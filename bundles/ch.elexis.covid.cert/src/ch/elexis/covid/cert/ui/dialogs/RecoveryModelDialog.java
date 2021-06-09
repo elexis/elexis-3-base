@@ -7,57 +7,43 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.IValueSetService;
 import ch.elexis.core.ui.util.CoreUiUtil;
-import ch.elexis.covid.cert.service.rest.model.VaccinationModel;
+import ch.elexis.covid.cert.service.rest.model.RecoveryModel;
 
-public class VaccinationModelDialog extends Dialog {
+public class RecoveryModelDialog extends Dialog {
 	
 	@Inject
 	private IValueSetService valueSetService;
 	
-	private VaccinationModel model;
+	private RecoveryModel model;
 	
 	private ComboViewer languageCombo;
-	
-	private ComboViewer productCombo;
-	
-	private Text dosage;
-	
-	private Text dosages;
 	
 	private CDateTime dateTime;
 	
 	private ComboViewer countryCombo;
 	
-	public VaccinationModelDialog(VaccinationModel model, Shell shell){
+	public RecoveryModelDialog(RecoveryModel model, Shell shell){
 		super(shell);
 		this.model = model;
 		
@@ -66,7 +52,7 @@ public class VaccinationModelDialog extends Dialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent){
-		getShell().setText("Daten der Impfung");
+		getShell().setText("Daten der Genesung / pos. Test");
 		parent = (Composite) super.createDialogArea(parent);
 		
 		languageCombo = new ComboViewer(parent, SWT.BORDER);
@@ -85,74 +71,6 @@ public class VaccinationModelDialog extends Dialog {
 		languageCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		languageCombo.getControl().setToolTipText("Sprache");
 		
-		productCombo = new ComboViewer(parent, SWT.BORDER);
-		productCombo.setContentProvider(ArrayContentProvider.getInstance());
-		productCombo.setInput(valueSetService.getValueSet("vaccines-covid-19-names"));
-		productCombo.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element){
-				if (element instanceof ICoding) {
-					return ((ICoding) element).getDisplay();
-				}
-				return super.getText(element);
-			}
-		});
-		productCombo.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event){
-				model.getVaccinationInfo()[0]
-					.setMedicinalProductCode(
-						((ICoding) event.getStructuredSelection().getFirstElement()).getCode());
-				if (productCombo.getControl().getData("deco") != null) {
-					removeErrorDecoration(productCombo.getControl());
-				}
-			}
-		});
-		productCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		productCombo.getControl().setToolTipText("Produkt");
-		productCombo.getCombo().setText("Produkt");
-		
-		Composite dosageComp = new Composite(parent, SWT.NONE);
-		dosageComp.setLayout(new GridLayout(4, false));
-		Label lbl = new Label(dosageComp, SWT.NONE);
-		lbl.setText("Impfung ");
-		dosage = new Text(dosageComp, SWT.BORDER);
-		dosage.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e){
-				if (StringUtils.isNotBlank(dosage.getText())) {
-					try {
-						model.getVaccinationInfo()[0]
-							.setNumberOfDoses(Integer.parseInt(dosage.getText()));
-						if (dosage.getData("deco") != null) {
-							removeErrorDecoration(dosage);
-						}
-					} catch (NumberFormatException ex) {
-						addErrorDecoration(dosage);
-					}
-				}
-			}
-		});
-		lbl = new Label(dosageComp, SWT.NONE);
-		lbl.setText(" von ");
-		dosages = new Text(dosageComp, SWT.BORDER);
-		dosages.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e){
-				if (StringUtils.isNotBlank(dosages.getText())) {
-					try {
-						model.getVaccinationInfo()[0]
-							.setTotalNumberOfDoses(Integer.parseInt(dosages.getText()));
-						if (dosages.getData("deco") != null) {
-							removeErrorDecoration(dosages);
-						}
-					} catch (NumberFormatException ex) {
-						addErrorDecoration(dosages);
-					}
-				}
-			}
-		});
-		
 		dateTime =
 			new CDateTime(parent, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
 		dateTime.addSelectionListener(new SelectionAdapter() {
@@ -162,7 +80,7 @@ public class VaccinationModelDialog extends Dialog {
 				if (dateTime.getSelection() != null) {
 					Date selection = dateTime.getSelection();
 					if (selection.before(now)) {
-						model.getVaccinationInfo()[0].setVaccinationDate(
+						model.getRecoveryInfo()[0].setDateOfFirstPositiveTestResult(
 							new SimpleDateFormat("yyyy-MM-dd").format(selection));
 						removeErrorDecoration(dateTime);
 					} else {
@@ -173,13 +91,13 @@ public class VaccinationModelDialog extends Dialog {
 		});
 		try {
 			dateTime.setSelection(new SimpleDateFormat("yyyy-MM-dd")
-				.parse(model.getVaccinationInfo()[0].getVaccinationDate()));
+				.parse(model.getRecoveryInfo()[0].getDateOfFirstPositiveTestResult()));
 		} catch (ParseException e1) {
 			LoggerFactory.getLogger(getClass()).warn("Could not parse date ["
-				+ model.getVaccinationInfo()[0].getVaccinationDate() + "]");
+				+ model.getRecoveryInfo()[0].getDateOfFirstPositiveTestResult() + "]");
 		}
 		dateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		dateTime.setToolTipText("Datum der Impfung");
+		dateTime.setToolTipText("Datum des positiven Test");
 		
 		countryCombo = new ComboViewer(parent, SWT.BORDER);
 		countryCombo.setContentProvider(ArrayContentProvider.getInstance());
@@ -189,37 +107,26 @@ public class VaccinationModelDialog extends Dialog {
 		countryCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event){
-				model.getVaccinationInfo()[0].setCountryOfVaccination(
+				model.getRecoveryInfo()[0].setCountryOfTest(
 					((String) event.getStructuredSelection().getFirstElement()));
 			}
 		});
 		countryCombo.setSelection(
-			new StructuredSelection(model.getVaccinationInfo()[0].getCountryOfVaccination()));
+			new StructuredSelection(model.getRecoveryInfo()[0].getCountryOfTest()));
 		countryCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		countryCombo.getControl().setToolTipText("Land der Impfung");
+		countryCombo.getControl().setToolTipText("Land der Testung");
 		
-		productCombo.getControl().setFocus();
+		dateTime.setFocus();
 		return parent;
 	}
 	
 	@Override
 	protected void okPressed(){
-		if (StringUtils.isEmpty(model.getVaccinationInfo()[0].getMedicinalProductCode())) {
-			addErrorDecoration(productCombo.getControl());
-			return;
-		}
-		if (model.getVaccinationInfo()[0].getNumberOfDoses() == null) {
-			addErrorDecoration(dosage);
-			return;
-		}
-		if (model.getVaccinationInfo()[0].getTotalNumberOfDoses() == null) {
-			addErrorDecoration(dosages);
-			return;
-		}
 		try {
-			if (model.getVaccinationInfo()[0].getVaccinationDate() == null
+			if (model.getRecoveryInfo()[0].getDateOfFirstPositiveTestResult() == null
 				|| new SimpleDateFormat("yyyy-MM-dd")
-					.parse(model.getVaccinationInfo()[0].getVaccinationDate()).after(new Date())) {
+					.parse(model.getRecoveryInfo()[0].getDateOfFirstPositiveTestResult())
+					.after(new Date())) {
 				addErrorDecoration(dateTime);
 				return;
 			}

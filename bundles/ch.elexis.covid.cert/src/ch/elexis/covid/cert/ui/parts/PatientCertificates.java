@@ -63,13 +63,16 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.covid.cert.service.CertificateInfo;
 import ch.elexis.covid.cert.service.CertificatesService;
+import ch.elexis.covid.cert.service.rest.model.RecoveryModel;
 import ch.elexis.covid.cert.service.rest.model.RevokeModel;
 import ch.elexis.covid.cert.service.rest.model.TestModel;
 import ch.elexis.covid.cert.service.rest.model.VaccinationModel;
+import ch.elexis.covid.cert.ui.dialogs.RecoveryModelDialog;
 import ch.elexis.covid.cert.ui.dialogs.TestModelDialog;
 import ch.elexis.covid.cert.ui.dialogs.VaccinationModelDialog;
 import ch.rgw.tools.Result;
 
+@SuppressWarnings("restriction")
 public class PatientCertificates {
 	
 	private Composite composite;
@@ -81,7 +84,6 @@ public class PatientCertificates {
 	@Inject
 	private CertificatesService service;
 	
-	@SuppressWarnings("restriction")
 	@Inject
 	@Service(filterExpression = "(storeid=ch.elexis.data.store.omnivore)")
 	private IDocumentStore omnivoreStore;
@@ -311,7 +313,33 @@ public class PatientCertificates {
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				
+				RecoveryModel model = getRecoveryModel();
+				if (model != null) {
+					try {
+						Result<String> result = service.createRecoveryCertificate(patient, model);
+						if (result.isOK()) {
+							CertificateInfo newCert = CertificateInfo.of(patient).stream()
+								.filter(c -> c.getUvci().equals(result.get())).findFirst()
+								.orElse(null);
+							if (newCert != null) {
+								openCertDocument(newCert);
+							}
+							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
+								patient);
+						} else {
+							MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+								"Es ist folgender Fehler aufgetreten.\n\n"
+									+ result.getMessages().stream().map(m -> m.getText())
+										.collect(Collectors.joining(", ")));
+						}
+					} catch (Exception ex) {
+						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+							"Es ist ein Fehler beim Aufruf der API aufgetreten.");
+						LoggerFactory.getLogger(getClass())
+							.error("Error getting recovery certificate",
+							ex);
+					}
+				}
 			}
 		});
 		btn.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -429,6 +457,16 @@ public class PatientCertificates {
 	private TestModel getTestModel(){
 		TestModel ret = new TestModel().initDefault(patient, service.getOtp());
 		TestModelDialog dialog = new TestModelDialog(ret, Display.getDefault().getActiveShell());
+		if (dialog.open() == Dialog.OK) {
+			return ret;
+		}
+		return null;
+	}
+	
+	private RecoveryModel getRecoveryModel(){
+		RecoveryModel ret = new RecoveryModel().initDefault(patient, service.getOtp());
+		RecoveryModelDialog dialog =
+			new RecoveryModelDialog(ret, Display.getDefault().getActiveShell());
 		if (dialog.open() == Dialog.OK) {
 			return ret;
 		}

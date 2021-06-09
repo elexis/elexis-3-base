@@ -232,6 +232,16 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		IQuery<IAppointment> query =
 			CoreModelServiceHolder.get().getQuery(IAppointment.class, true, true);
 		query.and("lastupdate", COMPARATOR.GREATER, Long.valueOf(knownLastUpdate));
+		if (!resources.isEmpty()) {
+			String[] resourceArray = resources.toArray(new String[resources.size()]);
+			query.startGroup();
+			for (int i = 0; i < resourceArray.length; i++) {
+				query.or(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS,
+					resourceArray[i]);
+				
+			}
+			query.andJoinGroups();
+		}
 		return (List<IPeriod>) (List<?>) query.execute();
 	}
 	

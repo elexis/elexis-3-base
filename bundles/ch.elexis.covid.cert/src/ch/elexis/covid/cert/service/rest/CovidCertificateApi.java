@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import ch.elexis.covid.cert.service.CertificatesService.Mode;
+import ch.elexis.covid.cert.service.rest.model.RecoveryModel;
 import ch.elexis.covid.cert.service.rest.model.RevokeModel;
 import ch.elexis.covid.cert.service.rest.model.SuccessResponse;
 import ch.elexis.covid.cert.service.rest.model.TestModel;
@@ -79,6 +80,23 @@ public class CovidCertificateApi {
 	public synchronized Object test(TestModel model){
 		WebTarget target =
 			jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/test");
+		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
+		
+		xSignatureClientRequestFilter.setPayload(gson.toJson(model));
+		final Response response = target.request().post(Entity.json(gson.toJson(model)));
+		
+		if (response.getStatus() >= 300) {
+			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
+			LoggerFactory.getLogger(getClass()).error(message);
+			return message;
+		} else {
+			return response.readEntity(SuccessResponse.class);
+		}
+	}
+	
+	public synchronized Object recovery(RecoveryModel model){
+		WebTarget target =
+			jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/recovery");
 		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
 		
 		xSignatureClientRequestFilter.setPayload(gson.toJson(model));

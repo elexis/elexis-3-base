@@ -102,6 +102,7 @@ public class TestModelDialog extends Dialog {
 		});
 		typeCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		typeCombo.getControl().setToolTipText("Test Typ");
+		typeCombo.getCombo().setText("Test Typ");
 		
 		manufacturerCombo = new ComboViewer(parent, SWT.BORDER);
 		manufacturerCombo.setContentProvider(ArrayContentProvider.getInstance());
@@ -131,6 +132,7 @@ public class TestModelDialog extends Dialog {
 		manufacturerCombo.getControl()
 			.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		manufacturerCombo.getControl().setToolTipText("Produkt");
+		manufacturerCombo.getCombo().setText("Produkt");
 		
 		sampleDateTime =
 			new CDateTime(parent, CDT.BORDER | CDT.DATE_MEDIUM | CDT.TIME_SHORT | CDT.DROP_DOWN);

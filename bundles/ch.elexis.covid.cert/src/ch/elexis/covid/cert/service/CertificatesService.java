@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.Properties;
 
-import org.apache.commons.io.FilenameUtils;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.Base64;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -21,6 +20,7 @@ import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.covid.cert.service.CertificateInfo.Type;
 import ch.elexis.covid.cert.service.rest.CovidCertificateApi;
+import ch.elexis.covid.cert.service.rest.model.RecoveryModel;
 import ch.elexis.covid.cert.service.rest.model.RevokeModel;
 import ch.elexis.covid.cert.service.rest.model.SuccessResponse;
 import ch.elexis.covid.cert.service.rest.model.TestModel;
@@ -135,6 +135,24 @@ public class CertificatesService {
 				return Result.OK(((SuccessResponse) result).uvci);
 			} catch (ElexisException e) {
 				LoggerFactory.getLogger(getClass()).error("Error saving test cert pdf", e);
+				return new Result<String>(SEVERITY.ERROR, 0, (String) e.getMessage(),
+					(String) e.getMessage(), false);
+			}
+		} else {
+			return new Result<String>(SEVERITY.ERROR, 0, (String) result, (String) result, false);
+		}
+	}
+	
+	public Result<String> createRecoveryCertificate(IPatient patient, RecoveryModel model){
+		Object result = covidCertificateApi.recovery(model);
+		if (result instanceof SuccessResponse) {
+			try {
+				String documentId = pdfToOmnivore(patient, Type.RECOVERY, (SuccessResponse) result);
+				CertificateInfo.add(Type.RECOVERY, LocalDateTime.now(), documentId,
+					((SuccessResponse) result).uvci, patient);
+				return Result.OK(((SuccessResponse) result).uvci);
+			} catch (ElexisException e) {
+				LoggerFactory.getLogger(getClass()).error("Error saving recovery cert pdf", e);
 				return new Result<String>(SEVERITY.ERROR, 0, (String) e.getMessage(),
 					(String) e.getMessage(), false);
 			}

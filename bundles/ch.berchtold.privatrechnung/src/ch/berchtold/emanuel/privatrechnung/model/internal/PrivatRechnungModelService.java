@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.common.ElexisEvent;
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.jpa.entities.EntityWithId;
 import ch.elexis.core.jpa.model.adapter.AbstractModelService;
 import ch.elexis.core.model.Identifiable;
@@ -19,7 +20,7 @@ import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IStoreToStringContribution;
-import ch.elexis.data.Xid;
+import ch.elexis.core.services.IXidService;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.berchtold.emanuel.privatrechnung.model")
 public class PrivatRechnungModelService extends AbstractModelService
@@ -31,13 +32,17 @@ public class PrivatRechnungModelService extends AbstractModelService
 	private IElexisEntityManager entityManager;
 	
 	@Reference
+	private IXidService xidService;
+	
+	@Reference
 	private EventAdmin eventAdmin;
 	
 	@Activate
 	public void activate(){
 		adapterFactory = PrivatRechnungModelAdapterFactory.getInstance();
 		
-		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Privatleistung", Xid.ASSIGNMENT_LOCAL);
+		xidService.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Privatleistung",
+			XidConstants.ASSIGNMENT_LOCAL);
 	}
 	
 	@Override

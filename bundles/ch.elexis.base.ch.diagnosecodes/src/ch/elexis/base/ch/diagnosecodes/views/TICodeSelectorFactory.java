@@ -12,6 +12,8 @@
 
 package ch.elexis.base.ch.diagnosecodes.views;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -76,16 +78,12 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 			value = "";
 		}
 		
+		@Override
 		public Object[] getChildren(Object parentElement){
-			IDiagnosisTree c = (IDiagnosisTree) parentElement;
-			// get all children if no search value is set
-			if (value == null || value.isEmpty()) {
-				return c.getChildren().toArray();
+			if (parentElement instanceof IDiagnosisTree) {
+				return ((IDiagnosisTree) parentElement).getChildren().toArray();
 			}
-			
-			// only show children that match the search query
-			List<IDiagnosisTree> availableChildren =  c.getChildren().parallelStream().filter(ti -> matchFilter(ti)).collect(Collectors.toList());
-			return availableChildren.toArray();
+			return null;
 		}
 		
 		public Object getParent(Object element){
@@ -101,8 +99,25 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 			return !c.getChildren().isEmpty();
 		}
 		
+		@SuppressWarnings("unchecked")
 		public Object[] getElements(Object inputElement){
-			return roots.toArray();
+			// get all children if no search value is set
+			if (value == null || value.isEmpty()) {
+				return roots.toArray();
+			}
+			
+			List<IDiagnosisTree> foundSubs =
+				((Collection<? extends IDiagnosisTree>) tiCodeElementContribution
+					.getElements(Collections.emptyMap())).stream().map(ce -> (IDiagnosisTree) ce)
+				.filter(dt -> matchFilter(dt)).collect(Collectors.toList());
+			List<IDiagnosisTree> foundRoots = ((Collection<? extends IDiagnosisTree>) roots)
+				.stream()
+					.map(ce -> (IDiagnosisTree) ce)
+					.filter(dt -> matchFilter(dt)).collect(Collectors.toList());
+			List<IDiagnosisTree> foundElements = new ArrayList<>(foundRoots);
+			foundElements.addAll(foundSubs);
+			
+			return foundElements.toArray(new Object[foundElements.size()]);
 		}
 		
 		public void dispose(){
@@ -133,7 +148,8 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 
 		public boolean matchFilter(IDiagnosisTree element) {
 			if(StringUtils.isNotBlank(value)) {
-				return (element.getCode() + " " + element.getText()).contains(value);
+				return (element.getCode() + " " + element.getText().toLowerCase())
+					.contains(value.toLowerCase());
 			}
 			return true;
 		}

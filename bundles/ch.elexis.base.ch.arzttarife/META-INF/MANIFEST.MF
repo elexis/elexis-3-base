@@ -2,25 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tarife für ambulante Arztbehandlungen in der Schweiz
 Bundle-SymbolicName: ch.elexis.base.ch.arzttarife;singleton:=true
-Bundle-Version: 3.6.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui.forms,
- org.eclipse.core.runtime,
- org.eclipse.ui,
- com.healthmarketscience.jackcess,
- ch.rgw.utility;bundle-version="3.0.0",
- ch.elexis.core;bundle-version="3.1.0",
- ch.elexis.core.ui;bundle-version="3.1.0",
- ch.elexis.core.ui.icons;bundle-version="3.1.0",
- ch.elexis.core.ui.importer.div;bundle-version="3.1.0",
- ch.elexis.base.ch.ebanking;bundle-version="3.0.0",
- org.apache.commons.io;bundle-version="2.4.0",
- at.medevit.elexis.tarmed.model,
- ch.elexis.core.ui.dbcheck,
- ch.elexis.base.ch.arzttarife.model;bundle-version="1.0.0",
- ch.elexis.base.ch.labortarif.model;bundle-version="1.0.0",
- ch.elexis.core.data;bundle-version="3.8.0"
+Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
+ ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.core.ui.importer.div;bundle-version="3.9.0",
+ ch.elexis.base.ch.ebanking;bundle-version="3.9.0",
+ ch.elexis.core.ui.dbcheck;bundle-version="3.9.0",
+ ch.elexis.base.ch.arzttarife.model;bundle-version="3.9.0",
+ at.medevit.elexis.tarmed.model;bundle-version="3.9.0",
+ ch.elexis.base.ch.labortarif.model;bundle-version="3.9.0"
 Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.arzttarife_schweiz,
  ch.elexis.base.ch.arzttarife.importer,
@@ -28,21 +21,18 @@ Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.tarmedprefs,
  ch.elexis.views
 Bundle-ClassPath: .
-Import-Package: ch.elexis.base.ch.arzttarife.importer,
- ch.elexis.core.services.holder,
- javax.inject,
- org.apache.commons.beanutils;version="1.8.0",
- org.apache.commons.lang,
- org.eclipse.e4.core.contexts,
- org.eclipse.e4.core.di.annotations;version="1.6.0",
- org.eclipse.e4.ui.di,
+Import-Package: javax.inject,
+ org.apache.commons.beanutils;version="1.9.4",
+ org.apache.commons.io;version="2.6.0",
+ org.apache.commons.lang3;version="3.12.0",
+ org.eclipse.ui.forms,
+ org.eclipse.ui.forms.events,
+ org.eclipse.ui.forms.widgets,
  org.jdom,
  org.jdom.input,
  org.jdom.output,
- org.jdom.transform,
- org.osgi.service.component.annotations;version="1.2.0",
- org.slf4j;version="1.7.2"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+ org.jdom.transform
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.adjuster.TarmedVerrechnebarAdjuster.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder.xml

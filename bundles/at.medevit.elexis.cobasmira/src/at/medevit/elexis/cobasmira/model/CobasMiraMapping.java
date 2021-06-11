@@ -9,10 +9,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.CsvToBean;
+
 import at.medevit.elexis.cobasmira.Activator;
 import at.medevit.elexis.cobasmira.ui.Preferences;
-import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
-import au.com.bytecode.opencsv.bean.CsvToBean;
 import ch.elexis.core.data.activator.CoreHub;
 
 public class CobasMiraMapping {

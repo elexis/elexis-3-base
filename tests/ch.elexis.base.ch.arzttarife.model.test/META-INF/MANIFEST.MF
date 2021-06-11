@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Arzttarife CH Test
 Bundle-SymbolicName: ch.elexis.base.ch.arzttarife.model.test
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.info
-Fragment-Host: ch.elexis.base.ch.arzttarife.model;bundle-version="1.0.0"
+Fragment-Host: ch.elexis.base.ch.arzttarife.model;bundle-version="3.9.0"
 Automatic-Module-Name: ch.elexis.base.ch.arzttarife.model.test
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit,
  ch.elexis.core.test;bundle-version="1.0.0",
  ch.rgw.utility;bundle-version="3.7.0",

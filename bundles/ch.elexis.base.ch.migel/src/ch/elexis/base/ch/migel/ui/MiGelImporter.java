@@ -30,7 +30,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
+
 import ch.elexis.artikel_ch.data.service.MiGelCodeElementService;
 import ch.elexis.base.ch.migel.Messages;
 import ch.elexis.core.model.IArticle;

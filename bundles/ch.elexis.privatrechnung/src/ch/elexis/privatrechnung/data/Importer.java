@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.elexis.core.services.IQuery;

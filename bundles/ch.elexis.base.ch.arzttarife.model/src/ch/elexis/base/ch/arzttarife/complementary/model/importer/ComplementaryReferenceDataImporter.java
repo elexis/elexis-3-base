@@ -16,7 +16,6 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVReader;
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
@@ -25,6 +24,7 @@ import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.jpa.entities.ComplementaryLeistung;
+import com.opencsv.CSVReader;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=complementary")
 public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImporter

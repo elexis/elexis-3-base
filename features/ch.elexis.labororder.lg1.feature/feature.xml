@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.labororder.lg1.feature"
       label="LG1 Laborauftrag"
-      version="1.0.0.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medevit.at">
 
    <description>
@@ -11,10 +11,10 @@
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+      Gerry Weirich, 2007-2013 und viele andere
      Patrick Kaufmann patrick@famkaufmann.info
      Lucia Ammann amann@medevit.at
-  	 Thomas Huster huster@medevit.at
+    Thomas Huster huster@medevit.at
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

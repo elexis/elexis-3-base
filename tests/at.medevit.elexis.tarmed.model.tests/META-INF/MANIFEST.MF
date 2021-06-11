@@ -2,8 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tarmed Model Tests
 Bundle-SymbolicName: at.medevit.elexis.tarmed.model.tests
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
-Fragment-Host: at.medevit.elexis.tarmed.model;bundle-version="3.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Fragment-Host: at.medevit.elexis.tarmed.model;bundle-version="3.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit;bundle-version="4.10.0"
+Import-Package: org.jdom.input;version="1.1.1"

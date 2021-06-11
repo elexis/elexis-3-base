@@ -2,7 +2,7 @@
 <feature
       id="ch.unibe.iam.scg.archie.feature"
       label="Archie Statistics"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="designchuchi.ch">
 
    <description>
@@ -11,7 +11,7 @@
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -26,35 +26,14 @@
          unpack="false"/>
 
    <plugin
-         id="junit"
+         id="org.jfree.chart"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="jfree.chart"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="jfree.chart-experimental"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="jfree.chart-swt"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="jfree.jcommon"
+         id="org.jfree.jcommon"
          download-size="0"
          install-size="0"
          version="0.0.0"

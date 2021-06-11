@@ -71,6 +71,7 @@ import org.w3c.dom.Element;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.rgw.io.Settings;
 
 /**
  * Utility to generate a CDA V1.1 compliant document according to the CDA-CH standard described at

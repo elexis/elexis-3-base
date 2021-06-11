@@ -2,7 +2,7 @@ package ch.elexis.TarmedRechnung;
 
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.jdom.Element;
 

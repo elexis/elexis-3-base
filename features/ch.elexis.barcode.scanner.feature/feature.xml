@@ -2,13 +2,13 @@
 <feature
       id="ch.elexis.barcode.scanner.feature"
       label="Barcode Scanner"
-      version="3.2.100.qualifier">
+      version="3.9.0.qualifier">
 
    <description url="https://wiki.elexis.info/At.medevit.elexis.barcode.scanner">
       Elexis Barcode Unterstützung für Motorola Barcode Scanner
    </description>
 
-    <copyright url="http://www.medevit.at">
+   <copyright url="http://www.medevit.at">
       Copyright (c) 2017-2018, Sezer Azgin und MEDEVIT OG
       All rights reserved.
    </copyright>

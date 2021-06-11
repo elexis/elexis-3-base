@@ -21,8 +21,10 @@
     <module>ch.elexis.base.ch.arzttarife.model.test</module>
     <module>at.medevit.atc_codes.test</module>
     <module>at.medevit.elexis.cobasmira.tests</module>
+<!--
     <module>at.medevit.elexis.ehc.core.test</module>
     <module>at.medevit.elexis.ehc.vacdoc.test</module>
+-->
     <module>at.medevit.elexis.emediplan.core.test</module>
     <module>at.medevit.elexis.impfplan.test</module>
     <module>at.medevit.elexis.loinc_test</module>

@@ -3,7 +3,7 @@ package at.medevit.elexis.inbox.model.impl;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;

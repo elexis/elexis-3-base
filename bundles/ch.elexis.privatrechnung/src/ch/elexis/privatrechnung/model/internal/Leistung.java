@@ -2,7 +2,7 @@ package ch.elexis.privatrechnung.model.internal;
 
 import java.time.LocalDate;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.jpa.entities.PrivatLeistung;

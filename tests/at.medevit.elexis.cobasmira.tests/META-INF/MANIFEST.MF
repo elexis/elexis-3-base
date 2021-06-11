@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CobasMira Tests
 Bundle-SymbolicName: at.medevit.elexis.cobasmira.tests
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
-Fragment-Host: at.medevit.elexis.cobasmira;bundle-version="3.0.0.qualifier"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Fragment-Host: at.medevit.elexis.cobasmira;bundle-version="3.9.0.qualifier"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit

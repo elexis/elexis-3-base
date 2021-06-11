@@ -38,6 +38,7 @@
     <module>at.medevit.elexis.bluemedication.core</module>
     <module>at.medevit.elexis.bluemedication.ui</module>
     <module>at.medevit.elexis.cobasmira</module>
+<!--
     <module>at.medevit.elexis.ehc.core</module>
     <module>at.medevit.elexis.ehc.docbox</module>
     <module>at.medevit.elexis.ehc.ui.docbox</module>
@@ -45,6 +46,7 @@
     <module>at.medevit.elexis.ehc.ui.vacdoc</module>
     <module>at.medevit.elexis.ehc.ui</module>
     <module>at.medevit.elexis.ehc.vacdoc</module>
+-->
     <module>at.medevit.elexis.emediplan.core</module>
     <module>at.medevit.elexis.emediplan.ui</module>
     <module>at.medevit.elexis.epha.interactions</module>

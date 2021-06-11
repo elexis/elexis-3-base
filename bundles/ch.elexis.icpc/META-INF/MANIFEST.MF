@@ -2,40 +2,25 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Plugin für ICPC 2
 Bundle-SymbolicName: ch.elexis.icpc;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.ch
 Eclipse-ExtensibleAPI: true
 Bundle-Localization: plugin
-Require-Bundle: ch.elexis.core;bundle-version="3.0.0",
- ch.elexis.core.data;bundle-version="3.0.0",
- ch.elexis.core.ui;bundle-version="3.0.0",
- ch.elexis.core.ui.icons;bundle-version="3.0.0",
- ch.elexis.core.ui.importer.div;bundle-version="3.0.0",
- ch.rgw.utility,
- org.eclipse.core.runtime,
- org.eclipse.ui,
- org.eclipse.ui.forms,
- com.healthmarketscience.jackcess,
- ch.elexis.core.ui.medication,
- ch.elexis.core.ui.laboratory,
- ch.elexis.core.ui.contacts,
- org.eclipse.osgi.services,
- ch.elexis.icpc.model;bundle-version="1.0.0"
 Eclipse-LazyStart: false
 Bundle-Activator: ch.elexis.icpc.Activator
 Export-Package: ch.elexis.icpc; uses:="org.eclipse.core.runtime,  ch.rgw.tools,  ch.elexis.actions,  ch.elexis.util,  ch.elexis.data,  ch.elexis.views.codesystems,  ch.elexis.icpc.views,  org.eclipse.ui,  org.eclipse.swt.custom,  org.eclipse.ui.plugin,  org.eclipse.ui.forms.widgets,  org.eclipse.osgi.util,  ch.elexis.text,  ch.elexis.views,  ch.elexis.util.viewers,  org.eclipse.jface.viewers,  org.osgi.framework,  org.eclipse.swt.widgets"
 Created-By: Buildr
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: ch.elexis.core.findings,
- ch.elexis.core.findings.codes,
- ch.elexis.core.findings.util.model,
- ch.elexis.core.services.holder,
- javax.inject,
- org.apache.commons.io;version="2.4.0",
- org.apache.commons.lang;version="2.6.0",
- org.eclipse.e4.core.di.annotations;version="1.6.0",
- org.eclipse.e4.ui.di
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Import-Package: javax.inject;version="1.0.0",
+ org.apache.commons.lang3;version="3.12.0"
 Bundle-ActivationPolicy: lazy
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.icpc.model;bundle-version="3.9.0",
+ ch.elexis.core.findings;bundle-version="3.9.0",
+ ch.elexis.core.findings.util;bundle-version="3.9.0",
+ ch.elexis.core.ui.medication;bundle-version="3.9.0",
+ ch.elexis.core.ui.laboratory;bundle-version="3.9.0"
 Service-Component: OSGI-INF/ch.elexis.icpc.service.CodeElementServiceHolder.xml,
  OSGI-INF/ch.elexis.icpc.coding.DatabaseICPCCodingContribution.xml,
  OSGI-INF/ch.elexis.icpc.service.IcpcModelServiceHolder.xml

@@ -16,7 +16,8 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
+
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;

@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.elexis.corona123.feature"
       label="Anbindung corona123.ch"
-      version="1.0.0.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medevit.at">
 
    <description url="http://www.example.com/description">

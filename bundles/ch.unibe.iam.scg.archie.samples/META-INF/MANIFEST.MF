@@ -2,12 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Archie Samples
 Bundle-SymbolicName: ch.unibe.iam.scg.archie.samples;singleton:=true
-Bundle-Version: 3.0.0.qualifier
-Fragment-Host: ch.unibe.iam.scg.archie;bundle-version="0.7"
+Bundle-Version: 3.9.0.qualifier
+Fragment-Host: ch.unibe.iam.scg.archie;bundle-version="3.9.0"
 Bundle-Localization: src/ch/unibe/iam/scg/archie/samples/i18n/messages
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: ch.rgw.tools
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.jface
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: designchuchi.ch
+Import-Package: org.jfree.data.statistics

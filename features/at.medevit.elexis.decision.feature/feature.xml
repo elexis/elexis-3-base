@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.elexis.decision.feature"
       label="Decision Support"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medevit.at">
 
    <description>

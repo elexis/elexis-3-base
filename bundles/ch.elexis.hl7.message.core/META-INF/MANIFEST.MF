@@ -2,20 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: HL7 Message Core
 Bundle-SymbolicName: ch.elexis.hl7.message.core
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.hl7.message.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: ch.elexis.core.constants,
- ch.elexis.core.exceptions,
- ch.elexis.core.model,
- ch.elexis.data,
- ch.rgw.tools,
- org.osgi.service.component.annotations;version="1.3.0",
- org.slf4j;version="1.7.2"
-Require-Bundle: ch.elexis.core.hl7.v2x,
- ca.uhn.hapi.osgi-base,
- org.eclipse.core.runtime;bundle-version="3.13.0"
-Export-Package: ch.elexis.hl7.message.core
-Service-Component: OSGI-INF/ch.elexis.hl7.message.core.service.HL7MessageService.xml
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.hl7.v2x;bundle-version="3.9.0"
+Service-Component: OSGI-INF/ch.elexis.hl7.message.core.service.HL7MessageService.xml
+Export-Package: ch.elexis.hl7.message.core

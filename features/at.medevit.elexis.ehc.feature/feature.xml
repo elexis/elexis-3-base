@@ -2,14 +2,14 @@
 <feature
       id="at.medevit.elexis.ehc.feature"
       label="e Health Connector for Elexis"
-      version="3.3.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medevit">
 
    <description url="https://wiki.elexis.info/At.medevit.elexis.ehc.feature.feature.group">
-	Das Feature bietet die Grundlage um e Health Dokumente zu erzeugen und wieder einzulesen. Dabei wird die ebenfalls unter der EPL verfügbare Bibliothek [http://sourceforge.net/projects/ehealthconnector/ eHealthConnector] verwendet.
+      Das Feature bietet die Grundlage um e Health Dokumente zu erzeugen und wieder einzulesen. Dabei wird die ebenfalls unter der EPL verfügbare Bibliothek [http://sourceforge.net/projects/ehealthconnector/ eHealthConnector] verwendet.
    </description>
 
-    <copyright url="http://www.medevit.at">
+   <copyright url="http://www.medevit.at">
       Copyright (c) 2015-2018, Thomas Huster und MEDEVIT OG
       All rights reserved.
    </copyright>
@@ -45,13 +45,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.apache.xerces"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="javax.xml"
          download-size="0"
          install-size="0"
@@ -59,14 +52,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.apache.xml.serializer"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.xml.resolver"
+         id="info.elexis.target.ehealth.connector.ch"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.base.ch.feature"
       label="Elexis Swiss OpenSource Feature"
-      version="3.2.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="elexis.info"
       plugin="ch.elexis.base.ch.feature.branding">
 

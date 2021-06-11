@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.elexis.bluemedication.feature"
       label="BlueMedication"
-      version="1.0.0.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medevit.at">
 
    <description url="http://www.example.com/description">

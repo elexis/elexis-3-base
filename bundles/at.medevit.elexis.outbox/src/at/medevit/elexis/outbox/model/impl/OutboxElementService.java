@@ -19,6 +19,7 @@ import org.osgi.service.component.annotations.Reference;
 import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.IOutboxElementService;
 import at.medevit.elexis.outbox.model.IOutboxUpdateListener;
+import ch.elexis.core.documents.DocumentStore;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;

@@ -2,19 +2,19 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: SIX QR Bill
 Bundle-SymbolicName: ch.elexis.ebanking.qr
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.ebanking.qr
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: ch.elexis.core.model,
- ch.elexis.core.model.format,
- ch.elexis.core.types,
- ch.rgw.tools,
- org.apache.commons.beanutils;version="1.8.0",
- org.apache.commons.lang3;version="3.7.0",
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Export-Package: ch.elexis.ebanking.qr
+Import-Package: com.google.zxing;version="3.4.1",
+ com.google.zxing.common;version="3.4.1",
+ com.google.zxing.qrcode;version="3.4.1",
+ com.google.zxing.qrcode.decoder;version="3.4.1",
+ org.apache.commons.beanutils;version="1.9.4",
+ org.apache.commons.lang3;version="3.12.0",
  org.eclipse.swt,
  org.eclipse.swt.graphics,
- org.eclipse.swt.widgets,
- org.slf4j;version="1.7.30"
-Require-Bundle: com.google.zxing.core;bundle-version="3.3.2"
-Export-Package: ch.elexis.ebanking.qr
+ org.eclipse.swt.widgets
+Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
+ ch.elexis.core;bundle-version="3.9.0"

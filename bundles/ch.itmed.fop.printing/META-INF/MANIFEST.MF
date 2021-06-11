@@ -2,26 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IT-Med Medi-Print Plugin
 Bundle-SymbolicName: ch.itmed.fop.printing;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: IT-Med AG
 Automatic-Module-Name: ch.itmed.fop.printing
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: ch.elexis.core.ui;bundle-version="3.8.0",
- ch.elexis.agenda;bundle-version="3.2.0",
- ch.elexis.core.data;bundle-version="3.8.0",
- ch.rgw.utility,
- org.eclipse.core.commands;bundle-version="3.9.200",
- org.eclipse.jface;bundle-version="3.14.100",
- org.eclipse.ui;bundle-version="3.110.0",
- org.eclipse.osgi,
- org.eclipse.core.runtime;bundle-version="3.15.0",
- org.eclipse.core.expressions;bundle-version="3.6.200",
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.agenda;bundle-version="3.9.0",
  ch.elexis.fop_wrapper;bundle-version="3.2.0"
 Bundle-ActivationPolicy: lazy
-Import-Package: ch.elexis.core.services.holder,
- javax.inject;version="1.0.0",
- org.apache.commons.lang;version="2.6.0",
- org.eclipse.e4.core.commands,
- org.eclipse.e4.core.contexts,
- org.eclipse.e4.ui.workbench
 Service-Component: OSGI-INF/ch.itmed.fop.printing.startup.StartupHandler.xml
+Import-Package: javax.inject;version="1.0.0",
+ org.apache.commons.lang3;version="3.12.0"

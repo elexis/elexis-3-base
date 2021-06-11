@@ -2,15 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Kapsch Referral Ui
 Bundle-SymbolicName: at.medevit.elexis.kapsch.referral.ui;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medbits.at
 Automatic-Module-Name: at.medevit.elexis.kapsch.referral.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.ui,
- ch.elexis.core.data,
- ch.elexis.core.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0"
 Service-Component: OSGI-INF/at.medevit.elexis.kapsch.referral.internal.KapschReferralServiceImpl.xml,
  OSGI-INF/at.medevit.elexis.kapsch.referral.internal.KapschReferralServiceHolder.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: ch.elexis.core.services.holder,
- org.apache.commons.lang;version="2.6.0"
+Import-Package: org.apache.commons.lang3;version="3.12.0"

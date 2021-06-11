@@ -2,36 +2,20 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Befunde Plugin
 Bundle-SymbolicName: ch.elexis.base.befunde;singleton:=true
-Bundle-Version: 3.3.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Export-Package: ch.elexis.base.befunde,
  ch.elexis.base.befunde.xchange,
  ch.elexis.befunde
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Created-By: Buildr
-Import-Package: ch.elexis.core.findings.util,
- ch.elexis.core.findings.util.commands,
- ch.elexis.core.findings.util.model,
- ch.elexis.core.services.holder,
- ch.elexis.core.ui.actions,
- ch.elexis.core.ui.icons,
- ch.elexis.core.ui.text,
- ch.elexis.core.ui.util,
- ch.elexis.scripting,
- org.eclipse.jface.dialogs,
- org.jdom
-Require-Bundle: org.eclipse.swt;bundle-version="3.8.1",
- org.eclipse.core.runtime;bundle-version="3.8.0",
- org.eclipse.ui;bundle-version="3.8.2",
- org.eclipse.ui.forms;bundle-version="3.5.200",
- ch.elexis.core;bundle-version="3.0.0",
- ch.rgw.utility;bundle-version="3.0.0",
- ch.elexis.core.data;bundle-version="3.0.0",
- ch.elexis.core.ui;bundle-version="3.0.0",
- ch.elexis.core.findings;bundle-version="1.0.0",
- ch.elexis.core.findings.templates;bundle-version="3.0.0",
- org.eclipse.osgi.services;bundle-version="3.5.100"
 Bundle-ActivationPolicy: lazy
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.findings;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.core.findings.util;bundle-version="3.9.0",
+ ch.elexis.core.findings.templates;bundle-version="3.9.0"
 Service-Component: OSGI-INF/ch.elexis.base.befunde.findings.migrator.preferences.FindingsServiceComponent.xml,
  OSGI-INF/ch.elexis.base.befunde.findings.migrator.MesswertMigrator.xml
+Import-Package: org.jdom;version="1.1.1"

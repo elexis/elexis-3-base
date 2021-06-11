@@ -13,7 +13,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.documents.DocumentStore;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IDocumentConverter;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.ConverterControllerApi;
 
@@ -31,6 +31,9 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 	
 	@Reference
 	private DocumentStore documentStore;
+	
+	@Reference
+	private IConfigService configService;
 	
 	@Override
 	public Optional<File> convertToPdf(IDocument document){
@@ -86,7 +89,7 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 	}
 	
 	private String getAppBasePath(){
-		return ConfigServiceHolder.get().get("jodrestconverter/basepath", "");
+		return configService.get("jodrestconverter/basepath", "");
 	}
 	
 	@Override

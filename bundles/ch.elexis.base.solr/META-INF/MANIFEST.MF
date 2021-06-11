@@ -2,25 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Solr
 Bundle-SymbolicName: ch.elexis.base.solr
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.info
 Automatic-Module-Name: ch.elexis.base.solr
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.apache.solr;bundle-version="1.0.0",
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: org.apache.solr;bundle-version="8.6.3",
  ch.rgw.utility;bundle-version="3.9.0",
  ch.elexis.core;bundle-version="3.9.0",
- ch.elexis.core.model;bundle-version="1.0.0",
- ch.elexis.core.services;bundle-version="1.0.0",
+ ch.elexis.core.model;bundle-version="3.9.0",
+ ch.elexis.core.services;bundle-version="3.9.0",
  ch.elexis.omnivore.model;bundle-version="3.9.0",
- org.apache.commons.lang3;bundle-version="3.7.0",
- org.apache.httpcomponents.httpclient,
- org.apache.commons.io;bundle-version="2.6.0",
- ch.elexis.core.tasks,
- ch.elexis.core.spotlight
-Import-Package: org.eclipse.core.runtime;version="3.5.0",
- org.osgi.service.component,
- org.osgi.service.component.annotations,
- org.slf4j;version="1.6.6"
+ ch.elexis.core.tasks;bundle-version="3.9.0",
+ ch.elexis.core.spotlight;bundle-version="3.9.0"
 Service-Component: OSGI-INF/*.xml
 Bundle-ActivationPolicy: lazy
 Export-Package: ch.elexis.base.solr.task
+Import-Package: org.apache.commons.io;version="2.6.0",
+ org.apache.commons.lang3;version="3.12.0",
+ org.apache.http.client;version="4.5.10"

@@ -2,8 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Ebanking
 Bundle-SymbolicName: ch.elexis.ebanking
-Bundle-Version: 3.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Multi-Release: true
-Import-Package: org.slf4j
+Bundle-Version: 3.9.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: ch.elexis.ebanking.parser
+Bundle-Vendor: elexis.ch
+Import-Package: javax.xml.bind,
+ javax.xml.bind.annotation

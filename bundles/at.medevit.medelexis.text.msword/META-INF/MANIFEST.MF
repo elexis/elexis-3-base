@@ -2,17 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Microsoft Word Textplugin
 Bundle-SymbolicName: at.medevit.medelexis.text.msword;singleton:=true
-Bundle-Version: 3.8.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Activator: at.medevit.medelexis.text.msword.Activator
 Bundle-Vendor: medevit.at
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- ch.rgw.utility;bundle-version="3.0.0",
- ch.elexis.core;bundle-version="3.0.0",
- ch.elexis.core.data;bundle-version="3.0.0",
- ch.elexis.core.ui;bundle-version="3.0.0",
- ch.elexis.core.ui.icons;bundle-version="3.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/jodconverter-core-3.0-beta-4/lib/commons-cli-1.1.jar,
@@ -24,4 +19,3 @@ Bundle-ClassPath: .,
  lib/jodconverter-core-3.0-beta-4/lib/jodconverter-core-3.0-beta-4-medevit.jar,
  lib/jodconverter-core-3.0-beta-4/lib/unoil-3.2.1.jar
 Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32))
-Import-Package: org.slf4j

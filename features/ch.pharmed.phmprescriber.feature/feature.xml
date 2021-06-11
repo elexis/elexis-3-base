@@ -2,7 +2,7 @@
 <feature
       id="ch.pharmed.phmprescriber.feature"
       label="Rezeptübermittlung"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="ch.pharmed">
 
    <description>
@@ -17,14 +17,14 @@
       Eclipse Public License v1.0
    </license>
 
-    <plugin
+   <plugin
          id="ch.pharmed.phmprescriber"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-    <plugin
+   <plugin
          id="org.apache.servicemix.bundles.zxing"
          download-size="0"
          install-size="0"

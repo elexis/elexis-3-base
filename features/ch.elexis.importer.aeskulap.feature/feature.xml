@@ -2,13 +2,13 @@
 <feature
       id="ch.elexis.importer.aeskulap.feature"
       label="Aeskulap Importer"
-      version="1.0.0.qualifier">
+      version="3.9.0.qualifier">
 
    <description url="https://wiki.elexis.info/Ch.elexis.importer.aeskulap.feature.feature.group">
-     Mit dem Aeskulap Importer können Daten welche aus Aeskulap exportiert wurden, in eine Elexis Datenbank importiert werden.
+      Mit dem Aeskulap Importer können Daten welche aus Aeskulap exportiert wurden, in eine Elexis Datenbank importiert werden.
    </description>
 
-    <copyright url="http://www.medevit.at">
+   <copyright url="http://www.medevit.at">
       Copyright (c) 2018, Thomas Huster und MEDEVIT OG
       All rights reserved.
    </copyright>

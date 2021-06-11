@@ -2,14 +2,14 @@
 <feature
       id="at.medevit.elexis.emediplan.feature"
       label="eMediplan"
-      version="1.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medevit.at">
 
    <description url="https://wiki.elexis.info/At.medevit.elexis.emediplan.feature.feature.group">
       Mit dem Feature kann aus Elexis ein Medikationsplan nach der Spezifikation von eMediplan Schweiz erstellt werde
    </description>
 
-    <copyright url="http://www.medevit.at">
+   <copyright url="http://www.medevit.at">
       Copyright (c) 2015-2018, Thomas Huster und MEDEVIT OG
       All rights reserved.
    </copyright>

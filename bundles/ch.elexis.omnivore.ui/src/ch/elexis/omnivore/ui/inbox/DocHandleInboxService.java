@@ -10,10 +10,10 @@ import org.osgi.service.event.EventHandler;
 
 import at.medevit.elexis.inbox.model.IInboxElementService;
 import ch.elexis.core.common.ElexisEventTopics;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.preferences.PreferencePage;

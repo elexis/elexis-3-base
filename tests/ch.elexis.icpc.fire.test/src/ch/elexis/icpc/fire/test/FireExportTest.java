@@ -22,7 +22,6 @@ import org.junit.Test;
 
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.constants.XidConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;

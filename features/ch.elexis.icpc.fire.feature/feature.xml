@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.icpc.fire.feature"
       label="FIRE Fragment für ICPC"
-      version="3.2.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="elexis.info">
 
    <description>

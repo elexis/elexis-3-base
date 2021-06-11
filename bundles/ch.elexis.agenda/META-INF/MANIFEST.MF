@@ -2,31 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agenda Plugin für Elexis
 Bundle-SymbolicName: ch.elexis.agenda;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Activator: ch.elexis.actions.Activator
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.jobs,
- org.eclipse.jface,
- org.eclipse.swt,
- org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.ui.forms,
- ch.rgw.utility,
- org.eclipse.core.databinding,
- org.eclipse.core.databinding.beans,
- org.eclipse.core.databinding.observable,
- org.eclipse.core.databinding.property,
- org.eclipse.jface.databinding,
- com.ibm.icu,
- ch.elexis.core;bundle-version="3.0.0",
+Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
  ch.elexis.core.data;bundle-version="3.0.0",
- ch.elexis.core.ui;bundle-version="3.0.0",
- ch.elexis.core.ui.icons;bundle-version="3.0.0",
- commons-logging;bundle-version="1.1.1",
- org.apache.commons.io;bundle-version="2.4.0",
- org.apache.commons.lang;bundle-version="2.6.0",
- edu.emory.mathcs.backport;bundle-version="3.1.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.fop.service;bundle-version="3.2.0"
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
@@ -38,11 +20,10 @@ Export-Package: ch.elexis.agenda.data,
  ch.elexis.agenda.series.ui,
  ch.elexis.agenda.util,
  ch.elexis.dialogs
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: ch.elexis.core.services.holder,
- com.google.common.cache;version="15.0.0",
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Import-Package: com.google.common.cache;version="15.0.0",
+ com.ibm.icu.util;version="67.1.0",
  javax.inject;version="1.0.0",
- org.eclipse.e4.core.di.annotations;version="1.6.0",
+ org.apache.commons.lang3;version="3.12.0",
  org.eclipse.e4.ui.di,
- org.eclipse.e4.ui.model.application.ui.basic,
- org.slf4j;version="1.6.6"
+ org.eclipse.e4.ui.model.application.ui.basic

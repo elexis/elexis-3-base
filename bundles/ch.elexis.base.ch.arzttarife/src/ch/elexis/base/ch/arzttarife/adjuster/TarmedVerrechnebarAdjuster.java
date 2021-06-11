@@ -2,7 +2,7 @@ package ch.elexis.base.ch.arzttarife.adjuster;
 
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;

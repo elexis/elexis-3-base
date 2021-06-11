@@ -2,32 +2,28 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Artikelstamm Service
 Bundle-SymbolicName: at.medevit.ch.artikelstamm.model
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.ch.artikelstamm.service
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Multi-Release: true
-Require-Bundle: org.eclipse.osgi.services;bundle-version="3.6.0",
- ch.rgw.utility;bundle-version="3.8.0",
- ch.elexis.core,
- ch.elexis.core.services;bundle-version="1.0.0",
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: ch.rgw.utility;bundle-version="3.8.0",
+ ch.elexis.core;bundle-version="3.9.0",
+ ch.elexis.core.services;bundle-version="3.9.0",
  ch.elexis.core.jpa;bundle-version="1.0.0",
  ch.elexis.core.jpa.entities;bundle-version="1.0.0",
  at.medevit.ch.artikelstamm,
  at.medevit.atc_codes;bundle-version="3.1.0"
-Service-Component: OSGI-INF/at.medevit.ch.artikelstamm.model.service.ArtikelstammModelService.xml,
- OSGI-INF/at.medevit.ch.artikelstamm.model.service.ArtikelstammModelServiceHolder.xml,
- OSGI-INF/at.medevit.ch.artikelstamm.model.service.CoreModelServiceHolder.xml,
- OSGI-INF/at.medevit.ch.artikelstamm.model.importer.ArtikelstammImporter.xml,
- OSGI-INF/at.medevit.ch.artikelstamm.model.service.EntityManagerHolder.xml,
- OSGI-INF/at.medevit.ch.artikelstamm.model.service.AtcCodeServiceHolder.xml,
- OSGI-INF/at.medevit.ch.artikelstamm.model.service.ATCCodeCache.xml,
- OSGI-INF/at.medevit.ch.artikelstamm.model.service.ModelServiceHolder.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.persistence;version="2.2.3",
  javax.persistence.criteria;version="2.2.3",
- org.apache.commons.lang3;version="3.3.2",
- org.eclipse.core.runtime;version="3.5.0",
- org.osgi.framework;version="1.9.0",
- org.slf4j;version="1.7.2"
+ javax.xml.bind,
+ org.apache.commons.lang3;version="3.3.2"
 Export-Package: at.medevit.ch.artikelstamm.model.common.preference
+Service-Component: OSGI-INF/at.medevit.ch.artikelstamm.model.service.EntityManagerHolder.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.model.service.ArtikelstammModelService.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.model.service.ModelServiceHolder.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.model.importer.ArtikelstammImporter.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.model.service.ATCCodeCache.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.model.service.CoreModelServiceHolder.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.model.service.AtcCodeServiceHolder.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.model.service.ArtikelstammModelServiceHolder.xml

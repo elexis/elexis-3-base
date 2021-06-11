@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: ch.elexis.base.ch.arzttarife.model;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: ch.elexis.base.ch.arzttarife.model
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: ch.elexis.base.ch.arzttarife.complementary,
  ch.elexis.base.ch.arzttarife.complementary.impl,
  ch.elexis.base.ch.arzttarife.complementary.util,
@@ -24,23 +24,20 @@ Export-Package: ch.elexis.base.ch.arzttarife.complementary,
  ch.elexis.base.ch.arzttarife.tarmed.impl,
  ch.elexis.base.ch.arzttarife.tarmed.util,
  ch.elexis.base.ch.arzttarife.util
-Require-Bundle: org.eclipse.osgi.services;bundle-version="3.6.0",
- org.eclipse.core.runtime,
- org.eclipse.emf.ecore;visibility:=reexport,
- ch.elexis.core;visibility:=reexport,
+Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
+ ch.elexis.core;bundle-version="3.9.0",
+ ch.elexis.core.services;bundle-version="3.9.0",
  ch.elexis.core.jpa,
  ch.elexis.core.jpa.entities;bundle-version="1.0.0",
- ch.rgw.utility;bundle-version="3.7.0",
- ch.elexis.core.importer.div,
- net.sf.opencsv
+ ch.elexis.core.importer.div
 Bundle-ActivationPolicy: lazy
-Import-Package: ch.elexis.core.services.holder,
+Import-Package: com.healthmarketscience.jackcess;version="4.0.0",
+ com.opencsv;version="3.10.0",
  javax.persistence;version="2.2.3",
  javax.persistence.criteria;version="2.2.3",
  org.apache.commons.io;version="2.5.0",
- org.apache.commons.lang;version="2.6.0",
- org.apache.commons.lang.math;version="2.6.0",
- org.slf4j
+ org.apache.commons.lang3;version="3.12.0",
+ org.apache.commons.lang3.math;version="3.12.0"
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.pandemie.model.importer.PandemieReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.physio.model.importer.PhysioReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder.xml,

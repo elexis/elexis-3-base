@@ -2,33 +2,28 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: ch.elexis.icpc.model;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: ch.elexis.icpc.model
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: ch.elexis.icpc.model.icpc,
  ch.elexis.icpc.model.icpc.impl,
  ch.elexis.icpc.model.icpc.util
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.ecore;visibility:=reexport,
- ch.elexis.core;bundle-version="3.8.0";visibility:=reexport,
- ch.elexis.core.jpa,
- ch.elexis.core.jpa.entities;bundle-version="1.0.0"
+Require-Bundle: ch.elexis.core.jpa.entities;bundle-version="3.9.0",
+ ch.elexis.core.jpa;bundle-version="3.9.0",
+ ch.elexis.core;bundle-version="3.9.0";visibility:=reexport,
+ ch.elexis.core.services;bundle-version="3.9.0"
 Bundle-ActivationPolicy: lazy
-Import-Package: ch.elexis.core.services.holder,
- com.healthmarketscience.jackcess;version="2.1.9",
- javax.persistence;version="2.2.3",
- javax.persistence.criteria;version="2.2.3",
- org.apache.commons.io;version="2.5.0",
- org.apache.commons.lang3;version="3.7.0",
- org.apache.commons.lang3.math;version="3.7.0",
- org.osgi.service.component.annotations;version="1.3.0",
- org.osgi.service.event,
- org.slf4j;version="1.7.2"
 Service-Component: OSGI-INF/ch.elexis.icpc.model.internal.service.IcpcModelService.xml,
  OSGI-INF/ch.elexis.icpc.model.internal.importer.IcpcReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.icpc.model.internal.importer.EntityManagerHolder.xml,
  OSGI-INF/ch.elexis.icpc.model.internal.service.CodeElementContribution.xml,
  OSGI-INF/ch.elexis.icpc.model.internal.service.IcpcModelServiceHolder.xml
+Import-Package: com.healthmarketscience.jackcess;version="4.0.0",
+ javax.persistence;version="2.2.3",
+ javax.persistence.criteria;version="2.2.3",
+ org.apache.commons.io;version="2.6.0",
+ org.apache.commons.lang3;version="3.12.0",
+ org.apache.commons.lang3.math;version="3.12.0"

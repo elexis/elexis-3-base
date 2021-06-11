@@ -2,14 +2,14 @@
 <feature
       id="ch.elexis.hl7.message.feature"
       label="HL7 Message"
-      version="1.0.0.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medevit.at">
 
    <description url="https://wiki.elexis.info/Ch.elexis.laborimport.hl7.allg.feature.feature.group">
-     Unterstützung für das Einlesen von HL7-Meldungen
+      Unterstützung für das Einlesen von HL7-Meldungen
    </description>
 
-    <copyright url="http://www.medevit.at">
+   <copyright url="http://www.medevit.at">
       Copyright (c) 2017-2018, Thomas Huster und MEDEVIT OG
       All rights reserved.
    </copyright>

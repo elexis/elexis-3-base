@@ -13,7 +13,7 @@ package at.medevit.elexis.medietikette.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.medietikette.Messages;

@@ -2,7 +2,7 @@
 <feature
       id="ch.gpb.elexis.cst.feature"
       label="Cellsymbiosistherapie-Elexis-Plugin von Gemeinschaftspraxis Brunnmatt/Daniel Ludin"
-      version="1.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="elexis.info">
 
    <description>
@@ -11,7 +11,7 @@
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2015 und viele andere
+      Gerry Weirich, 2007-2015 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -24,7 +24,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="com.lowagie.itext"

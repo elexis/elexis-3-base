@@ -41,7 +41,8 @@ public class PandemieLeistung
 				@Override
 				protected void setPrice(PandemieLeistung billable, IBilled billed){
 					Optional<IBillingSystemFactor> billingFactor =
-						BillingServiceHolder.get().getBillingSystemFactor(getCodeSystemName(),
+						BillingServiceHolder.get().getBillingSystemFactor(
+							billed.getEncounter().getCoverage().getBillingSystem().getName(),
 							billed.getEncounter().getDate());
 					if (billingFactor.isPresent()) {
 						billed.setFactor(billingFactor.get().getFactor());

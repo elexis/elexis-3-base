@@ -418,6 +418,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		Control c = super.createContents(parent);
 		// save global setting to global cfg
 		ConfigServicePreferenceStore globalStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
+		globalStore.setDefault(GLOBAL_SHOW_CREATED_IN_INBOX, true);
 		bStoreFSGlobal.setPreferenceStore(globalStore);
 		bStoreFSGlobal.load();
 		bShowCreatedInInbox.setPreferenceStore(globalStore);

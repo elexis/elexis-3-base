@@ -98,7 +98,10 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 			java.util.Optional<IEncounter> encounter = ContextServiceHolder.get().getTyped(IEncounter.class);
 			encounter.ifPresent(e -> {
 				query.and("validFrom", COMPARATOR.LESS_OR_EQUAL, e.getDate());
-				query.and("validUntil", COMPARATOR.GREATER_OR_EQUAL, e.getDate());
+				query.startGroup();
+				query.or("validUntil", COMPARATOR.GREATER_OR_EQUAL, e.getDate());
+				query.or("validUntil", COMPARATOR.EQUALS, null);
+				query.andJoinGroups();
 			});
 			
 			// apply filters from control field provider

@@ -35,19 +35,6 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		try {
-			// create article labels without medication
-			InputStream xmlDoc = ArticleLabel.create(false);
-			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
-				ResourceProvider.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID));
-			
-			String docName = PreferenceConstants.ARTICLE_LABEL;
-			IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
-			
-			String printerName =
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
-			logger.info("Printing document ArticleLabel on printer: " + printerName);
-			
-			// create medication labels for articles with medication
 			Optional<IEncounter> consultation =
 				ContextServiceHolder.get().getTyped(IEncounter.class);
 			if (consultation.isPresent()) {
@@ -64,18 +51,37 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 							.filter(m -> m.getArticle() != null && m.getArticle().equals(article))
 							.findFirst();
 						if (prescription.isPresent()) {
+							// create medication labels for articles with medication
 							for (int i = 0; i < iBilled.getAmount(); i++) {
-								xmlDoc = MedicationLabel.create(prescription.get());
-								fo = FoTransformer.transformXmlToFo(xmlDoc, ResourceProvider
+								InputStream xmlDoc = MedicationLabel.create(prescription.get());
+								InputStream fo =
+									FoTransformer.transformXmlToFo(xmlDoc, ResourceProvider
 									.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
 								
-								docName = PreferenceConstants.MEDICATION_LABEL;
-								settingsStore = SettingsProvider.getStore(docName);
+								String docName = PreferenceConstants.MEDICATION_LABEL;
+								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 								
-								printerName = settingsStore.getString(
+								String printerName = settingsStore.getString(
 									PreferenceConstants.getDocPreferenceConstant(docName, 0));
 								logger.info(
 									"Printing document MedicationLabel on printer: " + printerName);
+								PrintProvider.print(fo, printerName);
+							}
+						} else {
+							// create article labels without medication
+							for (int i = 0; i < iBilled.getAmount(); i++) {
+								InputStream xmlDoc = ArticleLabel.create(false);
+								InputStream fo =
+									FoTransformer.transformXmlToFo(xmlDoc, ResourceProvider
+										.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID));
+								
+								String docName = PreferenceConstants.ARTICLE_LABEL;
+								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
+								
+								String printerName = settingsStore.getString(
+									PreferenceConstants.getDocPreferenceConstant(docName, 0));
+								logger.info(
+									"Printing document ArticleLabel on printer: " + printerName);
 								PrintProvider.print(fo, printerName);
 							}
 						}

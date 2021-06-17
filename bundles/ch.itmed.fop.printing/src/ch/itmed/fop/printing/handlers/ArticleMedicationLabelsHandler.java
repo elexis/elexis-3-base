@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IArticle;
-import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IPrescription;
@@ -45,7 +44,7 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 				
 				for (IBilled iBilled : verrechnet) {
 					if (iBilled.getBillable() instanceof IArticle) {
-						IBillable article = iBilled.getBillable();
+						IArticle article = (IArticle) iBilled.getBillable();
 						// filter only medications which are billed on selected encounter
 						Optional<IPrescription> prescription = medication.stream()
 							.filter(m -> m.getArticle() != null && m.getArticle().equals(article))
@@ -70,7 +69,7 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 						} else {
 							// create article labels without medication
 							for (int i = 0; i < iBilled.getAmount(); i++) {
-								InputStream xmlDoc = ArticleLabel.create(false);
+								InputStream xmlDoc = ArticleLabel.create(article);
 								InputStream fo =
 									FoTransformer.transformXmlToFo(xmlDoc, ResourceProvider
 										.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID));

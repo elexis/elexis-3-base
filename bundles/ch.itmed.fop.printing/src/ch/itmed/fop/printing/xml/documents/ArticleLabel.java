@@ -16,6 +16,7 @@ import java.io.InputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import ch.elexis.core.model.IArticle;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.xml.elements.ArticlesElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
@@ -41,6 +42,19 @@ public class ArticleLabel {
 		Element articles = ArticlesElement.create(doc, includeMedication);
 		page.appendChild(articles);
 
+		return DomDocument.toInputStream(doc);
+	}
+	
+	public static InputStream create(IArticle article) throws Exception{
+		Document doc = DomDocument.newDocument();
+		
+		Element page = PageProperties.setProperties(doc, PreferenceConstants.ARTICLE_LABEL);
+		doc.appendChild(page);
+		Element patient = PatientElement.create(doc, false);
+		page.appendChild(patient);
+		Element articles = ArticlesElement.create(doc, article);
+		page.appendChild(articles);
+		
 		return DomDocument.toInputStream(doc);
 	}
 }

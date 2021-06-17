@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -14,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IPrescription;
@@ -46,37 +46,40 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 			String printerName =
 				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document ArticleLabel on printer: " + printerName);
-			PrintProvider.print(fo, printerName);
 			
 			// create medication labels for articles with medication
 			Optional<IEncounter> consultation =
 				ContextServiceHolder.get().getTyped(IEncounter.class);
 			if (consultation.isPresent()) {
 				List<IBilled> verrechnet = consultation.get().getBilled();
-				
-				List<IArticle> articles =
-					verrechnet.stream().filter(b -> b.getBillable() instanceof IArticle)
-					.map(b -> (IArticle) b.getBillable()).collect(Collectors.toList());
-				
 				List<IPrescription> medication = consultation.get().getPatient()
 					.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION,
 						EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
-				// filter only medications which are billed on selected encounter
-				medication = medication.stream().filter(m -> articles.contains(m.getArticle()))
-					.collect(Collectors.toList());
 				
-				for (IPrescription iPrescription : medication) {
-					xmlDoc = MedicationLabel.create(iPrescription);
-					fo = FoTransformer.transformXmlToFo(xmlDoc, ResourceProvider
-						.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
-					
-					docName = PreferenceConstants.MEDICATION_LABEL;
-					settingsStore = SettingsProvider.getStore(docName);
-					
-					printerName = settingsStore
-						.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
-					logger.info("Printing document MedicationLabel on printer: " + printerName);
-					PrintProvider.print(fo, printerName);
+				for (IBilled iBilled : verrechnet) {
+					if (iBilled.getBillable() instanceof IArticle) {
+						IBillable article = iBilled.getBillable();
+						// filter only medications which are billed on selected encounter
+						Optional<IPrescription> prescription = medication.stream()
+							.filter(m -> m.getArticle() != null && m.getArticle().equals(article))
+							.findFirst();
+						if (prescription.isPresent()) {
+							for (int i = 0; i < iBilled.getAmount(); i++) {
+								xmlDoc = MedicationLabel.create(prescription.get());
+								fo = FoTransformer.transformXmlToFo(xmlDoc, ResourceProvider
+									.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
+								
+								docName = PreferenceConstants.MEDICATION_LABEL;
+								settingsStore = SettingsProvider.getStore(docName);
+								
+								printerName = settingsStore.getString(
+									PreferenceConstants.getDocPreferenceConstant(docName, 0));
+								logger.info(
+									"Printing document MedicationLabel on printer: " + printerName);
+								PrintProvider.print(fo, printerName);
+							}
+						}
+					}
 				}
 			}
 		} catch (Exception e) {

@@ -1,7 +1,6 @@
 package ch.elexis.base.ch.arzttarife.pandemie.model;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
@@ -10,12 +9,10 @@ import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
-import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
-import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.VatInfo;
 
@@ -40,15 +37,8 @@ public class PandemieLeistung
 				
 				@Override
 				protected void setPrice(PandemieLeistung billable, IBilled billed){
-					Optional<IBillingSystemFactor> billingFactor =
-						BillingServiceHolder.get().getBillingSystemFactor(
-							billed.getEncounter().getCoverage().getBillingSystem().getName(),
-							billed.getEncounter().getDate());
-					if (billingFactor.isPresent()) {
-						billed.setFactor(billingFactor.get().getFactor());
-					} else {
-						billed.setFactor(1.0);
-					}
+					// ignore billing system factor
+					billed.setFactor(1.0);
 					int points = 0;
 					// use cents if set
 					if (billable.getCents() > 0) {

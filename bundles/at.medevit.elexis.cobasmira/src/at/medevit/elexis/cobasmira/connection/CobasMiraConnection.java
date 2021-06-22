@@ -1,12 +1,5 @@
 package at.medevit.elexis.cobasmira.connection;
 
-import gnu.io.CommPort;
-import gnu.io.CommPortIdentifier;
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.UnsupportedCommOperationException;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -24,6 +17,12 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.cobasmira.Activator;
 import at.medevit.elexis.cobasmira.ui.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
+import gnu.io.CommPort;
+import gnu.io.CommPortIdentifier;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.UnsupportedCommOperationException;
 
 public class CobasMiraConnection implements PropertyChangeListener {
 	private static Logger logger = LoggerFactory.getLogger(CobasMiraConnection.class);
@@ -54,14 +53,6 @@ public class CobasMiraConnection implements PropertyChangeListener {
 	
 	static String getPortTypeName(int portType){
 		switch (portType) {
-		case CommPortIdentifier.PORT_I2C:
-			return "I2C";
-		case CommPortIdentifier.PORT_PARALLEL:
-			return "Parallel";
-		case CommPortIdentifier.PORT_RAW:
-			return "Raw";
-		case CommPortIdentifier.PORT_RS485:
-			return "RS485";
 		case CommPortIdentifier.PORT_SERIAL:
 			return "Serial";
 		default:

@@ -24,14 +24,16 @@ public class SingleClickFunction extends BrowserFunction {
 		if (arguments.length == 1) {
 			IAppointment termin = CoreModelServiceHolder.get()
 				.load((String) arguments[0], IAppointment.class).orElse(null);
-			ContextServiceHolder.get().getRootContext().setTyped(termin);
-			if (selectionProvider != null) {
-				selectionProvider.setSelection(new StructuredSelection(termin));
-			}
-			IContact contact = termin.getContact();
-			if (contact != null && contact.isPatient()) {
-				ContextServiceHolder.get().setActivePatient(
-					CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get());
+			if (termin != null) {
+				ContextServiceHolder.get().getRootContext().setTyped(termin);
+				if (selectionProvider != null) {
+					selectionProvider.setSelection(new StructuredSelection(termin));
+				}
+				IContact contact = termin.getContact();
+				if (contact != null && contact.isPatient()) {
+					ContextServiceHolder.get().setActivePatient(
+						CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get());
+				}
 			}
 		} else if (arguments.length == 0) {
 			if (selectionProvider != null) {

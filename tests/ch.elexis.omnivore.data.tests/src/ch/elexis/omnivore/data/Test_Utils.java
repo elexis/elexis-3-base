@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteStreams;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.data.Patient;
 import ch.elexis.omnivore.model.IDocumentHandle;
@@ -254,7 +256,8 @@ public class Test_Utils{
 			writer.close();
 			Path archiveDir = archiveDestPaths.get(0);
 			archiveDir.toFile().mkdirs();
-			File result = Utils.archiveFile(testTmp, dh);
+			IVirtualFilesystemHandle of = VirtualFilesystemServiceHolder.get().of(testTmp);
+			File result = Utils.archiveFile(of, dh).toFile().orElse(null);
 			Assert.assertNotNull(result);
 			Assert.assertTrue(result.getName().contains("src_0_src"));
 			Assert.assertTrue(result.getName().contains(dh.getPatient().getPatientNr()));
@@ -276,7 +279,8 @@ public class Test_Utils{
 		try {
 			File testTmp;
 			testTmp = File.createTempFile("XXXXXXXXXXX", ".tmp");
-			File result = Utils.archiveFile(testTmp, dh);
+			IVirtualFilesystemHandle of = VirtualFilesystemServiceHolder.get().of(testTmp);
+			File result = Utils.archiveFile(of, dh).toFile().orElse(null);
 			log.debug("dh is " + dh.getId() + " " + dh.getTitle());
 			Assert.assertNull(result);
 		} catch (IOException e) {
@@ -291,7 +295,8 @@ public class Test_Utils{
 		try {
 			File testTmp;
 			testTmp = File.createTempFile("XXXXXXXXXXX", ".tmp");
-			File result = Utils.archiveFile(testTmp, dh);
+			IVirtualFilesystemHandle of = VirtualFilesystemServiceHolder.get().of(testTmp);
+			File result = Utils.archiveFile(of, dh).toFile().orElse(null);
 			Assert.assertNull(result);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -304,7 +309,8 @@ public class Test_Utils{
 		setArchivePreferences();
 		try {
 			Path testTmpDir = Files.createTempDirectory("Dummy");
-			File result = Utils.archiveFile(testTmpDir.toFile(), dh);
+			IVirtualFilesystemHandle of = VirtualFilesystemServiceHolder.get().of(testTmpDir.toFile());
+			File result = Utils.archiveFile(of, dh).toFile().orElse(null);
 			Assert.assertNull(result);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

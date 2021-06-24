@@ -1037,6 +1037,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 		invoice.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
 			+ invoice.getState().getLocaleText());
+		CoreModelServiceHolder.get().save(invoice);
 	}
 	
 	@Override

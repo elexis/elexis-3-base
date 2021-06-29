@@ -21,8 +21,10 @@ import org.osgi.service.event.EventHandler;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.ILabResult;
 
-@Component(property = EventConstants.EVENT_TOPIC + "="
-	+ ElexisEventTopics.EVENT_CREATE, immediate = true)
+@Component(property = {
+	EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.EVENT_CREATE,
+	EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.PERSISTENCE_EVENT_COMPATIBILITY_CREATE
+}, immediate = true)
 public class LabResultCreateEventHandler implements EventHandler {
 	private ExecutorService executor;
 	

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="at.medevit.elexis.inbox.core.elements.LabResultCreateEventHandler">
-   <property name="event.topics" value="info/elexis/model/create"/>
+   <property name="event.topics">info/elexis/model/create
+info/elexis/po/compatibility/create
+   </property>
    <service>
       <provide interface="org.osgi.service.event.EventHandler"/>
    </service>

@@ -10,26 +10,35 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.core.elements;
 
+import org.slf4j.LoggerFactory;
+
 import at.medevit.elexis.inbox.model.IInboxElementsProvider;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 
 public class CoreElements implements IInboxElementsProvider {
 	
-	private LabResultCreateListener labResultListener;
+	private static LabResultCreateEventHandler labResultCreateEventHandler;
 	
 	@Override
 	public void activate(){
 		// add inbox creation of LabResult
-		labResultListener = new LabResultCreateListener();
-		ElexisEventDispatcher.getInstance().addListeners(labResultListener);
+		if (labResultCreateEventHandler != null) {
+			labResultCreateEventHandler.setActive(true);
+		} else {
+			LoggerFactory.getLogger(getClass()).warn("No create event handler to activate");
+		}
 	}
 	
 	@Override
 	public void deactivate(){
-		if (labResultListener != null) {
-			ElexisEventDispatcher.getInstance().removeListeners(labResultListener);
-			labResultListener.shutdown();
+		if (labResultCreateEventHandler != null) {
+			labResultCreateEventHandler.setActive(false);
+		} else {
+			LoggerFactory.getLogger(getClass()).warn("No create event handler to deactivate");
 		}
-		labResultListener = null;
+	}
+	
+	public static void setLabResultCreateEventHandler(
+		LabResultCreateEventHandler labResultCreateEventHandler){
+		CoreElements.labResultCreateEventHandler = labResultCreateEventHandler;
 	}
 }

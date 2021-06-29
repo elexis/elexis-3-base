@@ -6,16 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.core.elements.service.ServiceComponent;
-import ch.elexis.core.data.service.ContextServiceHolder;
-import ch.elexis.core.data.service.CoreModelServiceHolder;
-import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ILabOrder;
 import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.data.LabOrder;
-import ch.elexis.data.LabResult;
-import ch.elexis.data.Mandant;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class AddLabInboxElement implements Runnable {
 	
@@ -23,24 +19,22 @@ public class AddLabInboxElement implements Runnable {
 
 	private static final int MAX_WAIT = 40;
 
-	private LabResult labResult;
+	private ILabResult labResult;
 	
-	public AddLabInboxElement(LabResult labResult){
+	public AddLabInboxElement(ILabResult labResult){
 		this.labResult = labResult;
 	}
 
 	@Override
 	public void run(){
 		// we have to wait for the fields to be set
-		if (labResult.get(LabResult.PATIENT_ID) == null
-			|| labResult.get(LabResult.PATIENT_ID).isEmpty()) {
+		if (labResult.getPatient() == null) {
 			int waitForFields = 0;
 			while (waitForFields < MAX_WAIT) {
 				try {
 					waitForFields++;
 					Thread.sleep(500);
-					if (labResult.get(LabResult.PATIENT_ID) != null
-						&& !labResult.get(LabResult.PATIENT_ID).isEmpty()) {
+					if (labResult.getPatient() != null) {
 						break;
 					}
 				} catch (InterruptedException e) {
@@ -53,12 +47,10 @@ public class AddLabInboxElement implements Runnable {
 				return;
 			}
 		}
-		ILabResult iLabResult = NoPoUtil.loadAsIdentifiable(labResult, ILabResult.class).get();
 		
-		IPatient patient = iLabResult.getPatient();
-		IContact doctor = iLabResult.getPatient().getFamilyDoctor();
-		IMandator assignedMandant =
-			NoPoUtil.loadAsIdentifiable(loadAssignedMandant(true), IMandator.class).orElse(null);
+		IPatient patient = labResult.getPatient();
+		IContact doctor = labResult.getPatient().getFamilyDoctor();
+		IMandator assignedMandant = loadAssignedMandant(true);
 		
 		// patient has NO stammarzt 
 		if (doctor == null) {
@@ -70,26 +62,25 @@ public class AddLabInboxElement implements Runnable {
 			// stammarzt is defined
 			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
 				+ patient.getLabel() + " for mandant " + doctor.getLabel());
-			ServiceComponent.getService().createInboxElement(patient,
-				CoreModelServiceHolder.get().load(doctor.getId(), IMandator.class).get(),
-				iLabResult);
+			ServiceComponent.get().createInboxElement(patient,
+				ServiceComponent.load(doctor.getId(), IMandator.class),
+				labResult);
 		}
 		
 		// an assigned contact was found that is different than the stammarzt
 		if (assignedMandant != null && !assignedMandant.equals(doctor)) {
 			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
 				+ patient.getLabel() + " for mandant " + assignedMandant.getLabel());
-			ServiceComponent.getService().createInboxElement(patient, assignedMandant, iLabResult);
+			ServiceComponent.get().createInboxElement(patient, assignedMandant, labResult);
 		}
 	}
 	
-	private Mandant loadAssignedMandant(boolean retry){
-		List<LabOrder> orders =
-			LabOrder.getLabOrders(labResult.getPatient(), null, null, labResult, null, null, null);
+	private IMandator loadAssignedMandant(boolean retry){
+		List<ILabOrder> orders = ServiceComponent.getLabOrders(labResult);
+		
 		if (orders != null && !orders.isEmpty()) {
-			String mandantId = orders.get(0).get(LabOrder.FLD_MANDANT);
-			if (mandantId != null && !mandantId.isEmpty()) {
-				return Mandant.load(mandantId);
+			if (orders.get(0).getMandator() != null) {
+				return orders.get(0).getMandator();
 			}
 		}
 		

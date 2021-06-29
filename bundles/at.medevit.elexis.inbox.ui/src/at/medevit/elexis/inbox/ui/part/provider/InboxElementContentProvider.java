@@ -103,6 +103,7 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 		PatientInboxElements patientInboxElement = map.get(patient);
 		// remove seen and add unseen
 		if (patientInboxElement != null) {
+			boolean wasEmpty = patientInboxElement.getElements().isEmpty();
 			if (inboxElement.getState() == State.SEEN) {
 				patientInboxElement.removeElement(inboxElement);
 			} else {
@@ -114,9 +115,13 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 					patientInboxElement.removeElement(inboxElement);
 				}
 			}
+			if (wasEmpty && !patientInboxElement.getElements().isEmpty()) {
+				items.add(patientInboxElement);
+			}
 		} else if (inboxElement.getState() == State.NEW) {
 			patientInboxElement = new PatientInboxElements(patient);
 			patientInboxElement.addElement(inboxElement);
+			items.add(patientInboxElement);
 		}
 	}
 	

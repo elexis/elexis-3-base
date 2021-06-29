@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.elexis.inbox.core.elements.service.ServiceComponent">
+   <reference bind="setModelSerivce" interface="ch.elexis.core.services.IModelService" name="ModelSerivce" target="(service.model.name=ch.elexis.core.model)"/>
+   <reference bind="setSerivce" interface="at.medevit.elexis.inbox.model.IInboxElementService" name="Serivce"/>
+   <implementation class="at.medevit.elexis.inbox.core.elements.service.ServiceComponent"/>
+</scr:component>

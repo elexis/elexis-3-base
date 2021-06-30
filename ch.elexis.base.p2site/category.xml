@@ -135,7 +135,7 @@
    <feature id="ch.elexis.laborimport_lg1.feature">
       <category name="laborexchanges"/>
    </feature>
-   <feature url="features/com.hilotec.elexis.stickerprefix.feature_3.0.100.qualifier.jar" id="com.hilotec.elexis.stickerprefix.feature" version="3.0.100.qualifier">
+   <feature id="com.hilotec.elexis.stickerprefix.feature">
       <category name="divers"/>
    </feature>
    <feature url="features/com.hilotec.elexis.opendocument2omnivore.feature_0.0.0.jar" id="com.hilotec.elexis.opendocument2omnivore.feature" version="0.0.0">
@@ -144,7 +144,7 @@
    <feature id="ch.elexis.laborimport_lg1.feature">
       <category name="laborexchanges"/>
    </feature>
-   <feature url="features/com.hilotec.elexis.pluginstatistiken.feature_3.0.100.qualifier.jar" id="com.hilotec.elexis.pluginstatistiken.feature" version="3.0.100.qualifier">
+   <feature id="com.hilotec.elexis.pluginstatistiken.feature">
       <category name="statistics"/>
    </feature>
    <feature url="features/com.hilotec.elexis.messwerte.v2.feature_0.0.0.jar" id="com.hilotec.elexis.messwerte.v2.feature" version="0.0.0">

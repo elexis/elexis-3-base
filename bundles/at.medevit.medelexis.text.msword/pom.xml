@@ -10,7 +10,7 @@
 	</parent>
 	<packaging>eclipse-plugin</packaging>
 	<artifactId>at.medevit.medelexis.text.msword</artifactId>
-	<version>3.8.0-SNAPSHOT</version>
+	<version>3.9.0-SNAPSHOT</version>
 	<!-- see http://maven.apache.org/ref/3.0.3/maven-model/maven.html -->
 	<build>
 		<plugins>

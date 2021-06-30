@@ -218,6 +218,11 @@ if ( System.getProperty("git_branch") == null ) {
 							<arch>x86_64</arch>
 						</environment>
 					</environments>
+					<dependency-resolution>
+                   		<profileProperties>
+                    		 <org.eclipse.justj.buildtime>true</org.eclipse.justj.buildtime>
+                   		</profileProperties>
+                 	</dependency-resolution>
 				</configuration>
 			</plugin>
 		</plugins>

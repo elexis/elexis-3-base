@@ -6,7 +6,7 @@ Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
 Require-Bundle: ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.core.findings;bundle-version="3.9.0"
-Bundle-RequiredExecutionEnvironment: Java7.30"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: ch.elexis.covid.cert
 Service-Component: OSGI-INF/ch.elexis.covid.cert.service.CertificatesService.xml,
  OSGI-INF/ch.elexis.covid.cert.valueset.ChCovidValueSetsContribution.xml

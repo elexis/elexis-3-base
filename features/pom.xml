@@ -21,7 +21,9 @@
     <module>at.medevit.elexis.agenda.feature</module>
     <module>at.medevit.elexis.cobasmira.feature</module>
     <module>at.medevit.elexis.decision.feature</module>
+<!--
     <module>at.medevit.elexis.ehc.feature</module>
+-->
     <module>at.medevit.elexis.emediplan.feature</module>
     <module>at.medevit.elexis.gdt.defaultfilecp.feature</module>
     <module>at.medevit.elexis.gdt.feature</module>

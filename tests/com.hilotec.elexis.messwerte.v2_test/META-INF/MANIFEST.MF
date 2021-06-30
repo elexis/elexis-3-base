@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test Fragment for com.hilotec.elexis.messwerte.v2
 Bundle-SymbolicName: com.hilotec.elexis.messwerte.v2_test
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: info@medshare.net
-Fragment-Host: com.hilotec.elexis.messwerte.v2;bundle-version="3.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Fragment-Host: com.hilotec.elexis.messwerte.v2;bundle-version="3.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit;bundle-version="4.12.0",
  ch.elexis.core.scripting.beanshell;bundle-version="3.2.0",
  org.beanshell.bsh;bundle-version="2.0.0"

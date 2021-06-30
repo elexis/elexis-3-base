@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test Fragment for Aerztekasse
 Bundle-SymbolicName: net.medshare.connector.aerztekasse_test
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medshare.net
 Fragment-Host: net.medshare.connector.aerztekasse
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit,
  ch.elexis.core.application;bundle-version="3.0.0"
 Export-Package: net.medshare.connector.aerztekasse_test,

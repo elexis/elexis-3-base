@@ -29,21 +29,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.odftoolkit.odfdom-java"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="xerces.Impl"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="xml-apis"
          download-size="0"
          install-size="0"
          version="0.0.0"

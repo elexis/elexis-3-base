@@ -2,13 +2,13 @@
 <feature
       id="ch.elexis.laborimport.eurolyser.feature"
       label="Laborimport Eurolyser"
-      version="3.0.100.qualifier">
+      version="3.9.0.qualifier">
 
    <description url="https://wiki.elexis.info/Ch.elexis.laborimport.eurolyser.feature.feature.group">
-      Dieses Plugin ermöglicht das Importieren von Laborwerte aus Dateien welche von Eurolyser Geräten generiert wurden. 
+      Dieses Plugin ermöglicht das Importieren von Laborwerte aus Dateien welche von Eurolyser Geräten generiert wurden.
    </description>
 
-    <copyright url="http://www.medevit.at">
+   <copyright url="http://www.medevit.at">
       Copyright (c) 2018, Thomas Huster und MEDEVIT OG
       All rights reserved.
    </copyright>

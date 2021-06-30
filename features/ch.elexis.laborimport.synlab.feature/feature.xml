@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.laborimport.synlab.feature"
       label="Laborimport Synlab HL7"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="elexis.info">
 
    <description>

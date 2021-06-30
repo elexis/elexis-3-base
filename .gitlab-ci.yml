@@ -23,6 +23,7 @@ build:
   - master@elexis/elexis-3-base
   - /^\d*[.]\d*$/@elexis/elexis-3-base
   - /^[bf]\d*$/@elexis/elexis-3-base
+  - target-2021-03-java11@elexis/elexis-3-base
 
 trigger_medelexis-3-application_build:
     stage: trigger_other_builds

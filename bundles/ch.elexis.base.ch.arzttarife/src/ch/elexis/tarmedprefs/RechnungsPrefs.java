@@ -243,27 +243,34 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		gd.verticalAlignment = SWT.TOP;
 		bPost.setLayoutData(gd);
 		bPost.setText(Messages.RechnungsPrefs_post); //$NON-NLS-1$
+		
 		bPost.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
-				// check if Bank has been chosen
-				if (actBank != null && actBank.isValid()) {
-					// clear all bank data
-					actBank = null;
-					actMandant.setInfoElement(ta.RNBANK, ""); //$NON-NLS-1$
-					// clear data set with BankLister dialog
-					actMandant.setInfoElement(ta.ESRNUMBER, ""); //$NON-NLS-1$
-					actMandant.setInfoElement(ta.ESRSUB, Messages.RechnungsPrefs_13); //$NON-NLS-1$
-					actMandant.setInfoElement(Messages.RechnungsPrefs_department, ""); //$NON-NLS-1$
-					actMandant.setInfoElement(Messages.RechnungsPrefs_POBox, ""); //$NON-NLS-1$ 
+				if (bPost.getSelection()) {
+					// check if Bank has been chosen
+					if (actBank != null && actBank.isValid()) {
+						// clear all bank data
+						actBank = null;
+						actMandant.setExtInfoStoredObjectByKey(ta.RNBANK, ""); //$NON-NLS-1$
+						// clear data set with BankLister dialog
+						actMandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, ""); //$NON-NLS-1$
+						actMandant.setExtInfoStoredObjectByKey(ta.ESRSUB,
+							Messages.RechnungsPrefs_13); //$NON-NLS-1$
+						actMandant.setExtInfoStoredObjectByKey(Messages.RechnungsPrefs_department,
+							""); //$NON-NLS-1$
+						actMandant.setExtInfoStoredObjectByKey(Messages.RechnungsPrefs_POBox, ""); //$NON-NLS-1$
+						actMandant.setExtInfoStoredObjectByKey("IBAN", ""); //$NON-NLS-1$ 
+					}
+					
+					// check if Post account is already available
+					if (StringTool
+						.isNothing(actMandant.getExtInfoStoredObjectByKey(ta.ESRNUMBER))) {
+						new PostDialog(getShell()).open();
+					}
+					
+					// update widgets
+					setMandant(actMandant);
 				}
-				
-				// check if Post account is already available
-				if (StringTool.isNothing(actMandant.getInfoElement(ta.ESRNUMBER))) {
-					new PostDialog(getShell()).open();
-				}
-				
-				// update widgets
-				setMandant(actMandant);
 			}
 		});
 		
@@ -295,10 +302,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		bBank.setText(Messages.RechnungsPrefs_bank); //$NON-NLS-1$
 		bBank.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
-				if (actBank == null) {
-					// invalidate available post data
-					actMandant.setInfoElement(ta.ESRNUMBER, ""); //$NON-NLS-1$
-					new BankLister(getShell()).open();
+				if (bBank.getSelection()) {
+					if (actBank == null) {
+						// invalidate available post data
+						actMandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, ""); //$NON-NLS-1$
+						new BankLister(getShell()).open();
+					}
 				}
 			}
 		});
@@ -588,9 +597,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 					}); //$NON-NLS-1$ //$NON-NLS-2$
 					if (ksl.open() == Dialog.OK) {
 						actBank = (Kontakt) ksl.getSelection();
-						actMandant.setInfoElement(ta.RNBANK, actBank.getId());
-						setMandant(actMandant);
-						exTable.setKontakt(actMandant);
+						actMandant.setExtInfoStoredObjectByKey(ta.RNBANK, actBank.getId());
 					}
 				}
 				
@@ -614,6 +621,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		@Override
 		protected void okPressed(){
 			exTable.okPressed(actMandant);
+			setMandant(actMandant);
 			super.okPressed();
 		}
 		
@@ -651,6 +659,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		@Override
 		protected void okPressed(){
 			exTable.okPressed(actMandant);
+			setMandant(actMandant);
 			super.okPressed();
 		}
 	}

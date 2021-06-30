@@ -2,16 +2,16 @@
 <feature
       id="com.hilotec.elexis.opendocument2omnivore.feature"
       label="Omnivore-Schnittstelle fuer OpenDocument-Plugin"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="ch.medelexis">
 
    <description url="http://www.hilotec.com/">
-     Erlaubt es ODF-Dokumente nach Omnivore abzulegen
+      Erlaubt es ODF-Dokumente nach Omnivore abzulegen
      Mehr Info unter http://wiki.elexis.info/com.hilotec.elexis.opendocument2omnivore.feature.feature.group
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Antoine Kaufmann
+      Antoine Kaufmann
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

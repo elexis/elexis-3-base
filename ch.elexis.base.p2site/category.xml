@@ -96,7 +96,7 @@
    <feature url="features/ch.medshare.connect.abacusjunior.feature_0.0.0.jar" id="ch.medshare.connect.abacusjunior.feature" version="0.0.0">
       <category name="labinterfaces"/>
    </feature>
-   <feature url="features/ch.elexis.archie.patientstatistik.feature_3.0.100.qualifier.jar" id="ch.elexis.archie.patientstatistik.feature" version="3.0.100.qualifier">
+   <feature id="ch.elexis.archie.patientstatistik.feature">
       <category name="statistics"/>
    </feature>
    <feature url="features/ch.elexis.notes.feature_3.0.100.qualifier.jar" id="ch.elexis.notes.feature" version="3.0.100.qualifier">

@@ -2,15 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Labor Synlab importer
 Bundle-SymbolicName: ch.elexis.laborimport.synlab;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ui,
- org.eclipse.ui.forms,
- ch.rgw.utility,
- ch.elexis.core.ui,
- ch.elexis.core.ui.importer.div;bundle-version="3.2.0",
- ch.elexis.core.data
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui.importer.div;bundle-version="3.9.0"
 Bundle-ClassPath: .

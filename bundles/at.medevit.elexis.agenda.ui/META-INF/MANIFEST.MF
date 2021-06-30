@@ -20,6 +20,5 @@ Import-Package: com.google.common.cache;version="15.0.0",
  javax.xml.bind.annotation,
  org.apache.commons.lang3;version="3.12.0",
  org.eclipse.nebula.cwt.base,
- org.eclipse.nebula.widgets.cdatetime,
- org.eclipse.rap.rwt;resolution:=optional
+ org.eclipse.nebula.widgets.cdatetime
 Eclipse-BundleShape: dir

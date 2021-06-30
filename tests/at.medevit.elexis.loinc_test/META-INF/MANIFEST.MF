@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Loinc_test
 Bundle-SymbolicName: at.medevit.elexis.loinc_test;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
-Fragment-Host: at.medevit.elexis.loinc
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Fragment-Host: at.medevit.elexis.loinc;bundle-version="3.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit
 Require-Bundle: org.junit;bundle-version="[4.0.0,5.0.0)",
  ch.elexis.core.application;bundle-version="3.0.0",

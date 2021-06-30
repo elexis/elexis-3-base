@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.connect.afinion.feature"
       label="Afinion AS100 Laborgerätanbindung"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="elexis.info">
 
    <description>
@@ -10,7 +10,7 @@
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

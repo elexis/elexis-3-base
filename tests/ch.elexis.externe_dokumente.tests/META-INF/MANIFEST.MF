@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ch.elexis.externe_dokumente test fragment
 Bundle-SymbolicName: ch.elexis.externe_dokumente.tests
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.ch
-Fragment-Host: ch.elexis.externe_dokumente
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Fragment-Host: ch.elexis.externe_dokumente;bundle-version="3.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit;bundle-version="4.8.0",
  org.apache.commons.io;bundle-version="2.4.0",
  ch.elexis.core.application;bundle-version="3.1.0"

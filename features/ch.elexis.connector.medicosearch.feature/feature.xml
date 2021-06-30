@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.connector.medicosearch.feature"
       label="Elexis Agenda - Medicosearch Connector"
-      version="3.0.100.qualifier">
+      version="3.9.0.qualifier">
 
    <description>
       Über dieses Plug-In können Agenda Einträge mit dem Medicosearch

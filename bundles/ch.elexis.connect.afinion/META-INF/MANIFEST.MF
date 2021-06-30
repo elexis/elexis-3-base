@@ -2,15 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Afinion AS100 Laborgerätanbindung
 Bundle-SymbolicName: ch.elexis.connect.afinion;singleton:=true
-Bundle-Version: 3.2.0.qualifier
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- ch.rgw.utility,
- ch.elexis.core.ui.importer.div;bundle-version="3.2.0",
- ch.elexis.core.ui;bundle-version="3.0.0",
- ch.elexis.core.data;bundle-version="3.0.0",
- ch.elexis.core.importer.div;bundle-version="3.2.0"
+Bundle-Version: 3.9.0.qualifier
+Require-Bundle: ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui.importer.div;bundle-version="3.9.0",
+ ch.elexis.core.importer.div;bundle-version="3.9.0"
 Bundle-Vendor: elexis.info
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy

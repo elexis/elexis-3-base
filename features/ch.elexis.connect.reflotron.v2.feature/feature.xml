@@ -2,14 +2,15 @@
 <feature
       id="ch.elexis.connect.reflotron.v2.feature"
       label="Roche Reflotron Laborgeräteanbindung V2"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="elexis.info">
 
    <description>
       Dieses Plugin dient dazu, die Laborgerät ‘Reflotron sprint’ und ‘Reflotron plus’ 1 an Elexis anzubinden. Mit diesem Plugin können die, vom Reflotron gemessenen Laborparameter direkt in die Elexis-Datenbank eingelesen werden. Mehr Info unter http://wiki.elexis.info/ch.elexis.connect.reflotron.v2.feature.feature.group
    </description>
+
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

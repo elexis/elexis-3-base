@@ -2,27 +2,26 @@
 <feature
       id="ch.elexis.externe_dokumente.feature"
       label="Einbindung eines beliebigen Dokumentenverzeichnisses "
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="ch.elexis">
 
-  <description>
+   <description>
       Einfache Einbindung eines beliebigen Dokumentenverzeichnisses (Dateinamen müssen bestimmten Konventionen folgen). Mehr Info unter http://wiki.elexis.info/ch.elexis.externe_dokumente.feature.feature.group
-  </description>
+   </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
       Eclipse Public License v1.0
    </license>
 
-  <plugin
-        id="ch.elexis.externe_dokumente"
-        download-size="0"
-        install-size="0"
-        version="0.0.0"
-        unpack="false"/>
+   <plugin
+         id="ch.elexis.externe_dokumente"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
-  

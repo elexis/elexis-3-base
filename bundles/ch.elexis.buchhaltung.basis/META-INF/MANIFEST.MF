@@ -2,16 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Basis-Buchhaltung für Elexis
 Bundle-SymbolicName: ch.elexis.buchhaltung.basis; singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- ch.unibe.iam.scg.archie,
- ch.elexis.core,
- ch.elexis.core.data;bundle-version="3.0.0",
- ch.rgw.utility;bundle-version="3.0.0",
- ch.elexis.core.ui;bundle-version="3.0.0"
-Import-Package: ch.elexis.base.ch.arzttarife.tarmed,
- org.apache.commons.lang3;version="3.7.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.unibe.iam.scg.archie;bundle-version="3.9.0",
+ ch.elexis.base.ch.arzttarife.model;bundle-version="3.9.0"

@@ -2,7 +2,7 @@
 <feature
       id="ch.medelexis.openoffice.feature"
       label="OpenOffice Anbindung"
-      version="3.8.0.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medelexis.ch">
 
    <description>

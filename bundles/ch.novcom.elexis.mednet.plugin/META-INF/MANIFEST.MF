@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: MedNet Plugin
 Bundle-SymbolicName: ch.novcom.elexis.mednet.plugin;singleton:=true
-Bundle-Version: 3.1.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Version: 3.9.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.novcom.elexis.mednet.plugin.MedNetActivator
@@ -13,19 +13,13 @@ Export-Package: ch.novcom.elexis.mednet.plugin,
  ch.novcom.elexis.mednet.plugin.ui.dialog,
  ch.novcom.elexis.mednet.plugin.ui.preferences
 Bundle-Vendor: novcom AG
-Require-Bundle: org.eclipse.core.runtime,
- ch.rgw.utility,
- ch.elexis.core,
- ch.elexis.core.ui,
- ch.elexis.core.data,
- ch.elexis.core.hl7.v2x,
- ch.elexis.core.ui.importer.div,
- org.eclipse.ui,
- at.medevit.elexis.gdt;bundle-version="3.1.0",
- at.medevit.elexis.gdt.defaultfilecp;bundle-version="3.1.0",
- ch.elexis.omnivore;bundle-version="3.2.0",
- ch.elexis.omnivore.data;bundle-version="3.2.0",
- ch.elexis.omnivore.ui;bundle-version="3.2.0"
-Import-Package: ch.elexis.core.services.holder,
- org.eclipse.e4.ui.workbench
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.core.hl7.v2x;bundle-version="3.9.0",
+ ch.elexis.core.ui.importer.div;bundle-version="3.9.0",
+ at.medevit.elexis.gdt;bundle-version="3.9.0",
+ at.medevit.elexis.gdt.defaultfilecp;bundle-version="3.9.0",
+ ch.elexis.omnivore;bundle-version="3.9.0",
+ ch.elexis.omnivore.data;bundle-version="3.9.0",
+ ch.elexis.omnivore.ui;bundle-version="3.9.0"
 Service-Component: OSGI-INF/ch.novcom.elexis.mednet.plugin.StartupHandler.xml

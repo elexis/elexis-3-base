@@ -2,12 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Communication utilities for elexis
 Bundle-SymbolicName: ch.ngiger.utilities.comm;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: Niklaus Giger
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: ch.rgw.utility,
- ch.elexis.core.data,
- org.slf4j.api
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0"
 Bundle-ClassPath: lib/commons-net-1.4.1.jar,
  .
 Import-Package: org.eclipse.swt.program

@@ -2,16 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: medshare Directories
 Bundle-SymbolicName: ch.medshare.elexis_directories;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medshare.ch und www.jisigle.com
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ui,
- ch.rgw.utility,
- ch.elexis.core.ui,
- ch.elexis.core.data,
- ch.elexis.core.ui.icons,
- ch.elexis.core.ui.contacts,
- org.slf4j.api;bundle-version="1.7.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.core.ui.contacts;bundle-version="3.3.0"
 Export-Package: ch.medshare.elexis.directories

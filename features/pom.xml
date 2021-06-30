@@ -27,7 +27,9 @@
     <module>at.medevit.elexis.emediplan.feature</module>
     <module>at.medevit.elexis.gdt.defaultfilecp.feature</module>
     <module>at.medevit.elexis.gdt.feature</module>
+<!--
     <module>at.medevit.elexis.impfplan.feature</module>
+-->
     <module>at.medevit.elexis.inbox.feature</module>
     <module>at.medevit.elexis.loinc.feature</module>
     <module>at.medevit.elexis.medietikette.feature</module>

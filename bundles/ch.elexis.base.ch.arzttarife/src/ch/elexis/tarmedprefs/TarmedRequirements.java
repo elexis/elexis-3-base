@@ -66,10 +66,19 @@ public class TarmedRequirements {
 		if (contact == null) {
 			return null;
 		}
-		IXid ret = contact.getXid(DOMAIN_EAN);
-		if (ret != null && ret.getDomainId() != null && !ret.getDomainId().isEmpty()) {
-			return ret.getDomainId().trim();
-		} else if (ret == null) {
+		System.out.println();
+		IXid xid = contact.getXid(DOMAIN_EAN);
+		// compatibility layer
+		if (xid == null) {
+			if (contact.getExtInfo("EAN") instanceof String
+				&& StringUtils.isNotBlank((String) contact.getExtInfo("EAN"))) {
+				setEAN(contact, (String) contact.getExtInfo("EAN"));
+				xid = contact.getXid(DOMAIN_EAN);
+			}
+		}
+		if (xid != null && xid.getDomainId() != null && !xid.getDomainId().isEmpty()) {
+			return xid.getDomainId().trim();
+		} else if (xid == null) {
 			return EAN_PSEUDO;
 		}
 		return "";

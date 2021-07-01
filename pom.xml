@@ -60,9 +60,7 @@
 		<module>bundles</module>
 		<module>features</module>
 		<module>ch.elexis.base.p2site</module>
-<!--
 		<module>tests</module>
--->
 	</modules>
 
 	<profiles>

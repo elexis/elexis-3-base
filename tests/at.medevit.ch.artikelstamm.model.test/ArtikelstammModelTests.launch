@@ -204,7 +204,6 @@
         <setEntry value="ch.elexis.core.ui.icons@default:default"/>
         <setEntry value="ch.elexis.core.ui@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
-        <setEntry value="ch.rgw.utility.tests@default:false"/>
         <setEntry value="ch.rgw.utility@default:default"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>

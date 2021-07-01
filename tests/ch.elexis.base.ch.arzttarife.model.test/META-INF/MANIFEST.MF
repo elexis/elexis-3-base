@@ -8,7 +8,7 @@ Fragment-Host: ch.elexis.base.ch.arzttarife.model;bundle-version="3.9.0"
 Automatic-Module-Name: ch.elexis.base.ch.arzttarife.model.test
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit,
- ch.elexis.core.test;bundle-version="1.0.0",
+ ch.elexis.core.test;bundle-version="3.9.0",
  ch.rgw.utility;bundle-version="3.7.0",
- ch.elexis.core.l10n,
- ch.elexis.base.ch.ticode;bundle-version="3.2.0"
+ ch.elexis.core.l10n;bundle-version="3.9.0",
+ ch.elexis.base.ch.ticode;bundle-version="3.9.0"

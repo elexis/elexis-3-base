@@ -77,7 +77,7 @@
 					<useUIHarness>false</useUIHarness>
 					<testClass>at.medevit.ch.artikelstamm.model.test.ArtikelstammTest</testClass>
 					<showEclipseLog>true</showEclipseLog>
-					<argLine>-Delexis.test.mode=true -Delexis.test.dbtrace=true</argLine>
+					<argLine>-Delexis.test.mode=true</argLine>
 					<dependencies>
 						<dependency>
 							<type>eclipse-feature</type>

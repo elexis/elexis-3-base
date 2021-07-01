@@ -8,6 +8,7 @@
 		<version>3.9.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>at.medevit.elexis.tarmed.model.tests</artifactId>
+	<version>3.9.0-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 
 	<build>
@@ -62,5 +63,4 @@
 		</plugins>
 	</build>
 
-	<version>3.0.0-SNAPSHOT</version>
 </project>

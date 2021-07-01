@@ -19,6 +19,8 @@
     <module>ch.elexis.ebanking.qr.test</module>
     <module>at.medevit.ch.artikelstamm.model.test</module>
     <module>at.medevit.elexis.tarmed.model.tests</module>
+    <module>ch.elexis.tasks.integration.test</module>
+
 <!--
 	Requires fix
     <module>ch.elexis.base.ch.arzttarife.model.test</module>
@@ -39,7 +41,6 @@
     <module>ch.elexis.ebanking.tests</module>
     <module>ch.elexis.externe_dokumente.tests</module>
     <module>ch.elexis.fop.service.test</module>
-    <module>ch.elexis.tasks.integration.test</module>
     <module>ch.elexis.laborimport.viollier.v2_test</module>
     <module>ch.medshare.connect.abacusjunior.test</module>
     <module>ch.medshare.elexis_directories.test</module>

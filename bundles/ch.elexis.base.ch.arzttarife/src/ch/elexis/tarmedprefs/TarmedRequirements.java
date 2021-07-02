@@ -66,7 +66,6 @@ public class TarmedRequirements {
 		if (contact == null) {
 			return null;
 		}
-		System.out.println();
 		IXid xid = contact.getXid(DOMAIN_EAN);
 		// compatibility layer
 		if (xid == null) {
@@ -161,14 +160,30 @@ public class TarmedRequirements {
 		return KSK.trim();
 	}
 	
-	public static String getKSK(final IContact k){
-		IXid ret = k.getXid(DOMAIN_KSK);
-		return ret != null ? ret.getDomainId().replaceAll("[\\s\\.\\-]", "").trim() : ""; //$NON-NLS-1$ //$NON-NLS-2$
+	public static String getKSK(final IContact contact){
+		IXid xid = contact.getXid(DOMAIN_KSK);
+		// compatibility layer
+		if (xid == null) {
+			if (contact.getExtInfo("KSK") instanceof String
+				&& StringUtils.isNotBlank((String) contact.getExtInfo("KSK"))) {
+				setKSK(contact, (String) contact.getExtInfo("KSK"));
+				xid = contact.getXid(DOMAIN_KSK);
+			}
+		}
+		return xid != null ? xid.getDomainId().replaceAll("[\\s\\.\\-]", "").trim() : ""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	public static String getNIF(final IContact k){
-		IXid ret = k.getXid(DOMAIN_NIF);
-		return ret != null ? ret.getDomainId().trim() : "";
+	public static String getNIF(final IContact contact){
+		IXid xid = contact.getXid(DOMAIN_NIF);
+		// compatibility layer
+		if (xid == null) {
+			if (contact.getExtInfo("NIF") instanceof String
+				&& StringUtils.isNotBlank((String) contact.getExtInfo("NIF"))) {
+				setNIF(contact, (String) contact.getExtInfo("NIF"));
+				xid = contact.getXid(DOMAIN_NIF);
+			}
+		}
+		return xid != null ? xid.getDomainId().trim() : "";
 	}
 	
 	public static boolean setEAN(final IContact k, final String ean){

@@ -117,6 +117,8 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter
 			}
 		} catch (Exception ex) {
 			logger.error("Error importing tarmed", ex);
+			return new Status(Status.ERROR, "ch.elexis.base.ch.arzttarife.model", ex.getMessage(),
+				ex);
 		} finally {
 			if (deleteCachedAccessTables() != Status.OK_STATUS) {
 				return Status.CANCEL_STATUS;

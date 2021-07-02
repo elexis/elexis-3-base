@@ -4,10 +4,10 @@ Bundle-Name: ReferenceDataImporter Tests für ch.elexis.base.ch.arzttarife
 Bundle-SymbolicName: ch.elexis.base.ch.arzttarife.test
 Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
-Fragment-Host: ch.elexis.base.ch.arzttarife;bundle-version="3.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Fragment-Host: ch.elexis.base.ch.arzttarife;bundle-version="3.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit,
- ch.elexis.core.application;bundle-version="3.0.0",
- ch.elexis.base.ch.ticode;bundle-version="3.2.0",
- ch.elexis.core.l10n;bundle-version="3.8.0"
+ ch.elexis.core.application;bundle-version="3.9.0",
+ ch.elexis.base.ch.ticode;bundle-version="3.9.0",
+ ch.elexis.core.l10n;bundle-version="3.9.0"
 Import-Package: org.jdom.filter

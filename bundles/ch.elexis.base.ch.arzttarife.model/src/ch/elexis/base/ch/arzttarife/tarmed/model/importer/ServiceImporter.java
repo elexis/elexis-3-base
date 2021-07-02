@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,26 +30,28 @@ import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
 
 public class ServiceImporter {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ServiceImporter.class);
-	
+
 	private JdbcLink cacheDb;
 	private String lang;
 	private String law;
-	
+
 	private ChapterImporter chapterImporter;
-	
+
 	// fields relevant for the currently imported service
 	private String code;
 	private TarmedExtension extension;
 	private Map<Object, Object> extensionMap;
 	private TimeTool validFrom;
 	private TimeTool validTo;
-	
+
 	private int serviceCount;
-	
-	public ServiceImporter(JdbcLink cacheDb, ChapterImporter chapterImporter, String lang,
-		String law){
+
+	private DateTimeFormatter tarmedFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd hh:mm:ss") // .parseLenient()
+			.appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
+
+	public ServiceImporter(JdbcLink cacheDb, ChapterImporter chapterImporter, String lang, String law) {
 		this.cacheDb = cacheDb;
 		this.lang = lang;
 		this.law = law;
@@ -55,25 +59,25 @@ public class ServiceImporter {
 		this.validFrom = new TimeTool();
 		this.validTo = new TimeTool();
 	}
-	
-	public void setServiceCount(int count){
+
+	public void setServiceCount(int count) {
 		this.serviceCount = count;
 	}
-	
-	public IStatus doImport(IProgressMonitor ipm) throws SQLException, IOException{
+
+	public IStatus doImport(IProgressMonitor ipm) throws SQLException, IOException {
 		Stm servicesStm = null;
 		try {
 			ipm.subTask(Messages.TarmedImporter_singleLst);
-			
+
 			int count = 0;
 			servicesStm = cacheDb.getStatement();
 			ResultSet res = servicesStm.query(String.format("SELECT * FROM %sLEISTUNG", //$NON-NLS-1$
-				TarmedReferenceDataImporter.ImportPrefix));
+					TarmedReferenceDataImporter.ImportPrefix));
 			while (res.next()) {
 				code = res.getString("LNR");
 				initValidTime(res);
 				String id = getId(res);
-				
+
 				TarmedLeistung tl = EntityUtil.load(id, TarmedLeistung.class);
 				if (tl != null) {
 					logger.debug("Skipped " + tl.getCode());
@@ -82,11 +86,10 @@ public class ServiceImporter {
 				} else {
 					String parentId = getParentId(res.getString("KNR"));
 					if (parentId == null) {
-						throw new IllegalStateException(
-							"Could not find parentId for chapter number [" + res.getString("KNR")
-								+ "] and service id [" + id + "]");
+						throw new IllegalStateException("Could not find parentId for chapter number ["
+								+ res.getString("KNR") + "] and service id [" + id + "]");
 					}
-					
+
 					tl = new TarmedLeistung();
 					tl.setId(id);
 					tl.setCode_(code);
@@ -98,27 +101,27 @@ public class ServiceImporter {
 					tl.setGueltigVon(validFrom.toLocalDate());
 					tl.setGueltigBis(validTo.toLocalDate());
 					tl.setLaw(law);
-	
+
 					extension = new TarmedExtension();
 					extension.setCode(tl.getId());
 					extensionMap = JpaModelUtil.extInfoFromBytes(extension.getExtInfo());
-					
+
 					if (hasColumn(res, "F_AL_R")) {
 						ImporterUtil.putResultSetToMap(extensionMap, res, "LEISTUNG_TYP", "SEITE", //$NON-NLS-1$//$NON-NLS-2$
-							"SEX", "ANAESTHESIE", "K_PFL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-							"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-							"WECHSEL_MIN", "F_AL", "F_TL", "F_AL_R"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								"SEX", "ANAESTHESIE", "K_PFL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+								"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+								"WECHSEL_MIN", "F_AL", "F_TL", "F_AL_R"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					} else {
 						ImporterUtil.putResultSetToMap(extensionMap, res, "LEISTUNG_TYP", "SEITE", //$NON-NLS-1$//$NON-NLS-2$
-							"SEX", "ANAESTHESIE", "K_PFL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-							"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-							"WECHSEL_MIN", "F_AL", "F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								"SEX", "ANAESTHESIE", "K_PFL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+								"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+								"WECHSEL_MIN", "F_AL", "F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					// get QL_DIGNITAET
 					String dqua = getQLDignitaet();
-					
+
 					// get BEZ_255, MED_INTERPRET, TECH_INTERPRET
 					String[] texts = getTexts();
 					tl.setDigniQuali(dqua);
@@ -130,23 +133,23 @@ public class ServiceImporter {
 					if (texts[2] != null) {
 						extension.setTech_interpret(texts[2]);
 					}
-					
+
 					// get LEISTUNG_HIERARCHIE
 					String slaves = getSlavesString();
 					extensionMap.put(TarmedLeistung.EXT_FLD_HIERARCHY_SLAVES, slaves);
-					
+
 					// get LEISTUNG_GRUPPEN
 					String groups = getGroups();
 					extensionMap.put(TarmedLeistung.EXT_FLD_SERVICE_GROUPS, groups);
-					
+
 					// get LEISTUNG_BLOECKE
 					String blocks = getBlocks();
 					extensionMap.put(TarmedLeistung.EXT_FLD_SERVICE_BLOCKS, blocks);
-					
+
 					// get LEISTUNG_ALTER
 					String age = getAge();
 					extensionMap.put(TarmedLeistung.EXT_FLD_SERVICE_AGE, age);
-					
+
 					// get LEISTUNG_KOMBINATION
 					String[] combinations = getCombinations();
 					if (combinations[0] != null) {
@@ -155,24 +158,23 @@ public class ServiceImporter {
 					if (combinations[1] != null) {
 						extensionMap.put("kombination_or", combinations[1]);
 					}
-					
+
 					// get OPERATOR, MENGE, ZR_ANZAHL, PRO_NACH, ZR_EINHEIT
 					String limits = getLimits();
 					extensionMap.put("limits", limits);
-					
+
 					// get LNR_SLAVE, TYP (invalid combinations with other codes)
 					importKumulations();
-					
+
 					extension.setExtInfo(JpaModelUtil.extInfoToBytes(extensionMap));
-					
+
 					EntityUtil.save(Arrays.asList(extension, tl));
-					
+
 					logger.debug("Imported " + tl.getId());
 					ipm.worked(1);
-					ipm.subTask(Messages.TarmedImporter_singleLst + " (" + count++ + "/"
-						+ serviceCount + ")");
+					ipm.subTask(Messages.TarmedImporter_singleLst + " (" + count++ + "/" + serviceCount + ")");
 				}
-				
+
 				if (ipm.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
@@ -186,10 +188,10 @@ public class ServiceImporter {
 		}
 		return Status.OK_STATUS;
 	}
-	
+
 	private HashMap<String, Integer> columnMap = new HashMap<>();
-	
-	private boolean hasColumn(ResultSet res, String columnLabel){
+
+	private boolean hasColumn(ResultSet res, String columnLabel) {
 		Integer index = columnMap.get(columnLabel);
 		if (index != null && index > 0) {
 			return true;
@@ -205,37 +207,35 @@ public class ServiceImporter {
 		}
 		return false;
 	}
-	
-	private String getParentId(String chapterCode){
+
+	private String getParentId(String chapterCode) {
 		return chapterImporter.getIdForCode(chapterCode, validFrom.toLocalDate(), law);
 	}
-	
+
 	/**
-	 * Import all the kumulations from the LEISTUNG_KUMULATION table for the given code. The
-	 * kumulations contain inclusions, exclusions and exclusives.
+	 * Import all the kumulations from the LEISTUNG_KUMULATION table for the given
+	 * code. The kumulations contain inclusions, exclusions and exclusives.
 	 * 
-	 * @param code
-	 *            of a tarmed value
+	 * @param code      of a tarmed value
 	 * @param stmCached
 	 * @throws SQLException
 	 */
-	private void importKumulations() throws SQLException{
+	private void importKumulations() throws SQLException {
 		Stm subStm = cacheDb.getStatement();
 		try {
 			try (ResultSet res = subStm
-				.query(String.format(
-					"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER='%s' AND ART_MASTER='L'",
-					TarmedReferenceDataImporter.ImportPrefix, code))) {
+					.query(String.format("SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER='%s' AND ART_MASTER='L'",
+							TarmedReferenceDataImporter.ImportPrefix, code))) {
 				TimeTool fromTime = new TimeTool();
 				TimeTool toTime = new TimeTool();
-				
+
 				List<Object> kumulations = new ArrayList<>();
 				boolean skip = false;
 				while (res != null && res.next()) {
 					skip = false;
 					fromTime.set(res.getString("GUELTIG_VON"));
 					toTime.set(res.getString("GUELTIG_BIS"));
-					
+
 					TarmedKumulation kumulation = new TarmedKumulation();
 					kumulation.setMasterCode(code);
 					kumulation.setMasterArt(res.getString("ART_MASTER"));
@@ -247,21 +247,21 @@ public class ServiceImporter {
 					kumulation.setValidFrom(fromTime.toLocalDate());
 					kumulation.setValidTo(toTime.toLocalDate());
 					kumulation.setLaw(law);
-					
-					// same code (TarmedLeistung) can be imported multiple times, filter out already imported kumulation
+
+					// same code (TarmedLeistung) can be imported multiple times, filter out already
+					// imported kumulation
 					// .masterCode.masterArt.typ
 					HashMap<String, Object> propertyMap = new HashMap<String, Object>();
 					propertyMap.put("masterCode", kumulation.getMasterCode());
 					propertyMap.put("masterArt", kumulation.getMasterArt());
 					propertyMap.put("typ", kumulation.getTyp());
-					List<TarmedKumulation> existing =
-						EntityUtil.loadByNamedQuery(propertyMap, TarmedKumulation.class);
+					List<TarmedKumulation> existing = EntityUtil.loadByNamedQuery(propertyMap, TarmedKumulation.class);
 					if (existing != null && !existing.isEmpty()) {
 						for (TarmedKumulation existingKumulation : existing) {
-							if(existingKumulation.getSlaveCode().equals(kumulation.getSlaveCode()) && existingKumulation.getSlaveArt().equals(kumulation.getSlaveArt()) && 
-								existingKumulation.getValidFrom().isEqual(kumulation.getValidFrom())
-								&& existingKumulation.getValidTo()
-									.isEqual(kumulation.getValidTo())) {
+							if (existingKumulation.getSlaveCode().equals(kumulation.getSlaveCode())
+									&& existingKumulation.getSlaveArt().equals(kumulation.getSlaveArt())
+									&& existingKumulation.getValidFrom().isEqual(kumulation.getValidFrom())
+									&& existingKumulation.getValidTo().isEqual(kumulation.getValidTo())) {
 								skip = true;
 								break;
 							}
@@ -279,18 +279,16 @@ public class ServiceImporter {
 			}
 		}
 	}
-	
-	private String[] getCombinations() throws SQLException, IOException{
+
+	private String[] getCombinations() throws SQLException, IOException {
 		String[] ret = new String[2];
 		StringBuilder sbAnd = new StringBuilder();
 		StringBuilder sbOr = new StringBuilder();
 		Stm subStm = cacheDb.getStatement();
 		try {
-			ResultSet rsub = subStm
-				.query(String.format("SELECT * FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER='%s'",
-					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
-			List<Map<String, String>> validResults =
-				ImporterUtil.getValidValueMaps(rsub, validFrom);
+			ResultSet rsub = subStm.query(String.format("SELECT * FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); // $NON-NLS-1$
+			List<Map<String, String>> validResults = ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {
 				for (Map<String, String> map : validResults) {
 					String typ = map.get("TYP");
@@ -300,12 +298,12 @@ public class ServiceImporter {
 							if (sbAnd.length() > 0) {
 								sbAnd.append(",");
 							}
-							sbAnd.append(slave); //$NON-NLS-1$
+							sbAnd.append(slave); // $NON-NLS-1$
 						} else if (typ.equals("or")) { //$NON-NLS-1$
 							if (sbOr.length() > 0) {
 								sbOr.append(",");
 							}
-							sbOr.append(slave); //$NON-NLS-1$
+							sbOr.append(slave); // $NON-NLS-1$
 						}
 					}
 				}
@@ -320,17 +318,15 @@ public class ServiceImporter {
 		ret[1] = sbOr.toString();
 		return ret;
 	}
-	
-	private String getLimits() throws SQLException, IOException{
+
+	private String getLimits() throws SQLException, IOException {
 		StringBuilder sb = new StringBuilder();
 		Stm subStm = cacheDb.getStatement();
 		try {
-			ResultSet rsub =
-				subStm.query(
-					String.format("SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR='%s' AND ART='L'",
-						TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
-			List<Map<String, String>> validResults =
-				ImporterUtil.getValidValueMaps(rsub, validFrom);
+			ResultSet rsub = subStm
+					.query(String.format("SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR='%s' AND ART='L'",
+							TarmedReferenceDataImporter.ImportPrefix, code)); // $NON-NLS-1$
+			List<Map<String, String>> validResults = ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {
 				for (Map<String, String> map : validResults) {
 					sb.append(map.get("OPERATOR")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
@@ -349,14 +345,13 @@ public class ServiceImporter {
 		}
 		return sb.toString();
 	}
-	
-	private String getBlocks() throws SQLException, IOException{
+
+	private String getBlocks() throws SQLException, IOException {
 		StringBuilder sb = new StringBuilder();
 		Stm subStm = cacheDb.getStatement();
 		try {
-			ResultSet rsub =
-				subStm.query(String.format("SELECT * FROM %sLEISTUNG_BLOECKE WHERE LNR='%s'",
-					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
+			ResultSet rsub = subStm.query(String.format("SELECT * FROM %sLEISTUNG_BLOECKE WHERE LNR='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); // $NON-NLS-1$
 			List<Map<String, String>> validResults = ImporterUtil.getAllValueMaps(rsub);
 			if (!validResults.isEmpty()) {
 				for (Map<String, String> map : validResults) {
@@ -366,10 +361,8 @@ public class ServiceImporter {
 						sb.append(", " + map.get("BLOCK"));
 					}
 					LocalDate from = ImporterUtil.getLocalDate(map, "GUELTIG_VON");
-					LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"),
-						DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.S"));
-					sb.append("[").append(from.toString()).append("|").append(to.toString())
-						.append("]");
+					LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"), tarmedFormatter);
+					sb.append("[").append(from.toString()).append("|").append(to.toString()).append("]");
 				}
 			}
 			rsub.close();
@@ -380,14 +373,13 @@ public class ServiceImporter {
 		}
 		return sb.toString();
 	}
-	
-	private String getGroups() throws SQLException, IOException{
+
+	private String getGroups() throws SQLException, IOException {
 		StringBuilder sb = new StringBuilder();
 		Stm subStm = cacheDb.getStatement();
 		try {
-			ResultSet rsub =
-				subStm.query(String.format("SELECT * FROM %sLEISTUNG_GRUPPEN WHERE LNR='%s'",
-					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
+			ResultSet rsub = subStm.query(String.format("SELECT * FROM %sLEISTUNG_GRUPPEN WHERE LNR='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); // $NON-NLS-1$
 			List<Map<String, String>> validResults = ImporterUtil.getAllValueMaps(rsub);
 			if (!validResults.isEmpty()) {
 				for (Map<String, String> map : validResults) {
@@ -397,10 +389,8 @@ public class ServiceImporter {
 						sb.append(", " + map.get("GRUPPE"));
 					}
 					LocalDate from = ImporterUtil.getLocalDate(map, "GUELTIG_VON");
-					LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"),
-						DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.S"));
-					sb.append("[").append(from.toString()).append("|").append(to.toString())
-						.append("]");
+					LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"), tarmedFormatter);
+					sb.append("[").append(from.toString()).append("|").append(to.toString()).append("]");
 				}
 			}
 			rsub.close();
@@ -411,14 +401,13 @@ public class ServiceImporter {
 		}
 		return sb.toString();
 	}
-	
-	private String getAge() throws SQLException, IOException{
+
+	private String getAge() throws SQLException, IOException {
 		StringBuilder sb = new StringBuilder();
 		Stm subStm = cacheDb.getStatement();
 		try {
-			ResultSet rsub =
-				subStm.query(String.format("SELECT * FROM %sLEISTUNG_ALTER WHERE LNR='%s'",
-					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
+			ResultSet rsub = subStm.query(String.format("SELECT * FROM %sLEISTUNG_ALTER WHERE LNR='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); // $NON-NLS-1$
 			List<Map<String, String>> validResults = ImporterUtil.getAllValueMaps(rsub);
 			if (!validResults.isEmpty()) {
 				for (Map<String, String> map : validResults) {
@@ -430,11 +419,9 @@ public class ServiceImporter {
 							def.append(", " + getAgeDefinition(map));
 						}
 						LocalDate from = ImporterUtil.getLocalDate(map, "GUELTIG_VON");
-						LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"),
-							DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.S"));
-						def.append("[").append(from.toString()).append("|").append(to.toString())
-							.append("]");
-						
+						LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"), tarmedFormatter);
+						def.append("[").append(from.toString()).append("|").append(to.toString()).append("]");
+
 						sb.append(def.toString());
 					} catch (IllegalStateException e) {
 						logger.warn("Exception on age import, continuing", e);
@@ -449,8 +436,8 @@ public class ServiceImporter {
 		}
 		return sb.toString();
 	}
-	
-	private String getAgeDefinition(Map<String, String> map){
+
+	private String getAgeDefinition(Map<String, String> map) {
 		StringBuilder sb = new StringBuilder();
 		int fromAge = getAgeInt(map.get("VON_ALTER"), -1);
 		int toAge = getAgeInt(map.get("BIS_ALTER"), -1);
@@ -469,13 +456,13 @@ public class ServiceImporter {
 		}
 		return sb.toString();
 	}
-	
-	private boolean checkValidRange(int fromAge, int toAge){
+
+	private boolean checkValidRange(int fromAge, int toAge) {
 		// not both not set
 		return !(fromAge == -1 && toAge == -1);
 	}
-	
-	private Integer getToleranceInt(String string, int defaultValue){
+
+	private Integer getToleranceInt(String string, int defaultValue) {
 		if (string == null || string.isEmpty()) {
 			return defaultValue;
 		}
@@ -485,8 +472,8 @@ public class ServiceImporter {
 			throw new IllegalStateException(fe);
 		}
 	}
-	
-	private Integer getAgeInt(String string, int defaultValue){
+
+	private Integer getAgeInt(String string, int defaultValue) {
 		if (string == null || string.isEmpty()) {
 			return defaultValue;
 		}
@@ -496,14 +483,13 @@ public class ServiceImporter {
 			throw new IllegalStateException(fe);
 		}
 	}
-	
-	private String getSlavesString() throws SQLException, IOException{
+
+	private String getSlavesString() throws SQLException, IOException {
 		StringBuilder sb = new StringBuilder();
 		Stm subStm = cacheDb.getStatement();
 		try {
-			ResultSet rsub = subStm
-				.query(String.format("SELECT * FROM %sLEISTUNG_HIERARCHIE WHERE LNR_MASTER='%s'",
-					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
+			ResultSet rsub = subStm.query(String.format("SELECT * FROM %sLEISTUNG_HIERARCHIE WHERE LNR_MASTER='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); // $NON-NLS-1$
 			List<Map<String, String>> validResults = ImporterUtil.getAllValueMaps(rsub);
 			if (!validResults.isEmpty()) {
 				// do not import directly as bezug, that will lead to incorrect bills
@@ -514,10 +500,8 @@ public class ServiceImporter {
 						sb.append(", " + map.get("LNR_SLAVE"));
 					}
 					LocalDate from = ImporterUtil.getLocalDate(map, "GUELTIG_VON");
-					LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"),
-						DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.S"));
-					sb.append("[").append(from.toString()).append("|").append(to.toString())
-						.append("]");
+					LocalDate to = LocalDate.parse(map.get("GUELTIG_BIS"), tarmedFormatter);
+					sb.append("[").append(from.toString()).append("|").append(to.toString()).append("]");
 				}
 			}
 			rsub.close();
@@ -528,24 +512,22 @@ public class ServiceImporter {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
-	 * Get texts. Index 0 = BEZ_255, Index 1 = MED_INTERPRET, Index 2 = TECH_INTERPRET
+	 * Get texts. Index 0 = BEZ_255, Index 1 = MED_INTERPRET, Index 2 =
+	 * TECH_INTERPRET
 	 * 
 	 * @return
 	 * @throws SQLException
 	 * @throws IOException
 	 */
-	private String[] getTexts() throws SQLException, IOException{
+	private String[] getTexts() throws SQLException, IOException {
 		String[] ret = new String[3];
 		Stm subStm = cacheDb.getStatement();
 		try {
-			ResultSet rsub = subStm
-				.query(
-					String.format("SELECT * FROM %sLEISTUNG_TEXT WHERE SPRACHE='%s' AND LNR='%s'",
-						TarmedReferenceDataImporter.ImportPrefix, lang, code)); //$NON-NLS-1$
-			List<Map<String, String>> validResults =
-				ImporterUtil.getValidValueMaps(rsub, validFrom);
+			ResultSet rsub = subStm.query(String.format("SELECT * FROM %sLEISTUNG_TEXT WHERE SPRACHE='%s' AND LNR='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, lang, code)); // $NON-NLS-1$
+			List<Map<String, String>> validResults = ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {
 				Map<String, String> row = ImporterUtil.getLatestMap(validResults);
 				ret[0] = StringUtils.abbreviate(row.get("BEZ_255"), 255); //$NON-NLS-1$
@@ -560,16 +542,14 @@ public class ServiceImporter {
 		}
 		return ret;
 	}
-	
-	private String getQLDignitaet() throws SQLException, IOException{
+
+	private String getQLDignitaet() throws SQLException, IOException {
 		String ret = "";
 		Stm subStm = cacheDb.getStatement();
 		try {
-			ResultSet rsub =
-				subStm.query(String.format("SELECT * FROM %sLEISTUNG_DIGNIQUALI WHERE LNR='%s'",
-					TarmedReferenceDataImporter.ImportPrefix, code)); //$NON-NLS-1$
-			List<Map<String, String>> validResults =
-				ImporterUtil.getValidValueMaps(rsub, validFrom);
+			ResultSet rsub = subStm.query(String.format("SELECT * FROM %sLEISTUNG_DIGNIQUALI WHERE LNR='%s'",
+					TarmedReferenceDataImporter.ImportPrefix, code)); // $NON-NLS-1$
+			List<Map<String, String>> validResults = ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {
 				ret = ImporterUtil.getLatestMap(validResults).get("QL_DIGNITAET");
 			}
@@ -581,18 +561,17 @@ public class ServiceImporter {
 		}
 		return ret;
 	}
-	
-	private void initValidTime(ResultSet res) throws SQLException{
+
+	private void initValidTime(ResultSet res) throws SQLException {
 		validFrom.set(res.getString("GUELTIG_VON"));
 		validTo.set(res.getString("GUELTIG_BIS"));
 	}
-	
-	private String getId(ResultSet res) throws SQLException{
-		return res.getString("LNR") + "-" + validFrom.toString(TimeTool.DATE_COMPACT)
-			+ getLawIdExtension();
+
+	private String getId(ResultSet res) throws SQLException {
+		return res.getString("LNR") + "-" + validFrom.toString(TimeTool.DATE_COMPACT) + getLawIdExtension();
 	}
-	
-	private String getLawIdExtension(){
+
+	private String getLawIdExtension() {
 		if (law != null && !law.isEmpty()) {
 			return "-" + law;
 		}

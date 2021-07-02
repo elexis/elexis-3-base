@@ -1,5 +1,8 @@
 package ch.elexis.base.ch.arzttarife.test;
 
+import static org.junit.Assert.assertTrue;
+
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -30,8 +33,9 @@ public class AllPluginTests {
 		IReferenceDataImporter tarmedImporter =
 			OsgiServiceUtil.getService(IReferenceDataImporter.class,
 				"(" + IReferenceDataImporter.REFERENCEDATAID + "=tarmed_34)").get();
-		tarmedImporter.performImport(new NullProgressMonitor(), AllPluginTests.class
+		IStatus status = tarmedImporter.performImport(new NullProgressMonitor(), AllPluginTests.class
 			.getResourceAsStream("/rsc/TARMED_Datenbank_01.08.00_BR_UVG_IVG_MVG.mdb"), 171019);
+		assertTrue(status.isOK());
 		OsgiServiceUtil.ungetService(tarmedImporter);
 		
 		IBillingSystemService billingSystemService =
@@ -39,5 +43,6 @@ public class AllPluginTests {
 		billingSystemService.addOrModifyBillingSystem(UVG_NAME, CONST_TARMED_LEISTUNG,
 			CONST_TARMED_DRUCKER, UVG_REQUIREMENTS, BillingLaw.UVG);
 		OsgiServiceUtil.ungetService(billingSystemService);
+		
 	}
 }

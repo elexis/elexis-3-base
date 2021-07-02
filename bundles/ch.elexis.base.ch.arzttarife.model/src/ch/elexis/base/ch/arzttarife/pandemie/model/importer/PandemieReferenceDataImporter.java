@@ -72,10 +72,9 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 					getExisting(line.get(1), line.get(4), getValidFrom(line));
 				if (!existing.isEmpty()) {
 					for (PandemieLeistung pandemieLeistung : existing) {
-						if (pandemieLeistung.getValidTo() == null) {
-							pandemieLeistung.setValidTo(getValidTo(line));
-							closed.add(pandemieLeistung);
-						}
+						// update validto of existing
+						pandemieLeistung.setValidTo(getValidTo(line));
+						closed.add(pandemieLeistung);
 					}
 				} else {
 					PandemieLeistung pl = new PandemieLeistung();

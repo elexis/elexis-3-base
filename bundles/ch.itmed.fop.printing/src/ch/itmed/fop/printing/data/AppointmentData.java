@@ -79,6 +79,28 @@ public final class AppointmentData {
 		return appointmentDate.toString();
 	}
 
+	public String getAppointmentDetailedNoEnd(){
+		StringBuilder appointmentDate = new StringBuilder();
+		
+		TimeSpan timeSpan = appointment.getTimeSpan();
+		
+		// the weekday of the appointment
+		TimeTool timeTool = new TimeTool();
+		timeTool.setDate(appointment.getDay());
+		appointmentDate.append(timeTool.toString(TimeTool.WEEKDAY));
+		appointmentDate.append(", ");
+		
+		// the date of the appointment
+		appointmentDate.append(timeTool.toString(TimeTool.DATE_GER));
+		appointmentDate.append(" ");
+		
+		// start time of the appointment
+		timeTool.setTime(timeSpan.from);
+		appointmentDate.append(timeTool.toString(TimeTool.TIME_SMALL));
+		
+		return appointmentDate.toString();
+	}
+	
 	public String getAgendaArea() {
 		Kontakt kontakt = null;
 		String agendaSection = appointment.getBereich();

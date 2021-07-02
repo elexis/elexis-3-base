@@ -48,6 +48,9 @@ public class AppointmentsInformationElement {
 				Element appointment = doc.createElement("Appointment");
 				appointment.appendChild(doc.createTextNode(ad.getAppointmentDetailed()));
 				c.appendChild(appointment);
+				Element appointmentNoEnd = doc.createElement("AppointmentNoEnd");
+				appointmentNoEnd.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));
+				c.appendChild(appointmentNoEnd);
 			}
 			p.appendChild(c);			
 		} else {

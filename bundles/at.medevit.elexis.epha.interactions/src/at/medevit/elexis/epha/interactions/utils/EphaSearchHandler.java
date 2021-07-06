@@ -16,7 +16,7 @@ import org.eclipse.core.commands.ExecutionException;
 
 public class EphaSearchHandler extends AbstractHandler {
 	
-	private static EphaApiSearchAction action = new EphaApiSearchAction();
+	private static EphaSearchProxyAction action = new EphaSearchProxyAction();
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{

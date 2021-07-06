@@ -12,9 +12,11 @@ package at.medevit.elexis.epha.interactions.utils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
@@ -35,9 +37,14 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.epha.interactions.api.EphaInteractionsApi;
 import at.medevit.elexis.epha.interactions.api.model.AdviceResponse;
 import at.medevit.elexis.epha.interactions.api.model.Substance;
+import at.medevit.elexis.epha.interactions.preference.EphaConstants;
+import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
+import ch.elexis.core.services.ICodeElementServiceContribution;
+import ch.elexis.core.services.holder.CodeElementServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.text.IRichTextDisplay;
 import ch.elexis.core.ui.util.IKonsExtension;
@@ -80,28 +87,36 @@ public class EphaApiSearchAction extends Action implements IKonsExtension, IHand
 				Object ret = interactionsApi
 					.advice(medication.stream().filter(p -> p.getArticle() != null)
 					.map(p -> Substance.of(p.getArticle())).collect(Collectors.toList()));
-				if (ret instanceof AdviceResponse) {
-					if (((AdviceResponse) ret).getData().getSafety() > 80) {
+				if (ret instanceof AdviceResponse && ((AdviceResponse) ret).getData() != null) {
+					if (((AdviceResponse) ret).getData().getSafety() > EphaConstants.SAFTEY_INFO) {
 						if (MessageDialog.open(MessageDialog.INFORMATION,
 							Display.getDefault().getActiveShell(), "Epha",
-							"Keine relevanten Einschränkung der Medikamentensicherheit",
-							SWT.SHEET, "Epha Interaktionen öffnen",
-							IDialogConstants.OK_LABEL) == 0) {
-								Program.launch(((AdviceResponse) ret).getData().getLink());
-							}
-					} else if (((AdviceResponse) ret).getData().getSafety() > 60) {
+							getMessage((AdviceResponse) ret), SWT.SHEET,
+							"Epha Interaktionen öffnen", IDialogConstants.OK_LABEL) == 0) {
+							Program.launch(((AdviceResponse) ret).getData().getLink());
+						}
+					} else if (((AdviceResponse) ret).getData()
+						.getSafety() > EphaConstants.SAFTEY_WARN) {
 						if (MessageDialog.open(MessageDialog.WARNING,
-							Display.getDefault().getActiveShell(), "Epha", "Erhöhtes Risiko",
-							SWT.SHEET, "Epha Interaktionen öffnen") == 0) {
+							Display.getDefault().getActiveShell(), "Epha",
+							getMessage((AdviceResponse) ret), SWT.SHEET,
+							"Epha Interaktionen öffnen") == 0) {
 							Program.launch(((AdviceResponse) ret).getData().getLink());
 						}
 					} else {
 						if (MessageDialog.open(MessageDialog.ERROR,
-							Display.getDefault().getActiveShell(), "Epha", "Stark erhöhtes Risiko",
-							SWT.SHEET, "Epha Interaktionen öffnen") == 0) {
+							Display.getDefault().getActiveShell(), "Epha",
+							getMessage((AdviceResponse) ret), SWT.SHEET,
+							"Epha Interaktionen öffnen") == 0) {
 							Program.launch(((AdviceResponse) ret).getData().getLink());
 						}
 					}
+				} else if (ret instanceof AdviceResponse
+					&& ((AdviceResponse) ret).getMeta() != null) {
+					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+						"Es ist folgender Fehler aufgetreten.\n\n"
+							+ ((AdviceResponse) ret).getMeta().getStatus() + " - "
+							+ ((AdviceResponse) ret).getMeta().getMessage());
 				} else {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
 						"Es ist folgender Fehler aufgetreten.\n\n" + ret);
@@ -114,6 +129,45 @@ public class EphaApiSearchAction extends Action implements IKonsExtension, IHand
 			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Info",
 				"Es ist kein Patient selektiert");
 		}
+	}
+	
+	private String getMessage(AdviceResponse response){
+		int safety = response.getData().getSafety();
+		StringBuilder ret = new StringBuilder();
+		if(safety > EphaConstants.SAFTEY_INFO) {
+			ret.append("Keine relevanten Einschränkung der Medikamentensicherheit");
+		} else if (safety > EphaConstants.SAFTEY_WARN) {
+			ret.append("Erhöhtes Risiko");			
+		} else {
+			ret.append("Stark erhöhtes Risiko");
+		}
+		if (response.getData().getValid() != null) {
+			ret.append("\n\nEs wurden " + response.getData().getValid().size()
+				+ " Medikamente erfolgreich an epha übertragen.");
+		}
+		if (response.getData().getFails() != null && !response.getData().getFails().isEmpty()) {
+			List<Map<String, String>> fails = response.getData().getFails();
+			ret.append("\n\nFolgende Medikamente konnten bei epha nicht gefunden werden:");
+			for (Map<String, String> failMap : fails) {
+				if (StringUtils.isNoneBlank(failMap.get("name"))) {
+					ret.append("\n- " + failMap.get("name"));
+				} else if (StringUtils.isNoneBlank(failMap.get("gtin"))) {
+					ICodeElementServiceContribution artikelstammContribution =
+						CodeElementServiceHolder.get()
+							.getContribution(CodeElementTyp.ARTICLE, "Artikelstamm").orElse(null);
+					if (artikelstammContribution != null) {
+						ICodeElement loaded =
+							artikelstammContribution.loadFromCode(failMap.get("gtin")).orElse(null);
+						if (loaded != null) {
+							ret.append("\n- " + loaded.getText());
+							continue;
+						}
+					}
+					ret.append("\n- GTIN: " + failMap.get("gtin"));
+				}
+			}
+		}
+		return ret.toString();
 	}
 	
 	public IAction[] getActions(){

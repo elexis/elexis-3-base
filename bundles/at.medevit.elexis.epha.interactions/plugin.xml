@@ -34,7 +34,7 @@
    <extension
          point="ch.elexis.core.ui.KonsExtension">
       <Link
-            KonsExtension="at.medevit.elexis.epha.interactions.EphaApiSearchAction"
+            KonsExtension="at.medevit.elexis.epha.interactions.utils.EphaSearchProxyAction"
             name="at.medevit.elexis.epha.interactions">
       </Link>
    </extension>
@@ -44,6 +44,15 @@
             commandId="at.medevit.elexis.epha.interactions.ephasearch"
             icon="rsc/pill_exclamation.png">
       </image>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="at.medevit.elexis.epha.interactions.preference.PreferencePage"
+            id="at.medevit.elexis.epha.interactions.preferences"
+            name="epha Interaktionen">
+      </page>
    </extension>
 
 </plugin>

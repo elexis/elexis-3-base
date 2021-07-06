@@ -40,7 +40,10 @@ public class EphaInteractionsApi {
 			.path("clinic/advice/" + Locale.getDefault().getLanguage() + "/");
 		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
 		
-		final Response response = target.request().post(Entity.json(gson.toJson(model)));
+		String jsonString = gson.toJson(model);
+		// remove bad chars
+		jsonString = jsonString.replaceAll("/", " ");
+		final Response response = target.request().post(Entity.json(jsonString));
 		
 		if (response.getStatus() >= 300) {
 			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);

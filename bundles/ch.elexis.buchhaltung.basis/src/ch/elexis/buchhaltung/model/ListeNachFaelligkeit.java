@@ -14,6 +14,7 @@ package ch.elexis.buchhaltung.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -111,7 +112,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 			if (bOnlyActiveMandator && (!actMnId.equals(rn.get("MandantID")))) { //$NON-NLS-1$
 				continue;
 			}
-			if (RnStatus.isActive(rn.getStatus())) {
+			if (RnStatus.isActive(rn.getStatus()) && StringUtils.isNotBlank(rn.getNr())) {
 				DateTool date = new DateTool(rn.getDatumRn());
 				date.addDays(dueAfter);
 				if (date.isBefore(stichTag)) {

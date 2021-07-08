@@ -10,3 +10,4 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.unibe.iam.scg.archie;bundle-version="3.9.0",
  ch.elexis.base.ch.arzttarife.model;bundle-version="3.9.0"
+Import-Package: org.apache.commons.lang3;version="3.12.0"

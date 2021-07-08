@@ -5,7 +5,6 @@ Bundle-SymbolicName: ch.elexis.icpc.fire.test
 Bundle-Version: 3.9.0.qualifier
 Automatic-Module-Name: ch.elexis.icpc.fire.test
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Multi-Release: true
 Require-Bundle: org.junit,
  ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",

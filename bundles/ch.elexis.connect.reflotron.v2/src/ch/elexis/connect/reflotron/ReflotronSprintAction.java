@@ -12,35 +12,35 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.ui.Hub;
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.connect.reflotron.packages.PackageException;
 import ch.elexis.connect.reflotron.packages.Probe;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.serial.Connection;
+import ch.elexis.core.serial.Connection.ComPortListener;
+import ch.elexis.core.ui.Hub;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.dialogs.KontaktSelektor;
+import ch.elexis.core.ui.importer.div.rs232.SerialConnectionUi;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.core.ui.dialogs.KontaktSelektor;
-import ch.elexis.core.ui.importer.div.rs232.AbstractConnection;
-import ch.elexis.core.ui.importer.div.rs232.AbstractConnection.ComPortListener;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.elexis.core.ui.util.SWTHelper;
 
 public class ReflotronSprintAction extends Action implements ComPortListener {
 	
-	AbstractConnection _ctrl;
+	Connection _ctrl;
 	Labor _myLab;
 	DeviceLogger _rs232log;
 	private Logger logger = LoggerFactory.getLogger("ReflotronSprintAction");
 	Thread msgDialogThread;
 	Patient selectedPatient;
 	boolean background = false;
+	private Thread awaitThread;
 	
 	public ReflotronSprintAction(){
 		super(Messages.ReflotronSprintAction_ButtonName, AS_CHECK_BOX);
@@ -56,12 +56,16 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		if (_ctrl != null && _ctrl.isOpen()) {
 			_ctrl.close();
 		}
-		_ctrl =
-			new ReflotronConnection(Messages.ReflotronSprintAction_ConnectionName,
-				CoreHub.localCfg.get(Preferences.PORT,
-					Messages.ReflotronSprintAction_DefaultPort), CoreHub.localCfg.get(
+		_ctrl = new Connection(Messages.ReflotronSprintAction_ConnectionName,
+			CoreHub.localCfg.get(Preferences.PORT, Messages.ReflotronSprintAction_DefaultPort),
+			CoreHub.localCfg.get(
 					Preferences.PARAMS, Messages.ReflotronSprintAction_DefaultParams),
-				this);
+			this).withStartOfChunk(
+				new byte[] {
+					Connection.STX
+				}).withEndOfChunk(new byte[] {
+					Connection.ETX
+		}).excludeDelimiters(true);
 		
 		if (CoreHub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) { //$NON-NLS-1$ //$NON-NLS-2$
 			try {
@@ -84,8 +88,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		if (isChecked()) {
 			initConnection();
 			_rs232log.logStart();
-			String msg = _ctrl.connect();
-			if (msg == null) {
+			if (_ctrl.connect()) {
 				String timeoutStr =
 					CoreHub.localCfg.get(Preferences.TIMEOUT,
 						Messages.ReflotronSprintAction_DefaultTimeout);
@@ -95,15 +98,15 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				} catch (NumberFormatException e) {
 					// Do nothing. Use default value
 				}
-				_ctrl
-					.awaitFrame(
+				awaitThread = SerialConnectionUi
+					.awaitFrame(_ctrl,
 						UiDesk.getTopShell(),
-						Messages.ReflotronSprintAction_WaitMsg, 1, 4, 0, timeout, background, true);
-				return;
+						Messages.ReflotronSprintAction_WaitMsg, timeout, background, true);
+				awaitThread = null;
 			} else {
 				_rs232log.log("Error"); //$NON-NLS-1$
 				SWTHelper.showError(Messages.ReflotronSprintAction_RS232_Error_Title,
-					msg);
+					Messages.ReflotronSprintAction_RS232_Error_Text);
 			}
 		} else {
 			if (_ctrl.isOpen()) {
@@ -126,18 +129,6 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				MessageDialog.openError(shell, title, message);
 			}
 		});
-	}
-	
-	/**
-	 * Unterbruche wird von serieller Schnittstelle geschickt.
-	 */
-	public void gotBreak(final AbstractConnection connection){
-		connection.close();
-		setChecked(false);
-		_rs232log.log("Break"); //$NON-NLS-1$
-		_rs232log.logEnd();
-		SWTHelper.showError(Messages.ReflotronSprintAction_RS232_Break_Title, Messages 
-			.ReflotronSprintAction_RS232_Break_Text);
 	}
 	
 	/**
@@ -287,10 +278,8 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		});
 	}
 	
-	/**
-	 * Daten werden von der Seriellen Schnittstelle geliefert
-	 */
-	public void gotData(final AbstractConnection connection, final byte[] data){
+	@Override
+	public void gotData(Connection conn, byte[] data){
 		String encoding =
 			CoreHub.localCfg.get(Preferences.ENCODING, Charset.defaultCharset().displayName());
 		String content = null;
@@ -308,14 +297,13 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				processProbe(probe);
 			} else {
 				if (content.length() > 0) {
-					showError(
-						"Reflotron", //$NON-NLS-1$  
-						Messages.ReflotronSprintAction_IncompleteDataRecordMsg + 
-						content + Messages.ReflotronSprintAction_ResendMsg);
+					showError("Reflotron", //$NON-NLS-1$  
+						Messages.ReflotronSprintAction_IncompleteDataRecordMsg + content
+							+ Messages.ReflotronSprintAction_ResendMsg);
 				}
-			}
+				}
 			_rs232log.log("Saved"); //$NON-NLS-1$
-		}
+			}
 		
 		ElexisEventDispatcher.reload(LabItem.class);
 	}

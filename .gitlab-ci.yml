@@ -12,7 +12,6 @@ build:
   - if [ $(curl -s --head -w %{http_code} http://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/target/ -o /dev/null) == '200' ]; then export BUILD_TARGET_BRANCH=$CI_COMMIT_REF_NAME; fi 
   - if [ $(curl -s --head -w %{http_code} http://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-core/ -o /dev/null) == '200' ]; then export BUILD_CORE_BRANCH=$CI_COMMIT_REF_NAME; fi 
   - xvfb-run mvn clean verify ${BUILD_TARGET_BRANCH:+-Dgit.target.branch=$BUILD_TARGET_BRANCH} ${BUILD_CORE_BRANCH:+-Dgit.core.branch=$BUILD_CORE_BRANCH}
-  - jo token="$WEBHOOK_TOKEN" info="elexis-3-base $CI_JOB_ID $ORIGIN_BRANCH $CI_COMMIT_REF_NAME $CI_COMMIT_SHA" binary=%$(find ch.elexis.base.p2site/target/ch.elexis.base.p2site*.zip) destDir=elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-base | curl -k -H "Content-Type:application/json" -X POST -d @- $WEBHOOK_URL/deploy-zip
   - eval $(ssh-agent -s)
   - ssh-add <(echo "$SSH_PRIVATE_KEY_ED25519_BASE64" | base64 -d)
   - rsync -aiv --delete -e ssh ch.elexis.base.p2site/target/repository/ deploy@download.medelexis.ch:download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-base/

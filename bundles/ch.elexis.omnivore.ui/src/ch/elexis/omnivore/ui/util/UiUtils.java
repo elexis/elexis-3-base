@@ -95,7 +95,7 @@ public class UiUtils {
 			fid = new FileImportDialog(file.getName(), selectedCategory);
 		}
 		
-		IDocumentHandle dh = null;
+		IDocumentHandle docHandle = null;
 		if (fid.open() == Dialog.OK) {
 			try (InputStream bis = file.openInputStream();
 					ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -115,17 +115,23 @@ public class UiUtils {
 				if (category == null || category.length() == 0) {
 					category = CategoryUtil.getDefaultCategory().getName();
 				}
-				dh = createDocHandle(category, baos.toByteArray(), act, fid.title.trim(),
+				docHandle = createDocHandle(category, baos.toByteArray(), act, fid.title.trim(),
 					file.getName(), fid.keywords.trim());
+				docHandle.setLastchanged(fid.saveDate);
+				if (Preferences.getDateModifiable()) {
+					docHandle.setCreated(fid.originDate);
+				}
+				OmnivoreModelServiceHolder.get().save(docHandle);
+				
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				SWTHelper.showError(Messages.DocHandle_importErrorCaption,
 					Messages.DocHandle_importErrorMessage2);
 				return null;
 			}
-			Utils.archiveFile(file, dh);
+			Utils.archiveFile(file, docHandle);
 		}
-		return dh;
+		return docHandle;
 	}
 	
 	public static IDocumentHandle assimilate(String f){
@@ -167,12 +173,14 @@ public class UiUtils {
 				if (category == null || category.length() == 0) {
 					category = CategoryUtil.getDefaultCategory().getName();
 				}
-				IDocumentHandle dh = createDocHandle(category, baos.toByteArray(), act,
+				IDocumentHandle docHandle = createDocHandle(category, baos.toByteArray(), act,
 					fid.originDate, fid.title, file.getName(), fid.keywords);
+				docHandle.setLastchanged(fid.saveDate);
 				if (Preferences.getDateModifiable()) {
-					dh.setCreated(fid.originDate);
+					docHandle.setCreated(fid.originDate);
 				}
-				return dh;
+				OmnivoreModelServiceHolder.get().save(docHandle);
+				return docHandle;
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				SWTHelper.showError(Messages.DocHandle_readErrorCaption3,

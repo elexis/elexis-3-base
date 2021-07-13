@@ -22,11 +22,12 @@ import ch.elexis.connect.sysmex.ui.Preferences;
 import ch.elexis.connect.sysmex.ui.WhichPatientDialog;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.serial.Connection;
+import ch.elexis.core.serial.Connection.ComPortListener;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
-import ch.elexis.core.ui.importer.div.rs232.AbstractConnection;
-import ch.elexis.core.ui.importer.div.rs232.AbstractConnection.ComPortListener;
+import ch.elexis.core.ui.importer.div.rs232.SerialConnectionUi;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.LabItem;
@@ -35,13 +36,14 @@ import ch.elexis.data.Patient;
 
 public class SysmexAction extends Action implements ComPortListener {
 	
-	AbstractConnection _ctrl;
+	Connection _ctrl;
 	Labor _myLab;
 	Logger _rs232log;
 	Log _elexislog = Log.get("SysmexAction"); //$NON-NLS-1$
 	Thread msgDialogThread;
 	Patient selectedPatient;
 	boolean background = false;
+	private Thread awaitThread;
 	
 	private ShutdownThread shutdownThread = null;
 	
@@ -98,11 +100,16 @@ public class SysmexAction extends Action implements ComPortListener {
 			_ctrl.close();
 		}
 		_ctrl =
-			new SysmexConnection(Messages.SysmexAction_ConnectionName,
+			new Connection(Messages.SysmexAction_ConnectionName,
 				CoreHub.localCfg.get(Preferences.PORT,
 					Messages.SysmexAction_DefaultPort), CoreHub.localCfg.get(
 					Preferences.PARAMS, Messages.SysmexAction_DefaultParams),
-				this);
+				this).withStartOfChunk(
+					new byte[] {
+						Connection.STX
+					}).withEndOfChunk(new byte[] {
+						Connection.ETX
+			}).excludeDelimiters(true);
 	}
 	
 	private void initPreferences(){
@@ -128,8 +135,7 @@ public class SysmexAction extends Action implements ComPortListener {
 			initPreferences();
 			if (simulate == null) {
 				initConnection();
-				String msg = _ctrl.connect();
-				if (msg == null) {
+				if (_ctrl.connect()) {
 					String timeoutStr =
 						CoreHub.localCfg.get(Preferences.TIMEOUT,
 							Messages.SysmexAction_DefaultTimeout);
@@ -139,15 +145,15 @@ public class SysmexAction extends Action implements ComPortListener {
 					} catch (NumberFormatException e) {
 						// Do nothing. Use default value
 					}
-					_ctrl
-						.awaitFrame(
-							UiDesk.getTopShell(),
-							Messages.SysmexAction_WaitMsg, 1, 4, 0, timeout, background, true);
+					awaitThread = SerialConnectionUi.awaitFrame(_ctrl, UiDesk.getTopShell(),
+						Messages.SysmexAction_WaitMsg, timeout, background, true);
+					awaitThread = null;
+					
 					return;
 				} else {
 					_rs232log.log("Error"); //$NON-NLS-1$
 					SWTHelper.showError(Messages.SysmexAction_RS232_Error_Title,
-						msg);
+						Messages.SysmexAction_RS232_Error_Text);
 				}
 			} else {
 				SWTHelper.showInfo("Simulating!!!", simulate);
@@ -166,7 +172,7 @@ public class SysmexAction extends Action implements ComPortListener {
 							test = inputStream.read();
 						}
 						byte[] data = baos.toByteArray();
-						gotData(null, data);
+						gotData((Connection) null, data);
 						while (test != -1 && test != Logger.STX) {
 							test = inputStream.read();
 						}
@@ -205,17 +211,6 @@ public class SysmexAction extends Action implements ComPortListener {
 				MessageDialog.openError(shell, title, message);
 			}
 		});
-	}
-	
-	/**
-	 * Unterbruche wird von serieller Schnittstelle geschickt.
-	 */
-	public void gotBreak(final AbstractConnection connection){
-		connection.close();
-		setChecked(false);
-		_elexislog.log("Break", Log.INFOS); //$NON-NLS-1$
-		SWTHelper.showError(Messages.SysmexAction_RS232_Break_Title, Messages
-			.SysmexAction_RS232_Break_Text);
 	}
 	
 	/**
@@ -306,7 +301,7 @@ public class SysmexAction extends Action implements ComPortListener {
 	/**
 	 * Daten werden von der Seriellen Schnittstelle geliefert
 	 */
-	public void gotData(final AbstractConnection connection, final byte[] data){
+	public void gotData(final Connection connection, final byte[] data){
 		stopShutdownSequence();
 		
 		String content = new String(data);

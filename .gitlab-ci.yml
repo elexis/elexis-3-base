@@ -12,8 +12,8 @@ build:
   - java11
   - maven
   script:
-  - if [ $(curl -s --head -w %{http_code} http://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/target/ -o /dev/null) == '200' ]; then export BUILD_TARGET_BRANCH=$CI_COMMIT_REF_NAME; fi 
-  - if [ $(curl -s --head -w %{http_code} http://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-core/ -o /dev/null) == '200' ]; then export BUILD_CORE_BRANCH=$CI_COMMIT_REF_NAME; fi 
+  - if [ $(curl -s --head -w %{http_code} https://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/target/ -o /dev/null) == '200' ]; then export BUILD_TARGET_BRANCH=$CI_COMMIT_REF_NAME; fi 
+  - if [ $(curl -s --head -w %{http_code} https://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-core/ -o /dev/null) == '200' ]; then export BUILD_CORE_BRANCH=$CI_COMMIT_REF_NAME; fi 
   - xvfb-run mvn clean verify ${BUILD_TARGET_BRANCH:+-Dgit.target.branch=$BUILD_TARGET_BRANCH} ${BUILD_CORE_BRANCH:+-Dgit.core.branch=$BUILD_CORE_BRANCH}
   - eval $(ssh-agent -s)
   - ssh-add <(echo "$SSH_PRIVATE_KEY_ED25519_BASE64" | base64 -d)

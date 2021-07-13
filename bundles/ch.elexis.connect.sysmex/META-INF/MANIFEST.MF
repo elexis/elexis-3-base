@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Sysmex Laborgeräteanbindung
 Bundle-SymbolicName: ch.elexis.connect.sysmex;singleton:=true
 Bundle-Version: 3.2.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  ch.rgw.utility,
@@ -12,4 +12,5 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core.data,
  ch.elexis.core.ui.importer.div;bundle-version="3.2.0"
 Bundle-Vendor: elexis.info
-Import-Package: org.apache.commons.lang
+Import-Package: ch.elexis.core.serial,
+ org.apache.commons.lang

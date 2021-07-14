@@ -34,7 +34,10 @@ import ch.elexis.core.utils.OsgiServiceUtil;
 
 /**
  * Test the Elexis ehc integration, with the ehealthsuisse <a
- * href=https://ehealthsuisse.ihe-europe.net/>„EPD-Referenzumgebung“ (EPD-RU)</a>.
+ * href=https://ehealthsuisse.ihe-europe.net/>„EPD-Referenzumgebung“ (EPD-RU)</a>.<br>
+ * <b>ATTENTION to run the test a valid jks for the gazelle test system is needed in the /rsc/cert/
+ * folder of the fragment. For medelexis such a jks is available attached to ticket
+ * https://redmine.medelexis.ch/issues/17337
  * 
  * @author thomas
  *

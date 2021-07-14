@@ -13,11 +13,8 @@
     <module>ch.elexis.base.ch.feature</module>
     <module>ch.elexis.hl7.message.feature</module>
     <module>at.gruber.elexis.mythic22.feature</module>
-    <!--
-    <module>at.medevit.ch.artikelstamm.medcalendar.feature</module>
-	-->
-	<module>at.medevit.elexis.corona123.feature</module>
-	<module>at.medevit.elexis.kapsch.referral.feature</module>
+    <module>at.medevit.elexis.corona123.feature</module>
+    <module>at.medevit.elexis.kapsch.referral.feature</module>
     <module>at.medevit.elexis.agenda.feature</module>
     <module>at.medevit.elexis.cobasmira.feature</module>
     <module>at.medevit.elexis.decision.feature</module>
@@ -36,9 +33,6 @@
     <module>ch.elexis.archie.wzw.feature</module>
     <module>ch.elexis.barcode.scanner.feature</module>
     <module>ch.elexis.base.befunde.feature</module>
-    <!--
-    <module>ch.elexis.base.ch.legacy.feature</module>
-	-->
     <module>ch.elexis.base.konsextension.bildanzeige.feature</module>
     <module>ch.elexis.base.konsextension.privatnotizen.feature</module>
     <module>ch.elexis.base.messages.feature</module>
@@ -97,9 +91,6 @@
     <module>net.medshare.connector.aerztekasse.feature</module>
     <module>net.medshare.connector.viollier.feature</module>
     <module>org.iatrix.bestellung.rose.feature</module>
-    <!--
-    <module>org.iatrix.feature</module>
-	-->
     <module>org.iatrix.messwerte.feature</module>
     <module>waelti.statistics.feature</module>
     <module>ch.itmed.fop.printing.feature</module>

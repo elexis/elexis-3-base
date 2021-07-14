@@ -16,6 +16,7 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.core.findings.util;bundle-version="3.9.0",
  ch.elexis.core.findings.templates;bundle-version="3.9.0"
-Service-Component: OSGI-INF/ch.elexis.base.befunde.findings.migrator.preferences.FindingsServiceComponent.xml,
- OSGI-INF/ch.elexis.base.befunde.findings.migrator.MesswertMigrator.xml
+Service-Component: OSGI-INF/ch.elexis.base.befunde.findings.migrator.MesswertMigrator.xml,
+ OSGI-INF/ch.elexis.base.befunde.findings.migrator.preferences.FindingsServiceComponent.xml,
+ OSGI-INF/ch.elexis.base.befunde.model.BefundeStoreToStringContribution.xml
 Import-Package: org.jdom;version="1.1.1"

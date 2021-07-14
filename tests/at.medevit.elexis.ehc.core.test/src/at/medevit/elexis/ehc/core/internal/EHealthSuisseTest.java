@@ -88,11 +88,11 @@ public class EHealthSuisseTest {
 		sslStoreService = OsgiServiceUtil.getService(ISSLStoreService.class)
 			.orElseThrow(() -> new IllegalStateException("No ISSLStoreService available"));
 		Optional<KeyStore> currentTrustStore = sslStoreService.loadKeyStore(
-			AffinityDomain.class.getResourceAsStream("/rsc/cert/gazelle.jks"), "gazelle", "JKS");
+			EHealthSuisseTest.class.getResourceAsStream("/rsc/cert/gazelle.jks"), "gazelle", "JKS");
 		currentTrustStore.ifPresent(store -> sslStoreService.addTrustStore(store));
 		
 		Optional<KeyStore> currentKeyStore = sslStoreService.loadKeyStore(
-			AffinityDomain.class.getResourceAsStream("/rsc/cert/gazelle.jks"), "gazelle", "JKS");
+			EHealthSuisseTest.class.getResourceAsStream("/rsc/cert/gazelle.jks"), "gazelle", "JKS");
 		currentKeyStore.ifPresent(store -> sslStoreService.addKeyStore(store, "gazelle"));
 		
 		if (affinityDomain == null) {

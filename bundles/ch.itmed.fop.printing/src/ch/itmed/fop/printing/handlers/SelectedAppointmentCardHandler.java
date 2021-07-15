@@ -11,49 +11,43 @@
 
 package ch.itmed.fop.printing.handlers;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.PersistentObject;
+import ch.itmed.fop.printing.resources.Messages;
 
-@SuppressWarnings("restriction")
 public final class SelectedAppointmentCardHandler extends AbstractHandler {
-	
-	@Inject
-	private ECommandService commandService;
-	
-	@Inject
-	private EHandlerService handlerService;
-	
-	public SelectedAppointmentCardHandler(){
-		CoreUiUtil.injectServices(this);
-	}
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IHandlerService handlerService =
+			(IHandlerService) HandlerUtil.getActiveSite(event).getService(IHandlerService.class);
 		// transfer selection to elexis event dispatcher
 		IStructuredSelection currentSelection = HandlerUtil.getCurrentStructuredSelection(event);
 		if (!currentSelection.isEmpty()) {
 			ElexisEventDispatcher.fireSelectionEvent(getAsPersistentObject(currentSelection));
 		}
 		// call default command
-		ParameterizedCommand cmd =
-			commandService.createCommand("ch.itmed.fop.printing.command.AppointmentCardPrint",
+		try {
+			handlerService.executeCommand("ch.itmed.fop.printing.command.AppointmentCardPrint",
 				null);
-		if (cmd != null) {
-			handlerService.executeHandler(cmd);
+		} catch (ExecutionException | NotDefinedException | NotEnabledException
+				| NotHandledException e) {
+			SWTHelper.showError(Messages.DefaultError_Title, Messages.DefaultError_Message);
+			LoggerFactory.getLogger(getClass()).error(e.getLocalizedMessage(), e);
 		}
 		return null;
 	}

@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 import ch.elexis.core.model.IArticle;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.xml.elements.ArticlesElement;
+import ch.itmed.fop.printing.xml.elements.MandatorElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
 
 public class ArticleLabel {
@@ -39,6 +40,12 @@ public class ArticleLabel {
 		doc.appendChild(page);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
+		
+		Element mandator = MandatorElement.create(doc);
+		if (mandator != null) {
+			page.appendChild(mandator);
+		}
+		
 		Element articles = ArticlesElement.create(doc, includeMedication);
 		page.appendChild(articles);
 
@@ -52,6 +59,12 @@ public class ArticleLabel {
 		doc.appendChild(page);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
+		
+		Element mandator = MandatorElement.create(doc);
+		if (mandator != null) {
+			page.appendChild(mandator);
+		}
+		
 		Element articles = ArticlesElement.create(doc, article);
 		page.appendChild(articles);
 		

@@ -16,5 +16,6 @@ Import-Package: ch.elexis.core.model,
  org.eclipse.swt.graphics,
  org.eclipse.swt.widgets,
  org.slf4j;version="1.7.30"
-Require-Bundle: com.google.zxing.core;bundle-version="3.3.2"
 Export-Package: ch.elexis.ebanking.qr
+Bundle-ClassPath: lib/com.google.zxing.core_3.3.2.jar,
+ .

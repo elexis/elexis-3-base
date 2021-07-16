@@ -18,6 +18,10 @@ import ch.elexis.data.Mandant;
 public final class MandatorData {
 	private Mandant mandator;
 	
+	public boolean canLoad(){
+		return ElexisEventDispatcher.getSelected(Mandant.class) != null;
+	}
+	
 	public void load() throws NullPointerException {
 		mandator = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
 		if (mandator == null) {

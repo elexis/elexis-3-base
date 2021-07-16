@@ -18,6 +18,7 @@ import org.w3c.dom.Element;
 
 import ch.elexis.core.model.IPrescription;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
+import ch.itmed.fop.printing.xml.elements.MandatorElement;
 import ch.itmed.fop.printing.xml.elements.MedicationElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
 
@@ -32,6 +33,11 @@ public final class MedicationLabel {
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
 
+		Element mandator = MandatorElement.create(doc);
+		if (mandator != null) {
+			page.appendChild(mandator);
+		}
+		
 		return DomDocument.toInputStream(doc);
 	}
 	
@@ -44,6 +50,11 @@ public final class MedicationLabel {
 		page.appendChild(medication);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
+		
+		Element mandator = MandatorElement.create(doc);
+		if (mandator != null) {
+			page.appendChild(mandator);
+		}
 		
 		return DomDocument.toInputStream(doc);
 	}

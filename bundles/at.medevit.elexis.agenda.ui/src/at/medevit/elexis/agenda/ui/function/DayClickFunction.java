@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.chromium.Browser;
+
+import com.equo.chromium.swt.Browser;
 
 import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import ch.elexis.core.model.IAppointment;

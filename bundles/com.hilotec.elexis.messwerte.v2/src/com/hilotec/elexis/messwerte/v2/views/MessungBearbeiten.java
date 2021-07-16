@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.chromium.Browser;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -35,12 +34,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.util.PlatformHelper;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Patient;
-import ch.rgw.tools.TimeTool;
-
+import com.equo.chromium.swt.Browser;
 import com.hilotec.elexis.messwerte.v2.data.Messung;
 import com.hilotec.elexis.messwerte.v2.data.MessungKonfiguration;
 import com.hilotec.elexis.messwerte.v2.data.MessungTyp;
@@ -51,6 +45,12 @@ import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
 import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypCalc;
 import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypDate;
 import com.tiff.common.ui.datepicker.DatePickerCombo;
+
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.util.PlatformHelper;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Patient;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Dialog um eine Messung zu bearbeiten oder neu zu erstellen
@@ -66,6 +66,7 @@ public class MessungBearbeiten extends TitleAreaDialog {
 	private String tabtitle;
 	
 	private final Listener listener = new Listener() {
+		@Override
 		public void handleEvent(Event event){
 			Boolean validValues = true;
 			for (Messwert mw : shownMesswerte) {

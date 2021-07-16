@@ -1,9 +1,10 @@
 package at.medevit.elexis.agenda.ui.function;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.swt.chromium.Browser;
-import org.eclipse.swt.chromium.BrowserFunction;
 import org.slf4j.LoggerFactory;
+
+import com.equo.chromium.swt.Browser;
+import com.equo.chromium.swt.BrowserFunction;
 
 import at.medevit.elexis.agenda.ui.view.AgendaView;
 

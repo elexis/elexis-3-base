@@ -18,9 +18,10 @@ import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.chromium.Browser;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
+
+import com.equo.chromium.swt.Browser;
 
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
@@ -42,6 +43,7 @@ public class DocboxView extends ViewPart {
 	ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
 		ElexisEvent.EVENT_USER_CHANGED) {
 		
+		@Override
 		public void runInUi(ElexisEvent ev){
 			userChanged();
 		}

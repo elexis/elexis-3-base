@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.jface,
  org.eclipse.core.runtime;bundle-version="3.13.0",
  org.apache.httpcomponents.httpclient,
  org.apache.httpcomponents.httpcore,
- org.eclipse.swt.chromium
+ com.equo.chromium;bundle-version="80.0.2"
 Import-Package: ch.elexis.core.ui.preferences,
  ch.elexis.tarmedprefs,
  ch.rgw.io,

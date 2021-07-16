@@ -1,7 +1,8 @@
 package at.medevit.elexis.agenda.ui.function;
 
-import org.eclipse.swt.chromium.Browser;
-import org.eclipse.swt.chromium.BrowserFunction;
+
+import com.equo.chromium.swt.Browser;
+import com.equo.chromium.swt.BrowserFunction;
 
 import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
@@ -17,6 +18,7 @@ public class DoubleClickFunction extends BrowserFunction {
 		super(browser, name);
 	}
 	
+	@Override
 	public Object function(Object[] arguments){
 		if (arguments.length == 1) {
 			IAppointment termin = CoreModelServiceHolder.get()

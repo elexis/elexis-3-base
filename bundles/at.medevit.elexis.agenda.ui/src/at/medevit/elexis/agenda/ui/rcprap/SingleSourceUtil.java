@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.swt.chromium.Browser;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.equo.chromium.swt.Browser;
 
 public class SingleSourceUtil {
 	

@@ -12,11 +12,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.eclipse.e4.ui.di.UISynchronize;
-import org.eclipse.swt.chromium.Browser;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.equo.chromium.swt.Browser;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;

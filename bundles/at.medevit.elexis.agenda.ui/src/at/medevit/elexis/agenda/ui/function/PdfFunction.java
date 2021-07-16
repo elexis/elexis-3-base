@@ -8,9 +8,10 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
-import org.eclipse.swt.chromium.Browser;
-import org.eclipse.swt.chromium.BrowserFunction;
 import org.slf4j.LoggerFactory;
+
+import com.equo.chromium.swt.Browser;
+import com.equo.chromium.swt.BrowserFunction;
 
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 

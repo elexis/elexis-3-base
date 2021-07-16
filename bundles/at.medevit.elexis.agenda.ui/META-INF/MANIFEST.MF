@@ -20,7 +20,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.databinding.property,
  org.eclipse.core.databinding.beans,
  org.eclipse.e4.core.di,
- org.eclipse.swt.chromium
+ com.equo.chromium;bundle-version="80.0.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Multi-Release: true
 Bundle-ActivationPolicy: lazy

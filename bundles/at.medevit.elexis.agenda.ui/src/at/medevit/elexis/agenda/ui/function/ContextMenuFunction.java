@@ -7,8 +7,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.chromium.Browser;
 import org.eclipse.swt.widgets.Display;
+
+import com.equo.chromium.swt.Browser;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;

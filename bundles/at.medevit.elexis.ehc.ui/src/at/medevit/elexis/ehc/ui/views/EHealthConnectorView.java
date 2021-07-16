@@ -24,7 +24,6 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.chromium.Browser;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,6 +38,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.equo.chromium.swt.Browser;
 
 import at.medevit.elexis.ehc.ui.Messages;
 import at.medevit.elexis.ehc.ui.util.CDALoader;

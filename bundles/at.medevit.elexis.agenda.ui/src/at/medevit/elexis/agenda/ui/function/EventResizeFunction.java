@@ -2,7 +2,7 @@ package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDateTime;
 
-import org.eclipse.swt.chromium.Browser;
+import com.equo.chromium.swt.Browser;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;

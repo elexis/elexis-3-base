@@ -5,7 +5,6 @@ import java.net.URI;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.chromium.Browser;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -16,6 +15,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.slf4j.LoggerFactory;
+
+import com.equo.chromium.swt.Browser;
 
 public class ResponseDialog extends Dialog {
 	

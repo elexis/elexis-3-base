@@ -2,8 +2,9 @@ package at.medevit.elexis.agenda.ui.function;
 
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.chromium.Browser;
-import org.eclipse.swt.chromium.BrowserFunction;
+
+import com.equo.chromium.swt.Browser;
+import com.equo.chromium.swt.BrowserFunction;
 
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;

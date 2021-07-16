@@ -19,13 +19,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
-import org.eclipse.swt.chromium.Browser;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.equo.chromium.swt.Browser;
 
 import at.medevit.elexis.agenda.ui.function.ContextMenuFunction;
 import at.medevit.elexis.agenda.ui.function.DayClickFunction;

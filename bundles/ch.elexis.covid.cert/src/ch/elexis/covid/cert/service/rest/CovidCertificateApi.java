@@ -139,11 +139,14 @@ public class CovidCertificateApi {
 			KeyStore clientStore = KeyStore.getInstance("PKCS12");
 			clientStore.load(
 				getClass().getClassLoader()
-					.getResourceAsStream("/rsc/" + keyProperties.getProperty("testcert")),
-				keyProperties.getProperty("testcertpass").toCharArray());
+					.getResourceAsStream("/rsc/"
+						+ keyProperties.getProperty(mode == Mode.TEST ? "testcert" : "prodcert")),
+				keyProperties.getProperty(mode == Mode.TEST ? "testcertpass" : "prodcertpass")
+					.toCharArray());
 			KeyManagerFactory kmf =
 				KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-			kmf.init(clientStore, keyProperties.getProperty("testcertpass").toCharArray());
+			kmf.init(clientStore, keyProperties
+				.getProperty(mode == Mode.TEST ? "testcertpass" : "prodcertpass").toCharArray());
 			
 			sslcontext.init(kmf.getKeyManagers(), new TrustManager[] {
 				new X509TrustManager() {
@@ -234,7 +237,8 @@ public class CovidCertificateApi {
 			try {
 				InputStream inputStream =
 					getClass().getClassLoader()
-						.getResourceAsStream("/rsc/" + keyProperties.getProperty("testkey"));
+						.getResourceAsStream("/rsc/"
+							+ keyProperties.getProperty(mode == Mode.TEST ? "testkey" : "prodkey"));
 				if(inputStream != null) {
 					String pemString = IOUtils.toString(inputStream, "UTF-8");
 					pemString = pemString.replaceAll("(\\r|\\n|\\r\\n)+", "");

@@ -24,6 +24,8 @@ public class JsonValueSet {
 	
 	public static Optional<JsonValueSet> load(String name){
 		try {
+			name = cummulatedMapName(name);
+			
 			InputStream jsonInput =
 				JsonValueSet.class.getResourceAsStream("/rsc/" + name + ".json");
 			if (jsonInput != null) {
@@ -32,6 +34,12 @@ public class JsonValueSet {
 					ValueSetConceptArray valueSet = gson
 						.fromJson(IOUtils.toString(jsonInput, "UTF-8"), ValueSetConceptArray.class);
 					return Optional.of(new JsonValueSet(valueSet));
+				} else if (isCummulated(name)) {
+					ValueSetCummulatedArray valueSet = gson.fromJson(
+						IOUtils.toString(jsonInput, "UTF-8"), ValueSetCummulatedArray.class);
+					return Optional.of(new JsonValueSet(valueSet, "covid-19-lab-test-manufacturer",
+						"https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+						"type_code=LP217198-3"));
 				} else {
 					ValueSetConceptMap valueSet = gson
 						.fromJson(IOUtils.toString(jsonInput, "UTF-8"), ValueSetConceptMap.class);
@@ -45,13 +53,29 @@ public class JsonValueSet {
 		return Optional.empty();
 	}
 	
+	private static String cummulatedMapName(String name){
+		if("test-manufacturer".equals(name)) {
+			return "cummulated_tests_1.0.0";
+		}
+		return name;
+	}
+	
 	private static boolean isValueSetList(String name){
 		return "country-alpha-2-de".equals(name);
+	}
+	
+	private static boolean isCummulated(String name){
+		return name.startsWith("cummulated");
 	}
 	
 	private ValueSetConceptMap valueSetMap;
 	
 	private ValueSetConceptArray valueSetArray;
+	
+	private ValueSetCummulatedArray cummulatedValueSet;
+	private String cummulatedValueSetId;
+	private String cummulatedFilter;
+	private String cummulatedSystem;
 	
 	public JsonValueSet(ValueSetConceptMap valueSet){
 		this.valueSetMap = valueSet;
@@ -61,9 +85,20 @@ public class JsonValueSet {
 		this.valueSetArray = valueSet;
 	}
 	
+	public JsonValueSet(ValueSetCummulatedArray valueSet, String valueSetId, String system,
+		String filterString){
+		this.cummulatedValueSet = valueSet;
+		this.cummulatedValueSetId = valueSetId;
+		this.cummulatedSystem = system;
+		this.cummulatedFilter = filterString;
+	}
+	
 	public String getId(){
 		if (valueSetArray != null) {
 			return valueSetArray.valueSetId;
+		}
+		if (cummulatedValueSet != null) {
+			return cummulatedValueSetId;
 		}
 		return valueSetMap.valueSetId;
 	}
@@ -81,15 +116,36 @@ public class JsonValueSet {
 					.filter(entry -> isActive(entry.getValue()))
 					.map(entry -> (ICoding) new Coding(entry)).collect(Collectors.toList());
 			}
+		} else if (cummulatedValueSet != null) {
+			if (cummulatedValueSet.entries != null) {
+				return Arrays.asList(cummulatedValueSet.entries).stream()
+					.filter(entry -> isActive(entry) && isCummulatedFilter(entry, cummulatedFilter))
+					.map(entry -> (ICoding) new Coding(entry)).collect(Collectors.toList());
+			}
 		}
 		return Collections.emptyList();
 	}
 	
-	private boolean isActive(Map<String, String> map){
-		if (StringUtils.isNotBlank(map.get("active"))) {
-			return Boolean.parseBoolean(map.get("active"));
+	private boolean isCummulatedFilter(Map<String, String> map, String cummulatedFilter){
+		if (cummulatedFilter != null && cummulatedFilter.split("=").length == 2) {
+			String[] filterParts = cummulatedFilter.split("=");
+			if (StringUtils.isNotBlank(map.get(filterParts[0]))) {
+				return filterParts[1].equals(map.get(filterParts[0]));
+			}
 		}
 		return true;
+	}
+	
+	private boolean isActive(Map<String, String> map){
+		boolean activeValue = true;
+		if (StringUtils.isNotBlank(map.get("active"))) {
+			activeValue = Boolean.parseBoolean(map.get("active"));
+		}
+		boolean chAcceptedValue = true;
+		if (StringUtils.isNotBlank(map.get("ch_accepted"))) {
+			chAcceptedValue = Boolean.parseBoolean(map.get("ch_accepted"));
+		}
+		return activeValue && chAcceptedValue;
 	}
 	
 	@Override

@@ -12,14 +12,31 @@ public class Coding implements ICoding {
 	private String system;
 	
 	public Coding(Map<String, String> map){
+		if (map.containsKey("manufacturer")) {
+			this.display = map.get("manufacturer") + " - ";
+		}
 		if (map.containsKey("short")) {
 			this.code = map.get("short");
 		}
 		if (map.containsKey("display")) {
-			this.display = map.get("display");
+			if (this.display != null) {
+				this.display += map.get("display");
+			} else {
+				this.display = map.get("display");
+			}
 		}
 		if (map.containsKey("system")) {
 			this.system = map.get("system");
+		}
+		if (map.containsKey("manufacturer_code_eu")) {
+			this.code = map.get("manufacturer_code_eu");
+		}
+		if (map.containsKey("name")) {
+			if (this.display != null) {
+				this.display += map.get("name");
+			} else {
+				this.display = map.get("name");
+			}
 		}
 	}
 	

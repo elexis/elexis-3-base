@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -35,7 +36,9 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.IValueSetService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.rest.model.TestInfo;
 import ch.elexis.covid.cert.service.rest.model.TestModel;
 
@@ -79,7 +82,8 @@ public class TestModelDialog extends Dialog {
 				return super.getText(element);
 			}
 		});
-		typeCombo.setInput(valueSetService.getValueSet("covid-19-test-type"));
+		List<ICoding> testsTypeValueSet = valueSetService.getValueSet("covid-19-test-type");
+		typeCombo.setInput(testsTypeValueSet);
 		typeCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event){
@@ -106,7 +110,8 @@ public class TestModelDialog extends Dialog {
 		
 		manufacturerCombo = new ComboViewer(parent, SWT.BORDER);
 		manufacturerCombo.setContentProvider(ArrayContentProvider.getInstance());
-		manufacturerCombo.setInput(valueSetService.getValueSet("covid-19-lab-test-manufacturer"));
+		List<ICoding> testsValueSet = valueSetService.getValueSet("covid-19-lab-test-manufacturer");
+		manufacturerCombo.setInput(testsValueSet);
 		manufacturerCombo.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element){
@@ -199,7 +204,17 @@ public class TestModelDialog extends Dialog {
 		countryCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		countryCombo.getControl().setToolTipText("Land des Test");
 		
-		typeCombo.getControl().setFocus();
+		// init default values
+		testsTypeValueSet.stream().filter(c -> c.getCode().equals("LP217198-3")).findFirst()
+			.ifPresent(c -> typeCombo.setSelection(new StructuredSelection(c)));
+		String defaultTestCode =
+			ConfigServiceHolder.get().get(CertificatesService.CFG_DEFAULT_TESTPRODUCT, null);
+		if (defaultTestCode != null) {
+			testsValueSet.stream().filter(c -> c.getCode().equals(defaultTestCode)).findFirst()
+				.ifPresent(c -> manufacturerCombo.setSelection(new StructuredSelection(c)));
+		}
+		
+		manufacturerCombo.getControl().setFocus();
 		return parent;
 	}
 	

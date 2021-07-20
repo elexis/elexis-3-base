@@ -2,6 +2,7 @@ package ch.elexis.covid.cert.ui.preference;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -25,6 +26,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import ch.elexis.core.findings.ICoding;
+import ch.elexis.core.findings.codes.IValueSetService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.covid.cert.service.CertificatesService;
@@ -39,8 +42,15 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	
 	private Text otpText;
 	
+	private ComboViewer defaultVaccinationCombo;
+	
+	private ComboViewer defaultTestCombo;
+	
 	@Inject
 	private CertificatesService service;
+	
+	@Inject
+	private IValueSetService valueSetService;
 	
 	private Label textLabel;
 	
@@ -77,7 +87,74 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 				service.setMode((Mode) event.getStructuredSelection().getFirstElement());
 			}
 		});
-
+		
+		defaultVaccinationCombo = new ComboViewer(ret, SWT.BORDER);
+		defaultVaccinationCombo.setContentProvider(ArrayContentProvider.getInstance());
+		List<ICoding> vaccinationValueSet = valueSetService.getValueSet("vaccines-covid-19-names");
+		defaultVaccinationCombo.setInput(vaccinationValueSet);
+		defaultVaccinationCombo.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element){
+				if (element instanceof ICoding) {
+					return ((ICoding) element).getDisplay();
+				}
+				return super.getText(element);
+			}
+		});
+		defaultVaccinationCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event){
+				if (event.getStructuredSelection() != null
+					&& !event.getStructuredSelection().isEmpty()) {
+					ICoding selected = (ICoding) event.getStructuredSelection().getFirstElement();
+					ConfigServiceHolder.get().set(CertificatesService.CFG_DEFAULT_VACCPRODUCT,
+						selected.getCode());
+				}
+			}
+		});
+		defaultVaccinationCombo.getControl().setToolTipText("Vorauswahl Impf-Produkt");
+		defaultVaccinationCombo.getCombo().setText("Vorauswahl Impf-Produkt");
+		String defaultVaccCode =
+			ConfigServiceHolder.get().get(CertificatesService.CFG_DEFAULT_VACCPRODUCT, null);
+		if (defaultVaccCode != null) {
+			vaccinationValueSet.stream().filter(c -> c.getCode().equals(defaultVaccCode))
+				.findFirst()
+				.ifPresent(c -> defaultVaccinationCombo.setSelection(new StructuredSelection(c)));
+		}
+		
+		defaultTestCombo = new ComboViewer(ret, SWT.BORDER);
+		defaultTestCombo.setContentProvider(ArrayContentProvider.getInstance());
+		List<ICoding> testsValueSet = valueSetService.getValueSet("covid-19-lab-test-manufacturer");
+		defaultTestCombo.setInput(testsValueSet);
+		defaultTestCombo.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element){
+				if (element instanceof ICoding) {
+					return ((ICoding) element).getDisplay();
+				}
+				return super.getText(element);
+			}
+		});
+		defaultTestCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event){
+				if (event.getStructuredSelection() != null
+					&& !event.getStructuredSelection().isEmpty()) {
+					ICoding selected = (ICoding) event.getStructuredSelection().getFirstElement();
+					ConfigServiceHolder.get().set(CertificatesService.CFG_DEFAULT_TESTPRODUCT,
+						selected.getCode());
+				}
+			}
+		});
+		defaultTestCombo.getControl().setToolTipText("Vorauswahl Test-Produkt");
+		defaultTestCombo.getCombo().setText("Vorauswahl Test-Produkt");
+		String defaultTestCode =
+			ConfigServiceHolder.get().get(CertificatesService.CFG_DEFAULT_TESTPRODUCT, null);
+		if (defaultTestCode != null) {
+			testsValueSet.stream().filter(c -> c.getCode().equals(defaultTestCode)).findFirst()
+				.ifPresent(c -> defaultTestCombo.setSelection(new StructuredSelection(c)));
+		}
+		
 		testingCenter = new Text(ret, SWT.BORDER);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		testingCenter.setLayoutData(gd);
@@ -119,8 +196,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	}
 	
 	private void updateTextLabel(){
-		String timeStampString = ConfigServiceHolder.get()
-			.getActiveMandator(CertificatesService.CFG_OTP_TIMESTAMP, "");
+		String timeStampString =
+			ConfigServiceHolder.get().getActiveMandator(CertificatesService.CFG_OTP_TIMESTAMP, "");
 		if (StringUtils.isNotBlank(timeStampString)) {
 			LocalDateTime timeStamp = LocalDateTime.parse(timeStampString);
 			textLabel.setText("OTP des Mandanten von "

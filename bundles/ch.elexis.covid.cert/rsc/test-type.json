@@ -3,14 +3,14 @@
   "valueSetDate": "2021-05-05",
   "valueSetValues": {
     "LP6464-4": {
-      "display": "Nucleic acid amplification with probe detection",
+      "display": "Nucleic acid amplification with probe detection (PCR)",
       "lang": "en",
       "active": true,
       "version": "2.69",
       "system": "http://loinc.org"
     },
     "LP217198-3": {
-      "display": "Rapid immunoassay",
+      "display": "Rapid immunoassay (Antigen-Test)",
       "lang": "en",
       "active": true,
       "version": "2.69",

@@ -3,6 +3,7 @@ package ch.elexis.covid.cert.ui.dialogs;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -35,7 +36,9 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.IValueSetService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.rest.model.VaccinationModel;
 
 public class VaccinationModelDialog extends Dialog {
@@ -87,7 +90,8 @@ public class VaccinationModelDialog extends Dialog {
 		
 		productCombo = new ComboViewer(parent, SWT.BORDER);
 		productCombo.setContentProvider(ArrayContentProvider.getInstance());
-		productCombo.setInput(valueSetService.getValueSet("vaccines-covid-19-names"));
+		List<ICoding> vaccinationValueSet = valueSetService.getValueSet("vaccines-covid-19-names");
+		productCombo.setInput(vaccinationValueSet);
 		productCombo.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element){
@@ -198,7 +202,15 @@ public class VaccinationModelDialog extends Dialog {
 		countryCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		countryCombo.getControl().setToolTipText("Land der Impfung");
 		
-		productCombo.getControl().setFocus();
+		String defaultVaccCode =
+			ConfigServiceHolder.get().get(CertificatesService.CFG_DEFAULT_VACCPRODUCT, null);
+		if (defaultVaccCode != null) {
+			vaccinationValueSet.stream().filter(c -> c.getCode().equals(defaultVaccCode))
+				.findFirst()
+				.ifPresent(c -> productCombo.setSelection(new StructuredSelection(c)));
+		}
+		
+		dosage.setFocus();
 		return parent;
 	}
 	

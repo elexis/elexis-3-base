@@ -31,6 +31,11 @@ import ch.rgw.tools.Result.SEVERITY;
 @Component(service = CertificatesService.class)
 public class CertificatesService {
 	
+	public static final String CFG_DEFAULT_VACCPRODUCT =
+		"ch.elexis.covid.cert/default/vaccproductcode";
+	public static final String CFG_DEFAULT_TESTPRODUCT =
+		"ch.elexis.covid.cert/default/testproductcode";
+	
 	private static String CFG_MODE = "ch.elexis.covid.cert/mode";
 	
 	public static String CFG_TESTCENTERNAME = "ch.elexis.covid.cert/testcentername";

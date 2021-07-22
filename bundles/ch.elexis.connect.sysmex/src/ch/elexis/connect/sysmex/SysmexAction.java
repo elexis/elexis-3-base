@@ -93,7 +93,7 @@ public class SysmexAction extends Action implements ComPortListener {
 	}
 	
 	/**
-	 * Serielle Verbindung wird initialisiert
+	 * Init serial connection using {@link Connection}.
 	 */
 	private void initConnection(){
 		if (_ctrl != null && _ctrl.isOpen()) {

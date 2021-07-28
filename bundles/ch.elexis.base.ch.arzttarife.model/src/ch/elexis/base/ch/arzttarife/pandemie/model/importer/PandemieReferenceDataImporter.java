@@ -81,7 +81,8 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 					pl.setPandemic(line.get(1));
 					pl.setChapter(getChapter(line));
 					pl.setCode(line.get(4));
-					pl.setTitle(StringUtils.abbreviate(line.get(5), 255));
+					pl.setTitle(StringUtils
+						.abbreviate(line.get(5).replace("\n", "").replace("\r", ""), 255));
 					pl.setValidFrom(getValidFrom(line));
 					pl.setDescription(line.get(6));
 					pl.setOrg(StringUtils

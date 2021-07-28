@@ -48,6 +48,7 @@ public class BillLabResultOnCreationIdentifiedRunnableTest {
 	@Before
 	public void before() throws TaskException{
 		ContextServiceHolder.get().setActiveUser(AllTests.getUser());
+		ContextServiceHolder.get().setActiveMandator(AllTests.getMandator());
 		IEncounter encounter =
 			EncounterServiceHolder.get().getLatestEncounter(AllTests.getPatient()).get();
 		List<IBilled> billed = encounter.getBilled();
@@ -62,6 +63,7 @@ public class BillLabResultOnCreationIdentifiedRunnableTest {
 	
 	@After
 	public void after(){
+		ContextServiceHolder.get().setActiveMandator(null);
 		ContextServiceHolder.get().setActiveUser(null);
 	}
 	
@@ -120,6 +122,8 @@ public class BillLabResultOnCreationIdentifiedRunnableTest {
 		invoice.setDateFrom(LocalDate.now());
 		invoice.setDateTo(LocalDate.now());
 		CoreModelServiceHolder.get().save(invoice);
+		encounter.setInvoice(invoice);
+		CoreModelServiceHolder.get().save(encounter);
 		
 		ILabResult labResult = new ILabResultBuilder(CoreModelServiceHolder.get(),
 			AllTests.getLabItem(), AllTests.getPatient()).build();

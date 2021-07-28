@@ -8,6 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.ILabItem;
 import ch.elexis.core.model.ILaboratory;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.tasks.integration.test.hl7import.Hl7ImporterTaskIntegrationTest;
@@ -30,6 +31,10 @@ public class AllTests {
 		util.prepareEnvironment();
 		util.configureLabAndLabItemBilling();
 		util.importEal2009();
+	}
+	
+	public static IMandator getMandator(){
+		return util.getMandator();
 	}
 	
 	public static IUser getUser(){

@@ -41,6 +41,7 @@ import ch.novcom.elexis.mednet.plugin.MedNetConfigFormItem;
 import ch.novcom.elexis.mednet.plugin.MedNetLabItemResolver;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 import ch.rgw.tools.Result;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Manage the import of HL7 and PDF Documents into the Patient
@@ -264,7 +265,8 @@ public class DocumentImporter {
 			) {
 			
 			//Pick the most informations from the PDF Filename
-			String documentDateTime = "";
+			String samplingDateTime = "";
+			String transmissionDateTime = "";
 			String patientId = "";
 			String patientLastName = "";
 			String patientFirstName = "";
@@ -274,14 +276,16 @@ public class DocumentImporter {
 			Matcher filenameMatcher = documentFilenamePattern.matcher(getBaseName(pdfFile));
 			
 			if(filenameMatcher.matches()){
-				documentDateTime = filenameMatcher.group("samplingDateTime");
-				if(documentDateTime == null || documentDateTime.isEmpty()) {
-					documentDateTime = filenameMatcher.group("transactionDateTime");
-				}
+				samplingDateTime = filenameMatcher.group("samplingDateTime");
+				transmissionDateTime = filenameMatcher.group("transactionDateTime");
 				patientId = filenameMatcher.group("PatientId");
 				patientLastName = filenameMatcher.group("PatientLastName");
 				patientBirthDate = filenameMatcher.group("PatientBirthdate");
 				orderNr = filenameMatcher.group("orderNr");
+			}
+			else {
+				LOGGER.warn("The PDF filename has not the expected Pattern and cannot be imported into omnivore:"+pdfFile);
+				return success;
 			}
 			
 			//If there is no hl7 File we first should search for the Patient
@@ -299,35 +303,61 @@ public class DocumentImporter {
 				if (documentManager != null) {
 					//Save the PDF file into Omnivore
 					
-					Date documentDateTimeObj = new Date();
-					try{
-						documentDateTimeObj = DocumentImporter.documentDateTimeParser.parse(documentDateTime);
-					}
-					catch(ParseException pe1){
-						//If we are not able to parse a DateTime, maybe it is only a Date
-						try {
-							documentDateTimeObj = DocumentImporter.documentDateParser.parse(documentDateTime);
+					
+					Date samplingDateTimeObj = null;
+					if(samplingDateTime != null && !samplingDateTime.isEmpty()) {
+						try{
+							samplingDateTimeObj = DocumentImporter.documentDateTimeParser.parse(samplingDateTime);
 						}
-						catch(ParseException pe2) {
-							LOGGER.warn("process Unable to parse documentDateTime:"+documentDateTime, pe2);
+						catch(ParseException pe1){
+							//If we are not able to parse a DateTime, maybe it is only a Date
+							try {
+								samplingDateTimeObj = DocumentImporter.documentDateParser.parse(samplingDateTime);
+							}
+							catch(ParseException pe2) {
+								LOGGER.warn("process Unable to parse samplingDateTime:"+samplingDateTime, pe2);
+							}
 						}
 					}
 					
-					String keywords = orderNr;
+					Date transmissionDateTimeObj = null;
+					if(transmissionDateTime != null && !transmissionDateTime.isEmpty()) {
+						try{
+							transmissionDateTimeObj = DocumentImporter.documentDateTimeParser.parse(transmissionDateTime);
+						}
+						catch(ParseException pe1){
+							//If we are not able to parse a DateTime, maybe it is only a Date
+							try {
+								transmissionDateTimeObj = DocumentImporter.documentDateParser.parse(transmissionDateTime);
+							}
+							catch(ParseException pe2) {
+								LOGGER.warn("process Unable to parse transmissionDateTime:"+transmissionDateTime, pe2);
+							}
+						}
+					}
 					
-					documentManager.addDocument(
-							contactLink,
-							institution,
-							orderNr,
-							pdfFile,
-							documentDateTimeObj, 
-							keywords
-							);
-					
-					success = true;
-					
+					if(transmissionDateTimeObj != null) {
+
+						String keywords = orderNr;
+						
+						documentManager.addDocument(
+								contactLink,
+								institution,
+								orderNr,
+								pdfFile,
+								samplingDateTimeObj,
+								transmissionDateTimeObj,
+								keywords
+								);
+						
+						success = true;
+						
+					}
+					else {
+						LOGGER.warn("No valid transmissionDateTime found in the filename:"+pdfFile+" the file will not be imported in Omnivore");
+						return success;
+					}
 				}
-				
 			}
 			else {
 				success = false;

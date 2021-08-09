@@ -38,6 +38,8 @@ public class MedNetMessages extends NLS {
 	public static String PatientDocumentManager_omnivoreNotInitialized;
 	public static String PatientDocumentManager_LabResultTitle;
 	public static String PatientDocumentManager_LabResultTitleTransactionFormat;
+	public static String PatientDocumentManager_LabResultTitleSamplingFormat;
+	public static String PatientDocumentManager_DocumentOmnivoreTitle;
 	public static String PatientDocumentManager_documentId;
 	public static String PatientDocumentManager_documentTitel;
 	public static String PatientDocumentManager_FormTitle;

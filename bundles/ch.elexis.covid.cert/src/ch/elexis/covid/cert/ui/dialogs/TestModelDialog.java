@@ -59,6 +59,8 @@ public class TestModelDialog extends Dialog {
 	
 	private ComboViewer countryCombo;
 	
+	private Text transferCode;
+	
 	public TestModelDialog(TestModel model, Shell shell){
 		super(shell);
 		this.model = model;
@@ -213,6 +215,21 @@ public class TestModelDialog extends Dialog {
 			testsValueSet.stream().filter(c -> c.getCode().equals(defaultTestCode)).findFirst()
 				.ifPresent(c -> manufacturerCombo.setSelection(new StructuredSelection(c)));
 		}
+		
+		transferCode = new Text(parent, SWT.BORDER);
+		transferCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		transferCode.setTextLimit(9);
+		transferCode.setMessage("Transfer Code");
+		transferCode.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e){
+				if (transferCode.getText() != null && transferCode.getText().length() == 9) {
+					model.setAppCode(transferCode.getText());
+				} else {
+					model.setAppCode(null);
+				}
+			}
+		});
 		
 		manufacturerCombo.getControl().setFocus();
 		return parent;

@@ -18,6 +18,7 @@ import ch.elexis.covid.cert.service.CertificatesService;
 //	  "dateOfBirth": "1950-06-04",
 //	  "language": "de",
 //	  "otp": "string",
+//	  "appCode": "stringstr",
 //	  "testInfo": [
 //	    {
 //	      "typeCode": "LP217198-3",
@@ -37,6 +38,8 @@ public class TestModel {
 	private String language;
 	
 	private String otp;
+	
+	private String appCode;
 	
 	private TestInfo[] testInfo;
 	
@@ -70,6 +73,14 @@ public class TestModel {
 	
 	public void setOtp(String otp){
 		this.otp = otp;
+	}
+	
+	public String getAppCode(){
+		return appCode;
+	}
+	
+	public void setAppCode(String appCode){
+		this.appCode = appCode;
 	}
 	
 	public TestInfo[] getTestInfo(){

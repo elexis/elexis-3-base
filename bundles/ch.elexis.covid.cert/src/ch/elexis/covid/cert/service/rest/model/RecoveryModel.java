@@ -14,6 +14,7 @@ import ch.elexis.core.model.IPatient;
 //	  "dateOfBirth": "1950-06-04",
 //	  "language": "de",
 //	  "otp": "string",
+//	  "appCode": "stringstr",
 //	  "recoveryInfo": [
 //	    {
 //	      "dateOfFirstPositiveTestResult": "2021-10-03",
@@ -30,6 +31,8 @@ public class RecoveryModel {
 	private String language;
 	
 	private String otp;
+	
+	private String appCode;
 	
 	private RecoveryInfo[] recoveryInfo;
 	
@@ -63,6 +66,14 @@ public class RecoveryModel {
 	
 	public void setOtp(String otp){
 		this.otp = otp;
+	}
+	
+	public String getAppCode(){
+		return appCode;
+	}
+	
+	public void setAppCode(String appCode){
+		this.appCode = appCode;
 	}
 	
 	public RecoveryInfo[] getRecoveryInfo(){

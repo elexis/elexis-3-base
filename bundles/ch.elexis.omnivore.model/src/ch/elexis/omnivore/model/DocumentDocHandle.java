@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +27,9 @@ import ch.elexis.core.model.IHistory;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.INativeQuery;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.DocumentStatus;
@@ -249,6 +252,25 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			}
 		}
 		return ret;
+	}
+	
+	@Override
+	public long getContentLength(){
+		INativeQuery nativeQuery = CoreModelServiceHolder.get()
+				.getNativeQuery("SELECT LENGTH(DOC) FROM CH_ELEXIS_OMNIVORE_DATA WHERE ID = ?1");
+			Iterator<?> result = nativeQuery
+				.executeWithParameters(nativeQuery.getIndexedParameterMap(Integer.valueOf(1), getId()))
+				.iterator();
+		if(result.hasNext()) {
+			return Long.parseLong(result.next().toString());
+		}
+		IVirtualFilesystemHandle vfsHandle = getStorageFile(false);
+		if(vfsHandle != null && vfsHandle.canRead()) {
+			try {
+				return vfsHandle.getContentLenght();
+			} catch (IOException e) {}
+		}
+		return -1l;
 	}
 	
 	@Override

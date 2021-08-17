@@ -259,6 +259,11 @@ public class MockOmnivoreDocumentStore implements IDocumentStore {
 				// TODO Auto-generated method stub
 				
 			}
+
+			@Override
+			public long getContentLength(){
+				return -1;
+			}
 		};
 	}
 	

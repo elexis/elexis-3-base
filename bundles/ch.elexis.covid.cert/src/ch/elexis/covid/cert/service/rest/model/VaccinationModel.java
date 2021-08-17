@@ -14,6 +14,7 @@ import ch.elexis.core.model.IPatient;
 //	  "dateOfBirth": "1950-06-04",
 //	  "language": "de",
 //	  "otp": "string",
+//	  "appCode": "stringstr",
 //	  "vaccinationInfo": [
 //	    {
 //	      "medicinalProductCode": "68267",
@@ -34,6 +35,8 @@ public class VaccinationModel {
 	private String language;
 	
 	private String otp;
+	
+	private String appCode;
 	
 	private VaccinationInfo[] vaccinationInfo;
 	
@@ -67,6 +70,14 @@ public class VaccinationModel {
 	
 	public void setOtp(String otp){
 		this.otp = otp;
+	}
+	
+	public String getAppCode(){
+		return appCode;
+	}
+	
+	public void setAppCode(String appCode){
+		this.appCode = appCode;
 	}
 	
 	public VaccinationInfo[] getVaccinationInfo(){

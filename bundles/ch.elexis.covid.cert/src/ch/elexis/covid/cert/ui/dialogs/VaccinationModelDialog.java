@@ -60,6 +60,8 @@ public class VaccinationModelDialog extends Dialog {
 	
 	private ComboViewer countryCombo;
 	
+	private Text transferCode;
+	
 	public VaccinationModelDialog(VaccinationModel model, Shell shell){
 		super(shell);
 		this.model = model;
@@ -209,6 +211,21 @@ public class VaccinationModelDialog extends Dialog {
 				.findFirst()
 				.ifPresent(c -> productCombo.setSelection(new StructuredSelection(c)));
 		}
+		
+		transferCode = new Text(parent, SWT.BORDER);
+		transferCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		transferCode.setTextLimit(9);
+		transferCode.setMessage("Transfer Code");
+		transferCode.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e){
+				if (transferCode.getText() != null && transferCode.getText().length() == 9) {
+					model.setAppCode(transferCode.getText());
+				} else {
+					model.setAppCode(null);
+				}
+			}
+		});
 		
 		dosage.setFocus();
 		return parent;

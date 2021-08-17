@@ -18,12 +18,15 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.findings.codes.IValueSetService;
@@ -42,6 +45,8 @@ public class RecoveryModelDialog extends Dialog {
 	private CDateTime dateTime;
 	
 	private ComboViewer countryCombo;
+	
+	private Text transferCode;
 	
 	public RecoveryModelDialog(RecoveryModel model, Shell shell){
 		super(shell);
@@ -115,6 +120,21 @@ public class RecoveryModelDialog extends Dialog {
 			new StructuredSelection(model.getRecoveryInfo()[0].getCountryOfTest()));
 		countryCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		countryCombo.getControl().setToolTipText("Land der Testung");
+		
+		transferCode = new Text(parent, SWT.BORDER);
+		transferCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		transferCode.setTextLimit(9);
+		transferCode.setMessage("Transfer Code");
+		transferCode.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e){
+				if(transferCode.getText() != null && transferCode.getText().length() == 9) {
+					model.setAppCode(transferCode.getText());
+				} else {
+					model.setAppCode(null);
+				}
+			}
+		});
 		
 		dateTime.setFocus();
 		return parent;

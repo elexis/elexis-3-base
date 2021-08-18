@@ -8,4 +8,5 @@ public class SuccessResponse {
 	
 	public String uvci;
 	
+	public DeliveryError appDeliveryError;
 }

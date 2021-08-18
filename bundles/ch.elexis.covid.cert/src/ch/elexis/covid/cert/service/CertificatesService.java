@@ -110,7 +110,14 @@ public class CertificatesService {
 					pdfToOmnivore(patient, Type.VACCINATION, (SuccessResponse) result);
 				CertificateInfo.add(Type.VACCINATION, LocalDateTime.now(), documentId,
 					((SuccessResponse) result).uvci, patient);
-				return Result.OK(((SuccessResponse) result).uvci);
+				Result<String> ret = Result.OK(((SuccessResponse) result).uvci);
+				
+				if (((SuccessResponse) result).appDeliveryError != null
+					&& ((SuccessResponse) result).appDeliveryError.errorMessage != null) {
+					ret.addMessage(SEVERITY.OK, "App Transfer Fehler\n\n"
+						+ ((SuccessResponse) result).appDeliveryError.errorMessage);
+				}
+				return ret;
 			} catch (ElexisException e) {
 				LoggerFactory.getLogger(getClass()).error("Error saving vaccination cert pdf", e);
 				return new Result<String>(SEVERITY.ERROR, 0, (String) e.getMessage(),
@@ -137,7 +144,14 @@ public class CertificatesService {
 					pdfToOmnivore(patient, Type.TEST, (SuccessResponse) result);
 				CertificateInfo.add(Type.TEST, LocalDateTime.now(), documentId,
 					((SuccessResponse) result).uvci, patient);
-				return Result.OK(((SuccessResponse) result).uvci);
+				Result<String> ret = Result.OK(((SuccessResponse) result).uvci);
+				
+				if (((SuccessResponse) result).appDeliveryError != null
+					&& ((SuccessResponse) result).appDeliveryError.errorMessage != null) {
+					ret.addMessage(SEVERITY.OK, "App Transfer Fehler\n\n"
+						+ ((SuccessResponse) result).appDeliveryError.errorMessage);
+				}
+				return ret;
 			} catch (ElexisException e) {
 				LoggerFactory.getLogger(getClass()).error("Error saving test cert pdf", e);
 				return new Result<String>(SEVERITY.ERROR, 0, (String) e.getMessage(),
@@ -155,7 +169,14 @@ public class CertificatesService {
 				String documentId = pdfToOmnivore(patient, Type.RECOVERY, (SuccessResponse) result);
 				CertificateInfo.add(Type.RECOVERY, LocalDateTime.now(), documentId,
 					((SuccessResponse) result).uvci, patient);
-				return Result.OK(((SuccessResponse) result).uvci);
+				Result<String> ret = Result.OK(((SuccessResponse) result).uvci);
+				
+				if (((SuccessResponse) result).appDeliveryError != null
+					&& ((SuccessResponse) result).appDeliveryError.errorMessage != null) {
+					ret.addMessage(SEVERITY.OK, "App Transfer Fehler\n\n"
+						+ ((SuccessResponse) result).appDeliveryError.errorMessage);
+				}
+				return ret;
 			} catch (ElexisException e) {
 				LoggerFactory.getLogger(getClass()).error("Error saving recovery cert pdf", e);
 				return new Result<String>(SEVERITY.ERROR, 0, (String) e.getMessage(),

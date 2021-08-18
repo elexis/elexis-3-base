@@ -223,11 +223,18 @@ public class TestModelDialog extends Dialog {
 		transferCode.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e){
-				if (transferCode.getText() != null && transferCode.getText().length() == 9) {
-					model.setAppCode(transferCode.getText());
-				} else {
-					model.setAppCode(null);
+				if (transferCode.getText() != null) {
+					// update to upper case
+					if (!transferCode.getText().equals(transferCode.getText().toUpperCase())) {
+						transferCode.setText(transferCode.getText().toUpperCase());
+						transferCode.setSelection(transferCode.getText().length());
+					}
+					if (transferCode.getText().length() == 9) {
+						model.setAppCode(transferCode.getText());
+						return;
+					}
 				}
+				model.setAppCode(null);
 			}
 		});
 		

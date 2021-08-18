@@ -253,6 +253,7 @@ public class PatientCertificates {
 							}
 							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
 								patient);
+							showResultInfos(result);
 						} else {
 							MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 								"Es ist folgender Fehler aufgetreten.\n\n"
@@ -268,6 +269,7 @@ public class PatientCertificates {
 					}
 				}
 			}
+			
 		});
 		btn.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		
@@ -290,6 +292,7 @@ public class PatientCertificates {
 							}
 							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
 								patient);
+							showResultInfos(result);
 						} else {
 							MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 								"Es ist folgender Fehler aufgetreten.\n\n"
@@ -326,6 +329,7 @@ public class PatientCertificates {
 							}
 							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
 								patient);
+							showResultInfos(result);
 						} else {
 							MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 								"Es ist folgender Fehler aufgetreten.\n\n"
@@ -393,6 +397,15 @@ public class PatientCertificates {
 		this.composite = composite;
 		setPatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 		setMandator(ContextServiceHolder.get().getActiveMandator().orElse(null));
+	}
+	
+	private void showResultInfos(Result<String> result){
+		if (result.getMessages().size() > 1) {
+			for (int i = 1; i < result.getMessages().size(); i++) {
+				MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Info",
+					result.getMessages().get(i).getText());
+			}
+		}
 	}
 	
 	private void setButtonsEnabled(Composite composite, boolean value){

@@ -53,7 +53,7 @@ public class BillLabResultOnCreationIdentifiedRunnableTest {
 			EncounterServiceHolder.get().getLatestEncounter(AllTests.getPatient()).get();
 		List<IBilled> billed = encounter.getBilled();
 		for (IBilled iBilled : billed) {
-			assertTrue(CoreModelServiceHolder.get().remove(iBilled));
+			CoreModelServiceHolder.get().remove(iBilled);
 		}
 		
 		billLabResultRunnable = TaskServiceHolder.get()
@@ -145,7 +145,7 @@ public class BillLabResultOnCreationIdentifiedRunnableTest {
 		encounter = EncounterServiceHolder.get().getLatestEncounter(AllTests.getPatient()).get();
 		assertNotEquals(closedEncounterId, encounter.getId());
 		assertEquals(1, encounter.getBilled().size());
-		assertTrue(CoreModelServiceHolder.get().remove(encounter));
+		CoreModelServiceHolder.get().remove(encounter);
 	}
 	
 	// see #22266

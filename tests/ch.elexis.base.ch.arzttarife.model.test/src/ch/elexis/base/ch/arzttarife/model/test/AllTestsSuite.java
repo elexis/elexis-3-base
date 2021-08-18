@@ -109,7 +109,7 @@ public class AllTestsSuite {
 		factor.setFactor(value);
 		factor.setValidFrom(from);
 		factor.setValidTo(LocalDate.of(9999, 12, 31));
-		assertTrue(coreModelService.save(factor));
+		coreModelService.save(factor);
 		return factor;
 	}
 	

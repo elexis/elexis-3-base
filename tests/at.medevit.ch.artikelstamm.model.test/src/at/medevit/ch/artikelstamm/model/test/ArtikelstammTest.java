@@ -55,7 +55,7 @@ public class ArtikelstammTest extends AbstractTest {
 		IArtikelstammItem item = modelService.create(IArtikelstammItem.class);
 		assertNotNull(item);
 		// create event?
-		assertTrue(modelService.remove(item));
+		modelService.remove(item);
 	}
 	
 	@Test

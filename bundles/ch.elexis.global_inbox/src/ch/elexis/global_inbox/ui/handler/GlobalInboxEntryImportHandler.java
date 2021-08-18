@@ -81,8 +81,9 @@ public class GlobalInboxEntryImportHandler {
 		documentReference.setPatientId(patient.getId());
 		documentReference.setAuthorId(sender != null ? sender.getId() : null);
 		documentReference.setDocument(document);
-		boolean success = findingService.saveFinding(documentReference);
-		if (!success) {
+		try {
+			findingService.saveFinding(documentReference);
+		} catch (IllegalStateException e) {
 			LoggerFactory.getLogger(getClass())
 				.warn("Import error - could not save documentReference");
 			SWTHelper.showError("Import error", "Could not save documentReference");

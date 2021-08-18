@@ -124,8 +124,9 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable
 				}
 				
 				document.setStatus(DocumentStatus.INDEXED, true);
-				boolean save = getModelService().save(document);
-				if (!save) {
+				try {
+					getModelService().save(document);
+				} catch (IllegalStateException e) {
 					logger.warn("[{}] could not be saved, see logs", currentDocumentId);
 					failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
 						"could not be saved, see logs"));

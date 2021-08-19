@@ -1012,6 +1012,17 @@ public class Tarmed45Exporter {
 		esrQRType.setReferenceNumber(besr.makeRefNr(false));
 		
 		IContact creditor = invoice.getMandator().getBiller();
+		// update creditor if configured
+		if (StringUtils
+			.isNotBlank((String) invoice.getMandator()
+				.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
+			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get().load(
+				(String) invoice.getMandator().getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER),
+				IContact.class);
+			if (loadedCreditor.isPresent()) {
+				creditor = loadedCreditor.get();
+			}
+		}
 		EsrAddressType esrAddressType = new EsrAddressType();
 		Object creditorCompanyOrPerson = getCompanyOrPerson(creditor, false);
 		if (creditorCompanyOrPerson instanceof CompanyType) {
@@ -1055,6 +1066,16 @@ public class Tarmed45Exporter {
 		esr9Type.setCodingLine(codingline);
 		
 		IContact creditor = invoice.getMandator().getBiller();
+		// update creditor if configured
+		if (StringUtils.isNotBlank(
+			(String) invoice.getMandator().getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
+			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get().load(
+				(String) invoice.getMandator().getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER),
+				IContact.class);
+			if (loadedCreditor.isPresent()) {
+				creditor = loadedCreditor.get();
+			}
+		}
 		EsrAddressType esrAddressType = new EsrAddressType();
 		Object creditorCompanyOrPerson = getCompanyOrPerson(creditor, false);
 		if (creditorCompanyOrPerson instanceof CompanyType) {

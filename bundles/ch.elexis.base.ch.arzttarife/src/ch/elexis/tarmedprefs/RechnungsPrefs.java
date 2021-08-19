@@ -572,7 +572,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			Messages.RechnungsPrefs_department, Messages.RechnungsPrefs_POBox, ta.ESRNUMBER,
 			ta.ESRSUB, "IBAN"
 		};
-		Label banklabel;
+		//		Label banklabel;
 		KontaktExtDialog.ExtInfoTable exTable;
 		
 		BankLister(Shell shell){
@@ -584,9 +584,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout(2, false));
-			Hyperlink hb = UiDesk.getToolkit().createHyperlink(ret,
+			Hyperlink hlBank = UiDesk.getToolkit().createHyperlink(ret,
 				Messages.RechnungsPrefs_FinanceInst, SWT.NONE); //$NON-NLS-1$
-			hb.addHyperlinkListener(new HyperlinkAdapter() {
+			hlBank.addHyperlinkListener(new HyperlinkAdapter() {
 				
 				@Override
 				public void linkActivated(HyperlinkEvent e){
@@ -599,15 +599,58 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 						actBank = (Kontakt) ksl.getSelection();
 						actMandant.setExtInfoStoredObjectByKey(ta.RNBANK, actBank.getId());
 					}
+					updateMandantContactHyper(hlBank, ta.RNBANK);
+				}
+			});
+			updateMandantContactHyper(hlBank, ta.RNBANK);
+			hlBank.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
+			
+			Hyperlink hlOwner = UiDesk.getToolkit().createHyperlink(ret, "Kontoinhaber", SWT.NONE); //$NON-NLS-1$
+			hlOwner.addHyperlinkListener(new HyperlinkAdapter() {
+				
+				@Override
+				public void linkActivated(HyperlinkEvent e){
+					KontaktSelektor ksl = new KontaktSelektor(getShell(), Kontakt.class,
+						"Kontoinhaber",
+						"Den Kontoinhaber auswählen, falls der nicht dem Mandanten entspricht.",
+						new String[] {
+							Kontakt.FLD_NAME1, Kontakt.FLD_NAME2
+					}); //$NON-NLS-1$ //$NON-NLS-2$
+					if (ksl.open() == Dialog.OK) {
+						Kontakt accountOwner = (Kontakt) ksl.getSelection();
+						actMandant.setExtInfoStoredObjectByKey(ta.RNACCOUNTOWNER,
+							accountOwner.getId());
+					} else {
+						actMandant.setExtInfoStoredObjectByKey(ta.RNACCOUNTOWNER, null);
+					}
+					updateMandantContactHyper(hlOwner, ta.RNACCOUNTOWNER);
 				}
 				
 			});
-			banklabel = new Label(ret, SWT.NONE);
-			banklabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			updateMandantContactHyper(hlOwner, ta.RNACCOUNTOWNER);
+			hlOwner.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
+			
+			//			banklabel = new Label(ret, SWT.NONE);
+			//			banklabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			exTable = new KontaktExtDialog.ExtInfoTable(parent, flds);
 			exTable.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 			exTable.setKontakt(actMandant);
 			return ret;
+		}
+		
+		private void updateMandantContactHyper(Hyperlink hb, String objectKey){
+			String[] parts = hb.getText().split(" - ");
+			if (actMandant != null && actMandant.getExtInfoStoredObjectByKey(objectKey) != null) {
+				Kontakt contact =
+					Kontakt.load((String) actMandant.getExtInfoStoredObjectByKey(objectKey));
+				if (contact.isAvailable()) {
+					if (parts.length == 1 || parts.length == 2) {
+						hb.setText(parts[0] + " - " + contact.getLabel());
+					}
+					return;
+				}
+			}
+			hb.setText(parts[0]);
 		}
 		
 		@Override

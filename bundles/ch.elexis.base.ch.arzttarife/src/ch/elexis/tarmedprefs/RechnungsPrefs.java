@@ -665,6 +665,15 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		protected void okPressed(){
 			exTable.okPressed(actMandant);
 			setMandant(actMandant);
+			// transfer IBAN information
+			if (actMandant.getExtInfoStoredObjectByKey(ta.RNACCOUNTOWNER) != null) {
+				Kontakt accountOwner = Kontakt
+					.load((String) actMandant.getExtInfoStoredObjectByKey(ta.RNACCOUNTOWNER));
+				if (accountOwner.isAvailable()) {
+					accountOwner.setExtInfoStoredObjectByKey("IBAN",
+						actMandant.getExtInfoStoredObjectByKey("IBAN"));
+				}
+			}
 			super.okPressed();
 		}
 		

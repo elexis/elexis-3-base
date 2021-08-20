@@ -1014,10 +1014,9 @@ public class Tarmed45Exporter {
 		IContact creditor = invoice.getMandator().getBiller();
 		// update creditor if configured
 		if (StringUtils
-			.isNotBlank((String) invoice.getMandator()
-				.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
+			.isNotBlank((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
 			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get().load(
-				(String) invoice.getMandator().getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER),
+				(String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER),
 				IContact.class);
 			if (loadedCreditor.isPresent()) {
 				creditor = loadedCreditor.get();
@@ -1068,9 +1067,9 @@ public class Tarmed45Exporter {
 		IContact creditor = invoice.getMandator().getBiller();
 		// update creditor if configured
 		if (StringUtils.isNotBlank(
-			(String) invoice.getMandator().getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
+			(String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
 			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get().load(
-				(String) invoice.getMandator().getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER),
+				(String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER),
 				IContact.class);
 			if (loadedCreditor.isPresent()) {
 				creditor = loadedCreditor.get();

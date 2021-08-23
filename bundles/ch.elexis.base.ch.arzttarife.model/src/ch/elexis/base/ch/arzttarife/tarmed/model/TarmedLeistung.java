@@ -37,6 +37,7 @@ import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
+import ch.elexis.core.types.VatInfo;
 import ch.rgw.tools.Money;
 
 public class TarmedLeistung
@@ -55,6 +56,11 @@ public class TarmedLeistung
 	public TarmedLeistung(ch.elexis.core.jpa.entities.TarmedLeistung entity){
 		super(entity);
 		verifier = new DefaultVerifier();
+	}
+	
+	@Override
+	public VatInfo getVatInfo(){
+		return VatInfo.VAT_CH_ISTREATMENT;
 	}
 	
 	@Override

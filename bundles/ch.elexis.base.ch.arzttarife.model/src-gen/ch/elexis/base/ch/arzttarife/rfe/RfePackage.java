@@ -77,13 +77,22 @@ public interface RfePackage extends EPackage {
 	int IREASON_FOR_ENCOUNTER__DELETED = ModelPackage.DELETEABLE__DELETED;
 
 	/**
+	 * The feature id for the '<em><b>Lastupdate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IREASON_FOR_ENCOUNTER__LASTUPDATE = ModelPackage.DELETEABLE_FEATURE_COUNT + 0;
+
+	/**
 	 * The feature id for the '<em><b>Encounter</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IREASON_FOR_ENCOUNTER__ENCOUNTER = ModelPackage.DELETEABLE_FEATURE_COUNT + 0;
+	int IREASON_FOR_ENCOUNTER__ENCOUNTER = ModelPackage.DELETEABLE_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Code</b></em>' attribute.
@@ -92,7 +101,7 @@ public interface RfePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IREASON_FOR_ENCOUNTER__CODE = ModelPackage.DELETEABLE_FEATURE_COUNT + 1;
+	int IREASON_FOR_ENCOUNTER__CODE = ModelPackage.DELETEABLE_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Text</b></em>' attribute.
@@ -101,7 +110,7 @@ public interface RfePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IREASON_FOR_ENCOUNTER__TEXT = ModelPackage.DELETEABLE_FEATURE_COUNT + 2;
+	int IREASON_FOR_ENCOUNTER__TEXT = ModelPackage.DELETEABLE_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of structural features of the '<em>IReason For Encounter</em>' class.
@@ -110,7 +119,7 @@ public interface RfePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IREASON_FOR_ENCOUNTER_FEATURE_COUNT = ModelPackage.DELETEABLE_FEATURE_COUNT + 3;
+	int IREASON_FOR_ENCOUNTER_FEATURE_COUNT = ModelPackage.DELETEABLE_FEATURE_COUNT + 4;
 
 
 	/**

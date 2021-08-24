@@ -171,4 +171,13 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="taxpoints" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     </eClassifiers>
   </eSubpackages>
+  <eSubpackages name="tarmedallowance" nsURI="http://ch.elexis.base/model/arzttarife/tarmedallowance"
+      nsPrefix="ch.elexis.arzttarife.ch.tarmed.model">
+    <eClassifiers xsi:type="ecore:EClass" name="ITarmedAllowance" abstract="true"
+        interface="true" eSuperTypes="../ch.elexis.core/model/model.ecore#//IBillable">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="chapter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+  </eSubpackages>
 </ecore:EPackage>

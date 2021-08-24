@@ -86,13 +86,22 @@ public interface PandemiePackage extends EPackage {
 	int IPANDEMIE_LEISTUNG__TEXT = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Lastupdate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IPANDEMIE_LEISTUNG__LASTUPDATE = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 2;
+
+	/**
 	 * The feature id for the '<em><b>Deleted</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IPANDEMIE_LEISTUNG__DELETED = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 2;
+	int IPANDEMIE_LEISTUNG__DELETED = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -101,7 +110,7 @@ public interface PandemiePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IPANDEMIE_LEISTUNG__DESCRIPTION = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 3;
+	int IPANDEMIE_LEISTUNG__DESCRIPTION = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Chapter</b></em>' attribute.
@@ -110,7 +119,7 @@ public interface PandemiePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IPANDEMIE_LEISTUNG__CHAPTER = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 4;
+	int IPANDEMIE_LEISTUNG__CHAPTER = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Cents</b></em>' attribute.
@@ -119,7 +128,7 @@ public interface PandemiePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IPANDEMIE_LEISTUNG__CENTS = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 5;
+	int IPANDEMIE_LEISTUNG__CENTS = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Valid From</b></em>' attribute.
@@ -128,7 +137,7 @@ public interface PandemiePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IPANDEMIE_LEISTUNG__VALID_FROM = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 6;
+	int IPANDEMIE_LEISTUNG__VALID_FROM = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Valid To</b></em>' attribute.
@@ -137,7 +146,7 @@ public interface PandemiePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IPANDEMIE_LEISTUNG__VALID_TO = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 7;
+	int IPANDEMIE_LEISTUNG__VALID_TO = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Taxpoints</b></em>' attribute.
@@ -146,7 +155,7 @@ public interface PandemiePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IPANDEMIE_LEISTUNG__TAXPOINTS = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 8;
+	int IPANDEMIE_LEISTUNG__TAXPOINTS = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 9;
 
 	/**
 	 * The number of structural features of the '<em>IPandemie Leistung</em>' class.
@@ -155,7 +164,7 @@ public interface PandemiePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IPANDEMIE_LEISTUNG_FEATURE_COUNT = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 9;
+	int IPANDEMIE_LEISTUNG_FEATURE_COUNT = ModelPackage.WITH_ASSIGNABLE_ID_FEATURE_COUNT + 10;
 
 
 	/**

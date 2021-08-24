@@ -85,6 +85,15 @@ public interface ComplementaryPackage extends EPackage {
 	int ICOMPLEMENTARY_LEISTUNG__TEXT = ModelPackage.IBILLABLE__TEXT;
 
 	/**
+	 * The feature id for the '<em><b>Lastupdate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ICOMPLEMENTARY_LEISTUNG__LASTUPDATE = ModelPackage.IBILLABLE__LASTUPDATE;
+
+	/**
 	 * The feature id for the '<em><b>Deleted</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

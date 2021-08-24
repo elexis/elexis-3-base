@@ -1,15 +1,15 @@
 /**
  * Copyright Text	Copyright (c) 2018 MEDEVIT <office@medevit.at>....
  */
-package ch.elexis.base.ch.arzttarife.pandemie.impl;
+package ch.elexis.base.ch.arzttarife.tarmedallowance.impl;
 
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 
 import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
 
-import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
-import ch.elexis.base.ch.arzttarife.pandemie.PandemieFactory;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
+
+import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
 
 import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
 
@@ -23,8 +23,10 @@ import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
 
 import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
 
+import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
+import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowanceFactory;
 import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
-import ch.elexis.base.ch.arzttarife.tarmedallowance.impl.TarmedallowancePackageImpl;
+
 import ch.elexis.core.model.ModelPackage;
 
 import ch.elexis.core.types.TypesPackage;
@@ -41,13 +43,13 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <!-- end-user-doc -->
  * @generated
  */
-public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage {
+public class TarmedallowancePackageImpl extends EPackageImpl implements TarmedallowancePackage {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass iPandemieLeistungEClass = null;
+	private EClass iTarmedAllowanceEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -60,12 +62,12 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage#eNS_URI
+	 * @see ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage#eNS_URI
 	 * @see #init()
 	 * @generated
 	 */
-	private PandemiePackageImpl() {
-		super(eNS_URI, PandemieFactory.eINSTANCE);
+	private TarmedallowancePackageImpl() {
+		super(eNS_URI, TarmedallowanceFactory.eINSTANCE);
 	}
 
 	/**
@@ -78,7 +80,7 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 *
-	 * <p>This method is used to initialize {@link PandemiePackage#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link TarmedallowancePackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -87,12 +89,12 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
-	public static PandemiePackage init() {
-		if (isInited) return (PandemiePackage)EPackage.Registry.INSTANCE.getEPackage(PandemiePackage.eNS_URI);
+	public static TarmedallowancePackage init() {
+		if (isInited) return (TarmedallowancePackage)EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
 
 		// Obtain or create and register package
-		Object registeredPandemiePackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		PandemiePackageImpl thePandemiePackage = registeredPandemiePackage instanceof PandemiePackageImpl ? (PandemiePackageImpl)registeredPandemiePackage : new PandemiePackageImpl();
+		Object registeredTarmedallowancePackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		TarmedallowancePackageImpl theTarmedallowancePackage = registeredTarmedallowancePackage instanceof TarmedallowancePackageImpl ? (TarmedallowancePackageImpl)registeredTarmedallowancePackage : new TarmedallowancePackageImpl();
 
 		isInited = true;
 
@@ -109,31 +111,31 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		ComplementaryPackageImpl theComplementaryPackage = (ComplementaryPackageImpl)(registeredPackage instanceof ComplementaryPackageImpl ? registeredPackage : ComplementaryPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(RfePackage.eNS_URI);
 		RfePackageImpl theRfePackage = (RfePackageImpl)(registeredPackage instanceof RfePackageImpl ? registeredPackage : RfePackage.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
-		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PandemiePackage.eNS_URI);
+		PandemiePackageImpl thePandemiePackage = (PandemiePackageImpl)(registeredPackage instanceof PandemiePackageImpl ? registeredPackage : PandemiePackage.eINSTANCE);
 
 		// Create package meta-data objects
-		thePandemiePackage.createPackageContents();
+		theTarmedallowancePackage.createPackageContents();
 		theTarmedPackage.createPackageContents();
 		thePhysioPackage.createPackageContents();
 		theComplementaryPackage.createPackageContents();
 		theRfePackage.createPackageContents();
-		theTarmedallowancePackage.createPackageContents();
+		thePandemiePackage.createPackageContents();
 
 		// Initialize created meta-data
-		thePandemiePackage.initializePackageContents();
+		theTarmedallowancePackage.initializePackageContents();
 		theTarmedPackage.initializePackageContents();
 		thePhysioPackage.initializePackageContents();
 		theComplementaryPackage.initializePackageContents();
 		theRfePackage.initializePackageContents();
-		theTarmedallowancePackage.initializePackageContents();
+		thePandemiePackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
-		thePandemiePackage.freeze();
+		theTarmedallowancePackage.freeze();
 
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(PandemiePackage.eNS_URI, thePandemiePackage);
-		return thePandemiePackage;
+		EPackage.Registry.INSTANCE.put(TarmedallowancePackage.eNS_URI, theTarmedallowancePackage);
+		return theTarmedallowancePackage;
 	}
 
 	/**
@@ -142,8 +144,8 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 	 * @generated
 	 */
 	@Override
-	public EClass getIPandemieLeistung() {
-		return iPandemieLeistungEClass;
+	public EClass getITarmedAllowance() {
+		return iTarmedAllowanceEClass;
 	}
 
 	/**
@@ -152,8 +154,8 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIPandemieLeistung_Description() {
-		return (EAttribute)iPandemieLeistungEClass.getEStructuralFeatures().get(0);
+	public EAttribute getITarmedAllowance_ValidFrom() {
+		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -162,8 +164,8 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIPandemieLeistung_Chapter() {
-		return (EAttribute)iPandemieLeistungEClass.getEStructuralFeatures().get(1);
+	public EAttribute getITarmedAllowance_ValidTo() {
+		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -172,8 +174,8 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIPandemieLeistung_Cents() {
-		return (EAttribute)iPandemieLeistungEClass.getEStructuralFeatures().get(2);
+	public EAttribute getITarmedAllowance_Chapter() {
+		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -182,38 +184,8 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getIPandemieLeistung_ValidFrom() {
-		return (EAttribute)iPandemieLeistungEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EAttribute getIPandemieLeistung_ValidTo() {
-		return (EAttribute)iPandemieLeistungEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EAttribute getIPandemieLeistung_Taxpoints() {
-		return (EAttribute)iPandemieLeistungEClass.getEStructuralFeatures().get(5);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public PandemieFactory getPandemieFactory() {
-		return (PandemieFactory)getEFactoryInstance();
+	public TarmedallowanceFactory getTarmedallowanceFactory() {
+		return (TarmedallowanceFactory)getEFactoryInstance();
 	}
 
 	/**
@@ -235,13 +207,10 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		isCreated = true;
 
 		// Create classes and their features
-		iPandemieLeistungEClass = createEClass(IPANDEMIE_LEISTUNG);
-		createEAttribute(iPandemieLeistungEClass, IPANDEMIE_LEISTUNG__DESCRIPTION);
-		createEAttribute(iPandemieLeistungEClass, IPANDEMIE_LEISTUNG__CHAPTER);
-		createEAttribute(iPandemieLeistungEClass, IPANDEMIE_LEISTUNG__CENTS);
-		createEAttribute(iPandemieLeistungEClass, IPANDEMIE_LEISTUNG__VALID_FROM);
-		createEAttribute(iPandemieLeistungEClass, IPANDEMIE_LEISTUNG__VALID_TO);
-		createEAttribute(iPandemieLeistungEClass, IPANDEMIE_LEISTUNG__TAXPOINTS);
+		iTarmedAllowanceEClass = createEClass(ITARMED_ALLOWANCE);
+		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__VALID_FROM);
+		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__VALID_TO);
+		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__CHAPTER);
 	}
 
 	/**
@@ -276,21 +245,16 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		iPandemieLeistungEClass.getESuperTypes().add(theModelPackage.getWithAssignableId());
-		iPandemieLeistungEClass.getESuperTypes().add(theModelPackage.getIBillable());
-		iPandemieLeistungEClass.getESuperTypes().add(theModelPackage.getDeleteable());
+		iTarmedAllowanceEClass.getESuperTypes().add(theModelPackage.getIBillable());
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(iPandemieLeistungEClass, IPandemieLeistung.class, "IPandemieLeistung", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getIPandemieLeistung_Description(), ecorePackage.getEString(), "description", null, 0, 1, IPandemieLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIPandemieLeistung_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, IPandemieLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIPandemieLeistung_Cents(), ecorePackage.getEInt(), "cents", null, 0, 1, IPandemieLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIPandemieLeistung_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, IPandemieLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIPandemieLeistung_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, IPandemieLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIPandemieLeistung_Taxpoints(), ecorePackage.getEInt(), "taxpoints", null, 0, 1, IPandemieLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(iTarmedAllowanceEClass, ITarmedAllowance.class, "ITarmedAllowance", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getITarmedAllowance_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getITarmedAllowance_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getITarmedAllowance_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
 	}
 
-} //PandemiePackageImpl
+} //TarmedallowancePackageImpl

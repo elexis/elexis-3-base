@@ -85,6 +85,15 @@ public interface PhysioPackage extends EPackage {
 	int IPHYSIO_LEISTUNG__TEXT = ModelPackage.IBILLABLE__TEXT;
 
 	/**
+	 * The feature id for the '<em><b>Lastupdate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IPHYSIO_LEISTUNG__LASTUPDATE = ModelPackage.IBILLABLE__LASTUPDATE;
+
+	/**
 	 * The feature id for the '<em><b>Valid From</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

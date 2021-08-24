@@ -49,8 +49,7 @@ public class TarmedAllowance
 	}
 	
 	protected Money getPrice(IEncounter iEncounter){
-		// TODO Auto-generated method stub
-		return null;
+		return new Money();
 	}
 	
 	@Override
@@ -128,5 +127,11 @@ public class TarmedAllowance
 	@Override
 	public IXid getXid(String domain){
 		return XidServiceHolder.get().getXid(this, domain);
-	}	
+	}
+	
+	@Override
+	public String getLabel(){
+		return "(" + getCode() + ") " + getChapter() + " - " + getText();
+	}
+	
 }

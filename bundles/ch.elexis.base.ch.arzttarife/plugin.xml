@@ -79,6 +79,16 @@
             name="PandemieLeistung"
             system="Pandemie">
       </Leistung>
+      <Leistung
+            CodeDetailDisplay="ch.elexis.views.TarmedAllowanceDetailDisplay"
+            CodeSelectorFactory="ch.elexis.views.TarmedAllowanceCodeSelectorFactory"
+            ImporterClass="ch.elexis.base.ch.arzttarife.importer.TarmedAllowanceImporter"
+            OptifyerClass="ch.elexis.data.TarmedOptifier"
+            elexisClassName="ch.elexis.data.TarmedPauschalen"
+            localizedName="Tarmedpauschalen"
+            name="Tarmedpauschalen"
+            system="Tarmedpauschalen">
+      </Leistung>
    </extension>
    <extension
          point="ch.elexis.core.data.RechnungsManager">

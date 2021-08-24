@@ -20,6 +20,8 @@ import ch.elexis.base.ch.arzttarife.rfe.RfeFactory;
 import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
 import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
+import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
+import ch.elexis.base.ch.arzttarife.tarmedallowance.impl.TarmedallowancePackageImpl;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.types.TypesPackage;
 
@@ -96,6 +98,8 @@ public class RfePackageImpl extends EPackageImpl implements RfePackage {
 		ComplementaryPackageImpl theComplementaryPackage = (ComplementaryPackageImpl)(registeredPackage instanceof ComplementaryPackageImpl ? registeredPackage : ComplementaryPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PandemiePackage.eNS_URI);
 		PandemiePackageImpl thePandemiePackage = (PandemiePackageImpl)(registeredPackage instanceof PandemiePackageImpl ? registeredPackage : PandemiePackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
+		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theRfePackage.createPackageContents();
@@ -103,6 +107,7 @@ public class RfePackageImpl extends EPackageImpl implements RfePackage {
 		thePhysioPackage.createPackageContents();
 		theComplementaryPackage.createPackageContents();
 		thePandemiePackage.createPackageContents();
+		theTarmedallowancePackage.createPackageContents();
 
 		// Initialize created meta-data
 		theRfePackage.initializePackageContents();
@@ -110,6 +115,7 @@ public class RfePackageImpl extends EPackageImpl implements RfePackage {
 		thePhysioPackage.initializePackageContents();
 		theComplementaryPackage.initializePackageContents();
 		thePandemiePackage.initializePackageContents();
+		theTarmedallowancePackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theRfePackage.freeze();

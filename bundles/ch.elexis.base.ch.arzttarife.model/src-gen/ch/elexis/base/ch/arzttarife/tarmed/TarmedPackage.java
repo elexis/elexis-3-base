@@ -88,6 +88,15 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_LEISTUNG__TEXT = ModelPackage.ISERVICE__TEXT;
 
 	/**
+	 * The feature id for the '<em><b>Lastupdate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_LEISTUNG__LASTUPDATE = ModelPackage.ISERVICE__LASTUPDATE;
+
+	/**
 	 * The feature id for the '<em><b>Deleted</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -269,6 +278,15 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_EXTENSION = 1;
 
 	/**
+	 * The feature id for the '<em><b>Lastupdate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_EXTENSION__LASTUPDATE = ModelPackage.IDENTIFIABLE__LASTUPDATE;
+
+	/**
 	 * The feature id for the '<em><b>Deleted</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -333,13 +351,22 @@ public interface TarmedPackage extends EPackage {
 	int ITARMED_GROUP__DELETED = ModelPackage.DELETEABLE__DELETED;
 
 	/**
+	 * The feature id for the '<em><b>Lastupdate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_GROUP__LASTUPDATE = ModelPackage.DELETEABLE_FEATURE_COUNT + 0;
+
+	/**
 	 * The feature id for the '<em><b>Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP__CODE = ModelPackage.DELETEABLE_FEATURE_COUNT + 0;
+	int ITARMED_GROUP__CODE = ModelPackage.DELETEABLE_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Services</b></em>' attribute list.
@@ -348,7 +375,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP__SERVICES = ModelPackage.DELETEABLE_FEATURE_COUNT + 1;
+	int ITARMED_GROUP__SERVICES = ModelPackage.DELETEABLE_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Valid From</b></em>' attribute.
@@ -357,7 +384,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP__VALID_FROM = ModelPackage.DELETEABLE_FEATURE_COUNT + 2;
+	int ITARMED_GROUP__VALID_FROM = ModelPackage.DELETEABLE_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Valid To</b></em>' attribute.
@@ -366,7 +393,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP__VALID_TO = ModelPackage.DELETEABLE_FEATURE_COUNT + 3;
+	int ITARMED_GROUP__VALID_TO = ModelPackage.DELETEABLE_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Law</b></em>' attribute.
@@ -375,7 +402,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP__LAW = ModelPackage.DELETEABLE_FEATURE_COUNT + 4;
+	int ITARMED_GROUP__LAW = ModelPackage.DELETEABLE_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Limitations</b></em>' attribute list.
@@ -384,7 +411,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP__LIMITATIONS = ModelPackage.DELETEABLE_FEATURE_COUNT + 5;
+	int ITARMED_GROUP__LIMITATIONS = ModelPackage.DELETEABLE_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Extension</b></em>' reference.
@@ -393,7 +420,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP__EXTENSION = ModelPackage.DELETEABLE_FEATURE_COUNT + 6;
+	int ITARMED_GROUP__EXTENSION = ModelPackage.DELETEABLE_FEATURE_COUNT + 7;
 
 	/**
 	 * The number of structural features of the '<em>ITarmed Group</em>' class.
@@ -402,7 +429,7 @@ public interface TarmedPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_GROUP_FEATURE_COUNT = ModelPackage.DELETEABLE_FEATURE_COUNT + 7;
+	int ITARMED_GROUP_FEATURE_COUNT = ModelPackage.DELETEABLE_FEATURE_COUNT + 8;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.base.ch.arzttarife.tarmed.ITarmedKumulation <em>ITarmed Kumulation</em>}' class.

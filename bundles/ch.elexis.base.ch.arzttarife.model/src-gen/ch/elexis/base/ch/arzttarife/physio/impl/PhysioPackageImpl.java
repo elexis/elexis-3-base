@@ -17,6 +17,8 @@ import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
 
 import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
 
+import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
+import ch.elexis.base.ch.arzttarife.tarmedallowance.impl.TarmedallowancePackageImpl;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.types.TypesPackage;
 import org.eclipse.emf.ecore.EAttribute;
@@ -99,6 +101,8 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		RfePackageImpl theRfePackage = (RfePackageImpl)(registeredPackage instanceof RfePackageImpl ? registeredPackage : RfePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PandemiePackage.eNS_URI);
 		PandemiePackageImpl thePandemiePackage = (PandemiePackageImpl)(registeredPackage instanceof PandemiePackageImpl ? registeredPackage : PandemiePackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
+		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
 
 		// Create package meta-data objects
 		thePhysioPackage.createPackageContents();
@@ -106,6 +110,7 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		theComplementaryPackage.createPackageContents();
 		theRfePackage.createPackageContents();
 		thePandemiePackage.createPackageContents();
+		theTarmedallowancePackage.createPackageContents();
 
 		// Initialize created meta-data
 		thePhysioPackage.initializePackageContents();
@@ -113,6 +118,7 @@ public class PhysioPackageImpl extends EPackageImpl implements PhysioPackage {
 		theComplementaryPackage.initializePackageContents();
 		theRfePackage.initializePackageContents();
 		thePandemiePackage.initializePackageContents();
+		theTarmedallowancePackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		thePhysioPackage.freeze();

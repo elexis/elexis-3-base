@@ -261,8 +261,11 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			Iterator<?> result = nativeQuery
 				.executeWithParameters(nativeQuery.getIndexedParameterMap(Integer.valueOf(1), getId()))
 				.iterator();
-		if(result.hasNext() && result.next() != null) {
-			return Long.parseLong(result.next().toString());
+		if(result.hasNext()) {
+			Object next = result.next();
+			if(next != null) {
+				return Long.parseLong(next.toString());
+			}
 		}
 		IVirtualFilesystemHandle vfsHandle = getStorageFile(false);
 		if(vfsHandle != null && vfsHandle.canRead()) {

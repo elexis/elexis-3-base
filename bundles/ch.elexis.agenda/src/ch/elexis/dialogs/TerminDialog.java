@@ -144,6 +144,8 @@ public class TerminDialog extends TitleAreaDialog {
 	boolean bModified;
 	private String msg;
 	
+	private boolean useGlobalData = true;
+	
 	private CollisionErrorLevel collisionErrorLevel = CollisionErrorLevel.ERROR;
 	
 	public TerminDialog(IPlannable act){
@@ -189,10 +191,6 @@ public class TerminDialog extends TitleAreaDialog {
 		tMap = Plannables.getTimePrefFor(agenda.getActResource());
 		tMap.put(Termin.typFrei(), "0"); //$NON-NLS-1$
 		tMap.put(Termin.typReserviert(), "0"); //$NON-NLS-1$
-	}
-	
-	public static void setActResource(String resource){
-		Activator.getDefault().setActResource(resource);
 	}
 	
 	@Override
@@ -474,7 +472,13 @@ public class TerminDialog extends TitleAreaDialog {
 		tName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cbMandant = new Combo(cBottom, SWT.SINGLE);
 		cbMandant.setItems(agenda.getResources());
-		cbMandant.setText(agenda.getActResource());
+		if (useGlobalData) {
+			cbMandant.setText(agenda.getActResource());
+		} else {
+			if (actPlannable instanceof Termin) {
+				cbMandant.setText(((Termin) actPlannable).getBereich());
+			}
+		}
 		cbMandant.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e){
@@ -616,7 +620,9 @@ public class TerminDialog extends TitleAreaDialog {
 		dp.setDate(new TimeTool(actPlannable.getDay()).getTime());
 		// actDate.setTime(dp.getDate());
 		agenda.setActDate(new TimeTool(dp.getDate().getTime()));
-		agenda.setActResource(cbMandant.getText());
+		if (useGlobalData) {
+			agenda.setActResource(cbMandant.getText());
+		}
 		// actBereich = cbMandant.getText();
 		
 		if (actPlannable instanceof Termin.Free) {
@@ -755,7 +761,12 @@ public class TerminDialog extends TitleAreaDialog {
 		 * 
 		 */
 		void recalc(){
-			list = Plannables.loadTermine(agenda.getActResource(), agenda.getActDate());
+			if (useGlobalData) {
+				list = Plannables.loadTermine(agenda.getActResource(), agenda.getActDate());
+			} else {
+				list = Plannables.loadTermine(cbMandant.getText(),
+					new TimeTool(dp.getDate().getTime()));
+			}
 			
 			tagStart = ts * 60;
 			tagEnd = te * 60;
@@ -910,6 +921,14 @@ public class TerminDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 	
+	private String getActResource(){
+		if (useGlobalData) {
+			return agenda.getActResource();
+		} else {
+			return cbMandant.getText();
+		}
+	}
+	
 	private void createTermin(final boolean bMulti){
 		int von = tiVon.getTimeAsMinutes();
 		int bis = von + niDauer.getValue();
@@ -918,7 +937,7 @@ public class TerminDialog extends TitleAreaDialog {
 		String priority = bEmergency.getSelection() ? "1" : "0";
 		Termin actTermin = null;
 		if (actPlannable instanceof Termin.Free) {
-			Termin newTermin = new Termin(agenda.getActResource(),
+			Termin newTermin = new Termin(getActResource(),
 				agenda.getActDate().toString(TimeTool.DATE_COMPACT), von, bis, typ, status,
 				priority);
 			actTermin = newTermin;
@@ -944,7 +963,7 @@ public class TerminDialog extends TitleAreaDialog {
 			actTermin.set(new String[] {
 				"BeiWem", "Tag", "Beginn", "Dauer", "Typ", "Status", Termin.FLD_PRIORITY
 			}, new String[] {
-				agenda.getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT),
+				getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT),
 				Integer.toString(von), Integer.toString(bis - von), typ, status, priority
 			});
 		}
@@ -1021,5 +1040,10 @@ public class TerminDialog extends TitleAreaDialog {
 		String label = actKontakt.getLabel()
 			+ ((telephoneLabel.length() > 0) ? " (" + telephoneLabel + ")" : "");
 		return label;
+	}
+	
+	public TerminDialog useAgendaGlobalData(boolean value){
+		useGlobalData = value;
+		return this;
 	}
 }

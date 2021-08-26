@@ -118,8 +118,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 					
 					@Override
 					public void lockAcquired(){
-						TerminDialog.setActResource(element.getBereich());
-						TerminDialog dlg = new TerminDialog(element);
+						TerminDialog dlg = new TerminDialog(element).useAgendaGlobalData(false);
 						dlg.open();
 					}
 				});

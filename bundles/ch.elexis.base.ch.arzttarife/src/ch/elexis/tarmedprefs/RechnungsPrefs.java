@@ -572,8 +572,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			Messages.RechnungsPrefs_department, Messages.RechnungsPrefs_POBox, ta.ESRNUMBER,
 			ta.ESRSUB, "IBAN"
 		};
-		//		Label banklabel;
-		KontaktExtDialog.ExtInfoTable exTable;
+		
+		private Text tInvoiceInfo;
+		private KontaktExtDialog.ExtInfoTable exTable;
 		
 		BankLister(Shell shell){
 			super(shell);
@@ -630,10 +631,21 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			updateMandantContactHyper(hlOwner, ta.RNACCOUNTOWNER);
 			hlOwner.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 			
-			//			banklabel = new Label(ret, SWT.NONE);
-			//			banklabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			Label lbl = new Label(ret, SWT.NONE);
+			lbl.setText("Rechnungsinformationen");
+			tInvoiceInfo = new Text(ret, SWT.BORDER | SWT.MULTI);
+			GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+			gd.heightHint = 50;
+			tInvoiceInfo.setLayoutData(gd);
+			tInvoiceInfo.setToolTipText("Rechnungsinformationen (Optional, max. 140 Zeichen)");
+			tInvoiceInfo.setTextLimit(140);
+			if (actMandant.getExtInfoStoredObjectByKey(ta.RNINFORMATION) != null) {
+				tInvoiceInfo
+					.setText((String) actMandant.getExtInfoStoredObjectByKey(ta.RNINFORMATION));
+			}
+			
 			exTable = new KontaktExtDialog.ExtInfoTable(parent, flds);
-			exTable.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
+			exTable.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			exTable.setKontakt(actMandant);
 			return ret;
 		}
@@ -673,6 +685,11 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 					accountOwner.setExtInfoStoredObjectByKey("IBAN",
 						actMandant.getExtInfoStoredObjectByKey("IBAN"));
 				}
+			}
+			if (StringUtils.isNotBlank(tInvoiceInfo.getText())) {
+				actMandant.setExtInfoStoredObjectByKey(ta.RNINFORMATION, tInvoiceInfo.getText());
+			} else {
+				actMandant.setExtInfoStoredObjectByKey(ta.RNINFORMATION, null);
 			}
 			super.okPressed();
 		}

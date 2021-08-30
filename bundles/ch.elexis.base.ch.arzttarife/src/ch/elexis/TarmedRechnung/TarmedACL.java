@@ -21,6 +21,7 @@ package ch.elexis.TarmedRechnung;
 public class TarmedACL {
 	public final String RNBANK = "TarmedRnBank"; //$NON-NLS-1$
 	public final String RNACCOUNTOWNER = "TarmedRnAccountOwner"; //$NON-NLS-1$
+	public final String RNINFORMATION = "TarmedRnInformation"; //$NON-NLS-1$
 	public final String ESR5OR9 = "TarmedESR5OrEsr9"; //$NON-NLS-1$
 	public final String ESRPLUS = "TarmedESRPlus"; //$NON-NLS-1$
 	public final String ESRNUMBER = "TarmedESRParticipantNumber"; //$NON-NLS-1$

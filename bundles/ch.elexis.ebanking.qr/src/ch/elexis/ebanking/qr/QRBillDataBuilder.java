@@ -92,7 +92,7 @@ public class QRBillDataBuilder {
 		ret.setCdtrInfIBAN(StringUtils.defaultString((String) cdtrInfContact.getExtInfo("IBAN")));
 		setAddress(ret, "cdtrInf", cdtrInfContact);
 		
-		ret.setCcyAmtAmt(amount.getAmountAsString().replaceAll(",", "."));
+		ret.setCcyAmtAmt(amount.getAmountAsString().replaceAll("'", "").replaceAll(",", "."));
 		ret.setCcyAmtCcy(amountCurrency);
 		
 		setAddress(ret, "ultmtDbtr", ultmtDbtrContact);

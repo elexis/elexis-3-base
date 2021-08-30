@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
@@ -545,5 +546,14 @@ public class XMLExporterUtil {
 		} else if (ahvValid) {
 			element.setAttribute("ssn", ahv); //$NON-NLS-1$
 		}
+	}
+	
+	public static List<String> splitStringEqually(String text, int size){
+		List<String> ret = new ArrayList<String>((text.length() + size - 1) / size);
+		
+		for (int start = 0; start < text.length(); start += size) {
+			ret.add(text.substring(start, Math.min(text.length(), start + size)));
+		}
+		return ret;
 	}
 }

@@ -1010,6 +1010,15 @@ public class Tarmed45Exporter {
 		}
 		esrQRType.setIban(iban);
 		esrQRType.setReferenceNumber(besr.makeRefNr(false));
+		String additionalInformation = (String) invoice.getMandator().getBiller()
+			.getExtInfo(TarmedACL.getInstance().RNINFORMATION);
+		if (StringUtils.isNotBlank(additionalInformation)) {
+			// split into strings with 35 characters
+			List<String> parts = XMLExporterUtil.splitStringEqually(additionalInformation, 35);
+			for (int i = 0; i < parts.size() && i < 4; i++) {
+				esrQRType.getPaymentReason().add(parts.get(i));
+			}
+		}
 		
 		IContact creditor = invoice.getMandator().getBiller();
 		// update creditor if configured

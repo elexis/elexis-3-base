@@ -100,7 +100,8 @@ public class QRBillDataBuilder {
 		ret.setRmtInfTp(referenceType);
 		ret.setRmtInfRef(reference);
 		
-		ret.setRmtInfUstrd(StringUtils.defaultString(referenceUnstructuredRemark));
+		ret.setRmtInfUstrd(
+			StringUtils.defaultString(referenceUnstructuredRemark).replaceAll("\\r|\\n", ""));
 		ret.setRmtInfTrailer(referenceTrailer);
 		
 		return ret;

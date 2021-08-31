@@ -1013,10 +1013,20 @@ public class Tarmed45Exporter {
 		String additionalInformation = (String) invoice.getMandator().getBiller()
 			.getExtInfo(TarmedACL.getInstance().RNINFORMATION);
 		if (StringUtils.isNotBlank(additionalInformation)) {
-			// split into strings with 35 characters
-			List<String> parts = XMLExporterUtil.splitStringEqually(additionalInformation, 35);
-			for (int i = 0; i < parts.size() && i < 4; i++) {
-				esrQRType.getPaymentReason().add(parts.get(i));
+			List<String> lines =
+				new ArrayList<String>(Arrays.asList(additionalInformation.split("\\r?\\n|\\r")));
+			for (int i = 0; i < lines.size(); i++) {
+				String line = lines.get(i);
+				if (line.length() > 35) {
+					// split into strings with 35 characters
+					List<String> parts =
+						XMLExporterUtil.splitStringEqually(line, 35);
+					lines.remove(i);
+					lines.addAll(i, parts);
+				}
+			}
+			for (int i = 0; i < lines.size() && i < 4; i++) {
+				esrQRType.getPaymentReason().add(lines.get(i));
 			}
 		}
 		

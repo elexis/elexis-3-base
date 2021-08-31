@@ -11,7 +11,7 @@ public class QRBillData {
 	
 	public static String SEPARATOR = "\r\n";
 	
-	private static String UMLAUTPATTERN = "\\u00c4\\u00e4\\u00d6\\u00f6\\u00dc\\u00fc";
+	private static String UMLAUTPATTERN = "\\u00c0-\\u00ff";
 	
 	private static String ADDITIONALCHARSPATTERN = "\\.\\-";
 	

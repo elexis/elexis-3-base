@@ -267,12 +267,12 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 				return Long.parseLong(next.toString());
 			}
 		}
-		IVirtualFilesystemHandle vfsHandle = getStorageFile(false);
-		if(vfsHandle != null && vfsHandle.canRead()) {
-			try {
+		try {
+			IVirtualFilesystemHandle vfsHandle = getStorageFile(false);
+			if (vfsHandle != null && vfsHandle.canRead()) {
 				return vfsHandle.getContentLenght();
-			} catch (IOException e) {}
-		}
+			}
+		} catch (IOException e) {}
 		return -1l;
 	}
 	

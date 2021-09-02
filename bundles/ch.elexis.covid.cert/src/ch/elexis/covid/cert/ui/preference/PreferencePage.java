@@ -17,21 +17,30 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.dialogs.SelectionDialog;
 
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.IValueSetService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.CertificatesService.Mode;
+import ch.elexis.covid.cert.ui.handler.CovidTestBill;
+import ch.elexis.data.Leistungsblock;
 
 public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		implements IWorkbenchPreferencePage {
@@ -53,6 +62,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	private IValueSetService valueSetService;
 	
 	private Label textLabel;
+	
+	private Button bAutomaticBilling;
 	
 	public PreferencePage(){
 		CoreUiUtil.injectServices(this);
@@ -174,6 +185,24 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		Label lbl = new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
 		lbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		
+		bAutomaticBilling = new Button(ret, SWT.CHECK);
+		bAutomaticBilling.setText("Automatische Verrechnung von Tests");
+		bAutomaticBilling
+			.setSelection(ConfigServiceHolder.get().get(CovidTestBill.CFG_AUTO_BILLING, false));
+		bAutomaticBilling.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				ConfigServiceHolder.get().set(CovidTestBill.CFG_AUTO_BILLING,
+					bAutomaticBilling.getSelection());
+			}
+		});
+		
+		createBillingBlock(CovidTestBill.CFG_KK_BLOCKID, ret);
+		createBillingBlock(CovidTestBill.CFG_SZ_BLOCKID, ret);
+		
+		lbl = new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
+		lbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		
 		textLabel = new Label(ret, SWT.NONE);
 		
 		otpText = new Text(ret, SWT.MULTI | SWT.BORDER | SWT.WRAP);
@@ -193,6 +222,42 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		});
 		updateTextLabel();
 		return ret;
+	}
+	
+	private void createBillingBlock(String cfg, Composite ret){
+		Composite billingBlockComposite = new Composite(ret, SWT.NONE);
+		billingBlockComposite.setLayout(new RowLayout());
+		Text tAutomaticBillingBlock = new Text(billingBlockComposite, SWT.BORDER | SWT.READ_ONLY);
+		tAutomaticBillingBlock.setLayoutData(new RowData(250, SWT.DEFAULT));
+		tAutomaticBillingBlock.setTextLimit(80);
+		String text = cfg.equals(CovidTestBill.CFG_KK_BLOCKID) ? "Block für Krankenkasse"
+				: "Block für Selbstzahler";
+		tAutomaticBillingBlock.setMessage(text);
+		tAutomaticBillingBlock.setToolTipText(text);
+		Button blockCodeSelection = new Button(billingBlockComposite, SWT.PUSH);
+		blockCodeSelection.setText("..."); //$NON-NLS-1$
+		blockCodeSelection.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				SelectionDialog dialog = CodeSelectorFactory.getSelectionDialog("Block", getShell(), //$NON-NLS-1$
+					"ignoreErrors");
+				if (dialog.open() == SelectionDialog.OK) {
+					if (dialog.getResult() != null && dialog.getResult().length > 0) {
+						Leistungsblock block = (Leistungsblock) dialog.getResult()[0];
+						tAutomaticBillingBlock.setText(block.getLabel());
+						ConfigServiceHolder.get().set(cfg, block.getId());
+					} else {
+						ConfigServiceHolder.get().set(cfg, null);
+						tAutomaticBillingBlock.setText("");
+					}
+				}
+			}
+		});
+		if (ConfigServiceHolder.get().get(cfg, null) != null) {
+			tAutomaticBillingBlock.setText(Leistungsblock
+				.load(ConfigServiceHolder.get().get(cfg, null))
+				.getLabel());
+		}
 	}
 	
 	private void updateTextLabel(){

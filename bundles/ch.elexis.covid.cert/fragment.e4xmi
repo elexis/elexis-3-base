@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="ASCII"?>
-<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_uA8UwMHwEeuZNMZqiCK6QA">
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_uA8UwMHwEeuZNMZqiCK6QA">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_zPmyAMHwEeuZNMZqiCK6QA" featurename="descriptors" parentElementId="xpath:/">
     <elements xsi:type="basic:PartDescriptor" xmi:id="_3W4JYMHwEeuZNMZqiCK6QA" elementId="ch.elexis.covid.cert.partdescriptor.certificates" label="COVID Zert." iconURI="platform:/plugin/ch.elexis.covid.cert/rsc/icon/cov_certs.png" category="General" closeable="true" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.parts.PatientCertificates">
       <tags>View</tags>
     </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_KbWGgAv4Eey-BvcngEK0rA" featurename="commands" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="_UPruYAv4Eey-BvcngEK0rA" elementId="ch.elexis.covid.cert.command.covidtest.bill" commandName="bill covid test"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_U5TTIAv4Eey-BvcngEK0rA" featurename="handlers" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_X-ydYAv4Eey-BvcngEK0rA" elementId="ch.elexis.covid.cert.handler.covidtest.bill" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.handler.CovidTestBill" command="_UPruYAv4Eey-BvcngEK0rA"/>
   </fragments>
 </fragment:ModelFragments>

@@ -11,6 +11,8 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Service;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -40,6 +42,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Form;
@@ -289,6 +293,7 @@ public class PatientCertificates {
 								.orElse(null);
 							if (newCert != null) {
 								openCertDocument(newCert);
+								executeTestBilling();
 							}
 							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
 								patient);
@@ -482,6 +487,25 @@ public class PatientCertificates {
 			new RecoveryModelDialog(ret, Display.getDefault().getActiveShell());
 		if (dialog.open() == Dialog.OK) {
 			return ret;
+		}
+		return null;
+	}
+	
+	private void executeTestBilling(){
+		executeCommand("ch.elexis.covid.cert.command.covidtest.bill");
+	}
+	
+	private Object executeCommand(String commandId){
+		try {
+			ICommandService commandService =
+				(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+			
+			Command cmd = commandService.getCommand(commandId);
+			ExecutionEvent ee = new ExecutionEvent(cmd, Collections.EMPTY_MAP, null, null);
+			return cmd.executeWithChecks(ee);
+		} catch (Exception e) {
+			LoggerFactory.getLogger(PatientCertificates.class)
+				.error("cannot execute command with id: " + commandId, e);
 		}
 		return null;
 	}

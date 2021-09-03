@@ -42,17 +42,17 @@ public class CovidTestBill {
 				if (!blocks.isEmpty()) {
 					Optional<ICoverage> coverage = getCoverage(patient);
 					if (coverage.isPresent()) {
-						IEncounter encounter =
-							new IEncounterBuilder(CoreModelServiceHolder.get(), coverage.get(),
-								contextService.getActiveMandator().get()).buildAndSave();
-						contextService.getRootContext().setTyped(encounter);
 						ICodeElementBlock block = selectBlock(blocks);
 						if (block != null) {
+							IEncounter encounter =
+								new IEncounterBuilder(CoreModelServiceHolder.get(), coverage.get(),
+									contextService.getActiveMandator().get()).buildAndSave();
 							// bill the block
 							block.getElements(encounter).stream()
 								.filter(el -> el instanceof IBillable).map(el -> (IBillable) el)
 								.forEach(billable -> BillingServiceHolder.get().bill(billable,
 									encounter, 1));
+							contextService.getRootContext().setTyped(encounter);
 						}
 					}
 				}

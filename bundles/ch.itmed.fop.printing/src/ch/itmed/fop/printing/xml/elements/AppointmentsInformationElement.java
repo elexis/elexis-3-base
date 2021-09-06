@@ -12,6 +12,11 @@
 package ch.itmed.fop.printing.xml.elements;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -39,20 +44,39 @@ public class AppointmentsInformationElement {
 		Element p = doc.createElement("AppointmentsInformation");
 
 		if(!al.isEmpty()) {
-			Element c = doc.createElement("AgendaArea");
-			c.appendChild(doc.createTextNode(al.get(0).getAgendaArea()));
-			p.appendChild(c);
+			Map<String, List<AppointmentData>> appointmentPerAreaMap =
+				al.stream().collect(Collectors.groupingBy(AppointmentData::getAgendaArea));
+			
+			List<Entry<String, List<AppointmentData>>> appointmentPerArea =
+				new ArrayList<>(appointmentPerAreaMap.entrySet());
+			appointmentPerArea.sort(new Comparator<Entry<String, List<AppointmentData>>>() {
+				@Override
+				public int compare(Entry<String, List<AppointmentData>> e1,
+					Entry<String, List<AppointmentData>> e2){
+					return e1.getValue().get(0).getStartTime()
+						.compareTo(e2.getValue().get(0).getStartTime());
+				}
+			});
+			
+			for (Entry<String, List<AppointmentData>> area : appointmentPerArea) {
+				List<AppointmentData> areaAppointments = area.getValue();
+				
+				Element c = doc.createElement("AgendaArea");
+				c.appendChild(doc.createTextNode(area.getKey()));
+				p.appendChild(c);
 
-			c = doc.createElement("Appointments");
-			for (AppointmentData ad : al) {
-				Element appointment = doc.createElement("Appointment");
-				appointment.appendChild(doc.createTextNode(ad.getAppointmentDetailed()));
-				c.appendChild(appointment);
-				Element appointmentNoEnd = doc.createElement("AppointmentNoEnd");
-				appointmentNoEnd.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));
-				c.appendChild(appointmentNoEnd);
+				c = doc.createElement("Appointments");
+				for (AppointmentData ad : areaAppointments) {
+					Element appointment = doc.createElement("Appointment");
+					appointment.appendChild(doc.createTextNode(ad.getAppointmentDetailed()));
+					c.appendChild(appointment);
+					Element appointmentNoEnd = doc.createElement("AppointmentNoEnd");
+					appointmentNoEnd
+						.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));
+					c.appendChild(appointmentNoEnd);
+				}
+				p.appendChild(c);
 			}
-			p.appendChild(c);			
 		} else {
 			MessageDialog.openInformation(Display.getDefault().getActiveShell(),
 				"Keine Termin Serie", "Keine Termin Serie zum selektierten Patienten gefunden");

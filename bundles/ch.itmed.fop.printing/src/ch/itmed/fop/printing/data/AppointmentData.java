@@ -101,6 +101,10 @@ public final class AppointmentData {
 		return appointmentDate.toString();
 	}
 	
+	public TimeTool getStartTime(){
+		return appointment.getStartTime();
+	}
+	
 	public String getAgendaArea() {
 		Kontakt kontakt = null;
 		String agendaSection = appointment.getBereich();

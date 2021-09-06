@@ -36,19 +36,27 @@
 					<fo:region-after />
 				</fo:simple-page-master>
 			</fo:layout-master-set>
-			<fo:page-sequence master-reference="RecurringAppointmentsCard">
+			<fo:page-sequence
+				master-reference="RecurringAppointmentsCard">
 				<fo:flow flow-name="xsl-region-body">
 					<fo:block-container font="9pt Helvetica"
 						font-weight="bold">
-							<fo:block> Praxisname</fo:block>
-							<fo:block> <xsl:value-of select="mandator" /></fo:block>
-							<fo:block font="8pt Helvetica" font-weight="normal">Strasse_Nr.</fo:block>
-							<fo:block font="8pt Helvetica" font-weight="normal">PLZ_Ort</fo:block>
-							<fo:block font="8pt Helvetica" font-weight="normal">Tel. 044 123 45 56</fo:block>
-							<fo:block font="8pt Helvetica" font-weight="normal">praxisname@mustermail.ch</fo:block>
-					<fo:block>
-						<fo:leader />
-					</fo:block>
+						<fo:block> Praxisname</fo:block>
+						<fo:block>
+							<xsl:value-of select="mandator" />
+						</fo:block>
+						<fo:block font="8pt Helvetica" font-weight="normal">Strasse_Nr.
+						</fo:block>
+						<fo:block font="8pt Helvetica" font-weight="normal">PLZ_Ort
+						</fo:block>
+						<fo:block font="8pt Helvetica" font-weight="normal">Tel. 044 123
+							45 56
+						</fo:block>
+						<fo:block font="8pt Helvetica" font-weight="normal">praxisname@mustermail.ch
+						</fo:block>
+						<fo:block>
+							<fo:leader />
+						</fo:block>
 					</fo:block-container>
 					<xsl:apply-templates select="/Page/Patient" />
 					<xsl:apply-templates
@@ -73,32 +81,7 @@
 		</fo:block-container>
 	</xsl:template>
 	<xsl:template match="AppointmentsInformation">
-		<fo:block-container font="8pt Helvetica"
-			font-weight="normal">
-			<xsl:if test="/Page/AppointmentsInformation/AgendaArea/text()">
-				<fo:block>
-					<fo:leader />
-				</fo:block>
-				<fo:block>
-					Termin bei:
-					<xsl:value-of select="AgendaArea" />
-				</fo:block>
-			</xsl:if>
-		</fo:block-container>
-		<fo:block-container>
-			<fo:block>
-				<fo:leader />
-			</fo:block>
-			<fo:block font="7.5pt Helvetica" font-weight="normal"
-				text-decoration="underline">
-				Ihre nächsten
-				Termine:
-			</fo:block>
-		</fo:block-container>
-		<fo:block-container font="8pt Helvetica"
-			font-weight="normal">
-			<xsl:apply-templates select="Appointments" />
-		</fo:block-container>
+		<xsl:apply-templates select="@*|node()" />
 		<fo:block>
 			<fo:leader />
 		</fo:block>
@@ -107,11 +90,37 @@
 			als 24 Stunden vor dem Termin werden verrechnet
 		</fo:block>
 	</xsl:template>
-	<xsl:template match="Appointments">
-		<xsl:for-each select="Appointment">
-			<fo:block font-weight="bold">
+
+	<xsl:template match="AgendaArea">
+		<fo:block-container font="8pt Helvetica"
+			font-weight="normal">
+			<fo:block>
+				<fo:leader />
+			</fo:block>
+			<fo:block>
+				Termin bei:
 				<xsl:value-of select="." />
 			</fo:block>
-		</xsl:for-each>
+		</fo:block-container>
+	</xsl:template>
+
+	<xsl:template match="Appointments">
+		<fo:block-container>
+			<fo:block font="7.5pt Helvetica" font-weight="normal"
+				text-decoration="underline">
+				Ihre nächsten
+				Termine:
+			</fo:block>
+		</fo:block-container>
+		<fo:block-container font="8pt Helvetica"
+			font-weight="normal">
+			<xsl:apply-templates select="@*|node()" />
+		</fo:block-container>
+	</xsl:template>
+	
+	<xsl:template match="Appointment">
+		<fo:block font-weight="bold">
+			<xsl:value-of select="." />
+		</fo:block>
 	</xsl:template>
 </xsl:stylesheet>

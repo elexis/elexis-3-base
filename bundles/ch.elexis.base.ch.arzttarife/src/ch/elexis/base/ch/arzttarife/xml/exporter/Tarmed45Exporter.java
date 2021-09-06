@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -869,6 +870,7 @@ public class Tarmed45Exporter {
 	}
 	
 	protected List<IDiagnosisReference> getInvoiceDiagnosis(IInvoice invoice){
+		HashSet<String> seen = new HashSet<>();
 		ArrayList<IDiagnosisReference> ret = new ArrayList<IDiagnosisReference>();
 		List<IEncounter> encounters = invoice.getEncounters();
 		for (IEncounter encounter : encounters) {
@@ -876,7 +878,11 @@ public class Tarmed45Exporter {
 			for (IDiagnosisReference encounterDiagnose : encounterDiagnosis) {
 				String dgc = encounterDiagnose.getCode();
 				if (dgc != null) {
-					ret.add(encounterDiagnose);
+					// each diag code and system only once
+					if (seen
+						.add(encounterDiagnose.getCode() + encounterDiagnose.getCodeSystemName())) {
+						ret.add(encounterDiagnose);
+					}
 				}
 			}
 		}

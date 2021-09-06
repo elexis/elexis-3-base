@@ -2,6 +2,7 @@ package ch.elexis.TarmedRechnung;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import org.jdom.Element;
@@ -68,6 +69,7 @@ public class XMLExporterTreatment {
 	}
 	
 	private static List<IDiagnosisReference> getDiagnosen(IInvoice invoice){
+		HashSet<String> seen = new HashSet<>();
 		ArrayList<IDiagnosisReference> ret = new ArrayList<IDiagnosisReference>();
 		List<IEncounter> encounters = invoice.getEncounters();
 		for (IEncounter encounter : encounters) {
@@ -75,7 +77,11 @@ public class XMLExporterTreatment {
 			for (IDiagnosisReference encounterDiagnose : encounterDiagnosis) {
 				String dgc = encounterDiagnose.getCode();
 				if (dgc != null) {
-					ret.add(encounterDiagnose);
+					// each diag code and system only once
+					if (seen
+						.add(encounterDiagnose.getCode() + encounterDiagnose.getCodeSystemName())) {
+						ret.add(encounterDiagnose);
+					}
 				}
 			}
 		}

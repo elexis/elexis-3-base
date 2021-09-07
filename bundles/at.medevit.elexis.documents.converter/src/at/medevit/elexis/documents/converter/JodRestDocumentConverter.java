@@ -43,10 +43,15 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 				File tempFile = new File(tempFilePath);
 				File converted = apiInstance.convertToUsingParamUsingPOST(tempFile, "pdf", null);
 				tempFile.delete();
+				File toDir =
+					new File(tempFile.getParentFile(), "elexispdf_" + System.currentTimeMillis());
+				toDir.mkdir();
+				File toFile = new File(toDir, getPrefix(document) + ".pdf");
 				Path moved = Files.move(converted.toPath(),
-					new File(tempFile.getParentFile(), getPrefix(document) + ".pdf").toPath(),
+					toFile.toPath(),
 					StandardCopyOption.REPLACE_EXISTING);
 				File ret = moved.toFile();
+				toDir.deleteOnExit();
 				ret.deleteOnExit();
 				return Optional.of(ret);
 			}

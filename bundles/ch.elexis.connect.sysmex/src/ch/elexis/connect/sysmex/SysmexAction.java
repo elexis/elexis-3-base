@@ -43,8 +43,6 @@ public class SysmexAction extends Action implements ComPortListener {
 	Thread msgDialogThread;
 	Patient selectedPatient;
 	boolean background = false;
-	private Thread awaitThread;
-	
 	private ShutdownThread shutdownThread = null;
 	
 	// Declare filename to the log for test only!! for production must be null!
@@ -145,10 +143,8 @@ public class SysmexAction extends Action implements ComPortListener {
 					} catch (NumberFormatException e) {
 						// Do nothing. Use default value
 					}
-					awaitThread = SerialConnectionUi.awaitFrame(_ctrl, UiDesk.getTopShell(),
+					SerialConnectionUi.awaitFrame(_ctrl, UiDesk.getTopShell(),
 						Messages.SysmexAction_WaitMsg, timeout, background, true);
-					awaitThread = null;
-					
 					return;
 				} else {
 					_rs232log.log("Error"); //$NON-NLS-1$
@@ -364,7 +360,6 @@ public class SysmexAction extends Action implements ComPortListener {
 			shutdownThread = null;
 		}
 		_ctrl.close();
-		setChecked(false);
 	}
 	
 	/**
@@ -372,24 +367,6 @@ public class SysmexAction extends Action implements ComPortListener {
 	 */
 	public void closed(){
 		_elexislog.log("Closed", Log.INFOS); //$NON-NLS-1$
-		close();
-	}
-	
-	/**
-	 * Verbindung zu serieller Schnittstelle wurde vom Benutzer abgebrochen
-	 */
-	public void cancelled(){
-		_elexislog.log("Cancelled", Log.INFOS); //$NON-NLS-1$
-		close();
-	}
-	
-	/**
-	 * Verbindung zu serieller Schnittstelle hat timeout erreicht.
-	 */
-	public void timeout(){
-		_elexislog.log("Timeout", Log.INFOS); //$NON-NLS-1$
-		SWTHelper.showError(Messages.SysmexAction_RS232_Timeout_Title,
-			Messages.SysmexAction_RS232_Timeout_Text);
-		close();
+		setChecked(false);
 	}
 }

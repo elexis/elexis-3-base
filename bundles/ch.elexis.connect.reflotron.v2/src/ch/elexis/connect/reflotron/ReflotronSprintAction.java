@@ -40,13 +40,12 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	Thread msgDialogThread;
 	Patient selectedPatient;
 	boolean background = false;
-	private Thread awaitThread;
 	
 	public ReflotronSprintAction(){
 		super(Messages.ReflotronSprintAction_ButtonName, AS_CHECK_BOX);
 		setToolTipText(Messages.ReflotronSprintAction_ToolTip);
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
-			"ch.elexis.connect.reflotron", "icons/reflotron.png")); //$NON-NLS-1$ //$NON-NLS-2$
+			"ch.elexis.connect.reflotron.v2", "icons/reflotron.png")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -98,11 +97,11 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 				} catch (NumberFormatException e) {
 					// Do nothing. Use default value
 				}
-				awaitThread = SerialConnectionUi
+				SerialConnectionUi
 					.awaitFrame(_ctrl,
 						UiDesk.getTopShell(),
 						Messages.ReflotronSprintAction_WaitMsg, timeout, background, true);
-				awaitThread = null;
+				return;
 			} else {
 				_rs232log.log("Error"); //$NON-NLS-1$
 				SWTHelper.showError(Messages.ReflotronSprintAction_RS232_Error_Title,
@@ -312,30 +311,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 	 * Verbindung zu serieller Schnittstelle wurde getrennt
 	 */
 	public void closed(){
-		_ctrl.close();
 		_rs232log.log("Closed"); //$NON-NLS-1$
-		setChecked(false);
-		_rs232log.logEnd();
-	}
-	
-	/**
-	 * Verbindung zu serieller Schnittstelle wurde vom Benutzer abgebrochen
-	 */
-	public void cancelled(){
-		_ctrl.close();
-		_rs232log.log("Cancelled"); //$NON-NLS-1$
-		setChecked(false);
-		_rs232log.logEnd();
-	}
-	
-	/**
-	 * Verbindung zu serieller Schnittstelle hat timeout erreicht.
-	 */
-	public void timeout(){
-		_ctrl.close();
-		_rs232log.log("Timeout"); //$NON-NLS-1$
-		SWTHelper.showError(Messages.ReflotronSprintAction_RS232_Timeout_Title,
-			Messages.ReflotronSprintAction_RS232_Timeout_Text);
 		setChecked(false);
 		_rs232log.logEnd();
 	}

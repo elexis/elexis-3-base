@@ -153,7 +153,7 @@ public class Event {
 			}
 			ret.description =
 				termin.getReason().replaceAll("\n", "<br />") + "<br /><br />" + termin
-					.getStateHistoryFormatted("dd.MM.yyyyy HH:mm:ss").replaceAll("\n", "<br />");
+					.getStateHistoryFormatted("dd.MM.yyyy HH:mm:ss").replaceAll("\n", "<br />");
 			ret.borderColor = getStateColor(userContact, iPeriod);
 			ret.backgroundColor = getTypColor(userContact, iPeriod);
 			ret.textColor = getTextColor(ret.backgroundColor.substring(1));

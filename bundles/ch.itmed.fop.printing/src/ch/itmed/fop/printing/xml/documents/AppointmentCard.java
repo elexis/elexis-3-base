@@ -26,6 +26,7 @@ public final class AppointmentCard {
 		Document doc = DomDocument.newDocument();
 
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.APPOINTMENT_CARD);
+		PageProperties.setCurrentDate(page);
 		doc.appendChild(page);
 		Element appointment = AppointmentsInformationElement.create(doc, true);
 		page.appendChild(appointment);

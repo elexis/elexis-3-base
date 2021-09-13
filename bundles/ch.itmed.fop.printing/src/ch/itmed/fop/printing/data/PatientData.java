@@ -13,10 +13,14 @@ package ch.itmed.fop.printing.data;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Messages;
@@ -124,5 +128,45 @@ public class PatientData {
 
 	public String getOrderNumber() {
 		return patient.getAuftragsnummer();
+	}
+	
+	public String getEmail(){
+		return patient.getMailAddress();
+	}
+	
+	public String getCoverageName(){
+		Optional<ICoverage> iCoverage = ContextServiceHolder.get().getTyped(ICoverage.class);
+		if (iCoverage.isPresent()) {
+			return iCoverage.get().getDescription();
+		}
+		return null;
+	}
+	
+	public String getInsuranceName(){
+		Optional<ICoverage> iCoverage = ContextServiceHolder.get().getTyped(ICoverage.class);
+		if (iCoverage.isPresent()) {
+			IContact costBearer = iCoverage.get().getCostBearer();
+			if(costBearer.isOrganization()) {
+				return costBearer.getLabel();
+			}
+		}
+		return null;
+	}
+	
+	public String getInsuranceNumber(){
+		Optional<ICoverage> iCoverage = ContextServiceHolder.get().getTyped(ICoverage.class);
+		if (iCoverage.isPresent()) {
+			if (iCoverage.get().getInsuranceNumber() != null) {
+				return iCoverage.get().getInsuranceNumber();
+			} else {
+				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Unfallnummer"))) {
+					return (String) iCoverage.get().getExtInfo("Unfallnummer");
+				}
+				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Fallnummer"))) {
+					return (String) iCoverage.get().getExtInfo("Fallnummer");
+				}
+			}
+		}
+		return null;
 	}
 }

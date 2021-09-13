@@ -11,6 +11,10 @@
 
 package ch.itmed.fop.printing.xml.documents;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -55,5 +59,14 @@ public final class PageProperties {
 				+ "mm");
 		
 		return page;
+	}
+	
+	public static void setCurrentDate(Element page){
+		LocalDate localDate = LocalDate.now();
+		DateTimeFormatter formatter =
+			DateTimeFormatter.ofPattern("dd.MM.YYYY").withZone(ZoneId.systemDefault());
+		String currentDate = formatter.format(localDate);
+		
+		page.setAttribute("currentDate", currentDate);
 	}
 }

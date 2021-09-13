@@ -20,7 +20,7 @@ Require-Bundle: ch.elexis.core.ui;bundle-version="3.8.0",
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.services.holder,
  javax.inject;version="1.0.0",
- org.apache.commons.lang;version="2.6.0",
+ org.apache.commons.lang3,
  org.eclipse.e4.core.commands,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.ui.workbench

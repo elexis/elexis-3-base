@@ -31,6 +31,7 @@ public class VersionedLabel {
 		Document doc = DomDocument.newDocument();
 
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.VERSIONED_LABEL);
+		PageProperties.setCurrentDate(page);
 		doc.appendChild(page);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);

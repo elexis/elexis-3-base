@@ -27,6 +27,7 @@ public final class MedicationLabel {
 		Document doc = DomDocument.newDocument();
 
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.MEDICATION_LABEL);
+		PageProperties.setCurrentDate(page);
 		doc.appendChild(page);
 		Element medication = MedicationElement.create(doc);
 		page.appendChild(medication);
@@ -45,6 +46,7 @@ public final class MedicationLabel {
 		Document doc = DomDocument.newDocument();
 		
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.MEDICATION_LABEL);
+		PageProperties.setCurrentDate(page);
 		doc.appendChild(page);
 		Element medication = MedicationElement.create(doc, iPrescription);
 		page.appendChild(medication);

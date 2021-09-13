@@ -30,6 +30,7 @@ public class PatientAddressLabel {
 		Document doc = DomDocument.newDocument();
 
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.PATIENT_ADDRESS_LABEL);
+		PageProperties.setCurrentDate(page);
 		doc.appendChild(page);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);

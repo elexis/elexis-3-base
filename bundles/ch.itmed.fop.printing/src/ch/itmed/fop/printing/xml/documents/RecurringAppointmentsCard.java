@@ -26,6 +26,7 @@ public final class RecurringAppointmentsCard {
 		Document doc = DomDocument.newDocument();
 
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.RECURRING_APPOINTMENTS_CARD);
+		PageProperties.setCurrentDate(page);
 		doc.appendChild(page);
 		Element appointment = AppointmentsInformationElement.create(doc, false);
 		page.appendChild(appointment);

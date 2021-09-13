@@ -18,6 +18,7 @@ import org.w3c.dom.Element;
 
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.xml.elements.AppointmentsInformationElement;
+import ch.itmed.fop.printing.xml.elements.MandatorElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
 
 public final class AppointmentCard {
@@ -32,7 +33,10 @@ public final class AppointmentCard {
 		page.appendChild(appointment);
 		Element patient = PatientElement.create(doc, true);
 		page.appendChild(patient);
-
+		Element mandator = MandatorElement.create(doc);
+		if (mandator != null) {
+			page.appendChild(mandator);
+		}
 		return DomDocument.toInputStream(doc);
 	}
 

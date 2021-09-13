@@ -15,7 +15,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.StringWriter;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -23,6 +25,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +34,8 @@ import ch.elexis.core.ui.util.SWTHelper;
 public class FoTransformer {
 	private static Logger logger = LoggerFactory.getLogger(FoTransformer.class);
 
+	private static String DEBUG_MODE = "fop.printing.debug";
+	
 	/**
 	 * Creates an FO file and returns it as an InputStream.
 	 * 
@@ -51,6 +56,22 @@ public class FoTransformer {
 			return null;
 		}
 
+		if (System.getProperty(DEBUG_MODE) != null) {
+			ByteArrayOutputStream bo = new ByteArrayOutputStream();
+			IOUtils.copy(xmlInputStream, bo);
+			
+			// setup pretty printing xml
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			StreamResult result = new StreamResult(new StringWriter());
+			StreamSource source = new StreamSource(new ByteArrayInputStream(bo.toByteArray()));
+			transformer.transform(source, result);
+			System.out.println(result.getWriter().toString());
+			
+			xmlInputStream = new ByteArrayInputStream(bo.toByteArray());
+		}
+		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		// Setup XSLT
 		TransformerFactory factory = TransformerFactory.newInstance();

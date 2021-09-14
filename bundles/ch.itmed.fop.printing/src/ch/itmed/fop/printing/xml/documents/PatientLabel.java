@@ -17,6 +17,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
+import ch.itmed.fop.printing.xml.elements.CaseElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
 
 public class PatientLabel {
@@ -34,6 +35,8 @@ public class PatientLabel {
 		doc.appendChild(page);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
+		Element c = CaseElement.create(doc);
+		page.appendChild(c);
 
 		return DomDocument.toInputStream(doc);
 	}

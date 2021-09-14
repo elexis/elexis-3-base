@@ -101,24 +101,6 @@ public class PatientElement {
 		c = doc.createElement("OrderNumber");
 		c.appendChild(doc.createTextNode(pd.getOrderNumber()));
 		p.appendChild(c);
-
-		if (pd.getCoverageName() != null) {
-			c = doc.createElement("CoverageName");
-			c.appendChild(doc.createTextNode(pd.getCoverageName()));
-			p.appendChild(c);
-		}
-		
-		if (pd.getInsuranceName() != null) {
-			c = doc.createElement("InsuranceName");
-			c.appendChild(doc.createTextNode(pd.getInsuranceName()));
-			p.appendChild(c);
-		}
-		
-		if (pd.getInsuranceNumber() != null) {
-			c = doc.createElement("InsuranceNumber");
-			c.appendChild(doc.createTextNode(pd.getInsuranceNumber()));
-			p.appendChild(c);
-		}
 		
 		return p;
 	}

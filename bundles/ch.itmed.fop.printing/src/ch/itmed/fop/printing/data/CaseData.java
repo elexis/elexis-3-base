@@ -11,38 +11,53 @@
 
 package ch.itmed.fop.printing.data;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Kontakt;
-import ch.itmed.fop.printing.resources.Messages;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public final class CaseData {
-	private Fall fall;
 
-	public void load() throws NullPointerException {
-		fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
-		if (fall == null) {
-			SWTHelper.showInfo(Messages.Info_NoCase_Title, Messages.Info_NoCase_Message);
-			throw new NullPointerException("No case selected");
+	public String getCoverageName(){
+		Optional<ICoverage> iCoverage = ContextServiceHolder.get().getTyped(ICoverage.class);
+		if (iCoverage.isPresent()) {
+			return iCoverage.get().getDescription();
 		}
+		return null;
 	}
-
-	public String getCostBearer() {
-		Kontakt kontakt = fall.getCostBearer();
-		if (kontakt != null) {
-			return kontakt.get("Bezeichnung1");
+	
+	public String getCostBearer(){
+		Optional<ICoverage> iCoverage = ContextServiceHolder.get().getTyped(ICoverage.class);
+		if (iCoverage.isPresent()) {
+			IContact costBearer = iCoverage.get().getCostBearer();
+			if (costBearer != null) {
+				return costBearer.getDescription1();
+			}
 		}
-		return ""; // null if not set or equal to patient
+		return "";
 	}
-
-	public String getInsurancePolicyNumber() {
-		if ("UVG".equals(fall.getAbrechnungsSystem())) {
-			return fall.getRequiredString("Unfallnummer");
-		} else if ("KVG".equals(fall.getAbrechnungsSystem())) {
-			return fall.getRequiredString("Versicherungsnummer");
+	
+	public String getInsurancePolicyNumber(){
+		Optional<ICoverage> iCoverage = ContextServiceHolder.get().getTyped(ICoverage.class);
+		if (iCoverage.isPresent()) {
+			if (iCoverage.get().getInsuranceNumber() != null) {
+				return iCoverage.get().getInsuranceNumber();
+			} else {
+				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Unfallnummer"))) {
+					return (String) iCoverage.get().getExtInfo("Unfallnummer");
+				}
+				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Fallnummer"))) {
+					return (String) iCoverage.get().getExtInfo("Fallnummer");
+				}
+				if (StringUtils
+					.isNotBlank((String) iCoverage.get().getExtInfo("Versicherungsnummer"))) {
+					return (String) iCoverage.get().getExtInfo("Versicherungsnummer");
+				}
+			}
 		}
-
 		return "";
 	}
 }

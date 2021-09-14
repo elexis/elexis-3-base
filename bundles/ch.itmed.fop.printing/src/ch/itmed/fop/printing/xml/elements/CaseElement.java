@@ -19,8 +19,6 @@ import ch.itmed.fop.printing.data.CaseData;
 public final class CaseElement {
 	public static Element create(Document doc) throws Exception {
 		CaseData cd = new CaseData();
-		cd.load();
-
 		Element p = doc.createElement("Case");
 		
 		Element c = doc.createElement("CostBearer");

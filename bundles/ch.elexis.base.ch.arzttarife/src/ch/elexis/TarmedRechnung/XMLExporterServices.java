@@ -436,11 +436,10 @@ public class XMLExporterServices {
 						el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(billed.getPrice()));
 						el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
 						if ("true".equals((String) billed.getExtInfo(Verrechnet.INDICATED))) {
-							el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, "207");
-						} else {
-							el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE,
-								billable.getCodeSystemCode());
+							el.setAttribute("name",
+								billed.getText() + " (medizinisch indiziert: 207)");
 						}
+						el.setAttribute(XMLExporter.ATTR_TARIFF_TYPE, billable.getCodeSystemCode());
 						if ("402".equals(billable.getCodeSystemCode())) { // GTIN-basiert //$NON-NLS-1$
 							String gtin = ((IArticle) billable).getGtin();
 							el.setAttribute(XMLExporter.ATTR_CODE, gtin);

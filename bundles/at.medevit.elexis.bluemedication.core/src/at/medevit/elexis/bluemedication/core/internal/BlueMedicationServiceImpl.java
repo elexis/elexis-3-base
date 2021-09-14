@@ -97,10 +97,10 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			oldProxyPort = systemSettings.getProperty("http.proxyPort"); //$NON-NLS-1$
 			
 			// set new values
-			systemSettings.put("http.proxyHost", CoreHub.globalCfg.get( //$NON-NLS-1$
+			systemSettings.put("http.proxyHost", CoreHub.localCfg.get( //$NON-NLS-1$
 				BlueMedicationConstants.CFG_HIN_PROXY_HOST,
 				BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST));
-			systemSettings.put("http.proxyPort", CoreHub.globalCfg.get( //$NON-NLS-1$
+			systemSettings.put("http.proxyPort", CoreHub.localCfg.get( //$NON-NLS-1$
 				BlueMedicationConstants.CFG_HIN_PROXY_PORT,
 				BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT));
 			System.setProperties(systemSettings);
@@ -528,9 +528,9 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			logger.info("Start polling for [" + uploadResult.getId() + "]");
 			// configure HIN proxy for apache http client
 			HttpHost proxy = new HttpHost(
-					CoreHub.globalCfg.get(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
+				CoreHub.localCfg.get(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
 							BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST),
-					Integer.parseInt(CoreHub.globalCfg.get(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
+				Integer.parseInt(CoreHub.localCfg.get(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
 							BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT)),
 					"http");
 			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);

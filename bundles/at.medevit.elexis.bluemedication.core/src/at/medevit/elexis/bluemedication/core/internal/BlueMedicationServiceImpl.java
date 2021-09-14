@@ -47,7 +47,6 @@ import at.medevit.elexis.bluemedication.core.BlueMedicationService;
 import at.medevit.elexis.bluemedication.core.UploadResult;
 import at.medevit.elexis.emediplan.core.EMediplanService;
 import ch.elexis.core.common.ElexisEventTopics;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IDocument;
@@ -99,10 +98,10 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			oldProxyPort = systemSettings.getProperty("http.proxyPort"); //$NON-NLS-1$
 			
 			// set new values
-			systemSettings.put("http.proxyHost", ConfigServiceHolder.getGlobal( //$NON-NLS-1$
+			systemSettings.put("http.proxyHost", ConfigServiceHolder.get().getLocal( //$NON-NLS-1$
 				BlueMedicationConstants.CFG_HIN_PROXY_HOST,
 				BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST));
-			systemSettings.put("http.proxyPort", ConfigServiceHolder.getGlobal( //$NON-NLS-1$
+			systemSettings.put("http.proxyPort", ConfigServiceHolder.get().getLocal( //$NON-NLS-1$
 				BlueMedicationConstants.CFG_HIN_PROXY_PORT,
 				BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT));
 			System.setProperties(systemSettings);
@@ -522,9 +521,10 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			logger.info("Start polling for [" + uploadResult.getId() + "]");
 			// configure HIN proxy for apache http client 
 			HttpHost proxy = new HttpHost(
-				ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
+				ConfigServiceHolder.get().getLocal(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
 					BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST),
-				Integer.parseInt(ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
+				Integer.parseInt(
+					ConfigServiceHolder.get().getLocal(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
 					BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT)),
 				"http");
 			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);

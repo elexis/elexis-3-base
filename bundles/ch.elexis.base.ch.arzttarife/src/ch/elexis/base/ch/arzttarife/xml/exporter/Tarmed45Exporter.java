@@ -710,6 +710,11 @@ public class Tarmed45Exporter {
 					serviceType.setRecordId(recordNumber++);
 					serviceType.setSession(session);
 					serviceType.setName(billed.getText());
+					if (billable instanceof IArticle
+						&& "true".equals((String) billed.getExtInfo(Constants.FLD_EXT_INDICATED))) {
+						serviceType
+							.setName(serviceType.getName() + " (medizinisch indiziert: 207)");
+					}
 					serviceType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
 					serviceType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
 					serviceType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));

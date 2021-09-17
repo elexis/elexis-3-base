@@ -49,7 +49,7 @@ public class Importer extends Action implements IAction {
 		File dir = new File(CoreHub.localCfg.get(Preferences.CFG_DIRECTORY, File.separator));
 		if ((!dir.exists()) || (!dir.isDirectory())) {
 			SWTHelper.showError("bad directory for import", "Konfigurationsfehler",
-				"Das Transferverzeichnis ist nicht korrekt eingestellt");
+				"Das Transferverzeichnis ist nicht korrekt eingestellt.");
 		} else {
 			int err = 0;
 			int files = 0;
@@ -63,28 +63,34 @@ public class Importer extends Action implements IAction {
 					return false;
 				}
 			});
-			Arrays.sort(fileNames);
-			for (String fn : fileNames) {
-				files++;
-				File hl7file = new File(dir, fn);
-				r = mfParser.importFromFile(hl7file,
-					new DefaultImportStrategyFactory().setMoveAfterImport(true)
-						.setLabContactResolver(new LinkLabContactResolver()),
-					hlp, new DefaultPersistenceHandler());
-			}
-			if (err > 0) {
-				if (r != null) {
-					ResultAdapter.displayResult(r, Integer.toString(err) + " von "
-						+ Integer.toString(files) + " Dateien hatten Fehler\n");
-				} else {
-					SWTHelper.showError("HL7 Import Fehler",
-						"Die Dateien aus dem Transferverzeichnis konnten nicht importiert werden.");
+			if (fileNames != null) {
+				Arrays.sort(fileNames);
+				for (String fn : fileNames) {
+					files++;
+					File hl7file = new File(dir, fn);
+					r = mfParser.importFromFile(hl7file,
+						new DefaultImportStrategyFactory().setMoveAfterImport(true)
+							.setLabContactResolver(new LinkLabContactResolver()),
+						hlp, new DefaultPersistenceHandler());
 				}
-			} else if (files == 0) {
-				SWTHelper.showInfo("Laborimport", "Es waren keine Dateien zum Import vorhanden");
+				if (err > 0) {
+					if (r != null) {
+						ResultAdapter.displayResult(r, Integer.toString(err) + " von "
+							+ Integer.toString(files) + " Dateien hatten Fehler\n");
+					} else {
+						SWTHelper.showError("HL7 Import Fehler",
+							"Die Dateien aus dem Transferverzeichnis konnten nicht importiert werden.");
+					}
+				} else if (files == 0) {
+					SWTHelper.showInfo("Laborimport",
+						"Es waren keine Dateien zum Import vorhanden");
+				} else {
+					SWTHelper.showInfo("Laborimport",
+						Integer.toString(files) + " Dateien wurden fehlerfrei verarbeitet.");
+				}
 			} else {
-				SWTHelper.showInfo("Laborimport", Integer.toString(files)
-					+ " Dateien wurden fehlerfrei verarbeitet.");
+				SWTHelper.showError("bad directory for import", "Konfigurationsfehler",
+					"Das Transferverzeichnis ist nicht korrekt eingestellt, bzw. kann nicht gelesen werden.");
 			}
 		}
 	}

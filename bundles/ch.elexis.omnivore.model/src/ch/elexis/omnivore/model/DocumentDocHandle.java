@@ -32,6 +32,7 @@ import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandl
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
+import ch.elexis.core.time.TimeUtil;
 import ch.elexis.core.types.DocumentStatus;
 import ch.elexis.core.types.DocumentStatusMapper;
 import ch.elexis.omnivore.Constants;
@@ -93,7 +94,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public void setCreated(Date value){
-		getEntityMarkDirty().setCreationDate(toLocalDate(value).toLocalDate());
+		getEntityMarkDirty().setCreationDate(TimeUtil.toLocalDate(value));
 	}
 	
 	@Override
@@ -109,7 +110,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	
 	@Override
 	public void setLastchanged(Date value){
-		getEntityMarkDirty().setDatum(toLocalDate(value).toLocalDate());
+		getEntityMarkDirty().setDatum(TimeUtil.toLocalDate(value));
 	}
 	
 	@Override

@@ -4,11 +4,10 @@ Bundle-Name: SIX QR Bill Tests
 Bundle-SymbolicName: ch.elexis.ebanking.qr.test
 Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
-Fragment-Host: ch.elexis.ebanking.qr;bundle-version="1.0.0"
+Fragment-Host: ch.elexis.ebanking.qr;bundle-version="3.9.0"
 Automatic-Module-Name: ch.elexis.ebanking.qr.test
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.junit
-Import-Package: ch.elexis.core.model.builder,
- ch.elexis.core.services.holder,
- ch.elexis.core.types,
- org.apache.commons.lang3;version="3.7.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: org.junit,
+ ch.elexis.core.model;bundle-version="3.9.0",
+ ch.elexis.core.services;bundle-version="3.9.0"
+Import-Package: org.apache.commons.lang3;version="3.7.0"

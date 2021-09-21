@@ -16,6 +16,8 @@
  */
 package org.apache.solr.client.solrj.impl;
 
+import static org.apache.solr.common.util.Utils.getObjectByPath;
+
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
@@ -53,6 +55,8 @@ import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.V2RequestSupport;
 import org.apache.solr.client.solrj.embedded.SSLConfig;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient.RemoteExecutionException;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient.RemoteSolrException;
 import org.apache.solr.client.solrj.request.RequestWriter;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.request.V2Request;
@@ -97,10 +101,6 @@ import org.eclipse.jetty.util.Fields;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.solr.client.solrj.impl.BaseHttpSolrClient.RemoteExecutionException;
-import static org.apache.solr.client.solrj.impl.BaseHttpSolrClient.RemoteSolrException;
-import static org.apache.solr.common.util.Utils.getObjectByPath;
 
 /**
  * Difference between this {@link Http2SolrClient} and {@link HttpSolrClient}:
@@ -234,7 +234,7 @@ public class Http2SolrClient extends SolrClient {
     if (closeClient) {
       try {
         ExecutorService executor = (ExecutorService) httpClient.getExecutor();
-        httpClient.setStopTimeout(1000);
+//        httpClient.setStopTimeout(1000);
         httpClient.stop();
         ExecutorUtil.shutdownAndAwaitTermination(executor);
       } catch (Exception e) {
@@ -604,7 +604,7 @@ public class Http2SolrClient extends SolrClient {
           if (name == null) {
             name = "";
           }
-          HttpFields fields = new HttpFields();
+          HttpFields.Mutable fields = HttpFields.build();
           fields.add(HttpHeader.CONTENT_TYPE, contentType);
           content.addFilePart(name, contentStream.getName(), new InputStreamContentProvider(contentStream.getStream()), fields);
         }

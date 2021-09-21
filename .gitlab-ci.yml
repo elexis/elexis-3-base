@@ -1,6 +1,6 @@
 # Build script used by gitlab.medelexis.ch
 variables:
-   ORIGIN_BRANCH: "target-2021-03-java11"
+   ORIGIN_BRANCH: "2021-06-java11"
 
 stages:
     - build
@@ -32,4 +32,4 @@ trigger_medelexis-3-application_build:
     - master@elexis/elexis-3-base
     - /^\d*[.]\d*$/@elexis/elexis-3-base
     - /^[bf]\d*$/@elexis/elexis-3-base
-    - target-2021-03-java11@elexis/elexis-3-base
+    - 2021-06-java11@elexis/elexis-3-base

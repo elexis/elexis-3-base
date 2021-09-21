@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
-import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
 
@@ -27,6 +27,9 @@ public class DeleteHandler {
 	
 	@Inject
 	private ESelectionService selectionService;
+	
+	@Inject
+	private IAppointmentService appointmentService;
 	
 	@Execute
 	public Object execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell)
@@ -45,7 +48,17 @@ public class DeleteHandler {
 					
 					@Override
 					public void lockAcquired(){
-						CoreModelServiceHolder.get().delete(p);
+						IAppointment appointment = (IAppointment) p;
+						if (appointment.isRecurring()) {
+							if (MessageDialog.openQuestion(shell, "Löschen",
+								"Wollen Sie die gesamte Serie löschen?")) {
+								appointmentService.delete(appointment, true);
+							} else {
+								appointmentService.delete(appointment, false);
+							}
+						} else {
+							appointmentService.delete(appointment, false);
+						}
 						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
 							IAppointment.class);
 					}

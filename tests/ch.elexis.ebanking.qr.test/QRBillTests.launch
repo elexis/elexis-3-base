@@ -41,22 +41,19 @@
         <setEntry value="ch.qos.logback.classic@default:default"/>
         <setEntry value="ch.qos.logback.core@default:default"/>
         <setEntry value="ch.qos.logback.slf4j@default:false"/>
-        <setEntry value="com.eclipsesource.jaxrs.consumer@default:default"/>
         <setEntry value="com.google.gson@default:default"/>
         <setEntry value="com.google.guava@default:default"/>
         <setEntry value="com.google.zxing.core@default:default"/>
         <setEntry value="com.h2database@default:default"/>
-        <setEntry value="com.make.chromium.cef.cocoa.macosx.x86_64@default:false"/>
-        <setEntry value="com.make.chromium.cef.gtk.linux.x86_64@default:false"/>
         <setEntry value="com.mysql.cj@default:default"/>
         <setEntry value="info.elexis.target.jaxws.core@default:default"/>
         <setEntry value="jakarta.persistence@default:default"/>
+        <setEntry value="jakarta.servlet-api@default:default"/>
         <setEntry value="jakarta.ws.rs-api@default:default"/>
         <setEntry value="javax.activation@default:default"/>
         <setEntry value="javax.annotation@default:default"/>
         <setEntry value="javax.el@default:default"/>
         <setEntry value="javax.inject@default:default"/>
-        <setEntry value="javax.servlet@default:default"/>
         <setEntry value="javax.transaction@default:false"/>
         <setEntry value="jaxb-api@default:default"/>
         <setEntry value="org.apache.commons.codec@default:default"/>
@@ -72,8 +69,6 @@
         <setEntry value="org.eclipse.ant.core@default:default"/>
         <setEntry value="org.eclipse.core.contenttype@default:default"/>
         <setEntry value="org.eclipse.core.expressions@default:default"/>
-        <setEntry value="org.eclipse.core.filesystem.linux.x86_64@default:false"/>
-        <setEntry value="org.eclipse.core.filesystem.macosx@default:false"/>
         <setEntry value="org.eclipse.core.filesystem@default:default"/>
         <setEntry value="org.eclipse.core.jobs@default:default"/>
         <setEntry value="org.eclipse.core.resources@default:default"/>
@@ -100,11 +95,7 @@
         <setEntry value="org.eclipse.persistence.jpa.jpql@default:default"/>
         <setEntry value="org.eclipse.persistence.jpa@default:default"/>
         <setEntry value="org.eclipse.persistence.oracle@default:false"/>
-        <setEntry value="org.eclipse.swt.browser.chromium.cocoa.macosx.x86_64@default:false"/>
-        <setEntry value="org.eclipse.swt.chromium.cocoa.macosx.x86_64@default:false"/>
-        <setEntry value="org.eclipse.swt.chromium.gtk.linux.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt.cocoa.macosx.x86_64@default:false"/>
-        <setEntry value="org.eclipse.swt.gtk.linux.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt@default:default"/>
         <setEntry value="org.glassfish.hk2.osgi-resource-locator@default:default"/>
         <setEntry value="org.glassfish.jersey.core.jersey-client@default:default"/>
@@ -134,6 +125,7 @@
         <setEntry value="ch.elexis.ebanking.qr.test@default:false"/>
         <setEntry value="ch.elexis.ebanking.qr@default:default"/>
         <setEntry value="ch.rgw.utility@default:default"/>
+        <setEntry value="com.eclipsesource.jaxrs.consumer@default:default"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <booleanAttribute key="tracing" value="false"/>

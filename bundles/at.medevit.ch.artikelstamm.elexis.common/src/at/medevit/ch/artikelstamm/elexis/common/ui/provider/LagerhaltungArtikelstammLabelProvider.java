@@ -10,6 +10,9 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.elexis.common.ui.provider;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
@@ -18,8 +21,12 @@ import org.eclipse.wb.swt.ResourceManager;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.ui.ArtikelstammLabelProvider;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IStockEntry;
 import ch.elexis.core.services.IStockService.Availability;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.StockServiceHolder;
+import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 
 /**
@@ -43,12 +50,27 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	@Override
 	public String getText(Object element){
 		IArtikelstammItem ai = (IArtikelstammItem) element;
-		Long availability = StockServiceHolder.get().getCumulatedStockForArticle(ai);
+		Long availability = getAvailability(ai, ContextServiceHolder.get().getActiveMandator());
 		if (availability != null) {
 			return ai.getLabel() + " (LB: " + availability + ")";
 		}
 		return ai.getLabel();
 		
+	}
+	
+	private Long getAvailability(IArtikelstammItem ai, Optional<IMandator> mandator){
+		List<IStockEntry> stockEntries = StockServiceHolder.get().findAllStockEntriesForArticle(StoreToStringServiceHolder.getStoreToString(ai));
+		if(!stockEntries.isEmpty()) {
+			if(mandator.isPresent()) {
+				return new Long(stockEntries.stream()
+					.filter(se -> (se.getStock().getOwner() == null
+						|| se.getStock().getOwner().equals(mandator.get())))
+					.mapToInt(se -> se.getCurrentStock()).sum());
+			} else {
+				return new Long(stockEntries.stream().mapToInt(se -> se.getCurrentStock()).sum());
+			}
+		}
+		return null;
 	}
 	
 	/**

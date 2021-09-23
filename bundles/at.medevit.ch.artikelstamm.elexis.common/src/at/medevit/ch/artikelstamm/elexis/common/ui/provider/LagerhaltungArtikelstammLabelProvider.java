@@ -13,6 +13,10 @@ package at.medevit.ch.artikelstamm.elexis.common.ui.provider;
 import java.util.List;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Color;
@@ -21,6 +25,7 @@ import org.eclipse.wb.swt.ResourceManager;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.ui.ArtikelstammLabelProvider;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IStockEntry;
 import ch.elexis.core.services.IStockService.Availability;
@@ -28,6 +33,7 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.StockServiceHolder;
 import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.util.CoreUiUtil;
 
 /**
  * {@link LabelProvider} that extends the basic {@link ArtikelstammLabelProvider} to consider the
@@ -36,8 +42,16 @@ import ch.elexis.core.ui.UiDesk;
 public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProvider
 		implements IColorProvider {
 	
+	@Inject
+	private IEclipseContext eclipseContext;
+	
 	private Image blackBoxedImage = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui",
 		"/rsc/icons/flag-black.png");
+	
+	public LagerhaltungArtikelstammLabelProvider(){
+		// trigger injection of application context 
+		CoreUiUtil.injectServicesWithContext(this);
+	}
 	
 	@Override
 	public Image getImage(Object element){
@@ -49,13 +63,24 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	
 	@Override
 	public String getText(Object element){
+		Long availability = null;
 		IArtikelstammItem ai = (IArtikelstammItem) element;
-		Long availability = getAvailability(ai, ContextServiceHolder.get().getActiveMandator());
+		if (eclipseContext != null) {
+			MPart mPart = eclipseContext.getActive(MPart.class);
+			if ("ch.elexis.LeistungenView".equals(mPart.getElementId())
+				&& ContextServiceHolder.get().getTyped(IEncounter.class).isPresent()) {
+				availability = getAvailability(ai, Optional
+					.of(ContextServiceHolder.get().getTyped(IEncounter.class).get().getMandator()));
+			} else {
+				availability = getAvailability(ai, ContextServiceHolder.get().getActiveMandator());
+			}
+		} else {
+			availability = StockServiceHolder.get().getCumulatedStockForArticle(ai);
+		}
 		if (availability != null) {
 			return ai.getLabel() + " (LB: " + availability + ")";
 		}
 		return ai.getLabel();
-		
 	}
 	
 	private Long getAvailability(IArtikelstammItem ai, Optional<IMandator> mandator){

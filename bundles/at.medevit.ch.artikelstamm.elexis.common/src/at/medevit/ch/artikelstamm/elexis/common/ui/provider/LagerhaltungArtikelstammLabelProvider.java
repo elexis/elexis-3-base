@@ -67,7 +67,7 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 		IArtikelstammItem ai = (IArtikelstammItem) element;
 		if (eclipseContext != null) {
 			MPart mPart = eclipseContext.getActive(MPart.class);
-			if ("ch.elexis.LeistungenView".equals(mPart.getElementId())
+			if (mPart != null && "ch.elexis.LeistungenView".equals(mPart.getElementId())
 				&& ContextServiceHolder.get().getTyped(IEncounter.class).isPresent()) {
 				availability = getAvailability(ai, Optional
 					.of(ContextServiceHolder.get().getTyped(IEncounter.class).get().getMandator()));

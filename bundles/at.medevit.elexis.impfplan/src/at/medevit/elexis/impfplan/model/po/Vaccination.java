@@ -193,7 +193,7 @@ public class Vaccination extends PersistentObject {
 	 */
 	public @NonNull String getAdministratorLabel(){
 		String value = get(FLD_ADMINISTRATOR);
-		if (value.startsWith(Mandant.class.getName()) || value.startsWith(Person.class.getName())) {
+		if (value.startsWith("ch.elexis")) {
 			Mandant mandant = loadMandant(value);
 			
 			if (mandant == null) {

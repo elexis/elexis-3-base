@@ -15,6 +15,7 @@ build:
   - eval $(ssh-agent -s)
   - ssh-add <(echo "$SSH_PRIVATE_KEY_ED25519_BASE64" | base64 -d)
   - rsync -aiv --delete -e ssh ch.elexis.base.p2site/target/repository/ deploy@download.medelexis.ch:download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-base/
+  - eval $(ssh-agent -k)
   only:
   - master@elexis/elexis-3-base
   - /^\d*[.]\d*$/@elexis/elexis-3-base

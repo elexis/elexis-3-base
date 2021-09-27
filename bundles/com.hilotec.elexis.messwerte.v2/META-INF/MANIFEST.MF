@@ -10,4 +10,4 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  com.hilotec.elexis.pluginstatistiken;bundle-version="3.9.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
-Import-Package: org.eclipse.swt.chromium
+Import-Package: com.equo.chromium.swt

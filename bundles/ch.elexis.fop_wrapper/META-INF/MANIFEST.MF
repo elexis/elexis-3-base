@@ -33,3 +33,4 @@ Export-Package: org.apache.avalon.framework.configuration,
  org.apache.fop.render.print,
  org.apache.fop.tools.fontlist,
  org.apache.xmlgraphics.util
+Import-Package: org.w3c.dom.svg

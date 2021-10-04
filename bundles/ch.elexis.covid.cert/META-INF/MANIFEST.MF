@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="2.1.700.v20200
  org.eclipse.ui.forms,
  org.eclipse.ui,
  org.eclipse.e4.core.di,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ ch.elexis.core.ui.dbcheck
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: ch.elexis.covid.cert
 Import-Package: ch.elexis.core.findings,

@@ -18,4 +18,10 @@
       </page>
    </extension>
 
+   <extension
+         point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
+      <ExternalMaintenance
+            MaintenanceCode="ch.elexis.covid.cert.dbcheck.RemoveDuplicateTestCerts">
+      </ExternalMaintenance>
+   </extension>
 </plugin>

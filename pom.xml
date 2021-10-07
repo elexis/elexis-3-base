@@ -9,10 +9,11 @@
 	<name>Elexis-Base</name>
 
 	<properties>
-		<tycho.version>2.4.0</tycho.version>
+		<elexis.target>2021-09-java11</elexis.target>
+
+		<tycho.version>2.5.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
-		<elexis.target>2021-06-java11</elexis.target>
 		<git.core.branch>${git.target.branch}</git.core.branch>
 		<!-- vvv required empty vvv -->
 		<os-jvm-flags />

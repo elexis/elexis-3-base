@@ -9,10 +9,13 @@ Bundle-Localization: plugin
 Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
- ch.elexis.fop.service;bundle-version="3.2.0"
+ ch.elexis.fop.service;bundle-version="3.2.0",
+ org.apache.commons.lang3;bundle-version="3.12.0",
+ org.apache.commons.codec;bundle-version="1.14.0"
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
- lib/ical4j-1.0.1.jar
+ lib/cache-api-1.1.1.jar,
+ lib/ical4j-3.0.29.jar
 Export-Package: ch.elexis.agenda.data,
  ch.elexis.agenda.externalaccess,
  ch.elexis.agenda.preferences,
@@ -24,6 +27,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Import-Package: com.google.common.cache;version="15.0.0",
  com.ibm.icu.util;version="67.1.0",
  javax.inject;version="1.0.0",
- org.apache.commons.lang3;version="3.12.0",
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.model.application.ui.basic

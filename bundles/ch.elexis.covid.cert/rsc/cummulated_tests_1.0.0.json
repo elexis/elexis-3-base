@@ -444,6 +444,17 @@
       "active": true
     },
     {
+      "name": "COVID-19 Ag Rapid Test Kit (Immuno-Chromatography)",
+      "type": "Rapid immunoassay",
+      "type_code": "LP217198-3",
+      "manufacturer": "Guangdong Longsee Biomedical Co., Ltd",
+      "swiss_test_kit": "",
+      "manufacturer_code_eu": "1216",
+      "eu_accepted": true,
+      "ch_accepted": true,
+      "active": true
+    },
+    {
       "name": "V-CHEK, 2019-nCoV Ag Rapid Test Kit (Immunochromatography)",
       "type": "Rapid immunoassay",
       "type_code": "LP217198-3",

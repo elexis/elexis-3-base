@@ -111,7 +111,7 @@ public class CovidCertificateApi {
 		}
 	}
 	
-	public Object revoke(RevokeModel model){
+	public synchronized Object revoke(RevokeModel model){
 		WebTarget target =
 			jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/revoke");
 		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
@@ -125,6 +125,38 @@ public class CovidCertificateApi {
 			return message;
 		} else {
 			return null;
+		}
+	}
+	
+	public synchronized Object issuableVaccines(){
+		WebTarget target =
+			jaxrsClient.target(getBaseUrl()).path("/api/v1/valuesets/issuable-vaccines");
+		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
+		
+		final Response response = target.request().get();
+		
+		if (response.getStatus() >= 300) {
+			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
+			LoggerFactory.getLogger(getClass()).error(message);
+			return message;
+		} else {
+			return response.readEntity(String.class);
+		}
+	}
+	
+	public synchronized Object issuableRapidTests(){
+		WebTarget target =
+			jaxrsClient.target(getBaseUrl()).path("/api/v1/valuesets/issuable-rapid-tests");
+		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
+		
+		final Response response = target.request().get();
+		
+		if (response.getStatus() >= 300) {
+			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
+			LoggerFactory.getLogger(getClass()).error(message);
+			return message;
+		} else {
+			return response.readEntity(String.class);
 		}
 	}
 	
@@ -201,22 +233,24 @@ public class CovidCertificateApi {
 		}
 		
 		private void signPayload(){
-			// load the key
-			PrivateKey privateKey = getPrivateKey();
-			// canonicalize
-			String normalizedJson = payload.replaceAll("[\\n\\r\\t ]", "");
-			byte[] bytes = normalizedJson.getBytes(StandardCharsets.UTF_8);
-			try {
-				// sign
-				Signature signature = Signature.getInstance("SHA256withRSA");
-				signature.initSign(privateKey);
-				signature.update(bytes);
-				
-				signedPayload = Base64.getEncoder().encodeToString(signature.sign());
-			} catch (Exception e) {
-				LoggerFactory.getLogger(getClass()).warn("Error signing payload", e);
-			} finally {
-				payload = null;
+			if (payload != null) {
+				// load the key
+				PrivateKey privateKey = getPrivateKey();
+				// canonicalize
+				String normalizedJson = payload.replaceAll("[\\n\\r\\t ]", "");
+				byte[] bytes = normalizedJson.getBytes(StandardCharsets.UTF_8);
+				try {
+					// sign
+					Signature signature = Signature.getInstance("SHA256withRSA");
+					signature.initSign(privateKey);
+					signature.update(bytes);
+					
+					signedPayload = Base64.getEncoder().encodeToString(signature.sign());
+				} catch (Exception e) {
+					LoggerFactory.getLogger(getClass()).warn("Error signing payload", e);
+				} finally {
+					payload = null;
+				}
 			}
 		}
 		

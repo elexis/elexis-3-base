@@ -21,6 +21,17 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 	private ISelectionProvider selectionProvider;
 	private MPart part;
 	
+	/*
+	 * on right click from javascript if an event is hit:
+	 * - contextMenuFunction(event.id) -> event selection
+	 * - contextMenuFunction(jsEvent.pageX, jsEvent.pageY, date.format(), jsEvent.resource) -> resource selection
+	 * if no event is hit
+	 *  - contextMenuFunction(jsEvent.pageX, jsEvent.pageY, date.format(), jsEvent.resource) -> resource selection
+	 * as there is no other way to deselect if no event is hit on rightclick,
+	 * remember timestamp of selection and deselect if older than 1 sec. 
+	 */
+	private long selectionTimestamp;
+	
 	public ContextMenuFunction(MPart part, Browser browser, String name){
 		super(browser, name);
 		this.part = part;
@@ -29,6 +40,13 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 	@Override
 	public Object function(Object[] arguments){
 		if (arguments.length == 4) {
+			if (selectionTimestamp > 0
+				&& (System.currentTimeMillis() - selectionTimestamp > 1000)) {
+				if (selectionProvider != null) {
+					selectionProvider.setSelection(StructuredSelection.EMPTY);
+				}
+			}
+			
 			LocalDateTime date = getDateTimeArg(arguments[2]);
 			String resource = (String) arguments[3];
 			
@@ -58,6 +76,8 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 				IStructuredSelection selection =
 					termin != null ? new StructuredSelection(termin) : null;
 				selectionProvider.setSelection(selection);
+				// set selection of right click
+				selectionTimestamp = System.currentTimeMillis();
 			}
 			// setting menu visibility needs to be executed in separate
 			// trigger rebuild of menu with new selection by setting visible false first

@@ -72,6 +72,13 @@
       "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
       "version": "2021-04-22 02:23:55 CET"
     },
+    "1216": {
+      "display": "Guangdong Longsee Biomedical Co., Ltd, COVID-19 Ag Rapid Test Kit (Immuno-Chromatography)",
+      "lang": "en",
+      "active": true,
+      "system": "https://covid-19-diagnostics.jrc.ec.europa.eu/devices",
+      "version": "2021-04-22 02:23:55 CET"
+    },
     "1363": {
       "display": "Hangzhou Clongene Biotech Co., Ltd",
       "lang": "en",

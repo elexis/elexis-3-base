@@ -104,6 +104,23 @@
                  icon="res/icons/appointmentPrint.png"
                  label="Termin drucken"
                  style="push">
+                 <visibleWhen checkEnabled="false">
+                 	<with
+			               variable="org.eclipse.ui.selection">
+			            <not>
+			               <count
+			                     value="0">
+			               </count>
+			            </not>
+			            <iterate
+			                  ifEmpty="false"
+			                  operator="and">
+			               <instanceof
+			                     value="ch.elexis.core.model.IPeriod">
+			               </instanceof>
+			            </iterate>
+			        </with>
+           		 </visibleWhen>
            </command>
         </menuContribution>
         <menuContribution
@@ -114,6 +131,23 @@
                  icon="res/icons/appointmentPrint.png"
                  label="Termin drucken"
                  style="push">
+                 <visibleWhen checkEnabled="false">
+                 	<with
+			               variable="org.eclipse.ui.selection">
+			            <not>
+			               <count
+			                     value="0">
+			               </count>
+			            </not>
+			            <iterate
+			                  ifEmpty="false"
+			                  operator="and">
+			               <instanceof
+			                     value="ch.elexis.core.model.IPeriod">
+			               </instanceof>
+			            </iterate>
+			        </with>
+           		 </visibleWhen>
            </command>
         </menuContribution>
 

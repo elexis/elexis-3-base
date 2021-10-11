@@ -64,10 +64,12 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 					Double argY = (Double) arguments[1];
 					getBrowser().getMenu().setLocation(argX.intValue() + 100, argY.intValue());
 				}
-				if (!getBrowser().getMenu().isVisible()) {
-					getBrowser().getMenu().setVisible(true);
-				}
 				
+				Display.getDefault().timerExec(100, () -> {
+					if (!getBrowser().getMenu().isVisible()) {
+						getBrowser().getMenu().setVisible(true);
+					}
+				});
 			});
 		} else if (arguments.length == 1) {
 			IAppointment termin = CoreModelServiceHolder.get()
@@ -79,14 +81,11 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 				// set selection of right click
 				selectionTimestamp = System.currentTimeMillis();
 			}
-			// setting menu visibility needs to be executed in separate
-			// trigger rebuild of menu with new selection by setting visible false first
-			Display.getDefault().asyncExec(() -> {
-				getBrowser().getMenu().setVisible(false);
-				
-			});
-			Display.getDefault().asyncExec(() -> {
-				getBrowser().getMenu().setVisible(true);
+			
+			Display.getDefault().timerExec(100, () -> {
+				if (!getBrowser().getMenu().isVisible()) {
+					getBrowser().getMenu().setVisible(true);
+				}
 			});
 		} else if (arguments.length == 0) {
 			if (selectionProvider != null) {

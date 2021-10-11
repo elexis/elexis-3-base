@@ -23,6 +23,7 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
@@ -52,6 +53,7 @@ public class PandemieDetailDisplay implements IDetailDisplay {
 		form.getBody().setLayout(twl);
 		
 		tblLab = new LabeledInputField.AutoForm(form.getBody(), data);
+		tblLab.setModelService(CoreModelServiceHolder.get());
 		
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;

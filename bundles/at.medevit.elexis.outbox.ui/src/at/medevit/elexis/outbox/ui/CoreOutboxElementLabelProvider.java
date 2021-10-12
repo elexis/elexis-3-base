@@ -188,7 +188,7 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 			}
 			if ("sendMailFromContext".equals(taskDescriptor.getIdentifiedRunnableId())) {
 				MailMessage msg =
-					MailMessage.fromJson(taskDescriptor.getRunContext().get("message"));
+					MailMessage.fromMap((Map) taskDescriptor.getRunContext().get("message"));
 				if (msg != null) {
 					sb.append(" an ").append(msg.getTo());
 					if (StringUtils.isNotBlank(msg.getCc())) {

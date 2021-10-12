@@ -36,7 +36,9 @@ import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.DATASOURCEType;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import at.medevit.ch.artikelstamm.elexis.common.service.ModelServiceHolder;
 import at.medevit.ch.artikelstamm.elexis.common.service.VersionUtil;
+import at.medevit.ch.artikelstamm.model.ArtikelstammItem;
 import at.medevit.ch.artikelstamm.model.common.preference.PreferenceConstants;
 import at.medevit.ch.artikelstamm.ui.DetailComposite;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -72,6 +74,9 @@ public class DetailDisplay implements IDetailDisplay {
 	@Override
 	public void display(Object obj){
 		IArtikelstammItem ai = (IArtikelstammItem) obj;
+		if (ai != null) {
+			ModelServiceHolder.get().refresh(ai, true);
+		}
 		item.setValue(ai);
 		if (dc != null) {
 			dc.setItem(ai);

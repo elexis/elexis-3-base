@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
@@ -182,6 +183,15 @@ public class ArtikelstammItem
 	}
 	
 	@Override
+	public String getProductId(){
+		if (isProduct()) {
+			return getId();
+		} else {
+			return getEntity().getProdno();
+		}
+	}
+	
+	@Override
 	public IArticle getProduct(){
 		String prodno = getEntity().getProdno();
 		if (prodno != null) {
@@ -226,7 +236,10 @@ public class ArtikelstammItem
 	
 	@Override
 	public void setSellingPrice(Money value){
-		getEntity().setPpub((value != null) ? Double.toString(value.doubleValue()) : null);
+		if (value != null && isUserDefinedPrice() && !value.isNegative()) {
+			value.negate();
+		}
+		getEntityMarkDirty().setPpub((value != null) ? Double.toString(value.doubleValue()) : null);
 	}
 	
 	@Override
@@ -310,7 +323,17 @@ public class ArtikelstammItem
 	
 	@Override
 	public boolean isInSLList(){
-		return getEntity().isSl_entry();
+		return getEntity().isSl_entry() || getEntity().isK70_entry();
+	}
+	
+	@Override
+	public void setInK70(boolean value){
+		getEntityMarkDirty().setK70_entry(value);
+	}
+	
+	@Override
+	public boolean isInK70(){
+		return getEntity().isK70_entry();
 	}
 	
 	@Override
@@ -384,11 +407,30 @@ public class ArtikelstammItem
 	public boolean isUserDefinedPrice(){
 		String ppub = getEntity().getPpub();
 		if (StringUtils.isNotBlank(ppub)) {
-			try {
-				return new Money(ppub).isNegative();
-			} catch (ParseException pe) {}
+			return ppub.startsWith("-");
 		}
 		return false;
+	}
+	
+	@Override
+	public void setUserDefinedPrice(boolean activate){
+		if (activate) {
+			String ppub = StringUtils.defaultString(getEntity().getPpub(), "0");
+			setExtInfo(ArtikelstammConstants.EXTINFO_VAL_PPUB_OVERRIDE_STORE, ppub);
+			double value = 0;
+			try {
+				value = Double.valueOf(ppub);
+			} catch (NumberFormatException nfe) {
+				LoggerFactory.getLogger(getClass()).error(
+					"Error #setUserDefinedPrice [{}] value is [{}], setting 0", getId(), ppub);
+			}
+			setUserDefinedPriceValue(new Money(value));
+		} else {
+			String ppubStored =
+				(String) getExtInfo(ArtikelstammConstants.EXTINFO_VAL_PPUB_OVERRIDE_STORE);
+			getEntityMarkDirty().setPpub(ppubStored);
+			setExtInfo(ArtikelstammConstants.EXTINFO_VAL_PPUB_OVERRIDE_STORE, null);
+		}
 	}
 	
 	@Override
@@ -410,7 +452,8 @@ public class ArtikelstammItem
 				(getSellingPrice() != null) ? Double.toString(getSellingPrice().doubleValue())
 						: "");
 		}
-		setSellingPrice((value != null && value.intValue() > 0) ? value.negate() : null);
+		//setSellingPrice((value != null) ? value.negate() : null);
+		getEntity().setPpub((value != null) ? "-" + Double.toString(value.doubleValue()) : null);
 	}
 	
 	@Override

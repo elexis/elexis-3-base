@@ -30,4 +30,5 @@ Import-Package: javax.persistence;version="2.2.3",
  org.eclipse.core.runtime;version="3.5.0",
  org.osgi.framework;version="1.9.0",
  org.slf4j;version="1.7.2"
-Export-Package: at.medevit.ch.artikelstamm.model.common.preference
+Export-Package: at.medevit.ch.artikelstamm.model,
+ at.medevit.ch.artikelstamm.model.common.preference

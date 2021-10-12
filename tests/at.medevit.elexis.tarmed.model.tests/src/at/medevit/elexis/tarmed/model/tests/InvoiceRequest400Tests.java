@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -16,9 +17,11 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import at.medevit.elexis.tarmed.model.Constants;
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.fd.invoice400.request.BalanceType;
 import ch.fd.invoice400.request.BankAddressType;
@@ -57,13 +60,12 @@ import ch.fd.invoice400.request.XtendHeaderPartyType;
 import ch.fd.invoice400.request.ZipType;
 
 public class InvoiceRequest400Tests {
-	private static TarmedJaxbUtil jaxbHelper;
+
 	private static File writeReq400;
 	private static File readReq400;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
-		jaxbHelper = new TarmedJaxbUtil();
 		writeReq400 = new File("rsc/writeReq400.xml");
 		if (!writeReq400.exists()) {
 			writeReq400.createNewFile();
@@ -73,18 +75,23 @@ public class InvoiceRequest400Tests {
 	}
 	
 	@Test
-	public void testMarshallInvoiceRequest400() throws FileNotFoundException,
-		DatatypeConfigurationException{
-		jaxbHelper.marshallInvoiceRequest(generateRequestSample(),
-			new FileOutputStream(writeReq400));
+	public void testMarshallInvoiceRequest400() throws DatatypeConfigurationException, IOException{
+		try (FileOutputStream fileOutputStream = new FileOutputStream(writeReq400)) {
+			TarmedJaxbUtil.marshallInvoiceRequest(generateRequestSample(), fileOutputStream);
+		}
 		
 		assertTrue(writeReq400.exists());
+		
+		try (FileInputStream fileInputStream = new FileInputStream(writeReq400);) {
+			String string = IOUtils.toString(fileInputStream, "UTF-8");
+			assertTrue(string.startsWith(Constants.DEFAULT_HEADER));
+		}
 	}
 	
 	@Test
 	public void testUnmarshalInvoiceRequest400() throws FileNotFoundException{
 		RequestType request =
-			jaxbHelper.unmarshalInvoiceRequest400(new FileInputStream(readReq400));
+				TarmedJaxbUtil.unmarshalInvoiceRequest400(new FileInputStream(readReq400));
 		
 		assertNotNull(request);
 		assertEquals("production", request.getRole());

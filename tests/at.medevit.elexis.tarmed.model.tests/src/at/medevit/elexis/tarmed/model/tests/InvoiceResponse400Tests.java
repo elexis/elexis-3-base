@@ -41,13 +41,12 @@ import ch.fd.invoice400.response.TelecomAddressType;
 import ch.fd.invoice400.response.ZipType;
 
 public class InvoiceResponse400Tests {
-	private static TarmedJaxbUtil jaxbHelper;
+
 	private static File writeResp400;
 	private static File readResp400;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
-		jaxbHelper = new TarmedJaxbUtil();
 		writeResp400 = new File("rsc/writeResp400.xml");
 		if (!writeResp400.exists()) {
 			writeResp400.createNewFile();
@@ -59,7 +58,7 @@ public class InvoiceResponse400Tests {
 	@Test
 	public void testMarshallInvoiceResponse400() throws FileNotFoundException,
 		DatatypeConfigurationException{
-		jaxbHelper.marshallInvoiceResponse(generateResponseSample(), new FileOutputStream(
+		TarmedJaxbUtil.marshallInvoiceResponse(generateResponseSample(), new FileOutputStream(
 			writeResp400));
 		
 		assertTrue(writeResp400.exists());
@@ -68,7 +67,7 @@ public class InvoiceResponse400Tests {
 	@Test
 	public void testUnmarshalInvoiceResponse400() throws FileNotFoundException{
 		ResponseType response =
-			jaxbHelper.unmarshalInvoiceResponse400(new FileInputStream(readResp400));
+				TarmedJaxbUtil.unmarshalInvoiceResponse400(new FileInputStream(readResp400));
 		assertNotNull(response);
 		assertEquals("test", response.getRole());
 		

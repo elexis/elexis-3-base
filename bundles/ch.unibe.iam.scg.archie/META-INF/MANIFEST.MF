@@ -16,20 +16,9 @@ Export-Package: ch.unibe.iam.scg.archie.annotations,
 Bundle-Vendor: designchuchi.ch
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
- org.junit;bundle-version="4.13.0"
-Import-Package: org.jfree.chart,
- org.jfree.chart.axis,
- org.jfree.chart.labels,
- org.jfree.chart.plot,
- org.jfree.chart.renderer,
- org.jfree.chart.renderer.category,
- org.jfree.chart.renderer.xy,
- org.jfree.chart.title,
- org.jfree.data,
- org.jfree.data.category,
- org.jfree.data.general,
- org.jfree.data.time,
- org.jfree.data.xy,
- org.jfree.ui
-Bundle-ClassPath: lib/jfreechart-swt-1.0.17.jar,
- .
+ org.junit;bundle-version="4.13.0",
+ org.jfree.chart;bundle-version="1.0.19",
+ org.jfree.chart-swt;bundle-version="1.0.0",
+ org.jfree.jcommon;bundle-version="1.0.24",
+ org.jfree.swtgraphics2d;bundle-version="1.1.0"
+Bundle-ClassPath: .

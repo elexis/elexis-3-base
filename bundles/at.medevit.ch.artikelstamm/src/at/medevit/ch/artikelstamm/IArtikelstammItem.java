@@ -22,6 +22,25 @@ import ch.rgw.tools.Money;
 public interface IArtikelstammItem extends IArticle {
 	
 	/**
+	 * Set whether this item is marked as in Kapitel 70 list
+	 * 
+	 * @param value
+	 */
+	public void setInK70(boolean value);
+	
+	/**
+	 * Set whether this price is set by the user
+	 * 
+	 * @param value
+	 */
+	public void setUserDefinedPrice(boolean value);
+	
+	/**
+	 * @return product id of product or article
+	 */
+	public String getProductId();
+	
+	/**
 	 * @return human readable label
 	 */
 	public String getLabel();
@@ -65,6 +84,11 @@ public interface IArtikelstammItem extends IArticle {
 	 * @return <code>true</code> if this article is narcotic
 	 */
 	public boolean isNarcotic();
+	
+	/**
+	 * @return <code>true</code> if article is marked as in Kapitel 70 list
+	 */
+	public boolean isInK70();
 	
 	/**
 	 * @return <code>true</code> if article is in LPPV list

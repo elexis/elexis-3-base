@@ -31,6 +31,7 @@ import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
+import ch.elexis.core.data.interfaces.IRnOutputter.TYPE;
 import ch.elexis.core.model.FallConstants;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
@@ -147,7 +148,7 @@ public class Tarmed45Exporter {
 			requestType.setLanguage(Locale.getDefault().getLanguage());
 			
 			requestType.setProcessing(getProcessing(invoice));
-			requestType.setPayload(getPayload(invoice));
+			requestType.setPayload(getPayload(invoice, type));
 			
 			// cleanup
 			services = null;
@@ -759,13 +760,16 @@ public class Tarmed45Exporter {
 		return ret;
 	}
 	
-	protected PayloadType getPayload(IInvoice invoice) throws DatatypeConfigurationException{
+	protected PayloadType getPayload(IInvoice invoice, TYPE type)
+		throws DatatypeConfigurationException{
 		PayloadType payloadType = new PayloadType();
 		
 		//		payloadType.setCredit(value);
 		payloadType.setInvoice(getInvoice(invoice));
 		
 		payloadType.setBody(getBody(invoice));
+		payloadType.setCopy(type == TYPE.COPY);
+		payloadType.setStorno(type == TYPE.STORNO);
 		
 		return payloadType;
 	}

@@ -156,7 +156,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 							}
 							betrag.subtractMoney(z.getBetrag());
 						}
-						row[3] = betrag.getAmountAsString();
+						row[3] = Double.toString(betrag.getAmount());
 						row[2] = RnStatus.getStatusText(status);
 						result.add(row);
 					}

@@ -13,3 +13,4 @@ Export-Package: at.medevit.ch.artikelstamm.ui,
  org.eclipse.wb.swt
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: at.medevit.ch.artikelstamm.ui.internal.Activator
+Service-Component: OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.ModelServiceHolder.xml

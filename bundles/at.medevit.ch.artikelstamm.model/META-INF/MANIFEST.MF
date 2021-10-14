@@ -18,7 +18,8 @@ Import-Package: javax.persistence;version="2.2.3",
  javax.persistence.criteria;version="2.2.3",
  javax.xml.bind,
  org.apache.commons.lang3;version="3.3.2"
-Export-Package: at.medevit.ch.artikelstamm.model.common.preference
+Export-Package: at.medevit.ch.artikelstamm.model,
+ at.medevit.ch.artikelstamm.model.common.preference
 Service-Component: OSGI-INF/at.medevit.ch.artikelstamm.model.service.EntityManagerHolder.xml,
  OSGI-INF/at.medevit.ch.artikelstamm.model.service.ArtikelstammModelService.xml,
  OSGI-INF/at.medevit.ch.artikelstamm.model.service.ModelServiceHolder.xml,

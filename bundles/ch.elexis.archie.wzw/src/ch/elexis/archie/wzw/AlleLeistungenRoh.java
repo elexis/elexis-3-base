@@ -52,7 +52,7 @@ public class AlleLeistungenRoh extends BaseStats {
 										g == null ? "?" : g, vv.getCodeSystemName(),
 										vv.getCode() == null ? "?" : vv.getCode(), vv.getText(),
 										Double.toString(v.getAmount()),
-										v.getTotal().getAmountAsString()
+										Double.toString(v.getTotal().getAmount())
 									};
 									lines.add(line);
 								} else {

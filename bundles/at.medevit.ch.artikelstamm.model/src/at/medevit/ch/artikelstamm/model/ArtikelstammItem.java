@@ -397,9 +397,9 @@ public class ArtikelstammItem
 		if (isUserDefinedPrice()) {
 			String overridenPrice =
 				(String) getExtInfo(ArtikelstammConstants.EXTINFO_VAL_PPUB_OVERRIDE_STORE);
-			try {
-				setSellingPrice(new Money(overridenPrice));
-			} catch (ParseException e) {}
+			if (overridenPrice != null) {
+				setUserDefinedPrice(false);
+			}
 		}
 	}
 	

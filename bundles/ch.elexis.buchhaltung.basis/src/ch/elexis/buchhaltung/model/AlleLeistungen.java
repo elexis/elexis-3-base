@@ -192,7 +192,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					row[index++] = verrechnet.getAmount();
 					row[index++] = verrechnet.getNetPrice(); //verrechnet.getKosten();
 					row[index++] = ""; //verrechnet.getEffPreis();
-					row[index++] = verrechnet.getTotal();
+					row[index++] = verrechnet.getTotal().getAmount();
 					row[index++] = getVatScale(verrechnet);
 					
 					row[index++] = billState;

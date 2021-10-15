@@ -131,7 +131,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	public Result<IBilled> add(TarmedLeistung code, IEncounter kons, double amount, boolean save){
 		this.save = save;
 		int amountInt = doubleToInt(amount);
-		if (amountInt >= 1) {
+		if (!code.isChapter() && amountInt >= 1) {
 			Result<IBilled> result = add(code, kons);
 			if (amountInt == 1) {
 				return result;

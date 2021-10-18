@@ -48,7 +48,7 @@
    <feature url="features/org.iatrix.bestellung.rose.feature_0.0.0.jar" id="org.iatrix.bestellung.rose.feature" version="0.0.0">
       <category name="dataexchange"/>
    </feature>
-   <feature url="features/ch.elexis.base.messages.feature_3.0.100.qualifier.jar" id="ch.elexis.base.messages.feature" version="3.0.100.qualifier">
+   <feature url="features/ch.elexis.base.messages.feature_0.0.0.jar" id="ch.elexis.base.messages.feature" version="0.0.0">
       <category name="organisation"/>
    </feature>
    <feature url="features/ch.elexis.base.befunde.feature_0.0.0.jar" id="ch.elexis.base.befunde.feature" version="0.0.0">
@@ -60,7 +60,7 @@
    <feature url="features/ch.elexis.base.konsextension.bildanzeige.feature_0.0.0.jar" id="ch.elexis.base.konsextension.bildanzeige.feature" version="0.0.0">
       <category name="clinicrecordkeeping"/>
    </feature>
-   <feature url="features/ch.elexis.laborimport.bioanalytica.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport.bioanalytica.feature" version="3.0.100.qualifier">
+   <feature url="features/ch.elexis.laborimport.bioanalytica.feature_0.0.0.jar" id="ch.elexis.laborimport.bioanalytica.feature" version="0.0.0">
       <category name="laborexchanges"/>
    </feature>
    <feature id="ch.elexis.laborimport.analytica.feature">
@@ -153,7 +153,7 @@
    <feature id="ch.elexis.laborimport_rischbern.feature">
       <category name="laborexchanges"/>
    </feature>
-   <feature url="features/ch.elexis.laborimport_rothen.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport_rothen.feature" version="3.0.100.qualifier">
+   <feature url="features/ch.elexis.laborimport_rothen.feature_0.0.0.jar" id="ch.elexis.laborimport_rothen.feature" version="0.0.0">
       <category name="laborexchanges"/>
    </feature>
    <feature url="features/ch.medshare.elexis_directories.feature_0.0.0.jar" id="ch.medshare.elexis_directories.feature" version="0.0.0">

@@ -2,15 +2,15 @@
 <feature
       id="ch.elexis.laborimport.bioanalytica.feature"
       label="Laborimport Bioanalytica"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="elexis.info">
 
-  <description>
+   <description>
       Laborimport Labor Bioanalytica HL7. Mehr Info unter http://wiki.elexis.info/ch.elexis.laborimport.bioanalytica.feature.feature.group
-  </description>
+   </description>
 
-    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+   <copyright url="http://elexis.info/de_contributers.html">
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

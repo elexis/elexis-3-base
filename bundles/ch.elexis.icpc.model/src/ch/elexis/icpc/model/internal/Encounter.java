@@ -30,7 +30,7 @@ public class Encounter extends AbstractIdModelAdapter<ICPCEncounter>
 	
 	@Override
 	public void setDeleted(boolean value){
-		getEntity().setDeleted(value);
+		getEntityMarkDirty().setDeleted(value);
 	}
 	
 	@Override
@@ -43,9 +43,9 @@ public class Encounter extends AbstractIdModelAdapter<ICPCEncounter>
 	@Override
 	public void setEncounter(IEncounter value){
 		if (value != null) {
-			getEntity().setKons(((AbstractIdModelAdapter<Behandlung>) value).getEntity());
+			getEntityMarkDirty().setKons(((AbstractIdModelAdapter<Behandlung>) value).getEntity());
 		} else {
-			getEntity().setKons(null);
+			getEntityMarkDirty().setKons(null);
 		}
 	}
 	
@@ -59,9 +59,10 @@ public class Encounter extends AbstractIdModelAdapter<ICPCEncounter>
 	@Override
 	public void setEpisode(IcpcEpisode value){
 		if (value != null) {
-			getEntity().setEpisode(((AbstractIdModelAdapter<ICPCEpisode>) value).getEntity());
+			getEntityMarkDirty()
+				.setEpisode(((AbstractIdModelAdapter<ICPCEpisode>) value).getEntity());
 		} else {
-			getEntity().setEpisode(null);
+			getEntityMarkDirty().setEpisode(null);
 		}
 	}
 	
@@ -77,9 +78,9 @@ public class Encounter extends AbstractIdModelAdapter<ICPCEncounter>
 	@Override
 	public void setProc(IcpcCode value){
 		if (value != null) {
-			getEntity().setProc(value.getId());
+			getEntityMarkDirty().setProc(value.getId());
 		} else {
-			getEntity().setProc(null);
+			getEntityMarkDirty().setProc(null);
 		}
 	}
 	
@@ -95,9 +96,9 @@ public class Encounter extends AbstractIdModelAdapter<ICPCEncounter>
 	@Override
 	public void setDiag(IcpcCode value){
 		if (value != null) {
-			getEntity().setDiag(value.getId());
+			getEntityMarkDirty().setDiag(value.getId());
 		} else {
-			getEntity().setDiag(null);
+			getEntityMarkDirty().setDiag(null);
 		}
 	}
 	
@@ -113,9 +114,9 @@ public class Encounter extends AbstractIdModelAdapter<ICPCEncounter>
 	@Override
 	public void setRfe(IcpcCode value){
 		if (value != null) {
-			getEntity().setRfe(value.getId());
+			getEntityMarkDirty().setRfe(value.getId());
 		} else {
-			getEntity().setRfe(null);
+			getEntityMarkDirty().setRfe(null);
 		}
 	}
 	

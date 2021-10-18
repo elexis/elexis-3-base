@@ -38,7 +38,7 @@ public interface IcpcEncounter extends Identifiable, Deleteable {
 	 * @return the value of the '<em>Encounter</em>' reference.
 	 * @see #setEncounter(IEncounter)
 	 * @see ch.elexis.icpc.model.icpc.IcpcPackage#getIcpcEncounter_Encounter()
-	 * @model
+	 * @model annotation="http://elexis.info/jpa/entity/attribute/mapping attributeName='kons'"
 	 * @generated
 	 */
 	IEncounter getEncounter();

@@ -3,7 +3,11 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="icpc" nsURI="http://ch.elexis.base/model/icpc" nsPrefix="ch.elexis.icpc.model">
   <eClassifiers xsi:type="ecore:EClass" name="IcpcEncounter" abstract="true" interface="true"
       eSuperTypes="../../ch.elexis.core/model/model.ecore#//Identifiable ../../ch.elexis.core/model/model.ecore#//Deleteable">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="encounter" eType="ecore:EClass ../../ch.elexis.core/model/model.ecore#//IEncounter"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="encounter" eType="ecore:EClass ../../ch.elexis.core/model/model.ecore#//IEncounter">
+      <eAnnotations source="http://elexis.info/jpa/entity/attribute/mapping">
+        <details key="attributeName" value="kons"/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="episode" eType="#//IcpcEpisode"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="proc" eType="#//IcpcCode"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="diag" eType="#//IcpcCode"/>

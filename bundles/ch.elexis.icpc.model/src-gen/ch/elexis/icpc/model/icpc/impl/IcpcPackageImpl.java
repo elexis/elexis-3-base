@@ -448,6 +448,12 @@ public class IcpcPackageImpl extends EPackageImpl implements IcpcPackage {
 	protected void createMappingAnnotations() {
 		String source = "http://elexis.info/jpa/entity/attribute/mapping";
 		addAnnotation
+		  (getIcpcEncounter_Encounter(),
+		   source,
+		   new String[] {
+			   "attributeName", "kons"
+		   });
+		addAnnotation
 		  (getIcpcEpisode_Patient(),
 		   source,
 		   new String[] {

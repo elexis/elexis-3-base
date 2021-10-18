@@ -69,6 +69,15 @@ public interface IcpcPackage extends EPackage {
 	int ICPC_ENCOUNTER = 0;
 
 	/**
+	 * The feature id for the '<em><b>Lastupdate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ICPC_ENCOUNTER__LASTUPDATE = ModelPackage.IDENTIFIABLE__LASTUPDATE;
+
+	/**
 	 * The feature id for the '<em><b>Deleted</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -151,13 +160,22 @@ public interface IcpcPackage extends EPackage {
 	int ICPC_EPISODE__DELETED = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Lastupdate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ICPC_EPISODE__LASTUPDATE = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 1;
+
+	/**
 	 * The feature id for the '<em><b>Title</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ICPC_EPISODE__TITLE = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 1;
+	int ICPC_EPISODE__TITLE = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Number</b></em>' attribute.
@@ -166,7 +184,7 @@ public interface IcpcPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ICPC_EPISODE__NUMBER = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 2;
+	int ICPC_EPISODE__NUMBER = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Start Date</b></em>' attribute.
@@ -175,7 +193,7 @@ public interface IcpcPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ICPC_EPISODE__START_DATE = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 3;
+	int ICPC_EPISODE__START_DATE = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Status</b></em>' attribute.
@@ -184,7 +202,7 @@ public interface IcpcPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ICPC_EPISODE__STATUS = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 4;
+	int ICPC_EPISODE__STATUS = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Patient</b></em>' reference.
@@ -193,7 +211,7 @@ public interface IcpcPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ICPC_EPISODE__PATIENT = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 5;
+	int ICPC_EPISODE__PATIENT = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Diagnosis</b></em>' reference list.
@@ -202,7 +220,7 @@ public interface IcpcPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ICPC_EPISODE__DIAGNOSIS = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 6;
+	int ICPC_EPISODE__DIAGNOSIS = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 7;
 
 	/**
 	 * The number of structural features of the '<em>Episode</em>' class.
@@ -211,7 +229,7 @@ public interface IcpcPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ICPC_EPISODE_FEATURE_COUNT = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 7;
+	int ICPC_EPISODE_FEATURE_COUNT = ModelPackage.WITH_EXT_INFO_FEATURE_COUNT + 8;
 
 	/**
 	 * The meta object id for the '{@link ch.elexis.icpc.model.icpc.IcpcCode <em>Code</em>}' class.
@@ -240,6 +258,15 @@ public interface IcpcPackage extends EPackage {
 	 * @ordered
 	 */
 	int ICPC_CODE__TEXT = ModelPackage.IDIAGNOSIS_TREE__TEXT;
+
+	/**
+	 * The feature id for the '<em><b>Lastupdate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ICPC_CODE__LASTUPDATE = ModelPackage.IDIAGNOSIS_TREE__LASTUPDATE;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.

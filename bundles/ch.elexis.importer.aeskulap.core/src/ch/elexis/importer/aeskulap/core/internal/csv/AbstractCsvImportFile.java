@@ -9,7 +9,8 @@ import java.io.InputStream;
 
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
+
 import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.data.Xid;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;

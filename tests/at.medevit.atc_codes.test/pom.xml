@@ -1,39 +1,42 @@
-<project xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd' xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>ch.elexis.base</groupId>
-    <artifactId>ch.elexis.base.tests</artifactId>
-    <version>3.9.0-SNAPSHOT</version>
-  </parent>
-  <groupId>ch.elexis.base</groupId>
-  <artifactId>at.medevit.atc_codes.test</artifactId>
-  <packaging>eclipse-test-plugin</packaging>
+<project
+	xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd'
+	xmlns='http://maven.apache.org/POM/4.0.0'
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>ch.elexis.base</groupId>
+		<artifactId>ch.elexis.base.tests</artifactId>
+		<version>3.9.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>at.medevit.atc_codes.test</artifactId>
+	<version>3.9.0-SNAPSHOT</version>
+	<packaging>eclipse-test-plugin</packaging>
 
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-surefire-plugin</artifactId>
-        <version>${tycho.version}</version>
-        <configuration>
-          <skipTests>true</skipTests> <!-- atc_codes references non existent files. -->
-          <application>ch.elexis.core.application.ElexisApp</application>
-          <argLine>-debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
-          <useUIThread>true</useUIThread>
-          <useUIHarness>true</useUIHarness>
-          <showEclipseLog>${show.eclipse.log}</showEclipseLog>
-          <dependencies>
-            <dependency>
-              <type>eclipse-feature</type>
-              <artifactId>ch.elexis.core.application.feature</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-          </dependencies>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<application>ch.elexis.core.application.ElexisApp</application>
+					<testClass>at.medevit.atc_codes.internal.ATCCodesTest</testClass>
+					<argLine>-debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
+					<useUIThread>true</useUIThread>
+					<useUIHarness>true</useUIHarness>
+					<showEclipseLog>${show.eclipse.log}</showEclipseLog>
+					<dependencies>
+						<dependency>
+							<type>eclipse-feature</type>
+							<artifactId>ch.elexis.core.application.feature</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+					</dependencies>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
-<version>3.0.0-SNAPSHOT</version>
+
 </project>

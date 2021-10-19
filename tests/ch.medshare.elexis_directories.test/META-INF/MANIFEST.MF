@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ch.medshare.elexis_directories.test
 Bundle-SymbolicName: ch.medshare.elexis_directories.test
-Bundle-Version: 3.0.0.qualifier
-Fragment-Host: ch.medshare.elexis_directories;bundle-version="3.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Version: 3.9.0.qualifier
+Fragment-Host: ch.medshare.elexis_directories;bundle-version="3.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit;bundle-version="4.10.0"
 Bundle-Vendor: elexis.ch
 Import-Package: org.apache.commons.io

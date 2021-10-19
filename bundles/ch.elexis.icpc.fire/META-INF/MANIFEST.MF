@@ -2,16 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: FIRE-Fragment für ICPC
 Bundle-SymbolicName: ch.elexis.icpc.fire;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.info
-Fragment-Host: ch.elexis.icpc;bundle-version="3.2.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Multi-Release: true
-Require-Bundle: org.eclipse.ui,
- ch.elexis.base.befunde;bundle-version="3.0.0",
- ch.elexis.base.ch.arzttarife;bundle-version="3.0.0",
- org.jdom;bundle-version="1.1.0"
+Fragment-Host: ch.elexis.icpc;bundle-version="3.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: ch.elexis.base.ch.arzttarife;bundle-version="3.9.0",
+ ch.elexis.base.befunde;bundle-version="3.9.0"
 Export-Package: ch.elexis.icpc.fire.handlers,
  ch.elexis.icpc.fire.model,
  ch.elexis.icpc.fire.ui
-Import-Package: ch.elexis.icpc.model.icpc
+Import-Package: javax.xml.bind,
+ javax.xml.bind.annotation,
+ javax.xml.bind.annotation.adapters

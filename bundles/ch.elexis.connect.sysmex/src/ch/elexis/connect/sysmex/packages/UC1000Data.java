@@ -1,6 +1,6 @@
 package ch.elexis.connect.sysmex.packages;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.data.Patient;

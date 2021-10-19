@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 
 import javax.sql.DataSource;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -28,11 +29,14 @@ import ch.elexis.core.common.DBConnection;
 import ch.elexis.core.common.DBConnection.DBType;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IBillingService;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IElexisDataSource;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IEncounterService;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
 @RunWith(Suite.class)
@@ -48,35 +52,39 @@ public class AllTestsSuite {
 	private static IEncounterService encounterService;
 	
 	@BeforeClass
-	public static void beforeClass() throws IOException{
+	public static void beforeClass() throws IOException, SQLException{
 		if (!setInitialTarifs()) {
 			// download and copy tarifs to rsc folder first !
 			IReferenceDataImporter physioImporter =
 				OsgiServiceUtil.getService(IReferenceDataImporter.class,
 					"(" + IReferenceDataImporter.REFERENCEDATAID + "=physio)").get();
-			physioImporter.performImport(new NullProgressMonitor(),
+			IStatus result = physioImporter.performImport(new NullProgressMonitor(),
 				AllTestsSuite.class.getResourceAsStream("/rsc/physiotarif2018_09_05.csv"), 180905);
 			OsgiServiceUtil.ungetService(physioImporter);
+			assertTrue(result.isOK());
 			
 			IReferenceDataImporter complementaryImporter =
 				OsgiServiceUtil.getService(IReferenceDataImporter.class,
 					"(" + IReferenceDataImporter.REFERENCEDATAID + "=complementary)").get();
-			complementaryImporter.performImport(new NullProgressMonitor(),
+			result =  complementaryImporter.performImport(new NullProgressMonitor(),
 				AllTestsSuite.class.getResourceAsStream("/rsc/complementary_171229.csv"), 180206);
+			assertTrue(result.isOK());
 			OsgiServiceUtil.ungetService(complementaryImporter);
 			
 			IReferenceDataImporter tarmedImporter =
 				OsgiServiceUtil.getService(IReferenceDataImporter.class,
 					"(" + IReferenceDataImporter.REFERENCEDATAID + "=tarmed_34)").get();
-			tarmedImporter.performImport(new NullProgressMonitor(), AllTestsSuite.class
+			result =  tarmedImporter.performImport(new NullProgressMonitor(), AllTestsSuite.class
 				.getResourceAsStream("/rsc/TARMED_Datenbank_01.08.00_BR_UVG_IVG_MVG.mdb"), 171019);
+			assertTrue(result.isOK());
 			OsgiServiceUtil.ungetService(tarmedImporter);
 			
 			tarmedImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
 				"(" + IReferenceDataImporter.REFERENCEDATAID + "=tarmed_kvg_34)").get();
-			tarmedImporter.performImport(new NullProgressMonitor(), AllTestsSuite.class
+			result = tarmedImporter.performImport(new NullProgressMonitor(), AllTestsSuite.class
 				.getResourceAsStream("/rsc/TARMED__Datenbank_01.09.00_BR_KVG-27.12.2017.mdb"),
 				171227);
+			assertTrue(result.isOK());
 			OsgiServiceUtil.ungetService(tarmedImporter);
 			
 			// dumpInitialTarifs();	
@@ -91,6 +99,10 @@ public class AllTestsSuite {
 		entityManager = OsgiServiceUtil.getService(IElexisEntityManager.class).get();
 		entityManager.getEntityManager(); // initialize the db		
 		encounterService = OsgiServiceUtil.getService(IEncounterService.class).get();
+		
+		TestDatabaseInitializer tdb = new TestDatabaseInitializer(coreModelService, entityManager);
+		tdb.initializeMandant();
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
 	}
 	
 	/**

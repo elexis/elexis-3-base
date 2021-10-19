@@ -2,16 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Artikelstamm Format
 Bundle-SymbolicName: at.medevit.ch.artikelstamm
-Bundle-Version: 3.3.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Export-Package: at.medevit.ch.artikelstamm,
  at.medevit.ch.artikelstamm.marge
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Multi-Release: true
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: medevit.at
 Bundle-ClassPath: lib/,
  .
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.osgi,
- ch.rgw.utility;bundle-version="3.8.0",
- ch.elexis.core;bundle-version="3.8.0"
-Import-Package: org.slf4j
+Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
+ ch.elexis.core;bundle-version="3.9.0"
+Import-Package: javax.xml.bind,
+ javax.xml.bind.annotation

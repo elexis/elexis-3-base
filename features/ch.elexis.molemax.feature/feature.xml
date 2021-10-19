@@ -2,28 +2,27 @@
 <feature
       id="ch.elexis.molemax.feature"
       label="Molemax: Aufzeichnung von Hautbildern und Dokumentation der Entwicklung"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="ch.elexis">
 
-  <description>
-Idee und Konzept: Dr. med. Angela Brögli, PD Dr. med. Andreas Häffner
+   <description>
+      Idee und Konzept: Dr. med. Angela Brögli, PD Dr. med. Andreas Häffner
 MoleMax ist ein Elexis-Plugin zur Aufzeichnung von Hautbildern und zur Dokumentation der Entwicklung von Hautveränderungen über die Zeit. MoleMax benötigt Elexis 3.0.3 oder höher.
-  </description>
+   </description>
 
-  <copyright url="http://elexis.info/de_contributers.html">
-    Gerry Weirich, 2007-2013 und viele andere
-  </copyright>
+   <copyright url="http://elexis.info/de_contributers.html">
+      Gerry Weirich, 2007-2013 und viele andere
+   </copyright>
 
-  <license url="http://www.eclipse.org/legal/epl-v10.html">
-    Eclipse Public License v1.0
-  </license>
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
 
-  <plugin
-        id="ch.elexis.molemax"
-        download-size="0"
-        install-size="0"
-        version="0.0.0"
-        unpack="false"/>
+   <plugin
+         id="ch.elexis.molemax"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
-  

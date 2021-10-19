@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.elexis.cobasmira.feature"
       label="Cobas Mira Anbindung"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medevit.at"
       plugin="at.medevit.elexis.cobasmira">
 
@@ -10,7 +10,7 @@
       Geräteanbindung für das Cobas Mira
    </description>
 
-    <copyright url="http://www.medevit.at">
+   <copyright url="http://www.medevit.at">
       Copyright (c) 2015-2018, Lucia Ammann, Thomas Huster, Marco Descher und MEDEVIT OG
       All rights reserved.
    </copyright>

@@ -2,7 +2,7 @@ package ch.berchtold.emanuel.privatrechnung.model.internal;
 
 import java.time.LocalDate;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import ch.berchtold.emanuel.privatrechnung.model.IPrivatLeistung;

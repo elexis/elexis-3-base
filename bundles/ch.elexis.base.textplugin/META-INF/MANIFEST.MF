@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Interne Texterstellung
 Bundle-SymbolicName: ch.elexis.base.textplugin;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.ch
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
@@ -12,4 +12,4 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.elexis.core.ui.icons;bundle-version="3.0.0"
 Eclipse-LazyStart: true
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-11

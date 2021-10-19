@@ -1,6 +1,6 @@
 # Build script used by gitlab.medelexis.ch
 variables:
-   ORIGIN_BRANCH: master 
+   ORIGIN_BRANCH: "2021-09-java11"
 
 stages:
     - build
@@ -8,18 +8,21 @@ stages:
 
 build:
   stage: build
+  tags:
+  - java11
+  - maven
   script:
-  - if [ $(curl -s --head -w %{http_code} http://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/target/ -o /dev/null) == '200' ]; then export BUILD_TARGET_BRANCH=$CI_COMMIT_REF_NAME; fi 
-  - if [ $(curl -s --head -w %{http_code} http://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-core/ -o /dev/null) == '200' ]; then export BUILD_CORE_BRANCH=$CI_COMMIT_REF_NAME; fi 
+  - if [ $(curl -s --head -w %{http_code} https://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/target/ -o /dev/null) == '200' ]; then export BUILD_TARGET_BRANCH=$CI_COMMIT_REF_NAME; fi 
+  - if [ $(curl -s --head -w %{http_code} https://download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-core/ -o /dev/null) == '200' ]; then export BUILD_CORE_BRANCH=$CI_COMMIT_REF_NAME; fi 
   - xvfb-run mvn clean verify ${BUILD_TARGET_BRANCH:+-Dgit.target.branch=$BUILD_TARGET_BRANCH} ${BUILD_CORE_BRANCH:+-Dgit.core.branch=$BUILD_CORE_BRANCH}
   - eval $(ssh-agent -s)
   - ssh-add <(echo "$SSH_PRIVATE_KEY_ED25519_BASE64" | base64 -d)
-  - rsync -aiv --delete -e ssh ch.elexis.base.p2site/target/repository/ deploy@download.medelexis.ch:download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-base/
-  - eval $(ssh-agent -k)
+  - rsync -aiv --delete --mkpath -e ssh ch.elexis.base.p2site/target/repository/ deploy@download.medelexis.ch:download.elexis.info/elexis/$CI_COMMIT_REF_NAME/p2/elexis-3-base/
   only:
   - master@elexis/elexis-3-base
   - /^\d*[.]\d*$/@elexis/elexis-3-base
   - /^[bf]\d*$/@elexis/elexis-3-base
+  - 2021-09-java11@elexis/elexis-3-base
 
 trigger_medelexis-3-application_build:
     stage: trigger_other_builds
@@ -29,3 +32,4 @@ trigger_medelexis-3-application_build:
     - master@elexis/elexis-3-base
     - /^\d*[.]\d*$/@elexis/elexis-3-base
     - /^[bf]\d*$/@elexis/elexis-3-base
+    - 2021-09-java11@elexis/elexis-3-base

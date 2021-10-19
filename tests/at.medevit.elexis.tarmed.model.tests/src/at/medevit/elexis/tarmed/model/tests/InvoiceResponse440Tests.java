@@ -41,13 +41,13 @@ import ch.fd.invoice440.response.TransportType.Via;
 import ch.fd.invoice440.response.ZipType;
 
 public class InvoiceResponse440Tests {
-	private static TarmedJaxbUtil jaxbHelper;
+
 	private static File writeResp440;
 	private static File readResp440;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
-		jaxbHelper = new TarmedJaxbUtil();
+
 		writeResp440 = new File("rsc/writeResp440.xml");
 		if (!writeResp440.exists()) {
 			writeResp440.createNewFile();
@@ -58,7 +58,7 @@ public class InvoiceResponse440Tests {
 	@Test
 	public void testMarshallInvoiceResponse440() throws FileNotFoundException,
 		DatatypeConfigurationException{
-		jaxbHelper.marshallInvoiceResponse(generateResponseSample(), new FileOutputStream(
+		TarmedJaxbUtil.marshallInvoiceResponse(generateResponseSample(), new FileOutputStream(
 			writeResp440));
 		assertTrue(writeResp440.exists());
 	}
@@ -66,7 +66,7 @@ public class InvoiceResponse440Tests {
 	@Test
 	public void testUnmarshalInvoiceResponse440() throws FileNotFoundException{
 		ResponseType response =
-			jaxbHelper.unmarshalInvoiceResponse440(new FileInputStream(readResp440));
+				TarmedJaxbUtil.unmarshalInvoiceResponse440(new FileInputStream(readResp440));
 		
 		assertNotNull(response);
 		assertEquals("en", response.getLanguage());

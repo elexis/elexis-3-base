@@ -12,11 +12,11 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.ui.dialog;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 
-import com.ibm.icu.text.SimpleDateFormat;
 
 public class DateTimeTargetToModelUVS implements IConverter {
 	

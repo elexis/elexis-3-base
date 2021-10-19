@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder;
 import at.medevit.elexis.bluemedication.core.UploadResult;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.rgw.tools.Result;
 
 public class BlueMedicationCheckHandler extends AbstractHandler implements IHandler {

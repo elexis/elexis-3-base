@@ -2,15 +2,15 @@
 <feature
       id="ch.elexis.base.konsextension.bildanzeige.feature"
       label="Bildanzeige in Konsultation"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="elexis.ch">
 
-  <description>
+   <description>
       Einbinden von Fotos und anderen Bildern in den Konsultationstext. Mehr Info unter http://wiki.elexis.info/ch.elexis.base.konsextension.bildanzeige.feature.feature.group
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -21,7 +21,7 @@
          id="ch.elexis.base.konsextension.bildanzeige"
          download-size="0"
          install-size="0"
-         version="3.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>

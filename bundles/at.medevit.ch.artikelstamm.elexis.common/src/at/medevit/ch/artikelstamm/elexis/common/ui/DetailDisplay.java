@@ -84,13 +84,14 @@ public class DetailDisplay implements IDetailDisplay {
 		if (sdc != null && !sdc.isDisposed()) {
 			sdc.setArticle(ai);
 		}
-		if (!txtStkProAbgabe.isDisposed()) {
-			txtStkProAbgabe.setEnabled(!ai.isProduct());
+		if(ai != null) {
+			if (!txtStkProAbgabe.isDisposed()) {
+				txtStkProAbgabe.setEnabled(!ai.isProduct());
+			}
+			if (!txtStkProPack.isDisposed()) {
+				txtStkProPack.setEnabled(!ai.isProduct());
+			}
 		}
-		if (!txtStkProPack.isDisposed()) {
-			txtStkProPack.setEnabled(!ai.isProduct());
-		}
-		
 	}
 	
 	@Override

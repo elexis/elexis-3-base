@@ -2,18 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis - Aerztekasse Connector Plug-In
 Bundle-SymbolicName: net.medshare.connector.aerztekasse;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-Activator: net.medshare.connector.aerztekasse.Activator
 Bundle-Vendor: medshare.net
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- ch.rgw.utility,
- ch.elexis.core;bundle-version="3.0.0",
- ch.elexis.core.data,
- ch.elexis.core.ui,
- ch.elexis.base.ch.arzttarife,
- org.jdom
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.base.ch.arzttarife;bundle-version="3.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
-Import-Package: ch.elexis.core.services.holder
+Import-Package: org.jdom;version="1.1.1"

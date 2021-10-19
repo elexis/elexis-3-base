@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import at.medevit.elexis.outbox.model.IOutboxElement;
 import at.medevit.elexis.outbox.model.IOutboxElementService.State;

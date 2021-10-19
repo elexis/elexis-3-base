@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.jfree.chart.JFreeChart;
-import org.jfree.experimental.chart.swt.ChartComposite;
+import org.jfree.chart.swt.ChartComposite;
 
 import ch.elexis.core.ui.UiDesk;
 import ch.unibe.iam.scg.archie.ArchieActivator;

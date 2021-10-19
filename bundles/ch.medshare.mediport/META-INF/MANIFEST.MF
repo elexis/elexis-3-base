@@ -3,27 +3,17 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Elexis MediPort Plugin
 Bundle-SymbolicName: ch.medshare.mediport;singleton:=true
 Bundle-Localization: plugin
-Bundle-Version: 3.1.0.qualifier
-Require-Bundle: ch.elexis.core;bundle-version="3.0.0",
- ch.elexis.core.data;bundle-version="3.0.0",
- ch.elexis.core.ui;bundle-version="3.0.0",
- ch.elexis.core.ui.icons;bundle-version="3.0.0",
- org.eclipse.swt,
- org.eclipse.ui,
- org.eclipse.core.runtime,
- ch.elexis.base.ch.arzttarife;bundle-version="3.1.0",
- org.eclipse.ui.forms,
- ch.rgw.utility,
- ch.elexis.core;bundle-version="0.0.2",
- org.jdom,
- org.slf4j.api,
- ch.medshare.commons;bundle-version="3.0.0"
+Bundle-Version: 3.9.0.qualifier
+Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.base.ch.arzttarife;bundle-version="3.9.0",
+ ch.medshare.commons;bundle-version="3.9.0"
 Export-Package: ch.medshare.mediport.config
 Bundle-Vendor: medshare.ch
 Bundle-ClassPath: .
 Created-By: Buildr
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.eclipse.e4.ui.workbench
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.medshare.mediport.StartupHandler.xml
+Import-Package: org.jdom;version="1.1.1"
 

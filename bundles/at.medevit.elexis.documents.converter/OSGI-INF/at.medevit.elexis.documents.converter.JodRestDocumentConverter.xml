@@ -3,6 +3,7 @@
    <service>
       <provide interface="ch.elexis.core.services.IDocumentConverter"/>
    </service>
+   <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
    <reference cardinality="1..1" field="documentStore" interface="ch.elexis.core.documents.DocumentStore" name="documentStore"/>
    <implementation class="at.medevit.elexis.documents.converter.JodRestDocumentConverter"/>
 </scr:component>

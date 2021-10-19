@@ -2,7 +2,7 @@
 <feature
       id="at.gruber.elexis.mythic22.feature"
       label="Mythic 22 Geräteanbindung"
-      version="3.0.100.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medevit.at">
 
    <description url="http://www.medevit.at/features/at.gruber.elexis.mythic22">

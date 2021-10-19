@@ -54,6 +54,7 @@ import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.TimeZone;
 import net.fortuna.ical4j.model.TimeZoneRegistry;
 import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.property.CalScale;
@@ -64,6 +65,7 @@ import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.util.MapTimeZoneCache;
 
 /**
  * Convert appointments to and frim ICal-Format
@@ -208,8 +210,8 @@ public class ICalTransfer {
 					TimeTool ttFrom = new TimeTool();
 					TimeTool ttUntil = new TimeTool();
 					Date dt = null;
-					List<Component> comps = cal.getComponents();
-					for (Component comp : comps) {
+					List<CalendarComponent> comps = cal.getComponents();
+					for (CalendarComponent comp : comps) {
 						if (comp instanceof VEvent) { // TimeZone not supported
 							VEvent event = (VEvent) comp;
 							// PropertyList props = event.getProperties();
@@ -362,6 +364,8 @@ public class ICalTransfer {
 		
 		@Override
 		protected void okPressed(){
+			System.setProperty("net.fortuna.ical4j.timezone.cache.impl", MapTimeZoneCache.class.getName());
+			
 			von.setTimeInMillis(dpVon.getDate().getTime());
 			bis.setTimeInMillis(dpBis.getDate().getTime());
 			Query<Termin> qbe = new Query<Termin>(Termin.class);

@@ -2,7 +2,7 @@
 <feature
       id="com.hilotec.elexis.opendocument.feature"
       label="Textplugin für OpenDocument kompatible Textprogramme (von Hilotec)"
-      version="3.7.0.qualifier"
+      version="3.9.0.qualifier"
       provider-name="ch.medelexis">
 
    <description>
@@ -29,21 +29,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.odftoolkit.odfdom-java"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="xerces.Impl"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="xml-apis"
          download-size="0"
          install-size="0"
          version="0.0.0"

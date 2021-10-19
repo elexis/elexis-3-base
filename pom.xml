@@ -14,7 +14,6 @@
 		<tycho.version>2.5.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
-		<git.core.branch>${git.target.branch}</git.core.branch>
 		<!-- vvv required empty vvv -->
 		<os-jvm-flags />
 	</properties>

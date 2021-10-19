@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.equo.chromium.swt.Browser;
 
+import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -24,23 +25,27 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 				.load((String) arguments[0], IAppointment.class).orElse(null);
 			final LocalDateTime startDate = getDateTimeArg(arguments[1]);
 			final LocalDateTime endDate = getDateTimeArg(arguments[2]);
-			
-			AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
-				@Override
-				public void lockFailed(){
-					redraw();
-				}
-				
-				@Override
-				public void lockAcquired(){
-					termin.setStartTime(startDate);
-					termin.setEndTime(endDate);
-					CoreModelServiceHolder.get().save(termin);
-					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
-						IAppointment.class);
-					redraw();
-				}
-			});
+			if (termin != null) {
+				AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
+					@Override
+					public void lockFailed(){
+						redraw();
+					}
+					
+					@Override
+					public void lockAcquired(){
+						termin.setStartTime(startDate);
+						termin.setEndTime(endDate);
+						CoreModelServiceHolder.get().save(termin);
+						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
+							IAppointment.class);
+						redraw();
+					}
+				});
+			} else {
+				// the event could not be loaded, trigger refetch 
+				new ScriptingHelper(getBrowser()).refetchEvents();
+			}
 		} else {
 			throw new IllegalArgumentException("Unexpected arguments");
 		}

@@ -4,6 +4,7 @@ package at.medevit.elexis.agenda.ui.function;
 import com.equo.chromium.swt.Browser;
 import com.equo.chromium.swt.BrowserFunction;
 
+import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
 import ch.elexis.core.model.IAppointment;
@@ -23,25 +24,30 @@ public class DoubleClickFunction extends BrowserFunction {
 		if (arguments.length == 1) {
 			IAppointment termin = CoreModelServiceHolder.get()
 				.load((String) arguments[0], IAppointment.class).orElse(null);
-			AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
-				@Override
-				public void lockFailed(){
-					// do nothing
-				}
-				
-				@Override
-				public void lockAcquired(){
-					// TerminDialog.setActResource(termin.getBereich());
-					if (termin.isRecurring()) {
-						RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(
-							AppointmentServiceHolder.get().getAppointmentSeries(termin).get());
-						dlg.open();
-					} else {
-						AppointmentDialog dlg = new AppointmentDialog(termin);
-						dlg.open();
+			if (termin != null) {
+				AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
+					@Override
+					public void lockFailed(){
+						// do nothing
 					}
-				}
-			});
+					
+					@Override
+					public void lockAcquired(){
+						// TerminDialog.setActResource(termin.getBereich());
+						if (termin.isRecurring()) {
+							RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(
+								AppointmentServiceHolder.get().getAppointmentSeries(termin).get());
+							dlg.open();
+						} else {
+							AppointmentDialog dlg = new AppointmentDialog(termin);
+							dlg.open();
+						}
+					}
+				});
+			} else {
+				// the event could not be loaded, trigger refetch 
+				new ScriptingHelper(getBrowser()).refetchEvents();
+			}
 		}
 		return null;
 	}

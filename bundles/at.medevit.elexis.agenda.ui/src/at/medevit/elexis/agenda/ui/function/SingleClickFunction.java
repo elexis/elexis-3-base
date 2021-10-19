@@ -6,6 +6,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import com.equo.chromium.swt.Browser;
 import com.equo.chromium.swt.BrowserFunction;
 
+import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
@@ -35,6 +36,9 @@ public class SingleClickFunction extends BrowserFunction {
 					ContextServiceHolder.get().setActivePatient(
 						CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get());
 				}
+			} else {
+				// the event could not be loaded, trigger refetch 
+				new ScriptingHelper(getBrowser()).refetchEvents();
 			}
 		} else if (arguments.length == 0) {
 			if (selectionProvider != null) {

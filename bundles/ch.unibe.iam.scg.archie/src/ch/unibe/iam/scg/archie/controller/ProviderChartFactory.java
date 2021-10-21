@@ -26,6 +26,7 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
+import org.slf4j.LoggerFactory;
 
 import ch.rgw.tools.Money;
 import ch.unibe.iam.scg.archie.ArchieActivator;
@@ -224,9 +225,15 @@ public class ProviderChartFactory {
 				if (cell instanceof Money) {
 					value = ((Money) cell).doubleValue();
 				} else {
-					value = new Double(cell.toString());
+					String strValue = cell.toString().replaceAll(",", ".");
+					if (strValue != null) {
+						try {
+							value = Double.parseDouble(strValue);
+						} catch (NumberFormatException e) {
+							LoggerFactory.getLogger(getClass()).warn("Could not parse [" + strValue + "] as double");
+						}
+					}
 				}
-
 				categoryDataSet.addValue(value, columnTitle, rowTitle);
 			}
 		}

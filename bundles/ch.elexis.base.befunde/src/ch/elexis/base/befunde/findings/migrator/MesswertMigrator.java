@@ -58,7 +58,7 @@ public class MesswertMigrator implements IMigratorContribution {
 		if (initialized()) {
 			MesswertMigrationStrategyFactory.clearCodeToTemplateCache();
 			MesswertMigrationStrategyFactory.setFindingsTemplateService(templateService);
-			logger.error("Initialized, activation successful");
+			logger.debug("Initialized, activation successful");
 		} else {
 			logger.error("Not initialized, activation failed");
 		}

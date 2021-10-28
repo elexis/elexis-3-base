@@ -35,6 +35,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Money;
 
@@ -252,6 +253,7 @@ public class TarmedDetailDialog extends Dialog {
 		}
 		billed.setExtInfo(Constants.FLD_EXT_PFLICHTLEISTUNG,
 			Boolean.toString(bPflicht.getSelection()));
+		CoreModelServiceHolder.get().save(billed);
 		super.okPressed();
 	}
 	

@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
 
+import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.CodeElementServiceHolder;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
@@ -23,6 +24,7 @@ import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementService.ContextKeys;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.text.model.Samdas.Record;
@@ -80,21 +82,22 @@ public class AddVaccinationToKons {
 						rec.setText(recText);
 						EncounterServiceHolder.get().updateVersionedEntry(actEncounter, samdas);
 						
-						boolean addedCons = true;
-						List<IBilled> leistungen = actEncounter.getBilled();
-						for (IBilled verrechnet : leistungen) {
-							IBillable verrechenbar = verrechnet.getBillable();
-							if (verrechenbar != null
-								&& verrechenbar.getCodeSystemName().equals("Tarmed")
-								&& verrechenbar.getCode().equals(TARMED_5MIN_TARIF)) {
-								addedCons = false;
-								break;
+						if (ConfigServiceHolder.getUser(PreferencePage.VAC_AUTO_BILL, true)) {
+							boolean addedCons = true;
+							List<IBilled> leistungen = actEncounter.getBilled();
+							for (IBilled verrechnet : leistungen) {
+								IBillable verrechenbar = verrechnet.getBillable();
+								if (verrechenbar != null
+									&& verrechenbar.getCodeSystemName().equals("Tarmed")
+									&& verrechenbar.getCode().equals(TARMED_5MIN_TARIF)) {
+									addedCons = false;
+									break;
+								}
 							}
-						}
-						IBillable consVerrechenbar = getKonsVerrechenbar(actEncounter);
-						if (addedCons && (consVerrechenbar != null)) {
-							BillingServiceHolder.get()
-								.bill(consVerrechenbar, actEncounter, 1);
+							IBillable consVerrechenbar = getKonsVerrechenbar(actEncounter);
+							if (addedCons && (consVerrechenbar != null)) {
+								BillingServiceHolder.get().bill(consVerrechenbar, actEncounter, 1);
+							}
 						}
 						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, actEncounter);
 					}

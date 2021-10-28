@@ -36,6 +36,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String VAC_SORT_ORDER = PREFBASE + "sortorder";
 	public static final String VAC_BILLING_POS = PREFBASE + "defleistungen";
 	public static final String VAC_SHOW_SIDE = PREFBASE + "showside";
+	public static final String VAC_AUTO_BILL = PREFBASE + "autobill";
 	public static final String VAC_DEFAULT_SIDE = PREFBASE + "defaultside";
 	
 	private Text txtLog;
@@ -56,6 +57,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	@Override
 	public void init(IWorkbench workbench){
 		setPreferenceStore(new ConfigServicePreferenceStore(Scope.USER));
+		getPreferenceStore().setDefault(VAC_AUTO_BILL, true);
 	}
 	
 	@Override
@@ -64,6 +66,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			new DirectoryFieldEditor(VAC_PDF_OUTPUTDIR, "Druck-Ausgabeverzeichnis",
 				getFieldEditorParent());
 		addField(editor);
+		
+		BooleanFieldEditor bfAutoBillEditor = new BooleanFieldEditor(VAC_AUTO_BILL,
+			"Impfungen automatisch mit Position 00.0010 verrechnen", getFieldEditorParent());
+		addField(bfAutoBillEditor);
 		
 		BooleanFieldEditor bfEditor =
 			new BooleanFieldEditor(VAC_SORT_ORDER, "Sortierung von neu-alt (neueste oben)",

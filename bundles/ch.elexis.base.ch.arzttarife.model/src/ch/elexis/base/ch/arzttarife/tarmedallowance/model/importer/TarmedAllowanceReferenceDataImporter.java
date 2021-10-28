@@ -40,8 +40,11 @@ public class TarmedAllowanceReferenceDataImporter extends AbstractReferenceDataI
 		ExcelWrapper exw = new ExcelWrapper();
 		exw.setFieldTypes(new Class[] {
 			String.class /* Tarif-Nr. */, String.class /* Tarif-Name */,
+			String.class /* Tarif-Name F */, String.class /* Tarif-Name I */,
 			String.class /* Kapitelziffer */, String.class /* Kapitelbezeichung_D */,
+			String.class /* Kapitelbezeichung_F */, String.class /* Kapitelbezeichung_I */,
 			String.class /* Positions-Nr. */, String.class /* Positions-Text D */,
+			String.class /* Positions-Text F */, String.class /* Positions-Text I */,
 			TimeTool.class /* Gültig von */, TimeTool.class /* Gültig bis */
 		});
 		if (exw.load(input, 0)) {
@@ -61,11 +64,11 @@ public class TarmedAllowanceReferenceDataImporter extends AbstractReferenceDataI
 				if (line == null) {
 					break;
 				} else if (line.isEmpty() || !line.get(0).equals("003")
-					|| StringUtils.isBlank(line.get(4))) {
+					|| StringUtils.isBlank(line.get(8))) {
 					continue;
 				}
 				
-				List<TarmedPauschalen> existing = getExisting(line.get(4), getValidFrom(line));
+				List<TarmedPauschalen> existing = getExisting(line.get(8), getValidFrom(line));
 				if (!existing.isEmpty()) {
 					for (TarmedPauschalen tarmedPauschalen : existing) {
 						// update validto of existing
@@ -74,7 +77,7 @@ public class TarmedAllowanceReferenceDataImporter extends AbstractReferenceDataI
 					}
 				} else {
 					TarmedPauschalen tarmedPauschalen = new TarmedPauschalen();
-					tarmedPauschalen.setCode(line.get(4));
+					tarmedPauschalen.setCode(line.get(8));
 					tarmedPauschalen.setText(getText(line));
 					tarmedPauschalen.setChapter(getChapter(line));
 					tarmedPauschalen.setValidFrom(getValidFrom(line));
@@ -94,16 +97,18 @@ public class TarmedAllowanceReferenceDataImporter extends AbstractReferenceDataI
 			if (newVersion != null) {
 				setCurrentVersion(newVersion);
 			}
+		} else {
+			ret = Status.CANCEL_STATUS;
 		}
 		return ret;
 	}
 	
 	private String getText(List<String> line){
-		return StringUtils.abbreviate(line.get(5).replace("\n", ";").replace("\r", ""), 255);
+		return StringUtils.abbreviate(line.get(9).replace("\n", ";").replace("\r", ""), 255);
 	}
 	
 	private String getChapter(List<String> line){
-		return StringUtils.abbreviate(line.get(3).replace("\n", ";").replace("\r", ""), 255);
+		return StringUtils.abbreviate(line.get(5).replace("\n", ";").replace("\r", ""), 255);
 	}
 	
 	private List<TarmedPauschalen> getExisting(String code, LocalDate validFrom){
@@ -114,12 +119,12 @@ public class TarmedAllowanceReferenceDataImporter extends AbstractReferenceDataI
 	}
 	
 	private LocalDate getValidFrom(List<String> line){
-		return getLocalDate((String) line.get(6).trim());
+		return getLocalDate((String) line.get(12).trim());
 	}
 	
 	private LocalDate getValidTo(List<String> line){
-		if (StringUtils.isNotBlank(line.get(7).trim())) {
-			return getLocalDate((String) line.get(7).trim());
+		if (StringUtils.isNotBlank(line.get(13).trim())) {
+			return getLocalDate((String) line.get(13).trim());
 		} else {
 			return LocalDate.MAX;
 		}

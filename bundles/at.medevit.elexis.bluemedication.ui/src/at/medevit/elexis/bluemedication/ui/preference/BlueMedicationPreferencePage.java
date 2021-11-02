@@ -15,6 +15,9 @@ public class BlueMedicationPreferencePage extends FieldEditorPreferencePage
 	
 	private SettingsPreferenceStore localPreferenceStore;
 	
+	private StringFieldEditor proxyHostEditor;
+	private StringFieldEditor proxyPortEditor;
+	
 	public BlueMedicationPreferencePage(){
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.globalCfg));
@@ -24,15 +27,14 @@ public class BlueMedicationPreferencePage extends FieldEditorPreferencePage
 	
 	@Override
 	protected void createFieldEditors(){
-		StringFieldEditor editor = new StringFieldEditor(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
+		proxyHostEditor = new StringFieldEditor(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
 			"HIN Proxy Host", getFieldEditorParent());
-		editor.setPreferenceStore(localPreferenceStore);
-		addField(editor);
+		addField(proxyHostEditor);
 		
-		editor = new StringFieldEditor(BlueMedicationConstants.CFG_HIN_PROXY_PORT, "HIN Proxy Port",
+		proxyPortEditor =
+			new StringFieldEditor(BlueMedicationConstants.CFG_HIN_PROXY_PORT, "HIN Proxy Port",
 			getFieldEditorParent());
-		editor.setPreferenceStore(localPreferenceStore);
-		addField(editor);
+		addField(proxyPortEditor);
 		
 		addField(new BooleanFieldEditor(BlueMedicationConstants.CFG_USE_IMPORT,
 			"Medikationsabgleich bei Blue Medication nutzen. (Automatisch deaktiviert bei Eigenartikel in Medikation des Patienten)",
@@ -40,6 +42,15 @@ public class BlueMedicationPreferencePage extends FieldEditorPreferencePage
 		
 		addField(new BooleanFieldEditor(BlueMedicationConstants.CFG_URL_STAGING,
 			"Test Server verwenden", getFieldEditorParent()));
+	}
+	
+	@Override
+	protected void initialize(){
+		super.initialize();
+		proxyHostEditor.setPreferenceStore(localPreferenceStore);
+		proxyHostEditor.load();
+		proxyPortEditor.setPreferenceStore(localPreferenceStore);
+		proxyPortEditor.load();
 	}
 	
 	@Override

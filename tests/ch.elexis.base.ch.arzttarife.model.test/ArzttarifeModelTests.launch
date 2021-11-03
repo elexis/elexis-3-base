@@ -60,6 +60,7 @@
         <setEntry value="org.apache.commons.collections@default:default"/>
         <setEntry value="org.apache.commons.commons-beanutils@default:default"/>
         <setEntry value="org.apache.commons.commons-collections4@default:default"/>
+        <setEntry value="org.apache.commons.commons-compress@default:default"/>
         <setEntry value="org.apache.commons.dbcp@default:default"/>
         <setEntry value="org.apache.commons.io@default:default"/>
         <setEntry value="org.apache.commons.lang3@default:default"/>
@@ -73,6 +74,7 @@
         <setEntry value="org.apache.poi.ooxml.schemas@default:default"/>
         <setEntry value="org.apache.poi.ooxml@default:default"/>
         <setEntry value="org.apache.poi@default:default"/>
+        <setEntry value="org.apache.xmlbeans@default:default"/>
         <setEntry value="org.beanshell.bsh@default:default"/>
         <setEntry value="org.bouncycastle.bcprov@default:default"/>
         <setEntry value="org.eclipse.core.contenttype@default:default"/>

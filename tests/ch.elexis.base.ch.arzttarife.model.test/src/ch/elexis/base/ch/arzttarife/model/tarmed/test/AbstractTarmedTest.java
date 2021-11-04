@@ -12,8 +12,10 @@ import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.services.IBillingService;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.types.Gender;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
@@ -43,6 +45,7 @@ public abstract class AbstractTarmedTest {
 			new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")
 				.buildAndSave();
 		encounter = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
 	}
 	
 	public void after() {

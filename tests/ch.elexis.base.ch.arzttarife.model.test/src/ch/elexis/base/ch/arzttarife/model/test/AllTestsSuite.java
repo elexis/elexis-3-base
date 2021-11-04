@@ -29,7 +29,6 @@ import ch.elexis.core.common.DBConnection;
 import ch.elexis.core.common.DBConnection.DBType;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.IBillingSystemFactor;
-import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IElexisDataSource;
@@ -103,6 +102,7 @@ public class AllTestsSuite {
 		TestDatabaseInitializer tdb = new TestDatabaseInitializer(coreModelService, entityManager);
 		tdb.initializeMandant();
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(TestDatabaseInitializer.getMandant());
 	}
 	
 	/**

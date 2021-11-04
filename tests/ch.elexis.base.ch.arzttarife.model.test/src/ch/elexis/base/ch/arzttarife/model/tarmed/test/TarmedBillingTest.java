@@ -28,9 +28,11 @@ import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IBillingService;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.test.matchers.IBillingMatch;
 import ch.elexis.core.types.Gender;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
@@ -68,6 +70,7 @@ public class TarmedBillingTest {
 			new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")
 				.buildAndSave();
 		encounter = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
 	}
 	
 	@After
@@ -87,7 +90,7 @@ public class TarmedBillingTest {
 				LocalDate.of(2000, 1, 1));
 		
 		status = billingService.bill(code_000010, encounter, 1);
-		assertTrue(status.isOK());
+		assertTrue(status.getMessages().toString(), status.isOK());
 		billed = status.get();
 		assertNotNull(billed);
 		assertEquals("00.0010", billed.getCode());
@@ -131,7 +134,7 @@ public class TarmedBillingTest {
 		
 		Result<IBilled> status;
 		status = billingService.bill(code_090510, encounter, 1);
-		assertTrue(status.isOK());
+		assertTrue(status.getMessages().toString(), status.isOK());
 		
 		IBilled billed = status.get();
 		assertNotNull(billed);
@@ -152,7 +155,7 @@ public class TarmedBillingTest {
 		ITarmedLeistung code_390590 = TarmedLeistung.getFromCode("39.0590", LocalDate.now(), null);
 		
 		status = billingService.bill(code_390590, encounter, 1);
-		assertTrue(status.isOK());
+		assertTrue(status.getMessages().toString(), status.isOK());
 		
 		List<IBillingMatch> matches = new ArrayList<>();
 		matches.add(new IBillingMatch("39.0590-20141001", 1));

@@ -41,6 +41,7 @@ import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.holder.CodeElementServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -149,6 +150,8 @@ public class TarmedOptifierTest {
 		konsPeriodEnd = new IEncounterBuilder(coreModelService, fallBelow75, mandator)
 			.date(new TimeTool("02.04.2018").toLocalDateTime()).buildAndSave();
 		resetKons(konsPeriodEnd);
+		
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
 	}
 	
 	private static void importTarmedReferenceData() throws FileNotFoundException{
@@ -360,7 +363,7 @@ public class TarmedOptifierTest {
 		resetKons(konsGriss);
 		for (int i = 0; i < 24; i++) {
 			Result<IBilled> result = billSingle(konsGriss, tlGroupLimit1);
-			assertTrue(result.isOK());
+			assertTrue(result.getMessages().toString(), result.isOK());
 			assertEquals("02.0310", result.get().getCode());
 		}
 		assertEquals(2, konsGriss.getBilled().size());
@@ -416,10 +419,12 @@ public class TarmedOptifierTest {
 			konsGriss.getCoverage().getBillingSystem().getName(), 0.83,
 			LocalDate.now().minus(1, ChronoUnit.DAYS));
 		
+		MandantType mandantType = ArzttarifeUtil.getMandantType(mandator);
+		assertEquals(MandantType.SPECIALIST, mandantType);
 		// default mandant type is specialist, factor 0.83 tarmed 1.09
 		clearKons(kons);
 		Result<IBilled> result = billSingle(kons, tlBaseFirst5Min);
-		assertTrue(result.isOK());
+		assertTrue(result.getMessages().toString(),result.isOK());
 		IBilled billed = kons.getBilled().get(0);
 		assertNotNull(billed);
 		double amountAL = ArzttarifeUtil.getAL(billed);

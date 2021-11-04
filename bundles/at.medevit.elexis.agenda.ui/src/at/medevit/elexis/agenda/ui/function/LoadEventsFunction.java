@@ -172,7 +172,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		cache = CacheBuilder.newBuilder().maximumSize(7).build(new TimeSpanLoader());
 		
 		timer = new Timer("Agenda check for updates", true);
-		timer.schedule(new CheckForUpdatesTimerTask(this, uiSynchronize), 10000);
+		timer.schedule(new CheckForUpdatesTimerTask(this, uiSynchronize), 10000, 10000);
 	}
 	
 	@Override

@@ -78,7 +78,8 @@ public class ComplementaryLeistungTest extends AbstractTest {
 		billed = encounter.getBilled().get(0);
 		assertEquals(1, billed.getAmount(), 0.01);
 		assertEquals(5000, billed.getPoints());
-		assertEquals(50, billed.getPrice().getAmount(), 0.01);
+		// complementary uses billing system factor if present 
+		assertEquals(billed.getFactor() * 50, billed.getPrice().getAmount(), 0.01);
 		
 		assertEquals(encounter, billed.getEncounter());
 		OsgiServiceUtil.ungetService(codeElementService);

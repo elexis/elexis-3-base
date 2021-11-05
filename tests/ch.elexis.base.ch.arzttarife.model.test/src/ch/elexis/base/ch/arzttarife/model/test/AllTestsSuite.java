@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -116,6 +117,12 @@ public class AllTestsSuite {
 	 */
 	public static IBillingSystemFactor createBillingSystemFactor(String billingSystem, double value,
 		LocalDate from){
+		Optional<IBillingSystemFactor> existing =
+			getBillingService().getBillingSystemFactor(billingSystem, from);
+		if (existing.isPresent()) {
+			getCoreModelService().remove(existing.get());
+		}
+		
 		IBillingSystemFactor factor = coreModelService.create(IBillingSystemFactor.class);
 		factor.setSystem(billingSystem);
 		factor.setFactor(value);

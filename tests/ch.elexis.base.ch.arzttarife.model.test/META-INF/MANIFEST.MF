@@ -11,4 +11,6 @@ Require-Bundle: org.junit,
  ch.elexis.core.test;bundle-version="3.9.0",
  ch.rgw.utility;bundle-version="3.7.0",
  ch.elexis.core.l10n;bundle-version="3.9.0",
- ch.elexis.base.ch.ticode;bundle-version="3.9.0"
+ ch.elexis.base.ch.ticode;bundle-version="3.9.0",
+ ch.elexis.core.jpa.datasource;bundle-version="3.9.0",
+ ch.elexis.core.model;bundle-version="3.9.0"

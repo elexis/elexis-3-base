@@ -21,10 +21,10 @@
     <module>at.medevit.elexis.tarmed.model.tests</module>
     <module>ch.elexis.tasks.integration.test</module>
     <module>ch.elexis.base.ch.arzttarife.test</module>
+    <module>ch.elexis.base.ch.arzttarife.model.test</module>
 
 <!--
 	Requires fix
-    <module>ch.elexis.base.ch.arzttarife.model.test</module>
     <module>at.medevit.atc_codes.test</module>
 -->
 <!--

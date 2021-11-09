@@ -36,30 +36,28 @@
     <stringAttribute key="product" value="ch.elexis.core.application.product"/>
     <booleanAttribute key="run_in_ui_thread" value="false"/>
     <setAttribute key="selected_target_bundles">
-        <setEntry value="bcprov@default:default"/>
         <setEntry value="ch.qos.logback.classic@default:default"/>
         <setEntry value="ch.qos.logback.core@default:default"/>
         <setEntry value="ch.qos.logback.slf4j@default:false"/>
         <setEntry value="com.eclipsesource.jaxrs.consumer@default:default"/>
+        <setEntry value="com.equo.chromium.cef.gtk.linux.x86_64@default:false"/>
+        <setEntry value="com.equo.chromium@default:default"/>
         <setEntry value="com.google.gson@default:default"/>
         <setEntry value="com.google.guava@default:default"/>
-        <setEntry value="com.google.zxing.core@default:default"/>
         <setEntry value="com.h2database@default:default"/>
         <setEntry value="com.healthmarketscience.jackcess@default:default"/>
         <setEntry value="com.ibm.icu@default:default"/>
-        <setEntry value="com.make.chromium.cef.gtk.linux.x86_64@default:false"/>
         <setEntry value="com.mysql.cj@default:default"/>
         <setEntry value="com.opencsv@default:default"/>
-        <setEntry value="com.sun.jna.platform@default:default"/>
-        <setEntry value="com.sun.jna@default:default"/>
+        <setEntry value="com.sun.jna*5.8.0.v20210503-0343@default:default"/>
+        <setEntry value="com.sun.jna.platform*5.8.0.v20210406-1004@default:default"/>
+        <setEntry value="com.sun.mail.jakarta.mail@default:default"/>
         <setEntry value="info.elexis.target.jaxws.core@default:default"/>
         <setEntry value="jakarta.persistence@default:default"/>
         <setEntry value="jakarta.ws.rs-api@default:default"/>
         <setEntry value="javax.activation@default:default"/>
         <setEntry value="javax.annotation@default:default"/>
-        <setEntry value="javax.el@default:default"/>
         <setEntry value="javax.inject@default:default"/>
-        <setEntry value="javax.servlet@default:default"/>
         <setEntry value="javax.transaction@default:false"/>
         <setEntry value="jaxb-api@default:default"/>
         <setEntry value="org.apache.batik.constants@default:default"/>
@@ -70,6 +68,7 @@
         <setEntry value="org.apache.commons.collections@default:default"/>
         <setEntry value="org.apache.commons.commons-beanutils@default:default"/>
         <setEntry value="org.apache.commons.commons-collections4@default:default"/>
+        <setEntry value="org.apache.commons.commons-compress@default:default"/>
         <setEntry value="org.apache.commons.dbcp@default:default"/>
         <setEntry value="org.apache.commons.io@default:default"/>
         <setEntry value="org.apache.commons.jexl@default:default"/>
@@ -82,10 +81,11 @@
         <setEntry value="org.apache.poi.ooxml.schemas@default:default"/>
         <setEntry value="org.apache.poi.ooxml@default:default"/>
         <setEntry value="org.apache.poi@default:default"/>
+        <setEntry value="org.apache.xmlbeans@default:default"/>
         <setEntry value="org.apache.xmlgraphics@default:default"/>
         <setEntry value="org.beanshell.bsh@default:default"/>
-        <setEntry value="org.eclipse.ant.core@default:default"/>
-        <setEntry value="org.eclipse.compare.core@default:default"/>
+        <setEntry value="org.bouncycastle.bcprov@default:default"/>
+        <setEntry value="org.eclipse.collections@default:default"/>
         <setEntry value="org.eclipse.core.commands@default:default"/>
         <setEntry value="org.eclipse.core.contenttype@default:default"/>
         <setEntry value="org.eclipse.core.databinding.beans@default:default"/>
@@ -93,12 +93,8 @@
         <setEntry value="org.eclipse.core.databinding.property@default:default"/>
         <setEntry value="org.eclipse.core.databinding@default:default"/>
         <setEntry value="org.eclipse.core.expressions@default:default"/>
-        <setEntry value="org.eclipse.core.filesystem.linux.x86_64@default:false"/>
-        <setEntry value="org.eclipse.core.filesystem@default:default"/>
         <setEntry value="org.eclipse.core.jobs@default:default"/>
-        <setEntry value="org.eclipse.core.resources@default:default"/>
         <setEntry value="org.eclipse.core.runtime@default:true"/>
-        <setEntry value="org.eclipse.core.variables@default:default"/>
         <setEntry value="org.eclipse.e4.core.commands@default:default"/>
         <setEntry value="org.eclipse.e4.core.contexts@default:default"/>
         <setEntry value="org.eclipse.e4.core.di.annotations@default:default"/>
@@ -118,8 +114,13 @@
         <setEntry value="org.eclipse.e4.ui.swt.gtk@default:false"/>
         <setEntry value="org.eclipse.e4.ui.widgets@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench.addons.swt@default:default"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.cocoa@default:false"/>
+        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_de@default:false"/>
+        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_fr@default:false"/>
+        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.workbench.swt.nl_de@default:false"/>
+        <setEntry value="org.eclipse.e4.ui.workbench.swt.nl_fr@default:false"/>
+        <setEntry value="org.eclipse.e4.ui.workbench.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.swt@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench3@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench@default:default"/>
@@ -137,6 +138,9 @@
         <setEntry value="org.eclipse.jdt.junit.runtime@default:default"/>
         <setEntry value="org.eclipse.jdt.junit4.runtime@default:default"/>
         <setEntry value="org.eclipse.jface.databinding@default:default"/>
+        <setEntry value="org.eclipse.jface.nl_de@default:false"/>
+        <setEntry value="org.eclipse.jface.nl_fr@default:false"/>
+        <setEntry value="org.eclipse.jface.nl_it@default:false"/>
         <setEntry value="org.eclipse.jface.notifications@default:default"/>
         <setEntry value="org.eclipse.jface@default:default"/>
         <setEntry value="org.eclipse.nebula.cwt@default:default"/>
@@ -154,26 +158,32 @@
         <setEntry value="org.eclipse.persistence.jpa.jpql@default:default"/>
         <setEntry value="org.eclipse.persistence.jpa@default:default"/>
         <setEntry value="org.eclipse.persistence.oracle@default:false"/>
-        <setEntry value="org.eclipse.swt.chromium.64b@default:false"/>
-        <setEntry value="org.eclipse.swt.chromium.gtk.linux.x86_64@default:false"/>
-        <setEntry value="org.eclipse.swt.chromium@default:default"/>
-        <setEntry value="org.eclipse.swt.cocoa.macosx.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt.gtk.linux.x86_64@default:false"/>
+        <setEntry value="org.eclipse.swt.nl_de@default:false"/>
+        <setEntry value="org.eclipse.swt.nl_fr@default:false"/>
+        <setEntry value="org.eclipse.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.swt@default:default"/>
-        <setEntry value="org.eclipse.team.core@default:default"/>
-        <setEntry value="org.eclipse.ui.cocoa@default:false"/>
         <setEntry value="org.eclipse.ui.forms@default:default"/>
+        <setEntry value="org.eclipse.ui.nl_de@default:false"/>
+        <setEntry value="org.eclipse.ui.nl_fr@default:false"/>
+        <setEntry value="org.eclipse.ui.nl_it@default:false"/>
+        <setEntry value="org.eclipse.ui.views.nl_de@default:false"/>
+        <setEntry value="org.eclipse.ui.views.nl_fr@default:false"/>
+        <setEntry value="org.eclipse.ui.views.nl_it@default:false"/>
         <setEntry value="org.eclipse.ui.views.properties.tabbed@default:default"/>
         <setEntry value="org.eclipse.ui.views@default:default"/>
+        <setEntry value="org.eclipse.ui.workbench.nl_de@default:false"/>
+        <setEntry value="org.eclipse.ui.workbench.nl_fr@default:false"/>
+        <setEntry value="org.eclipse.ui.workbench.nl_it@default:false"/>
         <setEntry value="org.eclipse.ui.workbench@default:default"/>
         <setEntry value="org.eclipse.ui@default:default"/>
         <setEntry value="org.eclipse.urischeme@default:default"/>
+        <setEntry value="org.glassfish.hk2.external.jakarta.inject@default:default"/>
         <setEntry value="org.glassfish.hk2.osgi-resource-locator@default:default"/>
         <setEntry value="org.glassfish.jersey.core.jersey-client@default:default"/>
         <setEntry value="org.glassfish.jersey.core.jersey-common@default:default"/>
         <setEntry value="org.glassfish.jersey.media.jersey-media-multipart@default:default"/>
         <setEntry value="org.hamcrest.core@default:default"/>
-        <setEntry value="org.hamcrest.library@default:default"/>
         <setEntry value="org.jdom@default:default"/>
         <setEntry value="org.junit@default:default"/>
         <setEntry value="org.jvnet.mimepull@default:default"/>
@@ -196,7 +206,6 @@
         <setEntry value="ch.elexis.core.application@default:default"/>
         <setEntry value="ch.elexis.core.data@default:default"/>
         <setEntry value="ch.elexis.core.documents@default:default"/>
-        <setEntry value="ch.elexis.core.findings@default:default"/>
         <setEntry value="ch.elexis.core.hl7.v2x@default:default"/>
         <setEntry value="ch.elexis.core.importer.div@default:default"/>
         <setEntry value="ch.elexis.core.jcifs@default:default"/>
@@ -207,14 +216,16 @@
         <setEntry value="ch.elexis.core.l10n@default:default"/>
         <setEntry value="ch.elexis.core.logback.rocketchat@default:false"/>
         <setEntry value="ch.elexis.core.logging.default_configuration@default:false"/>
+        <setEntry value="ch.elexis.core.mail@default:default"/>
         <setEntry value="ch.elexis.core.model@default:default"/>
+        <setEntry value="ch.elexis.core.serial@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
-        <setEntry value="ch.elexis.core.test.logging@default:false"/>
-        <setEntry value="ch.elexis.core.test@default:default"/>
+        <setEntry value="ch.elexis.core.tasks@default:default"/>
         <setEntry value="ch.elexis.core.ui.contacts@default:default"/>
         <setEntry value="ch.elexis.core.ui.dbcheck@default:default"/>
         <setEntry value="ch.elexis.core.ui.e4@default:default"/>
         <setEntry value="ch.elexis.core.ui.icons@default:default"/>
+        <setEntry value="ch.elexis.core.ui.importer.div.native64@default:false"/>
         <setEntry value="ch.elexis.core.ui.importer.div@default:default"/>
         <setEntry value="ch.elexis.core.ui.laboratory@default:default"/>
         <setEntry value="ch.elexis.core.ui.medication@default:default"/>
@@ -225,7 +236,7 @@
         <setEntry value="ch.rgw.utility@default:default"/>
         <setEntry value="org.iatrix.help.wiki@default:default"/>
     </setAttribute>
-    <booleanAttribute key="show_selected_only" value="true"/>
+    <booleanAttribute key="show_selected_only" value="false"/>
     <stringAttribute key="testApplication" value="ch.elexis.core.application.ElexisApp"/>
     <booleanAttribute key="tracing" value="false"/>
     <booleanAttribute key="useCustomFeatures" value="false"/>

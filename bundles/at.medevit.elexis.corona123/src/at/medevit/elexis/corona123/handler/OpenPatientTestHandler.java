@@ -1,5 +1,10 @@
 package at.medevit.elexis.corona123.handler;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import ch.elexis.data.Patient;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -10,6 +15,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.LoggerFactory;
 
 public class OpenPatientTestHandler extends AbstractHandler implements IHandler {
 	
@@ -31,8 +37,15 @@ public class OpenPatientTestHandler extends AbstractHandler implements IHandler 
 			String baseUrl = UrlBuilder.getTestBaseUrl();
 			
 			String patientParameters = UrlBuilder.getPatientParameters(patient);
-			
-			Program.launch(baseUrl + "?" + patientParameters);
+			try {
+				String testDateParameter = "testDate=" + URLEncoder.encode(
+					DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now()), "UTF-8");
+				
+				Program.launch(baseUrl + "?" + testDateParameter + "&" + patientParameters);
+			} catch (UnsupportedEncodingException e) {
+				LoggerFactory.getLogger(UrlBuilder.class).error("Error getting testDate parameter",
+					e);
+			}
 		} else {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 				"Es ist keine corona123 Organisations ID konfiguriert.");

@@ -17,9 +17,12 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.ui.medication.views.MedicationTableViewerItem;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.preferences.SettingsProvider;
@@ -35,17 +38,40 @@ public final class MedicationLabelHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
-			InputStream xmlDoc = MedicationLabel.create();
-			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+			// print current selection of MedicationView
+			IStructuredSelection selection = HandlerUtil.getCurrentStructuredSelection(event);
+			if (selection != null && !selection.isEmpty()
+				&& selection.getFirstElement() instanceof MedicationTableViewerItem) {
+				for (Object obj : selection.toList()) {
+					if (obj instanceof MedicationTableViewerItem) {
+						InputStream xmlDoc = MedicationLabel
+							.create(((MedicationTableViewerItem) obj).getPrescription());
+						InputStream fo = FoTransformer.transformXmlToFo(xmlDoc, ResourceProvider
+							.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
+						
+						String docName = PreferenceConstants.MEDICATION_LABEL;
+						IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
+						
+						String printerName = settingsStore
+							.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+						logger.info("Printing document MedicationLabel on printer: " + printerName);
+						PrintProvider.print(fo, printerName);
+					}
+				}
+			} else {
+				// print selection from context service
+				InputStream xmlDoc = MedicationLabel.create();
+				InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
 
-			String docName = PreferenceConstants.MEDICATION_LABEL;
-			IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
+				String docName = PreferenceConstants.MEDICATION_LABEL;
+				IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-			String printerName =
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
-			logger.info("Printing document MedicationLabel on printer: " + printerName);
-			PrintProvider.print(fo, printerName);
+				String printerName = settingsStore
+					.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+				logger.info("Printing document MedicationLabel on printer: " + printerName);
+				PrintProvider.print(fo, printerName);
+			}
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			if (msg != null) {

@@ -66,6 +66,19 @@ public class ServicesFinancialInfo {
 		return new Money(obligationSum);
 	}
 	
+	public Money getTarifSum(String tariff){
+		if (tariffSum.containsKey(tariff)) {
+			return new Money(tariffSum.get(tariff));
+		}
+		return new Money(0.0);
+	}
+	
+	public Money getTotalSum(){
+		Money ret = new Money(0.0);
+		tariffSum.values().forEach(tariffSum -> ret.addAmount(tariffSum));
+		return ret;
+	}
+	
 	public VatRateSum getVatRateSum(){
 		return vatRateSum;
 	}

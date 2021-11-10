@@ -44,6 +44,7 @@ import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IOrganization;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPerson;
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.model.format.PostalAddress;
@@ -153,12 +154,34 @@ public class Tarmed45Exporter {
 			// cleanup
 			services = null;
 			
+			if (getBalanceAmount(requestType) != null) {
+				if (invoice.adjustAmount(getBalanceAmount(requestType).roundTo5()) == false) {
+					invoice.reject(InvoiceState.REJECTCODE.SUM_MISMATCH,
+						Messages.XMLExporter_SumMismatch);
+				}
+				// save rounded amount
+				CoreModelServiceHolder.get().save(invoice);
+			}
+			
 			return TarmedJaxbUtil.marshallInvoiceRequest(requestType, dest);
 			
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Error generating tarmed xml model", e);
 			return false;
 		}
+	}
+	
+	private Money getBalanceAmount(RequestType requestType){
+		if (requestType.getPayload() != null && requestType.getPayload().getBody() != null) {
+			if (requestType.getPayload().getBody().getTiersGarant() != null) {
+				return new Money(
+					requestType.getPayload().getBody().getTiersGarant().getBalance().getAmount());
+			} else if (requestType.getPayload().getBody().getTiersPayant() != null) {
+				return new Money(
+					requestType.getPayload().getBody().getTiersPayant().getBalance().getAmount());
+			}
+		}
+		return null;
 	}
 	
 	public EsrType getEsrType(){
@@ -191,7 +214,8 @@ public class Tarmed45Exporter {
 			balanceTGType.setCurrency(getCurrency(invoice));
 			balanceTGType.setAmountPrepaid(invoice.getPayedAmount().doubleValue());
 			balanceTGType.setAmountReminder(invoice.getDemandAmount().doubleValue());
-			balanceTGType.setAmount(invoice.getTotalAmount().doubleValue());
+			// use tariff sum as invoice total is rounded to 5
+			balanceTGType.setAmount(financialInfo.getTotalSum().doubleValue());
 			balanceTGType.setAmountDue(invoice.getOpenAmount().roundTo5().doubleValue());
 			balanceTGType.setAmountObligations(financialInfo.getObligationSum().doubleValue());
 			balanceTGType.setVat(getVat(invoice, financialInfo));
@@ -202,7 +226,8 @@ public class Tarmed45Exporter {
 			
 			balanceTPType.setCurrency(getCurrency(invoice));
 			balanceTPType.setAmountReminder(invoice.getDemandAmount().doubleValue());
-			balanceTPType.setAmount(invoice.getTotalAmount().doubleValue());
+			// use tariff sum as invoice total is rounded to 5
+			balanceTPType.setAmount(financialInfo.getTotalSum().doubleValue());
 			balanceTPType.setAmountDue(invoice.getOpenAmount().roundTo5().doubleValue());
 			balanceTPType.setAmountObligations(financialInfo.getObligationSum().doubleValue());
 			balanceTPType.setVat(getVat(invoice, financialInfo));

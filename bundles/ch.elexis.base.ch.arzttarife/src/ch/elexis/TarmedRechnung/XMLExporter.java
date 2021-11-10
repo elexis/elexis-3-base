@@ -475,10 +475,11 @@ public class XMLExporter implements IRnOutputter {
 		
 		if (invoice.adjustAmount(xmlBalance.getAmount().roundTo5()) == false) {
 			invoice.reject(InvoiceState.REJECTCODE.SUM_MISMATCH, Messages.XMLExporter_SumMismatch);
-			CoreModelServiceHolder.get().save(invoice);
 		} else if (doVerify) {
 			new Validator().checkBill(this, new Result<IInvoice>());
 		}
+		// save rounded amount
+		CoreModelServiceHolder.get().save(invoice);
 		
 		checkXML(xmlRn, dest, invoice, doVerify);
 		

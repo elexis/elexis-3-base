@@ -104,7 +104,8 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 											
 											Money zahlung = rec.getBetrag();
 											Money offen = rn.getOffenerBetrag();
-											if (zahlung.isMoreThan(offen)) {
+											if (zahlung.isMoreThan(offen) && (zahlung.doubleValue()
+												- offen.doubleValue() > 0.03)) {
 												if (SWTHelper.askYesNo(Messages.ESRView_toohigh,
 													Messages.ESRView_paymentfor + rn.getNr()
 														+ Messages.ESRView_morethan) == false) {

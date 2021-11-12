@@ -31,8 +31,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String BATCH = "B"; //$NON-NLS-1$
 	public static final String FTP = "F"; //$NON-NLS-1$
 	
-	public static final String BATCH_OR_FTP = "F"; //$NON-NLS-1$
-	public static final String BATCH_DATEI = ""; //$NON-NLS-1$
+	public static final String BATCH_OR_FTP = "teamw/batch_or_ftp"; //$NON-NLS-1$
+	public static final String BATCH_DATEI = "teamw/batch_datei"; //$NON-NLS-1$
 	public static final String FTP_HOST = "teamw/ftp_host"; //$NON-NLS-1$
 	public static final String FTP_USER = "teamw/ftp_user"; //$NON-NLS-1$
 	public static final String FTP_PWD = "teamw/ftp_pwd"; //$NON-NLS-1$
@@ -44,6 +44,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String DEFAULT_FTP_USER = ""; //$NON-NLS-1$
 	public static final String DEFAULT_FTP_PWD = ""; //$NON-NLS-1$
 	public static final String DEFAULT_DL_DIR = "/tmp/teamw"; //$NON-NLS-1$
+	public static final String DEFAULT_BATCH_DATEI = ""; //$NON-NLS-1$
 	
 	public static final String DEFAULT_DOCUMENT_CATEGORY = "TeamW Laborbefunde";
 	
@@ -56,7 +57,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		prefs.setDefault(FTP_PWD, DEFAULT_FTP_PWD); //$NON-NLS-1$
 		
 		prefs.setDefault(DL_DIR, DEFAULT_DL_DIR); //$NON-NLS-1$
-		prefs.setDefault(BATCH_DATEI, ""); //$NON-NLS-1$
+		prefs.setDefault(BATCH_DATEI, DEFAULT_BATCH_DATEI); //$NON-NLS-1$
 		prefs.setDefault(BATCH_OR_FTP, FTP); //$NON-NLS-1$
 		
 		prefs.setDefault(DOCUMENT_CATEGORY, DEFAULT_DOCUMENT_CATEGORY); //$NON-NLS-1$

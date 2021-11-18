@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExclusive;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedGroup;
@@ -166,6 +167,15 @@ public class TarmedReferenceDataImporterTest {
 		assertTrue(StringUtils.isNotBlank(tl.getText()));
 		tl = TarmedLeistung.getFromCode("22.0035", LocalDate.now(), null);
 		assertTrue(StringUtils.isNotBlank(tl.getText()));
+		
+		// parent of 09.0010-20010101 has different valid from #23345
+		ITarmedLeistung tl2001 = ArzttarifeModelServiceHolder.get()
+			.load("09.0010-20010101", ITarmedLeistung.class).get();
+		assertNotNull(tl2001.getParent());
+		ITarmedLeistung tl2001Parent = ArzttarifeModelServiceHolder.get()
+			.load("09.01.01-20080101", ITarmedLeistung.class).get();
+		assertTrue(tl2001Parent.isChapter());
+		assertEquals(tl2001.getParent(), tl2001Parent);
 	}
 	
 	private static String testParentsSql =

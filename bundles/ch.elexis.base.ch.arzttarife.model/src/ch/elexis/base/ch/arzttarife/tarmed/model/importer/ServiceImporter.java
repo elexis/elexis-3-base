@@ -209,6 +209,10 @@ public class ServiceImporter {
 	}
 
 	private String getParentId(String chapterCode) {
+		// special handling for 09.0010, parent must be valid from 20080101
+		if (code.equals("09.0010") && StringUtils.isBlank(law)) {
+			return chapterImporter.getIdForCode(chapterCode, LocalDate.of(2008, 1, 1), law);
+		}
 		return chapterImporter.getIdForCode(chapterCode, validFrom.toLocalDate(), law);
 	}
 

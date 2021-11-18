@@ -109,4 +109,12 @@ public class InboxElementUiExtension {
 			provider.doubleClicked(element);
 		}
 	}
+	
+	public boolean isVisible(IInboxElement element){
+		IInboxElementUiProvider provider = getProvider(element);
+		if (provider != null) {
+			return provider.isVisible(element);
+		}
+		return true;
+	}
 }

@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -334,7 +333,7 @@ public class InboxView extends ViewPart {
 	
 	private class InboxElementViewerFilter extends ViewerFilter {
 		protected String searchString;
-		protected LabelProvider labelProvider = new InboxElementLabelProvider();
+		protected InboxElementLabelProvider labelProvider = new InboxElementLabelProvider();
 		
 		public void setSearchText(String s){
 			// Search must be a substring of the existing value
@@ -356,8 +355,18 @@ public class InboxView extends ViewPart {
 			return false;
 		}
 		
+		private boolean isVisible(Object element){
+			if (element instanceof IInboxElement) {
+				return labelProvider.isVisible((IInboxElement) element);
+			}
+			return true;
+		}
+		
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element){
+			if (element instanceof IInboxElement && !isVisible(element)) {
+				return false;
+			}
 			if (searchString == null || searchString.length() == 0) {
 				return true;
 			}

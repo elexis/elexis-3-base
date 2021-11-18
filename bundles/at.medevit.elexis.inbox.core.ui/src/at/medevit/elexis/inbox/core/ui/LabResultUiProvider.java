@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.core.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -21,8 +22,12 @@ import at.medevit.elexis.inbox.core.ui.filter.PathologicInboxFilter;
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.LabServiceHolder;
+import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.LabResult;
+import ch.rgw.tools.Result;
 
 public class LabResultUiProvider implements IInboxElementUiProvider {
 	private static DecorationOverlayIcon pathologicLabImage;
@@ -84,5 +89,26 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 	public void doubleClicked(IInboxElement element){
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public boolean isVisible(IInboxElement element){
+		Object obj = element.getObject();
+		if (obj instanceof LabResult) {
+			return StringUtils.isNotBlank(((LabResult) obj).getResult());
+		} else if (obj instanceof ILabResult) {
+			ILabResult labResult = (ILabResult) obj;
+			if (StringUtils.isBlank(labResult.getResult())) {
+				if (LabItemTyp.FORMULA == labResult.getItem().getTyp()) {
+					Result<String> result = LabServiceHolder.get().evaluate(labResult);
+					if (result.isOK() && StringUtils.isNotBlank(result.get())) {
+						labResult.setResult(result.get());
+						CoreModelServiceHolder.get().save(labResult);
+					}
+				}
+				return StringUtils.isNotBlank(labResult.getResult());
+			}
+		}
+		return true;
 	}
 }

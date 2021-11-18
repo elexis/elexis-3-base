@@ -60,4 +60,14 @@ public interface IInboxElementUiProvider {
 	 * @param element
 	 */
 	public void doubleClicked(IInboxElement element);
+	
+	/**
+	 * Test if the element should be visible in the ui.
+	 * 
+	 * @param element
+	 * @return
+	 */
+	public default boolean isVisible(IInboxElement element){
+		return true;
+	}
 }

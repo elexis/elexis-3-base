@@ -94,4 +94,8 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 		}
 		return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 	}
+	
+	public boolean isVisible(IInboxElement element){
+		return extension.isVisible(element);
+	}
 }

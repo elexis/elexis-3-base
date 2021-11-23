@@ -32,7 +32,7 @@ import ch.elexis.core.model.IPatient;
 
 public class InboxElementContentProvider implements ITreeContentProvider {
 	
-	HashMap<IPatient, PatientInboxElements> map = new HashMap<IPatient, PatientInboxElements>();
+	HashMap<IPatient, PatientInboxElements> map;
 	private List<PatientInboxElements> items;
 	
 	public Object[] getElements(Object inputElement){
@@ -67,8 +67,8 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 		if (newInput instanceof List<?>) {
 			List<IInboxElement> input = (List<IInboxElement>) newInput;
 			// refresh map and list
-			map.clear();
-			items = Collections.emptyList();
+			map = new HashMap<IPatient, PatientInboxElements>();
+			items = null;
 			Display.getDefault().asyncExec(() -> {
 				viewer.refresh();
 			});
@@ -116,23 +116,36 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 				}
 			}
 			if (wasEmpty && !patientInboxElement.getElements().isEmpty()) {
-				items.add(patientInboxElement);
+				addItem(patientInboxElement);
 			}
 		} else if (inboxElement.getState() == State.NEW) {
 			patientInboxElement = new PatientInboxElements(patient);
 			patientInboxElement.addElement(inboxElement);
-			items.add(patientInboxElement);
+			addItem(patientInboxElement);
+		}
+	}
+	
+	private void addItem(PatientInboxElements patientInboxElement){
+		if (items == null) {
+			items = new ArrayList<>();
+		}
+		items.add(patientInboxElement);
+	}
+	
+	private void removeItem(PatientInboxElements patientInboxElement){
+		if (items != null) {
+			items.remove(patientInboxElement);
 		}
 	}
 	
 	public void refreshElement(PatientInboxElements patientInbox){
 		if (patientInbox.getElements().isEmpty()) {
-			items.remove(patientInbox);
+			removeItem(patientInbox);
 		} else {
 			IMandator activeMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 			IMandator inboxMandant = patientInbox.getElements().get(0).getMandator();
 			if (!inboxMandant.equals(activeMandant)) {
-				items.remove(patientInbox);
+				removeItem(patientInbox);
 			}
 		}
 	}

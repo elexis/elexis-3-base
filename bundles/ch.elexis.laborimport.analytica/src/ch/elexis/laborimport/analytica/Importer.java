@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -203,10 +204,17 @@ public class Importer extends ImporterPage {
 		
 		if (type == FILE) {
 			String filename = results[1];
-			return ResultAdapter.getResultAsStatus(importFile(filename));
+			Result<?> res = importFile(filename);
+			if (res != null) {
+				return ResultAdapter.getResultAsStatus(res);
+			}
 		} else {
-			return ResultAdapter.getResultAsStatus(importDirect());
+			Result<?> res = importDirect();
+			if (res != null) {
+				return ResultAdapter.getResultAsStatus(res);
+			}
 		}
+		return Status.CANCEL_STATUS;
 	}
 	
 	@Override

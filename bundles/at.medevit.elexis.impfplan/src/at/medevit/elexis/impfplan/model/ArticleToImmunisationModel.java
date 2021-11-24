@@ -38,6 +38,7 @@ public class ArticleToImmunisationModel {
 		inl("J07AH04;J07AH");
 		inl("J07AH07;J07AH");
 		inl("J07AH08;J07AH");
+		inl("J07AH09;J07AH");
 		inl("J07AJ52;J07AF,J07AM,J07AJ");
 		inl("J07AL01;J07AL");
 		inl("J07AL02;J07AL");
@@ -51,11 +52,11 @@ public class ArticleToImmunisationModel {
 		inl("J07BC02;J07BC02");
 		inl("J07BC20;J07BC01,J07BC02");
 		inl("J07BD52;J07BD,J07BE,J07BJ");
-		inl("J07BD54;J07BD,J07BE,J07BJ,J07BK");
+		inl("J07BD54;J07BD,J07BE,J07BJ,J07BK02");
 		inl("J07BF03;J07BF");
 		inl("J07BG01;J07BG");
 		inl("J07BH01;J07BH");
-		inl("J07BK01;J07BK");
+		inl("J07BK01;J07BK01");
 		inl("J07BL01;J07BL");
 		inl("J07BM01;J07BM");
 		inl("J07BM02;J07BM");

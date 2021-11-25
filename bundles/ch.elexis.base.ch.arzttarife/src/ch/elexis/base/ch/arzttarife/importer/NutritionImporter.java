@@ -35,7 +35,7 @@ import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
-public class PhysioImporter extends ImporterPage {
+public class NutritionImporter extends ImporterPage {
 	
 	private TimeTool validFrom = new TimeTool();
 	
@@ -44,7 +44,7 @@ public class PhysioImporter extends ImporterPage {
 	@Inject
 	private IReferenceDataImporterService importerService;
 	
-	public PhysioImporter(){
+	public NutritionImporter(){
 		// set default to start of year
 		validFrom.clear();
 		validFrom.set(TimeTool.getInstance().get(Calendar.YEAR), 0, 1);
@@ -101,7 +101,7 @@ public class PhysioImporter extends ImporterPage {
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
 		try (FileInputStream tarifInputStream = new FileInputStream(results[0])) {
 			IReferenceDataImporter importer =
-				importerService.getImporter("physio").orElseThrow(
+				importerService.getImporter("nutrition").orElseThrow(
 					() -> new IllegalStateException("No IReferenceDataImporter available."));
 			return importer.performImport(monitor, tarifInputStream,
 				getVersionFromValid(validFrom));

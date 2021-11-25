@@ -89,6 +89,15 @@
             name="Tarmedpauschalen"
             system="Tarmedpauschalen">
       </Leistung>
+      <Leistung
+            CodeDetailDisplay="ch.elexis.views.NutritionDetailDisplay"
+            CodeSelectorFactory="ch.elexis.views.NutritionLeistungCodeSelectorFactory"
+            ImporterClass="ch.elexis.base.ch.arzttarife.importer.NutritionImporter"
+            elexisClassName="ch.elexis.data.NutritionLeistung"
+            localizedName="Ernährungsberatung"
+            name="Ernährungsberatung"
+            system="Ernährungsberatung">
+      </Leistung>
    </extension>
    <extension
          point="ch.elexis.core.data.RechnungsManager">

@@ -7,6 +7,8 @@ import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 
 import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
 
+import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
+import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
 import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemieFactory;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
@@ -111,6 +113,8 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		RfePackageImpl theRfePackage = (RfePackageImpl)(registeredPackage instanceof RfePackageImpl ? registeredPackage : RfePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
 		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(NutritionPackage.eNS_URI);
+		NutritionPackageImpl theNutritionPackage = (NutritionPackageImpl)(registeredPackage instanceof NutritionPackageImpl ? registeredPackage : NutritionPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		thePandemiePackage.createPackageContents();
@@ -119,6 +123,7 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		theComplementaryPackage.createPackageContents();
 		theRfePackage.createPackageContents();
 		theTarmedallowancePackage.createPackageContents();
+		theNutritionPackage.createPackageContents();
 
 		// Initialize created meta-data
 		thePandemiePackage.initializePackageContents();
@@ -127,6 +132,7 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		theComplementaryPackage.initializePackageContents();
 		theRfePackage.initializePackageContents();
 		theTarmedallowancePackage.initializePackageContents();
+		theNutritionPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		thePandemiePackage.freeze();

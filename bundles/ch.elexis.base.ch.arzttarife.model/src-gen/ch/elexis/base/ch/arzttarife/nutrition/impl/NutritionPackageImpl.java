@@ -1,14 +1,16 @@
 /**
  * Copyright Text	Copyright (c) 2018 MEDEVIT <office@medevit.at>....
  */
-package ch.elexis.base.ch.arzttarife.tarmedallowance.impl;
+package ch.elexis.base.ch.arzttarife.nutrition.impl;
 
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 
 import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
 
+import ch.elexis.base.ch.arzttarife.nutrition.INutritionLeistung;
+import ch.elexis.base.ch.arzttarife.nutrition.NutritionFactory;
 import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
-import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
+
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
@@ -25,9 +27,9 @@ import ch.elexis.base.ch.arzttarife.tarmed.TarmedPackage;
 
 import ch.elexis.base.ch.arzttarife.tarmed.impl.TarmedPackageImpl;
 
-import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
-import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowanceFactory;
 import ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage;
+
+import ch.elexis.base.ch.arzttarife.tarmedallowance.impl.TarmedallowancePackageImpl;
 
 import ch.elexis.core.model.ModelPackage;
 
@@ -45,13 +47,13 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <!-- end-user-doc -->
  * @generated
  */
-public class TarmedallowancePackageImpl extends EPackageImpl implements TarmedallowancePackage {
+public class NutritionPackageImpl extends EPackageImpl implements NutritionPackage {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass iTarmedAllowanceEClass = null;
+	private EClass iNutritionLeistungEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -64,12 +66,12 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage#eNS_URI
+	 * @see ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage#eNS_URI
 	 * @see #init()
 	 * @generated
 	 */
-	private TarmedallowancePackageImpl() {
-		super(eNS_URI, TarmedallowanceFactory.eINSTANCE);
+	private NutritionPackageImpl() {
+		super(eNS_URI, NutritionFactory.eINSTANCE);
 	}
 
 	/**
@@ -82,7 +84,7 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 *
-	 * <p>This method is used to initialize {@link TarmedallowancePackage#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link NutritionPackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -91,12 +93,12 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
-	public static TarmedallowancePackage init() {
-		if (isInited) return (TarmedallowancePackage)EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
+	public static NutritionPackage init() {
+		if (isInited) return (NutritionPackage)EPackage.Registry.INSTANCE.getEPackage(NutritionPackage.eNS_URI);
 
 		// Obtain or create and register package
-		Object registeredTarmedallowancePackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-		TarmedallowancePackageImpl theTarmedallowancePackage = registeredTarmedallowancePackage instanceof TarmedallowancePackageImpl ? (TarmedallowancePackageImpl)registeredTarmedallowancePackage : new TarmedallowancePackageImpl();
+		Object registeredNutritionPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		NutritionPackageImpl theNutritionPackage = registeredNutritionPackage instanceof NutritionPackageImpl ? (NutritionPackageImpl)registeredNutritionPackage : new NutritionPackageImpl();
 
 		isInited = true;
 
@@ -115,33 +117,33 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		RfePackageImpl theRfePackage = (RfePackageImpl)(registeredPackage instanceof RfePackageImpl ? registeredPackage : RfePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PandemiePackage.eNS_URI);
 		PandemiePackageImpl thePandemiePackage = (PandemiePackageImpl)(registeredPackage instanceof PandemiePackageImpl ? registeredPackage : PandemiePackage.eINSTANCE);
-		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(NutritionPackage.eNS_URI);
-		NutritionPackageImpl theNutritionPackage = (NutritionPackageImpl)(registeredPackage instanceof NutritionPackageImpl ? registeredPackage : NutritionPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
+		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
 
 		// Create package meta-data objects
-		theTarmedallowancePackage.createPackageContents();
+		theNutritionPackage.createPackageContents();
 		theTarmedPackage.createPackageContents();
 		thePhysioPackage.createPackageContents();
 		theComplementaryPackage.createPackageContents();
 		theRfePackage.createPackageContents();
 		thePandemiePackage.createPackageContents();
-		theNutritionPackage.createPackageContents();
+		theTarmedallowancePackage.createPackageContents();
 
 		// Initialize created meta-data
-		theTarmedallowancePackage.initializePackageContents();
+		theNutritionPackage.initializePackageContents();
 		theTarmedPackage.initializePackageContents();
 		thePhysioPackage.initializePackageContents();
 		theComplementaryPackage.initializePackageContents();
 		theRfePackage.initializePackageContents();
 		thePandemiePackage.initializePackageContents();
-		theNutritionPackage.initializePackageContents();
+		theTarmedallowancePackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
-		theTarmedallowancePackage.freeze();
+		theNutritionPackage.freeze();
 
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(TarmedallowancePackage.eNS_URI, theTarmedallowancePackage);
-		return theTarmedallowancePackage;
+		EPackage.Registry.INSTANCE.put(NutritionPackage.eNS_URI, theNutritionPackage);
+		return theNutritionPackage;
 	}
 
 	/**
@@ -150,8 +152,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public EClass getITarmedAllowance() {
-		return iTarmedAllowanceEClass;
+	public EClass getINutritionLeistung() {
+		return iNutritionLeistungEClass;
 	}
 
 	/**
@@ -160,8 +162,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedAllowance_ValidFrom() {
-		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(0);
+	public EAttribute getINutritionLeistung_ValidFrom() {
+		return (EAttribute)iNutritionLeistungEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -170,8 +172,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedAllowance_ValidTo() {
-		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(1);
+	public EAttribute getINutritionLeistung_ValidTo() {
+		return (EAttribute)iNutritionLeistungEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -180,8 +182,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public EAttribute getITarmedAllowance_Chapter() {
-		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(2);
+	public EAttribute getINutritionLeistung_TP() {
+		return (EAttribute)iNutritionLeistungEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -190,8 +192,18 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
-	public TarmedallowanceFactory getTarmedallowanceFactory() {
-		return (TarmedallowanceFactory)getEFactoryInstance();
+	public EAttribute getINutritionLeistung_Description() {
+		return (EAttribute)iNutritionLeistungEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NutritionFactory getNutritionFactory() {
+		return (NutritionFactory)getEFactoryInstance();
 	}
 
 	/**
@@ -213,10 +225,11 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		isCreated = true;
 
 		// Create classes and their features
-		iTarmedAllowanceEClass = createEClass(ITARMED_ALLOWANCE);
-		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__VALID_FROM);
-		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__VALID_TO);
-		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__CHAPTER);
+		iNutritionLeistungEClass = createEClass(INUTRITION_LEISTUNG);
+		createEAttribute(iNutritionLeistungEClass, INUTRITION_LEISTUNG__VALID_FROM);
+		createEAttribute(iNutritionLeistungEClass, INUTRITION_LEISTUNG__VALID_TO);
+		createEAttribute(iNutritionLeistungEClass, INUTRITION_LEISTUNG__TP);
+		createEAttribute(iNutritionLeistungEClass, INUTRITION_LEISTUNG__DESCRIPTION);
 	}
 
 	/**
@@ -251,16 +264,17 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		iTarmedAllowanceEClass.getESuperTypes().add(theModelPackage.getIBillable());
+		iNutritionLeistungEClass.getESuperTypes().add(theModelPackage.getIBillable());
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(iTarmedAllowanceEClass, ITarmedAllowance.class, "ITarmedAllowance", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getITarmedAllowance_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getITarmedAllowance_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getITarmedAllowance_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(iNutritionLeistungEClass, INutritionLeistung.class, "INutritionLeistung", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getINutritionLeistung_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, INutritionLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getINutritionLeistung_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, INutritionLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getINutritionLeistung_TP(), ecorePackage.getEString(), "TP", null, 0, 1, INutritionLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getINutritionLeistung_Description(), ecorePackage.getEString(), "description", null, 0, 1, INutritionLeistung.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
 	}
 
-} //TarmedallowancePackageImpl
+} //NutritionPackageImpl

@@ -11,6 +11,8 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
+import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
+import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
 import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
@@ -100,6 +102,8 @@ public class RfePackageImpl extends EPackageImpl implements RfePackage {
 		PandemiePackageImpl thePandemiePackage = (PandemiePackageImpl)(registeredPackage instanceof PandemiePackageImpl ? registeredPackage : PandemiePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
 		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(NutritionPackage.eNS_URI);
+		NutritionPackageImpl theNutritionPackage = (NutritionPackageImpl)(registeredPackage instanceof NutritionPackageImpl ? registeredPackage : NutritionPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theRfePackage.createPackageContents();
@@ -108,6 +112,7 @@ public class RfePackageImpl extends EPackageImpl implements RfePackage {
 		theComplementaryPackage.createPackageContents();
 		thePandemiePackage.createPackageContents();
 		theTarmedallowancePackage.createPackageContents();
+		theNutritionPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theRfePackage.initializePackageContents();
@@ -116,6 +121,7 @@ public class RfePackageImpl extends EPackageImpl implements RfePackage {
 		theComplementaryPackage.initializePackageContents();
 		thePandemiePackage.initializePackageContents();
 		theTarmedallowancePackage.initializePackageContents();
+		theNutritionPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theRfePackage.freeze();

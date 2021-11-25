@@ -7,6 +7,8 @@ import ch.elexis.base.ch.arzttarife.complementary.ComplementaryFactory;
 import ch.elexis.base.ch.arzttarife.complementary.ComplementaryPackage;
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 
+import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
+import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
 import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
@@ -107,6 +109,8 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		PandemiePackageImpl thePandemiePackage = (PandemiePackageImpl)(registeredPackage instanceof PandemiePackageImpl ? registeredPackage : PandemiePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
 		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(NutritionPackage.eNS_URI);
+		NutritionPackageImpl theNutritionPackage = (NutritionPackageImpl)(registeredPackage instanceof NutritionPackageImpl ? registeredPackage : NutritionPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theComplementaryPackage.createPackageContents();
@@ -115,6 +119,7 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		theRfePackage.createPackageContents();
 		thePandemiePackage.createPackageContents();
 		theTarmedallowancePackage.createPackageContents();
+		theNutritionPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theComplementaryPackage.initializePackageContents();
@@ -123,6 +128,7 @@ public class ComplementaryPackageImpl extends EPackageImpl implements Complement
 		theRfePackage.initializePackageContents();
 		thePandemiePackage.initializePackageContents();
 		theTarmedallowancePackage.initializePackageContents();
+		theNutritionPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theComplementaryPackage.freeze();

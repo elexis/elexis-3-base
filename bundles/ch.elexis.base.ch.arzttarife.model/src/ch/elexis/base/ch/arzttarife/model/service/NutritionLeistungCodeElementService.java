@@ -66,10 +66,12 @@ public class NutritionLeistungCodeElementService
 	
 	@Override
 	public Optional<String> storeToString(Identifiable identifiable){
-		if (identifiable instanceof NutritionLeistung) {
+		if (identifiable instanceof ch.elexis.base.ch.arzttarife.nutrition.model.NutritionLeistung) {
 			return Optional
 				.of(ch.elexis.base.ch.arzttarife.nutrition.model.NutritionLeistung.STS_CLASS
-					+ StringConstants.DOUBLECOLON + ((NutritionLeistung) identifiable).getCode());
+					+ StringConstants.DOUBLECOLON
+					+ ((ch.elexis.base.ch.arzttarife.nutrition.model.NutritionLeistung) identifiable)
+						.getId());
 		}
 		return Optional.empty();
 	}

@@ -133,5 +133,13 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmedallowance/ITarmedAllowance/chapter"/>
       </genClasses>
     </nestedGenPackages>
+    <nestedGenPackages prefix="Nutrition" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//nutrition">
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//nutrition/INutritionLeistung">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//nutrition/INutritionLeistung/validFrom"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//nutrition/INutritionLeistung/validTo"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//nutrition/INutritionLeistung/TP"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//nutrition/INutritionLeistung/description"/>
+      </genClasses>
+    </nestedGenPackages>
   </genPackages>
 </genmodel:GenModel>

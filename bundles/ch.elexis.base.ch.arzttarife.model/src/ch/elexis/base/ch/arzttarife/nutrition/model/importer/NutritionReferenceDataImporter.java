@@ -1,4 +1,4 @@
-package ch.elexis.base.ch.arzttarife.physio.model.importer;
+package ch.elexis.base.ch.arzttarife.nutrition.model.importer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,17 +18,17 @@ import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
-import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
+import ch.elexis.base.ch.arzttarife.nutrition.INutritionLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.importer.EntityUtil;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
-import ch.elexis.core.jpa.entities.PhysioLeistung;
+import ch.elexis.core.jpa.entities.NutritionLeistung;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.rgw.tools.TimeTool;
 
-@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=physio")
-public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
+@Component(property = IReferenceDataImporter.REFERENCEDATAID + "=nutrition")
+public class NutritionReferenceDataImporter extends AbstractReferenceDataImporter
 		implements IReferenceDataImporter {
 	
 	private LocalDate validFrom;
@@ -43,8 +43,8 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 		validFrom = getValidFromVersion(newVersion).toLocalDate();
 		
 		try {
-			CSVReader reader = new CSVReader(new InputStreamReader(input, "ISO-8859-1"), ';');
-			monitor.beginTask("Importiere Physio", 100);
+			CSVReader reader = new CSVReader(new InputStreamReader(input, "UTF-8"), ';');
+			monitor.beginTask("Importiere Ernährungsberatung", 100);
 			String[] line = reader.readNext();
 			while ((line = reader.readNext()) != null) {
 				if (line.length < 3) {
@@ -58,7 +58,7 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 			monitor.done();
 			return Status.OK_STATUS;
 		} catch (IOException uee) {
-			LoggerFactory.getLogger(getClass()).error("Could not import physio tarif", uee);
+			LoggerFactory.getLogger(getClass()).error("Could not import nutrition tarif", uee);
 			return Status.CANCEL_STATUS;
 		}
 	}
@@ -88,22 +88,22 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 	private void closeAllOlder(){
 		// get all entries
 		LocalDate defaultValidFrom = LocalDate.of(1970, 1, 1);
-		List<PhysioLeistung> entries = EntityUtil.loadAll(PhysioLeistung.class);
+		List<NutritionLeistung> entries = EntityUtil.loadAll(NutritionLeistung.class);
 		
-		for (PhysioLeistung physio : entries) {
-			LocalDate pValidFrom = physio.getValidFrom();
-			LocalDate pValidUntil = physio.getValidUntil();
+		for (NutritionLeistung nutrition : entries) {
+			LocalDate pValidFrom = nutrition.getValidFrom();
+			LocalDate pValidUntil = nutrition.getValidUntil();
 			if ((pValidFrom == null)) {
 				// old entry with no valid from
-				physio.setValidFrom(defaultValidFrom);
-				physio.setValidUntil(validFrom);
+				nutrition.setValidFrom(defaultValidFrom);
+				nutrition.setValidUntil(validFrom);
 			} else if (!validFrom.equals(pValidFrom)) {
 				// old entry not closed yet
 				if (pValidUntil == null) {
-					physio.setValidUntil(validFrom);
+					nutrition.setValidUntil(validFrom);
 				} else {
 					if (pValidUntil.isEqual(endOfEpoch)) {
-						physio.setValidUntil(validFrom);
+						nutrition.setValidUntil(validFrom);
 					}
 				}
 			}
@@ -111,70 +111,70 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 	}
 	
 	private void updateOrCreateFromLine(String[] line){
-		List<PhysioLeistung> entries = EntityUtil
-			.loadByNamedQuery(Collections.singletonMap("ziffer", line[0]), PhysioLeistung.class);
-		List<PhysioLeistung> openEntries = new ArrayList<PhysioLeistung>();
+		List<NutritionLeistung> entries = EntityUtil
+			.loadByNamedQuery(Collections.singletonMap("code", line[0]), NutritionLeistung.class);
+		List<NutritionLeistung> openEntries = new ArrayList<>();
 		// get open entries -> field FLD_GUELTIG_BIS not set
-		for (PhysioLeistung physio : entries) {
-			LocalDate pValidUntil = physio.getValidUntil();
+		for (NutritionLeistung nutrition : entries) {
+			LocalDate pValidUntil = nutrition.getValidUntil();
 			if (pValidUntil == null) {
-				openEntries.add(physio);
+				openEntries.add(nutrition);
 			} else {
 				if (pValidUntil.isEqual(endOfEpoch)) {
-					openEntries.add(physio);
+					openEntries.add(nutrition);
 				}
 			}
 		}
 		if (openEntries.isEmpty()) {
-			PhysioLeistung physio = new PhysioLeistung();
-			physio.setZiffer(line[0]);
-			physio.setTitel(line[1]);
-			physio.setTp(line[2]);
-			physio.setValidFrom(validFrom);
-			physio.setValidUntil(null);
+			NutritionLeistung nutrition = new NutritionLeistung();
+			nutrition.setCode(line[0]);
+			nutrition.setCodeText(line[1]);
+			nutrition.setTp(line[2]);
+			nutrition.setValidFrom(validFrom);
+			nutrition.setValidUntil(null);
 			if (lineHasFixPrice(line)) {
-				applyFixPrice(physio, line[3]);
+				applyFixPrice(nutrition, line[3]);
 			}
-			EntityUtil.save(Collections.singletonList(physio));
+			EntityUtil.save(Collections.singletonList(nutrition));
 		} else {
 			// do actual import if entries with updating open entries
-			for (PhysioLeistung physio : openEntries) {
-				if (physio.getValidFrom().equals(validFrom)) {
+			for (NutritionLeistung nutrition : openEntries) {
+				if (nutrition.getValidFrom().equals(validFrom)) {
 					// test if the gVon is the same -> update the values of the entry
-					physio.setTitel(line[1]);
-					physio.setTp(line[2]);
+					nutrition.setCodeText(line[1]);
+					nutrition.setTp(line[2]);
 					if (lineHasFixPrice(line)) {
-						applyFixPrice(physio, line[3]);
+						applyFixPrice(nutrition, line[3]);
 					}
 				} else {
 					// close entry and create new entry
-					physio.setValidUntil(validFrom);
-					EntityUtil.save(Collections.singletonList(physio));
+					nutrition.setValidUntil(validFrom);
+					EntityUtil.save(Collections.singletonList(nutrition));
 					
-					PhysioLeistung newPhysio = new PhysioLeistung();
-					newPhysio.setZiffer(line[0]);
-					newPhysio.setTitel(line[1]);
-					newPhysio.setTp(line[2]);
-					newPhysio.setValidFrom(validFrom);
-					newPhysio.setValidUntil(null);
+					NutritionLeistung newNutrition = new NutritionLeistung();
+					newNutrition.setCode(line[0]);
+					newNutrition.setCodeText(line[1]);
+					newNutrition.setTp(line[2]);
+					newNutrition.setValidFrom(validFrom);
+					newNutrition.setValidUntil(null);
 					if (lineHasFixPrice(line)) {
-						applyFixPrice(newPhysio, line[3]);
+						applyFixPrice(newNutrition, line[3]);
 					}
-					EntityUtil.save(Collections.singletonList(newPhysio));
+					EntityUtil.save(Collections.singletonList(newNutrition));
 				}
 			}
 		}
 	}
 	
-	private void applyFixPrice(PhysioLeistung physio, String string){
-		physio.setTp(string);
+	private void applyFixPrice(NutritionLeistung nutrition, String string){
+		nutrition.setTp(string);
 		StringBuilder sb = new StringBuilder();
-		String existingText = physio.getTitel();
+		String existingText = nutrition.getText();
 		if (existingText != null) {
 			sb.append(existingText);
 		}
-		sb.append(PhysioLeistung.FIXEDPRICE);
-		physio.setTitel(sb.toString());
+		sb.append(NutritionLeistung.FIXEDPRICE);
+		nutrition.setCodeText(sb.toString());
 	}
 	
 	private boolean lineHasFixPrice(String[] line){
@@ -184,12 +184,13 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 	
 	@Override
 	public int getCurrentVersion(){
-		IQuery<IPhysioLeistung> query = ArzttarifeModelServiceHolder.get().getQuery(IPhysioLeistung.class);
+		IQuery<INutritionLeistung> query =
+			ArzttarifeModelServiceHolder.get().getQuery(INutritionLeistung.class);
 		query.and("validFrom", COMPARATOR.NOT_EQUALS, null);
 		query.and("validUntil", COMPARATOR.EQUALS, null);
-		List<IPhysioLeistung> physioLeistungen = query.execute();
-		if (!physioLeistungen.isEmpty()) {
-			LocalDate validFrom = physioLeistungen.get(0).getValidFrom();
+		List<INutritionLeistung> nutritionLeistungen = query.execute();
+		if (!nutritionLeistungen.isEmpty()) {
+			LocalDate validFrom = nutritionLeistungen.get(0).getValidFrom();
 			if (validFrom != null) {
 				DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyMMdd");
 				int version = Integer.valueOf(ofPattern.format(validFrom));

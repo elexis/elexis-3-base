@@ -17,8 +17,9 @@ import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
@@ -29,7 +30,7 @@ import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.views.IDetailDisplay;
 
 public class NutritionDetailDisplay implements IDetailDisplay {
-	Form form;
+	ScrolledForm form;
 	FormToolkit tk = UiDesk.getToolkit();
 	LabeledInputField.AutoForm tblLab;
 	
@@ -39,6 +40,7 @@ public class NutritionDetailDisplay implements IDetailDisplay {
 		new InputData("Gültig von", "validFrom", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
 		new InputData("Gültig bis", "validTo", InputData.Typ.STRING, null) //$NON-NLS-1$ //$NON-NLS-2$
 		};
+		private FormText description;
 	
 	@Inject
 	public void selection(
@@ -51,7 +53,7 @@ public class NutritionDetailDisplay implements IDetailDisplay {
 	}
 	
 	public Composite createDisplay(Composite parent, IViewSite site){
-		form = tk.createForm(parent);
+		form = tk.createScrolledForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
 		
@@ -60,7 +62,10 @@ public class NutritionDetailDisplay implements IDetailDisplay {
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		tblLab.setLayoutData(twd);
-		// GlobalEvents.getInstance().addActivationListener(this,this);
+		
+		tk.createLabel(form.getBody(), "Beschreibung");
+		description = tk.createFormText(form.getBody(), false);
+		
 		return form.getBody();
 	}
 	
@@ -68,6 +73,13 @@ public class NutritionDetailDisplay implements IDetailDisplay {
 		INutritionLeistung ll = (INutritionLeistung) obj;
 		form.setText(ll.getLabel());
 		tblLab.reload(ll);
+		
+		String text =
+			ll.getDescription() != null
+					? "<form>" + ll.getDescription().replaceAll("\n", "<br/>") + "</form>"
+					: "<form/>";
+		description.setText(text, true, false);
+		form.reflow(true);
 	}
 	
 	public Class<?> getElementClass(){

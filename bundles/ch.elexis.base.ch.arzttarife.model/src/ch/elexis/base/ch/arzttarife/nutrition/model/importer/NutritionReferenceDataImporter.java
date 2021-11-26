@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -47,11 +48,13 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 			monitor.beginTask("Importiere Ernährungsberatung", 100);
 			String[] line = reader.readNext();
 			while ((line = reader.readNext()) != null) {
-				if (line.length < 3) {
+				if (line.length < 4) {
 					continue;
 				}
-				monitor.subTask(line[1]);
-				updateOrCreateFromLine(line);
+				if (StringUtils.isNoneBlank(line[0]) && Character.isDigit(line[0].charAt(0))) {
+					monitor.subTask(line[1]);
+					updateOrCreateFromLine(line);
+				}
 			}
 			closeAllOlder();
 			
@@ -129,11 +132,12 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 			NutritionLeistung nutrition = new NutritionLeistung();
 			nutrition.setCode(line[0]);
 			nutrition.setCodeText(line[1]);
-			nutrition.setTp(line[2]);
+			nutrition.setDescription(line[2]);
+			nutrition.setTp(line[3]);
 			nutrition.setValidFrom(validFrom);
 			nutrition.setValidUntil(null);
 			if (lineHasFixPrice(line)) {
-				applyFixPrice(nutrition, line[3]);
+				applyFixPrice(nutrition, line[4]);
 			}
 			EntityUtil.save(Collections.singletonList(nutrition));
 		} else {
@@ -142,9 +146,10 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 				if (nutrition.getValidFrom().equals(validFrom)) {
 					// test if the gVon is the same -> update the values of the entry
 					nutrition.setCodeText(line[1]);
-					nutrition.setTp(line[2]);
+					nutrition.setDescription(line[2]);
+					nutrition.setTp(line[3]);
 					if (lineHasFixPrice(line)) {
-						applyFixPrice(nutrition, line[3]);
+						applyFixPrice(nutrition, line[4]);
 					}
 				} else {
 					// close entry and create new entry
@@ -154,11 +159,12 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 					NutritionLeistung newNutrition = new NutritionLeistung();
 					newNutrition.setCode(line[0]);
 					newNutrition.setCodeText(line[1]);
-					newNutrition.setTp(line[2]);
+					newNutrition.setDescription(line[2]);
+					newNutrition.setTp(line[3]);
 					newNutrition.setValidFrom(validFrom);
 					newNutrition.setValidUntil(null);
 					if (lineHasFixPrice(line)) {
-						applyFixPrice(newNutrition, line[3]);
+						applyFixPrice(newNutrition, line[4]);
 					}
 					EntityUtil.save(Collections.singletonList(newNutrition));
 				}
@@ -178,8 +184,8 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 	}
 	
 	private boolean lineHasFixPrice(String[] line){
-		return line.length > 3 && line[3] != null && !line[3].isEmpty()
-			&& Character.isDigit(line[3].charAt(0));
+		return line.length > 4 && line[4] != null && !line[4].isEmpty()
+			&& Character.isDigit(line[4].charAt(0));
 	}
 	
 	@Override

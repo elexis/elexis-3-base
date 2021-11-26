@@ -58,6 +58,11 @@ public class NutritionLeistung
 	}
 	
 	@Override
+	public String getCodeSystemCode(){
+		return "510";
+	}
+	
+	@Override
 	public String getCodeSystemName(){
 		return ch.elexis.core.jpa.entities.NutritionLeistung.CODESYSTEM_NAME;
 	}

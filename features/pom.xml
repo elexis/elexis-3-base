@@ -43,7 +43,6 @@
     <module>ch.elexis.connect.mythic.feature</module>
     <module>ch.elexis.connect.reflotron.v2.feature</module>
     <module>ch.elexis.connect.sysmex.feature</module>
-    <module>ch.elexis.connector.medicosearch.feature</module>
     <module>ch.elexis.externe_dokumente.feature</module>
     <module>ch.elexis.fop_wrapper.feature</module>
     <module>ch.elexis.global_inbox.feature</module>

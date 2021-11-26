@@ -240,9 +240,6 @@
    <feature id="at.medevit.elexis.bluemedication.feature">
       <category name="clinicrecordkeeping"/>
    </feature>
-   <feature id="at.medbits.elexis.labbit.feature">
-      <category name="labinterfaces"/>
-   </feature>
    <feature url="features/ch.elexis.kassenbuch.feature_0.0.0.jar" id="ch.elexis.kassenbuch.feature" version="0.0.0">
       <category name="finances"/>
    </feature>

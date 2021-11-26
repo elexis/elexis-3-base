@@ -94,7 +94,6 @@
     <module>waelti.statistics.feature</module>
     <module>ch.itmed.fop.printing.feature</module>
     <module>at.medevit.elexis.bluemedication.feature</module>
-    <module>at.medbits.elexis.labbit.feature</module>
     <module>ch.medelexis.openoffice.feature</module>
     <module>at.medevit.medelexis.text.msword.feature</module>
     <module>at.medevit.elexis.documents.converter.feature</module>

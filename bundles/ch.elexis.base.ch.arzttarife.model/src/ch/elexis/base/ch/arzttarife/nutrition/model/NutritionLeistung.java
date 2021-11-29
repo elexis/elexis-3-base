@@ -14,6 +14,7 @@ import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
+import ch.elexis.core.types.VatInfo;
 
 public class NutritionLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.NutritionLeistung>
@@ -55,6 +56,11 @@ public class NutritionLeistung
 	@Override
 	public IBillableVerifier getVerifier(){
 		return verifier;
+	}
+	
+	@Override
+	public VatInfo getVatInfo(){
+		return VatInfo.VAT_CH_ISTREATMENT;
 	}
 	
 	@Override

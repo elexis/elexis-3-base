@@ -540,8 +540,8 @@ public class XMLExporterServices {
 							XMLTool.moneyToXmlDouble(billed.getTotal()));
 						XMLExporterUtil.setVatAttribute(billed, billed.getTotal(), el, vatSummer);
 						el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
-						// all pandemie are obligations
-						if ("351".equals(codeSystemCode)) {
+						// all pandemie and nutrition are obligations
+						if ("351".equals(codeSystemCode) || "510".equals(codeSystemCode)) {
 							el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
 						} else {
 							el.setAttribute(ATTR_OBLIGATION, "false"); //$NON-NLS-1$

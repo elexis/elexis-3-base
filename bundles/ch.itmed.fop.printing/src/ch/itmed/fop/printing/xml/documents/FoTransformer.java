@@ -34,7 +34,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 public class FoTransformer {
 	private static Logger logger = LoggerFactory.getLogger(FoTransformer.class);
 
-	private static String DEBUG_MODE = "fop.printing.debug";
+	public static String DEBUG_MODE = "fop.printing.debug";
 	
 	/**
 	 * Creates an FO file and returns it as an InputStream.

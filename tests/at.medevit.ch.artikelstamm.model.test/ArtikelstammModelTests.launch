@@ -47,7 +47,7 @@
         <setEntry value="ch.qos.logback.classic@default:default"/>
         <setEntry value="ch.qos.logback.core@default:default"/>
         <setEntry value="ch.qos.logback.slf4j@default:false"/>
-        <setEntry value="com.equo.chromium.cef.cocoa.macosx.x86_64@default:false"/>
+        <setEntry value="com.eclipsesource.jaxrs.consumer@default:default"/>
         <setEntry value="com.equo.chromium@default:default"/>
         <setEntry value="com.google.gson@default:default"/>
         <setEntry value="com.google.guava@default:default"/>
@@ -102,7 +102,6 @@
         <setEntry value="org.eclipse.core.databinding@default:default"/>
         <setEntry value="org.eclipse.core.expressions@default:default"/>
         <setEntry value="org.eclipse.core.filesystem.linux.x86_64@default:false"/>
-        <setEntry value="org.eclipse.core.filesystem.macosx@default:false"/>
         <setEntry value="org.eclipse.core.filesystem@default:default"/>
         <setEntry value="org.eclipse.core.jobs@default:default"/>
         <setEntry value="org.eclipse.core.resources@default:default"/>
@@ -126,7 +125,6 @@
         <setEntry value="org.eclipse.e4.ui.services@default:default"/>
         <setEntry value="org.eclipse.e4.ui.widgets@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench.addons.swt@default:default"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.cocoa@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_de@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_fr@default:false"/>
         <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt.nl_it@default:false"/>
@@ -171,13 +169,11 @@
         <setEntry value="org.eclipse.persistence.jpa.jpql@default:default"/>
         <setEntry value="org.eclipse.persistence.jpa@default:default"/>
         <setEntry value="org.eclipse.persistence.oracle@default:false"/>
-        <setEntry value="org.eclipse.swt.cocoa.macosx.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt.nl_de@default:false"/>
         <setEntry value="org.eclipse.swt.nl_fr@default:false"/>
         <setEntry value="org.eclipse.swt.nl_it@default:false"/>
         <setEntry value="org.eclipse.swt@default:default"/>
         <setEntry value="org.eclipse.team.core@default:default"/>
-        <setEntry value="org.eclipse.ui.cocoa@default:false"/>
         <setEntry value="org.eclipse.ui.forms@default:default"/>
         <setEntry value="org.eclipse.ui.nl_de@default:false"/>
         <setEntry value="org.eclipse.ui.nl_fr@default:false"/>
@@ -212,8 +208,6 @@
         <setEntry value="at.medevit.ch.artikelstamm.model@default:true"/>
         <setEntry value="at.medevit.ch.artikelstamm.ui@default:default"/>
         <setEntry value="at.medevit.ch.artikelstamm@default:default"/>
-        <setEntry value="at.medevit.logback.mattermost@default:false"/>
-        <setEntry value="at.medevit.logback.pushnotification@default:false"/>
         <setEntry value="ch.elexis.core.data@default:default"/>
         <setEntry value="ch.elexis.core.documents@default:default"/>
         <setEntry value="ch.elexis.core.hl7.v2x@default:default"/>
@@ -230,18 +224,14 @@
         <setEntry value="ch.elexis.core.model@default:true"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
+        <setEntry value="ch.elexis.core.test.context@default:default"/>
         <setEntry value="ch.elexis.core.test@default:default"/>
-        <setEntry value="ch.elexis.core.ui.chromium@default:default"/>
         <setEntry value="ch.elexis.core.ui.dbcheck@default:default"/>
         <setEntry value="ch.elexis.core.ui.e4@default:default"/>
         <setEntry value="ch.elexis.core.ui.icons@default:default"/>
         <setEntry value="ch.elexis.core.ui@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
         <setEntry value="ch.rgw.utility@default:default"/>
-        <setEntry value="com.eclipsesource.jaxrs.consumer@default:default"/>
-        <setEntry value="info.elexis.server.core.logging@default:false"/>
-        <setEntry value="jakarta.xml.bind-api@default:false"/>
-        <setEntry value="org.osgi.framework.system.packages.extra@default:false"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <booleanAttribute key="tracing" value="false"/>

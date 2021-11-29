@@ -159,14 +159,14 @@ public final class PrintProvider {
 		// print pdf
 		DocPrintJob printJob = createPdfPrintJob(printerName);
 		if (printJob != null) {
-			if (printJob.getPrintService().isDocFlavorSupported(DocFlavor.INPUT_STREAM.AUTOSENSE)) {
-				Doc doc = new SimpleDoc(new ByteArrayInputStream(pdfStream.toByteArray()),
-					DocFlavor.INPUT_STREAM.AUTOSENSE, null);
-				printJob.print(doc, null);
-			} else if (printJob.getPrintService()
-				.isDocFlavorSupported(DocFlavor.INPUT_STREAM.PDF)) {
+			if (printJob.getPrintService().isDocFlavorSupported(DocFlavor.INPUT_STREAM.PDF)) {
 				Doc doc = new SimpleDoc(new ByteArrayInputStream(pdfStream.toByteArray()),
 					DocFlavor.INPUT_STREAM.PDF, null);
+				printJob.print(doc, null);
+			} else if (printJob.getPrintService()
+				.isDocFlavorSupported(DocFlavor.INPUT_STREAM.AUTOSENSE)) {
+				Doc doc = new SimpleDoc(new ByteArrayInputStream(pdfStream.toByteArray()),
+					DocFlavor.INPUT_STREAM.AUTOSENSE, null);
 				printJob.print(doc, null);
 			}
 		}

@@ -455,8 +455,7 @@ public class XMLExporterServices {
 						el.setAttribute(XMLExporter.ATTR_AMOUNT,
 							XMLTool.moneyToXmlDouble(billed.getTotal()));
 						XMLExporterUtil.setVatAttribute(billed, billed.getTotal(), el, vatSummer);
-						String ckzl = (String) art.getExtInfo("Kassentyp"); // cf. MedikamentImporter#KASSENTYP
-						if ("1".equals(ckzl)) {
+						if (art.isObligation()) {
 							el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
 							ret.mObligations.addMoney(billed.getTotal());
 						} else {

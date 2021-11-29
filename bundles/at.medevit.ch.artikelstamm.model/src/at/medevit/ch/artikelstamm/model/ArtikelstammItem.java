@@ -244,8 +244,7 @@ public class ArtikelstammItem
 	
 	@Override
 	public boolean isObligation(){
-		// TODO Auto-generated method stub
-		return false;
+		return isInSLList();
 	}
 	
 	@Override

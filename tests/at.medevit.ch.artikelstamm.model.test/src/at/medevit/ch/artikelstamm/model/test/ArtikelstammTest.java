@@ -104,6 +104,7 @@ public class ArtikelstammTest extends AbstractTest {
 		assertEquals(new Money("2.05"), dafalganArticle.getSellingPrice());
 		assertEquals(10, dafalganArticle.getPackageSize());
 		assertTrue(dafalganArticle.isInSLList());
+		assertTrue(dafalganArticle.isObligation());
 		assertFalse(dafalganArticle.isLimited());
 		assertFalse(dafalganArticle.isInLPPV());
 		assertFalse(dafalganArticle.isNarcotic());

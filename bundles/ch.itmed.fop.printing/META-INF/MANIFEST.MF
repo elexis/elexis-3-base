@@ -9,7 +9,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.agenda;bundle-version="3.9.0",
- ch.elexis.fop_wrapper;bundle-version="3.2.0"
+ ch.elexis.fop_wrapper;bundle-version="3.2.0",
+ ch.elexis.core.pdfbox;bundle-version="2.0.24"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.itmed.fop.printing.startup.StartupHandler.xml
 Import-Package: ch.elexis.core.ui.medication.views,

@@ -11,13 +11,16 @@
 
 package ch.itmed.fop.printing.print;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -40,6 +43,10 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.print.PageableRenderer;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +91,11 @@ public final class PrintProvider {
 			printWithOutputFormatAndDocFlavor(foStream, printerName, MimeConstants.MIME_POSTSCRIPT,
 				DocFlavor.INPUT_STREAM.POSTSCRIPT);
 			return;
+		} else if (createDocFlavorPrintJob(printerName, DocFlavor.INPUT_STREAM.PNG) != null) {
+			logger.info("Using fo png printing with printer [" + printerName + "]");
+			printWithOutputFormatAndDocFlavor(foStream, printerName, MimeConstants.MIME_PNG,
+				DocFlavor.INPUT_STREAM.PNG);
+			return;
 		}
 		logger.info("Using default fo javax printing with printer [" + printerName + "]");
 		
@@ -113,7 +125,7 @@ public final class PrintProvider {
 
 		// Start XSLT transformation and FOP processing
 		transformer.transform(src, res);
-
+		
 		Doc doc = new SimpleDoc(renderer, DocFlavor.SERVICE_FORMATTED.PAGEABLE, null);
 		printJob.print(doc, null);
 		logger.info("Print job sent to printer: " + printerName);
@@ -138,35 +150,16 @@ public final class PrintProvider {
 			DocFlavor[] supportedFlavors = printJob.getPrintService().getSupportedDocFlavors();
 			Arrays.asList(supportedFlavors)
 				.forEach(df -> logger.info("docflavor [" + df + "]"));
-			//			@SuppressWarnings("unchecked")
-			//			Class<? extends Attribute>[] categories =
-			//				(Class<? extends Attribute>[]) printJob.getPrintService()
-			//					.getSupportedAttributeCategories();
-			//			Arrays.asList(categories).forEach(cat -> {
-			//				for (DocFlavor docFlavor : supportedFlavors) {
-			//					logger.info(
-			//						"cat [" + cat + "]  docflavor [" + docFlavor + "]");
-			//					Object supportedAttributeValues =
-			//						printJob.getPrintService().getSupportedAttributeValues(
-			//						(Class<? extends Attribute>) cat, docFlavor, null);
-			//					if (supportedAttributeValues != null) {
-			//						if (supportedAttributeValues.getClass().isArray()) {
-			//							logger.info(
-			//								"attributes ["
-			//									+ Arrays.toString((Object[]) supportedAttributeValues)
-			//									+ "]");
-			//						} else {
-			//							logger.info("attribute [" + supportedAttributeValues + "]");
-			//						}
-			//					}
-			//				}
-			//			});
 		}
 	}
 	
 	private static void printWithOutputFormatAndDocFlavor(InputStream foStream, String printerName,
 		String outputFormat, DocFlavor printingDocFlavor)
 		throws IOException, FOPException, TransformerException, PrintException{
+		boolean usePng = printingDocFlavor == DocFlavor.INPUT_STREAM.PNG;
+		if (usePng) {
+			outputFormat = MimeConstants.MIME_PDF;
+		}
 		// Make sure that the position of the marker is not at the end of stream
 		foStream.reset();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -198,8 +191,18 @@ public final class PrintProvider {
 					.error("Could not write medi-print debug pdf", e);
 			}
 		}
-		
-		// print pdf
+		if (usePng) {
+			List<ByteArrayOutputStream> outputStreams = convertPdfToPng(outputStream);
+			for (ByteArrayOutputStream os : outputStreams) {
+				print(os, printerName, printingDocFlavor);
+			}
+		} else {
+			print(outputStream, printerName, printingDocFlavor);
+		}
+	}
+	
+	private static void print(ByteArrayOutputStream outputStream, String printerName,
+		DocFlavor printingDocFlavor) throws PrintException{
 		DocPrintJob printJob = createDocFlavorPrintJob(printerName, printingDocFlavor);
 		if (printJob != null) {
 			logPrinterDebugInfo(printJob);
@@ -212,5 +215,20 @@ public final class PrintProvider {
 					"Could not print on [" + printerName + "] with [" + printingDocFlavor + "]");
 			}
 		}
+	}
+	
+	private static List<ByteArrayOutputStream> convertPdfToPng(ByteArrayOutputStream outputStream)
+		throws IOException{
+		List<ByteArrayOutputStream> ret = new ArrayList<>();
+		PDDocument document = PDDocument.load(new ByteArrayInputStream(outputStream.toByteArray()));
+		PDFRenderer pdfRenderer = new PDFRenderer(document);
+		for (int page = 0; page < document.getNumberOfPages(); ++page) {
+			BufferedImage bim = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ImageIOUtil.writeImage(bim, "PNG", out, 300);
+			ret.add(out);
+		}
+		document.close();
+		return ret;
 	}
 }

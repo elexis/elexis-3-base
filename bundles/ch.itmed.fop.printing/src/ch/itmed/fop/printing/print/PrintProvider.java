@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -72,24 +73,26 @@ public final class PrintProvider {
 	public static void print(InputStream foStream, String printerName)
 			throws IOException, FOPException, TransformerException, PrintException {
 		// always try to use printing via formats before using javax renderer
-		if(createPostscriptPrintJob(printerName) != null) {
-			logger.info("Using fo postscript printing with printer [" + printerName + "]");
-			printWithOutputFormatAndDocFlavor(foStream, printerName, MimeConstants.MIME_POSTSCRIPT,
-				DocFlavor.INPUT_STREAM.POSTSCRIPT);
-			return;
-		} else if (createPdfPrintJob(printerName) != null) {
+		if (createDocFlavorPrintJob(printerName, DocFlavor.INPUT_STREAM.PDF) != null) {
 			logger.info("Using fo pdf printing with printer [" + printerName + "]");
 			printWithOutputFormatAndDocFlavor(foStream, printerName, MimeConstants.MIME_PDF,
 				DocFlavor.INPUT_STREAM.PDF);
 			return;
+		} else if (createDocFlavorPrintJob(printerName,
+			DocFlavor.INPUT_STREAM.POSTSCRIPT) != null) {
+			logger.info("Using fo postscript printing with printer [" + printerName + "]");
+			printWithOutputFormatAndDocFlavor(foStream, printerName, MimeConstants.MIME_POSTSCRIPT,
+				DocFlavor.INPUT_STREAM.POSTSCRIPT);
+			return;
 		}
-		logger.info("Using fo javax printing with printer [" + printerName + "]");
+		logger.info("Using default fo javax printing with printer [" + printerName + "]");
 		
 		// Make sure that the position of the marker is not at the end of stream
 		foStream.reset();
 
 		FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 		DocPrintJob printJob = createDocPrintJob(printerName);
+		logPrinterDebugInfo(printJob);
 		FOUserAgent userAgent = fopFactory.newFOUserAgent();
 		PageableRenderer renderer = new PageableRenderer(userAgent);
 
@@ -116,28 +119,49 @@ public final class PrintProvider {
 		logger.info("Print job sent to printer: " + printerName);
 	}
 	
-	private static DocPrintJob createPostscriptPrintJob(String printerName){
+	private static DocPrintJob createDocFlavorPrintJob(String printerName, DocFlavor docFlavor){
 		PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
 		for (PrintService printer : services) {
 			if (printer.getName().equals(printerName)) {
-				if (printer.isDocFlavorSupported(DocFlavor.INPUT_STREAM.POSTSCRIPT)) {
-					return printer.createPrintJob();
+				if (printer.isDocFlavorSupported(docFlavor)) {
+					DocPrintJob ret = printer.createPrintJob();
+					return ret;
 				}
 			}
 		}
 		return null;
 	}
 	
-	private static DocPrintJob createPdfPrintJob(String printerName){
-		PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
-		for (PrintService printer : services) {
-			if (printer.getName().equals(printerName)) {
-				if (printer.isDocFlavorSupported(DocFlavor.INPUT_STREAM.PDF)) {
-					return printer.createPrintJob();
-				}
-			}
+	private static void logPrinterDebugInfo(DocPrintJob printJob){
+		if (System.getProperty(FoTransformer.DEBUG_MODE) != null) {
+			logger.info("Printer [" + printJob.getPrintService().getName() + "]");
+			DocFlavor[] supportedFlavors = printJob.getPrintService().getSupportedDocFlavors();
+			Arrays.asList(supportedFlavors)
+				.forEach(df -> logger.info("docflavor [" + df + "]"));
+			//			@SuppressWarnings("unchecked")
+			//			Class<? extends Attribute>[] categories =
+			//				(Class<? extends Attribute>[]) printJob.getPrintService()
+			//					.getSupportedAttributeCategories();
+			//			Arrays.asList(categories).forEach(cat -> {
+			//				for (DocFlavor docFlavor : supportedFlavors) {
+			//					logger.info(
+			//						"cat [" + cat + "]  docflavor [" + docFlavor + "]");
+			//					Object supportedAttributeValues =
+			//						printJob.getPrintService().getSupportedAttributeValues(
+			//						(Class<? extends Attribute>) cat, docFlavor, null);
+			//					if (supportedAttributeValues != null) {
+			//						if (supportedAttributeValues.getClass().isArray()) {
+			//							logger.info(
+			//								"attributes ["
+			//									+ Arrays.toString((Object[]) supportedAttributeValues)
+			//									+ "]");
+			//						} else {
+			//							logger.info("attribute [" + supportedAttributeValues + "]");
+			//						}
+			//					}
+			//				}
+			//			});
 		}
-		return null;
 	}
 	
 	private static void printWithOutputFormatAndDocFlavor(InputStream foStream, String printerName,
@@ -145,12 +169,12 @@ public final class PrintProvider {
 		throws IOException, FOPException, TransformerException, PrintException{
 		// Make sure that the position of the marker is not at the end of stream
 		foStream.reset();
-		ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		
 		FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 		FOUserAgent userAgent = fopFactory.newFOUserAgent();
 		// Construct FOP with desired output format
-		Fop fop = fopFactory.newFop(outputFormat, userAgent, pdfStream);
+		Fop fop = fopFactory.newFop(outputFormat, userAgent, outputStream);
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer transformer = factory.newTransformer();
 		
@@ -163,11 +187,12 @@ public final class PrintProvider {
 		// Start XSLT transformation and FOP processing
 		transformer.transform(src, res);
 		
-		if (System.getProperty(FoTransformer.DEBUG_MODE) != null) {
+		if (System.getProperty(FoTransformer.DEBUG_MODE) != null
+			&& MimeConstants.MIME_PDF.equals(outputFormat)) {
 			File userDir = CoreUtil.getWritableUserDir();
 			File xmlOutput = new File(userDir, "medi-print_debug.pdf");
 			try (FileOutputStream fo = new FileOutputStream(xmlOutput)) {
-				fo.write(pdfStream.toByteArray());
+				fo.write(outputStream.toByteArray());
 			} catch (IOException e) {
 				LoggerFactory.getLogger(PrintProvider.class)
 					.error("Could not write medi-print debug pdf", e);
@@ -175,10 +200,11 @@ public final class PrintProvider {
 		}
 		
 		// print pdf
-		DocPrintJob printJob = createPdfPrintJob(printerName);
+		DocPrintJob printJob = createDocFlavorPrintJob(printerName, printingDocFlavor);
 		if (printJob != null) {
+			logPrinterDebugInfo(printJob);
 			if (printJob.getPrintService().isDocFlavorSupported(printingDocFlavor)) {
-				Doc doc = new SimpleDoc(new ByteArrayInputStream(pdfStream.toByteArray()),
+				Doc doc = new SimpleDoc(new ByteArrayInputStream(outputStream.toByteArray()),
 					printingDocFlavor, null);
 				printJob.print(doc, null);
 			} else {

@@ -29,6 +29,8 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import javax.print.attribute.standard.MediaPrintableArea;
+import javax.print.attribute.standard.MediaSize;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -104,7 +106,7 @@ public final class PrintProvider {
 
 		FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 		DocPrintJob printJob = createDocPrintJob(printerName);
-		logPrinterDebugInfo(printJob);
+		logPrinterDebugInfo(printJob, DocFlavor.SERVICE_FORMATTED.PAGEABLE);
 		FOUserAgent userAgent = fopFactory.newFOUserAgent();
 		PageableRenderer renderer = new PageableRenderer(userAgent);
 
@@ -144,12 +146,37 @@ public final class PrintProvider {
 		return null;
 	}
 	
-	private static void logPrinterDebugInfo(DocPrintJob printJob){
+	private static void logPrinterDebugInfo(DocPrintJob printJob, DocFlavor printingDocFlavor){
 		if (System.getProperty(FoTransformer.DEBUG_MODE) != null) {
 			logger.info("Printer [" + printJob.getPrintService().getName() + "]");
 			DocFlavor[] supportedFlavors = printJob.getPrintService().getSupportedDocFlavors();
-			Arrays.asList(supportedFlavors)
-				.forEach(df -> logger.info("docflavor [" + df + "]"));
+			Arrays.asList(supportedFlavors).forEach(df -> logger.info("docflavor [" + df + "]"));
+			if (printingDocFlavor == DocFlavor.INPUT_STREAM.PNG) {
+				Object supported = printJob.getPrintService()
+					.getSupportedAttributeValues(MediaSize.class, printingDocFlavor, null);
+				if (supported != null) {
+					if (supported.getClass().isArray()) {
+						Object[] array = (Object[]) supported;
+						for (Object object : array) {
+							logger.info("attr mediasize [" + object + "]");
+						}
+					} else {
+						logger.info("attr mediasize [" + supported + "]");
+					}
+				}
+				supported = printJob.getPrintService()
+					.getSupportedAttributeValues(MediaPrintableArea.class, printingDocFlavor, null);
+				if (supported != null) {
+					if (supported.getClass().isArray()) {
+						Object[] array = (Object[]) supported;
+						for (Object object : array) {
+							logger.info("attr mediaprintablearea [" + object + "]");
+						}
+					} else {
+						logger.info("attr mediaprintablearea [" + supported + "]");
+					}
+				}
+			}
 		}
 	}
 	
@@ -205,7 +232,7 @@ public final class PrintProvider {
 		DocFlavor printingDocFlavor) throws PrintException{
 		DocPrintJob printJob = createDocFlavorPrintJob(printerName, printingDocFlavor);
 		if (printJob != null) {
-			logPrinterDebugInfo(printJob);
+			logPrinterDebugInfo(printJob, printingDocFlavor);
 			if (printJob.getPrintService().isDocFlavorSupported(printingDocFlavor)) {
 				Doc doc = new SimpleDoc(new ByteArrayInputStream(outputStream.toByteArray()),
 					printingDocFlavor, null);
@@ -223,9 +250,21 @@ public final class PrintProvider {
 		PDDocument document = PDDocument.load(new ByteArrayInputStream(outputStream.toByteArray()));
 		PDFRenderer pdfRenderer = new PDFRenderer(document);
 		for (int page = 0; page < document.getNumberOfPages(); ++page) {
-			BufferedImage bim = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
+			BufferedImage renderedImage = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
+			
+			//			Image resultingImage = renderedImage.getScaledInstance(400, 400, Image.SCALE_DEFAULT);
+			//			BufferedImage outputImage = new BufferedImage(400, 400, BufferedImage.TYPE_INT_RGB);
+			//			outputImage.getGraphics().drawImage(resultingImage, 0, 0, null);
+			
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			ImageIOUtil.writeImage(bim, "PNG", out, 300);
+			ImageIOUtil.writeImage(renderedImage, "PNG", out, 300);
+			if (System.getProperty(FoTransformer.DEBUG_MODE) != null) {
+				File userDir = CoreUtil.getWritableUserDir();
+				File pngOut = new File(userDir, "medi-print_debug.png");
+				try (FileOutputStream fo = new FileOutputStream(pngOut)) {
+					ImageIOUtil.writeImage(renderedImage, "PNG", fo, 300);
+				}
+			}
 			ret.add(out);
 		}
 		document.close();

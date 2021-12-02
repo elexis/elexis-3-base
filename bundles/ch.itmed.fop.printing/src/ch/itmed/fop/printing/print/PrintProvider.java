@@ -95,18 +95,18 @@ public final class PrintProvider {
 	public static void print(InputStream foStream, String printerName)
 		throws IOException, FOPException, TransformerException, PrintException{
 		// always try to use printing via formats before using javax renderer
-		if (createDocFlavorPrintJob(printerName, DocFlavor.INPUT_STREAM.PDF) != null) {
-			logger.info("Using fo pdf printing with printer [" + printerName + "]");
-			printWithOutputFormatAndDocFlavor(foStream, printerName, MimeConstants.MIME_PDF,
-				DocFlavor.INPUT_STREAM.PDF, null);
-			return;
-		} else if (createDocFlavorPrintJob(printerName,
-			DocFlavor.INPUT_STREAM.POSTSCRIPT) != null) {
-			logger.info("Using fo postscript printing with printer [" + printerName + "]");
-			printWithOutputFormatAndDocFlavor(foStream, printerName, MimeConstants.MIME_POSTSCRIPT,
-				DocFlavor.INPUT_STREAM.POSTSCRIPT, null);
-			return;
-		}
+		//		if (createDocFlavorPrintJob(printerName, DocFlavor.INPUT_STREAM.PDF) != null) {
+		//			logger.info("Using fo pdf printing with printer [" + printerName + "]");
+		//			printWithOutputFormatAndDocFlavor(foStream, printerName, MimeConstants.MIME_PDF,
+		//				DocFlavor.INPUT_STREAM.PDF, null);
+		//			return;
+		//		} else if (createDocFlavorPrintJob(printerName,
+		//			DocFlavor.INPUT_STREAM.POSTSCRIPT) != null) {
+		//			logger.info("Using fo postscript printing with printer [" + printerName + "]");
+		//			printWithOutputFormatAndDocFlavor(foStream, printerName, MimeConstants.MIME_POSTSCRIPT,
+		//				DocFlavor.INPUT_STREAM.POSTSCRIPT, null);
+		//			return;
+		//		}
 		logger.info("Using default fo javax printing with printer [" + printerName + "]");
 		CustomMediaSizeName mediaSize = getPageInformation(foStream);
 		PrintRequestAttributeSet printRequestAttributes = getPrintRequestAttributes(mediaSize);

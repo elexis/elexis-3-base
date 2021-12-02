@@ -32,6 +32,7 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.Size2DSyntax;
 import javax.print.attribute.standard.MediaSize;
+import javax.print.attribute.standard.OrientationRequested;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
@@ -67,6 +68,7 @@ public final class PrintProvider {
 	
 	private static Map<String, CustomMediaSizeName> customMediaSizeMap = new HashMap<>();
 	private static Integer customMediaSizeNumber = 1000;
+	private static Integer customMediaSizeNumberRotated = 2000;
 	
 	private static DocPrintJob createDocPrintJob(String printerName){
 		PrintService[] services =
@@ -162,10 +164,17 @@ public final class PrintProvider {
 					Integer height = Integer.parseInt(attributes.getNamedItem("page-height")
 						.getNodeValue().replaceAll("[^0-9]", ""));
 					if (customMediaSizeMap.get(width + "x" + height) == null) {
-						CustomMediaSizeName customMediaSize =
-							new CustomMediaSizeName(customMediaSizeNumber++);
-						customMediaSizeMap.put(width + "x" + height, customMediaSize);
-						new MediaSize(width, height, Size2DSyntax.MM, customMediaSize);
+						if (width > height) {
+							CustomMediaSizeName customMediaSize =
+								new CustomMediaSizeName(customMediaSizeNumberRotated++);
+							customMediaSizeMap.put(width + "x" + height, customMediaSize);
+							new MediaSize(height, width, Size2DSyntax.MM, customMediaSize);
+						} else {
+							CustomMediaSizeName customMediaSize =
+								new CustomMediaSizeName(customMediaSizeNumber++);
+							customMediaSizeMap.put(width + "x" + height, customMediaSize);
+							new MediaSize(width, height, Size2DSyntax.MM, customMediaSize);
+						}
 					}
 					return customMediaSizeMap.get(width + "x" + height);
 				}
@@ -183,6 +192,13 @@ public final class PrintProvider {
 		if (System.getProperty(FoTransformer.DEBUG_MODE) != null) {
 			logger.info("mediasize attribute [" + mediaSize + "] ["
 				+ MediaSize.getMediaSizeForName(mediaSize) + "]");
+		}
+		if (mediaSize.getValue() >= 2000) {
+			ret.add(OrientationRequested.LANDSCAPE);
+			if (System.getProperty(FoTransformer.DEBUG_MODE) != null) {
+				logger.info("orientation attribute [" + mediaSize + "] ["
+					+ OrientationRequested.LANDSCAPE + "]");
+			}
 		}
 		return ret;
 	}

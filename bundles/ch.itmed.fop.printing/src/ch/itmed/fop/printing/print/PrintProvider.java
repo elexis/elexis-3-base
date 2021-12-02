@@ -31,7 +31,9 @@ import javax.print.SimpleDoc;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.Size2DSyntax;
+import javax.print.attribute.standard.Media;
 import javax.print.attribute.standard.MediaSize;
+import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.OrientationRequested;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -221,6 +223,19 @@ public final class PrintProvider {
 			logger.info("Printer [" + printJob.getPrintService().getName() + "]");
 			DocFlavor[] supportedFlavors = printJob.getPrintService().getSupportedDocFlavors();
 			Arrays.asList(supportedFlavors).forEach(df -> logger.info("docflavor [" + df + "]"));
+			
+			Object supportedMedia =
+				printJob.getPrintService().getSupportedAttributeValues(Media.class, null,
+					null);
+			if (supportedMedia != null && supportedMedia.getClass().isArray()) {
+				for (Object media : ((Object[]) supportedMedia)) {
+					if (media instanceof MediaSizeName) {
+						logger.info(
+							"media [" + media + "] ["
+								+ MediaSize.getMediaSizeForName((MediaSizeName) media) + "]");
+					}
+				}
+			}
 		}
 	}
 	

@@ -198,10 +198,10 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 					Object element = ((StructuredSelection) selection).getFirstElement();
 					if (element instanceof MandantType) {
 						if (actMandant != null) {
-							ArzttarifeUtil.setMandantType(
-								CoreModelServiceHolder.get()
-									.load(actMandant.getId(), IMandator.class).get(),
-								(MandantType) element);
+							IMandator mandator = CoreModelServiceHolder.get()
+								.load(actMandant.getId(), IMandator.class).get();
+							ArzttarifeUtil.setMandantType(mandator, (MandantType) element);
+							CoreModelServiceHolder.get().save(mandator);
 						}
 					}
 				}

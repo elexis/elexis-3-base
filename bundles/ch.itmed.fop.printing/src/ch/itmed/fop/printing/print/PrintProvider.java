@@ -111,7 +111,6 @@ public final class PrintProvider {
 		//		}
 		logger.info("Using default fo javax printing with printer [" + printerName + "]");
 		CustomMediaSizeName mediaSize = getPageInformation(foStream);
-		PrintRequestAttributeSet printRequestAttributes = getPrintRequestAttributes(mediaSize);
 		
 		// Make sure that the position of the marker is not at the end of stream
 		foStream.reset();
@@ -141,6 +140,9 @@ public final class PrintProvider {
 		transformer.transform(src, res);
 		
 		Doc doc = new SimpleDoc(renderer, DocFlavor.SERVICE_FORMATTED.PAGEABLE, null);
+		
+		PrintRequestAttributeSet printRequestAttributes =
+			getPrintRequestAttributes(mediaSize, printJob);
 		printJob.print(doc, printRequestAttributes);
 		logger.info("Print job sent to printer: " + printerName);
 	}
@@ -188,13 +190,24 @@ public final class PrintProvider {
 	}
 	
 	private static PrintRequestAttributeSet getPrintRequestAttributes(
-		CustomMediaSizeName mediaSize){
+		CustomMediaSizeName mediaSize, DocPrintJob printJob){
 		HashPrintRequestAttributeSet ret = new HashPrintRequestAttributeSet();
-		ret.add(mediaSize);
-		if (System.getProperty(FoTransformer.DEBUG_MODE) != null) {
-			logger.info("mediasize attribute [" + mediaSize + "] ["
-				+ MediaSize.getMediaSizeForName(mediaSize) + "]");
+		MediaSizeName printJobCustomMediaSize = getCustomMediaSize(printJob);
+		
+		if (printJobCustomMediaSize != null) {
+			MediaSize requestMediaSize = MediaSize.getMediaSizeForName(mediaSize);
+			new MediaSize(requestMediaSize.getX(Size2DSyntax.MM),
+				requestMediaSize.getY(Size2DSyntax.MM), Size2DSyntax.MM, printJobCustomMediaSize);
+			logger.info("printjob custom mediasize attribute [" + printJobCustomMediaSize + "] ["
+				+ MediaSize.getMediaSizeForName(printJobCustomMediaSize) + "]");
+		} else {
+			ret.add(mediaSize);
+			if (System.getProperty(FoTransformer.DEBUG_MODE) != null) {
+				logger.info("mediasize attribute [" + mediaSize + "] ["
+					+ MediaSize.getMediaSizeForName(mediaSize) + "]");
+			}
 		}
+		
 		if (mediaSize.getValue() >= 2000) {
 			ret.add(OrientationRequested.LANDSCAPE);
 			if (System.getProperty(FoTransformer.DEBUG_MODE) != null) {
@@ -203,6 +216,20 @@ public final class PrintProvider {
 			}
 		}
 		return ret;
+	}
+	
+	private static MediaSizeName getCustomMediaSize(DocPrintJob printJob){
+		Object supportedMedia =
+			printJob.getPrintService().getSupportedAttributeValues(Media.class, null, null);
+		if (supportedMedia != null && supportedMedia.getClass().isArray()) {
+			for (Object media : ((Object[]) supportedMedia)) {
+				if (media instanceof MediaSizeName
+					&& ((MediaSizeName) media).toString().equalsIgnoreCase("custom")) {
+					return (MediaSizeName) media;
+				}
+			}
+		}
+		return null;
 	}
 	
 	private static DocPrintJob createDocFlavorPrintJob(String printerName, DocFlavor docFlavor){
@@ -231,7 +258,7 @@ public final class PrintProvider {
 				for (Object media : ((Object[]) supportedMedia)) {
 					if (media instanceof MediaSizeName) {
 						logger.info(
-							"media [" + media + "] ["
+							"media [" + media + "/" + ((MediaSizeName) media).getValue() + "] ["
 								+ MediaSize.getMediaSizeForName((MediaSizeName) media) + "]");
 					}
 				}

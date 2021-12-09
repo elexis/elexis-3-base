@@ -60,7 +60,6 @@ public class CreateOrderHandler extends AbstractHandler {
 		String land = "";
 		String socialSecurityNumber = ""; // AHV-Nummer
 		String insuranceCardNumber = ""; // Versicherungskarte
-		boolean hasVioNumber = true;
 		
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
 		if (patient == null) {
@@ -70,22 +69,19 @@ public class CreateOrderHandler extends AbstractHandler {
 			return null;
 		}
 		vioNumber = getVioNr(patient);
-		// wenn der Kunde keine VioNummer hat, Bestellung mit Patientendaten
-		if (vioNumber.isEmpty()) {
-			hasVioNumber = false;
-			vorname = patient.getVorname();
-			name = patient.getName();
-			geburtsdatum = convertDate(patient.getGeburtsdatum());
-			gender = parseGender(patient);
-			Anschrift tempAdr = patient.getAnschrift();
-			address = tempAdr.getStrasse();
-			plz = tempAdr.getPlz();
-			ort = tempAdr.getOrt();
-			land = tempAdr.getLand();
-			
-			socialSecurityNumber = getSocialSecuritNumber(patient);
-			insuranceCardNumber = getInsuranceCardNumber(patient);
-		}
+		// collect patient data
+		vorname = patient.getVorname();
+		name = patient.getName();
+		geburtsdatum = convertDate(patient.getGeburtsdatum());
+		gender = parseGender(patient);
+		Anschrift tempAdr = patient.getAnschrift();
+		address = tempAdr.getStrasse();
+		plz = tempAdr.getPlz();
+		ort = tempAdr.getOrt();
+		land = tempAdr.getLand();
+		
+		socialSecurityNumber = getSocialSecuritNumber(patient);
+		insuranceCardNumber = getInsuranceCardNumber(patient);
 		
 		// URL zum Direktaufruf von OrderIT
 		mySettings =
@@ -109,36 +105,32 @@ public class CreateOrderHandler extends AbstractHandler {
 		try {
 			httpsUrl += "&appPath=" + URLEncoder.encode("/orderit/createOrderFromGP?", "UTF-8");
 			// falls VioNummer bekannt
-			if (hasVioNumber) {
+			if (StringUtils.isNotBlank(vioNumber)) {
 				httpsUrl += URLEncoder.encode("vioNumber=" + vioNumber, "UTF-8");
 			}
-			// sonst Patientendaten mitgeben
-			else {
-				httpsUrl += URLEncoder.encode("firstname=" + vorname, "UTF-8");
-				httpsUrl += URLEncoder.encode("&surname=" + name, "UTF-8");
-				httpsUrl += URLEncoder.encode("&dateOfBirth=" + geburtsdatum, "UTF-8");
-				httpsUrl += URLEncoder.encode("&gender=" + gender, "UTF-8");
-				httpsUrl += URLEncoder.encode("&address=" + address, "UTF-8");
-				httpsUrl += URLEncoder.encode("&zip=" + plz, "UTF-8");
-				httpsUrl += URLEncoder.encode("&city=" + ort, "UTF-8");
-				httpsUrl += URLEncoder.encode("&country=" + land, "UTF-8");
-				httpsUrl += URLEncoder.encode("&patientReference=" + patient.getPatCode(), "UTF-8");
-				if (StringUtils.isNotBlank(patient.get(Patient.FLD_MOBILEPHONE))) {
-					httpsUrl += URLEncoder
-						.encode("&mobileNumber=" + patient.get(Patient.FLD_MOBILEPHONE), "UTF-8");
-				}
-				if (StringUtils.isNotBlank(socialSecurityNumber)) {
-					httpsUrl +=
-						URLEncoder.encode("&socialSecurityNumber=" + socialSecurityNumber, "UTF-8");
-				}
-				if (StringUtils.isNotBlank(insuranceCardNumber)) {
-					httpsUrl +=
-						URLEncoder.encode("&insuranceCardNumber=" + insuranceCardNumber, "UTF-8");
-				}
-				httpsUrl += URLEncoder.encode("&senderName=elexis.info", "UTF-8");
-				httpsUrl += URLEncoder.encode(
-					"&senderSoftware=" + getSenderSoftware(), "UTF-8");
+			httpsUrl += URLEncoder.encode("firstname=" + vorname, "UTF-8");
+			httpsUrl += URLEncoder.encode("&surname=" + name, "UTF-8");
+			httpsUrl += URLEncoder.encode("&dateOfBirth=" + geburtsdatum, "UTF-8");
+			httpsUrl += URLEncoder.encode("&gender=" + gender, "UTF-8");
+			httpsUrl += URLEncoder.encode("&address=" + address, "UTF-8");
+			httpsUrl += URLEncoder.encode("&zip=" + plz, "UTF-8");
+			httpsUrl += URLEncoder.encode("&city=" + ort, "UTF-8");
+			httpsUrl += URLEncoder.encode("&country=" + land, "UTF-8");
+			httpsUrl += URLEncoder.encode("&patientReference=" + patient.getPatCode(), "UTF-8");
+			if (StringUtils.isNotBlank(patient.get(Patient.FLD_MOBILEPHONE))) {
+				httpsUrl += URLEncoder
+					.encode("&mobileNumber=" + patient.get(Patient.FLD_MOBILEPHONE), "UTF-8");
 			}
+			if (StringUtils.isNotBlank(socialSecurityNumber)) {
+				httpsUrl +=
+					URLEncoder.encode("&socialSecurityNumber=" + socialSecurityNumber, "UTF-8");
+			}
+			if (StringUtils.isNotBlank(insuranceCardNumber)) {
+				httpsUrl +=
+					URLEncoder.encode("&insuranceCardNumber=" + insuranceCardNumber, "UTF-8");
+			}
+			httpsUrl += URLEncoder.encode("&senderName=elexis.info", "UTF-8");
+			httpsUrl += URLEncoder.encode("&senderSoftware=" + getSenderSoftware(), "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			log.error("Enoding not supported", e1);
 		}

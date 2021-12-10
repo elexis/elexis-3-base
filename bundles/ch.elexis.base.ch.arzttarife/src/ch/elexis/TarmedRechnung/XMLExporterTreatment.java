@@ -101,6 +101,9 @@ public class XMLExporterTreatment {
 		if (type.equalsIgnoreCase(FallConstants.TYPE_BIRTHDEFECT)) {
 			return XMLExporter.BIRTHDEFECT;
 		}
+		if (type.equalsIgnoreCase(FallConstants.TYPE_OTHER)) {
+			return "unknown";
+		}
 		return XMLExporter.DISEASE;
 	}
 	

@@ -21,7 +21,9 @@ build:
 
 trigger_medelexis-3-application_build:
     stage: trigger_other_builds
-    trigger: medelexis-core/medelexis-3-application
+    trigger:
+      project: medelexis-core/medelexis-3-application
+      branch: $CI_COMMIT_REF_NAME
     only:
     - master@elexis/elexis-3-base
     - /^\d*[.]\d*$/@elexis/elexis-3-base

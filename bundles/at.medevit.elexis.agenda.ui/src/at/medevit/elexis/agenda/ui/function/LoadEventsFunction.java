@@ -326,12 +326,5 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		}
 		super.dispose();
 	}
-	
-	@Override
-	public void dispose(boolean remove){
-		if (timer != null) {
-			timer.cancel();
-		}
-		super.dispose(remove);
-	}
+
 }

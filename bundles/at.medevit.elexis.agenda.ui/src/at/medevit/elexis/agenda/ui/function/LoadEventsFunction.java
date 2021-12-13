@@ -318,4 +318,20 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	public void invalidateCache(){
 		cache.invalidateAll();
 	}
+	
+	@Override
+	public void dispose(){
+		if (timer != null) {
+			timer.cancel();
+		}
+		super.dispose();
+	}
+	
+	@Override
+	public void dispose(boolean remove){
+		if (timer != null) {
+			timer.cancel();
+		}
+		super.dispose(remove);
+	}
 }

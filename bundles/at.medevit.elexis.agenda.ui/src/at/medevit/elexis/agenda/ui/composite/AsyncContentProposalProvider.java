@@ -99,14 +99,17 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable>
 							}
 						}
 						display.syncExec(() -> {
-							// trigger call getProposals
-							Event event = new Event();
-							event.character = ' ';
-							adapter.getControl().notifyListeners(SWT.KeyDown, event);
-							
-							event = new Event();
-							event.character = ' ';
-							adapter.getControl().notifyListeners(SWT.Modify, event);
+							if (adapter != null && adapter.getControl() != null
+								&& !adapter.getControl().isDisposed()) {
+								// trigger call getProposals
+								Event event = new Event();
+								event.character = ' ';
+								adapter.getControl().notifyListeners(SWT.KeyDown, event);
+								
+								event = new Event();
+								event.character = ' ';
+								adapter.getControl().notifyListeners(SWT.Modify, event);
+							}
 						});
 					} else {
 						// stop monitoring - content equals queried content

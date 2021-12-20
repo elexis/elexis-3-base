@@ -131,22 +131,33 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	public Result<IBilled> add(TarmedLeistung code, IEncounter kons, double amount, boolean save){
 		this.save = save;
 		int amountInt = doubleToInt(amount);
-		if (!code.isChapter() && amountInt >= 1) {
-			Result<IBilled> result = add(code, kons);
-			if (amountInt == 1) {
-				return result;
-			}
-			for (int i = 2; i <= amountInt; i++) {
-				Result<IBilled> intermediateResult = add(code, kons);
-				if (!intermediateResult.isOK()) {
-					result.addMessage(SEVERITY.WARNING, intermediateResult.toString(),
-						result.get());
+		boolean setNonIntAmount = amount % 1 != 0;
+		Result<IBilled> result = null;
+		try {
+			if (!code.isChapter() && amountInt >= 1) {
+				result = add(code, kons);
+				if (amountInt == 1) {
 					return result;
 				}
+				for (int i = 2; i <= amountInt; i++) {
+					Result<IBilled> intermediateResult = add(code, kons);
+					if (!intermediateResult.isOK()) {
+						result.addMessage(SEVERITY.WARNING, intermediateResult.toString(),
+							result.get());
+						return result;
+					}
+				}
+				return result;
+			} else {
+				return Result.OK();
 			}
-			return result;
-		} else {
-			return Result.OK();
+		} finally {
+			if (setNonIntAmount && result != null && result.get() != null) {
+				result.get().setAmount(amount);
+				if (save) {
+					CoreModelServiceHolder.get().save(result.get());
+				}
+			}
 		}
 	}
 	
@@ -628,7 +639,11 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 	private int doubleToInt(double value){
 		BigDecimal bd = new BigDecimal(value);
 		bd = bd.setScale(0, RoundingMode.HALF_UP);
-		return bd.intValue();
+		if (bd.intValue() > 0) {
+			return bd.intValue();
+		} else {
+			return 1;
+		}
 	}
 	
 	private Result<IBilled> checkLimitations(IEncounter kons, TarmedLeistung tarmedLeistung,

@@ -766,6 +766,22 @@ public class TarmedOptifierTest {
 		
 	}
 	
+	@Test
+	public void testBillNonIntAmount(){
+		clearKons(konsGriss);
+		// AL 11.20 TP TL 6.05 TP
+		TarmedLeistung service = TarmedLeistung.getFromCode("02.0050", LocalDate.now(), LAW);
+		Result<IBilled> resultGriss = optifier.add(service, konsGriss, 0.25, true);
+		assertTrue(resultGriss.isOK());
+		// 0.25 * 11.20 = 2,8
+		Money alMoney = ArzttarifeUtil.getALMoney(resultGriss.get());
+		assertEquals(2.8, alMoney.getAmount(), 0.0001);
+		// 0.25 * 6.05 = 1,5125
+		Money tlMoney = ArzttarifeUtil.getTLMoney(resultGriss.get());
+		assertEquals(1.51, tlMoney.getAmount(), 0.0001);
+		assertEquals(4.31, resultGriss.get().getTotal().doubleValue(), 0.0001);
+	}
+	
 	private int getLeistungAmount(String code, IEncounter kons){
 		int ret = 0;
 		for (IBilled leistung : kons.getBilled()) {

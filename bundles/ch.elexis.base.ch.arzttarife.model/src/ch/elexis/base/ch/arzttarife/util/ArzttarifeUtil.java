@@ -12,6 +12,7 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.verrechnet.Constants;
+import ch.rgw.tools.Money;
 
 public class ArzttarifeUtil {
 	
@@ -41,6 +42,39 @@ public class ArzttarifeUtil {
 			return MandantType.valueOf((String) typeObj);
 		}
 		return MandantType.SPECIALIST;
+	}
+	
+	/**
+	 * The the {@link Money} representation of the AL amount of the billed.
+	 * 
+	 * @param billed
+	 * @return
+	 */
+	public static Money getALMoney(IBilled billed){
+		// amount already includes secondary scale for non integer amounts
+		double secondaryScale = 1.0;
+		if (!billed.isNonIntegerAmount()) {
+			secondaryScale = billed.getSecondaryScaleFactor();
+		}
+		return new Money((int) Math.round(getAL(billed) * billed.getFactor() * billed.getAmount()
+			* billed.getPrimaryScaleFactor() * secondaryScale));
+		
+	}
+	
+	/**
+	 * The the {@link Money} representation of the TL amount of the billed.
+	 * 
+	 * @param billed
+	 * @return
+	 */
+	public static Money getTLMoney(IBilled billed){
+		// amount already includes secondary scale for non integer amounts
+		double secondaryScale = 1.0;
+		if (!billed.isNonIntegerAmount()) {
+			secondaryScale = billed.getSecondaryScaleFactor();
+		}
+		return new Money((int) Math.round(getTL(billed) * billed.getFactor() * billed.getAmount()
+			* billed.getPrimaryScaleFactor() * secondaryScale));
 	}
 	
 	/**

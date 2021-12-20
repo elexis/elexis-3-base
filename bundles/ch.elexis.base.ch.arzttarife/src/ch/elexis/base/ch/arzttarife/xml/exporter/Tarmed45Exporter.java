@@ -676,17 +676,17 @@ public class Tarmed45Exporter {
 					serviceExType.setBodyLocation(ArzttarifeUtil.getSide(billed));
 					
 					double primaryScale = billed.getPrimaryScaleFactor();
-					double secondaryScale = billed.getSecondaryScaleFactor();
+					double secondaryScale = 1.0;
+					if (!billed.isNonIntegerAmount()) {
+						secondaryScale = billed.getSecondaryScaleFactor();
+					}
 					double mult = billed.getFactor();
 					double tlAL = ArzttarifeUtil.getAL(billed);
 					double tlTL = ArzttarifeUtil.getTL(billed);
 					// build monetary values of this TarmedLeistung
-					Money mAL = new Money((int) Math
-						.round(tlAL * mult * billed.getAmount() * primaryScale * secondaryScale));
-					Money mTL = new Money((int) Math
-						.round(tlTL * mult * billed.getAmount() * primaryScale * secondaryScale));
-					Money mAmountLocal = new Money((int) Math.round(
-						(tlAL + tlTL) * mult * billed.getAmount() * primaryScale * secondaryScale));
+					Money mAL = ArzttarifeUtil.getALMoney(billed);
+					Money mTL = ArzttarifeUtil.getTLMoney(billed);
+					Money mAmountLocal = billed.getTotal();
 					
 					// tarmed AL
 					serviceExType.setUnitMt(tlAL / 100.0);

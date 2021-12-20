@@ -311,27 +311,26 @@ public class XMLExporterServices {
 					if (billable instanceof ITarmedLeistung) {
 						ITarmedLeistung tl = (ITarmedLeistung) billable;
 						double primaryScale = billed.getPrimaryScaleFactor();
-						double secondaryScale = billed.getSecondaryScaleFactor();
+						double secondaryScale = 1.0;
+						if (!billed.isNonIntegerAmount()) {
+							secondaryScale = billed.getSecondaryScaleFactor();
+						}
 						
 						double tlTL, tlAL, mult;
 						mult = billed.getFactor();
-						
 						tlAL = ArzttarifeUtil.getAL(billed);
 						tlTL = ArzttarifeUtil.getTL(billed);
 						// build monetary values of this TarmedLeistung
-						Money mAL = new Money(
-							(int) Math.round(tlAL * mult * amount * primaryScale * secondaryScale));
-						Money mTL = new Money(
-							(int) Math.round(tlTL * mult * amount * primaryScale * secondaryScale));
-						Money mAmountLocal = new Money((int) Math
-							.round((tlAL + tlTL) * mult * amount * primaryScale * secondaryScale));
+						Money mAL = ArzttarifeUtil.getALMoney(billed);
+						Money mTL = ArzttarifeUtil.getTLMoney(billed);
+						Money mAmountLocal = billed.getTotal();
 						
 						// sum tax points and monetary value
 						ret.tpTarmedTL += tlTL * amount;
 						ret.tpTarmedAL += tlAL * amount;
 						
-						ret.sumTarmedAL += tlAL * mult * amount * primaryScale * secondaryScale;
-						ret.sumTarmedTL += tlTL * mult * amount * primaryScale * secondaryScale;
+						ret.sumTarmedAL += mAL.doubleValue();
+						ret.sumTarmedTL += mTL.doubleValue();
 						
 						ret.mTarmed.addCent(mAmountLocal.getCents());
 						

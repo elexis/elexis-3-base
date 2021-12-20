@@ -875,8 +875,10 @@ public class XMLExporter implements IRnOutputter {
 	}
 
 	private boolean xmlBillExists(IInvoice invoice){
-		return CoreModelServiceHolder.get().load(PREFIX + invoice.getNumber(), IBlob.class)
-			.isPresent();
+		IBlob blob = CoreModelServiceHolder.get().load(PREFIX + invoice.getNumber(), IBlob.class)
+			.orElse(null);
+		return blob != null && blob.getStringContent() != null
+			&& !blob.getStringContent().isEmpty();
 	}
 
 	protected Element buildGuarantor(IContact garant, IContact patient){

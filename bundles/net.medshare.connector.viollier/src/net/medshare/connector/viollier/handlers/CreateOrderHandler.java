@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
@@ -27,15 +26,12 @@ import ch.elexis.data.Anschrift;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Query;
-import ch.elexis.data.Xid;
 import net.medshare.connector.viollier.Messages;
 import net.medshare.connector.viollier.data.ViollierConnectorSettings;
 import net.medshare.connector.viollier.ses.PortalCookieService;
 
 public class CreateOrderHandler extends AbstractHandler {
 	private static Logger log = LoggerFactory.getLogger(CreateOrderHandler.class);
-	private static String DOMAIN_VIONR = "viollier.ch/vioNumber";
 	private ViollierConnectorSettings mySettings;
 	private String httpsUrl;
 	
@@ -49,7 +45,6 @@ public class CreateOrderHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException{
 		String cookie = "";
-		String vioNumber = "";
 		String vorname = "";
 		String name = "";
 		String geburtsdatum = "";
@@ -68,7 +63,6 @@ public class CreateOrderHandler extends AbstractHandler {
 				Messages.Handler_errorMessageNoPatientSelected);
 			return null;
 		}
-		vioNumber = getVioNr(patient);
 		// collect patient data
 		vorname = patient.getVorname();
 		name = patient.getName();
@@ -104,10 +98,6 @@ public class CreateOrderHandler extends AbstractHandler {
 		httpsUrl += "&RCSession=" + cookie;
 		try {
 			httpsUrl += "&appPath=" + URLEncoder.encode("/orderit/createOrderFromGP?", "UTF-8");
-			// falls VioNummer bekannt
-			if (StringUtils.isNotBlank(vioNumber)) {
-				httpsUrl += URLEncoder.encode("vioNumber=" + vioNumber, "UTF-8");
-			}
 			httpsUrl += URLEncoder.encode("firstname=" + vorname, "UTF-8");
 			httpsUrl += URLEncoder.encode("&surname=" + name, "UTF-8");
 			httpsUrl += URLEncoder.encode("&dateOfBirth=" + geburtsdatum, "UTF-8");
@@ -224,17 +214,4 @@ public class CreateOrderHandler extends AbstractHandler {
 		
 		return tempYear + "-" + tempMonth + "-" + tempDay;
 	}
-	
-	private static String getVioNr(Patient patient){
-		Query<Xid> patientVioNrQuery = new Query<Xid>(Xid.class);
-		patientVioNrQuery.add(Xid.FLD_OBJECT, Query.EQUALS, patient.getId());
-		patientVioNrQuery.add(Xid.FLD_DOMAIN, Query.EQUALS, DOMAIN_VIONR);
-		List<Xid> patienten = patientVioNrQuery.execute();
-		if (patienten.isEmpty()) {
-			return "";
-		} else {
-			return ((Xid) patienten.get(0)).getDomainId();
-		}
-	}
-	
 }

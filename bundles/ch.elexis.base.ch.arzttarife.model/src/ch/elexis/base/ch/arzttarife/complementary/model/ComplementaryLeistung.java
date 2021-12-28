@@ -14,13 +14,11 @@ import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
-import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
-import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 
 public class ComplementaryLeistung
@@ -44,15 +42,8 @@ public class ComplementaryLeistung
 				
 				@Override
 				protected void setPrice(ComplementaryLeistung billable, IBilled billed){
-					Optional<IBillingSystemFactor> billingFactor =
-						BillingServiceHolder.get().getBillingSystemFactor(
-							billed.getEncounter().getCoverage().getBillingSystem().getName(),
-							billed.getEncounter().getDate());
-					if (billingFactor.isPresent()) {
-						billed.setFactor(billingFactor.get().getFactor());
-					} else {
-						billed.setFactor(1.0);
-					}
+					// ignore billing system factor
+					billed.setFactor(1.0);
 					int points = 0;
 					// configured hourly wage, or fixed value, in cents
 					if (billable.isFixedValueSet()) {

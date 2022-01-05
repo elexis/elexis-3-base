@@ -26,5 +26,8 @@
       <ExternalMaintenance
             MaintenanceCode="ch.elexis.covid.cert.dbcheck.BillMissingTestCerts">
       </ExternalMaintenance>
+      <ExternalMaintenance
+            MaintenanceCode="ch.elexis.covid.cert.dbcheck.MoveSzBillingToSzCoverage">
+      </ExternalMaintenance>
    </extension>
 </plugin>

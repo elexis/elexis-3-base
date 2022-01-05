@@ -1,6 +1,7 @@
  
 package ch.elexis.covid.cert.ui.handler;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import ch.elexis.core.model.ICodeElementBlock;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.IContextService;
@@ -30,6 +32,13 @@ public class CovidTestBill {
 	public static final String CFG_KK_BLOCKID = "ch.elexis.covid.cert.ui/kk_blockid";
 	public static final String CFG_SZ_BLOCKID = "ch.elexis.covid.cert.ui/sz_blockid";
 	
+	private static BillingLaw[] KK_LAWS = {
+		BillingLaw.KVG
+	};
+	private static BillingLaw[] SZ_LAWS = {
+		BillingLaw.privat, BillingLaw.VVG
+	};
+	
 	@Inject
 	private IContextService contextService;
 	
@@ -40,12 +49,27 @@ public class CovidTestBill {
 			activePatient.ifPresent(patient -> {
 				Map<String, ICodeElementBlock> blocks = getConfiguredBlocks();
 				if (!blocks.isEmpty()) {
-					Optional<ICoverage> coverage = getCoverage(patient);
-					if (coverage.isPresent()) {
-						ICodeElementBlock block = selectBlock(blocks);
-						if (block != null) {
+					ICodeElementBlock block = selectBlock(blocks);
+					if (block != null) {
+						// get or create coverage depending on selected block
+						ICoverage coverage = null;
+						if (block == blocks.get(CFG_KK_BLOCKID)) {
+							coverage = getCoverage(patient, KK_LAWS).orElse(null);
+							if (coverage == null) {
+								Display.getDefault()
+									.syncExec(() -> MessageDialog.openError(
+										Display.getDefault().getActiveShell(), "Keine Verrechnung",
+										"Es wurde noch kein Fall mit Gesetz KVG angelegt."));
+							}
+						} else {
+							coverage = getCoverage(patient, SZ_LAWS).orElse(null);
+							if (coverage == null) {
+								coverage = createPrivateCoverage(patient);
+							}
+						}
+						if (coverage != null) {
 							IEncounter encounter =
-								new IEncounterBuilder(CoreModelServiceHolder.get(), coverage.get(),
+								new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
 									contextService.getActiveMandator().get()).buildAndSave();
 							// bill the block
 							block.getElements(encounter).stream()
@@ -77,22 +101,19 @@ public class CovidTestBill {
 		return null;
 	}
 	
-	private Optional<ICoverage> getCoverage(IPatient patient){
-		Optional<ICoverage> activeCoverage = contextService.getActiveCoverage();
-		if (activeCoverage.isPresent() && activeCoverage.get().isOpen()) {
-			return activeCoverage;
-		}
+	private ICoverage createPrivateCoverage(IPatient patient){
+		return new ICoverageBuilder(CoreModelServiceHolder.get(), patient, "Selbstzahler",
+			ICoverageBuilder.getDefaultCoverageReason(ConfigServiceHolder.get()),
+			BillingLaw.privat.name()).buildAndSave();
+		
+	}
+	
+	private Optional<ICoverage> getCoverage(IPatient patient, BillingLaw[] laws){
 		ICoverage bestMatch = null;
 		for (ICoverage coverage : patient.getCoverages()) {
 			if (coverage.isOpen()) {
-				if (bestMatch == null) {
+				if (Arrays.asList(laws).contains(coverage.getBillingSystem().getLaw())) {
 					bestMatch = coverage;
-				} else {
-					if (coverage.getBillingSystem().getLaw() == BillingLaw.KVG) {
-						if (bestMatch.getBillingSystem().getLaw() != BillingLaw.KVG) {
-							bestMatch = coverage;
-						}
-					}
 				}
 			}
 		}

@@ -3,6 +3,7 @@ package ch.elexis.covid.cert.dbcheck;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,12 +18,15 @@ import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElementBlock;
 import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IDocumentLetter;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQueryCursor;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -30,15 +34,14 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
 import ch.elexis.core.utils.CoreUtil;
-import ch.elexis.covid.cert.service.CertificateInfo;
-import ch.elexis.covid.cert.service.CertificateInfo.Type;
 import ch.elexis.covid.cert.ui.handler.CovidTestBill;
 
-public class BillMissingTestCerts extends ExternalMaintenance {
+public class BillMissingTestAttests extends ExternalMaintenance {
 	
 	private int billCount;
 	private int notBillableCount;
 	
+	private ICodeElementBlock pcrBlock;
 	private ICodeElementBlock kkBlock;
 	private IMandator activeMandator;
 	
@@ -50,6 +53,9 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 			() -> new IllegalStateException(
 				"Es ist kein Block für Krankenkasse zur Verrechnung von COVID Zertifikaten konfiguriert."));
 		
+		pcrBlock = getBlock("PCR_kasse").orElseThrow(() -> new IllegalStateException(
+			"Es ist kein Block für PCR Test Krankenkasse [PCR_kasse] vorhanden."));
+		
 		activeMandator = ContextServiceHolder.get().getActiveMandator()
 			.orElseThrow(() -> new IllegalStateException("Es ist kein Mandant angemeldet."));
 		
@@ -59,34 +65,14 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 		notBillableCount = 0;
 		
 		try (IQueryCursor<IPatient> cursor = patientsQuery.executeAsCursor()) {
-			pm.beginTask("Bitte warten, COVID Test Zertifikate werden verrechnet ...",
+			pm.beginTask("Bitte warten, COVID Test Bescheinigungen werden verrechnet ...",
 				cursor.size());
 			while (cursor.hasNext()) {
 				IPatient patient = cursor.next();
-				List<CertificateInfo> certificates = CertificateInfo.of(patient);
-				if (!certificates.isEmpty()) {
-					List<CertificateInfo> testCertificates = certificates.stream()
-						.filter(c -> c.getType() == Type.TEST)
-						.collect(Collectors.toList());
-					
-					testCertificates.forEach(cert -> {
-						List<IEncounter> encountersAt =
-							getEncountersAt(patient, cert.getTimestamp().toLocalDate());
-						
-						Optional<IEncounter> certificateBilledEncounter = encountersAt.stream()
-							.filter(encounter -> isCertificateBilled(encounter)).findFirst();
-						if (!certificateBilledEncounter.isPresent()) {
-							Optional<ICoverage> coverage = getCoverage(patient);
-							if (coverage.isPresent()) {
-								billCert(coverage.get(), cert);
-								billCount++;
-							} else {
-								addNotBillable(patient);
-								notBillableCount++;
-							}
-						}
-					});
-				}
+				// covid negative
+				billAttests(patient, false);
+				// covid positive
+				billAttests(patient, true);
 				pm.worked(1);
 			}
 		}
@@ -104,11 +90,43 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 			}
 		}
 		
-		return "Es wurden " + billCount + " Zertifikate neu verrechnet."
+		return "Es wurden " + billCount + " Bescheinigungen neu verrechnet."
 			+ (notBillableCount > 0
 					? "\nEs gab " + notBillableCount
 						+ " Patienten bei denen nicht verrechnet werden konnte. (NotBillablePatients.csv Datei im user home elexis Verzeichnis)"
 					: "");
+	}
+	
+	private void billAttests(IPatient patient, boolean positive){
+		List<IDocumentLetter> attests = getAttests(patient, positive);
+		if (!attests.isEmpty()) {
+			attests.forEach(attest -> {
+				List<IEncounter> encountersAt = getEncountersAt(patient,
+					attest.getCreated().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+				
+				Optional<IEncounter> attestBilledEncounter = encountersAt.stream()
+					.filter(encounter -> isCertificateBilled(encounter)).findFirst();
+				if (!attestBilledEncounter.isPresent()) {
+					Optional<ICoverage> coverage = getCoverage(patient);
+					if (coverage.isPresent()) {
+						billAttest(coverage.get(), attest, positive);
+						billCount++;
+					} else {
+						addNotBillable(patient);
+						notBillableCount++;
+					}
+				}
+			});
+		}
+	}
+	
+	private List<IDocumentLetter> getAttests(IPatient patient, boolean positive){
+		IQuery<IDocumentLetter> query =
+			CoreModelServiceHolder.get().getQuery(IDocumentLetter.class);
+		query.and(ModelPackage.Literals.IDOCUMENT__PATIENT, COMPARATOR.EQUALS, patient);
+		query.and("subject", COMPARATOR.EQUALS,
+			positive ? "COVID Antigen positiv" : "COVID Antigen negativ");
+		return query.execute();
 	}
 	
 	private void addNotBillable(IPatient patient){
@@ -118,11 +136,12 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 		notBillablePatients.add(patient);
 	}
 	
-	private void billCert(ICoverage coverage, CertificateInfo cert){
+	private void billAttest(ICoverage coverage, IDocumentLetter attest, boolean positive){
 		if (kkBlock != null) {
 			IEncounter encounter =
 				new IEncounterBuilder(CoreModelServiceHolder.get(), coverage, activeMandator)
-					.date(cert.getTimestamp())
+					.date(attest.getCreated().toInstant().atZone(ZoneId.systemDefault())
+						.toLocalDateTime())
 					.buildAndSave();
 			
 			LoggerFactory.getLogger(getClass()).info("Bill Certificate on new encounter ["
@@ -131,6 +150,11 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 			kkBlock.getElements(encounter).stream().filter(el -> el instanceof IBillable)
 				.map(el -> (IBillable) el)
 				.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
+			if (positive) {
+				pcrBlock.getElements(encounter).stream().filter(el -> el instanceof IBillable)
+					.map(el -> (IBillable) el)
+					.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
+			}
 		}
 	}
 	
@@ -144,6 +168,13 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 			}
 		}
 		return Optional.empty();
+	}
+	
+	private Optional<ICodeElementBlock> getBlock(String name){
+		IQuery<ICodeElementBlock> query =
+			CoreModelServiceHolder.get().getQuery(ICodeElementBlock.class);
+		query.and("name", COMPARATOR.EQUALS, name);
+		return query.executeSingleResult();
 	}
 	
 	/**
@@ -214,6 +245,6 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 	
 	@Override
 	public String getMaintenanceDescription(){
-		return "Noch nicht verrechnete COVID Test Zertifikate verrechnen.";
+		return "Noch nicht verrechnete COVID Test Bescheinigungen (Briefe) verrechnen.";
 	}
 }

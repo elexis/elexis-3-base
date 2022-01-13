@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -51,7 +51,7 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 				if (line.length < 4) {
 					continue;
 				}
-				if (StringUtils.isNoneBlank(line[0]) && Character.isDigit(line[0].charAt(0))) {
+				if (StringUtils.isNotBlank(line[0]) && Character.isDigit(line[0].charAt(0))) {
 					monitor.subTask(line[1]);
 					updateOrCreateFromLine(line);
 				}

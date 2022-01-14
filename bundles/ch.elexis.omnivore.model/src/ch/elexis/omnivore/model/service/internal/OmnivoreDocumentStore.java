@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -78,9 +77,8 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	
 	@Override
 	public List<ICategory> getCategories(){
-		Stream<?> resultStream = modelService.executeNativeQuery(
-			"select distinct category from CH_ELEXIS_OMNIVORE_DATA where mimetype='text/category' and deleted = '0' order by category");
-		return resultStream.filter(o -> o instanceof String)
+		List<String> categoriesNames = CategoryUtil.getCategoriesNames();
+		return categoriesNames.stream()
 			.map(o -> new TransientCategory((String) o)).collect(Collectors.toList());
 	}
 	

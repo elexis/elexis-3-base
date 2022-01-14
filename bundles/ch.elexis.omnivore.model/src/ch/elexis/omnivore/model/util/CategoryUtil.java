@@ -3,11 +3,13 @@ package ch.elexis.omnivore.model.util;
 import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.ICategory;
+import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.omnivore.Constants;
@@ -47,12 +49,10 @@ public class CategoryUtil {
 	}
 	
 	public static List<String> getCategoriesNames(){
-		List<IDocumentHandle> dox = getCategories();
-		ArrayList<String> ret = new ArrayList<String>(dox.size());
-		for (IDocumentHandle doch : dox) {
-			ret.add(doch.getTitle());
-		}
-		return ret;
+		INamedQuery<String> findCategoriesQuery = OmnivoreModelServiceHolder.get().getNamedQueryByName(
+			String.class, IDocumentHandle.class, "DocHandle.select.category.names");
+		List<String> result = findCategoriesQuery.executeWithParameters(Collections.emptyMap());
+		return result;
 	}
 	
 	public static ICategory getDefaultCategory(){

@@ -12,11 +12,13 @@
 
 package ch.elexis.agenda.preferences;
 
+import ch.elexis.core.constants.Preferences;
+
 public class PreferenceConstants {
-	public static final String AG_BEREICHE = "agenda/bereiche"; //$NON-NLS-1$
+	public static final String AG_BEREICHE = Preferences.AG_BEREICHE; //$NON-NLS-1$
 	
-	public static final String AG_BEREICH_PREFIX = "agenda/bereich/"; //$NON-NLS-1$
-	public static final String AG_BEREICH_TYPE_POSTFIX = "/type"; //$NON-NLS-1$
+	public static final String AG_BEREICH_PREFIX = Preferences.AG_BEREICH_PREFIX;
+	public static final String AG_BEREICH_TYPE_POSTFIX = Preferences.AG_BEREICH_TYPE_POSTFIX; //$NON-NLS-1$
 	
 	public static final String AG_TERMINTYPEN = "agenda/TerminTypen"; //$NON-NLS-1$
 	public static final String AG_TERMINSTATUS = "agenda/TerminStatus"; //$NON-NLS-1$

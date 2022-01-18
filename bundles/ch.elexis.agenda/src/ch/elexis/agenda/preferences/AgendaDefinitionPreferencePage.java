@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.agenda.Messages;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.agenda.AreaType;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.AddStringEntryAction;
@@ -172,7 +173,7 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 						String area =
 							(String) listViewerArea.getStructuredSelection().getFirstElement();
 						Anwender anwender = (Anwender) ks.getSelection();
-						setAreaType(area, AreaType.CONTACT, anwender.getId());
+						AppointmentServiceHolder.get().setAreaType(area, AreaType.CONTACT, anwender.getId());
 						linkAreaTypeValue.setText("<a>" + anwender.getLabel() + "</a>");
 					}
 				}
@@ -262,18 +263,6 @@ public class AgendaDefinitionPreferencePage extends PreferencePage
 		refresh();
 		
 		return container;
-	}
-	
-	private void setAreaType(String area, AreaType areaType, String value){
-		String key = PreferenceConstants.AG_BEREICH_PREFIX + area
-			+ PreferenceConstants.AG_BEREICH_TYPE_POSTFIX;
-		switch (areaType) {
-		case CONTACT:
-			ConfigServiceHolder.setGlobal(key, areaType.name() + "/" + value);
-			break;
-		default:
-			ConfigServiceHolder.setGlobal(key, null);
-		}
 	}
 	
 	private void refresh(){

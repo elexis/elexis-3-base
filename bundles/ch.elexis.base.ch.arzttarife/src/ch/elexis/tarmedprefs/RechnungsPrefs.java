@@ -698,7 +698,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	
 	class PostDialog extends TitleAreaDialog {
 		final String[] flds = {
-			ta.ESRNUMBER
+			ta.ESRNUMBER, "IBAN"
 		};
 		KontaktExtDialog.ExtInfoTable exTable;
 		

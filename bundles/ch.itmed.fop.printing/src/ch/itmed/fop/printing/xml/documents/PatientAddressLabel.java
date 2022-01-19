@@ -18,6 +18,7 @@ import org.w3c.dom.Element;
 
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.xml.elements.CaseElement;
+import ch.itmed.fop.printing.xml.elements.MandatorElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
 
 public class PatientAddressLabel {
@@ -38,6 +39,11 @@ public class PatientAddressLabel {
 		Element c = CaseElement.create(doc);
 		page.appendChild(c);
 
+		Element mandator = MandatorElement.create(doc);
+		if (mandator != null) {
+			page.appendChild(mandator);
+		}
+		
 		return DomDocument.toInputStream(doc);
 	}
 

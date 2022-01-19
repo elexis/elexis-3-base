@@ -68,7 +68,9 @@ public class PhysioLeistungCodeElementService
 	public Optional<String> storeToString(Identifiable identifiable){
 		if (identifiable instanceof ch.elexis.base.ch.arzttarife.physio.model.PhysioLeistung) {
 			return Optional.of(ch.elexis.base.ch.arzttarife.physio.model.PhysioLeistung.STS_CLASS
-				+ StringConstants.DOUBLECOLON + ((PhysioLeistung) identifiable).getId());
+				+ StringConstants.DOUBLECOLON
+				+ ((ch.elexis.base.ch.arzttarife.physio.model.PhysioLeistung) identifiable)
+					.getId());
 		}
 		return Optional.empty();
 	}

@@ -3,6 +3,7 @@ package ch.elexis.base.ch.icd10;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -83,6 +84,16 @@ public class Icd10ModelService extends AbstractModelService
 			if (clazz != null) {
 				EntityManager em = (EntityManager) entityManager.getEntityManager();
 				EntityWithId dbObject = em.find(clazz, id);
+				// workaround for loading diagnosis of encounter
+				if (dbObject == null) {
+					TypedQuery<? extends EntityWithId> codeQuery =
+						em.createNamedQuery("ICD10.code", clazz);
+					codeQuery.setParameter("code", id);
+					Object result = codeQuery.getSingleResult();
+					if (result instanceof EntityWithId) {
+						dbObject = (EntityWithId) result;
+					}
+				}
 				return Optional
 					.ofNullable(adapterFactory.getModelAdapter(dbObject, null, false).orElse(null));
 			}

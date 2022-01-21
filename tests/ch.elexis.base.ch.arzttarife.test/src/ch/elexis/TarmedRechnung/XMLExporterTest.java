@@ -85,7 +85,7 @@ public class XMLExporterTest {
 			}
 			// check if the leistung is included
 			Element root = result.getRootElement();
-			Iterator<?> iter = root.getDescendants(new ElementFilter("record_tarmed"));
+			Iterator<?> iter = root.getDescendants(new ElementFilter("service_ex"));
 			assertTrue(iter.hasNext());
 			Element record = (Element) iter.next();
 			Attribute code = record.getAttribute("code");
@@ -95,7 +95,7 @@ public class XMLExporterTest {
 			assertTrue(iter.hasNext());
 			Element patient = (Element) iter.next();
 			assertNotNull(patient);
-			if (patient.getAttributeValue("birthdate").equals("1957-04-14T00:00:00")) {
+			if (patient.getAttributeValue("birthdate").startsWith("1957-04-14T00:00:00")) {
 				Iterator telcoms = patient.getDescendants(new ElementFilter("telecom"));
 				if (!telcoms.hasNext()) {
 					printFaildDocument(result);
@@ -256,7 +256,7 @@ public class XMLExporterTest {
 			boolean wholePresent = false;
 			boolean fractionalPresent = false;
 			Element root = result.getRootElement();
-			Iterator<?> iter = root.getDescendants(new ElementFilter("record_other"));
+			Iterator<?> iter = root.getDescendants(new ElementFilter("service"));
 			assertTrue(iter.hasNext());
 			while (iter.hasNext()) {
 				Element record = (Element) iter.next();
@@ -264,13 +264,11 @@ public class XMLExporterTest {
 				if (code.getValue().equals("123456789")) {
 					assertEquals("1.0", record.getAttribute("quantity").getValue());
 					assertEquals("10.15", record.getAttribute("unit").getValue());
-					assertEquals("1.0", record.getAttribute("external_factor").getValue());
 					assertEquals("10.15", record.getAttribute("amount").getValue());
 					wholePresent = true;
 				} else if (code.getValue().equals("1234567890")) {
 					assertTrue(record.getAttribute("quantity").getValue().equals("0.5"));
 					assertTrue(record.getAttribute("unit").getValue().equals("10.15"));
-					assertTrue(record.getAttribute("external_factor").getValue().equals("1.0"));
 					assertTrue(record.getAttribute("amount").getValue().equals("5.08"));
 					fractionalPresent = true;
 				}

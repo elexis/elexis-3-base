@@ -16,10 +16,13 @@
 
 package ch.elexis.TarmedRechnung;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -33,7 +36,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -67,7 +69,10 @@ import org.jdom.transform.JDOMSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
+import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter;
+import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Validator;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
@@ -78,7 +83,6 @@ import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.model.IBlob;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
-import ch.elexis.core.model.IDiagnosisReference;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
@@ -115,7 +119,7 @@ import ch.rgw.tools.XMLTool;
 public class XMLExporter implements IRnOutputter {
 	
 	private static Logger logger = LoggerFactory.getLogger(XMLExporter.class);
-
+	
 	// constants to access vat information from the extinfo of the Rechnungssteller
 	public static final String VAT_ISMANDANTVAT = "at.medevit.medelexis.vat_ch/IsMandantVat";
 	public static final String VAT_MANDANTVATNUMBER =
@@ -173,28 +177,22 @@ public class XMLExporter implements IRnOutputter {
 	public static final String ELEMENT_REMINDER = "reminder";
 	public static final String ATTR_REMINDER_LEVEL = "reminder_level";
 	
-	public static final Namespace ns = Namespace
-		.getNamespace("http://www.forum-datenaustausch.ch/invoice"); //$NON-NLS-1$
+	public static final Namespace ns =
+		Namespace.getNamespace("http://www.forum-datenaustausch.ch/invoice"); //$NON-NLS-1$
 	public static final Namespace nsinvoice = Namespace.getNamespace("invoice", //$NON-NLS-1$
 		"http://www.forum-datenaustausch.ch/invoice"); //$NON-NLS-1$
-	public static final Namespace nsxsi = Namespace.getNamespace(
-		"xsi", "http://www.w3.org/2001/XMLSchema-instance"); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final Namespace nsxsi =
+		Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance"); //$NON-NLS-1$ //$NON-NLS-2$
 	
-	public static final Namespace nsxenc = Namespace.getNamespace(
-		"nsxenc", "http://www.w3.org/2001/04/xmlenc#"); //$NON-NLS-1$ //$NON-NLS-2$	
-	public static final Namespace nsds = Namespace.getNamespace(
-		"ds", "http://www.w3.org/2000/09/xmldsig#"); //$NON-NLS-1$ //$NON-NLS-2$
-
-	ICoverage coverage;
-	IPatient patient;
-	IMandator mandator;
+	public static final Namespace nsxenc =
+		Namespace.getNamespace("nsxenc", "http://www.w3.org/2001/04/xmlenc#"); //$NON-NLS-1$ //$NON-NLS-2$	
+	public static final Namespace nsds =
+		Namespace.getNamespace("ds", "http://www.w3.org/2000/09/xmldsig#"); //$NON-NLS-1$ //$NON-NLS-2$
+	
 	String tiers;
 	
 	IInvoice invoice;
 	
-	private XMLExporterBalance xmlBalance;
-	private XMLExporterTreatment xmlTreatment;
-
 	private ESR besr;
 	static TarmedACL ta;
 	private String outputDir;
@@ -205,19 +203,13 @@ public class XMLExporter implements IRnOutputter {
 	private boolean printAtIntermediate = true;
 	public static final String PREFIX = "TarmedRn:"; //$NON-NLS-1$
 	
-	/**
-	 * Reset exporter
-	 */
-	public void clear(){
-		coverage = null;
-		patient = null;
-		mandator = null;
-		invoice = null;
-	}
+	private Tarmed45Exporter exporter;
+	private Tarmed45Validator validator;
 	
 	public XMLExporter(){
 		ta = TarmedACL.getInstance();
-		clear();
+		exporter = new Tarmed45Exporter();
+		validator = new Tarmed45Validator();
 	}
 	
 	/**
@@ -316,6 +308,15 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
+	protected Document doExport450(final Rechnung rechnung, final String dest,
+		final IRnOutputter.TYPE type, final boolean doVerify){
+		// create a object for managing vat rates and values on invoice level
+		invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class).orElseThrow(
+			() -> new IllegalStateException("Could not load invoice [" + rechnung.getId() + "]"));
+		
+		return null;
+	}
+	
 	/**
 	 * Export a bill as XML. We do, in fact first check whether this bill was exported already. And
 	 * if so we do not create it again but load the old one. There is deliberately no possibility to
@@ -336,12 +337,9 @@ public class XMLExporter implements IRnOutputter {
 	 */
 	public Document doExport(final Rechnung rechnung, final String dest,
 		final IRnOutputter.TYPE type, final boolean doVerify){
-		clear();
-		// create a object for managing vat rates and values on invoice level
-		VatRateSum vatSummer = new VatRateSum();
-		invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class)
-			.orElseThrow(() -> new IllegalStateException(
-				"Could not load invoice [" + rechnung.getId() + "]"));
+		//		clear();
+		invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class).orElseThrow(
+			() -> new IllegalStateException("Could not load invoice [" + rechnung.getId() + "]"));
 		
 		if (xmlBillExists(invoice)) {
 			logger.info("Updating existing bill for " + invoice.getNumber());
@@ -350,154 +348,45 @@ public class XMLExporter implements IRnOutputter {
 				return updated;
 			}
 		}
-
+		
 		if (type.equals(TYPE.STORNO)) {
 			SWTHelper.showError(Messages.XMLExporter_StornoImpossibleCaption,
 				Messages.XMLExporter_StornoImpossibleText);
 			return null;
 		}
 		
-		coverage = invoice.getCoverage();
-		patient = coverage.getPatient();
-		mandator = invoice.getMandator();
-		IContact costBearer = coverage.getCostBearer();
-		
-		if (costBearer == null) {
-			costBearer = patient;
-		}
-
 		logger.info("Creating new bill for " + rechnung.getNr());
-		Document xmlRn;
-		Element root = new Element(ELEMENT_REQUEST, nsinvoice);
-		root.addNamespaceDeclaration(nsxsi);
-		root.addNamespaceDeclaration(nsxenc);
-		root.addNamespaceDeclaration(nsxsi);
-		root.addNamespaceDeclaration(nsinvoice);
-		root.setAttribute("schemaLocation", //$NON-NLS-1$
-			"http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_440.xsd", nsxsi); //$NON-NLS-1$
-		
-		root.setAttribute(ATTR_MODUS, getRole(coverage));
-		root.setAttribute(ATTR_LANGUAGE, Locale.getDefault().getLanguage());
-		xmlRn = new Document(root);
-		
-		// services are needed for the balance
-		XMLExporterServices services = null;
-		services = XMLExporterServices.buildServices(invoice, vatSummer);
-		
-		//balance is needed by other parts so initialize first
-		initBalanceData(invoice, services, vatSummer);
-
-		//processing
-		XMLExporterProcessing processing = XMLExporterProcessing.buildProcessing(invoice, this);
-		root.addContent(processing.getElement());
-
-		//payload
-		Element payload = new Element(ELEMENT_PAYLOAD, nsinvoice);
-		payload.setAttribute(ATTR_PAYLOAD_TYPE, "invoice"); //$NON-NLS-1$
-		payload.setAttribute(ATTR_PAYLOAD_COPY, type.equals(IRnOutputter.TYPE.COPY) ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
-		payload
-			.setAttribute(ATTR_PAYLOAD_STORNO, type.equals(IRnOutputter.TYPE.STORNO) ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		//invoice
-		String ts = null;
-		if (type.equals(IRnOutputter.TYPE.COPY)) {
-			ts = (String) invoice.getExtInfo(FIELDNAME_TIMESTAMPXML);
-			if (StringTool.isNothing(ts)) {
-				ts = Long.toString(new Date().getTime() / 1000);
-				invoice.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
+		ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
+		if (exporter.doExport(invoice, xmlOutput, type)) {
+			Document xmlRn = getAsJdomDocument(xmlOutput).orElse(null);
+			ch.fd.invoice450.request.RequestType invoiceRequest = TarmedJaxbUtil
+				.unmarshalInvoiceRequest450(new ByteArrayInputStream(xmlOutput.toByteArray()));
+			if (doVerify) {
+				Result<IInvoice> res = validator.checkInvoice(invoice, invoiceRequest);
+				// new Validator().checkBill(invoice, xmlRn, new Result<IInvoice>());
 			}
-		} else {
-			ts = Long.toString(new Date().getTime() / 1000);
-			invoice.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
-		}
-		
-		Element invoiceElement = new Element(ELEMENT_INVOICE, nsinvoice);
-		invoiceElement.setAttribute(ATTR_REQUEST_TIMESTAMP, ts);
-		invoiceElement.setAttribute(ATTR_REQUEST_ID, getInvoiceId(invoice));
-		// add now time to date of Rechnung, some need time for validation see (https://redmine.medelexis.ch/issues/10561)
-		invoiceElement.setAttribute(ATTR_REQUEST_DATE,
-			new TimeTool(invoice.getDate()).toString(TimeTool.DATE_MYSQL) + "T" //$NON-NLS-1$
-				+ new TimeTool().toString(TimeTool.TIME_FULL)); // 10154 
-		payload.addContent(invoiceElement);
-		
-		//body
-		Element body = new Element(ELEMENT_BODY, nsinvoice);
-		body.setAttribute(ATTR_BODY_ROLE, "physician");
-		body.setAttribute(ATTR_BODY_PLACE, "practice");
-		
-		//prolog
-		XMLExporterProlog prolog = XMLExporterProlog.buildProlog(invoice, this);
-		body.addContent(prolog.getElement());
-
-		//remark
-		String bem = invoice.getRemark();
-		if (!StringTool.isNothing(bem)) {
-			Element remark = new Element(ELEMENT_REMARK, nsinvoice);
-			remark.setText(invoice.getRemark());
-			body.addContent(remark);
-		}
-		
-		// add the balance
-		body.addContent(xmlBalance.getElement());
-		
-		//esr9
-		esr9 = XMLExporterEsr9.buildEsr9(invoice, xmlBalance, this);
-		body.addContent(esr9.getElement());
-
-		//tiers garant or payant
-		XMLExporterTiers xmlTiers = XMLExporterTiers.buildTiers(invoice, this);
-		tiers = xmlTiers.getTiers();
-		body.addContent(xmlTiers.getElement());
-
-		//insurance
-		XMLExporterInsurance xmlInsurance = XMLExporterInsurance.buildInsurance(invoice, this);
-		body.addContent(xmlInsurance.getElement());
-
-		xmlTreatment = XMLExporterTreatment.buildTreatment(invoice, this);
-		body.addContent(xmlTreatment.getElement());
-		
-		if(services!=null) {
-			body.addContent(services.getElement());
-		} else {
-			logger.warn("services is null!");
-		}
-		
-		// documents
-		XMLExporterDocuments documents = XMLExporterDocuments.buildDocuments(invoice, this);
-		if(documents != null) {
-			body.addContent(documents.getElement());
-		}
-
-
-		payload.addContent(body);
-		
-		root.addContent(payload);
-		
-		if (invoice.adjustAmount(xmlBalance.getAmount().roundTo5()) == false) {
-			invoice.reject(InvoiceState.REJECTCODE.SUM_MISMATCH, Messages.XMLExporter_SumMismatch);
-		} else if (doVerify) {
-			new Validator().checkBill(this, new Result<IInvoice>());
-		}
-		// save rounded amount
-		CoreModelServiceHolder.get().save(invoice);
-		
-		checkXML(xmlRn, dest, invoice, doVerify);
-		
-		if (invoice.getState() != InvoiceState.DEFECTIVE) {
-			try {
-				
-				setExistingXml(invoice, xmlRn);
-				if (dest != null) {
-					writeFile(xmlRn, dest);
+			// save rounded amount
+			CoreModelServiceHolder.get().save(invoice);
+			
+			checkXML(xmlRn, dest, invoice, doVerify);
+			
+			if (invoice.getState() != InvoiceState.DEFECTIVE) {
+				try {
+					
+					setExistingXml(invoice, xmlRn);
+					if (dest != null) {
+						writeFile(xmlRn, dest);
+					}
+				} catch (Exception ex) {
+					ExHandler.handle(ex);
+					SWTHelper.alert(Messages.XMLExporter_ErrorCaption,
+						MessageFormat.format(Messages.XMLExporter_CouldNotWriteFile, dest));
+					return null;
 				}
-			} catch (Exception ex) {
-				ExHandler.handle(ex);
-				SWTHelper.alert(Messages.XMLExporter_ErrorCaption,
-					MessageFormat.format(Messages.XMLExporter_CouldNotWriteFile, dest));
-				return null;
 			}
+			return xmlRn;
 		}
-		return xmlRn;
+		return null;
 	}
 	
 	private String getInvoiceId(IInvoice invoice){
@@ -515,8 +404,8 @@ public class XMLExporter implements IRnOutputter {
 		// since it was output:
 		// Payments, state changes, obligations
 		// initialize variables
-		coverage = invoice.getCoverage();
-		mandator = invoice.getMandator();
+		//		coverage = invoice.getCoverage();
+		//		mandator = invoice.getMandator();
 		try {
 			Document ret = getExistingXml(invoice).get();
 			Element root = ret.getRootElement();
@@ -545,9 +434,17 @@ public class XMLExporter implements IRnOutputter {
 					}
 					addReminderEntry(root, invoice, "3");
 				}
+			} else if (getXmlVersion(root).equals("4.5")) {
+				getExistingXmlModel(invoice, "4.5").ifPresent(ir -> {
+					Tarmed45Exporter exporter = new Tarmed45Exporter();
+					exporter.updateExistingXml((ch.fd.invoice450.request.RequestType) ir, type,
+						invoice, this);
+					
+				});
+				
 			} else {
-				logger.warn("Bill in unknown XML version " + getXmlVersion(root)
-					+ ", recreating bill.");
+				logger.warn(
+					"Bill in unknown XML version " + getXmlVersion(root) + ", recreating bill.");
 				return null;
 			}
 			checkXML(ret, dest, invoice, doVerify);
@@ -568,6 +465,33 @@ public class XMLExporter implements IRnOutputter {
 			// What should we do -> We create it from scratch
 			return null;
 		}
+	}
+	
+	private Optional<?> getExistingXmlModel(IInvoice invoice, String version){
+		IBlob blob = CoreModelServiceHolder.get().load(PREFIX + invoice.getNumber(), IBlob.class)
+			.orElse(null);
+		if (blob != null && blob.getStringContent() != null && !blob.getStringContent().isEmpty()) {
+			if ("4.5".equals(version)) {
+				ch.fd.invoice450.request.RequestType invoiceRequest = TarmedJaxbUtil
+					.unmarshalInvoiceRequest450(
+						new ByteArrayInputStream(blob.getStringContent().getBytes()));
+				return Optional.ofNullable(invoiceRequest);
+			}
+		}
+		return Optional.empty();
+	}
+	
+	public Optional<Document> getAsJdomDocument(ByteArrayOutputStream outputStream){
+		if (outputStream != null) {
+			SAXBuilder builder = new SAXBuilder();
+			try (ByteArrayInputStream inputStream =
+				new ByteArrayInputStream(outputStream.toByteArray())) {
+				return Optional.of(builder.build(inputStream));
+			} catch (IOException | JDOMException e) {
+				LoggerFactory.getLogger(getClass()).error("Error loading as jdom document", e);
+			}
+		}
+		return Optional.empty();
 	}
 	
 	public Optional<Document> getExistingXml(IInvoice invoice){
@@ -680,16 +604,15 @@ public class XMLExporter implements IRnOutputter {
 		
 		// update patient information
 		Element tiersGarant = body.getChild("tiers_garant", XMLExporter.nsinvoice);//$NON-NLS-1$
-		if (tiersGarant != null && coverage.getPatient() != null) {
-			Element patientUpdate = buildPatient(coverage.getPatient());
+		if (tiersGarant != null && existingInvoice.getCoverage().getPatient() != null) {
+			Element patientUpdate = buildPatient(existingInvoice.getCoverage());
 			if (patientUpdate != null) {
 				List<Object> tiersChildren = tiersGarant.getChildren();
 				// remove existing patient children
 				ListIterator<Object> iterator = tiersChildren.listIterator();
 				while (iterator.hasNext()) {
 					Object obj = (Object) iterator.next();
-					if(obj instanceof Element
-							&& "patient".equals(((Element) obj).getName())) {
+					if (obj instanceof Element && "patient".equals(((Element) obj).getName())) {
 						iterator.remove();
 					}
 				}
@@ -700,9 +623,11 @@ public class XMLExporter implements IRnOutputter {
 		// update guarantor information
 		if (tiersGarant != null) {
 			IContact guarantorContact =
-				XMLExporterUtil.getGuarantor(XMLExporter.TIERS_GARANT, patient, coverage);
+				XMLExporterUtil.getGuarantor(XMLExporter.TIERS_GARANT,
+					existingInvoice.getCoverage().getPatient(), existingInvoice.getCoverage());
 			if (guarantorContact != null) {
-				Element guarantorUpdate = buildGuarantor(guarantorContact, patient);
+				Element guarantorUpdate =
+					buildGuarantor(guarantorContact, existingInvoice.getCoverage().getPatient());
 				if (guarantorUpdate != null) {
 					List<Object> tiersChildren = tiersGarant.getChildren();
 					// remove existing guarantor children
@@ -782,21 +707,20 @@ public class XMLExporter implements IRnOutputter {
 		Money xmlPrepaid = xmlBalance.getPrepaid();
 		Money xmlReminder = xmlBalance.getReminder();
 		
-		double diffDouble =
-			(xmlAmount.doubleValue() + xmlReminder.doubleValue())
-				- (xmlPrepaid.doubleValue() + xmlDue.doubleValue());
+		double diffDouble = (xmlAmount.doubleValue() + xmlReminder.doubleValue())
+			- (xmlPrepaid.doubleValue() + xmlDue.doubleValue());
 		// this is an erroneous bill
 		if (Math.abs(diffDouble) > 1) {
-			xmlBalance
-				.setDue(new Money((xmlAmount.doubleValue() + xmlReminder.doubleValue())
-					- xmlPrepaid.doubleValue()).roundTo5());
+			xmlBalance.setDue(new Money(
+				(xmlAmount.doubleValue() + xmlReminder.doubleValue()) - xmlPrepaid.doubleValue())
+					.roundTo5());
 		}
 	}
 	
 	private void updateExisting4Xml(Element root, TYPE type, IInvoice existingInvoice){
 		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
 		Money mPaid = existingInvoice.getPayedAmount();
-
+		
 		Element invoice = root.getChild("invoice", namespace);//$NON-NLS-1$
 		fixCanton(invoice, namespace);
 		Element balance = invoice.getChild("balance", namespace);//$NON-NLS-1$
@@ -860,26 +784,27 @@ public class XMLExporter implements IRnOutputter {
 	}
 	
 	public static String getXmlVersion(Element root){
-		String location =
-			root.getAttributeValue(
-				"schemaLocation", Namespace.getNamespace("http://www.w3.org/2001/XMLSchema-instance"));//$NON-NLS-1$ //$NON-NLS-2$
+		String location = root.getAttributeValue("schemaLocation", //$NON-NLS-1$
+			Namespace.getNamespace("http://www.w3.org/2001/XMLSchema-instance"));//$NON-NLS-1$
 		if (location != null && !location.isEmpty()) {
 			if (location.contains("InvoiceRequest_400")) {//$NON-NLS-1$
 				return "4.0";//$NON-NLS-1$
 			} else if (location.contains("InvoiceRequest_440")) {//$NON-NLS-1$
 				return "4.4";//$NON-NLS-1$
+			} else if (location.contains("InvoiceRequest_450")) {//$NON-NLS-1$
+				return "4.5";//$NON-NLS-1$
 			}
 		}
 		return location;//$NON-NLS-1$
 	}
-
+	
 	private boolean xmlBillExists(IInvoice invoice){
 		IBlob blob = CoreModelServiceHolder.get().load(PREFIX + invoice.getNumber(), IBlob.class)
 			.orElse(null);
 		return blob != null && blob.getStringContent() != null
 			&& !blob.getStringContent().isEmpty();
 	}
-
+	
 	protected Element buildGuarantor(IContact garant, IContact patient){
 		// Patient wird im override des MediPort Plugins verwendet
 		// Hinweis:
@@ -890,19 +815,20 @@ public class XMLExporter implements IRnOutputter {
 		guarantor.addContent(XMLExporterUtil.buildAdressElement(garant));
 		return guarantor;
 	}
-
-	protected Element buildPatient(IPatient patient){
+	
+	protected Element buildPatient(ICoverage coverage){
 		Element patientElement = new Element("patient", XMLExporter.nsinvoice); //$NON-NLS-1$
 		// patient.setAttribute("unique_id",rn.getFall().getId()); // this is
 		// optional and should be
 		// ssn13 type. leave it out for now
-		if (patient == null) {
+		if (coverage.getPatient() == null) {
 			MessageDialog.openError(null, Messages.XMLExporter_ErrorCaption,
 				Messages.XMLExporter_NoPatientText);
 			return null;
 		}
-		patientElement.setAttribute("gender", patient.getGender().toString().toLowerCase()); //$NON-NLS-1$
-		LocalDateTime dateOfBirth = patient.getDateOfBirth();
+		patientElement.setAttribute("gender", //$NON-NLS-1$
+			coverage.getPatient().getGender().toString().toLowerCase());
+		LocalDateTime dateOfBirth = coverage.getPatient().getDateOfBirth();
 		if (dateOfBirth == null) { // make validator happy if we don't
 			// know the birthdate
 			patientElement.setAttribute(XMLExporter.ATTR_BIRTHDATE, "0001-00-00T00:00:00"); //$NON-NLS-1$
@@ -910,7 +836,7 @@ public class XMLExporter implements IRnOutputter {
 			patientElement.setAttribute(XMLExporter.ATTR_BIRTHDATE,
 				XMLExporterUtil.makeTarmedDatum(dateOfBirth.toLocalDate())); //$NON-NLS-1$
 		}
-		patientElement.addContent(XMLExporterUtil.buildAdressElement(patient));
+		patientElement.addContent(XMLExporterUtil.buildAdressElement(coverage.getPatient()));
 		if (StringUtils.isNotBlank((String) coverage.getExtInfo("VEKANr"))
 			&& StringUtils.isNotBlank((String) coverage.getExtInfo("VEKAValid"))) {
 			Element cardElement = new Element("card", XMLExporter.nsinvoice);
@@ -919,7 +845,8 @@ public class XMLExporter implements IRnOutputter {
 				XMLExporterUtil.makeTarmedDatum((String) coverage.getExtInfo("VEKAValid")));
 			patientElement.addContent(cardElement);
 		}
-		XMLExporterUtil.addSSNAttribute(patientElement, patient, coverage, invoice, true);
+		XMLExporterUtil.addSSNAttribute(patientElement, coverage.getPatient(), coverage, invoice,
+			true);
 		return patientElement;
 	}
 	
@@ -952,18 +879,18 @@ public class XMLExporter implements IRnOutputter {
 			// validate depending on tarmed version
 			if (getXmlVersion(xmlDoc.getRootElement()).equals("4.0")) {
 				logger.info("Validating XML against MDInvoiceRequest_400.xsd");
-				errs =
-					XMLTool.validateSchema(
-						path + File.separator + "MDInvoiceRequest_400.xsd", source); //$NON-NLS-1$
+				errs = XMLTool.validateSchema(path + File.separator + "MDInvoiceRequest_400.xsd", //$NON-NLS-1$
+					source);
 			} else if (getXmlVersion(xmlDoc.getRootElement()).equals("4.4")) {
 				logger.info("Validating XML against generalInvoiceRequest_440.xsd");
-				errs =
-					XMLTool.validateSchema(
-						path + File.separator + "generalInvoiceRequest_440.xsd", source); //$NON-NLS-1$
+				errs = XMLTool.validateSchema(
+					path + File.separator + "generalInvoiceRequest_440.xsd", source); //$NON-NLS-1$
+			} else if (getXmlVersion(xmlDoc.getRootElement()).equals("4.5")) {
+				logger.info("Validating XML against generalInvoiceRequest_450.xsd");
+				errs = validator.validateRequest(toInputStream(xmlDoc));
 			} else {
-				errs =
-					Collections.singletonList("Bill in unknown XML version "
-						+ getXmlVersion(xmlDoc.getRootElement()));
+				errs = Collections.singletonList(
+					"Bill in unknown XML version " + getXmlVersion(xmlDoc.getRootElement()));
 			}
 			
 			if (!errs.isEmpty()) {
@@ -975,8 +902,7 @@ public class XMLExporter implements IRnOutputter {
 				invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR, sb.toString());
 				CoreModelServiceHolder.get().save(invoice);
 				XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
-				File invalidDir = 
-					new File(CoreHub.getWritableUserDir(), "validation_error");
+				File invalidDir = new File(CoreHub.getWritableUserDir(), "validation_error");
 				if (!invalidDir.exists()) {
 					invalidDir.mkdir();
 				}
@@ -1016,9 +942,8 @@ public class XMLExporter implements IRnOutputter {
 			}
 		});
 		b.setText(Messages.XMLExporter_Change);
-		outputDir =
-			CoreHub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR,
-				CorePreferenceInitializer.getDefaultDBPath());
+		outputDir = CoreHub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR,
+			CorePreferenceInitializer.getDefaultDBPath());
 		text.setText(outputDir);
 		return ret;
 	}
@@ -1041,6 +966,22 @@ public class XMLExporter implements IRnOutputter {
 		invoice.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
 			+ invoice.getState().getLocaleText());
 		CoreModelServiceHolder.get().save(invoice);
+	}
+	
+	protected InputStream toInputStream(final Document doc){
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			OutputStreamWriter cout = new OutputStreamWriter(out, "UTF-8"); //$NON-NLS-1$
+			XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
+			xout.output(doc, cout);
+			cout.close();
+			out.close();
+			return new ByteArrayInputStream(out.toByteArray());
+		} catch (IOException e) {
+			LoggerFactory.getLogger(XMLExporter.class)
+				.error("Error converting document to input stream", e);
+		}
+		return null;
 	}
 	
 	@Override
@@ -1074,8 +1015,8 @@ public class XMLExporter implements IRnOutputter {
 		// If everything fails we use a pseudo EAN to make the Validators happy
 		String iEAN = TarmedRequirements.getIntermediateEAN(coverage);
 		if (iEAN.length() == 0) {
-			if (TarmedRequirements.hasTCContract(mandator)) {
-				String trustCenter = TarmedRequirements.getTCName(mandator);
+			if (TarmedRequirements.hasTCContract(invoice.getMandator())) {
+				String trustCenter = TarmedRequirements.getTCName(invoice.getMandator());
 				if (trustCenter.length() > 0) {
 					iEAN = TrustCenters.getTCEAN(trustCenter);
 				}
@@ -1136,34 +1077,8 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
-	/**
-	 * Initialize balance related data structures of the export.
-	 * 
-	 * @param rechnung
-	 * @param services
-	 * @param vatSummer
-	 */
-	private void initBalanceData(IInvoice invoice, XMLExporterServices services,
-		VatRateSum vatSummer){
-		
-		xmlBalance = XMLExporterBalance.buildBalance(invoice, services, vatSummer, this);
-		
-		besr =
-			new ESR((String) mandator.getBiller().getExtInfo(XMLExporter.ta.ESRNUMBER),
-				(String) mandator.getBiller().getExtInfo(XMLExporter.ta.ESRSUB),
-				getInvoiceId(invoice), ESR.ESR27);
-	}
-
 	public ESR getBesr(){
 		return besr;
-	}
-
-	public Money getDueMoney(){
-		return xmlBalance.getDue();
-	}
-	
-	public List<IDiagnosisReference> getDiagnoses(){
-		return xmlTreatment.getDiagnoses();
 	}
 	
 	protected String getRole(final ICoverage coverage){

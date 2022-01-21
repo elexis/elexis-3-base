@@ -25,7 +25,7 @@ public class XMLExporterTiers {
 	private Element tiersElement;
 	
 	private String tiers;
-
+	
 	private XMLExporterTiers(Element tiers){
 		this.tiersElement = tiers;
 	}
@@ -37,17 +37,17 @@ public class XMLExporterTiers {
 	public String getTiers(){
 		return tiers;
 	}
-
+	
 	public static XMLExporterTiers buildTiers(IInvoice invoice, XMLExporter xmlExporter){
 		TarmedACL ta = TarmedACL.getInstance();
 		
 		ICoverage coverage = invoice.getCoverage();
 		IPatient patient = coverage.getPatient();
 		IMandator mandant = invoice.getMandator();
-	
+		
 		String tiers = XMLExporter.TIERS_PAYANT;
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(coverage);
-		if(Tiers.GARANT == tiersType) {
+		if (Tiers.GARANT == tiersType) {
 			tiers = XMLExporter.TIERS_GARANT;
 		}
 		
@@ -80,8 +80,7 @@ public class XMLExporterTiers {
 		if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
 			biller.setAttribute("specialty", spec); //$NON-NLS-1$
 		}
-		biller.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant
-			.getBiller())); // 11600-11680
+		biller.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant.getBiller())); // 11600-11680
 		ret.tiersElement.addContent(biller);
 		
 		Element provider = new Element("provider", XMLExporter.nsinvoice); //$NON-NLS-1$
@@ -168,12 +167,11 @@ public class XMLExporterTiers {
 			
 		}
 		
-		Element patientElement = xmlExporter.buildPatient(patient);
+		Element patientElement = xmlExporter.buildPatient(coverage);
 		ret.tiersElement.addContent(patientElement);
 		
-		Element guarantor =
-			xmlExporter.buildGuarantor(XMLExporterUtil.getGuarantor(tiers, patient, coverage),
-				patient);
+		Element guarantor = xmlExporter
+			.buildGuarantor(XMLExporterUtil.getGuarantor(tiers, patient, coverage), patient);
 		ret.tiersElement.addContent(guarantor);
 		
 		Element referrer = new Element("referrer", XMLExporter.nsinvoice); //$NON-NLS-1$
@@ -193,7 +191,7 @@ public class XMLExporterTiers {
 			ret.tiersElement.addContent(referrer);
 		}
 		ret.tiers = tiers;
-
+		
 		return ret;
 	}
 }

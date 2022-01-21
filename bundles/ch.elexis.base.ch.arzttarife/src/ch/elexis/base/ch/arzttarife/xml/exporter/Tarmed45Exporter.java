@@ -1,10 +1,14 @@
 package ch.elexis.base.ch.arzttarife.xml.exporter;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +18,7 @@ import java.util.Optional;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.slf4j.Logger;
@@ -23,6 +28,7 @@ import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.TarmedRechnung.Messages;
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
+import ch.elexis.TarmedRechnung.XMLExporterProcessing;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
@@ -40,6 +46,7 @@ import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IDiagnosisReference;
+import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IOrganization;
@@ -64,6 +71,8 @@ import ch.fd.invoice450.request.BodyType;
 import ch.fd.invoice450.request.CompanyType;
 import ch.fd.invoice450.request.DebitorAddressType;
 import ch.fd.invoice450.request.DiagnosisType;
+import ch.fd.invoice450.request.DocumentType;
+import ch.fd.invoice450.request.DocumentsType;
 import ch.fd.invoice450.request.Esr9Type;
 import ch.fd.invoice450.request.EsrAddressType;
 import ch.fd.invoice450.request.EsrQRType;
@@ -120,8 +129,6 @@ public class Tarmed45Exporter {
 	
 	private EsrType esrType = EsrType.esr9;
 	
-	private ServicesType services;
-	
 	/**
 	 * Create a tarmed invoice request model for the {@link IInvoice}, and marshall it into the
 	 * provided {@link OutputStream}.
@@ -143,9 +150,6 @@ public class Tarmed45Exporter {
 					.getInstance().ESRSUB),
 				InvoiceServiceHolder.get().getCombinedId(invoice), ESR.ESR27);
 			
-			// calculate financial information first
-			services = getServices(invoice);
-			
 			// build the tarmed invoice request for the IInvoice
 			RequestType requestType = new RequestType();
 			requestType.setModus(getModus(invoice.getCoverage()));
@@ -154,8 +158,6 @@ public class Tarmed45Exporter {
 			requestType.setProcessing(getProcessing(invoice));
 			requestType.setPayload(getPayload(invoice, type));
 			
-			// cleanup
-			services = null;
 			
 			if (getBalanceAmount(requestType) != null) {
 				if (invoice.adjustAmount(getBalanceAmount(requestType).roundTo5()) == false) {
@@ -174,7 +176,7 @@ public class Tarmed45Exporter {
 		}
 	}
 	
-	private Money getBalanceAmount(RequestType requestType){
+	public Money getBalanceAmount(RequestType requestType){
 		if (requestType.getPayload() != null && requestType.getPayload().getBody() != null) {
 			if (requestType.getPayload().getBody().getTiersGarant() != null) {
 				return new Money(
@@ -209,7 +211,8 @@ public class Tarmed45Exporter {
 	
 	protected Object getBalance(IInvoice invoice){
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-		ServicesFinancialInfo financialInfo = ServicesFinancialInfo.of(services);
+		
+		ServicesFinancialInfo financialInfo = ServicesFinancialInfo.of(getServices(invoice));
 		
 		if (tiersType == Tiers.GARANT) {
 			BalanceTGType balanceTGType = new BalanceTGType();
@@ -368,17 +371,19 @@ public class Tarmed45Exporter {
 			XMLExporterUtil.getGuarantor(tiersType.getShortName(), invoice.getCoverage()
 				.getPatient(),
 			invoice.getCoverage());
-		
-		GuarantorAddressType guarantorAddressType = new GuarantorAddressType();
-		
-		Object companyOrPerson = getCompanyOrPerson(guarantor, false);
-		if (companyOrPerson instanceof CompanyType) {
-			guarantorAddressType.setCompany((CompanyType) companyOrPerson);
-		} else if (companyOrPerson instanceof PersonType) {
-			guarantorAddressType.setPerson((PersonType) companyOrPerson);
+		if (guarantor != null) {
+			GuarantorAddressType guarantorAddressType = new GuarantorAddressType();
+			
+			Object companyOrPerson = getCompanyOrPerson(guarantor, false);
+			if (companyOrPerson instanceof CompanyType) {
+				guarantorAddressType.setCompany((CompanyType) companyOrPerson);
+			} else if (companyOrPerson instanceof PersonType) {
+				guarantorAddressType.setPerson((PersonType) companyOrPerson);
+			}
+			
+			return guarantorAddressType;
 		}
-		
-		return guarantorAddressType;
+		return null;
 	}
 	
 	protected PatientAddressType getPatient(IInvoice invoice) throws DatatypeConfigurationException{
@@ -631,7 +636,7 @@ public class Tarmed45Exporter {
 		return postalAddressType;
 	}
 	
-	protected ServicesType getServices(IInvoice invoice) throws DatatypeConfigurationException{
+	protected ServicesType getServices(IInvoice invoice){
 		ServicesType servicesType = new ServicesType();
 		List<IEncounter> encounters = invoice.getEncounters();
 		int recordNumber = 1;
@@ -650,119 +655,129 @@ public class Tarmed45Exporter {
 			
 			boolean bRFE = false; // RFE already encoded
 			
-			for (IBilled billed : encounterBilled) {
-				IBillable billable = billed.getBillable();
-				if (billable == null) {
-					logger.error(Messages.XMLExporter_ErroneusBill + invoice.getNumber()
-						+ " Null-Verrechenbar bei Kons " //$NON-NLS-1$
-						+ encounter.getLabel());
-					continue;
-				}
-				
-				if ("001".equals(billable.getCodeSystemCode())) { // tarmed service
-					ServiceExType serviceExType = new ServiceExType();
-					
-					serviceExType.setTreatment("ambulatory");
-					String bezug =
-						(String) ((ITarmedLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
-					if (StringTool.isNothing(bezug)) {
-						bezug = (String) billed.getExtInfo("Bezug"); //$NON-NLS-1$
+			try {
+				for (IBilled billed : encounterBilled) {
+					IBillable billable = billed.getBillable();
+					if (billable == null) {
+						logger.error(Messages.XMLExporter_ErroneusBill + invoice.getNumber()
+							+ " Null-Verrechenbar bei Kons " //$NON-NLS-1$
+							+ encounter.getLabel());
+						continue;
 					}
-					if (!StringTool.isNothing(bezug)) {
-						serviceExType.setRefCode(bezug);
-					}
-					serviceExType.setBillingRole("both");
-					serviceExType.setMedicalRole("self_employed");
-					serviceExType.setBodyLocation(ArzttarifeUtil.getSide(billed));
 					
-					double primaryScale = billed.getPrimaryScaleFactor();
-					double secondaryScale = 1.0;
-					if (!billed.isNonIntegerAmount()) {
-						secondaryScale = billed.getSecondaryScaleFactor();
-					}
-					double mult = billed.getFactor();
-					double tlAL = ArzttarifeUtil.getAL(billed);
-					double tlTL = ArzttarifeUtil.getTL(billed);
-					// build monetary values of this TarmedLeistung
-					Money mAL = ArzttarifeUtil.getALMoney(billed);
-					Money mTL = ArzttarifeUtil.getTLMoney(billed);
-					Money mAmountLocal = billed.getTotal();
-					
-					// tarmed AL
-					serviceExType.setUnitMt(tlAL / 100.0);
-					XMLExporterUtil.getALNotScaled(billed).ifPresent(d -> {
-						serviceExType.setUnitMt(d / 100.0);
-					});
-					serviceExType.setUnitFactorMt(mult);
-					serviceExType.setScaleFactorMt(primaryScale);
-					XMLExporterUtil.getALScalingFactor(billed).ifPresent(f -> {
-						f = f * primaryScale;
-						serviceExType.setScaleFactorMt(f);
-					});
-					serviceExType.setExternalFactorMt(secondaryScale);
-					serviceExType.setAmountMt(mAL.doubleValue());
-					// tarmed TL
-					serviceExType.setUnitTt(tlTL / 100.0);
-					serviceExType.setUnitFactorTt(mult);
-					serviceExType.setScaleFactorTt(primaryScale);
-					serviceExType.setExternalFactorTt(secondaryScale);
-					serviceExType.setAmountTt(mTL.doubleValue());
-					
-					serviceExType.setAmount(mAmountLocal.doubleValue());
-					serviceExType.setVatRate(getVatRate(billed));
-					
-					if (!bRFE) {
-						List<IReasonForEncounter> rfes =
-							XMLExporterUtil.getReasonsForEncounter(encounter);
-						if (rfes.size() > 0) {
-							StringBuilder sb = new StringBuilder();
-							for (IReasonForEncounter rfe : rfes) {
-								sb.append("551_").append(rfe.getCode()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-							serviceExType.setRemark(sb.toString());
+					if ("001".equals(billable.getCodeSystemCode())) { // tarmed service
+						ServiceExType serviceExType = new ServiceExType();
+						
+						serviceExType.setTreatment("ambulatory");
+						String bezug = (String) ((ITarmedLeistung) billable).getExtension()
+							.getExtInfo("Bezug"); //$NON-NLS-1$
+						if (StringTool.isNothing(bezug)) {
+							bezug = (String) billed.getExtInfo("Bezug"); //$NON-NLS-1$
 						}
-						bRFE = true;
-					}
-
-					serviceExType.setTariffType(billable.getCodeSystemCode());
-					serviceExType.setCode(billable.getCode());
-					serviceExType.setQuantity(billed.getAmount());
-					serviceExType.setRecordId(recordNumber++);
-					serviceExType.setSession(session);
-					serviceExType.setName(billed.getText());
-					serviceExType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
-					serviceExType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
-					serviceExType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
-					serviceExType.setObligation(getObligation(billed, billable));
-					
-					servicesType.getServiceExOrService().add(serviceExType);
-				} else { // any service
-					ServiceType serviceType = new ServiceType();
-					
-					serviceType.setAmount(billed.getTotal().doubleValue());
-					serviceType.setVatRate(getVatRate(billed));
-					
-					serviceType.setUnit(billed.getPrice().doubleValue());
-					serviceType.setUnitFactor(billed.getFactor());
-					
-					serviceType.setTariffType(billable.getCodeSystemCode());
-					serviceType.setCode(billable.getCode());
-					serviceType.setQuantity(billed.getAmount());
-					serviceType.setRecordId(recordNumber++);
-					serviceType.setSession(session);
-					serviceType.setName(billed.getText());
-					if (billable instanceof IArticle
-						&& "true".equals((String) billed.getExtInfo(Constants.FLD_EXT_INDICATED))) {
+						if (!StringTool.isNothing(bezug)) {
+							serviceExType.setRefCode(bezug);
+						}
+						serviceExType.setBillingRole("both");
+						serviceExType.setMedicalRole("self_employed");
+						serviceExType.setBodyLocation(ArzttarifeUtil.getSide(billed));
+						
+						double primaryScale = billed.getPrimaryScaleFactor();
+						double secondaryScale = 1.0;
+						if (!billed.isNonIntegerAmount()) {
+							secondaryScale = billed.getSecondaryScaleFactor();
+						}
+						double mult = billed.getFactor();
+						double tlAL = ArzttarifeUtil.getAL(billed);
+						double tlTL = ArzttarifeUtil.getTL(billed);
+						// build monetary values of this TarmedLeistung
+						Money mAL = ArzttarifeUtil.getALMoney(billed);
+						Money mTL = ArzttarifeUtil.getTLMoney(billed);
+						Money mAmountLocal = billed.getTotal();
+						
+						// tarmed AL
+						serviceExType.setUnitMt(tlAL / 100.0);
+						XMLExporterUtil.getALNotScaled(billed).ifPresent(d -> {
+							serviceExType.setUnitMt(d / 100.0);
+						});
+						serviceExType.setUnitFactorMt(mult);
+						serviceExType.setScaleFactorMt(primaryScale);
+						XMLExporterUtil.getALScalingFactor(billed).ifPresent(f -> {
+							f = f * primaryScale;
+							serviceExType.setScaleFactorMt(f);
+						});
+						serviceExType.setExternalFactorMt(secondaryScale);
+						serviceExType.setAmountMt(mAL.doubleValue());
+						// tarmed TL
+						serviceExType.setUnitTt(tlTL / 100.0);
+						serviceExType.setUnitFactorTt(mult);
+						serviceExType.setScaleFactorTt(primaryScale);
+						serviceExType.setExternalFactorTt(secondaryScale);
+						serviceExType.setAmountTt(mTL.doubleValue());
+						
+						serviceExType.setAmount(mAmountLocal.doubleValue());
+						serviceExType.setVatRate(getVatRate(billed));
+						
+						if (!bRFE) {
+							List<IReasonForEncounter> rfes =
+								XMLExporterUtil.getReasonsForEncounter(encounter);
+							if (rfes.size() > 0) {
+								StringBuilder sb = new StringBuilder();
+								for (IReasonForEncounter rfe : rfes) {
+									sb.append("551_").append(rfe.getCode()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+								}
+								serviceExType.setRemark(sb.toString());
+							}
+							bRFE = true;
+						}
+						
+						serviceExType.setTariffType(billable.getCodeSystemCode());
+						serviceExType.setCode(billable.getCode());
+						serviceExType.setQuantity(billed.getAmount());
+						serviceExType.setRecordId(recordNumber++);
+						serviceExType.setSession(session);
+						serviceExType.setName(billed.getText());
+						serviceExType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
+						serviceExType
+							.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
+						serviceExType
+							.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
+						serviceExType.setObligation(getObligation(billed, billable));
+						
+						servicesType.getServiceExOrService().add(serviceExType);
+					} else { // any service
+						ServiceType serviceType = new ServiceType();
+						
+						serviceType.setAmount(billed.getTotal().doubleValue());
+						serviceType.setVatRate(getVatRate(billed));
+						
+						serviceType.setUnit(billed.getPrice().doubleValue());
+						serviceType.setUnitFactor(billed.getFactor());
+						
+						serviceType.setTariffType(billable.getCodeSystemCode());
+						serviceType.setCode(billable.getCode());
+						serviceType.setQuantity(billed.getAmount());
+						serviceType.setRecordId(recordNumber++);
+						serviceType.setSession(session);
+						serviceType.setName(billed.getText());
+						if (billable instanceof IArticle && "true"
+							.equals((String) billed.getExtInfo(Constants.FLD_EXT_INDICATED))) {
+							serviceType
+								.setName(serviceType.getName() + " (medizinisch indiziert: 207)");
+						}
+						serviceType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
 						serviceType
-							.setName(serviceType.getName() + " (medizinisch indiziert: 207)");
+							.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
+						serviceType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
+						serviceType.setObligation(getObligation(billed, billable));
+						
+						servicesType.getServiceExOrService().add(serviceType);
 					}
-					serviceType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
-					serviceType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
-					serviceType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
-					serviceType.setObligation(getObligation(billed, billable));
-					
-					servicesType.getServiceExOrService().add(serviceType);
 				}
+			} catch (DatatypeConfigurationException e) {
+				logger.error(
+					"Error creating tarmed services for invoice nr [" + invoice.getNumber() + "]",
+					e);
+				return null;
 			}
 		}
 		
@@ -866,9 +881,48 @@ public class Tarmed45Exporter {
 		
 		bodyType.setTreatment(getTreatment(invoice));
 		
-		bodyType.setServices(services);
+		bodyType.setServices(getServices(invoice));
+		
+		if (invoice.getAttachments() != null && !invoice.getAttachments().isEmpty()) {
+			bodyType.setDocuments(getDocuments(invoice));
+		}
 		
 		return bodyType;
+	}
+	
+	private DocumentsType getDocuments(IInvoice invoice){
+		DocumentsType documentsType = new DocumentsType();
+		for (IDocument attachment : invoice.getAttachments()) {
+			String mimeType = attachment.getMimeType();
+			if (mimeType == null || !mimeType.endsWith("pdf")) {
+				logger.warn("Cannot add attachment [{}], mimeType is null or not pdf",
+					attachment.getId());
+				continue;
+			}
+			try {
+				InputStream content = attachment.getContent();
+				if (content != null) {
+					byte[] byteArray = IOUtils.toByteArray(attachment.getContent());
+					byte[] encoded = Base64.getEncoder().encode(byteArray);
+					
+					DocumentType document = new DocumentType();
+					document.setTitle(attachment.getTitle());
+					document.setFilename(attachment.getTitle());
+					document.setMimeType("application/pdf");
+					document.setBase64(encoded);
+					documentsType.getDocument().add(document);
+				} else {
+					logger.warn("Cannot add attachment [{}], content is null", attachment.getId());
+				}
+				
+			} catch (IOException e) {
+				logger.warn("Cannot add attachment [{}], cannot read content", attachment.getId(),
+					e);
+			}
+		}
+		documentsType
+			.setNumber(new BigInteger(Integer.toString(documentsType.getDocument().size())));
+		return documentsType.getDocument().isEmpty() ? null : documentsType;
 	}
 	
 	protected TreatmentType getTreatment(IInvoice invoice) throws DatatypeConfigurationException{
@@ -1244,5 +1298,95 @@ public class Tarmed45Exporter {
 		processingType.setTransport(transportType);
 		
 		return processingType;
+	}
+	
+	public void updateExistingXml(RequestType request, TYPE type, IInvoice invoice,
+		XMLExporter xmlExporter){
+		try {
+			// update processing, print_at_intermediate and transport via EAN
+			if (request.getProcessing() != null) {
+				if (request.getProcessing().isPrintAtIntermediate() != isPrintAtIntermediate()) {
+					request.getProcessing().setPrintAtIntermediate(isPrintAtIntermediate());
+				}
+				if (request.getProcessing().getTransport() != null) {
+					String iEAN = XMLExporterProcessing.getIntermediateEAN(invoice, xmlExporter);
+					List<Via> via = request.getProcessing().getTransport().getVia();
+					if (via != null && !via.isEmpty()) {
+						via.get(0).setVia(iEAN);
+					}
+				}
+			}
+			
+			// update payload and balance
+			if (request.getPayload() != null && request.getPayload().getBody() != null) {
+				
+				if (request.getPayload().getBody().getTiersGarant() != null
+					&& invoice.getCoverage().getPatient() != null) {
+					// update patient information	
+					PatientAddressType updatePatient = getPatient(invoice);
+					if (updatePatient != null) {
+						request.getPayload().getBody().getTiersGarant().setPatient(updatePatient);
+					}
+					// update guarantor information
+					GuarantorAddressType updateGuarantor = getGuarantor(invoice);
+					if (updateGuarantor != null) {
+						request.getPayload().getBody().getTiersGarant()
+							.setGuarantor(updateGuarantor);
+					}
+				}
+				
+				Object updateBalance = getBalance(invoice);
+				if (request.getPayload().getBody().getTiersGarant() != null
+					&& updateBalance instanceof BalanceTGType) {
+					BalanceTGType balance =
+						request.getPayload().getBody().getTiersGarant().getBalance();
+					if (((BalanceTGType) updateBalance).getAmountPrepaid() != balance
+						.getAmountPrepaid()) {
+						request.getPayload().getBody().getTiersGarant()
+							.setBalance((BalanceTGType) updateBalance);
+					}
+				}
+				
+				// always update copy information
+				request.getPayload().setCopy(type.equals(IRnOutputter.TYPE.COPY));
+				// update balance for storno
+				if (type.equals(TYPE.STORNO)) {
+					request.getPayload().setStorno(true);
+					negate(request.getPayload().getBody().getServices());
+					if (request.getPayload().getBody().getTiersGarant() != null) {
+						BalanceTGType balance =
+							request.getPayload().getBody().getTiersGarant().getBalance();
+						balance.setAmount(-Math.abs(balance.getAmount()));
+						balance.setAmountObligations(-Math.abs(balance.getAmountObligations()));
+						balance.setAmountDue(0.0);
+						balance.setAmountPrepaid(0.0);
+					} else if (request.getPayload().getBody().getTiersPayant() != null) {
+						BalanceTPType balance =
+							request.getPayload().getBody().getTiersPayant().getBalance();
+						balance.setAmount(-Math.abs(balance.getAmount()));
+						balance.setAmountObligations(-Math.abs(balance.getAmountObligations()));
+						balance.setAmountDue(0.0);
+					}
+				}
+			}
+		} catch (Exception e) {
+			LoggerFactory.getLogger(getClass()).error("Error updating tarmed xml model", e);
+		}
+	}
+	
+	private void negate(ServicesType services){
+		if (services != null) {
+			services.getServiceExOrService().forEach(s -> {
+				if (s instanceof ServiceType) {
+					((ServiceType) s).setQuantity(-Math.abs(((ServiceType) s).getQuantity()));
+					((ServiceType) s).setAmount(-Math.abs(((ServiceType) s).getAmount()));
+				} else if (s instanceof ServiceExType) {
+					((ServiceExType) s).setQuantity(-Math.abs(((ServiceExType) s).getQuantity()));
+					((ServiceExType) s).setAmount(-Math.abs(((ServiceExType) s).getAmount()));
+					((ServiceExType) s).setAmountMt(-Math.abs(((ServiceExType) s).getAmountMt()));
+					((ServiceExType) s).setAmountTt(-Math.abs(((ServiceExType) s).getAmountTt()));
+				}
+			});
+		}
 	}
 }

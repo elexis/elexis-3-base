@@ -72,6 +72,10 @@ import ch.rgw.tools.TimeTool;
 
 public class TestData {
 	
+	public static final String EXISTING_45_RNR = "4500";
+	
+	public static final String EXISTING_45_3_RNR = "4503";
+	
 	public static final String EXISTING_44_RNR = "4400";
 	
 	public static final String EXISTING_44_2_RNR = "4402";
@@ -341,6 +345,18 @@ public class TestData {
 			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
 			blob = NamedBlob.load(XMLExporter.PREFIX + ERRONEOUS_44_1_RNR);
 			blob.putString(stringWriter.toString());
+			
+			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing45_1.xml");
+			stringWriter = new StringWriter();
+			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_45_RNR);
+			blob.putString(stringWriter.toString());
+			
+			xmlIn = TestSzenario.class.getResourceAsStream("/rsc/existing45_3.xml");
+			stringWriter = new StringWriter();
+			IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+			blob = NamedBlob.load(XMLExporter.PREFIX + EXISTING_45_3_RNR);
+			blob.putString(stringWriter.toString());
 		}
 		
 		private void createLeistungen(){
@@ -590,6 +606,14 @@ public class TestData {
 							throw new IllegalStateException(result.toString());
 						}
 					}
+				}
+			} else if (rechnungNr.equals(EXISTING_45_RNR) || rechnungNr.equals(EXISTING_45_3_RNR)) {
+				for (IBillable leistung : leistungen) {
+					Result<IBilled> result =
+							BillingServiceHolder.get().bill(leistung, encounter, 1);
+						if (!result.isOK()) {
+							throw new IllegalStateException(result.toString());
+						}
 				}
 			}
 			Result<IInvoice> result = InvoiceServiceHolder.get().invoice(

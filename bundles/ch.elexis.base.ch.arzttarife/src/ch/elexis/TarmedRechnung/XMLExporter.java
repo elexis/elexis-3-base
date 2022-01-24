@@ -435,13 +435,42 @@ public class XMLExporter implements IRnOutputter {
 					addReminderEntry(root, invoice, "3");
 				}
 			} else if (getXmlVersion(root).equals("4.5")) {
-				getExistingXmlModel(invoice, "4.5").ifPresent(ir -> {
+				Optional<?> invoiceRequest = getExistingXmlModel(invoice, "4.5");
+				if (invoiceRequest.isPresent()) {
 					Tarmed45Exporter exporter = new Tarmed45Exporter();
-					exporter.updateExistingXml((ch.fd.invoice450.request.RequestType) ir, type,
-						invoice, this);
+					exporter.updateExistingXml(
+						(ch.fd.invoice450.request.RequestType) invoiceRequest.get(), type, invoice,
+						this);
 					
-				});
-				
+					InvoiceState state = invoice.getState();
+					if (state == InvoiceState.DEMAND_NOTE_1
+						|| state == InvoiceState.DEMAND_NOTE_1_PRINTED) {
+						if (dest != null) {
+							dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m1.xml");
+						}
+						exporter.addReminderEntry(
+							(ch.fd.invoice450.request.RequestType) invoiceRequest.get(), invoice,
+							"1");
+					} else if (state == InvoiceState.DEMAND_NOTE_2
+						|| state == InvoiceState.DEMAND_NOTE_2_PRINTED) {
+						if (dest != null) {
+							dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m2.xml");
+						}
+						exporter.addReminderEntry(
+							(ch.fd.invoice450.request.RequestType) invoiceRequest.get(), invoice,
+							"2");
+					} else if (state == InvoiceState.DEMAND_NOTE_3
+						|| state == InvoiceState.DEMAND_NOTE_3_PRINTED) {
+						if (dest != null) {
+							dest = dest.toLowerCase().replaceFirst("\\.xml$", "_m3.xml");
+						}
+						exporter.addReminderEntry(
+							(ch.fd.invoice450.request.RequestType) invoiceRequest.get(), invoice,
+							"3");
+					}
+					ret = getAsJdomDocument(
+						(ch.fd.invoice450.request.RequestType) invoiceRequest.get()).orElse(null);
+				}
 			} else {
 				logger.warn(
 					"Bill in unknown XML version " + getXmlVersion(root) + ", recreating bill.");
@@ -467,7 +496,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 	
-	private Optional<?> getExistingXmlModel(IInvoice invoice, String version){
+	protected Optional<?> getExistingXmlModel(IInvoice invoice, String version){
 		IBlob blob = CoreModelServiceHolder.get().load(PREFIX + invoice.getNumber(), IBlob.class)
 			.orElse(null);
 		if (blob != null && blob.getStringContent() != null && !blob.getStringContent().isEmpty()) {
@@ -490,6 +519,15 @@ public class XMLExporter implements IRnOutputter {
 			} catch (IOException | JDOMException e) {
 				LoggerFactory.getLogger(getClass()).error("Error loading as jdom document", e);
 			}
+		}
+		return Optional.empty();
+	}
+	
+	public Optional<Document> getAsJdomDocument(ch.fd.invoice450.request.RequestType request){
+		if (request != null) {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			TarmedJaxbUtil.marshallInvoiceRequest(request, outputStream);
+			return getAsJdomDocument(outputStream);
 		}
 		return Optional.empty();
 	}

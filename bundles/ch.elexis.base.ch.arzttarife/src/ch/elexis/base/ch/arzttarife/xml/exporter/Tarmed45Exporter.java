@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -93,6 +94,7 @@ import ch.fd.invoice450.request.ProcessingType.Demand;
 import ch.fd.invoice450.request.PrologType;
 import ch.fd.invoice450.request.ProviderAddressType;
 import ch.fd.invoice450.request.ReferrerAddressType;
+import ch.fd.invoice450.request.ReminderType;
 import ch.fd.invoice450.request.RequestType;
 import ch.fd.invoice450.request.ServiceExType;
 import ch.fd.invoice450.request.ServiceType;
@@ -1356,6 +1358,46 @@ public class Tarmed45Exporter {
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Error updating tarmed xml model", e);
+		}
+	}
+	
+	public void addReminderEntry(RequestType request, IInvoice invoice, String reminderLevel){
+		if (request.getPayload() != null) {
+			try {
+				GregorianCalendar now = new GregorianCalendar();
+				
+				ReminderType reminderType = request.getPayload().getReminder();
+				if (reminderType == null) {
+					reminderType = new ReminderType();
+					request.getPayload().setReminder(reminderType);
+				}
+				reminderType.setRequestId(InvoiceServiceHolder.get().getCombinedId(invoice));
+				reminderType.setReminderLevel(reminderLevel);
+				reminderType.setRequestDate(
+					DatatypeFactory.newInstance().newXMLGregorianCalendar(now));
+				reminderType.setRequestTimestamp((int) (now.getTimeInMillis() / 1000));
+				
+				// add amount reminder and recalculate amount due
+				if (request.getPayload().getBody() != null) {
+					Money mReminder = invoice.getDemandAmount();
+					Money mDue = new Money(invoice.getTotalAmount());
+					mDue.addMoney(mReminder);
+					mDue.subtractMoney(invoice.getPayedAmount());
+					if (request.getPayload().getBody().getTiersGarant() != null) {
+						BalanceTGType balance =
+							request.getPayload().getBody().getTiersGarant().getBalance();
+						balance.setAmountReminder(mReminder.doubleValue());
+						balance.setAmountDue(mDue.doubleValue());
+					} else if (request.getPayload().getBody().getTiersPayant() != null) {
+						BalanceTPType balance =
+							request.getPayload().getBody().getTiersPayant().getBalance();
+						balance.setAmountReminder(mReminder.doubleValue());
+						balance.setAmountDue(mDue.doubleValue());
+					}
+				}
+			} catch (DatatypeConfigurationException e) {
+				LoggerFactory.getLogger(getClass()).error("Error adding reminder to xml model", e);
+			}
 		}
 	}
 	

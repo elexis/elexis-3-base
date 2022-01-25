@@ -141,6 +141,30 @@ public class TarmedJaxbUtil {
 	}
 	
 	/**
+	 * creates an invoice response xml (XML4.5 ResponseType)
+	 * 
+	 * @param response
+	 *            ResponeType object to write to the xml
+	 * @param outStream
+	 *            of the file to write to
+	 * @return true if success, false if an exception occurred
+	 */
+	public static boolean marshallInvoiceResponse(ch.fd.invoice450.response.ResponseType response,
+		OutputStream outStream){
+		try {
+			JAXBContext jaxbContext =
+				JAXBContext.newInstance(ch.fd.invoice450.response.ResponseType.class);
+			Marshaller marshaller =
+				initMarshaller(jaxbContext, Constants.INVOICE_RESPONSE_450_LOCATION);
+			marshaller.marshal(response, outStream);
+			return true;
+		} catch (JAXBException e) {
+			log.error("Marshalling generalInvoiceResponse_450 failed", e);
+			return false;
+		}
+	}
+	
+	/**
 	 * initializes a marshaller for the given {@link JAXBContext} and sets default properties
 	 * 
 	 * @param jaxbContext
@@ -301,6 +325,35 @@ public class TarmedJaxbUtil {
 			}
 		} catch (JAXBException e) {
 			log.error("Unmarshalling generalInvoiceResponse_440 failed", e);
+		}
+		return null;
+	}
+	
+	/**
+	 * loads elements from a XML4.5 response file into java objects
+	 * 
+	 * @param inStream
+	 *            of an invoce response file (base on {@link www.forum-datenaustausch.ch/invoice
+	 *            generalInvoiceResponse_450.xsd})
+	 * @return {@link ResponseType} response root element containing the child objects or null if
+	 *         unable to resolve
+	 */
+	@SuppressWarnings("unchecked")
+	public static ch.fd.invoice450.response.ResponseType unmarshalInvoiceResponse450(
+		InputStream inStream){
+		try {
+			JAXBContext jaxbContext =
+				JAXBContext.newInstance(ch.fd.invoice450.response.ResponseType.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			JAXBElement<Object> jaxElement = (JAXBElement<Object>) unmarshaller.unmarshal(inStream);
+			
+			if (jaxElement.getValue() instanceof ch.fd.invoice450.response.ResponseType) {
+				ch.fd.invoice450.response.ResponseType response =
+					(ch.fd.invoice450.response.ResponseType) jaxElement.getValue();
+				return response;
+			}
+		} catch (JAXBException e) {
+			log.error("Unmarshalling generalInvoiceResponse_450 failed", e);
 		}
 		return null;
 	}

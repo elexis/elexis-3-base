@@ -59,9 +59,11 @@ import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.model.format.PostalAddress;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.ICoverageService.Tiers;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
+import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.fd.invoice450.request.BalanceTGType;
 import ch.fd.invoice450.request.BalanceTPType;
@@ -466,17 +468,30 @@ public class Tarmed45Exporter {
 	protected ProviderAddressType getProvider(IInvoice invoice){
 		ProviderAddressType providerAddressType = new ProviderAddressType();
 		
-		providerAddressType.setEanParty(TarmedRequirements.getEAN(invoice.getMandator()));
-		String zsr = TarmedRequirements.getKSK(invoice.getMandator());
+		IContact provider = invoice.getMandator();
+		if (StringUtils.isNotBlank(
+			ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null))) {
+			Optional<IContact> fixProvider = CoreModelServiceHolder.get().load(
+				ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null),
+				IContact.class);
+			if (fixProvider.isPresent()) {
+				logger.info("Fixed provider [" + fixProvider.get().getLabel() + "] ean ["
+					+ TarmedRequirements.getEAN(fixProvider.get()) + "]");
+				provider = fixProvider.get();
+			}
+		}
+		
+		providerAddressType.setEanParty(TarmedRequirements.getEAN(provider));
+		String zsr = TarmedRequirements.getKSK(provider);
 		if (StringUtils.isNotBlank(zsr)) {
 			providerAddressType.setZsr(zsr);
 		}
 		String spec =
-			(String) invoice.getMandator().getExtInfo(TarmedACL.getInstance().SPEC);
+			(String) provider.getExtInfo(TarmedACL.getInstance().SPEC);
 		if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
 			providerAddressType.setSpecialty(spec);
 		}
-		Object companyOrPerson = getCompanyOrPerson(invoice.getMandator(), false);
+		Object companyOrPerson = getCompanyOrPerson(provider, false);
 		if (companyOrPerson instanceof CompanyType) {
 			providerAddressType.setCompany((CompanyType) companyOrPerson);
 		} else if (companyOrPerson instanceof PersonType) {

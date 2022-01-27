@@ -16,6 +16,12 @@ public class TarmedTemplateRequirement implements ITextTemplateRequirement {
 	public static final String TT_TARMED_44_S2 = "TR44_S2";
 	public static final String TT_TARMED_44_S2_DESC =
 		"Tarmed-Rechnungsvorlage Folgeseite (XML 4.4 Standard)";
+	public static final String TT_TARMED_45_S1 = "TR45_S1";
+	public static final String TT_TARMED_45_S1_DESC =
+		"Tarmed-Rechnungsvorlage 1.Seite (XML4.5 Standard)";
+	public static final String TT_TARMED_45_S2 = "TR45_S2";
+	public static final String TT_TARMED_45_S2_DESC =
+		"Tarmed-Rechnungsvorlage Folgeseite (XML 4.5 Standard)";
 	public static final String TT_TARMED_EZ = "Tarmedrechnung_EZ";
 	public static final String TT_TARMED_EZ_DESC = "Tarmed-Rechnungsvorlage mit Einzahlungsschein";
 	
@@ -29,8 +35,8 @@ public class TarmedTemplateRequirement implements ITextTemplateRequirement {
 	@Override
 	public String[] getNamesOfRequiredTextTemplate(){
 		return new String[] {
-			TT_TARMED_S1, TT_TARMED_S2, TT_TARMED_44_S1, TT_TARMED_44_S2, TT_TARMED_EZ,
-			TT_TARMED_M1, TT_TARMED_M2, TT_TARMED_M3
+			TT_TARMED_S1, TT_TARMED_S2, TT_TARMED_44_S1, TT_TARMED_44_S2, TT_TARMED_45_S1,
+			TT_TARMED_45_S2, TT_TARMED_EZ, TT_TARMED_M1, TT_TARMED_M2, TT_TARMED_M3
 		};
 	}
 	
@@ -38,7 +44,8 @@ public class TarmedTemplateRequirement implements ITextTemplateRequirement {
 	public String[] getDescriptionsOfRequiredTextTemplate(){
 		return new String[] {
 			TT_TARMED_S1_DESC, TT_TARMED_S2_DESC, TT_TARMED_44_S1_DESC, TT_TARMED_44_S2_DESC,
-			TT_TARMED_EZ_DESC, TT_TARMED_M1_DESC, TT_TARMED_M2_DESC, TT_TARMED_M3_DESC
+			TT_TARMED_45_S1_DESC, TT_TARMED_45_S2_DESC, TT_TARMED_EZ_DESC, TT_TARMED_M1_DESC,
+			TT_TARMED_M2_DESC, TT_TARMED_M3_DESC
 		};
 	}
 	

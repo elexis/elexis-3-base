@@ -379,6 +379,30 @@ public class TarmedJaxbUtil {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static ch.fd.invoice450.request.RequestType unmarshalInvoiceRequest450(
+		org.jdom.Document jdomDoc){
+		try {
+			JAXBContext jaxbContext =
+				JAXBContext.newInstance(ch.fd.invoice450.request.RequestType.class);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			
+			DOMOutputter outputter = new DOMOutputter();
+			Document document = outputter.output(jdomDoc);
+			JAXBElement<Object> jaxElement = (JAXBElement<Object>) unmarshaller.unmarshal(document);
+			
+			if (jaxElement.getValue() instanceof ch.fd.invoice450.request.RequestType) {
+				ch.fd.invoice450.request.RequestType request =
+					(ch.fd.invoice450.request.RequestType) jaxElement.getValue();
+				return request;
+			}
+			
+		} catch (JDOMException | JAXBException e) {
+			log.error("Unmarshalling generalInvoiceRequest_450 from jDom document failed", e);
+		}
+		return null;
+	}
+	
 	public static String getXMLVersion(org.jdom.Document jdomDoc){
 		Element root = jdomDoc.getRootElement();
 		String location =

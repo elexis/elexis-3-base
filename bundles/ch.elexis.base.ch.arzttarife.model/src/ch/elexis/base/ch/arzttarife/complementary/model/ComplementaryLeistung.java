@@ -82,6 +82,11 @@ public class ComplementaryLeistung
 	}
 	
 	@Override
+	public String getCodeSystemCode(){
+		return "590";
+	}
+	
+	@Override
 	public String getCodeSystemName(){
 		return ch.elexis.core.jpa.entities.ComplementaryLeistung.CODESYSTEM_NAME;
 	}

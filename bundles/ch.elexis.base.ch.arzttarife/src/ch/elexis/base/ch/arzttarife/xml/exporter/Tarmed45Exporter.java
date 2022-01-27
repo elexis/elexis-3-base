@@ -110,6 +110,7 @@ import ch.fd.invoice450.request.UvgLawType;
 import ch.fd.invoice450.request.VatRateType;
 import ch.fd.invoice450.request.VatType;
 import ch.fd.invoice450.request.VvgLawType;
+import ch.fd.invoice450.request.XtraDrugType;
 import ch.fd.invoice450.request.ZipType;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -765,10 +766,16 @@ public class Tarmed45Exporter {
 						serviceType.setRecordId(recordNumber++);
 						serviceType.setSession(session);
 						serviceType.setName(billed.getText());
-						if (billable instanceof IArticle && "true"
-							.equals((String) billed.getExtInfo(Constants.FLD_EXT_INDICATED))) {
-							serviceType
-								.setName(serviceType.getName() + " (medizinisch indiziert: 207)");
+						if (billable instanceof IArticle) {
+							XtraDrugType drugType = new XtraDrugType();
+							drugType.setIndicated(false);
+							if ("true"
+								.equals((String) billed.getExtInfo(Constants.FLD_EXT_INDICATED))) {
+								serviceType.setName(
+									serviceType.getName() + " (medizinisch indiziert: 207)");
+								drugType.setIndicated(true);
+							}
+							serviceType.setXtraDrug(drugType);
 						}
 						serviceType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
 						serviceType

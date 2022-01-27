@@ -221,7 +221,9 @@ public class Tarmed45Exporter {
 			
 			balanceTGType.setCurrency(getCurrency(invoice));
 			balanceTGType.setAmountPrepaid(invoice.getPayedAmount().doubleValue());
-			balanceTGType.setAmountReminder(invoice.getDemandAmount().doubleValue());
+			if (!invoice.getDemandAmount().isZero()) {
+				balanceTGType.setAmountReminder(invoice.getDemandAmount().doubleValue());
+			}
 			// use tariff sum as invoice total is rounded to 5
 			balanceTGType.setAmount(financialInfo.getTotalSum().doubleValue());
 			balanceTGType.setAmountDue(invoice.getOpenAmount().roundTo5().doubleValue());
@@ -233,7 +235,9 @@ public class Tarmed45Exporter {
 			BalanceTPType balanceTPType = new BalanceTPType();
 			
 			balanceTPType.setCurrency(getCurrency(invoice));
-			balanceTPType.setAmountReminder(invoice.getDemandAmount().doubleValue());
+			if (!invoice.getDemandAmount().isZero()) {
+				balanceTPType.setAmountReminder(invoice.getDemandAmount().doubleValue());
+			}
 			// use tariff sum as invoice total is rounded to 5
 			balanceTPType.setAmount(financialInfo.getTotalSum().doubleValue());
 			balanceTPType.setAmountDue(invoice.getOpenAmount().roundTo5().doubleValue());

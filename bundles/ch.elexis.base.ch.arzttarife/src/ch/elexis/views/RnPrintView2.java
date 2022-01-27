@@ -39,6 +39,7 @@ import ch.elexis.data.RnStatus;
 import ch.elexis.tarmed.printer.TarmedTemplateRequirement;
 import ch.elexis.tarmed.printer.XML40Printer;
 import ch.elexis.tarmed.printer.XML44Printer;
+import ch.elexis.tarmed.printer.XML45Printer;
 
 /**
  * This is a pop-in replacement for RnPrintView. To avoid several problems around OpenOffice based
@@ -122,6 +123,10 @@ public class RnPrintView2 extends ViewPart {
 			XML44Printer xmlPrinter = new XML44Printer(text);
 			return xmlPrinter.doPrint(rn, xmlRn, rnType, saveFile, withESR, withForms, doVerify,
 				monitor);
+		} else if (TarmedJaxbUtil.getXMLVersion(xmlRn).equals("4.5")) {
+			XML45Printer xmlPrinter = new XML45Printer(text);
+			return xmlPrinter.doPrint(rn, xmlRn, rnType, saveFile, withESR, withForms, doVerify,
+				monitor);
 		} else {
 			
 			SWTHelper.showError("Fehler beim Drucken",
@@ -145,6 +150,13 @@ public class RnPrintView2 extends ViewPart {
 		}
 		if (!testTemplate(TarmedTemplateRequirement.TT_TARMED_44_S2)) {
 			initializeTemplate(TarmedTemplateRequirement.TT_TARMED_44_S2);
+		}
+		
+		if (!testTemplate(TarmedTemplateRequirement.TT_TARMED_45_S1)) {
+			initializeTemplate(TarmedTemplateRequirement.TT_TARMED_45_S1);
+		}
+		if (!testTemplate(TarmedTemplateRequirement.TT_TARMED_45_S2)) {
+			initializeTemplate(TarmedTemplateRequirement.TT_TARMED_45_S2);
 		}
 	}
 	
@@ -206,6 +218,10 @@ public class RnPrintView2 extends ViewPart {
 				return URL_ROOT + "TR44_S1.docx";
 			case TarmedTemplateRequirement.TT_TARMED_44_S2:
 				return URL_ROOT + "TR44_S2.docx";
+			case TarmedTemplateRequirement.TT_TARMED_45_S1:
+				return URL_ROOT + "TR45_S1.docx";
+			case TarmedTemplateRequirement.TT_TARMED_45_S2:
+				return URL_ROOT + "TR45_S2.docx";
 			default:
 				break;
 			}
@@ -219,6 +235,10 @@ public class RnPrintView2 extends ViewPart {
 				return URL_ROOT + "TR44_S1.odt";
 			case TarmedTemplateRequirement.TT_TARMED_44_S2:
 				return URL_ROOT + "TR44_S2.odt";
+			case TarmedTemplateRequirement.TT_TARMED_45_S1:
+				return URL_ROOT + "TR45_S1.odt";
+			case TarmedTemplateRequirement.TT_TARMED_45_S2:
+				return URL_ROOT + "TR45_S2.odt";
 				
 			default:
 				break;

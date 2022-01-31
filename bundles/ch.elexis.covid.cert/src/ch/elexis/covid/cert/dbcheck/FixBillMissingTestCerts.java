@@ -40,7 +40,6 @@ import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQueryCursor;
-import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.StickerServiceHolder;
 import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
@@ -167,7 +166,7 @@ public class FixBillMissingTestCerts extends ExternalMaintenance {
 								if (i.getState() == InvoiceState.PAID) {
 									i.setState(InvoiceState.TOTAL_LOSS);
 									invoiceStateChangeCount++;
-								} else {
+								} else if (i.getState() != InvoiceState.PARTIAL_LOSS) {
 									i.setState(InvoiceState.PARTIAL_LOSS);
 									invoiceStateChangeCount++;
 								}

@@ -72,6 +72,7 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter;
+import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Validator;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.Preferences;
@@ -205,6 +206,8 @@ public class XMLExporter implements IRnOutputter {
 	
 	private Tarmed45Exporter exporter;
 	private Tarmed45Validator validator;
+	
+	private EsrType esrType;
 	
 	public XMLExporter(){
 		ta = TarmedACL.getInstance();
@@ -341,6 +344,8 @@ public class XMLExporter implements IRnOutputter {
 		invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class).orElseThrow(
 			() -> new IllegalStateException("Could not load invoice [" + rechnung.getId() + "]"));
 		
+		exporter.setEsrType(esrType);
+		
 		if (xmlBillExists(invoice)) {
 			logger.info("Updating existing bill for " + invoice.getNumber());
 			Document updated = updateExistingXmlBill(invoice, dest, type, doVerify);
@@ -437,7 +442,6 @@ public class XMLExporter implements IRnOutputter {
 			} else if (getXmlVersion(root).equals("4.5")) {
 				Optional<?> invoiceRequest = getExistingXmlModel(invoice, "4.5");
 				if (invoiceRequest.isPresent()) {
-					Tarmed45Exporter exporter = new Tarmed45Exporter();
 					exporter.updateExistingXml(
 						(ch.fd.invoice450.request.RequestType) invoiceRequest.get(), type, invoice,
 						this);
@@ -1121,5 +1125,9 @@ public class XMLExporter implements IRnOutputter {
 	
 	protected String getRole(final ICoverage coverage){
 		return "production"; //$NON-NLS-1$
+	}
+	
+	public void setEsrType(EsrType esrType){
+		this.esrType = esrType;
 	}
 }

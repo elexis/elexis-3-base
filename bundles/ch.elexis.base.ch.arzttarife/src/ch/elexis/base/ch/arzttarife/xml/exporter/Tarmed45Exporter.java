@@ -146,13 +146,7 @@ public class Tarmed45Exporter {
 		final IRnOutputter.TYPE type){
 		
 		try {
-			besr = new ESR(
-				(String) invoice.getMandator().getBiller()
-					.getExtInfo(TarmedACL.getInstance().ESRNUMBER),
-				(String) invoice.getMandator().getBiller().getExtInfo(TarmedACL
-					.getInstance().ESRSUB),
-				InvoiceServiceHolder.get().getCombinedId(invoice), ESR.ESR27);
-			
+			besr = null;
 			// build the tarmed invoice request for the IInvoice
 			RequestType requestType = new RequestType();
 			requestType.setModus(getModus(invoice.getCoverage()));
@@ -197,7 +191,11 @@ public class Tarmed45Exporter {
 	}
 	
 	public void setEsrType(EsrType esrType){
-		this.esrType = esrType;
+		if(esrType == null) {
+			this.esrType = EsrType.esr9;
+		} else {
+			this.esrType = esrType;
+		}
 	}
 	
 	public boolean isPrintAtIntermediate(){
@@ -1133,7 +1131,7 @@ public class Tarmed45Exporter {
 			return null;
 		}
 		esrQRType.setIban(iban);
-		esrQRType.setReferenceNumber(besr.makeRefNr(false));
+		esrQRType.setReferenceNumber(getBesr(invoice).makeRefNr(false));
 		String additionalInformation = (String) invoice.getMandator().getBiller()
 			.getExtInfo(TarmedACL.getInstance().RNINFORMATION);
 		if (StringUtils.isNotBlank(additionalInformation)) {
@@ -1190,10 +1188,22 @@ public class Tarmed45Exporter {
 		return esrQRType;
 	}
 	
+	private ESR getBesr(IInvoice invoice){
+		if(besr == null) {
+			besr = new ESR(
+				(String) invoice.getMandator().getBiller()
+					.getExtInfo(TarmedACL.getInstance().ESRNUMBER),
+				(String) invoice.getMandator().getBiller().getExtInfo(TarmedACL
+					.getInstance().ESRSUB),
+				InvoiceServiceHolder.get().getCombinedId(invoice), ESR.ESR27);			
+		}
+		return besr;
+	}
+
 	protected Esr9Type getEsr9(IInvoice invoice){
 		Esr9Type esr9Type = new Esr9Type();
 		
-		String participantNumber = besr.makeParticipantNumber(true);
+		String participantNumber = getBesr(invoice).makeParticipantNumber(true);
 		if (StringUtils.isEmpty(participantNumber)) {
 			MessageDialog.openError(null, Messages.XMLExporter_MandatorErrorCaption,
 				Messages.XMLExporter_MandatorErrorEsr + " [" + invoice.getMandator().getLabel() //$NON-NLS-1$
@@ -1202,8 +1212,8 @@ public class Tarmed45Exporter {
 		}
 		esr9Type.setParticipantNumber(participantNumber);
 		esr9Type.setType("16or27");
-		esr9Type.setReferenceNumber(besr.makeRefNr(true));
-		String codingline = besr.createCodeline(
+		esr9Type.setReferenceNumber(getBesr(invoice).makeRefNr(true));
+		String codingline = getBesr(invoice).createCodeline(
 			XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", ""), null); //$NON-NLS-1$ //$NON-NLS-2$
 		esr9Type.setCodingLine(codingline);
 		
@@ -1299,7 +1309,7 @@ public class Tarmed45Exporter {
 			Demand demand = new ProcessingType.Demand();
 			demand.setTcDemandId(0);
 			
-			String tcToken = besr.createCodeline(
+			String tcToken = getBesr(invoice).createCodeline(
 				XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", //$NON-NLS-1$
 					""), //$NON-NLS-1$
 				tcCode);
@@ -1332,6 +1342,15 @@ public class Tarmed45Exporter {
 			
 			// update payload and balance
 			if (request.getPayload() != null && request.getPayload().getBody() != null) {
+				// update esr information
+				if (esrType == EsrType.esr9 && request.getPayload().getBody().getEsrQR() != null) {
+					request.getPayload().getBody().setEsrQR(null);
+					request.getPayload().getBody().setEsr9(getEsr9(invoice));
+				} else if (esrType == EsrType.esrQR
+					&& request.getPayload().getBody().getEsr9() != null) {
+					request.getPayload().getBody().setEsrQR(getEsrQR(invoice));
+					request.getPayload().getBody().setEsr9(null);
+				}
 				
 				if (request.getPayload().getBody().getTiersGarant() != null
 					&& invoice.getCoverage().getPatient() != null) {

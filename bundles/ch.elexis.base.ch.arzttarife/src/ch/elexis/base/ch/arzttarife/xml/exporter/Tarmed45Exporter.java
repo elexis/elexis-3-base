@@ -1384,6 +1384,7 @@ public class Tarmed45Exporter {
 				// update balance for storno
 				if (type.equals(TYPE.STORNO)) {
 					request.getPayload().setStorno(true);
+					request.getProcessing().setPrintCopyToGuarantor(false);
 					negate(request.getPayload().getBody().getServices());
 					if (request.getPayload().getBody().getTiersGarant() != null) {
 						BalanceTGType balance =

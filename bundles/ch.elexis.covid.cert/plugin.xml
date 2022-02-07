@@ -32,5 +32,8 @@
       <ExternalMaintenance
             MaintenanceCode="ch.elexis.covid.cert.dbcheck.BillMissingTestAttests">
       </ExternalMaintenance>
+      <ExternalMaintenance
+            MaintenanceCode="ch.elexis.covid.cert.dbcheck.FixBillMissingTestCerts">
+      </ExternalMaintenance>
    </extension>
 </plugin>

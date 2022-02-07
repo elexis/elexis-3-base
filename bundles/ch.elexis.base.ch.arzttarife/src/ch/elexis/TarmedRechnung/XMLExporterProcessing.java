@@ -16,7 +16,7 @@ public class XMLExporterProcessing {
 	
 	private static final String ELEMENT_PROCESSING = "processing"; //$NON-NLS-1$
 	public static final String ATTR_INTERMEDIAT_PRINT = "print_at_intermediate"; //$NON-NLS-1$
-	private static final String ATTR_PATIENT_COPY_PRINT = "print_patient_copy"; //$NON-NLS-1$
+	public static final String ATTR_PATIENT_COPY_PRINT = "print_patient_copy"; //$NON-NLS-1$
 	
 	public static final String ELEMENT_TRANSPORT = "transport"; //$NON-NLS-1$
 	public static final String ELEMENT_TRANSPORT_VIA = "via"; //$NON-NLS-1$

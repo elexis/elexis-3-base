@@ -702,6 +702,7 @@ public class XMLExporter implements IRnOutputter {
 		payload.setAttribute(ATTR_PAYLOAD_COPY, type.equals(IRnOutputter.TYPE.COPY) ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (type.equals(TYPE.STORNO)) {
 			payload.setAttribute("storno", Boolean.toString(true));//$NON-NLS-1$
+			processing.setAttribute(XMLExporterProcessing.ATTR_PATIENT_COPY_PRINT, "0");
 			Element services = body.getChild("services", XMLExporter.nsinvoice);//$NON-NLS-1$
 			XMLExporterServices xmlServices = new XMLExporterServices(services);
 			xmlServices.negateAll();

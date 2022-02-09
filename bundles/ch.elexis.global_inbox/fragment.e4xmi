@@ -35,9 +35,7 @@
     </elements>
     <elements xsi:type="basic:PartDescriptor" xmi:id="_SjWKwB9bEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.partdescriptor.detailpart" label="%detailpart.label" iconURI="platform:/plugin/ch.elexis.global_inbox/icons/inbox.jpg" category="Dokumente" closeable="true" contributionURI="bundleclass://ch.elexis.global_inbox/ch.elexis.global_inbox.ui.parts.GlobalInboxEntryDetailPart">
       <tags>View</tags>
-      <toolbar xmi:id="_DOX58B9dEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.toolbar.1">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_aW-psB9cEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.handledtoolitem.view" accessibilityPhrase="" label="" iconURI="icon://IMG_EYE_WO_SHADOW" command="_GDzgsB82Eeu6CfM6mOBDOA"/>
-      </toolbar>
+      <toolbar xmi:id="_DOX58B9dEeu6CfM6mOBDOA" elementId="ch.elexis.global_inbox.toolbar.1"/>
     </elements>
   </fragments>
 </fragment:ModelFragments>

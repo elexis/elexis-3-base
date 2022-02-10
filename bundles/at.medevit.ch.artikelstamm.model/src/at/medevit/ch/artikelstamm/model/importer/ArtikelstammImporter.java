@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -61,6 +62,19 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter
 	private static Map<String, PRODUCT> products = new HashMap<String, PRODUCT>();
 	private static Map<String, LIMITATION> limitations = new HashMap<String, LIMITATION>();
 	private static boolean isOddb2xml = false;
+	
+	@Override
+	public boolean isEnabled(){
+		// Queried by RDUS: This importer is only enabled if the existing data-set is oddb2xml
+		// or if the data-set is empty
+		try {
+			DATASOURCEType datasourceType = VersionUtil.getDatasourceType();
+			return Objects.equals(DATASOURCEType.ODDB_2_XML, datasourceType);
+		} catch (IllegalArgumentException iae) {
+			// empty data-set
+			return true;
+		}
+	}
 	
 	/**
 	 * @param monitor

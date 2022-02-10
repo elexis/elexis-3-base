@@ -30,7 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientConfig;
 import org.slf4j.LoggerFactory;
-import com.eclipsesource.jaxrs.provider.gson.GsonProvider;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -208,8 +208,6 @@ public class CovidCertificateApi {
 		xSignatureClientRequestFilter = new XSignatureClientRequestFilter();
 		
 		config.register(xSignatureClientRequestFilter);
-		
-		config.register(GsonProvider.class);
 		
 		return config;
 	}

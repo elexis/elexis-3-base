@@ -243,6 +243,13 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter
 				"[IP] Updating product " + foundProduct.getId() + " (" + product.getDSCR() + ")");
 			setValuesOnArtikelstammProdukt(foundProduct, product, newVersion);
 			products.add(foundProduct);
+			
+			// save in batches
+			if (products.size() == 50) {
+				EntityUtil.save(products);
+				products.clear();
+			}
+			
 			subMonitor.worked(1);
 		}
 		EntityUtil.save(products);

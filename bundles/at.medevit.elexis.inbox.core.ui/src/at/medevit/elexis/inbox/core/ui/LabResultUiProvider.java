@@ -12,19 +12,16 @@ package at.medevit.elexis.inbox.core.ui;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.IViewDescriptor;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
@@ -34,17 +31,14 @@ import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.LabServiceHolder;
 import ch.elexis.core.types.LabItemTyp;
-import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.data.LabResult;
 import ch.rgw.tools.Result;
 
 public class LabResultUiProvider implements IInboxElementUiProvider {
 	//	private static DecorationOverlayIcon pathologicLabImage;
 	
-	@Inject
-	private EPartService partService;
-	
-	private MPart labPart;
+	private IViewDescriptor rocheView;
+	private IViewDescriptor labView;
 	
 	private LabResultLabelProvider labelProvider;
 	//	private PathologicInboxFilter filter;
@@ -106,20 +100,23 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 	
 	@Override
 	public void doubleClicked(IInboxElement element){
-		if (partService == null) {
-			CoreUiUtil.injectServicesWithContext(this);
-			IViewDescriptor rocheView = PlatformUI.getWorkbench().getViewRegistry()
-				.find("at.medevit.elexis.roche.labor.view");
-			if (rocheView != null) {
-				labPart = partService.findPart("at.medevit.elexis.roche.labor.view");
-			} else {
-				labPart = partService.findPart("ch.elexis.Labor");
-			}
-		}
 		if (element instanceof LabGroupedInboxElements) {
+			if (rocheView == null && labView == null) {
+				rocheView = PlatformUI.getWorkbench().getViewRegistry()
+					.find("at.medevit.elexis.roche.labor.view");
+				labView = PlatformUI.getWorkbench().getViewRegistry().find("ch.elexis.Labor");
+			}
 			Display.getDefault().asyncExec(() -> {
-				if (partService != null && labPart != null) {
-					partService.showPart(labPart, PartState.ACTIVATE);
+				try {
+					if (rocheView != null) {
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(rocheView.getId());
+					} else if (labView != null) {
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(labView.getId());
+					}
+				} catch (PartInitException e) {
+					LoggerFactory.getLogger(getClass()).warn("Error showing lab view", e);
 				}
 			});
 		}

@@ -20,19 +20,27 @@ public abstract class GroupedInboxElements implements IInboxElement {
 	}
 	
 	public void addElement(IInboxElement element){
-		inboxElements.add(element);
+		synchronized (inboxElements) {
+			inboxElements.add(element);
+		}
 	}
 	
 	public List<IInboxElement> getElements(){
-		return new ArrayList<IInboxElement>(inboxElements);
+		synchronized (inboxElements) {
+			return new ArrayList<IInboxElement>(inboxElements);
+		}
 	}
 	
 	public boolean isEmpty(){
-		return inboxElements.isEmpty();
+		synchronized (inboxElements) {
+			return inboxElements.isEmpty();
+		}
 	}
 	
 	public IInboxElement getFirstElement(){
-		return inboxElements.isEmpty() ? null : getElements().get(0);
+		synchronized (inboxElements) {
+			return inboxElements.isEmpty() ? null : getElements().get(0);
+		}
 	}
 	
 	@Override

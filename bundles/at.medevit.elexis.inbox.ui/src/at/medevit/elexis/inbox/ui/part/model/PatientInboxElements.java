@@ -15,9 +15,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
+import at.medevit.elexis.inbox.ui.part.provider.InboxElementUiExtension;
 import ch.elexis.core.model.IPatient;
 
 public class PatientInboxElements {
+	
+	private static InboxElementUiExtension inboxElementUiExtension;
 	
 	private IPatient patient;
 	private HashSet<IInboxElement> elements = new HashSet<IInboxElement>();
@@ -31,7 +34,20 @@ public class PatientInboxElements {
 	}
 	
 	public void addElement(IInboxElement element){
-		elements.add(element);
+		GroupedInboxElements grouped = getGrouped(this, element);
+		if (grouped != null) {
+			elements.add(grouped);
+		} else {
+			elements.add(element);
+		}
+	}
+	
+	private GroupedInboxElements getGrouped(PatientInboxElements patientInboxElements,
+		IInboxElement element){
+		if (inboxElementUiExtension == null) {
+			inboxElementUiExtension = new InboxElementUiExtension();
+		}
+		return inboxElementUiExtension.getGrouped(patientInboxElements, element);
 	}
 	
 	public void removeElement(IInboxElement element){

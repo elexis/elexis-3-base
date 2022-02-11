@@ -14,12 +14,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
-      <page
-            category="ch.elexis.preferences.UserPreferences"
-            class="at.medevit.elexis.inbox.core.ui.preferences.InboxPreferences"
-            id="at.medevit.elexis.inbox.core.ui.preferences"
-            name="Inbox">
-      </page>
    </extension>
 
 </plugin>

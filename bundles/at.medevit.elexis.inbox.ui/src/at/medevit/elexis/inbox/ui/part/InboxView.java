@@ -54,6 +54,7 @@ import at.medevit.elexis.inbox.ui.InboxModelServiceHolder;
 import at.medevit.elexis.inbox.ui.InboxServiceHolder;
 import at.medevit.elexis.inbox.ui.command.AutoActivePatientHandler;
 import at.medevit.elexis.inbox.ui.part.action.InboxFilterAction;
+import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
@@ -304,11 +305,15 @@ public class InboxView extends ViewPart {
 	private State toggleInboxElementState(IInboxElement inboxElement){
 		if (inboxElement.getState() == State.NEW) {
 			inboxElement.setState(State.SEEN);
-			InboxModelServiceHolder.get().save(inboxElement);
+			if (!(inboxElement instanceof GroupedInboxElements)) {
+				InboxModelServiceHolder.get().save(inboxElement);
+			}
 			return State.SEEN;
 		} else if (inboxElement.getState() == State.SEEN) {
 			inboxElement.setState(State.NEW);
-			InboxModelServiceHolder.get().save(inboxElement);
+			if (!(inboxElement instanceof GroupedInboxElements)) {
+				InboxModelServiceHolder.get().save(inboxElement);
+			}
 			return State.NEW;
 		}
 		return State.NEW;

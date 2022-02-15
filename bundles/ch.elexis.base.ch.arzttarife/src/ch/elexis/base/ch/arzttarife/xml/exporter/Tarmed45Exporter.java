@@ -1028,7 +1028,8 @@ public class Tarmed45Exporter {
 	protected String getCaseNumber(IInvoice invoice){
 		String caseNumber = CoverageServiceHolder.get().getRequiredString(invoice.getCoverage(),
 			TarmedRequirements.CASE_NUMBER);
-		return caseNumber.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+		caseNumber = caseNumber.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+		return StringUtils.isNotBlank(caseNumber) ? caseNumber : null;
 	}
 	
 	protected String getInsuredId(IInvoice invoice){
@@ -1041,7 +1042,7 @@ public class Tarmed45Exporter {
 		if (StringTool.isNothing(vnummer)) {
 			vnummer = invoice.getCoverage().getPatient().getId();
 		}
-		return vnummer;
+		return StringUtils.isNotBlank(vnummer) ? vnummer : null;
 	}
 	
 	protected String getSSN(IInvoice invoice){
@@ -1052,7 +1053,7 @@ public class Tarmed45Exporter {
 				TarmedRequirements.SSN)
 				.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		}
-		return ahv;
+		return StringUtils.isNotBlank(ahv) ? ahv : null;
 	}
 	
 	protected EsrQRType getEsrQR(IInvoice invoice){

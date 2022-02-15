@@ -430,6 +430,14 @@ public class XMLExporterUtil {
 		return kEAN;
 	}
 	
+	public static XMLGregorianCalendar makeXMLDate(TimeTool date)
+		throws DatatypeConfigurationException{
+		if (date != null) {
+			return makeXMLDate(date.toLocalDate());
+		}
+		return null;
+	}
+	
 	public static XMLGregorianCalendar makeXMLDate(LocalDate date)
 		throws DatatypeConfigurationException{
 		ZonedDateTime zonedDateTime = date.atStartOfDay().atZone(ZoneId.systemDefault());

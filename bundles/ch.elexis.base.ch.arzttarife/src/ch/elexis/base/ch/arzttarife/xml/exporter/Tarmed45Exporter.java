@@ -836,6 +836,7 @@ public class Tarmed45Exporter {
 		PayloadType payloadType = new PayloadType();
 		
 		//		payloadType.setCredit(value);
+		payloadType.setType("invoice");
 		payloadType.setInvoice(getInvoice(invoice));
 		
 		payloadType.setBody(getBody(invoice));
@@ -1030,11 +1031,20 @@ public class Tarmed45Exporter {
 	
 	protected Object getLawType(IInvoice invoice) throws DatatypeConfigurationException{
 		BillingLaw law = invoice.getCoverage().getBillingSystem().getLaw();
+		
+		TimeTool caseDate = null;
+		if(StringUtils.isNotBlank((String) invoice.getCoverage().getExtInfo("Unfalldatum"))) {
+			caseDate = new TimeTool((String) invoice.getCoverage().getExtInfo("Unfalldatum"));
+		} else if (invoice.getDateFrom() != null){
+			caseDate = new TimeTool (invoice.getDateFrom());
+		}
+		
 		if (law == BillingLaw.KVG) {
 			KvgLawType kvgLawType = new KvgLawType();
 			
 			kvgLawType.setInsuredId(getInsuredId(invoice));
 			kvgLawType.setCaseId(getCaseNumber(invoice));
+			kvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
 			
 			return kvgLawType;
 		} else if (law == BillingLaw.UVG) {
@@ -1048,15 +1058,9 @@ public class Tarmed45Exporter {
 			if (StringUtils.isNotBlank(casenumber)) {
 				uvgLawType.setCaseId(casenumber);
 			}
-			String casedate = (String) invoice.getCoverage().getExtInfo("Unfalldatum"); //$NON-NLS-1$
-			if (StringUtils.isEmpty(casedate)) {
-				uvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(invoice.getDateFrom()));
-			} else {
-				TimeTool timeTool = new TimeTool(casedate);
-				uvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(timeTool.toLocalDate()));
-			}
 			uvgLawType.setSsn(getSSN(invoice));
 			uvgLawType.setInsuredId(getInsuredId(invoice));
+			uvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
 			
 			return uvgLawType;
 		} else if (law == BillingLaw.IV) {
@@ -1068,6 +1072,7 @@ public class Tarmed45Exporter {
 				TarmedRequirements.getNIF(invoice.getMandator().getBiller()).replaceAll("[^0-9]", //$NON-NLS-1$
 					StringConstants.EMPTY);
 			ivgLawType.setNif(nif);
+			ivgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
 			
 			return ivgLawType;
 		} else if (law == BillingLaw.MV) {
@@ -1076,6 +1081,7 @@ public class Tarmed45Exporter {
 			mvgLawType.setSsn(getSSN(invoice));
 			mvgLawType.setInsuredId(getInsuredId(invoice));
 			mvgLawType.setCaseId(getCaseNumber(invoice));
+			mvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
 			
 			return mvgLawType;
 		} else if (law == BillingLaw.VVG) {
@@ -1083,6 +1089,7 @@ public class Tarmed45Exporter {
 			
 			vvgLawType.setInsuredId(getInsuredId(invoice));
 			vvgLawType.setCaseId(getCaseNumber(invoice));
+			vvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
 			
 			return vvgLawType;
 		} else {
@@ -1417,6 +1424,7 @@ public class Tarmed45Exporter {
 				if (reminderType == null) {
 					reminderType = new ReminderType();
 					request.getPayload().setReminder(reminderType);
+					request.getPayload().setType("reminder");
 				}
 				reminderType.setRequestId(InvoiceServiceHolder.get().getCombinedId(invoice));
 				reminderType.setReminderLevel(reminderLevel);

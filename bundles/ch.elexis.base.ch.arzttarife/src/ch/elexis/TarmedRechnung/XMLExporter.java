@@ -198,8 +198,6 @@ public class XMLExporter implements IRnOutputter {
 	static TarmedACL ta;
 	private String outputDir;
 	
-	private XMLExporterEsr9 esr9;
-	
 	// default true, keep old behavior
 	private boolean printAtIntermediate = true;
 	public static final String PREFIX = "TarmedRn:"; //$NON-NLS-1$

@@ -130,7 +130,7 @@ public class Tarmed45Exporter {
 	
 	private ESR besr;
 	
-	private EsrType esrType = EsrType.esr9;
+	private EsrType esrType = EsrType.esrQR;
 	
 	/**
 	 * Create a tarmed invoice request model for the {@link IInvoice}, and marshall it into the
@@ -192,7 +192,7 @@ public class Tarmed45Exporter {
 	
 	public void setEsrType(EsrType esrType){
 		if(esrType == null) {
-			this.esrType = EsrType.esr9;
+			this.esrType = EsrType.esrQR;
 		} else {
 			this.esrType = esrType;
 		}

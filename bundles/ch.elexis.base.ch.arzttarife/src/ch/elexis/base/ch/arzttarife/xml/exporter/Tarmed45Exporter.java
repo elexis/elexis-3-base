@@ -791,8 +791,53 @@ public class Tarmed45Exporter {
 				return null;
 			}
 		}
+		if(servicesType.getServiceExOrService() != null) {
+			servicesType.getServiceExOrService().sort((l, r) -> {
+				LocalDate lDate = getServiceExOrServiceDate(l);
+				LocalDate rDate = getServiceExOrServiceDate(r);
+				int ret = lDate.compareTo(rDate);
+				if (ret == 0) {
+					Integer lTariff = getServiceExOrServiceTariffType(l);
+					Integer rTariff = getServiceExOrServiceTariffType(r);
+					ret = lTariff.compareTo(rTariff);
+					if (ret == 0) {
+						String lCode = getServiceExOrServiceCode(l);
+						String rCode = getServiceExOrServiceCode(r);
+						ret = lCode.compareTo(rCode);
+					}
+				}
+				return ret;
+			});
+		}
 		
 		return servicesType;
+	}
+	
+	private String getServiceExOrServiceCode(Object obj){
+		if (obj instanceof ServiceType) {
+			return ((ServiceType) obj).getCode();
+		} else if (obj instanceof ServiceExType) {
+			return ((ServiceExType) obj).getCode();
+		}
+		throw new IllegalArgumentException("Unknown type [" + obj.getClass().getName() + "]");
+	}
+	
+	private Integer getServiceExOrServiceTariffType(Object obj){
+		if (obj instanceof ServiceType) {
+			return Integer.parseInt(((ServiceType) obj).getTariffType());
+		} else if (obj instanceof ServiceExType) {
+			return Integer.parseInt(((ServiceExType) obj).getTariffType());
+		}
+		throw new IllegalArgumentException("Unknown type [" + obj.getClass().getName() + "]");
+	}
+	
+	private LocalDate getServiceExOrServiceDate(Object obj){
+		if (obj instanceof ServiceType) {
+			return XMLExporterUtil.getAsLocalDate(((ServiceType) obj).getDateBegin());
+		} else if (obj instanceof ServiceExType) {
+			return XMLExporterUtil.getAsLocalDate(((ServiceExType) obj).getDateBegin());
+		}
+		throw new IllegalArgumentException("Unknown type [" + obj.getClass().getName() + "]");
 	}
 	
 	protected Boolean getObligation(IBilled billed, IBillable billable){

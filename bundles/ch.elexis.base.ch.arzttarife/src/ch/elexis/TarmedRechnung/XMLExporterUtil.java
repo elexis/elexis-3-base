@@ -459,6 +459,10 @@ public class XMLExporterUtil {
 		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
 	}
 	
+	public static LocalDate getAsLocalDate(XMLGregorianCalendar xmlDate){
+		return LocalDate.of(xmlDate.getYear(), xmlDate.getMonth(), xmlDate.getDay());
+	}
+	
 	public static Optional<Double> getALScalingFactor(IBilled billed){
 		String scalingFactor = (String) billed.getExtInfo("AL_SCALINGFACTOR");
 		if (scalingFactor != null && !scalingFactor.isEmpty()) {

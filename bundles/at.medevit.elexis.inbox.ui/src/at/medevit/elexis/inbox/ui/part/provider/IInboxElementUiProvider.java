@@ -16,6 +16,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
+import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
+import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 
 public interface IInboxElementUiProvider {
 	/**
@@ -69,5 +71,28 @@ public interface IInboxElementUiProvider {
 	 */
 	public default boolean isVisible(IInboxElement element){
 		return true;
+	}
+	
+	/**
+	 * Test if the {@link IInboxElementUiProvider} supports grouping of {@link IInboxElement}s.
+	 * 
+	 * @return
+	 */
+	public default boolean isGrouped(){
+		return false;
+	}
+	
+	/**
+	 * Get a {@link GroupedInboxElements} instance for the provided {@link PatientInboxElements} and
+	 * {@link IInboxElement}. The returned {@link GroupedInboxElements} is not added to the
+	 * {@link PatientInboxElements} by this method.
+	 * 
+	 * @param patientInboxElements
+	 * @param element
+	 * @return
+	 */
+	public default GroupedInboxElements getGrouped(PatientInboxElements patientInboxElements,
+		IInboxElement element) {
+		return null;
 	}
 }

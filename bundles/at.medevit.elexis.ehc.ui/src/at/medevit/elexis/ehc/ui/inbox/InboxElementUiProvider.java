@@ -18,11 +18,9 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.wb.swt.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.medevit.elexis.ehc.ui.inbox.filter.EhcDocumentViewerFilter;
 import at.medevit.elexis.ehc.ui.model.EhcDocument;
 import at.medevit.elexis.ehc.ui.views.EHealthConnectorView;
 import at.medevit.elexis.inbox.model.IInboxElement;
@@ -32,22 +30,24 @@ public class InboxElementUiProvider implements IInboxElementUiProvider {
 	private static Logger logger = LoggerFactory.getLogger(InboxElementUiProvider.class);
 	
 	private EhcDocumentLabelProvider labelProvider;
-	private EhcDocumentViewerFilter filter;
+	//	private EhcDocumentViewerFilter filter;
 	
 	public InboxElementUiProvider(){
 		labelProvider = new EhcDocumentLabelProvider();
-		filter = new EhcDocumentViewerFilter();
+		//		filter = new EhcDocumentViewerFilter();
 	}
 	
 	@Override
 	public ImageDescriptor getFilterImage(){
-		return ResourceManager
-			.getPluginImageDescriptor("at.medevit.elexis.ehc.ui", "icons/ehc.jpg");
+		//		return ResourceManager
+		//			.getPluginImageDescriptor("at.medevit.elexis.ehc.ui", "icons/ehc.jpg");
+		return null;
 	}
 	
 	@Override
 	public ViewerFilter getFilter(){
-		return filter;
+		//		return filter;
+		return null;
 	}
 	
 	@Override

@@ -70,12 +70,8 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 						.collect(Collectors.toList());
 					
 					testCertificates.forEach(cert -> {
-						List<IEncounter> encountersAt =
-							getEncountersAt(patient, cert.getTimestamp().toLocalDate());
-						
-						Optional<IEncounter> certificateBilledEncounter = encountersAt.stream()
-							.filter(encounter -> isCertificateBilled(encounter)).findFirst();
-						if (!certificateBilledEncounter.isPresent()) {
+						if (!isCertificateBilledAtDate(patient,
+							cert.getTimestamp().toLocalDate())) {
 							Optional<ICoverage> coverage = getCoverage(patient);
 							if (coverage.isPresent()) {
 								billCert(coverage.get(), cert);
@@ -109,6 +105,19 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 					? "\nEs gab " + notBillableCount
 						+ " Patienten bei denen nicht verrechnet werden konnte. (NotBillablePatients.csv Datei im user home elexis Verzeichnis)"
 					: "");
+	}
+	
+	/**
+	 * Test if there is an encounter at the date with a billed covid certificate.
+	 * 
+	 * @param patient
+	 * @param localDate
+	 * @return
+	 */
+	private boolean isCertificateBilledAtDate(IPatient patient, LocalDate localDate){
+		List<IEncounter> encountersAt = getAllEncountersAt(patient, localDate);
+		return encountersAt.stream().filter(encounter -> isCertificateBilled(encounter)).findFirst()
+			.isPresent();
 	}
 	
 	private void addNotBillable(IPatient patient){
@@ -171,13 +180,13 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 	}
 	
 	/**
-	 * Lookup encounters at date of the newest open coverage with KVG law.
+	 * Lookup encounters at date of all coverages.
 	 * 
 	 * @param patient
 	 * @param localDate
 	 * @return
 	 */
-	private List<IEncounter> getEncountersAt(IPatient patient, LocalDate localDate){
+	private List<IEncounter> getAllEncountersAt(IPatient patient, LocalDate localDate){
 		if (patient.getCoverages() != null) {
 			List<ICoverage> coverages = patient.getCoverages();
 			coverages.sort(new Comparator<ICoverage>() {
@@ -186,10 +195,7 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 					return o2.getDateFrom().compareTo(o1.getDateFrom());
 				}
 			});
-			return coverages.stream()
-				.filter(coverage -> coverage.isOpen()
-					&& coverage.getBillingSystem().getLaw() == BillingLaw.KVG)
-				.flatMap(coverage -> coverage.getEncounters().stream())
+			return coverages.stream().flatMap(coverage -> coverage.getEncounters().stream())
 				.filter(encounter -> encounter.getDate().equals(localDate))
 				.collect(Collectors.toList());
 		}

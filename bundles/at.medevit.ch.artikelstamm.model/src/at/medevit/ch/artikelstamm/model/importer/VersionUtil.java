@@ -18,7 +18,7 @@ public class VersionUtil {
 		if (versionEntry != null) {
 			return DATASOURCEType.fromValue(versionEntry.getAdddscr());
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Version entry");
 	}
 	
 	public static void setDataSourceType(DATASOURCEType datasource){
@@ -28,7 +28,7 @@ public class VersionUtil {
 			EntityUtil.save(Collections.singletonList(versionEntry));
 			return;
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Version entry");
 	}
 	
 	public static int getCurrentVersion(){
@@ -51,7 +51,7 @@ public class VersionUtil {
 			EntityUtil.save(Collections.singletonList(versionEntry));
 			return;
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Version entry");
 	}
 	
 	public static void setImportSetCreationDate(Date time){
@@ -61,7 +61,7 @@ public class VersionUtil {
 			EntityUtil.save(Collections.singletonList(versionEntry));
 			return;
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Version entry");
 	}
 	
 	public static Date getImportSetCreationDate(){
@@ -74,6 +74,6 @@ public class VersionUtil {
 				return null;
 			}
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Version entry");
 	}
 }

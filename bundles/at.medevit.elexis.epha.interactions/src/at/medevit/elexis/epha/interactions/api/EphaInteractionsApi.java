@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.slf4j.LoggerFactory;
 
-import com.eclipsesource.jaxrs.provider.gson.GsonProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -77,7 +76,7 @@ public class EphaInteractionsApi {
 				}
 			}, new java.security.SecureRandom());
 			return ClientBuilder.newBuilder().sslContext(sslcontext)
-				.hostnameVerifier((s1, s2) -> true).withConfig(new ClientConfig().register(GsonProvider.class)).build();
+				.hostnameVerifier((s1, s2) -> true).withConfig(new ClientConfig()).build();
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).warn("Error creating jaxrs client", e);
 		}

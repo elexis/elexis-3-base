@@ -8,14 +8,19 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -42,6 +47,12 @@ public class GlobalInboxPart {
 	private IStatus inboxConfigStat;
 	private boolean configErrorShown = false;
 	private GlobalInboxContentProvider cp;
+	
+	@Inject
+	private ECommandService commandService;
+	
+	@Inject
+	private EHandlerService handlerService;
 	
 	@Inject
 	public GlobalInboxPart(Composite parent, EMenuService menuService,
@@ -91,6 +102,16 @@ public class GlobalInboxPart {
 						LoggerFactory.getLogger(getClass()).warn("Exception", e);
 					}
 				}
+			}
+		});
+		tv.addDoubleClickListener(new IDoubleClickListener() {
+			
+			@Override
+			public void doubleClick(DoubleClickEvent event){
+				// call view command
+				ParameterizedCommand command = commandService.createCommand(
+					"ch.elexis.global_inbox.command.globalinboxentryview");
+				handlerService.executeHandler(command);
 			}
 		});
 		

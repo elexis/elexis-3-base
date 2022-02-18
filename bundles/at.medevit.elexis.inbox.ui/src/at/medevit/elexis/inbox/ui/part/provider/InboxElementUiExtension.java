@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
+import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
+import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 
 public class InboxElementUiExtension {
 	
@@ -116,5 +118,14 @@ public class InboxElementUiExtension {
 			return provider.isVisible(element);
 		}
 		return true;
+	}
+	
+	public GroupedInboxElements getGrouped(PatientInboxElements patientInboxElements,
+		IInboxElement element){
+		IInboxElementUiProvider provider = getProvider(element);
+		if (provider != null && provider.isGrouped()) {
+			return provider.getGrouped(patientInboxElements, element);
+		}
+		return null;
 	}
 }

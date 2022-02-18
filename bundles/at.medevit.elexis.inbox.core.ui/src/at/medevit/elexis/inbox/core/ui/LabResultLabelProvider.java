@@ -120,6 +120,9 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 	
 	@Override
 	public String getText(Object element){
+		if (element instanceof LabGroupedInboxElements) {
+			return ((LabGroupedInboxElements) element).getLabel();
+		}
 		Object object = ((IInboxElement) element).getObject();
 		if (object instanceof LabResult) {
 			LabResult labResult = (LabResult) object;
@@ -156,6 +159,9 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 	
 	@Override
 	public Color getForeground(Object element){
+		if (element instanceof LabGroupedInboxElements) {
+			return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
+		}
 		boolean pathologic = false;
 		Object object = ((IInboxElement) element).getObject();
 		if (object instanceof LabResult) {

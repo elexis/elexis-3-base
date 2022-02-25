@@ -408,11 +408,13 @@ public class Tarmed45Exporter {
 
 		}
 		patientAddressType.setPerson(getPerson(patient, false));
-		if (StringUtils.isNotBlank((String) invoice.getCoverage().getExtInfo("VEKANr"))
-			&& StringUtils.isNotBlank((String) invoice.getCoverage().getExtInfo("VEKAValid"))) {
+		if (StringUtils.isNotBlank((String) invoice.getCoverage().getExtInfo("VEKANr"))) {
 			Card card = new Card();
 			card.setCardId((String) invoice.getCoverage().getExtInfo("VEKANr"));
-			card.setExpiryDate(XMLExporterUtil.makeTarmedDate((String) invoice.getCoverage().getExtInfo("VEKAValid")));
+			if (StringUtils.isNotBlank((String) invoice.getCoverage().getExtInfo("VEKAValid"))) {
+				card.setExpiryDate(XMLExporterUtil
+					.makeTarmedDate((String) invoice.getCoverage().getExtInfo("VEKAValid")));
+			}
 			patientAddressType.setCard(card);
 		}
 		return patientAddressType;

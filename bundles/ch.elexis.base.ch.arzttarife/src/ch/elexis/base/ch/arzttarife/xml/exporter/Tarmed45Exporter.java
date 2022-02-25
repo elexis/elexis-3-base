@@ -417,6 +417,7 @@ public class Tarmed45Exporter {
 			}
 			patientAddressType.setCard(card);
 		}
+		patientAddressType.setSsn(getSSN(invoice));
 		return patientAddressType;
 	}
 	

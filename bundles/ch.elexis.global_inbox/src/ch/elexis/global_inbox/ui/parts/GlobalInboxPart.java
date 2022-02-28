@@ -1,13 +1,11 @@
 package ch.elexis.global_inbox.ui.parts;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -30,6 +28,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.model.IDocument;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -94,10 +93,10 @@ public class GlobalInboxPart {
 			if (globalInboxEntry != null) {
 				File mainFile = globalInboxEntry.getPdfPreviewFile();
 				if (globalInboxEntry.getMimetype().toLowerCase().contains("pdf")) {
-					try (ByteArrayInputStream byteArrayInputStream =
-						new ByteArrayInputStream(FileUtils.readFileToByteArray(mainFile))) {
+					try {
+						IDocument mainFileDocument = FileDocument.of(mainFile);
 						eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF,
-							byteArrayInputStream);
+							mainFileDocument);
 					} catch (IOException e) {
 						LoggerFactory.getLogger(getClass()).warn("Exception", e);
 					}

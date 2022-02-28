@@ -15,8 +15,6 @@ package ch.elexis.omnivore.ui.views;
 import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
@@ -407,11 +405,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				(IDocumentHandle) ev.getStructuredSelection().getFirstElement();
 			if (docHandle != null && !docHandle.isCategory()) {
 				if (StringUtils.containsIgnoreCase(docHandle.getMimeType(), "pdf")) {
-					try (InputStream content = docHandle.getContent()) {
-						eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, content);
-					} catch (IOException e1) {
-						LoggerFactory.getLogger(getClass()).warn("Exception", e1);
-					}
+					eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, docHandle);
 				}
 			}
 		});

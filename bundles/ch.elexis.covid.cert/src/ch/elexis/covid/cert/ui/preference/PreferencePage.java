@@ -39,7 +39,7 @@ import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.CertificatesService.Mode;
-import ch.elexis.covid.cert.ui.handler.CovidTestBill;
+import ch.elexis.covid.cert.ui.handler.CovidHandlerUtil;
 import ch.elexis.data.Leistungsblock;
 
 public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
@@ -188,17 +188,19 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		bAutomaticBilling = new Button(ret, SWT.CHECK);
 		bAutomaticBilling.setText("Automatische Verrechnung von Tests");
 		bAutomaticBilling
-			.setSelection(ConfigServiceHolder.get().get(CovidTestBill.CFG_AUTO_BILLING, false));
+			.setSelection(ConfigServiceHolder.get().get(CovidHandlerUtil.CFG_AUTO_BILLING, false));
 		bAutomaticBilling.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				ConfigServiceHolder.get().set(CovidTestBill.CFG_AUTO_BILLING,
+				ConfigServiceHolder.get().set(CovidHandlerUtil.CFG_AUTO_BILLING,
 					bAutomaticBilling.getSelection());
 			}
 		});
 		
-		createBillingBlock(CovidTestBill.CFG_KK_BLOCKID, ret);
-		createBillingBlock(CovidTestBill.CFG_SZ_BLOCKID, ret);
+		createBillingBlock(CovidHandlerUtil.CFG_KK_BLOCKID, ret);
+		createBillingBlock(CovidHandlerUtil.CFG_KK_PCR_BLOCKID, ret);
+		createBillingBlock(CovidHandlerUtil.CFG_SZ_BLOCKID, ret);
+		createBillingBlock(CovidHandlerUtil.CFG_SZ_PCR_BLOCKID, ret);
 		
 		lbl = new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
 		lbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -230,8 +232,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		Text tAutomaticBillingBlock = new Text(billingBlockComposite, SWT.BORDER | SWT.READ_ONLY);
 		tAutomaticBillingBlock.setLayoutData(new RowData(250, SWT.DEFAULT));
 		tAutomaticBillingBlock.setTextLimit(80);
-		String text = cfg.equals(CovidTestBill.CFG_KK_BLOCKID) ? "Block für Krankenkasse"
-				: "Block für Selbstzahler";
+		String text = getText(cfg);
 		tAutomaticBillingBlock.setMessage(text);
 		tAutomaticBillingBlock.setToolTipText(text);
 		Button blockCodeSelection = new Button(billingBlockComposite, SWT.PUSH);
@@ -258,6 +259,19 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 				.load(ConfigServiceHolder.get().get(cfg, null))
 				.getLabel());
 		}
+	}
+	
+	private String getText(String cfg){
+		if(cfg.equals(CovidHandlerUtil.CFG_KK_BLOCKID)) {
+			return "Block für Krankenkasse Antigen";
+		} else if(cfg.equals(CovidHandlerUtil.CFG_KK_PCR_BLOCKID)) {
+			return "Block für Krankenkasse PCR";
+		} else if (cfg.equals(CovidHandlerUtil.CFG_SZ_BLOCKID)) {
+			return "Block für Selbstzahler Antigen";
+		} else if (cfg.equals(CovidHandlerUtil.CFG_SZ_PCR_BLOCKID)) {
+			return "Block für Selbstzahler PCR";
+		}
+		return "?";
 	}
 	
 	private void updateTextLabel(){

@@ -1,0 +1,126 @@
+ 
+package ch.elexis.covid.cert.ui.handler;
+
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.extensions.Service;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.slf4j.LoggerFactory;
+
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.findings.codes.IValueSetService;
+import ch.elexis.core.model.IBillable;
+import ch.elexis.core.model.ICodeElementBlock;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.builder.IEncounterBuilder;
+import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.IDocumentStore;
+import ch.elexis.core.services.ILocalDocumentService;
+import ch.elexis.core.services.holder.BillingServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.covid.cert.service.CertificateInfo;
+import ch.elexis.covid.cert.service.CertificatesService;
+import ch.elexis.covid.cert.service.rest.model.TestModel;
+import ch.rgw.tools.Result;
+
+public class CovidAntigenSz {
+	
+	@Inject
+	private IValueSetService valueSetService;
+	
+	@Inject
+	private CertificatesService service;
+	
+	@Inject
+	private IContextService contextService;
+	
+	@Inject
+	@Service(filterExpression = "(storeid=ch.elexis.data.store.omnivore)")
+	private IDocumentStore omnivoreStore;
+	
+	@Inject
+	private ILocalDocumentService localDocumentService;
+	
+	@Execute
+	public void execute() {
+		Optional<IPatient> activePatient = contextService.getActivePatient();
+		activePatient.ifPresent(patient -> {
+			Map<String, ICodeElementBlock> blocks = CovidHandlerUtil.getConfiguredBlocks();
+			if (!blocks.isEmpty()) {
+				Optional<ICoverage> szCoverage =
+					CovidHandlerUtil.getCoverageWithLaw(patient, CovidHandlerUtil.SZ_LAWS);
+				Optional<CertificateInfo> todayCertificate = CovidHandlerUtil.getCertificateAtWithType(patient, LocalDate.now(), CertificateInfo.Type.TEST);
+				if (todayCertificate.isPresent()) {
+					if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
+						"Vorhandenes Test Zertifikat",
+						"Es wurde heute bereits ein Test Zertifikat ausgestellt.\nMöchten Sie dieses anzeigen?")) {
+						CovidHandlerUtil.openCertDocument(todayCertificate.get(), omnivoreStore,
+							localDocumentService);
+					}
+				} else {
+					if (szCoverage.isEmpty()) {
+						szCoverage = CovidHandlerUtil.createSzCoverage(patient);
+					}
+					createCertAndBill(szCoverage.get());
+				}
+			}
+		});
+	}
+	
+	private void createCertAndBill(ICoverage coverage){
+		TestModel model = CovidHandlerUtil.getTestModel(coverage.getPatient(), service,
+			valueSetService, "antigen");
+		if (model != null) {
+			try {
+				Result<String> result = service.createTestCertificate(coverage.getPatient(), model);
+				if (result.isOK()) {
+					CertificateInfo newCert = CertificateInfo.of(coverage.getPatient()).stream()
+						.filter(c -> c.getUvci().equals(result.get())).findFirst().orElse(null);
+					if (newCert != null) {
+						CovidHandlerUtil.openCertDocument(newCert, omnivoreStore,
+							localDocumentService);
+						bill(coverage);
+					}
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
+						coverage.getPatient());
+					CovidHandlerUtil.showResultInfos(result);
+				} else {
+					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+						"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages().stream()
+							.map(m -> m.getText()).collect(Collectors.joining(", ")));
+				}
+			} catch (Exception ex) {
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+					"Es ist ein Fehler beim Aufruf der API aufgetreten.");
+				LoggerFactory.getLogger(getClass()).error("Error getting test certificate", ex);
+			}
+		}
+	}
+	
+	private void bill(ICoverage coverage){
+		ICodeElementBlock szBlock =
+			CovidHandlerUtil.getConfiguredBlocks().get(CovidHandlerUtil.CFG_SZ_BLOCKID);
+		if (szBlock != null) {
+			IEncounter encounter = new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
+				contextService.getActiveMandator().get()).buildAndSave();
+			// bill the block
+			szBlock.getElements(encounter).stream().filter(el -> el instanceof IBillable)
+				.map(el -> (IBillable) el)
+				.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
+			contextService.getRootContext().setTyped(encounter);
+		} else {
+			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+				"Kein Selbstzahler Antigen Block konfiguriert.");
+		}
+	}
+}

@@ -32,7 +32,7 @@ import ch.elexis.core.ui.dbcheck.external.ExternalMaintenance;
 import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.covid.cert.service.CertificateInfo;
 import ch.elexis.covid.cert.service.CertificateInfo.Type;
-import ch.elexis.covid.cert.ui.handler.CovidTestBill;
+import ch.elexis.covid.cert.ui.handler.CovidHandlerUtil;
 
 public class BillMissingTestCerts extends ExternalMaintenance {
 	
@@ -144,9 +144,9 @@ public class BillMissingTestCerts extends ExternalMaintenance {
 	}
 	
 	private Optional<ICodeElementBlock> getConfiguredBlock(){
-		if (ConfigServiceHolder.get().get(CovidTestBill.CFG_KK_BLOCKID, null) != null) {
+		if (ConfigServiceHolder.get().get(CovidHandlerUtil.CFG_KK_BLOCKID, null) != null) {
 			Optional<ICodeElementBlock> kkBlock = CoreModelServiceHolder.get()
-				.load(ConfigServiceHolder.get().get(CovidTestBill.CFG_KK_BLOCKID, null),
+				.load(ConfigServiceHolder.get().get(CovidHandlerUtil.CFG_KK_BLOCKID, null),
 					ICodeElementBlock.class);
 			if (kkBlock.isPresent()) {
 				return kkBlock;

@@ -4,11 +4,26 @@
     <elements xsi:type="basic:PartDescriptor" xmi:id="_3W4JYMHwEeuZNMZqiCK6QA" elementId="ch.elexis.covid.cert.partdescriptor.certificates" label="COVID Zert." iconURI="platform:/plugin/ch.elexis.covid.cert/rsc/icon/cov_certs.png" category="General" closeable="true" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.parts.PatientCertificates">
       <tags>View</tags>
     </elements>
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_3r33wJoiEeyOzv5jTfI7yg" elementId="ch.elexis.covid.cert.partdescriptor.tests" label="COVID Tests" iconURI="platform:/plugin/ch.elexis.covid.cert/rsc/icon/cov_certs.png" category="General" closeable="true" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.parts.PatientTests">
+      <tags>View</tags>
+    </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_KbWGgAv4Eey-BvcngEK0rA" featurename="commands" parentElementId="org.eclipse.e4.legacy.ide.application">
     <elements xsi:type="commands:Command" xmi:id="_UPruYAv4Eey-BvcngEK0rA" elementId="ch.elexis.covid.cert.command.covidtest.bill" commandName="bill covid test"/>
+    <elements xsi:type="commands:Command" xmi:id="_R49ykJoqEeyOzv5jTfI7yg" elementId="ch.elexis.covid.cert.command.covidtest.antigen.kk" commandName="covid test antigen kk"/>
+    <elements xsi:type="commands:Command" xmi:id="_60df4JpPEeyv1tS9sUBmGw" elementId="ch.elexis.covid.cert.command.covidtest.antigen.sz" commandName="covid test antigen sz"/>
+    <elements xsi:type="commands:Command" xmi:id="_gDeIMJrUEeyXKOxv3NOXvg" elementId="ch.elexis.covid.cert.command.covidtest.pcr.kk" commandName="covid test pcr kk"/>
+    <elements xsi:type="commands:Command" xmi:id="_n0qzoJrUEeyXKOxv3NOXvg" elementId="ch.elexis.covid.cert.command.covidtest.pcr.sz" commandName="covid test pcr sz"/>
+    <elements xsi:type="commands:Command" xmi:id="_azFGcJrxEey496ICPDiN_Q" elementId="ch.elexis.covid.cert.command.covidtest.letter.kk" commandName="covid test letter kk"/>
+    <elements xsi:type="commands:Command" xmi:id="_kvS28Jr8EeyU_ZKZT7anBg" elementId="ch.elexis.covid.cert.command.covidtest.letter.sz" commandName="covid test letter sz"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_U5TTIAv4Eey-BvcngEK0rA" featurename="handlers" parentElementId="org.eclipse.e4.legacy.ide.application">
     <elements xsi:type="commands:Handler" xmi:id="_X-ydYAv4Eey-BvcngEK0rA" elementId="ch.elexis.covid.cert.handler.covidtest.bill" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.handler.CovidTestBill" command="_UPruYAv4Eey-BvcngEK0rA"/>
+    <elements xsi:type="commands:Handler" xmi:id="_Y09UUJoqEeyOzv5jTfI7yg" elementId="ch.elexis.covid.cert.handler.covidtest.antigen.kk" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.handler.CovidAntigenKk" command="_R49ykJoqEeyOzv5jTfI7yg"/>
+    <elements xsi:type="commands:Handler" xmi:id="_88gKcJpPEeyv1tS9sUBmGw" elementId="ch.elexis.covid.cert.handler.covidtest.antigen.sz" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.handler.CovidAntigenSz" command="_60df4JpPEeyv1tS9sUBmGw"/>
+    <elements xsi:type="commands:Handler" xmi:id="_kOQtoJrUEeyXKOxv3NOXvg" elementId="ch.elexis.covid.cert.handler.covidtest.pcr.kk" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.handler.CovidPcrKk" command="_gDeIMJrUEeyXKOxv3NOXvg"/>
+    <elements xsi:type="commands:Handler" xmi:id="_pqcCcJrUEeyXKOxv3NOXvg" elementId="ch.elexis.covid.cert.handler.covidtest.pcr.sz" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.handler.CovidPcrSz" command="_n0qzoJrUEeyXKOxv3NOXvg"/>
+    <elements xsi:type="commands:Handler" xmi:id="_eZ6DMJrxEey496ICPDiN_Q" elementId="ch.elexis.covid.cert.handler.covidtest.letter.kk" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.handler.CovidAttestKk" command="_azFGcJrxEey496ICPDiN_Q"/>
+    <elements xsi:type="commands:Handler" xmi:id="_mdXiUJr8EeyU_ZKZT7anBg" elementId="ch.elexis.covid.cert.handler.covidtest.letter.sz" contributionURI="bundleclass://ch.elexis.covid.cert/ch.elexis.covid.cert.ui.handler.CovidAttestSz" command="_kvS28Jr8EeyU_ZKZT7anBg"/>
   </fragments>
 </fragment:ModelFragments>

@@ -206,14 +206,25 @@ public class TestModelDialog extends Dialog {
 		countryCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		countryCombo.getControl().setToolTipText("Land des Test");
 		
-		// init default values
-		testsTypeValueSet.stream().filter(c -> c.getCode().equals("LP217198-3")).findFirst()
-			.ifPresent(c -> typeCombo.setSelection(new StructuredSelection(c)));
-		String defaultTestCode =
-			ConfigServiceHolder.get().get(CertificatesService.CFG_DEFAULT_TESTPRODUCT, null);
-		if (defaultTestCode != null) {
-			testsValueSet.stream().filter(c -> c.getCode().equals(defaultTestCode)).findFirst()
-				.ifPresent(c -> manufacturerCombo.setSelection(new StructuredSelection(c)));
+		if (StringUtils.isBlank(model.getTestInfo()[0].getTypeCode())) {
+			// init default values
+			initDefaultAntigen(testsTypeValueSet, testsValueSet);
+		} else {
+			// hide type selection
+			((GridData) typeCombo.getCombo().getLayoutData()).exclude = true;
+			typeCombo.getCombo().setVisible(false);
+			typeCombo.getCombo().getParent().layout();
+			
+			if ("LP6464-4".equals(model.getTestInfo()[0].getTypeCode())) {
+				manufacturerCombo.getControl().setEnabled(false);
+				model.getTestInfo()[0].setManufacturerCode(null);
+				initDefaultPcr(testsTypeValueSet, testsValueSet);
+			} else {
+				model.getTestInfo()[0].setManufacturerCode(null);
+				manufacturerCombo.setSelection(new StructuredSelection());
+				manufacturerCombo.getControl().setEnabled(true);
+				initDefaultAntigen(testsTypeValueSet, testsValueSet);
+			}
 		}
 		
 		transferCode = new Text(parent, SWT.BORDER);
@@ -240,6 +251,22 @@ public class TestModelDialog extends Dialog {
 		
 		manufacturerCombo.getControl().setFocus();
 		return parent;
+	}
+	
+	private void initDefaultPcr(List<ICoding> testsTypeValueSet, List<ICoding> testsValueSet){
+		testsTypeValueSet.stream().filter(c -> c.getCode().equals("LP6464-4")).findFirst()
+			.ifPresent(c -> typeCombo.setSelection(new StructuredSelection(c)));
+	}
+	
+	private void initDefaultAntigen(List<ICoding> testsTypeValueSet, List<ICoding> testsValueSet){
+		testsTypeValueSet.stream().filter(c -> c.getCode().equals("LP217198-3")).findFirst()
+			.ifPresent(c -> typeCombo.setSelection(new StructuredSelection(c)));
+		String defaultTestCode =
+			ConfigServiceHolder.get().get(CertificatesService.CFG_DEFAULT_TESTPRODUCT, null);
+		if (defaultTestCode != null) {
+			testsValueSet.stream().filter(c -> c.getCode().equals(defaultTestCode)).findFirst()
+				.ifPresent(c -> manufacturerCombo.setSelection(new StructuredSelection(c)));
+		}
 	}
 	
 	@Override

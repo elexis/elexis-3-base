@@ -15,7 +15,8 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="2.1.700.v20200
  ch.elexis.core.ui.dbcheck
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: ch.elexis.covid.cert
-Import-Package: ch.elexis.core.findings,
+Import-Package: ch.elexis.core.data.util,
+ ch.elexis.core.findings,
  ch.elexis.core.findings.codes,
  ch.elexis.core.services.holder,
  ch.elexis.core.ui.icons,

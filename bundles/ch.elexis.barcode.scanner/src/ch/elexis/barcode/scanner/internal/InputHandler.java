@@ -20,9 +20,9 @@ import ch.elexis.barcode.scanner.BarcodeScannerMessage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.serial.Connection;
+import ch.elexis.core.serial.Connection.ComPortListener;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.importer.div.rs232.Connection;
-import ch.elexis.core.ui.importer.div.rs232.Connection.ComPortListener;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class InputHandler extends ToggleHandler implements ComPortListener {
@@ -118,18 +118,6 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 				ElexisEvent.EVENT_UPDATE, ElexisEvent.PRIORITY_NORMAL));
 	}
 	
-	@Override
-	public void gotBreak(Connection conn){
-		conn.close();
-		closeAllConnections();
-		toggleButtonOff();
-	}
-	
-	@Override
-	public void timeout(){
-		logger.info("timeout(): ");
-	}
-	
 	private void toggleButtonOff(){
 		ICommandService commandService =
 			(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
@@ -147,5 +135,10 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 				}
 			});
 		}
+	}
+	
+	@Override
+	public void closed(){
+		logger.info("Closed"); //$NON-NLS-1$
 	}
 }

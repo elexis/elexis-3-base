@@ -18,7 +18,7 @@ import ch.rgw.tools.TimeTool;
 
 public class XmlUtil {
 
-	private static final String JAXB_HEADER_KEY = "com.sun.xml.internal.bind.xmlHeaders";
+	private static final String JAXB_HEADER_KEY = "com.sun.xml.bind.xmlHeaders";
 	private static final String DEFAULT_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
 	private static Logger logger = LoggerFactory.getLogger(XmlUtil.class);

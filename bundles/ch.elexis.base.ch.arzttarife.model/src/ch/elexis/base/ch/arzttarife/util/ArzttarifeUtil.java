@@ -117,6 +117,11 @@ public class ArzttarifeUtil {
 	 * @return
 	 */
 	public static double getTL(IBilled billed){
+		// if price was changed to 0, use TP as TL
+		boolean changedPrice = billed.isChangedPrice();
+		if (changedPrice && billed.getPoints() == 0) {
+			return billed.getPoints();
+		}
 		String tlString = (String) billed.getExtInfo(Verrechnet.EXT_VERRRECHNET_TL);
 		if (tlString != null) {
 			try {

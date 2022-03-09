@@ -30,6 +30,8 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -178,6 +180,26 @@ public class PatientTests {
 								ZoneId.systemDefault()));
 				}
 				return super.getText(element);
+			}
+		});
+		testsViewer.setComparator(new ViewerComparator() {
+			@Override
+			public int compare(Viewer viewer, Object l, Object r){
+				LocalDateTime lDateTime = LocalDateTime.of(1970, 1, 1, 0, 0);
+				LocalDateTime rDateTime = LocalDateTime.of(1970, 1, 1, 0, 0);
+				if (l instanceof CertificateInfo) {
+					lDateTime = ((CertificateInfo) l).getTimestamp();
+				} else if (l instanceof IDocumentLetter) {
+					lDateTime = LocalDateTime.ofInstant(
+						((IDocumentLetter) l).getCreated().toInstant(), ZoneId.systemDefault());
+				}
+				if (r instanceof CertificateInfo) {
+					rDateTime = ((CertificateInfo) r).getTimestamp();
+				} else if (r instanceof IDocumentLetter) {
+					rDateTime = LocalDateTime.ofInstant(
+						((IDocumentLetter) r).getCreated().toInstant(), ZoneId.systemDefault());
+				}
+				return rDateTime.compareTo(lDateTime);
 			}
 		});
 		testsViewer.addDoubleClickListener(new IDoubleClickListener() {

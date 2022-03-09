@@ -23,6 +23,7 @@ import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElementBlock;
 import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IDocumentLetter;
 import ch.elexis.core.model.IEncounter;
@@ -34,6 +35,7 @@ import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.ILocalDocumentService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.commands.Messages;
@@ -289,5 +291,17 @@ public class CovidHandlerUtil {
 		} else {
 			return query.execute();
 		}
+	}
+	
+	public static void addBlockToEncounter(ICodeElementBlock block, IEncounter encounter){
+		// add diagnosis
+		block.getElements(encounter).stream().filter(el -> el instanceof IDiagnosis)
+			.map(el -> (IDiagnosis) el)
+			.forEach(diagnosis -> encounter.addDiagnosis(diagnosis));
+		CoreModelServiceHolder.get().save(encounter);
+		// bill the block
+		block.getElements(encounter).stream().filter(el -> el instanceof IBillable)
+			.map(el -> (IBillable) el)
+			.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
 	}
 }

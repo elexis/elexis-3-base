@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.util.NoPoUtil;
-import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElementBlock;
 import ch.elexis.core.model.ICoverage;
@@ -134,10 +133,7 @@ public class CovidAttestKk {
 		if (kkBlock != null) {
 			IEncounter encounter = new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
 				contextService.getActiveMandator().get()).buildAndSave();
-			// bill the block
-			kkBlock.getElements(encounter).stream().filter(el -> el instanceof IBillable)
-				.map(el -> (IBillable) el)
-				.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
+			CovidHandlerUtil.addBlockToEncounter(kkBlock, encounter);
 			contextService.getRootContext().setTyped(encounter);
 			return Optional.of(encounter);
 		} else {
@@ -153,10 +149,7 @@ public class CovidAttestKk {
 		if (kkBlock != null) {
 			IEncounter encounter = new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
 				contextService.getActiveMandator().get()).buildAndSave();
-			// bill the block
-			kkBlock.getElements(encounter).stream().filter(el -> el instanceof IBillable)
-				.map(el -> (IBillable) el)
-				.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
+			CovidHandlerUtil.addBlockToEncounter(kkBlock, encounter);
 			contextService.getRootContext().setTyped(encounter);
 			return Optional.of(encounter);
 		} else {

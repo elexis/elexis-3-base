@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.findings.codes.IValueSetService;
-import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElementBlock;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
@@ -25,7 +24,6 @@ import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.ILocalDocumentService;
-import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.covid.cert.service.CertificateInfo;
@@ -116,10 +114,7 @@ public class CovidAntigenKk {
 		if (kkBlock != null) {
 			IEncounter encounter = new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
 				contextService.getActiveMandator().get()).buildAndSave();
-			// bill the block
-			kkBlock.getElements(encounter).stream().filter(el -> el instanceof IBillable)
-				.map(el -> (IBillable) el)
-				.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
+			CovidHandlerUtil.addBlockToEncounter(kkBlock, encounter);
 			contextService.getRootContext().setTyped(encounter);
 		} else {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",

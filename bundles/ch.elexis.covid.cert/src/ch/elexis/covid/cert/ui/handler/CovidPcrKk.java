@@ -11,7 +11,6 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
-import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.ICodeElementBlock;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
@@ -19,7 +18,6 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.IContextService;
-import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class CovidPcrKk {
@@ -64,10 +62,7 @@ public class CovidPcrKk {
 		if (kkBlock != null) {
 			IEncounter encounter = new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
 				contextService.getActiveMandator().get()).buildAndSave();
-			// bill the block
-			kkBlock.getElements(encounter).stream().filter(el -> el instanceof IBillable)
-				.map(el -> (IBillable) el)
-				.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
+			CovidHandlerUtil.addBlockToEncounter(kkBlock, encounter);
 			contextService.getRootContext().setTyped(encounter);
 		} else {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",

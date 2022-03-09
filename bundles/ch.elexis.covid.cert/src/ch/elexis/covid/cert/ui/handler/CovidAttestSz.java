@@ -1,4 +1,4 @@
- 
+
 package ch.elexis.covid.cert.ui.handler;
 
 import java.time.LocalDate;
@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.util.NoPoUtil;
-import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElementBlock;
 import ch.elexis.core.model.ICoverage;
@@ -83,18 +82,20 @@ public class CovidAttestSz {
 							(Konsultation) NoPoUtil.loadAsPersistentObject(antigenEncounter.get());
 						Brief letterPositiv = textContainer.createFromTemplateName(letterKons,
 							CovidHandlerUtil.ATTEST_POSITIV_LETTER_NAME, Brief.UNKNOWN, null, null);
-						CovidHandlerUtil.openLetter(
-							NoPoUtil.loadAsIdentifiable(letterPositiv, IDocumentLetter.class).get(),
-							localDocumentService);
+						NoPoUtil.loadAsIdentifiable(letterPositiv, IDocumentLetter.class)
+							.ifPresent(l -> {
+								CovidHandlerUtil.openLetter(l, localDocumentService);
+							});
 					} else {
 						antigenEncounter = billAntigen(szCoverage.get());
 						Konsultation letterKons =
 							(Konsultation) NoPoUtil.loadAsPersistentObject(antigenEncounter.get());
 						Brief letterNegativ = textContainer.createFromTemplateName(letterKons,
 							CovidHandlerUtil.ATTEST_NEGATIV_LETTER_NAME, Brief.UNKNOWN, null, null);
-						CovidHandlerUtil.openLetter(
-							NoPoUtil.loadAsIdentifiable(letterNegativ, IDocumentLetter.class).get(),
-							localDocumentService);
+						NoPoUtil.loadAsIdentifiable(letterNegativ, IDocumentLetter.class)
+							.ifPresent(l -> {
+								CovidHandlerUtil.openLetter(l, localDocumentService);
+							});
 					}
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, patient);
 				} else {
@@ -127,10 +128,7 @@ public class CovidAttestSz {
 		if (szBlock != null) {
 			IEncounter encounter = new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
 				contextService.getActiveMandator().get()).buildAndSave();
-			// bill the block
-			szBlock.getElements(encounter).stream().filter(el -> el instanceof IBillable)
-				.map(el -> (IBillable) el)
-				.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
+			CovidHandlerUtil.addBlockToEncounter(szBlock, encounter);
 			contextService.getRootContext().setTyped(encounter);
 			return Optional.of(encounter);
 		} else {
@@ -146,10 +144,7 @@ public class CovidAttestSz {
 		if (szBlock != null) {
 			IEncounter encounter = new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
 				contextService.getActiveMandator().get()).buildAndSave();
-			// bill the block
-			szBlock.getElements(encounter).stream().filter(el -> el instanceof IBillable)
-				.map(el -> (IBillable) el)
-				.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
+			CovidHandlerUtil.addBlockToEncounter(szBlock, encounter);
 			contextService.getRootContext().setTyped(encounter);
 			return Optional.of(encounter);
 		} else {

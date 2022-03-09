@@ -195,8 +195,8 @@ class FileDocument implements IDocument {
 	
 	@Override
 	public InputStream getContent(){
-		try (FileInputStream fis = new FileInputStream(file)) {
-			return fis;
+		try {
+			return new FileInputStream(file);
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).warn("[{}] getContent()", file.getAbsolutePath(),
 				e);

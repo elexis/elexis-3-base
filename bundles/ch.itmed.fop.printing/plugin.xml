@@ -122,6 +122,12 @@
 			        </with>
            		 </visibleWhen>
            </command>
+           <command
+                 commandId="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint"
+                 icon="res/icons/appointmentsPrint.png"
+                 label="Terminserie drucken"
+                 style="push">
+           </command>
         </menuContribution>
         <menuContribution
               allPopups="false"
@@ -148,6 +154,12 @@
 			            </iterate>
 			        </with>
            		 </visibleWhen>
+           </command>
+           <command
+                 commandId="ch.itmed.fop.printing.command.RecurringAppointmentsCardPrint"
+                 icon="res/icons/appointmentsPrint.png"
+                 label="Terminserie drucken"
+                 style="push">
            </command>
         </menuContribution>
 

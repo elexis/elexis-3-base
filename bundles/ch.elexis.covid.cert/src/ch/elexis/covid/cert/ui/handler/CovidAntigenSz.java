@@ -69,13 +69,30 @@ public class CovidAntigenSz {
 					if (!szCoverage.isPresent()) {
 						szCoverage = CovidHandlerUtil.createSzCoverage(patient);
 					}
-					createCertAndBill(szCoverage.get());
+					Optional<IEncounter> antigenEncounter = billAntigen(szCoverage.get());
+					if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
+						"Test Resultat", "Wurde der Patient positiv getestet?")) {
+						if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
+							"PCR Test", "Wurde ein PCR Test gemacht?")) {
+							if (antigenEncounter.isPresent()) {
+								Optional<IEncounter> pcrEncounter = billPcr(szCoverage.get());
+								pcrEncounter.ifPresent(encounter -> {
+									if (CovidHandlerUtil.isBilled(antigenEncounter.get(),
+										"01.99.1100")) {
+										CovidHandlerUtil.removeBilled(encounter, "01.99.1100");
+									}
+								});
+							}
+						}
+					} else {
+						createCert(szCoverage.get());
+					}
 				}
 			}
 		});
 	}
 	
-	private void createCertAndBill(ICoverage coverage){
+	private void createCert(ICoverage coverage){
 		TestModel model = CovidHandlerUtil.getTestModel(coverage.getPatient(), service,
 			valueSetService, "antigen");
 		if (model != null) {
@@ -87,7 +104,6 @@ public class CovidAntigenSz {
 					if (newCert != null) {
 						CovidHandlerUtil.openCertDocument(newCert, omnivoreStore,
 							localDocumentService);
-						bill(coverage);
 					}
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
 						coverage.getPatient());
@@ -105,7 +121,7 @@ public class CovidAntigenSz {
 		}
 	}
 	
-	private void bill(ICoverage coverage){
+	private Optional<IEncounter> billAntigen(ICoverage coverage){
 		ICodeElementBlock szBlock =
 			CovidHandlerUtil.getConfiguredBlocks().get(CovidHandlerUtil.CFG_SZ_BLOCKID);
 		if (szBlock != null) {
@@ -113,9 +129,27 @@ public class CovidAntigenSz {
 				contextService.getActiveMandator().get()).buildAndSave();
 			CovidHandlerUtil.addBlockToEncounter(szBlock, encounter);
 			contextService.getRootContext().setTyped(encounter);
+			return Optional.of(encounter);
 		} else {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 				"Kein Selbstzahler Antigen Block konfiguriert.");
 		}
+		return Optional.empty();
+	}
+	
+	private Optional<IEncounter> billPcr(ICoverage coverage){
+		ICodeElementBlock szBlock =
+			CovidHandlerUtil.getConfiguredBlocks().get(CovidHandlerUtil.CFG_SZ_PCR_BLOCKID);
+		if (szBlock != null) {
+			IEncounter encounter = new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
+				contextService.getActiveMandator().get()).buildAndSave();
+			CovidHandlerUtil.addBlockToEncounter(szBlock, encounter);
+			contextService.getRootContext().setTyped(encounter);
+			return Optional.of(encounter);
+		} else {
+			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
+				"Kein Selbstzahler PCR Block konfiguriert.");
+		}
+		return Optional.empty();
 	}
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -306,5 +307,18 @@ public class CovidHandlerUtil {
 		block.getElements(encounter).stream().filter(el -> el instanceof IBillable)
 			.map(el -> (IBillable) el)
 			.forEach(billable -> BillingServiceHolder.get().bill(billable, encounter, 1));
+	}
+	
+	public static boolean isBilled(IEncounter encounter, String code){
+		return encounter.getBilled().stream().filter(b -> code.equals(b.getCode())).findFirst()
+			.isPresent();
+	}
+	
+	public static void removeBilled(IEncounter encounter, String code){
+		for (IBilled billed : new ArrayList<>(encounter.getBilled())) {
+			if (code.equals(billed.getCode())) {
+				BillingServiceHolder.get().removeBilled(billed, encounter);
+			}
+		}
 	}
 }

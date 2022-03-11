@@ -441,8 +441,8 @@ public class PatientTests {
 		}
 		testsViewer.refresh();
 		// limit height
-		if (testsViewer.getTable().computeSize(SWT.DEFAULT, SWT.DEFAULT).y > 400) {
-			((GridData) testsViewer.getTable().getLayoutData()).heightHint = 400;
+		if (testsViewer.getTable().computeSize(SWT.DEFAULT, SWT.DEFAULT).y > 250) {
+			((GridData) testsViewer.getTable().getLayoutData()).heightHint = 250;
 		}
 		Display.getDefault().asyncExec(() -> {
 			if (composite != null && !composite.isDisposed()) {

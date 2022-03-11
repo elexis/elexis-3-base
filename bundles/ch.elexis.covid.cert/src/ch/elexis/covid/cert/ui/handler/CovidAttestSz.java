@@ -2,7 +2,6 @@
 package ch.elexis.covid.cert.ui.handler;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +14,6 @@ import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.util.NoPoUtil;
-import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElementBlock;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IDocumentLetter;
@@ -24,7 +22,6 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.ILocalDocumentService;
-import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.text.TextContainer;
@@ -70,8 +67,9 @@ public class CovidAttestSz {
 							if (antigenEncounter.isPresent()) {
 								Optional<IEncounter> pcrEncounter = billPcr(szCoverage.get());
 								pcrEncounter.ifPresent(encounter -> {
-									if (isBilled(antigenEncounter.get(), "01.99.1100")) {
-										removeBilled(encounter, "01.99.1100");
+									if (CovidHandlerUtil.isBilled(antigenEncounter.get(),
+										"01.99.1100")) {
+										CovidHandlerUtil.removeBilled(encounter, "01.99.1100");
 									}
 								});
 							}
@@ -107,19 +105,6 @@ public class CovidAttestSz {
 				}
 			}
 		});
-	}
-	
-	private boolean isBilled(IEncounter encounter, String code){
-		return encounter.getBilled().stream().filter(b -> code.equals(b.getCode())).findFirst()
-			.isPresent();
-	}
-	
-	private void removeBilled(IEncounter encounter, String code){
-		for (IBilled billed : new ArrayList<>(encounter.getBilled())) {
-			if (code.equals(billed.getCode())) {
-				BillingServiceHolder.get().removeBilled(billed, encounter);
-			}
-		}
 	}
 	
 	private Optional<IEncounter> billAntigen(ICoverage coverage){

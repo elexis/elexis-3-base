@@ -54,6 +54,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
+import ch.elexis.core.types.Country;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.fd.invoice450.request.BalanceTGType;
@@ -622,8 +623,13 @@ public class Tarmed45Exporter {
 		String zip = StringUtils.defaultIfBlank(contact.getZip(), "0000");
 		ZipType zipType = new ZipType();
 		zipType.setValue(StringUtils.left(zip, 9));
-		if (StringUtils.isNotBlank(contact.getCountry().toString())) {
-			zipType.setCountrycode(StringUtils.left(contact.getCountry().toString(), 3));
+		Country country = contact.getCountry();
+		if (Country.NDF == country) {
+			logger.info("IContact [] Country not set, defaulting to CH", contact.getId());
+			country = Country.CH;
+		}
+		if (StringUtils.isNotBlank(country.toString())) {
+			zipType.setCountrycode(StringUtils.left(country.toString(), 3));
 		}
 		postalAddressType.setZip(zipType);
 		

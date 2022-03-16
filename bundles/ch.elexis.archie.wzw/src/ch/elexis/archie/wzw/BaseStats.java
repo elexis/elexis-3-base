@@ -143,14 +143,13 @@ public abstract class BaseStats extends AbstractTimeSeries {
 							break;
 						}
 					}
-					if (add) {
-						// use ModelAdapterProxyHandler, encounter and loaded sub data can be garbage collected 
-						Object proxy = Proxy.newProxyInstance(getClass().getClassLoader(),
-							new Class[] {
-								IEncounter.class
-							}, new ModelAdapterProxyHandler(encounter));
-						ret.add((IEncounter) proxy);
-					}
+				}
+				if (add) {
+					// use ModelAdapterProxyHandler, encounter and loaded sub data can be garbage collected 
+					Object proxy = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {
+						IEncounter.class
+					}, new ModelAdapterProxyHandler(encounter));
+					ret.add((IEncounter) proxy);
 				}
 				cursor.clear();
 			}

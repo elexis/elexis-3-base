@@ -90,6 +90,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
@@ -636,6 +637,11 @@ public class XMLExporter implements IRnOutputter {
 			if (iEAN != null && !iEAN.isEmpty()) {
 				via.setAttribute(XMLExporterProcessing.ATTR_TRANSPORT_VIA_VIA, iEAN);
 			}
+		}
+		if (CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage())) {
+			processing.setAttribute(XMLExporterProcessing.ATTR_PATIENT_COPY_PRINT, "1");
+		} else {
+			processing.setAttribute(XMLExporterProcessing.ATTR_PATIENT_COPY_PRINT, "0");
 		}
 		
 		// update payload and balance

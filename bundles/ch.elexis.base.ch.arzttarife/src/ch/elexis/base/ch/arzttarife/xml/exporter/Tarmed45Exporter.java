@@ -1349,9 +1349,8 @@ public class Tarmed45Exporter {
 		ProcessingType processingType = new ProcessingType();
 		processingType.setPrintAtIntermediate(printAtIntermediate);
 		
-		if (CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage())) {
-			processingType.setPrintCopyToGuarantor(true);
-		}
+		processingType.setPrintCopyToGuarantor(
+			CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
 		
 		TransportType transportType = new TransportType();
 		transportType.setFrom(TarmedRequirements.getEAN(invoice.getMandator()));
@@ -1400,6 +1399,8 @@ public class Tarmed45Exporter {
 						via.get(0).setVia(iEAN);
 					}
 				}
+				request.getProcessing().setPrintCopyToGuarantor(
+					CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
 			}
 			
 			// update payload and balance

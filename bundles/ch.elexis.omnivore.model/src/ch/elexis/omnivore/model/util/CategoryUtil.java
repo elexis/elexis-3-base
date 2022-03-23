@@ -5,7 +5,9 @@ import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.ICategory;
@@ -75,10 +77,21 @@ public class CategoryUtil {
 	}
 	
 	public static List<IDocumentHandle> getCategories(){
-		IQuery<IDocumentHandle> query =
-			OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-		query.and("mimetype", COMPARATOR.EQUALS, CATEGORY_MIMETYPE);
-		return query.execute();
+		INamedQuery<IDocumentHandle> findCategoriesQuery =
+			OmnivoreModelServiceHolder.get().getNamedQueryByName(IDocumentHandle.class,
+				IDocumentHandle.class, "DocHandle.select.categories");
+		// filter duplicates, ordered with TreeMap
+		TreeMap<String, IDocumentHandle> uniqueMap = new TreeMap<>();
+		findCategoriesQuery.executeWithParameters(Collections.emptyMap()).forEach(dh -> {
+			if(uniqueMap.containsKey(dh.getTitle())) {
+				if (StringUtils.isNotBlank(dh.getCategory().getName())) {
+					uniqueMap.put(dh.getTitle(), dh);
+				}
+			} else {
+				uniqueMap.put(dh.getTitle(), dh);
+			}
+		});
+		return new ArrayList<>(uniqueMap.values());
 	}
 	
 	public static List<IDocumentHandle> getDocumentsWithCategoryByName(String name){

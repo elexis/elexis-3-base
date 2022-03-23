@@ -51,7 +51,7 @@ public class QRBillImage {
 		QRCodeWriter qrCodeWriter = new QRCodeWriter();
 		try {
 			BitMatrix bitMatrix =
-				qrCodeWriter.encode(data.toString(), BarcodeFormat.QR_CODE, 0, 0, hintMap);
+				qrCodeWriter.encode(data.toString(), BarcodeFormat.QR_CODE, 200, 200, hintMap);
 			int width = bitMatrix.getWidth();
 			int height = bitMatrix.getHeight();
 			
@@ -71,39 +71,47 @@ public class QRBillImage {
 	}
 	
 	private int[] emptyRow = {
-		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
-		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF
 	};
 	
 	private int[] fullRow = {
-		0xFFFFFF, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000,
-		0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFFFFF
+		0xFFFFFF, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
+		0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
+		0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
+		0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFFFFF
 	};
 	private int[] vertRow = {
-		0xFFFFFF, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFFFFF, 0xFFFFFF,
-		0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFFFFF
+		0xFFFFFF, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000,
+		0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 
+		0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFFFFF
 	};
 	
 	private int[] horiRow = {
-		0xFFFFFF, 0x000000, 0x000000, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
-		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0x000000, 0x000000, 0xFFFFFF
+		0xFFFFFF, 0x000000, 0x000000, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF,
+		0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0x000000, 0x000000, 0xFFFFFF
 	};
 	
 	private void addCross(ImageData data){
 		int center = data.width / 2;
-		int start = center - 8;
+		int start = center - 16;
 		int lineCount = 0;
-		while (lineCount < 16) {
-			if (lineCount == 0 || lineCount == 15) {
-				data.setPixels(start, start + lineCount, 16, emptyRow, 0);
+		while (lineCount < 32) {
+			if (lineCount == 0 || lineCount == 31) {
+				data.setPixels(start, start + lineCount, 32, emptyRow, 0);
 			} else {
-				if (lineCount < 3 || lineCount > (16 - 4)) {
-					data.setPixels(start, start + lineCount, 16, fullRow, 0);
+				if (lineCount < 3 || lineCount > (31 - 4)) {
+					data.setPixels(start, start + lineCount, 32, fullRow, 0);
 				} else {
-					if (lineCount > 6 && lineCount < 9) {
-						data.setPixels(start, start + lineCount, 16, horiRow, 0);
+					if (lineCount > 12 && lineCount < 18) {
+						data.setPixels(start, start + lineCount, 32, horiRow, 0);
 					} else {
-						data.setPixels(start, start + lineCount, 16, vertRow, 0);
+						data.setPixels(start, start + lineCount, 32, vertRow, 0);
 					}
 				}
 			}
@@ -131,8 +139,11 @@ public class QRBillImage {
 				
 				return Optional.of("data:image/jpg;base64,"
 					+ Base64.getEncoder().encodeToString(output.toByteArray()));
+
 			} catch (IOException e) {
 				LoggerFactory.getLogger(getClass()).error("Error encoding QR", e);
+			} finally {
+				qr.dispose();
 			}
 		}
 		return Optional.empty();

@@ -68,20 +68,21 @@ public class SingleSourceUtil {
 	 */
 	public static boolean executeScript(final Browser browser, final String script){
 		log.debug("script [{}]: {}", script.hashCode(), script); //$NON-NLS-1$
-		if (IS_RAP) {
-			synchronized (BrowserLock.class) {
-				if (!browser.isDisposed()) {
+		if (!browser.isDisposed()) {
+			if (IS_RAP) {
+				synchronized (BrowserLock.class) {
 					try {
 						return browser.execute(script);
 					} catch (IllegalStateException ise) {
 						log.warn("Catched IllegalStateException in script [{}]", script);
 					}
+					
 				}
-				return false;
+			} else {
+				return browser.execute(script);
 			}
-		} else {
-			return browser.execute(script);
 		}
+		return false;
 	}
 	
 	private class BrowserLock {}

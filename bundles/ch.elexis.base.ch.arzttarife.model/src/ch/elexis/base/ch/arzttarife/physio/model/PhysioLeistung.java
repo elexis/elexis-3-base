@@ -74,6 +74,11 @@ public class PhysioLeistung
 	}
 	
 	@Override
+	public String getCodeSystemCode(){
+		return "311";
+	}
+	
+	@Override
 	public String getCode(){
 		return getZiffer();
 	}

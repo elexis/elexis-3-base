@@ -768,6 +768,11 @@ public class Tarmed45Exporter {
 						serviceType.setUnitFactor(billed.getFactor());
 						
 						serviceType.setTariffType(billable.getCodeSystemCode());
+						// change physio tariff type for KVG from 311 to 312 
+						if (encounter.getCoverage().getBillingSystem().getLaw() == BillingLaw.KVG
+							&& "311".equals(billable.getCodeSystemCode())) {
+							serviceType.setTariffType("312");
+						}
 						serviceType.setCode(billable.getCode());
 						serviceType.setQuantity(billed.getAmount());
 						serviceType.setRecordId(recordNumber++);

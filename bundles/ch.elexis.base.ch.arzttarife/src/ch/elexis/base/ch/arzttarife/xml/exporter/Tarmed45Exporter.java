@@ -329,11 +329,13 @@ public class Tarmed45Exporter {
 		DebitorAddressType debitorAddressType = new DebitorAddressType();
 		
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-		IContact debitor =
-			XMLExporterUtil.getGuarantor(tiersType.getShortName(), invoice.getCoverage()
-				.getPatient(),
-			invoice.getCoverage());
-
+		IContact debitor = null;
+		if (tiersType == Tiers.GARANT) {
+			debitor = XMLExporterUtil.getGuarantor(tiersType.getShortName(),
+				invoice.getCoverage().getPatient(), invoice.getCoverage());
+		} else {
+			debitor = invoice.getCoverage().getCostBearer();
+		}
 		debitorAddressType.setEanParty(TarmedRequirements.getEAN(debitor));
 		
 		Object companyOrPerson = getCompanyOrPerson(debitor, false);

@@ -393,7 +393,6 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	}
 	
 	public void closed(){
-		_ctrl.close();
 		_rs232log.log("Closed"); //$NON-NLS-1$
 		setChecked(false);
 		_rs232log.logEnd();

@@ -1,14 +1,15 @@
 package ch.elexis.connect.afinion;
 
-import gnu.io.SerialPortEvent;
-
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import ch.elexis.core.ui.importer.div.rs232.AbstractConnection;
+import org.slf4j.LoggerFactory;
+
+import ch.elexis.core.serial.Connection;
 import ch.elexis.core.ui.util.Log;
 
 /**
@@ -17,7 +18,7 @@ import ch.elexis.core.ui.util.Log;
  * @author immi
  * 
  */
-public class AfinionConnection extends AbstractConnection {
+public class AfinionConnection extends Connection {
 	
 	Log _elexislog = Log.get("AfinionConnection");
 	
@@ -53,6 +54,8 @@ public class AfinionConnection extends AbstractConnection {
 	private long last_time_ms = 0;
 	
 	private Calendar currentCal = new GregorianCalendar();
+	
+	private int state;
 	
 	// Wird für Fehlerhandling verwendet. Alles wird in console geloggt.
 	private static final boolean debugToConsole = false;
@@ -420,7 +423,7 @@ public class AfinionConnection extends AbstractConnection {
 		} else {
 			sendPacketACK(packetNr);
 			sendMessageACK();
-			listener.gotData(this, bytes);
+			fireData(bytes);
 		}
 	}
 	
@@ -532,38 +535,17 @@ public class AfinionConnection extends AbstractConnection {
 		}
 	}
 	
-	/**
-	 * Handles serial event.
-	 */
-	public void serialEvent(final int state, final InputStream inputStream, final SerialPortEvent e)
-		throws IOException{
-		
-		switch (e.getEventType()) {
-		case SerialPortEvent.BI:
-		case SerialPortEvent.OE:
-		case SerialPortEvent.FE:
-		case SerialPortEvent.PE:
-		case SerialPortEvent.CD:
-		case SerialPortEvent.CTS:
-		case SerialPortEvent.DSR:
-		case SerialPortEvent.RI:
-		case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
-			break;
-		case SerialPortEvent.DATA_AVAILABLE:
-			dataAvailable(inputStream);
-			break;
+	@Override
+	protected void setData(byte[] newData){
+		try {
+			dataAvailable(new ByteArrayInputStream(newData));
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error setting available serial data", e);
 		}
-		
 	}
 	
 	@Override
-	public void breakInterrupt(final int state){
-		setState(INIT);
-		super.breakInterrupt(state);
-	}
-	
-	@Override
-	public String connect(){
+	public boolean connect(){
 		setState(INIT);
 		return super.connect();
 	}
@@ -588,6 +570,10 @@ public class AfinionConnection extends AbstractConnection {
 	
 	public void setState(int state){
 		debugln(getStateText(getState()) + " -> " + getStateText(state));
-		super.setState(state);
+		this.state = state;
+	}
+	
+	public int getState(){
+		return state;
 	}
 }

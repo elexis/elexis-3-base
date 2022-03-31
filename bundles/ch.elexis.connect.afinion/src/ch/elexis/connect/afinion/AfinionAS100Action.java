@@ -18,11 +18,12 @@ import ch.elexis.connect.afinion.packages.PackageException;
 import ch.elexis.connect.afinion.packages.Record;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.serial.Connection;
+import ch.elexis.core.serial.Connection.ComPortListener;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
-import ch.elexis.core.ui.importer.div.rs232.AbstractConnection;
-import ch.elexis.core.ui.importer.div.rs232.AbstractConnection.ComPortListener;
+import ch.elexis.core.ui.importer.div.rs232.SerialConnectionUi;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.LabItem;
@@ -113,8 +114,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			if (simulate == null) {
 				initConnection();
 				_rs232log.logStart();
-				String msg = _ctrl.connect();
-				if (msg == null) {
+				if (_ctrl.connect()) {
 					String timeoutStr =
 						CoreHub.localCfg.get(Preferences.TIMEOUT,
 							Messages.AfinionAS100Action_DefaultTimeout); //$NON-NLS-1$
@@ -124,15 +124,15 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 					} catch (NumberFormatException e) {
 						// Do nothing. Use default value
 					}
-					_ctrl
-						.awaitFrame(
+					SerialConnectionUi.awaitFrame(_ctrl,
 							UiDesk.getTopShell(),
-							Messages.AfinionAS100Action_WaitMsg, 1, 4, 0, timeout, background, false); //$NON-NLS-1$
+						Messages.AfinionAS100Action_WaitMsg, timeout, background, false); //$NON-NLS-1$
 					return;
 				} else {
 					_rs232log.log("Error"); //$NON-NLS-1$
 					SWTHelper.showError(
-						Messages.AfinionAS100Action_RS232_Error_Title, msg); //$NON-NLS-1$
+						Messages.AfinionAS100Action_RS232_Error_Title,
+						"Konnte seriellen Port nicht öffnen"); //$NON-NLS-1$
 				}
 			} else {
 				SWTHelper.showInfo("Simulating!!!", simulate);
@@ -171,7 +171,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		_rs232log.logEnd();
 	}
 	
-	public void gotBreak(final AbstractConnection connection){
+	public void gotBreak(final Connection connection){
 		connection.close();
 		setChecked(false);
 		_rs232log.log("Break"); //$NON-NLS-1$
@@ -329,7 +329,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	/**
 	 * Messagedaten von Afinion wurden gelesen
 	 */
-	public void gotData(final AbstractConnection connection, final byte[] data){
+	public void gotData(final Connection connection, final byte[] data){
 		if (_rs232log != null) {
 			_rs232log.logRX(new String(data));
 		}

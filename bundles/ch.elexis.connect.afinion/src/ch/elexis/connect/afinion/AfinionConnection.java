@@ -58,6 +58,8 @@ public class AfinionConnection extends Connection {
 	
 	private int state;
 	
+	private ScheduledExecutorService executorService;
+	
 	// Wird für Fehlerhandling verwendet. Alles wird in console geloggt.
 	private static final boolean debugToConsole = false;
 	
@@ -516,11 +518,19 @@ public class AfinionConnection extends Connection {
 	}
 	
 	@Override
+	public void close(){
+		if (executorService != null) {
+			executorService.shutdownNow();
+		}
+		super.close();
+	}
+	
+	@Override
 	public boolean connect(){
 		setState(INIT);
 		boolean ret = super.connect();
 		if (ret) {
-			ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+			executorService = Executors.newSingleThreadScheduledExecutor();
 			executorService.scheduleAtFixedRate(() -> {
 				// Initialisierung
 				if (getState() == INIT) {

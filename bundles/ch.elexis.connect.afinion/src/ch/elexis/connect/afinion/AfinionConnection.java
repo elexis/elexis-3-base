@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +50,8 @@ public class AfinionConnection extends Connection {
 	private String awaitPacketNr;
 	
 	private static int pc_packet_nr = 21;
+	
+	private long last_time_ms = 0;
 	
 	private Calendar currentCal = new GregorianCalendar();
 	
@@ -332,7 +331,7 @@ public class AfinionConnection extends Connection {
 				debugln("OK"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error sending patient request", e);
+			e.printStackTrace();
 		}
 		
 		return packetNrStr;
@@ -504,6 +503,36 @@ public class AfinionConnection extends Connection {
 			// {Text} <LF>
 			readToLF(inputStream);
 		}
+		
+		// Initialisierung
+		if (getState() == INIT) {
+			last_time_ms = new GregorianCalendar().getTimeInMillis();
+			setState(WAITING);
+		}
+		
+		// 1 Minute delay
+		if (getState() == WAITING) {
+			long time_ms = new GregorianCalendar().getTimeInMillis();
+			if (time_ms - last_time_ms > STARTUP_DELAY_IN_MS) {
+				setState(SEND_PAT_REQUEST);
+				last_time_ms = new GregorianCalendar().getTimeInMillis();
+			}
+		}
+		
+		// Überprüft Status. Nach x Sekunden wird Request nochmals gesendet
+		if (getState() == PAT_REQUEST_SENDED || getState() == PAT_REQUEST_ACK) {
+			// Resend nach 30 sekunden
+			long time_ms = new GregorianCalendar().getTimeInMillis();
+			if (time_ms - last_time_ms > RESEND_IN_MS) {
+				setState(SEND_PAT_REQUEST);
+				last_time_ms = new GregorianCalendar().getTimeInMillis();
+			}
+		}
+		
+		if (getState() == SEND_PAT_REQUEST) {
+			awaitPacketNr = sendPatRecordRequest();
+			setState(PAT_REQUEST_SENDED);
+		}
 	}
 	
 	@Override
@@ -518,34 +547,7 @@ public class AfinionConnection extends Connection {
 	@Override
 	public boolean connect(){
 		setState(INIT);
-		boolean ret = super.connect();
-		if (ret) {
-			ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-			executorService.scheduleAtFixedRate(() -> {
-				// Initialisierung
-				if (getState() == INIT) {
-					setState(WAITING);
-				}
-				
-				// 1 Minute delay
-				if (getState() == WAITING) {
-					setState(SEND_PAT_REQUEST);
-				}
-				
-				// Überprüft Status. Nach x Sekunden wird Request nochmals gesendet
-				if (getState() == PAT_REQUEST_SENDED || getState() == PAT_REQUEST_ACK) {
-					setState(SEND_PAT_REQUEST);
-				}
-				
-				if (getState() == SEND_PAT_REQUEST) {
-					awaitPacketNr = sendPatRecordRequest();
-					LoggerFactory.getLogger(getClass()).info(
-						"Sending patient record request -> packet number [" + awaitPacketNr + "]");
-					setState(PAT_REQUEST_SENDED);
-				}
-			}, 3, 30, TimeUnit.SECONDS);
-		}
-		return ret;
+		return super.connect();
 	}
 	
 	private String getStateText(int state){

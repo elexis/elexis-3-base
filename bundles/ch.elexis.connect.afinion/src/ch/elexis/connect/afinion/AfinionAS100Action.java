@@ -75,11 +75,16 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			_ctrl.close();
 		}
 		_ctrl =
-			new AfinionConnection(Messages.AfinionAS100Action_ConnectionName, //$NON-NLS-1$
+			(AfinionConnection) new AfinionConnection(Messages.AfinionAS100Action_ConnectionName, //$NON-NLS-1$
 				CoreHub.localCfg.get(Preferences.PORT,
 					Messages.AfinionAS100Action_DefaultPort), CoreHub.localCfg.get( //$NON-NLS-1$
 					Preferences.PARAMS, Messages.AfinionAS100Action_DefaultParams), //$NON-NLS-1$
-				this);
+				this).withStartOfChunk(
+					new byte[] {
+						AfinionConnection.DLE, AfinionConnection.STX
+					}).withEndOfChunk(new byte[] {
+						AfinionConnection.DLE, AfinionConnection.ETX
+			}).excludeDelimiters(false);
 		
 		Calendar cal = new GregorianCalendar();
 		if (debugRecord != 0) {

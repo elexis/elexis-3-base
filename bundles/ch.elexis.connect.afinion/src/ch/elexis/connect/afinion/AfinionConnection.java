@@ -22,14 +22,14 @@ public class AfinionConnection extends Connection {
 	
 	Log _elexislog = Log.get("AfinionConnection");
 	
-	private static final int NUL = 0x00;
-	private static final int STX = 0x02;
-	private static final int ETX = 0x03;
-	private static final int ACK = 0x06;
-	private static final int DLE = 0x10;
-	private static final int NAK = 0x15;
-	private static final int ETB = 0x17;
-	private static final int LF = 0x0D;
+	protected static final int NUL = 0x00;
+	protected static final int STX = 0x02;
+	protected static final int ETX = 0x03;
+	protected static final int ACK = 0x06;
+	protected static final int DLE = 0x10;
+	protected static final int NAK = 0x15;
+	protected static final int ETB = 0x17;
+	protected static final int LF = 0x0D;
 	
 	private static final long STARTUP_DELAY_IN_MS = 2000; // 60 Sekunden
 	private static final long RESEND_IN_MS = 30000; // 30 Sekunden
@@ -423,7 +423,7 @@ public class AfinionConnection extends Connection {
 		} else {
 			sendPacketACK(packetNr);
 			sendMessageACK();
-			fireData(bytes);
+			getListener().gotData(this, bytes);
 		}
 	}
 	
@@ -536,11 +536,13 @@ public class AfinionConnection extends Connection {
 	}
 	
 	@Override
-	protected void setData(byte[] newData){
-		try {
-			dataAvailable(new ByteArrayInputStream(newData));
-		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error setting available serial data", e);
+	protected void fireData(byte[] data){
+		if (data != null && data.length > 0) {
+			try {
+				dataAvailable(new ByteArrayInputStream(data));
+			} catch (IOException e) {
+				LoggerFactory.getLogger(getClass()).error("Error fire available serial data", e);
+			}
 		}
 	}
 	

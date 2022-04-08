@@ -23,7 +23,7 @@ public class CDACHServices_Service extends Service {
 				.getResource("/rsc/ch/docbox/ws/cdachservices/CDACHServices.wsdl");
 	}
 	
-	public CDACHServices_Service(URL wsdlLocation, QName serviceName){
+	private CDACHServices_Service(URL wsdlLocation, QName serviceName){
 		super(wsdlLocation, serviceName);
 	}
 	
@@ -38,8 +38,14 @@ public class CDACHServices_Service extends Service {
 	 */
 	@WebEndpoint(name = "CDACHServices")
 	public CDACHServices getCDACHServices(){
-		return super.getPort(new QName("http://ws.docbox.ch/CDACHServices/", "CDACHServices"),
-			CDACHServices.class);
+		ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(Service.class.getClassLoader());
+		try {
+			return super.getPort(new QName("http://ws.docbox.ch/CDACHServices/", "CDACHServices"),
+				CDACHServices.class);
+		} finally {
+			Thread.currentThread().setContextClassLoader(tccl);
+		}
 	}
 	
 	/**
@@ -51,7 +57,7 @@ public class CDACHServices_Service extends Service {
 	 * @return returns CDACHServices
 	 */
 	@WebEndpoint(name = "CDACHServices")
-	public CDACHServices getCDACHServices(WebServiceFeature... features){
+	private CDACHServices getCDACHServices(WebServiceFeature... features){
 		return super.getPort(new QName("http://ws.docbox.ch/CDACHServices/", "CDACHServices"),
 			CDACHServices.class, features);
 	}

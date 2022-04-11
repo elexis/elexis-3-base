@@ -6,6 +6,7 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -120,12 +121,19 @@ public class GlobalInboxUtil {
 
 	public void removeFiles(GlobalInboxEntry globalInboxEntry){
 		File mainFile = globalInboxEntry.getMainFile();
-		mainFile.delete();
+		try {
+			Files.delete(mainFile.toPath());
+		} catch (IOException e) {
+			logger.warn("Could not delete " + mainFile, e);
+		}
 		File[] extensionFiles = globalInboxEntry.getExtensionFiles();
 		for (File extensionFile : extensionFiles) {
-			extensionFile.delete();
+			try {
+				Files.delete(extensionFile.toPath());
+			} catch (IOException e) {
+				logger.warn("Could not delete " + extensionFile, e);
+			}
 		}
-		
 	}
 	
 }

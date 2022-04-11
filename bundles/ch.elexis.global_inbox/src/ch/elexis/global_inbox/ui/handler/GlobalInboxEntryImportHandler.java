@@ -27,6 +27,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IContextService;
+import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
@@ -90,6 +91,9 @@ public class GlobalInboxEntryImportHandler {
 			documentStore.removeDocument(document);
 			return;
 		}
+		
+		// unload the document in preview, s.t. it can be deleted by the OS (Win)
+		eventBroker.send(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, null);
 		
 		new GlobalInboxUtil().removeFiles(globalInboxEntry);
 		

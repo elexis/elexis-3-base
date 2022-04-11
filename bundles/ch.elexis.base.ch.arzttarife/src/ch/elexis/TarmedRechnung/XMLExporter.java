@@ -343,7 +343,7 @@ public class XMLExporter implements IRnOutputter {
 		invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class).orElseThrow(
 			() -> new IllegalStateException("Could not load invoice [" + rechnung.getId() + "]"));
 		
-		exporter.setEsrType(esrType);
+		exporter.setEsrType(getEsrTypeOrFallback(invoice));
 		
 		if (xmlBillExists(invoice)) {
 			logger.info("Updating existing bill for " + invoice.getNumber());
@@ -391,6 +391,27 @@ public class XMLExporter implements IRnOutputter {
 			return xmlRn;
 		}
 		return null;
+	}
+	
+	/**
+	 * If current esrType is null (default is {@link EsrType#esrQR}) or {@link EsrType#esrQR}, check
+	 * if there is an IBAN available for the biller. If none is available fallback to
+	 * {@link EsrType#esr9}.
+	 * 
+	 * @param invoice
+	 * @return
+	 */
+	private EsrType getEsrTypeOrFallback(IInvoice invoice){
+		if (esrType == null || esrType == EsrType.esrQR) {
+			String iban = (String) invoice.getMandator().getBiller().getExtInfo("IBAN");
+			if (StringUtils.isEmpty(iban)) {
+				logger.warn("No IBAN for ESRQR with biller ["
+					+ invoice.getMandator().getBiller().getLabel()
+					+ "] fallback to ESR9 for invoice [" + invoice.getNumber() + "]");
+				return EsrType.esr9;
+			}
+		}
+		return esrType;
 	}
 	
 	private String getInvoiceId(IInvoice invoice){

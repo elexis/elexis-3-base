@@ -31,6 +31,7 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -93,6 +94,9 @@ public class XMLExporterTest {
 			Element record = (Element) iter.next();
 			Attribute code = record.getAttribute("code");
 			assertEquals("00.0010", code.getValue());
+			// check if the esrQR is included
+			iter = root.getDescendants(new ElementFilter("esrQR"));
+			assertTrue(iter.hasNext());
 			// check if patient is included
 			iter = root.getDescendants(new ElementFilter("patient"));
 			assertTrue(iter.hasNext());
@@ -125,6 +129,42 @@ public class XMLExporterTest {
 				Object base64Content = next.getContent().get(0);
 				assertNotNull(base64Content);
 			}
+		}
+		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
+	}
+	
+	@Test
+	public void doExportEsrFallbackTest() throws IOException{
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
+		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true);
+		XMLExporter exporter = new XMLExporter();
+		List<IInvoice> invoices = szenario.getInvoices();
+		for (IInvoice invoice : invoices) {
+			// clear IBAN for fallback
+			IContact biller = invoice.getMandator().getBiller();
+			String iban = (String) biller.getExtInfo("IBAN");
+			assertNotNull(iban);
+			biller.setExtInfo("IBAN", null);
+			CoreModelServiceHolder.get().save(biller);
+			
+			TestData.removeExistingXml(invoice);
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
+				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+			assertNotNull(result);
+			if (invoice.getState() == InvoiceState.DEFECTIVE) {
+				printFaildDocument(result);
+				fail();
+			}
+			// check if the esr9 is included
+			Element root = result.getRootElement();
+			Iterator<?> iter = root.getDescendants(new ElementFilter("esr9"));
+			assertTrue(iter.hasNext());
+			
+			// restore IBAN
+			biller.setExtInfo("IBAN", iban);
+			CoreModelServiceHolder.get().save(biller);
 		}
 		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 	}

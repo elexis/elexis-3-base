@@ -401,7 +401,7 @@ public class XMLExporter implements IRnOutputter {
 	 * @param invoice
 	 * @return
 	 */
-	private EsrType getEsrTypeOrFallback(IInvoice invoice){
+	public EsrType getEsrTypeOrFallback(IInvoice invoice){
 		if (esrType == null || esrType == EsrType.esrQR) {
 			String iban = (String) invoice.getMandator().getBiller().getExtInfo("IBAN");
 			if (StringUtils.isEmpty(iban)) {

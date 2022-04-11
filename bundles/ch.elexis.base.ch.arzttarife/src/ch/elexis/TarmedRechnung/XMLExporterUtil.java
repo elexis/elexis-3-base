@@ -386,7 +386,7 @@ public class XMLExporterUtil {
 		if (iEAN.length() == 0) {
 			if (TarmedRequirements.hasTCContract(invoice.getMandator())) {
 				String trustCenter = TarmedRequirements.getTCName(invoice.getMandator());
-				if (trustCenter.length() > 0) {
+				if (trustCenter != null && trustCenter.length() > 0) {
 					iEAN = TrustCenters.getTCEAN(trustCenter);
 				}
 			}

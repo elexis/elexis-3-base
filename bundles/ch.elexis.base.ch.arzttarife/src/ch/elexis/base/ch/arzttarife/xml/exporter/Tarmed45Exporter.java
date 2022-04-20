@@ -1440,9 +1440,9 @@ public class Tarmed45Exporter {
 					request.getPayload().getBody().setEsrQR(getEsrQR(invoice));
 					request.getPayload().getBody().setEsr9(null);
 				}
-				
 				if (request.getPayload().getBody().getTiersGarant() != null
 					&& invoice.getCoverage().getPatient() != null) {
+					// TG contacts
 					// update patient information	
 					PatientAddressType updatePatient = getPatient(invoice);
 					if (updatePatient != null) {
@@ -1453,6 +1453,52 @@ public class Tarmed45Exporter {
 					if (updateGuarantor != null) {
 						request.getPayload().getBody().getTiersGarant()
 							.setGuarantor(updateGuarantor);
+					}
+					// update insurance information
+					InsuranceAddressType updateInsurance = getInsurance(invoice);
+					if (updateInsurance != null) {
+						request.getPayload().getBody().getTiersGarant()
+							.setInsurance(updateInsurance);
+					}
+					// update provider information
+					ProviderAddressType updateProvider = getProvider(invoice);
+					if (updateProvider != null) {
+						request.getPayload().getBody().getTiersGarant().setProvider(updateProvider);
+					}
+					// update biller information
+					BillerAddressType updateBiller = getBiller(invoice);
+					if (updateBiller != null) {
+						request.getPayload().getBody().getTiersGarant().setBiller(updateBiller);
+					}
+				} else if (request.getPayload().getBody().getTiersPayant() != null
+					&& invoice.getCoverage().getPatient() != null) {
+					// TP contacts
+					// update patient information	
+					PatientAddressType updatePatient = getPatient(invoice);
+					if (updatePatient != null) {
+						request.getPayload().getBody().getTiersPayant().setPatient(updatePatient);
+					}
+					// update guarantor information
+					GuarantorAddressType updateGuarantor = getGuarantor(invoice);
+					if (updateGuarantor != null) {
+						request.getPayload().getBody().getTiersPayant()
+							.setGuarantor(updateGuarantor);
+					}
+					// update insurance information
+					InsuranceAddressType updateInsurance = getInsurance(invoice);
+					if (updateInsurance != null) {
+						request.getPayload().getBody().getTiersPayant()
+							.setInsurance(updateInsurance);
+					}
+					// update provider information
+					ProviderAddressType updateProvider = getProvider(invoice);
+					if (updateProvider != null) {
+						request.getPayload().getBody().getTiersPayant().setProvider(updateProvider);
+					}
+					// update biller information
+					BillerAddressType updateBiller = getBiller(invoice);
+					if (updateBiller != null) {
+						request.getPayload().getBody().getTiersPayant().setBiller(updateBiller);
 					}
 				}
 				

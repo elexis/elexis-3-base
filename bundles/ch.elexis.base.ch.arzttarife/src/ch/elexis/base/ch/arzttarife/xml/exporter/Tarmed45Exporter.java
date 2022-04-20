@@ -1118,6 +1118,25 @@ public class Tarmed45Exporter {
 				bankEsrAddressType.setCompany(bankCompany);
 				esrQRType.setBank(bankEsrAddressType);
 			});
+		} else {
+			// use PostFinance AG as bank  
+			EsrAddressType bankEsrAddressType = new EsrAddressType();
+			
+			CompanyType bankCompany = new CompanyType();
+			bankCompany.setCompanyname(StringUtils.abbreviate("PostFinance AG", 35));
+			PostalAddressType postalAddressType = new PostalAddressType();
+			postalAddressType.setStreet(StringUtils.abbreviate("Mingerstrasse 20", 35));
+			postalAddressType.setCity(StringUtils
+				.abbreviate(StringUtils.defaultIfBlank("Bern", Messages.XMLExporter_Unknown), 35));
+			ZipType zipType = new ZipType();
+			zipType.setValue(StringUtils.left("3030", 9));
+			Country country = Country.CH;
+			zipType.setCountrycode(StringUtils.left(country.toString(), 3));
+			postalAddressType.setZip(zipType);
+			bankCompany.setPostal(postalAddressType);
+			
+			bankEsrAddressType.setCompany(bankCompany);
+			esrQRType.setBank(bankEsrAddressType);
 		}
 		
 		return esrQRType;

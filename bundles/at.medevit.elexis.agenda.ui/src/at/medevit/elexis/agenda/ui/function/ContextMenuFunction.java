@@ -15,6 +15,7 @@ import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.utils.CoreUtil;
 
 public class ContextMenuFunction extends AbstractBrowserFunction {
 	
@@ -67,6 +68,9 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 				
 				Display.getDefault().timerExec(100, () -> {
 					if (!getBrowser().getMenu().isVisible()) {
+						if (CoreUtil.isMac()) {
+							getBrowser().setFocus();
+						}
 						getBrowser().getMenu().setVisible(true);
 					}
 				});

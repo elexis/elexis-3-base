@@ -89,6 +89,9 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 
 			Display.getDefault().timerExec(100, () -> {
 				if (!getBrowser().getMenu().isVisible()) {
+					if (CoreUtil.isMac()) {
+						getBrowser().setFocus();
+					}
 					getBrowser().getMenu().setVisible(true);
 				}
 			});

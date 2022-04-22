@@ -38,7 +38,10 @@ public class DayClickFunction extends AbstractBrowserFunction {
 						AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
 						AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
 			} else {
-				MessageDialog.openInformation(getBrowser().getShell(), "Info", "Keine Resource selektiert.");
+				MessageDialog.openInformation(getBrowser().getShell(), "Info",
+					"Im linken Seitenbereich ist kein Bereich selektiert. " +
+							"\nFalls keiner sichtbar ist, in den Agenda-Einstellungen hinzufügen." +
+							"\nSiehe https://wikijs.medelexis.ch/de/KonfigurationAgenda");
 			}
 		} else if (arguments.length == 2) {
 			LocalDateTime date = getDateTimeArg(arguments[0]);

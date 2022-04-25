@@ -14,6 +14,7 @@ package ch.elexis.base.messages;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.sound.sampled.AudioInputStream;
@@ -21,6 +22,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,18 +49,25 @@ public class MsgHeartListener implements HeartListener {
 				if (res.size() > 0) {
 					UiDesk.getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							bSkip = true;
-							if (ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_ON, true)) {
-								playSound();
+							if (!isModalShellOpen()) {
+								bSkip = true;
+								if (ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_ON, true)) {
+									playSound();
+								}
+								new MsgDetailDialog(Hub.getActiveShell(), res.get(0)).open();
+								bSkip = false;
 							}
-							new MsgDetailDialog(Hub.getActiveShell(), res.get(0)).open();
-							bSkip = false;
 						}
 					});
-
 				}
 			}
 		}
+	}
+
+	private boolean isModalShellOpen() {
+		return Arrays.asList(Display.getDefault().getShells()).stream()
+				.filter(s -> ((s.getStyle() & SWT.SYSTEM_MODAL) > 0)
+				|| ((s.getStyle() & SWT.APPLICATION_MODAL) > 0)).findFirst().isPresent();
 	}
 
 	/**

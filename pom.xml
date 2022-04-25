@@ -11,6 +11,7 @@
 	<properties>
 		<elexis.target>2021-09-java11</elexis.target>
 		<git.core.branch>master</git.core.branch>
+		<formatterConfigFile>https://raw.githubusercontent.com/elexis/elexis-3-core/master/Eclipse_builtin.xml</formatterConfigFile>
 		<tycho.version>2.7.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
@@ -160,6 +161,20 @@ if ( System.getProperty("git_branch") == null ) {
 					<suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
 				</configuration>
 				<version>2.17</version>
+			</plugin>
+			<plugin>
+				<groupId>net.revelc.code.formatter</groupId>
+				<artifactId>formatter-maven-plugin</artifactId>
+				<version>2.18.0</version>
+				<configuration>
+					<directories>
+						<directory>${project.build.sourceDirectory}</directory>
+						<directory>${project.basedir}/src</directory>
+					</directories>
+					<configFile>${formatterConfigFile}</configFile>
+					<lineEnding>KEEP</lineEnding>
+					<encoding>UTF-8</encoding>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>

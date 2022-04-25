@@ -6,17 +6,17 @@ import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider.QueryFilter;
 
 public class AtcQueryFilter implements QueryFilter {
 	private String filterValue;
-	
-	public void setFilterValue(String value){
+
+	public void setFilterValue(String value) {
 		this.filterValue = value;
 	}
-	
-	public String getFilterValue(){
+
+	public String getFilterValue() {
 		return this.filterValue;
 	}
-	
+
 	@Override
-	public void apply(IQuery<?> query){
+	public void apply(IQuery<?> query) {
 		if (filterValue != null && !filterValue.isEmpty()) {
 			query.and("atc", COMPARATOR.LIKE, filterValue + "%");
 		}

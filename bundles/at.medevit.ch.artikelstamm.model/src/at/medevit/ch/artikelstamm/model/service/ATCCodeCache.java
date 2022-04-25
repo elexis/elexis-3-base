@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     MEDEVIT <office@medevit.at> - initial API and implementation
  ******************************************************************************/
@@ -41,21 +41,22 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 /**
- * Provide a cache for the number of elements available in the Artikelstamm set for each ATC code.
- * 
+ * Provide a cache for the number of elements available in the Artikelstamm set
+ * for each ATC code.
+ *
  */
 @Component
 public class ATCCodeCache implements ATCCodeCacheService {
-	
+
 	private static HashMap<String, Integer> cache;
-	
+
 	private static Logger log = LoggerFactory.getLogger(ATCCodeCache.class);
 	private static final String NAMED_BLOB_PREFIX = "ATC_ARTSTAMM_CACHE";
-	
-	private static void initCache() throws IOException, ClassNotFoundException{
+
+	private static void initCache() throws IOException, ClassNotFoundException {
 		deserializeFromDatabase(determineBlobId());
 	}
-	
+
 	@Activate
 	public void activate() {
 		try {
@@ -64,17 +65,15 @@ public class ATCCodeCache implements ATCCodeCacheService {
 			log.warn("Error initializing cache failed [" + e.getMessage() + "] activating anyway");
 		}
 	}
-	
-	private static String determineBlobId(){
+
+	private static String determineBlobId() {
 		return NAMED_BLOB_PREFIX + "_" + VersionUtil.getCurrentVersion();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private static void deserializeFromDatabase(String id)
-		throws IOException, ClassNotFoundException{
-		
-		Optional<IBlobSecondary> cacheStorage =
-			CoreModelServiceHolder.get().load(id, IBlobSecondary.class);
+	private static void deserializeFromDatabase(String id) throws IOException, ClassNotFoundException {
+
+		Optional<IBlobSecondary> cacheStorage = CoreModelServiceHolder.get().load(id, IBlobSecondary.class);
 		if (cacheStorage.isPresent()) {
 			ByteArrayInputStream ba = new ByteArrayInputStream(cacheStorage.get().getContent());
 			ObjectInputStream oba = new ObjectInputStream(ba);
@@ -85,13 +84,13 @@ public class ATCCodeCache implements ATCCodeCacheService {
 			rebuildCache(new NullProgressMonitor());
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param element
 	 * @return the number of elements found, or -1 in case of any error
 	 */
-	public int getAvailableArticlesByATCCode(Object element){
+	public int getAvailableArticlesByATCCode(Object element) {
 		if (element instanceof ATCCode) {
 			if (cache == null) {
 				try {
@@ -102,14 +101,14 @@ public class ATCCodeCache implements ATCCodeCacheService {
 					return -1;
 				}
 			}
-			
+
 			Integer value = cache.get(((ATCCode) element).atcCode);
 			return (value != null) ? value : 0;
 		}
 		return 0;
 	}
-	
-	public static void rebuildCache(IProgressMonitor monitor){
+
+	public static void rebuildCache(IProgressMonitor monitor) {
 		ATCCodeService atcCodeService = AtcCodeServiceHolder.get().orElse(null);
 		if (atcCodeService == null) {
 			log.error("No ATCCodeService available");
@@ -119,14 +118,12 @@ public class ATCCodeCache implements ATCCodeCacheService {
 		}
 		List<ATCCode> allATCCodes = atcCodeService.getAllATCCodes();
 		int numberOfATCCodes = allATCCodes.size();
-		monitor.beginTask("Rebuilding index of available articles per ATC Code",
-			numberOfATCCodes + 1);
+		monitor.beginTask("Rebuilding index of available articles per ATC Code", numberOfATCCodes + 1);
 		cache = new HashMap<String, Integer>(numberOfATCCodes);
-		
+
 		TreeMap<String, Integer> tm = new TreeMap<String, Integer>();
 		String queryString = "SELECT DISTINCT(atc) FROM artikelstamm_ch";
-		log.debug("ArtikelstammImporter {} numberOfATCCodes using query {}:", numberOfATCCodes,
-			queryString);
+		log.debug("ArtikelstammImporter {} numberOfATCCodes using query {}:", numberOfATCCodes, queryString);
 		ModelServiceHolder.get().executeNativeQuery(queryString).forEach(o -> {
 			if (o instanceof String) {
 				String atc = (String) o;
@@ -139,10 +136,10 @@ public class ATCCodeCache implements ATCCodeCacheService {
 				}
 			}
 		});
-		
+
 		for (ATCCode atcCode : allATCCodes) {
 			int foundElements = 0;
-			
+
 			ATCCode next = atcCodeService.getNextInHierarchy(atcCode);
 			SortedMap<String, Integer> subMap;
 			if (next != null) {
@@ -150,7 +147,7 @@ public class ATCCodeCache implements ATCCodeCacheService {
 			} else {
 				subMap = tm.tailMap(atcCode.atcCode);
 			}
-			
+
 			for (Iterator<String> a = subMap.keySet().iterator(); a.hasNext();) {
 				String val = a.next();
 				foundElements += tm.get(val);
@@ -165,12 +162,11 @@ public class ATCCodeCache implements ATCCodeCacheService {
 		for (IBlobSecondary oldCache : query.execute()) {
 			CoreModelServiceHolder.get().remove(oldCache);
 		}
-		
+
 		// serialize the cache
 		try {
 			String id = determineBlobId();
-			IBlobSecondary cacheStorage =
-				CoreModelServiceHolder.get().load(id, IBlobSecondary.class).orElse(null);
+			IBlobSecondary cacheStorage = CoreModelServiceHolder.get().load(id, IBlobSecondary.class).orElse(null);
 			if (cacheStorage == null) {
 				cacheStorage = CoreModelServiceHolder.get().create(IBlobSecondary.class);
 				cacheStorage.setId(determineBlobId());

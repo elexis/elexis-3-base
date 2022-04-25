@@ -37,41 +37,41 @@ import ch.rgw.tools.VersionInfo;
 
 public class EhcDocument extends PersistentObject {
 	private static Logger logger = LoggerFactory.getLogger(EhcDocument.class);
-	
+
 	public enum EhcDocType {
-			CLINICALDOCUMENT, XDM
+		CLINICALDOCUMENT, XDM
 	}
-	
+
 	public static final String TABLENAME = "at_medevit_elexis_ehc_document"; //$NON-NLS-1$
 	public static final String VERSION = "1.0.0"; //$NON-NLS-1$
-	
+
 	public static final String VERSIONID = "VERSION"; //$NON-NLS-1$
-	
+
 	public static final String FLD_NAME = "name"; //$NON-NLS-1$
 	public static final String FLD_TIMESTAMP = "timestamp"; //$NON-NLS-1$
 	public static final String FLD_PATIENT = "patient"; //$NON-NLS-1$
 	public static final String FLD_LOCATION = "location"; //$NON-NLS-1$
-	
+
 	// @formatter:off
-	static final String create = 
+	static final String create =
 			"CREATE TABLE " + TABLENAME + " (" + //$NON-NLS-1$
 			"ID VARCHAR(25) primary key, " + //$NON-NLS-1$
 			"lastupdate BIGINT," +
 			"deleted CHAR(1) default '0'," + //$NON-NLS-1$
-			
+
 			"name VARCHAR(255)," + //$NON-NLS-1$
 			"timestamp VARCHAR(16)," + //$NON-NLS-1$
 			"patient VARCHAR(128)," + //$NON-NLS-1$
 			"location VARCHAR(255)" + //$NON-NLS-1$
-			
+
 			");" + //$NON-NLS-1$
 			"CREATE INDEX ehcdoc1 ON " + TABLENAME + " (" + FLD_PATIENT + ");" + //$NON-NLS-1$
 			"INSERT INTO " + TABLENAME + " (ID," + FLD_PATIENT + ") VALUES (" + JdbcLink.wrap(VERSIONID) + "," + JdbcLink.wrap(VERSION) + ");"; //$NON-NLS-1$
 	// @formatter:on
-	
+
 	static {
 		addMapping(TABLENAME, FLD_NAME, FLD_TIMESTAMP, FLD_PATIENT, FLD_LOCATION);
-		
+
 		if (!tableExists(TABLENAME)) {
 			createOrModifyTable(create);
 		} else {
@@ -84,27 +84,23 @@ public class EhcDocument extends PersistentObject {
 			}
 		}
 	}
-	
-	public EhcDocument(){
+
+	public EhcDocument() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	public EhcDocument(String id){
+
+	public EhcDocument(String id) {
 		super(id);
 	}
-	
-	public static EhcDocument load(final String id){
+
+	public static EhcDocument load(final String id) {
 		return new EhcDocument(id);
 	}
-	
-	public EhcDocument(String name, URL location, TimeTool creation){
+
+	public EhcDocument(String name, URL location, TimeTool creation) {
 		create(null);
-		String[] fields = {
-			FLD_NAME, FLD_TIMESTAMP, FLD_LOCATION
-		};
-		String[] vals = new String[] {
-			name, creation.toString(TimeTool.TIMESTAMP), location.toString()
-		};
+		String[] fields = { FLD_NAME, FLD_TIMESTAMP, FLD_LOCATION };
+		String[] vals = new String[] { name, creation.toString(TimeTool.TIMESTAMP), location.toString() };
 		set(fields, vals);
 		Patient patient = null;
 		if (isEhcType(EhcDocType.CLINICALDOCUMENT)) {
@@ -114,19 +110,18 @@ public class EhcDocument extends PersistentObject {
 			setPatient(patient);
 		}
 	}
-	
-	public boolean isEhcType(EhcDocType type){
+
+	public boolean isEhcType(EhcDocType type) {
 		return getName().contains("[" + type + "]");
 	}
-	
-	private Patient getPatientFromDocument(URL location){
+
+	private Patient getPatientFromDocument(URL location) {
 		Patient ret = null;
 		try {
 			if (EhcDocument.isEhcXml(location)) {
-				ClinicalDocument clinicalDocument =
-					ServiceComponent.getEhcService().loadDocument(location.openStream());
-				AbstractCdaChV1<?> cdaCh =
-					ServiceComponent.getEhcService().getAsCdaChDocument(clinicalDocument);
+				ClinicalDocument clinicalDocument = ServiceComponent.getEhcService()
+						.loadDocument(location.openStream());
+				AbstractCdaChV1<?> cdaCh = ServiceComponent.getEhcService().getAsCdaChDocument(clinicalDocument);
 				if (cdaCh != null) {
 					org.ehealth_connector.common.mdht.Patient patient = cdaCh.getPatient();
 					if (patient != null) {
@@ -139,16 +134,16 @@ public class EhcDocument extends PersistentObject {
 		}
 		return ret;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return get(FLD_NAME);
 	}
-	
-	public void setName(String name){
+
+	public void setName(String name) {
 		set(FLD_NAME, name);
 	}
-	
-	public URL getLocation(){
+
+	public URL getLocation() {
 		try {
 			return new URL(get(FLD_LOCATION));
 		} catch (MalformedURLException e) {
@@ -156,12 +151,12 @@ public class EhcDocument extends PersistentObject {
 		}
 		return null;
 	}
-	
-	public void setLocation(URL location){
+
+	public void setLocation(URL location) {
 		set(FLD_LOCATION, location.toString());
 	}
-	
-	public Patient getPatient(){
+
+	public Patient getPatient() {
 		String id = get(FLD_PATIENT);
 		if (id != null && !id.isEmpty()) {
 			Patient patient = Patient.load(id);
@@ -171,19 +166,19 @@ public class EhcDocument extends PersistentObject {
 		}
 		return null;
 	}
-	
-	public void setPatient(Patient patient){
+
+	public void setPatient(Patient patient) {
 		set(FLD_PATIENT, patient.getId());
 	}
-	
-	public static boolean documentExists(URL url){
+
+	public static boolean documentExists(URL url) {
 		Query<EhcDocument> qd = new Query<EhcDocument>(EhcDocument.class);
 		qd.add(FLD_LOCATION, Query.EQUALS, url.toString());
 		List<EhcDocument> existing = qd.execute();
 		return !existing.isEmpty();
 	}
-	
-	public static boolean isEhcXml(URL url){
+
+	public static boolean isEhcXml(URL url) {
 		if (url.getPath().endsWith(".xml")) {
 			try (InputStream stream = url.openStream();
 					BufferedReader br = new BufferedReader(new InputStreamReader(stream));) {
@@ -204,47 +199,46 @@ public class EhcDocument extends PersistentObject {
 		}
 		return false;
 	}
-	
-	public static boolean isEhcXdm(URL url){
+
+	public static boolean isEhcXdm(URL url) {
 		if (url.getPath().endsWith(".zip") || url.getPath().endsWith(".xdm")) {
 			String fileName = url.getFile();
 			if (fileName != null && !fileName.isEmpty()) {
 				File file = new File(fileName);
 				if (file.exists()) {
-					List<org.ehealth_connector.common.mdht.Patient> patients =
-						ServiceComponent.getEhcService().getXdmPatients(file);
+					List<org.ehealth_connector.common.mdht.Patient> patients = ServiceComponent.getEhcService()
+							.getXdmPatients(file);
 					return patients != null;
 				}
 			}
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Factory Method for creating an EhcDocument entry from an CDA ClinicalDocument XML.
-	 * 
+	 * Factory Method for creating an EhcDocument entry from an CDA ClinicalDocument
+	 * XML.
+	 *
 	 * @param fileUrl
 	 * @return
 	 */
-	public static EhcDocument createFromXml(URL fileUrl){
+	public static EhcDocument createFromXml(URL fileUrl) {
 		File file = new File(fileUrl.getFile());
-		return new EhcDocument(file.getName() + " [" + EhcDocType.CLINICALDOCUMENT + "]", fileUrl,
-			new TimeTool());
+		return new EhcDocument(file.getName() + " [" + EhcDocType.CLINICALDOCUMENT + "]", fileUrl, new TimeTool());
 	}
-	
+
 	/**
-	 * Factory Method for EhcDocument entry from an XDM. The ClinicalDocuments contained in the XDM
-	 * file are extracted. The InboxWatcher will handle them separately.
-	 * 
+	 * Factory Method for EhcDocument entry from an XDM. The ClinicalDocuments
+	 * contained in the XDM file are extracted. The InboxWatcher will handle them
+	 * separately.
+	 *
 	 * @param fileUrl
 	 * @return
 	 */
-	public static EhcDocument createFromXdm(URL fileUrl){
+	public static EhcDocument createFromXdm(URL fileUrl) {
 		File xdmFile = new File(fileUrl.getPath());
-		EhcDocument ret = new EhcDocument(xdmFile.getName() + " [" + EhcDocType.XDM + "]", fileUrl,
-			new TimeTool());
-		List<ClinicalDocument> documents =
-			ServiceComponent.getEhcService().getXdmDocuments(xdmFile);
+		EhcDocument ret = new EhcDocument(xdmFile.getName() + " [" + EhcDocType.XDM + "]", fileUrl, new TimeTool());
+		List<ClinicalDocument> documents = ServiceComponent.getEhcService().getXdmDocuments(xdmFile);
 		for (ClinicalDocument clinicalDocument : documents) {
 			File documentFile = getXdmDocumentFile(clinicalDocument, xdmFile);
 			try (FileOutputStream outputStream = new FileOutputStream(documentFile)) {
@@ -255,11 +249,11 @@ public class EhcDocument extends PersistentObject {
 		}
 		return ret;
 	}
-	
-	private static File getXdmDocumentFile(ClinicalDocument clinicalDocument, File xdmFile){
+
+	private static File getXdmDocumentFile(ClinicalDocument clinicalDocument, File xdmFile) {
 		String rootPath = xdmFile.getParent();
 		String rootName = xdmFile.getName();
-		
+
 		rootName = rootName.replaceAll("\\.", "");
 		File file = null;
 		for (int i = 0; i < 100; i++) {
@@ -268,17 +262,17 @@ public class EhcDocument extends PersistentObject {
 				break;
 			}
 		}
-		
+
 		return file;
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		return getName().replaceAll("\\[[A-Z]+\\]", "");
 	}
-	
+
 	@Override
-	protected String getTableName(){
+	protected String getTableName() {
 		return TABLENAME;
 	}
 }

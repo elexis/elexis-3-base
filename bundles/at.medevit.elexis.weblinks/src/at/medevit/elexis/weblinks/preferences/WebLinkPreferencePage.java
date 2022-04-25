@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     T. Huster - initial API and implementation
  ******************************************************************************/
@@ -30,7 +30,7 @@ import at.medevit.elexis.weblinks.model.WebLinkElement;
 import at.medevit.elexis.weblinks.model.WebLinkElementUtil;
 
 public class WebLinkPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	private List<WebLinkElement> elements;
 
 	private List<WebLinkEditor> editors = new ArrayList<WebLinkEditor>();
@@ -39,41 +39,40 @@ public class WebLinkPreferencePage extends PreferencePage implements IWorkbenchP
 	private Composite prefAreaComposite;
 
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		elements = WebLinkElementUtil.loadElements();
 	}
-	
+
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(Composite parent) {
 		prefAreaComposite = new Composite(parent, SWT.NONE);
 		prefAreaComposite.setLayout(new GridLayout());
 
 		Button addBtn = new Button(prefAreaComposite, SWT.PUSH);
 		addBtn.setText(Messages.WebLinkPreferencePage_0);
 		addBtn.addSelectionListener(new SelectionListener() {
-			
+
 			@Override
-			public void widgetSelected(SelectionEvent e){
-				elements.add(new WebLinkElement(Long.toString(Calendar.getInstance()
-					.getTimeInMillis())));
+			public void widgetSelected(SelectionEvent e) {
+				elements.add(new WebLinkElement(Long.toString(Calendar.getInstance().getTimeInMillis())));
 				refreshEditors();
 			}
-			
+
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e){
+			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 
 		editorsComposite = new Composite(prefAreaComposite, SWT.NONE);
 		editorsComposite.setLayout(new GridLayout());
 		editorsComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+
 		refreshEditors();
 
 		return prefAreaComposite;
 	}
-	
-	public void refreshEditors(){
+
+	public void refreshEditors() {
 		// remove old editors
 		for (WebLinkEditor editor : editors) {
 			editor.dispose();
@@ -84,17 +83,17 @@ public class WebLinkPreferencePage extends PreferencePage implements IWorkbenchP
 			editor.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			editors.add(editor);
 		}
-		
+
 		prefAreaComposite.layout(true, true);
 	}
 
 	@Override
-	public boolean performOk(){
+	public boolean performOk() {
 		WebLinkElementUtil.saveElements(elements);
 		return true;
 	}
-	
-	public List<WebLinkElement> getElements(){
+
+	public List<WebLinkElement> getElements() {
 		return elements;
 	}
 }

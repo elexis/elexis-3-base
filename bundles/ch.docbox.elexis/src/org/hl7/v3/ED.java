@@ -8,20 +8,23 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * 
- * Data that is primarily intended for human interpretation or for further machine processing is
- * outside the scope of HL7. This includes unformatted or formatted written language, multimedia
- * data, or structured information as defined by a different standard (e.g., XML-signatures.)
- * Instead of the data itself, an ED may contain only a reference (see TEL.) Note that the ST data
- * type is a specialization of the ED data type when the ED media type is text/plain.
- * 
- * 
+ *
+ * Data that is primarily intended for human interpretation or for further
+ * machine processing is outside the scope of HL7. This includes unformatted or
+ * formatted written language, multimedia data, or structured information as
+ * defined by a different standard (e.g., XML-signatures.) Instead of the data
+ * itself, an ED may contain only a reference (see TEL.) Note that the ST data
+ * type is a specialization of the ED data type when the ED media type is
+ * text/plain.
+ *
+ *
  * <p>
  * Java class for ED complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="ED">
  *   &lt;complexContent>
@@ -39,21 +42,19 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 // JAVA7JAXBCONFLICTWITHANY @XmlType(name = "ED", propOrder = {
 // JAVA7JAXBCONFLICTWITHANY "reference",
 // JAVA7JAXBCONFLICTWITHANY "thumbnail"
 // JAVA7JAXBCONFLICTWITHANY })
-@XmlSeeAlso({
-	Thumbnail.class, ST.class
-})
+@XmlSeeAlso({ Thumbnail.class, ST.class })
 public class ED extends BIN {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	// JAVA7JAXBCONFLICTWITHANY protected TEL reference;
@@ -70,116 +71,111 @@ public class ED extends BIN {
 	protected byte[] integrityCheck;
 	@XmlAttribute
 	protected IntegrityCheckAlgorithm integrityCheckAlgorithm;
-	
+
 	/**
 	 * Gets the value of the mediaType property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getMediaType(){
+	public String getMediaType() {
 		if (mediaType == null) {
 			return "text/plain";
 		} else {
 			return mediaType;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the mediaType property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setMediaType(String value){
+	public void setMediaType(String value) {
 		this.mediaType = value;
 	}
-	
+
 	/**
 	 * Gets the value of the language property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getLanguage(){
+	public String getLanguage() {
 		return language;
 	}
-	
+
 	/**
 	 * Sets the value of the language property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setLanguage(String value){
+	public void setLanguage(String value) {
 		this.language = value;
 	}
-	
+
 	/**
 	 * Gets the value of the compression property.
-	 * 
+	 *
 	 * @return possible object is {@link CompressionAlgorithm }
-	 * 
+	 *
 	 */
-	public CompressionAlgorithm getCompression(){
+	public CompressionAlgorithm getCompression() {
 		return compression;
 	}
-	
+
 	/**
 	 * Sets the value of the compression property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link CompressionAlgorithm }
-	 * 
+	 *
+	 * @param value allowed object is {@link CompressionAlgorithm }
+	 *
 	 */
-	public void setCompression(CompressionAlgorithm value){
+	public void setCompression(CompressionAlgorithm value) {
 		this.compression = value;
 	}
-	
+
 	/**
 	 * Gets the value of the integrityCheck property.
-	 * 
+	 *
 	 * @return possible object is byte[]
 	 */
-	public byte[] getIntegrityCheck(){
+	public byte[] getIntegrityCheck() {
 		return integrityCheck;
 	}
-	
+
 	/**
 	 * Sets the value of the integrityCheck property.
-	 * 
-	 * @param value
-	 *            allowed object is byte[]
+	 *
+	 * @param value allowed object is byte[]
 	 */
-	public void setIntegrityCheck(byte[] value){
+	public void setIntegrityCheck(byte[] value) {
 		this.integrityCheck = ((byte[]) value);
 	}
-	
+
 	/**
 	 * Gets the value of the integrityCheckAlgorithm property.
-	 * 
+	 *
 	 * @return possible object is {@link IntegrityCheckAlgorithm }
-	 * 
+	 *
 	 */
-	public IntegrityCheckAlgorithm getIntegrityCheckAlgorithm(){
+	public IntegrityCheckAlgorithm getIntegrityCheckAlgorithm() {
 		if (integrityCheckAlgorithm == null) {
 			return IntegrityCheckAlgorithm.SHA_1;
 		} else {
 			return integrityCheckAlgorithm;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the integrityCheckAlgorithm property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link IntegrityCheckAlgorithm }
-	 * 
+	 *
+	 * @param value allowed object is {@link IntegrityCheckAlgorithm }
+	 *
 	 */
-	public void setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm value){
+	public void setIntegrityCheckAlgorithm(IntegrityCheckAlgorithm value) {
 		this.integrityCheckAlgorithm = value;
 	}
-	
+
 }

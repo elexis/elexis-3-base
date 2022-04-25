@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    G. Weirich - added toHashmap
- *    
+ *
  *******************************************************************************/
 
 package ch.medshare.elexis.directories;
@@ -28,10 +28,9 @@ public class KontaktEntry {
 	private final String fax;
 	private final String email;
 	private final boolean isDetail; // List Kontakt oder Detail Kontakt
-	
-	public KontaktEntry(final String vorname, final String name, final String zusatz,
-		final String adresse, final String plz, final String ort, final String tel, String fax,
-		String email, boolean isDetail){
+
+	public KontaktEntry(final String vorname, final String name, final String zusatz, final String adresse,
+			final String plz, final String ort, final String tel, String fax, String email, boolean isDetail) {
 		super();
 		this.vorname = vorname;
 		this.name = name;
@@ -44,14 +43,14 @@ public class KontaktEntry {
 		this.email = email;
 		this.isDetail = isDetail;
 	}
-	
+
 	/**
 	 * Fill all fields into a hashmap
-	 * 
+	 *
 	 * @return a hashmap with all non-empty fields with standard names
 	 * @author gerry
 	 */
-	public HashMap<String, String> toHashmap(){
+	public HashMap<String, String> toHashmap() {
 		HashMap<String, String> ret = new HashMap<String, String>();
 		if (countValue(name) > 0) {
 			ret.put(Patient.FLD_NAME, name);
@@ -76,62 +75,62 @@ public class KontaktEntry {
 		}
 		return ret;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return this.name;
 	}
-	
-	public String getVorname(){
+
+	public String getVorname() {
 		return this.vorname;
 	}
-	
-	public String getZusatz(){
+
+	public String getZusatz() {
 		return this.zusatz;
 	}
-	
-	public String getAdresse(){
+
+	public String getAdresse() {
 		return this.adresse;
 	}
-	
-	public String getPlz(){
+
+	public String getPlz() {
 		return this.plz;
 	}
-	
-	public String getOrt(){
+
+	public String getOrt() {
 		return this.ort;
 	}
-	
-	public String getTelefon(){
+
+	public String getTelefon() {
 		return this.tel;
 	}
-	
-	public String getFax(){
+
+	public String getFax() {
 		return fax;
 	}
-	
-	public String getEmail(){
+
+	public String getEmail() {
 		return email;
 	}
-	
-	public boolean isDetail(){
+
+	public boolean isDetail() {
 		return this.isDetail;
 	}
-	
-	private int countValue(String value){
+
+	private int countValue(String value) {
 		if (value != null && value.length() > 0) {
 			return 1;
 		}
 		return 0;
 	}
-	
-	public int countNotEmptyFields(){
-		return countValue(getVorname()) + countValue(getName()) + countValue(getZusatz())
-			+ countValue(getAdresse()) + countValue(getPlz()) + countValue(getOrt())
-			+ countValue(getTelefon()) + countValue(getFax()) + countValue(getEmail());
+
+	public int countNotEmptyFields() {
+		return countValue(getVorname()) + countValue(getName()) + countValue(getZusatz()) + countValue(getAdresse())
+				+ countValue(getPlz()) + countValue(getOrt()) + countValue(getTelefon()) + countValue(getFax())
+				+ countValue(getEmail());
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return getName() + ", " + getZusatz() + ", " + getAdresse() + ", " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ getPlz() + " " + getOrt() + " " + getTelefon(); //$NON-NLS-1$ //$NON-NLS-2$
+				+ getPlz() + " " + getOrt() + " " + getTelefon(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

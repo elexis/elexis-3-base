@@ -20,8 +20,8 @@ package org.apache.solr.common.params;
  * Stats Parameters
  */
 public interface StatsParams {
-  public static final String STATS = "stats";
-  public static final String STATS_FIELD = STATS + ".field";
-  public static final String STATS_FACET = STATS + ".facet";
-  public static final String STATS_CALC_DISTINCT = STATS + ".calcdistinct";
+	public static final String STATS = "stats";
+	public static final String STATS_FIELD = STATS + ".field";
+	public static final String STATS_FACET = STATS + ".facet";
+	public static final String STATS_CALC_DISTINCT = STATS + ".calcdistinct";
 }

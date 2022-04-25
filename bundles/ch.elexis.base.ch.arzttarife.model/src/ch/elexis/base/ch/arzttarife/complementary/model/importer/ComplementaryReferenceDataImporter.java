@@ -29,38 +29,35 @@ import com.opencsv.CSVReader;
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=complementary")
 public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImporter
 		implements IReferenceDataImporter {
-	private static final Logger logger =
-		LoggerFactory.getLogger(ComplementaryReferenceDataImporter.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(ComplementaryReferenceDataImporter.class);
+
 	private int chapternr_index = 4;
 	private int chaptertext_index = 5;
-	
+
 	private int code_index = 8;
 	private int codetext_index = 9;
-	
+
 	private int description_index = 12;
-	
+
 	private int validfrom_index = 15;
 	private int validto_index = 16;
-	
+
 	@Override
-	public IStatus performImport(@Nullable IProgressMonitor monitor, InputStream input,
-		@Nullable Integer newVersion){
+	public IStatus performImport(@Nullable IProgressMonitor monitor, InputStream input, @Nullable Integer newVersion) {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		CSVReader reader;
 		try {
 			reader = new CSVReader(new InputStreamReader(input, "ISO-8859-1"), ';');
 			monitor.beginTask("Import Complementary", IProgressMonitor.UNKNOWN);
-			
+
 			ArzttarifeModelServiceHolder.get()
-				.executeNativeUpdate(
-					"DELETE FROM CH_ELEXIS_ARZTTARIFE_CH_COMPLEMENTARY WHERE ID NOT LIKE '%sub%'");
-			
+					.executeNativeUpdate("DELETE FROM CH_ELEXIS_ARZTTARIFE_CH_COMPLEMENTARY WHERE ID NOT LIKE '%sub%'");
+
 			updateIndexForLang();
-			
+
 			List<Object> imported = new ArrayList<>();
 			String[] line = reader.readNext();
 			while ((line = reader.readNext()) != null) {
@@ -69,12 +66,11 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 				}
 				if (line[0] != null && !line[0].isEmpty() && "590".equals(line[0])) {
 					monitor.subTask(line[codetext_index]);
-					
-					LocalDate validFrom =
-						LocalDate.parse(line[validfrom_index], csvDateTimeFormatter);
+
+					LocalDate validFrom = LocalDate.parse(line[validfrom_index], csvDateTimeFormatter);
 					LocalDate validTo = LocalDate.parse(line[validto_index], csvDateTimeFormatter);
 					String chapterString = line[chapternr_index] + " " + line[chaptertext_index];
-					
+
 					String id = line[code_index] + "-" + validFrom.format(elexisDateTimeFormatter);
 					ComplementaryLeistung complementary = new ComplementaryLeistung();
 					complementary.setId(id);
@@ -95,13 +91,12 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 			return Status.CANCEL_STATUS;
 		}
 	}
-	
+
 	private DateTimeFormatter csvDateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 	private DateTimeFormatter elexisDateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-	
-	private void updateIndexForLang(){
-		String lang =
-			ConfigServiceHolder.get().get().get(Preferences.ABL_LANGUAGE, "d").toUpperCase();
+
+	private void updateIndexForLang() {
+		String lang = ConfigServiceHolder.get().get().get(Preferences.ABL_LANGUAGE, "d").toUpperCase();
 		int offset = 0;
 		if ("I".equals(lang)) {
 			offset = 2;
@@ -112,11 +107,11 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 		chaptertext_index += offset;
 		description_index += offset;
 	}
-	
+
 	@Override
-	public int getCurrentVersion(){
+	public int getCurrentVersion() {
 		// currently the dataset is not versioned
 		return 0;
 	}
-	
+
 }

@@ -7,7 +7,7 @@
  *
  * Sponsoring:
  * 	 mediX Notfallpaxis, diepraxen Stauffacher AG, Zürich
- * 
+ *
  * Contributors:
  *    G. Weirich - initial implementation
  *    M. Descher - dynamic adaptation of font size
@@ -70,13 +70,13 @@ public class TerminLabel extends Composite {
 	private IAction terminKuerzenAction, terminVerlaengernAction, terminAendernAction;
 	private GC lblGc;
 	private List<TerminLabel> overLapped;
-	
+
 	/**
 	 * Static map holding all fonts used by all TerminLabel instances.
 	 */
 	private static HashMap<Integer, Font> fontMap = new HashMap<Integer, Font>();
-	
-	public TerminLabel(IAgendaLayout al){
+
+	public TerminLabel(IAgendaLayout al) {
 		super(al.getComposite(), SWT.BORDER);
 		ial = al;
 		makeActions();
@@ -90,111 +90,106 @@ public class TerminLabel extends Composite {
 		originalFontHeightPoint = lblFontData.getHeight();
 		originalFontHeightPixel = lblGc.getFontMetrics().getHeight();
 		lblGc.dispose();
-		
+
 		state = new Composite(this, SWT.NONE);
 		state.setLayoutData(new GridData());
 		lbl.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDoubleClick(MouseEvent e){
+			public void mouseDoubleClick(MouseEvent e) {
 				agenda.setActDate(getTermin().getDay());
 				agenda.setActResource(getTermin().getBereich());
 				AcquireLockBlockingUi.aquireAndRun(getTermin(), new ILockHandler() {
-					
+
 					@Override
-					public void lockFailed(){
+					public void lockFailed() {
 						// do nothing
 					}
-					
+
 					@Override
-					public void lockAcquired(){
+					public void lockAcquired() {
 						if (getTermin().isRecurringDate()) {
-							new SerienTerminDialog(UiDesk.getTopShell(),
-								new SerienTermin(getTermin()))
-								.open();
+							new SerienTerminDialog(UiDesk.getTopShell(), new SerienTermin(getTermin())).open();
 						} else {
 							new TerminDialog(getTermin()).open();
 						}
 					}
 				});
 			}
-			
+
 			@Override
-			public void mouseUp(MouseEvent e){
+			public void mouseUp(MouseEvent e) {
 				agenda.dispatchTermin(getTermin());
 				super.mouseUp(e);
 			}
-			
+
 			@Override
-			public void mouseDown(MouseEvent e){
+			public void mouseDown(MouseEvent e) {
 				ElexisEventDispatcher.fireSelectionEvent(getTermin().getKontakt());
 			}
 		});
 		new PersistentObjectDragSource(lbl, new PersistentObjectDragSource.ISelectionRenderer() {
-			public List<PersistentObject> getSelection(){
+			public List<PersistentObject> getSelection() {
 				ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>();
 				ret.add(getTermin());
 				return ret;
 			}
 		}) {
 			@Override
-			public void dragFinished(DragSourceEvent event){
+			public void dragFinished(DragSourceEvent event) {
 				lbl.getParent().dispose();
-				if (getTermin() != null
-					&& getTermin().equals(PersistentObjectDragSource.getDraggedObject())) {
+				if (getTermin() != null && getTermin().equals(PersistentObjectDragSource.getDraggedObject())) {
 					setDraggedObject(null);
 				}
 			}
 		};
 		new TerminLabelMenu();
 	}
-	
+
 	@Override
-	public void dispose(){
-		if (getTermin() != null && getTermin().equals(PersistentObjectDragSource.getDraggedObject())
-			&& isVisible()) {
+	public void dispose() {
+		if (getTermin() != null && getTermin().equals(PersistentObjectDragSource.getDraggedObject()) && isVisible()) {
 			setVisible(false);
-		}
-		else {
+		} else {
 			super.dispose();
 		}
-		
+
 	}
-	
-	public void set(Termin tf, int col){
+
+	public void set(Termin tf, int col) {
 		t = tf;
 		if (getTermin().isRecurringDate()) {
 			serienTermin = new SerienTermin(getTermin());
 		} else {
 			serienTermin = null;
 		}
-		
+
 		this.column = col;
 	}
-	
-	public TerminLabel(IAgendaLayout parent, Termin trm, int col){
+
+	public TerminLabel(IAgendaLayout parent, Termin trm, int col) {
 		this(parent);
 		set(trm, col);
 	}
-	
-	public int getColumn(){
+
+	public int getColumn() {
 		return column;
 	}
-	
-	public Termin getTermin(){
+
+	public Termin getTermin() {
 		return t;
 	}
-	
-	public void updateActions(){
+
+	public void updateActions() {
 		boolean canChangeAppointments = CoreHub.acl.request(ACLContributor.CHANGE_APPOINTMENTS);
 		terminKuerzenAction.setEnabled(canChangeAppointments);
 		terminVerlaengernAction.setEnabled(canChangeAppointments);
 		terminAendernAction.setEnabled(canChangeAppointments);
-		
+
 	}
-	
-	public void refresh(){
+
+	public void refresh() {
 		Termin appointment = getTermin();
-	
+
 		// termin of type recurring uses the root appointments title
 		Termin rootAppointment = appointment;
 		if (serienTermin != null) {
@@ -208,71 +203,66 @@ public class TerminLabel extends Composite {
 		lbl.setBackground(back);
 		// l.setBackground(Desk.getColor(Desk.COL_GREY20));
 		lbl.setForeground(SWTHelper.getContrast(back));
-		
+
 		// l.setForeground(Plannables.getStatusColor(t));
 		StringBuilder sb = new StringBuilder();
 		sb.append(appointment.isRecurringDate() ? "Terminserie\n" : "");
 		sb.append(appointment.getLabel()).append("\n").append(appointment.getGrund()); //$NON-NLS-1$
 		sb.append("\n--------\n").append(appointment.getStatusHistoryDesc()); //$NON-NLS-1$
-		
+
 		String grund = rootAppointment.getGrund();
 		if (grund != null && !grund.isEmpty())
 			lbl.setText(rootAppointment.getTitle() + ", " + grund);
 		else
 			lbl.setText(rootAppointment.getTitle());
-		
+
 		lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		lbl.setToolTipText(sb.toString());
-		
-		int lx = ial.getLeftOffset()
-			+ (int) Math.round(getColumn() * (ial.getWidthPerColumn() + ial.getPadding()));
-		
-		String startOfDayTimeInMinutes =
-			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+
+		int lx = ial.getLeftOffset() + (int) Math.round(getColumn() * (ial.getWidthPerColumn() + ial.getPadding()));
+
+		String startOfDayTimeInMinutes = ConfigServiceHolder
+				.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 		int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 		int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 		int sodtM = (sodtHours * 60);
 		sodtM += sodtMinutes;
-		
-		String endOfDayTimeInMinutes =
-			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+
+		String endOfDayTimeInMinutes = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT,
+				"2359");
 		int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.substring(0, 2));
 		int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.substring(2));
 		int eodtM = (eodtHours * 60);
 		eodtM += eodtMinutes;
-		
-		if ((appointment.getBeginn() < sodtM)
-			&& (appointment.getBeginn() + appointment.getDauer() < sodtM)) {
+
+		if ((appointment.getBeginn() < sodtM) && (appointment.getBeginn() + appointment.getDauer() < sodtM)) {
 			// skip this entry as begin and end are not visible
 			setBounds(0, 0, 0, 0);
 			return;
 		}
-		
-		if ((appointment.getBeginn() > eodtM)
-			&& (appointment.getBeginn() + appointment.getDauer() > eodtM)) {
+
+		if ((appointment.getBeginn() > eodtM) && (appointment.getBeginn() + appointment.getDauer() > eodtM)) {
 			// skip this entry as begin and end are not visible
 			setBounds(0, 0, 0, 0);
 			return;
 		}
-		
+
 		int ly = 0;
 		int lh = 0;
-		
+
 		if (appointment.getBeginn() < sodtM) {
 			ly = (int) Math.round(appointment.getBeginn() * ial.getPixelPerMinute());
-			int diff =
-				((appointment.getDauer() - sodtM) < 0) ? appointment.getDauer()
-						: (appointment.getDauer() - sodtM);
-			
-			diff += ((appointment.getBeginn() + diff) > eodtM)
-					? (appointment.getBeginn() + diff) - eodtM : 0;
-			
+			int diff = ((appointment.getDauer() - sodtM) < 0) ? appointment.getDauer()
+					: (appointment.getDauer() - sodtM);
+
+			diff += ((appointment.getBeginn() + diff) > eodtM) ? (appointment.getBeginn() + diff) - eodtM : 0;
+
 			lh = (int) Math.round(diff * ial.getPixelPerMinute());
-			
+
 		} else {
 			int startMinute = appointment.getBeginn() - sodtM;
 			ly = (int) Math.round(startMinute * ial.getPixelPerMinute());
-			
+
 			int ends = appointment.getBeginn() + appointment.getDauer();
 			int heigthDiff = ends - eodtM;
 			if (heigthDiff < 0)
@@ -280,14 +270,14 @@ public class TerminLabel extends Composite {
 			lh = (int) Math.round((appointment.getDauer() - heigthDiff) * ial.getPixelPerMinute());
 		}
 		int lw = (int) Math.round(ial.getWidthPerColumn());
-		
+
 		// dynamic font size adaption
 		int newHeight = originalFontHeightPoint;
 		if (originalFontHeightPixel >= lh) {
 			int diffPixel = originalFontHeightPixel - lh;
-			
+
 			int diffPoint = diffPixel * 72 / Display.getCurrent().getDPI().y;
-			
+
 			newHeight = originalFontHeightPoint - (diffPoint + 1);
 			if (newHeight <= 0)
 				newHeight = originalFontHeightPoint;
@@ -295,9 +285,9 @@ public class TerminLabel extends Composite {
 		}
 		lblFontData.setHeight(newHeight);
 		lbl.setFont(getLabelFont(lblFontData));
-		
+
 		setBounds(lx, ly, lw, lh);
-		
+
 		GridData gd = (GridData) state.getLayoutData();
 		gd.minimumWidth = 10;
 		gd.widthHint = 10;
@@ -309,8 +299,8 @@ public class TerminLabel extends Composite {
 		}
 		layout();
 	}
-	
-	private Font getLabelFont(FontData fontData){
+
+	private Font getLabelFont(FontData fontData) {
 		Font font = fontMap.get(fontData.getHeight());
 		if (font == null) {
 			font = new Font(UiDesk.getDisplay(), fontData);
@@ -318,62 +308,60 @@ public class TerminLabel extends Composite {
 		}
 		return font;
 	}
-	
+
 	class TerminLabelMenu {
-		TerminLabelMenu(){
+		TerminLabelMenu() {
 			MenuManager contextMenuManager = new MenuManager();
 			contextMenuManager.add(AgendaActions.getTerminStatusAction());
 			contextMenuManager.add(terminKuerzenAction);
 			contextMenuManager.add(terminVerlaengernAction);
 			contextMenuManager.add(terminAendernAction);
 			contextMenuManager.add(AgendaActions.getDelTerminAction());
-			TerminLabel.this.lbl
-				.setMenu(contextMenuManager.createContextMenu(TerminLabel.this.lbl));
+			TerminLabel.this.lbl.setMenu(contextMenuManager.createContextMenu(TerminLabel.this.lbl));
 		}
-		
+
 	};
-	
-	private void makeActions(){
+
+	private void makeActions() {
 		terminAendernAction = new Action(Messages.TagesView_changeTermin) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 				setToolTipText(Messages.TagesView_changeThisTermin);
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				AcquireLockBlockingUi.aquireAndRun(getTermin(), new ILockHandler() {
 					@Override
-					public void lockFailed(){
+					public void lockFailed() {
 						// do nothing
 					}
-					
+
 					@Override
-					public void lockAcquired(){
+					public void lockAcquired() {
 						agenda.setActResource(getTermin().getBereich());
 						TerminDialog dlg = new TerminDialog(getTermin());
 						dlg.open();
 					}
 				});
-				
+
 				refresh();
-				
+
 			}
 		};
 		terminKuerzenAction = new Action(Messages.TagesView_shortenTermin) {
 			@Override
-			public void run(){
+			public void run() {
 				if (getTermin() != null) {
 					AcquireLockBlockingUi.aquireAndRun(getTermin(), new ILockHandler() {
 						@Override
-						public void lockFailed(){
+						public void lockFailed() {
 							// do nothing
 						}
-						
+
 						@Override
-						public void lockAcquired(){
-							getTermin()
-								.setDurationInMinutes(getTermin().getDurationInMinutes() >> 1);
+						public void lockAcquired() {
+							getTermin().setDurationInMinutes(getTermin().getDurationInMinutes() >> 1);
 						}
 					});
 					ElexisEventDispatcher.update(getTermin());
@@ -382,19 +370,19 @@ public class TerminLabel extends Composite {
 		};
 		terminVerlaengernAction = new Action(Messages.TagesView_enlargeTermin) {
 			@Override
-			public void run(){
+			public void run() {
 				if (getTermin() != null) {
 					AcquireLockBlockingUi.aquireAndRun(getTermin(), new ILockHandler() {
 						@Override
-						public void lockFailed(){
+						public void lockFailed() {
 							// do nothing
 						}
-						
+
 						@Override
-						public void lockAcquired(){
+						public void lockAcquired() {
 							agenda.setActDate(getTermin().getDay());
-							Termin n = Plannables.getFollowingTermin(agenda.getActResource(),
-								agenda.getActDate(), getTermin());
+							Termin n = Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(),
+									getTermin());
 							if (n != null) {
 								getTermin().setEndTime(n.getStartTime());
 							}
@@ -405,12 +393,12 @@ public class TerminLabel extends Composite {
 			}
 		};
 	}
-	
-	public static void checkAllCollisions(List<TerminLabel> tlabels){
+
+	public static void checkAllCollisions(List<TerminLabel> tlabels) {
 		tlabels.parallelStream().forEach(terminLabel -> terminLabel.checkCollision(tlabels));
 	}
-	
-	private void checkCollision(List<TerminLabel> tlabels){
+
+	private void checkCollision(List<TerminLabel> tlabels) {
 		String checkBereich = getTermin().getBereich();
 		// use recurring termin for collision checking
 		Termin termin = getTermin();
@@ -423,8 +411,8 @@ public class TerminLabel extends Composite {
 			}
 		}
 	}
-	
-	private void addOverlapped(TerminLabel otherLabel){
+
+	private void addOverlapped(TerminLabel otherLabel) {
 		if (overLapped == null) {
 			overLapped = new ArrayList<TerminLabel>();
 		}

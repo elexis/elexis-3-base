@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    M. Descher - Initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.agenda;
 
@@ -18,22 +18,22 @@ import ch.elexis.actions.Activator;
 import ch.elexis.actions.IBereichSelectionEvent;
 
 public class BereichSelectionHandler {
-	
+
 	static List<IBereichSelectionEvent> bereichSelectionEventListener = null;
 	private static Activator agenda = Activator.getDefault();
-	
-	public static void addBereichSelectionListener(IBereichSelectionEvent listener){
+
+	public static void addBereichSelectionListener(IBereichSelectionEvent listener) {
 		if (bereichSelectionEventListener == null) {
 			bereichSelectionEventListener = new LinkedList<IBereichSelectionEvent>();
 		}
 		bereichSelectionEventListener.add(listener);
 	}
-	
-	public static void removeBarcodeEventListener(IBereichSelectionEvent listener){
+
+	public static void removeBarcodeEventListener(IBereichSelectionEvent listener) {
 		bereichSelectionEventListener.remove(listener);
 	}
-	
-	public static void updateListeners(){
+
+	public static void updateListeners() {
 		if (bereichSelectionEventListener == null)
 			return;
 		for (IBereichSelectionEvent listener : bereichSelectionEventListener) {
@@ -41,5 +41,5 @@ public class BereichSelectionHandler {
 			listener.bereichSelectionEvent(actResource);
 		}
 	}
-	
+
 }

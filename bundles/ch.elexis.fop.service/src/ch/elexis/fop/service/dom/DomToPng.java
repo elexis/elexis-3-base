@@ -22,24 +22,25 @@ import ch.elexis.core.services.IFormattedOutput;
 
 public class DomToPng implements IFormattedOutput {
 	private static DomToPng instance;
-	
-	private DomToPng(){}
-	
-	public static DomToPng getInstance(){
+
+	private DomToPng() {
+	}
+
+	public static DomToPng getInstance() {
 		if (instance == null)
 			instance = new DomToPng();
 		return instance;
 	}
-	
+
 	@Override
-	public void transform(Object documentObject, InputStream xslt, OutputStream png){
+	public void transform(Object documentObject, InputStream xslt, OutputStream png) {
 		transform(documentObject, xslt, png, null);
 	}
-	
+
 	@Override
 	public void transform(Object documentObject, InputStream xslt, OutputStream png,
-		Map<String, String> transformerParameters, URIResolver resolver){
-		DomToMimeType.getInstance().transform(documentObject, xslt, png, MimeConstants.MIME_PNG,
-			transformerParameters, resolver);
+			Map<String, String> transformerParameters, URIResolver resolver) {
+		DomToMimeType.getInstance().transform(documentObject, xslt, png, MimeConstants.MIME_PNG, transformerParameters,
+				resolver);
 	}
 }

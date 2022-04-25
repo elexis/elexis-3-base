@@ -12,10 +12,12 @@
 package ch.unibe.iam.scg.archie.utils;
 
 /**
- * <p>Helper class for string handling.</p>
- * 
+ * <p>
+ * Helper class for string handling.
+ * </p>
+ *
  * $Id: StringHelper.java 731 2009-03-18 10:07:47Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 731 $
@@ -24,7 +26,7 @@ public class StringHelper {
 
 	/**
 	 * Removes all illegal filename characters from a given String
-	 * 
+	 *
 	 * @param name
 	 * @param singleSpaces if true, no double spaces are allowed; they get removed.
 	 * @return String
@@ -53,10 +55,12 @@ public class StringHelper {
 
 		return safe;
 	}
-	
+
 	/**
-	 * Checks whether a given string only contains numeric characters and thus is a number.
-	 * @param inputData 
+	 * Checks whether a given string only contains numeric characters and thus is a
+	 * number.
+	 *
+	 * @param inputData
 	 * @return boolean True if a string has numeric characters only, false else.
 	 */
 	public static final boolean isNumeric(final String inputData) {

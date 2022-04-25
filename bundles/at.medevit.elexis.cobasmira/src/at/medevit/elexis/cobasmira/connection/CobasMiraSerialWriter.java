@@ -5,12 +5,12 @@ import java.io.OutputStream;
 
 public class CobasMiraSerialWriter implements Runnable {
 	private OutputStream out;
-	
-	public CobasMiraSerialWriter(OutputStream out){
+
+	public CobasMiraSerialWriter(OutputStream out) {
 		this.out = out;
 	}
-	
-	public void run(){
+
+	public void run() {
 		try {
 			System.out.println("Starting Writer");
 			int c = 0;
@@ -21,5 +21,5 @@ public class CobasMiraSerialWriter implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

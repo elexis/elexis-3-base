@@ -18,11 +18,11 @@ public class OleWordParagraphFormat extends OleWrapper {
 	public static final int wdAlignParagraphJustify = 3;
 	public static final int wdAlignParagraphDistribute = 4;
 
-	public OleWordParagraphFormat(OleAutomation oleAuto, Display display, OleWrapperManager manager){
+	public OleWordParagraphFormat(OleAutomation oleAuto, Display display, OleWrapperManager manager) {
 		super(oleAuto, display, manager);
 	}
-	
-	public void setAlignment(int swtAlignment){
+
+	public void setAlignment(int swtAlignment) {
 		Variant value = null;
 		try {
 			value = new Variant(alignmentSwt2Word(swtAlignment));
@@ -33,8 +33,8 @@ public class OleWordParagraphFormat extends OleWrapper {
 				value.dispose();
 		}
 	}
-	
-	private int alignmentSwt2Word(int swtAlignment){
+
+	private int alignmentSwt2Word(int swtAlignment) {
 		switch (swtAlignment) {
 		case SWT.LEFT:
 			return wdAlignParagraphLeft;
@@ -46,8 +46,8 @@ public class OleWordParagraphFormat extends OleWrapper {
 			return wdAlignParagraphLeft;
 		}
 	}
-	
-	public void setSpaceAfter(int points){
+
+	public void setSpaceAfter(int points) {
 		Variant value = null;
 		try {
 			value = new Variant(points);
@@ -59,7 +59,7 @@ public class OleWordParagraphFormat extends OleWrapper {
 		}
 	}
 
-	public void setSpaceBefore(int points){
+	public void setSpaceBefore(int points) {
 		Variant value = null;
 		try {
 			value = new Variant(points);
@@ -72,9 +72,9 @@ public class OleWordParagraphFormat extends OleWrapper {
 	}
 
 	protected static HashMap<String, Integer> memberIdMap = new HashMap<String, Integer>();
-	
+
 	@Override
-	protected synchronized int getIdForMember(String member){
+	protected synchronized int getIdForMember(String member) {
 		Integer id = memberIdMap.get(member);
 		if (id == null) {
 			id = OleUtil.getMemberId(oleObj, member);

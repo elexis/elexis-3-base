@@ -18,20 +18,20 @@ import at.medevit.elexis.impfplan.model.vaccplans.AbstractVaccinationPlan;
 import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2019;
 
 public class VaccinationPlanModel {
-		
+
 	private static List<AbstractVaccinationPlan> vaccinationPlans = null;
-	
-	public static List<AbstractVaccinationPlan> getVaccinationPlans(){
+
+	public static List<AbstractVaccinationPlan> getVaccinationPlans() {
 		if (vaccinationPlans == null)
 			init();
 		return vaccinationPlans;
 	}
-	
-	private static void init(){
+
+	private static void init() {
 		vaccinationPlans = new ArrayList<>();
 		vaccinationPlans.add(new ImpfplanSchweiz2019());
 		// add in the future
 		vaccinationPlans = Collections.unmodifiableList(vaccinationPlans);
 	}
-	
+
 }

@@ -19,11 +19,13 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
- * <p>Sorts the columns of a TableViewer in a simple manner. It does not consider
- * any sorting done before.</p>
- * 
+ * <p>
+ * Sorts the columns of a TableViewer in a simple manner. It does not consider
+ * any sorting done before.
+ * </p>
+ *
  * $Id: ColumnSorterAdapter.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -34,7 +36,7 @@ public class ColumnSorterAdapter extends SelectionAdapter {
 	 * Table viewer the sorter is acting on.
 	 */
 	private TableViewer viewer;
-	
+
 	/**
 	 * Index of the column that should be sorted.
 	 */
@@ -42,11 +44,9 @@ public class ColumnSorterAdapter extends SelectionAdapter {
 
 	/**
 	 * Public constructor.
-	 * 
-	 * @param viewer
-	 *            A tableViewer object.
-	 * @param index
-	 *            Index of the current column.
+	 *
+	 * @param viewer A tableViewer object.
+	 * @param index  Index of the current column.
 	 */
 	public ColumnSorterAdapter(TableViewer viewer, int index) {
 		this.viewer = viewer;
@@ -63,7 +63,7 @@ public class ColumnSorterAdapter extends SelectionAdapter {
 
 		TableColumn sortColumn = table.getSortColumn();
 		TableColumn currentColumn = (TableColumn) event.widget;
-		
+
 		// compute sort direction
 		int dir = table.getSortDirection();
 		if (sortColumn == currentColumn) {
@@ -72,7 +72,7 @@ public class ColumnSorterAdapter extends SelectionAdapter {
 			table.setSortColumn(currentColumn);
 			dir = SWT.UP; // up by default
 		}
-		
+
 		// add a sorter if not already present
 		ColumnSorter sorter = (ColumnSorter) this.viewer.getSorter();
 		if (sorter == null) {
@@ -83,11 +83,11 @@ public class ColumnSorterAdapter extends SelectionAdapter {
 		// set index and sort direction in sorter
 		sorter.setIndex((sorter.getIndex() != this.index) ? this.index : sorter.getIndex());
 		sorter.setSortDirection(dir);
-		
+
 		// update data displayed in table
 		table.setSortDirection(dir);
 		table.clearAll();
-		
+
 		this.viewer.refresh(); // sort
 	}
 }

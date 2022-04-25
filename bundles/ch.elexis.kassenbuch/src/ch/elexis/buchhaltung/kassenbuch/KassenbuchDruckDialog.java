@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    N. Giger - Warn on printing error
- *    
+ *
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -38,27 +38,29 @@ import ch.rgw.tools.TimeTool;
 public class KassenbuchDruckDialog extends Dialog implements ICallback {
 	TimeTool ttVon, ttBis;
 	Hashtable<String, Money> mCategories = new Hashtable<String, Money>();
-	
-	public KassenbuchDruckDialog(Shell shell, TimeTool von, TimeTool bis){
+
+	public KassenbuchDruckDialog(Shell shell, TimeTool von, TimeTool bis) {
 		super(shell);
 		ttVon = von;
 		ttBis = bis;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new FillLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
+
 		TextContainer text = new TextContainer(getShell());
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
-		Brief brief = text.createFromTemplateName(null, TT_LIST, Brief.UNKNOWN, CoreHub.getLoggedInContact(), "Kassenbuch");
+		Brief brief = text.createFromTemplateName(null, TT_LIST, Brief.UNKNOWN, CoreHub.getLoggedInContact(),
+				"Kassenbuch");
 		if (brief == null) {
 			String title = "Probleme beim Drucken";
-			String msg = String.format("Konnte kein TextDokument erstellen. Fehlt die Vorlage '%s'? Oder ist sie fehlerhaft?", TT_LIST);
+			String msg = String.format(
+					"Konnte kein TextDokument erstellen. Fehlt die Vorlage '%s'? Oder ist sie fehlerhaft?", TT_LIST);
 			SWTHelper.alert(title, msg);
 			return ret;
 		}
@@ -68,9 +70,7 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 		}
 		KassenbuchEintrag[] lines = set.toArray(new KassenbuchEintrag[0]);
 		String[][] table = new String[lines.length + 1][];
-		table[0] = new String[] {
-			"Nr", "Datum", "Soll", "Haben", "Betrag", "Text"
-		};
+		table[0] = new String[] { "Nr", "Datum", "Soll", "Haben", "Betrag", "Text" };
 		for (int i = 1; i <= lines.length; i++) {
 			table[i] = new String[6];
 			KassenbuchEintrag kb = lines[i - 1];
@@ -93,9 +93,8 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 			table[i][5] = kb.getText();
 		}
 		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
-		text.getPlugin().insertTable("[Liste]", ITextPlugin.FIRST_ROW_IS_HEADER, table, new int[] {
-			5, 15, 15, 15, 20, 30
-		});
+		text.getPlugin().insertTable("[Liste]", ITextPlugin.FIRST_ROW_IS_HEADER, table,
+				new int[] { 5, 15, 15, 15, 20, 30 });
 		Enumeration<String> keys = mCategories.keys();
 		Object cursor = text.getPlugin().insertText("##end##", "", SWT.LEFT);
 		if (cursor != null) {
@@ -109,24 +108,25 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		getShell().setText("Kassenbuch");
 		getShell().setSize(800, 700);
-		
+
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		super.okPressed();
 	}
-	
-	public void save(){}
-	
-	public boolean saveAs(){
+
+	public void save() {
+	}
+
+	public boolean saveAs() {
 		return false;
 	}
-	
+
 }

@@ -6,16 +6,15 @@ import org.eclipse.swt.graphics.Image;
 
 import at.medevit.elexis.cobasmira.model.CobasMiraMappingLabitem;
 
-public class CobasMiraMappingLabelProvider extends ColumnLabelProvider implements
-		ITableLabelProvider {
-	
+public class CobasMiraMappingLabelProvider extends ColumnLabelProvider implements ITableLabelProvider {
+
 	@Override
-	public Image getColumnImage(Object element, int columnIndex){
+	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
 	}
-	
+
 	@Override
-	public String getColumnText(Object element, int columnIndex){
+	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof CobasMiraMappingLabitem) {
 			CobasMiraMappingLabitem item = (CobasMiraMappingLabitem) element;
 			switch (columnIndex) {

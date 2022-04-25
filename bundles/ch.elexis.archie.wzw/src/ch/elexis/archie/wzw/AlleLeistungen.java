@@ -19,18 +19,16 @@ import ch.rgw.tools.Money;
 public class AlleLeistungen extends BaseStats {
 	static final String NAME = "Leistungen-Hitliste";
 	static final String DESC = "Listet sämtliche Leistungen im gegebenen Zeitraum";
-	static final String[] HEADINGS = {
-		"Codesystem", "Code", "Text", "Anzahl", "Umsatz"
-	};
-	
-	public AlleLeistungen(){
+	static final String[] HEADINGS = { "Codesystem", "Code", "Text", "Anzahl", "Umsatz" };
+
+	public AlleLeistungen() {
 		super(NAME, DESC, HEADINGS);
 	}
-	
+
 	@Override
-	protected IStatus createContent(IProgressMonitor monitor){
+	protected IStatus createContent(IProgressMonitor monitor) {
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
-		
+
 		List<IEncounter> conses = getConses(monitor);
 		if (conses.size() > 0) {
 			int clicksPerRound = HUGE_NUMBER / conses.size();
@@ -62,7 +60,7 @@ public class AlleLeistungen extends BaseStats {
 									ts.umsatz += v.getTotal().doubleValue();
 								}
 							}
-							
+
 						}
 					}
 					monitor.worked(clicksPerRound);
@@ -71,7 +69,7 @@ public class AlleLeistungen extends BaseStats {
 					}
 				}
 			}
-			
+
 			// Resultat-Array für Archie aufbauen
 			for (TarifStat ts : tstats.values()) {
 				Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
@@ -86,11 +84,11 @@ public class AlleLeistungen extends BaseStats {
 		// Und an Archie übermitteln
 		this.dataSet.setContent(result);
 		return Status.OK_STATUS;
-		
+
 	}
-	
+
 	class TarifStat {
-		
+
 		String tarif;
 		String ziffer;
 		String text;

@@ -24,7 +24,7 @@ import java.io.Closeable;
  */
 public interface SolrCloseable extends Closeable {
 
-  default boolean isClosed() {
-    return false;
-  }
+	default boolean isClosed() {
+		return false;
+	}
 }

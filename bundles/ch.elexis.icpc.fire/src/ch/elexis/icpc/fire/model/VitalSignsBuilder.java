@@ -7,19 +7,19 @@ import ch.elexis.base.befunde.xchange.XChangeContributor;
 import ch.elexis.data.Konsultation;
 
 public class VitalSignsBuilder {
-	
+
 	private FireConfig config;
-	
+
 	private XChangeContributor xc;
-	
+
 	private Konsultation consultation;
-	
-	public VitalSignsBuilder(FireConfig config){
+
+	public VitalSignsBuilder(FireConfig config) {
 		this.config = config;
 		this.xc = new XChangeContributor();
 	}
-	
-	public Optional<TVital> build(){
+
+	public Optional<TVital> build() {
 		if (consultation != null) {
 			xc.setPatient(consultation.getFall().getPatient());
 			TVital ret = config.getFactory().createTVital();
@@ -29,9 +29,9 @@ public class VitalSignsBuilder {
 			Optional<Float> gewicht = getGewicht();
 			Optional<Float> groesse = getGroesse();
 			Optional<Integer> puls = getPuls();
-			
-			if (bauchumfang.isPresent() || bpDiast.isPresent() || bpSyst.isPresent()
-				|| gewicht.isPresent() || groesse.isPresent() || puls.isPresent()) {
+
+			if (bauchumfang.isPresent() || bpDiast.isPresent() || bpSyst.isPresent() || gewicht.isPresent()
+					|| groesse.isPresent() || puls.isPresent()) {
 				bauchumfang.ifPresent(value -> ret.setBauchumfang(value));
 				bpDiast.ifPresent(value -> ret.setBpDiast(value));
 				bpSyst.ifPresent(value -> ret.setBpSyst(value));
@@ -40,16 +40,16 @@ public class VitalSignsBuilder {
 				puls.ifPresent(value -> ret.setPuls(value));
 				return Optional.of(ret);
 			}
-			
+
 		}
 		return Optional.empty();
 	}
-	
+
 	private enum BDIdentifier {
-			DIAST, SYST
+		DIAST, SYST
 	}
-	
-	private Optional<Integer> getBpDiast(){
+
+	private Optional<Integer> getBpDiast() {
 		Optional<String> value;
 		if (useCombinedBdValue()) {
 			value = getBdVitalParm(BDIdentifier.DIAST);
@@ -65,8 +65,8 @@ public class VitalSignsBuilder {
 		}
 		return Optional.empty();
 	}
-	
-	private Optional<Integer> getBpSyst(){
+
+	private Optional<Integer> getBpSyst() {
 		Optional<String> value;
 		if (useCombinedBdValue()) {
 			value = getBdVitalParm(BDIdentifier.SYST);
@@ -82,20 +82,20 @@ public class VitalSignsBuilder {
 		}
 		return Optional.empty();
 	}
-	
-	private boolean useCombinedBdValue(){
+
+	private boolean useCombinedBdValue() {
 		if (config.getBdDiastTab() != null) {
 			return config.getBdDiastTab().equalsIgnoreCase(config.getBdSystTab());
 		}
 		return false;
 	}
-	
-	private Optional<String> getBdVitalParm(BDIdentifier identifier){
+
+	private Optional<String> getBdVitalParm(BDIdentifier identifier) {
 		String[] split = config.getBdSystTab().split("\\s*\\:\\s*");
 		String bdsyst = null, bddiast = null;
 		if (split.length > 1) {
 			HashMap<String, String> vals = xc.getResult(split[0].trim(), consultation.getDatum());
-			
+
 			if (config.getBdSystTab().equals(config.getBdDiastTab())) {
 				String bd = vals.get(split[1].trim());
 				if (bd != null) {
@@ -121,8 +121,8 @@ public class VitalSignsBuilder {
 		}
 		return Optional.empty();
 	}
-	
-	private Optional<Float> getBauchumfang(){
+
+	private Optional<Float> getBauchumfang() {
 		Optional<String> value = getVitalParm(config.getWaistTab());
 		if (value.isPresent()) {
 			try {
@@ -133,8 +133,8 @@ public class VitalSignsBuilder {
 		}
 		return Optional.empty();
 	}
-	
-	private Optional<Float> getGewicht(){
+
+	private Optional<Float> getGewicht() {
 		Optional<String> value = getVitalParm(config.getWeightTab());
 		if (value.isPresent()) {
 			try {
@@ -145,8 +145,8 @@ public class VitalSignsBuilder {
 		}
 		return Optional.empty();
 	}
-	
-	private Optional<Float> getGroesse(){
+
+	private Optional<Float> getGroesse() {
 		Optional<String> value = getVitalParm(config.getHeightTab());
 		if (value.isPresent()) {
 			try {
@@ -157,8 +157,8 @@ public class VitalSignsBuilder {
 		}
 		return Optional.empty();
 	}
-	
-	private Optional<Integer> getPuls(){
+
+	private Optional<Integer> getPuls() {
 		Optional<String> value = getVitalParm(config.getPulseTab());
 		if (value.isPresent()) {
 			try {
@@ -169,8 +169,8 @@ public class VitalSignsBuilder {
 		}
 		return Optional.empty();
 	}
-	
-	private Optional<String> getVitalParm(String parameter){
+
+	private Optional<String> getVitalParm(String parameter) {
 		String[] split = parameter.split("\\s*\\:\\s*");
 		if (split.length > 1) {
 			HashMap<String, String> vals = xc.getResult(split[0].trim(), consultation.getDatum());
@@ -180,10 +180,10 @@ public class VitalSignsBuilder {
 		}
 		return Optional.empty();
 	}
-	
-	public VitalSignsBuilder consultation(Konsultation consultation){
+
+	public VitalSignsBuilder consultation(Konsultation consultation) {
 		this.consultation = consultation;
 		return this;
 	}
-	
+
 }

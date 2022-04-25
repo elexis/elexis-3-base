@@ -157,31 +157,31 @@ public class TextPlugin implements ITextPlugin {
 	/** Internal Representation of current style */
 	private class Style {
 		final static int ALIGN = SWT.LEFT | SWT.CENTER | SWT.RIGHT;
-		
+
 		String font = null;
 		public int flags;
 		Float size = null;
-		
-		public void setStyle(int s){
+
+		public void setStyle(int s) {
 			flags = s;
 		}
-		
-		public void clearAlign(){
+
+		public void clearAlign() {
 			flags &= (~ALIGN);
 		}
-		
-		public void setAlign(int a){
+
+		public void setAlign(int a) {
 			clearAlign();
 			flags |= a;
 		}
-		
-		public void setFont(String n, int f, float s){
+
+		public void setFont(String n, int f, float s) {
 			font = n;
 			flags = f;
 			size = s;
 		}
-		
-		private String label(){
+
+		private String label() {
 			MessageDigest m;
 			try {
 				String pass = "" + flags;
@@ -199,80 +199,71 @@ public class TextPlugin implements ITextPlugin {
 			}
 			return null;
 		}
-		
-		private void declareFont(String name) throws Exception{
+
+		private void declareFont(String name) throws Exception {
 			OdfFileDom contentDom = odt.getContentDom();
 			XPath xpath = odt.getXPath();
-			
+
 			// Declare font face
-			OdfOfficeFontFaceDecls ffdec =
-				(OdfOfficeFontFaceDecls) xpath.evaluate("//office:font-face-decls", contentDom,
-					XPathConstants.NODE);
-			
+			OdfOfficeFontFaceDecls ffdec = (OdfOfficeFontFaceDecls) xpath.evaluate("//office:font-face-decls",
+					contentDom, XPathConstants.NODE);
+
 			OdfStyleFontFace fface = (OdfStyleFontFace) ffdec.getFirstChild();
-			NodeList nl =
-				(NodeList) xpath.evaluate("//office:font-face-decls/style:font-face[@style:name='"
-					+ font + "']", contentDom, XPathConstants.NODESET);
+			NodeList nl = (NodeList) xpath.evaluate(
+					"//office:font-face-decls/style:font-face[@style:name='" + font + "']", contentDom,
+					XPathConstants.NODESET);
 			if (nl.getLength() == 0) {
-				fface =
-					(OdfStyleFontFace) OdfXMLFactory.newOdfElement(contentDom,
-						StyleFontFaceElement.ELEMENT_NAME);
+				fface = (OdfStyleFontFace) OdfXMLFactory.newOdfElement(contentDom, StyleFontFaceElement.ELEMENT_NAME);
 				fface.setStyleNameAttribute(font);
 				fface.setSvgFontFamilyAttribute("'" + font + "'");
 				ffdec.appendChild(fface);
 			}
 		}
-		
-		private void createStyle(String sname, String family){
+
+		private void createStyle(String sname, String family) {
 			try {
 				OdfFileDom contentDom = odt.getContentDom();
 				XPath xpath = odt.getXPath();
-				
+
 				// Create Style
-				NodeList nl =
-					(NodeList) xpath.evaluate("//style:style[@style:name='" + sname + "']",
-						contentDom, XPathConstants.NODESET);
+				NodeList nl = (NodeList) xpath.evaluate("//style:style[@style:name='" + sname + "']", contentDom,
+						XPathConstants.NODESET);
 				if (nl.getLength() == 0) {
-					OdfOfficeAutomaticStyles autost =
-						(OdfOfficeAutomaticStyles) xpath.evaluate("//office:automatic-styles",
-							contentDom, XPathConstants.NODE);
-					
-					OdfStyle frst =
-						(OdfStyle) OdfXMLFactory.newOdfElement(contentDom,
-							StyleStyleElement.ELEMENT_NAME);
+					OdfOfficeAutomaticStyles autost = (OdfOfficeAutomaticStyles) xpath
+							.evaluate("//office:automatic-styles", contentDom, XPathConstants.NODE);
+
+					OdfStyle frst = (OdfStyle) OdfXMLFactory.newOdfElement(contentDom, StyleStyleElement.ELEMENT_NAME);
 					frst.setStyleNameAttribute(sname);
 					frst.setStyleFamilyAttribute(family);
 					frst.setStyleParentStyleNameAttribute("Standard");
 					autost.appendChild(frst);
-					
-					OdfStyleTextProperties stp =
-						(OdfStyleTextProperties) OdfXMLFactory.newOdfElement(contentDom,
+
+					OdfStyleTextProperties stp = (OdfStyleTextProperties) OdfXMLFactory.newOdfElement(contentDom,
 							StyleTextPropertiesElement.ELEMENT_NAME);
-					
+
 					if (font != null) {
 						declareFont(font);
 						stp.setStyleFontNameAttribute(font);
 					}
-					
+
 					if (size != null) {
 						stp.setFoFontSizeAttribute(size + "pt");
 						stp.setStyleFontSizeAsianAttribute(size + "pt");
 						stp.setStyleFontSizeComplexAttribute(size + "pt");
 					}
-					
+
 					if ((flags & SWT.BOLD) != 0) {
 						stp.setFoFontWeightAttribute("bold");
 					}
 					if ((flags & SWT.ITALIC) != 0) {
 						stp.setFoFontStyleAttribute("italic");
 					}
-					
+
 					// If we have a paragraph style we might need to apply
 					// alignment settings.
 					if ((flags & ALIGN) != 0 && family.compareTo("paragraph") == 0) {
-						OdfStyleParagraphProperties pp =
-							(OdfStyleParagraphProperties) OdfXMLFactory.newOdfElement(contentDom,
-								StyleParagraphPropertiesElement.ELEMENT_NAME);
+						OdfStyleParagraphProperties pp = (OdfStyleParagraphProperties) OdfXMLFactory
+								.newOdfElement(contentDom, StyleParagraphPropertiesElement.ELEMENT_NAME);
 						if ((flags & SWT.LEFT) != 0) {
 							pp.setFoTextAlignAttribute("left");
 						} else if ((flags & SWT.RIGHT) != 0) {
@@ -282,30 +273,30 @@ public class TextPlugin implements ITextPlugin {
 						}
 						frst.appendChild(pp);
 					}
-					
+
 					frst.appendChild(stp);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		/** @return Label for paragraph style */
-		public String getParagraphLbl(){
+		public String getParagraphLbl() {
 			String lbl = label() + "_pg";
 			createStyle(lbl, "paragraph");
 			return lbl;
 		}
-		
+
 		/** @return Label for text style */
-		public String getTextLbl(){
+		public String getTextLbl() {
 			String lbl = label() + "_txt";
 			createStyle(lbl, "text");
 			return lbl;
 		}
-		
+
 	}
-	
+
 	private Process editor_process;
 	private File file;
 	private OdfTextDocument odt;
@@ -320,7 +311,7 @@ public class TextPlugin implements ITextPlugin {
 	private static Logger logger = LoggerFactory.getLogger(pluginID);
 	private static int cnt = 0;
 
-	private String getTempPrefix(){
+	private String getTempPrefix() {
 		cnt += 1;
 		StringBuffer sb = new StringBuffer();
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
@@ -333,8 +324,8 @@ public class TextPlugin implements ITextPlugin {
 		sb.append(dateFormat.format(date));
 		return sb.toString().replaceAll("[^0-9A-Za-z]", "_");
 	}
-	
-	private boolean editorRunning(){
+
+	private boolean editorRunning() {
 		if (editor_process == null)
 			return false;
 		try {
@@ -344,12 +335,12 @@ public class TextPlugin implements ITextPlugin {
 			return true;
 		}
 	}
-	
-	private synchronized void odtSync(){
+
+	private synchronized void odtSync() {
 		if (file == null || odt == null || editorRunning()) {
 			return;
 		}
-		
+
 		try {
 			odt.save(file);
 			logger.info("odtSync: completed " + file.length() + " saved");
@@ -358,63 +349,55 @@ public class TextPlugin implements ITextPlugin {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Sicherstellen dass kein Editor geoeffnet ist. Falls einer geoeffnet ist, wird eine
-	 * Fehlermeldung mit einem entsprechenden Hinweis angezeigt.
-	 * 
+	 * Sicherstellen dass kein Editor geoeffnet ist. Falls einer geoeffnet ist, wird
+	 * eine Fehlermeldung mit einem entsprechenden Hinweis angezeigt.
+	 *
 	 * @return True wenn keine Instanz mehr geoeffnet ist.
 	 */
-	private boolean ensureClosed(){
+	private boolean ensureClosed() {
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
 		if (actPatient != null) {
-			logger.info("ensureClosed: " + actPatient.getVorname() + " "
-				+ actPatient.getName().toString());
+			logger.info("ensureClosed: " + actPatient.getVorname() + " " + actPatient.getName().toString());
 		}
-		
+
 		while (editorRunning()) {
 			logger.info("Editor already opened file " + file.getAbsolutePath());
-			SWTHelper
-				.showError(
-					"Editor bereits geöffnet",
-					"Es scheint bereits ein Editor geöffnet zu sein für "
-						+ file.getAbsolutePath()
-						+ " geöffnet zu sein.\n\n"
-						+ "Falls Sie sicher sind, dass kein Editor diese Datei mehr offen hat, müssen Sie Elexis neu starten.\n\n"
-						+ "Falls Sie diese Warnung nicht beachten werden die in der Datei gemachten Änderungen nicht in der Elexis Datenbank gespeichert!");
+			SWTHelper.showError("Editor bereits geöffnet", "Es scheint bereits ein Editor geöffnet zu sein für "
+					+ file.getAbsolutePath() + " geöffnet zu sein.\n\n"
+					+ "Falls Sie sicher sind, dass kein Editor diese Datei mehr offen hat, müssen Sie Elexis neu starten.\n\n"
+					+ "Falls Sie diese Warnung nicht beachten werden die in der Datei gemachten Änderungen nicht in der Elexis Datenbank gespeichert!");
 			return false;
 		}
 		return true;
 	}
-	
-	private void openEditor(){
-		logger.info("openEditor "+file);
+
+	private void openEditor() {
+		logger.info("openEditor " + file);
 		if (file == null || !ensureClosed()) {
 			return;
 		}
-		
+
 		odtSync();
-		
+
 		String editor = CoreHub.localCfg.get(Preferences.P_EDITOR, Preferences.P_EDITOR_DEFAULT);
 		String argstr = CoreHub.localCfg.get(Preferences.P_EDITARGS, Preferences.P_EDITARGS_DEFAULT);
 		String baseName = "open_odf.sh";
 		if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0)
 			baseName = "open_odf.bat";
-		String scriptFile =
-			PlatformHelper.getBasePath(pluginID) + File.separator + "rsc" + File.separator
-				+ baseName;
+		String scriptFile = PlatformHelper.getBasePath(pluginID) + File.separator + "rsc" + File.separator + baseName;
 		logger.info(scriptFile);
 		if (editor.length() == 0) {
-			SWTHelper.showError("Kein Editor gesetzt",
-				"In den Einstellungen wurde kein Editor konfiguriert.");
+			SWTHelper.showError("Kein Editor gesetzt", "In den Einstellungen wurde kein Editor konfiguriert.");
 			return;
 		}
-		
+
 		File scriptShell = new File(scriptFile);
 		if (!scriptShell.canExecute())
 			scriptShell.setExecutable(true);
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
-		String personalia = (actPatient!=null) ? actPatient.getPersonalia() : "null";
+		String personalia = (actPatient != null) ? actPatient.getPersonalia() : "null";
 		List<String> args = new ArrayList<String>();
 		args.add(editor);
 		if (CoreHub.localCfg.get(Preferences.P_WRAPPERSCRIPT, Preferences.P_WRAPPERSCRIPT_DEFAULT)) {
@@ -429,19 +412,19 @@ public class TextPlugin implements ITextPlugin {
 			editor_process = pb.start();
 			odt = null;
 			(new Thread() {
-				public void run(){
+				public void run() {
 					try {
 						editor_process.waitFor();
 						odt = (OdfTextDocument) OdfTextDocument.loadDocument(file);
-						logger.info("openEditor: exitValue " + editor_process.exitValue()
-							+ " done " + file.getAbsolutePath() + " NOT closing odt");
+						logger.info("openEditor: exitValue " + editor_process.exitValue() + " done "
+								+ file.getAbsolutePath() + " NOT closing odt");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} finally {
 						editor_process = null;
 						Display.getDefault().asyncExec(new Runnable() {
-							public void run(){
+							public void run() {
 								filename_label.setText(NoFileOpen);
 								logger.info("openEditor: updated filename_label");
 							}
@@ -453,20 +436,18 @@ public class TextPlugin implements ITextPlugin {
 			e.printStackTrace();
 		}
 	}
-	
-	private void importFile(){
+
+	private void importFile() {
 		if (file == null || !ensureClosed()) {
 			return;
 		}
-		
+
 		odtSync();
-		
+
 		FileDialog fd = new FileDialog(UiDesk.getTopShell(), SWT.OPEN);
-		fd.setFilterExtensions(new String[] {
-			"*.odt"
-		});
+		fd.setFilterExtensions(new String[] { "*.odt" });
 		String path = fd.open();
-		
+
 		if (path != null) {
 			try {
 				logger.info("importFile: " + path);
@@ -475,9 +456,9 @@ public class TextPlugin implements ITextPlugin {
 					odt = ndoc;
 					fileValid();
 				}
-				
+
 				odtSync();
-				
+
 			} catch (Exception e) {
 				SWTHelper.showError("Fehler beim Import", e.getMessage());
 			}
@@ -491,14 +472,12 @@ public class TextPlugin implements ITextPlugin {
 
 		odtSync();
 
-		File pdffile = new File(
-			file.getAbsoluteFile().getPath().replaceAll("\\.odt$", ".pdf"));
+		File pdffile = new File(file.getAbsoluteFile().getPath().replaceAll("\\.odt$", ".pdf"));
 		String pdfconv = CoreHub.localCfg.get(Preferences.P_PDFCONVERTER, Preferences.P_PDFCONVERTER_DEFAULT);
 		String pdfargs = CoreHub.localCfg.get(Preferences.P_PDFARGS, Preferences.P_PDFARGS_DEFAULT);
 		if (pdfconv.length() == 0) {
 			SWTHelper.showError("Kein Konvertierungsbefehl gesetzt",
-					"In den Einstellungen wurde kein Befehl zum Konvertieren " +
-					"nach PDF konfiguriert.");
+					"In den Einstellungen wurde kein Befehl zum Konvertieren " + "nach PDF konfiguriert.");
 			return null;
 		}
 
@@ -519,7 +498,7 @@ public class TextPlugin implements ITextPlugin {
 	}
 
 	@Override
-	public boolean print(String toPrinter, String toTray, boolean waitUntilFinished){
+	public boolean print(String toPrinter, String toTray, boolean waitUntilFinished) {
 		logger.info("String: " + (file != null));
 		if (file == null || !ensureClosed()) {
 			return false;
@@ -545,7 +524,7 @@ public class TextPlugin implements ITextPlugin {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public Composite createContainer(Composite parent, ICallback handler) {
 		if (comp == null) {
@@ -570,10 +549,10 @@ public class TextPlugin implements ITextPlugin {
 					print_button.setText("Datei am drucken");
 					ProgressMonitorDialog pmd = new ProgressMonitorDialog(UiDesk.getTopShell());
 					try {
-						pmd.run(true, false, new IRunnableWithProgress() {		
+						pmd.run(true, false, new IRunnableWithProgress() {
 							@Override
-							public void run(IProgressMonitor monitor) throws InvocationTargetException,
-								InterruptedException{
+							public void run(IProgressMonitor monitor)
+									throws InvocationTargetException, InterruptedException {
 								logger.info("Start printing {}", file.getAbsolutePath()); //$NON-NLS-1$
 								exportPDF();
 							}
@@ -622,48 +601,48 @@ public class TextPlugin implements ITextPlugin {
 
 		return comp;
 	}
-	
-	private void fileValid(){
+
+	private void fileValid() {
 		open_button.setEnabled(true);
 		curStyle = new Style();
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		logger.info("dispose: ");
-		
+
 	}
-	
-	private void closeFile(){
+
+	private void closeFile() {
 		// System.out.println("closeFile()");
 		logger.info("closeFile: " + file.toString());
 		odtSync();
 		file.delete();
 		file = null;
 	}
-	
+
 	@Override
-	public boolean clear(){
+	public boolean clear() {
 		logger.info("clear: ");
 		SWTHelper.showError("TODO", "TODO: clear()");
 		return false;
 	}
-	
+
 	@Override
-	public boolean createEmptyDocument(){
+	public boolean createEmptyDocument() {
 		logger.info("createEmptyDocument: ");
 		if (!ensureClosed()) {
 			return false;
 		}
-		
+
 		if (file != null) {
 			closeFile();
 		}
-		
+
 		try {
 			file = File.createTempFile(getTempPrefix(), ".odt");
 			file.deleteOnExit();
-			
+
 			logger.info("createEmptyDocument: " + file.toString());
 			odt = OdfTextDocument.newTextDocument();
 			odt.save(file);
@@ -675,11 +654,11 @@ public class TextPlugin implements ITextPlugin {
 		}
 		return true;
 	}
-	
+
 	@Override
-	public byte[] storeToByteArray(){
-		logger.info("storeToByteArray: editorRunning() " + editorRunning() + " file: " + file
-			+ " odt null " + (odt == null));
+	public byte[] storeToByteArray() {
+		logger.info("storeToByteArray: editorRunning() " + editorRunning() + " file: " + file + " odt null "
+				+ (odt == null));
 		if (file == null || odt == null || editorRunning()) {
 			return null;
 		}
@@ -693,33 +672,33 @@ public class TextPlugin implements ITextPlugin {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 		return stream.toByteArray();
 	}
-	
+
 	@Override
-	public boolean loadFromByteArray(byte[] bs, boolean asTemplate){
+	public boolean loadFromByteArray(byte[] bs, boolean asTemplate) {
 		logger.info("loadFromByteArray: asTemplate " + asTemplate);
 		ByteArrayInputStream stream = new ByteArrayInputStream(bs);
 		return loadFromStream(stream, asTemplate);
 	}
-	
+
 	@Override
-	public boolean loadFromStream(InputStream is, boolean asTemplate){
+	public boolean loadFromStream(InputStream is, boolean asTemplate) {
 		logger.info("loadFromStream: " + (file != null));
 		if (!ensureClosed()) {
 			return false;
 		}
-		
+
 		if (file != null) {
 			closeFile();
 		}
-		
+
 		try {
 			file = File.createTempFile(getTempPrefix(), ".odt");
 			logger.info("loadFromStream: " + file.toString());
 			file.deleteOnExit();
-			
+
 			odt = (OdfTextDocument) OdfDocument.loadDocument(is);
 			odt.save(file);
 			fileValid();
@@ -729,67 +708,67 @@ public class TextPlugin implements ITextPlugin {
 			logger.info("loadFromStream: loading document failed ");
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Ersetzt Tabs in einem Text-Node
-	 * 
+	 *
 	 * @see formatText
-	 * 
+	 *
 	 * @return Letzter enstandener Knoten
 	 */
-	private Text replaceTabs(OdfFileDom dom, Text text){
+	private Text replaceTabs(OdfFileDom dom, Text text) {
 		Node parent = text.getParentNode();
 		Text cur = text;
 		int i;
-		
+
 		while ((i = cur.getTextContent().indexOf('\t')) >= 0) {
 			Text next = cur.splitText(i);
 			next.setTextContent(next.getTextContent().substring(1));
-			
+
 			OdfTextTab tab = (OdfTextTab) OdfXMLFactory.newOdfElement(dom, OdfTextTab.ELEMENT_NAME);
 			parent.insertBefore(tab, next);
 			cur = next;
 		}
-		
+
 		return cur;
 	}
-	
+
 	/**
-	 * Text-Node formatieren. Dabei werden Newlines und Tabs ersetzt. Der Knoten kann unter
-	 * Umstaenden aufgespalten werden. {text} entspricht in dem Fall dem ersten Stueck.
-	 * 
+	 * Text-Node formatieren. Dabei werden Newlines und Tabs ersetzt. Der Knoten
+	 * kann unter Umstaenden aufgespalten werden. {text} entspricht in dem Fall dem
+	 * ersten Stueck.
+	 *
 	 * @return Letzter Knoten, der beim aufsplitten entstanden ist
 	 * @throws Exception
 	 */
-	private Text formatText(OdfFileDom dom, Text text) throws Exception{
+	private Text formatText(OdfFileDom dom, Text text) throws Exception {
 		Node parent = text.getParentNode();
 		Text cur = text;
 		int i;
-		
+
 		// XXX: Hack fuer Text unterstrichen darzustellen
 		String textContent = text.getTextContent();
 		if (textContent.startsWith("_") && textContent.endsWith("_")) {
 			// _ Pre/Suffix entfernen
 			text.setTextContent(textContent.substring(1, textContent.length() - 1));
-			
+
 			if (parent instanceof OdfStylableElement) {
 				OdfStylableElement stel = (OdfStylableElement) parent;
 				OdfFileDom contentDom = odt.getContentDom();
-				
+
 				// Neuen Stil erstellen mit unterstrichen aktiviert
 				OdfStyle newst = createNewStyle("ul_", contentDom, odt.getStylesDom());
 				newst.setStyleFamilyAttribute("paragraph");
-				OdfStyleTextProperties stp =
-					(OdfStyleTextProperties) OdfXMLFactory.newOdfElement(contentDom,
+				OdfStyleTextProperties stp = (OdfStyleTextProperties) OdfXMLFactory.newOdfElement(contentDom,
 						StyleTextPropertiesElement.ELEMENT_NAME);
 				stp.setStyleTextUnderlineStyleAttribute("solid");
 				stp.setStyleTextUnderlineWidthAttribute("auto");
 				stp.setStyleTextUnderlineColorAttribute("font-color");
 				newst.appendChild(stp);
-				
+
 				// Originalstil als parent-Stil
 				// FIXME: Funktioniert so nicht wie gewuenscht, die
 				// style:text-properties muessten aus dem Elternstil kopiert
@@ -797,27 +776,26 @@ public class TextPlugin implements ITextPlugin {
 				String oldst = stel.getStyleName();
 				if (oldst != null && !oldst.isEmpty())
 					newst.setStyleParentStyleNameAttribute(oldst);
-				
+
 				stel.setStyleName(newst.getStyleNameAttribute());
 			}
 		}
-		
+
 		while ((i = cur.getTextContent().indexOf('\n')) >= 0) {
 			Text next = cur.splitText(i);
 			next.setTextContent(next.getTextContent().substring(1));
-			
-			OdfTextLineBreak lbrk =
-				(OdfTextLineBreak) OdfXMLFactory.newOdfElement(dom, OdfTextLineBreak.ELEMENT_NAME);
+
+			OdfTextLineBreak lbrk = (OdfTextLineBreak) OdfXMLFactory.newOdfElement(dom, OdfTextLineBreak.ELEMENT_NAME);
 			parent.insertBefore(lbrk, next);
-			
+
 			replaceTabs(dom, cur);
 			cur = next;
 		}
-		
+
 		return replaceTabs(dom, cur);
 	}
-	
-	private boolean searchNode(Node n, Pattern pat, List<Text> matches, boolean onlyFirst){
+
+	private boolean searchNode(Node n, Pattern pat, List<Text> matches, boolean onlyFirst) {
 		boolean result = false;
 		Node child = n.getFirstChild();
 		while (child != null) {
@@ -825,26 +803,26 @@ public class TextPlugin implements ITextPlugin {
 				Text bit = (Text) child;
 				String content = bit.getTextContent();
 				Matcher m = pat.matcher(content);
-				
+
 				if (m.find()) {
 					int start = m.start();
 					int end = m.end();
-					
+
 					// Wenn noetig fuehrendes Stueck abschneiden
 					if (start != 0) {
 						bit = bit.splitText(start);
 						end -= start;
 					}
-					
+
 					// Wenn noetig nachfolgendes Stueck abschneiden
 					if (end != bit.getTextContent().length()) {
 						bit.splitText(end);
 					}
-					
+
 					result = true;
 					matches.add(bit);
 					child = bit;
-					
+
 					if (onlyFirst) {
 						return true;
 					}
@@ -852,22 +830,19 @@ public class TextPlugin implements ITextPlugin {
 			}
 			child = child.getNextSibling();
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
-	 * Text-Nodes finden deren Inhalt das uebergebene Pattern matcht. Dabei werden die Folgenden
-	 * Elementtypen durchsucht: - text:p - text:span Es koennen vorhandene Text-Knoten aufgespalten
-	 * werden.
+	 * Text-Nodes finden deren Inhalt das uebergebene Pattern matcht. Dabei werden
+	 * die Folgenden Elementtypen durchsucht: - text:p - text:span Es koennen
+	 * vorhandene Text-Knoten aufgespalten werden.
 	 */
-	private List<Text> findTextNode(OdfFileDom dom, XPath xpath, Pattern pat, boolean onlyFirst)
-		throws Exception{
+	private List<Text> findTextNode(OdfFileDom dom, XPath xpath, Pattern pat, boolean onlyFirst) throws Exception {
 		List<Text> result = new ArrayList<Text>();
-		
-		String types[] = {
-			"//text:p", "//text:span"
-		};
+
+		String types[] = { "//text:p", "//text:span" };
 		for (String t : types) {
 			NodeList bits = (NodeList) xpath.evaluate(t, dom, XPathConstants.NODESET);
 			for (int i = 0; i < bits.getLength(); i++) {
@@ -879,33 +854,32 @@ public class TextPlugin implements ITextPlugin {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Tabelle erstellen, an der stelle an der match steht. match wird aus dem Dokument entfernt.
-	 * 
-	 * Bei den Breiten werden Prozentwerte erwartet, oder null, falls die Breite auf alle Spalten
-	 * gleichmaessig verteilt werden soll.
+	 * Tabelle erstellen, an der stelle an der match steht. match wird aus dem
+	 * Dokument entfernt.
+	 *
+	 * Bei den Breiten werden Prozentwerte erwartet, oder null, falls die Breite auf
+	 * alle Spalten gleichmaessig verteilt werden soll.
 	 */
-	private void makeTableAt(OdfFileDom dom, Text match, String[][] content, int[] widths)
-		throws Exception{
+	private void makeTableAt(OdfFileDom dom, Text match, String[][] content, int[] widths) throws Exception {
 		Node tableParent = match.getParentNode();
-		
+
 		// Find Parent-Node for table
 		while (tableParent instanceof TextSpanElement) {
 			tableParent = tableParent.getParentNode();
 		}
 		Node before = tableParent;
 		tableParent = tableParent.getParentNode();
-		
+
 		// Create table
-		TableTableElement table =
-			(TableTableElement) OdfXMLFactory.newOdfElement(dom, TableTableElement.ELEMENT_NAME);
+		TableTableElement table = (TableTableElement) OdfXMLFactory.newOdfElement(dom, TableTableElement.ELEMENT_NAME);
 		tableParent.insertBefore(table, before);
-		
+
 		// Remove reference node
 		// FIXME: There is probably a better solution
 		before.getParentNode().removeChild(before);
-		
+
 		// Initialize columns
 		if (content.length == 0) {
 			return;
@@ -916,36 +890,32 @@ public class TextPlugin implements ITextPlugin {
 		}
 		if (widths == null) {
 			// Create a column declaration for all columns
-			TableTableColumnElement ttc =
-				(TableTableColumnElement) OdfXMLFactory.newOdfElement(dom,
+			TableTableColumnElement ttc = (TableTableColumnElement) OdfXMLFactory.newOdfElement(dom,
 					TableTableColumnElement.ELEMENT_NAME);
 			ttc.setTableNumberColumnsRepeatedAttribute(colcount);
 			table.appendChild(ttc);
 		} else {
 			float percentval = 65535f / 100f;
-			
+
 			for (int i = 0; i < widths.length; i++) {
 				// Create Style for this column
 				OdfStyle cst = createNewStyle("col", odt.getContentDom(), odt.getStylesDom());
 				String stname = cst.getStyleNameAttribute();
 				cst.setStyleFamilyAttribute("table-column");
-				
-				OdfStyleTableColumnProperties stcp =
-					(OdfStyleTableColumnProperties) OdfXMLFactory.newOdfElement(dom,
+
+				OdfStyleTableColumnProperties stcp = (OdfStyleTableColumnProperties) OdfXMLFactory.newOdfElement(dom,
 						StyleTableColumnPropertiesElement.ELEMENT_NAME);
-				stcp.setStyleRelColumnWidthAttribute(Integer
-					.toString((int) (widths[i] * percentval)));
+				stcp.setStyleRelColumnWidthAttribute(Integer.toString((int) (widths[i] * percentval)));
 				cst.appendChild(stcp);
-				
+
 				// Create Column declaration for this column
-				TableTableColumnElement ttc =
-					(TableTableColumnElement) OdfXMLFactory.newOdfElement(dom,
+				TableTableColumnElement ttc = (TableTableColumnElement) OdfXMLFactory.newOdfElement(dom,
 						TableTableColumnElement.ELEMENT_NAME);
 				ttc.setStyleName(stname);
 				table.appendChild(ttc);
 			}
 		}
-		
+
 		for (String[] row : content) {
 			// Create row
 			TableTableRowElement ttre = table.newTableTableRowElement();
@@ -953,28 +923,27 @@ public class TextPlugin implements ITextPlugin {
 			for (int i = 0; i < row.length; i++) {
 				String col = row[i];
 				boolean last = (i == row.length - 1);
-				
+
 				if (col == null) {
 					col = "";
 				}
-				
+
 				// Create cell
 				TableTableCellElement ttce = ttre.newTableTableCellElement();
 				ttce.setOfficeValueTypeAttribute("string");
 				ttre.appendChild(ttce);
-				
+
 				// If this is the last column, and we don't have values for all
 				// columns, we need to set colspan.
 				if (last && row.length < colcount) {
 					ttce.setTableNumberColumnsSpannedAttribute(colcount - i);
 				}
-				
-				TextPElement tp =
-					(TextPElement) OdfXMLFactory.newOdfElement(dom, TextPElement.ELEMENT_NAME);
+
+				TextPElement tp = (TextPElement) OdfXMLFactory.newOdfElement(dom, TextPElement.ELEMENT_NAME);
 				tp.setStyleName(curStyle + "_pg");
 				tp.setTextContent(col);
 				ttce.appendChild(tp);
-				
+
 				// Format cell content
 				Text t = (Text) tp.getFirstChild();
 				if (t != null) {
@@ -982,21 +951,22 @@ public class TextPlugin implements ITextPlugin {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	/**
-	 * Tabelle in der sich der angegebene Platzhalter befindet befuellen. Dafuer wird die
-	 * Vorlagezeile 1:1 kopiert (insbesondere werden styles und breiten uebernommen) und die spalten
-	 * vom Plathalter an werden alle mit dem Inhalt aus content ueberschrieben. Spalten vor dem
-	 * angegebenen Platzhalter und ueberschuessige danach werden 1:1 kopiert.
+	 * Tabelle in der sich der angegebene Platzhalter befindet befuellen. Dafuer
+	 * wird die Vorlagezeile 1:1 kopiert (insbesondere werden styles und breiten
+	 * uebernommen) und die spalten vom Plathalter an werden alle mit dem Inhalt aus
+	 * content ueberschrieben. Spalten vor dem angegebenen Platzhalter und
+	 * ueberschuessige danach werden 1:1 kopiert.
 	 */
-	private void fillTableAt(OdfFileDom dom, Text match, String[][] content) throws Exception{
+	private void fillTableAt(OdfFileDom dom, Text match, String[][] content) throws Exception {
 		Node cellNode = match.getParentNode();
 		TableTableRowElement row;
 		TableTableCellElement cell;
 		int cellIndex = 0;
-		
+
 		// Find row-node
 		while (!(cellNode instanceof TableTableCellElement)) {
 			cellNode = cellNode.getParentNode();
@@ -1004,7 +974,7 @@ public class TextPlugin implements ITextPlugin {
 		cell = (TableTableCellElement) cellNode;
 		row = (TableTableRowElement) cell.getParentNode();
 		Node parent = row.getParentNode();
-		
+
 		// Zellenindex ausfindig machen
 		NodeList cellList = row.getChildNodes();
 		for (int i = 0; i < cellList.getLength(); i++) {
@@ -1015,12 +985,12 @@ public class TextPlugin implements ITextPlugin {
 				break;
 			cellIndex++;
 		}
-		
+
 		for (String[] rData : content) {
 			if (rData == null)
 				continue;
 			TableTableRowElement r = (TableTableRowElement) row.cloneNode(true);
-			
+
 			// Durch spalten und anderen Inhalt iterieren und entsprechende
 			// Zellen befuellen.
 			int i = 0;
@@ -1033,7 +1003,7 @@ public class TextPlugin implements ITextPlugin {
 				if (i >= cellIndex && (i - cellIndex + 1 <= rData.length)) {
 					// FIXME
 					TextPElement pe = (TextPElement) c.getChildNodes().item(0);
-					
+
 					pe.setTextContent(StringTool.unNull(rData[i - cellIndex]));
 					Text t = (Text) pe.getFirstChild();
 					if (t != null) {
@@ -1044,17 +1014,17 @@ public class TextPlugin implements ITextPlugin {
 			}
 			parent.insertBefore(r, row);
 		}
-		
+
 		parent.removeChild(row);
 	}
-	
-	private void replaceTableFills(OdfFileDom dom, XPath xpath, Pattern pat, boolean onlyFirst,
-		ReplaceCallback cb) throws Exception{
+
+	private void replaceTableFills(OdfFileDom dom, XPath xpath, Pattern pat, boolean onlyFirst, ReplaceCallback cb)
+			throws Exception {
 		String spat = pat.pattern();
 		spat = spat.replaceAll("\\\\\\[", "\\\\{");
 		spat = spat.replaceAll("\\\\\\]", "\\\\}");
 		Pattern npat = Pattern.compile(spat);
-		
+
 		List<Text> matches = findTextNode(dom, xpath, npat, onlyFirst);
 		for (Text match : matches) {
 			String text = match.getTextContent().replaceAll("\\{", "[").replaceAll("\\}", "]");
@@ -1068,19 +1038,19 @@ public class TextPlugin implements ITextPlugin {
 			}
 		}
 	}
-	
-	private int findOrReplaceIn(OdfFileDom dom, Pattern pat, ReplaceCallback cb, XPath xpath)
-		throws Exception{
-		
+
+	private int findOrReplaceIn(OdfFileDom dom, Pattern pat, ReplaceCallback cb, XPath xpath) throws Exception {
+
 		replaceTableFills(dom, xpath, pat, false, cb);
 		List<Text> matches = findTextNode(dom, xpath, pat, false);
-		
+
 		for (Text match : matches) {
 			String text = match.getTextContent();
 			Object replacement = cb.replace(text);
 			String replstr;
-			
-			if (replacement == null) {} else if (replacement instanceof String) {
+
+			if (replacement == null) {
+			} else if (replacement instanceof String) {
 				replstr = (String) replacement;
 				if (replstr.compareTo(text) != 0) {
 					match.setTextContent(replstr);
@@ -1098,57 +1068,56 @@ public class TextPlugin implements ITextPlugin {
 					match.setTextContent(replstr);
 				}
 			}
-			
+
 		}
-		
+
 		return matches.size();
 	}
-	
+
 	@Override
-	public boolean findOrReplace(String pattern, ReplaceCallback cb){
+	public boolean findOrReplace(String pattern, ReplaceCallback cb) {
 		if (editorRunning() || file == null) {
 			return false;
 		}
-		
+
 		int count = 0;
 		try {
 			Pattern pat = Pattern.compile(pattern);
 			OdfFileDom contentDom = odt.getContentDom();
 			OdfFileDom styleDom = odt.getStylesDom();
 			XPath xpath = odt.getXPath();
-			
+
 			count += findOrReplaceIn(contentDom, pat, cb, xpath);
 			count += findOrReplaceIn(styleDom, pat, cb, xpath);
-			
+
 			odtSync();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return count > 0;
 	}
-	
+
 	@Override
-	public boolean insertTable(String place, int properties, String[][] contents, int[] columnSizes){
+	public boolean insertTable(String place, int properties, String[][] contents, int[] columnSizes) {
 		// System.out.println("insertTable()" + this.hashCode());
 		if (!ensureClosed() || file == null) {
 			return false;
 		}
-		
+
 		try {
 			OdfFileDom contentDom = odt.getContentDom();
 			XPath xpath = odt.getXPath();
-			
-			List<Text> texts =
-				findTextNode(contentDom, xpath, Pattern.compile(Pattern.quote(place)), true);
-			
+
+			List<Text> texts = findTextNode(contentDom, xpath, Pattern.compile(Pattern.quote(place)), true);
+
 			if (texts.size() == 0) {
 				return false;
 			}
-			
+
 			Text txt = texts.get(0);
 			makeTableAt(contentDom, txt, contents, columnSizes);
-			
+
 			// TODO: Style
 			odtSync();
 			return true;
@@ -1157,29 +1126,28 @@ public class TextPlugin implements ITextPlugin {
 			return false;
 		}
 	}
-	
+
 	@Override
-	public Object insertText(String marke, String text, int adjust){
+	public Object insertText(String marke, String text, int adjust) {
 		if (!ensureClosed() || file == null) {
 			return null;
 		}
-		
+
 		// System.out.println("insertText('" + marke + "', '" + text + "')");
 		try {
 			OdfFileDom contentDom = odt.getContentDom();
 			XPath xpath = odt.getXPath();
-			
-			List<Text> texts =
-				findTextNode(contentDom, xpath, Pattern.compile(Pattern.quote(marke)), true);
-			
+
+			List<Text> texts = findTextNode(contentDom, xpath, Pattern.compile(Pattern.quote(marke)), true);
+
 			if (texts.size() == 0) {
 				return null;
 			}
-			
+
 			Text txt = texts.get(0);
 			txt.setTextContent(text);
 			txt = formatText(contentDom, txt);
-			
+
 			// TODO: Style
 			odtSync();
 			return txt;
@@ -1188,26 +1156,25 @@ public class TextPlugin implements ITextPlugin {
 			return null;
 		}
 	}
-	
+
 	@Override
-	public Object insertText(Object pos, String text, int adjust){
+	public Object insertText(Object pos, String text, int adjust) {
 		if (!ensureClosed() || file == null || pos == null) {
 			return null;
 		}
-		
+
 		// System.out.println("insertText2('" + text + "')");
 		try {
 			OdfFileDom contentDom = odt.getContentDom();
 			Text prev = (Text) pos;
-			
+
 			curStyle.setAlign(adjust);
-			
-			TextSpanElement span =
-				(TextSpanElement) OdfXMLFactory.newOdfElement(contentDom,
+
+			TextSpanElement span = (TextSpanElement) OdfXMLFactory.newOdfElement(contentDom,
 					TextSpanElement.ELEMENT_NAME);
 			span.setTextContent(text);
 			span.setStyleName(curStyle.getTextLbl());
-			
+
 			int i;
 			Text txt = prev;
 			for (i = 0; i < span.getChildNodes().getLength(); i++) {
@@ -1225,32 +1192,31 @@ public class TextPlugin implements ITextPlugin {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * Finde einen nicht benutzten Style-Namen der mit prefix beginnt, und mit einer beliebigen Zahl
-	 * endet.
+	 * Finde einen nicht benutzten Style-Namen der mit prefix beginnt, und mit einer
+	 * beliebigen Zahl endet.
 	 */
-	private String generateStyleName(String prefix, OdfFileDom contentDom, OdfFileDom styleDom,
-		XPath xpath){
+	private String generateStyleName(String prefix, OdfFileDom contentDom, OdfFileDom styleDom, XPath xpath) {
 		NodeList nl;
-		
+
 		// TODO: Muesste sich doch in konstanter Zeit machen lassen. ;-)
-		
+
 		for (int i = 0;; i++) {
 			String cur = prefix + i;
-			
+
 			String xp = "//*[@style:name='" + cur + "']";
 			try {
 				nl = (NodeList) xpath.evaluate(xp, contentDom, XPathConstants.NODESET);
 				if (nl.getLength() > 0) {
 					continue;
 				}
-				
+
 				nl = (NodeList) xpath.evaluate(xp, styleDom, XPathConstants.NODESET);
 				if (nl.getLength() > 0) {
 					continue;
 				}
-				
+
 				return cur;
 			} catch (XPathExpressionException e) {
 				// TODO Auto-generated catch block
@@ -1258,45 +1224,41 @@ public class TextPlugin implements ITextPlugin {
 			}
 		}
 	}
-	
-	private OdfStyle createNewStyle(String prefix, OdfFileDom contentDom, OdfFileDom styleDom)
-		throws Exception{
+
+	private OdfStyle createNewStyle(String prefix, OdfFileDom contentDom, OdfFileDom styleDom) throws Exception {
 		XPath xpath = odt.getXPath();
-		
+
 		String name = generateStyleName(prefix, contentDom, styleDom, xpath);
-		OdfOfficeAutomaticStyles autost =
-			(OdfOfficeAutomaticStyles) xpath.evaluate("//office:automatic-styles", contentDom,
-				XPathConstants.NODE);
-		
-		OdfStyle style =
-			(OdfStyle) OdfXMLFactory.newOdfElement(contentDom, StyleStyleElement.ELEMENT_NAME);
+		OdfOfficeAutomaticStyles autost = (OdfOfficeAutomaticStyles) xpath.evaluate("//office:automatic-styles",
+				contentDom, XPathConstants.NODE);
+
+		OdfStyle style = (OdfStyle) OdfXMLFactory.newOdfElement(contentDom, StyleStyleElement.ELEMENT_NAME);
 		style.setStyleNameAttribute(name);
 		autost.appendChild(style);
-		
+
 		return style;
 	}
-	
+
 	@Override
-	public Object insertTextAt(int x, int y, int w, int h, String text, int adjust){
+	public Object insertTextAt(int x, int y, int w, int h, String text, int adjust) {
 		if (!ensureClosed() || file == null) {
 			return null;
 		}
-		
+
 		try {
 			OdfFileDom contentDom = odt.getContentDom();
 			OdfFileDom styleDom = odt.getStylesDom();
 			XPath xpath = odt.getXPath();
-			
+
 			curStyle.setAlign(adjust);
-			
+
 			// Generate Styles
 			OdfStyle frst = createNewStyle("fr", contentDom, styleDom);
 			String frstyle = frst.getStyleNameAttribute();
 			frst.setStyleFamilyAttribute("graphic");
 			frst.setStyleParentStyleNameAttribute("Frame");
-			
-			OdfStyleGraphicProperties gsp =
-				(OdfStyleGraphicProperties) OdfXMLFactory.newOdfElement(contentDom,
+
+			OdfStyleGraphicProperties gsp = (OdfStyleGraphicProperties) OdfXMLFactory.newOdfElement(contentDom,
 					StyleGraphicPropertiesElement.ELEMENT_NAME);
 			gsp.setStyleRunThroughAttribute("foreground");
 			gsp.setStyleWrapAttribute("dynamic");
@@ -1313,26 +1275,21 @@ public class TextPlugin implements ITextPlugin {
 			gsp.setFoPaddingAttribute("0cm");
 			gsp.setFoBorderAttribute("none");
 			frst.appendChild(gsp);
-			
-			OdfStyleBackgroundImage bgimg =
-				(OdfStyleBackgroundImage) OdfXMLFactory.newOdfElement(contentDom,
+
+			OdfStyleBackgroundImage bgimg = (OdfStyleBackgroundImage) OdfXMLFactory.newOdfElement(contentDom,
 					StyleBackgroundImageElement.ELEMENT_NAME);
 			gsp.appendChild(bgimg);
-			
-			OdfStyleColumns scols =
-				(OdfStyleColumns) OdfXMLFactory.newOdfElement(contentDom,
+
+			OdfStyleColumns scols = (OdfStyleColumns) OdfXMLFactory.newOdfElement(contentDom,
 					StyleColumnsElement.ELEMENT_NAME);
 			scols.setFoColumnCountAttribute(1);
 			scols.setFoColumnGapAttribute("0cm");
 			gsp.appendChild(scols);
-			
+
 			// Generate Content
-			OdfOfficeText officeText =
-				(OdfOfficeText) xpath.evaluate("//office:text", contentDom, XPathConstants.NODE);
-			
-			OdfDrawFrame frame =
-				(OdfDrawFrame) OdfXMLFactory.newOdfElement(contentDom,
-					DrawFrameElement.ELEMENT_NAME);
+			OdfOfficeText officeText = (OdfOfficeText) xpath.evaluate("//office:text", contentDom, XPathConstants.NODE);
+
+			OdfDrawFrame frame = (OdfDrawFrame) OdfXMLFactory.newOdfElement(contentDom, DrawFrameElement.ELEMENT_NAME);
 			frame.setSvgXAttribute(x + "mm");
 			frame.setSvgYAttribute(y + "mm");
 			frame.setSvgWidthAttribute(w + "mm");
@@ -1345,119 +1302,117 @@ public class TextPlugin implements ITextPlugin {
 			frame.setDrawStyleNameAttribute(frstyle);
 			frame.setDrawNameAttribute("Frame" + frstyle);
 			officeText.insertBefore(frame, officeText.getFirstChild());
-			
-			OdfDrawTextBox textbox =
-				(OdfDrawTextBox) OdfXMLFactory.newOdfElement(contentDom,
+
+			OdfDrawTextBox textbox = (OdfDrawTextBox) OdfXMLFactory.newOdfElement(contentDom,
 					DrawTextBoxElement.ELEMENT_NAME);
 			frame.appendChild(textbox);
-			
-			OdfTextParagraph para =
-				(OdfTextParagraph) OdfXMLFactory.newOdfElement(contentDom,
+
+			OdfTextParagraph para = (OdfTextParagraph) OdfXMLFactory.newOdfElement(contentDom,
 					TextPElement.ELEMENT_NAME);
 			para.setTextContent(text);
 			para.setStyleName(curStyle.getParagraphLbl());
 			textbox.appendChild(para);
-			
+
 			// TODO: Sauber?
 			Text txt = (Text) para.getChildNodes().item(0);
 			formatText(contentDom, txt);
-			
+
 			curStyle.clearAlign();
-			
+
 			odtSync();
 			return txt;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public PageFormat getFormat(){
+	public PageFormat getFormat() {
 		// System.out.println("getFormat()");
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public String getMimeType(){
+	public String getMimeType() {
 		return "application/vnd.oasis.opendocument.text";
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public boolean setFont(String name, int style, float size){
+	public boolean setFont(String name, int style, float size) {
 		if (!ensureClosed() || file == null) {
 			return false;
 		}
-		
+
 		if (curStyle != null) { // NPE seen in Kassenbuch
 			curStyle.setFont(name, style, size);
 		}
 		return true;
 	}
-	
+
 	@Override
-	public void setFormat(PageFormat f){
+	public void setFormat(PageFormat f) {
 		// System.out.println("setFormat");
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void setSaveOnFocusLost(boolean bSave){
+	public void setSaveOnFocusLost(boolean bSave) {
 		// System.out.println("setSaveOnFocusLost");
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public boolean setStyle(int style){
+	public boolean setStyle(int style) {
 		curStyle.setStyle(style);
 		return true;
 	}
-	
+
 	@Override
-	public void showMenu(boolean b){
+	public void showMenu(boolean b) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void showToolbar(boolean b){
+	public void showToolbar(boolean b) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-		throws CoreException{
+			throws CoreException {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public boolean isDirectOutput(){
+	public boolean isDirectOutput() {
 		return true;
 	}
-	
+
 	@Override
-	public void setParameter(Parameter parameter){
+	public void setParameter(Parameter parameter) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void initTemplatePrintSettings(String template){
+	public void initTemplatePrintSettings(String template) {
 		// TODO: Siehe https://redmine.medelexis.ch/issues/3606 und
 		// https://redmine.medelexis.ch/issues/4037
 	}
-	
+
 }

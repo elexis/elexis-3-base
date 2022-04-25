@@ -43,9 +43,9 @@ import ch.unibe.iam.scg.archie.ui.DetailsPanel;
  * <p>
  * In this View a user can chose a statistic, set options for it and run it.
  * </p>
- * 
+ *
  * $Id: SidebarView.java 774 2010-01-29 05:47:10Z gerry.weirich $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 774 $
@@ -153,11 +153,10 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Checks whether the title passed to this function is a valid data provider
-	 * we have in the statistics table.
-	 * 
-	 * @param title
-	 *            Provider title.
+	 * Checks whether the title passed to this function is a valid data provider we
+	 * have in the statistics table.
+	 *
+	 * @param title Provider title.
 	 * @return True if the there is a provider with the given title, false else.
 	 */
 	protected boolean isValidProviderTitle(String title) {
@@ -166,7 +165,7 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 
 	/**
 	 * Nothing is done on focus here.
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	@Override
@@ -175,11 +174,9 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Sets all children enabled according to the boolean passed to this
-	 * function.
-	 * 
-	 * @param enabled
-	 *            True if children should be enabled, false else.
+	 * Sets all children enabled according to the boolean passed to this function.
+	 *
+	 * @param enabled True if children should be enabled, false else.
 	 */
 	public void setEnabled(boolean enabled) {
 		this.list.setEnabled(enabled);
@@ -201,7 +198,7 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 
 	/**
 	 * Removes any currently managed provider from the provider manager.
-	 * 
+	 *
 	 * @see ProviderManager
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */

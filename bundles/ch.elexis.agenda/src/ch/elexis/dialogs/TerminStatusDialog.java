@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -25,24 +25,23 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.util.SWTHelper;
 
-
 public class TerminStatusDialog extends TitleAreaDialog {
 	Button[] bStatus;
 	String[] status;
 	Termin termin;
-	
-	public TerminStatusDialog(Shell shell){
+
+	public TerminStatusDialog(Shell shell) {
 		super(shell);
 		termin = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 	}
-	
+
 	public TerminStatusDialog(Shell shell, Termin termin) {
 		super(shell);
 		this.termin = termin;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
@@ -59,17 +58,17 @@ public class TerminStatusDialog extends TitleAreaDialog {
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		getShell().setText(Messages.TerminStatusDialog_terminState);
 		setMessage(Messages.TerminStatusDialog_enterState);
 		setTitle(Messages.TerminStatusDialog_terminState);
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		for (int i = 0; i < status.length; i++) {
 			if (bStatus[i].getSelection()) {
 				termin.setStatus(status[i]);
@@ -79,5 +78,5 @@ public class TerminStatusDialog extends TitleAreaDialog {
 		ElexisEventDispatcher.reload(Termin.class);
 		super.okPressed();
 	}
-	
+
 }

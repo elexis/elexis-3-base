@@ -24,100 +24,98 @@ import org.eclipse.swt.widgets.Text;
 import ch.gpb.elexis.cst.Messages;
 
 /**
- * 
+ *
  * /**
- * @author daniel ludin ludin@swissonline.ch
- * 27.06.2015
- * 
+ *
+ * @author daniel ludin ludin@swissonline.ch 27.06.2015
+ *
  */
 
 public class CstCategoryDialog extends TitleAreaDialog {
 
-    private Text txtFirstName;
-    private Text lastNameText;
+	private Text txtFirstName;
+	private Text lastNameText;
 
+	private String groupName;
+	private String groupDescription;
 
-    private String groupName;
-    private String groupDescription;
+	public CstCategoryDialog(Shell parentShell) {
+		super(parentShell);
 
-    public CstCategoryDialog(Shell parentShell) {
-	super(parentShell);
+	}
 
-    }
+	@Override
+	public void create() {
+		super.create();
+		setTitle(Messages.Cst_Text_cstgroup_name);
+		setMessage(Messages.Cst_Text_Enter_name_for_cstgroup, IMessageProvider.INFORMATION);
+	}
 
-    @Override
-    public void create() {
-	super.create();
-	setTitle(Messages.Cst_Text_cstgroup_name);
-	setMessage(Messages.Cst_Text_Enter_name_for_cstgroup, IMessageProvider.INFORMATION);
-    }
+	@Override
+	protected Control createDialogArea(Composite parent) {
 
-    @Override
-    protected Control createDialogArea(Composite parent) {
+		Composite area = (Composite) super.createDialogArea(parent);
+		Composite container = new Composite(area, SWT.NONE);
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout layout = new GridLayout(2, false);
+		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		container.setLayout(layout);
 
-	Composite area = (Composite) super.createDialogArea(parent);
-	Composite container = new Composite(area, SWT.NONE);
-	container.setLayoutData(new GridData(GridData.FILL_BOTH));
-	GridLayout layout = new GridLayout(2, false);
-	container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-	container.setLayout(layout);
+		createFirstName(container);
+		createLastName(container);
 
-	createFirstName(container);
-	createLastName(container);
+		return area;
+	}
 
+	private void createFirstName(Composite container) {
+		Label lbtFirstName = new Label(container, SWT.NONE);
+		lbtFirstName.setText(Messages.Cst_Text_cstgroup_name);
 
-	return area;
-    }
+		GridData dataFirstName = new GridData();
+		dataFirstName.grabExcessHorizontalSpace = true;
+		dataFirstName.horizontalAlignment = GridData.FILL;
 
-    private void createFirstName(Composite container) {
-	Label lbtFirstName = new Label(container, SWT.NONE);
-	lbtFirstName.setText(Messages.Cst_Text_cstgroup_name);
+		txtFirstName = new Text(container, SWT.BORDER);
+		txtFirstName.setLayoutData(dataFirstName);
+	}
 
-	GridData dataFirstName = new GridData();
-	dataFirstName.grabExcessHorizontalSpace = true;
-	dataFirstName.horizontalAlignment = GridData.FILL;
+	private void createLastName(Composite container) {
+		Label lbtLastName = new Label(container, SWT.NONE);
 
-	txtFirstName = new Text(container, SWT.BORDER);
-	txtFirstName.setLayoutData(dataFirstName);
-    }
+		lbtLastName.setText(Messages.CstCategory_description);
 
-    private void createLastName(Composite container) {
-	Label lbtLastName = new Label(container, SWT.NONE);
+		GridData dataLastName = new GridData();
+		dataLastName.grabExcessHorizontalSpace = true;
+		dataLastName.horizontalAlignment = GridData.FILL;
+		lastNameText = new Text(container, SWT.BORDER);
+		lastNameText.setLayoutData(dataLastName);
+	}
 
-	lbtLastName.setText(Messages.CstCategory_description);
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 
-	GridData dataLastName = new GridData();
-	dataLastName.grabExcessHorizontalSpace = true;
-	dataLastName.horizontalAlignment = GridData.FILL;
-	lastNameText = new Text(container, SWT.BORDER);
-	lastNameText.setLayoutData(dataLastName);
-    }
+	// save content of the Text fields because they get disposed
+	// as soon as the Dialog closes
+	// this method seems to be a hook and is called on close
+	private void saveInput() {
+		groupName = txtFirstName.getText();
+		groupDescription = lastNameText.getText();
+	}
 
-    @Override
-    protected boolean isResizable() {
-	return true;
-    }
+	@Override
+	protected void okPressed() {
+		saveInput();
+		super.okPressed();
+	}
 
-    // save content of the Text fields because they get disposed
-    // as soon as the Dialog closes
-    // this method seems to be a hook and is called on close
-    private void saveInput() {
-	groupName = txtFirstName.getText();
-	groupDescription = lastNameText.getText();
-    }
+	public String getGroupName() {
+		return groupName;
+	}
 
-    @Override
-    protected void okPressed() {
-	saveInput();
-	super.okPressed();
-    }
-
-    public String getGroupName() {
-	return groupName;
-    }
-
-    public String getGroupDescription() {
-	return groupDescription;
-    }
+	public String getGroupDescription() {
+		return groupDescription;
+	}
 
 }

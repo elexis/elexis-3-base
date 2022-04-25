@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.icpc;
@@ -27,36 +27,36 @@ import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class IcpcImporter extends ImporterPage {
-	
+
 	@Inject
 	private IReferenceDataImporterService importerService;
-	
-	public IcpcImporter(){
+
+	public IcpcImporter() {
 		CoreUiUtil.injectServices(this);
 	}
-	
+
 	@Override
-	public Composite createPage(Composite parent){
+	public Composite createPage(Composite parent) {
 		FileBasedImporter fbi = new FileBasedImporter(parent, this);
 		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return fbi;
-		
+
 	}
-	
+
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception{
+	public IStatus doImport(IProgressMonitor monitor) throws Exception {
 		IReferenceDataImporter importer = importerService.getImporter("icpc")
-			.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available."));
+				.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available."));
 		return importer.performImport(monitor, new FileInputStream(results[0]), null);
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return "International Classification of Primary Care";
 	}
-	
+
 	@Override
-	public String getTitle(){
+	public String getTitle() {
 		return "ICPC-2";
 	}
 }

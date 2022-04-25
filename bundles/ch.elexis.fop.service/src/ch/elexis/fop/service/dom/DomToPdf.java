@@ -21,26 +21,27 @@ import org.apache.fop.apps.MimeConstants;
 import ch.elexis.core.services.IFormattedOutput;
 
 public class DomToPdf implements IFormattedOutput {
-	
+
 	private static DomToPdf instance;
-	
-	private DomToPdf(){}
-	
-	public static DomToPdf getInstance(){
+
+	private DomToPdf() {
+	}
+
+	public static DomToPdf getInstance() {
 		if (instance == null)
 			instance = new DomToPdf();
 		return instance;
 	}
-	
+
 	@Override
-	public void transform(Object documentObject, InputStream xslt, OutputStream pdf){
+	public void transform(Object documentObject, InputStream xslt, OutputStream pdf) {
 		transform(documentObject, xslt, pdf, null);
 	}
-	
+
 	@Override
 	public void transform(Object documentObject, InputStream xslt, OutputStream pdf,
-		Map<String, String> transformerParameters, URIResolver resolver){
-		DomToMimeType.getInstance().transform(documentObject, xslt, pdf, MimeConstants.MIME_PDF,
-			transformerParameters, resolver);
+			Map<String, String> transformerParameters, URIResolver resolver) {
+		DomToMimeType.getInstance().transform(documentObject, xslt, pdf, MimeConstants.MIME_PDF, transformerParameters,
+				resolver);
 	}
 }

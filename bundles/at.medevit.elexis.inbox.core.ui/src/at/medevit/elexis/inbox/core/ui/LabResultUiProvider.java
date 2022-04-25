@@ -35,48 +35,48 @@ import ch.elexis.data.LabResult;
 import ch.rgw.tools.Result;
 
 public class LabResultUiProvider implements IInboxElementUiProvider {
-	//	private static DecorationOverlayIcon pathologicLabImage;
-	
+	// private static DecorationOverlayIcon pathologicLabImage;
+
 	private IViewDescriptor rocheView;
 	private IViewDescriptor labView;
-	
+
 	private LabResultLabelProvider labelProvider;
-	//	private PathologicInboxFilter filter;
-	
-	public LabResultUiProvider(){
+	// private PathologicInboxFilter filter;
+
+	public LabResultUiProvider() {
 		labelProvider = new LabResultLabelProvider();
 	}
-	
+
 	@Override
-	public ImageDescriptor getFilterImage(){
-		//		if (pathologicLabImage == null) {
-		//			initializeImages();
-		//		}
-		//		return pathologicLabImage;
+	public ImageDescriptor getFilterImage() {
+		// if (pathologicLabImage == null) {
+		// initializeImages();
+		// }
+		// return pathologicLabImage;
 		return null;
 	}
-	
+
 	@Override
-	public ViewerFilter getFilter(){
-		//		if (filter == null) {
-		//			filter = new PathologicInboxFilter();
-		//		}
-		//		return filter;
+	public ViewerFilter getFilter() {
+		// if (filter == null) {
+		// filter = new PathologicInboxFilter();
+		// }
+		// return filter;
 		return null;
 	}
-	
+
 	@Override
-	public LabelProvider getLabelProvider(){
+	public LabelProvider getLabelProvider() {
 		return labelProvider;
 	}
-	
+
 	@Override
-	public IColorProvider getColorProvider(){
+	public IColorProvider getColorProvider() {
 		return labelProvider;
 	}
-	
+
 	@Override
-	public boolean isProviderFor(IInboxElement element){
+	public boolean isProviderFor(IInboxElement element) {
 		if (element instanceof LabGroupedInboxElements) {
 			return true;
 		}
@@ -88,32 +88,32 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 		}
 		return false;
 	}
-	
-	//	private static void initializeImages(){
-	//		ImageDescriptor[] overlays = new ImageDescriptor[1];
-	//		overlays[0] = AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.inbox.ui", //$NON-NLS-1$
-	//			"/rsc/img/achtung_overlay.png"); //$NON-NLS-1$
-	//		
-	//		pathologicLabImage =
-	//			new DecorationOverlayIcon(Images.IMG_VIEW_LABORATORY.getImage(), overlays);
-	//	}
-	
+
+	// private static void initializeImages(){
+	// ImageDescriptor[] overlays = new ImageDescriptor[1];
+	// overlays[0] =
+	// AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.inbox.ui",
+	// //$NON-NLS-1$
+	// "/rsc/img/achtung_overlay.png"); //$NON-NLS-1$
+	//
+	// pathologicLabImage =
+	// new DecorationOverlayIcon(Images.IMG_VIEW_LABORATORY.getImage(), overlays);
+	// }
+
 	@Override
-	public void doubleClicked(IInboxElement element){
+	public void doubleClicked(IInboxElement element) {
 		if (element instanceof LabGroupedInboxElements) {
 			if (rocheView == null && labView == null) {
-				rocheView = PlatformUI.getWorkbench().getViewRegistry()
-					.find("at.medevit.elexis.roche.labor.view");
+				rocheView = PlatformUI.getWorkbench().getViewRegistry().find("at.medevit.elexis.roche.labor.view");
 				labView = PlatformUI.getWorkbench().getViewRegistry().find("ch.elexis.Labor");
 			}
 			Display.getDefault().asyncExec(() -> {
 				try {
 					if (rocheView != null) {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-							.showView(rocheView.getId());
+								.showView(rocheView.getId());
 					} else if (labView != null) {
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-							.showView(labView.getId());
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(labView.getId());
 					}
 				} catch (PartInitException e) {
 					LoggerFactory.getLogger(getClass()).warn("Error showing lab view", e);
@@ -121,9 +121,9 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 			});
 		}
 	}
-	
+
 	@Override
-	public boolean isVisible(IInboxElement element){
+	public boolean isVisible(IInboxElement element) {
 		if (element instanceof LabGroupedInboxElements) {
 			return true;
 		}
@@ -145,21 +145,19 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 		}
 		return true;
 	}
-	
+
 	@Override
-	public boolean isGrouped(){
+	public boolean isGrouped() {
 		return true;
 	}
-	
+
 	@Override
-	public GroupedInboxElements getGrouped(PatientInboxElements patientInboxElements,
-		IInboxElement element){
+	public GroupedInboxElements getGrouped(PatientInboxElements patientInboxElements, IInboxElement element) {
 		LabGroupedInboxElements ret = null;
 		ILabResult labResult = (ILabResult) element.getObject();
 		Optional<LabGroupedInboxElements> existing = patientInboxElements.getElements().stream()
-			.filter(iie -> iie instanceof LabGroupedInboxElements)
-			.map(iie -> (LabGroupedInboxElements) iie).filter(lge -> lge.isMatching(labResult))
-			.findFirst();
+				.filter(iie -> iie instanceof LabGroupedInboxElements).map(iie -> (LabGroupedInboxElements) iie)
+				.filter(lge -> lge.isMatching(labResult)).findFirst();
 		if (existing.isPresent()) {
 			ret = existing.get();
 		} else {

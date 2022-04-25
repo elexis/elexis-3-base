@@ -25,60 +25,61 @@ import at.gruber.elexis.mythic22.persistency.PersistencyHandler;
 
 public class NetListener implements Runnable {
 	private static Logger logger = LoggerFactory.getLogger(NetListener.class);
-	
+
 	private static final String START = "MYTHIC";
 	private static final String END = "END_RESULT";
-	
+
 	private int m_serverPort;
 	private static boolean m_running = false;
 	private Thread m_thread;
 	private Socket m_socket;
 	private ServerSocket m_serverSocket;
-	
-	public NetListener(int serverPort){
+
+	public NetListener(int serverPort) {
 		super();
 		m_serverPort = serverPort;
 	}
-	
+
 	/**
-	 * Invokes a new Thread and starts it. This thread will process all incoming results from
-	 * mythic22
+	 * Invokes a new Thread and starts it. This thread will process all incoming
+	 * results from mythic22
 	 */
-	public void startContinousRead(){
-		// TODO IF we are still in Thread state RUNNABLE we face an IllegalThreadException here
+	public void startContinousRead() {
+		// TODO IF we are still in Thread state RUNNABLE we face an
+		// IllegalThreadException here
 		if (m_thread == null || (m_thread.getState() == Thread.State.TERMINATED)) {
 			m_thread = new Thread(this);
 		}
-		//		System.out.println(m_thread.getState());
+		// System.out.println(m_thread.getState());
 		m_serverSocket = null;
 		m_socket = null;
 		m_running = true;
 		m_thread.start();
 	}
-	
+
 	/**
-	 * tries to read one Mythic22 output from start to end and returns the output on success if it
-	 * fails to read the whole output or an output at all null is returned
-	 * 
+	 * tries to read one Mythic22 output from start to end and returns the output on
+	 * success if it fails to read the whole output or an output at all null is
+	 * returned
+	 *
 	 * @return null or the mythic22 output as a String
 	 */
-	private String readFromServer(){
-		
+	private String readFromServer() {
+
 		boolean mythicHeaderFound = false;
 		boolean mythicEndReached = false;
-		
+
 		StringBuilder strBuilder = new StringBuilder();
 		try {
 			if (m_serverSocket == null || m_serverSocket.isClosed()) {
 				m_serverSocket = new ServerSocket(m_serverPort);
 				m_serverSocket.setSoTimeout(5000);
 			}
-			
+
 			m_socket = m_serverSocket.accept();
-			
-			BufferedReader in =
-				new BufferedReader(new InputStreamReader(m_socket.getInputStream()));
-			
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(m_socket.getInputStream()));
+
 			String temp;
 			while (!mythicEndReached && (temp = in.readLine()) != null) {
 				if (temp.startsWith(START)) {
@@ -91,18 +92,18 @@ public class NetListener implements Runnable {
 					strBuilder.append('\n');
 				}
 			}
-			
+
 			in.close();
 			m_socket.close();
-			
+
 			if (mythicHeaderFound == true && mythicEndReached == true) {
 				return strBuilder.toString();
 			} else {
 				return null;
 			}
-			
+
 		} catch (IOException e) {
-			if(e instanceof BindException) {
+			if (e instanceof BindException) {
 				requestThreadToStop();
 			}
 			if (e instanceof SocketTimeoutException)
@@ -113,15 +114,15 @@ public class NetListener implements Runnable {
 			logger.error(message, e);
 			return null;
 		}
-		
+
 	}
-	
+
 	/**
-	 * reads incoming mythic22 results, processes them using the InputHandler and saves them into
-	 * the database using the PersistencyHandler
+	 * reads incoming mythic22 results, processes them using the InputHandler and
+	 * saves them into the database using the PersistencyHandler
 	 */
 	@Override
-	public void run(){
+	public void run() {
 		logger.debug("Starting mythic 22 listener");
 		while (m_running) {
 			String temp = readFromServer();
@@ -146,20 +147,20 @@ public class NetListener implements Runnable {
 			logger.warn(message, e);
 		}
 	}
-	
+
 	/**
 	 * request the continuous read Thread to stop
 	 */
-	public void requestThreadToStop(){
+	public void requestThreadToStop() {
 		m_running = false;
 	}
-	
-	public int getServerPort(){
+
+	public int getServerPort() {
 		return m_serverPort;
 	}
-	
-	public static boolean isRunning(){
+
+	public static boolean isRunning() {
 		return m_running;
 	}
-	
+
 }

@@ -36,9 +36,9 @@ import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
  * The activator class controls the plug-in life cycle and holds an image
  * registry for images used throughout the PLUGIN.
  * </p>
- * 
+ *
  * $Id: ArchieActivator.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -78,17 +78,17 @@ public class ArchieActivator extends AbstractUIPlugin {
 	public static final Log LOG = Log.get(ArchieActivator.PLUGIN_NAME);
 
 	/**
-	 * List of all available providers. <b>This variable is built-up upon the
-	 * first request in the corresponding getter method to save resources, not
-	 * upon activation of the plugin.</b>
+	 * List of all available providers. <b>This variable is built-up upon the first
+	 * request in the corresponding getter method to save resources, not upon
+	 * activation of the plugin.</b>
 	 */
 	private TreeMap<String, AbstractDataProvider> providers;
 
 	/**
-	 * Map of available provider categories. Category IDs are being mapped to
-	 * their names. <b>This variable is built-up upon plugin activation to
-	 * ensure that the categories are available later when building the list of
-	 * available providers.</b>
+	 * Map of available provider categories. Category IDs are being mapped to their
+	 * names. <b>This variable is built-up upon plugin activation to ensure that the
+	 * categories are available later when building the list of available
+	 * providers.</b>
 	 */
 	private Hashtable<String, String> categories;
 
@@ -110,7 +110,7 @@ public class ArchieActivator extends AbstractUIPlugin {
 
 	/**
 	 * Returns an instance of this activator object.
-	 * 
+	 *
 	 * @return The shared instance
 	 */
 	public static ArchieActivator getInstance() {
@@ -118,11 +118,10 @@ public class ArchieActivator extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns an image descriptor for the image file at the given plug-in
-	 * relative path
-	 * 
-	 * @param path
-	 *            the path
+	 * Returns an image descriptor for the image file at the given plug-in relative
+	 * path
+	 *
+	 * @param path the path
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
@@ -132,9 +131,8 @@ public class ArchieActivator extends AbstractUIPlugin {
 	/**
 	 * Returns an image from this PLUGIN's image registry based on the given
 	 * descriptor string.
-	 * 
-	 * @param descriptor
-	 *            Image descriptor string.
+	 *
+	 * @param descriptor Image descriptor string.
 	 * @return Image under that given descriptor from the registry.
 	 */
 	public static Image getImage(String descriptor) {
@@ -197,7 +195,7 @@ public class ArchieActivator extends AbstractUIPlugin {
 	/**
 	 * Returns the table of available data providers. This method builds up the
 	 * table of providers upon first request.
-	 * 
+	 *
 	 * @return Table containing all available data providers.
 	 */
 	public TreeMap<String, AbstractDataProvider> getProviderTable() {
@@ -219,8 +217,8 @@ public class ArchieActivator extends AbstractUIPlugin {
 						if (executable instanceof AbstractDataProvider) {
 
 							// compose category prefix
-							String category = element.getAttribute("category") == null ? "" : this
-									.getCategoryNameFromId(element.getAttribute("category")) + ": ";
+							String category = element.getAttribute("category") == null ? ""
+									: this.getCategoryNameFromId(element.getAttribute("category")) + ": ";
 
 							// add to list of available statistics
 							AbstractDataProvider provider = (AbstractDataProvider) executable;
@@ -245,9 +243,9 @@ public class ArchieActivator extends AbstractUIPlugin {
 	// ///////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Fills the categories hash map with available categories and their IDs.
-	 * This method needs to be executed before the initialization of the data
-	 * provider table in order for the providers to check for their category.
+	 * Fills the categories hash map with available categories and their IDs. This
+	 * method needs to be executed before the initialization of the data provider
+	 * table in order for the providers to check for their category.
 	 */
 	private void initializeAvailableCategories() {
 		if (this.categories == null) {
@@ -267,9 +265,8 @@ public class ArchieActivator extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Retrieves the category name from the categories table based on the given
-	 * ID.
-	 * 
+	 * Retrieves the category name from the categories table based on the given ID.
+	 *
 	 * @return The corresponding category name or an empty string if no category
 	 *         with the given ID is in the table.
 	 */

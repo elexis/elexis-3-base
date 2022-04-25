@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for x_ActRelationshipEntryRelationship.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="x_ActRelationshipEntryRelationship">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -27,20 +28,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "x_ActRelationshipEntryRelationship")
 @XmlEnum
 public enum XActRelationshipEntryRelationship {
-	
+
 	XCRPT, COMP, RSON, SPRT, CAUS, GEVL, MFST, REFR, SAS, SUBJ;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static XActRelationshipEntryRelationship fromValue(String v){
+
+	public static XActRelationshipEntryRelationship fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

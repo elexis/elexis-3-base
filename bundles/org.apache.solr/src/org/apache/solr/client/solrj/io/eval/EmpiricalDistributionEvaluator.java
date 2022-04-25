@@ -26,36 +26,39 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class EmpiricalDistributionEvaluator extends RecursiveNumericEvaluator implements ManyValueWorker {
-  protected static final long serialVersionUID = 1L;
-  private int bins = 99;
-  
-  public EmpiricalDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-    
-    if(2 != containedEvaluators.size() && 1 != containedEvaluators.size()) {
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting one or two values but found %d",expression,containedEvaluators.size()));
-    }
-  }
-  
-  @Override
-  public Object doWork(Object... values) throws IOException {
+	protected static final long serialVersionUID = 1L;
+	private int bins = 99;
 
-    if(!(values[0] instanceof List<?>)){
-      throw new StreamEvaluatorException("List value expected but found type %s for value %s", values[0].getClass().getName(), values[0].toString());
-    }
+	public EmpiricalDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(values.length == 2) {
-      Number n = (Number)values[1];
-      bins = n.intValue();
-    }
+		if (2 != containedEvaluators.size() && 1 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting one or two values but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-    EmpiricalDistribution empiricalDistribution = new EmpiricalDistribution(bins);
-    
-    double[] backingValues = ((List<?>)values[0]).stream().mapToDouble(innerValue -> ((Number)innerValue).doubleValue()).sorted().toArray();
+	@Override
+	public Object doWork(Object... values) throws IOException {
 
-    empiricalDistribution.load(backingValues);
+		if (!(values[0] instanceof List<?>)) {
+			throw new StreamEvaluatorException("List value expected but found type %s for value %s",
+					values[0].getClass().getName(), values[0].toString());
+		}
 
-    return empiricalDistribution;
-  }
+		if (values.length == 2) {
+			Number n = (Number) values[1];
+			bins = n.intValue();
+		}
+
+		EmpiricalDistribution empiricalDistribution = new EmpiricalDistribution(bins);
+
+		double[] backingValues = ((List<?>) values[0]).stream()
+				.mapToDouble(innerValue -> ((Number) innerValue).doubleValue()).sorted().toArray();
+
+		empiricalDistribution.load(backingValues);
+
+		return empiricalDistribution;
+	}
 }
-

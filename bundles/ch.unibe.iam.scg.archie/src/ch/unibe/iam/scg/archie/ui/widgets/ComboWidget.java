@@ -23,9 +23,9 @@ import ch.unibe.iam.scg.archie.model.RegexValidation;
  * <p>
  * Combo box field composite. TODO: Test me, use me.
  * </p>
- * 
+ *
  * $Id: ComboWidget.java 764 2009-07-24 11:20:03Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 764 $
@@ -55,8 +55,8 @@ public class ComboWidget extends AbstractWidget {
 
 	/**
 	 * Sets the combox items (array of strings).
-	 * @param items
-	 *            String[] items
+	 *
+	 * @param items String[] items
 	 */
 	public void setItems(String[] items) {
 		((Combo) this.control).setItems(items);
@@ -69,7 +69,7 @@ public class ComboWidget extends AbstractWidget {
 	public Object getValue() {
 		return ((Combo) this.control).getText();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -83,10 +83,10 @@ public class ComboWidget extends AbstractWidget {
 	 */
 	@Override
 	public void setValue(final Object value) {
-		if(value instanceof String) {
-			((Combo) this.control).setText(value.toString());	
+		if (value instanceof String) {
+			((Combo) this.control).setText(value.toString());
 		} else {
-			throw new IllegalArgumentException("Must be a string.");	
+			throw new IllegalArgumentException("Must be a string.");
 		}
 	}
 

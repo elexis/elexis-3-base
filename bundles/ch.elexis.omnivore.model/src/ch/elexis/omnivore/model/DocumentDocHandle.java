@@ -41,41 +41,41 @@ import ch.elexis.omnivore.model.internal.Preferences;
 
 public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		implements Identifiable, IDocumentHandle {
-	
+
 	private String storeId = "";
-	
-	public DocumentDocHandle(DocHandle entity){
+
+	public DocumentDocHandle(DocHandle entity) {
 		super(entity);
 	}
-	
+
 	@Override
-	public String getTitle(){
+	public String getTitle() {
 		return getEntity().getTitle();
 	}
-	
+
 	@Override
-	public void setTitle(String value){
+	public void setTitle(String value) {
 		getEntityMarkDirty().setTitle(value);
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return "";
 	}
-	
+
 	@Override
-	public void setDescription(String value){
+	public void setDescription(String value) {
 		// entity does not support description
 	}
-	
+
 	@Override
-	public List<DocumentStatus> getStatus(){
+	public List<DocumentStatus> getStatus() {
 		int status = getEntity().getStatus();
 		return new ArrayList<>(DocumentStatusMapper.map(status));
 	}
-	
+
 	@Override
-	public void setStatus(DocumentStatus status, boolean active){
+	public void setStatus(DocumentStatus status, boolean active) {
 		Set<DocumentStatus> _statusSet = new HashSet<>(getStatus());
 		if (active) {
 			_statusSet.add(status);
@@ -85,20 +85,20 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		int value = DocumentStatusMapper.map(_statusSet);
 		getEntity().setStatus(value);
 	}
-	
+
 	@Override
-	public Date getCreated(){
+	public Date getCreated() {
 		LocalDate creationDate = getEntity().getCreationDate();
 		return creationDate != null ? toDate(creationDate) : getLastchanged();
 	}
-	
+
 	@Override
-	public void setCreated(Date value){
+	public void setCreated(Date value) {
 		getEntityMarkDirty().setCreationDate(TimeUtil.toLocalDate(value));
 	}
-	
+
 	@Override
-	public Date getLastchanged(){
+	public Date getLastchanged() {
 		if (getEntity().getDatum() != null) {
 			return toDate(getEntity().getDatum());
 		}
@@ -107,107 +107,106 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		}
 		return new Date(0);
 	}
-	
+
 	@Override
-	public void setLastchanged(Date value){
+	public void setLastchanged(Date value) {
 		getEntityMarkDirty().setDatum(TimeUtil.toLocalDate(value));
 	}
-	
+
 	@Override
-	public String getMimeType(){
+	public String getMimeType() {
 		return StringUtils.defaultString(getEntity().getMimetype());
 	}
-	
+
 	@Override
-	public void setMimeType(String value){
+	public void setMimeType(String value) {
 		getEntityMarkDirty().setMimetype(value);
 	}
-	
+
 	@Override
-	public ICategory getCategory(){
+	public ICategory getCategory() {
 		if (getEntity().getCategory() != null) {
 			return new TransientCategory(getEntity().getCategory());
 		}
 		return new TransientCategory("?");
 	}
-	
+
 	@Override
-	public void setCategory(ICategory value){
+	public void setCategory(ICategory value) {
 		getEntityMarkDirty().setCategory(value.getName());
 	}
-	
+
 	@Override
-	public List<IHistory> getHistory(){
+	public List<IHistory> getHistory() {
 		return Collections.emptyList();
 	}
-	
+
 	@Override
-	public String getStoreId(){
+	public String getStoreId() {
 		return StringUtils.isNotEmpty(storeId) ? storeId : "ch.elexis.data.store.omnivore";
 	}
-	
+
 	@Override
-	public void setStoreId(String value){
+	public void setStoreId(String value) {
 		storeId = value;
 	}
-	
+
 	@Override
-	public String getExtension(){
+	public String getExtension() {
 		return ModelUtil.evaluateFileExtension(getEntity().getMimetype());
 	}
-	
+
 	@Override
-	public void setExtension(String value){
+	public void setExtension(String value) {
 		// entity does not support setting extension
 	}
-	
+
 	@Override
-	public String getKeywords(){
+	public String getKeywords() {
 		return StringUtils.defaultString(getEntity().getKeywords());
 	}
-	
+
 	@Override
-	public void setKeywords(String value){
+	public void setKeywords(String value) {
 		getEntityMarkDirty().setKeywords(value);
 	}
-	
+
 	@Override
-	public IPatient getPatient(){
+	public IPatient getPatient() {
 		return ModelUtil.loadCoreModel(getEntity().getKontakt(), IPatient.class);
 	}
-	
+
 	@Override
-	public void setPatient(IPatient value){
+	public void setPatient(IPatient value) {
 		if (value instanceof AbstractIdDeleteModelAdapter) {
-			getEntityMarkDirty()
-				.setKontakt((Kontakt) ((AbstractIdDeleteModelAdapter<?>) value).getEntity());
+			getEntityMarkDirty().setKontakt((Kontakt) ((AbstractIdDeleteModelAdapter<?>) value).getEntity());
 		} else if (value == null) {
 			getEntityMarkDirty().setKontakt(null);
 		}
 	}
-	
+
 	@Override
-	public IContact getAuthor(){
+	public IContact getAuthor() {
 		// entity does not support author
 		return null;
 	}
-	
+
 	@Override
-	public void setAuthor(IContact value){
+	public void setAuthor(IContact value) {
 		// entity does not support author
 	}
-	
+
 	@Override
-	public InputStream getContent(){
+	public InputStream getContent() {
 		byte[] contents = getContents();
 		if (contents != null) {
 			return new ByteArrayInputStream(contents);
 		}
 		return null;
 	}
-	
+
 	@Override
-	public void setContent(InputStream content){
+	public void setContent(InputStream content) {
 		setStatus(DocumentStatus.PREPROCESSED, false);
 		setStatus(DocumentStatus.INDEXED, false);
 		setLastchanged(new Date());
@@ -224,8 +223,8 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			LoggerFactory.getLogger(getClass()).error("Error setting content", e);
 		}
 	}
-	
-	private byte[] getContents(){
+
+	private byte[] getContents() {
 		byte[] ret = getEntity().getDoc();
 		if (ret == null) {
 			IVirtualFilesystemHandle vfsHandle = getStorageFile(true);
@@ -239,32 +238,29 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 					if (!Preferences.storeInFilesystem()) {
 						getEntity().setDoc(bytes);
 					}
-					
+
 					return bytes;
 				} else {
-					LoggerFactory.getLogger(getClass()).error(
-						"Error content of [{}] from [{}] does not exist",
-						getId(), vfsHandle);
+					LoggerFactory.getLogger(getClass()).error("Error content of [{}] from [{}] does not exist", getId(),
+							vfsHandle);
 				}
 			} catch (Exception ex) {
-				LoggerFactory.getLogger(getClass()).error("Getting content of [{}] fails [{}]",
-					getId(), vfsHandle, ex);
+				LoggerFactory.getLogger(getClass()).error("Getting content of [{}] fails [{}]", getId(), vfsHandle, ex);
 				throw new IllegalStateException(ex);
 			}
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public long getContentLength(){
+	public long getContentLength() {
 		INativeQuery nativeQuery = CoreModelServiceHolder.get()
 				.getNativeQuery("SELECT LENGTH(DOC) FROM CH_ELEXIS_OMNIVORE_DATA WHERE ID = ?1");
-			Iterator<?> result = nativeQuery
-				.executeWithParameters(nativeQuery.getIndexedParameterMap(Integer.valueOf(1), getId()))
-				.iterator();
-		if(result.hasNext()) {
+		Iterator<?> result = nativeQuery
+				.executeWithParameters(nativeQuery.getIndexedParameterMap(Integer.valueOf(1), getId())).iterator();
+		if (result.hasNext()) {
 			Object next = result.next();
-			if(next != null) {
+			if (next != null) {
 				return Long.parseLong(next.toString());
 			}
 		}
@@ -273,37 +269,33 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			if (vfsHandle != null && vfsHandle.canRead()) {
 				return vfsHandle.getContentLenght();
 			}
-		} catch (IOException e) {}
+		} catch (IOException e) {
+		}
 		return -1l;
 	}
-	
+
 	@Override
-	public IVirtualFilesystemHandle getHandle(){
+	public IVirtualFilesystemHandle getHandle() {
 		return getStorageFile(true);
 	}
-	
-	public IVirtualFilesystemHandle getStorageFile(boolean force){
+
+	public IVirtualFilesystemHandle getStorageFile(boolean force) {
 		if (force || Preferences.storeInFilesystem()) {
 			String pathname = Preferences.getBasepath();
 			if (pathname != null) {
 				try {
-					IVirtualFilesystemHandle storageDir =
-						VirtualFilesystemServiceHolder.get().of(pathname);
+					IVirtualFilesystemHandle storageDir = VirtualFilesystemServiceHolder.get().of(pathname);
 					if (storageDir.isDirectory()) {
-						IPatient patient =
-							ModelUtil.loadCoreModel(getEntity().getKontakt(), IPatient.class);
+						IPatient patient = ModelUtil.loadCoreModel(getEntity().getKontakt(), IPatient.class);
 						if (patient != null) {
-							IVirtualFilesystemHandle patientDir =
-								storageDir.subDir(patient.getPatientNr());
+							IVirtualFilesystemHandle patientDir = storageDir.subDir(patient.getPatientNr());
 							if (!patientDir.exists()) {
 								patientDir.mkdir();
 							}
-							IVirtualFilesystemHandle file =
-								patientDir.subFile(getId() + "." + getExtension()); //$NON-NLS-1$
+							IVirtualFilesystemHandle file = patientDir.subFile(getId() + "." + getExtension()); //$NON-NLS-1$
 							if (!file.exists()) {
 								// check if we can fix this with file without extension #21901
-								IVirtualFilesystemHandle noExtensionFile =
-									patientDir.subFile(getId());
+								IVirtualFilesystemHandle noExtensionFile = patientDir.subFile(getId());
 								if (noExtensionFile.exists()) {
 									noExtensionFile.copyTo(file);
 									noExtensionFile.delete();
@@ -312,36 +304,34 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 							return file;
 						} else {
 							if (getEntity().getKontakt() == null) {
-								LoggerFactory.getLogger(getClass()).error(
-									"DocHandle [" + getEntity().getId() + "] has no patient");
+								LoggerFactory.getLogger(getClass())
+										.error("DocHandle [" + getEntity().getId() + "] has no patient");
 							} else {
-								LoggerFactory.getLogger(getClass()).error("Contact ["
-									+ getEntity().getKontakt().getId() + "] is not a patient");
+								LoggerFactory.getLogger(getClass())
+										.error("Contact [" + getEntity().getKontakt().getId() + "] is not a patient");
 							}
 						}
 					}
-					
+
 				} catch (IOException e) {
-					LoggerFactory.getLogger(getClass())
-						.error("DocHandle [" + getEntity().getId() + "] IOException", e);
+					LoggerFactory.getLogger(getClass()).error("DocHandle [" + getEntity().getId() + "] IOException", e);
 					return null;
 				}
 			}
 			if (Preferences.storeInFilesystem()) {
-				LoggerFactory.getLogger(getClass())
-					.error("Config error: " + Messages.DocHandle_configErrorText);
+				LoggerFactory.getLogger(getClass()).error("Config error: " + Messages.DocHandle_configErrorText);
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
-	public boolean isCategory(){
+	public boolean isCategory() {
 		return getMimeType().equals(Constants.CATEGORY_MIMETYPE);
 	}
-	
+
 	@Override
-	public boolean exportToFileSystem(){
+	public boolean exportToFileSystem() {
 		byte[] doc = getEntity().getDoc();
 		// return true if doc is already on file system
 		if (doc == null) {
@@ -352,25 +342,24 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			out.write(doc);
 			getEntity().setDoc(null);
 		} catch (IOException ios) {
-			LoggerFactory.getLogger(getClass())
-				.error("Exporting dochandle [" + getId() + "] to filesystem fails.");
+			LoggerFactory.getLogger(getClass()).error("Exporting dochandle [" + getId() + "] to filesystem fails.");
 			return false;
 		}
 		return true;
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		return XidServiceHolder.get().getXid(this, domain);
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		if (isCategory()) {
 			return getTitle();
 		} else {

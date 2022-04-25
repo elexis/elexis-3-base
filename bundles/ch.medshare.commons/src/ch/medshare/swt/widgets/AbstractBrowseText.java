@@ -42,639 +42,639 @@ import org.eclipse.swt.widgets.Text;
 import ch.medshare.util.UtilMisc;
 
 public abstract class AbstractBrowseText {
-	
+
 	private final Text text;
 	private final Button btnBrowse;
-	
-	public AbstractBrowseText(final Composite parent, int style){
+
+	public AbstractBrowseText(final Composite parent, int style) {
 		this.text = new Text(parent, style);
 		this.btnBrowse = new Button(parent, SWT.PUSH);
 		this.btnBrowse.setText("Browse..."); //$NON-NLS-1$
 		this.btnBrowse.addSelectionListener(getBrowseSelectionAdapter());
 	}
-	
+
 	protected abstract SelectionAdapter getBrowseSelectionAdapter();
-	
-	public void addModifyListener(ModifyListener listener){
+
+	public void addModifyListener(ModifyListener listener) {
 		this.text.addModifyListener(listener);
 	}
-	
-	public void addSelectionListener(SelectionListener listener){
+
+	public void addSelectionListener(SelectionListener listener) {
 		this.text.addSelectionListener(listener);
 	}
-	
-	public void addVerifyListener(VerifyListener listener){
+
+	public void addVerifyListener(VerifyListener listener) {
 		this.text.addVerifyListener(listener);
 	}
-	
-	public void append(String string){
+
+	public void append(String string) {
 		this.text.append(string);
 	}
-	
-	public void clearSelection(){
+
+	public void clearSelection() {
 		this.text.clearSelection();
 	}
-	
-	public Point computeSize(int hint, int hint2, boolean changed){
+
+	public Point computeSize(int hint, int hint2, boolean changed) {
 		return this.text.computeSize(hint, hint2, changed);
 	}
-	
-	public Rectangle computeTrim(int x, int y, int width, int height){
+
+	public Rectangle computeTrim(int x, int y, int width, int height) {
 		return this.text.computeTrim(x, y, width, height);
 	}
-	
-	public void copy(){
+
+	public void copy() {
 		this.text.copy();
 	}
-	
-	public void cut(){
+
+	public void cut() {
 		this.text.cut();
 	}
-	
-	public int getBorderWidth(){
+
+	public int getBorderWidth() {
 		return this.text.getBorderWidth();
 	}
-	
-	public int getCaretLineNumber(){
+
+	public int getCaretLineNumber() {
 		return this.text.getCaretLineNumber();
 	}
-	
-	public Point getCaretLocation(){
+
+	public Point getCaretLocation() {
 		return this.text.getCaretLocation();
 	}
-	
-	public int getCaretPosition(){
+
+	public int getCaretPosition() {
 		return this.text.getCaretPosition();
 	}
-	
-	public int getCharCount(){
+
+	public int getCharCount() {
 		return this.text.getCharCount();
 	}
-	
-	public boolean getDoubleClickEnabled(){
+
+	public boolean getDoubleClickEnabled() {
 		return this.text.getDoubleClickEnabled();
 	}
-	
-	public char getEchoChar(){
+
+	public char getEchoChar() {
 		return this.text.getEchoChar();
 	}
-	
-	public boolean getEditable(){
+
+	public boolean getEditable() {
 		return this.text.getEditable();
 	}
-	
-	public int getLineCount(){
+
+	public int getLineCount() {
 		return this.text.getLineCount();
 	}
-	
-	public String getLineDelimiter(){
+
+	public String getLineDelimiter() {
 		return this.text.getLineDelimiter();
 	}
-	
-	public int getLineHeight(){
+
+	public int getLineHeight() {
 		return this.text.getLineHeight();
 	}
-	
-	public String getMessage(){
+
+	public String getMessage() {
 		return this.text.getMessage();
 	}
-	
-	public int getOrientation(){
+
+	public int getOrientation() {
 		return this.text.getOrientation();
 	}
-	
-	public Point getSelection(){
+
+	public Point getSelection() {
 		return this.text.getSelection();
 	}
-	
-	public int getSelectionCount(){
+
+	public int getSelectionCount() {
 		return this.text.getSelectionCount();
 	}
-	
-	public String getSelectionText(){
+
+	public String getSelectionText() {
 		return this.text.getSelectionText();
 	}
-	
-	public int getTabs(){
+
+	public int getTabs() {
 		return this.text.getTabs();
 	}
-	
-	public String getText(){
+
+	public String getText() {
 		String string = this.text.getText();
 		return UtilMisc.replaceWithForwardSlash(string);
 	}
-	
-	public String getText(int start, int end){
+
+	public String getText(int start, int end) {
 		String string = this.text.getText(start, end);
 		return UtilMisc.replaceWithForwardSlash(string);
 	}
-	
-	public int getTextLimit(){
+
+	public int getTextLimit() {
 		return this.text.getTextLimit();
 	}
-	
-	public int getTopIndex(){
+
+	public int getTopIndex() {
 		return this.text.getTopIndex();
 	}
-	
-	public int getTopPixel(){
+
+	public int getTopPixel() {
 		return this.text.getTopPixel();
 	}
-	
-	public void insert(String string){
+
+	public void insert(String string) {
 		this.text.insert(string);
 	}
-	
-	public void paste(){
+
+	public void paste() {
 		this.text.paste();
 	}
-	
-	public void removeModifyListener(ModifyListener listener){
+
+	public void removeModifyListener(ModifyListener listener) {
 		this.text.removeModifyListener(listener);
 	}
-	
-	public void removeSelectionListener(SelectionListener listener){
+
+	public void removeSelectionListener(SelectionListener listener) {
 		this.text.removeSelectionListener(listener);
 	}
-	
-	public void removeVerifyListener(VerifyListener listener){
+
+	public void removeVerifyListener(VerifyListener listener) {
 		this.text.removeVerifyListener(listener);
 	}
-	
-	public void selectAll(){
+
+	public void selectAll() {
 		this.text.selectAll();
 	}
-	
-	public void setDoubleClickEnabled(boolean doubleClick){
+
+	public void setDoubleClickEnabled(boolean doubleClick) {
 		this.text.setDoubleClickEnabled(doubleClick);
 	}
-	
-	public void setEchoChar(char echo){
+
+	public void setEchoChar(char echo) {
 		this.text.setEchoChar(echo);
 	}
-	
-	public void setEditable(boolean editable){
+
+	public void setEditable(boolean editable) {
 		this.text.setEditable(editable);
 	}
-	
-	public void setFont(Font font){
+
+	public void setFont(Font font) {
 		this.text.setFont(font);
 	}
-	
-	public void setMessage(String message){
+
+	public void setMessage(String message) {
 		this.text.setMessage(message);
 	}
-	
-	public void setOrientation(int orientation){
+
+	public void setOrientation(int orientation) {
 		this.text.setOrientation(orientation);
 	}
-	
-	public void setRedraw(boolean redraw){
+
+	public void setRedraw(boolean redraw) {
 		this.text.setRedraw(redraw);
 	}
-	
-	public void setSelection(int start, int end){
+
+	public void setSelection(int start, int end) {
 		this.text.setSelection(start, end);
 	}
-	
-	public void setSelection(int start){
+
+	public void setSelection(int start) {
 		this.text.setSelection(start);
 	}
-	
-	public void setSelection(Point selection){
+
+	public void setSelection(Point selection) {
 		this.text.setSelection(selection);
 	}
-	
-	public void setTabs(int tabs){
+
+	public void setTabs(int tabs) {
 		this.text.setTabs(tabs);
 	}
-	
-	public void setText(String string){
+
+	public void setText(String string) {
 		this.text.setText(UtilMisc.replaceWithForwardSlash(string));
 	}
-	
-	public void setTextLimit(int limit){
+
+	public void setTextLimit(int limit) {
 		this.text.setTextLimit(limit);
 	}
-	
-	public void setTopIndex(int index){
+
+	public void setTopIndex(int index) {
 		this.text.setTopIndex(index);
 	}
-	
-	public void showSelection(){
+
+	public void showSelection() {
 		this.text.showSelection();
 	}
-	
-	public Rectangle getClientArea(){
+
+	public Rectangle getClientArea() {
 		return this.text.getClientArea();
 	}
-	
-	public ScrollBar getHorizontalBar(){
+
+	public ScrollBar getHorizontalBar() {
 		return this.text.getHorizontalBar();
 	}
-	
-	public ScrollBar getVerticalBar(){
+
+	public ScrollBar getVerticalBar() {
 		return this.text.getVerticalBar();
 	}
-	
-	public void addControlListener(ControlListener listener){
+
+	public void addControlListener(ControlListener listener) {
 		this.text.addControlListener(listener);
 	}
-	
-	public void addDragDetectListener(DragDetectListener listener){
+
+	public void addDragDetectListener(DragDetectListener listener) {
 		this.text.addDragDetectListener(listener);
 	}
-	
-	public void addFocusListener(FocusListener listener){
+
+	public void addFocusListener(FocusListener listener) {
 		this.text.addFocusListener(listener);
 	}
-	
-	public void addHelpListener(HelpListener listener){
+
+	public void addHelpListener(HelpListener listener) {
 		this.text.addHelpListener(listener);
 	}
-	
-	public void addKeyListener(KeyListener listener){
+
+	public void addKeyListener(KeyListener listener) {
 		this.text.addKeyListener(listener);
 	}
-	
-	public void addMenuDetectListener(MenuDetectListener listener){
+
+	public void addMenuDetectListener(MenuDetectListener listener) {
 		this.text.addMenuDetectListener(listener);
 	}
-	
-	public void addMouseListener(MouseListener listener){
+
+	public void addMouseListener(MouseListener listener) {
 		this.text.addMouseListener(listener);
 	}
-	
-	public void addMouseMoveListener(MouseMoveListener listener){
+
+	public void addMouseMoveListener(MouseMoveListener listener) {
 		this.text.addMouseMoveListener(listener);
 	}
-	
-	public void addMouseTrackListener(MouseTrackListener listener){
+
+	public void addMouseTrackListener(MouseTrackListener listener) {
 		this.text.addMouseTrackListener(listener);
 	}
-	
-	public void addMouseWheelListener(MouseWheelListener listener){
+
+	public void addMouseWheelListener(MouseWheelListener listener) {
 		this.text.addMouseWheelListener(listener);
 	}
-	
-	public void addPaintListener(PaintListener listener){
+
+	public void addPaintListener(PaintListener listener) {
 		this.text.addPaintListener(listener);
 	}
-	
-	public void addTraverseListener(TraverseListener listener){
+
+	public void addTraverseListener(TraverseListener listener) {
 		this.text.addTraverseListener(listener);
 	}
-	
-	public Point computeSize(int hint, int hint2){
+
+	public Point computeSize(int hint, int hint2) {
 		return this.text.computeSize(hint, hint2);
 	}
-	
-	public boolean dragDetect(Event event){
+
+	public boolean dragDetect(Event event) {
 		return this.text.dragDetect(event);
 	}
-	
-	public boolean dragDetect(MouseEvent event){
+
+	public boolean dragDetect(MouseEvent event) {
 		return this.text.dragDetect(event);
 	}
-	
-	public boolean forceFocus(){
+
+	public boolean forceFocus() {
 		return this.text.forceFocus();
 	}
-	
-	public Accessible getAccessible(){
+
+	public Accessible getAccessible() {
 		return this.text.getAccessible();
 	}
-	
-	public Color getBackground(){
+
+	public Color getBackground() {
 		return this.text.getBackground();
 	}
-	
-	public Image getBackgroundImage(){
+
+	public Image getBackgroundImage() {
 		return this.text.getBackgroundImage();
 	}
-	
-	public Rectangle getBounds(){
+
+	public Rectangle getBounds() {
 		return this.text.getBounds();
 	}
-	
-	public Cursor getCursor(){
+
+	public Cursor getCursor() {
 		return this.text.getCursor();
 	}
-	
-	public boolean getDragDetect(){
+
+	public boolean getDragDetect() {
 		return this.text.getDragDetect();
 	}
-	
-	public boolean getEnabled(){
+
+	public boolean getEnabled() {
 		return this.text.getEnabled();
 	}
-	
-	public Font getFont(){
+
+	public Font getFont() {
 		return this.text.getFont();
 	}
-	
-	public Color getForeground(){
+
+	public Color getForeground() {
 		return this.text.getForeground();
 	}
-	
-	public Object getLayoutData(){
+
+	public Object getLayoutData() {
 		return this.text.getLayoutData();
 	}
-	
-	public Point getLocation(){
+
+	public Point getLocation() {
 		return this.text.getLocation();
 	}
-	
-	public Menu getMenu(){
+
+	public Menu getMenu() {
 		return this.text.getMenu();
 	}
-	
-	public Monitor getMonitor(){
+
+	public Monitor getMonitor() {
 		return this.text.getMonitor();
 	}
-	
-	public Composite getParent(){
+
+	public Composite getParent() {
 		return this.text.getParent();
 	}
-	
-	public Shell getShell(){
+
+	public Shell getShell() {
 		return this.text.getShell();
 	}
-	
-	public Point getSize(){
+
+	public Point getSize() {
 		return this.text.getSize();
 	}
-	
-	public String getToolTipText(){
+
+	public String getToolTipText() {
 		return this.text.getToolTipText();
 	}
-	
-	public boolean getVisible(){
+
+	public boolean getVisible() {
 		return this.text.getVisible();
 	}
-	
-	public void internal_dispose_GC(int hdc, GCData data){
+
+	public void internal_dispose_GC(int hdc, GCData data) {
 		this.text.internal_dispose_GC(hdc, data);
 	}
-	
-	public long internal_new_GC(GCData data){
+
+	public long internal_new_GC(GCData data) {
 		return this.text.internal_new_GC(data);
 	}
-	
-	public boolean isEnabled(){
+
+	public boolean isEnabled() {
 		return this.text.isEnabled();
 	}
-	
-	public boolean isFocusControl(){
+
+	public boolean isFocusControl() {
 		return this.text.isFocusControl();
 	}
-	
-	public boolean isReparentable(){
+
+	public boolean isReparentable() {
 		return this.text.isReparentable();
 	}
-	
-	public boolean isVisible(){
+
+	public boolean isVisible() {
 		return this.text.isVisible();
 	}
-	
-	public void moveAbove(Control control){
+
+	public void moveAbove(Control control) {
 		this.text.moveAbove(control);
 	}
-	
-	public void moveBelow(Control control){
+
+	public void moveBelow(Control control) {
 		this.text.moveBelow(control);
 	}
-	
-	public void pack(){
+
+	public void pack() {
 		this.text.pack();
 	}
-	
-	public void pack(boolean changed){
+
+	public void pack(boolean changed) {
 		this.text.pack(changed);
 	}
-	
-	public void redraw(){
+
+	public void redraw() {
 		this.text.redraw();
 	}
-	
-	public void redraw(int x, int y, int width, int height, boolean all){
+
+	public void redraw(int x, int y, int width, int height, boolean all) {
 		this.text.redraw(x, y, width, height, all);
 	}
-	
-	public void removeControlListener(ControlListener listener){
+
+	public void removeControlListener(ControlListener listener) {
 		this.text.removeControlListener(listener);
 	}
-	
-	public void removeDragDetectListener(DragDetectListener listener){
+
+	public void removeDragDetectListener(DragDetectListener listener) {
 		this.text.removeDragDetectListener(listener);
 	}
-	
-	public void removeFocusListener(FocusListener listener){
+
+	public void removeFocusListener(FocusListener listener) {
 		this.text.removeFocusListener(listener);
 	}
-	
-	public void removeHelpListener(HelpListener listener){
+
+	public void removeHelpListener(HelpListener listener) {
 		this.text.removeHelpListener(listener);
 	}
-	
-	public void removeKeyListener(KeyListener listener){
+
+	public void removeKeyListener(KeyListener listener) {
 		this.text.removeKeyListener(listener);
 	}
-	
-	public void removeMenuDetectListener(MenuDetectListener listener){
+
+	public void removeMenuDetectListener(MenuDetectListener listener) {
 		this.text.removeMenuDetectListener(listener);
 	}
-	
-	public void removeMouseListener(MouseListener listener){
+
+	public void removeMouseListener(MouseListener listener) {
 		this.text.removeMouseListener(listener);
 	}
-	
-	public void removeMouseMoveListener(MouseMoveListener listener){
+
+	public void removeMouseMoveListener(MouseMoveListener listener) {
 		this.text.removeMouseMoveListener(listener);
 	}
-	
-	public void removeMouseTrackListener(MouseTrackListener listener){
+
+	public void removeMouseTrackListener(MouseTrackListener listener) {
 		this.text.removeMouseTrackListener(listener);
 	}
-	
-	public void removeMouseWheelListener(MouseWheelListener listener){
+
+	public void removeMouseWheelListener(MouseWheelListener listener) {
 		this.text.removeMouseWheelListener(listener);
 	}
-	
-	public void removePaintListener(PaintListener listener){
+
+	public void removePaintListener(PaintListener listener) {
 		this.text.removePaintListener(listener);
 	}
-	
-	public void removeTraverseListener(TraverseListener listener){
+
+	public void removeTraverseListener(TraverseListener listener) {
 		this.text.removeTraverseListener(listener);
 	}
-	
-	public void setBackground(Color color){
+
+	public void setBackground(Color color) {
 		this.text.setBackground(color);
 	}
-	
-	public void setBackgroundImage(Image image){
+
+	public void setBackgroundImage(Image image) {
 		this.text.setBackgroundImage(image);
 	}
-	
-	public void setBounds(Rectangle rect){
+
+	public void setBounds(Rectangle rect) {
 		this.text.setBounds(rect);
 	}
-	
-	public void setBounds(int x, int y, int width, int height){
+
+	public void setBounds(int x, int y, int width, int height) {
 		this.text.setBounds(x, y, width, height);
 	}
-	
-	public void setCapture(boolean capture){
+
+	public void setCapture(boolean capture) {
 		this.text.setCapture(capture);
 	}
-	
-	public void setCursor(Cursor cursor){
+
+	public void setCursor(Cursor cursor) {
 		this.text.setCursor(cursor);
 	}
-	
-	public void setDragDetect(boolean dragDetect){
+
+	public void setDragDetect(boolean dragDetect) {
 		this.text.setDragDetect(dragDetect);
 	}
-	
-	public void setEnabled(boolean enabled){
+
+	public void setEnabled(boolean enabled) {
 		this.text.setEnabled(enabled);
 	}
-	
-	public boolean setFocus(){
+
+	public boolean setFocus() {
 		return this.text.setFocus();
 	}
-	
-	public void setForeground(Color color){
+
+	public void setForeground(Color color) {
 		this.text.setForeground(color);
 	}
-	
-	public void setLayoutData(Object layoutData){
+
+	public void setLayoutData(Object layoutData) {
 		this.text.setLayoutData(layoutData);
 	}
-	
-	public void setLocation(Point location){
+
+	public void setLocation(Point location) {
 		this.text.setLocation(location);
 	}
-	
-	public void setLocation(int x, int y){
+
+	public void setLocation(int x, int y) {
 		this.text.setLocation(x, y);
 	}
-	
-	public void setMenu(Menu menu){
+
+	public void setMenu(Menu menu) {
 		this.text.setMenu(menu);
 	}
-	
-	public boolean setParent(Composite parent){
+
+	public boolean setParent(Composite parent) {
 		return this.text.setParent(parent);
 	}
-	
-	public void setSize(Point size){
+
+	public void setSize(Point size) {
 		this.text.setSize(size);
 	}
-	
-	public void setSize(int width, int height){
+
+	public void setSize(int width, int height) {
 		this.text.setSize(width, height);
 	}
-	
-	public void setToolTipText(String string){
+
+	public void setToolTipText(String string) {
 		this.text.setToolTipText(string);
 	}
-	
-	public void setVisible(boolean visible){
+
+	public void setVisible(boolean visible) {
 		this.text.setVisible(visible);
 	}
-	
-	public Point toControl(Point point){
+
+	public Point toControl(Point point) {
 		return this.text.toControl(point);
 	}
-	
-	public Point toControl(int x, int y){
+
+	public Point toControl(int x, int y) {
 		return this.text.toControl(x, y);
 	}
-	
-	public Point toDisplay(Point point){
-		
+
+	public Point toDisplay(Point point) {
+
 		return this.text.toDisplay(point);
 	}
-	
-	public Point toDisplay(int x, int y){
+
+	public Point toDisplay(int x, int y) {
 		return this.text.toDisplay(x, y);
 	}
-	
-	public boolean traverse(int traversal){
+
+	public boolean traverse(int traversal) {
 		return this.text.traverse(traversal);
 	}
-	
-	public void update(){
+
+	public void update() {
 		this.text.update();
 	}
-	
-	public void addDisposeListener(DisposeListener listener){
+
+	public void addDisposeListener(DisposeListener listener) {
 		this.text.addDisposeListener(listener);
 	}
-	
-	public void addListener(int eventType, Listener listener){
+
+	public void addListener(int eventType, Listener listener) {
 		this.text.addListener(eventType, listener);
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		this.text.dispose();
 	}
-	
-	public Object getData(){
+
+	public Object getData() {
 		return this.text.getData();
 	}
-	
-	public Object getData(String key){
+
+	public Object getData(String key) {
 		return this.text.getData(key);
 	}
-	
-	public Display getDisplay(){
+
+	public Display getDisplay() {
 		return this.text.getDisplay();
 	}
-	
-	public int getStyle(){
+
+	public int getStyle() {
 		return this.text.getStyle();
 	}
-	
-	public boolean isDisposed(){
+
+	public boolean isDisposed() {
 		return this.text.isDisposed();
 	}
-	
-	public boolean isListening(int eventType){
+
+	public boolean isListening(int eventType) {
 		return this.text.isListening(eventType);
 	}
-	
-	public void notifyListeners(int eventType, Event event){
+
+	public void notifyListeners(int eventType, Event event) {
 		this.text.notifyListeners(eventType, event);
 	}
-	
-	public void removeDisposeListener(DisposeListener listener){
+
+	public void removeDisposeListener(DisposeListener listener) {
 		this.text.removeDisposeListener(listener);
 	}
-	
-	public void removeListener(int eventType, Listener listener){
+
+	public void removeListener(int eventType, Listener listener) {
 		this.text.removeListener(eventType, listener);
 	}
-	
-	public void setData(Object data){
+
+	public void setData(Object data) {
 		this.text.setData(data);
 	}
-	
-	public void setData(String key, Object value){
+
+	public void setData(String key, Object value) {
 		this.text.setData(key, value);
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return this.text.toString();
 	}
-	
-	public boolean equals(Object arg0){
+
+	public boolean equals(Object arg0) {
 		return this.text.equals(arg0);
 	}
-	
-	public int hashCode(){
+
+	public int hashCode() {
 		return this.text.hashCode();
 	}
 }

@@ -25,26 +25,26 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class FloorEvaluator extends RecursiveNumericEvaluator implements OneValueWorker {
-  protected static final long serialVersionUID = 1L;
-  
-  public FloorEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-    
-    if(1 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 1 value but found %d",expression,containedEvaluators.size()));
-    }
-  }
+	protected static final long serialVersionUID = 1L;
 
-  @Override
-  public Object doWork(Object value){
-    if(null == value){
-      return null;
-    }
-    else if(value instanceof List){
-      return ((List<?>)value).stream().map(innerValue -> doWork(innerValue)).collect(Collectors.toList());
-    }
-    else{
-      return Math.floor(((Number)value).doubleValue());
-    }
-  }
+	public FloorEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+
+		if (1 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 1 value but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
+
+	@Override
+	public Object doWork(Object value) {
+		if (null == value) {
+			return null;
+		} else if (value instanceof List) {
+			return ((List<?>) value).stream().map(innerValue -> doWork(innerValue)).collect(Collectors.toList());
+		} else {
+			return Math.floor(((Number) value).doubleValue());
+		}
+	}
 }

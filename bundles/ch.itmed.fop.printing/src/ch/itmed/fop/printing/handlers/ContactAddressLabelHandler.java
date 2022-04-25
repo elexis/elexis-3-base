@@ -42,8 +42,7 @@ public final class ContactAddressLabelHandler extends AbstractHandler {
 			String docName = PreferenceConstants.CONTACT_ADDRESS_LABEL;
 			IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-			String printerName =
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document ContactAddressLabel on printer: " + printerName);
 			PrintProvider.print(fo, printerName);
 		} catch (Exception e) {

@@ -28,20 +28,20 @@ import org.slf4j.LoggerFactory;
  */
 @Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
 public class StartupHandler implements EventHandler {
-	
+
 	private ExecutorService executor;
-	
+
 	/**
 	 * Logger used to log all activities of the module
 	 */
 	private final static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
-	
-	public StartupHandler(){
+
+	public StartupHandler() {
 		executor = Executors.newSingleThreadExecutor();
 	}
-	
+
 	@Override
-	public void handleEvent(Event event){
+	public void handleEvent(Event event) {
 		logger.info("APPLICATION STARTUP COMPLETE");
 		String logPrefix = "earlyStartup() - ";//$NON-NLS-1$
 		// do not block event handling, execute in different thread

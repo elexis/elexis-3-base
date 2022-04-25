@@ -8,7 +8,7 @@
  * Contributors:
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.views;
@@ -23,21 +23,21 @@ import ch.elexis.core.ui.preferences.inputs.InexistingFileOKFileFieldEditor;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public static final String CONFIG_FILE = "findings/hilotec/configfile"; //$NON-NLS-1$
-	
-	public void init(IWorkbench workbench){
+
+	public void init(IWorkbench workbench) {
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
+	protected void createFieldEditors() {
 		addField(new InexistingFileOKFileFieldEditor(CONFIG_FILE, "Konfigurationsdatei", //$NON-NLS-1$
-			getFieldEditorParent()));
-		
+				getFieldEditorParent()));
+
 	}
-	
+
 	@Override
-	public void performApply(){
+	public void performApply() {
 		CoreHub.localCfg.flush();
 	}
-	
+
 }

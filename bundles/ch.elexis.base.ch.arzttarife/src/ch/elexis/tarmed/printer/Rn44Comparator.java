@@ -15,10 +15,10 @@ import ch.rgw.tools.TimeTool;
 
 public class Rn44Comparator implements Comparator<Object> {
 	private static final String TARMED_TARIF = "001";
-	
+
 	TimeTool time1 = new TimeTool();
 	TimeTool time2 = new TimeTool();
-	
+
 	private GregorianCalendar cal1;
 	private GregorianCalendar cal2;
 	private String tarifType1;
@@ -27,28 +27,29 @@ public class Rn44Comparator implements Comparator<Object> {
 	private String code2;
 	private String name1;
 	private String name2;
-	
-	public Rn44Comparator(){}
-	
+
+	public Rn44Comparator() {
+	}
+
 	@Override
-	public int compare(Object o1, Object o2){
+	public int compare(Object o1, Object o2) {
 		initRecordValues1(o1);
 		initRecordValues2(o2);
-		
+
 		if (cal1 == null) {
 			return 1;
 		}
 		if (cal2 == null) {
 			return -1;
 		}
-		
+
 		time1.set(cal1);
 		time2.set(cal2);
 		int dat = time1.compareTo(time2);
 		if (dat != 0) {
 			return dat;
 		}
-		
+
 		if (TARMED_TARIF.equals(tarifType1)) { // tarmed-tarmed: nach code sortieren
 			if (TARMED_TARIF.equals(tarifType2)) {
 				return code1.compareTo(code2);
@@ -65,15 +66,15 @@ public class Rn44Comparator implements Comparator<Object> {
 			return diffc;
 		}
 	}
-	
-	private void initRecordValues1(Object object){
+
+	private void initRecordValues1(Object object) {
 		clearValues();
 		if (object instanceof RecordServiceType) {
 			RecordServiceType rec = (RecordServiceType) object;
 			if (rec.getDateBegin() != null) {
 				cal1 = rec.getDateBegin().toGregorianCalendar();
 			}
-			
+
 			tarifType1 = getTarifType(rec);
 			code1 = rec.getCode();
 			name1 = rec.getName();
@@ -82,14 +83,14 @@ public class Rn44Comparator implements Comparator<Object> {
 			if (tarmed.getDateBegin() != null) {
 				cal1 = tarmed.getDateBegin().toGregorianCalendar();
 			}
-			
+
 			tarifType1 = tarmed.getTariffType();
 			code1 = tarmed.getCode();
 			name1 = tarmed.getName();
 		}
 	}
-	
-	private void clearValues(){
+
+	private void clearValues() {
 		cal1 = null;
 		cal2 = null;
 		tarifType1 = "";
@@ -99,14 +100,14 @@ public class Rn44Comparator implements Comparator<Object> {
 		name1 = "";
 		name2 = "";
 	}
-	
-	private void initRecordValues2(Object object){
+
+	private void initRecordValues2(Object object) {
 		if (object instanceof RecordServiceType) {
 			RecordServiceType rec = (RecordServiceType) object;
 			if (rec.getDateBegin() != null) {
 				cal2 = rec.getDateBegin().toGregorianCalendar();
 			}
-			
+
 			tarifType2 = getTarifType(rec);
 			code2 = rec.getCode();
 			name2 = rec.getName();
@@ -115,14 +116,14 @@ public class Rn44Comparator implements Comparator<Object> {
 			if (tarmed.getDateBegin() != null) {
 				cal2 = tarmed.getDateBegin().toGregorianCalendar();
 			}
-			
+
 			tarifType2 = tarmed.getTariffType();
 			code2 = tarmed.getCode();
 			name2 = tarmed.getName();
 		}
 	}
-	
-	private String getTarifType(RecordServiceType rec){
+
+	private String getTarifType(RecordServiceType rec) {
 		if (rec instanceof RecordOtherType) {
 			RecordOtherType other = (RecordOtherType) rec;
 			return other.getTariffType();
@@ -144,5 +145,5 @@ public class Rn44Comparator implements Comparator<Object> {
 		}
 		return "";
 	}
-	
+
 }

@@ -4,12 +4,10 @@ import ch.elexis.core.importer.div.importers.ExcelWrapper;
 import ch.rgw.tools.StringTool;
 
 public class Fachspec {
-	
-	public static Fachspec[] loadFachspecs(int langdef){
+
+	public static Fachspec[] loadFachspecs(int langdef) {
 		ExcelWrapper excelWrapper = new ExcelWrapper();
-		excelWrapper.setFieldTypes(new Class[] {
-			Integer.class, String.class, Integer.class, Integer.class
-		});
+		excelWrapper.setFieldTypes(new Class[] { Integer.class, String.class, Integer.class, Integer.class });
 		if (excelWrapper.load(Fachspec.class.getResourceAsStream("/rsc/arztpraxen.xls"), langdef)) {
 			int first = excelWrapper.getFirstRow();
 			int last = excelWrapper.getLastRow();
@@ -21,33 +19,30 @@ public class Fachspec {
 		}
 		return null;
 	}
-	
+
 	public int code, from, until;
 	public String name;
-	
-	Fachspec(String[] line){
+
+	Fachspec(String[] line) {
 		this(Integer.parseInt(StringTool.getSafe(line, 0)), StringTool.getSafe(line, 1),
-			Integer.parseInt(StringTool.getSafe(line, 2)),
-			Integer.parseInt(StringTool.getSafe(line, 3)));
+				Integer.parseInt(StringTool.getSafe(line, 2)), Integer.parseInt(StringTool.getSafe(line, 3)));
 	}
-	
-	Fachspec(int code, String name, int from, int until){
+
+	Fachspec(int code, String name, int from, int until) {
 		this.code = code;
 		this.from = from;
 		this.until = until;
 		this.name = name;
 	}
-	
+
 	/**
 	 * Find the spec a given row belongs to
-	 * 
-	 * @param specs
-	 *            a list of all specs
-	 * @param row
-	 *            the row to match
+	 *
+	 * @param specs a list of all specs
+	 * @param row   the row to match
 	 * @return the spec number or -1 if no spec
 	 */
-	public static int getFachspec(Fachspec[] specs, int row){
+	public static int getFachspec(Fachspec[] specs, int row) {
 		for (Fachspec spec : specs) {
 			if (spec.from <= row && spec.until >= row) {
 				return spec.code;

@@ -13,24 +13,24 @@ import org.osgi.framework.BundleContext;
 import ch.elexis.base.ch.ebanking.command.LoadESRFileHandler;
 
 public class Activator extends AbstractUIPlugin {
-	
-	public Activator(){}
-	
+
+	public Activator() {
+	}
+
 	@Override
-	public void start(BundleContext context) throws Exception{
+	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		UIJob job = new UIJob("InitCommandsWorkaround") {
-			
-			public IStatus runInUIThread(@SuppressWarnings("unused") IProgressMonitor monitor){
-				
-				ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getService(ICommandService.class);
+
+			public IStatus runInUIThread(@SuppressWarnings("unused") IProgressMonitor monitor) {
+
+				ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+						.getService(ICommandService.class);
 				Command command = commandService.getCommand(LoadESRFileHandler.COMMAND_ID);
 				command.isEnabled();
-				return new Status(IStatus.OK, "my.plugin.id",
-					"Init commands workaround performed succesfully");
+				return new Status(IStatus.OK, "my.plugin.id", "Init commands workaround performed succesfully");
 			}
-			
+
 		};
 		job.schedule();
 	}

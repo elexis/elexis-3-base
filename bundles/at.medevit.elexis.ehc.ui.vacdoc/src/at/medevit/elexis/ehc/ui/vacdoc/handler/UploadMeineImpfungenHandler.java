@@ -31,26 +31,22 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 
 public class UploadMeineImpfungenHandler extends AbstractHandler implements IHandler {
-	
+
 	private List<Vaccination> selectedVacination;
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			Patient patient = ElexisEventDispatcher.getSelectedPatient();
-			
-			String vaccinations =
-				event.getParameter("at.medevit.elexis.ehc.ui.vacdoc.commandParameter.vaccinations"); //$NON-NLS-1$
+
+			String vaccinations = event.getParameter("at.medevit.elexis.ehc.ui.vacdoc.commandParameter.vaccinations"); //$NON-NLS-1$
 			if ("dialog".equals(vaccinations)) {
-				VaccinationSelectionDialog dialog =
-					new VaccinationSelectionDialog(HandlerUtil.getActiveShell(event));
+				VaccinationSelectionDialog dialog = new VaccinationSelectionDialog(HandlerUtil.getActiveShell(event));
 				Query<Vaccination> qbe = new Query<Vaccination>(Vaccination.class);
 				Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
 				if (selectedPatient != null) {
 					qbe.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, selectedPatient.getId());
-					qbe.orderBy(true, new String[] {
-						Vaccination.FLD_DOA, PersistentObject.FLD_LASTUPDATE
-					});
+					qbe.orderBy(true, new String[] { Vaccination.FLD_DOA, PersistentObject.FLD_LASTUPDATE });
 					List<Vaccination> patientVaccinations = qbe.execute();
 					dialog.setVaccinations(patientVaccinations);
 				}
@@ -58,64 +54,52 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 					selectedVacination = dialog.getSelectedVaccinations();
 				}
 			} else {
-				ISelection selection =
-					HandlerUtil.getActiveSite(event).getSelectionProvider().getSelection();
+				ISelection selection = HandlerUtil.getActiveSite(event).getSelectionProvider().getSelection();
 				if (selection instanceof StructuredSelection && !selection.isEmpty()) {
-					selectedVacination = Collections.singletonList(
-						(Vaccination) ((StructuredSelection) selection).getFirstElement());
+					selectedVacination = Collections
+							.singletonList((Vaccination) ((StructuredSelection) selection).getFirstElement());
 				}
 			}
 			if (patient != null && selectedVacination != null && !selectedVacination.isEmpty()) {
-				ProgressMonitorDialog progress =
-					new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
+				ProgressMonitorDialog progress = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
 				try {
 					progress.run(false, true, new IRunnableWithProgress() {
 						@Override
 						public void run(IProgressMonitor monitor)
-							throws InvocationTargetException, InterruptedException{
-							monitor.beginTask("Impfung export nach meineimpfungen ...",
-								IProgressMonitor.UNKNOWN);
-							
-							List<org.ehealth_connector.common.mdht.Patient> patients =
-								MeineImpfungenServiceHolder.getService().getPatients(patient);
+								throws InvocationTargetException, InterruptedException {
+							monitor.beginTask("Impfung export nach meineimpfungen ...", IProgressMonitor.UNKNOWN);
+
+							List<org.ehealth_connector.common.mdht.Patient> patients = MeineImpfungenServiceHolder
+									.getService().getPatients(patient);
 							if (patients != null && !patients.isEmpty()) {
 								if (patients.size() == 1) {
-									CdaChVacd document =
-										VacdocServiceComponent.getService().getVacdocDocument(
-											patient, ElexisEventDispatcher.getSelectedMandator());
-									setMeineImpfungenPatientId(document.getPatient(),
-										patients.get(0));
-									VacdocServiceComponent.getService().addVaccinations(document,
-										selectedVacination);
-									boolean success = MeineImpfungenServiceHolder.getService()
-										.uploadDocument(document);
+									CdaChVacd document = VacdocServiceComponent.getService().getVacdocDocument(patient,
+											ElexisEventDispatcher.getSelectedMandator());
+									setMeineImpfungenPatientId(document.getPatient(), patients.get(0));
+									VacdocServiceComponent.getService().addVaccinations(document, selectedVacination);
+									boolean success = MeineImpfungenServiceHolder.getService().uploadDocument(document);
 									if (!success) {
-										MessageDialog.openError(HandlerUtil.getActiveShell(event),
-											"meineimpfungen",
-											"Beim upload ist ein Fehler aufgetreten.");
+										MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
+												"Beim upload ist ein Fehler aufgetreten.");
 									}
 								} else {
-									MessageDialog.openError(HandlerUtil.getActiveShell(event),
-										"meineimpfungen",
-										"Mehrere Patienten für [" + patient.getLabel(false)
-											+ "] auf meineimpfungen gefunden.");
+									MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
+											"Mehrere Patienten für [" + patient.getLabel(false)
+													+ "] auf meineimpfungen gefunden.");
 								}
 							} else {
-								MessageDialog.openInformation(HandlerUtil.getActiveShell(event),
-									"meineimpfungen", "Kein Patient [" + patient.getLabel(false)
-										+ "] auf meineimpfungen gefunden.");
+								MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "meineimpfungen",
+										"Kein Patient [" + patient.getLabel(false) + "] auf meineimpfungen gefunden.");
 							}
 							monitor.done();
 						}
-						
-						private void setMeineImpfungenPatientId(
-							org.ehealth_connector.common.mdht.Patient docPatient,
-							org.ehealth_connector.common.mdht.Patient miPatient){
+
+						private void setMeineImpfungenPatientId(org.ehealth_connector.common.mdht.Patient docPatient,
+								org.ehealth_connector.common.mdht.Patient miPatient) {
 							List<Identificator> ids = miPatient.getIds();
 							if (ids != null && !ids.isEmpty()) {
 								for (Identificator identificator : ids) {
-									if (MeineImpfungenService.PDQ_REQUEST_PATID_OID
-										.equals(identificator.getRoot())) {
+									if (MeineImpfungenService.PDQ_REQUEST_PATID_OID.equals(identificator.getRoot())) {
 										docPatient.addId(identificator);
 										return;
 									}
@@ -124,20 +108,18 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 						}
 					});
 				} catch (InvocationTargetException | InterruptedException e) {
-					LoggerFactory.getLogger(OpenMeineImpfungenHandler.class)
-						.warn("Exception on patient lookup", e);
+					LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).warn("Exception on patient lookup", e);
 					MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
-						"Es ist ein Fehler aufgetreten.");
+							"Es ist ein Fehler aufgetreten.");
 				}
 			} else {
 				MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "meineimpfungen",
-					"Kein Patient, oder keine Impfung ausgewählt");
+						"Kein Patient, oder keine Impfung ausgewählt");
 			}
 		} catch (IllegalStateException ise) {
-			LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).error("Service not available",
-				ise);
+			LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).error("Service not available", ise);
 			MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
-				"meineimpfungen nicht verfügbar");
+					"meineimpfungen nicht verfügbar");
 		}
 		return null;
 	}

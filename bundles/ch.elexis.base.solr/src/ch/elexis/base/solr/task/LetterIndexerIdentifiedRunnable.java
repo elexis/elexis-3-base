@@ -10,53 +10,52 @@ import ch.elexis.core.model.IDocumentLetter;
 import ch.elexis.core.services.IModelService;
 
 public class LetterIndexerIdentifiedRunnable extends AbstractIDocumentIndexerIdentifiedRunnable {
-	
+
 	public static final String RUNNABLE_ID = "solrLetterIndexer";
-	public static final String DESCRIPTION =
-		"Index letters into SOLR (in batches, newest first strategy)";
-	
+	public static final String DESCRIPTION = "Index letters into SOLR (in batches, newest first strategy)";
+
 	private IModelService coreModelService;
-	
-	public LetterIndexerIdentifiedRunnable(IModelService coreModelService){
+
+	public LetterIndexerIdentifiedRunnable(IModelService coreModelService) {
 		this.coreModelService = coreModelService;
 	}
-	
+
 	@Override
-	public String getId(){
+	public String getId() {
 		return RUNNABLE_ID;
 	}
-	
+
 	@Override
-	public String getLocalizedDescription(){
+	public String getLocalizedDescription() {
 		return DESCRIPTION;
 	}
-	
-	// we load either 
-	// letters that are NOT DELETED, do NOT have DocumentStatus#INDEXED and a PATIENTID -> to add to solr
+
+	// we load either
+	// letters that are NOT DELETED, do NOT have DocumentStatus#INDEXED and a
+	// PATIENTID -> to add to solr
 	// letters that are DocumentStatus#INDEXED and DELETED -> to remove from solr
-	private final String QUERY =
-		"SELECT ID FROM BRIEFE WHERE (!(DOCUMENT_STATUS & 2) AND DELETED = '0' AND PATIENTID IS NOT NULL AND PATIENTID <> '') OR ((DOCUMENT_STATUS & 2) AND DELETED='1') ORDER BY lastUpdate DESC LIMIT 1000";
-	
+	private final String QUERY = "SELECT ID FROM BRIEFE WHERE (!(DOCUMENT_STATUS & 2) AND DELETED = '0' AND PATIENTID IS NOT NULL AND PATIENTID <> '') OR ((DOCUMENT_STATUS & 2) AND DELETED='1') ORDER BY lastUpdate DESC LIMIT 1000";
+
 	@Override
-	protected List<?> getDocuments(){
+	protected List<?> getDocuments() {
 		return coreModelService.getNativeQuery(QUERY).executeWithParameters(Collections.emptyMap())
-			.collect(Collectors.toList());
+				.collect(Collectors.toList());
 	}
-	
+
 	@Override
-	protected IDocument loadDocument(String id){
+	protected IDocument loadDocument(String id) {
 		return coreModelService.load(id, IDocumentLetter.class, true, true).orElse(null);
-		
+
 	}
-	
+
 	@Override
-	protected String getSolrCore(){
+	protected String getSolrCore() {
 		return SolrConstants.CORE_LETTERS;
 	}
-	
+
 	@Override
-	protected IModelService getModelService(){
+	protected IModelService getModelService() {
 		return coreModelService;
 	}
-	
+
 }

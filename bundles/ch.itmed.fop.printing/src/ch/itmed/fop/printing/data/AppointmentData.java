@@ -28,28 +28,28 @@ import ch.rgw.tools.TimeTool;
 
 public final class AppointmentData {
 	private Termin appointment;
-	
-	public AppointmentData() {}
+
+	public AppointmentData() {
+	}
 
 	public AppointmentData(Termin termin) {
 		appointment = termin;
 	}
-	
+
 	public void load() throws NullPointerException {
 		appointment = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 		if (appointment == null) {
 			ContextServiceHolder.get().getTyped(IAppointment.class).ifPresent(iAppointment -> {
 				PersistentObject po = NoPoUtil.loadAsPersistentObject(iAppointment);
-				if(po instanceof Termin) {
-					appointment = (Termin) po;						
+				if (po instanceof Termin) {
+					appointment = (Termin) po;
 				}
 			});
 			if (appointment == null) {
-				SWTHelper.showInfo(Messages.Info_NoAppointment_Title,
-					Messages.Info_NoAppointment_Message);
+				SWTHelper.showInfo(Messages.Info_NoAppointment_Title, Messages.Info_NoAppointment_Message);
 				throw new NullPointerException("No appointment selected");
 			}
-		}		
+		}
 	}
 
 	public String getAppointmentDetailed() {
@@ -79,32 +79,32 @@ public final class AppointmentData {
 		return appointmentDate.toString();
 	}
 
-	public String getAppointmentDetailedNoEnd(){
+	public String getAppointmentDetailedNoEnd() {
 		StringBuilder appointmentDate = new StringBuilder();
-		
+
 		TimeSpan timeSpan = appointment.getTimeSpan();
-		
+
 		// the weekday of the appointment
 		TimeTool timeTool = new TimeTool();
 		timeTool.setDate(appointment.getDay());
 		appointmentDate.append(timeTool.toString(TimeTool.WEEKDAY));
 		appointmentDate.append(", ");
-		
+
 		// the date of the appointment
 		appointmentDate.append(timeTool.toString(TimeTool.DATE_GER));
 		appointmentDate.append(" ");
-		
+
 		// start time of the appointment
 		timeTool.setTime(timeSpan.from);
 		appointmentDate.append(timeTool.toString(TimeTool.TIME_SMALL));
-		
+
 		return appointmentDate.toString();
 	}
-	
-	public TimeTool getStartTime(){
+
+	public TimeTool getStartTime() {
 		return appointment.getStartTime();
 	}
-	
+
 	public String getAgendaArea() {
 		Kontakt kontakt = null;
 		String agendaSection = appointment.getBereich();

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.agenda.ui.week;
@@ -40,28 +40,27 @@ public class ColumnHeader extends Composite {
 	static final String IMG_PERSONS_NAME = Activator.PLUGIN_ID + "/personen"; //$NON-NLS-1$
 	static final String IMG_PERSONS_PATH = "icons/personen.png"; //$NON-NLS-1$
 	ImageHyperlink ihRes;
-	
-	public ColumnHeader(Composite parent, AgendaWeek aw){
+
+	public ColumnHeader(Composite parent, AgendaWeek aw) {
 		super(parent, SWT.NONE);
 		view = aw;
 		if (UiDesk.getImage(IMG_PERSONS_NAME) == null) {
-			UiDesk.getImageRegistry().put(IMG_PERSONS_NAME,
-				Activator.getImageDescriptor(IMG_PERSONS_PATH));
+			UiDesk.getImageRegistry().put(IMG_PERSONS_NAME, Activator.getImageDescriptor(IMG_PERSONS_PATH));
 		}
 		ihRes = new ImageHyperlink(this, SWT.NONE);
 		ihRes.setImage(UiDesk.getImage(IMG_PERSONS_NAME));
 		ihRes.setToolTipText(Messages.ColumnHeader_selectDaysToDisplay);
 		ihRes.addHyperlinkListener(new HyperlinkAdapter() {
-			
+
 			@Override
-			public void linkActivated(HyperlinkEvent e){
+			public void linkActivated(HyperlinkEvent e) {
 				new SelectDaysDlg().open();
 			}
-			
+
 		});
 	}
-	
-	void recalc(double widthPerColumn, int left_offset, int padding, int textSize){
+
+	void recalc(double widthPerColumn, int left_offset, int padding, int textSize) {
 		GridData gd = (GridData) getLayoutData();
 		gd.heightHint = textSize + 2;
 		for (Control c : getChildren()) {
@@ -87,10 +86,10 @@ public class ColumnHeader extends Composite {
 				if (extend.x > widthPerColumn) {
 					coltext = coltext.substring(0, 2);
 				}
-				
+
 			}
 			l.setText(coltext);
-			
+
 			int outer = (int) Math.round(widthPerColumn);
 			int inner = l.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 			int off = (outer - inner) / 2;
@@ -98,22 +97,21 @@ public class ColumnHeader extends Composite {
 			l.setBounds(lx, 0, inner, textSize + 2);
 		}
 	}
-	
+
 	class SelectDaysDlg extends TitleAreaDialog {
-		SelectDaysDlg(){
+		SelectDaysDlg() {
 			super(ColumnHeader.this.getShell());
 		}
-		
+
 		@Override
-		protected Control createDialogArea(Composite parent){
+		protected Control createDialogArea(Composite parent) {
 			Composite ret = (Composite) super.createDialogArea(parent);
 			ret.setLayout(new GridLayout());
-			
-			String resources =
-				CoreHub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW,
+
+			String resources = CoreHub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW,
 					StringTool.join(TimeTool.Wochentage, ",")); //$NON-NLS-1$
 			String[] daysSelected = resources.split(",");
-			
+
 			for (TimeTool.DAYS day : TimeTool.DAYS.values()) {
 				Button b = new Button(ret, SWT.CHECK);
 				b.setText(day.fullName);
@@ -123,21 +121,21 @@ public class ColumnHeader extends Composite {
 					if (string.toLowerCase().equalsIgnoreCase(day.fullName.toLowerCase()))
 						b.setSelection(true);
 				}
-				
+
 			}
 			return ret;
 		}
-		
+
 		@Override
-		public void create(){
+		public void create() {
 			super.create();
 			getShell().setText(Messages.ColumnHeader_configureDisplay);
 			setTitle(Messages.ColumnHeader_displayWeekdays);
 			setMessage(Messages.ColumnHeader_pleaseSelectWeekdays);
 		}
-		
+
 		@Override
-		protected void okPressed(){
+		protected void okPressed() {
 			Composite dlg = (Composite) getDialogArea();
 			String[] res = TimeTool.Wochentage;
 			ArrayList<String> sel = new ArrayList<String>(res.length);
@@ -152,9 +150,9 @@ public class ColumnHeader extends Composite {
 			view.clear();
 			CoreHub.localCfg.set(PreferenceConstants.AG_DAYSTOSHOW, StringTool.join(sel, ",")); //$NON-NLS-1$
 			view.refresh();
-			
+
 			super.okPressed();
 		}
-		
+
 	}
 }

@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for x_ActMoodDocumentObservation.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="x_ActMoodDocumentObservation">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -24,20 +25,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "x_ActMoodDocumentObservation")
 @XmlEnum
 public enum XActMoodDocumentObservation {
-	
+
 	INT, DEF, EVN, GOL, PRMS, PRP, RQO;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static XActMoodDocumentObservation fromValue(String v){
+
+	public static XActMoodDocumentObservation fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

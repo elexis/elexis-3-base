@@ -72,41 +72,40 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
 public class InboxView extends ViewPart {
-	
+
 	private Text filterText;
 	private CheckboxTreeViewer viewer;
-	
 
 	private boolean reloadPending;
 
 	private InboxElementViewerFilter filter = new InboxElementViewerFilter();
-	
+
 	private ElexisUiEventListenerImpl mandantChanged = new ElexisUiEventListenerImpl(Mandant.class,
-		ElexisEvent.EVENT_MANDATOR_CHANGED) {
+			ElexisEvent.EVENT_MANDATOR_CHANGED) {
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev) {
 			reload();
 		}
 	};
 	private InboxElementContentProvider contentProvider;
 	private boolean setAutoSelectPatient;
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
-		
+
 		Composite filterComposite = new Composite(composite, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		filterComposite.setLayoutData(data);
 		filterComposite.setLayout(new GridLayout(2, false));
-		
+
 		filterText = new Text(filterComposite, SWT.SEARCH);
 		filterText.setMessage("Patienten Filter");
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		filterText.setLayoutData(data);
 		filterText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e){
+			public void modifyText(ModifyEvent e) {
 				if (filterText.getText().length() > 1) {
 					filter.setSearchText(filterText.getText());
 					viewer.refresh();
@@ -116,28 +115,26 @@ public class InboxView extends ViewPart {
 				}
 			}
 		});
-		
+
 		ToolBarManager menuManager = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
 		menuManager.createControl(filterComposite);
-		
-		viewer =
-			new CheckboxTreeViewer(composite,
-				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.VIRTUAL);
+
+		viewer = new CheckboxTreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.VIRTUAL);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		viewer.getControl().setLayoutData(gd);
-		
+
 		ViewerFilter[] filters = new ViewerFilter[1];
 		filters[0] = filter;
 		viewer.setFilters(filters);
-		
+
 		contentProvider = new InboxElementContentProvider();
 		viewer.setContentProvider(contentProvider);
-		
+
 		viewer.setLabelProvider(new InboxElementLabelProvider());
-		
+
 		viewer.addCheckStateListener(new ICheckStateListener() {
-			
-			public void checkStateChanged(CheckStateChangedEvent event){
+
+			public void checkStateChanged(CheckStateChangedEvent event) {
 				if (event.getElement() instanceof PatientInboxElements) {
 					PatientInboxElements patientInbox = (PatientInboxElements) event.getElement();
 					for (IInboxElement inboxElement : patientInbox.getElements()) {
@@ -158,10 +155,10 @@ public class InboxView extends ViewPart {
 				viewer.refresh(false);
 			}
 		});
-		
+
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (!selection.isEmpty()) {
 					Object selectedObj = selection.getFirstElement();
@@ -172,56 +169,51 @@ public class InboxView extends ViewPart {
 				}
 			}
 		});
-		
+
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (selection instanceof StructuredSelection && !selection.isEmpty()) {
 					if (setAutoSelectPatient) {
-						Object selectedElement =
-							((StructuredSelection) selection).getFirstElement();
+						Object selectedElement = ((StructuredSelection) selection).getFirstElement();
 						if (selectedElement instanceof IInboxElement) {
-							Patient patient = (Patient) NoPoUtil.loadAsPersistentObject(
-								((IInboxElement) selectedElement).getPatient());
-							ElexisEventDispatcher
-								.fireSelectionEvent(patient);
+							Patient patient = (Patient) NoPoUtil
+									.loadAsPersistentObject(((IInboxElement) selectedElement).getPatient());
+							ElexisEventDispatcher.fireSelectionEvent(patient);
 						} else if (selectedElement instanceof PatientInboxElements) {
-							Patient patient = (Patient) NoPoUtil.loadAsPersistentObject(
-								((PatientInboxElements) selectedElement).getPatient());
+							Patient patient = (Patient) NoPoUtil
+									.loadAsPersistentObject(((PatientInboxElements) selectedElement).getPatient());
 							ElexisEventDispatcher.fireSelectionEvent(patient);
 						}
 					}
 				}
 			}
 		});
-		
-		final Transfer[] dropTransferTypes = new Transfer[] {
-			FileTransfer.getInstance()
-		};
+
+		final Transfer[] dropTransferTypes = new Transfer[] { FileTransfer.getInstance() };
 		viewer.addDropSupport(DND.DROP_COPY, dropTransferTypes, new DropTargetAdapter() {
-			
+
 			@Override
-			public void dragEnter(DropTargetEvent event){
+			public void dragEnter(DropTargetEvent event) {
 				event.detail = DND.DROP_COPY;
 			}
-			
+
 			@Override
-			public void drop(DropTargetEvent event){
+			public void drop(DropTargetEvent event) {
 				if (dropTransferTypes[0].isSupportedType(event.currentDataType)) {
 					String[] files = (String[]) event.data;
 					IPatient patient = null;
-					
+
 					if (event.item != null) {
 						Object data = event.item.getData();
 						if (data instanceof IInboxElement) {
 							patient = ((IInboxElement) data).getPatient();
-						}
-						else if (data instanceof PatientInboxElements) {
+						} else if (data instanceof PatientInboxElements) {
 							patient = ((PatientInboxElements) data).getPatient();
 						}
 					}
-					
+
 					if (patient == null) {
 						// fallback
 						patient = ContextServiceHolder.get().getActivePatient().orElse(null);
@@ -231,32 +223,31 @@ public class InboxView extends ViewPart {
 							for (String file : files) {
 								try {
 									InboxServiceHolder.get().createInboxElement(patient,
-										ContextServiceHolder.get().getActiveMandator().orElse(null),
-										file, true);
+											ContextServiceHolder.get().getActiveMandator().orElse(null), file, true);
 								} catch (Exception e) {
 									LoggerFactory.getLogger(InboxView.class).warn("drop error", e);
 								}
 							}
 						}
-						
+
 						viewer.refresh();
 					} else {
 						MessageDialog.openWarning(Display.getCurrent().getActiveShell(), "Warnung",
-							"Bitte wählen Sie zuerst einen Patienten aus.");
+								"Bitte wählen Sie zuerst einen Patienten aus.");
 					}
-					
+
 				}
 			}
-			
+
 		});
-							
+
 		addFilterActions(menuManager);
-		
+
 		InboxServiceHolder.get().addUpdateListener(new IInboxUpdateListener() {
-			public void update(final IInboxElement element){
+			public void update(final IInboxElement element) {
 				if (viewer != null && !viewer.getControl().isDisposed()) {
 					Display.getDefault().asyncExec(new Runnable() {
-						public void run(){
+						public void run() {
 							contentProvider.refreshElement(element);
 							viewer.refresh();
 						}
@@ -264,45 +255,43 @@ public class InboxView extends ViewPart {
 				}
 			}
 		});
-		
+
 		reload();
-		
+
 		MenuManager ctxtMenuManager = new MenuManager();
 		Menu menu = ctxtMenuManager.createContextMenu(viewer.getTree());
 		viewer.getTree().setMenu(menu);
 		getSite().registerContextMenu(ctxtMenuManager, viewer);
-		
+
 		ElexisEventDispatcher.getInstance().addListeners(mandantChanged);
 		getSite().setSelectionProvider(viewer);
-		
+
 		setAutoSelectPatientState(ConfigServiceHolder.getUser(Preferences.INBOX_PATIENT_AUTOSELECT, false));
 	}
-	
-	public void setAutoSelectPatientState(boolean value){
+
+	public void setAutoSelectPatientState(boolean value) {
 		setAutoSelectPatient = value;
-		ICommandService service =
-			(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = service.getCommand(AutoActivePatientHandler.CMD_ID);
 		command.getState(AutoActivePatientHandler.STATE_ID).setValue(value);
 		ConfigServiceHolder.setUser(Preferences.INBOX_PATIENT_AUTOSELECT, value);
 	}
-	
-	private void addFilterActions(ToolBarManager menuManager){
+
+	private void addFilterActions(ToolBarManager menuManager) {
 		InboxElementUiExtension extension = new InboxElementUiExtension();
 		List<IInboxElementUiProvider> providers = extension.getProviders();
 		for (IInboxElementUiProvider iInboxElementUiProvider : providers) {
 			ViewerFilter extensionFilter = iInboxElementUiProvider.getFilter();
 			if (extensionFilter != null) {
-				InboxFilterAction action =
-					new InboxFilterAction(viewer, extensionFilter,
+				InboxFilterAction action = new InboxFilterAction(viewer, extensionFilter,
 						iInboxElementUiProvider.getFilterImage());
 				menuManager.add(action);
 			}
 		}
 		menuManager.update(true);
 	}
-	
-	private State toggleInboxElementState(IInboxElement inboxElement){
+
+	private State toggleInboxElementState(IInboxElement inboxElement) {
 		if (inboxElement.getState() == State.NEW) {
 			inboxElement.setState(State.SEEN);
 			if (!(inboxElement instanceof GroupedInboxElements)) {
@@ -318,57 +307,55 @@ public class InboxView extends ViewPart {
 		}
 		return State.NEW;
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		filterText.setFocus();
-		
+
 		if (reloadPending) {
 			reload();
 		}
 	}
-	
-	private List<IInboxElement> getOpenInboxElements(){
-		List<IInboxElement> openElements =
-			InboxServiceHolder.get().getInboxElements(
-				ContextServiceHolder.get().getActiveMandator().orElse(null), null,
-				IInboxElementService.State.NEW);
+
+	private List<IInboxElement> getOpenInboxElements() {
+		List<IInboxElement> openElements = InboxServiceHolder.get().getInboxElements(
+				ContextServiceHolder.get().getActiveMandator().orElse(null), null, IInboxElementService.State.NEW);
 		return openElements;
 	}
-	
+
 	private class InboxElementViewerFilter extends ViewerFilter {
 		protected String searchString;
 		protected InboxElementLabelProvider labelProvider = new InboxElementLabelProvider();
-		
-		public void setSearchText(String s){
+
+		public void setSearchText(String s) {
 			// Search must be a substring of the existing value
 			this.searchString = s != null ? s.toLowerCase() : s;
 		}
-		
-		public boolean isActive(){
+
+		public boolean isActive() {
 			if (searchString == null || searchString.isEmpty()) {
 				return false;
 			}
 			return true;
 		}
-		
-		private boolean isSelect(Object leaf){
+
+		private boolean isSelect(Object leaf) {
 			String label = labelProvider.getText(leaf);
 			if (label != null && label.toLowerCase().contains(searchString)) {
 				return true;
 			}
 			return false;
 		}
-		
-		private boolean isVisible(Object element){
+
+		private boolean isVisible(Object element) {
 			if (element instanceof IInboxElement) {
 				return labelProvider.isVisible((IInboxElement) element);
 			}
 			return true;
 		}
-		
+
 		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element){
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof IInboxElement && !isVisible(element)) {
 				return false;
 			}
@@ -382,25 +369,25 @@ public class InboxView extends ViewPart {
 			}
 		}
 	}
-	
-	public void reload(){
+
+	public void reload() {
 		if (!viewer.getControl().isVisible()) {
 			reloadPending = true;
 			return;
 		}
-		
+
 		viewer.setInput(getOpenInboxElements());
 		reloadPending = false;
 		viewer.refresh();
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		ElexisEventDispatcher.getInstance().removeListeners(mandantChanged);
 		super.dispose();
 	}
-	
-	public CheckboxTreeViewer getCheckboxTreeViewer(){
+
+	public CheckboxTreeViewer getCheckboxTreeViewer() {
 		return viewer;
 	}
 }

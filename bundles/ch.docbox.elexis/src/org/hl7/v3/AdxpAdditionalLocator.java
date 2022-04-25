@@ -7,10 +7,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for adxp.additionalLocator complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="adxp.additionalLocator">
  *   &lt;complexContent>
@@ -20,16 +21,16 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "adxp.additionalLocator")
 public class AdxpAdditionalLocator extends ADXP {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 }

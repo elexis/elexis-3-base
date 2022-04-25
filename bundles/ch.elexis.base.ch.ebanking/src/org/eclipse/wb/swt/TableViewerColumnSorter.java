@@ -24,10 +24,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Table;
 
 /**
- * Helper for sorting {@link TableViewer} by one of its {@link TableViewerColumn}s.
+ * Helper for sorting {@link TableViewer} by one of its
+ * {@link TableViewerColumn}s.
  * <p>
- * Originally from http://wiki.eclipse.org/index.php/JFaceSnippets, Snippet040TableViewerSorting.
- * 
+ * Originally from http://wiki.eclipse.org/index.php/JFaceSnippets,
+ * Snippet040TableViewerSorting.
+ *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  * @author Konstantin Scheglov <Konstantin.Scheglov@gmail.com>
  */
@@ -44,18 +46,18 @@ public class TableViewerColumnSorter extends ViewerComparator {
 	private final TableViewer m_viewer;
 	private final Table m_table;
 	private int m_direction = NONE;
-	
+
 	// //////////////////////////////////////////////////////////////////////////
 	//
 	// Constructor
 	//
 	// //////////////////////////////////////////////////////////////////////////
-	public TableViewerColumnSorter(TableViewerColumn column){
+	public TableViewerColumnSorter(TableViewerColumn column) {
 		m_column = column;
 		m_viewer = (TableViewer) column.getViewer();
 		m_table = m_viewer.getTable();
 		m_column.getColumn().addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				if (m_viewer.getComparator() != null) {
 					if (m_viewer.getComparator() == TableViewerColumnSorter.this) {
 						if (m_direction == ASC) {
@@ -72,13 +74,13 @@ public class TableViewerColumnSorter extends ViewerComparator {
 			}
 		});
 	}
-	
+
 	// //////////////////////////////////////////////////////////////////////////
 	//
 	// Utils
 	//
 	// //////////////////////////////////////////////////////////////////////////
-	public void setSorter(int direction){
+	public void setSorter(int direction) {
 		if (direction == NONE) {
 			m_table.setSortColumn(null);
 			m_table.setSortDirection(SWT.NONE);
@@ -98,23 +100,23 @@ public class TableViewerColumnSorter extends ViewerComparator {
 			}
 		}
 	}
-	
+
 	// //////////////////////////////////////////////////////////////////////////
 	//
 	// ViewerComparator
 	//
 	// //////////////////////////////////////////////////////////////////////////
-	public int compare(Viewer viewer, Object e1, Object e2){
+	public int compare(Viewer viewer, Object e1, Object e2) {
 		return m_direction * doCompare(viewer, e1, e2);
 	}
-	
+
 	/**
-	 * Compares to elements of viewer. By default tries to compare values extracted from these
-	 * elements using {@link #getValue(Object)}, because usually you want to compare value of some
-	 * attribute.
+	 * Compares to elements of viewer. By default tries to compare values extracted
+	 * from these elements using {@link #getValue(Object)}, because usually you want
+	 * to compare value of some attribute.
 	 */
 	@SuppressWarnings("unchecked")
-	protected int doCompare(Viewer viewer, Object e1, Object e2){
+	protected int doCompare(Viewer viewer, Object e1, Object e2) {
 		Object o1 = getValue(e1);
 		Object o2 = getValue(e2);
 		if (o1 instanceof Comparable && o2 instanceof Comparable) {
@@ -122,33 +124,29 @@ public class TableViewerColumnSorter extends ViewerComparator {
 		}
 		return 0;
 	}
-	
+
 	/**
-	 * 
-	 * @return the value to compare in {@link #doCompare(Viewer, Object, Object)}. Be default tries
-	 *         to get it from {@link EditingSupport}. May return <code>null</code>.
+	 *
+	 * @return the value to compare in {@link #doCompare(Viewer, Object, Object)}.
+	 *         Be default tries to get it from {@link EditingSupport}. May return
+	 *         <code>null</code>.
 	 */
-	protected Object getValue(Object o){
+	protected Object getValue(Object o) {
 		try {
 			EditingSupport editingSupport;
 			{
-				Method getEditingMethod =
-					ViewerColumn.class.getDeclaredMethod("getEditingSupport", new Class[] {});
+				Method getEditingMethod = ViewerColumn.class.getDeclaredMethod("getEditingSupport", new Class[] {});
 				getEditingMethod.setAccessible(true);
-				editingSupport =
-					(EditingSupport) getEditingMethod.invoke(m_column, new Object[] {});
+				editingSupport = (EditingSupport) getEditingMethod.invoke(m_column, new Object[] {});
 			}
 			if (editingSupport != null) {
-				Method getValueMethod =
-					EditingSupport.class.getDeclaredMethod("getValue", new Class[] {
-						Object.class
-					});
+				Method getValueMethod = EditingSupport.class.getDeclaredMethod("getValue",
+						new Class[] { Object.class });
 				getValueMethod.setAccessible(true);
-				return getValueMethod.invoke(editingSupport, new Object[] {
-					o
-				});
+				return getValueMethod.invoke(editingSupport, new Object[] { o });
 			}
-		} catch (Throwable e) {}
+		} catch (Throwable e) {
+		}
 		return null;
 	}
 }

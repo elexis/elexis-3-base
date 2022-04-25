@@ -6,12 +6,12 @@ import java.util.Map.Entry;
 import ch.elexis.core.findings.ICoding;
 
 public class Coding implements ICoding {
-	
+
 	private String code;
 	private String display;
 	private String system;
-	
-	public Coding(Map<String, String> map){
+
+	public Coding(Map<String, String> map) {
 		if (map.containsKey("manufacturer")) {
 			this.display = map.get("manufacturer") + " - ";
 		}
@@ -39,8 +39,8 @@ public class Coding implements ICoding {
 			}
 		}
 	}
-	
-	public Coding(Entry<String, Map<String, String>> entry){
+
+	public Coding(Entry<String, Map<String, String>> entry) {
 		this.code = entry.getKey();
 		if (entry.getValue().containsKey("display")) {
 			this.display = entry.getValue().get("display");
@@ -48,22 +48,22 @@ public class Coding implements ICoding {
 		if (entry.getValue().containsKey("system")) {
 			this.system = entry.getValue().get("system");
 		}
-		
+
 	}
-	
+
 	@Override
-	public String getSystem(){
+	public String getSystem() {
 		return system;
 	}
-	
+
 	@Override
-	public String getCode(){
+	public String getCode() {
 		return code;
 	}
-	
+
 	@Override
-	public String getDisplay(){
+	public String getDisplay() {
 		return display;
 	}
-	
+
 }

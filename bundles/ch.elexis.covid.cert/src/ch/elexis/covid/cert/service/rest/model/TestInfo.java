@@ -9,53 +9,52 @@ import java.time.format.DateTimeFormatter;
 //"memberStateOfTest": "CH"
 
 public class TestInfo {
-	
-	public static DateTimeFormatter formatter =
-		DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-	
+
+	public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
 	private String typeCode;
 	private String manufacturerCode;
 	private String sampleDateTime;
 	private String testingCentreOrFacility;
 	private String memberStateOfTest;
-	
-	public String getTypeCode(){
+
+	public String getTypeCode() {
 		return typeCode;
 	}
-	
-	public void setTypeCode(String typeCode){
+
+	public void setTypeCode(String typeCode) {
 		this.typeCode = typeCode;
 	}
-	
-	public String getManufacturerCode(){
+
+	public String getManufacturerCode() {
 		return manufacturerCode;
 	}
-	
-	public void setManufacturerCode(String manufacturerCode){
+
+	public void setManufacturerCode(String manufacturerCode) {
 		this.manufacturerCode = manufacturerCode;
 	}
-	
-	public String getSampleDateTime(){
+
+	public String getSampleDateTime() {
 		return sampleDateTime;
 	}
-	
-	public void setSampleDateTime(String sampleDateTime){
+
+	public void setSampleDateTime(String sampleDateTime) {
 		this.sampleDateTime = sampleDateTime;
 	}
-	
-	public String getTestingCentreOrFacility(){
+
+	public String getTestingCentreOrFacility() {
 		return testingCentreOrFacility;
 	}
-	
-	public void setTestingCentreOrFacility(String testingCentreOrFacility){
+
+	public void setTestingCentreOrFacility(String testingCentreOrFacility) {
 		this.testingCentreOrFacility = testingCentreOrFacility;
 	}
-	
-	public String getMemberStateOfTest(){
+
+	public String getMemberStateOfTest() {
 		return memberStateOfTest;
 	}
-	
-	public void setMemberStateOfTest(String memberStateOfTest){
+
+	public void setMemberStateOfTest(String memberStateOfTest) {
 		this.memberStateOfTest = memberStateOfTest;
 	}
 }

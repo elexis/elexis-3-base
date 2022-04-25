@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for RoleClassDistributedMaterial.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="RoleClassDistributedMaterial">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -19,20 +20,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "RoleClassDistributedMaterial")
 @XmlEnum
 public enum RoleClassDistributedMaterial {
-	
+
 	DST, RET;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static RoleClassDistributedMaterial fromValue(String v){
+
+	public static RoleClassDistributedMaterial fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

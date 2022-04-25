@@ -47,9 +47,9 @@ import ch.unibe.iam.scg.archie.utils.ProviderHelper;
  * provider. The parameters of a provider are set accordingly. Parameter fields
  * and their content are determined at runtime through annotations.
  * </p>
- * 
+ *
  * $Id: ParametersPanel.java 764 2009-07-24 11:20:03Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 764 $
@@ -57,21 +57,21 @@ import ch.unibe.iam.scg.archie.utils.ProviderHelper;
 public class ParametersPanel extends Composite {
 
 	/**
-	 * Map containing all text fields an their name. Used to feed the query with
-	 * the user input.
+	 * Map containing all text fields an their name. Used to feed the query with the
+	 * user input.
 	 */
 	private Map<String, AbstractWidget> widgetMap;
 
 	/**
-	 * Map containing the getter method names and their default values. We need
-	 * this because of the control decorations that have to be set after the
-	 * text fields have been created.
+	 * Map containing the getter method names and their default values. We need this
+	 * because of the control decorations that have to be set after the text fields
+	 * have been created.
 	 */
 	private Map<String, Object> defaultValuesMap;
 
 	/**
-	 * The query which is selected at the moment and will be configured
-	 * according to the user input in this panel.
+	 * The query which is selected at the moment and will be configured according to
+	 * the user input in this panel.
 	 */
 	private AbstractDataProvider provider;
 
@@ -175,14 +175,16 @@ public class ParametersPanel extends Composite {
 				widget.setDescription(getter.description());
 			}
 
-			/* ****************************************************************
-			 * Get string array and set the items if we have a Combo, that is:
+			/*
+			 * **************************************************************** Get string
+			 * array and set the items if we have a Combo, that is:
 			 * ***************************************************************
-			 * 
-			 * - if there are any items - if the widget is our combo widget - if
-			 * the widget is not a custom vendor widget
+			 *
+			 * - if there are any items - if the widget is our combo widget - if the widget
+			 * is not a custom vendor widget
 			 */
-			if (getter.items().length > 0 && widget instanceof ComboWidget && getter.widgetType() != WidgetTypes.VENDOR) {
+			if (getter.items().length > 0 && widget instanceof ComboWidget
+					&& getter.widgetType() != WidgetTypes.VENDOR) {
 				((ComboWidget) widget).setItems(getter.items());
 			}
 
@@ -195,9 +197,9 @@ public class ParametersPanel extends Composite {
 	}
 
 	/**
-	 * Updates the provider parameters according to the user input in the fields
-	 * in this panel.
-	 * 
+	 * Updates the provider parameters according to the user input in the fields in
+	 * this panel.
+	 *
 	 * @throws Exception
 	 */
 	public void updateProviderParameters() throws Exception {
@@ -206,7 +208,7 @@ public class ParametersPanel extends Composite {
 
 	/**
 	 * Checks the validity of all input fields in this composite.
-	 * 
+	 *
 	 * @return true if all fields are valid, false else.
 	 */
 	public boolean allFieldsValid() {
@@ -219,11 +221,10 @@ public class ParametersPanel extends Composite {
 	}
 
 	/**
-	 * Enables or disables all controls in the <code>fieldMap</code> belonging
-	 * to this <code>ParameterPanel</code>
-	 * 
-	 * @param enabled
-	 *            true to enable, false to disable
+	 * Enables or disables all controls in the <code>fieldMap</code> belonging to
+	 * this <code>ParameterPanel</code>
+	 *
+	 * @param enabled true to enable, false to disable
 	 */
 	@Override
 	public void setEnabled(boolean enabled) {
@@ -236,19 +237,14 @@ public class ParametersPanel extends Composite {
 	}
 
 	/**
-	 * Creates a single widget based on the <code>fieldType</code> parameter
-	 * with given labels and values as well as a validation regex.
-	 * 
-	 * @param parent
-	 *            Composite container for the widget.
-	 * @param label
-	 *            Label for the widget.
-	 * @param widgetType
-	 *            Type of the widget to create.
-	 * @param regex
-	 *            A regex validation object.
-	 * @param vendorClass
-	 *            Class of a vendor specific widget implementation.
+	 * Creates a single widget based on the <code>fieldType</code> parameter with
+	 * given labels and values as well as a validation regex.
+	 *
+	 * @param parent      Composite container for the widget.
+	 * @param label       Label for the widget.
+	 * @param widgetType  Type of the widget to create.
+	 * @param regex       A regex validation object.
+	 * @param vendorClass Class of a vendor specific widget implementation.
 	 * @return An <code>AbstractWidget</code> object.
 	 */
 	private AbstractWidget createWidget(final Composite parent, final String label, WidgetTypes widgetType,
@@ -290,19 +286,14 @@ public class ParametersPanel extends Composite {
 	}
 
 	/**
-	 * Creates a vendor widget object based on the given class. This method is
-	 * used to instantiate custom widgets.
-	 * 
-	 * @param parent
-	 *            Composite container for the widget.
-	 * @param label
-	 *            Label for the widget.
-	 * @param widgetType
-	 *            Type of the widget to create.
-	 * @param regex
-	 *            A regex validation object.
-	 * @param vendorClass
-	 *            Class of a vendor specific widget implementation.
+	 * Creates a vendor widget object based on the given class. This method is used
+	 * to instantiate custom widgets.
+	 *
+	 * @param parent      Composite container for the widget.
+	 * @param label       Label for the widget.
+	 * @param widgetType  Type of the widget to create.
+	 * @param regex       A regex validation object.
+	 * @param vendorClass Class of a vendor specific widget implementation.
 	 * @return An <code>AbstractWidget</code> object.
 	 * @return A vendor widget object, null else.
 	 */
@@ -312,9 +303,9 @@ public class ParametersPanel extends Composite {
 		AbstractWidget widget = null;
 		Class<AbstractWidget> abstractWidgetClass = (Class<AbstractWidget>) vendorClass;
 		try {
-			widget = abstractWidgetClass.getConstructor(
-					new Class[] { Composite.class, int.class, String.class, RegexValidation.class }).newInstance(
-					parent, SWT.NONE, label, regex);
+			widget = abstractWidgetClass
+					.getConstructor(new Class[] { Composite.class, int.class, String.class, RegexValidation.class })
+					.newInstance(parent, SWT.NONE, label, regex);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {

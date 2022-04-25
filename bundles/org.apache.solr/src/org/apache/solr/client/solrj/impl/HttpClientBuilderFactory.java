@@ -21,24 +21,23 @@ import java.util.Optional;
 
 /**
  * Factory interface for configuring {@linkplain SolrHttpClientBuilder}. This
- * relies on the internal HttpClient implementation and is subject to
- * change.
+ * relies on the internal HttpClient implementation and is subject to change.
  *
  * @lucene.experimental
  **/
 public interface HttpClientBuilderFactory extends Closeable {
 
-  /**
-   * This method configures the {@linkplain SolrHttpClientBuilder} by overriding the
-   * configuration of passed SolrHttpClientBuilder or as a new instance.
-   *
-   * @param builder The instance of the {@linkplain SolrHttpClientBuilder} which should
-   *                by configured (optional).
-   * @return the {@linkplain SolrHttpClientBuilder}
-   */
-  public SolrHttpClientBuilder getHttpClientBuilder(Optional<SolrHttpClientBuilder> builder);
+	/**
+	 * This method configures the {@linkplain SolrHttpClientBuilder} by overriding
+	 * the configuration of passed SolrHttpClientBuilder or as a new instance.
+	 *
+	 * @param builder The instance of the {@linkplain SolrHttpClientBuilder} which
+	 *                should by configured (optional).
+	 * @return the {@linkplain SolrHttpClientBuilder}
+	 */
+	public SolrHttpClientBuilder getHttpClientBuilder(Optional<SolrHttpClientBuilder> builder);
 
-  public default void setup(Http2SolrClient client) {
+	public default void setup(Http2SolrClient client) {
 
-  }
+	}
 }

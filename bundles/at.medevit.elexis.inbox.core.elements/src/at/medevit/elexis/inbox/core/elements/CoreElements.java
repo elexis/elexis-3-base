@@ -15,11 +15,11 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.inbox.model.IInboxElementsProvider;
 
 public class CoreElements implements IInboxElementsProvider {
-	
+
 	private static LabResultCreateEventHandler labResultCreateEventHandler;
-	
+
 	@Override
-	public void activate(){
+	public void activate() {
 		// add inbox creation of LabResult
 		if (labResultCreateEventHandler != null) {
 			labResultCreateEventHandler.setActive(true);
@@ -27,18 +27,17 @@ public class CoreElements implements IInboxElementsProvider {
 			LoggerFactory.getLogger(getClass()).warn("No create event handler to activate");
 		}
 	}
-	
+
 	@Override
-	public void deactivate(){
+	public void deactivate() {
 		if (labResultCreateEventHandler != null) {
 			labResultCreateEventHandler.setActive(false);
 		} else {
 			LoggerFactory.getLogger(getClass()).warn("No create event handler to deactivate");
 		}
 	}
-	
-	public static void setLabResultCreateEventHandler(
-		LabResultCreateEventHandler labResultCreateEventHandler){
+
+	public static void setLabResultCreateEventHandler(LabResultCreateEventHandler labResultCreateEventHandler) {
 		CoreElements.labResultCreateEventHandler = labResultCreateEventHandler;
 	}
 }

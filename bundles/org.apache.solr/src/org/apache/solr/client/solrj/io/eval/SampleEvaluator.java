@@ -33,69 +33,76 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class SampleEvaluator extends RecursiveObjectEvaluator implements ManyValueWorker {
 
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public SampleEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
-  
-  @Override
-  public Object doWork(Object ... objects) throws IOException{
-    if(objects.length < 1){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
-    }
+	public SampleEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-    Object first = objects[0];
+	@Override
+	public Object doWork(Object... objects) throws IOException {
+		if (objects.length < 1) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
+					toExpression(constructingFactory)));
+		}
 
-    if(!(first instanceof MultivariateRealDistribution) && !(first instanceof RealDistribution) && !(first instanceof IntegerDistribution) && !(first instanceof MarkovChainEvaluator.MarkovChain)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the first value, expecting a Markov Chain, Real or Integer Distribution",toExpression(constructingFactory), first.getClass().getSimpleName()));
-    }
+		Object first = objects[0];
 
-    Object second = null;
-    if(objects.length > 1) {
-      second = objects[1];
-    }
+		if (!(first instanceof MultivariateRealDistribution) && !(first instanceof RealDistribution)
+				&& !(first instanceof IntegerDistribution) && !(first instanceof MarkovChainEvaluator.MarkovChain)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for the first value, expecting a Markov Chain, Real or Integer Distribution",
+					toExpression(constructingFactory), first.getClass().getSimpleName()));
+		}
 
-    if(first instanceof MarkovChainEvaluator.MarkovChain) {
-      MarkovChainEvaluator.MarkovChain markovChain = (MarkovChainEvaluator.MarkovChain)first;
-      if(second != null) {
-        return Arrays.stream(markovChain.sample(((Number) second).intValue())).mapToObj(item -> item).collect(Collectors.toList());
-      } else {
-        return markovChain.sample();
-      }
-    } else if (first instanceof RealDistribution) {
-      RealDistribution realDistribution = (RealDistribution) first;
-      if (second != null) {
-        return Arrays.stream(realDistribution.sample(((Number) second).intValue())).mapToObj(item -> item).collect(Collectors.toList());
-      } else {
-        return realDistribution.sample();
-      }
-    }else if(first instanceof MultivariateNormalDistribution) {
-      if(second != null) {
-        MultivariateNormalDistribution multivariateNormalDistribution = (MultivariateNormalDistribution)first;
-        int size = ((Number)second).intValue();
-        double[][] samples = new double[size][];
-        for(int i=0; i<size; ++i) {
-          samples[i] =  multivariateNormalDistribution.sample();
-        }
+		Object second = null;
+		if (objects.length > 1) {
+			second = objects[1];
+		}
 
-        return new Matrix(samples);
-      } else {
-        MultivariateNormalDistribution multivariateNormalDistribution = (MultivariateNormalDistribution)first;
-        double[] sample = multivariateNormalDistribution.sample();
-        List<Number> sampleList = new ArrayList<>(sample.length);
-        for(int i=0; i<sample.length; i++) {
-          sampleList.add(sample[i]);
-        }
-        return sampleList;
-      }
-    } else {
-      IntegerDistribution integerDistribution = (IntegerDistribution) first;
-      if(second != null) {
-        return Arrays.stream(integerDistribution.sample(((Number) second).intValue())).mapToObj(item -> item).collect(Collectors.toList());
-      } else {
-        return integerDistribution.sample();
-      }
-    }
-  }
+		if (first instanceof MarkovChainEvaluator.MarkovChain) {
+			MarkovChainEvaluator.MarkovChain markovChain = (MarkovChainEvaluator.MarkovChain) first;
+			if (second != null) {
+				return Arrays.stream(markovChain.sample(((Number) second).intValue())).mapToObj(item -> item)
+						.collect(Collectors.toList());
+			} else {
+				return markovChain.sample();
+			}
+		} else if (first instanceof RealDistribution) {
+			RealDistribution realDistribution = (RealDistribution) first;
+			if (second != null) {
+				return Arrays.stream(realDistribution.sample(((Number) second).intValue())).mapToObj(item -> item)
+						.collect(Collectors.toList());
+			} else {
+				return realDistribution.sample();
+			}
+		} else if (first instanceof MultivariateNormalDistribution) {
+			if (second != null) {
+				MultivariateNormalDistribution multivariateNormalDistribution = (MultivariateNormalDistribution) first;
+				int size = ((Number) second).intValue();
+				double[][] samples = new double[size][];
+				for (int i = 0; i < size; ++i) {
+					samples[i] = multivariateNormalDistribution.sample();
+				}
+
+				return new Matrix(samples);
+			} else {
+				MultivariateNormalDistribution multivariateNormalDistribution = (MultivariateNormalDistribution) first;
+				double[] sample = multivariateNormalDistribution.sample();
+				List<Number> sampleList = new ArrayList<>(sample.length);
+				for (int i = 0; i < sample.length; i++) {
+					sampleList.add(sample[i]);
+				}
+				return sampleList;
+			}
+		} else {
+			IntegerDistribution integerDistribution = (IntegerDistribution) first;
+			if (second != null) {
+				return Arrays.stream(integerDistribution.sample(((Number) second).intValue())).mapToObj(item -> item)
+						.collect(Collectors.toList());
+			} else {
+				return integerDistribution.sample();
+			}
+		}
+	}
 }

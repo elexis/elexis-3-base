@@ -23,11 +23,12 @@ public class Messages extends NLS {
 	public static String Prefs_FS_Open;
 	public static String Prefs_DialogSettings;
 	public static String Prefs_btnAnswerAutoclear;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
-	private Messages(){}
+
+	private Messages() {
+	}
 }

@@ -19,21 +19,21 @@ import at.medevit.elexis.inbox.ui.part.provider.InboxElementUiExtension;
 import ch.elexis.core.model.IPatient;
 
 public class PatientInboxElements {
-	
+
 	private static InboxElementUiExtension inboxElementUiExtension;
-	
+
 	private IPatient patient;
 	private HashSet<IInboxElement> elements = new HashSet<IInboxElement>();
-	
-	public PatientInboxElements(IPatient patient){
+
+	public PatientInboxElements(IPatient patient) {
 		this.patient = patient;
 	}
-	
-	public List<IInboxElement> getElements(){
+
+	public List<IInboxElement> getElements() {
 		return new ArrayList<IInboxElement>(elements);
 	}
-	
-	public void addElement(IInboxElement element){
+
+	public void addElement(IInboxElement element) {
 		GroupedInboxElements grouped = getGrouped(this, element);
 		if (grouped != null) {
 			elements.add(grouped);
@@ -41,24 +41,23 @@ public class PatientInboxElements {
 			elements.add(element);
 		}
 	}
-	
-	private GroupedInboxElements getGrouped(PatientInboxElements patientInboxElements,
-		IInboxElement element){
+
+	private GroupedInboxElements getGrouped(PatientInboxElements patientInboxElements, IInboxElement element) {
 		if (inboxElementUiExtension == null) {
 			inboxElementUiExtension = new InboxElementUiExtension();
 		}
 		return inboxElementUiExtension.getGrouped(patientInboxElements, element);
 	}
-	
-	public void removeElement(IInboxElement element){
+
+	public void removeElement(IInboxElement element) {
 		elements.remove(element);
 	}
-	
-	public IPatient getPatient(){
+
+	public IPatient getPatient() {
 		return patient;
 	}
 
-	public String toString(){
+	public String toString() {
 		if (patient == null) {
 			return "nicht zugeordnet";
 		}

@@ -1,18 +1,19 @@
 package at.medevit.elexis.inbox.model;
 
 public enum InboxElementType {
-		FILE("FILE://"), DB("");
+	FILE("FILE://"), DB("");
+
 	private final String prefix;
-	
-	private InboxElementType(String prefix){
+
+	private InboxElementType(String prefix) {
 		this.prefix = prefix;
 	}
-	
-	public String getPrefix(){
+
+	public String getPrefix() {
 		return prefix;
 	}
-	
-	public static InboxElementType parseType(String uri){
+
+	public static InboxElementType parseType(String uri) {
 		if (uri != null) {
 			if (uri.contains("::")) {
 				return DB;

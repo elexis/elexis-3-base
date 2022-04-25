@@ -28,7 +28,7 @@ import ch.unibe.iam.scg.archie.ArchieActivator;
  * can use the field support built into JFace that allows us to create a page
  * that is small and knows how to save, restore and apply itself.
  * </p>
- * 
+ *
  * <p>
  * This page is used to modify preferences only. They are stored in the
  * preference store that belongs to the main plug-in class. That way,
@@ -47,7 +47,8 @@ public class ArchiePreferencePage extends FieldEditorPreferencePage implements I
 		this.setPreferenceStore(ArchieActivator.getInstance().getPreferenceStore());
 		this.setDefaults();
 
-		this.setDescription("Archie settings page. Use the following input fields to manipulate Archie's default behaviour and adjust to fit your preferences.");
+		this.setDescription(
+				"Archie settings page. Use the following input fields to manipulate Archie's default behaviour and adjust to fit your preferences.");
 	}
 
 	/**
@@ -59,9 +60,9 @@ public class ArchiePreferencePage extends FieldEditorPreferencePage implements I
 	}
 
 	/**
-	 * Creates the field editors. Field editors are abstractions of the common
-	 * GUI blocks needed to manipulate various types of preferences. Each field
-	 * editor knows how to save and restore itself.
+	 * Creates the field editors. Field editors are abstractions of the common GUI
+	 * blocks needed to manipulate various types of preferences. Each field editor
+	 * knows how to save and restore itself.
 	 */
 	@Override
 	public void createFieldEditors() {

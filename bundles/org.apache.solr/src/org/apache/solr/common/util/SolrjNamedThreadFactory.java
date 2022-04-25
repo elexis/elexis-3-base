@@ -23,7 +23,7 @@ package org.apache.solr.common.util;
  */
 @Deprecated
 public class SolrjNamedThreadFactory extends SolrNamedThreadFactory {
-    public SolrjNamedThreadFactory(String namePrefix) {
-        super(namePrefix);
-    }
+	public SolrjNamedThreadFactory(String namePrefix) {
+		super(namePrefix);
+	}
 }

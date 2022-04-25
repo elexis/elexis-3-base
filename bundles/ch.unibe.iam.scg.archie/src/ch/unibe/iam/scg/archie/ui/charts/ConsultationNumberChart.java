@@ -28,15 +28,15 @@ import org.jfree.ui.RectangleInsets;
  * <p>
  * Creates a Chart which shows number of consultations in the last six months.
  * </p>
- * 
+ *
  * $Id: ConsultationNumberChart.java 668 2008-12-14 22:43:13Z hephster $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 668 $
  */
 public class ConsultationNumberChart extends AbstractChartComposite {
-	
+
 	private static final String CHART_TITLE = "Number of Consultations";
 
 	/**
@@ -49,7 +49,7 @@ public class ConsultationNumberChart extends AbstractChartComposite {
 
 	/**
 	 * @see ch.unibe.iam.scg.archie.ui.charts.AbstractChartComposite#
-	 * initializeChart()
+	 *      initializeChart()
 	 */
 	@Override
 	protected JFreeChart initializeChart() {
@@ -60,10 +60,10 @@ public class ConsultationNumberChart extends AbstractChartComposite {
 				false, // create legend?
 				true, // generate tooltips?
 				false // generate URLs?
-				);
+		);
 
-		chart.setBackgroundPaint(new Color(this.parent.getBackground().getRed(),
-				this.parent.getBackground().getGreen(), this.parent.getBackground().getBlue()));
+		chart.setBackgroundPaint(new Color(this.parent.getBackground().getRed(), this.parent.getBackground().getGreen(),
+				this.parent.getBackground().getBlue()));
 
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setDomainGridlinePaint(Color.lightGray);
@@ -88,7 +88,7 @@ public class ConsultationNumberChart extends AbstractChartComposite {
 
 	/**
 	 * @see ch.unibe.iam.scg.archie.ui.charts.AbstractChartComposite#
-	 * initializeCreator()
+	 *      initializeCreator()
 	 */
 	@Override
 	protected AbstractDatasetCreator initializeCreator() {

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 
@@ -35,13 +35,12 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 
 /**
  * An AbstractDataProvider that calculates income due at a given date
- * 
+ *
  * @author gerry
- * 
+ *
  */
 public class ListeNachFaelligkeit extends AbstractDataProvider {
-	private static final String ANALYSIERE_RECHNUNGEN =
-		Messages.ListeNachFaelligkeit_AnalyzingBills;
+	private static final String ANALYSIERE_RECHNUNGEN = Messages.ListeNachFaelligkeit_AnalyzingBills;
 	private static final String DATENBANKABFRAGE = Messages.ListeNachFaelligkeit_DatabaseQuery;
 	private static final String NAME = Messages.ListeNachFaelligkeit_BillsAfterDaysDue;
 	private static final String DUE_AFTER_TEXT = "Fällig nach Tagen"; //$NON-NLS-1$
@@ -50,44 +49,44 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 	private int dueAfter;
 	private DateTool stichTag = new DateTool();
 	private boolean bOnlyActiveMandator;
-	
-	public ListeNachFaelligkeit(){
+
+	public ListeNachFaelligkeit() {
 		super(NAME);
-		
+
 	}
-	
+
 	@SetProperty(name = DUE_DATE_TEXT)
-	public void setStichtag(String stichtag) throws SetDataException{
+	public void setStichtag(String stichtag) throws SetDataException {
 		stichTag = new DateTool(stichtag);
 	}
-	
+
 	@GetProperty(name = DUE_DATE_TEXT, widgetType = WidgetTypes.TEXT_DATE, index = -2)
-	public String getStichtag(){
+	public String getStichtag() {
 		return stichTag.toString(DateTool.DATE_GER);
 	}
-	
+
 	@GetProperty(name = DUE_AFTER_TEXT, widgetType = WidgetTypes.TEXT_NUMERIC)
-	public int getDueAfter(){
+	public int getDueAfter() {
 		return dueAfter;
 	}
-	
+
 	@SetProperty(name = DUE_AFTER_TEXT)
-	public void setDueAfter(int date){
+	public void setDueAfter(int date) {
 		dueAfter = date;
 	}
-	
+
 	@GetProperty(name = FIELD_ACTMANDATOR, widgetType = WidgetTypes.BUTTON_CHECKBOX, index = 2)
-	public boolean getOnlyActiveMandator(){
+	public boolean getOnlyActiveMandator() {
 		return bOnlyActiveMandator;
 	}
-	
+
 	@SetProperty(name = FIELD_ACTMANDATOR, index = 1)
-	public void setOnlyActiveMandator(boolean val){
+	public void setOnlyActiveMandator(boolean val) {
 		bOnlyActiveMandator = val;
 	}
-	
+
 	@Override
-	protected IStatus createContent(IProgressMonitor monitor){
+	protected IStatus createContent(IProgressMonitor monitor) {
 		int totalwork = 1000000;
 		monitor.beginTask(NAME, totalwork);
 		monitor.subTask(DATENBANKABFRAGE);
@@ -128,7 +127,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 							result.add(row);
 						}
 					}
-					
+
 				}
 			}
 			monitor.worked(step);
@@ -137,9 +136,9 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		monitor.done();
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
-	protected List<String> createHeadings(){
+	protected List<String> createHeadings() {
 		List<String> ret = new ArrayList<String>();
 		ret.add(Messages.ListeNachFaelligkeit_PatientNr);
 		ret.add(Messages.ListeNachFaelligkeit_BillNr);
@@ -147,10 +146,10 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		ret.add(Messages.ListeNachFaelligkeit_Amount);
 		return ret;
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return NAME;
 	}
-	
+
 }

@@ -10,9 +10,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import at.medevit.elexis.inbox.ui.part.InboxView;
 
 public class ExpandAllCommand extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (part instanceof InboxView) {
 			InboxView view = (InboxView) part;

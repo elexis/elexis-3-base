@@ -38,13 +38,13 @@ public final class MedicationLabel {
 		if (mandator != null) {
 			page.appendChild(mandator);
 		}
-		
+
 		return DomDocument.toInputStream(doc);
 	}
-	
-	public static InputStream create(IPrescription iPrescription) throws Exception{
+
+	public static InputStream create(IPrescription iPrescription) throws Exception {
 		Document doc = DomDocument.newDocument();
-		
+
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.MEDICATION_LABEL);
 		PageProperties.setCurrentDate(page);
 		doc.appendChild(page);
@@ -52,12 +52,12 @@ public final class MedicationLabel {
 		page.appendChild(medication);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
-		
+
 		Element mandator = MandatorElement.create(doc);
 		if (mandator != null) {
 			page.appendChild(mandator);
 		}
-		
+
 		return DomDocument.toInputStream(doc);
 	}
 }

@@ -36,9 +36,9 @@ import ch.unibe.iam.scg.archie.ui.views.StatisticsView;
  * <code>IStructuredSelection</code>, this way we can assume the data is coming
  * from a table, most likely one that has been built from a provider's dataset.
  * </p>
- * 
+ *
  * $Id: CopySelected.java 672 2008-12-15 10:53:14Z hephster $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 672 $
@@ -54,8 +54,9 @@ public class CopySelected extends AbstractHandler {
 		IWorkbenchPage page = window.getActivePage();
 		IViewPart view = (IViewPart) page.findView(StatisticsView.ID);
 		ISelection selection = view.getSite().getSelectionProvider().getSelection();
-		if(selection==null) return null;
-		
+		if (selection == null)
+			return null;
+
 		// build selection string
 		StringBuilder builder = new StringBuilder();
 		if (selection instanceof IStructuredSelection) {
@@ -76,11 +77,9 @@ public class CopySelected extends AbstractHandler {
 
 	/**
 	 * Composes a string from a dataset row that resides in a table.
-	 * 
-	 * @param row
-	 *            Array of <code>Comparable</code> objects.
-	 * @return String composed from the array fields, separated by
-	 *         <code>\t</code>
+	 *
+	 * @param row Array of <code>Comparable</code> objects.
+	 * @return String composed from the array fields, separated by <code>\t</code>
 	 */
 	private String datasetRowToString(Comparable<?>[] row) {
 		String rowString = "";

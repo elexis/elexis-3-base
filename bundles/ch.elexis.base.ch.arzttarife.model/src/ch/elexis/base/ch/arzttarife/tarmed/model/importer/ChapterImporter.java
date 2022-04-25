@@ -21,21 +21,21 @@ import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
 
 public class ChapterImporter {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ChapterImporter.class);
-	
+
 	private JdbcLink cacheDb;
 	private String lang;
 	private String law;
-	
+
 	private int chapterCount;
-	
+
 	private HashMap<String, List<TarmedLeistung>> importedChapters;
-	
+
 	private TimeTool validFrom;
 	private TimeTool validTo;
-	
-	public ChapterImporter(JdbcLink cacheDb, String lang, String law){
+
+	public ChapterImporter(JdbcLink cacheDb, String lang, String law) {
 		this.cacheDb = cacheDb;
 		this.lang = lang;
 		this.law = law;
@@ -43,20 +43,19 @@ public class ChapterImporter {
 		validFrom = new TimeTool();
 		validTo = new TimeTool();
 	}
-	
-	public void setChapterCount(int count){
+
+	public void setChapterCount(int count) {
 		this.chapterCount = count;
 	}
-	
-	public IStatus doImport(IProgressMonitor ipm) throws SQLException, IOException{
+
+	public IStatus doImport(IProgressMonitor ipm) throws SQLException, IOException {
 		Stm source = null;
 		try {
 			ipm.subTask(Messages.TarmedImporter_chapter);
-			
+
 			List<Object> imported = new ArrayList<>();
 			source = cacheDb.getStatement();
-			try (ResultSet res = source.query(String
-				.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE='%s'", //$NON-NLS-1$
+			try (ResultSet res = source.query(String.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE='%s'", //$NON-NLS-1$
 					TarmedReferenceDataImporter.ImportPrefix, lang))) {
 				int count = 0;
 				while (res != null && res.next()) {
@@ -66,7 +65,7 @@ public class ChapterImporter {
 					}
 					validFrom.set(res.getString("GUELTIG_VON"));
 					validTo.set(res.getString("GUELTIG_BIS"));
-					
+
 					int subcap = code.lastIndexOf('.');
 					String parentId = "NIL"; //$NON-NLS-1$
 					if (subcap != -1) {
@@ -82,16 +81,15 @@ public class ChapterImporter {
 					tl.setDigniQuanti("");
 					tl.setSparte("");
 					tl.setChapter(true);
-					
+
 					String text = ImporterUtil.getAsString(res, "BEZ_255"); //$NON-NLS-1$
 					tl.setTx255(text);
 					tl.setGueltigVon(validFrom.toLocalDate());
 					tl.setGueltigBis(validTo.toLocalDate());
 					tl.setLaw(law);
-					
-					ipm.subTask(Messages.TarmedImporter_chapter + " (" + count++ + "/"
-						+ chapterCount + ")");
-					
+
+					ipm.subTask(Messages.TarmedImporter_chapter + " (" + count++ + "/" + chapterCount + ")");
+
 					imported.add(tl);
 					addToImportedChapters(tl);
 					ipm.worked(1);
@@ -108,8 +106,8 @@ public class ChapterImporter {
 		}
 		return Status.OK_STATUS;
 	}
-	
-	private void addToImportedChapters(TarmedLeistung tl){
+
+	private void addToImportedChapters(TarmedLeistung tl) {
 		String code = tl.getCode();
 		List<TarmedLeistung> list = importedChapters.get(code);
 		if (list == null) {
@@ -120,15 +118,15 @@ public class ChapterImporter {
 		importedChapters.put(code, list);
 		logger.debug("Imported " + tl.getCode());
 	}
-	
-	private String getParentId(String parentCode) throws SQLException{
+
+	private String getParentId(String parentCode) throws SQLException {
 		Stm source = null;
 		List<TimeTool> parentValidFroms = new ArrayList<>();
 		try {
 			source = cacheDb.getStatement();
 			try (ResultSet res = source
-				.query(String.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE='%s' AND KNR='%s'", //$NON-NLS-1$
-					TarmedReferenceDataImporter.ImportPrefix, lang, parentCode))) {
+					.query(String.format("SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE='%s' AND KNR='%s'", //$NON-NLS-1$
+							TarmedReferenceDataImporter.ImportPrefix, lang, parentCode))) {
 				while (res != null && res.next()) {
 					String code = res.getString("KNR"); //$NON-NLS-1$
 					if (code.trim().equals("I")) { //$NON-NLS-1$
@@ -152,33 +150,32 @@ public class ChapterImporter {
 				latestParentValidFrom = parentValidFrom;
 				continue;
 			}
-			if (parentValidFrom.isBeforeOrEqual(validTo)
-				&& parentValidFrom.isAfter(latestParentValidFrom)) {
+			if (parentValidFrom.isBeforeOrEqual(validTo) && parentValidFrom.isAfter(latestParentValidFrom)) {
 				latestParentValidFrom = parentValidFrom;
 			}
 		}
 		if (latestParentValidFrom == null) {
-			throw new IllegalStateException("No parent valid from found for " + parentCode + " in "
-				+ parentValidFroms.size() + " values");
+			throw new IllegalStateException(
+					"No parent valid from found for " + parentCode + " in " + parentValidFroms.size() + " values");
 		}
-		
+
 		return parentCode + "-" + latestParentValidFrom.toString(TimeTool.DATE_COMPACT) //$NON-NLS-1$
-			+ getLawIdExtension();
+				+ getLawIdExtension();
 	}
-	
-	private String getId(ResultSet res) throws SQLException{
+
+	private String getId(ResultSet res) throws SQLException {
 		return res.getString("KNR") + "-" + validFrom.toString(TimeTool.DATE_COMPACT) //$NON-NLS-1$
-			+ getLawIdExtension();
+				+ getLawIdExtension();
 	}
-	
-	private String getLawIdExtension(){
+
+	private String getLawIdExtension() {
 		if (law != null && !law.isEmpty()) {
 			return "-" + law;
 		}
 		return "";
 	}
-	
-	public String getIdForCode(String lookupCode, LocalDate lookupValidFrom, String lookupLaw){
+
+	public String getIdForCode(String lookupCode, LocalDate lookupValidFrom, String lookupLaw) {
 		List<TarmedLeistung> list = importedChapters.get(lookupCode);
 		if (!list.isEmpty()) {
 			if (list.size() == 1) {
@@ -188,9 +185,8 @@ public class ChapterImporter {
 				for (TarmedLeistung tarmedLeistung : list) {
 					String currLaw = tarmedLeistung.getLaw();
 					LocalDate currValidFrom = tarmedLeistung.getGueltigVon();
-					if ((currValidFrom.isAfter(lookupValidFrom)
-						|| currValidFrom.isEqual(lookupValidFrom))
-						&& currLaw.equals(lookupLaw)) {
+					if ((currValidFrom.isAfter(lookupValidFrom) || currValidFrom.isEqual(lookupValidFrom))
+							&& currLaw.equals(lookupLaw)) {
 						return tarmedLeistung.getId();
 					}
 				}

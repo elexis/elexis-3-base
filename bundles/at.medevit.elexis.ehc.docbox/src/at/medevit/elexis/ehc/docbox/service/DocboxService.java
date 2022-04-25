@@ -68,44 +68,40 @@ import ch.rgw.tools.TimeTool;
 @Component
 public class DocboxService {
 	private static final Logger logger = LoggerFactory.getLogger(DocboxService.class);
-	
+
 	public static final String DOMAIN_KSK = "www.xid.ch/id/ksk"; //$NON-NLS-1$
-	
-	public static final String[] DOSE_TIME = {
-		"190001010800", "190001011200", "190001011600", "190001012000"
-	};
+
+	public static final String[] DOSE_TIME = { "190001010800", "190001011200", "190001011600", "190001012000" };
 
 	private static EhcCoreService ehcCoreService;
-	
+
 	@Reference
-	public synchronized void setEhcCoreService(EhcCoreService service){
+	public synchronized void setEhcCoreService(EhcCoreService service) {
 		ehcCoreService = service;
 	}
-	
-	public synchronized void unsetEhcCoreService(EhcCoreService service){
+
+	public synchronized void unsetEhcCoreService(EhcCoreService service) {
 		if (ehcCoreService == service) {
 			ehcCoreService = null;
 		}
 	}
-	
+
 	private static IFormattedOutputFactory foFactory;
-	
+
 	@Reference
-	public synchronized void setFormattedOutputFactory(IFormattedOutputFactory service){
+	public synchronized void setFormattedOutputFactory(IFormattedOutputFactory service) {
 		foFactory = service;
 	}
-	
-	public synchronized void unsetFormattedOutputFactory(IFormattedOutputFactory service){
+
+	public synchronized void unsetFormattedOutputFactory(IFormattedOutputFactory service) {
 		if (foFactory == service) {
 			foFactory = null;
 		}
 	}
-	
-	public static AbstractCdaChV1<?> getPrescriptionDocument(Rezept rezept){
-		AbstractCdaChV1<?> document =
-			ehcCoreService.createCdaChDocument(rezept.getPatient(),
-				rezept.getMandant());
-		
+
+	public static AbstractCdaChV1<?> getPrescriptionDocument(Rezept rezept) {
+		AbstractCdaChV1<?> document = ehcCoreService.createCdaChDocument(rezept.getPatient(), rezept.getMandant());
+
 		ClinicalDocument clinicalDocument = document.getDocRoot().getClinicalDocument();
 		// clear template ids for now
 		clinicalDocument.getTemplateIds().clear();
@@ -133,7 +129,7 @@ public class DocboxService {
 		loinccode.setDisplayName("Prescriptions");
 		loinccode.setCodeSystemName("LOINC");
 		clinicalDocument.setCode(loinccode);
-		
+
 		// RezeptID
 		id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105.1.6");
 		id.setExtension(getRezeptId(rezept));
@@ -148,7 +144,7 @@ public class DocboxService {
 		confidentiality.setCodeSystem("2.16.840.1.113883.5.25");
 		confidentiality.setCode("N");
 		clinicalDocument.setConfidentialityCode(confidentiality);
-		
+
 		// add empty id to patient role
 		PatientRole patientRole = clinicalDocument.getPatientRoles().get(0);
 		patientRole.getIds().add(DatatypesFactory.eINSTANCE.createII());
@@ -161,14 +157,12 @@ public class DocboxService {
 		Rechnungssteller rechnungssteller = rezept.getMandant().getRechnungssteller();
 		Organization organization = null;
 		if (rechnungssteller.istOrganisation()) {
-			organization =
-				new Organization(rechnungssteller.get(Rechnungssteller.FLD_NAME1) + " "
+			organization = new Organization(rechnungssteller.get(Rechnungssteller.FLD_NAME1) + " "
 					+ rechnungssteller.get(Rechnungssteller.FLD_NAME2));
 		} else {
-			organization =
-				new Organization(rechnungssteller.get(Person.TITLE) + " "
-					+ rechnungssteller.get(Rechnungssteller.FLD_NAME1) + " "
-					+ rechnungssteller.get(Rechnungssteller.FLD_NAME2));
+			organization = new Organization(
+					rechnungssteller.get(Person.TITLE) + " " + rechnungssteller.get(Rechnungssteller.FLD_NAME1) + " "
+							+ rechnungssteller.get(Rechnungssteller.FLD_NAME2));
 		}
 		organization.addAddress(EhcCoreMapper.getEhcAddress(rechnungssteller.getAnschrift()));
 		String phone = (String) rechnungssteller.get(Rechnungssteller.FLD_PHONE1);
@@ -180,12 +174,11 @@ public class DocboxService {
 		// add ZSR to custodian organization
 		id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105.1.1.2");
 		id.setExtension(getZsr(rezept));
-		clinicalDocument.getCustodian().getAssignedCustodian()
-			.getRepresentedCustodianOrganization().getIds().add(id);
+		clinicalDocument.getCustodian().getAssignedCustodian().getRepresentedCustodianOrganization().getIds().add(id);
 		// CDA body und rezeptzeilen
 		Section section = CDAFactory.eINSTANCE.createSection();
 		clinicalDocument.addSection(section);
-		
+
 		CE prescriptionCode = DatatypesFactory.eINSTANCE.createCE();
 		prescriptionCode.setNullFlavor(NullFlavor.NA);
 		CD translationCode = DatatypesFactory.eINSTANCE.createCD();
@@ -193,7 +186,7 @@ public class DocboxService {
 		translationCode.setCode("VERORDNETEMEDIKAMENTE");
 		prescriptionCode.getTranslations().add(translationCode);
 		section.setCode(prescriptionCode);
-		
+
 		ST title = DatatypesFactory.eINSTANCE.createST();
 		title.addText("Medikamente");
 		section.setTitle(title);
@@ -202,22 +195,20 @@ public class DocboxService {
 		List<Prescription> prescriptions = rezept.getLines();
 		for (int idx = 0; idx < prescriptions.size(); idx++) {
 			Prescription prescription = prescriptions.get(idx);
-			SubstanceAdministration administration =
-				CDAFactory.eINSTANCE.createSubstanceAdministration();
+			SubstanceAdministration administration = CDAFactory.eINSTANCE.createSubstanceAdministration();
 			administration.setMoodCode(x_DocumentSubstanceMood.RQO);
 			// pharmacode
 			String pharmaCode = prescription.getArtikel().getPharmaCode();
 			II pharmacodeId = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.2.6.1");
 			pharmacodeId.setExtension(pharmaCode);
 			administration.getIds().add(pharmacodeId);
-			
+
 			// atc code as material
 			String atcCode = prescription.getArtikel().getATC_code();
 			ManufacturedProduct product = CDAFactory.eINSTANCE.createManufacturedProduct();
 			Material material = CDAFactory.eINSTANCE.createMaterial();
 			if (atcCode != null && !atcCode.isEmpty()) {
-				material.setCode(DatatypesFactory.eINSTANCE.createCE(atcCode,
-					"2.16.840.1.113883.6.73"));
+				material.setCode(DatatypesFactory.eINSTANCE.createCE(atcCode, "2.16.840.1.113883.6.73"));
 			} else {
 				material.setCode(DatatypesFactory.eINSTANCE.createCE());
 			}
@@ -235,11 +226,11 @@ public class DocboxService {
 			TEL reference = DatatypesFactory.eINSTANCE.createTEL();
 			reference.setValue("#m" + idx);
 			text.setReference(reference);
-			//			text.addText("<reference value=\"#m" + idx + "\" />");
+			// text.addText("<reference value=\"#m" + idx + "\" />");
 			administration.setText(text);
 			// text of section
 			addMedicationText(sectionText, prescription, idx);
-			
+
 			section.addSubstanceAdministration(administration);
 		}
 		addMedicationTextEnd(sectionText);
@@ -247,13 +238,11 @@ public class DocboxService {
 
 		return document;
 	}
-	
-	private static void addMedicationText(StringBuilder sectionText, Prescription prescription,
-		int id){
+
+	private static void addMedicationText(StringBuilder sectionText, Prescription prescription, int id) {
 		// article
 		sectionText.append("<tr>\n<td>\n");
-		sectionText.append("<content ID=\"m" + id + "\"> " + prescription.getArtikel().getLabel()
-			+ "</content>");
+		sectionText.append("<content ID=\"m" + id + "\"> " + prescription.getArtikel().getLabel() + "</content>");
 		sectionText.append("\n</td>");
 		// dose
 		sectionText.append("\n<td>\n");
@@ -272,17 +261,17 @@ public class DocboxService {
 		sectionText.append("\n</td>\n</tr>");
 	}
 
-	private static void addMedicationTextStart(StringBuilder sectionText){
+	private static void addMedicationTextStart(StringBuilder sectionText) {
 		sectionText.append("<table>\n<thead>\n<tr>\n")
-			.append("<th>Präparat</th><th>Dosis</th><th>Gültigkeit</th><th>Verabreichung</th>")
-			.append("\n</tr>\n</thead>\n").append("<tbody>\n");
+				.append("<th>Präparat</th><th>Dosis</th><th>Gültigkeit</th><th>Verabreichung</th>")
+				.append("\n</tr>\n</thead>\n").append("<tbody>\n");
 	}
-	
-	private static void addMedicationTextEnd(StringBuilder sectionText){
+
+	private static void addMedicationTextEnd(StringBuilder sectionText) {
 		sectionText.append("\n</tbody>\n</table>\n");
 	}
 
-	private static void addQuantity(SubstanceAdministration administration, int quantity){
+	private static void addQuantity(SubstanceAdministration administration, int quantity) {
 		if (administration != null) {
 			EntryRelationship relationship = CDAFactory.eINSTANCE.createEntryRelationship();
 			relationship.setTypeCode(x_ActRelationshipEntryRelationship.REFR);
@@ -297,8 +286,8 @@ public class DocboxService {
 			administration.getEntryRelationships().add(relationship);
 		}
 	}
-	
-	private static void addRemark(SubstanceAdministration administration, String bemerkung){
+
+	private static void addRemark(SubstanceAdministration administration, String bemerkung) {
 		if (administration != null && bemerkung != null && !bemerkung.isEmpty()) {
 			EntryRelationship relationship = CDAFactory.eINSTANCE.createEntryRelationship();
 			relationship.setTypeCode(x_ActRelationshipEntryRelationship.SPRT);
@@ -315,8 +304,8 @@ public class DocboxService {
 			administration.getEntryRelationships().add(relationship);
 		}
 	}
-	
-	private static void addDose(SubstanceAdministration administration, String dosis){
+
+	private static void addDose(SubstanceAdministration administration, String dosis) {
 		ArrayList<Float> doseFloats = Prescription.getDoseAsFloats(dosis);
 		if (!doseFloats.isEmpty()) {
 			if (doseFloats.size() == 1) {
@@ -329,8 +318,7 @@ public class DocboxService {
 				// morning, midday, evening, night
 				for (int i = 0; i < doseFloats.size(); i++) {
 					if (doseFloats.get(i) > 0) {
-						SubstanceAdministration doseAdministration =
-							addDoseAdministration(administration);
+						SubstanceAdministration doseAdministration = addDoseAdministration(administration);
 						if (i < 4) {
 							addEffectiveTime(doseAdministration, DOSE_TIME[i], "1", "d");
 						}
@@ -342,14 +330,13 @@ public class DocboxService {
 		// default do not encode ... info has to be in remark or text form
 	}
 
-	private static SubstanceAdministration addDoseAdministration(
-		SubstanceAdministration administration){
+	private static SubstanceAdministration addDoseAdministration(SubstanceAdministration administration) {
 		if (administration != null) {
 			EntryRelationship relationship = CDAFactory.eINSTANCE.createEntryRelationship();
 			relationship.setTypeCode(x_ActRelationshipEntryRelationship.COMP);
 			SubstanceAdministration ret = CDAFactory.eINSTANCE.createSubstanceAdministration();
 			ret.setMoodCode(x_DocumentSubstanceMood.RQO);
-			
+
 			ManufacturedProduct product = CDAFactory.eINSTANCE.createManufacturedProduct();
 			Material material = CDAFactory.eINSTANCE.createMaterial();
 			material.setCode(DatatypesFactory.eINSTANCE.createCE());
@@ -364,9 +351,8 @@ public class DocboxService {
 		}
 		return null;
 	}
-	
-	private static void addDoseQuantity(SubstanceAdministration administration, Float value,
-		String unit){
+
+	private static void addDoseQuantity(SubstanceAdministration administration, Float value, String unit) {
 		if (administration != null) {
 			IVL_PQ doseQuantity = DatatypesFactory.eINSTANCE.createIVL_PQ();
 			PQ quantity = DatatypesFactory.eINSTANCE.createPQ();
@@ -377,8 +363,8 @@ public class DocboxService {
 		}
 	}
 
-	private static void addEffectiveTime(SubstanceAdministration administration, String time,
-		String periodValue, String periodUnit){
+	private static void addEffectiveTime(SubstanceAdministration administration, String time, String periodValue,
+			String periodUnit) {
 		if (administration != null) {
 			PIVL_TS effectiveTime = DatatypesFactory.eINSTANCE.createPIVL_TS();
 			effectiveTime.setOperator(SetOperator.A);
@@ -393,32 +379,30 @@ public class DocboxService {
 		}
 	}
 
-	public static ByteArrayOutputStream getPrescriptionPdf(ByteArrayOutputStream cdaOutput){
-		IFormattedOutput foImpl =
-			foFactory.getFormattedOutputImplementation(ObjectType.XMLSTREAM, OutputType.PDF);
-		
+	public static ByteArrayOutputStream getPrescriptionPdf(ByteArrayOutputStream cdaOutput) {
+		IFormattedOutput foImpl = foFactory.getFormattedOutputImplementation(ObjectType.XMLSTREAM, OutputType.PDF);
+
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		
+
 		try {
 			foImpl.transform(new ByteArrayInputStream(cdaOutput.toByteArray()),
-				DocboxService.class.getResourceAsStream("/rsc/xsl/prescription.xsl"), out);
+					DocboxService.class.getResourceAsStream("/rsc/xsl/prescription.xsl"), out);
 		} catch (Exception e) {
 			logger.error("Could not create prescription PDF" + e);
 		}
 
 		return out;
 	}
-	
-	public static ByteArrayOutputStream getPrescriptionPdf(AbstractCdaChV1<?> cdaPrescription)
-		throws Exception{
+
+	public static ByteArrayOutputStream getPrescriptionPdf(AbstractCdaChV1<?> cdaPrescription) throws Exception {
 		ByteArrayOutputStream cdaOutput = new ByteArrayOutputStream();
 		CDAUtil.save(cdaPrescription.getDocRoot().getClinicalDocument(), cdaOutput);
 		return getPrescriptionPdf(cdaOutput);
 	}
-	
-	public static String sendPrescription(InputStream xmlFile, InputStream pdfFile){
+
+	public static String sendPrescription(InputStream xmlFile, InputStream pdfFile) {
 		SendClinicalDocumentClient send = new SendClinicalDocumentClient();
-		
+
 		boolean success = send.sendClinicalDocument(xmlFile, pdfFile);
 		String message = send.getMessage();
 		if (!success) {
@@ -427,9 +411,9 @@ public class DocboxService {
 		return message;
 	}
 
-	private static String getRezeptId(Rezept rezept){
+	private static String getRezeptId(Rezept rezept) {
 		Date now = new Date();
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("202");
 		sb.append(getIdZsr(rezept));
@@ -439,7 +423,7 @@ public class DocboxService {
 		sb.append(new SimpleDateFormat("HH").format(now));
 		sb.append(new SimpleDateFormat("mm").format(now));
 		sb.append(new SimpleDateFormat("ss").format(now));
-		// Milliseconds ... 
+		// Milliseconds ...
 		String millis = new SimpleDateFormat("SS").format(now);
 		if (millis.length() == 1) {
 			sb.append("0").append(millis);
@@ -450,7 +434,7 @@ public class DocboxService {
 		} else {
 			sb.append("00");
 		}
-		
+
 		String checkString = sb.toString();
 		try {
 			int checkSum = 0;
@@ -464,8 +448,8 @@ public class DocboxService {
 		}
 		return sb.toString();
 	}
-	
-	private static String getIdZsr(Rezept rezept){
+
+	private static String getIdZsr(Rezept rezept) {
 		String zsr = getZsr(rezept);
 		if (zsr != null && !zsr.isEmpty()) {
 			if (zsr.length() >= 6) {
@@ -475,10 +459,10 @@ public class DocboxService {
 		throw new IllegalStateException("Keine ZSR gefunden");
 	}
 
-	private static String getZsr(Rezept rezept){
+	private static String getZsr(Rezept rezept) {
 		Mandant mandant = rezept.getMandant();
 		Rechnungssteller rechnungssteller = mandant.getRechnungssteller();
-		
+
 		String zsr = rechnungssteller.getXid(DOMAIN_KSK);
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
 			return zsr.replaceAll("\\.", "");
@@ -497,5 +481,5 @@ public class DocboxService {
 		}
 		throw new IllegalStateException("Keine ZSR gefunden");
 	}
-	
+
 }

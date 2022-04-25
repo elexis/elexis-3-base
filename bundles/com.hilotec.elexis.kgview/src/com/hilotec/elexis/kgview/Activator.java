@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
- *    
+ *    A. Kaufmann - initial implementation
+ *
  * $Id: Activator.java 5386 2009-06-23 11:34:17Z rgw_ch $
  *******************************************************************************/
 
@@ -29,27 +29,29 @@ import ch.elexis.data.Query;
 public class Activator extends AbstractUIPlugin {
 	// Einstellung fuer Plugin-Versionsinfos
 	private static final String VERSION_SETTING = "hilotec/kgview/pluginversion";
-	
+
 	// The plug-in ID
 	public static final String PLUGIN_ID = "com.hilotec.elexis.kgview";
-	
+
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
-	public Activator(){}
-	
+	public Activator() {
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 *
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.
+	 * BundleContext)
 	 */
-	public void start(BundleContext context) throws Exception{
+	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		
+
 		// Falls noetig Dosierungen von Verschreibungen konvertieren
 		int ver = ConfigServiceHolder.getGlobal(VERSION_SETTING, 0);
 		if (ver < 1) {
@@ -58,33 +60,34 @@ public class Activator extends AbstractUIPlugin {
 			ConfigServiceHolder.setGlobal(VERSION_SETTING, 1);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 *
+	 * @see
+	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop(BundleContext context) throws Exception{
+	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
 	}
-	
+
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault(){
+	public static Activator getDefault() {
 		return plugin;
 	}
-	
-	private void updateDosierungen(){
+
+	private void updateDosierungen() {
 		Query<Prescription> q = new Query<Prescription>(Prescription.class);
 		List<Prescription> pl = q.execute();
 		for (Prescription p : pl) {
 			try {
 				String[] parts = p.getDosis().split("-");
-				
+
 				if (parts == null || parts.length != 4) {
 					// System.out.println("skip");
 					continue;
@@ -95,7 +98,7 @@ public class Activator extends AbstractUIPlugin {
 						parts[i] = "X";
 						break;
 					}
-					
+
 					// Brueche kuerzen
 					if (d.matches("[0-9]+/[0-9]+")) {
 						String[] dp = d.split("/");
@@ -106,7 +109,7 @@ public class Activator extends AbstractUIPlugin {
 							z %= n;
 							parts[i] = g + " " + z + "/" + n;
 						}
-						
+
 					}
 				}
 				p.setDosis(parts[0] + "-" + parts[1] + "-" + parts[2] + "-" + parts[3]);

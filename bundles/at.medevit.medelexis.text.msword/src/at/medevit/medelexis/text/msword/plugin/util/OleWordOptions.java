@@ -11,63 +11,63 @@ import org.eclipse.swt.ole.win32.Variant;
 import org.eclipse.swt.widgets.Display;
 
 public class OleWordOptions extends OleWrapper {
-	public OleWordOptions(OleAutomation oleAuto, Display display, OleWrapperManager manager){
+	public OleWordOptions(OleAutomation oleAuto, Display display, OleWrapperManager manager) {
 		super(oleAuto, display, manager);
 	}
-	
-	public void setDefaultTray(String trayName){
+
+	public void setDefaultTray(String trayName) {
 		Variant value = new Variant(trayName);
 		runSetProperty("DefaultTray", value); //$NON-NLS-1$
 		value.dispose();
 	}
-	
-	public String getDefaultTray(){
+
+	public String getDefaultTray() {
 		Variant value = runGetVariantProperty("DefaultTray"); //$NON-NLS-1$
 		String ret = value.getString();
 		value.dispose();
 		return ret;
 	}
-	
-	public void setCheckSpellingAsYouType(boolean value){
+
+	public void setCheckSpellingAsYouType(boolean value) {
 		Variant var = new Variant(value);
 		runSetProperty("CheckSpellingAsYouType", var); //$NON-NLS-1$
 		var.dispose();
 	}
-	
-	public void setCheckGrammarAsYouType(boolean value){
+
+	public void setCheckGrammarAsYouType(boolean value) {
 		Variant var = new Variant(value);
 		runSetProperty("CheckGrammarAsYouType", var); //$NON-NLS-1$
 		var.dispose();
 	}
-	
-	public void setSuggestSpellingCorrections(boolean value){
+
+	public void setSuggestSpellingCorrections(boolean value) {
 		Variant var = new Variant(value);
 		runSetProperty("SuggestSpellingCorrections", var); //$NON-NLS-1$
 		var.dispose();
 	}
-	
-	public void setCheckGrammarWithSpelling(boolean value){
+
+	public void setCheckGrammarWithSpelling(boolean value) {
 		Variant var = new Variant(value);
 		runSetProperty("CheckGrammarWithSpelling", var); //$NON-NLS-1$
 		var.dispose();
 	}
 
-	public void setPagination(boolean value){
+	public void setPagination(boolean value) {
 		Variant var = new Variant(value);
 		runSetProperty("Pagination", var); //$NON-NLS-1$
 		var.dispose();
 	}
 
-	public void setDoNotPromptForConvert(boolean value){
+	public void setDoNotPromptForConvert(boolean value) {
 		Variant var = new Variant(value);
 		runSetProperty("DoNotPromptForConvert", var); //$NON-NLS-1$
 		var.dispose();
 	}
 
 	protected static HashMap<String, Integer> memberIdMap = new HashMap<String, Integer>();
-	
+
 	@Override
-	protected synchronized int getIdForMember(String member){
+	protected synchronized int getIdForMember(String member) {
 		Integer id = memberIdMap.get(member);
 		if (id == null) {
 			id = OleUtil.getMemberId(oleObj, member);

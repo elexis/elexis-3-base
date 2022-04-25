@@ -20,9 +20,9 @@ import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import ch.elexis.core.model.ILabResult;
 
 public class PathologicInboxFilter extends ViewerFilter {
-	
+
 	@Override
-	public boolean select(Viewer viewer, Object parentElement, Object element){
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof IInboxElement) {
 			if (((IInboxElement) element).getObject() instanceof ILabResult) {
 				ILabResult labResult = (ILabResult) ((IInboxElement) element).getObject();
@@ -31,8 +31,8 @@ public class PathologicInboxFilter extends ViewerFilter {
 			return false;
 		} else if (element instanceof PatientInboxElements) {
 			PatientInboxElements patientInbox = (PatientInboxElements) element;
-			Optional<IInboxElement> selectedElement = ((PatientInboxElements) element).getElements()
-				.stream().filter(ie -> select(viewer, patientInbox, ie)).findAny();
+			Optional<IInboxElement> selectedElement = ((PatientInboxElements) element).getElements().stream()
+					.filter(ie -> select(viewer, patientInbox, ie)).findAny();
 			return selectedElement.isPresent();
 		}
 		return true;

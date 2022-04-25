@@ -18,20 +18,20 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class MedNetActivator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "ch.novcom.elexis.mednet.plugin";
 	private static MedNetActivator plugin;
-	
+
 	/**
 	 * Standard Constructor
 	 */
-	public MedNetActivator(){
+	public MedNetActivator() {
 		plugin = this;
 	}
-	
+
 	/**
 	 * Return the active Instance
-	 * 
+	 *
 	 * @return MedNetActivator instance
 	 */
-	public static MedNetActivator getInstance(){
+	public static MedNetActivator getInstance() {
 		return plugin;
 	}
 }

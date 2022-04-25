@@ -10,49 +10,43 @@ import ch.rgw.tools.TimeTool;
 import com.swtdesigner.ResourceManager;
 
 public class CobasMiraLogLabelProvider extends ColumnLabelProvider implements ITableLabelProvider {
-	
+
 	@Override
-	public Image getColumnImage(Object element, int columnIndex){
+	public Image getColumnImage(Object element, int columnIndex) {
 		CobasMiraMessage elem = (CobasMiraMessage) element;
 		int status = elem.getElexisStatus();
-		
+
 		if (columnIndex == 3) {
 			if (status == CobasMiraMessage.ELEXIS_RESULT_INTEGRATION_OK) {
-				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira",
-					"rsc/check2.png");
+				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira", "rsc/check2.png");
 			} else if (status == CobasMiraMessage.ELEXIS_RESULT_LABITEM_NOT_FOUND) {
-				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira",
-					"rsc/error.png");
+				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira", "rsc/error.png");
 			} else if (status == CobasMiraMessage.ELEXIS_RESULT_PATIENT_NOT_FOUND) {
-				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira",
-					"rsc/error.png");
+				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira", "rsc/error.png");
 			} else if (status == CobasMiraMessage.ELEXIS_RESULT_RESULT_ALREADY_HERE) {
-				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira",
-					"rsc/unknown.png");
+				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira", "rsc/unknown.png");
 			} else if (status == CobasMiraMessage.ELEXIS_RESULT_CONTROL_OK) {
-				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira",
-					"rsc/check2.png");
+				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira", "rsc/check2.png");
 			} else if (status == CobasMiraMessage.ELEXIS_RESULT_CONTROL_ERR) {
-				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira",
-					"rsc/error.png");
+				return ResourceManager.getPluginImage("at.medevit.elexis.cobasmira", "rsc/error.png");
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getColumnText(Object element, int columnIndex){
+	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof CobasMiraMessage) {
 			CobasMiraMessage elem = (CobasMiraMessage) element;
 			int blockType = elem.getBlockType();
-			
+
 			if (columnIndex == 0) {
 				TimeTool entryDate = elem.getEntryDate();
 				return entryDate.toString(TimeTool.FULL_GER);
 			}
 			if (columnIndex == 1)
 				return elem.getBlockTypeString();
-			
+
 			if (columnIndex == 2) {
 				if (blockType == CobasMiraMessage.BLOCK_TYPE_PATIENT_RESULTS) {
 					int noResults = elem.getNoPatientResults();
@@ -65,7 +59,7 @@ public class CobasMiraLogLabelProvider extends ColumnLabelProvider implements IT
 					return "";
 				}
 			}
-			
+
 			if (columnIndex == 3) {
 				int status = elem.getElexisStatus();
 				if (status == CobasMiraMessage.ELEXIS_RESULT_IGNORED)

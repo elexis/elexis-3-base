@@ -8,13 +8,13 @@ import ch.elexis.core.services.IElexisEntityManager;
 @Component
 public class EntityManagerHolder {
 	private static IElexisEntityManager entityManager;
-	
+
 	@Reference
-	public void setModelService(IElexisEntityManager entityManager){
+	public void setModelService(IElexisEntityManager entityManager) {
 		EntityManagerHolder.entityManager = entityManager;
 	}
-	
-	public static IElexisEntityManager get(){
+
+	public static IElexisEntityManager get() {
 		if (entityManager == null) {
 			throw new IllegalStateException("No IElexisEntityManager available");
 		}

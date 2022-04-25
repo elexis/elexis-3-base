@@ -19,19 +19,21 @@ import java.util.Map;
 import ch.elexis.core.jdt.NonNull;
 
 public class ArticleToImmunisationModel {
-	
+
 	private static Map<String, List<String>> atim = null;
-	
+
 	public static @NonNull List<String> getImmunisationForAtcCode(String atcCode) {
-		if(atim == null) initModel();
+		if (atim == null)
+			initModel();
 		List<String> list = atim.get(atcCode.trim());
-		if(list==null) return Collections.emptyList();
+		if (list == null)
+			return Collections.emptyList();
 		return list;
 	}
-	
-	private static void initModel(){
+
+	private static void initModel() {
 		atim = new HashMap<>();
-		
+
 		inl("J07AE01;J07AE");
 		inl("J07AN01;J07AN");
 		inl("J07AG01;J07AG");
@@ -43,12 +45,12 @@ public class ArticleToImmunisationModel {
 		inl("J07AL01;J07AL");
 		inl("J07AL02;J07AL");
 		inl("J07AM01;J07AM");
-		inl("J07AM51;J07AF,J07AM");		
+		inl("J07AM51;J07AF,J07AM");
 		inl("J07AP01;J07AP");
 		inl("J07BA01;J07BA01");
 		inl("J07BA02;J07BA02");
 		inl("J07BB02;J07BB");
-		inl("J07BC01;J07BC01");	
+		inl("J07BC01;J07BC01");
 		inl("J07BC02;J07BC02");
 		inl("J07BC20;J07BC01,J07BC02");
 		inl("J07BD52;J07BD,J07BE,J07BJ");
@@ -64,21 +66,21 @@ public class ArticleToImmunisationModel {
 		inl("J07CA02;J07AF,J07AM,J07AJ,J07BF");
 		inl("J07CA06;J07AF,J07AM,J07AJ,J07BF,J07AG");
 		inl("J07CA09;J07AF,J07AM,J07AJ,J07BF,J07AG,J07BC01");
-		
+
 		atim = Collections.unmodifiableMap(atim);
 	}
 
-	private static void inl(String string){
+	private static void inl(String string) {
 		String[] s = string.split(";");
 		atim.put(s[0], il(s[1]));
 	}
 
-	private static List<String> il(String string){
+	private static List<String> il(String string) {
 		String[] split = string.split(",");
 		List<String> ret = new ArrayList<>(split.length);
-			for (String s : split) {
-				ret.add(s);
-			}
+		for (String s : split) {
+			ret.add(s);
+		}
 		ret = Collections.unmodifiableList(ret);
 		return ret;
 	}

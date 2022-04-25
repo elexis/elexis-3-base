@@ -17,8 +17,8 @@ import ch.elexis.hl7.message.core.IHL7MessageService;
 import ch.elexis.hl7.message.ui.preference.PreferenceUtil;
 
 public class MessageUtil {
-	
-	public static Map<String, Object> getContext(){
+
+	public static Map<String, Object> getContext() {
 		Map<String, Object> ret = new HashMap<>();
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
 		Konsultation cons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
@@ -34,14 +34,12 @@ public class MessageUtil {
 		}
 		return ret;
 	}
-	
-	public static void export(String typ, String message, String encoding) throws IOException{
+
+	public static void export(String typ, String message, String encoding) throws IOException {
 		Optional<File> outputDir = PreferenceUtil.getOutputDirectory();
 		if (outputDir.isPresent()) {
-			File outputFile =
-				new File(outputDir.get(), System.currentTimeMillis() + "_" + typ + ".hl7");
-			try (BufferedWriter writer =
-				new BufferedWriter(
+			File outputFile = new File(outputDir.get(), System.currentTimeMillis() + "_" + typ + ".hl7");
+			try (BufferedWriter writer = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(outputFile), encoding))) {
 				writer.write(message);
 			}

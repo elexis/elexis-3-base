@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    Niklaus Giger - added fourth element & utility procedures
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.extdoc.preferences;
@@ -18,7 +18,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class PreferenceConstants {
 	// retour kompatibel
-	public static final String BASIS_PFAD1 = "ch.elexis.externe_dokumente/BasisPfad"; //$NON-NLS-1$l
+	public static final String BASIS_PFAD1 = "ch.elexis.externe_dokumente/BasisPfad"; //$NON-NLS-1$ l
 	public static final String BASIS_PFAD2 = "ch.elexis.externe_dokumente/BasisPfad2"; //$NON-NLS-1$
 	public static final String BASIS_PFAD3 = "ch.elexis.externe_dokumente/BasisPfad3"; //$NON-NLS-1$
 	public static final String BASIS_PFAD4 = "ch.elexis.externe_dokumente/BasisPfad4"; //$NON-NLS-1$
@@ -29,33 +29,30 @@ public class PreferenceConstants {
 	public static final String SELECTED_PATHS = "ch.elexis.externe_dokumente/SelectedPaths"; //$NON-NLS-1$
 	public static final String CONCERNS = "ch.elexis.externe_dokumente/Concerns"; //$NON-NLS-1$
 	public static final String EMAIL_PROGRAM = "ch.elexis.externe_dokumente/Email_app"; //$NON-NLS-1$
-	
+
 	public static class PathElement {
 		public String prefName;
 		public String name;
 		public String prefBaseDir;
 		public String baseDir;
-		
-		PathElement(String prefsName, String prefsBaseDirName){
+
+		PathElement(String prefsName, String prefsBaseDirName) {
 			prefName = prefsName;
 			prefBaseDir = prefsBaseDirName;
 			name = CoreHub.localCfg.get(prefName, ""); //$NON-NLS-1$
 			baseDir = CoreHub.localCfg.get(prefsBaseDirName, ""); //$NON-NLS-1$
 		}
 	}
-	
-	public static PathElement[] getPrefenceElements(){
-		PathElement prefElems[] =
-			{
-				new PathElement(PreferenceConstants.NAME_PFAD1, PreferenceConstants.BASIS_PFAD1),
+
+	public static PathElement[] getPrefenceElements() {
+		PathElement prefElems[] = { new PathElement(PreferenceConstants.NAME_PFAD1, PreferenceConstants.BASIS_PFAD1),
 				new PathElement(PreferenceConstants.NAME_PFAD2, PreferenceConstants.BASIS_PFAD2),
 				new PathElement(PreferenceConstants.NAME_PFAD3, PreferenceConstants.BASIS_PFAD3),
-				new PathElement(PreferenceConstants.NAME_PFAD4, PreferenceConstants.BASIS_PFAD4),
-			};
+				new PathElement(PreferenceConstants.NAME_PFAD4, PreferenceConstants.BASIS_PFAD4), };
 		return prefElems;
 	}
-	
-	public static String[] getActiveBasePaths(){
+
+	public static String[] getActiveBasePaths() {
 		String[] paths = new String[4];
 		paths[0] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD1, ""); //$NON-NLS-1$
 		paths[1] = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD2, ""); //$NON-NLS-1$
@@ -66,42 +63,42 @@ public class PreferenceConstants {
 				paths[j] = null;
 		return paths;
 	}
-	
+
 	private static int selected = -1;
-	
-	private static void ensureValueLoaded(){
+
+	private static void ensureValueLoaded() {
 		if (selected == -1)
-			selected = Integer.parseInt(ConfigServiceHolder.getUser(PreferenceConstants.SELECTED_PATHS, "0")); //$NON-NLS-1$	
+			selected = Integer.parseInt(ConfigServiceHolder.getUser(PreferenceConstants.SELECTED_PATHS, "0")); //$NON-NLS-1$
 	}
-	
+
 	/***
 	 * Tells whether the user has the path activated or not
-	 * 
+	 *
 	 * @param whichOne
 	 * @return true or false
 	 */
-	public static boolean pathIsSelected(int whichOne){
+	public static boolean pathIsSelected(int whichOne) {
 		ensureValueLoaded();
 		return (selected & (1 << whichOne)) != 0;
 	}
-	
+
 	/***
 	 * Writes selection to user configuration
 	 */
-	
-	public static void saveSelected(){
+
+	public static void saveSelected() {
 		ensureValueLoaded();
 		ConfigServiceHolder.setUser(PreferenceConstants.SELECTED_PATHS, Integer.toString(selected));
-		
+
 	}
-	
+
 	/**
 	 * Sets (but does not save) the active paths
-	 * 
+	 *
 	 * @param whichOne
 	 * @param yes
 	 */
-	public static void pathSetSelected(int whichOne, boolean yes){
+	public static void pathSetSelected(int whichOne, boolean yes) {
 		ensureValueLoaded();
 		int mask = 1 << whichOne;
 		if (yes)

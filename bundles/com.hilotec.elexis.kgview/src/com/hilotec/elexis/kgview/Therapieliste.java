@@ -33,38 +33,39 @@ import ch.rgw.tools.StringTool;
 public class Therapieliste extends ViewPart implements ElexisEventListener {
 	final public static String ID = "com.hilotec.elexis.kgview.Therapieliste";
 	private TableViewer tv;
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		tv = new TableViewer(parent);
-		
+
 		Table t = tv.getTable();
 		t.setHeaderVisible(true);
-		
+
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnPixelData(70));
 		layout.addColumnData(new ColumnPixelData(70));
 		t.setLayout(layout);
-		
+
 		TableColumn tc = new TableColumn(t, 0);
 		tc.setText("Datum");
-		
+
 		tc = new TableColumn(t, 0);
 		tc.setText("Therapie");
-		
+
 		tv.setContentProvider(new IStructuredContentProvider() {
 			private Patient pat;
-			
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				this.pat = (Patient) newInput;
 			}
-			
-			public void dispose(){}
-			
-			public Object[] getElements(Object inputElement){
+
+			public void dispose() {
+			}
+
+			public Object[] getElements(Object inputElement) {
 				List<Konsultation> kl = ArchivKG.getKonsultationen(pat, false);
 				ArrayList<KonsData> list = new ArrayList<KonsData>(kl.size());
-				
+
 				// Liste mit KonsDatas zusammenstellen
 				for (Konsultation k : kl) {
 					KonsData kd = KonsData.load(k);
@@ -75,23 +76,23 @@ public class Therapieliste extends ViewPart implements ElexisEventListener {
 				return list.toArray();
 			}
 		});
-		
+
 		// Label provider um mehrzeilige Zellen zu erlauben
 		tv.setLabelProvider(new OwnerDrawLabelProvider() {
-			private String getText(KonsData kd, Event event){
+			private String getText(KonsData kd, Event event) {
 				if (event.index == 0)
 					return kd.getKonsultation().getDatum();
 				else
 					return StringTool.unNull(kd.getTherapie());
 			}
-			
-			protected void paint(Event event, Object element){
+
+			protected void paint(Event event, Object element) {
 				KonsData kd = (KonsData) element;
 				String text = getText(kd, event);
 				event.gc.drawText(text, event.x, event.y, true);
 			}
-			
-			protected void measure(Event event, Object element){
+
+			protected void measure(Event event, Object element) {
 				KonsData kd = (KonsData) element;
 				String text = getText(kd, event);
 				Point size = event.gc.textExtent(text);
@@ -102,10 +103,10 @@ public class Therapieliste extends ViewPart implements ElexisEventListener {
 				event.height = size.y * lines;
 			}
 		});
-		
+
 		// Doppelklick-Listener zum selektieren der Konsultation
 		tv.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				TableItem[] tis = tv.getTable().getSelection();
 				if (tis.length != 1)
 					return;
@@ -113,51 +114,52 @@ public class Therapieliste extends ViewPart implements ElexisEventListener {
 				ElexisEventDispatcher.fireSelectionEvent(kd.getKonsultation());
 			}
 		});
-		
+
 		// Drag source um per D&D Therapien in die Therapieliste uebernehmen zu
 		// koennen.
 		new PersistentObjectDragSource(tv);
-		
+
 		tv.setInput(ElexisEventDispatcher.getSelectedPatient());
 		new SelListener().init();
 		ElexisEventDispatcher.getInstance().addListeners(this);
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		ElexisEventDispatcher.getInstance().removeListeners(this);
 		super.dispose();
 	}
-	
-	public void setFocus(){}
-	
+
+	public void setFocus() {
+	}
+
 	/** Selection Listener um bei Patientenwechsel zu aktualisieren */
 	private class SelListener extends POSelectionListener<Patient> {
-		protected void deselected(Patient p){
+		protected void deselected(Patient p) {
 			if (tv.getControl() != null && !tv.getControl().isDisposed()) {
 				tv.setInput(null);
 			}
 		}
-		
-		protected void selected(Patient p){
+
+		protected void selected(Patient p) {
 			if (tv.getControl() != null && !tv.getControl().isDisposed()) {
 				tv.setInput(p);
 			}
 		}
 	}
-	
-	public void catchElexisEvent(ElexisEvent ev){
+
+	public void catchElexisEvent(ElexisEvent ev) {
 		UiDesk.asyncExec(new Runnable() {
-			public void run(){
+			public void run() {
 				tv.refresh();
 			}
 		});
 	}
-	
-	private ElexisEvent eetmpl = new ElexisEvent(null, Konsultation.class, ElexisEvent.EVENT_CREATE
-		| ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_DELETE);
-	
-	public ElexisEvent getElexisEventFilter(){
+
+	private ElexisEvent eetmpl = new ElexisEvent(null, Konsultation.class,
+			ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_DELETE);
+
+	public ElexisEvent getElexisEventFilter() {
 		return eetmpl;
 	}
 }

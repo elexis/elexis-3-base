@@ -12,105 +12,105 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IXid;
 
 public abstract class GroupedInboxElements implements IInboxElement {
-	
+
 	protected HashSet<IInboxElement> inboxElements;
-	
-	public GroupedInboxElements(){
+
+	public GroupedInboxElements() {
 		this.inboxElements = new HashSet<>();
 	}
-	
-	public void addElement(IInboxElement element){
+
+	public void addElement(IInboxElement element) {
 		synchronized (inboxElements) {
 			inboxElements.add(element);
 		}
 	}
-	
-	public List<IInboxElement> getElements(){
+
+	public List<IInboxElement> getElements() {
 		synchronized (inboxElements) {
 			return new ArrayList<IInboxElement>(inboxElements);
 		}
 	}
-	
-	public boolean isEmpty(){
+
+	public boolean isEmpty() {
 		synchronized (inboxElements) {
 			return inboxElements.isEmpty();
 		}
 	}
-	
-	public IInboxElement getFirstElement(){
+
+	public IInboxElement getFirstElement() {
 		synchronized (inboxElements) {
 			return inboxElements.isEmpty() ? null : getElements().get(0);
 		}
 	}
-	
+
 	@Override
-	public State getState(){
+	public State getState() {
 		return isEmpty() ? State.NEW : getFirstElement().getState();
 	}
-	
+
 	@Override
-	public void setState(State state){
+	public void setState(State state) {
 		getElements().forEach(iie -> iie.setState(state));
 		InboxModelServiceHolder.get().save(getElements());
 	}
-	
+
 	@Override
-	public Object getObject(){
+	public Object getObject() {
 		return getElements();
 	}
-	
+
 	@Override
-	public IPatient getPatient(){
+	public IPatient getPatient() {
 		return isEmpty() ? null : getFirstElement().getPatient();
 	}
-	
+
 	@Override
-	public void setPatient(IPatient patient){
+	public void setPatient(IPatient patient) {
 		getElements().forEach(iie -> iie.setPatient(patient));
 	}
-	
+
 	@Override
-	public IMandator getMandator(){
+	public IMandator getMandator() {
 		return isEmpty() ? null : getFirstElement().getMandator();
 	}
-	
+
 	@Override
-	public void setMandator(IMandator mandator){
+	public void setMandator(IMandator mandator) {
 		getElements().forEach(iie -> iie.setMandator(mandator));
 	}
-	
+
 	@Override
-	public void setObject(String storeToString){
+	public void setObject(String storeToString) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public Long getLastupdate(){
+	public Long getLastupdate() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public boolean isDeleted(){
+	public boolean isDeleted() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public void setDeleted(boolean value){
+	public void setDeleted(boolean value) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
-	public String getId(){
+	public String getId() {
 		throw new UnsupportedOperationException();
 	}
 }

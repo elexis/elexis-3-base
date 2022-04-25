@@ -25,24 +25,24 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.outbox.model.IOutboxElementsProvider;
 
 public class ElementsProviderExtension {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(ElementsProviderExtension.class);
-	
-	public static void activateAll(){
+
+	public static void activateAll() {
 		List<IOutboxElementsProvider> providers = getAllProviders();
 		for (IOutboxElementsProvider iOutboxElementsProvider : providers) {
 			iOutboxElementsProvider.activate();
 		}
 	}
-	
-	public static void deactivateAll(){
+
+	public static void deactivateAll() {
 		List<IOutboxElementsProvider> providers = getAllProviders();
 		for (IOutboxElementsProvider iOutboxElementsProvider : providers) {
 			iOutboxElementsProvider.deactivate();
 		}
 	}
-	
-	private static List<IOutboxElementsProvider> getAllProviders(){
+
+	private static List<IOutboxElementsProvider> getAllProviders() {
 		List<IOutboxElementsProvider> ret = new ArrayList<>();
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
 		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.outbox.elementsprovider");
@@ -53,8 +53,7 @@ public class ElementsProviderExtension {
 				for (IConfigurationElement el : elems) {
 					if (el.getName().equals("provider")) {
 						try {
-							ret.add(
-								(IOutboxElementsProvider) el.createExecutableExtension("class"));
+							ret.add((IOutboxElementsProvider) el.createExecutableExtension("class"));
 						} catch (CoreException e) {
 							logger.error("Error creating IOutboxElementsProvider {}", e);
 						}

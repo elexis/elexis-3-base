@@ -16,41 +16,40 @@ import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
 
 public class EventDropFunction extends AbstractBrowserFunction {
-	
-	public EventDropFunction(Browser browser, String name){
+
+	public EventDropFunction(Browser browser, String name) {
 		super(browser, name);
 	}
-	
+
 	@Override
-	public Object function(final Object[] arguments){
+	public Object function(final Object[] arguments) {
 		if (arguments.length >= 3) {
-			IAppointment termin = CoreModelServiceHolder.get()
-				.load((String) arguments[0], IAppointment.class).orElse(null);
-			
+			IAppointment termin = CoreModelServiceHolder.get().load((String) arguments[0], IAppointment.class)
+					.orElse(null);
+
 			AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
 				@Override
-				public void lockFailed(){
+				public void lockFailed() {
 					redraw();
 				}
-				
+
 				@Override
-				public void lockAcquired(){
+				public void lockAcquired() {
 					IAppointment current = termin;
-					
+
 					// do copy
 					if (arguments.length >= 5 && Boolean.TRUE.equals(arguments[4])) {
 						current = AppointmentServiceHolder.get().clone(termin);
 						if (termin.isRecurring() && termin.getContact() == null) {
 							// take kontakt from root termin
-							IContact k =
-								new RecurringAppointment(termin, CoreModelServiceHolder.get())
+							IContact k = new RecurringAppointment(termin, CoreModelServiceHolder.get())
 									.getRootAppoinemtent().getContact();
 							if (k != null) {
 								current.setSubjectOrPatient(k.getId());
 							}
 						}
 					}
-					
+
 					// moving
 					LocalDateTime startDate = getDateTimeArg(arguments[1]);
 					current.setStartTime(startDate);
@@ -62,7 +61,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 							current.setSchedule(bereich);
 						}
 					}
-					
+
 					// checks if that termin is copied
 					if (!current.equals(termin)) {
 						if (LocalLockServiceHolder.get().acquireLock(current).isOk()) {
@@ -74,8 +73,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 					}
 					CoreModelServiceHolder.get().save(current);
 					CoreModelServiceHolder.get().save(termin);
-					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
-						IAppointment.class);
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 					redraw();
 				}
 			});
@@ -84,5 +82,5 @@ public class EventDropFunction extends AbstractBrowserFunction {
 		}
 		return null;
 	}
-	
+
 }

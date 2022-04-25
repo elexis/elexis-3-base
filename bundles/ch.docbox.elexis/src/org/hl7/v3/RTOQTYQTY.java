@@ -9,10 +9,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for RTO_QTY_QTY complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="RTO_QTY_QTY">
  *   &lt;complexContent>
@@ -25,67 +26,61 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "RTO_QTY_QTY", propOrder = {
-	"numerator", "denominator"
-})
-@XmlSeeAlso({
-	RTO.class
-})
+@XmlType(name = "RTO_QTY_QTY", propOrder = { "numerator", "denominator" })
+@XmlSeeAlso({ RTO.class })
 public class RTOQTYQTY extends QTY {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	@XmlElement(required = true)
 	protected QTY numerator;
 	@XmlElement(required = true)
 	protected QTY denominator;
-	
+
 	/**
 	 * Gets the value of the numerator property.
-	 * 
+	 *
 	 * @return possible object is {@link QTY }
-	 * 
+	 *
 	 */
-	public QTY getNumerator(){
+	public QTY getNumerator() {
 		return numerator;
 	}
-	
+
 	/**
 	 * Sets the value of the numerator property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link QTY }
-	 * 
+	 *
+	 * @param value allowed object is {@link QTY }
+	 *
 	 */
-	public void setNumerator(QTY value){
+	public void setNumerator(QTY value) {
 		this.numerator = value;
 	}
-	
+
 	/**
 	 * Gets the value of the denominator property.
-	 * 
+	 *
 	 * @return possible object is {@link QTY }
-	 * 
+	 *
 	 */
-	public QTY getDenominator(){
+	public QTY getDenominator() {
 		return denominator;
 	}
-	
+
 	/**
 	 * Sets the value of the denominator property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link QTY }
-	 * 
+	 *
+	 * @param value allowed object is {@link QTY }
+	 *
 	 */
-	public void setDenominator(QTY value){
+	public void setDenominator(QTY value) {
 		this.denominator = value;
 	}
-	
+
 }

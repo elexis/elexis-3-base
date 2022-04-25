@@ -40,17 +40,17 @@ import ch.elexis.data.PersistentObject;
 
 @Component(immediate = true)
 public class InboxElementService implements IInboxElementService {
-	
+
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=at.medevit.elexis.inbox.model)")
 	private IModelService modelService;
-	
+
 	@Reference
 	private IStoreToStringService storeToString;
-	
+
 	HashSet<IInboxUpdateListener> listeners = new HashSet<IInboxUpdateListener>();
-	
+
 	@Override
-	public void createInboxElement(IPatient patient, IMandator mandator, Identifiable object){
+	public void createInboxElement(IPatient patient, IMandator mandator, Identifiable object) {
 		// InboxElement element = new InboxElement(patient, mandant, object);
 		IInboxElement element = modelService.create(IInboxElement.class);
 		element.setPatient(patient);
@@ -62,9 +62,9 @@ public class InboxElementService implements IInboxElementService {
 		modelService.save(element);
 		fireUpdate(element);
 	}
-	
+
 	@Override
-	public void createInboxElement(IPatient patient, IMandator mandator, PersistentObject object){
+	public void createInboxElement(IPatient patient, IMandator mandator, PersistentObject object) {
 		// InboxElement element = new InboxElement(patient, mandant, object);
 		IInboxElement element = modelService.create(IInboxElement.class);
 		element.setPatient(patient);
@@ -74,23 +74,23 @@ public class InboxElementService implements IInboxElementService {
 		modelService.save(element);
 		fireUpdate(element);
 	}
-	
+
 	@Override
-	public void removeUpdateListener(IInboxUpdateListener listener){
+	public void removeUpdateListener(IInboxUpdateListener listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
 		}
 	}
-	
+
 	@Override
-	public void addUpdateListener(IInboxUpdateListener listener){
+	public void addUpdateListener(IInboxUpdateListener listener) {
 		synchronized (listeners) {
 			listeners.add(listener);
 		}
 	}
-	
+
 	@Override
-	public List<IInboxElement> getInboxElements(IMandator mandant, IPatient patient, State state){
+	public List<IInboxElement> getInboxElements(IMandator mandant, IPatient patient, State state) {
 		IQuery<IInboxElement> query = modelService.getQuery(IInboxElement.class);
 		if (mandant != null) {
 			query.and("mandant", COMPARATOR.EQUALS, mandant);
@@ -103,35 +103,34 @@ public class InboxElementService implements IInboxElementService {
 		}
 		return query.execute();
 	}
-	
+
 	@Override
-	public void changeInboxElementState(IInboxElement element, State state){
+	public void changeInboxElementState(IInboxElement element, State state) {
 		element.setState(state);
 		modelService.save(element);
 		fireUpdate(element);
 	}
-	
-	private void fireUpdate(IInboxElement element){
+
+	private void fireUpdate(IInboxElement element) {
 		synchronized (listeners) {
 			for (IInboxUpdateListener listener : listeners) {
 				listener.update(element);
 			}
 		}
 	}
-	
+
 	@Activate
-	public void activate(){
+	public void activate() {
 		activateProviders();
 	}
-	
+
 	@Deactivate
-	public void deactivate(){
+	public void deactivate() {
 		deactivateProviders();
 	}
-	
+
 	@Override
-	public void createInboxElement(IPatient patient, IMandator mandant, String file,
-		boolean copyFile){
+	public void createInboxElement(IPatient patient, IMandator mandant, String file, boolean copyFile) {
 		String path = file;
 		if (path != null) {
 			File src = new File(path);
@@ -150,8 +149,7 @@ public class InboxElementService implements IInboxElementService {
 						FileUtils.copyFile(src, dest);
 						path = dest.getAbsolutePath();
 					} catch (IOException e) {
-						LoggerFactory.getLogger(InboxElementService.class).error("file copy error",
-							e);
+						LoggerFactory.getLogger(InboxElementService.class).error("file copy error", e);
 						return;
 					}
 				}
@@ -161,21 +159,22 @@ public class InboxElementService implements IInboxElementService {
 				element.setObject(InboxElementType.FILE.getPrefix() + path);
 				element.setState(State.NEW);
 				modelService.save(element);
-				
+
 				fireUpdate(element);
 			}
 		}
 	}
-	
+
 	@Override
-	public void deactivateProviders(){
+	public void deactivateProviders() {
 		LoggerFactory.getLogger(getClass()).info("Deactivating all ElementProviders");
 		ElementsProviderExtension.deactivateAll();
 	}
-	
+
 	@Override
-	public void activateProviders(){
-		// async activation as element provider bundles may have dependency on IInboxElementService
+	public void activateProviders() {
+		// async activation as element provider bundles may have dependency on
+		// IInboxElementService
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		executor.execute(() -> {
 			LoggerFactory.getLogger(getClass()).info("Activating all ElementProviders");

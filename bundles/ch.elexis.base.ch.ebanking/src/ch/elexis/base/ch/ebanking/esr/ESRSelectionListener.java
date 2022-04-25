@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
@@ -17,37 +17,36 @@ import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.data.Rechnung;
 
 /**
- * Eigentlich nur zur Demonstration, dass ein Selectionlistener auch unabhängig von einer View
- * existieren kann
- * 
+ * Eigentlich nur zur Demonstration, dass ein Selectionlistener auch unabhängig
+ * von einer View existieren kann
+ *
  * @author gerry
- * 
+ *
  */
 public class ESRSelectionListener implements ElexisEventListener {
-	
+
 	// ESRSelectionListener(IViewSite site) { }
-	
-	void activate(boolean mode){
+
+	void activate(boolean mode) {
 		if (mode) {
 			ElexisEventDispatcher.getInstance().addListeners(this);
 		} else {
 			ElexisEventDispatcher.getInstance().removeListeners(this);
 		}
 	}
-	
-	public void catchElexisEvent(ElexisEvent ev){
+
+	public void catchElexisEvent(ElexisEvent ev) {
 		ESRRecord esr = (ESRRecord) ev.getObject();
 		Rechnung rn = esr.getRechnung();
 		if (rn != null) {
 			ElexisEventDispatcher.fireSelectionEvent(esr.getRechnung());
 		}
 	}
-	
-	private final ElexisEvent eetmpl = new ElexisEvent(null, ESRRecord.class,
-		ElexisEvent.EVENT_SELECTED);
-	
-	public ElexisEvent getElexisEventFilter(){
+
+	private final ElexisEvent eetmpl = new ElexisEvent(null, ESRRecord.class, ElexisEvent.EVENT_SELECTED);
+
+	public ElexisEvent getElexisEventFilter() {
 		return eetmpl;
 	}
-	
+
 }

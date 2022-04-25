@@ -42,9 +42,8 @@ import ch.elexis.data.LabItem;
 import ch.gpb.elexis.cst.Messages;
 
 /**
- * @author daniel ludin ludin@swissonline.ch
- * 27.06.2015
- * 
+ * @author daniel ludin ludin@swissonline.ch 27.06.2015
+ *
  */
 
 public class CstLabItemSelectionDialog extends SelectionDialog {
@@ -53,17 +52,17 @@ public class CstLabItemSelectionDialog extends SelectionDialog {
 	private String firstName;
 	private String lastName;
 	private CheckboxTableViewer tableViewer;
-    private List<LabItem> labItems;
+	private List<LabItem> labItems;
 
-    public List<LabItem> getSelItems() {
-	return selItems;
-    }
+	public List<LabItem> getSelItems() {
+		return selItems;
+	}
 
-    public void setSelItems(List<LabItem> selItems) {
-	this.selItems = selItems;
-    }
+	public void setSelItems(List<LabItem> selItems) {
+		this.selItems = selItems;
+	}
 
-    private List<LabItem> selItems;
+	private List<LabItem> selItems;
 	private int sortColumn = 0;
 	private boolean sortReverse = false;
 
@@ -71,7 +70,7 @@ public class CstLabItemSelectionDialog extends SelectionDialog {
 		super(parentShell);
 	}
 
-    public CstLabItemSelectionDialog(Shell parentShell, List<LabItem> labItems) {
+	public CstLabItemSelectionDialog(Shell parentShell, List<LabItem> labItems) {
 		super(parentShell);
 		this.labItems = labItems;
 	}
@@ -87,17 +86,16 @@ public class CstLabItemSelectionDialog extends SelectionDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
-		
+
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout(2, false);
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		container.setLayout(layout);
 		/*
-		 * 
+		 *
 		 * createFirstName(container); createLastName(container);
 		 */
-		table = new Table(container, SWT.CHECK | SWT.SINGLE | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.FULL_SELECTION);
+		table = new Table(container, SWT.CHECK | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 
 		String[] colLabels = getColumnLabels();
 		int columnWidth[] = getColumnWidth();
@@ -131,9 +129,9 @@ public class CstLabItemSelectionDialog extends SelectionDialog {
 	}
 
 	private String[] getColumnLabels() {
-		String columnLabels[] = { Messages.CstLaborPrefs_name,
-				Messages.CstLaborPrefs_short, Messages.CstLaborPrefs_unit,
-				Messages.CstLaborPrefs_type, Messages.CstLaborPrefs_sortmode, "Ref M", "Ref F" };
+		String columnLabels[] = { Messages.CstLaborPrefs_name, Messages.CstLaborPrefs_short,
+				Messages.CstLaborPrefs_unit, Messages.CstLaborPrefs_type, Messages.CstLaborPrefs_sortmode, "Ref M",
+				"Ref F" };
 		return columnLabels;
 	}
 
@@ -149,10 +147,10 @@ public class CstLabItemSelectionDialog extends SelectionDialog {
 
 	@Override
 	protected void okPressed() {
-	selItems = new ArrayList<LabItem>();
+		selItems = new ArrayList<LabItem>();
 		Object[] checkedItems = tableViewer.getCheckedElements();
 		for (Object object : checkedItems) {
-	    LabItem labItem = (LabItem) object;
+			LabItem labItem = (LabItem) object;
 			selItems.add(labItem);
 		}
 		super.okPressed();
@@ -178,25 +176,24 @@ public class CstLabItemSelectionDialog extends SelectionDialog {
 		}
 	}
 
-	class ViewLabelProvider extends LabelProvider implements
-			ITableLabelProvider, ITableFontProvider, IColorProvider {
+	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider, IColorProvider {
 		public String getColumnText(Object obj, int index) {
-	    LabItem labItem = (LabItem) obj;
+			LabItem labItem = (LabItem) obj;
 			switch (index) {
 			case 0:
-		return labItem.getName();
+				return labItem.getName();
 			case 1:
-		return labItem.getKuerzel();
+				return labItem.getKuerzel();
 			case 2:
-		return labItem.getEinheit();
+				return labItem.getEinheit();
 			case 3:
-		return labItem.getPrio();
+				return labItem.getPrio();
 			case 4:
-		return labItem.getGroup();
+				return labItem.getGroup();
 			case 5:
-		return labItem.getRefM();
+				return labItem.getRefM();
 			case 6:
-		return labItem.getRefW();
+				return labItem.getRefW();
 			default:
 				return "?";
 			}
@@ -207,8 +204,7 @@ public class CstLabItemSelectionDialog extends SelectionDialog {
 		}
 
 		public Image getImage(Object obj) {
-			return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJ_ELEMENT);
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
 
 		public Font getFont(Object element, int columnIndex) {

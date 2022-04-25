@@ -29,67 +29,67 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class SubtractEvaluator extends RecursiveNumericEvaluator implements ManyValueWorker {
-  protected static final long serialVersionUID = 1L;
-  
-  public SubtractEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-    
-    if(containedEvaluators.size() < 2){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting at least two values but found %d",expression,containedEvaluators.size()));
-    }
-  }
+	protected static final long serialVersionUID = 1L;
 
-  @Override
-  public Object doWork(Object... values) throws IOException {
-    if(Arrays.stream(values).anyMatch(item -> null == item)){
-      return null;
-    }
-    
-    if(0 == values.length){
-      return null;
-    }
-    
-    List<BigDecimal> flattenedValues = flatten(Arrays.stream(values).collect(Collectors.toList()));
-    
-    BigDecimal result = flattenedValues.get(0);
-    for(int idx = 1; idx < flattenedValues.size(); ++idx){
-      result = subtract(result, flattenedValues.get(idx));
-    }
-    
-    return result;
-  }
-  
-  private List<BigDecimal> flatten(Collection<?> values){
-    List<BigDecimal> flattened = new ArrayList<>();
-    
-    for(Object value : values){
-      if(null == value){
-        flattened.add(null);
-      }
-      if(value instanceof Collection<?>){
-        flattened.addAll(flatten((Collection<?>)value));
-      }
-      else if(value instanceof BigDecimal){
-        flattened.add((BigDecimal)value);
-      }
-      else if(value instanceof Number){
-        flattened.add(new BigDecimal(value.toString()));
-      }
-      else{
-        throw new StreamEvaluatorException("Numeric value expected but found type %s for value %s", value.getClass().getName(), value.toString());
-      }
-    }
-    
-    return flattened;
-  }
-    
-  private BigDecimal subtract(BigDecimal left, Object right) throws IOException{
-    
-    if(null == right){
-      return null;
-    }
-    
-    return left.subtract((BigDecimal)right);
-  }
-  
+	public SubtractEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+
+		if (containedEvaluators.size() < 2) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting at least two values but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
+
+	@Override
+	public Object doWork(Object... values) throws IOException {
+		if (Arrays.stream(values).anyMatch(item -> null == item)) {
+			return null;
+		}
+
+		if (0 == values.length) {
+			return null;
+		}
+
+		List<BigDecimal> flattenedValues = flatten(Arrays.stream(values).collect(Collectors.toList()));
+
+		BigDecimal result = flattenedValues.get(0);
+		for (int idx = 1; idx < flattenedValues.size(); ++idx) {
+			result = subtract(result, flattenedValues.get(idx));
+		}
+
+		return result;
+	}
+
+	private List<BigDecimal> flatten(Collection<?> values) {
+		List<BigDecimal> flattened = new ArrayList<>();
+
+		for (Object value : values) {
+			if (null == value) {
+				flattened.add(null);
+			}
+			if (value instanceof Collection<?>) {
+				flattened.addAll(flatten((Collection<?>) value));
+			} else if (value instanceof BigDecimal) {
+				flattened.add((BigDecimal) value);
+			} else if (value instanceof Number) {
+				flattened.add(new BigDecimal(value.toString()));
+			} else {
+				throw new StreamEvaluatorException("Numeric value expected but found type %s for value %s",
+						value.getClass().getName(), value.toString());
+			}
+		}
+
+		return flattened;
+	}
+
+	private BigDecimal subtract(BigDecimal left, Object right) throws IOException {
+
+		if (null == right) {
+			return null;
+		}
+
+		return left.subtract((BigDecimal) right);
+	}
+
 }

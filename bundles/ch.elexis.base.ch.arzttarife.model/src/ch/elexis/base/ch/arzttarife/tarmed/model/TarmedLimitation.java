@@ -26,29 +26,28 @@ import ch.elexis.core.services.INativeQuery;
 import ch.rgw.tools.Result;
 
 public class TarmedLimitation {
-	
+
 	private int amount;
-	
+
 	private String per;
 	private String operator;
-	
+
 	private LimitationUnit limitationUnit;
 	private int limitationAmount;
-	
+
 	private int electronicBilling;
-	
+
 	private boolean skip = false;
-	
+
 	private TarmedLeistung tarmedLeistung;
 	private TarmedGroup tarmedGroup;
-	
+
 	public enum LimitationUnit {
-			LOCATION_SESSION, SIDE, SESSION, PATIENT_SESSION, COVERAGE, STAY, TESTSERIES, PREGNANCY,
-			BIRTH, RADIANTEXPOSURE, TRANSMITTAL, AUTOPSY, EXPERTISE, INTERVENTION_SESSION,
-			CATEGORY_DAY, DAY, WEEK, MONTH, YEAR, JOINTREGION, REGION_SIDE, JOINTREGION_SIDE,
-			MAINSERVICE, SESSION_YEAR, SESSION_COVERAGE, SESSION_PATIENT;
-		
-		public static LimitationUnit from(int parseInt){
+		LOCATION_SESSION, SIDE, SESSION, PATIENT_SESSION, COVERAGE, STAY, TESTSERIES, PREGNANCY, BIRTH, RADIANTEXPOSURE,
+		TRANSMITTAL, AUTOPSY, EXPERTISE, INTERVENTION_SESSION, CATEGORY_DAY, DAY, WEEK, MONTH, YEAR, JOINTREGION,
+		REGION_SIDE, JOINTREGION_SIDE, MAINSERVICE, SESSION_YEAR, SESSION_COVERAGE, SESSION_PATIENT;
+
+		public static LimitationUnit from(int parseInt) {
 			switch (parseInt) {
 			case 6:
 				return LOCATION_SESSION;
@@ -107,19 +106,19 @@ public class TarmedLimitation {
 			}
 			return null;
 		}
-		
+
 	}
-	
+
 	/**
-	 * Factory method for creating {@link TarmedLimitation} objects of {@link TarmedLeistung}
-	 * limitations.
-	 * 
+	 * Factory method for creating {@link TarmedLimitation} objects of
+	 * {@link TarmedLeistung} limitations.
+	 *
 	 * @param limitation
 	 * @return
 	 */
-	public static TarmedLimitation of(String limitation){
+	public static TarmedLimitation of(String limitation) {
 		TarmedLimitation ret = new TarmedLimitation();
-		
+
 		String[] parts = limitation.split(","); //$NON-NLS-1$
 		if (parts.length >= 5) {
 			if (parts[0] != null && !parts[0].isEmpty()) {
@@ -147,114 +146,101 @@ public class TarmedLimitation {
 		}
 		return ret;
 	}
-	
-	public TarmedLimitation setTarmedLeistung(TarmedLeistung tarmedLeistung){
+
+	public TarmedLimitation setTarmedLeistung(TarmedLeistung tarmedLeistung) {
 		this.tarmedLeistung = tarmedLeistung;
 		return this;
 	}
-	
-	public TarmedLimitation setTarmedGroup(TarmedGroup tarmedGroup){
+
+	public TarmedLimitation setTarmedGroup(TarmedGroup tarmedGroup) {
 		this.tarmedGroup = tarmedGroup;
 		return this;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		if (limitationUnit == LimitationUnit.SESSION) {
 			sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
-				+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perSession);
+					+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perSession);
 		} else if (limitationUnit == LimitationUnit.SIDE) {
 			sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
-				+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perSide);
+					+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perSide);
 		} else if (limitationUnit == LimitationUnit.DAY) {
 			sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
-				+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perDay);
+					+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perDay);
 		} else if (limitationUnit == LimitationUnit.WEEK) {
 			if (tarmedGroup != null) {
-				sb.append(
-					String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
-						tarmedGroup.getCode())
-						+ amount
-						+ String.format(
-							ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perWeeks,
-							limitationAmount));
+				sb.append(String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
+						tarmedGroup.getCode()) + amount
+						+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perWeeks,
+								limitationAmount));
 			} else {
-				sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
-					+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perWeeks,
-						limitationAmount));
+				sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount + String
+						.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perWeeks, limitationAmount));
 			}
 		} else if (limitationUnit == LimitationUnit.MONTH) {
 			if (tarmedGroup != null) {
-				sb.append(
-					String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
-						tarmedGroup.getCode())
-						+ amount
-						+ String.format(
-							ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perMonth,
-							limitationAmount));
+				sb.append(String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
+						tarmedGroup.getCode()) + amount
+						+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perMonth,
+								limitationAmount));
 			} else {
-				sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
-					+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perMonth,
-						limitationAmount));
+				sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount + String
+						.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perMonth, limitationAmount));
 			}
 		} else if (limitationUnit == LimitationUnit.YEAR) {
 			if (tarmedGroup != null) {
-				sb.append(
-					String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
-						tarmedGroup.getCode())
-						+ amount
-						+ String.format(
-							ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perYears,
-							limitationAmount));
+				sb.append(String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_groupmax,
+						tarmedGroup.getCode()) + amount
+						+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perYears,
+								limitationAmount));
 			} else {
-				sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
-					+ String.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perYears,
-						limitationAmount));
+				sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount + String
+						.format(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perYears, limitationAmount));
 			}
 		} else if (limitationUnit == LimitationUnit.COVERAGE) {
 			sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
-				+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perCoverage);
+					+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perCoverage);
 		} else {
 			sb.append("amount " + amount + "x unit " + limitationAmount + "x" + limitationUnit);
 		}
 		return sb.toString();
 	}
-	
-	public boolean isTestable(){
+
+	public boolean isTestable() {
 		return limitationUnit == LimitationUnit.SIDE || limitationUnit == LimitationUnit.SESSION
-			|| limitationUnit == LimitationUnit.DAY || limitationUnit == LimitationUnit.WEEK
-			|| limitationUnit == LimitationUnit.MONTH || limitationUnit == LimitationUnit.YEAR
-			|| limitationUnit == LimitationUnit.COVERAGE;
+				|| limitationUnit == LimitationUnit.DAY || limitationUnit == LimitationUnit.WEEK
+				|| limitationUnit == LimitationUnit.MONTH || limitationUnit == LimitationUnit.YEAR
+				|| limitationUnit == LimitationUnit.COVERAGE;
 	}
-	
-	public Result<IBilled> test(IEncounter kons, IBilled newVerrechnet){
+
+	public Result<IBilled> test(IEncounter kons, IBilled newVerrechnet) {
 		if (limitationUnit == LimitationUnit.SIDE || limitationUnit == LimitationUnit.SESSION) {
 			return testSideOrSession(kons, newVerrechnet);
 		} else if (limitationUnit == LimitationUnit.DAY) {
 			return testDay(kons, newVerrechnet);
 		} else if (limitationUnit == LimitationUnit.WEEK || limitationUnit == LimitationUnit.MONTH
-			|| limitationUnit == LimitationUnit.YEAR) {
+				|| limitationUnit == LimitationUnit.YEAR) {
 			return testDuration(kons, newVerrechnet);
 		} else if (limitationUnit == LimitationUnit.COVERAGE) {
 			return testCoverage(kons, newVerrechnet);
 		}
 		return new Result<IBilled>(null);
 	}
-	
-	private Result<IBilled> testCoverage(IEncounter kons, IBilled verrechnet){
+
+	private Result<IBilled> testCoverage(IEncounter kons, IBilled verrechnet) {
 		Result<IBilled> ret = new Result<IBilled>(null);
 		if (shouldSkipTest()) {
 			return ret;
 		}
 		if (operator.equals("<=")) {
 			if (tarmedGroup == null) {
-				List<IBilled> verrechnetByCoverage =
-					getVerrechnetByCoverageAndCode(kons, tarmedLeistung.getCode());
+				List<IBilled> verrechnetByCoverage = getVerrechnetByCoverageAndCode(kons, tarmedLeistung.getCode());
 				verrechnetByCoverage = filterWithSameCode(verrechnet, verrechnetByCoverage);
 				if (getVerrechnetCount(verrechnetByCoverage) > amount) {
-					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
-						toString(), null, false);
+					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null,
+							false);
 				}
 			} else {
 				List<IBilled> allVerrechnetOfGroup = new ArrayList<>();
@@ -265,55 +251,53 @@ public class TarmedLimitation {
 				}
 				int verrechnetCount = getVerrechnetCount(allVerrechnetOfGroup);
 				if (verrechnetCount > amount) {
-					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
-						toString(), null, false);
+					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null,
+							false);
 				}
 			}
 		}
 		return ret;
 	}
-	
-	private Result<IBilled> testDuration(IEncounter kons, IBilled verrechnet){
+
+	private Result<IBilled> testDuration(IEncounter kons, IBilled verrechnet) {
 		Result<IBilled> ret = new Result<IBilled>(null);
 		if (shouldSkipTest()) {
 			return ret;
 		}
 		if (operator.equals("<=")) {
 			if (tarmedGroup == null) {
-				List<IBilled> verrechnetByMandant =
-					getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons,
-					verrechnet.getBillable().getCode());
+				List<IBilled> verrechnetByMandant = getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons,
+						verrechnet.getBillable().getCode());
 				if (getVerrechnetCount(verrechnetByMandant) > amount) {
-					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
-						toString(), null, false);
+					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null,
+							false);
 				}
 			} else {
 				List<IBilled> allVerrechnetOfGroup = new ArrayList<>();
 				List<String> serviceCodes = tarmedGroup.getServices();
 				for (String code : serviceCodes) {
-					allVerrechnetOfGroup
-						.addAll(getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons, code));
+					allVerrechnetOfGroup.addAll(getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons, code));
 				}
 				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
-					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
-						toString(), null, false);
+					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null,
+							false);
 				}
 			}
 		}
 		return ret;
 	}
-	
-	private int getVerrechnetCount(List<IBilled> verrechnete){
+
+	private int getVerrechnetCount(List<IBilled> verrechnete) {
 		int ret = 0;
 		for (IBilled verrechnet : verrechnete) {
 			ret += verrechnet.getAmount();
 		}
 		return ret;
 	}
-	
+
 	// @formatter:off
 	private static final String VERRECHNET_BYPATIENT_ANDCODE = "SELECT leistungen.ID FROM leistungen, behandlungen, faelle"
-	+ " WHERE leistungen.deleted = '0'" 
+	+ " WHERE leistungen.deleted = '0'"
 	+ " AND leistungen.deleted = behandlungen.deleted"
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
 	+ " AND leistungen.KLASSE = 'ch.elexis.data.TarmedLeistung'"
@@ -322,15 +306,12 @@ public class TarmedLimitation {
 	+ " AND leistungen.LEISTG_CODE like ?2"
 	+ " ORDER BY behandlungen.Datum ASC";
 	// @formatter:on
-	
-	
-	public static List<IBilled> findVerrechnetByPatientCodeDuringPeriod(IPatient patient,
-		String code){
+
+	public static List<IBilled> findVerrechnetByPatientCodeDuringPeriod(IPatient patient, String code) {
 		List<IBilled> all = new ArrayList<>();
-		INativeQuery nativeQuery =
-			CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYPATIENT_ANDCODE);
-		Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(Integer.valueOf(1),
-			patient.getId(), Integer.valueOf(2), code + "%");
+		INativeQuery nativeQuery = CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYPATIENT_ANDCODE);
+		Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(Integer.valueOf(1), patient.getId(),
+				Integer.valueOf(2), code + "%");
 		Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
 		while (result.hasNext()) {
 			String next = result.next().toString();
@@ -339,26 +320,26 @@ public class TarmedLimitation {
 		}
 		return all;
 	}
-	
+
 	/**
-	 * Get {@link Verrechnet} which are in the matching period for the kons and the code. <br />
-	 * The first period starts with the first time a {@link Verrechnet} with the code was created by
-	 * the mandant. From then on periods with the duration specified by {@link LimitationUnit} and
-	 * limitaiton amount are calculated and the {@link Verrechnet} during the periods are collected.
-	 * The collected {@link Verrechnet} of the period matching the kons date are returned, or empty
-	 * if no such period exists yet.
-	 * 
+	 * Get {@link Verrechnet} which are in the matching period for the kons and the
+	 * code. <br />
+	 * The first period starts with the first time a {@link Verrechnet} with the
+	 * code was created by the mandant. From then on periods with the duration
+	 * specified by {@link LimitationUnit} and limitaiton amount are calculated and
+	 * the {@link Verrechnet} during the periods are collected. The collected
+	 * {@link Verrechnet} of the period matching the kons date are returned, or
+	 * empty if no such period exists yet.
+	 *
 	 * @param kons
 	 * @param code
 	 * @return
 	 */
-	private List<IBilled> getVerrechnetByRechnungsstellerAndCodeDuringPeriod(IEncounter kons,
-		String code){
+	private List<IBilled> getVerrechnetByRechnungsstellerAndCodeDuringPeriod(IEncounter kons, String code) {
 		IContact rechnungssteller = kons.getMandator().getBiller();
-		
+
 		if (rechnungssteller != null) {
-			List<IBilled> all =
-				findVerrechnetByPatientCodeDuringPeriod(kons.getCoverage().getPatient(), code);
+			List<IBilled> all = findVerrechnetByPatientCodeDuringPeriod(kons.getCoverage().getPatient(), code);
 			// filter for matching rechnungssteller
 			all = all.parallelStream().filter(billed -> {
 				IEncounter encounter = billed.getEncounter();
@@ -373,9 +354,8 @@ public class TarmedLimitation {
 						}
 					}
 				}
-				LoggerFactory.getLogger(getClass()).warn(
-					"Missing object in chain for IBilled [{}]: [{}], [{}], [{}]", billed.getId(),
-					encounter, mandator, biller);
+				LoggerFactory.getLogger(getClass()).warn("Missing object in chain for IBilled [{}]: [{}], [{}], [{}]",
+						billed.getId(), encounter, mandator, biller);
 				return false;
 			}).collect(Collectors.toList());
 			all = filterValidCodeForKonsultation(code, kons, all);
@@ -391,8 +371,8 @@ public class TarmedLimitation {
 		}
 		return Collections.emptyList();
 	}
-	
-	private List<VerrechnetPeriod> getGroupedByPeriod(List<IBilled> verrechnete){
+
+	private List<VerrechnetPeriod> getGroupedByPeriod(List<IBilled> verrechnete) {
 		if (!verrechnete.isEmpty()) {
 			List<VerrechnetPeriod> ret = new ArrayList<>();
 			for (IBilled verrechnet : verrechnete) {
@@ -417,14 +397,14 @@ public class TarmedLimitation {
 		}
 		return Collections.emptyList();
 	}
-	
+
 	private class VerrechnetPeriod {
 		private LocalDate start;
 		private LocalDate end;
-		
+
 		private List<IBilled> verrechnete;
-		
-		private VerrechnetPeriod(IBilled verrechnet){
+
+		private VerrechnetPeriod(IBilled verrechnet) {
 			start = verrechnet.getEncounter().getDate();
 			if (limitationUnit == LimitationUnit.WEEK) {
 				end = start.plus(limitationAmount, ChronoUnit.WEEKS);
@@ -436,29 +416,28 @@ public class TarmedLimitation {
 			verrechnete = new ArrayList<>();
 			verrechnete.add(verrechnet);
 		}
-		
-		public List<IBilled> getVerrechnete(){
+
+		public List<IBilled> getVerrechnete() {
 			return verrechnete;
 		}
-		
-		private boolean isInPeriod(IBilled verrechnet){
+
+		private boolean isInPeriod(IBilled verrechnet) {
 			LocalDate matchDate = verrechnet.getEncounter().getDate();
 			return isDateInPeriod(matchDate);
 		}
-		
-		private boolean isDateInPeriod(LocalDate date){
-			return (date.isAfter(start) || date.isEqual(start))
-				&& (date.isBefore(end) || date.isEqual(end));
+
+		private boolean isDateInPeriod(LocalDate date) {
+			return (date.isAfter(start) || date.isEqual(start)) && (date.isBefore(end) || date.isEqual(end));
 		}
-		
-		private void addVerrechnet(IBilled verrechnet){
+
+		private void addVerrechnet(IBilled verrechnet) {
 			verrechnete.add(verrechnet);
 		}
 	}
-	
+
 	// @formatter:off
 	private static final String VERRECHNET_BYMANDANT_ANDCODE_DURING = "SELECT leistungen.ID FROM leistungen, behandlungen, faelle"
-	+ " WHERE leistungen.deleted = '0'" 
+	+ " WHERE leistungen.deleted = '0'"
 	+ " AND leistungen.deleted = behandlungen.deleted"
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
 	+ " AND leistungen.KLASSE = 'ch.elexis.data.TarmedLeistung'"
@@ -468,66 +447,62 @@ public class TarmedLimitation {
 	+ " AND behandlungen.Datum >= ?3"
 	+ " AND behandlungen.MandantID = ?4";
 	// @formatter:on
-	
-	private List<IBilled> getVerrechnetByMandantAndCodeDuring(IEncounter kons, String code){
+
+	private List<IBilled> getVerrechnetByMandantAndCodeDuring(IEncounter kons, String code) {
 		LocalDate fromDate = getDuringStartDate(kons);
 		IMandator mandant = kons.getMandator();
 		List<IBilled> ret = new ArrayList<>();
 		if (fromDate != null && mandant != null) {
-			
-			INativeQuery nativeQuery =
-				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE_DURING);
-			Map<Integer, Object> parameterMap =
-				nativeQuery.getIndexedParameterMap(Integer.valueOf(1),
-					kons.getCoverage().getPatient().getId(), Integer.valueOf(2), code + "%",
-					Integer.valueOf(3), fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")),
-					Integer.valueOf(4), mandant.getId());
+
+			INativeQuery nativeQuery = CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYMANDANT_ANDCODE_DURING);
+			Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(Integer.valueOf(1),
+					kons.getCoverage().getPatient().getId(), Integer.valueOf(2), code + "%", Integer.valueOf(3),
+					fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")), Integer.valueOf(4), mandant.getId());
 			Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
 			while (result.hasNext()) {
 				String next = result.next().toString();
 				IBilled load = CoreModelServiceHolder.get().load(next, IBilled.class).get();
 				ret.add(load);
 			}
-			
-			//			PreparedStatement pstm = PersistentObject.getDefaultConnection()
-			//				.getPreparedStatement(VERRECHNET_BYMANDANT_ANDCODE_DURING);
-			//			try {
-			//				pstm.setString(1, kons.getCoverage().getPatient().getId());
-			//				pstm.setString(2, code + "%");
-			//				pstm.setString(3, fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-			//				pstm.setString(4, mandant.getId());
-			//				ResultSet resultSet = pstm.executeQuery();
-			//				while (resultSet.next()) {
-			//					ret.add(Verrechnet.load(resultSet.getString(1)));
-			//				}
-			//				resultSet.close();
-			//			} catch (SQLException e) {
-			//				LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
-			//			} finally {
-			//				PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
-			//			}
+
+			// PreparedStatement pstm = PersistentObject.getDefaultConnection()
+			// .getPreparedStatement(VERRECHNET_BYMANDANT_ANDCODE_DURING);
+			// try {
+			// pstm.setString(1, kons.getCoverage().getPatient().getId());
+			// pstm.setString(2, code + "%");
+			// pstm.setString(3, fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+			// pstm.setString(4, mandant.getId());
+			// ResultSet resultSet = pstm.executeQuery();
+			// while (resultSet.next()) {
+			// ret.add(Verrechnet.load(resultSet.getString(1)));
+			// }
+			// resultSet.close();
+			// } catch (SQLException e) {
+			// LoggerFactory.getLogger(getClass()).error("Error during lookup", e);
+			// } finally {
+			// PersistentObject.getDefaultConnection().releasePreparedStatement(pstm);
+			// }
 		}
 		return ret;
 	}
-	
+
 	// @formatter:off
 	private static final String VERRECHNET_BYCOVERAGE_ANDCODE = "SELECT leistungen.ID FROM leistungen, behandlungen"
-	+ " WHERE leistungen.deleted = '0'" 
+	+ " WHERE leistungen.deleted = '0'"
 	+ " AND leistungen.deleted = behandlungen.deleted"
 	+ " AND leistungen.BEHANDLUNG = behandlungen.ID"
 	+ " AND leistungen.KLASSE = 'ch.elexis.data.TarmedLeistung'"
 	+ " AND leistungen.LEISTG_CODE like ?1"
 	+ " AND behandlungen.FallID = ?2";
 	// @formatter:on
-	
-	private List<IBilled> getVerrechnetByCoverageAndCode(IEncounter kons, String code){
+
+	private List<IBilled> getVerrechnetByCoverageAndCode(IEncounter kons, String code) {
 		List<IBilled> ret = new ArrayList<>();
 		if (kons != null && kons.getCoverage() != null) {
-			
-			INativeQuery nativeQuery =
-				CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYCOVERAGE_ANDCODE);
-			Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(
-				Integer.valueOf(1), code + "%", Integer.valueOf(2), kons.getCoverage().getId());
+
+			INativeQuery nativeQuery = CoreModelServiceHolder.get().getNativeQuery(VERRECHNET_BYCOVERAGE_ANDCODE);
+			Map<Integer, Object> parameterMap = nativeQuery.getIndexedParameterMap(Integer.valueOf(1), code + "%",
+					Integer.valueOf(2), kons.getCoverage().getId());
 			Iterator<?> result = nativeQuery.executeWithParameters(parameterMap).iterator();
 			while (result.hasNext()) {
 				String next = result.next().toString();
@@ -537,8 +512,8 @@ public class TarmedLimitation {
 		}
 		return ret;
 	}
-	
-	private LocalDate getDuringStartDate(IEncounter kons){
+
+	private LocalDate getDuringStartDate(IEncounter kons) {
 		LocalDate konsDate = kons.getDate();
 		LocalDate ret = null;
 		if (limitationUnit == LimitationUnit.WEEK) {
@@ -556,15 +531,16 @@ public class TarmedLimitation {
 		}
 		return ret;
 	}
-	
+
 	/**
-	 * Filter the list of {@link Verrechnet} that only instances with the same code field (Tarmed
-	 * code, startdate and law) as the provided {@link Verrechnet} are in the resulting list.
-	 * 
+	 * Filter the list of {@link Verrechnet} that only instances with the same code
+	 * field (Tarmed code, startdate and law) as the provided {@link Verrechnet} are
+	 * in the resulting list.
+	 *
 	 * @param verrechnet
 	 * @return
 	 */
-	private List<IBilled> filterWithSameCode(IBilled verrechnet, List<IBilled> list){
+	private List<IBilled> filterWithSameCode(IBilled verrechnet, List<IBilled> list) {
 		List<IBilled> ret = new ArrayList<>();
 		String matchCode = verrechnet.getCode();
 		if (matchCode != null && !matchCode.isEmpty()) {
@@ -576,17 +552,17 @@ public class TarmedLimitation {
 		}
 		return ret;
 	}
-	
+
 	/**
-	 * Filter the list of {@link IBilled} that only instances with the same code field (Tarmed code,
-	 * startdate and law) as the valid {@link TarmedLeistung} for the provided {@link Konsultation}.
-	 * This filters {@link IBilled} with a {@link TarmedLeistung} from a different catalog.
-	 * 
+	 * Filter the list of {@link IBilled} that only instances with the same code
+	 * field (Tarmed code, startdate and law) as the valid {@link TarmedLeistung}
+	 * for the provided {@link Konsultation}. This filters {@link IBilled} with a
+	 * {@link TarmedLeistung} from a different catalog.
+	 *
 	 * @param verrechnet
 	 * @return
 	 */
-	private List<IBilled> filterValidCodeForKonsultation(String code, IEncounter kons,
-		List<IBilled> list){
+	private List<IBilled> filterValidCodeForKonsultation(String code, IEncounter kons, List<IBilled> list) {
 		List<IBilled> ret = new ArrayList<>();
 		BillingLaw law = kons.getCoverage().getBillingSystem().getLaw();
 		IBillable validForKons = TarmedLeistung.getFromCode(code, kons.getDate(), law.name());
@@ -604,22 +580,21 @@ public class TarmedLimitation {
 		}
 		return ret;
 	}
-	
-	private Result<IBilled> testDay(IEncounter kons, IBilled verrechnet){
+
+	private Result<IBilled> testDay(IEncounter kons, IBilled verrechnet) {
 		Result<IBilled> ret = new Result<IBilled>(null);
 		if (shouldSkipTest()) {
 			return ret;
 		}
 		if (limitationAmount == 1 && operator.equals("<=")) {
 			if (getVerrechnetAmount(verrechnet) > amount) {
-				ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
-					toString(), null, false);
+				ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null, false);
 			}
 		}
 		return ret;
 	}
-	
-	private Result<IBilled> testSideOrSession(IEncounter kons, IBilled verrechnet){
+
+	private Result<IBilled> testSideOrSession(IEncounter kons, IBilled verrechnet) {
 		Result<IBilled> ret = new Result<IBilled>(null);
 		if (shouldSkipTest()) {
 			return ret;
@@ -627,30 +602,28 @@ public class TarmedLimitation {
 		if (limitationAmount == 1 && operator.equals("<=")) {
 			if (getVerrechnetAmount(verrechnet) > amount) {
 				if (limitationUnit == LimitationUnit.SESSION) {
-					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
-						toString(), null, false);
+					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null,
+							false);
 				} else if (limitationUnit == LimitationUnit.SIDE) {
-					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION,
-						toString(), null, false);
+					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null,
+							false);
 				}
 			}
 		}
 		return ret;
 	}
-	
-	private List<IBilled> getSameVerrechnetOfKons(IBilled verrechnet){
+
+	private List<IBilled> getSameVerrechnetOfKons(IBilled verrechnet) {
 		List<IBilled> ret = new ArrayList<>();
 		Class<? extends IBilled> verrechnetClass = verrechnet.getClass();
 		String verrechnetCode = verrechnet.getCode();
 		if (verrechnetClass != null && verrechnetCode != null) {
 			IEncounter kons = verrechnet.getEncounter();
 			for (IBilled leistung : kons.getBilled()) {
-				if (verrechnetClass.equals(verrechnet.getClass())
-					&& verrechnetCode.equals(leistung.getCode())) {
+				if (verrechnetClass.equals(verrechnet.getClass()) && verrechnetCode.equals(leistung.getCode())) {
 					// for side limit, only add with same side
 					if (limitationUnit == LimitationUnit.SIDE) {
-						if (TarmedLeistung.getSide(verrechnet)
-							.equals(TarmedLeistung.getSide(leistung))) {
+						if (TarmedLeistung.getSide(verrechnet).equals(TarmedLeistung.getSide(leistung))) {
 							ret.add(leistung);
 						}
 					} else {
@@ -661,36 +634,36 @@ public class TarmedLimitation {
 		}
 		return ret;
 	}
-	
-	private int getVerrechnetAmount(IBilled verrechnet){
+
+	private int getVerrechnetAmount(IBilled verrechnet) {
 		List<IBilled> sameVerrechnet = getSameVerrechnetOfKons(verrechnet);
 		return getVerrechnetCount(sameVerrechnet);
 	}
-	
-	private boolean shouldSkipTest(){
+
+	private boolean shouldSkipTest() {
 		if (skip) {
 			return skip;
 		}
 		return shouldSkipElectronicBilling();
 	}
-	
-	private boolean shouldSkipElectronicBilling(){
+
+	private boolean shouldSkipElectronicBilling() {
 		if (electronicBilling > 0) {
-			return TarmedUtil.getConfigValue(getClass(), IMandator.class,
-				PreferenceConstants.BILL_ELECTRONICALLY, false);
+			return TarmedUtil.getConfigValue(getClass(), IMandator.class, PreferenceConstants.BILL_ELECTRONICALLY,
+					false);
 		}
 		return false;
 	}
-	
-	public LimitationUnit getLimitationUnit(){
+
+	public LimitationUnit getLimitationUnit() {
 		return limitationUnit;
 	}
-	
-	public int getAmount(){
+
+	public int getAmount() {
 		return amount;
 	}
-	
-	public void setSkip(boolean value){
+
+	public void setSkip(boolean value) {
 		this.skip = true;
 	}
 }

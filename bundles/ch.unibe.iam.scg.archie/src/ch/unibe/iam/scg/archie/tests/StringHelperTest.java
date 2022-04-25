@@ -20,9 +20,9 @@ import ch.unibe.iam.scg.archie.utils.StringHelper;
 
 /**
  * Test the utility class for strings.
- * 
+ *
  * $Id: StringHelperTest.java 666 2008-12-13 00:07:54Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 666 $
@@ -43,11 +43,11 @@ public class StringHelperTest {
 		Assert.assertFalse(single.equals("I_am_an_ill!egal____String_containing_bad_characters!"));
 		Assert.assertTrue(single.equals("I_am_an_ill!egal_String_containing_bad_characters!"));
 	}
-	
+
 	/**
 	 * Static method for JUnit 4 test classes to make them accessible to a
 	 * TestRunner designed to work with earlier versions of JUnit.
-	 * 
+	 *
 	 * @return A Test that can be used in test suites.
 	 */
 	public static junit.framework.Test suite() {

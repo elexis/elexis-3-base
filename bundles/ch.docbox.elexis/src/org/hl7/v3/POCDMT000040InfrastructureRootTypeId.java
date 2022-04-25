@@ -7,10 +7,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for POCD_MT000040.InfrastructureRoot.typeId complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="POCD_MT000040.InfrastructureRoot.typeId">
  *   &lt;complexContent>
@@ -21,16 +22,16 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "POCD_MT000040.InfrastructureRoot.typeId")
 public class POCDMT000040InfrastructureRootTypeId extends II {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 }

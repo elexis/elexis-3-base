@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     MEDEVIT <office@medevit.at> - initial API and implementation
  ******************************************************************************/
@@ -42,21 +42,20 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 
 public class PrintMediEtiketteUi extends AbstractHandler {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(PrintMediEtiketteUi.class);
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+
 		synchronized (PrintMediEtiketteUi.class) {
 			// init the selection
-			ISelection selection =
-				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
+			ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection strucSelection = (IStructuredSelection) selection;
 				List<IPrescription> prescriptions = getPrescriptionsFromSelection(strucSelection);
 				List<IArticle> artikels = getArtikelsFromSelection(strucSelection);
-				
+
 				for (IPrescription prescription : prescriptions) {
 					DataAccessor.setSelectedPrescription(prescription);
 					DataAccessor.setSelectedArticel(prescription.getArticle());
@@ -65,7 +64,7 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 					DataAccessor.setSelectedPrescription(null);
 					DataAccessor.setSelectedArticel(null);
 				}
-				
+
 				for (IArticle artikel : artikels) {
 					DataAccessor.setSelectedArticel(artikel);
 					print(event);
@@ -77,12 +76,12 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 			return null;
 		}
 	}
-	
-	private void print(ExecutionEvent event){
+
+	private void print(ExecutionEvent event) {
 		// start printing the etikette
 		Kontakt kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Patient.class);
-		EtiketteDruckenDialog dlg =
-			new EtiketteDruckenDialog(HandlerUtil.getActiveShell(event), kontakt, TT_MEDI_LABEL);
+		EtiketteDruckenDialog dlg = new EtiketteDruckenDialog(HandlerUtil.getActiveShell(event), kontakt,
+				TT_MEDI_LABEL);
 		dlg.setTitle(Messages.PrintMediEtiketteUi_DialogTitel);
 		dlg.setMessage(Messages.PrintMediEtiketteUi_DialogMessage);
 		if (!CoreHub.localCfg.get("Drucker/Etiketten/Choose", true)) { //$NON-NLS-1$
@@ -91,10 +90,11 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 			if (dlg.doPrint()) {
 				dlg.close();
 			} else {
-				StatusManager.getManager()
-					.handle(new ElexisStatus(ElexisStatus.ERROR, Activator.PLUGIN_ID,
-						ElexisStatus.CODE_NOFEEDBACK, Messages.PrintMediEtiketteUi_PrintError,
-						ElexisStatus.LOG_ERRORS), StatusManager.BLOCK);
+				StatusManager
+						.getManager().handle(
+								new ElexisStatus(ElexisStatus.ERROR, Activator.PLUGIN_ID, ElexisStatus.CODE_NOFEEDBACK,
+										Messages.PrintMediEtiketteUi_PrintError, ElexisStatus.LOG_ERRORS),
+								StatusManager.BLOCK);
 				return;
 			}
 		} else {
@@ -102,8 +102,8 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 			dlg.open();
 		}
 	}
-	
-	private List<IArticle> getArtikelsFromSelection(IStructuredSelection strucSelection){
+
+	private List<IArticle> getArtikelsFromSelection(IStructuredSelection strucSelection) {
 		List<?> selection = strucSelection.toList();
 		List<IArticle> ret = new ArrayList<>();
 		for (Object object : selection) {
@@ -117,15 +117,15 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 		}
 		return ret;
 	}
-	
-	private List<IPrescription> getPrescriptionsFromSelection(IStructuredSelection strucSelection){
+
+	private List<IPrescription> getPrescriptionsFromSelection(IStructuredSelection strucSelection) {
 		List<?> selection = strucSelection.toList();
 		List<IPrescription> ret = new ArrayList<>();
 		for (Object object : selection) {
 			if (object instanceof IPrescription) {
 				ret.add((IPrescription) object);
 			} else if (object.getClass().getName()
-				.equals("ch.elexis.core.ui.medication.views.MedicationTableViewerItem")) {
+					.equals("ch.elexis.core.ui.medication.views.MedicationTableViewerItem")) {
 				try {
 					Method method = object.getClass().getMethod("getPrescription", new Class[0]);
 					if (method != null) {
@@ -134,8 +134,8 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 							ret.add(pres);
 						}
 					}
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException
-						| IllegalArgumentException | InvocationTargetException e) {
+				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException e) {
 					logger.warn("Could not get selected prescription.", e);
 				}
 			}

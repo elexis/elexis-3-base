@@ -14,22 +14,20 @@ import ch.elexis.icpc.model.icpc.IcpcCode;
 @Component
 public class IcpcModelServiceHolder {
 	private static IModelService modelService;
-	
-	@Reference(target = "(" + IModelService.SERVICEMODELNAME
-		+ "=ch.elexis.icpc.model)")
-	public void setModelService(IModelService modelService){
+
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.icpc.model)")
+	public void setModelService(IModelService modelService) {
 		IcpcModelServiceHolder.modelService = modelService;
 	}
-	
-	public static IModelService get(){
+
+	public static IModelService get() {
 		if (modelService == null) {
 			throw new IllegalStateException("No IModelService available");
 		}
 		return modelService;
 	}
-	
-	public static List<IcpcCode> loadAllFromComponent(String chapter, String component,
-		boolean order){
+
+	public static List<IcpcCode> loadAllFromComponent(String chapter, String component, boolean order) {
 		IQuery<IcpcCode> query = get().getQuery(IcpcCode.class);
 		query.and("component", COMPARATOR.EQUALS, component.substring(0, 1));
 		query.startGroup();

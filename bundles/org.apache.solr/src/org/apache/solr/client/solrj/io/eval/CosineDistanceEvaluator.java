@@ -28,33 +28,34 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class CosineDistanceEvaluator extends RecursiveEvaluator {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public CosineDistanceEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-  }
+	public CosineDistanceEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  public CosineDistanceEvaluator(StreamExpression expression, StreamFactory factory, List<String> ignoredNamedParameters) throws IOException{
-    super(expression, factory, ignoredNamedParameters);
-  }
+	public CosineDistanceEvaluator(StreamExpression expression, StreamFactory factory,
+			List<String> ignoredNamedParameters) throws IOException {
+		super(expression, factory, ignoredNamedParameters);
+	}
 
-  @Override
-  public Object evaluate(Tuple tuple) throws IOException {
-    return new CosineDistance();
-  }
+	@Override
+	public Object evaluate(Tuple tuple) throws IOException {
+		return new CosineDistance();
+	}
 
-  @Override
-  public Object doWork(Object... values) throws IOException {
-    // Nothing to do here
-    throw new IOException("This call should never occur");
-  }
+	@Override
+	public Object doWork(Object... values) throws IOException {
+		// Nothing to do here
+		throw new IOException("This call should never occur");
+	}
 
-  public static class CosineDistance implements DistanceMeasure {
+	public static class CosineDistance implements DistanceMeasure {
 
-    private static final long serialVersionUID = -9108154600539125566L;
+		private static final long serialVersionUID = -9108154600539125566L;
 
-    public double compute(double[] v1, double[] v2) throws DimensionMismatchException {
-      return Precision.round(1-Math.abs(CosineSimilarityEvaluator.cosineSimilarity(v1, v2)), 8);
-    }
-  }
+		public double compute(double[] v1, double[] v2) throws DimensionMismatchException {
+			return Precision.round(1 - Math.abs(CosineSimilarityEvaluator.cosineSimilarity(v1, v2)), 8);
+		}
+	}
 }

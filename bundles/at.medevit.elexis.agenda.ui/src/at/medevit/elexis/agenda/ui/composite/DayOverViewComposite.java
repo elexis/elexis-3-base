@@ -49,61 +49,57 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 public class DayOverViewComposite extends Canvas implements PaintListener {
-	
+
 	public enum CollisionErrorLevel {
-			ERROR, WARNING
+		ERROR, WARNING
 	}
-	
+
 	@Inject
 	private IAppointmentService appointmentService;
-	
+
 	private CDateTime txtTimeFrom;
 	private CDateTime txtTimeTo;
 	private Spinner txtDuration;
-	
+
 	private int ts = getRasterStartTime();
 	private int te = getRasterEndTime();
 	private int tagStart = ts * 60; // 7 Uhr
 	private int tagEnd = te * 60;
-	private int[] rasterValues =
-		new int[] {
-		5, 10, 15, 30
-	};
+	private int[] rasterValues = new int[] { 5, 10, 15, 30 };
 	private int rasterIndex = getRasterIndex();
 	private double minutes;
 	private double pixelPerMinute;
-	
+
 	private Slider slider;
 
 	private boolean bModified;
 	private String msg;
-	
+
 	private Point d;
 	private int sep;
-	
+
 	private java.util.List<IAppointment> list;
 	private IAppointment appointment;
-	
+
 	private Group parent;
-	
+
 	private CollisionErrorLevel collisionErrorLevel = CollisionErrorLevel.ERROR;
-	
-	public DayOverViewComposite(final Group parent, IAppointment appointment,
-		CDateTime txtTimeFrom,
-		CDateTime txtTimeTo, Spinner txtDuration){
+
+	public DayOverViewComposite(final Group parent, IAppointment appointment, CDateTime txtTimeFrom,
+			CDateTime txtTimeTo, Spinner txtDuration) {
 		super(parent, SWT.NONE);
 		CoreUiUtil.injectServicesWithContext(this);
 		this.parent = parent;
-		
+
 		this.appointment = appointment;
 		this.txtTimeFrom = txtTimeFrom;
 		this.txtDuration = txtDuration;
 		this.txtTimeTo = txtTimeTo;
-		
+
 		addPaintListener(this);
 		addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDown(final MouseEvent e){
+			public void mouseDown(final MouseEvent e) {
 				if (e.y > sep + 2) {
 					rasterIndex = (rasterIndex >= rasterValues.length) ? 0 : rasterIndex + 1;
 					setRasterIndex(rasterIndex);
@@ -114,23 +110,23 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 					slider.updateTimes();
 				}
 			}
-			
+
 		});
-		
+
 		slider = new Slider(this);
 	}
-	
-	public void setAppointment(IAppointment appointment){
+
+	public void setAppointment(IAppointment appointment) {
 		this.appointment = appointment;
 	}
-	
+
 	/**
 	 * Tagesbalken neu kalkulieren (Startzeit, Endzeit, pixel pro Minute etc.)
-	 * 
+	 *
 	 */
-	void recalc(){
+	void recalc() {
 		loadCurrentAppointments();
-		
+
 		tagStart = ts * 60;
 		tagEnd = te * 60;
 		int i = 0;
@@ -145,12 +141,12 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			}
 			i = list.size() - 1;
 			pi = list.get(i);
-			
+
 			int end = getStartMinute(pi) + pi.getDurationMinutes();
 			if (end < 1408) {
 				tagEnd = 1439;
 			}
-			
+
 			if (tagStart != 0) {
 				tagStart = tagStart / 60 * 60;
 			}
@@ -163,16 +159,16 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			sep = d.y / 2;
 		}
 	}
-	
+
 	@Override
-	public Point computeSize(final int wHint, final int hHint, final boolean changed){
+	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
 		return new Point(getParent().getSize().x, 40);
 	}
-	
+
 	/**
 	 * Tagesbalken zeichnen
 	 */
-	public void paintControl(final PaintEvent pe){
+	public void paintControl(final PaintEvent pe) {
 		recalc();
 		GC g = pe.gc;
 		Color def = g.getBackground();
@@ -180,16 +176,16 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		g.setBackground(getColor(SWT.COLOR_GREEN));
 		Rectangle r = new Rectangle(0, 0, d.x, sep - 2);
 		g.fillRectangle(r);
-		
+
 		// Termine darauf zeichnen
 		for (IAppointment p : list) {
 			paintAppointment(g, p, r, tagStart, tagEnd);
 		}
-		
+
 		// Lineal zeichnen
 		g.setBackground(def);
 		g.setFont(getSmallFont());
-		
+
 		g.drawLine(0, sep, d.x, sep);
 		if (rasterIndex >= rasterValues.length) {
 			rasterIndex = 0;
@@ -212,11 +208,11 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 				g.drawLine(lx, sep, lx, sep + 4);
 			}
 		}
-		
+
 		slider.redraw();
 	}
-	
-	private void paintAppointment(GC gc, IAppointment p, Rectangle r, int start, int end){
+
+	private void paintAppointment(GC gc, IAppointment p, Rectangle r, int start, int end) {
 		double minutes = end - start;
 		double pixelPerMinute = (double) r.width / minutes;
 		int x = (int) Math.round((getStartMinute(p) - start) * pixelPerMinute);
@@ -224,19 +220,18 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		gc.setBackground(getTypColor(p));
 		gc.fillRectangle(x, r.y, w, r.height);
 	}
-	
-	
+
 	private class Slider extends Composite implements MouseListener, MouseMoveListener {
 		boolean isDragging;
-		
-		Slider(final Composite parent){
+
+		Slider(final Composite parent) {
 			super(parent, SWT.BORDER);
-			setBackground(getColor(SWT.COLOR_RED)); //$NON-NLS-1$
+			setBackground(getColor(SWT.COLOR_RED)); // $NON-NLS-1$
 			addMouseListener(this);
 			addMouseMoveListener(this);
 		}
-		
-		void set(){
+
+		void set() {
 			int v = getTimeInMinutes();
 			int d = txtDuration.getSelection();
 			Rectangle r = getParent().getBounds();
@@ -247,30 +242,31 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			bModified = true;
 			updateCollision();
 		}
-		
-		public void mouseDoubleClick(final MouseEvent e){}
-		
-		public void mouseDown(final MouseEvent e){
+
+		public void mouseDoubleClick(final MouseEvent e) {
+		}
+
+		public void mouseDown(final MouseEvent e) {
 			isDragging = true;
 		}
-		
-		public void mouseUp(final MouseEvent e){
+
+		public void mouseUp(final MouseEvent e) {
 			if (isDragging) {
 				isDragging = false;
 				updateTimes();
 			}
 		}
-		
-		public void mouseMove(final MouseEvent e){
+
+		public void mouseMove(final MouseEvent e) {
 			if (isDragging) {
 				Point loc = getLocation();
 				int x = loc.x + e.x;
 				setLocation(x, loc.y);
 			}
-			
+
 		}
-		
-		public void updateTimes(){
+
+		public void updateTimes() {
 			Point loc = getLocation();
 			Rectangle rec = getParent().getBounds();
 			double minutes = tagEnd - tagStart;
@@ -281,10 +277,10 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			setTimeFrom(minute);
 			set();
 		}
-		
+
 	}
-	
-	public void set(){
+
+	public void set() {
 		if (slider != null) {
 			recalc();
 			slider.set();
@@ -292,10 +288,10 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			redraw();
 			this.getParent().layout();
 		}
-		
+
 	}
-	
-	public void refresh(){
+
+	public void refresh() {
 		if (slider != null) {
 			recalc();
 			updateCollision();
@@ -303,147 +299,132 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			this.getParent().layout();
 		}
 	}
-	
-	public void setCollisionErrorLevel(CollisionErrorLevel level){
+
+	public void setCollisionErrorLevel(CollisionErrorLevel level) {
 		this.collisionErrorLevel = level;
 	}
-	
-	private boolean isTerminTypeIsReserviert(IAppointment pi){
-		return pi.getType()
-			.equals(ConfigServiceHolder.get().getAsList("agenda/TerminTypen").get(1));
+
+	private boolean isTerminTypeIsReserviert(IAppointment pi) {
+		return pi.getType().equals(ConfigServiceHolder.get().getAsList("agenda/TerminTypen").get(1));
 	}
-	
-	private boolean isTerminTypeIsFree(IAppointment pi){
-		return pi.getType()
-			.equals(ConfigServiceHolder.get().getAsList("agenda/TerminTypen").get(0));
+
+	private boolean isTerminTypeIsFree(IAppointment pi) {
+		return pi.getType().equals(ConfigServiceHolder.get().getAsList("agenda/TerminTypen").get(0));
 	}
-	
-	private int getStartMinute(IAppointment pi){
-		long minutesIntoTheDay = ChronoUnit.MINUTES
-			.between(pi.getStartTime().toLocalDate().atStartOfDay(), pi.getStartTime());
+
+	private int getStartMinute(IAppointment pi) {
+		long minutesIntoTheDay = ChronoUnit.MINUTES.between(pi.getStartTime().toLocalDate().atStartOfDay(),
+				pi.getStartTime());
 		return (int) minutesIntoTheDay;
 	}
-	
-	private int getTimeInMinutes(){
-		LocalDateTime localDateTime =
-			txtTimeFrom.getSelection().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-		long minutesIntoTheDay =
-			ChronoUnit.MINUTES.between(localDateTime.toLocalDate().atStartOfDay(), localDateTime);
+
+	private int getTimeInMinutes() {
+		LocalDateTime localDateTime = txtTimeFrom.getSelection().toInstant().atZone(ZoneId.systemDefault())
+				.toLocalDateTime();
+		long minutesIntoTheDay = ChronoUnit.MINUTES.between(localDateTime.toLocalDate().atStartOfDay(), localDateTime);
 		return (int) minutesIntoTheDay;
 	}
-	
-	private void setTimeTo(int i){
-		LocalDateTime localDateTime = txtTimeTo.getSelection().toInstant()
-			.atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay();
+
+	private void setTimeTo(int i) {
+		LocalDateTime localDateTime = txtTimeTo.getSelection().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+				.atStartOfDay();
 		appointment.setEndTime(localDateTime.plusMinutes(i));
-		txtTimeTo.setSelection(
-			Date.from(appointment.getEndTime().atZone(ZoneId.systemDefault()).toInstant()));
+		txtTimeTo.setSelection(Date.from(appointment.getEndTime().atZone(ZoneId.systemDefault()).toInstant()));
 	}
-	
-	private void setTimeFrom(int i){
-		LocalDateTime localDateTime = txtTimeFrom.getSelection().toInstant()
-			.atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay();
+
+	private void setTimeFrom(int i) {
+		LocalDateTime localDateTime = txtTimeFrom.getSelection().toInstant().atZone(ZoneId.systemDefault())
+				.toLocalDate().atStartOfDay();
 		appointment.setStartTime(localDateTime.plusMinutes(i));
-		txtTimeFrom.setSelection(
-			Date.from(appointment.getStartTime().atZone(ZoneId.systemDefault()).toInstant()));
+		txtTimeFrom.setSelection(Date.from(appointment.getStartTime().atZone(ZoneId.systemDefault()).toInstant()));
 	}
-	
-	private void updateCollision(){
+
+	private void updateCollision() {
 		updateMessage(isColliding());
 	}
-	
-	private void loadCurrentAppointments(){
-		//@REF Plannables#loadTermine
+
+	private void loadCurrentAppointments() {
+		// @REF Plannables#loadTermine
 		if (appointment.getSchedule() == null) {
 			list = new ArrayList<>();
 		}
-		
-		IQuery<IAppointment> query =
-			CoreModelServiceHolder.get().getQuery(IAppointment.class, !ConfigServiceHolder.get()
-				.getActiveUserContact("agenda/zeige_geloeschte", "0").equals("0"));
+
+		IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class,
+				!ConfigServiceHolder.get().getActiveUserContact("agenda/zeige_geloeschte", "0").equals("0"));
 		query.and("tag", COMPARATOR.EQUALS, appointment.getStartTime().toLocalDate());
-		query.and(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS,
-			appointment.getSchedule());
+		query.and(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS, appointment.getSchedule());
 		list = query.execute();
 		if (list.isEmpty()) {
-			appointmentService.updateBoundaries(appointment.getSchedule(),
-				appointment.getStartTime().toLocalDate());
+			appointmentService.updateBoundaries(appointment.getSchedule(), appointment.getStartTime().toLocalDate());
 			list = query.execute();
 		}
-		list = list.stream()
-			.sorted(Comparator.comparing(a -> a.getStartTime()))
-			.collect(Collectors.toList());
+		list = list.stream().sorted(Comparator.comparing(a -> a.getStartTime())).collect(Collectors.toList());
 	}
-	
-	private boolean isColliding(){
+
+	private boolean isColliding() {
 		for (IAppointment iAppointment : list) {
 			if (!iAppointment.getId().equals(appointment.getId())) {
-				if (isOverlapping(appointment.getStartTime(), appointment.getEndTime(),
-					iAppointment.getStartTime(), iAppointment.getEndTime())) {
-					System.out.println(
-						"Collide " + appointment.getLabel() + " with " + iAppointment.getLabel());
+				if (isOverlapping(appointment.getStartTime(), appointment.getEndTime(), iAppointment.getStartTime(),
+						iAppointment.getEndTime())) {
+					System.out.println("Collide " + appointment.getLabel() + " with " + iAppointment.getLabel());
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
-	private boolean isOverlapping(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2,
-		LocalDateTime end2){
+
+	private boolean isOverlapping(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2) {
 		return start1.isBefore(end2) && start2.isBefore(end1);
 	}
-	
-	private int getRasterStartTime(){
+
+	private int getRasterStartTime() {
 		try {
-			//@REF ConfigServiceHolder.getUser("agenda/dayView/Start", 7);
-			return Integer.parseInt(
-				ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/Start", "7"));
+			// @REF ConfigServiceHolder.getUser("agenda/dayView/Start", 7);
+			return Integer.parseInt(ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/Start", "7"));
 		} catch (NumberFormatException e) {
 			return rasterIndex;
 		}
 	}
-	
-	private int getRasterEndTime(){
+
+	private int getRasterEndTime() {
 		try {
-			//@REF ConfigServiceHolder.getUser("agenda/dayView/End", 19);
-			return Integer.parseInt(
-				ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/End", "19"));
+			// @REF ConfigServiceHolder.getUser("agenda/dayView/End", 19);
+			return Integer.parseInt(ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/End", "19"));
 		} catch (NumberFormatException e) {
 			return rasterIndex;
 		}
 	}
-	
-	
-	private int getRasterIndex(){
+
+	private int getRasterIndex() {
 		try {
-			//@REF ConfigServiceHolder.getUser("agenda/dayView/raster", 3)
-			return Integer.parseInt(
-				ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/raster", "3"));
+			// @REF ConfigServiceHolder.getUser("agenda/dayView/raster", 3)
+			return Integer.parseInt(ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/raster", "3"));
 		} catch (NumberFormatException e) {
 			return rasterIndex;
 		}
 	}
-	
-	private void setRasterIndex(int rasterIndex){
-		//@REF ConfigServiceHolder.setUser("agenda/dayView/raster", rasterIndex); //$NON-NLS-1$
-		ContextServiceHolder.get().getActiveUserContact().ifPresent(c -> ConfigServiceHolder.get()
-			.set(c, "agenda/dayView/raster", String.valueOf(rasterIndex)));
+
+	private void setRasterIndex(int rasterIndex) {
+		// @REF ConfigServiceHolder.setUser("agenda/dayView/raster", rasterIndex);
+		// //$NON-NLS-1$
+		ContextServiceHolder.get().getActiveUserContact()
+				.ifPresent(c -> ConfigServiceHolder.get().set(c, "agenda/dayView/raster", String.valueOf(rasterIndex)));
 	}
-	
-	private void updateMessage(final boolean collision){
+
+	private void updateMessage(final boolean collision) {
 		msg = "Termin(e) bearbeiten bzw. neu einsetzen";
-		
-		slider.setBackground(getColor(SWT.COLOR_GRAY)); //$NON-NLS-1$ //TODO LIGHTGREY
-		
+
+		slider.setBackground(getColor(SWT.COLOR_GRAY)); // $NON-NLS-1$ //TODO LIGHTGREY
+
 		if (collision) {
-			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY)); //$NON-NLS-1$
+			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY)); // $NON-NLS-1$
 			msg += "\t" + " - Terminkollision!";
 		}
-		
+
 		getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
-			public void run(){
+			public void run() {
 				if (collisionErrorLevel == CollisionErrorLevel.ERROR) {
 					setMessage(msg, collision ? IMessageProvider.ERROR : IMessageProvider.NONE);
 				} else if (collisionErrorLevel == CollisionErrorLevel.WARNING) {
@@ -452,46 +433,43 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			}
 		});
 	}
-	
-	private void setMessage(String msg, int i){
+
+	private void setMessage(String msg, int i) {
 		if (i == IMessageProvider.NONE) {
 			parent.setForeground(parent.getParent().getForeground());
 			parent.setText(msg);
-			
+
 		} else if (i == IMessageProvider.ERROR) {
 			parent.setText(msg);
 			parent.setForeground(getColor(SWT.COLOR_RED));
-		}
-		else if (i == IMessageProvider.WARNING) {
+		} else if (i == IMessageProvider.WARNING) {
 			parent.setText(msg);
 			parent.setForeground(getColor(SWT.COLOR_DARK_YELLOW));
 		}
 	}
-	
-	public boolean isValid(){
+
+	public boolean isValid() {
 		return !CollisionErrorLevel.ERROR.equals(collisionErrorLevel);
 	}
-	
+
 	/** Die einem Plannable-Typ zugeordnete Farbe holen */
-	private Color getTypColor(IAppointment p){
-		
-		//@REF String coldesc =
-		//			ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(), "FFFFFF"); //$NON-NLS-1$
-		//		return UiDesk.getColorFromRGB(coldesc);
+	private Color getTypColor(IAppointment p) {
+
+		// @REF String coldesc =
+		// ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX +
+		// p.getType(), "FFFFFF"); //$NON-NLS-1$
+		// return UiDesk.getColorFromRGB(coldesc);
 
 		String cfgName = "agenda/farben/typ/";
-		String coldesc = ConfigServiceHolder.get()
-			.getActiveUserContact(
-			cfgName + p.getType(), "FFFFFF");
+		String coldesc = ConfigServiceHolder.get().getActiveUserContact(cfgName + p.getType(), "FFFFFF");
 		ColorRegistry cr = JFaceResources.getColorRegistry();
 		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
-		
+
 		if (!cr.hasValueFor(col)) {
 			RGB rgb;
 			try {
-				rgb = new RGB(Integer.parseInt(col.substring(0, 2), 16),
-					Integer.parseInt(col.substring(2, 4), 16),
-					Integer.parseInt(col.substring(4, 6), 16));
+				rgb = new RGB(Integer.parseInt(col.substring(0, 2), 16), Integer.parseInt(col.substring(2, 4), 16),
+						Integer.parseInt(col.substring(4, 6), 16));
 			} catch (NumberFormatException nex) {
 				ExHandler.handle(nex);
 				rgb = new RGB(100, 100, 100);
@@ -500,19 +478,19 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		}
 		return cr.get(col);
 	}
-	
-	private Color getColor(int swtColor){
+
+	private Color getColor(int swtColor) {
 		Display display = Display.getCurrent();
 		return display.getSystemColor(swtColor);
 	}
-	
-	private Font getSmallFont(){
-		//@REF UiDesk.getFont(Preferences.USR_SMALLFONT))
+
+	private Font getSmallFont() {
+		// @REF UiDesk.getFont(Preferences.USR_SMALLFONT))
 		String cfgName = "anwender/smallfont";
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		if (!fr.hasValueFor(cfgName)) {
 			FontData[] fd = PreferenceConverter
-				.basicGetFontData(ConfigServiceHolder.get().getActiveUserContact(cfgName, ""));
+					.basicGetFontData(ConfigServiceHolder.get().getActiveUserContact(cfgName, ""));
 			fr.put(cfgName, fd);
 		}
 		return fr.get(cfgName);

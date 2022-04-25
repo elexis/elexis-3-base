@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -18,40 +18,38 @@ import ch.elexis.data.PersistentObjectFactory;
 
 /**
  * used internally to create Note Objects cfrom a String representation
- * 
+ *
  * @see ch.elexis.data.PersisentObjectFactory
  * @author gerry
- * 
+ *
  */
 public class NoteFactory extends PersistentObjectFactory {
-	public NoteFactory(){}
-	
+	public NoteFactory() {
+	}
+
 	@Override
-	public PersistentObject createFromString(String code){
+	public PersistentObject createFromString(String code) {
 		try {
 			String[] ci = code.split("::"); //$NON-NLS-1$
 			Class<?> clazz = Class.forName(ci[0]);
 			Method load = clazz.getMethod("load", new Class[] { //$NON-NLS-1$
-					String.class
-				});
-			return (PersistentObject) (load.invoke(null, new Object[] {
-				ci[1]
-			}));
+					String.class });
+			return (PersistentObject) (load.invoke(null, new Object[] { ci[1] }));
 		} catch (Exception ex) {
 			// ExHandler.handle(ex);
 			return null;
-			
+
 		}
 	}
-	
+
 	@Override
-	public PersistentObject doCreateTemplate(Class<? extends PersistentObject> typ){
+	public PersistentObject doCreateTemplate(Class<? extends PersistentObject> typ) {
 		try {
 			return (PersistentObject) typ.newInstance();
 		} catch (Exception e) {
 			// ExHandler.handle(e);
 			return null;
 		}
-		
+
 	}
 }

@@ -10,28 +10,26 @@ import ch.elexis.laborimport.hl7.universal.LinkLabContactResolver;
 import ch.rgw.tools.Result;
 
 public class ImportFileRunnable implements Runnable {
-	
+
 	private IVirtualFilesystemHandle vfsFile;
 	private Result<?> result;
 	private MultiFileParser mfParser;
 	private HL7Parser hl7parser;
-	
-	public ImportFileRunnable(IVirtualFilesystemHandle vfsFile, final String myLab){
+
+	public ImportFileRunnable(IVirtualFilesystemHandle vfsFile, final String myLab) {
 		this.vfsFile = vfsFile;
 		this.mfParser = new MultiFileParser(myLab);
 		this.hl7parser = new DefaultHL7Parser(myLab);
 	}
-	
-	public Result<?> getResult(){
+
+	public Result<?> getResult() {
 		return result;
 	}
-	
+
 	@Override
-	public void run(){
-		result = mfParser.importFromHandle(
-			vfsFile, new DefaultImportStrategyFactory().setMoveAfterImport(true)
-				.setLabContactResolver(new LinkLabContactResolver()),
-			hl7parser, new DefaultPersistenceHandler());
+	public void run() {
+		result = mfParser.importFromHandle(vfsFile, new DefaultImportStrategyFactory().setMoveAfterImport(true)
+				.setLabContactResolver(new LinkLabContactResolver()), hl7parser, new DefaultPersistenceHandler());
 	}
-	
+
 }

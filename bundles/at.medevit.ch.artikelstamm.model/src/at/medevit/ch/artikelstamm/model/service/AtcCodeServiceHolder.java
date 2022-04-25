@@ -10,13 +10,13 @@ import at.medevit.atc_codes.ATCCodeService;
 @Component
 public class AtcCodeServiceHolder {
 	private static ATCCodeService atcCodeService = null;
-	
+
 	@Reference
-	public void setATCCodeService(ATCCodeService consumer){
+	public void setATCCodeService(ATCCodeService consumer) {
 		AtcCodeServiceHolder.atcCodeService = consumer;
 	}
-	
-	public static Optional<ATCCodeService> get(){
+
+	public static Optional<ATCCodeService> get() {
 		return Optional.ofNullable(atcCodeService);
 	}
 }

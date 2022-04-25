@@ -7,12 +7,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java-Klasse für anonymous complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ * <p>
+ * Java-Klasse für anonymous complex type.
+ *
+ * <p>
+ * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser
+ * Klasse enthalten ist.
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -24,41 +26,35 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "apotheken"
-})
+@XmlType(name = "", propOrder = { "apotheken" })
 @XmlRootElement(name = "Apotheken")
 public class Apotheken {
 
-    @XmlElement(required = true)
-    protected ArrayOfApotheken apotheken;
+	@XmlElement(required = true)
+	protected ArrayOfApotheken apotheken;
 
-    /**
-     * Ruft den Wert der apotheken-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ArrayOfApotheken }
-     *     
-     */
-    public ArrayOfApotheken getApotheken() {
-        return apotheken;
-    }
+	/**
+	 * Ruft den Wert der apotheken-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link ArrayOfApotheken }
+	 *
+	 */
+	public ArrayOfApotheken getApotheken() {
+		return apotheken;
+	}
 
-    /**
-     * Legt den Wert der apotheken-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ArrayOfApotheken }
-     *     
-     */
-    public void setApotheken(ArrayOfApotheken value) {
-        this.apotheken = value;
-    }
+	/**
+	 * Legt den Wert der apotheken-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link ArrayOfApotheken }
+	 *
+	 */
+	public void setApotheken(ArrayOfApotheken value) {
+		this.apotheken = value;
+	}
 
 }

@@ -24,34 +24,31 @@ import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
 
 public class DeleteHandler {
-	
+
 	@Inject
 	private ESelectionService selectionService;
-	
+
 	@Inject
 	private IAppointmentService appointmentService;
-	
+
 	@Execute
-	public Object execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell)
-		throws ExecutionException{
+	public Object execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell) throws ExecutionException {
 		Optional<IPeriod> period = getSelectedPeriod();
-		
+
 		period.ifPresent(p -> {
 			if (MessageDialog.openConfirm(shell, "Löschen",
-				"Wollen Sie " + period.get().getLabel()
-					+ " wirklich löschen?")) {
+					"Wollen Sie " + period.get().getLabel() + " wirklich löschen?")) {
 				AcquireLockBlockingUi.aquireAndRun(p, new ILockHandler() {
 					@Override
-					public void lockFailed(){
+					public void lockFailed() {
 						// do nothing
 					}
-					
+
 					@Override
-					public void lockAcquired(){
+					public void lockAcquired() {
 						IAppointment appointment = (IAppointment) p;
 						if (appointment.isRecurring()) {
-							if (MessageDialog.openQuestion(shell, "Löschen",
-								"Wollen Sie die gesamte Serie löschen?")) {
+							if (MessageDialog.openQuestion(shell, "Löschen", "Wollen Sie die gesamte Serie löschen?")) {
 								appointmentService.delete(appointment, true);
 							} else {
 								appointmentService.delete(appointment, false);
@@ -59,20 +56,18 @@ public class DeleteHandler {
 						} else {
 							appointmentService.delete(appointment, false);
 						}
-						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
-							IAppointment.class);
+						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 					}
 				});
 			}
 		});
 		return null;
 	}
-	
-	private Optional<IPeriod> getSelectedPeriod(){
+
+	private Optional<IPeriod> getSelectedPeriod() {
 		try {
 			ISelection activeSelection = (ISelection) selectionService.getSelection();
-			if (activeSelection instanceof StructuredSelection
-				&& !((StructuredSelection) activeSelection).isEmpty()) {
+			if (activeSelection instanceof StructuredSelection && !((StructuredSelection) activeSelection).isEmpty()) {
 				Object element = ((StructuredSelection) activeSelection).getFirstElement();
 				if (element instanceof IPeriod) {
 					return Optional.of((IPeriod) element);

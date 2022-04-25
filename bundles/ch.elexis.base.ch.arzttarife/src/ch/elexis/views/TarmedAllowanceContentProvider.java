@@ -14,22 +14,19 @@ import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 public class TarmedAllowanceContentProvider extends CommonViewerContentProvider {
-	
-	
+
 	private ControlFieldProvider controlFieldProvider;
-	
-	public TarmedAllowanceContentProvider(CommonViewer commonViewer,
-		ControlFieldProvider controlFieldProvider){
+
+	public TarmedAllowanceContentProvider(CommonViewer commonViewer, ControlFieldProvider controlFieldProvider) {
 		super(commonViewer);
 		this.controlFieldProvider = controlFieldProvider;
 	}
-	
+
 	@Override
-	public Object[] getElements(Object arg0){
+	public Object[] getElements(Object arg0) {
 		IQuery<?> query = getBaseQuery();
-		
-		java.util.Optional<IEncounter> encounter =
-			ContextServiceHolder.get().getTyped(IEncounter.class);
+
+		java.util.Optional<IEncounter> encounter = ContextServiceHolder.get().getTyped(IEncounter.class);
 		encounter.ifPresent(e -> {
 			query.and("validFrom", COMPARATOR.LESS_OR_EQUAL, e.getDate());
 			query.startGroup();
@@ -37,20 +34,19 @@ public class TarmedAllowanceContentProvider extends CommonViewerContentProvider 
 			query.or("validTo", COMPARATOR.EQUALS, null);
 			query.andJoinGroups();
 		});
-		
+
 		// apply filters from control field provider
 		controlFieldProvider.setQuery(query);
 		applyQueryFilters(query);
 		query.orderBy("code", ORDER.ASC);
 		List<?> elements = query.execute();
-		
+
 		return elements.toArray(new Object[elements.size()]);
 	}
-	
+
 	@Override
-	protected IQuery<?> getBaseQuery(){
-		IQuery<ITarmedAllowance> query =
-			ArzttarifeModelServiceHolder.get().getQuery(ITarmedAllowance.class);
+	protected IQuery<?> getBaseQuery() {
+		IQuery<ITarmedAllowance> query = ArzttarifeModelServiceHolder.get().getQuery(ITarmedAllowance.class);
 		query.and("id", COMPARATOR.NOT_EQUALS, "VERSION");
 		return query;
 	}

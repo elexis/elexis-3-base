@@ -17,30 +17,30 @@ import ch.elexis.core.spotlight.ISpotlightResultEntry.Category;
 
 @Component(service = ISpotlightResultContributor.class)
 public class DocumentSpotlightResultContributor extends AbstractSpotlightResultContributor {
-	
+
 	@Reference
 	private IElexisEnvironmentService elexisEnvironmentService;
-	
-	public DocumentSpotlightResultContributor(){
+
+	public DocumentSpotlightResultContributor() {
 		super(SolrConstants.CORE_DOCUMENTS);
 	}
-	
+
 	@Activate
-	public void activate(){
+	public void activate() {
 		super.activate(elexisEnvironmentService);
 	}
-	
+
 	@Deactivate
-	public void deactivate(){
+	public void deactivate() {
 		super.deactivate();
 	}
-	
+
 	@Override
-	protected void handleResponse(ISpotlightResult spotlightResult, QueryResponse response){
+	protected void handleResponse(ISpotlightResult spotlightResult, QueryResponse response) {
 		List<IDocumentBean> beans = response.getBeans(IDocumentBean.class);
 		for (IDocumentBean bean : beans) {
 			spotlightResult.addEntry(Category.DOCUMENT, bean.getLabel(), bean.getId(), bean.getContent());
 		}
 	}
-	
+
 }

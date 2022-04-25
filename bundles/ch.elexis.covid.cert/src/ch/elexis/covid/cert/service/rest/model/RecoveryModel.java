@@ -25,66 +25,66 @@ import ch.elexis.core.model.IPatient;
 
 public class RecoveryModel {
 	private Name name;
-	
+
 	private String dateOfBirth;
-	
+
 	private String language;
-	
+
 	private String otp;
-	
+
 	private String appCode;
-	
+
 	private RecoveryInfo[] recoveryInfo;
-	
-	public Name getName(){
+
+	public Name getName() {
 		return name;
 	}
-	
-	public void setName(Name name){
+
+	public void setName(Name name) {
 		this.name = name;
 	}
-	
-	public String getDateOfBirth(){
+
+	public String getDateOfBirth() {
 		return dateOfBirth;
 	}
-	
-	public void setDateOfBirth(String dateOfBirth){
+
+	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
-	
-	public String getLanguage(){
+
+	public String getLanguage() {
 		return language;
 	}
-	
-	public void setLanguage(String language){
+
+	public void setLanguage(String language) {
 		this.language = language;
 	}
-	
-	public String getOtp(){
+
+	public String getOtp() {
 		return otp;
 	}
-	
-	public void setOtp(String otp){
+
+	public void setOtp(String otp) {
 		this.otp = otp;
 	}
-	
-	public String getAppCode(){
+
+	public String getAppCode() {
 		return appCode;
 	}
-	
-	public void setAppCode(String appCode){
+
+	public void setAppCode(String appCode) {
 		this.appCode = appCode;
 	}
-	
-	public RecoveryInfo[] getRecoveryInfo(){
+
+	public RecoveryInfo[] getRecoveryInfo() {
 		return recoveryInfo;
 	}
-	
-	public void setRecoveryInfo(RecoveryInfo[] testInfo){
+
+	public void setRecoveryInfo(RecoveryInfo[] testInfo) {
 		this.recoveryInfo = testInfo;
 	}
-	
-	public RecoveryModel initDefault(IPatient patient, String otp){
+
+	public RecoveryModel initDefault(IPatient patient, String otp) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		setName(Name.of(patient));
 		setDateOfBirth(formatter.format(patient.getDateOfBirth()));
@@ -93,10 +93,8 @@ public class RecoveryModel {
 		RecoveryInfo recoveryinfo = new RecoveryInfo();
 		recoveryinfo.setDateOfFirstPositiveTestResult(formatter.format(LocalDate.now()));
 		recoveryinfo.setCountryOfTest("CH");
-		setRecoveryInfo(new RecoveryInfo[] {
-			recoveryinfo
-		});
+		setRecoveryInfo(new RecoveryInfo[] { recoveryinfo });
 		return this;
 	}
-	
+
 }

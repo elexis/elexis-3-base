@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
- *    
+ *
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -38,41 +38,41 @@ import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 
 /**
  * Some common actions for the agenda
- * 
+ *
  * @author gerry
- * 
+ *
  */
 public class AgendaActions {
-	
+
 	/** delete an appointment */
 	private static LockRequestingRestrictedAction<Termin> delTerminAction;
 	/** Display or change the state of an appointment */
 	private static IAction terminStatusAction;
-	
+
 	/**
 	 * Reflect the user's rights on the agenda actions
 	 */
-	public static void updateActions(){
+	public static void updateActions() {
 		getTerminStatusAction().setEnabled(CoreHub.acl.request(ACLContributor.USE_AGENDA));
 		((RestrictedAction) getDelTerminAction()).reflectRight();
 	}
-	
-	public static IAction getDelTerminAction(){
+
+	public static IAction getDelTerminAction() {
 		if (delTerminAction == null) {
 			makeActions();
 		}
 		return delTerminAction;
 	}
-	
-	public static IAction getTerminStatusAction(){
+
+	public static IAction getTerminStatusAction() {
 		if (terminStatusAction == null) {
 			makeActions();
 		}
 		return terminStatusAction;
 	}
-	
-	private static void makeActions(){
-		
+
+	private static void makeActions() {
+
 		delTerminAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.DELETE_APPOINTMENTS,
 				Messages.AgendaActions_deleteDate) {
 			{
@@ -96,48 +96,47 @@ public class AgendaActions {
 			Listener showListener = null;
 			{
 				setMenuCreator(new IMenuCreator() {
-					public void dispose(){
+					public void dispose() {
 						if (mine != null) {
 							removeShowListener();
 							mine.dispose();
 						}
 					}
-					
-					public Menu getMenu(Control parent){
+
+					public Menu getMenu(Control parent) {
 						mine = new Menu(parent);
 						fillMenu();
 						addShowListener();
 						return mine;
 					}
-					
-					public Menu getMenu(Menu parent){
+
+					public Menu getMenu(Menu parent) {
 						mine = new Menu(parent);
 						fillMenu();
 						addShowListener();
 						return mine;
 					}
-					
-					private void removeShowListener(){
+
+					private void removeShowListener() {
 						if (mine != null && showListener != null) {
 							mine.removeListener(SWT.Show, showListener);
 						}
 					}
-					
-					private void addShowListener(){
+
+					private void addShowListener() {
 						if (mine != null) {
 							removeShowListener();
 							showListener = new Listener() {
 								@Override
-								public void handleEvent(Event event){
+								public void handleEvent(Event event) {
 									Menu menu = (Menu) event.widget;
-									Termin actTermin =
-										(Termin) ElexisEventDispatcher.getSelected(Termin.class);
+									Termin actTermin = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 									if (actTermin != null) {
 										String actTerminStatus = actTermin.getStatus();
 										if (actTerminStatus != null) {
 											for (MenuItem menuItem : menu.getItems()) {
-												menuItem.setSelection(StringUtils
-													.equals(actTerminStatus, menuItem.getText()));
+												menuItem.setSelection(
+														StringUtils.equals(actTerminStatus, menuItem.getText()));
 											}
 										}
 									}
@@ -148,25 +147,24 @@ public class AgendaActions {
 					}
 				});
 			}
-			
-			void fillMenu(){
+
+			void fillMenu() {
 				for (String t : Termin.TerminStatus) {
 					MenuItem it = new MenuItem(mine, SWT.CHECK);
 					it.setText(t);
 					it.addSelectionListener(new SelectionAdapter() {
 						@Override
-						public void widgetSelected(SelectionEvent e){
+						public void widgetSelected(SelectionEvent e) {
 							Termin act = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-							AcquireLockBlockingUi.aquireAndRun((IPersistentObject) act,
-								new ILockHandler() {
+							AcquireLockBlockingUi.aquireAndRun((IPersistentObject) act, new ILockHandler() {
 								@Override
-								public void lockFailed(){
+								public void lockFailed() {
 									// do nothing
-									
+
 								}
-								
+
 								@Override
-								public void lockAcquired(){
+								public void lockAcquired() {
 									MenuItem it = (MenuItem) e.getSource();
 									act.setStatus(it.getText());
 									ElexisEventDispatcher.reload(Termin.class);

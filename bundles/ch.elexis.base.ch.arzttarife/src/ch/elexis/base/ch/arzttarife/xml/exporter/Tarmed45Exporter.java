@@ -120,105 +120,99 @@ import ch.rgw.tools.VersionInfo;
 import ch.rgw.tools.XMLTool;
 
 public class Tarmed45Exporter {
-	
+
 	public static enum EsrType {
-			esr9, esrQR
+		esr9, esrQR
 	}
-	
+
 	private static Logger logger = LoggerFactory.getLogger(Tarmed45Exporter.class);
-	
+
 	protected boolean printAtIntermediate;
-	
+
 	private ESR besr;
-	
+
 	private EsrType esrType = EsrType.esrQR;
-	
+
 	/**
-	 * Create a tarmed invoice request model for the {@link IInvoice}, and marshall it into the
-	 * provided {@link OutputStream}.
-	 * 
+	 * Create a tarmed invoice request model for the {@link IInvoice}, and marshall
+	 * it into the provided {@link OutputStream}.
+	 *
 	 * @param invoice
 	 * @param dest
 	 * @param type
 	 * @return
 	 */
-	public boolean doExport(final IInvoice invoice,
-		final OutputStream dest,
-		final IRnOutputter.TYPE type){
-		
+	public boolean doExport(final IInvoice invoice, final OutputStream dest, final IRnOutputter.TYPE type) {
+
 		try {
 			besr = null;
 			// build the tarmed invoice request for the IInvoice
 			RequestType requestType = new RequestType();
 			requestType.setModus(getModus(invoice.getCoverage()));
 			requestType.setLanguage(Locale.getDefault().getLanguage());
-			
+
 			requestType.setProcessing(getProcessing(invoice));
 			requestType.setPayload(getPayload(invoice, type));
-			
-			
+
 			if (getBalanceAmount(requestType) != null) {
 				if (invoice.adjustAmount(getBalanceAmount(requestType).roundTo5()) == false) {
-					invoice.reject(InvoiceState.REJECTCODE.SUM_MISMATCH,
-						Messages.XMLExporter_SumMismatch);
+					invoice.reject(InvoiceState.REJECTCODE.SUM_MISMATCH, Messages.XMLExporter_SumMismatch);
 				}
 				// save rounded amount
 				CoreModelServiceHolder.get().save(invoice);
 			}
-			
+
 			return TarmedJaxbUtil.marshallInvoiceRequest(requestType, dest);
-			
+
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Error generating tarmed xml model", e);
 			return false;
 		}
 	}
-	
-	public Money getBalanceAmount(RequestType requestType){
+
+	public Money getBalanceAmount(RequestType requestType) {
 		if (requestType.getPayload() != null && requestType.getPayload().getBody() != null) {
 			if (requestType.getPayload().getBody().getTiersGarant() != null) {
-				return new Money(
-					requestType.getPayload().getBody().getTiersGarant().getBalance().getAmount());
+				return new Money(requestType.getPayload().getBody().getTiersGarant().getBalance().getAmount());
 			} else if (requestType.getPayload().getBody().getTiersPayant() != null) {
-				return new Money(
-					requestType.getPayload().getBody().getTiersPayant().getBalance().getAmount());
+				return new Money(requestType.getPayload().getBody().getTiersPayant().getBalance().getAmount());
 			}
 		}
 		return null;
 	}
-	
-	public EsrType getEsrType(){
+
+	public EsrType getEsrType() {
 		return esrType;
 	}
-	
-	public void setEsrType(EsrType esrType){
-		if(esrType == null) {
+
+	public void setEsrType(EsrType esrType) {
+		if (esrType == null) {
 			this.esrType = EsrType.esrQR;
 		} else {
 			this.esrType = esrType;
 		}
 	}
-	
-	public boolean isPrintAtIntermediate(){
+
+	public boolean isPrintAtIntermediate() {
 		return printAtIntermediate;
 	}
-	
-	public void setPrintAtIntermediate(boolean value){
+
+	public void setPrintAtIntermediate(boolean value) {
 		printAtIntermediate = value;
 	}
-	
-	protected String getModus(ICoverage coverage){
+
+	protected String getModus(ICoverage coverage) {
 		return "production"; //$NON-NLS-1$
 	}
-	
-	protected Object getBalance(IInvoice invoice){
+
+	protected Object getBalance(IInvoice invoice) {
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-		
+
 		ServicesFinancialInfo financialInfo = ServicesFinancialInfo.of(getServices(invoice));
-		
+
 		if (tiersType == Tiers.GARANT) {
 			BalanceTGType balanceTGType = new BalanceTGType();
-			
+
 			balanceTGType.setCurrency(getCurrency(invoice));
 			balanceTGType.setAmountPrepaid(invoice.getPayedAmount().doubleValue());
 			if (!invoice.getDemandAmount().isZero()) {
@@ -229,11 +223,11 @@ public class Tarmed45Exporter {
 			balanceTGType.setAmountDue(invoice.getOpenAmount().roundTo5().doubleValue());
 			balanceTGType.setAmountObligations(financialInfo.getObligationSum().doubleValue());
 			balanceTGType.setVat(getVat(invoice, financialInfo));
-			
+
 			return balanceTGType;
 		} else if (tiersType == Tiers.PAYANT) {
 			BalanceTPType balanceTPType = new BalanceTPType();
-			
+
 			balanceTPType.setCurrency(getCurrency(invoice));
 			if (!invoice.getDemandAmount().isZero()) {
 				balanceTPType.setAmountReminder(invoice.getDemandAmount().doubleValue());
@@ -243,29 +237,28 @@ public class Tarmed45Exporter {
 			balanceTPType.setAmountDue(invoice.getOpenAmount().roundTo5().doubleValue());
 			balanceTPType.setAmountObligations(financialInfo.getObligationSum().doubleValue());
 			balanceTPType.setVat(getVat(invoice, financialInfo));
-			
+
 			return balanceTPType;
 		}
 		return null;
 	}
-	
-	protected VatType getVat(IInvoice invoice, ServicesFinancialInfo financialInfo){
+
+	protected VatType getVat(IInvoice invoice, ServicesFinancialInfo financialInfo) {
 		VatType vatType = new VatType();
-		
-		String vatNumber =
-			(String) invoice.getMandator().getBiller().getExtInfo(XMLExporter.VAT_MANDANTVATNUMBER);
+
+		String vatNumber = (String) invoice.getMandator().getBiller().getExtInfo(XMLExporter.VAT_MANDANTVATNUMBER);
 		if (StringUtils.isNotBlank(vatNumber)) {
 			vatType.setVatNumber(vatNumber);
 		}
-		
+
 		VatRateSum vatSum = financialInfo.getVatRateSum();
 		vatType.setVat(vatSum.getSumVat().doubleValue());
-		
+
 		VatRateElement[] vatValues = vatSum.getRates().values().toArray(new VatRateElement[0]);
 		Arrays.sort(vatValues);
 		for (VatRateElement rate : vatValues) {
 			VatRateType vatRateType = new VatRateType();
-			
+
 			vatRateType.setVatRate(rate.getScale());
 			vatRateType.setAmount(rate.getAmount().doubleValue());
 			vatRateType.setVat(rate.getVat().doubleValue());
@@ -273,29 +266,26 @@ public class Tarmed45Exporter {
 		}
 		return vatType;
 	}
-	
-	protected String getCurrency(IInvoice invoice){
-		String curr =
-			(String) invoice.getMandator().getBiller().getExtInfo(Messages.XMLExporter_Currency);
+
+	protected String getCurrency(IInvoice invoice) {
+		String curr = (String) invoice.getMandator().getBiller().getExtInfo(Messages.XMLExporter_Currency);
 		if (StringUtils.isNotBlank(curr)) {
-			return curr; //$NON-NLS-1$
+			return curr; // $NON-NLS-1$
 		}
 		return "CHF";
 	}
-	
-	protected Object getTiers(IInvoice invoice) throws DatatypeConfigurationException{
+
+	protected Object getTiers(IInvoice invoice) throws DatatypeConfigurationException {
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-		if(tiersType == Tiers.GARANT) {
+		if (tiersType == Tiers.GARANT) {
 			GarantType garantType = new GarantType();
-			
-			String paymentPeriode =
-				(String) invoice.getMandator().getBiller().getExtInfo("rnfrist"); //$NON-NLS-1$
+
+			String paymentPeriode = (String) invoice.getMandator().getBiller().getExtInfo("rnfrist"); //$NON-NLS-1$
 			if (StringTool.isNothing(paymentPeriode)) {
 				paymentPeriode = "30"; //$NON-NLS-1$
 			}
-			garantType.setPaymentPeriod(
-				DatatypeFactory.newInstance().newDuration("P" + paymentPeriode + "D")); //$NON-NLS-1$ //$NON-NLS-2$
-			
+			garantType.setPaymentPeriod(DatatypeFactory.newInstance().newDuration("P" + paymentPeriode + "D")); //$NON-NLS-1$ //$NON-NLS-2$
+
 			garantType.setBiller(getBiller(invoice));
 			garantType.setDebitor(getDebitor(invoice));
 			garantType.setProvider(getProvider(invoice));
@@ -303,13 +293,13 @@ public class Tarmed45Exporter {
 			garantType.setPatient(getPatient(invoice));
 			garantType.setGuarantor(getGuarantor(invoice));
 			garantType.setReferrer(getReferrer(invoice));
-			
+
 			garantType.setBalance((BalanceTGType) getBalance(invoice));
-			
+
 			return garantType;
 		} else if (tiersType == Tiers.PAYANT) {
 			PayantType payantTyp = new PayantType();
-			
+
 			payantTyp.setBiller(getBiller(invoice));
 			payantTyp.setDebitor(getDebitor(invoice));
 			payantTyp.setProvider(getProvider(invoice));
@@ -317,43 +307,42 @@ public class Tarmed45Exporter {
 			payantTyp.setPatient(getPatient(invoice));
 			payantTyp.setGuarantor(getGuarantor(invoice));
 			payantTyp.setReferrer(getReferrer(invoice));
-			
+
 			payantTyp.setBalance((BalanceTPType) getBalance(invoice));
-			
+
 			return payantTyp;
 		}
 		throw new IllegalStateException("Unknown tiers [" + tiersType + "]");
 	}
-	
-	protected DebitorAddressType getDebitor(IInvoice invoice){
+
+	protected DebitorAddressType getDebitor(IInvoice invoice) {
 		DebitorAddressType debitorAddressType = new DebitorAddressType();
-		
+
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
 		IContact debitor = null;
 		if (tiersType == Tiers.GARANT) {
-			debitor = XMLExporterUtil.getGuarantor(tiersType.getShortName(),
-				invoice.getCoverage().getPatient(), invoice.getCoverage());
+			debitor = XMLExporterUtil.getGuarantor(tiersType.getShortName(), invoice.getCoverage().getPatient(),
+					invoice.getCoverage());
 		} else {
 			debitor = invoice.getCoverage().getCostBearer();
 		}
 		debitorAddressType.setEanParty(TarmedRequirements.getEAN(debitor));
-		
+
 		Object companyOrPerson = getCompanyOrPerson(debitor, false);
 		if (companyOrPerson instanceof CompanyType) {
 			debitorAddressType.setCompany((CompanyType) companyOrPerson);
 		} else if (companyOrPerson instanceof PersonType) {
 			debitorAddressType.setPerson((PersonType) companyOrPerson);
 		}
-		
+
 		return debitorAddressType;
 	}
-	
-	protected ReferrerAddressType getReferrer(IInvoice invoice){
-		IContact auftraggeber =
-			CoverageServiceHolder.get().getRequiredContact(invoice.getCoverage(), "Zuweiser");
+
+	protected ReferrerAddressType getReferrer(IInvoice invoice) {
+		IContact auftraggeber = CoverageServiceHolder.get().getRequiredContact(invoice.getCoverage(), "Zuweiser");
 		if (auftraggeber != null) {
 			ReferrerAddressType referrerAddressType = new ReferrerAddressType();
-			
+
 			String ean = TarmedRequirements.getEAN(auftraggeber);
 			if (StringUtils.isNotBlank(ean)) {
 				referrerAddressType.setEanParty(ean);
@@ -372,29 +361,27 @@ public class Tarmed45Exporter {
 		}
 		return null;
 	}
-	
-	protected GuarantorAddressType getGuarantor(IInvoice invoice){
+
+	protected GuarantorAddressType getGuarantor(IInvoice invoice) {
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-		IContact guarantor =
-			XMLExporterUtil.getGuarantor(tiersType.getShortName(), invoice.getCoverage()
-				.getPatient(),
-			invoice.getCoverage());
+		IContact guarantor = XMLExporterUtil.getGuarantor(tiersType.getShortName(), invoice.getCoverage().getPatient(),
+				invoice.getCoverage());
 		if (guarantor != null) {
 			GuarantorAddressType guarantorAddressType = new GuarantorAddressType();
-			
+
 			Object companyOrPerson = getCompanyOrPerson(guarantor, false);
 			if (companyOrPerson instanceof CompanyType) {
 				guarantorAddressType.setCompany((CompanyType) companyOrPerson);
 			} else if (companyOrPerson instanceof PersonType) {
 				guarantorAddressType.setPerson((PersonType) companyOrPerson);
 			}
-			
+
 			return guarantorAddressType;
 		}
 		return null;
 	}
-	
-	protected PatientAddressType getPatient(IInvoice invoice) throws DatatypeConfigurationException{
+
+	protected PatientAddressType getPatient(IInvoice invoice) throws DatatypeConfigurationException {
 		IPatient patient = invoice.getCoverage().getPatient();
 		PatientAddressType patientAddressType = new PatientAddressType();
 
@@ -403,7 +390,7 @@ public class Tarmed45Exporter {
 		}
 		patientAddressType.setGender(patient.getGender().toString().toLowerCase());
 		LocalDateTime dateOfBirth = patient.getDateOfBirth();
-		if (dateOfBirth == null) { 
+		if (dateOfBirth == null) {
 			// make validator happy if we don't know the birthdate
 			patientAddressType.setBirthdate(XMLExporterUtil.makeXMLDateTime(LocalDateTime.of(1, 1, 1, 0, 0)));
 		} else {
@@ -415,16 +402,16 @@ public class Tarmed45Exporter {
 			Card card = new Card();
 			card.setCardId((String) invoice.getCoverage().getExtInfo("VEKANr"));
 			if (StringUtils.isNotBlank((String) invoice.getCoverage().getExtInfo("VEKAValid"))) {
-				card.setExpiryDate(XMLExporterUtil
-					.makeTarmedDate((String) invoice.getCoverage().getExtInfo("VEKAValid")));
+				card.setExpiryDate(
+						XMLExporterUtil.makeTarmedDate((String) invoice.getCoverage().getExtInfo("VEKAValid")));
 			}
 			patientAddressType.setCard(card);
 		}
 		patientAddressType.setSsn(getSSN(invoice));
 		return patientAddressType;
 	}
-	
-	protected InsuranceAddressType getInsurance(IInvoice invoice){
+
+	protected InsuranceAddressType getInsurance(IInvoice invoice) {
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
 		IContact costBearer = invoice.getCoverage().getCostBearer();
 		if (costBearer == null) {
@@ -432,12 +419,12 @@ public class Tarmed45Exporter {
 		}
 		String kEAN = TarmedRequirements.getEAN(costBearer);
 		InsuranceAddressType insuranceAddressType = new InsuranceAddressType();
-		
+
 		if (tiersType == Tiers.GARANT) {
 			if (costBearer.isOrganization()) {
 				if (kEAN.matches("[0-9]{13,13}")) { //$NON-NLS-1$
 					insuranceAddressType.setEanParty(kEAN);
-					
+
 					insuranceAddressType.setCompany(getCompany(costBearer, false));
 				}
 			}
@@ -445,11 +432,11 @@ public class Tarmed45Exporter {
 			insuranceAddressType.setEanParty(kEAN);
 			insuranceAddressType.setCompany(getCompany(costBearer, false));
 		}
-		
+
 		return insuranceAddressType.getEanParty() == null ? null : insuranceAddressType;
 	}
-	
-	protected CompanyType getCompany(IContact contact, boolean useContactPostalAddress){
+
+	protected CompanyType getCompany(IContact contact, boolean useContactPostalAddress) {
 		if (contact.isOrganization()) {
 			return (CompanyType) getCompanyOrPerson(contact, useContactPostalAddress);
 		} else {
@@ -457,7 +444,7 @@ public class Tarmed45Exporter {
 			// note this may lead to a person mistreated as organization. So
 			// these faults should be caught when generating bills
 			CompanyType companyType = new CompanyType();
-			
+
 			companyType.setCompanyname(StringUtils.abbreviate(contact.getDescription1(), 35));
 			companyType.setPostal(getPostalAddress(contact));
 			companyType.setTelecom(getTelecom(contact));
@@ -465,39 +452,36 @@ public class Tarmed45Exporter {
 			return companyType;
 		}
 	}
-	
-	protected PersonType getPerson(IContact contact, boolean useContactPostalAddress){
+
+	protected PersonType getPerson(IContact contact, boolean useContactPostalAddress) {
 		if (contact.isPerson()) {
 			return (PersonType) getCompanyOrPerson(contact, useContactPostalAddress);
 		} else {
 			throw new IllegalStateException("Contact is not a person");
 		}
 	}
-	
-	protected ProviderAddressType getProvider(IInvoice invoice){
+
+	protected ProviderAddressType getProvider(IInvoice invoice) {
 		ProviderAddressType providerAddressType = new ProviderAddressType();
-		
+
 		IContact provider = invoice.getMandator();
-		if (StringUtils.isNotBlank(
-			ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null))) {
+		if (StringUtils.isNotBlank(ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null))) {
 			Optional<IContact> fixProvider = CoreModelServiceHolder.get().load(
-				ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null),
-				IContact.class);
+					ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null), IContact.class);
 			if (fixProvider.isPresent()) {
 				logger.info("Fixed provider [" + fixProvider.get().getLabel() + "] ean ["
-					+ TarmedRequirements.getEAN(fixProvider.get()) + "]");
+						+ TarmedRequirements.getEAN(fixProvider.get()) + "]");
 				provider = fixProvider.get();
 			}
 		}
-		
+
 		providerAddressType.setEanParty(TarmedRequirements.getEAN(provider));
 		String zsr = TarmedRequirements.getKSK(provider);
 		if (StringUtils.isNotBlank(zsr)) {
 			providerAddressType.setZsr(zsr);
 		}
-		String spec =
-			(String) provider.getExtInfo(TarmedACL.getInstance().SPEC);
-		if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
+		String spec = (String) provider.getExtInfo(TarmedACL.getInstance().SPEC);
+		if (StringUtils.isNotBlank(spec)) { // $NON-NLS-1$
 			providerAddressType.setSpecialty(spec);
 		}
 		Object companyOrPerson = getCompanyOrPerson(provider, false);
@@ -508,20 +492,19 @@ public class Tarmed45Exporter {
 		}
 		return providerAddressType;
 	}
-	
-	protected BillerAddressType getBiller(IInvoice invoice){
+
+	protected BillerAddressType getBiller(IInvoice invoice) {
 		IContact biller = invoice.getMandator().getBiller();
-		
+
 		BillerAddressType billerAddressType = new BillerAddressType();
 		billerAddressType.setEanParty(TarmedRequirements.getEAN(biller));
 		String zsr = TarmedRequirements.getKSK(biller);
 		if (StringUtils.isNotBlank(zsr)) {
 			billerAddressType.setZsr(zsr);
 		}
-		
-		String spec =
-			(String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().SPEC);
-		if (StringUtils.isNotBlank(spec)) { //$NON-NLS-1$
+
+		String spec = (String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().SPEC);
+		if (StringUtils.isNotBlank(spec)) { // $NON-NLS-1$
 			billerAddressType.setSpecialty(spec);
 		}
 		Object companyOrPerson = getCompanyOrPerson(biller, false);
@@ -532,28 +515,27 @@ public class Tarmed45Exporter {
 		}
 		return billerAddressType;
 	}
-	
-	protected Object getCompanyOrPerson(IContact contact, boolean useContactPostalAddress){
+
+	protected Object getCompanyOrPerson(IContact contact, boolean useContactPostalAddress) {
 		if (contact.isOrganization()) {
 			CompanyType companyType = new CompanyType();
-			
+
 			companyType.setCompanyname(StringUtils.abbreviate(contact.getDescription1(), 35));
-			
+
 			companyType.setPostal(getPostalAddress(contact));
-			
+
 			companyType.setTelecom(getTelecom(contact));
 			companyType.setOnline(getOnline(contact));
 			return companyType;
 		} else if (contact.isPerson()) {
 			PersonType personType = new PersonType();
-			
+
 			if (useContactPostalAddress) {
 				PostalAddress postAnschrift = PostalAddress.ofText(contact.getPostalAddress());
 				personType.setFamilyname(StringUtils.abbreviate(postAnschrift.getLastName(), 35));
 				personType.setGivenname(StringUtils.abbreviate(postAnschrift.getFirstName(), 35));
 				if (StringUtils.isNotBlank(postAnschrift.getSalutation())) {
-					personType
-						.setSalutation(StringUtils.abbreviate(postAnschrift.getSalutation(), 35));
+					personType.setSalutation(StringUtils.abbreviate(postAnschrift.getSalutation(), 35));
 				}
 			} else {
 				String salutation = (String) contact.getExtInfo("Anrede");
@@ -561,14 +543,12 @@ public class Tarmed45Exporter {
 					personType.setSalutation(StringUtils.abbreviate(salutation, 35));
 				}
 				if (contact.isPerson()) {
-					IPerson person =
-						CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
+					IPerson person = CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
 					if (StringUtils.isNotBlank(person.getTitel())) {
 						personType.setTitle(StringUtils.abbreviate(person.getTitel(), 35));
 					}
 					if (StringUtils.isBlank(salutation)) {
-						personType.setSalutation(
-							StringUtils.abbreviate(PersonFormatUtil.getSalutation(person), 35));
+						personType.setSalutation(StringUtils.abbreviate(PersonFormatUtil.getSalutation(person), 35));
 					}
 				}
 				personType.setFamilyname(StringUtils.abbreviate(contact.getDescription1(), 35));
@@ -580,42 +560,41 @@ public class Tarmed45Exporter {
 			personType.setPostal(getPostalAddress(contact));
 			personType.setTelecom(getTelecom(contact));
 			personType.setOnline(getOnline(contact));
-			
+
 			return personType;
 		}
 		throw new IllegalStateException("Contact is no organization and no person");
 	}
-	
-	protected OnlineAddressType getOnline(IContact contact){
+
+	protected OnlineAddressType getOnline(IContact contact) {
 		OnlineAddressType onlineAddressType = new OnlineAddressType();
-		
+
 		if (StringUtils.isNotBlank(contact.getEmail())) {
-			String email =
-				XMLExporterUtil.getValidXMLString(StringUtils.left(contact.getEmail(), 70));
+			String email = XMLExporterUtil.getValidXMLString(StringUtils.left(contact.getEmail(), 70));
 			if (!email.matches(".+@.+")) { //$NON-NLS-1$
 				email = "mail@invalid.invalid"; //$NON-NLS-1$
 			}
 			onlineAddressType.getEmail().add(email);
 		}
-		
+
 		if (StringUtils.isNotBlank(contact.getWebsite())) {
-			String website =
-				XMLExporterUtil.getValidXMLString(StringUtils.left(contact.getWebsite(), 100));
-			
+			String website = XMLExporterUtil.getValidXMLString(StringUtils.left(contact.getWebsite(), 100));
+
 			onlineAddressType.getUrl().add(website);
 		}
-		
+
 		return onlineAddressType.getEmail().isEmpty() && onlineAddressType.getUrl().isEmpty() ? null
 				: onlineAddressType;
 	}
-	
-	protected TelecomAddressType getTelecom(IContact contact){
+
+	protected TelecomAddressType getTelecom(IContact contact) {
 		TelecomAddressType telecomAddressType = new TelecomAddressType();
-		
+
 		if (StringUtils.isNotBlank(contact.getPhone1())) {
 			telecomAddressType.getPhone().add(StringUtils.abbreviate(contact.getPhone1(), 25));
 		}
-		// only add the fax element if there is a phone, telcom without phone is not allowed by xsd
+		// only add the fax element if there is a phone, telcom without phone is not
+		// allowed by xsd
 		if (!telecomAddressType.getPhone().isEmpty()) {
 			if (StringUtils.isNotBlank(contact.getFax())) {
 				telecomAddressType.getFax().add(StringUtils.abbreviate(contact.getFax(), 25));
@@ -623,10 +602,10 @@ public class Tarmed45Exporter {
 		}
 		return telecomAddressType.getPhone().isEmpty() ? null : telecomAddressType;
 	}
-	
-	protected PostalAddressType getPostalAddress(IContact contact){
+
+	protected PostalAddressType getPostalAddress(IContact contact) {
 		PostalAddressType postalAddressType = new PostalAddressType();
-		
+
 		String pobox = (String) contact.getExtInfo("Postfach");
 		if (StringUtils.isNotBlank(pobox)) {
 			postalAddressType.setPobox(StringUtils.abbreviate(pobox, 35));
@@ -634,8 +613,8 @@ public class Tarmed45Exporter {
 		if (StringUtils.isNotBlank(contact.getStreet())) {
 			postalAddressType.setStreet(StringUtils.abbreviate(contact.getStreet(), 35));
 		}
-		postalAddressType.setCity(StringUtils.abbreviate(
-			StringUtils.defaultIfBlank(contact.getCity(), Messages.XMLExporter_Unknown), 35));
+		postalAddressType.setCity(StringUtils
+				.abbreviate(StringUtils.defaultIfBlank(contact.getCity(), Messages.XMLExporter_Unknown), 35));
 		String zip = StringUtils.defaultIfBlank(contact.getZip(), "0000");
 		ZipType zipType = new ZipType();
 		zipType.setValue(StringUtils.left(zip, 9));
@@ -648,11 +627,11 @@ public class Tarmed45Exporter {
 			zipType.setCountrycode(StringUtils.left(country.toString(), 3));
 		}
 		postalAddressType.setZip(zipType);
-		
+
 		return postalAddressType;
 	}
-	
-	protected ServicesType getServices(IInvoice invoice){
+
+	protected ServicesType getServices(IInvoice invoice) {
 		ServicesType servicesType = new ServicesType();
 		List<IEncounter> encounters = invoice.getEncounters();
 		int recordNumber = 1;
@@ -668,25 +647,24 @@ public class Tarmed45Exporter {
 				lastEncounterDate = encounterDate;
 				session = 1;
 			}
-			
+
 			boolean bRFE = false; // RFE already encoded
-			
+
 			try {
 				for (IBilled billed : encounterBilled) {
 					IBillable billable = billed.getBillable();
 					if (billable == null) {
-						logger.error(Messages.XMLExporter_ErroneusBill + invoice.getNumber()
-							+ " Null-Verrechenbar bei Kons " //$NON-NLS-1$
-							+ encounter.getLabel());
+						logger.error(
+								Messages.XMLExporter_ErroneusBill + invoice.getNumber() + " Null-Verrechenbar bei Kons " //$NON-NLS-1$
+										+ encounter.getLabel());
 						continue;
 					}
-					
+
 					if ("001".equals(billable.getCodeSystemCode())) { // tarmed service
 						ServiceExType serviceExType = new ServiceExType();
-						
+
 						serviceExType.setTreatment("ambulatory");
-						String bezug = (String) ((ITarmedLeistung) billable).getExtension()
-							.getExtInfo("Bezug"); //$NON-NLS-1$
+						String bezug = (String) ((ITarmedLeistung) billable).getExtension().getExtInfo("Bezug"); //$NON-NLS-1$
 						if (StringTool.isNothing(bezug)) {
 							bezug = (String) billed.getExtInfo("Bezug"); //$NON-NLS-1$
 						}
@@ -696,7 +674,7 @@ public class Tarmed45Exporter {
 						serviceExType.setBillingRole("both");
 						serviceExType.setMedicalRole("self_employed");
 						serviceExType.setBodyLocation(ArzttarifeUtil.getSide(billed));
-						
+
 						double primaryScale = billed.getPrimaryScaleFactor();
 						double secondaryScale = 1.0;
 						if (!billed.isNonIntegerAmount()) {
@@ -709,7 +687,7 @@ public class Tarmed45Exporter {
 						Money mAL = ArzttarifeUtil.getALMoney(billed);
 						Money mTL = ArzttarifeUtil.getTLMoney(billed);
 						Money mAmountLocal = billed.getTotal();
-						
+
 						// tarmed AL
 						serviceExType.setUnitMt(tlAL / 100.0);
 						XMLExporterUtil.getALNotScaled(billed).ifPresent(d -> {
@@ -729,13 +707,12 @@ public class Tarmed45Exporter {
 						serviceExType.setScaleFactorTt(primaryScale);
 						serviceExType.setExternalFactorTt(secondaryScale);
 						serviceExType.setAmountTt(mTL.doubleValue());
-						
+
 						serviceExType.setAmount(mAmountLocal.doubleValue());
 						serviceExType.setVatRate(getVatRate(billed));
-						
+
 						if (!bRFE) {
-							List<IReasonForEncounter> rfes =
-								XMLExporterUtil.getReasonsForEncounter(encounter);
+							List<IReasonForEncounter> rfes = XMLExporterUtil.getReasonsForEncounter(encounter);
 							if (rfes.size() > 0) {
 								StringBuilder sb = new StringBuilder();
 								for (IReasonForEncounter rfe : rfes) {
@@ -745,7 +722,7 @@ public class Tarmed45Exporter {
 							}
 							bRFE = true;
 						}
-						
+
 						serviceExType.setTariffType(billable.getCodeSystemCode());
 						serviceExType.setCode(billable.getCode());
 						serviceExType.setQuantity(billed.getAmount());
@@ -753,26 +730,24 @@ public class Tarmed45Exporter {
 						serviceExType.setSession(session);
 						serviceExType.setName(billed.getText());
 						serviceExType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
-						serviceExType
-							.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
-						serviceExType
-							.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
+						serviceExType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
+						serviceExType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
 						serviceExType.setObligation(getObligation(billed, billable));
-						
+
 						servicesType.getServiceExOrService().add(serviceExType);
 					} else { // any service
 						ServiceType serviceType = new ServiceType();
-						
+
 						serviceType.setAmount(billed.getTotal().doubleValue());
 						serviceType.setVatRate(getVatRate(billed));
-						
+
 						serviceType.setUnit(billed.getPrice().doubleValue());
 						serviceType.setUnitFactor(billed.getFactor());
-						
+
 						serviceType.setTariffType(billable.getCodeSystemCode());
-						// change physio tariff type for KVG from 311 to 312 
+						// change physio tariff type for KVG from 311 to 312
 						if (encounter.getCoverage().getBillingSystem().getLaw() == BillingLaw.KVG
-							&& "311".equals(billable.getCodeSystemCode())) {
+								&& "311".equals(billable.getCodeSystemCode())) {
 							serviceType.setTariffType("312");
 						}
 						serviceType.setCode(billable.getCode());
@@ -783,31 +758,26 @@ public class Tarmed45Exporter {
 						if (billable instanceof IArticle) {
 							XtraDrugType drugType = new XtraDrugType();
 							drugType.setIndicated(false);
-							if ("true"
-								.equals((String) billed.getExtInfo(Constants.FLD_EXT_INDICATED))) {
-								serviceType.setName(
-									serviceType.getName() + " (medizinisch indiziert: 207)");
+							if ("true".equals((String) billed.getExtInfo(Constants.FLD_EXT_INDICATED))) {
+								serviceType.setName(serviceType.getName() + " (medizinisch indiziert: 207)");
 								drugType.setIndicated(true);
 							}
 							serviceType.setXtraDrug(drugType);
 						}
 						serviceType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
-						serviceType
-							.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
+						serviceType.setProviderId(TarmedRequirements.getEAN(encounter.getMandator()));
 						serviceType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
 						serviceType.setObligation(getObligation(billed, billable));
-						
+
 						servicesType.getServiceExOrService().add(serviceType);
 					}
 				}
 			} catch (DatatypeConfigurationException e) {
-				logger.error(
-					"Error creating tarmed services for invoice nr [" + invoice.getNumber() + "]",
-					e);
+				logger.error("Error creating tarmed services for invoice nr [" + invoice.getNumber() + "]", e);
 				return null;
 			}
 		}
-		if(servicesType.getServiceExOrService() != null) {
+		if (servicesType.getServiceExOrService() != null) {
 			servicesType.getServiceExOrService().sort((l, r) -> {
 				LocalDate lDate = getServiceExOrServiceDate(l);
 				LocalDate rDate = getServiceExOrServiceDate(r);
@@ -825,11 +795,11 @@ public class Tarmed45Exporter {
 				return ret;
 			});
 		}
-		
+
 		return servicesType;
 	}
-	
-	private String getServiceExOrServiceCode(Object obj){
+
+	private String getServiceExOrServiceCode(Object obj) {
 		if (obj instanceof ServiceType) {
 			return ((ServiceType) obj).getCode();
 		} else if (obj instanceof ServiceExType) {
@@ -837,8 +807,8 @@ public class Tarmed45Exporter {
 		}
 		throw new IllegalArgumentException("Unknown type [" + obj.getClass().getName() + "]");
 	}
-	
-	private Integer getServiceExOrServiceTariffType(Object obj){
+
+	private Integer getServiceExOrServiceTariffType(Object obj) {
 		if (obj instanceof ServiceType) {
 			return Integer.parseInt(((ServiceType) obj).getTariffType());
 		} else if (obj instanceof ServiceExType) {
@@ -846,8 +816,8 @@ public class Tarmed45Exporter {
 		}
 		throw new IllegalArgumentException("Unknown type [" + obj.getClass().getName() + "]");
 	}
-	
-	private LocalDate getServiceExOrServiceDate(Object obj){
+
+	private LocalDate getServiceExOrServiceDate(Object obj) {
 		if (obj instanceof ServiceType) {
 			return XMLExporterUtil.getAsLocalDate(((ServiceType) obj).getDateBegin());
 		} else if (obj instanceof ServiceExType) {
@@ -855,8 +825,8 @@ public class Tarmed45Exporter {
 		}
 		throw new IllegalArgumentException("Unknown type [" + obj.getClass().getName() + "]");
 	}
-	
-	protected Boolean getObligation(IBilled billed, IBillable billable){
+
+	protected Boolean getObligation(IBilled billed, IBillable billable) {
 		String tariffTyp = billable.getCodeSystemCode();
 		if (billable instanceof ITarmedLeistung) {
 			return ArzttarifeUtil.isObligation(billed);
@@ -880,65 +850,64 @@ public class Tarmed45Exporter {
 		}
 		return false;
 	}
-	
-	protected Double getVatRate(IBilled billed){
+
+	protected Double getVatRate(IBilled billed) {
 		Double ret = 0.0;
-		
+
 		String vatScale = (String) billed.getExtInfo(Constants.VAT_SCALE);
 		if (vatScale != null && vatScale.length() > 0) {
 			ret = Double.parseDouble(vatScale);
 		}
-		
+
 		return ret;
 	}
-	
-	protected PayloadType getPayload(IInvoice invoice, TYPE type)
-		throws DatatypeConfigurationException{
+
+	protected PayloadType getPayload(IInvoice invoice, TYPE type) throws DatatypeConfigurationException {
 		PayloadType payloadType = new PayloadType();
-		
-		//		payloadType.setCredit(value);
+
+		// payloadType.setCredit(value);
 		payloadType.setType("invoice");
 		payloadType.setInvoice(getInvoice(invoice));
-		
+
 		payloadType.setBody(getBody(invoice));
 		payloadType.setCopy(type == TYPE.COPY);
 		payloadType.setStorno(type == TYPE.STORNO);
-		
+
 		return payloadType;
 	}
-	
-	protected InvoiceType getInvoice(IInvoice invoice) throws DatatypeConfigurationException{
+
+	protected InvoiceType getInvoice(IInvoice invoice) throws DatatypeConfigurationException {
 		InvoiceType invoiceType = new InvoiceType();
-		
+
 		invoiceType.setRequestTimestamp((int) (new Date().getTime() / 1000));
 		invoiceType.setRequestDate(XMLExporterUtil.makeXMLDate(invoice.getDate()));
 		invoiceType.setRequestId(InvoiceServiceHolder.get().getCombinedId(invoice));
-		
+
 		return invoiceType;
 	}
-	
-	protected BodyType getBody(IInvoice invoice) throws DatatypeConfigurationException{
+
+	protected BodyType getBody(IInvoice invoice) throws DatatypeConfigurationException {
 		BodyType bodyType = new BodyType();
-		
+
 		bodyType.setRole("physician");
 		bodyType.setPlace("practice");
-		
+
 		bodyType.setProlog(getProlog(invoice));
-		//		bodyType.setRemark(value);
-		
+		// bodyType.setRemark(value);
+
 		Object tiers = getTiers(invoice);
 		if (tiers instanceof GarantType) {
 			bodyType.setTiersGarant((GarantType) tiers);
 		} else if (tiers instanceof PayantType) {
 			bodyType.setTiersPayant((PayantType) tiers);
 		}
-		
+
 		if (esrType == EsrType.esr9) {
 			bodyType.setEsr9(getEsr9(invoice));
 		} else if (esrType == EsrType.esrQR) {
 			bodyType.setEsrQR(getEsrQR(invoice));
 		}
-		
+
 		Object lawType = getLawType(invoice);
 		if (lawType instanceof KvgLawType) {
 			bodyType.setKvg((KvgLawType) lawType);
@@ -951,25 +920,24 @@ public class Tarmed45Exporter {
 		} else if (lawType instanceof VvgLawType) {
 			bodyType.setVvg((VvgLawType) lawType);
 		}
-		
+
 		bodyType.setTreatment(getTreatment(invoice));
-		
+
 		bodyType.setServices(getServices(invoice));
-		
+
 		if (invoice.getAttachments() != null && !invoice.getAttachments().isEmpty()) {
 			bodyType.setDocuments(getDocuments(invoice));
 		}
-		
+
 		return bodyType;
 	}
-	
-	private DocumentsType getDocuments(IInvoice invoice){
+
+	private DocumentsType getDocuments(IInvoice invoice) {
 		DocumentsType documentsType = new DocumentsType();
 		for (IDocument attachment : invoice.getAttachments()) {
 			String mimeType = attachment.getMimeType();
 			if (mimeType == null || !mimeType.endsWith("pdf")) {
-				logger.warn("Cannot add attachment [{}], mimeType is null or not pdf",
-					attachment.getId());
+				logger.warn("Cannot add attachment [{}], mimeType is null or not pdf", attachment.getId());
 				continue;
 			}
 			try {
@@ -977,7 +945,7 @@ public class Tarmed45Exporter {
 				if (content != null) {
 					byte[] byteArray = IOUtils.toByteArray(attachment.getContent());
 					byte[] encoded = Base64.getEncoder().encode(byteArray);
-					
+
 					DocumentType document = new DocumentType();
 					document.setTitle(attachment.getTitle());
 					document.setFilename(attachment.getTitle());
@@ -987,26 +955,23 @@ public class Tarmed45Exporter {
 				} else {
 					logger.warn("Cannot add attachment [{}], content is null", attachment.getId());
 				}
-				
+
 			} catch (IOException e) {
-				logger.warn("Cannot add attachment [{}], cannot read content", attachment.getId(),
-					e);
+				logger.warn("Cannot add attachment [{}], cannot read content", attachment.getId(), e);
 			}
 		}
-		documentsType
-			.setNumber(new BigInteger(Integer.toString(documentsType.getDocument().size())));
+		documentsType.setNumber(new BigInteger(Integer.toString(documentsType.getDocument().size())));
 		return documentsType.getDocument().isEmpty() ? null : documentsType;
 	}
-	
-	protected TreatmentType getTreatment(IInvoice invoice) throws DatatypeConfigurationException{
+
+	protected TreatmentType getTreatment(IInvoice invoice) throws DatatypeConfigurationException {
 		TreatmentType treatmentType = new TreatmentType();
-		
+
 		treatmentType.setDateBegin(XMLExporterUtil.makeXMLDate(invoice.getDateFrom()));
 		treatmentType.setDateEnd(XMLExporterUtil.makeXMLDate(invoice.getDateTo()));
-		treatmentType
-			.setCanton((String) invoice.getMandator().getExtInfo(TarmedACL.getInstance().KANTON));
+		treatmentType.setCanton((String) invoice.getMandator().getExtInfo(TarmedACL.getInstance().KANTON));
 		treatmentType.setReason(getTreatmentReason(invoice.getCoverage()));
-		
+
 		for (IDiagnosisReference invoiceDiagnosis : getInvoiceDiagnosis(invoice)) {
 			DiagnosisType diagnosisType = new DiagnosisType();
 			String type = getTreatmentDiagnosisType(invoiceDiagnosis);
@@ -1021,8 +986,8 @@ public class Tarmed45Exporter {
 		}
 		return treatmentType;
 	}
-	
-	private String getTreatmentDiagnosisType(IDiagnosisReference invoiceDiagnosis){
+
+	private String getTreatmentDiagnosisType(IDiagnosisReference invoiceDiagnosis) {
 		String name = invoiceDiagnosis.getCodeSystemName();
 		if (name != null) {
 			if (name.equalsIgnoreCase("freetext")) { //$NON-NLS-1$
@@ -1043,8 +1008,8 @@ public class Tarmed45Exporter {
 		}
 		return "by_contract"; //$NON-NLS-1$
 	}
-	
-	protected List<IDiagnosisReference> getInvoiceDiagnosis(IInvoice invoice){
+
+	protected List<IDiagnosisReference> getInvoiceDiagnosis(IInvoice invoice) {
 		HashSet<String> seen = new HashSet<>();
 		ArrayList<IDiagnosisReference> ret = new ArrayList<IDiagnosisReference>();
 		List<IEncounter> encounters = invoice.getEncounters();
@@ -1054,8 +1019,7 @@ public class Tarmed45Exporter {
 				String dgc = encounterDiagnose.getCode();
 				if (dgc != null) {
 					// each diag code and system only once
-					if (seen
-						.add(encounterDiagnose.getCode() + encounterDiagnose.getCodeSystemName())) {
+					if (seen.add(encounterDiagnose.getCode() + encounterDiagnose.getCodeSystemName())) {
 						ret.add(encounterDiagnose);
 					}
 				}
@@ -1063,8 +1027,8 @@ public class Tarmed45Exporter {
 		}
 		return ret;
 	}
-	
-	private String getTreatmentReason(ICoverage coverage){
+
+	private String getTreatmentReason(ICoverage coverage) {
 		String type = coverage.getReason();
 		if (type == null) {
 			return XMLExporter.DISEASE;
@@ -1089,32 +1053,32 @@ public class Tarmed45Exporter {
 		}
 		return XMLExporter.DISEASE;
 	}
-	
-	protected Object getLawType(IInvoice invoice) throws DatatypeConfigurationException{
+
+	protected Object getLawType(IInvoice invoice) throws DatatypeConfigurationException {
 		BillingLaw law = invoice.getCoverage().getBillingSystem().getLaw();
-		
+
 		TimeTool caseDate = null;
-		if(StringUtils.isNotBlank((String) invoice.getCoverage().getExtInfo("Unfalldatum"))) {
+		if (StringUtils.isNotBlank((String) invoice.getCoverage().getExtInfo("Unfalldatum"))) {
 			caseDate = new TimeTool((String) invoice.getCoverage().getExtInfo("Unfalldatum"));
-		} else if (invoice.getDateFrom() != null){
-			caseDate = new TimeTool (invoice.getDateFrom());
+		} else if (invoice.getDateFrom() != null) {
+			caseDate = new TimeTool(invoice.getDateFrom());
 		}
-		
+
 		if (law == BillingLaw.KVG) {
 			KvgLawType kvgLawType = new KvgLawType();
-			
+
 			kvgLawType.setInsuredId(getInsuredId(invoice));
 			kvgLawType.setCaseId(getCaseNumber(invoice));
 			kvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
-			
+
 			return kvgLawType;
 		} else if (law == BillingLaw.UVG) {
 			UvgLawType uvgLawType = new UvgLawType();
-			
+
 			String casenumber = getCaseNumber(invoice);
 			if (StringTool.isNothing(casenumber)) {
 				casenumber = CoverageServiceHolder.get().getRequiredString(invoice.getCoverage(),
-					TarmedRequirements.ACCIDENT_NUMBER);
+						TarmedRequirements.ACCIDENT_NUMBER);
 			}
 			if (StringUtils.isNotBlank(casenumber)) {
 				uvgLawType.setCaseId(casenumber);
@@ -1122,96 +1086,92 @@ public class Tarmed45Exporter {
 			uvgLawType.setSsn(getSSN(invoice));
 			uvgLawType.setInsuredId(getInsuredId(invoice));
 			uvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
-			
+
 			return uvgLawType;
 		} else if (law == BillingLaw.IV) {
 			IvgLawType ivgLawType = new IvgLawType();
-			
+
 			ivgLawType.setCaseId(getCaseNumber(invoice));
 			ivgLawType.setSsn(getSSN(invoice));
-			String nif =
-				TarmedRequirements.getNIF(invoice.getMandator().getBiller()).replaceAll("[^0-9]", //$NON-NLS-1$
+			String nif = TarmedRequirements.getNIF(invoice.getMandator().getBiller()).replaceAll("[^0-9]", //$NON-NLS-1$
 					StringConstants.EMPTY);
 			ivgLawType.setNif(nif);
 			ivgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
-			
+
 			return ivgLawType;
 		} else if (law == BillingLaw.MV) {
 			MvgLawType mvgLawType = new MvgLawType();
-			
+
 			mvgLawType.setSsn(getSSN(invoice));
 			mvgLawType.setInsuredId(getInsuredId(invoice));
 			mvgLawType.setCaseId(getCaseNumber(invoice));
 			mvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
-			
+
 			return mvgLawType;
 		} else if (law == BillingLaw.VVG) {
 			VvgLawType vvgLawType = new VvgLawType();
-			
+
 			vvgLawType.setInsuredId(getInsuredId(invoice));
 			vvgLawType.setCaseId(getCaseNumber(invoice));
 			vvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
-			
+
 			return vvgLawType;
 		} else {
 			throw new UnsupportedOperationException("Billing law [" + law + "] not implemented");
 		}
 	}
-	
-	protected String getCaseNumber(IInvoice invoice){
+
+	protected String getCaseNumber(IInvoice invoice) {
 		String caseNumber = CoverageServiceHolder.get().getRequiredString(invoice.getCoverage(),
-			TarmedRequirements.CASE_NUMBER);
+				TarmedRequirements.CASE_NUMBER);
 		caseNumber = caseNumber.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		return StringUtils.isNotBlank(caseNumber) ? caseNumber : null;
 	}
-	
-	protected String getInsuredId(IInvoice invoice){
+
+	protected String getInsuredId(IInvoice invoice) {
 		String vnummer = CoverageServiceHolder.get().getRequiredString(invoice.getCoverage(),
-			TarmedRequirements.INSURANCE_NUMBER);
+				TarmedRequirements.INSURANCE_NUMBER);
 		if (StringTool.isNothing(vnummer)) {
 			vnummer = CoverageServiceHolder.get().getRequiredString(invoice.getCoverage(),
-				TarmedRequirements.CASE_NUMBER);
+					TarmedRequirements.CASE_NUMBER);
 		}
 		if (StringTool.isNothing(vnummer)) {
 			vnummer = invoice.getCoverage().getPatient().getId();
 		}
 		return StringUtils.isNotBlank(vnummer) ? vnummer : null;
 	}
-	
-	protected String getSSN(IInvoice invoice){
-		String ahv = TarmedRequirements.getAHV(invoice.getCoverage().getPatient())
-			.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+
+	protected String getSSN(IInvoice invoice) {
+		String ahv = TarmedRequirements.getAHV(invoice.getCoverage().getPatient()).replaceAll("[^0-9]", //$NON-NLS-1$
+				StringConstants.EMPTY);
 		if (ahv.length() == 0) {
-			ahv = CoverageServiceHolder.get().getRequiredString(invoice.getCoverage(),
-				TarmedRequirements.SSN)
-				.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+			ahv = CoverageServiceHolder.get().getRequiredString(invoice.getCoverage(), TarmedRequirements.SSN)
+					.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		}
 		return StringUtils.isNotBlank(ahv) ? ahv : null;
 	}
-	
-	protected EsrQRType getEsrQR(IInvoice invoice){
+
+	protected EsrQRType getEsrQR(IInvoice invoice) {
 		EsrQRType esrQRType = new EsrQRType();
-		
+
 		String iban = (String) invoice.getMandator().getBiller().getExtInfo("IBAN");
 		if (StringUtils.isEmpty(iban)) {
 			MessageDialog.openError(null, Messages.XMLExporter_MandatorErrorCaption,
-				Messages.XMLExporter_MandatorErrorEsr + " [" + invoice.getMandator().getLabel() //$NON-NLS-1$
-					+ "]"); //$NON-NLS-1$
+					Messages.XMLExporter_MandatorErrorEsr + " [" + invoice.getMandator().getLabel() //$NON-NLS-1$
+							+ "]"); //$NON-NLS-1$
 			return null;
 		}
 		esrQRType.setIban(iban);
 		esrQRType.setReferenceNumber(getBesr(invoice).makeRefNr(false));
 		String additionalInformation = (String) invoice.getMandator().getBiller()
-			.getExtInfo(TarmedACL.getInstance().RNINFORMATION);
+				.getExtInfo(TarmedACL.getInstance().RNINFORMATION);
 		if (StringUtils.isNotBlank(additionalInformation)) {
-			List<String> lines =
-				new ArrayList<String>(Arrays.asList(additionalInformation.split("\\r?\\n|\\r")));
+			List<String> lines = new ArrayList<String>(Arrays.asList(additionalInformation.split("\\r?\\n|\\r")));
 			for (int i = 0; i < lines.size(); i++) {
 				String line = lines.get(i);
 				if (line.length() > 35) {
 					// split into strings with 35 characters
-					List<String> parts =
-						XMLExporterUtil.splitStringEqually(line, 35);
+					List<String> parts = XMLExporterUtil.splitStringEqually(line, 35);
 					lines.remove(i);
 					lines.addAll(i, parts);
 				}
@@ -1220,14 +1180,12 @@ public class Tarmed45Exporter {
 				esrQRType.getPaymentReason().add(lines.get(i));
 			}
 		}
-		
+
 		IContact creditor = invoice.getMandator().getBiller();
 		// update creditor if configured
-		if (StringUtils
-			.isNotBlank((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
-			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get().load(
-				(String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER),
-				IContact.class);
+		if (StringUtils.isNotBlank((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
+			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get()
+					.load((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER), IContact.class);
 			if (loadedCreditor.isPresent()) {
 				creditor = loadedCreditor.get();
 			}
@@ -1240,12 +1198,10 @@ public class Tarmed45Exporter {
 			esrAddressType.setPerson((PersonType) creditorCompanyOrPerson);
 		}
 		esrQRType.setCreditor(esrAddressType);
-		
-		String bankid =
-			(String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().RNBANK);
-		if (StringUtils.isNotBlank(bankid)) { //$NON-NLS-1$
-			Optional<IOrganization> bank =
-				CoreModelServiceHolder.get().load(bankid, IOrganization.class);
+
+		String bankid = (String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().RNBANK);
+		if (StringUtils.isNotBlank(bankid)) { // $NON-NLS-1$
+			Optional<IOrganization> bank = CoreModelServiceHolder.get().load(bankid, IOrganization.class);
 			bank.ifPresent(b -> {
 				EsrAddressType bankEsrAddressType = new EsrAddressType();
 				CompanyType bankCompany = getCompany(b, false);
@@ -1253,65 +1209,60 @@ public class Tarmed45Exporter {
 				esrQRType.setBank(bankEsrAddressType);
 			});
 		} else {
-			// use PostFinance AG as bank  
+			// use PostFinance AG as bank
 			EsrAddressType bankEsrAddressType = new EsrAddressType();
-			
+
 			CompanyType bankCompany = new CompanyType();
 			bankCompany.setCompanyname(StringUtils.abbreviate("PostFinance AG", 35));
 			PostalAddressType postalAddressType = new PostalAddressType();
 			postalAddressType.setStreet(StringUtils.abbreviate("Mingerstrasse 20", 35));
-			postalAddressType.setCity(StringUtils
-				.abbreviate(StringUtils.defaultIfBlank("Bern", Messages.XMLExporter_Unknown), 35));
+			postalAddressType.setCity(
+					StringUtils.abbreviate(StringUtils.defaultIfBlank("Bern", Messages.XMLExporter_Unknown), 35));
 			ZipType zipType = new ZipType();
 			zipType.setValue(StringUtils.left("3030", 9));
 			Country country = Country.CH;
 			zipType.setCountrycode(StringUtils.left(country.toString(), 3));
 			postalAddressType.setZip(zipType);
 			bankCompany.setPostal(postalAddressType);
-			
+
 			bankEsrAddressType.setCompany(bankCompany);
 			esrQRType.setBank(bankEsrAddressType);
 		}
-		
+
 		return esrQRType;
 	}
-	
-	private ESR getBesr(IInvoice invoice){
-		if(besr == null) {
-			besr = new ESR(
-				(String) invoice.getMandator().getBiller()
-					.getExtInfo(TarmedACL.getInstance().ESRNUMBER),
-				(String) invoice.getMandator().getBiller().getExtInfo(TarmedACL
-					.getInstance().ESRSUB),
-				InvoiceServiceHolder.get().getCombinedId(invoice), ESR.ESR27);			
+
+	private ESR getBesr(IInvoice invoice) {
+		if (besr == null) {
+			besr = new ESR((String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().ESRNUMBER),
+					(String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().ESRSUB),
+					InvoiceServiceHolder.get().getCombinedId(invoice), ESR.ESR27);
 		}
 		return besr;
 	}
 
-	protected Esr9Type getEsr9(IInvoice invoice){
+	protected Esr9Type getEsr9(IInvoice invoice) {
 		Esr9Type esr9Type = new Esr9Type();
-		
+
 		String participantNumber = getBesr(invoice).makeParticipantNumber(true);
 		if (StringUtils.isEmpty(participantNumber)) {
 			MessageDialog.openError(null, Messages.XMLExporter_MandatorErrorCaption,
-				Messages.XMLExporter_MandatorErrorEsr + " [" + invoice.getMandator().getLabel() //$NON-NLS-1$
-					+ "]"); //$NON-NLS-1$
+					Messages.XMLExporter_MandatorErrorEsr + " [" + invoice.getMandator().getLabel() //$NON-NLS-1$
+							+ "]"); //$NON-NLS-1$
 			return null;
 		}
 		esr9Type.setParticipantNumber(participantNumber);
 		esr9Type.setType("16or27");
 		esr9Type.setReferenceNumber(getBesr(invoice).makeRefNr(true));
-		String codingline = getBesr(invoice).createCodeline(
-			XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", ""), null); //$NON-NLS-1$ //$NON-NLS-2$
+		String codingline = getBesr(invoice)
+				.createCodeline(XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", ""), null); //$NON-NLS-1$ //$NON-NLS-2$
 		esr9Type.setCodingLine(codingline);
-		
+
 		IContact creditor = invoice.getMandator().getBiller();
 		// update creditor if configured
-		if (StringUtils.isNotBlank(
-			(String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
-			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get().load(
-				(String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER),
-				IContact.class);
+		if (StringUtils.isNotBlank((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
+			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get()
+					.load((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER), IContact.class);
 			if (loadedCreditor.isPresent()) {
 				creditor = loadedCreditor.get();
 			}
@@ -1324,12 +1275,10 @@ public class Tarmed45Exporter {
 			esrAddressType.setPerson((PersonType) creditorCompanyOrPerson);
 		}
 		esr9Type.setCreditor(esrAddressType);
-		
-		String bankid =
-			(String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().RNBANK);
-		if (StringUtils.isNotBlank(bankid)) { //$NON-NLS-1$
-			Optional<IOrganization> bank =
-				CoreModelServiceHolder.get().load(bankid, IOrganization.class);
+
+		String bankid = (String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().RNBANK);
+		if (StringUtils.isNotBlank(bankid)) { // $NON-NLS-1$
+			Optional<IOrganization> bank = CoreModelServiceHolder.get().load(bankid, IOrganization.class);
 			bank.ifPresent(b -> {
 				EsrAddressType bankEsrAddressType = new EsrAddressType();
 				CompanyType bankCompany = getCompany(b, false);
@@ -1337,28 +1286,28 @@ public class Tarmed45Exporter {
 				esr9Type.setBank(bankEsrAddressType);
 			});
 		}
-		
+
 		return esr9Type;
 	}
-	
-	protected PrologType getProlog(IInvoice invoice){
+
+	protected PrologType getProlog(IInvoice invoice) {
 		PrologType prologType = new PrologType();
-		
+
 		SoftwareType softwareType = new SoftwareType();
 		softwareType.setName("Elexis");
 		VersionInfo vi = new VersionInfo(CoreHub.Version);
 		softwareType.setVersion(Long.valueOf(vi.getMaior() + vi.getMinor() + vi.getRevision()));
 		prologType.setPackage(softwareType);
-		
+
 		softwareType = new SoftwareType();
 		softwareType.setName("JAXB");
 		softwareType.setVersion((long) getJavaVersion());
 		prologType.setGenerator(softwareType);
-		
+
 		return prologType;
 	}
-	
-	private int getJavaVersion(){
+
+	private int getJavaVersion() {
 		String version = System.getProperty("java.version");
 		if (version.startsWith("1.")) {
 			version = version.substring(2, 3);
@@ -1370,48 +1319,45 @@ public class Tarmed45Exporter {
 		}
 		return Integer.parseInt(version);
 	}
-	
-	protected ProcessingType getProcessing(IInvoice invoice) throws DatatypeConfigurationException{
+
+	protected ProcessingType getProcessing(IInvoice invoice) throws DatatypeConfigurationException {
 		ProcessingType processingType = new ProcessingType();
 		processingType.setPrintAtIntermediate(printAtIntermediate);
-		
-		processingType.setPrintCopyToGuarantor(
-			CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
-		
+
+		processingType.setPrintCopyToGuarantor(CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
+
 		TransportType transportType = new TransportType();
 		transportType.setFrom(TarmedRequirements.getEAN(invoice.getMandator()));
 		transportType.setTo(XMLExporterUtil.getRecipientEAN(invoice));
-		
+
 		logger.info("Using intermediate EAN [" + XMLExporterUtil.getIntermediateEAN(invoice) + "]");
 		Via via = new Via();
 		via.setVia(XMLExporterUtil.getIntermediateEAN(invoice));
 		via.setSequenceId(1);
 		transportType.getVia().add(via);
-		
+
 		// insert demand if TG and TC contract
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-		if (Tiers.GARANT == tiersType
-			&& (TarmedRequirements.hasTCContract(invoice.getMandator()))) {
+		if (Tiers.GARANT == tiersType && (TarmedRequirements.hasTCContract(invoice.getMandator()))) {
 			String tcCode = TarmedRequirements.getTCCode(invoice.getMandator());
 			Demand demand = new ProcessingType.Demand();
 			demand.setTcDemandId(0);
-			
+
 			String tcToken = getBesr(invoice).createCodeline(
-				XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", //$NON-NLS-1$
-					""), //$NON-NLS-1$
-				tcCode);
+					XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", //$NON-NLS-1$
+							""), //$NON-NLS-1$
+					tcCode);
 			demand.setTcToken(tcToken);
 			demand.setInsuranceDemandDate(XMLExporterUtil.makeXMLDate(invoice.getDate()));
-			
+
 			processingType.setDemand(demand);
 		}
 		processingType.setTransport(transportType);
-		
+
 		return processingType;
 	}
-	
-	public void updateExistingXml(RequestType request, TYPE type, IInvoice invoice,
-		XMLExporter xmlExporter){
+
+	public void updateExistingXml(RequestType request, TYPE type, IInvoice invoice, XMLExporter xmlExporter) {
 		try {
 			// update processing, print_at_intermediate and transport via EAN
 			if (request.getProcessing() != null) {
@@ -1425,25 +1371,24 @@ public class Tarmed45Exporter {
 						via.get(0).setVia(iEAN);
 					}
 				}
-				request.getProcessing().setPrintCopyToGuarantor(
-					CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
+				request.getProcessing()
+						.setPrintCopyToGuarantor(CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
 			}
-			
+
 			// update payload and balance
 			if (request.getPayload() != null && request.getPayload().getBody() != null) {
 				// update esr information
 				if (esrType == EsrType.esr9 && request.getPayload().getBody().getEsrQR() != null) {
 					request.getPayload().getBody().setEsrQR(null);
 					request.getPayload().getBody().setEsr9(getEsr9(invoice));
-				} else if (esrType == EsrType.esrQR
-					&& request.getPayload().getBody().getEsr9() != null) {
+				} else if (esrType == EsrType.esrQR && request.getPayload().getBody().getEsr9() != null) {
 					request.getPayload().getBody().setEsrQR(getEsrQR(invoice));
 					request.getPayload().getBody().setEsr9(null);
 				}
 				if (request.getPayload().getBody().getTiersGarant() != null
-					&& invoice.getCoverage().getPatient() != null) {
+						&& invoice.getCoverage().getPatient() != null) {
 					// TG contacts
-					// update patient information	
+					// update patient information
 					PatientAddressType updatePatient = getPatient(invoice);
 					if (updatePatient != null) {
 						request.getPayload().getBody().getTiersGarant().setPatient(updatePatient);
@@ -1451,14 +1396,12 @@ public class Tarmed45Exporter {
 					// update guarantor information
 					GuarantorAddressType updateGuarantor = getGuarantor(invoice);
 					if (updateGuarantor != null) {
-						request.getPayload().getBody().getTiersGarant()
-							.setGuarantor(updateGuarantor);
+						request.getPayload().getBody().getTiersGarant().setGuarantor(updateGuarantor);
 					}
 					// update insurance information
 					InsuranceAddressType updateInsurance = getInsurance(invoice);
 					if (updateInsurance != null) {
-						request.getPayload().getBody().getTiersGarant()
-							.setInsurance(updateInsurance);
+						request.getPayload().getBody().getTiersGarant().setInsurance(updateInsurance);
 					}
 					// update provider information
 					ProviderAddressType updateProvider = getProvider(invoice);
@@ -1471,9 +1414,9 @@ public class Tarmed45Exporter {
 						request.getPayload().getBody().getTiersGarant().setBiller(updateBiller);
 					}
 				} else if (request.getPayload().getBody().getTiersPayant() != null
-					&& invoice.getCoverage().getPatient() != null) {
+						&& invoice.getCoverage().getPatient() != null) {
 					// TP contacts
-					// update patient information	
+					// update patient information
 					PatientAddressType updatePatient = getPatient(invoice);
 					if (updatePatient != null) {
 						request.getPayload().getBody().getTiersPayant().setPatient(updatePatient);
@@ -1481,14 +1424,12 @@ public class Tarmed45Exporter {
 					// update guarantor information
 					GuarantorAddressType updateGuarantor = getGuarantor(invoice);
 					if (updateGuarantor != null) {
-						request.getPayload().getBody().getTiersPayant()
-							.setGuarantor(updateGuarantor);
+						request.getPayload().getBody().getTiersPayant().setGuarantor(updateGuarantor);
 					}
 					// update insurance information
 					InsuranceAddressType updateInsurance = getInsurance(invoice);
 					if (updateInsurance != null) {
-						request.getPayload().getBody().getTiersPayant()
-							.setInsurance(updateInsurance);
+						request.getPayload().getBody().getTiersPayant().setInsurance(updateInsurance);
 					}
 					// update provider information
 					ProviderAddressType updateProvider = getProvider(invoice);
@@ -1501,19 +1442,15 @@ public class Tarmed45Exporter {
 						request.getPayload().getBody().getTiersPayant().setBiller(updateBiller);
 					}
 				}
-				
+
 				Object updateBalance = getBalance(invoice);
-				if (request.getPayload().getBody().getTiersGarant() != null
-					&& updateBalance instanceof BalanceTGType) {
-					BalanceTGType balance =
-						request.getPayload().getBody().getTiersGarant().getBalance();
-					if (((BalanceTGType) updateBalance).getAmountPrepaid() != balance
-						.getAmountPrepaid()) {
-						request.getPayload().getBody().getTiersGarant()
-							.setBalance((BalanceTGType) updateBalance);
+				if (request.getPayload().getBody().getTiersGarant() != null && updateBalance instanceof BalanceTGType) {
+					BalanceTGType balance = request.getPayload().getBody().getTiersGarant().getBalance();
+					if (((BalanceTGType) updateBalance).getAmountPrepaid() != balance.getAmountPrepaid()) {
+						request.getPayload().getBody().getTiersGarant().setBalance((BalanceTGType) updateBalance);
 					}
 				}
-				
+
 				// always update copy information
 				request.getPayload().setCopy(type.equals(IRnOutputter.TYPE.COPY));
 				// update balance for storno
@@ -1522,15 +1459,13 @@ public class Tarmed45Exporter {
 					request.getProcessing().setPrintCopyToGuarantor(false);
 					negate(request.getPayload().getBody().getServices());
 					if (request.getPayload().getBody().getTiersGarant() != null) {
-						BalanceTGType balance =
-							request.getPayload().getBody().getTiersGarant().getBalance();
+						BalanceTGType balance = request.getPayload().getBody().getTiersGarant().getBalance();
 						balance.setAmount(-Math.abs(balance.getAmount()));
 						balance.setAmountObligations(-Math.abs(balance.getAmountObligations()));
 						balance.setAmountDue(0.0);
 						balance.setAmountPrepaid(0.0);
 					} else if (request.getPayload().getBody().getTiersPayant() != null) {
-						BalanceTPType balance =
-							request.getPayload().getBody().getTiersPayant().getBalance();
+						BalanceTPType balance = request.getPayload().getBody().getTiersPayant().getBalance();
 						balance.setAmount(-Math.abs(balance.getAmount()));
 						balance.setAmountObligations(-Math.abs(balance.getAmountObligations()));
 						balance.setAmountDue(0.0);
@@ -1541,12 +1476,12 @@ public class Tarmed45Exporter {
 			LoggerFactory.getLogger(getClass()).error("Error updating tarmed xml model", e);
 		}
 	}
-	
-	public void addReminderEntry(RequestType request, IInvoice invoice, String reminderLevel){
+
+	public void addReminderEntry(RequestType request, IInvoice invoice, String reminderLevel) {
 		if (request.getPayload() != null) {
 			try {
 				GregorianCalendar now = new GregorianCalendar();
-				
+
 				ReminderType reminderType = request.getPayload().getReminder();
 				if (reminderType == null) {
 					reminderType = new ReminderType();
@@ -1555,10 +1490,9 @@ public class Tarmed45Exporter {
 				}
 				reminderType.setRequestId(InvoiceServiceHolder.get().getCombinedId(invoice));
 				reminderType.setReminderLevel(reminderLevel);
-				reminderType.setRequestDate(
-					DatatypeFactory.newInstance().newXMLGregorianCalendar(now));
+				reminderType.setRequestDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(now));
 				reminderType.setRequestTimestamp((int) (now.getTimeInMillis() / 1000));
-				
+
 				// add amount reminder and recalculate amount due
 				if (request.getPayload().getBody() != null) {
 					Money mReminder = invoice.getDemandAmount();
@@ -1566,13 +1500,11 @@ public class Tarmed45Exporter {
 					mDue.addMoney(mReminder);
 					mDue.subtractMoney(invoice.getPayedAmount());
 					if (request.getPayload().getBody().getTiersGarant() != null) {
-						BalanceTGType balance =
-							request.getPayload().getBody().getTiersGarant().getBalance();
+						BalanceTGType balance = request.getPayload().getBody().getTiersGarant().getBalance();
 						balance.setAmountReminder(mReminder.doubleValue());
 						balance.setAmountDue(mDue.doubleValue());
 					} else if (request.getPayload().getBody().getTiersPayant() != null) {
-						BalanceTPType balance =
-							request.getPayload().getBody().getTiersPayant().getBalance();
+						BalanceTPType balance = request.getPayload().getBody().getTiersPayant().getBalance();
 						balance.setAmountReminder(mReminder.doubleValue());
 						balance.setAmountDue(mDue.doubleValue());
 					}
@@ -1582,8 +1514,8 @@ public class Tarmed45Exporter {
 			}
 		}
 	}
-	
-	private void negate(ServicesType services){
+
+	private void negate(ServicesType services) {
 		if (services != null) {
 			services.getServiceExOrService().forEach(s -> {
 				if (s instanceof ServiceType) {

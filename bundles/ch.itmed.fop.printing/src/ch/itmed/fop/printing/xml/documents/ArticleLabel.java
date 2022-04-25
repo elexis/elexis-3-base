@@ -26,14 +26,14 @@ public class ArticleLabel {
 
 	/**
 	 * Creates the XML file and returns it as an InputStream.
-	 * 
+	 *
 	 * @return The generated XML as an InputStream
 	 */
 	public static InputStream create() throws Exception {
 		return create(true);
 	}
-	
-	public static InputStream create(boolean includeMedication) throws Exception{
+
+	public static InputStream create(boolean includeMedication) throws Exception {
 		Document doc = DomDocument.newDocument();
 
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.ARTICLE_LABEL);
@@ -41,35 +41,35 @@ public class ArticleLabel {
 		doc.appendChild(page);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
-		
+
 		Element mandator = MandatorElement.create(doc);
 		if (mandator != null) {
 			page.appendChild(mandator);
 		}
-		
+
 		Element articles = ArticlesElement.create(doc, includeMedication);
 		page.appendChild(articles);
 
 		return DomDocument.toInputStream(doc);
 	}
-	
-	public static InputStream create(IArticle article) throws Exception{
+
+	public static InputStream create(IArticle article) throws Exception {
 		Document doc = DomDocument.newDocument();
-		
+
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.ARTICLE_LABEL);
 		PageProperties.setCurrentDate(page);
 		doc.appendChild(page);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
-		
+
 		Element mandator = MandatorElement.create(doc);
 		if (mandator != null) {
 			page.appendChild(mandator);
 		}
-		
+
 		Element articles = ArticlesElement.create(doc, article);
 		page.appendChild(articles);
-		
+
 		return DomDocument.toInputStream(doc);
 	}
 }

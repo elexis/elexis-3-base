@@ -30,12 +30,12 @@ import ch.elexis.omnivore.ui.views.FileImportDialog;
 import ch.rgw.tools.ExHandler;
 
 public class UiUtils {
-	
-	public static void open(IDocumentHandle handle){
+
+	public static void open(IDocumentHandle handle) {
 		try {
-			String ext = StringConstants.SPACE; //""; //$NON-NLS-1$
+			String ext = StringConstants.SPACE; // ""; //$NON-NLS-1$
 			File temp = Utils.createTemporaryFile(handle, handle.getTitle());
-			
+
 			Program proggie = Program.findProgram(ext);
 			if (proggie != null) {
 				proggie.execute(temp.getAbsolutePath());
@@ -43,21 +43,19 @@ public class UiUtils {
 				if (Program.launch(temp.getAbsolutePath()) == false) {
 					Runtime.getRuntime().exec(temp.getAbsolutePath());
 				}
-				
+
 			}
-			
+
 		} catch (Exception ex) {
 			LoggerFactory.getLogger(UiUtils.class).error("Error on omnivore open", ex);
-			SWTHelper.showError(ch.elexis.omnivore.ui.Messages.DocHandle_runErrorHeading,
-				ex.getMessage());
+			SWTHelper.showError(ch.elexis.omnivore.ui.Messages.DocHandle_runErrorHeading, ex.getMessage());
 		}
 	}
-	
-	public static IDocumentHandle assimilate(String f, String selectedCategory){
+
+	public static IDocumentHandle assimilate(String f, String selectedCategory) {
 		IPatient act = ContextServiceHolder.get().getActivePatient().orElse(null);
 		if (act == null) {
-			SWTHelper.showError(Messages.DocHandle_noPatientSelected,
-				Messages.DocHandle_pleaseSelectPatient);
+			SWTHelper.showError(Messages.DocHandle_noPatientSelected, Messages.DocHandle_pleaseSelectPatient);
 			return null;
 		}
 		IVirtualFilesystemHandle file;
@@ -65,96 +63,91 @@ public class UiUtils {
 			file = VirtualFilesystemServiceHolder.get().of(f);
 			if (!file.canRead()) {
 				SWTHelper.showError(Messages.DocHandle_cantReadCaption,
-					String.format(Messages.DocHandle_cantReadMessage, f));
+						String.format(Messages.DocHandle_cantReadMessage, f));
 				return null;
 			}
 			// can't import complete directory
 			if (file.isDirectory()) {
 				SWTHelper.showError(Messages.DocHandle_importErrorDirectory,
-					Messages.DocHandle_importErrorDirectoryText);
+						Messages.DocHandle_importErrorDirectoryText);
 				return null;
 			}
 		} catch (IOException e) {
 			SWTHelper.showError(Messages.DocHandle_importErrorDirectory, e.getMessage());
 			return null;
 		}
-		
+
 		Integer maxOmnivoreFilenameLength = Preferences.getOmnivoreMax_Filename_Length();
-		
+
 		String nam = file.getName();
 		if (nam.length() > maxOmnivoreFilenameLength) {
-			SWTHelper.showError(Messages.DocHandle_importErrorCaption, MessageFormat
-				.format(Messages.DocHandle_importErrorMessage, maxOmnivoreFilenameLength));
+			SWTHelper.showError(Messages.DocHandle_importErrorCaption,
+					MessageFormat.format(Messages.DocHandle_importErrorMessage, maxOmnivoreFilenameLength));
 			return null;
 		}
-		
+
 		FileImportDialog fid;
 		if (selectedCategory == null) {
 			fid = new FileImportDialog(file.getName());
 		} else {
 			fid = new FileImportDialog(file.getName(), selectedCategory);
 		}
-		
+
 		IDocumentHandle docHandle = null;
 		if (fid.open() == Dialog.OK) {
-			try (InputStream bis = file.openInputStream();
-					ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-				
+			try (InputStream bis = file.openInputStream(); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
 				int in;
 				while ((in = bis.read()) != -1) {
 					baos.write(in);
 				}
-				
+
 				String fileName = file.getName();
 				if (fileName.length() > 255) {
-					SWTHelper.showError(Messages.DocHandle_readErrorCaption,
-						Messages.DocHandle_fileNameTooLong);
+					SWTHelper.showError(Messages.DocHandle_readErrorCaption, Messages.DocHandle_fileNameTooLong);
 					return null;
 				}
 				String category = fid.category;
 				if (category == null || category.length() == 0) {
 					category = CategoryUtil.getDefaultCategory().getName();
 				}
-				docHandle = createDocHandle(category, baos.toByteArray(), act, fid.title.trim(),
-					file.getName(), fid.keywords.trim());
+				docHandle = createDocHandle(category, baos.toByteArray(), act, fid.title.trim(), file.getName(),
+						fid.keywords.trim());
 				docHandle.setLastchanged(fid.saveDate);
 				if (Preferences.getDateModifiable()) {
 					docHandle.setCreated(fid.originDate);
 				}
 				OmnivoreModelServiceHolder.get().save(docHandle);
-				
+
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				SWTHelper.showError(Messages.DocHandle_importErrorCaption,
-					Messages.DocHandle_importErrorMessage2);
+				SWTHelper.showError(Messages.DocHandle_importErrorCaption, Messages.DocHandle_importErrorMessage2);
 				return null;
 			}
 			Utils.archiveFile(file, docHandle);
 		}
 		return docHandle;
 	}
-	
-	public static IDocumentHandle assimilate(String f){
+
+	public static IDocumentHandle assimilate(String f) {
 		IPatient act = ContextServiceHolder.get().getActivePatient().orElse(null);
 		if (act == null) {
-			SWTHelper.showError(Messages.DocHandle_noPatientSelected,
-				Messages.DocHandle_pleaseSelectPatient);
+			SWTHelper.showError(Messages.DocHandle_noPatientSelected, Messages.DocHandle_pleaseSelectPatient);
 			return null;
 		}
 		File file = new File(f);
 		if (!file.canRead()) {
 			SWTHelper.showError(Messages.DocHandle_cantReadCaption,
-				MessageFormat.format(Messages.DocHandle_cantReadText, f));
+					MessageFormat.format(Messages.DocHandle_cantReadText, f));
 			return null;
 		}
-		
+
 		// can't import complete directory
 		if (file.isDirectory()) {
-			SWTHelper.showError(Messages.DocHandle_importErrorDirectory,
-				Messages.DocHandle_importErrorDirectoryText);
+			SWTHelper.showError(Messages.DocHandle_importErrorDirectory, Messages.DocHandle_importErrorDirectoryText);
 			return null;
 		}
-		
+
 		FileImportDialog fid = new FileImportDialog(file.getName());
 		if (fid.open() == Dialog.OK) {
 			try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
@@ -165,16 +158,15 @@ public class UiUtils {
 				}
 				String nam = file.getName();
 				if (nam.length() > 255) {
-					SWTHelper.showError(Messages.DocHandle_readErrorCaption3,
-						Messages.DocHandle_fileNameTooLong);
+					SWTHelper.showError(Messages.DocHandle_readErrorCaption3, Messages.DocHandle_fileNameTooLong);
 					return null;
 				}
 				String category = fid.category;
 				if (category == null || category.length() == 0) {
 					category = CategoryUtil.getDefaultCategory().getName();
 				}
-				IDocumentHandle docHandle = createDocHandle(category, baos.toByteArray(), act,
-					fid.originDate, fid.title, file.getName(), fid.keywords);
+				IDocumentHandle docHandle = createDocHandle(category, baos.toByteArray(), act, fid.originDate,
+						fid.title, file.getName(), fid.keywords);
 				docHandle.setLastchanged(fid.saveDate);
 				if (Preferences.getDateModifiable()) {
 					docHandle.setCreated(fid.originDate);
@@ -183,15 +175,14 @@ public class UiUtils {
 				return docHandle;
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				SWTHelper.showError(Messages.DocHandle_readErrorCaption3,
-					Messages.DocHandle_readErrorText2);
+				SWTHelper.showError(Messages.DocHandle_readErrorCaption3, Messages.DocHandle_readErrorText2);
 			}
 		}
 		return null;
 	}
-	
-	private static IDocumentHandle createDocHandle(String category, byte[] doc, IPatient pat,
-		Date creationDate, String title, String mime, String keyw){
+
+	private static IDocumentHandle createDocHandle(String category, byte[] doc, IPatient pat, Date creationDate,
+			String title, String mime, String keyw) {
 		IDocumentHandle ret = OmnivoreModelServiceHolder.get().create(IDocumentHandle.class);
 		OmnivoreModelServiceHolder.get().setEntityProperty("category", category, ret);
 		ret.setPatient(pat);
@@ -203,9 +194,9 @@ public class UiUtils {
 		OmnivoreModelServiceHolder.get().save(ret);
 		return ret;
 	}
-	
-	private static IDocumentHandle createDocHandle(String category, byte[] doc, IPatient pat,
-		String title, String mime, String keyw){
+
+	private static IDocumentHandle createDocHandle(String category, byte[] doc, IPatient pat, String title, String mime,
+			String keyw) {
 		IDocumentHandle ret = OmnivoreModelServiceHolder.get().create(IDocumentHandle.class);
 		OmnivoreModelServiceHolder.get().setEntityProperty("category", category, ret);
 		ret.setPatient(pat);
@@ -216,5 +207,5 @@ public class UiUtils {
 		OmnivoreModelServiceHolder.get().save(ret);
 		return ret;
 	}
-	
+
 }

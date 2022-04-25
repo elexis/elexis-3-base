@@ -42,34 +42,31 @@ public final class ConsultationData {
 	}
 
 	private List<ArticleData> getArticles() {
-		List<IBilled> verrechnet =
-			NoPoUtil.loadAsIdentifiable(consultation, IEncounter.class).get().getBilled();
+		List<IBilled> verrechnet = NoPoUtil.loadAsIdentifiable(consultation, IEncounter.class).get().getBilled();
 
 		verrechenbar = new ArrayList<>();
 		verrechnet.stream().forEach(new VerrechnetConsumer());
 
 		List<ArticleData> articles = new ArrayList<>();
 		verrechenbar.stream().filter(v -> v instanceof IArticle)
-			.forEach(v -> articles.add(new ArticleData((IArticle) v)));
+				.forEach(v -> articles.add(new ArticleData((IArticle) v)));
 
 		return articles;
 	}
 
 	private static class VerrechnetConsumer implements Consumer<IBilled> {
 		@Override
-		public void accept(IBilled v){
+		public void accept(IBilled v) {
 			// We need to count the quantity of the articles
 			for (int i = 0; i < v.getAmount(); i++) {
 				verrechenbar.add(v.getBillable());
 			}
 		}
 	}
-	
-	public List<Prescription> getMedication(){
+
+	public List<Prescription> getMedication() {
 		Patient patient = consultation.getFall().getPatient();
-		return patient.getMedication(new EntryType[] {
-			EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION,
-			EntryType.SYMPTOMATIC_MEDICATION
-		});
+		return patient.getMedication(new EntryType[] { EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION,
+				EntryType.SYMPTOMATIC_MEDICATION });
 	}
 }

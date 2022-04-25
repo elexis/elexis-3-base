@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for TimingEvent.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="TimingEvent">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -30,20 +31,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "TimingEvent")
 @XmlEnum
 public enum TimingEvent {
-	
+
 	AC, ACD, ACM, ACV, HS, IC, ICD, ICM, ICV, PC, PCD, PCM, PCV;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static TimingEvent fromValue(String v){
+
+	public static TimingEvent fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

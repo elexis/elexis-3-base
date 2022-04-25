@@ -24,49 +24,44 @@ import ch.elexis.core.jpa.model.adapter.AbstractModelAdapterFactory;
 import ch.elexis.core.jpa.model.adapter.MappingEntry;
 
 public class ArzttarifeModelAdapterFactory extends AbstractModelAdapterFactory {
-	
+
 	private static ArzttarifeModelAdapterFactory INSTANCE;
-	
-	public static synchronized ArzttarifeModelAdapterFactory getInstance(){
+
+	public static synchronized ArzttarifeModelAdapterFactory getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new ArzttarifeModelAdapterFactory();
 		}
 		return INSTANCE;
 	}
-	
-	private ArzttarifeModelAdapterFactory(){
+
+	private ArzttarifeModelAdapterFactory() {
 		super();
 	}
-	
+
 	@Override
-	protected void initializeMappings(){
+	protected void initializeMappings() {
 		addMapping(new MappingEntry(IPhysioLeistung.class,
-			ch.elexis.base.ch.arzttarife.physio.model.PhysioLeistung.class, PhysioLeistung.class));
+				ch.elexis.base.ch.arzttarife.physio.model.PhysioLeistung.class, PhysioLeistung.class));
 		addMapping(new MappingEntry(IComplementaryLeistung.class,
-			ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.class,
-			ComplementaryLeistung.class));
+				ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.class,
+				ComplementaryLeistung.class));
 		addMapping(new MappingEntry(IPandemieLeistung.class,
-			ch.elexis.base.ch.arzttarife.pandemie.model.PandemieLeistung.class,
-			PandemieLeistung.class));
+				ch.elexis.base.ch.arzttarife.pandemie.model.PandemieLeistung.class, PandemieLeistung.class));
 		addMapping(new MappingEntry(ITarmedAllowance.class,
-			ch.elexis.base.ch.arzttarife.tarmedallowance.model.TarmedAllowance.class,
-			TarmedPauschalen.class));
+				ch.elexis.base.ch.arzttarife.tarmedallowance.model.TarmedAllowance.class, TarmedPauschalen.class));
 		addMapping(new MappingEntry(INutritionLeistung.class,
-			ch.elexis.base.ch.arzttarife.nutrition.model.NutritionLeistung.class,
-			NutritionLeistung.class));
-		
+				ch.elexis.base.ch.arzttarife.nutrition.model.NutritionLeistung.class, NutritionLeistung.class));
+
 		addMapping(new MappingEntry(ITarmedLeistung.class,
-			ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung.class, TarmedLeistung.class));
+				ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung.class, TarmedLeistung.class));
 		addMapping(new MappingEntry(ITarmedExtension.class,
-			ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExtension.class,
-			TarmedExtension.class));
+				ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExtension.class, TarmedExtension.class));
 		addMapping(new MappingEntry(ITarmedKumulation.class,
-			ch.elexis.base.ch.arzttarife.tarmed.model.TarmedKumulation.class,
-			TarmedKumulation.class));
-		addMapping(new MappingEntry(ITarmedGroup.class,
-			ch.elexis.base.ch.arzttarife.tarmed.model.TarmedGroup.class, TarmedGroup.class));
-		
+				ch.elexis.base.ch.arzttarife.tarmed.model.TarmedKumulation.class, TarmedKumulation.class));
+		addMapping(new MappingEntry(ITarmedGroup.class, ch.elexis.base.ch.arzttarife.tarmed.model.TarmedGroup.class,
+				TarmedGroup.class));
+
 		addMapping(new MappingEntry(IReasonForEncounter.class,
-			ch.elexis.base.ch.arzttarife.rfe.model.ReasonForEncounter.class, RFE.class));
+				ch.elexis.base.ch.arzttarife.rfe.model.ReasonForEncounter.class, RFE.class));
 	}
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    T. Huster - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.arzttarife.importer;
 
@@ -25,33 +25,33 @@ import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 
 public class PandemieImporter extends ImporterPage {
-	
+
 	@Inject
 	private IReferenceDataImporterService importerService;
-	
-	public PandemieImporter(){
+
+	public PandemieImporter() {
 		CoreUiUtil.injectServicesWithContext(this);
 	}
-	
+
 	@Override
-	public Composite createPage(Composite parent){
+	public Composite createPage(Composite parent) {
 		return new FileBasedImporter(parent, this);
 	}
-	
+
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception{
+	public IStatus doImport(IProgressMonitor monitor) throws Exception {
 		IReferenceDataImporter importer = importerService.getImporter("pandemie")
-			.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available."));
+				.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available."));
 		return importer.performImport(monitor, new FileInputStream(results[0]), null);
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return "Pandemie-Tarif";
 	}
-	
+
 	@Override
-	public String getTitle(){
+	public String getTitle() {
 		return "Pandemie";
 	}
 }

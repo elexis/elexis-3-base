@@ -26,30 +26,33 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class MultiVariateNormalDistributionEvaluator extends RecursiveObjectEvaluator implements TwoValueWorker {
 
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public MultiVariateNormalDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public MultiVariateNormalDistributionEvaluator(StreamExpression expression, StreamFactory factory)
+			throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object first, Object second) throws IOException{
-    if(null == first){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
-    }
-    if(null == second){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the second value",toExpression(constructingFactory)));
-    }
+	@Override
+	public Object doWork(Object first, Object second) throws IOException {
+		if (null == first) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
+					toExpression(constructingFactory)));
+		}
+		if (null == second) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the second value",
+					toExpression(constructingFactory)));
+		}
 
-    @SuppressWarnings({"unchecked"})
-    List<Number> means = (List<Number>)first;
-    Matrix covar = (Matrix)second;
+		@SuppressWarnings({ "unchecked" })
+		List<Number> means = (List<Number>) first;
+		Matrix covar = (Matrix) second;
 
-    double[] m = new double[means.size()];
-    for(int i=0; i< m.length; i++) {
-      m[i] = means.get(i).doubleValue();
-    }
+		double[] m = new double[means.size()];
+		for (int i = 0; i < m.length; i++) {
+			m[i] = means.get(i).doubleValue();
+		}
 
-    return new MultivariateNormalDistribution(m, covar.getData());
-  }
+		return new MultivariateNormalDistribution(m, covar.getData());
+	}
 }

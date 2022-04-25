@@ -30,57 +30,50 @@ import ch.itmed.fop.printing.xml.documents.MedicationLabel;
 
 public class ArticleMedicationLabelsHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(ArticleMedicationLabelsHandler.class);
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
-			Optional<IEncounter> consultation =
-				ContextServiceHolder.get().getTyped(IEncounter.class);
+			Optional<IEncounter> consultation = ContextServiceHolder.get().getTyped(IEncounter.class);
 			if (consultation.isPresent()) {
 				List<IBilled> verrechnet = consultation.get().getBilled();
-				List<IPrescription> medication = consultation.get().getPatient()
-					.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION,
-						EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
-				
+				List<IPrescription> medication = consultation.get().getPatient().getMedication(Arrays.asList(
+						EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
+
 				for (IBilled iBilled : verrechnet) {
 					if (iBilled.getBillable() instanceof IArticle) {
 						IArticle article = (IArticle) iBilled.getBillable();
 						// filter only medications which are billed on selected encounter
 						Optional<IPrescription> prescription = medication.stream()
-							.filter(m -> m.getArticle() != null && m.getArticle().equals(article))
-							.findFirst();
+								.filter(m -> m.getArticle() != null && m.getArticle().equals(article)).findFirst();
 						if (prescription.isPresent()) {
 							// create medication labels for articles with medication
 							for (int i = 0; i < iBilled.getAmount(); i++) {
 								InputStream xmlDoc = MedicationLabel.create(prescription.get());
-								InputStream fo =
-									FoTransformer.transformXmlToFo(xmlDoc, ResourceProvider
-									.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
-								
+								InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+										ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
+
 								String docName = PreferenceConstants.MEDICATION_LABEL;
 								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
-								
-								String printerName = settingsStore.getString(
-									PreferenceConstants.getDocPreferenceConstant(docName, 0));
-								logger.info(
-									"Printing document MedicationLabel on printer: " + printerName);
+
+								String printerName = settingsStore
+										.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+								logger.info("Printing document MedicationLabel on printer: " + printerName);
 								PrintProvider.print(fo, printerName);
 							}
 						} else {
 							// create article labels without medication
 							for (int i = 0; i < iBilled.getAmount(); i++) {
 								InputStream xmlDoc = ArticleLabel.create(article);
-								InputStream fo =
-									FoTransformer.transformXmlToFo(xmlDoc, ResourceProvider
-										.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID));
-								
+								InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+										ResourceProvider.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID));
+
 								String docName = PreferenceConstants.ARTICLE_LABEL;
 								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
-								
-								String printerName = settingsStore.getString(
-									PreferenceConstants.getDocPreferenceConstant(docName, 0));
-								logger.info(
-									"Printing document ArticleLabel on printer: " + printerName);
+
+								String printerName = settingsStore
+										.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+								logger.info("Printing document ArticleLabel on printer: " + printerName);
 								PrintProvider.print(fo, printerName);
 							}
 						}

@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2010, Oliver Egger, visionary ag
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *    
+ *
  *******************************************************************************/
 
 package ch.swissmedicalsuite;
@@ -26,19 +26,19 @@ import ch.elexis.core.ui.util.Log;
 import com.sun.jna.ptr.PointerByReference;
 
 public class HCardBrowser {
-	
+
 	final private String gln;
 	final private String browserUrl;
-	
+
 	static boolean initApi = false;
 	static String glnOld;
-	
+
 	protected static Log log = Log.get("HCardBrowser"); //$NON-NLS-1$
-	
-	public HCardBrowser(String gln, String browserUrl){
+
+	public HCardBrowser(String gln, String browserUrl) {
 		if (!HCardBrowser.initApi) {
 			HCardBrowser.initApi = true;
-			
+
 			PointerByReference pByReference = new PointerByReference();
 			HCardAPI.INSTANCE.initApi("hCard-OEM-Test", false, pByReference);
 			System.setProperty("https.proxyHost", "localhost");
@@ -47,29 +47,29 @@ public class HCardBrowser {
 		this.gln = gln;
 		log.log("hcardbrowser initiated " + browserUrl + " " + gln, Log.DEBUGMSG);
 	}
-	
-	public void setProxyPort(){
+
+	public void setProxyPort() {
 		if (glnOld == null || !glnOld.equals(gln)) {
 			int port = HCardAPI.INSTANCE.getUserProxyPort(gln);
 			log.log("getting proxy port for gln:" + gln + " port " + port, Log.DEBUGMSG);
-			
+
 			System.setProperty("https.proxyPort", "" + port);
 			glnOld = gln;
-			
-			TrustManager[] trustAllCerts = new TrustManager[] {
-				new X509TrustManager() {
-					public java.security.cert.X509Certificate[] getAcceptedIssuers(){
-						return null;
-					}
-					
-					public void checkClientTrusted(java.security.cert.X509Certificate[] chain,
-						String authType) throws CertificateException{}
-					
-					public void checkServerTrusted(java.security.cert.X509Certificate[] chain,
-						String authType) throws CertificateException{}
+
+			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+					return null;
 				}
-			};
-			
+
+				public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
+						throws CertificateException {
+				}
+
+				public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
+						throws CertificateException {
+				}
+			} };
+
 			SSLContext sc;
 			try {
 				sc = SSLContext.getInstance("SSL");
@@ -80,7 +80,7 @@ public class HCardBrowser {
 			} catch (KeyManagementException e) {
 				e.printStackTrace();
 			}
-			
+
 			// HostnameVerifier allHostsValid = new HostnameVerifier() {
 			// public boolean verify(String arg0, SSLSession arg1) {
 			// return true;
@@ -90,8 +90,8 @@ public class HCardBrowser {
 			// HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
 		}
 	}
-	
-	private String getPageParam(String page){
+
+	private String getPageParam(String page) {
 		try {
 			return "?page=" + URLEncoder.encode(page, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
@@ -99,32 +99,32 @@ public class HCardBrowser {
 		}
 		return "";
 	}
-	
-	public int setTerminvereinbarung(){
+
+	public int setTerminvereinbarung() {
 		log.log("startSmsBroser, Terminvereinbarung:" + gln, Log.DEBUGMSG);
 		String url = browserUrl + this.getPageParam("AppBookingWizzard");
 		return HCardAPI.INSTANCE.startSmsBrowser(gln, url, 0);
 	}
-	
-	public int setHome(){
+
+	public int setHome() {
 		log.log("startSmsBroser, setHome :" + gln, Log.DEBUGMSG);
 		String url = browserUrl + this.getPageParam("MainWelcome");
 		return HCardAPI.INSTANCE.startSmsBrowser(gln, url, 0);
 	}
-	
-	public int setHospitalReferral(){
+
+	public int setHospitalReferral() {
 		log.log("startSmsBroser, setHospitalReferral: " + gln, Log.DEBUGMSG);
 		String url = browserUrl + this.getPageParam("HospitalApplicationsOverview");
 		return HCardAPI.INSTANCE.startSmsBrowser(gln, url, 0);
 	}
-	
-	public int setMyPatient(){
+
+	public int setMyPatient() {
 		log.log("startSmsBroser, setMyPatient: " + gln, Log.DEBUGMSG);
 		String url = browserUrl + this.getPageParam("MyPatient");
 		return HCardAPI.INSTANCE.startSmsBrowser(gln, url, 0);
 	}
-	
-	public int setAppointment(String terminId){
+
+	public int setAppointment(String terminId) {
 		log.log("startSmsBroser, setAppointment: " + gln, Log.DEBUGMSG);
 		String url = browserUrl + getPageParam("DocCalendar");
 		if (terminId != null) {
@@ -134,9 +134,10 @@ public class HCardBrowser {
 			}
 			try {
 				url += "&id=" + URLEncoder.encode(id, "UTF-8");
-			} catch (UnsupportedEncodingException e) {}
+			} catch (UnsupportedEncodingException e) {
+			}
 		}
 		return HCardAPI.INSTANCE.startSmsBrowser(gln, url, 0);
 	}
-	
+
 }

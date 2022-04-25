@@ -7,20 +7,20 @@ import ch.elexis.core.services.IDocumentStore;
 
 @Component
 public class DocumentStoreServiceHolder {
-	
+
 	private static IDocumentStore documentStore;
-	
+
 	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
-	public void setDocumentStore(IDocumentStore documentStore){
+	public void setDocumentStore(IDocumentStore documentStore) {
 		DocumentStoreServiceHolder.documentStore = documentStore;
 	}
-	
+
 	public static boolean isSet() {
 		return documentStore != null;
 	}
-	
-	public static IDocumentStore get(){
-		if(documentStore == null) {
+
+	public static IDocumentStore get() {
+		if (documentStore == null) {
 			throw new IllegalStateException("No IDocumentStore implementation available");
 		}
 		return documentStore;

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -23,9 +23,9 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
 
 public class TarmedPrefs extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	@Override
-	protected Control createContents(final Composite parent){
+	protected Control createContents(final Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPKVG);
@@ -33,16 +33,16 @@ public class TarmedPrefs extends PreferencePage implements IWorkbenchPreferenceP
 		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL);
 		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPUVG);
 		new MultiplikatorEditor(ret, "ch.elexis.data.TarmedLeistung" + "UVG"); //$NON-NLS-1$
-		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPIV); 
+		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPIV);
 		new MultiplikatorEditor(ret, "ch.elexis.data.TarmedLeistung" + "IV"); //$NON-NLS-1$
-		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPMV); 
+		new Label(ret, SWT.NONE).setText(Messages.TarmedPrefs_TPMV);
 		new MultiplikatorEditor(ret, "ch.elexis.data.TarmedLeistung" + "MV"); //$NON-NLS-1$
 		return ret;
 	}
-	
-	public void init(final IWorkbench workbench){
+
+	public void init(final IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

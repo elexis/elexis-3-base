@@ -9,10 +9,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for SXCM_INT complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="SXCM_INT">
  *   &lt;complexContent>
@@ -22,46 +23,43 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SXCM_INT")
-@XmlSeeAlso({
-	IVLINT.class
-})
+@XmlSeeAlso({ IVLINT.class })
 public class SXCMINT extends INT {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	@XmlAttribute
 	protected SetOperator operator;
-	
+
 	/**
 	 * Gets the value of the operator property.
-	 * 
+	 *
 	 * @return possible object is {@link SetOperator }
-	 * 
+	 *
 	 */
-	public SetOperator getOperator(){
+	public SetOperator getOperator() {
 		if (operator == null) {
 			return SetOperator.I;
 		} else {
 			return operator;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the operator property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link SetOperator }
-	 * 
+	 *
+	 * @param value allowed object is {@link SetOperator }
+	 *
 	 */
-	public void setOperator(SetOperator value){
+	public void setOperator(SetOperator value) {
 		this.operator = value;
 	}
-	
+
 }

@@ -24,15 +24,15 @@ import ch.elexis.core.types.Gender;
 import ch.elexis.core.ui.icons.Images;
 
 public class InboxElementLabelProvider extends LabelProvider implements IColorProvider {
-	
+
 	private InboxElementUiExtension extension;
-	
-	public InboxElementLabelProvider(){
+
+	public InboxElementLabelProvider() {
 		extension = new InboxElementUiExtension();
 	}
-	
+
 	@Override
-	public String getText(Object element){
+	public String getText(Object element) {
 		if (element instanceof PatientInboxElements) {
 			return ((PatientInboxElements) element).toString();
 		} else if (element instanceof IInboxElement) {
@@ -41,18 +41,18 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 				return text;
 			} else {
 				Object obj = ((IInboxElement) element).getObject();
-				if(obj != null) {
+				if (obj != null) {
 					return "unbekannt [" + obj.getClass().getSimpleName() + "]";
 				} else {
-					return "unbekannt";					
+					return "unbekannt";
 				}
 			}
 		}
 		return super.getText(element);
 	}
-	
+
 	@Override
-	public Image getImage(Object element){
+	public Image getImage(Object element) {
 		if (element instanceof PatientInboxElements) {
 			IPatient pat = ((PatientInboxElements) element).getPatient();
 			if (pat != null) {
@@ -74,8 +74,8 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 		}
 		return null;
 	}
-	
-	public Color getForeground(Object element){
+
+	public Color getForeground(Object element) {
 		if (element instanceof IInboxElement) {
 			Color color = extension.getForeground((IInboxElement) element);
 			if (color != null) {
@@ -84,8 +84,8 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 		}
 		return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
 	}
-	
-	public Color getBackground(Object element){
+
+	public Color getBackground(Object element) {
 		if (element instanceof IInboxElement) {
 			Color color = extension.getBackground((IInboxElement) element);
 			if (color != null) {
@@ -94,8 +94,8 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 		}
 		return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 	}
-	
-	public boolean isVisible(IInboxElement element){
+
+	public boolean isVisible(IInboxElement element) {
 		return extension.isVisible(element);
 	}
 }

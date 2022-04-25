@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.berchtold.emanuel.privatrechnung.rechnung;
 
@@ -55,38 +55,38 @@ public class RnPrintView extends ViewPart {
 	TextContainer tc;
 	Fall fall;
 	private IRnOutputter tarmedOutputter;
-	
+
 	@Override
-	public void createPartControl(final Composite parent){
+	public void createPartControl(final Composite parent) {
 		tc = new TextContainer(parent.getShell());
 		tc.getPlugin().createContainer(parent, new ITextPlugin.ICallback() {
-			
-			public void save(){
+
+			public void save() {
 				// we don't save
 			}
-			
-			public boolean saveAs(){
+
+			public boolean saveAs() {
 				return false; // nope
 			}
 		});
-		
+
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	/**
 	 * print a bill into a text container
 	 */
-	public Result<Rechnung> doPrint(final Rechnung rn, Properties props){
+	public Result<Rechnung> doPrint(final Rechnung rn, Properties props) {
 		Mandant sm = ElexisEventDispatcher.getSelectedMandator();
 		if (sm == null || (!sm.isValid())) {
 			return new Result<Rechnung>(SEVERITY.ERROR, 1, "Kein Mandant eingeloggt", null, true);
 		}
-		
+
 		String id = sm.getId();
 		Result<Rechnung> ret = new Result<Rechnung>();
 		fall = rn.getFall();
@@ -95,18 +95,18 @@ public class RnPrintView extends ViewPart {
 		if (!adressat.isValid()) {
 			adressat = fall.getPatient();
 		}
-		
+
 		List<Konsultation> kons = rn.getKonsultationen();
 		Collections.sort(kons, new Comparator<Konsultation>() {
 			TimeTool t0 = new TimeTool();
 			TimeTool t1 = new TimeTool();
-			
-			public int compare(final Konsultation arg0, final Konsultation arg1){
+
+			public int compare(final Konsultation arg0, final Konsultation arg1) {
 				t0.set(arg0.getDatum());
 				t1.set(arg1.getDatum());
 				return t0.compareTo(t1);
 			}
-			
+
 		});
 		// Leistungen und Artikel gruppieren
 		Money sum = new Money();
@@ -129,23 +129,17 @@ public class RnPrintView extends ViewPart {
 		}
 		if (props.get("Summary").equals(Boolean.toString(true))) {
 			// Seite mit ESR
-			tc.createFromTemplateName(null,
-				BerchtoldPrivatrechnungTextTemplateRequirement.getESRTemplate(), Brief.RECHNUNG,
-				adressat, rn.getNr());
+			tc.createFromTemplateName(null, BerchtoldPrivatrechnungTextTemplateRequirement.getESRTemplate(),
+					Brief.RECHNUNG, adressat, rn.getNr());
 			fillFields();
-			ESR esr =
-				new ESR(CoreHub.localCfg.get(PreferenceConstants.esrIdentity + "/" + id, ""),
-					CoreHub.localCfg.get(PreferenceConstants.esrUser + "/" + id, ""), rn.getRnId(),
-					27);
-			Kontakt bank =
-				Kontakt.load(CoreHub.localCfg.get(PreferenceConstants.cfgBank + "/" + id, ""));
+			ESR esr = new ESR(CoreHub.localCfg.get(PreferenceConstants.esrIdentity + "/" + id, ""),
+					CoreHub.localCfg.get(PreferenceConstants.esrUser + "/" + id, ""), rn.getRnId(), 27);
+			Kontakt bank = Kontakt.load(CoreHub.localCfg.get(PreferenceConstants.cfgBank + "/" + id, ""));
 			if (!bank.isValid()) {
-				SWTHelper
-					.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
+				SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
 			}
 			esr.printBESR(bank, adressat, rn.getMandant(), sum.getCentsAsString(), tc);
-			Object pos =
-				tc.getPlugin().insertText("[Leistungen]", "Leistungspositionen\n", SWT.LEFT);
+			Object pos = tc.getPlugin().insertText("[Leistungen]", "Leistungspositionen\n", SWT.LEFT);
 			for (String k : groups.keySet()) {
 				tc.getPlugin().setFont("Helvetiva", SWT.BOLD, 10);
 				pos = tc.getPlugin().insertText(pos, k + ":\t", SWT.LEFT);
@@ -155,24 +149,18 @@ public class RnPrintView extends ViewPart {
 				for (IBilled vv : lv) {
 					zeile.addMoney(vv.getTotal());
 				}
-				pos =
-					tc.getPlugin().insertText(pos, "\t\t" + zeile.getAmountAsString() + "\n",
-						SWT.LEFT);
+				pos = tc.getPlugin().insertText(pos, "\t\t" + zeile.getAmountAsString() + "\n", SWT.LEFT);
 			}
-			pos =
-				tc.getPlugin().insertText(pos,
-					"_____________________________________\nSumme\t\t\t" + sum.getAmountAsString(),
-					SWT.LEFT);
+			pos = tc.getPlugin().insertText(pos,
+					"_____________________________________\nSumme\t\t\t" + sum.getAmountAsString(), SWT.LEFT);
 			tc.getPlugin().print(CoreHub.localCfg.get("Drucker/A4ESR/Name", null), null, false);
 		}
 		if (props.get("Detail").equals(Boolean.toString(true))) {
 			// Seite Detail
-			double cmAvail =
-				CoreHub.localCfg.get(PreferenceConstants.cfgTemplateBillHeight + "/" + id, 15.0);
+			double cmAvail = CoreHub.localCfg.get(PreferenceConstants.cfgTemplateBillHeight + "/" + id, 15.0);
 			String toPrinter = CoreHub.localCfg.get("Drucker/A4/Name", null);
-			tc.createFromTemplateName(null,
-				BerchtoldPrivatrechnungTextTemplateRequirement.getBill1Template(), Brief.RECHNUNG,
-				adressat, rn.getNr());
+			tc.createFromTemplateName(null, BerchtoldPrivatrechnungTextTemplateRequirement.getBill1Template(),
+					Brief.RECHNUNG, adressat, rn.getNr());
 			fillFields();
 			Object pos = tc.getPlugin().insertText("[Leistungen]", "\n", SWT.LEFT);
 			sum = new Money();
@@ -188,10 +176,9 @@ public class RnPrintView extends ViewPart {
 				String date = new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER);
 				for (IBilled vv : encounter.getBilled()) {
 					StringBuilder sb = new StringBuilder();
-					sb.append(date).append("\t").append(vv.getAmount()).append("\t")
-						.append(vv.getText())
-						.append("\t").append(vv.getScaledPrice()).append("\t")
-						.append(vv.getTotal().getAmountAsString()).append("\n");
+					sb.append(date).append("\t").append(vv.getAmount()).append("\t").append(vv.getText()).append("\t")
+							.append(vv.getScaledPrice()).append("\t").append(vv.getTotal().getAmountAsString())
+							.append("\n");
 					pos = tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
 					sum.addMoney(vv.getTotal());
 					cmAvail -= lineHeight;
@@ -201,52 +188,46 @@ public class RnPrintView extends ViewPart {
 						footer.append("Zwischentotal:\t\t").append(sum.getAmountAsString()); //$NON-NLS-1$
 						pos = tc.getPlugin().insertText(pos, footer.toString(), SWT.LEFT);
 						if (tc.getPlugin().print(toPrinter, null, false) == false) {
-							return new Result<Rechnung>(SEVERITY.ERROR, 2,
-								"Fehler beim Drucken der Rn. " + rn.getNr(), null, true);
+							return new Result<Rechnung>(SEVERITY.ERROR, 2, "Fehler beim Drucken der Rn. " + rn.getNr(),
+									null, true);
 						}
-						
+
 						insertPage(++page, adressat, rn);
 						pos = tc.getPlugin().insertText("[Leistungen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
-						cmAvail =
-							CoreHub.localCfg.get(PreferenceConstants.cfgTemplateBill2Height + "/"
-								+ id, 20.0);
-						
+						cmAvail = CoreHub.localCfg.get(PreferenceConstants.cfgTemplateBill2Height + "/" + id, 20.0);
+
 					}
 				}
 			}
-			pos =
-				tc.getPlugin().insertText(pos,
-					StringTool.filler("_", 110) + "\nTotal:\t\t\t\t" + sum.getAmountAsString(),
-					SWT.LEFT);
-			
+			pos = tc.getPlugin().insertText(pos,
+					StringTool.filler("_", 110) + "\nTotal:\t\t\t\t" + sum.getAmountAsString(), SWT.LEFT);
+
 			tc.getPlugin().print(toPrinter, null, false);
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM).equals(Boolean.toString(true))) {
 			Optional<IRnOutputter> tarmedOutputter = getTarmedOutputter();
 			if (tarmedOutputter.isPresent()) {
 				Properties tarmedProps = new Properties();
-				tarmedProps.put(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE,
-					Boolean.toString(false));
+				tarmedProps.put(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE, Boolean.toString(false));
 				tarmedProps.put(IRnOutputter.PROP_OUTPUT_WITH_ESR, Boolean.toString(false));
 				tarmedProps.put(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM, Boolean.toString(true));
-				
-				tarmedOutputter.get().doOutput(IRnOutputter.TYPE.ORIG,
-					Collections.singletonList(rn), tarmedProps);
+
+				tarmedOutputter.get().doOutput(IRnOutputter.TYPE.ORIG, Collections.singletonList(rn), tarmedProps);
 			} else {
 				SWTHelper.showError("Keine Tarmed Ausgabe gefunden",
-					"Es ist keine Tarmed Ausgabe bei dieser Installation verfügbar.");
+						"Es ist keine Tarmed Ausgabe bei dieser Installation verfügbar.");
 			}
 		}
 		return ret;
 	}
-	
-	private Optional<IRnOutputter> getTarmedOutputter(){
+
+	private Optional<IRnOutputter> getTarmedOutputter() {
 		if (tarmedOutputter != null) {
 			return Optional.of(tarmedOutputter);
 		}
 		@SuppressWarnings("unchecked")
-		List<IRnOutputter> foundOutputters =
-			Extensions.getClasses(ExtensionPointConstantsData.RECHNUNGS_MANAGER, "outputter");
+		List<IRnOutputter> foundOutputters = Extensions.getClasses(ExtensionPointConstantsData.RECHNUNGS_MANAGER,
+				"outputter");
 		for (IRnOutputter outputter : foundOutputters) {
 			if (outputter.getClass().getName().endsWith("TarmedRechnung.RechnungsDrucker")) {
 				tarmedOutputter = outputter;
@@ -255,22 +236,21 @@ public class RnPrintView extends ViewPart {
 		}
 		return Optional.empty();
 	}
-	
-	private void insertPage(final int page, final Kontakt adressat, final Rechnung rn){
-		tc.createFromTemplateName(null,
-			BerchtoldPrivatrechnungTextTemplateRequirement.getBill2Template(), Brief.RECHNUNG,
-			adressat, rn.getNr());
+
+	private void insertPage(final int page, final Kontakt adressat, final Rechnung rn) {
+		tc.createFromTemplateName(null, BerchtoldPrivatrechnungTextTemplateRequirement.getBill2Template(),
+				Brief.RECHNUNG, adressat, rn.getNr());
 		fillFields();
 		tc.replace("\\[Seite\\]", StringTool.pad(StringTool.LEFT, '0', Integer.toString(page), 2)); //$NON-NLS-1$
 	}
-	
-	private void fillFields(){
+
+	private void fillFields() {
 		Kontakt versicherung = Kontakt.load(fall.getInfoString("Versicherung"));
 		if (versicherung.isValid()) {
 			tc.replace("\\?\\?Versicherung\\.Name\\?\\?]", versicherung.getLabel());
 			tc.replace("\\?\\?Versicherung\\.Anschrift\\?\\?", versicherung.getPostAnschrift(true));
 		}
-		
+
 	}
-	
+
 }

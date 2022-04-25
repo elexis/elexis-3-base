@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    T. Huster - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -51,112 +51,109 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 
 public class TarmedRefcodesDialog extends Dialog {
-	
+
 	private IBilled billed;
 	private Composite contentComposite;
-	
+
 	private List<RefCodeEditComposite> refcodesComposites;
-	
-	public TarmedRefcodesDialog(Shell shell, IBilled tl){
+
+	public TarmedRefcodesDialog(Shell shell, IBilled tl) {
 		super(shell);
 		refcodesComposites = new ArrayList<>();
 		billed = tl;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		contentComposite = (Composite) super.createDialogArea(parent);
 		contentComposite.setLayout(new GridLayout(2, false));
-		
+
 		Label lbl = new Label(contentComposite, SWT.NONE);
 		lbl.setText(billed.getAmount() + "x " + billed.getText());
 		lbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		
+
 		lbl = new Label(contentComposite, SWT.NONE);
 		lbl.setText("Aufteilen zu Bezugsleistungen (selber Fall und selber Tag)");
 		lbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+
 		ToolBarManager mgr = new ToolBarManager(SWT.RIGHT | SWT.FLAT);
 		mgr.add(new Action() {
 			@Override
-			public ImageDescriptor getImageDescriptor(){
+			public ImageDescriptor getImageDescriptor() {
 				return Images.IMG_NEW.getImageDescriptor();
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				addRefcodeEdit();
 			}
 		});
 		mgr.createControl(contentComposite);
-		
+
 		return contentComposite;
 	}
-	
-	private void addRefcodeEdit(){
+
+	private void addRefcodeEdit() {
 		RefCodeEditComposite add = new RefCodeEditComposite(contentComposite, SWT.NONE);
 		add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		refcodesComposites.add(add);
 		TarmedRefcodesDialog.this.getShell().pack(true);
 	}
-	
-	private void removeRefcodeEdit(RefCodeEditComposite refCodeEditComposite){
+
+	private void removeRefcodeEdit(RefCodeEditComposite refCodeEditComposite) {
 		((GridData) refCodeEditComposite.getLayoutData()).exclude = true;
 		refCodeEditComposite.setVisible(false);
 		refCodeEditComposite.dispose();
 		refcodesComposites.remove(refCodeEditComposite);
 		TarmedRefcodesDialog.this.getShell().pack(true);
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		getShell().setText("Tarmedbezüge herstellen: " + billed.getCode());
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		if (!refcodesComposites.isEmpty()) {
 			if (isValid()) {
 				refcodesComposites.forEach(rc -> rc.apply(billed));
-				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
-					billed.getEncounter());
+				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, billed.getEncounter());
 				super.okPressed();
 			} else {
 				MessageDialog.openWarning(getShell(), "Warnung",
-					"Summe der Bezüge ist grösser als die ursprüngliche Menge.");
+						"Summe der Bezüge ist grösser als die ursprüngliche Menge.");
 			}
 		}
 	}
-	
-	private boolean isValid(){
-		return refcodesComposites.stream().mapToInt(rc -> rc.amountSpinner.getSelection())
-			.sum() <= billed.getAmount();
+
+	private boolean isValid() {
+		return refcodesComposites.stream().mapToInt(rc -> rc.amountSpinner.getSelection()).sum() <= billed.getAmount();
 	}
-	
+
 	private class RefCodeEditComposite extends Composite {
-		
+
 		private ComboViewer refcodeCombo;
 		private Spinner amountSpinner;
-		
-		public RefCodeEditComposite(Composite parent, int style){
+
+		public RefCodeEditComposite(Composite parent, int style) {
 			super(parent, style);
 			setLayout(new GridLayout(3, false));
 			createContent();
 		}
-		
-		public void apply(IBilled billed){
+
+		public void apply(IBilled billed) {
 			if (amountSpinner.getSelection() > 0 && !refcodeCombo.getSelection().isEmpty()) {
-				String bezug =
-					(String) ((StructuredSelection) refcodeCombo.getSelection()).getFirstElement();
+				String bezug = (String) ((StructuredSelection) refcodeCombo.getSelection()).getFirstElement();
 				int amount = amountSpinner.getSelection();
 				if (amount == billed.getAmount()) {
 					billed.setExtInfo("Bezug", bezug);
 					CoreModelServiceHolder.get().save(billed);
 				} else {
 					IContact biller = ContextServiceHolder.get().getActiveUserContact().get();
-					IBilled copy = new IBilledBuilder(CoreModelServiceHolder.get(),
-						billed.getBillable(), billed.getEncounter(), biller).build();
+					IBilled copy = new IBilledBuilder(CoreModelServiceHolder.get(), billed.getBillable(),
+							billed.getEncounter(), biller).build();
 					billed.copy(copy);
 					copy.setAmount(amount);
 					billed.setAmount(billed.getAmount() - amount);
@@ -165,48 +162,44 @@ public class TarmedRefcodesDialog extends Dialog {
 				}
 			}
 		}
-		
-		private void createContent(){
+
+		private void createContent() {
 			refcodeCombo = new ComboViewer(this, SWT.BORDER);
 			refcodeCombo.setContentProvider(ArrayContentProvider.getInstance());
 			refcodeCombo.setLabelProvider(new LabelProvider());
 			refcodeCombo.setInput(getPossibleRefCodes());
-			
+
 			amountSpinner = new Spinner(this, SWT.BORDER);
-			amountSpinner.setValues(0, 0, (int) TarmedRefcodesDialog.this.billed.getAmount(), 0, 1,
-				1);
-			
+			amountSpinner.setValues(0, 0, (int) TarmedRefcodesDialog.this.billed.getAmount(), 0, 1, 1);
+
 			ToolBarManager mgr = new ToolBarManager(SWT.RIGHT | SWT.FLAT);
 			mgr.add(new Action() {
 				@Override
-				public ImageDescriptor getImageDescriptor(){
+				public ImageDescriptor getImageDescriptor() {
 					return Images.IMG_DELETE.getImageDescriptor();
 				}
-				
+
 				@Override
-				public void run(){
+				public void run() {
 					removeRefcodeEdit(RefCodeEditComposite.this);
 				}
 			});
 			mgr.createControl(this);
 		}
-		
-		private List<String> getPossibleRefCodes(){
+
+		private List<String> getPossibleRefCodes() {
 			IEncounter encounter = billed.getEncounter();
-			
+
 			IQuery<IEncounter> query = CoreModelServiceHolder.get().getQuery(IEncounter.class);
-			query.and(ModelPackage.Literals.IENCOUNTER__COVERAGE, COMPARATOR.EQUALS,
-				encounter.getCoverage());
-			query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.EQUALS,
-				encounter.getDate());
+			query.and(ModelPackage.Literals.IENCOUNTER__COVERAGE, COMPARATOR.EQUALS, encounter.getCoverage());
+			query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.EQUALS, encounter.getDate());
 			List<IEncounter> encounters = query.execute();
 			if (!encounters.isEmpty()) {
 				List<String> ret = new ArrayList<String>();
 				HashSet<String> uniqueCodes = new HashSet<String>();
 				encounters.forEach(e -> {
-					List<String> codes = e.getBilled().stream()
-						.filter(b -> b.getBillable() instanceof ITarmedLeistung)
-						.map(b -> b.getCode()).collect(Collectors.toList());
+					List<String> codes = e.getBilled().stream().filter(b -> b.getBillable() instanceof ITarmedLeistung)
+							.map(b -> b.getCode()).collect(Collectors.toList());
 					uniqueCodes.addAll(codes);
 				});
 				ret.addAll(uniqueCodes);

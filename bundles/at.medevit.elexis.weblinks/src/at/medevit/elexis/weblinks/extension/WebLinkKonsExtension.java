@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     T. Huster - initial API and implementation
  ******************************************************************************/
@@ -27,36 +27,36 @@ import ch.rgw.tools.GenericRange;
 import ch.rgw.tools.StringTool;
 
 public class WebLinkKonsExtension implements IKonsExtension {
-	
+
 	private static IRichTextDisplay textField;
-	
+
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-		throws CoreException{
+			throws CoreException {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public String connect(IRichTextDisplay tf){
+	public String connect(IRichTextDisplay tf) {
 		textField = (EnhancedTextField) tf;
 		return "at.medevit.elexis.decisionsupport.generic.GenericKonsExtension"; //$NON-NLS-1$
 	}
-	
+
 	@Override
-	public boolean doLayout(StyleRange styleRange, String provider, String id){
+	public boolean doLayout(StyleRange styleRange, String provider, String id) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
-	public boolean doXRef(String refProvider, String refID){
+	public boolean doXRef(String refProvider, String refID) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
-	public IAction[] getActions(){
+	public IAction[] getActions() {
 		List<WebLinkAction> actions = new ArrayList<WebLinkAction>();
 		List<WebLinkElement> elements = WebLinkElementUtil.loadElements();
 		for (WebLinkElement decisionSupportElement : elements) {
@@ -64,20 +64,20 @@ public class WebLinkKonsExtension implements IKonsExtension {
 		}
 		return actions.toArray(new WebLinkAction[actions.size()]);
 	}
-	
+
 	@Override
-	public void insert(Object o, int pos){
+	public void insert(Object o, int pos) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void removeXRef(String refProvider, String refID){
+	public void removeXRef(String refProvider, String refID) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	public static void updatePlaceholders(){
+
+	public static void updatePlaceholders() {
 		String selection = "";
 		if (textField != null) {
 			String text = textField.getContentsPlaintext();
@@ -89,8 +89,8 @@ public class WebLinkKonsExtension implements IKonsExtension {
 			}
 			selection = selection.trim().replace("\r\n", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		WebLinkElementUtil.setPlaceholder("text.selection", selection);
 	}
-	
+
 }

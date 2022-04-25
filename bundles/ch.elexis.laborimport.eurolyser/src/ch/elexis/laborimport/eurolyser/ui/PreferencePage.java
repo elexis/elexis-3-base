@@ -11,20 +11,20 @@ import ch.elexis.laborimport.eurolyser.EurolyserImporter;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public PreferencePage(){
+	public PreferencePage() {
 		super(GRID);
 		setPreferenceStore(new ConfigServicePreferenceStore(Scope.MANDATOR));
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
-		addField(new StringFieldEditor(EurolyserImporter.CONFIG_IMPORT_MANDANTONLY,
-			"Import nur für Mandanten (Kürzel)", getFieldEditorParent()));
+	protected void createFieldEditors() {
+		addField(new StringFieldEditor(EurolyserImporter.CONFIG_IMPORT_MANDANTONLY, "Import nur für Mandanten (Kürzel)",
+				getFieldEditorParent()));
 	}
-	
+
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

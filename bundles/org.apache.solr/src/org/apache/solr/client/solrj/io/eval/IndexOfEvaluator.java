@@ -25,28 +25,30 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class IndexOfEvaluator extends RecursiveObjectEvaluator implements TwoValueWorker {
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public IndexOfEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public IndexOfEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object value1, Object value2) throws IOException {
-    if(!(value1 instanceof List)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for value, expecting an array",toExpression(constructingFactory), value1.getClass().getSimpleName()));
-    } else {
-      @SuppressWarnings({"rawtypes"})
-      List list = (List)value1;
-      String find = value2.toString().replace("\"","");
-      for(int i=0; i<list.size(); i++) {
-        Object o = list.get(i);
-        if(o.toString().equals(find)) {
-          return i;
-        }
-      }
+	@Override
+	public Object doWork(Object value1, Object value2) throws IOException {
+		if (!(value1 instanceof List)) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - found type %s for value, expecting an array",
+							toExpression(constructingFactory), value1.getClass().getSimpleName()));
+		} else {
+			@SuppressWarnings({ "rawtypes" })
+			List list = (List) value1;
+			String find = value2.toString().replace("\"", "");
+			for (int i = 0; i < list.size(); i++) {
+				Object o = list.get(i);
+				if (o.toString().equals(find)) {
+					return i;
+				}
+			}
 
-      return -1;
-    }
-  }
+			return -1;
+		}
+	}
 }

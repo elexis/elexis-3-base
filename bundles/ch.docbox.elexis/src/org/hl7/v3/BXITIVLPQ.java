@@ -9,10 +9,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for BXIT_IVL_PQ complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="BXIT_IVL_PQ">
  *   &lt;complexContent>
@@ -22,43 +23,42 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BXIT_IVL_PQ")
 public class BXITIVLPQ extends IVLPQ {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	@XmlAttribute
 	protected BigInteger qty;
-	
+
 	/**
 	 * Gets the value of the qty property.
-	 * 
+	 *
 	 * @return possible object is {@link BigInteger }
-	 * 
+	 *
 	 */
-	public BigInteger getQty(){
+	public BigInteger getQty() {
 		if (qty == null) {
 			return new BigInteger("1");
 		} else {
 			return qty;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the qty property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link BigInteger }
-	 * 
+	 *
+	 * @param value allowed object is {@link BigInteger }
+	 *
 	 */
-	public void setQty(BigInteger value){
+	public void setQty(BigInteger value) {
 		this.qty = value;
 	}
-	
+
 }

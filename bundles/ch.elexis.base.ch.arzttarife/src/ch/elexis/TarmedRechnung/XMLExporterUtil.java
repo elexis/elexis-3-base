@@ -50,26 +50,25 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class XMLExporterUtil {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(XMLExporterUtil.class);
-	
+
 	private static final String ELEMENT_EMAIL = "email"; //$NON-NLS-1$
 	private static final String ELEMENT_ONLINE = "online"; //$NON-NLS-1$
-	
-	public static Element buildRechnungsstellerAdressElement(final IContact k){
+
+	public static Element buildRechnungsstellerAdressElement(final IContact k) {
 		return buildAdressElement(k, false, true);
 	}
-	
-	public static Element buildAdressElement(final IContact contact){
+
+	public static Element buildAdressElement(final IContact contact) {
 		return buildAdressElement(contact, false, false);
 	}
-	
-	public static Element buildAdressElement(final IContact contact, final boolean useAnschrift){
+
+	public static Element buildAdressElement(final IContact contact, final boolean useAnschrift) {
 		return buildAdressElement(contact, useAnschrift, false);
 	}
-	
-	public static Element buildAdressElement(final IContact contact, final boolean useAnschrift,
-		boolean checkAnrede){
+
+	public static Element buildAdressElement(final IContact contact, final boolean useAnschrift, boolean checkAnrede) {
 		Element ret;
 		boolean anredeOrganization = false;
 		if (checkAnrede) {
@@ -94,19 +93,18 @@ public class XMLExporterUtil {
 			ret = new Element("person", XMLExporter.nsinvoice); //$NON-NLS-1$
 			Element familyname = new Element("familyname", XMLExporter.nsinvoice); //$NON-NLS-1$
 			Element givenname = new Element("givenname", XMLExporter.nsinvoice); //$NON-NLS-1$
-			
+
 			if (!useAnschrift) {
 				setAttributeIfNotEmptyWithLimit(ret, "salutation", //$NON-NLS-1$
-					(String) contact.getExtInfo("Anrede"), //$NON-NLS-1$
-					35);
+						(String) contact.getExtInfo("Anrede"), //$NON-NLS-1$
+						35);
 				if (contact.isPerson()) {
-					IPerson person =
-						CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
+					IPerson person = CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
 					setAttributeIfNotEmptyWithLimit(ret, "title", person.getTitel(), 35); //$NON-NLS-1$
 					if (StringUtils.isEmpty((String) contact.getExtInfo("Anrede"))) {
 						setAttributeIfNotEmptyWithLimit(ret, "salutation", //$NON-NLS-1$
-							PersonFormatUtil.getSalutation(person), //$NON-NLS-1$
-							35);
+								PersonFormatUtil.getSalutation(person), // $NON-NLS-1$
+								35);
 					}
 				}
 				familyname.setText(StringTool.limitLength(contact.getDescription1(), 35));
@@ -122,9 +120,9 @@ public class XMLExporterUtil {
 				PostalAddress postAnschrift = PostalAddress.ofText(contact.getPostalAddress());
 				familyname.setText(StringTool.limitLength(postAnschrift.getLastName(), 35));
 				givenname.setText(StringTool.limitLength(postAnschrift.getFirstName(), 35));
-				
+
 				setAttributeIfNotEmptyWithLimit(ret, "salutation", postAnschrift.getSalutation(), //$NON-NLS-1$
-					35);
+						35);
 				ret.addContent(familyname);
 				ret.addContent(givenname);
 				ret.addContent(buildPostalElement(postAnschrift));
@@ -140,17 +138,16 @@ public class XMLExporterUtil {
 		}
 		return ret;
 	}
-	
-	public static Element buildPostalElement(final IContact contact){
+
+	public static Element buildPostalElement(final IContact contact) {
 		Element ret = new Element("postal", XMLExporter.nsinvoice); //$NON-NLS-1$
 		addElementIfExists(ret, "pobox", null, //$NON-NLS-1$
-			StringTool.limitLength((String) contact.getExtInfo("Postfach"), //$NON-NLS-1$
-				35),
-			null);
+				StringTool.limitLength((String) contact.getExtInfo("Postfach"), //$NON-NLS-1$
+						35),
+				null);
 		addElementIfExists(ret, "street", null, StringTool.limitLength(contact.getStreet(), 35), //$NON-NLS-1$
-			null);
-		Element zip =
-			addElementIfExists(ret, "zip", null, StringTool.limitLength(contact.getZip(), 9), //$NON-NLS-1$
+				null);
+		Element zip = addElementIfExists(ret, "zip", null, StringTool.limitLength(contact.getZip(), 9), //$NON-NLS-1$
 				"0000"); //$NON-NLS-1$
 		Country country = contact.getCountry();
 		if (Country.NDF == country) {
@@ -158,29 +155,28 @@ public class XMLExporterUtil {
 			country = Country.CH;
 		}
 		setAttributeIfNotEmpty(zip, "countrycode", //$NON-NLS-1$
-			StringTool.limitLength(country.toString(), 3));
+				StringTool.limitLength(country.toString(), 3));
 		addElementIfExists(ret, "city", null, StringTool.limitLength(contact.getCity(), 35), //$NON-NLS-1$
-			Messages.XMLExporter_Unknown);
+				Messages.XMLExporter_Unknown);
 		return ret;
 	}
-	
-	public static Element buildPostalElement(final PostalAddress postalAddress){
+
+	public static Element buildPostalElement(final PostalAddress postalAddress) {
 		Element ret = new Element("postal", XMLExporter.nsinvoice); //$NON-NLS-1$
 		addElementIfExists(ret, "pobox", null, //$NON-NLS-1$
-			StringTool.limitLength(postalAddress.getAddress2(), 35), null);
+				StringTool.limitLength(postalAddress.getAddress2(), 35), null);
 		addElementIfExists(ret, "street", null, //$NON-NLS-1$
-			StringTool.limitLength(postalAddress.getAddress1(), 35), null);
-		Element zip =
-			addElementIfExists(ret, "zip", null, StringTool.limitLength(postalAddress.getZip(), 9), //$NON-NLS-1$
+				StringTool.limitLength(postalAddress.getAddress1(), 35), null);
+		Element zip = addElementIfExists(ret, "zip", null, StringTool.limitLength(postalAddress.getZip(), 9), //$NON-NLS-1$
 				"0000"); //$NON-NLS-1$
 		setAttributeIfNotEmpty(zip, "countrycode", //$NON-NLS-1$
-			StringTool.limitLength(postalAddress.getCountry(), 3));
+				StringTool.limitLength(postalAddress.getCountry(), 3));
 		addElementIfExists(ret, "city", null, StringTool.limitLength(postalAddress.getCity(), 35), //$NON-NLS-1$
-			Messages.XMLExporter_unknown);
+				Messages.XMLExporter_unknown);
 		return ret;
 	}
-	
-	public static Element buildOnlineElement(final IContact k){
+
+	public static Element buildOnlineElement(final IContact k) {
 		// Element ret = new Element("online", XMLExporter.nsinvoice);
 		// String email = StringTool.limitLength(k.get("E-Mail"), 70);
 		// if (!email.matches(".+@.+")) {
@@ -191,12 +187,12 @@ public class XMLExporterUtil {
 		// addElementIfExists(ret, "url", null,
 		// StringTool.limitLength(k.get("Website"), 100), null);
 		// return ret;
-		
+
 		// Tony Schaller, 28.12.2008:
 		// optimized code: online element is created when it contains real
 		// content, only
 		Element ret = null;
-		
+
 		// mail adresse
 		String value = getValidXMLString(StringTool.limitLength(k.getEmail(), 70));
 		if (!value.equals(StringConstants.EMPTY)) {
@@ -208,7 +204,7 @@ public class XMLExporterUtil {
 			}
 			addElementIfExists(ret, ELEMENT_EMAIL, null, value, null);
 		}
-		
+
 		// webseite
 		value = getValidXMLString(StringTool.limitLength(k.getWebsite(), 100));
 		if (!value.equals(StringConstants.EMPTY)) {
@@ -220,21 +216,21 @@ public class XMLExporterUtil {
 		}
 		return ret;
 	}
-	
-	public static Element buildTelekomElement(final IContact k){
+
+	public static Element buildTelekomElement(final IContact k) {
 		Element ret = new Element("telecom", XMLExporter.nsinvoice); //$NON-NLS-1$
 		Element phoneElement = addElementIfExists(ret, "phone", null, //$NON-NLS-1$
-			StringTool.limitLength(k.getPhone1(), 25), null); //$NON-NLS-1$
-		// only add the fax element if there is a phone, telcom without phone is not allowed by xsd
+				StringTool.limitLength(k.getPhone1(), 25), null); // $NON-NLS-1$
+		// only add the fax element if there is a phone, telcom without phone is not
+		// allowed by xsd
 		if (phoneElement != null) {
 			addElementIfExists(ret, "fax", null, StringTool.limitLength(k.getFax(), 25), //$NON-NLS-1$
-				null);
+					null);
 		}
 		return ret;
 	}
-	
-	public static boolean setAttributeIfNotEmpty(final Element element, final String name,
-		final String value){
+
+	public static boolean setAttributeIfNotEmpty(final Element element, final String name, final String value) {
 		if (element == null) {
 			return false;
 		}
@@ -247,32 +243,33 @@ public class XMLExporterUtil {
 		element.setAttribute(name, value);
 		return true;
 	}
-	
-	public static boolean setAttributeIfNotEmptyWithLimit(final Element element, final String name,
-		String value, final int len){
+
+	public static boolean setAttributeIfNotEmptyWithLimit(final Element element, final String name, String value,
+			final int len) {
 		if (value != null && value.length() >= len) {
 			value = value.substring(0, len - 1);
 		}
 		return setAttributeIfNotEmpty(element, name, value);
 	}
-	
-	public static String makeTarmedDatum(final String datum){
+
+	public static String makeTarmedDatum(final String datum) {
 		return new TimeTool(datum).toString(TimeTool.DATE_MYSQL) + "T00:00:00"; //$NON-NLS-1$
 	}
-	
-	public static String makeTarmedDatum(final LocalDate datum){
+
+	public static String makeTarmedDatum(final LocalDate datum) {
 		return datum.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "T00:00:00"; //$NON-NLS-1$
 	}
-	
-	private static Element addElementIfExists(final Element parent, final String name,
-		final String attr, String val, final String defValue){
+
+	private static Element addElementIfExists(final Element parent, final String name, final String attr, String val,
+			final String defValue) {
 		if (StringTool.isNothing(val)) {
 			val = defValue;
 		}
 		if (!StringTool.isNothing(val)) {
 			Element ret = new Element(name, XMLExporter.nsinvoice);
 			if (attr == null) {
-				// the replaceAll is an ugly fix problems in a database from Bruno Büchel in Yverdon
+				// the replaceAll is an ugly fix problems in a database from Bruno Büchel in
+				// Yverdon
 				ret.setText(val.replaceAll("\u001f", "")); // Unit-Separator
 			} else {
 				ret.setAttribute(attr, val);
@@ -282,9 +279,9 @@ public class XMLExporterUtil {
 		}
 		return null;
 	}
-	
-	public static void setAttributeWithDefault(final Element element, final String name,
-		String value, final String def){
+
+	public static void setAttributeWithDefault(final Element element, final String name, String value,
+			final String def) {
 		if (element != null) {
 			if (!StringTool.isNothing(name)) {
 				if (StringTool.isNothing(value)) {
@@ -294,49 +291,48 @@ public class XMLExporterUtil {
 			}
 		}
 	}
-	
+
 	/**
-	 * Set the correct VAT Attribute based on the Verrechent and the info if the Rechnungssteller
-	 * has to pay VAT.
-	 * 
+	 * Set the correct VAT Attribute based on the Verrechent and the info if the
+	 * Rechnungssteller has to pay VAT.
+	 *
 	 * @param verrechnet
 	 * @param amount
 	 * @param el
 	 */
-	public static void setVatAttribute(IBilled billed, Money amount, Element el, VatRateSum vatsum){
+	public static void setVatAttribute(IBilled billed, Money amount, Element el, VatRateSum vatsum) {
 		double value = 0.0;
-		
+
 		String vatScale = (String) billed.getExtInfo(Constants.VAT_SCALE);
 		if (vatScale != null && vatScale.length() > 0)
 			value = Double.parseDouble(vatScale);
-		
-		el.setAttribute(XMLExporter.ATTR_VAT_RATE, Double.toString(value)); //$NON-NLS-1$
-		
+
+		el.setAttribute(XMLExporter.ATTR_VAT_RATE, Double.toString(value)); // $NON-NLS-1$
+
 		vatsum.add(value, amount.doubleValue());
 	}
-	
+
 	/**
-	 * Determine the EAN of the responsible Kontakt for a Konsultation. The search for thee right
-	 * contact is in the following order.<br\> 1. configured via ResponsibleComposite on
-	 * RechnungsPref preference page for the Mandant of the consultation<br\> 2. Rechnungssteller of
-	 * the Mandant of the consultation if not an organization<br\> 3. the Mandant of the
-	 * consultation<\br>
-	 * 
+	 * Determine the EAN of the responsible Kontakt for a Konsultation. The search
+	 * for thee right contact is in the following order.<br\> 1. configured via
+	 * ResponsibleComposite on RechnungsPref preference page for the Mandant of the
+	 * consultation<br\> 2. Rechnungssteller of the Mandant of the consultation if
+	 * not an organization<br\> 3. the Mandant of the consultation<\br>
+	 *
 	 * @param encounter
 	 * @return
 	 */
-	public static String getResponsibleEAN(IEncounter encounter){
+	public static String getResponsibleEAN(IEncounter encounter) {
 		IContact responsibleKontakt = null;
-		
-		String responsibleId =
-			(String) encounter.getMandator().getExtInfo(TarmedRequirements.RESPONSIBLE_INFO_KEY);
+
+		String responsibleId = (String) encounter.getMandator().getExtInfo(TarmedRequirements.RESPONSIBLE_INFO_KEY);
 		if (responsibleId != null && !responsibleId.isEmpty()) {
-			responsibleKontakt =
-				CoreModelServiceHolder.get().load(responsibleId, IMandator.class).orElse(null);
+			responsibleKontakt = CoreModelServiceHolder.get().load(responsibleId, IMandator.class).orElse(null);
 		} else {
 			IContact rechnungssteller = encounter.getMandator().getBiller();
 			String anrede = (String) rechnungssteller.getExtInfo("Anrede");
-			// only way to determine if rechnungssteller is a organization is testing empty anrede
+			// only way to determine if rechnungssteller is a organization is testing empty
+			// anrede
 			if (anrede != null && !anrede.isEmpty()) {
 				responsibleKontakt = rechnungssteller;
 			} else {
@@ -345,8 +341,8 @@ public class XMLExporterUtil {
 		}
 		return TarmedRequirements.getEAN(responsibleKontakt);
 	}
-	
-	public static void negate(Element el, String attr){
+
+	public static void negate(Element el, String attr) {
 		String v = el.getAttributeValue(attr);
 		if (!StringTool.isNothing(v)) {
 			if (!v.equals(StringConstants.DOUBLE_ZERO)) {
@@ -359,8 +355,8 @@ public class XMLExporterUtil {
 			}
 		}
 	}
-	
-	public static String getValidXMLString(String source){
+
+	public static String getValidXMLString(String source) {
 		StringBuilder ret = new StringBuilder();
 		for (int i = 0, len = source.length(); i < len; i++) {
 			// skip non valid XML characters
@@ -370,11 +366,11 @@ public class XMLExporterUtil {
 		}
 		return ret.toString();
 	}
-	
-	public static String getIntermediateEAN(IInvoice invoice){
+
+	public static String getIntermediateEAN(IInvoice invoice) {
 		String kEAN = getCostBearerEAN(invoice);
 		String rEAN = getRecipientEAN(invoice);
-		
+
 		// Try to find the intermediate EAN. If we have explicitely set
 		// an intermediate EAN, we'll use this one. Otherweise, we'll
 		// check whether the mandator has a TC contract. if so, we try to
@@ -406,16 +402,16 @@ public class XMLExporterUtil {
 		}
 		return iEAN;
 	}
-	
-	private static IContact getCostBearer(ICoverage invoiceCoverage){
+
+	private static IContact getCostBearer(ICoverage invoiceCoverage) {
 		IContact kostentraeger = invoiceCoverage.getCostBearer();
 		if (kostentraeger == null) {
 			kostentraeger = invoiceCoverage.getPatient();
 		}
 		return kostentraeger;
 	}
-	
-	public static String getRecipientEAN(IInvoice invoice){
+
+	public static String getRecipientEAN(IInvoice invoice) {
 		String rEAN = TarmedRequirements.getRecipientEAN(getCostBearer(invoice.getCoverage()));
 		logger.info("Recipient EAN [" + rEAN + "]");
 		if (rEAN.equals("unknown")) { //$NON-NLS-1$
@@ -423,47 +419,43 @@ public class XMLExporterUtil {
 		}
 		return rEAN;
 	}
-	
-	public static String getCostBearerEAN(IInvoice invoice){
+
+	public static String getCostBearerEAN(IInvoice invoice) {
 		String kEAN = TarmedRequirements.getEAN(getCostBearer(invoice.getCoverage()));
 		logger.info("Costbearer EAN [" + kEAN + "]");
 		return kEAN;
 	}
-	
-	public static XMLGregorianCalendar makeXMLDate(TimeTool date)
-		throws DatatypeConfigurationException{
+
+	public static XMLGregorianCalendar makeXMLDate(TimeTool date) throws DatatypeConfigurationException {
 		if (date != null) {
 			return makeXMLDate(date.toLocalDate());
 		}
 		return null;
 	}
-	
-	public static XMLGregorianCalendar makeXMLDate(LocalDate date)
-		throws DatatypeConfigurationException{
+
+	public static XMLGregorianCalendar makeXMLDate(LocalDate date) throws DatatypeConfigurationException {
 		ZonedDateTime zonedDateTime = date.atStartOfDay().atZone(ZoneId.systemDefault());
 		GregorianCalendar gregorianCalendar = GregorianCalendar.from(zonedDateTime);
 		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
 	}
-	
-	public static XMLGregorianCalendar makeXMLDateTime(LocalDateTime dateTime)
-		throws DatatypeConfigurationException{
+
+	public static XMLGregorianCalendar makeXMLDateTime(LocalDateTime dateTime) throws DatatypeConfigurationException {
 		ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.systemDefault());
 		GregorianCalendar gregorianCalendar = GregorianCalendar.from(zonedDateTime);
 		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
 	}
-	
-	public static XMLGregorianCalendar makeTarmedDate(String dateString)
-		throws DatatypeConfigurationException{
+
+	public static XMLGregorianCalendar makeTarmedDate(String dateString) throws DatatypeConfigurationException {
 		TimeTool timetool = new TimeTool(dateString);
 		GregorianCalendar gregorianCalendar = GregorianCalendar.from(timetool.toZonedDateTime());
 		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
 	}
-	
-	public static LocalDate getAsLocalDate(XMLGregorianCalendar xmlDate){
+
+	public static LocalDate getAsLocalDate(XMLGregorianCalendar xmlDate) {
 		return LocalDate.of(xmlDate.getYear(), xmlDate.getMonth(), xmlDate.getDay());
 	}
-	
-	public static Optional<Double> getALScalingFactor(IBilled billed){
+
+	public static Optional<Double> getALScalingFactor(IBilled billed) {
 		String scalingFactor = (String) billed.getExtInfo("AL_SCALINGFACTOR");
 		if (scalingFactor != null && !scalingFactor.isEmpty()) {
 			try {
@@ -474,8 +466,8 @@ public class XMLExporterUtil {
 		}
 		return Optional.empty();
 	}
-	
-	public static Optional<Double> getALNotScaled(IBilled billed){
+
+	public static Optional<Double> getALNotScaled(IBilled billed) {
 		String notScaled = (String) billed.getExtInfo("AL_NOTSCALED");
 		if (notScaled != null && !notScaled.isEmpty()) {
 			try {
@@ -486,17 +478,17 @@ public class XMLExporterUtil {
 		}
 		return Optional.empty();
 	}
-	
-	public static List<IReasonForEncounter> getReasonsForEncounter(IEncounter encounter){
-		IQuery<IReasonForEncounter> query =
-			ArzttarifeModelServiceHolder.get().getQuery(IReasonForEncounter.class);
+
+	public static List<IReasonForEncounter> getReasonsForEncounter(IEncounter encounter) {
+		IQuery<IReasonForEncounter> query = ArzttarifeModelServiceHolder.get().getQuery(IReasonForEncounter.class);
 		query.and("konsID", COMPARATOR.EQUALS, encounter.getId());
 		return query.execute();
 	}
-	
+
 	/**
-	 * Get the {@link IContact} of the guarantor for a bill using the paymentMode, patient and fall.
-	 * 
+	 * Get the {@link IContact} of the guarantor for a bill using the paymentMode,
+	 * patient and fall.
+	 *
 	 * <ul>
 	 * <li>Fall TP, Guardian defined -> return guardian
 	 * <li>Fall TP, No Guardian defined -> return patient
@@ -504,13 +496,13 @@ public class XMLExporterUtil {
 	 * <li>Fall TG, Guarantor equals Patient, No Guardian defined -> return patient
 	 * <li>Fall TG, Guarantor not equals Patient -> return guarantor
 	 * </ul>
-	 * 
+	 *
 	 * @param paymentMode
 	 * @param patient
 	 * @param coverage
 	 * @return
 	 */
-	public static IContact getGuarantor(String paymentMode, IPatient patient, ICoverage coverage){
+	public static IContact getGuarantor(String paymentMode, IPatient patient, ICoverage coverage) {
 		IContact ret;
 		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			// TP
@@ -539,30 +531,27 @@ public class XMLExporterUtil {
 		ret.getPostalAddress();
 		return ret;
 	}
-	
-	public static void addSSNAttribute(Element element, IPatient actPatient, ICoverage coverage,
-		IInvoice invoice, boolean isOptional){
-		String ahv =
-			TarmedRequirements.getAHV(actPatient).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+
+	public static void addSSNAttribute(Element element, IPatient actPatient, ICoverage coverage, IInvoice invoice,
+			boolean isOptional) {
+		String ahv = TarmedRequirements.getAHV(actPatient).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 		if (ahv.length() == 0) {
-			ahv = CoverageServiceHolder.get().getRequiredString(coverage, TarmedRequirements.SSN)
-				.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+			ahv = CoverageServiceHolder.get().getRequiredString(coverage, TarmedRequirements.SSN).replaceAll("[^0-9]", //$NON-NLS-1$
+					StringConstants.EMPTY);
 		}
 		boolean ahvValid = ahv.matches("[0-9]{4,10}|[1-9][0-9]{10}|756[0-9]{10}|438[0-9]{10}"); //$NON-NLS-1$
 		if (!isOptional
-			&& ((ConfigServiceHolder.getUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true)
-				&& !ahvValid))) {
-			invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR,
-				Messages.XMLExporter_AHVInvalid);
+				&& ((ConfigServiceHolder.getUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true) && !ahvValid))) {
+			invoice.reject(InvoiceState.REJECTCODE.VALIDATION_ERROR, Messages.XMLExporter_AHVInvalid);
 			CoreModelServiceHolder.get().save(invoice);
 		} else if (ahvValid) {
 			element.setAttribute("ssn", ahv); //$NON-NLS-1$
 		}
 	}
-	
-	public static List<String> splitStringEqually(String text, int size){
+
+	public static List<String> splitStringEqually(String text, int size) {
 		List<String> ret = new ArrayList<String>((text.length() + size - 1) / size);
-		
+
 		for (int start = 0; start < text.length(); start += size) {
 			ret.add(text.substring(start, Math.min(text.length(), start + size)));
 		}

@@ -12,6 +12,6 @@ package at.medevit.elexis.outbox.model;
 
 public interface IOutboxElementsProvider {
 	public void activate();
-	
+
 	public void deactivate();
 }

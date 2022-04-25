@@ -26,16 +26,18 @@ import ch.unibe.iam.scg.archie.model.ChartModel;
 import ch.unibe.iam.scg.archie.model.DataSet;
 
 /**
- * <p>Simple chart model tests.</p>
- * 
+ * <p>
+ * Simple chart model tests.
+ * </p>
+ *
  * $Id: ChartModelTest.java 714 2009-01-06 09:58:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 714 $
  */
 public class ChartModelTest {
-	
+
 	private ChartModel model;
 
 	/**
@@ -47,7 +49,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#ChartModel()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#ChartModel()}.
 	 */
 	@Test
 	public void testChartModel() {
@@ -56,24 +59,25 @@ public class ChartModelTest {
 
 		model = new ChartModel();
 		assertNotNull(model);
-		
+
 		assertNull(model.getDataSet());
 		assertNull(model.getChartName());
 		assertNull(model.getRows());
 		assertNull(model.getColumns());
-		
+
 		assertSame(-1, model.getKeysIndex());
 		assertSame(-1, model.getValuesIndex());
 		assertSame(-1, model.getChartType());
 		assertSame(0, model.getCategoryColumnIndex());
-		
+
 		assertFalse(model.isLineChart());
 		assertFalse(model.isThreeDimensional());
 		assertFalse(model.isValid());
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#setChartType(int)}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#setChartType(int)}.
 	 */
 	@Test
 	public void testSetChartType() {
@@ -87,7 +91,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#getChartType()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#getChartType()}.
 	 */
 	@Test
 	public void testGetChartType() {
@@ -97,7 +102,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#getChartName()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#getChartName()}.
 	 */
 	@Test
 	public void testGetChartName() {
@@ -108,7 +114,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#setChartName(java.lang.String)}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#setChartName(java.lang.String)}.
 	 */
 	@Test
 	public void testSetChartName() {
@@ -119,7 +126,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#getDataSet()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#getDataSet()}.
 	 */
 	@Test
 	public void testGetDataSet() {
@@ -131,7 +139,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#hasDataSet()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#hasDataSet()}.
 	 */
 	@Test
 	public void testHasDataSet() {
@@ -142,7 +151,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#setDataSet(ch.unibe.iam.scg.archie.model.DataSet)}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#setDataSet(ch.unibe.iam.scg.archie.model.DataSet)}.
 	 */
 	@Test
 	public void testSetDataSet() {
@@ -154,7 +164,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#getKeysIndex()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#getKeysIndex()}.
 	 */
 	@Test
 	public void testGetKeysIndex() {
@@ -164,7 +175,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#setKeysIndex(int)}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#setKeysIndex(int)}.
 	 */
 	@Test
 	public void testSetKeysIndex() {
@@ -174,7 +186,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#getValuesIndex()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#getValuesIndex()}.
 	 */
 	@Test
 	public void testGetValuesIndex() {
@@ -184,7 +197,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#setValuesIndex(int)}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#setValuesIndex(int)}.
 	 */
 	@Test
 	public void testSetValuesIndex() {
@@ -194,7 +208,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#setRows(int[])}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#setRows(int[])}.
 	 */
 	@Test
 	public void testSetRows() {
@@ -210,7 +225,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#setColumns(int[])}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#setColumns(int[])}.
 	 */
 	@Test
 	public void testSetColumns() {
@@ -218,7 +234,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#getColumns()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#getColumns()}.
 	 */
 	@Test
 	public void testGetColumns() {
@@ -226,7 +243,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#isThreeDimensional()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#isThreeDimensional()}.
 	 */
 	@Test
 	public void testIsThreeDimensional() {
@@ -234,7 +252,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#setThreeDimensional(boolean)}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#setThreeDimensional(boolean)}.
 	 */
 	@Test
 	public void testSetThreeDimensional() {
@@ -242,7 +261,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#setCategoryColumnIndex(int)}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#setCategoryColumnIndex(int)}.
 	 */
 	@Test
 	public void testSetRowTitleColumnIndex() {
@@ -250,7 +270,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#getCategoryColumnIndex()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#getCategoryColumnIndex()}.
 	 */
 	@Test
 	public void testGetRowTitleColumnIndex() {
@@ -258,7 +279,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#setLineChart(boolean)}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#setLineChart(boolean)}.
 	 */
 	@Test
 	public void testSetLineChart() {
@@ -266,7 +288,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#isLineChart()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#isLineChart()}.
 	 */
 	@Test
 	public void testIsLineChart() {
@@ -290,7 +313,8 @@ public class ChartModelTest {
 	}
 
 	/**
-	 * Test method for {@link ch.unibe.iam.scg.archie.model.ChartModel#hasValidChartType()}.
+	 * Test method for
+	 * {@link ch.unibe.iam.scg.archie.model.ChartModel#hasValidChartType()}.
 	 */
 	@Test
 	public void testHasValidChartType() {

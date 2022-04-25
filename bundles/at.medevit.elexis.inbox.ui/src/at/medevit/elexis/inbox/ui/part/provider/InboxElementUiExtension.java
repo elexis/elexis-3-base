@@ -29,20 +29,20 @@ import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 
 public class InboxElementUiExtension {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(InboxElementUiExtension.class);
-	
+
 	private List<IInboxElementUiProvider> providers;
-	
-	public InboxElementUiExtension(){
+
+	public InboxElementUiExtension() {
 		providers = getExtensions();
 	}
-	
-	public List<IInboxElementUiProvider> getProviders(){
+
+	public List<IInboxElementUiProvider> getProviders() {
 		return providers;
 	}
-	
-	private IInboxElementUiProvider getProvider(IInboxElement element){
+
+	private IInboxElementUiProvider getProvider(IInboxElement element) {
 		for (IInboxElementUiProvider iInboxElementUiProvider : providers) {
 			if (iInboxElementUiProvider.isProviderFor(element)) {
 				return iInboxElementUiProvider;
@@ -50,8 +50,8 @@ public class InboxElementUiExtension {
 		}
 		return null;
 	}
-	
-	private List<IInboxElementUiProvider> getExtensions(){
+
+	private List<IInboxElementUiProvider> getExtensions() {
 		List<IInboxElementUiProvider> ret = new ArrayList<IInboxElementUiProvider>();
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
 		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.inbox.ui.elementsui");
@@ -72,56 +72,55 @@ public class InboxElementUiExtension {
 		}
 		return ret;
 	}
-	
-	public String getText(IInboxElement element){
+
+	public String getText(IInboxElement element) {
 		IInboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getLabelProvider() != null) {
 			return provider.getLabelProvider().getText(element);
 		}
 		return null;
 	}
-	
-	public Image getImage(IInboxElement element){
+
+	public Image getImage(IInboxElement element) {
 		IInboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getLabelProvider() != null) {
 			return provider.getLabelProvider().getImage(element);
 		}
 		return null;
 	}
-	
-	public Color getForeground(IInboxElement element){
+
+	public Color getForeground(IInboxElement element) {
 		IInboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getColorProvider() != null) {
 			return provider.getColorProvider().getForeground(element);
 		}
 		return null;
 	}
-	
-	public Color getBackground(IInboxElement element){
+
+	public Color getBackground(IInboxElement element) {
 		IInboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getColorProvider() != null) {
 			return provider.getColorProvider().getBackground(element);
 		}
 		return null;
 	}
-	
-	public void fireDoubleClicked(IInboxElement element){
+
+	public void fireDoubleClicked(IInboxElement element) {
 		IInboxElementUiProvider provider = getProvider(element);
 		if (provider != null) {
 			provider.doubleClicked(element);
 		}
 	}
-	
-	public boolean isVisible(IInboxElement element){
+
+	public boolean isVisible(IInboxElement element) {
 		IInboxElementUiProvider provider = getProvider(element);
 		if (provider != null) {
 			return provider.isVisible(element);
 		}
 		return true;
 	}
-	
-	public GroupedInboxElements getGrouped(PatientInboxElements patientInboxElements,
-		IInboxElement element){
+
+	public GroupedInboxElements getGrouped(PatientInboxElements patientInboxElements, IInboxElement element) {
 		IInboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.isGrouped()) {
 			return provider.getGrouped(patientInboxElements, element);

@@ -16,14 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CdaUtil {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(CdaUtil.class);
 
 	private static Unmarshaller unmarshaller;
-	
+
 	private static Marshaller marshaller;
 
-	public static synchronized Unmarshaller getCdaUnmarshaller(){
+	public static synchronized Unmarshaller getCdaUnmarshaller() {
 		if (CdaUtil.unmarshaller == null) {
 			try {
 				JAXBContext jaxbContext = JAXBContext.newInstance("org.hl7.v3");
@@ -35,8 +35,8 @@ public class CdaUtil {
 		}
 		return unmarshaller;
 	}
-	
-	public static synchronized Marshaller getMarshaller(){
+
+	public static synchronized Marshaller getMarshaller() {
 		if (CdaUtil.marshaller == null) {
 			try {
 				JAXBContext jaxbContext = JAXBContext.newInstance("org.hl7.v3");
@@ -53,23 +53,21 @@ public class CdaUtil {
 		return marshaller;
 	}
 
-	public static POCDMT000040ClinicalDocument unmarshall(InputStream source) throws JAXBException{
+	public static POCDMT000040ClinicalDocument unmarshall(InputStream source) throws JAXBException {
 		Unmarshaller unmarshaller = CdaUtil.getCdaUnmarshaller();
-		
-		JAXBElement<POCDMT000040ClinicalDocument> doc =
-			unmarshaller.unmarshal(new StreamSource(source), POCDMT000040ClinicalDocument.class);
+
+		JAXBElement<POCDMT000040ClinicalDocument> doc = unmarshaller.unmarshal(new StreamSource(source),
+				POCDMT000040ClinicalDocument.class);
 		return doc.getValue();
 	}
-	
-	@SuppressWarnings({
-		"rawtypes", "unchecked"
-	})
-	public static String marshallIntoString(POCDMT000040ClinicalDocument clinicalDocumentType){
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static String marshallIntoString(POCDMT000040ClinicalDocument clinicalDocumentType) {
 		StringWriter writer = new StringWriter();
 		try {
 			Marshaller marshaller = getMarshaller();
 			marshaller.marshal(new JAXBElement(new QName("urn:hl7-org:v3", "ClinicalDocument"),
-				POCDMT000040ClinicalDocument.class, clinicalDocumentType), writer);
+					POCDMT000040ClinicalDocument.class, clinicalDocumentType), writer);
 		} catch (Exception e) {
 			logger.error("Could not marshall to string.", e);
 			return null;

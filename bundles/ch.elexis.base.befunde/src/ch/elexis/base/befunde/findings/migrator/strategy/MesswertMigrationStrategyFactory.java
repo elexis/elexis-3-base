@@ -18,21 +18,20 @@ import ch.elexis.core.findings.templates.model.InputDataText;
 import ch.elexis.core.findings.templates.service.IFindingsTemplateService;
 
 public class MesswertMigrationStrategyFactory {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(MesswertMigrationStrategyFactory.class);
-	
+
 	private static IFindingsTemplateService tempalteService;
-	
+
 	private static HashMap<String, FindingsTemplate> codeToTemplateMap = new HashMap<>();
-	
+
 	public static IMigrationStrategy get(MesswertFieldMapping mapping, Messwert messwert,
-		List<IObservation> createdObservations){
-		
+			List<IObservation> createdObservations) {
+
 		FindingsTemplate template = getTemplate(mapping);
 		if (template != null) {
 			if (template.getInputData() instanceof InputDataGroupComponent) {
-				IMigrationStrategy migration =
-					new ComponentMigration(mapping, messwert, createdObservations);
+				IMigrationStrategy migration = new ComponentMigration(mapping, messwert, createdObservations);
 				migration.setTemplateService(tempalteService);
 				migration.setTemplate(template);
 				return migration;
@@ -53,21 +52,20 @@ public class MesswertMigrationStrategyFactory {
 		// default no migration strategy
 		return new AbstractMigrationStrategy() {
 			@Override
-			public Optional<IObservation> migrate(){
+			public Optional<IObservation> migrate() {
 				logger.warn("No migration available for mapping " + mapping.getLocalBefund() + "."
-					+ mapping.getLocalBefundField() + " to " + mapping.getFindingsCode()
-					+ " using template " + ((template != null) ? template.getTitle() : "none"));
+						+ mapping.getLocalBefundField() + " to " + mapping.getFindingsCode() + " using template "
+						+ ((template != null) ? template.getTitle() : "none"));
 				return Optional.empty();
 			}
 		};
 	}
-	
-	private static FindingsTemplate getTemplate(MesswertFieldMapping mapping){
+
+	private static FindingsTemplate getTemplate(MesswertFieldMapping mapping) {
 		FindingsTemplate template = codeToTemplateMap.get(mapping.getFindingsCode());
 		if (template == null) {
-			FindingsTemplates availableTemplates =
-				tempalteService.getFindingsTemplates("Standard Vorlagen");
-			
+			FindingsTemplates availableTemplates = tempalteService.getFindingsTemplates("Standard Vorlagen");
+
 			String[] parts = mapping.getFindingsCode().split("\\.");
 			if (parts.length > 0) {
 				for (FindingsTemplate fTemplate : availableTemplates.getFindingsTemplates()) {
@@ -81,12 +79,12 @@ public class MesswertMigrationStrategyFactory {
 		}
 		return template;
 	}
-	
-	public static void setFindingsTemplateService(IFindingsTemplateService service){
+
+	public static void setFindingsTemplateService(IFindingsTemplateService service) {
 		tempalteService = service;
 	}
-	
-	public static void clearCodeToTemplateCache(){
+
+	public static void clearCodeToTemplateCache() {
 		codeToTemplateMap.clear();
 	}
 }

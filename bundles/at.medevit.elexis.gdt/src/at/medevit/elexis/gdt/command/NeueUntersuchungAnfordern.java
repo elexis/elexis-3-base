@@ -36,12 +36,11 @@ import ch.elexis.core.model.Identifiable;
 import ch.elexis.data.Patient;
 
 public class NeueUntersuchungAnfordern extends AbstractHandler {
-	
-	private static final String PARAM_TARGET_ID =
-		"at.medevit.elexis.gdt.cmd.parameter.targetId";
-	
+
+	private static final String PARAM_TARGET_ID = "at.medevit.elexis.gdt.cmd.parameter.targetId";
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Patient pat = null;
 		IWorkbenchWindow iWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 		if (iWorkbenchWindow != null) {
@@ -51,38 +50,36 @@ public class NeueUntersuchungAnfordern extends AbstractHandler {
 				pat = getAsPatient(strucSelection);
 			}
 		}
-		
+
 		String configuredGDTId = CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, "");
 		if (pat == null)
 			pat = ElexisEventDispatcher.getSelectedPatient();
-		
-		if(pat==null) {
+
+		if (pat == null) {
 			return null;
 		}
-		
-		GDTSatzNachricht6302 gdt6302 =
-			new GDTSatzNachricht6302(pat.get(Patient.FLD_PATID), pat.getName(), pat.getVorname(),
-				pat.getGeburtsdatum(), null, pat.get(Patient.TITLE), null, pat.get(Patient.FLD_ZIP)
-					+ " " + pat.get(Patient.FLD_PLACE), pat.get(Patient.FLD_STREET), null,
-				GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.SEX)), null, null,
-				null, null, null, null, configuredGDTId, GDTConstants.ZEICHENSATZ_IBM_CP_437 + "",
-				GDTConstants.GDT_VERSION);
-		
-		NeueUntersuchungAnfordernDialog nuad =
-			new NeueUntersuchungAnfordernDialog(Display.getCurrent().getActiveShell(), gdt6302);
+
+		GDTSatzNachricht6302 gdt6302 = new GDTSatzNachricht6302(pat.get(Patient.FLD_PATID), pat.getName(),
+				pat.getVorname(), pat.getGeburtsdatum(), null, pat.get(Patient.TITLE), null,
+				pat.get(Patient.FLD_ZIP) + " " + pat.get(Patient.FLD_PLACE), pat.get(Patient.FLD_STREET), null,
+				GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.SEX)), null, null, null, null, null,
+				null, configuredGDTId, GDTConstants.ZEICHENSATZ_IBM_CP_437 + "", GDTConstants.GDT_VERSION);
+
+		NeueUntersuchungAnfordernDialog nuad = new NeueUntersuchungAnfordernDialog(
+				Display.getCurrent().getActiveShell(), gdt6302);
 		nuad.setTargetIdSelection(event.getParameter(PARAM_TARGET_ID));
 		int retVal = nuad.open();
-		
+
 		if (retVal == TitleAreaDialog.CANCEL)
 			return null;
-		
+
 		IGDTCommunicationPartner cp = nuad.getGDTCommunicationPartner();
 		GDTOutputHandler.handleOutput(gdt6302, cp, HandlerProgramType.DEFAULT);
-		
+
 		return null;
 	}
-	
-	private Patient getAsPatient(IStructuredSelection strucSelection){
+
+	private Patient getAsPatient(IStructuredSelection strucSelection) {
 		Patient ret = null;
 		if (strucSelection.getFirstElement() instanceof Identifiable) {
 			ret = Patient.load(((Identifiable) strucSelection.getFirstElement()).getId());

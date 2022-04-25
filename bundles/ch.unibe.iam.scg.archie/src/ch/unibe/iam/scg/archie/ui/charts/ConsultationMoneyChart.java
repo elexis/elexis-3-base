@@ -26,18 +26,18 @@ import org.jfree.ui.RectangleInsets;
 
 /**
  * <p>
- * Creates a chart showing how much profit, income and costs we 
- * had with consultations of the last six months.
+ * Creates a chart showing how much profit, income and costs we had with
+ * consultations of the last six months.
  * </p>
- * 
+ *
  * $Id: ConsultationMoneyChart.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
  */
 public class ConsultationMoneyChart extends AbstractChartComposite {
-	
+
 	private static final String CHART_TITLE = "Consultation Money";
 
 	/**
@@ -50,7 +50,7 @@ public class ConsultationMoneyChart extends AbstractChartComposite {
 
 	/**
 	 * @see ch.unibe.iam.scg.archie.ui.charts.AbstractChartComposite#
-	 * initializeChart()
+	 *      initializeChart()
 	 */
 	@Override
 	protected JFreeChart initializeChart() {
@@ -61,11 +61,11 @@ public class ConsultationMoneyChart extends AbstractChartComposite {
 				true, // create legend?
 				true, // generate tooltips?
 				false // generate URLs?
-				);
-		
+		);
+
 		// Set chart background color to it's parents background
-		chart.setBackgroundPaint(new Color(this.parent.getBackground().getRed(),
-				this.parent.getBackground().getGreen(), this.parent.getBackground().getBlue()));
+		chart.setBackgroundPaint(new Color(this.parent.getBackground().getRed(), this.parent.getBackground().getGreen(),
+				this.parent.getBackground().getBlue()));
 
 		XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setDomainGridlinePaint(Color.lightGray);
@@ -88,15 +88,15 @@ public class ConsultationMoneyChart extends AbstractChartComposite {
 		return chart;
 	}
 
-	/** 
+	/**
 	 * @see ch.unibe.iam.scg.archie.ui.charts.AbstractChartComposite#
-	 * initializeCreator()
+	 *      initializeCreator()
 	 */
 	@Override
 	protected AbstractDatasetCreator initializeCreator() {
 		return new ConsultationMoneyDatasetCreator(ConsultationMoneyChart.CHART_TITLE);
 	}
-	
+
 	/**
 	 * @see ch.unibe.iam.scg.archie.ui.charts.AbstractChartComposite#refresh()
 	 */

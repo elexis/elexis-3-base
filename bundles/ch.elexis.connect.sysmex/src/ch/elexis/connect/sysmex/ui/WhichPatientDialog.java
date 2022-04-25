@@ -15,8 +15,8 @@ import ch.elexis.data.Patient;
 public class WhichPatientDialog extends TitleAreaDialog {
 	private Patient pat, sysmexPat, selectedPat;
 	private Button btnSysmexPatient, btnSelectedPatient, btnOtherPatient;
-	
-	public WhichPatientDialog(Shell parentShell, Patient sysmexPat){
+
+	public WhichPatientDialog(Shell parentShell, Patient sysmexPat) {
 		super(parentShell);
 		this.sysmexPat = sysmexPat;
 		// only add selected pat if he/she is not null and not equal the sysmex patient
@@ -25,33 +25,33 @@ public class WhichPatientDialog extends TitleAreaDialog {
 			selectedPat = tmpPat;
 		}
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		setTitle("Patienten Vorschlag");
 		setMessage("Wem sollen die Laborwerte zugewiesen werden?");
-		
+
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		btnSysmexPatient = new Button(container, SWT.RADIO);
 		btnSysmexPatient.setText(sysmexPat.getLabel());
-		
+
 		if (selectedPat != null && selectedPat.exists()) {
 			btnSelectedPatient = new Button(container, SWT.RADIO);
 			btnSelectedPatient.setText(selectedPat.getLabel());
 		}
-		
+
 		btnOtherPatient = new Button(container, SWT.RADIO);
 		btnOtherPatient.setText("anderen Patienten selektieren");
-		
+
 		return area;
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		if (btnSysmexPatient.getSelection()) {
 			pat = sysmexPat;
 		} else if (btnOtherPatient.getSelection()) {
@@ -61,8 +61,8 @@ public class WhichPatientDialog extends TitleAreaDialog {
 		}
 		super.okPressed();
 	}
-	
-	public Patient getPatient(){
+
+	public Patient getPatient() {
 		return pat;
 	}
 }

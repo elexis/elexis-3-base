@@ -14,9 +14,9 @@ import org.eclipse.osgi.util.NLS;
 
 public class MedNetMessages extends NLS {
 	private static final String BUNDLE_NAME = "ch.novcom.elexis.mednet.plugin.messages.messages";
-		
+
 	public static String FormWatcher_FormCategory;
-	
+
 	public static String DocumentImporterPage_callMedNet;
 	public static String DocumentImporterPage_checkInstitution;
 	public static String DocumentImporterPage_parseFile;
@@ -29,12 +29,12 @@ public class MedNetMessages extends NLS {
 	public static String DocumentImporterPage_FileFailure;
 	public static String DocumentImporterPage_FileSuccess;
 	public static String DocumentImporterPage_ImportError;
-	
+
 	public static String DocumentImporter_SelectPatient;
 	public static String DocumentImporter_WhoIs;
-	
+
 	public static String DocumentSettingRecord_Label;
-	
+
 	public static String PatientDocumentManager_omnivoreNotInitialized;
 	public static String PatientDocumentManager_LabResultTitle;
 	public static String PatientDocumentManager_LabResultTitleTransactionFormat;
@@ -43,13 +43,12 @@ public class MedNetMessages extends NLS {
 	public static String PatientDocumentManager_documentId;
 	public static String PatientDocumentManager_documentTitel;
 	public static String PatientDocumentManager_FormTitle;
-	
+
 	public static String PatientLabor_errorAddingDocumentToOmnivore;
-	
-	
+
 	public static String MainPreferences_labelExePath;
 	public static String MainPreferences_labelPurgeInterval;
-	
+
 	public static String ContactLinkPreferences_ContactLabel;
 	public static String ContactLinkPreferences_MedNetId;
 	public static String ContactLinkPreferences_MedNetName;
@@ -57,7 +56,6 @@ public class MedNetMessages extends NLS {
 	public static String ContactLinkPreferences_DocImportId;
 	public static String ContactLinkPreferences_FormImport;
 	public static String ContactLinkPreferences_XIDDomain;
-	
 
 	public static String ContactLinkPreferences_title;
 	public static String ContactLinkPreferences_new;
@@ -68,10 +66,9 @@ public class MedNetMessages extends NLS {
 	public static String ContactLinkPreferences_deleteAllTitle;
 	public static String ContactLinkPreferences_deleteAllExplain;
 	public static String ContactLinkPreferences_deleteAllFailed;
-	
 
 	public static String ContactLinkRecord_Label;
-	
+
 	public static String ContactLinkRecordEditDialog_shellTitle;
 	public static String ContactLinkRecordEditDialog_title;
 	public static String ContactLinkRecordEditDialog_message;
@@ -88,11 +85,12 @@ public class MedNetMessages extends NLS {
 
 	public static String Omnivore_category_doclabel;
 	public static String Omnivore_category_formlabel;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, MedNetMessages.class);
 	}
-	
-	private MedNetMessages(){}
+
+	private MedNetMessages() {
+	}
 }

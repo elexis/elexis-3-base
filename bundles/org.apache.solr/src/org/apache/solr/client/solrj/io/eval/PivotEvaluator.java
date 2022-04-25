@@ -31,82 +31,84 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 import org.apache.solr.client.solrj.io.Tuple;
 
 public class PivotEvaluator extends RecursiveObjectEvaluator implements ManyValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public  PivotEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public PivotEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(4 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 4 values but found %d",expression,containedEvaluators.size()));
-    }
-  }
+		if (4 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 4 values but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-  @Override
-  public Object doWork(Object... values) throws IOException {
-    if(values.length != 4) {
-      throw new IOException("The pivot function requires four parameters.");
-    }
+	@Override
+	public Object doWork(Object... values) throws IOException {
+		if (values.length != 4) {
+			throw new IOException("The pivot function requires four parameters.");
+		}
 
-    Object value1 = values[0];
-    Object value2 = values[1];
-    Object value3 = values[2];
-    Object value4 = values[3];
+		Object value1 = values[0];
+		Object value2 = values[1];
+		Object value3 = values[2];
+		Object value4 = values[3];
 
-    if(value1 instanceof List) {
-      @SuppressWarnings({"unchecked"})
-      List<Tuple> tuples = (List<Tuple>)value1;
-      String x = (String)value2;
-      x = x.replace("\"", "");
-      String y = (String)value3;
-      y = y.replace("\"", "");
+		if (value1 instanceof List) {
+			@SuppressWarnings({ "unchecked" })
+			List<Tuple> tuples = (List<Tuple>) value1;
+			String x = (String) value2;
+			x = x.replace("\"", "");
+			String y = (String) value3;
+			y = y.replace("\"", "");
 
-      String vlabel = (String)value4;
-      vlabel = vlabel.replace("\"", "");
+			String vlabel = (String) value4;
+			vlabel = vlabel.replace("\"", "");
 
-      Set<String> xset = new TreeSet<>();
-      Set<String> yset = new TreeSet<>();
+			Set<String> xset = new TreeSet<>();
+			Set<String> yset = new TreeSet<>();
 
-      for(int i=0; i<tuples.size(); i++) {
-        Tuple tuple = tuples.get(i);
-        xset.add(tuple.getString(x));
-        yset.add(tuple.getString(y));
-      }
+			for (int i = 0; i < tuples.size(); i++) {
+				Tuple tuple = tuples.get(i);
+				xset.add(tuple.getString(x));
+				yset.add(tuple.getString(y));
+			}
 
-      double[][] data = new double[xset.size()][yset.size()];
+			double[][] data = new double[xset.size()][yset.size()];
 
-      List<String> xlabels = new ArrayList<>(xset.size());
-      Map<String, Integer> xindexes = new HashMap<>();
-      int xindex = 0;
-      for (String xlabel :xset) {
-        xlabels.add(xlabel);
-        xindexes.put(xlabel, xindex);
-        ++xindex;
-      }
+			List<String> xlabels = new ArrayList<>(xset.size());
+			Map<String, Integer> xindexes = new HashMap<>();
+			int xindex = 0;
+			for (String xlabel : xset) {
+				xlabels.add(xlabel);
+				xindexes.put(xlabel, xindex);
+				++xindex;
+			}
 
-      List<String> ylabels = new ArrayList<>(yset.size());
-      Map<String, Integer> yindexes = new HashMap<>();
-      int yindex = 0;
-      for (String ylabel : yset) {
-        ylabels.add(ylabel);
-        yindexes.put(ylabel, yindex);
-        ++yindex;
-      }
+			List<String> ylabels = new ArrayList<>(yset.size());
+			Map<String, Integer> yindexes = new HashMap<>();
+			int yindex = 0;
+			for (String ylabel : yset) {
+				ylabels.add(ylabel);
+				yindexes.put(ylabel, yindex);
+				++yindex;
+			}
 
-      for(Tuple tuple : tuples) {
-        String xlabel = tuple.getString(x);
-        String ylabel = tuple.getString(y);
-        int xi = xindexes.get(xlabel);
-        int yi = yindexes.get(ylabel);
-        double val = tuple.getDouble(vlabel);
-        data[xi][yi] = val;
-      }
+			for (Tuple tuple : tuples) {
+				String xlabel = tuple.getString(x);
+				String ylabel = tuple.getString(y);
+				int xi = xindexes.get(xlabel);
+				int yi = yindexes.get(ylabel);
+				double val = tuple.getDouble(vlabel);
+				data[xi][yi] = val;
+			}
 
-      Matrix matrix = new Matrix(data);
-      matrix.setRowLabels(xlabels);
-      matrix.setColumnLabels(ylabels);
-      return matrix;
-    } else {
-      throw new IOException("The getValue function expects a list of tuples as the first parameter");
-    }
-  }
+			Matrix matrix = new Matrix(data);
+			matrix.setRowLabels(xlabels);
+			matrix.setColumnLabels(ylabels);
+			return matrix;
+		} else {
+			throw new IOException("The getValue function expects a list of tuples as the first parameter");
+		}
+	}
 }

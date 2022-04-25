@@ -17,38 +17,36 @@ import ch.elexis.core.types.VatInfo;
 import ch.rgw.tools.Money;
 
 public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvider {
-	
+
 	private ATCLabelProvider atcLabelProvider;
 	private String atcLang;
-	
-	public ATCArtikelstammDecoratingLabelProvider(ILabelProvider provider,
-		ILabelDecorator decorator, String atcLang){
+
+	public ATCArtikelstammDecoratingLabelProvider(ILabelProvider provider, ILabelDecorator decorator, String atcLang) {
 		super(provider, decorator);
 		atcLabelProvider = new ATCLabelProvider(atcLang);
 	}
-	
+
 	@Override
-	public String getText(Object element){
+	public String getText(Object element) {
 		if (element instanceof IArtikelstammItem) {
 			String ret = super.getText(element);
-			
+
 			IArtikelstammItem ai = (IArtikelstammItem) element;
 			if (ai.isOverrideVatInfo()) {
 				ret = ret + " (MWSt: " + resolveVatInfoLabel(ai.getVatInfo()) + ")";
 			}
-			if (ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW,
-				true)) {
+			if (ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, true)) {
 				Money publicPrice = ai.getSellingPrice();
 				if (publicPrice != null && publicPrice.getAmount() > 0.0d) {
 					ret = ret + " <" + ai.getSellingPrice().getAmount() + "> ";
 				}
 			}
-			
+
 			return ret;
 		} else if (element instanceof ATCCode) {
 			String atcLabel = atcLabelProvider.getText(element);
-			String atcLabelWAvailability =
-				atcLabel + " [" + determineNumberOfAvailableArticlesForAtcCode((ATCCode) element)+" Artikel]";
+			String atcLabelWAvailability = atcLabel + " ["
+					+ determineNumberOfAvailableArticlesForAtcCode((ATCCode) element) + " Artikel]";
 			return atcLabelWAvailability;
 		} else if (element instanceof ATCFilterInfoListElement) {
 			ATCFilterInfoListElement afile = (ATCFilterInfoListElement) element;
@@ -56,12 +54,12 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 		}
 		return null;
 	}
-	
-	private String determineNumberOfAvailableArticlesForAtcCode(ATCCode element){
+
+	private String determineNumberOfAvailableArticlesForAtcCode(ATCCode element) {
 		return String.valueOf(ATCCodeCacheServiceHolder.getAvailableArticlesByATCCode(element));
 	}
-	
-	private String resolveVatInfoLabel(VatInfo vatinfo){
+
+	private String resolveVatInfoLabel(VatInfo vatinfo) {
 		switch (vatinfo) {
 		case VAT_CH_ISMEDICAMENT:
 			return "Reduziert";
@@ -71,9 +69,9 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 			return "Normal";
 		}
 	}
-	
+
 	@Override
-	public Image getImage(Object element){
+	public Image getImage(Object element) {
 		if (element instanceof IArtikelstammItem) {
 			return super.getImage(element);
 		} else if (element instanceof ATCCode) {
@@ -83,9 +81,9 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 		}
 		return null;
 	}
-	
+
 	@Override
-	public Color getForeground(Object element){
+	public Color getForeground(Object element) {
 		if (element instanceof IArtikelstammItem) {
 			return super.getForeground(element);
 		} else if (element instanceof ATCCode) {
@@ -95,9 +93,9 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 		}
 		return null;
 	}
-	
+
 	@Override
-	public Color getBackground(Object element){
+	public Color getBackground(Object element) {
 		if (element instanceof IArtikelstammItem) {
 			return super.getBackground(element);
 		} else if (element instanceof ATCCode) {
@@ -107,5 +105,5 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 		}
 		return null;
 	}
-	
+
 }

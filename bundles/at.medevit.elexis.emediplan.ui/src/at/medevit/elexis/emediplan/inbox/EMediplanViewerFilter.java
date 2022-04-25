@@ -20,9 +20,9 @@ import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import ch.elexis.data.NamedBlob;
 
 public class EMediplanViewerFilter extends ViewerFilter {
-	
+
 	@Override
-	public boolean select(Viewer viewer, Object parentElement, Object element){
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof IInboxElement) {
 			Object o = ((IInboxElement) element).getObject();
 			if (o instanceof NamedBlob && ((NamedBlob) o).getId().startsWith("Med_")) {
@@ -31,8 +31,8 @@ public class EMediplanViewerFilter extends ViewerFilter {
 			return false;
 		} else if (element instanceof PatientInboxElements) {
 			PatientInboxElements patientInbox = (PatientInboxElements) element;
-			Optional<IInboxElement> selectedElement = ((PatientInboxElements) element).getElements()
-				.stream().filter(ie -> select(viewer, patientInbox, ie)).findAny();
+			Optional<IInboxElement> selectedElement = ((PatientInboxElements) element).getElements().stream()
+					.filter(ie -> select(viewer, patientInbox, ie)).findAny();
 			return selectedElement.isPresent();
 		}
 		return true;

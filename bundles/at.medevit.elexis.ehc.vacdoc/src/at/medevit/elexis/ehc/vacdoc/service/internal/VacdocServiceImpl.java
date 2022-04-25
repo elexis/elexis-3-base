@@ -38,86 +38,86 @@ import ch.elexis.data.Query;
 
 @Component
 public class VacdocServiceImpl implements VacdocService {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(VacdocServiceImpl.class);
-	
+
 	private EhcCoreService ehcCoreService;
 
-	public VacdocServiceImpl(){
+	public VacdocServiceImpl() {
 		EClass vacdClass = ChPackage.eINSTANCE.getCdaChVacdV1();
 		if (vacdClass == null) {
 			logger.warn("Could not load VACD class from ch package");
 		}
 	}
-	
+
 	@Reference
-	public void setEhcCoreService(EhcCoreService ehcCoreService){
+	public void setEhcCoreService(EhcCoreService ehcCoreService) {
 		this.ehcCoreService = ehcCoreService;
 	}
-	
-	public void unsetEhcCoreService(EhcCoreService ehcCoreService){
+
+	public void unsetEhcCoreService(EhcCoreService ehcCoreService) {
 		this.ehcCoreService = null;
 	}
-	
+
 	@Override
-	public InputStream getXdmAsStream(CdaChVacd document) throws Exception{
+	public InputStream getXdmAsStream(CdaChVacd document) throws Exception {
 		return ehcCoreService.getXdmAsStream(document.getDoc());
 	}
-	
+
 	@Override
-	public CdaChVacd getVacdocDocument(Patient patient, Mandant mandant){
+	public CdaChVacd getVacdocDocument(Patient patient, Mandant mandant) {
 		// Create eVACDOC (Header)
 		CdaChVacd doc = new CdaChVacd(LanguageCode.GERMAN, null, null);
 		doc.setPatient(EhcCoreMapper.getEhcPatient(patient));
 		doc.setCustodian(EhcCoreMapper.getEhcOrganization(mandant));
 		doc.addAuthor(EhcCoreMapper.getEhcAuthor(mandant));
 		doc.setLegalAuthenticator(EhcCoreMapper.getEhcAuthor(mandant));
-		
+
 		return doc;
 	}
-	
+
 	/**
 	 * Add all vaccinations of the patient referenced in the document.
-	 * 
+	 *
 	 * @param doc
 	 * @param vaccinations
 	 */
 	@Override
-	public void addAllVaccinations(CdaChVacd doc){
+	public void addAllVaccinations(CdaChVacd doc) {
 		org.ehealth_connector.common.mdht.Patient ehcPatient = doc.getPatient();
 		Patient elexisPatient = EhcCoreMapper.getElexisPatient(ehcPatient);
-		
+
 		Query<Vaccination> query = new Query<Vaccination>(Vaccination.class);
 		query.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, elexisPatient.getId());
 		List<Vaccination> vaccinations = query.execute();
 		addVaccinations(doc, vaccinations);
 	}
-	
+
 	/**
 	 * Add the vaccinations to the document.
-	 * 
+	 *
 	 * @param doc
 	 * @param vaccinations
 	 */
 	@Override
-	public void addVaccinations(CdaChVacd doc, List<Vaccination> vaccinations){
+	public void addVaccinations(CdaChVacd doc, List<Vaccination> vaccinations) {
 		if (!vaccinations.isEmpty()) {
 			for (Vaccination vaccination : vaccinations) {
 				Consumable consumable = new Consumable(vaccination.getShortBusinessName());
 				consumable.setLotNr(vaccination.getLotNo());
-				
+
 				String code = vaccination.getAtcCode();
 				if (code != null && !code.isEmpty()) {
 					Code atc = new Code(CodeSystems.WHOATCCode, code);
 					consumable.setWhoAtcCode(atc);
 				}
-				
+
 				String identifier = vaccination.get(Vaccination.FLD_EAN);
 				if (identifier != null && !identifier.isEmpty()) {
 					Identificator ean = new Identificator("1.3.160", identifier);
 					consumable.setManufacturedProductId(ean);
 				}
-				
+
 				Author author = null;
 				if (isVaccinationMandantKnown(vaccination)) {
 					author = EhcCoreMapper.getEhcAuthor(getVaccinationMandant(vaccination));
@@ -125,44 +125,44 @@ public class VacdocServiceImpl implements VacdocService {
 					String administratorName = getVaccinationAdministrator(vaccination);
 					author = new Author(EhcCoreMapper.getEhcName(administratorName));
 				}
-				
+
 				Immunization immunization = new Immunization(consumable, author,
-					DateUtil.parseDate(vaccination.getDateOfAdministrationLabel()), null, null);
+						DateUtil.parseDate(vaccination.getDateOfAdministrationLabel()), null, null);
 				doc.addImmunization(immunization);
 			}
 		}
 	}
-	
-	private boolean isVaccinationMandantKnown(Vaccination vaccination){
+
+	private boolean isVaccinationMandantKnown(Vaccination vaccination) {
 		String value = vaccination.get(Vaccination.FLD_ADMINISTRATOR);
 		if (value.startsWith(Mandant.class.getName())) {
 			Mandant mandant = (Mandant) new PersistentObjectFactory().createFromString(value);
-			
+
 			if (mandant != null && mandant.exists()) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	private Mandant getVaccinationMandant(Vaccination vaccination){
+
+	private Mandant getVaccinationMandant(Vaccination vaccination) {
 		String value = vaccination.get(Vaccination.FLD_ADMINISTRATOR);
 		if (value.startsWith(Mandant.class.getName())) {
 			Mandant mandant = (Mandant) new PersistentObjectFactory().createFromString(value);
-			
+
 			if (mandant != null && mandant.exists()) {
 				return mandant;
 			}
 		}
 		return null;
 	}
-	
-	private String getVaccinationAdministrator(Vaccination vaccination){
+
+	private String getVaccinationAdministrator(Vaccination vaccination) {
 		return vaccination.get(Vaccination.FLD_ADMINISTRATOR);
 	}
-	
+
 	@Override
-	public Optional<CdaChVacd> loadVacdocDocument(InputStream document) throws Exception{
+	public Optional<CdaChVacd> loadVacdocDocument(InputStream document) throws Exception {
 		try {
 			final CdaChLoader<CdaChVacd> loader = new CdaChLoader<CdaChVacd>();
 			return Optional.of(loader.loadFromStream(document, CdaChVacd.class, CdaChVacdV1.class));
@@ -171,52 +171,47 @@ public class VacdocServiceImpl implements VacdocService {
 		}
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public void importImmunizations(Patient elexisPatient, List<Immunization> immunizations){
+	public void importImmunizations(Patient elexisPatient, List<Immunization> immunizations) {
 		for (Immunization immunization : immunizations) {
 			Consumable consumable = immunization.getConsumable();
-			
+
 			Code atcCode = consumable.getWhoAtcCode();
 			Identificator gtin = consumable.getManufacturedProductId();
 			IArtikelstammItem article = resolveArticle(gtin, atcCode);
-			Optional<String> articleStoreToString =
-				StoreToStringServiceHolder.get().storeToString(article);
-			
+			Optional<String> articleStoreToString = StoreToStringServiceHolder.get().storeToString(article);
+
 			Author author = immunization.getAuthor();
-			
+
 			if (article != null && articleStoreToString.isPresent()) {
-				new Vaccination(elexisPatient.getId(), articleStoreToString.get(),
-					article.getLabel(), article.getGtin(), article.getAtcCode(),
-					immunization.getApplyDate(), consumable.getLotNr(),
-					((author != null) ? author.getCompleteName() : ""));
+				new Vaccination(elexisPatient.getId(), articleStoreToString.get(), article.getLabel(),
+						article.getGtin(), article.getAtcCode(), immunization.getApplyDate(), consumable.getLotNr(),
+						((author != null) ? author.getCompleteName() : ""));
 			} else {
 				logger.warn("Article [" + consumable.getTradeName() + "] not found GTIN ["
-					+ ((gtin != null) ? gtin.getExtension() : "") + "]");
+						+ ((gtin != null) ? gtin.getExtension() : "") + "]");
 				new Vaccination(elexisPatient.getId(), "", consumable.getTradeName(),
-					((gtin != null) ? gtin.getExtension() : ""),
-					((atcCode != null) ? atcCode.getCode() : ""), immunization.getApplyDate(),
-					consumable.getLotNr(), ((author != null) ? author.getCompleteName() : ""));
+						((gtin != null) ? gtin.getExtension() : ""), ((atcCode != null) ? atcCode.getCode() : ""),
+						immunization.getApplyDate(), consumable.getLotNr(),
+						((author != null) ? author.getCompleteName() : ""));
 			}
 		}
 	}
-	
-	private IArtikelstammItem resolveArticle(Identificator gtin, Code atcCode){
+
+	private IArtikelstammItem resolveArticle(Identificator gtin, Code atcCode) {
 		String gtinStr = (gtin != null) ? gtin.getExtension() : null;
 		String atcStr = (atcCode != null) ? atcCode.getCode() : null;
 		if (gtinStr != null) {
-			INamedQuery<IArtikelstammItem> query =
-				ArtikelstammModelServiceHolder.get().getNamedQuery(IArtikelstammItem.class, "gtin");
-			return query.executeWithParametersSingleResult(query.getParameterMap("gtin", gtinStr))
-				.orElse(null);
+			INamedQuery<IArtikelstammItem> query = ArtikelstammModelServiceHolder.get()
+					.getNamedQuery(IArtikelstammItem.class, "gtin");
+			return query.executeWithParametersSingleResult(query.getParameterMap("gtin", gtinStr)).orElse(null);
 		} else if (atcStr != null && !atcStr.isEmpty()) {
-			IQuery<IArtikelstammItem> query =
-				ArtikelstammModelServiceHolder.get().getQuery(IArtikelstammItem.class);
+			IQuery<IArtikelstammItem> query = ArtikelstammModelServiceHolder.get().getQuery(IArtikelstammItem.class);
 			query.and("atc", COMPARATOR.EQUALS, atcStr);
 			List<IArtikelstammItem> articles = query.execute();
 			if (articles != null && !articles.isEmpty()) {
-				String displayName =
-					(atcCode != null) ? atcCode.getDisplayName().toLowerCase() : null;
+				String displayName = (atcCode != null) ? atcCode.getDisplayName().toLowerCase() : null;
 				if (displayName != null && !displayName.isEmpty()) {
 					for (IArtikelstammItem artikelstammItem : articles) {
 						if (artikelstammItem.getName().toLowerCase().contains(displayName)) {

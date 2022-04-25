@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -35,40 +35,37 @@ import ch.elexis.icpc.service.IcpcModelServiceHolder;
 public class KonsExtension implements IKonsExtension {
 	IRichTextDisplay mine;
 	static final String EPISODE_TITLE = "Problem: ";
-	
-	public String connect(final IRichTextDisplay tf){
+
+	public String connect(final IRichTextDisplay tf) {
 		mine = tf;
 		mine.addDropReceiver(IcpcEpisode.class, this);
 		return Activator.PLUGIN_ID;
 	}
-	
-	public boolean doLayout(final StyleRange n, final String provider, final String id){
+
+	public boolean doLayout(final StyleRange n, final String provider, final String id) {
 		n.background = UiDesk.getColor(UiDesk.COL_GREEN);
 		return true;
 	}
-	
-	public boolean doXRef(final String refProvider, final String refID){
-		IcpcEncounter enc =
-			IcpcModelServiceHolder.get().load(refID, IcpcEncounter.class).orElse(null);
+
+	public boolean doXRef(final String refProvider, final String refID) {
+		IcpcEncounter enc = IcpcModelServiceHolder.get().load(refID, IcpcEncounter.class).orElse(null);
 		if (enc != null) {
 			ContextServiceHolder.get().getRootContext().setTyped(enc);
 		}
 		return true;
 	}
-	
-	public IAction[] getActions(){
+
+	public IAction[] getActions() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public void insert(final Object o, final int pos){
+
+	public void insert(final Object o, final int pos) {
 		if (o instanceof IcpcEpisode) {
 			IcpcEpisode ep = (IcpcEpisode) o;
-			final IEncounter encounter =
-				ContextServiceHolder.get().getTyped(IEncounter.class).orElse(null);
+			final IEncounter encounter = ContextServiceHolder.get().getTyped(IEncounter.class).orElse(null);
 			if (encounter != null) {
-				IcpcEncounter icpcEncounter =
-					IcpcModelServiceHolder.get().create(IcpcEncounter.class);
+				IcpcEncounter icpcEncounter = IcpcModelServiceHolder.get().create(IcpcEncounter.class);
 				icpcEncounter.setEncounter(encounter);
 				icpcEncounter.setEpisode(ep);
 				IcpcModelServiceHolder.get().save(icpcEncounter);
@@ -76,29 +73,27 @@ public class KonsExtension implements IKonsExtension {
 				for (IDiagnosis dg : diags) {
 					encounter.addDiagnosis(dg);
 				}
-				mine.insertXRef(pos, EPISODE_TITLE + ep.getLabel(), Activator.PLUGIN_ID,
-					icpcEncounter.getId());
+				mine.insertXRef(pos, EPISODE_TITLE + ep.getLabel(), Activator.PLUGIN_ID, icpcEncounter.getId());
 				EncounterServiceHolder.get().updateVersionedEntry(encounter, new Samdas(mine.getContentsAsXML()));
-				
+
 				CoreModelServiceHolder.get().save(encounter);
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, encounter);
 			}
 		}
-		
+
 	}
-	
-	public void removeXRef(final String refProvider, final String refID){
-		IcpcEncounter enc =
-			IcpcModelServiceHolder.get().load(refID, IcpcEncounter.class).orElse(null);
+
+	public void removeXRef(final String refProvider, final String refID) {
+		IcpcEncounter enc = IcpcModelServiceHolder.get().load(refID, IcpcEncounter.class).orElse(null);
 		if (enc != null) {
 			IcpcModelServiceHolder.get().delete(enc);
 		}
 	}
-	
-	public void setInitializationData(final IConfigurationElement config,
-		final String propertyName, final Object data) throws CoreException{
+
+	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data)
+			throws CoreException {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

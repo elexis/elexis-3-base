@@ -21,18 +21,16 @@ import org.apache.solr.common.util.NamedList;
 /**
  * No special handling at this time.
  */
-public class ConfigSetAdminResponse extends SolrResponseBase
-{
-  @SuppressWarnings({"unchecked"})
-  public NamedList<String> getErrorMessages()
-  {
-     return (NamedList<String>) getResponse().get( "exceptions" );
-  }
+public class ConfigSetAdminResponse extends SolrResponseBase {
+	@SuppressWarnings({ "unchecked" })
+	public NamedList<String> getErrorMessages() {
+		return (NamedList<String>) getResponse().get("exceptions");
+	}
 
-  @SuppressWarnings({"unchecked"})
-  public static class List extends ConfigSetAdminResponse {
-    public java.util.List<String> getConfigSets() {
-      return (java.util.List<String>) getResponse().get("configSets");
-    }
-  }
+	@SuppressWarnings({ "unchecked" })
+	public static class List extends ConfigSetAdminResponse {
+		public java.util.List<String> getConfigSets() {
+			return (java.util.List<String>) getResponse().get("configSets");
+		}
+	}
 }

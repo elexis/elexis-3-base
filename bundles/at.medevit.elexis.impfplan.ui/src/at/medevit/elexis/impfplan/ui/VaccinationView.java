@@ -55,54 +55,52 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 
 public class VaccinationView extends ViewPart {
-	
+
 	public static final String PART_ID = "at.medevit.elexis.impfplan.ui.ImpfplanViewPart";
-	
+
 	private static VaccinationPlanHeaderDefinition vaccinationHeaderDefinition;
 	private static List<Vaccination> vaccinations;
 	private VaccinationComposite vaccinationComposite;
 	private VaccinationCompositePaintListener vcPaintListener;
-	
+
 	public static final String HEADER_ID_SHOW_ADMINISTERED = "HISA";
 	private Patient pat;
 	/**
 	 * knowledge if the sortByVaccination icon is active
 	 */
 	private boolean sortByVaccinationName = false;
-	
+
 	private ElexisEventListener eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
-		public void runInUi(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev) {
 			setPatient(ElexisEventDispatcher.getSelectedPatient());
 		}
 	};
-	
+
 	private ElexisEventListener eeli_vacc = new ElexisUiEventListenerImpl(Vaccination.class,
-		ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE) {
-		public void runInUi(ElexisEvent ev){
+			ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE) {
+		public void runInUi(ElexisEvent ev) {
 			updateUi(true);
 		};
 	};
-	
+
 	private ScrolledComposite scrolledComposite;
-	
-	public VaccinationView(){
+
+	public VaccinationView() {
 		ImpfplanSchweiz2019 is = new ImpfplanSchweiz2019();
-		vaccinationHeaderDefinition =
-			new VaccinationPlanHeaderDefinition(is.id, is.name, is.getOrderedBaseDiseases(),
+		vaccinationHeaderDefinition = new VaccinationPlanHeaderDefinition(is.id, is.name, is.getOrderedBaseDiseases(),
 				is.getOrderedExtendedDiseases());
 		ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_vacc);
 	}
-	
+
 	/**
 	 * Create contents of the view part.
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout(SWT.VERTICAL));
-		scrolledComposite =
-			new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		vaccinationComposite = new VaccinationComposite(scrolledComposite);
 		scrolledComposite.setContent(vaccinationComposite);
 		scrolledComposite.setExpandHorizontal(true);
@@ -111,26 +109,26 @@ public class VaccinationView extends ViewPart {
 		vcPaintListener = vaccinationComposite.getVaccinationCompositePaintListener();
 		vaccinationComposite.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDoubleClick(MouseEvent e){
+			public void mouseDoubleClick(MouseEvent e) {
 				Vaccination selVaccination = vcPaintListener.getSelectedVaccination();
 				editVaccination(selVaccination);
 			}
 		});
-		
+
 		MenuManager menuManager = new MenuManager();
 		menuManager.add(new Action() {
 			@Override
-			public String getText(){
+			public String getText() {
 				return "Eintrag löschen";
 			}
-			
+
 			@Override
-			public ImageDescriptor getImageDescriptor(){
+			public ImageDescriptor getImageDescriptor() {
 				return Images.IMG_DELETE.getImageDescriptor();
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Vaccination selVaccination = vcPaintListener.getSelectedVaccination();
 				if (selVaccination != null) {
 					selVaccination.delete();
@@ -139,56 +137,54 @@ public class VaccinationView extends ViewPart {
 		});
 		menuManager.add(new Action() {
 			@Override
-			public String getText(){
+			public String getText() {
 				return "Impfung editieren";
 			}
-			
+
 			@Override
-			public ImageDescriptor getImageDescriptor(){
+			public ImageDescriptor getImageDescriptor() {
 				return Images.IMG_EDIT.getImageDescriptor();
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Vaccination selVaccination = vcPaintListener.getSelectedVaccination();
 				editVaccination(selVaccination);
 			}
 		});
-		
+
 		vaccinationComposite.setMenu(menuManager.createContextMenu(vaccinationComposite));
-		getSite().registerContextMenu(PART_ID + ".contextMenu", menuManager,
-			vaccinationComposite);
+		getSite().registerContextMenu(PART_ID + ".contextMenu", menuManager, vaccinationComposite);
 		getSite().setSelectionProvider(vaccinationComposite);
 		if (ElexisEventDispatcher.getSelectedPatient() != null) {
 			setPatient(ElexisEventDispatcher.getSelectedPatient());
 		}
 	}
-	
+
 	private void editVaccination(Vaccination selVaccination) {
 		if (selVaccination != null) {
-			EditVaccinationDialog evd =
-				new EditVaccinationDialog(vaccinationComposite.getShell(), selVaccination);
+			EditVaccinationDialog evd = new EditVaccinationDialog(vaccinationComposite.getShell(), selVaccination);
 			evd.open();
 		}
 	}
-	
-	private void setPatient(Patient selectedPatient){
+
+	private void setPatient(Patient selectedPatient) {
 		pat = selectedPatient;
 		updateUi(true);
 	}
-	
+
 	/**
 	 * updates the ui
-	 * 
-	 * @param patientChanged
-	 *            if this value is true all vacc's will be reloaded (via a query)
+	 *
+	 * @param patientChanged if this value is true all vacc's will be reloaded (via
+	 *                       a query)
 	 */
-	public void updateUi(boolean patientChanged){
+	public void updateUi(boolean patientChanged) {
 		if (pat == null) {
 			vaccinations = Collections.emptyList();
 			return;
 		}
-		
+
 		if (patientChanged) {
 			boolean sortDir = ConfigServiceHolder.getUser(PreferencePage.VAC_SORT_ORDER, false);
 			Query<Vaccination> qbe = new Query<>(Vaccination.class);
@@ -196,90 +192,84 @@ public class VaccinationView extends ViewPart {
 			qbe.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, pat.getId());
 			qbe.orderBy(sortDir, Vaccination.FLD_DOA);
 			vaccinations = qbe.execute();
-			
+
 		}
-		
+
 		if (sortByVaccinationName) {
 			sortVaccinationsByName();
 		}
-		
+
 		if (vaccinationHeaderDefinition.id.equals(HEADER_ID_SHOW_ADMINISTERED)) {
 			HashSet<String> atc = new HashSet<>();
 			for (Vaccination vacc : vaccinations) {
 				String atcCode = vacc.get(Vaccination.FLD_ATCCODE);
 				if (atcCode.length() > 3) {
-					List<String> immunisationForAtcCode =
-						ArticleToImmunisationModel.getImmunisationForAtcCode(atcCode);
+					List<String> immunisationForAtcCode = ArticleToImmunisationModel.getImmunisationForAtcCode(atcCode);
 					atc.addAll(immunisationForAtcCode);
 				} else {
 					atc.addAll(Arrays.asList(vacc.get(Vaccination.FLD_VACC_AGAINST).split(",")));
 				}
 			}
-			vaccinationHeaderDefinition =
-				new VaccinationPlanHeaderDefinition(HEADER_ID_SHOW_ADMINISTERED,
-					"Nur verabreichte Impfungen", new ArrayList<String>(atc),
-					Collections.emptyList());
+			vaccinationHeaderDefinition = new VaccinationPlanHeaderDefinition(HEADER_ID_SHOW_ADMINISTERED,
+					"Nur verabreichte Impfungen", new ArrayList<String>(atc), Collections.emptyList());
 		}
-		vaccinationComposite.updateUi(vaccinationHeaderDefinition, vaccinations,
-			new TimeTool(pat.getGeburtsdatum()));
+		vaccinationComposite.updateUi(vaccinationHeaderDefinition, vaccinations, new TimeTool(pat.getGeburtsdatum()));
 		// workaround for layout after patient changed
 		if (patientChanged) {
 			vaccinationComposite.update();
 			vaccinationComposite.redraw();
 		}
 	}
-	
-	public void sortVaccinationsByName(){
+
+	public void sortVaccinationsByName() {
 		Collections.sort(vaccinations, new Comparator<Vaccination>() {
 			@Override
-			public int compare(Vaccination vac1, Vaccination vac2){
+			public int compare(Vaccination vac1, Vaccination vac2) {
 				String name1 = vac1.getShortBusinessName();
 				String name2 = vac2.getShortBusinessName();
 				return name1.compareTo(name2);
 			}
 		});
 	}
-	
-	public void setSortByVaccinationName(boolean sort){
+
+	public void setSortByVaccinationName(boolean sort) {
 		sortByVaccinationName = sort;
 		updateUi(!sort);
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		updateUi(false);
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_vacc);
 		super.dispose();
 	}
-	
+
 	@Optional
 	@Inject
-	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState) {
 		CoreUiUtil.updateFixLayout(part, currentState);
 	}
-	
-	public static void setVaccinationHeaderDefinition(
-		VaccinationPlanHeaderDefinition vacccinationHeaderDefinition){
+
+	public static void setVaccinationHeaderDefinition(VaccinationPlanHeaderDefinition vacccinationHeaderDefinition) {
 		VaccinationView.vaccinationHeaderDefinition = vacccinationHeaderDefinition;
-		IViewReference viewReference =
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+		IViewReference viewReference = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.findViewReference(PART_ID);
 		IWorkbenchPart part = viewReference.getPart(false);
 		if (part != null) {
 			part.setFocus();
 		}
-		
+
 	}
-	
-	public static VaccinationPlanHeaderDefinition getVaccinationHeaderDefinition(){
+
+	public static VaccinationPlanHeaderDefinition getVaccinationHeaderDefinition() {
 		return vaccinationHeaderDefinition;
 	}
-	
-	public VaccinationComposite getVaccinationComposite(){
+
+	public VaccinationComposite getVaccinationComposite() {
 		return vaccinationComposite;
 	}
 }

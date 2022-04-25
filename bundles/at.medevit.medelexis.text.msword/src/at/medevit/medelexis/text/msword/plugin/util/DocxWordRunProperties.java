@@ -7,12 +7,12 @@ import org.w3c.dom.Node;
 
 public class DocxWordRunProperties {
 	Node properties;
-	
-	DocxWordRunProperties(Node node){
+
+	DocxWordRunProperties(Node node) {
 		this.properties = node;
 	}
-	
-	public int getFontSize(){
+
+	public int getFontSize() {
 		List<Node> wszNodes = XMLUtil.getChildElementsByTagName(properties, "w:sz"); //$NON-NLS-1$
 		if (!wszNodes.isEmpty()) {
 			String strSize = XMLUtil.getAttribute((Element) wszNodes.get(0), "w:val"); //$NON-NLS-1$
@@ -21,8 +21,8 @@ public class DocxWordRunProperties {
 		}
 		return -1;
 	}
-	
-	public String getFont(){
+
+	public String getFont() {
 		List<Node> wszNodes = XMLUtil.getChildElementsByTagName(properties, "w:rFonts"); //$NON-NLS-1$
 		if (!wszNodes.isEmpty()) {
 			String strFont = XMLUtil.getAttribute((Element) wszNodes.get(0), "w:cs"); //$NON-NLS-1$
@@ -32,8 +32,8 @@ public class DocxWordRunProperties {
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
-	public String getColor(){
+
+	public String getColor() {
 		List<Node> wszNodes = XMLUtil.getChildElementsByTagName(properties, "w:color"); //$NON-NLS-1$
 		if (!wszNodes.isEmpty()) {
 			String strColor = XMLUtil.getAttribute((Element) wszNodes.get(0), "w:val"); //$NON-NLS-1$
@@ -43,13 +43,13 @@ public class DocxWordRunProperties {
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
-	public boolean isBold(){
+
+	public boolean isBold() {
 		List<Node> wszNodes = XMLUtil.getChildElementsByTagName(properties, "w:b"); //$NON-NLS-1$
 		return !wszNodes.isEmpty();
 	}
-	
-	public void setBold(boolean value){
+
+	public void setBold(boolean value) {
 		List<Node> wbNodes = XMLUtil.getChildElementsByTagName(properties, "w:b"); //$NON-NLS-1$
 		if (value) {
 			if (wbNodes.isEmpty()) {
@@ -62,25 +62,25 @@ public class DocxWordRunProperties {
 			}
 		}
 	}
-	
-	public DocxWordRunProperties getClone(boolean deep){
+
+	public DocxWordRunProperties getClone(boolean deep) {
 		return new DocxWordRunProperties(properties.cloneNode(deep));
 	}
-	
+
 	@Override
-	public boolean equals(Object obj){
+	public boolean equals(Object obj) {
 		if (obj instanceof DocxWordRunProperties) {
 			DocxWordRunProperties other = (DocxWordRunProperties) obj;
 			if (other.getColor().equals(getColor()) && other.getFont().equals(getFont())
-				&& other.getFontSize() == getFontSize() && other.isBold() == isBold()) {
+					&& other.getFontSize() == getFontSize() && other.isBold() == isBold()) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getColor()).append(getFont()).append(getFontSize()).append(isBold());
 		return sb.toString().hashCode();

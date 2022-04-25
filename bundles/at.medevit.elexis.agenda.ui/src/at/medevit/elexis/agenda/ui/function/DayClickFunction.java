@@ -18,60 +18,57 @@ import ch.elexis.core.types.AppointmentState;
 import ch.elexis.core.types.AppointmentType;
 
 public class DayClickFunction extends AbstractBrowserFunction {
-	
+
 	private List<String> selectedResources;
-	
-	public DayClickFunction(Browser browser, String name){
+
+	public DayClickFunction(Browser browser, String name) {
 		super(browser, name);
 	}
-	
+
 	@Override
-	public Object function(Object[] arguments){
+	public Object function(Object[] arguments) {
 		IAppointment appointment = null;
 		if (arguments.length == 1) {
 			LocalDateTime date = getDateTimeArg(arguments[0]);
 			if (selectedResources != null && !selectedResources.isEmpty()) {
 				Integer preferredDuration = getPreferredDuration(selectedResources.get(0),
-					AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
-				appointment =
-					new IAppointmentBuilder(CoreModelServiceHolder.get(), selectedResources.get(0),
-						date, date.plusMinutes(preferredDuration),
-					AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
-					AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
+						AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
+				appointment = new IAppointmentBuilder(CoreModelServiceHolder.get(), selectedResources.get(0), date,
+						date.plusMinutes(preferredDuration),
+						AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
+						AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
 			} else {
-				MessageDialog.openInformation(getBrowser().getShell(), "Info",
-					"Keine Resource selektiert.");
+				MessageDialog.openInformation(getBrowser().getShell(), "Info", "Keine Resource selektiert.");
 			}
 		} else if (arguments.length == 2) {
 			LocalDateTime date = getDateTimeArg(arguments[0]);
 			String resource = (String) arguments[1];
 			Integer preferredDuration = getPreferredDuration(resource,
-				AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
+					AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT));
 			appointment = new IAppointmentBuilder(CoreModelServiceHolder.get(), resource, date,
-				date.plusMinutes(preferredDuration),
-				AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
-				AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
+					date.plusMinutes(preferredDuration),
+					AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
+					AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
 		}
 		if (appointment != null) {
 			final IAppointment editAppointment = appointment;
 			ContextServiceHolder.get().getActivePatient()
-				.ifPresent(p -> editAppointment.setSubjectOrPatient(p.getId()));
+					.ifPresent(p -> editAppointment.setSubjectOrPatient(p.getId()));
 			AppointmentDialog dlg = new AppointmentDialog(editAppointment);
 			dlg.open();
 		}
 		return null;
 	}
-	
-	private Integer getPreferredDuration(String areaName, String type){
-		Map<String, Integer> preferredDurations =
-			AppointmentServiceHolder.get().getPreferredDurations(areaName);
+
+	private Integer getPreferredDuration(String areaName, String type) {
+		Map<String, Integer> preferredDurations = AppointmentServiceHolder.get().getPreferredDurations(areaName);
 		if (preferredDurations.containsKey(type)) {
 			return preferredDurations.get(type);
 		}
 		return 30;
 	}
-	
-	public void setSelectedResources(List<String> selectedResources){
+
+	public void setSelectedResources(List<String> selectedResources) {
 		this.selectedResources = selectedResources;
 	}
 }

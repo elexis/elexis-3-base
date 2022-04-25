@@ -34,21 +34,21 @@ import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.tools.Result;
 
 public class BlueMedicationDownloadHandler extends AbstractHandler implements IHandler {
-	
+
 	private ICommandService commandService;
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		commandService = (ICommandService) HandlerUtil.getActiveWorkbenchWindow(event)
-			.getService(ICommandService.class);
-		
-		StructuredSelection selection =
-			(StructuredSelection) HandlerUtil.getCurrentSelection(event);
+				.getService(ICommandService.class);
+
+		StructuredSelection selection = (StructuredSelection) HandlerUtil.getCurrentSelection(event);
 		if (!selection.isEmpty()) {
 			Object object = selection.getFirstElement();
 			if (object instanceof IDocumentHandle) {
 				IDocumentHandle docHandle = (IDocumentHandle) object;
-					Optional<UploadResult> pending = BlueMedicationServiceHolder.getService().getPendingUploadResult(docHandle);
+				Optional<UploadResult> pending = BlueMedicationServiceHolder.getService()
+						.getPendingUploadResult(docHandle);
 				if (pending.isPresent()) {
 					if ("chmed".equals(pending.get().getTyp())) {
 						downloadAndImportChmed(docHandle, pending.get());
@@ -62,89 +62,84 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 		}
 		return null;
 	}
-	
-	private void downloadAndImportPdf(IDocumentHandle docHandle, UploadResult uploadResult){
-		Result<String> pdf =
-			BlueMedicationServiceHolder.getService().downloadPdf(uploadResult);
+
+	private void downloadAndImportPdf(IDocumentHandle docHandle, UploadResult uploadResult) {
+		Result<String> pdf = BlueMedicationServiceHolder.getService().downloadPdf(uploadResult);
 		if (pdf.isOK()) {
 			DocumentStore documentsService = DocumentStoreServiceHolder.getService();
 			// debug code, save to new document
-			//				IDocument extDocument = documentsService.createDocument(
-			//					"ch.elexis.data.store.omnivore",
-			//					docHandle.getPatient().getId(), "ext" + docHandle.getTitle() + ".pdf",
-			//					docHandle.getCategory().getName());
-			//				documentsService.saveDocument(extDocument,
-			//					new FileInputStream(new File(pdf.get())));
+			// IDocument extDocument = documentsService.createDocument(
+			// "ch.elexis.data.store.omnivore",
+			// docHandle.getPatient().getId(), "ext" + docHandle.getTitle() + ".pdf",
+			// docHandle.getCategory().getName());
+			// documentsService.saveDocument(extDocument,
+			// new FileInputStream(new File(pdf.get())));
 			try (InputStream fis = new FileInputStream(new File(pdf.get()))) {
 				documentsService.saveDocument(docHandle, fis);
 			} catch (ElexisException | IOException e) {
 				LoggerFactory.getLogger(getClass()).error("Error saving pdf", e);
 				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-					"Beim speichern des pdf ist ein Fehler aufgetreten. Bitte starten sie den Vorgang neu.");
+						"Beim speichern des pdf ist ein Fehler aufgetreten. Bitte starten sie den Vorgang neu.");
 			}
 		} else {
 			LoggerFactory.getLogger(getClass()).error("Error downloading pdf");
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-				"Beim download des pdf ist ein Fehler aufgetreten. Bitte starten sie den Vorgang neu.");
+					"Beim download des pdf ist ein Fehler aufgetreten. Bitte starten sie den Vorgang neu.");
 		}
 	}
-	
+
 	private void downloadAndImportChmed(IDocumentHandle docHandle, UploadResult uploadResult)
-		throws ExecutionException{
-		Result<String> emediplan =
-			BlueMedicationServiceHolder.getService().downloadEMediplan(uploadResult);
+			throws ExecutionException {
+		Result<String> emediplan = BlueMedicationServiceHolder.getService().downloadEMediplan(uploadResult);
 		if (emediplan.isOK()) {
 			if (uploadResult.isUploadedMediplan()) {
 				if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Import",
-					"Möchten Sie die aktuelle Medikation mit dem erstellten eMediplan überschreiben?")) {
-					Command directImportCommand =
-						commandService.getCommand("at.medevit.elexis.emediplan.ui.directImport");
-					
+						"Möchten Sie die aktuelle Medikation mit dem erstellten eMediplan überschreiben?")) {
+					Command directImportCommand = commandService
+							.getCommand("at.medevit.elexis.emediplan.ui.directImport");
+
 					HashMap<String, String> params = new HashMap<String, String>();
-					
-					params.put("at.medevit.elexis.emediplan.ui.directImport.parameter.emediplan",
-						emediplan.get());
+
+					params.put("at.medevit.elexis.emediplan.ui.directImport.parameter.emediplan", emediplan.get());
 					params.put("at.medevit.elexis.emediplan.ui.directImport.parameter.patientid",
-						docHandle.getPatient().getId());
+							docHandle.getPatient().getId());
 					params.put("at.medevit.elexis.emediplan.ui.directImport.parameter.stopreason",
-						"BlueMedication EMediplan Import");
-					
-					ParameterizedCommand parametrizedCommmand =
-						ParameterizedCommand.generateCommand(directImportCommand, params);
-					
+							"BlueMedication EMediplan Import");
+
+					ParameterizedCommand parametrizedCommmand = ParameterizedCommand
+							.generateCommand(directImportCommand, params);
+
 					try {
-						PlatformUI.getWorkbench().getService(IHandlerService.class)
-							.executeCommand(parametrizedCommmand, null);
+						PlatformUI.getWorkbench().getService(IHandlerService.class).executeCommand(parametrizedCommmand,
+								null);
 					} catch (NotDefinedException | NotEnabledException | NotHandledException e) {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-							"Beim import des eMediplan ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
+								"Beim import des eMediplan ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
 					}
 				}
 			} else {
-				Command openImportCommand =
-					commandService.getCommand("at.medevit.elexis.emediplan.ui.openImport");
-				
+				Command openImportCommand = commandService.getCommand("at.medevit.elexis.emediplan.ui.openImport");
+
 				HashMap<String, String> params = new HashMap<String, String>();
-				
-				params.put("at.medevit.elexis.emediplan.ui.openImport.parameter.emediplan",
-					emediplan.get());
+
+				params.put("at.medevit.elexis.emediplan.ui.openImport.parameter.emediplan", emediplan.get());
 				params.put("at.medevit.elexis.emediplan.ui.openImport.parameter.patientid",
-					docHandle.getPatient().getId());
-				
-				ParameterizedCommand parametrizedCommmand =
-					ParameterizedCommand.generateCommand(openImportCommand, params);
-				
+						docHandle.getPatient().getId());
+
+				ParameterizedCommand parametrizedCommmand = ParameterizedCommand.generateCommand(openImportCommand,
+						params);
+
 				try {
-					PlatformUI.getWorkbench().getService(IHandlerService.class)
-						.executeCommand(parametrizedCommmand, null);
+					PlatformUI.getWorkbench().getService(IHandlerService.class).executeCommand(parametrizedCommmand,
+							null);
 				} catch (NotDefinedException | NotEnabledException | NotHandledException e) {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-						"Beim öffnen des eMediplan Import ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
+							"Beim öffnen des eMediplan Import ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
 				}
 			}
 		} else {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-				"Beim download ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
+					"Beim download ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
 		}
 	}
 }

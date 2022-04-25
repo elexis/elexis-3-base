@@ -38,38 +38,38 @@ import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 
 public class ExportPatientWizardPage1 extends WizardPage {
-	
+
 	private TableViewer contentViewer;
-	
-	protected ExportPatientWizardPage1(String pageName){
+
+	protected ExportPatientWizardPage1(String pageName) {
 		super(pageName);
 		setTitle(pageName);
 	}
-	
+
 	@Override
-	public void createControl(Composite parent){
+	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		contentViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		Control control = contentViewer.getControl();
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd.heightHint = 300;
 		control.setLayoutData(gd);
-		
+
 		contentViewer.setContentProvider(new ArrayContentProvider());
 		contentViewer.setLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof Patient) {
 					return ((Patient) element).getLabel();
 				}
 				return super.getText(element);
 			}
-			
+
 			@Override
-			public Image getImage(Object element){
+			public Image getImage(Object element) {
 				if (element instanceof Patient) {
 					if (((Patient) element).getGeschlecht().equals(Person.FEMALE)) {
 						return Images.IMG_FRAU.getImage();
@@ -82,36 +82,34 @@ public class ExportPatientWizardPage1 extends WizardPage {
 		});
 		Query<Patient> qp = new Query(Patient.class);
 		contentViewer.setInput(qp.execute());
-		
+
 		Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
 		if (selectedPatient != null) {
 			contentViewer.setSelection(new StructuredSelection(selectedPatient));
 			contentViewer.getTable().showSelection();
 		}
-		
+
 		setControl(composite);
 	}
-	
-	public boolean finish(){
+
+	public boolean finish() {
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
-		
+
 		if (!contentSelection.isEmpty()) {
 			Patient selectedPatient = (Patient) contentSelection.getFirstElement();
-			AbstractCdaChV1<?> document =
-				ServiceComponent.getService().createCdaChDocument(selectedPatient,
+			AbstractCdaChV1<?> document = ServiceComponent.getService().createCdaChDocument(selectedPatient,
 					(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 			try {
-				String outputDir =
-					ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
+				String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
 						PreferencePage.getDefaultOutputDir());
-				document.saveToFile(outputDir + File.separator
-					+ selectedPatient.get(Patient.FLD_PATID) + "_patientdata.xml");
+				document.saveToFile(
+						outputDir + File.separator + selectedPatient.get(Patient.FLD_PATID) + "_patientdata.xml");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
+
 		return true;
 	}
 }

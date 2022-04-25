@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
- *    
+ *
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -32,15 +32,15 @@ public class TagesgrenzenDialog extends TitleAreaDialog {
 	Text text;
 	String beiwem;
 	List<Termin> lRes;
-	
-	public TagesgrenzenDialog(Shell parent, String tag, String bereich){
+
+	public TagesgrenzenDialog(Shell parent, String tag, String bereich) {
 		super(parent);
 		day = tag;
 		beiwem = bereich;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
@@ -56,23 +56,24 @@ public class TagesgrenzenDialog extends TitleAreaDialog {
 		StringBuilder sb = new StringBuilder();
 		for (Termin t : lt) {
 			sb.append(t.getTimeSpan().from.toString(TimeTool.TIME_SMALL)).append("-")
-				.append(t.getTimeSpan().until.toString(TimeTool.TIME_SMALL)).append("\n");
+					.append(t.getTimeSpan().until.toString(TimeTool.TIME_SMALL)).append("\n");
 		}
 		text.setText(sb.toString());
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		setTitle("Tagesgrenzen");
-		setMessage("Bitte geben Sie nicht planbare Zeiträume in der Form hh:mm-hh:mm jeweils in einer eigenen Zeile ein");
+		setMessage(
+				"Bitte geben Sie nicht planbare Zeiträume in der Form hh:mm-hh:mm jeweils in einer eigenen Zeile ein");
 		getShell().setText("Agenda");
-		
+
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		for (Termin t : lRes) {
 			t.delete();
 		}
@@ -85,5 +86,5 @@ public class TagesgrenzenDialog extends TitleAreaDialog {
 		}
 		super.okPressed();
 	}
-	
+
 }

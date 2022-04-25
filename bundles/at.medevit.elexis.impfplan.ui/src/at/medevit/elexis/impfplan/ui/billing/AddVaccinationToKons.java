@@ -36,44 +36,44 @@ import ch.elexis.data.Patient;
 
 public class AddVaccinationToKons {
 	private static final String TARMED_5MIN_TARIF = "00.0010";
-	
+
 	private static Object selectKonsLock = new Object();
 	private IEncounter actEncounter;
 	private IPatient patient;
 	private IArticle art;
-	
-	public AddVaccinationToKons(IPatient patient, IArticle art, String ean){
+
+	public AddVaccinationToKons(IPatient patient, IArticle art, String ean) {
 		this.patient = patient;
 		this.art = art;
 		if (art == null) {
 			CodeElementServiceHolder.get().getContribution(CodeElementTyp.ARTICLE, "Artikelstamm")
-				.ifPresent(contribution -> {
-					Optional<ICodeElement> loaded = contribution.loadFromCode(ean);
-					if (loaded.isPresent()) {
-						this.art = (IArticle) loaded.get();
-					}
-				});
+					.ifPresent(contribution -> {
+						Optional<ICodeElement> loaded = contribution.loadFromCode(ean);
+						if (loaded.isPresent()) {
+							this.art = (IArticle) loaded.get();
+						}
+					});
 		}
 	}
-	
-	public IEncounter findOrCreateKons(){
+
+	public IEncounter findOrCreateKons() {
 		initKonsultation();
 		if (actEncounter == null || !EncounterServiceHolder.get().isEditable(actEncounter)) {
 			return null;
 		} else { // (kons != null && kons.isEditable(false)) {
 			AcquireLockBlockingUi.aquireAndRun(actEncounter, new ILockHandler() {
-				
+
 				@Override
-				public void lockFailed(){
+				public void lockFailed() {
 					// do nothing
-					
+
 				}
-				
+
 				@Override
-				public void lockAcquired(){
+				public void lockAcquired() {
 					if (actEncounter != null) {
 						BillingServiceHolder.get().bill(art, actEncounter, 1);
-						
+
 						// update kons. text
 						Samdas samdas = new Samdas(actEncounter.getVersionedEntry().getHead());
 						Record rec = samdas.getRecord();
@@ -81,15 +81,14 @@ public class AddVaccinationToKons {
 						recText += "\nImpfung - " + art.getName();
 						rec.setText(recText);
 						EncounterServiceHolder.get().updateVersionedEntry(actEncounter, samdas);
-						
+
 						if (ConfigServiceHolder.getUser(PreferencePage.VAC_AUTO_BILL, true)) {
 							boolean addedCons = true;
 							List<IBilled> leistungen = actEncounter.getBilled();
 							for (IBilled verrechnet : leistungen) {
 								IBillable verrechenbar = verrechnet.getBillable();
-								if (verrechenbar != null
-									&& verrechenbar.getCodeSystemName().equals("Tarmed")
-									&& verrechenbar.getCode().equals(TARMED_5MIN_TARIF)) {
+								if (verrechenbar != null && verrechenbar.getCodeSystemName().equals("Tarmed")
+										&& verrechenbar.getCode().equals(TARMED_5MIN_TARIF)) {
 									addedCons = false;
 									break;
 								}
@@ -106,19 +105,18 @@ public class AddVaccinationToKons {
 			return actEncounter;
 		}
 	}
-	
-	private IBillable getKonsVerrechenbar(IEncounter encounter){
+
+	private IBillable getKonsVerrechenbar(IEncounter encounter) {
 		LocalDate encounterDate = encounter.getDate();
 		if (encounter.getCoverage() != null) {
 			BillingLaw law = encounter.getCoverage().getBillingSystem().getLaw();
-			Optional<ICodeElementServiceContribution> tarmedContribution =
-				CodeElementServiceHolder.get().getContribution(CodeElementTyp.SERVICE, "Tarmed");
+			Optional<ICodeElementServiceContribution> tarmedContribution = CodeElementServiceHolder.get()
+					.getContribution(CodeElementTyp.SERVICE, "Tarmed");
 			if (tarmedContribution.isPresent()) {
 				Map<Object, Object> context = new HashMap<>();
 				context.put(ContextKeys.DATE, encounterDate);
 				context.put(ContextKeys.LAW, law.name());
-				Optional<ICodeElement> loaded =
-					tarmedContribution.get().loadFromCode(TARMED_5MIN_TARIF, context);
+				Optional<ICodeElement> loaded = tarmedContribution.get().loadFromCode(TARMED_5MIN_TARIF, context);
 				if (loaded.isPresent()) {
 					return (IBillable) loaded.get();
 				}
@@ -126,29 +124,28 @@ public class AddVaccinationToKons {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * get existing kons or creates new one for patient
 	 */
-	private void initKonsultation(){
+	private void initKonsultation() {
 		synchronized (selectKonsLock) {
 			actEncounter = EncounterServiceHolder.get().getLatestEncounter(patient, false).orElse(null);
 			if (actEncounter == null || !EncounterServiceHolder.get().isEditable(actEncounter)) {
 				Display.getDefault().syncExec(new Runnable() {
 					@Override
-					public void run(){
-						SelectOrCreateOpenKonsDialog dialog =
-							new SelectOrCreateOpenKonsDialog(Patient.load(patient.getId()),
+					public void run() {
+						SelectOrCreateOpenKonsDialog dialog = new SelectOrCreateOpenKonsDialog(
+								Patient.load(patient.getId()),
 								"Konsultation für die automatische Verrechnung auswählen.");
 						if (dialog.open() == Dialog.OK) {
 							actEncounter = CoreModelServiceHolder.get()
-								.load(dialog.getKonsultation().getId(), IEncounter.class)
-								.orElse(null);
+									.load(dialog.getKonsultation().getId(), IEncounter.class).orElse(null);
 						}
 					}
 				});
 			}
 		}
 	}
-	
+
 }

@@ -9,21 +9,21 @@ import java.util.List;
 import org.slf4j.LoggerFactory;
 
 public class TarmedLeistungAge {
-	
+
 	private LocalDate validFromDate;
 	private LocalDate validToDate;
-	
+
 	private long fromDays;
 	private long toDays;
 	private String fromText;
 	private String toText;
-	
-	private TarmedLeistungAge(String datesString, String ageString, LocalDateTime consDate){
+
+	private TarmedLeistungAge(String datesString, String ageString, LocalDateTime consDate) {
 		parseDatesString(datesString);
 		parseAgeString(ageString, consDate);
 	}
-	
-	private void parseAgeString(String ageString, LocalDateTime consDate){
+
+	private void parseAgeString(String ageString, LocalDateTime consDate) {
 		String[] parts = ageString.split("\\|");
 		if (parts.length == 5) {
 			fromDays = getAsDays(parts[0], parts[1], parts[4], consDate, false);
@@ -35,8 +35,8 @@ public class TarmedLeistungAge {
 			toDays = -1;
 		}
 	}
-	
-	private String getAsText(String age, String tolerance, String unit){
+
+	private String getAsText(String age, String tolerance, String unit) {
 		if (age.equals("-1")) {
 			return "";
 		}
@@ -55,9 +55,9 @@ public class TarmedLeistungAge {
 		}
 		return sb.toString();
 	}
-	
+
 	private long getAsDays(String age, String tolerance, String unit, LocalDateTime consDate,
-		boolean positiveTolerance){
+			boolean positiveTolerance) {
 		if (age.equals("-1")) {
 			return -1;
 		}
@@ -81,32 +81,33 @@ public class TarmedLeistungAge {
 		}
 		return -1;
 	}
-	
-	private void parseDatesString(String datesString){
+
+	private void parseDatesString(String datesString) {
 		String[] parts = datesString.split("\\|");
 		if (parts.length == 2) {
 			validFromDate = LocalDate.parse(parts[0]);
 			validToDate = LocalDate.parse(parts[1]);
 		}
 	}
-	
-	public boolean isValid(){
+
+	public boolean isValid() {
 		return fromDays != -1 || toDays != -1;
 	}
-	
-	public boolean isValidOn(LocalDate localDate){
+
+	public boolean isValidOn(LocalDate localDate) {
 		return (validFromDate.isBefore(localDate) || validFromDate.isEqual(localDate))
-			&& (validToDate.isAfter(localDate) || validToDate.isEqual(localDate));
+				&& (validToDate.isAfter(localDate) || validToDate.isEqual(localDate));
 	}
-	
+
 	/**
-	 * Create {@link TarmedLeistungAge} objects for the ages String, relative to the consDate.
-	 * 
+	 * Create {@link TarmedLeistungAge} objects for the ages String, relative to the
+	 * consDate.
+	 *
 	 * @param ages
 	 * @param consDate
 	 * @return
 	 */
-	public static List<TarmedLeistungAge> of(String ages, LocalDateTime consDate){
+	public static List<TarmedLeistungAge> of(String ages, LocalDateTime consDate) {
 		List<TarmedLeistungAge> ret = new ArrayList<>();
 		if (ages != null && !ages.isEmpty()) {
 			String[] singleAge = ages.split(", ");
@@ -116,43 +117,40 @@ public class TarmedLeistungAge {
 					ret.add(new TarmedLeistungAge(validParts[0], validParts[1], consDate));
 				} else {
 					LoggerFactory.getLogger(TarmedLeistungAge.class)
-						.warn("Could not parse age string [" + string + "]");
+							.warn("Could not parse age string [" + string + "]");
 				}
 			}
 		}
 		return ret;
 	}
-	
-	private static String[] isValidAgeString(String ageDefinition){
+
+	private static String[] isValidAgeString(String ageDefinition) {
 		int dateStart = ageDefinition.indexOf('[');
 		String datesString = ageDefinition.substring(dateStart + 1, ageDefinition.length() - 1);
 		String ageString = ageDefinition.substring(0, dateStart);
-		if (datesString != null && !datesString.isEmpty() && ageString != null
-			&& !ageString.isEmpty()) {
-			return new String[] {
-				datesString, ageString
-			};
+		if (datesString != null && !datesString.isEmpty() && ageString != null && !ageString.isEmpty()) {
+			return new String[] { datesString, ageString };
 		}
 		return null;
 	}
-	
-	public long getFromDays(){
+
+	public long getFromDays() {
 		return fromDays;
 	}
-	
-	public long getToDays(){
+
+	public long getToDays() {
 		return toDays;
 	}
-	
-	public String getFromText(){
+
+	public String getFromText() {
 		return fromText;
 	}
-	
-	public String getToText(){
+
+	public String getToText() {
 		return toText;
 	}
-	
-	public String getText(){
+
+	public String getText() {
 		return "ab " + getFromText() + " bis " + getToText();
 	}
 }

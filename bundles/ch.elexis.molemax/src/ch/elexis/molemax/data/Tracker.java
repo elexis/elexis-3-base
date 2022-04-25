@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    rgw - initial API and implementation
  *    rgw - 2014: Changes for Elexis 2.x
@@ -44,37 +44,30 @@ import ch.rgw.tools.VersionInfo;
 
 /**
  * A Tracker is one image region with all its details and follow-ups
- * 
+ *
  * @author Gerry
- * 
+ *
  */
 public class Tracker extends PersistentObject {
 	private static final String TABLENAME = "CH_ELEXIS_MOLEMAX";
 	private static final String VERSION = "0.2.0";
-	private static final String createTable = "CREATE TABLE " + TABLENAME
-			+ " (" + "ID           VARCHAR(25) primary key, "
-			+ "deleted CHAR(1) default '0', " + "patientID    VARCHAR(25), "
-			+ "parentID VARCHAR(25), " + "date CHAR(8)," + "slot CHAR(3), "
-			+ "koord VARCHAR(40), " + // x-y-w-h-num-ext
+	private static final String createTable = "CREATE TABLE " + TABLENAME + " ("
+			+ "ID           VARCHAR(25) primary key, " + "deleted CHAR(1) default '0', " + "patientID    VARCHAR(25), "
+			+ "parentID VARCHAR(25), " + "date CHAR(8)," + "slot CHAR(3), " + "koord VARCHAR(40), " + // x-y-w-h-num-ext
 			" ExtInfo	BLOB, " + "lastupdate BIGINT);";
-	private static final String createIndex = " CREATE INDEX MLMX1 ON "
-			+ TABLENAME + " (patientID);";
-	private static final String insertVersion = "INSERT INTO " + TABLENAME
-			+ " (ID,koord) VALUES ('VERSION','" + VERSION + "');";
-	private static final String createDB = createTable + createIndex
-			+ insertVersion;
-	private static final String updateDB011 = "ALTER  TABLE " + TABLENAME
-			+ " ADD parentID VARCHAR(25);";
+	private static final String createIndex = " CREATE INDEX MLMX1 ON " + TABLENAME + " (patientID);";
+	private static final String insertVersion = "INSERT INTO " + TABLENAME + " (ID,koord) VALUES ('VERSION','" + VERSION
+			+ "');";
+	private static final String createDB = createTable + createIndex + insertVersion;
+	private static final String updateDB011 = "ALTER  TABLE " + TABLENAME + " ADD parentID VARCHAR(25);";
 
-	private static final String updateDB020 = "ALTER TABLE " + TABLENAME
-			+ " ADD lastupdate BIGINT;";
+	private static final String updateDB020 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;";
 	static Log log = Log.get("Molemax");
 	private static int[] map = { 0, 4, 8, 1, 5, 9, 2, 6, 10, 3, 7, 11 };
 	Image image = null;
 
 	static {
-		addMapping(TABLENAME, "PatientID=patientID", "ParentID=parentID",
-				"Datum=S:D:date", "slot", "koord", "ExtInfo");
+		addMapping(TABLENAME, "PatientID=patientID", "ParentID=parentID", "Datum=S:D:date", "slot", "koord", "ExtInfo");
 		Tracker version = load("VERSION");
 		if (!version.exists()) {
 			if (PersistentObject.tableExists(TABLENAME)) {
@@ -96,66 +89,49 @@ public class Tracker extends PersistentObject {
 				log.log("Update auf " + VERSION, Log.TRACE);
 
 			} else {
-				SWTHelper.alert("Kann Molemax nicht starten",
-						"Zu alte Version der Datenbank");
+				SWTHelper.alert("Kann Molemax nicht starten", "Zu alte Version der Datenbank");
 			}
 		}
 	}
 
 	/**
 	 * A Child Tracker: A detail within a region image
-	 * 
-	 * @param p
-	 *            patient
-	 * @param parent
-	 *            parent tracker (that denotes the region)
-	 * @param date
-	 *            date of sequence to add this detail. If null: today
-	 * @param slot
-	 *            whicht region this detail belongs
-	 * @param pos
-	 *            position of this detail within the region
+	 *
+	 * @param p      patient
+	 * @param parent parent tracker (that denotes the region)
+	 * @param date   date of sequence to add this detail. If null: today
+	 * @param slot   whicht region this detail belongs
+	 * @param pos    position of this detail within the region
 	 */
-	public Tracker(final Patient p, final Tracker parent, String date,
-			final int slot, final Rectangle pos) {
+	public Tracker(final Patient p, final Tracker parent, String date, final int slot, final Rectangle pos) {
 		create(null);
 		if (date == null) {
 			date = new TimeTool().toString(TimeTool.DATE_GER);
 		}
 		set(new String[] { "PatientID", "ParentID", "Datum", "slot", "koord" },
-				new String[] { p.getId(), parent.getId(), date,
-						Integer.toString(slot), makeFilename(pos, null) });
+				new String[] { p.getId(), parent.getId(), date, Integer.toString(slot), makeFilename(pos, null) });
 
 	}
 
 	/**
-	 * a parent tracker is one of the 12 regions to store. If in the directory
-	 * of the originating file are exactly 12 images with subseqeuntly ascending
-	 * sequence numbers in their filename, and this image is first of sequence,
-	 * and slot 0 is selected, then all 12 images can be loaded
-	 * 
-	 * @param p
-	 *            patient this image belongs to
-	 * @param date
-	 *            date of the sequence this image belongs to
-	 * @param slot
-	 *            which of the 12 basic regions this image belongs to
-	 * @param file
-	 *            file in which the image resides
+	 * a parent tracker is one of the 12 regions to store. If in the directory of
+	 * the originating file are exactly 12 images with subseqeuntly ascending
+	 * sequence numbers in their filename, and this image is first of sequence, and
+	 * slot 0 is selected, then all 12 images can be loaded
+	 *
+	 * @param p    patient this image belongs to
+	 * @param date date of the sequence this image belongs to
+	 * @param slot which of the 12 basic regions this image belongs to
+	 * @param file file in which the image resides
 	 */
-	public Tracker(final Patient p, final String date, final int slot,
-			final File file) {
+	public Tracker(final Patient p, final String date, final int slot, final File file) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(makeDescriptor(p, date, slot));
 		File dir = new File(sb.toString());
 		if ((!dir.exists()) && (!dir.mkdirs())) {
-			SWTHelper
-					.showError(
-							"Schreibfehler",
-							"Konnte Verzeichnis "
-									+ dir.getAbsolutePath()
-									+ " nicht erstellen. Speicherverzeichnis korrekt angegeben?");
+			SWTHelper.showError("Schreibfehler", "Konnte Verzeichnis " + dir.getAbsolutePath()
+					+ " nicht erstellen. Speicherverzeichnis korrekt angegeben?");
 			return;
 		}
 		sb.append(File.separator);
@@ -167,15 +143,11 @@ public class Tracker extends PersistentObject {
 			SWTHelper.showError("I/O Fehler", "Kann das Bild nicht übertragen");
 		} else {
 			create(null);
-			set(new String[] { "PatientID", "ParentID", "Datum", "slot",
-					"koord" },
-					new String[] { p.getId(), "NIL", date,
-							Integer.toString(slot), fname });
+			set(new String[] { "PatientID", "ParentID", "Datum", "slot", "koord" },
+					new String[] { p.getId(), "NIL", date, Integer.toString(slot), fname });
 		}
 		if (slot == 0) {
-			Pattern pattern = Pattern.compile(
-					"([a-z_\\-]+)([0-9]+)(\\.[a-z0-9]+)",
-					Pattern.CASE_INSENSITIVE);
+			Pattern pattern = Pattern.compile("([a-z_\\-]+)([0-9]+)(\\.[a-z0-9]+)", Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(file.getName());
 			if (matcher.matches()) {
 				File path = file.getParentFile();
@@ -186,26 +158,21 @@ public class Tracker extends PersistentObject {
 				int v = Integer.parseInt(val);
 				boolean bSerie = true;
 				for (int i = v; i < v + 11; i++) {
-					String tryname = prefix
-							+ StringTool.pad(StringTool.LEFT, '0',
-									Integer.toString(i), numlen) + postfix;
+					String tryname = prefix + StringTool.pad(StringTool.LEFT, '0', Integer.toString(i), numlen)
+							+ postfix;
 					if (!new File(path, tryname).exists()) {
 						bSerie = false;
 						break;
 					}
 				}
 				if (bSerie) {
-					if (SWTHelper
-							.askYesNo("Ganze Serie einlesen?",
-									"Dieses Bild scheint das erste Bild einer Serie zu sein. Ganze Serie einlesen?")) {
+					if (SWTHelper.askYesNo("Ganze Serie einlesen?",
+							"Dieses Bild scheint das erste Bild einer Serie zu sein. Ganze Serie einlesen?")) {
 						for (int i = v + 1; i < v + 12; i++) {
-							String tryname = prefix
-									+ StringTool.pad(StringTool.LEFT, '0',
-											Integer.toString(i), numlen)
+							String tryname = prefix + StringTool.pad(StringTool.LEFT, '0', Integer.toString(i), numlen)
 									+ postfix;
 							int slotnr = map[i - v];
-							Tracker trytracker = new Tracker(p, date, slotnr,
-									new File(path, tryname));
+							Tracker trytracker = new Tracker(p, date, slotnr, new File(path, tryname));
 						}
 						ElexisEventDispatcher.fireSelectionEvent(p);
 						// GlobalEvents.getInstance().fireSelectionEvent(p);
@@ -218,11 +185,10 @@ public class Tracker extends PersistentObject {
 
 	/**
 	 * Copy the file containing an image to the directory location it belongs
-	 * (according to the database information of this tracker). If a file for
-	 * the same tracker exists, the index portion of the filename is increased
-	 * 
-	 * @param file
-	 *            the file to import. Must contain a valid image
+	 * (according to the database information of this tracker). If a file for the
+	 * same tracker exists, the index portion of the filename is increased
+	 *
+	 * @param file the file to import. Must contain a valid image
 	 * @return true on success
 	 */
 	public boolean setFile(final File file) {
@@ -265,10 +231,8 @@ public class Tracker extends PersistentObject {
 					int is = Integer.parseInt(seq);
 					while (is-- > 0) {
 						try {
-							fname = makeFilename(Integer.parseInt(flds[0]),
-									Integer.parseInt(flds[1]),
-									Integer.parseInt(flds[2]),
-									Integer.parseInt(flds[3]), is, ext);
+							fname = makeFilename(Integer.parseInt(flds[0]), Integer.parseInt(flds[1]),
+									Integer.parseInt(flds[2]), Integer.parseInt(flds[3]), is, ext);
 							set("koord", fname);
 							path = makeFilename();
 							file = new File(path);
@@ -288,9 +252,9 @@ public class Tracker extends PersistentObject {
 	}
 
 	/**
-	 * Image des Bildes erzeugen. Achtung: dieses muss nach Gebrauch mit
-	 * dispose() wieder entsorgt werden.
-	 * 
+	 * Image des Bildes erzeugen. Achtung: dieses muss nach Gebrauch mit dispose()
+	 * wieder entsorgt werden.
+	 *
 	 * @return ein SWT-Image
 	 */
 	public Image createImage() {
@@ -319,8 +283,7 @@ public class Tracker extends PersistentObject {
 
 	public Image createImageScaled(final Point size) {
 		Image orig = createImage();
-		Image scaled = new Image(UiDesk.getDisplay(), orig.getImageData()
-				.scaledTo(size.x, size.y));
+		Image scaled = new Image(UiDesk.getDisplay(), orig.getImageData().scaledTo(size.x, size.y));
 		return scaled;
 	}
 
@@ -333,8 +296,7 @@ public class Tracker extends PersistentObject {
 		String[] k = koord.split("[\\.-]");
 		if (k.length > 3) {
 			try {
-				return new Rectangle(Integer.parseInt(k[0]),
-						Integer.parseInt(k[1]), Integer.parseInt(k[2]),
+				return new Rectangle(Integer.parseInt(k[0]), Integer.parseInt(k[1]), Integer.parseInt(k[2]),
 						Integer.parseInt(k[3]));
 			} catch (NumberFormatException nx) {
 				ExHandler.handle(nx);
@@ -393,7 +355,7 @@ public class Tracker extends PersistentObject {
 
 	/**
 	 * compose a filename to the image file that belongs to this tracker
-	 * 
+	 *
 	 * @return
 	 */
 	String makeFilename() {
@@ -403,18 +365,16 @@ public class Tracker extends PersistentObject {
 		if (parent != null) {
 			date = parent.getDate();
 		}
-		ret.append(makeDescriptor(getPatient(), date, getSlot()))
-				.append(File.separator).append(get("koord"));
+		ret.append(makeDescriptor(getPatient(), date, getSlot())).append(File.separator).append(get("koord"));
 		return ret.toString();
 	}
 
 	/**
 	 * Load all children and return as stack of images
-	 * 
-	 * @param parent
-	 *            the parent tracker whose children to load
-	 * @return a stack that contains the parent at its bottom and all the
-	 *         children above ordered by date
+	 *
+	 * @param parent the parent tracker whose children to load
+	 * @return a stack that contains the parent at its bottom and all the children
+	 *         above ordered by date
 	 */
 	public static Tracker[] getImageStack(final Tracker parent) {
 		if (parent == null) {
@@ -460,8 +420,7 @@ public class Tracker extends PersistentObject {
 		if (list.size() > 0) {
 			Tracker ret = list.get(0);
 			if (list.size() > 1) {
-				TimeTool lastDate = new TimeTool(
-						TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				TimeTool lastDate = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 				TimeTool cmp = new TimeTool();
 				for (Tracker tracker : list) {
 					cmp.set(tracker.get("Datum"));
@@ -480,18 +439,14 @@ public class Tracker extends PersistentObject {
 
 	/**
 	 * Load the base Tracker for a given slot, patient and date
-	 * 
-	 * @param patient
-	 *            patient
-	 * @param date
-	 *            date of sequence. If null: Any sequence
-	 * @param slot
-	 *            image region
-	 * @return a Tracker for the requested patient and region. Might be null id
-	 *         no such tracker exists
+	 *
+	 * @param patient patient
+	 * @param date    date of sequence. If null: Any sequence
+	 * @param slot    image region
+	 * @return a Tracker for the requested patient and region. Might be null id no
+	 *         such tracker exists
 	 */
-	public static Tracker loadBase(final Patient patient, final String date,
-			final int slot) {
+	public static Tracker loadBase(final Patient patient, final String date, final int slot) {
 		Query<Tracker> qbe = new Query<Tracker>(Tracker.class);
 		qbe.add("PatientID", "=", patient.getId());
 		qbe.add("slot", "=", Integer.toString(slot));
@@ -503,8 +458,7 @@ public class Tracker extends PersistentObject {
 		if (list.size() > 0) {
 			Tracker ret = list.get(0);
 			if ((date == null) && (list.size() > 1)) {
-				TimeTool lastDate = new TimeTool(
-						TimeTool.BEGINNING_OF_UNIX_EPOCH);
+				TimeTool lastDate = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 				TimeTool cmp = new TimeTool();
 				for (Tracker tracker : list) {
 					cmp.set(tracker.get("Datum"));
@@ -521,17 +475,13 @@ public class Tracker extends PersistentObject {
 
 	/**
 	 * Find the Tracker that is topmost at a given point
-	 * 
-	 * @param slot
-	 *            Array of all trackers to match
-	 * @param x
-	 *            koordinate
-	 * @param y
-	 *            koordinate
+	 *
+	 * @param slot Array of all trackers to match
+	 * @param x    koordinate
+	 * @param y    koordinate
 	 * @return index of the last Tracker that contains the given point
 	 */
-	public static int getTrackerAtPoint(final Tracker[] slot, final int x,
-			final int y) {
+	public static int getTrackerAtPoint(final Tracker[] slot, final int x, final int y) {
 		for (int i = slot.length - 1; i >= 0; i--) {
 			Rectangle rec = slot[i].getBounds();
 			if (rec.contains(x, y)) {
@@ -543,14 +493,13 @@ public class Tracker extends PersistentObject {
 
 	/**
 	 * Find all Trackers that contain a given point
-	 * 
+	 *
 	 * @param slot
 	 * @param x
 	 * @param y
 	 * @return
 	 */
-	public static List<Tracker> getTrackersAtPoint(final Tracker[] slot,
-			final int x, final int y) {
+	public static List<Tracker> getTrackersAtPoint(final Tracker[] slot, final int x, final int y) {
 		ArrayList<Tracker> ret = new ArrayList<Tracker>(slot.length);
 		for (int i = 1; i < slot.length; i++) {
 			Rectangle rec = slot[i].getBounds();
@@ -566,37 +515,30 @@ public class Tracker extends PersistentObject {
 
 	/**
 	 * Create the full path used for images of the given slot
-	 * 
-	 * @param p
-	 *            Patient
-	 * @param date
-	 *            date of sequence (if null: today)
-	 * @param slot
-	 *            image slot
-	 * @return the full path of the directory where images of this slot are
-	 *         stored
+	 *
+	 * @param p    Patient
+	 * @param date date of sequence (if null: today)
+	 * @param slot image slot
+	 * @return the full path of the directory where images of this slot are stored
 	 */
-	public static String makeDescriptor(final Patient p, String date,
-			final int slot) {
+	public static String makeDescriptor(final Patient p, String date, final int slot) {
 		if (date == null) {
 			date = getLastSequenceDate(p);
 		}
 		StringBuilder ret = new StringBuilder();
-		ret.append(CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, "")).append(
-				File.separator);
+		ret.append(CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, "")).append(File.separator);
 		String name = p.getName();
 		ret.append(name.length() > 2 ? name.substring(0, 2) : name);
 		String vname = p.getVorname();
 		ret.append(vname.length() > 2 ? vname.substring(0, 2) : vname);
-		ret.append(p.getPatCode()).append(File.separator)
-				.append(new TimeTool(date).toString(TimeTool.DATE_COMPACT))
+		ret.append(p.getPatCode()).append(File.separator).append(new TimeTool(date).toString(TimeTool.DATE_COMPACT))
 				.append(File.separator).append(slot);
 		return ret.toString();
 	}
 
 	/**
 	 * create a filename from koordinates and an extension
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @param w
@@ -604,11 +546,10 @@ public class Tracker extends PersistentObject {
 	 * @param ext
 	 * @return
 	 */
-	private static String makeFilename(final int x, final int y, final int w,
-			final int h, final int seq, final String ext) {
+	private static String makeFilename(final int x, final int y, final int w, final int h, final int seq,
+			final String ext) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(x).append("-").append(y).append("-").append(w).append("-")
-				.append(h).append("-").append(seq);
+		sb.append(x).append("-").append(y).append("-").append(w).append("-").append(h).append("-").append(seq);
 		if (ext != null) {
 			sb.append(".").append(ext);
 		}
@@ -618,10 +559,8 @@ public class Tracker extends PersistentObject {
 
 	private static String makeFilename(final Rectangle rec, final String ext) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(Integer.toString(rec.x)).append("-")
-				.append(Integer.toString(rec.y)).append("-")
-				.append(Integer.toString(rec.width)).append("-")
-				.append(Integer.toString(rec.height));
+		sb.append(Integer.toString(rec.x)).append("-").append(Integer.toString(rec.y)).append("-")
+				.append(Integer.toString(rec.width)).append("-").append(Integer.toString(rec.height));
 		if (ext != null) {
 			sb.append(".").append(ext);
 		}
@@ -652,7 +591,7 @@ public class Tracker extends PersistentObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ch.elexis.data.PersistentObject#delete()
 	 */
 	@Override

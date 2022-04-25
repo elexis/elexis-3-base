@@ -17,19 +17,19 @@ import org.eclipse.jface.wizard.Wizard;
 import at.medevit.elexis.ehc.ui.extension.ImportWizardsExtension;
 
 public class ImportSelectionWizard extends Wizard {
-	
+
 	@Override
-	public void addPages(){
+	public void addPages() {
 		addPage(new ImportWizardSelectionPage());
 		setForcePreviousAndNextButtons(true);
 	}
-	
+
 	@Override
-	public boolean performFinish(){
+	public boolean performFinish() {
 		return false;
 	}
-	
-	public void setDocument(InputStream document){
+
+	public void setDocument(InputStream document) {
 		ImportWizardsExtension.setImportDocument(document);
 	}
 }

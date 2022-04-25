@@ -25,18 +25,18 @@ import ch.elexis.icpc.fire.ui.Preferences;
 import ch.rgw.tools.TimeTool;
 
 public class ReportBuilder {
-	
+
 	private Report report;
-	
+
 	private Map<BigInteger, TPatient> patients;
-	
+
 	private Map<BigInteger, TDoctor> doctors;
-	
+
 	private ConsultationBuilder consultationBuilder;
-	
+
 	private FireConfig fireConfig;
-	
-	public ReportBuilder() throws DatatypeConfigurationException{
+
+	public ReportBuilder() throws DatatypeConfigurationException {
 		patients = new HashMap<>();
 		doctors = new HashMap<>();
 		fireConfig = new FireConfig();
@@ -46,48 +46,47 @@ public class ReportBuilder {
 		report = fireConfig.getFactory().createReport();
 		report.setExportDate(XmlUtil.getXmlGregorianCalendar(new TimeTool()));
 	}
-	
+
 	public FireConfig getFireConfig() {
 		return fireConfig;
 	}
-	
+
 	public void addKonsultation(BigInteger patId, BigInteger docId, Konsultation konsultation,
-		Map<String, Set<TMedi>> unreferencedStoppedMedis) throws DatatypeConfigurationException{
+			Map<String, Set<TMedi>> unreferencedStoppedMedis) throws DatatypeConfigurationException {
 		if (fireConfig.isValid()) {
 			if (report.getConsultations() == null) {
 				report.setConsultations(fireConfig.getFactory().createReportConsultations());
 			}
-			
-			Optional<TConsultation> consultation =
-				consultationBuilder.consultation(konsultation).build(unreferencedStoppedMedis);
+
+			Optional<TConsultation> consultation = consultationBuilder.consultation(konsultation)
+					.build(unreferencedStoppedMedis);
 			consultation.ifPresent(c -> report.getConsultations().getConsultation().add(c));
 			consultation.ifPresent(c -> c.setDocId(docId));
 			consultation.ifPresent(c -> c.setPatId(patId));
 			consultation.ifPresent(c -> {
 				try {
-					c.setDate(
-						XmlUtil.getXmlGregorianCalendar(new TimeTool(konsultation.getDatum())));
+					c.setDate(XmlUtil.getXmlGregorianCalendar(new TimeTool(konsultation.getDatum())));
 				} catch (DatatypeConfigurationException e) {
 					LoggerFactory.getLogger(ReportBuilder.class).warn("date error", e);
 				}
 			});
 		} else {
 			LoggerFactory.getLogger(getClass())
-				.warn("Invalid fireConfig, skipping consultation [" + konsultation.getId() + "]");
+					.warn("Invalid fireConfig, skipping consultation [" + konsultation.getId() + "]");
 		}
 	}
-	
-	public BigInteger addPatient(Patient patient){
+
+	public BigInteger addPatient(Patient patient) {
 		BigInteger patId = fireConfig.getPatId(patient);
 		// only add a new patient model object if no already in the list
 		if (patients.get(patId) == null) {
 			if (report.getPatients() == null) {
 				report.setPatients(fireConfig.getFactory().createReportPatients());
 			}
-			
+
 			TPatient tPatient = fireConfig.getFactory().createTPatient();
 			tPatient.setId(patId);
-			
+
 			Gender gender = patient.getGender();
 			if (gender == Gender.MALE) {
 				tPatient.setGender(true);
@@ -99,18 +98,18 @@ public class ReportBuilder {
 				TimeTool dob = new TimeTool(dateOfBirth);
 				tPatient.setBirthYear(dob.get(TimeTool.YEAR));
 			}
-			
+
 			TStatus tStatus = createPatientTStatus(patient);
 			tPatient.setStatus(tStatus);
-			
+
 			report.getPatients().getPatient().add(tPatient);
 			patients.put(patId, tPatient);
 		}
-		
+
 		return patId;
 	}
-	
-	private TStatus createPatientTStatus(Patient patient){
+
+	private TStatus createPatientTStatus(Patient patient) {
 		String insurer = null;
 		Boolean mc = null;
 		Query<Fall> qbe = new Query<>(Fall.class, Fall.FLD_PATIENT_ID, patient.getId());
@@ -120,7 +119,7 @@ public class ReportBuilder {
 		for (Fall fall : qre) {
 			if (fall.isOpen()) {
 				String kostentraeger = (String) fall.getInfoElement(Fall.FLD_EXT_KOSTENTRAEGER);
-				if(kostentraeger == null) {
+				if (kostentraeger == null) {
 					kostentraeger = fall.get(Fall.FLD_KOSTENTRAEGER);
 				}
 				if (kostentraeger != null && !kostentraeger.equals(patient.getId())) {
@@ -148,47 +147,47 @@ public class ReportBuilder {
 		}
 		return null;
 	}
-	
-	public BigInteger addMandant(Mandant mandant){
+
+	public BigInteger addMandant(Mandant mandant) {
 		BigInteger docId = fireConfig.getDocId(mandant);
 		// only add a new doctor model object if no already in the list
 		if (doctors.get(docId) == null) {
 			if (report.getDoctors() == null) {
 				report.setDoctors(fireConfig.getFactory().createReportDoctors());
 			}
-			
+
 			TDoctor tDoctor = fireConfig.getFactory().createTDoctor();
 			tDoctor.setId(docId);
 			tDoctor.setSystem("Elexis");
 			tDoctor.setFirstName(mandant.getVorname());
 			tDoctor.setLastName(mandant.getName());
-			
+
 			try {
-				tDoctor.setGeburtstag(
-					XmlUtil.getXmlGregorianCalendar(new TimeTool(mandant.getGeburtsdatum())));
+				tDoctor.setGeburtstag(XmlUtil.getXmlGregorianCalendar(new TimeTool(mandant.getGeburtsdatum())));
 			} catch (DatatypeConfigurationException e) {
 				LoggerFactory.getLogger(ReportBuilder.class).warn("date error", e);
 			}
-			
+
 			report.getDoctors().getDoctor().add(tDoctor);
 			doctors.put(docId, tDoctor);
 		}
 		return docId;
 	}
-	
-	public boolean isValidConfig(){
+
+	public boolean isValidConfig() {
 		return fireConfig.isValid();
 	}
-	
-	public Optional<Report> build(){
+
+	public Optional<Report> build() {
 		return Optional.ofNullable(report);
 	}
-	
+
 	/**
 	 * handle finishing tasks
-	 * @param unreferencedStopMedisPerPatient 
+	 *
+	 * @param unreferencedStopMedisPerPatient
 	 */
-	public void finish(Map<String, Set<TMedi>> unreferencedStopMedisPerPatient){
+	public void finish(Map<String, Set<TMedi>> unreferencedStopMedisPerPatient) {
 		consultationBuilder.handleUnreferencedStopMedisPerPatient(fireConfig, report, unreferencedStopMedisPerPatient);
 	}
 }

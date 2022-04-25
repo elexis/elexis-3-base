@@ -41,60 +41,55 @@ import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 	private ViewerConfigurer vc;
-	
+
 	@Inject
-	public void selectedEncounter(@Optional IEncounter encounter){
+	public void selectedEncounter(@Optional IEncounter encounter) {
 		if (vc != null && vc.getControlFieldProvider() != null) {
 			vc.getControlFieldProvider().fireChangedEvent();
 		}
 	}
-	
+
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		cv.setSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				TableViewer tv = (TableViewer) event.getSource();
 				StructuredSelection ss = (StructuredSelection) tv.getSelection();
 				if (!ss.isEmpty()) {
 					IPhysioLeistung selected = (IPhysioLeistung) ss.getFirstElement();
 					ContextServiceHolder.get().getRootContext()
-						.setNamed("ch.elexis.views.codeselector.physio.selection", selected);
+							.setNamed("ch.elexis.views.codeselector.physio.selection", selected);
 				} else {
 					ContextServiceHolder.get().getRootContext()
-						.setNamed("ch.elexis.views.codeselector.physio.selection", null);
+							.setNamed("ch.elexis.views.codeselector.physio.selection", null);
 				}
 			}
 		});
-		FieldDescriptor<?>[] fd =
-			new FieldDescriptor<?>[] {
+		FieldDescriptor<?>[] fd = new FieldDescriptor<?>[] {
 				new FieldDescriptor<IPhysioLeistung>("Ziffer", "ziffer", null),
-				new FieldDescriptor<IPhysioLeistung>("Text", "titel", null),
-			};
+				new FieldDescriptor<IPhysioLeistung>("Text", "titel", null), };
 		SelectorPanelProvider slp = new SelectorPanelProvider(fd, true);
-		vc =
-			new ViewerConfigurer(new PhysioContentProvider(cv, slp), new DefaultLabelProvider(),
-				slp,
-				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
+		vc = new ViewerConfigurer(new PhysioContentProvider(cv, slp), new DefaultLabelProvider(), slp,
+				new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		return vc.setContentType(ContentType.GENERICOBJECT);
-		
+
 	}
-	
+
 	private class PhysioContentProvider extends CommonViewerContentProvider {
-		
+
 		private ControlFieldProvider controlFieldProvider;
-		
-		public PhysioContentProvider(CommonViewer commonViewer,
-			ControlFieldProvider controlFieldProvider){
+
+		public PhysioContentProvider(CommonViewer commonViewer, ControlFieldProvider controlFieldProvider) {
 			super(commonViewer);
 			this.controlFieldProvider = controlFieldProvider;
 		}
-		
+
 		@Override
-		public Object[] getElements(Object inputElement){
+		public Object[] getElements(Object inputElement) {
 			IQuery<?> query = getBaseQuery();
-			
+
 			java.util.Optional<IEncounter> encounter = ContextServiceHolder.get().getTyped(IEncounter.class);
 			encounter.ifPresent(e -> {
 				query.and("validFrom", COMPARATOR.LESS_OR_EQUAL, e.getDate());
@@ -103,38 +98,37 @@ public class PhysioLeistungsCodeSelectorFactory extends CodeSelectorFactory {
 				query.or("validUntil", COMPARATOR.EQUALS, null);
 				query.andJoinGroups();
 			});
-			
+
 			// apply filters from control field provider
 			controlFieldProvider.setQuery(query);
 			applyQueryFilters(query);
 			query.orderBy("ziffer", ORDER.ASC);
 			List<?> elements = query.execute();
-			
+
 			return elements.toArray(new Object[elements.size()]);
 		}
-		
+
 		@Override
-		protected IQuery<?> getBaseQuery(){
-			IQuery<IPhysioLeistung> query =
-				ArzttarifeModelServiceHolder.get().getQuery(IPhysioLeistung.class);
+		protected IQuery<?> getBaseQuery() {
+			IQuery<IPhysioLeistung> query = ArzttarifeModelServiceHolder.get().getQuery(IPhysioLeistung.class);
 			query.and("id", COMPARATOR.NOT_EQUALS, "VERSION");
 			return query;
 		}
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return "Physiotherapie";
 	}
-	
+
 	@Override
-	public Class<?> getElementClass(){
+	public Class<?> getElementClass() {
 		return IPhysioLeistung.class;
 	}
 }

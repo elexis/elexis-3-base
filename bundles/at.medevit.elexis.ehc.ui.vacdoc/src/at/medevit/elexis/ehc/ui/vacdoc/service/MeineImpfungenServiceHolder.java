@@ -8,17 +8,17 @@ import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenService;
 @Component
 public class MeineImpfungenServiceHolder {
 	private static MeineImpfungenService miService;
-	
+
 	@Reference
-	public void setMeineImpfungenService(MeineImpfungenService miService){
+	public void setMeineImpfungenService(MeineImpfungenService miService) {
 		MeineImpfungenServiceHolder.miService = miService;
 	}
-	
-	public void unsetMeineImpfungenService(MeineImpfungenService miService){
+
+	public void unsetMeineImpfungenService(MeineImpfungenService miService) {
 		MeineImpfungenServiceHolder.miService = null;
 	}
-	
-	public static MeineImpfungenService getService(){
+
+	public static MeineImpfungenService getService() {
 		if (miService == null) {
 			throw new IllegalStateException("No MeineImpfungenService available");
 		}

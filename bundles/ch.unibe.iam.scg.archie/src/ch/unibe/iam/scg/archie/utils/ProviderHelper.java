@@ -31,9 +31,9 @@ import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
  * also handles the retrieval and setting of annotation methods and values for a
  * given provider.
  * </p>
- * 
+ *
  * $Id: ProviderHelper.java 705 2009-01-03 17:48:46Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 705 $
@@ -47,13 +47,11 @@ public class ProviderHelper {
 	private static final int SETTER = 1;
 
 	/**
-	 * Returns a map of getter methods for providers mapped from the method's
-	 * name to it's value.
-	 * 
-	 * @param provider
-	 *            AbstractDataProvider to retrieve the methods from.
-	 * @param sorted
-	 *            If true, the methods will be sorted according to their index.
+	 * Returns a map of getter methods for providers mapped from the method's name
+	 * to it's value.
+	 *
+	 * @param provider AbstractDataProvider to retrieve the methods from.
+	 * @param sorted   If true, the methods will be sorted according to their index.
 	 * @return Map with getter method names and values.
 	 */
 	public static Map<String, Object> getGetterMap(final AbstractDataProvider provider, final boolean sorted) {
@@ -69,11 +67,9 @@ public class ProviderHelper {
 
 	/**
 	 * Convenient method to retrieve all getters from a given provider.
-	 * 
-	 * @param provider
-	 *            AbstractDataProvider to retrieve the methods from.
-	 * @param sorted
-	 *            If true, the methods will be sorted according to their index.
+	 *
+	 * @param provider AbstractDataProvider to retrieve the methods from.
+	 * @param sorted   If true, the methods will be sorted according to their index.
 	 * @return List of getter methods for a given provider.
 	 */
 	public static ArrayList<Method> getGetterMethods(final AbstractDataProvider provider, final boolean sorted) {
@@ -82,11 +78,9 @@ public class ProviderHelper {
 
 	/**
 	 * Convenient method to retrieve all setters from a given provider.
-	 * 
-	 * @param provider
-	 *            AbstractDataProvider to retrieve the methods from.
-	 * @param sorted
-	 *            If true, the methods will be sorted according to their index.
+	 *
+	 * @param provider AbstractDataProvider to retrieve the methods from.
+	 * @param sorted   If true, the methods will be sorted according to their index.
 	 * @return List of setter methods for a given provider.
 	 */
 	public static ArrayList<Method> getSetterMethods(final AbstractDataProvider provider, final boolean sorted) {
@@ -94,13 +88,11 @@ public class ProviderHelper {
 	}
 
 	/**
-	 * Retrieves the value of a given method for a given provider by invoking
-	 * the method on the given provider.
-	 * 
-	 * @param method
-	 *            Method to invoke.
-	 * @param provider
-	 *            Provider where the method will be invoked.
+	 * Retrieves the value of a given method for a given provider by invoking the
+	 * method on the given provider.
+	 *
+	 * @param method   Method to invoke.
+	 * @param provider Provider where the method will be invoked.
 	 * @return Value of the method invoked.
 	 */
 	public static Object getValue(final Method method, final AbstractDataProvider provider) {
@@ -114,18 +106,14 @@ public class ProviderHelper {
 	}
 
 	/**
-	 * Sets the value of a given method for a given provider by invoking the
-	 * method on the given provider.
-	 * 
-	 * @param method
-	 *            Method to invoke.
-	 * @param provider
-	 *            Provider where the method will be invoked.
-	 * @param value
-	 *            Value to use for the method invocation.
-	 * @throws Exception
-	 *             Exception when the value count not be set invoking the method
-	 *             on the given provider.
+	 * Sets the value of a given method for a given provider by invoking the method
+	 * on the given provider.
+	 *
+	 * @param method   Method to invoke.
+	 * @param provider Provider where the method will be invoked.
+	 * @param value    Value to use for the method invocation.
+	 * @throws Exception Exception when the value count not be set invoking the
+	 *                   method on the given provider.
 	 */
 	public static void setValue(final AbstractDataProvider provider, final Method method, final Object value)
 			throws Exception {
@@ -138,13 +126,10 @@ public class ProviderHelper {
 
 	/**
 	 * Internal method for retrieving a list of methods for a given provider.
-	 * 
-	 * @param provider
-	 *            AbstractDataProvider to retrieve the methods from.
-	 * @param sorted
-	 *            If true, the methods will be sorted according to their index.
-	 * @param which
-	 *            What method type, either getter or setter, to retrieve.
+	 *
+	 * @param provider AbstractDataProvider to retrieve the methods from.
+	 * @param sorted   If true, the methods will be sorted according to their index.
+	 * @param which    What method type, either getter or setter, to retrieve.
 	 * @return List of either getter or setter methods for a given provider.
 	 */
 	private static ArrayList<Method> getMethods(final AbstractDataProvider provider, final boolean sorted,
@@ -170,10 +155,9 @@ public class ProviderHelper {
 
 	/**
 	 * Sorts the methods according to the index of the property annotation.
-	 * 
-	 * @param methodList
-	 *            a list containing only methods having a Set/GetProperty
-	 *            annotation.
+	 *
+	 * @param methodList a list containing only methods having a Set/GetProperty
+	 *                   annotation.
 	 */
 	private static void sortMethodList(ArrayList<Method> methodList) {
 		Collections.sort(methodList, new Comparator<Method>() {

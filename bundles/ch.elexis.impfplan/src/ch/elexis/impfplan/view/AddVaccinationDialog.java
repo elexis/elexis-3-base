@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.impfplan.view;
 
@@ -36,13 +36,13 @@ public class AddVaccinationDialog extends TitleAreaDialog {
 	public VaccinationType result;
 	public TimeTool date;
 	public boolean bUnexact;
-	
-	public AddVaccinationDialog(Shell shell){
+
+	public AddVaccinationDialog(Shell shell) {
 		super(shell);
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = (Composite) super.createDialogArea(parent);
 		ret.setLayout(new GridLayout());
 		tv = new TableViewer(ret);
@@ -57,7 +57,7 @@ public class AddVaccinationDialog extends TitleAreaDialog {
 		bCa.setText(Messages.AddVaccinationDialog_dateOnlyAbout);
 		tv.setContentProvider(new ContentProviderAdapter() {
 			@Override
-			public Object[] getElements(Object arg0){
+			public Object[] getElements(Object arg0) {
 				return ImpfplanController.allVaccs().toArray();
 			}
 		});
@@ -66,20 +66,20 @@ public class AddVaccinationDialog extends TitleAreaDialog {
 		tv.setInput(this);
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		getShell().setText(Messages.AddVaccinationDialog_enterVaccinationTitle);
 		setMessage(Messages.AddVaccinationDialog_enterVaccinationText);
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 		if (sel.isEmpty()) {
 			MessageDialog.openError(getShell(), Messages.AddVaccinationDialog_enterVaccinationTitle,
-				Messages.AddVaccinationDialog_enterVaccinationTextError + ".");
+					Messages.AddVaccinationDialog_enterVaccinationTextError + ".");
 			return;
 		}
 		result = (VaccinationType) sel.getFirstElement();
@@ -87,5 +87,5 @@ public class AddVaccinationDialog extends TitleAreaDialog {
 		bUnexact = bCa.getSelection();
 		super.okPressed();
 	}
-	
+
 }

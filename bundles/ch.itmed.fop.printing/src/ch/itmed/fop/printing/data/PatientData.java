@@ -39,8 +39,7 @@ public class PatientData {
 	public void loadFromAgenda() throws NullPointerException {
 		Termin t = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 		if (t == null) {
-			Optional<IAppointment> iAppointment =
-				ContextServiceHolder.get().getTyped(IAppointment.class);
+			Optional<IAppointment> iAppointment = ContextServiceHolder.get().getTyped(IAppointment.class);
 			if (iAppointment.isPresent()) {
 				PersistentObject po = NoPoUtil.loadAsPersistentObject(iAppointment.get());
 				if (po instanceof Termin) {
@@ -125,8 +124,8 @@ public class PatientData {
 	public String getOrderNumber() {
 		return patient.getAuftragsnummer();
 	}
-	
-	public String getEmail(){
+
+	public String getEmail() {
 		return patient.getMailAddress();
 	}
 }

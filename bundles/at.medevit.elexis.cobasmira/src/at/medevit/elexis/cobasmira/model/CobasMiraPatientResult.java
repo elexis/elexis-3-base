@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 
 public class CobasMiraPatientResult {
 	private static Logger logger = LoggerFactory.getLogger(CobasMiraPatientResult.class);
-	
-	// 0  3 5  8 10        20        30        40        50   55
-	// |  | |  | |         |         |         |         |    |
+
+	// 0 3 5 8 10 20 30 40 50 55
+	// | | | | | | | | | |
 	// xx w tt nnnn ti scno iiiiiiiiii resulttttttt dp uu t f rrLF
 	private int lineCode;
 	private int testResultIndex;
@@ -15,18 +15,18 @@ public class CobasMiraPatientResult {
 	private int noOfDigitsBehindDecimalPoint;
 	private int unitCode;
 	private int remark;
-	
+
 	private float concentration;
-	
+
 	private char worklistType;
 	private char resultType;
 	private char flag;
-	
+
 	private String testNumber;
 	private String testName;
 	private String patientIdentification;
-	
-	public CobasMiraPatientResult(String input){
+
+	public CobasMiraPatientResult(String input) {
 		try {
 			if (Integer.parseInt(input.substring(0, 2)) == 20) {
 				this.lineCode = 20;
@@ -52,13 +52,13 @@ public class CobasMiraPatientResult {
 			logger.warn("IndexOutOfBoundsException: " + e.getMessage());
 			return;
 		}
-		
+
 	}
-	
+
 	/**
 	 * @return Beschreibung es angegebenen Zeilencodes
 	 */
-	public static String getLineCodeString(int lineCode){
+	public static String getLineCodeString(int lineCode) {
 		switch (lineCode) {
 		case 20:
 			return "Patient Result";
@@ -74,56 +74,56 @@ public class CobasMiraPatientResult {
 			return "unknwon line code";
 		}
 	}
-	
-	public int getLineCode(){
+
+	public int getLineCode() {
 		return lineCode;
 	}
-	
-	public int getTestResultIndex(){
+
+	public int getTestResultIndex() {
 		return testResultIndex;
 	}
-	
-	public int getSampleCupNumber(){
+
+	public int getSampleCupNumber() {
 		return sampleCupNumber;
 	}
-	
-	public int getNoOfDigitsBehindDecimalPoint(){
+
+	public int getNoOfDigitsBehindDecimalPoint() {
 		return noOfDigitsBehindDecimalPoint;
 	}
-	
-	public int getUnitCode(){
+
+	public int getUnitCode() {
 		return unitCode;
 	}
-	
-	public int getRemark(){
+
+	public int getRemark() {
 		return remark;
 	}
-	
-	public float getConcentration(){
+
+	public float getConcentration() {
 		return concentration;
 	}
-	
-	public char getWorklistType(){
+
+	public char getWorklistType() {
 		return worklistType;
 	}
-	
-	public char getResultType(){
+
+	public char getResultType() {
 		return resultType;
 	}
-	
-	public char getFlag(){
+
+	public char getFlag() {
 		return flag;
 	}
-	
-	public String getTestNumber(){
+
+	public String getTestNumber() {
 		return testNumber;
 	}
-	
-	public String getTestName(){
+
+	public String getTestName() {
 		return testName;
 	}
-	
-	public String getPatientIdentification(){
+
+	public String getPatientIdentification() {
 		return patientIdentification;
 	}
 }

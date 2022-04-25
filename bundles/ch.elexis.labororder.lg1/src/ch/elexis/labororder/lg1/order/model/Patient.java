@@ -32,8 +32,8 @@ public class Patient {
 	String insurancename = "";
 	String insurancegln = "";
 	String billing = "";
-	
-	public static Patient of(ch.elexis.data.Patient patient){
+
+	public static Patient of(ch.elexis.data.Patient patient) {
 		Patient ret = new Patient();
 		ret.id = patient.getPatCode();
 		ret.dateofbirth = new TimeTool(patient.getGeburtsdatum()).toString(TimeTool.DATE_COMPACT);
@@ -48,8 +48,8 @@ public class Patient {
 		Fall fall = getFall(patient);
 		if (fall == null) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
-				Messages.LabOrderAction_errorTitleNoFallSelected,
-				Messages.LabOrderAction_errorMessageNoFallSelected);
+					Messages.LabOrderAction_errorTitleNoFallSelected,
+					Messages.LabOrderAction_errorMessageNoFallSelected);
 		}
 		ret.insurancenumber = getInsuranceOrCaseNumber(fall);
 		ret.insurancename = getInsuranceName(fall);
@@ -57,8 +57,8 @@ public class Patient {
 		ret.billing = getBilling(fall);
 		return ret;
 	}
-	
-	private static String getBilling(Fall fall){
+
+	private static String getBilling(Fall fall) {
 		Kontakt costBearer = fall.getCostBearer();
 		Kontakt guarantor = fall.getGarant();
 		if (costBearer == null) {
@@ -71,27 +71,26 @@ public class Patient {
 		}
 		return "tg";
 	}
-	
-	private static String getInsuranceName(Fall fall){
+
+	private static String getInsuranceName(Fall fall) {
 		Kontakt costBearer = fall.getCostBearer();
 		if (costBearer == null) {
 			costBearer = fall.getGarant();
 		}
 		return costBearer.getLabel(true);
 	}
-	
-	private static String getInsuranceGln(Fall fall){
+
+	private static String getInsuranceGln(Fall fall) {
 		Kontakt costBearer = fall.getCostBearer();
 		if (costBearer == null) {
 			costBearer = fall.getGarant();
 		}
 		return costBearer.getXid(DOMAIN_EAN);
 	}
-	
-	private static Fall getFall(ch.elexis.data.Patient patient){
+
+	private static Fall getFall(ch.elexis.data.Patient patient) {
 		Fall fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
-		if (fall != null && fall.getPatient() != null
-			&& !patient.getId().equals(fall.getPatient().getId())) {
+		if (fall != null && fall.getPatient() != null && !patient.getId().equals(fall.getPatient().getId())) {
 			fall = null;
 		}
 		if (fall == null) {
@@ -107,8 +106,8 @@ public class Patient {
 		}
 		return fall;
 	}
-	
-	private static String getInsuranceOrCaseNumber(final Fall fall){
+
+	private static String getInsuranceOrCaseNumber(final Fall fall) {
 		String nummer = null;
 		BillingLaw gesetz = BillingLaw.KVG;
 		try {

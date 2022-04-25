@@ -7,9 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
  *
- *    
+ *
+ *
  *******************************************************************************/
 package elexis_db_shaker.actions;
 
@@ -29,13 +29,13 @@ public class SettingsDialog extends Dialog {
 	boolean replaceKons;
 	boolean deleteDocs;
 	boolean purgeDB;
-	
-	protected SettingsDialog(Shell parentShell){
+
+	protected SettingsDialog(Shell parentShell) {
 		super(parentShell);
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = (Composite) super.createDialogArea(parent);
 		bNames = new Button(ret, SWT.CHECK);
 		bNames.setText("Namen durch echt wirkende Pseudos ersetzen");
@@ -47,19 +47,19 @@ public class SettingsDialog extends Dialog {
 		bPurge.setText("Gelöscht markierte Objekte definitiv löschen");
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		getShell().setText("Datenbank-Anonymisierer");
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		replaceNames = bNames.getSelection();
 		replaceKons = bKons.getSelection();
 		deleteDocs = bDocuments.getSelection();
 		super.okPressed();
 	}
-	
+
 }

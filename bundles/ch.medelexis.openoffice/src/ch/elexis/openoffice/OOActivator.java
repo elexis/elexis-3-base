@@ -34,13 +34,12 @@ public class OOActivator extends AbstractUIPlugin {
 	public OOActivator() {
 		super();
 		plugin = this;
-		System.setProperty(IOfficeApplication.NOA_NATIVE_LIB_PATH,
-				getLibrariesLocation());
+		System.setProperty(IOfficeApplication.NOA_NATIVE_LIB_PATH, getLibrariesLocation());
 	}
 
 	/**
 	 * Returns the shared instance.
-	 * 
+	 *
 	 * @return shared instance
 	 */
 	public static OOActivator getDefault() {
@@ -48,54 +47,45 @@ public class OOActivator extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns office application. The office application is not activated.
-	 * Before using the office application the client should check the
-	 * activation state.
-	 * 
-	 * @param shell
-	 *            shell to be used for dialogs
-	 * 
+	 * Returns office application. The office application is not activated. Before
+	 * using the office application the client should check the activation state.
+	 *
+	 * @param shell shell to be used for dialogs
+	 *
 	 * @return office application
 	 */
-	public synchronized IOfficeApplication getLocalOfficeApplication(Shell shell)
-			throws OfficeApplicationException {
+	public synchronized IOfficeApplication getLocalOfficeApplication(Shell shell) throws OfficeApplicationException {
 		log.debug(MessageFormat.format("getLocalOfficeApplication({0})", shell));
 
 		if (localOfficeApplication == null && librariesOk) {
 			Map<String, String> configuration = new HashMap<String, String>(1);
-			configuration.put(IOfficeApplication.APPLICATION_TYPE_KEY,
-					IOfficeApplication.LOCAL_APPLICATION);
-			localOfficeApplication = OfficeApplicationRuntime
-					.getApplication(configuration);
+			configuration.put(IOfficeApplication.APPLICATION_TYPE_KEY, IOfficeApplication.LOCAL_APPLICATION);
+			localOfficeApplication = OfficeApplicationRuntime.getApplication(configuration);
 		}
 		return localOfficeApplication;
 	}
 
 	/**
-	 * Returns location of the libraries of the plugin. Returns null if the
-	 * location can not be provided.
-	 * 
-	 * @return location of the libraries of the plugin or null if the location
-	 *         can not be provided
+	 * Returns location of the libraries of the plugin. Returns null if the location
+	 * can not be provided.
+	 *
+	 * @return location of the libraries of the plugin or null if the location can
+	 *         not be provided
 	 */
 	public String getLibrariesLocation() {
 		if (librariesLocation == null) {
 			try {
 				URL url = Platform.getBundle("ag.ion.noa").getEntry("/");
-				url = FileLocator.toFileURL(url);		
-				String bundleLocation = url.getPath();				
-				File file = new File(bundleLocation);			
-				bundleLocation = file.getAbsolutePath();			
-				bundleLocation = bundleLocation
-						.replace('/', File.separatorChar)
-						+ File.separator
-						+ "lib";
+				url = FileLocator.toFileURL(url);
+				String bundleLocation = url.getPath();
+				File file = new File(bundleLocation);
+				bundleLocation = file.getAbsolutePath();
+				bundleLocation = bundleLocation.replace('/', File.separatorChar) + File.separator + "lib";
 
 				librariesLocation = bundleLocation;
 				librariesOk = true;
 
-				if (!new File(librariesLocation + File.separator
-						+ "ICE_JNIRegistry.dll").exists()) {
+				if (!new File(librariesLocation + File.separator + "ICE_JNIRegistry.dll").exists()) {
 					if (!new File("ICE_JNIRegistry.dll").exists()) {
 						librariesOk = false;
 						librariesLocation = null;

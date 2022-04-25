@@ -10,9 +10,9 @@ import ch.elexis.core.model.IEncounter;
 import ch.rgw.tools.Result;
 
 public class LaborLeistungVerifier implements IBillableVerifier {
-	
+
 	@Override
-	public Result<IBillable> verifyAdd(IBillable billable, IEncounter encounter, double amount){
+	public Result<IBillable> verifyAdd(IBillable billable, IEncounter encounter, double amount) {
 		if (billable instanceof ILaborLeistung) {
 			ILaborLeistung laborLeistung = (ILaborLeistung) billable;
 			LocalDate date = encounter.getDate();
@@ -21,16 +21,14 @@ public class LaborLeistungVerifier implements IBillableVerifier {
 			} else {
 				DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 				return new Result<IBillable>(Result.SEVERITY.ERROR, 2,
-					laborLeistung.getCode() + " ("
-						+ laborLeistung.getValidFrom().format(dateFormatter) + "-"
-						+ laborLeistung.getValidTo().format(dateFormatter)
-						+ ") Gültigkeit beinhaltet nicht das Konsultationsdatum "
-						+ date.format(dateFormatter),
-					billable, false);
-				
+						laborLeistung.getCode() + " (" + laborLeistung.getValidFrom().format(dateFormatter) + "-"
+								+ laborLeistung.getValidTo().format(dateFormatter)
+								+ ") Gültigkeit beinhaltet nicht das Konsultationsdatum " + date.format(dateFormatter),
+						billable, false);
+
 			}
 		}
 		return new Result<IBillable>(Result.SEVERITY.ERROR, 2,
-			"Verrechneter code [" + billable + "] ist keine Laborleistung", billable, true);
+				"Verrechneter code [" + billable + "] ist keine Laborleistung", billable, true);
 	}
 }

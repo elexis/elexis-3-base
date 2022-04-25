@@ -7,9 +7,6 @@ import com.hilotec.elexis.opendocument.export.IDocExporter;
 
 import ch.elexis.omnivore.ui.util.UiUtils;
 
-
-
-
 public class Exporter implements IDocExporter {
 
 	@Override
@@ -18,7 +15,7 @@ public class Exporter implements IDocExporter {
 		byte[] b;
 		try {
 			f = new RandomAccessFile(path, "r");
-			b = new byte[(int)f.length()];
+			b = new byte[(int) f.length()];
 			f.read(b);
 			f.close();
 		} catch (Exception e) {

@@ -17,60 +17,60 @@ import ch.elexis.omnivore.Constants;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 import ch.elexis.omnivore.ui.util.UiUtils;
+
 public class KonsExtension implements IKonsExtension {
 	IRichTextDisplay mine;
-	
+
 	static final String DOCHANDLE_TITLE = "Dokument: ";
-	
+
 	@Override
-	public String connect(IRichTextDisplay tf){
+	public String connect(IRichTextDisplay tf) {
 		mine = tf;
 		mine.addDropReceiver(IDocumentHandle.class, this);
 		return Constants.PLUGIN_ID;
 	}
-	
+
 	@Override
-	public boolean doLayout(StyleRange styleRange, String provider, String id){
+	public boolean doLayout(StyleRange styleRange, String provider, String id) {
 		styleRange.background = UiDesk.getColor(UiDesk.COL_LIGHTBLUE);
 		return true;
 	}
-	
+
 	@Override
-	public boolean doXRef(String refProvider, String refID){
-		Optional<IDocumentHandle> handle =
-			OmnivoreModelServiceHolder.get().load(refID, IDocumentHandle.class);
+	public boolean doXRef(String refProvider, String refID) {
+		Optional<IDocumentHandle> handle = OmnivoreModelServiceHolder.get().load(refID, IDocumentHandle.class);
 		if (handle.isPresent()) {
 			UiUtils.open(handle.get());
 			ContextServiceHolder.get().getRootContext().setTyped(handle.get());
 		}
 		return true;
 	}
-	
+
 	@Override
-	public void insert(Object o, int pos){
+	public void insert(Object o, int pos) {
 		if (o instanceof IDocumentHandle) {
 			IDocumentHandle handle = (IDocumentHandle) o;
-			final Konsultation k =
-				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			
-			mine.insertXRef(pos, DOCHANDLE_TITLE + handle.getLabel(), Constants.PLUGIN_ID,
-				handle.getId());
+			final Konsultation k = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+
+			mine.insertXRef(pos, DOCHANDLE_TITLE + handle.getLabel(), Constants.PLUGIN_ID, handle.getId());
 			k.updateEintrag(mine.getContentsAsXML(), false);
 			ElexisEventDispatcher.update(k);
 		}
-		
+
 	}
-	
+
 	@Override
-	public IAction[] getActions(){
+	public IAction[] getActions() {
 		return null;
 	}
-	
+
 	@Override
-	public void removeXRef(String refProvider, String refID){}
-	
+	public void removeXRef(String refProvider, String refID) {
+	}
+
 	@Override
-	public void setInitializationData(IConfigurationElement config, String propertyName,
-		Object data) throws CoreException{}
-	
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+			throws CoreException {
+	}
+
 }

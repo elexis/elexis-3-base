@@ -43,41 +43,41 @@ import ch.elexis.covid.cert.service.rest.model.TestInfo;
 import ch.elexis.covid.cert.service.rest.model.TestModel;
 
 public class TestModelDialog extends Dialog {
-	
+
 	@Inject
 	private IValueSetService valueSetService;
-	
+
 	private TestModel model;
-	
+
 	private ComboViewer typeCombo;
-	
+
 	private ComboViewer manufacturerCombo;
-	
+
 	private CDateTime sampleDateTime;
-	
+
 	private Text testingCenter;
-	
+
 	private ComboViewer countryCombo;
-	
+
 	private Text transferCode;
-	
-	public TestModelDialog(TestModel model, Shell shell){
+
+	public TestModelDialog(TestModel model, Shell shell) {
 		super(shell);
 		this.model = model;
-		
+
 		CoreUiUtil.injectServices(this);
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		getShell().setText("Daten des Test");
 		parent = (Composite) super.createDialogArea(parent);
-		
+
 		typeCombo = new ComboViewer(parent, SWT.BORDER);
 		typeCombo.setContentProvider(ArrayContentProvider.getInstance());
 		typeCombo.setLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof ICoding) {
 					return ((ICoding) element).getDisplay();
 				}
@@ -88,9 +88,8 @@ public class TestModelDialog extends Dialog {
 		typeCombo.setInput(testsTypeValueSet);
 		typeCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
-				String code =
-					((ICoding) typeCombo.getStructuredSelection().getFirstElement()).getCode();
+			public void selectionChanged(SelectionChangedEvent event) {
+				String code = ((ICoding) typeCombo.getStructuredSelection().getFirstElement()).getCode();
 				model.getTestInfo()[0].setTypeCode(code);
 				if (typeCombo.getControl().getData("deco") != null) {
 					removeErrorDecoration(typeCombo.getControl());
@@ -109,14 +108,14 @@ public class TestModelDialog extends Dialog {
 		typeCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		typeCombo.getControl().setToolTipText("Test Typ");
 		typeCombo.getCombo().setText("Test Typ");
-		
+
 		manufacturerCombo = new ComboViewer(parent, SWT.BORDER);
 		manufacturerCombo.setContentProvider(ArrayContentProvider.getInstance());
 		List<ICoding> testsValueSet = valueSetService.getValueSet("covid-19-lab-test-manufacturer");
 		manufacturerCombo.setInput(testsValueSet);
 		manufacturerCombo.setLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof ICoding) {
 					return ((ICoding) element).getDisplay();
 				}
@@ -125,36 +124,33 @@ public class TestModelDialog extends Dialog {
 		});
 		manufacturerCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				if (event.getStructuredSelection() != null
-					&& event.getStructuredSelection().getFirstElement() != null) {
+						&& event.getStructuredSelection().getFirstElement() != null) {
 					model.getTestInfo()[0].setManufacturerCode(
-						((ICoding) event.getStructuredSelection().getFirstElement()).getCode());
+							((ICoding) event.getStructuredSelection().getFirstElement()).getCode());
 					if (manufacturerCombo.getControl().getData("deco") != null) {
 						removeErrorDecoration(manufacturerCombo.getControl());
 					}
 				}
 			}
 		});
-		manufacturerCombo.getControl()
-			.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		manufacturerCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		manufacturerCombo.getControl().setToolTipText("Produkt");
 		manufacturerCombo.getCombo().setText("Produkt");
-		
-		sampleDateTime =
-			new CDateTime(parent, CDT.BORDER | CDT.DATE_MEDIUM | CDT.TIME_SHORT | CDT.DROP_DOWN);
+
+		sampleDateTime = new CDateTime(parent, CDT.BORDER | CDT.DATE_MEDIUM | CDT.TIME_SHORT | CDT.DROP_DOWN);
 		sampleDateTime.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				Date now = new Date();
 				if (sampleDateTime.getSelection() != null) {
 					Date selection = sampleDateTime.getSelection();
 					if (selection.before(now)) {
-						ZonedDateTime zonedSelected = ZonedDateTime.ofInstant(selection.toInstant(), ZoneId.systemDefault());
+						ZonedDateTime zonedSelected = ZonedDateTime.ofInstant(selection.toInstant(),
+								ZoneId.systemDefault());
 						ZonedDateTime utcDateTime = zonedSelected.withZoneSameInstant(ZoneId.of("Z"));
-						model.getTestInfo()[0].setSampleDateTime(
-							TestInfo.formatter
-								.format(utcDateTime));
+						model.getTestInfo()[0].setSampleDateTime(TestInfo.formatter.format(utcDateTime));
 						removeErrorDecoration(sampleDateTime);
 					} else {
 						addErrorDecoration(sampleDateTime);
@@ -163,16 +159,17 @@ public class TestModelDialog extends Dialog {
 			}
 		});
 		try {
-			ZonedDateTime utcDateTime = LocalDateTime.parse(model.getTestInfo()[0].getSampleDateTime(),TestInfo.formatter).atZone(ZoneId.of("Z"));
+			ZonedDateTime utcDateTime = LocalDateTime
+					.parse(model.getTestInfo()[0].getSampleDateTime(), TestInfo.formatter).atZone(ZoneId.of("Z"));
 			ZonedDateTime localDateTime = utcDateTime.withZoneSameInstant(ZoneId.systemDefault());
 			sampleDateTime.setSelection(Date.from(localDateTime.toInstant()));
 		} catch (DateTimeParseException e) {
 			LoggerFactory.getLogger(getClass())
-				.warn("Could not parse date [" + model.getTestInfo()[0].getSampleDateTime() + "]");
+					.warn("Could not parse date [" + model.getTestInfo()[0].getSampleDateTime() + "]");
 		}
 		sampleDateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		sampleDateTime.setToolTipText("Datum der Probe");
-		
+
 		testingCenter = new Text(parent, SWT.BORDER);
 		testingCenter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		testingCenter.setMessage("Test Ort Name (z.B. Praxis Name) max. 50 Zeichen");
@@ -180,7 +177,7 @@ public class TestModelDialog extends Dialog {
 		testingCenter.setText(model.getTestInfo()[0].getTestingCentreOrFacility());
 		testingCenter.addModifyListener(new ModifyListener() {
 			@Override
-			public void modifyText(ModifyEvent e){
+			public void modifyText(ModifyEvent e) {
 				if (StringUtils.isNotBlank(testingCenter.getText())) {
 					model.getTestInfo()[0].setTestingCentreOrFacility(testingCenter.getText());
 					if (testingCenter.getData("deco") != null) {
@@ -189,23 +186,22 @@ public class TestModelDialog extends Dialog {
 				}
 			}
 		});
-		
+
 		countryCombo = new ComboViewer(parent, SWT.BORDER);
 		countryCombo.setContentProvider(ArrayContentProvider.getInstance());
-		countryCombo.setInput(valueSetService.getValueSet("country-alpha-2-de").stream()
-			.map(c -> c.getCode()).collect(Collectors.toList()));
+		countryCombo.setInput(valueSetService.getValueSet("country-alpha-2-de").stream().map(c -> c.getCode())
+				.collect(Collectors.toList()));
 		countryCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
-				model.getTestInfo()[0].setMemberStateOfTest(
-					((String) event.getStructuredSelection().getFirstElement()));
+			public void selectionChanged(SelectionChangedEvent event) {
+				model.getTestInfo()[0]
+						.setMemberStateOfTest(((String) event.getStructuredSelection().getFirstElement()));
 			}
 		});
-		countryCombo
-			.setSelection(new StructuredSelection(model.getTestInfo()[0].getMemberStateOfTest()));
+		countryCombo.setSelection(new StructuredSelection(model.getTestInfo()[0].getMemberStateOfTest()));
 		countryCombo.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		countryCombo.getControl().setToolTipText("Land des Test");
-		
+
 		if (StringUtils.isBlank(model.getTestInfo()[0].getTypeCode())) {
 			// init default values
 			initDefaultAntigen(testsTypeValueSet, testsValueSet);
@@ -214,7 +210,7 @@ public class TestModelDialog extends Dialog {
 			((GridData) typeCombo.getCombo().getLayoutData()).exclude = true;
 			typeCombo.getCombo().setVisible(false);
 			typeCombo.getCombo().getParent().layout();
-			
+
 			if ("LP6464-4".equals(model.getTestInfo()[0].getTypeCode())) {
 				manufacturerCombo.getControl().setEnabled(false);
 				model.getTestInfo()[0].setManufacturerCode(null);
@@ -226,14 +222,14 @@ public class TestModelDialog extends Dialog {
 				initDefaultAntigen(testsTypeValueSet, testsValueSet);
 			}
 		}
-		
+
 		transferCode = new Text(parent, SWT.BORDER);
 		transferCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		transferCode.setTextLimit(9);
 		transferCode.setMessage("Transfer Code");
 		transferCode.addModifyListener(new ModifyListener() {
 			@Override
-			public void modifyText(ModifyEvent e){
+			public void modifyText(ModifyEvent e) {
 				if (transferCode.getText() != null) {
 					// update to upper case
 					if (!transferCode.getText().equals(transferCode.getText().toUpperCase())) {
@@ -248,37 +244,36 @@ public class TestModelDialog extends Dialog {
 				model.setAppCode(null);
 			}
 		});
-		
+
 		manufacturerCombo.getControl().setFocus();
 		return parent;
 	}
-	
-	private void initDefaultPcr(List<ICoding> testsTypeValueSet, List<ICoding> testsValueSet){
+
+	private void initDefaultPcr(List<ICoding> testsTypeValueSet, List<ICoding> testsValueSet) {
 		testsTypeValueSet.stream().filter(c -> c.getCode().equals("LP6464-4")).findFirst()
-			.ifPresent(c -> typeCombo.setSelection(new StructuredSelection(c)));
+				.ifPresent(c -> typeCombo.setSelection(new StructuredSelection(c)));
 	}
-	
-	private void initDefaultAntigen(List<ICoding> testsTypeValueSet, List<ICoding> testsValueSet){
+
+	private void initDefaultAntigen(List<ICoding> testsTypeValueSet, List<ICoding> testsValueSet) {
 		testsTypeValueSet.stream().filter(c -> c.getCode().equals("LP217198-3")).findFirst()
-			.ifPresent(c -> typeCombo.setSelection(new StructuredSelection(c)));
-		String defaultTestCode =
-			ConfigServiceHolder.get().get(CertificatesService.CFG_DEFAULT_TESTPRODUCT, null);
+				.ifPresent(c -> typeCombo.setSelection(new StructuredSelection(c)));
+		String defaultTestCode = ConfigServiceHolder.get().get(CertificatesService.CFG_DEFAULT_TESTPRODUCT, null);
 		if (defaultTestCode != null) {
 			testsValueSet.stream().filter(c -> c.getCode().equals(defaultTestCode)).findFirst()
-				.ifPresent(c -> manufacturerCombo.setSelection(new StructuredSelection(c)));
+					.ifPresent(c -> manufacturerCombo.setSelection(new StructuredSelection(c)));
 		}
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		if (StringUtils.isEmpty(model.getTestInfo()[0].getTypeCode())) {
 			addErrorDecoration(typeCombo.getControl());
 			return;
 		}
 		try {
-			if (model.getTestInfo()[0].getSampleDateTime() == null || LocalDateTime
-				.parse(model.getTestInfo()[0].getSampleDateTime(), TestInfo.formatter)
-				.isAfter(LocalDateTime.now())) {
+			if (model.getTestInfo()[0].getSampleDateTime() == null
+					|| LocalDateTime.parse(model.getTestInfo()[0].getSampleDateTime(), TestInfo.formatter)
+							.isAfter(LocalDateTime.now())) {
 				addErrorDecoration(sampleDateTime);
 				return;
 			}
@@ -286,26 +281,26 @@ public class TestModelDialog extends Dialog {
 			addErrorDecoration(sampleDateTime);
 			return;
 		}
-		
+
 		super.okPressed();
 	}
-	
-	private void removeErrorDecoration(Control control){
+
+	private void removeErrorDecoration(Control control) {
 		if (control.getData("deco") != null) {
 			((ControlDecoration) control.getData("deco")).hide();
 			((ControlDecoration) control.getData("deco")).dispose();
 			control.setData("deco", null);
 		}
 	}
-	
-	private void addErrorDecoration(Control control){
+
+	private void addErrorDecoration(Control control) {
 		if (control.getData("deco") == null) {
 			ControlDecoration deco = new ControlDecoration(control, SWT.TOP | SWT.LEFT);
-			
+
 			// set description and image
 			deco.setDescriptionText("Fehlende oder fehlerhafte Eingabe");
-			deco.setImage(FieldDecorationRegistry.getDefault()
-				.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR).getImage());
+			deco.setImage(FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR)
+					.getImage());
 			// hide deco if not in focus
 			deco.setShowOnlyOnFocus(false);
 			deco.show();

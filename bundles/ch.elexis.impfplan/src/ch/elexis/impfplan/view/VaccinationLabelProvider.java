@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.impfplan.view;
@@ -20,15 +20,15 @@ import ch.elexis.impfplan.model.Vaccination;
 import ch.elexis.impfplan.model.VaccinationType;
 
 public class VaccinationLabelProvider extends LabelProvider implements ITableLabelProvider {
-	
+
 	@Override
-	public Image getColumnImage(Object element, int columnIndex){
+	public Image getColumnImage(Object element, int columnIndex) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public String getColumnText(Object element, int columnIndex){
+	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof Vaccination) {
 			Vaccination vac = (Vaccination) element;
 			VaccinationType vt = vac.getVaccinationType();
@@ -44,5 +44,5 @@ public class VaccinationLabelProvider extends LabelProvider implements ITableLab
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 }

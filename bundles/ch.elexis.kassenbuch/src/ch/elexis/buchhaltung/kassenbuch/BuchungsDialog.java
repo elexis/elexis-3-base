@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    N. Giger - Using Nebula CDateTime as DatePicker
- *    
+ *
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -32,7 +32,7 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class BuchungsDialog extends TitleAreaDialog {
-	
+
 	boolean bType;
 	LabeledInputField liBeleg, liBetrag;
 	CDateTime liDate;
@@ -40,23 +40,23 @@ public class BuchungsDialog extends TitleAreaDialog {
 	Text text;
 	KassenbuchEintrag last, act;
 	Combo cbDate, cbCats, cbPayments;
-	
-	BuchungsDialog(Shell shell, boolean mode){
+
+	BuchungsDialog(Shell shell, boolean mode) {
 		super(shell);
 		bType = mode;
 		act = null;
 	}
-	
+
 	/**
 	 * @wbp.parser.constructor
 	 */
-	BuchungsDialog(Shell shell, KassenbuchEintrag kbe){
+	BuchungsDialog(Shell shell, KassenbuchEintrag kbe) {
 		super(shell);
 		act = kbe;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
@@ -68,7 +68,7 @@ public class BuchungsDialog extends TitleAreaDialog {
 		cbDate_1.setLayout(new GridLayout(1, false));
 		dDate = new Label(cbDate_1, SWT.NONE);
 		dDate.setText("Datum");
-		liDate =  new CDateTime(cbDate_1, CDT.DATE_MEDIUM | CDT.DROP_DOWN | SWT.BORDER | CDT.COMPACT);
+		liDate = new CDateTime(cbDate_1, CDT.DATE_MEDIUM | CDT.DROP_DOWN | SWT.BORDER | CDT.COMPACT);
 		liBetrag = new LabeledInputField(top, "Betrag", LabeledInputField.Typ.MONEY);
 		Composite cCombos = new Composite(ret, SWT.NONE);
 		cCombos.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -77,12 +77,12 @@ public class BuchungsDialog extends TitleAreaDialog {
 		cbCats = new Combo(cCombos, SWT.SINGLE);
 		cbCats.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cbCats.setItems(KassenbuchEintrag.getCategories());
-		
+
 		new Label(cCombos, SWT.NONE).setText("Zahlungsart");
 		cbPayments = new Combo(cCombos, SWT.SINGLE);
 		cbPayments.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cbPayments.setItems(KassenbuchEintrag.getPaymentModes());
-		
+
 		new Label(ret, SWT.NONE).setText("Buchungstext");
 		text = new Text(ret, SWT.BORDER);
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -99,9 +99,9 @@ public class BuchungsDialog extends TitleAreaDialog {
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		if (act == null) {
 			if (bType) {
@@ -116,9 +116,9 @@ public class BuchungsDialog extends TitleAreaDialog {
 		getShell().setText("Buchung für Kassenbuch");
 		liBetrag.getControl().setFocus();
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		Money money = new Money();
 		try {
 			money.addAmount(liBetrag.getText());
@@ -127,24 +127,20 @@ public class BuchungsDialog extends TitleAreaDialog {
 		}
 		TimeTool tt = new TimeTool(liDate.getText());
 		String bt = text.getText();
-		
+
 		if (act == null) {
 			if (!bType) {
 				money = money.negate();
 			}
-			act =
-				new KassenbuchEintrag(liBeleg.getText(), tt.toString(TimeTool.DATE_GER), money, bt,
-					last);
+			act = new KassenbuchEintrag(liBeleg.getText(), tt.toString(TimeTool.DATE_GER), money, bt, last);
 		} else {
-			act.set(new String[] {
-				"BelegNr", "Datum", "Betrag", "Text"
-			}, liBeleg.getText(), tt.toString(TimeTool.DATE_GER), money.getCentsAsString(),
-				text.getText());
+			act.set(new String[] { "BelegNr", "Datum", "Betrag", "Text" }, liBeleg.getText(),
+					tt.toString(TimeTool.DATE_GER), money.getCentsAsString(), text.getText());
 			KassenbuchEintrag.recalc();
 		}
 		act.setKategorie(cbCats.getText());
 		act.setPaymentMode(cbPayments.getText());
 		super.okPressed();
 	}
-	
+
 }

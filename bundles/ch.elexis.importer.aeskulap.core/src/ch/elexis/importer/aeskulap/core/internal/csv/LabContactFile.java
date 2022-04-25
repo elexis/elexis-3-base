@@ -13,32 +13,31 @@ import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 
 public class LabContactFile extends AbstractCsvImportFile<Labor> implements IAeskulapImportFile {
-	
+
 	private File file;
-	
-	public LabContactFile(File file){
+
+	public LabContactFile(File file) {
 		super(file);
 		this.file = file;
 	}
-	
+
 	@Override
-	public File getFile(){
+	public File getFile() {
 		return file;
 	}
-	
-	public static boolean canHandleFile(File file){
+
+	public static boolean canHandleFile(File file) {
 		return FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("csv")
-			&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Labor_LabSource");
+				&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Labor_LabSource");
 	}
-	
+
 	@Override
-	public Type getType(){
+	public Type getType() {
 		return Type.LABORCONTACT;
 	}
-	
+
 	@Override
-	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite,
-		SubMonitor monitor){
+	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite, SubMonitor monitor) {
 		monitor.beginTask("Aeskuplap Labor Adressen Import", getLineCount());
 		try {
 			String[] line = null;
@@ -62,26 +61,26 @@ public class LabContactFile extends AbstractCsvImportFile<Labor> implements IAes
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean isHeaderLine(String[] line){
+	public boolean isHeaderLine(String[] line) {
 		return line[0].equalsIgnoreCase("LabSource_no");
 	}
-	
+
 	@Override
-	public String getXidDomain(){
+	public String getXidDomain() {
 		return IAeskulapImporter.XID_IMPORT_LABCONTACT;
 	}
-	
+
 	@Override
-	public Labor create(String[] line){
+	public Labor create(String[] line) {
 		Labor ret = new Labor(line[1], line[2]);
 		ret.addXid(getXidDomain(), line[0], true);
 		return ret;
 	}
-	
+
 	@Override
-	public void setProperties(Labor contact, String[] line){
+	public void setProperties(Labor contact, String[] line) {
 		// no more properties
 	}
 }

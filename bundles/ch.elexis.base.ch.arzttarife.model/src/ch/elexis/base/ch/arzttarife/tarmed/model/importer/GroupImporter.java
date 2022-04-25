@@ -25,51 +25,50 @@ import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
 
 public class GroupImporter {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ServiceImporter.class);
-	
+
 	private JdbcLink cacheDb;
 	private String lang;
 	private String law;
 	private TimeTool validFrom;
 	private TimeTool validTo;
-	
+
 	private HashMap<String, TransientTarmedGroup> loadedGroups;
-	
-	public GroupImporter(JdbcLink cacheDb, String lang, String law){
+
+	public GroupImporter(JdbcLink cacheDb, String lang, String law) {
 		this.cacheDb = cacheDb;
 		this.lang = lang;
 		this.law = law;
 		this.validFrom = new TimeTool();
 		this.validTo = new TimeTool();
-		
+
 		this.loadedGroups = new HashMap<>();
 	}
-	
-	public IStatus doImport(IProgressMonitor ipm) throws SQLException, IOException{
+
+	public IStatus doImport(IProgressMonitor ipm) throws SQLException, IOException {
 		Stm servicesStm = null;
 		try {
 			ipm.subTask("Importiere Gruppen");
-			
+
 			servicesStm = cacheDb.getStatement();
 			ResultSet res = servicesStm.query(String.format("SELECT * FROM %sLEISTUNG_GRUPPEN", //$NON-NLS-1$
-				TarmedReferenceDataImporter.ImportPrefix));
+					TarmedReferenceDataImporter.ImportPrefix));
 			while (res.next()) {
 				String groupName = res.getString("GRUPPE");
 				String serviceCode = res.getString("LNR");
 				initValidTime(res);
-				
+
 				String id = getIdString(groupName, law);
 				TransientTarmedGroup transientGroup = loadedGroups.get(id);
 				if (transientGroup == null) {
-					transientGroup =
-						new TransientTarmedGroup(id, groupName, law, validFrom.toLocalDate(),
+					transientGroup = new TransientTarmedGroup(id, groupName, law, validFrom.toLocalDate(),
 							validTo.toLocalDate(), this);
 					loadedGroups.put(id, transientGroup);
 				}
 				transientGroup.addService(serviceCode);
 			}
-			
+
 			for (String key : loadedGroups.keySet()) {
 				TransientTarmedGroup transientGroup = loadedGroups.get(key);
 				TarmedGroup group = transientGroup.persist();
@@ -82,94 +81,90 @@ public class GroupImporter {
 		}
 		return Status.OK_STATUS;
 	}
-	
-	private void initValidTime(ResultSet res) throws SQLException{
+
+	private void initValidTime(ResultSet res) throws SQLException {
 		validFrom.set(res.getString("GUELTIG_VON"));
 		validTo.set(res.getString("GUELTIG_BIS"));
 	}
-	
-	private String getIdString(String groupName, String law){
-		return "GRP" + groupName + "-" + validFrom.toString(TimeTool.DATE_COMPACT)
-			+ getLawIdExtension();
+
+	private String getIdString(String groupName, String law) {
+		return "GRP" + groupName + "-" + validFrom.toString(TimeTool.DATE_COMPACT) + getLawIdExtension();
 	}
-	
-	private String getLawIdExtension(){
+
+	private String getLawIdExtension() {
 		if (law != null && !law.isEmpty()) {
 			return "-" + law;
 		}
 		return "";
 	}
-	
+
 	private static class TransientTarmedGroup {
-		
+
 		private String id;
 		private String code;
 		private String law;
 		private StringBuilder services;
-		
+
 		private LocalDate validFrom;
 		private LocalDate validTo;
-		
+
 		private GroupImporter importer;
-		
-		public TransientTarmedGroup(String id, String groupName, String law, LocalDate validFrom,
-			LocalDate validTo, GroupImporter importer){
+
+		public TransientTarmedGroup(String id, String groupName, String law, LocalDate validFrom, LocalDate validTo,
+				GroupImporter importer) {
 			this.id = id;
 			this.code = groupName;
 			this.law = law;
 			this.validFrom = validFrom;
 			this.validTo = validTo;
-			
+
 			this.services = new StringBuilder();
-			
+
 			this.importer = importer;
 		}
-		
-		public TarmedGroup persist() throws SQLException, IOException{
-			TarmedGroup persistent =
-				new TarmedGroup();
+
+		public TarmedGroup persist() throws SQLException, IOException {
+			TarmedGroup persistent = new TarmedGroup();
 			persistent.setId(id);
 			persistent.setGroupName(code);
 			persistent.setLaw(law);
 			persistent.setValidFrom(validFrom);
 			persistent.setValidTo(validTo);
 			persistent.setRawServices(services.toString());
-			
+
 			TarmedExtension extension = new TarmedExtension();
 			extension.setCode(persistent.getId());
-			Map<Object, Object> extensionMap =
-				JpaModelUtil.extInfoFromBytes(extension.getExtInfo());
-			
+			Map<Object, Object> extensionMap = JpaModelUtil.extInfoFromBytes(extension.getExtInfo());
+
 			// get OPERATOR, MENGE, ZR_ANZAHL, PRO_NACH, ZR_EINHEIT
 			String limits = getLimits(code);
 			extensionMap.put("limits", limits);
-			
+
 			// get LNR_SLAVE, TYP (invalid combinations with other codes)
 			importKumulations(code);
-			
+
 			extension.setExtInfo(JpaModelUtil.extInfoToBytes(extensionMap));
-			
+
 			EntityUtil.save(Arrays.asList(persistent, extension));
-			
+
 			return persistent;
 		}
-		
-		public void addService(String serviceCode){
+
+		public void addService(String serviceCode) {
 			if (services.length() > 0) {
 				services.append(TarmedGroup.SERVICES_SEPARATOR);
 			}
 			services.append(serviceCode);
 		}
-		
-		private String getLimits(String groupName) throws SQLException, IOException{
+
+		private String getLimits(String groupName) throws SQLException, IOException {
 			StringBuilder sb = new StringBuilder();
 			Stm subStm = importer.cacheDb.getStatement();
 			try {
-				ResultSet rsub = subStm.query(
-					String.format("SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR='%s' AND ART='G'",
-						TarmedReferenceDataImporter.ImportPrefix, groupName)); //$NON-NLS-1$
-				List<Map<String, String>> validResults =
-					ImporterUtil.getValidValueMaps(rsub, new TimeTool(validFrom));
+				ResultSet rsub = subStm
+						.query(String.format("SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR='%s' AND ART='G'",
+								TarmedReferenceDataImporter.ImportPrefix, groupName)); // $NON-NLS-1$
+				List<Map<String, String>> validResults = ImporterUtil.getValidValueMaps(rsub, new TimeTool(validFrom));
 				if (!validResults.isEmpty()) {
 					for (Map<String, String> map : validResults) {
 						sb.append(map.get("OPERATOR")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
@@ -188,30 +183,29 @@ public class GroupImporter {
 			}
 			return sb.toString();
 		}
-		
+
 		/**
-		 * Import all the kumulations from the LEISTUNG_KUMULATION table for the given code. The
-		 * kumulations contain inclusions, exclusions and exclusives.
-		 * 
-		 * @param code
-		 *            of a tarmed value
+		 * Import all the kumulations from the LEISTUNG_KUMULATION table for the given
+		 * code. The kumulations contain inclusions, exclusions and exclusives.
+		 *
+		 * @param code      of a tarmed value
 		 * @param stmCached
 		 * @throws SQLException
 		 */
-		private void importKumulations(String groupName) throws SQLException{
+		private void importKumulations(String groupName) throws SQLException {
 			Stm subStm = importer.cacheDb.getStatement();
 			try {
-				try (ResultSet res = subStm.query(String.format(
-					"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s AND ART_MASTER='G'",
-					TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(groupName)))) {
+				try (ResultSet res = subStm.query(
+						String.format("SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s AND ART_MASTER='G'",
+								TarmedReferenceDataImporter.ImportPrefix, JdbcLink.wrap(groupName)))) {
 					TimeTool fromTime = new TimeTool();
 					TimeTool toTime = new TimeTool();
-					
+
 					List<Object> kumulations = new ArrayList<>();
 					while (res != null && res.next()) {
 						fromTime.set(res.getString("GUELTIG_VON"));
 						toTime.set(res.getString("GUELTIG_BIS"));
-						
+
 						TarmedKumulation kumulation = new TarmedKumulation();
 						kumulation.setMasterCode(groupName);
 						kumulation.setMasterArt(res.getString("ART_MASTER"));

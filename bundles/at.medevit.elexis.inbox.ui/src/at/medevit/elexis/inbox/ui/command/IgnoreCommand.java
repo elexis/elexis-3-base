@@ -18,20 +18,18 @@ import at.medevit.elexis.inbox.ui.part.InboxView;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class IgnoreCommand extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		// check all open elements
-		List<IInboxElement> openElements =
-			InboxServiceHolder.get().getInboxElements(
-				ContextServiceHolder.get().getActiveMandator().orElse(null), null,
-				IInboxElementService.State.NEW);
-		
+		List<IInboxElement> openElements = InboxServiceHolder.get().getInboxElements(
+				ContextServiceHolder.get().getActiveMandator().orElse(null), null, IInboxElementService.State.NEW);
+
 		for (IInboxElement ie : openElements) {
 			ie.setState(State.SEEN);
 		}
 		InboxModelServiceHolder.get().save(openElements);
-		
+
 		// update view
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (part instanceof InboxView) {

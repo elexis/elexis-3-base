@@ -26,63 +26,59 @@ import at.medevit.elexis.impfplan.ui.VaccinationPlanHeaderDefinition;
 import at.medevit.elexis.impfplan.ui.VaccinationView;
 
 public class FilterHandlerDynamicContribution extends ContributionItem {
-	
+
 	private List<AbstractVaccinationPlan> vaccPlans = VaccinationPlanModel.getVaccinationPlans();
-	
-	public FilterHandlerDynamicContribution(){
+
+	public FilterHandlerDynamicContribution() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	public FilterHandlerDynamicContribution(String id){
+
+	public FilterHandlerDynamicContribution(String id) {
 		super(id);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public void fill(Menu menu, int index){
+	public void fill(Menu menu, int index) {
 		for (final AbstractVaccinationPlan avp : vaccPlans) {
 			MenuItem temp = new MenuItem(menu, SWT.RADIO, index);
 			temp.setText(avp.name);
-			temp.setSelection(avp.id.equalsIgnoreCase(VaccinationView
-				.getVaccinationHeaderDefinition().id));
+			temp.setSelection(avp.id.equalsIgnoreCase(VaccinationView.getVaccinationHeaderDefinition().id));
 			temp.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e){
-					VaccinationPlanHeaderDefinition vphd =
-						new VaccinationPlanHeaderDefinition(avp.id, avp.name, avp
-							.getOrderedBaseDiseases(), avp.getOrderedExtendedDiseases());
+				public void widgetSelected(SelectionEvent e) {
+					VaccinationPlanHeaderDefinition vphd = new VaccinationPlanHeaderDefinition(avp.id, avp.name,
+							avp.getOrderedBaseDiseases(), avp.getOrderedExtendedDiseases());
 					VaccinationView.setVaccinationHeaderDefinition(vphd);
 				}
 			});
 		}
-		
+
 		MenuItem menuItemHWAV = new MenuItem(menu, SWT.RADIO, index);
 		menuItemHWAV.setText("verabreichten Impfungen");
 		menuItemHWAV.setSelection(VaccinationView.getVaccinationHeaderDefinition().id
-			.equals(VaccinationView.HEADER_ID_SHOW_ADMINISTERED));
+				.equals(VaccinationView.HEADER_ID_SHOW_ADMINISTERED));
 		menuItemHWAV.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				@SuppressWarnings("unchecked")
-				VaccinationPlanHeaderDefinition vphd =
-					new VaccinationPlanHeaderDefinition(
-						VaccinationView.HEADER_ID_SHOW_ADMINISTERED,
-						VaccinationView.HEADER_ID_SHOW_ADMINISTERED, Collections.EMPTY_LIST,
-						Collections.EMPTY_LIST);
+				VaccinationPlanHeaderDefinition vphd = new VaccinationPlanHeaderDefinition(
+						VaccinationView.HEADER_ID_SHOW_ADMINISTERED, VaccinationView.HEADER_ID_SHOW_ADMINISTERED,
+						Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 				VaccinationView.setVaccinationHeaderDefinition(vphd);
 			}
 		});
-		
+
 		MenuItem menuInfo = new MenuItem(menu, SWT.CHECK, index);
 		menuInfo.setEnabled(false);
 		menuInfo.setText("Darstellung nach");
-		
+
 		super.fill(menu, index);
 	}
-	
+
 	@Override
-	public boolean isDynamic(){
+	public boolean isDynamic() {
 		return false;
 	}
-	
+
 }

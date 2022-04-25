@@ -22,23 +22,23 @@ import ch.elexis.core.services.IFormattedOutput;
 
 public class JaxbToPcl implements IFormattedOutput {
 	private static JaxbToPcl instance;
-	
-	public static JaxbToPcl getInstance(){
+
+	public static JaxbToPcl getInstance() {
 		if (instance == null)
 			instance = new JaxbToPcl();
 		return instance;
 	}
-	
+
 	@Override
-	public void transform(Object jaxbObject, InputStream xslt, OutputStream pcl){
+	public void transform(Object jaxbObject, InputStream xslt, OutputStream pcl) {
 		transform(jaxbObject, xslt, pcl, null);
 	}
-	
+
 	@Override
 	public void transform(Object jaxbObject, InputStream xslt, OutputStream pcl,
-		Map<String, String> transformerParameters, URIResolver resolver){
-		JaxbToMimeType.getInstance().transform(jaxbObject, xslt, pcl, MimeConstants.MIME_PCL,
-			transformerParameters, resolver);
+			Map<String, String> transformerParameters, URIResolver resolver) {
+		JaxbToMimeType.getInstance().transform(jaxbObject, xslt, pcl, MimeConstants.MIME_PCL, transformerParameters,
+				resolver);
 	}
-	
+
 }

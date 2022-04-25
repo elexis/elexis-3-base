@@ -8,7 +8,7 @@
  * Contributors:
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
- *    
+ *
  *******************************************************************************/
 package com.hilotec.elexis.messwerte.v2.data;
 
@@ -17,36 +17,36 @@ public class Panel {
 	private Panel[] panels;
 	private String[] fields;
 	private String[] attributes;
-	
-	public Panel[] getPanels(){
+
+	public Panel[] getPanels() {
 		return panels;
 	}
-	
-	public void setPanels(Panel[] panels){
+
+	public void setPanels(Panel[] panels) {
 		this.panels = panels;
 	}
-	
-	public String[] getFields(){
+
+	public String[] getFields() {
 		return fields;
 	}
-	
-	public void setFields(String[] fields){
+
+	public void setFields(String[] fields) {
 		this.fields = fields;
 	}
-	
-	public String[] getAttributes(){
+
+	public String[] getAttributes() {
 		return attributes;
 	}
-	
-	public void setAttributes(String[] attributes){
+
+	public void setAttributes(String[] attributes) {
 		this.attributes = attributes;
 	}
-	
-	public Panel(String type){
+
+	public Panel(String type) {
 		this.type = type;
 	}
-	
-	public String getAttribute(String name){
+
+	public String getAttribute(String name) {
 		for (String a : attributes) {
 			if (a.startsWith(name + "=")) { //$NON-NLS-1$
 				return a.substring(name.length() + 1);
@@ -54,9 +54,9 @@ public class Panel {
 		}
 		return null;
 	}
-	
-	public String getType(){
+
+	public String getType() {
 		return type;
 	}
-	
+
 }

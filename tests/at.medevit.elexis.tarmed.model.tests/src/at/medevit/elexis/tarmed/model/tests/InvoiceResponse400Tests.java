@@ -44,69 +44,64 @@ public class InvoiceResponse400Tests {
 
 	private static File writeResp400;
 	private static File readResp400;
-	
+
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception{
+	public static void setUpBeforeClass() throws Exception {
 		writeResp400 = new File("rsc/writeResp400.xml");
 		if (!writeResp400.exists()) {
 			writeResp400.createNewFile();
 		}
-		
+
 		readResp400 = new File("rsc/readResp400.xml");
 	}
-	
+
 	@Test
-	public void testMarshallInvoiceResponse400() throws FileNotFoundException,
-		DatatypeConfigurationException{
-		TarmedJaxbUtil.marshallInvoiceResponse(generateResponseSample(), new FileOutputStream(
-			writeResp400));
-		
+	public void testMarshallInvoiceResponse400() throws FileNotFoundException, DatatypeConfigurationException {
+		TarmedJaxbUtil.marshallInvoiceResponse(generateResponseSample(), new FileOutputStream(writeResp400));
+
 		assertTrue(writeResp400.exists());
 	}
-	
+
 	@Test
-	public void testUnmarshalInvoiceResponse400() throws FileNotFoundException{
-		ResponseType response =
-				TarmedJaxbUtil.unmarshalInvoiceResponse400(new FileInputStream(readResp400));
+	public void testUnmarshalInvoiceResponse400() throws FileNotFoundException {
+		ResponseType response = TarmedJaxbUtil.unmarshalInvoiceResponse400(new FileInputStream(readResp400));
 		assertNotNull(response);
 		assertEquals("test", response.getRole());
-		
+
 		HeaderType header = response.getHeader();
 		assertNotNull(header);
 		assertEquals("7601003002119", header.getSender().getEanParty());
 		assertEquals("7601001304307", header.getIntermediate().getEanParty());
 		assertEquals("7601000019202", header.getRecipient().getEanParty());
-		
+
 		PrologType prolog = response.getProlog();
 		assertNotNull(prolog);
 		assertEquals("Sumex II", prolog.getPackage().getValue());
-		assertEquals("BackofficeInvoiceResponseBuilder", prolog.getGenerator().getSoftware()
-			.getValue());
-		
+		assertEquals("BackofficeInvoiceResponseBuilder", prolog.getGenerator().getSoftware().getValue());
+
 		StatusType status = response.getStatus();
 		assertNotNull(status);
 		assertNotNull(status.getRejected());
 		assertEquals("bereits bezahlt", status.getRejected().getExplanation());
 		assertEquals(1, status.getRejected().getError().size());
 		assertEquals(1016, status.getRejected().getError().get(0).getMajor());
-		
+
 		InvoiceType invoice = response.getInvoice();
 		assertNotNull(invoice);
 		assertEquals("7601000019202", invoice.getBiller().getEanParty());
-		
-		assertEquals("SWICA UVG Abteilung Leistungen", invoice.getReply().getCompany()
-			.getCompanyname());
+
+		assertEquals("SWICA UVG Abteilung Leistungen", invoice.getReply().getCompany().getCompanyname());
 		assertEquals("Pattavino", invoice.getReply().getContact().getFamilyname());
 	}
-	
-	private ResponseType generateResponseSample() throws DatatypeConfigurationException{
+
+	private ResponseType generateResponseSample() throws DatatypeConfigurationException {
 		GregorianCalendar c = new GregorianCalendar();
 		c.set(2015, 01, 26, 10, 30);
 		XMLGregorianCalendar cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-		
+
 		ResponseType response = new ResponseType();
 		response.setRole("UnitTest");
-		
+
 		// header
 		HeaderType header = new HeaderType();
 		// sender
@@ -121,9 +116,9 @@ public class InvoiceResponse400Tests {
 		HeaderPartyType recipient = new HeaderPartyType();
 		recipient.setEanParty("7601000019202");
 		header.setRecipient(recipient);
-		
+
 		response.setHeader(header);
-		
+
 		// prolog
 		PrologType prolog = new PrologType();
 		SoftwareType pack = new SoftwareType();
@@ -131,7 +126,7 @@ public class InvoiceResponse400Tests {
 		pack.setVersion(new BigInteger("202"));
 		pack.setValue("Sumex II");
 		prolog.setPackage(pack);
-		
+
 		GeneratorType generator = new GeneratorType();
 		SoftwareType software = new SoftwareType();
 		software.setId(new BigInteger("0"));
@@ -139,9 +134,9 @@ public class InvoiceResponse400Tests {
 		software.setValue("BackofficeInvoiceResponseBuilder");
 		generator.setSoftware(software);
 		prolog.setGenerator(generator);
-		
+
 		response.setProlog(prolog);
-		
+
 		// status
 		StatusType status = new StatusType();
 		RejectedType rejected = new RejectedType();
@@ -155,10 +150,10 @@ public class InvoiceResponse400Tests {
 		errBusiness.setValue("test");
 		error.setErrorBusiness(errBusiness);
 		rejected.getError().add(error);
-		
+
 		status.setRejected(rejected);
 		response.setStatus(status);
-		
+
 		// invoice
 		InvoiceType invoice = new InvoiceType();
 		invoice.setCaseId("obe6c21c29a337c590657");
@@ -167,22 +162,22 @@ public class InvoiceResponse400Tests {
 		invoice.setInvoiceTimestamp(new BigInteger("1422456026"));
 		invoice.setResponseId("99009960_12.03.15_1382");
 		invoice.setResponseTimestamp(new BigInteger("1426122914"));
-		
+
 		// EANs
 		Biller billerEAN = new Biller();
 		billerEAN.setEanParty("7601000019202");
 		invoice.setBiller(billerEAN);
-		
+
 		Insurance insuranceEAN = new Insurance();
 		insuranceEAN.setEanParty("7601003002119");
 		invoice.setInsurance(insuranceEAN);
-		
+
 		// reply
 		ReplyAddressType reply = new ReplyAddressType();
 		reply.setEanParty("7601003002119");
 		ReplyCompanyType replyCompany = new ReplyCompanyType();
 		replyCompany.setCompanyname("SWICA UVG Abteilung Leistungen");
-		
+
 		PostalAddressType rPostal = new PostalAddressType();
 		rPostal.setStreet("Römerstrasse 37");
 		rPostal.setCity("Winterthur");
@@ -192,7 +187,7 @@ public class InvoiceResponse400Tests {
 		rPostal.setZip(rZip);
 		replyCompany.setPostal(rPostal);
 		reply.setCompany(replyCompany);
-		
+
 		ReplyContactType replyContact = new ReplyContactType();
 		replyContact.setFamilyname("Pattavino");
 		replyContact.getGivenname().add("Lorena");
@@ -203,9 +198,9 @@ public class InvoiceResponse400Tests {
 		rMail.getEmail().add("lorena.pattavino@swica.ch");
 		replyContact.setOnline(rMail);
 		reply.setContact(replyContact);
-		
+
 		invoice.setReply(reply);
-		
+
 		response.setInvoice(invoice);
 		return response;
 	}

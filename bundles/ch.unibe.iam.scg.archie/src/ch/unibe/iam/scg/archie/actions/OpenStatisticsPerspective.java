@@ -23,20 +23,20 @@ import ch.unibe.iam.scg.archie.ui.perspectives.StatisticsPerspective;
 import ch.unibe.iam.scg.archie.ui.views.StatisticsView;
 
 /**
- * 
+ *
  * <p>
  * This action opens the statistic view. This class is not used anymore as our
  * plugin contributes to the <code>Sidebar</code> extension point defined by
  * Elexis, which automatically makes an <em>Open Arcie</em> button &mdash; thus
  * deprecated.
  * </p>
- * 
+ *
  * NOTE: This class is not used anymore
- * 
+ *
  * @see IWorkbenchWindowActionDelegate
  * @see StatisticsView $Id: OpenStatisticsPerspective.java 492 2008-11-18
  *      22:18:18Z psiska $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 705 $
@@ -56,9 +56,9 @@ public class OpenStatisticsPerspective implements IWorkbenchWindowActionDelegate
 	/**
 	 * The action has been activated. The argument of the method represents the
 	 * 'real' action sitting in the workbench UI.
-	 * 
+	 *
 	 * @param action
-	 * 
+	 *
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(final IAction action) {
@@ -71,13 +71,13 @@ public class OpenStatisticsPerspective implements IWorkbenchWindowActionDelegate
 	}
 
 	/**
-	 * Selection in the workbench has been changed. We can change the state of
-	 * the 'real' action here if we want, but this can only happen after the
-	 * delegate has been created.
-	 * 
+	 * Selection in the workbench has been changed. We can change the state of the
+	 * 'real' action here if we want, but this can only happen after the delegate
+	 * has been created.
+	 *
 	 * @param action
 	 * @param selection
-	 * 
+	 *
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -87,7 +87,7 @@ public class OpenStatisticsPerspective implements IWorkbenchWindowActionDelegate
 	/**
 	 * We can use this method to dispose of any system resources we previously
 	 * allocated.
-	 * 
+	 *
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
 	public void dispose() {
@@ -95,11 +95,11 @@ public class OpenStatisticsPerspective implements IWorkbenchWindowActionDelegate
 	}
 
 	/**
-	 * We will cache window object in order to be able to provide parent shell
-	 * for the message dialog.
-	 * 
+	 * We will cache window object in order to be able to provide parent shell for
+	 * the message dialog.
+	 *
 	 * @param window
-	 * 
+	 *
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
 	public void init(IWorkbenchWindow window) {

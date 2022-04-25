@@ -24,65 +24,65 @@ import ch.elexis.core.ui.UiDesk;
 
 /**
  * This is the base class for all CST Canvasses.
- * 
+ *
  * @author daniel
  *
  */
 public class CstCanvas extends Canvas {
-    Font fontSmall;
-    Font fontBig;
+	Font fontSmall;
+	Font fontBig;
 
-    Font fontA;
+	Font fontA;
 
-    static Color BLUE;
-    static Color GRAY;
-    static Color DARKGRAY;
-    static Color WHITE;
-    static Color BRIGHTGREEN;
-    static Color ORANGE;
-    static Color BLACK;
-    protected static Logger log = LoggerFactory.getLogger(CstCanvas.class.getName());
+	static Color BLUE;
+	static Color GRAY;
+	static Color DARKGRAY;
+	static Color WHITE;
+	static Color BRIGHTGREEN;
+	static Color ORANGE;
+	static Color BLACK;
+	protected static Logger log = LoggerFactory.getLogger(CstCanvas.class.getName());
 
-    public CstCanvas(Composite parent, int style) {
-	super(parent, style);
+	public CstCanvas(Composite parent, int style) {
+		super(parent, style);
 
-	fontSmall = createFontofSize(7);
-	fontBig = createFontofSize(12);
+		fontSmall = createFontofSize(7);
+		fontBig = createFontofSize(12);
 
-	Font initialFont = getDisplay().getSystemFont();
-	FontData[] fontData = initialFont.getFontData();
-	for (int i = 0; i < fontData.length; i++) {
-	    fontData[i].setHeight(7);
+		Font initialFont = getDisplay().getSystemFont();
+		FontData[] fontData = initialFont.getFontData();
+		for (int i = 0; i < fontData.length; i++) {
+			fontData[i].setHeight(7);
+		}
+		fontA = new Font(getDisplay(), fontData);
+		BLUE = UiDesk.getColorFromRGB("1E1EFF");
+		GRAY = UiDesk.getColorFromRGB("DDDDDD");
+		DARKGRAY = UiDesk.getColorFromRGB("777777");
+		WHITE = UiDesk.getColorFromRGB("FFFFFF");
+		BRIGHTGREEN = UiDesk.getColorFromRGB("68FF00");
+		ORANGE = UiDesk.getColorFromRGB("FF6800");
+		BLACK = UiDesk.getColorFromRGB("000000");
+
+		setBackground(WHITE);
+
+		addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				// TODO: is it necessary to dispose these colors (don't think so, but make sure)
+				fontA.dispose();
+			}
+
+		});
+
 	}
-	fontA = new Font(getDisplay(), fontData);
-	BLUE = UiDesk.getColorFromRGB("1E1EFF");
-	GRAY = UiDesk.getColorFromRGB("DDDDDD");
-	DARKGRAY = UiDesk.getColorFromRGB("777777");
-	WHITE = UiDesk.getColorFromRGB("FFFFFF");
-	BRIGHTGREEN = UiDesk.getColorFromRGB("68FF00");
-	ORANGE = UiDesk.getColorFromRGB("FF6800");
-	BLACK = UiDesk.getColorFromRGB("000000");
 
-	setBackground(WHITE);
-
-	addDisposeListener(new DisposeListener() {
-	    public void widgetDisposed(DisposeEvent e) {
-		// TODO: is it necessary to dispose these colors (don't think so, but make sure)
-		fontA.dispose();
-	    }
-
-	});
-
-    }
-
-    private Font createFontofSize(int sizeOfFont) {
-	Font initialFont = getDisplay().getSystemFont();
-	FontData[] fontData = initialFont.getFontData();
-	for (int i = 0; i < fontData.length; i++) {
-	    fontData[i].setHeight(sizeOfFont);
+	private Font createFontofSize(int sizeOfFont) {
+		Font initialFont = getDisplay().getSystemFont();
+		FontData[] fontData = initialFont.getFontData();
+		for (int i = 0; i < fontData.length; i++) {
+			fontData[i].setHeight(sizeOfFont);
+		}
+		Font newFont = new Font(getDisplay(), fontData);
+		return newFont;
 	}
-	Font newFont = new Font(getDisplay(), fontData);
-	return newFont;
-    }
 
 }

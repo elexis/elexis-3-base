@@ -42,8 +42,7 @@ public final class PatientAddressLabelHandler extends AbstractHandler {
 			String docName = PreferenceConstants.PATIENT_ADDRESS_LABEL;
 			IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-			String printerName =
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document PatientAddressLabel on printer: " + printerName);
 			PrintProvider.print(fo, printerName);
 		} catch (Exception e) {

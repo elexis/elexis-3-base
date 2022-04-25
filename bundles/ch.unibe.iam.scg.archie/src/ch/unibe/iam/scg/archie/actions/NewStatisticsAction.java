@@ -51,9 +51,9 @@ import ch.unibe.iam.scg.archie.ui.views.StatisticsView;
  * getting all information needed from the user, starting the query in the
  * background and updating the view in the end.
  * </p>
- * 
+ *
  * $Id: NewStatisticsAction.java 727 2009-01-23 14:26:46Z hephster $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 727 $
@@ -73,11 +73,10 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 
 	/**
 	 * Action for creating a new statistical analysis. This class serves as a
-	 * controller and mediator between the main and sidebar view. It also acts
-	 * as a job listener and listens to the job this actions data provider runs.
-	 * 
-	 * @param parameters
-	 *            Panel containing a provider's parameters.
+	 * controller and mediator between the main and sidebar view. It also acts as a
+	 * job listener and listens to the job this actions data provider runs.
+	 *
+	 * @param parameters Panel containing a provider's parameters.
 	 */
 	public NewStatisticsAction(ParametersPanel parameters) {
 		super(Messages.ACTION_NEWSTAT_TITLE, AS_PUSH_BUTTON);
@@ -113,9 +112,8 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 				SWTHelper.showError(Messages.ERROR, e.getMessage());
 				return;
 			} catch (Exception e) {
-				ArchieActivator.LOG.log(
-						Messages.ACTION_NEWSTAT_ERROR_COULDNT_UPDATE_PROVIDER + " " + provider.getName() + ".\n"
-								+ e.getLocalizedMessage(), Log.WARNINGS);
+				ArchieActivator.LOG.log(Messages.ACTION_NEWSTAT_ERROR_COULDNT_UPDATE_PROVIDER + " " + provider.getName()
+						+ ".\n" + e.getLocalizedMessage(), Log.WARNINGS);
 				e.printStackTrace();
 			}
 
@@ -162,11 +160,11 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 
 	/**
 	 * This method is being called as soon as the job this action observes,
-	 * finishes. The action is enabled as soon as the last job finishes. This
-	 * method also creates and sets the result table in the result view as well
-	 * as information about the parameters of the active provider in the header
-	 * of the result panel.
-	 * 
+	 * finishes. The action is enabled as soon as the last job finishes. This method
+	 * also creates and sets the result table in the result view as well as
+	 * information about the parameters of the active provider in the header of the
+	 * result panel.
+	 *
 	 * @param event
 	 */
 	public void done(final IJobChangeEvent event) {
@@ -184,8 +182,8 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 				} else {
 					// create result table
 					TableFactory tableFactory = TableFactory.getInstance();
-					TableViewer viewer = tableFactory.createTableFromData(results, dataset,
-							provider.getLabelProvider(), provider.getContentProvider());
+					TableViewer viewer = tableFactory.createTableFromData(results, dataset, provider.getLabelProvider(),
+							provider.getContentProvider());
 
 					// add column dataset sorter and add table to the manager
 					new DatasetTableColumnSorter(viewer.getTable(), dataset);
@@ -221,9 +219,9 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 
 	/**
 	 * Registers a change listener with this action.
-	 * 
+	 *
 	 * @param listener
-	 * 
+	 *
 	 * @see IPropertyChangeListener
 	 */
 	@Override
@@ -236,9 +234,9 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 
 	/**
 	 * Unregisters a change listener with this action.
-	 * 
+	 *
 	 * @param listener
-	 * 
+	 *
 	 * @see IPropertyChangeListener
 	 */
 	@Override

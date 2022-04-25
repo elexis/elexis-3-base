@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
- *    
+ *    A. Kaufmann - initial implementation
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.pluginstatistiken.config;
@@ -39,7 +39,7 @@ import ch.elexis.core.data.util.Extensions;
 
 /**
  * Parser fuer die Konfiguration der Abfragen
- * 
+ *
  * @author Antoine Kaufmann
  */
 public class Konfiguration {
@@ -55,47 +55,46 @@ public class Konfiguration {
 	public static final String ATTR_TABLE = "table";
 	public static final String ATTR_AS = "as";
 	public static final String ATTR_TYPE = "type";
-	
+
 	public static final String DATASOURCE_EXT = "com.hilotec.elexis.pluginstatistiken.Datenquelle";
-	
+
 	Logger log = LoggerFactory.getLogger(getClass());
 	ArrayList<KonfigurationQuery> queries;
 	HashMap<String, IDatenquelle> datenquellen;
-	
+
 	private static Konfiguration the_one_and_only_instance = null;
-	
-	public static Konfiguration getInstance(){
+
+	public static Konfiguration getInstance() {
 		if (the_one_and_only_instance == null) {
 			the_one_and_only_instance = new Konfiguration();
 		}
 		return the_one_and_only_instance;
 	}
-	
+
 	/**
 	 * Das ist ein Singleton, also muss der Konstruktor privat sein
 	 */
-	private Konfiguration(){
+	private Konfiguration() {
 		queries = new ArrayList<KonfigurationQuery>();
 		datenquellen = new HashMap<String, IDatenquelle>();
 		datenquellenInitialisieren();
 		readFromXML(CoreHub.getWritableUserDir() + File.separator + STATISTIKEN_FILENAME);
 	}
-	
+
 	/**
 	 * XML-Datei mit den Definitionen der Abfragen einlesen und parsen
-	 * 
-	 * @param path
-	 *            Pfad zur Datei
+	 *
+	 * @param path Pfad zur Datei
 	 */
-	private void readFromXML(String path){
+	private void readFromXML(String path) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		Document doc;
-		
+
 		try {
 			builder = factory.newDocumentBuilder();
 			doc = builder.parse(new FileInputStream(path));
-			
+
 			Element rootel = doc.getDocumentElement();
 			NodeList ql = rootel.getElementsByTagName(ELEM_QUERY);
 			for (int i = 0; i < ql.getLength(); i++) {
@@ -103,18 +102,18 @@ public class Konfiguration {
 				if (qn.getNodeType() != Node.ELEMENT_NODE) {
 					continue;
 				}
-				
+
 				Element qe = (Element) qn;
 				KonfigurationQuery kq = new KonfigurationQuery(qe.getAttribute(ATTR_TITLE));
-				
+
 				Element frome = (Element) qe.getElementsByTagName(ELEM_FROM).item(0);
 				kq.setFrom(frome.getAttribute(ATTR_TABLE), frome.getAttribute(ATTR_AS));
-				
+
 				// Joins verabeiten
 				NodeList jl = qe.getElementsByTagName(ELEM_JOIN);
 				for (int j = 0; j < jl.getLength(); j++) {
 					Element je = (Element) jl.item(j);
-					
+
 					// Bedingunsoperation suchen
 					KonfigurationWhere where = null;
 					NodeList jchildren = je.getChildNodes();
@@ -124,11 +123,11 @@ public class Konfiguration {
 							break;
 						}
 					}
-					
-					kq.addJoin(new KonfigurationQuery.Join(je.getAttribute(ATTR_TABLE), je
-						.getAttribute(ATTR_AS), where, KonfigurationQuery.Join.JType.JOIN_INNER));
+
+					kq.addJoin(new KonfigurationQuery.Join(je.getAttribute(ATTR_TABLE), je.getAttribute(ATTR_AS), where,
+							KonfigurationQuery.Join.JType.JOIN_INNER));
 				}
-				
+
 				// Spaltendefinitionen
 				Element colse = (Element) qe.getElementsByTagName(ELEM_COLS).item(0);
 				Element wheree;
@@ -138,7 +137,7 @@ public class Konfiguration {
 				} else {
 					wheree = (Element) wel.item(0);
 				}
-				
+
 				NodeList colsList = colse.getChildNodes();
 				for (int j = 0; j < colsList.getLength(); j++) {
 					Node cn = colsList.item(j);
@@ -146,10 +145,10 @@ public class Konfiguration {
 						continue;
 					}
 					Element ce = (Element) cn;
-					
+
 					kq.addCol(ce.getAttribute(ATTR_NAME), ce.getAttribute(ATTR_SOURCE));
 				}
-				
+
 				// Where-Klausel
 				if (wheree != null) {
 					Element whereOp = null;
@@ -168,40 +167,38 @@ public class Konfiguration {
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("Einlesen der XML-Datei felgeschlagen: " + e.getMessage());
-			MessageDialog.openError(Display.getDefault().getActiveShell(),
-				"Hilotec Pluginstatistiken Fehler",
-				"Einlesen der XML-Datei felgeschlagen: " + e.getMessage());
+			MessageDialog.openError(Display.getDefault().getActiveShell(), "Hilotec Pluginstatistiken Fehler",
+					"Einlesen der XML-Datei felgeschlagen: " + e.getMessage());
 		}
 	}
-	
-	private void datenquellenInitialisieren(){
+
+	private void datenquellenInitialisieren() {
 		for (IConfigurationElement ic : Extensions.getExtensions(DATASOURCE_EXT)) {
 			try {
 				IDatenquelle dq;
 				dq = (IDatenquelle) ic.createExecutableExtension("class");
 				datenquellen.put(dq.getName(), dq);
 			} catch (CoreException ce) {
-				log.error("Initialisieren der Datenquelle " + ic.getAttribute("name")
-					+ " fehlgeschlagen: " + ce.getMessage());
-				MessageDialog.openError(Display.getDefault().getActiveShell(),
-					"Hilotec Pluginstatistiken Fehler",
-					"Initialisieren der Datenquelle " + ic.getAttribute("name")
-						+ " fehlgeschlagen: " + ce.getMessage());
+				log.error("Initialisieren der Datenquelle " + ic.getAttribute("name") + " fehlgeschlagen: "
+						+ ce.getMessage());
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Hilotec Pluginstatistiken Fehler",
+						"Initialisieren der Datenquelle " + ic.getAttribute("name") + " fehlgeschlagen: "
+								+ ce.getMessage());
 			}
 		}
 	}
-	
+
 	/**
 	 * Alle Abfragen in dieser Konfiguration zurzueckgeben
 	 */
-	public List<KonfigurationQuery> getQueries(){
+	public List<KonfigurationQuery> getQueries() {
 		return queries;
 	}
-	
+
 	/**
 	 * Bestimmte Datenquelle holen
 	 */
-	public IDatenquelle getDatenquelle(String name){
+	public IDatenquelle getDatenquelle(String name) {
 		return datenquellen.get(name);
 	}
 }

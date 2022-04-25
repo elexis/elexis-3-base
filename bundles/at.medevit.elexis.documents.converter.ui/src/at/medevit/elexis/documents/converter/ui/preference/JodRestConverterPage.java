@@ -8,23 +8,22 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
-public class JodRestConverterPage extends FieldEditorPreferencePage
-		implements IWorkbenchPreferencePage {
-	
-	public JodRestConverterPage(){
+public class JodRestConverterPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+
+	public JodRestConverterPage() {
 		super(GRID);
 		setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 	}
-	
+
 	@Override
-	public void init(IWorkbench workbench){
-		
+	public void init(IWorkbench workbench) {
+
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
-		StringFieldEditor jodRestBasPath = new StringFieldEditor("jodrestconverter/basepath",
-			"JODconverter REST URL", getFieldEditorParent());
+	protected void createFieldEditors() {
+		StringFieldEditor jodRestBasPath = new StringFieldEditor("jodrestconverter/basepath", "JODconverter REST URL",
+				getFieldEditorParent());
 		addField(jodRestBasPath);
 	}
 }

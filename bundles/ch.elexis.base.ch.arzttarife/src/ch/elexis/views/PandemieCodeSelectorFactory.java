@@ -32,57 +32,56 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 public class PandemieCodeSelectorFactory extends CodeSelectorFactory {
-	
+
 	private ViewerConfigurer vc;
-	
+
 	@Inject
-	public void selectedEncounter(@Optional IEncounter encounter){
+	public void selectedEncounter(@Optional IEncounter encounter) {
 		if (vc != null && vc.getControlFieldProvider() != null) {
 			vc.getControlFieldProvider().fireChangedEvent();
 		}
 	}
-	
+
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		cv.setSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				TableViewer tv = (TableViewer) event.getSource();
 				StructuredSelection ss = (StructuredSelection) tv.getSelection();
 				if (!ss.isEmpty()) {
 					IPandemieLeistung selected = (IPandemieLeistung) ss.getFirstElement();
 					ContextServiceHolder.get().getRootContext()
-						.setNamed("ch.elexis.views.codeselector.pandemie.selection", selected);
+							.setNamed("ch.elexis.views.codeselector.pandemie.selection", selected);
 				} else {
 					ContextServiceHolder.get().getRootContext()
-						.setNamed("ch.elexis.views.codeselector.pandemie.selection", null);
+							.setNamed("ch.elexis.views.codeselector.pandemie.selection", null);
 				}
 			}
 		});
 		FieldDescriptor<?>[] fd = new FieldDescriptor<?>[] {
-			new FieldDescriptor<IPandemieLeistung>("Ziffer", "code", null),
-			new FieldDescriptor<IPandemieLeistung>("Titel", "title", null),
-		};
+				new FieldDescriptor<IPandemieLeistung>("Ziffer", "code", null),
+				new FieldDescriptor<IPandemieLeistung>("Titel", "title", null), };
 		SelectorPanelProvider slp = new SelectorPanelProvider(fd, true);
-		vc = new ViewerConfigurer(new PandemieContentProvider(cv, slp),
-			new DefaultLabelProvider(), slp, new ViewerConfigurer.DefaultButtonProvider(),
-			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
+		vc = new ViewerConfigurer(new PandemieContentProvider(cv, slp), new DefaultLabelProvider(), slp,
+				new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		return vc.setContentType(ContentType.GENERICOBJECT);
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return "Pandemie";
 	}
-	
+
 	@Override
-	public Class<?> getElementClass(){
+	public Class<?> getElementClass() {
 		return IPandemieLeistung.class;
 	}
 }

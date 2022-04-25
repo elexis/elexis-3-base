@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.base.messages;
@@ -36,8 +36,8 @@ import ch.elexis.messages.Message;
 public class MsgHeartListener implements HeartListener {
 	static Logger log = LoggerFactory.getLogger(MsgHeartListener.class);
 	boolean bSkip;
-	
-	public void heartbeat(){
+
+	public void heartbeat() {
 		if (!bSkip) {
 			if (CoreHub.getLoggedInContact() != null) {
 				Query<Message> qbe = new Query<Message>(Message.class);
@@ -45,7 +45,7 @@ public class MsgHeartListener implements HeartListener {
 				final List<Message> res = qbe.execute();
 				if (res.size() > 0) {
 					UiDesk.getDisplay().asyncExec(new Runnable() {
-						public void run(){
+						public void run() {
 							bSkip = true;
 							if (ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_ON, true)) {
 								playSound();
@@ -54,31 +54,31 @@ public class MsgHeartListener implements HeartListener {
 							bSkip = false;
 						}
 					});
-					
+
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Plays a sound. The sound file can be defined via the message preferences.<br>
 	 * <br>
-	 * Set {@link DataLine.Info} and use it to load {@link Clip} to avoid IllegalArgumentException
-	 * caused by missing/wrong system settings. See <a href=
+	 * Set {@link DataLine.Info} and use it to load {@link Clip} to avoid
+	 * IllegalArgumentException caused by missing/wrong system settings. See
+	 * <a href=
 	 * "http://stackoverflow.com/questions/26435282/issue-playing-audio-with-stackoverflows-javasound-tag-example">
 	 * Stackoverflow</a> for detailed explanation.
 	 */
-	private void playSound(){
+	private void playSound() {
 		try {
 			AudioInputStream audioInStream;
-			String soundFilePath =
-				ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH,
+			String soundFilePath = ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_PATH,
 					MessagePreferences.DEF_SOUND_PATH);
-			
+
 			// create an audioinputstream from sound url
 			if (MessagePreferences.DEF_SOUND_PATH.equals(soundFilePath)) {
 				URL sound = getClass().getResource(soundFilePath);
-				
+
 				audioInStream = AudioSystem.getAudioInputStream(sound);
 			} else {
 				// create AudioInputStream from user defined file
@@ -89,13 +89,13 @@ public class MsgHeartListener implements HeartListener {
 				}
 				audioInStream = AudioSystem.getAudioInputStream(soundFile);
 			}
-			
+
 			// load the sound into memory (a Clip)
 			DataLine.Info info = new DataLine.Info(Clip.class, audioInStream.getFormat());
 			Clip clip = (Clip) AudioSystem.getLine(info);
 			clip.open(audioInStream);
 			clip.start();
-			
+
 		} catch (Exception e) {
 			log.error("Could not play message sound", e);
 			return;

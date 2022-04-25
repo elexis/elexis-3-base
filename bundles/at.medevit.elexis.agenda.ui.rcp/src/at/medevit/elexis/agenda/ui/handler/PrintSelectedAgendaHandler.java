@@ -37,47 +37,44 @@ import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
 import ch.elexis.core.services.IFormattedOutputFactory.OutputType;
 
 public class PrintSelectedAgendaHandler {
-	
+
 	@Execute
-	public Object execute(MPart part, @Named(IServiceConstants.ACTIVE_SHELL) Shell shell){
+	public Object execute(MPart part, @Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
 		if (part.getObject() instanceof AgendaView) {
 			AgendaView agendaView = (AgendaView) part.getObject();
 			LoadEventsFunction loadEventsFunction = agendaView.getLoadEventsFunction();
-			
+
 			List<IPeriod> periods = loadEventsFunction.getCurrentPeriods();
 			Map<String, List<IPeriod>> areaPeriodMap = getAreaPeriodMap(periods);
-			
+
 			for (String area : areaPeriodMap.keySet()) {
 				AreaPeriodsLetter letter = AreaPeriodsLetter.of(area, areaPeriodMap.get(area));
 				if (letter != null) {
-					BundleContext bundleContext =
-						FrameworkUtil.getBundle(getClass()).getBundleContext();
-					ServiceReference<IFormattedOutputFactory> serviceRef =
-						bundleContext.getServiceReference(IFormattedOutputFactory.class);
+					BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+					ServiceReference<IFormattedOutputFactory> serviceRef = bundleContext
+							.getServiceReference(IFormattedOutputFactory.class);
 					if (serviceRef != null) {
 						IFormattedOutputFactory service = bundleContext.getService(serviceRef);
-						IFormattedOutput outputter = service
-							.getFormattedOutputImplementation(ObjectType.JAXB, OutputType.PDF);
+						IFormattedOutput outputter = service.getFormattedOutputImplementation(ObjectType.JAXB,
+								OutputType.PDF);
 						ByteArrayOutputStream pdf = new ByteArrayOutputStream();
 						Map<String, String> parameters = new HashMap<>();
 						parameters.put("current-date",
-							LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-						
-						outputter.transform(letter,
-							getClass().getResourceAsStream("/rsc/xslt/areaperiods2fo.xslt"), pdf,
-							parameters);
+								LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+
+						outputter.transform(letter, getClass().getResourceAsStream("/rsc/xslt/areaperiods2fo.xslt"),
+								pdf, parameters);
 						bundleContext.ungetService(serviceRef);
 						// save and open the file ...
 						File file = null;
 						FileOutputStream fout = null;
-							try {
+						try {
 							file = File.createTempFile(letter.getArea() + "_", ".pdf");
 							fout = new FileOutputStream(file);
 							fout.write(pdf.toByteArray());
-							} catch (IOException e) {
+						} catch (IOException e) {
 							Display.getDefault().syncExec(() -> {
-								MessageDialog.openError(shell, "Fehler",
-									"Fehler beim PDF anlegen.\n" + e.getMessage());
+								MessageDialog.openError(shell, "Fehler", "Fehler beim PDF anlegen.\n" + e.getMessage());
 							});
 							LoggerFactory.getLogger(getClass()).error("Error creating PDF", e);
 						} finally {
@@ -91,7 +88,7 @@ public class PrintSelectedAgendaHandler {
 						}
 						if (file != null) {
 							Program.launch(file.getAbsolutePath());
-							}
+						}
 					} else {
 						LoggerFactory.getLogger(getClass()).warn("No formatted output factory available.");
 					}
@@ -100,8 +97,8 @@ public class PrintSelectedAgendaHandler {
 		}
 		return null;
 	}
-	
-	private Map<String, List<IPeriod>> getAreaPeriodMap(List<IPeriod> periods){
+
+	private Map<String, List<IPeriod>> getAreaPeriodMap(List<IPeriod> periods) {
 		if (periods != null && !periods.isEmpty()) {
 			if (periods.get(0) instanceof IAppointment) {
 				Map<String, List<IPeriod>> ret = new HashMap<>();
@@ -116,8 +113,7 @@ public class PrintSelectedAgendaHandler {
 				}
 				return ret;
 			} else {
-				throw new IllegalStateException(
-					"Can not determine area of period " + periods.get(0));
+				throw new IllegalStateException("Can not determine area of period " + periods.get(0));
 			}
 		}
 		return Collections.emptyMap();

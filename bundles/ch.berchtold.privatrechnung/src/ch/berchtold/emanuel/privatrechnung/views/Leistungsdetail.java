@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.berchtold.emanuel.privatrechnung.views;
@@ -29,65 +29,64 @@ import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.views.IDetailDisplay;
 
 /**
- * An IDetailDisplay must be able to create and manage a form that can display detailed information
- * on a code of this codesystem.
- * 
+ * An IDetailDisplay must be able to create and manage a form that can display
+ * detailed information on a code of this codesystem.
+ *
  * @author Gerry
- * 
+ *
  */
 public class Leistungsdetail implements IDetailDisplay {
 	Form form;
 	LabeledInputField.AutoForm tblPls;
-	InputData[] data = new InputData[] {
-		new InputData("Kuerzel", "code", InputData.Typ.STRING, null), //$NON-NLS-1$
-		new InputData("Kosten", "netPrice", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
-		new InputData("Preis", "price", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
+	InputData[] data = new InputData[] { new InputData("Kuerzel", "code", InputData.Typ.STRING, null), //$NON-NLS-1$
+			new InputData("Kosten", "netPrice", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
+			new InputData("Preis", "price", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
 	};
-	
+
 	/**
 	 * Select the given Objetc to display
 	 */
-	public void display(Object obj){
+	public void display(Object obj) {
 		if (obj instanceof IPrivatLeistung) { // should always be true...
 			IPrivatLeistung ls = (IPrivatLeistung) obj;
 			form.setText(ls.getLabel());
 			tblPls.reload(ls);
 		}
-		
+
 	}
-	
+
 	@Inject
 	public void selection(
-		@Optional @Named("ch.berchtold.emanuel.privatrechnung.views.selection") IPrivatLeistung leistung){
+			@Optional @Named("ch.berchtold.emanuel.privatrechnung.views.selection") IPrivatLeistung leistung) {
 		if (form != null && !form.isDisposed()) {
 			display(leistung);
 		}
 	}
-	
+
 	@Override
-	public Class<?> getElementClass(){
+	public Class<?> getElementClass() {
 		return IPrivatLeistung.class;
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return "Privatrechnung B";
 	}
-	
+
 	/**
-	 * Create the display composite. As usual, we'll keep things simple and re-use existing classes
-	 * to simplify our work.
+	 * Create the display composite. As usual, we'll keep things simple and re-use
+	 * existing classes to simplify our work.
 	 */
-	public Composite createDisplay(Composite parent, IViewSite site){
+	public Composite createDisplay(Composite parent, IViewSite site) {
 		form = UiDesk.getToolkit().createForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
-		
+
 		tblPls = new LabeledInputField.AutoForm(form.getBody(), data);
-		
+
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		tblPls.setLayoutData(twd);
 		return form.getBody();
 	}
-	
+
 }

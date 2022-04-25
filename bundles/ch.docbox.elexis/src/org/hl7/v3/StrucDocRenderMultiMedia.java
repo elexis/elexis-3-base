@@ -15,10 +15,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * <p>
  * Java class for StrucDoc.RenderMultiMedia complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="StrucDoc.RenderMultiMedia">
  *   &lt;complexContent>
@@ -34,15 +35,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "StrucDoc.RenderMultiMedia", propOrder = {
-	"caption"
-})
+@XmlType(name = "StrucDoc.RenderMultiMedia", propOrder = { "caption" })
 public class StrucDocRenderMultiMedia {
-	
+
 	protected StrucDocCaption caption;
 	@XmlAttribute(required = true)
 	@XmlIDREF
@@ -60,124 +59,123 @@ public class StrucDocRenderMultiMedia {
 	@XmlAttribute
 	@XmlSchemaType(name = "NMTOKENS")
 	protected List<String> styleCode;
-	
+
 	/**
 	 * Gets the value of the caption property.
-	 * 
+	 *
 	 * @return possible object is {@link StrucDocCaption }
-	 * 
+	 *
 	 */
-	public StrucDocCaption getCaption(){
+	public StrucDocCaption getCaption() {
 		return caption;
 	}
-	
+
 	/**
 	 * Sets the value of the caption property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link StrucDocCaption }
-	 * 
+	 *
+	 * @param value allowed object is {@link StrucDocCaption }
+	 *
 	 */
-	public void setCaption(StrucDocCaption value){
+	public void setCaption(StrucDocCaption value) {
 		this.caption = value;
 	}
-	
+
 	/**
 	 * Gets the value of the referencedObject property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the referencedObject property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the referencedObject property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getReferencedObject().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link Object }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<Object> getReferencedObject(){
+	public List<Object> getReferencedObject() {
 		if (referencedObject == null) {
 			referencedObject = new ArrayList<Object>();
 		}
 		return this.referencedObject;
 	}
-	
+
 	/**
 	 * Gets the value of the attributeId property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getAttributeId(){
+	public String getAttributeId() {
 		return attributeId;
 	}
-	
+
 	/**
 	 * Sets the value of the attributeId property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setAttributeId(String value){
+	public void setAttributeId(String value) {
 		this.attributeId = value;
 	}
-	
+
 	/**
 	 * Gets the value of the language property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getLanguage(){
+	public String getLanguage() {
 		return language;
 	}
-	
+
 	/**
 	 * Sets the value of the language property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setLanguage(String value){
+	public void setLanguage(String value) {
 		this.language = value;
 	}
-	
+
 	/**
 	 * Gets the value of the styleCode property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the styleCode property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the styleCode property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getStyleCode().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link String }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<String> getStyleCode(){
+	public List<String> getStyleCode() {
 		if (styleCode == null) {
 			styleCode = new ArrayList<String>();
 		}
 		return this.styleCode;
 	}
-	
+
 }

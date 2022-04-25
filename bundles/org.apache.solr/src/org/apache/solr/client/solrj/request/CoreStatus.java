@@ -23,26 +23,26 @@ import org.apache.solr.common.util.NamedList;
 
 public class CoreStatus {
 
-  private final NamedList<Object> response;
+	private final NamedList<Object> response;
 
-  public CoreStatus(NamedList<Object> response) {
-    this.response = response;
-  }
+	public CoreStatus(NamedList<Object> response) {
+		this.response = response;
+	}
 
-  public String getDataDirectory() {
-    return (String) response.get("dataDir");
-  }
+	public String getDataDirectory() {
+		return (String) response.get("dataDir");
+	}
 
-  public String getInstanceDirectory() {
-    return (String) response.findRecursive("instanceDir");
-  }
+	public String getInstanceDirectory() {
+		return (String) response.findRecursive("instanceDir");
+	}
 
-  @Override
-  public String toString() {
-    return response.toString();
-  }
+	@Override
+	public String toString() {
+		return response.toString();
+	}
 
-  public Date getCoreStartTime() {
-    return (Date) response.get("startTime");
-  }
+	public Date getCoreStartTime() {
+		return (Date) response.get("startTime");
+	}
 }

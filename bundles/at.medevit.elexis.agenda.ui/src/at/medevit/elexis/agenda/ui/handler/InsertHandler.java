@@ -14,9 +14,9 @@ import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.ui.e4.dialog.GenericSelectionDialog;
 
 public class InsertHandler {
-	
+
 	@Execute
-	public Object execute(MPart part){
+	public Object execute(MPart part) {
 		Optional<SideBarComposite> activeSideBar = AbstractBrowserFunction.getActiveSideBar(part);
 		activeSideBar.ifPresent(sideBar -> {
 			sideBar.getMoveInformation().ifPresent(moveInformation -> {
@@ -24,8 +24,8 @@ public class InsertHandler {
 				if (moveablePeriods.size() == 1) {
 					moveInformation.movePeriod(moveablePeriods.get(0));
 				} else if (moveablePeriods.size() > 1) {
-					GenericSelectionDialog dialog = new GenericSelectionDialog(
-						Display.getDefault().getActiveShell(), moveablePeriods);
+					GenericSelectionDialog dialog = new GenericSelectionDialog(Display.getDefault().getActiveShell(),
+							moveablePeriods);
 					if (dialog.open() == GenericSelectionDialog.OK) {
 						IStructuredSelection selection = dialog.getSelection();
 						if (selection != null && !selection.isEmpty()) {

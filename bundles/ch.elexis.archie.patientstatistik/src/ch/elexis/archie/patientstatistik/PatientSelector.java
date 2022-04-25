@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.archie.patientstatistik;
@@ -20,29 +20,29 @@ import ch.unibe.iam.scg.archie.ui.widgets.AbstractWidget;
 
 public class PatientSelector extends AbstractWidget {
 	public Patient patSelected;
-	
-	public PatientSelector(Composite parent, int style, String labelText, RegexValidation regex){
+
+	public PatientSelector(Composite parent, int style, String labelText, RegexValidation regex) {
 		super(parent, style, labelText, regex);
 	}
-	
+
 	@Override
-	public Object getValue(){
+	public Object getValue() {
 		return patSelected;
 	}
-	
+
 	@Override
-	public boolean isValid(){
+	public boolean isValid() {
 		return true;
 	}
-	
+
 	@Override
-	public void setDescription(String description){
-		
+	public void setDescription(String description) {
+
 	}
-	
+
 	@Override
-	public void setValue(Object value){
+	public void setValue(Object value) {
 		patSelected = (Patient) value;
 	}
-	
+
 }

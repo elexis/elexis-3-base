@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.arzttarife.importer;
 
@@ -29,27 +29,27 @@ public class TrustCenters {
 	public static final int TRUSTMED = 61;
 	public static final int VD_CDC = 62;
 	public static final int TC_TEST = 69;
-	
-	public static List<String> getTCList(){
+
+	public static List<String> getTCList() {
 		ArrayList<String> list = new ArrayList<String>(tc.size());
 		for (String o : tc.keySet()) {
 			list.add(o);
 		}
 		return list;
 	}
-	
+
 	/** EAN des TrustCenters holen */
-	public static String getTCEAN(String tcName){
+	public static String getTCEAN(String tcName) {
 		return getTCEAN(tc.get(tcName));
 	}
-	
-	public static String getTCEAN(Integer tcCode){
+
+	public static String getTCEAN(Integer tcCode) {
 		if (tcCode == null) {
 			return null;
 		}
 		return tcEAN.get(tcCode);
 	}
-	
+
 	// Ctésias cte 7601001370210 51
 	// GallOnet gal 7601001370241 52
 	// hawatrust haw 7601001370159 53
@@ -63,7 +63,7 @@ public class TrustCenters {
 	// trustmed tru 7601001370227 61
 	// CdC Vd 7609999036705 62
 	// TC test tes 7601001370128 69
-	
+
 	public static final HashMap<String, Integer> tc = new HashMap<String, Integer>();
 	public static final HashMap<Integer, String> tcEAN = new HashMap<Integer, String>();
 	static {

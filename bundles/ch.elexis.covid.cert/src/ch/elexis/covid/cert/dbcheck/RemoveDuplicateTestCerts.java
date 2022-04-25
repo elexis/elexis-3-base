@@ -22,46 +22,43 @@ import ch.elexis.covid.cert.service.CertificateInfo;
 import ch.elexis.covid.cert.service.CertificateInfo.Type;
 
 public class RemoveDuplicateTestCerts extends ExternalMaintenance {
-	
+
 	private IDocumentStore omnivoreDocumentStore;
-	
+
 	@Override
-	public String executeMaintenance(IProgressMonitor pm, String DBVersion){
-		omnivoreDocumentStore = OsgiServiceUtil.getService(IDocumentStore.class,
-			"(storeid=ch.elexis.data.store.omnivore)")
-			.orElseThrow(() -> new IllegalStateException("No Omnivore Document Store available."));
-		
+	public String executeMaintenance(IProgressMonitor pm, String DBVersion) {
+		omnivoreDocumentStore = OsgiServiceUtil
+				.getService(IDocumentStore.class, "(storeid=ch.elexis.data.store.omnivore)")
+				.orElseThrow(() -> new IllegalStateException("No Omnivore Document Store available."));
+
 		IQuery<IPatient> patientsQuery = CoreModelServiceHolder.get().getQuery(IPatient.class);
-		
+
 		int removeCount = 0;
 		int totalCount = 0;
-		
+
 		try (IQueryCursor<IPatient> cursor = patientsQuery.executeAsCursor()) {
-			pm.beginTask("Bitte warten, COVID Test Zertifikat Duplikate werden entfernt ...",
-				cursor.size());
+			pm.beginTask("Bitte warten, COVID Test Zertifikat Duplikate werden entfernt ...", cursor.size());
 			while (cursor.hasNext()) {
 				IPatient patient = cursor.next();
 				List<CertificateInfo> certificates = CertificateInfo.of(patient);
 				if (!certificates.isEmpty()) {
-					List<CertificateInfo> testCertificates = certificates.stream()
-						.filter(c -> c.getType() == Type.TEST)
-						.collect(Collectors.toList());
+					List<CertificateInfo> testCertificates = certificates.stream().filter(c -> c.getType() == Type.TEST)
+							.collect(Collectors.toList());
 					totalCount += testCertificates.size();
-					Map<LocalDate, List<CertificateInfo>> certificatesDayMap =
-						getCertificatesDayMap(testCertificates);
+					Map<LocalDate, List<CertificateInfo>> certificatesDayMap = getCertificatesDayMap(testCertificates);
 					for (LocalDate date : certificatesDayMap.keySet()) {
 						List<CertificateInfo> list = certificatesDayMap.get(date);
 						if (list.size() > 1) {
 							list.sort(new Comparator<CertificateInfo>() {
 								@Override
-								public int compare(CertificateInfo o1, CertificateInfo o2){
+								public int compare(CertificateInfo o1, CertificateInfo o2) {
 									return o2.getTimestamp().compareTo(o1.getTimestamp());
 								}
 							});
 							for (int i = 1; i < list.size(); i++) {
 								CertificateInfo info = list.get(i);
-								java.util.Optional<IDocument> document =
-									omnivoreDocumentStore.loadDocument(info.getDocumentId());
+								java.util.Optional<IDocument> document = omnivoreDocumentStore
+										.loadDocument(info.getDocumentId());
 								if (document.isPresent()) {
 									omnivoreDocumentStore.removeDocument(document.get());
 								}
@@ -74,15 +71,13 @@ public class RemoveDuplicateTestCerts extends ExternalMaintenance {
 				pm.worked(1);
 			}
 		}
-		
+
 		OsgiServiceUtil.ungetService(omnivoreDocumentStore);
-		
-		return "Es wurden " + removeCount + " Duplikate aus " + totalCount
-			+ " Zertifikaten entfernt.";
+
+		return "Es wurden " + removeCount + " Duplikate aus " + totalCount + " Zertifikaten entfernt.";
 	}
-	
-	private Map<LocalDate, List<CertificateInfo>> getCertificatesDayMap(
-		List<CertificateInfo> testCertificates){
+
+	private Map<LocalDate, List<CertificateInfo>> getCertificatesDayMap(List<CertificateInfo> testCertificates) {
 		Map<LocalDate, List<CertificateInfo>> ret = new HashMap<LocalDate, List<CertificateInfo>>();
 		for (CertificateInfo certificateInfo : testCertificates) {
 			LocalDate date = certificateInfo.getTimestamp().toLocalDate();
@@ -95,9 +90,9 @@ public class RemoveDuplicateTestCerts extends ExternalMaintenance {
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public String getMaintenanceDescription(){
+	public String getMaintenanceDescription() {
 		return "COVID Test Zertifikat Duplikate (am selben Tag) entfernen.";
 	}
 }

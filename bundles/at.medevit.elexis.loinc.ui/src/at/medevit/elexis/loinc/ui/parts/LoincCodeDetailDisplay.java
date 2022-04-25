@@ -25,109 +25,109 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.views.IDetailDisplay;
 
 public class LoincCodeDetailDisplay implements IDetailDisplay {
-	
+
 	private FormToolkit toolkit;
 	private ScrolledForm form;
-	
+
 	protected LoincCode actCode;
-	
+
 	private Section infoSection;
 	private Text codeCode;
 	private Text codeShortDesc;
 	private Text codeUnit;
 	private Text codeText;
 	private Text codeClazz;
-	
-	public LoincCodeDetailDisplay(){}
-	
-	public Class getElementClass(){
+
+	public LoincCodeDetailDisplay() {
+	}
+
+	public Class getElementClass() {
 		return LoincCode.class;
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return "LOINC"; //$NON-NLS-1$
 	}
-	
+
 	@Override
-	public Composite createDisplay(Composite parent, IViewSite site){
+	public Composite createDisplay(Composite parent, IViewSite site) {
 		toolkit = UiDesk.getToolkit();
 		form = toolkit.createScrolledForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
 		form.setText("Kein LOINC Code ausgewählt.");
-		
+
 		form.getToolBarManager().add(new RemoveAction()); // NEW LINE
 		form.getToolBarManager().update(true);
-		
+
 		// General Information
-		infoSection =
-			toolkit.createSection(form.getBody(), Section.COMPACT | Section.EXPANDED
-				| Section.TWISTIE | Section.TITLE_BAR);
+		infoSection = toolkit.createSection(form.getBody(),
+				Section.COMPACT | Section.EXPANDED | Section.TWISTIE | Section.TITLE_BAR);
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		infoSection.setLayoutData(twd);
 		infoSection.addExpansionListener(new SectionExpansionHandler());
 		infoSection.setText("Details");
-		
+
 		Composite info = toolkit.createComposite(infoSection);
 		twl = new TableWrapLayout();
 		info.setLayout(twl);
-		
+
 		Label lbl = toolkit.createLabel(info, "Code");
 		// get a bold version of the standard font
 		FontData[] bfd = lbl.getFont().getFontData();
 		bfd[0].setStyle(SWT.BOLD);
 		Font boldFont = new Font(Display.getCurrent(), bfd[0]);
 		lbl.setFont(boldFont);
-		
+
 		codeCode = toolkit.createText(info, "");
 		codeCode.setEditable(false);
 		codeCode.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		
+
 		lbl = toolkit.createLabel(info, "Kurz Beschreibung");
 		lbl.setFont(boldFont);
-		
+
 		codeShortDesc = toolkit.createText(info, "");
 		codeShortDesc.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		codeShortDesc.setLayoutData(twd);
-		
+
 		lbl = toolkit.createLabel(info, "Einheit");
 		lbl.setFont(boldFont);
-		
+
 		codeUnit = toolkit.createText(info, "");
 		codeUnit.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		codeUnit.setLayoutData(twd);
-		
+
 		lbl = toolkit.createLabel(info, "Text");
 		lbl.setFont(boldFont);
-		
+
 		codeText = toolkit.createText(info, "", SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		codeText.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.heightHint = 100;
 		codeText.setLayoutData(twd);
-		
+
 		lbl = toolkit.createLabel(info, "Klassifikation");
 		lbl.setFont(boldFont);
-		
+
 		codeClazz = toolkit.createText(info, "");
 		codeClazz.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		codeClazz.setLayoutData(twd);
-		
+
 		infoSection.setClient(info);
-		
+
 		return form.getBody();
 	}
-	
+
 	@Override
-	public void display(Object obj){
+	public void display(Object obj) {
 		if (obj instanceof LoincCode) {
 			actCode = (LoincCode) obj;
 			form.setText(actCode.getLabel());
-			
+
 			codeCode.setText(actCode.getCode());
 			codeShortDesc.setText(actCode.get(LoincCode.FLD_SHORTNAME));
 			codeUnit.setText(actCode.get(LoincCode.FLD_UNIT));
@@ -136,7 +136,7 @@ public class LoincCodeDetailDisplay implements IDetailDisplay {
 		} else {
 			actCode = null;
 			form.setText("Kein LOINC Code ausgewählt.");
-			
+
 			codeCode.setText("");
 			codeShortDesc.setText("");
 			codeUnit.setText("");
@@ -146,22 +146,22 @@ public class LoincCodeDetailDisplay implements IDetailDisplay {
 		infoSection.layout();
 		form.reflow(true);
 	}
-	
+
 	private final class SectionExpansionHandler extends ExpansionAdapter {
 		@Override
-		public void expansionStateChanged(ExpansionEvent e){
+		public void expansionStateChanged(ExpansionEvent e) {
 			form.reflow(true);
 		}
 	}
-	
+
 	protected class RemoveAction extends Action {
 		@Override
-		public ImageDescriptor getImageDescriptor(){
+		public ImageDescriptor getImageDescriptor() {
 			return Images.IMG_DELETE.getImageDescriptor();
 		}
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			if (actCode != null) {
 				actCode.delete();
 				display(null);

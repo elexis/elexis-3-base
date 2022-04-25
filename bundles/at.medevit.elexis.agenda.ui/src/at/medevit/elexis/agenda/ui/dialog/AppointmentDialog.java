@@ -18,22 +18,22 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class AppointmentDialog extends Dialog {
-	
+
 	private AppointmentDetailComposite detailComposite;
-	
+
 	private IAppointment appointment;
-	
+
 	@Inject
 	private IEventBroker eventBroker;
-	
-	public AppointmentDialog(IAppointment appointment){
+
+	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
 		CoreUiUtil.injectServicesWithContext(this);
 		this.appointment = appointment;
 	}
-	
+
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(Composite parent) {
 		if (appointment == null) {
 			appointment = CoreModelServiceHolder.get().create(IAppointment.class);
 			appointment.setStartTime(LocalDateTime.now());
@@ -41,9 +41,9 @@ public class AppointmentDialog extends Dialog {
 		detailComposite = new AppointmentDetailComposite(parent, SWT.NONE, appointment);
 		return super.createContents(parent);
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		if (appointment != null) {
 			// save appointment
 			CoreModelServiceHolder.get().save(detailComposite.setToModel());
@@ -51,5 +51,5 @@ public class AppointmentDialog extends Dialog {
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 		super.okPressed();
 	}
-	
+
 }

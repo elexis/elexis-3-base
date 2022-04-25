@@ -37,42 +37,40 @@ import at.medevit.elexis.gdt.tools.GDTFileHelper;
 import at.medevit.elexis.gdt.ui.GDTProtokollView;
 
 public class GDTOutputHandler {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(GDTOutputHandler.class);
-	
+
 	public static void handleOutput(GDTSatzNachricht gdtSatzNachricht, IGDTCommunicationPartner cp,
-		HandlerProgramType handlerType){
+			HandlerProgramType handlerType) {
 		cp.handleOutput(gdtSatzNachricht);
 		int connectionType = cp.getConnectionType();
-		
+
 		switch (connectionType) {
 		case SystemConstants.FILE_COMMUNICATION:
 			boolean success = GDTFileHelper.writeGDTSatzNachricht(gdtSatzNachricht, cp);
 			if (success) {
 				GDTProtokoll.addEntry(GDTProtokoll.MESSAGE_DIRECTION_OUT, cp, gdtSatzNachricht);
 			} else {
-				String message =
-					"Fehler beim Schreiben der GDT Satznachricht "
-						+ gdtSatzNachricht.getValue(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION)
-						+ " auf " + cp.getLabel();
+				String message = "Fehler beim Schreiben der GDT Satznachricht "
+						+ gdtSatzNachricht.getValue(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION) + " auf "
+						+ cp.getLabel();
 				Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message);
 				StatusManager.getManager().handle(status, StatusManager.SHOW);
 				logger.warn(message);
 			}
-			
+
 			// Update the protokoll view
-			final IViewPart protokoll =
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+			final IViewPart protokoll = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 					.findView(GDTProtokollView.ID);
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			display.asyncExec(new Runnable() {
 				@Override
-				public void run(){
+				public void run() {
 					if (protokoll != null)
 						protokoll.setFocus();
 				}
 			});
-			
+
 			// Call the external program to care for the output (if applicable)
 			String handlerProgram = cp.getExternalHandlerProgram(handlerType);
 			if (handlerProgram == null && handlerType == HandlerProgramType.VIEWER) {

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Gerry Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.agenda.ui;
 
@@ -28,11 +28,12 @@ public class Messages extends NLS {
 	public static String ColumnHeader_selectMandators;
 	public static String ColumnHeader_selectMandatorToShow;
 	public static String TerminListView_noPatientSelected;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
-	private Messages(){}
+
+	private Messages() {
+	}
 }

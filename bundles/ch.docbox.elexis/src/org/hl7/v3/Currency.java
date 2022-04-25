@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for Currency.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="Currency">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -44,21 +45,21 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "Currency")
 @XmlEnum
 public enum Currency {
-	
-	ARS, AUD, BRL, CAD, CHF, CLF, CNY, DEM, ESP, EUR, FIM, FRF, GBP, ILS, INR, JPY, KRW, MXN, NLG,
-		NZD, PHP, RUR, THB, TRL, TWD, USD, ZAR;
-	
-	public String value(){
+
+	ARS, AUD, BRL, CAD, CHF, CLF, CNY, DEM, ESP, EUR, FIM, FRF, GBP, ILS, INR, JPY, KRW, MXN, NLG, NZD, PHP, RUR, THB,
+	TRL, TWD, USD, ZAR;
+
+	public String value() {
 		return name();
 	}
-	
-	public static Currency fromValue(String v){
+
+	public static Currency fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

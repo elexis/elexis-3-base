@@ -29,10 +29,10 @@ import ch.itmed.fop.printing.resources.Messages;
 public final class MedicationData {
 	private IPrescription prescription;
 
-	public MedicationData(IPrescription prescription){
+	public MedicationData(IPrescription prescription) {
 		this.prescription = prescription;
 	}
-	
+
 	public void load() throws NullPointerException {
 		prescription = ContextServiceHolder.get().getTyped(IPrescription.class).orElse(null);
 		if (prescription == null) {
@@ -75,8 +75,7 @@ public final class MedicationData {
 	}
 
 	public String getPrescriptionAuthor() {
-		return prescription.getPrescriptor() != null ? prescription.getPrescriptor().getLabel()
-				: "";
+		return prescription.getPrescriptor() != null ? prescription.getPrescriptor().getLabel() : "";
 	}
 
 	public String getResponsiblePharmacist() {

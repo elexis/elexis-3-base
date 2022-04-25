@@ -42,27 +42,25 @@ public class StorageController extends Job implements HeartListener {
 	private List<Metafile> metafiles = new ArrayList<StorageController.Metafile>();
 	private static StorageController theInstance;
 	private String category = null;
-	
-	public static StorageController getInstance(){
+
+	public static StorageController getInstance() {
 		if (theInstance == null) {
 			theInstance = new StorageController();
 		}
 		return theInstance;
 	}
-	
-	private StorageController(){
+
+	private StorageController() {
 		super("Medelexis-Text-Templator");
-		dm =
-			(IDocumentManager) Extensions
-				.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
+		dm = (IDocumentManager) Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 		category = CoreHub.localCfg.get(Preferences.PREF_CATEGORY, "-");
 		setPriority(DECORATE);
 		setSystem(true);
 		setUser(false);
 		CoreHub.heart.addListener(this);
 	}
-	
-	public File createFile(Patient pat, String name) throws IOException{
+
+	public File createFile(Patient pat, String name) throws IOException {
 		String ext = "templator." + FileTool.getExtension(name);
 		File dest = File.createTempFile("elexis", ext);
 		dest.deleteOnExit();
@@ -70,14 +68,13 @@ public class StorageController extends Job implements HeartListener {
 			Metafile mf = new Metafile(pat, name, category, System.currentTimeMillis(), dest);
 			metafiles.add(mf);
 		} else {
-			log.debug("DocumentManager null [" + (dm == null) + "], Patient null (["
-				+ (pat == null) + "])");
+			log.debug("DocumentManager null [" + (dm == null) + "], Patient null ([" + (pat == null) + "])");
 		}
 		return dest;
 	}
-	
+
 	@Override
-	protected IStatus run(IProgressMonitor monitor){
+	protected IStatus run(IProgressMonitor monitor) {
 		Iterator<Metafile> it = metafiles.iterator();
 		while (it.hasNext()) {
 			try {
@@ -89,18 +86,18 @@ public class StorageController extends Job implements HeartListener {
 					if (exists.lastModified() > mf.timestamp) {
 						dm.removeDocument(mf.guid);
 						addDocument(mf);
-						
+
 					}
 				}
 			} catch (Exception ex) {
 				SWTHelper.showError("Templator", "Fehler bei der Verarbeitung:", ex.getMessage());
 			}
-			
+
 		}
 		return Status.OK_STATUS;
 	}
-	
-	private void addDocument(Metafile mf) throws Exception{
+
+	private void addDocument(Metafile mf) throws Exception {
 		if (mf.category == null) {
 			mf.category = "-";
 		} else {
@@ -108,19 +105,18 @@ public class StorageController extends Job implements HeartListener {
 				dm.addCategorie(mf.category);
 			}
 		}
-		GenericDocument gd =
-			new GenericDocument(mf.pat, mf.name, mf.category, mf.fileOnDisk,
+		GenericDocument gd = new GenericDocument(mf.pat, mf.name, mf.category, mf.fileOnDisk,
 				new TimeTool().toString(TimeTool.DATE_GER), "", null);
 		dm.addDocument(gd);
 		mf.guid = gd.getGUID();
 		mf.timestamp = mf.fileOnDisk.lastModified();
 	}
-	
+
 	@Override
-	public void heartbeat(){
+	public void heartbeat() {
 		schedule();
 	}
-	
+
 	private class Metafile {
 		String name;
 		long timestamp;
@@ -128,8 +124,8 @@ public class StorageController extends Job implements HeartListener {
 		String guid = null;
 		Patient pat;
 		File fileOnDisk;
-		
-		Metafile(Patient p, String n, String c, long t, File f){
+
+		Metafile(Patient p, String n, String c, long t, File f) {
 			name = n;
 			category = c;
 			timestamp = t;
@@ -137,5 +133,5 @@ public class StorageController extends Job implements HeartListener {
 			fileOnDisk = f;
 		}
 	}
-	
+
 }

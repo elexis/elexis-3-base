@@ -30,24 +30,26 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Plug into the elexis xChange model. Since we have that slightly weird model of finding definition
- * in this elexis-befunde-Plugin, this is more complicated as in other plugins. First we need to
- * figure out the Names of the Tabs in the FindingsView. These are encoded in the hashtable as value
- * of the Item "Setup". We can retrieve this item with the call to Messwert.getSetup(); Its
- * Befunde-Member holds a hashtable that encodes all finding items. The names of the items are
- * listet as hash value with the key "names", a String separated by SETUP_SEPARATOR The fields of
- * each item are listed as hash values with the key [name]_FIELDS. Each is a String separated by
- * SETUP_SEPARATOR. Every field contains a name and a multiline-indicator, separated by
- * SETUP_CHECKSEPARATOR. The name can, optionally, contain a script definition. In that case it ist
- * a String of the form result=script
- * 
- * We create from every finding item an xChange:BefundeItem and from every finding entry an
- * xChange:BefundElement. Thus if we have a tab "Cardio" defined, with the elements
- * RRSyst,RRDiast,HR, there will be three FindingElements called Cardio:RRSyst, Cardio:RRDiast,
- * Cardio:HR
- * 
+ * Plug into the elexis xChange model. Since we have that slightly weird model
+ * of finding definition in this elexis-befunde-Plugin, this is more complicated
+ * as in other plugins. First we need to figure out the Names of the Tabs in the
+ * FindingsView. These are encoded in the hashtable as value of the Item
+ * "Setup". We can retrieve this item with the call to Messwert.getSetup(); Its
+ * Befunde-Member holds a hashtable that encodes all finding items. The names of
+ * the items are listet as hash value with the key "names", a String separated
+ * by SETUP_SEPARATOR The fields of each item are listed as hash values with the
+ * key [name]_FIELDS. Each is a String separated by SETUP_SEPARATOR. Every field
+ * contains a name and a multiline-indicator, separated by SETUP_CHECKSEPARATOR.
+ * The name can, optionally, contain a script definition. In that case it ist a
+ * String of the form result=script
+ *
+ * We create from every finding item an xChange:BefundeItem and from every
+ * finding entry an xChange:BefundElement. Thus if we have a tab "Cardio"
+ * defined, with the elements RRSyst,RRDiast,HR, there will be three
+ * FindingElements called Cardio:RRSyst, Cardio:RRDiast, Cardio:HR
+ *
  * @author Gerry
- * 
+ *
  */
 public class XChangeContributor implements IExchangeContributor {
 	private Map<String, Object> hash;
@@ -55,8 +57,8 @@ public class XChangeContributor implements IExchangeContributor {
 	private String[] paramNames;
 	private Patient actPatient = null;
 	private HashMap<String, List<Messwert>> messwerte;
-	
-	public void setPatient(Patient pat){
+
+	public void setPatient(Patient pat) {
 		actPatient = pat;
 		if (messwerte == null) {
 			messwerte = new HashMap<String, List<Messwert>>();
@@ -80,12 +82,12 @@ public class XChangeContributor implements IExchangeContributor {
 					params.put(n, flds);
 				}
 			}
-			
+
 		}
-		
+
 	}
-	
-	public List<Messwert> getResults(String name){
+
+	public List<Messwert> getResults(String name) {
 		List<Messwert> ret = messwerte.get(name);
 		if (ret != null) {
 			return ret;
@@ -95,11 +97,11 @@ public class XChangeContributor implements IExchangeContributor {
 		qbe.add(Messwert.FLD_NAME, Query.EQUALS, name);
 		ret = qbe.execute();
 		messwerte.put(name, ret);
-		
+
 		return ret;
 	}
-	
-	public HashMap<String, String> getResult(String name, String date){
+
+	public HashMap<String, String> getResult(String name, String date) {
 		HashMap<String, String> ret = new HashMap<String, String>();
 		List<Messwert> mwl = messwerte.get(name);
 		if (mwl == null) {
@@ -121,8 +123,8 @@ public class XChangeContributor implements IExchangeContributor {
 		}
 		return ret;
 	}
-	
-	public void exportHook(MedicalElement me){
+
+	public void exportHook(MedicalElement me) {
 		Patient pat = (Patient) me.getContainer().getMapping(me);
 		if (pat != null) {
 			Messwert setup = Messwert.getSetup();
@@ -142,7 +144,7 @@ public class XChangeContributor implements IExchangeContributor {
 						params.put(n, flds);
 					}
 				}
-				
+
 			}
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
 			qbe.add(Messwert.FLD_PATIENT_ID, Query.EQUALS, pat.getId());
@@ -157,22 +159,22 @@ public class XChangeContributor implements IExchangeContributor {
 				}
 			}
 		}
-		
+
 	}
-	
-	public void importHook(XChangeContainer container, PersistentObject context){
+
+	public void importHook(XChangeContainer container, PersistentObject context) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	public boolean init(MedicalElement me, boolean export){
+
+	public boolean init(MedicalElement me, boolean export) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-		throws CoreException{
-		
+			throws CoreException {
+
 	}
-	
+
 }

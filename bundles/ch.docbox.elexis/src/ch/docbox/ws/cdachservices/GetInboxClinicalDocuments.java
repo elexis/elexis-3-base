@@ -9,10 +9,11 @@ import org.hl7.v3.CE;
 /**
  * <p>
  * Java class for anonymous complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -24,37 +25,34 @@ import org.hl7.v3.CE;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-	"code"
-})
+@XmlType(name = "", propOrder = { "code" })
 @XmlRootElement(name = "getInboxClinicalDocuments")
 public class GetInboxClinicalDocuments {
-	
+
 	protected CE code;
-	
+
 	/**
 	 * Gets the value of the code property.
-	 * 
+	 *
 	 * @return possible object is {@link CE }
-	 * 
+	 *
 	 */
-	public CE getCode(){
+	public CE getCode() {
 		return code;
 	}
-	
+
 	/**
 	 * Sets the value of the code property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link CE }
-	 * 
+	 *
+	 * @param value allowed object is {@link CE }
+	 *
 	 */
-	public void setCode(CE value){
+	public void setCode(CE value) {
 		this.code = value;
 	}
-	
+
 }

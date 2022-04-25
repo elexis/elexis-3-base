@@ -18,22 +18,22 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.docbox.ws.client.WsClientConfig;
 
 public class CertificateConfigDialog extends Dialog {
-	
+
 	private Text certFileText;
 	private Button certFileBtn;
-	
+
 	private Text certPass;
 
-	protected CertificateConfigDialog(Shell parentShell){
+	protected CertificateConfigDialog(Shell parentShell) {
 		super(parentShell);
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
-		
+
 		container.setLayout(new GridLayout(2, false));
-		
+
 		Label lbl = new Label(container, SWT.NONE);
 		lbl.setText("Zertifikat");
 		Composite fileChooser = new Composite(container, SWT.NONE);
@@ -46,7 +46,7 @@ public class CertificateConfigDialog extends Dialog {
 		certFileBtn.setText("...");
 		certFileBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				FileDialog dlg = new FileDialog(getShell());
 				String path = dlg.open();
 				if (path != null) {
@@ -54,37 +54,35 @@ public class CertificateConfigDialog extends Dialog {
 				}
 			}
 		});
-		
+
 		lbl = new Label(container, SWT.NONE);
 		lbl.setText("Passwort");
 		certPass = new Text(container, SWT.PASSWORD | SWT.BORDER);
 		certPass.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		fromConfig();
-		
+
 		return container;
 	}
 
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		toConfig();
 		super.okPressed();
 	}
-	
-	private void fromConfig(){
+
+	private void fromConfig() {
 		certFileText.setText(WsClientConfig.getP12Path());
 		certPass.setText(WsClientConfig.getP12Password());
 	}
-	
-	private void toConfig(){
-		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXP12PATH,
-			certFileText.getText());
-		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXP12PASSWORD,
-			certPass.getText());
+
+	private void toConfig() {
+		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXP12PATH, certFileText.getText());
+		ConfigServiceHolder.setMandator(WsClientConfig.USR_DEFDOCBOXP12PASSWORD, certPass.getText());
 	}
-	
+
 	@Override
-	protected void configureShell(Shell newShell){
+	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Zertifikat");
 	}

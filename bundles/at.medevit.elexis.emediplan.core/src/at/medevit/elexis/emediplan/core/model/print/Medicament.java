@@ -25,32 +25,32 @@ import ch.elexis.data.Person;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Medicament {
 	public String name;
-	
+
 	public String dosageText;
-	
+
 	public String dosageMorning;
 	public String dosageNoon;
 	public String dosageEvening;
 	public String dosageNight;
-	
+
 	public String unit;
 	public String type;
-	
+
 	public String startDate;
 	public String endDate;
-	
+
 	public String remarks;
 	public String reason;
 	public String prescriptor;
-	
-	public static Medicament fromPrescription(IPrescription prescription){
+
+	public static Medicament fromPrescription(IPrescription prescription) {
 		Medicament ret = new Medicament();
 		ret.name = prescription.getArticle().getLabel();
-		
+
 		String[] signature = MedicationServiceHolder.get()
-			.getSignatureAsStringArray(prescription.getDosageInstruction());
-		boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty()
-			&& signature[2].isEmpty() && signature[3].isEmpty();
+				.getSignatureAsStringArray(prescription.getDosageInstruction());
+		boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty() && signature[2].isEmpty()
+				&& signature[3].isEmpty();
 		if (isFreetext) {
 			ret.dosageText = signature[0];
 		} else {
@@ -68,14 +68,13 @@ public class Medicament {
 				: "";
 		ret.remarks = prescription.getRemark();
 		ret.reason = prescription.getDisposalComment();
-		
-		String prescriptorId =
-			prescription.getPrescriptor() != null ? prescription.getPrescriptor().getId() : "";
+
+		String prescriptorId = prescription.getPrescriptor() != null ? prescription.getPrescriptor().getId() : "";
 		ret.prescriptor = getPrescriptorLabel(prescriptorId);
 		return ret;
 	}
-	
-	private static String getPrescriptorLabel(String prescriptorId){
+
+	private static String getPrescriptorLabel(String prescriptorId) {
 		if (prescriptorId != null && !prescriptorId.isEmpty()) {
 			Anwender prescriptor = Anwender.load(prescriptorId);
 			if (prescriptor != null && prescriptor.exists()) {
@@ -83,8 +82,8 @@ public class Medicament {
 				String firstname = prescriptor.get(Person.FLD_NAME2);
 				String lastname = prescriptor.get(Person.FLD_NAME1);
 				return ((title != null && !title.isEmpty()) ? title + " " : "")
-					+ ((firstname != null && !firstname.isEmpty()) ? firstname + " " : "")
-					+ ((lastname != null && !lastname.isEmpty()) ? lastname + " " : "");
+						+ ((firstname != null && !firstname.isEmpty()) ? firstname + " " : "")
+						+ ((lastname != null && !lastname.isEmpty()) ? lastname + " " : "");
 			}
 		}
 		return null;

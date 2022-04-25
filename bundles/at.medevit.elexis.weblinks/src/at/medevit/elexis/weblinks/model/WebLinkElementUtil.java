@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     T. Huster - initial API and implementation
  ******************************************************************************/
@@ -22,49 +22,49 @@ public class WebLinkElementUtil {
 	private static final String CFG_WEBLINK_TEXT = CFG_WEBLINK + ".text";
 	private static final String CFG_WEBLINK_LINK = CFG_WEBLINK + ".link";
 	private static final String CFG_WEBLINK_IDS = CFG_WEBLINK + ".ids";
-	
+
 	private static final String ID_DELIMITER = "||";
 	private static final String ID_DELIMITER_ESCAPED = "\\|\\|";
-	
+
 	private static HashMap<String, String> placeholders = new HashMap<String, String>();
-	
-	public static String replacePlaceholders(String url){
+
+	public static String replacePlaceholders(String url) {
 		while (hasPlaceholder(url)) {
 			url = replacePlaceholder(url);
 		}
 		return url;
 	}
-	
-	private static String replacePlaceholder(String url){
+
+	private static String replacePlaceholder(String url) {
 		StringBuilder sb = new StringBuilder();
 		int startIdx = url.indexOf('[');
 		int endIdx = url.indexOf(']');
-		
+
 		sb.append(url.substring(0, startIdx));
 		String placeholder = url.substring(startIdx + 1, endIdx);
 		if (placeholder != null) {
 			sb.append(getPlaceholder(placeholder));
 		}
 		sb.append(url.substring(endIdx + 1));
-		
+
 		return sb.toString();
 	}
-	
-	public static String getPlaceholder(String placeholder){
+
+	public static String getPlaceholder(String placeholder) {
 		return placeholders.get(placeholder);
 	}
-	
-	public static void setPlaceholder(String placeholder, String value){
+
+	public static void setPlaceholder(String placeholder, String value) {
 		placeholders.put(placeholder, value);
 	}
-	
-	private static boolean hasPlaceholder(String url){
+
+	private static boolean hasPlaceholder(String url) {
 		int startIdx = url.indexOf('[');
 		int endIdx = url.indexOf(']');
 		return startIdx != -1 && endIdx != -1;
 	}
-	
-	public static List<WebLinkElement> loadElements(){
+
+	public static List<WebLinkElement> loadElements() {
 		List<String> ids = loadIds();
 		ArrayList<WebLinkElement> ret = new ArrayList<WebLinkElement>();
 		for (String id : ids) {
@@ -72,8 +72,8 @@ public class WebLinkElementUtil {
 		}
 		return ret;
 	}
-	
-	public static void saveElements(List<WebLinkElement> elements){
+
+	public static void saveElements(List<WebLinkElement> elements) {
 		List<String> ids = new ArrayList<String>();
 		for (WebLinkElement element : elements) {
 			element.save();
@@ -81,8 +81,8 @@ public class WebLinkElementUtil {
 		}
 		saveIds(ids);
 	}
-	
-	private static List<String> loadIds(){
+
+	private static List<String> loadIds() {
 		String allIds = ConfigServiceHolder.getUser(CFG_WEBLINK_IDS, "");
 		String[] ids = allIds.split(ID_DELIMITER_ESCAPED);
 		ArrayList<String> ret = new ArrayList<String>();
@@ -93,10 +93,10 @@ public class WebLinkElementUtil {
 		}
 		return ret;
 	}
-	
-	private static void saveIds(List<String> ids){
+
+	private static void saveIds(List<String> ids) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		if (ids.isEmpty()) {
 			ConfigServiceHolder.setUser(CFG_WEBLINK_IDS, "");
 		} else {
@@ -108,12 +108,12 @@ public class WebLinkElementUtil {
 			ConfigServiceHolder.setUser(CFG_WEBLINK_IDS, sb.toString());
 		}
 	}
-	
-	public static String getTextConfig(String id){
+
+	public static String getTextConfig(String id) {
 		return CFG_WEBLINK_TEXT + "." + id;
 	}
-	
-	public static String getLinkConfig(String id){
+
+	public static String getLinkConfig(String id) {
 		return CFG_WEBLINK_LINK + "." + id;
 	}
 }

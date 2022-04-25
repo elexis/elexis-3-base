@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2010, Oliver Egger, visionary ag
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *    
+ *
  *******************************************************************************/
 package ch.docbox.cdach;
 
@@ -29,22 +29,22 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class CdaChValidator {
-	
+
 	private XPathFactory factory;
 	private XPath xpath;
-	
+
 	private Document doc;
-	
+
 	private String xmlFileName;
 	private Map<String, XPathExpression> expressionCache = new HashMap<String, XPathExpression>();
-	
-	public CdaChValidator(){
+
+	public CdaChValidator() {
 		factory = XPathFactory.newInstance();
 		xpath = factory.newXPath();
 		xpath.setNamespaceContext(new CdaNamespaceContext());
 	}
-	
-	public String getFieldValue(String expression){
+
+	public String getFieldValue(String expression) {
 		Object result = null;
 		try {
 			XPathExpression xpathCheckTypeId = expressionCache.get(expression);
@@ -68,8 +68,8 @@ public class CdaChValidator {
 			}
 		}
 	}
-	
-	public String setPatientDocument(String document){
+
+	public String setPatientDocument(String document) {
 		xmlFileName = document;
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		docBuilderFactory.setNamespaceAware(true);
@@ -89,30 +89,26 @@ public class CdaChValidator {
 		}
 		return null;
 	}
-	
-	public String getPatientLastName(){
-		String str =
-			"//cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:patient/cda:name/cda:family";
+
+	public String getPatientLastName() {
+		String str = "//cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:patient/cda:name/cda:family";
 		return (getFieldValue(str));
 	}
-	
-	public String getPatientFirstName(){
-		String str =
-			"//cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:patient/cda:name/cda:given";
+
+	public String getPatientFirstName() {
+		String str = "//cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:patient/cda:name/cda:given";
 		return (getFieldValue(str));
 	}
-	
-	public String getCity(){
+
+	public String getCity() {
 		String str = "//cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:addr/cda:city";
 		return (getFieldValue(str));
 	}
-	
-	public String getPatientNumber(){
-		String str =
-			"//cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:id[@root = '"
-				+ DocboxCDA.getOidPraxisSoftwareId()
-				+ "' or string-length(normalize-space(@root)) = 0]/@extension";
+
+	public String getPatientNumber() {
+		String str = "//cda:ClinicalDocument/cda:recordTarget/cda:patientRole/cda:id[@root = '"
+				+ DocboxCDA.getOidPraxisSoftwareId() + "' or string-length(normalize-space(@root)) = 0]/@extension";
 		return (getFieldValue(str));
 	}
-	
+
 }

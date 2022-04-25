@@ -8,27 +8,27 @@ import ch.elexis.core.model.IPatient;
 //},
 
 public class Name {
-	
+
 	private String familyName;
 	private String givenName;
-	
-	public String getFamilyName(){
+
+	public String getFamilyName() {
 		return familyName;
 	}
-	
-	public String getGivenName(){
+
+	public String getGivenName() {
 		return givenName;
 	}
-	
-	public void setFamilyName(String familyName){
+
+	public void setFamilyName(String familyName) {
 		this.familyName = familyName;
 	}
-	
-	public void setGivenName(String givenName){
+
+	public void setGivenName(String givenName) {
 		this.givenName = givenName;
 	}
-	
-	public static Name of(IPatient patient){
+
+	public static Name of(IPatient patient) {
 		Name ret = new Name();
 		ret.familyName = patient.getLastName();
 		ret.givenName = patient.getFirstName();

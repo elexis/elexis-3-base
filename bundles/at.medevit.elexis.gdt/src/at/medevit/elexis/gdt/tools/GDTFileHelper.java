@@ -31,18 +31,18 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.util.Log;
 
 public class GDTFileHelper {
-	
+
 	private static Log logger = Log.get(GDTFileHelper.class.getName());
-	
+
 	static DecimalFormat threePlaces = new DecimalFormat("000");
-	
+
 	/**
 	 * Identifies a file being a GDT Satznachricht or not
-	 * 
+	 *
 	 * @param file
 	 * @return boolean if file contains a SatzNachricht
 	 */
-	public static boolean containsSatzNachricht(File file){
+	public static boolean containsSatzNachricht(File file) {
 		try {
 			List<String> contents = FileUtils.readLines(file);
 			if (contents.size() == 0)
@@ -54,14 +54,14 @@ public class GDTFileHelper {
 		}
 		return false;
 	}
-	
+
 	public static <U extends GDTSatzNachricht> boolean writeGDTSatzNachricht(U gdtSatzNachricht,
-		IGDTCommunicationPartner cp){
+			IGDTCommunicationPartner cp) {
 		String[] outLines = gdtSatzNachricht.getMessage();
 		String zeichensatz = GDTConstants.getCharsetStringByInt(cp.getOutgoingDefaultCharset());
 		String directory = cp.getOutgoingDirectory();
 		String outgoingFileName = determineOutgoingFileName(cp);
-		
+
 		try {
 			File destination = new File(directory + File.separatorChar + outgoingFileName);
 			StringBuilder sb = new StringBuilder();
@@ -78,23 +78,20 @@ public class GDTFileHelper {
 		}
 		return true;
 	}
-	
-	public static String determineOutgoingFileName(IGDTCommunicationPartner cp){
+
+	public static String determineOutgoingFileName(IGDTCommunicationPartner cp) {
 		String directory = cp.getOutgoingDirectory();
-		String filenameHeader =
-			cp.getShortIDReceiver()
-				+ CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_FILETRANSFER_SHORTNAME,
-					GDTConstants.GDT_SHORT_ID_DEFAULT);
+		String filenameHeader = cp.getShortIDReceiver() + CoreHub.localCfg
+				.get(GDTPreferenceConstants.CFG_GDT_FILETRANSFER_SHORTNAME, GDTConstants.GDT_SHORT_ID_DEFAULT);
 		String filename = null;
-		
+
 		if (cp.getRequiredFileType().equalsIgnoreCase(GDTConstants.GDT_FILETRANSFER_TYP_FEST)) {
 			if (cp.getFixedCommmunicationFileName() != null) {
 				filename = cp.getFixedCommmunicationFileName();
 			} else {
 				filename = filenameHeader + ".GDT";
 			}
-		} else if (cp.getRequiredFileType().equalsIgnoreCase(
-			GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND)) {
+		} else if (cp.getRequiredFileType().equalsIgnoreCase(GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND)) {
 			int counter = 0;
 			while (true) {
 				filename = filenameHeader + "." + threePlaces.format(counter);
@@ -106,8 +103,7 @@ public class GDTFileHelper {
 				}
 			}
 		} else {
-			logger.log("Invalid file transfer type returned, neither fest nor hochzaehlend!",
-				Log.ERRORS);
+			logger.log("Invalid file transfer type returned, neither fest nor hochzaehlend!", Log.ERRORS);
 		}
 		return filename;
 	}

@@ -19,13 +19,13 @@ import at.medevit.elexis.inbox.model.IInboxElement;
 
 public class EhcDocumentLabelProvider extends LabelProvider {
 	@Override
-	public String getText(Object element){
+	public String getText(Object element) {
 		EhcDocument document = (EhcDocument) ((IInboxElement) element).getObject();
 		return document.getLabel();
 	}
-	
+
 	@Override
-	public Image getImage(Object element){
+	public Image getImage(Object element) {
 		return ResourceManager.getPluginImage("at.medevit.elexis.ehc.ui", "icons/ehc.jpg");
 	}
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.agenda.ui.week;
@@ -46,7 +46,7 @@ import ch.rgw.tools.TimeTool;
 public class ProportionalSheet extends Composite implements IAgendaLayout {
 	static final int LEFT_OFFSET_DEFAULT = 20;
 	static final int PADDING_DEFAULT = 5;
-	
+
 	int left_offset, padding;
 	private AgendaWeek view;
 	private MenuManager contextMenuManager;
@@ -57,28 +57,27 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 	private int textWidth;
 	private double sheetWidth;
 	private double widthPerColumn;
-	
-	public ProportionalSheet(Composite parent, AgendaWeek v){
+
+	public ProportionalSheet(Composite parent, AgendaWeek v) {
 		super(parent, SWT.NO_BACKGROUND);
 		view = v;
 		addControlListener(new ControlAdapter() {
 			@Override
-			public void controlResized(ControlEvent e){
+			public void controlResized(ControlEvent e) {
 				layout();
 				recalc();
 			}
 		});
 		addPaintListener(new TimePainter());
 		addMouseListener(new MouseAdapter() {
-			
+
 			@Override
-			public void mouseDoubleClick(MouseEvent e){
-				String startOfDayTimeInMinutes =
-					ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT,
-						"0000");
+			public void mouseDoubleClick(MouseEvent e) {
+				String startOfDayTimeInMinutes = ConfigServiceHolder
+						.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 				int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 				int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
-				
+
 				int minute = (int) Math.round(e.y / ppm);
 				TimeTool tt = new TimeTool(Activator.getDefault().getActDate());
 				int hour = minute / 60;
@@ -88,7 +87,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				tt.set(TimeTool.AM_PM, TimeTool.AM);
 				tt.set(TimeTool.HOUR, hour + sodtHours);
 				tt.set(TimeTool.MINUTE, minute + sodtMinutes);
-				
+
 				TerminDialog dlg = new TerminDialog(null);
 				dlg.create();
 				dlg.setTime(tt);
@@ -96,20 +95,20 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 					refresh();
 				}
 			}
-			
+
 			@Override
-			public void mouseDown(MouseEvent e){
+			public void mouseDown(MouseEvent e) {
 				super.mouseDown(e);
 			}
-			
+
 		});
 		// setBackground(Desk.getColor(Desk.COL_GREEN));
 		left_offset = LEFT_OFFSET_DEFAULT;
 		padding = PADDING_DEFAULT;
-		
+
 	}
-	
-	private boolean isBetween(int x, double lower, double upper){
+
+	private boolean isBetween(int x, double lower, double upper) {
 		int y = (int) Math.round(lower);
 		int z = (int) Math.round(upper);
 		if ((x >= y) && (x <= z)) {
@@ -117,20 +116,20 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		}
 		return false;
 	}
-	
-	public MenuManager getContextMenuManager(){
+
+	public MenuManager getContextMenuManager() {
 		return contextMenuManager;
 	}
-	
-	public void clear(){
+
+	public void clear() {
 		while (tlabels != null && tlabels.size() > 0) {
 			tlabels.remove(0).dispose();
 		}
 		recalc();
-		
+
 	}
-	
-	synchronized void refresh(){
+
+	synchronized void refresh() {
 		String[] days = view.getDisplayedDays();
 		Query<Termin> qbe = new Query<Termin>(Termin.class);
 		qbe.add("BeiWem", "=", Activator.getDefault().getActResource());
@@ -163,29 +162,29 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		TerminLabel.checkAllCollisions(tlabels);
 		recalc();
 	}
-	
-	void recalc(){
+
+	void recalc() {
 		if (tlabels != null) {
 			ppm = BaseView.getPixelPerMinute();
-			
-			String startOfDayTimeInMinutes =
-				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+
+			String startOfDayTimeInMinutes = ConfigServiceHolder
+					.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 			int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 			int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 			int sodtM = (sodtHours * 60);
 			sodtM += sodtMinutes;
-			
-			String endOfDayTimeInMinutes =
-				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+
+			String endOfDayTimeInMinutes = ConfigServiceHolder
+					.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
 			int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.substring(0, 2));
 			int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.substring(2));
 			int eodtM = (eodtHours * 60);
 			eodtM += eodtMinutes;
-			
+
 			sheetHeight = (int) Math.round(ppm * (eodtM - sodtM));
 			ScrolledComposite sc = (ScrolledComposite) getParent();
 			Point mySize = getSize();
-			
+
 			if (mySize.x > 0.0) {
 				if (mySize.y != sheetHeight) {
 					setSize(mySize.x, sheetHeight);
@@ -206,50 +205,49 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				widthPerColumn = sheetWidth / count;
 				ColumnHeader header = view.getHeader();
 				header.recalc(widthPerColumn, left_offset, padding, textSize.y);
-				
+
 				for (TerminLabel l : tlabels) {
 					l.refresh();
-					
+
 				}
 				sc.layout();
 			}
 		}
 	}
-	
-	public double getPixelPerMinute(){
+
+	public double getPixelPerMinute() {
 		return ppm;
 	}
-	
-	public double getWidthPerColumn(){
+
+	public double getWidthPerColumn() {
 		return widthPerColumn;
 	}
-	
-	public int getPadding(){
+
+	public int getPadding() {
 		return padding;
 	}
-	
-	public int getLeftOffset(){
+
+	public int getLeftOffset() {
 		return left_offset;
 	}
-	
+
 	class TimePainter implements PaintListener {
-		
-		public void paintControl(PaintEvent e){
+
+		public void paintControl(PaintEvent e) {
 			GC gc = e.gc;
 			gc.fillRectangle(e.x, e.y, e.width, e.height);
 			int y = 0;
 			TimeTool runner = new TimeTool();
-			
-			String dayStartsAt =
-				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
-			runner.set(dayStartsAt); //$NON-NLS-1$
-			
-			String dayEndsAt =
-				ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
-			TimeTool limit = new TimeTool(dayEndsAt); //$NON-NLS-1$
+
+			String dayStartsAt = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT,
+					"0000");
+			runner.set(dayStartsAt); // $NON-NLS-1$
+
+			String dayEndsAt = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+			TimeTool limit = new TimeTool(dayEndsAt); // $NON-NLS-1$
 			Point textSize = gc.textExtent("88:88"); //$NON-NLS-1$
 			int textwidth = textSize.x;
-			
+
 			int quarter = (int) Math.round(15.0 * BaseView.getPixelPerMinute());
 			int w = ProportionalSheet.this.getSize().x - 5;
 			int left = 0;
@@ -272,10 +270,10 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				runner.addHours(1);
 			}
 		}
-		
+
 	}
-	
-	public Composite getComposite(){
+
+	public Composite getComposite() {
 		return this;
 	}
 }

@@ -8,17 +8,17 @@ import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
 @Component
 public class VacdocServiceComponent {
 	private static VacdocService vacdocService;
-	
+
 	@Reference
-	public void setVacdocService(VacdocService vacdocService){
+	public void setVacdocService(VacdocService vacdocService) {
 		VacdocServiceComponent.vacdocService = vacdocService;
 	}
-	
-	public void unsetVacdocService(VacdocService vacdocService){
+
+	public void unsetVacdocService(VacdocService vacdocService) {
 		VacdocServiceComponent.vacdocService = null;
 	}
-	
-	public static VacdocService getService(){
+
+	public static VacdocService getService() {
 		if (vacdocService == null) {
 			throw new IllegalStateException("No VacdocService available");
 		}

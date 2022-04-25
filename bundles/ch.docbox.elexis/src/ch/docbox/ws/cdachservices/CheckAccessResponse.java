@@ -9,10 +9,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for anonymous complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -25,55 +26,52 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-	"success", "message"
-})
+@XmlType(name = "", propOrder = { "success", "message" })
 @XmlRootElement(name = "checkAccessResponse")
 public class CheckAccessResponse {
-	
+
 	protected boolean success;
 	@XmlElement(required = true)
 	protected String message;
-	
+
 	/**
 	 * Gets the value of the success property.
-	 * 
+	 *
 	 */
-	public boolean isSuccess(){
+	public boolean isSuccess() {
 		return success;
 	}
-	
+
 	/**
 	 * Sets the value of the success property.
-	 * 
+	 *
 	 */
-	public void setSuccess(boolean value){
+	public void setSuccess(boolean value) {
 		this.success = value;
 	}
-	
+
 	/**
 	 * Gets the value of the message property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getMessage(){
+	public String getMessage() {
 		return message;
 	}
-	
+
 	/**
 	 * Sets the value of the message property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setMessage(String value){
+	public void setMessage(String value) {
 		this.message = value;
 	}
-	
+
 }

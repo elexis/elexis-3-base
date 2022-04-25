@@ -27,48 +27,47 @@ import static org.apache.solr.common.util.Utils.makeMap;
 import static org.apache.solr.common.util.Utils.toJSONString;
 
 public class Pair<T1, T2> implements Serializable, MapWriter {
-  private final T1 first;
-  private final T2 second;
+	private final T1 first;
+	private final T2 second;
 
-  public T1 first() {
-    return first;
-  }
+	public T1 first() {
+		return first;
+	}
 
-  public T2 second() {
-    return second;
-  }
+	public T2 second() {
+		return second;
+	}
 
-  public Pair(T1 key, T2 value) {
-    this.first = key;
-    this.second = value;
-  }
+	public Pair(T1 key, T2 value) {
+		this.first = key;
+		this.second = value;
+	}
 
-  @Override
-  public boolean equals(Object that) {
-    return that instanceof Pair &&
-        Objects.equals(this.first, ((Pair) that).first) &&
-        Objects.equals(this.second, ((Pair) that).second);
-  }
+	@Override
+	public boolean equals(Object that) {
+		return that instanceof Pair && Objects.equals(this.first, ((Pair) that).first)
+				&& Objects.equals(this.second, ((Pair) that).second);
+	}
 
-  @Override
-  public String toString() {
-    return toJSONString(makeMap("first", first, "second", second));
-  }
+	@Override
+	public String toString() {
+		return toJSONString(makeMap("first", first, "second", second));
+	}
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(first, second);
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hash(first, second);
+	}
 
-  @Override
-  public void writeMap(EntryWriter ew) throws IOException {
-    ew.put("first", first);
-    ew.put("second", second);
-  }
+	@Override
+	public void writeMap(EntryWriter ew) throws IOException {
+		ew.put("first", first);
+		ew.put("second", second);
+	}
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  public static Pair parse(Map m) {
-    return new Pair(m.get("first"), m.get("second"));
-  }
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Pair parse(Map m) {
+		return new Pair(m.get("first"), m.get("second"));
+	}
 
 }

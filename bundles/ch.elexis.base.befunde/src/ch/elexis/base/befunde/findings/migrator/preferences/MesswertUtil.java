@@ -13,32 +13,32 @@ import ch.rgw.tools.StringTool;
 
 public class MesswertUtil {
 	private static final String MAPPING_CONFIG = "ch.elexis.core.findins/messwert/mapping";
-	
+
 	/**
 	 * Get the setup Messwert from the DB connection.
-	 * 
+	 *
 	 * @param connection
 	 * @return
 	 */
-	private static Messwert getSetup(){
+	private static Messwert getSetup() {
 		Messwert setup = Messwert.load("__SETUP__"); //$NON-NLS-1$
-		
+
 		if (setup.exists()) {
 			return setup;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Load all available Befunde.
-	 * 
+	 *
 	 * @param connection
 	 * @return
 	 */
-	public static List<String> getSetupBefunde(){
+	public static List<String> getSetupBefunde() {
 		Messwert setup = MesswertUtil.getSetup();
 		List<String> ret = Collections.emptyList();
-		
+
 		@SuppressWarnings("rawtypes")
 		Map fields = setup.getMap("Befunde"); //$NON-NLS-1$
 		String names = (String) fields.get("names"); //$NON-NLS-1$
@@ -47,17 +47,17 @@ public class MesswertUtil {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Load the fields available for the Befund.
-	 * 
+	 *
 	 * @param connection
 	 * @return
 	 */
-	public static List<String> getSetupBefundFields(String befund){
+	public static List<String> getSetupBefundFields(String befund) {
 		Messwert setup = MesswertUtil.getSetup();
 		List<String> ret = new ArrayList<String>();
-		
+
 		@SuppressWarnings("rawtypes")
 		Map befunde = setup.getMap("Befunde"); //$NON-NLS-1$
 		String befundFields = (String) befunde.get(befund + "_FIELDS");
@@ -72,13 +72,13 @@ public class MesswertUtil {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Load all mappings from the mandant configuration.
-	 * 
+	 *
 	 * @return
 	 */
-	public static List<MesswertFieldMapping> getMappings(){
+	public static List<MesswertFieldMapping> getMappings() {
 		List<MesswertFieldMapping> ret = new ArrayList<MesswertFieldMapping>();
 		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			String mapping = ConfigServiceHolder.getMandator(MAPPING_CONFIG, "");
@@ -94,14 +94,14 @@ public class MesswertUtil {
 		}
 		return ret;
 	}
-	
+
 	/**
-	 * Load all mappings from the mandant configuration. And add mappings for local befunde fields
-	 * which are not mapped yet.
-	 * 
+	 * Load all mappings from the mandant configuration. And add mappings for local
+	 * befunde fields which are not mapped yet.
+	 *
 	 * @return
 	 */
-	public static List<MesswertFieldMapping> getLocalMappings(){
+	public static List<MesswertFieldMapping> getLocalMappings() {
 		List<MesswertFieldMapping> ret = new ArrayList<MesswertFieldMapping>();
 		List<MesswertFieldMapping> existingMappings = getMappings();
 		ret.addAll(existingMappings);
@@ -125,14 +125,14 @@ public class MesswertUtil {
 		ret.addAll(localMappings);
 		return ret;
 	}
-	
+
 	/**
-	 * Save all mappings to the mandant configuration. Overwrites the existing mappings. Invalid
-	 * mappings are skipped.
-	 * 
+	 * Save all mappings to the mandant configuration. Overwrites the existing
+	 * mappings. Invalid mappings are skipped.
+	 *
 	 * @param mappings
 	 */
-	public static void saveMappings(List<MesswertFieldMapping> mappings){
+	public static void saveMappings(List<MesswertFieldMapping> mappings) {
 		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			StringBuilder sb = new StringBuilder();
 			for (MesswertFieldMapping befundFieldMapping : mappings) {
@@ -146,9 +146,9 @@ public class MesswertUtil {
 			throw new IllegalStateException("No mandant config available");
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
-	public static boolean isExistingMesswert(String name){
+	public static boolean isExistingMesswert(String name) {
 		Messwert setup = getSetup();
 		Map setupMap = setup.getMap("Befunde");
 		String names = (String) setupMap.get("names");

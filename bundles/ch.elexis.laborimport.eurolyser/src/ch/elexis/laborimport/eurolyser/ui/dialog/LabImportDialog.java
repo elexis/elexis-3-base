@@ -10,20 +10,20 @@ import ch.elexis.laborimport.eurolyser.ui.LabImportPage;
 
 public class LabImportDialog extends TitleAreaDialog {
 	private ImporterPage importer = new LabImportPage();
-	
-	public LabImportDialog(Shell parentShell){
+
+	public LabImportDialog(Shell parentShell) {
 		super(parentShell);
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		setTitle(importer.getTitle());
 		setMessage(importer.getDescription());
-		
+
 		return importer.createPage(parent);
 	}
-	
-	public void run(){
+
+	public void run() {
 		importer.run(true);
 	}
 }

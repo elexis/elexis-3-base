@@ -7,9 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
  *
- *    
+ *
+ *
  *******************************************************************************/
 package elexis_db_shaker.actions;
 
@@ -26,11 +26,11 @@ import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class Namen {
-	
+
 	List<String> vornamen;
 	List<String> nachnamen;
-	
-	public Namen(){
+
+	public Namen() {
 		try {
 			vornamen = new LinkedList<String>();
 			String base = PlatformHelper.getBasePath("ch.elexis.support.dbshaker");
@@ -43,7 +43,7 @@ public class Namen {
 				vornamen.add(line);
 			}
 			vn.close();
-			
+
 			nachnamen = new LinkedList<String>();
 			File fLastNames = new File(rsc, "nachnamen.txt");
 			Reader infilenn = new FileReader(fLastNames);
@@ -52,20 +52,20 @@ public class Namen {
 				nachnamen.add(line);
 			}
 			nn.close();
-			
+
 		} catch (FileNotFoundException e) {
 			SWTHelper.alert("File not found", e.getMessage());
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public String getRandomVorname(){
+
+	public String getRandomVorname() {
 		return vornamen.get((int) Math.round(Math.random() * (vornamen.size() - 1))).trim();
 	}
-	
-	public String getRandomNachname(){
+
+	public String getRandomNachname() {
 		return nachnamen.get((int) Math.round(Math.random() * (nachnamen.size() - 1))).trim();
 	}
 }

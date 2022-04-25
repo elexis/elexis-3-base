@@ -7,15 +7,15 @@ import at.medevit.elexis.kapsch.referral.KapschReferralService;
 
 @Component(service = {})
 public class KapschReferralServiceHolder {
-	
+
 	private static KapschReferralService service;
-	
+
 	@Reference
-	public void setService(KapschReferralService service){
+	public void setService(KapschReferralService service) {
 		KapschReferralServiceHolder.service = service;
 	}
-	
-	public static KapschReferralService get(){
+
+	public static KapschReferralService get() {
 		if (service == null) {
 			throw new IllegalStateException("No service available");
 		}

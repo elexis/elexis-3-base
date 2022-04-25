@@ -42,32 +42,30 @@ import ch.elexis.covid.cert.service.rest.model.TestModel;
 import ch.elexis.covid.cert.service.rest.model.VaccinationModel;
 
 public class CovidCertificateApi {
-	
+
 	private Client jaxrsClient;
 	private XSignatureClientRequestFilter xSignatureClientRequestFilter;
-	
+
 	private Mode mode;
 	private Gson gson;
-	
+
 	private Properties keyProperties;
-	
-	public CovidCertificateApi(Mode mode, Properties keyProperties){
+
+	public CovidCertificateApi(Mode mode, Properties keyProperties) {
 		this.mode = mode;
 		this.keyProperties = keyProperties;
 		this.jaxrsClient = createJaxrsClient();
-		
+
 		this.gson = new GsonBuilder().create();
 	}
-	
-	public synchronized Object vaccination(VaccinationModel model){
-		WebTarget target =
-			jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/vaccination");
+
+	public synchronized Object vaccination(VaccinationModel model) {
+		WebTarget target = jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/vaccination");
 		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
-		
+
 		xSignatureClientRequestFilter.setPayload(gson.toJson(model));
-		final Response response =
-			target.request().post(Entity.json(gson.toJson(model)));
-		
+		final Response response = target.request().post(Entity.json(gson.toJson(model)));
+
 		if (response.getStatus() >= 300) {
 			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
 			LoggerFactory.getLogger(getClass()).error(message);
@@ -76,15 +74,14 @@ public class CovidCertificateApi {
 			return response.readEntity(SuccessResponse.class);
 		}
 	}
-	
-	public synchronized Object test(TestModel model){
-		WebTarget target =
-			jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/test");
+
+	public synchronized Object test(TestModel model) {
+		WebTarget target = jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/test");
 		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
-		
+
 		xSignatureClientRequestFilter.setPayload(gson.toJson(model));
 		final Response response = target.request().post(Entity.json(gson.toJson(model)));
-		
+
 		if (response.getStatus() >= 300) {
 			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
 			LoggerFactory.getLogger(getClass()).error(message);
@@ -93,15 +90,14 @@ public class CovidCertificateApi {
 			return response.readEntity(SuccessResponse.class);
 		}
 	}
-	
-	public synchronized Object recovery(RecoveryModel model){
-		WebTarget target =
-			jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/recovery");
+
+	public synchronized Object recovery(RecoveryModel model) {
+		WebTarget target = jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/recovery");
 		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
-		
+
 		xSignatureClientRequestFilter.setPayload(gson.toJson(model));
 		final Response response = target.request().post(Entity.json(gson.toJson(model)));
-		
+
 		if (response.getStatus() >= 300) {
 			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
 			LoggerFactory.getLogger(getClass()).error(message);
@@ -110,15 +106,14 @@ public class CovidCertificateApi {
 			return response.readEntity(SuccessResponse.class);
 		}
 	}
-	
-	public synchronized Object revoke(RevokeModel model){
-		WebTarget target =
-			jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/revoke");
+
+	public synchronized Object revoke(RevokeModel model) {
+		WebTarget target = jaxrsClient.target(getBaseUrl()).path("/api/v1/covidcertificate/revoke");
 		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
-		
+
 		xSignatureClientRequestFilter.setPayload(gson.toJson(model));
 		final Response response = target.request().post(Entity.json(gson.toJson(model)));
-		
+
 		if (response.getStatus() >= 300) {
 			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
 			LoggerFactory.getLogger(getClass()).error(message);
@@ -127,14 +122,13 @@ public class CovidCertificateApi {
 			return null;
 		}
 	}
-	
-	public synchronized Object issuableVaccines(){
-		WebTarget target =
-			jaxrsClient.target(getBaseUrl()).path("/api/v1/valuesets/issuable-vaccines");
+
+	public synchronized Object issuableVaccines() {
+		WebTarget target = jaxrsClient.target(getBaseUrl()).path("/api/v1/valuesets/issuable-vaccines");
 		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
-		
+
 		final Response response = target.request().get();
-		
+
 		if (response.getStatus() >= 300) {
 			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
 			LoggerFactory.getLogger(getClass()).error(message);
@@ -143,14 +137,13 @@ public class CovidCertificateApi {
 			return response.readEntity(String.class);
 		}
 	}
-	
-	public synchronized Object issuableRapidTests(){
-		WebTarget target =
-			jaxrsClient.target(getBaseUrl()).path("/api/v1/valuesets/issuable-rapid-tests");
+
+	public synchronized Object issuableRapidTests() {
+		WebTarget target = jaxrsClient.target(getBaseUrl()).path("/api/v1/valuesets/issuable-rapid-tests");
 		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
-		
+
 		final Response response = target.request().get();
-		
+
 		if (response.getStatus() >= 300) {
 			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
 			LoggerFactory.getLogger(getClass()).error(message);
@@ -159,80 +152,75 @@ public class CovidCertificateApi {
 			return response.readEntity(String.class);
 		}
 	}
-	
-	private String getBaseUrl(){
+
+	private String getBaseUrl() {
 		return mode.getUrl();
 	}
-	
-	private Client createJaxrsClient(){
+
+	private Client createJaxrsClient() {
 		try {
 			SSLContext sslcontext = SSLContext.getInstance("TLS");
-			
+
 			KeyStore clientStore = KeyStore.getInstance("PKCS12");
 			clientStore.load(
-				getClass().getClassLoader()
-					.getResourceAsStream("/rsc/"
-						+ keyProperties.getProperty(mode == Mode.TEST ? "testcert" : "prodcert")),
-				keyProperties.getProperty(mode == Mode.TEST ? "testcertpass" : "prodcertpass")
-					.toCharArray());
-			KeyManagerFactory kmf =
-				KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-			kmf.init(clientStore, keyProperties
-				.getProperty(mode == Mode.TEST ? "testcertpass" : "prodcertpass").toCharArray());
-			
-			sslcontext.init(kmf.getKeyManagers(), new TrustManager[] {
-				new X509TrustManager() {
-					public void checkClientTrusted(X509Certificate[] arg0, String arg1)
-						throws CertificateException{}
-					
-					public void checkServerTrusted(X509Certificate[] arg0, String arg1)
-						throws CertificateException{}
-					
-					public X509Certificate[] getAcceptedIssuers(){
-						return new X509Certificate[0];
-					}
-					
+					getClass().getClassLoader().getResourceAsStream(
+							"/rsc/" + keyProperties.getProperty(mode == Mode.TEST ? "testcert" : "prodcert")),
+					keyProperties.getProperty(mode == Mode.TEST ? "testcertpass" : "prodcertpass").toCharArray());
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+			kmf.init(clientStore,
+					keyProperties.getProperty(mode == Mode.TEST ? "testcertpass" : "prodcertpass").toCharArray());
+
+			sslcontext.init(kmf.getKeyManagers(), new TrustManager[] { new X509TrustManager() {
+				public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
 				}
-			}, new java.security.SecureRandom());
-			return ClientBuilder.newBuilder().sslContext(sslcontext)
-				.hostnameVerifier((s1, s2) -> true).withConfig(getClientConfig()).build();
+
+				public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+				}
+
+				public X509Certificate[] getAcceptedIssuers() {
+					return new X509Certificate[0];
+				}
+
+			} }, new java.security.SecureRandom());
+			return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((s1, s2) -> true)
+					.withConfig(getClientConfig()).build();
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).warn("Error creating jaxrs client", e);
 		}
 		return null;
 	}
-	
-	private Configuration getClientConfig(){
+
+	private Configuration getClientConfig() {
 		ClientConfig config = new ClientConfig();
-		
+
 		xSignatureClientRequestFilter = new XSignatureClientRequestFilter();
-		
+
 		config.register(xSignatureClientRequestFilter);
-		
+
 		return config;
 	}
-	
+
 	private class XSignatureClientRequestFilter implements ClientRequestFilter {
-		
+
 		private String payload;
-		
+
 		private String signedPayload;
-		
+
 		private PrivateKey privateKey;
-		
+
 		@Override
-		public void filter(ClientRequestContext request) throws IOException{
+		public void filter(ClientRequestContext request) throws IOException {
 			request.getHeaders().add("X-Signature", getSignedPayload());
 		}
-		
-		public String getSignedPayload(){
+
+		public String getSignedPayload() {
 			if (signedPayload == null) {
 				signPayload();
 			}
 			return signedPayload;
 		}
-		
-		private void signPayload(){
+
+		private void signPayload() {
 			if (payload != null) {
 				// load the key
 				PrivateKey privateKey = getPrivateKey();
@@ -244,7 +232,7 @@ public class CovidCertificateApi {
 					Signature signature = Signature.getInstance("SHA256withRSA");
 					signature.initSign(privateKey);
 					signature.update(bytes);
-					
+
 					signedPayload = Base64.getEncoder().encodeToString(signature.sign());
 				} catch (Exception e) {
 					LoggerFactory.getLogger(getClass()).warn("Error signing payload", e);
@@ -253,34 +241,32 @@ public class CovidCertificateApi {
 				}
 			}
 		}
-		
-		public void setPayload(String json){
+
+		public void setPayload(String json) {
 			this.payload = json;
 			this.signedPayload = null;
 		}
-		
-		private PrivateKey getPrivateKey(){
+
+		private PrivateKey getPrivateKey() {
 			if (this.privateKey == null) {
 				this.privateKey = loadPrivateKey();
 			}
 			return this.privateKey;
 		}
-		
-		private PrivateKey loadPrivateKey(){
+
+		private PrivateKey loadPrivateKey() {
 			PrivateKey privateKey = null;
 			try {
-				InputStream inputStream =
-					getClass().getClassLoader()
-						.getResourceAsStream("/rsc/"
-							+ keyProperties.getProperty(mode == Mode.TEST ? "testkey" : "prodkey"));
-				if(inputStream != null) {
+				InputStream inputStream = getClass().getClassLoader().getResourceAsStream(
+						"/rsc/" + keyProperties.getProperty(mode == Mode.TEST ? "testkey" : "prodkey"));
+				if (inputStream != null) {
 					String pemString = IOUtils.toString(inputStream, "UTF-8");
 					pemString = pemString.replaceAll("(\\r|\\n|\\r\\n)+", "");
-					String keyString = StringUtils.substringBetween(pemString,
-						"-----BEGIN PRIVATE KEY-----", "-----END PRIVATE KEY-----");
-					
+					String keyString = StringUtils.substringBetween(pemString, "-----BEGIN PRIVATE KEY-----",
+							"-----END PRIVATE KEY-----");
+
 					byte[] decoded = Base64.getDecoder().decode(keyString);
-					
+
 					KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 					PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decoded);
 					return keyFactory.generatePrivate(keySpec);

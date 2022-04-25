@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    T. Huster - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -32,46 +32,46 @@ public class TarmedAllowanceDetailDisplay implements IDetailDisplay {
 	Form form;
 	FormToolkit tk = UiDesk.getToolkit();
 	LabeledInputField.AutoForm tblLab;
-	
-	//	InputData[] data = new InputData[] {
-	//		new InputData("Taxpunkte", "taxpoints", InputData.Typ.STRING, null), //$NON-NLS-1$
-	//		new InputData("Preis in Rappen", "cents", InputData.Typ.STRING, null), //$NON-NLS-1$
-	//		};
-	
-		@Inject
-		public void selection(
-			@Optional
-			@Named("ch.elexis.views.codeselector.tarmedallowance.selection")
-			ITarmedAllowance allowance){
-			if (allowance != null && !form.isDisposed()) {
-				display(allowance);
-			}
+
+	// InputData[] data = new InputData[] {
+	// new InputData("Taxpunkte", "taxpoints", InputData.Typ.STRING, null),
+	// //$NON-NLS-1$
+	// new InputData("Preis in Rappen", "cents", InputData.Typ.STRING, null),
+	// //$NON-NLS-1$
+	// };
+
+	@Inject
+	public void selection(
+			@Optional @Named("ch.elexis.views.codeselector.tarmedallowance.selection") ITarmedAllowance allowance) {
+		if (allowance != null && !form.isDisposed()) {
+			display(allowance);
 		}
-		
-	public Composite createDisplay(Composite parent, IViewSite site){
+	}
+
+	public Composite createDisplay(Composite parent, IViewSite site) {
 		form = tk.createForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
-		
+
 		tblLab = new LabeledInputField.AutoForm(form.getBody(), new InputData[0]);
-		
+
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		tblLab.setLayoutData(twd);
 		return form.getBody();
 	}
-	
-	public void display(Object obj){
+
+	public void display(Object obj) {
 		ITarmedAllowance ll = (ITarmedAllowance) obj;
 		form.setText(ll.getLabel());
 		tblLab.reload(ll);
 	}
-	
-	public Class<?> getElementClass(){
+
+	public Class<?> getElementClass() {
 		return ITarmedAllowance.class;
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return "Tarmedpauschalen";
 	}
 }

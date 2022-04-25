@@ -11,19 +11,20 @@ import org.slf4j.LoggerFactory;
 import com.equo.chromium.swt.Browser;
 
 public class SingleSourceUtil {
-	
+
 	private static Logger log = LoggerFactory.getLogger(SingleSourceUtil.class);
-	
+
 	private static final boolean IS_RAP;
 	private static final String HTML_BASE_URL;
-	
+
 	static {
 		Class<?> clazz = null;
 		try {
 			clazz = Class.forName("org.eclipse.rap.rwt.RWT"); //$NON-NLS-1$
-		} catch (ClassNotFoundException cnfe) {}
+		} catch (ClassNotFoundException cnfe) {
+		}
 		IS_RAP = clazz != null;
-		
+
 		if (IS_RAP) {
 			String baseUrl = System.getenv("BASE_URL");
 			if (baseUrl == null) {
@@ -33,41 +34,42 @@ public class SingleSourceUtil {
 		} else {
 			String _baseUrl = null;
 			try {
-				URL url = FileLocator.toFileURL(
-					FrameworkUtil.getBundle(SingleSourceUtil.class).getResource("/rsc/html/")); //$NON-NLS-1$
+				URL url = FileLocator
+						.toFileURL(FrameworkUtil.getBundle(SingleSourceUtil.class).getResource("/rsc/html/")); //$NON-NLS-1$
 				_baseUrl = url.toString();
 			} catch (IOException e) {
 				log.error("Initialization error", e); //$NON-NLS-1$
 			}
 			HTML_BASE_URL = _baseUrl;
 		}
-		
+
 	}
-	
-	public static boolean isRap(){
+
+	public static boolean isRap() {
 		return IS_RAP;
 	}
-	
+
 	/**
-	 * Resolve the html base url, i.e. the location of the fullcalendar html resources.
-	 * 
+	 * Resolve the html base url, i.e. the location of the fullcalendar html
+	 * resources.
+	 *
 	 * @param html
 	 * @return
 	 */
-	public static String resolve(String html){
+	public static String resolve(String html) {
 		return HTML_BASE_URL + html;
 	}
-	
+
 	/**
-	 * The RAP {@link Browser#execute(String)} might throw an {@link IllegalStateException} if
-	 * script execution is not synchronized. Hence if we face a RAP environment we enforce
-	 * synchronization.
-	 * 
+	 * The RAP {@link Browser#execute(String)} might throw an
+	 * {@link IllegalStateException} if script execution is not synchronized. Hence
+	 * if we face a RAP environment we enforce synchronization.
+	 *
 	 * @param browser
 	 * @param script
 	 * @return
 	 */
-	public static boolean executeScript(final Browser browser, final String script){
+	public static boolean executeScript(final Browser browser, final String script) {
 		log.debug("script [{}]: {}", script.hashCode(), script); //$NON-NLS-1$
 		if (!browser.isDisposed()) {
 			if (IS_RAP) {
@@ -77,7 +79,7 @@ public class SingleSourceUtil {
 					} catch (IllegalStateException ise) {
 						log.warn("Catched IllegalStateException in script [{}]", script);
 					}
-					
+
 				}
 			} else {
 				return browser.execute(script);
@@ -85,7 +87,8 @@ public class SingleSourceUtil {
 		}
 		return false;
 	}
-	
-	private class BrowserLock {}
-	
+
+	private class BrowserLock {
+	}
+
 }

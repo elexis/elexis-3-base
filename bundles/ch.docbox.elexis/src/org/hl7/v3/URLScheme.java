@@ -7,11 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for URLScheme.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="URLScheme">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -28,12 +29,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "URLScheme")
 @XmlEnum
 public enum URLScheme {
-	
+
 	@XmlEnumValue("fax")
 	FAX("fax"), @XmlEnumValue("file")
 	FILE("file"), @XmlEnumValue("ftp")
@@ -45,17 +46,18 @@ public enum URLScheme {
 	NFS("nfs"), @XmlEnumValue("tel")
 	TEL("tel"), @XmlEnumValue("telnet")
 	TELNET("telnet");
+
 	private final String value;
-	
-	URLScheme(String v){
+
+	URLScheme(String v) {
 		value = v;
 	}
-	
-	public String value(){
+
+	public String value() {
 		return value;
 	}
-	
-	public static URLScheme fromValue(String v){
+
+	public static URLScheme fromValue(String v) {
 		for (URLScheme c : URLScheme.values()) {
 			if (c.value.equals(v)) {
 				return c;
@@ -63,5 +65,5 @@ public enum URLScheme {
 		}
 		throw new IllegalArgumentException(v);
 	}
-	
+
 }

@@ -34,9 +34,9 @@ import ch.unibe.iam.scg.archie.utils.DatasetHelper;
  * <p>
  * Main page in the chart wizard. Contains buttons for selecting the chart type.
  * </p>
- * 
+ *
  * $Id: ChartWizardMainPage.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -137,10 +137,10 @@ public class ChartWizardMainPage extends AbstractChartPage implements Listener {
 	// ///////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Checks whether the current dataset is valid for chart generation. This
-	 * means that the dataset has to have at least one numeric columns to be
-	 * able to generate values in charts.
-	 * 
+	 * Checks whether the current dataset is valid for chart generation. This means
+	 * that the dataset has to have at least one numeric columns to be able to
+	 * generate values in charts.
+	 *
 	 * @return True if the current dataset is valid, false else.
 	 */
 	private boolean hasValidDataset() {
@@ -150,25 +150,24 @@ public class ChartWizardMainPage extends AbstractChartPage implements Listener {
 
 	/**
 	 * Returns the error status based on the dataset validity.
-	 * 
-	 * @return True if graphs can be created from the current dataset, false
-	 *         else.
+	 *
+	 * @return True if graphs can be created from the current dataset, false else.
 	 */
 	private IStatus getErrorStatus() {
 		// Initialize a variable with the no error status
 		Status status = new Status(IStatus.OK, ArchieActivator.PLUGIN_NAME, 0, "", null);
 
 		if (!this.hasValidDataset()) {
-			status = new Status(IStatus.ERROR, ArchieActivator.PLUGIN_NAME, 0,
-					Messages.CHART_WIZARD_PAGE_ERROR_DATASET, null);
+			status = new Status(IStatus.ERROR, ArchieActivator.PLUGIN_NAME, 0, Messages.CHART_WIZARD_PAGE_ERROR_DATASET,
+					null);
 		}
 
 		return status;
 	}
 
 	/**
-	 * Sets the chart type in the chart model according to the currently
-	 * selected item.
+	 * Sets the chart type in the chart model according to the currently selected
+	 * item.
 	 */
 	private void setModelChartType() {
 		ChartModel model = ((ChartWizard) ChartWizardMainPage.this.getWizard()).getModel();
@@ -194,7 +193,7 @@ public class ChartWizardMainPage extends AbstractChartPage implements Listener {
 	@Override
 	public IWizardPage getNextPage() {
 		IWizard wizard = this.getWizard();
-		return (this.pieItem.getSelection() ? wizard.getPage(PieChartPage.PAGE_NAME) : wizard
-				.getPage(BarChartPage.PAGE_NAME));
+		return (this.pieItem.getSelection() ? wizard.getPage(PieChartPage.PAGE_NAME)
+				: wizard.getPage(BarChartPage.PAGE_NAME));
 	}
 }

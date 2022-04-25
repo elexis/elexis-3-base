@@ -30,13 +30,11 @@ public final class PrintAppointmentLabelHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String appointmentids = event.getParameter("ch.elexis.agenda.param.appointmentids");
 		if (StringUtils.isNotBlank(appointmentids)) {
-			List<Termin> lTermine = ((List<String>) Arrays.asList(appointmentids.split(",")))
-				.stream().filter(id -> StringUtils.isNotBlank(id)).map(id -> Termin.load(id))
-				.collect(Collectors.toList());
+			List<Termin> lTermine = ((List<String>) Arrays.asList(appointmentids.split(","))).stream()
+					.filter(id -> StringUtils.isNotBlank(id)).map(id -> Termin.load(id)).collect(Collectors.toList());
 			if (!lTermine.isEmpty()) {
-				new TermineDruckenDialog(
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-					lTermine.toArray(new Termin[lTermine.size()])).open();
+				new TermineDruckenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						lTermine.toArray(new Termin[lTermine.size()])).open();
 			}
 		}
 		return null;

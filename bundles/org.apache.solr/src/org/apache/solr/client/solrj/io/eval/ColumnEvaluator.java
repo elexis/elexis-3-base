@@ -27,51 +27,56 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class ColumnEvaluator extends RecursiveEvaluator {
-  protected static final long serialVersionUID = 1L;
-  
-  public ColumnEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-    
-    init();
-  }
-  
-  public ColumnEvaluator(StreamExpression expression, StreamFactory factory, List<String> ignoredNamedParameters) throws IOException{
-    super(expression, factory, ignoredNamedParameters);
-    
-    init();
-  }
-  
-  private void init() throws IOException{
-    if(2 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 2 parameters but found %d", toExpression(constructingFactory), containedEvaluators.size()));
-    }
-  }
-      
-  @Override
-  public Object evaluate(Tuple tuple) throws IOException {    
-    try{
-      
-      Object firstLevel = containedEvaluators.get(0).evaluate(tuple);
-      
-      if(!(firstLevel instanceof List<?>) || ((List<?>) firstLevel).stream().anyMatch(value -> !(value instanceof Tuple))){
-        throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting a list of tuples but found %s", toExpression(constructingFactory), firstLevel.getClass().getSimpleName()));
-      }
+	protected static final long serialVersionUID = 1L;
 
-      List<Object> column = new ArrayList<>();
-      for(Object innerTuple : (List<?>)firstLevel){
-        column.add(containedEvaluators.get(1).evaluate((Tuple)innerTuple));
-      }
+	public ColumnEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-      return normalizeOutputType(column);
-    }
-    catch(UncheckedIOException e){
-      throw e.getCause();
-    }
-  }
+		init();
+	}
 
-  @Override
-  public Object doWork(Object... values) throws IOException {
-    // Nothing to do here
-    throw new IOException("This call should never occur");
-  }
+	public ColumnEvaluator(StreamExpression expression, StreamFactory factory, List<String> ignoredNamedParameters)
+			throws IOException {
+		super(expression, factory, ignoredNamedParameters);
+
+		init();
+	}
+
+	private void init() throws IOException {
+		if (2 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 2 parameters but found %d",
+							toExpression(constructingFactory), containedEvaluators.size()));
+		}
+	}
+
+	@Override
+	public Object evaluate(Tuple tuple) throws IOException {
+		try {
+
+			Object firstLevel = containedEvaluators.get(0).evaluate(tuple);
+
+			if (!(firstLevel instanceof List<?>)
+					|| ((List<?>) firstLevel).stream().anyMatch(value -> !(value instanceof Tuple))) {
+				throw new IOException(
+						String.format(Locale.ROOT, "Invalid expression %s - expecting a list of tuples but found %s",
+								toExpression(constructingFactory), firstLevel.getClass().getSimpleName()));
+			}
+
+			List<Object> column = new ArrayList<>();
+			for (Object innerTuple : (List<?>) firstLevel) {
+				column.add(containedEvaluators.get(1).evaluate((Tuple) innerTuple));
+			}
+
+			return normalizeOutputType(column);
+		} catch (UncheckedIOException e) {
+			throw e.getCause();
+		}
+	}
+
+	@Override
+	public Object doWork(Object... values) throws IOException {
+		// Nothing to do here
+		throw new IOException("This call should never occur");
+	}
 }

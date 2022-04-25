@@ -23,13 +23,16 @@ import org.apache.solr.common.params.ShardParams;
 
 public interface ReplicaListTransformer {
 
-  /**
-   * Transforms the passed in list of choices. Transformations can include (but are not limited to)
-   * reordering of elements (e.g. via shuffling) and removal of elements (i.e. filtering).
-   *
-   * @param choices - a list of choices to transform, typically the choices are {@link Replica} objects but choices
-   * can also be {@link String} objects such as URLs passed in via the {@link ShardParams#SHARDS} parameter.
-   */
-  public void transform(List<?> choices);
+	/**
+	 * Transforms the passed in list of choices. Transformations can include (but
+	 * are not limited to) reordering of elements (e.g. via shuffling) and removal
+	 * of elements (i.e. filtering).
+	 *
+	 * @param choices - a list of choices to transform, typically the choices are
+	 *                {@link Replica} objects but choices can also be {@link String}
+	 *                objects such as URLs passed in via the
+	 *                {@link ShardParams#SHARDS} parameter.
+	 */
+	public void transform(List<?> choices);
 
 }

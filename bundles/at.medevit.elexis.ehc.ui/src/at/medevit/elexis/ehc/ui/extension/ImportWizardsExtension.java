@@ -28,28 +28,28 @@ import at.medevit.elexis.ehc.ui.dialog.WizardDescriptor;
 
 public class ImportWizardsExtension {
 	private static Logger logger = LoggerFactory.getLogger(ImportWizardsExtension.class);
-	
+
 	private static final String OTHER_CATEGORYID = "at.medevit.elexis.ehc.ui.OtherCategoryId";
-	
+
 	private static List<IWizardCategory> cacheCategoriesList;
-	
+
 	private static List<IWizardDescriptor> cacheWizardsList;
-	
-	public static List<IWizardCategory> getCategories(boolean refresh){
+
+	public static List<IWizardCategory> getCategories(boolean refresh) {
 		if (refresh || cacheCategoriesList == null)
 			refreshCache();
-		
+
 		return cacheCategoriesList;
 	}
-	
-	public static List<IWizardDescriptor> getWizards(boolean refresh){
+
+	public static List<IWizardDescriptor> getWizards(boolean refresh) {
 		if (refresh || cacheWizardsList == null)
 			refreshCache();
-		
+
 		return cacheWizardsList;
 	}
-	
-	public static void setImportDocument(InputStream document){
+
+	public static void setImportDocument(InputStream document) {
 		List<IWizardDescriptor> wizards = getWizards(false);
 		for (IWizardDescriptor iWizardDescriptor : wizards) {
 			try {
@@ -60,19 +60,18 @@ public class ImportWizardsExtension {
 			}
 		}
 	}
-	
-	private static void refreshCache(){
+
+	private static void refreshCache() {
 		cacheCategoriesList = new ArrayList<IWizardCategory>();
-		
+
 		cacheWizardsList = new ArrayList<IWizardDescriptor>();
-		
+
 		logger.info("Initializing or refreshing Import Wizards.");
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
 		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.ehc.ui.ehcimport");
 		if (exp != null) {
 			IExtension[] extensions = exp.getExtensions();
-			logger.info("Initializing or refreshing Import Wizards found " + extensions.length
-				+ " implementations.");
+			logger.info("Initializing or refreshing Import Wizards found " + extensions.length + " implementations.");
 			for (IExtension ex : extensions) {
 				IConfigurationElement[] elems = ex.getConfigurationElements();
 				for (IConfigurationElement el : elems) {

@@ -10,10 +10,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for anonymous complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -25,44 +26,44 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-	"document"
-})
+@XmlType(name = "", propOrder = { "document" })
 @XmlRootElement(name = "getInboxClinicalDocumentsResponse")
 public class GetInboxClinicalDocumentsResponse {
-	
+
 	protected List<DocumentInfoType> document;
-	
+
 	/**
 	 * Gets the value of the document property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the document property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the document property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getDocument().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
-	 * Objects of the following type(s) are allowed in the list {@link DocumentInfoType }
-	 * 
-	 * 
+	 * Objects of the following type(s) are allowed in the list
+	 * {@link DocumentInfoType }
+	 *
+	 *
 	 */
-	public List<DocumentInfoType> getDocument(){
+	public List<DocumentInfoType> getDocument() {
 		if (document == null) {
 			document = new ArrayList<DocumentInfoType>();
 		}
 		return this.document;
 	}
-	
+
 }

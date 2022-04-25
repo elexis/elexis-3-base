@@ -18,27 +18,27 @@ import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 
 public class Feld8402ContentProposalProvider implements IContentProposalProvider {
-	
+
 	private String[] proposals;
 	private String[] labels;
 	private String[] detailDescription;
 	private IContentProposal[] contentProposals;
 	private boolean filterProposals = false;
-	
-	public Feld8402ContentProposalProvider(String[] proposals, String[] labels, String[] detailDescription){
+
+	public Feld8402ContentProposalProvider(String[] proposals, String[] labels, String[] detailDescription) {
 		super();
 		this.proposals = proposals;
 		this.labels = labels;
 		this.detailDescription = detailDescription;
 	}
-	
+
 	@Override
-	public IContentProposal[] getProposals(String contents, int position){
+	public IContentProposal[] getProposals(String contents, int position) {
 		if (filterProposals) {
 			ArrayList<IContentProposal> list = new ArrayList<IContentProposal>();
 			for (int i = 0; i < proposals.length; i++) {
 				if (proposals[i].length() >= contents.length()
-					&& proposals[i].substring(0, contents.length()).equalsIgnoreCase(contents)) {
+						&& proposals[i].substring(0, contents.length()).equalsIgnoreCase(contents)) {
 					list.add(makeContentProposal(proposals[i], labels[i], detailDescription[i]));
 				}
 			}
@@ -50,45 +50,47 @@ public class Feld8402ContentProposalProvider implements IContentProposalProvider
 		return contentProposals;
 	}
 
-	public void setProposals(String[] proposals, String[] labels, String[] detailDescription){
+	public void setProposals(String[] proposals, String[] labels, String[] detailDescription) {
 		this.proposals = proposals;
 		this.labels = labels;
 		this.detailDescription = detailDescription;
 		contentProposals = null;
 		refreshProposals();
 	}
-	
-	public void setFiltering(boolean filterProposals){
+
+	public void setFiltering(boolean filterProposals) {
 		this.filterProposals = filterProposals;
 		contentProposals = null;
 	}
-	
+
 	private void refreshProposals() {
 		contentProposals = new IContentProposal[proposals.length];
-		
+
 		for (int i = 0; i < proposals.length; i++) {
 			String detailDescriptionA = null;
-			if (detailDescription != null && detailDescription[i]!=null)  detailDescriptionA = detailDescription[i];
+			if (detailDescription != null && detailDescription[i] != null)
+				detailDescriptionA = detailDescription[i];
 			contentProposals[i] = makeContentProposal(proposals[i], labels[i], detailDescriptionA);
 		}
 	}
-	
-	private IContentProposal makeContentProposal(final String proposal, final String label, final String detailDescription){
+
+	private IContentProposal makeContentProposal(final String proposal, final String label,
+			final String detailDescription) {
 		return new IContentProposal() {
-			
-			public String getContent(){
+
+			public String getContent() {
 				return proposal;
 			}
-			
-			public String getDescription(){
+
+			public String getDescription() {
 				return detailDescription;
 			}
-			
-			public String getLabel(){
+
+			public String getLabel() {
 				return proposal + " - " + label;
 			}
-			
-			public int getCursorPosition(){
+
+			public int getCursorPosition() {
 				return proposal.length();
 			}
 		};

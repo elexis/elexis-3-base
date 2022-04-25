@@ -27,28 +27,28 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class AgendaView {
-	
+
 	private Composite container;
-	
+
 	private Composite parallelParent;
 	private ParallelComposite parallelComposite;
-	
+
 	private Composite weekParent;
 	private WeekComposite weekComposite;
-	
+
 	private StackLayout stackLayout;
-	
+
 	private SideBarComposite parallelSideBar;
-	
+
 	private SideBarComposite weekSideBar;
-	
-	public AgendaView(){
+
+	public AgendaView() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Inject
 	@Optional
-	public void reload(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Class<?> clazz){
+	public void reload(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Class<?> clazz) {
 		if (IAppointment.class.equals(clazz)) {
 			if (parallelComposite != null && !parallelComposite.isDisposed()) {
 				parallelComposite.refetchEvents();
@@ -58,14 +58,14 @@ public class AgendaView {
 			}
 		}
 	}
-	
+
 	@PostConstruct
-	public void createPartControl(MPart part, ESelectionService selectionService,
-		EMenuService menuService, Composite parent, UISynchronize uiSynchronize){
+	public void createPartControl(MPart part, ESelectionService selectionService, EMenuService menuService,
+			Composite parent, UISynchronize uiSynchronize) {
 		container = new Composite(parent, SWT.NONE);
 		stackLayout = new StackLayout();
 		container.setLayout(stackLayout);
-		
+
 		// create week composites
 		weekParent = new Composite(container, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
@@ -74,15 +74,15 @@ public class AgendaView {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		weekParent.setLayout(layout);
-		
+
 		weekSideBar = new SideBarComposite(weekParent, SWT.NONE);
 		weekSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		weekComposite = new WeekComposite(part, selectionService, menuService, weekParent, SWT.NONE,
-			true, uiSynchronize);
+		weekComposite = new WeekComposite(part, selectionService, menuService, weekParent, SWT.NONE, true,
+				uiSynchronize);
 		weekComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		CoreUiUtil.injectServicesWithContext(weekComposite);
 		weekSideBar.setAgendaComposite(weekComposite);
-		
+
 		// create parallel composites
 		parallelParent = new Composite(container, SWT.NONE);
 		layout = new GridLayout(2, false);
@@ -91,26 +91,26 @@ public class AgendaView {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		parallelParent.setLayout(layout);
-		
+
 		parallelSideBar = new SideBarComposite(parallelParent, true, SWT.NONE);
 		parallelSideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		parallelComposite = new ParallelComposite(part, selectionService, menuService,
-			parallelParent, SWT.NONE, true, uiSynchronize);
+		parallelComposite = new ParallelComposite(part, selectionService, menuService, parallelParent, SWT.NONE, true,
+				uiSynchronize);
 		CoreUiUtil.injectServicesWithContext(parallelComposite);
 		parallelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parallelSideBar.setAgendaComposite(parallelComposite);
-		
+
 		setTopControl("parallel");
 	}
-	
+
 	@Focus
-	public void setFocus(){
+	public void setFocus() {
 		if (container != null && !container.isDisposed()) {
 			container.setFocus();
 		}
 	}
-	
-	public void setTopControl(String name){
+
+	public void setTopControl(String name) {
 		if ("parallel".equalsIgnoreCase(name)) {
 			stackLayout.topControl = parallelParent;
 		} else if ("week".equalsIgnoreCase(name)) {
@@ -118,12 +118,12 @@ public class AgendaView {
 		}
 		container.layout();
 	}
-	
-	public SideBarComposite getParallelSideBarComposite(){
+
+	public SideBarComposite getParallelSideBarComposite() {
 		return parallelSideBar;
 	}
-	
-	public LoadEventsFunction getLoadEventsFunction(){
+
+	public LoadEventsFunction getLoadEventsFunction() {
 		if (stackLayout.topControl == parallelParent) {
 			return parallelComposite.getLoadEventsFunction();
 		} else if (stackLayout.topControl == weekParent) {
@@ -131,10 +131,10 @@ public class AgendaView {
 		}
 		return null;
 	}
-	
+
 	@Optional
 	@Inject
-	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState) {
 		CoreUiUtil.updateFixLayout(part, currentState);
 	}
 }

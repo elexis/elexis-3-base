@@ -104,14 +104,12 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 			settingsStore = new ConfigServicePreferenceStore(Scope.LOCAL);
 		}
 
-		item.setText(1,
-			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0)));
+		item.setText(1, settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0)));
 
 		if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 4))) {
 			item.setText(2, Messages.GeneralPreferences_Custom);
 		} else {
-			item.setText(2,
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 3)));
+			item.setText(2, settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 3)));
 		}
 
 		if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 2))) {
@@ -120,8 +118,7 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 			item.setText(3, Messages.GeneralPreferences_Default);
 		}
 
-		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7))
-			.equals("90")) {
+		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7)).equals("90")) {
 			item.setText(4, Messages.GeneralPreferences_OrientationPortrait);
 		} else {
 			item.setText(4, Messages.GeneralPreferences_OrientationLandscape);
@@ -147,14 +144,12 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 			}
 
 			item.setText(0, Messages.getDocumentName(table.getItemCount() - 1));
-			item.setText(1,
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 0)));
+			item.setText(1, settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 0)));
 
 			if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(s, 4))) {
 				item.setText(2, Messages.GeneralPreferences_Custom);
 			} else {
-				item.setText(2,
-					settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 3)));
+				item.setText(2, settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 3)));
 			}
 
 			if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(s, 2))) {
@@ -163,8 +158,7 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 				item.setText(3, Messages.GeneralPreferences_Default);
 			}
 
-			if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 7))
-				.equals("90")) {
+			if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 7)).equals("90")) {
 				item.setText(4, Messages.GeneralPreferences_OrientationPortrait);
 			} else {
 				item.setText(4, Messages.GeneralPreferences_OrientationLandscape);

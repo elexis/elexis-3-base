@@ -8,11 +8,10 @@ import org.eclipse.ui.PlatformUI;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
 
 public class AddReccuringDateHandler extends AbstractHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		SerienTerminDialog std =
-			new SerienTerminDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		SerienTerminDialog std = new SerienTerminDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 				null);
 		std.open();
 		return null;

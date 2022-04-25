@@ -67,9 +67,9 @@ public class ComplementarySubDetail extends Composite {
 				if (dialog.open() == InputDialog.OK) {
 					String newAlternativeText = dialog.getText();
 					Integer newAlternativeValue = dialog.getValue();
-					
-					IComplementaryLeistung newComplementary =
-						ArzttarifeModelServiceHolder.get().create(IComplementaryLeistung.class);
+
+					IComplementaryLeistung newComplementary = ArzttarifeModelServiceHolder.get()
+							.create(IComplementaryLeistung.class);
 					newComplementary.setId(getNextSubId());
 					newComplementary.setChapter(complementary.getChapter());
 					newComplementary.setCode(complementary.getCode());
@@ -77,7 +77,7 @@ public class ComplementarySubDetail extends Composite {
 					newComplementary.setDescription("");
 					newComplementary.setValidFrom(complementary.getValidFrom());
 					newComplementary.setValidTo(complementary.getValidTo());
-					
+
 					newComplementary.setFixedValue(newAlternativeValue);
 					ArzttarifeModelServiceHolder.get().save(newComplementary);
 					updateContent();
@@ -100,8 +100,7 @@ public class ComplementarySubDetail extends Composite {
 			public void run() {
 				ISelection selection = subTable.getSelection();
 				if (selection != null && !selection.isEmpty()) {
-					IComplementaryLeistung element =
-						(IComplementaryLeistung) ((StructuredSelection) selection)
+					IComplementaryLeistung element = (IComplementaryLeistung) ((StructuredSelection) selection)
 							.getFirstElement();
 					ArzttarifeModelServiceHolder.get().delete(element);
 					updateContent();
@@ -121,8 +120,8 @@ public class ComplementarySubDetail extends Composite {
 					StringBuilder sb = new StringBuilder();
 					sb.append(((IComplementaryLeistung) element).getText());
 					if (((IComplementaryLeistung) element).isFixedValueSet()) {
-						sb.append(" (" + Double.toString(
-							((IComplementaryLeistung) element).getFixedValue() / 100.0) + ")");
+						sb.append(" (" + Double.toString(((IComplementaryLeistung) element).getFixedValue() / 100.0)
+								+ ")");
 					}
 					return sb.toString();
 				}
@@ -132,8 +131,8 @@ public class ComplementarySubDetail extends Composite {
 	}
 
 	private void updateContent() {
-		IQuery<IComplementaryLeistung> query =
-			ArzttarifeModelServiceHolder.get().getQuery(IComplementaryLeistung.class);
+		IQuery<IComplementaryLeistung> query = ArzttarifeModelServiceHolder.get()
+				.getQuery(IComplementaryLeistung.class);
 		query.and("code", COMPARATOR.EQUALS, complementary.getCode());
 		query.and("id", COMPARATOR.LIKE, complementary.getCode() + "sub%");
 		subTable.setInput(query.execute());
@@ -143,14 +142,14 @@ public class ComplementarySubDetail extends Composite {
 
 	private String getNextSubId() {
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-		IQuery<IComplementaryLeistung> query =
-			ArzttarifeModelServiceHolder.get().getQuery(IComplementaryLeistung.class, true);
+		IQuery<IComplementaryLeistung> query = ArzttarifeModelServiceHolder.get().getQuery(IComplementaryLeistung.class,
+				true);
 		query.and("code", COMPARATOR.EQUALS, complementary.getCode());
 		query.and("id", COMPARATOR.LIKE,
-			complementary.getCode() + "sub%-" + dateFormatter.format(complementary.getValidFrom()));
-		
+				complementary.getCode() + "sub%-" + dateFormatter.format(complementary.getValidFrom()));
+
 		List<IComplementaryLeistung> existing = query.execute();
-		
+
 		Map<Integer, String> existingIndexMap = new HashMap<Integer, String>();
 		for (IComplementaryLeistung complementaryLeistung : existing) {
 			String id = complementaryLeistung.getId();
@@ -161,8 +160,7 @@ public class ComplementarySubDetail extends Composite {
 		while (existingIndexMap.containsKey(freeIndex)) {
 			freeIndex++;
 		}
-		return complementary.getCode() + "sub" + freeIndex + "-"
-			+ dateFormatter.format(complementary.getValidFrom());
+		return complementary.getCode() + "sub" + freeIndex + "-" + dateFormatter.format(complementary.getValidFrom());
 	}
 
 	public void hide() {
@@ -176,7 +174,7 @@ public class ComplementarySubDetail extends Composite {
 		getParent().layout(true, true);
 	}
 
-	public void show(IComplementaryLeistung complementary){
+	public void show(IComplementaryLeistung complementary) {
 		this.complementary = complementary;
 		updateContent();
 		for (Control child : getChildren()) {

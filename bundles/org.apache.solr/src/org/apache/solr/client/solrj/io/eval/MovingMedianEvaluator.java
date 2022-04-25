@@ -27,42 +27,48 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class MovingMedianEvaluator extends RecursiveNumericEvaluator implements TwoValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public MovingMedianEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-  }
+	public MovingMedianEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object first, Object second) throws IOException{
-    if(null == first){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
-    }
-    if(null == second){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the second value",toExpression(constructingFactory)));
-    }
-    if(!(first instanceof List<?>)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the first value, expecting a List",toExpression(constructingFactory), first.getClass().getSimpleName()));
-    }
-    if(!(second instanceof Number)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the second value, expecting a Number",toExpression(constructingFactory), first.getClass().getSimpleName()));
-    }
+	@Override
+	public Object doWork(Object first, Object second) throws IOException {
+		if (null == first) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
+					toExpression(constructingFactory)));
+		}
+		if (null == second) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the second value",
+					toExpression(constructingFactory)));
+		}
+		if (!(first instanceof List<?>)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for the first value, expecting a List",
+					toExpression(constructingFactory), first.getClass().getSimpleName()));
+		}
+		if (!(second instanceof Number)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for the second value, expecting a Number",
+					toExpression(constructingFactory), first.getClass().getSimpleName()));
+		}
 
-    List<?> values = (List<?>)first;
-    int window = ((Number)second).intValue();
+		List<?> values = (List<?>) first;
+		int window = ((Number) second).intValue();
 
-    List<Number> moving = new ArrayList<>();
-    DescriptiveStatistics slider = new DescriptiveStatistics(window);
-    Percentile percentile = new Percentile();
-    for(Object value : values){
-      slider.addValue(((Number)value).doubleValue());
-      if(slider.getN() >= window){
-        double median = percentile.evaluate(slider.getValues(), 50);
-        moving.add(median);
-      }
-    }
+		List<Number> moving = new ArrayList<>();
+		DescriptiveStatistics slider = new DescriptiveStatistics(window);
+		Percentile percentile = new Percentile();
+		for (Object value : values) {
+			slider.addValue(((Number) value).doubleValue());
+			if (slider.getN() >= window) {
+				double median = percentile.evaluate(slider.getValues(), 50);
+				moving.add(median);
+			}
+		}
 
-    return moving;
-  }
+		return moving;
+	}
 
 }

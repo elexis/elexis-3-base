@@ -24,39 +24,41 @@ import java.util.Map;
 
 public class LinkedHashMapWriter<V> extends LinkedHashMap<String, V> implements MapWriter {
 
-  public LinkedHashMapWriter(int initialCapacity) {
-    super(initialCapacity);
-  }
+	public LinkedHashMapWriter(int initialCapacity) {
+		super(initialCapacity);
+	}
 
-  public LinkedHashMapWriter() {
-    super();
-  }
+	public LinkedHashMapWriter() {
+		super();
+	}
 
-  public LinkedHashMapWriter(Map<? extends String, ? extends V> m) {
-    super(m);
-  }
+	public LinkedHashMapWriter(Map<? extends String, ? extends V> m) {
+		super(m);
+	}
 
-  @Override
-  public void writeMap(EntryWriter ew) throws IOException {
-    forEach(ew.getBiConsumer());
-  }
+	@Override
+	public void writeMap(EntryWriter ew) throws IOException {
+		forEach(ew.getBiConsumer());
+	}
 
-  @Override
-  @SuppressWarnings({"unchecked"})
-  public Object _get(String path, Object def) {
-    if (path.indexOf('/') == -1) return getOrDefault(path, (V) def);
-    return MapWriter.super._get(path, def);
-  }
+	@Override
+	@SuppressWarnings({ "unchecked" })
+	public Object _get(String path, Object def) {
+		if (path.indexOf('/') == -1)
+			return getOrDefault(path, (V) def);
+		return MapWriter.super._get(path, def);
+	}
 
-  @Override
-  @SuppressWarnings({"unchecked"})
-  public Object _get(List<String> path, Object def) {
-    if (path.size() == 1) return getOrDefault(path.get(0), (V) def);
-    return MapWriter.super._get(path, def);
-  }
+	@Override
+	@SuppressWarnings({ "unchecked" })
+	public Object _get(List<String> path, Object def) {
+		if (path.size() == 1)
+			return getOrDefault(path.get(0), (V) def);
+		return MapWriter.super._get(path, def);
+	}
 
-  @Override
-  public String toString() {
-    return jsonStr();
-  }
+	@Override
+	public String toString() {
+		return jsonStr();
+	}
 }

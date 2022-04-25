@@ -6,22 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
- *    
+ *    A. Kaufmann - initial implementation
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.pluginstatistiken;
 
 /**
- * Wir benutzen hier der Sauberkeit halber eine eigene Exception, auch wenn die im Moment noch nicht
- * sehr viel tut.
- * 
+ * Wir benutzen hier der Sauberkeit halber eine eigene Exception, auch wenn die
+ * im Moment noch nicht sehr viel tut.
+ *
  * @author Antoine Kaufmann
  */
 public class PluginstatistikException extends Exception {
 	private static final long serialVersionUID = 1L;
-	
-	public PluginstatistikException(String message){
+
+	public PluginstatistikException(String message) {
 		super(message);
 	}
 }

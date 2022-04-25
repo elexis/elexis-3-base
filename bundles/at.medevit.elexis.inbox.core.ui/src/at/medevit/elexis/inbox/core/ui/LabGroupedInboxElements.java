@@ -7,39 +7,36 @@ import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 
 public class LabGroupedInboxElements extends GroupedInboxElements {
-	
-	private static DateTimeFormatter defaultDateFormatter =
-		DateTimeFormatter.ofPattern("dd.MM.yyyy");
-	
+
+	private static DateTimeFormatter defaultDateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
 	@Override
-	public String getUri(){
+	public String getUri() {
 		if (getPatient() != null) {
 			return "lab://" + StoreToStringServiceHolder.getStoreToString(getPatient());
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		if (!isEmpty()) {
 			if (getFirstElement().getObject() instanceof ILabResult
-				&& ((ILabResult) getFirstElement().getObject()).getObservationTime() != null) {
-				return getElements().size() + " Laborresultate am "
-					+ ((ILabResult) getFirstElement().getObject()).getObservationTime()
-						.toLocalDate().format(defaultDateFormatter);
+					&& ((ILabResult) getFirstElement().getObject()).getObservationTime() != null) {
+				return getElements().size() + " Laborresultate am " + ((ILabResult) getFirstElement().getObject())
+						.getObservationTime().toLocalDate().format(defaultDateFormatter);
 			} else {
 				return getElements().size() + " Laborresultate";
 			}
 		}
 		return "Keine Laborresultate";
 	}
-	
-	public boolean isMatching(ILabResult labResult){
-		if (!isEmpty()
-			&& (((ILabResult) getFirstElement().getObject()).getObservationTime() != null
+
+	public boolean isMatching(ILabResult labResult) {
+		if (!isEmpty() && (((ILabResult) getFirstElement().getObject()).getObservationTime() != null
 				&& labResult.getObservationTime() != null)) {
 			return ((ILabResult) getFirstElement().getObject()).getObservationTime().toLocalDate()
-				.equals(labResult.getObservationTime().toLocalDate());
+					.equals(labResult.getObservationTime().toLocalDate());
 		}
 		// if empty match any
 		return isEmpty();

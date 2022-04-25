@@ -30,17 +30,16 @@ import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.elexis.icpc.model.internal.service.IcpcModelServiceHolder;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=icpc2")
-public class IcpcReferenceDataImporter extends AbstractReferenceDataImporter
-		implements IReferenceDataImporter {
-	
+public class IcpcReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
+
 	@Override
-	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion){
+	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion) {
 		monitor.beginTask("Importiere ICPC-2", 727);
 		Database db = null;
 		try {
 			File tempFile = File.createTempFile("tmp_icpc-2", ".mdb");
 			tempFile.deleteOnExit();
-			
+
 			try (OutputStream outputStream = new FileOutputStream(tempFile)) {
 				IOUtils.copy(input, outputStream);
 				db = new DatabaseBuilder().setReadOnly(true).open(tempFile);
@@ -53,16 +52,17 @@ public class IcpcReferenceDataImporter extends AbstractReferenceDataImporter
 			IOUtils.closeQuietly(db);
 		}
 	}
-	
+
 	@Override
-	public int getCurrentVersion(){
-		long count = IcpcModelServiceHolder.get().executeNativeQuery("SELECT ID FROM CH_ELEXIS_ICPC WHERE ID != 'ver'").count();
+	public int getCurrentVersion() {
+		long count = IcpcModelServiceHolder.get().executeNativeQuery("SELECT ID FROM CH_ELEXIS_ICPC WHERE ID != 'ver'")
+				.count();
 		return count > 0 ? 1 : 0;
 	}
-	
-	private IStatus doImport(IProgressMonitor monitor, Database db) throws IOException{
+
+	private IStatus doImport(IProgressMonitor monitor, Database db) throws IOException {
 		monitor.worked(1);
-		
+
 		monitor.subTask("Lösche alte Daten");
 		IQuery<IcpcCode> query = IcpcModelServiceHolder.get().getQuery(IcpcCode.class);
 		query.and("id", COMPARATOR.NOT_EQUALS, "ver");

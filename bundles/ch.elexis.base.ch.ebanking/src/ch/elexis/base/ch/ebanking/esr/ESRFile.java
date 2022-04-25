@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
@@ -32,33 +32,31 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
 /**
- * Ein ESRFile ist eine Datei, wie sie von der Bank heruntergeladen werden kann, um VESR-Records zu
- * verbuchen
- * 
+ * Ein ESRFile ist eine Datei, wie sie von der Bank heruntergeladen werden kann,
+ * um VESR-Records zu verbuchen
+ *
  * @author gerry
- * 
+ *
  */
 public class ESRFile {
 	List<ESRRecord> list = new ArrayList<ESRRecord>();
 	String name;
 	String hash;
-	
+
 	/**
 	 * ein ESR-File einlesen
-	 * 
-	 * @param filename
-	 *            vollständiger Pfadname der Datei
+	 *
+	 * @param filename vollständiger Pfadname der Datei
 	 * @return true wenn die Datei erfolgreich gelesen werden konnte
 	 */
-	public Result<List<ESRRecord>> read(File file, final IProgressMonitor monitor){
-		
+	public Result<List<ESRRecord>> read(File file, final IProgressMonitor monitor) {
+
 		if (!file.exists()) {
-			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 1,
-				Messages.ESRFile_esrfile_not_founde, null, true);
+			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 1, Messages.ESRFile_esrfile_not_founde, null,
+					true);
 		}
 		if (!file.canRead()) {
-			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 2,
-				Messages.ESRFile_cannot_read_esr, null, true);
+			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 2, Messages.ESRFile_cannot_read_esr, null, true);
 		}
 		byte[] md5 = FileTool.checksum(file);
 		name = file.getName();
@@ -71,67 +69,63 @@ public class ESRFile {
 		qesr.add("File", "=", hash); //$NON-NLS-1$ //$NON-NLS-2$
 		List<ESRRecord> list = qesr.execute();
 		if (list.size() > 0) {
-			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 4,
-				Messages.ESRFile_file_already_read, null, true);
+			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 4, Messages.ESRFile_file_already_read, null,
+					true);
 		}
 		String fileName = file.getName();
 		if ("xml".equalsIgnoreCase(FilenameUtils.getExtension(fileName))) {
-			
+
 			try (InputStream inputStream = new FileInputStream(file)) {
 				Camt054Parser camt054Parser = new Camt054Parser();
 				List<Camt054Record> inputs = camt054Parser.parseRecords(inputStream);
-				
+
 				for (Camt054Record camt054Record : inputs) {
 					ESRRecord esr = new ESRRecord(hash, camt054Record);
 					list.add(esr);
 					monitor.worked(1);
-					
+
 				}
-				return new Result<List<ESRRecord>>(Result.SEVERITY.OK, 0, "OK", list, false); //$NON-NLS-1$
-			}
-			catch (Exception ex) {
-				ExHandler.handle(ex);
-				return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3,
-					Messages.ESRFile_ExceptionParsing, list, true);
-			}
-		}
-		else
-		{
-			try (InputStreamReader ir = new InputStreamReader(new FileInputStream(file));
-					BufferedReader br = new BufferedReader(ir))
-				{
-					String in;
-					// String date=new TimeTool().toString(TimeTool.DATE_COMPACT);
-					LinkedList<String> records = new LinkedList<String>();
-					while ((in = br.readLine()) != null) {
-						for (int i = 0; i < in.length(); i += 128) {
-							int eidx = i + 125;
-							if (eidx >= in.length()) {
-								eidx = in.length() - 1;
-							}
-							records.add(in.substring(i, eidx));
-						}
-					}
-					for (String s : records) {
-						ESRRecord esr = new ESRRecord(hash, s);
-						list.add(esr);
-						monitor.worked(1);
-					}
-				
 				return new Result<List<ESRRecord>>(Result.SEVERITY.OK, 0, "OK", list, false); //$NON-NLS-1$
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3,
-					Messages.ESRFile_ExceptionParsing, list, true);
+				return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3, Messages.ESRFile_ExceptionParsing, list,
+						true);
+			}
+		} else {
+			try (InputStreamReader ir = new InputStreamReader(new FileInputStream(file));
+					BufferedReader br = new BufferedReader(ir)) {
+				String in;
+				// String date=new TimeTool().toString(TimeTool.DATE_COMPACT);
+				LinkedList<String> records = new LinkedList<String>();
+				while ((in = br.readLine()) != null) {
+					for (int i = 0; i < in.length(); i += 128) {
+						int eidx = i + 125;
+						if (eidx >= in.length()) {
+							eidx = in.length() - 1;
+						}
+						records.add(in.substring(i, eidx));
+					}
+				}
+				for (String s : records) {
+					ESRRecord esr = new ESRRecord(hash, s);
+					list.add(esr);
+					monitor.worked(1);
+				}
+
+				return new Result<List<ESRRecord>>(Result.SEVERITY.OK, 0, "OK", list, false); //$NON-NLS-1$
+			} catch (Exception ex) {
+				ExHandler.handle(ex);
+				return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3, Messages.ESRFile_ExceptionParsing, list,
+						true);
 			}
 		}
 	}
-	
-	public List<ESRRecord> getLastResult(){
+
+	public List<ESRRecord> getLastResult() {
 		return list;
 	}
-	
-	public String getFilename(){
+
+	public String getFilename() {
 		return name;
 	}
 }

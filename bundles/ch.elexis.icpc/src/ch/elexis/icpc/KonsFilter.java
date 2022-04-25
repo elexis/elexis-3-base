@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.icpc;
@@ -32,46 +32,46 @@ public class KonsFilter implements IObjectFilterProvider, IFilter {
 	IcpcEpisode mine;
 	EpisodesView home;
 	boolean bDaemfung;
-	
-	public KonsFilter(final EpisodesView home){
+
+	public KonsFilter(final EpisodesView home) {
 		this.home = home;
 	}
-	
-	public void setProblem(final IcpcEpisode problem){
+
+	public void setProblem(final IcpcEpisode problem) {
 		mine = problem;
 	}
-	
-	public void activate(){
+
+	public void activate() {
 		bDaemfung = true;
 		home.activateKonsFilterAction(true);
 		bDaemfung = false;
 	}
-	
-	public void changed(){
+
+	public void changed() {
 		// should we mind?
 	}
-	
-	public void deactivate(){
+
+	public void deactivate() {
 		bDaemfung = true;
 		home.activateKonsFilterAction(false);
 		bDaemfung = false;
 	}
-	
-	public IFilter getFilter(){
+
+	public IFilter getFilter() {
 		return this;
 	}
-	
-	public String getId(){
+
+	public String getId() {
 		return "ch.elexis.icpc.konsfilter";
 	}
-	
-	public boolean select(final Object toTest){
+
+	public boolean select(final Object toTest) {
 		if (mine == null) {
 			return true;
 		}
 		if (toTest instanceof Konsultation) {
-			IEncounter encounter = CoreModelServiceHolder.get()
-				.load(((Konsultation) toTest).getId(), IEncounter.class).orElse(null);
+			IEncounter encounter = CoreModelServiceHolder.get().load(((Konsultation) toTest).getId(), IEncounter.class)
+					.orElse(null);
 			if (encounter != null) {
 				return mineHasEncounter(encounter);
 			}
@@ -84,8 +84,8 @@ public class KonsFilter implements IObjectFilterProvider, IFilter {
 		}
 		return false;
 	}
-	
-	private boolean mineHasEncounter(IEncounter encounter){
+
+	private boolean mineHasEncounter(IEncounter encounter) {
 		IQuery<IcpcEncounter> query = IcpcModelServiceHolder.get().getQuery(IcpcEncounter.class);
 		query.and(IcpcPackage.Literals.ICPC_ENCOUNTER__EPISODE, COMPARATOR.EQUALS, mine);
 		List<IcpcEncounter> list = query.execute();

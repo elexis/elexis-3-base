@@ -32,68 +32,69 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- *  The SolrClientCache caches SolrClients so they can be reused by different TupleStreams.
+ * The SolrClientCache caches SolrClients so they can be reused by different
+ * TupleStreams.
  **/
 
 public class SolrClientCache implements Serializable {
 
-  private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final Map<String, SolrClient> solrClients = new HashMap<>();
-  private final HttpClient httpClient;
+	private final Map<String, SolrClient> solrClients = new HashMap<>();
+	private final HttpClient httpClient;
 
-  public SolrClientCache() {
-    httpClient = null;
-  }
+	public SolrClientCache() {
+		httpClient = null;
+	}
 
-  public SolrClientCache(HttpClient httpClient) {
-    this.httpClient = httpClient;
-  }
+	public SolrClientCache(HttpClient httpClient) {
+		this.httpClient = httpClient;
+	}
 
-  public synchronized CloudSolrClient getCloudSolrClient(String zkHost) {
-    CloudSolrClient client;
-    if (solrClients.containsKey(zkHost)) {
-      client = (CloudSolrClient) solrClients.get(zkHost);
-    } else {
-      final List<String> hosts = new ArrayList<String>();
-      hosts.add(zkHost);
-      CloudSolrClient.Builder builder = new CloudSolrClient.Builder(hosts, Optional.empty()).withSocketTimeout(30000).withConnectionTimeout(15000);
-      if (httpClient != null) {
-        builder = builder.withHttpClient(httpClient);
-      }
-      client = builder.build();
-      client.connect();
-      solrClients.put(zkHost, client);
-    }
+	public synchronized CloudSolrClient getCloudSolrClient(String zkHost) {
+		CloudSolrClient client;
+		if (solrClients.containsKey(zkHost)) {
+			client = (CloudSolrClient) solrClients.get(zkHost);
+		} else {
+			final List<String> hosts = new ArrayList<String>();
+			hosts.add(zkHost);
+			CloudSolrClient.Builder builder = new CloudSolrClient.Builder(hosts, Optional.empty())
+					.withSocketTimeout(30000).withConnectionTimeout(15000);
+			if (httpClient != null) {
+				builder = builder.withHttpClient(httpClient);
+			}
+			client = builder.build();
+			client.connect();
+			solrClients.put(zkHost, client);
+		}
 
-    return client;
-  }
+		return client;
+	}
 
-  public synchronized HttpSolrClient getHttpSolrClient(String host) {
-    HttpSolrClient client;
-    if (solrClients.containsKey(host)) {
-      client = (HttpSolrClient) solrClients.get(host);
-    } else {
-      HttpSolrClient.Builder builder = new HttpSolrClient.Builder(host);
-      if (httpClient != null) {
-        builder = builder.withHttpClient(httpClient);
-      }
-      client = builder.build();
-      solrClients.put(host, client);
-    }
-    return client;
-  }
+	public synchronized HttpSolrClient getHttpSolrClient(String host) {
+		HttpSolrClient client;
+		if (solrClients.containsKey(host)) {
+			client = (HttpSolrClient) solrClients.get(host);
+		} else {
+			HttpSolrClient.Builder builder = new HttpSolrClient.Builder(host);
+			if (httpClient != null) {
+				builder = builder.withHttpClient(httpClient);
+			}
+			client = builder.build();
+			solrClients.put(host, client);
+		}
+		return client;
+	}
 
-  public synchronized void close() {
-    for(Map.Entry<String, SolrClient> entry : solrClients.entrySet()) {
-      try {
-        entry.getValue().close();
-      } catch (IOException e) {
-        log.error("Error closing SolrClient for {}", entry.getKey(), e);
-      }
-    }
-    solrClients.clear();
-  }
+	public synchronized void close() {
+		for (Map.Entry<String, SolrClient> entry : solrClients.entrySet()) {
+			try {
+				entry.getValue().close();
+			} catch (IOException e) {
+				log.error("Error closing SolrClient for {}", entry.getKey(), e);
+			}
+		}
+		solrClients.clear();
+	}
 }

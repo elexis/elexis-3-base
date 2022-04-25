@@ -20,23 +20,20 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.Gender;
 
 public class UrlBuilder {
-	
-	public static String getPatientParameters(IPatient patient){
+
+	public static String getPatientParameters(IPatient patient) {
 		String parameters = "";
 		try {
 			parameters += "firstName=" + URLEncoder.encode(patient.getFirstName(), "UTF-8");
 			parameters += "&lastName=" + URLEncoder.encode(patient.getLastName(), "UTF-8");
 			if (patient.getDateOfBirth() != null) {
-				parameters += "&dateOfBirth=" + URLEncoder.encode(
-					DateTimeFormatter.ofPattern("yyyy-MM-dd").format(patient.getDateOfBirth()),
-					"UTF-8");
+				parameters += "&dateOfBirth=" + URLEncoder
+						.encode(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(patient.getDateOfBirth()), "UTF-8");
 			}
-			parameters +=
-				"&gender=" + URLEncoder.encode(genderAsString(patient.getGender()), "UTF-8");
-			
+			parameters += "&gender=" + URLEncoder.encode(genderAsString(patient.getGender()), "UTF-8");
+
 			if (patient.getCountry() != null) {
-				parameters +=
-					"&nationality=" + URLEncoder.encode(patient.getCountry().toString(), "UTF-8");
+				parameters += "&nationality=" + URLEncoder.encode(patient.getCountry().toString(), "UTF-8");
 			}
 			if (StringUtils.isNotBlank(patient.getStreet())) {
 				parameters += "&street=" + URLEncoder.encode(patient.getStreet(), "UTF-8");
@@ -47,49 +44,43 @@ public class UrlBuilder {
 			if (StringUtils.isNotBlank(patient.getCity())) {
 				parameters += "&city=" + URLEncoder.encode(patient.getCity(), "UTF-8");
 			}
-			
+
 			if (StringUtils.isNotBlank(patient.getPhone1())) {
 				parameters += "&phone=" + URLEncoder.encode(patient.getPhone1(), "UTF-8");
 			} else if (StringUtils.isNotBlank(patient.getPhone2())) {
 				parameters += "&phone=" + URLEncoder.encode(patient.getPhone2(), "UTF-8");
 			}
-			
+
 			if (StringUtils.isNotBlank(patient.getEmail())) {
 				parameters += "&email=" + URLEncoder.encode(patient.getEmail(), "UTF-8");
 			}
-			
+
 			if (patient.getFamilyDoctor() != null) {
 				IContact familyDoctor = patient.getFamilyDoctor();
 				parameters += "&generalPractitioner="
-					+ URLEncoder.encode(getContactNameWithTitle(familyDoctor),
-					"UTF-8");
+						+ URLEncoder.encode(getContactNameWithTitle(familyDoctor), "UTF-8");
 			} else if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
-				parameters +=
-					"&generalPractitioner="
-						+ URLEncoder.encode(
-							getContactNameWithTitle(
-								ContextServiceHolder.get().getActiveMandator().get()),
-							"UTF-8");
+				parameters += "&generalPractitioner=" + URLEncoder
+						.encode(getContactNameWithTitle(ContextServiceHolder.get().getActiveMandator().get()), "UTF-8");
 			}
-			
+
 			String insuranceCardNumber = getInsuranceCardNumber(patient);
 			if (StringUtils.isNotBlank(insuranceCardNumber)) {
-				parameters +=
-					"&identityNumberInsurance=" + URLEncoder.encode(insuranceCardNumber, "UTF-8");
+				parameters += "&identityNumberInsurance=" + URLEncoder.encode(insuranceCardNumber, "UTF-8");
 			}
-			
+
 			String insurance = getInsurance(patient);
 			if (StringUtils.isNotBlank(insurance)) {
 				parameters += "&healthInsurance=" + URLEncoder.encode(insurance, "UTF-8");
 			}
-			
+
 		} catch (UnsupportedEncodingException e) {
 			LoggerFactory.getLogger(UrlBuilder.class).error("Error getting patient parameters", e);
 		}
 		return parameters;
 	}
-	
-	public static String getVaccinationDefaultParameters(){
+
+	public static String getVaccinationDefaultParameters() {
 		String ret = "";
 		try {
 			ret += "&takesAnticoagulants=" + URLEncoder.encode("false", "UTF-8");
@@ -100,7 +91,7 @@ public class UrlBuilder {
 			ret += "&hasContactWithVulnerablePeople=" + URLEncoder.encode("false", "UTF-8");
 			ret += "&livesInACommunityFacility=" + URLEncoder.encode("false", "UTF-8");
 			ret += "&wantsVaccinationCertificate=" + URLEncoder.encode("false", "UTF-8");
-			
+
 			ret += "&hadCovidInTheLast90Days=" + URLEncoder.encode("false", "UTF-8");
 			ret += "&hadCovidVaccination=" + URLEncoder.encode("false", "UTF-8");
 			ret += "&hasCurrentlyColdSymptoms=" + URLEncoder.encode("false", "UTF-8");
@@ -109,37 +100,33 @@ public class UrlBuilder {
 		}
 		return ret;
 	}
-	
-	private static String getInsurance(IPatient patient){
+
+	private static String getInsurance(IPatient patient) {
 		String ret = "";
 		Optional<ICoverage> activeCoverage = ContextServiceHolder.get().getActiveCoverage();
 		if (activeCoverage.isPresent()) {
 			ICoverage coverage = activeCoverage.get();
 			if (coverage.isOpen()) {
-				if (coverage.getCostBearer() != null
-					&& coverage.getCostBearer().isOrganization()) {
+				if (coverage.getCostBearer() != null && coverage.getCostBearer().isOrganization()) {
 					IOrganization costBearer = CoreModelServiceHolder.get()
-						.load(coverage.getCostBearer().getId(), IOrganization.class).get();
-					return costBearer.getDescription1() + " "
-						+ StringUtils.defaultString(costBearer.getDescription2());
+							.load(coverage.getCostBearer().getId(), IOrganization.class).get();
+					return costBearer.getDescription1() + " " + StringUtils.defaultString(costBearer.getDescription2());
 				}
 			}
 		}
 		for (ICoverage coverage : patient.getCoverages()) {
 			if (coverage.isOpen()) {
-				if (coverage.getCostBearer() != null
-					&& coverage.getCostBearer().isOrganization()) {
+				if (coverage.getCostBearer() != null && coverage.getCostBearer().isOrganization()) {
 					IOrganization costBearer = CoreModelServiceHolder.get()
-						.load(coverage.getCostBearer().getId(), IOrganization.class).get();
-					return costBearer.getDescription1() + " "
-						+ StringUtils.defaultString(costBearer.getDescription2());
+							.load(coverage.getCostBearer().getId(), IOrganization.class).get();
+					return costBearer.getDescription1() + " " + StringUtils.defaultString(costBearer.getDescription2());
 				}
 			}
 		}
 		return ret;
 	}
-	
-	private static String getInsuranceCardNumber(IPatient patient){
+
+	private static String getInsuranceCardNumber(IPatient patient) {
 		String ret = "";
 		Optional<ICoverage> activeCoverage = ContextServiceHolder.get().getActiveCoverage();
 		if (activeCoverage.isPresent()) {
@@ -171,21 +158,19 @@ public class UrlBuilder {
 		}
 		return ret;
 	}
-	
-	private static String getContactNameWithTitle(IContact contact){
+
+	private static String getContactNameWithTitle(IContact contact) {
 		if (contact.isPerson()) {
-			IPerson person =
-				CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
-			return StringUtils.defaultString(person.getTitel()) + " "
-				+ StringUtils.defaultString(person.getFirstName()) + " "
-				+ StringUtils.defaultString(person.getLastName())
-				+ ", " + StringUtils.defaultString(person.getCity());
+			IPerson person = CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
+			return StringUtils.defaultString(person.getTitel()) + " " + StringUtils.defaultString(person.getFirstName())
+					+ " " + StringUtils.defaultString(person.getLastName()) + ", "
+					+ StringUtils.defaultString(person.getCity());
 		} else {
 			return contact.getDescription1();
 		}
 	}
-	
-	private static String genderAsString(Gender gender){
+
+	private static String genderAsString(Gender gender) {
 		switch (gender) {
 		case FEMALE:
 			return "FEMALE";
@@ -196,22 +181,22 @@ public class UrlBuilder {
 		}
 		return "OTHER";
 	}
-	
-	public static String getVaccinationBaseUrl(){
+
+	public static String getVaccinationBaseUrl() {
 		// https://corona123.ch/corona-vaccine-form-prefill/{organization-id}
 		return "https://corona123.ch/corona-vaccine-form-prefill/" + getOrgId();
 	}
-	
-	public static String getTestBaseUrl(){
+
+	public static String getTestBaseUrl() {
 		// https://corona123.ch/corona-test-form-prefill/{organization-id}
 		return "https://corona123.ch/corona-test-form-prefill/" + getOrgId();
 	}
-	
-	private static String getOrgId(){
+
+	private static String getOrgId() {
 		return ConfigServiceHolder.get().get(PreferenceConstants.CFG_CORONA123_ORGID, "");
 	}
-	
-	public static boolean isOrgId(){
+
+	public static boolean isOrgId() {
 		return StringUtils.isNotBlank(getOrgId());
 	}
 }

@@ -29,28 +29,28 @@ import ch.rgw.tools.ExHandler;
 
 public class KonsExtension implements IKonsExtension {
 	IRichTextDisplay mine;
-	
-	public String connect(IRichTextDisplay tf){
+
+	public String connect(IRichTextDisplay tf) {
 		mine = tf;
 		return "bildanzeige"; //$NON-NLS-1$
 	}
-	
-	public boolean doLayout(StyleRange n, String provider, String id){
+
+	public boolean doLayout(StyleRange n, String provider, String id) {
 		n.background = UiDesk.getColor(UiDesk.COL_GREEN);
 		return true;
 	}
-	
-	public boolean doXRef(String refProvider, String refID){
+
+	public boolean doXRef(String refProvider, String refID) {
 		Bild bild = Bild.load(refID);
 		new BildanzeigeFenster(UiDesk.getTopShell(), bild).open();
 		return true;
 	}
-	
-	public IAction[] getActions(){
+
+	public IAction[] getActions() {
 		IAction[] ret = new IAction[1];
 		ret[0] = new Action(Messages.KonsExtension_InsertImage) {
 			@Override
-			public void run(){
+			public void run() {
 				FileDialog fd = new FileDialog(UiDesk.getTopShell());
 				String iName = fd.open();
 				if (iName != null) {
@@ -60,37 +60,36 @@ public class KonsExtension implements IKonsExtension {
 						BildImportDialog bid = new BildImportDialog(UiDesk.getTopShell(), iml);
 						if (bid.open() == Dialog.OK) {
 							Bild bild = bid.result;
-							mine.insertXRef(
-								-1,
-								Messages.KonsExtension_Image + bild.get("Titel"), "bildanzeige", bild.getId()); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							mine.insertXRef(-1, Messages.KonsExtension_Image + bild.get("Titel"), "bildanzeige", //$NON-NLS-1$//$NON-NLS-2$
+									bild.getId()); //$NON-NLS-3$
 						}
-						
+
 					} catch (Throwable t) {
 						ExHandler.handle(t);
 						SWTHelper.showError(Messages.KonsExtension_ErrorLoading,
-							Messages.KonsExtension_ImageCouldnotBeLoaded + t.getMessage());
+								Messages.KonsExtension_ImageCouldnotBeLoaded + t.getMessage());
 					}
 				}
 			}
-			
+
 		};
 		return ret;
 	}
-	
+
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-		throws CoreException{
+			throws CoreException {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	public void removeXRef(String refProvider, String refID){
+
+	public void removeXRef(String refProvider, String refID) {
 		Bild bild = Bild.load(refID);
 		bild.delete();
 	}
-	
-	public void insert(Object o, int pos){
+
+	public void insert(Object o, int pos) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

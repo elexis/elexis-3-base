@@ -49,41 +49,41 @@ import ch.elexis.data.Mandant;
 
 public class InboxWatcher {
 	private static Logger logger = LoggerFactory.getLogger(InboxWatcher.class);
-	
+
 	private MandantChangedListener mandantListener;
-	
+
 	private ExecutorService executor;
-	
+
 	private WatchService watcher;
 	private HashMap<String, WatchKey> watchKeys;
 	private String activeInboxString;
 	private static String LinuxIoNtifyHint = "The inbox will not work correctly.\n\nHINT: Under linux calling 'echo 256 > /proc/sys/fs/inotify/max_user_instances' might fix the problem";
-	
+
 	private List<InboxListener> listeners;
-	
-	public InboxWatcher(){
+
+	public InboxWatcher() {
 		executor = Executors.newFixedThreadPool(2);
-		
+
 		mandantListener = new MandantChangedListener();
 		watchKeys = new HashMap<String, WatchKey>();
-		
+
 		listeners = new ArrayList<InboxListener>();
-		
+
 		ElexisEventDispatcher.getInstance().addListeners(mandantListener);
 	}
-	
-	public void start(){
+
+	public void start() {
 		try {
 			watcher = FileSystems.getDefault().newWatchService();
-			
+
 			executor.execute(new DirectoryWatcher());
 		} catch (IOException e) {
 			logger.error(LinuxIoNtifyHint);
 			logger.error("Error creating filesystem watcher", e);
 		}
 	}
-	
-	public void stop(){
+
+	public void stop() {
 		ElexisEventDispatcher.getInstance().removeListeners(mandantListener);
 		try {
 			executor.shutdown();
@@ -94,25 +94,25 @@ public class InboxWatcher {
 			logger.error("Error closing filesystem watcher", e);
 		}
 	}
-	
-	public synchronized void addInboxListener(InboxListener listener){
+
+	public synchronized void addInboxListener(InboxListener listener) {
 		if (!listeners.contains(listener)) {
 			listeners.add(listener);
 		}
 	}
-	
-	public synchronized void removeInboxListener(InboxListener listener){
+
+	public synchronized void removeInboxListener(InboxListener listener) {
 		listeners.remove(listener);
 	}
-	
-	private void fireInboxCreated(EhcDocument newDocument){
+
+	private void fireInboxCreated(EhcDocument newDocument) {
 		for (InboxListener inboxListener : listeners) {
 			inboxListener.documentCreated(newDocument);
 		}
 	}
-	
+
 	private class DirectoryDocumentStrategy {
-		public void execute(URL fileUrl){
+		public void execute(URL fileUrl) {
 			if (!EhcDocument.documentExists(fileUrl)) {
 				if (EhcDocument.isEhcXml(fileUrl)) {
 					fireInboxCreated(EhcDocument.createFromXml(fileUrl));
@@ -123,24 +123,24 @@ public class InboxWatcher {
 			}
 		}
 	}
-	
+
 	private class DirectoryWatcher implements Runnable {
-		
+
 		private DirectoryDocumentStrategy documentStrategy;
-		
-		public DirectoryWatcher(){
+
+		public DirectoryWatcher() {
 			documentStrategy = new DirectoryDocumentStrategy();
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		@Override
-		public void run(){
+		public void run() {
 			WatchKey key = null;
 			try {
 				while (true) {
 					// wait for key to be signaled
 					key = watcher.take();
-					
+
 					// Dequeueing events
 					Kind<?> kind = null;
 					for (WatchEvent<?> watchEvent : key.pollEvents()) {
@@ -151,8 +151,7 @@ public class InboxWatcher {
 						} else if (ENTRY_CREATE == kind) {
 							// A new Path was created
 							Path newPath = ((WatchEvent<Path>) watchEvent).context();
-							String newInboxPath = activeInboxString + File.separator
-								+ newPath.getFileName().toString();
+							String newInboxPath = activeInboxString + File.separator + newPath.getFileName().toString();
 							URL fileUrl = new URL("file:///" + newInboxPath);
 							documentStrategy.execute(fileUrl);
 						}
@@ -166,17 +165,17 @@ public class InboxWatcher {
 			}
 		}
 	}
-	
+
 	private class DirectoryInitializer implements Runnable {
-		
+
 		private DirectoryDocumentStrategy documentStrategy;
-		
-		public DirectoryInitializer(){
+
+		public DirectoryInitializer() {
 			documentStrategy = new DirectoryDocumentStrategy();
 		}
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			File inboxFolder = new File(activeInboxString);
 			if (!inboxFolder.exists()) {
 				PreferencePage.initDirectories();
@@ -196,16 +195,16 @@ public class InboxWatcher {
 			}
 		}
 	}
-	
+
 	private class MandantChangedListener extends ElexisUiEventListenerImpl {
-		public MandantChangedListener(){
+		public MandantChangedListener() {
 			super(Mandant.class, ElexisEvent.EVENT_MANDATOR_CHANGED);
 		}
-		
+
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev) {
 			activeInboxString = ConfigServiceHolder.getUser(PreferencePage.EHC_INPUTDIR,
-				PreferencePage.getDefaultInputDir());
+					PreferencePage.getDefaultInputDir());
 			executor.execute(new DirectoryInitializer());
 			if (watchKeys.get(activeInboxString) == null) {
 				try {
@@ -213,18 +212,16 @@ public class InboxWatcher {
 					if (!inboxPath.toFile().exists()) {
 						inboxPath.toFile().mkdirs();
 					}
-					
+
 					WatchKey key;
 					if (watcher == null) {
 						String errorTitle = "Unable to create file watcher";
-						Status status =
-								new Status(Status.ERROR, this.getClass().getSimpleName(), Status.ERROR,
-										errorTitle, null);
-							ErrorDialog.openError(null,"Unable to create file watcher",
-									LinuxIoNtifyHint, status);
+						Status status = new Status(Status.ERROR, this.getClass().getSimpleName(), Status.ERROR,
+								errorTitle, null);
+						ErrorDialog.openError(null, "Unable to create file watcher", LinuxIoNtifyHint, status);
 					} else {
 						key = inboxPath.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
-							StandardWatchEventKinds.ENTRY_DELETE);
+								StandardWatchEventKinds.ENTRY_DELETE);
 						watchKeys.put(activeInboxString, key);
 					}
 				} catch (IOException e) {

@@ -5,22 +5,22 @@ import org.osgi.service.component.annotations.Reference;
 
 @Component
 public class EMediplanServiceHolder {
-	
+
 	private static EMediplanService eMediplanService;
-	
-	public EMediplanServiceHolder(){
+
+	public EMediplanServiceHolder() {
 	}
-	
+
 	@Reference
-	public void setReference(EMediplanService eMediplanService){
+	public void setReference(EMediplanService eMediplanService) {
 		EMediplanServiceHolder.eMediplanService = eMediplanService;
 	}
-	
-	public void unsetReference(EMediplanService eMediplanService){
+
+	public void unsetReference(EMediplanService eMediplanService) {
 		EMediplanServiceHolder.eMediplanService = null;
 	}
-	
-	public static EMediplanService getService(){
+
+	public static EMediplanService getService() {
 		return eMediplanService;
 	}
 }

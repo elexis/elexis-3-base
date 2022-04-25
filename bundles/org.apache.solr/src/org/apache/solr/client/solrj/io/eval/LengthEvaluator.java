@@ -24,26 +24,29 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class LengthEvaluator extends RecursiveObjectEvaluator implements OneValueWorker {
-  protected static final long serialVersionUID = 1L;
-  
-  public LengthEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-    
-    if(1 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 1 value but found %d",expression,containedEvaluators.size()));
-    }
-  }
-  
-  @Override
-  public Object doWork(Object value) throws IOException{
-    if(null == value){
-      throw new IOException(String.format(Locale.ROOT, "Unable to find %s(...) because the value is null", constructingFactory.getFunctionName(getClass())));
-    }
-    else if(value instanceof Collection<?>){
-      return ((Collection<?>)value).size();
-    }
-    else{
-      throw new IOException(String.format(Locale.ROOT, "Unable to find %s(...) because the value is not a collection, instead a %s was found", constructingFactory.getFunctionName(getClass()), value.getClass().getSimpleName()));
-    }
-  }
+	protected static final long serialVersionUID = 1L;
+
+	public LengthEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+
+		if (1 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 1 value but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
+
+	@Override
+	public Object doWork(Object value) throws IOException {
+		if (null == value) {
+			throw new IOException(String.format(Locale.ROOT, "Unable to find %s(...) because the value is null",
+					constructingFactory.getFunctionName(getClass())));
+		} else if (value instanceof Collection<?>) {
+			return ((Collection<?>) value).size();
+		} else {
+			throw new IOException(String.format(Locale.ROOT,
+					"Unable to find %s(...) because the value is not a collection, instead a %s was found",
+					constructingFactory.getFunctionName(getClass()), value.getClass().getSimpleName()));
+		}
+	}
 }

@@ -25,32 +25,36 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class DensityEvaluator extends RecursiveObjectEvaluator implements TwoValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public DensityEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-  }
+	public DensityEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object first, Object second) throws IOException{
+	@Override
+	public Object doWork(Object first, Object second) throws IOException {
 
-    if (!(first instanceof MultivariateRealDistribution)) {
-      throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - found type %s for the first value, expecting a MultiVariateRealDistribution for density", toExpression(constructingFactory), first.getClass().getSimpleName()));
-    }
-    if (!(second instanceof List)) {
-      throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - found type %s for the second value, expecting a numeric array.", toExpression(constructingFactory), first.getClass().getSimpleName()));
-    }
+		if (!(first instanceof MultivariateRealDistribution)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for the first value, expecting a MultiVariateRealDistribution for density",
+					toExpression(constructingFactory), first.getClass().getSimpleName()));
+		}
+		if (!(second instanceof List)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for the second value, expecting a numeric array.",
+					toExpression(constructingFactory), first.getClass().getSimpleName()));
+		}
 
-    MultivariateRealDistribution multivariateRealDistribution = (MultivariateRealDistribution) first;
-    @SuppressWarnings({"unchecked"})
-    List<Number> nums = (List<Number>) second;
+		MultivariateRealDistribution multivariateRealDistribution = (MultivariateRealDistribution) first;
+		@SuppressWarnings({ "unchecked" })
+		List<Number> nums = (List<Number>) second;
 
-    double[] vec = new double[nums.size()];
+		double[] vec = new double[nums.size()];
 
-    for(int i=0; i<vec.length; i++) {
-      vec[i] = nums.get(i).doubleValue();
-    }
+		for (int i = 0; i < vec.length; i++) {
+			vec[i] = nums.get(i).doubleValue();
+		}
 
-    return multivariateRealDistribution.density(vec);
-  }
+		return multivariateRealDistribution.density(vec);
+	}
 }

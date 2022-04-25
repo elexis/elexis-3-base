@@ -10,27 +10,26 @@ import at.medevit.elexis.impfplan.ui.VaccinationView;
 
 /**
  * Sorts the vaccinations based on their name
- * 
+ *
  * @author Lucia
  *
  */
 public class SortByVaccinationHandler extends AbstractHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		boolean toggled = HandlerUtil.toggleCommandState(event.getCommand());
-		
-		VaccinationView vaccView =
-			(VaccinationView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.findView(VaccinationView.PART_ID);
-		
+
+		VaccinationView vaccView = (VaccinationView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getActivePage().findView(VaccinationView.PART_ID);
+
 		if (toggled) {
 			vaccView.setSortByVaccinationName(false);
 		} else {
 			vaccView.setSortByVaccinationName(true);
 		}
-		
+
 		return null;
 	}
-	
+
 }

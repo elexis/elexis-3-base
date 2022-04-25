@@ -7,15 +7,15 @@ import ch.elexis.core.services.IModelService;
 
 @Component
 public class OmnivoreModelServiceHolder {
-	
+
 	private static IModelService omnivoreModelService;
-	
+
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.omnivore.data.model)")
-	public void setModelService(IModelService modelService){
+	public void setModelService(IModelService modelService) {
 		OmnivoreModelServiceHolder.omnivoreModelService = modelService;
 	}
-	
-	public static IModelService get(){
+
+	public static IModelService get() {
 		return omnivoreModelService;
 	}
 }

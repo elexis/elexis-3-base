@@ -8,20 +8,22 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * Note: because this type is defined as an extension of SXCM_T, all of the attributes and elements
- * accepted for T are also accepted by this definition. However, they are NOT allowed by the
- * normative description of this type. Unfortunately, we cannot write a general purpose schematron
- * contraints to provide that extra validation, thus applications must be aware that instance
+ *
+ * Note: because this type is defined as an extension of SXCM_T, all of the
+ * attributes and elements accepted for T are also accepted by this definition.
+ * However, they are NOT allowed by the normative description of this type.
+ * Unfortunately, we cannot write a general purpose schematron contraints to
+ * provide that extra validation, thus applications must be aware that instance
  * (fragments) that pass validation with this might might still not be legal.
- * 
- * 
+ *
+ *
  * <p>
  * Java class for PIVL_PPD_TS complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="PIVL_PPD_TS">
  *   &lt;complexContent>
@@ -36,17 +38,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PIVL_PPD_TS", propOrder = {
-	"phase", "period"
-})
+@XmlType(name = "PIVL_PPD_TS", propOrder = { "phase", "period" })
 public class PIVLPPDTS extends SXCMPPDTS {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	protected IVLPPDTS phase;
@@ -55,100 +55,98 @@ public class PIVLPPDTS extends SXCMPPDTS {
 	protected List<String> alignment;
 	@XmlAttribute
 	protected Boolean institutionSpecified;
-	
+
 	/**
 	 * Gets the value of the phase property.
-	 * 
+	 *
 	 * @return possible object is {@link IVLPPDTS }
-	 * 
+	 *
 	 */
-	public IVLPPDTS getPhase(){
+	public IVLPPDTS getPhase() {
 		return phase;
 	}
-	
+
 	/**
 	 * Sets the value of the phase property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link IVLPPDTS }
-	 * 
+	 *
+	 * @param value allowed object is {@link IVLPPDTS }
+	 *
 	 */
-	public void setPhase(IVLPPDTS value){
+	public void setPhase(IVLPPDTS value) {
 		this.phase = value;
 	}
-	
+
 	/**
 	 * Gets the value of the period property.
-	 * 
+	 *
 	 * @return possible object is {@link PPDPQ }
-	 * 
+	 *
 	 */
-	public PPDPQ getPeriod(){
+	public PPDPQ getPeriod() {
 		return period;
 	}
-	
+
 	/**
 	 * Sets the value of the period property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link PPDPQ }
-	 * 
+	 *
+	 * @param value allowed object is {@link PPDPQ }
+	 *
 	 */
-	public void setPeriod(PPDPQ value){
+	public void setPeriod(PPDPQ value) {
 		this.period = value;
 	}
-	
+
 	/**
 	 * Gets the value of the alignment property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the alignment property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the alignment property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getAlignment().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link String }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<String> getAlignment(){
+	public List<String> getAlignment() {
 		if (alignment == null) {
 			alignment = new ArrayList<String>();
 		}
 		return this.alignment;
 	}
-	
+
 	/**
 	 * Gets the value of the institutionSpecified property.
-	 * 
+	 *
 	 * @return possible object is {@link Boolean }
-	 * 
+	 *
 	 */
-	public boolean isInstitutionSpecified(){
+	public boolean isInstitutionSpecified() {
 		if (institutionSpecified == null) {
 			return false;
 		} else {
 			return institutionSpecified;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the institutionSpecified property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link Boolean }
-	 * 
+	 *
+	 * @param value allowed object is {@link Boolean }
+	 *
 	 */
-	public void setInstitutionSpecified(Boolean value){
+	public void setInstitutionSpecified(Boolean value) {
 		this.institutionSpecified = value;
 	}
-	
+
 }

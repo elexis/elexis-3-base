@@ -17,27 +17,25 @@ import ch.elexis.global_inbox.ui.GlobalInboxUtil;
 import ch.elexis.global_inbox.ui.Messages;
 
 public class GlobalInboxEntryDeleteHandler {
-	
+
 	@Execute
-	public void execute(
-		@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry,
-		IEventBroker eventBroker){
-		
-		if (SWTHelper.askYesNo(Messages.InboxView_inbox, MessageFormat
-			.format(Messages.InboxView_thisreallydelete, globalInboxEntry.getTitle()))) {
-			
+	public void execute(@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry,
+			IEventBroker eventBroker) {
+
+		if (SWTHelper.askYesNo(Messages.InboxView_inbox,
+				MessageFormat.format(Messages.InboxView_thisreallydelete, globalInboxEntry.getTitle()))) {
+
 			// unload the document in preview, s.t. it can be deleted by the OS (Win)
 			eventBroker.send(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, null);
-			
+
 			new GlobalInboxUtil().removeFiles(globalInboxEntry);
 		}
-		
+
 	}
-	
+
 	@CanExecute
-	public boolean canExecute(
-		@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry){
+	public boolean canExecute(@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
 		return globalInboxEntry != null;
 	}
-	
+
 }

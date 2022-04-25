@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-/** 
- * Convenience classes for dealing with various types of Solr responses.
 
+/**
+ * Convenience classes for dealing with various types of Solr responses.
+ *
  */
 package org.apache.solr.client.solrj.response;
-
-

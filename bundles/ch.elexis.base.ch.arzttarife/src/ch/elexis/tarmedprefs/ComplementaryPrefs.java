@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -24,61 +24,58 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
-public class ComplementaryPrefs extends FieldEditorPreferencePage
-		implements IWorkbenchPreferencePage {
-	
+public class ComplementaryPrefs extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+
 	@Override
-	protected void createFieldEditors(){
+	protected void createFieldEditors() {
 		HourlyWageFieldEditor hourlyWageEditpor = new HourlyWageFieldEditor(
-			PreferenceConstants.COMPLEMENTARY_HOURLY_WAGE, "Stundensatz", getFieldEditorParent());
+				PreferenceConstants.COMPLEMENTARY_HOURLY_WAGE, "Stundensatz", getFieldEditorParent());
 		addField(hourlyWageEditpor);
-		
-		BooleanFieldEditor fixToVVG =
-			new BooleanFieldEditor(PreferenceConstants.COMPLEMENTARY_FIXTOVVG,
+
+		BooleanFieldEditor fixToVVG = new BooleanFieldEditor(PreferenceConstants.COMPLEMENTARY_FIXTOVVG,
 				"Nur bei VVG verrechenbar", getFieldEditorParent());
 		addField(fixToVVG);
 	}
-	
+
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		setPreferenceStore(new ConfigServicePreferenceStore(Scope.MANDATOR));
 		setTitle("Komplementärmedizin");
 	}
-	
+
 	/**
-	 * Hourly Wage {@link FieldEditor} implementation, editing as amount with decimal places, saving
-	 * as cents.
-	 * 
+	 * Hourly Wage {@link FieldEditor} implementation, editing as amount with
+	 * decimal places, saving as cents.
+	 *
 	 * @author thomas
 	 *
 	 */
 	private class HourlyWageFieldEditor extends StringFieldEditor {
 		private float minValidValue = 0;
-		
+
 		private float maxValidValue = Float.MAX_VALUE;
-		
+
 		private static final int DEFAULT_TEXT_LIMIT = 10;
-		
-		public HourlyWageFieldEditor(String name, String labelText, Composite parent){
-	        this(name, labelText, parent, DEFAULT_TEXT_LIMIT);
-	    }
-		
-		public HourlyWageFieldEditor(String name, String labelText, Composite parent,
-	            int textLimit) {
-	        init(name, labelText);
-	        setTextLimit(textLimit);
+
+		public HourlyWageFieldEditor(String name, String labelText, Composite parent) {
+			this(name, labelText, parent, DEFAULT_TEXT_LIMIT);
+		}
+
+		public HourlyWageFieldEditor(String name, String labelText, Composite parent, int textLimit) {
+			init(name, labelText);
+			setTextLimit(textLimit);
 			setEmptyStringAllowed(true);
 			setErrorMessage("Kein gültiger Wert");//$NON-NLS-1$
-	        createControl(parent);
-	    }
-		
+			createControl(parent);
+		}
+
 		@Override
-		protected boolean checkState(){
+		protected boolean checkState() {
 			Text text = getTextControl();
 			if (text == null) {
 				return false;
 			}
-			
+
 			String numberString = text.getText().replaceAll(",", ".");
 			try {
 				float number = Float.valueOf(numberString).floatValue();
@@ -93,20 +90,20 @@ public class ComplementaryPrefs extends FieldEditorPreferencePage
 			}
 			return false;
 		}
-		
+
 		@Override
-		protected void doLoad(){
+		protected void doLoad() {
 			Text text = getTextControl();
 			if (text != null) {
 				int value = getPreferenceStore().getInt(getPreferenceName());
 				text.setText("" + (float) value / 100);//$NON-NLS-1$
 				oldValue = "" + value; //$NON-NLS-1$
 			}
-			
+
 		}
-		
+
 		@Override
-		protected void doLoadDefault(){
+		protected void doLoadDefault() {
 			Text text = getTextControl();
 			if (text != null) {
 				int value = getPreferenceStore().getDefaultInt(getPreferenceName());
@@ -114,9 +111,9 @@ public class ComplementaryPrefs extends FieldEditorPreferencePage
 			}
 			valueChanged();
 		}
-		
+
 		@Override
-		protected void doStore(){
+		protected void doStore() {
 			Text text = getTextControl();
 			if (text != null) {
 				Float f = Float.valueOf(text.getText().replaceAll(",", "."));

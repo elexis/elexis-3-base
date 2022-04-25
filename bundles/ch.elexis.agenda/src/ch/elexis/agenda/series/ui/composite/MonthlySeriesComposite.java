@@ -11,17 +11,17 @@ import ch.elexis.agenda.series.ui.Messages;
 
 public class MonthlySeriesComposite extends Composite {
 	private Text txtDay;
-	
+
 	/**
 	 * Create the composite.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 */
-	public MonthlySeriesComposite(Composite parent, int style){
+	public MonthlySeriesComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(3, false));
-		
+
 		Label lblAtThe = new Label(this, SWT.NONE);
 		lblAtThe.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblAtThe.setText(Messages.MonthlySeriesComposite_lblAtThe_text);
@@ -33,18 +33,18 @@ public class MonthlySeriesComposite extends Composite {
 		txtDay.setLayoutData(gd_txtDay);
 		new Label(this, SWT.NONE);
 	}
-	
+
 	@Override
-	protected void checkSubclass(){
+	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
-	
-	public int getDay(){
+
+	public int getDay() {
 		return Integer.parseInt(txtDay.getText());
 	}
-	
-	public void setDay(int day){
+
+	public void setDay(int day) {
 		txtDay.setText(day + "");
 	}
-	
+
 }

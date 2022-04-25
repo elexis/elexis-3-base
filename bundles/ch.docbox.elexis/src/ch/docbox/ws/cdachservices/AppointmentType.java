@@ -10,10 +10,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 /**
  * <p>
  * Java class for AppointmentType complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="AppointmentType">
  *   &lt;complexContent>
@@ -46,15 +47,14 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AppointmentType", propOrder = {
-	"date", "duration", "id", "state", "reasonTitle", "reasonDetails", "visitor", "info"
-})
+@XmlType(name = "AppointmentType", propOrder = { "date", "duration", "id", "state", "reasonTitle", "reasonDetails",
+		"visitor", "info" })
 public class AppointmentType {
-	
+
 	@XmlElement(required = true)
 	@XmlSchemaType(name = "dateTime")
 	protected XMLGregorianCalendar date;
@@ -67,168 +67,161 @@ public class AppointmentType {
 	protected String reasonDetails;
 	protected String visitor;
 	protected String info;
-	
+
 	/**
 	 * Gets the value of the date property.
-	 * 
+	 *
 	 * @return possible object is {@link XMLGregorianCalendar }
-	 * 
+	 *
 	 */
-	public XMLGregorianCalendar getDate(){
+	public XMLGregorianCalendar getDate() {
 		return date;
 	}
-	
+
 	/**
 	 * Sets the value of the date property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link XMLGregorianCalendar }
-	 * 
+	 *
+	 * @param value allowed object is {@link XMLGregorianCalendar }
+	 *
 	 */
-	public void setDate(XMLGregorianCalendar value){
+	public void setDate(XMLGregorianCalendar value) {
 		this.date = value;
 	}
-	
+
 	/**
 	 * Gets the value of the duration property.
-	 * 
+	 *
 	 */
-	public long getDuration(){
+	public long getDuration() {
 		return duration;
 	}
-	
+
 	/**
 	 * Sets the value of the duration property.
-	 * 
+	 *
 	 */
-	public void setDuration(long value){
+	public void setDuration(long value) {
 		this.duration = value;
 	}
-	
+
 	/**
 	 * Gets the value of the id property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getId(){
+	public String getId() {
 		return id;
 	}
-	
+
 	/**
 	 * Sets the value of the id property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setId(String value){
+	public void setId(String value) {
 		this.id = value;
 	}
-	
+
 	/**
 	 * Gets the value of the state property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getState(){
+	public String getState() {
 		return state;
 	}
-	
+
 	/**
 	 * Sets the value of the state property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setState(String value){
+	public void setState(String value) {
 		this.state = value;
 	}
-	
+
 	/**
 	 * Gets the value of the reasonTitle property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getReasonTitle(){
+	public String getReasonTitle() {
 		return reasonTitle;
 	}
-	
+
 	/**
 	 * Sets the value of the reasonTitle property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setReasonTitle(String value){
+	public void setReasonTitle(String value) {
 		this.reasonTitle = value;
 	}
-	
+
 	/**
 	 * Gets the value of the reasonDetails property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getReasonDetails(){
+	public String getReasonDetails() {
 		return reasonDetails;
 	}
-	
+
 	/**
 	 * Sets the value of the reasonDetails property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setReasonDetails(String value){
+	public void setReasonDetails(String value) {
 		this.reasonDetails = value;
 	}
-	
+
 	/**
 	 * Gets the value of the visitor property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getVisitor(){
+	public String getVisitor() {
 		return visitor;
 	}
-	
+
 	/**
 	 * Sets the value of the visitor property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setVisitor(String value){
+	public void setVisitor(String value) {
 		this.visitor = value;
 	}
-	
+
 	/**
 	 * Gets the value of the info property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getInfo(){
+	public String getInfo() {
 		return info;
 	}
-	
+
 	/**
 	 * Sets the value of the info property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setInfo(String value){
+	public void setInfo(String value) {
 		this.info = value;
 	}
-	
+
 }

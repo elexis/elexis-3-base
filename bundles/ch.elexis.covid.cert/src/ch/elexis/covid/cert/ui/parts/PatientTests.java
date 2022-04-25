@@ -76,62 +76,59 @@ import ch.elexis.covid.cert.ui.handler.CovidHandlerUtil;
 import ch.rgw.tools.Result;
 
 public class PatientTests {
-	
+
 	private Composite composite;
-	
+
 	private Form patientLabel;
-	
+
 	private TableViewer testsViewer;
-	
+
 	@Inject
 	private CertificatesService service;
-	
+
 	@Inject
 	@Service(filterExpression = "(storeid=ch.elexis.data.store.omnivore)")
 	private IDocumentStore omnivoreStore;
-	
+
 	@Inject
 	private ILocalDocumentService localDocumentService;
-	
+
 	@Inject
 	private IConfigService configService;
-	
+
 	private IPatient patient;
-	
+
 	private Button btnOtp;
-	
+
 	@Optional
 	@Inject
-	void updatePatient(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE)
-	IPatient patient){
+	void updatePatient(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IPatient patient) {
 		if (composite != null && !composite.isDisposed()) {
 			setPatient(patient);
 		}
 	}
-	
+
 	@Optional
 	@Inject
-	void activePatient(IPatient patient){
+	void activePatient(IPatient patient) {
 		if (composite != null && !composite.isDisposed()) {
 			Display.getDefault().asyncExec(() -> {
 				setPatient(patient);
 			});
 		}
 	}
-	
+
 	@Inject
-	void setMandator(@Optional
-	IMandator mandator){
+	void setMandator(@Optional IMandator mandator) {
 		if (composite != null && !composite.isDisposed()) {
 			Display.getDefault().asyncExec(() -> {
 				updateOtp();
 			});
 		}
 	}
-	
-	private void updateOtp(){
-		java.util.Optional<IMandator> activeMandator =
-			ContextServiceHolder.get().getActiveMandator();
+
+	private void updateOtp() {
+		java.util.Optional<IMandator> activeMandator = ContextServiceHolder.get().getActiveMandator();
 		if (activeMandator.isPresent()) {
 			btnOtp.setText("OTP von " + activeMandator.get().getLabel());
 			String otp = configService.getActiveMandator(CertificatesService.CFG_OTP, null);
@@ -146,77 +143,71 @@ public class PatientTests {
 		}
 		composite.layout();
 	}
-	
+
 	@Inject
-	public PatientTests(){}
-	
+	public PatientTests() {
+	}
+
 	@PostConstruct
-	public void postConstruct(Composite parent){
+	public void postConstruct(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
-		
+
 		Composite btnComposite = new Composite(composite, SWT.NONE);
 		btnComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		btnComposite.setLayout(new GridLayout(2, true));
-		
+
 		patientLabel = UiDesk.getToolkit().createForm(composite);
 		patientLabel.getBody().setLayout(new GridLayout(1, true));
 		patientLabel.setText("");
-		
+
 		testsViewer = new TableViewer(composite, SWT.V_SCROLL);
 		testsViewer.setContentProvider(ArrayContentProvider.getInstance());
 		testsViewer.setLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof CertificateInfo) {
-					return ((CertificateInfo) element).getType().getLabel() + ", erstellt "
-						+ DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
-							.format(((CertificateInfo) element).getTimestamp());
+					return ((CertificateInfo) element).getType().getLabel() + ", erstellt " + DateTimeFormatter
+							.ofPattern("dd.MM.yyyy HH:mm").format(((CertificateInfo) element).getTimestamp());
 				} else if (element instanceof IDocumentLetter) {
 					return "Bescheinigung " + ((IDocumentLetter) element).getTitle() + ", erstellt "
-						+ DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
-							.format(LocalDateTime.ofInstant(
-								((IDocumentLetter) element).getCreated().toInstant(),
-								ZoneId.systemDefault()));
+							+ DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(LocalDateTime.ofInstant(
+									((IDocumentLetter) element).getCreated().toInstant(), ZoneId.systemDefault()));
 				}
 				return super.getText(element);
 			}
 		});
 		testsViewer.setComparator(new ViewerComparator() {
 			@Override
-			public int compare(Viewer viewer, Object l, Object r){
+			public int compare(Viewer viewer, Object l, Object r) {
 				LocalDateTime lDateTime = LocalDateTime.of(1970, 1, 1, 0, 0);
 				LocalDateTime rDateTime = LocalDateTime.of(1970, 1, 1, 0, 0);
 				if (l instanceof CertificateInfo) {
 					lDateTime = ((CertificateInfo) l).getTimestamp();
 				} else if (l instanceof IDocumentLetter) {
-					lDateTime = LocalDateTime.ofInstant(
-						((IDocumentLetter) l).getCreated().toInstant(), ZoneId.systemDefault());
+					lDateTime = LocalDateTime.ofInstant(((IDocumentLetter) l).getCreated().toInstant(),
+							ZoneId.systemDefault());
 				}
 				if (r instanceof CertificateInfo) {
 					rDateTime = ((CertificateInfo) r).getTimestamp();
 				} else if (r instanceof IDocumentLetter) {
-					rDateTime = LocalDateTime.ofInstant(
-						((IDocumentLetter) r).getCreated().toInstant(), ZoneId.systemDefault());
+					rDateTime = LocalDateTime.ofInstant(((IDocumentLetter) r).getCreated().toInstant(),
+							ZoneId.systemDefault());
 				}
 				return rDateTime.compareTo(lDateTime);
 			}
 		});
 		testsViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
-			public void doubleClick(DoubleClickEvent event){
-				if (testsViewer.getStructuredSelection() != null
-					&& !testsViewer.getStructuredSelection().isEmpty()) {
-					if (testsViewer.getStructuredSelection()
-						.getFirstElement() instanceof CertificateInfo) {
-						CertificateInfo info = (CertificateInfo) testsViewer
-							.getStructuredSelection().getFirstElement();
-						CovidHandlerUtil.openCertDocument(info, omnivoreStore,
-							localDocumentService);
-					} else if (testsViewer.getStructuredSelection()
-						.getFirstElement() instanceof IDocumentLetter) {
-						CovidHandlerUtil.openLetter((IDocumentLetter) testsViewer
-							.getStructuredSelection().getFirstElement(), localDocumentService);
+			public void doubleClick(DoubleClickEvent event) {
+				if (testsViewer.getStructuredSelection() != null && !testsViewer.getStructuredSelection().isEmpty()) {
+					if (testsViewer.getStructuredSelection().getFirstElement() instanceof CertificateInfo) {
+						CertificateInfo info = (CertificateInfo) testsViewer.getStructuredSelection().getFirstElement();
+						CovidHandlerUtil.openCertDocument(info, omnivoreStore, localDocumentService);
+					} else if (testsViewer.getStructuredSelection().getFirstElement() instanceof IDocumentLetter) {
+						CovidHandlerUtil.openLetter(
+								(IDocumentLetter) testsViewer.getStructuredSelection().getFirstElement(),
+								localDocumentService);
 					}
 				}
 			}
@@ -224,42 +215,37 @@ public class PatientTests {
 		MenuManager menuManager = new MenuManager();
 		menuManager.add(new Action() {
 			@Override
-			public String getText(){
+			public String getText() {
 				return "Zertifikat entfernen";
 			}
-			
+
 			@Override
-			public ImageDescriptor getImageDescriptor(){
+			public ImageDescriptor getImageDescriptor() {
 				return Images.IMG_DELETE.getImageDescriptor();
 			}
-			
+
 			@Override
-			public void run(){
-				if (testsViewer.getStructuredSelection()
-					.getFirstElement() instanceof CertificateInfo) {
-					CertificateInfo info =
-						(CertificateInfo) testsViewer.getStructuredSelection().getFirstElement();
+			public void run() {
+				if (testsViewer.getStructuredSelection().getFirstElement() instanceof CertificateInfo) {
+					CertificateInfo info = (CertificateInfo) testsViewer.getStructuredSelection().getFirstElement();
 					RevokeModel model = new RevokeModel().initDefault(info, service.getOtp());
 					Result<String> result = service.revokeCertificate(patient, info, model);
 					if (result.isOK()) {
-						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
-							patient);
+						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, patient);
 					} else {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-							"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages()
-								.stream().map(m -> m.getText()).collect(Collectors.joining(", ")));
+								"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages().stream()
+										.map(m -> m.getText()).collect(Collectors.joining(", ")));
 					}
-				} else if (testsViewer.getStructuredSelection()
-					.getFirstElement() instanceof IDocumentLetter) {
-					IDocumentLetter letter =
-						(IDocumentLetter) testsViewer.getStructuredSelection().getFirstElement();
+				} else if (testsViewer.getStructuredSelection().getFirstElement() instanceof IDocumentLetter) {
+					IDocumentLetter letter = (IDocumentLetter) testsViewer.getStructuredSelection().getFirstElement();
 					CoreModelServiceHolder.get().delete(letter);
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, patient);
 				}
 			}
-			
+
 			@Override
-			public boolean isEnabled(){
+			public boolean isEnabled() {
 				return testsViewer.getSelection() != null && !testsViewer.getSelection().isEmpty();
 			}
 		});
@@ -267,118 +253,114 @@ public class PatientTests {
 		testsViewer.getTable().setMenu(contextMenu);
 		menuManager.addMenuListener(new IMenuListener() {
 			@Override
-			public void menuAboutToShow(IMenuManager manager){
+			public void menuAboutToShow(IMenuManager manager) {
 				IContributionItem[] items = manager.getItems();
 				for (IContributionItem iContributionItem : items) {
 					iContributionItem.update();
 				}
 			}
 		});
-		testsViewer.getTable()
-			.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+		testsViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
 		Button btn = new Button(btnComposite, SWT.PUSH);
 		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText("Antigen Kasse");
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				executeCommand("ch.elexis.covid.cert.command.covidtest.antigen.kk");
 			}
-			
+
 		});
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.heightHint = 75;
 		btn.setLayoutData(gd);
-		
+
 		btn = new Button(btnComposite, SWT.PUSH);
 		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText("Antigen Selbstzahler");
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				executeCommand("ch.elexis.covid.cert.command.covidtest.antigen.sz");
 			}
 		});
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.heightHint = 75;
 		btn.setLayoutData(gd);
-		
+
 		btn = new Button(btnComposite, SWT.PUSH);
 		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText("PCR Kasse");
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				executeCommand("ch.elexis.covid.cert.command.covidtest.pcr.kk");
 			}
 		});
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.heightHint = 75;
 		btn.setLayoutData(gd);
-		
+
 		btn = new Button(btnComposite, SWT.PUSH);
 		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText("PCR Selbstzahler");
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				executeCommand("ch.elexis.covid.cert.command.covidtest.pcr.sz");
 			}
 		});
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.heightHint = 75;
 		btn.setLayoutData(gd);
-		
+
 		btn = new Button(btnComposite, SWT.PUSH);
 		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText("Bescheinigung Kasse");
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				executeCommand("ch.elexis.covid.cert.command.covidtest.letter.kk");
 			}
 		});
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.heightHint = 75;
 		btn.setLayoutData(gd);
-		
+
 		btn = new Button(btnComposite, SWT.PUSH);
 		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText("Bescheinigung Selbstzahler");
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				executeCommand("ch.elexis.covid.cert.command.covidtest.letter.sz");
 			}
 		});
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.heightHint = 75;
 		btn.setLayoutData(gd);
-		
+
 		Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep.setLayoutData(gd);
-		
+
 		btnOtp = new Button(composite, SWT.PUSH);
 		btnOtp.setText("...");
 		btnOtp.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
-				java.util.Optional<IMandator> activeMandator =
-					ContextServiceHolder.get().getActiveMandator();
+			public void widgetSelected(SelectionEvent e) {
+				java.util.Optional<IMandator> activeMandator = ContextServiceHolder.get().getActiveMandator();
 				if (activeMandator.isPresent()) {
 					String otp = configService.getActiveMandator(CertificatesService.CFG_OTP, "");
-					InputDialog otpDialog =
-						new InputDialog(Display.getDefault().getActiveShell(), "COVID Zert OTP",
-							"Das one time password (OTP) von " + activeMandator.get().getLabel()
-								+ " setzen.",
-							otp, null, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+					InputDialog otpDialog = new InputDialog(Display.getDefault().getActiveShell(), "COVID Zert OTP",
+							"Das one time password (OTP) von " + activeMandator.get().getLabel() + " setzen.", otp,
+							null, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 					otpDialog.setWidthHint(400);
 					if (otpDialog.open() == Window.OK) {
 						String newOtp = otpDialog.getValue();
 						configService.setActiveMandator(CertificatesService.CFG_OTP, newOtp);
-						ConfigServiceHolder.get().setActiveMandator(
-							CertificatesService.CFG_OTP_TIMESTAMP, LocalDateTime.now().toString());
+						ConfigServiceHolder.get().setActiveMandator(CertificatesService.CFG_OTP_TIMESTAMP,
+								LocalDateTime.now().toString());
 					}
 					updateOtp();
 				}
@@ -389,23 +371,25 @@ public class PatientTests {
 		otplink.setForeground(CoreUiUtil.getColorForString("0000ff"));
 		otplink.addHyperlinkListener(new IHyperlinkListener() {
 			@Override
-			public void linkExited(HyperlinkEvent e){}
-			
+			public void linkExited(HyperlinkEvent e) {
+			}
+
 			@Override
-			public void linkEntered(HyperlinkEvent e){}
-			
+			public void linkEntered(HyperlinkEvent e) {
+			}
+
 			@Override
-			public void linkActivated(HyperlinkEvent e){
+			public void linkActivated(HyperlinkEvent e) {
 				Program.launch(service.getOtpUrl());
 			}
 		});
-		
+
 		this.composite = composite;
 		setPatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 		setMandator(ContextServiceHolder.get().getActiveMandator().orElse(null));
 	}
-	
-	private void setButtonsEnabled(Composite composite, boolean value){
+
+	private void setButtonsEnabled(Composite composite, boolean value) {
 		for (Control child : composite.getChildren()) {
 			if (child instanceof Button) {
 				child.setEnabled(value);
@@ -414,19 +398,16 @@ public class PatientTests {
 			}
 		}
 	}
-	
-	private void setPatient(IPatient patient){
+
+	private void setPatient(IPatient patient) {
 		this.patient = patient;
 		if (patient != null) {
 			patientLabel.setText("Tests von " + PersonFormatUtil.getFullName(patient));
 			patientLabel.layout();
 			List<CertificateInfo> certificates = CertificateInfo.of(patient).stream()
-				.filter(ci -> ci.getType() == Type.TEST).collect(Collectors.toList());
-			List<IDocumentLetter> letters = CovidHandlerUtil.getLettersAt(patient, null,
-				new String[] {
-					CovidHandlerUtil.ATTEST_POSITIV_LETTER_NAME,
-					CovidHandlerUtil.ATTEST_NEGATIV_LETTER_NAME
-				});
+					.filter(ci -> ci.getType() == Type.TEST).collect(Collectors.toList());
+			List<IDocumentLetter> letters = CovidHandlerUtil.getLettersAt(patient, null, new String[] {
+					CovidHandlerUtil.ATTEST_POSITIV_LETTER_NAME, CovidHandlerUtil.ATTEST_NEGATIV_LETTER_NAME });
 			List<Object> input = new ArrayList<>();
 			input.addAll(certificates);
 			input.addAll(letters);
@@ -435,7 +416,7 @@ public class PatientTests {
 		} else {
 			patientLabel.setText("");
 			patientLabel.layout();
-			
+
 			testsViewer.setInput(Collections.emptyList());
 			setButtonsEnabled(composite, false);
 		}
@@ -447,22 +428,21 @@ public class PatientTests {
 		Display.getDefault().asyncExec(() -> {
 			if (composite != null && !composite.isDisposed()) {
 				composite.getParent().layout(true, true);
-				
+
 			}
 		});
 	}
-	
-	private Object executeCommand(String commandId){
+
+	private Object executeCommand(String commandId) {
 		try {
-			ICommandService commandService =
-				(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
-			
+			ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
+					.getService(ICommandService.class);
+
 			Command cmd = commandService.getCommand(commandId);
 			ExecutionEvent ee = new ExecutionEvent(cmd, Collections.EMPTY_MAP, null, null);
 			return cmd.executeWithChecks(ee);
 		} catch (Exception e) {
-			LoggerFactory.getLogger(PatientTests.class)
-				.error("cannot execute command with id: " + commandId, e);
+			LoggerFactory.getLogger(PatientTests.class).error("cannot execute command with id: " + commandId, e);
 		}
 		return null;
 	}

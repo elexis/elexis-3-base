@@ -7,10 +7,9 @@ import at.medevit.elexis.cobasmira.model.CobasMiraMessage;
 
 public class ErrorMessageHandler {
 	private static Logger logger = LoggerFactory.getLogger(ErrorMessageHandler.class);
-	
-	public static void handleError(CobasMiraMessage add){
-		logger.warn("Cobas Mira Error Message: "
-			+ CobasMiraMessage.getBlockTypeString(add.getBlockType()));
-		//TODO: Send the messages to the respective person
+
+	public static void handleError(CobasMiraMessage add) {
+		logger.warn("Cobas Mira Error Message: " + CobasMiraMessage.getBlockTypeString(add.getBlockType()));
+		// TODO: Send the messages to the respective person
 	}
 }

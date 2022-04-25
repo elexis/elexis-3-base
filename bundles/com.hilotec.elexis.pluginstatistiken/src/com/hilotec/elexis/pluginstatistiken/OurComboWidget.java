@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
+ *    A. Kaufmann - initial implementation
  *    G. Weirich - modify to API Changes in 2.1 (ElexisEventDispatcher)
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.pluginstatistiken;
@@ -24,16 +24,17 @@ import ch.unibe.iam.scg.archie.model.RegexValidation;
 import ch.unibe.iam.scg.archie.ui.widgets.ComboWidget;
 
 /**
- * Wir benutzen hier ein eigenes ComboWidget, da eine statische Liste mit Eintraegen, wie sie das
- * von Archie gestellte Widget bietet, fuer unsere Beduerfnisse nicht reicht, da die vorhandenen
- * Abfragen erst nach dem Parsen der Konfigurationsdatei zur Verfuegung stehen.
- * 
+ * Wir benutzen hier ein eigenes ComboWidget, da eine statische Liste mit
+ * Eintraegen, wie sie das von Archie gestellte Widget bietet, fuer unsere
+ * Beduerfnisse nicht reicht, da die vorhandenen Abfragen erst nach dem Parsen
+ * der Konfigurationsdatei zur Verfuegung stehen.
+ *
  * @author Antoine Kaufmann
  */
 public class OurComboWidget extends ComboWidget {
-	public OurComboWidget(Composite parent, int style, String labelText, RegexValidation regex){
+	public OurComboWidget(Composite parent, int style, String labelText, RegexValidation regex) {
 		super(parent, style, labelText, regex);
-		
+
 		List<KonfigurationQuery> ql = Konfiguration.getInstance().getQueries();
 		String queries[] = new String[ql.size()];
 		int i = 0;

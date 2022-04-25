@@ -14,14 +14,14 @@ import ch.elexis.core.ui.util.Log;
 
 /**
  * Ueberarbeitete Version des Handshakes zwischen PC und Afinion
- * 
+ *
  * @author immi
- * 
+ *
  */
 public class AfinionConnection extends Connection {
-	
+
 	Log _elexislog = Log.get("AfinionConnection");
-	
+
 	protected static final int NUL = 0x00;
 	protected static final int STX = 0x02;
 	protected static final int ETX = 0x03;
@@ -30,10 +30,10 @@ public class AfinionConnection extends Connection {
 	protected static final int NAK = 0x15;
 	protected static final int ETB = 0x17;
 	protected static final int LF = 0x0D;
-	
+
 	private static final long STARTUP_DELAY_IN_MS = 2000; // 60 Sekunden
 	private static final long RESEND_IN_MS = 30000; // 30 Sekunden
-	
+
 	// Initialisierung
 	public static final int INIT = 0;
 	// 1 Minute warten
@@ -46,58 +46,58 @@ public class AfinionConnection extends Connection {
 	public static final int PAT_REQUEST_ACK = 4;
 	// Beenden
 	public static final int ENDING = 99;
-	
+
 	private String awaitPacketNr;
-	
+
 	private static int pc_packet_nr = 21;
-	
+
 	private long last_time_ms = 0;
-	
+
 	private Calendar currentCal = new GregorianCalendar();
-	
+
 	private int state;
-	
+
 	// Wird für Fehlerhandling verwendet. Alles wird in console geloggt.
 	private static final boolean debugToConsole = false;
-	
-	public AfinionConnection(String portName, String port, String settings, ComPortListener l){
+
+	public AfinionConnection(String portName, String port, String settings, ComPortListener l) {
 		super(portName, port, settings, l);
 		setState(INIT);
 	}
-	
-	public void setCurrentDate(Calendar cal){
+
+	public void setCurrentDate(Calendar cal) {
 		this.currentCal = cal;
 	}
-	
+
 	/**
-	 * Wenn variable debug = true, dann werden alle bytes in die console geloggt. In jedem Fall wird
-	 * ins Elexis Log geloggt
-	 * 
+	 * Wenn variable debug = true, dann werden alle bytes in die console geloggt. In
+	 * jedem Fall wird ins Elexis Log geloggt
+	 *
 	 * @param text
 	 */
-	private void debug(String text){
+	private void debug(String text) {
 		_elexislog.log(text, Log.DEBUGMSG);
 		if (debugToConsole) {
 			System.out.print(text);
 		}
 	}
-	
+
 	/**
 	 * Wenn variable debug = true, dann werden alle bytes in die console geloggt.
-	 * 
+	 *
 	 * @param text
 	 */
-	private void debugln(String text){
+	private void debugln(String text) {
 		_elexislog.log(text, Log.DEBUGMSG);
 		if (debugToConsole) {
 			System.out.println(text);
 		}
 	}
-	
+
 	/**
 	 * Crc calculation
 	 */
-	private static long getCrc(byte[] array){
+	private static long getCrc(byte[] array) {
 		char crc = 0xFFFF;
 		for (byte b : array) {
 			char value = (char) b;
@@ -107,11 +107,11 @@ public class AfinionConnection extends Connection {
 		}
 		return crc;
 	}
-	
+
 	/**
 	 * Retourniert Byte-Array als Textausgabe.
 	 */
-	private String getByteStr(byte[] bytes){
+	private String getByteStr(byte[] bytes) {
 		StringBuffer strBuf = new StringBuffer();
 		int counter = 1;
 		for (byte b : bytes) {
@@ -127,19 +127,19 @@ public class AfinionConnection extends Connection {
 				byteStr = "0" + byteStr; //$NON-NLS-1$
 			}
 			strBuf.append("0x" + byteStr); //$NON-NLS-1$
-			
+
 			counter++;
 		}
 		return strBuf.toString();
 	}
-	
+
 	/**
 	 * Textausgabe für debugging
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
-	private String getText(int value){
+	private String getText(int value) {
 		if (value == NUL) {
 			return "<NUL>"; //$NON-NLS-1$
 		}
@@ -161,17 +161,17 @@ public class AfinionConnection extends Connection {
 		if (value == ETB) {
 			return "<ETB>"; //$NON-NLS-1$
 		}
-		
+
 		return new Character((char) value).toString();
 	}
-	
+
 	/**
 	 * Liest nächste Elexis-interne PacketNr
-	 * 
+	 *
 	 * @param strBuf
 	 * @param date
 	 */
-	private String nextPacketNr(){
+	private String nextPacketNr() {
 		String packetNrStr = new Integer(pc_packet_nr).toString();
 		pc_packet_nr++;
 		while (packetNrStr.length() < 4) {
@@ -179,50 +179,50 @@ public class AfinionConnection extends Connection {
 		}
 		return packetNrStr;
 	}
-	
+
 	/**
 	 * Fuegt Datum als String yyyyMMdd HH:mm:ss dazu (ohne Timezone-Umwandlung)
 	 */
-	private void addDate(StringBuffer strBuf){
+	private void addDate(StringBuffer strBuf) {
 		int day = this.currentCal.get(Calendar.DATE);
 		int month = this.currentCal.get(Calendar.MONTH) + 1;
 		int year = this.currentCal.get(Calendar.YEAR);
 		int hour = this.currentCal.get(Calendar.HOUR_OF_DAY);
 		int minutes = this.currentCal.get(Calendar.MINUTE);
 		int seconds = this.currentCal.get(Calendar.SECOND);
-		
+
 		String dayStr = (day < 10 ? "0" : "") + Integer.valueOf(day).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		String monthStr = (month < 10 ? "0" : "") + Integer.valueOf(month).toString();
 		String yearStr = Integer.valueOf(year).toString();
 		String hourStr = (hour < 10 ? "0" : "") + Integer.valueOf(hour).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		String minuteStr = (minutes < 10 ? "0" : "") + Integer.valueOf(minutes).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 		String secondStr = (seconds < 10 ? "0" : "") + Integer.valueOf(seconds).toString(); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		String dateStr = yearStr + monthStr + dayStr + " " + hourStr + ":" + minuteStr + ":" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ secondStr;
+				+ secondStr;
 		strBuf.append(dateStr);
 		String text = "Request starting at:" + dateStr;
 		System.out.println(text);
 		_elexislog.log(text, Log.INFOS);
 	}
-	
-	private void addContentStart(ByteArrayOutputStream os){
+
+	private void addContentStart(ByteArrayOutputStream os) {
 		debug("<DLE>"); //$NON-NLS-1$
 		os.write(DLE);
 		debug("<STX>"); //$NON-NLS-1$
 		os.write(STX);
 	}
-	
-	private void addContentEnd(ByteArrayOutputStream os){
+
+	private void addContentEnd(ByteArrayOutputStream os) {
 		debug("<DLE>"); //$NON-NLS-1$
 		os.write(DLE);
 		debug("<ETB>"); //$NON-NLS-1$
 		os.write(ETB);
 	}
-	
-	private void addEnding(ByteArrayOutputStream os) throws IOException{
+
+	private void addEnding(ByteArrayOutputStream os) throws IOException {
 		long crc = getCrc(os.toByteArray());
-		
+
 		String crcStr = Long.toHexString(crc).toUpperCase();
 		while (crcStr.length() < 4) {
 			crcStr = "0" + crcStr; //$NON-NLS-1$
@@ -235,10 +235,10 @@ public class AfinionConnection extends Connection {
 		os.write(ETX);
 		debugln(""); //$NON-NLS-1$
 	}
-	
-	private void sendPacketACK(String packetNr){
+
+	private void sendPacketACK(String packetNr) {
 		debug("-->"); //$NON-NLS-1$
-		
+
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			addContentStart(os);
@@ -248,7 +248,7 @@ public class AfinionConnection extends Connection {
 			os.write(ACK);
 			addContentEnd(os);
 			addEnding(os);
-			
+
 			debugln("Send: " + getByteStr(os.toByteArray())); //$NON-NLS-1$
 			if (send(os.toByteArray())) {
 				debugln("OK"); //$NON-NLS-1$
@@ -257,10 +257,10 @@ public class AfinionConnection extends Connection {
 			e.printStackTrace();
 		}
 	}
-	
-	private void sendMessageACK(){
+
+	private void sendMessageACK() {
 		debug("-->"); //$NON-NLS-1$
-		
+
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			addContentStart(os);
@@ -272,7 +272,7 @@ public class AfinionConnection extends Connection {
 			os.write(cmdack.getBytes());
 			addContentEnd(os);
 			addEnding(os);
-			
+
 			debugln("Send: " + getByteStr(os.toByteArray())); //$NON-NLS-1$
 			if (send(os.toByteArray())) {
 				debugln("OK"); //$NON-NLS-1$
@@ -281,10 +281,10 @@ public class AfinionConnection extends Connection {
 			e.printStackTrace();
 		}
 	}
-	
-	private void sendPacketNAK(String packetNr){
+
+	private void sendPacketNAK(String packetNr) {
 		debug("-->"); //$NON-NLS-1$
-		
+
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			addContentStart(os);
@@ -294,7 +294,7 @@ public class AfinionConnection extends Connection {
 			os.write(NAK);
 			addContentEnd(os);
 			addEnding(os);
-			
+
 			debugln("Send: " + getByteStr(os.toByteArray())); //$NON-NLS-1$
 			if (send(os.toByteArray())) {
 				debugln("OK"); //$NON-NLS-1$
@@ -303,21 +303,21 @@ public class AfinionConnection extends Connection {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Patienteanfrage wird gesendet
-	 * 
+	 *
 	 * @return
 	 */
-	private String sendPatRecordRequest(){
+	private String sendPatRecordRequest() {
 		debug("-->"); //$NON-NLS-1$
-		
+
 		StringBuffer contentBuf = new StringBuffer();
 		String packetNrStr = nextPacketNr();
 		contentBuf.append(packetNrStr);
 		contentBuf.append("0025:record,patient@"); //$NON-NLS-1$
 		addDate(contentBuf);
-		
+
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			addContentStart(os);
@@ -325,7 +325,7 @@ public class AfinionConnection extends Connection {
 			os.write(contentBuf.toString().getBytes());
 			addContentEnd(os);
 			addEnding(os);
-			
+
 			debugln("Send: " + getByteStr(os.toByteArray())); //$NON-NLS-1$
 			if (send(os.toByteArray())) {
 				debugln("OK"); //$NON-NLS-1$
@@ -333,16 +333,16 @@ public class AfinionConnection extends Connection {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return packetNrStr;
 	}
-	
+
 	/**
 	 * Liest Stream bis zum nächsten <DEL><ETX>
 	 */
-	private void readToEnd(final InputStream inputStream) throws IOException{
+	private void readToEnd(final InputStream inputStream) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		
+
 		int data = inputStream.read();
 		while (data != -1 && data != ETX) {
 			while (data != -1 && data != DLE) {
@@ -351,17 +351,17 @@ public class AfinionConnection extends Connection {
 			}
 			data = inputStream.read();
 		}
-		
+
 		debug(os.toString());
 		debugln("<DLE><ETX>");
 	}
-	
+
 	/**
 	 * Liest Stream bis zum nächsten <DEL><ETX>
 	 */
-	private void readToLF(final InputStream inputStream) throws IOException{
+	private void readToLF(final InputStream inputStream) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		
+
 		int data = inputStream.read();
 		while (data != -1 && data != LF) {
 			os.write(data);
@@ -370,29 +370,27 @@ public class AfinionConnection extends Connection {
 		debug("...");
 		debugln("<LF>");
 	}
-	
+
 	/**
 	 * Liest Datenstream bis <DLE><ETX> und sendet anschliessend das Ack
-	 * 
+	 *
 	 * @param inputStream
 	 * @throws IOException
 	 */
-	private void readToEndAndACK(final String packetNr, final InputStream inputStream)
-		throws IOException{
+	private void readToEndAndACK(final String packetNr, final InputStream inputStream) throws IOException {
 		readToEnd(inputStream);
 		debugln(""); //$NON-NLS-1$
 		if (packetNr != null) {
 			sendPacketACK(packetNr);
 		}
 	}
-	
+
 	/**
 	 * Verarbeitet Patientendaten
 	 */
-	private void handlePatientRecord(final String packetNr, final InputStream inputStream)
-		throws IOException{
+	private void handlePatientRecord(final String packetNr, final InputStream inputStream) throws IOException {
 		// nächste 2560 Bytes lesen
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		// <DLE><ETB> suchen
 		int data = inputStream.read();
@@ -410,14 +408,14 @@ public class AfinionConnection extends Connection {
 				data = inputStream.read();
 			}
 		}
-		
+
 		byte[] bytes = baos.toByteArray();
-		
+
 		debug(getByteStr(bytes));
 		debugln("<DLE><ETB>");
-		
+
 		readToEnd(inputStream);
-		
+
 		if (bytes.length < 2560) {
 			sendPacketNAK(packetNr);
 		} else {
@@ -426,8 +424,8 @@ public class AfinionConnection extends Connection {
 			getListener().gotData(this, bytes);
 		}
 	}
-	
-	private void dataAvailable(final InputStream inputStream) throws IOException{
+
+	private void dataAvailable(final InputStream inputStream) throws IOException {
 		debug("<--"); //$NON-NLS-1$
 		int data = inputStream.read();
 		if (data == DLE) {
@@ -435,14 +433,14 @@ public class AfinionConnection extends Connection {
 			data = inputStream.read();
 			if (data == STX) {
 				debug("<STX>"); //$NON-NLS-1$
-				
+
 				String packetNr = ""; //$NON-NLS-1$
 				for (int i = 0; i < 4; i++) {
 					data = inputStream.read();
 					packetNr += (char) data;
 				}
 				debug(packetNr);
-				
+
 				// ACK/ NAK
 				data = inputStream.read();
 				if (data == NAK) {
@@ -503,13 +501,13 @@ public class AfinionConnection extends Connection {
 			// {Text} <LF>
 			readToLF(inputStream);
 		}
-		
+
 		// Initialisierung
 		if (getState() == INIT) {
 			last_time_ms = new GregorianCalendar().getTimeInMillis();
 			setState(WAITING);
 		}
-		
+
 		// 1 Minute delay
 		if (getState() == WAITING) {
 			long time_ms = new GregorianCalendar().getTimeInMillis();
@@ -518,7 +516,7 @@ public class AfinionConnection extends Connection {
 				last_time_ms = new GregorianCalendar().getTimeInMillis();
 			}
 		}
-		
+
 		// Überprüft Status. Nach x Sekunden wird Request nochmals gesendet
 		if (getState() == PAT_REQUEST_SENDED || getState() == PAT_REQUEST_ACK) {
 			// Resend nach 30 sekunden
@@ -528,15 +526,15 @@ public class AfinionConnection extends Connection {
 				last_time_ms = new GregorianCalendar().getTimeInMillis();
 			}
 		}
-		
+
 		if (getState() == SEND_PAT_REQUEST) {
 			awaitPacketNr = sendPatRecordRequest();
 			setState(PAT_REQUEST_SENDED);
 		}
 	}
-	
+
 	@Override
-	protected void fireData(byte[] data){
+	protected void fireData(byte[] data) {
 		if (data != null && data.length > 0) {
 			try {
 				dataAvailable(new ByteArrayInputStream(data));
@@ -545,14 +543,14 @@ public class AfinionConnection extends Connection {
 			}
 		}
 	}
-	
+
 	@Override
-	public boolean connect(){
+	public boolean connect() {
 		setState(INIT);
 		return super.connect();
 	}
-	
-	private String getStateText(int state){
+
+	private String getStateText(int state) {
 		switch (state) {
 		case INIT:
 			return "INIT";
@@ -569,13 +567,13 @@ public class AfinionConnection extends Connection {
 		}
 		return "#" + state;
 	}
-	
-	public void setState(int state){
+
+	public void setState(int state) {
 		debugln(getStateText(getState()) + " -> " + getStateText(state));
 		this.state = state;
 	}
-	
-	public int getState(){
+
+	public int getState() {
 		return state;
 	}
 }

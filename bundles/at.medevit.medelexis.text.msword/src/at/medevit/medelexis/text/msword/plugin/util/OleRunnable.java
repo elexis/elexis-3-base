@@ -9,12 +9,12 @@ import org.eclipse.swt.ole.win32.Variant;
 
 /**
  * Runnable capable of carrying return values for executing OLE/COM commands.
- * 
+ *
  * @author thomashu
- * 
+ *
  */
 public abstract class OleRunnable implements Runnable {
-	
+
 	protected Variant returnVariant;
 	protected OleAutomation returnAutomation;
 	protected Object returnObject;

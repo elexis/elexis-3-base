@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "ch.elexis.base.ch.ebanking.esr.messages"; //$NON-NLS-1$
-	
+
 	public static String ESR_bad_user_defin;
 	public static String ESR_errorMark;
 	public static String ESR_esr_invalid;
@@ -86,11 +86,12 @@ public class Messages extends NLS {
 	public static String ESRView2_patient;
 	public static String ESRView2_readDate;
 	public static String LoadESRFileHandler_notAssignable;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
-	private Messages(){}
+
+	private Messages() {
+	}
 }

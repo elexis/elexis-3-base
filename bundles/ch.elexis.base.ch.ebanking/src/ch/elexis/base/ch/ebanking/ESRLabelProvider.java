@@ -15,19 +15,18 @@ import ch.elexis.data.Rechnung;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-public class ESRLabelProvider extends LabelProvider implements ITableLabelProvider,
-		ITableColorProvider {
-	
+public class ESRLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
+
 	DecimalFormat df = new DecimalFormat("###0.00"); //$NON-NLS-1$
-	
-	public String getColumnText(Object element, int columnIndex){
+
+	public String getColumnText(Object element, int columnIndex) {
 		String text = ""; //$NON-NLS-1$
-		
+
 		ESRRecord rec = (ESRRecord) element;
-		
+
 		switch (columnIndex) {
 		case ESRView.DATUM_INDEX:
-			text = rec.get(ESRRecord.FLD_DATE); //$NON-NLS-1$
+			text = rec.get(ESRRecord.FLD_DATE); // $NON-NLS-1$
 			break;
 		case ESRView.RN_NUMMER_INDEX:
 			Rechnung rn = rec.getRechnung();
@@ -62,17 +61,17 @@ public class ESRLabelProvider extends LabelProvider implements ITableLabelProvid
 			text = rec.getFile();
 			break;
 		}
-		
+
 		return text;
 	}
-	
-	public Color getForeground(Object element, int columnIndex){
+
+	public Color getForeground(Object element, int columnIndex) {
 		return null;
 	}
-	
-	public Color getBackground(Object element, int columnIndex){
+
+	public Color getBackground(Object element, int columnIndex) {
 		ESRRecord rec = (ESRRecord) element;
-		
+
 		if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
 			if (StringTool.isNothing(rec.getGebucht())) {
 				return UiDesk.getColor(UiDesk.COL_GREY);
@@ -82,10 +81,10 @@ public class ESRLabelProvider extends LabelProvider implements ITableLabelProvid
 			return UiDesk.getColor(UiDesk.COL_RED);
 		}
 	}
-	
+
 	@Override
-	public Image getColumnImage(Object element, int columnIndex){
+	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
 	}
-	
+
 }

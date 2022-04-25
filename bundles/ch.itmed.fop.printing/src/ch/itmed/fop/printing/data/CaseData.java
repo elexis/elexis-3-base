@@ -21,15 +21,15 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public final class CaseData {
 
-	public String getCoverageName(){
+	public String getCoverageName() {
 		Optional<ICoverage> iCoverage = ContextServiceHolder.get().getTyped(ICoverage.class);
 		if (iCoverage.isPresent()) {
 			return iCoverage.get().getDescription();
 		}
 		return null;
 	}
-	
-	public String getCostBearer(){
+
+	public String getCostBearer() {
 		Optional<ICoverage> iCoverage = ContextServiceHolder.get().getTyped(ICoverage.class);
 		if (iCoverage.isPresent()) {
 			IContact costBearer = iCoverage.get().getCostBearer();
@@ -39,8 +39,8 @@ public final class CaseData {
 		}
 		return "";
 	}
-	
-	public String getInsurancePolicyNumber(){
+
+	public String getInsurancePolicyNumber() {
 		Optional<ICoverage> iCoverage = ContextServiceHolder.get().getTyped(ICoverage.class);
 		if (iCoverage.isPresent()) {
 			if (iCoverage.get().getInsuranceNumber() != null) {
@@ -52,8 +52,7 @@ public final class CaseData {
 				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Fallnummer"))) {
 					return (String) iCoverage.get().getExtInfo("Fallnummer");
 				}
-				if (StringUtils
-					.isNotBlank((String) iCoverage.get().getExtInfo("Versicherungsnummer"))) {
+				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Versicherungsnummer"))) {
 					return (String) iCoverage.get().getExtInfo("Versicherungsnummer");
 				}
 			}

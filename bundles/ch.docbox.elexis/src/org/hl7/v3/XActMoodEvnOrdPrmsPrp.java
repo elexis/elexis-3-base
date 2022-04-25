@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for x_ActMoodEvnOrdPrmsPrp.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="x_ActMoodEvnOrdPrmsPrp">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -21,20 +22,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "x_ActMoodEvnOrdPrmsPrp")
 @XmlEnum
 public enum XActMoodEvnOrdPrmsPrp {
-	
+
 	EVN, PRMS, PRP, RQO;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static XActMoodEvnOrdPrmsPrp fromValue(String v){
+
+	public static XActMoodEvnOrdPrmsPrp fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

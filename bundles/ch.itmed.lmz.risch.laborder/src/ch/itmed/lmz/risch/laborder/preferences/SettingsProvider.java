@@ -18,7 +18,7 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public final class SettingsProvider {
-	public static IPreferenceStore getSettings(){
+	public static IPreferenceStore getSettings() {
 		String currentPreferences = CoreHub.localCfg.get(PreferenceConstants.SETTINGS_PROVIDER, "aktueller Benutzer");
 
 		if (currentPreferences.equals("aktueller Benutzer")) {

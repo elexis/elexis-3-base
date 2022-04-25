@@ -36,71 +36,66 @@ import ch.elexis.omnivore.PreferenceConstants;
 import ch.rgw.tools.Result;
 
 public class AutomaticBilling {
-	
-	public static boolean isEnabled(){
-		String blockId =
-			ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING_BLOCK, "");
-		return ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING, false)
-			&& !blockId.isEmpty();
+
+	public static boolean isEnabled() {
+		String blockId = ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING_BLOCK, "");
+		return ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING, false) && !blockId.isEmpty();
 	}
-	
+
 	private static Executor executor = Executors.newSingleThreadExecutor();
-	
+
 	private IPatient patient;
 	private IDocument docHandle;
-	
-	public AutomaticBilling(IDocument docHandle){
+
+	public AutomaticBilling(IDocument docHandle) {
 		this.patient = docHandle.getPatient();
 		this.docHandle = docHandle;
 	}
-	
-	public void bill(){
+
+	public void bill() {
 		if (isEnabled() && docHandle != null) {
 			// do actual billing in a separate thread
 			executor.execute(new Runnable() {
 				@Override
-				public void run(){
+				public void run() {
 					try {
 						IEncounter encounter = getEncounter();
 						if (encounter != null) {
-							String blockId = ConfigServiceHolder.get()
-								.getLocal(PreferenceConstants.AUTO_BILLING_BLOCK, "");
+							String blockId = ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING_BLOCK,
+									"");
 							if (StringUtils.isNotBlank(blockId)) {
 								ICodeElementBlock block = CoreModelServiceHolder.get()
-									.load(blockId, ICodeElementBlock.class).orElse(null);
+										.load(blockId, ICodeElementBlock.class).orElse(null);
 								if (block != null) {
-									if (encounter != null && BillingServiceHolder.get()
-										.isEditable(encounter).isOK()) {
+									if (encounter != null && BillingServiceHolder.get().isEditable(encounter).isOK()) {
 										addBlockToEncounter(block, encounter);
 									} else {
 										LoggerFactory.getLogger(getClass()).warn(String.format(
-											"Could not add block [%s] for document of patient [%s] because no valid kons found.",
-											block.getCode(), patient.getLabel()));
+												"Could not add block [%s] for document of patient [%s] because no valid kons found.",
+												block.getCode(), patient.getLabel()));
 									}
 								}
 							}
 						}
 					} catch (Exception e) {
-						ElexisEventDispatcher.getInstance().fireMessageEvent(new MessageEvent(
-							MessageType.ERROR, "Error",
-							"Es ist ein Fehler bei der automatischen Verrechnung aufgetreten."));
+						ElexisEventDispatcher.getInstance().fireMessageEvent(new MessageEvent(MessageType.ERROR,
+								"Error", "Es ist ein Fehler bei der automatischen Verrechnung aufgetreten."));
 						LoggerFactory.getLogger(getClass()).error("Error billing block", e);
 					}
 				}
 			});
 		}
 	}
-	
-	private void addBlockToEncounter(ICodeElementBlock block, IEncounter encounter){
+
+	private void addBlockToEncounter(ICodeElementBlock block, IEncounter encounter) {
 		List<ICodeElement> elements = block.getElements(encounter);
 		StringJoiner notOkResults = new StringJoiner("\n");
 		for (ICodeElement element : elements) {
 			if (element instanceof IBillable) {
-				Result<IBilled> result =
-					BillingServiceHolder.get().bill((IBillable) element, encounter, 1);
+				Result<IBilled> result = BillingServiceHolder.get().bill((IBillable) element, encounter, 1);
 				if (!result.isOK()) {
-					String message = patient.getLabel() + "\nDokument import Verrechnung von ["
-						+ element.getCode() + "]\n\n" + ResultDialog.getResultMessage(result);
+					String message = patient.getLabel() + "\nDokument import Verrechnung von [" + element.getCode()
+							+ "]\n\n" + ResultDialog.getResultMessage(result);
 					if (!notOkResults.toString().contains(message)) {
 						notOkResults.add(message);
 					}
@@ -109,21 +104,20 @@ public class AutomaticBilling {
 		}
 		if (!notOkResults.toString().isEmpty()) {
 			ElexisEventDispatcher.getInstance().fireMessageEvent(new MessageEvent(MessageType.WARN,
-				Messages.VerrechnungsDisplay_imvalidBilling, notOkResults.toString()));
+					Messages.VerrechnungsDisplay_imvalidBilling, notOkResults.toString()));
 		}
 	}
-	
-	private IEncounter getEncounter(){
+
+	private IEncounter getEncounter() {
 		Optional<IEncounter> encounter = EncounterServiceHolder.get().getLatestEncounter(patient);
 		if (!encounter.isPresent() || !EncounterServiceHolder.get().isEditable(encounter.get())) {
 			encounter = createEncounter();
 		}
 		return encounter.orElse(null);
 	}
-	
-	private Optional<IEncounter> createEncounter(){
-		Optional<IEncounter> lastEncounter =
-			EncounterServiceHolder.get().getLatestEncounter(patient); // patient.getLastKonsultation();
+
+	private Optional<IEncounter> createEncounter() {
+		Optional<IEncounter> lastEncounter = EncounterServiceHolder.get().getLatestEncounter(patient); // patient.getLastKonsultation();
 		ICoverage coverage = null;
 		if (lastEncounter.isPresent()) {
 			coverage = lastEncounter.get().getCoverage();
@@ -132,21 +126,21 @@ public class AutomaticBilling {
 			List<ICoverage> openFall = getOpenFall();
 			if (openFall.isEmpty()) {
 				coverage = new ICoverageBuilder(CoreModelServiceHolder.get(), patient,
-					CoverageServiceHolder.get().getDefaultCoverageLabel(),
-					CoverageServiceHolder.get().getDefaultCoverageReason(),
-					CoverageServiceHolder.get().getDefaultCoverageLaw()).buildAndSave();
+						CoverageServiceHolder.get().getDefaultCoverageLabel(),
+						CoverageServiceHolder.get().getDefaultCoverageReason(),
+						CoverageServiceHolder.get().getDefaultCoverageLaw()).buildAndSave();
 			} else {
 				coverage = openFall.get(0);
 			}
 		}
 		if (coverage != null) {
 			return Optional.of(new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
-				ContextServiceHolder.get().getActiveMandator().orElse(null)).buildAndSave());
+					ContextServiceHolder.get().getActiveMandator().orElse(null)).buildAndSave());
 		}
 		return Optional.empty();
 	}
-	
-	private List<ICoverage> getOpenFall(){
+
+	private List<ICoverage> getOpenFall() {
 		ArrayList<ICoverage> ret = new ArrayList<>();
 		List<ICoverage> coverages = patient.getCoverages();
 		for (ICoverage f : coverages) {
@@ -156,7 +150,7 @@ public class AutomaticBilling {
 		}
 		ret.sort(new Comparator<ICoverage>() {
 			@Override
-			public int compare(ICoverage o1, ICoverage o2){
+			public int compare(ICoverage o1, ICoverage o2) {
 				if (o1.getDateFrom() != null && o2.getDateFrom() != null) {
 					return o1.getDateFrom().compareTo(o2.getDateFrom());
 				}

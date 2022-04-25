@@ -46,9 +46,9 @@ import ch.elexis.core.ui.medication.views.MedicationTableViewerItem;
 import ch.elexis.core.ui.medication.views.MedicationView;
 
 public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IPatient patient = ContextServiceHolder.get().getActivePatient().orElse(null);
 		if (patient == null) {
 			return null;
@@ -57,49 +57,45 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 		if (mandant == null) {
 			return null;
 		}
-		
-		String medicationType =
-			event.getParameter("ch.elexis.core.ui.medication.commandParameter.medication"); //$NON-NLS-1$
+
+		String medicationType = event.getParameter("ch.elexis.core.ui.medication.commandParameter.medication"); //$NON-NLS-1$
 		// if not set use all
 		if (medicationType == null || medicationType.isEmpty()) {
 			medicationType = "all";
 		}
-		
+
 		List<IPrescription> prescriptions = getPrescriptions(patient, medicationType, event);
 		if (prescriptions != null && !prescriptions.isEmpty()) {
 			prescriptions = sortPrescriptions(prescriptions, event);
-			
+
 			BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
-			ServiceReference<EMediplanService> eMediplanServiceRef =
-				bundleContext.getServiceReference(EMediplanService.class);
+			ServiceReference<EMediplanService> eMediplanServiceRef = bundleContext
+					.getServiceReference(EMediplanService.class);
 			if (eMediplanServiceRef != null) {
 				EMediplanService eMediplanService = bundleContext.getService(eMediplanServiceRef);
 				ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
 				eMediplanService.exportEMediplanPdf(mandant, patient, prescriptions, pdfOutput);
 				// save as Brief
-				IDocument letter =
-					SaveEMediplanUtil.saveEMediplan(patient, mandant, pdfOutput.toByteArray());
+				IDocument letter = SaveEMediplanUtil.saveEMediplan(patient, mandant, pdfOutput.toByteArray());
 				// open with system viewer
 				try {
 					Program.launch(SaveEMediplanUtil.writeTempPdf(pdfOutput));
-					ContextServiceHolder.get()
-						.postEvent(ElexisEventTopics.BASE + "emediplan/ui/create", letter);
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.BASE + "emediplan/ui/create", letter);
 				} catch (IOException e) {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-						"Das Rezept konnte nicht angezeigt werden.");
+							"Das Rezept konnte nicht angezeigt werden.");
 				}
 				bundleContext.ungetService(eMediplanServiceRef);
 			} else {
 				LoggerFactory.getLogger(getClass()).error("No EMediplanService available");
 				MessageDialog.openError(HandlerUtil.getActiveShell(event), "Fehler",
-					"Kein eMediplan Service gefunden.");
+						"Kein eMediplan Service gefunden.");
 			}
 		}
 		return null;
 	}
-	
-	private List<IPrescription> sortPrescriptions(List<IPrescription> prescriptions,
-		ExecutionEvent event){
+
+	private List<IPrescription> sortPrescriptions(List<IPrescription> prescriptions, ExecutionEvent event) {
 		SorterAdapter sorter = new SorterAdapter(event);
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (part instanceof MedicationView) {
@@ -107,19 +103,17 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 		}
 		return prescriptions;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType,
-		ExecutionEvent event){
+	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType, ExecutionEvent event) {
 		if ("selection".equals(medicationType)) {
-			ISelection selection =
-				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
+			ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
 			if (selection != null && !selection.isEmpty()) {
 				List<IPrescription> ret = new ArrayList<>();
 				IStructuredSelection strucSelection = (IStructuredSelection) selection;
 				if (strucSelection.getFirstElement() instanceof MedicationTableViewerItem) {
-					List<MedicationTableViewerItem> mtvItems =
-						(List<MedicationTableViewerItem>) strucSelection.toList();
+					List<MedicationTableViewerItem> mtvItems = (List<MedicationTableViewerItem>) strucSelection
+							.toList();
 					for (MedicationTableViewerItem mtvItem : mtvItems) {
 						IPrescription p = mtvItem.getPrescription();
 						if (p != null) {
@@ -133,16 +127,15 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 			}
 		} else if ("all".equals(medicationType)) {
 			List<IPrescription> ret = new ArrayList<>();
-			ret.addAll(patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION,
-				EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION)));
+			ret.addAll(patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION,
+					EntryType.SYMPTOMATIC_MEDICATION)));
 			return ret;
 		} else if ("fix".equals(medicationType)) {
 			return patient.getMedication(Collections.singletonList(EntryType.FIXED_MEDICATION));
 		} else if ("reserve".equals(medicationType)) {
 			return patient.getMedication(Collections.singletonList(EntryType.RESERVE_MEDICATION));
 		} else if ("symptomatic".equals(medicationType)) {
-			return patient
-				.getMedication(Collections.singletonList(EntryType.SYMPTOMATIC_MEDICATION));
+			return patient.getMedication(Collections.singletonList(EntryType.SYMPTOMATIC_MEDICATION));
 		}
 		return Collections.emptyList();
 	}

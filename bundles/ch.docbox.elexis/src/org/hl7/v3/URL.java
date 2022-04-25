@@ -7,20 +7,21 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * A telecommunications address specified according to Internet standard RFC 1738
- * [http://www.ietf.org/rfc/rfc1738.txt]. The URL specifies the protocol and the contact point
- * defined by that protocol for the resource. Notable uses of the telecommunication address data
- * type are for telephone and telefax numbers, e-mail addresses, Hypertext references, FTP
- * references, etc.
- * 
- * 
+ *
+ * A telecommunications address specified according to Internet standard RFC
+ * 1738 [http://www.ietf.org/rfc/rfc1738.txt]. The URL specifies the protocol
+ * and the contact point defined by that protocol for the resource. Notable uses
+ * of the telecommunication address data type are for telephone and telefax
+ * numbers, e-mail addresses, Hypertext references, FTP references, etc.
+ *
+ *
  * <p>
  * Java class for URL complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="URL">
  *   &lt;complexContent>
@@ -30,42 +31,39 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "URL")
-@XmlSeeAlso({
-	TEL.class
-})
+@XmlSeeAlso({ TEL.class })
 public abstract class URL extends ANY {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	@XmlAttribute
 	protected String value;
-	
+
 	/**
 	 * Gets the value of the value property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getValue(){
+	public String getValue() {
 		return value;
 	}
-	
+
 	/**
 	 * Sets the value of the value property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setValue(String value){
+	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 }

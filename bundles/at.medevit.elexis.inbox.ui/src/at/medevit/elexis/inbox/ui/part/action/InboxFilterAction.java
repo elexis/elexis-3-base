@@ -19,31 +19,30 @@ public class InboxFilterAction extends Action {
 	private ImageDescriptor image;
 	private ViewerFilter filter;
 	private StructuredViewer viewer;
-	
-	public InboxFilterAction(StructuredViewer viewer, ViewerFilter extensionFilter,
-		ImageDescriptor filterImage){
+
+	public InboxFilterAction(StructuredViewer viewer, ViewerFilter extensionFilter, ImageDescriptor filterImage) {
 		this.viewer = viewer;
 		this.filter = extensionFilter;
 		this.image = filterImage;
 	}
-	
+
 	@Override
-	public ImageDescriptor getImageDescriptor(){
+	public ImageDescriptor getImageDescriptor() {
 		return image;
 	}
-	
+
 	@Override
-	public int getStyle(){
+	public int getStyle() {
 		return Action.AS_CHECK_BOX;
 	}
-	
+
 	@Override
-	public void run(){
+	public void run() {
 		if (isChecked()) {
 			viewer.addFilter(filter);
 		} else {
 			viewer.removeFilter(filter);
 		}
 	}
-	
+
 }

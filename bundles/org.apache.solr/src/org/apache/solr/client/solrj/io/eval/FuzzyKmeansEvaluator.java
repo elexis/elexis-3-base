@@ -33,83 +33,77 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionNamedParamete
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class FuzzyKmeansEvaluator extends RecursiveObjectEvaluator implements TwoValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
+	private int maxIterations = 1000;
+	private double fuzziness = 1.2;
 
-  private int maxIterations = 1000;
-  private double fuzziness = 1.2;
+	public FuzzyKmeansEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-  public FuzzyKmeansEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+		List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
 
-    List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
+		for (StreamExpressionNamedParameter namedParam : namedParams) {
+			if (namedParam.getName().equals("fuzziness")) {
+				this.fuzziness = Double.parseDouble(namedParam.getParameter().toString().trim());
+			} else if (namedParam.getName().equals("maxIterations")) {
+				this.maxIterations = Integer.parseInt(namedParam.getParameter().toString().trim());
+			} else {
+				throw new IOException("Unexpected named parameter:" + namedParam.getName());
+			}
+		}
+	}
 
-    for(StreamExpressionNamedParameter namedParam : namedParams){
-      if(namedParam.getName().equals("fuzziness")){
-        this.fuzziness = Double.parseDouble(namedParam.getParameter().toString().trim());
-      } else if(namedParam.getName().equals("maxIterations")) {
-        this.maxIterations = Integer.parseInt(namedParam.getParameter().toString().trim());
-      } else {
-        throw new IOException("Unexpected named parameter:"+namedParam.getName());
-      }
-    }
-  }
+	@Override
+	@SuppressWarnings({ "unchecked" })
+	public Object doWork(Object value1, Object value2) throws IOException {
 
-  @Override
-  @SuppressWarnings({"unchecked"})
-  public Object doWork(Object value1, Object value2) throws IOException {
+		Matrix matrix = null;
+		int k = 0;
 
+		if (value1 instanceof Matrix) {
+			matrix = (Matrix) value1;
+		} else {
+			throw new IOException("The first parameter for fuzzyKmeans should be the observation matrix.");
+		}
 
-    Matrix matrix = null;
-    int k = 0;
+		if (value2 instanceof Number) {
+			k = ((Number) value2).intValue();
+		} else {
+			throw new IOException("The second parameter for fuzzyKmeans should be k.");
+		}
 
+		@SuppressWarnings({ "rawtypes" })
+		FuzzyKMeansClusterer<KmeansEvaluator.ClusterPoint> kmeans = new FuzzyKMeansClusterer(k, fuzziness,
+				maxIterations, new EuclideanDistance());
+		List<KmeansEvaluator.ClusterPoint> points = new ArrayList<>();
+		double[][] data = matrix.getData();
 
-    if(value1 instanceof Matrix) {
-      matrix = (Matrix)value1;
-    } else {
-      throw new IOException("The first parameter for fuzzyKmeans should be the observation matrix.");
-    }
+		List<String> ids = matrix.getRowLabels();
 
-    if(value2 instanceof Number) {
-      k = ((Number)value2).intValue();
-    } else {
-      throw new IOException("The second parameter for fuzzyKmeans should be k.");
-    }
+		for (int i = 0; i < data.length; i++) {
+			double[] vec = data[i];
+			points.add(new KmeansEvaluator.ClusterPoint(ids.get(i), vec));
+		}
 
-    @SuppressWarnings({"rawtypes"})
-    FuzzyKMeansClusterer<KmeansEvaluator.ClusterPoint> kmeans = new FuzzyKMeansClusterer(k,
-                                                                                         fuzziness,
-                                                                                         maxIterations,
-                                                                                         new EuclideanDistance());
-    List<KmeansEvaluator.ClusterPoint> points = new ArrayList<>();
-    double[][] data = matrix.getData();
+		@SuppressWarnings({ "rawtypes" })
+		Map fields = new HashMap();
 
-    List<String> ids = matrix.getRowLabels();
+		fields.put("k", k);
+		fields.put("fuzziness", fuzziness);
+		fields.put("distance", "euclidean");
+		fields.put("maxIterations", maxIterations);
 
-    for(int i=0; i<data.length; i++) {
-      double[] vec = data[i];
-      points.add(new KmeansEvaluator.ClusterPoint(ids.get(i), vec));
-    }
-
-    @SuppressWarnings({"rawtypes"})
-    Map fields = new HashMap();
-
-    fields.put("k", k);
-    fields.put("fuzziness", fuzziness);
-    fields.put("distance", "euclidean");
-    fields.put("maxIterations", maxIterations);
-
-    List<CentroidCluster<KmeansEvaluator.ClusterPoint>> clusters = kmeans.cluster(points);
-    RealMatrix realMatrix = kmeans.getMembershipMatrix();
-    double[][] mmData = realMatrix.getData();
-    Matrix mmMatrix = new Matrix(mmData);
-    mmMatrix.setRowLabels(matrix.getRowLabels());
-    List<String> clusterCols = new ArrayList<>();
-    for(int i=0; i<clusters.size(); i++) {
-      clusterCols.add("cluster"+ ZplotStream.pad(Integer.toString(i), clusters.size()));
-    }
-    mmMatrix.setRowLabels(clusterCols);
-    return new KmeansEvaluator.ClusterTuple(fields, clusters, matrix.getColumnLabels(),mmMatrix);
-  }
+		List<CentroidCluster<KmeansEvaluator.ClusterPoint>> clusters = kmeans.cluster(points);
+		RealMatrix realMatrix = kmeans.getMembershipMatrix();
+		double[][] mmData = realMatrix.getData();
+		Matrix mmMatrix = new Matrix(mmData);
+		mmMatrix.setRowLabels(matrix.getRowLabels());
+		List<String> clusterCols = new ArrayList<>();
+		for (int i = 0; i < clusters.size(); i++) {
+			clusterCols.add("cluster" + ZplotStream.pad(Integer.toString(i), clusters.size()));
+		}
+		mmMatrix.setRowLabels(clusterCols);
+		return new KmeansEvaluator.ClusterTuple(fields, clusters, matrix.getColumnLabels(), mmMatrix);
+	}
 }
-

@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for RelatedLinkType.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="RelatedLinkType">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -23,20 +24,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "RelatedLinkType")
 @XmlEnum
 public enum RelatedLinkType {
-	
+
 	REL, BACKUP, DIRAUTH, INDAUTH, PART, REPL;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static RelatedLinkType fromValue(String v){
+
+	public static RelatedLinkType fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

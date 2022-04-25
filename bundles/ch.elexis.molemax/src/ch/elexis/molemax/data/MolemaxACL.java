@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    rgw - initial API and implementation
  *    rgw - 2014: Changes for Elexis 2.x
@@ -18,19 +18,17 @@ import ch.elexis.core.model.RoleConstants;
 import ch.elexis.molemax.Messages;
 
 public class MolemaxACL implements IACLContributor {
-	public static final ACE ACLBASE = new ACE(ACE.ACE_ROOT,
-			"ch.elexis.molemax", "Molemax");
-	public static final ACE SEE_IMAGES = new ACE(ACLBASE,
-			"ch.elexis.molemax.seeImages", Messages.MolemaxACL_seeImages);
-	public static final ACE CHANGE_IMAGES = new ACE(ACLBASE,
-			"ch.elexis.molemax.changeImages", Messages.MolemaxACL_changeImages);
+	public static final ACE ACLBASE = new ACE(ACE.ACE_ROOT, "ch.elexis.molemax", "Molemax");
+	public static final ACE SEE_IMAGES = new ACE(ACLBASE, "ch.elexis.molemax.seeImages", Messages.MolemaxACL_seeImages);
+	public static final ACE CHANGE_IMAGES = new ACE(ACLBASE, "ch.elexis.molemax.changeImages",
+			Messages.MolemaxACL_changeImages);
 
 	public ACE[] getACL() {
 		return new ACE[] { ACLBASE, SEE_IMAGES, CHANGE_IMAGES };
 	}
 
 	@Override
-	public void initializeDefaults(AbstractAccessControl ac){
+	public void initializeDefaults(AbstractAccessControl ac) {
 		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_DOCTOR, ACLBASE);
 	}
 

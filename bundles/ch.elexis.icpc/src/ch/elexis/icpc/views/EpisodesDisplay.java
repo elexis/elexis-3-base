@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -51,8 +51,8 @@ public class EpisodesDisplay extends Composite {
 	ScrolledForm form;
 	IPatient actPatient;
 	TreeViewer tvEpisodes;
-	
-	public EpisodesDisplay(final Composite parent){
+
+	public EpisodesDisplay(final Composite parent) {
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
 		form = UiDesk.getToolkit().createScrolledForm(this);
@@ -63,8 +63,7 @@ public class EpisodesDisplay extends Composite {
 		tvEpisodes.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tvEpisodes.setLabelProvider(new EpisodesLabelProvider());
 		tvEpisodes.setContentProvider(new EpisodecontentProvider());
-		tvEpisodes.addSelectionChangedListener(GlobalEventDispatcher.getInstance()
-			.getDefaultListener());
+		tvEpisodes.addSelectionChangedListener(GlobalEventDispatcher.getInstance().getDefaultListener());
 		/* PersistentObjectDragSource pods= */new GenericObjectDragSource(tvEpisodes);
 		// lvEpisodes.addDragSupport(DND.DROP_COPY, new Transfer[]
 		// {TextTransfer.getInstance()},
@@ -72,16 +71,16 @@ public class EpisodesDisplay extends Composite {
 		new GenericObjectDropTarget(tvEpisodes.getControl(), new Receiver());
 		setPatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
-	
-	public void setPatient(final IPatient pat){
+
+	public void setPatient(final IPatient pat) {
 		actPatient = pat;
 		if (pat != null) {
 			tvEpisodes.setInput(pat);
 		}
 		tvEpisodes.refresh();
 	}
-	
-	public IcpcEpisode getSelectedEpisode(){
+
+	public IcpcEpisode getSelectedEpisode() {
 		Tree widget = tvEpisodes.getTree();
 		TreeItem[] sel = widget.getSelection();
 		if ((sel == null) || (sel.length == 0)) {
@@ -95,11 +94,10 @@ public class EpisodesDisplay extends Composite {
 		} while (p != null);
 		return getEpisodeFromItem(f);
 	}
-	
-	private IcpcEpisode getEpisodeFromItem(final TreeItem t){
+
+	private IcpcEpisode getEpisodeFromItem(final TreeItem t) {
 		String etext = t.getText();
-		for (Object o : ((ITreeContentProvider) tvEpisodes.getContentProvider())
-			.getElements(actPatient)) {
+		for (Object o : ((ITreeContentProvider) tvEpisodes.getContentProvider()).getElements(actPatient)) {
 			if (o instanceof IcpcEpisode) {
 				IcpcEpisode ep = (IcpcEpisode) o;
 				if (ep.getLabel().equals(etext)) {
@@ -109,10 +107,10 @@ public class EpisodesDisplay extends Composite {
 		}
 		return null;
 	}
-	
+
 	class EpisodecontentProvider implements ITreeContentProvider {
-		
-		public Object[] getChildren(final Object parentElement){
+
+		public Object[] getChildren(final Object parentElement) {
 			if (parentElement instanceof IcpcEpisode) {
 				IcpcEpisode ep = (IcpcEpisode) parentElement;
 				ArrayList<String> ret = new ArrayList<String>();
@@ -126,47 +124,45 @@ public class EpisodesDisplay extends Composite {
 			}
 			return null;
 		}
-		
-		public Object getParent(final Object element){
+
+		public Object getParent(final Object element) {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
-		public boolean hasChildren(final Object element){
+
+		public boolean hasChildren(final Object element) {
 			if (element instanceof IcpcEpisode) {
 				return true;
 			}
 			return false;
 		}
-		
-		public Object[] getElements(final Object inputElement){
+
+		public Object[] getElements(final Object inputElement) {
 			if (actPatient != null) {
-				IQuery<IcpcEpisode> query =
-					IcpcModelServiceHolder.get().getQuery(IcpcEpisode.class);
-				query.and(IcpcPackage.Literals.ICPC_EPISODE__PATIENT, COMPARATOR.EQUALS,
-					actPatient);
+				IQuery<IcpcEpisode> query = IcpcModelServiceHolder.get().getQuery(IcpcEpisode.class);
+				query.and(IcpcPackage.Literals.ICPC_EPISODE__PATIENT, COMPARATOR.EQUALS, actPatient);
 				query.orderBy(IcpcPackage.Literals.ICPC_EPISODE__START_DATE, ORDER.ASC);
 				return query.execute().toArray();
 			}
 			return new Object[0];
-			
+
 		}
-		
-		public void dispose(){
+
+		public void dispose() {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
-		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){
+
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 	}
-	
+
 	class EpisodesLabelProvider extends LabelProvider implements IColorProvider {
 		@Override
-		public String getText(final Object element){
+		public String getText(final Object element) {
 			if (element instanceof IcpcEpisode) {
 				return ((IcpcEpisode) element).getLabel();
 			} else if (element instanceof String) {
@@ -174,13 +170,13 @@ public class EpisodesDisplay extends Composite {
 			}
 			return super.getText(element);
 		}
-		
-		public Color getBackground(final Object element){
+
+		public Color getBackground(final Object element) {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
-		public Color getForeground(final Object element){
+
+		public Color getForeground(final Object element) {
 			if (element instanceof IcpcEpisode) {
 				IcpcEpisode e = (IcpcEpisode) element;
 				if (e.getStatus() == 0) {
@@ -189,13 +185,13 @@ public class EpisodesDisplay extends Composite {
 			}
 			return UiDesk.getColor(UiDesk.COL_BLACK);
 		}
-		
+
 	}
-	
+
 	class Receiver implements GenericObjectDropTarget.IReceiver {
-		
+
 		@Override
-		public void dropped(List<Object> list, DropTargetEvent e){
+		public void dropped(List<Object> list, DropTargetEvent e) {
 			Tree tree = tvEpisodes.getTree();
 			Point point = tree.toControl(e.x, e.y);
 			TreeItem item = tree.getItem(point);
@@ -212,9 +208,9 @@ public class EpisodesDisplay extends Composite {
 				}
 			}
 		}
-		
+
 		@Override
-		public boolean accept(List<Object> list){
+		public boolean accept(List<Object> list) {
 			for (Object object : list) {
 				if (object instanceof IDiagnose) {
 					return true;
@@ -222,6 +218,6 @@ public class EpisodesDisplay extends Composite {
 			}
 			return false;
 		}
-		
+
 	}
 }

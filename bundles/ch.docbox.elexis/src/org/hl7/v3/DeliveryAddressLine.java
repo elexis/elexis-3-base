@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for DeliveryAddressLine.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="DeliveryAddressLine">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -23,20 +24,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "DeliveryAddressLine")
 @XmlEnum
 public enum DeliveryAddressLine {
-	
+
 	DAL, DINST, DINSTA, DINSTQ, DMOD, DMODID;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static DeliveryAddressLine fromValue(String v){
+
+	public static DeliveryAddressLine fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

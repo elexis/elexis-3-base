@@ -22,30 +22,30 @@ public class XMLExporterTreatment {
 
 	private Element insuranceElement;
 	List<IDiagnosisReference> invoiceDiagnosis;
-	
-	private XMLExporterTreatment(Element insuranceElement){
+
+	private XMLExporterTreatment(Element insuranceElement) {
 		this.insuranceElement = insuranceElement;
 	}
-	
-	public Element getElement(){
+
+	public Element getElement() {
 		return insuranceElement;
 	}
-	
-	public static XMLExporterTreatment buildTreatment(IInvoice invoice, XMLExporter xmlExporter){
-		
+
+	public static XMLExporterTreatment buildTreatment(IInvoice invoice, XMLExporter xmlExporter) {
+
 		ICoverage actFall = invoice.getCoverage();
 		IMandator actMandant = invoice.getMandator();
-		
+
 		Element element = new Element("treatment", XMLExporter.nsinvoice);
 		element.setAttribute("date_begin", //$NON-NLS-1$
-			XMLExporterUtil.makeTarmedDatum(invoice.getDateFrom()));
+				XMLExporterUtil.makeTarmedDatum(invoice.getDateFrom()));
 		element.setAttribute("date_end", //$NON-NLS-1$
-			XMLExporterUtil.makeTarmedDatum(invoice.getDateTo()));
+				XMLExporterUtil.makeTarmedDatum(invoice.getDateTo()));
 		element.setAttribute("canton", (String) actMandant.getExtInfo(XMLExporter.ta.KANTON)); //$NON-NLS-1$
 		element.setAttribute("reason", match_type(actFall.getReason())); //$NON-NLS-1$
-		
+
 		List<IDiagnosisReference> invoiceDiagnosis = getDiagnosen(invoice);
-		//diagnosis
+		// diagnosis
 		for (IDiagnosisReference invoiceDiagnose : invoiceDiagnosis) {
 			Element diagnosis = new Element("diagnosis", XMLExporter.nsinvoice); //$NON-NLS-1$
 			String diagnosisType = match_diag(invoiceDiagnose.getCodeSystemName());
@@ -64,11 +64,11 @@ public class XMLExporterTreatment {
 
 		XMLExporterTreatment ret = new XMLExporterTreatment(element);
 		ret.invoiceDiagnosis = invoiceDiagnosis;
-		
+
 		return ret;
 	}
-	
-	private static List<IDiagnosisReference> getDiagnosen(IInvoice invoice){
+
+	private static List<IDiagnosisReference> getDiagnosen(IInvoice invoice) {
 		HashSet<String> seen = new HashSet<>();
 		ArrayList<IDiagnosisReference> ret = new ArrayList<IDiagnosisReference>();
 		List<IEncounter> encounters = invoice.getEncounters();
@@ -78,8 +78,7 @@ public class XMLExporterTreatment {
 				String dgc = encounterDiagnose.getCode();
 				if (dgc != null) {
 					// each diag code and system only once
-					if (seen
-						.add(encounterDiagnose.getCode() + encounterDiagnose.getCodeSystemName())) {
+					if (seen.add(encounterDiagnose.getCode() + encounterDiagnose.getCodeSystemName())) {
 						ret.add(encounterDiagnose);
 					}
 				}
@@ -88,7 +87,7 @@ public class XMLExporterTreatment {
 		return ret;
 	}
 
-	private static String match_type(final String type){
+	private static String match_type(final String type) {
 		if (type == null) {
 			return XMLExporter.DISEASE;
 		}
@@ -112,8 +111,8 @@ public class XMLExporterTreatment {
 		}
 		return XMLExporter.DISEASE;
 	}
-	
-	private static String match_diag(final String name){
+
+	private static String match_diag(final String name) {
 		if (name != null) {
 			if (name.equalsIgnoreCase(XMLExporter.FREETEXT)) {
 				return XMLExporter.FREETEXT;
@@ -133,8 +132,8 @@ public class XMLExporterTreatment {
 		}
 		return BY_CONTRACT;
 	}
-	
-	public List<IDiagnosisReference> getDiagnoses(){
+
+	public List<IDiagnosisReference> getDiagnoses() {
 		if (invoiceDiagnosis == null) {
 			return Collections.emptyList();
 		}

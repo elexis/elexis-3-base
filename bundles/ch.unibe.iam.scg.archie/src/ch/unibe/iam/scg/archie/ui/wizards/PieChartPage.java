@@ -36,10 +36,12 @@ import ch.unibe.iam.scg.archie.ui.widgets.TextWidget;
 import ch.unibe.iam.scg.archie.utils.DatasetHelper;
 
 /**
- * <p>Chart wizard page for setting parameters for pie charts.</p>
- * 
+ * <p>
+ * Chart wizard page for setting parameters for pie charts.
+ * </p>
+ *
  * $Id: PieChartPage.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -62,8 +64,8 @@ public class PieChartPage extends AbstractChartPage implements Listener {
 	 * Constructs ChartWizardMainPage
 	 */
 	public PieChartPage() {
-		super(PieChartPage.PAGE_NAME, Messages.CHART_WIZARD_PIE_CHART_PAGE_TITLE, ArchieActivator
-				.getImageDescriptor("icons/chart_pie_big.png"));
+		super(PieChartPage.PAGE_NAME, Messages.CHART_WIZARD_PIE_CHART_PAGE_TITLE,
+				ArchieActivator.getImageDescriptor("icons/chart_pie_big.png"));
 		super.setDescription(Messages.CHART_WIZARD_PIE_CHART_PAGE_DESCRIPTION);
 	}
 

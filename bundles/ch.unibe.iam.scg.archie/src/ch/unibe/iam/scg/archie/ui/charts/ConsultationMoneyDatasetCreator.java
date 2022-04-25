@@ -35,10 +35,10 @@ import ch.elexis.data.Query;
  * <p>
  * Creates dataset for ConsultationMoneyChart.
  * </p>
- * 
+ *
  * $Id: ConsultationMoneyDatasetCreator.java 747 2009-07-23 09:14:53Z
  * peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $

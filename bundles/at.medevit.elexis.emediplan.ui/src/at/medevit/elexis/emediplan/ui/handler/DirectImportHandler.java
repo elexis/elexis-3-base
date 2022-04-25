@@ -30,46 +30,42 @@ import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.rgw.tools.TimeTool;
 
 public class DirectImportHandler extends AbstractHandler implements IHandler {
-	
+
 	private EMediplanService mediplanService;
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		mediplanService = EMediplanServiceHolder.getService();
-		String emediplan =
-			event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.emediplan");
-		String patientid =
-			event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.patientid");
-		String stopreason =
-			event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.stopreason");
-		String medicationType =
-			event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.medication"); //$NON-NLS-1$
+		String emediplan = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.emediplan");
+		String patientid = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.patientid");
+		String stopreason = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.stopreason");
+		String medicationType = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.medication"); //$NON-NLS-1$
 		// if not set use all
 		if (medicationType == null || medicationType.isEmpty()) {
 			medicationType = "all";
 		}
-		
+
 		if (StringUtils.isNotEmpty(patientid) && StringUtils.isNotEmpty(emediplan)) {
 			Medication medication = mediplanService.createModelFromChunk(emediplan);
-			
+
 			mediplanService.addExistingArticlesToMedication(medication);
-			
-			IPatient patient =
-				CoreModelServiceHolder.get().load(patientid, IPatient.class).orElse(null);
+
+			IPatient patient = CoreModelServiceHolder.get().load(patientid, IPatient.class).orElse(null);
 			if (patient != null) {
 				ContextServiceHolder.get().setActivePatient(patient);
-				
+
 				List<IPrescription> currentMedication = getPrescriptions(patient, medicationType);
 				LocalDateTime now = LocalDateTime.now();
 				for (IPrescription prescription : currentMedication) {
 					MedicationServiceHolder.get().stopPrescription(prescription, now,
-						stopreason != null ? stopreason : "Direct Import");
-					// FIXME (#15795) this is a workaround as eclipselink only picks up the change if done twice 
+							stopreason != null ? stopreason : "Direct Import");
+					// FIXME (#15795) this is a workaround as eclipselink only picks up the change
+					// if done twice
 					prescription.setDateTo(now);
 					CoreModelServiceHolder.get().save(prescription);
 				}
-				currentMedication.forEach(
-					pr -> ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, pr));
+				currentMedication
+						.forEach(pr -> ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, pr));
 				List<Medicament> notFoundMedicament = new ArrayList<>();
 				for (Medicament medicament : medication.Medicaments) {
 					if (medicament.artikelstammItem != null) {
@@ -80,28 +76,24 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 				}
 				if (!notFoundMedicament.isEmpty()) {
 					StringBuilder sb = new StringBuilder();
-					sb.append(
-						"Folgende Medikamente konnte im Artikelstamm nicht gefunden werden\n\n");
-					notFoundMedicament
-						.forEach(
-							m -> sb.append(" - " + getDsc(m) + " " + m.AppInstr + " " + m.TkgRsn));
-					MessageDialog.openWarning(Display.getDefault().getActiveShell(), "Warnung",
-						sb.toString());
+					sb.append("Folgende Medikamente konnte im Artikelstamm nicht gefunden werden\n\n");
+					notFoundMedicament.forEach(m -> sb.append(" - " + getDsc(m) + " " + m.AppInstr + " " + m.TkgRsn));
+					MessageDialog.openWarning(Display.getDefault().getActiveShell(), "Warnung", sb.toString());
 				}
 			}
 		}
 		return null;
 	}
-	
-	private String getDsc(Medicament medicament){
+
+	private String getDsc(Medicament medicament) {
 		String ret = medicament.Id;
 		if (StringUtils.isNotBlank(mediplanService.getPFieldValue(medicament, "Dsc"))) {
 			ret = mediplanService.getPFieldValue(medicament, "Dsc");
 		}
 		return ret;
 	}
-	
-	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType){
+
+	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType) {
 		if ("all".equals(medicationType)) {
 			return patient.getMedication(Collections.emptyList());
 		} else if ("fix".equals(medicationType)) {
@@ -113,8 +105,8 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 		}
 		return Collections.emptyList();
 	}
-	
-	private IPrescription createPrescription(Medicament medicament, IPatient patient){
+
+	private IPrescription createPrescription(Medicament medicament, IPatient patient) {
 		medicament.entryType = EntryType.FIXED_MEDICATION;
 		String takingScheme = mediplanService.getPFieldValue(medicament, "TkgSch");
 		if (StringUtils.isNotBlank(takingScheme)) {
@@ -130,23 +122,22 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 				}
 			}
 		}
-		
-		IPrescription prescription =
-			new IPrescriptionBuilder(CoreModelServiceHolder.get(), ContextServiceHolder.get(),
+
+		IPrescription prescription = new IPrescriptionBuilder(CoreModelServiceHolder.get(), ContextServiceHolder.get(),
 				medicament.artikelstammItem, patient, medicament.dosis).build();
-		
+
 		getLocalDateTime(medicament.dateFrom).ifPresent(ldt -> prescription.setDateFrom(ldt));
 		getLocalDateTime(medicament.dateTo).ifPresent(ldt -> prescription.setDateTo(ldt));
-		
+
 		prescription.setRemark(medicament.AppInstr);
 		prescription.setEntryType(medicament.entryType);
 		prescription.setDisposalComment(medicament.TkgRsn);
-		
+
 		CoreModelServiceHolder.get().save(prescription);
 		return prescription;
 	}
-	
-	private java.util.Optional<LocalDateTime> getLocalDateTime(String dateString){
+
+	private java.util.Optional<LocalDateTime> getLocalDateTime(String dateString) {
 		if (dateString != null && !dateString.isEmpty()) {
 			return java.util.Optional.of(new TimeTool(dateString).toLocalDateTime());
 		}

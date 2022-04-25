@@ -11,14 +11,11 @@ import com.hilotec.elexis.kgview.data.FavMedikament;
 /**
  * Comparator fuer Medikamentenkarteeintraege (Prescription)
  */
-public class MedikarteEintragComparator
-	implements Comparator<Prescription>
-{
+public class MedikarteEintragComparator implements Comparator<Prescription> {
 	public enum Sortierung {
-		ALPHABETISCH,
-		CHRONOLOGISCH,
-		ORDNUNGSZAHL,
+		ALPHABETISCH, CHRONOLOGISCH, ORDNUNGSZAHL,
 	};
+
 	MedikarteEintragComparator.Sortierung sort;
 
 	public MedikarteEintragComparator(MedikarteEintragComparator.Sortierung sort) {
@@ -39,8 +36,7 @@ public class MedikarteEintragComparator
 		FavMedikament fm1 = FavMedikament.load(a1);
 		FavMedikament fm2 = FavMedikament.load(a2);
 		if (fm1 != null && fm2 != null)
-			return fm1.getBezeichnung().compareTo(
-					fm2.getBezeichnung());
+			return fm1.getBezeichnung().compareTo(fm2.getBezeichnung());
 
 		// Als letzte Moeglichkeit nehmen wir das Artikel-Label
 		return a1.getLabel().compareTo(a2.getLabel());
@@ -55,13 +51,12 @@ public class MedikarteEintragComparator
 
 		// Sortieren nach Startdatum
 		int bc = b1.compareTo(b2);
-		if (bc != 0) return -bc;
+		if (bc != 0)
+			return -bc;
 
 		// Sortieren nach Enddatum
 		return -e1.compareTo(e2);
 	}
-
-
 
 	/** Sortierung nach Ordnungszahl */
 	private int compareOz(Prescription p1, Prescription p2) {
@@ -78,7 +73,8 @@ public class MedikarteEintragComparator
 	/** Sortierung chronologisch */
 	private int compareCh(Prescription p1, Prescription p2) {
 		int ord = compareNurChronologisch(p1, p2);
-		if (ord != 0) return ord;
+		if (ord != 0)
+			return ord;
 
 		// Als Fallback sortieren wir alphabetisch
 		return compareNurLabel(p1, p2);
@@ -87,18 +83,21 @@ public class MedikarteEintragComparator
 	/** Sortierung alphabetisch */
 	public int compareAl(Prescription p1, Prescription p2) {
 		int ord = compareNurLabel(p1, p2);
-		if (ord != 0) return ord;
+		if (ord != 0)
+			return ord;
 
 		// Als Fallback sortieren wir chronologisch
 		return compareCh(p1, p2);
 	}
 
-
 	public int compare(Prescription p1, Prescription p2) {
 		switch (sort) {
-			case ALPHABETISCH:  return compareAl(p1, p2);
-			case CHRONOLOGISCH: return compareCh(p1, p2);
-			case ORDNUNGSZAHL:  return compareOz(p1, p2);
+		case ALPHABETISCH:
+			return compareAl(p1, p2);
+		case CHRONOLOGISCH:
+			return compareCh(p1, p2);
+		case ORDNUNGSZAHL:
+			return compareOz(p1, p2);
 		}
 		throw new RuntimeException("Unbekannte Sortierungsreihenfolge");
 	}

@@ -29,16 +29,17 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
 public class Tarmed45Validator {
-	
+
 	private static Validator validator;
-	
+
 	/**
-	 * Validate the invoice request from the {@link InputStream} against the xsd schema.
-	 * 
+	 * Validate the invoice request from the {@link InputStream} against the xsd
+	 * schema.
+	 *
 	 * @param request
 	 * @return
 	 */
-	public synchronized List<String> validateRequest(InputStream request){
+	public synchronized List<String> validateRequest(InputStream request) {
 		if (validator == null) {
 			try {
 				validator = initValidator();
@@ -49,24 +50,21 @@ public class Tarmed45Validator {
 		}
 		return validate(new StreamSource(request));
 	}
-	
-	private Validator initValidator() throws SAXException{
+
+	private Validator initValidator() throws SAXException {
 		SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 		Schema schema = factory.newSchema();
 		schema = factory.newSchema(new Source[] {
-			new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/xenc-schema.xsd")),
-			new StreamSource(
-				Tarmed45Validator.class.getResourceAsStream("/rsc/xmldsig-core-schema.xsd")),
-			new StreamSource(
-				Tarmed45Validator.class.getResourceAsStream("/rsc/generalInvoiceRequest_450.xsd"))
-		});
+				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/xenc-schema.xsd")),
+				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/xmldsig-core-schema.xsd")),
+				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/generalInvoiceRequest_450.xsd")) });
 		return schema.newValidator();
 	}
-	
-	private List<String> validate(Source source){
+
+	private List<String> validate(Source source) {
 		MyErrorHandler errorHandler = new MyErrorHandler();
 		try {
-			
+
 			validator.setErrorHandler(errorHandler);
 			validator.validate(source);
 		} catch (Exception ex) {
@@ -74,30 +72,30 @@ public class Tarmed45Validator {
 		}
 		return errorHandler.getMessageList();
 	}
-	
+
 	private static class MyErrorHandler implements ErrorHandler {
 		public List<Exception> exceptions = new ArrayList<>();
-		
+
 		@Override
-		public void error(SAXParseException exception) throws SAXException{
+		public void error(SAXParseException exception) throws SAXException {
 			exceptions.add(exception);
 		}
-		
+
 		@Override
-		public void fatalError(SAXParseException exception) throws SAXException{
+		public void fatalError(SAXParseException exception) throws SAXException {
 			exceptions.add(exception);
 		}
-		
+
 		@Override
-		public void warning(SAXParseException exception) throws SAXException{
+		public void warning(SAXParseException exception) throws SAXException {
 			// Nothing
 		}
-		
-		public void exception(Exception exception){
+
+		public void exception(Exception exception) {
 			// Nothing this is not an xml related error
 		}
-		
-		public List<String> getMessageList(){
+
+		public List<String> getMessageList() {
 			List<String> messageList = new ArrayList<>();
 			for (Exception ex : exceptions) {
 				String msg = ex.getMessage();
@@ -109,48 +107,48 @@ public class Tarmed45Validator {
 			return messageList;
 		}
 	}
-	
+
 	/**
 	 * Check if invoice and invoice request contain valid information.
-	 * 
+	 *
 	 * @param invoice
 	 * @param invoiceRequest
 	 * @return
 	 */
-	public Result<IInvoice> checkInvoice(IInvoice invoice, RequestType invoiceRequest){
+	public Result<IInvoice> checkInvoice(IInvoice invoice, RequestType invoiceRequest) {
 		Result<IInvoice> res = new Result<IInvoice>();
-		
+
 		IMandator m = invoice.getMandator();
 		if (invoice.getState().numericValue() > InvoiceState.OPEN.numericValue()) {
 			return res; // Wenn sie eh schon gedruckt war machen wir kein Büro mehr auf
 		}
-		
+
 		if ((m == null)) {
 			invoice.reject(InvoiceState.REJECTCODE.NO_MANDATOR, Messages.Validator_NoMandator);
 			CoreModelServiceHolder.get().save(invoice);
 			res.add(Result.SEVERITY.ERROR, 2, Messages.Validator_NoMandator, invoice, true);
 		}
 		ICoverage coverage = invoice.getCoverage();
-		
+
 		if (coverage == null || !CoverageServiceHolder.get().isValid(coverage)) {
 			invoice.reject(InvoiceState.REJECTCODE.NO_CASE, Messages.Validator_NoCase);
 			CoreModelServiceHolder.get().save(invoice);
 			res.add(Result.SEVERITY.ERROR, 4, Messages.Validator_NoCase, invoice, true);
 		}
-		
+
 		String ean = TarmedRequirements.getEAN(m);
 		if (StringTool.isNothing(ean)) {
 			invoice.reject(InvoiceState.REJECTCODE.NO_MANDATOR, Messages.Validator_NoEAN);
 			CoreModelServiceHolder.get().save(invoice);
 			res.add(Result.SEVERITY.ERROR, 3, Messages.Validator_NoEAN, invoice, true);
 		}
-		
+
 		if (invoiceRequest.getPayload().getBody().getTreatment().getDiagnosis().isEmpty()) {
 			invoice.reject(InvoiceState.REJECTCODE.NO_DIAG, Messages.Validator_NoDiagnosis);
 			CoreModelServiceHolder.get().save(invoice);
 			res.add(Result.SEVERITY.ERROR, 8, Messages.Validator_NoDiagnosis, invoice, true);
 		}
-		
+
 		IContact costBearer = (coverage != null) ? coverage.getCostBearer() : null;
 		// kostentraeger is optional for tiers garant else check if valid
 		if (costBearer == null && invoiceRequest.getPayload().getBody().getTiersGarant() != null) {
@@ -163,7 +161,7 @@ public class Tarmed45Validator {
 				return res;
 			}
 			ean = TarmedRequirements.getEAN(costBearer);
-			
+
 			if (StringTool.isNothing(ean) || (!ean.matches(TarmedRequirements.EAN_PATTERN))) {
 				invoice.reject(InvoiceState.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoEAN2);
 				CoreModelServiceHolder.get().save(invoice);

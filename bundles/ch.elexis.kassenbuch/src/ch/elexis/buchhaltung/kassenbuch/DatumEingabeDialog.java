@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    N. Giger - Using Nebula CDateTime as DatePicker
- *    
+ *
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -28,15 +28,15 @@ import ch.rgw.tools.TimeTool;
 public class DatumEingabeDialog extends TitleAreaDialog {
 	CDateTime dpVon, dpBis;
 	TimeTool ttVon, ttBis;
-	
-	public DatumEingabeDialog(Shell parentShell, TimeTool von, TimeTool bis){
+
+	public DatumEingabeDialog(Shell parentShell, TimeTool von, TimeTool bis) {
 		super(parentShell);
 		ttVon = von == null ? null : new TimeTool(von);
 		ttBis = bis == null ? null : new TimeTool(bis);
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(2, true));
@@ -52,21 +52,21 @@ public class DatumEingabeDialog extends TitleAreaDialog {
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		setMessage(
-			"Bitte geben Sie den gewünschten Zeitraum ein oder drücken Sie 'Abbrechen' um alle Buchungen anzuzeigen.");
+				"Bitte geben Sie den gewünschten Zeitraum ein oder drücken Sie 'Abbrechen' um alle Buchungen anzuzeigen.");
 		setTitle("Anzeigezeitraum für Kassenbuch");
 		getShell().setText("Elexis Kassenbuch");
 	}
-	
+
 	@Override
-	protected void okPressed(){
-		ttVon =  new TimeTool(dpVon.getSelection());
-		ttBis =  new TimeTool(dpBis.getSelection());
+	protected void okPressed() {
+		ttVon = new TimeTool(dpVon.getSelection());
+		ttBis = new TimeTool(dpBis.getSelection());
 		super.okPressed();
 	}
-	
+
 }

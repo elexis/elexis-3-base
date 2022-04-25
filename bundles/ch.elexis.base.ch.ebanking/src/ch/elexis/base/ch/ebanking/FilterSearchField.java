@@ -10,26 +10,27 @@ import ch.elexis.data.Rechnung;
 import ch.rgw.tools.Money;
 
 public class FilterSearchField extends ViewerFilter {
-	
+
 	private static FilterSearchField instance;
-	
-	private FilterSearchField(){}
-	
-	public static FilterSearchField getInstance(){
+
+	private FilterSearchField() {
+	}
+
+	public static FilterSearchField getInstance() {
 		if (null == instance) {
 			instance = new FilterSearchField();
 		}
 		return instance;
 	}
-	
+
 	private String searchString;
-	
+
 	@Override
-	public boolean select(Viewer viewer, Object parentElement, Object element){
+	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (searchString == null || searchString.length() < 2)
 			return true;
 		ESRRecord e = (ESRRecord) element;
-		
+
 		char c = searchString.charAt(0);
 		String useSearchString = searchString.substring(1);
 		if (useSearchString.length() < 1)
@@ -82,12 +83,12 @@ public class FilterSearchField extends ViewerFilter {
 			return false;
 		}
 	}
-	
-	public void setSearchText(String s){
+
+	public void setSearchText(String s) {
 		if (s == null || s.length() == 0)
 			searchString = null;
 		else
-			searchString = s.toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$
+			searchString = s.toLowerCase(); // $NON-NLS-1$ //$NON-NLS-2$
 		// filter "dirty" characters
 		if (searchString != null)
 			searchString = searchString.replaceAll("[^#<>\\.$, a-zA-Z0-9]", "");

@@ -15,12 +15,12 @@ import at.medevit.elexis.agenda.ui.view.AgendaView;
 import at.medevit.elexis.agenda.ui.view.ParallelView;
 
 public abstract class AbstractBrowserFunction extends BrowserFunction {
-	
-	public AbstractBrowserFunction(Browser browser, String name){
+
+	public AbstractBrowserFunction(Browser browser, String name) {
 		super(browser, name);
 	}
-	
-	public static Optional<SideBarComposite> getActiveSideBar(MPart part){
+
+	public static Optional<SideBarComposite> getActiveSideBar(MPart part) {
 		SideBarComposite sideBar = null;
 		if (part.getObject() instanceof AgendaView) {
 			AgendaView view = (AgendaView) part.getObject();
@@ -31,26 +31,25 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 		}
 		return Optional.ofNullable(sideBar);
 	}
-	
-	public void updateCalendarHeight(){
-		String updateHeight =
-			"$('#calendar').fullCalendar('option', 'contentHeight', (%d - $('#calendar').find('.fc-view-container').offset().top));";
+
+	public void updateCalendarHeight() {
+		String updateHeight = "$('#calendar').fullCalendar('option', 'contentHeight', (%d - $('#calendar').find('.fc-view-container').offset().top));";
 		int browserHeight = getBrowser().getBounds().height;
 		String script = String.format(updateHeight, browserHeight);
 		SingleSourceUtil.executeScript(getBrowser(), script);
 	}
-	
-	public void redraw(){
+
+	public void redraw() {
 		String refetchEvents = "$('#calendar').fullCalendar('rerenderEvents');";
 		SingleSourceUtil.executeScript(getBrowser(), refetchEvents);
 	}
-	
+
 	@Override
-	public boolean isDisposed(){
+	public boolean isDisposed() {
 		return super.isDisposed();
 	}
-	
-	protected LocalDateTime getDateTimeArg(Object object){
+
+	protected LocalDateTime getDateTimeArg(Object object) {
 		if (object instanceof String) {
 			if (((String) object).length() == 10) {
 				return LocalDate.parse((String) object).atStartOfDay();
@@ -62,8 +61,8 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 		}
 		return null;
 	}
-	
-	protected LocalDate getDateArg(Object object){
+
+	protected LocalDate getDateArg(Object object) {
 		if (object instanceof String) {
 			if (((String) object).length() == 10) {
 				return LocalDate.parse((String) object);

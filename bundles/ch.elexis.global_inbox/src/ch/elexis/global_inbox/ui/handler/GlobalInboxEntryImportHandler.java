@@ -36,7 +36,7 @@ import ch.elexis.global_inbox.ui.GlobalInboxUtil;
 import ch.elexis.omnivore.data.AutomaticBilling;
 
 public class GlobalInboxEntryImportHandler {
-	
+
 	@Inject
 	private IConfigService configService;
 	@Inject
@@ -47,11 +47,11 @@ public class GlobalInboxEntryImportHandler {
 	private IFindingsService findingService;
 	@Inject
 	private IInboxElementService inboxElementService;
-	
+
 	@Execute
-	public void execute(@Named(IServiceConstants.ACTIVE_SELECTION)
-	GlobalInboxEntry globalInboxEntry, IEventBroker eventBroker){
-		
+	public void execute(@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry,
+			IEventBroker eventBroker) {
+
 		String title = globalInboxEntry.getTitle();
 		IPatient patient = globalInboxEntry.getPatient();
 		if (patient == null) {
@@ -59,10 +59,9 @@ public class GlobalInboxEntryImportHandler {
 		}
 		String category = globalInboxEntry.getCategory();
 		IContact sender = globalInboxEntry.getSender();
-		
+
 		File mainFile = globalInboxEntry.getMainFile();
-		IDocument document =
-			documentStore.createDocument(null, patient.getId(), mainFile.getName(), category);
+		IDocument document = documentStore.createDocument(null, patient.getId(), mainFile.getName(), category);
 		document.setTitle(title);
 		document.setMimeType(globalInboxEntry.getMimetype());
 		document.setKeywords(globalInboxEntry.getKeywords());
@@ -77,7 +76,7 @@ public class GlobalInboxEntryImportHandler {
 			documentStore.removeDocument(document);
 			return;
 		}
-		
+
 		IDocumentReference documentReference = findingService.create(IDocumentReference.class);
 		documentReference.setPatientId(patient.getId());
 		documentReference.setAuthorId(sender != null ? sender.getId() : null);
@@ -85,52 +84,49 @@ public class GlobalInboxEntryImportHandler {
 		try {
 			findingService.saveFinding(documentReference);
 		} catch (IllegalStateException e) {
-			LoggerFactory.getLogger(getClass())
-				.warn("Import error - could not save documentReference");
+			LoggerFactory.getLogger(getClass()).warn("Import error - could not save documentReference");
 			SWTHelper.showError("Import error", "Could not save documentReference");
 			documentStore.removeDocument(document);
 			return;
 		}
-		
+
 		// unload the document in preview, s.t. it can be deleted by the OS (Win)
 		eventBroker.send(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, null);
-		
+
 		new GlobalInboxUtil().removeFiles(globalInboxEntry);
-		
+
 		boolean automaticBilling = configService.getLocal(Preferences.PREF_AUTOBILLING, false);
 		if (automaticBilling && AutomaticBilling.isEnabled()) {
 			AutomaticBilling billing = new AutomaticBilling(document);
 			billing.bill();
 		}
-		
+
 		if (globalInboxEntry.isSendInfoTo()) {
 			List<IMandator> notificationTo = globalInboxEntry.getInfoTo();
 			for (IMandator mandator : notificationTo) {
 				inboxElementService.createInboxElement(patient, mandator, document);
 			}
 		}
-		
+
 		eventBroker.send(Constants.EVENT_UI_REMOVE_AND_SELECT_NEXT, globalInboxEntry);
 	}
-	
+
 	@CanExecute
-	public boolean canExecute(@Named(IServiceConstants.ACTIVE_SELECTION)
-	GlobalInboxEntry globalInboxEntry){
-		
+	public boolean canExecute(@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
+
 		if (globalInboxEntry == null) {
 			return false;
 		}
-		
-		if (globalInboxEntry.getPatient() == null
-			&& !contextService.getActivePatient().isPresent()) {
+
+		if (globalInboxEntry.getPatient() == null && !contextService.getActivePatient().isPresent()) {
 			return false;
 		}
-		
+
 		if (globalInboxEntry.getCategory() == null) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 }

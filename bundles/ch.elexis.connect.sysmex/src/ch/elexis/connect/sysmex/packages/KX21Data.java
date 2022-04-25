@@ -5,16 +5,16 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.rgw.tools.TimeTool;
 
 public class KX21Data extends AbstractHaematologyData {
-	
-	public int getSize(){
+
+	public int getSize() {
 		return 119;
 	}
-	
-	protected int getDataIndex(){
+
+	protected int getDataIndex() {
 		return 29;
 	}
-	
-	protected TimeTool getDate(final String content){
+
+	protected TimeTool getDate(final String content) {
 		int year = Integer.parseInt(content.substring(3, 5));
 		int month = Integer.parseInt(content.substring(5, 7));
 		int day = Integer.parseInt(content.substring(7, 9));
@@ -22,9 +22,9 @@ public class KX21Data extends AbstractHaematologyData {
 		timetool.set(year, month - 1, day);
 		return timetool;
 	}
-	
+
 	@Override
-	protected String getPatientId(String content){
+	protected String getPatientId(String content) {
 		String patId = content.substring(10, 22);
 		if (patId != null && !patId.isEmpty()) {
 			// remove leading zeros
@@ -32,45 +32,45 @@ public class KX21Data extends AbstractHaematologyData {
 		}
 		return patId;
 	}
-	
-	private boolean isRdwSd(){
+
+	private boolean isRdwSd() {
 		String rdw = CoreHub.localCfg.get(Preferences.RDW_TYP, Preferences.RDW_SD);
 		return Preferences.RDW_SD.equals(rdw);
 	}
-	
-	protected String getRDWSD(final String content){
+
+	protected String getRDWSD(final String content) {
 		if (!isRdwSd()) {
 			return null;
 		}
 		int pos = getDataIndex() + 70;
 		return getValueStr(content, pos, "XXX.XF"); //$NON-NLS-1$
-		
+
 	}
-	
-	protected String getRDWCV(final String content){
+
+	protected String getRDWCV(final String content) {
 		if (isRdwSd()) {
 			return null;
 		}
 		int pos = getDataIndex() + 70;
 		return getValueStr(content, pos, "XXX.XF"); //$NON-NLS-1$
 	}
-	
-	protected String getPDW(final String content){
+
+	protected String getPDW(final String content) {
 		int pos = getDataIndex() + 75;
 		return getValueStr(content, pos, "XXX.XF"); //$NON-NLS-1$
 	}
-	
-	protected String getMPV(final String content){
+
+	protected String getMPV(final String content) {
 		int pos = getDataIndex() + 80;
 		return getValueStr(content, pos, "XXX.XF"); //$NON-NLS-1$
 	}
-	
-	protected String getPLCR(final String content){
+
+	protected String getPLCR(final String content) {
 		int pos = getDataIndex() + 85;
 		return getValueStr(content, pos, "XXX.XF"); //$NON-NLS-1$
 	}
-	
-	protected Value getValue(final String paramName) throws PackageException{
+
+	protected Value getValue(final String paramName) throws PackageException {
 		return Value.getValueKX21(paramName);
 	}
 }

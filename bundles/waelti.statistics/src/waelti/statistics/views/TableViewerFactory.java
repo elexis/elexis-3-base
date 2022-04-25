@@ -12,54 +12,54 @@ import waelti.statistics.queries.AbstractQuery;
 
 /** Creates a SWT Table containing the results of the given query. */
 public class TableViewerFactory {
-	
+
 	/** Parent of the viewer to be created. */
 	private Composite parent;
 	private AbstractQuery query;
-	
+
 	/** constructor */
-	public TableViewerFactory(Composite parent, AbstractQuery query){
+	public TableViewerFactory(Composite parent, AbstractQuery query) {
 		this.parent = parent;
 		this.query = query;
-		
+
 	}
-	
+
 	/** Creates a table viewer containing the query's data. */
-	public TableViewer createTableViewer(){
+	public TableViewer createTableViewer() {
 		Table table = this.createTable();
-		
+
 		TableViewer viewer = new TableViewer(table);
 		viewer.setContentProvider(this.query.getContentProvider());
 		viewer.setLabelProvider(this.query.getLabelProvider());
 		this.addColumnSort(viewer);
-		
+
 		viewer.setInput(""); // fill the table
 		packColumns(viewer.getTable()); // width of single columns
 		return viewer;
 	}
-	
-	private Table createTable(){
+
+	private Table createTable() {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-		
+
 		GridData data = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
 		table.setLayoutData(data);
 		table.setHeaderVisible(true);
-		
+
 		this.createColumns(table);
-		
+
 		return table;
 	}
-	
-	private void packColumns(Table table){
+
+	private void packColumns(Table table) {
 		TableColumn[] col = table.getColumns();
-		
+
 		for (int i = 0; i < col.length; i++) {
 			col[i].pack();
 		}
 	}
-	
-	private void createColumns(Table table){
+
+	private void createColumns(Table table) {
 		int i = 0;
 		for (String text : this.query.getTableHeadings()) {
 			TableColumn column = new TableColumn(table, SWT.LEFT);
@@ -69,20 +69,20 @@ public class TableViewerFactory {
 			i++;
 		}
 	}
-	
-	private void addColumnSort(TableViewer viewer){
+
+	private void addColumnSort(TableViewer viewer) {
 		TableColumn[] cols = viewer.getTable().getColumns();
 		for (int i = 0; i < cols.length; i++) {
 			cols[i].addSelectionListener(new ColumnSorterAdapter(viewer, i));
 		}
-		
+
 	}
-	
-	public AbstractQuery getQuery(){
+
+	public AbstractQuery getQuery() {
 		return query;
 	}
-	
-	public void setQuery(AbstractQuery query){
+
+	public void setQuery(AbstractQuery query) {
 		this.query = query;
 	}
 }

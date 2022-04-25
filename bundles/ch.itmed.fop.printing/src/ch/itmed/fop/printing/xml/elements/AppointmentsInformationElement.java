@@ -43,24 +43,22 @@ public class AppointmentsInformationElement {
 
 		Element p = doc.createElement("AppointmentsInformation");
 
-		if(!al.isEmpty()) {
-			Map<String, List<AppointmentData>> appointmentPerAreaMap =
-				al.stream().collect(Collectors.groupingBy(AppointmentData::getAgendaArea));
-			
-			List<Entry<String, List<AppointmentData>>> appointmentPerArea =
-				new ArrayList<>(appointmentPerAreaMap.entrySet());
+		if (!al.isEmpty()) {
+			Map<String, List<AppointmentData>> appointmentPerAreaMap = al.stream()
+					.collect(Collectors.groupingBy(AppointmentData::getAgendaArea));
+
+			List<Entry<String, List<AppointmentData>>> appointmentPerArea = new ArrayList<>(
+					appointmentPerAreaMap.entrySet());
 			appointmentPerArea.sort(new Comparator<Entry<String, List<AppointmentData>>>() {
 				@Override
-				public int compare(Entry<String, List<AppointmentData>> e1,
-					Entry<String, List<AppointmentData>> e2){
-					return e1.getValue().get(0).getStartTime()
-						.compareTo(e2.getValue().get(0).getStartTime());
+				public int compare(Entry<String, List<AppointmentData>> e1, Entry<String, List<AppointmentData>> e2) {
+					return e1.getValue().get(0).getStartTime().compareTo(e2.getValue().get(0).getStartTime());
 				}
 			});
-			
+
 			for (Entry<String, List<AppointmentData>> area : appointmentPerArea) {
 				List<AppointmentData> areaAppointments = area.getValue();
-				
+
 				Element c = doc.createElement("AgendaArea");
 				c.appendChild(doc.createTextNode(area.getKey()));
 				p.appendChild(c);
@@ -71,17 +69,16 @@ public class AppointmentsInformationElement {
 					appointment.appendChild(doc.createTextNode(ad.getAppointmentDetailed()));
 					c.appendChild(appointment);
 					Element appointmentNoEnd = doc.createElement("AppointmentNoEnd");
-					appointmentNoEnd
-						.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));
+					appointmentNoEnd.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));
 					c.appendChild(appointmentNoEnd);
 				}
 				p.appendChild(c);
 			}
 		} else {
-			MessageDialog.openInformation(Display.getDefault().getActiveShell(),
-				"Keine Termin Serie", "Keine Termin Serie zum selektierten Patienten gefunden");
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Keine Termin Serie",
+					"Keine Termin Serie zum selektierten Patienten gefunden");
 		}
-		
+
 		return p;
 	}
 }

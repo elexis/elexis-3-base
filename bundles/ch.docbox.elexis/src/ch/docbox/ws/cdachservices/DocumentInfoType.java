@@ -11,10 +11,11 @@ import org.hl7.v3.CE;
 /**
  * <p>
  * Java class for DocumentInfoType complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="DocumentInfoType">
  *   &lt;complexContent>
@@ -31,15 +32,14 @@ import org.hl7.v3.CE;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DocumentInfoType", propOrder = {
-	"title", "message", "code", "documentID", "creationDate", "lastDownload"
-})
+@XmlType(name = "DocumentInfoType", propOrder = { "title", "message", "code", "documentID", "creationDate",
+		"lastDownload" })
 public class DocumentInfoType {
-	
+
 	@XmlElement(required = true)
 	protected String title;
 	@XmlElement(required = true)
@@ -53,131 +53,125 @@ public class DocumentInfoType {
 	protected XMLGregorianCalendar creationDate;
 	@XmlSchemaType(name = "dateTime")
 	protected XMLGregorianCalendar lastDownload;
-	
+
 	/**
 	 * Gets the value of the title property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getTitle(){
+	public String getTitle() {
 		return title;
 	}
-	
+
 	/**
 	 * Sets the value of the title property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setTitle(String value){
+	public void setTitle(String value) {
 		this.title = value;
 	}
-	
+
 	/**
 	 * Gets the value of the message property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getMessage(){
+	public String getMessage() {
 		return message;
 	}
-	
+
 	/**
 	 * Sets the value of the message property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setMessage(String value){
+	public void setMessage(String value) {
 		this.message = value;
 	}
-	
+
 	/**
 	 * Gets the value of the code property.
-	 * 
+	 *
 	 * @return possible object is {@link CE }
-	 * 
+	 *
 	 */
-	public CE getCode(){
+	public CE getCode() {
 		return code;
 	}
-	
+
 	/**
 	 * Sets the value of the code property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link CE }
-	 * 
+	 *
+	 * @param value allowed object is {@link CE }
+	 *
 	 */
-	public void setCode(CE value){
+	public void setCode(CE value) {
 		this.code = value;
 	}
-	
+
 	/**
 	 * Gets the value of the documentID property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getDocumentID(){
+	public String getDocumentID() {
 		return documentID;
 	}
-	
+
 	/**
 	 * Sets the value of the documentID property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setDocumentID(String value){
+	public void setDocumentID(String value) {
 		this.documentID = value;
 	}
-	
+
 	/**
 	 * Gets the value of the creationDate property.
-	 * 
+	 *
 	 * @return possible object is {@link XMLGregorianCalendar }
-	 * 
+	 *
 	 */
-	public XMLGregorianCalendar getCreationDate(){
+	public XMLGregorianCalendar getCreationDate() {
 		return creationDate;
 	}
-	
+
 	/**
 	 * Sets the value of the creationDate property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link XMLGregorianCalendar }
-	 * 
+	 *
+	 * @param value allowed object is {@link XMLGregorianCalendar }
+	 *
 	 */
-	public void setCreationDate(XMLGregorianCalendar value){
+	public void setCreationDate(XMLGregorianCalendar value) {
 		this.creationDate = value;
 	}
-	
+
 	/**
 	 * Gets the value of the lastDownload property.
-	 * 
+	 *
 	 * @return possible object is {@link XMLGregorianCalendar }
-	 * 
+	 *
 	 */
-	public XMLGregorianCalendar getLastDownload(){
+	public XMLGregorianCalendar getLastDownload() {
 		return lastDownload;
 	}
-	
+
 	/**
 	 * Sets the value of the lastDownload property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link XMLGregorianCalendar }
-	 * 
+	 *
+	 * @param value allowed object is {@link XMLGregorianCalendar }
+	 *
 	 */
-	public void setLastDownload(XMLGregorianCalendar value){
+	public void setLastDownload(XMLGregorianCalendar value) {
 		this.lastDownload = value;
 	}
-	
+
 }

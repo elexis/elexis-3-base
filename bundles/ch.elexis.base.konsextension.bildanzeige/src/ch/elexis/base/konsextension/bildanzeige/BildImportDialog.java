@@ -43,14 +43,14 @@ public class BildImportDialog extends TitleAreaDialog {
 	Text titel;
 	Text info;
 	public Bild result;
-	
-	BildImportDialog(Shell shell, ImageLoader iml){
+
+	BildImportDialog(Shell shell, ImageLoader iml) {
 		super(shell);
 		this.iml = iml;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
@@ -58,13 +58,13 @@ public class BildImportDialog extends TitleAreaDialog {
 		cImage.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		img = new Image(UiDesk.getDisplay(), iml.data[0]);
 		cImage.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e){
+			public void paintControl(PaintEvent e) {
 				GC gc = e.gc;
 				gc.drawImage(img, 0, 0);
 			}
-			
+
 		});
-		
+
 		Group gFormat = new Group(ret, SWT.BORDER);
 		gFormat.setText(Messages.BildImportDialog_StorageFormat);
 		bJPEG = new Button(gFormat, SWT.RADIO);
@@ -84,34 +84,32 @@ public class BildImportDialog extends TitleAreaDialog {
 		info.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		getShell().setText(Messages.BildImportDialog_ImportCaption);
 		setTitle(Messages.BildImportDialog_ImportTitle);
 		setMessage(Messages.BildImportDialog_ImportMessage);
 		setTitleImage(Images.IMG_LOGO.getImage(ImageSize._75x66_TitleDialogIconSize));
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int format = SWT.IMAGE_PNG;
 		if (bJPEG.getSelection()) {
 			format = SWT.IMAGE_JPEG;
 		}
 		iml.save(baos, format);
-		result =
-			new Bild(ElexisEventDispatcher.getSelectedPatient(), titel.getText(), baos
-				.toByteArray());
+		result = new Bild(ElexisEventDispatcher.getSelectedPatient(), titel.getText(), baos.toByteArray());
 		result.set("Info", info.getText()); //$NON-NLS-1$
 		img.dispose();
 		super.okPressed();
 	}
-	
+
 	@Override
-	protected void cancelPressed(){
+	protected void cancelPressed() {
 		img.dispose();
 		super.cancelPressed();
 	}

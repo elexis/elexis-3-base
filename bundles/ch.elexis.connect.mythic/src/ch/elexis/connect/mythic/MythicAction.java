@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.connect.mythic;
@@ -39,31 +39,29 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class MythicAction extends Action implements ComPortListener {
-	
+
 	private static final int MODE_AWAIT_START = 0;
 	private static final int MODE_AWAIT_LINES = 1;
 	private final int mode = 0;
-	
-	Connection ctrl =
-		new Connection("Elexis-Mythic", CoreHub.localCfg.get(Preferences.PORT, "COM1"),
+
+	Connection ctrl = new Connection("Elexis-Mythic", CoreHub.localCfg.get(Preferences.PORT, "COM1"),
 			CoreHub.localCfg.get(Preferences.PARAMS, "9600,8,n,1"), this);
 	ILaboratory myLab;
 	Patient actPatient;
-	
-	public MythicAction(){
+
+	public MythicAction() {
 		super("Mythic", AS_CHECK_BOX);
 		setToolTipText("Daten von Mythic einlesen");
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.connect.mythic", //$NON-NLS-1$
-			"icons/mythic.ico"));
-			
+				"icons/mythic.ico"));
+
 		myLab = LabImportUtilHolder.get().getOrCreateLabor("Mythic");
 	}
-	
+
 	@Override
-	public void run(){
+	public void run() {
 		if (isChecked()) {
-			KontaktSelektor ksl =
-				new KontaktSelektor(Hub.getActiveShell(), Patient.class, "Patient auswählen",
+			KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(), Patient.class, "Patient auswählen",
 					"Wem soll der Mythic-Befund zugeordnet werden?", Patient.DEFAULT_SORT);
 			ksl.create();
 			ksl.getShell().setText("Mythic Patientenauswahl");
@@ -85,16 +83,16 @@ public class MythicAction extends Action implements ComPortListener {
 		}
 		setChecked(false);
 	}
-	
-	public void gotBreak(final Connection connection){
+
+	public void gotBreak(final Connection connection) {
 		actPatient = null;
 		connection.close();
 		SWTHelper.showError("Mythic", "Datenübertragung wurde unterbrochen");
-		
+
 	}
-	
-	public void gotChunk(final Connection connection, final String data){
-		
+
+	public void gotChunk(final Connection connection, final String data) {
+
 		// System.out.println(data+"\n");
 		if (actPatient != null) {
 			if (data.startsWith("END_RESULT")) {
@@ -105,12 +103,12 @@ public class MythicAction extends Action implements ComPortListener {
 			} else {
 				fetchResult(data);
 			}
-			
+
 		}
-		
+
 	}
-	
-	private void fetchResult(final String data){
+
+	private void fetchResult(final String data) {
 		String[] line = data.split(";");
 		int idx = StringTool.getIndex(results, line[0]);
 		if (idx != -1) {
@@ -123,43 +121,35 @@ public class MythicAction extends Action implements ComPortListener {
 				} else if (StringUtils.isNotBlank(line[6])) {
 					ref = "<" + line[6];
 				}
-				
+
 				ILabItem li = LabImportUtilHolder.get().getLabItem(line[0], myLab);
 				if (li == null) {
-					li = LabImportUtilHolder.get().createLabItem(line[0], line[0], myLab, ref, ref,
-						units[idx], LabItemTyp.NUMERIC, "MTH Mythic", "50");
+					li = LabImportUtilHolder.get().createLabItem(line[0], line[0], myLab, ref, ref, units[idx],
+							LabItemTyp.NUMERIC, "MTH Mythic", "50");
 				}
-				
+
 				String comment = "";
 				if ((line[2].length() > 0) || (line[3].length() > 0)) {
 					comment = line[2] + ";" + line[3];
 				}
-				IPatient iPatient = CoreModelServiceHolder.get()
-					.load(actPatient.getId(), IPatient.class)
-					.orElse(null);
-				
-				TransientLabResult tLabResult =
-					new TransientLabResult.Builder(iPatient, myLab, li, line[1])
-						.date(new TimeTool()).ref(ref).comment(comment)
-						.build(LabImportUtilHolder.get());
+				IPatient iPatient = CoreModelServiceHolder.get().load(actPatient.getId(), IPatient.class).orElse(null);
+
+				TransientLabResult tLabResult = new TransientLabResult.Builder(iPatient, myLab, li, line[1])
+						.date(new TimeTool()).ref(ref).comment(comment).build(LabImportUtilHolder.get());
 				LabImportUtilHolder.get().importLabResults(Collections.singletonList(tLabResult),
-					new DefaultLabImportUiHandler());
+						new DefaultLabImportUiHandler());
 			}
 		}
 	}
-	
-	public void timeout(){
+
+	public void timeout() {
 		ctrl.close();
 		SWTHelper.showError("Mythic", "Das Gerät antwortet nicht");
 		setChecked(false);
 	}
-	
-	String[] results = {
-		"WBC", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "RDW", "PLT", "MPV", "THT", "PDW", "LYM%",
-		"MON%", "GRA%", "LYM", "MON", "GRA"
-	};
-	String[] units = {
-		"G/l", "G/l", "g/dl", "%", "fl", "pg", "g/dl", "%", "G/l", "fl", "%", "%", "%", "%", "%",
-		"G/l", "G/l", "G/l"
-	};
+
+	String[] results = { "WBC", "RBC", "HGB", "HCT", "MCV", "MCH", "MCHC", "RDW", "PLT", "MPV", "THT", "PDW", "LYM%",
+			"MON%", "GRA%", "LYM", "MON", "GRA" };
+	String[] units = { "G/l", "G/l", "g/dl", "%", "fl", "pg", "g/dl", "%", "G/l", "fl", "%", "%", "%", "%", "%", "G/l",
+			"G/l", "G/l" };
 }

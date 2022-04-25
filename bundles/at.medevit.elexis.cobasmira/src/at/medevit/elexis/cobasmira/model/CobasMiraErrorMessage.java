@@ -8,28 +8,27 @@ public class CobasMiraErrorMessage {
 	// 73 ernoLF
 	int lineCode;
 	int errorNumber;
-	
-	public CobasMiraErrorMessage(String input){
+
+	public CobasMiraErrorMessage(String input) {
 		try {
 			this.lineCode = Integer.parseInt(input.substring(0, 2));
 			this.errorNumber = Integer.parseInt(input.substring(3, 7));
-			
+
 			logger.debug("CobasMira Error: " + getErrorDescription(errorNumber));
 		} catch (NumberFormatException | IndexOutOfBoundsException e) {
 			logger.error("CobasMira - can't resolve error message", e);
 		}
 	}
-	
-	public String getErrorDescription(){
+
+	public String getErrorDescription() {
 		return CobasMiraErrorMessage.getErrorDescription(errorNumber);
 	}
-	
+
 	/**
-	 * @param errorNumer
-	 *            : Error Code Number
+	 * @param errorNumer : Error Code Number
 	 * @return Error Text
 	 */
-	public static String getErrorDescription(int errorNumber){
+	public static String getErrorDescription(int errorNumber) {
 		switch (errorNumber) {
 		case 1:
 			return "PHOTOMETER OVERFLOW";
@@ -303,5 +302,5 @@ public class CobasMiraErrorMessage {
 			return "UNKNOWN ERROR";
 		}
 	}
-	
+
 }

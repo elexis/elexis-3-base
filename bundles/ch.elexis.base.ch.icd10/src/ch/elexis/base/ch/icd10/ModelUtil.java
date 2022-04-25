@@ -12,36 +12,33 @@ import ch.elexis.core.services.INamedQuery;
 
 @Component
 public class ModelUtil {
-	
+
 	private static IModelService icd10ModelService;
-	
+
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.icd10)")
-	public void setModelService(IModelService modelService){
+	public void setModelService(IModelService modelService) {
 		ModelUtil.icd10ModelService = modelService;
 	}
-	
-	public static Optional<IDiagnosisTree> loadDiagnosisWithId(String id){
+
+	public static Optional<IDiagnosisTree> loadDiagnosisWithId(String id) {
 		return icd10ModelService.load(id, IDiagnosisTree.class);
 	}
-	
-	public static Optional<IDiagnosisTree> loadDiagnosisWithCode(String code){
-		INamedQuery<IDiagnosisTree> query =
-			icd10ModelService.getNamedQuery(IDiagnosisTree.class, "code");
-		List<IDiagnosisTree> found =
-			query.executeWithParameters(query.getParameterMap("code", code));
+
+	public static Optional<IDiagnosisTree> loadDiagnosisWithCode(String code) {
+		INamedQuery<IDiagnosisTree> query = icd10ModelService.getNamedQuery(IDiagnosisTree.class, "code");
+		List<IDiagnosisTree> found = query.executeWithParameters(query.getParameterMap("code", code));
 		if (!found.isEmpty()) {
 			return Optional.of(found.get(0));
 		}
 		return Optional.empty();
 	}
-	
-	public static List<IDiagnosisTree> loadDiagnosisWithParent(String parentId){
-		INamedQuery<IDiagnosisTree> query =
-			icd10ModelService.getNamedQuery(IDiagnosisTree.class, "parent");
+
+	public static List<IDiagnosisTree> loadDiagnosisWithParent(String parentId) {
+		INamedQuery<IDiagnosisTree> query = icd10ModelService.getNamedQuery(IDiagnosisTree.class, "parent");
 		return query.executeWithParameters(query.getParameterMap("parent", parentId));
 	}
-	
-	public static List<IDiagnosisTree> loadAllDiagnosis(){
+
+	public static List<IDiagnosisTree> loadAllDiagnosis() {
 		return icd10ModelService.getQuery(IDiagnosisTree.class).execute();
 	}
 }

@@ -37,42 +37,40 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
 /**
- * Einfache Konsultationsliste die aber auch auf Konsultationszeiten Ruecksicht nimmt beim
- * Sortieren.
+ * Einfache Konsultationsliste die aber auch auf Konsultationszeiten Ruecksicht
+ * nimmt beim Sortieren.
  */
 public class Konsliste extends ViewPart implements ElexisEventListener {
 	protected TableViewer tv;
 	protected SelListener sl;
-	
+
 	/**
 	 * Wrapper um globale delKonsAction da diese keine Bestaetigung verlangt.
 	 */
 	class KonsLoeschenAct extends Action {
-		public KonsLoeschenAct(){
+		public KonsLoeschenAct() {
 			setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 			setText("Konsultation löschen");
 			setToolTipText("Aktuell ausgewählte Konsultation löschen");
 		}
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			Konsultation k = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 			if (k != null
-				&& SWTHelper.askYesNo("Konsultation löschen",
-					"Soll die aktuell ausgewählte Konsultation wirklich "
-						+ "gelöscht werden?\nDieser Vorgang kann nicht Rückgängig"
-						+ "gemacht werden."))
+					&& SWTHelper.askYesNo("Konsultation löschen", "Soll die aktuell ausgewählte Konsultation wirklich "
+							+ "gelöscht werden?\nDieser Vorgang kann nicht Rückgängig" + "gemacht werden."))
 				GlobalActions.delKonsAction.run();
 		}
 	}
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		tv = new TableViewer(parent, SWT.SINGLE | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.BORDER);
-		
+
 		Table t = tv.getTable();
 		t.setHeaderVisible(true);
-		
+
 		// Konfiguriere Tabellenspalten
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnPixelData(20));
@@ -80,43 +78,43 @@ public class Konsliste extends ViewPart implements ElexisEventListener {
 		layout.addColumnData(new ColumnPixelData(50));
 		layout.addColumnData(new ColumnWeightData(10));
 		t.setLayout(layout);
-		
+
 		TableColumn tc = new TableColumn(t, 0);
-		
+
 		tc = new TableColumn(t, 0);
 		tc.setText("Datum");
-		
+
 		tc = new TableColumn(t, 0);
 		tc.setText("Zeit");
-		
+
 		tc = new TableColumn(t, 0);
 		tc.setText("Fall");
-		
+
 		// Inhalt
 		tv.setContentProvider(new IStructuredContentProvider() {
 			private Patient pat;
-			
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				this.pat = (Patient) newInput;
 			}
-			
-			public void dispose(){}
-			
-			public Object[] getElements(Object inputElement){
+
+			public void dispose() {
+			}
+
+			public Object[] getElements(Object inputElement) {
 				return ArchivKG.getKonsultationen(pat, false).toArray();
 			}
 		});
-		
+
 		// Label provider um mehrzeilige Zellen zu erlauben
 		tv.setLabelProvider(new CellLabelProvider() {
-			private Color mandantColor(Mandant m){
+			private Color mandantColor(Mandant m) {
 				return UiDesk.getColorFromRGB(ConfigServiceHolder.getGlobal(
-					ch.elexis.core.constants.Preferences.USR_MANDATOR_COLORS_PREFIX + m.getLabel(),
-					"ffffff"));
+						ch.elexis.core.constants.Preferences.USR_MANDATOR_COLORS_PREFIX + m.getLabel(), "ffffff"));
 			}
-			
+
 			@Override
-			public void update(ViewerCell cell){
+			public void update(ViewerCell cell) {
 				Konsultation k = (Konsultation) cell.getElement();
 				KonsData kd = KonsData.load(k);
 				String s = "";
@@ -125,12 +123,10 @@ public class Konsliste extends ViewPart implements ElexisEventListener {
 					int typ = kd.getKonsTyp();
 					ImageDescriptor desc = null;
 					if (typ == KonsData.KONSTYP_TELEFON)
-						desc =
-							AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID,
-								"rsc/phone.png");
+						desc = AbstractUIPlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "rsc/phone.png");
 					else if (typ == KonsData.KONSTYP_HAUSBESUCH)
 						desc = Images.IMG_HOME.getImageDescriptor();
-					
+
 					if (desc != null)
 						cell.setImage(desc.createImage());
 					break;
@@ -149,10 +145,10 @@ public class Konsliste extends ViewPart implements ElexisEventListener {
 				cell.setText(s);
 			}
 		});
-		
+
 		// Doppelklick-Listener zum selektieren der Konsultation
 		tv.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				TableItem[] tis = tv.getTable().getSelection();
 				if (tis.length != 1)
 					return;
@@ -160,53 +156,54 @@ public class Konsliste extends ViewPart implements ElexisEventListener {
 				ElexisEventDispatcher.fireSelectionEvent(k);
 			}
 		});
-		
+
 		// Menuleiste
 		ViewMenus menus = new ViewMenus(getViewSite());
 		menus.createToolbar(new ArchivKG.NeueKonsAct(KonsData.KONSTYP_NORMAL),
-			new ArchivKG.NeueKonsAct(KonsData.KONSTYP_TELEFON), new ArchivKG.NeueKonsAct(
-				KonsData.KONSTYP_HAUSBESUCH), null, new ArchivKG.KonsAendernAct(),
-			new KonsLoeschenAct());
-		
+				new ArchivKG.NeueKonsAct(KonsData.KONSTYP_TELEFON),
+				new ArchivKG.NeueKonsAct(KonsData.KONSTYP_HAUSBESUCH), null, new ArchivKG.KonsAendernAct(),
+				new KonsLoeschenAct());
+
 		tv.setInput(ElexisEventDispatcher.getSelectedPatient());
 		sl = new SelListener();
 		sl.init();
 		ElexisEventDispatcher.getInstance().addListeners(this);
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		ElexisEventDispatcher.getInstance().removeListeners(this);
 		sl.destroy();
 		super.dispose();
 	}
-	
+
 	/** Selection Listener um bei Patientenwechsel zu aktualisieren */
 	private class SelListener extends POSelectionListener<Patient> {
-		protected void deselected(Patient p){
+		protected void deselected(Patient p) {
 			tv.setInput(null);
 		}
-		
-		protected void selected(Patient p){
+
+		protected void selected(Patient p) {
 			tv.setInput(p);
 		}
 	}
-	
+
 	@Override
-	public void setFocus(){}
-	
-	public void catchElexisEvent(ElexisEvent ev){
+	public void setFocus() {
+	}
+
+	public void catchElexisEvent(ElexisEvent ev) {
 		UiDesk.asyncExec(new Runnable() {
-			public void run(){
+			public void run() {
 				tv.refresh();
 			}
 		});
 	}
-	
-	private ElexisEvent eetmpl = new ElexisEvent(null, Konsultation.class, ElexisEvent.EVENT_CREATE
-		| ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_DELETE);
-	
-	public ElexisEvent getElexisEventFilter(){
+
+	private ElexisEvent eetmpl = new ElexisEvent(null, Konsultation.class,
+			ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_DELETE);
+
+	public ElexisEvent getElexisEventFilter() {
 		return eetmpl;
 	}
 }

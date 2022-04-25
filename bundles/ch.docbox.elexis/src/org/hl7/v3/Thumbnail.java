@@ -5,19 +5,22 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * A thumbnail is an abbreviated rendition of the full data. A thumbnail requires significantly
- * fewer resources than the full data, while still maintaining some distinctive similarity with the
- * full data. A thumbnail is typically used with by-reference encapsulated data. It allows a user to
- * select data more efficiently before actually downloading through the reference.
- * 
- * 
+ *
+ * A thumbnail is an abbreviated rendition of the full data. A thumbnail
+ * requires significantly fewer resources than the full data, while still
+ * maintaining some distinctive similarity with the full data. A thumbnail is
+ * typically used with by-reference encapsulated data. It allows a user to
+ * select data more efficiently before actually downloading through the
+ * reference.
+ *
+ *
  * <p>
  * Java class for thumbnail complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="thumbnail">
  *   &lt;complexContent>
@@ -30,16 +33,16 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "thumbnail")
 public class Thumbnail extends ED {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 }

@@ -28,31 +28,28 @@ import io.swagger.client.api.ConverterControllerApi;
 
 @Component
 public class JodRestDocumentConverter implements IDocumentConverter {
-	
+
 	@Reference
 	private DocumentStore documentStore;
-	
+
 	@Reference
 	private IConfigService configService;
-	
+
 	@Override
-	public Optional<File> convertToPdf(IDocument document){
+	public Optional<File> convertToPdf(IDocument document) {
 		ConverterControllerApi apiInstance = new ConverterControllerApi();
 		apiInstance.getApiClient().setBasePath(getAppBasePath());
 		try {
 			String tempFilePath = documentStore.saveContentToTempFile(document, getPrefix(document),
-				getExtension(document), true);
+					getExtension(document), true);
 			if (tempFilePath != null) {
 				File tempFile = new File(tempFilePath);
 				File converted = apiInstance.convertToUsingParamUsingPOST(tempFile, "pdf", null);
 				tempFile.delete();
-				File toDir =
-					new File(tempFile.getParentFile(), "elexispdf_" + System.currentTimeMillis());
+				File toDir = new File(tempFile.getParentFile(), "elexispdf_" + System.currentTimeMillis());
 				toDir.mkdir();
 				File toFile = new File(toDir, getPrefix(document) + ".pdf");
-				Path moved = Files.move(converted.toPath(),
-					toFile.toPath(),
-					StandardCopyOption.REPLACE_EXISTING);
+				Path moved = Files.move(converted.toPath(), toFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 				File ret = moved.toFile();
 				toDir.deleteOnExit();
 				ret.deleteOnExit();
@@ -61,26 +58,25 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 		} catch (ElexisException | ApiException | IOException e) {
 			if (e instanceof ApiException) {
 				LoggerFactory.getLogger(getClass())
-					.error("Error rest api response code [" + ((ApiException) e).getCode() + "]");
+						.error("Error rest api response code [" + ((ApiException) e).getCode() + "]");
 			}
-			LoggerFactory.getLogger(getClass())
-				.error("Error converting document [" + document + "]", e);
+			LoggerFactory.getLogger(getClass()).error("Error converting document [" + document + "]", e);
 		}
 		return Optional.empty();
 	}
-	
-	private static String getExtension(IDocument document){
+
+	private static String getExtension(IDocument document) {
 		String extension = document.getExtension();
 		if (extension.indexOf('.') != -1) {
 			extension = extension.substring(extension.lastIndexOf('.') + 1);
 		}
 		return extension;
 	}
-	
-	private static String getPrefix(IDocument iDocument){
+
+	private static String getPrefix(IDocument iDocument) {
 		StringBuilder ret = new StringBuilder();
 		ret.append(iDocument.getPatient().getCode()).append("_");
-		
+
 		ret.append(iDocument.getPatient().getLastName()).append(" ");
 		ret.append(iDocument.getPatient().getFirstName()).append("_");
 		String title = iDocument.getTitle();
@@ -89,18 +85,18 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 		}
 		ret.append(title).append("_");
 		ret.append(new SimpleDateFormat("ddMMyyyy_HHmmss").format(iDocument.getLastchanged()));
-		
+
 		return ret.toString().replaceAll("[^a-züäöA-ZÜÄÖ0-9 _\\.\\-]", "");
 	}
-	
-	private String getAppBasePath(){
+
+	private String getAppBasePath() {
 		return configService.get("jodrestconverter/basepath", "");
 	}
-	
+
 	@Override
-	public boolean isAvailable(){
+	public boolean isAvailable() {
 		String basePath = getAppBasePath();
-		if(StringUtils.isNotEmpty(basePath)) {
+		if (StringUtils.isNotEmpty(basePath)) {
 			try {
 				URI uri = new URI(basePath);
 				int port = uri.getPort();
@@ -118,8 +114,8 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 		}
 		return false;
 	}
-	
-	private boolean isServiceAvailable(String serverHost, int serverPort, Integer timeoutms){
+
+	private boolean isServiceAvailable(String serverHost, int serverPort, Integer timeoutms) {
 		if (serverHost != null) {
 			try {
 				SocketAddress endpoint = new InetSocketAddress(serverHost, serverPort);

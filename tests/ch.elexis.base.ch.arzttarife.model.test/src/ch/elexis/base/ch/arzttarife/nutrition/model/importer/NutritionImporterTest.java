@@ -16,23 +16,18 @@ import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class NutritionImporterTest {
-	
+
 	@Test
-	public void performImport() throws FileNotFoundException, SQLException{
+	public void performImport() throws FileNotFoundException, SQLException {
 		// IMPORTANT download the database from ...
 		// and add to the rsc folder of test bundle
 		NutritionReferenceDataImporter importer = new NutritionReferenceDataImporter();
-		Status retStatus =
-			(Status) importer.performImport(new NullProgressMonitor(),
-				NutritionImporterTest.class
-					.getResourceAsStream("/rsc/nutrition2021_11_25.csv"),
-				211125);
+		Status retStatus = (Status) importer.performImport(new NullProgressMonitor(),
+				NutritionImporterTest.class.getResourceAsStream("/rsc/nutrition2021_11_25.csv"), 211125);
 		assertEquals(IStatus.OK, retStatus.getCode());
-		
-		ICodeElementService codeElementService =
-			OsgiServiceUtil.getService(ICodeElementService.class).get();
-		ICodeElement generalAllowance =
-			codeElementService.loadFromString("Ernährungsberatung", "7811", null).get();
+
+		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElement generalAllowance = codeElementService.loadFromString("Ernährungsberatung", "7811", null).get();
 		assertNotNull(generalAllowance);
 		assertNotNull(generalAllowance.getText());
 		OsgiServiceUtil.ungetService(codeElementService);

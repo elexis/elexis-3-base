@@ -38,8 +38,7 @@ public class DateTimeObservableValue extends AbstractObservableValue {
 			Date newValue = dateTimeToDate();
 
 			if (!newValue.equals(DateTimeObservableValue.this.oldValue)) {
-				fireValueChange(Diffs.createValueDiff(DateTimeObservableValue.this.oldValue,
-						newValue));
+				fireValueChange(Diffs.createValueDiff(DateTimeObservableValue.this.oldValue, newValue));
 				DateTimeObservableValue.this.oldValue = newValue;
 
 			}

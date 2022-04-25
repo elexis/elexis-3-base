@@ -22,26 +22,26 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.SolrClient;
 
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({ "unchecked" })
 public class Http2ClusterStateProvider extends BaseHttpClusterStateProvider {
-  final Http2SolrClient httpClient;
-  final boolean closeClient;
+	final Http2SolrClient httpClient;
+	final boolean closeClient;
 
-  public Http2ClusterStateProvider(List<String> solrUrls, Http2SolrClient httpClient) throws Exception {
-    this.httpClient = httpClient == null? new Http2SolrClient.Builder().build(): httpClient;
-    this.closeClient = httpClient == null;
-    init(solrUrls);
-  }
+	public Http2ClusterStateProvider(List<String> solrUrls, Http2SolrClient httpClient) throws Exception {
+		this.httpClient = httpClient == null ? new Http2SolrClient.Builder().build() : httpClient;
+		this.closeClient = httpClient == null;
+		init(solrUrls);
+	}
 
-  @Override
-  public void close() throws IOException {
-    if (this.closeClient && this.httpClient != null) {
-      httpClient.close();
-    }
-  }
+	@Override
+	public void close() throws IOException {
+		if (this.closeClient && this.httpClient != null) {
+			httpClient.close();
+		}
+	}
 
-  @Override
-  protected SolrClient getSolrClient(String baseUrl) {
-    return new Http2SolrClient.Builder(baseUrl).withHttpClient(httpClient).build();
-  }
+	@Override
+	protected SolrClient getSolrClient(String baseUrl) {
+		return new Http2SolrClient.Builder(baseUrl).withHttpClient(httpClient).build();
+	}
 }

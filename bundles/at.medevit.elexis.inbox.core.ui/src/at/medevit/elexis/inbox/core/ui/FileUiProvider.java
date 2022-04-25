@@ -22,44 +22,44 @@ import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 
 public class FileUiProvider implements IInboxElementUiProvider {
-	
+
 	FileLabelProvider fileLabelProvider;
-	
-	public FileUiProvider(){
+
+	public FileUiProvider() {
 		fileLabelProvider = new FileLabelProvider();
 	}
-	
+
 	@Override
-	public ImageDescriptor getFilterImage(){
+	public ImageDescriptor getFilterImage() {
 		return null;
 	}
-	
+
 	@Override
-	public ViewerFilter getFilter(){
+	public ViewerFilter getFilter() {
 		return null;
 	}
-	
+
 	@Override
-	public LabelProvider getLabelProvider(){
+	public LabelProvider getLabelProvider() {
 		return fileLabelProvider;
 	}
-	
+
 	@Override
-	public IColorProvider getColorProvider(){
+	public IColorProvider getColorProvider() {
 		return fileLabelProvider;
 	}
-	
+
 	@Override
-	public boolean isProviderFor(IInboxElement element){
+	public boolean isProviderFor(IInboxElement element) {
 		Object obj = element.getObject();
 		if (obj instanceof Path) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	@Override
-	public void doubleClicked(IInboxElement element){
+	public void doubleClicked(IInboxElement element) {
 		Path path = (Path) element.getObject();
 		Program.launch(path.toFile().getAbsolutePath());
 	}

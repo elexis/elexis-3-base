@@ -26,83 +26,71 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
 
 public class DownloadMeineImpfungenHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			Patient patient = ElexisEventDispatcher.getSelectedPatient();
 			if (patient != null) {
-				ProgressMonitorDialog progress =
-					new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
+				ProgressMonitorDialog progress = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
 				try {
 					progress.run(false, true, new IRunnableWithProgress() {
 						@Override
 						public void run(IProgressMonitor monitor)
-							throws InvocationTargetException, InterruptedException{
-							monitor.beginTask("Impfungen importieren von meineimpfungen ...",
-								IProgressMonitor.UNKNOWN);
-							
-							List<org.ehealth_connector.common.mdht.Patient> patients =
-								MeineImpfungenServiceHolder.getService().getPatients(patient);
+								throws InvocationTargetException, InterruptedException {
+							monitor.beginTask("Impfungen importieren von meineimpfungen ...", IProgressMonitor.UNKNOWN);
+
+							List<org.ehealth_connector.common.mdht.Patient> patients = MeineImpfungenServiceHolder
+									.getService().getPatients(patient);
 							if (patients != null && !patients.isEmpty()) {
 								if (patients.size() == 1) {
-									List<CdaChVacd> documents = MeineImpfungenServiceHolder
-										.getService().getDocuments(patients.get(0));
+									List<CdaChVacd> documents = MeineImpfungenServiceHolder.getService()
+											.getDocuments(patients.get(0));
 									Optional<CdaChVacd> latestVacDoc = getLatestVacdoc(documents);
 									latestVacDoc.ifPresent(vd -> {
-										ImportVaccinationsWizard wizard =
-											new ImportVaccinationsWizard();
-										try (ByteArrayOutputStream output =
-											new ByteArrayOutputStream()) {
-											CDAUtil.save(vd.getDocRoot().getClinicalDocument(),
-												output);
-											wizard.setDocument(
-												new ByteArrayInputStream(output.toByteArray()));
-											
-											WizardDialog dialog = new WizardDialog(
-												HandlerUtil.getActiveShell(event), wizard);
+										ImportVaccinationsWizard wizard = new ImportVaccinationsWizard();
+										try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+											CDAUtil.save(vd.getDocRoot().getClinicalDocument(), output);
+											wizard.setDocument(new ByteArrayInputStream(output.toByteArray()));
+
+											WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event),
+													wizard);
 											dialog.open();
 										} catch (Exception e) {
-											LoggerFactory
-												.getLogger(DownloadMeineImpfungenHandler.class)
-												.error("Error processing downloaded eVACDOC", e);
+											LoggerFactory.getLogger(DownloadMeineImpfungenHandler.class)
+													.error("Error processing downloaded eVACDOC", e);
 										}
 									});
 								} else {
-									MessageDialog.openError(HandlerUtil.getActiveShell(event),
-										"meineimpfungen",
-										"Mehrere Patienten für [" + patient.getLabel(false)
-											+ "] auf meineimpfungen gefunden.");
+									MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
+											"Mehrere Patienten für [" + patient.getLabel(false)
+													+ "] auf meineimpfungen gefunden.");
 								}
 							} else {
-								MessageDialog.openInformation(HandlerUtil.getActiveShell(event),
-									"meineimpfungen", "Kein Patient [" + patient.getLabel(false)
-										+ "] auf meineimpfungen gefunden.");
+								MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "meineimpfungen",
+										"Kein Patient [" + patient.getLabel(false) + "] auf meineimpfungen gefunden.");
 							}
 							monitor.done();
 						}
 					});
 				} catch (InvocationTargetException | InterruptedException e) {
-					LoggerFactory.getLogger(DownloadMeineImpfungenHandler.class)
-						.warn("Exception on patient lookup", e);
+					LoggerFactory.getLogger(DownloadMeineImpfungenHandler.class).warn("Exception on patient lookup", e);
 					MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
-						"Es ist ein Fehler aufgetreten.");
+							"Es ist ein Fehler aufgetreten.");
 				}
 			} else {
 				MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "meineimpfungen",
-					"Kein Patient ausgewählt");
+						"Kein Patient ausgewählt");
 			}
 		} catch (IllegalStateException ise) {
-			LoggerFactory.getLogger(DownloadMeineImpfungenHandler.class)
-				.error("Service not available",
-				ise);
+			LoggerFactory.getLogger(DownloadMeineImpfungenHandler.class).error("Service not available", ise);
 			MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
-				"meineimpfungen nicht verfügbar");
+					"meineimpfungen nicht verfügbar");
 		}
 		return null;
 	}
-	
-	private Optional<CdaChVacd> getLatestVacdoc(List<CdaChVacd> documents){
+
+	private Optional<CdaChVacd> getLatestVacdoc(List<CdaChVacd> documents) {
 		CdaChVacd ret = null;
 		for (CdaChVacd cdaChVacd : documents) {
 			if (ret == null) {

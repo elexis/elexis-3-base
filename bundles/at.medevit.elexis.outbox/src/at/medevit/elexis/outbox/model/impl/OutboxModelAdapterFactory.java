@@ -8,20 +8,20 @@ public class OutboxModelAdapterFactory extends AbstractModelAdapterFactory {
 
 	private static OutboxModelAdapterFactory INSTANCE;
 
-	public static synchronized OutboxModelAdapterFactory getInstance(){
+	public static synchronized OutboxModelAdapterFactory getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new OutboxModelAdapterFactory();
 		}
 		return INSTANCE;
 	}
 
-	private OutboxModelAdapterFactory(){
+	private OutboxModelAdapterFactory() {
 		super();
 	}
 
 	@Override
 	protected void initializeMappings() {
-		addMapping(new MappingEntry(IOutboxElement.class,
-			OutboxElement.class, ch.elexis.core.jpa.entities.OutboxElement.class));
+		addMapping(new MappingEntry(IOutboxElement.class, OutboxElement.class,
+				ch.elexis.core.jpa.entities.OutboxElement.class));
 	}
 }

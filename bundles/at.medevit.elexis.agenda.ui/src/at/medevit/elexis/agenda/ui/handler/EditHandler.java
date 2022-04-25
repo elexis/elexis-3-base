@@ -17,23 +17,23 @@ import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
 
 public class EditHandler {
-	
+
 	@Inject
 	private ESelectionService selectionService;
-	
+
 	@Execute
-	public Object execute(){
+	public Object execute() {
 		Optional<IPeriod> period = getSelectedPeriod();
-		
+
 		period.ifPresent(p -> {
 			AcquireLockBlockingUi.aquireAndRun(p, new ILockHandler() {
 				@Override
-				public void lockFailed(){
+				public void lockFailed() {
 					// do nothing
 				}
-				
+
 				@Override
-				public void lockAcquired(){
+				public void lockAcquired() {
 					AppointmentDialog dlg = new AppointmentDialog((IAppointment) p);
 					dlg.open();
 				}
@@ -41,12 +41,11 @@ public class EditHandler {
 		});
 		return null;
 	}
-	
-	private Optional<IPeriod> getSelectedPeriod(){
+
+	private Optional<IPeriod> getSelectedPeriod() {
 		try {
 			ISelection activeSelection = (ISelection) selectionService.getSelection();
-			if (activeSelection instanceof StructuredSelection
-				&& !((StructuredSelection) activeSelection).isEmpty()) {
+			if (activeSelection instanceof StructuredSelection && !((StructuredSelection) activeSelection).isEmpty()) {
 				Object element = ((StructuredSelection) activeSelection).getFirstElement();
 				if (element instanceof IPeriod) {
 					return Optional.of((IPeriod) element);

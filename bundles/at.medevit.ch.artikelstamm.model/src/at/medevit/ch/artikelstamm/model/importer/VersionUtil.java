@@ -12,16 +12,16 @@ import ch.elexis.core.jpa.entities.ArtikelstammItem;
 public class VersionUtil {
 	private static DateFormat df = new SimpleDateFormat("ddMMyy HH:mm");
 	private static final String VERSION_ENTRY_ID = "VERSION";
-	
-	public static DATASOURCEType getDatasourceType(){
+
+	public static DATASOURCEType getDatasourceType() {
 		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
 		if (versionEntry != null) {
 			return DATASOURCEType.fromValue(versionEntry.getAdddscr());
 		}
 		throw new IllegalArgumentException("No Version entry");
 	}
-	
-	public static void setDataSourceType(DATASOURCEType datasource){
+
+	public static void setDataSourceType(DATASOURCEType datasource) {
 		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
 		if (versionEntry != null) {
 			versionEntry.setAdddscr(datasource.value());
@@ -30,8 +30,8 @@ public class VersionUtil {
 		}
 		throw new IllegalArgumentException("No Version entry");
 	}
-	
-	public static int getCurrentVersion(){
+
+	public static int getCurrentVersion() {
 		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
 		if (versionEntry != null) {
 			String ppub = versionEntry.getPpub();
@@ -43,8 +43,8 @@ public class VersionUtil {
 		}
 		return 0;
 	}
-	
-	public static void setCurrentVersion(int newVersion){
+
+	public static void setCurrentVersion(int newVersion) {
 		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
 		if (versionEntry != null) {
 			versionEntry.setPpub(Integer.toString(newVersion));
@@ -53,8 +53,8 @@ public class VersionUtil {
 		}
 		throw new IllegalArgumentException("No Version entry");
 	}
-	
-	public static void setImportSetCreationDate(Date time){
+
+	public static void setImportSetCreationDate(Date time) {
 		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
 		if (versionEntry != null) {
 			versionEntry.setDscr(df.format(time.getTime()));
@@ -63,8 +63,8 @@ public class VersionUtil {
 		}
 		throw new IllegalArgumentException("No Version entry");
 	}
-	
-	public static Date getImportSetCreationDate(){
+
+	public static Date getImportSetCreationDate() {
 		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
 		if (versionEntry != null) {
 			String value = versionEntry.getDscr();

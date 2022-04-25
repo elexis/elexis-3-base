@@ -33,11 +33,13 @@ import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 
 /**
- * <p>Is displayed in the sidebar. Shows description and parameters for chosen statistic.
- * Statistics can be run or canceled here.</p>
- * 
+ * <p>
+ * Is displayed in the sidebar. Shows description and parameters for chosen
+ * statistic. Statistics can be run or canceled here.
+ * </p>
+ *
  * $Id: DetailsPanel.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -49,13 +51,13 @@ public class DetailsPanel extends Composite implements Observer {
 	private ParametersPanel parameters;
 
 	private ActionContributionItem startButton;
-	
+
 	private Button cancelButton;
 
 	private NewStatisticsAction action;
 
 	/**
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 */
@@ -99,22 +101,24 @@ public class DetailsPanel extends Composite implements Observer {
 		// Set initial state
 		this.reset();
 	}
-	
+
 	/**
 	 * Create the new statistic button,
+	 *
 	 * @param parent
 	 */
 	private void createQueryButton(Composite parent) {
 		// add the new query action and a button for it
 		this.action = new NewStatisticsAction(this.parameters);
-		
+
 		this.startButton = new ActionContributionItem(this.action);
 		this.startButton.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		this.startButton.fill(parent);
 	}
-	
+
 	/**
 	 * Create the cancel button.
+	 *
 	 * @param parent
 	 */
 	private void createCancelButton(Composite parent) {
@@ -132,8 +136,8 @@ public class DetailsPanel extends Composite implements Observer {
 	}
 
 	/**
-	 * Resets the details panel and it's components to a start state, same as if
-	 * no statistic were selected yet.
+	 * Resets the details panel and it's components to a start state, same as if no
+	 * statistic were selected yet.
 	 */
 	public void reset() {
 		this.description.setText(Messages.EMPTY_PROVIDER_DESCRIPTION);
@@ -148,11 +152,9 @@ public class DetailsPanel extends Composite implements Observer {
 	}
 
 	/**
-	 * Sets all children enabled according to the boolean passed to this
-	 * function.
-	 * 
-	 * @param enabled
-	 *            True if children should be enabled, false else.
+	 * Sets all children enabled according to the boolean passed to this function.
+	 *
+	 * @param enabled True if children should be enabled, false else.
 	 */
 	@Override
 	public void setEnabled(boolean enabled) {
@@ -162,17 +164,19 @@ public class DetailsPanel extends Composite implements Observer {
 		// cancel button has reversed status
 		this.setCancelButtonEnabled(!enabled);
 	}
-	
+
 	/**
 	 * Sets the cancel button either enabled or disabled.
+	 *
 	 * @param enabled State to set the cancel button to.
 	 */
 	public void setCancelButtonEnabled(boolean enabled) {
 		this.cancelButton.setEnabled(enabled);
 	}
-	
+
 	/**
 	 * Sets the main query action enabled or disabled.
+	 *
 	 * @param enabled State to set the main action to.
 	 */
 	public void setActionEnabled(boolean enabled) {
@@ -180,11 +184,10 @@ public class DetailsPanel extends Composite implements Observer {
 	}
 
 	/**
-	 * Attache a property change listener to this object. This actually forwards
-	 * the attachment to this panel's new query action.
-	 * 
-	 * @param listener
-	 *            A property change listener.
+	 * Attache a property change listener to this object. This actually forwards the
+	 * attachment to this panel's new query action.
+	 *
+	 * @param listener A property change listener.
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		this.action.addPropertyChangeListener(listener);

@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for x_PersonNamePartType.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="x_PersonNamePartType">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -22,20 +23,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "x_PersonNamePartType")
 @XmlEnum
 public enum XPersonNamePartType {
-	
+
 	DEL, FAM, GIV, PFX, SFX;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static XPersonNamePartType fromValue(String v){
+
+	public static XPersonNamePartType fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

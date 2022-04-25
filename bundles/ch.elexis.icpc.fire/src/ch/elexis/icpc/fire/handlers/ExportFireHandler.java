@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.icpc.fire.handlers;
@@ -57,7 +57,7 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
- * 
+ *
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
@@ -81,7 +81,7 @@ public class ExportFireHandler extends AbstractHandler {
 
 	/**
 	 * The time this export slot run starts from
-	 * 
+	 *
 	 * @return
 	 */
 	public static TimeTool getTtFrom() {
@@ -93,9 +93,10 @@ public class ExportFireHandler extends AbstractHandler {
 		ttFrom.addHours(Report.EXPORT_DELAY * -1);
 		return ttFrom;
 	}
-	
+
 	/**
 	 * The time this export slot ends with
+	 *
 	 * @return
 	 */
 	public static TimeTool getTtTo() {
@@ -110,7 +111,7 @@ public class ExportFireHandler extends AbstractHandler {
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-		qbe.add(Konsultation.DATE, Query.GREATER, getTtFrom().toString(TimeTool.DATE_COMPACT));	
+		qbe.add(Konsultation.DATE, Query.GREATER, getTtFrom().toString(TimeTool.DATE_COMPACT));
 		qbe.add(Konsultation.DATE, Query.LESS_OR_EQUAL, getTtTo().toString(TimeTool.DATE_COMPACT));
 		qbe.orderBy(false, Konsultation.DATE);
 		List<Konsultation> konsen = qbe.execute();
@@ -181,7 +182,8 @@ public class ExportFireHandler extends AbstractHandler {
 								// add to report
 								BigInteger patId = reportBuilder.addPatient(pat);
 								BigInteger docId = reportBuilder.addMandant(mandant);
-								reportBuilder.addKonsultation(patId, docId, konsultation, unreferencedStopMedisPerPatient);
+								reportBuilder.addKonsultation(patId, docId, konsultation,
+										unreferencedStopMedisPerPatient);
 
 								konsultation.addSticker(fireSticker);
 							} catch (IllegalStateException e) {
@@ -199,7 +201,8 @@ public class ExportFireHandler extends AbstractHandler {
 						try (FileOutputStream fout = new FileOutputStream(new File(exportPath))) {
 							XmlUtil.marshallFireReport(report.get(), fout);
 							// update last export date
-							ConfigServiceHolder.setGlobal(Preferences.CFGPARAM, new TimeTool().toString(TimeTool.DATE_COMPACT));
+							ConfigServiceHolder.setGlobal(Preferences.CFGPARAM,
+									new TimeTool().toString(TimeTool.DATE_COMPACT));
 						} catch (IOException e) {
 							openError("Error", "Error writing report, see logs for details.");
 							logger.error("Error writing report.", e);

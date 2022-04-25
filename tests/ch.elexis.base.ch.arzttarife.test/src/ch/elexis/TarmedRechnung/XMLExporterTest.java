@@ -43,35 +43,34 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class XMLExporterTest {
-	
+
 	@After
-	public void teardown() throws Exception{
+	public void teardown() throws Exception {
 		Display.getDefault().syncExec(new Runnable() {
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				PlatformUI.getWorkbench().saveAllEditors(false); // do not confirm saving
-				PlatformUI.getWorkbench().saveAll(
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null, false);
+				PlatformUI.getWorkbench().saveAll(PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null, false);
 				if (PlatformUI.getWorkbench() != null) // null if run from Eclipse-IDE
 				{
 					// needed if run as surefire test from using mvn install
 					try {
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-							.closeAllPerspectives(false, true);
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllPerspectives(false,
+								true);
 					} catch (Exception e) {
-						
+
 						System.out.println(e.getMessage());
 					}
 				}
 			}
 		});
-		
+
 	}
-	
+
 	@Test
-	public void doExportTest() throws IOException{
+	public void doExportTest() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
@@ -80,8 +79,8 @@ public class XMLExporterTest {
 		List<IInvoice> invoices = szenario.getInvoices();
 		for (IInvoice invoice : invoices) {
 			TestData.removeExistingXml(invoice);
-			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
-				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()), getTempDestination(),
+					IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
 			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
@@ -132,9 +131,9 @@ public class XMLExporterTest {
 		}
 		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 	}
-	
+
 	@Test
-	public void doExportEsrFallbackTest() throws IOException{
+	public void doExportEsrFallbackTest() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
@@ -148,10 +147,10 @@ public class XMLExporterTest {
 			assertNotNull(iban);
 			biller.setExtInfo("IBAN", null);
 			CoreModelServiceHolder.get().save(biller);
-			
+
 			TestData.removeExistingXml(invoice);
-			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
-				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()), getTempDestination(),
+					IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
 			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
@@ -161,16 +160,16 @@ public class XMLExporterTest {
 			Element root = result.getRootElement();
 			Iterator<?> iter = root.getDescendants(new ElementFilter("esr9"));
 			assertTrue(iter.hasNext());
-			
+
 			// restore IBAN
 			biller.setExtInfo("IBAN", iban);
 			CoreModelServiceHolder.get().save(biller);
 		}
 		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 	}
-	
+
 	@Test
-	public void doExportVatTest() throws IOException{
+	public void doExportVatTest() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		assertNotNull(szenario);
 		assertNotNull(szenario.getInvoices());
@@ -180,14 +179,13 @@ public class XMLExporterTest {
 		List<IInvoice> invoices = szenario.getInvoices();
 		for (IInvoice invoice : invoices) {
 			TestData.removeExistingXml(invoice);
-			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
-				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()), getTempDestination(),
+					IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
 			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
-				fail("Invoice " + invoice.getNumber() + " "
-					+ invoice.getCoverage().getBillingSystem().getName()
-					+ " is defective\n" + invoice.getTrace("Zurückgewiesen").get(0));
+				fail("Invoice " + invoice.getNumber() + " " + invoice.getCoverage().getBillingSystem().getName()
+						+ " is defective\n" + invoice.getTrace("Zurückgewiesen").get(0));
 			}
 			// check if the vat is included
 			Element root = result.getRootElement();
@@ -210,23 +208,22 @@ public class XMLExporterTest {
 		}
 		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 	}
-	
+
 	@Test
-	public void doExportObligationTest() throws IOException{
+	public void doExportObligationTest() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
 		XMLExporter exporter = new XMLExporter();
 		List<IInvoice> invoices = szenario.getInvoices();
 		for (IInvoice invoice : invoices) {
-			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
-				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()), getTempDestination(),
+					IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
 			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
-				fail("Invoice " + invoice.getNumber() + " "
-					+ invoice.getCoverage().getBillingSystem().getName()
-					+ " is defective");
+				fail("Invoice " + invoice.getNumber() + " " + invoice.getCoverage().getBillingSystem().getName()
+						+ " is defective");
 			}
 			// check if the amount_obligations amount of the balance element is correct
 			Element root = result.getRootElement();
@@ -246,17 +243,17 @@ public class XMLExporterTest {
 			}
 		}
 	}
-	
+
 	@Test
-	public void doExportPrepaidTest() throws IOException{
+	public void doExportPrepaidTest() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
 		XMLExporter exporter = new XMLExporter();
 		List<IInvoice> invoices = szenario.getInvoices();
 		for (IInvoice invoice : invoices) {
-			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
-				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()), getTempDestination(),
+					IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
 			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
@@ -279,17 +276,17 @@ public class XMLExporterTest {
 			}
 		}
 	}
-	
+
 	@Test
-	public void doExportTestFractional() throws IOException{
+	public void doExportTestFractional() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		assertNotNull(szenario.getInvoices());
 		assertFalse(szenario.getInvoices().isEmpty());
 		XMLExporter exporter = new XMLExporter();
 		List<IInvoice> invoices = szenario.getInvoices();
 		for (IInvoice invoice : invoices) {
-			Document result = exporter.doExport(Rechnung.load(invoice.getId()),
-				getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+			Document result = exporter.doExport(Rechnung.load(invoice.getId()), getTempDestination(),
+					IRnOutputter.TYPE.ORIG, true);
 			assertNotNull(result);
 			if (invoice.getState() == InvoiceState.DEFECTIVE) {
 				printFaildDocument(result);
@@ -319,17 +316,16 @@ public class XMLExporterTest {
 			assertTrue(wholePresent && fractionalPresent);
 		}
 	}
-	
+
 	@Test
-	public void doExportExisting4Test() throws IOException{
+	public void doExportExisting4Test() throws IOException {
 		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
-		
+
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_4_RNR);
 		existing.addZahlung(new Money(1.0), "test", new TimeTool());
 		XMLExporter exporter = new XMLExporter();
-		Document result =
-			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
 			printFaildDocument(result);
@@ -339,7 +335,7 @@ public class XMLExporterTest {
 		Element balance = invoice.getChild("balance", namespace);//$NON-NLS-1$
 		String prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
 		assertEquals("1.00", prepaid);
-		
+
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.STORNO, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
@@ -351,17 +347,15 @@ public class XMLExporterTest {
 		String due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
 		assertEquals("0.00", due);
 	}
-	
-	
+
 	@Test
-	public void doReExportExistingPrepaid4Test() throws IOException{
+	public void doReExportExistingPrepaid4Test() throws IOException {
 		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
-		
+
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_4_2_RNR);
 		XMLExporter exporter = new XMLExporter();
-		Document result =
-			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
 			printFaildDocument(result);
@@ -375,7 +369,7 @@ public class XMLExporterTest {
 		assertEquals("17.76", amount);
 		String due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
 		assertEquals("7.75", due);
-		
+
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
@@ -391,15 +385,14 @@ public class XMLExporterTest {
 		due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
 		assertEquals("7.75", due);
 	}
-	
+
 	@Test
-	public void doExportExisting44Test() throws IOException{
+	public void doExportExisting44Test() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_44_RNR);
 		existing.addZahlung(new Money(1.0), "test", new TimeTool());
 		XMLExporter exporter = new XMLExporter();
-		Document result =
-			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
 			printFaildDocument(result);
@@ -408,10 +401,10 @@ public class XMLExporterTest {
 		Element payload = result.getRootElement().getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
-		
+
 		String prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
 		assertEquals("1.00", prepaid);
-		
+
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.STORNO, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
@@ -424,14 +417,13 @@ public class XMLExporterTest {
 		String due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
 		assertEquals("0.00", due);
 	}
-	
+
 	@Test
-	public void doReExportExistingPrepaid44Test() throws IOException{
+	public void doReExportExistingPrepaid44Test() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_44_2_RNR);
 		XMLExporter exporter = new XMLExporter();
-		Document result =
-			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
 			printFaildDocument(result);
@@ -439,14 +431,14 @@ public class XMLExporterTest {
 		}
 		Element payload = result.getRootElement().getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
-		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$	
+		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
 		String prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
 		assertEquals("4000.00", prepaid);
 		String due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
 		assertEquals("1217.75", due);
 		String amount = balance.getAttributeValue("amount");//$NON-NLS-1$
 		assertEquals("5217.76", amount);
-		
+
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
@@ -463,14 +455,13 @@ public class XMLExporterTest {
 		amount = balance.getAttributeValue("amount");//$NON-NLS-1$
 		assertEquals("5217.76", amount);
 	}
-	
+
 	@Test
-	public void fixErrorneousBill44Test() throws IOException{
+	public void fixErrorneousBill44Test() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		Rechnung erroneous = szenario.getExistingRechnung(TestData.ERRONEOUS_44_1_RNR);
 		XMLExporter exporter = new XMLExporter();
-		Document result =
-			exporter.doExport(erroneous, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
+		Document result = exporter.doExport(erroneous, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 		assertNotNull(result);
 		if (erroneous.getStatus() == RnStatus.FEHLERHAFT) {
 			printFaildDocument(result);
@@ -478,14 +469,14 @@ public class XMLExporterTest {
 		}
 		Element payload = result.getRootElement().getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
-		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$	
+		Element balance = body.getChild("balance", XMLExporter.nsinvoice);//$NON-NLS-1$
 		String prepaid = balance.getAttributeValue("amount_prepaid");//$NON-NLS-1$
 		assertEquals("4000.00", prepaid);
 		String due = balance.getAttributeValue("amount_due");//$NON-NLS-1$
 		assertEquals("1217.75", due);
 		String amount = balance.getAttributeValue("amount");//$NON-NLS-1$
 		assertEquals("5217.76", amount);
-		
+
 		erroneous.addZahlung(new Money(10.0), "test", new TimeTool());
 		result = exporter.doExport(erroneous, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 		assertNotNull(result);
@@ -503,9 +494,9 @@ public class XMLExporterTest {
 		amount = balance.getAttributeValue("amount");//$NON-NLS-1$
 		assertEquals("5217.76", amount);
 	}
-	
+
 	@Test
-	public void erroneous44_2Test() throws IOException, JDOMException{
+	public void erroneous44_2Test() throws IOException, JDOMException {
 		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, true);
 		XMLExporter exporter = new XMLExporter();
 		// error in sequence of invoice:tiers_garant
@@ -518,21 +509,19 @@ public class XMLExporterTest {
 		assertTrue(dummyInvoice.getState() == null);
 		ConfigServiceHolder.setUser(Preferences.LEISTUNGSCODES_BILLING_STRICT, false);
 	}
-	
+
 	@Test
-	public void doExportReminder4Test() throws IOException{
+	public void doExportReminder4Test() throws IOException {
 		Namespace namespace = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
-		
+
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_4_3_RNR);
 		// set reminder booking and state
-		existing.addZahlung(new Money(10.0).multiply(-1.0),
-			ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
+		existing.addZahlung(new Money(10.0).multiply(-1.0), ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
 		existing.setStatus(InvoiceState.DEMAND_NOTE_1.numericValue());
 		// output the bill
 		XMLExporter exporter = new XMLExporter();
-		Document result =
-			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
 			printFaildDocument(result);
@@ -564,19 +553,17 @@ public class XMLExporterTest {
 		assertEquals("0.00", due);
 		assertEquals(existing.getInvoiceState(), InvoiceState.PAID);
 	}
-	
+
 	@Test
-	public void doExportReminder44Test() throws IOException{
+	public void doExportReminder44Test() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_44_3_RNR);
 		// set reminder booking and state
-		existing.addZahlung(new Money(10.0).multiply(-1.0),
-			ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
+		existing.addZahlung(new Money(10.0).multiply(-1.0), ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
 		existing.setStatus(InvoiceState.DEMAND_NOTE_1.numericValue());
 		// output the bill
 		XMLExporter exporter = new XMLExporter();
-		Document result =
-			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
 		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
 			printFaildDocument(result);
@@ -594,8 +581,7 @@ public class XMLExporterTest {
 		String reminder = balance.getAttributeValue("amount_reminder");
 		assertEquals("10.00", reminder);
 		// set reminder booking and state
-		existing.addZahlung(new Money(10.0).multiply(-1.0),
-			ch.elexis.data.Messages.Rechnung_Mahngebuehr2, null);
+		existing.addZahlung(new Money(10.0).multiply(-1.0), ch.elexis.data.Messages.Rechnung_Mahngebuehr2, null);
 		existing.setStatus(InvoiceState.DEMAND_NOTE_2.numericValue());
 		// output the bill
 		exporter = new XMLExporter();
@@ -636,37 +622,34 @@ public class XMLExporterTest {
 		reminder = balance.getAttributeValue("amount_reminder");
 		assertEquals("20.00", reminder);
 	}
-	
+
 	@Test
-	public void doExportReminder45Test() throws IOException{
+	public void doExportReminder45Test() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_45_3_RNR);
 		// set reminder booking and state
-		existing.addZahlung(new Money(10.0).multiply(-1.0),
-			ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
+		existing.addZahlung(new Money(10.0).multiply(-1.0), ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
 		existing.setStatus(InvoiceState.DEMAND_NOTE_1.numericValue());
 		// output the bill
 		XMLExporter exporter = new XMLExporter();
-		Document result =
-			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
 		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
-		Optional<?> invoiceRequest = exporter.getExistingXmlModel(
-			NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
+		Optional<?> invoiceRequest = exporter
+				.getExistingXmlModel(NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
 		assertTrue(invoiceRequest.get() instanceof ch.fd.invoice450.request.RequestType);
-		BalanceTGType balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get())
-			.getPayload().getBody().getTiersGarant().getBalance();
+		BalanceTGType balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().getBody()
+				.getTiersGarant().getBalance();
 		assertNotNull(balance);
 		assertEquals(0.0, balance.getAmountPrepaid(), 0.0001);
 		assertEquals(5248.06, balance.getAmountDue(), 0.0001);
 		assertEquals(5238.06, balance.getAmount(), 0.0001);
 		assertEquals(10.0, balance.getAmountReminder(), 0.0001);
 		// set reminder booking and state
-		existing.addZahlung(new Money(10.0).multiply(-1.0),
-			ch.elexis.data.Messages.Rechnung_Mahngebuehr2, null);
+		existing.addZahlung(new Money(10.0).multiply(-1.0), ch.elexis.data.Messages.Rechnung_Mahngebuehr2, null);
 		existing.setStatus(InvoiceState.DEMAND_NOTE_2.numericValue());
 		// output the bill
 		exporter = new XMLExporter();
@@ -676,11 +659,11 @@ public class XMLExporterTest {
 			printFaildDocument(result);
 			fail();
 		}
-		invoiceRequest = exporter.getExistingXmlModel(
-			NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
+		invoiceRequest = exporter
+				.getExistingXmlModel(NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
 		assertTrue(invoiceRequest.get() instanceof ch.fd.invoice450.request.RequestType);
-		balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload()
-			.getBody().getTiersGarant().getBalance();
+		balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().getBody().getTiersGarant()
+				.getBalance();
 		assertNotNull(balance);
 		assertEquals(0.0, balance.getAmountPrepaid(), 0.0001);
 		assertEquals(5258.06, balance.getAmountDue(), 0.0001);
@@ -694,62 +677,59 @@ public class XMLExporterTest {
 			printFaildDocument(result);
 			fail();
 		}
-		invoiceRequest = exporter.getExistingXmlModel(
-			NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
+		invoiceRequest = exporter
+				.getExistingXmlModel(NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
 		assertTrue(invoiceRequest.get() instanceof ch.fd.invoice450.request.RequestType);
-		balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload()
-			.getBody().getTiersGarant().getBalance();
+		balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().getBody().getTiersGarant()
+				.getBalance();
 		assertNotNull(balance);
 		assertEquals(5238.06, balance.getAmountPrepaid(), 0.0001);
 		assertEquals(20.0, balance.getAmountDue(), 0.0001);
 		assertEquals(5238.06, balance.getAmount(), 0.0001);
 		assertEquals(20.0, balance.getAmountReminder(), 0.0001);
 	}
-	
+
 	@Test
-	public void doExportExisting45Test() throws IOException{
+	public void doExportExisting45Test() throws IOException {
 		TestSzenario szenario = TestData.getTestSzenarioInstance();
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_45_RNR);
 		existing.addZahlung(new Money(1.0), "test", new TimeTool());
 		XMLExporter exporter = new XMLExporter();
-		Document result =
-			exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
+		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
 		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
-		Optional<?> invoiceRequest = exporter.getExistingXmlModel(
-			NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
+		Optional<?> invoiceRequest = exporter
+				.getExistingXmlModel(NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
 		assertTrue(invoiceRequest.get() instanceof ch.fd.invoice450.request.RequestType);
-		BalanceTGType balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get())
-			.getPayload().getBody().getTiersGarant().getBalance();
+		BalanceTGType balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().getBody()
+				.getTiersGarant().getBalance();
 		assertNotNull(balance);
-		assertFalse(
-			((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().isStorno());
+		assertFalse(((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().isStorno());
 		assertEquals(1.00, balance.getAmountPrepaid(), 0.0001);
-		
+
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.STORNO, true);
 		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
-		invoiceRequest = exporter.getExistingXmlModel(
-			NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
+		invoiceRequest = exporter
+				.getExistingXmlModel(NoPoUtil.loadAsIdentifiable(existing, IInvoice.class).orElse(null), "4.5");
 		assertTrue(invoiceRequest.get() instanceof ch.fd.invoice450.request.RequestType);
-		balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload()
-			.getBody().getTiersGarant().getBalance();
+		balance = ((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().getBody().getTiersGarant()
+				.getBalance();
 		assertNotNull(balance);
-		assertTrue(
-			((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().isStorno());
+		assertTrue(((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).getPayload().isStorno());
 		assertEquals(0.00, balance.getAmountPrepaid(), 0.0001);
 	}
-	
-	private String getTempDestination(){
+
+	private String getTempDestination() {
 		return CoreHub.getTempDir().getAbsolutePath() + File.separator + "tarmedTest.xml";
 	}
-	
-	private void printFaildDocument(Document result) throws IOException{
+
+	private void printFaildDocument(Document result) throws IOException {
 		XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
 		xout.output(result, System.err);
 	}

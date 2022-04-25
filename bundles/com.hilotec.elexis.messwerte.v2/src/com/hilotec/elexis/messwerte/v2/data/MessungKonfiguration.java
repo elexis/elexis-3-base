@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
+ *    A. Kaufmann - initial implementation
  *    G. Weirich - added layout option
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data;
@@ -58,11 +58,11 @@ import ch.rgw.tools.ExHandler;
 
 public class MessungKonfiguration {
 	public static final String CONFIG_FILENAME = "messwerte_v2.xml"; //$NON-NLS-1$
-	
+
 	public static final String ELEMENT_VAR = "var"; //$NON-NLS-1$
 	public static final String ELEMENT_FORMULA = "formula"; //$NON-NLS-1$
 	public static final String ELEMENT_DATATYPE = "datatype"; //$NON-NLS-1$
-	
+
 	// Design
 	public static final String ELEMENT_LAYOUTDESIGN = "design"; //$NON-NLS-1$
 	public static final String ELEMENT_LAYOUTLABEL = "label"; //$NON-NLS-1$
@@ -83,11 +83,11 @@ public class MessungKonfiguration {
 	public static final String ATTR_TYPE = "type"; //$NON-NLS-1$
 	public static final String ATTR_VALUE = "value"; //$NON-NLS-1$
 	public static final String ATTR_ATTRIBUTE = "attribute"; //$NON-NLS-1$
-	
+
 	// Formulas
 	public static final String ATTR_SOURCE = "source"; //$NON-NLS-1$
 	public static final String ATTR_INTERPRETER = "interpreter"; //$NON-NLS-1$
-	
+
 	// Datatypes
 	public static final String ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
 	public static final String ATTR_DEFAULT = "default"; //$NON-NLS-1$
@@ -105,7 +105,7 @@ public class MessungKonfiguration {
 	public static final String ATTR_ROUNDMODE = "roundingmode"; //$NON-NLS-1$
 	public static final String ATTR_COUNTERMODE = "countermode"; //$NON-NLS-1$
 	public static final String ATTR_STARTVALUE = "startvalue"; //$NON-NLS-1$
-	
+
 	public static final String NAME_BOOLFIELD = "boolfield"; //$NON-NLS-1$
 	public static final String NAME_CALCFIELD = "calcfield"; //$NON-NLS-1$
 	public static final String NAME_COUNTERFIELD = "counterfield"; //$NON-NLS-1$
@@ -115,25 +115,25 @@ public class MessungKonfiguration {
 	public static final String NAME_SCALEFIELD = "scalefield"; //$NON-NLS-1$
 	public static final String NAME_NUMFIELD = "numfield"; //$NON-NLS-1$
 	public static final String NAME_STRINGFIELD = "strfield"; //$NON-NLS-1$
-	
+
 	private static MessungKonfiguration the_one_and_only_instance = null;
 	ArrayList<MessungTyp> types;
 	private final Log log = Log.get("DataConfiguration"); //$NON-NLS-1$
 	private final String defaultFile;
-	
-	public static MessungKonfiguration getInstance(){
+
+	public static MessungKonfiguration getInstance() {
 		if (the_one_and_only_instance == null) {
 			the_one_and_only_instance = new MessungKonfiguration();
 		}
 		return the_one_and_only_instance;
 	}
-	
-	private MessungKonfiguration(){
+
+	private MessungKonfiguration() {
 		types = new ArrayList<MessungTyp>();
-		String bundle_config_xml = PlatformHelper.getBasePath(Activator.PLUGIN_ID) + File.separator
-			+ "rsc" + File.separator + CONFIG_FILENAME;
+		String bundle_config_xml = PlatformHelper.getBasePath(Activator.PLUGIN_ID) + File.separator + "rsc"
+				+ File.separator + CONFIG_FILENAME;
 		String user_config_xml = CoreHub.localCfg.get(Preferences.CONFIG_FILE,
-			CoreHub.getWritableUserDir() + File.separator + CONFIG_FILENAME);
+				CoreHub.getWritableUserDir() + File.separator + CONFIG_FILENAME);
 		File f = new File(user_config_xml);
 		if (f.exists()) {
 			defaultFile = f.getAbsolutePath();
@@ -142,8 +142,8 @@ public class MessungKonfiguration {
 		}
 		LoggerFactory.getLogger(getClass()).info("using config {}", defaultFile);
 	}
-	
-	private Panel createPanelFromNode(Element n){
+
+	private Panel createPanelFromNode(Element n) {
 		String type = n.getAttribute(ATTR_TYPE);
 		Panel ret = new Panel(type);
 		LinkedList<String> attributeList = new LinkedList<String>();
@@ -155,7 +155,7 @@ public class MessungKonfiguration {
 				if (nodename.equals(ATTR_ATTRIBUTE)) {
 					NamedNodeMap na = node.getAttributes();
 					String nx = na.getNamedItem(ATTR_NAME).getNodeValue() + "=" //$NON-NLS-1$
-						+ na.getNamedItem(ATTR_VALUE).getNodeValue();
+							+ na.getNamedItem(ATTR_VALUE).getNodeValue();
 					attributeList.add(nx);
 				} else if (nodename.equals(ELEMENT_LAYOUTPANEL)) {
 					panelsList.add(createPanelFromNode((Element) node));
@@ -166,48 +166,47 @@ public class MessungKonfiguration {
 		ret.setAttributes(attributeList.toArray(new String[0]));
 		ret.setPanels(panelsList.toArray(new Panel[0]));
 		return ret;
-		
+
 	}
-	
-	public Boolean readFromXML(){
+
+	public Boolean readFromXML() {
 		return readFromXML(defaultFile);
 	}
-	
-	public Boolean readFromXML(String path){
+
+	public Boolean readFromXML(String path) {
 		types.clear();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		Document doc;
 		SchemaFactory sfac = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		
+
 		if (path == null) {
 			path = defaultFile;
 		}
 		try {
-			String schemapath =
-				PlatformHelper.getBasePath("com.hilotec.elexis.messwerte.v2") + File.separator //$NON-NLS-1$
+			String schemapath = PlatformHelper.getBasePath("com.hilotec.elexis.messwerte.v2") + File.separator //$NON-NLS-1$
 					+ "rsc" + File.separator + "messwerte.xsd"; //$NON-NLS-1$ //$NON-NLS-2$
 			Schema s = sfac.newSchema(new File(schemapath));
 			factory.setSchema(s);
-			
+
 			builder = factory.newDocumentBuilder();
 			builder.setErrorHandler(new ErrorHandler() {
-				public void error(SAXParseException exception) throws SAXException{
+				public void error(SAXParseException exception) throws SAXException {
 					throw exception;
 				}
-				
-				public void fatalError(SAXParseException exception) throws SAXException{
+
+				public void fatalError(SAXParseException exception) throws SAXException {
 					throw exception;
 				}
-				
-				public void warning(SAXParseException exception) throws SAXException{
+
+				public void warning(SAXParseException exception) throws SAXException {
 					throw exception;
 				}
 			});
 			doc = builder.parse(new FileInputStream(path));
-			
+
 			Element rootel = doc.getDocumentElement();
-			
+
 			// datatype-Deklarationen durchgehen und einlesen
 			NodeList nl = rootel.getElementsByTagName(ELEMENT_DATATYPE);
 			for (int i = 0; i < nl.getLength(); i++) {
@@ -227,9 +226,9 @@ public class MessungKonfiguration {
 					dt = new MessungTyp(name, title, description, panel);
 				} else {
 					dt = new MessungTyp(name, title, description);
-					
+
 				}
-				
+
 				// Einzlene Felddeklarationen durchgehen
 				NodeList dtf = edt.getChildNodes();
 				for (int j = 0; j < dtf.getLength(); j++) {
@@ -237,54 +236,50 @@ public class MessungKonfiguration {
 					if (ndtf.getNodeType() != Node.ELEMENT_NODE) {
 						continue;
 					}
-					
+
 					Element edtf = (Element) ndtf;
 					String fn = edtf.getAttribute(ATTR_NAME);
 					String ft = edtf.getAttribute(ATTR_TITLE);
 					if (ft.equals("")) { //$NON-NLS-1$
 						ft = fn;
 					}
-					
+
 					// OldMesswertTyp dft;
 					IMesswertTyp typ;
 					if (edtf.getNodeName().equals(NAME_NUMFIELD)) {
-						MesswertTypNum num =
-							new MesswertTypNum(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						MesswertTypNum num = new MesswertTypNum(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = num;
 						if (edtf.hasAttribute(ATTR_DEFAULT))
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
-						
+
 						if (edtf.hasAttribute(ATTR_FORMATPATTERN))
 							num.setFormatPattern(edtf.getAttribute(ATTR_FORMATPATTERN));
-						
+
 						if (edtf.hasAttribute(ATTR_DEFAULT))
-							((MesswertTypNum) typ)
-								.setRoundingMode(edtf.getAttribute(ATTR_ROUNDMODE));
-						
+							((MesswertTypNum) typ).setRoundingMode(edtf.getAttribute(ATTR_ROUNDMODE));
+
 					} else if (edtf.getNodeName().equals(NAME_BOOLFIELD)) {
 						typ = new MesswertTypBool(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						if (edtf.hasAttribute(ATTR_DEFAULT))
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
-						
+
 					} else if (edtf.getNodeName().equals(NAME_STRINGFIELD)) {
-						MesswertTypStr str =
-							new MesswertTypStr(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						MesswertTypStr str = new MesswertTypStr(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = str;
-						
+
 						if (edtf.hasAttribute(ATTR_DEFAULT))
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
-						
+
 						if (edtf.hasAttribute(ATTR_LINES))
 							str.setLines(Integer.parseInt(edtf.getAttribute(ATTR_LINES)));
-						
+
 					} else if (edtf.getNodeName().equals(NAME_ENUMFIELD)) {
-						MesswertTypEnum en =
-							new MesswertTypEnum(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						MesswertTypEnum en = new MesswertTypEnum(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = en;
-						
+
 						if (edtf.hasAttribute(ATTR_DEFAULT))
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
-						
+
 						NodeList children = edtf.getChildNodes();
 						for (int k = 0; k < children.getLength(); k++) {
 							if (!ELEMENT_ENUM_OPTION.equals(children.item(k).getNodeName())) {
@@ -293,12 +288,12 @@ public class MessungKonfiguration {
 							if (children.item(k).getNodeType() != Node.ELEMENT_NODE) {
 								continue;
 							}
-							
+
 							Element choice = (Element) children.item(k);
 							en.addChoice(choice.getAttribute(ATTR_TITLE),
-								Integer.parseInt(choice.getAttribute(ATTR_VALUE)));
+									Integer.parseInt(choice.getAttribute(ATTR_VALUE)));
 						}
-						
+
 						// Wenn kein vernuenftiger Standardwert angegeben wurde
 						// nehmen wir die erste Auswahlmoeglichkeit
 						if (typ.getDefault(null).equals("")) { //$NON-NLS-1$
@@ -313,60 +308,55 @@ public class MessungKonfiguration {
 							}
 						}
 					} else if (edtf.getNodeName().equals(NAME_CALCFIELD)) {
-						MesswertTypCalc calc =
-							new MesswertTypCalc(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						MesswertTypCalc calc = new MesswertTypCalc(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = calc;
 						if (edtf.hasAttribute(ATTR_FORMATPATTERN))
 							calc.setFormatPattern(edtf.getAttribute(ATTR_FORMATPATTERN));
-						
+
 						if (edtf.hasAttribute(ATTR_DEFAULT))
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
-						
+
 					} else if (edtf.getNodeName().equals(NAME_DATAFIELD)) {
-						MesswertTypData data =
-							new MesswertTypData(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						MesswertTypData data = new MesswertTypData(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = data;
-						
+
 						data.setRefType(edtf.getAttribute(ATTR_TYPE));
 					} else if (edtf.getNodeName().equals(NAME_SCALEFIELD)) {
-						MesswertTypScale scale =
-							new MesswertTypScale(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						MesswertTypScale scale = new MesswertTypScale(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = scale;
 						if (edtf.hasAttribute(ATTR_DEFAULT))
 							scale.setDefault(edtf.getAttribute(ATTR_DEFAULT));
-						
+
 						if (edtf.hasAttribute(ATTR_MIN))
 							scale.setMin(Integer.parseInt(edtf.getAttribute(ATTR_MIN)));
-						
+
 						if (edtf.hasAttribute(ATTR_MAX))
 							scale.setMax(Integer.parseInt(edtf.getAttribute(ATTR_MAX)));
-						
+
 					} else if (edtf.getNodeName().equals(NAME_DATEFIELD)) {
-						MesswertTypDate date =
-							new MesswertTypDate(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						MesswertTypDate date = new MesswertTypDate(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = date;
 						if (edtf.hasAttribute(ATTR_DEFAULT))
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
-						
+
 					} else if (edtf.getNodeName().equals(NAME_COUNTERFIELD)) {
-						MesswertTypCount counter =
-							new MesswertTypCount(fn, ft, edtf.getAttribute(ATTR_UNIT));
+						MesswertTypCount counter = new MesswertTypCount(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						counter.setCounterMode(edtf.getAttribute(ATTR_COUNTERMODE));
 						typ = counter;
 						if (edtf.hasAttribute(ATTR_FORMATPATTERN))
 							counter.setFormatPattern(edtf.getAttribute(ATTR_FORMATPATTERN));
-						
+
 						if (edtf.hasAttribute(ATTR_STARTVALUE))
 							counter.setStartValue(edtf.getAttribute(ATTR_STARTVALUE));
-						
+
 					} else if (edtf.getNodeName().equals(ELEMENT_LAYOUTDESIGN)) {
 						continue;
 					} else {
 						log.log(MessageFormat.format(Messages.MessungKonfiguration_UnknownFieldType,
-							edtf.getNodeName()), Log.ERRORS);
+								edtf.getNodeName()), Log.ERRORS);
 						continue;
 					}
-					
+
 					String attr;
 					attr = ATTR_LOW_ALERT;
 					if (edtf.hasAttribute(attr)) {
@@ -384,12 +374,11 @@ public class MessungKonfiguration {
 					if (edtf.hasAttribute(attr)) {
 						typ.setHighAlertValue(edtf.getAttribute(attr));
 					}
-					
+
 					Element formula = (Element) edtf.getElementsByTagName(ELEMENT_FORMULA).item(0);
 					if (formula != null)
-						typ.setFormula(formula.getTextContent(),
-							formula.getAttribute(ATTR_INTERPRETER));
-					
+						typ.setFormula(formula.getTextContent(), formula.getAttribute(ATTR_INTERPRETER));
+
 					NodeList children = edtf.getElementsByTagName(ELEMENT_VAR);
 					if (children != null) {
 						for (int k = 0; k < children.getLength(); k++) {
@@ -398,8 +387,7 @@ public class MessungKonfiguration {
 								continue;
 							}
 							Element var = (Element) n;
-							typ.addVariable(var.getAttribute(ATTR_NAME),
-								var.getAttribute(ATTR_SOURCE));
+							typ.addVariable(var.getAttribute(ATTR_NAME), var.getAttribute(ATTR_SOURCE));
 						}
 					}
 					dt.addField(typ);
@@ -407,31 +395,30 @@ public class MessungKonfiguration {
 				types.add(dt);
 			}
 			return true;
-			
+
 		} catch (Error e) {
 			log.log(Messages.MessungKonfiguration_ErrorReadXML + e.getMessage(), Log.ERRORS);
 		} catch (SAXParseException e) {
 			ExHandler.handle(e);
-			SWTHelper.showError(Messages.MessungKonfiguration_ErrorInXML,
-				MessageFormat.format(Messages.MessungKonfiguration_ErrorInXMLOnLine, path,
-					e.getLineNumber(), e.getMessage()));
-			log.log(Messages.MessungKonfiguration_ErrorReadXML + MessageFormat.format(
-				Messages.MessungKonfiguration_ErrorReadXMLFailure + e.getMessage(),
-				e.getLineNumber()), Log.ERRORS);
+			SWTHelper.showError(Messages.MessungKonfiguration_ErrorInXML, MessageFormat
+					.format(Messages.MessungKonfiguration_ErrorInXMLOnLine, path, e.getLineNumber(), e.getMessage()));
+			log.log(Messages.MessungKonfiguration_ErrorReadXML + MessageFormat
+					.format(Messages.MessungKonfiguration_ErrorReadXMLFailure + e.getMessage(), e.getLineNumber()),
+					Log.ERRORS);
 		} catch (Exception e) {
 			ExHandler.handle(e);
 			log.log(Messages.MessungKonfiguration_ErrorReadXML + e.getMessage(), Log.ERRORS);
-			
+
 		}
-		
+
 		return false;
 	}
-	
-	public ArrayList<MessungTyp> getTypes(){
+
+	public ArrayList<MessungTyp> getTypes() {
 		return types;
 	}
-	
-	public MessungTyp getTypeByName(String name){
+
+	public MessungTyp getTypeByName(String name) {
 		for (MessungTyp t : types) {
 			if (t.getName().compareTo(name) == 0) {
 				return t;

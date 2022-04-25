@@ -32,9 +32,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import ch.gpb.elexis.cst.Messages;
 
 /**
- * @author daniel ludin ludin@swissonline.ch
- * 27.06.2015
- * 
+ * @author daniel ludin ludin@swissonline.ch 27.06.2015
+ *
  */
 
 public class ThemenblockDetailDialog extends TitleAreaDialog {
@@ -93,12 +92,12 @@ public class ThemenblockDetailDialog extends TitleAreaDialog {
 		GridData dataLastName = new GridData();
 		dataLastName.grabExcessHorizontalSpace = true;
 		dataLastName.horizontalAlignment = GridData.FILL;
-		
+
 		txtDescription = new Text(container, SWT.BORDER);
 		txtDescription.setLayoutData(dataLastName);
 	}
-	
-	private Date getDateFromCompact(String sDate){
+
+	private Date getDateFromCompact(String sDate) {
 		DateFormat df = new SimpleDateFormat("yyyyMMdd");
 
 		try {
@@ -110,7 +109,6 @@ public class ThemenblockDetailDialog extends TitleAreaDialog {
 		return null;
 	}
 
-	
 	@Override
 	protected boolean isResizable() {
 		return true;

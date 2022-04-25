@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.icpc.views;
 
@@ -27,29 +27,30 @@ public class ICPCCodesView extends ViewPart {
 	ChapterDisplay[] chapters;
 	ShortlistComposite shortlistComposite;
 	CTabFolder ctab;
-	
-	public ICPCCodesView(){}
-	
+
+	public ICPCCodesView() {
+	}
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		ctab = new CTabFolder(parent, SWT.NONE);
 		chapters = new ChapterDisplay[Messages.classes.length];
-		
+
 		for (String chapter : Messages.classes) {
 			CTabItem item = new CTabItem(ctab, SWT.NONE);
 			item.setText(chapter.substring(0, 1));
 			item.setToolTipText(chapter.substring(3));
 		}
-		
+
 		CTabItem shortlistCTabItem = new CTabItem(ctab, SWT.NONE);
 		shortlistCTabItem.setText("Shortlist");
 		shortlistComposite = new ShortlistComposite(ctab, SWT.NONE);
 		shortlistCTabItem.setControl(shortlistComposite);
-		
+
 		ctab.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				int idx = ctab.getSelectionIndex();
 				if (idx >= Messages.classes.length) {
 					// if shortlist
@@ -61,22 +62,22 @@ public class ICPCCodesView extends ViewPart {
 				}
 				chapters[idx].setComponent(mode);
 			}
-			
+
 		});
 		ctab.setSelection(Messages.classes.length);
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		ctab.setFocus();
 	}
-	
-	public void setComponent(String mode){
+
+	public void setComponent(String mode) {
 		this.mode = mode;
 		int idx = ctab.getSelectionIndex();
 		if (idx > -1 && idx < chapters.length) {
 			chapters[ctab.getSelectionIndex()].setComponent(mode);
 		}
 	}
-	
+
 }

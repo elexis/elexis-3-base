@@ -1,14 +1,14 @@
 /*******************************************************************************
- * 
- * The authorship of this code and the accompanying materials is held by 
- * medshare GmbH, Switzerland. All rights reserved. 
+ *
+ * The authorship of this code and the accompanying materials is held by
+ * medshare GmbH, Switzerland. All rights reserved.
  * http://medshare.net
- * 
- * This code and the accompanying materials are made available under 
+ *
+ * This code and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0
- * 
+ *
  * Year of publication: 2012
- * 
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
@@ -33,33 +33,33 @@ import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
  */
 public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 	private String defVal = ""; //$NON-NLS-1$
-	
+
 	/**
 	 * Decimal Format für die Anzeige
 	 */
 	DecimalFormat df = new DecimalFormat("#0.#"); //$NON-NLS-1$
-	
-	public MesswertTypCalc(String n, String t, String u){
+
+	public MesswertTypCalc(String n, String t, String u) {
 		super(n, t, u);
 	}
-	
-	public String getFormatPattern(){
+
+	public String getFormatPattern() {
 		return df.toPattern();
 	}
-	
-	public void setFormatPattern(String pattern){
+
+	public void setFormatPattern(String pattern) {
 		df.applyPattern(pattern);
 	}
-	
-	public String getRoundingMode(){
+
+	public String getRoundingMode() {
 		return df.getRoundingMode().toString();
 	}
-	
-	public void setRoundingMode(String roundingMode){
+
+	public void setRoundingMode(String roundingMode) {
 		df.setRoundingMode(RoundingMode.valueOf(roundingMode));
 	}
-	
-	public String erstelleDarstellungswert(Messwert messwert){
+
+	public String erstelleDarstellungswert(Messwert messwert) {
 		String wert = defVal;
 		try {
 			wert = evalateFormula(formula, messwert, defVal);
@@ -76,24 +76,24 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 			return wert.toString();
 		}
 	}
-	
-	public String getDefault(Messwert messwert){
+
+	public String getDefault(Messwert messwert) {
 		return evalateFormula(formula, messwert, defVal);
 	}
-	
-	public void setDefault(String str){
+
+	public void setDefault(String str) {
 		defVal = str;
 	}
-	
-	public Widget createWidget(Composite parent, Messwert messwert){
+
+	public Widget createWidget(Composite parent, Messwert messwert) {
 		widget = SWTHelper.createText(parent, 1, SWT.NONE);
 		((Text) widget).setText(erstelleDarstellungswert(messwert));
 		((Text) widget).setEditable(false);
 		setShown(true);
 		return widget;
 	}
-	
-	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
+
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable) {
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
 		if (!dft.getUnit().equals("")) { //$NON-NLS-1$
@@ -102,25 +102,25 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 		TextField tf = new TextField(parent, ActiveControl.READONLY, labelText);
 		tf.setText(erstelleDarstellungswert(messwert));
 		return tf;
-		
+
 	}
-	
-	public void calcNewValue(Messwert messwert){
+
+	public void calcNewValue(Messwert messwert) {
 		((Text) widget).setText(erstelleDarstellungswert(messwert));
 		super.checkInput(messwert, messwert.getTyp().getValidpattern());
 	}
-	
-	public String getDarstellungswert(String wert){
+
+	public String getDarstellungswert(String wert) {
 		return wert;
 	}
-	
+
 	@Override
-	public void saveInput(Messwert messwert){
+	public void saveInput(Messwert messwert) {
 		messwert.setWert(erstelleDarstellungswert(messwert));
 	}
-	
+
 	@Override
-	public boolean checkInput(Messwert messwert, String pattern){
+	public boolean checkInput(Messwert messwert, String pattern) {
 		super.checkInput(messwert, pattern);
 		String value = ((Text) widget).getText();
 		if (value.matches(pattern) || pattern == null) {
@@ -128,9 +128,9 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 		}
 		return false;
 	}
-	
+
 	@Override
-	public String getActualValue(){
+	public String getActualValue() {
 		return ((Text) widget).getText();
 	}
 }

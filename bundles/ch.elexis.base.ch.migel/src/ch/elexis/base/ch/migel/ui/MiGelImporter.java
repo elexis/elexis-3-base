@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    T. Huster - copied from ch.elexis.base.ch.artikel
- *    
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.migel.ui;
 
@@ -52,21 +52,21 @@ public class MiGelImporter extends ImporterPage {
 	boolean bDelete = false;
 	Button bClear;
 	String mode;
-	
+
 	private enum ImportFields {
-			POSNUMER(0), NAME(1), UNIT(2), PRICE(3), CATEGORY(4), SUBCATEGORY(5), AMOUNT(6);
-		
+		POSNUMER(0), NAME(1), UNIT(2), PRICE(3), CATEGORY(4), SUBCATEGORY(5), AMOUNT(6);
+
 		private int index;
-		
-		ImportFields(int index){
+
+		ImportFields(int index) {
 			this.index = index;
 		}
-		
-		private boolean exists(String[] line){
+
+		private boolean exists(String[] line) {
 			return line.length > index;
 		}
-		
-		public String getStringValue(String[] line){
+
+		public String getStringValue(String[] line) {
 			if (exists(line)) {
 				if (this == NAME && line[index].contains("\n")) {
 					line[index] = getJoinedFirstLines(line[index]);
@@ -76,8 +76,8 @@ public class MiGelImporter extends ImporterPage {
 				return "";
 			}
 		}
-		
-		private String getJoinedFirstLines(String string){
+
+		private String getJoinedFirstLines(String string) {
 			String[] parts = string.split("\n");
 			if (parts.length > 1) {
 				StringBuilder ret = new StringBuilder();
@@ -102,8 +102,8 @@ public class MiGelImporter extends ImporterPage {
 				return string;
 			}
 		}
-		
-		public Money getMoneyValue(String[] line){
+
+		public Money getMoneyValue(String[] line) {
 			if (exists(line)) {
 				try {
 					return new Money(getStringValue(line));
@@ -113,23 +113,24 @@ public class MiGelImporter extends ImporterPage {
 			}
 			return new Money();
 		}
-		
+
 	}
-	
-	public MiGelImporter(){}
-	
+
+	public MiGelImporter() {
+	}
+
 	@Override
-	public String getTitle(){
+	public String getTitle() {
 		return "MiGeL"; //$NON-NLS-1$
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return Messages.MiGelImporter_PleaseSelectFile;
 	}
-	
+
 	@Override
-	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
 		mode = Messages.MiGelImporter_ModeUpdateAdd;
 		if (bDelete == true) {
 			IQuery<IArticle> query = CoreModelServiceHolder.get().getQuery(IArticle.class, true);
@@ -150,14 +151,14 @@ public class MiGelImporter extends ImporterPage {
 		}
 		return Status.CANCEL_STATUS;
 	}
-	
+
 	@Override
-	public void collect(){
+	public void collect() {
 		bDelete = bClear.getSelection();
 	}
-	
+
 	@Override
-	public Composite createPage(final Composite parent){
+	public Composite createPage(final Composite parent) {
 		Composite ret = new ImporterPage.FileBasedImporter(parent, this);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		bClear = new Button(parent, SWT.CHECK | SWT.WRAP);
@@ -165,13 +166,13 @@ public class MiGelImporter extends ImporterPage {
 		bClear.setSelection(true);
 		bClear.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		return ret;
-		
+
 	}
-	
+
 	static Pattern pattern = Pattern.compile("([a-z0-9A-Z])([A-Z][a-z])");
-	
+
 	private IStatus importCSV(final File file, final IProgressMonitor monitor)
-		throws FileNotFoundException, IOException{
+			throws FileNotFoundException, IOException {
 		InputStreamReader isr = new InputStreamReader(new FileInputStream(file), SRC_ENCODING);
 		CSVReader reader = new CSVReader(isr);
 		String[] line;
@@ -184,11 +185,11 @@ public class MiGelImporter extends ImporterPage {
 					category = ImportFields.CATEGORY.getStringValue(line);
 				}
 				// category only 1 line and max 80 char
-				if(!category.isEmpty()) {
+				if (!category.isEmpty()) {
 					text.append(StringTool.getFirstLine(category, 80, "[\\n\\r]")).append(" - ");
 				}
 				text.append(ImportFields.NAME.getStringValue(line));
-				
+
 				String amount = ImportFields.AMOUNT.getStringValue(line);
 				String unit = ImportFields.UNIT.getStringValue(line);
 				// try to parse amount from unit
@@ -203,20 +204,19 @@ public class MiGelImporter extends ImporterPage {
 						unit = unitWithoutDigit.toString();
 					}
 				}
-				
+
 				String code = ImportFields.POSNUMER.getStringValue(line);
 				String shortname = getShortname(text.toString());
-				
-				IArticle migelArticle =
-					new IArticleBuilder(CoreModelServiceHolder.get(), shortname,
+
+				IArticle migelArticle = new IArticleBuilder(CoreModelServiceHolder.get(), shortname,
 						ImportFields.POSNUMER.getStringValue(line), ArticleTyp.MIGEL).build();
-				
-				CoreModelServiceHolder.get().setEntityProperty("id",
-					MiGelCodeElementService.MIGEL_NAME + code, migelArticle);
+
+				CoreModelServiceHolder.get().setEntityProperty("id", MiGelCodeElementService.MIGEL_NAME + code,
+						migelArticle);
 				migelArticle.setPackageUnit(unit);
 				migelArticle.setSellingPrice(ImportFields.PRICE.getMoneyValue(line));
 				migelArticle.setExtInfo("FullText", text.toString());
-				
+
 				if (!amount.isEmpty()) {
 					try {
 						double amountDbl = Double.parseDouble(amount);
@@ -232,8 +232,8 @@ public class MiGelImporter extends ImporterPage {
 		monitor.done();
 		return Status.OK_STATUS;
 	}
-	
-	private String getShortname(String text){
+
+	private String getShortname(String text) {
 		String shortname = StringTool.getFirstLine(text, 120, "[\\n\\r]");
 		Matcher matcher = pattern.matcher(shortname);
 		StringBuffer sb = new StringBuffer();
@@ -243,13 +243,14 @@ public class MiGelImporter extends ImporterPage {
 		matcher.appendTail(sb);
 		return sb.toString();
 	}
-	
-	private boolean isFieldsLine(String[] line){
-		// line[0] contains the code, which always contains digits, so if not its is probably the description
+
+	private boolean isFieldsLine(String[] line) {
+		// line[0] contains the code, which always contains digits, so if not its is
+		// probably the description
 		return containsDigits(line[0]);
 	}
-	
-	private boolean containsDigits(String string){
+
+	private boolean containsDigits(String string) {
 		for (char character : string.toCharArray()) {
 			if (Character.isDigit(character)) {
 				return true;

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -37,9 +37,9 @@ import ch.rgw.tools.ExHandler;
 
 /**
  * Dislplay details (text., links, keywords) of a note
- * 
+ *
  * @author gerry
- * 
+ *
  */
 public class NotesDetail extends Composite {
 	private ETFTextPlugin etf;
@@ -49,44 +49,44 @@ public class NotesDetail extends Composite {
 	FormToolkit tk = UiDesk.getToolkit();
 	private IAction newRefAction, delRefAction;
 	Note actNote;
-	
-	NotesDetail(Composite parent){
+
+	NotesDetail(Composite parent) {
 		super(parent, SWT.NONE);
 		etf = new ETFTextPlugin();
-		
+
 		setLayout(new GridLayout());
 		SashForm sash = new SashForm(this, SWT.VERTICAL);
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		fNote = tk.createScrolledForm(sash);
 		fNote.getBody().setLayout(new GridLayout());
-		etf.createContainer(fNote.getBody(), new SaveCallback()).setLayoutData(
-			SWTHelper.getFillGridData(1, true, 1, true));
+		etf.createContainer(fNote.getBody(), new SaveCallback())
+				.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		etf.setSaveOnFocusLost(true);
 		tKeywords = tk.createText(fNote.getBody(), ""); //$NON-NLS-1$
 		tKeywords.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tKeywords.addFocusListener(new FocusAdapter() {
-			
+
 			@Override
-			public void focusLost(FocusEvent e){
+			public void focusLost(FocusEvent e) {
 				if (actNote != null) {
 					actNote.setKeywords(tKeywords.getText());
 				}
 				super.focusLost(e);
 			}
-			
+
 		});
 		fRefs = tk.createScrolledForm(sash);
 		fRefs.getBody().setLayout(new GridLayout());
 		lRefs = new List(fRefs.getBody(), SWT.SINGLE);
 		lRefs.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDoubleClick(MouseEvent e){
+			public void mouseDoubleClick(MouseEvent e) {
 				String[] sel = lRefs.getSelection();
 				if (sel.length > 0) {
 					execute(sel[0]);
 				}
 			}
-			
+
 		});
 		lRefs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		fRefs.setText(Messages.NotesDetail_xrefs);
@@ -95,12 +95,10 @@ public class NotesDetail extends Composite {
 		fRefs.getToolBarManager().add(delRefAction);
 		fRefs.updateToolBar();
 		tk.adapt(lRefs, true, true);
-		sash.setWeights(new int[] {
-			80, 20
-		});
+		sash.setWeights(new int[] { 80, 20 });
 	}
-	
-	public void setNote(Note note){
+
+	public void setNote(Note note) {
 		actNote = note;
 		fNote.setText(note.get("Title")); //$NON-NLS-1$
 		etf.loadFromByteArray(note.getContent(), false);
@@ -111,13 +109,13 @@ public class NotesDetail extends Composite {
 			lRefs.add(s);
 		}
 	}
-	
+
 	/**
 	 * Run a program to view an external file
-	 * 
+	 *
 	 * @param filename
 	 */
-	public void execute(String filename){
+	public void execute(String filename) {
 		try {
 			int r = filename.lastIndexOf('.');
 			String ext = ""; //$NON-NLS-1$
@@ -131,23 +129,23 @@ public class NotesDetail extends Composite {
 				if (Program.launch(filename) == false) {
 					Runtime.getRuntime().exec(filename);
 				}
-				
+
 			}
-			
+
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			SWTHelper.showError(Messages.NotesDetail_couldNotLaunch, ex.getMessage());
 		}
 	}
-	
-	private void makeActions(){
+
+	private void makeActions() {
 		newRefAction = new Action(Messages.NotesDetail_newActionCaption) {
 			{
 				setToolTipText(Messages.NotesDetail_newActionToolTip);
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 			}
-			
-			public void run(){
+
+			public void run() {
 				if (new AddLinkDialog(getShell(), actNote).open() == Dialog.OK) {
 					setNote(actNote);
 				}
@@ -158,30 +156,30 @@ public class NotesDetail extends Composite {
 				setToolTipText(Messages.NotesDetail_deleteActionToolTip);
 				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 			}
-			
-			public void run(){
+
+			public void run() {
 				String actRef = lRefs.getSelection()[0];
 				if (SWTHelper.askYesNo(Messages.NotesDetail_deleteConfirmCaption,
-					Messages.NotesDetail_deleteConfirmMessage)) {
+						Messages.NotesDetail_deleteConfirmMessage)) {
 					actNote.removeRef(actRef);
 					setNote(actNote);
 				}
 			}
 		};
 	}
-	
+
 	class SaveCallback implements ICallback {
-		
-		public void save(){
+
+		public void save() {
 			byte[] cnt = etf.storeToByteArray();
 			actNote.setContent(cnt);
-			
+
 		}
-		
-		public boolean saveAs(){
+
+		public boolean saveAs() {
 			// TODO Auto-generated method stub
 			return false;
 		}
-		
+
 	}
 }

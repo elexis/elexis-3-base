@@ -23,9 +23,9 @@ import ch.unibe.iam.scg.archie.model.RegexValidation;
  * <p>
  * A simple FieldComposite containing a checkbox button.
  * </p>
- * 
+ *
  * $Id: CheckboxWidget.java 764 2009-07-24 11:20:03Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 764 $
@@ -33,12 +33,9 @@ import ch.unibe.iam.scg.archie.model.RegexValidation;
 public class CheckboxWidget extends AbstractWidget {
 
 	/**
-	 * @param parent
-	 *            Composite
-	 * @param style
-	 *            Integer
-	 * @param labelText
-	 *            String
+	 * @param parent    Composite
+	 * @param style     Integer
+	 * @param labelText String
 	 */
 	public CheckboxWidget(Composite parent, int style, final String labelText, RegexValidation regex) {
 		super(parent, style, labelText, regex);

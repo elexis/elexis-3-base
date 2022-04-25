@@ -10,7 +10,6 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.preferences;
 
-
 import java.nio.file.Paths;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -34,139 +33,133 @@ import ch.novcom.elexis.mednet.plugin.MedNet;
 import ch.novcom.elexis.mednet.plugin.MedNetSettings;
 import ch.novcom.elexis.mednet.plugin.messages.MedNetMessages;
 
-
 /**
  * Einstellungen für MedNet Plugin
  */
-public class MainPreferencePage extends FieldEditorPreferencePage implements
-		IWorkbenchPreferencePage {
-	
+public class MainPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+
 	Text exePath;
 	private Button exePathSelection;
-	
-	private Text  purgeInterval;
-	
+
+	private Text purgeInterval;
+
 	/**
 	 * Standard Constructor
 	 */
-	public MainPreferencePage(){
+	public MainPreferencePage() {
 		super(GRID);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
-	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createContents(org.eclipse.swt.widgets
-	 * .Composite)
+	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createContents(org.
+	 * eclipse.swt.widgets .Composite)
 	 */
 	@Override
-	protected Control createContents(Composite parent){
-		
+	protected Control createContents(Composite parent) {
+
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(3, false));
-		
+
 		WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelExePath);
 		exePath = new Text(ret, SWT.BORDER);
 		exePath.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		exePath.setTextLimit(80);
 		exePath.setEnabled(false);
-		if(MedNet.getSettings().getExePath() != null) {
+		if (MedNet.getSettings().getExePath() != null) {
 			exePath.setText(MedNet.getSettings().getExePath().toString());
 		}
-		
+
 		exePathSelection = new Button(ret, SWT.PUSH);
 		exePathSelection.setText("...");
 		exePathSelection.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell());
 				dialog.setText(MedNetMessages.MainPreferences_labelExePath);
-				if(System.getProperty("os.name").contains("Windows")){
-					dialog.setFilterExtensions(new String[] { "*.exe"});
+				if (System.getProperty("os.name").contains("Windows")) {
+					dialog.setFilterExtensions(new String[] { "*.exe" });
 				}
-		        String selected = dialog.open();
-		        exePath.setText(selected);
+				String selected = dialog.open();
+				exePath.setText(selected);
 			}
 		});
-		
 
 		WidgetFactory.createLabel(ret, MedNetMessages.MainPreferences_labelPurgeInterval);
 		purgeInterval = new Text(ret, SWT.BORDER);
 		purgeInterval.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		purgeInterval.setTextLimit(80);
 		purgeInterval.setText(String.valueOf(MedNet.getSettings().getArchivePurgeInterval()));
-		
+
 		purgeInterval.addVerifyListener(new VerifyListener() {
-	        @Override
-	        public void verifyText(VerifyEvent e) {
+			@Override
+			public void verifyText(VerifyEvent e) {
 
-	            Text text = (Text)e.getSource();
+				Text text = (Text) e.getSource();
 
-	            // get old text and create new text by using the VerifyEvent.text
-	            final String oldS = text.getText();
-	            String newS = oldS.substring(0, e.start) + e.text + oldS.substring(e.end);
+				// get old text and create new text by using the VerifyEvent.text
+				final String oldS = text.getText();
+				String newS = oldS.substring(0, e.start) + e.text + oldS.substring(e.end);
 
-	            boolean isInteger = true;
-	            int newInt = -1;
-	            try
-	            {
-	            	newInt = Integer.parseInt(newS);
-	            }
-	            catch(NumberFormatException ex)
-	            {
-	            	isInteger = false;
-	            }
+				boolean isInteger = true;
+				int newInt = -1;
+				try {
+					newInt = Integer.parseInt(newS);
+				} catch (NumberFormatException ex) {
+					isInteger = false;
+				}
 
-	            if(!isInteger || newInt < 0 ){
-	                e.doit = false;
-	            }
-	        }
-	    });
-		
+				if (!isInteger || newInt < 0) {
+					e.doit = false;
+				}
+			}
+		});
+
 		return ret;
-		
+
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
 	 */
 	@Override
-	public boolean performOk(){
+	public boolean performOk() {
 		MedNet.getSettings().setExePath(Paths.get(exePath.getText()));
 		MedNet.getSettings().setArchivePurgeInterval(Integer.valueOf(purgeInterval.getText()));
 		MedNet.getSettings().saveSettings();
 		return true;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performDefaults()
 	 */
 	@Override
-	public void performDefaults(){
+	public void performDefaults() {
 		purgeInterval.setText(String.valueOf(MedNetSettings.DEFAULT_ARCHIVEPURGEINTERVAL));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+	 *
+	 * @see
+	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	@Override
-	protected void createFieldEditors(){
+	protected void createFieldEditors() {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
 
 }

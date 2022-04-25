@@ -30,9 +30,9 @@ import ch.unibe.iam.scg.archie.preferences.PreferenceConstants;
  * Specific chart composite containing statistics about age distrubition in the
  * Elexis system.
  * </p>
- * 
+ *
  * $Id: AgeHistogrammChart.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -62,7 +62,7 @@ public class AgeHistogrammChart extends AbstractChartComposite {
 				PlotOrientation.HORIZONTAL, true, // include legend
 				true, // tooltips
 				false // urls
-				);
+		);
 
 		// set tooltip renderer
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
@@ -73,8 +73,8 @@ public class AgeHistogrammChart extends AbstractChartComposite {
 		axis.setTickLabelsVisible(false);
 
 		// Set chart background color to it's parents background
-		chart.setBackgroundPaint(new Color(this.parent.getBackground().getRed(),
-				this.parent.getBackground().getGreen(), this.parent.getBackground().getBlue()));
+		chart.setBackgroundPaint(new Color(this.parent.getBackground().getRed(), this.parent.getBackground().getGreen(),
+				this.parent.getBackground().getBlue()));
 
 		return chart;
 	}
@@ -97,8 +97,7 @@ public class AgeHistogrammChart extends AbstractChartComposite {
 	}
 
 	/**
-	 * Set cohort size according to preferences, if set, else return default
-	 * value.
+	 * Set cohort size according to preferences, if set, else return default value.
 	 */
 	private int getCohortSize() {
 

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.impfplan.view;
 
@@ -38,25 +38,25 @@ import ch.rgw.tools.ExHandler;
 
 public class ImpfplanPrinter extends TitleAreaDialog implements ICallback {
 	private TextContainer text = null;
-	
-	public ImpfplanPrinter(Shell parentShell){
+
+	public ImpfplanPrinter(Shell parentShell) {
 		super(parentShell);
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
 		if (actPatient != null) {
 			ret.setLayout(new FillLayout());
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			
+
 			text = new TextContainer(getShell());
 			text.getPlugin().createContainer(ret, this);
 			text.getPlugin().showMenu(true);
 			text.getPlugin().showToolbar(true);
 			text.createFromTemplateName(null, TT_VACCINATIONS, Brief.UNKNOWN, CoreHub.getLoggedInContact(),
-				Messages.ImpfplanPrinter_templateType);
+					Messages.ImpfplanPrinter_templateType);
 			Collection<Vaccination> r = ImpfplanController.getVaccinations(actPatient);
 			String[][] tbl = new String[r.size()][3];
 			int line = 0;
@@ -66,8 +66,7 @@ public class ImpfplanPrinter extends TitleAreaDialog implements ICallback {
 				tbl[line][1] = vt.get(VaccinationType.PRODUCT);
 				tbl[line++][2] = vacc.getDateAsString();
 			}
-			text.getPlugin()
-				.insertTable(Messages.ImpfplanPrinter_templatePlaceHolder, 0, tbl, null);
+			text.getPlugin().insertTable(Messages.ImpfplanPrinter_templatePlaceHolder, 0, tbl, null);
 			List<VaccinationType> vts;
 			try {
 				vts = VaccinationType.findDueFor(actPatient);
@@ -82,28 +81,29 @@ public class ImpfplanPrinter extends TitleAreaDialog implements ICallback {
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		setMessage(Messages.ImpfplanPrinter_printPlanMessage);
 		setTitle(Messages.ImpfplanPrinter_printPlanTitle);
 		getShell().setText(Messages.ImpfplanPrinter_printListHeading);
 		getShell().setSize(800, 700);
-		
+
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		super.okPressed();
 	}
-	
+
 	@Override
-	public void save(){}
-	
+	public void save() {
+	}
+
 	@Override
-	public boolean saveAs(){
+	public boolean saveAs() {
 		return false;
 	}
-	
+
 }

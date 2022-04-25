@@ -29,9 +29,9 @@ import ch.unibe.iam.scg.archie.model.RegexValidation;
  * <p>
  * Implements <code>FieldComposite</code> with a <code>SmartNumericField</code>.
  * </p>
- * 
+ *
  * $Id: NumericWidget.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -39,14 +39,10 @@ import ch.unibe.iam.scg.archie.model.RegexValidation;
 public class NumericWidget extends TextWidget {
 
 	/**
-	 * @param parent
-	 *            Composite
-	 * @param style
-	 *            Integer
-	 * @param labelText
-	 *            String
-	 * @param regex
-	 *            String
+	 * @param parent    Composite
+	 * @param style     Integer
+	 * @param labelText String
+	 * @param regex     String
 	 */
 	public NumericWidget(Composite parent, int style, final String labelText, RegexValidation regex) {
 		super(parent, style, labelText, regex);
@@ -94,9 +90,9 @@ public class NumericWidget extends TextWidget {
 
 	/**
 	 * Returns the value of the numeric field as an <code>int</code>. The String
-	 * content ist parsed using the <code>Integer.parseInt()</code> method, if
-	 * an exception is thrown, it's logged as an error to the Elexis log.
-	 * 
+	 * content ist parsed using the <code>Integer.parseInt()</code> method, if an
+	 * exception is thrown, it's logged as an error to the Elexis log.
+	 *
 	 * @return Contents of the inner <code>SmartNumericField</code> as an
 	 *         <code>int</code>. This way, implementing providers can use an
 	 *         <code>int</code> as parameters for their setter methods.
@@ -113,8 +109,8 @@ public class NumericWidget extends TextWidget {
 	}
 
 	/**
-	 * Is only valid if content are digits and nothing else. Provides a
-	 * quick-fix to remove all characters that are not digits.
+	 * Is only valid if content are digits and nothing else. Provides a quick-fix to
+	 * remove all characters that are not digits.
 	 */
 	private class SmartNumericField extends SmartField {
 

@@ -27,38 +27,38 @@ import ch.elexis.data.LabItem;
 import ch.elexis.laborimport.eurolyser.EurolyserImporter;
 
 public class LabImportPage extends ImporterPage {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(LabImportPage.class);
-	
+
 	private ILaboratory eurolyserLabor;
 	private Shell parentShell;
-	
+
 	private File archiveDir;
-	
-	public LabImportPage(){
+
+	public LabImportPage() {
 		eurolyserLabor = LabImportUtilHolder.get().getOrCreateLabor("Eurolyser");
 	}
-	
+
 	@Override
-	public String getTitle(){
+	public String getTitle() {
 		return "Eurolyser";
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return "Bitte wählen Sie ein Verzeichnis mit Dateien im Eurolyser-Format für den Import aus";
 	}
-	
+
 	@Override
-	public Composite createPage(Composite parent){
+	public Composite createPage(Composite parent) {
 		parentShell = parent.getShell();
 		Composite ret = new ImporterPage.DirectoryBasedImporter(parent, this);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return ret;
 	}
-	
+
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception{
+	public IStatus doImport(IProgressMonitor monitor) throws Exception {
 		String dirname = results[0];
 		List<File> files = getEurolyserFiles(dirname);
 		monitor.beginTask("Eurolyser import.", files.size());
@@ -72,20 +72,19 @@ public class LabImportPage extends ImporterPage {
 			} catch (final IllegalStateException e) {
 				parentShell.getDisplay().syncExec(new Runnable() {
 					@Override
-					public void run(){
+					public void run() {
 						MessageDialog.openError(parentShell, "Fehler",
-							"Die Datei konnte nicht eingelesen werden.\n[" + e.getLocalizedMessage()
-								+ "]");
+								"Die Datei konnte nicht eingelesen werden.\n[" + e.getLocalizedMessage() + "]");
 					}
 				});
 			}
 		}
-		
+
 		ElexisEventDispatcher.reload(LabItem.class);
 		return Status.OK_STATUS;
 	}
-	
-	private List<File> getEurolyserFiles(String dirname){
+
+	private List<File> getEurolyserFiles(String dirname) {
 		ArrayList<File> ret = new ArrayList<File>();
 		File dir = new File(dirname);
 		File[] list = dir.listFiles();
@@ -97,30 +96,31 @@ public class LabImportPage extends ImporterPage {
 		if (!ret.isEmpty()) {
 			archiveDir = createArchiveDir(dir);
 		}
-		
+
 		return ret;
 	}
-	
-	private File createArchiveDir(File dir){
+
+	private File createArchiveDir(File dir) {
 		File ret = new File(dir, "archiv");
 		if (!ret.exists()) {
 			ret.mkdir();
 		}
 		return ret;
 	}
-	
-	private void archiveFile(File file){
+
+	private void archiveFile(File file) {
 		String prefix = "";
 		while (!file.renameTo(new File(archiveDir, prefix + file.getName()))) {
 			prefix += "_";
 		}
 	}
-	
-	private boolean isEurolyserFile(File file){
-		try(FileInputStream input = new FileInputStream(file)) {
+
+	private boolean isEurolyserFile(File file) {
+		try (FileInputStream input = new FileInputStream(file)) {
 			byte[] buffer = new byte[256];
 			int len = input.read(buffer);
-			// a file should have more than 30 bytes and stat with a line with 5 parts separated by ;
+			// a file should have more than 30 bytes and stat with a line with 5 parts
+			// separated by ;
 			if (len > 30) {
 				ByteArrayInputStream bis = new ByteArrayInputStream(buffer);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(bis));
@@ -140,5 +140,5 @@ public class LabImportPage extends ImporterPage {
 		logger.warn("File [" + file.getAbsolutePath() + "] is not in eurolyser format.");
 		return false;
 	}
-	
+
 }

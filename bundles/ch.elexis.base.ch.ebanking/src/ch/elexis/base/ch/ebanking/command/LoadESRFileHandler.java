@@ -40,135 +40,123 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 public class LoadESRFileHandler extends AbstractHandler implements IElementUpdater {
-	
+
 	public static final String COMMAND_ID = "ch.elexis.ebanking_ch.command.loadESRFile";
-	
+
 	private Logger log = LoggerFactory.getLogger(this.getClass());
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		FileDialog fld =
-			new FileDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), SWT.OPEN);
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		FileDialog fld = new FileDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), SWT.OPEN);
 		fld.setText(Messages.ESRView_selectESR);
 		final String filename = fld.open();
 		if (filename != null) {
 			final ESRFile esrf = new ESRFile();
 			final File file = new File(filename);
 			try {
-				PlatformUI.getWorkbench().getProgressService()
-					.busyCursorWhile(new IRunnableWithProgress() {
-						
-						public void run(IProgressMonitor monitor) throws InvocationTargetException,
-							InterruptedException{
-							monitor.beginTask(Messages.ESRView_reading_ESR,
-								(int) (file.length() / 25));
-							Result<List<ESRRecord>> result = esrf.read(file, monitor);
-							if (result.isOK()) {
-								for (ESRRecord rec : result.get()) {
-									monitor.worked(1);
-									if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
-										if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
-											log.info(Messages.ESRView_ESR_finished
-												+ rec.getBetrag());
-										} else if ((rec.getTyp().equals(ESRRecord.MODE.Storno_edv))
+				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						monitor.beginTask(Messages.ESRView_reading_ESR, (int) (file.length() / 25));
+						Result<List<ESRRecord>> result = esrf.read(file, monitor);
+						if (result.isOK()) {
+							for (ESRRecord rec : result.get()) {
+								monitor.worked(1);
+								if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
+									if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
+										log.info(Messages.ESRView_ESR_finished + rec.getBetrag());
+									} else if ((rec.getTyp().equals(ESRRecord.MODE.Storno_edv))
 											|| (rec.getTyp().equals(ESRRecord.MODE.Storno_Schalter))) {
-											Rechnung rn = rec.getRechnung();
-											Money zahlung = rec.getBetrag().negate();
-											Zahlung zahlungsObj = rn.addZahlung(zahlung,
+										Rechnung rn = rec.getRechnung();
+										Money zahlung = rec.getBetrag().negate();
+										Zahlung zahlungsObj = rn.addZahlung(zahlung,
 												Messages.ESRView_storno_for + rn.getNr() + " / " //$NON-NLS-1$
-													+ rec.getPatient().getPatCode(), new TimeTool(
-													rec.getValuta()));
-											if (zahlungsObj != null && ESR.getAccount() != null) {
-												AccountTransaction transaction =
-													zahlungsObj.getTransaction();
-												transaction.setAccount(ESR.getAccount());
-											}
-											rec.setGebucht(null);
-										} else {
-											Rechnung rn = rec.getRechnung();
-											if (rn.getStatus() == RnStatus.BEZAHLT) {
-												if (SWTHelper.askYesNo(Messages.ESRView_paid,
-													Messages.ESRView_rechnung + rn.getNr()
-														+ Messages.ESRView_ispaid) == false) {
-													continue;
-												}
-											}
-											if (rn.getStatus() == RnStatus.IN_BETREIBUNG) {
-												if (SWTHelper.askYesNo(
-													Messages.ESRView_compulsoryExecution,
-													Messages.ESRView_rechnung + rn.getNr()
-														+ Messages.ESRView_isInCompulsoryExecution) == false) {
-													continue;
-												}
-											}
-											
-											Money zahlung = rec.getBetrag();
-											Money offen = rn.getOffenerBetrag();
-											if (zahlung.isMoreThan(offen) && (zahlung.doubleValue()
-												- offen.doubleValue() > 0.03)) {
-												if (SWTHelper.askYesNo(Messages.ESRView_toohigh,
-													Messages.ESRView_paymentfor + rn.getNr()
-														+ Messages.ESRView_morethan) == false) {
-													continue;
-												}
-											}
-											
-											Zahlung zahlungsObj = rn.addZahlung(zahlung,
-												Messages.ESRView_vesrfor + rn.getNr() + " / " //$NON-NLS-1$
-													+ rec.getPatient().getPatCode(), new TimeTool(
-													rec.getValuta()));
-											if (zahlungsObj != null && ESR.getAccount() != null) {
-												AccountTransaction transaction =
-													zahlungsObj.getTransaction();
-												transaction.setAccount(ESR.getAccount());
-											}
-											rec.setGebucht(null);
-										}
-									} else if (rec.getRejectCode()
-										.equals(ESRRecord.REJECT.RN_NUMMER)) {
-										TimeTool valutaDate = new TimeTool(rec.getValuta());
-										AccountTransaction transaction =
-											new AccountTransaction(rec.getPatient(), null,
-											rec.getBetrag(), valutaDate.toString(TimeTool.DATE_GER),
-											Messages.LoadESRFileHandler_notAssignable);
-										if (ESR.getAccount() != null) {
+														+ rec.getPatient().getPatCode(),
+												new TimeTool(rec.getValuta()));
+										if (zahlungsObj != null && ESR.getAccount() != null) {
+											AccountTransaction transaction = zahlungsObj.getTransaction();
 											transaction.setAccount(ESR.getAccount());
 										}
+										rec.setGebucht(null);
+									} else {
+										Rechnung rn = rec.getRechnung();
+										if (rn.getStatus() == RnStatus.BEZAHLT) {
+											if (SWTHelper.askYesNo(Messages.ESRView_paid, Messages.ESRView_rechnung
+													+ rn.getNr() + Messages.ESRView_ispaid) == false) {
+												continue;
+											}
+										}
+										if (rn.getStatus() == RnStatus.IN_BETREIBUNG) {
+											if (SWTHelper.askYesNo(Messages.ESRView_compulsoryExecution,
+													Messages.ESRView_rechnung + rn.getNr()
+															+ Messages.ESRView_isInCompulsoryExecution) == false) {
+												continue;
+											}
+										}
+
+										Money zahlung = rec.getBetrag();
+										Money offen = rn.getOffenerBetrag();
+										if (zahlung.isMoreThan(offen)
+												&& (zahlung.doubleValue() - offen.doubleValue() > 0.03)) {
+											if (SWTHelper.askYesNo(Messages.ESRView_toohigh, Messages.ESRView_paymentfor
+													+ rn.getNr() + Messages.ESRView_morethan) == false) {
+												continue;
+											}
+										}
+
+										Zahlung zahlungsObj = rn.addZahlung(zahlung,
+												Messages.ESRView_vesrfor + rn.getNr() + " / " //$NON-NLS-1$
+														+ rec.getPatient().getPatCode(),
+												new TimeTool(rec.getValuta()));
+										if (zahlungsObj != null && ESR.getAccount() != null) {
+											AccountTransaction transaction = zahlungsObj.getTransaction();
+											transaction.setAccount(ESR.getAccount());
+										}
+										rec.setGebucht(null);
+									}
+								} else if (rec.getRejectCode().equals(ESRRecord.REJECT.RN_NUMMER)) {
+									TimeTool valutaDate = new TimeTool(rec.getValuta());
+									AccountTransaction transaction = new AccountTransaction(rec.getPatient(), null,
+											rec.getBetrag(), valutaDate.toString(TimeTool.DATE_GER),
+											Messages.LoadESRFileHandler_notAssignable);
+									if (ESR.getAccount() != null) {
+										transaction.setAccount(ESR.getAccount());
 									}
 								}
-								monitor.done();
-								updateEsrView(event);
-							} else {
-								ResultAdapter.displayResult(result, Messages.ESRView_errorESR);
 							}
+							monitor.done();
+							updateEsrView(event);
+						} else {
+							ResultAdapter.displayResult(result, Messages.ESRView_errorESR);
 						}
-						
-					});
+					}
+
+				});
 			} catch (InvocationTargetException e) {
 				ExHandler.handle(e);
 				SWTHelper.showError(Messages.ESRView_errorESR2, Messages.ESRView_errrorESR2,
-					Messages.ESRView_couldnotread + e.getMessage() + e.getCause().getMessage());
+						Messages.ESRView_couldnotread + e.getMessage() + e.getCause().getMessage());
 			} catch (InterruptedException e) {
 				ExHandler.handle(e);
 				SWTHelper.showError("ESR interrupted", Messages.ESRView_interrupted, e //$NON-NLS-1$
-					.getMessage());
+						.getMessage());
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
-	public void updateElement(UIElement element, Map parameters){
+	public void updateElement(UIElement element, Map parameters) {
 		element.setIcon(Images.IMG_IMPORT.getImageDescriptor());
 		element.setTooltip(Messages.ESRView_read_ESR_explain);
 	}
-	
-	private void updateEsrView(ExecutionEvent event){
+
+	private void updateEsrView(ExecutionEvent event) {
 		UiDesk.asyncExec(new Runnable() {
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
 				if (window != null) {
 					IWorkbenchPage page = window.getActivePage();
@@ -179,9 +167,9 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 						}
 					}
 				}
-				
+
 			}
 		});
 	}
-	
+
 }

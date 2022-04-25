@@ -20,31 +20,27 @@ import ch.medshare.util.UtilFile;
 
 public class MPCProperties extends Properties implements ConfigKeys {
 	private static final long serialVersionUID = -5479066172426446513L;
-	
-	private final String LOG_ENTRY_TITLE =
-		SystemProperties.LINE_SEPARATOR
+
+	private final String LOG_ENTRY_TITLE = SystemProperties.LINE_SEPARATOR
 			+ "###########################################################" + SystemProperties.LINE_SEPARATOR + //$NON-NLS-1$
-			"# PFADKONFIGURATION"
-			+ SystemProperties.LINE_SEPARATOR
-			+ //$NON-NLS-1$
-			"###########################################################"
-			+ SystemProperties.LINE_SEPARATOR + SystemProperties.LINE_SEPARATOR
-			+ //$NON-NLS-1$
+			"# PFADKONFIGURATION" + SystemProperties.LINE_SEPARATOR + // $NON-NLS-1$
+			"###########################################################" + SystemProperties.LINE_SEPARATOR
+			+ SystemProperties.LINE_SEPARATOR + // $NON-NLS-1$
 			"### NEUE MULTI CLIENT (SENDER) AB V01.05.00" + SystemProperties.LINE_SEPARATOR
-			+ SystemProperties.LINE_SEPARATOR; //$NON-NLS-1$
-	
+			+ SystemProperties.LINE_SEPARATOR; // $NON-NLS-1$
+
 	private final String installDir;
-	
+
 	private static MPCProperties props;
-	
+
 	private Map<Integer, Client> clientMap = new HashMap<Integer, Client>();
-	
-	private MPCProperties(String installDir) throws IOException{
+
+	private MPCProperties(String installDir) throws IOException {
 		this.installDir = installDir;
 		load();
 	}
-	
-	public static MPCProperties reload(String installDir) throws IOException{
+
+	public static MPCProperties reload(String installDir) throws IOException {
 		if (installDir != null && installDir.length() > 0) {
 			props = new MPCProperties(installDir);
 		} else {
@@ -52,21 +48,21 @@ public class MPCProperties extends Properties implements ConfigKeys {
 		}
 		return props;
 	}
-	
-	public static MPCProperties reload() throws IOException{
+
+	public static MPCProperties reload() throws IOException {
 		ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 		String installDir = prefs.getString(MediPortAbstractPrefPage.MPC_INSTALL_DIR);
 		return reload(installDir);
 	}
-	
-	public static MPCProperties getCurrent() throws IOException{
+
+	public static MPCProperties getCurrent() throws IOException {
 		if (props == null) {
 			reload();
 		}
 		return props;
 	}
-	
-	private void addClientProperty(String key, String value){
+
+	private void addClientProperty(String key, String value) {
 		String[] parts = key.split("[.]"); //$NON-NLS-1$
 		Client client = clientMap.get(Integer.parseInt(parts[1]));
 		if (client == null) {
@@ -75,13 +71,13 @@ public class MPCProperties extends Properties implements ConfigKeys {
 		}
 		client.add(parts, value);
 	}
-	
-	public String getConfigFilenamePath(){
+
+	public String getConfigFilenamePath() {
 		return this.installDir + File.separator + "config" //$NON-NLS-1$
-			+ File.separator + "mpcommunicator.config"; //$NON-NLS-1$
+				+ File.separator + "mpcommunicator.config"; //$NON-NLS-1$
 	}
-	
-	public void load() throws IOException{
+
+	public void load() throws IOException {
 		load(new FileInputStream(getConfigFilenamePath()));
 		for (Object keyObj : keySet()) {
 			String key = (String) keyObj;
@@ -90,8 +86,8 @@ public class MPCProperties extends Properties implements ConfigKeys {
 			}
 		}
 	}
-	
-	public void store() throws IOException{
+
+	public void store() throws IOException {
 		boolean clientAdded = false;
 		boolean skipEmptyLines = false;
 		StringBuffer newContent = new StringBuffer();
@@ -130,7 +126,7 @@ public class MPCProperties extends Properties implements ConfigKeys {
 					skipEmptyLines = false;
 				}
 			}
-			
+
 			if (!clientAdded) {
 				newContent.append(LOG_ENTRY_TITLE);
 				newContent.append(clientString());
@@ -140,24 +136,24 @@ public class MPCProperties extends Properties implements ConfigKeys {
 				in.close();
 			}
 		}
-		
+
 		UtilFile.writeTextFile(getConfigFilenamePath(), newContent.toString());
 	}
-	
-	public Client getClient(Integer num){
+
+	public Client getClient(Integer num) {
 		if (num == null) {
 			return null;
 		}
 		return clientMap.get(num);
 	}
-	
-	public int addNewClient(Client client){
+
+	public int addNewClient(Client client) {
 		int nextNumber = getNextClientKey();
 		clientMap.put(nextNumber, client);
 		return nextNumber;
 	}
-	
-	private int getNextClientKey(){
+
+	private int getNextClientKey() {
 		int maxNumber = 0;
 		for (Integer key : clientMap.keySet()) {
 			if (key.intValue() > maxNumber) {
@@ -166,24 +162,24 @@ public class MPCProperties extends Properties implements ConfigKeys {
 		}
 		return maxNumber + 1;
 	}
-	
-	public List<Integer> getClientKeys(){
+
+	public List<Integer> getClientKeys() {
 		List<Integer> keyList = new Vector<Integer>();
 		for (Integer key : clientMap.keySet()) {
 			keyList.add(key);
 		}
 		return keyList;
 	}
-	
-	public String clientString(){
+
+	public String clientString() {
 		StringBuffer buffer = new StringBuffer();
-		
+
 		for (Integer num : clientMap.keySet()) {
 			Client client = getClient(num);
 			buffer.append(client.toString(num));
 			buffer.append(SystemProperties.LINE_SEPARATOR);
 		}
-		
+
 		return buffer.toString();
 	}
 }

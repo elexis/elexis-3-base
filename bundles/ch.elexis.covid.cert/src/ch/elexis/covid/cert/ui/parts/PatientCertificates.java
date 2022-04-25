@@ -79,62 +79,59 @@ import ch.rgw.tools.Result;
 
 @SuppressWarnings("restriction")
 public class PatientCertificates {
-	
+
 	private Composite composite;
-	
+
 	private Form patientLabel;
-	
+
 	private TableViewer certificatesViewer;
-	
+
 	@Inject
 	private CertificatesService service;
-	
+
 	@Inject
 	@Service(filterExpression = "(storeid=ch.elexis.data.store.omnivore)")
 	private IDocumentStore omnivoreStore;
-	
+
 	@Inject
 	private ILocalDocumentService localDocumentService;
-	
+
 	@Inject
 	private IConfigService configService;
-	
+
 	private IPatient patient;
-	
+
 	private Button btnOtp;
-	
+
 	@Optional
 	@Inject
-	void updatePatient(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE)
-	IPatient patient){
+	void updatePatient(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IPatient patient) {
 		if (composite != null && !composite.isDisposed()) {
 			setPatient(patient);
 		}
 	}
-	
+
 	@Optional
 	@Inject
-	void activePatient(IPatient patient){
+	void activePatient(IPatient patient) {
 		if (composite != null && !composite.isDisposed()) {
 			Display.getDefault().asyncExec(() -> {
 				setPatient(patient);
 			});
 		}
 	}
-	
+
 	@Inject
-	void setMandator(@Optional
-	IMandator mandator){
+	void setMandator(@Optional IMandator mandator) {
 		if (composite != null && !composite.isDisposed()) {
 			Display.getDefault().asyncExec(() -> {
 				updateOtp();
 			});
 		}
 	}
-	
-	private void updateOtp(){
-		java.util.Optional<IMandator> activeMandator =
-			ContextServiceHolder.get().getActiveMandator();
+
+	private void updateOtp() {
+		java.util.Optional<IMandator> activeMandator = ContextServiceHolder.get().getActiveMandator();
 		if (activeMandator.isPresent()) {
 			btnOtp.setText("OTP von " + activeMandator.get().getLabel());
 			String otp = configService.getActiveMandator(CertificatesService.CFG_OTP, null);
@@ -149,44 +146,44 @@ public class PatientCertificates {
 		}
 		composite.layout();
 	}
-	
+
 	@Inject
-	public PatientCertificates(){}
-	
+	public PatientCertificates() {
+	}
+
 	@PostConstruct
-	public void postConstruct(Composite parent){
+	public void postConstruct(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
-		
+
 		patientLabel = UiDesk.getToolkit().createForm(composite);
 		patientLabel.getBody().setLayout(new GridLayout(1, true));
 		patientLabel.setText("");
-		
+
 		Composite btnComposite = new Composite(composite, SWT.NONE);
 		btnComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		btnComposite.setLayout(new GridLayout(3, true));
-		
+
 		certificatesViewer = new TableViewer(composite, SWT.V_SCROLL);
 		certificatesViewer.setContentProvider(ArrayContentProvider.getInstance());
 		certificatesViewer.setLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof CertificateInfo) {
-					return ((CertificateInfo) element).getType().getLabel() + ", erstellt "
-						+ DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
-							.format(((CertificateInfo) element).getTimestamp());
+					return ((CertificateInfo) element).getType().getLabel() + ", erstellt " + DateTimeFormatter
+							.ofPattern("dd.MM.yyyy HH:mm").format(((CertificateInfo) element).getTimestamp());
 				}
 				return super.getText(element);
 			}
 		});
 		certificatesViewer.addDoubleClickListener(new IDoubleClickListener() {
-			
+
 			@Override
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				if (certificatesViewer.getStructuredSelection() != null
-					&& !certificatesViewer.getStructuredSelection().isEmpty()) {
-					CertificateInfo info = (CertificateInfo) certificatesViewer
-						.getStructuredSelection().getFirstElement();
+						&& !certificatesViewer.getStructuredSelection().isEmpty()) {
+					CertificateInfo info = (CertificateInfo) certificatesViewer.getStructuredSelection()
+							.getFirstElement();
 					openCertDocument(info);
 				}
 			}
@@ -194,191 +191,170 @@ public class PatientCertificates {
 		MenuManager menuManager = new MenuManager();
 		menuManager.add(new Action() {
 			@Override
-			public String getText(){
+			public String getText() {
 				return "Zertifikat entfernen";
 			}
-			
+
 			@Override
-			public ImageDescriptor getImageDescriptor(){
+			public ImageDescriptor getImageDescriptor() {
 				return Images.IMG_DELETE.getImageDescriptor();
 			}
-			
+
 			@Override
-			public void run(){
-				CertificateInfo info =
-					(CertificateInfo) certificatesViewer.getStructuredSelection().getFirstElement();
+			public void run() {
+				CertificateInfo info = (CertificateInfo) certificatesViewer.getStructuredSelection().getFirstElement();
 				RevokeModel model = new RevokeModel().initDefault(info, service.getOtp());
 				Result<String> result = service.revokeCertificate(patient, info, model);
 				if (result.isOK()) {
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, patient);
 				} else {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-						"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages().stream()
-							.map(m -> m.getText()).collect(Collectors.joining(", ")));
+							"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages().stream()
+									.map(m -> m.getText()).collect(Collectors.joining(", ")));
 				}
 			}
-			
+
 			@Override
-			public boolean isEnabled(){
-				return certificatesViewer.getSelection() != null
-					&& !certificatesViewer.getSelection().isEmpty();
+			public boolean isEnabled() {
+				return certificatesViewer.getSelection() != null && !certificatesViewer.getSelection().isEmpty();
 			}
 		});
 		Menu contextMenu = menuManager.createContextMenu(certificatesViewer.getTable());
 		certificatesViewer.getTable().setMenu(contextMenu);
 		menuManager.addMenuListener(new IMenuListener() {
 			@Override
-			public void menuAboutToShow(IMenuManager manager){
+			public void menuAboutToShow(IMenuManager manager) {
 				IContributionItem[] items = manager.getItems();
 				for (IContributionItem iContributionItem : items) {
 					iContributionItem.update();
 				}
 			}
 		});
-		certificatesViewer.getTable()
-			.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+		certificatesViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
 		Button btn = new Button(btnComposite, SWT.PUSH);
 		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText(CertificateInfo.Type.VACCINATION.getLabel());
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				VaccinationModel model = getVaccinationModel();
 				if (model != null) {
 					try {
-						Result<String> result =
-							service.createVaccinationCertificate(patient, model);
+						Result<String> result = service.createVaccinationCertificate(patient, model);
 						if (result.isOK()) {
 							CertificateInfo newCert = CertificateInfo.of(patient).stream()
-								.filter(c -> c.getUvci().equals(result.get())).findFirst()
-								.orElse(null);
+									.filter(c -> c.getUvci().equals(result.get())).findFirst().orElse(null);
 							if (newCert != null) {
 								openCertDocument(newCert);
 							}
-							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
-								patient);
+							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, patient);
 							CovidHandlerUtil.showResultInfos(result);
 						} else {
 							MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-								"Es ist folgender Fehler aufgetreten.\n\n"
-									+ result.getMessages().stream().map(m -> m.getText())
-										.collect(Collectors.joining(", ")));
+									"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages().stream()
+											.map(m -> m.getText()).collect(Collectors.joining(", ")));
 						}
 					} catch (Exception ex) {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-							"Es ist ein Fehler beim Aufruf der API aufgetreten.");
-						LoggerFactory.getLogger(getClass())
-							.error("Error getting vaccination certificate",
-							ex);
+								"Es ist ein Fehler beim Aufruf der API aufgetreten.");
+						LoggerFactory.getLogger(getClass()).error("Error getting vaccination certificate", ex);
 					}
 				}
 			}
-			
+
 		});
 		btn.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+
 		btn = new Button(btnComposite, SWT.PUSH);
 		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText(CertificateInfo.Type.TEST.getLabel());
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				TestModel model = getTestModel();
 				if (model != null) {
 					try {
 						Result<String> result = service.createTestCertificate(patient, model);
 						if (result.isOK()) {
 							CertificateInfo newCert = CertificateInfo.of(patient).stream()
-								.filter(c -> c.getUvci().equals(result.get())).findFirst()
-								.orElse(null);
+									.filter(c -> c.getUvci().equals(result.get())).findFirst().orElse(null);
 							if (newCert != null) {
 								openCertDocument(newCert);
 								executeTestBilling();
 							}
-							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
-								patient);
+							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, patient);
 							CovidHandlerUtil.showResultInfos(result);
 						} else {
 							MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-								"Es ist folgender Fehler aufgetreten.\n\n"
-									+ result.getMessages().stream().map(m -> m.getText())
-										.collect(Collectors.joining(", ")));
+									"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages().stream()
+											.map(m -> m.getText()).collect(Collectors.joining(", ")));
 						}
 					} catch (Exception ex) {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-							"Es ist ein Fehler beim Aufruf der API aufgetreten.");
-						LoggerFactory.getLogger(getClass()).error("Error getting test certificate",
-							ex);
+								"Es ist ein Fehler beim Aufruf der API aufgetreten.");
+						LoggerFactory.getLogger(getClass()).error("Error getting test certificate", ex);
 					}
 				}
 			}
 		});
 		btn.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+
 		btn = new Button(btnComposite, SWT.PUSH);
 		btn.setImage(Images.IMG_NEW.getImage());
 		btn.setText(CertificateInfo.Type.RECOVERY.getLabel());
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				RecoveryModel model = getRecoveryModel();
 				if (model != null) {
 					try {
 						Result<String> result = service.createRecoveryCertificate(patient, model);
 						if (result.isOK()) {
 							CertificateInfo newCert = CertificateInfo.of(patient).stream()
-								.filter(c -> c.getUvci().equals(result.get())).findFirst()
-								.orElse(null);
+									.filter(c -> c.getUvci().equals(result.get())).findFirst().orElse(null);
 							if (newCert != null) {
 								openCertDocument(newCert);
 							}
-							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
-								patient);
+							ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, patient);
 							CovidHandlerUtil.showResultInfos(result);
 						} else {
 							MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-								"Es ist folgender Fehler aufgetreten.\n\n"
-									+ result.getMessages().stream().map(m -> m.getText())
-										.collect(Collectors.joining(", ")));
+									"Es ist folgender Fehler aufgetreten.\n\n" + result.getMessages().stream()
+											.map(m -> m.getText()).collect(Collectors.joining(", ")));
 						}
 					} catch (Exception ex) {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-							"Es ist ein Fehler beim Aufruf der API aufgetreten.");
-						LoggerFactory.getLogger(getClass())
-							.error("Error getting recovery certificate",
-							ex);
+								"Es ist ein Fehler beim Aufruf der API aufgetreten.");
+						LoggerFactory.getLogger(getClass()).error("Error getting recovery certificate", ex);
 					}
 				}
 			}
 		});
 		btn.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+
 		Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.heightHint = 5;
 		sep.setLayoutData(gd);
-		
+
 		btnOtp = new Button(composite, SWT.PUSH);
 		btnOtp.setText("...");
 		btnOtp.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
-				java.util.Optional<IMandator> activeMandator =
-					ContextServiceHolder.get().getActiveMandator();
+			public void widgetSelected(SelectionEvent e) {
+				java.util.Optional<IMandator> activeMandator = ContextServiceHolder.get().getActiveMandator();
 				if (activeMandator.isPresent()) {
 					String otp = configService.getActiveMandator(CertificatesService.CFG_OTP, "");
-					InputDialog otpDialog =
-						new InputDialog(Display.getDefault().getActiveShell(), "COVID Zert OTP",
-							"Das one time password (OTP) von " + activeMandator.get().getLabel()
-								+ " setzen.",
-							otp, null, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+					InputDialog otpDialog = new InputDialog(Display.getDefault().getActiveShell(), "COVID Zert OTP",
+							"Das one time password (OTP) von " + activeMandator.get().getLabel() + " setzen.", otp,
+							null, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 					otpDialog.setWidthHint(400);
 					if (otpDialog.open() == Window.OK) {
 						String newOtp = otpDialog.getValue();
 						configService.setActiveMandator(CertificatesService.CFG_OTP, newOtp);
-						ConfigServiceHolder.get().setActiveMandator(
-							CertificatesService.CFG_OTP_TIMESTAMP, LocalDateTime.now().toString());
+						ConfigServiceHolder.get().setActiveMandator(CertificatesService.CFG_OTP_TIMESTAMP,
+								LocalDateTime.now().toString());
 					}
 					updateOtp();
 				}
@@ -389,23 +365,25 @@ public class PatientCertificates {
 		otplink.setForeground(CoreUiUtil.getColorForString("0000ff"));
 		otplink.addHyperlinkListener(new IHyperlinkListener() {
 			@Override
-			public void linkExited(HyperlinkEvent e){}
-			
+			public void linkExited(HyperlinkEvent e) {
+			}
+
 			@Override
-			public void linkEntered(HyperlinkEvent e){}
-			
+			public void linkEntered(HyperlinkEvent e) {
+			}
+
 			@Override
-			public void linkActivated(HyperlinkEvent e){
+			public void linkActivated(HyperlinkEvent e) {
 				Program.launch(service.getOtpUrl());
 			}
 		});
-		
+
 		this.composite = composite;
 		setPatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 		setMandator(ContextServiceHolder.get().getActiveMandator().orElse(null));
 	}
-	
-	private void setButtonsEnabled(Composite composite, boolean value){
+
+	private void setButtonsEnabled(Composite composite, boolean value) {
 		for (Control child : composite.getChildren()) {
 			if (child instanceof Button) {
 				child.setEnabled(value);
@@ -414,19 +392,19 @@ public class PatientCertificates {
 			}
 		}
 	}
-	
-	private void setPatient(IPatient patient){
+
+	private void setPatient(IPatient patient) {
 		this.patient = patient;
 		if (patient != null) {
 			patientLabel.setText("Zertifikate von " + PersonFormatUtil.getFullName(patient));
 			patientLabel.layout();
-			
+
 			certificatesViewer.setInput(CertificateInfo.of(patient));
 			setButtonsEnabled(composite, true);
 		} else {
 			patientLabel.setText("");
 			patientLabel.layout();
-			
+
 			certificatesViewer.setInput(Collections.emptyList());
 			setButtonsEnabled(composite, false);
 		}
@@ -434,37 +412,35 @@ public class PatientCertificates {
 		Display.getDefault().asyncExec(() -> {
 			if (composite != null && !composite.isDisposed()) {
 				composite.getParent().layout(true, true);
-				
+
 			}
 		});
 	}
-	
-	private void openCertDocument(CertificateInfo newCert){
-		java.util.Optional<IDocument> document =
-			omnivoreStore.loadDocument(newCert.getDocumentId());
+
+	private void openCertDocument(CertificateInfo newCert) {
+		java.util.Optional<IDocument> document = omnivoreStore.loadDocument(newCert.getDocumentId());
 		if (document.isPresent()) {
 			java.util.Optional<File> file = localDocumentService.getTempFile(document.get());
 			if (file.isPresent()) {
 				Program.launch(file.get().getAbsolutePath());
 			} else {
 				MessageDialog.openError(Display.getDefault().getActiveShell(),
-					Messages.StartEditLocalDocumentHandler_errortitle,
-					Messages.StartEditLocalDocumentHandler_errormessage);
+						Messages.StartEditLocalDocumentHandler_errortitle,
+						Messages.StartEditLocalDocumentHandler_errormessage);
 			}
 		}
 	}
-	
-	private VaccinationModel getVaccinationModel(){
+
+	private VaccinationModel getVaccinationModel() {
 		VaccinationModel ret = new VaccinationModel().initDefault(patient, service.getOtp());
-		VaccinationModelDialog dialog =
-			new VaccinationModelDialog(ret, Display.getDefault().getActiveShell());
+		VaccinationModelDialog dialog = new VaccinationModelDialog(ret, Display.getDefault().getActiveShell());
 		if (dialog.open() == Dialog.OK) {
 			return ret;
 		}
 		return null;
 	}
-	
-	private TestModel getTestModel(){
+
+	private TestModel getTestModel() {
 		TestModel ret = new TestModel().initDefault(patient, service.getOtp());
 		TestModelDialog dialog = new TestModelDialog(ret, Display.getDefault().getActiveShell());
 		if (dialog.open() == Dialog.OK) {
@@ -472,32 +448,30 @@ public class PatientCertificates {
 		}
 		return null;
 	}
-	
-	private RecoveryModel getRecoveryModel(){
+
+	private RecoveryModel getRecoveryModel() {
 		RecoveryModel ret = new RecoveryModel().initDefault(patient, service.getOtp());
-		RecoveryModelDialog dialog =
-			new RecoveryModelDialog(ret, Display.getDefault().getActiveShell());
+		RecoveryModelDialog dialog = new RecoveryModelDialog(ret, Display.getDefault().getActiveShell());
 		if (dialog.open() == Dialog.OK) {
 			return ret;
 		}
 		return null;
 	}
-	
-	private void executeTestBilling(){
+
+	private void executeTestBilling() {
 		executeCommand("ch.elexis.covid.cert.command.covidtest.bill");
 	}
-	
-	private Object executeCommand(String commandId){
+
+	private Object executeCommand(String commandId) {
 		try {
-			ICommandService commandService =
-				(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
-			
+			ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
+					.getService(ICommandService.class);
+
 			Command cmd = commandService.getCommand(commandId);
 			ExecutionEvent ee = new ExecutionEvent(cmd, Collections.EMPTY_MAP, null, null);
 			return cmd.executeWithChecks(ee);
 		} catch (Exception e) {
-			LoggerFactory.getLogger(PatientCertificates.class)
-				.error("cannot execute command with id: " + commandId, e);
+			LoggerFactory.getLogger(PatientCertificates.class).error("cannot execute command with id: " + commandId, e);
 		}
 		return null;
 	}

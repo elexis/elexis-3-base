@@ -35,45 +35,48 @@ import ch.elexis.core.model.Identifiable;
 import ch.elexis.data.Patient;
 
 public class UntersuchungAnzeigenMenu extends ContributionItem {
-	
+
 	public static final String ID = "at.medevit.elexis.gdt.dynamic.UntersuchungAnzeigenMenu";
-	
-	public UntersuchungAnzeigenMenu(){}
-	
-	public UntersuchungAnzeigenMenu(String id){
+
+	public UntersuchungAnzeigenMenu() {
+	}
+
+	public UntersuchungAnzeigenMenu(String id) {
 		super(id);
 	}
-	
+
 	@Override
-	public void fill(Menu menu, int index){
+	public void fill(Menu menu, int index) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		ISelection selection = window.getActivePage().getSelection();
 		IStructuredSelection strucSelection = (IStructuredSelection) selection;
 		Patient pat = getAsPatient(strucSelection);
-		
+
 		if (pat != null) {
 			GDTProtokoll[] prot = GDTProtokoll.getEntriesForPatient(pat);
 			int counter = 0;
 			for (GDTProtokoll gdtProtokoll : prot) {
-				if (Integer.parseInt(gdtProtokoll.getMessageType()) == GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_UEBERMITTELN) {
+				if (Integer.parseInt(
+						gdtProtokoll.getMessageType()) == GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_UEBERMITTELN) {
 					final GDTProtokoll gd = gdtProtokoll;
 					counter++;
 					MenuItem item = new MenuItem(menu, SWT.PUSH, index);
 					item.setText(gdtProtokoll.getMenuLabel());
-					item.addListener(SWT.Selection, new Listener() {					
+					item.addListener(SWT.Selection, new Listener() {
 						@Override
 						public void handleEvent(Event event) {
-							// Lets call our command			
-							IHandlerService handlerService = (IHandlerService)PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow().getService(IHandlerService.class);			
-							ICommandService commandService = (ICommandService)PlatformUI.getWorkbench()
+							// Lets call our command
+							IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow().getService(IHandlerService.class);
+							ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getService(ICommandService.class);
-							try {	
+							try {
 								Command cmd = commandService.getCommand(DatenEinerUntersuchungAnzeigen.ID);
-								ParameterizedCommand pc = new ParameterizedCommand(cmd, new Parameterization[] {
-									new Parameterization(cmd.getParameter(DatenEinerUntersuchungAnzeigen.PARAM_ID), gd.getId()) 
-									});
-								
+								ParameterizedCommand pc = new ParameterizedCommand(cmd,
+										new Parameterization[] { new Parameterization(
+												cmd.getParameter(DatenEinerUntersuchungAnzeigen.PARAM_ID),
+												gd.getId()) });
+
 								handlerService.executeCommand(pc, event);
 							} catch (Exception ex) {
 								throw new RuntimeException(DatenEinerUntersuchungAnzeigen.ID, ex);
@@ -82,16 +85,16 @@ public class UntersuchungAnzeigenMenu extends ContributionItem {
 					});
 				}
 			}
-			if(counter == 0) {
+			if (counter == 0) {
 				MenuItem item = new MenuItem(menu, SWT.PUSH, index);
 				item.setText("Keine Untersuchungsdaten vorhanden.");
 				item.setEnabled(false);
 			}
-			
+
 		}
 	}
-	
-	private Patient getAsPatient(IStructuredSelection strucSelection){
+
+	private Patient getAsPatient(IStructuredSelection strucSelection) {
 		Patient ret = null;
 		if (strucSelection.getFirstElement() instanceof Identifiable) {
 			ret = Patient.load(((Identifiable) strucSelection.getFirstElement()).getId());

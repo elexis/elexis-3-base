@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * This class provides a very simple job scheduling rule. Use this rule for jobs
  * that that cannot be run concurrently but have to be run sequentially.
  * </p>
- * 
+ *
  * $Id: MutexRule.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $

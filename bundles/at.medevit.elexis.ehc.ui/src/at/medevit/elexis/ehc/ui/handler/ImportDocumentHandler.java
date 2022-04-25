@@ -18,32 +18,30 @@ import at.medevit.elexis.ehc.ui.dialog.ImportSelectionWizard;
 import at.medevit.elexis.ehc.ui.views.EHealthConnectorView;
 
 public class ImportDocumentHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		
-		EHealthConnectorView view =
-			(EHealthConnectorView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+
+		EHealthConnectorView view = (EHealthConnectorView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().findView(EHealthConnectorView.ID);
 		if (view != null) {
 			ImportSelectionWizard importSelection = new ImportSelectionWizard();
-			
+
 			InputStream inView = view.getDisplayedReport();
 			if (inView != null) {
 				ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
 				copyStream(inView, outBuffer);
-				
+
 				ByteArrayInputStream inDocument = new ByteArrayInputStream(outBuffer.toByteArray());
 				importSelection.setDocument(inDocument);
 			}
-			WizardDialog dialog =
-				new WizardDialog(HandlerUtil.getActiveShell(event), importSelection);
+			WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), importSelection);
 			dialog.open();
 		}
 		return null;
 	}
-	
-	private static void copyStream(InputStream input, OutputStream output){
+
+	private static void copyStream(InputStream input, OutputStream output) {
 		try {
 			byte[] buffer = new byte[1024];
 			int bytesRead;

@@ -33,73 +33,71 @@ import ch.elexis.data.Rezept;
 
 public class ExportPrescriptionWizardPage1 extends WizardPage {
 	private TableViewer contentViewer;
-	
-	protected ExportPrescriptionWizardPage1(String pageName){
+
+	protected ExportPrescriptionWizardPage1(String pageName) {
 		super(pageName);
 		setTitle(pageName);
 	}
-	
+
 	@Override
-	public void createControl(Composite parent){
+	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		contentViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		Control control = contentViewer.getControl();
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd.heightHint = 300;
 		control.setLayoutData(gd);
-		
+
 		contentViewer.setContentProvider(new ArrayContentProvider());
 		contentViewer.setLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof Rezept) {
 					return ((Rezept) element).getLabel();
 				}
 				return super.getText(element);
 			}
-			
+
 			@Override
-			public Image getImage(Object element){
+			public Image getImage(Object element) {
 				return super.getImage(element);
 			}
 		});
-		
+
 		contentViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				getWizard().getContainer().updateButtons();
 			}
 		});
-		
+
 		setControl(composite);
 	}
-	
+
 	@Override
-	public void setVisible(boolean visible){
+	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
 			Query<Rezept> qbe = new Query<Rezept>(Rezept.class);
 			Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
 			if (selectedPatient != null) {
 				qbe.add(Rezept.PATIENT_ID, Query.EQUALS, selectedPatient.getId());
-				qbe.orderBy(true, new String[] {
-					Rezept.DATE, PersistentObject.FLD_LASTUPDATE
-				});
+				qbe.orderBy(true, new String[] { Rezept.DATE, PersistentObject.FLD_LASTUPDATE });
 			}
 			contentViewer.setInput(qbe.execute());
 		}
 	}
-	
+
 	@Override
-	public boolean isPageComplete(){
+	public boolean isPageComplete() {
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
-		
+
 		if (!contentSelection.isEmpty()) {
 			Rezept selectedRezept = (Rezept) contentSelection.getFirstElement();
-			
+
 			AbstractCdaChV1<?> document = DocboxService.getPrescriptionDocument(selectedRezept);
 			if (document != null) {
 				ExportPrescriptionWizard.setRezept(selectedRezept);
@@ -109,26 +107,24 @@ public class ExportPrescriptionWizardPage1 extends WizardPage {
 		}
 		return false;
 	}
-	
-	private void writePdf(ByteArrayOutputStream pdf) throws FileNotFoundException, IOException{
-		String outputDir =
-			ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR, PreferencePage.getDefaultOutputDir());
+
+	private void writePdf(ByteArrayOutputStream pdf) throws FileNotFoundException, IOException {
+		String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
+				PreferencePage.getDefaultOutputDir());
 		File pdfFile = new File(outputDir + File.separator + getRezeptFileName() + ".pdf");
 		try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
 			fos.write(pdf.toByteArray());
 			fos.flush();
 		}
 	}
-	
-	public boolean finish(){
+
+	public boolean finish() {
 		try {
-			String outputDir =
-				ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
+			String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
 					PreferencePage.getDefaultOutputDir());
-			ExportPrescriptionWizard.getDocument().saveToFile(
-				outputDir + File.separator + getRezeptFileName() + ".xml");
-			ByteArrayOutputStream pdf =
-				DocboxService.getPrescriptionPdf(ExportPrescriptionWizard.getDocument());
+			ExportPrescriptionWizard.getDocument()
+					.saveToFile(outputDir + File.separator + getRezeptFileName() + ".xml");
+			ByteArrayOutputStream pdf = DocboxService.getPrescriptionPdf(ExportPrescriptionWizard.getDocument());
 			writePdf(pdf);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -136,8 +132,8 @@ public class ExportPrescriptionWizardPage1 extends WizardPage {
 		}
 		return true;
 	}
-	
-	public String getRezeptFileName(){
+
+	public String getRezeptFileName() {
 		String ret = ExportPrescriptionWizard.getRezept().getLabel();
 		return ret.replaceAll(" ", "_");
 	}

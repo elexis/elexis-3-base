@@ -51,61 +51,60 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.JdbcLink.Stm;
 
 public class MesswertMigrationSettings extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	private List<MesswertFieldMapping> localMappings;
-	
+
 	private TableViewer viewerBefundeMapping;
-	
+
 	private HashMap<String, Integer> availableCode;
-	
+
 	private Label statistics;
-	
+
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		if (isMesswertAvailable()) {
 			localMappings = MesswertUtil.getLocalMappings();
 			availableCode = getAvailableCodes();
 		}
 	}
-	
+
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(Composite parent) {
 		Composite parentComposite = new Composite(parent, SWT.NONE);
 		parentComposite.setLayout(new GridLayout(2, false));
-		
+
 		Label label = new Label(parentComposite, SWT.NONE);
 		if (isMesswertAvailable()) {
 			label.setText("Befunde Zuordnung:");
 			label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
-			
-			viewerBefundeMapping =
-				new TableViewer(parentComposite, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
+
+			viewerBefundeMapping = new TableViewer(parentComposite, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
 			viewerBefundeMapping.getTable().setHeaderVisible(true);
 			viewerBefundeMapping.getTable().setLinesVisible(true);
 			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1);
 			gd.heightHint = 400;
 			viewerBefundeMapping.getControl().setLayoutData(gd);
-			
+
 			viewerBefundeMapping.setContentProvider(new ArrayContentProvider());
-			
+
 			TableViewerColumn column = new TableViewerColumn(viewerBefundeMapping, SWT.NONE);
 			column.getColumn().setWidth(150);
 			column.getColumn().setText("Messwert");
 			column.setLabelProvider(new ColumnLabelProvider() {
-				public String getText(Object element){
+				public String getText(Object element) {
 					if (element instanceof MesswertFieldMapping) {
 						return ((MesswertFieldMapping) element).getLocalFieldLabel();
 					}
 					return "?";
 				}
 			});
-			
+
 			column = new TableViewerColumn(viewerBefundeMapping, SWT.NONE);
 			column.getColumn().setWidth(150);
 			column.getColumn().setText("Code");
 			column.setLabelProvider(new ColumnLabelProvider() {
 				@Override
-				public String getText(Object element){
+				public String getText(Object element) {
 					if (element instanceof MesswertFieldMapping) {
 						return ((MesswertFieldMapping) element).getFindingsCodeLabel();
 					}
@@ -113,9 +112,9 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 				}
 			});
 			column.setEditingSupport(new EditingSupport(viewerBefundeMapping) {
-				
+
 				@Override
-				protected void setValue(Object element, Object value){
+				protected void setValue(Object element, Object value) {
 					Set<String> keys = availableCode.keySet();
 					for (String key : keys) {
 						Integer fieldValue = availableCode.get(key);
@@ -125,13 +124,12 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 					}
 					getViewer().update(element, null);
 				}
-				
+
 				@Override
-				protected Object getValue(Object element){
+				protected Object getValue(Object element) {
 					if (element instanceof MesswertFieldMapping) {
 						if (((MesswertFieldMapping) element).isValidMapping()) {
-							String fieldLabel =
-								((MesswertFieldMapping) element).getFindingsCodeLabel();
+							String fieldLabel = ((MesswertFieldMapping) element).getFindingsCodeLabel();
 							Integer ret = availableCode.get(fieldLabel);
 							if (ret != null) {
 								return ret;
@@ -140,9 +138,9 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 					}
 					return 0;
 				}
-				
+
 				@Override
-				protected CellEditor getCellEditor(Object element){
+				protected CellEditor getCellEditor(Object element) {
 					Set<String> keys = availableCode.keySet();
 					String[] displayValues = new String[keys.size()];
 					for (String key : keys) {
@@ -150,42 +148,40 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 					}
 					return new ComboBoxCellEditor(viewerBefundeMapping.getTable(), displayValues);
 				}
-				
+
 				@Override
-				protected boolean canEdit(Object element){
+				protected boolean canEdit(Object element) {
 					return true;
 				}
 			});
-			
+
 			viewerBefundeMapping.setInput(localMappings);
-			
+
 			statistics = new Label(parentComposite, SWT.NONE);
 			reloadStatistics();
-			
+
 			Button btn = new Button(parentComposite, SWT.PUSH);
 			btn.setText("Messwerte migrieren");
 			btn.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e){
+				public void widgetSelected(SelectionEvent e) {
 					Query<Patient> query = new Query<Patient>(Patient.class);
 					List<Patient> patients = query.execute();
-					
+
 					ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-					
+
 					try {
 						dialog.run(true, true, new IRunnableWithProgress() {
-							
+
 							@Override
 							public void run(IProgressMonitor monitor)
-								throws InvocationTargetException, InterruptedException{
+									throws InvocationTargetException, InterruptedException {
 								monitor.beginTask("Messwerte Migration", patients.size());
 								for (int count = 0; count < patients.size(); count++) {
 									Patient patient = patients.get(count);
-									monitor.subTask(
-										"Patient (" + count + "/" + patients.size() + ")");
+									monitor.subTask("Patient (" + count + "/" + patients.size() + ")");
 									FindingsServiceComponent.getMigratorService()
-										.migratePatientsFindings(
-										patient.getId(), IObservation.class, null);
+											.migratePatientsFindings(patient.getId(), IObservation.class, null);
 									monitor.worked(1);
 									if (monitor.isCanceled()) {
 										break;
@@ -196,7 +192,7 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 						});
 					} catch (InvocationTargetException | InterruptedException ex) {
 						MessageDialog.openError(getShell(), "Migration fehlgeschlagen",
-							"Wärend der Migration ist ein Fehler aufgetreten.\n" + ex.getMessage());
+								"Wärend der Migration ist ein Fehler aufgetreten.\n" + ex.getMessage());
 					}
 					reloadStatistics();
 				}
@@ -205,24 +201,23 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 			label.setText("Befunde nicht installiert.");
 			label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		}
-		
+
 		return parentComposite;
 	}
-	
-	private void reloadStatistics(){
+
+	private void reloadStatistics() {
 		statistics.setText("Statistik lädt ... ");
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
-			public void run(){
+			public void run() {
 				List<Messwert> messwerte = getAllMesswerte();
 				long notMigrated = countNotMigratedMesswerte(messwerte);
 				if (statistics != null && !statistics.isDisposed()) {
 					Display.getDefault().syncExec(new Runnable() {
 						@Override
-						public void run(){
-							statistics
-								.setText(messwerte.size() + " Messwerte vorhanden, davon sind "
-									+ notMigrated + " noch zu migrieren.");
+						public void run() {
+							statistics.setText(messwerte.size() + " Messwerte vorhanden, davon sind " + notMigrated
+									+ " noch zu migrieren.");
 							statistics.getParent().layout();
 						}
 					});
@@ -230,8 +225,8 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 			}
 		});
 	}
-	
-	private boolean isMesswertAvailable(){
+
+	private boolean isMesswertAvailable() {
 		try {
 			Class<?> clazz = getClass().getClassLoader().loadClass("ch.elexis.befunde.Messwert");
 			return clazz != null;
@@ -239,13 +234,13 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 			return false;
 		}
 	}
-	
-	private List<Messwert> getAllMesswerte(){
+
+	private List<Messwert> getAllMesswerte() {
 		Query<Messwert> query = new Query<Messwert>(Messwert.class);
 		return query.execute();
 	}
-	
-	private long countNotMigratedMesswerte(List<Messwert> messwerte){
+
+	private long countNotMigratedMesswerte(List<Messwert> messwerte) {
 		long ret = 0;
 		for (Messwert messwert : messwerte) {
 			if ("__SETUP__".equals(messwert.getId())) {
@@ -257,14 +252,13 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 		}
 		return ret;
 	}
-	
-	private boolean hasMigratedObservations(String originuri){
+
+	private boolean hasMigratedObservations(String originuri) {
 		Stm stm = PersistentObject.getDefaultConnection().getStatement();
 		if (stm != null) {
 			try {
-				ResultSet result = stm
-					.query("SELECT ID FROM CH_ELEXIS_CORE_FINDINGS_OBSERVATION WHERE originuri = '"
-						+ originuri + "';");
+				ResultSet result = stm.query(
+						"SELECT ID FROM CH_ELEXIS_CORE_FINDINGS_OBSERVATION WHERE originuri = '" + originuri + "';");
 				return result.next();
 			} catch (SQLException e) {
 				LoggerFactory.getLogger(getClass()).error("Error on migrated lookup", e);
@@ -274,32 +268,31 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 		}
 		return false;
 	}
-	
-	protected HashMap<String, Integer> getAvailableCodes(){
+
+	protected HashMap<String, Integer> getAvailableCodes() {
 		HashMap<String, Integer> ret = new HashMap<String, Integer>();
 		List<String> codesStrings = new ArrayList<String>();
 		// load the templates and collect the codes from the template titles
-		FindingsTemplates templatesResource =
-			FindingsServiceComponent.getTemplateService().getFindingsTemplates("Standard Vorlagen");
+		FindingsTemplates templatesResource = FindingsServiceComponent.getTemplateService()
+				.getFindingsTemplates("Standard Vorlagen");
 		EList<FindingsTemplate> templates = templatesResource.getFindingsTemplates();
 		List<ICoding> codes = new ArrayList<>();
 		for (FindingsTemplate findingsTemplate : templates) {
 			if (findingsTemplate.getInputData() instanceof InputDataGroupComponent) {
 				// add components
-				EList<FindingsTemplate> subTemplates =
-					((InputDataGroupComponent) findingsTemplate.getInputData())
+				EList<FindingsTemplate> subTemplates = ((InputDataGroupComponent) findingsTemplate.getInputData())
 						.getFindingsTemplates();
 				for (FindingsTemplate subFindingsTemplate : subTemplates) {
 					codes.add(new TransientCoding(CodingSystem.ELEXIS_LOCAL_CODESYSTEM.getSystem(),
-						findingsTemplate.getTitle() + "." + subFindingsTemplate.getTitle(),
-						subFindingsTemplate.getTitle()));
+							findingsTemplate.getTitle() + "." + subFindingsTemplate.getTitle(),
+							subFindingsTemplate.getTitle()));
 				}
 				// add component
 				codes.add(new TransientCoding(CodingSystem.ELEXIS_LOCAL_CODESYSTEM.getSystem(),
-					findingsTemplate.getTitle(), findingsTemplate.getTitle()));
+						findingsTemplate.getTitle(), findingsTemplate.getTitle()));
 			} else {
 				codes.add(new TransientCoding(CodingSystem.ELEXIS_LOCAL_CODESYSTEM.getSystem(),
-					findingsTemplate.getTitle(), findingsTemplate.getTitle()));
+						findingsTemplate.getTitle(), findingsTemplate.getTitle()));
 			}
 		}
 		for (ICoding iCoding : codes) {
@@ -307,7 +300,7 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 		}
 		codesStrings.sort(new Comparator<String>() {
 			@Override
-			public int compare(String arg0, String arg1){
+			public int compare(String arg0, String arg1) {
 				return arg0.compareTo(arg1);
 			}
 		});
@@ -317,9 +310,9 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public boolean performOk(){
+	public boolean performOk() {
 		MesswertUtil.saveMappings(localMappings);
 		return super.performOk();
 	}

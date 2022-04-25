@@ -21,320 +21,320 @@ import ch.elexis.core.types.DocumentStatus;
 
 @Component(immediate = true, property = "storeid=ch.elexis.data.store.omnivore")
 public class MockOmnivoreDocumentStore implements IDocumentStore {
-	
+
 	@Override
-	public String getId(){
+	public String getId() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public String getName(){
+	public String getName() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public List<IDocument> getDocuments(String patientId, String authorId, ICategory category,
-		List<ITag> tag){
+	public List<IDocument> getDocuments(String patientId, String authorId, ICategory category, List<ITag> tag) {
 		return Collections.emptyList();
 	}
-	
+
 	@Override
-	public Optional<IDocument> loadDocument(String id){
+	public Optional<IDocument> loadDocument(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public Optional<InputStream> loadContent(IDocument document){
+	public Optional<InputStream> loadContent(IDocument document) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public IDocument createDocument(String patientId, String title, String categoryName){
+	public IDocument createDocument(String patientId, String title, String categoryName) {
 		return new IDocument() {
-			
+
 			@Override
-			public void setDeleted(boolean value){
+			public void setDeleted(boolean value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public boolean isDeleted(){
+			public boolean isDeleted() {
 				// TODO Auto-generated method stub
 				return false;
 			}
-			
+
 			@Override
-			public IXid getXid(String domain){
+			public IXid getXid(String domain) {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
-			public Long getLastupdate(){
+			public Long getLastupdate() {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
-			public String getLabel(){
+			public String getLabel() {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
-			public String getId(){
+			public String getId() {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
-			public boolean addXid(String domain, String id, boolean updateIfExists){
+			public boolean addXid(String domain, String id, boolean updateIfExists) {
 				// TODO Auto-generated method stub
 				return false;
 			}
-			
+
 			@Override
-			public void setTitle(String value){
+			public void setTitle(String value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setStoreId(String value){
+			public void setStoreId(String value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setPatient(IPatient value){
+			public void setPatient(IPatient value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setMimeType(String value){
+			public void setMimeType(String value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setLastchanged(Date value){
+			public void setLastchanged(Date value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setKeywords(String value){
+			public void setKeywords(String value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setExtension(String value){
+			public void setExtension(String value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setDescription(String value){
+			public void setDescription(String value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setCreated(Date value){
+			public void setCreated(Date value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setContent(InputStream content){
+			public void setContent(InputStream content) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setCategory(ICategory value){
+			public void setCategory(ICategory value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void setAuthor(IContact value){
+			public void setAuthor(IContact value) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public String getTitle(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public String getStoreId(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IPatient getPatient(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public String getMimeType(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public Date getLastchanged(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public String getKeywords(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public List<IHistory> getHistory(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public String getExtension(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public String getDescription(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public Date getCreated(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public InputStream getContent(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ICategory getCategory(){
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public IContact getAuthor(){
+			public String getTitle() {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public List<DocumentStatus> getStatus(){
+			public String getStoreId() {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public void setStatus(DocumentStatus status, boolean active){
+			public IPatient getPatient() {
 				// TODO Auto-generated method stub
-				
+				return null;
 			}
 
 			@Override
-			public long getContentLength(){
+			public String getMimeType() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Date getLastchanged() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public String getKeywords() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public List<IHistory> getHistory() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public String getExtension() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public String getDescription() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Date getCreated() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public InputStream getContent() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public ICategory getCategory() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public IContact getAuthor() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public List<DocumentStatus> getStatus() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void setStatus(DocumentStatus status, boolean active) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public long getContentLength() {
 				return -1;
 			}
 		};
 	}
-	
+
 	@Override
-	public IDocument saveDocument(IDocument document) throws ElexisException{
+	public IDocument saveDocument(IDocument document) throws ElexisException {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public IDocument saveDocument(IDocument document, InputStream content) throws ElexisException{
+	public IDocument saveDocument(IDocument document, InputStream content) throws ElexisException {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public void removeDocument(IDocument document){
+	public void removeDocument(IDocument document) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public List<ICategory> getCategories(){
+	public List<ICategory> getCategories() {
 		return Collections.emptyList();
 	}
-	
+
 	@Override
-	public ICategory getCategoryDefault(){
+	public ICategory getCategoryDefault() {
 		return new ICategory() {
-			
+
 			@Override
-			public void setName(String value){}
-			
+			public void setName(String value) {
+			}
+
 			@Override
-			public String getName(){
+			public String getName() {
 				return "mockCategory";
 			}
 		};
 	}
-	
+
 	@Override
-	public ICategory createCategory(String name){
+	public ICategory createCategory(String name) {
 		return new ICategory() {
-			
+
 			@Override
-			public void setName(String value){}
-			
+			public void setName(String value) {
+			}
+
 			@Override
-			public String getName(){
+			public String getName() {
 				return name;
 			}
 		};
 	}
-	
+
 	@Override
-	public void removeCategory(IDocument iDocument, String newCategory)
-		throws IllegalStateException{
+	public void removeCategory(IDocument iDocument, String newCategory) throws IllegalStateException {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void renameCategory(ICategory category, String newCategory){
+	public void renameCategory(ICategory category, String newCategory) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public Optional<Object> getPersistenceObject(IDocument iDocument){
+	public Optional<Object> getPersistenceObject(IDocument iDocument) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

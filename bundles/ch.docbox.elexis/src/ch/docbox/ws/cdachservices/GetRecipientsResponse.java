@@ -11,10 +11,11 @@ import org.hl7.v3.POCDMT000040IntendedRecipient;
 /**
  * <p>
  * Java class for anonymous complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -26,45 +27,44 @@ import org.hl7.v3.POCDMT000040IntendedRecipient;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-	"recipient"
-})
+@XmlType(name = "", propOrder = { "recipient" })
 @XmlRootElement(name = "getRecipientsResponse")
 public class GetRecipientsResponse {
-	
+
 	protected List<POCDMT000040IntendedRecipient> recipient;
-	
+
 	/**
 	 * Gets the value of the recipient property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the recipient property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the recipient property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getRecipient().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list
 	 * {@link POCDMT000040IntendedRecipient }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<POCDMT000040IntendedRecipient> getRecipient(){
+	public List<POCDMT000040IntendedRecipient> getRecipient() {
 		if (recipient == null) {
 			recipient = new ArrayList<POCDMT000040IntendedRecipient>();
 		}
 		return this.recipient;
 	}
-	
+
 }

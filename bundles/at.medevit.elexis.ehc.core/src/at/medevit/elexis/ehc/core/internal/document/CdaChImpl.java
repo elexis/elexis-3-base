@@ -16,7 +16,7 @@ import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 @SuppressWarnings("deprecation")
 public class CdaChImpl extends AbstractCdaChV1<ClinicalDocument> {
 
-	public CdaChImpl(ClinicalDocument cda){
+	public CdaChImpl(ClinicalDocument cda) {
 		super(cda);
 	}
 }

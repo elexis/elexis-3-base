@@ -25,22 +25,20 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.rgw.tools.Result;
 
 public class BlueMedicationCheckHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IPatient patient = ContextServiceHolder.get().getActivePatient().orElse(null);
 		if (patient == null)
 			return null;
-		
+
 		Shell activeshell = HandlerUtil.getActiveShell(event);
 		ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(activeshell);
 		try {
 			progressDialog.run(true, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException{
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					monitor.beginTask("BlueMedication Check", IProgressMonitor.UNKNOWN);
-					Result<UploadResult> result =
-						BlueMedicationServiceHolder.getService().uploadCheck(patient);
+					Result<UploadResult> result = BlueMedicationServiceHolder.getService().uploadCheck(patient);
 					if (result.isOK()) {
 						Display.getDefault().syncExec(() -> {
 							// open the uri of the result
@@ -50,27 +48,23 @@ public class BlueMedicationCheckHandler extends AbstractHandler implements IHand
 						List<Result<UploadResult>.msg> messages = result.getMessages();
 						if (messages != null && !messages.isEmpty()) {
 							String text = messages.get(0).getText();
-							if (StringUtils.isNotBlank(text)
-								&& text.startsWith("Error result code [")) {
-								String resultCode =
-									text.substring(text.indexOf('[') + 1, text.indexOf(']'));
+							if (StringUtils.isNotBlank(text) && text.startsWith("Error result code [")) {
+								String resultCode = text.substring(text.indexOf('[') + 1, text.indexOf(']'));
 								if (StringUtils.isNotBlank(resultCode)) {
 									if ("A6".equals(resultCode)) {
 										Display.getDefault().syncExec(() -> {
-											MessageDialog.openError(
-												Display.getDefault().getActiveShell(),
-												"BlueMedication",
-												"Der Medikationscheck kann in BlueMedication nicht durchgeführt werden.\n"
-													+ "Bitte melden Sie den Fehler A6 an help.bluemedication@bluecare.ch");
+											MessageDialog.openError(Display.getDefault().getActiveShell(),
+													"BlueMedication",
+													"Der Medikationscheck kann in BlueMedication nicht durchgeführt werden.\n"
+															+ "Bitte melden Sie den Fehler A6 an help.bluemedication@bluecare.ch");
 										});
 									} else {
 										Display.getDefault().syncExec(() -> {
-											MessageDialog.openError(
-												Display.getDefault().getActiveShell(),
-												"BlueMedication",
-												"Beim Aufruf von BlueMedication ist ein technischer Fehler aufgetreten\n"
-													+ "Bitte melden Sie den Fehler " + resultCode
-													+ " an help.bluemedication@bluecare.ch");
+											MessageDialog.openError(Display.getDefault().getActiveShell(),
+													"BlueMedication",
+													"Beim Aufruf von BlueMedication ist ein technischer Fehler aufgetreten\n"
+															+ "Bitte melden Sie den Fehler " + resultCode
+															+ " an help.bluemedication@bluecare.ch");
 										});
 									}
 									return;
@@ -78,19 +72,18 @@ public class BlueMedicationCheckHandler extends AbstractHandler implements IHand
 							}
 						}
 						Display.getDefault().syncExec(() -> {
-							MessageDialog.openError(Display.getDefault().getActiveShell(),
-								"BlueMedication",
-								"Beim Hochladen der Medikation ist ein Fehler aufgetreten.\n\nBitte HIN client Konfiguration prüfen.");
+							MessageDialog.openError(Display.getDefault().getActiveShell(), "BlueMedication",
+									"Beim Hochladen der Medikation ist ein Fehler aufgetreten.\n\nBitte HIN client Konfiguration prüfen.");
 						});
 					}
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
 			MessageDialog.openError(activeshell, "BlueMedication",
-				"BlueMedication Check konnte nicht gestartet werden.");
+					"BlueMedication Check konnte nicht gestartet werden.");
 			LoggerFactory.getLogger(getClass()).error("Error on check", e);
 		}
-		
+
 		return null;
 	}
 }

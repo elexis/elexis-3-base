@@ -15,21 +15,19 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.IKonsMakro;
 
 public class TIMakro implements IKonsMakro {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(TIMakro.class);
-	
-	public TIMakro(){
+
+	public TIMakro() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public String executeMakro(String makro){
-		Optional<IEncounter> encounter =
-			ContextServiceHolder.get().getRootContext().getTyped(IEncounter.class);
+	public String executeMakro(String makro) {
+		Optional<IEncounter> encounter = ContextServiceHolder.get().getRootContext().getTyped(IEncounter.class);
 		if (encounter.isPresent()) {
 			try {
-				Optional<ICodeElement> tiCode =
-					CodeElementServiceHolder.get().loadFromString("TI-Code", makro, null);
+				Optional<ICodeElement> tiCode = CodeElementServiceHolder.get().loadFromString("TI-Code", makro, null);
 				if (tiCode.isPresent()) {
 					encounter.get().addDiagnosis((IDiagnosis) tiCode.get());
 					CoreModelServiceHolder.get().save(encounter.get());
@@ -41,5 +39,5 @@ public class TIMakro implements IKonsMakro {
 		}
 		return null;
 	}
-	
+
 }

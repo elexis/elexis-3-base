@@ -29,80 +29,80 @@ import ch.elexis.privatnotizen.Privatnotiz;
 
 public class KonsExtension implements IKonsExtension {
 	IRichTextDisplay mine = null;
-	
+
 	/**
-	 * Die Darstellung unserer Hyperlinks. Da wir alle Hyperlinks gleich darstellen, interessieren
-	 * uns hier provider und id nicht. Wir formatieren unsere Links einfach kursiv, und wir geben
-	 * "true" zurück um anzuzeigen, dass wir auf Mausklicks reagieren wollen.
+	 * Die Darstellung unserer Hyperlinks. Da wir alle Hyperlinks gleich darstellen,
+	 * interessieren uns hier provider und id nicht. Wir formatieren unsere Links
+	 * einfach kursiv, und wir geben "true" zurück um anzuzeigen, dass wir auf
+	 * Mausklicks reagieren wollen.
 	 */
-	public boolean doLayout(StyleRange n, String provider, String id){
+	public boolean doLayout(StyleRange n, String provider, String id) {
 		n.fontStyle = SWT.ITALIC;
 		return true;
 	}
-	
+
 	/**
-	 * Der Anwender hat auf einen unserer Links geklickt. Wir müssen jetzt anhand der id
-	 * herausfinden, welcher Link das war. Wenn der Anwender derjenige Mandant ist, dem der Eintrag
-	 * "gehört", dann zeigen wir den Inhalt der Notiz an.
+	 * Der Anwender hat auf einen unserer Links geklickt. Wir müssen jetzt anhand
+	 * der id herausfinden, welcher Link das war. Wenn der Anwender derjenige
+	 * Mandant ist, dem der Eintrag "gehört", dann zeigen wir den Inhalt der Notiz
+	 * an.
 	 */
-	public boolean doXRef(String refProvider, String refID){
+	public boolean doXRef(String refProvider, String refID) {
 		Privatnotiz clicked = Privatnotiz.load(refID);
 		if (clicked.getMandantID().equals(CoreHub.actMandant.getId())) {
 			new NotizInputDialog(UiDesk.getTopShell(), clicked).open();
 			return true;
 		} else {
-			SWTHelper.alert(Messages.NotizInputDialog_notYourNoteTitle,
-				Messages.NotizInputDialog_notYourNoteMessage
+			SWTHelper.alert(Messages.NotizInputDialog_notYourNoteTitle, Messages.NotizInputDialog_notYourNoteMessage
 					+ Mandant.load(clicked.getMandantID()).getLabel(true) + "\""); //$NON-NLS-1$
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Wir möchten gern ein Kontextmenu in der KonsDetailView einbringen. Dieses dient dazu, eine
-	 * neue Notiz zu erstellen.
+	 * Wir möchten gern ein Kontextmenu in der KonsDetailView einbringen. Dieses
+	 * dient dazu, eine neue Notiz zu erstellen.
 	 */
-	public IAction[] getActions(){
+	public IAction[] getActions() {
 		IAction[] ret = new IAction[1];
 		ret[0] = new Action(Messages.KonsExtension_noteActionLabel) {
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Privatnotiz np = new Privatnotiz(CoreHub.actMandant);
 				if (new NotizInputDialog(UiDesk.getTopShell(), np).open() == Dialog.OK) {
-					mine.insertXRef(-1, Messages.KonsExtension_noteActionXREFText,
-						"privatnotizen", np.getId()); //$NON-NLS-2$
+					mine.insertXRef(-1, Messages.KonsExtension_noteActionXREFText, "privatnotizen", np.getId()); // $NON-NLS-2$
 				} else {
 					np.delete();
 				}
 			}
-			
+
 		};
 		return ret;
 	}
-	
+
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-		throws CoreException{
+			throws CoreException {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	public String connect(IRichTextDisplay tf){
+
+	public String connect(IRichTextDisplay tf) {
 		mine = tf;
 		return "privatnotizen"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Der Anwender möchte den Querverweis wieder entfernen
 	 */
-	public void removeXRef(String refProvider, String refID){
+	public void removeXRef(String refProvider, String refID) {
 		Privatnotiz n = Privatnotiz.load(refID);
 		n.delete();
 	}
-	
-	public void insert(Object o, int pos){
+
+	public void insert(Object o, int pos) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

@@ -64,55 +64,52 @@ import io.swagger.client.api.EMediplanGenerationApi;
 import io.swagger.client.api.ExtractionAndConsolidationApi;
 import io.swagger.client.api.MediCheckApi;
 
-@Component(property = EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.BASE
-	+ "emediplan/ui/create")
+@Component(property = EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.BASE + "emediplan/ui/create")
 public class BlueMedicationServiceImpl implements BlueMedicationService, EventHandler {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(BlueMedicationServiceImpl.class);
-	
+
 	private boolean proxyActive;
 	private String oldProxyHost;
 	private String oldProxyPort;
-	
+
 	private Map<Object, UploadResult> pendingUploadResults;
-	
+
 	private ExecutorService executor;
-	
+
 	@Reference
 	private EMediplanService eMediplanService;
-	
+
 	@Activate
-	public void activate(){
+	public void activate() {
 		pendingUploadResults = new HashMap<>();
 		executor = Executors.newCachedThreadPool();
 	}
-	
+
 	/**
 	 * Set the HIN proxy as system property. <b>Remember to call deInitProxy</b>
 	 */
-	private void initProxy(){
+	private void initProxy() {
 		if (!proxyActive) {
 			// get proxy settings and store old values
 			Properties systemSettings = System.getProperties();
 			oldProxyHost = systemSettings.getProperty("http.proxyHost"); //$NON-NLS-1$
 			oldProxyPort = systemSettings.getProperty("http.proxyPort"); //$NON-NLS-1$
-			
+
 			// set new values
 			systemSettings.put("http.proxyHost", ConfigServiceHolder.get().getLocal( //$NON-NLS-1$
-				BlueMedicationConstants.CFG_HIN_PROXY_HOST,
-				BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST));
+					BlueMedicationConstants.CFG_HIN_PROXY_HOST, BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST));
 			systemSettings.put("http.proxyPort", ConfigServiceHolder.get().getLocal( //$NON-NLS-1$
-				BlueMedicationConstants.CFG_HIN_PROXY_PORT,
-				BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT));
+					BlueMedicationConstants.CFG_HIN_PROXY_PORT, BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT));
 			System.setProperties(systemSettings);
 			proxyActive = true;
 		}
 	}
-	
+
 	/**
 	 * Reset the proxy values in the system properties.
 	 */
-	private void deInitProxy(){
+	private void deInitProxy() {
 		if (proxyActive) {
 			Properties systemSettings = System.getProperties();
 			if (oldProxyHost != null) {
@@ -125,9 +122,9 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			proxyActive = false;
 		}
 	}
-	
+
 	@Override
-	public Result<UploadResult> uploadDocument(IPatient patient, File document, String resulttyp){
+	public Result<UploadResult> uploadDocument(IPatient patient, File document, String resulttyp) {
 		initProxy();
 		workaroundGet();
 		try {
@@ -141,16 +138,14 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			try {
 				boolean uploadedMediplan = false;
 				File internalData = null;
-				if ("chmed".equals(resulttyp) && useRemoteImport()
-					&& hasPrescriptionsWithValidIdType(patient)) {
+				if ("chmed".equals(resulttyp) && useRemoteImport() && hasPrescriptionsWithValidIdType(patient)) {
 					IMandator mandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 					if (mandant != null) {
 						try {
 							ByteArrayOutputStream pdfOutput = new ByteArrayOutputStream();
-							eMediplanService.exportEMediplanPdf(mandant, patient,
-								getPrescriptions(patient, "all"), true, pdfOutput);
-							File pdfFile = File
-								.createTempFile("eMediplan_" + System.currentTimeMillis(), ".pdf");
+							eMediplanService.exportEMediplanPdf(mandant, patient, getPrescriptions(patient, "all"),
+									true, pdfOutput);
+							File pdfFile = File.createTempFile("eMediplan_" + System.currentTimeMillis(), ".pdf");
 							try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
 								fos.write(pdfOutput.toByteArray());
 								fos.flush();
@@ -158,50 +153,44 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 							internalData = pdfFile;
 							uploadedMediplan = true;
 						} catch (IOException e) {
-							logger.error("Error creating eMediplan",
-								e);
-							return new Result<UploadResult>(
-								SEVERITY.ERROR, 0, e.getMessage(), null, false);
+							logger.error("Error creating eMediplan", e);
+							return new Result<UploadResult>(SEVERITY.ERROR, 0, e.getMessage(), null, false);
 						}
 					}
 				}
-				ApiResponse<?> response =
-					apiInstance.dispatchPostWithHttpInfo(internalData, externalData,
-						patientFirstName, patientLastName, patientSex, patientBirthdate,
-						"", "", "", "", "");
+				ApiResponse<?> response = apiInstance.dispatchPostWithHttpInfo(internalData, externalData,
+						patientFirstName, patientLastName, patientSex, patientBirthdate, "", "", "", "", "");
 				if (response.getStatusCode() >= 300) {
 					return new Result<UploadResult>(SEVERITY.ERROR, 0,
-						"Response status code was [" + response.getStatusCode() + "]", null, false);
+							"Response status code was [" + response.getStatusCode() + "]", null, false);
 				}
 				if (response.getData() == null) {
-					return new Result<UploadResult>(SEVERITY.ERROR,
-						0, "Response has no data", null, false);
+					return new Result<UploadResult>(SEVERITY.ERROR, 0, "Response has no data", null, false);
 				}
 				// successful upload
 				@SuppressWarnings("unchecked")
-				io.swagger.client.model.UploadResult data =
-					((ApiResponse<io.swagger.client.model.UploadResult>) response).getData();
-				return new Result<UploadResult>(new UploadResult(appendPath(getBasePath(),
-					data.getUrl() + "&mode=embed"), data.getId(), resulttyp, uploadedMediplan));
+				io.swagger.client.model.UploadResult data = ((ApiResponse<io.swagger.client.model.UploadResult>) response)
+						.getData();
+				return new Result<UploadResult>(
+						new UploadResult(appendPath(getBasePath(), data.getUrl() + "&mode=embed"), data.getId(),
+								resulttyp, uploadedMediplan));
 			} catch (ApiException e) {
 				if (e.getCode() == 400 || e.getCode() == 422) {
 					// error result code should be evaluated
 					try {
 						Gson gson = new Gson();
-						io.swagger.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(), io.swagger.client.model.ErrorResult[].class);
+						io.swagger.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
+								io.swagger.client.model.ErrorResult[].class);
 						if (mcArray != null && mcArray.length > 0) {
 							return new Result<UploadResult>(SEVERITY.ERROR, 0,
-								"Error result code [" + mcArray[0].getCode() + "]", null, false);
+									"Error result code [" + mcArray[0].getCode() + "]", null, false);
 						}
 					} catch (Exception je) {
-						logger
-							.warn("Could not parse code 400 exception content ["
-								+ e.getResponseBody() + "]");
+						logger.warn("Could not parse code 400 exception content [" + e.getResponseBody() + "]");
 					}
 				}
 				logger.error("Error uploading Document", e);
-				return new Result<UploadResult>(SEVERITY.ERROR, 0,
-					e.getMessage(), null, false);
+				return new Result<UploadResult>(SEVERITY.ERROR, 0, e.getMessage(), null, false);
 			}
 		} finally {
 			deInitProxy();
@@ -209,90 +198,84 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 	}
 
 	private class CheckApiClient extends ApiClient {
-		
+
 		private String redirectUrl;
-		
-		public CheckApiClient(){
+
+		public CheckApiClient() {
 			super();
 			// do not follow redirects
 			getHttpClient().setFollowRedirects(false);
 			getHttpClient().setFollowSslRedirects(false);
 		}
-		
-		public String selectHeaderContentType(String[] contentTypes){
+
+		public String selectHeaderContentType(String[] contentTypes) {
 			return "application/x-chmed16a";
 		};
-		
+
 		@Override
-		public RequestBody serialize(Object obj, String contentType) throws ApiException{
+		public RequestBody serialize(Object obj, String contentType) throws ApiException {
 			if (obj instanceof String) {
 				return RequestBody.create(MediaType.parse(contentType), (String) obj);
 			} else {
 				throw new ApiException("Content type \"" + contentType + "\" is not supported");
 			}
 		}
-		
+
 		@Override
-		public <T> T handleResponse(Response response, Type returnType) throws ApiException{
+		public <T> T handleResponse(Response response, Type returnType) throws ApiException {
 			if (response.code() == 302) {
 				redirectUrl = response.header("Location", null);
 				return null;
 			}
-			throw new ApiException(response.message(), response.code(),
-				response.headers().toMultimap(), null);
+			throw new ApiException(response.message(), response.code(), response.headers().toMultimap(), null);
 		}
-		
-		public String getRedirectUrl(){
+
+		public String getRedirectUrl() {
 			return redirectUrl;
 		}
 	}
-	
+
 	@Override
-	public Result<UploadResult> uploadCheck(IPatient patient){
+	public Result<UploadResult> uploadCheck(IPatient patient) {
 		initProxy();
 		workaroundGet();
 		try {
 			CheckApiClient client = new CheckApiClient();
-			
+
 			MediCheckApi apiInstance = new MediCheckApi(client);
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
 			IMandator mandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 			if (mandant != null) {
 				try {
 					ByteArrayOutputStream jsonOutput = new ByteArrayOutputStream();
-					eMediplanService.exportEMediplanChmed(mandant, patient,
-						getPrescriptions(patient, "all"), true, jsonOutput);
-					apiInstance
-						.checkPostWithHttpInfo(new String(jsonOutput.toByteArray(), "UTF-8"));
+					eMediplanService.exportEMediplanChmed(mandant, patient, getPrescriptions(patient, "all"), true,
+							jsonOutput);
+					apiInstance.checkPostWithHttpInfo(new String(jsonOutput.toByteArray(), "UTF-8"));
 					if (client.getRedirectUrl() != null) {
-						return new Result<UploadResult>(
-							new UploadResult(client.getRedirectUrl(), "", "check", true));
+						return new Result<UploadResult>(new UploadResult(client.getRedirectUrl(), "", "check", true));
 					} else {
-						return new Result<UploadResult>(SEVERITY.ERROR, 0, "No redirect", null,
-							false);
+						return new Result<UploadResult>(SEVERITY.ERROR, 0, "No redirect", null, false);
 					}
 				} catch (IOException e) {
 					logger.error("Error creating eMediplan", e);
 					return new Result<UploadResult>(SEVERITY.ERROR, 0, e.getMessage(), null, false);
 				}
 			} else {
-				return new Result<UploadResult>(SEVERITY.ERROR, 0, "No active mandator", null,
-					false);
+				return new Result<UploadResult>(SEVERITY.ERROR, 0, "No active mandator", null, false);
 			}
 		} catch (ApiException e) {
 			if (e.getCode() == 400 || e.getCode() == 422) {
 				// error result code should be evaluated
 				try {
 					Gson gson = new Gson();
-					io.swagger.client.model.ErrorResult[] mcArray = gson
-						.fromJson(e.getResponseBody(), io.swagger.client.model.ErrorResult[].class);
+					io.swagger.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
+							io.swagger.client.model.ErrorResult[].class);
 					if (mcArray != null && mcArray.length > 0) {
 						return new Result<UploadResult>(SEVERITY.ERROR, 0,
-							"Error result code [" + mcArray[0].getCode() + "]", null, false);
+								"Error result code [" + mcArray[0].getCode() + "]", null, false);
 					}
 				} catch (Exception je) {
-					logger.warn(
-						"Could not parse code 400 exception content [" + e.getResponseBody() + "]");
+					logger.warn("Could not parse code 400 exception content [" + e.getResponseBody() + "]");
 				}
 			}
 			logger.error("Error uploading Document", e);
@@ -301,36 +284,36 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			deInitProxy();
 		}
 	}
-	
+
 	@Override
-	public Result<String> emediplanNotification(IPatient patient){
+	public Result<String> emediplanNotification(IPatient patient) {
 		initProxy();
 		workaroundGet();
 		try {
 			EMediplanGenerationApi apiInstance = new EMediplanGenerationApi();
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
-			
+
 			LocalDateTime patBirthDay = patient.getDateOfBirth();
-			LocalDate birthDate = (patBirthDay != null ? LocalDate.of(patBirthDay.getYear(), patBirthDay.getMonthValue(), patBirthDay.getDayOfMonth()) : null);
-			
-			ApiResponse<?> response =
-				apiInstance.notificationEmediplanPostWithHttpInfo(patient.getFirstName(),
-				patient.getLastName(), patient.getGender().name(), birthDate);
+			LocalDate birthDate = (patBirthDay != null
+					? LocalDate.of(patBirthDay.getYear(), patBirthDay.getMonthValue(), patBirthDay.getDayOfMonth())
+					: null);
+
+			ApiResponse<?> response = apiInstance.notificationEmediplanPostWithHttpInfo(patient.getFirstName(),
+					patient.getLastName(), patient.getGender().name(), birthDate);
 			return Result.OK(response.toString());
 		} catch (ApiException e) {
 			if (e.getCode() == 400 || e.getCode() == 422) {
 				// error result code should be evaluated
 				try {
 					Gson gson = new Gson();
-					io.swagger.client.model.ErrorResult[] mcArray = gson
-						.fromJson(e.getResponseBody(), io.swagger.client.model.ErrorResult[].class);
+					io.swagger.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
+							io.swagger.client.model.ErrorResult[].class);
 					if (mcArray != null && mcArray.length > 0) {
-						return new Result<String>(SEVERITY.ERROR, 0,
-							"Error result code [" + mcArray[0].getCode() + "]", null, false);
+						return new Result<String>(SEVERITY.ERROR, 0, "Error result code [" + mcArray[0].getCode() + "]",
+								null, false);
 					}
 				} catch (Exception je) {
-					logger.warn(
-						"Could not parse code 400 exception content [" + e.getResponseBody() + "]");
+					logger.warn("Could not parse code 400 exception content [" + e.getResponseBody() + "]");
 				}
 			}
 			logger.error("Error performing notification", e);
@@ -339,24 +322,24 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			deInitProxy();
 		}
 	}
-	
+
 	/**
 	 * Perform a workaround get until HIN fixed POST issue
-	 * 
+	 *
 	 */
-	private void workaroundGet(){
+	private void workaroundGet() {
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
-			
+
 			logger.warn("Performing workaround GET request");
 			apiInstance.downloadIdComparisonChmedGet("workaround", false);
 		} catch (Exception e) {
 			// ignore
 		}
 	}
-	
-	private String appendPath(String pathStart, String pathEnd){
+
+	private String appendPath(String pathStart, String pathEnd) {
 		if (pathStart.endsWith("/") || pathEnd.startsWith("/")) {
 			return pathStart + pathEnd;
 		} else if (pathStart.endsWith("/") && pathEnd.startsWith("/")) {
@@ -365,45 +348,41 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			return pathStart + "/" + pathEnd;
 		}
 	}
-	
-	private String getBasePath(){
+
+	private String getBasePath() {
 		if (ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_URL_STAGING, false)) {
 			return "http://staging.bluemedication.hin.ch";
 		} else {
 			return "http://bluemedication.hin.ch";
 		}
 	}
-	
-	private String getAppBasePath(){
+
+	private String getAppBasePath() {
 		return appendPath(getBasePath(), "/api/v1");
 	}
-	
+
 	@Override
-	public Result<String> downloadEMediplan(UploadResult uploadResult){
+	public Result<String> downloadEMediplan(UploadResult uploadResult) {
 		initProxy();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
-			
+
 			if (uploadResult.isUploadedMediplan()) {
-				ApiResponse<String> response =
-					apiInstance.downloadIdComparisonChmedGetWithHttpInfo(uploadResult.getId(),
-						true);
+				ApiResponse<String> response = apiInstance
+						.downloadIdComparisonChmedGetWithHttpInfo(uploadResult.getId(), true);
 				if (response.getStatusCode() >= 300) {
-					return Result
-						.ERROR("Response status code was [" + response.getStatusCode() + "]");
+					return Result.ERROR("Response status code was [" + response.getStatusCode() + "]");
 				}
 				if (response.getData() == null) {
 					return Result.ERROR("Response has no data");
 				}
 				return Result.OK(response.getData());
 			} else {
-				ApiResponse<String> response =
-					apiInstance.downloadIdExtractionChmedGetWithHttpInfo(uploadResult.getId(),
-						true);
+				ApiResponse<String> response = apiInstance
+						.downloadIdExtractionChmedGetWithHttpInfo(uploadResult.getId(), true);
 				if (response.getStatusCode() >= 300) {
-					return Result
-						.ERROR("Response status code was [" + response.getStatusCode() + "]");
+					return Result.ERROR("Response status code was [" + response.getStatusCode() + "]");
 				}
 				if (response.getData() == null) {
 					return Result.ERROR("Response has no data");
@@ -417,24 +396,23 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			deInitProxy();
 		}
 	}
-	
+
 	@Override
-	public Result<String> downloadPdf(UploadResult uploadResult){
+	public Result<String> downloadPdf(UploadResult uploadResult) {
 		initProxy();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
-			
-				ApiResponse<File> response = apiInstance
+
+			ApiResponse<File> response = apiInstance
 					.downloadIdExtractionExtendedpdfGetWithHttpInfo(uploadResult.getId(), true);
-				if (response.getStatusCode() >= 300) {
-					return Result
-						.ERROR("Response status code was [" + response.getStatusCode() + "]");
-				}
-				if (response.getData() == null) {
-					return Result.ERROR("Response has no data");
-				}
-				return Result.OK(response.getData().getAbsolutePath());
+			if (response.getStatusCode() >= 300) {
+				return Result.ERROR("Response status code was [" + response.getStatusCode() + "]");
+			}
+			if (response.getData() == null) {
+				return Result.ERROR("Response has no data");
+			}
+			return Result.OK(response.getData().getAbsolutePath());
 		} catch (ApiException e) {
 			logger.error("Error downloading Document Pdf", e);
 			return Result.ERROR(e.getMessage());
@@ -442,39 +420,37 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			deInitProxy();
 		}
 	}
-	
+
 	@Override
-	public void addPendingUploadResult(Object object,
-		UploadResult uploadResult){
+	public void addPendingUploadResult(Object object, UploadResult uploadResult) {
 		pendingUploadResults.put(object, uploadResult);
 	}
-	
+
 	@Override
-	public Optional<UploadResult> getPendingUploadResult(
-		Object object){
+	public Optional<UploadResult> getPendingUploadResult(Object object) {
 		return Optional.ofNullable(pendingUploadResults.get(object));
 	}
-	
+
 	@Override
-	public void removePendingUploadResult(Object object){
+	public void removePendingUploadResult(Object object) {
 		pendingUploadResults.remove(object);
 	}
-	
-	private boolean useRemoteImport(){
+
+	private boolean useRemoteImport() {
 		return ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_USE_IMPORT, false);
 	}
-	
+
 	private boolean hasPrescriptionsWithValidIdType(IPatient patient) {
 		List<IPrescription> allPrescriptions = getPrescriptions(patient, "all");
 		List<IPrescription> nonValidIdPrescriptions = allPrescriptions.stream()
 				.filter(p -> getIdType(p.getArticle()) == 1).collect(Collectors.toList());
 		return nonValidIdPrescriptions.isEmpty();
 	}
-	
-	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType){
+
+	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType) {
 		if ("all".equals(medicationType)) {
-			return patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION,
-				EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
+			return patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION,
+					EntryType.SYMPTOMATIC_MEDICATION));
 		} else if ("fix".equals(medicationType)) {
 			return patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION));
 		} else if ("reserve".equals(medicationType)) {
@@ -484,15 +460,15 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		}
 		return Collections.emptyList();
 	}
-	
+
 	/**
 	 * Get the eMediplan id type for an IArticle. Must match method of
 	 * <i>at.medevit.elexis.emediplan.core.model.chmed16a.Medicament</i>.
-	 * 
+	 *
 	 * @param article
 	 * @return
 	 */
-	private int getIdType(IArticle article){
+	private int getIdType(IArticle article) {
 		if (article != null) {
 			String gtin = article.getGtin();
 			if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) {
@@ -508,10 +484,9 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		}
 		return 1;
 	}
-	
+
 	@Override
-	public void startPollForResult(final Object object, final UploadResult uploadResult,
-		Consumer<Object> onSuccess){
+	public void startPollForResult(final Object object, final UploadResult uploadResult, Consumer<Object> onSuccess) {
 		executor.execute(() -> {
 			try {
 				Thread.sleep(5000);
@@ -519,17 +494,16 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				// ignore
 			}
 			logger.info("Start polling for [" + uploadResult.getId() + "]");
-			// configure HIN proxy for apache http client 
+			// configure HIN proxy for apache http client
 			HttpHost proxy = new HttpHost(
-				ConfigServiceHolder.get().getLocal(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
-					BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST),
-				Integer.parseInt(
-					ConfigServiceHolder.get().getLocal(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
-					BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT)),
-				"http");
+					ConfigServiceHolder.get().getLocal(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
+							BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST),
+					Integer.parseInt(ConfigServiceHolder.get().getLocal(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
+							BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT)),
+					"http");
 			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
 			HttpClient httpclient = HttpClients.custom().setRoutePlanner(routePlanner).build();
-			
+
 			HttpGet httpget = new HttpGet(getAppBasePath() + "/status/" + uploadResult.getId());
 			int maxRetry = 30; // default timeout 30 sec -> 15 min.
 			int statusCode = 204;
@@ -538,7 +512,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				while (statusCode == 204 && maxRetry > 0) {
 					HttpResponse response = httpclient.execute(httpget);
 					statusCode = response.getStatusLine().getStatusCode();
-					if(response.getEntity() != null) {
+					if (response.getEntity() != null) {
 						content = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 					}
 					maxRetry--;
@@ -557,18 +531,18 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				}
 			} else {
 				logger.warn("Got response code [" + statusCode + "] for [" + uploadResult.getId()
-					+ "] clearing pending upload");
+						+ "] clearing pending upload");
 				removePendingUploadResult(object);
 			}
 		});
 	}
-	
+
 	@Override
-	public void handleEvent(Event event){
+	public void handleEvent(Event event) {
 		Object property = event.getProperty("org.eclipse.e4.data");
 		if (property instanceof IDocument) {
 			IPatient patient = ((IDocument) property).getPatient();
-			if(patient != null) {
+			if (patient != null) {
 				emediplanNotification(patient);
 			}
 		}

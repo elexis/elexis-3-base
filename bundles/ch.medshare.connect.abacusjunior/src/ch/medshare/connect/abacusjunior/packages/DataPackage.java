@@ -12,16 +12,15 @@ import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
 public class DataPackage extends Package {
-	
-	public DataPackage(char id, String message){
+
+	public DataPackage(char id, String message) {
 		super(id, message);
 	}
-	
-	public void fetchResults(Patient actPatient){
+
+	public void fetchResults(Patient actPatient) {
 		TimeTool date = new TimeTool();
-		IPatient iPatient =
-			CoreModelServiceHolder.get().load(actPatient.getId(), IPatient.class).orElse(null);
-		
+		IPatient iPatient = CoreModelServiceHolder.get().load(actPatient.getId(), IPatient.class).orElse(null);
+
 		for (String line : getMessage().split("\n")) {
 			String[] cells = line.split("\t");
 			if (cells.length >= 2) {
@@ -30,19 +29,18 @@ public class DataPackage extends Package {
 					continue;
 				}
 				if (cells[0].equals("TIME")) {
-					date.set(cells[1].substring(0, 2) + ":" + cells[1].substring(2, 4) + ":"
-						+ cells[1].substring(4, 6));
+					date.set(
+							cells[1].substring(0, 2) + ":" + cells[1].substring(2, 4) + ":" + cells[1].substring(4, 6));
 					continue;
 				}
-				
+
 				try {
 					Value val = Value.getValue(cells[0]);
-					
-					TransientLabResult result =
-						val.fetchValue(iPatient, cells[1], cells.length >= 3 ? cells[2] : "",
+
+					TransientLabResult result = val.fetchValue(iPatient, cells[1], cells.length >= 3 ? cells[2] : "",
 							date);
 					LabImportUtilHolder.get().importLabResults(Collections.singletonList(result),
-						new DefaultLabImportUiHandler());
+							new DefaultLabImportUiHandler());
 				} catch (MissingResourceException ex) {
 					// Value will not be recorded
 				}

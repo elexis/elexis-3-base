@@ -19,17 +19,17 @@ public class FreieKategorie {
 
 	String name;
 	HashMap<Integer, String> value = new LinkedHashMap<Integer, String>();
-	
-	public void setName(String value){
+
+	public void setName(String value) {
 		name = value;
-		
+
 	}
-	
+
 	public String getValue(int feldkennung) {
 		return value.get(feldkennung);
 	}
 
-	public void setValue(int feldkennung, String value){
+	public void setValue(int feldkennung, String value) {
 		this.value.put(feldkennung, value);
 	}
 }

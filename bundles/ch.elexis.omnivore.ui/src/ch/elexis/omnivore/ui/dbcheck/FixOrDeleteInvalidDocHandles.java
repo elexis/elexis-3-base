@@ -21,20 +21,18 @@ import ch.elexis.omnivore.model.util.Utils;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 
 public class FixOrDeleteInvalidDocHandles extends ExternalMaintenance {
-	
+
 	private Logger logger = LoggerFactory.getLogger(FixOrDeleteInvalidDocHandles.class);
-	
+
 	private int deleteCount;
 	private int repairCount;
-	
+
 	@Override
-	public String executeMaintenance(IProgressMonitor pm, String DBVersion){
+	public String executeMaintenance(IProgressMonitor pm, String DBVersion) {
 		// query all except version and categories
-		IQuery<IDocumentHandle> query =
-			OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
+		IQuery<IDocumentHandle> query = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
 		query.and("id", COMPARATOR.NOT_EQUALS, "1");
-		query.and(ModelPackage.Literals.IDOCUMENT__MIME_TYPE, COMPARATOR.NOT_EQUALS,
-			Constants.CATEGORY_MIMETYPE);
+		query.and(ModelPackage.Literals.IDOCUMENT__MIME_TYPE, COMPARATOR.NOT_EQUALS, Constants.CATEGORY_MIMETYPE);
 		try (IQueryCursor<IDocumentHandle> cursor = query.executeAsCursor()) {
 			pm.beginTask("Bitte warten, Omnivore Eiträge werden geprüft ...", cursor.size());
 			deleteCount = 0;
@@ -50,10 +48,8 @@ public class FixOrDeleteInvalidDocHandles extends ExternalMaintenance {
 							// perform lookup in directory with id
 							IVirtualFilesystemHandle directory = vfsHandle.getParent();
 							if (directory != null && directory.exists()) {
-								IVirtualFilesystemHandle[] handles =
-									directory.listHandles(handle -> Objects.equals(
-										FilenameUtils.getBaseName(handle.getName()),
-										docHandle.getId()));
+								IVirtualFilesystemHandle[] handles = directory.listHandles(handle -> Objects
+										.equals(FilenameUtils.getBaseName(handle.getName()), docHandle.getId()));
 								if (handles.length > 0) {
 									repair(docHandle, handles[0]);
 								} else {
@@ -69,31 +65,28 @@ public class FixOrDeleteInvalidDocHandles extends ExternalMaintenance {
 				}
 			}
 		}
-		return "Es wurden " + deleteCount + " Einträge entfernt (Details siehe Log)\nEs wurden "
-			+ repairCount + " Einträge repariert (Details siehe Log)";
+		return "Es wurden " + deleteCount + " Einträge entfernt (Details siehe Log)\nEs wurden " + repairCount
+				+ " Einträge repariert (Details siehe Log)";
 	}
-	
-	private void repair(IDocumentHandle docHandle, IVirtualFilesystemHandle file){
+
+	private void repair(IDocumentHandle docHandle, IVirtualFilesystemHandle file) {
 		repairCount++;
 		logger.warn("Repair DocHandle [" + docHandle.getLabel() + "] of patient ["
-			+ (docHandle.getPatient() != null ? docHandle.getPatient().getPatientNr()
-					: "no patient")
-			+ "] with file [" + file.getName() + "]");
+				+ (docHandle.getPatient() != null ? docHandle.getPatient().getPatientNr() : "no patient")
+				+ "] with file [" + file.getName() + "]");
 		docHandle.setMimeType(file.getName());
 	}
-	
-	private void delete(IDocumentHandle docHandle){
+
+	private void delete(IDocumentHandle docHandle) {
 		deleteCount++;
 		logger.warn("Delete DocHandle [" + docHandle.getLabel() + "] of patient ["
-			+ (docHandle.getPatient() != null ? docHandle.getPatient().getPatientNr()
-					: "no patient")
-			+ "]");
+				+ (docHandle.getPatient() != null ? docHandle.getPatient().getPatientNr() : "no patient") + "]");
 		OmnivoreModelServiceHolder.get().delete(docHandle);
 	}
-	
+
 	@Override
-	public String getMaintenanceDescription(){
+	public String getMaintenanceDescription() {
 		return "Omnivore Einträge überprüfen, reparieren oder entfernen";
 	}
-	
+
 }

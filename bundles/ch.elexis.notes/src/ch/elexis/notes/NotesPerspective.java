@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -16,12 +16,12 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 public class NotesPerspective implements IPerspectiveFactory {
 	public static final String ID = "ch.elexis.NotesPerspektive"; //$NON-NLS-1$
-	
-	public void createInitialLayout(IPageLayout layout){
+
+	public void createInitialLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(true);
 		layout.addView(NotesView.ID, IPageLayout.RIGHT, 0.9f, editorArea);
 	}
-	
+
 }

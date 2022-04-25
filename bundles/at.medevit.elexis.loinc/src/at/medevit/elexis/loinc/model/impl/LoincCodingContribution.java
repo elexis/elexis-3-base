@@ -14,32 +14,31 @@ import ch.elexis.core.findings.codes.CodingSystem;
 import ch.elexis.core.findings.codes.ICodingContribution;
 
 @Component
-public class LoincCodingContribution implements ICodingContribution
-{
+public class LoincCodingContribution implements ICodingContribution {
 	private ILoincCodeService iLoincCodeService;
-	
+
 	@Activate
-	public void activate(){
+	public void activate() {
 		this.iLoincCodeService = new LoincCodeService();
 	}
-	
+
 	@Override
-	public String getCodeSystem(){
+	public String getCodeSystem() {
 		return CodingSystem.LOINC_CODESYSTEM.getSystem();
 	}
-	
+
 	@Override
-	public List<ICoding> getCodes(){
+	public List<ICoding> getCodes() {
 		List<ICoding> codings = new ArrayList<>();
 		for (LoincCode c : iLoincCodeService.getAllCodes()) {
 			codings.add((ICoding) c);
 		}
 		return codings;
 	}
-	
+
 	@Override
-	public Optional<ICoding> getCode(String code){
+	public Optional<ICoding> getCode(String code) {
 		return Optional.ofNullable((ICoding) iLoincCodeService.getByCode(code));
 	}
-	
+
 }

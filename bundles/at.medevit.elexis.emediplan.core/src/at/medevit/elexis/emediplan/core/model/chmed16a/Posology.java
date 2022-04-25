@@ -26,8 +26,8 @@ public class Posology {
 	public int InRes;
 	public List<Float> D;
 	public List<TakingTime> TT;
-	
-	public static List<Posology> fromPrescription(IPrescription prescription){
+
+	public static List<Posology> fromPrescription(IPrescription prescription) {
 		List<Posology> ret = new ArrayList<>();
 		Posology posology = new Posology();
 		LocalDateTime beginDate = prescription.getDateFrom();
@@ -39,13 +39,14 @@ public class Posology {
 			posology.DtTo = new TimeTool(endDate).toString(TimeTool.DATE_ISO);
 		}
 		String[] signature = MedicationServiceHolder.get()
-			.getSignatureAsStringArray(prescription.getDosageInstruction());
-		boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty()
-			&& signature[2].isEmpty() && signature[3].isEmpty();
+				.getSignatureAsStringArray(prescription.getDosageInstruction());
+		boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty() && signature[2].isEmpty()
+				&& signature[3].isEmpty();
 		if (!isFreetext) {
 			List<Float> floats = MedicationServiceHolder.get().getDosageAsFloats(prescription);
 			posology.D = floats;
-			// posology.TT = TakingTime.fromFloats(floats, prescription.getEntryType() == EntryType.RESERVE_MEDICATION);
+			// posology.TT = TakingTime.fromFloats(floats, prescription.getEntryType() ==
+			// EntryType.RESERVE_MEDICATION);
 		}
 		if (prescription.getEntryType() == EntryType.RESERVE_MEDICATION) {
 			posology.InRes = 1;

@@ -44,9 +44,9 @@ public class InvoiceResponse450Tests {
 
 	private static File writeResp450;
 	private static File readResp450;
-	
+
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception{
+	public static void setUpBeforeClass() throws Exception {
 
 		writeResp450 = new File("rsc/writeResp450.xml");
 		if (!writeResp450.exists()) {
@@ -54,20 +54,18 @@ public class InvoiceResponse450Tests {
 		}
 		readResp450 = new File("rsc/readResp450.xml");
 	}
-	
+
 	@Test
-	public void testMarshallInvoiceResponse450() throws FileNotFoundException,
-		DatatypeConfigurationException{
-		assertTrue(TarmedJaxbUtil.marshallInvoiceResponse(generateResponseSample(),
-			new FileOutputStream(writeResp450)));
+	public void testMarshallInvoiceResponse450() throws FileNotFoundException, DatatypeConfigurationException {
+		assertTrue(
+				TarmedJaxbUtil.marshallInvoiceResponse(generateResponseSample(), new FileOutputStream(writeResp450)));
 		assertTrue(writeResp450.exists());
 	}
-	
+
 	@Test
-	public void testUnmarshalInvoiceResponse450() throws FileNotFoundException{
-		ResponseType response =
-			TarmedJaxbUtil.unmarshalInvoiceResponse450(new FileInputStream(readResp450));
-		
+	public void testUnmarshalInvoiceResponse450() throws FileNotFoundException {
+		ResponseType response = TarmedJaxbUtil.unmarshalInvoiceResponse450(new FileInputStream(readResp450));
+
 		assertNotNull(response);
 		assertEquals("en", response.getLanguage());
 		assertEquals("UnitTest", response.getModus());
@@ -76,46 +74,46 @@ public class InvoiceResponse450Tests {
 		BodyType body = response.getPayload().getBody();
 		assertNotNull(body);
 		assertNotNull(body.getRejected());
-		
+
 		assertEquals("female", body.getPatient().getGender());
 		assertNotNull(body.getPatient().getPerson().getPostal());
 		assertNotNull(body.getPatient().getPerson().getTelecom());
 		assertEquals("Edeltraud", body.getPatient().getPerson().getGivenname());
 		assertEquals("Armeswesen", body.getPatient().getPerson().getFamilyname());
-		
+
 		assertEquals(2, response.getPayload().getBody().getRejected().getError().size());
 		assertEquals("This is an invoice rejection", body.getRejected().getExplanation());
 		assertNull(response.getPayload().getBody().getPending());
 	}
-	
-	private ResponseType generateResponseSample() throws DatatypeConfigurationException{
+
+	private ResponseType generateResponseSample() throws DatatypeConfigurationException {
 		ResponseType response = new ResponseType();
 		response.setLanguage("en");
 		response.setModus("UnitTest");
 		response.setPayload(getPayloadSample());
 		response.setProcessing(getProcessingSample());
-		
+
 		return response;
 	}
-	
-	private PayloadType getPayloadSample() throws DatatypeConfigurationException{
+
+	private PayloadType getPayloadSample() throws DatatypeConfigurationException {
 		GregorianCalendar c = new GregorianCalendar();
 		c.set(2015, 01, 21, 13, 30);
 		XMLGregorianCalendar cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-		
+
 		GregorianCalendar cBd = new GregorianCalendar(1980, 04, 01);
 		XMLGregorianCalendar birthDate = DatatypeFactory.newInstance().newXMLGregorianCalendar(cBd);
-		
+
 		PayloadType payload = new PayloadType();
 		payload.setStorno(false);
 		payload.setResponseTimestamp(1262874342);
-		
+
 		InvoiceType invoice = new InvoiceType();
 		invoice.setRequestDate(cal);
 		invoice.setRequestTimestamp(1255521474);
 		invoice.setRequestId("001163000564");
 		payload.setInvoice(invoice);
-		
+
 		BodyType body = new BodyType();
 		PartyType biller = new PartyType();
 		biller.setEanParty("2011234567890");
@@ -126,7 +124,7 @@ public class InvoiceResponse450Tests {
 		body.setBiller(biller);
 		body.setProvider(provider);
 		body.setInsurance(insurance);
-		
+
 		// patient
 		PatientAddressType patient = new PatientAddressType();
 		patient.setGender("female");
@@ -145,7 +143,7 @@ public class InvoiceResponse450Tests {
 		pPatient.setTelecom(pTele);
 		patient.setPerson(pPatient);
 		body.setPatient(patient);
-		
+
 		// contact
 		ContactAddressType contact = new ContactAddressType();
 		contact.setEanParty("7600000000191");
@@ -176,9 +174,9 @@ public class InvoiceResponse450Tests {
 		OnlineAddressType eOnline = new OnlineAddressType();
 		eOnline.getEmail().add("s.sachearbeiter@insurance.ch");
 		contact.setEmployee(employee);
-		
+
 		body.setContact(contact);
-		
+
 		RejectedType rejected = new RejectedType();
 		rejected.setStatusIn("unknown");
 		rejected.setStatusOut("canceled");
@@ -195,12 +193,12 @@ public class InvoiceResponse450Tests {
 		rejected.getError().add(error1);
 		rejected.getError().add(error2);
 		body.setRejected(rejected);
-		
+
 		payload.setBody(body);
 		return payload;
 	}
-	
-	private ProcessingType getProcessingSample(){
+
+	private ProcessingType getProcessingSample() {
 		ProcessingType processing = new ProcessingType();
 		// transport from - to
 		TransportType transport = new TransportType();
@@ -211,7 +209,7 @@ public class InvoiceResponse450Tests {
 		via.setSequenceId(1);
 		via.setVia("7601001304307");
 		transport.getVia().add(via);
-		
+
 		// add transport to processing
 		processing.setTransport(transport);
 		return processing;

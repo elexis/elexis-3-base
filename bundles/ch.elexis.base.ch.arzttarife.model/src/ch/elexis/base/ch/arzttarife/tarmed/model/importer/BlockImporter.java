@@ -18,40 +18,39 @@ import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Importer for tarmed LEISTUNG_BLOECKE information. Currently only {@link TarmedKumulation} rules
- * are imported.
- * 
+ * Importer for tarmed LEISTUNG_BLOECKE information. Currently only
+ * {@link TarmedKumulation} rules are imported.
+ *
  * @author thomas
  *
  */
 public class BlockImporter {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ServiceImporter.class);
-	
+
 	private JdbcLink cacheDb;
 	private String lang;
 	private String law;
-	
-	public BlockImporter(JdbcLink cacheDb, String lang, String law){
+
+	public BlockImporter(JdbcLink cacheDb, String lang, String law) {
 		this.cacheDb = cacheDb;
 		this.lang = lang;
 		this.law = law;
 	}
-	
-	public IStatus doImport(IProgressMonitor ipm) throws SQLException, IOException{
+
+	public IStatus doImport(IProgressMonitor ipm) throws SQLException, IOException {
 		Stm servicesStm = null;
 		try {
 			ipm.subTask("Importiere Blöcke");
-			
+
 			servicesStm = cacheDb.getStatement();
-			ResultSet res =
-				servicesStm.query(String.format("SELECT DISTINCT BLOCK FROM %sLEISTUNG_BLOECKE", //$NON-NLS-1$
-				TarmedReferenceDataImporter.ImportPrefix));
+			ResultSet res = servicesStm.query(String.format("SELECT DISTINCT BLOCK FROM %sLEISTUNG_BLOECKE", //$NON-NLS-1$
+					TarmedReferenceDataImporter.ImportPrefix));
 			while (res.next()) {
 				String blockName = res.getString("BLOCK");
-				
+
 				importKumulations(blockName);
-				
+
 				logger.debug("Imported block " + blockName);
 			}
 		} finally {
@@ -61,30 +60,29 @@ public class BlockImporter {
 		}
 		return Status.OK_STATUS;
 	}
-	
+
 	/**
-	 * Import all the kumulations from the LEISTUNG_KUMULATION table for the given code. The
-	 * kumulations contain inclusions, exclusions and exclusives.
-	 * 
-	 * @param code
-	 *            of a tarmed value
+	 * Import all the kumulations from the LEISTUNG_KUMULATION table for the given
+	 * code. The kumulations contain inclusions, exclusions and exclusives.
+	 *
+	 * @param code      of a tarmed value
 	 * @param stmCached
 	 * @throws SQLException
 	 */
-	private void importKumulations(String blockName) throws SQLException{
+	private void importKumulations(String blockName) throws SQLException {
 		Stm subStm = cacheDb.getStatement();
 		try {
-			try (ResultSet res = subStm.query(String.format(
-				"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER='%s' AND ART_MASTER='B'",
-				TarmedReferenceDataImporter.ImportPrefix, blockName))) {
+			try (ResultSet res = subStm
+					.query(String.format("SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER='%s' AND ART_MASTER='B'",
+							TarmedReferenceDataImporter.ImportPrefix, blockName))) {
 				TimeTool fromTime = new TimeTool();
 				TimeTool toTime = new TimeTool();
-				
+
 				List<Object> kumulations = new ArrayList<>();
 				while (res != null && res.next()) {
 					fromTime.set(res.getString("GUELTIG_VON"));
 					toTime.set(res.getString("GUELTIG_BIS"));
-					
+
 					TarmedKumulation kumulation = new TarmedKumulation();
 					kumulation.setMasterCode(blockName);
 					kumulation.setMasterArt(res.getString("ART_MASTER"));

@@ -42,8 +42,7 @@ public final class ArticleLabelHandler extends AbstractHandler {
 			String docName = PreferenceConstants.ARTICLE_LABEL;
 			IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-			String printerName =
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document ArticleLabel on printer: " + printerName);
 			PrintProvider.print(fo, printerName);
 		} catch (Exception e) {

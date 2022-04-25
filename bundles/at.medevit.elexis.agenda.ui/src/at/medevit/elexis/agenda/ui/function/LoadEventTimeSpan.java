@@ -6,21 +6,21 @@ import java.time.temporal.ChronoUnit;
 public class LoadEventTimeSpan {
 	private LocalDate from;
 	private LocalDate to;
-	
-	public LoadEventTimeSpan(LocalDate from, LocalDate to){
+
+	public LoadEventTimeSpan(LocalDate from, LocalDate to) {
 		this.from = from;
 		this.to = to;
 	}
-	
-	public boolean isWeek(){
+
+	public boolean isWeek() {
 		return ChronoUnit.DAYS.between(from, to) == 7;
 	}
-	
-	public boolean isDay(){
+
+	public boolean isDay() {
 		return ChronoUnit.DAYS.between(from, to) == 1;
 	}
-	
-	public LocalDate getFrom(){
+
+	public LocalDate getFrom() {
 		return from;
 	}
 }

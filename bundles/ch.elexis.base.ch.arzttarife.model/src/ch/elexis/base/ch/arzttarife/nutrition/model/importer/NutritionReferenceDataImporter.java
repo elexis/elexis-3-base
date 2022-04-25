@@ -30,20 +30,19 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.rgw.tools.TimeTool;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=nutrition")
-public class NutritionReferenceDataImporter extends AbstractReferenceDataImporter
-		implements IReferenceDataImporter {
-	
+public class NutritionReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
+
 	private LocalDate validFrom;
 	private LocalDate endOfEpoch = new TimeTool(TimeTool.END_OF_UNIX_EPOCH).toLocalDate();
-	
+
 	@Override
-	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion){
+	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion) {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		validFrom = getValidFromVersion(newVersion).toLocalDate();
-		
+
 		try {
 			CSVReader reader = new CSVReader(new InputStreamReader(input, "UTF-8"), ';');
 			monitor.beginTask("Importiere Ernährungsberatung", 100);
@@ -58,7 +57,7 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 				}
 			}
 			closeAllOlder();
-			
+
 			monitor.done();
 			return Status.OK_STATUS;
 		} catch (IOException uee) {
@@ -66,18 +65,17 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 			return Status.CANCEL_STATUS;
 		}
 	}
-	
+
 	/**
 	 * Convert version Integer in yymmdd format to date.
-	 * 
+	 *
 	 * @param newVersion
 	 * @return
 	 */
-	private TimeTool getValidFromVersion(Integer newVersion){
+	private TimeTool getValidFromVersion(Integer newVersion) {
 		String intString = Integer.toString(newVersion);
 		if (intString.length() != 6) {
-			throw new IllegalStateException(
-				"Version " + newVersion + " can not be parsed to valid date.");
+			throw new IllegalStateException("Version " + newVersion + " can not be parsed to valid date.");
 		}
 		String year = intString.substring(0, 2);
 		String month = intString.substring(2, 4);
@@ -88,12 +86,12 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 		ret.set(TimeTool.DAY_OF_MONTH, Integer.parseInt(day));
 		return ret;
 	}
-	
-	private void closeAllOlder(){
+
+	private void closeAllOlder() {
 		// get all entries
 		LocalDate defaultValidFrom = LocalDate.of(1970, 1, 1);
 		List<NutritionLeistung> entries = EntityUtil.loadAll(NutritionLeistung.class);
-		
+
 		for (NutritionLeistung nutrition : entries) {
 			LocalDate pValidFrom = nutrition.getValidFrom();
 			LocalDate pValidUntil = nutrition.getValidUntil();
@@ -113,10 +111,10 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 			}
 		}
 	}
-	
-	private void updateOrCreateFromLine(String[] line){
-		List<NutritionLeistung> entries = EntityUtil
-			.loadByNamedQuery(Collections.singletonMap("code", line[0]), NutritionLeistung.class);
+
+	private void updateOrCreateFromLine(String[] line) {
+		List<NutritionLeistung> entries = EntityUtil.loadByNamedQuery(Collections.singletonMap("code", line[0]),
+				NutritionLeistung.class);
 		List<NutritionLeistung> openEntries = new ArrayList<>();
 		// get open entries -> field FLD_GUELTIG_BIS not set
 		for (NutritionLeistung nutrition : entries) {
@@ -156,7 +154,7 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 					// close entry and create new entry
 					nutrition.setValidUntil(validFrom);
 					EntityUtil.save(Collections.singletonList(nutrition));
-					
+
 					NutritionLeistung newNutrition = new NutritionLeistung();
 					newNutrition.setCode(line[0]);
 					newNutrition.setCodeText(line[1]);
@@ -172,8 +170,8 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 			}
 		}
 	}
-	
-	private void applyFixPrice(NutritionLeistung nutrition, String string){
+
+	private void applyFixPrice(NutritionLeistung nutrition, String string) {
 		nutrition.setTp(string);
 		StringBuilder sb = new StringBuilder();
 		String existingText = nutrition.getText();
@@ -183,16 +181,14 @@ public class NutritionReferenceDataImporter extends AbstractReferenceDataImporte
 		sb.append(NutritionLeistung.FIXEDPRICE);
 		nutrition.setCodeText(sb.toString());
 	}
-	
-	private boolean lineHasFixPrice(String[] line){
-		return line.length > 4 && line[4] != null && !line[4].isEmpty()
-			&& Character.isDigit(line[4].charAt(0));
+
+	private boolean lineHasFixPrice(String[] line) {
+		return line.length > 4 && line[4] != null && !line[4].isEmpty() && Character.isDigit(line[4].charAt(0));
 	}
-	
+
 	@Override
-	public int getCurrentVersion(){
-		IQuery<INutritionLeistung> query =
-			ArzttarifeModelServiceHolder.get().getQuery(INutritionLeistung.class);
+	public int getCurrentVersion() {
+		IQuery<INutritionLeistung> query = ArzttarifeModelServiceHolder.get().getQuery(INutritionLeistung.class);
 		query.and("validFrom", COMPARATOR.NOT_EQUALS, null);
 		query.and("validUntil", COMPARATOR.EQUALS, null);
 		List<INutritionLeistung> nutritionLeistungen = query.execute();

@@ -17,31 +17,31 @@ import ch.elexis.core.services.IContextService;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
 
 public class AutoSelectPatientHandler {
-	
+
 	@Inject
 	private IContextService contextService;
-	
+
 	private boolean isActive;
-	
+
 	@Inject
-	public void initialize(EModelService modelService, MPart part){
-		MUIElement toolItem = modelService
-			.find("ch.elexis.global_inbox.directtoolitem.autoSelectPatient", part.getToolbar());
+	public void initialize(EModelService modelService, MPart part) {
+		MUIElement toolItem = modelService.find("ch.elexis.global_inbox.directtoolitem.autoSelectPatient",
+				part.getToolbar());
 		isActive = ((MDirectToolItem) toolItem).isSelected();
 	}
-	
+
 	@Execute
-	public void execute(MDirectToolItem toolItem){
+	public void execute(MDirectToolItem toolItem) {
 		isActive = toolItem.isSelected();
 	}
-	
+
 	@Inject
-	public void setGlobalInboxEntry(@Optional @Named(IServiceConstants.ACTIVE_SELECTION)
-	GlobalInboxEntry globalInboxEntry){
+	public void setGlobalInboxEntry(
+			@Optional @Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
 		if (globalInboxEntry == null) {
 			return;
 		}
-		
+
 		if (isActive) {
 			IPatient patient = globalInboxEntry.getPatient();
 			if (patient != null) {
@@ -49,5 +49,5 @@ public class AutoSelectPatientHandler {
 			}
 		}
 	}
-	
+
 }

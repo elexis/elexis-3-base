@@ -21,20 +21,18 @@ import org.osgi.service.event.EventHandler;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.ILabResult;
 
-@Component(property = {
-	EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.EVENT_CREATE,
-	EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.PERSISTENCE_EVENT_COMPATIBILITY_CREATE
-}, immediate = true)
+@Component(property = { EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.EVENT_CREATE,
+		EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.PERSISTENCE_EVENT_COMPATIBILITY_CREATE }, immediate = true)
 public class LabResultCreateEventHandler implements EventHandler {
 	private ExecutorService executor;
-	
+
 	private boolean active = false;
-	
-	public LabResultCreateEventHandler(){
+
+	public LabResultCreateEventHandler() {
 		CoreElements.setLabResultCreateEventHandler(this);
 	}
-	
-	public void setActive(boolean value){
+
+	public void setActive(boolean value) {
 		this.active = value;
 		if (value) {
 			if (executor == null) {
@@ -47,13 +45,13 @@ public class LabResultCreateEventHandler implements EventHandler {
 			}
 		}
 	}
-	
+
 	@Override
-	public void handleEvent(Event event){
+	public void handleEvent(Event event) {
 		if (active) {
 			if (event.getProperty(ElexisEventTopics.ECLIPSE_E4_DATA) instanceof ILabResult) {
-				executor.execute(new AddLabInboxElement(
-					(ILabResult) event.getProperty(ElexisEventTopics.ECLIPSE_E4_DATA)));
+				executor.execute(
+						new AddLabInboxElement((ILabResult) event.getProperty(ElexisEventTopics.ECLIPSE_E4_DATA)));
 			}
 		}
 	}

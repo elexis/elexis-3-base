@@ -35,10 +35,10 @@ public class FoTransformer {
 	private static Logger logger = LoggerFactory.getLogger(FoTransformer.class);
 
 	public static String DEBUG_MODE = "fop.printing.debug";
-	
+
 	/**
 	 * Creates an FO file and returns it as an InputStream.
-	 * 
+	 *
 	 * @param inputStream
 	 * @return
 	 */
@@ -59,7 +59,7 @@ public class FoTransformer {
 		if (System.getProperty(DEBUG_MODE) != null) {
 			ByteArrayOutputStream bo = new ByteArrayOutputStream();
 			IOUtils.copy(xmlInputStream, bo);
-			
+
 			// setup pretty printing xml
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -68,10 +68,10 @@ public class FoTransformer {
 			StreamSource source = new StreamSource(new ByteArrayInputStream(bo.toByteArray()));
 			transformer.transform(source, result);
 			System.out.println(result.getWriter().toString());
-			
+
 			xmlInputStream = new ByteArrayInputStream(bo.toByteArray());
 		}
-		
+
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		// Setup XSLT
 		TransformerFactory factory = TransformerFactory.newInstance();

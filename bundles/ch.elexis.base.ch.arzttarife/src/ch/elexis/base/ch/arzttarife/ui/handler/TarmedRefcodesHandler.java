@@ -15,17 +15,15 @@ import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.views.TarmedRefcodesDialog;
 
 public class TarmedRefcodesHandler extends AbstractHandler {
-	
+
 	public static String CMDID = "ch.elexis.base.ch.arzttarife.tarmed.refcodes";
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell shell = HandlerUtil.getActiveShell(event);
 		if (shell != null) {
-			IEclipseContext iEclipseContext =
-				PlatformUI.getWorkbench().getService(IEclipseContext.class);
-			StructuredSelection selection =
-				CoreUiUtil.getCommandSelection(iEclipseContext, CMDID);
+			IEclipseContext iEclipseContext = PlatformUI.getWorkbench().getService(IEclipseContext.class);
+			StructuredSelection selection = CoreUiUtil.getCommandSelection(iEclipseContext, CMDID);
 			if (!selection.isEmpty() && selection.getFirstElement() instanceof IBilled) {
 				IBilled billed = (IBilled) selection.getFirstElement();
 				if (billed.getBillable() instanceof ITarmedLeistung) {
@@ -35,15 +33,12 @@ public class TarmedRefcodesHandler extends AbstractHandler {
 		}
 		return shell;
 	}
-	
+
 	@Override
-	public boolean isEnabled(){
-		IEclipseContext iEclipseContext =
-			PlatformUI.getWorkbench().getService(IEclipseContext.class);
-		StructuredSelection selection =
-			CoreUiUtil.getCommandSelection(iEclipseContext, CMDID, false);
-		if (selection != null && !selection.isEmpty()
-			&& selection.getFirstElement() instanceof IBilled) {
+	public boolean isEnabled() {
+		IEclipseContext iEclipseContext = PlatformUI.getWorkbench().getService(IEclipseContext.class);
+		StructuredSelection selection = CoreUiUtil.getCommandSelection(iEclipseContext, CMDID, false);
+		if (selection != null && !selection.isEmpty() && selection.getFirstElement() instanceof IBilled) {
 			IBilled billed = (IBilled) selection.getFirstElement();
 			return billed.getBillable() instanceof ITarmedLeistung;
 		}

@@ -70,29 +70,28 @@ public class ESRView extends ViewPart {
 	private Text txtFilter;
 	private Label lblSUMME;
 	private TableViewer tableViewer;
-	
+
 	private TimeTool startDate;
 	private TimeTool endDate;
-	
+
 	private TimeTool compTT1, compTT2; // for comparison only
-	
-	protected final SimpleDateFormat sdf =
-		(SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
-	
-	private final ElexisUiEventListenerImpl eeli_user =
-		new ElexisUiEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
-			
-			public void runInUi(ElexisEvent ev){
-				updateView();
-			};
+
+	protected final SimpleDateFormat sdf = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
+
+	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
+			ElexisEvent.EVENT_USER_CHANGED) {
+
+		public void runInUi(ElexisEvent ev) {
+			updateView();
 		};
-	
-	private enum SELECTION_TYPE {
-			NOTPOSTED, LASTMONTH, THISMONTH, LASTWEEK, THISWEEK, PERIOD
 	};
-	
+
+	private enum SELECTION_TYPE {
+		NOTPOSTED, LASTMONTH, THISMONTH, LASTWEEK, THISWEEK, PERIOD
+	};
+
 	private SELECTION_TYPE selectionType = SELECTION_TYPE.NOTPOSTED;
-	
+
 	static final int DATUM_INDEX = 0;
 	static final int RN_NUMMER_INDEX = 1;
 	static final int BETRAG_INDEX = 2;
@@ -102,134 +101,130 @@ public class ESRView extends ViewPart {
 	static final int PATIENT_INDEX = 6;
 	static final int BUCHUNG_INDEX = 7;
 	static final int DATEI_INDEX = 8;
-	
-	private static final String[] COLUMN_TEXTS = {
-		Messages.ESRView2_date, // DATUM_INDEX
-		Messages.ESRView2_billNumber, // RN_NUMMER_INDEX
-		Messages.ESRView2_amount, // BETRAG
-		Messages.ESRView2_readDate, // EINGELESEN_INDEX
-		Messages.ESRView2_accountedDate, // VERRECHNET_INDEX
-		Messages.ESRView2_addedDate, // GUTGESCHRIEBEN_INDEX
-		Messages.ESRView2_patient, // PATIENT_INDEX
-		Messages.ESRView2_booking, // BUCHUNG_INDEX
-		Messages.ESRView2_file, // DATEI_INDEX
+
+	private static final String[] COLUMN_TEXTS = { Messages.ESRView2_date, // DATUM_INDEX
+			Messages.ESRView2_billNumber, // RN_NUMMER_INDEX
+			Messages.ESRView2_amount, // BETRAG
+			Messages.ESRView2_readDate, // EINGELESEN_INDEX
+			Messages.ESRView2_accountedDate, // VERRECHNET_INDEX
+			Messages.ESRView2_addedDate, // GUTGESCHRIEBEN_INDEX
+			Messages.ESRView2_patient, // PATIENT_INDEX
+			Messages.ESRView2_booking, // BUCHUNG_INDEX
+			Messages.ESRView2_file, // DATEI_INDEX
 	};
-	
+
 	private Button btnDatePeriod;
 	private Button btnNotPosted;
 	private Button btnThisMonth;
 	private Button btnLastMonth;
 	private Button btnThisWeek;
 	private Button btnLastWeek;
-	
-	public ESRView(){
+
+	public ESRView() {
 		endDate = new TimeTool();
 		startDate = new TimeTool();
 		startDate.add(Calendar.MONTH, -3);
-		
+
 		compTT1 = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 		compTT2 = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 	}
-	
+
 	/**
 	 * Create contents of the view part.
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout(1, false));
-		
+
 		GC gc = new GC(parent);
 		FontMetrics fm = gc.getFontMetrics();
 		gc.dispose();
 		int dateLength = (sdf.toPattern().length() + 2) * fm.getAverageCharWidth();
-		
+
 		Composite headerContainer = new Composite(parent, SWT.NONE);
 		headerContainer.setLayout(new GridLayout(7, false));
 		headerContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		txtFilter = new Text(headerContainer, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
 		txtFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtFilter
-			.setMessage("Suche - #RechnungsNr, $Betrag, Text zB $>100 für alle Beträge größer 100");
-		
+		txtFilter.setMessage("Suche - #RechnungsNr, $Betrag, Text zB $>100 für alle Beträge größer 100");
+
 		Listener selectionListener = new Listener() {
 			@Override
-			public void handleEvent(Event event){
+			public void handleEvent(Event event) {
 				selectionType = (SELECTION_TYPE) event.widget.getData();
 				updateView();
 			}
 		};
-		
+
 		btnNotPosted = new Button(headerContainer, SWT.FLAT | SWT.TOGGLE);
 		btnNotPosted.setToolTipText("Noch nicht verbuchte Zahlungen");
 		btnNotPosted.setText("Nicht verbucht");
 		btnNotPosted.setData(SELECTION_TYPE.NOTPOSTED);
 		btnNotPosted.addListener(SWT.Selection, selectionListener);
-		
+
 		btnThisMonth = new Button(headerContainer, SWT.FLAT | SWT.TOGGLE);
 		btnThisMonth.setToolTipText("Dieser Monat");
 		btnThisMonth.setText("DM");
 		btnThisMonth.setData(SELECTION_TYPE.THISMONTH);
 		btnThisMonth.addListener(SWT.Selection, selectionListener);
-		
+
 		btnLastMonth = new Button(headerContainer, SWT.FLAT | SWT.TOGGLE);
 		btnLastMonth.setToolTipText("Letzter Monat");
 		btnLastMonth.setText("LM");
 		btnLastMonth.setData(SELECTION_TYPE.LASTMONTH);
 		btnLastMonth.addListener(SWT.Selection, selectionListener);
-		
+
 		btnThisWeek = new Button(headerContainer, SWT.FLAT | SWT.TOGGLE);
 		btnThisWeek.setToolTipText("Diese Woche");
 		btnThisWeek.setText("DW");
 		btnThisWeek.setData(SELECTION_TYPE.THISWEEK);
 		btnThisWeek.addListener(SWT.Selection, selectionListener);
-		
+
 		btnLastWeek = new Button(headerContainer, SWT.FLAT | SWT.TOGGLE);
 		btnLastWeek.setToolTipText("Letzte Woche");
 		btnLastWeek.setText("LW");
 		btnLastWeek.setData(SELECTION_TYPE.LASTWEEK);
 		btnLastWeek.addListener(SWT.Selection, selectionListener);
-		
+
 		btnDatePeriod = new Button(headerContainer, SWT.FLAT | SWT.TOGGLE);
 		btnDatePeriod.setToolTipText("Selektion über Zeitraum");
 		btnDatePeriod.setData(SELECTION_TYPE.PERIOD);
 		btnDatePeriod.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent event){
+			public void widgetSelected(SelectionEvent event) {
 				selectionType = (SELECTION_TYPE) event.widget.getData();
-				
-				DatePeriodSelectorDialog dpsd = new DatePeriodSelectorDialog(
-					Display.getCurrent().getActiveShell(), startDate, endDate);
+
+				DatePeriodSelectorDialog dpsd = new DatePeriodSelectorDialog(Display.getCurrent().getActiveShell(),
+						startDate, endDate);
 				int retVal = dpsd.open();
 				if (retVal == Dialog.OK) {
 					updateView();
 				}
 			}
 		});
-		
+
 		Composite tableViewerComposite = new Composite(parent, SWT.NONE);
 		tableViewerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		TableColumnLayout tcl_tableViewerComposite = new TableColumnLayout();
 		tableViewerComposite.setLayout(tcl_tableViewerComposite);
-		
-		tableViewer =
-			new TableViewer(tableViewerComposite, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
+
+		tableViewer = new TableViewer(tableViewerComposite, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
 		table = tableViewer.getTable();
 		tableViewer.setUseHashlookup(true);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		
+
 		// Datum
 		TableViewerColumn tableViewerColumnDate = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnDate = tableViewerColumnDate.getColumn();
-		tcl_tableViewerComposite.setColumnData(tblclmnDate,
-			new ColumnPixelData(dateLength, true, false));
+		tcl_tableViewerComposite.setColumnData(tblclmnDate, new ColumnPixelData(dateLength, true, false));
 		tblclmnDate.setText(COLUMN_TEXTS[0]);
 		new TableViewerColumnSorter(tableViewerColumnDate) {
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2){
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				ESRRecord esr1 = (ESRRecord) e1;
 				ESRRecord esr2 = (ESRRecord) e2;
 				if (!compTT1.set(esr1.get(ESRRecord.FLD_DATE)))
@@ -239,16 +234,15 @@ public class ESRView extends ViewPart {
 				return compTT1.compareTo(compTT2);
 			}
 		};
-		
+
 		// Rechnungs-Nummer
-		TableViewerColumn tableViewerColumnBillNumber =
-			new TableViewerColumn(tableViewer, SWT.NONE);
+		TableViewerColumn tableViewerColumnBillNumber = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnRnnum = tableViewerColumnBillNumber.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnRnnum, new ColumnPixelData(70, true, true));
 		tblclmnRnnum.setText(COLUMN_TEXTS[1]);
 		new TableViewerColumnSorter(tableViewerColumnBillNumber) {
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2){
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				Rechnung r1 = ((ESRRecord) e1).getRechnung();
 				Rechnung r2 = ((ESRRecord) e2).getRechnung();
 				String rNr1 = (r1 != null) ? r1.getNr() : "";
@@ -256,7 +250,7 @@ public class ESRView extends ViewPart {
 				return StringTool.compareNumericStrings(rNr1, rNr2);
 			}
 		};
-		
+
 		// Betrag
 		TableViewerColumn tableViewerColumnAmount = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnAmount = tableViewerColumnAmount.getColumn();
@@ -264,23 +258,21 @@ public class ESRView extends ViewPart {
 		tblclmnAmount.setText(COLUMN_TEXTS[2]);
 		new TableViewerColumnSorter(tableViewerColumnAmount) {
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2){
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				ESRRecord esr1 = (ESRRecord) e1;
 				ESRRecord esr2 = (ESRRecord) e2;
 				return esr1.getBetrag().compareTo(esr2.getBetrag());
 			}
 		};
-		
+
 		// Eingelesen Datum
-		TableViewerColumn tableViewerColumnEingelesen =
-			new TableViewerColumn(tableViewer, SWT.NONE);
+		TableViewerColumn tableViewerColumnEingelesen = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnEingelesen = tableViewerColumnEingelesen.getColumn();
-		tcl_tableViewerComposite.setColumnData(tblclmnEingelesen,
-			new ColumnPixelData(dateLength, true, false));
+		tcl_tableViewerComposite.setColumnData(tblclmnEingelesen, new ColumnPixelData(dateLength, true, false));
 		tblclmnEingelesen.setText(COLUMN_TEXTS[3]);
 		new TableViewerColumnSorter(tableViewerColumnEingelesen) {
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2){
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				ESRRecord esr1 = (ESRRecord) e1;
 				ESRRecord esr2 = (ESRRecord) e2;
 				if (!compTT1.set(esr1.getEinlesedatatum()))
@@ -290,17 +282,15 @@ public class ESRView extends ViewPart {
 				return compTT1.compareTo(compTT2);
 			}
 		};
-		
+
 		// Verrechnet Datum
-		TableViewerColumn tableViewerColumnVerrechnet =
-			new TableViewerColumn(tableViewer, SWT.NONE);
+		TableViewerColumn tableViewerColumnVerrechnet = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnVerrechnet = tableViewerColumnVerrechnet.getColumn();
-		tcl_tableViewerComposite.setColumnData(tblclmnVerrechnet,
-			new ColumnPixelData(dateLength, true, false));
+		tcl_tableViewerComposite.setColumnData(tblclmnVerrechnet, new ColumnPixelData(dateLength, true, false));
 		tblclmnVerrechnet.setText(COLUMN_TEXTS[4]);
 		new TableViewerColumnSorter(tableViewerColumnVerrechnet) {
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2){
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				ESRRecord esr1 = (ESRRecord) e1;
 				ESRRecord esr2 = (ESRRecord) e2;
 				if (!compTT1.set(esr1.getVerarbeitungsdatum()))
@@ -310,17 +300,15 @@ public class ESRView extends ViewPart {
 				return compTT1.compareTo(compTT2);
 			}
 		};
-		
+
 		// Gutgeschrieben Datum
-		TableViewerColumn tableViewerColumnGutgeschrieben =
-			new TableViewerColumn(tableViewer, SWT.NONE);
+		TableViewerColumn tableViewerColumnGutgeschrieben = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnGutgeschrieben = tableViewerColumnGutgeschrieben.getColumn();
-		tcl_tableViewerComposite.setColumnData(tblclmnGutgeschrieben,
-			new ColumnPixelData(dateLength, true, false));
+		tcl_tableViewerComposite.setColumnData(tblclmnGutgeschrieben, new ColumnPixelData(dateLength, true, false));
 		tblclmnGutgeschrieben.setText(COLUMN_TEXTS[5]);
 		new TableViewerColumnSorter(tableViewerColumnGutgeschrieben) {
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2){
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				ESRRecord esr1 = (ESRRecord) e1;
 				ESRRecord esr2 = (ESRRecord) e2;
 				if (!compTT1.set(esr1.getValuta()))
@@ -330,16 +318,16 @@ public class ESRView extends ViewPart {
 				return compTT1.compareTo(compTT2);
 			}
 		};
-		
+
 		// Patient
 		TableViewerColumn tableViewerColumnPatient = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnPatient = tableViewerColumnPatient.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnPatient,
-			new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
+				new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
 		tblclmnPatient.setText(COLUMN_TEXTS[6]);
 		new TableViewerColumnSorter(tableViewerColumnPatient) {
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2){
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				Patient pat1 = ((ESRRecord) e1).getPatient();
 				Patient pat2 = ((ESRRecord) e2).getPatient();
 				String patLab1 = (pat1 != null) ? pat1.getLabel() : "";
@@ -347,16 +335,16 @@ public class ESRView extends ViewPart {
 				return patLab1.compareTo(patLab2);
 			}
 		};
-		
+
 		// Buchungs Datum
 		TableViewerColumn tableViewerColumnBooking = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnBuchung = tableViewerColumnBooking.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnBuchung,
-			new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
+				new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
 		tblclmnBuchung.setText(COLUMN_TEXTS[7]);
 		new TableViewerColumnSorter(tableViewerColumnBooking) {
 			@Override
-			protected int doCompare(Viewer viewer, Object e1, Object e2){
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				ESRRecord esr1 = (ESRRecord) e1;
 				ESRRecord esr2 = (ESRRecord) e2;
 				if (!compTT1.set(esr1.getGebucht()))
@@ -366,47 +354,46 @@ public class ESRView extends ViewPart {
 				return compTT1.compareTo(compTT2);
 			}
 		};
-		
+
 		TableViewerColumn tableViewerColumnFile = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnDatei = tableViewerColumnFile.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnDatei,
-			new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
+				new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
 		tblclmnDatei.setText(COLUMN_TEXTS[8]);
-		
+
 		Composite footerComposite = new Composite(parent, SWT.NONE);
 		footerComposite.setLayout(new GridLayout(2, false));
 		footerComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		Label lblSumme = new Label(footerComposite, SWT.NONE);
 		lblSumme.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.BOLD));
 		lblSumme.setBounds(0, 0, 59, 14);
 		lblSumme.setText("Summe über gewählte Einträge ");
-		
+
 		lblSUMME = new Label(footerComposite, SWT.NONE);
 		lblSUMME.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				if ((sel != null) && (!sel.isEmpty())) {
 					Object element = sel.getFirstElement();
 					PersistentObject po = (PersistentObject) element;
-					ESRRecordDialog erd =
-						new ESRRecordDialog(getViewSite().getShell(), (ESRRecord) po);
+					ESRRecordDialog erd = new ESRRecordDialog(getViewSite().getShell(), (ESRRecord) po);
 					erd.open();
 					updateView();
 				}
 			}
 		});
-		
+
 		tableViewer.setLabelProvider(new ESRLabelProvider());
 		tableViewer.setContentProvider(new ESRContentProvider(lblSUMME, DISPLAY_ESR));
-		
+
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
+
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				StructuredSelection ss = (StructuredSelection) tableViewer.getSelection();
 				Object firstElement = ss.getFirstElement();
 				if (firstElement != null) {
@@ -419,35 +406,33 @@ public class ESRView extends ViewPart {
 				} else {
 					ElexisEventDispatcher.clearSelection(ESRRecord.class);
 				}
-				
+
 			}
 		});
-		
-		ViewerFilter[] filters = new ViewerFilter[] {
-			FilterSearchField.getInstance()
-		};
+
+		ViewerFilter[] filters = new ViewerFilter[] { FilterSearchField.getInstance() };
 		tableViewer.setFilters(filters);
-		
+
 		txtFilter.addKeyListener(new FilterKeyListener(txtFilter, tableViewer));
 		txtFilter.addSelectionListener(new SelectionAdapter() {
-			public void widgetDefaultSelected(SelectionEvent e){
+			public void widgetDefaultSelected(SelectionEvent e) {
 				if (e.detail == SWT.CANCEL) {
 					FilterSearchField.getInstance().setSearchText(null);
 					tableViewer.refresh();
 				}
 			}
 		});
-		
+
 		updateView();
-		
+
 		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
 	}
-	
-	public void updateView(){
+
+	public void updateView() {
 		updateButtonToggleState();
-		
+
 		if (SELECTION_TYPE.NOTPOSTED == selectionType) {
-			btnDatePeriod.setText("Zeitraum: \u2264"+sdf.format(new Date()));
+			btnDatePeriod.setText("Zeitraum: \u2264" + sdf.format(new Date()));
 		} else {
 			LocalDateTime dateHolder = LocalDateTime.now();
 			switch (selectionType) {
@@ -455,8 +440,7 @@ public class ESRView extends ViewPart {
 				dateHolder = dateHolder.minusMonths(1);
 			case THISMONTH:
 				startDate = new TimeTool(dateHolder.withDayOfMonth(1));
-				endDate =
-					new TimeTool(dateHolder.withDayOfMonth(dateHolder.getMonth().maxLength()));
+				endDate = new TimeTool(dateHolder.withDayOfMonth(dateHolder.getMonth().maxLength()));
 				break;
 			case LASTWEEK:
 				dateHolder = dateHolder.minusWeeks(1);
@@ -467,19 +451,17 @@ public class ESRView extends ViewPart {
 			default:
 				break;
 			}
-			btnDatePeriod.setText("Zeitraum: " + sdf.format(startDate.getTime()) + " - "
-				+ sdf.format(endDate.getTime()));
+			btnDatePeriod
+					.setText("Zeitraum: " + sdf.format(startDate.getTime()) + " - " + sdf.format(endDate.getTime()));
 		}
-		
+
 		if (CoreHub.acl.request(DISPLAY_ESR) == true) {
 			Job job = Job.create("ESR loading ...", (ICoreRunnable) monitor -> {
-				Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class, ESRRecord.TABLENAME,
-					false, new String[] {
-						ESRRecord.FLD_DATE, ESRRecord.FLD_BOOKING_DATE, ESRRecord.RECHNUNGS_ID,
-						"Eingelesen", "Verarbeitet", "BetragInRp", "File"
-				});
+				Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class, ESRRecord.TABLENAME, false,
+						new String[] { ESRRecord.FLD_DATE, ESRRecord.FLD_BOOKING_DATE, ESRRecord.RECHNUNGS_ID,
+								"Eingelesen", "Verarbeitet", "BetragInRp", "File" });
 				qbe.add(ESRRecord.FLD_ID, Query.NOT_EQUAL, StringConstants.ONE);
-				
+
 				if (CoreHub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
 					Mandant mandator = ElexisEventDispatcher.getSelectedMandator();
 					if (mandator != null) {
@@ -494,7 +476,7 @@ public class ESRView extends ViewPart {
 						qbe.insertFalse();
 					}
 				}
-				
+
 				if (SELECTION_TYPE.NOTPOSTED == selectionType) {
 					// we select by state
 					qbe.startGroup();
@@ -503,25 +485,25 @@ public class ESRView extends ViewPart {
 					qbe.addToken(ESRRecord.FLD_BOOKING_DATE + " IS NULL");
 					qbe.endGroup();
 				} else {
-					// we select by date	
+					// we select by date
 					qbe.add(ESRRecord.FLD_DATE, Query.GREATER_OR_EQUAL, startDate.toDBString(true));
 					qbe.add(ESRRecord.FLD_DATE, Query.LESS_OR_EQUAL, endDate.toDBString(true));
 				}
 				List<ESRRecord> res = qbe.execute();
-				
+
 				Display.getDefault().asyncExec(() -> {
 					tableViewer.setInput(res);
 				});
 			});
-			
+
 			// Start the Job
 			job.schedule();
 		} else {
 			tableViewer.setInput(null);
 		}
 	}
-	
-	private void updateButtonToggleState(){
+
+	private void updateButtonToggleState() {
 		btnNotPosted.setSelection(btnNotPosted.getData() == selectionType);
 		btnDatePeriod.setSelection(btnDatePeriod.getData() == selectionType);
 		btnLastMonth.setSelection(btnLastMonth.getData() == selectionType);
@@ -531,12 +513,13 @@ public class ESRView extends ViewPart {
 	}
 
 	@Override
-	public void dispose(){
+	public void dispose() {
 		super.dispose();
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_user);
 	}
-	
+
 	@Override
-	public void setFocus(){}
-	
+	public void setFocus() {
+	}
+
 }

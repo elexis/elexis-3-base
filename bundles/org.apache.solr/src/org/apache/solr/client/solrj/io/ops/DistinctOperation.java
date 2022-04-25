@@ -28,48 +28,47 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class DistinctOperation implements ReduceOperation {
 
-  private static final long serialVersionUID = 1L;
-  private UUID operationNodeId = UUID.randomUUID();
-  private Tuple current;
+	private static final long serialVersionUID = 1L;
+	private UUID operationNodeId = UUID.randomUUID();
+	private Tuple current;
 
-  public DistinctOperation(StreamExpression expression, StreamFactory factory) throws IOException {
-    init();
-  }
+	public DistinctOperation(StreamExpression expression, StreamFactory factory) throws IOException {
+		init();
+	}
 
-  public DistinctOperation() {
-    init();
-  }
+	public DistinctOperation() {
+		init();
+	}
 
-  private void init() {
-  }
+	private void init() {
+	}
 
-  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-    StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
-    return expression;
-  }
+	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+		StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
+		return expression;
+	}
 
-  @Override
-  public Explanation toExplanation(StreamFactory factory) throws IOException {
-    return new Explanation(operationNodeId.toString())
-      .withExpressionType(ExpressionType.OPERATION)
-      .withFunctionName(factory.getFunctionName(getClass()))
-      .withImplementingClass(getClass().getName())
-      .withExpression(toExpression(factory).toString());
-  }
+	@Override
+	public Explanation toExplanation(StreamFactory factory) throws IOException {
+		return new Explanation(operationNodeId.toString()).withExpressionType(ExpressionType.OPERATION)
+				.withFunctionName(factory.getFunctionName(getClass())).withImplementingClass(getClass().getName())
+				.withExpression(toExpression(factory).toString());
+	}
 
-  public Tuple reduce() {
-    // Return the tuple after setting current to null. This will ensure the next call to 
-    // operate stores that tuple
-    Tuple toReturn = current;
-    current = null;
-    
-    return toReturn;
-  }
+	public Tuple reduce() {
+		// Return the tuple after setting current to null. This will ensure the next
+		// call to
+		// operate stores that tuple
+		Tuple toReturn = current;
+		current = null;
 
-  public void operate(Tuple tuple) {
-    // we only care about the first one seen. Drop all but the first
-    if(null == current){
-      current = tuple;
-    }
-  }
+		return toReturn;
+	}
+
+	public void operate(Tuple tuple) {
+		// we only care about the first one seen. Drop all but the first
+		if (null == current) {
+			current = tuple;
+		}
+	}
 }

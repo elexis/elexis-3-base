@@ -10,29 +10,29 @@ import org.eclipse.swt.ole.win32.OleAutomation;
 import org.eclipse.swt.widgets.Display;
 
 public class OleWordSection extends OleWrapper {
-	public OleWordSection(OleAutomation oleAuto, Display display, OleWrapperManager manager){
+	public OleWordSection(OleAutomation oleAuto, Display display, OleWrapperManager manager) {
 		super(oleAuto, display, manager);
 	}
-	
-	public OleWordRange getRange(OleWrapperManager manager){
+
+	public OleWordRange getRange(OleWrapperManager manager) {
 		OleAutomation oleAuto = runGetOleAutomationProperty("Range"); //$NON-NLS-1$
 		return new OleWordRange(oleAuto, display, manager);
 	}
-	
-	public OleWordHeadersFooters getHeaders(OleWrapperManager manager){
+
+	public OleWordHeadersFooters getHeaders(OleWrapperManager manager) {
 		OleAutomation oleAuto = runGetOleAutomationProperty("Headers"); //$NON-NLS-1$
 		return new OleWordHeadersFooters(oleAuto, display, manager);
 	}
-	
-	public OleWordHeadersFooters getFooters(OleWrapperManager manager){
+
+	public OleWordHeadersFooters getFooters(OleWrapperManager manager) {
 		OleAutomation oleAuto = runGetOleAutomationProperty("Footers"); //$NON-NLS-1$
 		return new OleWordHeadersFooters(oleAuto, display, manager);
 	}
-	
+
 	protected static HashMap<String, Integer> memberIdMap = new HashMap<String, Integer>();
-	
+
 	@Override
-	protected synchronized int getIdForMember(String member){
+	protected synchronized int getIdForMember(String member) {
 		Integer id = memberIdMap.get(member);
 		if (id == null) {
 			id = OleUtil.getMemberId(oleObj, member);

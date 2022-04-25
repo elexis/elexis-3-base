@@ -13,29 +13,28 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import ch.elexis.core.model.IPatient;
 
 public class OpenPatientVaccinationHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IStructuredSelection selection = HandlerUtil.getCurrentStructuredSelection(event);
-		if (selection != null && !selection.isEmpty()
-			&& selection.getFirstElement() instanceof IPatient) {
+		if (selection != null && !selection.isEmpty() && selection.getFirstElement() instanceof IPatient) {
 			IPatient patient = (IPatient) selection.getFirstElement();
 			openPatientVaccination(patient);
 		}
 		return null;
 	}
-	
-	private void openPatientVaccination(IPatient patient){
+
+	private void openPatientVaccination(IPatient patient) {
 		if (UrlBuilder.isOrgId()) {
 			String baseUrl = UrlBuilder.getVaccinationBaseUrl();
-			
+
 			String patientParameters = UrlBuilder.getPatientParameters(patient);
 			patientParameters += UrlBuilder.getVaccinationDefaultParameters();
-			
+
 			Program.launch(baseUrl + "?" + patientParameters);
 		} else {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-				"Es ist keine corona123 Organisations ID konfiguriert.");
+					"Es ist keine corona123 Organisations ID konfiguriert.");
 		}
 	}
 }

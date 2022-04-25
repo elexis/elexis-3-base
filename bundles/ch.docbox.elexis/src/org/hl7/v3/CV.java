@@ -6,17 +6,18 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * Coded data, consists of a code, display name, code system, and original text. Used when a single
- * code value must be sent.
- * 
- * 
+ *
+ * Coded data, consists of a code, display name, code system, and original text.
+ * Used when a single code value must be sent.
+ *
+ *
  * <p>
  * Java class for CV complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="CV">
  *   &lt;complexContent>
@@ -34,19 +35,17 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CV")
-@XmlSeeAlso({
-	CS.class, CO.class, PQR.class
-})
+@XmlSeeAlso({ CS.class, CO.class, PQR.class })
 public class CV extends CE {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 }

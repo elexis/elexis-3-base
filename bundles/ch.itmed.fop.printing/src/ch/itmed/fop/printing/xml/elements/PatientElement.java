@@ -87,7 +87,7 @@ public class PatientElement {
 		c = doc.createElement("Email");
 		c.appendChild(doc.createTextNode(pd.getEmail()));
 		p.appendChild(c);
-		
+
 		c = doc.createElement("CompleteAddress");
 		String address = pd.getCompleteAddress();
 		String[] addressParts = address.split("[\\r\\n]+");
@@ -101,7 +101,7 @@ public class PatientElement {
 		c = doc.createElement("OrderNumber");
 		c.appendChild(doc.createTextNode(pd.getOrderNumber()));
 		p.appendChild(c);
-		
+
 		return p;
 	}
 }

@@ -23,58 +23,54 @@ import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.SolrParams;
 
 /**
- * 
+ *
  *
  * @since solr 1.3
  */
 public class QueryRequest extends SolrRequest<QueryResponse> {
 
-  private SolrParams query;
-  
-  public QueryRequest()
-  {
-    super( METHOD.GET, null );
-  }
+	private SolrParams query;
 
-  public QueryRequest( SolrParams q )
-  {
-    super( METHOD.GET, null );
-    query = q;
-  }
-  
-  public QueryRequest( SolrParams q, METHOD method )
-  {
-    super( method, null );
-    query = q;
-  }
+	public QueryRequest() {
+		super(METHOD.GET, null);
+	}
 
-  /**
-   * Use the params 'QT' parameter if it exists
-   */
-  @Override
-  public String getPath() {
-    String qt = query == null ? null : query.get( CommonParams.QT );
-    if( qt == null ) {
-      qt = super.getPath();
-    }
-    if( qt != null && qt.startsWith( "/" ) ) {
-      return qt;
-    }
-    return "/select";
-  }
-  
-  //---------------------------------------------------------------------------------
-  //---------------------------------------------------------------------------------
+	public QueryRequest(SolrParams q) {
+		super(METHOD.GET, null);
+		query = q;
+	}
 
-  @Override
-  protected QueryResponse createResponse(SolrClient client) {
-    return new QueryResponse(client);
-  }
+	public QueryRequest(SolrParams q, METHOD method) {
+		super(method, null);
+		query = q;
+	}
 
-  @Override
-  public SolrParams getParams() {
-    return query;
-  }
+	/**
+	 * Use the params 'QT' parameter if it exists
+	 */
+	@Override
+	public String getPath() {
+		String qt = query == null ? null : query.get(CommonParams.QT);
+		if (qt == null) {
+			qt = super.getPath();
+		}
+		if (qt != null && qt.startsWith("/")) {
+			return qt;
+		}
+		return "/select";
+	}
+
+	// ---------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------
+
+	@Override
+	protected QueryResponse createResponse(SolrClient client) {
+		return new QueryResponse(client);
+	}
+
+	@Override
+	public SolrParams getParams() {
+		return query;
+	}
 
 }
-

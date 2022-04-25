@@ -6,24 +6,23 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
- *    
+ *    A. Kaufmann - initial implementation
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.pluginstatistiken.schnittstelle;
 
 /**
  * Einzelner Datensatz in einer ITabelle.
- * 
+ *
  * @author Antoine Kaufmann
  */
 public interface IDatensatz {
 	/**
 	 * Spalte anhand des Spaltennamens auslesen
-	 * 
-	 * @param name
-	 *            Spaltenname
-	 * 
+	 *
+	 * @param name Spaltenname
+	 *
 	 * @return Spaltenwert oder null falls die Spalte nicht existiert
 	 */
 	String getSpalte(String name);

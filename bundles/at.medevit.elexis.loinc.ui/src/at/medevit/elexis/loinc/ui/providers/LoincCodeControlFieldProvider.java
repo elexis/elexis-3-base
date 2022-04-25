@@ -27,120 +27,120 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.IFilter;
 
 public class LoincCodeControlFieldProvider implements ControlFieldProvider {
-	
+
 	private CommonViewer commonViewer;
 	private StructuredViewer viewer;
-	
+
 	private Text txtFilter;
-	
+
 	private LoincCodeTextFilter filterCodeText;
-	
-	public LoincCodeControlFieldProvider(final CommonViewer viewer){
+
+	public LoincCodeControlFieldProvider(final CommonViewer viewer) {
 		commonViewer = viewer;
 	}
-	
+
 	@Override
-	public Composite createControl(Composite parent){
+	public Composite createControl(Composite parent) {
 		final Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new FormLayout());
-		
+
 		Label lblFilter = new Label(ret, SWT.NONE);
 		lblFilter.setText("Filter: ");
-		
+
 		txtFilter = new Text(ret, SWT.BORDER | SWT.SEARCH);
 		txtFilter.setText(""); //$NON-NLS-1$
-		
+
 		ToolBarManager tbManager = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
 		tbManager.add(new Action("neu erstellen") {
 			{
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 				setToolTipText("Neuer Loinc Code erstellen");
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				EditLoincCodeDialog dialog = new EditLoincCodeDialog(ret.getShell(), null);
 				if (dialog.open() == EditLoincCodeDialog.OK) {
-					
+
 				}
 			}
 		});
 		ToolBar toolbar = tbManager.createControl(ret);
-		
+
 		FormData fd = new FormData();
 		fd.top = new FormAttachment(0, 5);
 		fd.left = new FormAttachment(0, 5);
 		lblFilter.setLayoutData(fd);
-		
+
 		fd = new FormData();
 		fd.top = new FormAttachment(0, 5);
 		fd.right = new FormAttachment(100, -5);
 		toolbar.setLayoutData(fd);
-		
+
 		fd = new FormData();
 		fd.top = new FormAttachment(0, 5);
 		fd.left = new FormAttachment(lblFilter, 5);
 		fd.right = new FormAttachment(toolbar, -5);
 		txtFilter.setLayoutData(fd);
-		
+
 		return ret;
 	}
-	
+
 	@Override
-	public void addChangeListener(ControlFieldListener cl){
+	public void addChangeListener(ControlFieldListener cl) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void removeChangeListener(ControlFieldListener cl){
+	public void removeChangeListener(ControlFieldListener cl) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public String[] getValues(){
+	public String[] getValues() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public void clearValues(){
+	public void clearValues() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public boolean isEmpty(){
+	public boolean isEmpty() {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
-	public void setQuery(Query<? extends PersistentObject> q){
+	public void setQuery(Query<? extends PersistentObject> q) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void setQuery(IQuery<?> query){
-		// TODO Auto-generated method stub	
+	public void setQuery(IQuery<?> query) {
+		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public IFilter createFilter(){
+	public IFilter createFilter() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public void fireChangedEvent(){
+	public void fireChangedEvent() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void fireSortEvent(String text){
+	public void fireSortEvent(String text) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		// apply filter to viewer on focus as the creation in common viewer is done
 		// first filter then viewer -> viewer not ready on createControl.
 		if (viewer == null) {
@@ -151,27 +151,27 @@ public class LoincCodeControlFieldProvider implements ControlFieldProvider {
 			txtFilter.addKeyListener(new FilterKeyListener(txtFilter, viewer));
 		}
 	}
-	
+
 	private class LoincCodeComparator extends ViewerComparator {
 		@Override
-		public int compare(Viewer viewer, Object e1, Object e2){
+		public int compare(Viewer viewer, Object e1, Object e2) {
 			LoincCode lCode = (LoincCode) e1;
 			LoincCode rCode = (LoincCode) e2;
-			
+
 			return lCode.getCode().compareTo(rCode.getCode());
 		}
 	}
-	
+
 	private class FilterKeyListener extends KeyAdapter {
 		private Text text;
 		private StructuredViewer viewer;
-		
-		FilterKeyListener(Text filterTxt, StructuredViewer viewer){
+
+		FilterKeyListener(Text filterTxt, StructuredViewer viewer) {
 			text = filterTxt;
 			this.viewer = viewer;
 		}
-		
-		public void keyReleased(KeyEvent ke){
+
+		public void keyReleased(KeyEvent ke) {
 			String txt = text.getText();
 			if (txt.length() > 1) {
 				filterCodeText.setSearchText(txt);

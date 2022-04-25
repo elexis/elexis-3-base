@@ -45,21 +45,19 @@ import org.slf4j.LoggerFactory;
 import ch.docbox.ws.cdachservicesv2.CDACHServicesV2;
 
 public class WsClientUtil {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(WsClientUtil.class);
 
-	private static char[] hex = {
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-	};
-	
-	public final static String toHex(byte[] v){
+	private static char[] hex = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+	public final static String toHex(byte[] v) {
 		String out = "";
 		for (int i = 0; i < v.length; i++)
 			out = out + hex[(v[i] >> 4) & 0xF] + hex[v[i] & 0xF];
 		return (out);
 	}
 
-	public static String getSHA1(String password){
+	public static String getSHA1(String password) {
 		if (password == null || "".equals(password)) {
 			return "";
 		}
@@ -79,45 +77,42 @@ public class WsClientUtil {
 		return "";
 	}
 
-	public static boolean checkAccess(CDACHServicesV2 port){
+	public static boolean checkAccess(CDACHServicesV2 port) {
 		{
-			javax.xml.ws.Holder<java.lang.Boolean> _checkAccess_success =
-				new javax.xml.ws.Holder<java.lang.Boolean>();
-			javax.xml.ws.Holder<java.lang.String> _checkAccess_message =
-				new javax.xml.ws.Holder<java.lang.String>();
+			javax.xml.ws.Holder<java.lang.Boolean> _checkAccess_success = new javax.xml.ws.Holder<java.lang.Boolean>();
+			javax.xml.ws.Holder<java.lang.String> _checkAccess_message = new javax.xml.ws.Holder<java.lang.String>();
 			port.checkAccess(_checkAccess_success, _checkAccess_message);
-			
+
 			logger.debug("checkAccess._checkAccess_success=" + _checkAccess_success.value);
 			logger.debug("checkAccess._checkAccess_message=" + _checkAccess_message.value);
-			
+
 			return _checkAccess_success.value;
 		}
 	}
-	
+
 	public static void addWsSecurityAndHttpConfigWithClientCert(Service ss, final String username,
-		final String password, final String p12, final String jks, final String passwordP12,
-		final String passwordJks){
-		
+			final String password, final String p12, final String jks, final String passwordP12,
+			final String passwordJks) {
+
 		String url = WsClientConfig.getDocboxServiceUrl();
 		final boolean clientcert = url.contains("ihe");
-		
+
 		ss.setHandlerResolver(new HandlerResolver() {
 			@SuppressWarnings("rawtypes")
-			public List<Handler> getHandlerChain(PortInfo portInfo){
+			public List<Handler> getHandlerChain(PortInfo portInfo) {
 				List<Handler> handlerList = new ArrayList<Handler>();
-				handlerList.add(new SecurityHandler(username, password, clientcert, p12, jks,
-					passwordP12, passwordJks));
+				handlerList
+						.add(new SecurityHandler(username, password, clientcert, p12, jks, passwordP12, passwordJks));
 				return handlerList;
 			}
 		});
 	}
 
-	public static boolean isMedelexisCertAvailable(){
+	public static boolean isMedelexisCertAvailable() {
 		InputStream keyInputStream = null;
 		InputStream certInputStream = null;
 		try {
-			certInputStream =
-				WsClientUtil.class.getResourceAsStream("/cert/MedElexis_MedElexis.p12");
+			certInputStream = WsClientUtil.class.getResourceAsStream("/cert/MedElexis_MedElexis.p12");
 			keyInputStream = WsClientUtil.class.getResourceAsStream("/cert/cert.key");
 			return certInputStream != null && keyInputStream != null;
 		} finally {
@@ -146,9 +141,9 @@ public class WsClientUtil {
 		private String jks;
 		private String passwordP12;
 		private String passwordJks;
-		
-		public SecurityHandler(String username, String password, boolean clientcert, String p12,
-			String jks, String passwordP12, String passwordJks){
+
+		public SecurityHandler(String username, String password, boolean clientcert, String p12, String jks,
+				String passwordP12, String passwordJks) {
 			this.username = username;
 			this.password = password;
 			this.clientcert = clientcert;
@@ -157,69 +152,58 @@ public class WsClientUtil {
 			this.passwordP12 = passwordP12;
 			this.passwordJks = passwordJks;
 		}
-		
-		public Set<QName> getHeaders(){
+
+		public Set<QName> getHeaders() {
 			return new TreeSet<QName>();
 		}
-		
-		public boolean handleMessage(SOAPMessageContext context){
-			Boolean outboundProperty =
-				(Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+
+		public boolean handleMessage(SOAPMessageContext context) {
+			Boolean outboundProperty = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 			if (outboundProperty.booleanValue()) {
-				
+
 				if (clientcert) {
 					InputStream certInput = null;
 					try {
-						
+
 						String trustpass = passwordJks;
-						
+
 						TrustManager[] tm = null;
 						if (jks != null) {
 							KeyStore keyTrustStore = KeyStore.getInstance("JKS");
 							File truststore = new File(jks);
-							keyTrustStore.load(new FileInputStream(truststore),
-								trustpass.toCharArray());
-							TrustManagerFactory trustFactory =
-								TrustManagerFactory.getInstance(TrustManagerFactory
-									.getDefaultAlgorithm());
+							keyTrustStore.load(new FileInputStream(truststore), trustpass.toCharArray());
+							TrustManagerFactory trustFactory = TrustManagerFactory
+									.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 							trustFactory.init(keyTrustStore);
 							tm = trustFactory.getTrustManagers();
 						}
-						
+
 						KeyStore keyStore = KeyStore.getInstance("PKCS12");
 						char[] certPass = getCertPass();
 						certInput = getCertInputStream();
 						keyStore.load(certInput, certPass);
-						KeyManagerFactory keyFactory =
-							KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+						KeyManagerFactory keyFactory = KeyManagerFactory
+								.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 						keyFactory.init(keyStore, certPass);
 						KeyManager[] km = keyFactory.getKeyManagers();
-						
+
 						SSLContext sslContext = SSLContext.getInstance("TLS");
 						sslContext.init(km, tm, null);
-						HttpsURLConnection
-							.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+						HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
 					} catch (KeyStoreException kse) {
-						logger.error("Security configuration failed with the following: "
-							+ kse.getCause());
+						logger.error("Security configuration failed with the following: " + kse.getCause());
 					} catch (KeyManagementException kse) {
-						logger.error("Security configuration failed with the following: "
-							+ kse.getCause());
+						logger.error("Security configuration failed with the following: " + kse.getCause());
 					} catch (NoSuchAlgorithmException nsa) {
-						logger.error("Security configuration failed with the following: "
-							+ nsa.getCause());
+						logger.error("Security configuration failed with the following: " + nsa.getCause());
 					} catch (FileNotFoundException fnfe) {
-						logger.error("Security configuration failed with the following: "
-							+ fnfe.getCause());
+						logger.error("Security configuration failed with the following: " + fnfe.getCause());
 					} catch (UnrecoverableKeyException uke) {
-						logger.error("Security configuration failed with the following: "
-							+ uke.getCause());
+						logger.error("Security configuration failed with the following: " + uke.getCause());
 					} catch (CertificateException ce) {
-						logger.error("Security configuration failed with the following: "
-							+ ce.getCause());
+						logger.error("Security configuration failed with the following: " + ce.getCause());
 					} catch (IOException ioe) {
-						logger.error("Security configuration failed with the following: "
-							+ ioe.getCause());
+						logger.error("Security configuration failed with the following: " + ioe.getCause());
 					} finally {
 						if (certInput != null) {
 							try {
@@ -230,16 +214,14 @@ public class WsClientUtil {
 						}
 					}
 				}
-				
+
 				try {
 					SOAPEnvelope envelope = context.getMessage().getSOAPPart().getEnvelope();
 					SOAPFactory factory = SOAPFactory.newInstance();
 					String prefix = "wsse";
-					String uri =
-						"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
+					String uri = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
 					SOAPElement securityElem = factory.createElement("Security", prefix, uri);
-					SOAPElement usernameTokenEl =
-						factory.createElement("UsernameToken", prefix, uri);
+					SOAPElement usernameTokenEl = factory.createElement("UsernameToken", prefix, uri);
 					SOAPElement usernameEl = factory.createElement("Username", prefix, uri);
 					SOAPElement passwordEl = factory.createElement("Password", prefix, uri);
 					usernameEl.setTextContent(username);
@@ -260,11 +242,10 @@ public class WsClientUtil {
 			}
 			return true;
 		}
-		
-		private InputStream getCertInputStream(){
+
+		private InputStream getCertInputStream() {
 			// look for cert from fragment
-			InputStream certInputStream =
-				WsClientUtil.class.getResourceAsStream("/cert/MedElexis_MedElexis.p12");
+			InputStream certInputStream = WsClientUtil.class.getResourceAsStream("/cert/MedElexis_MedElexis.p12");
 			if (certInputStream != null) {
 				logger.info("Using fragment Cert.");
 				return certInputStream;
@@ -279,8 +260,8 @@ public class WsClientUtil {
 			}
 			return null;
 		}
-		
-		private char[] getCertPass(){
+
+		private char[] getCertPass() {
 			// look for pass from fragment
 			InputStream keyInputStream = WsClientUtil.class.getResourceAsStream("/cert/cert.key");
 			if (keyInputStream != null) {
@@ -308,11 +289,11 @@ public class WsClientUtil {
 			return passwordP12.toCharArray();
 		}
 
-		public boolean handleFault(SOAPMessageContext context){
+		public boolean handleFault(SOAPMessageContext context) {
 			return true;
 		}
-		
-		public void close(MessageContext context){
+
+		public void close(MessageContext context) {
 			//
 		}
 	}

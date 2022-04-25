@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    rgw - initial API and implementation
  *    rgw - 2014: Changes for Elexis 2.x
@@ -41,20 +41,16 @@ public class AllSlotsDisplay extends Composite {
 		this.parent = parent;
 		setLayout(new GridLayout(4, true));
 		hl = new RowSelector();
-		Hyperlink hlLinks = tk.createHyperlink(this,
-				Messages.AllSlotsDisplay_left, SWT.CENTER);
+		Hyperlink hlLinks = tk.createHyperlink(this, Messages.AllSlotsDisplay_left, SWT.CENTER);
 		hlLinks.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		hlLinks.addHyperlinkListener(hl);
-		Hyperlink hlVorne = tk.createHyperlink(this,
-				Messages.AllSlotsDisplay_front, SWT.CENTER);
+		Hyperlink hlVorne = tk.createHyperlink(this, Messages.AllSlotsDisplay_front, SWT.CENTER);
 		hlVorne.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		hlVorne.addHyperlinkListener(hl);
-		Hyperlink hlRechts = tk.createHyperlink(this,
-				Messages.AllSlotsDisplay_right, SWT.CENTER);
+		Hyperlink hlRechts = tk.createHyperlink(this, Messages.AllSlotsDisplay_right, SWT.CENTER);
 		hlRechts.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		hlRechts.addHyperlinkListener(hl);
-		Hyperlink hlHinten = tk.createHyperlink(this,
-				Messages.AllSlotsDisplay_back, SWT.CENTER);
+		Hyperlink hlHinten = tk.createHyperlink(this, Messages.AllSlotsDisplay_back, SWT.CENTER);
 		hlHinten.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		hlHinten.addHyperlinkListener(hl);
 	}

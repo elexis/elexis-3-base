@@ -27,42 +27,39 @@ import ch.elexis.core.services.IQuery.ORDER;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 
-public class TarmedCodeSelectorContentProvider
-		implements ICommonViewerContentProvider, ITreeContentProvider {
-	
+public class TarmedCodeSelectorContentProvider implements ICommonViewerContentProvider, ITreeContentProvider {
+
 	private List<ITarmedLeistung> roots;
-	
+
 	private CommonViewer commonViewer;
-	
+
 	private boolean isFiltered;
-	
+
 	private HashMap<String, List<ITarmedLeistung>> filteredLeafs;
-	
+
 	private RefreshExecutor refreshExecutor;
-	
+
 	private String currentZiffer;
 	private String currentText;
-	
+
 	private INamedQuery<ITarmedLeistung> childrenQuery;
-	
+
 	private INamedQuery<ITarmedLeistung> childrenChapterQuery;
-	
-	public TarmedCodeSelectorContentProvider(CommonViewer commonViewer){
+
+	public TarmedCodeSelectorContentProvider(CommonViewer commonViewer) {
 		this.commonViewer = commonViewer;
-		
-		this.childrenQuery =
-			ArzttarifeModelServiceHolder.get().getNamedQuery(ITarmedLeistung.class, "parent");
-		this.childrenChapterQuery =
-			ArzttarifeModelServiceHolder.get().getNamedQuery(ITarmedLeistung.class, "parent",
+
+		this.childrenQuery = ArzttarifeModelServiceHolder.get().getNamedQuery(ITarmedLeistung.class, "parent");
+		this.childrenChapterQuery = ArzttarifeModelServiceHolder.get().getNamedQuery(ITarmedLeistung.class, "parent",
 				"chapter");
-		
+
 		filteredLeafs = new HashMap<>();
-		
+
 		refreshExecutor = new RefreshExecutor();
 	}
-	
+
 	@Override
-	public void changed(HashMap<String, String> values){
+	public void changed(HashMap<String, String> values) {
 		currentZiffer = values.get("Ziffer");
 		currentText = values.get("Text");
 		if (shouldFilter(currentZiffer, currentText)) {
@@ -74,7 +71,7 @@ public class TarmedCodeSelectorContentProvider
 			isFiltered = false;
 			commonViewer.getViewerWidget().getControl().getDisplay().syncExec(new Runnable() {
 				@Override
-				public void run(){
+				public void run() {
 					StructuredViewer viewer = commonViewer.getViewerWidget();
 					viewer.setSelection(new StructuredSelection());
 					viewer.getControl().setRedraw(false);
@@ -84,12 +81,11 @@ public class TarmedCodeSelectorContentProvider
 			});
 		}
 	}
-	
-	private void refreshLeafs(String queryZiffer, String queryText){
+
+	private void refreshLeafs(String queryZiffer, String queryText) {
 		filteredLeafs.clear();
 		// prepare query
-		IQuery<ITarmedLeistung> leafsQuery =
-			ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
+		IQuery<ITarmedLeistung> leafsQuery = ArzttarifeModelServiceHolder.get().getQuery(ITarmedLeistung.class);
 		if (queryZiffer != null && queryZiffer.length() > 2) {
 			leafsQuery.and("code_", COMPARATOR.LIKE, queryZiffer + "%");
 		}
@@ -110,37 +106,37 @@ public class TarmedCodeSelectorContentProvider
 			filteredLeafs.put(parentId, list);
 		}
 	}
-	
-	private boolean shouldFilter(String ziffer, String text){
+
+	private boolean shouldFilter(String ziffer, String text) {
 		return ziffer.length() > 2 || text.length() > 2;
 	}
-	
+
 	@Override
-	public void reorder(String field){
+	public void reorder(String field) {
 		// TODO Auto-generated method stub
 		System.out.println(field);
 	}
-	
+
 	@Override
-	public void selected(){
+	public void selected() {
 	}
-	
+
 	@Override
-	public void init(){
+	public void init() {
 	}
-	
+
 	@Override
-	public void startListening(){
+	public void startListening() {
 		commonViewer.getConfigurer().getControlFieldProvider().addChangeListener(this);
 	}
-	
+
 	@Override
-	public void stopListening(){
+	public void stopListening() {
 		commonViewer.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
-	
+
 	@Override
-	public Object[] getElements(Object inputElement){
+	public Object[] getElements(Object inputElement) {
 		if (roots == null) {
 			roots = getRoots();
 		}
@@ -150,12 +146,12 @@ public class TarmedCodeSelectorContentProvider
 		}
 		return ret.toArray();
 	}
-	
-	private List<ITarmedLeistung> getRoots(){
+
+	private List<ITarmedLeistung> getRoots() {
 		return childrenQuery.executeWithParameters(childrenQuery.getParameterMap("parent", "NIL"));
 	}
-	
-	private List<ITarmedLeistung> purgeRoots(List<ITarmedLeistung> roots){
+
+	private List<ITarmedLeistung> purgeRoots(List<ITarmedLeistung> roots) {
 		ArrayList<ITarmedLeistung> ret = new ArrayList<>();
 		for (ITarmedLeistung root : roots) {
 			if (currentZiffer != null && currentZiffer.length() > 2) {
@@ -170,13 +166,15 @@ public class TarmedCodeSelectorContentProvider
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public Object[] getChildren(Object parentElement){
+	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ITarmedLeistung) {
 			ITarmedLeistung parentLeistung = (ITarmedLeistung) parentElement;
 			if (!isFiltered) {
-				return childrenQuery.executeWithParameters(childrenQuery.getParameterMap("parent", parentLeistung.getId())).toArray();
+				return childrenQuery
+						.executeWithParameters(childrenQuery.getParameterMap("parent", parentLeistung.getId()))
+						.toArray();
 			} else {
 				if (subChaptersHaveChildren(parentLeistung)) {
 					return getFilteredChapterChildren(parentLeistung).toArray();
@@ -185,8 +183,8 @@ public class TarmedCodeSelectorContentProvider
 		}
 		return null;
 	}
-	
-	private boolean subChaptersHaveChildren(ITarmedLeistung parentLeistung){
+
+	private boolean subChaptersHaveChildren(ITarmedLeistung parentLeistung) {
 		List<ITarmedLeistung> children = getFilteredChapterChildren(parentLeistung);
 		for (ITarmedLeistung tarmedLeistung : children) {
 			if (tarmedLeistung.isChapter()) {
@@ -199,23 +197,24 @@ public class TarmedCodeSelectorContentProvider
 		}
 		return false;
 	}
-	
+
 	@Override
-	public Object getParent(Object element){
+	public Object getParent(Object element) {
 		if (element instanceof ITarmedLeistung) {
 			ITarmedLeistung leistung = (ITarmedLeistung) element;
 			return leistung.getParent();
 		}
 		return null;
 	}
-	
+
 	@Override
-	public boolean hasChildren(Object parentElement){
+	public boolean hasChildren(Object parentElement) {
 		if (parentElement instanceof ITarmedLeistung) {
 			ITarmedLeistung parentLeistung = (ITarmedLeistung) parentElement;
 			if (!isFiltered) {
-				return !childrenQuery.executeWithParameters(
-					childrenQuery.getParameterMap("parent", parentLeistung.getId())).isEmpty();
+				return !childrenQuery
+						.executeWithParameters(childrenQuery.getParameterMap("parent", parentLeistung.getId()))
+						.isEmpty();
 			} else {
 				List<ITarmedLeistung> filteredChildren = getFilteredChapterChildren(parentLeistung);
 				return !filteredChildren.isEmpty();
@@ -223,8 +222,8 @@ public class TarmedCodeSelectorContentProvider
 		}
 		return false;
 	}
-	
-	private List<ITarmedLeistung> getFilteredChapterChildren(ITarmedLeistung parentLeistung){
+
+	private List<ITarmedLeistung> getFilteredChapterChildren(ITarmedLeistung parentLeistung) {
 		List<ITarmedLeistung> ret = new ArrayList<>();
 		List<ITarmedLeistung> chapterChildren = getChapterChildren(parentLeistung);
 		if (!chapterChildren.isEmpty()) {
@@ -240,30 +239,31 @@ public class TarmedCodeSelectorContentProvider
 		}
 		return ret;
 	}
-	
-	private List<ITarmedLeistung> getChapterChildren(ITarmedLeistung parentLeistung){
-		return childrenChapterQuery.executeWithParameters(childrenChapterQuery
-			.getParameterMap("parent", parentLeistung.getId(), "chapter", true));
+
+	private List<ITarmedLeistung> getChapterChildren(ITarmedLeistung parentLeistung) {
+		return childrenChapterQuery.executeWithParameters(
+				childrenChapterQuery.getParameterMap("parent", parentLeistung.getId(), "chapter", true));
 	}
-	
+
 	/**
-	 * Executor for the {@link RefreshRunnable} to refresh the viewer async. Will start a timer
-	 * checking for new filter every 500ms. The timer expires after 30 runs without a change.
-	 * 
+	 * Executor for the {@link RefreshRunnable} to refresh the viewer async. Will
+	 * start a timer checking for new filter every 500ms. The timer expires after 30
+	 * runs without a change.
+	 *
 	 * @author thomas
 	 *
 	 */
 	private class RefreshExecutor {
 		private Executor executor = Executors.newSingleThreadExecutor();
 		private boolean isRunning = false;
-		
+
 		private Timer timer;
 		private int timerCountDown;
-		
+
 		private RefreshRunnable currentRunnable;
 		private long currentRunnableMs;
-		
-		public void add(RefreshRunnable refreshRunnable){
+
+		public void add(RefreshRunnable refreshRunnable) {
 			checkTimer();
 			synchronized (RefreshExecutor.class) {
 				currentRunnable = refreshRunnable;
@@ -271,18 +271,18 @@ public class TarmedCodeSelectorContentProvider
 				currentRunnableMs = System.currentTimeMillis();
 			}
 		}
-		
-		private void checkTimer(){
+
+		private void checkTimer() {
 			synchronized (RefreshExecutor.class) {
 				if (timer == null) {
 					timer = new Timer();
 					timerCountDown = 30;
 					timer.scheduleAtFixedRate(new TimerTask() {
 						@Override
-						public void run(){
+						public void run() {
 							synchronized (RefreshExecutor.class) {
 								if (!isRunning && currentRunnable != null
-									&& (System.currentTimeMillis() - currentRunnableMs) > 750) {
+										&& (System.currentTimeMillis() - currentRunnableMs) > 750) {
 									executor.execute(currentRunnable);
 									setIsRunning(true);
 									currentRunnable = null;
@@ -297,54 +297,52 @@ public class TarmedCodeSelectorContentProvider
 				}
 			}
 		}
-		
-		public void setIsRunning(boolean value){
+
+		public void setIsRunning(boolean value) {
 			this.isRunning = value;
 			timerCountDown = 30;
 		}
 	}
-	
+
 	/**
 	 * Refresh the content and the viewer.
-	 * 
+	 *
 	 * @author thomas
 	 *
 	 */
 	private class RefreshRunnable implements Runnable {
 		private RefreshExecutor refreshExecutor;
-		
+
 		private String queryZiffer;
 		private String queryText;
-		
+
 		private Display display;
-		
-		public RefreshRunnable(String queryZiffer, String queryText){
+
+		public RefreshRunnable(String queryZiffer, String queryText) {
 			this.queryText = queryText;
 			this.queryZiffer = queryZiffer;
 			this.display = commonViewer.getViewerWidget().getControl().getDisplay();
 		}
-		
-		public void setExecutor(RefreshExecutor refreshExecutor){
+
+		public void setExecutor(RefreshExecutor refreshExecutor) {
 			this.refreshExecutor = refreshExecutor;
 		}
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			if (queryText != null && queryText.length() > 2) {
 				display.syncExec(new Runnable() {
-					
+
 					@Override
-					public void run(){
-						ProgressMonitorDialog pmd =
-							new ProgressMonitorDialog(display.getActiveShell());
+					public void run() {
+						ProgressMonitorDialog pmd = new ProgressMonitorDialog(display.getActiveShell());
 						try {
 							pmd.run(true, false, new IRunnableWithProgress() {
-								
+
 								@Override
 								public void run(IProgressMonitor monitor)
-									throws InvocationTargetException, InterruptedException{
-									monitor.beginTask("Text Suche nach (" + queryText + ")",
-										IProgressMonitor.UNKNOWN);
+										throws InvocationTargetException, InterruptedException {
+									monitor.beginTask("Text Suche nach (" + queryText + ")", IProgressMonitor.UNKNOWN);
 									doWork();
 								}
 							});
@@ -357,21 +355,21 @@ public class TarmedCodeSelectorContentProvider
 				doWork();
 			}
 		}
-		
-		private void doWork(){
+
+		private void doWork() {
 			refreshLeafs(queryZiffer, queryText);
 			if (this.refreshExecutor != null) {
 				this.refreshExecutor.setIsRunning(false);
 			}
 			display.asyncExec(new Runnable() {
 				@Override
-				public void run(){
+				public void run() {
 					StructuredViewer viewer = commonViewer.getViewerWidget();
 					viewer.setSelection(new StructuredSelection());
 					viewer.getControl().setRedraw(false);
 					viewer.refresh();
 					if ((queryZiffer != null && queryZiffer.length() > 4)
-						|| (queryText != null && queryText.length() > 4)) {
+							|| (queryText != null && queryText.length() > 4)) {
 						if (viewer instanceof TreeViewer) {
 							((TreeViewer) viewer).expandAll();
 						}

@@ -14,7 +14,7 @@ import ch.rgw.tools.Money;
 
 public class XML44Services {
 	private ServicesType services;
-	
+
 	private Money tarmedMoney;
 	private Money drugMoney;
 	private Money drgMoney;
@@ -23,8 +23,8 @@ public class XML44Services {
 	private Money paramedMoney;
 	private Money otherMoney;
 	private Money complementaryMoney;
-	
-	public XML44Services(ServicesType services){
+
+	public XML44Services(ServicesType services) {
 		this.services = services;
 		tarmedMoney = new Money();
 		drugMoney = new Money();
@@ -36,8 +36,8 @@ public class XML44Services {
 		complementaryMoney = new Money();
 		initMoneyAmounts();
 	}
-	
-	private void initMoneyAmounts(){
+
+	private void initMoneyAmounts() {
 		List<Object> serviceRecords = services.getRecordTarmedOrRecordDrgOrRecordLab();
 		for (Object rec : serviceRecords) {
 			if (rec instanceof RecordTarmedType) {
@@ -69,36 +69,36 @@ public class XML44Services {
 			}
 		}
 	}
-	
-	public Money getTarmedMoney(){
+
+	public Money getTarmedMoney() {
 		return tarmedMoney;
 	}
-	
-	public Money getDrugMoney(){
+
+	public Money getDrugMoney() {
 		return drugMoney;
 	}
-	
-	public Money getDrgMoney(){
+
+	public Money getDrgMoney() {
 		return drgMoney;
 	}
-	
-	public Money getMigelMoney(){
+
+	public Money getMigelMoney() {
 		return migelMoney;
 	}
-	
-	public Money getLabMoney(){
+
+	public Money getLabMoney() {
 		return labMoney;
 	}
-	
-	public Money getParamedMoney(){
+
+	public Money getParamedMoney() {
 		return paramedMoney;
 	}
-	
-	public Money getOtherMoney(){
+
+	public Money getOtherMoney() {
 		return otherMoney;
 	}
-	
-	public Money getComplementaryMoney(){
+
+	public Money getComplementaryMoney() {
 		return complementaryMoney;
 	}
 }

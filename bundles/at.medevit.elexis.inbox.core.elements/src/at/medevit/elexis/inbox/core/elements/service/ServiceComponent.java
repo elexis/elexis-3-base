@@ -25,34 +25,33 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 
 @Component
 public class ServiceComponent {
-	
+
 	private static IInboxElementService service;
-	
+
 	private static IModelService coreModelService;
-	
+
 	@Reference
-	public void setSerivce(IInboxElementService service){
+	public void setSerivce(IInboxElementService service) {
 		ServiceComponent.service = service;
 	}
-	
+
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
-	public void setModelSerivce(IModelService coreModelService){
+	public void setModelSerivce(IModelService coreModelService) {
 		ServiceComponent.coreModelService = coreModelService;
 	}
-	
-	public static IInboxElementService get(){
+
+	public static IInboxElementService get() {
 		return service;
 	}
-	
-	public static List<ILabOrder> getLabOrders(ILabResult labResult){
+
+	public static List<ILabOrder> getLabOrders(ILabResult labResult) {
 		IQuery<ILabOrder> query = coreModelService.getQuery(ILabOrder.class);
-		query.and(ModelPackage.Literals.ILAB_ORDER__PATIENT, COMPARATOR.EQUALS,
-			labResult.getPatient());
+		query.and(ModelPackage.Literals.ILAB_ORDER__PATIENT, COMPARATOR.EQUALS, labResult.getPatient());
 		query.and(ModelPackage.Literals.ILAB_ORDER__RESULT, COMPARATOR.EQUALS, labResult);
 		return query.execute();
 	}
-	
-	public static <T> T load(String id, Class<T> clazz){
+
+	public static <T> T load(String id, Class<T> clazz) {
 		return coreModelService.load(id, clazz).orElse(null);
 	}
 }

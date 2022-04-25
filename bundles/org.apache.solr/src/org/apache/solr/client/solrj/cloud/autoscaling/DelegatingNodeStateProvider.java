@@ -28,29 +28,29 @@ import org.apache.solr.client.solrj.cloud.NodeStateProvider;
  * Base class for overriding some behavior of {@link NodeStateProvider}.
  */
 public class DelegatingNodeStateProvider implements NodeStateProvider {
-  private final NodeStateProvider delegate;
+	private final NodeStateProvider delegate;
 
-  public DelegatingNodeStateProvider(NodeStateProvider delegate) {
-    this.delegate = delegate;
-  }
+	public DelegatingNodeStateProvider(NodeStateProvider delegate) {
+		this.delegate = delegate;
+	}
 
-  @Override
-  public Map<String, Object> getNodeValues(String node, Collection<String> tags) {
-    return delegate.getNodeValues(node, tags);
-  }
+	@Override
+	public Map<String, Object> getNodeValues(String node, Collection<String> tags) {
+		return delegate.getNodeValues(node, tags);
+	}
 
-  @Override
-  public Map<String, Map<String, List<ReplicaInfo>>> getReplicaInfo(String node, Collection<String> keys) {
-    return delegate.getReplicaInfo(node, keys);
-  }
+	@Override
+	public Map<String, Map<String, List<ReplicaInfo>>> getReplicaInfo(String node, Collection<String> keys) {
+		return delegate.getReplicaInfo(node, keys);
+	}
 
-  @Override
-  public void close() throws IOException {
-    delegate.close();
-  }
+	@Override
+	public void close() throws IOException {
+		delegate.close();
+	}
 
-  @Override
-  public boolean isClosed() {
-    return delegate.isClosed();
-  }
+	@Override
+	public boolean isClosed() {
+		return delegate.isClosed();
+	}
 }

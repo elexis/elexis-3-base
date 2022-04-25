@@ -12,15 +12,15 @@ import org.eclipse.swt.widgets.Text;
 public class FilterKeyListener extends KeyAdapter {
 	private Text text;
 	private StructuredViewer viewer;
-	
-	FilterKeyListener(Text filterTxt, StructuredViewer viewer){
+
+	FilterKeyListener(Text filterTxt, StructuredViewer viewer) {
 		text = filterTxt;
 		this.viewer = viewer;
 	}
-	
-	public void keyReleased(KeyEvent ke){
+
+	public void keyReleased(KeyEvent ke) {
 		String txt = text.getText();
-		
+
 		if (txt.length() > 1) {
 			FilterSearchField.getInstance().setSearchText(txt);
 			viewer.getControl().setRedraw(false);

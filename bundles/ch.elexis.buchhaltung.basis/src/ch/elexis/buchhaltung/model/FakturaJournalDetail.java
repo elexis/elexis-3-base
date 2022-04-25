@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Gerry Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 
@@ -37,31 +37,31 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 public class FakturaJournalDetail extends AbstractTimeSeries {
 	private static final String NAME = Messages.FakturaJournalDetail_Name;
 	private boolean bOnlyActiveMandator;
-	
-	public FakturaJournalDetail(){
+
+	public FakturaJournalDetail() {
 		super(NAME);
 	}
-	
+
 	@GetProperty(name = "Nur aktueller Mandant", widgetType = WidgetTypes.BUTTON_CHECKBOX, index = 1)
-	public boolean getOnlyActiveMandator(){
+	public boolean getOnlyActiveMandator() {
 		return bOnlyActiveMandator;
 	}
-	
+
 	@SetProperty(name = "Nur aktueller Mandant", index = 1)
-	public void setOnlyActiveMandator(boolean val){
+	public void setOnlyActiveMandator(boolean val) {
 		bOnlyActiveMandator = val;
 	}
-	
+
 	@Override
-	protected IStatus createContent(IProgressMonitor monitor){
+	protected IStatus createContent(IProgressMonitor monitor) {
 		int total = 10000000;
 		Query<AccountTransaction> qbe = new Query<AccountTransaction>(AccountTransaction.class);
 		TimeTool ttStart = new TimeTool(this.getStartDate().getTimeInMillis());
 		TimeTool ttEnd = new TimeTool(this.getEndDate().getTimeInMillis());
-		qbe.add(AccountTransaction.FLD_DATE, Query.GREATER_OR_EQUAL,
-			ttStart.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
-		qbe.add(AccountTransaction.FLD_DATE, Query.LESS_OR_EQUAL,
-			ttEnd.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add(AccountTransaction.FLD_DATE, Query.GREATER_OR_EQUAL, ttStart.toString(TimeTool.DATE_COMPACT)); // $NON-NLS-1$
+																												// //$NON-NLS-2$
+		qbe.add(AccountTransaction.FLD_DATE, Query.LESS_OR_EQUAL, ttEnd.toString(TimeTool.DATE_COMPACT)); // $NON-NLS-1$
+																											// //$NON-NLS-2$
 		monitor.beginTask(NAME, total);
 		monitor.subTask(Messages.FakturaJournal_DatabaseQuery);
 		List<AccountTransaction> transactions = qbe.execute();
@@ -96,8 +96,7 @@ public class FakturaJournalDetail extends AbstractTimeSeries {
 					rechnungssteller = mandant;
 				Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
 				row[0] = pat.getLabel(false);
-				row[1] =
-					(rechnungssteller != null) ? rechnungssteller.getLabel(true) : StringTool.leer;
+				row[1] = (rechnungssteller != null) ? rechnungssteller.getLabel(true) : StringTool.leer;
 				row[2] = (garant != null) ? garant.getLabel(true) : StringTool.leer;
 				row[3] = new DateTool(at.getDate());
 				row[4] = at.getAmount();
@@ -118,18 +117,18 @@ public class FakturaJournalDetail extends AbstractTimeSeries {
 			}
 			monitor.worked(step);
 		}
-		
+
 		// Set content.
 		this.dataSet.setContent(result);
-		
+
 		// Job finished successfully
 		monitor.done();
-		
+
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
-	protected List<String> createHeadings(){
+	protected List<String> createHeadings() {
 		List<String> ret = new ArrayList<String>();
 		ret.add(Messages.FakturaJournalDetail_Patient);
 		ret.add(Messages.FakturaJournalDetail_Rechnungssteller);
@@ -138,12 +137,12 @@ public class FakturaJournalDetail extends AbstractTimeSeries {
 		ret.add(Messages.FakturaJournal_Amount);
 		ret.add(Messages.FakturaJournal_Type);
 		ret.add(Messages.FakturaJournal_Text);
-		
+
 		return ret;
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return Messages.FakturaJournalDetail_Beschreibung;
 	}
 }

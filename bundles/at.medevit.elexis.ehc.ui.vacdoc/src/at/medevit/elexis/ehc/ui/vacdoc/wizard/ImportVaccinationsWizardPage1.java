@@ -37,45 +37,43 @@ import ch.rgw.tools.TimeTool;
 public class ImportVaccinationsWizardPage1 extends WizardPage {
 	private TableViewer contentViewer;
 	private CdaChVacd ehcDocument;
-	
+
 	private List<Vaccination> vaccinations;
-	
-	protected ImportVaccinationsWizardPage1(String pageName, CdaChVacd ehcDocument){
+
+	protected ImportVaccinationsWizardPage1(String pageName, CdaChVacd ehcDocument) {
 		super(pageName);
 		setTitle(pageName);
 		this.ehcDocument = ehcDocument;
 		Patient elexisPatient = EhcCoreMapper.getElexisPatient(ehcDocument.getPatient());
 		vaccinations = getVaccinations(elexisPatient);
 	}
-	
+
 	@Override
-	public void createControl(Composite parent){
+	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		contentViewer =
-			new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI);
+
+		contentViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI);
 		Control control = contentViewer.getControl();
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd.heightHint = 300;
 		control.setLayoutData(gd);
-		
+
 		contentViewer.setContentProvider(new ArrayContentProvider());
 		contentViewer.setLabelProvider(new ColumnLabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof Immunization) {
 					Immunization immunization = (Immunization) element;
-					return "(" + immunization.getApplyDate() + ") "
-						+ immunization.getConsumable().getTradeName() + " - "
-						+ immunization.getAuthor().getCompleteName();
+					return "(" + immunization.getApplyDate() + ") " + immunization.getConsumable().getTradeName()
+							+ " - " + immunization.getAuthor().getCompleteName();
 				}
 				return super.getText(element);
 			}
-			
+
 			@Override
-			public Color getBackground(Object element){
+			public Color getBackground(Object element) {
 				if (element instanceof Immunization) {
 					Immunization immunization = (Immunization) element;
 					if (isExisting(immunization, vaccinations)) {
@@ -84,25 +82,25 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 				}
 				return super.getBackground(element);
 			}
-			
+
 			@Override
-			public Image getImage(Object element){
+			public Image getImage(Object element) {
 				return super.getImage(element);
 			}
 		});
-		
+
 		contentViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				getWizard().getContainer().updateButtons();
 			}
 		});
-		
+
 		setControl(composite);
 	}
-	
+
 	@Override
-	public void setVisible(boolean visible){
+	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
 			if (ehcDocument != null) {
@@ -111,16 +109,16 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 			}
 		}
 	}
-	
-	private List<Vaccination> getVaccinations(Patient elexisPatient){
+
+	private List<Vaccination> getVaccinations(Patient elexisPatient) {
 		Query<Vaccination> qbe = new Query<>(Vaccination.class);
 		qbe.add("ID", Query.NOT_EQUAL, StringConstants.VERSION_LITERAL);
 		qbe.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, elexisPatient.getId());
 		qbe.orderBy(false, Vaccination.FLD_DOA);
 		return qbe.execute();
 	}
-	
-	private boolean isExisting(Immunization immunization, List<Vaccination> vaccinations){
+
+	private boolean isExisting(Immunization immunization, List<Vaccination> vaccinations) {
 		for (Vaccination vaccination : vaccinations) {
 			Date applyDate = immunization.getApplyDate();
 			TimeTool vaccDate = vaccination.getDateOfAdministration();
@@ -134,38 +132,35 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean isPageComplete(){
+	public boolean isPageComplete() {
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
-		
+
 		if (!contentSelection.isEmpty()) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private List<Immunization> getSelectedImmunizations(){
+	private List<Immunization> getSelectedImmunizations() {
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
 		if (!contentSelection.isEmpty()) {
 			List<Immunization> immunizations = contentSelection.toList();
-			return immunizations.stream().filter(i -> !isExisting(i, vaccinations))
-				.collect(Collectors.toList());
+			return immunizations.stream().filter(i -> !isExisting(i, vaccinations)).collect(Collectors.toList());
 		}
 		return Collections.emptyList();
 	}
-	
-	public boolean finish(){
+
+	public boolean finish() {
 		try {
 			Patient elexisPatient = EhcCoreMapper.getElexisPatient(ehcDocument.getPatient());
-			
-			VacdocServiceComponent.getService().importImmunizations(elexisPatient,
-				getSelectedImmunizations());
+
+			VacdocServiceComponent.getService().importImmunizations(elexisPatient, getSelectedImmunizations());
 		} catch (Exception e) {
 			ImportVaccinationsWizard.logger.error("Import failed.", e);
-			MessageDialog.openError(getShell(), "Error",
-				"Es ist ein Fehler beim Impfungen importieren aufgetreten.");
+			MessageDialog.openError(getShell(), "Error", "Es ist ein Fehler beim Impfungen importieren aufgetreten.");
 			return false;
 		}
 		return true;

@@ -29,31 +29,31 @@ import ch.elexis.core.ui.util.Messages;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class LoincCodeCsvImporter extends ImporterPage {
-	
-	public LoincCodeCsvImporter(){
+
+	public LoincCodeCsvImporter() {
 		results = new String[2];
 	}
-	
+
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception{
+	public IStatus doImport(IProgressMonitor monitor) throws Exception {
 		FileInputStream fis = null;
-		
+
 		if (results[0] != null && !results[0].isEmpty()) {
 			File csv = new File(results[0]);
-			
+
 			try {
 				fis = new FileInputStream(csv);
 				LoincServiceComponent.getService().importFromCsv(fis, getFieldMapping());
-				
+
 			} catch (RuntimeException e) {
-				return new ElexisStatus(ElexisStatus.ERROR, Activator.PLUGIN_ID,
-					ElexisStatus.CODE_NOFEEDBACK, "Import failed", e);
+				return new ElexisStatus(ElexisStatus.ERROR, Activator.PLUGIN_ID, ElexisStatus.CODE_NOFEEDBACK,
+						"Import failed", e);
 			} finally {
 				if (fis != null) {
 					fis.close();
 				}
 			}
-			
+
 			ElexisEventDispatcher.reload(LoincCode.class);
 		}
 // if (results[1] != null && !results[1].isEmpty()) {
@@ -73,31 +73,30 @@ public class LoincCodeCsvImporter extends ImporterPage {
 // }
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
-	public String getTitle(){
+	public String getTitle() {
 		return "LOINC Code CSV Importer"; //$NON-NLS-1$
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return "LOIN Code Import aus einer CSV Datei. Format CODE,LONGNAME,SHORTNAME,CLASS,UNIT";
 	}
-	
+
 	@Override
-	public Composite createPage(Composite parent){
+	public Composite createPage(Composite parent) {
 		Composite area = new Composite(parent, SWT.NONE);
 		area.setLayout(new GridLayout(1, true));
 		area.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		
-		LoincFileBasedImporter fis =
-			new LoincFileBasedImporter(area, this, "Loinc Code CSV Datei:", 0);
+
+		LoincFileBasedImporter fis = new LoincFileBasedImporter(area, this, "Loinc Code CSV Datei:", 0);
 		fis.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
+
 		return area;
 	}
-	
-	private static Map<Integer, String> getFieldMapping(){
+
+	private static Map<Integer, String> getFieldMapping() {
 		HashMap<Integer, String> ret = new HashMap<Integer, String>();
 		ret.put(0, LoincCode.FLD_CODE);
 		ret.put(1, LoincCode.FLD_LONGNAME);
@@ -106,33 +105,29 @@ public class LoincCodeCsvImporter extends ImporterPage {
 		ret.put(4, LoincCode.FLD_UNIT);
 		return ret;
 	}
-	
+
 	private static class LoincFileBasedImporter extends Composite {
-		
+
 		public Text tFname;
-		private String[] filterExts = {
-			"*.csv"
-		};
-		private String[] filterNames = {
-			Messages.ImporterPage_allFiles
-		};
-		
-		public LoincFileBasedImporter(final Composite parent, final ImporterPage home,
-			final String message, final int resultIdx){
+		private String[] filterExts = { "*.csv" };
+		private String[] filterNames = { Messages.ImporterPage_allFiles };
+
+		public LoincFileBasedImporter(final Composite parent, final ImporterPage home, final String message,
+				final int resultIdx) {
 			super(parent, SWT.BORDER);
 			setLayout(new GridLayout(1, false));
 			final Label lFile = new Label(this, SWT.NONE);
 			tFname = new Text(this, SWT.BORDER);
 			home.results[resultIdx] = tFname.getText();
-			lFile.setText(message); //$NON-NLS-1$
+			lFile.setText(message); // $NON-NLS-1$
 			lFile.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			tFname.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			Button bFile = new Button(this, SWT.PUSH);
-			bFile.setText(Messages.ImporterPage_browse); //$NON-NLS-1$
+			bFile.setText(Messages.ImporterPage_browse); // $NON-NLS-1$
 			// bFile.setLayoutData(SWTHelper.getFillGridData(2,true,1,false));
 			bFile.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(final SelectionEvent e){
+				public void widgetSelected(final SelectionEvent e) {
 					FileDialog fdl = new FileDialog(parent.getShell(), SWT.OPEN);
 					fdl.setFilterExtensions(filterExts);
 					fdl.setFilterNames(filterNames);
@@ -143,7 +138,7 @@ public class LoincCodeCsvImporter extends ImporterPage {
 					}
 				}
 			});
-			
+
 		}
 	}
 }

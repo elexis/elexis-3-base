@@ -25,25 +25,25 @@ import ch.elexis.core.data.activator.CoreHub;
 
 @Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
 public class StartupHandler implements EventHandler {
-	
+
 	public static final String PARAM_EARLYSTARTUP = "earlyStartup";
 	private static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
-	
+
 	@Override
-	public void handleEvent(Event event){
+	public void handleEvent(Event event) {
 		logger.info("APPLICATION STARTUP COMPLETE");
 		boolean autostart = CoreHub.localCfg.get(Preferences.CFG_AUTOSTART, false);
-		
+
 		if (autostart) {
 			try {
-				ICommandService commandService =
-					(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class); // NPE
-				
+				ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
+						.getService(ICommandService.class); // NPE
+
 				Command cmd = commandService.getCommand(ServerControl.ID);
-				
+
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put(PARAM_EARLYSTARTUP, "true");
-				
+
 				ExecutionEvent ee = new ExecutionEvent(cmd, map, null, null);
 				cmd.executeWithChecks(ee);
 			} catch (Exception exception) {

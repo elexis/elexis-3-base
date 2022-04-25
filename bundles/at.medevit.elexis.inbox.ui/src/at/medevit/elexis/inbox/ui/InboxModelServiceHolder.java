@@ -18,13 +18,13 @@ import ch.elexis.core.services.IModelService;
 @Component
 public class InboxModelServiceHolder {
 	private static IModelService service;
-	
+
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=at.medevit.elexis.inbox.model)")
-	public void setService(IModelService service){
+	public void setService(IModelService service) {
 		InboxModelServiceHolder.service = service;
 	}
-	
-	public static IModelService get(){
+
+	public static IModelService get() {
 		return service;
 	}
 }

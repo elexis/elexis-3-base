@@ -25,33 +25,34 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class SumSqEvaluator extends RecursiveObjectEvaluator implements OneValueWorker {
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public SumSqEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public SumSqEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object value) throws IOException {
-    if(null == value){
-      return value;
-    }
-    else if(!(value instanceof List<?>)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for value, expecting a List",toExpression(constructingFactory), value.getClass().getSimpleName()));
-    }
+	@Override
+	public Object doWork(Object value) throws IOException {
+		if (null == value) {
+			return value;
+		} else if (!(value instanceof List<?>)) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - found type %s for value, expecting a List",
+							toExpression(constructingFactory), value.getClass().getSimpleName()));
+		}
 
-    @SuppressWarnings({"unchecked"})
-    List<Number> list = (List<Number>)value;
+		@SuppressWarnings({ "unchecked" })
+		List<Number> list = (List<Number>) value;
 
-    if(0 == list.size()){
-      return list;
-    }
+		if (0 == list.size()) {
+			return list;
+		}
 
-    double[] vec = new double[list.size()];
-    for(int i=0; i< vec.length; i++) {
-      vec[i] = list.get(i).doubleValue();
-    }
+		double[] vec = new double[list.size()];
+		for (int i = 0; i < vec.length; i++) {
+			vec[i] = list.get(i).doubleValue();
+		}
 
-    return StatUtils.sumSq(vec);
-  }
+		return StatUtils.sumSq(vec);
+	}
 }

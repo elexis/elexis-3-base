@@ -16,18 +16,17 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 
-public class InboxElement
-		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.InboxElement>
+public class InboxElement extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.InboxElement>
 		implements IInboxElement {
-	
+
 	private Identifiable object;
-	
-	public InboxElement(ch.elexis.core.jpa.entities.InboxElement entity){
+
+	public InboxElement(ch.elexis.core.jpa.entities.InboxElement entity) {
 		super(entity);
 	}
-	
+
 	@Override
-	public State getState(){
+	public State getState() {
 		String stateStr = getEntity().getState();
 		if (StringUtils.isEmpty(stateStr)) {
 			return State.NEW;
@@ -35,14 +34,14 @@ public class InboxElement
 			return State.values()[Integer.parseInt(stateStr.trim())];
 		}
 	}
-	
+
 	@Override
-	public void setState(State state){
+	public void setState(State state) {
 		getEntityMarkDirty().setState(Integer.toString(state.ordinal()));
 	}
-	
+
 	@Override
-	public Object getObject(){
+	public Object getObject() {
 		String uri = getEntity().getObject();
 		InboxElementType outboxElementType = InboxElementType.parseType(uri);
 		if (outboxElementType != null) {
@@ -65,57 +64,55 @@ public class InboxElement
 		}
 		return null;
 	}
-	
+
 	@Override
-	public IPatient getPatient(){
+	public IPatient getPatient() {
 		return ModelUtil.loadCoreModel(getEntity().getPatient(), IPatient.class);
 	}
-	
+
 	@Override
-	public void setPatient(IPatient patient){
+	public void setPatient(IPatient patient) {
 		if (patient instanceof AbstractIdDeleteModelAdapter) {
-			getEntityMarkDirty()
-				.setPatient((Kontakt) ((AbstractIdDeleteModelAdapter<?>) patient).getEntity());
+			getEntityMarkDirty().setPatient((Kontakt) ((AbstractIdDeleteModelAdapter<?>) patient).getEntity());
 		} else if (patient == null) {
 			getEntityMarkDirty().setPatient(null);
 		}
 	}
-	
+
 	@Override
-	public IMandator getMandator(){
+	public IMandator getMandator() {
 		return ModelUtil.loadCoreModel(getEntity().getMandant(), IMandator.class);
-		
+
 	}
-	
+
 	@Override
-	public void setMandator(IMandator mandator){
+	public void setMandator(IMandator mandator) {
 		if (mandator instanceof AbstractIdDeleteModelAdapter) {
-			getEntityMarkDirty()
-				.setMandant((Kontakt) ((AbstractIdDeleteModelAdapter<?>) mandator).getEntity());
+			getEntityMarkDirty().setMandant((Kontakt) ((AbstractIdDeleteModelAdapter<?>) mandator).getEntity());
 		} else if (mandator == null) {
 			getEntityMarkDirty().setMandant(null);
 		}
 	}
-	
+
 	@Override
-	public void setObject(String storeToString){
+	public void setObject(String storeToString) {
 		object = null;
 		getEntityMarkDirty().setObject(storeToString);
 	}
-	
+
 	@Override
-	public String getUri(){
+	public String getUri() {
 		return getEntity().getObject();
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		// TODO Auto-generated method stub
 		return null;
 	}

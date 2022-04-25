@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
+ *    A. Kaufmann - initial implementation
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
@@ -31,17 +31,17 @@ import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
  */
 public class MesswertTypBool extends MesswertBase implements IMesswertTyp {
 	boolean defVal;
-	
-	public MesswertTypBool(String n, String t, String u){
+
+	public MesswertTypBool(String n, String t, String u) {
 		super(n, t, u);
 		defVal = false;
 	}
-	
-	public String erstelleDarstellungswert(Messwert messwert){
+
+	public String erstelleDarstellungswert(Messwert messwert) {
 		return createDarstellungswert(messwert.getWert());
 	}
-	
-	public String getDefault(Messwert messwert){
+
+	public String getDefault(Messwert messwert) {
 		Boolean retVal = defVal;
 		if (formula != null) {
 			String sWert = evalateFormula(formula, messwert, Boolean.toString(retVal));
@@ -50,19 +50,19 @@ public class MesswertTypBool extends MesswertBase implements IMesswertTyp {
 		}
 		return Boolean.toString(retVal);
 	}
-	
-	public void setDefault(String def){
+
+	public void setDefault(String def) {
 		defVal = Boolean.parseBoolean(def);
 	}
-	
-	public Widget createWidget(Composite parent, Messwert messwert){
+
+	public Widget createWidget(Composite parent, Messwert messwert) {
 		widget = new Button(parent, SWT.CHECK);
 		((Button) widget).setSelection(Boolean.parseBoolean(messwert.getWert()));
 		setShown(true);
 		return widget;
 	}
-	
-	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
+
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable) {
 		int flags = 0;
 		if (!bEditable) {
 			flags |= TextField.READONLY;
@@ -76,33 +76,32 @@ public class MesswertTypBool extends MesswertBase implements IMesswertTyp {
 			messwert.setWert("false"); //$NON-NLS-1$
 		}
 		bf.setText(Boolean.toString(Boolean.parseBoolean(messwert.getWert())));
-		
+
 		return bf;
 	}
-	
-	public String getDarstellungswert(String wert){
+
+	public String getDarstellungswert(String wert) {
 		return createDarstellungswert(wert);
 	}
-	
+
 	@Override
-	public void saveInput(Messwert messwert){
+	public void saveInput(Messwert messwert) {
 		messwert.setWert(Boolean.toString(((Button) widget).getSelection()));
 	}
-	
+
 	@Override
-	public String getActualValue(){
+	public String getActualValue() {
 		return (Boolean.toString(((Button) widget).getSelection()));
 	}
-	
-	private String createDarstellungswert(String wert){
+
+	private String createDarstellungswert(String wert) {
 		if (wert.equals("1")) { //$NON-NLS-1$
 			return Messages.MesswertTypBool_Yes;
 		}
 		if (wert.equals("0")) { //$NON-NLS-1$
 			return Messages.MesswertTypBool_No;
 		}
-		return (Boolean.parseBoolean(wert) ? Messages.MesswertTypBool_Yes
-				: Messages.MesswertTypBool_No);
+		return (Boolean.parseBoolean(wert) ? Messages.MesswertTypBool_Yes : Messages.MesswertTypBool_No);
 	}
-	
+
 }

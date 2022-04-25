@@ -25,20 +25,21 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class PoissonDistributionEvaluator extends RecursiveNumericEvaluator implements OneValueWorker {
 
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public PoissonDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public PoissonDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object first) throws IOException{
-    if(null == first){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
-    }
+	@Override
+	public Object doWork(Object first) throws IOException {
+		if (null == first) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
+					toExpression(constructingFactory)));
+		}
 
-    Number mean = (Number)first;
+		Number mean = (Number) first;
 
-    return new PoissonDistribution(mean.doubleValue());
-  }
+		return new PoissonDistribution(mean.doubleValue());
+	}
 }

@@ -30,42 +30,40 @@ import ch.elexis.data.Patient;
 
 /**
  * Erstelle eine Antwort mit Datensatz 6301 auf Anfrage 6300
- * 
+ *
  * @author marco
- * 
+ *
  */
 public class GDTResponseIn6300Out6301 {
-	
+
 	private static Log logger = Log.get(GDTResponseIn6300Out6301.class.getName());
-	
-	public static GDTSatzNachricht6301 createResponse(GDTSatzNachricht6300 in){
+
+	public static GDTSatzNachricht6301 createResponse(GDTSatzNachricht6300 in) {
 		String patientenKennung = in.getValue(GDTConstants.FELDKENNUNG_PATIENT_KENNUNG);
 		String gdtSender = in.getValue(GDTConstants.FELDKENNUNG_GDT_ID_SENDER);
-		
+
 		Patient pat = null;
 		if (patientenKennung != null) {
 			pat = Patient.loadByPatientID(patientenKennung);
 		} else {
 			pat = ElexisEventDispatcher.getSelectedPatient();
 		}
-		
+
 		if (pat == null || (!pat.isValid())) {
-			String message =
-				"GDT (6300): Stammdatenübermittlung für unbekannten oder ungültigen Patienten angefordert. Patientenkennung: "
+			String message = "GDT (6300): Stammdatenübermittlung für unbekannten oder ungültigen Patienten angefordert. Patientenkennung: "
 					+ patientenKennung;
 			Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message);
 			StatusManager.getManager().handle(status, StatusManager.SHOW);
 			logger.log(message, Log.WARNINGS);
 			return null;
 		}
-		
-		return new GDTSatzNachricht6301(pat.get(Patient.FLD_PATID), pat.getName(),
-			pat.getVorname(), GDTSatzNachrichtHelper.deliverBirthdate(pat), null,
-			pat.get(Patient.TITLE), null, pat.get(Patient.FLD_ZIP) + " "
-				+ pat.get(Patient.FLD_PLACE), pat.get(Patient.FLD_STREET), null,
-			GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.FLD_SEX)), null, null,
-			null, gdtSender, CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, null),
-			GDTConstants.ZEICHENSATZ_IBM_CP_437 + "", GDTConstants.GDT_VERSION);
+
+		return new GDTSatzNachricht6301(pat.get(Patient.FLD_PATID), pat.getName(), pat.getVorname(),
+				GDTSatzNachrichtHelper.deliverBirthdate(pat), null, pat.get(Patient.TITLE), null,
+				pat.get(Patient.FLD_ZIP) + " " + pat.get(Patient.FLD_PLACE), pat.get(Patient.FLD_STREET), null,
+				GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.FLD_SEX)), null, null, null, gdtSender,
+				CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, null), GDTConstants.ZEICHENSATZ_IBM_CP_437 + "",
+				GDTConstants.GDT_VERSION);
 	}
-	
+
 }

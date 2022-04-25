@@ -22,7 +22,7 @@ public final class PrinterProvider {
 
 	/**
 	 * Returns all available printers of the system.
-	 * 
+	 *
 	 * @return The available printers as a String array.
 	 */
 	public static String[] getAvailablePrinters() {

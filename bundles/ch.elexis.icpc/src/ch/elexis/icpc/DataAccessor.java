@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
- *    
+ *    A. Kaufmann - initial implementation
+ *
  *******************************************************************************/
 
 package ch.elexis.icpc;
@@ -39,83 +39,79 @@ import ch.elexis.icpc.service.IcpcModelServiceHolder;
 import ch.rgw.tools.Result;
 
 public class DataAccessor implements IDataAccess {
-	
-	public String getName(){
+
+	public String getName() {
 		return "ICPC2-Daten";
 	}
-	
-	public String getDescription(){
+
+	public String getDescription() {
 		return "Daten aus dem ICPC2-Plugin";
 	}
-	
-	public List<Element> getList(){
+
+	public List<Element> getList() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	private String code(IcpcCode ic){
+
+	private String code(IcpcCode ic) {
 		return (ic == null ? "" : ic.getCode());
 	}
-	
+
 	/**
-	 * Alle Encounters in der Episode ep suchen, die zum Zeitraum dates passen und Liste zurueck
-	 * geben.
+	 * Alle Encounters in der Episode ep suchen, die zum Zeitraum dates passen und
+	 * Liste zurueck geben.
 	 */
-	private Result<Object> sucheEncounters(IcpcEpisode ep, String dates, Object dep){
+	private Result<Object> sucheEncounters(IcpcEpisode ep, String dates, Object dep) {
 		IQuery<IcpcEncounter> query = IcpcModelServiceHolder.get().getQuery(IcpcEncounter.class);
 		query.and(IcpcPackage.Literals.ICPC_ENCOUNTER__EPISODE, COMPARATOR.EQUALS, ep);
 		if (dep instanceof Konsultation) {
-			IEncounter encounter = CoreModelServiceHolder.get()
-				.load(((Konsultation) dep).getId(), IEncounter.class).orElse(null);
+			IEncounter encounter = CoreModelServiceHolder.get().load(((Konsultation) dep).getId(), IEncounter.class)
+					.orElse(null);
 			query.and(IcpcPackage.Literals.ICPC_ENCOUNTER__ENCOUNTER, COMPARATOR.EQUALS, encounter);
 		}
 		List<IcpcEncounter> encounters = query.execute();
-		
+
 		// TODO: Filtern nach dates
-		
+
 		// Encounters ohne RFE, Diag und Procedere rauswerfen
-		encounters = encounters.parallelStream().filter(e -> filterEmptyEncounter(e))
-			.collect(Collectors.toList());
-		
+		encounters = encounters.parallelStream().filter(e -> filterEmptyEncounter(e)).collect(Collectors.toList());
+
 		// Sortieren
 		Collections.sort(encounters, new Comparator<IcpcEncounter>() {
-			public int compare(IcpcEncounter e1, IcpcEncounter e2){
+			public int compare(IcpcEncounter e1, IcpcEncounter e2) {
 				return e1.getEncounter().getDate().compareTo(e2.getEncounter().getDate());
 			}
 		});
-		
+
 		return new Result<Object>(encounters);
 	}
-	
-	private boolean filterEmptyEncounter(IcpcEncounter encounter){
-		return encounter.getRfe() != null || encounter.getDiag() != null
-			|| encounter.getProc() != null;
+
+	private boolean filterEmptyEncounter(IcpcEncounter encounter) {
+		return encounter.getRfe() != null || encounter.getDiag() != null || encounter.getProc() != null;
 	}
-	
-	private Result<Object> sucheEncounters(List<IcpcEpisode> eps,
-		Map<IcpcEpisode, List<IcpcEncounter>> encs,
-		Object dep, String dates){
-		
+
+	private Result<Object> sucheEncounters(List<IcpcEpisode> eps, Map<IcpcEpisode, List<IcpcEncounter>> encs,
+			Object dep, String dates) {
+
 		IPatient pat;
-		
+
 		if (dep instanceof Konsultation) {
-			IEncounter encounter = CoreModelServiceHolder.get()
-				.load(((Konsultation) dep).getId(), IEncounter.class).orElse(null);
+			IEncounter encounter = CoreModelServiceHolder.get().load(((Konsultation) dep).getId(), IEncounter.class)
+					.orElse(null);
 			pat = encounter.getPatient();
 		} else if (dep instanceof Patient) {
-			pat = CoreModelServiceHolder.get().load(((Patient) dep).getId(), IPatient.class)
-				.orElse(null);
+			pat = CoreModelServiceHolder.get().load(((Patient) dep).getId(), IPatient.class).orElse(null);
 		} else {
-			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
-				"Ungültiger Parameter", dep, true);
+			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS, "Ungültiger Parameter",
+					dep, true);
 		}
-		
+
 		// Alle Episoden des Patienten zusammensuchen
 		IQuery<IcpcEpisode> query = IcpcModelServiceHolder.get().getQuery(IcpcEpisode.class);
 		query.and(IcpcPackage.Literals.ICPC_EPISODE__PATIENT, COMPARATOR.EQUALS, pat);
 		query.orderBy(IcpcPackage.Literals.ICPC_EPISODE__START_DATE, ORDER.ASC);
 		List<IcpcEpisode> raw_eps = query.execute();
-		
+
 		int count = 0;
 		for (IcpcEpisode ep : raw_eps) {
 			// Betroffene Encounters suchen
@@ -123,7 +119,7 @@ public class DataAccessor implements IDataAccess {
 			if (!res.isOK()) {
 				return res;
 			}
-			
+
 			// Falls mindestens ein Encounter gefunden wurde,
 			// Episode in Liste aufnehmen.
 			@SuppressWarnings("unchecked")
@@ -135,32 +131,31 @@ public class DataAccessor implements IDataAccess {
 				count += 1 + ep_encs.size();
 			}
 		}
-		
+
 		return new Result<Object>(count);
 	}
-	
-	public Result<Object> getObject(String descriptor, PersistentObject dependentObject,
-		String dates, String[] params){
-		
+
+	public Result<Object> getObject(String descriptor, PersistentObject dependentObject, String dates,
+			String[] params) {
+
 		if (descriptor.toLowerCase().equals("encounters")) {
 			/*
-			 * Tabelle in der Form: Problem1 | Datum | aktiv/inaktiv | Datum | RFE | Diagnose |
-			 * Procedere . . . . . Problem2 | Datum | aktiv/inaktiv . . . . .
+			 * Tabelle in der Form: Problem1 | Datum | aktiv/inaktiv | Datum | RFE |
+			 * Diagnose | Procedere . . . . . Problem2 | Datum | aktiv/inaktiv . . . . .
 			 */
-			
+
 			List<IcpcEpisode> episodes = new LinkedList<IcpcEpisode>();
-			HashMap<IcpcEpisode, List<IcpcEncounter>> encounters =
-				new HashMap<IcpcEpisode, List<IcpcEncounter>>();
-			
+			HashMap<IcpcEpisode, List<IcpcEncounter>> encounters = new HashMap<IcpcEpisode, List<IcpcEncounter>>();
+
 			Result<Object> res = sucheEncounters(episodes, encounters, dependentObject, dates);
 			if (!res.isOK()) {
 				return res;
 			}
-			
+
 			int rows = (Integer) res.get() + 1;
 			String result[][] = new String[rows][5];
 			int i = 0;
-			
+
 			// Spaltenüberschriften
 			result[i][0] = "Problem";
 			result[i][1] = "Datum";
@@ -168,7 +163,7 @@ public class DataAccessor implements IDataAccess {
 			result[i][3] = "Diagnose";
 			result[i][4] = "Procedere";
 			i++;
-			
+
 			for (IcpcEpisode ep : episodes) {
 				/* Zeile fuer Episode generieren */
 				result[i][0] = ep.getTitle();
@@ -176,27 +171,26 @@ public class DataAccessor implements IDataAccess {
 				result[i][2] = getStatusText(ep.getStatus());
 				result[i][3] = result[i][4] = "";
 				i++;
-				
+
 				/* Zeilen fuer Encounters generieren */
 				for (IcpcEncounter en : encounters.get(ep)) {
 					result[i][0] = "";
-					result[i][1] = en.getEncounter().getDate()
-						.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+					result[i][1] = en.getEncounter().getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 					result[i][2] = code(en.getRfe());
 					result[i][3] = code(en.getDiag());
 					result[i][4] = code(en.getProc());
 					i++;
 				}
 			}
-			
+
 			return new Result<Object>(result);
 		} else {
-			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
-				"Ungültiger Parameter", descriptor, true);
+			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND, "Ungültiger Parameter",
+					descriptor, true);
 		}
 	}
-	
-	private String getStatusText(int status){
+
+	private String getStatusText(int status) {
 		if (status == 1) {
 			return Messages.Active;
 		} else {

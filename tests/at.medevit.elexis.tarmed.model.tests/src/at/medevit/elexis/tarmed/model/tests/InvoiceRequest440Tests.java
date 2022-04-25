@@ -58,33 +58,31 @@ import ch.fd.invoice440.request.ZipType;
 public class InvoiceRequest440Tests {
 	private static File writeReq440;
 	private static File readReq440;
-	
+
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception{
+	public static void setUpBeforeClass() throws Exception {
 		writeReq440 = new File("rsc/writeReq440.xml");
 		if (!writeReq440.exists()) {
 			writeReq440.createNewFile();
 		}
-		
+
 		readReq440 = new File("rsc/readReq440.xml");
 	}
-	
+
 	@Test
-	public void testMarshallInvoiceRequest440() throws InstantiationException,
-		IllegalAccessException, FileNotFoundException, DatatypeConfigurationException{
-		
-		TarmedJaxbUtil.marshallInvoiceRequest(generateRequestSample(), new FileOutputStream(
-			writeReq440));
+	public void testMarshallInvoiceRequest440() throws InstantiationException, IllegalAccessException,
+			FileNotFoundException, DatatypeConfigurationException {
+
+		TarmedJaxbUtil.marshallInvoiceRequest(generateRequestSample(), new FileOutputStream(writeReq440));
 		assertTrue(writeReq440.exists());
 	}
-	
+
 	@Test
-	public void testUnmarshalInvoiceRequest440() throws FileNotFoundException,
-		InstantiationException, IllegalAccessException, DatatypeConfigurationException{
-		
-		RequestType requestType =
-			TarmedJaxbUtil.unmarshalInvoiceRequest440(new FileInputStream(readReq440));
-		
+	public void testUnmarshalInvoiceRequest440() throws FileNotFoundException, InstantiationException,
+			IllegalAccessException, DatatypeConfigurationException {
+
+		RequestType requestType = TarmedJaxbUtil.unmarshalInvoiceRequest440(new FileInputStream(readReq440));
+
 		assertNotNull(requestType);
 		assertEquals("en", requestType.getLanguage());
 		assertEquals("UnitTest", requestType.getModus());
@@ -102,13 +100,13 @@ public class InvoiceRequest440Tests {
 		assertEquals("6564564", body.getKvg().getInsuredId());
 		assertEquals(1, body.getServices().getRecordTarmedOrRecordDrgOrRecordLab().size());
 	}
-	
+
 	@Test
-	public void testDomUnmarshalInvoiceRequest440() throws JDOMException, IOException{
+	public void testDomUnmarshalInvoiceRequest440() throws JDOMException, IOException {
 		SAXBuilder builder = new SAXBuilder();
 		Document jdomDoc = builder.build(readReq440);
 		RequestType requestType = TarmedJaxbUtil.unmarshalInvoiceRequest440(jdomDoc);
-		
+
 		assertNotNull(requestType);
 		assertEquals("en", requestType.getLanguage());
 		assertEquals("UnitTest", requestType.getModus());
@@ -126,17 +124,17 @@ public class InvoiceRequest440Tests {
 		assertEquals("6564564", body.getKvg().getInsuredId());
 		assertEquals(1, body.getServices().getRecordTarmedOrRecordDrgOrRecordLab().size());
 	}
-	
+
 	@Test
-	public void testGetXMLVersion() throws JDOMException, IOException{
+	public void testGetXMLVersion() throws JDOMException, IOException {
 		SAXBuilder builder = new SAXBuilder();
 		Document jdomDoc = builder.build(readReq440);
 		String version = TarmedJaxbUtil.getXMLVersion(jdomDoc);
 		assertEquals("4.4", version);
 	}
-	
-	private RequestType generateRequestSample() throws InstantiationException,
-		IllegalAccessException, DatatypeConfigurationException{
+
+	private RequestType generateRequestSample()
+			throws InstantiationException, IllegalAccessException, DatatypeConfigurationException {
 		RequestType request = new RequestType();
 		request.setModus("UnitTest");
 		request.setLanguage("en");
@@ -144,8 +142,8 @@ public class InvoiceRequest440Tests {
 		request.setPayload(getPayloadSample());
 		return request;
 	}
-	
-	private ProcessingType getProcessingSample(){
+
+	private ProcessingType getProcessingSample() {
 		ProcessingType processing = new ProcessingType();
 		processing.setPrintAtIntermediate(false);
 		processing.setPrintPatientCopy(true);
@@ -158,42 +156,42 @@ public class InvoiceRequest440Tests {
 		via.setSequenceId(1);
 		via.setVia("7601001304307");
 		transport.getVia().add(via);
-		
+
 		// add transport to processing
 		processing.setTransport(transport);
 		return processing;
 	}
-	
-	private PayloadType getPayloadSample() throws InstantiationException, IllegalAccessException,
-		DatatypeConfigurationException{
+
+	private PayloadType getPayloadSample()
+			throws InstantiationException, IllegalAccessException, DatatypeConfigurationException {
 		GregorianCalendar c = new GregorianCalendar();
 		c.set(2015, 01, 21, 13, 30);
 		XMLGregorianCalendar cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-		
+
 		PayloadType payload = new PayloadType();
 		payload.setType("invoice");
 		payload.setCopy(false);
 		payload.setStorno(false);
-		
+
 		// set invoice
 		InvoiceType invoice = new InvoiceType();
 		invoice.setRequestTimestamp(new BigInteger("1421827519"));
 		invoice.setRequestId("001163000552");
 		payload.setInvoice(invoice);
-		
+
 		// body
 		BodyType body = new BodyType();
-		
-		//prolog
+
+		// prolog
 		PrologType prolog = new PrologType();
-		
-		//package
+
+		// package
 		SoftwareType swPackage = new SoftwareType();
 		swPackage.setVersion(300l);
 		swPackage.setName("Elexis Unit Test");
 		prolog.setPackage(swPackage);
-		
-		//generator
+
+		// generator
 		SoftwareType generator = new SoftwareType();
 		generator.setVersion(100l);
 		generator.setName("JDOM");
@@ -202,16 +200,16 @@ public class InvoiceRequest440Tests {
 		dependsOn.setVersion(300l);
 		generator.getDependsOn().add(dependsOn);
 		prolog.setGenerator(generator);
-		
+
 		body.setProlog(prolog);
-		
-		//balance 
+
+		// balance
 		BalanceType balance = new BalanceType();
 		balance.setCurrency("CHF");
 		balance.setAmount(30.35);
 		balance.setAmountDue(30.35);
 		balance.setAmountObligations(30.35);
-		//vat
+		// vat
 		VatType vat = new VatType();
 		vat.setVat(0.0);
 		VatRateType vatRate = new VatRateType();
@@ -220,16 +218,16 @@ public class InvoiceRequest440Tests {
 		vatRate.setVat(0.0);
 		vat.getVatRate().add(vatRate);
 		balance.setVat(vat);
-		
+
 		body.setBalance(balance);
-		
-		//esr 9
+
+		// esr 9
 		Esr9Type esr9 = new Esr9Type();
 		esr9.setParticipantNumber("01-200020-9");
 		esr9.setType("16or27");
 		esr9.setReferenceNumber("81 17000 00000 00001 16300 05527");
 		esr9.setCodingLine("0100000030359&gt;811700000000000011630005527+ 012000209&gt;");
-		
+
 		// add bank part
 		EsrAddressType bank = new EsrAddressType();
 		CompanyType company = new CompanyType();
@@ -242,18 +240,18 @@ public class InvoiceRequest440Tests {
 		postal.setCity("Götzis");
 		postal.setStreet("St. Ulrich Straße 40");
 		company.setPostal(postal);
-		//phone
+		// phone
 		TelecomAddressType tele = new TelecomAddressType();
 		tele.getPhone().add("+4369919270505");
 		company.setTelecom(tele);
 		bank.setCompany(company);
 		esr9.setBank(bank);
 		body.setEsr9(esr9);
-		
-		//Tiers Payant
+
+		// Tiers Payant
 		PayantType payant = new PayantType();
-		
-		//biller
+
+		// biller
 		BillerAddressType biller = new BillerAddressType();
 		CompanyType medevit = new CompanyType();
 		medevit.setCompanyname("Medevit");
@@ -271,12 +269,12 @@ public class InvoiceRequest440Tests {
 		biller.setCompany(medevit);
 		biller.setSpecialty("Software Development");
 		payant.setBiller(biller);
-		
+
 		// provider
 		ProviderAddressType provider = new ProviderAddressType();
 		provider.setCompany(medevit);
 		payant.setProvider(provider);
-		
+
 		// insurance
 		InsuranceAddressType insurance = new InsuranceAddressType();
 		CompanyType person = new CompanyType();
@@ -290,7 +288,7 @@ public class InvoiceRequest440Tests {
 		person.setTelecom(mobil);
 		insurance.setCompany(person);
 		payant.setInsurance(insurance);
-		
+
 		// patient
 		PatientAddressType patAddress = new PatientAddressType();
 		patAddress.setGender("female");
@@ -302,20 +300,20 @@ public class InvoiceRequest440Tests {
 		pat.setTelecom(mobil);
 		patAddress.setPerson(pat);
 		payant.setPatient(patAddress);
-		
-		//guarantor
+
+		// guarantor
 		GuarantorAddressType guarantor = new GuarantorAddressType();
 		guarantor.setPerson(pat);
 		payant.setGuarantor(guarantor);
-		
+
 		body.setTiersPayant(payant);
-		
+
 		// KVG
 		KvgLawType kvg = new KvgLawType();
 		kvg.setInsuredId("6564564");
 		kvg.setCaseDate(cal);
 		body.setKvg(kvg);
-		
+
 		// treatment and diagnosis
 		TreatmentType treatment = new TreatmentType();
 		treatment.setReason("disease");
@@ -327,7 +325,7 @@ public class InvoiceRequest440Tests {
 		diagnosis.setCode("H00.0");
 		treatment.getDiagnosis().add(diagnosis);
 		body.setTreatment(treatment);
-		
+
 		// services
 		ServicesType services = new ServicesType();
 		RecordDrugType recDrug = new RecordDrugType();
@@ -347,7 +345,7 @@ public class InvoiceRequest440Tests {
 		recDrug.setName("MUCEDOKEHL Tropfen D 5 AR 11649 10 ml ()");
 		services.getRecordTarmedOrRecordDrgOrRecordLab().add(recDrug);
 		body.setServices(services);
-		
+
 		payload.setBody(body);
 		return payload;
 	}

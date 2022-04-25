@@ -22,32 +22,30 @@ import ch.elexis.core.services.IFormattedOutput;
 
 public class XmlStreamToPdf implements IFormattedOutput {
 	private static XmlStreamToPdf instance;
-	
-	private XmlStreamToPdf(){
-		
+
+	private XmlStreamToPdf() {
+
 	}
-	
-	public static XmlStreamToPdf getInstance(){
+
+	public static XmlStreamToPdf getInstance() {
 		if (instance == null)
 			instance = new XmlStreamToPdf();
 		return instance;
 	}
-	
+
 	@Override
-	public void transform(Object xmlStream, InputStream xslt, OutputStream pdf){
+	public void transform(Object xmlStream, InputStream xslt, OutputStream pdf) {
 		transform(xmlStream, xslt, pdf, null);
 	}
-	
+
 	@Override
 	public void transform(Object xmlStream, InputStream xslt, OutputStream pdf,
-		Map<String, String> transformerParameters, URIResolver resolver){
+			Map<String, String> transformerParameters, URIResolver resolver) {
 		if (xmlStream instanceof InputStream) {
-			XmlStreamToMimeType.getInstance().transform(
-				(InputStream) xmlStream, xslt,
-				pdf, MimeConstants.MIME_PDF, transformerParameters, resolver);
+			XmlStreamToMimeType.getInstance().transform((InputStream) xmlStream, xslt, pdf, MimeConstants.MIME_PDF,
+					transformerParameters, resolver);
 		} else {
-			throw new IllegalStateException(
-				"Input Object [" + xmlStream + "] is not of type InputStream");
+			throw new IllegalStateException("Input Object [" + xmlStream + "] is not of type InputStream");
 		}
 	}
 }

@@ -27,19 +27,22 @@ import org.apache.solr.common.SolrCloseable;
  * This interface models the access to node and replica information.
  */
 public interface NodeStateProvider extends SolrCloseable {
-  /**
-   * Get the value of each tag for a given node
-   *
-   * @param node node name
-   * @param tags tag names
-   * @return a map of tag vs value
-   */
-  Map<String, Object> getNodeValues(String node, Collection<String> tags);
+	/**
+	 * Get the value of each tag for a given node
+	 *
+	 * @param node node name
+	 * @param tags tag names
+	 * @return a map of tag vs value
+	 */
+	Map<String, Object> getNodeValues(String node, Collection<String> tags);
 
-  /**
-   * Get the details of each replica in a node. It attempts to fetch as much details about
-   * the replica as mentioned in the keys list. It is not necessary to give all details
-   * <p>The format is {collection:shard :[{replicadetails}]}.</p>
-   */
-  Map<String, Map<String, List<ReplicaInfo>>> getReplicaInfo(String node, Collection<String> keys);
+	/**
+	 * Get the details of each replica in a node. It attempts to fetch as much
+	 * details about the replica as mentioned in the keys list. It is not necessary
+	 * to give all details
+	 * <p>
+	 * The format is {collection:shard :[{replicadetails}]}.
+	 * </p>
+	 */
+	Map<String, Map<String, List<ReplicaInfo>>> getReplicaInfo(String node, Collection<String> keys);
 }

@@ -18,28 +18,28 @@ import org.eclipse.swt.widgets.Composite;
 import at.medevit.elexis.ehc.ui.extension.ImportWizardsExtension;
 
 public class ImportWizardsComposite extends Composite {
-	
+
 	private TreeViewer viewer;
-	
-	public ImportWizardsComposite(Composite parent, int style){
+
+	public ImportWizardsComposite(Composite parent, int style) {
 		super(parent, style);
-		
+
 		createContent();
 	}
-	
-	private void createContent(){
+
+	private void createContent() {
 		setLayout(new FillLayout());
-		
+
 		viewer = new TreeViewer(this, SWT.FULL_SELECTION | SWT.MULTI);
-		
+
 		viewer.setLabelProvider(new WizardLabelProvider());
-		
+
 		viewer.setContentProvider(new WizardContentProvider());
-		
+
 		viewer.setInput(ImportWizardsExtension.getCategories(false));
 	}
-	
-	public TreeViewer getViewer(){
+
+	public TreeViewer getViewer() {
 		return viewer;
 	}
 }

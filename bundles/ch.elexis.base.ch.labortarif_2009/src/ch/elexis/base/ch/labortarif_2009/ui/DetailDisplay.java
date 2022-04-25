@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.base.ch.labortarif_2009.ui;
@@ -34,40 +34,32 @@ public class DetailDisplay implements IDetailDisplay {
 	Form form;
 	DisplayPanel panel;
 	FieldDescriptor<?>[] fields = {
-		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_chapter, "chapter", Typ.STRING,
-			null),
-		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_code, "code",
-			Typ.STRING, null),
-		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_fachbereich, "speciality",
-			Typ.STRING, null),
-		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_name, "text",
-			Typ.STRING, null),
-		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_limitation,
-			"limitation", Typ.STRING, null),
-		new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_taxpoints,
-			"points", Typ.STRING, null)
-	};
-	
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_chapter, "chapter", Typ.STRING, null),
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_code, "code", Typ.STRING, null),
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_fachbereich, "speciality", Typ.STRING, null),
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_name, "text", Typ.STRING, null),
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_limitation, "limitation", Typ.STRING, null),
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_taxpoints, "points", Typ.STRING, null) };
+
 	@Inject
-	public void selection(
-		@Optional @Named("ch.elexis.base.ch.labortarif_2009.ui.selection") ILaborLeistung item){
+	public void selection(@Optional @Named("ch.elexis.base.ch.labortarif_2009.ui.selection") ILaborLeistung item) {
 		if (item != null && !panel.isDisposed()) {
 			display(item);
 		}
 	}
-	
-	public void display(Object obj){
+
+	public void display(Object obj) {
 		if (obj instanceof ILaborLeistung) {
 			form.setText(((ILaborLeistung) obj).getLabel());
 			panel.setObject((ILaborLeistung) obj);
 		}
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return "EAL 2009"; //$NON-NLS-1$
 	}
-	
-	public Composite createDisplay(Composite parent, IViewSite site){
+
+	public Composite createDisplay(Composite parent, IViewSite site) {
 		form = UiDesk.getToolkit().createForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		form.getBody().setLayout(new GridLayout());
@@ -75,9 +67,9 @@ public class DetailDisplay implements IDetailDisplay {
 		panel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return panel;
 	}
-	
+
 	@Override
-	public Class<?> getElementClass(){
+	public Class<?> getElementClass() {
 		return ILaborLeistung.class;
 	}
 }

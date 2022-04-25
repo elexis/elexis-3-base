@@ -84,9 +84,9 @@ public class Messages extends NLS {
 	public static String MesswertTypBool_Yes;
 	public static String MesswertTypNum_CastFailure;
 	public static String MesswertTypScale_CastFailure;
-	
+
 	static { // load message values from bundle file
 		NLS.initializeMessages("com.hilotec.elexis.messwerte.v2.messages", //$NON-NLS-1$
-			Messages.class);
+				Messages.class);
 	}
 }

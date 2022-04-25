@@ -28,27 +28,31 @@ import org.apache.solr.common.util.ObjectCache;
 import org.apache.solr.common.util.TimeSource;
 
 /**
- * This interface abstracts the access to a SolrCloud cluster, including interactions with Zookeeper, Solr
- * and generic HTTP calls.
- * <p>This abstraction should be used when possible instead of directly referencing ZK, Solr and HTTP.</p>
+ * This interface abstracts the access to a SolrCloud cluster, including
+ * interactions with Zookeeper, Solr and generic HTTP calls.
+ * <p>
+ * This abstraction should be used when possible instead of directly referencing
+ * ZK, Solr and HTTP.
+ * </p>
  */
 public interface SolrCloudManager extends SolrCloseable {
 
-  ClusterStateProvider getClusterStateProvider();
+	ClusterStateProvider getClusterStateProvider();
 
-  NodeStateProvider getNodeStateProvider();
+	NodeStateProvider getNodeStateProvider();
 
-  DistribStateManager getDistribStateManager();
+	DistribStateManager getDistribStateManager();
 
-  DistributedQueueFactory getDistributedQueueFactory();
+	DistributedQueueFactory getDistributedQueueFactory();
 
-  ObjectCache getObjectCache();
+	ObjectCache getObjectCache();
 
-  TimeSource getTimeSource();
+	TimeSource getTimeSource();
 
-  // Solr-like methods
+	// Solr-like methods
 
-  SolrResponse request(@SuppressWarnings({"rawtypes"})SolrRequest req) throws IOException;
+	SolrResponse request(@SuppressWarnings({ "rawtypes" }) SolrRequest req) throws IOException;
 
-  byte[] httpRequest(String url, SolrRequest.METHOD method, Map<String, String> headers, String payload, int timeout, boolean followRedirects) throws IOException;
+	byte[] httpRequest(String url, SolrRequest.METHOD method, Map<String, String> headers, String payload, int timeout,
+			boolean followRedirects) throws IOException;
 }

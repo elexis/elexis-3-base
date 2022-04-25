@@ -58,45 +58,45 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
 
 public class SideBarComposite extends Composite {
-	
+
 	private IAgendaComposite agendaComposite;
-	
+
 	private List<String> selectedResources = new ArrayList<>();
-	
+
 	private ComboViewer spanSizeCombo;
-	
+
 	private ToolBarManager menuManager;
-	
+
 	private Button scrollToNowCheck;
-	
+
 	private TableViewer moveTable;
 	private List<IPeriod> movePeriods;
-	
+
 	private MoveInformation currentMoveInformation;
-	
+
 	private Composite areaComposite;
-	
+
 	@Inject
 	private IEventBroker eventBroker;
 
 	private DateTime calendar;
-	
-	public SideBarComposite(Composite parent, int style){
+
+	public SideBarComposite(Composite parent, int style) {
 		this(parent, false, style);
 	}
-	
-	public SideBarComposite(Composite parent, boolean includeMove, int style){
+
+	public SideBarComposite(Composite parent, boolean includeMove, int style) {
 		super(parent, style);
 		CoreUiUtil.injectServicesWithContext(this);
 		setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 		setBackgroundMode(SWT.INHERIT_FORCE);
-		
+
 		setLayout(new GridLayout(1, true));
-		
+
 		menuManager = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL);
 		menuManager.add(new Action(">", Action.AS_PUSH_BUTTON) {
 			@Override
-			public void run(){
+			public void run() {
 				if (">".equals(super.getText())) {
 					showContent();
 					super.setText("<");
@@ -107,21 +107,19 @@ public class SideBarComposite extends Composite {
 				super.run();
 			}
 		});
-		menuManager.createControl(this)
-			.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+		menuManager.createControl(this).setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 
 		calendar = new DateTime(this, SWT.CALENDAR | SWT.CALENDAR_WEEKNUMBERS);
 		calendar.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
-				agendaComposite.setSelectedDate(
-					LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay()));
+			public void widgetSelected(SelectionEvent e) {
+				agendaComposite
+						.setSelectedDate(LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay()));
 			}
 		});
-		
+
 		Label label = new Label(this, SWT.NONE);
-		FontDescriptor boldDescriptor =
-			FontDescriptor.createFrom(label.getFont()).setStyle(SWT.BOLD);
+		FontDescriptor boldDescriptor = FontDescriptor.createFrom(label.getFont()).setStyle(SWT.BOLD);
 		Font boldFont = boldDescriptor.createFont(label.getDisplay());
 		label.setFont(boldFont);
 		label.setText("Bereiche");
@@ -129,10 +127,10 @@ public class SideBarComposite extends Composite {
 		areaScrolledComposite.setLayout(new FillLayout());
 		areaScrolledComposite.setExpandVertical(true);
 		areaScrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		areaScrolledComposite.addListener( SWT.Resize, event -> {
+		areaScrolledComposite.addListener(SWT.Resize, event -> {
 			areaScrolledComposite.setMinSize(areaComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		} );
-		
+		});
+
 		areaComposite = new Composite(areaScrolledComposite, SWT.NONE);
 		areaComposite.setLayout(new GridLayout());
 		List<Area> areas = AppointmentServiceHolder.get().getAreas();
@@ -141,7 +139,7 @@ public class SideBarComposite extends Composite {
 			btn.setText(area.getName());
 			btn.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e){
+				public void widgetSelected(SelectionEvent e) {
 					if (e.getSource() instanceof Button) {
 						if (((Button) e.getSource()).getSelection()) {
 							selectedResources.add(((Button) e.getSource()).getText());
@@ -156,8 +154,7 @@ public class SideBarComposite extends Composite {
 		}
 		areaComposite.pack();
 		areaScrolledComposite.setContent(areaComposite);
-		
-		
+
 		label = new Label(this, SWT.NONE);
 		label.setFont(boldFont);
 		label.setText("Zeitschritte");
@@ -165,57 +162,55 @@ public class SideBarComposite extends Composite {
 		spanSizeCombo.setContentProvider(ArrayContentProvider.getInstance());
 		spanSizeCombo.setLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				return ((AgendaSpanSize) element).getLabel();
 			}
 		});
 		spanSizeCombo.setInput(AgendaSpanSize.values());
 		spanSizeCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (selection instanceof StructuredSelection) {
 					if (!selection.isEmpty()) {
 						agendaComposite.setSelectedSpanSize(
-							(AgendaSpanSize) ((StructuredSelection) selection).getFirstElement());
+								(AgendaSpanSize) ((StructuredSelection) selection).getFirstElement());
 						saveConfigurationString("selectedSpanSize",
-							((AgendaSpanSize) ((StructuredSelection) selection).getFirstElement())
-								.name());
+								((AgendaSpanSize) ((StructuredSelection) selection).getFirstElement()).name());
 					}
 				}
 			}
 		});
-		
+
 		label = new Label(this, SWT.NONE);
 		label.setFont(boldFont);
 		label.setText("Auto. zu jetzt scrollen");
 		scrollToNowCheck = new Button(this, SWT.CHECK);
 		scrollToNowCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				agendaComposite.setScrollToNow(scrollToNowCheck.getSelection());
-				saveConfigurationString("scrollToNow",
-					Boolean.toString(scrollToNowCheck.getSelection()));
+				saveConfigurationString("scrollToNow", Boolean.toString(scrollToNowCheck.getSelection()));
 				super.widgetSelected(e);
 			}
 		});
-		
+
 		Label separator = new Label(this, SWT.HORIZONTAL | SWT.SEPARATOR);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Button btn = new Button(this, SWT.NONE);
 		btn.setText("Neue Serie anlegen");
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				if (e.getSource() instanceof Button) {
 					RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(
-						AppointmentServiceHolder.get().createAppointmentSeries());
+							AppointmentServiceHolder.get().createAppointmentSeries());
 					dlg.open();
 				}
 			}
 		});
-		
+
 		if (includeMove) {
 			label = new Label(this, SWT.NONE);
 			label.setFont(boldFont);
@@ -226,7 +221,7 @@ public class SideBarComposite extends Composite {
 			moveTable.setContentProvider(ArrayContentProvider.getInstance());
 			moveTable.setLabelProvider(new LabelProvider() {
 				@Override
-				public String getText(Object element){
+				public String getText(Object element) {
 					if (element instanceof IPeriod) {
 						return ((IPeriod) element).getLabel();
 					}
@@ -236,17 +231,17 @@ public class SideBarComposite extends Composite {
 			MenuManager menuManager = new MenuManager();
 			menuManager.add(new Action() {
 				@Override
-				public String getText(){
+				public String getText() {
 					return "verschieben abbrechen";
 				}
-				
+
 				@Override
-				public ImageDescriptor getImageDescriptor(){
+				public ImageDescriptor getImageDescriptor() {
 					return Images.IMG_DELETE.getImageDescriptor();
 				}
-				
+
 				@Override
-				public void run(){
+				public void run() {
 					IStructuredSelection selection = moveTable.getStructuredSelection();
 					if (selection != null && !selection.isEmpty()) {
 						for (Object selected : selection.toList()) {
@@ -259,35 +254,34 @@ public class SideBarComposite extends Composite {
 			});
 			Menu contextMenu = menuManager.createContextMenu(moveTable.getTable());
 			moveTable.getTable().setMenu(contextMenu);
-			
+
 			GridData gd = new GridData(SWT.LEFT, SWT.BOTTOM, false, false);
 			gd.widthHint = 150;
 			moveTable.getTable().setLayoutData(gd);
 			movePeriods = new ArrayList<>();
 		}
-		
+
 		hideContent();
 	}
-	
+
 	@Inject
 	@org.eclipse.e4.core.di.annotations.Optional
-	public void loadDate(
-		@UIEventTopic(ElexisEventTopics.BASE + "agenda/loadtimespan") LoadEventTimeSpan timespan){
+	public void loadDate(@UIEventTopic(ElexisEventTopics.BASE + "agenda/loadtimespan") LoadEventTimeSpan timespan) {
 		if (timespan != null && calendar != null && !calendar.isDisposed()) {
 			if (!LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay())
-				.equals(timespan.getFrom())) {
+					.equals(timespan.getFrom())) {
 				if (agendaComposite instanceof WeekComposite && timespan.isWeek()) {
-					calendar.setDate(timespan.getFrom().getYear(),
-						timespan.getFrom().getMonthValue() - 1, timespan.getFrom().getDayOfMonth());
+					calendar.setDate(timespan.getFrom().getYear(), timespan.getFrom().getMonthValue() - 1,
+							timespan.getFrom().getDayOfMonth());
 				} else if (agendaComposite instanceof ParallelComposite && timespan.isDay()) {
-					calendar.setDate(timespan.getFrom().getYear(),
-						timespan.getFrom().getMonthValue() - 1, timespan.getFrom().getDayOfMonth());
+					calendar.setDate(timespan.getFrom().getYear(), timespan.getFrom().getMonthValue() - 1,
+							timespan.getFrom().getDayOfMonth());
 				}
 			}
 		}
 	}
-	
-	private void hideContent(){
+
+	private void hideContent() {
 		Control[] controls = getChildren();
 		for (Control control : controls) {
 			if (control instanceof ToolBar) {
@@ -304,8 +298,8 @@ public class SideBarComposite extends Composite {
 		}
 		getParent().layout();
 	}
-	
-	private void showContent(){
+
+	private void showContent() {
 		Control[] controls = getChildren();
 		for (Control control : controls) {
 			GridData gridData = (GridData) control.getLayoutData();
@@ -318,15 +312,14 @@ public class SideBarComposite extends Composite {
 		}
 		getParent().layout();
 	}
-	
-	public void setAgendaComposite(IAgendaComposite agendaComposite){
+
+	public void setAgendaComposite(IAgendaComposite agendaComposite) {
 		this.agendaComposite = agendaComposite;
 		loadSelectedResources();
 		agendaComposite.setSelectedResources(selectedResources);
 		String selectedSpanSize = loadConfigurationString("selectedSpanSize");
 		if (!selectedSpanSize.isEmpty()) {
-			spanSizeCombo
-				.setSelection(new StructuredSelection(AgendaSpanSize.valueOf(selectedSpanSize)));
+			spanSizeCombo.setSelection(new StructuredSelection(AgendaSpanSize.valueOf(selectedSpanSize)));
 		}
 		String value = loadConfigurationString("scrollToNow");
 		if (value != null && value.equalsIgnoreCase("true")) {
@@ -334,8 +327,8 @@ public class SideBarComposite extends Composite {
 			agendaComposite.setScrollToNow(true);
 		}
 	}
-	
-	private void saveSelectedResources(){
+
+	private void saveSelectedResources() {
 		agendaComposite.setSelectedResources(selectedResources);
 		StringBuilder sb = new StringBuilder();
 		for (String resource : selectedResources) {
@@ -346,8 +339,8 @@ public class SideBarComposite extends Composite {
 		}
 		saveConfigurationString("selectedResources", sb.toString());
 	}
-	
-	private void loadSelectedResources(){
+
+	private void loadSelectedResources() {
 		String loadedResources = loadConfigurationString("selectedResources");
 		String[] parts = loadedResources.split("\\|");
 		if (parts.length > 0 && !parts[0].isEmpty()) {
@@ -368,19 +361,18 @@ public class SideBarComposite extends Composite {
 			selectedResources = selections;
 		}
 	}
-	
-	private void saveConfigurationString(String configKey, String value){
+
+	private void saveConfigurationString(String configKey, String value) {
 		ConfigServiceHolder.get().setActiveUserContact(
-			"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey,
-			value);
+				"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, value);
 	}
-	
-	private String loadConfigurationString(String configKey){
+
+	private String loadConfigurationString(String configKey) {
 		return ConfigServiceHolder.get().getActiveUserContact(
-			"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, "");
+				"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, "");
 	}
-	
-	public void addMovePeriod(IPeriod period){
+
+	public void addMovePeriod(IPeriod period) {
 		if (moveTable != null && !moveTable.getTable().isDisposed()) {
 			if (!movePeriods.contains(period)) {
 				movePeriods.add(period);
@@ -388,50 +380,50 @@ public class SideBarComposite extends Composite {
 			moveTable.setInput(movePeriods);
 		}
 	}
-	
-	public void removeMovePeriod(IPeriod period){
+
+	public void removeMovePeriod(IPeriod period) {
 		if (moveTable != null && !moveTable.getTable().isDisposed()) {
 			movePeriods.remove(period);
 			moveTable.setInput(movePeriods);
 		}
 	}
-	
-	public Optional<MoveInformation> getMoveInformation(){
+
+	public Optional<MoveInformation> getMoveInformation() {
 		if (currentMoveInformation != null) {
 			currentMoveInformation.setMoveablePeriods(movePeriods);
 		}
 		return Optional.ofNullable(currentMoveInformation);
 	}
-	
-	public void setMoveInformation(LocalDateTime date, String resource){
+
+	public void setMoveInformation(LocalDateTime date, String resource) {
 		currentMoveInformation = new MoveInformation(this, date, resource);
 	}
-	
+
 	public static class MoveInformation {
 		private SideBarComposite sideBar;
 		private LocalDateTime dateTime;
 		private String resource;
-		
+
 		private List<IPeriod> moveablePeriods;
-		
-		public MoveInformation(SideBarComposite sideBar, LocalDateTime dateTime, String resource){
+
+		public MoveInformation(SideBarComposite sideBar, LocalDateTime dateTime, String resource) {
 			this.sideBar = sideBar;
 			this.dateTime = dateTime;
 			this.resource = resource;
 		}
-		
-		public void setMoveablePeriods(List<IPeriod> periods){
+
+		public void setMoveablePeriods(List<IPeriod> periods) {
 			this.moveablePeriods = new ArrayList<>(periods);
 		}
-		
-		public List<IPeriod> getMoveablePeriods(){
+
+		public List<IPeriod> getMoveablePeriods() {
 			return moveablePeriods;
 		}
-		
-		public void movePeriod(IPeriod iPeriod){
+
+		public void movePeriod(IPeriod iPeriod) {
 			AcquireLockBlockingUi.aquireAndRun(iPeriod, new ILockHandler() {
 				@Override
-				public void lockAcquired(){
+				public void lockAcquired() {
 					iPeriod.setStartTime(dateTime);
 					if (iPeriod instanceof IAppointment) {
 						((IAppointment) iPeriod).setSchedule(resource);
@@ -439,20 +431,19 @@ public class SideBarComposite extends Composite {
 					CoreModelServiceHolder.get().save(iPeriod);
 					Display.getDefault().timerExec(250, new Runnable() {
 						@Override
-						public void run(){
+						public void run() {
 							if (sideBar != null && !sideBar.isDisposed()) {
 								sideBar.removeMovePeriod(iPeriod);
-								sideBar.eventBroker
-									.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+								sideBar.eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 							}
 						}
 					});
 				}
 
 				@Override
-				public void lockFailed(){
+				public void lockFailed() {
 					// TODO Auto-generated method stub
-					
+
 				}
 			});
 		}

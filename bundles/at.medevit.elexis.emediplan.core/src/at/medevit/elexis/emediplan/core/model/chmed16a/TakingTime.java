@@ -20,12 +20,10 @@ public class TakingTime {
 	public Double DoTo;
 	public Double A;
 	public Double MA;
-	
-	private static Integer[] secondsOffsets = {
-		8 * 3600, 12 * 3600, 16 * 3600, 20 * 3600
-	};
-	
-	public static List<TakingTime> fromFloats(List<Float> floats, boolean reserve){
+
+	private static Integer[] secondsOffsets = { 8 * 3600, 12 * 3600, 16 * 3600, 20 * 3600 };
+
+	public static List<TakingTime> fromFloats(List<Float> floats, boolean reserve) {
 		List<TakingTime> ret = new ArrayList<>();
 		for (int i = 0; i < floats.size(); i++) {
 			TakingTime tt = new TakingTime();

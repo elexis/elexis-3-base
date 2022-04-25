@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.base.ch.diagnosecodes.views;
@@ -32,32 +32,31 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IDetailDisplay;
 
 public class TICodeDetail implements IDetailDisplay {
-	
+
 	FormToolkit tk = UiDesk.getToolkit();
 	Form form;
 	Text tID, tFull;
-	
+
 	@Inject
-	public void selection(
-		@Optional @Named("ch.elexis.base.ch.diagnosecodes.ti.selection") IDiagnosisTree item){
+	public void selection(@Optional @Named("ch.elexis.base.ch.diagnosecodes.ti.selection") IDiagnosisTree item) {
 		if (item != null && !form.isDisposed()) {
 			display(item);
 		}
 	}
-	
-	public void display(Object obj){
+
+	public void display(Object obj) {
 		if (obj instanceof IDiagnosis) {
 			IDiagnosis tc = (IDiagnosis) obj;
 			tID.setText(tc.getCode());
 			tFull.setText(tc.getText());
 		}
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return "TI Code"; //$NON-NLS-1$
 	}
-	
-	public Composite createDisplay(Composite parent, IViewSite site){
+
+	public Composite createDisplay(Composite parent, IViewSite site) {
 		parent.setLayout(new FillLayout());
 		form = tk.createForm(parent);
 		Composite body = form.getBody();
@@ -70,9 +69,9 @@ public class TICodeDetail implements IDetailDisplay {
 		tFull.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		return body;
 	}
-	
+
 	@Override
-	public Class<?> getElementClass(){
+	public Class<?> getElementClass() {
 		return IDiagnosis.class;
 	}
 }

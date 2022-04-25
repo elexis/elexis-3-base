@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -33,61 +33,56 @@ public class NutritionDetailDisplay implements IDetailDisplay {
 	ScrolledForm form;
 	FormToolkit tk = UiDesk.getToolkit();
 	LabeledInputField.AutoForm tblLab;
-	
-	InputData[] data = new InputData[] {
-		new InputData("Ziffer", "code", InputData.Typ.STRING, null), //$NON-NLS-1$
-		new InputData("Taxpunkte / Preis in Rappen", "TP", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
-		new InputData("Gültig von", "validFrom", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
-		new InputData("Gültig bis", "validTo", InputData.Typ.STRING, null) //$NON-NLS-1$ //$NON-NLS-2$
-		};
-		private FormText description;
-	
+
+	InputData[] data = new InputData[] { new InputData("Ziffer", "code", InputData.Typ.STRING, null), //$NON-NLS-1$
+			new InputData("Taxpunkte / Preis in Rappen", "TP", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
+			new InputData("Gültig von", "validFrom", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
+			new InputData("Gültig bis", "validTo", InputData.Typ.STRING, null) //$NON-NLS-1$ //$NON-NLS-2$
+	};
+	private FormText description;
+
 	@Inject
 	public void selection(
-		@Optional
-		@Named("ch.elexis.views.codeselector.nutrition.selection")
-		INutritionLeistung physio){
+			@Optional @Named("ch.elexis.views.codeselector.nutrition.selection") INutritionLeistung physio) {
 		if (physio != null && !form.isDisposed()) {
 			display(physio);
 		}
 	}
-	
-	public Composite createDisplay(Composite parent, IViewSite site){
+
+	public Composite createDisplay(Composite parent, IViewSite site) {
 		form = tk.createScrolledForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
-		
+
 		tblLab = new LabeledInputField.AutoForm(form.getBody(), data);
-		
+
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		tblLab.setLayoutData(twd);
-		
+
 		tk.createLabel(form.getBody(), "Beschreibung");
 		description = tk.createFormText(form.getBody(), false);
-		
+
 		return form.getBody();
 	}
-	
-	public void display(Object obj){
+
+	public void display(Object obj) {
 		INutritionLeistung ll = (INutritionLeistung) obj;
 		form.setText(ll.getLabel());
 		tblLab.reload(ll);
-		
-		String text =
-			ll.getDescription() != null
-					? "<form>" + ll.getDescription().replaceAll("\n", "<br/>") + "</form>"
-					: "<form/>";
+
+		String text = ll.getDescription() != null ? "<form>" + ll.getDescription().replaceAll("\n", "<br/>") + "</form>"
+				: "<form/>";
 		description.setText(text, true, false);
 		form.reflow(true);
 	}
-	
-	public Class<?> getElementClass(){
+
+	public Class<?> getElementClass() {
 		return INutritionLeistung.class;
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return "Ernährungsberatung";
 	}
-	
+
 }

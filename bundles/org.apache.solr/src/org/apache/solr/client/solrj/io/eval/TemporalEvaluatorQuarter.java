@@ -28,17 +28,17 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
  * Provides a day stream evaluator
  */
 public class TemporalEvaluatorQuarter extends RecursiveTemporalEvaluator {
-  protected static final long serialVersionUID = 1L;
-  
-  public static final String FUNCTION_NAME = "quarter";
+	protected static final long serialVersionUID = 1L;
 
-  public TemporalEvaluatorQuarter(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory, FUNCTION_NAME);
-  }
+	public static final String FUNCTION_NAME = "quarter";
 
-  @Override
-  protected Object getDatePart(TemporalAccessor value) {
-    return value.get(IsoFields.QUARTER_OF_YEAR);
-  }
+	public TemporalEvaluatorQuarter(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory, FUNCTION_NAME);
+	}
+
+	@Override
+	protected Object getDatePart(TemporalAccessor value) {
+		return value.get(IsoFields.QUARTER_OF_YEAR);
+	}
 
 }

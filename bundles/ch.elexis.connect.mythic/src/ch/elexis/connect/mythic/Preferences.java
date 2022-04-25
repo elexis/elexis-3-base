@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.connect.mythic;
@@ -30,24 +30,24 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	public static final String MYTHIC_BASE = "connectors/mythic/";
 	public static final String PORT = MYTHIC_BASE + "port";
 	public static final String PARAMS = MYTHIC_BASE + "params";
-	
+
 	Combo ports;
 	Text speed, data, stop;
 	Button parity;
-	
-	public Preferences(){
+
+	public Preferences() {
 		super("Mythic");
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}
-	
+
 	@Override
-	protected Control createContents(final Composite parent){
+	protected Control createContents(final Composite parent) {
 		String[] param = CoreHub.localCfg.get(PARAMS, "9600,8,n,1").split(",");
-		
+
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout(2, false));
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -70,23 +70,23 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		return ret;
 	}
 
-	private String getParamText(String[] param, int idx){
+	private String getParamText(String[] param, int idx) {
 		if (idx < param.length) {
 			return param[idx];
 		}
 		return "";
 	}
-	
-	public void init(final IWorkbench workbench){
+
+	public void init(final IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public boolean performOk(){
+	public boolean performOk() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(speed.getText()).append(",").append(data.getText()).append(",")
-			.append(parity.getSelection() ? "y" : "n").append(",").append(stop.getText());
+				.append(parity.getSelection() ? "y" : "n").append(",").append(stop.getText());
 		CoreHub.localCfg.set(PARAMS, sb.toString());
 		CoreHub.localCfg.set(PORT, ports.getText());
 		CoreHub.localCfg.flush();

@@ -16,26 +16,26 @@ import java.io.OutputStream;
 
 public class SchemaFilterOutputStream extends FilterOutputStream {
 	/**
-	 * 
+	 *
 	 */
 	private final ProcessingSchema schema;
 	private static final int AWAIT_START = 0;
 	private static final int AWAIT_SECOND = 1;
 	private static final int AWAIT_THIRD = 2;
 	private static final int AWAIT_FOURTH = 4;
-	
+
 	private StringBuilder sb;
 	private int state = AWAIT_START;
 	private IProcessor proc;
-	
-	public SchemaFilterOutputStream(ProcessingSchema schema, OutputStream out, IProcessor proc){
+
+	public SchemaFilterOutputStream(ProcessingSchema schema, OutputStream out, IProcessor proc) {
 		super(out);
 		this.schema = schema;
 		this.proc = proc;
 	}
-	
+
 	@Override
-	public void flush() throws IOException{
+	public void flush() throws IOException {
 		if (sb != null) {
 			for (int i = 0; i < sb.length(); i++) {
 				super.write(sb.charAt(i));
@@ -45,10 +45,10 @@ public class SchemaFilterOutputStream extends FilterOutputStream {
 		}
 		super.flush();
 	}
-	
+
 	@Override
-	public void write(int b) throws IOException{
-		
+	public void write(int b) throws IOException {
+
 		switch (state) {
 		case AWAIT_START:
 			if (b == '{') {
@@ -85,11 +85,11 @@ public class SchemaFilterOutputStream extends FilterOutputStream {
 						super.write(c);
 					}
 				}
-				
+
 				sb = null;
 				state = AWAIT_START;
 			}
 		}
 	}
-	
+
 }

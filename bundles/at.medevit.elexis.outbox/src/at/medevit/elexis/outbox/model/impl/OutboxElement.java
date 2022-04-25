@@ -19,16 +19,15 @@ import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 
-public class OutboxElement
-		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.OutboxElement>
+public class OutboxElement extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.OutboxElement>
 		implements IOutboxElement {
-	
-	public OutboxElement(ch.elexis.core.jpa.entities.OutboxElement entity){
+
+	public OutboxElement(ch.elexis.core.jpa.entities.OutboxElement entity) {
 		super(entity);
 	}
-	
+
 	@Override
-	public State getState(){
+	public State getState() {
 		String stateStr = getEntity().getState();
 		if (StringUtils.isEmpty(stateStr)) {
 			return State.NEW;
@@ -36,31 +35,30 @@ public class OutboxElement
 			return State.values()[Integer.parseInt(stateStr.trim())];
 		}
 	}
-	
+
 	@Override
-	public void setState(State state){
+	public void setState(State state) {
 		getEntityMarkDirty().setState(Integer.toString(state.ordinal()));
 	}
-	
+
 	@Override
-	public void setUri(String uri){
+	public void setUri(String uri) {
 		getEntityMarkDirty().setUri(uri);
 	}
-	
+
 	@Override
-	public String getUri(){
+	public String getUri() {
 		return getEntity().getUri();
 	}
-	
+
 	@Override
-	public Object getObject(){
+	public Object getObject() {
 		String uri = getEntity().getUri();
 		OutboxElementType outboxElementType = OutboxElementType.parseType(uri);
 		if (outboxElementType != null) {
 			switch (outboxElementType) {
 			case DB:
-				Optional<Identifiable> loaded =
-					StoreToStringServiceHolder.get().loadFromString(uri);
+				Optional<Identifiable> loaded = StoreToStringServiceHolder.get().loadFromString(uri);
 				if (loaded.isPresent()) {
 					return loaded.get();
 				}
@@ -73,8 +71,8 @@ public class OutboxElement
 				String refDoc = uri.substring(OutboxElementType.DOC.getPrefix().length());
 				String[] splits = refDoc.split(DocumentStore.ID_WITH_STOREID_SPLIT);
 				if (splits.length == 2) {
-					Optional<IDocument> doc =
-						DocumentStoreServiceHolder.getService().loadDocument(splits[0], splits[1]);
+					Optional<IDocument> doc = DocumentStoreServiceHolder.getService().loadDocument(splits[0],
+							splits[1]);
 					if (doc.isPresent()) {
 						return doc.get();
 					}
@@ -85,39 +83,37 @@ public class OutboxElement
 		}
 		return null;
 	}
-	
+
 	@Override
-	public IPatient getPatient(){
+	public IPatient getPatient() {
 		return ModelUtil.loadCoreModel(getEntity().getPatient(), IPatient.class);
 	}
-	
+
 	@Override
-	public void setPatient(IPatient value){
+	public void setPatient(IPatient value) {
 		if (value instanceof AbstractIdDeleteModelAdapter) {
-			getEntityMarkDirty()
-				.setPatient((Kontakt) ((AbstractIdDeleteModelAdapter<?>) value).getEntity());
+			getEntityMarkDirty().setPatient((Kontakt) ((AbstractIdDeleteModelAdapter<?>) value).getEntity());
 		} else if (value == null) {
 			getEntityMarkDirty().setPatient(null);
 		}
 	}
-	
+
 	@Override
-	public IMandator getMandator(){
+	public IMandator getMandator() {
 		return ModelUtil.loadCoreModel(getEntity().getMandant(), IMandator.class);
 	}
-	
+
 	@Override
-	public void setMandator(IMandator value){
+	public void setMandator(IMandator value) {
 		if (value instanceof AbstractIdDeleteModelAdapter) {
-			getEntityMarkDirty()
-				.setMandant((Kontakt) ((AbstractIdDeleteModelAdapter<?>) value).getEntity());
+			getEntityMarkDirty().setMandant((Kontakt) ((AbstractIdDeleteModelAdapter<?>) value).getEntity());
 		} else if (value == null) {
 			getEntityMarkDirty().setMandant(null);
 		}
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		Object element = getObject();
 		if (element instanceof IDocument) {
 			String lbl = ((IDocument) element).getLabel();
@@ -130,15 +126,15 @@ public class OutboxElement
 		}
 		return "OutboxElement " + this.getId() + " with no object.";
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		// TODO Auto-generated method stub
 		return null;
 	}

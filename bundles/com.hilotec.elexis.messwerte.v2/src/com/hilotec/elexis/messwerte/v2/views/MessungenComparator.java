@@ -1,14 +1,14 @@
 /*******************************************************************************
- * 
- * The authorship of this code and the accompanying materials is held by 
- * medshare GmbH, Switzerland. All rights reserved. 
+ *
+ * The authorship of this code and the accompanying materials is held by
+ * medshare GmbH, Switzerland. All rights reserved.
  * http://medshare.net
- * 
- * This code and the accompanying materials are made available under 
+ *
+ * This code and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0
- * 
+ *
  * Year of publication: 2012
- * 
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.views;
@@ -22,21 +22,21 @@ import ch.rgw.tools.TimeTool;
 import com.hilotec.elexis.messwerte.v2.data.Messung;
 
 public class MessungenComparator extends ViewerComparator {
-	
+
 	private int propertyIndex;
 	private static final int DESCENDING = 1;
 	private int direction = DESCENDING;
-	
-	public MessungenComparator(){
+
+	public MessungenComparator() {
 		this.propertyIndex = 0;
 		direction = DESCENDING;
 	}
-	
-	public int getDirection(){
+
+	public int getDirection() {
 		return direction == 1 ? SWT.DOWN : SWT.UP;
 	}
-	
-	public void setColumn(int column){
+
+	public void setColumn(int column) {
 		if (column == this.propertyIndex) {
 			// Same column as last sort; toggle the direction
 			direction = 1 - direction;
@@ -46,9 +46,9 @@ public class MessungenComparator extends ViewerComparator {
 			direction = DESCENDING;
 		}
 	}
-	
+
 	@Override
-	public int compare(Viewer viewer, Object e1, Object e2){
+	public int compare(Viewer viewer, Object e1, Object e2) {
 		Messung m1 = (Messung) e1;
 		Messung m2 = (Messung) e2;
 		int rc = 0;
@@ -67,5 +67,5 @@ public class MessungenComparator extends ViewerComparator {
 		}
 		return rc;
 	}
-	
+
 }

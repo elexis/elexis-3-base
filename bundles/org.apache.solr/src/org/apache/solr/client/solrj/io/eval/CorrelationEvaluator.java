@@ -33,131 +33,140 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionNamedParamete
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class CorrelationEvaluator extends RecursiveObjectEvaluator implements ManyValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public enum CorrelationType {pearsons, kendalls, spearmans}
-  private CorrelationType type;
+	public enum CorrelationType {
+		pearsons, kendalls, spearmans
+	}
 
-  public CorrelationEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-    List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
-    if(namedParams.size() > 0) {
-      if (namedParams.size() > 1) {
-        throw new IOException("corr function expects only one named parameter 'type'.");
-      }
+	private CorrelationType type;
 
-      StreamExpressionNamedParameter namedParameter = namedParams.get(0);
-      String name = namedParameter.getName();
-      if (!name.equalsIgnoreCase("type")) {
-        throw new IOException("corr function expects only one named parameter 'type'.");
-      }
+	public CorrelationEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+		List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
+		if (namedParams.size() > 0) {
+			if (namedParams.size() > 1) {
+				throw new IOException("corr function expects only one named parameter 'type'.");
+			}
 
-      String typeParam = namedParameter.getParameter().toString().trim();
-      this.type= CorrelationType.valueOf(typeParam);
-    } else {
-      this.type = CorrelationType.pearsons;
-    }
-  }
+			StreamExpressionNamedParameter namedParameter = namedParams.get(0);
+			String name = namedParameter.getName();
+			if (!name.equalsIgnoreCase("type")) {
+				throw new IOException("corr function expects only one named parameter 'type'.");
+			}
 
-  @Override
-  @SuppressWarnings({"unchecked"})
-  public Object doWork(Object ... values) throws IOException{
+			String typeParam = namedParameter.getParameter().toString().trim();
+			this.type = CorrelationType.valueOf(typeParam);
+		} else {
+			this.type = CorrelationType.pearsons;
+		}
+	}
 
-    if(values.length == 2) {
-      Object first = values[0];
-      Object second = values[1];
+	@Override
+	@SuppressWarnings({ "unchecked" })
+	public Object doWork(Object... values) throws IOException {
 
-      if (null == first) {
-        throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value", toExpression(constructingFactory)));
-      }
-      if (null == second) {
-        throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the second value", toExpression(constructingFactory)));
-      }
-      if (!(first instanceof List<?>)) {
-        throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - found type %s for the first value, expecting a list of numbers", toExpression(constructingFactory), first.getClass().getSimpleName()));
-      }
-      if (!(second instanceof List<?>)) {
-        throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - found type %s for the second value, expecting a list of numbers", toExpression(constructingFactory), first.getClass().getSimpleName()));
-      }
+		if (values.length == 2) {
+			Object first = values[0];
+			Object second = values[1];
 
-      if (type.equals(CorrelationType.pearsons)) {
-        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
-        return pearsonsCorrelation.correlation(
-            ((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray(),
-            ((List) second).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray()
-        );
-      } else if (type.equals(CorrelationType.kendalls)) {
-        KendallsCorrelation kendallsCorrelation = new KendallsCorrelation();
-        return kendallsCorrelation.correlation(
-            ((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray(),
-            ((List) second).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray()
-        );
+			if (null == first) {
+				throw new IOException(String.format(Locale.ROOT,
+						"Invalid expression %s - null found for the first value", toExpression(constructingFactory)));
+			}
+			if (null == second) {
+				throw new IOException(String.format(Locale.ROOT,
+						"Invalid expression %s - null found for the second value", toExpression(constructingFactory)));
+			}
+			if (!(first instanceof List<?>)) {
+				throw new IOException(String.format(Locale.ROOT,
+						"Invalid expression %s - found type %s for the first value, expecting a list of numbers",
+						toExpression(constructingFactory), first.getClass().getSimpleName()));
+			}
+			if (!(second instanceof List<?>)) {
+				throw new IOException(String.format(Locale.ROOT,
+						"Invalid expression %s - found type %s for the second value, expecting a list of numbers",
+						toExpression(constructingFactory), first.getClass().getSimpleName()));
+			}
 
-      } else if (type.equals(CorrelationType.spearmans)) {
-        SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation();
-        return spearmansCorrelation.correlation(
-            ((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray(),
-            ((List) second).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray()
-        );
-      } else {
-        return null;
-      }
-    } else if(values.length == 1) {
-      if(values[0] instanceof Matrix) {
-        Matrix matrix = (Matrix)values[0];
-        double[][] data = matrix.getData();
-        if (type.equals(CorrelationType.pearsons)) {
-          PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation(data);
-          RealMatrix corrMatrix = pearsonsCorrelation.getCorrelationMatrix();
-          double[][] corrMatrixData = corrMatrix.getData();
-          Matrix realMatrix = new Matrix(corrMatrixData);
-          realMatrix.setAttribute("corr", pearsonsCorrelation);
-          List<String> labels = getColumnLabels(matrix.getColumnLabels(), corrMatrixData.length);
-          realMatrix.setColumnLabels(labels);
-          realMatrix.setRowLabels(labels);
-          return realMatrix;
-        } else if (type.equals(CorrelationType.kendalls)) {
-          KendallsCorrelation kendallsCorrelation = new KendallsCorrelation(data);
-          RealMatrix corrMatrix = kendallsCorrelation.getCorrelationMatrix();
-          double[][] corrMatrixData = corrMatrix.getData();
-          Matrix realMatrix =  new Matrix(corrMatrixData);
-          realMatrix.setAttribute("corr", kendallsCorrelation);
-          List<String> labels = getColumnLabels(matrix.getColumnLabels(), corrMatrixData.length);
-          realMatrix.setColumnLabels(labels);
-          realMatrix.setRowLabels(labels);
-          return realMatrix;
-        } else if (type.equals(CorrelationType.spearmans)) {
-          SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation(new Array2DRowRealMatrix(data, false));
-          RealMatrix corrMatrix = spearmansCorrelation.getCorrelationMatrix();
-          double[][] corrMatrixData = corrMatrix.getData();
-          Matrix realMatrix =  new Matrix(corrMatrixData);
-          realMatrix.setAttribute("corr", spearmansCorrelation.getRankCorrelation());
-          List<String> labels = getColumnLabels(matrix.getColumnLabels(), corrMatrixData.length);
-          realMatrix.setColumnLabels(labels);
-          realMatrix.setRowLabels(labels);
-          return realMatrix;
-        } else {
-          return null;
-        }
-      } else {
-        throw new IOException("corr function operates on either two numeric arrays or a single matrix as parameters.");
-      }
-    } else {
-      throw new IOException("corr function operates on either two numeric arrays or a single matrix as parameters.");
-    }
-  }
+			if (type.equals(CorrelationType.pearsons)) {
+				PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
+				return pearsonsCorrelation.correlation(
+						((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray(),
+						((List) second).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray());
+			} else if (type.equals(CorrelationType.kendalls)) {
+				KendallsCorrelation kendallsCorrelation = new KendallsCorrelation();
+				return kendallsCorrelation.correlation(
+						((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray(),
+						((List) second).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray());
 
-  public static List<String> getColumnLabels(List<String> labels, int length) {
-    if(labels != null) {
-      return labels;
-    } else {
-      List<String> l = new ArrayList<>();
-      for(int i=0; i<length; i++) {
-        String label = "col"+ ZplotStream.pad(Integer.toString(i), length);
-        l.add(label);
-      }
+			} else if (type.equals(CorrelationType.spearmans)) {
+				SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation();
+				return spearmansCorrelation.correlation(
+						((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray(),
+						((List) second).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray());
+			} else {
+				return null;
+			}
+		} else if (values.length == 1) {
+			if (values[0] instanceof Matrix) {
+				Matrix matrix = (Matrix) values[0];
+				double[][] data = matrix.getData();
+				if (type.equals(CorrelationType.pearsons)) {
+					PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation(data);
+					RealMatrix corrMatrix = pearsonsCorrelation.getCorrelationMatrix();
+					double[][] corrMatrixData = corrMatrix.getData();
+					Matrix realMatrix = new Matrix(corrMatrixData);
+					realMatrix.setAttribute("corr", pearsonsCorrelation);
+					List<String> labels = getColumnLabels(matrix.getColumnLabels(), corrMatrixData.length);
+					realMatrix.setColumnLabels(labels);
+					realMatrix.setRowLabels(labels);
+					return realMatrix;
+				} else if (type.equals(CorrelationType.kendalls)) {
+					KendallsCorrelation kendallsCorrelation = new KendallsCorrelation(data);
+					RealMatrix corrMatrix = kendallsCorrelation.getCorrelationMatrix();
+					double[][] corrMatrixData = corrMatrix.getData();
+					Matrix realMatrix = new Matrix(corrMatrixData);
+					realMatrix.setAttribute("corr", kendallsCorrelation);
+					List<String> labels = getColumnLabels(matrix.getColumnLabels(), corrMatrixData.length);
+					realMatrix.setColumnLabels(labels);
+					realMatrix.setRowLabels(labels);
+					return realMatrix;
+				} else if (type.equals(CorrelationType.spearmans)) {
+					SpearmansCorrelation spearmansCorrelation = new SpearmansCorrelation(
+							new Array2DRowRealMatrix(data, false));
+					RealMatrix corrMatrix = spearmansCorrelation.getCorrelationMatrix();
+					double[][] corrMatrixData = corrMatrix.getData();
+					Matrix realMatrix = new Matrix(corrMatrixData);
+					realMatrix.setAttribute("corr", spearmansCorrelation.getRankCorrelation());
+					List<String> labels = getColumnLabels(matrix.getColumnLabels(), corrMatrixData.length);
+					realMatrix.setColumnLabels(labels);
+					realMatrix.setRowLabels(labels);
+					return realMatrix;
+				} else {
+					return null;
+				}
+			} else {
+				throw new IOException(
+						"corr function operates on either two numeric arrays or a single matrix as parameters.");
+			}
+		} else {
+			throw new IOException(
+					"corr function operates on either two numeric arrays or a single matrix as parameters.");
+		}
+	}
 
-      return l;
-    }
-  }
+	public static List<String> getColumnLabels(List<String> labels, int length) {
+		if (labels != null) {
+			return labels;
+		} else {
+			List<String> l = new ArrayList<>();
+			for (int i = 0; i < length; i++) {
+				String label = "col" + ZplotStream.pad(Integer.toString(i), length);
+				l.add(label);
+			}
+
+			return l;
+		}
+	}
 }

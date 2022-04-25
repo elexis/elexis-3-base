@@ -8,11 +8,11 @@ import org.eclipse.swt.program.Program;
 import ch.medshare.util.UtilFile;
 
 public class Desktop {
-	
+
 	/**
 	 * Opens a directory or file. JDK 1.6: Desktop.getDesktop().open(directory);
 	 */
-	public static void open(File dirOrFile) throws IOException{
+	public static void open(File dirOrFile) throws IOException {
 		Program proggie = null;
 		if (dirOrFile.isFile()) {
 			String ext = UtilFile.getFileExtension(dirOrFile.getName());
@@ -26,5 +26,5 @@ public class Desktop {
 			}
 		}
 	}
-	
+
 }

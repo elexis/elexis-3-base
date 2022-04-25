@@ -12,14 +12,16 @@ package at.medevit.elexis.weblinks;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-  private static final String BUNDLE_NAME = "at.medevit.elexis.weblinks.messages"; //$NON-NLS-1$
-    public static String WebLinkEditor_0;
-    public static String WebLinkEditor_1;
-    public static String WebLinkEditor_2;
-    public static String WebLinkPreferencePage_0;
+	private static final String BUNDLE_NAME = "at.medevit.elexis.weblinks.messages"; //$NON-NLS-1$
+	public static String WebLinkEditor_0;
+	public static String WebLinkEditor_1;
+	public static String WebLinkEditor_2;
+	public static String WebLinkPreferencePage_0;
 
-    static { // load message values from bundle file
-    	NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-    	}
-    private Messages(){}
+	static { // load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
+
+	private Messages() {
+	}
 }

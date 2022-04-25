@@ -9,12 +9,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java-Klasse für anonymous complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ * <p>
+ * Java-Klasse für anonymous complex type.
+ *
+ * <p>
+ * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser
+ * Klasse enthalten ist.
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -27,73 +29,66 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "key",
-    "atcCodes"
-})
+@XmlType(name = "", propOrder = { "key", "atcCodes" })
 @XmlRootElement(name = "InteractionRequest")
 public class InteractionRequest {
 
-    @XmlElement(required = true)
-    protected String key;
-    @XmlElement(name = "atc_codes", required = true)
-    protected List<String> atcCodes;
+	@XmlElement(required = true)
+	protected String key;
+	@XmlElement(name = "atc_codes", required = true)
+	protected List<String> atcCodes;
 
-    /**
-     * Ruft den Wert der key-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getKey() {
-        return key;
-    }
+	/**
+	 * Ruft den Wert der key-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link String }
+	 *
+	 */
+	public String getKey() {
+		return key;
+	}
 
-    /**
-     * Legt den Wert der key-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setKey(String value) {
-        this.key = value;
-    }
+	/**
+	 * Legt den Wert der key-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link String }
+	 *
+	 */
+	public void setKey(String value) {
+		this.key = value;
+	}
 
-    /**
-     * Gets the value of the atcCodes property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the atcCodes property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAtcCodes().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
-    public List<String> getAtcCodes() {
-        if (atcCodes == null) {
-            atcCodes = new ArrayList<String>();
-        }
-        return this.atcCodes;
-    }
+	/**
+	 * Gets the value of the atcCodes property.
+	 *
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the atcCodes property.
+	 *
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 *
+	 * <pre>
+	 * getAtcCodes().add(newItem);
+	 * </pre>
+	 *
+	 *
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link String }
+	 *
+	 *
+	 */
+	public List<String> getAtcCodes() {
+		if (atcCodes == null) {
+			atcCodes = new ArrayList<String>();
+		}
+		return this.atcCodes;
+	}
 
 }

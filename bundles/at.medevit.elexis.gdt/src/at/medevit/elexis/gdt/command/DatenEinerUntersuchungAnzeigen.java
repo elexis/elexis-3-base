@@ -31,22 +31,20 @@ import at.medevit.elexis.gdt.messages.GDTSatzNachricht6311;
 import at.medevit.elexis.gdt.tools.GDTCommPartnerCollector;
 
 public class DatenEinerUntersuchungAnzeigen extends AbstractHandler {
-	
+
 	private Logger log = LoggerFactory.getLogger(DatenEinerUntersuchungAnzeigen.class);
-	
+
 	public static final String ID = "at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen";
-	public static final String PARAM_ID =
-		"at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen.gdtProtokollSource";
-	
+	public static final String PARAM_ID = "at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen.gdtProtokollSource";
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		GDTProtokoll gdtpEntry = null;
-		
+
 		String gdtProtokollSource = event.getParameter(PARAM_ID);
-		
+
 		if (gdtProtokollSource == null) {
-			ISelection selection =
-				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
+			ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection strucSelection = (IStructuredSelection) selection;
 				gdtpEntry = (GDTProtokoll) strucSelection.getFirstElement();
@@ -54,23 +52,24 @@ public class DatenEinerUntersuchungAnzeigen extends AbstractHandler {
 		} else {
 			gdtpEntry = GDTProtokoll.load(gdtProtokollSource);
 		}
-		
+
 		if (gdtpEntry == null) {
 			log.error("gdtpEntry is null");
 			return null;
 		}
-		
+
 		String[] message = gdtpEntry.getMessage().split("\r\n");
 		GDTSatzNachricht6310 incoming = GDTSatzNachricht6310.createfromStringArray(message);
 		GDTSatzNachricht6311 outgoing = GDTResponseIn6310Out6311.createResponse(incoming);
-		IGDTCommunicationPartner cp = GDTCommPartnerCollector.identifyCommunicationPartnerByLabel(gdtpEntry.getGegenstelle());
+		IGDTCommunicationPartner cp = GDTCommPartnerCollector
+				.identifyCommunicationPartnerByLabel(gdtpEntry.getGegenstelle());
 		if (cp != null) {
 			GDTOutputHandler.handleOutput(outgoing, cp, HandlerProgramType.VIEWER);
 		} else {
 			log.error("No communication partner found for [" + gdtpEntry.getGegenstelle() + "]");
 		}
-		
+
 		return null;
 	}
-	
+
 }

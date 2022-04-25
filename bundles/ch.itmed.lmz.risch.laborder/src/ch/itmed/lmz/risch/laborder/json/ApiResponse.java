@@ -13,7 +13,7 @@ package ch.itmed.lmz.risch.laborder.json;
 
 public final class ApiResponse {
 	private String ReturnUrl;
-	
+
 	public String getReturnUrl() {
 		return ReturnUrl;
 	}

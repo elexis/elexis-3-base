@@ -20,15 +20,15 @@ public final class CaseElement {
 	public static Element create(Document doc) throws Exception {
 		CaseData cd = new CaseData();
 		Element p = doc.createElement("Case");
-		
+
 		Element c = doc.createElement("CostBearer");
 		c.appendChild(doc.createTextNode(cd.getCostBearer()));
 		p.appendChild(c);
-		
+
 		c = doc.createElement("InsurancePolicyNumber");
 		c.appendChild(doc.createTextNode(cd.getInsurancePolicyNumber()));
 		p.appendChild(c);
-		
+
 		return p;
 	}
 }

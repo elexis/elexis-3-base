@@ -8,13 +8,13 @@ import ch.elexis.core.services.IDocumentStore;
 @Component(service = {})
 public class DocumentStoreHolder {
 	private static IDocumentStore omnivoreDocumentStore;
-	
+
 	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
-	public void bind(IDocumentStore service){
+	public void bind(IDocumentStore service) {
 		DocumentStoreHolder.omnivoreDocumentStore = service;
 	}
-	
-	public static IDocumentStore get(){
+
+	public static IDocumentStore get() {
 		return omnivoreDocumentStore;
 	}
 }

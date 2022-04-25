@@ -5,10 +5,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
+ *    A. Kaufmann - initial implementation
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
@@ -38,58 +38,58 @@ import com.hilotec.elexis.messwerte.v2.views.Messages;
 public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 	int defVal = 0;
 	private final HashMap<Messwert, Widget> widgetMap;
-	
+
 	/**
 	 * Bezeichnungen fuer die einzelnen Auswahlmoeglichkeiten
 	 */
 	public ArrayList<String> choices = new ArrayList<String>();
-	
+
 	/**
-	 * Werte fuer die Auswahlmoeglichkeiten. (notwendig, da die Combo nur fortlaufende Werte nimmt.
+	 * Werte fuer die Auswahlmoeglichkeiten. (notwendig, da die Combo nur
+	 * fortlaufende Werte nimmt.
 	 */
 	private final ArrayList<Integer> values = new ArrayList<Integer>();
-	
-	public MesswertTypEnum(String n, String t, String u){
+
+	public MesswertTypEnum(String n, String t, String u) {
 		super(n, t, u);
 		widgetMap = new HashMap<Messwert, Widget>();
 	}
-	
-	public String erstelleDarstellungswert(Messwert messwert){
+
+	public String erstelleDarstellungswert(Messwert messwert) {
 		return getDarstellungswert(messwert.getWert());
 	}
-	
-	public String getDefault(Messwert messwert){
+
+	public String getDefault(Messwert messwert) {
 		Integer retVal = defVal;
 		if (formula != null) {
 			try {
 				String sWert = evalateFormula(formula, messwert, retVal.toString());
 				if (sWert != null)
 					retVal = Integer.parseInt(sWert);
-				
-			} finally {}
+
+			} finally {
+			}
 		}
 		return retVal.toString();
-		
+
 	}
-	
-	public void setDefault(String str){
+
+	public void setDefault(String str) {
 		defVal = StringTool.parseSafeInt(str);
 	}
-	
+
 	/**
 	 * Neue Auswahlmoeglichkeit fuer dieses Enum-Feld anfuegen
-	 * 
-	 * @param c
-	 *            Beschriftung dieser Auswahlmoeglichkeit
-	 * @param v
-	 *            Wert fuer diese Auswahlmoeglichkeit
+	 *
+	 * @param c Beschriftung dieser Auswahlmoeglichkeit
+	 * @param v Wert fuer diese Auswahlmoeglichkeit
 	 */
-	public void addChoice(String c, int v){
+	public void addChoice(String c, int v) {
 		choices.add(c);
 		values.add(v);
 	}
-	
-	public Widget createWidget(Composite parent, Messwert messwert){
+
+	public Widget createWidget(Composite parent, Messwert messwert) {
 		widget = new Combo(parent, SWT.DROP_DOWN);
 		for (int i = 0; i < choices.size(); i++) {
 			((Combo) widget).add(choices.get(i), i);
@@ -109,8 +109,8 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 		setShown(true);
 		return widget;
 	}
-	
-	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
+
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable) {
 		int flags = 0;
 		if (!bEditable) {
 			flags |= TextField.READONLY;
@@ -131,8 +131,8 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 		widgetMap.put(messwert, cf);
 		return cf;
 	}
-	
-	public String getDarstellungswert(String wert){
+
+	public String getDarstellungswert(String wert) {
 		try {
 			int iWert = StringTool.parseSafeInt(wert);
 			for (int i = 0; i < values.size(); i++) {
@@ -140,17 +140,18 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 					return choices.get(i);
 				}
 			}
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	@Override
-	public void saveInput(Messwert messwert){
+	public void saveInput(Messwert messwert) {
 		messwert.setWert(Integer.toString(values.get(((Combo) widget).getSelectionIndex())));
 	}
-	
+
 	@Override
-	public boolean checkInput(Messwert messwert, String pattern){
+	public boolean checkInput(Messwert messwert, String pattern) {
 		Boolean validValue = false;
 		try {
 			validValue = (((Combo) widget).getSelectionIndex() > -1);
@@ -162,10 +163,10 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 		}
 		return validValue;
 	}
-	
+
 	@Override
-	public String getActualValue(){
+	public String getActualValue() {
 		return ((Combo) widget).getText();
 	}
-	
+
 }

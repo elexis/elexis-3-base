@@ -18,48 +18,48 @@
 package org.apache.solr.common.util;
 
 public class BytesBlock {
-  private int bufSize;
-  public byte[] buf;
-  //current position
-  private int pos;
-  //going to expand. mark the start position
-  private int startPos = 0;
+	private int bufSize;
+	public byte[] buf;
+	// current position
+	private int pos;
+	// going to expand. mark the start position
+	private int startPos = 0;
 
-  public BytesBlock(int sz) {
-    this.bufSize = sz;
-    create();
-  }
+	public BytesBlock(int sz) {
+		this.bufSize = sz;
+		create();
+	}
 
-  public int getPos() {
-    return pos;
-  }
+	public int getPos() {
+		return pos;
+	}
 
-  public int getStartPos() {
-    return startPos;
-  }
+	public int getStartPos() {
+		return startPos;
+	}
 
-  public byte[] getBuf() {
-    return buf;
-  }
+	public byte[] getBuf() {
+		return buf;
+	}
 
-  public BytesBlock expand(int sz) {
-    if (bufSize - pos >= sz) {
-      return markPositions(sz);
-    }
-    if (sz > (bufSize / 4)) return new BytesBlock(sz).expand(sz);// a reasonably large block, create new
-    create();
-    return markPositions(sz);
-  }
+	public BytesBlock expand(int sz) {
+		if (bufSize - pos >= sz) {
+			return markPositions(sz);
+		}
+		if (sz > (bufSize / 4))
+			return new BytesBlock(sz).expand(sz);// a reasonably large block, create new
+		create();
+		return markPositions(sz);
+	}
 
-  private BytesBlock markPositions(int sz) {
-    this.startPos = pos;
-    pos += sz;
-    return this;
-  }
+	private BytesBlock markPositions(int sz) {
+		this.startPos = pos;
+		pos += sz;
+		return this;
+	}
 
-
-  private void create() {
-    buf = new byte[bufSize];
-    startPos = pos = 0;
-  }
+	private void create() {
+		buf = new byte[bufSize];
+		startPos = pos = 0;
+	}
 }

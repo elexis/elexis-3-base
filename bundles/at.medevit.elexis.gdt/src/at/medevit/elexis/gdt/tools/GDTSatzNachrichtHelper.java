@@ -22,16 +22,15 @@ import at.medevit.elexis.gdt.constants.GDTConstants;
 
 /**
  * Hilfsklasse für die Behandlung von GDT Satzarten {@link GDTConstants}
- * 
+ *
  * @author M. Descher
- * 
+ *
  */
 public class GDTSatzNachrichtHelper {
-	
+
 	// Lese Kennung der Arbeitsstation
-	
-	public static String getValueIfExists(int feldkennungGesucht,
-		String[] satznachricht){
+
+	public static String getValueIfExists(int feldkennungGesucht, String[] satznachricht) {
 		String value = null;
 		for (int i = 0; i < satznachricht.length; i++) {
 			int length = Integer.parseInt(satznachricht[i].substring(0, 3));
@@ -43,17 +42,20 @@ public class GDTSatzNachrichtHelper {
 		return value;
 	}
 
-	public static String bestimmeGeschlechtsWert(String sex){
-		if(sex==null) return null;
+	public static String bestimmeGeschlechtsWert(String sex) {
+		if (sex == null)
+			return null;
 
 		String sexCode = null;
 		sex = sex.trim();
-		if(sex.equalsIgnoreCase("m")) sexCode = GDTConstants.SEX_MALE+"";
-		if(sex.equalsIgnoreCase("w") || sex.equalsIgnoreCase("f")) sexCode = GDTConstants.SEX_FEMALE+"";
+		if (sex.equalsIgnoreCase("m"))
+			sexCode = GDTConstants.SEX_MALE + "";
+		if (sex.equalsIgnoreCase("w") || sex.equalsIgnoreCase("f"))
+			sexCode = GDTConstants.SEX_FEMALE + "";
 		return sexCode;
 	}
 
-	public static String deliverBirthdate(Patient pat){
+	public static String deliverBirthdate(Patient pat) {
 		String dob = null;
 		try {
 			TimeTool tt = new TimeTool(pat.getGeburtsdatum(), true);

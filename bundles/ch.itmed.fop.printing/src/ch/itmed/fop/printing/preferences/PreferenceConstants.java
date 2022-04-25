@@ -56,7 +56,7 @@ public class PreferenceConstants {
 	private static final String PAGE_MARGIN_RIGHT = "/page/marginRight"; // 11
 	private static final String SETTING_SCOPE = "/settingScope"; // 12
 	private static final String MEDICATION_RESPONSIBLE_PHARMACIST = "medication/responsiblePharmacist"; // 13
-	
+
 	/**
 	 * @param docName
 	 */
@@ -64,7 +64,7 @@ public class PreferenceConstants {
 		if (docNames == null) {
 			initDocNames();
 		}
-		
+
 		if (hm == null) {
 			initPreferenceConstants();
 		}
@@ -123,11 +123,11 @@ public class PreferenceConstants {
 			constants.add(SETTINGS_BASE_PATH + docName + PAGE_MARGIN_LEFT);
 			constants.add(SETTINGS_BASE_PATH + docName + PAGE_MARGIN_RIGHT);
 			constants.add(SETTINGS_BASE_PATH + docName + SETTING_SCOPE);
-			
+
 			if (docName.equals(MEDICATION_LABEL)) {
 				constants.add(SETTINGS_BASE_PATH + docName + MEDICATION_RESPONSIBLE_PHARMACIST);
 			}
-			
+
 			hm.put(docName, constants);
 		}
 	}

@@ -14,44 +14,43 @@ import ch.elexis.omnivore.ui.util.UiUtils;
 public class DocHandleUiProvider implements IInboxElementUiProvider {
 	private DocHandleLabelProvider labelProvider;
 	private DocHandleViewerFilter filter;
-	
-	public DocHandleUiProvider(){
+
+	public DocHandleUiProvider() {
 		labelProvider = new DocHandleLabelProvider();
 		filter = new DocHandleViewerFilter();
 	}
-	
+
 	@Override
-	public ImageDescriptor getFilterImage(){
-		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.omnivore.ui",
-			"icons/fressen.gif");
+	public ImageDescriptor getFilterImage() {
+		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.omnivore.ui", "icons/fressen.gif");
 	}
-	
+
 	@Override
-	public ViewerFilter getFilter(){
+	public ViewerFilter getFilter() {
 		return filter;
 	}
-	
+
 	@Override
-	public LabelProvider getLabelProvider(){
+	public LabelProvider getLabelProvider() {
 		return labelProvider;
 	}
-	
+
 	@Override
-	public IColorProvider getColorProvider(){
+	public IColorProvider getColorProvider() {
 		return null;
 	}
-	
+
 	@Override
-	public boolean isProviderFor(IInboxElement element){
+	public boolean isProviderFor(IInboxElement element) {
 		Object obj = element.getObject();
 		if (obj instanceof IDocumentHandle) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	@Override
-	public void doubleClicked(IInboxElement element){
+	public void doubleClicked(IInboxElement element) {
 		Object obj = element.getObject();
 		if (isProviderFor(element)) {
 			IDocumentHandle document = (IDocumentHandle) obj;

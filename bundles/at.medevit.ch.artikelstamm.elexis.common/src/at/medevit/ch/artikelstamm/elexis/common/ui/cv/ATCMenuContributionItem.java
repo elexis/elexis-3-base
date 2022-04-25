@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     MEDEVIT <office@medevit.at> - initial API and implementation
  ******************************************************************************/
@@ -32,33 +32,32 @@ import ch.elexis.core.ui.util.viewers.CommonViewer.Message;
 import ch.elexis.core.ui.util.viewers.CommonViewerContentProvider;
 
 public class ATCMenuContributionItem extends ContributionItem {
-	
+
 	final private CommonViewer cov;
 	final private String prefAtcLanguage;
 	final private CommonViewerContentProvider commonViewerDataProvider;
-	
-	public ATCMenuContributionItem(CommonViewer cov,
-		CommonViewerContentProvider commonViewerDataProvider){
+
+	public ATCMenuContributionItem(CommonViewer cov, CommonViewerContentProvider commonViewerDataProvider) {
 		this.cov = cov;
 		this.commonViewerDataProvider = commonViewerDataProvider;
-		
+
 		prefAtcLanguage = ConfigServiceHolder.get().get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
-			ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
+				ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
 	}
-	
+
 	@Override
-	public void fill(Menu menu, int index){
+	public void fill(Menu menu, int index) {
 		StructuredSelection structuredSelection = new StructuredSelection(cov.getSelection());
 		Object element = structuredSelection.getFirstElement();
-		
+
 		ATCCodeService atcCodeService = ATCCodeServiceHolder.get().get();
 		if (atcCodeService == null)
 			return;
-		
+
 		if (element instanceof IArtikelstammItem) {
 			final IArtikelstammItem ai = (IArtikelstammItem) element;
 			List<ATCCode> atcHierarchy = atcCodeService.getHierarchyForATCCode(ai.getAtcCode());
-			
+
 			for (ATCCode atcCode : atcHierarchy) {
 				MenuItem temp = new MenuItem(menu, SWT.PUSH);
 				if (prefAtcLanguage.equals(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN)) {
@@ -69,7 +68,7 @@ public class ATCMenuContributionItem extends ContributionItem {
 				final ATCCode tempC = atcCode;
 				temp.addSelectionListener(new SelectionAdapter() {
 					@Override
-					public void widgetSelected(SelectionEvent e){
+					public void widgetSelected(SelectionEvent e) {
 						commonViewerDataProvider.removeAllQueryFilterByType(AtcQueryFilter.class);
 						AtcQueryFilter queryFilter = new AtcQueryFilter();
 						queryFilter.setFilterValue(tempC.atcCode);
@@ -79,11 +78,11 @@ public class ATCMenuContributionItem extends ContributionItem {
 				});
 			}
 		}
-		
+
 	}
-	
+
 	@Override
-	public boolean isDynamic(){
+	public boolean isDynamic() {
 		return true;
 	}
 }

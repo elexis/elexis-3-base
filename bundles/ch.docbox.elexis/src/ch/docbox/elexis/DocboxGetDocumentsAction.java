@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2008, Oliver Egger, visionary ag
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *    
+ *
  *******************************************************************************/
 package ch.docbox.elexis;
 
@@ -18,31 +18,32 @@ import ch.rgw.tools.ExHandler;
 
 /**
  * Performs the task go
- * 
+ *
  * @see IWorkbenchWindowActionDelegate
  */
 public class DocboxGetDocumentsAction extends DocboxAction {
-	
+
 	public boolean showWaitCursor = false;
-	
-	public DocboxGetDocumentsAction(){}
-	
+
+	public DocboxGetDocumentsAction() {
+	}
+
 	/**
-	 * The action has been activated. The argument of the method represents the 'real' action
-	 * sitting in the workbench UI.
-	 * 
+	 * The action has been activated. The argument of the method represents the
+	 * 'real' action sitting in the workbench UI.
+	 *
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
-	public void run(IAction action){
-		
+	public void run(IAction action) {
+
 		if (showWaitCursor) {
-			
+
 			Runnable longJob = new Runnable() {
 				boolean done = false;
-				
-				public void run(){
+
+				public void run() {
 					Thread thread = new Thread(new Runnable() {
-						public void run(){
+						public void run() {
 							if (!hasValidDocboxCredentials()) {
 								return;
 							}

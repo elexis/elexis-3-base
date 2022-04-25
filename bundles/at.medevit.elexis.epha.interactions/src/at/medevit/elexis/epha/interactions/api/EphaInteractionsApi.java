@@ -24,27 +24,27 @@ import at.medevit.elexis.epha.interactions.api.model.AdviceResponse;
 import at.medevit.elexis.epha.interactions.api.model.Substance;
 
 public class EphaInteractionsApi {
-	
+
 	private Client jaxrsClient;
-	
+
 	private Gson gson;
-	
-	public EphaInteractionsApi(){
+
+	public EphaInteractionsApi() {
 		this.jaxrsClient = createJaxrsClient();
-		
+
 		this.gson = new GsonBuilder().create();
 	}
-	
-	public synchronized Object advice(List<Substance> model){
+
+	public synchronized Object advice(List<Substance> model) {
 		WebTarget target = jaxrsClient.target(getBaseUrl())
-			.path("clinic/advice/" + Locale.getDefault().getLanguage() + "/");
+				.path("clinic/advice/" + Locale.getDefault().getLanguage() + "/");
 		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
-		
+
 		String jsonString = gson.toJson(model);
 		// remove bad chars
 		jsonString = jsonString.replaceAll("/", " ");
 		final Response response = target.request().post(Entity.json(jsonString));
-		
+
 		if (response.getStatus() >= 300) {
 			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
 			LoggerFactory.getLogger(getClass()).error(message);
@@ -53,30 +53,28 @@ public class EphaInteractionsApi {
 			return response.readEntity(AdviceResponse.class);
 		}
 	}
-	
-	private String getBaseUrl(){
+
+	private String getBaseUrl() {
 		return "https://api.epha.health/";
 	}
-	
-	private Client createJaxrsClient(){
+
+	private Client createJaxrsClient() {
 		try {
 			SSLContext sslcontext = SSLContext.getInstance("TLS");
-			sslcontext.init(null, new TrustManager[] {
-				new X509TrustManager() {
-					public void checkClientTrusted(X509Certificate[] arg0, String arg1)
-						throws CertificateException{}
-					
-					public void checkServerTrusted(X509Certificate[] arg0, String arg1)
-						throws CertificateException{}
-					
-					public X509Certificate[] getAcceptedIssuers(){
-						return new X509Certificate[0];
-					}
-					
+			sslcontext.init(null, new TrustManager[] { new X509TrustManager() {
+				public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
 				}
-			}, new java.security.SecureRandom());
-			return ClientBuilder.newBuilder().sslContext(sslcontext)
-				.hostnameVerifier((s1, s2) -> true).withConfig(new ClientConfig()).build();
+
+				public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+				}
+
+				public X509Certificate[] getAcceptedIssuers() {
+					return new X509Certificate[0];
+				}
+
+			} }, new java.security.SecureRandom());
+			return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((s1, s2) -> true)
+					.withConfig(new ClientConfig()).build();
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).warn("Error creating jaxrs client", e);
 		}

@@ -10,29 +10,28 @@ import ch.elexis.core.ui.views.codesystems.Messages;
 import ch.elexis.laborimport.eurolyser.ui.dialog.LabImportDialog;
 
 public class LabImportAction extends Action {
-	
+
 	private static ImageDescriptor imageDescriptor;
-	
-	public LabImportAction(){
+
+	public LabImportAction() {
 		super("Eurolyser Import");
 		setImageDescriptor(getImageDescriptor());
 	}
-	
+
 	@Override
-	public ImageDescriptor getImageDescriptor(){
+	public ImageDescriptor getImageDescriptor() {
 		if (imageDescriptor == null) {
-			Image image = new Image(Display.getDefault(),
-				getClass().getResourceAsStream("/rsc/eurolyser_16x16.png"));
+			Image image = new Image(Display.getDefault(), getClass().getResourceAsStream("/rsc/eurolyser_16x16.png"));
 			imageDescriptor = ImageDescriptor.createFromImage(image);
 		}
 		return imageDescriptor;
 	}
-	
+
 	@Override
-	public void run(){
+	public void run() {
 		LabImportDialog dlg = new LabImportDialog(Display.getDefault().getActiveShell());
 		dlg.create();
-		dlg.getShell().setText(Messages.CodeDetailView_importerCaption); //$NON-NLS-1$
+		dlg.getShell().setText(Messages.CodeDetailView_importerCaption); // $NON-NLS-1$
 		if (dlg.open() == Dialog.OK) {
 			dlg.run();
 		}

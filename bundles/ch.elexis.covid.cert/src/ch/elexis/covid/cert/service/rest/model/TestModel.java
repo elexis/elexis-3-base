@@ -32,66 +32,66 @@ import ch.elexis.covid.cert.service.CertificatesService;
 
 public class TestModel {
 	private Name name;
-	
+
 	private String dateOfBirth;
-	
+
 	private String language;
-	
+
 	private String otp;
-	
+
 	private String appCode;
-	
+
 	private TestInfo[] testInfo;
-	
-	public Name getName(){
+
+	public Name getName() {
 		return name;
 	}
-	
-	public void setName(Name name){
+
+	public void setName(Name name) {
 		this.name = name;
 	}
-	
-	public String getDateOfBirth(){
+
+	public String getDateOfBirth() {
 		return dateOfBirth;
 	}
-	
-	public void setDateOfBirth(String dateOfBirth){
+
+	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
-	
-	public String getLanguage(){
+
+	public String getLanguage() {
 		return language;
 	}
-	
-	public void setLanguage(String language){
+
+	public void setLanguage(String language) {
 		this.language = language;
 	}
-	
-	public String getOtp(){
+
+	public String getOtp() {
 		return otp;
 	}
-	
-	public void setOtp(String otp){
+
+	public void setOtp(String otp) {
 		this.otp = otp;
 	}
-	
-	public String getAppCode(){
+
+	public String getAppCode() {
 		return appCode;
 	}
-	
-	public void setAppCode(String appCode){
+
+	public void setAppCode(String appCode) {
 		this.appCode = appCode;
 	}
-	
-	public TestInfo[] getTestInfo(){
+
+	public TestInfo[] getTestInfo() {
 		return testInfo;
 	}
-	
-	public void setTestInfo(TestInfo[] testInfo){
+
+	public void setTestInfo(TestInfo[] testInfo) {
 		this.testInfo = testInfo;
 	}
-	
-	public TestModel initDefault(IPatient patient, String otp){
+
+	public TestModel initDefault(IPatient patient, String otp) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		setName(Name.of(patient));
 		setDateOfBirth(formatter.format(patient.getDateOfBirth()));
@@ -101,16 +101,11 @@ public class TestModel {
 		// ISO 8601 date incl. time
 		ZonedDateTime zonedNow = LocalDateTime.now().minusMinutes(5).atZone(ZoneId.systemDefault());
 		ZonedDateTime utcDateTime = zonedNow.withZoneSameInstant(ZoneId.of("Z"));
-		testinfo.setSampleDateTime(
-			TestInfo.formatter
-				.format(utcDateTime));
+		testinfo.setSampleDateTime(TestInfo.formatter.format(utcDateTime));
 		testinfo.setMemberStateOfTest("CH");
-		testinfo.setTestingCentreOrFacility(
-			ConfigServiceHolder.get().get(CertificatesService.CFG_TESTCENTERNAME, ""));
-		setTestInfo(new TestInfo[] {
-			testinfo
-		});
+		testinfo.setTestingCentreOrFacility(ConfigServiceHolder.get().get(CertificatesService.CFG_TESTCENTERNAME, ""));
+		setTestInfo(new TestInfo[] { testinfo });
 		return this;
 	}
-	
+
 }

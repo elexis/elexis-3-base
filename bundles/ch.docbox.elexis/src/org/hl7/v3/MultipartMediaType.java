@@ -7,11 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for MultipartMediaType.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="MultipartMediaType">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -19,25 +20,26 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "MultipartMediaType")
 @XmlEnum
 public enum MultipartMediaType {
-	
+
 	@XmlEnumValue("multipart/x-hl7-cda-level1")
 	MULTIPART_X_HL_7_CDA_LEVEL_1("multipart/x-hl7-cda-level1");
+
 	private final String value;
-	
-	MultipartMediaType(String v){
+
+	MultipartMediaType(String v) {
 		value = v;
 	}
-	
-	public String value(){
+
+	public String value() {
 		return value;
 	}
-	
-	public static MultipartMediaType fromValue(String v){
+
+	public static MultipartMediaType fromValue(String v) {
 		for (MultipartMediaType c : MultipartMediaType.values()) {
 			if (c.value.equals(v)) {
 				return c;
@@ -45,5 +47,5 @@ public enum MultipartMediaType {
 		}
 		throw new IllegalArgumentException(v);
 	}
-	
+
 }

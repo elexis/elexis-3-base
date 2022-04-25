@@ -24,31 +24,31 @@ import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import at.medevit.elexis.ehc.ui.extension.IImportWizard;
 
 public class ImportPatientWizard extends Wizard implements IImportWizard {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(ImportPatientWizard.class);
-	
+
 	private ImportPatientWizardPage1 mainPage;
-	
+
 	private AbstractCdaChV1<?> ehcDocument;
-	
-	public ImportPatientWizard(){
+
+	public ImportPatientWizard() {
 		setWindowTitle("Patientenstammdaten import.");
 	}
-	
+
 	@Override
-	public void addPages(){
+	public void addPages() {
 		super.addPages();
 		mainPage = new ImportPatientWizardPage1("Import Patientenstammdaten.", ehcDocument);
 		addPage(mainPage);
 	}
-	
+
 	@Override
-	public boolean performFinish(){
+	public boolean performFinish() {
 		return mainPage.finish();
 	}
-	
+
 	@Override
-	public void setDocument(InputStream document){
+	public void setDocument(InputStream document) {
 		try {
 			document.reset();
 			ClinicalDocument clinicalDocument = ServiceComponent.getService().loadDocument(document);

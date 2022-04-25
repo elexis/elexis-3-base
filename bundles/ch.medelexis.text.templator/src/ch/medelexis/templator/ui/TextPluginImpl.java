@@ -36,31 +36,31 @@ public class TextPluginImpl implements ITextPlugin {
 	ProcessingSchemaDisplay schemaDisplay;
 	ProcessingSchema schema;
 	ICallback saveHandler;
-	
+
 	private TextTemplatePrintSettings printSettings;
-	
+
 	@Override
-	public boolean clear(){
+	public boolean clear() {
 		return createEmptyDocument();
 	}
-	
+
 	@Override
-	public boolean createEmptyDocument(){
+	public boolean createEmptyDocument() {
 		schema = new ProcessingSchema();
 		schemaDisplay.set(schema);
 		return true;
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		if (schemaDisplay != null && !schemaDisplay.isDisposed()) {
 			schemaDisplay.dispose();
 		}
 		schema = null;
 	}
-	
+
 	@Override
-	public boolean findOrReplace(String pattern, ReplaceCallback cb){
+	public boolean findOrReplace(String pattern, ReplaceCallback cb) {
 		boolean bHit = false;
 		Pattern pat = Pattern.compile(pattern);
 		for (Element field : schema.getFields()) {
@@ -77,19 +77,19 @@ public class TextPluginImpl implements ITextPlugin {
 		schemaDisplay.set(schema);
 		return bHit;
 	}
-	
+
 	@Override
-	public PageFormat getFormat(){
+	public PageFormat getFormat() {
 		return PageFormat.A4;
 	}
-	
+
 	@Override
-	public String getMimeType(){
+	public String getMimeType() {
 		return MimeTypeUtil.MIME_TYPE_TEMPLATOR;
 	}
-	
+
 	@Override
-	public boolean insertTable(String place, int properties, String[][] contents, int[] columnSizes){
+	public boolean insertTable(String place, int properties, String[][] contents, int[] columnSizes) {
 		StringBuffer sbu = new StringBuffer();
 		for (int z = 0; z < contents.length; z++) {
 			for (int s = 0; s < contents[z].length; s++) {
@@ -112,13 +112,13 @@ public class TextPluginImpl implements ITextPlugin {
 		schemaDisplay.set(schema);
 		return true;
 	}
-	
+
 	/*
-	 * @Override public Object insertText(String marke, String text, int adjust) { Position pos =
-	 * new Position(); pos.e = schema.getField(marke); pos.pos = 0; return insertText(pos, text,
-	 * adjust); }
+	 * @Override public Object insertText(String marke, String text, int adjust) {
+	 * Position pos = new Position(); pos.e = schema.getField(marke); pos.pos = 0;
+	 * return insertText(pos, text, adjust); }
 	 */
-	public Object insertText(String place, String text, int adjust){
+	public Object insertText(String place, String text, int adjust) {
 		place = "\\[" + place.substring(1, place.length() - 1) + "\\]";
 		Pattern pat = Pattern.compile(place);
 		Element ret = null;
@@ -134,9 +134,9 @@ public class TextPluginImpl implements ITextPlugin {
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public Object insertText(Object pos, String text, int adjust){
+	public Object insertText(Object pos, String text, int adjust) {
 		Position p = (Position) pos;
 		StringBuilder sb = new StringBuilder(p.e.getText());
 		sb.insert(p.pos, text);
@@ -144,24 +144,24 @@ public class TextPluginImpl implements ITextPlugin {
 		schemaDisplay.set(schema);
 		return pos;
 	}
-	
+
 	@Override
-	public Object insertTextAt(int x, int y, int w, int h, String text, int adjust){
+	public Object insertTextAt(int x, int y, int w, int h, String text, int adjust) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public boolean loadFromByteArray(byte[] bs, boolean asTemplate){
+	public boolean loadFromByteArray(byte[] bs, boolean asTemplate) {
 		ByteArrayInputStream bais = new ByteArrayInputStream(bs);
 		return loadFromStream(bais, asTemplate);
 	}
-	
+
 	@Override
-	public boolean loadFromStream(InputStream is, boolean asTemplate){
+	public boolean loadFromStream(InputStream is, boolean asTemplate) {
 		try {
 			schema = ProcessingSchema.load(is);
-			
+
 			schemaDisplay.set(schema);
 			/*
 			 * if(schema.getDirectOutput()){ schemaDisplay.save();
@@ -178,57 +178,57 @@ public class TextPluginImpl implements ITextPlugin {
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean print(String toPrinter, String toTray, boolean waitUntilFinished){
+	public boolean print(String toPrinter, String toTray, boolean waitUntilFinished) {
 		schemaDisplay.save();
 		schema.getProcessor().doOutput(schema);
 		return true;
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		schemaDisplay.setFocus();
-		
+
 	}
-	
+
 	@Override
-	public boolean setFont(String name, int style, float size){
+	public boolean setFont(String name, int style, float size) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
-	public void setFormat(PageFormat f){
+	public void setFormat(PageFormat f) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void setSaveOnFocusLost(boolean bSave){
+	public void setSaveOnFocusLost(boolean bSave) {
 		schemaDisplay.setSaveOnFocusLost(bSave);
 	}
-	
+
 	@Override
-	public boolean setStyle(int style){
+	public boolean setStyle(int style) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
-	public void showMenu(boolean b){
+	public void showMenu(boolean b) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void showToolbar(boolean b){
+	public void showToolbar(boolean b) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public byte[] storeToByteArray(){
+	public byte[] storeToByteArray() {
 		schemaDisplay.collect();
 		String s = schema.toXML();
 		try {
@@ -238,42 +238,42 @@ public class TextPluginImpl implements ITextPlugin {
 			return null;
 		}
 	}
-	
+
 	@Override
-	public Composite createContainer(Composite parent, ICallback handler){
+	public Composite createContainer(Composite parent, ICallback handler) {
 		schemaDisplay = new ProcessingSchemaDisplay(parent, handler);
 		saveHandler = handler;
 		return schemaDisplay;
 	}
-	
+
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-		throws CoreException{
+			throws CoreException {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	class Position {
 		Element e;
 		int pos;
 	}
-	
+
 	@Override
-	public boolean isDirectOutput(){
+	public boolean isDirectOutput() {
 		if (schema != null) {
 			return schema.getDirectOutput();
 		}
 		return false;
 	}
-	
+
 	@Override
-	public void setParameter(Parameter parameter){
+	public void setParameter(Parameter parameter) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void initTemplatePrintSettings(String template){
+	public void initTemplatePrintSettings(String template) {
 		printSettings = new TextTemplatePrintSettings(template, getMimeType());
 	}
 }

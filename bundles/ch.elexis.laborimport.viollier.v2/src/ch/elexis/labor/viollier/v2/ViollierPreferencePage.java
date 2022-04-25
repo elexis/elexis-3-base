@@ -1,14 +1,14 @@
 /*******************************************************************************
- * 
- * The authorship of this code and the accompanying materials is held by 
- * medshare GmbH, Switzerland. All rights reserved. 
+ *
+ * The authorship of this code and the accompanying materials is held by
+ * medshare GmbH, Switzerland. All rights reserved.
  * http://medshare.net
- * 
- * This code and the accompanying materials are made available under 
+ *
+ * This code and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0
- * 
+ *
  * Year of publication: 2012
- * 
+ *
  *******************************************************************************/
 package ch.elexis.labor.viollier.v2;
 
@@ -36,14 +36,13 @@ import ch.elexis.labor.viollier.v2.data.ViollierLaborImportSettings;
 /**
  * Einstellungen für Viollier Plugin
  */
-public class ViollierPreferencePage extends FieldEditorPreferencePage implements
-		IWorkbenchPreferencePage {
-	
+public class ViollierPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+
 	private ViollierLaborImportSettings mySettings;
-	
+
 	private GridData gridDataForLabels;
 	private GridData gridDataForInputs;
-	
+
 	private Group gGlobalSettings;
 	private Text tGlobalJMedTransferJar;
 	private Text tGlobalJMedTransferParam;
@@ -52,11 +51,11 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 	private Text tGlobalDirError;
 	private Text tGlobalArchivePurgeInterval;
 	private Text tGlobalDocumentCategory;
-	
+
 	private Group gMandantSettings;
 	private Button bMandantUseGlobalSettings;
 	private Text tMandantDocumentCategory;
-	
+
 	private Group gMachineSettings;
 	private Button bMachineUseGlobalSettings;
 	private Text tMachineJMedTransferJar;
@@ -65,23 +64,23 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 	private Text tMachineDirArchive;
 	private Text tMachineDirError;
 	private Text tMachineArchivePurgeInterval;
-	
+
 	private Boolean isInitializing = true;
-	
+
 	/**
 	 * Standard Constructor
 	 */
-	public ViollierPreferencePage(){
+	public ViollierPreferencePage() {
 		super(GRID);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
 	 */
 	@Override
-	public boolean performOk(){
+	public boolean performOk() {
 		String temp;
 		int days = 30;
 		mySettings.setGlobalJMedTransferJar(tGlobalJMedTransferJar.getText());
@@ -92,13 +91,14 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		temp = tGlobalArchivePurgeInterval.getText();
 		try {
 			days = Integer.parseInt(temp);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		mySettings.setGlobalArchivePurgeInterval(days);
 		mySettings.setGlobalDocumentCategory(tGlobalDocumentCategory.getText());
-		
+
 		mySettings.setMandantUsingGlobalSettings(bMandantUseGlobalSettings.getSelection());
 		mySettings.setMandantDocumentCategory(tMandantDocumentCategory.getText());
-		
+
 		mySettings.setMachineUsingGlobalSettings(bMachineUseGlobalSettings.getSelection());
 		mySettings.setMachineJMedTransferJar(tMachineJMedTransferJar.getText());
 		mySettings.setMachineJMedTransferParam(tMachineJMedTransferParam.getText());
@@ -108,44 +108,46 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		temp = tMachineArchivePurgeInterval.getText();
 		try {
 			days = Integer.parseInt(temp);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		mySettings.setMachineArchivePurgeInterval(days);
-		
+
 		mySettings.saveSettings();
-		
+
 		return true;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		if (mySettings == null)
 			mySettings = new ViollierLaborImportSettings((CoreHub.actMandant));
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+	 *
+	 * @see
+	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	@Override
-	protected void createFieldEditors(){
+	protected void createFieldEditors() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
-	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createContents(org.eclipse.swt.widgets
-	 * .Composite)
+	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createContents(org.
+	 * eclipse.swt.widgets .Composite)
 	 */
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(Composite parent) {
 		String undefined = Messages.Preferences_undefiniert;
 		Text dummy = new Text(parent, SWT.NONE);
 		dummy.setText(Messages.Preferences_ArchivePurgeInterval);
@@ -155,23 +157,23 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		if (mySettings == null)
 			mySettings = new ViollierLaborImportSettings((CoreHub.actMandant));
 		dummy.dispose();
-		
+
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(1, false));
-		
+
 		Label lbl;
 		Group grp;
-		
+
 		// =====================================================================
 		// Global Settings
 		// =====================================================================
-		
+
 		gGlobalSettings = new Group(comp, SWT.NONE);
 		grp = gGlobalSettings;
 		grp.setText(Messages.Preferences_GlobalSettings);
 		grp.setLayout(new GridLayout(2, false));
 		grp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		// JMedTransfer Jar
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_JMedTransferJar);
@@ -179,7 +181,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalJMedTransferJar = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tGlobalJMedTransferJar.setLayoutData(gridDataForInputs);
 		tGlobalJMedTransferJar.setText(undefined);
-		
+
 		// JMedTransfer Parameter
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_JMedTransferParam);
@@ -187,7 +189,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalJMedTransferParam = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tGlobalJMedTransferParam.setLayoutData(gridDataForInputs);
 		tGlobalJMedTransferParam.setText(undefined);
-		
+
 		// Download Verzeichnis
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_DirDownload);
@@ -195,7 +197,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalDirDownload = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tGlobalDirDownload.setLayoutData(gridDataForInputs);
 		tGlobalDirDownload.setText(undefined);
-		
+
 		// Archive Verzeichnis
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_DirArchive);
@@ -203,7 +205,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalDirArchive = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tGlobalDirArchive.setLayoutData(gridDataForInputs);
 		tGlobalDirArchive.setText(undefined);
-		
+
 		// Error Verzeichnis
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_DirError);
@@ -211,7 +213,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalDirError = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tGlobalDirError.setLayoutData(gridDataForInputs);
 		tGlobalDirError.setText(undefined);
-		
+
 		// Bereinigung Archiv Verzeichnis
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_ArchivePurgeInterval);
@@ -219,7 +221,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalArchivePurgeInterval = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tGlobalArchivePurgeInterval.setLayoutData(gridDataForInputs);
 		tGlobalArchivePurgeInterval.setText(undefined);
-		
+
 		// Document Category
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_DocumentCategory);
@@ -227,7 +229,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalDocumentCategory = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tGlobalDocumentCategory.setLayoutData(gridDataForInputs);
 		tGlobalDocumentCategory.setText(undefined);
-		
+
 		// =====================================================================
 		// Mandant Settings
 		// =====================================================================
@@ -236,18 +238,18 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		grp.setText(Messages.Preferences_MandantSettingsFor);
 		grp.setLayout(new GridLayout(2, false));
 		grp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		// Use global Settings
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_UseGlobalSettings);
 		lbl.setLayoutData(gridDataForLabels);
-		
+
 		bMandantUseGlobalSettings = new Button(grp, SWT.CHECK);
 		bMandantUseGlobalSettings.setSelection(false);
 		bMandantUseGlobalSettings.addSelectionListener(new SelectionListener() {
-			
+
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				if (isInitializing)
 					return;
 				Button c = (Button) e.widget;
@@ -255,13 +257,13 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 				mySettings.setMandantUsingGlobalSettings(mandantUseGlobalSettings);
 				showMandantSettings();
 			}
-			
+
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e){
+			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 			}
 		});
-		
+
 		// Document Category
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_DocumentCategory);
@@ -269,7 +271,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tMandantDocumentCategory = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tMandantDocumentCategory.setLayoutData(gridDataForInputs);
 		tMandantDocumentCategory.setText(undefined);
-		
+
 		// =====================================================================
 		// Machine Settings
 		// =====================================================================
@@ -278,18 +280,18 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		grp.setText(Messages.Preferences_LocalSettingsFor);
 		grp.setLayout(new GridLayout(2, false));
 		grp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		// Use global Settings
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_UseGlobalSettings);
 		lbl.setLayoutData(gridDataForLabels);
-		
+
 		bMachineUseGlobalSettings = new Button(grp, SWT.CHECK);
 		bMachineUseGlobalSettings.setSelection(false);
 		bMachineUseGlobalSettings.addSelectionListener(new SelectionListener() {
-			
+
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				if (isInitializing)
 					return;
 				Button c = (Button) e.widget;
@@ -297,13 +299,13 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 				mySettings.setMachineUsingGlobalSettings(machineUseGlobalSettings);
 				showMachineSettings();
 			}
-			
+
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e){
+			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 			}
 		});
-		
+
 		// JMedTransfer Jar
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_JMedTransferJar);
@@ -311,7 +313,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tMachineJMedTransferJar = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tMachineJMedTransferJar.setLayoutData(gridDataForInputs);
 		tMachineJMedTransferJar.setText(undefined);
-		
+
 		// JMedTransfer Param
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_JMedTransferParam);
@@ -319,7 +321,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tMachineJMedTransferParam = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tMachineJMedTransferParam.setLayoutData(gridDataForInputs);
 		tMachineJMedTransferParam.setText(undefined);
-		
+
 		// Download Verzeichnis
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_DirDownload);
@@ -327,7 +329,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tMachineDirDownload = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tMachineDirDownload.setLayoutData(gridDataForInputs);
 		tMachineDirDownload.setText(undefined);
-		
+
 		// Archive Verzeichnis
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_DirArchive);
@@ -335,7 +337,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tMachineDirArchive = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tMachineDirArchive.setLayoutData(gridDataForInputs);
 		tMachineDirArchive.setText(undefined);
-		
+
 		// Error Verzeichnis
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_DirError);
@@ -343,7 +345,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tMachineDirError = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tMachineDirError.setLayoutData(gridDataForInputs);
 		tMachineDirError.setText(undefined);
-		
+
 		// Bereinigung Archiv Verzeichnis
 		lbl = new Label(grp, SWT.NONE);
 		lbl.setText(Messages.Preferences_ArchivePurgeInterval);
@@ -351,7 +353,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tMachineArchivePurgeInterval = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tMachineArchivePurgeInterval.setLayoutData(gridDataForInputs);
 		tMachineArchivePurgeInterval.setText(undefined);
-		
+
 		// ----------------------------------------------------
 		// ----------------------------------------------------
 		// Test Button zum Anzeigen welche Einstellung verwendet wird
@@ -388,60 +390,59 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		// Ende Test Button
 		// ----------------------------------------------------
 		// ----------------------------------------------------
-		
+
 		showSettings();
 		isInitializing = false;
 		return comp;
-		
+
 	}
-	
+
 	/**
-	 * Lädt die aktuell gültigen Settings in die Eingabefelder. Es werden alle Settings geladen
-	 * (Globale, Mandanten- und Machine-Settings)
+	 * Lädt die aktuell gültigen Settings in die Eingabefelder. Es werden alle
+	 * Settings geladen (Globale, Mandanten- und Machine-Settings)
 	 */
-	private void showSettings(){
+	private void showSettings() {
 		tGlobalJMedTransferJar.setText(mySettings.getGlobalJMedTransferJar());
 		tGlobalJMedTransferParam.setText(mySettings.getGlobalJMedTransferParam());
 		tGlobalDirDownload.setText(mySettings.getGlobalDirDownload());
 		tGlobalDirArchive.setText(mySettings.getGlobalDirArchive());
 		tGlobalDirError.setText(mySettings.getGlobalDirError());
-		tGlobalArchivePurgeInterval.setText(Integer.toString(mySettings
-			.getGlobalArchivePurgeInterval()));
+		tGlobalArchivePurgeInterval.setText(Integer.toString(mySettings.getGlobalArchivePurgeInterval()));
 		tGlobalDocumentCategory.setText(mySettings.getGlobalDocumentCategory());
-		
+
 		showMandantSettings();
 		showMachineSettings();
-		
+
 	}
-	
+
 	/**
 	 * Lädt die aktuell gültigen Mandanten-Settings in die Eingabefelder
 	 */
-	private void showMandantSettings(){
+	private void showMandantSettings() {
 		Boolean mandantUseGlobalSettings = mySettings.isMandantUsingGlobalSettings();
 		String mandantname = ""; //$NON-NLS-1$
 		try {
 			mandantname = mySettings.getMandant().getLabel();
-		} catch (Exception e) {}
-		gMandantSettings.setText(MessageFormat.format(Messages.Preferences_MandantSettingsFor,
-			mandantname));
+		} catch (Exception e) {
+		}
+		gMandantSettings.setText(MessageFormat.format(Messages.Preferences_MandantSettingsFor, mandantname));
 		bMandantUseGlobalSettings.setSelection(mandantUseGlobalSettings);
 		tMandantDocumentCategory.setEditable(!mandantUseGlobalSettings);
-		
+
 		tMandantDocumentCategory.setText(mySettings.getMandantDocumentCategory());
 	}
-	
+
 	/**
 	 * Lädt die aktuell gültigen Machine-Settings in die Eingabefelder
 	 */
-	private void showMachineSettings(){
+	private void showMachineSettings() {
 		Boolean machineUseGlobalSettings = mySettings.isMachineUsingGlobalSettings();
 		String hostname = "localhost"; //$NON-NLS-1$
 		try {
 			hostname = InetAddress.getLocalHost().getHostName();
-		} catch (Exception e) {}
-		gMachineSettings.setText(MessageFormat.format(Messages.Preferences_LocalSettingsFor,
-			hostname));
+		} catch (Exception e) {
+		}
+		gMachineSettings.setText(MessageFormat.format(Messages.Preferences_LocalSettingsFor, hostname));
 		bMachineUseGlobalSettings.setSelection(machineUseGlobalSettings);
 		tMachineJMedTransferJar.setEditable(!machineUseGlobalSettings);
 		tMachineJMedTransferParam.setEditable(!machineUseGlobalSettings);
@@ -449,13 +450,12 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tMachineDirArchive.setEditable(!machineUseGlobalSettings);
 		tMachineDirError.setEditable(!machineUseGlobalSettings);
 		tMachineArchivePurgeInterval.setEditable(!machineUseGlobalSettings);
-		
+
 		tMachineJMedTransferJar.setText(mySettings.getMachineJMedTransferJar());
 		tMachineJMedTransferParam.setText(mySettings.getMachineJMedTransferParam());
 		tMachineDirDownload.setText(mySettings.getMachineDirDownload());
 		tMachineDirArchive.setText(mySettings.getMachineDirArchive());
 		tMachineDirError.setText(mySettings.getMachineDirError());
-		tMachineArchivePurgeInterval.setText(Integer.toString(mySettings
-			.getMachineArchivePurgeInterval()));
+		tMachineArchivePurgeInterval.setText(Integer.toString(mySettings.getMachineArchivePurgeInterval()));
 	}
 }

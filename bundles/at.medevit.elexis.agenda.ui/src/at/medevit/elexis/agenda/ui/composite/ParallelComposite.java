@@ -45,95 +45,90 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 public class ParallelComposite extends Composite implements ISelectionProvider, IAgendaComposite {
 	private List<String> selectedResources = new ArrayList<>();
 	private static Logger logger = LoggerFactory.getLogger(ParallelComposite.class);
-	
+
 	private Browser browser;
 	private LoadEventsFunction loadEventsFunction;
-	
+
 	private ScriptingHelper scriptingHelper;
-	
+
 	private ISelection currentSelection;
 	private ListenerList<ISelectionChangedListener> listeners = new ListenerList<>();
-	
+
 	private AgendaSpanSize currentSpanSize;
-	
+
 	private DayClickFunction dayClickFunction;
-	
+
 	private ESelectionService selectionService;
-	
+
 	@Inject
 	void user(@Optional IUser user) {
-		if(loadEventsFunction != null) {
+		if (loadEventsFunction != null) {
 			loadEventsFunction.invalidateCache();
 		}
 	}
-	
-	public ParallelComposite(MPart part, ESelectionService selectionService,
-		EMenuService menuService, Composite parent, int style, UISynchronize uiSynchronize){
+
+	public ParallelComposite(MPart part, ESelectionService selectionService, EMenuService menuService, Composite parent,
+			int style, UISynchronize uiSynchronize) {
 		this(part, selectionService, menuService, parent, style, false, uiSynchronize);
 	}
-	
-	public ParallelComposite(MPart part, ESelectionService selectionService,
-		EMenuService menuService, Composite parent,
-		int style,
-		boolean enableSwitch, UISynchronize uiSynchronize){
+
+	public ParallelComposite(MPart part, ESelectionService selectionService, EMenuService menuService, Composite parent,
+			int style, boolean enableSwitch, UISynchronize uiSynchronize) {
 		super(parent, style);
 		this.selectionService = selectionService;
 		setLayout(new FillLayout());
 		browser = new Browser(this, SWT.NONE);
 		scriptingHelper = new ScriptingHelper(browser);
-		
-		loadEventsFunction =
-			new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper, uiSynchronize);
-		
+
+		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper, uiSynchronize);
+
 		new SingleClickFunction(browser, "singleClickFunction").setSelectionProvider(this);
-		
+
 		new DoubleClickFunction(browser, "doubleClickFunction");
-		
+
 		new ContextMenuFunction(part, browser, "contextMenuFunction").setSelectionProvider(this);
-		
+
 		new EventDropFunction(browser, "eventDropFunction");
-		
+
 		new EventResizeFunction(browser, "eventResizeFunction");
-		
+
 		new PdfFunction(part, browser, "pdfFunction");
-		
+
 		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
-		
+
 		// bisher 1,5h
-		
+
 		if (enableSwitch) {
 			new SwitchFunction(part, browser, "switchFunction");
 			String targetUrl = SingleSourceUtil.resolve("switchParallel.html");
 			logger.debug("Open url [" + targetUrl + "]");
 			browser.setUrl(targetUrl);
-				
+
 		} else {
-			String targetUrl = SingleSourceUtil.resolve( "defaultParallel.html");
+			String targetUrl = SingleSourceUtil.resolve("defaultParallel.html");
 			logger.debug("Open url [" + targetUrl + "]");
 			browser.setUrl(targetUrl);
 
 		}
-		
+
 		browser.addControlListener(new ControlAdapter() {
 			@Override
-			public void controlResized(ControlEvent e){
+			public void controlResized(ControlEvent e) {
 				loadEventsFunction.updateCalendarHeight();
 			}
 		});
-		
+
 		// register context menu for browser
 		menuService.registerContextMenu(browser, "at.medevit.elexis.agenda.ui.popupmenu.parallel");
-		
+
 		browser.addProgressListener(new ProgressAdapter() {
 			@Override
-			public void completed(ProgressEvent event){
-				String dayStartsAt =
-					ConfigServiceHolder.get().get("agenda/beginnStundeTagesdarstellung", "0000");
-				String dayEndsAt =
-					ConfigServiceHolder.get().get("agenda/endStundeTagesdarstellung", "2359");
+			public void completed(ProgressEvent event) {
+				String dayStartsAt = ConfigServiceHolder.get().get("agenda/beginnStundeTagesdarstellung", "0000");
+				String dayEndsAt = ConfigServiceHolder.get().get("agenda/endStundeTagesdarstellung", "2359");
 				uiSynchronize.asyncExec(() -> {
 					scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
-					
+
 					initializeResources();
 					loadEventsFunction.setResources(selectedResources);
 					dayClickFunction.setSelectedResources(selectedResources);
@@ -148,92 +143,91 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 			}
 		});
 	}
-	
-	private void initializeResources(){
+
+	private void initializeResources() {
 		scriptingHelper.initializeResources(selectedResources);
-		
+
 	}
-	
+
 	@Override
-	public void refetchEvents(){
+	public void refetchEvents() {
 		scriptingHelper.refetchEvents();
 	}
-	
+
 	@Override
-	public void setSelectedDate(LocalDate date){
+	public void setSelectedDate(LocalDate date) {
 		scriptingHelper.setSelectedDate(date);
 	}
-	
+
 	@Override
-	public void setFontSize(int sizePx){
+	public void setFontSize(int sizePx) {
 		scriptingHelper.setFontSize(sizePx);
 	}
-	
+
 	@Override
-	public void setFontFamily(String family){
+	public void setFontFamily(String family) {
 		scriptingHelper.setFontFamily(family);
 	}
-	
+
 	@Override
-	public void setSelectedSpanSize(AgendaSpanSize size){
+	public void setSelectedSpanSize(AgendaSpanSize size) {
 		currentSpanSize = size;
 		scriptingHelper.setSelectedSpanSize(size);
 		scriptingHelper.initializeResources(selectedResources);
 	}
-	
+
 	@Override
-	public void setSelectedResources(List<String> selectedResources){
+	public void setSelectedResources(List<String> selectedResources) {
 		this.selectedResources.clear();
 		this.selectedResources.addAll(selectedResources);
 		initializeResources();
 		loadEventsFunction.setResources(selectedResources);
 		dayClickFunction.setSelectedResources(selectedResources);
 	}
-	
+
 	@Override
-	public String getConfigId(){
+	public String getConfigId() {
 		return "parallel";
 	}
-	
+
 	@Override
-	public boolean setFocus(){
+	public boolean setFocus() {
 		return browser.setFocus();
 	}
-	
+
 	@Override
-	public void addSelectionChangedListener(ISelectionChangedListener listener){
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		listeners.add(listener);
 	}
-	
+
 	@Override
-	public ISelection getSelection(){
+	public ISelection getSelection() {
 		if (currentSelection != null) {
 			return currentSelection;
 		}
 		return StructuredSelection.EMPTY;
 	}
-	
+
 	@Override
-	public void removeSelectionChangedListener(ISelectionChangedListener listener){
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		listeners.remove(listener);
 	}
-	
+
 	@Override
-	public void setSelection(ISelection selection){
+	public void setSelection(ISelection selection) {
 		currentSelection = selection;
 		for (Object listener : listeners.getListeners()) {
-			((ISelectionChangedListener) listener)
-				.selectionChanged(new SelectionChangedEvent(this, selection));
+			((ISelectionChangedListener) listener).selectionChanged(new SelectionChangedEvent(this, selection));
 		}
 		selectionService.setSelection(currentSelection);
 	}
-	
+
 	@Override
-	public void setScrollToNow(boolean value){
+	public void setScrollToNow(boolean value) {
 		scriptingHelper.setScrollToNow(value);
 	}
-	
-	public LoadEventsFunction getLoadEventsFunction(){
+
+	public LoadEventsFunction getLoadEventsFunction() {
 		return loadEventsFunction;
 	}
 }

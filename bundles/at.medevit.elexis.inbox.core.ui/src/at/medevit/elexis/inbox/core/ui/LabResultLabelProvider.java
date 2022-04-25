@@ -30,25 +30,25 @@ import ch.elexis.data.LabResult;
 import ch.rgw.tools.TimeTool;
 
 public class LabResultLabelProvider extends LabelProvider implements IColorProvider {
-	
+
 	public enum LabelFields {
-		LAB_VALUE_SHORT("Kürzel"), LAB_VALUE_NAME("Name"), REF_RANGE("Referenzbereich"),
-			LAB_RESULT("Resultat"), ORIGIN("Herkunft"), DATE("Datum");
-		
+		LAB_VALUE_SHORT("Kürzel"), LAB_VALUE_NAME("Name"), REF_RANGE("Referenzbereich"), LAB_RESULT("Resultat"),
+		ORIGIN("Herkunft"), DATE("Datum");
+
 		private final String text;
-		
+
 		private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-		
-		private LabelFields(final String text){
+
+		private LabelFields(final String text) {
 			this.text = text;
 		}
-		
+
 		@Override
-		public String toString(){
+		public String toString() {
 			return text;
 		}
-		
-		public static LabelFields getEnum(String value){
+
+		public static LabelFields getEnum(String value) {
 			if (value.equals(LAB_VALUE_SHORT.toString())) {
 				return LAB_VALUE_SHORT;
 			} else if (value.equals(LAB_VALUE_NAME.toString())) {
@@ -65,8 +65,8 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 				return null;
 			}
 		}
-		
-		public String getValue(LabResult labResult){
+
+		public String getValue(LabResult labResult) {
 			switch (this) {
 			case LAB_VALUE_SHORT:
 				return labResult.getItem().getKuerzel();
@@ -88,8 +88,8 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 				return "";
 			}
 		}
-		
-		public String getValue(ILabResult labResult){
+
+		public String getValue(ILabResult labResult) {
 			switch (this) {
 			case LAB_VALUE_SHORT:
 				return labResult.getItem().getCode();
@@ -112,14 +112,14 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			}
 		}
 	}
-	
+
 	@Override
-	public Image getImage(Object element){
+	public Image getImage(Object element) {
 		return Images.IMG_VIEW_LABORATORY.getImage();
 	}
-	
+
 	@Override
-	public String getText(Object element){
+	public String getText(Object element) {
 		if (element instanceof LabGroupedInboxElements) {
 			return ((LabGroupedInboxElements) element).getLabel();
 		}
@@ -127,13 +127,13 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 		if (object instanceof LabResult) {
 			LabResult labResult = (LabResult) object;
 			List<LabelFields> labelFields = InboxPreferences.getChoosenLabel();
-			
+
 			StringBuilder sb = new StringBuilder();
 			for (LabelFields lblField : labelFields) {
 				sb.append(lblField.getValue(labResult));
 				sb.append(", ");
 			}
-			
+
 			if (!sb.toString().isEmpty() && sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
 				sb.replace(sb.length() - 2, sb.length(), "");
 			}
@@ -141,24 +141,23 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 		} else if (object instanceof ILabResult) {
 			ILabResult labResult = (ILabResult) object;
 			List<LabelFields> labelFields = InboxPreferences.getChoosenLabel();
-			
+
 			StringBuilder sb = new StringBuilder();
 			for (LabelFields lblField : labelFields) {
 				sb.append(lblField.getValue(labResult));
 				sb.append(", ");
 			}
-			
-			if (!sb.toString().isEmpty()
-				&& sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
+
+			if (!sb.toString().isEmpty() && sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
 				sb.replace(sb.length() - 2, sb.length(), "");
 			}
 			return sb.toString();
 		}
 		return ((IInboxElement) element).getLabel();
 	}
-	
+
 	@Override
-	public Color getForeground(Object element){
+	public Color getForeground(Object element) {
 		if (element instanceof LabGroupedInboxElements) {
 			return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
 		}
@@ -175,9 +174,9 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
 		}
 	}
-	
+
 	@Override
-	public Color getBackground(Object element){
+	public Color getBackground(Object element) {
 		return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 	}
 }

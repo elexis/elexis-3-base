@@ -11,8 +11,8 @@
  *******************************************************************************/
 
 /**
- * <p>Contains all actions used by the Eclipse framework. Actions 
- * are important parts of this program as they are the main source 
+ * <p>Contains all actions used by the Eclipse framework. Actions
+ * are important parts of this program as they are the main source
  * of triggering functionality of Archie.</p>
  */
 package ch.unibe.iam.scg.archie.actions;
@@ -38,9 +38,9 @@ import ch.unibe.iam.scg.archie.ui.wizards.ChartWizard;
  * <p>
  * Action for starting the chart generation wizard.
  * </p>
- * 
+ *
  * $Id: ChartWizardAction.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -97,17 +97,17 @@ public class ChartWizardAction extends Action {
 			try {
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ChartView.ID);
 			} catch (PartInitException e) {
-				ArchieActivator.LOG
-						.log("Could not create the chart view." + "\n" + e.getLocalizedMessage(), Log.ERRORS);
+				ArchieActivator.LOG.log("Could not create the chart view." + "\n" + e.getLocalizedMessage(),
+						Log.ERRORS);
 				e.printStackTrace();
 			}
 		}
 	}
 
 	/**
-	 * Sets the chart view dirty. This means that the view will have to refresh
-	 * / recreate it's contents according to the current situation reflected by
-	 * the chart factory and it's chart model.
+	 * Sets the chart view dirty. This means that the view will have to refresh /
+	 * recreate it's contents according to the current situation reflected by the
+	 * chart factory and it's chart model.
 	 */
 	private void setExistingViewDirty() {
 		// check if the view already was initialized
@@ -120,9 +120,8 @@ public class ChartWizardAction extends Action {
 
 	/**
 	 * Retrieves a view with the given ID from the view references registry.
-	 * 
-	 * @param id
-	 *            View id.
+	 *
+	 * @param id View id.
 	 * @return IViewPart View based on the given ID, null else.
 	 */
 	private IViewPart getView(String id) {

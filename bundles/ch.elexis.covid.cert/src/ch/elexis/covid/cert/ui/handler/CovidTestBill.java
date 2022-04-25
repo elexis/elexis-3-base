@@ -1,4 +1,4 @@
- 
+
 package ch.elexis.covid.cert.ui.handler;
 
 import java.util.Map;
@@ -23,10 +23,10 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class CovidTestBill {
-	
+
 	@Inject
 	private IContextService contextService;
-	
+
 	@Execute
 	public void execute() {
 		if (ConfigServiceHolder.get().get(CovidHandlerUtil.CFG_AUTO_BILLING, false)) {
@@ -39,25 +39,24 @@ public class CovidTestBill {
 						// get or create coverage depending on selected block
 						ICoverage coverage = null;
 						if (block == blocks.get(CovidHandlerUtil.CFG_KK_BLOCKID)
-							|| block == blocks.get(CovidHandlerUtil.CFG_KK_PCR_BLOCKID)) {
-							coverage = CovidHandlerUtil
-								.getCoverageWithLaw(patient, CovidHandlerUtil.KK_LAWS).orElse(null);
+								|| block == blocks.get(CovidHandlerUtil.CFG_KK_PCR_BLOCKID)) {
+							coverage = CovidHandlerUtil.getCoverageWithLaw(patient, CovidHandlerUtil.KK_LAWS)
+									.orElse(null);
 							if (coverage == null) {
 								Display.getDefault()
-									.syncExec(() -> MessageDialog.openError(
-										Display.getDefault().getActiveShell(), "Keine Verrechnung",
-										"Es wurde noch kein Fall mit Gesetz KVG angelegt."));
+										.syncExec(() -> MessageDialog.openError(Display.getDefault().getActiveShell(),
+												"Keine Verrechnung",
+												"Es wurde noch kein Fall mit Gesetz KVG angelegt."));
 							}
 						} else {
-							coverage = CovidHandlerUtil
-								.getCoverageWithLaw(patient, CovidHandlerUtil.SZ_LAWS).orElse(null);
+							coverage = CovidHandlerUtil.getCoverageWithLaw(patient, CovidHandlerUtil.SZ_LAWS)
+									.orElse(null);
 							if (coverage == null) {
 								coverage = createPrivateCoverage(patient);
 							}
 						}
 						if (coverage != null) {
-							IEncounter encounter =
-								new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
+							IEncounter encounter = new IEncounterBuilder(CoreModelServiceHolder.get(), coverage,
 									contextService.getActiveMandator().get()).buildAndSave();
 							CovidHandlerUtil.addBlockToEncounter(block, encounter);
 							contextService.getRootContext().setTyped(encounter);
@@ -67,16 +66,14 @@ public class CovidTestBill {
 			});
 		}
 	}
-	
-	private ICodeElementBlock selectBlock(Map<String, ICodeElementBlock> blocks){
+
+	private ICodeElementBlock selectBlock(Map<String, ICodeElementBlock> blocks) {
 		if (blocks.size() == 1) {
 			return (ICodeElementBlock) blocks.values().toArray()[0];
 		} else {
-			int ret = MessageDialog.open(MessageDialog.QUESTION,
-				Display.getDefault().getActiveShell(),
-				"Verrechnungsblock Auswahl", "Welcher Leistungsblock soll verrechnet werden.",
-				SWT.SHEET, "Krankenkasse Antigen", "Selbszahler Antigen", "Krankenkasse PCR",
-				"Selbszahler PCR");
+			int ret = MessageDialog.open(MessageDialog.QUESTION, Display.getDefault().getActiveShell(),
+					"Verrechnungsblock Auswahl", "Welcher Leistungsblock soll verrechnet werden.", SWT.SHEET,
+					"Krankenkasse Antigen", "Selbszahler Antigen", "Krankenkasse PCR", "Selbszahler PCR");
 			if (ret == 0) {
 				return blocks.get(CovidHandlerUtil.CFG_KK_BLOCKID);
 			} else if (ret == 1) {
@@ -89,11 +86,11 @@ public class CovidTestBill {
 		}
 		return null;
 	}
-	
-	private ICoverage createPrivateCoverage(IPatient patient){
+
+	private ICoverage createPrivateCoverage(IPatient patient) {
 		return new ICoverageBuilder(CoreModelServiceHolder.get(), patient, "Selbstzahler",
-			ICoverageBuilder.getDefaultCoverageReason(ConfigServiceHolder.get()),
-			BillingLaw.privat.name()).buildAndSave();
-		
+				ICoverageBuilder.getDefaultCoverageReason(ConfigServiceHolder.get()), BillingLaw.privat.name())
+						.buildAndSave();
+
 	}
 }

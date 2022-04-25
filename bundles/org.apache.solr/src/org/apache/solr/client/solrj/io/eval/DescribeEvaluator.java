@@ -26,41 +26,46 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class DescribeEvaluator extends RecursiveNumericEvaluator implements OneValueWorker {
-  protected static final long serialVersionUID = 1L;
-  
-  public DescribeEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-    
-    if(1 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly one value but found %d",expression,containedEvaluators.size()));
-    }
-  }
-  
-  @Override
-  public Object doWork(Object value) throws IOException {
-    
-    if(!(value instanceof List<?>)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting a numeric list but found %s", toExpression(constructingFactory), value.getClass().getSimpleName()));
-    }
-    
-    // we know each value is a BigDecimal or a list of BigDecimals
-    DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
-    ((List<?>)value).stream().mapToDouble(innerValue -> ((Number)innerValue).doubleValue()).forEach(innerValue -> descriptiveStatistics.addValue(innerValue));
+	protected static final long serialVersionUID = 1L;
 
-    Tuple tuple = new Tuple();
-    tuple.put("max", descriptiveStatistics.getMax());
-    tuple.put("mean", descriptiveStatistics.getMean());
-    tuple.put("min", descriptiveStatistics.getMin());
-    tuple.put("stdev", descriptiveStatistics.getStandardDeviation());
-    tuple.put("sum", descriptiveStatistics.getSum());
-    tuple.put("N", descriptiveStatistics.getN());
-    tuple.put("var", descriptiveStatistics.getVariance());
-    tuple.put("kurtosis", descriptiveStatistics.getKurtosis());
-    tuple.put("skewness", descriptiveStatistics.getSkewness());
-    tuple.put("popVar", descriptiveStatistics.getPopulationVariance());
-    tuple.put("geometricMean", descriptiveStatistics.getGeometricMean());
-    tuple.put("sumsq", descriptiveStatistics.getSumsq());
+	public DescribeEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    return tuple;
-  }  
+		if (1 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly one value but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
+
+	@Override
+	public Object doWork(Object value) throws IOException {
+
+		if (!(value instanceof List<?>)) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting a numeric list but found %s",
+							toExpression(constructingFactory), value.getClass().getSimpleName()));
+		}
+
+		// we know each value is a BigDecimal or a list of BigDecimals
+		DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
+		((List<?>) value).stream().mapToDouble(innerValue -> ((Number) innerValue).doubleValue())
+				.forEach(innerValue -> descriptiveStatistics.addValue(innerValue));
+
+		Tuple tuple = new Tuple();
+		tuple.put("max", descriptiveStatistics.getMax());
+		tuple.put("mean", descriptiveStatistics.getMean());
+		tuple.put("min", descriptiveStatistics.getMin());
+		tuple.put("stdev", descriptiveStatistics.getStandardDeviation());
+		tuple.put("sum", descriptiveStatistics.getSum());
+		tuple.put("N", descriptiveStatistics.getN());
+		tuple.put("var", descriptiveStatistics.getVariance());
+		tuple.put("kurtosis", descriptiveStatistics.getKurtosis());
+		tuple.put("skewness", descriptiveStatistics.getSkewness());
+		tuple.put("popVar", descriptiveStatistics.getPopulationVariance());
+		tuple.put("geometricMean", descriptiveStatistics.getGeometricMean());
+		tuple.put("sumsq", descriptiveStatistics.getSumsq());
+
+		return tuple;
+	}
 }

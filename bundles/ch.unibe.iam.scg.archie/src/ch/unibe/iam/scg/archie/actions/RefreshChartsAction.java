@@ -18,30 +18,32 @@ import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.ui.views.Dashboard;
 
 /**
- * <p>Action which refreshed charts in the dashboard.</p>
- * 
+ * <p>
+ * Action which refreshed charts in the dashboard.
+ * </p>
+ *
  * $Id: RefreshChartsAction.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
  */
 public class RefreshChartsAction extends Action {
-	
+
 	private Dashboard dashboard;
-	
+
 	/**
 	 * @param dashboard
 	 */
 	public RefreshChartsAction(final Dashboard dashboard) {
 		this.dashboard = dashboard;
-		
+
 		this.setToolTipText(Messages.RefreshChart);
 		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/arrow_circle_double.png"));
-		
+
 		this.setEnabled(false);
 	}
-	
+
 	/**
 	 * @{inheritDoc}
 	 */

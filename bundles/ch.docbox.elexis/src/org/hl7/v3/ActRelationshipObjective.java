@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for ActRelationshipObjective.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="ActRelationshipObjective">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -19,20 +20,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "ActRelationshipObjective")
 @XmlEnum
 public enum ActRelationshipObjective {
-	
+
 	OBJC, OBJF;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static ActRelationshipObjective fromValue(String v){
+
+	public static ActRelationshipObjective fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

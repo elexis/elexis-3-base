@@ -7,9 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
+ *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure
  *    P. Chaubert - adapted to Messwerte V2
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data;
@@ -22,22 +22,20 @@ import ch.elexis.data.PersistentObjectFactory;
 public class MessungFactory extends PersistentObjectFactory {
 	@SuppressWarnings("unchecked")
 	@Override
-	public PersistentObject createFromString(String code){
+	public PersistentObject createFromString(String code) {
 		try {
 			String[] ci = code.split("::"); //$NON-NLS-1$
 			Class clazz = Class.forName(ci[0]);
-			Method load = clazz.getMethod("load", new Class[] { String.class}); //$NON-NLS-1$
-			return (PersistentObject) (load.invoke(null, new Object[] {
-				ci[1]
-			}));
+			Method load = clazz.getMethod("load", new Class[] { String.class }); //$NON-NLS-1$
+			return (PersistentObject) (load.invoke(null, new Object[] { ci[1] }));
 		} catch (Exception ex) {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public PersistentObject doCreateTemplate(Class typ){
+	public PersistentObject doCreateTemplate(Class typ) {
 		try {
 			return (PersistentObject) typ.newInstance();
 		} catch (Exception ex) {

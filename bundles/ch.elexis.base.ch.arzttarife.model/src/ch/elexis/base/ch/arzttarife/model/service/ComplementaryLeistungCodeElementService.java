@@ -27,124 +27,117 @@ import ch.elexis.core.services.IStoreToStringContribution;
 @Component
 public class ComplementaryLeistungCodeElementService
 		implements ICodeElementServiceContribution, IStoreToStringContribution {
-	
+
 	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
-	
+
 	@Override
-	public String getSystem(){
+	public String getSystem() {
 		return ComplementaryLeistung.CODESYSTEM_NAME;
 	}
-	
+
 	@Override
-	public CodeElementTyp getTyp(){
+	public CodeElementTyp getTyp() {
 		return CodeElementTyp.SERVICE;
 	}
-	
+
 	@Override
-	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context){
+	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
 		EntityManager em = (EntityManager) entityManager.getEntityManager();
-		TypedQuery<ComplementaryLeistung> gtinQuery =
-			em.createNamedQuery("ComplementaryLeistung.code", ComplementaryLeistung.class);
+		TypedQuery<ComplementaryLeistung> gtinQuery = em.createNamedQuery("ComplementaryLeistung.code",
+				ComplementaryLeistung.class);
 		gtinQuery.setParameter("code", code);
 		List<ComplementaryLeistung> resultList = gtinQuery.getResultList();
 		if (resultList.size() > 0) {
 			Optional<Identifiable> element = ArzttarifeModelAdapterFactory.getInstance()
-				.getModelAdapter(resultList.get(0), IComplementaryLeistung.class, false);
+					.getModelAdapter(resultList.get(0), IComplementaryLeistung.class, false);
 			if (element.isPresent()) {
 				return Optional.of((ICodeElement) element.get());
 			}
 		}
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public List<ICodeElement> getElements(Map<Object, Object> context){
+	public List<ICodeElement> getElements(Map<Object, Object> context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public Optional<String> storeToString(Identifiable identifiable){
+	public Optional<String> storeToString(Identifiable identifiable) {
 		if (identifiable instanceof ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung) {
-			return Optional
-				.of(ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS
+			return Optional.of(ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS
 					+ StringConstants.DOUBLECOLON + identifiable.getId());
 		}
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public Optional<Identifiable> loadFromString(String storeToString){
-		if (storeToString.startsWith(
-			ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS
+	public Optional<Identifiable> loadFromString(String storeToString) {
+		if (storeToString.startsWith(ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS
 				+ StringConstants.DOUBLECOLON)) {
 			String[] split = splitIntoTypeAndId(storeToString);
 			String id = split[1];
 			EntityManager em = (EntityManager) entityManager.getEntityManager();
 			EntityWithId dbObject = em.find(ComplementaryLeistung.class, id);
-			return Optional.ofNullable(ArzttarifeModelAdapterFactory.getInstance()
-				.getModelAdapter(dbObject, null, false).orElse(null));
+			return Optional.ofNullable(
+					ArzttarifeModelAdapterFactory.getInstance().getModelAdapter(dbObject, null, false).orElse(null));
 		}
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public List<Identifiable> loadFromStringWithIdPart(String partialStoreToString){
-		if (!partialStoreToString.startsWith(
-			ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS
-				+ StringConstants.DOUBLECOLON)) {
+	public List<Identifiable> loadFromStringWithIdPart(String partialStoreToString) {
+		if (!partialStoreToString
+				.startsWith(ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS
+						+ StringConstants.DOUBLECOLON)) {
 			return Collections.emptyList();
 		}
-		
+
 		String[] split = splitIntoTypeAndId(partialStoreToString);
 		if (split != null && split.length == 2) {
 			String id = split[1];
-			Class<? extends EntityWithId> clazz =
-				ch.elexis.core.jpa.entities.ComplementaryLeistung.class;
+			Class<? extends EntityWithId> clazz = ch.elexis.core.jpa.entities.ComplementaryLeistung.class;
 			EntityManager em = (EntityManager) entityManager.getEntityManager();
-			TypedQuery<? extends EntityWithId> query = em.createQuery("SELECT entity FROM "
-				+ clazz.getSimpleName() + " entity WHERE entity.id LIKE :idpart", clazz);
+			TypedQuery<? extends EntityWithId> query = em.createQuery(
+					"SELECT entity FROM " + clazz.getSimpleName() + " entity WHERE entity.id LIKE :idpart", clazz);
 			query.setParameter("idpart", id + "%");
 			List<? extends EntityWithId> found = query.getResultList();
 			if (!found.isEmpty()) {
-				ArzttarifeModelAdapterFactory adapterFactory =
-					ArzttarifeModelAdapterFactory.getInstance();
-				return found.parallelStream()
-					.map(e -> adapterFactory.getModelAdapter(e, null, false).orElse(null))
-					.collect(Collectors.toList());
+				ArzttarifeModelAdapterFactory adapterFactory = ArzttarifeModelAdapterFactory.getInstance();
+				return found.parallelStream().map(e -> adapterFactory.getModelAdapter(e, null, false).orElse(null))
+						.collect(Collectors.toList());
 			}
 		}
 		return Collections.emptyList();
 	}
-	
+
 	@Override
-	public Class<?> getEntityForType(String type){
-		if (ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS
-			.equals(type)) {
+	public Class<?> getEntityForType(String type) {
+		if (ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS.equals(type)) {
 			return ch.elexis.core.jpa.entities.ComplementaryLeistung.class;
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getTypeForEntity(Object entityInstance){
+	public String getTypeForEntity(Object entityInstance) {
 		if (entityInstance instanceof ch.elexis.core.jpa.entities.ComplementaryLeistung) {
 			return ch.elexis.base.ch.arzttarife.complementary.model.ComplementaryLeistung.STS_CLASS;
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getTypeForModel(Class<?> interfaze){
-		Class<? extends EntityWithId> entityClass =
-			ArzttarifeModelAdapterFactory.getInstance().getEntityClass(interfaze);
+	public String getTypeForModel(Class<?> interfaze) {
+		Class<? extends EntityWithId> entityClass = ArzttarifeModelAdapterFactory.getInstance()
+				.getEntityClass(interfaze);
 		if (entityClass != null) {
 			try {
 				return getTypeForEntity(entityClass.newInstance());
 			} catch (InstantiationException | IllegalAccessException e) {
-				LoggerFactory.getLogger(getClass())
-					.error("Error getting type for model [" + interfaze + "]", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e);
 			}
 		}
 		return null;

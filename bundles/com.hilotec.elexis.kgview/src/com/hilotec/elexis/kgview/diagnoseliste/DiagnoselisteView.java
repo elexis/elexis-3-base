@@ -1,6 +1,5 @@
 package com.hilotec.elexis.kgview.diagnoseliste;
 
-
 /**
  * View um die Diagnoseliste anzuzeigen und zu bearbeiten
  */

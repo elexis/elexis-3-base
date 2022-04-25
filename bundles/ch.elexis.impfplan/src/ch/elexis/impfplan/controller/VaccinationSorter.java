@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.impfplan.controller;
 
@@ -19,9 +19,9 @@ import ch.elexis.impfplan.model.VaccinationType;
 import ch.rgw.tools.TimeTool;
 
 public class VaccinationSorter extends ViewerSorter {
-	
+
 	@Override
-	public int compare(Viewer viewer, Object e1, Object e2){
+	public int compare(Viewer viewer, Object e1, Object e2) {
 		if (e1 instanceof VaccinationType) {
 			VaccinationType v1 = (VaccinationType) e1;
 			VaccinationType v2 = (VaccinationType) e2;
@@ -31,9 +31,7 @@ public class VaccinationSorter extends ViewerSorter {
 			}
 			return c;
 		} else if (e1 instanceof Vaccination) {
-			int c =
-				compare(viewer, ((Vaccination) e1).getVaccinationType(),
-					((Vaccination) e2).getVaccinationType());
+			int c = compare(viewer, ((Vaccination) e1).getVaccinationType(), ((Vaccination) e2).getVaccinationType());
 			if (c == 0) {
 				Vaccination v1 = (Vaccination) e1;
 				Vaccination v2 = (Vaccination) e2;
@@ -46,5 +44,5 @@ public class VaccinationSorter extends ViewerSorter {
 			return 0;
 		}
 	}
-	
+
 }

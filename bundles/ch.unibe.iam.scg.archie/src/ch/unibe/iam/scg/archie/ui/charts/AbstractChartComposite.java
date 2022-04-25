@@ -35,9 +35,9 @@ import ch.unibe.iam.scg.archie.ui.GraphicalMessage;
  * JFreeChart based charts, and by using this listener interface reacts to
  * certain job events propagated by the dataset creator class.
  * </p>
- * 
+ *
  * $Id: AbstractChartComposite.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -52,7 +52,7 @@ public abstract class AbstractChartComposite extends Composite implements IJobCh
 
 	/**
 	 * Default constructor.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 */
@@ -80,14 +80,14 @@ public abstract class AbstractChartComposite extends Composite implements IJobCh
 	/**
 	 * Initialized the dataset creator. Subclasses have to initialize their
 	 * specialized creators.
-	 * 
+	 *
 	 * @return A JFreeChart dataset creator.
 	 */
 	abstract protected AbstractDatasetCreator initializeCreator();
 
 	/**
 	 * Initializes the chart.
-	 * 
+	 *
 	 * @return An initialized chart object.
 	 */
 	abstract protected JFreeChart initializeChart();
@@ -179,9 +179,8 @@ public abstract class AbstractChartComposite extends Composite implements IJobCh
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.jobs.IJobChangeListener#done(org.eclipse.core
+	 *
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#done(org.eclipse.core
 	 * .runtime.jobs.IJobChangeEvent)
 	 */
 	public void done(IJobChangeEvent event) {
@@ -212,9 +211,8 @@ public abstract class AbstractChartComposite extends Composite implements IJobCh
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.jobs.IJobChangeListener#aboutToRun(org.eclipse
+	 *
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#aboutToRun(org.eclipse
 	 * .core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void aboutToRun(IJobChangeEvent event) {
@@ -223,9 +221,8 @@ public abstract class AbstractChartComposite extends Composite implements IJobCh
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.jobs.IJobChangeListener#awake(org.eclipse.core
+	 *
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#awake(org.eclipse.core
 	 * .runtime.jobs.IJobChangeEvent)
 	 */
 	public void awake(IJobChangeEvent event) {
@@ -234,9 +231,8 @@ public abstract class AbstractChartComposite extends Composite implements IJobCh
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.jobs.IJobChangeListener#running(org.eclipse.
+	 *
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#running(org.eclipse.
 	 * core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void running(IJobChangeEvent event) {
@@ -245,9 +241,8 @@ public abstract class AbstractChartComposite extends Composite implements IJobCh
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.jobs.IJobChangeListener#scheduled(org.eclipse
+	 *
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#scheduled(org.eclipse
 	 * .core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void scheduled(IJobChangeEvent event) {
@@ -256,9 +251,8 @@ public abstract class AbstractChartComposite extends Composite implements IJobCh
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.runtime.jobs.IJobChangeListener#sleeping(org.eclipse
+	 *
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#sleeping(org.eclipse
 	 * .core.runtime.jobs.IJobChangeEvent)
 	 */
 	public void sleeping(IJobChangeEvent event) {

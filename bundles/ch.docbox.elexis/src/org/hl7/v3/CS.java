@@ -5,17 +5,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * Coded data, consists of a code, display name, code system, and original text. Used when a single
- * code value must be sent.
- * 
- * 
+ *
+ * Coded data, consists of a code, display name, code system, and original text.
+ * Used when a single code value must be sent.
+ *
+ *
  * <p>
  * Java class for CS complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="CS">
  *   &lt;complexContent>
@@ -25,16 +26,16 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CS")
 public class CS extends CV {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 }

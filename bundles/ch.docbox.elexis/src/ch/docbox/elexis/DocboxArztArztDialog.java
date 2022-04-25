@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2010, Oliver Egger, visionary ag
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *    
+ *
  *******************************************************************************/
 package ch.docbox.elexis;
 
@@ -70,41 +70,41 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 public class DocboxArztArztDialog extends TitleAreaDialog {
-	
+
 	private Patient patient;
 	private Kontakt kontakt;
 	private DocboxCDA docboxCDA = new DocboxCDA();
-	
+
 	private Text textTitle, textMessage;
 	private ArrayList<Kontakt> kontakte;
 	private Combo comboDoctor;
 	private org.eclipse.swt.widgets.List listAttachments;
-	
-	public DocboxArztArztDialog(Patient patient, Kontakt kontakt){
+
+	public DocboxArztArztDialog(Patient patient, Kontakt kontakt) {
 		super(UiDesk.getTopShell());
 		this.patient = patient;
 		this.kontakt = kontakt;
 		this.kontakte = new ArrayList<Kontakt>();
 	}
-	
+
 	@Override
-	protected Control createDialogArea(final Composite parent){
+	protected Control createDialogArea(final Composite parent) {
 		Composite com = new Composite(parent, SWT.NONE);
 		com.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		com.setLayout(new GridLayout(2, false));
-		
+
 		Label label;
-		
+
 		label = new Label(com, SWT.NONE);
 		label.setText(Messages.DocboxArztArztDialog_TextPatient);
-		
+
 		label = new Label(com, SWT.NONE);
 		label.setText(patient.getLabel());
-		
+
 		label = new Label(com, SWT.NONE);
 		label.setText(Messages.DocboxArztArztDialog_TextDoctor);
 		comboDoctor = new Combo(com, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-		
+
 		Query<Kontakt> qbe = new Query<Kontakt>(Kontakt.class);
 		List<Kontakt> list = qbe.execute();
 		for (Kontakt k : list) {
@@ -114,32 +114,32 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 				kontakte.add(k);
 			}
 		}
-		
+
 		if (kontakt != null) {
 			comboDoctor.setText(kontakt.getLabel());
 		}
-		
+
 		label = new Label(com, SWT.NONE);
 		label.setText(Messages.DocboxArztArztDialog_TextTitle);
-		
+
 		textTitle = new Text(com, SWT.BORDER);
 		textTitle.setText("");
 		textTitle.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		
+
 		Label l2 = new Label(com, SWT.NONE);
 		l2.setText(Messages.DocboxArztArztDialog_TextMessage);
-		
+
 		textMessage = new Text(com, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		textMessage.setText("\n\n\n\n\n");
 		textMessage.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		
+
 		label = new Label(com, SWT.NONE);
 		label.setText(Messages.DocboxArztArztDialog_TextAttachments);
-		
+
 		listAttachments = new org.eclipse.swt.widgets.List(com, SWT.SINGLE | SWT.V_SCROLL);
 		listAttachments.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		listAttachments.addListener(SWT.KeyUp, new Listener() {
-			public void handleEvent(Event e){
+			public void handleEvent(Event e) {
 				if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS) {
 					if (listAttachments.isFocusControl()) {
 						int index = listAttachments.getSelectionIndex();
@@ -150,23 +150,19 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 				}
 			}
 		});
-		
+
 		// dummy emtpy label for button
 		label = new Label(com, SWT.NONE);
-		
+
 		Button addAttachments = new Button(com, SWT.PUSH);
 		addAttachments.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0){
+			public void widgetSelected(SelectionEvent arg0) {
 				FileDialog fd = new FileDialog(UiDesk.getTopShell(), SWT.MULTI);
 				fd.setText("Öffnen");
-				String[] filterExt =
-					{
-						"*.*", "*.doc", "*.docx", "*.doc", "*.gif", "*.jpeg", "*.jpg", "*.mov",
-						"*.mp3", "*.mpeg", "*.pdf", "*.png", "*.ppt", "*.tiff", "*.txt", "*.xls",
-						"*.xlsx", "*.zip", "*.odt", "*.html", "*.htm", "*.rtf", "*.oft", "*.pptx",
-						"*.pps", "*.rpt", "*.vcf", "*.xml", "*.csv"
-					};
+				String[] filterExt = { "*.*", "*.doc", "*.docx", "*.doc", "*.gif", "*.jpeg", "*.jpg", "*.mov", "*.mp3",
+						"*.mpeg", "*.pdf", "*.png", "*.ppt", "*.tiff", "*.txt", "*.xls", "*.xlsx", "*.zip", "*.odt",
+						"*.html", "*.htm", "*.rtf", "*.oft", "*.pptx", "*.pps", "*.rpt", "*.vcf", "*.xml", "*.csv" };
 				fd.setFilterExtensions(filterExt);
 				String selected = fd.open();
 				if (selected != null) {
@@ -187,35 +183,32 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 			}
 		});
 		addAttachments.setText(Messages.DocboxArztArztDialog_ButtonAddAttachments);
-		
+
 		return com;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		super.create();
 		setMessage(Messages.DocboxArztArztDialog_Title);
 		if (UiDesk.getImage(Activator.IMG_DOC2DOC) == null) {
 			UiDesk.getImageRegistry().put(Activator.IMG_DOC2DOC,
-				Activator.getImageDescriptor(Activator.IMG_DOC2DOC_PATH));
+					Activator.getImageDescriptor(Activator.IMG_DOC2DOC_PATH));
 		}
 		setTitleImage(UiDesk.getImageRegistry().get(Activator.IMG_DOC2DOC));
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		final String title = textTitle.getText();
 		final String message = textMessage.getText();
 		final String filename = "ueberweisung.pdf";
 		final String[] attachments = listAttachments.getItems();
-		final javax.xml.ws.Holder<java.lang.Boolean> success =
-			new javax.xml.ws.Holder<java.lang.Boolean>();
-		final javax.xml.ws.Holder<java.lang.String> errorMessage =
-			new javax.xml.ws.Holder<java.lang.String>();
-		final javax.xml.ws.Holder<java.lang.String> documentId =
-			new javax.xml.ws.Holder<java.lang.String>();
-		
+		final javax.xml.ws.Holder<java.lang.Boolean> success = new javax.xml.ws.Holder<java.lang.Boolean>();
+		final javax.xml.ws.Holder<java.lang.String> errorMessage = new javax.xml.ws.Holder<java.lang.String>();
+		final javax.xml.ws.Holder<java.lang.String> documentId = new javax.xml.ws.Holder<java.lang.String>();
+
 		if (comboDoctor.getSelectionIndex() == -1) {
 			MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(), SWT.ICON_ERROR);
 			box.setText(Messages.DocboxArztArztAction_NoDoctorSelectedText);
@@ -225,44 +218,43 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 		} else {
 			kontakt = this.kontakte.get(comboDoctor.getSelectionIndex());
 		}
-		
+
 		Runnable longJob = new Runnable() {
 			boolean done = false;
-			
-			public void stop(String errMsg){
+
+			public void stop(String errMsg) {
 				if (errMsg != null) {
 					errorMessage.value = errMsg;
 				}
 				done = true;
 				UiDesk.getDisplay().wake();
 			}
-			
-			public void run(){
+
+			public void run() {
 				Thread thread = new Thread(new Runnable() {
-					public void run(){
+					public void run() {
 						success.value = Boolean.FALSE;
 						try {
-							final ClinicalDocumentType cda =
-								getArztArztCda(null, title, message, filename, attachments);
+							final ClinicalDocumentType cda = getArztArztCda(null, title, message, filename,
+									attachments);
 							if (cda == null) {
 								stop(Messages.DocboxArztArztAction_NoCdaGeneratedMessage);
 								return;
 							}
-							
+
 							byte[] xml = getClincicalDocumentSerialized(cda);
 							if (xml == null) {
 								stop(Messages.DocboxArztArztAction_NoXmlGeneratedMessage);
 								return;
 							}
-							
+
 							ByteArrayOutputStream pdfOut = getArztArztPdf(xml);
 							if (pdfOut == null) {
 								stop(Messages.DocboxArztArztAction_NoPdfGeneratedMessage);
 								return;
 							}
-							
-							final ByteArrayOutputStream byteArrayOutputStream =
-								new ByteArrayOutputStream();
+
+							final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 							ZipOutputStream out = new ZipOutputStream(byteArrayOutputStream);
 							try {
 								out.putNextEntry(new ZipEntry(filename));
@@ -272,12 +264,10 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 									for (String attachFile : attachments) {
 										String fileName = attachFile;
 										if (fileName.indexOf("/") >= 0) {
-											fileName =
-												fileName.substring(fileName.lastIndexOf("/") + 1);
+											fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
 										}
 										if (fileName.indexOf("\\") >= 0) {
-											fileName =
-												fileName.substring(fileName.lastIndexOf("\\") + 1);
+											fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
 										}
 										out.putNextEntry(new ZipEntry(fileName));
 										int len = 0;
@@ -296,19 +286,17 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 								stop(Messages.DocboxArztArztAction_NoZipGeneratedMessage);
 								return;
 							}
-							
+
 							CDACHServices port = UserDocboxPreferences.getPort();
-							port.sendClinicalDocument(cda, byteArrayOutputStream.toByteArray(),
-								success, errorMessage, documentId);
+							port.sendClinicalDocument(cda, byteArrayOutputStream.toByteArray(), success, errorMessage,
+									documentId);
 							if (!success.value.booleanValue()) {
-								stop(Messages.DocboxArztArztAction_SendDocumentFailed + "\n"
-									+ errorMessage.value);
+								stop(Messages.DocboxArztArztAction_SendDocumentFailed + "\n" + errorMessage.value);
 								return;
 							}
 						} catch (Exception e) {
 							ExHandler.handle(e);
-							stop(Messages.DocboxArztArztAction_SendDocumentFailed + "\n"
-								+ errorMessage.value);
+							stop(Messages.DocboxArztArztAction_SendDocumentFailed + "\n" + errorMessage.value);
 							return;
 						}
 						done = true;
@@ -316,16 +304,15 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 					}
 				});
 				thread.start();
-				while (!done
-					&& (UiDesk.getTopShell() == null || !UiDesk.getTopShell().isDisposed())) {
+				while (!done && (UiDesk.getTopShell() == null || !UiDesk.getTopShell().isDisposed())) {
 					if (!UiDesk.getDisplay().readAndDispatch())
 						UiDesk.getDisplay().sleep();
 				}
 			}
-			
+
 		};
 		BusyIndicator.showWhile(UiDesk.getDisplay(), longJob);
-		
+
 		if (success != null && success.value != null && !success.value.booleanValue()) {
 			MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(), SWT.ICON_ERROR);
 			box.setText(Messages.UserDocboxPreferences_ConnectionTestWithDocbox);
@@ -336,10 +323,9 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 			Activator.docboxBackgroundJob.schedule();
 		}
 	}
-	
-	private byte[] getClincicalDocumentSerialized(ClinicalDocumentType cda){
-		final String xml =
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type='text/xsl' href='./Terminvereinbarung.xsl'?>\n"
+
+	private byte[] getClincicalDocumentSerialized(ClinicalDocumentType cda) {
+		final String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type='text/xsl' href='./Terminvereinbarung.xsl'?>\n"
 				+ docboxCDA.marshallIntoString(cda.getClinicalDocument());
 		try {
 			return xml.getBytes("UTF8");
@@ -348,27 +334,26 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 		}
 		return null;
 	}
-	
+
 	// FIXME FOP xml-api library crashes as eclipse plugin
 	// http://www.mail-archive.com/fop-users@xmlgraphics.apache.org/msg12100.html
-	private ByteArrayOutputStream getArztArztPdf(byte[] xmlData){
+	private ByteArrayOutputStream getArztArztPdf(byte[] xmlData) {
 		if (xmlData == null) {
 			return null;
 		}
 		ByteArrayOutputStream pdfOut = new ByteArrayOutputStream();
-		
+
 		BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
-		ServiceReference<IFormattedOutputFactory> fopFactoryRef =
-			bundleContext.getServiceReference(IFormattedOutputFactory.class);
+		ServiceReference<IFormattedOutputFactory> fopFactoryRef = bundleContext
+				.getServiceReference(IFormattedOutputFactory.class);
 		if (fopFactoryRef != null) {
 			try {
 				IFormattedOutputFactory fopFactory = bundleContext.getService(fopFactoryRef);
-				
-				IFormattedOutput foOutputt = fopFactory
-					.getFormattedOutputImplementation(ObjectType.XMLSTREAM, OutputType.PDF);
+
+				IFormattedOutput foOutputt = fopFactory.getFormattedOutputImplementation(ObjectType.XMLSTREAM,
+						OutputType.PDF);
 				ByteArrayInputStream stream = new ByteArrayInputStream(xmlData);
-				URL xsl = CDACHServices_Service.class
-					.getResource("/rsc/ch/docbox/ws/cdachservices/ArztArzt.xsl");
+				URL xsl = CDACHServices_Service.class.getResource("/rsc/ch/docbox/ws/cdachservices/ArztArzt.xsl");
 				foOutputt.transform(stream, xsl.openStream(), pdfOut);
 			} catch (IllegalStateException e) {
 				ExHandler.handle(e);
@@ -377,59 +362,54 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 			}
 			bundleContext.ungetService(fopFactoryRef);
 		}
-		
+
 		return pdfOut;
 	}
-	
-	private ClinicalDocumentType getArztArztCda(Fall fall, String title, String message,
-		String filename, String[] attachments){
-		
+
+	private ClinicalDocumentType getArztArztCda(Fall fall, String title, String message, String filename,
+			String[] attachments) {
+
 		try {
 			addVersicherung(fall, docboxCDA);
 		} catch (Exception e) {
 			ExHandler.handle(e);
 		}
-		
+
 		Date birthday = null;
 		if (!"".equals(patient.getGeburtsdatum())) {
 			TimeTool ttBirthday = new TimeTool(patient.getGeburtsdatum());
 			birthday = ttBirthday.getTime();
 		}
-		POCDMT000040RecordTarget recordTarget =
-			docboxCDA.getRecordTarget(patient.getPatCode(), null, patient.getAnschrift()
-				.getStrasse(), patient.getAnschrift().getPlz(), patient.getAnschrift().getOrt(),
+		POCDMT000040RecordTarget recordTarget = docboxCDA.getRecordTarget(patient.getPatCode(), null,
+				patient.getAnschrift().getStrasse(), patient.getAnschrift().getPlz(), patient.getAnschrift().getOrt(),
 				patient.get(Person.FLD_PHONE1), patient.get(Person.FLD_PHONE2), patient.getNatel(),
-				patient.getMailAddress(), patient.getVorname(), patient.getName(), "w"
-					.equals(patient.getGeschlecht()), "m".equals(patient.getGeschlecht()), false,
-				birthday);
-		
-		POCDMT000040Author author =
-			docboxCDA.getAuthor(CoreHub.actMandant.get(Person.TITLE),
-				CoreHub.actMandant.getVorname(), CoreHub.actMandant.getName(),
-				CoreHub.actMandant.getNatel(), null, null, CoreHub.actMandant.getMailAddress(),
-				null, null, null);
-		
-		POCDMT000040Custodian custodian =
-			docboxCDA.getCustodian("", docboxCDA.getAddress(CoreHub.actMandant.getAnschrift()
-				.getStrasse(), null, CoreHub.actMandant.getAnschrift().getPlz(), CoreHub.actMandant
-				.getAnschrift().getOrt(), "WP"), null, null, null, null);
-		
+				patient.getMailAddress(), patient.getVorname(), patient.getName(), "w".equals(patient.getGeschlecht()),
+				"m".equals(patient.getGeschlecht()), false, birthday);
+
+		POCDMT000040Author author = docboxCDA.getAuthor(CoreHub.actMandant.get(Person.TITLE),
+				CoreHub.actMandant.getVorname(), CoreHub.actMandant.getName(), CoreHub.actMandant.getNatel(), null,
+				null, CoreHub.actMandant.getMailAddress(), null, null, null);
+
+		POCDMT000040Custodian custodian = docboxCDA.getCustodian("",
+				docboxCDA.getAddress(CoreHub.actMandant.getAnschrift().getStrasse(), null,
+						CoreHub.actMandant.getAnschrift().getPlz(), CoreHub.actMandant.getAnschrift().getOrt(), "WP"),
+				null, null, null, null);
+
 		POCDMT000040InformationRecipient informationRecipient = null;
 		if (kontakt != null) {
 			String organization = kontakt.get(Kontakt.FLD_NAME3);
 			if (kontakt.get(Kontakt.FLD_IS_USER).equals(StringConstants.ONE)) {
 				organization = "";
 			}
-			informationRecipient =
-				docboxCDA.getInformationRecipient(kontakt.get(Person.TITLE), kontakt
-					.get(Kontakt.FLD_NAME2), kontakt.get(Kontakt.FLD_NAME1), DocboxContact
-					.getDocboxIdFor(kontakt), docboxCDA.getOrganization(organization, null, null,
-					null, kontakt.getAnschrift().getStrasse(), kontakt.getAnschrift().getPlz(),
-					kontakt.getAnschrift().getOrt()));
+			informationRecipient = docboxCDA.getInformationRecipient(kontakt.get(Person.TITLE),
+					kontakt.get(Kontakt.FLD_NAME2), kontakt.get(Kontakt.FLD_NAME1),
+					DocboxContact.getDocboxIdFor(kontakt),
+					docboxCDA.getOrganization(organization, null, null, null, kontakt.getAnschrift().getStrasse(),
+							kontakt.getAnschrift().getPlz(), kontakt.getAnschrift().getOrt()));
 		}
-		
+
 		docboxCDA.addComponentToBody("Notiz", message, "NOTIZ");
-		
+
 		Vector<String> attachmentsCda = new Vector<String>();
 		attachmentsCda.add(filename);
 		if (attachments != null) {
@@ -438,27 +418,24 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 			}
 		}
 		docboxCDA.addAttachmentsDescriptionToBody(attachmentsCda);
-		
+
 		ClinicalDocumentType _addReferral_document = new ClinicalDocumentType();
-		_addReferral_document.setClinicalDocument(docboxCDA.getClinicalDocument(title,
-			recordTarget, author, custodian, informationRecipient, docboxCDA.getCodeReferral(),
-			null, DocboxCDA.DOCBOXCDATYPE.Docbox_Arzt_Arzt));
-		
+		_addReferral_document.setClinicalDocument(docboxCDA.getClinicalDocument(title, recordTarget, author, custodian,
+				informationRecipient, docboxCDA.getCodeReferral(), null, DocboxCDA.DOCBOXCDATYPE.Docbox_Arzt_Arzt));
+
 		return _addReferral_document;
 	}
-	
-	private void addVersicherung(Fall fall, DocboxCDA docboxCDA){
+
+	private void addVersicherung(Fall fall, DocboxCDA docboxCDA) {
 		if (fall != null) {
 			if ("UVG".equals(fall.getAbrechnungsSystem())) {
 				try {
-					docboxCDA.addUnfallversicherung(fall.getCostBearer()
-						.getLabel());
+					docboxCDA.addUnfallversicherung(fall.getCostBearer().getLabel());
 				} catch (Exception e) {
 					ExHandler.handle(e);
 				}
 				try {
-					docboxCDA.addUnfallversicherungPolicenummer(fall
-						.getRequiredString("Unfallnummer"));
+					docboxCDA.addUnfallversicherungPolicenummer(fall.getRequiredString("Unfallnummer"));
 				} catch (Exception e) {
 					ExHandler.handle(e);
 				}
@@ -470,14 +447,13 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 					ExHandler.handle(e);
 				}
 				try {
-					docboxCDA.addKrankenkassePolicenummer(fall
-						.getRequiredString("Versicherungsnummer"));
+					docboxCDA.addKrankenkassePolicenummer(fall.getRequiredString("Versicherungsnummer"));
 				} catch (Exception e) {
 					ExHandler.handle(e);
 				}
 			}
-			
+
 		}
 	}
-	
+
 }

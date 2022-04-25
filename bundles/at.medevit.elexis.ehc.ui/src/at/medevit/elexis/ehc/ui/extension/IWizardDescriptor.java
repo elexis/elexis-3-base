@@ -16,22 +16,22 @@ import org.eclipse.jface.wizard.Wizard;
 public interface IWizardDescriptor {
 	/**
 	 * Return the label for this wizard.
-	 * 
+	 *
 	 * @return the label for this wizard
 	 */
 	String getLabel();
-	
+
 	/**
 	 * Create a wizard.
-	 * 
+	 *
 	 * @return the wizard
 	 * @throws CoreException
 	 */
 	Wizard createWizard() throws CoreException;
-	
+
 	/**
 	 * Return the category id for this wizard.
-	 * 
+	 *
 	 * @return the category or <code>null</code>
 	 */
 	String getCategoryId();

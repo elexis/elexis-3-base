@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -33,8 +33,8 @@ import ch.elexis.data.Patient;
 
 public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallback {
 	IPlannable[] liste;
-	
-	public TerminListeDruckenDialog(Shell shell, IPlannable[] liste){
+
+	public TerminListeDruckenDialog(Shell shell, IPlannable[] liste) {
 		super(shell);
 		this.liste = liste;
 		// use first appointment for day and section reference
@@ -43,9 +43,9 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 			ElexisEventDispatcher.fireSelectionEvent(termin);
 		}
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new FillLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -55,9 +55,7 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 		text.getPlugin().showToolbar(false);
 		text.createFromTemplateName(null, TT_AGENDA_LIST, Brief.UNKNOWN, CoreHub.getLoggedInContact(), "Agenda");
 		String[][] termine = new String[liste.length + 1][5];
-		termine[0] = new String[] {
-			"von", "bis", "Typ", "Name", "Grund"
-		};
+		termine[0] = new String[] { "von", "bis", "Typ", "Name", "Grund" };
 		for (int i = 1; i < liste.length; i++) {
 			termine[i][0] = Plannables.getStartTimeAsString(liste[i - 1]);
 			termine[i][1] = Plannables.getEndTimeAsString(liste[i - 1]);
@@ -70,32 +68,31 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 			termine[i][3] = liste[i - 1].getTitle() + patCode;
 			termine[i][4] = liste[i - 1].getReason();
 		}
-		
+
 		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
-		text.getPlugin().insertTable("[Termine]", 0, termine, new int[] {
-			15, 15, 20, 50, 20
-		});
+		text.getPlugin().insertTable("[Termine]", 0, termine, new int[] { 15, 15, 20, 50, 20 });
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		setMessage("Terminliste ausdrucken");
 		setTitle("Terminliste");
 		getShell().setText("Agenda");
 		getShell().setSize(800, 700);
-		
+
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		super.okPressed();
 	}
-	
-	public void save(){}
-	
-	public boolean saveAs(){
+
+	public void save() {
+	}
+
+	public boolean saveAs() {
 		return false;
 	}
 }

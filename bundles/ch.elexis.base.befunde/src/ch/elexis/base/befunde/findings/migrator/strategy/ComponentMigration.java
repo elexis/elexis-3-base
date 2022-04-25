@@ -18,22 +18,21 @@ import ch.elexis.core.findings.util.ModelUtil;
 import ch.elexis.data.Patient;
 
 public class ComponentMigration extends AbstractMigrationStrategy implements IMigrationStrategy {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(ComponentMigration.class);
-	
+
 	private MesswertFieldMapping mapping;
 	private Messwert messwert;
 	private List<IObservation> createdObservations;
-	
+
 	private String componentGrpCode;
 	private String componentCode;
-	
-	public ComponentMigration(MesswertFieldMapping mapping, Messwert messwert,
-		List<IObservation> createdObservations){
+
+	public ComponentMigration(MesswertFieldMapping mapping, Messwert messwert, List<IObservation> createdObservations) {
 		this.mapping = mapping;
 		this.messwert = messwert;
 		this.createdObservations = createdObservations;
-		
+
 		// determine if component code
 		String code = mapping.getFindingsCode();
 		String[] parts = code.split("\\.");
@@ -45,9 +44,9 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 			componentCode = null;
 		}
 	}
-	
+
 	@Override
-	public Optional<IObservation> migrate(){
+	public Optional<IObservation> migrate() {
 		IObservation observation = getOrCreateObservation();
 		if (observation != null) {
 			boolean valueSet = false;
@@ -55,8 +54,8 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 			if (componentCode != null) {
 				List<ObservationComponent> components = observation.getComponents();
 				for (ObservationComponent observationComponent : components) {
-					if (ModelUtil.isCodeInList(CodingSystem.ELEXIS_LOCAL_CODESYSTEM.getSystem(),
-						componentCode, observationComponent.getCoding())) {
+					if (ModelUtil.isCodeInList(CodingSystem.ELEXIS_LOCAL_CODESYSTEM.getSystem(), componentCode,
+							observationComponent.getCoding())) {
 						valueSet = setValue(observationComponent);
 						observation.updateComponent(observationComponent);
 						break;
@@ -71,11 +70,11 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 		}
 		return Optional.empty();
 	}
-	
-	private boolean setValues(IObservation observation){
+
+	private boolean setValues(IObservation observation) {
 		List<ObservationComponent> components = observation.getComponents();
 		ObservationType type = getComponentsType(components);
-		if(type != null) {
+		if (type != null) {
 			if (type == ObservationType.NUMERIC) {
 				int valuesSet = 0;
 				String result = messwert.getResult(mapping.getLocalBefundField());
@@ -83,8 +82,7 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 				for (int i = 0; i < components.size(); i++) {
 					if (i < values.size()) {
 						ObservationComponent component = components.get(i);
-						ObservationType componentType =
-							component.getTypeFromExtension(ObservationType.class);
+						ObservationType componentType = component.getTypeFromExtension(ObservationType.class);
 						if (componentType == ObservationType.NUMERIC) {
 							component.setNumericValue(values.get(i));
 							observation.updateComponent(component);
@@ -103,17 +101,15 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 					}
 					return true;
 				} else {
-					logger.error("Could only set " + valuesSet + " of " + values.size()
-						+ " values of Messwert [" + messwert.getId() + "]");
+					logger.error("Could only set " + valuesSet + " of " + values.size() + " values of Messwert ["
+							+ messwert.getId() + "]");
 					return false;
 				}
 			} else if (type == ObservationType.TEXT) {
-				String value =
-					TextMigration.getValue(messwert.getResult(mapping.getLocalBefundField()));
+				String value = TextMigration.getValue(messwert.getResult(mapping.getLocalBefundField()));
 				// set in the first available text component
 				for (ObservationComponent observationComponent : components) {
-					ObservationType componentType =
-						observationComponent.getTypeFromExtension(ObservationType.class);
+					ObservationType componentType = observationComponent.getTypeFromExtension(ObservationType.class);
 					if (componentType == ObservationType.TEXT) {
 						observationComponent.setStringValue(value);
 						return true;
@@ -123,15 +119,15 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Get the most likely {@link ObservationType} of the components. Currently first encountered
-	 * {@link ObservationType}.
-	 * 
+	 * Get the most likely {@link ObservationType} of the components. Currently
+	 * first encountered {@link ObservationType}.
+	 *
 	 * @param components
 	 * @return
 	 */
-	private ObservationType getComponentsType(List<ObservationComponent> components){
+	private ObservationType getComponentsType(List<ObservationComponent> components) {
 		for (ObservationComponent observationComponent : components) {
 			ObservationType type = observationComponent.getTypeFromExtension(ObservationType.class);
 			if (type != null) {
@@ -140,34 +136,32 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 		}
 		return null;
 	}
-	
-	private boolean setValue(ObservationComponent observationComponent){
+
+	private boolean setValue(ObservationComponent observationComponent) {
 		ObservationType type = observationComponent.getTypeFromExtension(ObservationType.class);
 		if (type == ObservationType.NUMERIC) {
-			BigDecimal value =
-				NumericMigration.getValue(messwert.getResult(mapping.getLocalBefundField()));
+			BigDecimal value = NumericMigration.getValue(messwert.getResult(mapping.getLocalBefundField()));
 			observationComponent.setNumericValue(value);
 			return true;
 		} else if (type == ObservationType.TEXT) {
-			String value =
-				TextMigration.getValue(messwert.getResult(mapping.getLocalBefundField()));
+			String value = TextMigration.getValue(messwert.getResult(mapping.getLocalBefundField()));
 			observationComponent.setStringValue(value);
 			return true;
 		}
 		return false;
 	}
-	
-	private IObservation getOrCreateObservation(){
+
+	private IObservation getOrCreateObservation() {
 		// lookup already created group observation
 		for (IObservation iObservation : createdObservations) {
-			if (ModelUtil.isCodeInList(CodingSystem.ELEXIS_LOCAL_CODESYSTEM.getSystem(),
-				componentGrpCode, iObservation.getCoding())) {
+			if (ModelUtil.isCodeInList(CodingSystem.ELEXIS_LOCAL_CODESYSTEM.getSystem(), componentGrpCode,
+					iObservation.getCoding())) {
 				return iObservation;
 			}
 		}
 		try {
-			return (IObservation) templateService
-				.createFinding(Patient.load(messwert.get(Messwert.FLD_PATIENT_ID)), template);
+			return (IObservation) templateService.createFinding(Patient.load(messwert.get(Messwert.FLD_PATIENT_ID)),
+					template);
 		} catch (ElexisException e) {
 			logger.error("Error creating observation", e);
 		}

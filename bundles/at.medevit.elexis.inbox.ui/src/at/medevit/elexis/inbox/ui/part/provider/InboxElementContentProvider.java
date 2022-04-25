@@ -31,39 +31,39 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 
 public class InboxElementContentProvider implements ITreeContentProvider {
-	
+
 	HashMap<IPatient, PatientInboxElements> map;
 	private List<PatientInboxElements> items;
-	
-	public Object[] getElements(Object inputElement){
+
+	public Object[] getElements(Object inputElement) {
 		if (items != null) {
 			return items.toArray();
 		}
 		return Collections.emptyList().toArray();
 	}
-	
-	public Object[] getChildren(Object parentElement){
+
+	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof PatientInboxElements) {
 			return ((PatientInboxElements) parentElement).getElements().toArray();
 		} else {
 			return null;
 		}
 	}
-	
-	public boolean hasChildren(Object element){
+
+	public boolean hasChildren(Object element) {
 		return (element instanceof PatientInboxElements);
 	}
-	
-	public Object[] getParent(Object element){
+
+	public Object[] getParent(Object element) {
 		return null;
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		// nothing to do
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput instanceof List<?>) {
 			List<IInboxElement> input = (List<IInboxElement>) newInput;
 			// refresh map and list
@@ -74,7 +74,7 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 			});
 			Job job = new Job("Loading Inbox") {
 				@Override
-				protected IStatus run(IProgressMonitor monitor){
+				protected IStatus run(IProgressMonitor monitor) {
 					monitor.beginTask("Lade Inbox", input.size());
 					for (IInboxElement inboxElement : input) {
 						IPatient patient = inboxElement.getPatient();
@@ -92,13 +92,13 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 					});
 					return Status.OK_STATUS;
 				}
-				
+
 			};
 			job.schedule();
 		}
 	}
-	
-	public void refreshElement(IInboxElement inboxElement){
+
+	public void refreshElement(IInboxElement inboxElement) {
 		IPatient patient = inboxElement.getPatient();
 		PatientInboxElements patientInboxElement = map.get(patient);
 		// remove seen and add unseen
@@ -107,8 +107,7 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 			if (inboxElement.getState() == State.SEEN) {
 				patientInboxElement.removeElement(inboxElement);
 			} else {
-				IMandator activeMandant =
-					ContextServiceHolder.get().getActiveMandator().orElse(null);
+				IMandator activeMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 				if (inboxElement.getMandator().equals(activeMandant)) {
 					patientInboxElement.addElement(inboxElement);
 				} else {
@@ -124,21 +123,21 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 			addItem(patientInboxElement);
 		}
 	}
-	
-	private void addItem(PatientInboxElements patientInboxElement){
+
+	private void addItem(PatientInboxElements patientInboxElement) {
 		if (items == null) {
 			items = new ArrayList<>();
 		}
 		items.add(patientInboxElement);
 	}
-	
-	private void removeItem(PatientInboxElements patientInboxElement){
+
+	private void removeItem(PatientInboxElements patientInboxElement) {
 		if (items != null) {
 			items.remove(patientInboxElement);
 		}
 	}
-	
-	public void refreshElement(PatientInboxElements patientInbox){
+
+	public void refreshElement(PatientInboxElements patientInbox) {
 		if (patientInbox.getElements().isEmpty()) {
 			removeItem(patientInbox);
 		} else {

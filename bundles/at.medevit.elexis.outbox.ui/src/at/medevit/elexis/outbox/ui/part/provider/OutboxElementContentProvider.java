@@ -18,39 +18,39 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 
 public class OutboxElementContentProvider implements ITreeContentProvider {
-	
+
 	HashMap<IPatient, PatientOutboxElements> map = new HashMap<IPatient, PatientOutboxElements>();
 	private ArrayList<PatientOutboxElements> items;
-	
-	public Object[] getElements(Object inputElement){
+
+	public Object[] getElements(Object inputElement) {
 		if (items != null) {
 			return items.toArray();
 		}
 		return Collections.emptyList().toArray();
 	}
-	
-	public Object[] getChildren(Object parentElement){
+
+	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof PatientOutboxElements) {
 			return ((PatientOutboxElements) parentElement).getElements().toArray();
 		} else {
 			return null;
 		}
 	}
-	
-	public boolean hasChildren(Object element){
+
+	public boolean hasChildren(Object element) {
 		return (element instanceof PatientOutboxElements);
 	}
-	
-	public Object[] getParent(Object element){
+
+	public Object[] getParent(Object element) {
 		return null;
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		// nothing to do
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput instanceof List<?>) {
 			List<IOutboxElement> input = (List<IOutboxElement>) newInput;
 			// refresh map and list
@@ -74,8 +74,8 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 			items = new ArrayList<>(map.values());
 		}
 	}
-	
-	public void refreshElement(IOutboxElement outboxElement){
+
+	public void refreshElement(IOutboxElement outboxElement) {
 		IPatient patient = outboxElement.getPatient();
 		PatientOutboxElements patientOutboxElements = map.get(patient);
 		// remove seen and add unseen
@@ -93,8 +93,8 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 			patientOutboxElements.addElement(outboxElement);
 		}
 	}
-	
-	public void refreshElement(PatientOutboxElements patientOutboxElements){
+
+	public void refreshElement(PatientOutboxElements patientOutboxElements) {
 		if (patientOutboxElements.getElements().isEmpty()) {
 			items.remove(patientOutboxElements);
 		} else {
@@ -105,8 +105,8 @@ public class OutboxElementContentProvider implements ITreeContentProvider {
 			}
 		}
 	}
-	
-	public PatientOutboxElements getPatientOutboxElements(Object selectedObj){
+
+	public PatientOutboxElements getPatientOutboxElements(Object selectedObj) {
 		if (selectedObj instanceof IOutboxElement) {
 			return map.get(((IOutboxElement) selectedObj).getPatient());
 		} else if (selectedObj instanceof PatientOutboxElements) {

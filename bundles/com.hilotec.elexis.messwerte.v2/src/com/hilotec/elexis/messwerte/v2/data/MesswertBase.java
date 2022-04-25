@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
+ *    A. Kaufmann - initial implementation
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data;
@@ -47,20 +47,20 @@ import com.hilotec.elexis.messwerte.v2.data.typen.MesswertTypStr;
 
 /**
  * Abstrakte Basisklasse fuer die einzelnen Messwerttypen
- * 
+ *
  * @author Antoine Kaufmann
  */
 public abstract class MesswertBase {
-	
+
 	public static String ICON_TRANSPARENT = "transparent.png"; //$NON-NLS-1$
 	protected static String ICON_RED = "pin_red.png"; //$NON-NLS-1$
 	protected static String ICON_YELLOW = "pin_yellow.png"; //$NON-NLS-1$
 	protected static String ICON_GREEN = "pin_green.png"; //$NON-NLS-1$
 	protected static String ICON_BLUE = "pin_blue.png"; //$NON-NLS-1$
 	protected static String ICON_BLACK = "pin_black.png"; //$NON-NLS-1$
-	
+
 	protected final Log log = Log.get("Messwerte"); //$NON-NLS-1$
-	
+
 	private final String name;
 	private final String title;
 	private final String unit;
@@ -70,93 +70,93 @@ public abstract class MesswertBase {
 	private String size;
 	private boolean isShown = false;
 	protected Widget widget;
-	
+
 	private Boolean alerts = false;
-	
+
 	private Double highAlert = Double.MAX_VALUE;
 	private Double highWarning = Double.MAX_VALUE;
 	private Double lowWarning = Double.MIN_VALUE;
 	private Double lowAlert = Double.MIN_VALUE;
-	
+
 	public final static int SEVERITY_LEVEL_UNDEFINED = Integer.MAX_VALUE;
 	public final static int SEVERITY_LEVEL_LOW_ALERT = -2;
 	public final static int SEVERITY_LEVEL_LOW_WARNING = -1;
 	public final static int SEVERITY_LEVEL_NORMAL = 0;
 	public final static int SEVERITY_LEVEL_HIGH_WARNING = 1;
 	public final static int SEVERITY_LEVEL_HIGH_ALERT = 2;
-	
+
 	/**
 	 * Eigentlicher Code der Formel
 	 */
 	protected String formula;
-	
+
 	/**
 	 * Interpreter, der benutzt werden soll, um die
 	 */
 	protected String interpreter;
-	
+
 	/**
 	 * Liste mit den Variablen die fuer die Formel gesetzt werden sollen
 	 */
 	protected final ArrayList<CalcVar> variables = new ArrayList<CalcVar>();
-	
-	public MesswertBase(String n, String t, String u){
+
+	public MesswertBase(String n, String t, String u) {
 		name = n;
 		title = t;
 		unit = u;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return name;
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return title;
 	}
-	
-	public String getUnit(){
+
+	public String getUnit() {
 		return unit;
 	}
-	
-	public boolean isEditable(){
+
+	public boolean isEditable() {
 		return editable;
 	}
-	
-	public void setEditable(boolean editable){
+
+	public void setEditable(boolean editable) {
 		this.editable = editable;
 	}
-	
-	public String getValidpattern(){
+
+	public String getValidpattern() {
 		return validpattern;
 	}
-	
-	public void setValidpattern(String validpattern){
+
+	public void setValidpattern(String validpattern) {
 		this.validpattern = validpattern;
 	}
-	
-	public String getInvalidmessage(){
+
+	public String getInvalidmessage() {
 		return invalidmessage;
 	}
-	
-	public void setInvalidmessage(String invalidmessage){
+
+	public void setInvalidmessage(String invalidmessage) {
 		this.invalidmessage = invalidmessage;
 	}
-	
-	public String getSize(){
+
+	public String getSize() {
 		return size;
 	}
-	
-	public void setSize(String size){
+
+	public void setSize(String size) {
 		this.size = size;
 	}
-	
-	public void saveInput(Messwert messwert){}
-	
-	public boolean checkInput(Messwert messwert, String pattern){
+
+	public void saveInput(Messwert messwert) {
+	}
+
+	public boolean checkInput(Messwert messwert, String pattern) {
 		IMesswertTyp typ = messwert.getTyp();
 		if (typ.isAlertEnabled()) {
-			String path =
-				PlatformHelper.getBasePath("com.hilotec.elexis.messwerte.v2") + File.separator //$NON-NLS-1$
+			String path = PlatformHelper.getBasePath("com.hilotec.elexis.messwerte.v2") + File.separator //$NON-NLS-1$
 					+ "rsc" + File.separator; //$NON-NLS-1$
 			Label lab = messwert.getIconLabel();
 			Image image = null;
@@ -182,37 +182,34 @@ public abstract class MesswertBase {
 			}
 			if (image != null)
 				lab.setImage(image);
-			
+
 		}
 		return true;
 	}
-	
-	public String getActualValue(){
+
+	public String getActualValue() {
 		return ""; //$NON-NLS-1$
 	}
-	
-	public boolean isShown(){
+
+	public boolean isShown() {
 		return isShown;
 	}
-	
-	public void setShown(boolean isShown){
+
+	public void setShown(boolean isShown) {
 		this.isShown = isShown;
 	}
-	
+
 	/**
-	 * Kontext des Interpreters vorbereiten um die Formel auswerten zu koennen. Dabei werden die
-	 * Variablen importiert.
-	 * 
+	 * Kontext des Interpreters vorbereiten um die Formel auswerten zu koennen.
+	 * Dabei werden die Variablen importiert.
+	 *
 	 * TODO: Ist noch Beanshell-spezifisch
-	 * 
-	 * @param interpreter
-	 *            Interpreter
-	 * @param messung
-	 *            Messung in der die Formel ausgewertet werden soll
+	 *
+	 * @param interpreter Interpreter
+	 * @param messung     Messung in der die Formel ausgewertet werden soll
 	 * @throws EvalError
 	 */
-	protected void interpreterSetzeKontext(Interpreter interpreter, Messung messung)
-		throws ElexisException{
+	protected void interpreterSetzeKontext(Interpreter interpreter, Messung messung) throws ElexisException {
 		for (CalcVar cv : variables) {
 			Object wert = holeVariable(messung, cv.getName(), cv.getSource());
 			if (wert != null) {
@@ -226,22 +223,21 @@ public abstract class MesswertBase {
 		interpreter.setValue("actUser", CoreHub.getLoggedInContact()); //$NON-NLS-1$
 		interpreter.setValue("Elexis", Hub.plugin); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Wert einer Variable fuer die Formel bestimmen
-	 * 
-	 * @param messung
-	 *            Messung in der die Formel ausgewertet werten soll
-	 * @param name
-	 *            Name der Variable. Kann mit . getrennt sein, wenn sich links vom Punkt jeweils ein
-	 *            Data-Feld befindet, dabei bezieht sich der Teil rechts vom Punkt auf das Feld in
-	 *            dem referenzierten Objekt.
-	 * @param source
-	 *            Quelle der Variable
-	 * 
-	 * @return Wert der dem Interpreter uebergeben werden soll. Haengt vom typ der Variable ab.
+	 *
+	 * @param messung Messung in der die Formel ausgewertet werten soll
+	 * @param name    Name der Variable. Kann mit . getrennt sein, wenn sich links
+	 *                vom Punkt jeweils ein Data-Feld befindet, dabei bezieht sich
+	 *                der Teil rechts vom Punkt auf das Feld in dem referenzierten
+	 *                Objekt.
+	 * @param source  Quelle der Variable
+	 *
+	 * @return Wert der dem Interpreter uebergeben werden soll. Haengt vom typ der
+	 *         Variable ab.
 	 */
-	protected Object holeVariable(Messung messung, String name, String source){
+	protected Object holeVariable(Messung messung, String name, String source) {
 		if (messung == null) {
 			return "messung?"; //$NON-NLS-1$
 		}
@@ -251,7 +247,7 @@ public abstract class MesswertBase {
 		String[] parts = source.split("\\."); //$NON-NLS-1$
 		Messwert messwert = messung.getMesswert(parts[0]);
 		IMesswertTyp typ = messwert.getTyp();
-		
+
 		if (parts.length == 1) {
 			if (typ instanceof MesswertTypNum) {
 				if (typ.isShown()) {
@@ -299,25 +295,25 @@ public abstract class MesswertBase {
 				// return tt.get(TimeTool.YEAR) * 365 + tt.get(TimeTool.DAY_OF_YEAR);
 				// }
 			} else if (typ instanceof MesswertTypData) {
-				log.log(MessageFormat.format(Messages.MesswertBase_Failure1, name,
-					Messages.MesswertBase_DataField), Log.ERRORS);
+				log.log(MessageFormat.format(Messages.MesswertBase_Failure1, name, Messages.MesswertBase_DataField),
+						Log.ERRORS);
 				return null;
 			}
 		}
-		
+
 		if (!(typ instanceof MesswertTypData)) {
-			log.log(MessageFormat.format(Messages.MesswertBase_Failure1, name,
-				Messages.MesswertBase_NoData), Log.ERRORS);
+			log.log(MessageFormat.format(Messages.MesswertBase_Failure1, name, Messages.MesswertBase_NoData),
+					Log.ERRORS);
 			return null;
 		}
 		MesswertTypData t = (MesswertTypData) typ;
 		Messung dm = t.getMessung(messwert);
 		return holeVariable(dm, name + "." + parts[0], source.substring(source.indexOf(".") + 1)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Interne Klasse die eine Variable fuer die Formel darstellt(nur deklaration).
-	 * 
+	 *
 	 * @author Antoine Kaufmann
 	 */
 	private class CalcVar {
@@ -325,56 +321,52 @@ public abstract class MesswertBase {
 		 * Name der Variable
 		 */
 		private final String name;
-		
+
 		/**
 		 * Quelle der Variable(meist Feldname in der Messung)
 		 */
 		private final String source;
-		
-		CalcVar(String n, String s){
+
+		CalcVar(String n, String s) {
 			name = n;
 			source = s;
 		}
-		
-		String getName(){
+
+		String getName() {
 			return name;
 		}
-		
-		String getSource(){
+
+		String getSource() {
 			return source;
 		}
 	}
-	
+
 	/**
 	 * Neue Variable hinzufuegen
-	 * 
-	 * @param name
-	 *            Name der Variable
-	 * @param source
-	 *            Quelle fuer den Variableninhalt
+	 *
+	 * @param name   Name der Variable
+	 * @param source Quelle fuer den Variableninhalt
 	 */
-	public void addVariable(String name, String source){
+	public void addVariable(String name, String source) {
 		variables.add(new CalcVar(name, source));
 	}
-	
+
 	/**
 	 * Formel, die berechnet werden soll, setzen.
-	 * 
-	 * @param f
-	 *            Formel
-	 * @param i
-	 *            Interpreter fuer die Formel
+	 *
+	 * @param f Formel
+	 * @param i Interpreter fuer die Formel
 	 */
-	public void setFormula(String f, String i){
+	public void setFormula(String f, String i) {
 		formula = f;
 		interpreter = i;
 	}
-	
-	public String evalateFormula(String formula, Messwert messwert){
+
+	public String evalateFormula(String formula, Messwert messwert) {
 		return evalateFormula(formula, messwert, ""); //$NON-NLS-1$
 	}
-	
-	public String evalateFormula(String formula, Messwert messwert, String defaultValue){
+
+	public String evalateFormula(String formula, Messwert messwert, String defaultValue) {
 		try {
 			Interpreter interpreter = Script.getInterpreterFor(formula);
 			Messung messung = null;
@@ -387,56 +379,58 @@ public abstract class MesswertBase {
 			return String.valueOf(wert);
 		} catch (ElexisException e) {
 			e.printStackTrace();
-			String message =
-				MessageFormat
-					.format(Messages.MesswertBase_Failure2, formula.trim(), e.getMessage());
+			String message = MessageFormat.format(Messages.MesswertBase_Failure2, formula.trim(), e.getMessage());
 			log.log(message, Log.ERRORS);
 			if (System.getProperty("com.hilotec.unitests") == null
-				|| !System.getProperty("com.hilotec.unitests").equals("1"))
+					|| !System.getProperty("com.hilotec.unitests").equals("1"))
 				SWTHelper.showError(Messages.DataAccessor_Title, message);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		return defaultValue;
 	}
-	
-	public void setLowAlertValue(String value){
+
+	public void setLowAlertValue(String value) {
 		alerts = true;
 		lowAlert = Double.MIN_VALUE;
 		try {
 			lowAlert = Double.parseDouble(value);
-		} finally {}
+		} finally {
+		}
 	}
-	
-	public void setLowWarningValue(String value){
+
+	public void setLowWarningValue(String value) {
 		alerts = true;
 		lowWarning = Double.MIN_VALUE;
 		try {
 			lowWarning = Double.parseDouble(value);
-		} finally {}
+		} finally {
+		}
 	}
-	
-	public void setHighAlertValue(String value){
+
+	public void setHighAlertValue(String value) {
 		alerts = true;
 		highAlert = Double.MAX_VALUE;
 		try {
 			highAlert = Double.parseDouble(value);
-		} finally {}
+		} finally {
+		}
 	}
-	
-	public void setHighWarningValue(String value){
+
+	public void setHighWarningValue(String value) {
 		alerts = true;
 		highWarning = Double.MAX_VALUE;
 		try {
 			highWarning = Double.parseDouble(value);
-		} finally {}
+		} finally {
+		}
 	}
-	
-	public Boolean isAlertEnabled(){
+
+	public Boolean isAlertEnabled() {
 		return alerts;
 	}
-	
-	public int getSeverityLevel(Widget widget){
+
+	public int getSeverityLevel(Widget widget) {
 		int retVal = SEVERITY_LEVEL_UNDEFINED;
 		try {
 			String strValue = ((Text) widget).getText();
@@ -451,10 +445,11 @@ public abstract class MesswertBase {
 			} else if (value < lowWarning) {
 				retVal = SEVERITY_LEVEL_LOW_WARNING;
 			}
-			
-		} catch (Exception e) {}
-		
+
+		} catch (Exception e) {
+		}
+
 		return retVal;
 	}
-	
+
 }

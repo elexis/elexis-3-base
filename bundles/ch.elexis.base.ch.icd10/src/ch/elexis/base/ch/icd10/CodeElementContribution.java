@@ -13,31 +13,30 @@ import ch.elexis.core.services.ICodeElementServiceContribution;
 
 @Component
 public class CodeElementContribution implements ICodeElementServiceContribution {
-	
+
 	@Override
-	public String getSystem(){
+	public String getSystem() {
 		return Icd10Diagnosis.CODESYSTEM_NAME;
 	}
-	
+
 	@Override
-	public CodeElementTyp getTyp(){
+	public CodeElementTyp getTyp() {
 		return CodeElementTyp.DIAGNOSE;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context){
+	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
 		return (Optional<ICodeElement>) (Optional<?>) ModelUtil.loadDiagnosisWithCode(code);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ICodeElement> getElements(Map<Object, Object> context){
-		if (context.get(ContextKeys.TREE_ROOTS) != null
-			&& context.get(ContextKeys.TREE_ROOTS).equals(Boolean.TRUE)) {
+	public List<ICodeElement> getElements(Map<Object, Object> context) {
+		if (context.get(ContextKeys.TREE_ROOTS) != null && context.get(ContextKeys.TREE_ROOTS).equals(Boolean.TRUE)) {
 			return (List<ICodeElement>) (List<?>) ModelUtil.loadDiagnosisWithParent("NIL");
 		}
 		return (List<ICodeElement>) (List<?>) ModelUtil.loadAllDiagnosis();
 	}
-	
+
 }

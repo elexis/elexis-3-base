@@ -21,9 +21,9 @@ import ch.unibe.iam.scg.archie.model.RegexValidation;
 
 /**
  * Tests RegexValidation class.
- * 
+ *
  * $Id: RegexValidationTest.java 702 2008-12-23 11:20:40Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 702 $
@@ -62,7 +62,7 @@ public class RegexValidationTest {
 	/**
 	 * Static method for JUnit 4 test classes to make them accessible to a
 	 * TestRunner designed to work with earlier versions of JUnit.
-	 * 
+	 *
 	 * @return A Test that can be used in test suites.
 	 */
 	public static junit.framework.Test suite() {

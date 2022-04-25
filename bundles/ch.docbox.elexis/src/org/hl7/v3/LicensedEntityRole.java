@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for LicensedEntityRole.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="LicensedEntityRole">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -20,20 +21,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "LicensedEntityRole")
 @XmlEnum
 public enum LicensedEntityRole {
-	
+
 	LIC, NOT, PROV;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static LicensedEntityRole fromValue(String v){
+
+	public static LicensedEntityRole fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

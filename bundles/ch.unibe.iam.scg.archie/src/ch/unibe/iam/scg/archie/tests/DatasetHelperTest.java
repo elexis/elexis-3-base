@@ -28,7 +28,7 @@ import ch.unibe.iam.scg.archie.utils.DatasetHelper;
  * <p>
  * Tests <code>DataSet</code>
  * </p>
- * 
+ *
  * <pre>
  * SampleDataSet:
  * ==============
@@ -43,9 +43,9 @@ import ch.unibe.iam.scg.archie.utils.DatasetHelper;
  * <p>
  * E.g getCell(2,1) == Meier (Matrix notation)
  * </p>
- * 
+ *
  * $Id: DatasetHelperTest.java 666 2008-12-13 00:07:54Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 666 $
@@ -122,11 +122,11 @@ public class DatasetHelperTest {
 
 		Assert.assertTrue(DatasetHelper.isNumericColumn(dataset, "Happyness"));
 	}
-	
+
 	/**
 	 * Static method for JUnit 4 test classes to make them accessible to a
 	 * TestRunner designed to work with earlier versions of JUnit.
-	 * 
+	 *
 	 * @return A Test that can be used in test suites.
 	 */
 	public static junit.framework.Test suite() {

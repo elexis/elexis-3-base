@@ -31,26 +31,26 @@ import ch.rgw.tools.ExHandler;
 
 /**
  * This is a processor that takes OpenOffice Documents as templates
- * 
+ *
  * @author gerry
- * 
+ *
  */
 public class OpenOfficeProcessor implements IProcessor {
 	private static final Logger log = LoggerFactory.getLogger(OpenOfficeProcessor.class);
 	ProcessingSchema proc;
-	
-	public String getName(){
+
+	public String getName() {
 		return "OpenOffice-Processor";
 	}
-	
+
 	@Override
-	public boolean doOutput(ProcessingSchema schema){
+	public boolean doOutput(ProcessingSchema schema) {
 		proc = schema;
 		File tmpl = schema.getTemplateFile();
 		if (!tmpl.exists()) {
 			log.warn("Template " + schema + " missing");
-			SWTHelper.alert("Template missing", MessageFormat
-				.format("Konnte Vorlagedatei {0} nicht öffnen", tmpl.getAbsolutePath()));
+			SWTHelper.alert("Template missing",
+					MessageFormat.format("Konnte Vorlagedatei {0} nicht öffnen", tmpl.getAbsolutePath()));
 			return false;
 		}
 		try {
@@ -71,8 +71,7 @@ public class OpenOfficeProcessor implements IProcessor {
 			}
 			zos.close();
 			zis.close();
-			String cmd =
-				CoreHub.localCfg.get(OOOProcessorPrefs.PREFERENCE_BRANCH + "cmd", "swriter.exe");
+			String cmd = CoreHub.localCfg.get(OOOProcessorPrefs.PREFERENCE_BRANCH + "cmd", "swriter.exe");
 			String param = CoreHub.localCfg.get(OOOProcessorPrefs.PREFERENCE_BRANCH + "param", "%");
 			int i = param.indexOf('%');
 			if (i != -1) {
@@ -84,18 +83,17 @@ public class OpenOfficeProcessor implements IProcessor {
 			for (i = 0; i < params_.length; i++) {
 				params[i + 1] = params_[i];
 			}
-			/* Process process = */ Runtime.getRuntime().exec(params);	
+			/* Process process = */ Runtime.getRuntime().exec(params);
 			return true;
 		} catch (Exception e) {
 			ExHandler.handle(e);
-			SWTHelper.alert("OpenOffice Processor",
-				"Problem mit dem Erstellen des Dokuments " + e.getMessage());
+			SWTHelper.alert("OpenOffice Processor", "Problem mit dem Erstellen des Dokuments " + e.getMessage());
 		}
 		return false;
 	}
-	
+
 	@Override
-	public String convert(String input){
+	public String convert(String input) {
 		String ret = input.replaceAll("\\t", "<text:tab/>");
 		ret = ret.replaceAll("\\n", "<text:line-break/>");
 		return ret;

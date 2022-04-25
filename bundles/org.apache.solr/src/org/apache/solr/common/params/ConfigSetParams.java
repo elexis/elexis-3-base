@@ -21,32 +21,30 @@ import java.util.Locale;
 /**
  * ConfigSets API related parameters and actions.
  */
-public interface ConfigSetParams
-{
-  public final static String ACTION = "action";
+public interface ConfigSetParams {
+	public final static String ACTION = "action";
 
-  public enum ConfigSetAction {
-    CREATE,
-    UPLOAD,
-    DELETE,
-    LIST;
+	public enum ConfigSetAction {
+		CREATE, UPLOAD, DELETE, LIST;
 
-    public static ConfigSetAction get(String p) {
-      if (p != null) {
-        try {
-          return ConfigSetAction.valueOf( p.toUpperCase(Locale.ROOT) );
-        } catch (Exception ex) {}
-      }
-      return null;
-    }
+		public static ConfigSetAction get(String p) {
+			if (p != null) {
+				try {
+					return ConfigSetAction.valueOf(p.toUpperCase(Locale.ROOT));
+				} catch (Exception ex) {
+				}
+			}
+			return null;
+		}
 
-    public boolean isEqual(String s) {
-      if (s == null) return false;
-      return toString().equals(s.toUpperCase(Locale.ROOT));
-    }
+		public boolean isEqual(String s) {
+			if (s == null)
+				return false;
+			return toString().equals(s.toUpperCase(Locale.ROOT));
+		}
 
-    public String toLower() {
-      return toString().toLowerCase(Locale.ROOT);
-    }
-  }
+		public String toLower() {
+			return toString().toLowerCase(Locale.ROOT);
+		}
+	}
 }

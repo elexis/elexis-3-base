@@ -7,16 +7,16 @@ import ch.elexis.core.services.ICodeElementService;
 
 @Component
 public class CodeElementServiceHolder {
-	
+
 	private static ICodeElementService service;
-	
+
 	@Reference
-	public void setCodeElementService(ICodeElementService service){
+	public void setCodeElementService(ICodeElementService service) {
 		CodeElementServiceHolder.service = service;
 	}
-	
-	public static ICodeElementService get(){
+
+	public static ICodeElementService get() {
 		return service;
-		
+
 	}
 }

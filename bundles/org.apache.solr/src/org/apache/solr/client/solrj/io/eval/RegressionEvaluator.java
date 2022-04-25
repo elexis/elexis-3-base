@@ -28,67 +28,75 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class RegressionEvaluator extends RecursiveNumericEvaluator implements TwoValueWorker {
-  protected static final long serialVersionUID = 1L;
-  
-  public RegressionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-  }
+	protected static final long serialVersionUID = 1L;
 
-  @Override
-  public Object doWork(Object first, Object second) throws IOException{
-    if(null == first){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
-    }
-    if(null == second){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the second value",toExpression(constructingFactory)));
-    }
-    if(!(first instanceof List<?>)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the first value, expecting a list of numbers",toExpression(constructingFactory), first.getClass().getSimpleName()));
-    }
-    if(!(second instanceof List<?>)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the second value, expecting a list of numbers",toExpression(constructingFactory), first.getClass().getSimpleName()));
-    }
-    
-    @SuppressWarnings({"unchecked"})
-    List<Number> l1 = (List<Number>)first;
-    @SuppressWarnings({"unchecked"})
-    List<Number> l2 = (List<Number>)second;
-    
-    if(l2.size() < l1.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - first list (%d) has more values than the second list (%d)",toExpression(constructingFactory), l1.size(), l2.size()));      
-    }
+	public RegressionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-    SimpleRegression regression = new SimpleRegression();
-    for(int idx = 0; idx < l1.size(); ++idx){
-      regression.addData(l1.get(idx).doubleValue(), l2.get(idx).doubleValue());
-    }
-    
-    Map<String, Object> map = new HashMap<>();
-    map.put("slope", regression.getSlope());
-    map.put("intercept", regression.getIntercept());
-    map.put("R", regression.getR());
-    map.put("N", regression.getN());
-    map.put("RSquared", regression.getRSquare());
-    map.put("regressionSumSquares", regression.getRegressionSumSquares());
-    map.put("slopeConfidenceInterval", regression.getSlopeConfidenceInterval());
-    map.put("interceptStdErr", regression.getInterceptStdErr());
-    map.put("totalSumSquares", regression.getTotalSumSquares());
-    map.put("significance", regression.getSignificance());
-    map.put("meanSquareError", regression.getMeanSquareError());
+	@Override
+	public Object doWork(Object first, Object second) throws IOException {
+		if (null == first) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
+					toExpression(constructingFactory)));
+		}
+		if (null == second) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the second value",
+					toExpression(constructingFactory)));
+		}
+		if (!(first instanceof List<?>)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for the first value, expecting a list of numbers",
+					toExpression(constructingFactory), first.getClass().getSimpleName()));
+		}
+		if (!(second instanceof List<?>)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for the second value, expecting a list of numbers",
+					toExpression(constructingFactory), first.getClass().getSimpleName()));
+		}
 
-    return new RegressionTuple(regression, map);
-  }
-  
-  public static class RegressionTuple extends Tuple {
-    private SimpleRegression simpleRegression;
+		@SuppressWarnings({ "unchecked" })
+		List<Number> l1 = (List<Number>) first;
+		@SuppressWarnings({ "unchecked" })
+		List<Number> l2 = (List<Number>) second;
 
-    public RegressionTuple(SimpleRegression simpleRegression, Map<?,?> map) {
-      super(map);
-      this.simpleRegression = simpleRegression;
-    }
+		if (l2.size() < l1.size()) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - first list (%d) has more values than the second list (%d)",
+					toExpression(constructingFactory), l1.size(), l2.size()));
+		}
 
-    public double predict(double value) {
-      return this.simpleRegression.predict(value);
-    }
-  }
+		SimpleRegression regression = new SimpleRegression();
+		for (int idx = 0; idx < l1.size(); ++idx) {
+			regression.addData(l1.get(idx).doubleValue(), l2.get(idx).doubleValue());
+		}
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("slope", regression.getSlope());
+		map.put("intercept", regression.getIntercept());
+		map.put("R", regression.getR());
+		map.put("N", regression.getN());
+		map.put("RSquared", regression.getRSquare());
+		map.put("regressionSumSquares", regression.getRegressionSumSquares());
+		map.put("slopeConfidenceInterval", regression.getSlopeConfidenceInterval());
+		map.put("interceptStdErr", regression.getInterceptStdErr());
+		map.put("totalSumSquares", regression.getTotalSumSquares());
+		map.put("significance", regression.getSignificance());
+		map.put("meanSquareError", regression.getMeanSquareError());
+
+		return new RegressionTuple(regression, map);
+	}
+
+	public static class RegressionTuple extends Tuple {
+		private SimpleRegression simpleRegression;
+
+		public RegressionTuple(SimpleRegression simpleRegression, Map<?, ?> map) {
+			super(map);
+			this.simpleRegression = simpleRegression;
+		}
+
+		public double predict(double value) {
+			return this.simpleRegression.predict(value);
+		}
+	}
 }

@@ -8,12 +8,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java-Klasse für anonymous complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ * <p>
+ * Java-Klasse für anonymous complex type.
+ *
+ * <p>
+ * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser
+ * Klasse enthalten ist.
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -27,95 +29,79 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "software",
-    "password",
-    "zsrId"
-})
+@XmlType(name = "", propOrder = { "software", "password", "zsrId" })
 @XmlRootElement(name = "ApothekenRequest")
 public class ApothekenRequest {
 
-    @XmlElement(required = true)
-    protected BigInteger software;
-    @XmlElement(required = true)
-    protected String password;
-    @XmlElement(name = "zsr_id", required = true)
-    protected String zsrId;
+	@XmlElement(required = true)
+	protected BigInteger software;
+	@XmlElement(required = true)
+	protected String password;
+	@XmlElement(name = "zsr_id", required = true)
+	protected String zsrId;
 
-    /**
-     * Ruft den Wert der software-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
-     */
-    public BigInteger getSoftware() {
-        return software;
-    }
+	/**
+	 * Ruft den Wert der software-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link BigInteger }
+	 *
+	 */
+	public BigInteger getSoftware() {
+		return software;
+	}
 
-    /**
-     * Legt den Wert der software-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
-     */
-    public void setSoftware(BigInteger value) {
-        this.software = value;
-    }
+	/**
+	 * Legt den Wert der software-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link BigInteger }
+	 *
+	 */
+	public void setSoftware(BigInteger value) {
+		this.software = value;
+	}
 
-    /**
-     * Ruft den Wert der password-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getPassword() {
-        return password;
-    }
+	/**
+	 * Ruft den Wert der password-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link String }
+	 *
+	 */
+	public String getPassword() {
+		return password;
+	}
 
-    /**
-     * Legt den Wert der password-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setPassword(String value) {
-        this.password = value;
-    }
+	/**
+	 * Legt den Wert der password-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link String }
+	 *
+	 */
+	public void setPassword(String value) {
+		this.password = value;
+	}
 
-    /**
-     * Ruft den Wert der zsrId-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getZsrId() {
-        return zsrId;
-    }
+	/**
+	 * Ruft den Wert der zsrId-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link String }
+	 *
+	 */
+	public String getZsrId() {
+		return zsrId;
+	}
 
-    /**
-     * Legt den Wert der zsrId-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setZsrId(String value) {
-        this.zsrId = value;
-    }
+	/**
+	 * Legt den Wert der zsrId-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link String }
+	 *
+	 */
+	public void setZsrId(String value) {
+		this.zsrId = value;
+	}
 
 }

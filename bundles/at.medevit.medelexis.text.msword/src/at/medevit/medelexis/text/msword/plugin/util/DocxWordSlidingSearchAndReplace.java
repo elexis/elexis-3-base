@@ -9,43 +9,41 @@ import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 
 public class DocxWordSlidingSearchAndReplace {
 	ArrayList<DocxWordRun> reverseOrderedRuns = new ArrayList<DocxWordRun>();
-	
+
 	Pattern pattern;
 	String contains;
-	
+
 	ReplaceCallback callback;
 	String replaceText;
-	
+
 	DocxWordParagraph paragraph;
-	
-	public DocxWordSlidingSearchAndReplace(DocxWordParagraph para, String regex,
-		ReplaceCallback cb){
+
+	public DocxWordSlidingSearchAndReplace(DocxWordParagraph para, String regex, ReplaceCallback cb) {
 		paragraph = para;
 		pattern = Pattern.compile(regex);
 		callback = cb;
 	}
 
-	public DocxWordSlidingSearchAndReplace(DocxWordParagraph para, String regex, String replace){
+	public DocxWordSlidingSearchAndReplace(DocxWordParagraph para, String regex, String replace) {
 		paragraph = para;
 		pattern = Pattern.compile(regex);
 		replaceText = replace;
 	}
 
-	
-	public DocxWordSlidingSearchAndReplace(DocxWordParagraph para, String search){
+	public DocxWordSlidingSearchAndReplace(DocxWordParagraph para, String search) {
 		paragraph = para;
 		contains = search;
 	}
 
-	public void addRun(DocxWordRun run){
+	public void addRun(DocxWordRun run) {
 		reverseOrderedRuns.add(0, run);
 	}
-	
-	protected void reset(){
+
+	protected void reset() {
 		reverseOrderedRuns.clear();
 	}
-	
-	public boolean findAndReplaceAll(){
+
+	public boolean findAndReplaceAll() {
 		boolean found = false;
 		List<DocxWordRun> runs = paragraph.getDirectChildRuns();
 		for (DocxWordRun run : runs) {
@@ -56,7 +54,7 @@ public class DocxWordSlidingSearchAndReplace {
 		return found;
 	}
 
-	protected boolean doSearch(){
+	protected boolean doSearch() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < reverseOrderedRuns.size(); i++) {
 			DocxWordRun run = reverseOrderedRuns.get(i);
@@ -81,14 +79,14 @@ public class DocxWordSlidingSearchAndReplace {
 		}
 		return false;
 	}
-	
-	private String getWindowsString(String string){
+
+	private String getWindowsString(String string) {
 		String ret = string;
 		// try to fix line endings
 		String lines[] = string.split("\\r?\\n");//$NON-NLS-1$
 		if (lines.length > 1) {
 			StringBuilder sb = new StringBuilder();
-			
+
 			for (String line : lines) {
 				if (!line.isEmpty()) {
 					sb.append(line);
@@ -102,10 +100,9 @@ public class DocxWordSlidingSearchAndReplace {
 		return ret;
 	}
 
-	
-	protected String findAndReplace(String text){
+	protected String findAndReplace(String text) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		Matcher matcher = pattern.matcher(text);
 		int lastEnd = 0;
 		int found = 0;
@@ -115,7 +112,7 @@ public class DocxWordSlidingSearchAndReplace {
 				sb.append(text.substring(0, matcher.start()));
 			else
 				sb.append(text.substring(lastEnd, matcher.start()));
-			
+
 			String replace = ""; //$NON-NLS-1$
 			if (callback != null) {
 				Object obj = callback.replace(text.substring(matcher.start(), matcher.end()));
@@ -129,7 +126,7 @@ public class DocxWordSlidingSearchAndReplace {
 					if (pProp != null) {
 						rProp = pProp.getRunProperties();
 					}
-					
+
 					DocxWordTable table = paragraph.replaceWithTable();
 					DocxWordTableProperties tProp = table.createProperties();
 					tProp.setWidth(100);
@@ -167,8 +164,8 @@ public class DocxWordSlidingSearchAndReplace {
 		else
 			return null;
 	}
-	
-	public boolean contains(){
+
+	public boolean contains() {
 		boolean found = false;
 		List<DocxWordRun> runs = paragraph.getDirectChildRuns();
 		for (DocxWordRun run : runs) {

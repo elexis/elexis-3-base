@@ -17,20 +17,17 @@ import ch.rgw.tools.TimeTool;
 
 public class ControlResultHandler {
 	private static Logger logger = LoggerFactory.getLogger(ControlResultHandler.class);
-	
-	public static int writeControlResult(CobasMiraPatientResult cmp, TimeTool entryDate){
+
+	public static int writeControlResult(CobasMiraPatientResult cmp, TimeTool entryDate) {
 		FileOutputStream fos;
 		try {
-			fos =
-				new FileOutputStream(CoreHub.localCfg.get(Preferences.CONTROLLOGFILE,
-					"controlLog.txt"), true);
+			fos = new FileOutputStream(CoreHub.localCfg.get(Preferences.CONTROLLOGFILE, "controlLog.txt"), true);
 			OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
-			out.write(entryDate.toDBString(true) + "," + cmp.getPatientIdentification() + ","
-				+ cmp.getTestName() + "," + Float.toString(cmp.getConcentration()) + "\n");
+			out.write(entryDate.toDBString(true) + "," + cmp.getPatientIdentification() + "," + cmp.getTestName() + ","
+					+ Float.toString(cmp.getConcentration()) + "\n");
 			out.close();
 		} catch (FileNotFoundException e) {
-			logger
-				.warn("Logfileexists but is a directory rather than a regular file, "
+			logger.warn("Logfileexists but is a directory rather than a regular file, "
 					+ "does not exist but cannot be created, or cannot be opened for any other reason.");
 			return CobasMiraMessage.ELEXIS_RESULT_CONTROL_ERR;
 		} catch (UnsupportedEncodingException e) {

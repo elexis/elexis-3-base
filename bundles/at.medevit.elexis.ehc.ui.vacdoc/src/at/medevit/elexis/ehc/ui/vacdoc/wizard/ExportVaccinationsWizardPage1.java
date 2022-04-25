@@ -45,40 +45,39 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 
 public class ExportVaccinationsWizardPage1 extends WizardPage {
-	
+
 	private Patient selectedPatient;
-	
+
 	private final ExportType exportType;
-	
+
 	private VaccinationSelectionComposite composite;
-	
-	protected ExportVaccinationsWizardPage1(String pageName, ExportType exportType){
+
+	protected ExportVaccinationsWizardPage1(String pageName, ExportType exportType) {
 		super(pageName);
 		setTitle(pageName);
 		this.exportType = exportType;
 	}
-	
+
 	@Override
-	public void createControl(Composite parent){
-		composite =
-			new VaccinationSelectionComposite(parent, SWT.NULL);
-		
+	public void createControl(Composite parent) {
+		composite = new VaccinationSelectionComposite(parent, SWT.NULL);
+
 		composite.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				getWizard().getContainer().updateButtons();
 			}
 		});
-		
+
 		Composite c = new Composite(composite, SWT.RIGHT_TO_LEFT);
 		c.setLayout(new GridLayout(2, false));
 		c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		setControl(composite);
 	}
-	
+
 	@Override
-	public void setVisible(boolean visible){
+	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
 			setErrorMessage(null);
@@ -86,13 +85,11 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 			selectedPatient = ElexisEventDispatcher.getSelectedPatient();
 			if (selectedPatient != null) {
 				qbe.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, selectedPatient.getId());
-				qbe.orderBy(true, new String[] {
-					Vaccination.FLD_DOA, PersistentObject.FLD_LASTUPDATE
-				});
+				qbe.orderBy(true, new String[] { Vaccination.FLD_DOA, PersistentObject.FLD_LASTUPDATE });
 				List<Vaccination> vaccinations = qbe.execute();
 				composite.setInput(vaccinations);
 				composite.setSelection(new StructuredSelection(vaccinations), true);
-				
+
 				String ahvNr = selectedPatient.getXid(DOMAIN_AHV);
 				if (ahvNr == null || ahvNr.isEmpty()) {
 					setErrorMessage("Patient hat keine AHV Nummer.");
@@ -102,9 +99,9 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 			}
 		}
 	}
-	
+
 	@Override
-	public boolean isPageComplete(){
+	public boolean isPageComplete() {
 		IStructuredSelection contentSelection = (IStructuredSelection) composite.getSelection();
 		String ahvNr = selectedPatient.getXid(DOMAIN_AHV);
 		if (!contentSelection.isEmpty() && ahvNr != null && !ahvNr.isEmpty()) {
@@ -112,28 +109,28 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private List<Vaccination> getSelectedVaccinations(){
+	private List<Vaccination> getSelectedVaccinations() {
 		IStructuredSelection contentSelection = (IStructuredSelection) composite.getSelection();
-		
+
 		if (!contentSelection.isEmpty()) {
 			return contentSelection.toList();
 		}
 		return Collections.emptyList();
 	}
-	
-	public boolean finish(){
+
+	public boolean finish() {
 		String outputFile = "";
 		try {
 			Patient elexisPatient = ElexisEventDispatcher.getSelectedPatient();
 			Mandant elexisMandant = ElexisEventDispatcher.getSelectedMandator();
 			String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
-				PreferencePage.getDefaultOutputDir());
+					PreferencePage.getDefaultOutputDir());
 			VacdocService service = VacdocServiceComponent.getService();
-			
+
 			CdaChVacd document = service.getVacdocDocument(elexisPatient, elexisMandant);
-			
+
 			service.addVaccinations(document, getSelectedVaccinations());
 			switch (exportType) {
 			case CDA:
@@ -149,26 +146,24 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		} catch (Exception e) {
 			ExportVaccinationsWizard.logger.error("Export failed.", e);
 			MessageDialog.openError(getShell(), "Error",
-				"Es ist ein Fehler beim Impfungen exportiern nach [" + outputFile
-					+ "] aufgetreten.");
+					"Es ist ein Fehler beim Impfungen exportiern nach [" + outputFile + "] aufgetreten.");
 			return false;
 		}
 		return true;
 	}
-	
-	private void createOutboxElement(Patient patient, Mandant mandant, String outputFile){
+
+	private void createOutboxElement(Patient patient, Mandant mandant, String outputFile) {
 		OutboxElementServiceHolder.getService().createOutboxElement(
-			CoreModelServiceHolder.get().load(patient.getId(), IPatient.class).orElse(null),
-			CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).orElse(null),
-			OutboxElementType.FILE.getPrefix() + outputFile);
+				CoreModelServiceHolder.get().load(patient.getId(), IPatient.class).orElse(null),
+				CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).orElse(null),
+				OutboxElementType.FILE.getPrefix() + outputFile);
 	}
-	
-	private String writeAsXDM(Patient elexisPatient, String outputDir, VacdocService service,
-		CdaChVacd document) throws Exception, FileNotFoundException, IOException{
+
+	private String writeAsXDM(Patient elexisPatient, String outputDir, VacdocService service, CdaChVacd document)
+			throws Exception, FileNotFoundException, IOException {
 		// write a XDM document for exchange
 		InputStream xdmDocumentStream = service.getXdmAsStream(document);
-		String outputFile =
-			outputDir + File.separator + getVaccinationsFileName(elexisPatient) + ".xdm";
+		String outputFile = outputDir + File.separator + getVaccinationsFileName(elexisPatient) + ".xdm";
 		FileOutputStream outputStream = new FileOutputStream(outputFile);
 		IOUtils.copy(xdmDocumentStream, outputStream);
 		xdmDocumentStream.close();
@@ -176,22 +171,21 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		return outputFile;
 	}
 
-	private String writeAsCDA(Patient elexisPatient, String outputDir, VacdocService service,
-		CdaChVacd document) throws Exception, FileNotFoundException, IOException{
+	private String writeAsCDA(Patient elexisPatient, String outputDir, VacdocService service, CdaChVacd document)
+			throws Exception, FileNotFoundException, IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		CDAUtil.save(document.getMdht(), out);
 		InputStream in = new ByteArrayInputStream(out.toByteArray());
-		String outputFile =
-			outputDir + File.separator + getVaccinationsFileName(elexisPatient)
-				+ "_" + System.currentTimeMillis() + ".xml";
+		String outputFile = outputDir + File.separator + getVaccinationsFileName(elexisPatient) + "_"
+				+ System.currentTimeMillis() + ".xml";
 		FileOutputStream outputStream = new FileOutputStream(outputFile);
 		IOUtils.copy(in, outputStream);
 		in.close();
 		outputStream.close();
 		return outputFile;
 	}
-	
-	private String getVaccinationsFileName(Patient patient){
+
+	private String getVaccinationsFileName(Patient patient) {
 		return "vacc_" + patient.getPatCode();
 	}
 }

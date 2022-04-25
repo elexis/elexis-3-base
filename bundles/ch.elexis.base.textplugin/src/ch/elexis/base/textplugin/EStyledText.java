@@ -3,10 +3,10 @@
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    bogdan314 - initial implementation
- * Sponsor: 
+ * Sponsor:
  *    G. Weirich
  ******************************************************************************/
 package ch.elexis.base.textplugin;
@@ -29,32 +29,33 @@ import org.eclipse.swt.widgets.Composite;
 import ch.elexis.core.jdt.NonNull;
 
 public class EStyledText extends StyledText implements FocusListener {
-	
+
 	protected ElexisEditor editor;
-	
-	public EStyledText(Composite parent, ElexisEditor editor, int style){
+
+	public EStyledText(Composite parent, ElexisEditor editor, int style) {
 		super(parent, style);
 		this.editor = editor;
 		addFocusListener(this);
 	}
-	
-	public void cut(){
+
+	public void cut() {
 		editor.handleCutCopy(this);
 		super.cut();
 	}
-	
-	public void copy(){
+
+	public void copy() {
 		editor.handleCutCopy(this);
 		super.copy();
 	}
-	
-	public void focusGained(FocusEvent e){
+
+	public void focusGained(FocusEvent e) {
 		editor.setSelectedText(this);
 	}
-	
-	public void focusLost(FocusEvent e){}
-	
-	public void readFrom(DataInputStream in) throws IOException{
+
+	public void focusLost(FocusEvent e) {
+	}
+
+	public void readFrom(DataInputStream in) throws IOException {
 		setText(in.readUTF());
 		int stylesCount = in.readInt();
 		for (int i = 0; i < stylesCount; i++) {
@@ -67,12 +68,12 @@ public class EStyledText extends StyledText implements FocusListener {
 			if (isFont) {
 				style.font = new Font(getDisplay(), in.readUTF(), in.readInt(), style.fontStyle);
 			}
-			
+
 			setStyleRange(style);
 		}
 	}
-	
-	public void writeTo(DataOutputStream out) throws IOException{
+
+	public void writeTo(DataOutputStream out) throws IOException {
 		out.writeUTF(getText());
 		List<StyleRange> styles = getStyles();
 		out.writeInt(styles.size());
@@ -92,24 +93,24 @@ public class EStyledText extends StyledText implements FocusListener {
 				out.writeBoolean(false);
 			}
 		}
-		
+
 	}
-	
-	protected List<StyleRange> getStyles(){
+
+	protected List<StyleRange> getStyles() {
 		List<StyleRange> result = new ArrayList<StyleRange>();
 		StyleRange[] styles = getStyleRanges();
-		
+
 		boolean same = true;
 		int index = 0;
 		int start = 0;
 		int len = 0;
 		StyleRange current = styles.length > 0 ? styles[0] : null;
-		
+
 		while (index < styles.length) {
 			index++;
 			if (index < styles.length) {
 				StyleRange style = styles[index];
-				if (current!=null && sameStyle(current, style)) {
+				if (current != null && sameStyle(current, style)) {
 					current.length += style.length;
 				} else {
 					result.add(current);
@@ -122,8 +123,8 @@ public class EStyledText extends StyledText implements FocusListener {
 		}
 		return result;
 	}
-	
-	protected boolean sameStyle(@NonNull StyleRange s1, @NonNull StyleRange s2){
+
+	protected boolean sameStyle(@NonNull StyleRange s1, @NonNull StyleRange s2) {
 		if (s1.fontStyle != s2.fontStyle || s1.underline != s2.underline) {
 			return false;
 		}

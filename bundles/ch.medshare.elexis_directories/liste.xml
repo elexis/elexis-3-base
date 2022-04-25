@@ -3,7 +3,7 @@
 		<div class="" id="results">
 			<div id="te_ojUHu3vXsUWJbXidz2_sRQ"
 				onmouseover="lcl.search.onEntryHover(this)"
-				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/ILwo-yKRTlguXS4TFuVPuA?what=Meier&start=3'); }"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/ILwo-yKRTlguXS4TFuVPuA?what=Meier start=3'); }"
 				class="vcard searchResult resrowclr_yellow mappable">
 				<div class="imgbox">
 					<a
@@ -51,7 +51,7 @@
 			</div>
 			<div id="te_p9wAV6VxQpTx0pwzQaUbOw"
 				onmouseover="lcl.search.onEntryHover(this)"
-				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/XuvSAF2q97-HIM2d0r3rtQ?what=Meier&start=3'); }"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/XuvSAF2q97-HIM2d0r3rtQ?what=Meier start=3'); }"
 				class="vcard searchResult resrowclr_yellow mappable">
 				<div class="imgbox">
 					<a
@@ -70,7 +70,6 @@
 							Auto
 							<span class="highlight">Meier</span>
 						</a>
-						</br>
 					</h4>
 					<p class="bold phoneNumber">
 						<span class="label">Tel.</span>
@@ -94,7 +93,7 @@
 			</div>
 			<div id="te_jPqjQmpqM9ZAV4Rzba8TPQ"
 				onmouseover="lcl.search.onEntryHover(this)"
-				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/zyqg4GlMGDM4PB7_S7-M4Q?what=Meier&start=3'); }"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/zyqg4GlMGDM4PB7_S7-M4Q?what=Meier start=3'); }"
 				class="vcard searchResult resrowclr_yellow mappable">
 				<div class="imgbox">
 					<a
@@ -140,9 +139,9 @@
 				</div>
 				<div style="clear: both;"></div>
 			</div>
-			<div id="te_G8nfTDwP5oGYkt_Tj_a3TA"
+			<div id="te_G8nfTDwP5o GYkt_Tj_a3TA"
 				onmouseover="lcl.search.onEntryHover(this)"
-				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/nX67wzm8r2RxksHOKhhWZg?what=Meier&start=3'); }"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/nX67wzm8r2RxksHOKhhWZg?what=Meier start=3'); }"
 				class="vcard searchResult resrowclr_yellow mappable">
 				<div class="imgbox">
 					<a
@@ -162,12 +161,11 @@
 							<span class="highlight">Meier</span>
 							AG
 						</a>
-						</br>
 					</h4>
 					<p class="bold phoneNumber">
 						<span class="label">Tel.</span>
 						<span class="tel">
-							*&nbsp;<a class="phonenr"
+							* <a class="phonenr"
 								href="callto://+41317711666">
 								031 771 16 66
 </a>
@@ -186,7 +184,7 @@
 			</div>
 			<div id="te__R9dBb9j3UXMqCbDjwj-CQ"
 				onmouseover="lcl.search.onEntryHover(this)"
-				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/iEIHJbQqndscxtfT7geXnw?what=Meier&start=3'); }"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/iEIHJbQqndscxtfT7geXnw?what=Meier start=3'); }"
 				class="vcard searchResult resrowclr_yellow mappable">
 				<div class="imgbox">
 					<a
@@ -206,12 +204,11 @@
 							<span class="highlight">Meier</span>
 							Herbert
 						</a>
-						</br>
 					</h4>
 					<p class="bold phoneNumber">
 						<span class="label">Tel.</span>
 						<span class="tel">
-							*&nbsp;<a class="phonenr"
+							* <a class="phonenr"
 								href="callto://+41449542827">
 								044 954 28 27
 </a>
@@ -230,7 +227,7 @@
 			</div>
 			<div id="te_hvB8gEe_MVAR1pxdRDi95A"
 				onmouseover="lcl.search.onEntryHover(this)"
-				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/o7ynlMBTWkDlqAOUL5lgGQ?what=Meier&start=3'); }"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/o7ynlMBTWkDlqAOUL5lgGQ?what=Meier start=3'); }"
 				class="vcard searchResult resrowclr_yellow mappable">
 				<div class="imgbox">
 					<a
@@ -250,7 +247,6 @@
 							<span class="highlight">Meier</span>
 							Hans W. GmbH
 						</a>
-						</br>
 					</h4>
 					<p class="bold phoneNumber">
 						<span class="label">Tel.</span>
@@ -274,7 +270,7 @@
 			</div>
 			<div id="te_uO2t_mZ78VtNq8DR-UmFew"
 				onmouseover="lcl.search.onEntryHover(this)"
-				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/omq1QIWusOD1Lxe0VWn9lw?what=Meier&start=3'); }"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/omq1QIWusOD1Lxe0VWn9lw?what=Meier start=3'); }"
 				class="vcard searchResult resrowclr_yellow mappable">
 				<div class="imgbox">
 					<a
@@ -302,7 +298,7 @@
 					<p class="bold phoneNumber">
 						<span class="label">Tel.</span>
 						<span class="tel">
-							*&nbsp;<a class="phonenr"
+							* <a class="phonenr"
 								href="callto://+41564420556">
 								056 442 05 56
 </a>
@@ -321,7 +317,7 @@
 			</div>
 			<div id="te_bq350JSyJC0wmoWuKoAtew"
 				onmouseover="lcl.search.onEntryHover(this)"
-				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/Pe-LA5AYEyc1OqUrSuBnBw?what=Meier&start=3'); }"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/Pe-LA5AYEyc1OqUrSuBnBw?what=Meier start=3'); }"
 				class="vcard searchResult resrowclr_yellow mappable">
 				<div class="imgbox">
 					<a
@@ -341,7 +337,6 @@
 							<span class="highlight">Meier</span>
 							Sins
 						</a>
-						</br>
 					</h4>
 					<p class="bold phoneNumber">
 						<span class="label">Tel.</span>
@@ -365,7 +360,7 @@
 			</div>
 			<div id="te_JCalHmKZdKU-qXIuL11GhA"
 				onmouseover="lcl.search.onEntryHover(this)"
-				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/5_9CoSa14cQI7C21ZS_e1w?what=Meier&start=3'); }"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/5_9CoSa14cQI7C21ZS_e1w?what=Meier start=3'); }"
 				class="vcard searchResult resrowclr_grey mappable poihighlight clickable">
 				<div class="imgbox">
 					<a
@@ -385,12 +380,11 @@
 							<span class="highlight">Meier</span>
 							Dora
 						</a>
-						</br>
 					</h4>
 					<p class="bold phoneNumber">
 						<span class="label">Tel.</span>
 						<span class="tel">
-							*&nbsp;<a class="phonenr"
+							* <a class="phonenr"
 								href="callto://+41627973621">
 								062 797 36 21
 </a>
@@ -409,7 +403,7 @@
 			</div>
 			<div id="te_AzjJm37iWendsf-vwbtrNg"
 				onmouseover="lcl.search.onEntryHover(this)"
-				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/0C9T0C04uK27hpt81ME7Cw?what=Meier&start=3'); }"
+				onclick="if (typeof(lcl.search) != 'undefined') { lcl.search.navigateTo(event, 'http://tel.local.ch/de/d/0C9T0C04uK27hpt81ME7Cw?what=Meier start=3'); }"
 				class="vcard searchResult resrowclr_yellow mappable">
 				<div class="imgbox">
 					<a
@@ -429,7 +423,6 @@
 							<span class="highlight">Meier</span>
 							AG
 						</a>
-						</br>
 					</h4>
 					<p class="bold phoneNumber">
 						<span class="label">Tel.</span>
@@ -545,7 +538,7 @@
 					<form name="footfeedback" method="get"
 						onsubmit="return lcl.form.shortfeedback();" action="">
 						<textarea id="comment" name="comment" rows="6"
-							cols="35">&nbsp;
+							cols="35"> 
 						</textarea>
 						<input
 							xmlns:i18n="http://apache.org/cocoon/i18n/2.1"

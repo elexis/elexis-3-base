@@ -1,5 +1,4 @@
 <div class="resrowclr_yellow">
-	</br>
 	<img class="imgbox"
 		src="http://s.staticlocal.ch/images/pois/na/blue.png" alt="poi" />
 	<p class="role">Garage</p>
@@ -8,11 +7,9 @@
 	<div class="addressBlockMain">
 		<div class="streetAddress">
 			<span class="street-address">Hauptstrasse 253</span>
-			</br>
 			<span class="postal-code">5314</span>
 			<span class="locality">Kleindöttingen</span>
 		</div>
-		</br>
 		<table>
 			<tbody>
 				<tr class="phoneNumber">
@@ -32,13 +29,13 @@
 						<span class="contact">Fax:</span>
 					</td>
 					<td>
-						*&nbsp;044 810 54 40
+						044 810 54 40
 					</td>
 				</tr>
 				<tr>
-					<td>&nbsp;
+					<td> 
 					</td>
-					<td>&nbsp;
+					<td> 
 					</td>
 					<td></td>
 				</tr>
@@ -47,7 +44,7 @@
 						<span class="contact">E-Mail:</span>
 					</td>
 					<td>
-						*&nbsp;<a href="mailto:info@kvd.ch">
+						 <a href="mailto:info@kvd.ch">
 							info@kvd.ch
 							</a>
 					</td>
@@ -61,7 +58,6 @@
 		<h3>Zusatzeintrag</h3>
 		<div class="additionalAddress" id="additionalAddress1">
 			<span class="role">Verkauf</span>
-			</br>
 			<table>
 				<tbody>
 					<tr class="phoneNumber">

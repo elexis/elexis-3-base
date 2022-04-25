@@ -7,6 +7,7 @@ repos:
       files: '.*json'
     - id: check-xml
       files: '.*xml'
+      exclude: 'oneEntry.xml'
     - id: check-yaml
       files: '.*yaml|.*yml'
     - id: mixed-line-ending

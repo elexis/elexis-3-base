@@ -10,7 +10,7 @@
             "sourceMaps": true,
             "trace": true,
             "userDataDir": "${workspaceRoot}/.vscode/edge"
-        }
+        },
         {
             "name": "Launch localhost",
             "type": "edge",

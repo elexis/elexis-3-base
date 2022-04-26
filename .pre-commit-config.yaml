@@ -23,7 +23,7 @@ repos:
     - id: enforce-eclipse-format
       stages: [manual]
       name: enforce-eclipse-format
-      entry: mvn formatter:format
+      entry: mvn -V formatter:format
       language: system
       types: [java]
       pass_filenames: false

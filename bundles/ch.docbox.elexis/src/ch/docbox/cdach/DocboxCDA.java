@@ -65,13 +65,13 @@ import org.hl7.v3.StrucDocText;
 import org.hl7.v3.TEL;
 import org.hl7.v3.TS;
 import org.hl7.v3.XInformationRecipient;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.rgw.io.Settings;
 
 /**
  * Utility to generate a CDA V1.1 compliant document according to the CDA-CH
@@ -728,30 +728,42 @@ public class DocboxCDA {
 
 	static synchronized Marshaller getCdaMarshaller() {
 		if (DocboxCDA.marshaller == null) {
+			ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+			
 			try {
+				Thread.currentThread().setContextClassLoader(DocboxCDA.class.getClassLoader());
 				JAXBContext jaxbContext = JAXBContext.newInstance("org.hl7.v3");
 				marshaller = jaxbContext.createMarshaller();
-				marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
+				marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 				marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "urn:hl7-org:v3 CDA.xsd");
 				// omit the xml declaration
-				marshaller.setProperty(Marshaller.JAXB_FRAGMENT, new Boolean(true));
+				marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 			} catch (Exception e) {
+				LoggerFactory.getLogger(DocboxCDA.class).error("Failure in JAXBContext.newInstance", e);
 				e.printStackTrace(System.out);
-				return null;
-			}
+				marshaller = null;
+			} 
+			
+			Thread.currentThread().setContextClassLoader(tccl);
 		}
 		return marshaller;
 	}
 
 	static synchronized Unmarshaller getCdaUnmarshaller() {
 		if (DocboxCDA.unmarshaller == null) {
+			ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+			
 			try {
+				Thread.currentThread().setContextClassLoader(DocboxCDA.class.getClassLoader());
 				JAXBContext jaxbContext = JAXBContext.newInstance("org.hl7.v3");
 				unmarshaller = jaxbContext.createUnmarshaller();
 			} catch (Exception e) {
+				LoggerFactory.getLogger(DocboxCDA.class).error("Failure in JAXBContext.newInstance", e);
 				e.printStackTrace(System.out);
-				return null;
+				marshaller = null;
 			}
+			
+			Thread.currentThread().setContextClassLoader(tccl);
 		}
 		return unmarshaller;
 	}

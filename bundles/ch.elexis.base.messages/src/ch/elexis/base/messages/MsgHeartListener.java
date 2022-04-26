@@ -66,8 +66,8 @@ public class MsgHeartListener implements HeartListener {
 
 	private boolean isModalShellOpen() {
 		return Arrays.asList(Display.getDefault().getShells()).stream()
-				.filter(s -> ((s.getStyle() & SWT.SYSTEM_MODAL) > 0)
-				|| ((s.getStyle() & SWT.APPLICATION_MODAL) > 0)).findFirst().isPresent();
+				.filter(s -> ((s.getStyle() & SWT.SYSTEM_MODAL) > 0) || ((s.getStyle() & SWT.APPLICATION_MODAL) > 0))
+				.findFirst().isPresent();
 	}
 
 	/**

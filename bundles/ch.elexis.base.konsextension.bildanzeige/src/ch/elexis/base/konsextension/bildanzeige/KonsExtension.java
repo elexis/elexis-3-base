@@ -61,7 +61,7 @@ public class KonsExtension implements IKonsExtension {
 						if (bid.open() == Dialog.OK) {
 							Bild bild = bid.result;
 							mine.insertXRef(-1, Messages.KonsExtension_Image + bild.get("Titel"), "bildanzeige", //$NON-NLS-1$//$NON-NLS-2$
-									bild.getId()); //$NON-NLS-3$
+									bild.getId()); // $NON-NLS-3$
 						}
 
 					} catch (Throwable t) {

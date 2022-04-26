@@ -211,7 +211,7 @@ public class PatientLabor {
 				sequence = "50";
 			}
 			labItem = new LabItem(data.getName(), data.getName(), myLab, null, null, "", LabItemTyp.TEXT, group, //$NON-NLS-1$
-					sequence); //$NON-NLS-2$
+					sequence); // $NON-NLS-2$
 		}
 
 		TimeTool dateTime = new TimeTool();

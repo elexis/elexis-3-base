@@ -125,7 +125,8 @@ public class Synchronizer {
 
 			StringBuilder sql = new StringBuilder(200);
 			sql.append("SELECT * FROM agnTermine WHERE deleted='0' AND Tag=") //$NON-NLS-1$
-					.append(JdbcLink.wrap(agenda.getActDate().toString(TimeTool.DATE_COMPACT))).append(" AND BeiWem=").append(JdbcLink.wrap(map.get(agenda.getActResource()))); //$NON-NLS-1$
+					.append(JdbcLink.wrap(agenda.getActDate().toString(TimeTool.DATE_COMPACT))).append(" AND BeiWem=") //$NON-NLS-1$
+					.append(JdbcLink.wrap(map.get(agenda.getActResource())));
 
 			try {
 				// 1. Synchronisation von remote nach lokal
@@ -182,7 +183,8 @@ public class Synchronizer {
 				sql.setLength(0);
 				// Lokale Termine
 				sql.append("SELECT * FROM AGNTERMINE WHERE deleted='0' AND Tag=") //$NON-NLS-1$
-						.append(JdbcLink.wrap(agenda.getActDate().toString(TimeTool.DATE_COMPACT))).append(" AND Bereich=").append(JdbcLink.wrap(agenda.getActResource())); //$NON-NLS-1$
+						.append(JdbcLink.wrap(agenda.getActDate().toString(TimeTool.DATE_COMPACT)))
+						.append(" AND Bereich=").append(JdbcLink.wrap(agenda.getActResource())); //$NON-NLS-1$
 				res = stmMine.query(sql.toString());
 				psInsert = sync.getConnection().prepareStatement(
 						"INSERT INTO agnTermine (Tag, Beginn, Dauer, BeiWem, PatID, Personalien, Grund, TerminTyp, TerminStatus , Angelegt, Lastedit, ID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"); //$NON-NLS-1$

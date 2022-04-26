@@ -38,11 +38,12 @@ public class CDACHServices_Service extends Service {
 	@WebEndpoint(name = "CDACHServices")
 	public CDACHServices getCDACHServices() {
 		ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-		
+
 		Thread.currentThread().setContextClassLoader(Service.class.getClassLoader());
-		CDACHServices port = super.getPort(new QName("http://ws.docbox.ch/CDACHServices/", "CDACHServices"), CDACHServices.class);
+		CDACHServices port = super.getPort(new QName("http://ws.docbox.ch/CDACHServices/", "CDACHServices"),
+				CDACHServices.class);
 		Thread.currentThread().setContextClassLoader(tccl);
-		
+
 		return port;
 	}
 

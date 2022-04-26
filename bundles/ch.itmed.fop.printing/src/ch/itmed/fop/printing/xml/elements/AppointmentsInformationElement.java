@@ -44,6 +44,22 @@ public class AppointmentsInformationElement {
 		Element p = doc.createElement("AppointmentsInformation");
 
 		if (!al.isEmpty()) {
+			Element l = doc.createElement("AppointmentsList");
+
+			if (!al.isEmpty()) {
+				for (AppointmentData ad : al) {
+					Element appointment = doc.createElement("ListAppointment");
+					appointment.setAttribute("area", ad.getAgendaArea());
+					appointment.appendChild(doc.createTextNode(ad.getAppointmentDetailed()));
+					l.appendChild(appointment);
+					Element appointmentNoEnd = doc.createElement("ListAppointmentNoEnd");
+					appointmentNoEnd.setAttribute("area", ad.getAgendaArea());
+					appointmentNoEnd.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));
+					l.appendChild(appointmentNoEnd);
+				}
+			}
+			p.appendChild(l);
+
 			Map<String, List<AppointmentData>> appointmentPerAreaMap = al.stream()
 					.collect(Collectors.groupingBy(AppointmentData::getAgendaArea));
 

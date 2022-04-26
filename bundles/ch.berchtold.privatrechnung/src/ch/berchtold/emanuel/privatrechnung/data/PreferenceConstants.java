@@ -7,18 +7,19 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.berchtold.emanuel.privatrechnung.data;
 
 public class PreferenceConstants {
 	public static final String PLUGIN_ID = "ch.berchtold.emanuel.privatrechnung";
-	
-	// for different incarantations of private billing systems change the following two lines
+
+	// for different incarantations of private billing systems change the following
+	// two lines
 	public static final String BillingSystemName = "Berchtold";
 	public static final String cfgBase = "privatrechnung_berchtold";
-	
+
 	public static final String cfgBank = cfgBase + "/bank";
 	public static final String cfgTemplateESR = cfgBase + "/templateESR";
 	public static final String cfgTemplateBill = cfgBase + "/templateBill";

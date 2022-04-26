@@ -41,70 +41,69 @@ import ch.elexis.core.ui.text.ITextPlugin;
 
 /**
  * Class for searching and manipulating the content of a docx MS Word document.
- * 
+ *
  * @author thomashu
- * 
+ *
  */
 public class DocxWordDocument {
 	private static Logger logger = LoggerFactory.getLogger(DocxWordDocument.class);
-	
+
 	private File unzipedDirectory;
-	
+
 	// document part as dom
 	protected HashMap<File, Document> documentsMap;
 	// header part as dom
 	protected HashMap<File, Document> headersMap;
 	// footer part as dom
 	protected HashMap<File, Document> footersMap;
-	
+
 	protected File settings;
-	
+
 	/**
-	 * Create a DocxWordDocument for manipulating a docx file. It will be unzipped to a new
-	 * directory with the same name as the file, in the same directory as the file.
-	 * 
-	 * @param file
-	 *            directory with unzipped docx content
+	 * Create a DocxWordDocument for manipulating a docx file. It will be unzipped
+	 * to a new directory with the same name as the file, in the same directory as
+	 * the file.
+	 *
+	 * @param file directory with unzipped docx content
 	 */
-	public DocxWordDocument(File file){
+	public DocxWordDocument(File file) {
 		// Verify the the Word document exists and can be read
 		if (file.exists() || file.canRead()) {
-			String unzipedDirName =
-				file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('.'));
+			String unzipedDirName = file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('.'));
 			unzipedDirectory = new File(unzipedDirName);
 			// when used with CommunicationFile the unzipedDirectory will stay the same
 			if (unzipedDirectory.exists())
 				ZipUtil.deleteRecursive(unzipedDirectory);
 			unzipedDirectory.mkdir();
 			ZipUtil.unzipToDirectory(file, unzipedDirectory);
-			
+
 			initializeMaps();
-			
+
 			logger.debug("Unzipped docx to " + unzipedDirName);
 		} else {
 			throw new IllegalArgumentException("The file " + file.getAbsolutePath() //$NON-NLS-1$
-				+ " is not accessible."); //$NON-NLS-1$
+					+ " is not accessible."); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Write zipped content in MS Word docx format to the FileOutputStream.
-	 * 
+	 *
 	 * @param os
 	 * @throws IOException
 	 */
-	public void writeTo(FileOutputStream os) throws IOException{
+	public void writeTo(FileOutputStream os) throws IOException {
 		ZipUtil.zipDirectory(unzipedDirectory, os);
 	}
-	
-	protected Document getDomFromFile(File file){
+
+	protected Document getDomFromFile(File file) {
 		Document doc = null;
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder;
-			
+
 			dBuilder = dbFactory.newDocumentBuilder();
-			
+
 			doc = dBuilder.parse(file);
 			doc.getDocumentElement().normalize();
 		} catch (ParserConfigurationException e) {
@@ -116,12 +115,12 @@ public class DocxWordDocument {
 		}
 		return doc;
 	}
-	
-	protected void writeDomToFile(Document dom, File file){
+
+	protected void writeDomToFile(Document dom, File file) {
 		try {
 			Source source = new DOMSource(dom);
 			Result result = new StreamResult(file);
-			
+
 			// Write the DOM document to the file
 			Transformer xformer = TransformerFactory.newInstance().newTransformer();
 			xformer.transform(source, result);
@@ -131,8 +130,8 @@ public class DocxWordDocument {
 			throw new IllegalStateException(e);
 		}
 	}
-	
-	protected void initializeMaps(){
+
+	protected void initializeMaps() {
 		List<File> files = getDocumentFiles();
 		// add settings
 		if (settings != null) {
@@ -158,25 +157,25 @@ public class DocxWordDocument {
 			footersMap.put(file, getDomFromFile(file));
 		}
 	}
-	
-	protected List<File> getDocumentFiles(){
+
+	protected List<File> getDocumentFiles() {
 		ArrayList<File> ret = new ArrayList<File>();
 		ret.add(new File(unzipedDirectory.getAbsolutePath() + File.separator + "word" //$NON-NLS-1$
-			+ File.separator + "document.xml")); //$NON-NLS-1$
-		
+				+ File.separator + "document.xml")); //$NON-NLS-1$
+
 		settings = new File(unzipedDirectory.getAbsolutePath() + File.separator + "word" //$NON-NLS-1$
-			+ File.separator + "settings.xml");
-		
+				+ File.separator + "settings.xml");
+
 		return ret;
 	}
-	
-	protected List<File> getHeaderFiles(){
+
+	protected List<File> getHeaderFiles() {
 		ArrayList<File> ret = new ArrayList<File>();
 		File dir = new File(unzipedDirectory.getAbsolutePath() + File.separator + "word"); //$NON-NLS-1$
 		String[] headerFiles = dir.list(new FilenameFilter() {
-			
+
 			@Override
-			public boolean accept(File dir, String filename){
+			public boolean accept(File dir, String filename) {
 				if (filename.startsWith("header")) { //$NON-NLS-1$
 					return true;
 				}
@@ -186,19 +185,19 @@ public class DocxWordDocument {
 		if (headerFiles != null) {
 			for (int i = 0; i < headerFiles.length; i++) {
 				ret.add(new File(unzipedDirectory.getAbsolutePath() + File.separator + "word" //$NON-NLS-1$
-					+ File.separator + headerFiles[i]));
+						+ File.separator + headerFiles[i]));
 			}
 		}
 		return ret;
 	}
-	
-	protected List<File> getFooterFiles(){
+
+	protected List<File> getFooterFiles() {
 		ArrayList<File> ret = new ArrayList<File>();
 		File dir = new File(unzipedDirectory.getAbsolutePath() + File.separator + "word"); //$NON-NLS-1$
 		String[] headerFiles = dir.list(new FilenameFilter() {
-			
+
 			@Override
-			public boolean accept(File dir, String filename){
+			public boolean accept(File dir, String filename) {
 				if (filename.startsWith("footer")) { //$NON-NLS-1$
 					return true;
 				}
@@ -208,13 +207,13 @@ public class DocxWordDocument {
 		if (headerFiles != null) {
 			for (int i = 0; i < headerFiles.length; i++) {
 				ret.add(new File(unzipedDirectory.getAbsolutePath() + File.separator + "word" //$NON-NLS-1$
-					+ File.separator + headerFiles[i]));
+						+ File.separator + headerFiles[i]));
 			}
 		}
 		return ret;
 	}
-	
-	protected List<String> initFindNextMatch(String pattern){
+
+	protected List<String> initFindNextMatch(String pattern) {
 		ArrayList<String> ret = new ArrayList<String>();
 		// header
 		if (headersMap != null) {
@@ -237,15 +236,15 @@ public class DocxWordDocument {
 				ret.addAll(getRegexMatches(pattern, getTextOfDom(document)));
 			}
 		}
-		
+
 		return ret;
 	}
-	
-	protected List<String> getRegexMatches(String regex, String text){
+
+	protected List<String> getRegexMatches(String regex, String text) {
 		List<String> matches = new ArrayList<String>();
 		// prepare the pattern add ? for non greedy matching
 		Pattern regexPattern = Pattern.compile(getNonGreedyRegex(regex));
-		
+
 		if (text != null && !text.isEmpty()) {
 			Matcher matcher = regexPattern.matcher(text);
 			while (matcher.find()) {
@@ -254,10 +253,10 @@ public class DocxWordDocument {
 		}
 		return matches;
 	}
-	
-	private String getNonGreedyRegex(String pattern){
+
+	private String getNonGreedyRegex(String pattern) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		for (int i = 0; i < pattern.length(); i++) {
 			char c = pattern.charAt(i);
 			sb.append(c);
@@ -267,18 +266,18 @@ public class DocxWordDocument {
 				sb.append('?');
 			}
 		}
-		
+
 		return sb.toString();
 	}
-	
-	protected String getTextOfDom(Document dom){
+
+	protected String getTextOfDom(Document dom) {
 		StringBuilder sb = new StringBuilder();
 		// get all text elements ignoring their parents
 		NodeList nList = dom.getElementsByTagName("w:t"); //$NON-NLS-1$
-		
+
 		for (int i = 0; i < nList.getLength(); i++) {
 			Node nNode = nList.item(i);
-			
+
 			String value = nNode.getTextContent();
 			if (value != null && !value.isEmpty()) {
 				sb.append(value);
@@ -286,8 +285,8 @@ public class DocxWordDocument {
 		}
 		return sb.toString();
 	}
-	
-	public synchronized boolean findAndReplaceWithCallback(String pattern, ReplaceCallback cb){
+
+	public synchronized boolean findAndReplaceWithCallback(String pattern, ReplaceCallback cb) {
 		boolean found = false;
 		// header
 		if (headersMap != null) {
@@ -321,15 +320,15 @@ public class DocxWordDocument {
 		}
 		return found;
 	}
-	
-	private void writeDomToFile(Document dom){
+
+	private void writeDomToFile(Document dom) {
 		try {
 			TransformerFactory tff = TransformerFactory.newInstance();
 			Transformer transformer;
-			
+
 			transformer = tff.newTransformer();
 			DOMSource xmlSource = new DOMSource(dom);
-			
+
 			File matchingOutput = null;
 			// look in document map
 			Set<File> keys = documentsMap.keySet();
@@ -359,7 +358,7 @@ public class DocxWordDocument {
 					}
 				}
 			}
-			
+
 			if (matchingOutput != null) {
 				StreamResult outputTarget = new StreamResult(matchingOutput);
 				transformer.transform(xmlSource, outputTarget);
@@ -372,10 +371,10 @@ public class DocxWordDocument {
 			throw new IllegalStateException("Error on writing dom.", e); //$NON-NLS-1$
 		}
 	}
-	
-	private boolean findAndReplaceAllWithCallback(Document dom, String pattern, ReplaceCallback cb){
+
+	private boolean findAndReplaceAllWithCallback(Document dom, String pattern, ReplaceCallback cb) {
 		boolean found = false;
-		
+
 		List<DocxWordParagraph> paragraphs = getAllParagraphs(dom);
 		for (DocxWordParagraph paragraph : paragraphs) {
 			if (paragraph.findAndReplaceAll(pattern, cb))
@@ -383,34 +382,34 @@ public class DocxWordDocument {
 		}
 		return found;
 	}
-	
-	public List<DocxWordParagraph> getAllParagraphs(Document dom){
+
+	public List<DocxWordParagraph> getAllParagraphs(Document dom) {
 		ArrayList<DocxWordParagraph> ret = new ArrayList<DocxWordParagraph>();
 		// get all paragraph elements ignoring their parents
-		List<Node> paragraphs =
-			XMLUtil.getAllChildElementsByTagName(dom.getDocumentElement(), "w:p"); //$NON-NLS-1$
+		List<Node> paragraphs = XMLUtil.getAllChildElementsByTagName(dom.getDocumentElement(), "w:p"); //$NON-NLS-1$
 		for (Node paragraph : paragraphs) {
 			ret.add(new DocxWordParagraph(paragraph));
 		}
 		return ret;
 	}
-	
+
 	/**
-	 * Get an iterator for all matches of the provided regular expression pattern in the documents
-	 * header, content and footer. The regular expression is always used non greedy.
-	 * 
+	 * Get an iterator for all matches of the provided regular expression pattern in
+	 * the documents header, content and footer. The regular expression is always
+	 * used non greedy.
+	 *
 	 * @param pattern
 	 * @return
 	 */
-	public synchronized Iterator<String> getMatchesIterator(String pattern){
+	public synchronized Iterator<String> getMatchesIterator(String pattern) {
 		List<String> matches = initFindNextMatch(pattern);
 		return matches.iterator();
 	}
-	
-	public synchronized boolean findAndInsertTable(String place, int properties,
-		String[][] contents, int[] columnSizes){
+
+	public synchronized boolean findAndInsertTable(String place, int properties, String[][] contents,
+			int[] columnSizes) {
 		boolean found = false;
-		
+
 		// document
 		if (documentsMap != null) {
 			Collection<Document> documents = documentsMap.values();
@@ -421,11 +420,11 @@ public class DocxWordDocument {
 				}
 			}
 		}
-		
+
 		return found;
 	}
-	
-	public void setReadOnly(boolean value){
+
+	public void setReadOnly(boolean value) {
 		Document dom = documentsMap.get(settings);
 		if (dom != null) {
 			DocxWordSettings settingsDom = new DocxWordSettings(dom.getDocumentElement());
@@ -433,7 +432,7 @@ public class DocxWordDocument {
 				if (!settingsDom.isReadOnly()) {
 					settingsDom.setReadOnly(true);
 				}
-				
+
 			} else {
 				if (settingsDom.isReadOnly()) {
 					settingsDom.setReadOnly(false);
@@ -442,12 +441,12 @@ public class DocxWordDocument {
 			writeDomToFile(dom, settings);
 		}
 	}
-	
-	public boolean findAndInsertTable(Document document, String place, int properties,
-		String[][] contents, int[] columnSizes){
-		
+
+	public boolean findAndInsertTable(Document document, String place, int properties, String[][] contents,
+			int[] columnSizes) {
+
 		boolean found = false;
-		
+
 		List<DocxWordParagraph> paragraphs = getAllParagraphs(document);
 		for (DocxWordParagraph paragraph : paragraphs) {
 			if (paragraph.contains(place)) {

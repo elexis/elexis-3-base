@@ -7,7 +7,7 @@ import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
 public class UC1000Data extends AbstractUrinData {
-	
+
 	private TimeTool date;
 	private String patId;
 	private ResultInfo uro;
@@ -27,12 +27,12 @@ public class UC1000Data extends AbstractUrinData {
 	private ResultInfo sgr;
 	private ResultInfo color;
 	private ResultInfo tur;
-	
-	public int getSize(){
+
+	public int getSize() {
 		return 518;
 	}
-	
-	protected TimeTool getDate(final String content){
+
+	protected TimeTool getDate(final String content) {
 		int year = Integer.parseInt(content.substring(49, 53));
 		int month = Integer.parseInt(content.substring(54, 56));
 		int day = Integer.parseInt(content.substring(57, 59));
@@ -40,9 +40,9 @@ public class UC1000Data extends AbstractUrinData {
 		timetool.set(year, month - 1, day);
 		return timetool;
 	}
-	
+
 	@Override
-	protected String getPatientId(String content){
+	protected String getPatientId(String content) {
 		String patId = content.substring(0, 14).trim();
 		if (patId != null && !patId.isEmpty()) {
 			// remove leading zeros
@@ -54,12 +54,12 @@ public class UC1000Data extends AbstractUrinData {
 		}
 		return patId;
 	}
-	
-	protected Value getValue(final String paramName) throws PackageException{
+
+	protected Value getValue(final String paramName) throws PackageException {
 		return Value.getValueUC1000(paramName);
 	}
-	
-	public ResultInfo getResultInfo(final String paramName){
+
+	public ResultInfo getResultInfo(final String paramName) {
 		switch (paramName.toLowerCase()) {
 		case "uro":
 			return uro;
@@ -88,19 +88,19 @@ public class UC1000Data extends AbstractUrinData {
 		}
 		throw new IllegalStateException("Unknown parameter name [" + paramName + "]");
 	}
-	
+
 	@Override
-	protected int getDataIndex(){
+	protected int getDataIndex() {
 		return 69;
 	}
-	
+
 	@Override
-	public String getPatientId(){
+	public String getPatientId() {
 		return patId;
 	}
-	
+
 	@Override
-	public void write(Patient patient) throws PackageException{
+	public void write(Patient patient) throws PackageException {
 		if (uro.isAnalyzed()) {
 			write(uro, getValue("URO"), patient);
 		}
@@ -142,8 +142,8 @@ public class UC1000Data extends AbstractUrinData {
 			write(alb, getValue("ALB"), patient);
 		}
 	}
-	
-	private void write(ResultInfo resultInfo, Value value, Patient patient){
+
+	private void write(ResultInfo resultInfo, Value value, Patient patient) {
 		String result = "";
 		String comment = "";
 		if (StringUtils.isNotBlank(resultInfo.getSemiQualitativValue())) {
@@ -160,19 +160,19 @@ public class UC1000Data extends AbstractUrinData {
 		Integer patho = 0;
 		if (StringUtils.isNotBlank(resultInfo.getQualitativValue())) {
 			if (Character.isDigit(resultInfo.getQualitativValue().charAt(0))
-				&& resultInfo.getQualitativValue().contains("+")) {
+					&& resultInfo.getQualitativValue().contains("+")) {
 				patho |= LabResultConstants.PATHOLOGIC;
 			}
 		}
 		value.fetchValue(patient, result, patho, date, comment);
 	}
-		
+
 	@Override
-	public void parse(String content){
+	public void parse(String content) {
 		// Datum
 		date = getDate(content);
 		patId = getPatientId(content);
-		
+
 		uro = ResultInfo.parse(69, 101, content);
 		bid = ResultInfo.parse(101, 133, content);
 		bil = ResultInfo.parse(133, 165, content);

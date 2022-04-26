@@ -25,20 +25,21 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class GeometricDistributionEvaluator extends RecursiveNumericEvaluator implements OneValueWorker {
 
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public GeometricDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public GeometricDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object first) throws IOException{
-    if(null == first){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
-    }
+	@Override
+	public Object doWork(Object first) throws IOException {
+		if (null == first) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
+					toExpression(constructingFactory)));
+		}
 
-    Number prob = (Number)first;
+		Number prob = (Number) first;
 
-    return new GeometricDistribution(prob.doubleValue());
-  }
+		return new GeometricDistribution(prob.doubleValue());
+	}
 }

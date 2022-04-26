@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for ActRelationshipReplacement.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="ActRelationshipReplacement">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -19,20 +20,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "ActRelationshipReplacement")
 @XmlEnum
 public enum ActRelationshipReplacement {
-	
+
 	RPLC, SUCC;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static ActRelationshipReplacement fromValue(String v){
+
+	public static ActRelationshipReplacement fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

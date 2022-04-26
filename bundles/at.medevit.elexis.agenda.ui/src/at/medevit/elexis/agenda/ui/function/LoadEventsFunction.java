@@ -38,43 +38,42 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class LoadEventsFunction extends AbstractBrowserFunction {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(LoadEventsFunction.class);
-	
+
 	private Gson gson;
-	
+
 	private Set<String> resources = new HashSet<String>();
-	
+
 	protected ScriptingHelper scriptingHelper;
-	
+
 	private LoadingCache<TimeSpan, EventsJsonValue> cache;
-	
+
 	protected long knownLastUpdate = 0;
-	
+
 	private TimeSpan currentTimeSpan;
-	
+
 	private Timer timer;
-	
+
 	private class EventsJsonValue {
-		
+
 		private Map<String, Event> eventsMap;
-		
+
 		private String jsonString;
-		
+
 		private TimeSpan timespan;
-		
-		public EventsJsonValue(TimeSpan key, List<Event> events){
+
+		public EventsJsonValue(TimeSpan key, List<Event> events) {
 			this.timespan = key;
-			this.eventsMap =
-				events.parallelStream().collect(Collectors.toMap(e -> e.getId(), e -> e));
+			this.eventsMap = events.parallelStream().collect(Collectors.toMap(e -> e.getId(), e -> e));
 			jsonString = gson.toJson(eventsMap.values());
 		}
-		
-		public String getJson(){
+
+		public String getJson() {
 			return jsonString;
 		}
-		
-		public boolean updateWith(List<IPeriod> changedPeriods, IContact userContact){
+
+		public boolean updateWith(List<IPeriod> changedPeriods, IContact userContact) {
 			boolean updated = false;
 			for (IPeriod iPeriod : changedPeriods) {
 				if (eventsMap.containsKey(iPeriod.getId())) {
@@ -101,20 +100,20 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			return updated;
 		}
 	}
-	
+
 	private class TimeSpan {
 		private LocalDate startDate;
 		private LocalDate endDate;
 		private IContact userContact;
-		
-		public TimeSpan(LocalDate startDate, LocalDate endDate, IContact userContact){
+
+		public TimeSpan(LocalDate startDate, LocalDate endDate, IContact userContact) {
 			this.startDate = startDate;
 			this.endDate = endDate;
 			this.userContact = userContact;
 		}
-		
+
 		@Override
-		public int hashCode(){
+		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + getOuterType().hashCode();
@@ -122,9 +121,9 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
 			return result;
 		}
-		
+
 		@Override
-		public boolean equals(Object obj){
+		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
 			if (obj == null)
@@ -146,47 +145,45 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 				return false;
 			return true;
 		}
-		
-		private LoadEventsFunction getOuterType(){
+
+		private LoadEventsFunction getOuterType() {
 			return LoadEventsFunction.this;
 		}
-		
-		public boolean contains(IPeriod iPeriod){
+
+		public boolean contains(IPeriod iPeriod) {
 			LocalDate periodStartDate = iPeriod.getStartTime().toLocalDate();
 			return (periodStartDate.isEqual(startDate) || periodStartDate.isAfter(startDate))
-				&& (periodStartDate.isEqual(endDate) || periodStartDate.isBefore(endDate));
+					&& (periodStartDate.isEqual(endDate) || periodStartDate.isBefore(endDate));
 		}
-		
+
 		@Override
-		public String toString(){
+		public String toString() {
 			return "Timespan [" + startDate + " - " + endDate + "]";
 		}
 	}
-	
+
 	public LoadEventsFunction(Browser browser, String name, ScriptingHelper scriptingHelper,
-		UISynchronize uiSynchronize){
+			UISynchronize uiSynchronize) {
 		super(browser, name);
 		gson = new GsonBuilder().create();
 		this.scriptingHelper = scriptingHelper;
-		
+
 		cache = CacheBuilder.newBuilder().maximumSize(7).build(new TimeSpanLoader());
-		
+
 		timer = new Timer("Agenda check for updates", true);
 		timer.schedule(new CheckForUpdatesTimerTask(this, uiSynchronize), 10000, 10000);
 	}
-	
+
 	@Override
-	public Object function(Object[] arguments){
+	public Object function(Object[] arguments) {
 		if (arguments.length == 3) {
 			try {
-				IContact userContact = ContextServiceHolder.get().getActiveUser()
-					.map(IUser::getAssignedContact).orElse(null);
-				currentTimeSpan =
-					new TimeSpan(getDateArg(arguments[0]), getDateArg(arguments[1]), userContact);
+				IContact userContact = ContextServiceHolder.get().getActiveUser().map(IUser::getAssignedContact)
+						.orElse(null);
+				currentTimeSpan = new TimeSpan(getDateArg(arguments[0]), getDateArg(arguments[1]), userContact);
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.BASE + "agenda/loadtimespan",
-					new LoadEventTimeSpan(currentTimeSpan.startDate, currentTimeSpan.endDate));
-				long currentLastUpdate =
-					CoreModelServiceHolder.get().getHighestLastUpdate(IAppointment.class);
+						new LoadEventTimeSpan(currentTimeSpan.startDate, currentTimeSpan.endDate));
+				long currentLastUpdate = CoreModelServiceHolder.get().getHighestLastUpdate(IAppointment.class);
 				if (knownLastUpdate == 0) {
 					knownLastUpdate = currentLastUpdate;
 				} else if (knownLastUpdate < currentLastUpdate) {
@@ -205,7 +202,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 				EventsJsonValue eventsJson = cache.get(currentTimeSpan);
 				Display.getDefault().asyncExec(new Runnable() {
 					@Override
-					public void run(){
+					public void run() {
 						if (!isDisposed()) {
 							// update calendar height
 							updateCalendarHeight();
@@ -221,59 +218,57 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			throw new IllegalArgumentException("Unexpected arguments");
 		}
 	}
-	
+
 	/**
 	 * Get all changed {@link IPeriod} since the knownLastUpdate.
-	 * 
+	 *
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private List<IPeriod> getChangedPeriods(){
-		IQuery<IAppointment> query =
-			CoreModelServiceHolder.get().getQuery(IAppointment.class, true, true);
+	private List<IPeriod> getChangedPeriods() {
+		IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class, true, true);
 		query.and("lastupdate", COMPARATOR.GREATER, Long.valueOf(knownLastUpdate));
 		if (!resources.isEmpty()) {
 			String[] resourceArray = resources.toArray(new String[resources.size()]);
 			query.startGroup();
 			for (int i = 0; i < resourceArray.length; i++) {
-				query.or(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS,
-					resourceArray[i]);
-				
+				query.or(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS, resourceArray[i]);
+
 			}
 			query.andJoinGroups();
 		}
 		return (List<IPeriod>) (List<?>) query.execute();
 	}
-	
-	public void addResource(String resource){
+
+	public void addResource(String resource) {
 		this.resources.add(resource);
 	}
-	
-	public void removeResource(String resource){
+
+	public void removeResource(String resource) {
 		this.resources.remove(resource);
 	}
-	
-	public void setResources(List<String> resources){
+
+	public void setResources(List<String> resources) {
 		this.resources.clear();
 		this.resources.addAll(resources);
 		cache.invalidateAll();
 	}
-	
+
 	private class TimeSpanLoader extends CacheLoader<TimeSpan, EventsJsonValue> {
-		
+
 		@Override
-		public EventsJsonValue load(TimeSpan key) throws Exception{
+		public EventsJsonValue load(TimeSpan key) throws Exception {
 			List<IPeriod> periods = getPeriods(key);
-			return new EventsJsonValue(key, periods.parallelStream()
-				.map(p -> Event.of(p, key.userContact)).collect(Collectors.toList()));
+			return new EventsJsonValue(key,
+					periods.parallelStream().map(p -> Event.of(p, key.userContact)).collect(Collectors.toList()));
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		private List<IPeriod> getPeriods(TimeSpan timespan) throws IllegalStateException{
+		private List<IPeriod> getPeriods(TimeSpan timespan) throws IllegalStateException {
 			logger.debug("Loading timespan " + timespan);
 			LocalDate from = timespan.startDate;
 			LocalDate to = timespan.endDate;
-			
+
 			for (String resource : resources) {
 				LocalDate updateDate = LocalDate.from(from);
 				do {
@@ -281,15 +276,14 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 					updateDate = updateDate.plusDays(1);
 				} while (updateDate.isBefore(to) || updateDate.isEqual(to));
 			}
-			
+
 			IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class);
 			if (!resources.isEmpty()) {
 				String[] resourceArray = resources.toArray(new String[resources.size()]);
 				query.startGroup();
 				for (int i = 0; i < resourceArray.length; i++) {
-					query.or(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS,
-						resourceArray[i]);
-					
+					query.or(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS, resourceArray[i]);
+
 				}
 				query.andJoinGroups();
 				query.startGroup();
@@ -306,29 +300,29 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			return Collections.emptyList();
 		}
 	}
-	
-	public List<IPeriod> getCurrentPeriods(){
+
+	public List<IPeriod> getCurrentPeriods() {
 		TimeSpanLoader loader = new TimeSpanLoader();
 		return loader.getPeriods(currentTimeSpan);
 	}
-	
+
 	/**
 	 * Invalidate all cache entries. This should be done prior to changing the user.
 	 */
-	public void invalidateCache(){
+	public void invalidateCache() {
 		cache.invalidateAll();
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		if (timer != null) {
 			timer.cancel();
 		}
 		super.dispose();
 	}
-	
+
 	@Override
-	public void dispose(boolean remove){
+	public void dispose(boolean remove) {
 		if (timer != null) {
 			timer.cancel();
 		}

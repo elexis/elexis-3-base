@@ -1,14 +1,14 @@
 /*******************************************************************************
- * 
- * The authorship of this code and the accompanying materials is held by 
- * medshare GmbH, Switzerland. All rights reserved. 
+ *
+ * The authorship of this code and the accompanying materials is held by
+ * medshare GmbH, Switzerland. All rights reserved.
  * http://medshare.net
- * 
- * This code and the accompanying materials are made available under 
+ *
+ * This code and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0
- * 
+ *
  * Year of publication: 2012
- * 
+ *
  *******************************************************************************/
 package ch.elexis.labor.viollier.v2;
 
@@ -79,7 +79,7 @@ public class Messages extends NLS {
 	public static String PatientLabor_nameViollierLabor;
 	public static String PatientLabor_TextForComments;
 	public static String PatientLabor_WarningRefRangeMismatch;
-	
+
 	public static String Preferences_undefiniert;
 	public static String Preferences_UseGlobalSettings;
 	public static String Preferences_GlobalSettings;
@@ -93,11 +93,12 @@ public class Messages extends NLS {
 	public static String Preferences_ArchivePurgeInterval;
 	public static String Preferences_DocumentCategory;
 	public static String Preferences_SaveRefRange;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
-	private Messages(){}
+
+	private Messages() {
+	}
 }

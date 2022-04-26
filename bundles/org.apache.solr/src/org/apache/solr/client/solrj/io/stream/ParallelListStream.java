@@ -37,166 +37,167 @@ import org.apache.solr.common.util.SolrNamedThreadFactory;
 
 public class ParallelListStream extends TupleStream implements Expressible {
 
-  private static final long serialVersionUID = 1;
-  private TupleStream[] streams;
-  private TupleStream currentStream;
-  private int streamIndex;
+	private static final long serialVersionUID = 1;
+	private TupleStream[] streams;
+	private TupleStream currentStream;
+	private int streamIndex;
 
-  public ParallelListStream(TupleStream... streams) throws IOException {
-    init(streams);
-  }
+	public ParallelListStream(TupleStream... streams) throws IOException {
+		init(streams);
+	}
 
-  public ParallelListStream(StreamExpression expression, StreamFactory factory) throws IOException {
-    List<StreamExpression> streamExpressions = factory.getExpressionOperandsRepresentingTypes(expression, Expressible.class, TupleStream.class);
-    TupleStream[] streams = new TupleStream[streamExpressions.size()];
-    for(int idx = 0; idx < streamExpressions.size(); ++idx){
-      streams[idx] = factory.constructStream(streamExpressions.get(idx));
-    }
+	public ParallelListStream(StreamExpression expression, StreamFactory factory) throws IOException {
+		List<StreamExpression> streamExpressions = factory.getExpressionOperandsRepresentingTypes(expression,
+				Expressible.class, TupleStream.class);
+		TupleStream[] streams = new TupleStream[streamExpressions.size()];
+		for (int idx = 0; idx < streamExpressions.size(); ++idx) {
+			streams[idx] = factory.constructStream(streamExpressions.get(idx));
+		}
 
-    init(streams);
-  }
+		init(streams);
+	}
 
-  private void init(TupleStream ... tupleStreams) {
-    this.streams = tupleStreams;
-  }
+	private void init(TupleStream... tupleStreams) {
+		this.streams = tupleStreams;
+	}
 
-  @Override
-  public StreamExpression toExpression(StreamFactory factory) throws IOException{
-    return toExpression(factory, true);
-  }
+	@Override
+	public StreamExpression toExpression(StreamFactory factory) throws IOException {
+		return toExpression(factory, true);
+	}
 
-  private StreamExpression toExpression(StreamFactory factory, boolean includeStreams) throws IOException {
-    // function name
-    StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
-    if(includeStreams) {
-      for(TupleStream stream : streams) {
-        expression.addParameter(((Expressible)stream).toExpression(factory));
-      }
-    }
-    return expression;
-  }
+	private StreamExpression toExpression(StreamFactory factory, boolean includeStreams) throws IOException {
+		// function name
+		StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
+		if (includeStreams) {
+			for (TupleStream stream : streams) {
+				expression.addParameter(((Expressible) stream).toExpression(factory));
+			}
+		}
+		return expression;
+	}
 
-  @Override
-  public Explanation toExplanation(StreamFactory factory) throws IOException {
+	@Override
+	public Explanation toExplanation(StreamFactory factory) throws IOException {
 
-    StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
-    explanation.setFunctionName(factory.getFunctionName(this.getClass()));
-    explanation.setImplementingClass(this.getClass().getName());
-    explanation.setExpressionType(ExpressionType.STREAM_DECORATOR);
-    explanation.setExpression(toExpression(factory, false).toString());
-    for(TupleStream stream : streams) {
-      explanation.addChild(stream.toExplanation(factory));
-    }
+		StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
+		explanation.setFunctionName(factory.getFunctionName(this.getClass()));
+		explanation.setImplementingClass(this.getClass().getName());
+		explanation.setExpressionType(ExpressionType.STREAM_DECORATOR);
+		explanation.setExpression(toExpression(factory, false).toString());
+		for (TupleStream stream : streams) {
+			explanation.addChild(stream.toExplanation(factory));
+		}
 
-    return explanation;
-  }
+		return explanation;
+	}
 
-  public void setStreamContext(StreamContext context) {
-    for(TupleStream stream : streams) {
-      stream.setStreamContext(context);
-    }
-  }
+	public void setStreamContext(StreamContext context) {
+		for (TupleStream stream : streams) {
+			stream.setStreamContext(context);
+		}
+	}
 
-  public List<TupleStream> children() {
-    List<TupleStream> l =  new ArrayList<TupleStream>();
-    for(TupleStream stream : streams) {
-      l.add(stream);
-    }
-    return l;
-  }
+	public List<TupleStream> children() {
+		List<TupleStream> l = new ArrayList<TupleStream>();
+		for (TupleStream stream : streams) {
+			l.add(stream);
+		}
+		return l;
+	}
 
-  public Tuple read() throws IOException {
-    while (true) {
-      if (currentStream == null) {
-        if (streamIndex < streams.length) {
-          currentStream = streams[streamIndex];
-        } else {
-          return Tuple.EOF();
-        }
-      }
+	public Tuple read() throws IOException {
+		while (true) {
+			if (currentStream == null) {
+				if (streamIndex < streams.length) {
+					currentStream = streams[streamIndex];
+				} else {
+					return Tuple.EOF();
+				}
+			}
 
-      Tuple tuple = currentStream.read();
-      if (tuple.EOF) {
-        currentStream.close();
-        currentStream = null;
-        ++streamIndex;
-      } else {
-        return tuple;
-      }
-    }
-  }
+			Tuple tuple = currentStream.read();
+			if (tuple.EOF) {
+				currentStream.close();
+				currentStream = null;
+				++streamIndex;
+			} else {
+				return tuple;
+			}
+		}
+	}
 
-  public void close() throws IOException {
-  }
+	public void close() throws IOException {
+	}
 
-  public void open() throws IOException {
-    openStreams();
-  }
+	public void open() throws IOException {
+		openStreams();
+	}
 
-  private void openStreams() throws IOException {
-    ExecutorService service = ExecutorUtil.newMDCAwareCachedThreadPool(new SolrNamedThreadFactory("ParallelListStream"));
-    try {
-      List<Future<StreamIndex>> futures = new ArrayList<>();
-      int i=0;
-      for (TupleStream tupleStream : streams) {
-        StreamOpener so = new StreamOpener(new StreamIndex(tupleStream, i++));
-        Future<StreamIndex> future = service.submit(so);
-        futures.add(future);
-      }
+	private void openStreams() throws IOException {
+		ExecutorService service = ExecutorUtil
+				.newMDCAwareCachedThreadPool(new SolrNamedThreadFactory("ParallelListStream"));
+		try {
+			List<Future<StreamIndex>> futures = new ArrayList<>();
+			int i = 0;
+			for (TupleStream tupleStream : streams) {
+				StreamOpener so = new StreamOpener(new StreamIndex(tupleStream, i++));
+				Future<StreamIndex> future = service.submit(so);
+				futures.add(future);
+			}
 
-      try {
-        for (Future<StreamIndex> f : futures) {
-          StreamIndex streamIndex = f.get();
-          this.streams[streamIndex.getIndex()] = streamIndex.getTupleStream();
-        }
-      } catch (Exception e) {
-        throw new IOException(e);
-      }
-    } finally {
-      service.shutdown();
-    }
-  }
+			try {
+				for (Future<StreamIndex> f : futures) {
+					StreamIndex streamIndex = f.get();
+					this.streams[streamIndex.getIndex()] = streamIndex.getTupleStream();
+				}
+			} catch (Exception e) {
+				throw new IOException(e);
+			}
+		} finally {
+			service.shutdown();
+		}
+	}
 
-  protected class StreamOpener implements Callable<StreamIndex> {
+	protected class StreamOpener implements Callable<StreamIndex> {
 
-    private StreamIndex streamIndex;
+		private StreamIndex streamIndex;
 
-    public StreamOpener(StreamIndex streamIndex) {
-      this.streamIndex = streamIndex;
-    }
+		public StreamOpener(StreamIndex streamIndex) {
+			this.streamIndex = streamIndex;
+		}
 
-    public StreamIndex call() throws Exception {
-      streamIndex.getTupleStream().open();
-      return streamIndex;
-    }
-  }
+		public StreamIndex call() throws Exception {
+			streamIndex.getTupleStream().open();
+			return streamIndex;
+		}
+	}
 
-  protected class StreamIndex {
-    private TupleStream tupleStream;
-    private int index;
+	protected class StreamIndex {
+		private TupleStream tupleStream;
+		private int index;
 
-    public StreamIndex(TupleStream tupleStream, int index) {
-      this.tupleStream = tupleStream;
-      this.index = index;
-    }
+		public StreamIndex(TupleStream tupleStream, int index) {
+			this.tupleStream = tupleStream;
+			this.index = index;
+		}
 
-    public int getIndex() {
-      return this.index;
-    }
+		public int getIndex() {
+			return this.index;
+		}
 
-    public TupleStream getTupleStream() {
-      return this.tupleStream;
-    }
-  }
+		public TupleStream getTupleStream() {
+			return this.tupleStream;
+		}
+	}
 
-  /** Return the stream sort - ie, the order in which records are returned */
-  public StreamComparator getStreamSort(){
-    return null;
-  }
+	/** Return the stream sort - ie, the order in which records are returned */
+	public StreamComparator getStreamSort() {
+		return null;
+	}
 
-  public int getCost() {
-    return 0;
-  }
-
+	public int getCost() {
+		return 0;
+	}
 
 }

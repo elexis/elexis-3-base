@@ -54,7 +54,7 @@ public class FileImportDialog extends TitleAreaDialog {
 	DatePickerCombo originDatePicker;
 	Text tTitle;
 	Text tKeywords;
-	
+
 	Combo cbCategories;
 	public Date saveDate;
 	public Date originDate;
@@ -62,29 +62,29 @@ public class FileImportDialog extends TitleAreaDialog {
 	public String keywords;
 	public String category;
 	private String preSelectedCategory;
-	
-	public FileImportDialog(IDocumentHandle dh){
+
+	public FileImportDialog(IDocumentHandle dh) {
 		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
 		this.dh = dh;
 		file = dh.getTitle();
 	}
-	
+
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public FileImportDialog(String name){
+	public FileImportDialog(String name) {
 		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
 		file = name;
 	}
-	
-	public FileImportDialog(String name, String preSelectedCategory){
+
+	public FileImportDialog(String name, String preSelectedCategory) {
 		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
 		file = name;
 		this.preSelectedCategory = preSelectedCategory;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -92,7 +92,7 @@ public class FileImportDialog extends TitleAreaDialog {
 			Composite dateComposite = new Composite(ret, SWT.NONE);
 			dateComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			dateComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-			
+
 			new Label(dateComposite, SWT.None).setText(Messages.FileImportDialog_dateLabel);
 			saveDatePicker = new DatePickerCombo(dateComposite, SWT.NONE);
 			if (dh == null) {
@@ -100,9 +100,8 @@ public class FileImportDialog extends TitleAreaDialog {
 			} else {
 				saveDatePicker.setDate(new TimeTool(dh.getLastchanged()).getTime());
 			}
-			
-			new Label(dateComposite, SWT.None)
-				.setText(Messages.FileImportDialog_dateOriginLabel);
+
+			new Label(dateComposite, SWT.None).setText(Messages.FileImportDialog_dateOriginLabel);
 			originDatePicker = new DatePickerCombo(dateComposite, SWT.NONE);
 			if (dh == null) {
 				originDatePicker.setDate(new Date());
@@ -110,7 +109,7 @@ public class FileImportDialog extends TitleAreaDialog {
 				originDatePicker.setDate(new TimeTool(dh.getCreated()).getTime());
 			}
 		}
-		
+
 		new Label(ret, SWT.None).setText(Messages.FileImportDialog_categoryLabel);
 		Composite cCats = new Composite(ret, SWT.NONE);
 		cCats.setFocus();
@@ -123,9 +122,8 @@ public class FileImportDialog extends TitleAreaDialog {
 		bNewCat.setImage(Images.IMG_NEW.getImage());
 		bNewCat.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
-				InputDialog id =
-					new InputDialog(getShell(), Messages.FileImportDialog_newCategoryCaption,
+			public void widgetSelected(SelectionEvent e) {
+				InputDialog id = new InputDialog(getShell(), Messages.FileImportDialog_newCategoryCaption,
 						Messages.FileImportDialog_newCategoryText, null, null);
 				if (id.open() == Dialog.OK) {
 					CategoryUtil.addCategory(id.getValue());
@@ -139,11 +137,10 @@ public class FileImportDialog extends TitleAreaDialog {
 		bEditCat.setToolTipText("Kategorie umbenennen");
 		bEditCat.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				String old = cbCategories.getText();
-				InputDialog id = new InputDialog(getShell(),
-					MessageFormat.format("Kategorie '{0}' umbenennen.", old),
-					"Geben Sie bitte einen neuen Namen für die Kategorie ein", old, null);
+				InputDialog id = new InputDialog(getShell(), MessageFormat.format("Kategorie '{0}' umbenennen.", old),
+						"Geben Sie bitte einen neuen Namen für die Kategorie ein", old, null);
 				if (id.open() == Dialog.OK) {
 					String nn = id.getValue();
 					CategoryUtil.renameCategory(old, nn);
@@ -153,16 +150,15 @@ public class FileImportDialog extends TitleAreaDialog {
 				}
 			}
 		});
-		
+
 		Button bDeleteCat = new Button(cCats, SWT.PUSH);
 		bDeleteCat.setImage(Images.IMG_DELETE.getImage());
 		bDeleteCat.setToolTipText("Kategorie löschen");
 		bDeleteCat.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent ev){
+			public void widgetSelected(SelectionEvent ev) {
 				String old = cbCategories.getText();
-				InputDialog id =
-					new InputDialog(getShell(), MessageFormat.format("Kategorie {0}löschen", old),
+				InputDialog id = new InputDialog(getShell(), MessageFormat.format("Kategorie {0}löschen", old),
 						"Geben Sie bitte an, in welche andere Kategorie die Dokumente dieser Kategorie verschoben werden sollen",
 						"", null);
 				if (id.open() == Dialog.OK) {
@@ -180,7 +176,7 @@ public class FileImportDialog extends TitleAreaDialog {
 		if (cats.size() > 0) {
 			Collections.sort(cats);
 			cbCategories.setItems(cats.toArray(new String[0]));
-			
+
 			if (preSelectedCategory == null) {
 				cbCategories.select(0);
 			} else {
@@ -204,29 +200,29 @@ public class FileImportDialog extends TitleAreaDialog {
 		bEditCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE));
 		bDeleteCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE));
 		bNewCat.setEnabled(CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATCREATE));
-		
+
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		setTitle(file);
 		getShell().setText(Messages.FileImportDialog_importCaption);
 		setMessage(Messages.FileImportDialog_importFileText);
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		setDateValues();
-		
+
 		keywords = tKeywords.getText();
 		title = tTitle.getText();
 		category = cbCategories.getText();
 		if (dh != null) {
 			dh.setLastchanged(saveDate);
 			dh.setCreated(originDate);
-			
+
 			if (category.length() > 0) {
 				dh.setCategory(new TransientCategory(category));
 			}
@@ -236,15 +232,15 @@ public class FileImportDialog extends TitleAreaDialog {
 		}
 		super.okPressed();
 	}
-	
-	private void setDateValues(){
+
+	private void setDateValues() {
 		if (saveDatePicker != null) {
 			saveDate = saveDatePicker.getDate();
 		}
 		if (originDatePicker != null) {
 			originDate = originDatePicker.getDate();
 		}
-		
+
 		if (saveDate == null && originDate != null) {
 			saveDate = originDate;
 		} else if (originDate == null && saveDate != null) {
@@ -254,5 +250,5 @@ public class FileImportDialog extends TitleAreaDialog {
 			originDate = new Date();
 		}
 	}
-	
+
 }

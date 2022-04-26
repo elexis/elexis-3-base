@@ -20,31 +20,30 @@ public class OutboxFilterAction extends Action {
 	private ImageDescriptor image;
 	private ViewerFilter filter;
 	private StructuredViewer viewer;
-	
-	public OutboxFilterAction(StructuredViewer viewer, ViewerFilter extensionFilter,
-		ImageDescriptor filterImage){
+
+	public OutboxFilterAction(StructuredViewer viewer, ViewerFilter extensionFilter, ImageDescriptor filterImage) {
 		this.viewer = viewer;
 		this.filter = extensionFilter;
 		this.image = filterImage;
 	}
-	
+
 	@Override
-	public ImageDescriptor getImageDescriptor(){
+	public ImageDescriptor getImageDescriptor() {
 		return image;
 	}
-	
+
 	@Override
-	public int getStyle(){
+	public int getStyle() {
 		return IAction.AS_CHECK_BOX;
 	}
-	
+
 	@Override
-	public void run(){
+	public void run() {
 		if (isChecked()) {
 			viewer.addFilter(filter);
 		} else {
 			viewer.removeFilter(filter);
 		}
 	}
-	
+
 }

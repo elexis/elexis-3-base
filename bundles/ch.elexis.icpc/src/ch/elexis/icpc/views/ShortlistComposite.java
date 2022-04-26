@@ -23,36 +23,32 @@ import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.elexis.icpc.service.IcpcModelServiceHolder;
 
 public class ShortlistComposite extends Composite {
-	
-	private String[] SHORTLIST_CODES = new String[] {
-		"K86", "K74", "K75", "K77", "T90", "R95", "K78", "K90", "K92", "P17", "R96", "P70", "A96"
-	};
-	
+
+	private String[] SHORTLIST_CODES = new String[] { "K86", "K74", "K75", "K77", "T90", "R95", "K78", "K90", "K92",
+			"P17", "R96", "P70", "A96" };
+
 	/**
 	 * Create the composite.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 */
-	public ShortlistComposite(Composite parent, int style){
+	public ShortlistComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new FillLayout(SWT.HORIZONTAL));
-		
+
 		List<IcpcCode> shortList = Arrays.asList(SHORTLIST_CODES).stream()
-			.map(s -> IcpcModelServiceHolder.get().load(s, IcpcCode.class).get())
-			.collect(Collectors.toList());
-		
+				.map(s -> IcpcModelServiceHolder.get().load(s, IcpcCode.class).get()).collect(Collectors.toList());
+
 		ListViewer listViewer = new ListViewer(this, SWT.BORDER | SWT.V_SCROLL);
 		org.eclipse.swt.widgets.List list = listViewer.getList();
-		
+
 		DragSource dragSource = new DragSource(list, DND.DROP_COPY);
-		dragSource.setTransfer(new Transfer[] {
-			TextTransfer.getInstance()
-		});
+		dragSource.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		dragSource.addDragListener(new DragSourceListener() {
-			
+
 			@Override
-			public void dragStart(DragSourceEvent event){
+			public void dragStart(DragSourceEvent event) {
 				IStructuredSelection ss = listViewer.getStructuredSelection();
 				if (ss.isEmpty()) {
 					event.data = null;
@@ -61,23 +57,24 @@ public class ShortlistComposite extends Composite {
 					event.data = (IcpcCode) ss.getFirstElement();
 				}
 			}
-			
+
 			@Override
-			public void dragSetData(DragSourceEvent event){
+			public void dragSetData(DragSourceEvent event) {
 				IStructuredSelection ss = listViewer.getStructuredSelection();
 				if (!ss.isEmpty()) {
-					event.data = StoreToStringServiceHolder.get()
-						.storeToString((IcpcCode) ss.getFirstElement()).orElse(null);
+					event.data = StoreToStringServiceHolder.get().storeToString((IcpcCode) ss.getFirstElement())
+							.orElse(null);
 				}
 			}
-			
+
 			@Override
-			public void dragFinished(DragSourceEvent event){}
+			public void dragFinished(DragSourceEvent event) {
+			}
 		});
-		
+
 		listViewer.setContentProvider(ArrayContentProvider.getInstance());
 		listViewer.setLabelProvider(new DefaultLabelProvider());
 		listViewer.setInput(shortList);
 	}
-	
+
 }

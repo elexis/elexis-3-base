@@ -12,10 +12,12 @@
 package ch.unibe.iam.scg.archie.model;
 
 /**
- * <p>Custom Exception which handles malformed input Strings for queries.</p>
- * 
+ * <p>
+ * Custom Exception which handles malformed input Strings for queries.
+ * </p>
+ *
  * $Id: SetDataException.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -27,9 +29,8 @@ public class SetDataException extends Exception {
 	/**
 	 * This exception is thrown by a query if any of the annotated methods can't
 	 * handle the input string. The message is printed to the output.
-	 * 
-	 * @param message
-	 *            error message to be displayed to the user in the UI.
+	 *
+	 * @param message error message to be displayed to the user in the UI.
 	 */
 	public SetDataException(String message) {
 		super(message);

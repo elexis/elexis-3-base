@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.labortarif_2009.ui;
 
@@ -28,18 +28,16 @@ import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
 
 public class Labor2009ControlFieldProvider extends DefaultControlFieldProvider {
-	
+
 	private LocalDate filterDate;
-	
-	public Labor2009ControlFieldProvider(CommonViewer viewer){
-		super(viewer, new String[] {
-			"filter=Filter"
-		});
+
+	public Labor2009ControlFieldProvider(CommonViewer viewer) {
+		super(viewer, new String[] { "filter=Filter" });
 		CoreUiUtil.injectServicesWithContext(this);
 	}
-	
+
 	@Inject
-	public void selectedEncounter(@Optional IEncounter encounter){
+	public void selectedEncounter(@Optional IEncounter encounter) {
 		if (encounter != null) {
 			this.filterDate = encounter.getDate();
 			fireChangedEvent();
@@ -48,9 +46,9 @@ public class Labor2009ControlFieldProvider extends DefaultControlFieldProvider {
 			fireChangedEvent();
 		}
 	}
-	
+
 	@Override
-	public void setQuery(IQuery<?> query){
+	public void setQuery(IQuery<?> query) {
 		String[] values = getValues();
 		if (values != null && values.length == 1) {
 			String filterValue = values[0];
@@ -59,8 +57,7 @@ public class Labor2009ControlFieldProvider extends DefaultControlFieldProvider {
 				for (String string : filterParts) {
 					if (StringUtils.isNotBlank(string)) {
 						if (Character.isDigit(string.charAt(0))) {
-							query.and(ModelPackage.Literals.ICODE_ELEMENT__CODE, COMPARATOR.LIKE,
-								string + "%", true);
+							query.and(ModelPackage.Literals.ICODE_ELEMENT__CODE, COMPARATOR.LIKE, string + "%", true);
 						} else {
 							query.and("name", COMPARATOR.LIKE, string + "%", true);
 						}
@@ -68,13 +65,10 @@ public class Labor2009ControlFieldProvider extends DefaultControlFieldProvider {
 				}
 			}
 			if (filterDate != null) {
-				query.and(LabortarifPackage.Literals.ILABOR_LEISTUNG__VALID_FROM,
-					COMPARATOR.LESS_OR_EQUAL, filterDate);
+				query.and(LabortarifPackage.Literals.ILABOR_LEISTUNG__VALID_FROM, COMPARATOR.LESS_OR_EQUAL, filterDate);
 				query.startGroup();
-				query.or(LabortarifPackage.Literals.ILABOR_LEISTUNG__VALID_TO, COMPARATOR.EQUALS,
-					null);
-				query.or(LabortarifPackage.Literals.ILABOR_LEISTUNG__VALID_TO,
-					COMPARATOR.GREATER_OR_EQUAL, filterDate);
+				query.or(LabortarifPackage.Literals.ILABOR_LEISTUNG__VALID_TO, COMPARATOR.EQUALS, null);
+				query.or(LabortarifPackage.Literals.ILABOR_LEISTUNG__VALID_TO, COMPARATOR.GREATER_OR_EQUAL, filterDate);
 				query.andJoinGroups();
 			}
 		}

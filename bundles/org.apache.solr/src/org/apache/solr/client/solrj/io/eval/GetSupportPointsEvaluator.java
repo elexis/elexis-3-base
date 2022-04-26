@@ -28,31 +28,34 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class GetSupportPointsEvaluator extends RecursiveObjectEvaluator implements OneValueWorker {
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public GetSupportPointsEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public GetSupportPointsEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object value) throws IOException {
-    if(!(value instanceof EnclosingBall)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for value, expecting an EnclosingBall",toExpression(constructingFactory), value.getClass().getSimpleName()));
-    } else {
-      @SuppressWarnings({"rawtypes"})
-      EnclosingBall enclosingBall = (EnclosingBall)value;
-      @SuppressWarnings({"rawtypes"})
-      Point[] points = enclosingBall.getSupport();
-      double[][] data = new double[points.length][2];
-      int i=0;
-      for(@SuppressWarnings({"rawtypes"})Point point : points) {
-        Vector2D eu = (Vector2D)point;
-        data[i][0] = eu.getX();
-        data[i][1] = eu.getY();
-        ++i;
-      }
+	@Override
+	public Object doWork(Object value) throws IOException {
+		if (!(value instanceof EnclosingBall)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for value, expecting an EnclosingBall",
+					toExpression(constructingFactory), value.getClass().getSimpleName()));
+		} else {
+			@SuppressWarnings({ "rawtypes" })
+			EnclosingBall enclosingBall = (EnclosingBall) value;
+			@SuppressWarnings({ "rawtypes" })
+			Point[] points = enclosingBall.getSupport();
+			double[][] data = new double[points.length][2];
+			int i = 0;
+			for (@SuppressWarnings({ "rawtypes" })
+			Point point : points) {
+				Vector2D eu = (Vector2D) point;
+				data[i][0] = eu.getX();
+				data[i][1] = eu.getY();
+				++i;
+			}
 
-      return new Matrix(data);
-    }
-  }
+			return new Matrix(data);
+		}
+	}
 }

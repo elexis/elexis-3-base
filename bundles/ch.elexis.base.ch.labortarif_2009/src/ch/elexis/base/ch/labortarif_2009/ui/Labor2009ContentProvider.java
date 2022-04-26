@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.labortarif_2009.ui;
 
@@ -23,17 +23,16 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.elexis.labortarif2009.data.ModelServiceHolder;
 
 public class Labor2009ContentProvider extends LazyCommonViewerContentProvider {
-	
+
 	private ControlFieldProvider controlFieldProvider;
-	
-	public Labor2009ContentProvider(CommonViewer commonViewer,
-		ControlFieldProvider controlFieldProvider){
+
+	public Labor2009ContentProvider(CommonViewer commonViewer, ControlFieldProvider controlFieldProvider) {
 		super(commonViewer);
 		this.controlFieldProvider = controlFieldProvider;
 	}
-	
+
 	@Override
-	public Object[] getElements(Object inputElement){
+	public Object[] getElements(Object inputElement) {
 		IQuery<?> query = getBaseQuery();
 		// apply filters from control field provider
 		controlFieldProvider.setQuery(query);
@@ -41,12 +40,12 @@ public class Labor2009ContentProvider extends LazyCommonViewerContentProvider {
 		applyQueryFilters(query);
 		query.orderBy("code", ORDER.ASC);
 		List<?> elements = query.execute();
-		
+
 		return elements.toArray(new Object[elements.size()]);
 	}
-	
+
 	@Override
-	protected IQuery<?> getBaseQuery(){
+	protected IQuery<?> getBaseQuery() {
 		IQuery<ILaborLeistung> query = ModelServiceHolder.get().getQuery(ILaborLeistung.class);
 		query.and("id", COMPARATOR.NOT_EQUALS, "1");
 		return query;

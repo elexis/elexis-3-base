@@ -16,47 +16,47 @@ import ch.elexis.core.services.IQuery;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.arzttarife.model")
 public class ArzttarifeModelService extends AbstractModelService implements IModelService {
-	
+
 	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
-	
+
 	@Reference
 	private EventAdmin eventAdmin;
-	
+
 	@Activate
-	public void activate(){
+	public void activate() {
 		adapterFactory = ArzttarifeModelAdapterFactory.getInstance();
 	}
-	
+
 	@Override
-	public <T> IQuery<T> getQuery(Class<T> clazz, boolean refreshCache, boolean includeDeleted){
-		return new ArzttarifeQuery<>(clazz, refreshCache,
-			(EntityManager) entityManager.getEntityManager(), includeDeleted);
+	public <T> IQuery<T> getQuery(Class<T> clazz, boolean refreshCache, boolean includeDeleted) {
+		return new ArzttarifeQuery<>(clazz, refreshCache, (EntityManager) entityManager.getEntityManager(),
+				includeDeleted);
 	}
-	
+
 	@Override
-	protected EntityManager getEntityManager(boolean managed){
+	protected EntityManager getEntityManager(boolean managed) {
 		return (EntityManager) entityManager.getEntityManager(managed);
 	}
-	
+
 	@Override
-	protected void closeEntityManager(EntityManager entityManager){
+	protected void closeEntityManager(EntityManager entityManager) {
 		this.entityManager.closeEntityManager(entityManager);
 	}
-	
+
 	@Override
-	protected EventAdmin getEventAdmin(){
+	protected EventAdmin getEventAdmin() {
 		return eventAdmin;
 	}
-	
+
 	@Override
-	protected ElexisEvent getCreateEvent(Identifiable identifiable){
+	protected ElexisEvent getCreateEvent(Identifiable identifiable) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public void clearCache(){
+	public void clearCache() {
 		entityManager.clearCache();
 	}
 }

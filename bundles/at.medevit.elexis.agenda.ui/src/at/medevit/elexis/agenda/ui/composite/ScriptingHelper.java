@@ -9,29 +9,29 @@ import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 
 public class ScriptingHelper {
-	
+
 	private Browser browser;
-	
+
 	private volatile boolean doScroll;
-	
-	public ScriptingHelper(Browser browser){
+
+	public ScriptingHelper(Browser browser) {
 		this.browser = browser;
 	}
-	
-	public void setSelectedSpanSize(AgendaSpanSize size){
+
+	public void setSelectedSpanSize(AgendaSpanSize size) {
 		String slotDuration = "$('#calendar').fullCalendar('option', 'slotDuration', '%s');";
 		String script = String.format(slotDuration, size.getCalendarString());
 		SingleSourceUtil.executeScript(browser, script);
 		scrollToNow();
 	}
-	
+
 	/**
 	 * parses a time of format 1900 to 19:00:00
-	 * 
+	 *
 	 * @param time
 	 * @return
 	 */
-	private String parseTime(String time){
+	private String parseTime(String time) {
 		if (time.length() < 6 || time.lastIndexOf(":") != 5) {
 			StringBuilder builder = new StringBuilder(6);
 			time = time.replaceAll(":", "");
@@ -51,55 +51,53 @@ public class ScriptingHelper {
 		}
 		return time;
 	}
-	
-	public void setCalenderTime(String dayStartsAt, String dayEndsAt){
-		
+
+	public void setCalenderTime(String dayStartsAt, String dayEndsAt) {
+
 		String endsAt = "$('#calendar').fullCalendar('option', 'maxTime', '%s');";
 		String startAt = "$('#calendar').fullCalendar('option', 'minTime', '%s');";
-		String script = String.format(endsAt, parseTime(dayEndsAt))
-			+ String.format(startAt, parseTime(dayStartsAt));
+		String script = String.format(endsAt, parseTime(dayEndsAt)) + String.format(startAt, parseTime(dayStartsAt));
 		SingleSourceUtil.executeScript(browser, script);
 		scrollToNow();
 	}
-	
-	public void setSelectedDate(LocalDate date){
+
+	public void setSelectedDate(LocalDate date) {
 		String gotoDate = "$('#calendar').fullCalendar('gotoDate', '%s');";
 		String script = String.format(gotoDate, date.toString());
 		SingleSourceUtil.executeScript(browser, script);
 	}
-	
-	public void setFontSize(int sizePx){
+
+	public void setFontSize(int sizePx) {
 		String bodyFontSize = "$('body').css('font-size', '%dpx');";
 		String script = String.format(bodyFontSize, sizePx);
 		SingleSourceUtil.executeScript(browser, script);
 	}
-	
-	public void setFontFamily(String family){
+
+	public void setFontFamily(String family) {
 		String bodyFontFamily = "$('body').css('font-family', '%s');";
 		String script = String.format(bodyFontFamily, family);
 		SingleSourceUtil.executeScript(browser, script);
 	}
-	
-	public void refetchEvents(){
+
+	public void refetchEvents() {
 		String refetchEvents = "$('#calendar').fullCalendar('refetchEvents');";
 		SingleSourceUtil.executeScript(browser, refetchEvents);
 	}
-	
-	public void initializeResources(List<String> selectedResources){
+
+	public void initializeResources(List<String> selectedResources) {
 		String updateResourceIds = "$('#calendar').fullCalendar('getView').setResourceIds(%s);";
 		String script = String.format(updateResourceIds, getResourceIdsString(selectedResources));
 		SingleSourceUtil.executeScript(browser, script);
 	}
-	
-	public void scrollToNow(){
+
+	public void scrollToNow() {
 		if (doScroll) {
-			String script =
-				"var now = $('#calendar').fullCalendar('getNow'); if (now >= $('#calendar').fullCalendar('getView').intervalStart && now < $('#calendar').fullCalendar('getView').intervalEnd){ setTimeout( function(){$('.fc-scroller').scrollTop($('.fc-now-indicator').position().top - ($('#calendar').height() / 2) );}  , 500 );}";
+			String script = "var now = $('#calendar').fullCalendar('getNow'); if (now >= $('#calendar').fullCalendar('getView').intervalStart && now < $('#calendar').fullCalendar('getView').intervalEnd){ setTimeout( function(){$('.fc-scroller').scrollTop($('.fc-now-indicator').position().top - ($('#calendar').height() / 2) );}  , 500 );}";
 			SingleSourceUtil.executeScript(browser, script);
 		}
 	}
-	
-	private Object getResourceIdsString(List<String> selectedResources){
+
+	private Object getResourceIdsString(List<String> selectedResources) {
 		StringBuilder ret = new StringBuilder();
 		ret.append("[");
 		for (String calendar : selectedResources) {
@@ -111,8 +109,8 @@ public class ScriptingHelper {
 		ret.append("]");
 		return ret;
 	}
-	
-	public void setScrollToNow(boolean value){
+
+	public void setScrollToNow(boolean value) {
 		this.doScroll = value;
 		scrollToNow();
 	}

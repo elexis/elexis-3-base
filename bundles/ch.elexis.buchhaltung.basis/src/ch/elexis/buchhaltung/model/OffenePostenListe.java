@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 
@@ -36,9 +36,9 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 
 /**
  * Find all bills that are payable at a given date
- * 
+ *
  * @author user
- * 
+ *
  */
 public class OffenePostenListe extends AbstractDataProvider {
 	private static final String OFFENE_RECHNUNGEN_PER = Messages.OffenePostenListe_OpenBillsPer;
@@ -49,70 +49,69 @@ public class OffenePostenListe extends AbstractDataProvider {
 	private static final String FIELD_ACTMANDATOR = "Nur aktueller Mandant"; //$NON-NLS-1$
 	private static final String FIELD_AUSGANGSDATUM = "Ausgangsdatum"; //$NON-NLS-1$
 	private static final String FIELD_STICHTAG = "Stichtag"; //$NON-NLS-1$
-	
+
 	private TimeTool stichtag = new TimeTool();
 	private TimeTool startTag = new TimeTool();
 	private boolean bOnlyActiveMandator;
-	
-	public OffenePostenListe(){
+
+	public OffenePostenListe() {
 		super(NAME);
 		startTag.set(TimeTool.MONTH, TimeTool.JANUARY);
 		startTag.set(TimeTool.DAY_OF_MONTH, 1);
 	}
-	
-	public void setStartTag(TimeTool starttag){
+
+	public void setStartTag(TimeTool starttag) {
 		this.startTag.set(starttag);
 	}
-	
-	public TimeTool getStartTag(){
+
+	public TimeTool getStartTag() {
 		return new TimeTool(startTag);
 	}
-	
-	public void setStichtag(TimeTool stichtag){
+
+	public void setStichtag(TimeTool stichtag) {
 		this.stichtag.set(stichtag);
 	}
-	
-	public TimeTool getStichtag(){
+
+	public TimeTool getStichtag() {
 		return new TimeTool(stichtag);
 	}
-	
+
 	@GetProperty(name = FIELD_ACTMANDATOR, widgetType = WidgetTypes.BUTTON_CHECKBOX)
-	public boolean getOnlyActiveMandator(){
+	public boolean getOnlyActiveMandator() {
 		return bOnlyActiveMandator;
 	}
-	
+
 	@SetProperty(name = FIELD_ACTMANDATOR)
-	public void setOnlyActiveMandator(boolean val){
+	public void setOnlyActiveMandator(boolean val) {
 		bOnlyActiveMandator = val;
 	}
-	
+
 	@GetProperty(name = FIELD_AUSGANGSDATUM, widgetType = WidgetTypes.TEXT_DATE)
-	public String metaGetStarttag(){
+	public String metaGetStarttag() {
 		return getStartTag().toString(TimeTool.DATE_SIMPLE);
 	}
-	
+
 	@SetProperty(name = FIELD_AUSGANGSDATUM, index = -2)
-	public void metaSetStarttag(String tag) throws SetDataException{
+	public void metaSetStarttag(String tag) throws SetDataException {
 		TimeTool tt = new TimeTool(tag);
 		this.setStartTag(tt);
 	}
-	
+
 	@GetProperty(name = FIELD_STICHTAG, widgetType = WidgetTypes.TEXT_DATE)
-	public String metaGetStichtag(){
+	public String metaGetStichtag() {
 		return getStichtag().toString(TimeTool.DATE_SIMPLE);
 	}
-	
+
 	@SetProperty(name = FIELD_STICHTAG)
-	public void metaSetStichtag(String stichtag) throws SetDataException{
+	public void metaSetStichtag(String stichtag) throws SetDataException {
 		TimeTool tt = new TimeTool(stichtag);
 		this.setStichtag(tt);
 	}
-	
+
 	@Override
-	protected IStatus createContent(IProgressMonitor monitor){
+	protected IStatus createContent(IProgressMonitor monitor) {
 		int totalwork = 1000000;
-		monitor.beginTask(OFFENE_RECHNUNGEN_PER + getStichtag().toString(TimeTool.DATE_SIMPLE),
-			totalwork);
+		monitor.beginTask(OFFENE_RECHNUNGEN_PER + getStichtag().toString(TimeTool.DATE_SIMPLE), totalwork);
 		monitor.subTask(DATENBANKABFRAGE);
 		Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
 		qbe.add("RnDatum", "<=", getStichtag().toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -141,7 +140,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 			if (fall != null) {
 				Patient pat = fall.getPatient();
 				Money betrag = rn.getBetrag();
-				
+
 				if ((pat != null) && (betrag != null) && (!betrag.isNeglectable())) {
 					int status = rn.getStatusAtDate(now);
 					if (RnStatus.isActive(status)) {
@@ -160,19 +159,19 @@ public class OffenePostenListe extends AbstractDataProvider {
 						row[2] = RnStatus.getStatusText(status);
 						result.add(row);
 					}
-					
+
 				}
 			}
 			monitor.worked(step);
 		}
 		this.dataSet.setContent(result);
-		
+
 		monitor.done();
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
-	protected List<String> createHeadings(){
+	protected List<String> createHeadings() {
 		List<String> ret = new ArrayList<String>();
 		ret.add(Messages.OffenePostenListe_PatientNr);
 		ret.add(Messages.OffenePostenListe_BillNr);
@@ -180,10 +179,10 @@ public class OffenePostenListe extends AbstractDataProvider {
 		ret.add(Messages.OffenePostenListe_OpenAmount);
 		return ret;
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return OFFENE_POSTEN;
 	}
-	
+
 }

@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2010, Oliver Egger, visionary ag
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *    
+ *
  *******************************************************************************/
 package ch.docbox.elexis;
 
@@ -80,92 +80,89 @@ import ch.elexis.data.Query;
 /**
  * Displays the documents downloaded from docbox (doctrans)
  */
-public class DocboxDocumentsView extends ViewPart implements IActivationListener,
-		HeartListener {
-	
+public class DocboxDocumentsView extends ViewPart implements IActivationListener, HeartListener {
+
 	public static final String ID = "chdocbox.elexis.DocboxDocumentsView";
-	
+
 	private TableViewer tableViewer;
 	private Table table;
 	private Font boldFont;
-	
+
 	private int sortColumn = 0;
 	private boolean sortReverse = false;
-	
+
 	public CdaMessage selectedCdaMessage;
-	
-	private final ElexisEventListenerImpl reloadListener = new ElexisUiEventListenerImpl(
-		CdaMessage.class, ElexisEvent.EVENT_RELOAD) {
-		public void runInUi(ElexisEvent ev){
+
+	private final ElexisEventListenerImpl reloadListener = new ElexisUiEventListenerImpl(CdaMessage.class,
+			ElexisEvent.EVENT_RELOAD) {
+		public void runInUi(ElexisEvent ev) {
 			if (!tableViewer.getControl().isDisposed()) {
 				log.log("reloadListener refresh", Log.DEBUGMSG);
 				tableViewer.refresh(true);
 			}
 		}
 	};
-	
-	private final ElexisEventListenerImpl updateListener =
-		new ElexisUiEventListenerImpl(
-		CdaMessage.class, ElexisEvent.EVENT_UPDATE) {
-		public void runInUi(ElexisEvent ev){
+
+	private final ElexisEventListenerImpl updateListener = new ElexisUiEventListenerImpl(CdaMessage.class,
+			ElexisEvent.EVENT_UPDATE) {
+		public void runInUi(ElexisEvent ev) {
 			if (!tableViewer.getControl().isDisposed()) {
 				log.log("updateListener refresh", Log.DEBUGMSG);
 				tableViewer.refresh(true);
 			}
 		}
 	};
-	
-	private final ElexisUiEventListenerImpl patientSelectionListener =
-		new ElexisUiEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED) {
-			
-			@Override
-			public void runInUi(ElexisEvent ev){
-				
-				ISelection selection = tableViewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				if (obj != null) {
-					CdaMessage cdaMessage = (CdaMessage) obj;
-					if (!cdaMessage.isEqualsPatient((Patient) ev.getObject())) {
-						tableViewer.setSelection(null);
-					} else {
-						
-					}
-					
+
+	private final ElexisUiEventListenerImpl patientSelectionListener = new ElexisUiEventListenerImpl(Patient.class,
+			ElexisEvent.EVENT_SELECTED) {
+
+		@Override
+		public void runInUi(ElexisEvent ev) {
+
+			ISelection selection = tableViewer.getSelection();
+			Object obj = ((IStructuredSelection) selection).getFirstElement();
+			if (obj != null) {
+				CdaMessage cdaMessage = (CdaMessage) obj;
+				if (!cdaMessage.isEqualsPatient((Patient) ev.getObject())) {
+					tableViewer.setSelection(null);
+				} else {
+
 				}
-				
+
 			}
-			
-		};
-	
-	ElexisEventListenerImpl eeli_user =
-		new ElexisUiEventListenerImpl(Anwender.class,
-		ElexisEvent.EVENT_USER_CHANGED) {
-		
-		public void runInUi(ElexisEvent ev){
+
+		}
+
+	};
+
+	ElexisEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+
+		public void runInUi(ElexisEvent ev) {
 			userChanged();
 		}
 	};
-	
+
 	private Action actionOpenAttachments;
 	private Action actionDeleteDocument;
 	private Action actionShowCdaDocument;
 	private Action actionCreatePatient;
-	
+
 	protected static Log log = Log.get("DocboxDocumentsView"); //$NON-NLS-1$
-	
+
 	class ViewContentProvider implements IStructuredContentProvider {
-		public void inputChanged(Viewer v, Object oldInput, Object newInput){}
-		
-		public void dispose(){}
-		
-		public Object[] getElements(Object parent){
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
+
+		public void dispose() {
+		}
+
+		public Object[] getElements(Object parent) {
 			return CdaMessage.getCdaMessages();
 		}
 	}
-	
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider,
-			ITableFontProvider {
-		public String getColumnText(Object obj, int index){
+
+	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider {
+		public String getColumnText(Object obj, int index) {
 			CdaMessage cdaMessage = (CdaMessage) obj;
 			switch (index) {
 			case 0:
@@ -182,17 +179,16 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 				return "?";
 			}
 		}
-		
-		public Image getColumnImage(Object obj, int index){
+
+		public Image getColumnImage(Object obj, int index) {
 			return null;
 		}
-		
-		public Image getImage(Object obj){
-			return PlatformUI.getWorkbench().getSharedImages()
-				.getImage(ISharedImages.IMG_OBJ_ELEMENT);
+
+		public Image getImage(Object obj) {
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
-		
-		public Font getFont(Object element, int columnIndex){
+
+		public Font getFont(Object element, int columnIndex) {
 			Font font = null;
 			if (element instanceof CdaMessage) {
 				CdaMessage cdaMessage = (CdaMessage) element;
@@ -203,11 +199,11 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 			return font;
 		}
 	}
-	
+
 	class Sorter extends ViewerSorter {
-		
+
 		@Override
-		public int compare(Viewer viewer, Object e1, Object e2){
+		public int compare(Viewer viewer, Object e1, Object e2) {
 			if ((e1 instanceof CdaMessage) && (e2 instanceof CdaMessage)) {
 				CdaMessage d1 = (CdaMessage) e1;
 				CdaMessage d2 = (CdaMessage) e2;
@@ -243,17 +239,17 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 			}
 			return 0;
 		}
-		
+
 	}
-	
+
 	class SortListener extends SelectionAdapter {
-		
+
 		@Override
-		public void widgetSelected(SelectionEvent e){
+		public void widgetSelected(SelectionEvent e) {
 			TableColumn col = (TableColumn) e.getSource();
-			
+
 			Integer colNo = (Integer) col.getData();
-			
+
 			if (colNo != null) {
 				if (colNo == sortColumn) {
 					sortReverse = !sortReverse;
@@ -264,42 +260,36 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 				tableViewer.refresh();
 			}
 		}
-		
+
 	}
-	
-	public DocboxDocumentsView(){
+
+	public DocboxDocumentsView() {
 		super();
 		CdaMessage.load("1");
 	}
-	
-	private String[] getColumnLabels(){
-		String columnLabels[] =
-			{
-				Messages.DocboxDocumentsView_DateSent, Messages.DocboxDocumentsView_Title,
+
+	private String[] getColumnLabels() {
+		String columnLabels[] = { Messages.DocboxDocumentsView_DateSent, Messages.DocboxDocumentsView_Title,
 				Messages.DocboxDocumentsView_Sender, Messages.DocboxDocumentsView_Patient,
-				Messages.DocboxDocumentsView_Attachments
-			};
+				Messages.DocboxDocumentsView_Attachments };
 		return columnLabels;
 	}
-	
-	private int[] getColumnWidth(){
-		int columnWidth[] = {
-			80, 150, 200, 200, 500
-		};
+
+	private int[] getColumnWidth() {
+		int columnWidth[] = { 80, 150, 200, 200, 500 };
 		return columnWidth;
 	}
-	
-	private Font createBoldFont(Font baseFont){
+
+	private Font createBoldFont(Font baseFont) {
 		FontData fd = baseFont.getFontData()[0];
-		Font font =
-			new Font(baseFont.getDevice(), fd.getName(), fd.getHeight(), fd.getStyle() | SWT.BOLD);
+		Font font = new Font(baseFont.getDevice(), fd.getName(), fd.getHeight(), fd.getStyle() | SWT.BOLD);
 		return font;
 	}
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		table = new Table(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		
+
 		String[] colLabels = getColumnLabels();
 		int columnWidth[] = getColumnWidth();
 		SortListener sortListener = new SortListener();
@@ -311,39 +301,37 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 			cols[i].setData(new Integer(i));
 			cols[i].addSelectionListener(sortListener);
 		}
-		
+
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		
+
 		boldFont = createBoldFont(table.getFont());
-		
+
 		tableViewer = new TableViewer(table);
 		tableViewer.setContentProvider(new ViewContentProvider());
 		tableViewer.setLabelProvider(new ViewLabelProvider());
 		tableViewer.setSorter(new Sorter());
 		tableViewer.setUseHashlookup(true);
-		
-		Transfer[] transferTypes = new Transfer[] {
-			FileTransfer.getInstance()
-		};
-		
+
+		Transfer[] transferTypes = new Transfer[] { FileTransfer.getInstance() };
+
 		tableViewer.addDragSupport(DND.DROP_COPY, transferTypes, new DragSourceListener() {
-			
+
 			private CdaMessage cdaMessage;
-			
+
 			@Override
-			public void dragStart(DragSourceEvent event){
+			public void dragStart(DragSourceEvent event) {
 				event.doit = true;
 				event.detail = DND.DROP_MOVE;
 				log.log("dragStart", Log.DEBUGMSG);
 			}
-			
+
 			@Override
-			public void dragSetData(DragSourceEvent event){
-				
+			public void dragSetData(DragSourceEvent event) {
+
 				ISelection selection = tableViewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				
+
 				if (obj != null) {
 					cdaMessage = (CdaMessage) obj;
 					String files[] = cdaMessage.getFiles();
@@ -353,60 +341,53 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 					}
 					event.data = files;
 				}
-				
+
 			}
-			
+
 			@Override
-			public void dragFinished(DragSourceEvent event){
+			public void dragFinished(DragSourceEvent event) {
 				log.log("dragFinished", Log.DEBUGMSG);
 				if (event.detail == 1) {
 					cdaMessage.setAssignedToOmnivore();
 				}
 			}
-			
+
 		});
-		
+
 		selectionEvent(CoreHub.getLoggedInContact());
 		tableViewer.setInput(getViewSite());
-		
+
 		actionOpenAttachments = new Action(Messages.DocboxDocumentsView_Action_AttachmentsOpen) {
-			public void run(){
+			public void run() {
 				ISelection selection = tableViewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				CdaMessage cdaMessage = (CdaMessage) obj;
 				cdaMessage.execute();
 			}
 		};
-		
+
 		actionShowCdaDocument = new Action(Messages.DocboxDocumentsView_Action_ShowCdaDocument) {
-			public void run(){
+			public void run() {
 				ISelection selection = tableViewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				CdaMessage cdaMessage = (CdaMessage) obj;
 				TextTransfer textTransfer = TextTransfer.getInstance();
 				final Clipboard cb = new Clipboard(UiDesk.getDisplay());
-				cb.setContents(new Object[] {
-					cdaMessage.getCda()
-				}, new Transfer[] {
-					textTransfer
-				});
+				cb.setContents(new Object[] { cdaMessage.getCda() }, new Transfer[] { textTransfer });
 			}
 		};
-		
+
 		actionDeleteDocument = new Action(Messages.DocboxDocumentsView_Action_Delete) {
-			public void run(){
+			public void run() {
 				ISelection selection = tableViewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				if (obj != null) {
 					CdaMessage cdaMessage = (CdaMessage) obj;
-					MessageBox messageBox =
-						new MessageBox(UiDesk.getDisplay().getActiveShell(), SWT.ICON_WARNING
-							| SWT.OK | SWT.CANCEL);
+					MessageBox messageBox = new MessageBox(UiDesk.getDisplay().getActiveShell(),
+							SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
 					messageBox.setText(Messages.DocboxDocumentsView_Action_Delete);
-					messageBox
-						.setMessage(String.format(
-							Messages.DocboxDocumentsView_Action_DeleteConfirmMsg,
-							cdaMessage.getTitle()));
+					messageBox.setMessage(
+							String.format(Messages.DocboxDocumentsView_Action_DeleteConfirmMsg, cdaMessage.getTitle()));
 					if (messageBox.open() == SWT.OK) {
 						cdaMessage.deleteDocs();
 						tableViewer.refresh();
@@ -414,34 +395,34 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 				}
 			}
 		};
-		
+
 		actionCreatePatient = new Action(Messages.DocboxDocumentsView_Action_CreatePatient) {
-			public void run(){
+			public void run() {
 				ISelection selection = tableViewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				
+
 				if (obj != null) {
 					CdaMessage cdaMessage = (CdaMessage) obj;
-					
+
 					CdaChXPath xpath = new CdaChXPath();
 					String name = cdaMessage.getCda();
 					if (name != null) {
 						xpath.setPatientDocument(cdaMessage.getCda());
-						
+
 						String family = xpath.getPatientLastName();
 						String given = xpath.getPatientFirstName();
 						String streetAdressLine = xpath.getPatientStreet();
 						String plz = xpath.getPatientPlz();
 						String city = xpath.getPatientCity();
-						
+
 						Patient p = new Patient(family, given, "", "");
 						p.set(Person.NAME, family);
 						p.set(Person.FIRSTNAME, given);
-						
+
 						p.set(Kontakt.FLD_STREET, streetAdressLine);
 						p.set(Kontakt.FLD_ZIP, plz);
 						p.set(Kontakt.FLD_PLACE, city);
-						
+
 						p.set(Patient.FLD_E_MAIL, xpath.getPatientEmail());
 						if ("M".equals(xpath.getPatientGender())) {
 							p.set(Patient.FLD_SEX, "m");
@@ -453,23 +434,23 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 						p.set(Patient.FLD_MOBILEPHONE, xpath.getPatientMobile());
 						p.set(Patient.FLD_PHONE2, xpath.getPatientOfficePhone());
 						p.set(Patient.BIRTHDATE, xpath.getPatientDateOfBirth());
-						
+
 						String ahv = xpath.getPatientAhv13();
 						if (ahv != null && !"".equals(ahv)) {
 							p.addXid(DOMAIN_AHV, xpath.getPatientAhv13(), true);
 						}
-						
+
 						ElexisEventDispatcher.fireSelectionEvent((PersistentObject) p);
 						ElexisEventDispatcher.reload(Patient.class);
 					}
 				}
 			}
 		};
-		
+
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager){
+			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(actionOpenAttachments);
 				manager.add(actionDeleteDocument);
 				manager.add(actionShowCdaDocument);
@@ -477,14 +458,14 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 			}
 		});
 		tableViewer.getControl().setMenu(mgr.createContextMenu(tableViewer.getControl()));
-		
+
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				actionOpenAttachments.run();
 			}
 		});
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				if ((sel != null) && !sel.isEmpty()) {
 					Object object = sel.getFirstElement();
@@ -492,7 +473,7 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 						CdaMessage cdaMessage = (CdaMessage) object;
 						cdaMessage.setRead();
 						// try to find the matchting person
-						
+
 						CdaChXPath cdaChXPath = new CdaChXPath();
 						String cda = cdaMessage.getCda();
 						if (cda != null) {
@@ -501,28 +482,25 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 							String firstName = cdaChXPath.getPatientFirstName();
 							String geburtsdatum = cdaChXPath.getPatientDateOfBirth();
 							if (cdaChXPath.getPatientNumber() != null) {
-								String patId =
-									new Query<Patient>(Patient.class).findSingle(
-										"PatientNr", "=", cdaChXPath.getPatientNumber());//$NON-NLS-1$ //$NON-NLS-2$
+								String patId = new Query<Patient>(Patient.class).findSingle("PatientNr", "=", //$NON-NLS-1$ //$NON-NLS-2$
+										cdaChXPath.getPatientNumber());
 								if (patId != null) {
-									
+
 									Patient elexisPatient = Patient.load(patId);
-									if (elexisPatient != null
-										&& elexisPatient.getName().equals(lastName)
-										&& elexisPatient.getVorname().equals(firstName)) {
-										log.log("selecting patient by id with " + lastName + ", "
-											+ firstName, Log.DEBUGMSG);
+									if (elexisPatient != null && elexisPatient.getName().equals(lastName)
+											&& elexisPatient.getVorname().equals(firstName)) {
+										log.log("selecting patient by id with " + lastName + ", " + firstName,
+												Log.DEBUGMSG);
 										ElexisEventDispatcher.fireSelectionEvent(elexisPatient);
 										return;
 									}
 								}
 							}
-							if (KontaktMatcher.findPerson(lastName, firstName, geburtsdatum, null,
-								null, null, null, null, CreateMode.FAIL) != null) {
-								log.log("selecting patient by demographics " + lastName + ", "
-									+ firstName, Log.DEBUGMSG);
-								Patient elexisPatient =
-									KontaktMatcher.findPatient(lastName, firstName, geburtsdatum,
+							if (KontaktMatcher.findPerson(lastName, firstName, geburtsdatum, null, null, null, null,
+									null, CreateMode.FAIL) != null) {
+								log.log("selecting patient by demographics " + lastName + ", " + firstName,
+										Log.DEBUGMSG);
+								Patient elexisPatient = KontaktMatcher.findPatient(lastName, firstName, geburtsdatum,
 										null, null, null, null, null, CreateMode.FAIL);
 								if (elexisPatient != null) {
 									ElexisEventDispatcher.fireSelectionEvent(elexisPatient);
@@ -532,26 +510,26 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 						tableViewer.refresh();
 					}
 				}
-				
+
 			}
-			
+
 		});
-		
+
 		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
-		
+
 	}
-	
-	void userChanged(){
+
+	void userChanged() {
 		tableViewer.refresh();
 	}
-	
+
 	@Optional
 	@Inject
-	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState) {
 		CoreUiUtil.updateFixLayout(part, currentState);
 	}
-	
-	public void selectionEvent(PersistentObject obj){
+
+	public void selectionEvent(PersistentObject obj) {
 		if (obj instanceof CdaMessage) {
 			CdaMessage cdaMessage = (CdaMessage) obj;
 			cdaMessage.setRead();
@@ -560,66 +538,65 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 			tableViewer.refresh();
 		}
 	}
-	
-	public void activation(boolean mode){}
-	
-	public void visible(boolean mode){
+
+	public void activation(boolean mode) {
+	}
+
+	public void visible(boolean mode) {
 		if (mode == true) {
 			CoreHub.heart.addListener(this);
-			ElexisEventDispatcher.getInstance().addListeners(reloadListener, updateListener,
-				patientSelectionListener);
+			ElexisEventDispatcher.getInstance().addListeners(reloadListener, updateListener, patientSelectionListener);
 			heartbeat();
 		} else {
 			CoreHub.heart.removeListener(this);
 			ElexisEventDispatcher.getInstance().removeListeners(reloadListener, updateListener,
-				patientSelectionListener);
+					patientSelectionListener);
 		}
-		
+
 	};
-	
-	public void clearEvent(Class<? extends PersistentObject> template){}
-	
+
+	public void clearEvent(Class<? extends PersistentObject> template) {
+	}
+
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		tableViewer.getControl().setFocus();
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
 		super.dispose();
 	}
-	
-	public void refresh(){
+
+	public void refresh() {
 		tableViewer.refresh();
 	}
-	
-	public void objectChanged(PersistentObject obj){
+
+	public void objectChanged(PersistentObject obj) {
 		if (obj instanceof CdaMessage) {
 			tableViewer.refresh();
 		}
 	}
-	
-	public void objectCreated(PersistentObject obj){
+
+	public void objectCreated(PersistentObject obj) {
 		if (obj instanceof CdaMessage) {
 			tableViewer.refresh();
 		}
 	}
-	
-	public void objectDeleted(PersistentObject obj){
+
+	public void objectDeleted(PersistentObject obj) {
 		if (obj instanceof CdaMessage) {
 			tableViewer.refresh();
 		}
 	}
-	
-	public void heartbeat(){
-		reloadListener.catchElexisEvent(new ElexisEvent(null, CdaMessage.class,
-			ElexisEvent.EVENT_RELOAD));
-		updateListener.catchElexisEvent(new ElexisEvent(null, CdaMessage.class,
-			ElexisEvent.EVENT_UPDATE));
+
+	public void heartbeat() {
+		reloadListener.catchElexisEvent(new ElexisEvent(null, CdaMessage.class, ElexisEvent.EVENT_RELOAD));
+		updateListener.catchElexisEvent(new ElexisEvent(null, CdaMessage.class, ElexisEvent.EVENT_UPDATE));
 	}
-	
+
 }

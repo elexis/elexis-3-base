@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.solr.client.solrj.response;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,52 +27,52 @@ import org.apache.solr.common.util.NamedList;
  * Encapsulates responses from ClusteringComponent
  */
 public class ClusteringResponse {
-  private static final String CLUSTERS_NODE = "clusters";
-  private static final String LABELS_NODE = "labels";
-  private static final String DOCS_NODE = "docs";
-  private static final String SCORE_NODE = "score";
-  private static final String IS_OTHER_TOPICS = "other-topics";
-  private List<Cluster> clusters;
+	private static final String CLUSTERS_NODE = "clusters";
+	private static final String LABELS_NODE = "labels";
+	private static final String DOCS_NODE = "docs";
+	private static final String SCORE_NODE = "score";
+	private static final String IS_OTHER_TOPICS = "other-topics";
+	private List<Cluster> clusters;
 
-  @SuppressWarnings("unchecked")
-  public ClusteringResponse(List<NamedList<Object>> clusterInfo) {
-    clusters = new ArrayList<Cluster>();
-    for (NamedList<Object> clusterNode : clusterInfo) {
-      List<String> labelList, docIdList;
-      List<Cluster> subclusters = Collections.emptyList();
-      labelList = docIdList = Collections.emptyList();
-      Double score = 0d;
-      boolean otherTopics = false;
-      for (Map.Entry<String, ?> e : clusterNode) {
-        switch (e.getKey()) {
-          case LABELS_NODE:
-            labelList = (List<String>) e.getValue(); 
-            break;
+	@SuppressWarnings("unchecked")
+	public ClusteringResponse(List<NamedList<Object>> clusterInfo) {
+		clusters = new ArrayList<Cluster>();
+		for (NamedList<Object> clusterNode : clusterInfo) {
+			List<String> labelList, docIdList;
+			List<Cluster> subclusters = Collections.emptyList();
+			labelList = docIdList = Collections.emptyList();
+			Double score = 0d;
+			boolean otherTopics = false;
+			for (Map.Entry<String, ?> e : clusterNode) {
+				switch (e.getKey()) {
+				case LABELS_NODE:
+					labelList = (List<String>) e.getValue();
+					break;
 
-          case DOCS_NODE:
-            docIdList = (List<String>) e.getValue(); 
-            break;
-            
-          case SCORE_NODE:
-            score = (Double) e.getValue();
-            break;
+				case DOCS_NODE:
+					docIdList = (List<String>) e.getValue();
+					break;
 
-          case CLUSTERS_NODE:
-            subclusters = new ClusteringResponse((List<NamedList<Object>>) e.getValue()).getClusters();
-            break;
-            
-          case IS_OTHER_TOPICS:
-            otherTopics = (Boolean) e.getValue();
-            break;
-        }
-      }
+				case SCORE_NODE:
+					score = (Double) e.getValue();
+					break;
 
-      clusters.add(new Cluster(labelList, score, docIdList, subclusters, otherTopics));
-    }
-  }
+				case CLUSTERS_NODE:
+					subclusters = new ClusteringResponse((List<NamedList<Object>>) e.getValue()).getClusters();
+					break;
 
-  public List<Cluster> getClusters() {
-    return clusters;
-  }
+				case IS_OTHER_TOPICS:
+					otherTopics = (Boolean) e.getValue();
+					break;
+				}
+			}
+
+			clusters.add(new Cluster(labelList, score, docIdList, subclusters, otherTopics));
+		}
+	}
+
+	public List<Cluster> getClusters() {
+		return clusters;
+	}
 
 }

@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-
 abstract public class SimpleTextFView extends ViewPart {
 	private boolean canEdit = true;
 	private Text textfield;
@@ -23,12 +22,11 @@ abstract public class SimpleTextFView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
-		
+
 		area = new Composite(parent, 0);
 		area.setLayout(new GridLayout());
-		
-		textfield = new Text(area,
-			(SWT.MULTI | SWT.WRAP | SWT.V_SCROLL));
+
+		textfield = new Text(area, (SWT.MULTI | SWT.WRAP | SWT.V_SCROLL));
 
 		modifiable = false;
 		textfield.setEditable(modifiable);
@@ -36,16 +34,16 @@ abstract public class SimpleTextFView extends ViewPart {
 			public void focusLost(FocusEvent e) {
 				fieldChanged();
 			}
-			
-			public void focusGained(FocusEvent e) {}
+
+			public void focusGained(FocusEvent e) {
+			}
 		});
-		
+
 		// TraverseListener um das Standard-Tab-Verhalten zu ueberschreiben.
 		// Wir wollen mit Tab Fokus weiterbewegen.
 		textfield.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_TAB_NEXT ||
-						e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
+				if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
 					e.doit = true;
 			}
 		});
@@ -54,17 +52,19 @@ abstract public class SimpleTextFView extends ViewPart {
 		gd.horizontalAlignment = gd.verticalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = gd.grabExcessVerticalSpace = true;
 		textfield.setLayoutData(gd);
-		
+
 		origPName = getPartName();
-		
+
 		initialize();
 	}
-	
-	protected void initialize() {}
-	
+
+	protected void initialize() {
+	}
+
 	@Override
-	public void setFocus() {}
-	
+	public void setFocus() {
+	}
+
 	protected void setEnabled(boolean en) {
 		modifiable = en && canEdit;
 		textfield.setEditable(modifiable);
@@ -72,16 +72,16 @@ abstract public class SimpleTextFView extends ViewPart {
 			setText("");
 		}
 	}
-	
+
 	protected boolean isEnabled() {
 		return modifiable;
 	}
-	
+
 	protected void setText(String text) {
 		textfield.setText(text);
 		setEmpty();
 	}
-	
+
 	protected String getText() {
 		return textfield.getText();
 	}
@@ -92,13 +92,13 @@ abstract public class SimpleTextFView extends ViewPart {
 	protected void setEmpty() {
 		setPartName((isEmpty() ? "" : "* ") + origPName);
 	}
-	
+
 	// Helper-Funktionen die in Subklassen ueberschrieben werden koennen,
 	// muessen hier aber noch aufgerufen werden
 	protected void fieldChanged() {
 		setEmpty();
 	}
-	
+
 	protected boolean isEmpty() {
 		String text = textfield.getText();
 		return text == null || text.isEmpty();

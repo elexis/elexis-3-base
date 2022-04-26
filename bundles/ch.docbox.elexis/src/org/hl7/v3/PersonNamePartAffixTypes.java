@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for PersonNamePartAffixTypes.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="PersonNamePartAffixTypes">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -21,20 +22,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "PersonNamePartAffixTypes")
 @XmlEnum
 public enum PersonNamePartAffixTypes {
-	
+
 	AC, NB, PR, VV;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static PersonNamePartAffixTypes fromValue(String v){
+
+	public static PersonNamePartAffixTypes fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

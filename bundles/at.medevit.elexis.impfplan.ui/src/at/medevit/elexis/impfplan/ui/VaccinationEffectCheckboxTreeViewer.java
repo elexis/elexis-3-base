@@ -20,105 +20,107 @@ import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel;
 import at.medevit.elexis.impfplan.model.DiseaseDefinitionModel.DiseaseDefinition;
 import ch.elexis.core.constants.StringConstants;
 
-public class VaccinationEffectCheckboxTreeViewer extends CheckboxTreeViewer
-		implements ICheckStateProvider {
-		
+public class VaccinationEffectCheckboxTreeViewer extends CheckboxTreeViewer implements ICheckStateProvider {
+
 	private String initialCheckedElements = "";
-	
-	public VaccinationEffectCheckboxTreeViewer(Composite parent, int style,
-		String initialCheckedElements){
+
+	public VaccinationEffectCheckboxTreeViewer(Composite parent, int style, String initialCheckedElements) {
 		super(parent, style);
-		
-		this.initialCheckedElements =
-			(initialCheckedElements != null) ? initialCheckedElements : StringConstants.EMPTY;
-			
+
+		this.initialCheckedElements = (initialCheckedElements != null) ? initialCheckedElements : StringConstants.EMPTY;
+
 		GridData gd_tree = new GridData(SWT.FILL, SWT.TOP, true, false);
 		gd_tree.heightHint = 200;
 		getTree().setLayoutData(gd_tree);
 		getTree().setHeaderVisible(false);
 		getTree().setLinesVisible(true);
-		
+
 		TreeViewerColumn col = new TreeViewerColumn(this, SWT.NONE);
 		col.getColumn().setWidth(225);
-		
+
 		setContentProvider(new DiseaseTreeContentProvider());
 		setLabelProvider(new DiseaseTreeLabelProvider());
 		setInput(DiseaseDefinitionModel.getDiseaseDefinitions());
 		setCheckStateProvider(this);
 	}
-	
-	public String getCheckedElementsAsCommaSeparatedString(){
+
+	public String getCheckedElementsAsCommaSeparatedString() {
 		Object[] checkedElements = getCheckedElements();
 		List<Object> list = Arrays.asList(checkedElements);
-		Optional<String> ret = list.stream().map(o -> (DiseaseDefinition) o)
-			.map(o -> o.getATCCode()).reduce((u, t) -> u + StringConstants.COMMA + t);
+		Optional<String> ret = list.stream().map(o -> (DiseaseDefinition) o).map(o -> o.getATCCode())
+				.reduce((u, t) -> u + StringConstants.COMMA + t);
 		return ret.orElse("");
 	}
-	
+
 	private class DiseaseTreeContentProvider implements ITreeContentProvider {
-		
+
 		@Override
-		public void dispose(){}
-		
+		public void dispose() {
+		}
+
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
-		
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+
 		@Override
-		public Object[] getElements(Object inputElement){
+		public Object[] getElements(Object inputElement) {
 			return DiseaseDefinitionModel.getDiseaseDefinitions().toArray();
 		}
-		
+
 		@Override
-		public Object[] getChildren(Object parentElement){
+		public Object[] getChildren(Object parentElement) {
 			return null;
 		}
-		
+
 		@Override
-		public Object getParent(Object element){
+		public Object getParent(Object element) {
 			return (DiseaseDefinition) element;
 		}
-		
+
 		@Override
-		public boolean hasChildren(Object element){
+		public boolean hasChildren(Object element) {
 			return false;
 		}
 	}
-	
+
 	private class DiseaseTreeLabelProvider implements ILabelProvider {
-		
+
 		@Override
-		public void addListener(ILabelProviderListener listener){}
-		
+		public void addListener(ILabelProviderListener listener) {
+		}
+
 		@Override
-		public void dispose(){}
-		
+		public void dispose() {
+		}
+
 		@Override
-		public boolean isLabelProperty(Object element, String property){
+		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
-		
+
 		@Override
-		public void removeListener(ILabelProviderListener listener){}
-		
+		public void removeListener(ILabelProviderListener listener) {
+		}
+
 		@Override
-		public Image getImage(Object element){
+		public Image getImage(Object element) {
 			return null;
 		}
-		
+
 		@Override
-		public String getText(Object element){
+		public String getText(Object element) {
 			return ((DiseaseDefinition) element).getDiseaseLabel();
 		}
 	}
-	
+
 	@Override
-	public boolean isChecked(Object element){
+	public boolean isChecked(Object element) {
 		DiseaseDefinition dd = (DiseaseDefinition) element;
 		return initialCheckedElements.contains(dd.getATCCode());
 	}
-	
+
 	@Override
-	public boolean isGrayed(Object element){
+	public boolean isGrayed(Object element) {
 		return false;
 	}
 }

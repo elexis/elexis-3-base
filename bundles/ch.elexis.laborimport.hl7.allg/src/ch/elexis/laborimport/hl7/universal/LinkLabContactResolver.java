@@ -8,15 +8,14 @@ import ch.elexis.core.ui.importer.div.importers.Messages;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class LinkLabContactResolver implements ILabContactResolver {
-	
+
 	@Override
-	public ILaboratory getLabContact(String identifier, String sendingFacility){
+	public ILaboratory getLabContact(String identifier, String sendingFacility) {
 		ILaboratory labor = LabImportUtilHolder.get().getLinkLabor(sendingFacility,
-			new DefaultLinkLabContactResolver().identifier(identifier));
-		
+				new DefaultLinkLabContactResolver().identifier(identifier));
+
 		if (labor == null) {
-			boolean askYesNo =
-				SWTHelper.askYesNo(Messages.HL7Parser_NoLab, Messages.HL7Parser_AskUseOwnLab);
+			boolean askYesNo = SWTHelper.askYesNo(Messages.HL7Parser_NoLab, Messages.HL7Parser_AskUseOwnLab);
 			if (askYesNo) {
 				labor = LabImportUtilHolder.get().getOrCreateLabor(identifier);
 			}

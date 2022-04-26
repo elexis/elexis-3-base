@@ -30,24 +30,26 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class GetCenterEvaluator extends RecursiveObjectEvaluator implements OneValueWorker {
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public GetCenterEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public GetCenterEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object value) throws IOException {
-    if(!(value instanceof EnclosingBall)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for value, expecting an EnclosingBall",toExpression(constructingFactory), value.getClass().getSimpleName()));
-    } else {
-      @SuppressWarnings({"rawtypes"})
-      EnclosingBall enclosingBall = (EnclosingBall)value;
-      Vector2D vec = (Vector2D)enclosingBall.getCenter();
-      List<Number> center = new ArrayList<>();
-      center.add(vec.getX());
-      center.add(vec.getY());
-      return center;
-    }
-  }
+	@Override
+	public Object doWork(Object value) throws IOException {
+		if (!(value instanceof EnclosingBall)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for value, expecting an EnclosingBall",
+					toExpression(constructingFactory), value.getClass().getSimpleName()));
+		} else {
+			@SuppressWarnings({ "rawtypes" })
+			EnclosingBall enclosingBall = (EnclosingBall) value;
+			Vector2D vec = (Vector2D) enclosingBall.getCenter();
+			List<Number> center = new ArrayList<>();
+			center.add(vec.getX());
+			center.add(vec.getY());
+			return center;
+		}
+	}
 }

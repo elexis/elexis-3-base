@@ -35,7 +35,7 @@ public class ContactInfo {
 	String tel;
 	String insurancenumber;
 
-	public static ContactInfo fromPatient(IPatient pat){
+	public static ContactInfo fromPatient(IPatient pat) {
 		ContactInfo ret = new ContactInfo();
 		ret.setBirthdate(pat.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 		ret.setCity(pat.getCity());
@@ -47,18 +47,17 @@ public class ContactInfo {
 		ret.setTel(pat.getPhone1());
 		return ret;
 	}
-	
+
 	/**
-	 * Change the information contained by this Object to
-	 * the Information provided by the {@link Kontakt} or its subclasses.
-	 * 
+	 * Change the information contained by this Object to the Information provided
+	 * by the {@link Kontakt} or its subclasses.
+	 *
 	 * @param kon
 	 */
-	public static ContactInfo fromKontakt(IContact kon){
+	public static ContactInfo fromKontakt(IContact kon) {
 		ContactInfo ret = new ContactInfo();
 		if (kon.isOrganization()) {
-			IOrganization org =
-				CoreModelServiceHolder.get().load(kon.getId(), IOrganization.class).orElse(null);
+			IOrganization org = CoreModelServiceHolder.get().load(kon.getId(), IOrganization.class).orElse(null);
 			ret.setZip(org.getZip());
 			ret.setCity(org.getCity());
 			ret.setStreet1(org.getStreet());
@@ -66,16 +65,14 @@ public class ContactInfo {
 			ret.setFirstname(org.getDescription1());
 			ret.setTel(org.getPhone1());
 		} else if (kon.isPerson()) {
-			IPerson per =
-				CoreModelServiceHolder.get().load(kon.getId(), IPerson.class).orElse(null);
+			IPerson per = CoreModelServiceHolder.get().load(kon.getId(), IPerson.class).orElse(null);
 			ret.setZip(per.getZip());
 			ret.setCity(per.getCity());
 			ret.setStreet1(per.getStreet());
 			ret.setLastname(per.getLastName());
 			ret.setFirstname(per.getFirstName());
 			if (per.getDateOfBirth() != null) {
-				ret.setBirthdate(
-					per.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+				ret.setBirthdate(per.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 			}
 			ret.setGender(per.getGender() == Gender.FEMALE ? "W" : "M");
 			ret.setTel(per.getPhone1());
@@ -89,87 +86,111 @@ public class ContactInfo {
 		}
 		return ret;
 	}
-	
+
 	public String getLastname() {
 		return lastname;
 	}
+
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
+
 	public String getFirstname() {
 		return firstname;
 	}
+
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
 	}
+
 	public String getStreet1() {
 		return street1;
 	}
+
 	public void setStreet1(String street1) {
 		this.street1 = street1;
 	}
+
 	public String getStreet2() {
 		return street2;
 	}
+
 	public void setStreet2(String street2) {
 		this.street2 = street2;
 	}
+
 	public String getCity() {
 		return city;
 	}
+
 	public void setCity(String city) {
 		this.city = city;
 	}
+
 	public String getZip() {
 		return zip;
 	}
+
 	public void setZip(String zip) {
 		this.zip = zip;
 	}
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getMenumber() {
 		return menumber;
 	}
+
 	public void setMenumber(String menumber) {
 		this.menumber = menumber;
 	}
+
 	public String getBirthdate() {
 		return birthdate;
 	}
+
 	public void setBirthdate(String birthdate) {
 		this.birthdate = birthdate;
 	}
+
 	public String getGender() {
 		return gender;
 	}
+
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
+
 	public String getTel() {
 		return tel;
 	}
+
 	public void setTel(String tel) {
 		this.tel = tel;
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return title;
 	}
-	
-	public void setTitle(String title){
+
+	public void setTitle(String title) {
 		this.title = title;
 	}
+
 	public String getInsurancenumber() {
 		return insurancenumber;
 	}
+
 	public void setInsurancenumber(String inumber) {
 		insurancenumber = inumber;
 	}
+
 	@Override
 	public String toString() {
 		return "ContactInfo: " + firstname + " " + lastname + " " + city + " " + zip + " " + menumber;

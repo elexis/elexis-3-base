@@ -19,11 +19,11 @@ import ch.rgw.tools.TimeTool;
 
 public class SupplementVaccinationHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(SupplementVaccinationHandler.class);
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Patient sp = ElexisEventDispatcher.getSelectedPatient();
-		if(sp==null) {
+		if (sp == null) {
 			return null;
 		}
 		SupplementVaccinationDialog svd = new SupplementVaccinationDialog(UiDesk.getTopShell(), sp);
@@ -34,17 +34,15 @@ public class SupplementVaccinationHandler extends AbstractHandler {
 			String lotNo = svd.getLotNo();
 			TimeTool doa = svd.getDateOfAdministration();
 			String articleString = svd.getArticleString();
-			Identifiable art =
-				StoreToStringServiceHolder.get().loadFromString(articleString).orElse(null);
-			
+			Identifiable art = StoreToStringServiceHolder.get().loadFromString(articleString).orElse(null);
+
 			if (art instanceof IArticle) {
 				IArticle article = (IArticle) art;
-				new Vaccination(patientId, articleString, article.getLabel(), article.getGtin(),
-					article.getAtcCode(), doa.getTime(), lotNo, administratorString);
+				new Vaccination(patientId, articleString, article.getLabel(), article.getGtin(), article.getAtcCode(),
+						doa.getTime(), lotNo, administratorString);
 			} else {
-				Vaccination v =
-					new Vaccination(patientId, null, articleString, null, null, doa.getTime(),
-						lotNo, administratorString);
+				Vaccination v = new Vaccination(patientId, null, articleString, null, null, doa.getTime(), lotNo,
+						administratorString);
 				v.setVaccAgainst(svd.getVaccAgainst());
 			}
 			logger.debug("Supplement vaccination: " + articleString + " added");

@@ -10,10 +10,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for POCD_MT000040.SpecimenRole complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="POCD_MT000040.SpecimenRole">
  *   &lt;complexContent>
@@ -31,15 +32,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "POCD_MT000040.SpecimenRole", propOrder = {
-	"realmCode", "typeId", "templateId", "id", "specimenPlayingEntity"
-})
+@XmlType(name = "POCD_MT000040.SpecimenRole", propOrder = { "realmCode", "typeId", "templateId", "id",
+		"specimenPlayingEntity" })
 public class POCDMT000040SpecimenRole {
-	
+
 	protected List<CS> realmCode;
 	protected POCDMT000040InfrastructureRootTypeId typeId;
 	protected List<II> templateId;
@@ -49,184 +49,185 @@ public class POCDMT000040SpecimenRole {
 	protected List<String> nullFlavor;
 	@XmlAttribute
 	protected RoleClassSpecimen classCode;
-	
+
 	/**
 	 * Gets the value of the realmCode property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the realmCode property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the realmCode property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getRealmCode().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link CS }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<CS> getRealmCode(){
+	public List<CS> getRealmCode() {
 		if (realmCode == null) {
 			realmCode = new ArrayList<CS>();
 		}
 		return this.realmCode;
 	}
-	
+
 	/**
 	 * Gets the value of the typeId property.
-	 * 
+	 *
 	 * @return possible object is {@link POCDMT000040InfrastructureRootTypeId }
-	 * 
+	 *
 	 */
-	public POCDMT000040InfrastructureRootTypeId getTypeId(){
+	public POCDMT000040InfrastructureRootTypeId getTypeId() {
 		return typeId;
 	}
-	
+
 	/**
 	 * Sets the value of the typeId property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link POCDMT000040InfrastructureRootTypeId }
-	 * 
+	 *
+	 * @param value allowed object is {@link POCDMT000040InfrastructureRootTypeId }
+	 *
 	 */
-	public void setTypeId(POCDMT000040InfrastructureRootTypeId value){
+	public void setTypeId(POCDMT000040InfrastructureRootTypeId value) {
 		this.typeId = value;
 	}
-	
+
 	/**
 	 * Gets the value of the templateId property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the templateId property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the templateId property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getTemplateId().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link II }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<II> getTemplateId(){
+	public List<II> getTemplateId() {
 		if (templateId == null) {
 			templateId = new ArrayList<II>();
 		}
 		return this.templateId;
 	}
-	
+
 	/**
 	 * Gets the value of the id property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the id property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the id property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getId().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link II }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<II> getId(){
+	public List<II> getId() {
 		if (id == null) {
 			id = new ArrayList<II>();
 		}
 		return this.id;
 	}
-	
+
 	/**
 	 * Gets the value of the specimenPlayingEntity property.
-	 * 
+	 *
 	 * @return possible object is {@link POCDMT000040PlayingEntity }
-	 * 
+	 *
 	 */
-	public POCDMT000040PlayingEntity getSpecimenPlayingEntity(){
+	public POCDMT000040PlayingEntity getSpecimenPlayingEntity() {
 		return specimenPlayingEntity;
 	}
-	
+
 	/**
 	 * Sets the value of the specimenPlayingEntity property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link POCDMT000040PlayingEntity }
-	 * 
+	 *
+	 * @param value allowed object is {@link POCDMT000040PlayingEntity }
+	 *
 	 */
-	public void setSpecimenPlayingEntity(POCDMT000040PlayingEntity value){
+	public void setSpecimenPlayingEntity(POCDMT000040PlayingEntity value) {
 		this.specimenPlayingEntity = value;
 	}
-	
+
 	/**
 	 * Gets the value of the nullFlavor property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the nullFlavor property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the nullFlavor property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getNullFlavor().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link String }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<String> getNullFlavor(){
+	public List<String> getNullFlavor() {
 		if (nullFlavor == null) {
 			nullFlavor = new ArrayList<String>();
 		}
 		return this.nullFlavor;
 	}
-	
+
 	/**
 	 * Gets the value of the classCode property.
-	 * 
+	 *
 	 * @return possible object is {@link RoleClassSpecimen }
-	 * 
+	 *
 	 */
-	public RoleClassSpecimen getClassCode(){
+	public RoleClassSpecimen getClassCode() {
 		if (classCode == null) {
 			return RoleClassSpecimen.SPEC;
 		} else {
 			return classCode;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the classCode property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link RoleClassSpecimen }
-	 * 
+	 *
+	 * @param value allowed object is {@link RoleClassSpecimen }
+	 *
 	 */
-	public void setClassCode(RoleClassSpecimen value){
+	public void setClassCode(RoleClassSpecimen value) {
 		this.classCode = value;
 	}
-	
+
 }

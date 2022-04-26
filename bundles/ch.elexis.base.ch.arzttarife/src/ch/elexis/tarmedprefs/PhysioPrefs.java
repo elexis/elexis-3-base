@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -21,14 +21,14 @@ import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
 
 public class PhysioPrefs extends PreferencePage implements IWorkbenchPreferencePage {
 	public static final String TP_ID = "Physio"; //$NON-NLS-1$
-	
+
 	@Override
-	protected Control createContents(final Composite parent){
+	protected Control createContents(final Composite parent) {
 		return new MultiplikatorEditor(parent, TP_ID);
 	}
-	
-	public void init(final IWorkbench workbench){
-		
+
+	public void init(final IWorkbench workbench) {
+
 	}
-	
+
 }

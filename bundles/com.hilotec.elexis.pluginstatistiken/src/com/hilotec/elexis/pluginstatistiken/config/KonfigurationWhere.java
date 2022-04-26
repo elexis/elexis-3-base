@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
- *    
+ *    A. Kaufmann - initial implementation
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.pluginstatistiken.config;
@@ -25,14 +25,14 @@ import com.hilotec.elexis.pluginstatistiken.Datensatz;
 import com.hilotec.elexis.pluginstatistiken.PluginstatistikException;
 
 /**
- * Where-Klausel fuer eine Abfrage. (Eigentlich allgemein Bedingungsklauseln, wird beispielsweise
- * auch fuer die Join-Bedingung benutzt).
- * 
+ * Where-Klausel fuer eine Abfrage. (Eigentlich allgemein Bedingungsklauseln,
+ * wird beispielsweise auch fuer die Join-Bedingung benutzt).
+ *
  * @author Antoine Kaufmann
  */
 public class KonfigurationWhere {
 	private Element element;
-	
+
 	public static final String ELEM_OR = "or";
 	public static final String ELEM_AND = "and";
 	public static final String ELEM_NOT = "not";
@@ -42,29 +42,28 @@ public class KonfigurationWhere {
 	public static final String ATTR_A = "a";
 	public static final String ATTR_B = "b";
 	public static final String REGEX_PLUGINREF = "^\\[.*\\]$";
-	
+
 	enum ElementTyp {
 		E_INVALID,
-		
+
 		E_NOT, E_AND, E_OR,
-		
+
 		E_EQUAL, E_GREATERTHAN, E_LESSTHAN,
 	};
-	
+
 	/**
 	 * Neue Where-Klausel erstellen
-	 * 
-	 * @param e
-	 *            DOM—Element der Klausel
+	 *
+	 * @param e DOM—Element der Klausel
 	 */
-	public KonfigurationWhere(Element e){
+	public KonfigurationWhere(Element e) {
 		element = e;
 	}
-	
+
 	/**
 	 * Interne Repraesentation des Typs anhand des DOM-Elements ausfindig machen.
 	 */
-	private ElementTyp getTyp(Element e){
+	private ElementTyp getTyp(Element e) {
 		String n = e.getTagName();
 		if (n.equals(ELEM_AND)) {
 			return ElementTyp.E_AND;
@@ -79,17 +78,17 @@ public class KonfigurationWhere {
 		} else if (n.equals(ELEM_LESSTHAN)) {
 			return ElementTyp.E_LESSTHAN;
 		}
-		
+
 		return ElementTyp.E_INVALID;
 	}
-	
+
 	/**
-	 * Hilfsfunktion um eine Liste aller Kindelemente eines DOM-Elements abzurufen (Nimmt nur die
-	 * ELEMENT_NODE aus get Childnodes).
+	 * Hilfsfunktion um eine Liste aller Kindelemente eines DOM-Elements abzurufen
+	 * (Nimmt nur die ELEMENT_NODE aus get Childnodes).
 	 */
-	private List<Element> getChildElements(Element parent){
+	private List<Element> getChildElements(Element parent) {
 		ArrayList<Element> l = new ArrayList<Element>();
-		
+
 		NodeList nl = parent.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node n = nl.item(i);
@@ -99,22 +98,19 @@ public class KonfigurationWhere {
 		}
 		return l;
 	}
-	
+
 	/**
-	 * Wert eines Attributs eines DOM-Elements auslesen. Wenn dabei Referenzen auf Felder in eckigen
-	 * Klammern enthalten sind, werden diese automatisch ersetzt.
-	 * 
-	 * @param e
-	 *            Element
-	 * @param name
-	 *            Name des Attributs
-	 * @param ds
-	 *            Datensatz
-	 * 
+	 * Wert eines Attributs eines DOM-Elements auslesen. Wenn dabei Referenzen auf
+	 * Felder in eckigen Klammern enthalten sind, werden diese automatisch ersetzt.
+	 *
+	 * @param e    Element
+	 * @param name Name des Attributs
+	 * @param ds   Datensatz
+	 *
 	 * @return Wert des Attributs
 	 * @throws PluginstatistikException
 	 */
-	private String attrValue(Element e, String name, Datensatz ds) throws PluginstatistikException{
+	private String attrValue(Element e, String name, Datensatz ds) throws PluginstatistikException {
 		String val = e.getAttribute(name);
 		// Wenn es sich um Verweise auf Feldnamen handelt, muessen wir
 		// die erst aufloesen
@@ -128,11 +124,12 @@ public class KonfigurationWhere {
 		}
 		return val;
 	}
-	
+
 	/**
-	 * Hilfsfunktion, die prueft ob es sich bei einem String um einen rein numerischen Wert handelt.
+	 * Hilfsfunktion, die prueft ob es sich bei einem String um einen rein
+	 * numerischen Wert handelt.
 	 */
-	private boolean isNum(String val){
+	private boolean isNum(String val) {
 		try {
 			Double.parseDouble(val);
 		} catch (NumberFormatException e) {
@@ -140,21 +137,20 @@ public class KonfigurationWhere {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Hilfsfunktion fuers Abarbeiten der XML-Repraesentation einer Where- Klausel fuer einen
-	 * bestimmten Datensatz. (Der ganze Kram wird rekursiv geparst)
-	 * 
-	 * @param e
-	 *            Aktuelles DOM-Element das gerade verarbeitet wird.
+	 * Hilfsfunktion fuers Abarbeiten der XML-Repraesentation einer Where- Klausel
+	 * fuer einen bestimmten Datensatz. (Der ganze Kram wird rekursiv geparst)
+	 *
+	 * @param e Aktuelles DOM-Element das gerade verarbeitet wird.
 	 * @throws PluginstatistikException
 	 */
-	private boolean matchesElement(Element e, Datensatz ds) throws PluginstatistikException{
+	private boolean matchesElement(Element e, Datensatz ds) throws PluginstatistikException {
 		ElementTyp typ = getTyp(e);
 		List<Element> children;
 		String a, b;
 		Double da, db;
-		
+
 		switch (typ) {
 		case E_AND:
 			children = getChildElements(e);
@@ -164,7 +160,7 @@ public class KonfigurationWhere {
 				}
 			}
 			return true;
-			
+
 		case E_OR:
 			children = getChildElements(e);
 			for (int i = 0; i < children.size(); i++) {
@@ -173,26 +169,26 @@ public class KonfigurationWhere {
 				}
 			}
 			return false;
-			
+
 		case E_NOT:
 			return !matchesElement(getChildElements(e).get(0), ds);
-			
+
 		case E_EQUAL:
 			a = attrValue(e, ATTR_A, ds);
 			b = attrValue(e, ATTR_B, ds);
-			
+
 			// Wenn es sich um Zahlen handelt, koennte ein einfacher
 			// Stringvergleich nicht das erwuenschte Ergebnis bringen
 			if (isNum(a) && isNum(b)) {
 				return (Double.parseDouble(a) == Double.parseDouble(b));
 			}
 			return a.equals(b);
-			
+
 		case E_GREATERTHAN:
 		case E_LESSTHAN:
 			a = attrValue(e, ATTR_A, ds);
 			b = attrValue(e, ATTR_B, ds);
-			
+
 			da = Double.parseDouble(a);
 			db = Double.parseDouble(b);
 			if ((typ == ElementTyp.E_GREATERTHAN) && (da > db)) {
@@ -201,21 +197,20 @@ public class KonfigurationWhere {
 				return true;
 			}
 			return false;
-			
+
 		case E_INVALID:
 		default:
-			Log.get("Messwertstatistiken").log("Ungueltige Operation: " + e.getTagName(),
-				Log.ERRORS);
+			Log.get("Messwertstatistiken").log("Ungueltige Operation: " + e.getTagName(), Log.ERRORS);
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Prueft ob der Datensatz zur Where-Klausel passt
-	 * 
+	 *
 	 * @throws PluginstatistikException
 	 */
-	public boolean matches(Datensatz ds) throws PluginstatistikException{
+	public boolean matches(Datensatz ds) throws PluginstatistikException {
 		return matchesElement(element, ds);
 	}
 }

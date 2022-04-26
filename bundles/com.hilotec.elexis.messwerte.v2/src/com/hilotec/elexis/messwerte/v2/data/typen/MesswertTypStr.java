@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
+ *    A. Kaufmann - initial implementation
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
@@ -31,21 +31,21 @@ import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
  */
 public class MesswertTypStr extends MesswertBase implements IMesswertTyp {
 	String defVal = ""; //$NON-NLS-1$
-	
+
 	/**
 	 * Anzahl Zeilen, die das Textfeld haben soll
 	 */
 	int lines = 1;
-	
-	public MesswertTypStr(String n, String t, String u){
+
+	public MesswertTypStr(String n, String t, String u) {
 		super(n, t, u);
 	}
-	
-	public String erstelleDarstellungswert(Messwert messwert){
+
+	public String erstelleDarstellungswert(Messwert messwert) {
 		return messwert.getWert();
 	}
-	
-	public String getDefault(Messwert messwert){
+
+	public String getDefault(Messwert messwert) {
 		String retVal = defVal;
 		if (formula != null) {
 			String sWert = evalateFormula(formula, messwert, defVal);
@@ -54,19 +54,19 @@ public class MesswertTypStr extends MesswertBase implements IMesswertTyp {
 		}
 		return retVal;
 	}
-	
-	public void setDefault(String def){
+
+	public void setDefault(String def) {
 		defVal = def;
 	}
-	
+
 	/**
 	 * Anzahl der anzuzeigenden Zeilen setzen
 	 */
-	public void setLines(int l){
+	public void setLines(int l) {
 		lines = l;
 	}
-	
-	public Widget createWidget(Composite parent, Messwert messwert){
+
+	public Widget createWidget(Composite parent, Messwert messwert) {
 		if (lines > 2) {
 			widget = SWTHelper.createText(parent, lines, SWT.MULTI | SWT.V_SCROLL);
 		} else if (lines == 2) {
@@ -79,8 +79,8 @@ public class MesswertTypStr extends MesswertBase implements IMesswertTyp {
 		setShown(true);
 		return widget;
 	}
-	
-	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
+
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable) {
 		int flags = 0;
 		if (!bEditable) {
 			flags |= TextField.READONLY;
@@ -97,26 +97,26 @@ public class MesswertTypStr extends MesswertBase implements IMesswertTyp {
 		tf.setText(messwert.getDarstellungswert());
 		return tf;
 	}
-	
-	public String getDarstellungswert(String wert){
+
+	public String getDarstellungswert(String wert) {
 		return wert;
 	}
-	
+
 	@Override
-	public void saveInput(Messwert messwert){
+	public void saveInput(Messwert messwert) {
 		messwert.setWert(((Text) widget).getText());
 	}
-	
+
 	@Override
-	public boolean checkInput(Messwert messwert, String pattern){
+	public boolean checkInput(Messwert messwert, String pattern) {
 		if (((Text) widget).getText().matches(pattern) || pattern == null) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	@Override
-	public String getActualValue(){
+	public String getActualValue() {
 		return ((Text) widget).getText();
 	}
 }

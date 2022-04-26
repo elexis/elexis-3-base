@@ -18,17 +18,17 @@ import at.medevit.elexis.outbox.model.IOutboxElementService;
 @Component
 public class OutboxServiceComponent {
 	private static IOutboxElementService service;
-	
-	public static IOutboxElementService get(){
+
+	public static IOutboxElementService get() {
 		return service;
 	}
-	
+
 	@Reference
-	public synchronized void setService(IOutboxElementService service){
+	public synchronized void setService(IOutboxElementService service) {
 		OutboxServiceComponent.service = service;
 	}
-	
-	public synchronized void unsetService(IOutboxElementService service){
+
+	public synchronized void unsetService(IOutboxElementService service) {
 		if (OutboxServiceComponent.service == service) {
 			OutboxServiceComponent.service = null;
 		}

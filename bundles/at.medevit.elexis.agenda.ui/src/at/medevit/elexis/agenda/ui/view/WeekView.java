@@ -24,22 +24,22 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class WeekView {
-	
+
 	private WeekComposite composite;
-	
+
 	@Inject
 	@Optional
-	public void reload(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Class<?> clazz){
+	public void reload(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Class<?> clazz) {
 		if (IAppointment.class.equals(clazz)) {
 			if (composite != null && !composite.isDisposed()) {
 				composite.refetchEvents();
 			}
 		}
 	}
-	
+
 	@PostConstruct
-	public void createPartControl(MPart part, ESelectionService selectionService,
-		EMenuService menuService, Composite parent, UISynchronize uiSynchronize){
+	public void createPartControl(MPart part, ESelectionService selectionService, EMenuService menuService,
+			Composite parent, UISynchronize uiSynchronize) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 0;
@@ -47,26 +47,25 @@ public class WeekView {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		container.setLayout(layout);
-		
+
 		SideBarComposite sideBar = new SideBarComposite(container, SWT.NONE);
 		sideBar.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
-		composite = new WeekComposite(part, selectionService, menuService, container, SWT.NONE,
-			uiSynchronize);
+		composite = new WeekComposite(part, selectionService, menuService, container, SWT.NONE, uiSynchronize);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		CoreUiUtil.injectServicesWithContext(composite);
 		sideBar.setAgendaComposite(composite);
 	}
-	
+
 	@Focus
-	public void setFocus(){
+	public void setFocus() {
 		if (composite != null && !composite.isDisposed()) {
 			composite.setFocus();
 		}
 	}
-	
+
 	@Optional
 	@Inject
-	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState) {
 		CoreUiUtil.updateFixLayout(part, currentState);
 	}
 }

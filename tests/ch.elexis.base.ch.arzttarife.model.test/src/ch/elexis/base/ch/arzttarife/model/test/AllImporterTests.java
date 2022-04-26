@@ -12,11 +12,8 @@ import ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedReferenceDataImp
 import ch.elexis.base.ch.arzttarife.tarmedallowance.model.importer.TarmedAllowanceImporterTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-	NutritionImporterTest.class, PhysioImporterTest.class, TarmedAllowanceImporterTest.class,
-	TarmedReferenceDataImporterTest.class,
-	ComplementaryImporterTest.class, PandemieImporterTest.class
-})
+@SuiteClasses({ NutritionImporterTest.class, PhysioImporterTest.class, TarmedAllowanceImporterTest.class,
+		TarmedReferenceDataImporterTest.class, ComplementaryImporterTest.class, PandemieImporterTest.class })
 public class AllImporterTests {
-	
+
 }

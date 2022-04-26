@@ -54,10 +54,9 @@ public final class HttpsConnectionHandler {
 		try {
 			clientStore = KeyStore.getInstance("PKCS12");
 			clientStore.load(
-				new FileInputStream(SettingsProvider.getSettings()
-					.getString(PreferenceConstants.CLIENT_CERTIFICATE)),
-				SettingsProvider.getSettings().getString(PreferenceConstants.CERTIFICATE_PASSWORD)
-					.toCharArray());
+					new FileInputStream(
+							SettingsProvider.getSettings().getString(PreferenceConstants.CLIENT_CERTIFICATE)),
+					SettingsProvider.getSettings().getString(PreferenceConstants.CERTIFICATE_PASSWORD).toCharArray());
 		} catch (FileNotFoundException e) {
 			MessageBoxUtil.showErrorDialog("Zertifikat nicht gefunden",
 					"Das angegebene Zertifikat konnte nicht geöffnet");
@@ -80,8 +79,7 @@ public final class HttpsConnectionHandler {
 			KeyManagerFactory keyManagerFactory = KeyManagerFactory
 					.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 			keyManagerFactory.init(clientStore,
-				SettingsProvider.getSettings().getString(PreferenceConstants.CERTIFICATE_PASSWORD)
-					.toCharArray());
+					SettingsProvider.getSettings().getString(PreferenceConstants.CERTIFICATE_PASSWORD).toCharArray());
 
 			KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
 
@@ -104,10 +102,10 @@ public final class HttpsConnectionHandler {
 			HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
 			HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
 
-			String riboxAddress =
-				SettingsProvider.getSettings().getString(PreferenceConstants.RIBOX_IP); // The address
-																										// can be an IP
-																										// or DNS
+			String riboxAddress = SettingsProvider.getSettings().getString(PreferenceConstants.RIBOX_IP); // The address
+																											// can be an
+																											// IP
+																											// or DNS
 			URL url = new URL("https://" + riboxAddress + "/include/moduls/asp.php");
 
 			ApiRequest apiRequest = null;

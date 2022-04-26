@@ -18,19 +18,19 @@ import ch.rgw.tools.JdbcLink.Stm;
 
 public class KontaktOrderManagement extends PersistentObject {
 	public static final String TABLENAME = "KONTAKT_ORDER_MANAGEMENT"; //$NON-NLS-1$
-	
+
 	public static final String FLD_KONTAKT_ID = "KONTAKT_ID"; //$NON-NLS-1$
 	public static final String FLD_ORDER_NR = "ORDER_NR"; //$NON-NLS-1$
-	
+
 	public static long FIRST_ORDER_NR = 100000;
-	
+
 	private static final JdbcLink j = getConnection();
 	protected static Logger log = LoggerFactory.getLogger(KontaktOrderManagement.class.getName());
-	
+
 	static {
 		if (!tableExists(TABLENAME)) {
 			String filepath = PlatformHelper.getBasePath("ch.elexis.laborimport.medics.v2") //$NON-NLS-1$
-				+ File.separator + "createTable.script"; //$NON-NLS-1$
+					+ File.separator + "createTable.script"; //$NON-NLS-1$
 			Stm stm = j.getStatement();
 			try {
 				FileInputStream fis = new FileInputStream(filepath);
@@ -38,52 +38,51 @@ public class KontaktOrderManagement extends PersistentObject {
 			} catch (Exception e) {
 				ExHandler.handle(e);
 				SWTHelper.showError(Messages.KontaktOrderManagement_titleErrorCreateDB,
-					MessageFormat.format(Messages.KontaktOrderManagement_messageErrorCreateDB,
-						filepath));
+						MessageFormat.format(Messages.KontaktOrderManagement_messageErrorCreateDB, filepath));
 			} finally {
 				j.releaseStatement(stm);
 			}
-			
+
 		}
 		addMapping(TABLENAME, FLD_KONTAKT_ID, FLD_ORDER_NR);
 	}
-	
-	public KontaktOrderManagement(){
+
+	public KontaktOrderManagement() {
 		super();
 	}
-	
-	private KontaktOrderManagement(String id){
+
+	private KontaktOrderManagement(String id) {
 		super(id);
 	}
-	
-	public KontaktOrderManagement(final Kontakt kontakt){
+
+	public KontaktOrderManagement(final Kontakt kontakt) {
 		create(null);
 		setKontakt(kontakt);
 		setOrderNr(FIRST_ORDER_NR);
 	}
-	
+
 	/** Eine KontaktOrderManagement anhand der ID aus der Datenbank laden */
-	public static KontaktOrderManagement load(String id){
+	public static KontaktOrderManagement load(String id) {
 		return new KontaktOrderManagement(id);
 	}
-	
-	public Kontakt getKontakt(){
+
+	public Kontakt getKontakt() {
 		return Kontakt.load(get(FLD_KONTAKT_ID));
 	}
-	
-	public void setKontakt(final Kontakt kontakt){
+
+	public void setKontakt(final Kontakt kontakt) {
 		if (kontakt != null) {
 			set(FLD_KONTAKT_ID, kontakt.getId());
 		}
 	}
-	
+
 	/**
 	 * Transforms text into int value.
-	 * 
+	 *
 	 * @param doubleStr
 	 * @return
 	 */
-	private static Long getLong(final String longStr){
+	private static Long getLong(final String longStr) {
 		Long value = null;
 		if (longStr != null && longStr.length() > 0) {
 			try {
@@ -94,29 +93,29 @@ public class KontaktOrderManagement extends PersistentObject {
 		}
 		return value;
 	}
-	
-	public Long getOrderNr(){
+
+	public Long getOrderNr() {
 		String intStr = get(FLD_ORDER_NR);
 		return getLong(intStr);
 	}
-	
-	public void setOrderNr(final Long orderNr){
+
+	public void setOrderNr(final Long orderNr) {
 		if (orderNr != null) {
 			set(FLD_ORDER_NR, orderNr.toString());
 		}
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		Kontakt kontakt = getKontakt();
 		if (kontakt != null) {
 			return kontakt.getLabel() + " (" + getOrderNr() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return "-"; //$NON-NLS-1$
 	}
-	
+
 	@Override
-	protected String getTableName(){
+	protected String getTableName() {
 		return TABLENAME;
 	}
 }

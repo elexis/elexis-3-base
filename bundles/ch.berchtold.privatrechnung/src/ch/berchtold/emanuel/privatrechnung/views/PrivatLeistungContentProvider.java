@@ -14,105 +14,102 @@ import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.CommonViewer.Message;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 
-public class PrivatLeistungContentProvider
-		implements ICommonViewerContentProvider, ITreeContentProvider {
-	
+public class PrivatLeistungContentProvider implements ICommonViewerContentProvider, ITreeContentProvider {
+
 	private CommonViewer commonViewer;
-	
+
 	private INamedQuery<IPrivatLeistung> childrenQuery;
-	
+
 	private String nameFilter;
-	
+
 	private String codeFilter;
-	
-	public PrivatLeistungContentProvider(CommonViewer commonViewer){
+
+	public PrivatLeistungContentProvider(CommonViewer commonViewer) {
 		this.commonViewer = commonViewer;
-		
-		this.childrenQuery =
-			PrivatModelServiceHolder.get().getNamedQuery(IPrivatLeistung.class, "parent");
-		
+
+		this.childrenQuery = PrivatModelServiceHolder.get().getNamedQuery(IPrivatLeistung.class, "parent");
+
 	}
-	
+
 	@Override
-	public Object[] getElements(Object inputElement){
-		List<IPrivatLeistung> roots = childrenQuery.executeWithParameters(childrenQuery.getParameterMap("parent", "NIL"));
+	public Object[] getElements(Object inputElement) {
+		List<IPrivatLeistung> roots = childrenQuery
+				.executeWithParameters(childrenQuery.getParameterMap("parent", "NIL"));
 		return roots.toArray(new Object[roots.size()]);
 	}
-	
+
 	@Override
-	public void changed(HashMap<String, String> values){
+	public void changed(HashMap<String, String> values) {
 		nameFilter = values.get("name");
 		codeFilter = values.get("shortName");
 		commonViewer.notify(Message.update_keeplabels);
 	}
-	
+
 	@Override
-	public void reorder(String field){
-		
+	public void reorder(String field) {
+
 	}
-	
+
 	@Override
-	public void selected(){
+	public void selected() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void init(){
+	public void init() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void startListening(){
+	public void startListening() {
 		commonViewer.getConfigurer().getControlFieldProvider().addChangeListener(this);
 	}
-	
+
 	@Override
-	public void stopListening(){
+	public void stopListening() {
 		commonViewer.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
-	
+
 	@Override
-	public Object[] getChildren(Object parentElement){
+	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IPrivatLeistung) {
 			IPrivatLeistung parentLeistung = (IPrivatLeistung) parentElement;
-			List<IPrivatLeistung> ret = childrenQuery.executeWithParameters(
-				childrenQuery.getParameterMap("parent", parentLeistung.getCode()));
+			List<IPrivatLeistung> ret = childrenQuery
+					.executeWithParameters(childrenQuery.getParameterMap("parent", parentLeistung.getCode()));
 			ret = getFiltered(ret);
 			return ret.toArray(new Object[ret.size()]);
 		}
 		return null;
 	}
-	
-	private List<IPrivatLeistung> getFiltered(List<IPrivatLeistung> ret){
+
+	private List<IPrivatLeistung> getFiltered(List<IPrivatLeistung> ret) {
 		if (StringUtils.isNotBlank(nameFilter)) {
 			ret = ret.stream()
-				.filter(pl -> hasChildren(pl)
-					|| pl.getText().toLowerCase().contains(nameFilter.toLowerCase()))
-				.collect(Collectors.toList());
+					.filter(pl -> hasChildren(pl) || pl.getText().toLowerCase().contains(nameFilter.toLowerCase()))
+					.collect(Collectors.toList());
 		}
 		if (StringUtils.isNotBlank(codeFilter)) {
 			ret = ret.stream()
-				.filter(pl -> hasChildren(pl)
-					|| pl.getCode().toLowerCase().contains(codeFilter.toLowerCase()))
-				.collect(Collectors.toList());
+					.filter(pl -> hasChildren(pl) || pl.getCode().toLowerCase().contains(codeFilter.toLowerCase()))
+					.collect(Collectors.toList());
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public Object getParent(Object element){
+	public Object getParent(Object element) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public boolean hasChildren(Object parentElement){
+	public boolean hasChildren(Object parentElement) {
 		if (parentElement instanceof IPrivatLeistung) {
 			IPrivatLeistung parentLeistung = (IPrivatLeistung) parentElement;
-			List<IPrivatLeistung> ret = childrenQuery.executeWithParameters(
-				childrenQuery.getParameterMap("parent", parentLeistung.getCode()));
+			List<IPrivatLeistung> ret = childrenQuery
+					.executeWithParameters(childrenQuery.getParameterMap("parent", parentLeistung.getCode()));
 			ret = getFiltered(ret);
 			return !ret.isEmpty();
 		}

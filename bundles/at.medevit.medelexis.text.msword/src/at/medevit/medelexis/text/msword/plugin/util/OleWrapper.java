@@ -9,26 +9,27 @@ import org.eclipse.swt.ole.win32.Variant;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Abstract implementation of stuff all OLE/COM wrapper classes have in common. OLE/COM invocation
- * is encapsulated into Runnable. Currently we assume running in display thread.
- * 
+ * Abstract implementation of stuff all OLE/COM wrapper classes have in common.
+ * OLE/COM invocation is encapsulated into Runnable. Currently we assume running
+ * in display thread.
+ *
  * @author thomashu
- * 
+ *
  */
 public abstract class OleWrapper {
 	protected Display display;
 
 	protected OleAutomation oleObj;
-	
-	public OleWrapper(OleAutomation oleAuto, Display display, OleWrapperManager manager){
+
+	public OleWrapper(OleAutomation oleAuto, Display display, OleWrapperManager manager) {
 		this.display = display;
 		oleObj = oleAuto;
 		manager.add(this);
-		
+
 		GlobalOleWordWrapperManager.add(oleObj);
 	}
 
-	protected synchronized void run(OleRunnable runnable){
+	protected synchronized void run(OleRunnable runnable) {
 		try {
 			Thread.yield();
 			runnable.run();
@@ -40,7 +41,7 @@ public abstract class OleWrapper {
 		}
 	}
 
-	protected void checkOleException(){
+	protected void checkOleException() {
 		String lastError = oleObj.getLastError();
 		if (lastError != null && !lastError.startsWith("No Error")) //$NON-NLS-1$
 			throw new IllegalStateException("OleWrapper error: " + oleObj.getLastError()); //$NON-NLS-1$
@@ -48,10 +49,10 @@ public abstract class OleWrapper {
 
 	protected abstract int getIdForMember(String member);
 
-	protected Variant runInvoke(final String method){
+	protected Variant runInvoke(final String method) {
 		OleRunnable runnable = new OleRunnable() {
 			@Override
-			public void run(){
+			public void run() {
 				returnVariant = OleUtil.invoke(oleObj, getIdForMember(method));
 			}
 		};
@@ -59,10 +60,10 @@ public abstract class OleWrapper {
 		return runnable.returnVariant;
 	}
 
-	protected Variant runInvoke(final String method, final Variant[] arguments){
+	protected Variant runInvoke(final String method, final Variant[] arguments) {
 		OleRunnable runnable = new OleRunnable() {
 			@Override
-			public void run(){
+			public void run() {
 				returnVariant = OleUtil.invoke(oleObj, getIdForMember(method), arguments);
 			}
 		};
@@ -70,11 +71,10 @@ public abstract class OleWrapper {
 		return runnable.returnVariant;
 	}
 
-	protected Variant runInvoke(final String method, final Variant[] arguments,
-		final String[] argumentsNames){
+	protected Variant runInvoke(final String method, final Variant[] arguments, final String[] argumentsNames) {
 		OleRunnable runnable = new OleRunnable() {
 			@Override
-			public void run(){
+			public void run() {
 				// add the method name to the argumentsNames as expected by getIDsOfNames
 				String[] idArgumentsNames = new String[argumentsNames.length + 1];
 				idArgumentsNames[0] = method;
@@ -88,49 +88,47 @@ public abstract class OleWrapper {
 					argumentsIds[i] = ids[i + 1];
 				}
 
-				returnVariant =
-					OleUtil.invoke(oleObj, getIdForMember(method), arguments, argumentsIds);
-				
+				returnVariant = OleUtil.invoke(oleObj, getIdForMember(method), arguments, argumentsIds);
+
 			}
 		};
 		run(runnable);
 		return runnable.returnVariant;
 	}
 
-	protected void runSetProperty(final String property, final Variant value){
+	protected void runSetProperty(final String property, final Variant value) {
 		OleRunnable runnable = new OleRunnable() {
 			@Override
-			public void run(){
+			public void run() {
 				OleUtil.setProperty(oleObj, getIdForMember(property), value);
 			}
 		};
 		run(runnable);
 	}
 
-	protected OleAutomation runGetOleAutomationProperty(final String property){
+	protected OleAutomation runGetOleAutomationProperty(final String property) {
 		OleRunnable runnable = new OleRunnable() {
 			@Override
-			public void run(){
-				returnAutomation =
-					OleUtil.getOleAutomationProperty(oleObj, getIdForMember(property));
+			public void run() {
+				returnAutomation = OleUtil.getOleAutomationProperty(oleObj, getIdForMember(property));
 			}
 		};
 		run(runnable);
 		return runnable.returnAutomation;
 	}
 
-	protected Variant runGetVariantProperty(final String property){
+	protected Variant runGetVariantProperty(final String property) {
 		OleRunnable runnable = new OleRunnable() {
 			@Override
-			public void run(){
+			public void run() {
 				returnVariant = OleUtil.getVariantProperty(oleObj, getIdForMember(property));
 			}
 		};
 		run(runnable);
 		return runnable.returnVariant;
 	}
-	
-	public OleAutomation getOleObj(){
+
+	public OleAutomation getOleObj() {
 		return oleObj;
 	}
 }

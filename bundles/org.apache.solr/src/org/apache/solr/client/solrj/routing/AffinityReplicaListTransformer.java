@@ -26,80 +26,83 @@ import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.Hash;
 
 /**
- * Allows better caching by establishing deterministic evenly-distributed replica routing preferences according to
- * either explicitly configured hash routing parameter, or the hash of a query parameter (configurable, usually related
- * to the main query).
+ * Allows better caching by establishing deterministic evenly-distributed
+ * replica routing preferences according to either explicitly configured hash
+ * routing parameter, or the hash of a query parameter (configurable, usually
+ * related to the main query).
  */
 public class AffinityReplicaListTransformer implements ReplicaListTransformer {
 
-  private final int routingDividend;
+	private final int routingDividend;
 
-  private AffinityReplicaListTransformer(String hashVal) {
-    this.routingDividend = Math.abs(Hash.lookup3ycs(hashVal, 0, hashVal.length(), 0));
-  }
+	private AffinityReplicaListTransformer(String hashVal) {
+		this.routingDividend = Math.abs(Hash.lookup3ycs(hashVal, 0, hashVal.length(), 0));
+	}
 
-  private AffinityReplicaListTransformer(int routingDividend) {
-    this.routingDividend = routingDividend;
-  }
+	private AffinityReplicaListTransformer(int routingDividend) {
+		this.routingDividend = routingDividend;
+	}
 
-  /**
-   *
-   * @param dividendParam int param to be used directly for mod-based routing
-   * @param hashParam String param to be hashed into an int for mod-based routing
-   * @param requestParams the parameters of the Solr request
-   * @return null if specified routing vals are not able to be parsed properly
-   */
-  public static ReplicaListTransformer getInstance(String dividendParam, String hashParam, SolrParams requestParams) {
-    Integer dividendVal;
-    if (dividendParam != null && (dividendVal = requestParams.getInt(dividendParam)) != null) {
-      return new AffinityReplicaListTransformer(dividendVal);
-    }
-    String hashVal;
-    if (hashParam != null && (hashVal = requestParams.get(hashParam)) != null && !hashVal.isEmpty()) {
-      return new AffinityReplicaListTransformer(hashVal);
-    } else {
-      return null;
-    }
-  }
+	/**
+	 *
+	 * @param dividendParam int param to be used directly for mod-based routing
+	 * @param hashParam     String param to be hashed into an int for mod-based
+	 *                      routing
+	 * @param requestParams the parameters of the Solr request
+	 * @return null if specified routing vals are not able to be parsed properly
+	 */
+	public static ReplicaListTransformer getInstance(String dividendParam, String hashParam, SolrParams requestParams) {
+		Integer dividendVal;
+		if (dividendParam != null && (dividendVal = requestParams.getInt(dividendParam)) != null) {
+			return new AffinityReplicaListTransformer(dividendVal);
+		}
+		String hashVal;
+		if (hashParam != null && (hashVal = requestParams.get(hashParam)) != null && !hashVal.isEmpty()) {
+			return new AffinityReplicaListTransformer(hashVal);
+		} else {
+			return null;
+		}
+	}
 
-  @Override
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  public void transform(List<?> choices) {
-    int size = choices.size();
-    if (size > 1) {
-      int i = 0;
-      SortableChoice[] sortableChoices = new SortableChoice[size];
-      for (Object o : choices) {
-        sortableChoices[i++] = new SortableChoice(o);
-      }
-      Arrays.sort(sortableChoices, SORTABLE_CHOICE_COMPARATOR);
-      ListIterator iter = choices.listIterator();
-      i = routingDividend % size;
-      final int limit = i + size;
-      do {
-        iter.next();
-        iter.set(sortableChoices[i % size].choice);
-      } while (++i < limit);
-    }
-  }
+	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void transform(List<?> choices) {
+		int size = choices.size();
+		if (size > 1) {
+			int i = 0;
+			SortableChoice[] sortableChoices = new SortableChoice[size];
+			for (Object o : choices) {
+				sortableChoices[i++] = new SortableChoice(o);
+			}
+			Arrays.sort(sortableChoices, SORTABLE_CHOICE_COMPARATOR);
+			ListIterator iter = choices.listIterator();
+			i = routingDividend % size;
+			final int limit = i + size;
+			do {
+				iter.next();
+				iter.set(sortableChoices[i % size].choice);
+			} while (++i < limit);
+		}
+	}
 
-  private static final class SortableChoice {
+	private static final class SortableChoice {
 
-    private final Object choice;
-    private final String sortableCoreLabel;
+		private final Object choice;
+		private final String sortableCoreLabel;
 
-    private SortableChoice(Object choice) {
-      this.choice = choice;
-      if (choice instanceof Replica) {
-        this.sortableCoreLabel = ((Replica)choice).getCoreUrl();
-      } else if (choice instanceof String) {
-        this.sortableCoreLabel = (String)choice;
-      } else {
-        throw new IllegalArgumentException("can't handle type " + choice.getClass());
-      }
-    }
+		private SortableChoice(Object choice) {
+			this.choice = choice;
+			if (choice instanceof Replica) {
+				this.sortableCoreLabel = ((Replica) choice).getCoreUrl();
+			} else if (choice instanceof String) {
+				this.sortableCoreLabel = (String) choice;
+			} else {
+				throw new IllegalArgumentException("can't handle type " + choice.getClass());
+			}
+		}
 
-  }
+	}
 
-  private static final Comparator<SortableChoice> SORTABLE_CHOICE_COMPARATOR = Comparator.comparing(o -> o.sortableCoreLabel);
+	private static final Comparator<SortableChoice> SORTABLE_CHOICE_COMPARATOR = Comparator
+			.comparing(o -> o.sortableCoreLabel);
 }

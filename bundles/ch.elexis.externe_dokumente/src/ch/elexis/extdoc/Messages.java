@@ -55,11 +55,12 @@ public class Messages extends NLS {
 	public static String FileEditDialog_really_attribute_to_new_patient;
 	public static String FileEditDialog_17;
 	public static String FileEditDialog_18;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
-	private Messages(){}
+
+	private Messages() {
+	}
 }

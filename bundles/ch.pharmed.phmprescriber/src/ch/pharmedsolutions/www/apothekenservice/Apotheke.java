@@ -6,12 +6,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java-Klasse für Apotheke complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ * <p>
+ * Java-Klasse für Apotheke complex type.
+ *
+ * <p>
+ * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser
+ * Klasse enthalten ist.
+ *
  * <pre>
  * &lt;complexType name="Apotheke">
  *   &lt;complexContent>
@@ -25,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Apotheke", propOrder = {
@@ -34,83 +36,71 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class Apotheke {
 
-    @XmlElement(required = true)
-    protected String name;
-    @XmlElement(required = true)
-    protected String city;
-    @XmlElement(name = "gln_id", required = true)
-    protected String glnId;
+	@XmlElement(required = true)
+	protected String name;
+	@XmlElement(required = true)
+	protected String city;
+	@XmlElement(name = "gln_id", required = true)
+	protected String glnId;
 
-    /**
-     * Ruft den Wert der name-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Ruft den Wert der name-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link String }
+	 *
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Legt den Wert der name-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
+	/**
+	 * Legt den Wert der name-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link String }
+	 *
+	 */
+	public void setName(String value) {
+		this.name = value;
+	}
 
-    /**
-     * Ruft den Wert der city-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getCity() {
-        return city;
-    }
+	/**
+	 * Ruft den Wert der city-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link String }
+	 *
+	 */
+	public String getCity() {
+		return city;
+	}
 
-    /**
-     * Legt den Wert der city-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setCity(String value) {
-        this.city = value;
-    }
+	/**
+	 * Legt den Wert der city-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link String }
+	 *
+	 */
+	public void setCity(String value) {
+		this.city = value;
+	}
 
-    /**
-     * Ruft den Wert der glnId-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getGlnId() {
-        return glnId;
-    }
+	/**
+	 * Ruft den Wert der glnId-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link String }
+	 *
+	 */
+	public String getGlnId() {
+		return glnId;
+	}
 
-    /**
-     * Legt den Wert der glnId-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setGlnId(String value) {
-        this.glnId = value;
-    }
+	/**
+	 * Legt den Wert der glnId-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link String }
+	 *
+	 */
+	public void setGlnId(String value) {
+		this.glnId = value;
+	}
 
 }

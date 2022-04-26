@@ -37,26 +37,24 @@ import ch.elexis.global_inbox.ui.Constants;
 import ch.elexis.global_inbox.ui.Messages;
 
 public class GlobalInboxPart {
-	
+
 	private TableViewer tv;
-	private String[] columnHeaders = new String[] {
-		Messages.InboxView_category, Messages.InboxView_title
-	};
+	private String[] columnHeaders = new String[] { Messages.InboxView_category, Messages.InboxView_title };
 	private TableColumn[] tc;
 	private IStatus inboxConfigStat;
 	private boolean configErrorShown = false;
 	private GlobalInboxContentProvider cp;
-	
+
 	@Inject
 	private ECommandService commandService;
-	
+
 	@Inject
 	private EHandlerService handlerService;
-	
+
 	@Inject
-	public GlobalInboxPart(Composite parent, EMenuService menuService,
-		ESelectionService selectionService, IEventBroker eventBroker){
-		
+	public GlobalInboxPart(Composite parent, EMenuService menuService, ESelectionService selectionService,
+			IEventBroker eventBroker) {
+
 		Table table = new Table(parent, SWT.FULL_SELECTION);
 		tv = new TableViewer(table);
 		tc = new TableColumn[columnHeaders.length];
@@ -68,7 +66,7 @@ public class GlobalInboxPart {
 			} else {
 				tc[i].setWidth(250);
 			}
-			
+
 		}
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -77,26 +75,23 @@ public class GlobalInboxPart {
 		tv.setLabelProvider(new GlobalInboxLabelProvider());
 		tv.setSorter(new ViewerSorter() {
 			@Override
-			public int compare(Viewer viewer, Object e1, Object e2){
+			public int compare(Viewer viewer, Object e1, Object e2) {
 				GlobalInboxEntry f1 = (GlobalInboxEntry) e1;
 				GlobalInboxEntry f2 = (GlobalInboxEntry) e2;
-				return f1.getMainFile().getName().toLowerCase()
-					.compareTo(f2.getMainFile().getName().toLowerCase());
+				return f1.getMainFile().getName().toLowerCase().compareTo(f2.getMainFile().getName().toLowerCase());
 			}
 		});
-		
+
 		tv.addSelectionChangedListener(event -> {
-			GlobalInboxEntry globalInboxEntry =
-				(GlobalInboxEntry) tv.getStructuredSelection().getFirstElement();
+			GlobalInboxEntry globalInboxEntry = (GlobalInboxEntry) tv.getStructuredSelection().getFirstElement();
 			selectionService.setSelection(globalInboxEntry);
-			
+
 			if (globalInboxEntry != null) {
 				File mainFile = globalInboxEntry.getPdfPreviewFile();
 				if (globalInboxEntry.getMimetype().toLowerCase().contains("pdf")) {
 					try {
 						IDocument mainFileDocument = FileDocument.of(mainFile);
-						eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF,
-							mainFileDocument);
+						eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, mainFileDocument);
 					} catch (IOException e) {
 						LoggerFactory.getLogger(getClass()).warn("Exception", e);
 					}
@@ -104,62 +99,59 @@ public class GlobalInboxPart {
 			}
 		});
 		tv.addDoubleClickListener(new IDoubleClickListener() {
-			
+
 			@Override
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				// call view command
-				ParameterizedCommand command = commandService.createCommand(
-					"ch.elexis.global_inbox.command.globalinboxentryview");
+				ParameterizedCommand command = commandService
+						.createCommand("ch.elexis.global_inbox.command.globalinboxentryview");
 				handlerService.executeHandler(command);
 			}
 		});
-		
+
 		inboxConfigStat = cp.reload();
-		
-		menuService.registerContextMenu(table,
-			"ch.elexis.global_inbox.popupmenu.globalinboxentries");
-		
+
+		menuService.registerContextMenu(table, "ch.elexis.global_inbox.popupmenu.globalinboxentries");
+
 		tv.setInput(this);
 	}
-	
+
 	@Inject
 	@Optional
-	void handleRemoveAndSelectNext(
-		@UIEventTopic(Constants.EVENT_UI_REMOVE_AND_SELECT_NEXT) GlobalInboxEntry gie){
-		
+	void handleRemoveAndSelectNext(@UIEventTopic(Constants.EVENT_UI_REMOVE_AND_SELECT_NEXT) GlobalInboxEntry gie) {
+
 		int selectionIndex = tv.getTable().getSelectionIndex();
 		tv.remove(gie);
 		tv.getTable().setSelection(selectionIndex);
 	}
-	
+
 	@PreDestroy
-	public void destroy(){
+	public void destroy() {
 		cp.destroy();
 	}
-	
+
 	@Focus
-	public void setFocus(){
+	public void setFocus() {
 		if (!inboxConfigStat.isOK() && !configErrorShown) {
-			SWTHelper.alert(Messages.Activator_noInbox,
-				Messages.InboxContentProvider_noInboxDefined);
+			SWTHelper.alert(Messages.Activator_noInbox, Messages.InboxContentProvider_noInboxDefined);
 			configErrorShown = true;
 		}
 	}
-	
-	public void reload(){
+
+	public void reload() {
 		UiDesk.asyncExec(new Runnable() {
 			@Override
-			public void run(){
+			public void run() {
 				tv.refresh();
 			}
 		});
 	}
-	
-	public void reloadInbox(){
+
+	public void reloadInbox() {
 		IStatus status = cp.reload();
 		if (status == Status.CANCEL_STATUS) {
 			SWTHelper.showError(Messages.InboxView_error, Messages.InvoxView_errorCantDetectInbox);
 		}
 	}
-	
+
 }

@@ -8,17 +8,18 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * 
- * A ST that optionally may have a code attached. The text must always be present if a code is
- * present. The code is often a local code.
- * 
- * 
+ *
+ * A ST that optionally may have a code attached. The text must always be
+ * present if a code is present. The code is often a local code.
+ *
+ *
  * <p>
  * Java class for SC complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="SC">
  *   &lt;complexContent>
@@ -32,15 +33,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SC")
 public class SC extends ST {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	@XmlAttribute
@@ -54,110 +55,105 @@ public class SC extends ST {
 	protected String codeSystemVersion;
 	@XmlAttribute
 	protected String displayName;
-	
+
 	/**
 	 * Gets the value of the code property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getCode(){
+	public String getCode() {
 		return code;
 	}
-	
+
 	/**
 	 * Sets the value of the code property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setCode(String value){
+	public void setCode(String value) {
 		this.code = value;
 	}
-	
+
 	/**
 	 * Gets the value of the codeSystem property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getCodeSystem(){
+	public String getCodeSystem() {
 		return codeSystem;
 	}
-	
+
 	/**
 	 * Sets the value of the codeSystem property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setCodeSystem(String value){
+	public void setCodeSystem(String value) {
 		this.codeSystem = value;
 	}
-	
+
 	/**
 	 * Gets the value of the codeSystemName property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return codeSystemName;
 	}
-	
+
 	/**
 	 * Sets the value of the codeSystemName property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setCodeSystemName(String value){
+	public void setCodeSystemName(String value) {
 		this.codeSystemName = value;
 	}
-	
+
 	/**
 	 * Gets the value of the codeSystemVersion property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getCodeSystemVersion(){
+	public String getCodeSystemVersion() {
 		return codeSystemVersion;
 	}
-	
+
 	/**
 	 * Sets the value of the codeSystemVersion property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setCodeSystemVersion(String value){
+	public void setCodeSystemVersion(String value) {
 		this.codeSystemVersion = value;
 	}
-	
+
 	/**
 	 * Gets the value of the displayName property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getDisplayName(){
+	public String getDisplayName() {
 		return displayName;
 	}
-	
+
 	/**
 	 * Sets the value of the displayName property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setDisplayName(String value){
+	public void setDisplayName(String value) {
 		this.displayName = value;
 	}
-	
+
 }

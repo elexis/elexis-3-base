@@ -10,21 +10,21 @@ import org.apache.solr.common.util.ContentStreamBase.ByteArrayStream;
 import org.apache.solr.common.util.NamedList;
 
 public class SolrIndexerUtil {
-	
+
 	public String[] performSolrCellRequest(HttpSolrClient solr, String collection, byte[] input)
-		throws SolrServerException, IOException{
-		
+			throws SolrServerException, IOException {
+
 		// extract content and metadata using SolrCell
 		ContentStreamUpdateRequest request = new ContentStreamUpdateRequest("/update/extract");
-		
+
 		final ByteArrayStream stream = new ContentStreamBase.ByteArrayStream(input, null);
 		request.addContentStream(stream);
 		request.setParam("extractOnly", "true");
 		request.setParam("extractFormat", "text");
-		
+
 		String content = "";
 		String metadata = "";
-		
+
 		NamedList<Object> result = solr.request(request, collection);
 		for (int i = 0; i < result.size(); i++) {
 			String name = result.getName(i);
@@ -34,10 +34,8 @@ public class SolrIndexerUtil {
 				metadata = String.valueOf(result.getVal(i));
 			}
 		}
-		
-		return new String[] {
-			content, metadata
-		};
+
+		return new String[] { content, metadata };
 	}
-	
+
 }

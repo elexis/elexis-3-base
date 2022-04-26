@@ -17,9 +17,9 @@ import java.lang.reflect.Method;
  * <p>
  * Array utility class providing convenience methods for arrays.
  * </p>
- * 
+ *
  * $Id: ArrayUtils.java 709 2009-01-04 10:20:27Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 709 $
@@ -28,9 +28,8 @@ public class ArrayUtils {
 
 	/**
 	 * Prints out an int array in human readable form.
-	 * 
-	 * @param array
-	 *            An int array.
+	 *
+	 * @param array An int array.
 	 */
 	public static final void print(int[] array) {
 		System.out.println(ArrayUtils.toString(array));
@@ -39,9 +38,8 @@ public class ArrayUtils {
 	/**
 	 * Generates a string representation of an int array. An example string
 	 * representation could look like [3,2,7].
-	 * 
-	 * @param array
-	 *            Array of ints.
+	 *
+	 * @param array Array of ints.
 	 * @return String representation of an array.
 	 */
 	public static final String toString(int[] array) {
@@ -63,7 +61,7 @@ public class ArrayUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param array
 	 * @param needle
 	 * @return True if the given needle is in the array.
@@ -98,13 +96,10 @@ public class ArrayUtils {
 
 	/**
 	 * Checks for a given method name in the array of methods.
-	 * 
-	 * @param methods
-	 *            Array of <code>Method</code> objects.
-	 * @param string
-	 *            Needle, the method name to search for.
-	 * @return True if a method with the given name exists in the array, false
-	 *         else.
+	 *
+	 * @param methods Array of <code>Method</code> objects.
+	 * @param string  Needle, the method name to search for.
+	 * @return True if a method with the given name exists in the array, false else.
 	 */
 	public static boolean hasMethod(Method[] methods, String needle) {
 		for (int i = 0; i < methods.length; i++) {

@@ -29,30 +29,29 @@ import at.medevit.elexis.gdt.tools.GDTSatzNachrichtHelper;
 import ch.elexis.core.ui.util.Log;
 
 public class GDTFileInputHandler {
-	
+
 	private static Log logger = Log.get(GDTFileInputHandler.class.getName());
-	
-	public static void handle(File file){
+
+	public static void handle(File file) {
 		String[] lines = readFileGetUTF8(file);
 		int satzkennung = 0;
-		
+
 		if (lines != null) {
-			String satzkennungString =
-				GDTSatzNachrichtHelper.getValueIfExists(
-					GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION, lines);
+			String satzkennungString = GDTSatzNachrichtHelper
+					.getValueIfExists(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION, lines);
 			satzkennung = Integer.parseInt(satzkennungString);
 		}
-		
+
 		IGDTCommunicationPartner cp = GDTCommPartnerCollector
-			.identifyCommunicationPartnerByIncomingDirectory(file.getParent());
+				.identifyCommunicationPartnerByIncomingDirectory(file.getParent());
 		if (cp == null) {
-			logger.log("IGDTCommunicationPartner for file " + file.getAbsolutePath()
-				+ " is null, skipping.", Log.ERRORS);
+			logger.log("IGDTCommunicationPartner for file " + file.getAbsolutePath() + " is null, skipping.",
+					Log.ERRORS);
 			return;
 		}
-		
+
 		boolean delivered = false;
-		
+
 		switch (satzkennung) {
 		case GDTConstants.SATZART_STAMMDATEN_ANFORDERN:
 			delivered = GDTInputHandler.handleSatznachricht6300(lines, file.getName(), cp);
@@ -76,8 +75,8 @@ public class GDTFileInputHandler {
 			break;
 		}
 	}
-	
-	private static void delete(File file){
+
+	private static void delete(File file) {
 		try {
 			boolean deleted = file.delete();
 			if (deleted) {
@@ -89,25 +88,23 @@ public class GDTFileInputHandler {
 			logger.log(e, "Error deleting " + file.getAbsolutePath(), Log.WARNINGS);
 		}
 	}
-	
-	public static String[] readFileGetUTF8(File file){
+
+	public static String[] readFileGetUTF8(File file) {
 		int encoding = GDTConstants.ZEICHENSATZ_IBM_CP_437;
 		try {
 			List<String> dataList = FileUtils.readLines(file, "cp437");
 			String[] data = dataList.toArray(new String[] {});
-			String usedEncoding =
-				GDTSatzNachrichtHelper.getValueIfExists(
-					GDTConstants.FELDKENNUNG_VERWENDETER_ZEICHENSATZ, data);
+			String usedEncoding = GDTSatzNachrichtHelper
+					.getValueIfExists(GDTConstants.FELDKENNUNG_VERWENDETER_ZEICHENSATZ, data);
 			if (usedEncoding == null)
 				return data; // Not set return default encoding
-				
+
 			int usedEncodingInt = Integer.parseInt(usedEncoding);
 			if (encoding == usedEncodingInt)
 				return data; // Set, but default
-				
+
 			if (usedEncodingInt == GDTConstants.ZEICHENSATZ_7BIT) {
-				return FileUtils.readLines(file, GDTConstants.ZEICHENSATZ_7BIT_CHARSET_STRING)
-					.toArray(new String[] {});
+				return FileUtils.readLines(file, GDTConstants.ZEICHENSATZ_7BIT_CHARSET_STRING).toArray(new String[] {});
 			} else if (usedEncodingInt == GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252) {
 				return FileUtils.readLines(file, "Cp1252").toArray(new String[] {});
 			}

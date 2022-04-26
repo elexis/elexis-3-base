@@ -16,27 +16,25 @@ import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 
 public class GlobalInboxEntryDeleteHandler {
-	
+
 	@Execute
-	public void execute(
-		@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry){
-		
+	public void execute(@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
+
 		File mainFile = globalInboxEntry.getMainFile();
-		if (SWTHelper.askYesNo(Messages.InboxView_inbox, MessageFormat
-			.format(Messages.InboxView_thisreallydelete, globalInboxEntry.getTitle()))) {
+		if (SWTHelper.askYesNo(Messages.InboxView_inbox,
+				MessageFormat.format(Messages.InboxView_thisreallydelete, globalInboxEntry.getTitle()))) {
 			File[] extensionFiles = globalInboxEntry.getExtensionFiles();
 			for (File extensionFile : extensionFiles) {
 				extensionFile.delete();
 			}
 			mainFile.delete();
 		}
-		
+
 	}
-	
+
 	@CanExecute
-	public boolean canExecute(
-		@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry){
+	public boolean canExecute(@Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
 		return globalInboxEntry != null;
 	}
-	
+
 }

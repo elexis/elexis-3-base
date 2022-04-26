@@ -10,12 +10,12 @@ import org.w3c.dom.Node;
 public class DocxWordRun {
 	private Node run;
 	private boolean isFollowedBySdt;
-	
-	public DocxWordRun(Node runNode){
+
+	public DocxWordRun(Node runNode) {
 		this.run = runNode;
 	}
-	
-	public List<DocxWordText> getDirectChildText(){
+
+	public List<DocxWordText> getDirectChildText() {
 		ArrayList<DocxWordText> ret = new ArrayList<DocxWordText>();
 		List<Node> wtNodes = XMLUtil.getChildElementsByTagName(run, "w:t"); //$NON-NLS-1$
 		for (Node node : wtNodes) {
@@ -23,25 +23,25 @@ public class DocxWordRun {
 		}
 		return ret;
 	}
-	
-	public void insertRunAfter(DocxWordRun insert){
+
+	public void insertRunAfter(DocxWordRun insert) {
 		run.getParentNode().insertBefore(insert.getNode(), run.getNextSibling());
 	}
-	
-	public void insertRunBefore(DocxWordRun insert){
+
+	public void insertRunBefore(DocxWordRun insert) {
 		run.getParentNode().insertBefore(insert.getNode(), run);
 	}
-	
-	public boolean isContainingText(){
+
+	public boolean isContainingText() {
 		List<Node> wtNodes = XMLUtil.getChildElementsByTagName(run, "w:t"); //$NON-NLS-1$
 		return !wtNodes.isEmpty();
 	}
-	
-	public Node getNode(){
+
+	public Node getNode() {
 		return run;
 	}
-	
-	public String getText(){
+
+	public String getText() {
 		StringBuilder sb = new StringBuilder();
 		List<DocxWordText> texts = getDirectChildText();
 		for (DocxWordText text : texts) {
@@ -49,8 +49,8 @@ public class DocxWordRun {
 		}
 		return sb.toString();
 	}
-	
-	public DocxWordRun setText(String newText){
+
+	public DocxWordRun setText(String newText) {
 		DocxWordRun ret = this;
 		List<DocxWordText> texts = getDirectChildText();
 		if (texts.isEmpty()) {
@@ -69,14 +69,14 @@ public class DocxWordRun {
 		}
 		return ret;
 	}
-	
-	public DocxWordText createText(){
+
+	public DocxWordText createText() {
 		Node node = run.getOwnerDocument().createElement("w:t"); //$NON-NLS-1$
 		run.appendChild(node);
 		return new DocxWordText(node);
 	}
-	
-	public DocxWordParagraph getParentParagraph(){
+
+	public DocxWordParagraph getParentParagraph() {
 		Node parent = run.getParentNode();
 		while (parent != null && !parent.getNodeName().equals("w:p")) { //$NON-NLS-1$
 			parent = parent.getParentNode();
@@ -86,12 +86,12 @@ public class DocxWordRun {
 		else
 			return null;
 	}
-	
-	protected DocxWordRun getCloneOfRun(boolean deep){
+
+	protected DocxWordRun getCloneOfRun(boolean deep) {
 		return new DocxWordRun(run.cloneNode(deep));
 	}
-	
-	private DocxWordRun setTextWithLineBreaks(String newText){
+
+	private DocxWordRun setTextWithLineBreaks(String newText) {
 		DocxWordRun currentRun = this;
 		String[] lines = newText.split("\\r"); //$NON-NLS-1$
 		for (int i = 0; i < lines.length; i++) {
@@ -104,7 +104,7 @@ public class DocxWordRun {
 				breakRun.clear();
 				breakRun.insertLineBreak();
 				currentRun.insertRunAfter(breakRun);
-				
+
 				DocxWordRun newRun = getCloneOfRun(true);
 				newRun.clear();
 				newRun.createText();
@@ -114,62 +114,62 @@ public class DocxWordRun {
 		}
 		return currentRun;
 	}
-	
-	public void removeText(DocxWordText text){
+
+	public void removeText(DocxWordText text) {
 		run.removeChild(text.getNode());
 	}
-	
-	public void removeAllText(){
+
+	public void removeAllText() {
 		List<DocxWordText> texts = getDirectChildText();
 		for (DocxWordText docxWordText : texts) {
 			removeText(docxWordText);
 		}
 	}
-	
-	public void insertTab(){
+
+	public void insertTab() {
 		Document document = run.getOwnerDocument();
 		Element tab = document.createElement("w:tab"); //$NON-NLS-1$
 		run.appendChild(tab);
 	}
-	
-	public void removeAllTab(){
+
+	public void removeAllTab() {
 		List<Node> wrTabNodes = XMLUtil.getChildElementsByTagName(run, "w:tab"); //$NON-NLS-1$
 		for (Node node : wrTabNodes) {
 			run.removeChild(node);
 		}
 	}
-	
-	public void removeAllLineBreak(){
+
+	public void removeAllLineBreak() {
 		List<Node> wrBrNodes = XMLUtil.getChildElementsByTagName(run, "w:br"); //$NON-NLS-1$
 		for (Node node : wrBrNodes) {
 			run.removeChild(node);
 		}
 	}
-	
-	public void insertLineBreak(){
+
+	public void insertLineBreak() {
 		Document document = run.getOwnerDocument();
 		Element lineBr = document.createElement("w:br"); //$NON-NLS-1$
 		run.appendChild(lineBr);
 	}
-	
-	public void clear(){
+
+	public void clear() {
 		removeAllText();
 		removeAllLineBreak();
 		removeAllTab();
 	}
-	
-	public DocxWordRunProperties getProperties(){
+
+	public DocxWordRunProperties getProperties() {
 		List<Node> wrPrNodes = XMLUtil.getChildElementsByTagName(run, "w:rPr"); //$NON-NLS-1$
 		if (!wrPrNodes.isEmpty())
 			return new DocxWordRunProperties(wrPrNodes.get(0));
 		return null;
 	}
-	
-	public void removeProperties(DocxWordRunProperties prop){
+
+	public void removeProperties(DocxWordRunProperties prop) {
 		run.removeChild(prop.properties);
 	}
-	
-	public void setProperties(DocxWordRunProperties prop){
+
+	public void setProperties(DocxWordRunProperties prop) {
 		DocxWordRunProperties currentProp = getProperties();
 		if (currentProp != null) {
 			run.insertBefore(prop.properties, currentProp.properties);
@@ -178,38 +178,38 @@ public class DocxWordRun {
 			run.appendChild(prop.properties);
 		}
 	}
-	
-	public DocxWordRunProperties createProperties(){
+
+	public DocxWordRunProperties createProperties() {
 		Node node = run.getOwnerDocument().createElement("w:rPr"); //$NON-NLS-1$
 		run.appendChild(node);
 		return new DocxWordRunProperties(node);
 	}
-	
-	public boolean containsTab(){
+
+	public boolean containsTab() {
 		List<Node> wTab = XMLUtil.getChildElementsByTagName(run, "w:tab"); //$NON-NLS-1$
 		return !wTab.isEmpty();
 	}
-	
-	public boolean conatinsField(){
+
+	public boolean conatinsField() {
 		List<Node> wField = XMLUtil.getChildElementsByTagName(run, "w:fldChar"); //$NON-NLS-1$
 		return !wField.isEmpty();
 	}
-	
-	public boolean containsLineBreak(){
+
+	public boolean containsLineBreak() {
 		List<Node> wTab = XMLUtil.getChildElementsByTagName(run, "w:br"); //$NON-NLS-1$
 		return !wTab.isEmpty();
 	}
-	
-	public boolean containsInstrText(){
+
+	public boolean containsInstrText() {
 		List<Node> wInstr = XMLUtil.getChildElementsByTagName(run, "w:instrText"); //$NON-NLS-1$
 		return !wInstr.isEmpty();
 	}
-	
-	public void setIsFollowedBySdt(boolean value){
+
+	public void setIsFollowedBySdt(boolean value) {
 		isFollowedBySdt = value;
 	}
-	
-	public boolean isFollowedBySdt(){
+
+	public boolean isFollowedBySdt() {
 		return isFollowedBySdt;
 	}
 }

@@ -9,10 +9,10 @@ import ch.rgw.tools.TimeTool;
 
 public class Rn45Comparator implements Comparator<Object> {
 	private static final String TARMED_TARIF = "001";
-	
+
 	TimeTool time1 = new TimeTool();
 	TimeTool time2 = new TimeTool();
-	
+
 	private GregorianCalendar cal1;
 	private GregorianCalendar cal2;
 	private String tarifType1;
@@ -21,28 +21,29 @@ public class Rn45Comparator implements Comparator<Object> {
 	private String code2;
 	private String name1;
 	private String name2;
-	
-	public Rn45Comparator(){}
-	
+
+	public Rn45Comparator() {
+	}
+
 	@Override
-	public int compare(Object o1, Object o2){
+	public int compare(Object o1, Object o2) {
 		initRecordValues1(o1);
 		initRecordValues2(o2);
-		
+
 		if (cal1 == null) {
 			return 1;
 		}
 		if (cal2 == null) {
 			return -1;
 		}
-		
+
 		time1.set(cal1);
 		time2.set(cal2);
 		int dat = time1.compareTo(time2);
 		if (dat != 0) {
 			return dat;
 		}
-		
+
 		if (TARMED_TARIF.equals(tarifType1)) { // tarmed-tarmed: nach code sortieren
 			if (TARMED_TARIF.equals(tarifType2)) {
 				return code1.compareTo(code2);
@@ -59,8 +60,8 @@ public class Rn45Comparator implements Comparator<Object> {
 			return diffc;
 		}
 	}
-	
-	private void initRecordValues1(Object object){
+
+	private void initRecordValues1(Object object) {
 		clearValues();
 		if (object instanceof ServiceType) {
 			if (((ServiceType) object).getDateBegin() != null) {
@@ -78,8 +79,8 @@ public class Rn45Comparator implements Comparator<Object> {
 			name1 = ((ServiceExType) object).getName();
 		}
 	}
-	
-	private void clearValues(){
+
+	private void clearValues() {
 		cal1 = null;
 		cal2 = null;
 		tarifType1 = "";
@@ -89,8 +90,8 @@ public class Rn45Comparator implements Comparator<Object> {
 		name1 = "";
 		name2 = "";
 	}
-	
-	private void initRecordValues2(Object object){
+
+	private void initRecordValues2(Object object) {
 		if (object instanceof ServiceType) {
 			if (((ServiceType) object).getDateBegin() != null) {
 				cal2 = ((ServiceType) object).getDateBegin().toGregorianCalendar();

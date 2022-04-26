@@ -6,18 +6,18 @@ import ch.elexis.core.jpa.model.adapter.AbstractModelQuery;
 import ch.elexis.core.services.IQuery;
 
 public class LaborTarifModelQuery<T> extends AbstractModelQuery<T> implements IQuery<T> {
-	
+
 	public LaborTarifModelQuery(Class<T> clazz, boolean refreshCache, EntityManager entityManager,
-		boolean includeDeleted){
+			boolean includeDeleted) {
 		super(clazz, refreshCache, entityManager, includeDeleted);
 	}
-	
+
 	@Override
-	protected void initialize(){
+	protected void initialize() {
 		adapterFactory = LaborTarifModelAdapterFactory.getInstance();
-		
+
 		entityClazz = adapterFactory.getEntityClass(clazz);
-		
+
 		criteriaQuery = criteriaBuilder.createQuery(entityClazz);
 		rootQuery = criteriaQuery.from(entityClazz);
 	}

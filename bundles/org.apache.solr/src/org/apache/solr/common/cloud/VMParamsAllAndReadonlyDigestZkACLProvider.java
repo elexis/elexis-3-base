@@ -28,90 +28,89 @@ import org.apache.zookeeper.server.auth.DigestAuthenticationProvider;
 
 public class VMParamsAllAndReadonlyDigestZkACLProvider extends SecurityAwareZkACLProvider {
 
-  public static final String DEFAULT_DIGEST_READONLY_USERNAME_VM_PARAM_NAME = "zkDigestReadonlyUsername";
-  public static final String DEFAULT_DIGEST_READONLY_PASSWORD_VM_PARAM_NAME = "zkDigestReadonlyPassword";
-  
-  final String zkDigestAllUsernameVMParamName;
-  final String zkDigestAllPasswordVMParamName;
-  final String zkDigestReadonlyUsernameVMParamName;
-  final String zkDigestReadonlyPasswordVMParamName;
-  
-  public VMParamsAllAndReadonlyDigestZkACLProvider() {
-    this(
-        VMParamsSingleSetCredentialsDigestZkCredentialsProvider.DEFAULT_DIGEST_USERNAME_VM_PARAM_NAME, 
-        VMParamsSingleSetCredentialsDigestZkCredentialsProvider.DEFAULT_DIGEST_PASSWORD_VM_PARAM_NAME,
-        DEFAULT_DIGEST_READONLY_USERNAME_VM_PARAM_NAME,
-        DEFAULT_DIGEST_READONLY_PASSWORD_VM_PARAM_NAME
-        );
-  }
-  
-  public VMParamsAllAndReadonlyDigestZkACLProvider(String zkDigestAllUsernameVMParamName, String zkDigestAllPasswordVMParamName,
-      String zkDigestReadonlyUsernameVMParamName, String zkDigestReadonlyPasswordVMParamName) {
-    this.zkDigestAllUsernameVMParamName = zkDigestAllUsernameVMParamName;
-    this.zkDigestAllPasswordVMParamName = zkDigestAllPasswordVMParamName;
-    this.zkDigestReadonlyUsernameVMParamName = zkDigestReadonlyUsernameVMParamName;
-    this.zkDigestReadonlyPasswordVMParamName = zkDigestReadonlyPasswordVMParamName;
-  }
+	public static final String DEFAULT_DIGEST_READONLY_USERNAME_VM_PARAM_NAME = "zkDigestReadonlyUsername";
+	public static final String DEFAULT_DIGEST_READONLY_PASSWORD_VM_PARAM_NAME = "zkDigestReadonlyPassword";
 
-  /**
-   * @return Set of ACLs to return for non-security related znodes
-   */
-  @Override
-  protected List<ACL> createNonSecurityACLsToAdd() {
-    return createACLsToAdd(true);
-  }
+	final String zkDigestAllUsernameVMParamName;
+	final String zkDigestAllPasswordVMParamName;
+	final String zkDigestReadonlyUsernameVMParamName;
+	final String zkDigestReadonlyPasswordVMParamName;
 
-  /**
-   * @return Set of ACLs to return security-related znodes
-   */
-  @Override
-  protected List<ACL> createSecurityACLsToAdd() {
-    return createACLsToAdd(false);
-  }
+	public VMParamsAllAndReadonlyDigestZkACLProvider() {
+		this(VMParamsSingleSetCredentialsDigestZkCredentialsProvider.DEFAULT_DIGEST_USERNAME_VM_PARAM_NAME,
+				VMParamsSingleSetCredentialsDigestZkCredentialsProvider.DEFAULT_DIGEST_PASSWORD_VM_PARAM_NAME,
+				DEFAULT_DIGEST_READONLY_USERNAME_VM_PARAM_NAME, DEFAULT_DIGEST_READONLY_PASSWORD_VM_PARAM_NAME);
+	}
 
-  protected List<ACL> createACLsToAdd(boolean includeReadOnly) {
-    String digestAllUsername = System.getProperty(zkDigestAllUsernameVMParamName);
-    String digestAllPassword = System.getProperty(zkDigestAllPasswordVMParamName);
-    String digestReadonlyUsername = System.getProperty(zkDigestReadonlyUsernameVMParamName);
-    String digestReadonlyPassword = System.getProperty(zkDigestReadonlyPasswordVMParamName);
+	public VMParamsAllAndReadonlyDigestZkACLProvider(String zkDigestAllUsernameVMParamName,
+			String zkDigestAllPasswordVMParamName, String zkDigestReadonlyUsernameVMParamName,
+			String zkDigestReadonlyPasswordVMParamName) {
+		this.zkDigestAllUsernameVMParamName = zkDigestAllUsernameVMParamName;
+		this.zkDigestAllPasswordVMParamName = zkDigestAllPasswordVMParamName;
+		this.zkDigestReadonlyUsernameVMParamName = zkDigestReadonlyUsernameVMParamName;
+		this.zkDigestReadonlyPasswordVMParamName = zkDigestReadonlyPasswordVMParamName;
+	}
 
-    return createACLsToAdd(includeReadOnly,
-        digestAllUsername, digestAllPassword,
-        digestReadonlyUsername, digestReadonlyPassword);
-  }
+	/**
+	 * @return Set of ACLs to return for non-security related znodes
+	 */
+	@Override
+	protected List<ACL> createNonSecurityACLsToAdd() {
+		return createACLsToAdd(true);
+	}
 
-  /**
-   * Note: only used for tests
-   */
-  protected List<ACL> createACLsToAdd(boolean includeReadOnly,
-                                      String digestAllUsername, String digestAllPassword,
-                                      String digestReadonlyUsername, String digestReadonlyPassword) {
+	/**
+	 * @return Set of ACLs to return security-related znodes
+	 */
+	@Override
+	protected List<ACL> createSecurityACLsToAdd() {
+		return createACLsToAdd(false);
+	}
 
-      try {
-      List<ACL> result = new ArrayList<ACL>();
-  
-      // Not to have to provide too much credentials and ACL information to the process it is assumed that you want "ALL"-acls
-      // added to the user you are using to connect to ZK (if you are using VMParamsSingleSetCredentialsDigestZkCredentialsProvider)
-      if (!StringUtils.isEmpty(digestAllUsername) && !StringUtils.isEmpty(digestAllPassword)) {
-        result.add(new ACL(ZooDefs.Perms.ALL, new Id("digest", DigestAuthenticationProvider.generateDigest(digestAllUsername + ":" + digestAllPassword))));
-      }
+	protected List<ACL> createACLsToAdd(boolean includeReadOnly) {
+		String digestAllUsername = System.getProperty(zkDigestAllUsernameVMParamName);
+		String digestAllPassword = System.getProperty(zkDigestAllPasswordVMParamName);
+		String digestReadonlyUsername = System.getProperty(zkDigestReadonlyUsernameVMParamName);
+		String digestReadonlyPassword = System.getProperty(zkDigestReadonlyPasswordVMParamName);
 
-      if (includeReadOnly) {
-        // Besides that support for adding additional "READONLY"-acls for another user
-        if (!StringUtils.isEmpty(digestReadonlyUsername) && !StringUtils.isEmpty(digestReadonlyPassword)) {
-          result.add(new ACL(ZooDefs.Perms.READ, new Id("digest", DigestAuthenticationProvider.generateDigest(digestReadonlyUsername + ":" + digestReadonlyPassword))));
-        }
-      }
-      
-      if (result.isEmpty()) {
-        result = ZooDefs.Ids.OPEN_ACL_UNSAFE;
-      }
-      
-      return result;
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
-  }
+		return createACLsToAdd(includeReadOnly, digestAllUsername, digestAllPassword, digestReadonlyUsername,
+				digestReadonlyPassword);
+	}
+
+	/**
+	 * Note: only used for tests
+	 */
+	protected List<ACL> createACLsToAdd(boolean includeReadOnly, String digestAllUsername, String digestAllPassword,
+			String digestReadonlyUsername, String digestReadonlyPassword) {
+
+		try {
+			List<ACL> result = new ArrayList<ACL>();
+
+			// Not to have to provide too much credentials and ACL information to the
+			// process it is assumed that you want "ALL"-acls
+			// added to the user you are using to connect to ZK (if you are using
+			// VMParamsSingleSetCredentialsDigestZkCredentialsProvider)
+			if (!StringUtils.isEmpty(digestAllUsername) && !StringUtils.isEmpty(digestAllPassword)) {
+				result.add(new ACL(ZooDefs.Perms.ALL, new Id("digest",
+						DigestAuthenticationProvider.generateDigest(digestAllUsername + ":" + digestAllPassword))));
+			}
+
+			if (includeReadOnly) {
+				// Besides that support for adding additional "READONLY"-acls for another user
+				if (!StringUtils.isEmpty(digestReadonlyUsername) && !StringUtils.isEmpty(digestReadonlyPassword)) {
+					result.add(new ACL(ZooDefs.Perms.READ, new Id("digest", DigestAuthenticationProvider
+							.generateDigest(digestReadonlyUsername + ":" + digestReadonlyPassword))));
+				}
+			}
+
+			if (result.isEmpty()) {
+				result = ZooDefs.Ids.OPEN_ACL_UNSAFE;
+			}
+
+			return result;
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }
-

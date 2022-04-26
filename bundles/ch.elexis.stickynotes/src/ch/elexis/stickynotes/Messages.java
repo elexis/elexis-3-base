@@ -12,14 +12,14 @@ package ch.elexis.stickynotes;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-  private static final String BUNDLE_NAME = "ch.elexis.stickynotes.messages";
-    public static String Preferences_BackgroundColor;
-    public static String Preferences_ForegroundColor;
-    public static String StickyNotesView_NoPatientSelected;
-    public static String StickyNotesView_StickyNotesName;
-    public static String StickyNotesView_StickyNotesNameDash;
+	private static final String BUNDLE_NAME = "ch.elexis.stickynotes.messages";
+	public static String Preferences_BackgroundColor;
+	public static String Preferences_ForegroundColor;
+	public static String StickyNotesView_NoPatientSelected;
+	public static String StickyNotesView_StickyNotesName;
+	public static String StickyNotesView_StickyNotesNameDash;
 
-    static { // load message values from bundle file
-    NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-  }
+	static { // load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
 }

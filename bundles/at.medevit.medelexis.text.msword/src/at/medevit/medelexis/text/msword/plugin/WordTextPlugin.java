@@ -78,48 +78,48 @@ import ch.elexis.core.ui.views.textsystem.TextTemplatePrintSettings;
 
 /**
  * ITextPlugin implementation for MS Word.
- * 
- * Loading and saving has to be done via files as the Word COM object does not support these
- * functions when embedded.
- * 
+ *
+ * Loading and saving has to be done via files as the Word COM object does not
+ * support these functions when embedded.
+ *
  * @author thomashu
- * 
+ *
  */
 public class WordTextPlugin implements ITextPlugin {
 	private static Logger logger = LoggerFactory.getLogger(WordTextPlugin.class);
-	
+
 	private static ArrayList<WordTextPlugin> instances = new ArrayList<WordTextPlugin>();
-	
+
 	private Composite wordComposite;
 	private OleWordSite word;
 	private OleWordDocument openDocument;
-	
+
 	private ExternalFile externalOpenDocument;
-	
+
 	protected boolean saveOnFocusLost = true;
-	
+
 	protected PageFormat format = ITextPlugin.PageFormat.USER;
-	
+
 	// font settings
 	private String fontName = null;
 	private int fontStyle = -1;
 	private int fontSize = -1;
-	
+
 	private boolean dirty;
 	private DocxWordDocument dirtyFile;
-	
+
 	private Parameter parameter;
-	
+
 	private static TextTemplatePrintSettings printSettings;
-	
-	public WordTextPlugin(){
+
+	public WordTextPlugin() {
 		synchronized (instances) {
 			instances.add(this);
 			dirty = false;
 		}
 	}
-	
-	private void reloadDirtyFile(){
+
+	private void reloadDirtyFile() {
 		synchronized (this) {
 			if (dirtyFile != null) {
 				CommunicationFile file = word.getCommunicationFile();
@@ -130,22 +130,21 @@ public class WordTextPlugin implements ITextPlugin {
 			}
 		}
 	}
-	
-	private void setDirtyFile(DocxWordDocument doc){
+
+	private void setDirtyFile(DocxWordDocument doc) {
 		synchronized (this) {
 			dirtyFile = doc;
 			dirty = true;
 			ReloadRunnable.createInstance(this);
 		}
 	}
-	
+
 	private static class ReloadRunnable implements Runnable {
-		private static Map<WordTextPlugin, ReloadRunnable> instances =
-			new HashMap<WordTextPlugin, ReloadRunnable>();
-		
+		private static Map<WordTextPlugin, ReloadRunnable> instances = new HashMap<WordTextPlugin, ReloadRunnable>();
+
 		private WordTextPlugin wtp;
-		
-		public static void createInstance(WordTextPlugin plugin){
+
+		public static void createInstance(WordTextPlugin plugin) {
 			synchronized (plugin) {
 				if (instances.get(plugin) == null) {
 					ReloadRunnable runnable = new ReloadRunnable(plugin);
@@ -154,13 +153,13 @@ public class WordTextPlugin implements ITextPlugin {
 				}
 			}
 		}
-		
-		private ReloadRunnable(WordTextPlugin plugin){
+
+		private ReloadRunnable(WordTextPlugin plugin) {
 			wtp = plugin;
 		}
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			synchronized (wtp) {
 				if (wtp.dirty) {
 					wtp.reloadDirtyFile();
@@ -169,37 +168,36 @@ public class WordTextPlugin implements ITextPlugin {
 			}
 		}
 	}
-	
-	private DocxWordDocument getDirtyFile(){
+
+	private DocxWordDocument getDirtyFile() {
 		synchronized (this) {
 			if (dirtyFile == null) {
 				OleWrapperManager manager = new OleWrapperManager();
-				dirtyFile =
-					word.getApplication(manager).getActiveDocument(manager).getDocxWordDocument();
+				dirtyFile = word.getApplication(manager).getActiveDocument(manager).getDocxWordDocument();
 				manager.dispose();
 			}
 			return dirtyFile;
 		}
 	}
-	
+
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-		throws CoreException{
+			throws CoreException {
 		// Do nothing
 	}
-	
+
 	@Override
-	public PageFormat getFormat(){
+	public PageFormat getFormat() {
 		return format;
 	}
-	
+
 	@Override
-	public void setFormat(PageFormat f){
+	public void setFormat(PageFormat f) {
 		format = f;
 	}
-	
+
 	@Override
-	public Composite createContainer(Composite parent, ICallback handler){
+	public Composite createContainer(Composite parent, ICallback handler) {
 		synchronized (this) {
 			wordComposite = new Composite(parent, SWT.NONE);
 			GridLayout gridLayout = new GridLayout(1, true);
@@ -207,47 +205,46 @@ public class WordTextPlugin implements ITextPlugin {
 			gridLayout.marginHeight = 0;
 			gridLayout.marginWidth = 0;
 			wordComposite.setLayout(gridLayout);
-			
+
 			ToolBar toolBar = new ToolBar(wordComposite, SWT.FLAT);
 			GridData gridData = new GridData(GridData.FILL, SWT.TOP, true, false);
 			toolBar.setLayoutData(gridData);
 			ToolBarManager toolBarManager = new ToolBarManager(toolBar);
-			
+
 			Map<String, String> parameters = new HashMap<String, String>();
 			parameters.put("at.medevit.medelexis.text.msword.WordTextPluginHash", //$NON-NLS-1$
-				Integer.toString(this.hashCode()));
-			
-			CommandContributionItemParameter parameter =
-				new CommandContributionItemParameter(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow(), null,
+					Integer.toString(this.hashCode()));
+
+			CommandContributionItemParameter parameter = new CommandContributionItemParameter(
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null,
 					"at.medevit.medelexis.text.msword.printDialog", //$NON-NLS-1$
 					CommandContributionItem.STYLE_PUSH);
 			parameter.icon = Images.IMG_PRINTER.getImageDescriptor();
 			parameter.parameters = parameters;
-			
+
 			toolBarManager.add(new CommandContributionItem(parameter));
-			
+
 			toolBarManager.update(true);
-			
+
 			word = new OleWordSite(wordComposite);
 			gridData = new GridData(GridData.FILL, SWT.FILL, true, true);
 			word.getFrame().setLayoutData(gridData);
-			
+
 			logger.info("Created Word Site " + word + " for instance " + this);
-			
+
 			return wordComposite;
 		}
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		if (word != null) {
 			word.setFocus();
 		}
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		logger.info("Disposing Word Site " + word + " with instance " + this);
 		synchronized (instances) {
 			instances.remove(this);
@@ -255,24 +252,24 @@ public class WordTextPlugin implements ITextPlugin {
 				word.dispose();
 		}
 	}
-	
+
 	@Override
-	public void showMenu(boolean b){
+	public void showMenu(boolean b) {
 		// Do nothing
 	}
-	
+
 	@Override
-	public void showToolbar(boolean b){
+	public void showToolbar(boolean b) {
 		// Do nothing
 	}
-	
+
 	@Override
-	public void setSaveOnFocusLost(boolean bSave){
+	public void setSaveOnFocusLost(boolean bSave) {
 		saveOnFocusLost = bSave;
 	}
-	
+
 	@Override
-	public boolean createEmptyDocument(){
+	public boolean createEmptyDocument() {
 		synchronized (this) {
 			try {
 				// Reload the OleWordSite without a file results in creating a new document.
@@ -284,13 +281,12 @@ public class WordTextPlugin implements ITextPlugin {
 			return true;
 		}
 	}
-	
+
 	@Override
-	public boolean loadFromByteArray(byte[] bs, boolean asTemplate){
+	public boolean loadFromByteArray(byte[] bs, boolean asTemplate) {
 		synchronized (this) {
 			try {
-				if (!asTemplate
-					&& CoreHub.userCfg.get(MSWordPreferencePage.MSWORD_OPEN_EXTERN, false)) {
+				if (!asTemplate && CoreHub.userCfg.get(MSWordPreferencePage.MSWORD_OPEN_EXTERN, false)) {
 					externalOpenDocument = new ExternalFile();
 					externalOpenDocument.write(bs);
 					externalOpenDocument.open();
@@ -312,13 +308,12 @@ public class WordTextPlugin implements ITextPlugin {
 			return true;
 		}
 	}
-	
+
 	@Override
-	public boolean loadFromStream(InputStream is, boolean asTemplate){
+	public boolean loadFromStream(InputStream is, boolean asTemplate) {
 		synchronized (this) {
 			try {
-				if (!asTemplate
-					&& CoreHub.userCfg.get(MSWordPreferencePage.MSWORD_OPEN_EXTERN, false)) {
+				if (!asTemplate && CoreHub.userCfg.get(MSWordPreferencePage.MSWORD_OPEN_EXTERN, false)) {
 					externalOpenDocument = new ExternalFile();
 					externalOpenDocument.write(is);
 					externalOpenDocument.open();
@@ -327,7 +322,8 @@ public class WordTextPlugin implements ITextPlugin {
 						externalOpenDocument.dispose();
 						externalOpenDocument = null;
 					}
-					// Write the InputStream to the CommunicationFile and reload the OleWordSite with
+					// Write the InputStream to the CommunicationFile and reload the OleWordSite
+					// with
 					// that CommunicationFile.
 					CommunicationFile file = word.getCommunicationFile();
 					file.write(is);
@@ -340,16 +336,17 @@ public class WordTextPlugin implements ITextPlugin {
 			return true;
 		}
 	}
-	
+
 	@Override
-	public byte[] storeToByteArray(){
+	public byte[] storeToByteArray() {
 		if (parameter == Parameter.READ_ONLY) {
 			return null;
 		}
 		synchronized (this) {
 			byte[] ret = null;
 			try {
-				// Get a CommunicationFile with the ActiveDocument of the OleWordSite as content and
+				// Get a CommunicationFile with the ActiveDocument of the OleWordSite as content
+				// and
 				// read that file into a byte array.
 				FileInputStream fis = null;
 				try {
@@ -362,7 +359,7 @@ public class WordTextPlugin implements ITextPlugin {
 						if (dirty) {
 							reloadDirtyFile();
 						}
-						
+
 						CommunicationFile file = word.getCommunicationFile();
 						if (file.isError()) {
 							// try to cancel the save operation if the loaded file is in error state
@@ -377,7 +374,7 @@ public class WordTextPlugin implements ITextPlugin {
 							}
 							file.write(openDocument);
 						}
-						
+
 						fis = new FileInputStream(file.getFile());
 						ret = new byte[(int) file.getFile().length()];
 						fis.read(ret);
@@ -403,22 +400,23 @@ public class WordTextPlugin implements ITextPlugin {
 			return ret;
 		}
 	}
-	
+
 	@Override
-	public boolean findOrReplace(String pattern, ReplaceCallback cb){
+	public boolean findOrReplace(String pattern, ReplaceCallback cb) {
 		return findOrReplaceFile(pattern, cb);
 	}
-	
-	protected boolean findOrReplaceFile(String pattern, ReplaceCallback cb){
+
+	protected boolean findOrReplaceFile(String pattern, ReplaceCallback cb) {
 		synchronized (this) {
-			// As Word does not support regular expressions, the search and replace for the matches
+			// As Word does not support regular expressions, the search and replace for the
+			// matches
 			// is done directly on the xml content (DocxWordDocument)
 			try {
 				DocxWordDocument docxWordDocument = getDirtyFile();
 				boolean found = docxWordDocument.findAndReplaceWithCallback(pattern, cb);
-				
+
 				setDirtyFile(docxWordDocument);
-				
+
 				return found;
 			} catch (IllegalStateException e) {
 				handleException(e);
@@ -426,24 +424,26 @@ public class WordTextPlugin implements ITextPlugin {
 			}
 		}
 	}
-	
+
 	// Currently not used ... OLE is very slow
-	protected boolean findOrReplaceOle(String pattern, ReplaceCallback cb){
+	protected boolean findOrReplaceOle(String pattern, ReplaceCallback cb) {
 		synchronized (this) {
 			OleWrapperManager manager = new OleWrapperManager();
-			// As Word does not support regular expressions, the search for the matches is done
-			// directly on the xml content (DocxWordDocument), and then the matches are used to
+			// As Word does not support regular expressions, the search for the matches is
+			// done
+			// directly on the xml content (DocxWordDocument), and then the matches are used
+			// to
 			// search and replace using Word.
 			try {
-				DocxWordDocument docxWordDocument =
-					word.getApplication(manager).getActiveDocument(manager).getDocxWordDocument();
-				
+				DocxWordDocument docxWordDocument = word.getApplication(manager).getActiveDocument(manager)
+						.getDocxWordDocument();
+
 				Iterator<String> found = docxWordDocument.getMatchesIterator(pattern);
 				while (found.hasNext()) {
 					String foundStr = found.next();
 					String replace = null;
 					OleWordRange range = null;
-					
+
 					Object obj = cb.replace(foundStr);
 					if (obj instanceof String) {
 						replace = (String) obj;
@@ -463,8 +463,8 @@ public class WordTextPlugin implements ITextPlugin {
 			return true;
 		}
 	}
-	
-	private String getWindowsString(String string){
+
+	private String getWindowsString(String string) {
 		String ret = string;
 		// try to fix line endings
 		int idx = ret.indexOf("\r\n"); //$NON-NLS-1$
@@ -476,60 +476,62 @@ public class WordTextPlugin implements ITextPlugin {
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public Object insertText(Object pos, String text, int adjust){
+	public Object insertText(Object pos, String text, int adjust) {
 		synchronized (this) {
 			if (dirty)
 				reloadDirtyFile();
-			
+
 			OleWrapperManager manager = new OleWrapperManager();
 			OleWordRange range = null;
 			// append the text to the OleWordRange defining the position in the document
-			// the alignment is applied to the paragraph before setting the text of the returned
+			// the alignment is applied to the paragraph before setting the text of the
+			// returned
 			// range
 			if (pos == null)
 				range = word.getApplication(manager).getActiveDocument(manager).getContent(manager);
 			else
 				range = (OleWordRange) pos;
-			
+
 			range.collapse();
 			range.setText(getWindowsString(text));
 			applyFont(range);
 			// OleWordParagraphFormat pFormat = range.getParagraphFormat(manager);
 			// pFormat.setAlignment(adjust);
-			
+
 			manager.remove(range);
 			manager.dispose();
 			return range;
 		}
 	}
-	
+
 	@Override
-	public Object insertTextAt(int x, int y, int w, int h, String text, int adjust){
+	public Object insertTextAt(int x, int y, int w, int h, String text, int adjust) {
 		synchronized (this) {
 			if (dirty)
 				reloadDirtyFile();
-			
+
 			OleWrapperManager manager = new OleWrapperManager();
 			OleWordRange textRange = null;
-			
+
 			// Create a new OleWordShape (Textbox) to position the text in the document
-			// the alignment is applied to the paragraph before setting the text of the returned
+			// the alignment is applied to the paragraph before setting the text of the
+			// returned
 			// range
 			OleWordApplication app = word.getApplication(manager);
 			OleWordDocument doc = app.getActiveDocument(manager);
 			OleWordPageSetup pageSetup = doc.getPageSetup(manager);
-			// add left margin as x = 0 would result in an not printable area, handle y the same
+			// add left margin as x = 0 would result in an not printable area, handle y the
+			// same
 			// way!? OO seems to handle y without margin?
 			int ptX = app.getPoints(x) + pageSetup.getLeftMargin();
 			int ptY = app.getPoints(y);
-			
+
 			int ptW = app.getPoints(w);
 			int ptH = app.getPoints(h);
-			
-			OleWordShape textbox =
-				doc.getShapes(manager).addTextbox(OleWordShapes.msoTextOrientationHorizontal, ptX,
+
+			OleWordShape textbox = doc.getShapes(manager).addTextbox(OleWordShapes.msoTextOrientationHorizontal, ptX,
 					ptY, ptW, ptH, manager);
 			textbox.getLine(manager).setVisible(false);
 			OleWordTextFrame textFrame = textbox.getTextFrame(manager);
@@ -538,61 +540,64 @@ public class WordTextPlugin implements ITextPlugin {
 			textFrame.setMarginRight(0);
 			textFrame.setMarginBottom(0);
 			textFrame.setAutoSize(true);
-			
+
 			textRange = textbox.getTextFrame(manager).getTextRange(manager);
 			textRange.setText(getWindowsString(text));
-			
+
 			OleWordParagraphFormat paragraph = textRange.getParagraphFormat(manager);
 			paragraph.setAlignment(adjust);
 			paragraph.setSpaceAfter(0);
 			paragraph.setSpaceBefore(0);
-			
+
 			applyFont(textRange);
-			
+
 			manager.remove(textRange);
 			manager.dispose();
 			return textRange;
 		}
 	}
-	
+
 	@Override
-	public Object insertText(String marke, String text, int adjust){
-		// Use the DcoxWordDocument to search for the first occurrence of the pattern in the text.
-		// Then use the returned matching string with OleFind to locate and replace it in the
+	public Object insertText(String marke, String text, int adjust) {
+		// Use the DcoxWordDocument to search for the first occurrence of the pattern in
+		// the text.
+		// Then use the returned matching string with OleFind to locate and replace it
+		// in the
 		// document.
 		// TODO if marke is used as regex strings like [xyz] are not interpreted as
-		// string but as character class that is currently not the desired behavior so skip regex
+		// string but as character class that is currently not the desired behavior so
+		// skip regex
 		// handling
 		// search in the text
 		synchronized (this) {
 			if (dirty)
 				reloadDirtyFile();
-			
+
 			OleWordRange range = null;
 			range = findAndReplaceFirst(marke, getWindowsString(text));
 			if (range != null) {
 				OleWrapperManager manager = new OleWrapperManager();
-				
+
 				applyFont(range);
 				OleWordParagraphFormat paragraph = range.getParagraphFormat(manager);
 				paragraph.setAlignment(adjust);
-				
+
 				manager.dispose();
 			}
 			return range;
 		}
 	}
-	
+
 	/**
-	 * Find and replace the first occurrence of findStr with replaceStr in the active document.
-	 * Occurrences in text and textboxes (OleWordShapes) have to be searched separately. This
-	 * implementation searches first text then textboxes.
-	 * 
+	 * Find and replace the first occurrence of findStr with replaceStr in the
+	 * active document. Occurrences in text and textboxes (OleWordShapes) have to be
+	 * searched separately. This implementation searches first text then textboxes.
+	 *
 	 * @param findStr
 	 * @param replaceStr
 	 * @return OleWordRange object containing the replaced text or null if not found
 	 */
-	protected OleWordRange findAndReplaceFirst(String findStr, String replaceStr){
+	protected OleWordRange findAndReplaceFirst(String findStr, String replaceStr) {
 		OleWrapperManager manager = new OleWrapperManager();
 		// sections
 		OleWordDocument doc = word.getApplication(manager).getActiveDocument(manager);
@@ -601,13 +606,12 @@ public class WordTextPlugin implements ITextPlugin {
 		for (int sectionsIdx = 0; sectionsIdx < sectionsCnt; sectionsIdx++) {
 			OleWordRange range;
 			OleWordFind find;
-			
+
 			OleWordSection section = sections.getItem(sectionsIdx + 1, manager);
-			
+
 			// headers
 			OleWordHeadersFooters headers = section.getHeaders(manager);
-			OleWordHeaderFooter header =
-				headers.getItem(OleWordConstants.wdHeaderFooterPrimary, manager);
+			OleWordHeaderFooter header = headers.getItem(OleWordConstants.wdHeaderFooterPrimary, manager);
 			range = header.getRange(manager);
 			if (range != null) {
 				find = range.getFind(manager);
@@ -617,7 +621,7 @@ public class WordTextPlugin implements ITextPlugin {
 					return range;
 				}
 			}
-			
+
 			// content
 			range = section.getRange(manager);
 			if (range != null) {
@@ -628,11 +632,10 @@ public class WordTextPlugin implements ITextPlugin {
 					return range;
 				}
 			}
-			
+
 			// footers
 			OleWordHeadersFooters footers = section.getFooters(manager);
-			OleWordHeaderFooter footer =
-				footers.getItem(OleWordConstants.wdHeaderFooterPrimary, manager);
+			OleWordHeaderFooter footer = footers.getItem(OleWordConstants.wdHeaderFooterPrimary, manager);
 			range = footer.getRange(manager);
 			if (range != null) {
 				find = range.getFind(manager);
@@ -642,9 +645,9 @@ public class WordTextPlugin implements ITextPlugin {
 					return range;
 				}
 			}
-			
+
 		}
-		
+
 		// search in the textboxes
 		OleWordShapes shapes = doc.getShapes(manager);
 		int cnt = shapes.getCount();
@@ -664,42 +667,37 @@ public class WordTextPlugin implements ITextPlugin {
 		manager.dispose();
 		return null;
 	}
-	
+
 	@Override
-	public boolean insertTable(String place, int properties, String[][] contents, int[] columnSizes){
+	public boolean insertTable(String place, int properties, String[][] contents, int[] columnSizes) {
 		synchronized (this) {
-			return insertTableFile(place, properties | ITextPlugin.GRID_VISIBLE, contents,
-				columnSizes);
+			return insertTableFile(place, properties | ITextPlugin.GRID_VISIBLE, contents, columnSizes);
 		}
 	}
-	
-	protected boolean insertTableFile(String place, int properties, String[][] contents,
-		int[] columnSizes){
-		
+
+	protected boolean insertTableFile(String place, int properties, String[][] contents, int[] columnSizes) {
+
 		try {
 			DocxWordDocument docxWordDocument = getDirtyFile();
 			docxWordDocument.findAndInsertTable(place, properties, contents, columnSizes);
-			
+
 			setDirtyFile(docxWordDocument);
-			
+
 		} catch (IllegalStateException e) {
 			handleException(e);
 			return false;
 		}
 		return true;
 	}
-	
-	protected boolean insertTableOle(String place, int properties, String[][] contents,
-		int[] columnSizes){
+
+	protected boolean insertTableOle(String place, int properties, String[][] contents, int[] columnSizes) {
 		synchronized (this) {
 			OleWrapperManager manager = new OleWrapperManager();
-			
+
 			OleWordRange range = findAndReplaceFirst(place, ""); //$NON-NLS-1$
 			manager.add(range);
 			if (range != null && contents != null) {
-				OleWordTable table =
-					range.getTables(manager).add(range, contents.length, contents[0].length,
-						manager);
+				OleWordTable table = range.getTables(manager).add(range, contents.length, contents[0].length, manager);
 				// all rows
 				OleWordRows rows = table.getRows(manager);
 				long rowCnt = rows.getCount();
@@ -710,16 +708,13 @@ public class WordTextPlugin implements ITextPlugin {
 					long cellCnt = cells.getCount();
 					for (long cellIndex = 0; cellIndex < cellCnt; cellIndex++) {
 						OleWordCell cell = cells.getItem(cellIndex + 1, manager);
-						cell.getRange(manager).insertAfter(
-							contents[(int) rowIndex][(int) cellIndex]);
+						cell.getRange(manager).insertAfter(contents[(int) rowIndex][(int) cellIndex]);
 					}
 				}
 				// apply properties
 				if ((properties & GRID_VISIBLE) > 0) {
-					table.getBorders(manager).setOutsideLineStyle(
-						OleWordConstants.wdLineStyleSingle);
-					table.getBorders(manager)
-						.setInsideLineStyle(OleWordConstants.wdLineStyleSingle);
+					table.getBorders(manager).setOutsideLineStyle(OleWordConstants.wdLineStyleSingle);
+					table.getBorders(manager).setInsideLineStyle(OleWordConstants.wdLineStyleSingle);
 				} else {
 					table.getBorders(manager).setOutsideLineStyle(OleWordConstants.wdLineStyleNone);
 					table.getBorders(manager).setInsideLineStyle(OleWordConstants.wdLineStyleNone);
@@ -730,8 +725,7 @@ public class WordTextPlugin implements ITextPlugin {
 					if (rowCnt > 0) {
 						OleWordRow row = rows.getItem(1, manager);
 						row.getRange(manager).getFont(manager).setItalic(true);
-						OleWordBorder border =
-							row.getBorders(manager).getItem(OleWordConstants.wdBorderBottom,
+						OleWordBorder border = row.getBorders(manager).getItem(OleWordConstants.wdBorderBottom,
 								manager);
 						border.setLineStyle(OleWordConstants.wdLineStyleSingle);
 						border.setLineWidth(OleWordConstants.wdLineWidth150pt);
@@ -739,13 +733,12 @@ public class WordTextPlugin implements ITextPlugin {
 				}
 				// apply column sizes if specified
 				if (columnSizes != null) {
-					int percent =
-						word.getApplication(manager).getActiveDocument(manager)
-							.getPageSetup(manager).getPageWidth() / 100;
+					int percent = word.getApplication(manager).getActiveDocument(manager).getPageSetup(manager)
+							.getPageWidth() / 100;
 					OleWordColumns columns = table.getColumns(manager);
 					long columnCnt = columns.getCount();
 					for (long columnIndex = 0; columnIndex < columnCnt
-						&& columnIndex < columnSizes.length; columnIndex++) {
+							&& columnIndex < columnSizes.length; columnIndex++) {
 						OleWordColumn column = columns.getItem(columnIndex + 1, manager);
 						column.setWidth(columnSizes[(int) columnIndex] * percent);
 					}
@@ -755,66 +748,61 @@ public class WordTextPlugin implements ITextPlugin {
 			return true;
 		}
 	}
-	
+
 	@Override
-	public boolean print(String toPrinter, String toTray, boolean waitUntilFinished){
+	public boolean print(String toPrinter, String toTray, boolean waitUntilFinished) {
 		synchronized (this) {
 			if (dirty)
 				reloadDirtyFile();
-			
+
 			// trigger save of word document -> have last printed document in temp folder
 			OleWrapperManager tmpmanager = new OleWrapperManager();
 			word.getApplication(tmpmanager).getActiveDocument(tmpmanager).getDocxWordDocument();
 			tmpmanager.dispose();
-			
+
 			OleWrapperManager manager = new OleWrapperManager();
-			
+
 			OleWordApplication app = word.getApplication(manager);
 			// remember default settings
 			String defaultPrinter = app.getActivePrinter();
 			String defaultTray = app.getOptions(manager).getDefaultTray();
 			if (printSettings != null) {
-				toPrinter =
-					printSettings.getPrinter() == null ? toPrinter : printSettings.getPrinter();
+				toPrinter = printSettings.getPrinter() == null ? toPrinter : printSettings.getPrinter();
 				toTray = printSettings.getTray() == null ? toTray : printSettings.getTray();
 			}
-			
+
 			if (toPrinter != null && !toPrinter.isEmpty()) {
 				try {
 					app.setActivePrinter(toPrinter);
 				} catch (Exception e) {
-					MessageDialog.openError(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						Messages.WordTextPlugin_PrintError,
-						Messages.WordTextPlugin_PrintConnectionIssue + ": " + toPrinter + "\n["
-							+ e.getMessage() + "]\n\n"
-							+ Messages.WordTextPlugin_SelectAnotherPrinter);
-					PrintDialog pd = new PrintDialog(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+							Messages.WordTextPlugin_PrintError,
+							Messages.WordTextPlugin_PrintConnectionIssue + ": " + toPrinter + "\n[" + e.getMessage()
+									+ "]\n\n" + Messages.WordTextPlugin_SelectAnotherPrinter);
+					PrintDialog pd = new PrintDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 					PrinterData pdata = pd.open();
 					if (pdata != null && pdata.name != null) {
 						app.setActivePrinter(pdata.name);
-					}
-					else {
+					} else {
 						return false;
 					}
 				}
 			}
 			if (toTray != null && !toTray.isEmpty())
 				app.getOptions(manager).setDefaultTray(toTray);
-			
+
 			app.getActiveDocument(manager).printOut(!waitUntilFinished);
-			
+
 			// set default settings
 			app.setActivePrinter(defaultPrinter);
 			app.getOptions(manager).setDefaultTray(defaultTray);
-			
+
 			manager.dispose();
 			return true;
 		}
 	}
-	
-	private void applyFont(OleWordRange range){
+
+	private void applyFont(OleWordRange range) {
 		OleWrapperManager manager = new OleWrapperManager();
 		OleWordFont font = range.getFont(manager);
 		if (fontName != null)
@@ -835,9 +823,9 @@ public class WordTextPlugin implements ITextPlugin {
 		}
 		manager.dispose();
 	}
-	
+
 	@Override
-	public boolean setFont(String name, int style, float size){
+	public boolean setFont(String name, int style, float size) {
 		synchronized (this) {
 			fontName = name;
 			fontStyle = style;
@@ -845,26 +833,26 @@ public class WordTextPlugin implements ITextPlugin {
 			return true;
 		}
 	}
-	
-	protected void resetFont(){
+
+	protected void resetFont() {
 		fontName = null;
 		fontStyle = -1;
 		fontSize = -1;
 	}
-	
+
 	@Override
-	public boolean setStyle(int style){
+	public boolean setStyle(int style) {
 		synchronized (this) {
 			fontStyle = style;
 			return true;
 		}
 	}
-	
-	protected void resetStyle(){
+
+	protected void resetStyle() {
 		fontStyle = -1;
 	}
-	
-	protected void reload(File file, boolean dirty){
+
+	protected void reload(File file, boolean dirty) {
 		synchronized (this) {
 			if (!dirty) {
 				resetFont();
@@ -889,39 +877,36 @@ public class WordTextPlugin implements ITextPlugin {
 				try {
 					document.writeTo(new FileOutputStream(file));
 				} catch (IOException e) {
-					logger.error(
-						"Could not set read only mode of document. " + file.getAbsolutePath(), e);
+					logger.error("Could not set read only mode of document. " + file.getAbsolutePath(), e);
 				}
 			}
 			openDocument = word.reload(file, parameter);
 		}
 	}
-	
+
 	@Override
-	public boolean clear(){
+	public boolean clear() {
 		return false;
 	}
-	
+
 	@Override
-	public String getMimeType(){
+	public String getMimeType() {
 		return MimeTypeUtil.MIME_TYPE_MSWORD;
 	}
-	
+
 	@Override
-	public boolean isDirectOutput(){
+	public boolean isDirectOutput() {
 		return false;
 	}
-	
-	protected void handleException(Exception e){
+
+	protected void handleException(Exception e) {
 		if (e instanceof IllegalStateException) {
-			StatusManager.getManager().handle(
-				new ElexisStatus(ElexisStatus.ERROR, Activator.PLUGIN_ID,
-					ElexisStatus.CODE_NOFEEDBACK, e.getMessage(), e, ElexisStatus.LOG_ERRORS),
-				StatusManager.BLOCK);
+			StatusManager.getManager().handle(new ElexisStatus(ElexisStatus.ERROR, Activator.PLUGIN_ID,
+					ElexisStatus.CODE_NOFEEDBACK, e.getMessage(), e, ElexisStatus.LOG_ERRORS), StatusManager.BLOCK);
 		}
 	}
-	
-	private static WordTextPlugin getInstanceByHash(String hashCode){
+
+	private static WordTextPlugin getInstanceByHash(String hashCode) {
 		Integer hash = Integer.decode(hashCode);
 		for (WordTextPlugin instance : instances) {
 			if (hash.intValue() == instance.hashCode()) {
@@ -930,12 +915,12 @@ public class WordTextPlugin implements ITextPlugin {
 		}
 		return null;
 	}
-	
-	private static WordTextPlugin getActiveInstance(){
+
+	private static WordTextPlugin getActiveInstance() {
 		WordTextPlugin activeInstance = null;
 		for (WordTextPlugin instance : instances) {
 			if (instance.wordComposite != null && !instance.wordComposite.isDisposed()
-				&& instance.wordComposite.isVisible()) {
+					&& instance.wordComposite.isVisible()) {
 				if (activeInstance == null) {
 					activeInstance = instance;
 				} else if (instance.wordComposite.isFocusControl()) {
@@ -945,18 +930,18 @@ public class WordTextPlugin implements ITextPlugin {
 		}
 		return activeInstance;
 	}
-	
-	public static void openPrintDialog(String wordTextPluginHash){
+
+	public static void openPrintDialog(String wordTextPluginHash) {
 		synchronized (instances) {
 			WordTextPlugin activeInstance = null;
 			if (wordTextPluginHash != null)
 				activeInstance = getInstanceByHash(wordTextPluginHash);
 			else
 				activeInstance = getActiveInstance();
-			
+
 			if (activeInstance != null) {
 				OleWrapperManager manager = new OleWrapperManager();
-				
+
 				activeInstance.setFocus();
 				OleWordApplication app = activeInstance.word.getApplication(manager);
 				// remember default settings
@@ -977,28 +962,28 @@ public class WordTextPlugin implements ITextPlugin {
 					;
 				}
 				dialog.show();
-				
+
 				// set default settings
 				app.setActivePrinter(defaultPrinter);
 				app.getOptions(manager).setDefaultTray(defaultTray);
-				
+
 				manager.dispose();
 				return;
 			} else {
 				StatusManager.getManager().handle(
-					new Status(Status.WARNING, Activator.PLUGIN_ID,
-						Messages.WordTextPlugin_NoActiveWordView), StatusManager.SHOW);
+						new Status(Status.WARNING, Activator.PLUGIN_ID, Messages.WordTextPlugin_NoActiveWordView),
+						StatusManager.SHOW);
 			}
 		}
 	}
-	
+
 	@Override
-	public void setParameter(Parameter parameter){
+	public void setParameter(Parameter parameter) {
 		this.parameter = parameter;
 	}
-	
+
 	@Override
-	public void initTemplatePrintSettings(String template){
+	public void initTemplatePrintSettings(String template) {
 		printSettings = new TextTemplatePrintSettings(template, getMimeType());
 	}
 }

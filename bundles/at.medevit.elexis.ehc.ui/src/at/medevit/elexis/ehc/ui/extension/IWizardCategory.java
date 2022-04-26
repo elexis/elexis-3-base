@@ -19,28 +19,28 @@ public interface IWizardCategory {
 
 	/**
 	 * Return the identifier of this category.
-	 * 
+	 *
 	 * @return the identifier of this category
 	 */
 	String getId();
 
 	/**
 	 * Return the label for this category.
-	 * 
+	 *
 	 * @return the label for this category
 	 */
 	String getLabel();
 
 	/**
 	 * Return the wizards in this category.
-	 * 
+	 *
 	 * @return the wizards in this category. Never <code>null</code>
 	 */
 	List<IWizardDescriptor> getWizards();
 
 	/**
 	 * Add a wizard to this category.
-	 * 
+	 *
 	 * @param wizard
 	 */
 	void addWizard(IWizardDescriptor wizard);

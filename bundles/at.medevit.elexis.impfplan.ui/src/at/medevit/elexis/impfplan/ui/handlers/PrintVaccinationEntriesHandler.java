@@ -60,20 +60,18 @@ import ch.elexis.data.Person;
 
 public class PrintVaccinationEntriesHandler extends AbstractHandler {
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMM yyyy");
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
-		
-		VaccinationView vaccView =
-			(VaccinationView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.findView(VaccinationView.PART_ID);
+
+		VaccinationView vaccView = (VaccinationView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getActivePage().findView(VaccinationView.PART_ID);
 		VaccinationComposite vaccinationComposite = vaccView.getVaccinationComposite();
-		VaccinationCompositePaintListener vcpl =
-			vaccinationComposite.getVaccinationCompositePaintListener();
-		
+		VaccinationCompositePaintListener vcpl = vaccinationComposite.getVaccinationCompositePaintListener();
+
 		final int dim = 800;
-		
+
 		Rectangle a4Rectangle = new Rectangle(0, 0, dim, (int) (dim * 1.41));
 		Display display = vaccinationComposite.getDisplay();
 		List<Image> images = new ArrayList<>();
@@ -93,27 +91,27 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		vcpl.restorePrePrintSettting();
 		return null;
 	}
-	
+
 	private void createPDF(Patient patient, List<Image> images) throws IOException {
 		PDDocumentInformation pdi = new PDDocumentInformation();
 		Mandant mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
 		pdi.setAuthor(mandant.getName() + " " + mandant.getVorname());
 		pdi.setCreationDate(new GregorianCalendar());
 		pdi.setTitle("Impfausweis " + patient.getLabel());
-		
+
 		PDDocument document = new PDDocument();
 		document.setDocumentInformation(pdi);
-		
+
 		int i = 0;
 		for (Image image : images) {
 			i++;
 			PDPage page = new PDPage();
 			page.setMediaBox(PDRectangle.A4);
 			document.addPage(page);
-			
+
 			PDRectangle pageSize = page.getMediaBox();
 			PDFont font = PDType1Font.HELVETICA_BOLD;
-			
+
 			PDFont subFont = PDType1Font.HELVETICA;
 			PDPageContentStream contentStream = new PDPageContentStream(document, page);
 			contentStream.beginText();
@@ -121,7 +119,7 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 			contentStream.moveTextPositionByAmount(40, pageSize.getUpperRightY() - 40);
 			contentStream.drawString(patient.getLabel());
 			contentStream.endText();
-			
+
 			String dateLabel = sdf.format(Calendar.getInstance().getTime());
 			String title = Person.load(mandant.getId()).get(Person.TITLE);
 			String mandantLabel = title + " " + mandant.getName() + " " + mandant.getVorname();
@@ -130,32 +128,27 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 			contentStream.moveTextPositionByAmount(40, pageSize.getUpperRightY() - 55);
 			contentStream.drawString("Ausstellung " + dateLabel + ", " + mandantLabel);
 			contentStream.endText();
-			
+
 			BufferedImage imageAwt = convertToAWT(image.getImageData());
-			
+
 			PDImageXObject pdPixelMap = LosslessFactory.createFromImage(document, imageAwt);
-			contentStream.drawXObject(pdPixelMap, 40, 30, pageSize.getWidth() - 80,
-				pageSize.getHeight() - 100);
-			
+			contentStream.drawXObject(pdPixelMap, 40, 30, pageSize.getWidth() - 80, pageSize.getHeight() - 100);
+
 			// page numbers
 			contentStream.beginText();
 			contentStream.setFont(subFont, 8);
-			contentStream.moveTextPositionByAmount((PDRectangle.A4.getUpperRightX() / 2 - 20), (PDRectangle.A4.getLowerLeftY() + 15));
+			contentStream.moveTextPositionByAmount((PDRectangle.A4.getUpperRightX() / 2 - 20),
+					(PDRectangle.A4.getLowerLeftY() + 15));
 			contentStream.drawString("Seite " + i + " von " + images.size());
 			contentStream.endText();
-            contentStream.close();
+			contentStream.close();
 		}
-		
-		String outputPath =
-			ConfigServiceHolder.getUser(PreferencePage.VAC_PDF_OUTPUTDIR, CoreHub.getWritableUserDir()
-				.getAbsolutePath());
+
+		String outputPath = ConfigServiceHolder.getUser(PreferencePage.VAC_PDF_OUTPUTDIR,
+				CoreHub.getWritableUserDir().getAbsolutePath());
 		if (outputPath.equals(CoreHub.getWritableUserDir().getAbsolutePath())) {
-			SWTHelper
-				.showInfo(
-					"Kein Ausgabeverzeichnis definiert",
-					"Ausgabe erfolgt in: "
-						+ outputPath
-						+ "\nDas Ausgabeverzeichnis kann unter Einstellungen\\Klinische Hilfsmittel\\Impfplan definiert werden.");
+			SWTHelper.showInfo("Kein Ausgabeverzeichnis definiert", "Ausgabe erfolgt in: " + outputPath
+					+ "\nDas Ausgabeverzeichnis kann unter Einstellungen\\Klinische Hilfsmittel\\Impfplan definiert werden.");
 		}
 		File outputDir = new File(outputPath);
 		File pdf = new File(outputDir, "impfplan_" + patient.getPatCode() + ".pdf");
@@ -164,17 +157,14 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 		// open with system viewer
 		Program.launch(pdf.getAbsolutePath());
 	}
-	
-	static BufferedImage convertToAWT(ImageData data){
+
+	static BufferedImage convertToAWT(ImageData data) {
 		ColorModel colorModel = null;
 		PaletteData palette = data.palette;
 		if (palette.isDirect) {
-			colorModel =
-				new DirectColorModel(data.depth, palette.redMask, palette.greenMask,
-					palette.blueMask);
-			BufferedImage bufferedImage =
-				new BufferedImage(colorModel, colorModel.createCompatibleWritableRaster(data.width,
-					data.height), false, null);
+			colorModel = new DirectColorModel(data.depth, palette.redMask, palette.greenMask, palette.blueMask);
+			BufferedImage bufferedImage = new BufferedImage(colorModel,
+					colorModel.createCompatibleWritableRaster(data.width, data.height), false, null);
 			for (int y = 0; y < data.height; y++) {
 				for (int x = 0; x < data.width; x++) {
 					int pixel = data.getPixel(x, y);
@@ -195,15 +185,12 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 				blue[i] = (byte) rgb.blue;
 			}
 			if (data.transparentPixel != -1) {
-				colorModel =
-					new IndexColorModel(data.depth, rgbs.length, red, green, blue,
-						data.transparentPixel);
+				colorModel = new IndexColorModel(data.depth, rgbs.length, red, green, blue, data.transparentPixel);
 			} else {
 				colorModel = new IndexColorModel(data.depth, rgbs.length, red, green, blue);
 			}
-			BufferedImage bufferedImage =
-				new BufferedImage(colorModel, colorModel.createCompatibleWritableRaster(data.width,
-					data.height), false, null);
+			BufferedImage bufferedImage = new BufferedImage(colorModel,
+					colorModel.createCompatibleWritableRaster(data.width, data.height), false, null);
 			WritableRaster raster = bufferedImage.getRaster();
 			int[] pixelArray = new int[1];
 			for (int y = 0; y < data.height; y++) {

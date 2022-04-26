@@ -26,7 +26,7 @@ public final class PatientData {
 	private Fall fall;
 
 	/**
-	 * 
+	 *
 	 * @param loadCase if true, the user can select the open case for the patient
 	 */
 	public PatientData(boolean loadCase) throws UnsupportedOperationException {

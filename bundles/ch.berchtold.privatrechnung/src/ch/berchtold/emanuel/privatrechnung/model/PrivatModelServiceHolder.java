@@ -8,14 +8,13 @@ import ch.elexis.core.services.IModelService;
 @Component
 public class PrivatModelServiceHolder {
 	private static IModelService modelService;
-	
-	@Reference(target = "(" + IModelService.SERVICEMODELNAME
-		+ "=ch.berchtold.emanuel.privatrechnung.model)")
-	public void setModelService(IModelService modelService){
+
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.berchtold.emanuel.privatrechnung.model)")
+	public void setModelService(IModelService modelService) {
 		PrivatModelServiceHolder.modelService = modelService;
 	}
-	
-	public static IModelService get(){
+
+	public static IModelService get() {
 		if (modelService == null) {
 			throw new IllegalStateException("No IModelService available");
 		}

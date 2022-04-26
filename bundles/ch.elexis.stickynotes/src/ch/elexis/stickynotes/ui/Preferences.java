@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    J, Kurath - Sponsoring
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.stickynotes.ui;
@@ -26,23 +26,21 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	final static String PREFBRANCH = "sticky_notes/"; //$NON-NLS-1$
 	final static String COLBACKGROUND = PREFBRANCH + "col_background"; //$NON-NLS-1$
 	final static String COLFOREGROUND = PREFBRANCH + "col_foreground"; //$NON-NLS-1$
-	
-	public Preferences(){
+
+	public Preferences() {
 		super(GRID);
 		setPreferenceStore(new ConfigServicePreferenceStore(Scope.USER));
 	}
-	
-	public void init(IWorkbench workbench){
+
+	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
-		addField(new ColorFieldEditor(COLBACKGROUND, Messages.Preferences_BackgroundColor,
-			getFieldEditorParent()));
-		addField(new ColorFieldEditor(COLFOREGROUND, Messages.Preferences_ForegroundColor,
-			getFieldEditorParent()));
+	protected void createFieldEditors() {
+		addField(new ColorFieldEditor(COLBACKGROUND, Messages.Preferences_BackgroundColor, getFieldEditorParent()));
+		addField(new ColorFieldEditor(COLFOREGROUND, Messages.Preferences_ForegroundColor, getFieldEditorParent()));
 	}
-	
+
 }

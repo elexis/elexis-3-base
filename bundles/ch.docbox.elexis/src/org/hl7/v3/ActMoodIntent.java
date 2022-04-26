@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for ActMoodIntent.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="ActMoodIntent">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -24,20 +25,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "ActMoodIntent")
 @XmlEnum
 public enum ActMoodIntent {
-	
+
 	INT, APT, ARQ, PRMS, PRP, RQO, SLOT;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static ActMoodIntent fromValue(String v){
+
+	public static ActMoodIntent fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

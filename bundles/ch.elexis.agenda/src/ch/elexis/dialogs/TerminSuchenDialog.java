@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -23,24 +23,24 @@ import ch.elexis.core.ui.icons.Images;
 
 public class TerminSuchenDialog extends TitleAreaDialog {
 	IPlannable actPlannable;
-	
-	TerminSuchenDialog(IPlannable act, Shell parent){
+
+	TerminSuchenDialog(IPlannable act, Shell parent) {
 		super(parent);
 		actPlannable = act;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		return super.createDialogArea(parent);
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		setTitle(Messages.TerminSuchenDialog_findTermin);
 		setMessage(Messages.TerminSuchenDialog_enterfind);
 		getShell().setText(Messages.TerminSuchenDialog_findTermin);
 		setTitleImage(Images.IMG_LOGO.getImage());
 	}
-	
+
 }

@@ -8,19 +8,18 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 
 public class TarmedExclusion {
-	
+
 	private String slaveCode;
 	private TarmedKumulationArt slaveType;
 	private boolean validSide;
-	
-	public TarmedExclusion(ITarmedKumulation kumulation){
+
+	public TarmedExclusion(ITarmedKumulation kumulation) {
 		slaveCode = kumulation.getSlaveCode();
 		slaveType = kumulation.getSlaveArt();
 		validSide = "1".equals(kumulation.getValidSide());
 	}
-	
 
-	public boolean isMatching(TarmedLeistung tarmedLeistung, LocalDate date){
+	public boolean isMatching(TarmedLeistung tarmedLeistung, LocalDate date) {
 		if (slaveType == TarmedKumulationArt.CHAPTER) {
 			return isMatchingChapter(tarmedLeistung);
 		} else if (slaveType == TarmedKumulationArt.SERVICE) {
@@ -31,12 +30,12 @@ public class TarmedExclusion {
 		}
 		return false;
 	}
-	
-	private boolean isMatchingService(ITarmedLeistung tarmedLeistung){
+
+	private boolean isMatchingService(ITarmedLeistung tarmedLeistung) {
 		return slaveCode.equals(tarmedLeistung.getCode());
 	}
-	
-	private boolean isMatchingChapter(ITarmedLeistung tarmedLeistung){
+
+	private boolean isMatchingChapter(ITarmedLeistung tarmedLeistung) {
 		if (slaveCode.equals(tarmedLeistung.getCode())) {
 			return true;
 		} else {
@@ -48,20 +47,20 @@ public class TarmedExclusion {
 			}
 		}
 	}
-	
-	public boolean isMatching(TarmedGroup tarmedGroup){
+
+	public boolean isMatching(TarmedGroup tarmedGroup) {
 		if (slaveType != TarmedKumulationArt.GROUP) {
 			return false;
 		}
 		return slaveCode.equals(tarmedGroup.getCode());
 	}
-	
-	public boolean isValidSide(){
+
+	public boolean isValidSide() {
 		return validSide;
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(TarmedKumulationArt.toString(slaveType)).append(" ").append(slaveCode);
 		return sb.toString();

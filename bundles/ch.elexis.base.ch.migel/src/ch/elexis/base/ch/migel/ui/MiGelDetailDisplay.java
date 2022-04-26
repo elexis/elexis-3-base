@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    T. Huster - copied from ch.elexis.base.ch.artikel
- *    
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.migel.ui;
 
@@ -37,41 +37,40 @@ import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.rgw.tools.Money;
 
 public class MiGelDetailDisplay implements IDetailDisplay {
-	
+
 	FormToolkit tk = UiDesk.getToolkit();
 	ScrolledForm form;
 	LabeledInputField ifName, ifPreis, ifAmount, ifEinheit;
 	Text tName, tLong;
 	IArticle act;
-	
+
 	@Inject
-	public void selection(
-		@Optional @Named("ch.elexis.base.ch.migel.ui.selection") IArticle typedArticle){
+	public void selection(@Optional @Named("ch.elexis.base.ch.migel.ui.selection") IArticle typedArticle) {
 		if (typedArticle != null && !form.isDisposed()) {
 			display(typedArticle);
 		}
 	}
-	
-	public Composite createDisplay(Composite parent, IViewSite site){
+
+	public Composite createDisplay(Composite parent, IViewSite site) {
 		parent.setLayout(new GridLayout());
 		form = tk.createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
+
 		Composite ret = form.getBody();
 		ret.setLayout(new GridLayout());
-		
+
 		ifName = new LabeledInputField(ret, "Name");
 		ifName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tName = (Text) ifName.getControl();
 		tName.addFocusListener(new FocusAdapter() {
 			@Override
-			public void focusLost(FocusEvent e){
+			public void focusLost(FocusEvent e) {
 				if (act != null) {
 					act.setName(tName.getText());
 				}
 				super.focusLost(e);
 			}
-			
+
 		});
 		ifPreis = new LabeledInputField(ret, Messages.MiGelDetailDisplay_Price);
 		ifPreis.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -84,12 +83,12 @@ public class MiGelDetailDisplay implements IDetailDisplay {
 
 		return ret;
 	}
-	
-	public Class getElementClass(){
+
+	public Class getElementClass() {
 		return IArticle.class;
 	}
-	
-	public void display(Object obj){
+
+	public void display(Object obj) {
 		if (obj instanceof IArticle) {
 			act = (IArticle) obj;
 			form.setText(act.getLabel());
@@ -100,9 +99,9 @@ public class MiGelDetailDisplay implements IDetailDisplay {
 			tLong.setText((String) act.getExtInfo("FullText")); //$NON-NLS-1$
 		}
 	}
-	
-	public String getTitle(){
-		return MiGelCodeElementService.MIGEL_NAME; //$NON-NLS-1$
+
+	public String getTitle() {
+		return MiGelCodeElementService.MIGEL_NAME; // $NON-NLS-1$
 	}
-	
+
 }

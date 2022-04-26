@@ -20,14 +20,13 @@ import ch.rgw.tools.TimeTool;
 
 public class EMediplanLabelProvider extends LabelProvider {
 	@Override
-	public String getText(Object element){
+	public String getText(Object element) {
 		NamedBlob document = (NamedBlob) ((IInboxElement) element).getObject();
-		return "EMediplan von "
-			+ new TimeTool(document.getLastUpdate()).toString(TimeTool.FULL_GER);
+		return "EMediplan von " + new TimeTool(document.getLastUpdate()).toString(TimeTool.FULL_GER);
 	}
-	
+
 	@Override
-	public Image getImage(Object element){
+	public Image getImage(Object element) {
 		return ResourceManager.getPluginImage("at.medevit.elexis.emediplan.ui", "rsc/logo.png");
 	}
 }

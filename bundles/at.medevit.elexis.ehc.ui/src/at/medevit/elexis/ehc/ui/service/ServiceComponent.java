@@ -20,22 +20,22 @@ import at.medevit.elexis.inbox.model.IInboxElementService;
 public class ServiceComponent {
 	private static EhcCoreService ehcService;
 	private static IInboxElementService inboxService;
-	
-	public static IInboxElementService getInboxService(){
+
+	public static IInboxElementService getInboxService() {
 		return inboxService;
 	}
-	
+
 	@Reference
-	public synchronized void setEhcService(EhcCoreService service){
+	public synchronized void setEhcService(EhcCoreService service) {
 		ServiceComponent.ehcService = service;
 	}
-	
+
 	@Reference
-	public synchronized void setInboxService(IInboxElementService service){
+	public synchronized void setInboxService(IInboxElementService service) {
 		ServiceComponent.inboxService = service;
 	}
-	
-	public static EhcCoreService getEhcService(){
+
+	public static EhcCoreService getEhcService() {
 		return ehcService;
 	}
 }

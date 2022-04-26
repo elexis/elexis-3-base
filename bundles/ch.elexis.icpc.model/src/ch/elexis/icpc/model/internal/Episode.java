@@ -20,106 +20,104 @@ import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.icpc.model.icpc.IcpcEpisode;
 
-public class Episode extends AbstractIdModelAdapter<ICPCEpisode>
-		implements Identifiable, IcpcEpisode {
-	
-	public Episode(ICPCEpisode entity){
+public class Episode extends AbstractIdModelAdapter<ICPCEpisode> implements Identifiable, IcpcEpisode {
+
+	public Episode(ICPCEpisode entity) {
 		super(entity);
 	}
-	
+
 	@Override
-	public Object getExtInfo(Object key){
+	public Object getExtInfo(Object key) {
 		return extInfoHandler.getExtInfo(key);
 	}
-	
+
 	@Override
-	public void setExtInfo(Object key, Object value){
+	public void setExtInfo(Object key, Object value) {
 		extInfoHandler.setExtInfo(key, value);
 	}
-	
+
 	@Override
-	public Map<Object, Object> getMap(){
+	public Map<Object, Object> getMap() {
 		return extInfoHandler.getMap();
 	}
-	
+
 	@Override
-	public boolean isDeleted(){
+	public boolean isDeleted() {
 		return getEntity().isDeleted();
 	}
-	
+
 	@Override
-	public void setDeleted(boolean value){
+	public void setDeleted(boolean value) {
 		getEntity().setDeleted(value);
 	}
-	
+
 	@Override
-	public String getTitle(){
+	public String getTitle() {
 		return getEntity().getTitle();
 	}
-	
+
 	@Override
-	public void setTitle(String value){
+	public void setTitle(String value) {
 		getEntity().setTitle(value);
 	}
-	
+
 	@Override
-	public String getNumber(){
+	public String getNumber() {
 		return getEntity().getNumber();
 	}
-	
+
 	@Override
-	public void setNumber(String value){
+	public void setNumber(String value) {
 		getEntity().setNumber(value);
 	}
-		
+
 	@Override
-	public int getStatus(){
+	public int getStatus() {
 		return getEntity().getStatus();
 	}
-	
+
 	@Override
-	public void setStatus(int value){
+	public void setStatus(int value) {
 		getEntity().setStatus(value);
 	}
-	
+
 	@Override
-	public IPatient getPatient(){
-		return CoreModelServiceHolder.get().adapt(getEntity().getPatientKontakt(), IPatient.class)
-			.orElse(null);
+	public IPatient getPatient() {
+		return CoreModelServiceHolder.get().adapt(getEntity().getPatientKontakt(), IPatient.class).orElse(null);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setPatient(IPatient value){
+	public void setPatient(IPatient value) {
 		if (value != null) {
 			getEntity().setPatientKontakt(((AbstractIdModelAdapter<Kontakt>) value).getEntity());
 		} else {
 			getEntity().setPatientKontakt(null);
 		}
 	}
-	
+
 	@Override
-	public List<IDiagnosis> getDiagnosis(){
+	public List<IDiagnosis> getDiagnosis() {
 		List<ICPCEpisodeDiagnosisLink> links = getEntity().getLinks();
 		List<IDiagnosis> ret = new ArrayList<>();
 		for (ICPCEpisodeDiagnosisLink iDiagnosisLink : links) {
-			Optional<Identifiable> loaded =
-				StoreToStringServiceHolder.get().loadFromString(iDiagnosisLink.getDiagnosis());
+			Optional<Identifiable> loaded = StoreToStringServiceHolder.get()
+					.loadFromString(iDiagnosisLink.getDiagnosis());
 			if (loaded.isPresent() && loaded.get() instanceof IDiagnosis) {
 				ret.add((IDiagnosis) loaded.get());
 			}
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public void addDiagnosis(IDiagnosis diagnosis){
+	public void addDiagnosis(IDiagnosis diagnosis) {
 		Optional<String> string = StoreToStringServiceHolder.get().storeToString(diagnosis);
 		string.ifPresent(s -> getEntity().addDiagnosis(s));
 	}
-	
+
 	@Override
-	public void removeDiagnosis(IDiagnosis diagnosis){
+	public void removeDiagnosis(IDiagnosis diagnosis) {
 		Optional<String> string = StoreToStringServiceHolder.get().storeToString(diagnosis);
 		string.ifPresent(s -> {
 			List<ICPCEpisodeDiagnosisLink> links = getEntity().getLinks();
@@ -131,36 +129,36 @@ public class Episode extends AbstractIdModelAdapter<ICPCEpisode>
 			}
 		});
 	}
-	
+
 	@Override
-	public String getStartDate(){
+	public String getStartDate() {
 		return getEntity().getStartDate();
 	}
-	
+
 	@Override
-	public void setStartDate(String value){
+	public void setStartDate(String value) {
 		getEntity().setStartDate(value);
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		StringBuffer sb = new StringBuffer();
 		if (StringUtils.isNotBlank(getNumber())) {
 			sb.append(getNumber()).append(": ");
 		}
 		sb.append(getTitle());
 		sb.append(" [" + (getStatus() == 1 ? Messages.Active : Messages.Inactive) + "]");
-		
+
 		return sb.toString();
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

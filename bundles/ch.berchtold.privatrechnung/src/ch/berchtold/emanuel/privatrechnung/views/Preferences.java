@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.berchtold.emanuel.privatrechnung.views;
@@ -35,7 +35,7 @@ import ch.elexis.data.Mandant;
 import ch.rgw.io.Settings;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	
+
 	Settings cfg;
 	List<Mandant> lMandanten;
 	ComboFieldEditor cfe;
@@ -44,48 +44,34 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	KontaktFieldEditor kfBank;
 	Mandant selected;
 	static final String doSelect = "bitte wählen";
-	
-	public Preferences(){
+
+	public Preferences() {
 		super(GRID);
-		cfg=CoreHub.localCfg;
+		cfg = CoreHub.localCfg;
 		setPreferenceStore(new SettingsPreferenceStore(cfg));
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
+	protected void createFieldEditors() {
 		lMandanten = Hub.getMandantenList();
 		String[] fields = new String[lMandanten.size()];
 		for (int i = 0; i < fields.length; i++) {
 			fields[i] = lMandanten.get(i).getLabel();
 		}
-		cfe =
-			new ComboFieldEditor(PreferenceConstants.cfgBase, "Mandant", fields,
+		cfe = new ComboFieldEditor(PreferenceConstants.cfgBase, "Mandant", fields, getFieldEditorParent());
+		sfESR = new StringFieldEditor(PreferenceConstants.cfgTemplateESR, "Vorlage mit ESR", getFieldEditorParent());
+		sf1st = new StringFieldEditor(PreferenceConstants.cfgTemplateBill, "Erste Folgeseite", getFieldEditorParent());
+		ifh1 = new IntegerFieldEditor(PreferenceConstants.cfgTemplateBillHeight, "Verfügbare Höhe erste Seite (cm)",
 				getFieldEditorParent());
-		sfESR =
-			new StringFieldEditor(PreferenceConstants.cfgTemplateESR, "Vorlage mit ESR",
+		sf2nd = new StringFieldEditor(PreferenceConstants.cfgTemplateBill2, "Vorlage weitere Seiten",
 				getFieldEditorParent());
-		sf1st =
-			new StringFieldEditor(PreferenceConstants.cfgTemplateBill, "Erste Folgeseite",
+		if2nd = new IntegerFieldEditor(PreferenceConstants.cfgTemplateBill2Height, "Verfügbare Höhe Folgeseiten (cm)",
 				getFieldEditorParent());
-		ifh1 =
-			new IntegerFieldEditor(PreferenceConstants.cfgTemplateBillHeight,
-				"Verfügbare Höhe erste Seite (cm)", getFieldEditorParent());
-		sf2nd =
-			new StringFieldEditor(PreferenceConstants.cfgTemplateBill2, "Vorlage weitere Seiten",
+		kfBank = new KontaktFieldEditor(new ConfigServicePreferenceStore(Scope.LOCAL), PreferenceConstants.cfgBank,
+				"Bank", getFieldEditorParent());
+		sfESRNr = new StringFieldEditor(PreferenceConstants.esrIdentity, "ESR-Teilnehmernummer",
 				getFieldEditorParent());
-		if2nd =
-			new IntegerFieldEditor(PreferenceConstants.cfgTemplateBill2Height,
-				"Verfügbare Höhe Folgeseiten (cm)", getFieldEditorParent());
-		kfBank =
-			new KontaktFieldEditor(new ConfigServicePreferenceStore(Scope.LOCAL),
-				PreferenceConstants.cfgBank, "Bank",
-				getFieldEditorParent());
-		sfESRNr =
-			new StringFieldEditor(PreferenceConstants.esrIdentity, "ESR-Teilnehmernummer",
-				getFieldEditorParent());
-		sfESRKd =
-			new StringFieldEditor(PreferenceConstants.esrUser, "ESR-Kundennummer",
-				getFieldEditorParent());
+		sfESRKd = new StringFieldEditor(PreferenceConstants.esrUser, "ESR-Kundennummer", getFieldEditorParent());
 		addField(cfe);
 		addField(sfESR);
 		addField(sf1st);
@@ -96,9 +82,9 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		addField(sfESRNr);
 		addField(sfESRKd);
 		cfe.getCombo().addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				if (selected != null) {
 					flush(selected);
 				}
@@ -109,13 +95,13 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 					load(selected);
 				}
 			}
-			
+
 		});
 		selected = null; // lMandanten.get(0);
 		// cfe.getCombo().setText(selected.getLabel());
 	}
-	
-	public void flush(Mandant m){
+
+	public void flush(Mandant m) {
 		if (m != null) {
 			String id = m.getId();
 			cfg.set(PreferenceConstants.cfgTemplateESR + "/" + id, sfESR.getStringValue());
@@ -130,31 +116,30 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 			cfg.set(PreferenceConstants.esrIdentity + "/" + id, sfESRNr.getStringValue());
 			cfg.set(PreferenceConstants.esrUser + "/" + id, sfESRKd.getStringValue());
 		}
-		
+
 	}
-	
-	public void load(Mandant m){
+
+	public void load(Mandant m) {
 		if (m != null) {
 			String id = m.getId();
-			
+
 			sfESR.setStringValue(cfg.get(PreferenceConstants.cfgTemplateESR + "/" + id, ""));
 			sf1st.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBill + "/" + id, ""));
 			ifh1.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBillHeight + "/" + id, ""));
 			sf2nd.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBill2 + "/" + id, ""));
-			if2nd
-				.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBill2Height + "/" + id, ""));
+			if2nd.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBill2Height + "/" + id, ""));
 			kfBank.set(Kontakt.load(cfg.get(PreferenceConstants.cfgBank + "/" + id, "")));
 			sfESRNr.setStringValue(cfg.get(PreferenceConstants.esrIdentity + "/" + id, ""));
 			sfESRKd.setStringValue(cfg.get(PreferenceConstants.esrUser + "/" + id, ""));
 		}
 	}
-	
+
 	@Override
-	public void init(IWorkbench workbench){
-		
+	public void init(IWorkbench workbench) {
+
 	}
-	
-	public Mandant getMandant(String label){
+
+	public Mandant getMandant(String label) {
 		for (Mandant m : lMandanten) {
 			if (m.getLabel().equals(label)) {
 				return m;
@@ -162,14 +147,14 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		}
 		return null;
 	}
-	
+
 	@Override
-	public boolean performOk(){
+	public boolean performOk() {
 		if (selected != null) {
 			flush(selected);
 		}
 		CoreHub.localCfg.flush();
 		return true;
 	}
-	
+
 }

@@ -4,14 +4,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class DocxWordText {
-	
+
 	Node text;
-	
-	public DocxWordText(Node textNode){
+
+	public DocxWordText(Node textNode) {
 		this.text = textNode;
 	}
-	
-	public DocxWordRun setText(String string){
+
+	public DocxWordRun setText(String string) {
 		DocxWordRun ret = getParentRun();
 		if (string == null)
 			return ret;
@@ -22,8 +22,8 @@ public class DocxWordText {
 		}
 		return ret;
 	}
-	
-	private DocxWordRun setTextWithTabs(String string){
+
+	private DocxWordRun setTextWithTabs(String string) {
 		DocxWordRun templateRun = getParentRun().getCloneOfRun(true);
 		DocxWordRun currentRun = getParentRun();
 		StringBuilder currentString = new StringBuilder();
@@ -61,8 +61,8 @@ public class DocxWordText {
 		}
 		return currentRun;
 	}
-	
-	public DocxWordRun getParentRun(){
+
+	public DocxWordRun getParentRun() {
 		Node parent = text.getParentNode();
 		while (parent != null && !parent.getNodeName().equals("w:r")) { //$NON-NLS-1$
 			parent = parent.getParentNode();
@@ -72,12 +72,12 @@ public class DocxWordText {
 		else
 			return null;
 	}
-	
-	public Node getNode(){
+
+	public Node getNode() {
 		return text;
 	}
-	
-	public Object getText(){
+
+	public Object getText() {
 		return ((Element) text).getTextContent();
 	}
 }

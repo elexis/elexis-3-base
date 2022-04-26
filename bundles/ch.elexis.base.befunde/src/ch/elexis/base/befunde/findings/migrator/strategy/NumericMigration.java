@@ -16,27 +16,26 @@ import ch.elexis.core.findings.templates.model.InputDataNumeric;
 import ch.elexis.data.Patient;
 
 public class NumericMigration extends AbstractMigrationStrategy implements IMigrationStrategy {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(NumericMigration.class);
-	
+
 	private MesswertFieldMapping mapping;
 	private Messwert messwert;
-	
-	public NumericMigration(MesswertFieldMapping mapping, Messwert messwert){
+
+	public NumericMigration(MesswertFieldMapping mapping, Messwert messwert) {
 		this.mapping = mapping;
 		this.messwert = messwert;
 	}
-	
+
 	@Override
-	public Optional<IObservation> migrate(){
+	public Optional<IObservation> migrate() {
 		try {
 			IObservation observation = (IObservation) templateService
-				.createFinding(Patient.load(messwert.get(Messwert.FLD_PATIENT_ID)), template);
-			
+					.createFinding(Patient.load(messwert.get(Messwert.FLD_PATIENT_ID)), template);
+
 			String result = messwert.getResult(mapping.getLocalBefundField());
-			observation.setNumericValue(getValue(result),
-				((InputDataNumeric) template.getInputData()).getUnit());
-			
+			observation.setNumericValue(getValue(result), ((InputDataNumeric) template.getInputData()).getUnit());
+
 			String comment = getComment(result);
 			if (comment != null && !comment.isEmpty()) {
 				observation.setComment(comment);
@@ -47,14 +46,14 @@ public class NumericMigration extends AbstractMigrationStrategy implements IMigr
 		}
 		return Optional.empty();
 	}
-	
+
 	/**
 	 * Get the first numeric value.
-	 * 
+	 *
 	 * @param result
 	 * @return
 	 */
-	public static BigDecimal getValue(String result){
+	public static BigDecimal getValue(String result) {
 		StringBuilder sb = new StringBuilder();
 		for (char c : result.toCharArray()) {
 			if (Character.isDigit(c) || c == '.' || c == ',') {
@@ -74,20 +73,19 @@ public class NumericMigration extends AbstractMigrationStrategy implements IMigr
 			try {
 				return new BigDecimal(value);
 			} catch (NumberFormatException ne) {
-				logger
-					.error("Could not parse numeric result [" + result + "] value [" + value + "]");
+				logger.error("Could not parse numeric result [" + result + "] value [" + value + "]");
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get non numeric text at the end of the String.
-	 * 
+	 *
 	 * @param result
 	 * @return
 	 */
-	public static String getComment(String result){
+	public static String getComment(String result) {
 		StringBuilder sb = new StringBuilder();
 		char[] charArray = result.toCharArray();
 		for (int i = charArray.length - 1; i > -1; i--) {
@@ -104,16 +102,16 @@ public class NumericMigration extends AbstractMigrationStrategy implements IMigr
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get a list of numeric values.
-	 * 
+	 *
 	 * @param result
 	 * @return
 	 */
-	public static List<BigDecimal> getValues(String result){
+	public static List<BigDecimal> getValues(String result) {
 		List<BigDecimal> ret = new ArrayList<>();
-		
+
 		List<String> parts = new ArrayList<>();
 		String[] spacesSplits = result.split(" ");
 		for (String spacesSplit : spacesSplits) {
@@ -122,7 +120,7 @@ public class NumericMigration extends AbstractMigrationStrategy implements IMigr
 				parts.add(slashSplit);
 			}
 		}
-		
+
 		for (String string : parts) {
 			BigDecimal value = getValue(string);
 			if (value != null) {

@@ -10,13 +10,13 @@ import ch.elexis.core.services.IConfigService;
 @Component
 public class ConfigServiceHolder {
 	private static IConfigService configService;
-	
+
 	@Reference
-	public void setModelService(IConfigService configService){
+	public void setModelService(IConfigService configService) {
 		ConfigServiceHolder.configService = configService;
 	}
-	
-	public static Optional<IConfigService> get(){
+
+	public static Optional<IConfigService> get() {
 		return Optional.ofNullable(configService);
 	}
 }

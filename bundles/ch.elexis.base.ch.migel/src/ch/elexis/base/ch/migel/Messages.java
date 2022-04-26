@@ -8,7 +8,7 @@
  * Contributors:
  *    Gerry Weirich - initial implementation
  *    T. Huster - copied from ch.elexis.base.ch.artikel
- *    
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.migel;
 
@@ -28,6 +28,7 @@ public class Messages extends NLS {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
-	private Messages(){}
+
+	private Messages() {
+	}
 }

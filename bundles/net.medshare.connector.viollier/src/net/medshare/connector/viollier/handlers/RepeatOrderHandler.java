@@ -32,7 +32,7 @@ public class RepeatOrderHandler extends AbstractHandler {
 	private static Logger log = LoggerFactory.getLogger(RepeatOrderHandler.class);
 	private ViollierConnectorSettings mySettings;
 	private String httpsUrl;
-	
+
 	/**
 	 * Starte Labor Befundabfrage : <br>
 	 * <ul>
@@ -41,65 +41,59 @@ public class RepeatOrderHandler extends AbstractHandler {
 	 * </ul>
 	 */
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String cookie = "";
-		
-		mySettings =
-			new ViollierConnectorSettings(
-				(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
+
+		mySettings = new ViollierConnectorSettings((Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 		httpsUrl = mySettings.getGlobalLoginUrl();
-		
+
 		// Cookie holen
 		try {
 			cookie = new PortalCookieService().getCookie();
-			
+
 		} catch (IOException e) {
 			log.error("Error getting cookie", e);
 			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleGetCookie,
-				Messages.Handler_errorMessageGetCookie + e.getMessage());
+					Messages.Handler_errorMessageGetCookie + e.getMessage());
 		} catch (ElexisException e) {
 			log.error("No password/user defined", e);
-			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleGetCookie,
-				e.getMessage());
+			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleGetCookie, e.getMessage());
 		}
 		httpsUrl += "&RCSession=" + cookie;
 		try {
-			httpsUrl +=
-				"&appPath="
-					+ URLEncoder.encode("/orderit/createOrderFromConsultIT?app=LAB400CI&", "UTF-8");
+			httpsUrl += "&appPath=" + URLEncoder.encode("/orderit/createOrderFromConsultIT?app=LAB400CI&", "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			log.error("Enoding not supported", e1);
 		}
-		
+
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
 		if (patient == null) {
 			log.warn("No patient selected - exit execution of RepeatOrderHandler");
 			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleNoPatientSelected,
-				Messages.Handler_errorMessageNoPatientSelected);
+					Messages.Handler_errorMessageNoPatientSelected);
 			return null;
 		}
 		// Holen der OrderId anhand des selektierten resultats
-		PersistentObject obj =
-			(PersistentObject) ElexisEventDispatcher.getSelected(LabResult.class);
+		PersistentObject obj = (PersistentObject) ElexisEventDispatcher.getSelected(LabResult.class);
 		String labResultId = null;
 		if (obj != null) {
 			labResultId = ((LabResult) obj).getId();
 		}
-		
+
 		if (labResultId == null || labResultId.isEmpty()) {
 			log.warn("No LabResult-ID - exit execution of RepeatOrderHandler");
 			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleNoLabResultSelected,
-				Messages.Handler_errorMessageNoLabResultSelected);
+					Messages.Handler_errorMessageNoLabResultSelected);
 			return null;
 		}
-		
+
 		String orderId = LaborwerteOrderManagement.findOrderId(labResultId);
 		String orderNr = KontaktOrderManagement.load(orderId).get("ORDER_NR");
-		
+
 		if (orderNr == null || orderNr.isEmpty()) {
 			log.warn("No order for the given LabResult [" + labResultId + "] found");
 			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleNoOrderFound,
-				Messages.Handler_errorMessageNoOrderFound);
+					Messages.Handler_errorMessageNoOrderFound);
 			return null;
 		}
 		try {
@@ -107,7 +101,7 @@ public class RepeatOrderHandler extends AbstractHandler {
 		} catch (UnsupportedEncodingException e1) {
 			log.error("Enoding not supported", e1);
 		}
-		
+
 		// Browser OrderIT öffnen
 		try {
 			IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();

@@ -6,17 +6,19 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * The character string data type stands for text data, primarily intended for machine processing
- * (e.g., sorting, querying, indexing, etc.) Used for names, symbols, and formal expressions.
- * 
- * 
+ *
+ * The character string data type stands for text data, primarily intended for
+ * machine processing (e.g., sorting, querying, indexing, etc.) Used for names,
+ * symbols, and formal expressions.
+ *
+ *
  * <p>
  * Java class for ST complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="ST">
  *   &lt;complexContent>
@@ -32,19 +34,17 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ST")
-@XmlSeeAlso({
-	SC.class, ADXP.class, ENXP.class
-})
+@XmlSeeAlso({ SC.class, ADXP.class, ENXP.class })
 public class ST extends ED {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 }

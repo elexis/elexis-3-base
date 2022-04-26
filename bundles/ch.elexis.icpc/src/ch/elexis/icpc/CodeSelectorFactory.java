@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.icpc;
@@ -39,74 +39,72 @@ import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.elexis.icpc.service.CodeElementServiceHolder;
 
 public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.CodeSelectorFactory {
-	
-	public CodeSelectorFactory(){
+
+	public CodeSelectorFactory() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
-		ViewerConfigurer vc = new ViewerConfigurer(new IcpcCodeContentProvider(cv),
-			new IcpcCodeLabelProvider(),
-			new DefaultControlFieldProvider(cv, new String[] {
-				"Text"
-			}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-				SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
+		ViewerConfigurer vc = new ViewerConfigurer(new IcpcCodeContentProvider(cv), new IcpcCodeLabelProvider(),
+				new DefaultControlFieldProvider(cv, new String[] { "Text" }),
+				new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 		vc.setContentType(ContentType.GENERICOBJECT);
 		cv.setNamedSelection("ch.elexis.icpc.selection");
 		return vc;
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return "ICPC";
 	}
-	
+
 	@Override
-	public Class getElementClass(){
+	public Class getElementClass() {
 		return IcpcCode.class;
 	}
-	
-	public class IcpcCodeContentProvider implements ICommonViewerContentProvider,
-			ITreeContentProvider {
+
+	public class IcpcCodeContentProvider implements ICommonViewerContentProvider, ITreeContentProvider {
 		private CommonViewer viewer;
 		private String filterValue;
-		
-		public IcpcCodeContentProvider(CommonViewer cv){
+
+		public IcpcCodeContentProvider(CommonViewer cv) {
 			this.viewer = cv;
 		}
-		
-		public void startListening(){
+
+		public void startListening() {
 			viewer.getConfigurer().getControlFieldProvider().addChangeListener(this);
 		}
-		
-		public void stopListening(){
+
+		public void stopListening() {
 			viewer.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 		}
-		
-		public Object[] getElements(Object inputElement){
-			ICodeElementServiceContribution icpcCodeElementContribution = CodeElementServiceHolder
-				.get().getContribution(CodeElementTyp.DIAGNOSE, "ICPC").orElseThrow(
-					() -> new IllegalStateException("No ICPC CodeElementContribution available"));
-				
-			List<ICodeElement> roots = icpcCodeElementContribution.getElements(
-				Collections
-					.singletonMap(ICodeElementService.ContextKeys.TREE_ROOTS, Boolean.TRUE));
-			
+
+		public Object[] getElements(Object inputElement) {
+			ICodeElementServiceContribution icpcCodeElementContribution = CodeElementServiceHolder.get()
+					.getContribution(CodeElementTyp.DIAGNOSE, "ICPC")
+					.orElseThrow(() -> new IllegalStateException("No ICPC CodeElementContribution available"));
+
+			List<ICodeElement> roots = icpcCodeElementContribution
+					.getElements(Collections.singletonMap(ICodeElementService.ContextKeys.TREE_ROOTS, Boolean.TRUE));
+
 			return roots.toArray();
 		}
-		
-		public void dispose(){}
-		
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
-		
-		public void changed(HashMap<String, String> values){
+
+		public void dispose() {
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+
+		public void changed(HashMap<String, String> values) {
 			String filterText = values.get("Text").toLowerCase();
 			if (filterText == null || filterText.isEmpty() || filterText.equals("%")) {
 				setFilterValue("");
@@ -115,52 +113,51 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 			}
 			// update view
 			viewer.notify(CommonViewer.Message.update);
-			if(StringUtils.isNotBlank(filterValue)) {
+			if (StringUtils.isNotBlank(filterValue)) {
 				((TreeViewer) viewer.getViewerWidget()).expandAll();
 			}
 		}
-		
-		public boolean matchFilter(IDiagnosisTree element){
+
+		public boolean matchFilter(IDiagnosisTree element) {
 			if (StringUtils.isNotBlank(filterValue)) {
 				if (element.getChildren().isEmpty()) {
-					return (element.getCode() + " " + element.getText()).toLowerCase()
-						.contains(filterValue);
+					return (element.getCode() + " " + element.getText()).toLowerCase().contains(filterValue);
 				} else {
 					return getChildren(element).length > 0;
 				}
 			}
 			return true;
 		}
-		
-		public void reorder(String field){}
-		
-		public void selected(){
+
+		public void reorder(String field) {
+		}
+
+		public void selected() {
 			// nothing to do
 		}
-		
-		public Object[] getChildren(Object parentElement){
+
+		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof IDiagnosisTree) {
 				// get all children if no search value is set
 				if (StringUtils.isBlank(filterValue)) {
 					return ((IDiagnosisTree) parentElement).getChildren().toArray();
 				} else {
-					List<IDiagnosisTree> availableChildren =
-						((IDiagnosisTree) parentElement).getChildren().parallelStream()
-							.filter(ti -> matchFilter(ti)).collect(Collectors.toList());
+					List<IDiagnosisTree> availableChildren = ((IDiagnosisTree) parentElement).getChildren()
+							.parallelStream().filter(ti -> matchFilter(ti)).collect(Collectors.toList());
 					return availableChildren.toArray();
 				}
 			}
 			return null;
 		}
-		
-		public Object getParent(Object element){
+
+		public Object getParent(Object element) {
 			if (element instanceof IDiagnosisTree) {
 				return ((IDiagnosisTree) element).getParent();
 			}
 			return null;
 		}
-		
-		public boolean hasChildren(Object element){
+
+		public boolean hasChildren(Object element) {
 			if (element instanceof IDiagnosisTree) {
 				if (StringUtils.isBlank(filterValue)) {
 					List<IDiagnosisTree> children = ((IDiagnosisTree) element).getChildren();
@@ -171,28 +168,28 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 			}
 			return false;
 		}
-		
+
 		@Override
-		public void init(){
+		public void init() {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
-		private void setFilterValue(String value){
+
+		private void setFilterValue(String value) {
 			this.filterValue = value;
 		}
 	}
-	
+
 	public class IcpcCodeLabelProvider extends LabelProvider {
-		
+
 		@Override
-		public String getText(Object element){
+		public String getText(Object element) {
 			if (element instanceof IDiagnosisTree) {
 				return ((IDiagnosisTree) element).getLabel();
 			}
 			return super.getText(element);
 		}
-		
+
 	}
-	
+
 }

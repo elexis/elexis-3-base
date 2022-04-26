@@ -14,51 +14,50 @@ import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 
 public class MandatorFile extends AbstractCsvImportFile<String> implements IAeskulapImportFile {
-	
+
 	private File file;
-	
+
 	private Map<String, String> values;
-	
-	public MandatorFile(File file){
+
+	public MandatorFile(File file) {
 		super(file);
 		this.file = file;
 		this.values = new HashMap<>();
 	}
-	
+
 	@Override
-	public File getFile(){
+	public File getFile() {
 		return file;
 	}
-	
-	public static boolean canHandleFile(File file){
+
+	public static boolean canHandleFile(File file) {
 		return FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("csv")
-			&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Mandanten");
+				&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Mandanten");
 	}
-	
+
 	@Override
-	public boolean isHeaderLine(String[] line){
+	public boolean isHeaderLine(String[] line) {
 		return line[0] != null && line[0].equalsIgnoreCase("Arzt_No");
 	}
-	
+
 	@Override
-	public String create(String[] line){
+	public String create(String[] line) {
 		values.put(line[0], StringUtils.abbreviate(line[1], 10));
 		return line[1];
 	}
-	
+
 	@Override
-	public void setProperties(String map, String[] line){
+	public void setProperties(String map, String[] line) {
 		// no additional properties
 	}
-	
+
 	@Override
-	public String getExisting(String id){
+	public String getExisting(String id) {
 		return values.get(id);
 	}
-	
+
 	@Override
-	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite,
-		SubMonitor monitor){
+	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite, SubMonitor monitor) {
 		try {
 			String[] line = null;
 			while ((line = getNextLine()) != null) {
@@ -76,24 +75,24 @@ public class MandatorFile extends AbstractCsvImportFile<String> implements IAesk
 		}
 		return false;
 	}
-	
+
 	@Override
-	public Type getType(){
+	public Type getType() {
 		return Type.MANDATOR;
 	}
-	
+
 	@Override
-	public String getXidDomain(){
+	public String getXidDomain() {
 		return IAeskulapImporter.XID_IMPORT_ADDRESS;
 	}
-	
+
 	@Override
-	public boolean isTransient(){
+	public boolean isTransient() {
 		return true;
 	}
-	
+
 	@Override
-	public Object getTransient(String id){
+	public Object getTransient(String id) {
 		return values.get(id);
 	}
 }

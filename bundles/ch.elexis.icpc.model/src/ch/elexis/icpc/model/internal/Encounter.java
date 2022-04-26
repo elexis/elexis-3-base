@@ -16,117 +16,113 @@ import ch.elexis.icpc.model.icpc.IcpcEncounter;
 import ch.elexis.icpc.model.icpc.IcpcEpisode;
 import ch.elexis.icpc.model.internal.service.IcpcModelServiceHolder;
 
-public class Encounter extends AbstractIdModelAdapter<ICPCEncounter>
-		implements Identifiable, IcpcEncounter {
-	
-	public Encounter(ICPCEncounter entity){
+public class Encounter extends AbstractIdModelAdapter<ICPCEncounter> implements Identifiable, IcpcEncounter {
+
+	public Encounter(ICPCEncounter entity) {
 		super(entity);
 	}
-	
+
 	@Override
-	public boolean isDeleted(){
+	public boolean isDeleted() {
 		return getEntity().isDeleted();
 	}
-	
+
 	@Override
-	public void setDeleted(boolean value){
+	public void setDeleted(boolean value) {
 		getEntityMarkDirty().setDeleted(value);
 	}
-	
+
 	@Override
-	public IEncounter getEncounter(){
-		return CoreModelServiceHolder.get().adapt(getEntity().getKons(), IEncounter.class)
-			.orElse(null);
+	public IEncounter getEncounter() {
+		return CoreModelServiceHolder.get().adapt(getEntity().getKons(), IEncounter.class).orElse(null);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setEncounter(IEncounter value){
+	public void setEncounter(IEncounter value) {
 		if (value != null) {
 			getEntityMarkDirty().setKons(((AbstractIdModelAdapter<Behandlung>) value).getEntity());
 		} else {
 			getEntityMarkDirty().setKons(null);
 		}
 	}
-	
+
 	@Override
-	public IcpcEpisode getEpisode(){
-		return IcpcModelServiceHolder.get().adapt(getEntity().getEpisode(), IcpcEpisode.class)
-			.orElse(null);
+	public IcpcEpisode getEpisode() {
+		return IcpcModelServiceHolder.get().adapt(getEntity().getEpisode(), IcpcEpisode.class).orElse(null);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setEpisode(IcpcEpisode value){
+	public void setEpisode(IcpcEpisode value) {
 		if (value != null) {
-			getEntityMarkDirty()
-				.setEpisode(((AbstractIdModelAdapter<ICPCEpisode>) value).getEntity());
+			getEntityMarkDirty().setEpisode(((AbstractIdModelAdapter<ICPCEpisode>) value).getEntity());
 		} else {
 			getEntityMarkDirty().setEpisode(null);
 		}
 	}
-	
+
 	@Override
-	public IcpcCode getProc(){
+	public IcpcCode getProc() {
 		String codeId = getEntity().getProc();
-		if(!StringUtils.isBlank(codeId)) {
+		if (!StringUtils.isBlank(codeId)) {
 			return IcpcModelServiceHolder.get().load(codeId, IcpcCode.class).orElse(null);
 		}
 		return null;
 	}
-	
+
 	@Override
-	public void setProc(IcpcCode value){
+	public void setProc(IcpcCode value) {
 		if (value != null) {
 			getEntityMarkDirty().setProc(value.getId());
 		} else {
 			getEntityMarkDirty().setProc(null);
 		}
 	}
-	
+
 	@Override
-	public IcpcCode getDiag(){
+	public IcpcCode getDiag() {
 		String codeId = getEntity().getDiag();
 		if (!StringUtils.isBlank(codeId)) {
 			return IcpcModelServiceHolder.get().load(codeId, IcpcCode.class).orElse(null);
 		}
 		return null;
 	}
-	
+
 	@Override
-	public void setDiag(IcpcCode value){
+	public void setDiag(IcpcCode value) {
 		if (value != null) {
 			getEntityMarkDirty().setDiag(value.getId());
 		} else {
 			getEntityMarkDirty().setDiag(null);
 		}
 	}
-	
+
 	@Override
-	public IcpcCode getRfe(){
+	public IcpcCode getRfe() {
 		String codeId = getEntity().getRfe();
 		if (!StringUtils.isBlank(codeId)) {
 			return IcpcModelServiceHolder.get().load(codeId, IcpcCode.class).orElse(null);
 		}
 		return null;
 	}
-	
+
 	@Override
-	public void setRfe(IcpcCode value){
+	public void setRfe(IcpcCode value) {
 		if (value != null) {
 			getEntityMarkDirty().setRfe(value.getId());
 		} else {
 			getEntityMarkDirty().setRfe(null);
 		}
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

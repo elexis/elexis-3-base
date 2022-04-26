@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for ContextControlPropagating.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="ContextControlPropagating">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -19,20 +20,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "ContextControlPropagating")
 @XmlEnum
 public enum ContextControlPropagating {
-	
+
 	AP, OP;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static ContextControlPropagating fromValue(String v){
+
+	public static ContextControlPropagating fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

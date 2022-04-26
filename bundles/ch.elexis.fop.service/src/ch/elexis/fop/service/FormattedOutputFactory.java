@@ -45,17 +45,16 @@ import ch.elexis.fop.service.xmlstream.XmlStreamToPs;
 
 @Component
 public class FormattedOutputFactory implements IFormattedOutputFactory {
-	
+
 	private static FopFactory fopFactory;
-	
+
 	@Activate
-	public void activate(){
+	public void activate() {
 		initialize();
 	}
-	
+
 	@Override
-	public IFormattedOutput getFormattedOutputImplementation(ObjectType objectType,
-		OutputType outputType){
+	public IFormattedOutput getFormattedOutputImplementation(ObjectType objectType, OutputType outputType) {
 		if (objectType == ObjectType.JAXB) {
 			switch (outputType) {
 			case PCL:
@@ -96,20 +95,20 @@ public class FormattedOutputFactory implements IFormattedOutputFactory {
 				break;
 			}
 		}
-		
+
 		throw new IllegalStateException(
-			"No IFormattedOutput implementation for [" + objectType + "->" + outputType + "]");
+				"No IFormattedOutput implementation for [" + objectType + "->" + outputType + "]");
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param mimeType
 	 * @return The fonts available for FOP processing.
 	 */
-	public static String[] getRegisteredFonts(String mimeType){
+	public static String[] getRegisteredFonts(String mimeType) {
 		try {
 			LinkedList<String> fontFamiliesList = new LinkedList<String>();
-			
+
 			FontListGenerator listGenerator = new FontListGenerator();
 			SortedMap fontFamilies = listGenerator.listFonts(fopFactory, mimeType, null);
 			Iterator iter = fontFamilies.entrySet().iterator();
@@ -121,15 +120,13 @@ public class FormattedOutputFactory implements IFormattedOutputFactory {
 		} catch (FOPException e) {
 			LoggerFactory.getLogger(FormattedOutputFactory.class).error("Error getting fonts", e);
 		}
-		return new String[] {
-			""
-		};
+		return new String[] { "" };
 	}
-	
-	public static void initialize(){
+
+	public static void initialize() {
 		try {
 			FopConfParser parser = new FopConfParser(new ConfigFile().getAsInputStream(),
-				new URI("http://dummy.domain"));
+					new URI("http://dummy.domain"));
 			FopFactoryBuilder builder = parser.getFopFactoryBuilder();
 			builder.setStrictFOValidation(false);
 			fopFactory = builder.build();
@@ -137,8 +134,8 @@ public class FormattedOutputFactory implements IFormattedOutputFactory {
 			LoggerFactory.getLogger(FormattedOutputFactory.class).error("Error initializing", e);
 		}
 	}
-	
-	public static FopFactory getFopFactory(){
+
+	public static FopFactory getFopFactory() {
 		return fopFactory;
 	}
 }

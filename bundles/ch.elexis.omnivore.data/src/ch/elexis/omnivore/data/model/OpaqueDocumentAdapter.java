@@ -12,59 +12,59 @@ import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.tools.TimeTool;
 
 public class OpaqueDocumentAdapter implements IOpaqueDocument {
-	
+
 	private IDocumentHandle documentHandle;
-	
-	public OpaqueDocumentAdapter(IDocumentHandle documentHandle){
+
+	public OpaqueDocumentAdapter(IDocumentHandle documentHandle) {
 		this.documentHandle = documentHandle;
 	}
-	
+
 	@Override
-	public String getTitle(){
+	public String getTitle() {
 		return documentHandle.getTitle();
 	}
-	
+
 	@Override
-	public String getMimeType(){
+	public String getMimeType() {
 		return documentHandle.getMimeType();
 	}
-	
+
 	@Override
-	public InputStream getContentsAsStream() throws ElexisException{
+	public InputStream getContentsAsStream() throws ElexisException {
 		return documentHandle.getContent();
 	}
-	
+
 	@Override
-	public byte[] getContentsAsBytes() throws ElexisException{
+	public byte[] getContentsAsBytes() throws ElexisException {
 		try {
 			return IOUtils.toByteArray(documentHandle.getContent());
 		} catch (IOException e) {
 			throw new ElexisException("Error getting content", e);
 		}
 	}
-	
+
 	@Override
-	public String getKeywords(){
+	public String getKeywords() {
 		return documentHandle.getKeywords();
 	}
-	
+
 	@Override
-	public String getCategory(){
+	public String getCategory() {
 		return documentHandle.getCategory().getName();
 	}
-	
+
 	@Override
-	public String getCreationDate(){
+	public String getCreationDate() {
 		return new TimeTool(documentHandle.getCreated()).toString(TimeTool.DATE_GER);
 	}
-	
+
 	@Override
-	public Patient getPatient(){
+	public Patient getPatient() {
 		return Patient.load(documentHandle.getPatient().getId());
 	}
-	
+
 	@Override
-	public String getGUID(){
+	public String getGUID() {
 		return documentHandle.getId();
 	}
 }

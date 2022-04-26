@@ -25,39 +25,41 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class SumRowsEvaluator extends RecursiveObjectEvaluator implements OneValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public SumRowsEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public SumRowsEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(1 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 1 value but found %d",expression,containedEvaluators.size()));
-    }
-  }
+		if (1 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 1 value but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-  @Override
-  public Object doWork(Object value) throws IOException{
-    if(null == value){
-      return null;
-    } else if (value instanceof Matrix) {
+	@Override
+	public Object doWork(Object value) throws IOException {
+		if (null == value) {
+			return null;
+		} else if (value instanceof Matrix) {
 
-      Matrix matrix = (Matrix) value;
-      double[][] data = matrix.getData();
-      List<Number> sums = new ArrayList<>(data.length);
+			Matrix matrix = (Matrix) value;
+			double[][] data = matrix.getData();
+			List<Number> sums = new ArrayList<>(data.length);
 
-      for(int i=0; i<data.length; i++) {
-        double sum = 0;
-        double[] row = data[i];
-        for(int j=0; j<row.length; j++){
-          sum+=row[j];
-        }
+			for (int i = 0; i < data.length; i++) {
+				double sum = 0;
+				double[] row = data[i];
+				for (int j = 0; j < row.length; j++) {
+					sum += row[j];
+				}
 
-        sums.add(sum);
-      }
+				sums.add(sum);
+			}
 
-      return sums;
-    } else {
-      throw new IOException("Grand sum function only operates on a matrix");
-    }
-  }
+			return sums;
+		} else {
+			throw new IOException("Grand sum function only operates on a matrix");
+		}
+	}
 }

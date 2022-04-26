@@ -94,34 +94,33 @@ import ch.rgw.tools.TimeTool;
 @Component
 public class EMediplanServiceImpl implements EMediplanService {
 	private static Logger logger = LoggerFactory.getLogger(EMediplanServiceImpl.class);
-	
+
 	private IInboxElementService service;
-	
+
 	private Gson gson;
-	
-	public EMediplanServiceImpl(){
+
+	public EMediplanServiceImpl() {
 		gson = new GsonBuilder().create();
 	}
-	
+
 	@Override
-	public void exportEMediplanPdf(IMandator author, IPatient patient,
-		List<IPrescription> prescriptions, boolean addDesc, OutputStream output){
+	public void exportEMediplanPdf(IMandator author, IPatient patient, List<IPrescription> prescriptions,
+			boolean addDesc, OutputStream output) {
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
 			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
-			Optional<Image> qrCode =
-				jsonString.map(json -> getQrCode(json)).orElse(Optional.empty());
-			
-			Optional<at.medevit.elexis.emediplan.core.model.print.Medication> jaxbModel =
-				getJaxbModel(author, patient, prescriptions);
+			Optional<Image> qrCode = jsonString.map(json -> getQrCode(json)).orElse(Optional.empty());
+
+			Optional<at.medevit.elexis.emediplan.core.model.print.Medication> jaxbModel = getJaxbModel(author, patient,
+					prescriptions);
 			jaxbModel.ifPresent(model -> {
 				createPdf(qrCode, model, output);
 			});
 		}
 	}
-	
+
 	@Override
-	public void exportEMediplanJson(IMandator author, IPatient patient,
-		List<IPrescription> prescriptions, boolean addDesc, OutputStream output){
+	public void exportEMediplanJson(IMandator author, IPatient patient, List<IPrescription> prescriptions,
+			boolean addDesc, OutputStream output) {
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
 			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
 			if (jsonString.isPresent()) {
@@ -131,10 +130,10 @@ public class EMediplanServiceImpl implements EMediplanService {
 			}
 		}
 	}
-	
+
 	@Override
-	public void exportEMediplanChmed(IMandator author, IPatient patient,
-		List<IPrescription> prescriptions, boolean addDesc, OutputStream output){
+	public void exportEMediplanChmed(IMandator author, IPatient patient, List<IPrescription> prescriptions,
+			boolean addDesc, OutputStream output) {
 		if (prescriptions != null && !prescriptions.isEmpty() && output != null) {
 			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
 			if (jsonString.isPresent()) {
@@ -144,75 +143,66 @@ public class EMediplanServiceImpl implements EMediplanService {
 			}
 		}
 	}
-	
-	private void createPdf(Optional<Image> qrCode, Object jaxbModel, OutputStream output){
+
+	private void createPdf(Optional<Image> qrCode, Object jaxbModel, OutputStream output) {
 		BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
-		ServiceReference<IFormattedOutputFactory> fopFactoryRef =
-			bundleContext.getServiceReference(IFormattedOutputFactory.class);
+		ServiceReference<IFormattedOutputFactory> fopFactoryRef = bundleContext
+				.getServiceReference(IFormattedOutputFactory.class);
 		if (fopFactoryRef != null) {
 			IFormattedOutputFactory fopFactory = bundleContext.getService(fopFactoryRef);
-			IFormattedOutput foOutput =
-				fopFactory.getFormattedOutputImplementation(ObjectType.JAXB, OutputType.PDF);
+			IFormattedOutput foOutput = fopFactory.getFormattedOutputImplementation(ObjectType.JAXB, OutputType.PDF);
 			HashMap<String, String> parameters = new HashMap<>();
 			parameters.put("logoJpeg", getEncodedLogo());
-			parameters.put("commentText",
-				ConfigServiceHolder.get().getActiveUserContact(
-					Preferences.MEDICATION_SETTINGS_EMEDIPLAN_HEADER_COMMENT,
-					Messages.Medication_headerComment));
+			parameters.put("commentText", ConfigServiceHolder.get().getActiveUserContact(
+					Preferences.MEDICATION_SETTINGS_EMEDIPLAN_HEADER_COMMENT, Messages.Medication_headerComment));
 			qrCode.ifPresent(qr -> {
 				parameters.put("qrJpeg", getEncodedQr(qr));
 			});
-			foOutput.transform(jaxbModel,
-				EMediplanServiceImpl.class.getResourceAsStream("/rsc/xslt/emediplan.xslt"), output,
-				parameters);
+			foOutput.transform(jaxbModel, EMediplanServiceImpl.class.getResourceAsStream("/rsc/xslt/emediplan.xslt"),
+					output, parameters);
 			bundleContext.ungetService(fopFactoryRef);
 		} else {
 			throw new IllegalStateException("No IFormattedOutputFactory available");
 		}
 	}
-	
-	private String getEncodedQr(Image qr){
+
+	private String getEncodedQr(Image qr) {
 		try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
 			ImageLoader imageLoader = new ImageLoader();
-			imageLoader.data = new ImageData[] {
-				qr.getImageData()
-			};
+			imageLoader.data = new ImageData[] { qr.getImageData() };
 			imageLoader.compression = 100;
 			imageLoader.save(output, SWT.IMAGE_JPEG);
-			return "data:image/jpg;base64,"
-				+ Base64.getEncoder().encodeToString(output.toByteArray());
+			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray());
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error encoding QR", e);
 		}
 		return "";
 	}
-	
-	private String getEncodedLogo(){
-		try(InputStream input =  getClass().getResourceAsStream("/rsc/img/Logo_Full.jpeg"); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+
+	private String getEncodedLogo() {
+		try (InputStream input = getClass().getResourceAsStream("/rsc/img/Logo_Full.jpeg");
+				ByteArrayOutputStream output = new ByteArrayOutputStream()) {
 			IOUtils.copy(input, output);
-			return "data:image/jpg;base64,"
-				+ Base64.getEncoder().encodeToString(output.toByteArray());
+			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray());
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error encoding logo", e);
 		}
 		return "";
 	}
-	
-	protected Optional<Image> getQrCode(@NonNull String json){
+
+	protected Optional<Image> getQrCode(@NonNull String json) {
 		String encodedJson = getEncodedJson(json);
-		
+
 		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
 		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-		
+
 		QRCodeWriter qrCodeWriter = new QRCodeWriter();
 		try {
-			BitMatrix bitMatrix =
-				qrCodeWriter.encode(encodedJson, BarcodeFormat.QR_CODE, 470, 470, hintMap);
+			BitMatrix bitMatrix = qrCodeWriter.encode(encodedJson, BarcodeFormat.QR_CODE, 470, 470, hintMap);
 			int width = bitMatrix.getWidth();
 			int height = bitMatrix.getHeight();
-			
-			ImageData data =
-				new ImageData(width, height, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
+
+			ImageData data = new ImageData(width, height, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
 					data.setPixel(x, y, bitMatrix.get(x, y) ? 0x000000 : 0xFFFFFF);
@@ -224,19 +214,19 @@ public class EMediplanServiceImpl implements EMediplanService {
 			return Optional.empty();
 		}
 	}
-	
+
 	/**
-	 * Get the encoded (Header with zipped and Base64 encoded content) String. The header of the
-	 * current CHMED Version is added to the resulting String.
-	 * 
+	 * Get the encoded (Header with zipped and Base64 encoded content) String. The
+	 * header of the current CHMED Version is added to the resulting String.
+	 *
 	 * @param json
 	 * @return
 	 */
-	protected String getEncodedJson(@NonNull String json){
+	protected String getEncodedJson(@NonNull String json) {
 		StringBuilder sb = new StringBuilder();
 		// header for compresses json
 		sb.append("CHMED16A1");
-		
+
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
 			gzip.write(json.getBytes());
@@ -247,15 +237,15 @@ public class EMediplanServiceImpl implements EMediplanService {
 		sb.append(Base64.getEncoder().encodeToString(out.toByteArray()));
 		return sb.toString();
 	}
-	
+
 	/**
-	 * Get the decoded String, from the zipped and Base64 encoded String. The first 9 characters
-	 * (CHMED header) are ignored.
-	 * 
+	 * Get the decoded String, from the zipped and Base64 encoded String. The first
+	 * 9 characters (CHMED header) are ignored.
+	 *
 	 * @param encodedJson
 	 * @return
 	 */
-	protected String getDecodedJsonString(@NonNull String encodedJson){
+	protected String getDecodedJsonString(@NonNull String encodedJson) {
 		String content = encodedJson.substring(9);
 		byte[] zipped = Base64.getMimeDecoder().decode(content);
 		StringBuilder sb = new StringBuilder();
@@ -263,7 +253,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 			GZIPInputStream gzip = new GZIPInputStream(new ByteArrayInputStream(zipped));
 			InputStreamReader reader = new InputStreamReader(gzip);
 			BufferedReader in = new BufferedReader(reader);
-			// Probably only single json line, but just to be sure ... 
+			// Probably only single json line, but just to be sure ...
 			String read;
 			while ((read = in.readLine()) != null) {
 				sb.append(read);
@@ -274,51 +264,48 @@ public class EMediplanServiceImpl implements EMediplanService {
 		}
 		return sb.toString();
 	}
-	
-	protected Optional<at.medevit.elexis.emediplan.core.model.print.Medication> getJaxbModel(
-		IMandator author, IPatient patient, List<IPrescription> prescriptions){
-		at.medevit.elexis.emediplan.core.model.print.Medication medication =
-			at.medevit.elexis.emediplan.core.model.print.Medication.fromPrescriptions(author,
-				patient, prescriptions);
+
+	protected Optional<at.medevit.elexis.emediplan.core.model.print.Medication> getJaxbModel(IMandator author,
+			IPatient patient, List<IPrescription> prescriptions) {
+		at.medevit.elexis.emediplan.core.model.print.Medication medication = at.medevit.elexis.emediplan.core.model.print.Medication
+				.fromPrescriptions(author, patient, prescriptions);
 		return Optional.ofNullable(medication);
 	}
-	
-	protected Optional<String> getJsonString(IMandator author, IPatient patient,
-		List<IPrescription> prescriptions, boolean addDesc){
-		Medication medication =
-			Medication.fromPrescriptions(author, patient, prescriptions, addDesc);
+
+	protected Optional<String> getJsonString(IMandator author, IPatient patient, List<IPrescription> prescriptions,
+			boolean addDesc) {
+		Medication medication = Medication.fromPrescriptions(author, patient, prescriptions, addDesc);
 		// TODO remove after verification
 		Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
 		logger.info("EMEDIPLAN JSON\n\n" + prettyGson.toJson(medication) + "\n\n");
-		
+
 		return Optional.ofNullable(gson.toJson(medication));
 	}
-	
+
 	@Override
-	public Medication createModelFromChunk(String chunk){
+	public Medication createModelFromChunk(String chunk) {
 		String json = getDecodedJsonString(chunk);
 		if (chunk.length() > 8) {
 			logger.debug("json version: " + chunk.substring(5, 8));
 			Medication ret = createModelFromJsonString(json);
 			ret.chunk = chunk;
 			return ret;
-		}
-		else {
+		} else {
 			logger.error("invalid json length - cannot parseable");
 		}
-		
+
 		return null;
 	}
-	
-	protected Medication createModelFromJsonString(String jsonString){
+
+	protected Medication createModelFromJsonString(String jsonString) {
 		GsonBuilder gb = new GsonBuilder();
 		gb.registerTypeAdapter(Medication.class, new MedicationDeserializer());
 		Gson g = gb.create();
 		Medication m = g.fromJson(jsonString, Medication.class);
 		return m;
 	}
-	
-	public void addExistingArticlesToMedication(Medication medication){
+
+	public void addExistingArticlesToMedication(Medication medication) {
 		if (medication != null) {
 			findPatientForMedication(medication);
 			List<Medicament> medicaments = new ArrayList<>();
@@ -351,37 +338,33 @@ public class EMediplanServiceImpl implements EMediplanService {
 			}
 		}
 	}
-	
-	private void findPatientForMedication(Medication medication){
+
+	private void findPatientForMedication(Medication medication) {
 		if (medication.Patient != null) {
 			IPatient patient = null;
 			// if the chunk are from the inbox the elexis patient id is also available
 			if (medication.Patient.patientId != null) {
-				patient = CoreModelServiceHolder.get()
-					.load(medication.Patient.patientId, IPatient.class).orElse(null);
+				patient = CoreModelServiceHolder.get().load(medication.Patient.patientId, IPatient.class).orElse(null);
 			}
 			// try to find patient by birthdate firstname and lastname
 			if (patient == null) {
 				String bDate = medication.Patient.BDt;
-				Patient kontakt = KontaktMatcher.findPatient(medication.Patient.LName,
-					medication.Patient.FName, bDate != null ? bDate.replace("-", "") : null, null,
-					null, null, null, null, CreateMode.ASK);
-				if(kontakt != null) {
-					patient = CoreModelServiceHolder.get().load(kontakt.getId(), IPatient.class)
-						.orElse(null);
+				Patient kontakt = KontaktMatcher.findPatient(medication.Patient.LName, medication.Patient.FName,
+						bDate != null ? bDate.replace("-", "") : null, null, null, null, null, null, CreateMode.ASK);
+				if (kontakt != null) {
+					patient = CoreModelServiceHolder.get().load(kontakt.getId(), IPatient.class).orElse(null);
 				}
 			}
-			
+
 			if (patient != null) {
 				medication.Patient.patientId = patient.getId();
 				medication.Patient.patientLabel = patient.getLabel();
 			}
 		}
-		
+
 	}
 
-	private void addMedicamentToMedication(Medication medication, List<Medicament> medicaments,
-		Medicament toAdd){
+	private void addMedicamentToMedication(Medication medication, List<Medicament> medicaments, Medicament toAdd) {
 		if (toAdd.Pos != null && !toAdd.Pos.isEmpty()) {
 			Posology pos = toAdd.Pos.get(0);
 			StringBuffer buf = new StringBuffer();
@@ -404,16 +387,16 @@ public class EMediplanServiceImpl implements EMediplanService {
 			toAdd.dateFrom = pos.DtFrom;
 			toAdd.dateTo = pos.DtTo;
 		}
-		
+
 		findArticleForMedicament(toAdd);
-		
+
 		// check if db already contains this prescription
 		setPresciptionsToMedicament(medication, toAdd);
-		
+
 		medicaments.add(toAdd);
 	}
 
-	private void transformAppInstrToFreeTextDosage(Medicament toAdd){
+	private void transformAppInstrToFreeTextDosage(Medicament toAdd) {
 		if (toAdd.dosis.isEmpty() && toAdd.AppInstr != null) {
 			String[] split = toAdd.AppInstr.split("\\" + Medicament.FREETEXT_PREFIX);
 			if (split.length > 1) {
@@ -427,49 +410,47 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 
 	@Override
-	public void setPresciptionsToMedicament(Medication medication,
-		Medicament medicament){
-		if (medication.Patient != null
-			&& medication.Patient.patientId != null) {
+	public void setPresciptionsToMedicament(Medication medication, Medicament medicament) {
+		if (medication.Patient != null && medication.Patient.patientId != null) {
 			if (medicament.artikelstammItem != null) {
 				Query<Prescription> qre = new Query<>(Prescription.class);
 				qre.add(Prescription.FLD_PATIENT_ID, Query.LIKE, medication.Patient.patientId);
 				qre.orderBy(true, PersistentObject.FLD_LASTUPDATE);
-				
+
 				List<Prescription> execute = qre.execute();
-				
+
 				TimeTool now = new TimeTool();
 				now.add(TimeTool.SECOND, 5);
-				
-				List<Prescription> patientPrescriptions = execute.parallelStream()
-					.filter(p -> !p.isStopped(now)).collect(Collectors.toList());
-				
+
+				List<Prescription> patientPrescriptions = execute.parallelStream().filter(p -> !p.isStopped(now))
+						.collect(Collectors.toList());
+
 				setMedicamentState(medicament, patientPrescriptions);
 			}
 			setMedicamentStateInfo(medicament);
 		}
-		
+
 	}
-	
-	private void setMedicamentState(Medicament medicament, List<Prescription> patientPrescriptions){
+
+	private void setMedicamentState(Medicament medicament, List<Prescription> patientPrescriptions) {
 		// reset state
 		medicament.state = State.NEW;
 		medicament.foundPrescription = null;
-		
+
 		for (Prescription prescription : patientPrescriptions) {
 			Artikel artikel = prescription.getArtikel();
-			
+
 			if (checkATCEquality(medicament.artikelstammItem.getAtcCode(), artikel.getATC_code())) {
 				if (State.isHigherState(medicament.state, State.ATC)) {
 					medicament.state = State.ATC;
 					medicament.foundPrescription = prescription;
 				}
-				
+
 				if (medicament.artikelstammItem.getAtcCode().equals(artikel.getATC_code())
-					&& State.isHigherState(medicament.state, State.ATC_SAME)) {
+						&& State.isHigherState(medicament.state, State.ATC_SAME)) {
 					medicament.state = State.ATC_SAME;
 					medicament.foundPrescription = prescription;
-					
+
 					if (prescription.getDosis().equals(medicament.dosis)) {
 						if (State.isHigherState(medicament.state, State.ATC_SAME_DOSAGE)) {
 							medicament.state = State.ATC_SAME_DOSAGE;
@@ -483,7 +464,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 					medicament.state = State.GTIN_SAME;
 					medicament.foundPrescription = prescription;
 				}
-				
+
 				if (prescription.getDosis().equals(medicament.dosis)) {
 					if (State.isHigherState(medicament.state, State.GTIN_SAME_DOSAGE)) {
 						medicament.state = State.GTIN_SAME_DOSAGE;
@@ -495,55 +476,51 @@ public class EMediplanServiceImpl implements EMediplanService {
 		}
 	}
 
-	private void setMedicamentStateInfo(Medicament medicament){
+	private void setMedicamentStateInfo(Medicament medicament) {
 		StringBuffer buf = new StringBuffer();
-		
+
 		if (medicament.artikelstammItem == null) {
 			buf.append("Der Artikel wurde nicht gefunden.");
 		} else if (medicament.isMedicationExpired()) {
 			buf.append("Diese Medikation ist bereits am " + medicament.dateTo + " abgelaufen.");
 		} else {
-			if (State.GTIN_SAME_DOSAGE.equals(medicament.state)
-				|| State.GTIN_SAME.equals(medicament.state)) {
+			if (State.GTIN_SAME_DOSAGE.equals(medicament.state) || State.GTIN_SAME.equals(medicament.state)) {
 				buf.append("Dieses Medikament existiert bereits in Elexis.");
-			} else if (State.ATC_SAME_DOSAGE.equals(medicament.state)
-				|| State.ATC.equals(medicament.state) || State.ATC_SAME.equals(medicament.state)) {
+			} else if (State.ATC_SAME_DOSAGE.equals(medicament.state) || State.ATC.equals(medicament.state)
+					|| State.ATC_SAME.equals(medicament.state)) {
 				buf.append(State.ATC.equals(medicament.state)
 						? "Medikament aus gleicher Wirkstoffgruppe bereits vorhanden."
 						: "Medikament mit gleichem Wirkstoff bereits vorhanden.");
-				if (medicament.foundPrescription != null
-					&& medicament.foundPrescription.getArtikel() != null) {
+				if (medicament.foundPrescription != null && medicament.foundPrescription.getArtikel() != null) {
 					buf.append("\n(" + medicament.foundPrescription.getArtikel().getName() + ")");
 				}
 			} else if (State.NEW.equals(medicament.state)) {
 				buf.append("Neues Medikament");
 			}
-			if (State.ATC_SAME.equals(medicament.state)
-				|| State.GTIN_SAME.equals(medicament.state)) {
+			if (State.ATC_SAME.equals(medicament.state) || State.GTIN_SAME.equals(medicament.state)) {
 				buf.append("\nÄnderung bei der Dosierung.");
 			}
 		}
 		medicament.stateInfo = buf.toString();
 	}
-	
-	private boolean checkATCEquality(String atc1, String atc2){
+
+	private boolean checkATCEquality(String atc1, String atc2) {
 		if (atc1 != null && atc1.length() > 3 && atc2 != null) {
 			return atc2.startsWith(atc1.substring(0, 4));
 		}
 		return atc1 != null && atc1.equals(atc2);
 	}
-	
-	private void findArticleForMedicament(Medicament medicament){
-		Optional<ICodeElementServiceContribution> artikelstammContribution =
-			CodeElementServiceHolder.get().getContribution(CodeElementTyp.ARTICLE, "Artikelstamm");
+
+	private void findArticleForMedicament(Medicament medicament) {
+		Optional<ICodeElementServiceContribution> artikelstammContribution = CodeElementServiceHolder.get()
+				.getContribution(CodeElementTyp.ARTICLE, "Artikelstamm");
 		if (artikelstammContribution.isPresent()) {
-			Optional<ICodeElement> loaded =
-				artikelstammContribution.get().loadFromCode(medicament.Id);
+			Optional<ICodeElement> loaded = artikelstammContribution.get().loadFromCode(medicament.Id);
 			if (loaded.isPresent()) {
 				medicament.artikelstammItem = (IArtikelstammItem) loaded.get();
 			} else {
-				logger.warn("Could not load article for code [" + medicament.Id + "] id type ["
-					+ medicament.IdType + "]");
+				logger.warn(
+						"Could not load article for code [" + medicament.Id + "] id type [" + medicament.IdType + "]");
 			}
 		} else {
 			logger.error("No Artikelstamm code contribution available");
@@ -551,20 +528,20 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 
 	public class MedicationDeserializer implements JsonDeserializer<Medication> {
-		
+
 		Gson g = new GsonBuilder().create();
-		
+
 		@Override
-		public Medication deserialize(JsonElement json, Type typeOfT,
-			JsonDeserializationContext context){
+		public Medication deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
 			Medication u = null;
 			try {
 				try {
 					u = g.fromJson(json, Medication.class);
 					return u;
 				} catch (JsonSyntaxException e) {
-					// because version incompatibility of 16A the MedicalData 'Med' attribute will be removed
-					// MedicalData 'Med' has different types in the version 16A 
+					// because version incompatibility of 16A the MedicalData 'Med' attribute will
+					// be removed
+					// MedicalData 'Med' has different types in the version 16A
 					if (json.getAsJsonObject().get("Patient") != null) {
 						json.getAsJsonObject().get("Patient").getAsJsonObject().remove("Med");
 					}
@@ -575,26 +552,25 @@ public class EMediplanServiceImpl implements EMediplanService {
 				logger.error("unexpected json error", e);
 			}
 			return u;
-			
+
 		}
-		
+
 	}
-	
+
 	@Override
-	public boolean createInboxEntry(Medication medication, IMandator mandant){
-		
+	public boolean createInboxEntry(Medication medication, IMandator mandant) {
+
 		if (service == null) {
 			throw new IllegalStateException("No IInboxElementService for inbox defined");
 		}
-		
+
 		if (medication != null) {
-			if (medication.chunk != null && medication.Patient != null
-				&& medication.Patient.patientId != null) {
-				IPatient patient = CoreModelServiceHolder.get()
-					.load(medication.Patient.patientId, IPatient.class).orElse(null);
+			if (medication.chunk != null && medication.Patient != null && medication.Patient.patientId != null) {
+				IPatient patient = CoreModelServiceHolder.get().load(medication.Patient.patientId, IPatient.class)
+						.orElse(null);
 				if (patient != null) {
-					IBlob blob = CoreModelServiceHolder.get()
-						.load(medication.getNamedBlobId(), IBlob.class).orElse(null);
+					IBlob blob = CoreModelServiceHolder.get().load(medication.getNamedBlobId(), IBlob.class)
+							.orElse(null);
 					if (blob == null) {
 						blob = CoreModelServiceHolder.get().create(IBlob.class);
 						blob.setId(medication.getNamedBlobId());
@@ -605,25 +581,23 @@ public class EMediplanServiceImpl implements EMediplanService {
 					return true;
 				}
 			}
-			
+
 			StringBuffer buf = new StringBuffer("cannot add medication to list:");
 			buf.append("[");
 			buf.append("med chunk:" + medication.chunk);
-			buf.append("med patient id:"
-				+ (medication.Patient != null ? medication.Patient.patientId : "null"));
-			
+			buf.append("med patient id:" + (medication.Patient != null ? medication.Patient.patientId : "null"));
+
 			buf.append("]");
 			logger.warn(buf.toString());
 		} else {
 			logger.error("cannot add medication to list: medication is null");
 		}
-		
+
 		return false;
 	}
-	
 
 	@Reference(unbind = "-")
-	public void setService(IInboxElementService service){
+	public void setService(IInboxElementService service) {
 		this.service = service;
 	}
 }

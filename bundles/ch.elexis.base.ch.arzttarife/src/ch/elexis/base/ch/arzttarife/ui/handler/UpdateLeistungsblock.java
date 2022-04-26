@@ -11,13 +11,12 @@ import org.eclipse.ui.PlatformUI;
 import ch.elexis.data.Leistungsblock;
 
 public class UpdateLeistungsblock extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		IEclipseContext iEclipseContext =
-			PlatformUI.getWorkbench().getService(IEclipseContext.class);
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IEclipseContext iEclipseContext = PlatformUI.getWorkbench().getService(IEclipseContext.class);
 		StructuredSelection selection = (StructuredSelection) iEclipseContext
-			.get(event.getCommand().getId().concat(".selection"));
+				.get(event.getCommand().getId().concat(".selection"));
 		iEclipseContext.remove(event.getCommand().getId().concat(".selection"));
 		if (selection != null && !selection.isEmpty()) {
 			for (Object object : selection.toList()) {

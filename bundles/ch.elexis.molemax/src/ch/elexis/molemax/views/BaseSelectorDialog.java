@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    rgw - initial API and implementation
  *    rgw - 2014: Changes for Elexis 2.x
@@ -29,8 +29,7 @@ public class BaseSelectorDialog extends TitleAreaDialog {
 	java.util.List<Tracker> dates;
 	String ret = null;
 
-	BaseSelectorDialog(final org.eclipse.swt.widgets.Shell shell,
-			final Patient patient) {
+	BaseSelectorDialog(final org.eclipse.swt.widgets.Shell shell, final Patient patient) {
 		super(shell);
 		pat = patient;
 		Query<Tracker> qbe = new Query<Tracker>(Tracker.class);

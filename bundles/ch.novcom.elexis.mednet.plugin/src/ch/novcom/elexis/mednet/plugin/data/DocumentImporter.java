@@ -10,6 +10,7 @@
  *******************************************************************************/
 
 package ch.novcom.elexis.mednet.plugin.data;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -45,6 +46,7 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Manage the import of HL7 and PDF Documents into the Patient
+ *
  * @author David Gutknecht
  *
  */
@@ -55,216 +57,188 @@ public class DocumentImporter {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DocumentImporter.class.getName());
 
 	/**
-	 * The filename structure of the document that can be imported
-	 * this is useful to extract different informations without looking at the content of the file
-	 * It can also be used if a PDF has no HL7 linked to it.
+	 * The filename structure of the document that can be imported this is useful to
+	 * extract different informations without looking at the content of the file It
+	 * can also be used if a PDF has no HL7 linked to it.
 	 */
-	private final static Pattern documentFilenamePattern = Pattern.compile("^([^_]*_)*(?<uniqueMessageId>[^_]+)_(?<caseNr>[^_]*)_(?<transactionDateTime>[^_]*)_(?<orderNr>[^_]+)_(?<samplingDateTime>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<PatientId>[^_]*)_(?<recipient>\\d+)$");//$NON-NLS-1$
+	private final static Pattern documentFilenamePattern = Pattern.compile(
+			"^([^_]*_)*(?<uniqueMessageId>[^_]+)_(?<caseNr>[^_]*)_(?<transactionDateTime>[^_]*)_(?<orderNr>[^_]+)_(?<samplingDateTime>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<PatientId>[^_]*)_(?<recipient>\\d+)$");//$NON-NLS-1$
 	/**
-	 * The filename structure of the Forms that can be imported
-	 * This is important to identify which patient the file should be added
+	 * The filename structure of the Forms that can be imported This is important to
+	 * identify which patient the file should be added
 	 */
-	private final static Pattern formFilenamePattern = Pattern.compile("^(?<transactionDateTime>[0-9]{14})_(?<sender>[^_]*)_(?<PatientId>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientFirstName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<institutionId>[^_]*)_(?<formId>[^_]*)_(?<orderNr>[^_]*)$");//$NON-NLS-1$
-	
+	private final static Pattern formFilenamePattern = Pattern.compile(
+			"^(?<transactionDateTime>[0-9]{14})_(?<sender>[^_]*)_(?<PatientId>[^_]*)_(?<PatientLastName>[^_]*)_(?<PatientFirstName>[^_]*)_(?<PatientBirthdate>[0-9]{8})?_(?<institutionId>[^_]*)_(?<formId>[^_]*)_(?<orderNr>[^_]*)$");//$NON-NLS-1$
+
 	/**
-	 * This DateFormat is used to convert the transactionDateTime available in the filenames of the files to import
-	 * into a DateTime Object.
+	 * This DateFormat is used to convert the transactionDateTime available in the
+	 * filenames of the files to import into a DateTime Object.
 	 */
 	private final static SimpleDateFormat documentDateTimeParser = new SimpleDateFormat("yyyyMMddHHmmss");//$NON-NLS-1$
 	private final static SimpleDateFormat documentDateParser = new SimpleDateFormat("yyyyMMdd");//$NON-NLS-1$
 
 	/**
-	 * This DateFormat is used to convert the birthdate available in the filename of the files to import into 
-	 * a Date Object
+	 * This DateFormat is used to convert the birthdate available in the filename of
+	 * the files to import into a Date Object
 	 */
 	private final static SimpleDateFormat birthdateParser = new SimpleDateFormat("yyyyMMdd");//$NON-NLS-1$
-	
+
 	/**
-	 * This DateFormat is used to convert a Date Object into a format that can be used by the elexis KontaktSelektor
+	 * This DateFormat is used to convert a Date Object into a format that can be
+	 * used by the elexis KontaktSelektor
 	 */
 	private final static SimpleDateFormat birthdateHumanReadableFormatter = new SimpleDateFormat("dd-MM-yyyy");//$NON-NLS-1$
-	
+
 	/**
-	 * The Pattern to search for laboratory PID in the HL7 if xidDomain is set 
+	 * The Pattern to search for laboratory PID in the HL7 if xidDomain is set
 	 */
-	private final static Pattern hl7PatientPattern = Pattern.compile("^PID\\|[^\\|]*\\|(?<id>[^\\|]*)\\|(?<institutionId>[^\\|]*)\\|[^\\|]*\\|(?<lastname>[^\\|\\^]*)\\^?(?<firstname>[^\\|\\^]*)[^\\|]*\\|[^\\|]*\\|(?<birthdate>[^\\|]*)\\|(?<gender>[^\\|]*)\\|.*$");
-	
+	private final static Pattern hl7PatientPattern = Pattern.compile(
+			"^PID\\|[^\\|]*\\|(?<id>[^\\|]*)\\|(?<institutionId>[^\\|]*)\\|[^\\|]*\\|(?<lastname>[^\\|\\^]*)\\^?(?<firstname>[^\\|\\^]*)[^\\|]*\\|[^\\|]*\\|(?<birthdate>[^\\|]*)\\|(?<gender>[^\\|]*)\\|.*$");
+
 	/**
 	 * The default encoding for opening HL7
 	 */
 	private final static Charset DEFAULT_HL7_INPUTENCODING = Charset.forName("ISO-8859-1");
-	
-	
+
 	/**
 	 * Import an hl7 and a pdfFile
-	 * @param hl7File the hl7 to import
-	 * @param pdfFile the pdf to import
-	 * @param institutionId the kontaktId of the institution
-	 * @param institutionName Institution Name
-	 * @param overwriteOlderEntries
-	 *            true if the document should be overwritten. Even if a newer version exists
-	 *            By default it is false
-	 * @param askUser
-	 *            true (default), if the patient cannot been identified, show a dialog to select the patient
+	 *
+	 * @param hl7File               the hl7 to import
+	 * @param pdfFile               the pdf to import
+	 * @param institutionId         the kontaktId of the institution
+	 * @param institutionName       Institution Name
+	 * @param overwriteOlderEntries true if the document should be overwritten. Even
+	 *                              if a newer version exists By default it is false
+	 * @param askUser               true (default), if the patient cannot been
+	 *                              identified, show a dialog to select the patient
 	 * @return true if the import was successful
 	 * @throws IOException
 	 */
-	public static boolean process(
-			Path hl7File,
-			Path pdfFile,
-			ContactLinkRecord contactLink,
-			Kontakt institution,
-			boolean overwriteOlderEntries,
-			boolean askUser
-		) throws IOException{
+	public static boolean process(Path hl7File, Path pdfFile, ContactLinkRecord contactLink, Kontakt institution,
+			boolean overwriteOlderEntries, boolean askUser) throws IOException {
 		String logPrefix = "process() - ";//$NON-NLS-1$
-		
+
 		boolean success = true;
 		Patient patient = null;
 
-		if(hl7File != null) {
-			LOGGER.info(logPrefix + "Import document -- HL7: "+ hl7File.toString());//$NON-NLS-1$
+		if (hl7File != null) {
+			LOGGER.info(logPrefix + "Import document -- HL7: " + hl7File.toString());//$NON-NLS-1$
 		}
-		if(pdfFile != null) {
-			LOGGER.info(logPrefix + "Import document -- PDF: "+ pdfFile.toString());//$NON-NLS-1$
+		if (pdfFile != null) {
+			LOGGER.info(logPrefix + "Import document -- PDF: " + pdfFile.toString());//$NON-NLS-1$
 		}
-		
-		//If we have an hl7 File try first to import the hl7 and to get all the Patient informations
-		if(hl7File != null && Files.exists(hl7File) && Files.isRegularFile(hl7File)){
 
-			//Import the HL7. If the patient has not been found in the DB, the parser will ask for it 
+		// If we have an hl7 File try first to import the hl7 and to get all the Patient
+		// informations
+		if (hl7File != null && Files.exists(hl7File) && Files.isRegularFile(hl7File)) {
+
+			// Import the HL7. If the patient has not been found in the DB, the parser will
+			// ask for it
 			String docImportId = institution.getId();
-			if(contactLink.getDocImport_id() != null 
-					&&	!contactLink.getDocImport_id().isEmpty()) {
+			if (contactLink.getDocImport_id() != null && !contactLink.getDocImport_id().isEmpty()) {
 				docImportId = contactLink.getDocImport_id();
 			}
-			
+
 			HL7Parser hlp = new DefaultHL7Parser(docImportId);
 			try {
-				
+
 				Result<?> res = null;
-				
-				if(contactLink.getDocImport_id() != null 
-						&&	!contactLink.getDocImport_id().isEmpty()) {
-					//If a docImport ID is specified, we should import without using the LabItemResolver
-					res = hlp.importFile(
-						hl7File.toFile(),
-						null,
-						false
-					);
+
+				if (contactLink.getDocImport_id() != null && !contactLink.getDocImport_id().isEmpty()) {
+					// If a docImport ID is specified, we should import without using the
+					// LabItemResolver
+					res = hlp.importFile(hl7File.toFile(), null, false);
+				} else {
+					// If no docImport ID is specified, we can use the labItemResolver
+					res = hlp.importFile(hl7File.toFile(), null, new MedNetLabItemResolver(institution.getLabel(true)),
+							false);
 				}
-				else {
-					//If no docImport ID is specified, we can use the labItemResolver
-					res = hlp.importFile(
-						hl7File.toFile(),
-						null,
-						new MedNetLabItemResolver(institution.getLabel(true)),
-						false
-					);
-				}
-				
-				if(res.isOK()) {
-					//If the result has successfully been imported
-					//Get the Patient found in the HL7 or selected by the user
+
+				if (res.isOK()) {
+					// If the result has successfully been imported
+					// Get the Patient found in the HL7 or selected by the user
 					ch.elexis.core.model.IPatient ipat = hlp.hl7Reader.getPatient();
-					patient = DocumentImporter.getPatient(ipat.getId(), ipat.getLastName(),
-						ipat.getFirstName(),
-						ipat.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyyMMdd")),
-						ipat.getGender().value(), false);
+					patient = DocumentImporter.getPatient(ipat.getId(), ipat.getLastName(), ipat.getFirstName(),
+							ipat.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyyMMdd")),
+							ipat.getGender().value(), false);
 					success = true;
-				}
-				else {
-					//If the import was not successful
+				} else {
+					// If the import was not successful
 					LOGGER.error(logPrefix + "Unable to import the hl7.");//$NON-NLS-1$
 					success = false;
-				}					
-				
-				
+				}
+
 			} catch (Exception ex) {
 				success = false;
 				LOGGER.error(logPrefix + "Exception importing the hl7. ", ex);//$NON-NLS-1$
 			}
-			
-			
-			if(		success
-				&&	patient != null
-				&&	contactLink.getXIDDomain() != null 
-				&&	!contactLink.getXIDDomain().isEmpty()) {
-			
-				
-				
+
+			if (success && patient != null && contactLink.getXIDDomain() != null
+					&& !contactLink.getXIDDomain().isEmpty()) {
+
 				String patient_institutionId = null;
-				
-				//if xid_Domain is set, we should extract the institution Patient ID
-				//We look for the Patient Informations and Order informations in the file
+
+				// if xid_Domain is set, we should extract the institution Patient ID
+				// We look for the Patient Informations and Order informations in the file
 				try {
-					BufferedReader lineReader = Files.newBufferedReader(hl7File, DocumentImporter.DEFAULT_HL7_INPUTENCODING);
-					
-					//The informations we are looking for is in the first 4 lines.
-					//We don't need to read more
+					BufferedReader lineReader = Files.newBufferedReader(hl7File,
+							DocumentImporter.DEFAULT_HL7_INPUTENCODING);
+
+					// The informations we are looking for is in the first 4 lines.
+					// We don't need to read more
 					int nbMatches = 0;
-					for(int i=0; 
-									i<4 
-								&&	lineReader.ready()
-								&&	nbMatches < 3
-							;
-						i++
-						){
+					for (int i = 0; i < 4 && lineReader.ready() && nbMatches < 3; i++) {
 						String line = lineReader.readLine();
-						
+
 						Matcher patientMatcher = DocumentImporter.hl7PatientPattern.matcher(line);
-						if (patientMatcher.matches()){
-							nbMatches ++;
+						if (patientMatcher.matches()) {
+							nbMatches++;
 							patient_institutionId = patientMatcher.group("institutionId");//$NON-NLS-1$
 							break;
 						}
 					}
 					lineReader.close();
-					
+
 				} catch (IOException ioe) {
 					LOGGER.error(logPrefix + "Unable to load the hl7 file. ", ioe);//$NON-NLS-1$
 				}
-				
-				if(patient_institutionId != null && !patient_institutionId.isEmpty()) {
+
+				if (patient_institutionId != null && !patient_institutionId.isEmpty()) {
 					try {
-						Xid.localRegisterXIDDomainIfNotExists(contactLink.getXIDDomain(), institution.getLabel(true) , Xid.ASSIGNMENT_LOCAL);
-						String db_patient_institutionId = DocumentImporter.getInstitutionXID(contactLink.getXIDDomain(), patient);
-						if(db_patient_institutionId == null) {
+						Xid.localRegisterXIDDomainIfNotExists(contactLink.getXIDDomain(), institution.getLabel(true),
+								Xid.ASSIGNMENT_LOCAL);
+						String db_patient_institutionId = DocumentImporter.getInstitutionXID(contactLink.getXIDDomain(),
+								patient);
+						if (db_patient_institutionId == null) {
 							new Xid(patient, contactLink.getXIDDomain(), patient_institutionId);
-							LOGGER.info(
-								MessageFormat.format("xid {0} ({2}) successfully saved to Patient {1}", patient_institutionId,
-									patient.getLabel(), institution.getLabel(true))
-							);
-						}
-						else if( db_patient_institutionId.equals(patient_institutionId)) {
-							//If the institution ID we have in the database is not the same as the one we got,
-							//Update the one we got
+							LOGGER.info(MessageFormat.format("xid {0} ({2}) successfully saved to Patient {1}",
+									patient_institutionId, patient.getLabel(), institution.getLabel(true)));
+						} else if (db_patient_institutionId.equals(patient_institutionId)) {
+							// If the institution ID we have in the database is not the same as the one we
+							// got,
+							// Update the one we got
 							DocumentImporter.deleteInstitutionXID(contactLink.getXIDDomain(), patient);
 							new Xid(patient, contactLink.getXIDDomain(), patient_institutionId);
-							LOGGER.info(
-									MessageFormat.format("xid {0} ({2}) from Patient {1} successfully updated (old value {3})", patient_institutionId,
-										patient.getLabel(), institution.getLabel(true), db_patient_institutionId)
-								);
+							LOGGER.info(MessageFormat.format(
+									"xid {0} ({2}) from Patient {1} successfully updated (old value {3})",
+									patient_institutionId, patient.getLabel(), institution.getLabel(true),
+									db_patient_institutionId));
 						}
 					} catch (XIDException e) {
-						LOGGER.error(
-							MessageFormat.format("xid {0} ({2}) has not been saved to Patient {1}", patient_institutionId,
-								patient.getLabel(),institution.getLabel(true)),e);
+						LOGGER.error(MessageFormat.format("xid {0} ({2}) has not been saved to Patient {1}",
+								patient_institutionId, patient.getLabel(), institution.getLabel(true)), e);
 					}
 				}
-				
+
 			}
-			
+
 		}
-		
-		//If there is a PDF File
-		if (	success //It doesn t make sense to import the pdf if the import of the HL7 didn't work
-			&&	pdfFile != null 
-			&&	Files.exists(pdfFile)
-			&&	Files.isRegularFile(pdfFile)
-			) {
-			
-			//Pick the most informations from the PDF Filename
+
+		// If there is a PDF File
+		if (success // It doesn t make sense to import the pdf if the import of the HL7 didn't work
+				&& pdfFile != null && Files.exists(pdfFile) && Files.isRegularFile(pdfFile)) {
+
+			// Pick the most informations from the PDF Filename
 			String samplingDateTime = "";
 			String transmissionDateTime = "";
 			String patientId = "";
@@ -272,129 +246,114 @@ public class DocumentImporter {
 			String patientFirstName = "";
 			String patientBirthDate = "";
 			String orderNr = "";
-			
+
 			Matcher filenameMatcher = documentFilenamePattern.matcher(getBaseName(pdfFile));
-			
-			if(filenameMatcher.matches()){
+
+			if (filenameMatcher.matches()) {
 				samplingDateTime = filenameMatcher.group("samplingDateTime");
 				transmissionDateTime = filenameMatcher.group("transactionDateTime");
 				patientId = filenameMatcher.group("PatientId");
 				patientLastName = filenameMatcher.group("PatientLastName");
 				patientBirthDate = filenameMatcher.group("PatientBirthdate");
 				orderNr = filenameMatcher.group("orderNr");
-			}
-			else {
-				LOGGER.warn("The PDF filename has not the expected Pattern and cannot be imported into omnivore:"+pdfFile);
+			} else {
+				LOGGER.warn("The PDF filename has not the expected Pattern and cannot be imported into omnivore:"
+						+ pdfFile);
 				return success;
 			}
-			
-			//If there is no hl7 File we first should search for the Patient
-			if(patient == null){
-				//Search the Patient
-				patient = DocumentImporter.getPatient(patientId, patientLastName, patientFirstName ,patientBirthDate, "", askUser);
+
+			// If there is no hl7 File we first should search for the Patient
+			if (patient == null) {
+				// Search the Patient
+				patient = DocumentImporter.getPatient(patientId, patientLastName, patientFirstName, patientBirthDate,
+						"", askUser);
 			}
-			
-			//If we found a patient we can add the PDF
-			if(patient != null){
-			
-				//Initialize a DocumentManager
-				PatientDocumentManager documentManager = new PatientDocumentManager(patient);	
-				
+
+			// If we found a patient we can add the PDF
+			if (patient != null) {
+
+				// Initialize a DocumentManager
+				PatientDocumentManager documentManager = new PatientDocumentManager(patient);
+
 				if (documentManager != null) {
-					//Save the PDF file into Omnivore
-					
-					
+					// Save the PDF file into Omnivore
+
 					Date samplingDateTimeObj = null;
-					if(samplingDateTime != null && !samplingDateTime.isEmpty()) {
-						try{
+					if (samplingDateTime != null && !samplingDateTime.isEmpty()) {
+						try {
 							samplingDateTimeObj = DocumentImporter.documentDateTimeParser.parse(samplingDateTime);
-						}
-						catch(ParseException pe1){
-							//If we are not able to parse a DateTime, maybe it is only a Date
+						} catch (ParseException pe1) {
+							// If we are not able to parse a DateTime, maybe it is only a Date
 							try {
 								samplingDateTimeObj = DocumentImporter.documentDateParser.parse(samplingDateTime);
-							}
-							catch(ParseException pe2) {
-								LOGGER.warn("process Unable to parse samplingDateTime:"+samplingDateTime, pe2);
+							} catch (ParseException pe2) {
+								LOGGER.warn("process Unable to parse samplingDateTime:" + samplingDateTime, pe2);
 							}
 						}
 					}
-					
+
 					Date transmissionDateTimeObj = null;
-					if(transmissionDateTime != null && !transmissionDateTime.isEmpty()) {
-						try{
-							transmissionDateTimeObj = DocumentImporter.documentDateTimeParser.parse(transmissionDateTime);
-						}
-						catch(ParseException pe1){
-							//If we are not able to parse a DateTime, maybe it is only a Date
+					if (transmissionDateTime != null && !transmissionDateTime.isEmpty()) {
+						try {
+							transmissionDateTimeObj = DocumentImporter.documentDateTimeParser
+									.parse(transmissionDateTime);
+						} catch (ParseException pe1) {
+							// If we are not able to parse a DateTime, maybe it is only a Date
 							try {
-								transmissionDateTimeObj = DocumentImporter.documentDateParser.parse(transmissionDateTime);
-							}
-							catch(ParseException pe2) {
-								LOGGER.warn("process Unable to parse transmissionDateTime:"+transmissionDateTime, pe2);
+								transmissionDateTimeObj = DocumentImporter.documentDateParser
+										.parse(transmissionDateTime);
+							} catch (ParseException pe2) {
+								LOGGER.warn("process Unable to parse transmissionDateTime:" + transmissionDateTime,
+										pe2);
 							}
 						}
 					}
-					
-					if(transmissionDateTimeObj != null) {
+
+					if (transmissionDateTimeObj != null) {
 
 						String keywords = orderNr;
-						
-						documentManager.addDocument(
-								contactLink,
-								institution,
-								orderNr,
-								pdfFile,
-								samplingDateTimeObj,
-								transmissionDateTimeObj,
-								keywords
-								);
-						
+
+						documentManager.addDocument(contactLink, institution, orderNr, pdfFile, samplingDateTimeObj,
+								transmissionDateTimeObj, keywords);
+
 						success = true;
-						
-					}
-					else {
-						LOGGER.warn("No valid transmissionDateTime found in the filename:"+pdfFile+" the file will not be imported in Omnivore");
+
+					} else {
+						LOGGER.warn("No valid transmissionDateTime found in the filename:" + pdfFile
+								+ " the file will not be imported in Omnivore");
 						return success;
 					}
 				}
-			}
-			else {
+			} else {
 				success = false;
 			}
 		}
-		
+
 		return success;
 	}
-	
+
 	/**
 	 * Import a Form
-	 * @param pdfFile the pdf to import
+	 *
+	 * @param pdfFile  the pdf to import
 	 * @param category the category were the Form will be saved
-	 * @param askUser
-	 *            true (default), if the patient cannot been identified, show a dialog to select the patient
-	 * 
+	 * @param askUser  true (default), if the patient cannot been identified, show a
+	 *                 dialog to select the patient
+	 *
 	 * @return true if the import was successful
 	 * @throws IOException
 	 */
-	public static boolean processForm(
-			Path pdfFile,
-			boolean askUser
-		) throws IOException{
+	public static boolean processForm(Path pdfFile, boolean askUser) throws IOException {
 		String logPrefix = "processForm() - ";//$NON-NLS-1$
-		
+
 		boolean success = false;
 		Patient patient = null;
-		
-		
-		//If there is a PDF File
-		if (	pdfFile != null 
-			&&	Files.exists(pdfFile)
-			&&	Files.isRegularFile(pdfFile)
-			) {
-			LOGGER.info(logPrefix+"import form -- PDF: "+pdfFile.toString());//$NON-NLS-1$
-			
-			//Pick the most informations from the PDF Filename
+
+		// If there is a PDF File
+		if (pdfFile != null && Files.exists(pdfFile) && Files.isRegularFile(pdfFile)) {
+			LOGGER.info(logPrefix + "import form -- PDF: " + pdfFile.toString());//$NON-NLS-1$
+
+			// Pick the most informations from the PDF Filename
 			String documentDateTime = "";
 			String patientId = "";
 			String patientLastName = "";
@@ -406,11 +365,11 @@ public class DocumentImporter {
 			String formularId = "";
 			String formularName = "";
 			ContactLinkRecord contactLink = null;
-			
-			//If it is not a document, maybe it is a form
+
+			// If it is not a document, maybe it is a form
 			Matcher filenameMatcher = formFilenamePattern.matcher(getBaseName(pdfFile));
-				
-			if(filenameMatcher.matches()){
+
+			if (filenameMatcher.matches()) {
 				documentDateTime = filenameMatcher.group("transactionDateTime");
 				patientId = filenameMatcher.group("PatientId");
 				patientLastName = filenameMatcher.group("PatientLastName");
@@ -419,298 +378,254 @@ public class DocumentImporter {
 				orderNr = filenameMatcher.group("orderNr");
 				institutionId = filenameMatcher.group("institutionId");
 				formularId = filenameMatcher.group("formId");
-				
-				//Try to get the formularName and the institutionName from the configuration
-				Map<String, Map<String, MedNetConfigFormItem>> configFormItems = MedNet.getSettings().getConfigFormItems();
-				if(		configFormItems.containsKey(institutionId)
-					&&	configFormItems.get(institutionId).containsKey(formularId)
-						) {
+
+				// Try to get the formularName and the institutionName from the configuration
+				Map<String, Map<String, MedNetConfigFormItem>> configFormItems = MedNet.getSettings()
+						.getConfigFormItems();
+				if (configFormItems.containsKey(institutionId)
+						&& configFormItems.get(institutionId).containsKey(formularId)) {
 					MedNetConfigFormItem item = configFormItems.get(institutionId).get(formularId);
 					formularName = item.getFormName();
 					institutionName = item.getInstitutionName();
 				}
-				
-				//Try to get the contactLink database entry for this institution
+
+				// Try to get the contactLink database entry for this institution
 				List<ContactLinkRecord> contactLinkList = ContactLinkRecord.getContactLinkRecord(null, institutionId);
-				if(contactLinkList != null && contactLinkList.size() > 0) {
+				if (contactLinkList != null && contactLinkList.size() > 0) {
 					contactLink = contactLinkList.get(0);
 
-					//Check if the contactLink formImport is active, if not don't import the form in Omnivore
-					if(contactLink != null && !contactLink.formImport_isActive()) {
-						LOGGER.info(logPrefix+"import ignored for " +institutionName);//$NON-NLS-1$
+					// Check if the contactLink formImport is active, if not don't import the form
+					// in Omnivore
+					if (contactLink != null && !contactLink.formImport_isActive()) {
+						LOGGER.info(logPrefix + "import ignored for " + institutionName);//$NON-NLS-1$
 						return true;
 					}
-					
+
 				}
-				
+
 			}
-			
-			//search for the Patient
-			patient = DocumentImporter.getPatient(patientId, patientLastName, patientFirstName ,patientBirthDate, "", askUser);
-			
-			//If we found a patient we can add the PDF
-			if(patient != null){
-			
-				//Initialize a DocumentManager
-				PatientDocumentManager documentManager = new PatientDocumentManager(patient);	
-				
+
+			// search for the Patient
+			patient = DocumentImporter.getPatient(patientId, patientLastName, patientFirstName, patientBirthDate, "",
+					askUser);
+
+			// If we found a patient we can add the PDF
+			if (patient != null) {
+
+				// Initialize a DocumentManager
+				PatientDocumentManager documentManager = new PatientDocumentManager(patient);
+
 				if (documentManager != null) {
-					//Save the PDF file into Omnivore
-					
+					// Save the PDF file into Omnivore
+
 					Date documentDateTimeObj = new Date();
-					try{
+					try {
 						documentDateTimeObj = DocumentImporter.documentDateTimeParser.parse(documentDateTime);
+					} catch (ParseException pe) {
+						LOGGER.warn(logPrefix + "Unable to parse documentDateTime:" + documentDateTime, pe);//$NON-NLS-1$
 					}
-					catch(ParseException pe){
-						LOGGER.warn(logPrefix + "Unable to parse documentDateTime:"+documentDateTime, pe);//$NON-NLS-1$
-					}
-					
+
 					String keywords = orderNr;
-					
-					documentManager.addForm(
-							contactLink,
-							institutionName,
-							formularName,
-							orderNr,
-							pdfFile,
-							documentDateTimeObj,
-							keywords
-							);
-					
+
+					documentManager.addForm(contactLink, institutionName, formularName, orderNr, pdfFile,
+							documentDateTimeObj, keywords);
+
 					success = true;
 				}
 			}
+		} else if (pdfFile != null) {
+			LOGGER.error(logPrefix + "following file is not valid: " + pdfFile.toString());//$NON-NLS-1$
+		} else {
+			LOGGER.error(logPrefix + "the file is null");//$NON-NLS-1$
 		}
-		else if(pdfFile != null){
-			LOGGER.error(logPrefix+"following file is not valid: "+pdfFile.toString());//$NON-NLS-1$
-		}
-		else {
-			LOGGER.error(logPrefix+"the file is null");//$NON-NLS-1$
-		}
-		
+
 		return success;
 	}
-	
+
 	/**
-	 * 
-	 * Try to get a patient using the given informations.
-	 * First with the id, if the id is empty or it has not been found, try using the other parameters
-	 * If no patient has been found, the user will be asked for delivering the patient
+	 *
+	 * Try to get a patient using the given informations. First with the id, if the
+	 * id is empty or it has not been found, try using the other parameters If no
+	 * patient has been found, the user will be asked for delivering the patient
+	 *
 	 * @param id
 	 * @param lastname
 	 * @param firstname
 	 * @param birthdate
 	 * @param sex
-	 * @param askUser
-	 *            true (default), if the user interface will be shown to select the patient
+	 * @param askUser   true (default), if the user interface will be shown to
+	 *                  select the patient
 	 * @return the Patient or null
 	 */
-	private static Patient getPatient(
-			String id,
-			String lastname,
-			String firstname,
-			String birthdate,
-			String sex,
-			boolean askUser){
+	private static Patient getPatient(String id, String lastname, String firstname, String birthdate, String sex,
+			boolean askUser) {
 		String logPrefix = "getPatient() - ";//$NON-NLS-1$
-		
+
 		Patient patient = null;
-		
-		//First of all try to find the patient with the id
-		//Try using the id
-		if (id != null && !id.isEmpty()){
+
+		// First of all try to find the patient with the id
+		// Try using the id
+		if (id != null && !id.isEmpty()) {
 			patient = DocumentImporter.getPatientFromDB(id);
 		}
 
-		//If we still didn't find the patient
-		//Search for it using the lastname, firstname, birthdate and sex
-		if (	patient == null){
-			//Try to find the patient using all the parameters
-			if (	lastname != null
-				&&	!lastname.isEmpty()
-				&&	firstname != null
-				&&	!firstname.isEmpty()
-				&&	birthdate != null
-				&&	!birthdate.isEmpty()
-					) {
+		// If we still didn't find the patient
+		// Search for it using the lastname, firstname, birthdate and sex
+		if (patient == null) {
+			// Try to find the patient using all the parameters
+			if (lastname != null && !lastname.isEmpty() && firstname != null && !firstname.isEmpty()
+					&& birthdate != null && !birthdate.isEmpty()) {
 				patient = DocumentImporter.getPatientFromDB(lastname, firstname, birthdate, sex);
 				if (patient != null) {
-					LOGGER.debug(logPrefix+"Patient found in the database. "+patient.getLabel());//$NON-NLS-1$
+					LOGGER.debug(logPrefix + "Patient found in the database. " + patient.getLabel());//$NON-NLS-1$
 				}
 			}
-			
+
 			// If the patient has not been found
 			// Ask the user
 			if (patient == null) {
 				if (askUser)
 					patient = DocumentImporter.patientSelectorDialog(lastname, firstname, birthdate, sex);
 				if (patient != null) {
-					LOGGER.debug(logPrefix+"Patient identified by the user. "+patient.getLabel());//$NON-NLS-1$
+					LOGGER.debug(logPrefix + "Patient identified by the user. " + patient.getLabel());//$NON-NLS-1$
 				} else {
-					LOGGER.warn(logPrefix+"Patient identification aborded by the user. ");//$NON-NLS-1$
+					LOGGER.warn(logPrefix + "Patient identification aborded by the user. ");//$NON-NLS-1$
 				}
 			}
 		}
-		
+
 		return patient;
 	}
-	
-	
+
 	/**
-	 * Open a Kontakt selector window in order to allow the user choosing the Patient
+	 * Open a Kontakt selector window in order to allow the user choosing the
+	 * Patient
+	 *
 	 * @param lastname,
 	 * @param firstname,
 	 * @param birthdate,
 	 * @param sex
 	 * @return the selected Patient or null if the user canceled the dialog
 	 */
-	private static Patient patientSelectorDialog(
-			String lastname,
-			String firstname,
-			String birthdate,
-			String sex){
+	private static Patient patientSelectorDialog(String lastname, String firstname, String birthdate, String sex) {
 		String logPrefix = "patientSelectorDialog() - ";//$NON-NLS-1$
 		Patient retVal = null;
-		
+
 		String birthdateString = birthdate;
 		try {
-			birthdateString = birthdateHumanReadableFormatter.format(
-					DocumentImporter.birthdateParser.parse(birthdate)
-					);
+			birthdateString = birthdateHumanReadableFormatter.format(DocumentImporter.birthdateParser.parse(birthdate));
 		} catch (ParseException e) {
-			LOGGER.error(logPrefix+"Unable to parse birthdate "+birthdate);//$NON-NLS-1$
+			LOGGER.error(logPrefix + "Unable to parse birthdate " + birthdate);//$NON-NLS-1$
 		}
-		
-		retVal =
-			(Patient) KontaktSelektor.showInSync(Patient.class,
-				MedNetMessages.DocumentImporter_SelectPatient,
-				MessageFormat.format(
-						MedNetMessages.DocumentImporter_WhoIs,
-						lastname,
-						firstname, 
-						birthdateString,
-						sex));
+
+		retVal = (Patient) KontaktSelektor.showInSync(Patient.class, MedNetMessages.DocumentImporter_SelectPatient,
+				MessageFormat.format(MedNetMessages.DocumentImporter_WhoIs, lastname, firstname, birthdateString, sex));
 		return retVal;
 	}
-	
-	
+
 	/**
-	 * Get the Patients with the patId given as parameter
-	 * It should not be possible to get multiple patients
-	 * @param patId
-	 *            Patienten-ID
+	 * Get the Patients with the patId given as parameter It should not be possible
+	 * to get multiple patients
+	 *
+	 * @param patId Patienten-ID
 	 * @return List der gefundenen Patienten
 	 */
-	private static Patient getPatientFromDB(final String patId){
+	private static Patient getPatientFromDB(final String patId) {
 		String logPrefix = "getPatientFromDB() - ";//$NON-NLS-1$
 		Query<Patient> patientQuery = new Query<Patient>(Patient.class);
 		patientQuery.add(Patient.FLD_PATID, Query.EQUALS, patId);
-		
-		List<Patient> result = patientQuery.execute(); 
-		if(result.size() == 1){
+
+		List<Patient> result = patientQuery.execute();
+		if (result.size() == 1) {
 			return result.get(0);
-		}
-		else if(result.size() >= 1){
-			//If the get more than one Patient, we should log it
-			LOGGER.error(logPrefix+"Multiple patients found with the id :" +patId);//$NON-NLS-1$
+		} else if (result.size() >= 1) {
+			// If the get more than one Patient, we should log it
+			LOGGER.error(logPrefix + "Multiple patients found with the id :" + patId);//$NON-NLS-1$
 			return null;
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
 
 	/**
 	 * Try to find a patient in the database with the following parameters
+	 *
 	 * @param firstname
 	 * @param lastname
 	 * @param birthdate
 	 * @param sex
-	 * @return the patient found or null if no patient or multiple patients has been found
+	 * @return the patient found or null if no patient or multiple patients has been
+	 *         found
 	 */
-	public static Patient getPatientFromDB(
-			final String lastname,
-			final String firstname,
-			final String birthdate,
-			final String sex
-		){
-		
+	public static Patient getPatientFromDB(final String lastname, final String firstname, final String birthdate,
+			final String sex) {
+
 		Query<Patient> patientQuery = new Query<Patient>(Patient.class);
-		if(lastname != null && !lastname.isEmpty()){
+		if (lastname != null && !lastname.isEmpty()) {
 			patientQuery.add(Patient.FLD_NAME, Query.EQUALS, lastname);
 		}
-		if(firstname != null && !firstname.isEmpty()){
+		if (firstname != null && !firstname.isEmpty()) {
 			patientQuery.add(Patient.FLD_FIRSTNAME, Query.EQUALS, firstname);
 		}
-		if(birthdate != null && !birthdate.isEmpty()){
+		if (birthdate != null && !birthdate.isEmpty()) {
 			patientQuery.add(Patient.FLD_DOB, Query.EQUALS, birthdate);
 		}
-		if(sex != null && !sex.isEmpty()){
+		if (sex != null && !sex.isEmpty()) {
 			String sexParam = sex.toLowerCase();
 			if ("f".equals(sexParam))
 				sexParam = "w";
 			patientQuery.add(Patient.FLD_SEX, Query.EQUALS, sexParam);
 		}
-		
+
 		List<Patient> result = patientQuery.execute();
-		if(result.size() == 1){
+		if (result.size() == 1) {
 			return result.get(0);
-		}
-		else if(result.size() >= 1){
-			//If the get more than one Patient, we should log it
-			LOGGER.error(
-					"getPatientFromDB() " +
-					"Multiple patients found for :" 
-						+lastname+" "
-						+firstname+" "
-						+birthdate+" "
-						+sex
-			);
+		} else if (result.size() >= 1) {
+			// If the get more than one Patient, we should log it
+			LOGGER.error("getPatientFromDB() " + "Multiple patients found for :" + lastname + " " + firstname + " "
+					+ birthdate + " " + sex);
+			return null;
+		} else {
 			return null;
 		}
-		else {
-			return null;
-		}
-		
+
 	}
-	
-	
+
 	/**
 	 * Returns the BaseName of a Path Object
+	 *
 	 * @param file
 	 * @return
 	 */
-	public static String getBaseName(Path file){
-		
+	public static String getBaseName(Path file) {
+
 		int pos = file.getFileName().toString().lastIndexOf(".");
 		if (pos > 0) {
-		    return file.getFileName().toString().substring(0, pos);
-		}
-		else {
+			return file.getFileName().toString().substring(0, pos);
+		} else {
 			return file.getFileName().toString();
 		}
 	}
-	
+
 	/**
 	 * Returns the Extension of a Path Object
+	 *
 	 * @param file
 	 * @return
 	 */
-	public static String getExtension(Path file){
-		
+	public static String getExtension(Path file) {
+
 		int pos = file.getFileName().toString().lastIndexOf(".");
 		if (pos > 1) {
-		    return file.getFileName().toString().substring(pos+1);
-		}
-		else {
+			return file.getFileName().toString().substring(pos + 1);
+		} else {
 			return file.getFileName().toString();
 		}
-		
-	}
-	
 
-	public static String getInstitutionXID(String xidDomain, Patient patient){
-		
+	}
+
+	public static String getInstitutionXID(String xidDomain, Patient patient) {
+
 		Query<Xid> patientInstitutionXIDQuery = new Query<Xid>(Xid.class);
 		patientInstitutionXIDQuery.add(Xid.FLD_OBJECT, Query.EQUALS, patient.getId());
 		patientInstitutionXIDQuery.add(Xid.FLD_DOMAIN, Query.EQUALS, xidDomain);
@@ -720,23 +635,22 @@ public class DocumentImporter {
 		} else {
 			return ((Xid) patienten.get(0)).getDomainId();
 		}
-		
+
 	}
-	
-	public static void deleteInstitutionXID(String xidDomain, Patient patient){
-		
+
+	public static void deleteInstitutionXID(String xidDomain, Patient patient) {
+
 		Query<Xid> patientInstitutionXIDQuery = new Query<Xid>(Xid.class);
 		patientInstitutionXIDQuery.add(Xid.FLD_OBJECT, Query.EQUALS, patient.getId());
 		patientInstitutionXIDQuery.add(Xid.FLD_DOMAIN, Query.EQUALS, xidDomain);
 		List<Xid> patientenXids = patientInstitutionXIDQuery.execute();
 		if (patientenXids.isEmpty()) {
-			return ;
+			return;
 		} else {
 			for (Xid xid : patientenXids) {
 				xid.delete();
 			}
-		}		
+		}
 	}
-	
-	
+
 }

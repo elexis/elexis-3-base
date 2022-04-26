@@ -14,19 +14,19 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class AddLabInboxElement implements Runnable {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(AddLabInboxElement.class);
 
 	private static final int MAX_WAIT = 40;
 
 	private ILabResult labResult;
-	
-	public AddLabInboxElement(ILabResult labResult){
+
+	public AddLabInboxElement(ILabResult labResult) {
 		this.labResult = labResult;
 	}
 
 	@Override
-	public void run(){
+	public void run() {
 		// we have to wait for the fields to be set
 		if (labResult.getPatient() == null) {
 			int waitForFields = 0;
@@ -42,17 +42,16 @@ public class AddLabInboxElement implements Runnable {
 				}
 			}
 			if (waitForFields == MAX_WAIT) {
-				logger
-					.warn(String.format("Could not get data from result [%s].", labResult.getId()));
+				logger.warn(String.format("Could not get data from result [%s].", labResult.getId()));
 				return;
 			}
 		}
-		
+
 		IPatient patient = labResult.getPatient();
 		IContact doctor = labResult.getPatient().getFamilyDoctor();
 		IMandator assignedMandant = loadAssignedMandant(true);
-		
-		// patient has NO stammarzt 
+
+		// patient has NO stammarzt
 		if (doctor == null) {
 			if (assignedMandant == null) {
 				// if stammarzt and assigned contact is null use active mandant
@@ -61,37 +60,35 @@ public class AddLabInboxElement implements Runnable {
 		} else if (doctor.isMandator()) {
 			// stammarzt is defined
 			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
-				+ patient.getLabel() + " for mandant " + doctor.getLabel());
-			ServiceComponent.get().createInboxElement(patient,
-				ServiceComponent.load(doctor.getId(), IMandator.class),
-				labResult);
+					+ patient.getLabel() + " for mandant " + doctor.getLabel());
+			ServiceComponent.get().createInboxElement(patient, ServiceComponent.load(doctor.getId(), IMandator.class),
+					labResult);
 		}
-		
+
 		// an assigned contact was found that is different than the stammarzt
 		if (assignedMandant != null && !assignedMandant.equals(doctor)) {
 			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
-				+ patient.getLabel() + " for mandant " + assignedMandant.getLabel());
+					+ patient.getLabel() + " for mandant " + assignedMandant.getLabel());
 			ServiceComponent.get().createInboxElement(patient, assignedMandant, labResult);
 		}
 	}
-	
-	private IMandator loadAssignedMandant(boolean retry){
+
+	private IMandator loadAssignedMandant(boolean retry) {
 		List<ILabOrder> orders = ServiceComponent.getLabOrders(labResult);
-		
+
 		if (orders != null && !orders.isEmpty()) {
 			if (orders.get(0).getMandator() != null) {
 				return orders.get(0).getMandator();
 			}
 		}
-		
-		// sometimes the mandant is persisted delayed from another thread - we have to try again to fetch the mandant id
-		if (retry)
-		{
+
+		// sometimes the mandant is persisted delayed from another thread - we have to
+		// try again to fetch the mandant id
+		if (retry) {
 			try {
 				Thread.sleep(1500);
 				return loadAssignedMandant(false);
-			}
-			 catch (InterruptedException e) {
+			} catch (InterruptedException e) {
 				/* ignore */
 			}
 		}

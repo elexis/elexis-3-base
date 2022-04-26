@@ -18,29 +18,25 @@ import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.INamedQuery;
 
 @Component
-public class PrivatRechnungCodeElementServiceContribution
-		implements ICodeElementServiceContribution {
-	
-	@Reference(target = "(" + IModelService.SERVICEMODELNAME
-		+ "=ch.berchtold.emanuel.privatrechnung.model)")
+public class PrivatRechnungCodeElementServiceContribution implements ICodeElementServiceContribution {
+
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.berchtold.emanuel.privatrechnung.model)")
 	private IModelService modelService;
-	
+
 	@Override
-	public String getSystem(){
+	public String getSystem() {
 		return "Privattarif";
 	}
-	
+
 	@Override
-	public CodeElementTyp getTyp(){
+	public CodeElementTyp getTyp() {
 		return CodeElementTyp.SERVICE;
 	}
-	
+
 	@Override
-	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context){
-		INamedQuery<IPrivatLeistung> codeQuery =
-			modelService.getNamedQuery(IPrivatLeistung.class, "code");
-		List<IPrivatLeistung> codes =
-			codeQuery.executeWithParameters(codeQuery.getParameterMap("code", code));
+	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
+		INamedQuery<IPrivatLeistung> codeQuery = modelService.getNamedQuery(IPrivatLeistung.class, "code");
+		List<IPrivatLeistung> codes = codeQuery.executeWithParameters(codeQuery.getParameterMap("code", code));
 		if (codes != null && !codes.isEmpty()) {
 			LocalDate date = getDate(context);
 			for (IPrivatLeistung iLaborLeistung : codes) {
@@ -51,8 +47,8 @@ public class PrivatRechnungCodeElementServiceContribution
 		}
 		return Optional.empty();
 	}
-	
-	private LocalDate getDate(Map<Object, Object> context){
+
+	private LocalDate getDate(Map<Object, Object> context) {
 		Object date = context.get(ContextKeys.DATE);
 		if (date instanceof LocalDate) {
 			return (LocalDate) date;
@@ -64,11 +60,10 @@ public class PrivatRechnungCodeElementServiceContribution
 		return LocalDate.now();
 	}
 
-	
 	@Override
-	public List<ICodeElement> getElements(Map<Object, Object> context){
+	public List<ICodeElement> getElements(Map<Object, Object> context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

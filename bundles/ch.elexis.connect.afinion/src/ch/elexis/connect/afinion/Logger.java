@@ -10,24 +10,24 @@ import ch.rgw.tools.TimeTool;
 
 public class Logger {
 	PrintStream _log;
-	
-	public Logger(){
+
+	public Logger() {
 		_log = System.out;
 	}
-	
-	public Logger(String filename) throws FileNotFoundException{
+
+	public Logger(String filename) throws FileNotFoundException {
 		_log = new PrintStream(new FileOutputStream(filename, true));
 	}
-	
-	public Logger(boolean enable){
+
+	public Logger(boolean enable) {
 		if (enable) {
 			_log = System.out;
 		} else {
 			_log = new PrintStream(new DummyPrintStream());
 		}
 	}
-	
-	private String replaceBinaryChar(String s){
+
+	private String replaceBinaryChar(String s) {
 		String debug = s.replace("<", "<LT>").replace(">", "<GT>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		debug = debug.replace("\000", "<NUL>"); //$NON-NLS-1$ //$NON-NLS-2$
 		debug = debug.replace("\001", "<SOH>"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -67,36 +67,37 @@ public class Logger {
 		debug = debug.replace("\"", "<QUOTE>"); //$NON-NLS-1$ //$NON-NLS-2$
 		return debug;
 	}
-	
-	public void logRX(String s){
+
+	public void logRX(String s) {
 		_log.println("<-- \"" + s + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	// public void logTX(String s)
 	// {
 	//
-	//		_log.println("--> \"" + replaceBinaryChar(s) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+	// _log.println("--> \"" + replaceBinaryChar(s) + "\""); //$NON-NLS-1$
+	// //$NON-NLS-2$
 	// }
-	
-	public void logRaw(String s){
+
+	public void logRaw(String s) {
 		_log.println(s);
 	}
-	
-	public void log(String s){
+
+	public void log(String s) {
 		_log.println("-*- \"" + replaceBinaryChar(s) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
-	public void logStart(){
+
+	public void logStart() {
 		_log.println("-S- \"" + new TimeTool().toDBString(true) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
-	public void logEnd(){
+
+	public void logEnd() {
 		_log.println("-E- \"" + new TimeTool().toDBString(true) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	class DummyPrintStream extends OutputStream {
 		@Override
-		public void write(int b) throws IOException{
+		public void write(int b) throws IOException {
 			// Do nothing
 		}
 	}

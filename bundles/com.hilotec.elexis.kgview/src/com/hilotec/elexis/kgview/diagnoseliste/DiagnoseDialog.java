@@ -23,29 +23,28 @@ public class DiagnoseDialog extends TitleAreaDialog {
 	private Text text;
 	private boolean showDate;
 	private boolean showICPC;
-	
-	public DiagnoseDialog(Shell parentShell, DiagnoselisteItem di, boolean showDate,
-		boolean showICPC){
+
+	public DiagnoseDialog(Shell parentShell, DiagnoselisteItem di, boolean showDate, boolean showICPC) {
 		super(parentShell);
 		this.di = di;
 		this.showDate = showDate;
 		this.showICPC = showICPC;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		setTitle("Eintrag bearbeiten");
-		
+
 		Composite comp = new Composite(parent, 0);
 		comp.setLayout(new GridLayout(2, false));
 		comp.setLayoutData(SWTHelper.getFillGridData());
-		
+
 		Label lblText = new Label(comp, 0);
 		lblText.setText("Text");
 		text = SWTHelper.createText(comp, 5, SWT.MULTI);
 		text.setText(di.getText());
 		text.setLayoutData(SWTHelper.getFillGridData());
-		
+
 		if (showDate) {
 			Label lblDate = new Label(comp, 0);
 			lblDate.setText("Datum");
@@ -53,11 +52,11 @@ public class DiagnoseDialog extends TitleAreaDialog {
 			TimeTool tt = new TimeTool(di.getDatum());
 			date.setDate(tt.getTime());
 		}
-		
+
 		if (showICPC) {
 			Label lblICPC = new Label(comp, 0);
 			lblICPC.setText("ICPC");
-			
+
 			Label icpc = new Label(comp, 0);
 			String code = di.getICPC();
 			if (!StringTool.isNothing(code)) {
@@ -67,12 +66,12 @@ public class DiagnoseDialog extends TitleAreaDialog {
 				}
 			}
 		}
-		
+
 		return comp;
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		di.setText(text.getText());
 		if (showDate) {
 			di.setDatum(new TimeTool(date.getDate().getTime()).toString(TimeTool.DATE_GER));

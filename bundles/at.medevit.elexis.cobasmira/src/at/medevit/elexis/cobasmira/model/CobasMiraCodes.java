@@ -2,11 +2,11 @@ package at.medevit.elexis.cobasmira.model;
 
 public class CobasMiraCodes {
 	/**
-	 * 
+	 *
 	 * @param rt
 	 * @return Result Type String
 	 */
-	public static String getResultTypeString(char rt){
+	public static String getResultTypeString(char rt) {
 		switch (rt) {
 		case 'O':
 			return "original result";
@@ -16,13 +16,13 @@ public class CobasMiraCodes {
 			return "unknown";
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param flag
 	 * @return Flag Type String
 	 */
-	public static String getFlagString(char flag){
+	public static String getFlagString(char flag) {
 		switch (flag) {
 		case 'N':
 			return "no flag";
@@ -44,11 +44,11 @@ public class CobasMiraCodes {
 			return "unknown";
 		}
 	}
-	
+
 	/**
 	 * @return Beschreibung des angegebenen Arbeitslisten-Typus
 	 */
-	public static String getWorklistTypeString(char worklistType){
+	public static String getWorklistTypeString(char worklistType) {
 		switch (worklistType) {
 		case 'R':
 			return "routine";
@@ -60,13 +60,13 @@ public class CobasMiraCodes {
 			return "unknown worklist type";
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param unit
 	 * @return Unit Type String
 	 */
-	public static String getUnitString(int unit){
+	public static String getUnitString(int unit) {
 		switch (unit) {
 		case 2:
 			return "mol/L";
@@ -144,11 +144,11 @@ public class CobasMiraCodes {
 			return "unknown";
 		}
 	}
-	
+
 	/**
 	 * @return Remark Type String
 	 */
-	public static String getRemarkString(int remark){
+	public static String getRemarkString(int remark) {
 		switch (remark) {
 		case 0:
 			return "no remark";
@@ -216,13 +216,13 @@ public class CobasMiraCodes {
 			return "unknown";
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param evmodel
 	 * @return Evalutation Model String
 	 */
-	public static String getEvaluationModelString(int evmodel){
+	public static String getEvaluationModelString(int evmodel) {
 		switch (evmodel) {
 		case 1:
 			return "linear (photometry)";
@@ -246,5 +246,5 @@ public class CobasMiraCodes {
 			return "unknown";
 		}
 	}
-	
+
 }

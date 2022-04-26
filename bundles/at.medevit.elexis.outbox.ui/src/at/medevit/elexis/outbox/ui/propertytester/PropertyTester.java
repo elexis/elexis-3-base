@@ -8,12 +8,12 @@ import org.eclipse.jface.viewers.TreeSelection;
 import at.medevit.elexis.outbox.model.IOutboxElement;
 
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
-	
-	public PropertyTester(){
+
+	public PropertyTester() {
 	}
-	
+
 	@Override
-	public boolean test(Object receiver, String property, Object[] args, Object expectedValue){
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (receiver instanceof TreeSelection) {
 			receiver = ((TreeSelection) receiver).getFirstElement();
 		}
@@ -39,5 +39,5 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 		}
 		return false;
 	}
-	
+
 }

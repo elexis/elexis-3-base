@@ -15,23 +15,23 @@ import ch.elexis.omnivore.model.IDocumentHandle;
 /**
  * Service component for {@link LocalDocumentService} access. <br/>
  * <br/>
- * Component annotation on views leads to startup problems. The reason is that on DS start a display
- * is created in the context of the resolving Thread.
- * 
+ * Component annotation on views leads to startup problems. The reason is that
+ * on DS start a display is created in the context of the resolving Thread.
+ *
  * @author thomas
  *
  */
 @Component(service = {})
 public class LocalDocumentServiceHolder {
 	private static Optional<ILocalDocumentService> localDocumentService;
-	
+
 	@Reference
-	public void bind(ILocalDocumentService service){
+	public void bind(ILocalDocumentService service) {
 		LocalDocumentServiceHolder.localDocumentService = Optional.ofNullable(service);
-		
+
 		service.registerSaveHandler(IDocumentHandle.class, new ISaveHandler() {
 			@Override
-			public boolean save(Object documentSource, ILocalDocumentService service){
+			public boolean save(Object documentSource, ILocalDocumentService service) {
 				IDocumentHandle docHandle = (IDocumentHandle) documentSource;
 				Optional<InputStream> content = service.getContent(docHandle);
 				if (content.isPresent()) {
@@ -49,21 +49,21 @@ public class LocalDocumentServiceHolder {
 				return false;
 			}
 		});
-		
+
 		service.registerLoadHandler(IDocumentHandle.class, new ILoadHandler() {
 			@Override
-			public InputStream load(Object documentSource){
+			public InputStream load(Object documentSource) {
 				IDocumentHandle docHandle = (IDocumentHandle) documentSource;
 				return docHandle.getContent();
 			}
 		});
 	}
-	
-	public void unbind(ILocalDocumentService service){
+
+	public void unbind(ILocalDocumentService service) {
 		LocalDocumentServiceHolder.localDocumentService = Optional.empty();
 	}
-	
-	public static Optional<ILocalDocumentService> getService(){
+
+	public static Optional<ILocalDocumentService> getService() {
 		return localDocumentService;
 	}
 }

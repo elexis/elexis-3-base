@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    D. Lutz - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.laborimport.bioanalytica;
@@ -37,16 +37,16 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * This class provides the groups and codes used by the lab Bioanalytica.
- * 
+ *
  * Important: Each public method must run init() to make sure data is loaded.
- * 
+ *
  * @author Daniel Lutz
  */
 public class Groups implements ILabItemResolver {
-	public static void main(String[] args){
+	public static void main(String[] args) {
 		System.out.println("Groups");
 	}
-	
+
 	/**
 	 * Groups and Code data of Lab Bioanalytica
 	 */
@@ -54,18 +54,18 @@ public class Groups implements ILabItemResolver {
 	private static final String CODES_FILE = "/rsc/codes.dat";
 	private static final String UNKNOWN_PREFIX = "00 Automatisch";
 	private static final String DEFAULT_ORDER = "000";
-	
+
 	private static final String CHARSET_UTF_8 = "UTF-8";
 	private static final String CHARSET = CHARSET_UTF_8;
-	
+
 	private static HashMap<String, Group> groups = null;
 	private static HashMap<String, Code> codes = null;
-	
+
 	static {
 		init();
 	}
-	
-	private static final InputStreamReader getFileAsSreamReader(String path){
+
+	private static final InputStreamReader getFileAsSreamReader(String path) {
 		String basePath = PlatformHelper.getBasePath(Importer.PLUGIN_ID);
 		File file = new File(basePath + path);
 		if (file.exists() && file.isFile()) {
@@ -82,27 +82,27 @@ public class Groups implements ILabItemResolver {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Initialize data
 	 */
-	private static void init(){
+	private static void init() {
 		if (groups == null || codes == null) {
 			loadData();
 		}
 	}
-	
+
 	/**
 	 * Load data from GROUPS_FILE and CODES_FILE
 	 */
-	private static void loadData(){
+	private static void loadData() {
 		groups = new HashMap<String, Group>();
 		codes = new HashMap<String, Code>();
-		
+
 		InputStreamReader isr;
 		BufferedReader in;
 		String line;
-		
+
 		try {
 			isr = getFileAsSreamReader(GROUPS_FILE);
 			if (isr != null) {
@@ -112,7 +112,7 @@ public class Groups implements ILabItemResolver {
 				}
 				in.close();
 			}
-			
+
 			isr = getFileAsSreamReader(CODES_FILE);
 			if (isr != null) {
 				in = new BufferedReader(isr);
@@ -126,8 +126,8 @@ public class Groups implements ILabItemResolver {
 			codes = null;
 		}
 	}
-	
-	private static void parseGroup(String line){
+
+	private static void parseGroup(String line) {
 		if (!isCommentLine(line)) {
 			// pattern: <Key>;<Name>
 			Pattern p = Pattern.compile("^([^;]+);([^;]+)$");
@@ -140,8 +140,8 @@ public class Groups implements ILabItemResolver {
 			}
 		}
 	}
-	
-	private static void parseCode(String line){
+
+	private static void parseCode(String line) {
 		if (!isCommentLine(line)) {
 			// pattern: <Order>;<Code>;<Group Key>[;<Name>]
 			Pattern p = Pattern.compile("^([0-9]+);([^;]+);([^;]+)(;([^;]*))?");
@@ -162,26 +162,26 @@ public class Groups implements ILabItemResolver {
 			}
 		}
 	}
-	
-	private static boolean isCommentLine(String line){
+
+	private static boolean isCommentLine(String line) {
 		if (line.matches("^\\s*#.*$") || line.matches("^\\s*$")) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Get the group's name of a given code
-	 * 
+	 *
 	 * @param code
 	 * @return
 	 */
-	public static String getGroupNameOfCode(String key){
+	public static String getGroupNameOfCode(String key) {
 		String name;
-		
+
 		init();
-		
+
 		Code code = codes.get(key);
 		if (code != null) {
 			Group group = groups.get(code.group.key);
@@ -190,20 +190,19 @@ public class Groups implements ILabItemResolver {
 			String dat = new TimeTool().toString(TimeTool.DATE_GER);
 			name = UNKNOWN_PREFIX;
 		}
-		
+
 		return name;
 	}
-	
+
 	/**
 	 * Get the code's name
-	 * 
-	 * @param key
-	 *            the code
+	 *
+	 * @param key the code
 	 * @return the name of the code
 	 */
-	public static String getCodeName(String key){
+	public static String getCodeName(String key) {
 		init();
-		
+
 		Code code = codes.get(key);
 		if (code != null) {
 			if (!StringTool.isNothing(code.name)) {
@@ -214,43 +213,42 @@ public class Groups implements ILabItemResolver {
 		} else {
 			return key;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Get the code's order number
-	 * 
-	 * @param key
-	 *            the code
+	 *
+	 * @param key the code
 	 * @return the order of the code
 	 */
 	/*
 	 * public static String getCodeOrder(String key) { init();
-	 * 
-	 * Code code = codes.get(key); if (code != null) { if (!StringTool.isNothing(code.order)) {
-	 * return code.order; } else { return DEFAULT_ORDER; } } else { return DEFAULT_ORDER; } }
+	 *
+	 * Code code = codes.get(key); if (code != null) { if
+	 * (!StringTool.isNothing(code.order)) { return code.order; } else { return
+	 * DEFAULT_ORDER; } } else { return DEFAULT_ORDER; } }
 	 */
-	
+
 	/**
-	 * Determine a priority by consulting the existing prios of the group. We don't consider prios
-	 * with string length < 3 (to make things easier). We start at prio 001.
-	 * 
-	 * @param groupName
-	 *            the gorup's name this labitem is part of
-	 * @param labor
-	 *            the labor this labitem is part of
+	 * Determine a priority by consulting the existing prios of the group. We don't
+	 * consider prios with string length < 3 (to make things easier). We start at
+	 * prio 001.
+	 *
+	 * @param groupName the gorup's name this labitem is part of
+	 * @param labor     the labor this labitem is part of
 	 * @return the next free priority
 	 */
-	public static String getCodeOrderByGroupName(String groupName, ILaboratory labor){
+	public static String getCodeOrderByGroupName(String groupName, ILaboratory labor) {
 		String order;
-		
+
 		Query<LabItem> query = new Query<LabItem>(LabItem.class);
 		query.add("Gruppe", "=", groupName);
 		query.add("LaborID", "=", labor.getId());
 		List<LabItem> labItems = query.execute();
 		if (labItems != null) {
 			int lastPrioValue = 0;
-			
+
 			for (LabItem labItem : labItems) {
 				String currentPrio = labItem.getPrio().trim();
 				// only consider prios with length 3
@@ -269,23 +267,23 @@ public class Groups implements ILabItemResolver {
 		} else {
 			order = DEFAULT_ORDER;
 		}
-		
+
 		return order;
 	}
-	
+
 	static class Group {
 		String key;
 		String name;
-		
-		Group(String key, String name){
+
+		Group(String key, String name) {
 			this.key = key;
 			this.name = name;
 		}
 	}
-	
+
 	/**
 	 * Representation of a Bioanlaytica code
-	 * 
+	 *
 	 * @author danlutz
 	 */
 	static class Code {
@@ -296,35 +294,35 @@ public class Groups implements ILabItemResolver {
 		 * The ordering string for this code
 		 */
 		String order;
-		
-		Code(Group group, String key, String name, String order){
+
+		Code(Group group, String key, String name, String order) {
 			this.group = group;
 			this.key = key;
 			this.name = name;
 			this.order = order;
 		}
 	}
-	
+
 	@Override
-	public String getTestGroupName(AbstractData data){
+	public String getTestGroupName(AbstractData data) {
 		if (data instanceof LabResultData) {
 			LabResultData labData = (LabResultData) data;
 			return Groups.getGroupNameOfCode(labData.getCode());
 		}
 		return Groups.getGroupNameOfCode(data.getName() + " " + data.getGroup());
 	}
-	
+
 	@Override
-	public String getTestName(AbstractData data){
+	public String getTestName(AbstractData data) {
 		if (data instanceof LabResultData) {
 			LabResultData labData = (LabResultData) data;
 			return Groups.getCodeName(labData.getCode());
 		}
 		return Groups.getCodeName(data.getName());
 	}
-	
+
 	@Override
-	public String getNextTestGroupSequence(AbstractData data){
+	public String getNextTestGroupSequence(AbstractData data) {
 		ILaboratory labor = LabImportUtilHolder.get().getOrCreateLabor(Importer.MY_LAB);
 		return Groups.getCodeOrderByGroupName(getTestGroupName(data), labor);
 	}

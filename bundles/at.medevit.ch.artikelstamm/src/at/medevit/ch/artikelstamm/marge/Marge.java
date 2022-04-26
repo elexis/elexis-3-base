@@ -4,32 +4,32 @@ public class Marge {
 	public double startInterval;
 	public double endInterval;
 	public double addition;
-	
-	public double getStartInterval(){
+
+	public double getStartInterval() {
 		return startInterval;
 	}
-	
-	public void setStartInterval(double startInterval){
+
+	public void setStartInterval(double startInterval) {
 		this.startInterval = startInterval;
 	}
-	
-	public double getEndInterval(){
+
+	public double getEndInterval() {
 		return endInterval;
 	}
-	
-	public void setEndInterval(double endInterval){
+
+	public void setEndInterval(double endInterval) {
 		this.endInterval = endInterval;
 	}
-	
-	public double getAddition(){
+
+	public double getAddition() {
 		return addition;
 	}
-	
-	public void setAddition(double addition){
+
+	public void setAddition(double addition) {
 		this.addition = addition;
 	}
-	
-	public boolean isValid(){
+
+	public boolean isValid() {
 		boolean valid = true;
 		if (Double.isNaN(startInterval) || startInterval == 0)
 			valid = false;
@@ -39,5 +39,5 @@ public class Marge {
 			valid = false;
 		return valid;
 	}
-	
+
 }

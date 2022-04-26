@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    D. Lutz - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.agenda.preferences;
@@ -22,37 +22,37 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class AgendaAnzeige extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	
+
 	ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.USER);
-	
-	public AgendaAnzeige(){
+
+	public AgendaAnzeige() {
 		super(GRID);
-		
+
 		prefs.setDefault(PreferenceConstants.AG_SHOW_REASON, false);
 		prefs.setDefault(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true);
-		
+
 		setPreferenceStore(prefs);
-		
+
 		setDescription(Messages.AgendaAnzeige_options);
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
-		addField(new BooleanFieldEditor(PreferenceConstants.AG_SHOW_REASON,
-			Messages.AgendaAnzeige_showReason, getFieldEditorParent()));
-		
+	protected void createFieldEditors() {
+		addField(new BooleanFieldEditor(PreferenceConstants.AG_SHOW_REASON, Messages.AgendaAnzeige_showReason,
+				getFieldEditorParent()));
+
 		addField(new BooleanFieldEditor(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH,
-			Messages.AgendaAnzeige_saveColumnSize, getFieldEditorParent()));
+				Messages.AgendaAnzeige_saveColumnSize, getFieldEditorParent()));
 	}
-	
+
 	@Override
-	public boolean performOk(){
+	public boolean performOk() {
 		return super.performOk();
 	}
-	
-	public void init(IWorkbench workbench){
+
+	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

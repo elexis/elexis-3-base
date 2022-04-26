@@ -10,15 +10,14 @@ import org.eclipse.ui.PlatformUI;
 import ch.elexis.agenda.ui.TerminListeView;
 
 public class SortAscendingCommand extends AbstractHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		IViewPart vp =
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IViewPart vp = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.findView(TerminListeView.ID);
 		TerminListeView terminListView = (TerminListeView) vp;
 		terminListView.sort(SWT.UP);
 		return null;
 	}
-	
+
 }

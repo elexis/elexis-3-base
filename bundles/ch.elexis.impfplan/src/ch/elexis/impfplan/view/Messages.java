@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.impfplan.view;
 
@@ -55,6 +55,7 @@ public class Messages extends NLS {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
-	private Messages(){}
+
+	private Messages() {
+	}
 }

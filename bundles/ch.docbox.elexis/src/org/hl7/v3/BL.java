@@ -6,17 +6,18 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * The Boolean type stands for the values of two-valued logic. A Boolean value can be either true or
- * false, or, as any other value may be NULL.
- * 
- * 
+ *
+ * The Boolean type stands for the values of two-valued logic. A Boolean value
+ * can be either true or false, or, as any other value may be NULL.
+ *
+ *
  * <p>
  * Java class for BL complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="BL">
  *   &lt;complexContent>
@@ -26,39 +27,38 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BL")
 public class BL extends ANY {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	@XmlAttribute
 	protected Boolean value;
-	
+
 	/**
 	 * Gets the value of the value property.
-	 * 
+	 *
 	 * @return possible object is {@link Boolean }
-	 * 
+	 *
 	 */
-	public Boolean isValue(){
+	public Boolean isValue() {
 		return value;
 	}
-	
+
 	/**
 	 * Sets the value of the value property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link Boolean }
-	 * 
+	 *
+	 * @param value allowed object is {@link Boolean }
+	 *
 	 */
-	public void setValue(Boolean value){
+	public void setValue(Boolean value) {
 		this.value = value;
 	}
-	
+
 }

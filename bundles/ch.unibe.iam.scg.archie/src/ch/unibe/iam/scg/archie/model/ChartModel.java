@@ -17,9 +17,9 @@ import ch.unibe.iam.scg.archie.utils.ArrayUtils;
  * <p>
  * Represents a model of a chart. Contains information on how to render a chart.
  * </p>
- * 
+ *
  * $Id: ChartModel.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -33,14 +33,14 @@ public class ChartModel {
 
 	/**
 	 * Constant for bar chart types, 2. Bar charts can also be handled as line
-	 * charts as they both are created from a category dataset. There's a switch
-	 * in the bar chart type that can be activated for line charts.
+	 * charts as they both are created from a category dataset. There's a switch in
+	 * the bar chart type that can be activated for line charts.
 	 */
 	public static final int CHART_BAR = 2;
 
 	/**
-	 * This switch can be activated for bar charts which makes them render as
-	 * line charts.
+	 * This switch can be activated for bar charts which makes them render as line
+	 * charts.
 	 */
 	private boolean isLineChart;
 
@@ -58,7 +58,7 @@ public class ChartModel {
 	private boolean isThreeDimensional;
 
 	/**
-	 * 
+	 *
 	 */
 	public ChartModel() {
 		// Initialize with invalid, dummy data
@@ -70,7 +70,7 @@ public class ChartModel {
 
 		this.keysIndex = -1;
 		this.valuesIndex = -1;
-		this.categoryColumnIndex = 0; //defaults to first column
+		this.categoryColumnIndex = 0; // defaults to first column
 		this.chartType = -1;
 
 		this.isLineChart = false;
@@ -89,7 +89,7 @@ public class ChartModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return int chartType
 	 */
 	public int getChartType() {
@@ -104,7 +104,7 @@ public class ChartModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param chartName
 	 */
 	public void setChartName(String chartName) {
@@ -120,9 +120,9 @@ public class ChartModel {
 
 	/**
 	 * Checks whether the chart model has a dataset set.
-	 * 
-	 * @return True if the dataset in this model is other than <code>null</code>
-	 *         , false else.
+	 *
+	 * @return True if the dataset in this model is other than <code>null</code> ,
+	 *         false else.
 	 */
 	public boolean hasDataSet() {
 		return this.dataSet != null;
@@ -192,7 +192,7 @@ public class ChartModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return isThreeDimensional
 	 */
 	public boolean isThreeDimensional() {
@@ -200,7 +200,7 @@ public class ChartModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param isThreeDimensional
 	 */
 	public void setThreeDimensional(boolean isThreeDimensional) {
@@ -208,7 +208,7 @@ public class ChartModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param columnIndex
 	 */
 	public void setCategoryColumnIndex(int columnIndex) {
@@ -216,18 +216,18 @@ public class ChartModel {
 	}
 
 	/**
-	 * Returns the index of the column used for grouping columns for each row in
-	 * a bar chart.
-	 * 
-	 * @return The index of the column used for grouping columns for each row in
-	 *         a bar chart, or -1 if the index was not set yet.
+	 * Returns the index of the column used for grouping columns for each row in a
+	 * bar chart.
+	 *
+	 * @return The index of the column used for grouping columns for each row in a
+	 *         bar chart, or -1 if the index was not set yet.
 	 */
 	public int getCategoryColumnIndex() {
 		return this.categoryColumnIndex;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param isLineChart
 	 */
 	public void setLineChart(boolean isLineChart) {
@@ -235,12 +235,11 @@ public class ChartModel {
 	}
 
 	/**
-	 * Checks whether the chart type is a line chart. Line chart is a
-	 * specialized case of a bar chart, so the chart type in the model also
-	 * needs to be a bar chart.
-	 * 
-	 * @return True if the chart type set in the model is a line chart, false
-	 *         else.
+	 * Checks whether the chart type is a line chart. Line chart is a specialized
+	 * case of a bar chart, so the chart type in the model also needs to be a bar
+	 * chart.
+	 *
+	 * @return True if the chart type set in the model is a line chart, false else.
 	 */
 	public boolean isLineChart() {
 		return this.chartType == ChartModel.CHART_BAR && this.isLineChart;
@@ -251,9 +250,9 @@ public class ChartModel {
 	// ///////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * String representation of this chart model which means string
-	 * representations of all chart model variables.
-	 * 
+	 * String representation of this chart model which means string representations
+	 * of all chart model variables.
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -287,7 +286,7 @@ public class ChartModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private boolean isValidPieChart() {
@@ -296,25 +295,25 @@ public class ChartModel {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private boolean isValidBarChart() {
 		return this.chartName != null && this.dataSet != null && this.chartType == ChartModel.CHART_BAR
-				&& this.categoryColumnIndex >= 0 && this.columns != null && this.columns.length > 0
-				&& this.rows != null && this.rows.length > 0 && !this.isLineChart;
+				&& this.categoryColumnIndex >= 0 && this.columns != null && this.columns.length > 0 && this.rows != null
+				&& this.rows.length > 0 && !this.isLineChart;
 	}
 
 	/**
-	 * Valid line charts have the same definitions as bar charts, as they're
-	 * only a variation of those.
-	 * 
+	 * Valid line charts have the same definitions as bar charts, as they're only a
+	 * variation of those.
+	 *
 	 * @return
 	 */
 	private boolean isValidLineChart() {
 		return this.chartName != null && this.dataSet != null && this.chartType == ChartModel.CHART_BAR
-				&& this.categoryColumnIndex >= 0 && this.columns != null && this.columns.length > 0
-				&& this.rows != null && this.rows.length > 0 && this.isLineChart;
+				&& this.categoryColumnIndex >= 0 && this.columns != null && this.columns.length > 0 && this.rows != null
+				&& this.rows.length > 0 && this.isLineChart;
 	}
 
 	/**

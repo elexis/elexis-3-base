@@ -37,19 +37,19 @@ public class Medication {
 	public String Rmk;
 	public String ValBy;
 	public String ValDt;
-	
+
 	public transient String chunk;
-	
+
 	/**
-	 * Create a complete CHMED16A model from the provided {@link Prescription} of one
-	 * {@link IPatient}.
-	 * 
+	 * Create a complete CHMED16A model from the provided {@link Prescription} of
+	 * one {@link IPatient}.
+	 *
 	 * @param prescriptions
 	 * @param addDesc
 	 * @return
 	 */
 	public static Medication fromPrescriptions(@NonNull IMandator author, @NonNull IPatient patient,
-		@NonNull List<IPrescription> prescriptions, boolean addDesc){
+			@NonNull List<IPrescription> prescriptions, boolean addDesc) {
 		Medication ret = new Medication();
 		ret.MedType = 1;
 		ret.Id = UUID.randomUUID().toString();
@@ -63,14 +63,13 @@ public class Medication {
 			ret.Auth = author.getLabel();
 		}
 		if (!prescriptions.isEmpty()) {
-			ret.Patient =
-				at.medevit.elexis.emediplan.core.model.chmed16a.Patient.fromPatient(patient);
+			ret.Patient = at.medevit.elexis.emediplan.core.model.chmed16a.Patient.fromPatient(patient);
 			ret.Medicaments = Medicament.fromPrescriptions(prescriptions, addDesc);
 		}
 		return ret;
 	}
-	
-	public String getNamedBlobId(){
+
+	public String getNamedBlobId() {
 		if (Id == null) {
 			throw new IllegalStateException("id cannot be null");
 		}

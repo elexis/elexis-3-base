@@ -13,16 +13,16 @@ package at.medevit.elexis.ehc.ui.dialog;
 import org.eclipse.jface.wizard.Wizard;
 
 public class ExportSelectionWizard extends Wizard {
-	
+
 	@Override
-	public void addPages(){
+	public void addPages() {
 		addPage(new ExportWizardSelectionPage());
 		setForcePreviousAndNextButtons(true);
 	}
-	
+
 	@Override
-	public boolean performFinish(){
+	public boolean performFinish() {
 		return false;
 	}
-	
+
 }

@@ -35,9 +35,9 @@ import ch.unibe.iam.scg.archie.ui.ResultPanel;
  * This class contains all methods needed to display the output created by any
  * query.
  * </p>
- * 
+ *
  * $Id: StatisticsView.java 774 2010-01-29 05:47:10Z gerry.weirich $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 774 $
@@ -77,8 +77,7 @@ public class StatisticsView extends ViewPart {
 	}
 
 	/**
-	 * This is a callback that will allow us to create the viewer and initialize
-	 * it.
+	 * This is a callback that will allow us to create the viewer and initialize it.
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
@@ -139,8 +138,8 @@ public class StatisticsView extends ViewPart {
 	}
 
 	/**
-	 * Removes the initial message which is being shown before any statistics
-	 * have been run.
+	 * Removes the initial message which is being shown before any statistics have
+	 * been run.
 	 */
 	public void removeInitializeMessage() {
 		if (this.message != null) {
@@ -157,9 +156,9 @@ public class StatisticsView extends ViewPart {
 	}
 
 	/**
-	 * Returns the container of this view. This composite is used to populate
-	 * the view with other components.
-	 * 
+	 * Returns the container of this view. This composite is used to populate the
+	 * view with other components.
+	 *
 	 * @return The composite container of this view.
 	 */
 	public Composite getParent() {
@@ -179,16 +178,15 @@ public class StatisticsView extends ViewPart {
 
 	/**
 	 * Sets the result panel for this view.
-	 * 
-	 * @param composite
-	 *            Composite containing the results of a query.
+	 *
+	 * @param composite Composite containing the results of a query.
 	 */
 	public void setResultComposite(ResultPanel composite) {
 		this.resultPanel = composite;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return ResultPanel
 	 */
 	public ResultPanel getResultPanel() {
@@ -197,9 +195,8 @@ public class StatisticsView extends ViewPart {
 
 	/**
 	 * Sets the enabled state for actions in this view.
-	 * 
-	 * @param enabled
-	 *            True if actions should be enabled, false for disabled.
+	 *
+	 * @param enabled True if actions should be enabled, false for disabled.
 	 * @see String org.eclipse.jface.action.IAction.ENABLED
 	 */
 	public void setActionsEnabled(boolean enabled) {

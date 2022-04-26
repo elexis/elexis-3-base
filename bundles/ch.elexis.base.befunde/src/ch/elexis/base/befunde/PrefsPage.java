@@ -34,24 +34,24 @@ import ch.elexis.scripting.ScriptEditor;
 import ch.rgw.tools.StringTool;
 
 public class PrefsPage extends Composite {
-	
+
 	String[] mNames;
 	Text[] texts;
 	Button[] checkboxes;
 	Label[] labels;
 	Map<Object, Object> hash;
 	String name;
-	
-	PrefsPage(final Composite parent, final Map<Object, Object> fields, final String name){
+
+	PrefsPage(final Composite parent, final Map<Object, Object> fields, final String name) {
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout(3, false));
 		this.hash = fields;
 		this.name = name;
-		
+
 		load();
 	}
-	
-	void load(){
+
+	void load() {
 		if (texts != null) {
 			for (int i = 0; i < texts.length; i++) {
 				texts[i].dispose();
@@ -72,8 +72,8 @@ public class PrefsPage extends Composite {
 			labels[0].setText("F1"); //$NON-NLS-1$
 			texts[0] = SWTHelper.createText(this, 1, SWT.NONE);
 			checkboxes[0] = new Button(this, SWT.CHECK);
-			checkboxes[0].setText(Messages.PrefsPage_multilineCaption); //$NON-NLS-1$
-			
+			checkboxes[0].setText(Messages.PrefsPage_multilineCaption); // $NON-NLS-1$
+
 		} else {
 			mNames = fields.split(Messwert.SETUP_SEPARATOR);
 			texts = new Text[mNames.length + 1];
@@ -86,7 +86,7 @@ public class PrefsPage extends Composite {
 				labels[i].addMouseListener(new ScriptListener(i));
 				texts[i] = SWTHelper.createText(this, 1, SWT.NONE);
 				checkboxes[i] = new Button(this, SWT.CHECK);
-				checkboxes[i].setText(Messages.PrefsPage_multilineCaption); //$NON-NLS-1$
+				checkboxes[i].setText(Messages.PrefsPage_multilineCaption); // $NON-NLS-1$
 				if (i < mNames.length) {
 					String[] line = mNames[i].split(Messwert.SETUP_CHECKSEPARATOR);
 					texts[i].setText(line[0]);
@@ -98,8 +98,8 @@ public class PrefsPage extends Composite {
 		}
 		layout();
 	}
-	
-	void flush(){
+
+	void flush() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < texts.length; i++) {
 			String n = texts[i].getText();
@@ -110,19 +110,18 @@ public class PrefsPage extends Composite {
 			if (checkboxes[i].getSelection() == false) {
 				m = "s"; //$NON-NLS-1$
 			}
-			sb.append(n).append(Messwert.SETUP_CHECKSEPARATOR).append(m)
-				.append(Messwert.SETUP_SEPARATOR);
+			sb.append(n).append(Messwert.SETUP_CHECKSEPARATOR).append(m).append(Messwert.SETUP_SEPARATOR);
 		}
 		if (sb.length() > Messwert.SETUP_SEPARATOR.length()) {
 			sb.setLength(sb.length() - Messwert.SETUP_SEPARATOR.length());
 			hash.put(name + Messwert._FIELDS, sb.toString());
 		}
 	}
-	
-	boolean remove(){
+
+	boolean remove() {
 		if (CoreHub.acl.request(ACLContributor.DELETE_PARAM)
-			&& SWTHelper.askYesNo(Messages.PrefsPage_warningNotUndoableCaption, //$NON-NLS-1$
-				Messages.PrefsPage_warningConfirmMessage)) { //$NON-NLS-1$
+				&& SWTHelper.askYesNo(Messages.PrefsPage_warningNotUndoableCaption, // $NON-NLS-1$
+						Messages.PrefsPage_warningConfirmMessage)) { // $NON-NLS-1$
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
 			qbe.add(Messwert.FLD_NAME, Query.EQUALS, name);
 			for (Messwert m : qbe.execute()) {
@@ -133,19 +132,19 @@ public class PrefsPage extends Composite {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * renames all {@link Messwert Messwerte} entries who's {@link Messwert#FLD_NAME} matches this
-	 * name to the given new name and updates this name.
-	 * 
-	 * @param newName
-	 *            {@link String}
+	 * renames all {@link Messwert Messwerte} entries who's
+	 * {@link Messwert#FLD_NAME} matches this name to the given new name and updates
+	 * this name.
+	 *
+	 * @param newName {@link String}
 	 * @return true if rename was successful, false otherwise
 	 */
-	public boolean rename(String newName){
-		if (SWTHelper.askYesNo(Messages.PrefsPage_warningNotUndoableCaption, //$NON-NLS-1$
-			Messages.PrefsPage_warningConfirmRename)) { //$NON-NLS-1$
-			
+	public boolean rename(String newName) {
+		if (SWTHelper.askYesNo(Messages.PrefsPage_warningNotUndoableCaption, // $NON-NLS-1$
+				Messages.PrefsPage_warningConfirmRename)) { // $NON-NLS-1$
+
 			// rename all entries from oldName to new one
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
 			qbe.add(Messwert.FLD_NAME, Query.EQUALS, name);
@@ -159,29 +158,28 @@ public class PrefsPage extends Composite {
 			// add new name with value
 			hash.put(newName + Messwert._FIELDS, value);
 			name = newName;
-			
+
 			return true;
 		}
 		return false;
 	}
-	
+
 	private class ScriptListener extends MouseAdapter {
 		private int i;
-		
-		ScriptListener(int x){
+
+		ScriptListener(int x) {
 			i = x;
 		}
-		
+
 		@Override
-		public void mouseUp(MouseEvent e){
-			ScriptEditor se =
-				new ScriptEditor(getShell(), texts[i].getText(),
-					Messages.PrefsPage_enterCalculationForThis); //$NON-NLS-1$
+		public void mouseUp(MouseEvent e) {
+			ScriptEditor se = new ScriptEditor(getShell(), texts[i].getText(),
+					Messages.PrefsPage_enterCalculationForThis); // $NON-NLS-1$
 			if (se.open() == Dialog.OK) {
 				texts[i].setText(se.getScript());
 			}
 			super.mouseUp(e);
 		}
-		
+
 	}
 }

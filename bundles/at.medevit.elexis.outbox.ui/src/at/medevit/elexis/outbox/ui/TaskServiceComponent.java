@@ -18,17 +18,17 @@ import ch.elexis.core.tasks.model.ITaskService;
 @Component
 public class TaskServiceComponent {
 	private static ITaskService service;
-	
-	public static ITaskService get(){
+
+	public static ITaskService get() {
 		return service;
 	}
-	
+
 	@Reference
-	public synchronized void setService(ITaskService service){
+	public synchronized void setService(ITaskService service) {
 		TaskServiceComponent.service = service;
 	}
-	
-	public synchronized void unsetService(ITaskService service){
+
+	public synchronized void unsetService(ITaskService service) {
 		if (TaskServiceComponent.service == service) {
 			TaskServiceComponent.service = null;
 		}

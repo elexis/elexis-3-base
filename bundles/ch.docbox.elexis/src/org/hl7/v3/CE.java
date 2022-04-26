@@ -6,17 +6,19 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * Coded data, consists of a coded value (CV) and, optionally, coded value(s) from other coding
- * systems that identify the same concept. Used when alternative codes may exist.
- * 
- * 
+ *
+ * Coded data, consists of a coded value (CV) and, optionally, coded value(s)
+ * from other coding systems that identify the same concept. Used when
+ * alternative codes may exist.
+ *
+ *
  * <p>
  * Java class for CE complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="CE">
  *   &lt;complexContent>
@@ -35,19 +37,17 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CE")
-@XmlSeeAlso({
-	CV.class, EIVLEvent.class, HXITCE.class
-})
+@XmlSeeAlso({ CV.class, EIVLEvent.class, HXITCE.class })
 public class CE extends CD {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 }

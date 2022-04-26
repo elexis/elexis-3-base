@@ -13,47 +13,47 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class CertificateInfo {
-	
+
 	private static String EXTINFO_KEY = "ch.elexis.covid.certinfo";
-	
+
 	public enum Type {
-			VACCINATION("Impfung"), RECOVERY("Genesen"), TEST("Test");
-		
+		VACCINATION("Impfung"), RECOVERY("Genesen"), TEST("Test");
+
 		private String label;
-		
-		Type(String label){
+
+		Type(String label) {
 			this.label = label;
 		}
-		
-		public String getLabel(){
+
+		public String getLabel() {
 			return label;
 		}
 	}
-	
+
 	private Type type;
-	
+
 	private LocalDateTime timestamp;
-	
+
 	private String documentId;
-	
+
 	private String uvci;
-	
-	public Type getType(){
+
+	public Type getType() {
 		return type;
 	}
-	
-	public LocalDateTime getTimestamp(){
+
+	public LocalDateTime getTimestamp() {
 		return timestamp;
 	}
-	
-	public String getDocumentId(){
+
+	public String getDocumentId() {
 		return documentId;
 	}
-	
-	public String getUvci(){
+
+	public String getUvci() {
 		return uvci;
 	}
-	
+
 	private static CertificateInfo of(String infoStringPart) {
 		String[] parts = infoStringPart.split("\\|");
 		if (parts.length == 4) {
@@ -67,19 +67,19 @@ public class CertificateInfo {
 		LoggerFactory.getLogger(CertificateInfo.class).error("No valid input [" + infoStringPart + "]");
 		return null;
 	}
-	
+
 	/**
-	 * Add a {@link CertificateInfo} with the provided properties to the {@link IPatient}s
-	 * certificates.
-	 * 
+	 * Add a {@link CertificateInfo} with the provided properties to the
+	 * {@link IPatient}s certificates.
+	 *
 	 * @param type
 	 * @param timestamp
 	 * @param uvci
 	 * @param patient
 	 * @return
 	 */
-	public static CertificateInfo add(Type type, LocalDateTime timestamp, String documentId,
-		String uvci, IPatient patient){
+	public static CertificateInfo add(Type type, LocalDateTime timestamp, String documentId, String uvci,
+			IPatient patient) {
 		List<CertificateInfo> certificates = of(patient);
 		if (certificates == null || certificates.isEmpty()) {
 			certificates = new ArrayList<CertificateInfo>();
@@ -99,18 +99,18 @@ public class CertificateInfo {
 		CoreModelServiceHolder.get().save(patient);
 		return ret;
 	}
-	
+
 	/**
 	 * Remove the {@link CertificateInfo} with matching uvci from the patient;
-	 * 
+	 *
 	 * @param info
 	 * @param patient
 	 */
-	public static void remove(CertificateInfo info, IPatient patient){
+	public static void remove(CertificateInfo info, IPatient patient) {
 		List<CertificateInfo> certificates = of(patient);
 		certificates = certificates.stream().filter(c -> !c.getUvci().equals(info.getUvci()))
-			.collect(Collectors.toList());
-		
+				.collect(Collectors.toList());
+
 		StringJoiner sj = new StringJoiner("||");
 		for (CertificateInfo certificateInfo : certificates) {
 			sj.add(certificateInfo.toString());
@@ -118,15 +118,15 @@ public class CertificateInfo {
 		patient.setExtInfo(EXTINFO_KEY, sj.toString());
 		CoreModelServiceHolder.get().save(patient);
 	}
-	
+
 	/**
-	 * Get a {@link List} of all {@link CertificateInfo}s of the {@link IPatient}. The content of
-	 * the {@link List} is sorted by timestamp desc.
-	 * 
+	 * Get a {@link List} of all {@link CertificateInfo}s of the {@link IPatient}.
+	 * The content of the {@link List} is sorted by timestamp desc.
+	 *
 	 * @param patient
 	 * @return
 	 */
-	public static List<CertificateInfo> of(IPatient patient){
+	public static List<CertificateInfo> of(IPatient patient) {
 		Object infoString = patient.getExtInfo(EXTINFO_KEY);
 		if (infoString instanceof String) {
 			List<CertificateInfo> ret = new ArrayList<CertificateInfo>();
@@ -142,9 +142,9 @@ public class CertificateInfo {
 		}
 		return Collections.emptyList();
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return timestamp.toString() + "|" + type.name() + "|" + documentId + "|" + uvci;
 	}
 }

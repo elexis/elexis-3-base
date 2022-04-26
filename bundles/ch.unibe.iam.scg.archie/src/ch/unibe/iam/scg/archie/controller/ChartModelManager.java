@@ -14,10 +14,12 @@ package ch.unibe.iam.scg.archie.controller;
 import ch.unibe.iam.scg.archie.model.ChartModel;
 
 /**
- * <p>Manages Chart Models.</p>
- * 
+ * <p>
+ * Manages Chart Models.
+ * </p>
+ *
  * $Id: ChartModelManager.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -39,7 +41,7 @@ public class ChartModelManager {
 	 * The currently managed pie chart model.
 	 */
 	private ChartModel pieChartModel;
-	
+
 	/**
 	 * Private constructor.
 	 */
@@ -50,7 +52,7 @@ public class ChartModelManager {
 
 	/**
 	 * Returns an instance of this chart model manager.
-	 * 
+	 *
 	 * @return An instance of this chart model manager.
 	 */
 	public static ChartModelManager getInstance() {
@@ -68,8 +70,7 @@ public class ChartModelManager {
 	}
 
 	/**
-	 * @param barChartModel
-	 *            the barChartModel to set
+	 * @param barChartModel the barChartModel to set
 	 */
 	public void setBarChartModel(ChartModel barChartModel) {
 		if (barChartModel.getChartType() != ChartModel.CHART_BAR) {
@@ -77,15 +78,15 @@ public class ChartModelManager {
 		}
 		this.barChartModel = barChartModel;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param chartModel
 	 */
 	public void setChartModel(ChartModel chartModel) {
 		if (chartModel.getChartType() == ChartModel.CHART_PIE) {
 			this.setPieChartModel(chartModel);
-		} else if(chartModel.getChartType() == ChartModel.CHART_BAR) {
+		} else if (chartModel.getChartType() == ChartModel.CHART_BAR) {
 			this.setBarChartModel(chartModel);
 		} else {
 			throw new IllegalArgumentException("The model has to have a valid chart type.");
@@ -100,8 +101,7 @@ public class ChartModelManager {
 	}
 
 	/**
-	 * @param pieChartModel
-	 *            the pieChartModel to set
+	 * @param pieChartModel the pieChartModel to set
 	 */
 	public void setPieChartModel(ChartModel pieChartModel) {
 		if (pieChartModel.getChartType() != ChartModel.CHART_PIE) {
@@ -111,7 +111,7 @@ public class ChartModelManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param type
 	 * @return whether we have a model or not.
 	 */
@@ -123,7 +123,7 @@ public class ChartModelManager {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @return whether we have a PieChartModel or not.
 	 */
@@ -132,7 +132,7 @@ public class ChartModelManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return whether we have a BarChartModel or not.
 	 */
 	public boolean hasBarChartModel() {

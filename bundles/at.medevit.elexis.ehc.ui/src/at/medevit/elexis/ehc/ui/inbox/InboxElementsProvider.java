@@ -21,15 +21,16 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class InboxElementsProvider implements IInboxElementsProvider, InboxListener {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(InboxElementsProvider.class);
-	
+
 	private InboxWatcher watcher;
-	
-	public InboxElementsProvider(){}
-	
+
+	public InboxElementsProvider() {
+	}
+
 	@Override
-	public void activate(){
+	public void activate() {
 		if (watcher != null) {
 			watcher.stop();
 		}
@@ -37,18 +38,18 @@ public class InboxElementsProvider implements IInboxElementsProvider, InboxListe
 		watcher.addInboxListener(this);
 		watcher.start();
 	}
-	
+
 	@Override
-	public void deactivate(){
+	public void deactivate() {
 		if (watcher != null) {
 			watcher.stop();
 		}
 	}
-	
+
 	@Override
-	public void documentCreated(EhcDocument document){
+	public void documentCreated(EhcDocument document) {
 		ServiceComponent.getInboxService().createInboxElement(
-			NoPoUtil.loadAsIdentifiable(document.getPatient(), IPatient.class).orElse(null),
-			ContextServiceHolder.get().getActiveMandator().orElse(null), document);
+				NoPoUtil.loadAsIdentifiable(document.getPatient(), IPatient.class).orElse(null),
+				ContextServiceHolder.get().getActiveMandator().orElse(null), document);
 	}
 }

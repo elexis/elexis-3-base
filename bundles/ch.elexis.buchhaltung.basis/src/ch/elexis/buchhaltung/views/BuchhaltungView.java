@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.buchhaltung.views;
@@ -18,17 +18,17 @@ import org.eclipse.ui.part.ViewPart;
 
 public class BuchhaltungView extends ViewPart {
 	public static final String ID = "ch.elexis.buchhaltung.basis.view"; //$NON-NLS-1$
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		new Composite(parent, SWT.BORDER);
-		
+
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

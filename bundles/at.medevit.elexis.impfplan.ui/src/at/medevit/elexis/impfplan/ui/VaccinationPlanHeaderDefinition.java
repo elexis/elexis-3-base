@@ -18,7 +18,7 @@ public class VaccinationPlanHeaderDefinition {
 	final List<String> base;
 	final List<String> extended;
 
-	public VaccinationPlanHeaderDefinition(String id, String name, List<String> base, List<String> extended){
+	public VaccinationPlanHeaderDefinition(String id, String name, List<String> base, List<String> extended) {
 		this.id = id;
 		this.name = name;
 		this.base = base;

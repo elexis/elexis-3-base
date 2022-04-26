@@ -24,24 +24,25 @@ import ch.elexis.core.services.holder.XidServiceHolder;
 public class ComplementaryLeistung
 		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.ComplementaryLeistung>
 		implements Identifiable, IComplementaryLeistung {
-	
+
 	public static final String STS_CLASS = "ch.elexis.data.ComplementaryLeistung";
-	
+
 	private static IBillableOptifier<ComplementaryLeistung> optifier;
 	private IBillableVerifier verifier;
-	
-	public ComplementaryLeistung(ch.elexis.core.jpa.entities.ComplementaryLeistung entity){
+
+	public ComplementaryLeistung(ch.elexis.core.jpa.entities.ComplementaryLeistung entity) {
 		super(entity);
 		verifier = new DefaultVerifier();
 	}
-	
+
 	@Override
-	public IBillableOptifier<ComplementaryLeistung> getOptifier(){
+	public IBillableOptifier<ComplementaryLeistung> getOptifier() {
 		if (optifier == null) {
-			optifier = new AbstractOptifier<ComplementaryLeistung>(CoreModelServiceHolder.get(), ContextServiceHolder.get().get()) {
-				
+			optifier = new AbstractOptifier<ComplementaryLeistung>(CoreModelServiceHolder.get(),
+					ContextServiceHolder.get().get()) {
+
 				@Override
-				protected void setPrice(ComplementaryLeistung billable, IBilled billed){
+				protected void setPrice(ComplementaryLeistung billable, IBilled billed) {
 					// ignore billing system factor
 					billed.setFactor(1.0);
 					int points = 0;
@@ -53,136 +54,134 @@ public class ComplementaryLeistung
 					}
 					billed.setPoints(points);
 				}
-				
-				private int getHourlyWage(){
+
+				private int getHourlyWage() {
 					if (ContextServiceHolder.get().isPresent()) {
-						Optional<IMandator> activeMandator =
-							ContextServiceHolder.get().get().getActiveMandator();
+						Optional<IMandator> activeMandator = ContextServiceHolder.get().get().getActiveMandator();
 						if (activeMandator.isPresent()) {
 							if (ConfigServiceHolder.get().isPresent()) {
-								String wageString = ConfigServiceHolder.get().get()
-									.get(activeMandator.get(),
+								String wageString = ConfigServiceHolder.get().get().get(activeMandator.get(),
 										PreferenceConstants.COMPLEMENTARY_HOURLY_WAGE, "0");
 								return Integer.valueOf(wageString);
 							}
 						}
 					}
 					LoggerFactory.getLogger(getClass())
-						.warn("Could not get active mandator, billing without hourly wage");
+							.warn("Could not get active mandator, billing without hourly wage");
 					return 0;
 				}
 			};
 		}
 		return optifier;
 	}
-	
+
 	@Override
-	public IBillableVerifier getVerifier(){
+	public IBillableVerifier getVerifier() {
 		return verifier;
 	}
-	
+
 	@Override
-	public String getCodeSystemCode(){
+	public String getCodeSystemCode() {
 		return "590";
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return ch.elexis.core.jpa.entities.ComplementaryLeistung.CODESYSTEM_NAME;
 	}
-	
+
 	@Override
-	public String getCode(){
+	public String getCode() {
 		return getEntity().getCode();
 	}
-	
+
 	@Override
-	public void setCode(String value){
+	public void setCode(String value) {
 		getEntity().setCode(value);
 	}
-	
+
 	@Override
-	public String getText(){
+	public String getText() {
 		return getEntity().getCodeText();
 	}
-	
+
 	@Override
-	public void setText(String value){
+	public void setText(String value) {
 		getEntity().setCodeText(value);
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return getEntity().getDescription();
 	}
-	
+
 	@Override
-	public void setDescription(String value){
+	public void setDescription(String value) {
 		getEntity().setDescription(value);
 	}
-	
+
 	@Override
-	public String getChapter(){
+	public String getChapter() {
 		return getEntity().getChapter();
 	}
-	
+
 	@Override
-	public void setChapter(String value){
+	public void setChapter(String value) {
 		getEntity().setChapter(value);
 	}
-	
+
 	@Override
-	public int getFixedValue(){
+	public int getFixedValue() {
 		return getEntity().getFixedValue();
 	}
-	
+
 	@Override
-	public void setFixedValue(int value){
+	public void setFixedValue(int value) {
 		getEntity().setFixedValue(value);
 	}
-	
+
 	@Override
-	public boolean isFixedValueSet(){
+	public boolean isFixedValueSet() {
 		return getFixedValue() != 0;
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		return "(" + getCode() + ") " + getText();
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		return XidServiceHolder.get().getXid(this, domain);
 	}
-	
+
 	@Override
-	public void setId(String id){
+	public void setId(String id) {
 		getEntityMarkDirty().setId(id);
 	}
-	
+
 	@Override
-	public LocalDate getValidFrom(){
+	public LocalDate getValidFrom() {
 		return getEntity().getValidFrom();
 	}
-	
+
 	@Override
-	public LocalDate getValidTo(){
+	public LocalDate getValidTo() {
 		return getEntity().getValidTo();
 	}
-	
+
 	@Override
-	public void setValidFrom(LocalDate value){
+	public void setValidFrom(LocalDate value) {
 		getEntityMarkDirty().setValidFrom(value);
 	}
-	
+
 	@Override
-	public void setValidTo(LocalDate value){
+	public void setValidTo(LocalDate value) {
 		getEntityMarkDirty().setValidTo(value);
 	}
 }

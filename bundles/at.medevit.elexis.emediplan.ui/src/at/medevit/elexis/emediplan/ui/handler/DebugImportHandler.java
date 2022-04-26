@@ -19,27 +19,26 @@ import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.ui.dialogs.base.InputDialog;
 
 public class DebugImportHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		
-		InputDialog inputDialog = new InputDialog(Display.getDefault().getActiveShell(),
-			"eMediplan JSON", "Bitte geben Sie das eMediplan JSON ein das importiert werden soll",
-			"", null,
-			SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+
+		InputDialog inputDialog = new InputDialog(Display.getDefault().getActiveShell(), "eMediplan JSON",
+				"Bitte geben Sie das eMediplan JSON ein das importiert werden soll", "", null,
+				SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		if (inputDialog.open() == MessageDialog.OK) {
 			String importJson = inputDialog.getValue();
-			
+
 			StartupHandler.openEMediplanImportDialog(getEncodedJson(importJson), null);
 		}
 		return null;
 	}
-	
-	protected String getEncodedJson(@NonNull String json){
+
+	protected String getEncodedJson(@NonNull String json) {
 		StringBuilder sb = new StringBuilder();
 		// header for compresses json
 		sb.append("CHMED16A1");
-		
+
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
 			gzip.write(json.getBytes());
@@ -50,5 +49,5 @@ public class DebugImportHandler extends AbstractHandler implements IHandler {
 		sb.append(Base64.getEncoder().encodeToString(out.toByteArray()));
 		return sb.toString();
 	}
-	
+
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    Michael Imhof - PrintFindingsDialog.java 2010-03-18
- *    
+ *
  *******************************************************************************/
 package ch.elexis.base.befunde;
 
@@ -31,14 +31,14 @@ import ch.elexis.data.Brief;
 public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 	String[][] fields;
 	private TextContainer text;
-	
-	public PrintFindingsDialog(Shell parentShell, String[][] fields){
+
+	public PrintFindingsDialog(Shell parentShell, String[][] fields) {
 		super(parentShell);
 		this.fields = fields;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		text = new TextContainer(getShell());
 		ret.setLayout(new FillLayout());
@@ -46,33 +46,32 @@ public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
-		text.createFromTemplateName(null, TT_MEASUREMENTS, Brief.UNKNOWN, CoreHub.getLoggedInContact(),
-			"Messwerte"); //$NON-NLS-1$ //$NON-NLS-2$
+		text.createFromTemplateName(null, TT_MEASUREMENTS, Brief.UNKNOWN, CoreHub.getLoggedInContact(), "Messwerte"); //$NON-NLS-1$ //$NON-NLS-2$
 		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
 		text.getPlugin().insertTable("[Tabelle]", ITextPlugin.FIRST_ROW_IS_HEADER, fields, null); //$NON-NLS-1$
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
-		getShell().setText(Messages.PrintFindingsDialog_messwerteCaption); //$NON-NLS-1$
-		setTitle(Messages.PrintFindingsDialog_printMesswerteTitle); //$NON-NLS-1$
-		setMessage(Messages.PrintFindingsDialog_printMesswerteMessage); //$NON-NLS-1$
+		getShell().setText(Messages.PrintFindingsDialog_messwerteCaption); // $NON-NLS-1$
+		setTitle(Messages.PrintFindingsDialog_printMesswerteTitle); // $NON-NLS-1$
+		setMessage(Messages.PrintFindingsDialog_printMesswerteMessage); // $NON-NLS-1$
 		getShell().setSize(900, 700);
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		super.okPressed();
 	}
-	
-	public void save(){
+
+	public void save() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	public boolean saveAs(){
+
+	public boolean saveAs() {
 		// TODO Auto-generated method stub
 		return false;
 	}

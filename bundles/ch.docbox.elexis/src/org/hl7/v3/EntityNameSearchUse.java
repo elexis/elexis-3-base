@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for EntityNameSearchUse.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="EntityNameSearchUse">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -20,20 +21,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "EntityNameSearchUse")
 @XmlEnum
 public enum EntityNameSearchUse {
-	
+
 	SRCH, PHON, SNDX;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static EntityNameSearchUse fromValue(String v){
+
+	public static EntityNameSearchUse fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

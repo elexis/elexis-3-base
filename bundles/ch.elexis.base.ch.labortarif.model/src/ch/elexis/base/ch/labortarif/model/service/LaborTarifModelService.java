@@ -22,99 +22,96 @@ import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IStoreToStringContribution;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.labortarif.model")
-public class LaborTarifModelService extends AbstractModelService
-		implements IModelService, IStoreToStringContribution {
-	
+public class LaborTarifModelService extends AbstractModelService implements IModelService, IStoreToStringContribution {
+
 	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
-	
+
 	@Reference
 	private EventAdmin eventAdmin;
-	
+
 	@Activate
-	public void activate(){
+	public void activate() {
 		adapterFactory = LaborTarifModelAdapterFactory.getInstance();
 	}
-	
+
 	@Override
-	public <T> IQuery<T> getQuery(Class<T> clazz, boolean refreshCache, boolean includeDeleted){
-		return new LaborTarifModelQuery<>(clazz, refreshCache,
-			(EntityManager) entityManager.getEntityManager(), includeDeleted);
+	public <T> IQuery<T> getQuery(Class<T> clazz, boolean refreshCache, boolean includeDeleted) {
+		return new LaborTarifModelQuery<>(clazz, refreshCache, (EntityManager) entityManager.getEntityManager(),
+				includeDeleted);
 	}
-	
+
 	@Override
-	protected EntityManager getEntityManager(boolean managed){
+	protected EntityManager getEntityManager(boolean managed) {
 		return (EntityManager) entityManager.getEntityManager(managed);
 	}
-	
+
 	@Override
-	protected void closeEntityManager(EntityManager entityManager){
+	protected void closeEntityManager(EntityManager entityManager) {
 		this.entityManager.closeEntityManager(entityManager);
 	}
-	
+
 	@Override
-	protected EventAdmin getEventAdmin(){
+	protected EventAdmin getEventAdmin() {
 		return eventAdmin;
 	}
-	
+
 	@Override
-	protected ElexisEvent getCreateEvent(Identifiable identifiable){
+	protected ElexisEvent getCreateEvent(Identifiable identifiable) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public Optional<String> storeToString(Identifiable identifiable){
+	public Optional<String> storeToString(Identifiable identifiable) {
 		if (identifiable instanceof LaborLeistung) {
-			return Optional
-				.of(LaborLeistung.STS_CLASS + StringConstants.DOUBLECOLON + identifiable.getId());
+			return Optional.of(LaborLeistung.STS_CLASS + StringConstants.DOUBLECOLON + identifiable.getId());
 		}
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public Optional<Identifiable> loadFromString(String storeToString){
+	public Optional<Identifiable> loadFromString(String storeToString) {
 		if (storeToString.startsWith(LaborLeistung.STS_CLASS + StringConstants.DOUBLECOLON)) {
 			String[] split = splitIntoTypeAndId(storeToString);
 			String id = split[1];
 			EntityManager em = (EntityManager) entityManager.getEntityManager();
 			EntityWithId dbObject = em.find(ch.elexis.core.jpa.entities.Labor2009Tarif.class, id);
-			return Optional.ofNullable(LaborTarifModelAdapterFactory.getInstance()
-				.getModelAdapter(dbObject, null, false).orElse(null));
+			return Optional.ofNullable(
+					LaborTarifModelAdapterFactory.getInstance().getModelAdapter(dbObject, null, false).orElse(null));
 		}
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public void clearCache(){
+	public void clearCache() {
 		entityManager.clearCache();
 	}
-	
+
 	@Override
-	public Class<?> getEntityForType(String type){
+	public Class<?> getEntityForType(String type) {
 		if (LaborLeistung.STS_CLASS.equals(type)) {
 			return ch.elexis.core.jpa.entities.Labor2009Tarif.class;
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getTypeForEntity(Object entityInstance){
+	public String getTypeForEntity(Object entityInstance) {
 		if (entityInstance instanceof ch.elexis.core.jpa.entities.Labor2009Tarif) {
 			return LaborLeistung.STS_CLASS;
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getTypeForModel(Class<?> interfaze){
+	public String getTypeForModel(Class<?> interfaze) {
 		Class<? extends EntityWithId> entityClass = adapterFactory.getEntityClass(interfaze);
 		if (entityClass != null) {
 			try {
 				return getTypeForEntity(entityClass.newInstance());
 			} catch (InstantiationException | IllegalAccessException e) {
-				LoggerFactory.getLogger(getClass())
-					.error("Error getting type for model [" + interfaze + "]", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e);
 			}
 		}
 		return null;

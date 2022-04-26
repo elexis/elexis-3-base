@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.agenda.preferences;
@@ -39,23 +39,23 @@ import ch.elexis.core.ui.util.SWTHelper;
 public class AgendaFarben extends PreferencePage implements IWorkbenchPreferencePage {
 	private ConfigServicePreferenceStore prefs;
 	private int typCols, typRows, statusCols;
-	
+
 	// private ColorCellEditor[] editors;
 	// private String[] columnProperties;
-	
-	public AgendaFarben(){
+
+	public AgendaFarben() {
 		prefs = new ConfigServicePreferenceStore(Scope.USER);
 		setPreferenceStore(prefs);
 		setDescription(Messages.AgendaFarben_colorSettings);
 	}
-	
-	public void init(IWorkbench workbench){
+
+	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(Composite parent) {
 		Composite par = new Composite(parent, SWT.NONE);
 		par.setLayout(new GridLayout(1, false));
 		Group top = new Group(par, SWT.BORDER);
@@ -74,16 +74,15 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 		for (int i = 0; i < num; i++) {
 			Label lab = new Label(top, SWT.NONE);
 			lab.setText(typ[i]);
-			String coldesc =
-					ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + typ[i], "FFFFFF"); //$NON-NLS-1$
+			String coldesc = ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + typ[i], "FFFFFF"); //$NON-NLS-1$
 			Color background = UiDesk.getColorFromRGB(coldesc);
 			lab.setBackground(background);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			lab.setLayoutData(gd);
 			lab.addMouseListener(new MouseAdapter() {
-				
+
 				@Override
-				public void mouseDoubleClick(MouseEvent e){
+				public void mouseDoubleClick(MouseEvent e) {
 					ColorDialog cd = new ColorDialog(getShell());
 					Label l = (Label) e.getSource();
 					RGB selected = cd.open();
@@ -91,12 +90,12 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 					l.setBackground(UiDesk.getColorFromRGB(symbolic));
 					ConfigServiceHolder.setUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + l.getText(), symbolic);
 				}
-				
+
 			});
 		}
-		
+
 		String[] status = Termin.TerminStatus;
-		
+
 		num = status.length;
 		int statusRows = ((int) Math.sqrt(num));
 		statusCols = num - (statusRows * statusRows);
@@ -110,12 +109,12 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 			lab.setText(status[i]);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			lab.setLayoutData(gd);
-			lab.setBackground(UiDesk.getColorFromRGB(ConfigServiceHolder.getUser(
-				PreferenceConstants.AG_STATCOLOR_PREFIX + status[i], "FFFFFF"))); //$NON-NLS-1$
+			lab.setBackground(UiDesk.getColorFromRGB(
+					ConfigServiceHolder.getUser(PreferenceConstants.AG_STATCOLOR_PREFIX + status[i], "FFFFFF"))); //$NON-NLS-1$
 			lab.addMouseListener(new MouseAdapter() {
-				
+
 				@Override
-				public void mouseDoubleClick(MouseEvent e){
+				public void mouseDoubleClick(MouseEvent e) {
 					ColorDialog cd = new ColorDialog(getShell());
 					Label l = (Label) e.getSource();
 					RGB selected = cd.open();
@@ -123,11 +122,11 @@ public class AgendaFarben extends PreferencePage implements IWorkbenchPreference
 					l.setBackground(UiDesk.getColorFromRGB(symbolic));
 					ConfigServiceHolder.setUser(PreferenceConstants.AG_STATCOLOR_PREFIX + l.getText(), symbolic);
 				}
-				
+
 			});
 		}
-		
+
 		return par;
 	}
-	
+
 }

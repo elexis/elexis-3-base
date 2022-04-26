@@ -24,9 +24,9 @@ import ch.unibe.iam.scg.archie.model.DataSet;
  * <p>
  * Singleton implementation of a dataset helper class. Contains helper functions
  * such as sorting or column operations to perform on a given dataset.
- * 
+ *
  * $Id: DatasetHelper.java 666 2008-12-13 00:07:54Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 666 $
@@ -52,12 +52,12 @@ public class DatasetHelper {
 	}
 
 	/**
-	 * Checks whether a given column contains only money values. This function
-	 * only checks the first row for a given column but given the specification
-	 * and definition of a dataset, we can assume the data / value types in a
-	 * column are the same. This function uses the column name (heading) to
-	 * search for the given column in the dataset.
-	 * 
+	 * Checks whether a given column contains only money values. This function only
+	 * checks the first row for a given column but given the specification and
+	 * definition of a dataset, we can assume the data / value types in a column are
+	 * the same. This function uses the column name (heading) to search for the
+	 * given column in the dataset.
+	 *
 	 * @param dataset
 	 * @param column
 	 * @return True if the column contains only numeric characters, false else.
@@ -70,12 +70,12 @@ public class DatasetHelper {
 	}
 
 	/**
-	 * Checks whether a given column contains only money values. This function
-	 * only checks the first row for a given column but given the specification
-	 * and definition of a dataset, we can assume the data / value types in a
-	 * column are the same. This function uses the column index to search for
-	 * the given column in the dataset.
-	 * 
+	 * Checks whether a given column contains only money values. This function only
+	 * checks the first row for a given column but given the specification and
+	 * definition of a dataset, we can assume the data / value types in a column are
+	 * the same. This function uses the column index to search for the given column
+	 * in the dataset.
+	 *
 	 * @param dataset
 	 * @param columnIndex
 	 * @return True if the column contains only numeric characters, false else.
@@ -90,17 +90,15 @@ public class DatasetHelper {
 
 	/**
 	 * Checks whether a given column contains only numeric values. This function
-	 * only checks the first row for a given column but given the specification
-	 * and definition of a dataset, we can assume the data / value types in a
-	 * column are the same. This function uses the column name (heading) to
-	 * search for the given column in the dataset.
-	 * 
-	 * @param dataset
-	 *            Dataset to check the column in.
-	 * @param column
-	 *            String Column name.
-	 * @return boolean True if the column contains only numeric characters,
-	 *         false else.
+	 * only checks the first row for a given column but given the specification and
+	 * definition of a dataset, we can assume the data / value types in a column are
+	 * the same. This function uses the column name (heading) to search for the
+	 * given column in the dataset.
+	 *
+	 * @param dataset Dataset to check the column in.
+	 * @param column  String Column name.
+	 * @return boolean True if the column contains only numeric characters, false
+	 *         else.
 	 */
 	public static final boolean isNumericColumn(final DataSet dataset, final String column) {
 		int columnIndex = DatasetHelper.getColumnIndex(dataset, column);
@@ -111,16 +109,15 @@ public class DatasetHelper {
 
 	/**
 	 * Checks whether a given column contains only numeric values. This function
-	 * only checks the first row for a given column but given the specification
-	 * and definition of a dataset, we can assume the data / value types in a
-	 * column are the same. This function uses the column index to search for
-	 * the given column in the dataset.
-	 * 
-	 * @param dataset
-	 *            Dataset to check the column in.
+	 * only checks the first row for a given column but given the specification and
+	 * definition of a dataset, we can assume the data / value types in a column are
+	 * the same. This function uses the column index to search for the given column
+	 * in the dataset.
+	 *
+	 * @param dataset     Dataset to check the column in.
 	 * @param columnIndex
-	 * @return boolean True if the column contains only numeric characters,
-	 *         false else.
+	 * @return boolean True if the column contains only numeric characters, false
+	 *         else.
 	 */
 	public static final boolean isNumericColumn(final DataSet dataset, final int columnIndex) {
 		Comparable<?>[] col = dataset.getColumn(columnIndex);
@@ -129,34 +126,34 @@ public class DatasetHelper {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Checks whether a given dataset has at least one numeric column of data.
-	 * 
+	 *
 	 * @param dataset Dataset to check the columns in.
 	 * @return True if the dataset has at least one numeric column, false else.
 	 */
 	public static final boolean hasNumericColumn(final DataSet dataset) {
 		boolean hasNumeric = false;
-		for(String heading : dataset.getHeadings()) {
-			if(DatasetHelper.isNumericColumn(dataset, heading)) {
+		for (String heading : dataset.getHeadings()) {
+			if (DatasetHelper.isNumericColumn(dataset, heading)) {
 				hasNumeric = true;
 				break;
 			}
 		}
 		return hasNumeric;
 	}
-	
+
 	/**
 	 * Checks whether a given dataset has at least one money column of data.
-	 * 
+	 *
 	 * @param dataset Dataset to check the columns in.
 	 * @return True if the dataset has at least one money column, false else.
 	 */
 	public static final boolean hasMoneyColumn(final DataSet dataset) {
 		boolean hasMoney = false;
-		for(String heading : dataset.getHeadings()) {
-			if(DatasetHelper.isMoneyColumn(dataset, heading)) {
+		for (String heading : dataset.getHeadings()) {
+			if (DatasetHelper.isMoneyColumn(dataset, heading)) {
 				hasMoney = true;
 				break;
 			}
@@ -165,7 +162,7 @@ public class DatasetHelper {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param dataset
 	 * @param column
 	 * @return
@@ -181,12 +178,12 @@ public class DatasetHelper {
 	}
 
 	/**
-	 * Internal comparator used for sorting a dataset according to a given
-	 * column index and a sort direction. The comparator compares all values in
-	 * the given column and sorts them accordingly.
-	 * 
+	 * Internal comparator used for sorting a dataset according to a given column
+	 * index and a sort direction. The comparator compares all values in the given
+	 * column and sorts them accordingly.
+	 *
 	 * $Id: DatasetHelper.java 666 2008-12-13 00:07:54Z peschehimself $
-	 * 
+	 *
 	 * @author Peter Siska
 	 * @author Dennis Schenk
 	 * @version $Rev: 666 $
@@ -199,25 +196,26 @@ public class DatasetHelper {
 
 		/**
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		@SuppressWarnings("unchecked")
 		public int compare(final Object e1, final Object e2) {
 			Object o1 = ((Object[]) e1)[this.sortColumn];
 			Object o2 = ((Object[]) e2)[this.sortColumn];
-			
+
 			int result;
-			
+
 			Class<?>[] o1interfaces = o1.getClass().getInterfaces();
 			Class<?>[] o2interfaces = o2.getClass().getInterfaces();
-			
-			if (ArrayUtils.hasInterface(o1interfaces, Comparable.class) && ArrayUtils.hasInterface(o2interfaces, Comparable.class)) {
+
+			if (ArrayUtils.hasInterface(o1interfaces, Comparable.class)
+					&& ArrayUtils.hasInterface(o2interfaces, Comparable.class)) {
 				result = ((Comparable) o1).compareTo((Comparable) o2);
 			} else {
 				result = o1.toString().compareTo(o2.toString());
 			}
-			
+
 			return (this.sortDirection == SWT.DOWN ? result * (-1) : result); // invert
 		}
 
@@ -232,7 +230,7 @@ public class DatasetHelper {
 		 * @param direction
 		 */
 		public void setSortDirection(final int direction) {
-			this.sortDirection = direction;		
+			this.sortDirection = direction;
 		}
 	}
 }

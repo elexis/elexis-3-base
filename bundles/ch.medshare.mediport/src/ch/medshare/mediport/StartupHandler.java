@@ -13,17 +13,16 @@ import ch.medshare.mediport.util.MediPortHelper;
 
 @Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
 public class StartupHandler implements EventHandler {
-	
+
 	@Override
-	public void handleEvent(Event event){
+	public void handleEvent(Event event) {
 		LoggerFactory.getLogger(getClass()).info("APPLICATION STARTUP COMPLETE");
 		int count = MediPortHelper.getReturnFiles();
 		if (count > 0) {
 			Display.getDefault().asyncExec(new Runnable() {
-				public void run(){
+				public void run() {
 					// Verzeichnisse Ueberpruefen
-					ShowErrorInvoices dialog =
-						new ShowErrorInvoices(null, MediPortHelper.getCurrentClient());
+					ShowErrorInvoices dialog = new ShowErrorInvoices(null, MediPortHelper.getCurrentClient());
 					dialog.open();
 				}
 			});

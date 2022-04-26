@@ -8,7 +8,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class XMLUtil {
-	public static List<Node> getChildElementsByTagName(Node node, String name){
+	public static List<Node> getChildElementsByTagName(Node node, String name) {
 		ArrayList<Node> result = new ArrayList<Node>();
 		if (node != null) {
 			NodeList nodes = node.getChildNodes();
@@ -25,8 +25,8 @@ public class XMLUtil {
 		}
 		return result;
 	}
-	
-	public static List<Node> getChildElements(Node node){
+
+	public static List<Node> getChildElements(Node node) {
 		ArrayList<Node> result = new ArrayList<Node>();
 		if (node != null) {
 			NodeList nodes = node.getChildNodes();
@@ -42,7 +42,7 @@ public class XMLUtil {
 		return result;
 	}
 
-	public static List<Node> getAllChildElementsByTagName(Element root, String name){
+	public static List<Node> getAllChildElementsByTagName(Element root, String name) {
 		ArrayList<Node> result = new ArrayList<Node>();
 		NodeList nodes = root.getElementsByTagName(name);
 		if (nodes != null) {
@@ -53,12 +53,12 @@ public class XMLUtil {
 		}
 		return result;
 	}
-	
-	public static void setAttribute(Element element, String name, String value){
+
+	public static void setAttribute(Element element, String name, String value) {
 		element.setAttribute(name, value);
 	}
-	
-	public static String getAttribute(Element element, String name){
+
+	public static String getAttribute(Element element, String name) {
 		return element.getAttribute(name);
 	}
 }

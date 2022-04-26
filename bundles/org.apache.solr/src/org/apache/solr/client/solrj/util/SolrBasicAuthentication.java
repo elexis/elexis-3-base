@@ -32,30 +32,31 @@ import org.eclipse.jetty.util.B64Code;
  */
 public class SolrBasicAuthentication implements Authentication {
 
-  private final String value;
+	private final String value;
 
-  public SolrBasicAuthentication(String user, String password) {
-    this.value = "Basic " + B64Code.encode(user + ":" + password, StandardCharsets.ISO_8859_1);
-  }
+	public SolrBasicAuthentication(String user, String password) {
+		this.value = "Basic " + B64Code.encode(user + ":" + password, StandardCharsets.ISO_8859_1);
+	}
 
-  @Override
-  public boolean matches(String type, URI uri, String realm) {
-    return true;
-  }
+	@Override
+	public boolean matches(String type, URI uri, String realm) {
+		return true;
+	}
 
-  @Override
-  public Result authenticate(Request request, ContentResponse response, HeaderInfo headerInfo, Attributes context) {
-    return new Result() {
-      @Override
-      public URI getURI() {
-        // cache result by host and port
-        return URI.create(String.format(Locale.ROOT, "%s://%s:%d", request.getScheme(), request.getHost(), request.getPort()));
-      }
+	@Override
+	public Result authenticate(Request request, ContentResponse response, HeaderInfo headerInfo, Attributes context) {
+		return new Result() {
+			@Override
+			public URI getURI() {
+				// cache result by host and port
+				return URI.create(String.format(Locale.ROOT, "%s://%s:%d", request.getScheme(), request.getHost(),
+						request.getPort()));
+			}
 
-      @Override
-      public void apply(Request request) {
-        request.header(headerInfo.getHeader(), value);
-      }
-    };
-  }
+			@Override
+			public void apply(Request request) {
+				request.header(headerInfo.getHeader(), value);
+			}
+		};
+	}
 }

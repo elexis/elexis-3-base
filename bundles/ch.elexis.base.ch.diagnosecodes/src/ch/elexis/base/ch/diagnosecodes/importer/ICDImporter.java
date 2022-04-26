@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.base.ch.diagnosecodes.importer;
@@ -26,34 +26,34 @@ import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 
 public class ICDImporter extends ImporterPage {
-	
+
 	@Inject
 	private IReferenceDataImporterService importerService;
-	
-	public ICDImporter(){
+
+	public ICDImporter() {
 		CoreUiUtil.injectServices(this);
 	}
-	
+
 	@Override
-	public Composite createPage(Composite parent){
+	public Composite createPage(Composite parent) {
 		return new FileBasedImporter(parent, this);
 	}
-	
+
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		
+	public IStatus doImport(IProgressMonitor monitor) throws Exception {
+
 		IReferenceDataImporter importer = importerService.getImporter("icd10")
-			.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available."));
+				.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available."));
 		return importer.performImport(monitor, new FileInputStream(results[0]), null);
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return "Import einer ICD-10 zip Datei";
 	}
-	
+
 	@Override
-	public String getTitle(){
+	public String getTitle() {
 		return "ICD-10";
 	}
 }

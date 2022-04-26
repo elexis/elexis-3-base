@@ -12,41 +12,41 @@ import ch.elexis.core.spotlight.ui.ISpotlightResultEntryDetailComposite;
 
 public class DocumentSpotlightResultEntryDetailComposite extends Composite
 		implements ISpotlightResultEntryDetailComposite {
-	
+
 	private Text txtDocument;
-	
-	public DocumentSpotlightResultEntryDetailComposite(Composite parent, int style){
+
+	public DocumentSpotlightResultEntryDetailComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(1, false));
-		
+
 		txtDocument = new Text(this, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 		txtDocument.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 	}
-	
+
 	@Override
-	protected void checkSubclass(){
+	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
-	
+
 	@Override
-	public void setSpotlightEntry(ISpotlightResultEntry resultEntry){
-		
+	public void setSpotlightEntry(ISpotlightResultEntry resultEntry) {
+
 		txtDocument.setText("");
-		
+
 		if (resultEntry != null) {
 			String text = (String) resultEntry.getObject().get();
 			txtDocument.setText(text.trim());
 		}
-		
+
 	}
-	
+
 	@Override
-	public Category appliedForCategory(){
+	public Category appliedForCategory() {
 		return Category.DOCUMENT;
 	}
 
 	@Override
-	public boolean handleAltKeyPressed(int keyCode){
+	public boolean handleAltKeyPressed(int keyCode) {
 		return true;
 	}
 }

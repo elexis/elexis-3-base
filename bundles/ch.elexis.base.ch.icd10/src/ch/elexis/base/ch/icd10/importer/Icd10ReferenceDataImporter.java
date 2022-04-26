@@ -29,53 +29,62 @@ import ch.elexis.core.jpa.model.util.JpaModelUtil;
 import ch.rgw.io.FileTool;
 
 /**
- * Der ICDImporter importiert den ICD-Code, wie er beispielsweise von der WHO bereitgestellt wird.
- * Die "EDV-Fassung" kann z.B. hier bezogen werden: http://www
- * .dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-who/version2006/systematik Sie benötigen die
- * ICD-10-WHO 2006 Systematik EDV-Fassung ASCII (x1vea2006.zip) und die ICD-10-WHO 2006 Systematik
- * Metadaten ASCII (x1vma2006.zip) Entpacken Sie beide in dieselbe Ebene desselben Verzeichnisses.
- * (Die "liesmich.txt"-Datei wird dabei überschrieben, da sie in beiden Archiven vorhanden ist. Sie
- * können die entsprechende Warung ignorieren)
- * 
- * Dieser Importer liest aus den Metadaten "codes.txt" die einzelnen ICD-Ziffern zeilenweise ein und
- * baut die kompletten Codes mithilfe der KAPxx-.asc - Kapiteldateien aus der Systematik auf.
- * 
- * Aufbau von codes.txt: Feld 1 : Klassifikationsebene, 1 Zeichen 3 = Dreisteller 4 = Viersteller 5
- * = Fünfsteller Feld 2 : Ort der Schlüsselnummer im Klassifikationsbaum, 1 Zeichen T = terminale
- * Schlüsselnummer (kodierbarer Endpunkt) N = nichtterminale Schlüsselnummer (kein kodierbarer
- * Endpunkt) Feld 3 : Generiert? X: explizit in der Klassifikation aufgeführt S: über
- * Subklassifikation generiert Feld 4 : Art der Viersteller X = explizit aufgeführt (präkombiniert)
- * S = per Subklassifikation (postkomibiniert) Feld 5 : Kapitelnummer, 2 Zeichen Feld 6 : erster
- * Dreisteller der Gruppe, 3 Zeichen Feld 7 : Dreisteller zur Schlüsselnummer, 3 Zeichen Feld 8 :
- * Schlüsselnummer ohne eventuelles Kreuzchen, bis zu 7 Zeichen Feld 9 : Schlüsselnummer ohne
- * Strich, Sternchen und Ausrufezeichen, bis zu 6 Zeichen Feld 10: Schlüsselnummer ohne Punkt,
- * Strich, Sternchen und Ausrufezeichen, bis zu 5 Zeichen Feld 11: Klassentitel, bis zu 255 Zeichen
- * Feld 12: Bezug zur Mortalitätsliste 1 Feld 13: Bezug zur Mortalitätsliste 2 Feld 14: Bezug zur
- * Mortalitätsliste 3 Feld 15: Bezug zur Mortalitätsliste 4 Feld 16: Bezug zur Morbiditätsliste Feld
- * 17: Geschlechtsbezug der Schlüsselnummer 9 = kein Geschlechtsbezug M = maennlich W = weiblich
- * Feld 18: Art des Fehlers bei Geschlechtsbezug 9 = irrelevant M = Muß-Fehler K = Kann-Fehler Feld
- * 19: untere Altersgrenze für eine Schlüsselnummer 999 = irrelevant 000 = bis unter 1 Tag 001-006 =
- * 1 Tag bis unter 7 Tage 011-013 = 7 Tage bis unter 28 Tage 101-111 = 28 Tage bis unter 1 Jahr
- * 201-299 = 1 Jahr bis unter 100 Jahre 300-324 = 100 Jahre bis unter 124 Jahre Feld 20: obere
- * Altersgrenze für eine Schlüsselnummer wie bei Feld 19 Feld 21: Art des Fehlers bei Altersbezug 9
- * = irrelevant M = Muß-Fehler K = Kann-Fehler Feld 22: Krankheit in Mitteleuropa sehr selten? J =
- * Ja (--> Kann-Fehler auslösen!) N = Nein Feld 23: Schlüsselnummer als Grundleiden in der
- * Todesursachenkodierung zugelassen? J = Ja M = Nein
- * 
- * 
+ * Der ICDImporter importiert den ICD-Code, wie er beispielsweise von der WHO
+ * bereitgestellt wird. Die "EDV-Fassung" kann z.B. hier bezogen werden:
+ * http://www
+ * .dimdi.de/dynamic/de/klassi/downloadcenter/icd-10-who/version2006/systematik
+ * Sie benötigen die ICD-10-WHO 2006 Systematik EDV-Fassung ASCII
+ * (x1vea2006.zip) und die ICD-10-WHO 2006 Systematik Metadaten ASCII
+ * (x1vma2006.zip) Entpacken Sie beide in dieselbe Ebene desselben
+ * Verzeichnisses. (Die "liesmich.txt"-Datei wird dabei überschrieben, da sie in
+ * beiden Archiven vorhanden ist. Sie können die entsprechende Warung
+ * ignorieren)
+ *
+ * Dieser Importer liest aus den Metadaten "codes.txt" die einzelnen ICD-Ziffern
+ * zeilenweise ein und baut die kompletten Codes mithilfe der KAPxx-.asc -
+ * Kapiteldateien aus der Systematik auf.
+ *
+ * Aufbau von codes.txt: Feld 1 : Klassifikationsebene, 1 Zeichen 3 =
+ * Dreisteller 4 = Viersteller 5 = Fünfsteller Feld 2 : Ort der Schlüsselnummer
+ * im Klassifikationsbaum, 1 Zeichen T = terminale Schlüsselnummer (kodierbarer
+ * Endpunkt) N = nichtterminale Schlüsselnummer (kein kodierbarer Endpunkt) Feld
+ * 3 : Generiert? X: explizit in der Klassifikation aufgeführt S: über
+ * Subklassifikation generiert Feld 4 : Art der Viersteller X = explizit
+ * aufgeführt (präkombiniert) S = per Subklassifikation (postkomibiniert) Feld 5
+ * : Kapitelnummer, 2 Zeichen Feld 6 : erster Dreisteller der Gruppe, 3 Zeichen
+ * Feld 7 : Dreisteller zur Schlüsselnummer, 3 Zeichen Feld 8 : Schlüsselnummer
+ * ohne eventuelles Kreuzchen, bis zu 7 Zeichen Feld 9 : Schlüsselnummer ohne
+ * Strich, Sternchen und Ausrufezeichen, bis zu 6 Zeichen Feld 10:
+ * Schlüsselnummer ohne Punkt, Strich, Sternchen und Ausrufezeichen, bis zu 5
+ * Zeichen Feld 11: Klassentitel, bis zu 255 Zeichen Feld 12: Bezug zur
+ * Mortalitätsliste 1 Feld 13: Bezug zur Mortalitätsliste 2 Feld 14: Bezug zur
+ * Mortalitätsliste 3 Feld 15: Bezug zur Mortalitätsliste 4 Feld 16: Bezug zur
+ * Morbiditätsliste Feld 17: Geschlechtsbezug der Schlüsselnummer 9 = kein
+ * Geschlechtsbezug M = maennlich W = weiblich Feld 18: Art des Fehlers bei
+ * Geschlechtsbezug 9 = irrelevant M = Muß-Fehler K = Kann-Fehler Feld 19:
+ * untere Altersgrenze für eine Schlüsselnummer 999 = irrelevant 000 = bis unter
+ * 1 Tag 001-006 = 1 Tag bis unter 7 Tage 011-013 = 7 Tage bis unter 28 Tage
+ * 101-111 = 28 Tage bis unter 1 Jahr 201-299 = 1 Jahr bis unter 100 Jahre
+ * 300-324 = 100 Jahre bis unter 124 Jahre Feld 20: obere Altersgrenze für eine
+ * Schlüsselnummer wie bei Feld 19 Feld 21: Art des Fehlers bei Altersbezug 9 =
+ * irrelevant M = Muß-Fehler K = Kann-Fehler Feld 22: Krankheit in Mitteleuropa
+ * sehr selten? J = Ja (--> Kann-Fehler auslösen!) N = Nein Feld 23:
+ * Schlüsselnummer als Grundleiden in der Todesursachenkodierung zugelassen? J =
+ * Ja M = Nein
+ *
+ *
  * @author gerry
- * 
+ *
  */
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=icd10")
-public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter
-		implements IReferenceDataImporter {
-	
+public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
+
 	private Pattern pat_group;
-	
+
 	private final static String regex_group = "([A-Z][0-9][0-9]-[A-Z][0-9][0-9])(.+?):"; //$NON-NLS-1$
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(Icd10ReferenceDataImporter.class);
-	
+
 	static final int LEVEL = 0;
 	static final int TERMINAL = 1;
 	static final int GENERATED = 2;
@@ -87,17 +96,18 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter
 	static final int CODE_SHORT = 8;
 	static final int CODE_COMPACT = 9;
 	static final int TEXT = 10;
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion){
+	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion) {
 		List<ICD10> existing = EntityUtil.loadAll(ICD10.class);
 		if (existing.size() > 1) {
 			EntityUtil.removeAll((List<Object>) (List<?>) existing);
 		}
 		monitor.beginTask("ICD-10 Import", 15000);
 		try {
-			// input is expected to be a zip file, containing the icd-10 who 2006 files as described
+			// input is expected to be a zip file, containing the icd-10 who 2006 files as
+			// described
 			File zipFile = Files.createTempFile("icd10_", ".zip").toFile();
 			FileUtils.copyInputStreamToFile(input, zipFile);
 			File unzipDirectory = Files.createTempDirectory("icd10_").toFile();
@@ -126,17 +136,17 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter
 						kapitel = new ICD10();
 						kapitel.setParent("NIL");
 						kapitel.setCode(kap);
-						kapitel.setEncoded("1;N;X;X;" + kap + ";" + kap + ";" + kap + ";" + kap
-							+ ";" + kap + ";" + kap + ";Kapitel " + kap + ";;;;;");
+						kapitel.setEncoded("1;N;X;X;" + kap + ";" + kap + ";" + kap + ";" + kap + ";" + kap + ";" + kap
+								+ ";Kapitel " + kap + ";;;;;");
 						kapitel.setText(kapitel.getEnoded().split(";")[TEXT]);
 						chapters.put(kap, kapitel);
-						LineFeeder lf =
-							new LineFeeder(new File(unzipDirectory, "KAP" + kap + ".asc")); //$NON-NLS-1$ //$NON-NLS-2$
+						LineFeeder lf = new LineFeeder(new File(unzipDirectory, "KAP" + kap + ".asc")); //$NON-NLS-1$ //$NON-NLS-2$
 						while (lf.peek() == '0') {
 							String t = lf.nextLine();
 							switch (t.charAt(1)) {
 							case 'T':
-								kapitel.setText(t.substring(2).replaceAll("\n", " - ")); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+								kapitel.setText(t.substring(2).replaceAll("\n", " - ")); //$NON-NLS-1$//$NON-NLS-2$
+																							// //$NON-NLS-3$
 								break;
 							case 'I':
 								setExtInfo("Incl:", t.substring(2), kapitel);
@@ -155,9 +165,8 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter
 										ICD10 icdgroup = new ICD10();
 										icdgroup.setParent(kapitel.getId());
 										icdgroup.setCode(code);
-										icdgroup.setEncoded("1;N;X;X;" + kap + ";" + code + ";"
-											+ gs[0] + ";" + gs[0] + ";" + code + ";" + code + ";"
-											+ match.group(2));
+										icdgroup.setEncoded("1;N;X;X;" + kap + ";" + code + ";" + gs[0] + ";" + gs[0]
+												+ ";" + code + ";" + code + ";" + match.group(2));
 										icdgroup.setText(icdgroup.getEnoded().split(";")[TEXT]);
 										groups.put(gs[0], icdgroup);
 									}
@@ -171,7 +180,7 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter
 						EntityUtil.save(new ArrayList(chapters.values()));
 						EntityUtil.save(new ArrayList(groups.values()));
 					}
-					
+
 					ICD10 mygroup = groups.get(group);
 					if (mygroup == null) {
 						node = new ICD10();
@@ -205,7 +214,7 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter
 						}
 					}
 					EntityUtil.save(Collections.singletonList(node));
-					
+
 					monitor.worked(1);
 					if (monitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
@@ -217,17 +226,17 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter
 		} catch (Exception e) {
 			logger.error("Error importing icd10 zip file", e);
 			return new Status(Status.ERROR, "ch.elexis.base.ch.icd10",
-				"Error importing icd10 zip file [" + e.getMessage() + "]");
+					"Error importing icd10 zip file [" + e.getMessage() + "]");
 		}
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
-	public int getCurrentVersion(){
+	public int getCurrentVersion() {
 		return -1;
 	}
-	
-	private static void setExtInfo(Object key, Object value, ICD10 icd){
+
+	private static void setExtInfo(Object key, Object value, ICD10 icd) {
 		Map<Object, Object> extInfo = new Hashtable<>();
 		byte[] bytes = icd.getExtInfo();
 		if (bytes != null) {
@@ -240,22 +249,21 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter
 		}
 		icd.setExtInfo(JpaModelUtil.extInfoToBytes(extInfo));
 	}
-	
+
 	private class LineFeeder {
 		String prev;
 		BufferedReader br;
-		
-		LineFeeder(File file) throws Exception{
-			br = new BufferedReader(
-				new InputStreamReader(new FileInputStream(file), "iso-8859-1")); //$NON-NLS-1$
+
+		LineFeeder(File file) throws Exception {
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "iso-8859-1")); //$NON-NLS-1$
 			prev = br.readLine();
 		}
-		
-		char peek(){
+
+		char peek() {
 			return prev.charAt(0);
 		}
-		
-		String nextLine() throws Exception{
+
+		String nextLine() throws Exception {
 			if (prev == null) {
 				return null;
 			}
@@ -286,12 +294,12 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter
 			}
 			return ret;
 		}
-		
-		boolean atEOF(){
+
+		boolean atEOF() {
 			return prev == null;
 		}
-		
-		public void close() throws Exception{
+
+		public void close() throws Exception {
 			br.close();
 		}
 	}

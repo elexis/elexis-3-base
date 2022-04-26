@@ -30,15 +30,15 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 
 @Component
 public class OutboxElementService implements IOutboxElementService {
-	
+
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=at.medevit.elexis.outbox.model)")
 	private IModelService modelService;
-	
+
 	HashSet<IOutboxUpdateListener> listeners = new HashSet<IOutboxUpdateListener>();
-	
+
 	@Override
-	public IOutboxElement createOutboxElement(IPatient patient, IMandator mandator, String uri){
-		//		OutboxElement element = new OutboxElement(patient, mandant, uri);
+	public IOutboxElement createOutboxElement(IPatient patient, IMandator mandator, String uri) {
+		// OutboxElement element = new OutboxElement(patient, mandant, uri);
 		IOutboxElement element = modelService.create(IOutboxElement.class);
 		element.setPatient(patient);
 		element.setMandator(mandator);
@@ -48,16 +48,16 @@ public class OutboxElementService implements IOutboxElementService {
 		fireUpdate(element);
 		return element;
 	}
-	
+
 	@Override
-	public void changeOutboxElementState(IOutboxElement element, State state){
+	public void changeOutboxElementState(IOutboxElement element, State state) {
 		element.setState(state);
 		modelService.save(element);
 		fireUpdate(element);
 	}
-	
+
 	@Override
-	public List<IOutboxElement> getOutboxElements(String uri, State state){
+	public List<IOutboxElement> getOutboxElements(String uri, State state) {
 		IQuery<IOutboxElement> query = modelService.getQuery(IOutboxElement.class);
 		if (uri != null) {
 			query.and("uri", COMPARATOR.EQUALS, uri);
@@ -67,10 +67,9 @@ public class OutboxElementService implements IOutboxElementService {
 		}
 		return query.execute();
 	}
-	
+
 	@Override
-	public List<IOutboxElement> getOutboxElements(IMandator mandator, IPatient patient,
-		State state){
+	public List<IOutboxElement> getOutboxElements(IMandator mandator, IPatient patient, State state) {
 		IQuery<IOutboxElement> query = modelService.getQuery(IOutboxElement.class);
 		if (mandator != null) {
 			query.and("mandant", COMPARATOR.EQUALS, mandator);
@@ -83,22 +82,22 @@ public class OutboxElementService implements IOutboxElementService {
 		}
 		return query.execute();
 	}
-	
+
 	@Override
-	public void addUpdateListener(IOutboxUpdateListener listener){
+	public void addUpdateListener(IOutboxUpdateListener listener) {
 		synchronized (listeners) {
 			listeners.add(listener);
 		}
 	}
-	
+
 	@Override
-	public void removeUpdateListener(IOutboxUpdateListener listener){
+	public void removeUpdateListener(IOutboxUpdateListener listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
 		}
 	}
-	
-	private void fireUpdate(IOutboxElement element){
+
+	private void fireUpdate(IOutboxElement element) {
 		synchronized (listeners) {
 			for (IOutboxUpdateListener listener : listeners) {
 				listener.update(element);
@@ -107,27 +106,24 @@ public class OutboxElementService implements IOutboxElementService {
 	}
 
 	@Activate
-	public void activate(){
+	public void activate() {
 		System.out.println("active providers");
 		ElementsProviderExtension.activateAll();
 	}
-	
+
 	@Deactivate
-	public void deactivate(){
+	public void deactivate() {
 		System.out.println("deactive providers");
 	}
-	
+
 	@Override
-	public InputStream getContentsAsStream(IOutboxElement outboxElement)
-		throws IOException{
+	public InputStream getContentsAsStream(IOutboxElement outboxElement) throws IOException {
 		Object object = outboxElement.getObject();
 		if (object instanceof Path) {
 			Path path = (Path) object;
 			return Files.newInputStream(path);
-		}
-		else if (object instanceof IDocument) {
-			Optional<InputStream> in =
-				DocumentStoreServiceHolder.getService().loadContent((IDocument) object);
+		} else if (object instanceof IDocument) {
+			Optional<InputStream> in = DocumentStoreServiceHolder.getService().loadContent((IDocument) object);
 			if (in.isPresent()) {
 				return in.get();
 			}
@@ -136,10 +132,9 @@ public class OutboxElementService implements IOutboxElementService {
 		}
 		return null;
 	}
-	
+
 	@Override
-	public Optional<File> createTempFileWithContents(File folder, IOutboxElement outboxElement)
-		throws IOException{
+	public Optional<File> createTempFileWithContents(File folder, IOutboxElement outboxElement) throws IOException {
 		try (InputStream in = getContentsAsStream(outboxElement)) {
 			if (in != null) {
 				if (folder != null && folder.exists()) {
@@ -154,9 +149,9 @@ public class OutboxElementService implements IOutboxElementService {
 		}
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public void deleteOutboxElement(IOutboxElement outboxElement){
+	public void deleteOutboxElement(IOutboxElement outboxElement) {
 		if (outboxElement != null) {
 			modelService.delete(outboxElement);
 			fireUpdate(outboxElement);

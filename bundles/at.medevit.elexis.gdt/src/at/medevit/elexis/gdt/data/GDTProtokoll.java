@@ -25,7 +25,7 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 public class GDTProtokoll extends PersistentObject {
-	
+
 	public static final String FLD_DATETIME = "DateTime";
 	public static final String FLD_PATIENT_ID = "PatientID";
 	public static final String FLD_BEZEICHNUNG = "Bezeichnung";
@@ -35,140 +35,132 @@ public class GDTProtokoll extends PersistentObject {
 	public static final String FLD_GEGENSTELLE = "Remote";
 	public static final String FLD_MESSAGE = "Message";
 	static final String VERSION = "1.0.1";
-	
+
 	public static final String MESSAGE_DIRECTION_IN = "IN";
 	public static final String MESSAGE_DIRECTION_OUT = "OUT";
-	
+
 	static final String TABLENAME = "at_medevit_elexis_gdt_protokoll";
-	
-	static final String createDB =
-			"CREATE TABLE " + TABLENAME
-				+ "("
-				+ "ID VARCHAR(25) primary key," 
-				+ "lastupdate BIGINT," 
-				+ "deleted CHAR(1) default '0'," 
-				+ FLD_DATETIME +" VARCHAR(24)," 
-				+ FLD_PATIENT_ID+" VARCHAR(25),"
-				+ FLD_BEZEICHNUNG+" VARCHAR(60),"
-				+ FLD_BEMERKUNGEN+" VARCHAR(80),"
-				+ FLD_MESSAGE_TYPE+" VARCHAR(4),"
-				+ FLD_MESSAGE_DIRECTION+" VARCHAR(3)," 
-				+ FLD_GEGENSTELLE+" VARCHAR(60),"
-				+ FLD_MESSAGE+"	TEXT);" 
-				+ "CREATE INDEX "
-				+ TABLENAME
-				+ "idx1 on " + TABLENAME + " ("+FLD_DATETIME+");"
-				+ "INSERT INTO " + TABLENAME + " (ID,DateTime) VALUES ('VERSION',"
-				+ JdbcLink.wrap("1.0.0") + ");";
-	
+
+	static final String createDB = "CREATE TABLE " + TABLENAME + "(" + "ID VARCHAR(25) primary key,"
+			+ "lastupdate BIGINT," + "deleted CHAR(1) default '0'," + FLD_DATETIME + " VARCHAR(24)," + FLD_PATIENT_ID
+			+ " VARCHAR(25)," + FLD_BEZEICHNUNG + " VARCHAR(60)," + FLD_BEMERKUNGEN + " VARCHAR(80)," + FLD_MESSAGE_TYPE
+			+ " VARCHAR(4)," + FLD_MESSAGE_DIRECTION + " VARCHAR(3)," + FLD_GEGENSTELLE + " VARCHAR(60)," + FLD_MESSAGE
+			+ "	TEXT);" + "CREATE INDEX " + TABLENAME + "idx1 on " + TABLENAME + " (" + FLD_DATETIME + ");"
+			+ "INSERT INTO " + TABLENAME + " (ID,DateTime) VALUES ('VERSION'," + JdbcLink.wrap("1.0.0") + ");";
+
 	static {
-		addMapping(TABLENAME, FLD_DATETIME, FLD_PATIENT_ID,
-			FLD_BEZEICHNUNG, FLD_BEMERKUNGEN, FLD_MESSAGE_TYPE, FLD_MESSAGE_DIRECTION, FLD_GEGENSTELLE, FLD_MESSAGE); 
+		addMapping(TABLENAME, FLD_DATETIME, FLD_PATIENT_ID, FLD_BEZEICHNUNG, FLD_BEMERKUNGEN, FLD_MESSAGE_TYPE,
+				FLD_MESSAGE_DIRECTION, FLD_GEGENSTELLE, FLD_MESSAGE);
 		GDTProtokoll version = load("VERSION");
 		if (!version.exists()) {
 			createOrModifyTable(createDB);
 		} else {
-			VersionInfo vi = new VersionInfo(version.get(FLD_DATETIME));	
+			VersionInfo vi = new VersionInfo(version.get(FLD_DATETIME));
 			if (vi.isOlder(VERSION)) {
-				{	// 1.0.1
-					createOrModifyTable("ALTER TABLE "+TABLENAME+" MODIFY "+FLD_GEGENSTELLE+" VARCHAR(255);");
+				{ // 1.0.1
+					createOrModifyTable("ALTER TABLE " + TABLENAME + " MODIFY " + FLD_GEGENSTELLE + " VARCHAR(255);");
 					version.set(FLD_DATETIME, VERSION);
 				}
 			}
 		}
 	}
 
-	GDTProtokoll(){}
-	protected GDTProtokoll(String id) { super(id); }
-	
-	
-	public <U extends GDTSatzNachricht> GDTProtokoll(String messageDirection, IGDTCommunicationPartner cp, U satzNachricht){
-		create(null); 
-		
+	GDTProtokoll() {
+	}
+
+	protected GDTProtokoll(String id) {
+		super(id);
+	}
+
+	public <U extends GDTSatzNachricht> GDTProtokoll(String messageDirection, IGDTCommunicationPartner cp,
+			U satzNachricht) {
+		create(null);
+
 		Patient pat = Patient.loadByPatientID(satzNachricht.getValue(GDTConstants.FELDKENNUNG_PATIENT_KENNUNG));
-		
+
 		StringBuilder sb = new StringBuilder();
 		String[] message = satzNachricht.getMessage();
 		for (int i = 0; i < message.length; i++) {
 			sb.append(message[i]);
 		}
-		
-		set(new String[] {
-			FLD_DATETIME, FLD_PATIENT_ID, FLD_MESSAGE_TYPE, FLD_MESSAGE_DIRECTION, FLD_GEGENSTELLE, FLD_MESSAGE, FLD_BEZEICHNUNG
-		}, 
-		new TimeTool().toString(TimeTool.TIMESTAMP), 
-		(pat!=null) ? pat.getId() : "nicht zugeordnet", 
-		satzNachricht.getValue(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION), 
-		messageDirection,
-		cp.getLabel(),
-		sb.toString(),
-		satzNachricht.getValue(GDTConstants.FELDKENNUNG_TEST_IDENT)
-		);
+
+		set(new String[] { FLD_DATETIME, FLD_PATIENT_ID, FLD_MESSAGE_TYPE, FLD_MESSAGE_DIRECTION, FLD_GEGENSTELLE,
+				FLD_MESSAGE, FLD_BEZEICHNUNG }, new TimeTool().toString(TimeTool.TIMESTAMP),
+				(pat != null) ? pat.getId() : "nicht zugeordnet",
+				satzNachricht.getValue(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION), messageDirection, cp.getLabel(),
+				sb.toString(), satzNachricht.getValue(GDTConstants.FELDKENNUNG_TEST_IDENT));
 
 		int satznachrichtType = Integer.parseInt(satzNachricht.getValue(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION));
-		if(messageDirection.equalsIgnoreCase(GDTProtokoll.MESSAGE_DIRECTION_OUT)) {
+		if (messageDirection.equalsIgnoreCase(GDTProtokoll.MESSAGE_DIRECTION_OUT)) {
 			switch (satznachrichtType) {
 			case GDTConstants.SATZART_UNTERSUCHUNG_ANFORDERN:
-				set(FLD_BEZEICHNUNG, "Anforderung Untersuchung: "+satzNachricht.getValue(GDTConstants.FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD));
+				set(FLD_BEZEICHNUNG, "Anforderung Untersuchung: "
+						+ satzNachricht.getValue(GDTConstants.FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD));
 				break;
 			case GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_ZEIGEN:
-				set(FLD_BEZEICHNUNG, "Anzeige Untersuchung: "+satzNachricht.getValue(GDTConstants.FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD));
+				set(FLD_BEZEICHNUNG, "Anzeige Untersuchung: "
+						+ satzNachricht.getValue(GDTConstants.FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD));
 				break;
 			case GDTConstants.SATZART_STAMMDATEN_UEBERMITTELN:
 				set(FLD_BEZEICHNUNG, "Stammdaten übermittelt");
 				break;
-			default: break;
+			default:
+				break;
 			}
 		}
-		if(messageDirection.equalsIgnoreCase(GDTProtokoll.MESSAGE_DIRECTION_IN)) {
+		if (messageDirection.equalsIgnoreCase(GDTProtokoll.MESSAGE_DIRECTION_IN)) {
 			switch (satznachrichtType) {
 			case GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_UEBERMITTELN:
-				set(FLD_BEZEICHNUNG, "Resultat Untersuchung: "+satzNachricht.getValue(GDTConstants.FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD));
+				set(FLD_BEZEICHNUNG, "Resultat Untersuchung: "
+						+ satzNachricht.getValue(GDTConstants.FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD));
 				break;
-			
-			default: break;
+
+			default:
+				break;
 			}
 		}
 	}
-		
-	public static GDTProtokoll load(String id){
+
+	public static GDTProtokoll load(String id) {
 		return new GDTProtokoll(id);
 	}
-	
+
 	@Override
-	protected String getTableName(){
+	protected String getTableName() {
 		return TABLENAME;
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		StringBuilder sb = new StringBuilder();
 		TimeTool tt = new TimeTool(get(FLD_DATETIME));
 		Patient pat = Patient.loadByPatientID(get(FLD_PATIENT_ID));
-		sb.append(tt.toString(TimeTool.DATE_GER)+": "+pat.getLabel()+" "+FLD_MESSAGE_TYPE+" "+FLD_MESSAGE_DIRECTION);
-		return sb.toString();
-	}
-	
-	public String getMenuLabel() {
-		StringBuilder sb = new StringBuilder();
-		TimeTool tt = new TimeTool(get(FLD_DATETIME));
-		
-		sb.append(tt.toString(TimeTool.DATE_GER)+": "+get(FLD_BEZEICHNUNG)+" "+"["+get(FLD_GEGENSTELLE)+"]");
+		sb.append(tt.toString(TimeTool.DATE_GER) + ": " + pat.getLabel() + " " + FLD_MESSAGE_TYPE + " "
+				+ FLD_MESSAGE_DIRECTION);
 		return sb.toString();
 	}
 
-	public static <U extends GDTSatzNachricht> GDTProtokoll addEntry(String messageDirection, IGDTCommunicationPartner cp,
-		 U satzNachricht){
+	public String getMenuLabel() {
+		StringBuilder sb = new StringBuilder();
+		TimeTool tt = new TimeTool(get(FLD_DATETIME));
+
+		sb.append(
+				tt.toString(TimeTool.DATE_GER) + ": " + get(FLD_BEZEICHNUNG) + " " + "[" + get(FLD_GEGENSTELLE) + "]");
+		return sb.toString();
+	}
+
+	public static <U extends GDTSatzNachricht> GDTProtokoll addEntry(String messageDirection,
+			IGDTCommunicationPartner cp, U satzNachricht) {
 		return new GDTProtokoll(messageDirection, cp, satzNachricht);
 	}
-	
+
 	public static GDTProtokoll[] getAllEntries() {
 		Query<GDTProtokoll> qbe = new Query<GDTProtokoll>(GDTProtokoll.class);
 		qbe.add("ID", Query.NOT_EQUAL, "VERSION");
 		List<GDTProtokoll> qre = qbe.execute();
 		return qre.toArray(new GDTProtokoll[] {});
 	}
-	
+
 	public static GDTProtokoll[] getEntriesForPatient(Patient pat) {
 		String ID = pat.getId();
 		Query<GDTProtokoll> qbe = new Query<GDTProtokoll>(GDTProtokoll.class);
@@ -177,37 +169,46 @@ public class GDTProtokoll extends PersistentObject {
 		List<GDTProtokoll> qre = qbe.execute();
 		return qre.toArray(new GDTProtokoll[] {});
 	}
-	
+
 	public String getMessageDirection() {
 		return get(FLD_MESSAGE_DIRECTION);
 	}
+
 	public TimeTool getEntryTime() {
 		return new TimeTool(get(FLD_DATETIME));
 	}
+
 	/**
 	 * @return value of {@link GDTConstants#FELDKENNUNG_SATZIDENTIFIKATION}
 	 */
-	public String getMessageType(){
+	public String getMessageType() {
 		return get(FLD_MESSAGE_TYPE);
 	}
+
 	public Patient getEntryRelatedPatient() {
 		return Patient.load(get(FLD_PATIENT_ID));
 	}
+
 	public String getBezeichnung() {
 		return get(FLD_BEZEICHNUNG);
 	}
+
 	public void setBezeichnung(String bezeichnung) {
 		set(FLD_BEZEICHNUNG, bezeichnung);
 	}
+
 	public String getBemerkungen() {
 		return get(FLD_BEMERKUNGEN);
 	}
+
 	public void setBemerkungen(String bemerkung) {
 		set(FLD_BEMERKUNGEN, bemerkung);
 	}
+
 	public String getGegenstelle() {
 		return get(FLD_GEGENSTELLE);
 	}
+
 	public String getMessage() {
 		return get(FLD_MESSAGE);
 	}

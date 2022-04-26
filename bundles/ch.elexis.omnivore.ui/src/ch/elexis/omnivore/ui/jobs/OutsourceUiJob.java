@@ -15,32 +15,29 @@ import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
 
 public class OutsourceUiJob {
-	
-	public Object execute(Shell parentShell){
-		
+
+	public Object execute(Shell parentShell) {
+
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(parentShell);
-		
+
 		try {
 			dialog.run(true, true, new IRunnableWithProgress() {
-				
+
 				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException,
-					InterruptedException{
-					
-					IQuery<IDocumentHandle> qDoc =
-						OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+
+					IQuery<IDocumentHandle> qDoc = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
 					List<IDocumentHandle> lDocs = qDoc.execute();
-					
+
 					monitor.beginTask("Dateien werden ausgelagert...", lDocs.size());
-					
+
 					for (IDocumentHandle docHandle : lDocs) {
 						if (monitor.isCanceled())
 							return;
 						monitor.subTask("Datei: " + docHandle.getTitle());
 						if (!docHandle.exportToFileSystem()) {
 							SWTHelper.showError(Messages.DocHandle_writeErrorCaption2,
-								Messages.DocHandle_writeErrorCaption2,
-								"Fehlerdetails siehe Logdatei");
+									Messages.DocHandle_writeErrorCaption2, "Fehlerdetails siehe Logdatei");
 						}
 						monitor.worked(1);
 					}
@@ -52,8 +49,8 @@ public class OutsourceUiJob {
 		} catch (InterruptedException ie) {
 			ie.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 }

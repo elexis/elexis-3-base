@@ -34,147 +34,144 @@ import static org.apache.solr.common.params.CommonParams.NAME;
  *
  * @since solr 5.4
  */
-public abstract class ConfigSetAdminRequest
-      <Q extends ConfigSetAdminRequest<Q,R>, R extends ConfigSetAdminResponse>
-      extends SolrRequest<R> {
+public abstract class ConfigSetAdminRequest<Q extends ConfigSetAdminRequest<Q, R>, R extends ConfigSetAdminResponse>
+		extends SolrRequest<R> {
 
-  protected ConfigSetAction action = null;
+	protected ConfigSetAction action = null;
 
-  @SuppressWarnings({"rawtypes"})
-  protected ConfigSetAdminRequest setAction(ConfigSetAction action) {
-    this.action = action;
-    return this;
-  }
+	@SuppressWarnings({ "rawtypes" })
+	protected ConfigSetAdminRequest setAction(ConfigSetAction action) {
+		this.action = action;
+		return this;
+	}
 
-  public ConfigSetAdminRequest() {
-    super(METHOD.GET, "/admin/configs");
-  }
+	public ConfigSetAdminRequest() {
+		super(METHOD.GET, "/admin/configs");
+	}
 
-  public ConfigSetAdminRequest(String path) {
-    super (METHOD.GET, path);
-  }
+	public ConfigSetAdminRequest(String path) {
+		super(METHOD.GET, path);
+	}
 
-  protected abstract Q getThis();
+	protected abstract Q getThis();
 
-  @Override
-  public SolrParams getParams() {
-    if (action == null) {
-      throw new RuntimeException( "no action specified!" );
-    }
-    ModifiableSolrParams params = new ModifiableSolrParams();
-    params.set(ConfigSetParams.ACTION, action.toString());
-    return params;
-  }
+	@Override
+	public SolrParams getParams() {
+		if (action == null) {
+			throw new RuntimeException("no action specified!");
+		}
+		ModifiableSolrParams params = new ModifiableSolrParams();
+		params.set(ConfigSetParams.ACTION, action.toString());
+		return params;
+	}
 
+	@Override
+	protected abstract R createResponse(SolrClient client);
 
-  @Override
-  protected abstract R createResponse(SolrClient client);
+	protected abstract static class ConfigSetSpecificAdminRequest<T extends ConfigSetAdminRequest<T, ConfigSetAdminResponse>>
+			extends ConfigSetAdminRequest<T, ConfigSetAdminResponse> {
+		protected String configSetName = null;
 
-  protected abstract static class ConfigSetSpecificAdminRequest
-       <T extends ConfigSetAdminRequest<T,ConfigSetAdminResponse>>
-       extends ConfigSetAdminRequest<T,ConfigSetAdminResponse> {
-    protected String configSetName = null;
+		public final T setConfigSetName(String configSetName) {
+			this.configSetName = configSetName;
+			return getThis();
+		}
 
-    public final T setConfigSetName(String configSetName) {
-      this.configSetName = configSetName;
-      return getThis();
-    }
+		public final String getConfigSetName() {
+			return configSetName;
+		}
 
-    public final String getConfigSetName() {
-      return configSetName;
-    }
+		@Override
+		public SolrParams getParams() {
+			ModifiableSolrParams params = new ModifiableSolrParams(super.getParams());
+			if (configSetName == null) {
+				throw new RuntimeException("no ConfigSet specified!");
+			}
+			params.set(NAME, configSetName);
+			return params;
+		}
 
-    @Override
-    public SolrParams getParams() {
-      ModifiableSolrParams params = new ModifiableSolrParams(super.getParams());
-      if (configSetName == null) {
-        throw new RuntimeException( "no ConfigSet specified!" );
-      }
-      params.set(NAME, configSetName);
-      return params;
-    }
+		@Override
+		protected ConfigSetAdminResponse createResponse(SolrClient client) {
+			return new ConfigSetAdminResponse();
+		}
+	}
 
-    @Override
-    protected ConfigSetAdminResponse createResponse(SolrClient client) {
-      return new ConfigSetAdminResponse();
-    }
-  }
+	// CREATE request
+	public static class Create extends ConfigSetSpecificAdminRequest<Create> {
+		protected static String PROPERTY_PREFIX = "configSetProp";
+		protected String baseConfigSetName;
+		protected Properties properties;
 
-  // CREATE request
-  public static class Create extends ConfigSetSpecificAdminRequest<Create> {
-    protected static String PROPERTY_PREFIX = "configSetProp";
-    protected String baseConfigSetName;
-    protected Properties properties;
+		public Create() {
+			action = ConfigSetAction.CREATE;
+		}
 
-    public Create() {
-      action = ConfigSetAction.CREATE;
-    }
+		@Override
+		protected Create getThis() {
+			return this;
+		}
 
-    @Override
-    protected Create getThis() {
-      return this;
-    }
+		public final Create setBaseConfigSetName(String baseConfigSetName) {
+			this.baseConfigSetName = baseConfigSetName;
+			return getThis();
+		}
 
-    public final Create setBaseConfigSetName(String baseConfigSetName) {
-      this.baseConfigSetName = baseConfigSetName;
-      return getThis();
-    }
+		public final String getBaseConfigSetName() {
+			return baseConfigSetName;
+		}
 
-    public final String getBaseConfigSetName() {
-      return baseConfigSetName;
-    }
+		public final Create setNewConfigSetProperties(Properties properties) {
+			this.properties = properties;
+			return getThis();
+		}
 
-    public final Create setNewConfigSetProperties(Properties properties) {
-      this.properties = properties;
-      return getThis();
-    }
+		public final Properties getNewConfigSetProperties() {
+			return properties;
+		}
 
-    public final Properties getNewConfigSetProperties() {
-      return properties;
-    }
+		@Override
+		public SolrParams getParams() {
+			ModifiableSolrParams params = new ModifiableSolrParams(super.getParams());
+			if (baseConfigSetName != null) {
+				params.set("baseConfigSet", baseConfigSetName);
+			}
+			if (properties != null) {
+				for (@SuppressWarnings({ "rawtypes" })
+				Map.Entry entry : properties.entrySet()) {
+					params.set(PROPERTY_PREFIX + "." + entry.getKey().toString(), entry.getValue().toString());
+				}
+			}
+			return params;
+		}
+	}
 
-    @Override
-    public SolrParams getParams() {
-      ModifiableSolrParams params = new ModifiableSolrParams(super.getParams());
-      if (baseConfigSetName != null) {
-        params.set("baseConfigSet", baseConfigSetName);
-      }
-      if (properties != null) {
-        for (@SuppressWarnings({"rawtypes"})Map.Entry entry : properties.entrySet()) {
-          params.set(PROPERTY_PREFIX + "." + entry.getKey().toString(),
-              entry.getValue().toString());
-        }
-      }
-      return params;
-    }
-  }
+	// DELETE request
+	public static class Delete extends ConfigSetSpecificAdminRequest<Delete> {
+		public Delete() {
+			action = ConfigSetAction.DELETE;
+		}
 
-  // DELETE request
-  public static class Delete extends ConfigSetSpecificAdminRequest<Delete> {
-    public Delete() {
-      action = ConfigSetAction.DELETE;
-    }
+		@Override
+		protected Delete getThis() {
+			return this;
+		}
+	}
 
-    @Override
-    protected Delete getThis() {
-      return this;
-    }
-  }
+	// LIST request
+	public static class List extends ConfigSetAdminRequest<List, ConfigSetAdminResponse.List> {
+		public List() {
+			action = ConfigSetAction.LIST;
+		}
 
-  // LIST request
-  public static class List extends ConfigSetAdminRequest<List, ConfigSetAdminResponse.List> {
-    public List() {
-      action = ConfigSetAction.LIST;
-    }
+		@Override
+		protected List getThis() {
+			return this;
+		}
 
-    @Override
-    protected List getThis() {
-      return this;
-    }
-
-    @Override
-    protected ConfigSetAdminResponse.List createResponse(SolrClient client) {
-      return new ConfigSetAdminResponse.List();
-    }
-  }
+		@Override
+		protected ConfigSetAdminResponse.List createResponse(SolrClient client) {
+			return new ConfigSetAdminResponse.List();
+		}
+	}
 }

@@ -96,24 +96,21 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;;
 
 /**
- * Diese Ansicht zeigt externe Dokumente an. Die Dokumente liegen in einem Verzeichnis im
- * Dateisystem. Dieses Verzeichnis kann in den Einstellungen angegeben werden. Falls ein Patient
- * ausgewaehlt ist, wird nach einem bestimmten Schema nach diesem Patienten gefiltert.
+ * Diese Ansicht zeigt externe Dokumente an. Die Dokumente liegen in einem
+ * Verzeichnis im Dateisystem. Dieses Verzeichnis kann in den Einstellungen
+ * angegeben werden. Falls ein Patient ausgewaehlt ist, wird nach einem
+ * bestimmten Schema nach diesem Patienten gefiltert.
  */
 
 public class ExterneDokumente extends ViewPart implements IActivationListener {
 	// private static final String NONE = "Keine Dokumente";
-	
+
 	// Erwartete Anzahl Dokumente falls noch nicht bekannt
 	private static final int DEFAULT_SIZE = 1;
-	private Button[] pathCheckBoxes = {
-		null, null, null, null
-	};
-	
-	private final String[] activePaths = {
-		null, null, null, null
-	};
-	
+	private Button[] pathCheckBoxes = { null, null, null, null };
+
+	private final String[] activePaths = { null, null, null, null };
+
 	/*
 	 * private Combo pathCombo;
 	 */
@@ -132,35 +129,35 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	/*
 	 * private String actPath = null;
 	 */
-	
+
 	private TimestampComparator timeComparator;
 	private FilenameComparator nameComparator;
-	
+
 	// work-around to get the job
 	// TODO cleaner design
 	BackgroundJob globalJob;
-	
+
 	// letzte bekannte Anzahl Dokumente (fuer getSize())
 	int lastSize = DEFAULT_SIZE;
-	
+
 	private static Logger logger = null;
-	
+
 	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
-		ElexisEvent.EVENT_SELECTED) {
+			ElexisEvent.EVENT_SELECTED) {
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev) {
 			actPatient = (Patient) ev.getObject();
 			actMandant = CoreHub.actMandant;
 			refresh();
 		}
 	};
-	
+
 	class DataLoader extends BackgroundJob {
-		public DataLoader(String jobName){
+		public DataLoader(String jobName) {
 			super(jobName);
 		}
-		
-		public IStatus execute(IProgressMonitor monitor){
+
+		public IStatus execute(IProgressMonitor monitor) {
 			if (actPatient != null) {
 				result = MatchPatientToPath.getFilesForPatient(actPatient, activePaths);
 			} else {
@@ -169,16 +166,16 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 
 			return Status.OK_STATUS;
 		}
-		
-		public int getSize(){
+
+		public int getSize() {
 			return lastSize;
 		}
 	}
-	
+
 	class ViewContentProvider implements IStructuredContentProvider, BackgroundJobListener {
 		BackgroundJob job;
-		
-		public ViewContentProvider(){
+
+		public ViewContentProvider() {
 			job = new DataLoader(Messages.ExterneDokumente_externe_dokumente);
 			globalJob = job;
 			if (JobPool.getJobPool().getJob(job.getJobname()) == null) {
@@ -186,45 +183,42 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			}
 			job.addListener(this);
 		}
-		
-		public void inputChanged(Viewer v, Object oldInput, Object newInput){}
-		
-		public void dispose(){
+
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
+
+		public void dispose() {
 			job.removeListener(this);
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		public Object[] getElements(Object parent){
+		public Object[] getElements(Object parent) {
 			Object result = job.getData();
 			if (result == null) {
 				JobPool.getJobPool().activate(job.getJobname(), Job.LONG);
-				return new String[] {
-					Messages.ExterneDokumente_loading
-				};
+				return new String[] { Messages.ExterneDokumente_loading };
 			} else {
 				if (result instanceof List) {
 					return ((List<?>) result).toArray();
 				} else if (result instanceof String) {
-					return new Object[] {
-						result
-					};
+					return new Object[] { result };
 				} else {
 					return null;
 				}
 			}
 		}
-		
-		public void jobFinished(BackgroundJob j){
+
+		public void jobFinished(BackgroundJob j) {
 			// int size=((Object[])j.getData()).length;
 			viewer.refresh(true);
 		}
 	}
-	
+
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 		private static final int DATE_COLUMN = 0;
 		private static final int NAME_COLUMN = 1;
-		
-		public String getColumnText(Object obj, int index){
+
+		public String getColumnText(Object obj, int index) {
 			switch (index) {
 			case DATE_COLUMN:
 				return getDate(obj);
@@ -233,8 +227,8 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			}
 			return ""; //$NON-NLS-1$
 		}
-		
-		public String getText(Object obj){
+
+		public String getText(Object obj) {
 			if (obj instanceof File) {
 				File file = (File) obj;
 				return file.getName();
@@ -244,73 +238,70 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				return ""; //$NON-NLS-1$
 			}
 		}
-		
-		public String getDate(Object obj){
+
+		public String getDate(Object obj) {
 			if (obj instanceof File) {
 				File file = (File) obj;
 				long modified = file.lastModified();
 				Calendar cal = Calendar.getInstance();
 				cal.setTimeInMillis(modified);
 				TimeTool tl = new TimeTool(cal.getTimeInMillis());
-				String modifiedTime =
-					String.format(Messages.ExterneDokumente_modified_time,
+				String modifiedTime = String.format(Messages.ExterneDokumente_modified_time,
 						tl.toString(TimeTool.DATE_ISO), tl.toString(TimeTool.TIME_SMALL));
 				return modifiedTime;
 			} else {
 				return ""; //$NON-NLS-1$
 			}
 		}
-		
-		public Image getColumnImage(Object obj, int index){
+
+		public Image getColumnImage(Object obj, int index) {
 			switch (index) {
 			case NAME_COLUMN:
 				return getImage(obj);
 			}
 			return null;
 		}
-		
-		public Image getImage(Object obj){
+
+		public Image getImage(Object obj) {
 			if (!(obj instanceof File)) {
 				return null;
 			}
-			
+
 			File file = (File) obj;
 			if (file.isDirectory()) {
-				return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJ_FOLDER);
+				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 			} else {
-				return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJ_FILE);
+				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 			}
 		}
 	}
-	
+
 	class TimestampComparator extends ViewerComparator {
 		private static final int DESCENDING = 1;
 		private int direction = DESCENDING;
-		
-		public TimestampComparator(){
+
+		public TimestampComparator() {
 			direction = DESCENDING;
 		}
-		
-		public void changeSortOrder(){
+
+		public void changeSortOrder() {
 			direction = -direction;
 		}
-		
-		public int compare(Viewer viewer, Object e1, Object e2){
+
+		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1 == null) {
 				return direction;
 			}
 			if (e2 == null) {
 				return -direction;
 			}
-			
+
 			File file1 = (File) e1;
 			File file2 = (File) e2;
-			
+
 			long modified1 = file1.lastModified();
 			long modified2 = file2.lastModified();
-			
+
 			if (modified1 < modified2) {
 				return -direction;
 			} else if (modified1 > modified2) {
@@ -320,49 +311,50 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			}
 		}
 	}
-	
+
 	class FilenameComparator extends ViewerComparator {
 		private static final int DESCENDING = 1;
 		private int direction = DESCENDING;
-		
-		public FilenameComparator(){
+
+		public FilenameComparator() {
 			direction = DESCENDING;
 		}
-		
-		public void changeSortOrder(){
+
+		public void changeSortOrder() {
 			direction = -direction;
 		}
-		
-		public int compare(Viewer viewer, Object e1, Object e2){
+
+		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1 == null) {
 				return direction;
 			}
 			if (e2 == null) {
 				return -direction;
 			}
-			
+
 			File file1 = (File) e1;
 			File file2 = (File) e2;
 			return direction * file1.compareTo(file2);
 		}
 	}
-	
+
 	/**
 	 * The constructor.
 	 */
-	public ExterneDokumente(){}
-	
-	public static void addFile(String f){
+	public ExterneDokumente() {
+	}
+
+	public static void addFile(String f) {
 		Patient act = ElexisEventDispatcher.getSelectedPatient();
 		if (act == null) {
 			SWTHelper.showError(Messages.ExterneDokumente_no_patient_found,
-				Messages.ExterneDokumente_select_patient_first);
+					Messages.ExterneDokumente_select_patient_first);
 			return;
 		}
 		File file = new File(f);
 		if (!file.canRead()) {
 			SWTHelper.showError(Messages.ExterneDokumente_read_errpor,
-				MessageFormat.format(Messages.ExterneDokumente_could_not_read_File, f));
+					MessageFormat.format(Messages.ExterneDokumente_could_not_read_File, f));
 			return;
 		}
 		try {
@@ -379,15 +371,15 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			SWTHelper.showError(Messages.ExterneDokumente_import_failed,
-				Messages.ExterneDokumente_exception_while_copying);
+					Messages.ExterneDokumente_exception_while_copying);
 		}
 		logger.info(Messages.ExterneDokumente_imported + file.getAbsolutePath());
 	}
-	
+
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize it.
 	 */
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		logger = LoggerFactory.getLogger(this.getClass());
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.horizontalSpacing = 0;
@@ -395,32 +387,31 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		parent.setLayout(gridLayout);
-		
+
 		Composite topArea = new Composite(parent, SWT.NONE);
 		topArea.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 		topArea.setLayout(new GridLayout());
-		
+
 		Composite bottomArea = new Composite(parent, SWT.NONE);
 		bottomArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		bottomArea.setLayout(new GridLayout());
-		
+
 		// check boxes
-		
+
 		Composite pathArea = new Composite(topArea, SWT.NONE);
 		pathArea.setLayout(new GridLayout(4, false));
-		
+
 		SelectionAdapter checkBoxListener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				refresh();
 			}
 		};
-		
+
 		PreferenceConstants.PathElement[] prefs = PreferenceConstants.getPrefenceElements();
 		for (int j = 0; j < prefs.length; j++) {
 			PreferenceConstants.PathElement cur = prefs[j];
-			boolean emptyPath =
-				(cur.name == null || cur.name.length() == 0 || cur.baseDir == null || cur.baseDir
-					.length() == 0);
+			boolean emptyPath = (cur.name == null || cur.name.length() == 0 || cur.baseDir == null
+					|| cur.baseDir.length() == 0);
 			if (j == 0 || !emptyPath) {
 				pathCheckBoxes[j] = new Button(pathArea, SWT.CHECK);
 				// Show the logical short name
@@ -428,20 +419,17 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				pathCheckBoxes[j].setSelection(PreferenceConstants.pathIsSelected(j));
 				pathCheckBoxes[j].addSelectionListener(checkBoxListener);
 				if (emptyPath) {
-					pathCheckBoxes[j]
-						.setToolTipText(Messages.ExterneDokumente_not_defined_in_preferences);
+					pathCheckBoxes[j].setToolTipText(Messages.ExterneDokumente_not_defined_in_preferences);
 				} else {
 					if (!emptyPath)
 						pathCheckBoxes[j].setToolTipText(cur.baseDir);
 				}
 			}
 		}
-		
+
 		// table
-		viewer =
-			new TableViewer(bottomArea, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
-				| SWT.FULL_SELECTION);
-		
+		viewer = new TableViewer(bottomArea, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+
 		Table table = viewer.getTable();
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		table.setHeaderVisible(true);
@@ -450,13 +438,13 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		TableColumn tc;
 		timeComparator = new TimestampComparator();
 		nameComparator = new FilenameComparator();
-		
+
 		tc = new TableColumn(table, SWT.LEFT);
 		tc.setText(Messages.ExterneDokumente_file_date);
 		tc.setWidth(120);
 		tc.setToolTipText(Messages.ExterneDokumente_click_to_sort_by_date);
 		tc.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				if (viewer.getComparator() == timeComparator)
 					timeComparator.changeSortOrder();
 				else
@@ -464,13 +452,13 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				viewer.refresh();
 			}
 		});
-		
+
 		tc = new TableColumn(table, SWT.LEFT);
 		tc.setText(Messages.ExterneDokumente_file_name);
 		tc.setWidth(400);
 		tc.setToolTipText(Messages.ExterneDokumente_click_to_sort_by_name);
 		tc.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				if (viewer.getComparator() == nameComparator)
 					nameComparator.changeSortOrder();
 				else
@@ -478,28 +466,26 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				viewer.refresh();
 			}
 		});
-		
+
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setComparator(timeComparator);
 		viewer.setInput(getViewSite());
-		
+
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
-		Transfer[] transferTypes = new Transfer[] {
-			FileTransfer.getInstance()
-		};
+		Transfer[] transferTypes = new Transfer[] { FileTransfer.getInstance() };
 		viewer.addDropSupport(DND.DROP_COPY, transferTypes, new DropTargetAdapter() {
-			
+
 			@Override
-			public void dragEnter(DropTargetEvent event){
+			public void dragEnter(DropTargetEvent event) {
 				event.detail = DND.DROP_COPY;
 			}
-			
+
 			@Override
-			public void drop(DropTargetEvent event){
+			public void drop(DropTargetEvent event) {
 				String[] files = (String[]) event.data;
 				for (String file : files) {
 					addFile(file);
@@ -509,17 +495,17 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			}
 
 		});
-		
+
 		// Welcher Patient ist im aktuellen WorkbenchWindow selektiert?
 		actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
-	
-	private void hookContextMenu(){
+
+	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager(Messages.ExterneDokumente_pop_menu);
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager){
+			public void menuAboutToShow(IMenuManager manager) {
 				ch.elexis.extdoc.views.ExterneDokumente.this.fillContextMenu(manager);
 			}
 		});
@@ -527,14 +513,14 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
 	}
-	
-	private void contributeToActionBars(){
+
+	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
 	}
-	
-	private void fillLocalPullDown(IMenuManager manager){
+
+	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(openAction);
 		manager.add(openFolderAction);
 		manager.add(sendMailAction);
@@ -543,8 +529,8 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		manager.add(verifyAction);
 		manager.add(moveIntoSubDirsActions);
 	}
-	
-	private void fillContextMenu(IMenuManager manager){
+
+	private void fillContextMenu(IMenuManager manager) {
 		manager.add(openAction);
 		manager.add(openFolderAction);
 		manager.add(sendMailAction);
@@ -555,17 +541,17 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-	
-	private void fillLocalToolBar(IToolBarManager manager){
+
+	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(openAction);
 		manager.add(editAction);
 		manager.add(sendMailAction);
 		manager.add(openFolderAction);
 	}
-	
-	private void makeActions(){
+
+	private void makeActions() {
 		sendMailAction = new Action() {
-			public void run(){
+			public void run() {
 				Object element = null;
 				List<File> attachements = new ArrayList<>();
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
@@ -581,10 +567,9 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				if (actPatient != null) {
 					String inhalt = Email.getEmailPreface(actPatient);
 					inhalt += "\n\n\nMedikation: \n" + actPatient.getMedikation();
-					inhalt += "\nAlle Konsultationen\n" +
-							Email.getAllKonsultations(actPatient) + "\n\n";
+					inhalt += "\nAlle Konsultationen\n" + Email.getAllKonsultations(actPatient) + "\n\n";
 					Email.openMailApplication("", // No default to address
-						null, inhalt, attachements);
+							null, inhalt, attachements);
 				}
 			}
 		};
@@ -592,7 +577,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		sendMailAction.setImageDescriptor(Images.IMG_MAIL.getImageDescriptor());
 		sendMailAction.setToolTipText(Messages.ExterneDokumente_sendEmailTip);
 		openFolderAction = new Action() {
-			public void run(){
+			public void run() {
 				List<File> directories = ListFiles.getDirectoriesForActPatient(actPatient);
 				if (directories.size() == 0) {
 					if (actPatient != null) {
@@ -609,12 +594,11 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			}
 		};
 		openFolderAction.setText(Messages.ExterneDokumente_openFolder);
-		openFolderAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.iatrix",
-				"rsc/folder.png"));
+		openFolderAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("org.iatrix", "rsc/folder.png"));
 		openFolderAction.setToolTipText(Messages.ExterneDokumente_openFolderTip);
 
 		openAction = new Action() {
-			public void run(){
+			public void run() {
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null) {
 					Object element = selection.getFirstElement();
@@ -631,14 +615,14 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		openAction.setImageDescriptor(Images.IMG_DOCUMENT_TEXT.getImageDescriptor());
 		doubleClickAction = new Action() {
 			@Override
-			public void run(){
+			public void run() {
 				openAction.run();
 			}
 		};
-		
+
 		editAction = new Action() {
 			@Override
-			public void run(){
+			public void run() {
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null) {
 					Object element = selection.getFirstElement();
@@ -653,9 +637,9 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		editAction.setActionDefinitionId("ch.elexis.extdoc.commands.edit_properties");
 		editAction.setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 		GlobalActions.registerActionHandler(this, editAction);
-		
+
 		deleteAction = new Action() {
-			public void run(){
+			public void run() {
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null) {
 					Object element = selection.getFirstElement();
@@ -663,7 +647,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 						File file = (File) element;
 
 						if (SWTHelper.askYesNo(Messages.ExterneDokumente_delete_doc,
-							Messages.ExterneDokumente_shold_doc_be_delted + file.getName())) {
+								Messages.ExterneDokumente_shold_doc_be_delted + file.getName())) {
 							logger.info("Datei Löschen: " + file.getAbsolutePath()); //$NON-NLS-1$
 							file.delete();
 							refresh();
@@ -676,9 +660,9 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		deleteAction.setToolTipText(Messages.ExterneDokumente_delete_files);
 		deleteAction.setActionDefinitionId(GlobalActions.DELETE_COMMAND);
 		GlobalActions.registerActionHandler(this, deleteAction);
-		
+
 		renameAction = new Action() {
-			public void run(){
+			public void run() {
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null) {
 					Object element = selection.getFirstElement();
@@ -692,9 +676,9 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		renameAction.setToolTipText(Messages.ExterneDokumente_renaming_file);
 		renameAction.setActionDefinitionId("ch.elexis.extdoc.commands.rename");
 		GlobalActions.registerActionHandler(this, renameAction);
-		
+
 		verifyAction = new Action() {
-			public void run(){
+			public void run() {
 				new VerifierDialog(getViewSite().getShell(), actPatient).open();
 				// files may have been renamed
 				refresh();
@@ -706,16 +690,16 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		moveIntoSubDirsActions.setText(Messages.ExterneDokumente_move_into_subdir);
 		moveIntoSubDirsActions.setToolTipText(Messages.ExterneDokumente_move_into_subdir_tooltip);
 	}
-	
-	private void hookDoubleClickAction(){
+
+	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				doubleClickAction.run();
 			}
 		});
 	}
-	
-	private void refresh(){
+
+	private void refresh() {
 		PreferenceConstants.PathElement[] prefs = PreferenceConstants.getPrefenceElements();
 		for (int j = 0; j < prefs.length; j++) {
 			if (pathCheckBoxes[j] != null && pathCheckBoxes[j].getSelection()) {
@@ -730,65 +714,67 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		globalJob.invalidate();
 		viewer.refresh(true);
 	}
-	
+
 	/*
 	 * private void showMessage(String message) { MessageDialog.openInformation(
 	 * viewer.getControl().getShell(), "Externe Dokumente", message); }
 	 */
-	
-	private void openFileEditorDialog(File file){
+
+	private void openFileEditorDialog(File file) {
 		FileEditDialog fed = new FileEditDialog(getViewSite().getShell(), file);
 		fed.open();
 		refresh();
 	}
-	
+
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
-	public void setFocus(){
+	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
-	
+
 	/**
-	 * Wichtig! Alle Listeners, die eine View einhängt, müssen in dispose() wieder ausgehängt
-	 * werden. Sonst kommt es zu Exceptions, wenn der Anwender eine View schliesst und später ein
-	 * Objekt selektiert.
+	 * Wichtig! Alle Listeners, die eine View einhängt, müssen in dispose() wieder
+	 * ausgehängt werden. Sonst kommt es zu Exceptions, wenn der Anwender eine View
+	 * schliesst und später ein Objekt selektiert.
 	 */
 	@Override
-	public void dispose(){
+	public void dispose() {
 		GlobalEventDispatcher.removeActivationListener(this, this);
 	}
-	
+
 	// Die Methode des SelectionListeners
-	public void selectionEvent(PersistentObject obj){
-		if (obj instanceof Patient) {}
+	public void selectionEvent(PersistentObject obj) {
+		if (obj instanceof Patient) {
+		}
 	}
-	
+
 	// Die beiden Methoden des ActivationListeners
 	/**
 	 * Die View wird aktiviert (z.B angeklickt oder mit Tab)
 	 */
-	public void activation(boolean mode){
+	public void activation(boolean mode) {
 		/* Interessiert uns nicht */
 	}
-	
+
 	/**
-	 * Die View wird sichtbar (mode=true). Immer dann hängen wir unseren SelectionListener ein.
-	 * (Benutzeraktionen interessieren uns ja nur dann, wenn wir etwas damit machen müssen, also
-	 * sichtbar sind. Im unsichtbaren Zustand würde das Abfangen von SelectionEvents nur unnötig
-	 * Ressourcen verbrauchen. Aber weil es ja sein könnte, dass der Anwender, während wir im
-	 * Hintergrund waren, etliche Aktionen durchgefürt hat, über die wir jetzt nicht informiert
-	 * sind, "simulieren" wir beim Sichtbar-Werden gleich einen selectionEvent, um uns zu
-	 * infomieren, welcher Patient jetzt gerade selektiert ist.
-	 * 
-	 * Oder die View wird unsichtbar (mode=false). Dann hängen wir unseren SelectionListener aus und
-	 * faulenzen ein wenig.
+	 * Die View wird sichtbar (mode=true). Immer dann hängen wir unseren
+	 * SelectionListener ein. (Benutzeraktionen interessieren uns ja nur dann, wenn
+	 * wir etwas damit machen müssen, also sichtbar sind. Im unsichtbaren Zustand
+	 * würde das Abfangen von SelectionEvents nur unnötig Ressourcen verbrauchen.
+	 * Aber weil es ja sein könnte, dass der Anwender, während wir im Hintergrund
+	 * waren, etliche Aktionen durchgefürt hat, über die wir jetzt nicht informiert
+	 * sind, "simulieren" wir beim Sichtbar-Werden gleich einen selectionEvent, um
+	 * uns zu infomieren, welcher Patient jetzt gerade selektiert ist.
+	 *
+	 * Oder die View wird unsichtbar (mode=false). Dann hängen wir unseren
+	 * SelectionListener aus und faulenzen ein wenig.
 	 */
-	public void visible(boolean mode){
+	public void visible(boolean mode) {
 		if (mode == true) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
-			eeli_pat.catchElexisEvent(new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(),
-				Patient.class, ElexisEvent.EVENT_SELECTED));
+			eeli_pat.catchElexisEvent(new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(), Patient.class,
+					ElexisEvent.EVENT_SELECTED));
 		} else {
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
 		}

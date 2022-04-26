@@ -20,16 +20,15 @@ import ch.elexis.core.ui.UiDesk;
 @Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
 public class StartupHandler implements EventHandler {
 	private static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
-	
+
 	@Override
-	public void handleEvent(Event event){
+	public void handleEvent(Event event) {
 		logger.info("APPLICATION STARTUP COMPLETE");
-		ICommandService commandService =
-			(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		boolean settings = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_AUTOSTART, false);
 		if (settings) {
 			UiDesk.getDisplay().syncExec(new Runnable() {
-				public void run(){
+				public void run() {
 					try {
 						Command cmd = commandService.getCommand(ToggleHandler.COMMAND_ID);
 						cmd.executeWithChecks(new ExecutionEvent(cmd, new HashMap<>(), null, null));

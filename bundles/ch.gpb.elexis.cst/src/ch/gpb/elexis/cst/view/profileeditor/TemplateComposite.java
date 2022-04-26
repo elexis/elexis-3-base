@@ -22,86 +22,86 @@ import org.eclipse.swt.widgets.Text;
 import ch.gpb.elexis.cst.Messages;
 
 public class TemplateComposite extends CstComposite {
-    private Button btnProfilIstTemplate;
-    private Text text;
+	private Button btnProfilIstTemplate;
+	private Text text;
 
-    public TemplateComposite(Composite parent) {
-	super(parent, SWT.NONE);
+	public TemplateComposite(Composite parent) {
+		super(parent, SWT.NONE);
 
-	GridLayout gridLayout = new GridLayout(1, false);
-	setLayout(gridLayout);
+		GridLayout gridLayout = new GridLayout(1, false);
+		setLayout(gridLayout);
 
-	GridData gdGastro = new GridData();
-	gdGastro.heightHint = 800;
-	gdGastro.minimumHeight = 800;
-	setLayoutData(gdGastro);
+		GridData gdGastro = new GridData();
+		gdGastro.heightHint = 800;
+		gdGastro.minimumHeight = 800;
+		setLayoutData(gdGastro);
 
-	Label lblAuswahlBefundparameter = new Label(this, SWT.NONE);
-	lblAuswahlBefundparameter.setText(Messages.TemplateComposite_template_settings);
+		Label lblAuswahlBefundparameter = new Label(this, SWT.NONE);
+		lblAuswahlBefundparameter.setText(Messages.TemplateComposite_template_settings);
 
-	createLayout(this);
+		createLayout(this);
 
-	btnProfilIstTemplate = new Button(this, SWT.CHECK);
-	GridData gd_btnProfilIstTemplate = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-	gd_btnProfilIstTemplate.horizontalIndent = 20;
-	gd_btnProfilIstTemplate.verticalIndent = 20;
-	gd_btnProfilIstTemplate.widthHint = 200;
-	btnProfilIstTemplate.setLayoutData(gd_btnProfilIstTemplate);
-	btnProfilIstTemplate.setText(Messages.TemplateComposite_is_template);
+		btnProfilIstTemplate = new Button(this, SWT.CHECK);
+		GridData gd_btnProfilIstTemplate = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnProfilIstTemplate.horizontalIndent = 20;
+		gd_btnProfilIstTemplate.verticalIndent = 20;
+		gd_btnProfilIstTemplate.widthHint = 200;
+		btnProfilIstTemplate.setLayoutData(gd_btnProfilIstTemplate);
+		btnProfilIstTemplate.setText(Messages.TemplateComposite_is_template);
 
-	Label lblHeaderzeileOutput = new Label(this, SWT.NONE);
-	GridData gd_lblHeaderzeileOutput = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-	gd_lblHeaderzeileOutput.verticalIndent = 20;
-	lblHeaderzeileOutput.setLayoutData(gd_lblHeaderzeileOutput);
-	lblHeaderzeileOutput.setText(Messages.TemplateComposite_OutputHeader);
+		Label lblHeaderzeileOutput = new Label(this, SWT.NONE);
+		GridData gd_lblHeaderzeileOutput = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblHeaderzeileOutput.verticalIndent = 20;
+		lblHeaderzeileOutput.setLayoutData(gd_lblHeaderzeileOutput);
+		lblHeaderzeileOutput.setText(Messages.TemplateComposite_OutputHeader);
 
-	text = new Text(this, SWT.BORDER);
+		text = new Text(this, SWT.BORDER);
 
-	GridData gd_text = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-	gd_text.widthHint = 650;
-	gd_text.horizontalIndent = 20;
-	text.setLayoutData(gd_text);
-
-    }
-
-    // dynamic Layout elements
-    private void createLayout(Composite parent) {
-
-	GridData gdTextGa1 = new GridData(GridData.BEGINNING);
-	gdTextGa1.grabExcessHorizontalSpace = true;
-	gdTextGa1.widthHint = 100;
-	gdTextGa1.minimumWidth = 100;
-    }
-
-    public void clear() {
-	Control[] controls = this.getChildren();
-	for (Control control : controls) {
-	    if (control instanceof Button) {
-		Button b = (Button) control;
-		b.setSelection(false);
-	    }
-	    if (control instanceof Text) {
-		Text b = (Text) control;
-		b.setText("");
-	    }
+		GridData gd_text = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_text.widthHint = 650;
+		gd_text.horizontalIndent = 20;
+		text.setLayoutData(gd_text);
 
 	}
-    }
 
-    public boolean isTemplate() {
-	return btnProfilIstTemplate.getSelection();
-    }
+	// dynamic Layout elements
+	private void createLayout(Composite parent) {
 
-    public void setTemplate(boolean isTemplate) {
-	btnProfilIstTemplate.setSelection(isTemplate);
-    }
+		GridData gdTextGa1 = new GridData(GridData.BEGINNING);
+		gdTextGa1.grabExcessHorizontalSpace = true;
+		gdTextGa1.widthHint = 100;
+		gdTextGa1.minimumWidth = 100;
+	}
 
-    public String getOutputHeader() {
-	return this.text.getText();
-    }
+	public void clear() {
+		Control[] controls = this.getChildren();
+		for (Control control : controls) {
+			if (control instanceof Button) {
+				Button b = (Button) control;
+				b.setSelection(false);
+			}
+			if (control instanceof Text) {
+				Text b = (Text) control;
+				b.setText("");
+			}
 
-    public void setOutputHeader(String text) {
-	this.text.setText(text);
-    }
+		}
+	}
+
+	public boolean isTemplate() {
+		return btnProfilIstTemplate.getSelection();
+	}
+
+	public void setTemplate(boolean isTemplate) {
+		btnProfilIstTemplate.setSelection(isTemplate);
+	}
+
+	public String getOutputHeader() {
+		return this.text.getText();
+	}
+
+	public void setOutputHeader(String text) {
+		this.text.setText(text);
+	}
 
 }

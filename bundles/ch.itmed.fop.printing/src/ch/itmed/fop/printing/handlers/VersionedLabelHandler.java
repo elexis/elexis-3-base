@@ -42,8 +42,7 @@ public final class VersionedLabelHandler extends AbstractHandler {
 			String docName = PreferenceConstants.VERSIONED_LABEL;
 			IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-			String printerName =
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document VersionedLabel on printer: " + printerName);
 			PrintProvider.print(fo, printerName);
 		} catch (Exception e) {

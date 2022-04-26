@@ -8,10 +8,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for en.given complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="en.given">
  *   &lt;complexContent>
@@ -21,15 +22,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "en.given")
 @XmlRootElement(name = "given")
 public class EnGiven extends ENXP {
-	
+
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3878156440813337467L;
-	
+
 }

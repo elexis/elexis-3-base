@@ -14,18 +14,18 @@ import at.medevit.elexis.ehc.core.EhcCoreService;
 
 public class ServiceComponent {
 	private static EhcCoreService service;
-	
-	public synchronized void setService(EhcCoreService service){
+
+	public synchronized void setService(EhcCoreService service) {
 		ServiceComponent.service = service;
 	}
-	
-	public synchronized void unsetService(EhcCoreService service){
+
+	public synchronized void unsetService(EhcCoreService service) {
 		if (ServiceComponent.service == service) {
 			ServiceComponent.service = null;
 		}
 	}
-	
-	public static EhcCoreService getService(){
+
+	public static EhcCoreService getService() {
 		return service;
 	}
 }

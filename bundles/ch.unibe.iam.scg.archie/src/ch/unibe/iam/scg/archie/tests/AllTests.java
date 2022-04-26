@@ -20,9 +20,9 @@ import junit.framework.TestSuite;
  * <code>ch.unibe.iam.scg.archie.tests</code> package. However, all tests need
  * to be added manually to this suite.
  * </p>
- * 
+ *
  * $Id: AllTests.java 666 2008-12-13 00:07:54Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 666 $

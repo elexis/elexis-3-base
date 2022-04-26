@@ -12,58 +12,56 @@ import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.holder.XidServiceHolder;
 
-public class ReasonForEncounter
-		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.RFE>
+public class ReasonForEncounter extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.RFE>
 		implements Identifiable, IReasonForEncounter {
-		
-	public ReasonForEncounter(RFE entity){
+
+	public ReasonForEncounter(RFE entity) {
 		super(entity);
 	}
-	
+
 	@Override
-	public IEncounter getEncounter(){
+	public IEncounter getEncounter() {
 		if (getEntity().getKonsID() != null) {
-			Optional<IEncounter> ret =
-				CoreModelServiceHolder.get().load(getEntity().getKonsID(), IEncounter.class);
+			Optional<IEncounter> ret = CoreModelServiceHolder.get().load(getEntity().getKonsID(), IEncounter.class);
 			if (ret.isPresent()) {
 				return ret.get();
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
-	public void setEncounter(IEncounter value){
+	public void setEncounter(IEncounter value) {
 		if (value != null) {
 			getEntity().setKonsID(value.getId());
 		} else {
 			getEntity().setKonsID(null);
 		}
 	}
-	
+
 	@Override
-	public String getCode(){
+	public String getCode() {
 		return getEntity().getType() != null ? getEntity().getType() : "";
 	}
-	
+
 	@Override
-	public void setCode(String value){
+	public void setCode(String value) {
 		getEntity().setType(value);
 	}
-	
+
 	@Override
-	public String getText(){
+	public String getText() {
 		String code = getCode();
 		return ReasonsForEncounter.getCodeToReasonMap().get(code);
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

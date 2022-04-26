@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -32,48 +32,46 @@ public class PhysioDetailDisplay implements IDetailDisplay {
 	Form form;
 	FormToolkit tk = UiDesk.getToolkit();
 	LabeledInputField.AutoForm tblLab;
-	
-	InputData[] data = new InputData[] {
-		new InputData("Ziffer", "ziffer", InputData.Typ.STRING, null), //$NON-NLS-1$
-		new InputData("Taxpunkte / Preis in Rappen", "TP", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
-		new InputData("Gültig von", "validFrom", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
-		new InputData("Gültig bis", "validTo", InputData.Typ.STRING, null) //$NON-NLS-1$ //$NON-NLS-2$
-		};
-	
+
+	InputData[] data = new InputData[] { new InputData("Ziffer", "ziffer", InputData.Typ.STRING, null), //$NON-NLS-1$
+			new InputData("Taxpunkte / Preis in Rappen", "TP", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
+			new InputData("Gültig von", "validFrom", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
+			new InputData("Gültig bis", "validTo", InputData.Typ.STRING, null) //$NON-NLS-1$ //$NON-NLS-2$
+	};
+
 	@Inject
-	public void selection(
-		@Optional @Named("ch.elexis.views.codeselector.physio.selection") IPhysioLeistung physio){
+	public void selection(@Optional @Named("ch.elexis.views.codeselector.physio.selection") IPhysioLeistung physio) {
 		if (physio != null && !form.isDisposed()) {
 			display(physio);
 		}
 	}
-	
-	public Composite createDisplay(Composite parent, IViewSite site){
+
+	public Composite createDisplay(Composite parent, IViewSite site) {
 		form = tk.createForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
-		
+
 		tblLab = new LabeledInputField.AutoForm(form.getBody(), data);
-		
+
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		tblLab.setLayoutData(twd);
 		// GlobalEvents.getInstance().addActivationListener(this,this);
 		return form.getBody();
 	}
-	
-	public void display(Object obj){
+
+	public void display(Object obj) {
 		IPhysioLeistung ll = (IPhysioLeistung) obj;
 		form.setText(ll.getLabel());
 		tblLab.reload(ll);
 	}
-	
-	public Class<?> getElementClass(){
+
+	public Class<?> getElementClass() {
 		return IPhysioLeistung.class;
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return "Physiotherapie";
 	}
-	
+
 }

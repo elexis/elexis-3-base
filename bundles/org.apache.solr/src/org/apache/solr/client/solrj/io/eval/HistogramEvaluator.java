@@ -29,60 +29,66 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class HistogramEvaluator extends RecursiveNumericEvaluator implements ManyValueWorker {
-  protected static final long serialVersionUID = 1L;
-  
-  public HistogramEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-    
-    if(containedEvaluators.size() < 1){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting at least one value but found %d",expression,containedEvaluators.size()));
-    }
-  }
+	protected static final long serialVersionUID = 1L;
 
-  @Override
-  public Object doWork(Object... values) throws IOException {
-    if(Arrays.stream(values).anyMatch(item -> null == item)){
-      return null;
-    }
-    
-    List<?> sourceValues;
-    Integer bins = 10;
-    
-    if(values.length >= 1){
-      sourceValues = values[0] instanceof List<?> ? (List<?>)values[0] : Arrays.asList(values[0]); 
-            
-      if(values.length >= 2){
-        if(values[1] instanceof Number){
-          bins = ((Number)values[1]).intValue();
-        }
-        else{
-          throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - if second parameter is provided then it must be a valid number but found %s instead",toExpression(constructingFactory), values[1].getClass().getSimpleName()));
-        }        
-      }      
-    }
-    else{
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting at least one value but found %d",toExpression(constructingFactory),containedEvaluators.size()));
-    }
+	public HistogramEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    EmpiricalDistribution distribution = new EmpiricalDistribution(bins);
-    distribution.load(((List<?>)sourceValues).stream().mapToDouble(value -> ((Number)value).doubleValue()).toArray());;
+		if (containedEvaluators.size() < 1) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting at least one value but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-    List<Tuple> histogramBins = new ArrayList<>();
-    for(SummaryStatistics binSummary : distribution.getBinStats()) {
-      Tuple tuple = new Tuple();
-      tuple.put("max", binSummary.getMax());
-      tuple.put("mean", binSummary.getMean());
-      tuple.put("min", binSummary.getMin());
-      tuple.put("stdev", binSummary.getStandardDeviation());
-      tuple.put("sum", binSummary.getSum());
-      tuple.put("N", binSummary.getN());
-      tuple.put("var", binSummary.getVariance());
-      tuple.put("cumProb", distribution.cumulativeProbability(binSummary.getMean()));
-      tuple.put("prob", distribution.probability(binSummary.getMin(), binSummary.getMax()));
-      histogramBins.add(tuple);
-    }
-    
-    return histogramBins;
-  }
-    
+	@Override
+	public Object doWork(Object... values) throws IOException {
+		if (Arrays.stream(values).anyMatch(item -> null == item)) {
+			return null;
+		}
+
+		List<?> sourceValues;
+		Integer bins = 10;
+
+		if (values.length >= 1) {
+			sourceValues = values[0] instanceof List<?> ? (List<?>) values[0] : Arrays.asList(values[0]);
+
+			if (values.length >= 2) {
+				if (values[1] instanceof Number) {
+					bins = ((Number) values[1]).intValue();
+				} else {
+					throw new IOException(String.format(Locale.ROOT,
+							"Invalid expression %s - if second parameter is provided then it must be a valid number but found %s instead",
+							toExpression(constructingFactory), values[1].getClass().getSimpleName()));
+				}
+			}
+		} else {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting at least one value but found %d",
+							toExpression(constructingFactory), containedEvaluators.size()));
+		}
+
+		EmpiricalDistribution distribution = new EmpiricalDistribution(bins);
+		distribution
+				.load(((List<?>) sourceValues).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray());
+		;
+
+		List<Tuple> histogramBins = new ArrayList<>();
+		for (SummaryStatistics binSummary : distribution.getBinStats()) {
+			Tuple tuple = new Tuple();
+			tuple.put("max", binSummary.getMax());
+			tuple.put("mean", binSummary.getMean());
+			tuple.put("min", binSummary.getMin());
+			tuple.put("stdev", binSummary.getStandardDeviation());
+			tuple.put("sum", binSummary.getSum());
+			tuple.put("N", binSummary.getN());
+			tuple.put("var", binSummary.getVariance());
+			tuple.put("cumProb", distribution.cumulativeProbability(binSummary.getMean()));
+			tuple.put("prob", distribution.probability(binSummary.getMin(), binSummary.getMax()));
+			histogramBins.add(tuple);
+		}
+
+		return histogramBins;
+	}
+
 }

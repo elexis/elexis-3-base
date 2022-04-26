@@ -24,75 +24,67 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Patient;
 
 public class OpenMeineImpfungenHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			Patient patient = ElexisEventDispatcher.getSelectedPatient();
-			if(patient != null) {
-				ProgressMonitorDialog progress =
-					new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
+			if (patient != null) {
+				ProgressMonitorDialog progress = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
 				try {
 					progress.run(false, true, new IRunnableWithProgress() {
 						@Override
 						public void run(IProgressMonitor monitor)
-							throws InvocationTargetException, InterruptedException{
-							monitor.beginTask("Patient auf meineimpfungen suchen ...",
-								IProgressMonitor.UNKNOWN);
-							
-							List<org.ehealth_connector.common.mdht.Patient> patients =
-								MeineImpfungenServiceHolder.getService().getPatients(patient);
+								throws InvocationTargetException, InterruptedException {
+							monitor.beginTask("Patient auf meineimpfungen suchen ...", IProgressMonitor.UNKNOWN);
+
+							List<org.ehealth_connector.common.mdht.Patient> patients = MeineImpfungenServiceHolder
+									.getService().getPatients(patient);
 							if (patients != null && !patients.isEmpty()) {
 								if (patients.size() == 1) {
 									StringBuilder link = new StringBuilder();
-									link.append(
-										MeineImpfungenServiceHolder.getService().getBaseUrl());
+									link.append(MeineImpfungenServiceHolder.getService().getBaseUrl());
 									if (link.lastIndexOf("/") != (link.length() - 1)) {
 										link.append("/");
 									}
-									if (ConfigServiceHolder.getMandator(
-										MeineImpfungenService.CONFIG_USECERTAUTH, false)) {
+									if (ConfigServiceHolder.getMandator(MeineImpfungenService.CONFIG_USECERTAUTH,
+											false)) {
 										link.append("certauth/");
 									}
 									getPatientId(patients.get(0)).ifPresent(pid -> {
-										link.append("specialist-person-home.html?personId=")
-											.append(pid);
+										link.append("specialist-person-home.html?personId=").append(pid);
 										Program.launch(link.toString());
 									});
 								} else {
-									MessageDialog.openError(HandlerUtil.getActiveShell(event),
-										"meineimpfungen",
-										"Mehrere Patienten für [" + patient.getLabel(false)
-											+ "] auf meineimpfungen gefunden.");
+									MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
+											"Mehrere Patienten für [" + patient.getLabel(false)
+													+ "] auf meineimpfungen gefunden.");
 								}
 							} else {
-								MessageDialog.openInformation(HandlerUtil.getActiveShell(event),
-									"meineimpfungen", "Kein Patient [" + patient.getLabel(false)
-										+ "] auf meineimpfungen gefunden.");
+								MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "meineimpfungen",
+										"Kein Patient [" + patient.getLabel(false) + "] auf meineimpfungen gefunden.");
 							}
 							monitor.done();
 						}
 					});
 				} catch (InvocationTargetException | InterruptedException e) {
-					LoggerFactory.getLogger(OpenMeineImpfungenHandler.class)
-						.warn("Exception on patient lookup", e);
+					LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).warn("Exception on patient lookup", e);
 					MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
-						"Es ist ein Fehler aufgetreten.");
+							"Es ist ein Fehler aufgetreten.");
 				}
 			} else {
 				MessageDialog.openInformation(HandlerUtil.getActiveShell(event), "meineimpfungen",
 						"Kein Patient ausgewählt");
 			}
 		} catch (IllegalStateException ise) {
-			LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).error("Service not available",
-				ise);
+			LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).error("Service not available", ise);
 			MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
-				"meineimpfungen nicht verfügbar");
+					"meineimpfungen nicht verfügbar");
 		}
 		return null;
 	}
-	
-	private Optional<String> getPatientId(org.ehealth_connector.common.mdht.Patient ehcPatient){
+
+	private Optional<String> getPatientId(org.ehealth_connector.common.mdht.Patient ehcPatient) {
 		List<Identificator> ids = ehcPatient.getIds();
 		if (ids != null && !ids.isEmpty()) {
 			for (Identificator identificator : ids) {

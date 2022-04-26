@@ -44,9 +44,9 @@ import ch.unibe.iam.scg.archie.model.RegexValidation;
 
 /**
  * Implements <code>AbstractWidget</code> with a SmartDateField.
- * 
+ *
  * $Id: DateWidget.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -104,7 +104,7 @@ public class DateWidget extends TextWidget {
 
 		// Add Datepicker
 		this.datePicker = new DateTime(this.datePickerShell, SWT.CALENDAR);
-		
+
 		// Add Select Date Button
 		Button button = new Button(this.datePickerShell, SWT.NONE);
 		button.setText(Messages.BUTTON_DATE_SELECT);
@@ -113,6 +113,7 @@ public class DateWidget extends TextWidget {
 			public void mouseDoubleClick(MouseEvent e) {
 				// Nothing here. Move along...
 			}
+
 			public void mouseDown(MouseEvent e) {
 				Calendar cal = Calendar.getInstance();
 				cal.set(Calendar.YEAR, DateWidget.this.datePicker.getYear());
@@ -121,11 +122,12 @@ public class DateWidget extends TextWidget {
 				DateWidget.this.smartField.setContents(DateWidget.DATE_FORMAT.format(cal.getTime()));
 				DateWidget.this.popDownCalendar();
 			}
+
 			public void mouseUp(MouseEvent e) {
 				// Nothing here. Move along...
 			}
 		});
-		
+
 		// Pack Datepicker Popup Shell
 		this.datePickerShell.pack();
 
@@ -147,6 +149,7 @@ public class DateWidget extends TextWidget {
 			public void mouseDoubleClick(MouseEvent e) {
 				// Nothing here. Move along...
 			}
+
 			public void mouseDown(MouseEvent e) {
 				Calendar cal = Calendar.getInstance();
 				cal.set(Calendar.YEAR, DateWidget.this.datePicker.getYear());
@@ -154,11 +157,12 @@ public class DateWidget extends TextWidget {
 				cal.set(Calendar.DAY_OF_MONTH, DateWidget.this.datePicker.getDay());
 				DateWidget.this.smartField.setContents(DateWidget.DATE_FORMAT.format(cal.getTime()));
 			}
+
 			public void mouseUp(MouseEvent e) {
 				// Nothing here. Move along...
 			}
 		});
-		
+
 		// Create quickFix menu listener
 		this.controlDecoration.addMenuDetectListener(new MenuDetectListener() {
 			public void menuDetected(MenuDetectEvent event) {
@@ -222,14 +226,14 @@ public class DateWidget extends TextWidget {
 				date = DateWidget.DATE_FORMAT.parse(this.smartField.getContents());
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(date);
-				this.datePicker
-						.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+				this.datePicker.setDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
+						cal.get(Calendar.DAY_OF_MONTH));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	protected Menu createQuickFixMenu(final SmartDateField field) {
 		Menu newMenu = new Menu(this.control);
 		MenuItem item = new MenuItem(newMenu, SWT.PUSH);
@@ -300,7 +304,7 @@ public class DateWidget extends TextWidget {
 
 			return true;
 		}
-		
+
 		/**
 		 * @see ch.unibe.iam.scg.archie.ui.widgets.TextWidget.SmartField#hasQuickFix()
 		 */
@@ -308,7 +312,7 @@ public class DateWidget extends TextWidget {
 		public boolean hasQuickFix() {
 			return true;
 		}
-		
+
 		/**
 		 * @see ch.unibe.iam.scg.archie.ui.widgets.TextWidget.SmartField#getQuickfixMessage()
 		 */
@@ -316,7 +320,7 @@ public class DateWidget extends TextWidget {
 		protected String getQuickfixMessage() {
 			return this.getErrorMessage();
 		}
-		
+
 		/**
 		 * Sets the date field contents to the value of today's date.
 		 */

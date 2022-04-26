@@ -17,16 +17,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>Marks a method as setter. Used by the view to determine which elements can be
+ * <p>
+ * Marks a method as setter. Used by the view to determine which elements can be
  * changed by the user. The index determines the order in which the setter
  * methods will be invoked. This is only important for exception handling. If
  * the validity of a setter value depends on another value (e.g. marking a
  * starting and ending point for a time period where the end point has to be
  * greater than the starting point) the index can be used to control the
- * invocation order.</p>
- * 
+ * invocation order.
+ * </p>
+ *
  * $Id: SetProperty.java 705 2009-01-03 17:48:46Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 705 $
@@ -43,12 +45,11 @@ public @interface SetProperty {
 	public String name();
 
 	/**
-	 * Determines the order of invocation. Use this if a setter value's validity
-	 * is dependent on another value. This has not to be necessarily the same
-	 * value as in the GetProperty annotation. The default value of -1 ensures
-	 * that methods without an index annotated will be invoked first since they
-	 * do not depend on the other data they are not critical and can
-	 * independently called.
+	 * Determines the order of invocation. Use this if a setter value's validity is
+	 * dependent on another value. This has not to be necessarily the same value as
+	 * in the GetProperty annotation. The default value of -1 ensures that methods
+	 * without an index annotated will be invoked first since they do not depend on
+	 * the other data they are not critical and can independently called.
 	 */
 	public int index() default -1;
 }

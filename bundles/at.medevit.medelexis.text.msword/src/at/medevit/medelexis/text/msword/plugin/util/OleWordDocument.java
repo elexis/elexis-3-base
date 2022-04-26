@@ -16,38 +16,37 @@ import org.slf4j.LoggerFactory;
 
 /**
  * OleWrapper for accessing Word Document members.
- * 
+ *
  * @author thomashu
- * 
+ *
  */
 public class OleWordDocument extends OleWrapper {
 	private Logger logger = LoggerFactory.getLogger(OleWordDocument.class);
-	
+
 	private OleWordSite site;
-	
-	public OleWordDocument(OleWordSite site, OleAutomation oleAuto, Display display,
-		OleWrapperManager manager){
+
+	public OleWordDocument(OleWordSite site, OleAutomation oleAuto, Display display, OleWrapperManager manager) {
 		super(oleAuto, display, manager);
 		this.site = site;
 	}
-	
+
 	/**
-	 * Get the Content (Returns a Range object that represents the main document story.) from the
-	 * Document object.
-	 * 
+	 * Get the Content (Returns a Range object that represents the main document
+	 * story.) from the Document object.
+	 *
 	 * @param wordDocument
 	 * @return
 	 */
-	public OleWordRange getContent(OleWrapperManager manager){
+	public OleWordRange getContent(OleWrapperManager manager) {
 		OleAutomation oleAuto = runGetOleAutomationProperty("Content"); //$NON-NLS-1$
 		return new OleWordRange(oleAuto, display, manager);
 	}
-	
-	public OleWordRange getRange(int start, int end, OleWrapperManager manager){
+
+	public OleWordRange getRange(int start, int end, OleWrapperManager manager) {
 		Variant[] boundriesArgs = new Variant[2];
 		boundriesArgs[0] = new Variant(start);
 		boundriesArgs[1] = new Variant(end);
-		
+
 		Variant oleVar = runInvoke("Range", boundriesArgs); //$NON-NLS-1$
 		OleAutomation oleAuto = OleUtil.getOleAutomationFromVariant(oleVar);
 		oleVar.dispose();
@@ -55,20 +54,20 @@ public class OleWordDocument extends OleWrapper {
 		boundriesArgs[1].dispose();
 		return new OleWordRange(oleAuto, display, manager);
 	}
-	
-	public OleWordShapes getShapes(OleWrapperManager manager){
+
+	public OleWordShapes getShapes(OleWrapperManager manager) {
 		OleAutomation oleAuto = runGetOleAutomationProperty("Shapes"); //$NON-NLS-1$
 		return new OleWordShapes(oleAuto, display, manager);
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		Variant value = runGetVariantProperty("Name"); //$NON-NLS-1$
 		String ret = value.getString();
 		value.dispose();
 		return ret;
 	}
-	
-	public boolean isValid(){
+
+	public boolean isValid() {
 		try {
 			Variant value = runGetVariantProperty("Name"); //$NON-NLS-1$
 			if (value == null) {
@@ -80,39 +79,39 @@ public class OleWordDocument extends OleWrapper {
 		}
 		return true;
 	}
-	
-	public OleWordPageSetup getPageSetup(OleWrapperManager manager){
+
+	public OleWordPageSetup getPageSetup(OleWrapperManager manager) {
 		OleAutomation oleAuto = runGetOleAutomationProperty("PageSetup"); //$NON-NLS-1$
 		return new OleWordPageSetup(oleAuto, display, manager);
 	}
-	
-	public OleWordSections getSections(OleWrapperManager manager){
+
+	public OleWordSections getSections(OleWrapperManager manager) {
 		OleAutomation oleAuto = runGetOleAutomationProperty("Sections"); //$NON-NLS-1$
 		return new OleWordSections(oleAuto, display, manager);
 	}
-	
-	public void printOut(boolean background){
+
+	public void printOut(boolean background) {
 		Variant[] arguments = new Variant[1];
 		arguments[0] = new Variant(background);
 		runInvoke("PrintOut", arguments); //$NON-NLS-1$
 		arguments[0].dispose();
 	}
-	
-	public void activate(){
+
+	public void activate() {
 		runInvoke("Activate"); //$NON-NLS-1$
 	}
-	
-	public void close(){
+
+	public void close() {
 		runInvoke("Close"); //$NON-NLS-1$
 	}
-	
-	public CommunicationFile getCommunicationFile(){
+
+	public CommunicationFile getCommunicationFile() {
 		CommunicationFile ret = site.getCommunicationFile();
 		ret.write(this);
 		return ret;
 	}
-	
-	public void save(File file){
+
+	public void save(File file) {
 		// create separate file for save as (else write error due to unknown reason)
 		File saFile = null;
 		try {
@@ -128,19 +127,19 @@ public class OleWordDocument extends OleWrapper {
 				Variant[] arguments = new Variant[2];
 				arguments[0] = new Variant(saFile.getAbsolutePath());
 				arguments[1] = new Variant(OleWordConstants.wdFormatDocumentDefault);
-				
+
 				if (OleWordApplication.WORD_VERSION == 2010)
 					runInvoke("SaveAs2", arguments); //$NON-NLS-1$
 				else
 					runInvoke("SaveAs", arguments); //$NON-NLS-1$
-					
+
 				arguments[0].dispose();
 				arguments[1].dispose();
-				
+
 				if (saFile.length() == 0) {
 					logger.warn("Save created empty file");
 				}
-				
+
 				// copy the saved file and remove the temp file
 				ZipUtil.copyFile(saFile, file);
 			}
@@ -152,22 +151,22 @@ public class OleWordDocument extends OleWrapper {
 			}
 		}
 	}
-	
-	public DocxWordDocument getDocxWordDocument(){
+
+	public DocxWordDocument getDocxWordDocument() {
 		CommunicationFile file = getCommunicationFile();
 		DocxWordDocument docxWordDocument = new DocxWordDocument(file.getFile());
 		return docxWordDocument;
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		GlobalOleWordWrapperManager.add(oleObj);
 		GlobalOleWordWrapperManager.disposeAll();
 	}
-	
+
 	protected static HashMap<String, Integer> memberIdMap = new HashMap<String, Integer>();
-	
+
 	@Override
-	protected synchronized int getIdForMember(String member){
+	protected synchronized int getIdForMember(String member) {
 		Integer id = memberIdMap.get(member);
 		if (id == null) {
 			id = OleUtil.getMemberId(oleObj, member);

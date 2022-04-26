@@ -26,9 +26,8 @@ import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 
 /**
- * @author daniel ludin ludin@swissonline.ch
- * 27.06.2015
- * 
+ * @author daniel ludin ludin@swissonline.ch 27.06.2015
+ *
  */
 
 public class ProfileDetailDialog extends TitleAreaDialog {
@@ -85,7 +84,7 @@ public class ProfileDetailDialog extends TitleAreaDialog {
 		GridData dataLastName = new GridData();
 		dataLastName.grabExcessHorizontalSpace = true;
 		dataLastName.horizontalAlignment = GridData.FILL;
-		
+
 		txtDescription = new Text(container, SWT.BORDER);
 		txtDescription.setLayoutData(dataLastName);
 	}
@@ -93,10 +92,9 @@ public class ProfileDetailDialog extends TitleAreaDialog {
 	private void createDates(Composite container) {
 		Label lblValidFrom = new Label(container, SWT.NONE);
 		lblValidFrom.setText(Messages.Cst_Text_anzeigen_ab);
-		cdtValidFrom =
-			new CDateTime(container, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
+		cdtValidFrom = new CDateTime(container, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
 		cdtValidFrom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		
+
 	}
 
 	@Override

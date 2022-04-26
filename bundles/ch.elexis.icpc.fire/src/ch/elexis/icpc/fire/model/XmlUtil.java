@@ -22,15 +22,15 @@ public class XmlUtil {
 	private static final String DEFAULT_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
 	private static Logger logger = LoggerFactory.getLogger(XmlUtil.class);
-	
+
 	public static XMLGregorianCalendar getXmlGregorianCalendar(TimeTool timeTool)
-		throws DatatypeConfigurationException{
+			throws DatatypeConfigurationException {
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime(timeTool.getTime());
 		return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
 	}
-	
-	public static boolean marshallFireReport(Report report, OutputStream outStream){
+
+	public static boolean marshallFireReport(Report report, OutputStream outStream) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Report.class);
 			Marshaller marshaller = initMarshaller(jaxbContext);
@@ -41,21 +41,20 @@ public class XmlUtil {
 			return false;
 		}
 	}
-	
-	public static Marshaller initMarshaller(JAXBContext jaxbContext)
-		throws JAXBException{
-		
+
+	public static Marshaller initMarshaller(JAXBContext jaxbContext) throws JAXBException {
+
 		Marshaller marshaller = jaxbContext.createMarshaller();
 		try {
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 			marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "/rsc/fireDbDe_20170322.xsd");
 			marshaller.setProperty(JAXB_HEADER_KEY, DEFAULT_HEADER);
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			
+
 			return marshaller;
 		} catch (PropertyException propE) {
-			logger.error("Error setting marshall properties - concerns XML with schema ["
-				+ "/rsc/fireDbDe_20170322.xsd" + "]", propE);
+			logger.error("Error setting marshall properties - concerns XML with schema [" + "/rsc/fireDbDe_20170322.xsd"
+					+ "]", propE);
 		}
 		return marshaller;
 	}

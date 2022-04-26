@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for x_RoleClassPayeePolicyRelationship.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="x_RoleClassPayeePolicyRelationship">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -22,20 +23,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "x_RoleClassPayeePolicyRelationship")
 @XmlEnum
 public enum XRoleClassPayeePolicyRelationship {
-	
+
 	COVPTY, GUAR, POLHOLD, PROV, PRS;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static XRoleClassPayeePolicyRelationship fromValue(String v){
+
+	public static XRoleClassPayeePolicyRelationship fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

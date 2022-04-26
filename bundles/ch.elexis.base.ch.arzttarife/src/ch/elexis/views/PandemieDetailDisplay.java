@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    T. Huster - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -33,45 +33,44 @@ public class PandemieDetailDisplay implements IDetailDisplay {
 	Form form;
 	FormToolkit tk = UiDesk.getToolkit();
 	LabeledInputField.AutoForm tblLab;
-	
-	InputData[] data = new InputData[] {
-		new InputData("Taxpunkte", "taxpoints", InputData.Typ.STRING, null), //$NON-NLS-1$
-		new InputData("Preis in Rappen", "cents", InputData.Typ.STRING, null), //$NON-NLS-1$
-		};
-	
-		@Inject
-		public void selection(
-			@Optional @Named("ch.elexis.views.codeselector.pandemie.selection") IPandemieLeistung pandemie){
-			if (pandemie != null && !form.isDisposed()) {
-				display(pandemie);
-			}
+
+	InputData[] data = new InputData[] { new InputData("Taxpunkte", "taxpoints", InputData.Typ.STRING, null), //$NON-NLS-1$
+			new InputData("Preis in Rappen", "cents", InputData.Typ.STRING, null), //$NON-NLS-1$
+	};
+
+	@Inject
+	public void selection(
+			@Optional @Named("ch.elexis.views.codeselector.pandemie.selection") IPandemieLeistung pandemie) {
+		if (pandemie != null && !form.isDisposed()) {
+			display(pandemie);
 		}
-		
-	public Composite createDisplay(Composite parent, IViewSite site){
+	}
+
+	public Composite createDisplay(Composite parent, IViewSite site) {
 		form = tk.createForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
-		
+
 		tblLab = new LabeledInputField.AutoForm(form.getBody(), data);
 		tblLab.setModelService(CoreModelServiceHolder.get());
-		
+
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		tblLab.setLayoutData(twd);
 		return form.getBody();
 	}
-	
-	public void display(Object obj){
+
+	public void display(Object obj) {
 		IPandemieLeistung ll = (IPandemieLeistung) obj;
 		form.setText(ll.getLabel());
 		tblLab.reload(ll);
 	}
-	
-	public Class<?> getElementClass(){
+
+	public Class<?> getElementClass() {
 		return IPandemieLeistung.class;
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return "Pandemie";
 	}
 }

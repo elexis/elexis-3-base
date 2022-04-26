@@ -29,14 +29,15 @@ import ch.unibe.iam.scg.archie.utils.DatabaseHelper;
  * <p>
  * Dashboard overview is the dashboard description panel on the top side of the
  * entire dashboard. Contains some basic welcome message and some general data
- * about the system (simple gender overview of users in the system and more).<br>
+ * about the system (simple gender overview of users in the system and
+ * more).<br>
  * <br>
  * The overview panel also contains two buttons, one to start the creation of
  * the charts, the other to recreate them once available.
  * </p>
- * 
+ *
  * $Id: DashboardOverview.java 748 2009-07-23 09:44:49Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 748 $
@@ -49,11 +50,9 @@ public class DashboardOverview extends Composite {
 
 	/**
 	 * Public constructor.
-	 * 
-	 * @param parent
-	 *            Parent composite.
-	 * @param style
-	 *            SWT control style.
+	 *
+	 * @param parent Parent composite.
+	 * @param style  SWT control style.
 	 */
 	public DashboardOverview(final Composite parent, final int style) {
 		super(parent, style);
@@ -71,30 +70,29 @@ public class DashboardOverview extends Composite {
 		this.createDescriptionPanel(overview);
 		this.createStatsPanel(overview);
 	}
-	
+
 	// ////////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// ////////////////////////////////////////////////////////////////////////////
-	
+
 	/**
-	 * Triggers a refresh of this dashboard overview.
-	 * The values update with the latest values from the database.
+	 * Triggers a refresh of this dashboard overview. The values update with the
+	 * latest values from the database.
 	 */
 	public void refresh() {
 		this.setValues();
 	}
-	
+
 	// ////////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// ////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Creates the description panel for this dashboard overview. This is the
-	 * left hand side of the overview, containing the buttons that control the
-	 * chart generation.
-	 * 
-	 * @param parent
-	 *            Parent composite.
+	 * Creates the description panel for this dashboard overview. This is the left
+	 * hand side of the overview, containing the buttons that control the chart
+	 * generation.
+	 *
+	 * @param parent Parent composite.
 	 * @return Composite containing the created controls.
 	 */
 	private Composite createDescriptionPanel(Composite parent) {
@@ -116,12 +114,10 @@ public class DashboardOverview extends Composite {
 	}
 
 	/**
-	 * Creates the statistics panel in this dashboard overview. This is the
-	 * right hand side of the overview, containing some statistical data about
-	 * the system.
-	 * 
-	 * @param parent
-	 *            Parent composite.
+	 * Creates the statistics panel in this dashboard overview. This is the right
+	 * hand side of the overview, containing some statistical data about the system.
+	 *
+	 * @param parent Parent composite.
 	 * @return Composite containing the created controls.
 	 */
 	private Composite createStatsPanel(Composite parent) {
@@ -141,7 +137,7 @@ public class DashboardOverview extends Composite {
 		this.invoices = new Label(container, SWT.NONE | SWT.WRAP);
 		this.consultations = new Label(container, SWT.NONE | SWT.WRAP);
 		this.consultations.setLayoutData(layoutData);
-		
+
 		// Set label values
 		this.setValues();
 
@@ -179,27 +175,23 @@ public class DashboardOverview extends Composite {
 
 	/**
 	 * Calculates the percent value from two given amounts.
-	 * 
-	 * @param givenAmount
-	 *            Amount given.
-	 * @param totalAmount
-	 *            Total amount.
+	 *
+	 * @param givenAmount Amount given.
+	 * @param totalAmount Total amount.
 	 * @return float How much percent is givenAmount of totalAmount
 	 */
 	private float calculatePercent(final float givenAmount, final float totalAmount) {
 		if (totalAmount <= 0) {
-            return 0;
+			return 0;
 		}
 		return (givenAmount / totalAmount) * 100;
 	}
 
 	/**
 	 * Writes the percent value from two given amounts.
-	 * 
-	 * @param givenAmount
-	 *            Amount given.
-	 * @param totalAmount
-	 *            Total amount.
+	 *
+	 * @param givenAmount Amount given.
+	 * @param totalAmount Total amount.
 	 * @return String How much percent is givenAmount of totalAmount, written as
 	 *         string containing the % sign.
 	 */

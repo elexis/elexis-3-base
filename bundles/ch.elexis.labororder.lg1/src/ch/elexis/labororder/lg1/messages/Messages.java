@@ -13,20 +13,20 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "ch.elexis.labororder.lg1.messages.messages";
-    public static String LabOrderAction_errorMessageNoFallSelected;
-    public static String LabOrderAction_errorMessageNoPatientSelected;
-    public static String LabOrderAction_errorTitleCannotCreateHL7;
-    public static String LabOrderAction_errorTitleCannotShowURL;
-    public static String LabOrderAction_errorTitleNoFallSelected;
-    public static String LabOrderAction_errorTitleNoPatientSelected;
-    public static String LabOrderAction_infoMessageLabOrderFinshed;
-    public static String LabOrderAction_infoTitleLabOrderFinshed;
-    public static String LabOrderAction_nameAction;
-    public static String LabOrderAction_receivingApplication;
-    public static String LabOrderAction_receivingFacility;
+	public static String LabOrderAction_errorMessageNoFallSelected;
+	public static String LabOrderAction_errorMessageNoPatientSelected;
+	public static String LabOrderAction_errorTitleCannotCreateHL7;
+	public static String LabOrderAction_errorTitleCannotShowURL;
+	public static String LabOrderAction_errorTitleNoFallSelected;
+	public static String LabOrderAction_errorTitleNoPatientSelected;
+	public static String LabOrderAction_infoMessageLabOrderFinshed;
+	public static String LabOrderAction_infoTitleLabOrderFinshed;
+	public static String LabOrderAction_nameAction;
+	public static String LabOrderAction_receivingApplication;
+	public static String LabOrderAction_receivingFacility;
 	public static String Lg1PreferencePage_labelUploadDir;
 
-    static { // load message values from bundle file
-    NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-  }
+	static { // load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
 }

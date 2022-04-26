@@ -15,13 +15,7 @@
  * limitations under the License.
  */
 
-
-
 /**
  * Expression language for the Streaming Aggregation API
  **/
 package org.apache.solr.client.solrj.io.stream.expr;
-
-
-
-

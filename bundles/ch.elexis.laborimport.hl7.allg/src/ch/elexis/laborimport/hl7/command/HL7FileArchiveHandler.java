@@ -16,33 +16,30 @@ import ch.rgw.tools.Result.CODE;
 import ch.rgw.tools.Result.SEVERITY;
 
 public class HL7FileArchiveHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		String fileUrl =
-			event.getParameter("ch.elexis.laborimport.hl7.allg.archiveFile.fileUrl").toString();
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		String fileUrl = event.getParameter("ch.elexis.laborimport.hl7.allg.archiveFile.fileUrl").toString();
 		if (fileUrl.isEmpty()) {
 			throw new ExecutionException("File url parameter is empty");
 		}
-		
-		IVirtualFilesystemService vfsService =
-			OsgiServiceUtil.getService(IVirtualFilesystemService.class).orElse(null);
+
+		IVirtualFilesystemService vfsService = OsgiServiceUtil.getService(IVirtualFilesystemService.class).orElse(null);
 		if (vfsService == null) {
 			throw new ExecutionException("VirtualFileSystemService is not available");
 		}
-		
+
 		try {
 			IVirtualFilesystemHandle vfsFile = vfsService.of(fileUrl);
-			IVirtualFilesystemHandle fileHandleAfterMove =
-				FileImportStrategyUtil.moveAfterImport(true, vfsFile);
-			
+			IVirtualFilesystemHandle fileHandleAfterMove = FileImportStrategyUtil.moveAfterImport(true, vfsFile);
+
 			Result<String> result = Result.OK();
 			result.addMessage(CODE.URL, SEVERITY.OK, "url", fileHandleAfterMove.getAbsolutePath());
 			return result;
-			
+
 		} catch (IOException e) {
 			throw new ExecutionException("Invalid fileUrl [" + fileUrl + "]", e);
 		}
 	}
-	
+
 }

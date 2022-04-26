@@ -9,15 +9,15 @@ import ch.elexis.core.spotlight.ui.ISpotlightResultEntryDetailCompositeContribut
 @Component
 public class DocumentSpotlightResultEntryDetailCompositeContributor
 		implements ISpotlightResultEntryDetailCompositeContributor {
-	
+
 	@Override
-	public ISpotlightResultEntryDetailComposite createDetailComposite(Composite parent, int style){
+	public ISpotlightResultEntryDetailComposite createDetailComposite(Composite parent, int style) {
 		return new DocumentSpotlightResultEntryDetailComposite(parent, style);
 	}
-	
+
 	@Override
-	public Category appliedForCategory(){
+	public Category appliedForCategory() {
 		return Category.DOCUMENT;
 	}
-	
+
 }

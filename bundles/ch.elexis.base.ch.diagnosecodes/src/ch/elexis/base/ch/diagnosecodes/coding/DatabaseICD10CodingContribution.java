@@ -19,24 +19,24 @@ import ch.rgw.tools.JdbcLink.Stm;
 
 @Component
 public class DatabaseICD10CodingContribution implements ICodingContribution {
-	
+
 	private HashMap<String, ICoding> codesMap;
-	
+
 	@Override
-	public String getCodeSystem(){
+	public String getCodeSystem() {
 		return CodingSystem.ICD_DE_CODESYSTEM.getSystem();
 	}
-	
+
 	@Override
-	public Optional<ICoding> getCode(String code){
+	public Optional<ICoding> getCode(String code) {
 		if (codesMap == null && isPresent()) {
 			initialize();
 		}
 		return Optional.ofNullable(codesMap.get(code));
 	}
-	
+
 	@Override
-	public synchronized List<ICoding> getCodes(){
+	public synchronized List<ICoding> getCodes() {
 		if (isPresent()) {
 			if (codesMap == null) {
 				initialize();
@@ -45,29 +45,28 @@ public class DatabaseICD10CodingContribution implements ICodingContribution {
 		}
 		return Collections.emptyList();
 	}
-	
-	private boolean isPresent(){
+
+	private boolean isPresent() {
 		if (PersistentObject.getDefaultConnection() != null) {
 			return PersistentObject.tableExists("ICD10");
 		}
 		return true;
 	}
-	
-	private void initialize(){
+
+	private void initialize() {
 		codesMap = new HashMap<>();
 		Stm statement = PersistentObject.getDefaultConnection().getStatement();
 		try {
 			ResultSet result = statement.query(
-				"SELECT ICDCode, ICDTxt FROM ICD10 WHERE ID <> 1 AND ICDTxt NOT LIKE '%Kapitel%' AND ICDCode NOT LIKE '%-%'");
+					"SELECT ICDCode, ICDTxt FROM ICD10 WHERE ID <> 1 AND ICDTxt NOT LIKE '%Kapitel%' AND ICDCode NOT LIKE '%-%'");
 			while (result.next()) {
 				String code = result.getString(1);
 				String text = result.getString(2);
-				codesMap.put(code,
-					new TransientCoding(CodingSystem.ICD_DE_CODESYSTEM.getSystem(), code, text));
+				codesMap.put(code, new TransientCoding(CodingSystem.ICD_DE_CODESYSTEM.getSystem(), code, text));
 			}
 			result.close();
 		} catch (SQLException e) {
-			// ignore 
+			// ignore
 		} finally {
 			PersistentObject.getDefaultConnection().releaseStatement(statement);
 		}

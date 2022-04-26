@@ -7,21 +7,22 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.notes;
 
 import java.util.Comparator;
 
 /**
- * The NoteComparator sorts Notes with a case insensitive comparison of the Label
- * 
+ * The NoteComparator sorts Notes with a case insensitive comparison of the
+ * Label
+ *
  * @author gerry
- * 
+ *
  */
 public class NoteComparator implements Comparator<Note> {
-	
-	public int compare(Note arg0, Note arg1){
+
+	public int compare(Note arg0, Note arg1) {
 		return arg0.getLabel().compareToIgnoreCase(arg1.getLabel());
 	}
 }

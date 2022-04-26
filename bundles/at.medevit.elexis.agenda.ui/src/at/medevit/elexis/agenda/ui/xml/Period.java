@@ -12,12 +12,12 @@ import ch.elexis.core.model.IPeriod;
 
 @XmlRootElement(name = "period")
 public class Period implements Comparable<Period> {
-	
+
 	@XmlTransient
 	private LocalDateTime fromDateTime;
 	@XmlTransient
 	private LocalDateTime toDateTime;
-	
+
 	@XmlElement
 	private String from;
 	@XmlElement
@@ -27,9 +27,9 @@ public class Period implements Comparable<Period> {
 	@XmlElement
 	private String reason;
 
-	public static Period of(IPeriod iPeriod){
+	public static Period of(IPeriod iPeriod) {
 		Period ret = new Period();
-		
+
 		if (iPeriod instanceof IAppointment) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 			IAppointment termin = (IAppointment) iPeriod;
@@ -37,24 +37,24 @@ public class Period implements Comparable<Period> {
 			ret.toDateTime = termin.getEndTime();
 			ret.from = formatter.format(ret.fromDateTime);
 			ret.to = formatter.format(ret.toDateTime);
-			
+
 			ret.personalia = termin.getSubjectOrPatient();
 			ret.reason = termin.getReason();
 		}
-		
+
 		return ret;
 	}
-	
-	public Period(){
+
+	public Period() {
 		// needed for jaxb
 	}
-	
-	public LocalDateTime getFromDateTime(){
+
+	public LocalDateTime getFromDateTime() {
 		return fromDateTime;
 	}
-	
+
 	@Override
-	public int compareTo(Period other){
+	public int compareTo(Period other) {
 		return from.compareTo(other.from);
 	}
 }

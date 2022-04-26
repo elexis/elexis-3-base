@@ -27,7 +27,7 @@ public class Messages extends NLS {
 	public static String DocHandle_readErrorHeading;
 	public static String DocHandle_readErrorText;
 	public static String DocHandle_readErrorText2;
-	
+
 	public static String DocHandle_scannedImageDialogCaption;
 	public static String DocHandle_writeErrorCaption;
 	public static String DocHandle_writeErrorCaption2;
@@ -36,7 +36,7 @@ public class Messages extends NLS {
 	public static String DocHandle_writeErrorText2;
 	public static String Dochandle_errorCatNameAlreadyTaken;
 	public static String DocHandle_errorCatNameAlreadyTakenMsg;
-	
+
 	public static String xChangeContributor_thisIsAnOmnivoreDoc;
 	public static String DocumentManagement_contentsMatchNotSupported;
 	public static String DocHandle_cantReadMessage;
@@ -71,11 +71,12 @@ public class Messages extends NLS {
 	public static String Preferences_SRC_PATTERN;
 	public static String Preferences_automatic_archiving_of_processed_files;
 	public static String Preferences_omnivore;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 
-	private Messages(){}
+	private Messages() {
+	}
 }

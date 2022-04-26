@@ -25,7 +25,7 @@ public class StartupHandler implements EventHandler {
 	private static final String CONTEXT_ID = "ch.elexis.context.itmed.fop.printing";
 
 	@Override
-	public void handleEvent(Event event){
+	public void handleEvent(Event event) {
 		LoggerFactory.getLogger(getClass()).info("APPLICATION STARTUP COMPLETE");
 		IContextService contextService = (IContextService) PlatformUI.getWorkbench().getService(IContextService.class);
 		contextService.activateContext(CONTEXT_ID, null, true);

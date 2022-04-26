@@ -1,14 +1,14 @@
 /*******************************************************************************
- * 
- * The authorship of this code and the accompanying materials is held by 
- * medshare GmbH, Switzerland. All rights reserved. 
+ *
+ * The authorship of this code and the accompanying materials is held by
+ * medshare GmbH, Switzerland. All rights reserved.
  * http://medshare.net
- * 
- * This code and the accompanying materials are made available under 
+ *
+ * This code and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0
- * 
+ *
  * Year of publication: 2012
- * 
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
@@ -23,8 +23,9 @@ public class Messages extends NLS {
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages("com.hilotec.elexis.messwerte.v2.data.typen.messages", //$NON-NLS-1$
-			Messages.class);
+				Messages.class);
 	}
-	
-	private Messages(){}
+
+	private Messages() {
+	}
 }

@@ -20,10 +20,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * <p>
  * Java class for StrucDoc.Td complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="StrucDoc.Td">
  *   &lt;complexContent>
@@ -85,27 +86,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "StrucDoc.Td", propOrder = {
-	"content"
-})
+@XmlType(name = "StrucDoc.Td", propOrder = { "content" })
 public class StrucDocTd {
-	
-	@XmlElementRefs({
-		@XmlElementRef(name = "sup", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
-		@XmlElementRef(name = "footnoteRef", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
-		@XmlElementRef(name = "renderMultiMedia", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
-		@XmlElementRef(name = "sub", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
-		@XmlElementRef(name = "list", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
-		@XmlElementRef(name = "content", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
-		@XmlElementRef(name = "br", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
-		@XmlElementRef(name = "linkHtml", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
-		@XmlElementRef(name = "footnote", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
-		@XmlElementRef(name = "paragraph", namespace = "urn:hl7-org:v3", type = JAXBElement.class)
-	})
+
+	@XmlElementRefs({ @XmlElementRef(name = "sup", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
+			@XmlElementRef(name = "footnoteRef", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
+			@XmlElementRef(name = "renderMultiMedia", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
+			@XmlElementRef(name = "sub", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
+			@XmlElementRef(name = "list", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
+			@XmlElementRef(name = "content", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
+			@XmlElementRef(name = "br", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
+			@XmlElementRef(name = "linkHtml", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
+			@XmlElementRef(name = "footnote", namespace = "urn:hl7-org:v3", type = JAXBElement.class),
+			@XmlElementRef(name = "paragraph", namespace = "urn:hl7-org:v3", type = JAXBElement.class) })
 	@XmlMixed
 	protected List<Serializable> content;
 	@XmlAttribute(name = "ID")
@@ -145,335 +142,330 @@ public class StrucDocTd {
 	@XmlAttribute
 	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
 	protected String valign;
-	
+
 	/**
 	 * Gets the value of the content property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the content property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the content property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getContent().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
-	 * Objects of the following type(s) are allowed in the list {@link JAXBElement }{@code <}
-	 * {@link StrucDocSup }{@code >} {@link JAXBElement }{@code <}{@link StrucDocRenderMultiMedia }
-	 * {@code >} {@link JAXBElement }{@code <}{@link StrucDocFootnoteRef }{@code >}
-	 * {@link JAXBElement }{@code <}{@link StrucDocSub }{@code >} {@link JAXBElement }{@code <}
-	 * {@link StrucDocList }{@code >} {@link JAXBElement }{@code <}{@link StrucDocContent }{@code >}
-	 * {@link JAXBElement }{@code <}{@link StrucDocBr }{@code >} {@link JAXBElement }{@code <}
-	 * {@link StrucDocLinkHtml }{@code >} {@link JAXBElement }{@code <}{@link StrucDocFootnote }
-	 * {@code >} {@link String } {@link JAXBElement }{@code <}{@link StrucDocParagraph }{@code >}
-	 * 
-	 * 
+	 * Objects of the following type(s) are allowed in the list {@link JAXBElement
+	 * }{@code <} {@link StrucDocSup }{@code >} {@link JAXBElement
+	 * }{@code <}{@link StrucDocRenderMultiMedia } {@code >} {@link JAXBElement
+	 * }{@code <}{@link StrucDocFootnoteRef }{@code >} {@link JAXBElement
+	 * }{@code <}{@link StrucDocSub }{@code >} {@link JAXBElement }{@code <}
+	 * {@link StrucDocList }{@code >} {@link JAXBElement
+	 * }{@code <}{@link StrucDocContent }{@code >} {@link JAXBElement
+	 * }{@code <}{@link StrucDocBr }{@code >} {@link JAXBElement }{@code <}
+	 * {@link StrucDocLinkHtml }{@code >} {@link JAXBElement
+	 * }{@code <}{@link StrucDocFootnote } {@code >} {@link String }
+	 * {@link JAXBElement }{@code <}{@link StrucDocParagraph }{@code >}
+	 *
+	 *
 	 */
-	public List<Serializable> getContent(){
+	public List<Serializable> getContent() {
 		if (content == null) {
 			content = new ArrayList<Serializable>();
 		}
 		return this.content;
 	}
-	
+
 	/**
 	 * Gets the value of the attributeId property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getAttributeId(){
+	public String getAttributeId() {
 		return attributeId;
 	}
-	
+
 	/**
 	 * Sets the value of the attributeId property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setAttributeId(String value){
+	public void setAttributeId(String value) {
 		this.attributeId = value;
 	}
-	
+
 	/**
 	 * Gets the value of the language property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getLanguage(){
+	public String getLanguage() {
 		return language;
 	}
-	
+
 	/**
 	 * Sets the value of the language property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setLanguage(String value){
+	public void setLanguage(String value) {
 		this.language = value;
 	}
-	
+
 	/**
 	 * Gets the value of the styleCode property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the styleCode property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the styleCode property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getStyleCode().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link String }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<String> getStyleCode(){
+	public List<String> getStyleCode() {
 		if (styleCode == null) {
 			styleCode = new ArrayList<String>();
 		}
 		return this.styleCode;
 	}
-	
+
 	/**
 	 * Gets the value of the abbr property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getAbbr(){
+	public String getAbbr() {
 		return abbr;
 	}
-	
+
 	/**
 	 * Sets the value of the abbr property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setAbbr(String value){
+	public void setAbbr(String value) {
 		this.abbr = value;
 	}
-	
+
 	/**
 	 * Gets the value of the axis property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getAxis(){
+	public String getAxis() {
 		return axis;
 	}
-	
+
 	/**
 	 * Sets the value of the axis property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setAxis(String value){
+	public void setAxis(String value) {
 		this.axis = value;
 	}
-	
+
 	/**
 	 * Gets the value of the headers property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the headers property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the headers property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getHeaders().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link Object }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<Object> getHeaders(){
+	public List<Object> getHeaders() {
 		if (headers == null) {
 			headers = new ArrayList<Object>();
 		}
 		return this.headers;
 	}
-	
+
 	/**
 	 * Gets the value of the scope property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getScope(){
+	public String getScope() {
 		return scope;
 	}
-	
+
 	/**
 	 * Sets the value of the scope property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setScope(String value){
+	public void setScope(String value) {
 		this.scope = value;
 	}
-	
+
 	/**
 	 * Gets the value of the rowspan property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getRowspan(){
+	public String getRowspan() {
 		if (rowspan == null) {
 			return "1";
 		} else {
 			return rowspan;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the rowspan property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setRowspan(String value){
+	public void setRowspan(String value) {
 		this.rowspan = value;
 	}
-	
+
 	/**
 	 * Gets the value of the colspan property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getColspan(){
+	public String getColspan() {
 		if (colspan == null) {
 			return "1";
 		} else {
 			return colspan;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the colspan property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setColspan(String value){
+	public void setColspan(String value) {
 		this.colspan = value;
 	}
-	
+
 	/**
 	 * Gets the value of the align property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getAlign(){
+	public String getAlign() {
 		return align;
 	}
-	
+
 	/**
 	 * Sets the value of the align property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setAlign(String value){
+	public void setAlign(String value) {
 		this.align = value;
 	}
-	
+
 	/**
 	 * Gets the value of the char property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getChar(){
+	public String getChar() {
 		return _char;
 	}
-	
+
 	/**
 	 * Sets the value of the char property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setChar(String value){
+	public void setChar(String value) {
 		this._char = value;
 	}
-	
+
 	/**
 	 * Gets the value of the charoff property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getCharoff(){
+	public String getCharoff() {
 		return charoff;
 	}
-	
+
 	/**
 	 * Sets the value of the charoff property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setCharoff(String value){
+	public void setCharoff(String value) {
 		this.charoff = value;
 	}
-	
+
 	/**
 	 * Gets the value of the valign property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getValign(){
+	public String getValign() {
 		return valign;
 	}
-	
+
 	/**
 	 * Sets the value of the valign property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setValign(String value){
+	public void setValign(String value) {
 		this.valign = value;
 	}
-	
+
 }

@@ -27,7 +27,7 @@ public class DiagnoseQueryDoctorHandler extends AbstractHandler {
 	private static Logger log = LoggerFactory.getLogger(DiagnoseQueryDoctorHandler.class);
 	private ViollierConnectorSettings mySettings;
 	private String httpsUrl;
-	
+
 	/**
 	 * Starte Labor Befundabfrage : <br>
 	 * <ul>
@@ -36,26 +36,23 @@ public class DiagnoseQueryDoctorHandler extends AbstractHandler {
 	 * </ul>
 	 */
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String cookie = "";
-		
-		mySettings =
-			new ViollierConnectorSettings(
-				(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
+
+		mySettings = new ViollierConnectorSettings((Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 		httpsUrl = mySettings.getGlobalLoginUrl();
-		
+
 		// Cookie holen
 		try {
 			cookie = new PortalCookieService().getCookie();
-			
+
 		} catch (IOException e) {
 			log.error("Error getting cookie", e);
 			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleGetCookie,
-				Messages.Handler_errorMessageGetCookie + e.getMessage());
+					Messages.Handler_errorMessageGetCookie + e.getMessage());
 		} catch (ElexisException e) {
 			log.error("No user/password defined", e);
-			MessageDialog.openError(new Shell(),
-				Messages.Exception_errorTitleNoUserPasswordDefined, e.getMessage());
+			MessageDialog.openError(new Shell(), Messages.Exception_errorTitleNoUserPasswordDefined, e.getMessage());
 		}
 		httpsUrl += "&RCSession=" + cookie;
 		try {
@@ -63,7 +60,7 @@ public class DiagnoseQueryDoctorHandler extends AbstractHandler {
 		} catch (UnsupportedEncodingException e1) {
 			log.error("Enoding not supported", e1);
 		}
-		
+
 		// Browser ConsultIT öffnen
 		try {
 			IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();

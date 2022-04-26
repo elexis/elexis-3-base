@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     MEDEVIT <office@medevit.at> - initial API and implementation
  ******************************************************************************/
@@ -29,37 +29,36 @@ public class MephaPrefferedProviderSorterAction extends Action {
 	private CommonViewerContentProvider commonViewerContentProvider;
 
 	public static final String CFG_PREFER_MEPHA = "artikelstammPreferMepha";
-	
+
 	private MephaPrefferdQueryFilter queryFilter;
-	
-	public MephaPrefferedProviderSorterAction(
-		CommonViewerContentProvider commonViewerContentProvider){
+
+	public MephaPrefferedProviderSorterAction(CommonViewerContentProvider commonViewerContentProvider) {
 		this.commonViewerContentProvider = commonViewerContentProvider;
 		this.queryFilter = new MephaPrefferdQueryFilter();
 	}
-	
+
 	@Override
-	public String getText(){
+	public String getText() {
 		return "Mepha";
 	}
-	
+
 	@Override
-	public String getToolTipText(){
+	public String getToolTipText() {
 		return "Mepha Artikel bevorzugen (werden zuoberst angezeigt)";
 	}
-	
+
 	@Override
-	public int getStyle(){
+	public int getStyle() {
 		return Action.AS_CHECK_BOX;
 	}
-	
+
 	@Override
-	public ImageDescriptor getImageDescriptor(){
+	public ImageDescriptor getImageDescriptor() {
 		return Images.lookupImageDescriptor("mepha.png", ImageSize._16x16_DefaultIconSize);
 	}
-	
+
 	@Override
-	public void run(){
+	public void run() {
 		ConfigServiceHolder.get().set(CFG_PREFER_MEPHA, isChecked());
 		if (isChecked()) {
 			commonViewerContentProvider.addQueryFilter(queryFilter);
@@ -67,11 +66,11 @@ public class MephaPrefferedProviderSorterAction extends Action {
 			commonViewerContentProvider.removeQueryFilter(queryFilter);
 		}
 	}
-	
+
 	private class MephaPrefferdQueryFilter implements QueryFilter {
-		
+
 		@Override
-		public void apply(IQuery<?> query){
+		public void apply(IQuery<?> query) {
 			// #3627 need to work-around
 			Map<String, Object> caseContext = new HashMap<>();
 			caseContext.put("when|comp_gln|equals|7601001001121", Integer.valueOf(1));

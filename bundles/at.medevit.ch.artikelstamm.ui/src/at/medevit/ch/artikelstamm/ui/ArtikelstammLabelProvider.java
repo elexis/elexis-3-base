@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     MEDEVIT <office@medevit.at> - initial API and implementation
  ******************************************************************************/
@@ -21,18 +21,17 @@ import ch.elexis.core.ui.UiDesk;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 
 public class ArtikelstammLabelProvider extends LabelProvider implements IColorProvider {
-	
-	private static Image emptyTransparent = ResourceManager
-		.getPluginImage("at.medevit.ch.artikelstamm.ui", "rsc/icons/emptyTransparent.png");
-	private static Image pharmaMain =
-		ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", "rsc/icons/pharma.png");
-	private static Image nonPharmaMain =
-		ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", "rsc/icons/nonPharma.png");
-	private static Image slMain =
-		ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", "rsc/icons/sl.png");
-	
+
+	private static Image emptyTransparent = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui",
+			"rsc/icons/emptyTransparent.png");
+	private static Image pharmaMain = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui",
+			"rsc/icons/pharma.png");
+	private static Image nonPharmaMain = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui",
+			"rsc/icons/nonPharma.png");
+	private static Image slMain = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", "rsc/icons/sl.png");
+
 	@Override
-	public String getText(Object element){
+	public String getText(Object element) {
 		IArtikelstammItem item = (IArtikelstammItem) element;
 		StringBuilder sb = new StringBuilder();
 		if (item.getDeductible() > 0) {
@@ -41,16 +40,16 @@ public class ArtikelstammLabelProvider extends LabelProvider implements IColorPr
 		sb.append(item.getLabel());
 		return sb.toString();
 	}
-	
+
 	@Override
-	public Image getImage(Object element){
+	public Image getImage(Object element) {
 		IArtikelstammItem item = (IArtikelstammItem) element;
-		
+
 		TYPE itemType = item.getType();
 		if (itemType == null) {
 			return emptyTransparent;
 		}
-		
+
 		switch (itemType) {
 		case N:
 			return nonPharmaMain;
@@ -61,26 +60,26 @@ public class ArtikelstammLabelProvider extends LabelProvider implements IColorPr
 		}
 		return emptyTransparent;
 	}
-	
+
 	@Override
-	public Color getForeground(Object element){
+	public Color getForeground(Object element) {
 		return null;
 	}
-	
+
 	@Override
-	public Color getBackground(Object element){
+	public Color getBackground(Object element) {
 		IArtikelstammItem item = (IArtikelstammItem) element;
-		
+
 		TYPE itemType = item.getType();
 		if (itemType == null) {
 			return null;
 		}
-		
-		if(itemType == TYPE.X) {
+
+		if (itemType == TYPE.X) {
 			return UiDesk.getColor(UiDesk.COL_SKYBLUE);
 		}
-		
+
 		return null;
 	}
-	
+
 }

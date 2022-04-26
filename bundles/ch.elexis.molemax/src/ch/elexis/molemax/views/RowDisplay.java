@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    rgw - initial API and implementation
  *    rgw - 2014: Changes for Elexis 2.x
@@ -43,17 +43,15 @@ public class RowDisplay extends Composite {
 		sash = new SashForm(this, SWT.HORIZONTAL);
 		left = new Composite(sash, SWT.NONE);
 		left.setLayout(new GridLayout(1, false));
-		SWTHelper.createHyperlink(left, Messages.RowDisplay_overview,
-				new HyperlinkAdapter() {
+		SWTHelper.createHyperlink(left, Messages.RowDisplay_overview, new HyperlinkAdapter() {
 
-					@Override
-					public void linkActivated(final HyperlinkEvent e) {
-						parent.setTopControl(parent.dispAll);
-					}
+			@Override
+			public void linkActivated(final HyperlinkEvent e) {
+				parent.setTopControl(parent.dispAll);
+			}
 
-				});
-		right = new ScrolledComposite(sash, SWT.BORDER | SWT.V_SCROLL
-				| SWT.H_SCROLL);
+		});
+		right = new ScrolledComposite(sash, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		right.setAlwaysShowScrollBars(true);
 		actSlot = 0;
 		rightContents = new DetailDisplay(right, parent);

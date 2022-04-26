@@ -22,23 +22,23 @@ import ch.rgw.tools.ExHandler;
 
 public class PagesProcessor implements IProcessor {
 	private ProcessingSchema proc;
-	
-	public PagesProcessor(){
+
+	public PagesProcessor() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public String getName(){
+	public String getName() {
 		return "Apple(tm) iWork(tm) Pages(tm)";
 	}
-	
+
 	@Override
-	public boolean doOutput(ProcessingSchema schema){
+	public boolean doOutput(ProcessingSchema schema) {
 		proc = schema;
 		File tmpl = schema.getTemplateFile();
 		if (!tmpl.exists()) {
-			SWTHelper.alert("Template missing", MessageFormat.format(
-				"Konnte Vorlagedatei {0} nicht öffnen", tmpl.getAbsolutePath()));
+			SWTHelper.alert("Template missing",
+					MessageFormat.format("Konnte Vorlagedatei {0} nicht öffnen", tmpl.getAbsolutePath()));
 			return false;
 		}
 		try {
@@ -60,7 +60,7 @@ public class PagesProcessor implements IProcessor {
 					FileTool.copyStreams(zis, zos);
 				}
 			}
-			
+
 			zos.finish();
 			zis.close();
 			zos.close();
@@ -70,20 +70,17 @@ public class PagesProcessor implements IProcessor {
 			if (i != -1) {
 				param = param.substring(0, i) + output.getAbsolutePath() + param.substring(i + 1);
 			}
-			Process process = Runtime.getRuntime().exec(new String[] {
-				cmd, param
-			});
+			Process process = Runtime.getRuntime().exec(new String[] { cmd, param });
 			return process.waitFor() == 0;
 		} catch (Exception e) {
 			ExHandler.handle(e);
-			SWTHelper.alert("Pages Processor",
-				"Problem mit dem Erstellen des Dokuments " + e.getMessage());
+			SWTHelper.alert("Pages Processor", "Problem mit dem Erstellen des Dokuments " + e.getMessage());
 		}
 		return false;
 	}
-	
+
 	@Override
-	public String convert(String input){
+	public String convert(String input) {
 		String replacement = input.replaceAll("\\t", "<sf:tab/>");
 		replacement = replacement.replaceAll("\\n", "<sf:br/>");
 		return replacement;

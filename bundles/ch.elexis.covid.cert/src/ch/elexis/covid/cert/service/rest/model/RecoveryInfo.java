@@ -4,23 +4,23 @@ package ch.elexis.covid.cert.service.rest.model;
 //"countryOfTest": "CH"
 
 public class RecoveryInfo {
-	
+
 	private String dateOfFirstPositiveTestResult;
 	private String countryOfTest;
-	
-	public String getDateOfFirstPositiveTestResult(){
+
+	public String getDateOfFirstPositiveTestResult() {
 		return dateOfFirstPositiveTestResult;
 	}
-	
-	public void setDateOfFirstPositiveTestResult(String dateOfFirstPositiveTestResult){
+
+	public void setDateOfFirstPositiveTestResult(String dateOfFirstPositiveTestResult) {
 		this.dateOfFirstPositiveTestResult = dateOfFirstPositiveTestResult;
 	}
-	
-	public String getCountryOfTest(){
+
+	public String getCountryOfTest() {
 		return countryOfTest;
 	}
-	
-	public void setCountryOfTest(String countryOfTest){
+
+	public void setCountryOfTest(String countryOfTest) {
 		this.countryOfTest = countryOfTest;
 	}
 }

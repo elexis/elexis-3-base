@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
+ *    A. Kaufmann - initial implementation
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
@@ -36,59 +36,59 @@ import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
  */
 public class MesswertTypNum extends MesswertBase implements IMesswertTyp {
 	double defVal = 0.0;
-	
+
 	/**
 	 * Format für die Anzeige des Wertes
 	 */
 	private final DecimalFormat df = new DecimalFormat("#0.#"); //$NON-NLS-1$
-	
-	public MesswertTypNum(String n, String t, String u){
+
+	public MesswertTypNum(String n, String t, String u) {
 		super(n, t, u);
 		df.setRoundingMode(RoundingMode.HALF_UP);
 	}
-	
-	public String erstelleDarstellungswert(Messwert messwert){
+
+	public String erstelleDarstellungswert(Messwert messwert) {
 		try {
 			return df.format(Double.parseDouble(messwert.getWert()));
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		return ""; //$NON-NLS-1$
 	}
-	
-	public String getDefault(Messwert messwert){
+
+	public String getDefault(Messwert messwert) {
 		Double dWert = defVal;
 		if (formula != null) {
 			String sWert = evalateFormula(formula, messwert, df.format(dWert));
 			try {
 				dWert = Double.parseDouble(sWert);
 			} catch (Exception e) {
-				log.log(MessageFormat.format(Messages.MesswertTypNum_CastFailure, sWert),
-					Log.ERRORS);
+				log.log(MessageFormat.format(Messages.MesswertTypNum_CastFailure, sWert), Log.ERRORS);
 			}
 		}
 		return df.format(dWert);
 	}
-	
-	public void setDefault(String str){
+
+	public void setDefault(String str) {
 		defVal = Double.parseDouble(str);
 	}
-	
-	public String getFormatPattern(){
+
+	public String getFormatPattern() {
 		return df.toPattern();
 	}
-	
-	public void setFormatPattern(String pattern){
+
+	public void setFormatPattern(String pattern) {
 		df.applyPattern(pattern);
 	}
-	
-	public String getRoundingMode(){
+
+	public String getRoundingMode() {
 		return df.getRoundingMode().toString();
 	}
-	
-	public void setRoundingMode(String roundingMode){
+
+	public void setRoundingMode(String roundingMode) {
 		df.setRoundingMode(RoundingMode.valueOf(roundingMode));
 	}
-	
-	public Widget createWidget(Composite parent, Messwert messwert){
+
+	public Widget createWidget(Composite parent, Messwert messwert) {
 		widget = SWTHelper.createText(parent, 1, SWT.SINGLE);
 		try {
 			((Text) widget).setText(df.format(Double.parseDouble(messwert.getWert())));
@@ -100,26 +100,26 @@ public class MesswertTypNum extends MesswertBase implements IMesswertTyp {
 		setShown(true);
 		return widget;
 	}
-	
-	public String getDarstellungswert(String wert){
+
+	public String getDarstellungswert(String wert) {
 		return wert;
 	}
-	
+
 	@Override
-	public String getActualValue(){
+	public String getActualValue() {
 		String s = ((Text) widget).getText();
 		if (s == "") //$NON-NLS-1$
 			s = "0"; //$NON-NLS-1$
 		return s;
 	}
-	
+
 	@Override
-	public void saveInput(Messwert messwert){
+	public void saveInput(Messwert messwert) {
 		messwert.setWert(((Text) widget).getText());
 	}
-	
+
 	@Override
-	public boolean checkInput(Messwert messwert, String pattern){
+	public boolean checkInput(Messwert messwert, String pattern) {
 		super.checkInput(messwert, pattern);
 		String value = ((Text) widget).getText();
 		if (value.matches(pattern) || pattern == null) {
@@ -127,8 +127,8 @@ public class MesswertTypNum extends MesswertBase implements IMesswertTyp {
 		}
 		return false;
 	}
-	
-	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
+
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable) {
 		int flags = 0;
 		if (!bEditable) {
 			flags |= TextField.READONLY;

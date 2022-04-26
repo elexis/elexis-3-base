@@ -3,167 +3,169 @@ package ch.docbox.ws.cdachservices;
 import javax.xml.bind.annotation.XmlRegistry;
 
 /**
- * This object contains factory methods for each Java content interface and Java element interface
- * generated in the ch.docbox.ws.cdachservices package.
+ * This object contains factory methods for each Java content interface and Java
+ * element interface generated in the ch.docbox.ws.cdachservices package.
  * <p>
- * An ObjectFactory allows you to programatically construct new instances of the Java representation
- * for XML content. The Java representation of XML content can consist of schema derived interfaces
- * and classes representing the binding of schema type definitions, element declarations and model
- * groups. Factory methods for each of these are provided in this class.
- * 
+ * An ObjectFactory allows you to programatically construct new instances of the
+ * Java representation for XML content. The Java representation of XML content
+ * can consist of schema derived interfaces and classes representing the binding
+ * of schema type definitions, element declarations and model groups. Factory
+ * methods for each of these are provided in this class.
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
-	
+
 	/**
-	 * Create a new ObjectFactory that can be used to create new instances of schema derived classes
-	 * for package: ch.docbox.ws.cdachservices
-	 * 
+	 * Create a new ObjectFactory that can be used to create new instances of schema
+	 * derived classes for package: ch.docbox.ws.cdachservices
+	 *
 	 */
-	public ObjectFactory(){}
-	
+	public ObjectFactory() {
+	}
+
 	/**
 	 * Create an instance of {@link GetCalendar }
-	 * 
+	 *
 	 */
-	public GetCalendar createGetCalendar(){
+	public GetCalendar createGetCalendar() {
 		return new GetCalendar();
 	}
-	
+
 	/**
 	 * Create an instance of {@link SendClinicalDocument }
-	 * 
+	 *
 	 */
-	public SendClinicalDocument createSendClinicalDocument(){
+	public SendClinicalDocument createSendClinicalDocument() {
 		return new SendClinicalDocument();
 	}
-	
+
 	/**
 	 * Create an instance of {@link GetRecipients }
-	 * 
+	 *
 	 */
-	public GetRecipients createGetRecipients(){
+	public GetRecipients createGetRecipients() {
 		return new GetRecipients();
 	}
-	
+
 	/**
 	 * Create an instance of {@link DeleteAgendaEntry }
-	 * 
+	 *
 	 */
-	public DeleteAgendaEntry createDeleteAgendaEntry(){
+	public DeleteAgendaEntry createDeleteAgendaEntry() {
 		return new DeleteAgendaEntry();
 	}
-	
+
 	/**
 	 * Create an instance of {@link GetInboxClinicalDocumentsResponse }
-	 * 
+	 *
 	 */
-	public GetInboxClinicalDocumentsResponse createGetInboxClinicalDocumentsResponse(){
+	public GetInboxClinicalDocumentsResponse createGetInboxClinicalDocumentsResponse() {
 		return new GetInboxClinicalDocumentsResponse();
 	}
-	
+
 	/**
 	 * Create an instance of {@link AppointmentType }
-	 * 
+	 *
 	 */
-	public AppointmentType createAppointmentType(){
+	public AppointmentType createAppointmentType() {
 		return new AppointmentType();
 	}
-	
+
 	/**
 	 * Create an instance of {@link GetClinicalDocument }
-	 * 
+	 *
 	 */
-	public GetClinicalDocument createGetClinicalDocument(){
+	public GetClinicalDocument createGetClinicalDocument() {
 		return new GetClinicalDocument();
 	}
-	
+
 	/**
 	 * Create an instance of {@link AddReferralResponse }
-	 * 
+	 *
 	 */
-	public AddReferralResponse createAddReferralResponse(){
+	public AddReferralResponse createAddReferralResponse() {
 		return new AddReferralResponse();
 	}
-	
+
 	/**
 	 * Create an instance of {@link GetClinicalDocumentResponse }
-	 * 
+	 *
 	 */
-	public GetClinicalDocumentResponse createGetClinicalDocumentResponse(){
+	public GetClinicalDocumentResponse createGetClinicalDocumentResponse() {
 		return new GetClinicalDocumentResponse();
 	}
-	
+
 	/**
 	 * Create an instance of {@link SendClinicalDocumentResponse }
-	 * 
+	 *
 	 */
-	public SendClinicalDocumentResponse createSendClinicalDocumentResponse(){
+	public SendClinicalDocumentResponse createSendClinicalDocumentResponse() {
 		return new SendClinicalDocumentResponse();
 	}
-	
+
 	/**
 	 * Create an instance of {@link AddReferral }
-	 * 
+	 *
 	 */
-	public AddReferral createAddReferral(){
+	public AddReferral createAddReferral() {
 		return new AddReferral();
 	}
-	
+
 	/**
 	 * Create an instance of {@link GetRecipientsResponse }
-	 * 
+	 *
 	 */
-	public GetRecipientsResponse createGetRecipientsResponse(){
+	public GetRecipientsResponse createGetRecipientsResponse() {
 		return new GetRecipientsResponse();
 	}
-	
+
 	/**
 	 * Create an instance of {@link GetInboxClinicalDocuments }
-	 * 
+	 *
 	 */
-	public GetInboxClinicalDocuments createGetInboxClinicalDocuments(){
+	public GetInboxClinicalDocuments createGetInboxClinicalDocuments() {
 		return new GetInboxClinicalDocuments();
 	}
-	
+
 	/**
 	 * Create an instance of {@link CheckAccessResponse }
-	 * 
+	 *
 	 */
-	public CheckAccessResponse createCheckAccessResponse(){
+	public CheckAccessResponse createCheckAccessResponse() {
 		return new CheckAccessResponse();
 	}
-	
+
 	/**
 	 * Create an instance of {@link DocumentInfoType }
-	 * 
+	 *
 	 */
-	public DocumentInfoType createDocumentInfoType(){
+	public DocumentInfoType createDocumentInfoType() {
 		return new DocumentInfoType();
 	}
-	
+
 	/**
 	 * Create an instance of {@link GetCalendarResponse }
-	 * 
+	 *
 	 */
-	public GetCalendarResponse createGetCalendarResponse(){
+	public GetCalendarResponse createGetCalendarResponse() {
 		return new GetCalendarResponse();
 	}
-	
+
 	/**
 	 * Create an instance of {@link DeleteAgendaEntryResponse }
-	 * 
+	 *
 	 */
-	public DeleteAgendaEntryResponse createDeleteAgendaEntryResponse(){
+	public DeleteAgendaEntryResponse createDeleteAgendaEntryResponse() {
 		return new DeleteAgendaEntryResponse();
 	}
-	
+
 	/**
 	 * Create an instance of {@link CheckAccess }
-	 * 
+	 *
 	 */
-	public CheckAccess createCheckAccess(){
+	public CheckAccess createCheckAccess() {
 		return new CheckAccess();
 	}
-	
+
 }

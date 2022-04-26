@@ -24,33 +24,33 @@ import ch.rgw.tools.StringTool;
 public abstract class KonsDataFView extends SimpleTextFView {
 	protected final String dbfield;
 	protected final String icpcfield;
-	
+
 	private KonsData data;
 	private MyKonsListener listener;
-	
+
 	private List icpc_list;
 	private ArrayList<IcpcCode> code_list;
-	
-	protected KonsDataFView(String field){
+
+	protected KonsDataFView(String field) {
 		dbfield = field;
 		icpcfield = null;
 	}
-	
-	protected KonsDataFView(String field, String icpc){
+
+	protected KonsDataFView(String field, String icpc) {
 		dbfield = field;
 		icpcfield = icpc;
 	}
-	
+
 	/** Leert das ICPC-Feld im UI */
-	protected void clearIcpc(){
+	protected void clearIcpc() {
 		if (icpcfield == null)
 			return;
 		icpc_list.removeAll();
 		code_list.clear();
 	}
-	
+
 	/** Inhalt des ICPC-Felds in Datenbank ablegen */
-	protected void storeIcpc(){
+	protected void storeIcpc() {
 		if (icpcfield == null)
 			return;
 		StringBuffer sb = new StringBuffer();
@@ -63,26 +63,25 @@ public abstract class KonsDataFView extends SimpleTextFView {
 		data.set(icpcfield, sb.toString());
 		setEmpty();
 	}
-	
+
 	/** ICPC-Feld aus Datenbank laden */
-	protected void loadIcpc(){
+	protected void loadIcpc() {
 		if (icpcfield == null)
 			return;
 		clearIcpc();
-		
+
 		String entries[] = StringTool.unNull(data.get(icpcfield)).split(",");
 		for (String c : entries) {
 			if (c.length() == 0)
 				continue;
-			IcpcCode code = IcpcModelServiceHolder.get()
-				.load(c, ch.elexis.icpc.model.icpc.IcpcCode.class).orElse(null);
+			IcpcCode code = IcpcModelServiceHolder.get().load(c, ch.elexis.icpc.model.icpc.IcpcCode.class).orElse(null);
 			code_list.add(code);
 			icpc_list.add(code.getLabel());
 		}
 	}
-	
+
 	/** Aktuell ausgewaehlten ICPC Code loeschen (im UI und in DB). */
-	private void removeIcpcCode(){
+	private void removeIcpcCode() {
 		if (icpcfield == null)
 			return;
 		int i = icpc_list.getSelectionIndex();
@@ -93,44 +92,46 @@ public abstract class KonsDataFView extends SimpleTextFView {
 		}
 		setEmpty();
 	}
-	
+
 	@Override
-	protected void initialize(){
+	protected void initialize() {
 		if (icpcfield != null) {
 			GridData gd = new GridData();
 			gd.horizontalAlignment = gd.verticalAlignment = GridData.FILL;
 			gd.grabExcessHorizontalSpace = true;
 			gd.heightHint = 40;
-			
+
 			code_list = new ArrayList<IcpcCode>();
 			icpc_list = new List(area, SWT.V_SCROLL);
 			icpc_list.setLayoutData(gd);
 			icpc_list.addKeyListener(new KeyListener() {
-				public void keyReleased(KeyEvent e){}
-				
-				public void keyPressed(KeyEvent e){
+				public void keyReleased(KeyEvent e) {
+				}
+
+				public void keyPressed(KeyEvent e) {
 					if (e.keyCode != SWT.DEL)
 						return;
 					removeIcpcCode();
 				}
 			});
-			
+
 			Menu m = new Menu(icpc_list);
 			MenuItem mi = new MenuItem(m, 0);
 			mi.setText("Entfernen");
 			mi.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e){
+				public void widgetSelected(SelectionEvent e) {
 					removeIcpcCode();
 				}
-				
-				public void widgetDefaultSelected(SelectionEvent e){}
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
 			});
 			icpc_list.setMenu(m);
-			
+
 			new GenericObjectDropTarget(icpc_list, new GenericObjectDropTarget.IReceiver() {
-				
+
 				@Override
-				public void dropped(java.util.List<Object> list, DropTargetEvent e){
+				public void dropped(java.util.List<Object> list, DropTargetEvent e) {
 					for (Object o : list) {
 						IcpcCode code = (IcpcCode) o;
 						icpc_list.add(code.getLabel());
@@ -138,9 +139,9 @@ public abstract class KonsDataFView extends SimpleTextFView {
 						storeIcpc();
 					}
 				}
-				
+
 				@Override
-				public boolean accept(java.util.List<Object> list){
+				public boolean accept(java.util.List<Object> list) {
 					for (Object o : list) {
 						if (!(o instanceof IcpcCode) || code_list.contains(o))
 							return false;
@@ -149,72 +150,73 @@ public abstract class KonsDataFView extends SimpleTextFView {
 				}
 			});
 		}
-		
+
 		data = null;
 		listener = new MyKonsListener();
 	}
-	
+
 	@Override
-	protected void fieldChanged(){
+	protected void fieldChanged() {
 		super.fieldChanged();
 		if (!isEnabled()) {
 			return;
 		}
 		data.set(dbfield, getText());
 	}
-	
+
 	@Override
-	protected boolean isEmpty(){
+	protected boolean isEmpty() {
 		return super.isEmpty() && (code_list == null || code_list.isEmpty());
 	}
-	
+
 	@Override
-	protected void setEnabled(boolean en){
+	protected void setEnabled(boolean en) {
 		super.setEnabled(en);
-		
+
 		clearIcpc();
 		if (icpcfield != null)
 			icpc_list.setEnabled(en && getCanEdit());
 	}
-	
+
 	/** Konsultation wurde deselektiert */
-	private void konsDeselected(Konsultation kons){
+	private void konsDeselected(Konsultation kons) {
 		setEnabled(false);
 		data = null;
 	}
-	
+
 	/** Konsultation wurde selektiert */
-	private void konsSelected(Konsultation kons){
+	private void konsSelected(Konsultation kons) {
 		data = new KonsData(kons);
 		setCanEdit(data.isEditOK());
 		setEnabled(true);
-		
+
 		loadIcpc();
 		String text = StringTool.unNull(data.get(dbfield));
 		setText(text);
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		listener.destroy();
 		super.dispose();
 	}
-	
+
 	/**
-	 * Helper Klasse um auf dem Laufenden zu bleiben bezüglich der aktiven Konsultation.
+	 * Helper Klasse um auf dem Laufenden zu bleiben bezüglich der aktiven
+	 * Konsultation.
 	 */
 	class MyKonsListener extends POSelectionListener<Konsultation> {
-		public MyKonsListener(){
+		public MyKonsListener() {
 			init();
 		}
-		
+
 		@Override
-		protected void deselected(Konsultation kons){
+		protected void deselected(Konsultation kons) {
 			konsDeselected(kons);
 		}
-		
+
 		@Override
-		protected void selected(Konsultation kons){
+		protected void selected(Konsultation kons) {
 			konsSelected(kons);
 		}
 	}

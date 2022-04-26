@@ -23,10 +23,13 @@ import ch.unibe.iam.scg.archie.ui.views.SidebarView;
 import ch.unibe.iam.scg.archie.ui.views.StatisticsView;
 
 /**
- * <p>The main Archie perspective. Here we layout the views that compose the GUI for archie.</p>
- * 
+ * <p>
+ * The main Archie perspective. Here we layout the views that compose the GUI
+ * for archie.
+ * </p>
+ *
  * $Id: StatisticsPerspective.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -40,7 +43,7 @@ public class StatisticsPerspective implements IPerspectiveFactory {
 
 	/**
 	 * Creates the initial perspective layout.
-	 * 
+	 *
 	 * @param layout
 	 */
 	public void createInitialLayout(IPageLayout layout) {
@@ -51,7 +54,7 @@ public class StatisticsPerspective implements IPerspectiveFactory {
 
 		IFolderLayout main = layout.createFolder("main", IPageLayout.LEFT, 1.0f, editorArea);
 		IFolderLayout sidebar = layout.createFolder("right", IPageLayout.RIGHT, 0.6f, "main");
-		
+
 		// Main area
 		main.addView(Dashboard.ID);
 		main.addView(StatisticsView.ID);
@@ -60,7 +63,7 @@ public class StatisticsPerspective implements IPerspectiveFactory {
 
 		// Sidebar
 		sidebar.addView(SidebarView.ID);
-		
+
 		layout.getViewLayout(StatisticsView.ID).setCloseable(false);
 		layout.getViewLayout(SidebarView.ID).setCloseable(false);
 	}

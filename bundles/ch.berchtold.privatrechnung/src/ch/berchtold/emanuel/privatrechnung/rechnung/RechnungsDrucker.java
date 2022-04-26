@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.berchtold.emanuel.privatrechnung.rechnung;
@@ -39,27 +39,28 @@ import ch.rgw.tools.Result;
 public class RechnungsDrucker implements IRnOutputter {
 	private Button bFirst, bSecond, bThird;
 	private boolean bSummary, bDetail, bReclaim;
-	
+
 	/**
 	 * We'll take all sorts of bills
 	 */
-	public boolean canBill(final Fall fall){
+	public boolean canBill(final Fall fall) {
 		return true;
 	}
-	
+
 	/**
 	 * We never storno
 	 */
-	public boolean canStorno(final Rechnung rn){
+	public boolean canStorno(final Rechnung rn) {
 		return false;
 	}
-	
+
 	/**
-	 * Create the Control that will be presented to the user before selecting the bill output
-	 * target. Here we simply chose a template to use for the bill. In fact we need two templates: a
-	 * template for the page with summary and giro and a template for the other pages
+	 * Create the Control that will be presented to the user before selecting the
+	 * bill output target. Here we simply chose a template to use for the bill. In
+	 * fact we need two templates: a template for the page with summary and giro and
+	 * a template for the other pages
 	 */
-	public Object createSettingsControl(Object parent){
+	public Object createSettingsControl(Object parent) {
 		Composite compParent = (Composite) parent;
 		Composite ret = new Composite(compParent, SWT.NONE);
 		ret.setLayout(new GridLayout());
@@ -74,12 +75,11 @@ public class RechnungsDrucker implements IRnOutputter {
 		bThird.setSelection(true);
 		return ret;
 	}
-	
+
 	/**
 	 * Print the bill(s)
 	 */
-	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn,
-		final Properties props){
+	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn, final Properties props) {
 		IWorkbenchPage rnPage;
 		final Result<Rechnung> result = new Result<Rechnung>(); // =new
 		// Result<Rechnung>(Log.ERRORS,99,"Not
@@ -92,57 +92,48 @@ public class RechnungsDrucker implements IRnOutputter {
 		props.setProperty(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM, Boolean.toString(bReclaim));
 		try {
 			final RnPrintView rnp = (RnPrintView) rnPage.showView(RnPrintView.ID);
-			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
-				new IRunnableWithProgress() {
-					public void run(final IProgressMonitor monitor){
-						monitor.beginTask("Drucke Rechnungen", rnn.size() * 10);
-						int errors = 0;
-						for (Rechnung rn : rnn) {
-							try {
-								result.add(rnp.doPrint(rn, props));
-								monitor.worked(10);
-								if (!result.isOK()) {
-									String errms =
-										"Rechnung " + rn.getNr() + "konnte nicht gedruckt werden";
-									res.add(Result.SEVERITY.ERROR, 1, errms, rn, true);
-									errors++;
-									continue;
-								}
-								int status_vorher = rn.getStatus();
-								if ((status_vorher == RnStatus.OFFEN)
-									|| (status_vorher == RnStatus.MAHNUNG_1)
-									|| (status_vorher == RnStatus.MAHNUNG_2)
-									|| (status_vorher == RnStatus.MAHNUNG_3)) {
-									rn.setStatus(status_vorher + 1);
-								}
-								rn.addTrace(
-									Rechnung.OUTPUT,
-									getDescription() + ": "
-										+ RnStatus.getStatusText(rn.getStatus()));
-							} catch (Exception ex) {
-								LoggerFactory.getLogger(getClass()).error("Error printing", ex);
-								SWTHelper.showError(
-									"Fehler beim Drucken der Rechnung " + rn.getRnId(),
-									ex.getMessage());
+			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(), new IRunnableWithProgress() {
+				public void run(final IProgressMonitor monitor) {
+					monitor.beginTask("Drucke Rechnungen", rnn.size() * 10);
+					int errors = 0;
+					for (Rechnung rn : rnn) {
+						try {
+							result.add(rnp.doPrint(rn, props));
+							monitor.worked(10);
+							if (!result.isOK()) {
+								String errms = "Rechnung " + rn.getNr() + "konnte nicht gedruckt werden";
+								res.add(Result.SEVERITY.ERROR, 1, errms, rn, true);
 								errors++;
+								continue;
 							}
-						}
-						monitor.done();
-						if (errors == 0) {
-							SWTHelper.showInfo("OK", "OK");
-						} else {
-							SWTHelper.showError("Fehler", "Fehler");
+							int status_vorher = rn.getStatus();
+							if ((status_vorher == RnStatus.OFFEN) || (status_vorher == RnStatus.MAHNUNG_1)
+									|| (status_vorher == RnStatus.MAHNUNG_2) || (status_vorher == RnStatus.MAHNUNG_3)) {
+								rn.setStatus(status_vorher + 1);
+							}
+							rn.addTrace(Rechnung.OUTPUT,
+									getDescription() + ": " + RnStatus.getStatusText(rn.getStatus()));
+						} catch (Exception ex) {
+							LoggerFactory.getLogger(getClass()).error("Error printing", ex);
+							SWTHelper.showError("Fehler beim Drucken der Rechnung " + rn.getRnId(), ex.getMessage());
+							errors++;
 						}
 					}
-				}, null);
-			
+					monitor.done();
+					if (errors == 0) {
+						SWTHelper.showInfo("OK", "OK");
+					} else {
+						SWTHelper.showError("Fehler", "Fehler");
+					}
+				}
+			}, null);
+
 			rnPage.hideView(rnp);
-			
+
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
-			ErrorDialog.openError(null, "Exception", "Exception",
-				ResultAdapter.getResultAsStatus(res));
+			ErrorDialog.openError(null, "Exception", "Exception", ResultAdapter.getResultAsStatus(res));
 			return res;
 		}
 		if (!result.isOK()) {
@@ -150,12 +141,12 @@ public class RechnungsDrucker implements IRnOutputter {
 		}
 		return result;
 	}
-	
-	public String getDescription(){
+
+	public String getDescription() {
 		return "Privatrechnung B. auf Drucker";
 	}
-	
-	public void saveComposite(){
+
+	public void saveComposite() {
 		bSummary = bFirst.getSelection();
 		bDetail = bSecond.getSelection();
 		bReclaim = bThird.getSelection();

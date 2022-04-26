@@ -22,25 +22,25 @@ import ch.elexis.core.services.IFormattedOutput;
 
 public class JaxbToPdf implements IFormattedOutput {
 	private static JaxbToPdf instance;
-	
-	private JaxbToPdf(){
-		
+
+	private JaxbToPdf() {
+
 	}
-	
-	public static JaxbToPdf getInstance(){
+
+	public static JaxbToPdf getInstance() {
 		if (instance == null)
 			instance = new JaxbToPdf();
 		return instance;
 	}
-	
+
 	@Override
-	public void transform(Object jaxbObject, InputStream xslt, OutputStream pdf){
+	public void transform(Object jaxbObject, InputStream xslt, OutputStream pdf) {
 		transform(jaxbObject, xslt, pdf, null);
 	}
-	
+
 	public void transform(Object jaxbObject, InputStream xslt, OutputStream pdf,
-		Map<String, String> transformerParameters, URIResolver resolver){
-		JaxbToMimeType.getInstance().transform(jaxbObject, xslt, pdf, MimeConstants.MIME_PDF,
-			transformerParameters, resolver);
+			Map<String, String> transformerParameters, URIResolver resolver) {
+		JaxbToMimeType.getInstance().transform(jaxbObject, xslt, pdf, MimeConstants.MIME_PDF, transformerParameters,
+				resolver);
 	}
 }

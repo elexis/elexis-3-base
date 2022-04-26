@@ -8,25 +8,26 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class MesswertFieldMapping {
-	
+
 	private static final String MAPPING_CONFIG = "ch.elexis.core.findins/messwert/mapping";
-	
+
 	private String localMesswert;
 	private String localMesswertField;
-	
+
 	private String findingsCode;
-	
+
 	private static final String MAPPING_FIELD_SEPARATOR_ESCAPED = "\\|\\|";
 	private static final String MAPPING_SEPARATOR = "<->";
 	private static final String MAPPING_TYPE = "_MESSWERTFIELDMAPPING_";
-	
+
 	/**
-	 * Create a BefundFieldMapping from a String representation (see exportToString).
-	 * 
+	 * Create a BefundFieldMapping from a String representation (see
+	 * exportToString).
+	 *
 	 * @param string
 	 * @return a valid BefundFieldMapping, or null
 	 */
-	public static MesswertFieldMapping createFromString(String string){
+	public static MesswertFieldMapping createFromString(String string) {
 		MesswertFieldMapping mapping = new MesswertFieldMapping();
 		if (string.startsWith(MAPPING_TYPE)) {
 			string = string.substring(MAPPING_TYPE.length(), string.length());
@@ -42,54 +43,53 @@ public class MesswertFieldMapping {
 		}
 		return mapping.isValidMapping() ? mapping : null;
 	}
-	
-	private MesswertFieldMapping(){
+
+	private MesswertFieldMapping() {
 		// is only for use with createFromString method
 	}
-	
-	public boolean isLocalMatching(String befund, String field){
+
+	public boolean isLocalMatching(String befund, String field) {
 		if (localMesswert != null && localMesswertField != null) {
 			return localMesswert.equals(befund) && localMesswertField.equals(field);
 		}
 		return false;
 	}
-	
-	public boolean isFindingsCodeMatching(String findingsCode){
+
+	public boolean isFindingsCodeMatching(String findingsCode) {
 		if (this.findingsCode != null && findingsCode != null) {
 			return this.findingsCode.equals(findingsCode);
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Test if the mapping is valid. Valid means local and remote befund field is set, and the
-	 * befund is in the local setup exists.
-	 * 
+	 * Test if the mapping is valid. Valid means local and remote befund field is
+	 * set, and the befund is in the local setup exists.
+	 *
 	 * @return
 	 */
-	public boolean isValidMapping(){
-		return
-			localMesswert != null && localMesswertField != null && findingsCode != null;
+	public boolean isValidMapping() {
+		return localMesswert != null && localMesswertField != null && findingsCode != null;
 	}
-	
-	public String getLocalBefund(){
+
+	public String getLocalBefund() {
 		return localMesswert;
 	}
-	
-	public String getLocalBefundField(){
+
+	public String getLocalBefundField() {
 		return localMesswertField;
 	}
-	
-	public String getFindingsCode(){
+
+	public String getFindingsCode() {
 		return findingsCode;
 	}
-	
+
 	/**
 	 * Load all mappings from the mandant configuration.
-	 * 
+	 *
 	 * @return
 	 */
-	public static List<MesswertFieldMapping> getMappings(){
+	public static List<MesswertFieldMapping> getMappings() {
 		List<MesswertFieldMapping> ret = new ArrayList<MesswertFieldMapping>();
 		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			String mapping = ConfigServiceHolder.getMandator(MAPPING_CONFIG, "");

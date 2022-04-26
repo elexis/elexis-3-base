@@ -28,9 +28,9 @@ import ch.elexis.data.Query;
  * <p>
  * Dataset creator for the patients dashboard chart.
  * </p>
- * 
+ *
  * $Id: PatientDatasetCreator.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -39,7 +39,7 @@ public class PatientDatasetCreator extends AbstractDatasetCreator {
 
 	/**
 	 * Creates a CostDatasetCreator
-	 * 
+	 *
 	 * @param jobName
 	 */
 	public PatientDatasetCreator(String jobName) {
@@ -48,7 +48,7 @@ public class PatientDatasetCreator extends AbstractDatasetCreator {
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ch.elexis.actions.BackgroundJob#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override

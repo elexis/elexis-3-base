@@ -8,10 +8,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for RTO_MO_PQ complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="RTO_MO_PQ">
  *   &lt;complexContent>
@@ -24,64 +25,60 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "RTO_MO_PQ", propOrder = {
-	"numerator", "denominator"
-})
+@XmlType(name = "RTO_MO_PQ", propOrder = { "numerator", "denominator" })
 public class RTOMOPQ extends QTY {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	@XmlElement(required = true)
 	protected MO numerator;
 	@XmlElement(required = true)
 	protected PQ denominator;
-	
+
 	/**
 	 * Gets the value of the numerator property.
-	 * 
+	 *
 	 * @return possible object is {@link MO }
-	 * 
+	 *
 	 */
-	public MO getNumerator(){
+	public MO getNumerator() {
 		return numerator;
 	}
-	
+
 	/**
 	 * Sets the value of the numerator property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link MO }
-	 * 
+	 *
+	 * @param value allowed object is {@link MO }
+	 *
 	 */
-	public void setNumerator(MO value){
+	public void setNumerator(MO value) {
 		this.numerator = value;
 	}
-	
+
 	/**
 	 * Gets the value of the denominator property.
-	 * 
+	 *
 	 * @return possible object is {@link PQ }
-	 * 
+	 *
 	 */
-	public PQ getDenominator(){
+	public PQ getDenominator() {
 		return denominator;
 	}
-	
+
 	/**
 	 * Sets the value of the denominator property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link PQ }
-	 * 
+	 *
+	 * @param value allowed object is {@link PQ }
+	 *
 	 */
-	public void setDenominator(PQ value){
+	public void setDenominator(PQ value) {
 		this.denominator = value;
 	}
-	
+
 }

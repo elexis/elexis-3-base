@@ -31,42 +31,42 @@ import ch.rgw.tools.Result;
 
 public class LabResultUiProvider implements IInboxElementUiProvider {
 	private static DecorationOverlayIcon pathologicLabImage;
-	
+
 	private LabResultLabelProvider labelProvider;
 	private PathologicInboxFilter filter;
-	
-	public LabResultUiProvider(){
+
+	public LabResultUiProvider() {
 		labelProvider = new LabResultLabelProvider();
 	}
-	
+
 	@Override
-	public ImageDescriptor getFilterImage(){
+	public ImageDescriptor getFilterImage() {
 		if (pathologicLabImage == null) {
 			initializeImages();
 		}
 		return pathologicLabImage;
 	}
-	
+
 	@Override
-	public ViewerFilter getFilter(){
+	public ViewerFilter getFilter() {
 		if (filter == null) {
 			filter = new PathologicInboxFilter();
 		}
 		return filter;
 	}
-	
+
 	@Override
-	public LabelProvider getLabelProvider(){
+	public LabelProvider getLabelProvider() {
 		return labelProvider;
 	}
-	
+
 	@Override
-	public IColorProvider getColorProvider(){
+	public IColorProvider getColorProvider() {
 		return labelProvider;
 	}
-	
+
 	@Override
-	public boolean isProviderFor(IInboxElement element){
+	public boolean isProviderFor(IInboxElement element) {
 		Object obj = element.getObject();
 		if (obj instanceof LabResult) {
 			return true;
@@ -75,24 +75,23 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 		}
 		return false;
 	}
-	
-	private static void initializeImages(){
+
+	private static void initializeImages() {
 		ImageDescriptor[] overlays = new ImageDescriptor[1];
 		overlays[0] = AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.inbox.ui", //$NON-NLS-1$
-			"/rsc/img/achtung_overlay.png"); //$NON-NLS-1$
-		
-		pathologicLabImage =
-			new DecorationOverlayIcon(Images.IMG_VIEW_LABORATORY.getImage(), overlays);
+				"/rsc/img/achtung_overlay.png"); //$NON-NLS-1$
+
+		pathologicLabImage = new DecorationOverlayIcon(Images.IMG_VIEW_LABORATORY.getImage(), overlays);
 	}
-	
+
 	@Override
-	public void doubleClicked(IInboxElement element){
+	public void doubleClicked(IInboxElement element) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public boolean isVisible(IInboxElement element){
+	public boolean isVisible(IInboxElement element) {
 		Object obj = element.getObject();
 		if (obj instanceof LabResult) {
 			return StringUtils.isNotBlank(((LabResult) obj).getResult());

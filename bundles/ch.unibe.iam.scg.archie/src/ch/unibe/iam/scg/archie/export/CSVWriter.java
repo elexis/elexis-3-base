@@ -25,11 +25,13 @@ import ch.unibe.iam.scg.archie.ui.widgets.DateWidget;
 import ch.unibe.iam.scg.archie.utils.ProviderHelper;
 
 /**
- * <p>A simple CSV writer that takes care of exporting data from a given provider
- * into a CSV file.</p>
- * 
+ * <p>
+ * A simple CSV writer that takes care of exporting data from a given provider
+ * into a CSV file.
+ * </p>
+ *
  * $Id: CSVWriter.java 734 2009-03-23 12:11:13Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 734 $
@@ -41,11 +43,9 @@ public class CSVWriter {
 
 	/**
 	 * Writes contents of a data provider into the given file in a CSV-format.
-	 * 
-	 * @param provider
-	 *            A data provider.
-	 * @param fileName
-	 *            A filename to write to.
+	 *
+	 * @param provider A data provider.
+	 * @param fileName A filename to write to.
 	 * @return File File containing a data provider's content.
 	 * @throws IOException
 	 */
@@ -73,11 +73,9 @@ public class CSVWriter {
 
 	/**
 	 * Writes the heading for each column into the given file.
-	 * 
-	 * @param writer
-	 *            A FileWriter object.
-	 * @param headings
-	 *            List of column headings to write.
+	 *
+	 * @param writer   A FileWriter object.
+	 * @param headings List of column headings to write.
 	 * @throws IOException
 	 */
 	private static void writeColumnHeadings(FileWriter writer, List<String> headings) throws IOException {
@@ -87,14 +85,12 @@ public class CSVWriter {
 	}
 
 	/**
-	 * Writes the provider parameter information based on the given provider.
-	 * This also adds the current date to the file being written, so that we
-	 * know when the statistics were exported.
-	 * 
-	 * @param writer
-	 *            A FileWriter object.
-	 * @param provider
-	 *            A data provider.
+	 * Writes the provider parameter information based on the given provider. This
+	 * also adds the current date to the file being written, so that we know when
+	 * the statistics were exported.
+	 *
+	 * @param writer   A FileWriter object.
+	 * @param provider A data provider.
 	 * @throws IOException
 	 */
 	private static void writeProviderInformation(FileWriter writer, final AbstractDataProvider provider)
@@ -120,11 +116,9 @@ public class CSVWriter {
 
 	/**
 	 * Writes a row of given data to the output file.
-	 * 
-	 * @param writer
-	 *            A FileWriter object.
-	 * @param objects
-	 *            An array of objects containing the data to write.
+	 *
+	 * @param writer  A FileWriter object.
+	 * @param objects An array of objects containing the data to write.
 	 * @throws IOException
 	 */
 	private static void writeRow(FileWriter writer, Object[] objects) throws IOException {

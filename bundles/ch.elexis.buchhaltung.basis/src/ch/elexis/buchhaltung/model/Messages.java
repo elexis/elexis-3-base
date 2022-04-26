@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Gerry Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 
@@ -88,6 +88,7 @@ public class Messages extends NLS {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
-	private Messages(){}
+
+	private Messages() {
+	}
 }

@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.Label;
  * offers static access to methods that easily create spacers and labels and
  * more.
  * </p>
- * 
+ *
  * $Id: SWTUtils.java 666 2008-12-13 00:07:54Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 666 $
@@ -44,7 +44,7 @@ public class SWTUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param parent
 	 * @param mode
 	 * @return Label
@@ -67,9 +67,8 @@ public class SWTUtils {
 	/**
 	 * Convenience method for creating label that fills the entire width of the
 	 * given parent and whose content is automatically being wrapped on resize.
-	 * 
-	 * @param parent
-	 *            Parent composite container that the label is added to.
+	 *
+	 * @param parent Parent composite container that the label is added to.
 	 * @return The created label.
 	 */
 	public static final Label createLabel(final Composite parent) {

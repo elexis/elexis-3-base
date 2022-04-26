@@ -6,17 +6,18 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * The BooleanNonNull type is used where a Boolean cannot have a null value. A Boolean value can be
- * either true or false.
- * 
- * 
+ *
+ * The BooleanNonNull type is used where a Boolean cannot have a null value. A
+ * Boolean value can be either true or false.
+ *
+ *
  * <p>
  * Java class for ANYNonNull complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="ANYNonNull">
  *   &lt;complexContent>
@@ -25,19 +26,17 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ANYNonNull")
-@XmlSeeAlso({
-	BN.class
-})
+@XmlSeeAlso({ BN.class })
 public class ANYNonNull extends ANY {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 }

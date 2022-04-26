@@ -22,24 +22,23 @@ import ch.elexis.core.ui.icons.Images;
 
 public class FileLabelProvider extends LabelProvider implements IColorProvider {
 
-	
 	@Override
-	public Image getImage(Object element){
+	public Image getImage(Object element) {
 		return Images.IMG_DOCUMENT_TEXT.getImage();
 	}
-	
+
 	@Override
-	public String getText(Object element){
+	public String getText(Object element) {
 		return ((IInboxElement) element).getLabel();
 	}
-	
+
 	@Override
-	public Color getForeground(Object element){
+	public Color getForeground(Object element) {
 		return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
 	}
-	
+
 	@Override
-	public Color getBackground(Object element){
+	public Color getBackground(Object element) {
 		return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 	}
 }

@@ -10,7 +10,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 
 public class EncounterBean {
-	
+
 	@Field
 	public String id;
 	@Field
@@ -23,10 +23,11 @@ public class EncounterBean {
 	public String content;
 	@Field("cr_date")
 	public Date cr_date;
-	
-	public EncounterBean(){}
-	
-	public static EncounterBean of(IEncounter orig){
+
+	public EncounterBean() {
+	}
+
+	public static EncounterBean of(IEncounter orig) {
 		EncounterBean bean = new EncounterBean();
 		bean.setId(orig.getId());
 		IPatient patient = orig.getPatient();
@@ -42,61 +43,60 @@ public class EncounterBean {
 		} else {
 			bean.setMandator_id("");
 			// TODO on production
-			//			throw new IllegalArgumentException("mandator is null");
+			// throw new IllegalArgumentException("mandator is null");
 		}
 		bean.setContent(orig.getHeadVersionInPlaintext());
-		Date cr_date =
-			Date.from(orig.getDate().atTime(9, 0).atZone(ZoneId.systemDefault()).toInstant());
+		Date cr_date = Date.from(orig.getDate().atTime(9, 0).atZone(ZoneId.systemDefault()).toInstant());
 		bean.setCr_date(cr_date);
 		return bean;
 	}
-	
-	public String getId(){
+
+	public String getId() {
 		return id;
 	}
-	
-	public void setId(String id){
+
+	public void setId(String id) {
 		this.id = id;
 	}
-	
-	public String getPatient_id(){
+
+	public String getPatient_id() {
 		return patient_id;
 	}
-	
-	public void setPatient_id(String patient_id){
+
+	public void setPatient_id(String patient_id) {
 		this.patient_id = patient_id;
 	}
-	
-	public String getMandator_id(){
+
+	public String getMandator_id() {
 		return mandator_id;
 	}
-	
-	public void setMandator_id(String mandator_id){
+
+	public void setMandator_id(String mandator_id) {
 		this.mandator_id = mandator_id;
 	}
-	
-	public String getContent(){
+
+	public String getContent() {
 		return content;
 	}
-	
-	public void setContent(String content){
+
+	public void setContent(String content) {
 		this.content = content;
 	}
-	
-	public Date getCr_date(){
+
+	public Date getCr_date() {
 		return cr_date;
 	}
-	
-	public void setCr_date(Date cr_date){
+
+	public void setCr_date(Date cr_date) {
 		this.cr_date = cr_date;
 	}
-	
-	public String getLabel(){
+
+	public String getLabel() {
 		return label;
 	}
-	
-	public void setLabel(String label){
+
+	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 }

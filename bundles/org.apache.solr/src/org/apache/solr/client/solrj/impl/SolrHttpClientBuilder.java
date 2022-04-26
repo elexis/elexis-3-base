@@ -23,69 +23,68 @@ import org.apache.http.config.Lookup;
 import org.apache.http.cookie.CookieSpecProvider;
 
 /**
- * Builder class for configuring internal HttpClients. This
- * relies on the internal HttpClient implementation and is subject to
- * change.
- * 
+ * Builder class for configuring internal HttpClients. This relies on the
+ * internal HttpClient implementation and is subject to change.
+ *
  * @lucene.experimental
  */
 public class SolrHttpClientBuilder {
-  public static SolrHttpClientBuilder create() {
-    return new SolrHttpClientBuilder();
-  }
-  
-  public interface HttpRequestInterceptorProvider {
-    HttpRequestInterceptor getHttpRequestInterceptor();
-  }
-  
-  public interface CredentialsProviderProvider {
-    CredentialsProvider getCredentialsProvider();
-  }
-  
-  public interface AuthSchemeRegistryProvider {
-    Lookup<AuthSchemeProvider> getAuthSchemeRegistry();
-  }
-  
-  public interface CookieSpecRegistryProvider {
-    Lookup<CookieSpecProvider> getCookieSpecRegistry();
-  }
-  
-  private CookieSpecRegistryProvider cookieSpecRegistryProvider;
-  private AuthSchemeRegistryProvider authSchemeRegistryProvider;
-  private CredentialsProviderProvider credentialsProviderProvider;
+	public static SolrHttpClientBuilder create() {
+		return new SolrHttpClientBuilder();
+	}
 
-  protected SolrHttpClientBuilder() {
-    super();
-  }
+	public interface HttpRequestInterceptorProvider {
+		HttpRequestInterceptor getHttpRequestInterceptor();
+	}
 
-  public final SolrHttpClientBuilder setCookieSpecRegistryProvider(
-      final CookieSpecRegistryProvider cookieSpecRegistryProvider) {
-    this.cookieSpecRegistryProvider = cookieSpecRegistryProvider;
-    return this;
-  }
-  
-  public final SolrHttpClientBuilder setDefaultCredentialsProvider(
-      final CredentialsProviderProvider credentialsProviderProvider) {
-    this.credentialsProviderProvider = credentialsProviderProvider;
-    return this;
-  }
-  
-  public final SolrHttpClientBuilder setAuthSchemeRegistryProvider(
-      final AuthSchemeRegistryProvider authSchemeRegistryProvider) {
-    this.authSchemeRegistryProvider = authSchemeRegistryProvider;
-    return this;
-  }
+	public interface CredentialsProviderProvider {
+		CredentialsProvider getCredentialsProvider();
+	}
 
-  public AuthSchemeRegistryProvider getAuthSchemeRegistryProvider() {
-    return authSchemeRegistryProvider;
-  }
+	public interface AuthSchemeRegistryProvider {
+		Lookup<AuthSchemeProvider> getAuthSchemeRegistry();
+	}
 
-  public CookieSpecRegistryProvider getCookieSpecRegistryProvider() {
-    return cookieSpecRegistryProvider;
-  }
+	public interface CookieSpecRegistryProvider {
+		Lookup<CookieSpecProvider> getCookieSpecRegistry();
+	}
 
-  public CredentialsProviderProvider getCredentialsProviderProvider() {
-    return credentialsProviderProvider;
-  }
+	private CookieSpecRegistryProvider cookieSpecRegistryProvider;
+	private AuthSchemeRegistryProvider authSchemeRegistryProvider;
+	private CredentialsProviderProvider credentialsProviderProvider;
+
+	protected SolrHttpClientBuilder() {
+		super();
+	}
+
+	public final SolrHttpClientBuilder setCookieSpecRegistryProvider(
+			final CookieSpecRegistryProvider cookieSpecRegistryProvider) {
+		this.cookieSpecRegistryProvider = cookieSpecRegistryProvider;
+		return this;
+	}
+
+	public final SolrHttpClientBuilder setDefaultCredentialsProvider(
+			final CredentialsProviderProvider credentialsProviderProvider) {
+		this.credentialsProviderProvider = credentialsProviderProvider;
+		return this;
+	}
+
+	public final SolrHttpClientBuilder setAuthSchemeRegistryProvider(
+			final AuthSchemeRegistryProvider authSchemeRegistryProvider) {
+		this.authSchemeRegistryProvider = authSchemeRegistryProvider;
+		return this;
+	}
+
+	public AuthSchemeRegistryProvider getAuthSchemeRegistryProvider() {
+		return authSchemeRegistryProvider;
+	}
+
+	public CookieSpecRegistryProvider getCookieSpecRegistryProvider() {
+		return cookieSpecRegistryProvider;
+	}
+
+	public CredentialsProviderProvider getCredentialsProviderProvider() {
+		return credentialsProviderProvider;
+	}
 
 }

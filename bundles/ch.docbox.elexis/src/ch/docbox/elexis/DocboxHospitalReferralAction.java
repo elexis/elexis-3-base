@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2010, Oliver Egger, visionary ag
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *    
+ *
  *******************************************************************************/
 package ch.docbox.elexis;
 
@@ -49,7 +49,7 @@ import ch.swissmedicalsuite.HCardBrowser;
 
 /**
  * Implements the action to refer a patient to the hospital in docbox
- * 
+ *
  * @see IWorkbenchWindowActionDelegate
  */
 public class DocboxHospitalReferralAction extends DocboxAction {
@@ -57,15 +57,16 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 	private Patient patient;
 	private Fall fall;
 	public boolean meinPatient = false;
-	
+
 	protected static Log log = Log.get("DocboxHospitalReferralAction"); //$NON-NLS-1$
-	
+
 	/**
 	 * The constructor.
 	 */
-	public DocboxHospitalReferralAction(){}
-	
-	private LabResult getLatestLabResult(String name, List<LabResult> list){
+	public DocboxHospitalReferralAction() {
+	}
+
+	private LabResult getLatestLabResult(String name, List<LabResult> list) {
 		TimeTool ttLabResult = new TimeTool();
 		LabResult labResult = null;
 		if (list != null && name != null) {
@@ -90,28 +91,26 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 		}
 		return labResult;
 	}
-	
+
 	/**
-	 * The action has been activated. The argument of the method represents the 'real' action
-	 * sitting in the workbench UI.
-	 * 
+	 * The action has been activated. The argument of the method represents the
+	 * 'real' action sitting in the workbench UI.
+	 *
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
-	public void run(IAction action){
+	public void run(IAction action) {
 		try {
 			if (CoreHub.getLoggedInContact() != null) {
 				patient = ElexisEventDispatcher.getSelectedPatient();
 				if (patient == null) {
-					MessageBox box =
-						new MessageBox(UiDesk.getDisplay().getActiveShell(), SWT.ICON_ERROR);
+					MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(), SWT.ICON_ERROR);
 					box.setText(Messages.DocboxHospitalReferralAction_NoPatientSelectedText);
 					box.setMessage(Messages.DocboxHospitalReferralAction_NoPatientSelectedMessage);
 					box.open();
 					return;
 				}
 				fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
-				Konsultation konsultation =
-					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+				Konsultation konsultation = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 				if (fall == null) {
 					if (konsultation == null || konsultation.getFall() != fall) {
 						konsultation = patient.getLetzteKons(false);
@@ -124,17 +123,17 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 					konsultation = fall.getLetzteBehandlung();
 				}
 				final Konsultation kons = konsultation;
-				
+
 				if (!hasValidDocboxCredentials()) {
 					return;
 				}
-				
+
 				Runnable longJob = new Runnable() {
 					boolean done = false;
-					
-					public void run(){
+
+					public void run() {
 						Thread thread = new Thread(new Runnable() {
-							public void run(){
+							public void run() {
 								log.log("job started", Log.DEBUGMSG);
 								try {
 									makeReferral(kons);
@@ -162,14 +161,13 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 								UiDesk.getDisplay().sleep();
 						}
 						log.log("thread ended", Log.DEBUGMSG);
-						
+
 					}
 				};
 				BusyIndicator.showWhile(UiDesk.getDisplay(), longJob);
-				
+
 				if (UserDocboxPreferences.useHCard()) {
-					HCardBrowser hCardBrowser =
-						new HCardBrowser(UserDocboxPreferences.getDocboxLoginID(false),
+					HCardBrowser hCardBrowser = new HCardBrowser(UserDocboxPreferences.getDocboxLoginID(false),
 							UserDocboxPreferences.getDocboxBrowserUrl());
 					if (meinPatient) {
 						hCardBrowser.setMyPatient();
@@ -177,8 +175,7 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 						hCardBrowser.setHospitalReferral();
 					}
 				} else {
-					DocboxView docboxView =
-						(DocboxView) window.getWorkbench().getActiveWorkbenchWindow()
+					DocboxView docboxView = (DocboxView) window.getWorkbench().getActiveWorkbenchWindow()
 							.getActivePage().showView("ch.docbox.elexis.DocboxView");
 					if (docboxView != null) {
 						if (meinPatient) {
@@ -193,11 +190,11 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 			log.log(e, "runaction", Log.DEBUGMSG);
 		}
 	}
-	
-	private void makeReferral(Konsultation konsultation){
+
+	private void makeReferral(Konsultation konsultation) {
 		DocboxCDA docboxCDA = new DocboxCDA();
 		log.log("invoking makeReferral", Log.DEBUGMSG);
-		
+
 		try {
 			log.log("addMedikamente", Log.DEBUGMSG);
 			addMedikamente(patient, docboxCDA);
@@ -220,68 +217,56 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 		} catch (Exception e) {
 			log.log(e, "makereferral", Log.DEBUGMSG);
 		}
-		
+
 		Date birthday = null;
 		if (!"".equals(patient.getGeburtsdatum())) {
 			TimeTool ttBirthday = new TimeTool(patient.getGeburtsdatum());
 			birthday = ttBirthday.getTime();
 		}
-		
+
 		String phone = patient.get(Patient.FLD_PHONE1);
 		String phone2 = patient.get(Patient.FLD_PHONE2);
-		
-		POCDMT000040RecordTarget recordTarget =
-			docboxCDA.getRecordTarget(patient.getPatCode(), null, patient.getAnschrift()
-				.getStrasse(), patient.getAnschrift().getPlz(), patient.getAnschrift().getOrt(),
-				phone, phone2, patient.getNatel(), patient.getMailAddress(), patient.getVorname(),
-				patient.getName(), "w".equals(patient.getGeschlecht()), "m".equals(patient
-					.getGeschlecht()), false, birthday);
-		
-		POCDMT000040Author author =
-			docboxCDA.getAuthor(CoreHub.actMandant.get(Person.TITLE),
-				CoreHub.actMandant.getVorname(), CoreHub.actMandant.getName(),
-				CoreHub.actMandant.getNatel(), null, null, CoreHub.actMandant.getMailAddress(),
-				null, null, null);
-		POCDMT000040Custodian custodian =
-			docboxCDA.getCustodian(null, null, null, null, null, null);
-		
-		log.log(
-			"Invoking addReferral for patient " + patient.getVorname() + " " + patient.getName(),
-			Log.DEBUGMSG);
-		
+
+		POCDMT000040RecordTarget recordTarget = docboxCDA.getRecordTarget(patient.getPatCode(), null,
+				patient.getAnschrift().getStrasse(), patient.getAnschrift().getPlz(), patient.getAnschrift().getOrt(),
+				phone, phone2, patient.getNatel(), patient.getMailAddress(), patient.getVorname(), patient.getName(),
+				"w".equals(patient.getGeschlecht()), "m".equals(patient.getGeschlecht()), false, birthday);
+
+		POCDMT000040Author author = docboxCDA.getAuthor(CoreHub.actMandant.get(Person.TITLE),
+				CoreHub.actMandant.getVorname(), CoreHub.actMandant.getName(), CoreHub.actMandant.getNatel(), null,
+				null, CoreHub.actMandant.getMailAddress(), null, null, null);
+		POCDMT000040Custodian custodian = docboxCDA.getCustodian(null, null, null, null, null, null);
+
+		log.log("Invoking addReferral for patient " + patient.getVorname() + " " + patient.getName(), Log.DEBUGMSG);
+
 		ClinicalDocumentType _addReferral_document = new ClinicalDocumentType();
-		_addReferral_document.setClinicalDocument(docboxCDA.getClinicalDocument("", recordTarget,
-			author, custodian, null, docboxCDA.getCodeReferral(), null, null));
-		
-		log.log(docboxCDA.marshallIntoString(_addReferral_document.getClinicalDocument()),
-			Log.DEBUGMSG);
-		
+		_addReferral_document.setClinicalDocument(docboxCDA.getClinicalDocument("", recordTarget, author, custodian,
+				null, docboxCDA.getCodeReferral(), null, null));
+
+		log.log(docboxCDA.marshallIntoString(_addReferral_document.getClinicalDocument()), Log.DEBUGMSG);
+
 		byte[] _addReferral_attachment = new byte[0];
-		javax.xml.ws.Holder<java.lang.Boolean> _addReferral_success =
-			new javax.xml.ws.Holder<java.lang.Boolean>();
-		javax.xml.ws.Holder<java.lang.String> _addReferral_message =
-			new javax.xml.ws.Holder<java.lang.String>();
-		javax.xml.ws.Holder<java.lang.String> _addReferral_documentID =
-			new javax.xml.ws.Holder<java.lang.String>();
-		
+		javax.xml.ws.Holder<java.lang.Boolean> _addReferral_success = new javax.xml.ws.Holder<java.lang.Boolean>();
+		javax.xml.ws.Holder<java.lang.String> _addReferral_message = new javax.xml.ws.Holder<java.lang.String>();
+		javax.xml.ws.Holder<java.lang.String> _addReferral_documentID = new javax.xml.ws.Holder<java.lang.String>();
+
 		CDACHServices port = UserDocboxPreferences.getPort();
-		
-		port.addReferral(_addReferral_document, _addReferral_attachment, _addReferral_success,
-			_addReferral_message, _addReferral_documentID);
-		
+
+		port.addReferral(_addReferral_document, _addReferral_attachment, _addReferral_success, _addReferral_message,
+				_addReferral_documentID);
+
 		log.log("makeReferral ended...", Log.DEBUGMSG);
-		
+
 		log.log("addReferral._addReferral_success=" + _addReferral_success.value, Log.DEBUGMSG);
 		log.log("addReferral._addReferral_message=" + _addReferral_message.value, Log.DEBUGMSG);
-		log.log("addReferral._addReferral_documentID=" + _addReferral_documentID.value,
-			Log.DEBUGMSG);
+		log.log("addReferral._addReferral_documentID=" + _addReferral_documentID.value, Log.DEBUGMSG);
 	}
-	
+
 	/**
 	 * @param patient
 	 * @param docboxCDA
 	 */
-	private void addLaborDaten(Patient patient, DocboxCDA docboxCDA){
+	private void addLaborDaten(Patient patient, DocboxCDA docboxCDA) {
 		try {
 			Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
 			qbe.add("PatientID", "=", patient.getId());
@@ -299,8 +284,8 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 			ExHandler.handle(e);
 		}
 	}
-	
-	private void addVersicherung(Fall fall, DocboxCDA docboxCDA){
+
+	private void addVersicherung(Fall fall, DocboxCDA docboxCDA) {
 		if (fall != null) {
 			Kontakt costBearer = fall.getCostBearer();
 			if ("UVG".equals(fall.getAbrechnungsSystem())) {
@@ -313,8 +298,7 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 					ExHandler.handle(e);
 				}
 				try {
-					docboxCDA
-						.addUnfallversicherungPolicenummer(fall.getRequiredString("Unfallnummer"));
+					docboxCDA.addUnfallversicherungPolicenummer(fall.getRequiredString("Unfallnummer"));
 				} catch (Exception e) {
 					log.log(e, "Unfallnummer", Log.DEBUGMSG);
 					ExHandler.handle(e);
@@ -330,24 +314,23 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 					ExHandler.handle(e);
 				}
 				try {
-					docboxCDA
-						.addKrankenkassePolicenummer(fall.getRequiredString("Versicherungsnummer"));
+					docboxCDA.addKrankenkassePolicenummer(fall.getRequiredString("Versicherungsnummer"));
 				} catch (Exception e) {
 					log.log(e, "addKrankenkassePolicenummer", Log.DEBUGMSG);
 					ExHandler.handle(e);
 				}
 			}
-			
+
 		}
 	}
-	
+
 	/**
 	 * Einweisungsgrund: Kein Mapping für Prävention/Geburtsgebrechen
-	 * 
+	 *
 	 * @param fall
 	 * @param docboxCDA
 	 */
-	private void addEinweisungsgrund(Fall fall, DocboxCDA docboxCDA){
+	private void addEinweisungsgrund(Fall fall, DocboxCDA docboxCDA) {
 		if (fall != null) {
 			if (FallConstants.TYPE_DISEASE.equals(fall.getGrund())) {
 				docboxCDA.addEinweisungsgrund("Krankheit");
@@ -360,54 +343,54 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 			}
 		}
 	}
-	
-	private void addAnamnese(Konsultation konsultation, DocboxCDA docboxCDA){
+
+	private void addAnamnese(Konsultation konsultation, DocboxCDA docboxCDA) {
 		if (konsultation != null && konsultation.getEintrag() != null) {
 			String anamnese = konsultation.getEintrag().getHead();
 			Samdas samdas = new Samdas(anamnese);
 			anamnese = samdas.getRecordText();
-			
+
 			if (!StringTool.isNothing(anamnese)) {
 				docboxCDA.addAnamnese(anamnese);
 			}
 		}
 	}
-	
-	private void addPersoenlicheAnamnese(Patient patient, DocboxCDA docboxCDA){
+
+	private void addPersoenlicheAnamnese(Patient patient, DocboxCDA docboxCDA) {
 		String anamnese = patient.getPersAnamnese();
 		if (!StringTool.isNothing(anamnese)) {
 			docboxCDA.addPerseoenlicheAnamnese(anamnese);
 		}
 	}
-	
-	private void addDiagnose(Patient patient, DocboxCDA docboxCDA){
+
+	private void addDiagnose(Patient patient, DocboxCDA docboxCDA) {
 		String diagnose = patient.getDiagnosen();
 		if (!StringTool.isNothing(diagnose)) {
 			docboxCDA.addDiagnose(diagnose);
 		}
 	}
-	
-	private void addBemerkungen(Patient patient, DocboxCDA docboxCDA){
+
+	private void addBemerkungen(Patient patient, DocboxCDA docboxCDA) {
 		String bemerkung = patient.getBemerkung();
 		if (!StringTool.isNothing(bemerkung)) {
 			docboxCDA.addErgaenzungenLeistung(bemerkung);
 		}
 	}
-	
-	private void addAllergien(Patient patient, DocboxCDA docboxCDA){
+
+	private void addAllergien(Patient patient, DocboxCDA docboxCDA) {
 		String risks = patient.get("Allergien");
 		if (!StringTool.isNothing(risks)) {
 			docboxCDA.addAllergien(true, risks);
 		}
 	}
-	
+
 	/**
 	 * docbox Klinischen Angaben - Medikamente
-	 * 
+	 *
 	 * @param patient
 	 * @param docboxCDA
 	 */
-	private void addMedikamente(Patient patient, DocboxCDA docboxCDA){
+	private void addMedikamente(Patient patient, DocboxCDA docboxCDA) {
 		List<Prescription> prescriptions = patient.getMedication(EntryType.FIXED_MEDICATION);
 		if (prescriptions != null && !prescriptions.isEmpty()) {
 			String[] medikamente = new String[prescriptions.size()];
@@ -417,29 +400,33 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 			docboxCDA.addMedikamente(medikamente);
 		}
 	}
-	
+
 	/**
-	 * Selection in the workbench has been changed. We can change the state of the 'real' action
-	 * here if we want, but this can only happen after the delegate has been created.
-	 * 
+	 * Selection in the workbench has been changed. We can change the state of the
+	 * 'real' action here if we want, but this can only happen after the delegate
+	 * has been created.
+	 *
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
-	public void selectionChanged(IAction action, ISelection selection){}
-	
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
+
 	/**
-	 * We can use this method to dispose of any system resources we previously allocated.
-	 * 
+	 * We can use this method to dispose of any system resources we previously
+	 * allocated.
+	 *
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
-	public void dispose(){}
-	
+	public void dispose() {
+	}
+
 	/**
-	 * We will cache window object in order to be able to provide parent shell for the message
-	 * dialog.
-	 * 
+	 * We will cache window object in order to be able to provide parent shell for
+	 * the message dialog.
+	 *
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
-	public void init(IWorkbenchWindow window){
+	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}
 }

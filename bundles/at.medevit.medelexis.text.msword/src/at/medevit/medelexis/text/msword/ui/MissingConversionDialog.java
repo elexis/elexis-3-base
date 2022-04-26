@@ -20,51 +20,50 @@ import at.medevit.medelexis.text.msword.plugin.util.DocumentConversion;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class MissingConversionDialog extends TitleAreaDialog {
-	
+
 	private String officeHomePath;
 	private Text tOfficeHome;
-	
-	public MissingConversionDialog(Shell parentShell){
+
+	public MissingConversionDialog(Shell parentShell) {
 		super(parentShell);
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		new Label(ret, SWT.NONE).setText(Messages.MissingConversionDialog_OfficeHome);
 		tOfficeHome = new Text(ret, SWT.BORDER | SWT.SINGLE);
 		tOfficeHome.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tOfficeHome.setText(Activator.getDefault().getPreferenceStore()
-			.getString(DocumentConversion.PREFERENCE_OFFICE_HOME));
+		tOfficeHome.setText(
+				Activator.getDefault().getPreferenceStore().getString(DocumentConversion.PREFERENCE_OFFICE_HOME));
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		getShell().setText("Office Home Verzeichnis"); //$NON-NLS-1$
 		setTitle(Messages.MissingConversionDialog_OfficeHomeConfig);
 		setMessage(Messages.MissingConversionDialog_OfficeHomeMessage);
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		DefaultOfficeManagerConfiguration config = new DefaultOfficeManagerConfiguration();
 		try {
 			config.setOfficeHome(tOfficeHome.getText());
 		} catch (IllegalArgumentException iae) {
 			// office home not valid
-			setErrorMessage(tOfficeHome.getText()
-				+ Messages.MissingConversionDialog_OfficeHomeNoValidPath);
+			setErrorMessage(tOfficeHome.getText() + Messages.MissingConversionDialog_OfficeHomeNoValidPath);
 			return;
 		}
 		officeHomePath = tOfficeHome.getText();
 		super.okPressed();
 	}
 
-	public String getOfficeHomePath(){
+	public String getOfficeHomePath() {
 		return officeHomePath;
 	}
 }

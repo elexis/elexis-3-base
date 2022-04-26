@@ -17,110 +17,108 @@ import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.core.ui.util.SWTHelper;
 
 /**
- * This action is responsible for the whole procedure of creating a new query: getting all
- * information needed of the user, starting the query in the background and updating the view in the
- * end.
- * 
+ * This action is responsible for the whole procedure of creating a new query:
+ * getting all information needed of the user, starting the query in the
+ * background and updating the view in the end.
+ *
  * @author michael waelti
  */
 public class NewQueryAction extends Action implements BackgroundJobListener {
-	
+
 	private OutputView view;
-	
+
 	private AbstractQuery configuredQuery;
-	
+
 	/** constructor */
-	public NewQueryAction(){
+	public NewQueryAction() {
 		super();
 		this.setText("neue Auswertung");
 		this.setToolTipText("Startet eine neue Auswertung.");
-		this.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("Waelti.Statistics",
-			"icons/database_go.png"));
+		this.setImageDescriptor(
+				AbstractUIPlugin.imageDescriptorFromPlugin("Waelti.Statistics", "icons/database_go.png"));
 	}
-	
+
 	/** Standard constructor which should be used normally. */
-	public NewQueryAction(OutputView view){
+	public NewQueryAction(OutputView view) {
 		this();
 		this.view = view;
 	}
-	
+
 	@Override
-	public void run(){
+	public void run() {
 		// cannot start new query while another is still running.
 		this.getView().setButtonsEnabled(false);
-		
+
 		this.getInput();
-		
+
 		if (this.configuredQuery == null) { // user aborted
 			this.getView().setButtonsEnabled(true);
 		} else { // user did not cancel
 			this.configuredQuery.addListener(this);
 			this.view.setQuery(this.configuredQuery);
-			
+
 			this.createQueryOption();
 			this.createContentAndTable();
 			this.view.setHeader(this.configuredQuery.getTitle());
 		}
 	}
-	
-	private void createQueryOption(){
-		OptionPanel panel =
-			new OptionPanel(this.view.getParent(), UiDesk.getColor(UiDesk.COL_WHITE));
+
+	private void createQueryOption() {
+		OptionPanel panel = new OptionPanel(this.view.getParent(), UiDesk.getColor(UiDesk.COL_WHITE));
 		panel.updateContent(this.configuredQuery);
 		panel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		this.view.setQueryOptions(panel);
 	}
-	
-	private void createContentAndTable(){
-		
+
+	private void createContentAndTable() {
+
 		if (this.getView().getResultView() != null) {
 			this.getView().getResultView().dispose();
 		}
-		
-		ResultTable table =
-			new ResultTable(this.getView().getParent(), SWT.BORDER, this.configuredQuery);
-		
+
+		ResultTable table = new ResultTable(this.getView().getParent(), SWT.BORDER, this.configuredQuery);
+
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessVerticalSpace = true;
 		data.grabExcessHorizontalSpace = true;
 		table.setLayoutData(data);
-		
+
 		this.getView().setResultView(table);
-		
+
 		this.configuredQuery.schedule();
-		
+
 		this.getView().getParent().layout();
 	}
-	
+
 	/**
-	 * Opens a dialog which asks the user to define a new query which then is set by the opened
-	 * dialog to this.configuredQuery. If null, the user aborted.
+	 * Opens a dialog which asks the user to define a new query which then is set by
+	 * the opened dialog to this.configuredQuery. If null, the user aborted.
 	 */
-	protected void getInput(){
+	protected void getInput() {
 		QueryInputDialog dialog = new QueryInputDialog(this.view.getSite().getShell(), this);
 		if (dialog.open() != Window.OK) {
 			this.configuredQuery = null; // user aborted
 		}
 	}
-	
+
 	/** This action is enabled as soon as the last job finished. */
-	public void jobFinished(BackgroundJob j){
+	public void jobFinished(BackgroundJob j) {
 		this.getView().setButtonsEnabled(true);
 		this.getView().getResultView().createTable(this.configuredQuery);
 		// j.removeListener(this); //Exception in BackgroundJob
 	}
-	
-	public void setConfiguredQuery(AbstractQuery configuredQuery){
+
+	public void setConfiguredQuery(AbstractQuery configuredQuery) {
 		this.configuredQuery = configuredQuery;
 	}
-	
-	protected OutputView getView(){
+
+	protected OutputView getView() {
 		return view;
 	}
-	
-	protected AbstractQuery getConfiguredQuery(){
+
+	protected AbstractQuery getConfiguredQuery() {
 		return configuredQuery;
 	}
 }

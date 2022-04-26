@@ -24,27 +24,32 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 
 /**
- * Represents a query using the <a href="https://lucene.apache.org/solr/guide/json-request-api.html">JSON Query DSL</a>
+ * Represents a query using the
+ * <a href="https://lucene.apache.org/solr/guide/json-request-api.html">JSON
+ * Query DSL</a>
  *
- * This class doesn't construct the request body itself.  It uses a provided String without any modification.  Often
- * used in combination with the JSON DSL's <a href="https://lucene.apache.org/solr/guide/json-request-api.html#parameter-substitution-macro-expansion">macro expansion capabilities</a>.
- * The JSON body can contain template parameters which are replaced with values fetched from the {@link SolrParams}
- * used by this request.  For a more flexible, guided approach to constructing JSON DSL requests, see
- * {@link JsonQueryRequest}.
+ * This class doesn't construct the request body itself. It uses a provided
+ * String without any modification. Often used in combination with the JSON
+ * DSL's <a href=
+ * "https://lucene.apache.org/solr/guide/json-request-api.html#parameter-substitution-macro-expansion">macro
+ * expansion capabilities</a>. The JSON body can contain template parameters
+ * which are replaced with values fetched from the {@link SolrParams} used by
+ * this request. For a more flexible, guided approach to constructing JSON DSL
+ * requests, see {@link JsonQueryRequest}.
  */
 public class DirectJsonQueryRequest extends QueryRequest {
-  private final String jsonString;
+	private final String jsonString;
 
-  public DirectJsonQueryRequest(String jsonString) {
-    this(jsonString, new ModifiableSolrParams());
-  }
+	public DirectJsonQueryRequest(String jsonString) {
+		this(jsonString, new ModifiableSolrParams());
+	}
 
-  public DirectJsonQueryRequest(String jsonString, SolrParams params) {
-    super(params, METHOD.POST);
-    this.jsonString = jsonString;
-  }
+	public DirectJsonQueryRequest(String jsonString, SolrParams params) {
+		super(params, METHOD.POST);
+		this.jsonString = jsonString;
+	}
 
-  public RequestWriter.ContentWriter getContentWriter(String expectedType) {
-    return new RequestWriter.StringPayloadContentWriter(jsonString, ClientUtils.TEXT_JSON);
-  }
+	public RequestWriter.ContentWriter getContentWriter(String expectedType) {
+		return new RequestWriter.StringPayloadContentWriter(jsonString, ClientUtils.TEXT_JSON);
+	}
 }

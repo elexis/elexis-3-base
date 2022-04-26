@@ -18,39 +18,37 @@ import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
 
 public class DefinitionImport {
-	
+
 	private JdbcLink cacheDb;
 	private String lang;
 	private String law;
-	
-	public DefinitionImport(JdbcLink cacheDb, String lang, String law){
+
+	public DefinitionImport(JdbcLink cacheDb, String lang, String law) {
 		this.cacheDb = cacheDb;
 		this.lang = lang;
 		this.law = law;
 	}
-	
+
 	/**
 	 * Import code and text of the various CT_ tables from the cacheDb, into
 	 * {@link TarmedDefinitionen}. Only the newest (GUELTIG_VON) entry is imported.
-	 * 
+	 *
 	 * @param ipm
 	 * @return
 	 */
-	public IStatus doImport(IProgressMonitor ipm){
-		String[] fields = new String[] {
-			"ANAESTHESIE", "DIGNI_QUALI", "DIGNI_QUANTI", "LEISTUNG_BLOECKE", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"LEISTUNG_GRUPPEN", "LEISTUNG_TYP", "PFLICHT", "REGEL_EL_ABR", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"SEITE", "SEX", "SPARTE", "ZR_EINHEIT" //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+	public IStatus doImport(IProgressMonitor ipm) {
+		String[] fields = new String[] { "ANAESTHESIE", "DIGNI_QUALI", "DIGNI_QUANTI", "LEISTUNG_BLOECKE", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				"LEISTUNG_GRUPPEN", "LEISTUNG_TYP", "PFLICHT", "REGEL_EL_ABR", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				"SEITE", "SEX", "SPARTE", "ZR_EINHEIT" //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 		};
-		
+
 		Stm stmCached = null;
 		try {
 			ipm.subTask(Messages.TarmedImporter_definitions);
-			
+
 			stmCached = cacheDb.getStatement();
 			for (String s : fields) {
-				ResultSet res =
-					stmCached.query(String.format("SELECT * FROM %sCT_" + s + " WHERE SPRACHE='%s'", //$NON-NLS-1$
+				ResultSet res = stmCached.query(String.format("SELECT * FROM %sCT_" + s + " WHERE SPRACHE='%s'", //$NON-NLS-1$
 						TarmedReferenceDataImporter.ImportPrefix, lang));
 				importNewest(s, res);
 				res.close();
@@ -64,8 +62,8 @@ public class DefinitionImport {
 		}
 		return Status.OK_STATUS;
 	}
-	
-	protected void importNewest(String spalte, ResultSet res) throws SQLException{
+
+	protected void importNewest(String spalte, ResultSet res) throws SQLException {
 		List<String[]> sorted = new ArrayList<String[]>();
 		while (res.next()) {
 			String[] values = new String[3];
@@ -81,9 +79,9 @@ public class DefinitionImport {
 		sorted.sort(new Comparator<String[]>() {
 			private TimeTool leftTime = new TimeTool();
 			private TimeTool rightTime = new TimeTool();
-			
+
 			@Override
-			public int compare(String[] left, String[] right){
+			public int compare(String[] left, String[] right) {
 				int ret = left[0].compareTo(right[0]);
 				if (ret == 0) {
 					leftTime.set(left[2]);
@@ -95,8 +93,8 @@ public class DefinitionImport {
 		});
 		importNewest(spalte, sorted);
 	}
-	
-	protected void importNewest(String spalte, List<String[]> sorted){
+
+	protected void importNewest(String spalte, List<String[]> sorted) {
 		String lastCode = null;
 		List<Object> newDefinitionen = new ArrayList<>();
 		for (String[] strings : sorted) {

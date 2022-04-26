@@ -32,58 +32,56 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 public class TarmedAllowanceCodeSelectorFactory extends CodeSelectorFactory {
-	
+
 	private ViewerConfigurer vc;
-	
+
 	@Inject
-	public void selectedEncounter(@Optional IEncounter encounter){
+	public void selectedEncounter(@Optional IEncounter encounter) {
 		if (vc != null && vc.getControlFieldProvider() != null) {
 			vc.getControlFieldProvider().fireChangedEvent();
 		}
 	}
-	
+
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		cv.setSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				TableViewer tv = (TableViewer) event.getSource();
 				StructuredSelection ss = (StructuredSelection) tv.getSelection();
 				if (!ss.isEmpty()) {
 					ITarmedAllowance selected = (ITarmedAllowance) ss.getFirstElement();
 					ContextServiceHolder.get().getRootContext()
-						.setNamed("ch.elexis.views.codeselector.tarmedallowance.selection",
-							selected);
+							.setNamed("ch.elexis.views.codeselector.tarmedallowance.selection", selected);
 				} else {
 					ContextServiceHolder.get().getRootContext()
-						.setNamed("ch.elexis.views.codeselector.tarmedallowance.selection", null);
+							.setNamed("ch.elexis.views.codeselector.tarmedallowance.selection", null);
 				}
 			}
 		});
 		FieldDescriptor<?>[] fd = new FieldDescriptor<?>[] {
-			new FieldDescriptor<ITarmedAllowance>("Ziffer", "code", null),
-			new FieldDescriptor<ITarmedAllowance>("Titel", "text", null),
-		};
+				new FieldDescriptor<ITarmedAllowance>("Ziffer", "code", null),
+				new FieldDescriptor<ITarmedAllowance>("Titel", "text", null), };
 		SelectorPanelProvider slp = new SelectorPanelProvider(fd, true);
-		vc = new ViewerConfigurer(new TarmedAllowanceContentProvider(cv, slp),
-			new DefaultLabelProvider(), slp, new ViewerConfigurer.DefaultButtonProvider(),
-			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
+		vc = new ViewerConfigurer(new TarmedAllowanceContentProvider(cv, slp), new DefaultLabelProvider(), slp,
+				new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		return vc.setContentType(ContentType.GENERICOBJECT);
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return "Tarmedpauschalen";
 	}
-	
+
 	@Override
-	public Class<?> getElementClass(){
+	public Class<?> getElementClass() {
 		return ITarmedAllowance.class;
 	}
 }

@@ -25,7 +25,9 @@ import org.apache.solr.client.solrj.io.stream.expr.Expressible;
 
 /** Defines a comparator we can use with TupleStreams */
 public interface StreamComparator extends Comparator<Tuple>, Expressible, Serializable {
-  public boolean isDerivedFrom(StreamComparator base);
-  public StreamComparator copyAliased(Map<String,String> aliases);
-  public StreamComparator append(StreamComparator other);
+	public boolean isDerivedFrom(StreamComparator base);
+
+	public StreamComparator copyAliased(Map<String, String> aliases);
+
+	public StreamComparator append(StreamComparator other);
 }

@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for ActClassControlAct.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="ActClassControlAct">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -21,20 +22,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "ActClassControlAct")
 @XmlEnum
 public enum ActClassControlAct {
-	
+
 	CACT, ACTN, INFO, STC;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static ActClassControlAct fromValue(String v){
+
+	public static ActClassControlAct fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

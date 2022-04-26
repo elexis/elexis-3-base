@@ -27,18 +27,18 @@ import ch.medshare.util.UtilFile;
 import ch.rgw.tools.ExHandler;
 
 public class MediPortHelper {
-	
+
 	private static final String module = MediPortHelper.class.getName();
-	
+
 	private static final String MPC_NUMBER_POSTFIX = "/mpc_number";//$NON-NLS-1$
-	
+
 	public final static FilenameFilter XML_FILTER = new FilenameFilter() {
-		public boolean accept(File dir, String name){
+		public boolean accept(File dir, String name) {
 			return name.toUpperCase().endsWith(".XML"); //$NON-NLS-1$
 		}
 	};
-	
-	private static MPCProperties getProperties(){
+
+	private static MPCProperties getProperties() {
 		MPCProperties props = null;
 		try {
 			props = MPCProperties.getCurrent();
@@ -47,12 +47,12 @@ public class MediPortHelper {
 		}
 		return props;
 	}
-	
-	public static String getMandantPrefix(String label){
+
+	public static String getMandantPrefix(String label) {
 		return label + MPC_NUMBER_POSTFIX;
 	}
-	
-	public static Client getCurrentClient(){
+
+	public static Client getCurrentClient() {
 		MPCProperties props = getProperties();
 		if (props == null) {
 			return null;
@@ -63,11 +63,11 @@ public class MediPortHelper {
 		if (numStr != null && numStr.length() > 0) {
 			return getProperties().getClient(Integer.parseInt(numStr));
 		}
-		
+
 		return null;
 	}
-	
-	public static ClientParam getCurrentParam(String paramName){
+
+	public static ClientParam getCurrentParam(String paramName) {
 		if (paramName == null || paramName.length() == 0) {
 			return null;
 		}
@@ -78,8 +78,8 @@ public class MediPortHelper {
 		Integer paramNum = client.getParamKey(paramName);
 		return client.getParam(paramNum);
 	}
-	
-	public static List<IRnOutputter> getRnOutputter(){
+
+	public static List<IRnOutputter> getRnOutputter() {
 		List<IRnOutputter> retList = new Vector<IRnOutputter>();
 		for (Object outputter : Extensions.getClasses(ExtensionPointConstantsData.RECHNUNGS_MANAGER, "outputter")) { //$NON-NLS-1$ //$NON-NLS-2$
 			if (outputter instanceof IRnOutputter) {
@@ -88,8 +88,8 @@ public class MediPortHelper {
 		}
 		return retList;
 	}
-	
-	public static int getReturnFiles(){
+
+	public static int getReturnFiles() {
 		Client client = getCurrentClient();
 		if (client != null) {
 			int errorCount = 0;
@@ -106,14 +106,14 @@ public class MediPortHelper {
 		}
 		return 0;
 	}
-	
-	public static String getPluginDirectory(String pluginName){
+
+	public static String getPluginDirectory(String pluginName) {
 		String filePath = null;
-		Bundle bundle = Platform.getBundle(pluginName); //$NON-NLS-1$
+		Bundle bundle = Platform.getBundle(pluginName); // $NON-NLS-1$
 		if (bundle != null) {
 			Path path = new Path("/");
 			URL url = FileLocator.find(bundle, path, null);
-			
+
 			try {
 				filePath = FileLocator.toFileURL(url).getPath();
 				filePath = filePath.substring(1);
@@ -121,7 +121,7 @@ public class MediPortHelper {
 				ExHandler.handle(e);
 			}
 		}
-		if (filePath != null) { //$NON-NLS-1$
+		if (filePath != null) { // $NON-NLS-1$
 			return UtilFile.getCorrectPath(filePath);
 		}
 		return SystemProperties.USER_DIR + UtilFile.DIRECTORY_SEPARATOR;

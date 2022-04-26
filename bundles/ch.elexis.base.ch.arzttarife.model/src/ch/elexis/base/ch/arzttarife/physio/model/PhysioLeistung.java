@@ -18,29 +18,27 @@ import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 
-public class PhysioLeistung
-		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.PhysioLeistung>
+public class PhysioLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.PhysioLeistung>
 		implements Identifiable, IPhysioLeistung {
-	
+
 	public static final String STS_CLASS = "ch.elexis.data.PhysioLeistung";
-	
+
 	private static IBillableOptifier<PhysioLeistung> optifier;
 	private IBillableVerifier verifier;
-	
-	public PhysioLeistung(ch.elexis.core.jpa.entities.PhysioLeistung entity){
+
+	public PhysioLeistung(ch.elexis.core.jpa.entities.PhysioLeistung entity) {
 		super(entity);
 		verifier = new DefaultVerifier();
 	}
-	
+
 	@Override
-	public synchronized IBillableOptifier<PhysioLeistung> getOptifier(){
+	public synchronized IBillableOptifier<PhysioLeistung> getOptifier() {
 		if (optifier == null) {
 			optifier = new AbstractOptifier<PhysioLeistung>(CoreModelServiceHolder.get(), ContextServiceHolder.get()) {
-				
+
 				@Override
-				protected void setPrice(PhysioLeistung billable, IBilled billed){
-					Optional<IBillingSystemFactor> billingFactor =
-						BillingServiceHolder.get().getBillingSystemFactor(
+				protected void setPrice(PhysioLeistung billable, IBilled billed) {
+					Optional<IBillingSystemFactor> billingFactor = BillingServiceHolder.get().getBillingSystemFactor(
 							billed.getEncounter().getCoverage().getBillingSystem().getName(),
 							billed.getEncounter().getDate());
 					if (billingFactor.isPresent()) {
@@ -62,105 +60,105 @@ public class PhysioLeistung
 		}
 		return optifier;
 	}
-	
+
 	@Override
-	public IBillableVerifier getVerifier(){
+	public IBillableVerifier getVerifier() {
 		return verifier;
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return ch.elexis.core.jpa.entities.PhysioLeistung.CODESYSTEM_NAME;
 	}
-	
+
 	@Override
-	public String getCodeSystemCode(){
+	public String getCodeSystemCode() {
 		return "311";
 	}
-	
+
 	@Override
-	public String getCode(){
+	public String getCode() {
 		return getZiffer();
 	}
-	
+
 	@Override
-	public void setCode(String value){
+	public void setCode(String value) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public String getText(){
+	public String getText() {
 		return getEntity().getTitel();
 	}
-	
+
 	@Override
-	public void setText(String value){
+	public void setText(String value) {
 		getEntity().setTitel(value);
-		
+
 	}
-	
+
 	@Override
-	public LocalDate getValidFrom(){
+	public LocalDate getValidFrom() {
 		return getEntity().getValidFrom();
 	}
-	
+
 	@Override
-	public void setValidFrom(LocalDate value){
+	public void setValidFrom(LocalDate value) {
 		getEntity().setValidFrom(value);
 	}
-	
+
 	@Override
-	public LocalDate getValidTo(){
+	public LocalDate getValidTo() {
 		return getEntity().getValidUntil();
 	}
-	
+
 	@Override
-	public void setValidTo(LocalDate value){
+	public void setValidTo(LocalDate value) {
 		getEntity().setValidUntil(value);
 	}
-	
+
 	@Override
-	public String getTP(){
+	public String getTP() {
 		return getEntity().getTp();
 	}
-	
+
 	@Override
-	public void setTP(String value){
+	public void setTP(String value) {
 		getEntity().setTp(value);
 	}
-	
+
 	@Override
-	public String getZiffer(){
+	public String getZiffer() {
 		return getEntity().getZiffer();
 	}
-	
+
 	@Override
-	public void setZiffer(String value){
+	public void setZiffer(String value) {
 		getEntity().setZiffer(value);
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return getEntity().getDescription();
 	}
-	
+
 	@Override
-	public void setDescription(String value){
+	public void setDescription(String value) {
 		getEntity().setDescription(value);
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		return getZiffer() + " " + getText();
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		return XidServiceHolder.get().getXid(this, domain);
 	}
 }

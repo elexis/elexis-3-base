@@ -15,8 +15,8 @@ import ch.elexis.importer.aeskulap.core.internal.csv.MandatorFile;
 import ch.elexis.importer.aeskulap.core.internal.csv.PatientFile;
 
 public class AeskulapFileFactory {
-	
-	public static Optional<IAeskulapImportFile> getAeskulapFile(File file){
+
+	public static Optional<IAeskulapImportFile> getAeskulapFile(File file) {
 		if (AddressesFile.canHandleFile(file)) {
 			return Optional.of(new AddressesFile(file));
 		} else if (LabContactFile.canHandleFile(file)) {

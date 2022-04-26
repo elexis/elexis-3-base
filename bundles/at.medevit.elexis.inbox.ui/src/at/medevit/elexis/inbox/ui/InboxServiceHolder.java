@@ -18,13 +18,13 @@ import at.medevit.elexis.inbox.model.IInboxElementService;
 @Component
 public class InboxServiceHolder {
 	private static IInboxElementService service;
-	
+
 	@Reference
-	public void setService(IInboxElementService service){
+	public void setService(IInboxElementService service) {
 		InboxServiceHolder.service = service;
 	}
-	
-	public static IInboxElementService get(){
+
+	public static IInboxElementService get() {
 		return service;
 	}
 }

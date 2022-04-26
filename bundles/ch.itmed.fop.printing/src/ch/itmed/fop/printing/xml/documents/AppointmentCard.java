@@ -22,7 +22,7 @@ import ch.itmed.fop.printing.xml.elements.MandatorElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
 
 public final class AppointmentCard {
-	
+
 	public static InputStream create() throws Exception {
 		Document doc = DomDocument.newDocument();
 

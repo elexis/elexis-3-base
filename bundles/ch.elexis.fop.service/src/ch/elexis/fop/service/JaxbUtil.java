@@ -20,8 +20,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 public class JaxbUtil {
-	
-	public static ByteArrayOutputStream getOutputStreamForObject(Object jaxbObj) throws UnsupportedEncodingException, IOException, JAXBException {
+
+	public static ByteArrayOutputStream getOutputStreamForObject(Object jaxbObj)
+			throws UnsupportedEncodingException, IOException, JAXBException {
 		ByteArrayOutputStream ret = new ByteArrayOutputStream();
 		OutputStreamWriter writer;
 

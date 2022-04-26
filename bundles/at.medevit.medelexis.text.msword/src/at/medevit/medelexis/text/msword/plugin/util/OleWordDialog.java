@@ -11,19 +11,19 @@ import org.eclipse.swt.ole.win32.Variant;
 import org.eclipse.swt.widgets.Display;
 
 public class OleWordDialog extends OleWrapper {
-	public OleWordDialog(OleAutomation oleAuto, Display display, OleWrapperManager manager){
+	public OleWordDialog(OleAutomation oleAuto, Display display, OleWrapperManager manager) {
 		super(oleAuto, display, manager);
 	}
 
-	public void show(){
+	public void show() {
 		Variant value = runInvoke("Show"); //$NON-NLS-1$
 		value.dispose();
 	}
-	
+
 	protected static HashMap<String, Integer> memberIdMap = new HashMap<String, Integer>();
-	
+
 	@Override
-	protected synchronized int getIdForMember(String member){
+	protected synchronized int getIdForMember(String member) {
 		Integer id = memberIdMap.get(member);
 		if (id == null) {
 			id = OleUtil.getMemberId(oleObj, member);

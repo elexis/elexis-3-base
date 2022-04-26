@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    A. Kaufmann - initial implementation 
+ *    A. Kaufmann - initial implementation
  *    P. Chaubert - adapted to Messwerte V2
  *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
- *    
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
@@ -34,58 +34,57 @@ import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
  */
 public class MesswertTypScale extends MesswertBase implements IMesswertTyp {
 	int defVal = 0;
-	
+
 	/**
 	 * Kleinster auswaehlbarer Wert
 	 */
 	int min = 0;
-	
+
 	/**
 	 * Groesster auswaehlbarer Wert
 	 */
 	int max = 0;
-	
-	public MesswertTypScale(String n, String t, String u){
+
+	public MesswertTypScale(String n, String t, String u) {
 		super(n, t, u);
 	}
-	
-	public String erstelleDarstellungswert(Messwert messwert){
+
+	public String erstelleDarstellungswert(Messwert messwert) {
 		return messwert.getWert();
 	}
-	
-	public String getDefault(Messwert messwert){
+
+	public String getDefault(Messwert messwert) {
 		Integer retVal = defVal;
 		if (formula != null) {
 			String sWert = evalateFormula(formula, messwert, retVal.toString());
 			try {
 				retVal = Integer.parseInt(sWert);
 			} catch (Exception e) {
-				log.log(MessageFormat.format(Messages.MesswertTypScale_CastFailure, sWert),
-					Log.ERRORS);
+				log.log(MessageFormat.format(Messages.MesswertTypScale_CastFailure, sWert), Log.ERRORS);
 			}
 		}
 		return retVal.toString();
 	}
-	
-	public void setDefault(String str){
+
+	public void setDefault(String str) {
 		defVal = Integer.parseInt(str);
 	}
-	
+
 	/**
 	 * Groesster auswaehlbarer Wert setzen
 	 */
-	public void setMax(int m){
+	public void setMax(int m) {
 		max = m;
 	}
-	
+
 	/**
 	 * Kleinster auswaehlbarer Wert setzen
 	 */
-	public void setMin(int m){
+	public void setMin(int m) {
 		min = m;
 	}
-	
-	public Widget createWidget(Composite parent, Messwert messwert){
+
+	public Widget createWidget(Composite parent, Messwert messwert) {
 		widget = new Spinner(parent, SWT.NONE);
 		((Spinner) widget).setMinimum(min);
 		((Spinner) widget).setMaximum(max);
@@ -94,18 +93,18 @@ public class MesswertTypScale extends MesswertBase implements IMesswertTyp {
 		setShown(true);
 		return widget;
 	}
-	
-	public String getDarstellungswert(String wert){
+
+	public String getDarstellungswert(String wert) {
 		return wert;
 	}
-	
+
 	@Override
-	public void saveInput(Messwert messwert){
+	public void saveInput(Messwert messwert) {
 		messwert.setWert(Integer.toString(((Spinner) widget).getSelection()));
 	}
-	
+
 	@Override
-	public boolean checkInput(Messwert messwert, String pattern){
+	public boolean checkInput(Messwert messwert, String pattern) {
 		super.checkInput(messwert, pattern);
 		String value = ((Spinner) widget).getText();
 		if (value.matches(pattern) || pattern == null) {
@@ -113,8 +112,8 @@ public class MesswertTypScale extends MesswertBase implements IMesswertTyp {
 		}
 		return false;
 	}
-	
-	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
+
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable) {
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
 		if (!dft.getUnit().equals("")) { //$NON-NLS-1$
@@ -124,9 +123,9 @@ public class MesswertTypScale extends MesswertBase implements IMesswertTyp {
 		sf.setText(messwert.getDarstellungswert());
 		return sf;
 	}
-	
+
 	@Override
-	public String getActualValue(){
+	public String getActualValue() {
 		return ((Spinner) widget).getText();
 	}
 }

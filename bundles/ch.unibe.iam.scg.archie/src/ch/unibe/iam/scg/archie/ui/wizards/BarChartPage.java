@@ -41,10 +41,12 @@ import ch.unibe.iam.scg.archie.utils.DatasetHelper;
 import ch.unibe.iam.scg.archie.utils.SWTUtils;
 
 /**
- * <p>Chart wizard page for setting parameters for bar charts.</p>
- * 
+ * <p>
+ * Chart wizard page for setting parameters for bar charts.
+ * </p>
+ *
  * $Id: BarChartPage.java 734 2009-03-23 12:11:13Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 734 $
@@ -71,10 +73,10 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 	private Combo rowTitle;
 
 	/**
-	 * Maps the buttons to the column index of the dataset. We had to implement
-	 * this because subclassing SWT objects other than Composites is generally a
-	 * bad practice. That's why we had to abandon our custom Button class and go
-	 * with the map.
+	 * Maps the buttons to the column index of the dataset. We had to implement this
+	 * because subclassing SWT objects other than Composites is generally a bad
+	 * practice. That's why we had to abandon our custom Button class and go with
+	 * the map.
 	 */
 	private HashMap<Button, Integer> columnButtons;
 
@@ -84,8 +86,8 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 	 * Constructs BarChartPage
 	 */
 	public BarChartPage() {
-		super(BarChartPage.PAGE_NAME, Messages.CHART_WIZARD_BAR_CHART_PAGE_TITLE, ArchieActivator
-				.getImageDescriptor("icons/chart_bar_big.png"));
+		super(BarChartPage.PAGE_NAME, Messages.CHART_WIZARD_BAR_CHART_PAGE_TITLE,
+				ArchieActivator.getImageDescriptor("icons/chart_bar_big.png"));
 		super.setDescription(Messages.CHART_WIZARD_BAR_CHART_PAGE_DESCRIPTION);
 
 		this.columnButtons = new HashMap<Button, Integer>();
@@ -107,7 +109,7 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 		int[] selected = this.getSelectedIndexes();
 		if (selected.length <= 0) {
 			status = new Status(IStatus.ERROR, ArchieActivator.PLUGIN_NAME, 0,
-				Messages.CHART_WIZARD_BAR_CHART_ERROR_ONE_COLUMN, null);
+					Messages.CHART_WIZARD_BAR_CHART_ERROR_ONE_COLUMN, null);
 		}
 
 		// apply status
@@ -187,9 +189,9 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 	// ////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Creates the buttons for all "numeric" columns in a dataset. These columns
-	 * can be chosen for values in the chart. Adds the buttons to the list of
-	 * column buttons.
+	 * Creates the buttons for all "numeric" columns in a dataset. These columns can
+	 * be chosen for values in the chart. Adds the buttons to the list of column
+	 * buttons.
 	 */
 	private void addButtons(Composite parent, DataSet dataset) {
 		List<String> columns = dataset.getHeadings();
@@ -197,7 +199,8 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 		// add buttons for columns that have numeric values
 		for (int index = 0; index < columns.size(); index++) {
 			boolean firstColumn = index <= 0;
-			if ((DatasetHelper.isNumericColumn(dataset, index) || DatasetHelper.isMoneyColumn(dataset, index)) && !firstColumn) {
+			if ((DatasetHelper.isNumericColumn(dataset, index) || DatasetHelper.isMoneyColumn(dataset, index))
+					&& !firstColumn) {
 				Button columnButton = new Button(parent, SWT.CHECK);
 				columnButton.setText(columns.get(index));
 				columnButton.addListener(SWT.Selection, this);
@@ -252,7 +255,7 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 
 	/**
 	 * Returns the number of selected items in the column buttons list.
-	 * 
+	 *
 	 * @return Number of selected column buttons.
 	 */
 	private int getNumberSelected() {
@@ -261,7 +264,7 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 
 	/**
 	 * Array of selected indexes of the column buttons.
-	 * 
+	 *
 	 * @return Array of selected indexes of the column buttons.
 	 */
 	private int[] getSelectedIndexes() {

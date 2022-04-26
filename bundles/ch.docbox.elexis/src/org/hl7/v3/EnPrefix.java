@@ -8,10 +8,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for en.prefix complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="en.prefix">
  *   &lt;complexContent>
@@ -21,17 +22,17 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "en.prefix")
 @XmlRootElement(name = "prefix")
 public class EnPrefix extends ENXP {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 }

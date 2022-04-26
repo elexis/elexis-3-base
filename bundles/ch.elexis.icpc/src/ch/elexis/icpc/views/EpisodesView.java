@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -40,20 +40,20 @@ public class EpisodesView extends ViewPart {
 	public static final String ID = "ch.elexis.icpc.episodesView";
 	EpisodesDisplay display;
 	KonsFilter episodesFilter = new KonsFilter(this);
-	private IAction addEpisodeAction, removeEpisodeAction, editEpisodeAction,
-			activateEpisodeAction, konsFilterAction, removeDiagnosesAction;
-	
+	private IAction addEpisodeAction, removeEpisodeAction, editEpisodeAction, activateEpisodeAction, konsFilterAction,
+			removeDiagnosesAction;
+
 	@Inject
-	void activePatient(@Optional IPatient patient){
+	void activePatient(@Optional IPatient patient) {
 		if (display != null && !display.isDisposed()) {
 			Display.getDefault().asyncExec(() -> {
 				display.setPatient(patient);
 			});
 		}
 	}
-	
+
 	@Inject
-	void selectedEpisode(@Optional IcpcEpisode episode){
+	void selectedEpisode(@Optional IcpcEpisode episode) {
 		if (display != null && !display.isDisposed()) {
 			Display.getDefault().asyncExec(() -> {
 				if (episode != null) {
@@ -71,55 +71,53 @@ public class EpisodesView extends ViewPart {
 			});
 		}
 	}
-	
+
 	@Optional
 	@Inject
-	void updateEpisode(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IcpcEpisode episode){
+	void updateEpisode(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IcpcEpisode episode) {
 		if (display != null && !display.isDisposed()) {
 			display.tvEpisodes.refresh();
 		}
 	}
-	
+
 	@Override
-	public void createPartControl(final Composite parent){
+	public void createPartControl(final Composite parent) {
 		parent.setLayout(new GridLayout());
 		display = new EpisodesDisplay(parent);
 		display.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		makeActions();
 		ViewMenus menu = new ViewMenus(getViewSite());
-		
+
 		/*
 		 * menu.createViewerContextMenu(display.tvEpisodes, activateEpisodeAction,
 		 * editEpisodeAction, null, removeEpisodeAction);
 		 */
 		menu.createControlContextMenu(display.tvEpisodes.getControl(), new IMenuPopulator() {
 			@Override
-			public IAction[] fillMenu(){
-				return new IAction[] {
-					activateEpisodeAction, editEpisodeAction, null, removeEpisodeAction,
-					removeDiagnosesAction
-				};
-				
+			public IAction[] fillMenu() {
+				return new IAction[] { activateEpisodeAction, editEpisodeAction, null, removeEpisodeAction,
+						removeDiagnosesAction };
+
 			}
 		});
-		
+
 		menu.createToolbar(konsFilterAction, addEpisodeAction, editEpisodeAction);
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		display.setFocus();
 	}
-	
-	private void makeActions(){
+
+	private void makeActions() {
 		addEpisodeAction = new Action("Neues Problem") {
 			{
 				setToolTipText("Eine neues Problem erstellen");
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite().getShell(), null);
 				if (dlg.open() == Dialog.OK) {
 					display.tvEpisodes.refresh();
@@ -131,9 +129,9 @@ public class EpisodesView extends ViewPart {
 				setToolTipText("Das gewählte Problem unwiderruflich löschen");
 				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				IcpcEpisode act = display.getSelectedEpisode();
 				if (act != null) {
 					IcpcModelServiceHolder.get().delete(act);
@@ -141,15 +139,15 @@ public class EpisodesView extends ViewPart {
 				}
 			}
 		};
-		
+
 		removeDiagnosesAction = new Action("Diagnosen entfernen") {
 			{
 				setToolTipText("Entfernt die Verknüpfungen mit Diagnosen");
 				setImageDescriptor(Images.IMG_REMOVEITEM.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				IcpcEpisode act = display.getSelectedEpisode();
 				if (act != null) {
 					act.getDiagnosis().forEach(d -> act.removeDiagnosis(d));
@@ -158,15 +156,15 @@ public class EpisodesView extends ViewPart {
 				}
 			}
 		};
-		
+
 		editEpisodeAction = new Action("Problem bearbeiten") {
 			{
 				setToolTipText("Problem bearbeiten");
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				IcpcEpisode ep = display.getSelectedEpisode();
 				if (ep != null) {
 					EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite().getShell(), ep);
@@ -180,42 +178,40 @@ public class EpisodesView extends ViewPart {
 			{
 				setToolTipText("Problem aktivieren oder deaktivieren");
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				IcpcEpisode ep = display.getSelectedEpisode();
 				if (ep != null) {
 					ep.setStatus(activateEpisodeAction.isChecked() ? 1 : 0);
 					display.tvEpisodes.refresh();
 				}
 			}
-			
+
 		};
-		
+
 		konsFilterAction = new Action("Konsultationen filtern", Action.AS_CHECK_BOX) {
 			{
 				setToolTipText("Konsultationslisten auf markiertes Problem begrenzen");
 				setImageDescriptor(Images.IMG_FILTER.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				if (!isChecked()) {
-					ObjectFilterRegistry.getInstance().unregisterObjectFilter(Konsultation.class,
-						episodesFilter);
+					ObjectFilterRegistry.getInstance().unregisterObjectFilter(Konsultation.class, episodesFilter);
 				} else {
-					ObjectFilterRegistry.getInstance().registerObjectFilter(Konsultation.class,
-						episodesFilter);
+					ObjectFilterRegistry.getInstance().registerObjectFilter(Konsultation.class, episodesFilter);
 					IcpcEpisode ep = display.getSelectedEpisode();
 					episodesFilter.setProblem(ep);
 				}
 			}
 		};
-		
+
 	}
-	
-	public void activateKonsFilterAction(final boolean bActivate){
+
+	public void activateKonsFilterAction(final boolean bActivate) {
 		konsFilterAction.setChecked(bActivate);
 	}
-	
+
 }

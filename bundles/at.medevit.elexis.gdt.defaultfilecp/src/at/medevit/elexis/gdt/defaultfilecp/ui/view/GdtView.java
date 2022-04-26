@@ -33,142 +33,138 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 
 public class GdtView extends ViewPart {
-	
+
 	private Map<String, Button> mapExaminations = new HashMap<String, Button>();
 	private Composite composite;
-	
-	private final ElexisUiEventListenerImpl eeli_pat =
-		new ElexisUiEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED) {
-			
-			@Override
-			public void runInUi(ElexisEvent ev){
-				refreshLastExaminations();
-			}
-		};
-	
-	public GdtView(){
-		
+
+	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
+			ElexisEvent.EVENT_SELECTED) {
+
+		@Override
+		public void runInUi(ElexisEvent ev) {
+			refreshLastExaminations();
+		}
+	};
+
+	public GdtView() {
+
 	}
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
 		ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		sc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
+
 		composite = new Composite(sc, SWT.NONE);
 		composite.setLayout(new GridLayout());
-		
+
 		sc.setContent(composite);
-		
+
 		createContents(composite);
-		
+
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 		sc.setMinSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-	
-	private void createContents(Composite composite){
+
+	private void createContents(Composite composite) {
 		mapExaminations.clear();
 		for (String id : FileCommPartner.getAllFileCommPartnersArray()) {
 			FileCommPartner fileCommPartner = new FileCommPartner(id);
-			String fileCommPartnerName =
-				fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferName());
-			
+			String fileCommPartnerName = fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferName());
+
 			String lastExaminationId = getLastExaminationId(fileCommPartner);
-			
+
 			Composite content = new Composite(composite, SWT.BORDER);
 			content.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 1, 1));
 			content.setLayout(new GridLayout(3, false));
-			
+
 			Label label = new Label(content, SWT.RIGHT);
 			label.setText("");
 			label.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 			label.setBackground(UiDesk.getColor(UiDesk.COL_LIGHTGREY));
-			
+
 			label = new Label(content, SWT.NONE);
 			label.setText("Gerät: " + fileCommPartnerName);
 			label.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
-			
+
 			Button btnNewExamination = new Button(content, SWT.PUSH);
 			btnNewExamination.setText("");
 			btnNewExamination.setImage(Images.IMG_SYSTEM_MONITOR.getImage());
 			btnNewExamination.setToolTipText("Neue Untersuchung anfordern");
 			btnNewExamination.setData(fileCommPartner.getId());
 			btnNewExamination.addSelectionListener(new SelectionAdapter() {
-				
+
 				@Override
-				public void widgetSelected(SelectionEvent event){
+				public void widgetSelected(SelectionEvent event) {
 					if (ElexisEventDispatcher.getSelectedPatient() == null) {
 						openPatientNotSelectedDialog();
 					} else {
 						ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-							.getService(ICommandService.class);
+								.getService(ICommandService.class);
 						Command command = commandService
-							.getCommand("at.medevit.elexis.gdt.command.NeueUntersuchungAnfordern");
+								.getCommand("at.medevit.elexis.gdt.command.NeueUntersuchungAnfordern");
 						if (command != null) {
 							HashMap<String, String> params = new HashMap<String, String>();
 							params.put("at.medevit.elexis.gdt.cmd.parameter.targetId",
-								String.valueOf(((Button) event.getSource()).getData()));
-							
-							ExecutionEvent ee =
-								new ExecutionEvent(command, params, null, getSite().getPage());
+									String.valueOf(((Button) event.getSource()).getData()));
+
+							ExecutionEvent ee = new ExecutionEvent(command, params, null, getSite().getPage());
 							try {
 								command.executeWithChecks(ee);
 							} catch (CommandException e) {
-								LoggerFactory.getLogger(GdtView.class).error("command execution",
-									e);
+								LoggerFactory.getLogger(GdtView.class).error("command execution", e);
 								openPatientNotSelectedDialog();
 							}
 						}
 					}
-					
+
 				}
 			});
-			
+
 			Button btnBaseDataRequest = new Button(content, SWT.PUSH);
 			btnBaseDataRequest.setText("");
 			btnBaseDataRequest.setImage(Images.IMG_USER_IDLE.getImage());
 			btnBaseDataRequest.setToolTipText("Stammdaten übermitteln");
 			btnBaseDataRequest.setData(fileCommPartner.getId());
 			btnBaseDataRequest.addSelectionListener(new SelectionAdapter() {
-				
+
 				@Override
-				public void widgetSelected(SelectionEvent event){
-					
+				public void widgetSelected(SelectionEvent event) {
+
 					if (ElexisEventDispatcher.getSelectedPatient() == null) {
 						openPatientNotSelectedDialog();
 					} else {
 						ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-							.getService(ICommandService.class);
+								.getService(ICommandService.class);
 						Command command = commandService
-							.getCommand("at.medevit.elexis.gdt.command.StammdatenUebermitteln");
+								.getCommand("at.medevit.elexis.gdt.command.StammdatenUebermitteln");
 						if (command != null) {
 							HashMap<String, String> params = new HashMap<String, String>();
 							params.put("at.medevit.elexis.gdt.cmd.parameter.targetId",
-								String.valueOf(((Button) event.getSource()).getData()));
-							
-							ExecutionEvent ee =
-								new ExecutionEvent(command, params, null, getSite().getPage());
+									String.valueOf(((Button) event.getSource()).getData()));
+
+							ExecutionEvent ee = new ExecutionEvent(command, params, null, getSite().getPage());
 							try {
 								command.executeWithChecks(ee);
 							} catch (CommandException e) {
-								LoggerFactory.getLogger(GdtView.class).error("command execution",
-									e);
+								LoggerFactory.getLogger(GdtView.class).error("command execution", e);
 								MessageDialog.openError(getSite().getShell(), "Error",
-									"Stammdatenübermittlung fehlgeschlagen.");
+										"Stammdatenübermittlung fehlgeschlagen.");
 							}
 						}
 					}
 				}
 			});
-			
-			// tooltips are not shown for disabled buttons therefore we use a composite as wrapper with that tooltip
+
+			// tooltips are not shown for disabled buttons therefore we use a composite as
+			// wrapper with that tooltip
 			String lastExaminationToolTip = "Letzte Untersuchung anzeigen";
 			Composite lastExaminationComposite = new Composite(content, SWT.NONE);
 			lastExaminationComposite.setLayout(new GridLayout(1, false));
 			lastExaminationComposite.setToolTipText(lastExaminationToolTip);
-			
+
 			Button btnShowLastExamination = new Button(lastExaminationComposite, SWT.PUSH);
 			btnShowLastExamination.setText("");
 			btnShowLastExamination.setToolTipText(lastExaminationToolTip);
@@ -176,77 +172,74 @@ public class GdtView extends ViewPart {
 			btnShowLastExamination.setData(lastExaminationId);
 			btnShowLastExamination.setEnabled(lastExaminationId != null);
 			btnShowLastExamination.addSelectionListener(new SelectionAdapter() {
-				
+
 				@Override
-				public void widgetSelected(SelectionEvent event){
-					
+				public void widgetSelected(SelectionEvent event) {
+
 					ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-						.getService(ICommandService.class);
+							.getService(ICommandService.class);
 					Command command = commandService
-						.getCommand("at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen");
+							.getCommand("at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen");
 					if (command != null) {
 						HashMap<String, String> params = new HashMap<String, String>();
-						params.put(
-							"at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen.gdtProtokollSource",
-							String.valueOf(((Button) event.getSource()).getData()));
-						ExecutionEvent ee =
-							new ExecutionEvent(command, params, null, getSite().getPage());
+						params.put("at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen.gdtProtokollSource",
+								String.valueOf(((Button) event.getSource()).getData()));
+						ExecutionEvent ee = new ExecutionEvent(command, params, null, getSite().getPage());
 						try {
 							command.executeWithChecks(ee);
 						} catch (CommandException e) {
 							LoggerFactory.getLogger(GdtView.class).error("command execution", e);
 							MessageDialog.openError(getSite().getShell(), "Error",
-								"Letzte Untersuchung anzeigen fehlgeschlagen.");
+									"Letzte Untersuchung anzeigen fehlgeschlagen.");
 						}
 					}
 				}
-				
+
 			});
-			
+
 			if (id != null) {
 				mapExaminations.put(id, btnShowLastExamination);
 			}
 			ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
 		}
 	}
-	
+
 	@Override
-	public void setFocus(){}
-	
-	private String getLabel(FileCommPartner fileCommPartner){
-		return fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferName()) + " ("
-			+ fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferDirectory())
-			+ ")";
+	public void setFocus() {
 	}
-	
-	private void openPatientNotSelectedDialog(){
+
+	private String getLabel(FileCommPartner fileCommPartner) {
+		return fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferName()) + " ("
+				+ fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferDirectory()) + ")";
+	}
+
+	private void openPatientNotSelectedDialog() {
 		MessageDialog.openError(getSite().getShell(), "Error", "Kein Patient ausgewählt.");
 	}
-	
-	public String getLastExaminationId(FileCommPartner fileCommPartner){
+
+	public String getLastExaminationId(FileCommPartner fileCommPartner) {
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if (pat != null) {
 			String label = getLabel(fileCommPartner);
 			GDTProtokoll[] prot = GDTProtokoll.getEntriesForPatient(pat);
 			for (GDTProtokoll gdtProtokoll : prot) {
-				if (Integer
-					.parseInt(gdtProtokoll
-						.getMessageType()) == GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_UEBERMITTELN
-					&& label.equals(gdtProtokoll.getGegenstelle())) {
+				if (Integer.parseInt(
+						gdtProtokoll.getMessageType()) == GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_UEBERMITTELN
+						&& label.equals(gdtProtokoll.getGegenstelle())) {
 					return gdtProtokoll.getId();
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		super.dispose();
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
 	}
-	
-	private void refreshLastExaminations(){
+
+	private void refreshLastExaminations() {
 		if (mapExaminations != null) {
 			for (String id : mapExaminations.keySet()) {
 				Button btn = mapExaminations.get(id);
@@ -256,7 +249,7 @@ public class GdtView extends ViewPart {
 					btn.setEnabled(exId != null);
 				}
 			}
-			
+
 			if (composite != null) {
 				composite.layout(true);
 			}

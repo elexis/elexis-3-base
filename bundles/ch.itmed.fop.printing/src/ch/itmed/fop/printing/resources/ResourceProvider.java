@@ -54,8 +54,7 @@ public class ResourceProvider {
 		IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
 		if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 2))) {
-			String xslPath =
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 1));
+			String xslPath = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 1));
 			return new File(xslPath);
 		}
 
@@ -83,7 +82,7 @@ public class ResourceProvider {
 
 	/**
 	 * Returns the available paper formats
-	 * 
+	 *
 	 * @return
 	 */
 	public static String[] getPaperFormats() {
@@ -110,7 +109,7 @@ public class ResourceProvider {
 
 	/**
 	 * Returns the values of the specified paper format
-	 * 
+	 *
 	 * @param paperFormatName
 	 * @return
 	 */

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.base.messages;
@@ -20,15 +20,18 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import ch.elexis.core.ui.UiDesk;
 
 public class MessageDelegate implements IWorkbenchWindowActionDelegate {
-	
-	public void dispose(){}
-	
-	public void init(final IWorkbenchWindow window){}
-	
-	public void run(final IAction action){
+
+	public void dispose() {
+	}
+
+	public void init(final IWorkbenchWindow window) {
+	}
+
+	public void run(final IAction action) {
 		new MsgDetailDialog(UiDesk.getTopShell(), null).open();
 	}
-	
-	public void selectionChanged(final IAction action, final ISelection selection){}
-	
+
+	public void selectionChanged(final IAction action, final ISelection selection) {
+	}
+
 }

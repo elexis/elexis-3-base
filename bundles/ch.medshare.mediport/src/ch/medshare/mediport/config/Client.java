@@ -21,10 +21,10 @@ public class Client extends AbstractConfigKeyModel {
 	private String docstat_dir = "data/docstatus"; //$NON-NLS-1$
 	private String partner_file = "data/partner/partnerinfo.txt"; //$NON-NLS-1$
 	private String stylesheet = ""; //$NON-NLS-1$
-	
+
 	public Map<Integer, ClientParam> paramMap = new HashMap<Integer, ClientParam>();
-	
-	public Client(String installDir){
+
+	public Client(String installDir) {
 		super();
 		if (installDir != null && installDir.length() > 0) {
 			setSend_dir(installDir + "/" + send_dir); //$NON-NLS-1$
@@ -34,15 +34,15 @@ public class Client extends AbstractConfigKeyModel {
 			setDocstat_dir(installDir + "/" + docstat_dir); //$NON-NLS-1$
 			setPartner_file(installDir + "/" + partner_file); //$NON-NLS-1$
 		}
-		setStylesheet(UtilMisc.replaceWithForwardSlash(MediPortHelper
-			.getPluginDirectory("ch.medshare.mediport")
-			+ File.separator + "rsc" + File.separator + "mediport_response.xsl"));
+		setStylesheet(UtilMisc.replaceWithForwardSlash(MediPortHelper.getPluginDirectory("ch.medshare.mediport")
+				+ File.separator + "rsc" + File.separator + "mediport_response.xsl"));
 	}
-	
-	// C:/src/elexis/workspace/medshare-mediport/MDInvoiceRequest_400.xsd, müsste aber sein:
+
+	// C:/src/elexis/workspace/medshare-mediport/MDInvoiceRequest_400.xsd, müsste
+	// aber sein:
 	// C:/Programme/Elexis131/plugins/ch.medshare.mediport_1.0.1/MDInvoiceRequest_400.xsd
-	
-	public void add(String[] parts, String value){
+
+	public void add(String[] parts, String value) {
 		if (DIR.equals(parts[2])) { // Parameter
 			Integer num = Integer.parseInt(parts[3]);
 			ClientParam param = paramMap.get(num);
@@ -55,8 +55,8 @@ public class Client extends AbstractConfigKeyModel {
 			add(parts[2], value);
 		}
 	}
-	
-	public void add(final String key, String value){
+
+	public void add(final String key, String value) {
 		if (EAN.equals(key)) {
 			setEan(value);
 		} else if (SEND_DIR.equals(key)) {
@@ -73,14 +73,14 @@ public class Client extends AbstractConfigKeyModel {
 			setPartner_file(value);
 		}
 	}
-	
-	public int addNewParam(ClientParam param){
+
+	public int addNewParam(ClientParam param) {
 		int nextNumber = getNextParamKey();
 		paramMap.put(nextNumber, param);
 		return nextNumber;
 	}
-	
-	private int getNextParamKey(){
+
+	private int getNextParamKey() {
 		int maxNumber = 0;
 		for (Integer key : paramMap.keySet()) {
 			if (key.intValue() > maxNumber) {
@@ -89,15 +89,15 @@ public class Client extends AbstractConfigKeyModel {
 		}
 		return maxNumber + 1;
 	}
-	
-	public ClientParam getParam(Integer pNum){
+
+	public ClientParam getParam(Integer pNum) {
 		if (pNum == null) {
 			return null;
 		}
 		return paramMap.get(pNum);
 	}
-	
-	public Integer getParamKey(String paramBez){
+
+	public Integer getParamKey(String paramBez) {
 		if (paramBez == null) {
 			return null;
 		}
@@ -109,8 +109,8 @@ public class Client extends AbstractConfigKeyModel {
 		}
 		return null;
 	}
-	
-	public List<String> getParamNames(){
+
+	public List<String> getParamNames() {
 		SortedList<String> nameList = new SortedList<String>(new StringComparator());
 		for (ClientParam param : paramMap.values()) {
 			nameList.add(param.getName());
@@ -118,16 +118,16 @@ public class Client extends AbstractConfigKeyModel {
 		nameList.sort();
 		return nameList;
 	}
-	
-	public List<Integer> getParamKeys(){
+
+	public List<Integer> getParamKeys() {
 		List<Integer> keyList = new Vector<Integer>();
 		for (Integer key : paramMap.keySet()) {
 			keyList.add(key);
 		}
 		return keyList;
 	}
-	
-	public String toString(Integer num){
+
+	public String toString(Integer num) {
 		StringBuffer buffer = new StringBuffer();
 		String clientPrefix = CLIENT + "." + num + "."; //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append(clientPrefix + EAN + "=" + getEan()); //$NON-NLS-1$
@@ -137,7 +137,7 @@ public class Client extends AbstractConfigKeyModel {
 		buffer.append(clientPrefix + RECEIVE_DIR + "=" + getReceive_dir()); //$NON-NLS-1$
 		buffer.append(SystemProperties.LINE_SEPARATOR);
 		buffer.append(clientPrefix + RECEIVETEST_DIR + "=" //$NON-NLS-1$
-			+ this.receivetest_dir);
+				+ this.receivetest_dir);
 		buffer.append(SystemProperties.LINE_SEPARATOR);
 		buffer.append(clientPrefix + ERROR_DIR + "=" + getError_dir()); //$NON-NLS-1$
 		buffer.append(SystemProperties.LINE_SEPARATOR);
@@ -145,97 +145,97 @@ public class Client extends AbstractConfigKeyModel {
 		buffer.append(SystemProperties.LINE_SEPARATOR);
 		buffer.append(clientPrefix + PARTNER_FILE + "=" + getPartner_file()); //$NON-NLS-1$
 		buffer.append(SystemProperties.LINE_SEPARATOR);
-		
+
 		for (Integer pNum : paramMap.keySet()) {
 			ClientParam param = getParam(pNum);
 			buffer.append(param.toString(clientPrefix, pNum));
 		}
-		
+
 		return buffer.toString();
 	}
-	
-	public String getEan(){
+
+	public String getEan() {
 		return ean;
 	}
-	
-	public void setEan(String ean){
+
+	public void setEan(String ean) {
 		String oldValue = this.ean;
 		this.ean = ean;
 		propertyChanged(ean, oldValue);
 	}
-	
-	public String getSend_dir(){
+
+	public String getSend_dir() {
 		return send_dir;
 	}
-	
-	public void setSend_dir(String send_dir){
+
+	public void setSend_dir(String send_dir) {
 		String oldValue = this.send_dir;
 		this.send_dir = send_dir;
 		propertyChanged(send_dir, oldValue);
 	}
-	
-	public String getReceive_dir(){
+
+	public String getReceive_dir() {
 		return receive_dir;
 	}
-	
-	public void setReceive_dir(String receive_dir){
+
+	public void setReceive_dir(String receive_dir) {
 		String oldValue = this.receive_dir;
 		this.receive_dir = receive_dir;
 		propertyChanged(receive_dir, oldValue);
 	}
-	
-	public String getReceivetest_dir(){
+
+	public String getReceivetest_dir() {
 		return receivetest_dir;
 	}
-	
-	public void setReceivetest_dir(String receivetest_dir){
+
+	public void setReceivetest_dir(String receivetest_dir) {
 		String oldValue = this.receivetest_dir;
 		this.receivetest_dir = receivetest_dir;
 		propertyChanged(receivetest_dir, oldValue);
 	}
-	
-	public String getError_dir(){
+
+	public String getError_dir() {
 		return error_dir;
 	}
-	
-	public void setError_dir(String error_dir){
+
+	public void setError_dir(String error_dir) {
 		String oldValue = this.error_dir;
 		this.error_dir = error_dir;
 		propertyChanged(error_dir, oldValue);
 	}
-	
-	public String getDocstat_dir(){
+
+	public String getDocstat_dir() {
 		return docstat_dir;
 	}
-	
-	public void setDocstat_dir(String docstat_dir){
+
+	public void setDocstat_dir(String docstat_dir) {
 		String oldValue = this.docstat_dir;
 		this.docstat_dir = docstat_dir;
 		propertyChanged(docstat_dir, oldValue);
 	}
-	
-	public String getPartner_file(){
+
+	public String getPartner_file() {
 		return partner_file;
 	}
-	
-	public void setPartner_file(String partner_file){
+
+	public void setPartner_file(String partner_file) {
 		String oldValue = this.partner_file;
 		this.partner_file = partner_file;
 		propertyChanged(partner_file, oldValue);
 	}
-	
-	public String getStylesheet(){
+
+	public String getStylesheet() {
 		return stylesheet;
 	}
-	
-	public void setStylesheet(String stylesheet){
+
+	public void setStylesheet(String stylesheet) {
 		String oldValue = this.stylesheet;
 		this.stylesheet = stylesheet;
 		propertyChanged(stylesheet, oldValue);
 	}
-	
+
 	private class StringComparator implements Comparator<String> {
-		public int compare(String s1, String s2){
+		public int compare(String s1, String s2) {
 			return s1.compareTo(s2);
 		}
 	}

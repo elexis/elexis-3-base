@@ -1,14 +1,14 @@
 /*******************************************************************************
- * 
- * The authorship of this code and the accompanying materials is held by 
- * medshare GmbH, Switzerland. All rights reserved. 
+ *
+ * The authorship of this code and the accompanying materials is held by
+ * medshare GmbH, Switzerland. All rights reserved.
  * http://medshare.net
- * 
- * This code and the accompanying materials are made available under 
+ *
+ * This code and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0
- * 
+ *
  * Year of publication: 2012
- * 
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.views;
@@ -54,7 +54,7 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Dialog um eine Messung zu bearbeiten oder neu zu erstellen
- * 
+ *
  * @author Patrick Chaubert
  */
 public class MessungBearbeiten extends TitleAreaDialog {
@@ -64,10 +64,10 @@ public class MessungBearbeiten extends TitleAreaDialog {
 	private final List<Messwert> calcFields;
 	private DatePickerCombo dateWidget;
 	private String tabtitle;
-	
+
 	private final Listener listener = new Listener() {
 		@Override
-		public void handleEvent(Event event){
+		public void handleEvent(Event event) {
 			Boolean validValues = true;
 			for (Messwert mw : shownMesswerte) {
 				IMesswertTyp typ = mw.getTyp();
@@ -85,70 +85,69 @@ public class MessungBearbeiten extends TitleAreaDialog {
 			}
 		}
 	};
-	
-	public MessungBearbeiten(final Shell parent, Messung m){
+
+	public MessungBearbeiten(final Shell parent, Messung m) {
 		super(parent);
 		messung = m;
 		shownMesswerte = new ArrayList<Messwert>();
 		calcFields = new ArrayList<Messwert>();
 	}
-	
-	public MessungBearbeiten(Shell shell, Messung m, String text){
+
+	public MessungBearbeiten(Shell shell, Messung m, String text) {
 		this(shell, m);
 		tabtitle = text;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
-		
+	protected Control createDialogArea(Composite parent) {
+
 		Composite comp = null;
 		Composite row = null;
 		Label lbl = null;
-		
-		ScrolledComposite scroll =
-			new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+
+		ScrolledComposite scroll = new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		scroll.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		comp = new Composite(scroll, SWT.NONE);
 		scroll.setContent(comp);
-		
+
 		comp.setLayout(new GridLayout());
-		
+
 		row = new Composite(comp, SWT.NONE);
 		row.setLayout(new RowLayout(SWT.HORIZONTAL));
-		
+
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
-		
+
 		lbl = new Label(row, SWT.NONE);
 		lbl.setText(Messages.MessungBearbeiten_PatientLabel);
 		lbl.setLayoutData(new RowData(90, SWT.DEFAULT));
-		
+
 		lbl = new Label(row, SWT.NONE);
-		
+
 		if (pat != null) {
 			lbl.setText(pat.getLabel() + " (" + pat.getAlter() + ") - [" //$NON-NLS-1$ //$NON-NLS-2$
-				+ pat.get(Patient.FLD_PATID).toString() + "]"); //$NON-NLS-1$
+					+ pat.get(Patient.FLD_PATID).toString() + "]"); //$NON-NLS-1$
 		} else {
 			lbl.setText("Patient is null");
 		}
-		
+
 		row = new Composite(comp, SWT.NONE);
 		row.setLayout(new RowLayout(SWT.HORIZONTAL));
-		
+
 		lbl = new Label(row, SWT.NONE);
 		lbl.setText(Messages.MessungBearbeiten_MessungLabel);
 		lbl.setLayoutData(new RowData(90, SWT.DEFAULT));
-		
+
 		dateWidget = new DatePickerCombo(row, SWT.NONE);
-		dateWidget.setFormat(new SimpleDateFormat(MesswertTypDate.DATE_FORMAT)); //$NON-NLS-1$
+		dateWidget.setFormat(new SimpleDateFormat(MesswertTypDate.DATE_FORMAT)); // $NON-NLS-1$
 		dateWidget.setDate(new TimeTool(messung.getDatum()).getTime());
 		dateWidget.setLayoutData(new RowData(60, SWT.DEFAULT));
-		
+
 		Label shadow_sep_h = new Label(comp, SWT.SEPARATOR | SWT.SHADOW_OUT | SWT.HORIZONTAL);
 		shadow_sep_h.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		
+
 		messwerte = messung.getMesswerte();
 		MessungTyp typ = messung.getTyp();
-		
+
 		Panel p = typ.getPanel();
 		if (p != null) {
 			createCompositeWithLayout(typ.getPanel(), comp);
@@ -158,8 +157,8 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		comp.setSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return scroll;
 	}
-	
-	private Composite createCompositeWithoutLayout(Composite parent){
+
+	private Composite createCompositeWithoutLayout(Composite parent) {
 		Composite c = new Composite(parent, SWT.NONE);
 		c.setLayout(new GridLayout());
 		for (Messwert messwert : messung.getMesswerte()) {
@@ -174,8 +173,8 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		}
 		return c;
 	}
-	
-	private Composite createCompositeWithLayout(Panel p, Composite parent){
+
+	private Composite createCompositeWithLayout(Panel p, Composite parent) {
 		Composite c = new Composite(parent, SWT.NONE);
 		String panelType = MessungKonfiguration.ELEMENT_LAYOUTPANEL_PLAIN;
 		if (p != null)
@@ -185,12 +184,10 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		} else if (panelType.equals(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY)) {
 			c.setLayout(new GridLayout());
 			Browser browser = new Browser(c, SWT.NONE);
-			String url =
-				(p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY_URL) : null;
+			String url = (p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY_URL) : null;
 			browser.setUrl(url == null ? "" : url); //$NON-NLS-1$
 			GridData gd = SWTHelper.getFillGridData(1, true, 1, true);
-			String bounds = (p != null)
-					? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY_SIZE) : null;
+			String bounds = (p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY_SIZE) : null;
 			if (bounds != null) {
 				String[] coord = bounds.trim().split("\\s*,\\s*"); //$NON-NLS-1$
 				if (coord.length == 2) {
@@ -207,29 +204,26 @@ public class MessungBearbeiten extends TitleAreaDialog {
 				l.setText(p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTLABEL_TEXT));
 			}
 		} else if (panelType.equals(MessungKonfiguration.ELEMENT_LAYOUTGRID)) {
-			String cols = (p != null)
-					? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTGRID_COLUMNS) : null;
+			String cols = (p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTGRID_COLUMNS) : null;
 			if (cols == null) {
 				c.setLayout(new GridLayout());
 			} else {
 				c.setLayout(new GridLayout(Integer.parseInt(cols), false));
 			}
-			
+
 		} else if (panelType.equals(MessungKonfiguration.ELEMENT_LAYOUTFIELD)) {
-			String fieldref =
-				(p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_REF) : null;
+			String fieldref = (p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_REF) : null;
 			Messwert mw = getMesswert(fieldref);
 			if (mw != null) {
 				IMesswertTyp dft = mw.getTyp();
-				
+
 				boolean bEditable = true;
-				String attr = (p != null)
-						? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_EDITABLE) : null;
+				String attr = (p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_EDITABLE) : null;
 				if (attr != null && attr.equals("false")) { //$NON-NLS-1$
 					bEditable = false;
 				}
 				dft.setEditable(bEditable);
-				
+
 				String validpattern = (p != null)
 						? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTFIELD_VALIDPATTERN)
 						: null;
@@ -244,24 +238,23 @@ public class MessungBearbeiten extends TitleAreaDialog {
 					invalidMsg = Messages.MessungBearbeiten_InvalidValue;
 				}
 				dft.setInvalidmessage(invalidMsg);
-				
+
 				c.setLayout(new GridLayout());
-				
+
 				String labelText = dft.getTitle();
 				if (!dft.getUnit().equals("")) { //$NON-NLS-1$
 					labelText += " [" + dft.getUnit() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				
+
 				Composite labelRow = new Composite(c, SWT.NONE);
 				labelRow.setLayout(new GridLayout(2, false));
 				labelRow.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-				
+
 				Label tl = new Label(labelRow, SWT.NONE);
 				tl.setText(labelText);
 				tl.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
-				
-				Image image = new Image(c.getDisplay(),
-					PlatformHelper.getBasePath("com.hilotec.elexis.messwerte.v2") //$NON-NLS-1$
+
+				Image image = new Image(c.getDisplay(), PlatformHelper.getBasePath("com.hilotec.elexis.messwerte.v2") //$NON-NLS-1$
 						+ File.separator + "rsc" + File.separator //$NON-NLS-1$
 						+ MesswertBase.ICON_TRANSPARENT);
 				// label für icons, wenn Wert ausserhalb des konfigurierten Bereichs liegt
@@ -269,9 +262,9 @@ public class MessungBearbeiten extends TitleAreaDialog {
 				il.setImage(image);
 				il.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, true, 1, 1));
 				mw.setIconLabel(il);
-				
+
 				Widget w = dft.createWidget(c, mw);
-				
+
 				if (dft instanceof MesswertTypCalc) {
 					calcFields.add(mw);
 				} else {
@@ -291,15 +284,15 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		}
 		return c;
 	}
-	
-	private void setLayoutData(Composite c){
+
+	private void setLayoutData(Composite c) {
 		if (c.getParent().getLayout() instanceof GridLayout) {
 			c.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		}
 		c.pack();
 	}
-	
-	public Messwert getMesswert(String name){
+
+	public Messwert getMesswert(String name) {
 		for (Messwert m : messwerte) {
 			if (m.getName().equals(name)) {
 				return m;
@@ -307,9 +300,9 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		}
 		return null;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		getShell().setText(Messages.MessungBearbeiten_EditMessung);
 		String title = messung.getTyp().getTitle();
@@ -318,16 +311,16 @@ public class MessungBearbeiten extends TitleAreaDialog {
 			title = title + ": " + descr; //$NON-NLS-1$
 		setTitle(title);
 	}
-	
+
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
 		setTitle(tabtitle);
 		return contents;
 	}
-	
+
 	@Override
-	public void okPressed(){
+	public void okPressed() {
 		boolean validValues = true;
 		TimeTool tt = new TimeTool(dateWidget.getDate().getTime());
 		messung.setDatum(tt.toString(TimeTool.DATE_GER));
@@ -346,9 +339,9 @@ public class MessungBearbeiten extends TitleAreaDialog {
 			close();
 		}
 	}
-	
+
 	@Override
-	public boolean close(){
+	public boolean close() {
 		for (Messwert mw : shownMesswerte) {
 			mw.getTyp().setShown(false);
 		}

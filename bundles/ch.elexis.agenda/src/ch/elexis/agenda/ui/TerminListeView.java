@@ -7,10 +7,10 @@
  *
  * Sponsoring:
  * 	 mediX Notfallpaxis, diepraxen Stauffacher AG, Zürich
- * 
+ *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -68,56 +68,52 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 	ScrolledForm form;
 	CommonViewer cv = new CommonViewer();
 	LockRequestingRestrictedAction<Termin> terminAendernAction;
-	
+
 	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
-	
+
 	@Inject
-	void activePatient(@Optional
-	IPatient patient){
+	void activePatient(@Optional IPatient patient) {
 		Display.getDefault().asyncExec(() -> {
 			refresh();
 		});
 	}
-	
+
 	@Inject
 	@Optional
-	public void reload(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE)
-	IAppointment appointment){
+	public void reload(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IAppointment appointment) {
 		if (cv != null) {
 			cv.notify(CommonViewer.Message.update, appointment);
 		}
 	}
-	
-	
-	public TerminListeView(){
-		terminAendernAction = new LockRequestingRestrictedAction<Termin>(
-			ACLContributor.CHANGE_APPOINTMENTS, ch.elexis.agenda.Messages.TagesView_changeTermin) {
+
+	public TerminListeView() {
+		terminAendernAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.CHANGE_APPOINTMENTS,
+				ch.elexis.agenda.Messages.TagesView_changeTermin) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 				setToolTipText(ch.elexis.agenda.Messages.TagesView_changeThisTermin);
 			}
-			
+
 			@Override
-			public Termin getTargetedObject(){
-				java.util.Optional<IAppointment> appointment =
-					ContextServiceHolder.get().getTyped(IAppointment.class);
+			public Termin getTargetedObject() {
+				java.util.Optional<IAppointment> appointment = ContextServiceHolder.get().getTyped(IAppointment.class);
 				if (appointment.isPresent()) {
 					return Termin.load(appointment.get().getId());
 				}
 				return null;
 			}
-			
+
 			@Override
-			public void doRun(Termin element){
+			public void doRun(Termin element) {
 				AcquireLockBlockingUi.aquireAndRun((IPersistentObject) element, new ILockHandler() {
-					
+
 					@Override
-					public void lockFailed(){
+					public void lockFailed() {
 						// do nothing
 					}
-					
+
 					@Override
-					public void lockAcquired(){
+					public void lockAcquired() {
 						TerminDialog dlg = new TerminDialog(element).useAgendaGlobalData(false);
 						dlg.open();
 					}
@@ -128,55 +124,53 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 			}
 		};
 	}
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		form = UiDesk.getToolkit().createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
-		
-		CommonViewerContentProvider contentProvider =
-			new ch.elexis.core.ui.util.viewers.CommonViewerContentProvider(cv) {
-				
-				private static final int QUERY_LIMIT = 50;
-				
-				@Override
-				public Object[] getElements(final Object inputElement){
-					java.util.Optional<IPatient> actPat =
-						ContextServiceHolder.get().getActivePatient();
-					IQuery<?> query = getBaseQuery();
-					if (actPat.isPresent()) {
-						query.and("patId", COMPARATOR.EQUALS, actPat.get().getId());
-					} else {
-						return new Object[0];
-					}
-					query.orderBy("tag", ORDER.DESC);
-					List<?> elements = query.execute();
-					commonViewer.setLimitReached(elements.size() == QUERY_LIMIT, QUERY_LIMIT);
-					return elements.toArray(new Object[elements.size()]);
+
+		CommonViewerContentProvider contentProvider = new ch.elexis.core.ui.util.viewers.CommonViewerContentProvider(
+				cv) {
+
+			private static final int QUERY_LIMIT = 50;
+
+			@Override
+			public Object[] getElements(final Object inputElement) {
+				java.util.Optional<IPatient> actPat = ContextServiceHolder.get().getActivePatient();
+				IQuery<?> query = getBaseQuery();
+				if (actPat.isPresent()) {
+					query.and("patId", COMPARATOR.EQUALS, actPat.get().getId());
+				} else {
+					return new Object[0];
 				}
-				
-				@Override
-				protected IQuery<?> getBaseQuery(){
-					IQuery<IAppointment> ret =
-						CoreModelServiceHolder.get().getQuery(IAppointment.class);
-					if (!ignoreLimit) {
-						ret.limit(QUERY_LIMIT);
-					}
-					return ret;
+				query.orderBy("tag", ORDER.DESC);
+				List<?> elements = query.execute();
+				commonViewer.setLimitReached(elements.size() == QUERY_LIMIT, QUERY_LIMIT);
+				return elements.toArray(new Object[elements.size()]);
+			}
+
+			@Override
+			protected IQuery<?> getBaseQuery() {
+				IQuery<IAppointment> ret = CoreModelServiceHolder.get().getQuery(IAppointment.class);
+				if (!ignoreLimit) {
+					ret.limit(QUERY_LIMIT);
 				}
-				
-				@Override
-				public void init(){
-					super.init();
-					setIgnoreLimit(false);
-				}
-			};
-		
+				return ret;
+			}
+
+			@Override
+			public void init() {
+				super.init();
+				setIgnoreLimit(false);
+			}
+		};
+
 		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof IAppointment) {
 					IAppointment termin = (IAppointment) element;
 					StringBuilder sbLabel = new StringBuilder();
@@ -184,20 +178,20 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 					if (termin.getStartTime() != null) {
 						TimeTool tt = new TimeTool(termin.getStartTime());
 						sbLabel.append(tt.toString(TimeTool.DATE_GER));
-						String dayShort = termin.getStartTime().getDayOfWeek()
-							.getDisplayName(TextStyle.SHORT, Locale.getDefault());
+						String dayShort = termin.getStartTime().getDayOfWeek().getDisplayName(TextStyle.SHORT,
+								Locale.getDefault());
 						if (dayShort != null) {
 							sbLabel.append(" (" + dayShort + ")");
 						}
 						sbLabel.append(", ");
-						
+
 						// start time
 						sbLabel.append(tt.toString(TimeTool.TIME_SMALL));
 					} else {
 						sbLabel.append("?");
 					}
 					sbLabel.append(" - ");
-					
+
 					if (termin.getEndTime() != null) {
 						TimeTool te = new TimeTool(termin.getEndTime());
 						// end time
@@ -205,7 +199,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 					} else {
 						sbLabel.append("?");
 					}
-					
+
 					// type
 					sbLabel.append(" (");
 					sbLabel.append(termin.getType());
@@ -213,10 +207,10 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 					// status
 					sbLabel.append(termin.getState());
 					sbLabel.append("), ");
-					
+
 					// bereich
 					sbLabel.append(termin.getSchedule());
-					
+
 					// grund if set
 					if (termin.getReason() != null && !termin.getReason().isEmpty()) {
 						sbLabel.append(" (");
@@ -227,30 +221,29 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 				}
 				return super.getText(element);
 			}
-		},
-			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE,
-				SWT.V_SCROLL | SWT.FULL_SELECTION, cv));
+		}, new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE, SWT.V_SCROLL | SWT.FULL_SELECTION, cv));
 		vc.setContentType(ContentType.GENERICOBJECT);
 		cv.create(vc, body, SWT.NONE, this);
 		cv.getViewerWidget().addDoubleClickListener(new IDoubleClickListener() {
 			@Override
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				terminAendernAction.run();
 			}
 		});
-		
+
 		getSite().getPage().addPartListener(udpateOnVisible);
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		getSite().getPage().removePartListener(udpateOnVisible);
 	}
-	
+
 	@Override
-	public void setFocus(){}
-	
-	private void updateSelection(IPatient patient){
+	public void setFocus() {
+	}
+
+	private void updateSelection(IPatient patient) {
 		if (patient == null) {
 			form.setText(Messages.TerminListView_noPatientSelected);
 		} else {
@@ -258,20 +251,19 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 			cv.notify(CommonViewer.Message.update);
 		}
 	}
-	
+
 	/**
-	 * Sorts the appointments in the TerminListView. Use SWT.UP for ascending and SWT.DOWN for
-	 * descending.
-	 * 
+	 * Sorts the appointments in the TerminListView. Use SWT.UP for ascending and
+	 * SWT.DOWN for descending.
+	 *
 	 * @param sortDirection
 	 */
-	public void sort(final int sortDirection){
+	public void sort(final int sortDirection) {
 		cv.getViewerWidget().setComparator(new ViewerComparator() {
 			@Override
-			public int compare(Viewer viewer, Object e1, Object e2){
+			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1 instanceof IAppointment && e2 instanceof IAppointment) {
-					int rc = ((IAppointment) e1).getStartTime()
-						.compareTo(((IAppointment) e2).getStartTime());
+					int rc = ((IAppointment) e1).getStartTime().compareTo(((IAppointment) e2).getStartTime());
 					// If descending order, flip the direction
 					if (sortDirection == SWT.DOWN) {
 						rc = -rc;
@@ -282,9 +274,9 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 			}
 		});
 	}
-	
+
 	@Override
-	public void refresh(){
+	public void refresh() {
 		if (CoreUiUtil.isActiveControl(form)) {
 			updateSelection(ContextServiceHolder.get().getActivePatient().orElse(null));
 		}

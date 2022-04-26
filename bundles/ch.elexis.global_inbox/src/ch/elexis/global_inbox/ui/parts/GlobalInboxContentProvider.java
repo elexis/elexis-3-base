@@ -29,27 +29,27 @@ import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.GlobalInboxUtil;
 
 public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
-	
+
 	private static final String LOCAL_LOCK_INBOXIMPORT = "GlobalInboxImport";
 	private final Pattern PATIENT_MATCH_PATTERN = Pattern.compile("([0-9]+)_(.+)");
-	
+
 	private Logger log;
 	private List<GlobalInboxEntry> entries;
 	private List<GlobalInboxEntry> loadJobList;
 	private GlobalInboxPart view;
 	private LoadJob loader;
 	private GlobalInboxUtil giutil;
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		super.dispose();
 	}
-	
-	public IStatus reload(){
+
+	public IStatus reload() {
 		return loader.run(null);
 	}
-	
-	public GlobalInboxContentProvider(GlobalInboxPart view){
+
+	public GlobalInboxContentProvider(GlobalInboxPart view) {
 		this.view = view;
 		log = LoggerFactory.getLogger(getClass());
 		entries = new ArrayList<>();
@@ -58,23 +58,23 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 		loader.schedule(1000);
 		giutil = new GlobalInboxUtil();
 	}
-	
+
 	@Override
-	public Object[] getElements(Object inputElement){
+	public Object[] getElements(Object inputElement) {
 		return entries == null ? null : entries.toArray();
 	}
-	
+
 	class LoadJob extends Job {
-		
-		public LoadJob(){
+
+		public LoadJob() {
 			super("GlobalInbox"); //$NON-NLS-1$
 			setPriority(DECORATE);
 			setUser(false);
 			setSystem(true);
 		}
-		
+
 		@Override
-		protected IStatus run(IProgressMonitor monitor){
+		protected IStatus run(IProgressMonitor monitor) {
 			LocalLock lock = new LocalLock(LOCAL_LOCK_INBOXIMPORT);
 			if (lock.tryLock()) {
 				String filepath = CoreHub.localCfg.get(Preferences.PREF_DIR, null);
@@ -91,15 +91,14 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 						return Status.OK_STATUS;
 					}
 				}
-				Object dm =
-					Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
+				Object dm = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 				if (dm == null) {
 					log.warn("No document management service found.");
 					return Status.OK_STATUS;
 				}
 				IDocumentManager documentManager = (IDocumentManager) dm;
 				String[] cats = documentManager.getCategories();
-				
+
 				if (cats != null) {
 					for (String cat : cats) {
 						File subdir = new File(dir, cat);
@@ -108,7 +107,7 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 						}
 					}
 				}
-				
+
 //				entries.clear();
 				loadJobList.clear();
 				addFilesInDirRecursive(dir);
@@ -126,19 +125,18 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 				}
 			}
 			// unlock if the lock is managed by this instance
-			LocalLock.getManagedLock(LOCAL_LOCK_INBOXIMPORT)
-				.ifPresent(localDocumentLock -> localDocumentLock.unlock());
+			LocalLock.getManagedLock(LOCAL_LOCK_INBOXIMPORT).ifPresent(localDocumentLock -> localDocumentLock.unlock());
 			return Status.OK_STATUS;
 		}
-		
-		private void filterAndPopulate(){
+
+		private void filterAndPopulate() {
 			for (Iterator<GlobalInboxEntry> iterator = entries.iterator(); iterator.hasNext();) {
 				GlobalInboxEntry gie = iterator.next();
 				if (!loadJobList.contains(gie)) {
 					iterator.remove();
 				}
 			}
-			
+
 			for (GlobalInboxEntry gie : loadJobList) {
 				if (!entries.contains(gie)) {
 					gie = GlobalInboxEntryFactory.populateExtensionInformation(gie);
@@ -146,10 +144,10 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 				}
 			}
 		}
-		
-		private void addFilesInDirRecursive(File dir){
+
+		private void addFilesInDirRecursive(File dir) {
 			List<String> allFilesInDirRecursive = new ArrayList<>();
-			
+
 			for (File file : dir.listFiles()) {
 				if (file.isDirectory()) {
 					addFilesInDirRecursive(file);
@@ -159,45 +157,41 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 					if (matcher.matches()) {
 						String patientNo = matcher.group(1);
 						String fileName = matcher.group(2);
-						String tryImportForPatient =
-							giutil.tryImportForPatient(file, patientNo, fileName);
+						String tryImportForPatient = giutil.tryImportForPatient(file, patientNo, fileName);
 						if (tryImportForPatient != null) {
 							// TODO does this match the up-until-now behavior?
-							log.info("Auto imported file [{}], document id is [{}]", file,
-								tryImportForPatient);
+							log.info("Auto imported file [{}], document id is [{}]", file, tryImportForPatient);
 							continue;
 						}
 					}
-					
+
 					allFilesInDirRecursive.add(file.getAbsolutePath());
 				}
 			}
-			
+
 			// extension file names are always longer than the orig filenames
 			// so in order to identify them beforehand we sort the filenames by length
 			allFilesInDirRecursive.sort(Comparator.comparingInt(String::length));
-			
+
 			List<File> extensionFiles = new ArrayList<File>();
 			for (String string : allFilesInDirRecursive) {
 				File file = new File(string);
 				if (extensionFiles.contains(file)) {
 					continue;
 				}
-				
+
 				// are there extension-files to this file?
 				// e.g. orig file: scan.pdf, ext file: scan.pdf.edam.xml
-				File[] _extensionFiles =
-					dir.listFiles((_dir, _name) -> _name.startsWith(file.getName())
-						&& !Objects.equals(_name, file.getName()));
+				File[] _extensionFiles = dir.listFiles(
+						(_dir, _name) -> _name.startsWith(file.getName()) && !Objects.equals(_name, file.getName()));
 				extensionFiles.addAll(Arrays.asList(_extensionFiles));
-				GlobalInboxEntry globalInboxEntry =
-					GlobalInboxEntryFactory.createEntry(file, _extensionFiles);
+				GlobalInboxEntry globalInboxEntry = GlobalInboxEntryFactory.createEntry(file, _extensionFiles);
 				loadJobList.add(globalInboxEntry);
 			}
 		}
 	}
-	
-	void destroy(){
+
+	void destroy() {
 		giutil = null;
 		entries = null;
 		loader.cancel();

@@ -17,20 +17,20 @@ public class DocxWordTableProperties {
 	Node borderBottom;
 	Node borderInsideH;
 	Node borderInsideV;
-	
-	public DocxWordTableProperties(Node node){
+
+	public DocxWordTableProperties(Node node) {
 		this.properties = node;
 	}
-	
-	public void setWidth(int percent){
+
+	public void setWidth(int percent) {
 		Node width = getWidthNode();
 		if (width == null)
 			width = createWidthNode();
 		XMLUtil.setAttribute((Element) width, "w:w", Integer.toString(percent * 50)); //$NON-NLS-1$
 		XMLUtil.setAttribute((Element) width, "w:type", "pct"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
-	private Node getWidthNode(){
+
+	private Node getWidthNode() {
 		if (widthNode == null) {
 			List<Node> tblWNodes = XMLUtil.getChildElementsByTagName(properties, "w:tblW"); //$NON-NLS-1$
 			if (!tblWNodes.isEmpty())
@@ -38,17 +38,16 @@ public class DocxWordTableProperties {
 		}
 		return widthNode;
 	}
-	
-	private Node createWidthNode(){
+
+	private Node createWidthNode() {
 		widthNode = properties.getOwnerDocument().createElement("w:tblW"); //$NON-NLS-1$
 		properties.appendChild(widthNode);
 		return widthNode;
 	}
-	
-	private Node getBorderNode(){
+
+	private Node getBorderNode() {
 		if (borderNode == null) {
-			List<Node> tblBordersNodes =
-				XMLUtil.getChildElementsByTagName(properties, "w:tblBorders"); //$NON-NLS-1$
+			List<Node> tblBordersNodes = XMLUtil.getChildElementsByTagName(properties, "w:tblBorders"); //$NON-NLS-1$
 			if (!tblBordersNodes.isEmpty()) {
 				borderNode = tblBordersNodes.get(0);
 				// get the border nodes
@@ -75,10 +74,10 @@ public class DocxWordTableProperties {
 		return borderNode;
 	}
 
-	private Node createBorderNode(){
+	private Node createBorderNode() {
 		borderNode = properties.getOwnerDocument().createElement("w:tblBorders"); //$NON-NLS-1$
 		properties.appendChild(borderNode);
-		
+
 		// create the nodes for the borders
 		borderTop = properties.getOwnerDocument().createElement("w:top"); //$NON-NLS-1$
 		borderNode.appendChild(borderTop);
@@ -96,26 +95,26 @@ public class DocxWordTableProperties {
 		return borderNode;
 	}
 
-	public void setAllBorders(int i){
+	public void setAllBorders(int i) {
 		Node borders = getBorderNode();
 		if (borders == null)
 			borders = createBorderNode();
-		
+
 		XMLUtil.setAttribute((Element) borderTop, "w:val", "single"); //$NON-NLS-1$ //$NON-NLS-2$
 		XMLUtil.setAttribute((Element) borderTop, "w:sz", Integer.toString(i * 4)); //$NON-NLS-1$
-		
+
 		XMLUtil.setAttribute((Element) borderLeft, "w:val", "single"); //$NON-NLS-1$ //$NON-NLS-2$
 		XMLUtil.setAttribute((Element) borderLeft, "w:sz", Integer.toString(i * 4)); //$NON-NLS-1$
-		
+
 		XMLUtil.setAttribute((Element) borderBottom, "w:val", "single"); //$NON-NLS-1$ //$NON-NLS-2$
 		XMLUtil.setAttribute((Element) borderBottom, "w:sz", Integer.toString(i * 4)); //$NON-NLS-1$
-		
+
 		XMLUtil.setAttribute((Element) borderRight, "w:val", "single"); //$NON-NLS-1$ //$NON-NLS-2$
 		XMLUtil.setAttribute((Element) borderRight, "w:sz", Integer.toString(i * 4)); //$NON-NLS-1$
-		
+
 		XMLUtil.setAttribute((Element) borderInsideH, "w:val", "single"); //$NON-NLS-1$ //$NON-NLS-2$
 		XMLUtil.setAttribute((Element) borderInsideH, "w:sz", Integer.toString(i * 4)); //$NON-NLS-1$
-		
+
 		XMLUtil.setAttribute((Element) borderInsideV, "w:val", "single"); //$NON-NLS-1$ //$NON-NLS-2$
 		XMLUtil.setAttribute((Element) borderInsideV, "w:sz", Integer.toString(i * 4)); //$NON-NLS-1$
 	}

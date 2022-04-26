@@ -14,9 +14,9 @@ package ch.unibe.iam.scg.archie.ui.widgets;
 /**
  * Enum that stores available implementations of <code>AbstractWidget</code>
  * objects.
- * 
+ *
  * $Id: WidgetTypes.java 764 2009-07-24 11:20:03Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 764 $

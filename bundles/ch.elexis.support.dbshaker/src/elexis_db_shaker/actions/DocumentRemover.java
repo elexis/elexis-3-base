@@ -7,9 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
  *
- *    
+ *
+ *
  *******************************************************************************/
 package elexis_db_shaker.actions;
 
@@ -26,8 +26,8 @@ import ch.elexis.data.Brief;
 import ch.elexis.data.Query;
 
 public class DocumentRemover {
-	
-	void run(IProgressMonitor monitor, int i){
+
+	void run(IProgressMonitor monitor, int i) {
 		monitor.subTask("Lösche Dokumente");
 		Query<Brief> qbe = new Query<Brief>(Brief.class);
 		for (Brief brief : qbe.execute()) {
@@ -38,17 +38,16 @@ public class DocumentRemover {
 		if (os != null) {
 			IDocumentManager dm = (IDocumentManager) os;
 			try {
-				List<IOpaqueDocument> documents =
-					dm.listDocuments(null, null, null, null, null, null);
+				List<IOpaqueDocument> documents = dm.listDocuments(null, null, null, null, null, null);
 				for (IOpaqueDocument doc : documents) {
 					dm.removeDocument(doc.getGUID());
 				}
 			} catch (ElexisException e) {
-				
+
 				e.printStackTrace();
 			}
 		}
 		monitor.worked(i / 2);
 	}
-	
+
 }

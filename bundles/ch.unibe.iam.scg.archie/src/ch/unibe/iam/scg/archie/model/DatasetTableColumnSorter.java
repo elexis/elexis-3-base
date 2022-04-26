@@ -19,14 +19,16 @@ import org.eclipse.swt.widgets.TableColumn;
 import ch.unibe.iam.scg.archie.utils.DatasetHelper;
 
 /**
- * <p>Handles dataset sorting according to the table and it's sorting column and
+ * <p>
+ * Handles dataset sorting according to the table and it's sorting column and
  * direction. This class is used by the controller (action that starts a new
  * statistic) to attach this listener to the latest result table, so that
  * sorting the table is reflected on the dataset. This is needed in order to
- * have a properly sorted table (and the cloned dataset) in the chart wizard.</p>
- * 
+ * have a properly sorted table (and the cloned dataset) in the chart wizard.
+ * </p>
+ *
  * $Id: DatasetTableColumnSorter.java 669 2008-12-15 09:55:30Z hephster $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 669 $
@@ -45,8 +47,8 @@ public class DatasetTableColumnSorter implements SelectionListener {
 
 	/**
 	 * Public constructor.
-	 * 
-	 * @param table Table whose sorting will be synched wit the dataset.
+	 *
+	 * @param table   Table whose sorting will be synched wit the dataset.
 	 * @param dataset Dataset that will be sorted each time the table is sorted.
 	 */
 	public DatasetTableColumnSorter(final Table table, final DataSet dataset) {
@@ -70,7 +72,7 @@ public class DatasetTableColumnSorter implements SelectionListener {
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	public void widgetDefaultSelected(SelectionEvent e) {
-		//this.sortDataset();
+		// this.sortDataset();
 	}
 
 	/**
@@ -82,8 +84,8 @@ public class DatasetTableColumnSorter implements SelectionListener {
 
 	/**
 	 * Sorts the dataset given to this listener according to the table's sort
-	 * direction and column. This ensures that the table sorting is being
-	 * reflected onto the dataset.
+	 * direction and column. This ensures that the table sorting is being reflected
+	 * onto the dataset.
 	 */
 	private void sortDataset() {
 		TableColumn sortColumn = this.table.getSortColumn();

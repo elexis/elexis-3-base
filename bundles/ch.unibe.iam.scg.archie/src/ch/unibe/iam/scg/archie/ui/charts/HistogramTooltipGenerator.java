@@ -19,15 +19,15 @@ import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.data.category.CategoryDataset;
 
 /**
- * 
+ *
  * <p>
  * Custom tooltip generator for the age histogram chart. This basically reverts
  * all negative values so that all tooltips in the age histogram have positive
  * values, even the ones on the negative (left) side.
  * </p>
- * 
+ *
  * $Id: HistogramTooltipGenerator.java 705 2009-01-03 17:48:46Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 705 $

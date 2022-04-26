@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    J, Kurath - Sponsoring
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.stickynotes.ui;
@@ -45,31 +45,30 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 	Patient actPatient;
 	StickyNote actNote;
 	ConfigServicePreferenceStore prefs;
-	
-	private final ElexisUiEventListenerImpl eeli_pat =
-		new ElexisUiEventListenerImpl(Patient.class) {
-			@Override
-			public void runInUi(ElexisEvent ev){
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					doSelect((Patient) ev.getObject());
-				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-					deselect();
-				}
-			}
-		};
-	
-	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
-		ElexisEvent.EVENT_USER_CHANGED) {
-		
+
+	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
 		@Override
-		public void catchElexisEvent(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev) {
+			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+				doSelect((Patient) ev.getObject());
+			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+				deselect();
+			}
+		}
+	};
+
+	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
+			ElexisEvent.EVENT_USER_CHANGED) {
+
+		@Override
+		public void catchElexisEvent(ElexisEvent ev) {
 			prefs = new ConfigServicePreferenceStore(Scope.USER);
 		}
-		
+
 	};
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		prefs = new ConfigServicePreferenceStore(Scope.USER);
 		form = UiDesk.getToolkit().createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -79,21 +78,21 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 		etf.connectGlobalActions(getViewSite());
 		etf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		GlobalEventDispatcher.addActivationListener(this, this);
-		
+
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		etf.setFocus();
 	}
-	
-	public void activation(boolean mode){
+
+	public void activation(boolean mode) {
 		if ((mode == false) && etf.isDirty()) {
 			if (actPatient != null) {
 				if (actNote == null) {
@@ -102,10 +101,10 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 				actNote.setText(etf.getContentsAsXML());
 			}
 		}
-		
+
 	}
-	
-	public void visible(boolean mode){
+
+	public void visible(boolean mode) {
 		if (mode) {
 			eeli_pat.catchElexisEvent(ElexisEvent.createPatientEvent());
 			eeli_user.catchElexisEvent(ElexisEvent.createUserEvent());
@@ -115,23 +114,23 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_user);
 			CoreHub.heart.removeListener(this);
 		}
-		
+
 	}
-	
-	private void deselect(){
+
+	private void deselect() {
 		actNote = null;
 		actPatient = null;
 		etf.setText(""); //$NON-NLS-1$
 		// form.setText(Messages.StickyNotesView_NoPatientSelected);
 		setPartName(Messages.StickyNotesView_StickyNotesName);
 	}
-	
-	private void doSelect(Patient pat){
+
+	private void doSelect(Patient pat) {
 		if (pat == null) {
 			deselect();
-			
+
 		} else {
-			
+
 			actPatient = pat;
 			actNote = StickyNote.load(actPatient);
 			etf.setText(actNote.getText());
@@ -147,8 +146,8 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 			etf.getControl().setForeground(fore);
 		}
 	}
-	
-	public void heartbeat(){
+
+	public void heartbeat() {
 		if (actPatient == null) {
 			actPatient = ElexisEventDispatcher.getSelectedPatient();
 		}
@@ -158,9 +157,9 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 			}
 			if (actNote != null) {
 				// TODO handle conflicts
-				
+
 			}
 		}
 	}
-	
+
 }

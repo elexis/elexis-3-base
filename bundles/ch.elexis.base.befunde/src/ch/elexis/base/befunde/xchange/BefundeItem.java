@@ -21,8 +21,8 @@ import ch.elexis.core.ui.exchange.elements.XidElement;
 import ch.elexis.data.Xid;
 
 public class BefundeItem extends FindingElement {
-	
-	BefundeItem asExporter(XChangeExporter home, Messwert mw, String field){
+
+	BefundeItem asExporter(XChangeExporter home, Messwert mw, String field) {
 		super.asExporter(home);
 		setAttribute(ATTR_NAME, mw.getLabel() + ":" + field); //$NON-NLS-1$
 		setAttribute(ATTR_GROUP, "Messwert"); //$NON-NLS-1$

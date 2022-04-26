@@ -23,45 +23,43 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
-public class MessagePreferencePage extends FieldEditorPreferencePage
-		implements IWorkbenchPreferencePage {
-	
+public class MessagePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+
 	private TableViewer receiverViewer;
-	
+
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
-		
+
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
+	protected void createFieldEditors() {
 		// send directory
-		addField(new DirectoryFieldEditor(PreferenceUtil.PREF_FILESYSTEM_OUTPUTDIR,
-			"Ausgabe Verzeichnis", getFieldEditorParent()));
+		addField(new DirectoryFieldEditor(PreferenceUtil.PREF_FILESYSTEM_OUTPUTDIR, "Ausgabe Verzeichnis",
+				getFieldEditorParent()));
 
 		Composite area = new Composite(getFieldEditorParent().getParent(), SWT.NONE);
 		area.setLayoutData(new GridData(GridData.FILL_BOTH));
 		area.setLayout(new GridLayout(1, false));
-		
+
 		Label lbl = new Label(area, SWT.NONE);
 		lbl.setText("Empfänger Konfiguration");
 		lbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+
 		ToolBarManager toolbar = new ToolBarManager();
 		toolbar.add(new AddReceiverAction());
 		toolbar.add(new RemoveReceiverAction());
 		ToolBar toolbarControl = toolbar.createControl(area);
 		toolbarControl.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
-		
+
 		receiverViewer = new TableViewer(area, SWT.BORDER);
 		receiverViewer.setContentProvider(ArrayContentProvider.getInstance());
 		receiverViewer.setLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof Receiver) {
-					return ((Receiver) element).getApplication() + " - "
-						+ ((Receiver) element).getFacility();
+					return ((Receiver) element).getApplication() + " - " + ((Receiver) element).getFacility();
 				}
 				return super.getText(element);
 			}
@@ -71,15 +69,15 @@ public class MessagePreferencePage extends FieldEditorPreferencePage
 		receiverViewer.getTable().setLayoutData(gd);
 		receiverViewer.setInput(PreferenceUtil.getReceivers());
 	}
-	
+
 	private class AddReceiverAction extends Action {
 		@Override
-		public ImageDescriptor getImageDescriptor(){
+		public ImageDescriptor getImageDescriptor() {
 			return Images.IMG_NEW.getImageDescriptor();
 		}
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			Receiver receiver = new Receiver();
 			ReceiverEditDialog dialog = new ReceiverEditDialog(getShell());
 			dialog.setReceiver(receiver);
@@ -89,15 +87,15 @@ public class MessagePreferencePage extends FieldEditorPreferencePage
 			}
 		}
 	}
-	
+
 	private class RemoveReceiverAction extends Action {
 		@Override
-		public ImageDescriptor getImageDescriptor(){
+		public ImageDescriptor getImageDescriptor() {
 			return Images.IMG_DELETE.getImageDescriptor();
 		}
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			IStructuredSelection selection = receiverViewer.getStructuredSelection();
 			if (selection != null && !selection.isEmpty()) {
 				Receiver selected = (Receiver) selection.getFirstElement();

@@ -10,32 +10,32 @@ import org.eclipse.swt.widgets.Text;
 public class YearlySeriesComposite extends Composite {
 	private Text txtDay;
 	private Text txtMonth;
-	
+
 	/**
 	 * Create the composite.
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 */
-	public YearlySeriesComposite(Composite parent, int style){
+	public YearlySeriesComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(2, false));
-		
+
 		Label lblAtThe = new Label(this, SWT.NONE);
 		lblAtThe.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblAtThe.setText(Messages.YearlySeriesComposite_lblAtThe_text); //$NON-NLS-1$
-		
+		lblAtThe.setText(Messages.YearlySeriesComposite_lblAtThe_text); // $NON-NLS-1$
+
 		txtDay = new Text(this, SWT.BORDER);
 		txtDay.setTextLimit(2);
 		txtDay.setText("15");
 		GridData gd_txtDay = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_txtDay.widthHint = 30;
 		txtDay.setLayoutData(gd_txtDay);
-		
+
 		Label lblAtMonth = new Label(this, SWT.NONE);
 		lblAtMonth.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblAtMonth.setText(Messages.YearlySeriesComposite_lblAtMonth_text); //$NON-NLS-1$
-		
+		lblAtMonth.setText(Messages.YearlySeriesComposite_lblAtMonth_text); // $NON-NLS-1$
+
 		txtMonth = new Text(this, SWT.BORDER);
 		txtMonth.setTextLimit(2);
 		txtMonth.setText("6");
@@ -43,25 +43,25 @@ public class YearlySeriesComposite extends Composite {
 		gd_txtMonth.widthHint = 30;
 		txtMonth.setLayoutData(gd_txtMonth);
 	}
-	
+
 	@Override
-	protected void checkSubclass(){
+	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
-	
-	public int getDay(){
+
+	public int getDay() {
 		return Integer.parseInt(txtDay.getText());
 	}
-	
-	public void setDay(int day){
+
+	public void setDay(int day) {
 		txtDay.setText(day + "");
 	}
-	
-	public int getMonth(){
+
+	public int getMonth() {
 		return Integer.parseInt(txtMonth.getText());
 	}
-	
-	public void setMonth(int month){
+
+	public void setMonth(int month) {
 		txtMonth.setText(month + "");
 	}
 }

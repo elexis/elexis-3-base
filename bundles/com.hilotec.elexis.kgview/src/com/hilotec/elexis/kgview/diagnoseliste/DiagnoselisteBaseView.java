@@ -63,7 +63,7 @@ import ch.rgw.tools.StringTool;
  * Copyright (c) 2000, 2006 IBM Corporation and others (EPL)
  */
 class MultilinePaintListener implements Listener {
-	public void handleEvent(Event event){
+	public void handleEvent(Event event) {
 		switch (event.type) {
 		case SWT.MeasureItem: {
 			TreeItem item = (TreeItem) event.item;
@@ -87,13 +87,14 @@ class MultilinePaintListener implements Listener {
 		}
 		}
 	}
-	
-	String getText(TreeItem item, int column){
+
+	String getText(TreeItem item, int column) {
 		String text = item.getText(column);
 		/*
-		 * if (column != 0) { TreeItem parent = item.getParentItem(); int index = parent == null ?
-		 * tree.indexOf(item) : parent.indexOf(item); if ((index+column) % 3 == 1){ text
-		 * +="\nnew line"; } if ((index+column) % 3 == 2) { text +="\nnew line\nnew line"; } }
+		 * if (column != 0) { TreeItem parent = item.getParentItem(); int index = parent
+		 * == null ? tree.indexOf(item) : parent.indexOf(item); if ((index+column) % 3
+		 * == 1){ text +="\nnew line"; } if ((index+column) % 3 == 2) { text
+		 * +="\nnew line\nnew line"; } }
 		 */
 		return text;
 	}
@@ -105,34 +106,34 @@ class MultilinePaintListener implements Listener {
 class DNode {
 	public String text = "";
 	public ArrayList<DNode> children = new ArrayList<DNode>();
-	
+
 	/**
 	 * Neues Kindelement erstellen.
 	 */
-	public DNode newChild(){
+	public DNode newChild() {
 		DNode dn = new DNode();
 		children.add(dn);
 		return dn;
 	}
-	
+
 	/**
 	 * Text an diesen Knoten anhaengen
 	 */
-	public void append(String s){
+	public void append(String s) {
 		text += s;
 	}
-	
+
 	/**
 	 * Text aufgeraeumt zurueckgeben
 	 */
-	public String getClean(){
+	public String getClean() {
 		return text.trim().replaceAll("[ \t]+", " ").replaceAll("\n+", "\n");
 	}
-	
+
 	/**
 	 * Unter-Nodes in DiagnoselisteItem persistent abspeichern
 	 */
-	public void storeChildren(DiagnoselisteItem it){
+	public void storeChildren(DiagnoselisteItem it) {
 		for (DNode c : children) {
 			DiagnoselisteItem ci = it.createChild();
 			ci.setText(c.getClean());
@@ -147,61 +148,61 @@ class DNode {
 class DLDialog extends TitleAreaDialog {
 	private DNode di;
 	private Tree tree;
-	
-	public DLDialog(Shell parentShell, DNode di){
+
+	public DLDialog(Shell parentShell, DNode di) {
 		super(parentShell);
 		this.di = di;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		ScrolledComposite scroll = new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL);
 		Composite comp = new Composite(scroll, SWT.NONE);
-		
+
 		scroll.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		scroll.setContent(comp);
 		comp.setLayout(new GridLayout());
 		comp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		
+
 		tree = new Tree(comp, SWT.NONE);
 		tree.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		final TreeEditor editor = new TreeEditor(tree);
 		editor.grabHorizontal = true;
 		editor.grabVertical = true;
-		
+
 		MultilinePaintListener mlListener = new MultilinePaintListener();
 		tree.addListener(SWT.MeasureItem, mlListener);
 		tree.addListener(SWT.PaintItem, mlListener);
 		tree.addListener(SWT.EraseItem, mlListener);
-		
+
 		addNodes(di, null);
-		
+
 		comp.setSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return scroll;
 	}
-	
-	private void addNodes(DNode dn, TreeItem parent){
+
+	private void addNodes(DNode dn, TreeItem parent) {
 		TreeItem ti;
 		for (DNode n : dn.children) {
 			if (parent == null)
 				ti = new TreeItem(tree, 0);
 			else
 				ti = new TreeItem(parent, 0);
-			
+
 			ti.setText(n.getClean());
 			addNodes(n, ti);
 			ti.setExpanded(true);
 		}
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		getShell().setText("Diagnosen Importieren");
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		close();
 	}
 }
@@ -213,7 +214,7 @@ class DLParser {
 	/**
 	 * Versucht den String in eine DNode-Repraesentation zu parsen
 	 */
-	public DNode parse(String html){
+	public DNode parse(String html) {
 		DNode dn = parseItems(html);
 		if (dn == null) {
 			dn = parseManualList(html);
@@ -226,21 +227,21 @@ class DLParser {
 		}
 		return dn;
 	}
-	
+
 	/**
 	 * Root Element fuer XML Dokument geparst aus code holen
 	 */
-	private Element parseXML(String code){
+	private Element parseXML(String code) {
 		try {
 			byte[] bytes = code.getBytes();
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			
+
 			dbFactory.setValidating(false);
 			dbFactory.setNamespaceAware(true);
 			dbFactory.setIgnoringComments(false);
 			dbFactory.setIgnoringElementContentWhitespace(false);
 			dbFactory.setExpandEntityReferences(false);
-			
+
 			DocumentBuilder dBuilder;
 			dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(new ByteArrayInputStream(bytes));
@@ -250,27 +251,27 @@ class DLParser {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * HTML UL-Aufzaehlungsliste parsen
 	 */
-	private DNode parseItems(String html){
+	private DNode parseItems(String html) {
 		System.out.println("{{" + html + "}}");
-		
+
 		Element e = parseXML(html);
 		if (e == null)
 			return null;
-		
+
 		DNode dn = new DNode();
 		parseUL(e, dn);
 		return dn;
 	}
-	
+
 	/**
-	 * Konkretes UL-Element parsen, indirekt rekursiv. Dabei wird dn benutzt um die entstehenden
-	 * Kindknoten einzutragen.
+	 * Konkretes UL-Element parsen, indirekt rekursiv. Dabei wird dn benutzt um die
+	 * entstehenden Kindknoten einzutragen.
 	 */
-	private void parseUL(Element e, DNode dn){
+	private void parseUL(Element e, DNode dn) {
 		if (!e.getNodeName().equals("ul"))
 			return;
 		NodeList nl = e.getChildNodes();
@@ -283,21 +284,21 @@ class DLParser {
 			}
 		}
 	}
-	
+
 	/**
-	 * Einzelnes LI-Element einer UL-Liste parsen, rekursiv. Der Text und allfaellige Kindknoten
-	 * werden in dn eingetragen.
+	 * Einzelnes LI-Element einer UL-Liste parsen, rekursiv. Der Text und
+	 * allfaellige Kindknoten werden in dn eingetragen.
 	 */
-	private void parseLI(Element li, DNode dn){
+	private void parseLI(Element li, DNode dn) {
 		NodeList nl = li.getChildNodes();
-		
+
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node n = nl.item(i);
-			
+
 			if (n instanceof Element) {
 				Element e = (Element) n;
 				e.normalize();
-				
+
 				if (e.getNodeName().equals("ul")) {
 					parseUL(e, dn);
 				} else if (e.getNodeName().equals("br")) {
@@ -315,30 +316,29 @@ class DLParser {
 			}
 		}
 	}
-	
+
 	/**
-	 * Parsen der manuell erstellten Aufzaehlungslisten (mit - und tabulatoren) Gar nicht allgemein.
+	 * Parsen der manuell erstellten Aufzaehlungslisten (mit - und tabulatoren) Gar
+	 * nicht allgemein.
 	 */
-	private DNode parseManualList(String html){
+	private DNode parseManualList(String html) {
 		try {
 			// Versuchen html in gueltiges XML umzuwandeln
 			String enc = "utf-8";
 			if (System.getProperty("os.name").startsWith("Windows"))
 				enc = "iso-8859-1";
-			html =
-				"<?xml version=\"1.0\" encoding=\"" + enc + "\"?>" + "<root>\n" + html
-					+ "\n</root>";
+			html = "<?xml version=\"1.0\" encoding=\"" + enc + "\"?>" + "<root>\n" + html + "\n</root>";
 			html = html.replaceAll("<br>", "<br/>");
 			html = html.replaceAll("<BR>", "<br/>");
 			html = html.replaceAll("ALIGN=JUSTIFY", "");
 			html = html.replaceAll("&shy;", "-");
-			
+
 			System.out.println("Cleaned xml:\n{{" + html + "}}");
-			
+
 			// Parsen
 			Element root = parseXML(html);
 			NodeList nl = root.getChildNodes();
-			
+
 			Stack<DNode> stack = new Stack<DNode>();
 			stack.push(new DNode());
 			for (int i = 0; i < nl.getLength(); i++) {
@@ -346,13 +346,13 @@ class DLParser {
 				if (!(n instanceof Element))
 					continue;
 				Element e = (Element) n;
-				
+
 				// Wir wollen nur P-elemente
 				String txt = e.getTextContent();
 				if (!e.getNodeName().equalsIgnoreCase("p") || !txt.startsWith("-")) {
 					throw new Exception("Nicht p-Element");
 				}
-				
+
 				// Pruefen ob das class-Attribut mit list-n- anfaengt
 				String c = e.getAttribute("class");
 				if (c.isEmpty())
@@ -361,7 +361,7 @@ class DLParser {
 				if (!c.matches("liste?-[0-9]-.*")) {
 					throw new Exception("p-Element ohne passende class");
 				}
-				
+
 				// level Zahl aus class parsen
 				int lvl = Integer.parseInt(c.replaceAll("^liste?-", "").substring(0, 1));
 				while (stack.size() > lvl)
@@ -369,7 +369,7 @@ class DLParser {
 				if (stack.size() < lvl) {
 					throw new Exception("Stack underflow beim parsen");
 				}
-				
+
 				// Knoten erstellen
 				DNode dn = stack.peek().newChild();
 				parseManualP(dn, e);
@@ -386,13 +386,13 @@ class DLParser {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Text aus P-Element in manuell erstellter Liste parsen
-	 * 
+	 *
 	 * @throws Exception
 	 */
-	private void parseManualP(DNode dn, Element e) throws Exception{
+	private void parseManualP(DNode dn, Element e) throws Exception {
 		e.normalize();
 		NodeList nl = e.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
@@ -411,28 +411,28 @@ class DLParser {
 public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEventListener {
 	/** Typ der anzuzeigenden items */
 	protected final int typ;
-	
+
 	/** Sollen neue eintraege erstellt werden koenenn? */
 	protected boolean canAdd = true;
-	
+
 	/** Sollen alle Eintraege geloescht werden koennen? */
 	protected boolean canClear = false;
-	
+
 	/** Soll das Datum bei Eintraegen angezeigt werden? */
 	protected boolean showDate = true;
-	
+
 	/** Koennen Eintraege anderes Typs importiert werden (SA, PA) */
 	protected boolean allowImport = false;
-	
+
 	/** Koennen Eintraege aus der Diagnoseliste importiert werden (uebergang) */
 	protected boolean allowImportDL = true;
-	
+
 	/** Koennen Eintraege aus der Zwischenablage importiert werden? */
 	protected boolean allowImportCB = true;
-	
+
 	/** Koennen ICPC-Eintraege hinterlegt/angezeigt werden? */
 	protected boolean allowICPC = true;
-	
+
 	private Tree tree;
 	Action actAdd;
 	Action actEdit;
@@ -446,19 +446,18 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 	Action actImportSA;
 	Action actImportDL;
 	Action actImportCB;
-	
+
 	/**
 	 * Diagnoseliste Anzeige fuer Items eines bestimmten Typs initialisieren.
-	 * 
-	 * @param typ
-	 *            Typ der anzuzeigenden Elemente
+	 *
+	 * @param typ Typ der anzuzeigenden Elemente
 	 */
-	public DiagnoselisteBaseView(int typ){
+	public DiagnoselisteBaseView(int typ) {
 		super();
 		this.typ = typ;
 	}
-	
-	private void setupTI(TreeItem ti, DiagnoselisteItem di){
+
+	private void setupTI(TreeItem ti, DiagnoselisteItem di) {
 		String text = di.getText();
 		if (showDate)
 			text += " (" + di.getDatum() + ")";
@@ -468,11 +467,11 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 		ti.setText(text);
 		ti.setData(di);
 	}
-	
+
 	/**
 	 * Neues TreeItem für die übergebene Diagnose am angegebenen Index erstellen.
 	 */
-	private TreeItem createTI(DiagnoselisteItem di, TreeItem tip, int index){
+	private TreeItem createTI(DiagnoselisteItem di, TreeItem tip, int index) {
 		TreeItem ti;
 		if (tip == null)
 			ti = new TreeItem(tree, SWT.NONE, index);
@@ -481,87 +480,89 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 		setupTI(ti, di);
 		return ti;
 	}
-	
-	private void insertSubtree(DiagnoselisteItem dip, TreeItem tip){
+
+	private void insertSubtree(DiagnoselisteItem dip, TreeItem tip) {
 		TreeItem ti;
 		for (DiagnoselisteItem di : dip.getChildren()) {
 			ti = createTI(di, tip, di.getPosition());
 			insertSubtree(di, ti);
 		}
 	}
-	
-	private void updateTree(){
+
+	private void updateTree() {
 		updateTree(ElexisEventDispatcher.getSelectedPatient());
 	}
-	
-	private void updateTree(Patient pat){
+
+	private void updateTree(Patient pat) {
 		tree.removeAll();
 		boolean en = (pat != null);
-		
+
 		actAdd.setEnabled(en && canAdd);
 		actAddChild.setEnabled(en && canAdd);
-		
+
 		actEdit.setEnabled(en);
 		actDel.setEnabled(en);
 		actDelICPC.setEnabled(en && allowICPC);
 		actMoveUp.setEnabled(en);
 		actMoveDown.setEnabled(en);
-		
+
 		actImportPA.setEnabled(en && allowImport);
 		actImportSA.setEnabled(en && allowImport);
 		actImportDL.setEnabled(en && allowImportDL);
 		actImportCB.setEnabled(en && allowImportCB);
 		actClear.setEnabled(en && canClear);
-		
+
 		if (pat == null)
 			return;
-		
+
 		insertSubtree(DiagnoselisteItem.getRoot(pat, typ), null);
 	}
-	
+
 	/**
 	 * Root-Item eines bestimmten Typs fuer den aktuellen Patienten suchen
 	 */
-	private static DiagnoselisteItem getRoot(int typ){
+	private static DiagnoselisteItem getRoot(int typ) {
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		return DiagnoselisteItem.getRoot(pat, typ);
 	}
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		tree = new Tree(parent, SWT.NONE);
-		
+
 		final TreeEditor editor = new TreeEditor(tree);
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
-		
+
 		// SelectionListener um Eintraege inline bearbeiten zu koennen.
 		/*
 		 * tree.addSelectionListener(new SelectionListener() { public void
-		 * widgetDefaultSelected(SelectionEvent e) { } public void widgetSelected(SelectionEvent e)
-		 * { TreeItem diagItem = (TreeItem) e.item; if (diagItem == null) return;
-		 * 
+		 * widgetDefaultSelected(SelectionEvent e) { } public void
+		 * widgetSelected(SelectionEvent e) { TreeItem diagItem = (TreeItem) e.item; if
+		 * (diagItem == null) return;
+		 *
 		 * Control old = editor.getEditor(); if (old != null) old.dispose();
-		 * 
-		 * Text diagEditor = new Text(tree, SWT.MULTI | SWT.WRAP); diagEditor.setData(diagItem);
-		 * diagEditor.setText(diagItem.getText());
-		 * 
-		 * // ModifyListener um Aenderungen zu speichern diagEditor.addModifyListener(new
-		 * ModifyListener() { public void modifyText(ModifyEvent e) { Text te = (Text) e.widget;
-		 * TreeItem ti = (TreeItem) te.getData(); DiagnoselisteItem di = (DiagnoselisteItem)
+		 *
+		 * Text diagEditor = new Text(tree, SWT.MULTI | SWT.WRAP);
+		 * diagEditor.setData(diagItem); diagEditor.setText(diagItem.getText());
+		 *
+		 * // ModifyListener um Aenderungen zu speichern
+		 * diagEditor.addModifyListener(new ModifyListener() { public void
+		 * modifyText(ModifyEvent e) { Text te = (Text) e.widget; TreeItem ti =
+		 * (TreeItem) te.getData(); DiagnoselisteItem di = (DiagnoselisteItem)
 		 * ti.getData(); ti.setText(te.getText()); di.setText(te.getText()); } });
-		 * //diagEditor.selectAll(); diagEditor.setFocus(); editor.setEditor(diagEditor, diagItem);
-		 * } });
+		 * //diagEditor.selectAll(); diagEditor.setFocus(); editor.setEditor(diagEditor,
+		 * diagItem); } });
 		 */
 		MultilinePaintListener mlListener = new MultilinePaintListener();
 		tree.addListener(SWT.MeasureItem, mlListener);
 		tree.addListener(SWT.PaintItem, mlListener);
 		tree.addListener(SWT.EraseItem, mlListener);
-		
+
 		// Drop Target um neue Eintraege zu erstellen
 		new PersistentObjectDropTarget(tree, new PersistentObjectDropTarget.IReceiver() {
 			@Override
-			public void dropped(PersistentObject o, DropTargetEvent e){
+			public void dropped(PersistentObject o, DropTargetEvent e) {
 				// Ausgewaehltes Element suchen
 				TreeItem selTi = tree.getItem(tree.toControl(e.x, e.y));
 				DiagnoselisteItem it = null;
@@ -569,7 +570,7 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 					it = (DiagnoselisteItem) selTi.getData();
 				else
 					it = getRoot(typ);
-				
+
 				if (o instanceof IcpcCode && selTi != null) {
 					// ICPC2 code
 					IcpcCode i = (IcpcCode) o;
@@ -593,11 +594,11 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 						DiagnoselisteItem par = d.getParent();
 						if (par == null)
 							return;
-						
+
 						// Aufpassen dass wir keine Zyklen einfuehren
 						if (it.isDescendantOf(d))
 							return;
-						
+
 						par.removeChild(d);
 						if (!par.equals(it)) {
 							d.setPosition(it.nextChildPos());
@@ -607,9 +608,9 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 					updateTree();
 				}
 			}
-			
+
 			@Override
-			public boolean accept(PersistentObject o){
+			public boolean accept(PersistentObject o) {
 				if (o instanceof IcpcCode)
 					return allowICPC;
 				if (o instanceof KonsData)
@@ -617,27 +618,27 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 				if (!(o instanceof DiagnoselisteItem))
 					return false;
 				DiagnoselisteItem d = (DiagnoselisteItem) o;
-				
+
 				// Pruefen ob der Typ importiert werden kann
 				int t = d.getTyp();
 				if (t == DiagnoselisteItem.TYP_DIAGNOSELISTE && allowImportDL)
 					return true;
 				else if (allowImport
-					&& (t == DiagnoselisteItem.TYP_PERSANAMNESE || t == DiagnoselisteItem.TYP_SYSANAMNESE))
+						&& (t == DiagnoselisteItem.TYP_PERSANAMNESE || t == DiagnoselisteItem.TYP_SYSANAMNESE))
 					return true;
 				else if (typ == t)
 					return true;
-				
+
 				return false;
 			}
 		});
-		
+
 		new PersistentObjectDragSource(tree, new PersistentObjectDragSource.ISelectionRenderer() {
-			public List<PersistentObject> getSelection(){
+			public List<PersistentObject> getSelection() {
 				TreeItem[] tis = tree.getSelection();
 				if (tis == null)
 					return null;
-				
+
 				ArrayList<PersistentObject> res = new ArrayList<PersistentObject>(tis.length);
 				// Auswahl in Liste von Items umwandeln
 				for (TreeItem ti : tis) {
@@ -647,33 +648,36 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 				return res;
 			}
 		});
-		
+
 		makeActions();
 		tree.addMouseListener(new MouseListener() {
-			public void mouseUp(MouseEvent e){}
-			
-			public void mouseDown(MouseEvent e){}
-			
-			public void mouseDoubleClick(MouseEvent e){
+			public void mouseUp(MouseEvent e) {
+			}
+
+			public void mouseDown(MouseEvent e) {
+			}
+
+			public void mouseDoubleClick(MouseEvent e) {
 				actEdit.run();
 			}
 		});
 		tree.addKeyListener(new KeyListener() {
-			public void keyReleased(KeyEvent e){}
-			
-			public void keyPressed(KeyEvent e){
+			public void keyReleased(KeyEvent e) {
+			}
+
+			public void keyPressed(KeyEvent e) {
 				if (e.keyCode != SWT.DEL)
 					return;
 				if (actDel.isEnabled())
 					actDel.run();
 			}
 		});
-		
+
 		// Menus oben rechts in der View
 		ViewMenus menus = new ViewMenus(getViewSite());
 		ArrayList<IAction> m = new ArrayList<IAction>(5);
 		IAction[] a = new IAction[1];
-		
+
 		// Toolbar zusammenstellen
 		if (canAdd)
 			m.add(actAdd);
@@ -681,7 +685,7 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 		m.add(actMoveDown);
 		menus.createToolbar(m.toArray(a));
 		m.clear();
-		
+
 		// View-Menu zusammenstellen
 		if (allowImport)
 			m.add(actImportPA);
@@ -695,7 +699,7 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 			m.add(actClear);
 		menus.createMenu(m.toArray(a));
 		m.clear();
-		
+
 		// Context menu
 		if (canAdd)
 			m.add(actAddChild);
@@ -703,46 +707,44 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 		if (allowICPC)
 			m.add(actDelICPC);
 		menus.createControlContextMenu(tree, m.toArray(a));
-		
+
 		ElexisEventDispatcher.getInstance().addListeners(this);
 		updateTree();
 	}
-	
+
 	/**
 	 * Importiert alle Kind-Items von sp nach dp.
 	 */
-	private void importFrom(DiagnoselisteItem sp, DiagnoselisteItem dp){
+	private void importFrom(DiagnoselisteItem sp, DiagnoselisteItem dp) {
 		for (DiagnoselisteItem si : sp.getChildren()) {
 			importItemTo(si, dp);
 		}
 	}
-	
+
 	/**
-	 * Importiert item als Kind-Item in newParent item falls es noch nicht enthalten ist. Sonst
-	 * werden nur die Unterelemente rekursiv eingefuegt.
-	 * 
-	 * @param item
-	 *            Quell-Item
-	 * @param newParent
-	 *            Neues Ziel-Parent Item
+	 * Importiert item als Kind-Item in newParent item falls es noch nicht enthalten
+	 * ist. Sonst werden nur die Unterelemente rekursiv eingefuegt.
+	 *
+	 * @param item      Quell-Item
+	 * @param newParent Neues Ziel-Parent Item
 	 */
-	private void importItemTo(DiagnoselisteItem item, DiagnoselisteItem newParent){
+	private void importItemTo(DiagnoselisteItem item, DiagnoselisteItem newParent) {
 		DiagnoselisteItem di = newParent.getBySrc(item);
 		if (di == null) {
 			di = newParent.createChildFrom(item);
 		}
-		
+
 		// Rekursiv Kind-Item behandeln
 		importFrom(item, di);
 	}
-	
+
 	/**
 	 * Action zum Importieren aus Views eines anderen Typs.
 	 */
 	private class ImportAction extends Action {
 		int fromTyp;
-		
-		public ImportAction(int typ){
+
+		public ImportAction(int typ) {
 			super();
 			if (typ == DiagnoselisteItem.TYP_PERSANAMNESE) {
 				setText("Import Pers. Anamnese");
@@ -752,26 +754,26 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 				setText("Import Diagnoseliste");
 			}
 			setImageDescriptor(Images.IMG_IMPORT.getImageDescriptor());
-			
+
 			fromTyp = typ;
 		}
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			Patient pat = ElexisEventDispatcher.getSelectedPatient();
 			importFrom(DiagnoselisteItem.getRoot(pat, fromTyp), DiagnoselisteItem.getRoot(pat, typ));
 			updateTree(pat);
 		}
 	}
-	
-	private void makeActions(){
+
+	private void makeActions() {
 		actEdit = new Action("Bearbeiten") {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				if (tree.getSelectionCount() == 0)
 					return;
 				TreeItem ti = tree.getSelection()[0];
@@ -780,14 +782,14 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 				setupTI(ti, di);
 			}
 		};
-		
+
 		actAdd = new Action("Neue Kategorie") {
 			{
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Patient p = ElexisEventDispatcher.getSelectedPatient();
 				DiagnoselisteItem root = DiagnoselisteItem.getRoot(p, typ);
 				DiagnoselisteItem di = root.createChild();
@@ -795,21 +797,20 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 				createTI(di, null, di.getPosition());
 			}
 		};
-		
+
 		actAddChild = new Action("Neue Unterdiagnose") {
 			{
 				setImageDescriptor(Images.IMG_ADDITEM.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				TreeItem[] tis = tree.getSelection();
 				if (tis.length > 0) {
 					DiagnoselisteItem di = (DiagnoselisteItem) tis[0].getData();
 					DiagnoselisteItem ndi = di.createChild();
-					
-					DiagnoseDialog dd =
-						new DiagnoseDialog(getSite().getShell(), ndi, showDate, false);
+
+					DiagnoseDialog dd = new DiagnoseDialog(getSite().getShell(), ndi, showDate, false);
 					if (dd.open() == DiagnoseDialog.OK) {
 						createTI(ndi, tis[0], ndi.getPosition());
 						// Parent expanden
@@ -824,20 +825,19 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 			{
 				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				TreeItem[] tis = tree.getSelection();
 				if (tis.length > 0) {
 					DiagnoselisteItem di = (DiagnoselisteItem) tis[0].getData();
 					if (!di.getChildren().isEmpty()) {
 						SWTHelper.alert("Es existieren noch Unterdiagnosen",
-							"Bitte zuerst alle Unterdiagnosen der zu löschenden"
-								+ " Diagnose entfernen.");
+								"Bitte zuerst alle Unterdiagnosen der zu löschenden" + " Diagnose entfernen.");
 						return;
 					}
-					if (!SWTHelper.askYesNo("Löschen", "Soll die ausgewählte "
-						+ "Diagnose unwiderrufbar gelöscht werden?"))
+					if (!SWTHelper.askYesNo("Löschen",
+							"Soll die ausgewählte " + "Diagnose unwiderrufbar gelöscht werden?"))
 						return;
 					di.delete();
 					tis[0].dispose();
@@ -848,9 +848,9 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 			{
 				setImageDescriptor(Images.IMG_REMOVEITEM.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				TreeItem[] tis = tree.getSelection();
 				if (tis.length != 1)
 					return;
@@ -863,9 +863,9 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 		};
 		actClear = new Action("Alle Löschen") {
 			@Override
-			public void run(){
+			public void run() {
 				if (SWTHelper.askYesNo("Alle Eintraege loeschen",
-					"Sollen alle Eintraege unweiderruflich gelöscht werden?")) {
+						"Sollen alle Eintraege unweiderruflich gelöscht werden?")) {
 					Patient pat = ElexisEventDispatcher.getSelectedPatient();
 					DiagnoselisteItem.getRoot(pat, typ).deleteChildren();
 					updateTree();
@@ -876,17 +876,17 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 			{
 				setImageDescriptor(Images.IMG_ARROWUP.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				TreeItem[] tis = tree.getSelection();
 				if (tis.length > 0) {
 					DiagnoselisteItem di = (DiagnoselisteItem) tis[0].getData();
 					di.moveUp();
-					
+
 					TreeItem parent = tis[0].getParentItem();
 					tis[0].dispose();
-					
+
 					// Item neu erstellen an neuer Position
 					TreeItem ti = createTI(di, parent, di.getPosition());
 					insertSubtree(di, ti);
@@ -898,17 +898,17 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 			{
 				setImageDescriptor(Images.IMG_ARROWDOWN.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				TreeItem[] tis = tree.getSelection();
 				if (tis.length > 0) {
 					DiagnoselisteItem di = (DiagnoselisteItem) tis[0].getData();
 					di.moveDown();
-					
+
 					TreeItem parent = tis[0].getParentItem();
 					tis[0].dispose();
-					
+
 					// Item neu erstellen an neuer Position
 					TreeItem ti = createTI(di, parent, di.getPosition());
 					insertSubtree(di, ti);
@@ -916,35 +916,35 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 				}
 			}
 		};
-		
+
 		actImportPA = new ImportAction(DiagnoselisteItem.TYP_PERSANAMNESE);
 		actImportSA = new ImportAction(DiagnoselisteItem.TYP_SYSANAMNESE);
 		actImportDL = new ImportAction(DiagnoselisteItem.TYP_DIAGNOSELISTE);
-		
+
 		actImportCB = new Action("Import Zwischenablage") {
 			{
 				setImageDescriptor(Images.IMG_IMPORT.getImageDescriptor());
 				setToolTipText("Aus Zwischenablage importieren");
 				setDescription("Sollen die Diagnosen wie unten angegeben " + "importiert werden?");
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				// Daten aus Zwischenablage holen
 				Clipboard cb = new Clipboard(UiDesk.getDisplay());
 				String s = (String) cb.getContents(HTMLTransfer.getInstance());
 				if (s == null)
 					return;
-				
+
 				// Wurzel des Diagnosebaums holen
 				Patient p = ElexisEventDispatcher.getSelectedPatient();
 				DiagnoselisteItem root = DiagnoselisteItem.getRoot(p, typ);
-				
+
 				// Daten parsen
 				DNode dn = new DLParser().parse(s);
 				if (dn == null)
 					return;
-				
+
 				DLDialog di = new DLDialog(UiDesk.getTopShell(), dn);
 				if (di.open() == DLDialog.OK) {
 					dn.storeChildren(root);
@@ -952,34 +952,34 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 				}
 			}
 		};
-		
+
 	}
-	
+
 	@Override
-	public void setFocus(){}
-	
+	public void setFocus() {
+	}
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		ElexisEventDispatcher.getInstance().removeListeners(this);
 		super.dispose();
 	}
-	
-	public void catchElexisEvent(final ElexisEvent ev){
+
+	public void catchElexisEvent(final ElexisEvent ev) {
 		UiDesk.asyncExec(new Runnable() {
-			public void run(){
+			public void run() {
 				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 					updateTree((Patient) ev.getObject());
 				}
 			}
 		});
-		
+
 	}
-	
-	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class,
-		ElexisEvent.EVENT_SELECTED);
-	
-	public ElexisEvent getElexisEventFilter(){
+
+	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class, ElexisEvent.EVENT_SELECTED);
+
+	public ElexisEvent getElexisEventFilter() {
 		return eetmpl;
 	}
-	
+
 }

@@ -10,40 +10,40 @@ public class Logger {
 	public final static byte STX = 0x02;
 	public final static byte ETX = 0x03;
 	PrintStream _log;
-	
-	public Logger(){
+
+	public Logger() {
 		_log = System.out;
 	}
-	
-	public Logger(String filename) throws FileNotFoundException{
+
+	public Logger(String filename) throws FileNotFoundException {
 		_log = new PrintStream(new FileOutputStream(filename, true));
 	}
-	
-	public Logger(boolean enable){
+
+	public Logger(boolean enable) {
 		if (enable) {
 			_log = System.out;
 		} else {
 			_log = new PrintStream(new DummyPrintStream());
 		}
 	}
-	
-	public void logSTX(){
+
+	public void logSTX() {
 		Character ch = new Character((char) STX);
 		_log.print(ch);
 	}
-	
-	public void logETX(){
+
+	public void logETX() {
 		Character ch = new Character((char) ETX);
 		_log.println(ch);
 	}
-	
-	public void log(String s){
+
+	public void log(String s) {
 		_log.print(s);
 	}
-	
+
 	class DummyPrintStream extends OutputStream {
 		@Override
-		public void write(int b) throws IOException{
+		public void write(int b) throws IOException {
 			// Do nothing
 		}
 	}

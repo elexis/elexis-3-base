@@ -25,12 +25,12 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.inbox.model.IInboxElementsProvider;
 
 public class ElementsProviderExtension {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(ElementsProviderExtension.class);
-	
+
 	private static List<IInboxElementsProvider> instances;
-	
-	public synchronized static void activateAll(){
+
+	public synchronized static void activateAll() {
 		if (instances == null) {
 			updateInstances();
 		}
@@ -38,8 +38,8 @@ public class ElementsProviderExtension {
 			iInboxElementsProvider.activate();
 		}
 	}
-	
-	public synchronized static void deactivateAll(){
+
+	public synchronized static void deactivateAll() {
 		if (instances == null) {
 			updateInstances();
 		}
@@ -47,8 +47,8 @@ public class ElementsProviderExtension {
 			iInboxElementsProvider.deactivate();
 		}
 	}
-	
-	private static void updateInstances(){
+
+	private static void updateInstances() {
 		instances = new ArrayList<IInboxElementsProvider>();
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
 		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.inbox.elementsprovider");
@@ -59,8 +59,7 @@ public class ElementsProviderExtension {
 				for (IConfigurationElement el : elems) {
 					if (el.getName().equals("provider")) {
 						try {
-							instances.add(
-								(IInboxElementsProvider) el.createExecutableExtension("class"));
+							instances.add((IInboxElementsProvider) el.createExecutableExtension("class"));
 						} catch (CoreException e) {
 							logger.error("Error creating IInboxElementsProvider " + e);
 						}

@@ -219,7 +219,7 @@ public class ServiceImporter {
 	/**
 	 * Import all the kumulations from the LEISTUNG_KUMULATION table for the given
 	 * code. The kumulations contain inclusions, exclusions and exclusives.
-	 * 
+	 *
 	 * @param code      of a tarmed value
 	 * @param stmCached
 	 * @throws SQLException
@@ -520,7 +520,7 @@ public class ServiceImporter {
 	/**
 	 * Get texts. Index 0 = BEZ_255, Index 1 = MED_INTERPRET, Index 2 =
 	 * TECH_INTERPRET
-	 * 
+	 *
 	 * @return
 	 * @throws SQLException
 	 * @throws IOException

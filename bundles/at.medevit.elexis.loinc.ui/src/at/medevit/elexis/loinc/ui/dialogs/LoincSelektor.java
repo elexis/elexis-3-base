@@ -20,16 +20,16 @@ import at.medevit.elexis.loinc.model.LoincCode;
 import at.medevit.elexis.loinc.ui.LoincServiceComponent;
 
 public class LoincSelektor extends FilteredItemsSelectionDialog {
-	
+
 	private boolean ignoreErrors;
-	
-	public LoincSelektor(Shell shell){
+
+	public LoincSelektor(Shell shell) {
 		super(shell);
 		setTitle("LOINC Code Selektion");
-		
+
 		setListLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element == null) {
 					return "";
 				}
@@ -37,85 +37,85 @@ public class LoincSelektor extends FilteredItemsSelectionDialog {
 			}
 		});
 	}
-	
-	public LoincSelektor(Shell shell, Object data){
+
+	public LoincSelektor(Shell shell, Object data) {
 		this(shell);
 		if (data instanceof String && data.equals("ignoreErrors")) {
 			ignoreErrors = true;
 		}
-		
+
 	}
-	
+
 	@Override
-	protected void updateButtonsEnableState(IStatus status){
+	protected void updateButtonsEnableState(IStatus status) {
 		if (!ignoreErrors) {
 			super.updateButtonsEnableState(status);
 		}
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		String oldListLabel = WorkbenchMessages.FilteredItemsSelectionDialog_listLabel;
-		
+
 		setMessage("");
 		WorkbenchMessages.FilteredItemsSelectionDialog_listLabel = ""; //$NON-NLS-1$
 		Control ret = super.createDialogArea(parent);
-		
+
 		WorkbenchMessages.FilteredItemsSelectionDialog_listLabel = oldListLabel;
 		return ret;
 	}
-	
+
 	@Override
-	protected IDialogSettings getDialogSettings(){
+	protected IDialogSettings getDialogSettings() {
 		return new DialogSettings("loincselector"); //$NON-NLS-1$
 	}
-	
+
 	@Override
-	protected IStatus validateItem(Object item){
+	protected IStatus validateItem(Object item) {
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		if (ignoreErrors) {
 			updateStatus(Status.OK_STATUS);
 		}
 		super.okPressed();
 	}
-	
+
 	@Override
-	protected ItemsFilter createFilter(){
+	protected ItemsFilter createFilter() {
 		return new ItemsFilter() {
 			@Override
-			public boolean isConsistentItem(Object item){
+			public boolean isConsistentItem(Object item) {
 				return true;
 			}
-			
+
 			@Override
-			public boolean matchItem(Object item){
+			public boolean matchItem(Object item) {
 				LoincCode code = (LoincCode) item;
-				
+
 				return matches(code.getLabel());
 			}
 		};
 	}
-	
+
 	@Override
-	protected Comparator<LoincCode> getItemsComparator(){
+	protected Comparator<LoincCode> getItemsComparator() {
 		return new Comparator<LoincCode>() {
-			
-			public int compare(LoincCode o1, LoincCode o2){
+
+			public int compare(LoincCode o1, LoincCode o2) {
 				return o1.getLabel().compareTo(o2.getLabel());
 			}
 		};
 	}
-	
+
 	@Override
-	protected void fillContentProvider(AbstractContentProvider contentProvider,
-		ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException{
-		
+	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter,
+			IProgressMonitor progressMonitor) throws CoreException {
+
 		List<LoincCode> allCodes = LoincServiceComponent.getService().getAllCodes();
-		
+
 		for (LoincCode code : allCodes) {
 			if (progressMonitor.isCanceled()) {
 				return;
@@ -123,15 +123,15 @@ public class LoincSelektor extends FilteredItemsSelectionDialog {
 			contentProvider.add(code, itemsFilter);
 		}
 	}
-	
+
 	@Override
-	public String getElementName(Object item){
+	public String getElementName(Object item) {
 		LoincCode code = (LoincCode) item;
 		return code.getLabel();
 	}
-	
+
 	@Override
-	protected Control createExtendedContentArea(Composite parent){
+	protected Control createExtendedContentArea(Composite parent) {
 		// TODO Auto-generated method stub
 		return null;
 	}

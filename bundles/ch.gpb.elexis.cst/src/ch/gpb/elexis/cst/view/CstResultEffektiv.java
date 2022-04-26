@@ -42,11 +42,11 @@ import ch.gpb.elexis.cst.widget.CstDangerRangeCanvas;
 import ch.gpb.elexis.cst.widget.CstVorwertCanvas;
 
 /**
- * 
+ *
  * @author daniel ludin ludin@swissonline.ch 27.06.2015
- * 
+ *
  *         Class for displaying the Effektiv display mode.
- * 
+ *
  *         Target width for display: 794px (H�lfte: 397 px) Target heigth for
  *         display: 1123px
  */
@@ -78,8 +78,8 @@ public class CstResultEffektiv extends CstResultPart {
 		test.setImage(pointer);
 
 		/*
-		 * GridData gdCanvas = new GridData(SWT.FILL, SWT.FILL, true, true, 1,
-		 * 1); rCanvas.setLayoutData(gdCanvas); rCanvas.setSize(794, heigth);
+		 * GridData gdCanvas = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		 * rCanvas.setLayoutData(gdCanvas); rCanvas.setSize(794, heigth);
 		 * rCanvas.setBackground(WHITE);
 		 */
 		baseComposite.layout();
@@ -185,8 +185,7 @@ public class CstResultEffektiv extends CstResultPart {
 						txL2 += " (" + labItem.getLabItem().getEinheit() + ")";
 
 					} /*
-						 * if (labItem.getKuerzel() != null) { txL2 += "  " +
-						 * labItem.getKuerzel(); }
+						 * if (labItem.getKuerzel() != null) { txL2 += "  " + labItem.getKuerzel(); }
 						 */
 
 					l2.setText(txL2);
@@ -225,11 +224,10 @@ public class CstResultEffektiv extends CstResultPart {
 
 					newHeigth += (lineCompo.getSize().y);
 					/*
-					 * if
-					 * (!CstService.hasValueForName(labItem.getLabItem().getName
-					 * (), labItem.getLabItem().getKuerzel(), labResults)) { //
-					 * No Values Label addNoValuesLabel(leftCompo);
-					 * 
+					 * if (!CstService.hasValueForName(labItem.getLabItem().getName (),
+					 * labItem.getLabItem().getKuerzel(), labResults)) { // No Values Label
+					 * addNoValuesLabel(leftCompo);
+					 *
 					 * } else {
 					 */
 					if (!labItem.isDisplayOnce()) {
@@ -505,11 +503,9 @@ public class CstResultEffektiv extends CstResultPart {
 					}
 					// ----
 
-					Text txtAbstract = new Text(
-							rightCompo, /*
-										 * SWT.MULTI |SWT.BORDER | SWT.V_SCROLL
-										 * |
-										 */
+					Text txtAbstract = new Text(rightCompo, /*
+															 * SWT.MULTI |SWT.BORDER | SWT.V_SCROLL |
+															 */
 							SWT.READ_ONLY | SWT.WRAP);
 					txtAbstract.setFont(fontSmall);
 					txtAbstract.setSize(210, 190);

@@ -21,9 +21,9 @@ import org.eclipse.swt.widgets.Composite;
  * An abstract chart page, providing basic methods and error handling functions
  * for chart wizard pages.
  * </p>
- * 
+ *
  * $Id: AbstractChartPage.java 705 2009-01-03 17:48:46Z peschehimself $.
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 705 $
@@ -32,9 +32,8 @@ public abstract class AbstractChartPage extends WizardPage {
 
 	/**
 	 * The Constructor.
-	 * 
-	 * @param pageName
-	 *            the page name
+	 *
+	 * @param pageName the page name
 	 */
 	protected AbstractChartPage(String pageName) {
 		super(pageName);
@@ -42,13 +41,10 @@ public abstract class AbstractChartPage extends WizardPage {
 
 	/**
 	 * The Constructor.
-	 * 
-	 * @param pageName
-	 *            the page name
-	 * @param title
-	 *            the title
-	 * @param titleImage
-	 *            the title image
+	 *
+	 * @param pageName   the page name
+	 * @param title      the title
+	 * @param titleImage the title image
 	 */
 	protected AbstractChartPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -56,21 +52,19 @@ public abstract class AbstractChartPage extends WizardPage {
 
 	/**
 	 * Creates the control.
-	 * 
-	 * @param parent
-	 *            the parent
-	 * 
+	 *
+	 * @param parent the parent
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(Composite)
 	 */
 	abstract public void createControl(Composite parent);
 
 	/**
-	 * Applies the given status to the status line of a wizard page. This method
-	 * is mostly used by subclasses upon receiving an event and setting a status
+	 * Applies the given status to the status line of a wizard page. This method is
+	 * mostly used by subclasses upon receiving an event and setting a status
 	 * accordingly.
-	 * 
-	 * @param status
-	 *            the status
+	 *
+	 * @param status the status
 	 */
 	protected void applyToStatusLine(IStatus status) {
 		String message = status.getMessage();

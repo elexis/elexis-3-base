@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -21,26 +21,25 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 
 /**
  * Settings for the notes-Plugin
- * 
+ *
  * @author gerry
- * 
+ *
  */
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public static final String CFGTREE = "notes/basedir"; //$NON-NLS-1$
-	
-	public Preferences(){
+
+	public Preferences() {
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
-		addField(new DirectoryFieldEditor(CFGTREE, Messages.Preferences_basedir,
-			getFieldEditorParent()));
+	protected void createFieldEditors() {
+		addField(new DirectoryFieldEditor(CFGTREE, Messages.Preferences_basedir, getFieldEditorParent()));
 	}
-	
-	public void init(IWorkbench workbench){
+
+	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
 	}
-	
+
 }

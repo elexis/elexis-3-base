@@ -6,8 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaQuery;
 
 public class EntityUtil {
-	
-	public static void save(List<Object> saveObject){
+
+	public static void save(List<Object> saveObject) {
 		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
 		try {
 			em.getTransaction().begin();
@@ -19,8 +19,8 @@ public class EntityUtil {
 			em.close();
 		}
 	}
-	
-	public static void removeAll(List<Object> removeObjects){
+
+	public static void removeAll(List<Object> removeObjects) {
 		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
 		try {
 			em.getTransaction().begin();
@@ -33,8 +33,8 @@ public class EntityUtil {
 			em.close();
 		}
 	}
-	
-	public static <T> T load(String id, Class<T> clazz){
+
+	public static <T> T load(String id, Class<T> clazz) {
 		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
 		try {
 			return em.find(clazz, id);
@@ -42,12 +42,12 @@ public class EntityUtil {
 			em.close();
 		}
 	}
-	
-	public static <T> List<T> loadAll(Class<T> clazz){
+
+	public static <T> List<T> loadAll(Class<T> clazz) {
 		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
 		try {
 			CriteriaQuery<T> criteria = em.getCriteriaBuilder().createQuery(clazz);
-		    criteria.select(criteria.from(clazz));
+			criteria.select(criteria.from(clazz));
 			return em.createQuery(criteria).getResultList();
 		} finally {
 			em.close();

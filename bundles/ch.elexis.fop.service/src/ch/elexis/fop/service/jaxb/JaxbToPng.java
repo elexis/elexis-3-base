@@ -22,25 +22,25 @@ import ch.elexis.core.services.IFormattedOutput;
 
 public class JaxbToPng implements IFormattedOutput {
 	private static JaxbToPng instance;
-	
-	private JaxbToPng(){
-		
+
+	private JaxbToPng() {
+
 	}
-	
-	public static JaxbToPng getInstance(){
+
+	public static JaxbToPng getInstance() {
 		if (instance == null)
 			instance = new JaxbToPng();
 		return instance;
 	}
-	
+
 	@Override
-	public void transform(Object jaxbObject, InputStream xslt, OutputStream png){
+	public void transform(Object jaxbObject, InputStream xslt, OutputStream png) {
 		transform(jaxbObject, xslt, png, null);
 	}
-	
+
 	public void transform(Object jaxbObject, InputStream xslt, OutputStream png,
-		Map<String, String> transformerParameters, URIResolver resolver){
-		JaxbToMimeType.getInstance().transform(jaxbObject, xslt, png, MimeConstants.MIME_PNG,
-			transformerParameters, resolver);
+			Map<String, String> transformerParameters, URIResolver resolver) {
+		JaxbToMimeType.getInstance().transform(jaxbObject, xslt, png, MimeConstants.MIME_PNG, transformerParameters,
+				resolver);
 	}
 }

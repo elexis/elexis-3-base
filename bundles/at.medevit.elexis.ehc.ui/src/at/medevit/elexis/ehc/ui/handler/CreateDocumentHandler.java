@@ -19,13 +19,13 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import at.medevit.elexis.ehc.ui.dialog.ExportSelectionWizard;
 
 public class CreateDocumentHandler extends AbstractHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ExportSelectionWizard exportSelection = new ExportSelectionWizard();
 		WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), exportSelection);
 		dialog.open();
-		
+
 		return null;
 	}
 }

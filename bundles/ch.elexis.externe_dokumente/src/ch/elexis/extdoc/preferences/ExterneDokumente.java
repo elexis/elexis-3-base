@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    Niklaus Giger - new layout with subdirectories
- *    
+ *
  *******************************************************************************/
 package ch.elexis.extdoc.preferences;
 
@@ -39,47 +39,44 @@ import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.omnivore.OmnivoreImporter;
 
-
 /**
  * Einstellungen zur Verknüpfung externen Dokumenten
- * 
+ *
  * @author Daniel Lutz
  */
 public class ExterneDokumente extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	
-	public ExterneDokumente(){
+
+	public ExterneDokumente() {
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 		setDescription(Messages.ExterneDokumente_externe_dokumente);
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
+	protected void createFieldEditors() {
 		DirectoryFieldEditor dfe;
 		StringFieldEditor sfe;
 		FileFieldEditor ffe;
-	
+
 		PreferenceConstants.PathElement[] prefElems = PreferenceConstants.getPrefenceElements();
 		for (int j = 0; j < prefElems.length; j++) {
-			sfe =
-				new StringFieldEditor(prefElems[j].prefName, String.format(
-					Messages.ExterneDokumente_shorthand_for_path, j), getFieldEditorParent());
+			sfe = new StringFieldEditor(prefElems[j].prefName,
+					String.format(Messages.ExterneDokumente_shorthand_for_path, j), getFieldEditorParent());
 			sfe.setTextLimit(8);
 			addField(sfe);
-			dfe =
-				new DirectoryFieldEditor(prefElems[j].prefBaseDir,
-					Messages.ExterneDokumente_path_name_preference, getFieldEditorParent());
+			dfe = new DirectoryFieldEditor(prefElems[j].prefBaseDir, Messages.ExterneDokumente_path_name_preference,
+					getFieldEditorParent());
 			addField(dfe);
 		}
-		sfe =
-			new StringFieldEditor(PreferenceConstants.CONCERNS, Messages.ExterneDokumente_Concerns,
+		sfe = new StringFieldEditor(PreferenceConstants.CONCERNS, Messages.ExterneDokumente_Concerns,
 				getFieldEditorParent());
 		sfe.setTextLimit(60);
 		addField(sfe);
 		Composite composite = getFieldEditorParent();
-		ffe = new FileFieldEditor(PreferenceConstants.EMAIL_PROGRAM, 
-			Messages.ExterneDokumente_email_app,  getFieldEditorParent());
-		ffe.getLabelControl(composite).setToolTipText("Programm das zum Verschicken von E-Mails verwendet werden soll, falls leer wird dir URL mailto: verwendet, welche keine Anhänge unterstützt");
+		ffe = new FileFieldEditor(PreferenceConstants.EMAIL_PROGRAM, Messages.ExterneDokumente_email_app,
+				getFieldEditorParent());
+		ffe.getLabelControl(composite).setToolTipText(
+				"Programm das zum Verschicken von E-Mails verwendet werden soll, falls leer wird dir URL mailto: verwendet, welche keine Anhänge unterstützt");
 		addField(ffe);
 
 		OmnivoreImporter importer = new OmnivoreImporter();
@@ -87,33 +84,31 @@ public class ExterneDokumente extends FieldEditorPreferencePage implements IWork
 		omnivoreBtn.setText("Dateien in Omnivore importieren");
 		omnivoreBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				Optional<ICategory> importCategory = importer.getCategory();
 				importCategory.ifPresent(category -> {
-					ProgressMonitorDialog dialog =
-						new ProgressMonitorDialog(Display.getDefault().getActiveShell());
+					ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getDefault().getActiveShell());
 					try {
 						dialog.run(true, true, new IRunnableWithProgress() {
-							
+
 							@Override
 							public void run(IProgressMonitor monitor)
-								throws InvocationTargetException, InterruptedException{
+									throws InvocationTargetException, InterruptedException {
 								importer.importAll(category, monitor);
 							}
 						});
 					} catch (InvocationTargetException | InterruptedException ex) {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-							"Beim Import ist ein Fehler aufgetreten.");
-						LoggerFactory.getLogger(getClass())
-							.error("Exception on external file import", ex);
+								"Beim Import ist ein Fehler aufgetreten.");
+						LoggerFactory.getLogger(getClass()).error("Exception on external file import", ex);
 					}
 				});
 			}
 		});
 		omnivoreBtn.setEnabled(importer.isAvailable());
 	}
-	
-	public void init(IWorkbench workbench){
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));		
+
+	public void init(IWorkbench workbench) {
+		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}
 }

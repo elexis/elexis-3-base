@@ -1,19 +1,19 @@
 package ch.elexis.base.ch.arzttarife.tarmed;
 
 public enum TarmedKumulationTyp {
-		EXCLUSION("E"), INCLUSION("I"), EXCLUSIVE("X");
-	
+	EXCLUSION("E"), INCLUSION("I"), EXCLUSIVE("X");
+
 	private String typ;
-	
-	TarmedKumulationTyp(String typ){
+
+	TarmedKumulationTyp(String typ) {
 		this.typ = typ;
 	}
-	
-	public String getTyp(){
+
+	public String getTyp() {
 		return typ;
 	}
-	
-	public static TarmedKumulationTyp ofTyp(String typ){
+
+	public static TarmedKumulationTyp ofTyp(String typ) {
 		if ("E".equals(typ)) {
 			return EXCLUSION;
 		} else if ("I".equals(typ)) {
@@ -23,8 +23,8 @@ public enum TarmedKumulationTyp {
 		}
 		return null;
 	}
-	
-	public static String toString(TarmedKumulationTyp typ){
+
+	public static String toString(TarmedKumulationTyp typ) {
 		if (typ == EXCLUSION) {
 			return "Exklusion";
 		} else if (typ == INCLUSION) {

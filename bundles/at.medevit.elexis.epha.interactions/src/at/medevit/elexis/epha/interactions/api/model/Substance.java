@@ -8,32 +8,32 @@ public class Substance {
 	private String type;
 	private String gtin;
 	private String name;
-	
-	public String getType(){
+
+	public String getType() {
 		return type;
 	}
-	
-	public void setType(String type){
+
+	public void setType(String type) {
 		this.type = type;
 	}
-	
-	public String getGtin(){
+
+	public String getGtin() {
 		return gtin;
 	}
-	
-	public void setGtin(String gtin){
+
+	public void setGtin(String gtin) {
 		this.gtin = gtin;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return name;
 	}
-	
-	public void setName(String name){
+
+	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public static Substance of(IArticle article){
+
+	public static Substance of(IArticle article) {
 		Substance ret = new Substance();
 		ret.setType("drug");
 		if (StringUtils.isNotBlank(article.getGtin())) {

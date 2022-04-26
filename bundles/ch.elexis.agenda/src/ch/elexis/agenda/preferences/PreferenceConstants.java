@@ -7,17 +7,17 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.agenda.preferences;
 
 public class PreferenceConstants {
 	public static final String AG_BEREICHE = "agenda/bereiche"; //$NON-NLS-1$
-	
+
 	public static final String AG_BEREICH_PREFIX = "agenda/bereich/"; //$NON-NLS-1$
 	public static final String AG_BEREICH_TYPE_POSTFIX = "/type"; //$NON-NLS-1$
-	
+
 	public static final String AG_TERMINTYPEN = "agenda/TerminTypen"; //$NON-NLS-1$
 	public static final String AG_TERMINSTATUS = "agenda/TerminStatus"; //$NON-NLS-1$
 	public static final String AG_SHOWDELETED = "agenda/zeige_geloeschte"; //$NON-NLS-1$
@@ -31,15 +31,14 @@ public class PreferenceConstants {
 	public static final String AG_BEREICH = "agenda/bereich"; //$NON-NLS-1$
 	public static final String AG_BIG_SAVE_COLUMNWIDTH = "agenda/big/savecolumnwidth";
 	public static final String AG_BIG_COLUMNWIDTH = "agenda/big/columnwidth";
-	
-	public static final String AG_DAY_PRESENTATION_STARTS_AT =
-		"agenda/beginnStundeTagesdarstellung";
+
+	public static final String AG_DAY_PRESENTATION_STARTS_AT = "agenda/beginnStundeTagesdarstellung";
 	public static final String AG_DAY_PRESENTATION_ENDS_AT = "agenda/endStundeTagesdarstellung";
-	
+
 	public static final String AG_PIXEL_PER_MINUTE = "agenda/proportional/pixelperminute"; //$NON-NLS-1$
 	public static final String AG_RESOURCESTOSHOW = "agenda/proportional/bereichezeigen"; //$NON-NLS-1$
 	public static final String AG_DAYSTOSHOW = "agenda/wochenanzeige/tagezeigen"; //$NON-NLS-1$
-	
+
 	public static final String AG_SYNC_TYPE = "agenda/sync/db_type"; //$NON-NLS-1$
 	public static final String AG_SYNC_HOST = "agenda/sync/db_host"; //$NON-NLS-1$
 	public static final String AG_SYNC_CONNECTOR = "agenda/sync/db_connect"; //$NON-NLS-1$
@@ -47,20 +46,14 @@ public class PreferenceConstants {
 	public static final String AG_SYNC_DBPWD = "agenda/sync/db_pwd"; //$NON-NLS-1$
 	public static final String AG_SYNC_MAPPING = "agenda/sync/mapping"; //$NON-NLS-1$
 	public static final String AG_SYNC_ENABLED = "agenda/sync/enabled"; //$NON-NLS-1$
-	
-	public static final String AG_PRINT_APPOINTMENTCARD_TEMPLATE =
-		"agenda/print/appointmentcard_template"; //$NON-NLS-1$
-	public static final String AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT =
-		Messages.PreferenceConstants_appointmentCard;
-	public static final String AG_PRINT_APPOINTMENTCARD_PRINTER_NAME =
-		"agenda/print/appointmentcard_printer_name"; //$NON-NLS-1$
-	public static final String AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY =
-		"agenda/print/appointmentcard_printer_tray"; //$NON-NLS-1$
-	public static final String AG_PRINT_APPOINTMENTCARD_DIRECTPRINT =
-		"agenda/print/appointmentcard_directprint"; //$NON-NLS-1$
+
+	public static final String AG_PRINT_APPOINTMENTCARD_TEMPLATE = "agenda/print/appointmentcard_template"; //$NON-NLS-1$
+	public static final String AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT = Messages.PreferenceConstants_appointmentCard;
+	public static final String AG_PRINT_APPOINTMENTCARD_PRINTER_NAME = "agenda/print/appointmentcard_printer_name"; //$NON-NLS-1$
+	public static final String AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY = "agenda/print/appointmentcard_printer_tray"; //$NON-NLS-1$
+	public static final String AG_PRINT_APPOINTMENTCARD_DIRECTPRINT = "agenda/print/appointmentcard_directprint"; //$NON-NLS-1$
 	public static final boolean AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT = false;
-	
-	public static final String AG_AVOID_PATIENT_DOUBLE_BOOKING =
-		"agenda/patient/doppelteTerminvergabeVermeiden";
+
+	public static final String AG_AVOID_PATIENT_DOUBLE_BOOKING = "agenda/patient/doppelteTerminvergabeVermeiden";
 	public static final boolean AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT = false;
 }

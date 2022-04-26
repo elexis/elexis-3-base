@@ -35,10 +35,9 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-@Component(service = IReferenceDataImporter.class, property = IReferenceDataImporter.REFERENCEDATAID
-	+ "=analysenliste")
+@Component(service = IReferenceDataImporter.class, property = IReferenceDataImporter.REFERENCEDATAID + "=analysenliste")
 public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImporter {
-	
+
 	private static String FLD_CODE = "code";
 	private static String FLD_CHAPTER = "chapter";
 	private static String FLD_TP = "tp";
@@ -47,26 +46,25 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 	private static String FLD_FACHBEREICH = "fachbereich";
 	private static String FLD_GUELTIGVON = "gueltigVon";
 	private static String FLD_GUELTIGBIS = "gueltigBis";
-	
+
 	int langdef = 0;
 	LocalDate validFrom;
-	
+
 	Fachspec[] specs;
 	int row;
 	// use local HashMap instead of creating new one for every tarif position
 	private HashMap<String, String> importedValues = new HashMap<String, String>();
-	
+
 	@Override
 	public IStatus performImport(@Nullable IProgressMonitor monitor, @NonNull InputStream input,
-		@Nullable Integer newVersion){
+			@Nullable Integer newVersion) {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		validFrom = getValidFromVersion(newVersion).toLocalDate();
-		
-		String lang =
-			ConfigServiceHolder.get().getLocal(Preferences.ABL_LANGUAGE, "d").toUpperCase(); //$NON-NLS-1$
+
+		String lang = ConfigServiceHolder.get().getLocal(Preferences.ABL_LANGUAGE, "d").toUpperCase(); //$NON-NLS-1$
 		if (lang.startsWith("F")) { //$NON-NLS-1$
 			langdef = 1;
 		} else if (lang.startsWith("I")) { //$NON-NLS-1$
@@ -75,10 +73,9 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		specs = Fachspec.loadFachspecs(langdef);
 		if (specs != null) {
 			ExcelWrapper exw = new ExcelWrapper();
-			exw.setFieldTypes(new Class[] {
-				String.class /* chapter */, String.class /* rev */, String.class /* code */,
-				String.class /* tp */, String.class /* name */, String.class /* lim */,
-				String.class /* fach (2011) comment (2012) */, String.class
+			exw.setFieldTypes(new Class[] { String.class /* chapter */, String.class /* rev */, String.class /* code */,
+					String.class /* tp */, String.class /* name */, String.class /* lim */,
+					String.class /* fach (2011) comment (2012) */, String.class
 					/* fach (2012) */
 			});
 			if (exw.load(input, langdef)) {
@@ -87,25 +84,25 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 				int count = last - first;
 				if (monitor != null)
 					monitor.beginTask("Import EAL", count);
-				
+
 				String[] line = exw.getRow(1).toArray(new String[0]);
 				// determine format of file according to year of tarif
 				int formatYear = getFormatYear(line);
 				if (formatYear != 2011 && formatYear != 2012 && formatYear != 2018)
 					return new Status(Status.ERROR, "ch.elexis.base.ch.labortarif", //$NON-NLS-1$
-						"unknown file format"); //$NON-NLS-1$
-					
+							"unknown file format"); //$NON-NLS-1$
+
 				for (int i = first + 1; i <= last; i++) {
 					row = i;
 					line = exw.getRow(i).toArray(new String[0]);
-					
+
 					if (formatYear == 2011)
 						fillImportedValues2011(line);
 					else if (formatYear == 2012)
 						fillImportedValues2012(line);
 					else if (formatYear == 2018)
 						fillImportedValues2018(line);
-					
+
 					if (importedValues.size() > 0) {
 						updateOrCreateFromImportedValues();
 					}
@@ -116,12 +113,11 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 						}
 					}
 				}
-				
+
 				closeAllOlder();
 				if (monitor != null)
 					monitor.done();
-				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
-					ILaborLeistung.class);
+				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, ILaborLeistung.class);
 				if (newVersion != null) {
 					VersionUtil.setCurrentVersion(newVersion);
 				}
@@ -129,20 +125,19 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 			}
 		}
 		return new Status(Status.ERROR, "ch.elexis.labotarif.ch2009", //$NON-NLS-1$
-			"could not load file"); //$NON-NLS-1$
+				"could not load file"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Convert version Integer in yymmdd format to date.
-	 * 
+	 *
 	 * @param newVersion
 	 * @return
 	 */
-	private TimeTool getValidFromVersion(Integer newVersion){
+	private TimeTool getValidFromVersion(Integer newVersion) {
 		String intString = Integer.toString(newVersion);
 		if (intString.length() != 6) {
-			throw new IllegalStateException(
-				"Version " + newVersion + " can not be parsed to valid date.");
+			throw new IllegalStateException("Version " + newVersion + " can not be parsed to valid date.");
 		}
 		String year = intString.substring(0, 2);
 		String month = intString.substring(2, 4);
@@ -153,13 +148,12 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		ret.set(TimeTool.DAY_OF_MONTH, Integer.parseInt(day));
 		return ret;
 	}
-	
-	private void updateOrCreateFromImportedValues(){
+
+	private void updateOrCreateFromImportedValues() {
 		// get all entries with matching code
-		INamedQuery<ILaborLeistung> query =
-			ModelServiceHolder.get().getNamedQuery(ILaborLeistung.class, "code");
+		INamedQuery<ILaborLeistung> query = ModelServiceHolder.get().getNamedQuery(ILaborLeistung.class, "code");
 		List<ILaborLeistung> entries = query
-			.executeWithParameters(query.getParameterMap("code", importedValues.get(FLD_CODE)));
+				.executeWithParameters(query.getParameterMap("code", importedValues.get(FLD_CODE)));
 		List<ILaborLeistung> openEntries = new ArrayList<ILaborLeistung>();
 		// get open entries -> field FLD_GUELTIG_BIS not set
 		for (ILaborLeistung existing : entries) {
@@ -179,32 +173,30 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 					updateWithValues(openEntry, importedValues);
 				} else {
 					// close entry and create new entry
-					ModelServiceHolder.get().setEntityProperty(FLD_GUELTIGBIS,
-						validFrom.minusDays(1), openEntry);
+					ModelServiceHolder.get().setEntityProperty(FLD_GUELTIGBIS, validFrom.minusDays(1), openEntry);
 					createWithValues(importedValues);
 				}
 			}
 		}
 	}
-	
-	private void updateWithValues(ILaborLeistung existing, HashMap<String, String> values){
+
+	private void updateWithValues(ILaborLeistung existing, HashMap<String, String> values) {
 		IModelService modelService = ModelServiceHolder.get();
-		
-		modelService.setEntityProperty(FLD_CHAPTER,
-			concatChapter(existing, values.get(FLD_CHAPTER)), existing);
+
+		modelService.setEntityProperty(FLD_CHAPTER, concatChapter(existing, values.get(FLD_CHAPTER)), existing);
 		modelService.setEntityProperty(FLD_CODE, values.get(FLD_CODE), existing);
 		modelService.setEntityProperty(FLD_TP, Double.valueOf(values.get(FLD_TP)), existing);
 		modelService.setEntityProperty(FLD_NAME, values.get(FLD_NAME), existing);
 		modelService.setEntityProperty(FLD_LIMITATIO, values.get(FLD_LIMITATIO), existing);
 		modelService.setEntityProperty(FLD_FACHBEREICH, Fachspec.getFachspec(specs, row), existing);
-		
+
 		modelService.save(existing);
 	}
-	
-	private ILaborLeistung createWithValues(HashMap<String, String> values){
+
+	private ILaborLeistung createWithValues(HashMap<String, String> values) {
 		IModelService modelService = ModelServiceHolder.get();
 		ILaborLeistung created = modelService.create(ILaborLeistung.class);
-		
+
 		modelService.setEntityProperty(FLD_CHAPTER, values.get(FLD_CHAPTER), created);
 		modelService.setEntityProperty(FLD_CODE, values.get(FLD_CODE), created);
 		modelService.setEntityProperty(FLD_TP, Double.valueOf(values.get(FLD_TP)), created);
@@ -212,12 +204,12 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		modelService.setEntityProperty(FLD_LIMITATIO, values.get(FLD_LIMITATIO), created);
 		modelService.setEntityProperty(FLD_FACHBEREICH, Fachspec.getFachspec(specs, row), created);
 		modelService.setEntityProperty(FLD_GUELTIGVON, validFrom, created);
-		
+
 		modelService.save(created);
 		return created;
 	}
-	
-	private String concatChapter(ILaborLeistung existing, String chapter){
+
+	private String concatChapter(ILaborLeistung existing, String chapter) {
 		String existingChapter = existing.getChapter();
 		if (existingChapter != null && !existingChapter.isEmpty()) {
 			return chaptersMakeUnique(existingChapter + ", " + chapter);
@@ -225,8 +217,8 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 			return chaptersMakeUnique(chapter);
 		}
 	}
-	
-	private String chaptersMakeUnique(String chapters){
+
+	private String chaptersMakeUnique(String chapters) {
 		String[] parts = chapters.split(", ");
 		if (parts != null && parts.length > 1) {
 			StringBuilder sb = new StringBuilder();
@@ -245,63 +237,55 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 			return chapters;
 		}
 	}
-	
-	private void fillImportedValues2012(String[] line){
+
+	private void fillImportedValues2012(String[] line) {
 		importedValues.clear();
 		importedValues.put(FLD_CHAPTER, StringTool.getSafe(line, 0));
 		// convert code to nnnn.mm
 		String code = convertCodeString(StringTool.getSafe(line, 2));
-		
+
 		importedValues.put(FLD_CODE, code);
-		importedValues.put(FLD_TP,
-			convertLocalizedNumericString(StringTool.getSafe(line, 3)).toString());
-		importedValues.put(FLD_NAME,
-			StringTool.limitLength(StringTool.getSafe(line, 4), 254));
+		importedValues.put(FLD_TP, convertLocalizedNumericString(StringTool.getSafe(line, 3)).toString());
+		importedValues.put(FLD_NAME, StringTool.limitLength(StringTool.getSafe(line, 4), 254));
 		importedValues.put(FLD_LIMITATIO, StringTool.getSafe(line, 5));
 		importedValues.put(FLD_FACHBEREICH, StringTool.getSafe(line, 7));
 	}
-	
-	private void fillImportedValues2011(String[] line){
+
+	private void fillImportedValues2011(String[] line) {
 		importedValues.clear();
 		importedValues.put(FLD_CHAPTER, StringTool.getSafe(line, 0));
 		// convert code to nnnn.mm
 		String code = convertCodeString(StringTool.getSafe(line, 2));
-		
+
 		importedValues.put(FLD_CODE, code);
-		importedValues.put(FLD_TP,
-			convertLocalizedNumericString(StringTool.getSafe(line, 3)).toString());
-		importedValues.put(FLD_NAME,
-			StringTool.limitLength(StringTool.getSafe(line, 4), 254));
+		importedValues.put(FLD_TP, convertLocalizedNumericString(StringTool.getSafe(line, 3)).toString());
+		importedValues.put(FLD_NAME, StringTool.limitLength(StringTool.getSafe(line, 4), 254));
 		importedValues.put(FLD_LIMITATIO, StringTool.getSafe(line, 5));
 		importedValues.put(FLD_FACHBEREICH, StringTool.getSafe(line, 6));
 	}
-	
-	private void fillImportedValues2018(String[] line){
+
+	private void fillImportedValues2018(String[] line) {
 		importedValues.clear();
 		importedValues.put(FLD_CHAPTER, StringTool.getSafe(line, 0));
-		if (StringTool.getSafe(line, 6).equals("1")
-			|| StringTool.getSafe(line, 6).equalsIgnoreCase("true")) {
-			importedValues.put(FLD_CHAPTER,
-				StringTool.getSafe(line, 0) + ", 5.1.2.2.1");
+		if (StringTool.getSafe(line, 6).equals("1") || StringTool.getSafe(line, 6).equalsIgnoreCase("true")) {
+			importedValues.put(FLD_CHAPTER, StringTool.getSafe(line, 0) + ", 5.1.2.2.1");
 		}
 		// convert code to nnnn.mm
 		String code = convertCodeString(StringTool.getSafe(line, 1));
-		
+
 		importedValues.put(FLD_CODE, code);
-		importedValues.put(FLD_TP,
-			convertLocalizedNumericString(StringTool.getSafe(line, 2)).toString());
-		importedValues.put(FLD_NAME,
-			StringTool.limitLength(StringTool.getSafe(line, 3), 254));
+		importedValues.put(FLD_TP, convertLocalizedNumericString(StringTool.getSafe(line, 2)).toString());
+		importedValues.put(FLD_NAME, StringTool.limitLength(StringTool.getSafe(line, 3), 254));
 		importedValues.put(FLD_LIMITATIO, StringTool.getSafe(line, 4));
 		importedValues.put(FLD_FACHBEREICH, StringTool.getSafe(line, 5));
 	}
-	
-	private void closeAllOlder(){
+
+	private void closeAllOlder() {
 		IModelService modelService = ModelServiceHolder.get();
 		// get all entries
 		LocalDate defaultValidFrom = LocalDate.of(1970, 1, 1);
 		List<ILaborLeistung> entries = modelService.getQuery(ILaborLeistung.class).execute();
-		
+
 		List<ILaborLeistung> oldEntriesToSave = new ArrayList<ILaborLeistung>();
 		for (ILaborLeistung entry : entries) {
 			if (entry.getValidFrom() == null) {
@@ -316,8 +300,8 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		}
 		modelService.save(oldEntriesToSave);
 	}
-	
-	private String convertCodeString(String code){
+
+	private String convertCodeString(String code) {
 		// split by all possible delimiters after reading for xls
 		String[] parts = code.split("[\\.,']");
 		StringBuilder sb = new StringBuilder();
@@ -332,16 +316,17 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 			sb.append("00");
 		else if (sb.length() == 6)
 			sb.append("0");
-		
+
 		return sb.toString();
 	}
-	
-	private String convertLocalizedNumericString(String localized){
+
+	private String convertLocalizedNumericString(String localized) {
 		DecimalFormat df = (DecimalFormat) NumberFormat.getInstance();
 		Number number = new Integer(0);
 		try {
 			number = df.parse(localized);
-		} catch (ParseException pe) { /* ignore and return default 0 */}
+		} catch (ParseException pe) {
+			/* ignore and return default 0 */}
 		// cut off decimals if there are none
 		if ((number.doubleValue() % 1.0) > 0) {
 			return Double.toString(number.doubleValue());
@@ -349,8 +334,8 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 			return Integer.toString(number.intValue());
 		}
 	}
-	
-	private int getFormatYear(String[] line){
+
+	private int getFormatYear(String[] line) {
 		String fach2011 = StringTool.getSafe(line, 6);
 		String fach2012 = StringTool.getSafe(line, 7);
 		String code2018 = StringTool.getSafe(line, 1);
@@ -365,15 +350,15 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		}
 		return -1;
 	}
-	
-	private boolean isCode(String code2018){
+
+	private boolean isCode(String code2018) {
 		code2018 = code2018.replaceAll("[\\.,']", "");
 		Integer value = Integer.valueOf(code2018);
 		return value >= 1000;
 	}
-	
+
 	@Override
-	public int getCurrentVersion(){
+	public int getCurrentVersion() {
 		return VersionUtil.getCurrentVersion();
 	}
 }

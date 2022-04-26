@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -38,36 +38,37 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	TarmedSelectorPanelProvider slp;
 	CommonViewer cv;
 	int eventType = SWT.KeyDown;
-	
+
 	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
 	private ISelectionChangedListener selChangeListener = new ISelectionChangedListener() {
-		
+
 		@Override
-		public void selectionChanged(SelectionChangedEvent event){
+		public void selectionChanged(SelectionChangedEvent event) {
 			TreeViewer tv = (TreeViewer) event.getSource();
 			StructuredSelection ss = (StructuredSelection) tv.getSelection();
 			tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
 			if (!ss.isEmpty()) {
 				ITarmedLeistung selected = (ITarmedLeistung) ss.getFirstElement();
-				ContextServiceHolder.get().getRootContext()
-					.setNamed("ch.elexis.views.codeselector.tarmed.selection", selected);
+				ContextServiceHolder.get().getRootContext().setNamed("ch.elexis.views.codeselector.tarmed.selection",
+						selected);
 			} else {
-				ContextServiceHolder.get().getRootContext()
-					.setNamed("ch.elexis.views.codeselector.tarmed.selection", null);
+				ContextServiceHolder.get().getRootContext().setNamed("ch.elexis.views.codeselector.tarmed.selection",
+						null);
 			}
 		}
 	};
-	
-	public TarmedCodeSelectorFactory(){}
-	
+
+	public TarmedCodeSelectorFactory() {
+	}
+
 	@Override
-	public ViewerConfigurer createViewerConfigurer(final CommonViewer cv){
+	public ViewerConfigurer createViewerConfigurer(final CommonViewer cv) {
 		this.cv = cv;
 		cv.setSelectionChangedListener(selChangeListener);
 		// add keyListener to search field
 		Listener keyListener = new Listener() {
 			@Override
-			public void handleEvent(Event event){
+			public void handleEvent(Event event) {
 				if (event.type == eventType) {
 					if (event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR) {
 						slp.fireChangedEvent();
@@ -76,56 +77,54 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 			}
 		};
 		slp = new TarmedSelectorPanelProvider(cv);
-		
+
 		slp.addActions(new ToggleFiltersAction());
-		
+
 		MenuManager menu = new MenuManager();
 		menu.add(tvfa);
 		cv.setContextMenu(menu);
-		
-		ViewerConfigurer vc =
-			new ViewerConfigurer(new TarmedCodeSelectorContentProvider(cv),
-				new DefaultLabelProvider(), slp,
-				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-					SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
+
+		ViewerConfigurer vc = new ViewerConfigurer(new TarmedCodeSelectorContentProvider(cv),
+				new DefaultLabelProvider(), slp, new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 		return vc.setContentType(ContentType.GENERICOBJECT);
 	}
-	
+
 	@Override
-	public Class getElementClass(){
+	public Class getElementClass() {
 		return ITarmedLeistung.class;
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		cv.dispose();
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return "Tarmed"; //$NON-NLS-1$
 	}
-	
+
 	private class ToggleFiltersAction extends Action {
-		
-		public ToggleFiltersAction(){
+
+		public ToggleFiltersAction() {
 			super("", Action.AS_CHECK_BOX);
 			// initial state, active filters
 			setChecked(true);
 		}
-		
+
 		@Override
-		public String getToolTipText(){
+		public String getToolTipText() {
 			return "Kontext (Konsultation, Fall, etc.) Filter (de)aktivieren";
 		}
-		
+
 		@Override
-		public ImageDescriptor getImageDescriptor(){
+		public ImageDescriptor getImageDescriptor() {
 			return Images.IMG_FILTER.getImageDescriptor();
 		}
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			((TarmedSelectorPanelProvider) slp).toggleFilters();
 		}
 	}

@@ -20,51 +20,52 @@ import at.medevit.elexis.outbox.model.IOutboxElement;
 public interface IOutboxElementUiProvider {
 	/**
 	 * Image that will be placed on the filter action.
-	 * 
+	 *
 	 * @return ImageDescriptor or null
 	 */
 	public ImageDescriptor getFilterImage();
-	
+
 	/**
 	 * Filter that will be applied with the filter action.
-	 * 
+	 *
 	 * @return ViewerFilter or null
 	 */
 	public ViewerFilter getFilter();
-	
+
 	/**
 	 * LabelProvider used by the outbox viewer.
-	 * 
+	 *
 	 * @return LabelProvider or null
 	 */
 	public LabelProvider getLabelProvider();
-	
+
 	/**
 	 * ColorProvider used by the outbox viewer.
-	 * 
+	 *
 	 * @return IColorProvider or null
 	 */
 	public IColorProvider getColorProvider();
-	
+
 	/**
 	 * Test if this provider shall be used for the element.
-	 * 
+	 *
 	 * @param element
 	 * @return
 	 */
 	public boolean isProviderFor(IOutboxElement element);
-	
+
 	/**
 	 * Method called when element is double clicked.
-	 * 
+	 *
 	 * @param element
 	 */
 	public void doubleClicked(IOutboxElement element);
-	
+
 	/**
 	 * Method called when element is deleted.
-	 * 
+	 *
 	 * @param element
 	 */
-	public default void delete(IOutboxElement element){};
+	public default void delete(IOutboxElement element) {
+	};
 }

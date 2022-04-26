@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.impfplan.view;
 
@@ -40,13 +40,13 @@ import ch.elexis.impfplan.model.VaccinationType;
 public class ImpfplanPreferences extends PreferencePage implements IWorkbenchPreferencePage {
 	private IAction removeAction, editAction;
 	private TableViewer tv;
-	
-	public ImpfplanPreferences(){
+
+	public ImpfplanPreferences() {
 		makeActions();
 	}
-	
+
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
@@ -54,27 +54,27 @@ public class ImpfplanPreferences extends PreferencePage implements IWorkbenchPre
 		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv.setContentProvider(new ContentProviderAdapter() {
 			@Override
-			public Object[] getElements(Object arg0){
+			public Object[] getElements(Object arg0) {
 				return ImpfplanController.allVaccs().toArray();
 			}
 		});
 		tv.setLabelProvider(new LabelProvider() {
-			
+
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof VaccinationType) {
 					return ((VaccinationType) element).getLabel();
 				}
 				return "?"; //$NON-NLS-1$
 			}
-			
+
 		});
 		tv.addDoubleClickListener(new IDoubleClickListener() {
-			
+
 			@Override
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				edit();
-				
+
 			}
 		});
 		Composite cButtons = new Composite(ret, SWT.NONE);
@@ -84,16 +84,14 @@ public class ImpfplanPreferences extends PreferencePage implements IWorkbenchPre
 		bAdd.setText(Messages.ImpfplanPreferences_addCaption);
 		bAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
-				EditVaccinationDialog dlg =
-					new EditVaccinationDialog(getShell(), new VaccinationType(
-						Messages.ImpfplanPreferences_nameDummy,
-						Messages.ImpfplanPreferences_vaccDummy));
+			public void widgetSelected(SelectionEvent e) {
+				EditVaccinationDialog dlg = new EditVaccinationDialog(getShell(), new VaccinationType(
+						Messages.ImpfplanPreferences_nameDummy, Messages.ImpfplanPreferences_vaccDummy));
 				if (dlg.open() == Dialog.OK) {
 					tv.refresh();
 				}
 			}
-			
+
 		});
 		MenuManager menu = new MenuManager();
 		menu.add(removeAction);
@@ -101,34 +99,34 @@ public class ImpfplanPreferences extends PreferencePage implements IWorkbenchPre
 		tv.setInput(this);
 		return ret;
 	}
-	
+
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	private void edit(){
+
+	private void edit() {
 		IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 		if (!sel.isEmpty()) {
 			VaccinationType t = (VaccinationType) sel.getFirstElement();
 			if (new EditVaccinationDialog(getShell(), t).open() == Dialog.OK) {
 				tv.refresh(true);
 			}
-			
+
 		}
-		
+
 	}
-	
-	private void makeActions(){
+
+	private void makeActions() {
 		removeAction = new Action(Messages.ImpfplanPreferences_removeVaccination) {
 			{
 				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 				setToolTipText(Messages.ImpfplanPreferences_removeVaccWarning);
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 				if (!sel.isEmpty()) {
 					VaccinationType t = (VaccinationType) sel.getFirstElement();
@@ -136,10 +134,10 @@ public class ImpfplanPreferences extends PreferencePage implements IWorkbenchPre
 						tv.remove(sel.getFirstElement());
 					}
 				}
-				
+
 			}
-			
+
 		};
 	}
-	
+
 }

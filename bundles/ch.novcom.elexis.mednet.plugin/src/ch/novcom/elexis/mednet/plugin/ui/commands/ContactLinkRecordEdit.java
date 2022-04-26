@@ -12,7 +12,6 @@ package ch.novcom.elexis.mednet.plugin.ui.commands;
 
 import java.util.HashMap;
 
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -33,39 +32,40 @@ import ch.novcom.elexis.mednet.plugin.ui.dialog.ContactLinkRecordEditDialog;
 //TODO FIX A BUG BY EDITING
 
 public class ContactLinkRecordEdit extends AbstractHandler {
-	                                        
+
 	public static final String COMMANDID = "ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.edit";//$NON-NLS-1$
 	public static final String PARAMETERID = "ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.edit.selected";//$NON-NLS-1$
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
-			
+
 			// get the parameter
 			String param = event.getParameter(ContactLinkRecordEdit.PARAMETERID);
-			
-			PersistentObject contactLinkRecord =
-				(PersistentObject) event.getCommand().getParameterType(ContactLinkRecordEdit.PARAMETERID).getValueConverter().convertToObject(param);
-			String objString = event.getCommand().getParameterType(ContactLinkRecordEdit.PARAMETERID).getValueConverter().convertToString(param);
-			
-			
+
+			PersistentObject contactLinkRecord = (PersistentObject) event.getCommand()
+					.getParameterType(ContactLinkRecordEdit.PARAMETERID).getValueConverter().convertToObject(param);
+			String objString = event.getCommand().getParameterType(ContactLinkRecordEdit.PARAMETERID)
+					.getValueConverter().convertToString(param);
+
 			// create and open the dialog with the parameter
 			Shell parent = HandlerUtil.getActiveShell(event);
 
 			MessageDialog.openInformation(parent, "Parameter", param);
-			if(objString != null) {
+			if (objString != null) {
 				MessageDialog.openInformation(parent, "Parameter as String", objString);
 			}
-			
-			ContactLinkRecordEditDialog dialog = new ContactLinkRecordEditDialog(parent, (ContactLinkRecord) contactLinkRecord);
+
+			ContactLinkRecordEditDialog dialog = new ContactLinkRecordEditDialog(parent,
+					(ContactLinkRecord) contactLinkRecord);
 			dialog.open();
 		} catch (Exception ex) {
 			throw new RuntimeException(ContactLinkRecordEdit.COMMANDID, ex);
 		}
 		return null;
 	}
-	
-	public static void executeWithParams(PersistentObject parameter){
+
+	public static void executeWithParams(PersistentObject parameter) {
 		try {
 			// get the command
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -76,20 +76,14 @@ public class ContactLinkRecordEdit extends AbstractHandler {
 			param.put(ContactLinkRecordEdit.PARAMETERID, parameter);
 			// build the parameterized command
 			ParameterizedCommand pc = ParameterizedCommand.generateCommand(cmd, param);
-			
+
 			// execute the command
-			IHandlerService handlerService =
-				(IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+			IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 					.getService(IHandlerService.class);
 			handlerService.executeCommand(pc, null);
 		} catch (Exception ex) {
 			throw new RuntimeException(ContactLinkRecordEdit.COMMANDID, ex);
 		}
 	}
-	
+
 }
-
-
-
-
-

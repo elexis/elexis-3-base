@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -27,26 +27,25 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
 public class Validator {
-	
-	public Result<IInvoice> checkBill(IInvoice invoice, final Document xmlRn,
-		final Result<IInvoice> res){
+
+	public Result<IInvoice> checkBill(IInvoice invoice, final Document xmlRn, final Result<IInvoice> res) {
 		Element payload = xmlRn.getRootElement().getChild("payload", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element body = payload.getChild("body", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element treatment = body.getChild("treatment", XMLExporter.nsinvoice);//$NON-NLS-1$
 		Element tiersGarant = body.getChild("tiers_garant", XMLExporter.nsinvoice);
-		
+
 		IMandator m = invoice.getMandator();
 		if (invoice.getState().numericValue() > InvoiceState.OPEN.numericValue()) {
 			return res; // Wenn sie eh schon gedruckt war machen wir kein Büro mehr auf
 		}
-		
+
 		if ((m == null)) {
 			invoice.reject(InvoiceState.REJECTCODE.NO_MANDATOR, Messages.Validator_NoMandator);
 			CoreModelServiceHolder.get().save(invoice);
 			res.add(Result.SEVERITY.ERROR, 2, Messages.Validator_NoMandator, invoice, true);
 		}
 		ICoverage coverage = invoice.getCoverage();
-		
+
 		if (coverage == null || !CoverageServiceHolder.get().isValid(coverage)) {
 			invoice.reject(InvoiceState.REJECTCODE.NO_CASE, Messages.Validator_NoCase);
 			CoreModelServiceHolder.get().save(invoice);
@@ -59,16 +58,14 @@ public class Validator {
 			CoreModelServiceHolder.get().save(invoice);
 			res.add(Result.SEVERITY.ERROR, 3, Messages.Validator_NoEAN, invoice, true);
 		}
-		
+
 		if (treatment.getChildren("diagnosis", XMLExporter.nsinvoice).isEmpty()) {
 			invoice.reject(InvoiceState.REJECTCODE.NO_DIAG, Messages.Validator_NoDiagnosis);
 			CoreModelServiceHolder.get().save(invoice);
 			res.add(Result.SEVERITY.ERROR, 8, Messages.Validator_NoDiagnosis, invoice, true);
 		}
-		
-		
-		IContact costBearer =
-			(coverage != null) ? coverage.getCostBearer() : null;
+
+		IContact costBearer = (coverage != null) ? coverage.getCostBearer() : null;
 		// kostentraeger is optional for tiers garant else check if valid
 		if (costBearer == null && tiersGarant != null) {
 			return res;
@@ -80,7 +77,7 @@ public class Validator {
 				return res;
 			}
 			ean = TarmedRequirements.getEAN(costBearer);
-			
+
 			if (StringTool.isNothing(ean) || (!ean.matches(TarmedRequirements.EAN_PATTERN))) {
 				invoice.reject(InvoiceState.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoEAN2);
 				CoreModelServiceHolder.get().save(invoice);

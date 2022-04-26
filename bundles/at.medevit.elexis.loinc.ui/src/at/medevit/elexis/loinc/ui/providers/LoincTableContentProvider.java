@@ -10,55 +10,55 @@ import at.medevit.elexis.loinc.ui.LoincServiceComponent;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 
 public class LoincTableContentProvider implements ICommonViewerContentProvider {
-	
+
 	List<LoincCode> elements;
-	
+
 	@Override
-	public Object[] getElements(Object inputElement){
+	public Object[] getElements(Object inputElement) {
 		if (elements == null) {
 			elements = LoincServiceComponent.getService().getAllCodes();
 		}
 		return elements.toArray();
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void changed(HashMap<String, String> values){
+	public void changed(HashMap<String, String> values) {
 		elements = LoincServiceComponent.getService().getAllCodes();
 	}
-	
+
 	@Override
-	public void reorder(String field){
+	public void reorder(String field) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void selected(){
+	public void selected() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void init(){
+	public void init() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void startListening(){
+	public void startListening() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void stopListening(){
+	public void stopListening() {
 		// TODO Auto-generated method stub
 	}
-	
+
 }

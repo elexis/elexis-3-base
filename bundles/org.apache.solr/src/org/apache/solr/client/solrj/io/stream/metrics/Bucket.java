@@ -20,25 +20,24 @@ import org.apache.solr.client.solrj.io.Tuple;
 
 public class Bucket {
 
-  private static final String NULL_VALUE = "NULL";
+	private static final String NULL_VALUE = "NULL";
 
-  private String bucketKey;
+	private String bucketKey;
 
-  public Bucket(String bucketKey) {
-    this.bucketKey = bucketKey;
-  }
+	public Bucket(String bucketKey) {
+		this.bucketKey = bucketKey;
+	}
 
-  public Object getBucketValue(Tuple tuple)
-  {
-    Object o = tuple.get(bucketKey);
-    if(o == null) {
-      return NULL_VALUE;
-    } else {
-      return o;
-    }
-  }
+	public Object getBucketValue(Tuple tuple) {
+		Object o = tuple.get(bucketKey);
+		if (o == null) {
+			return NULL_VALUE;
+		} else {
+			return o;
+		}
+	}
 
-  public String toString() {
-    return bucketKey;
-  }
+	public String toString() {
+		return bucketKey;
+	}
 }

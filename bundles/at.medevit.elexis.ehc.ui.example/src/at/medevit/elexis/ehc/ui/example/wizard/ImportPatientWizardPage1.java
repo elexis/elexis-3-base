@@ -36,46 +36,44 @@ import ch.elexis.data.Person;
 import ch.rgw.tools.TimeTool;
 
 public class ImportPatientWizardPage1 extends WizardPage {
-	
+
 	private TableViewer contentViewer;
 	private AbstractCdaChV1<?> ehcDocument;
-	
-	protected ImportPatientWizardPage1(String pageName, AbstractCdaChV1<?> ehcDocument){
+
+	protected ImportPatientWizardPage1(String pageName, AbstractCdaChV1<?> ehcDocument) {
 		super(pageName);
 		setTitle("Patienten für import auswählen.");
 		this.ehcDocument = ehcDocument;
 	}
-	
+
 	@Override
-	public void createControl(Composite parent){
+	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		contentViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		Control control = contentViewer.getControl();
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd.heightHint = 300;
 		control.setLayoutData(gd);
-		
+
 		contentViewer.setContentProvider(new ArrayContentProvider());
 		contentViewer.setLabelProvider(new LabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				if (element instanceof org.ehealth_connector.common.mdht.Patient) {
-					org.ehealth_connector.common.mdht.Patient patient =
-						((org.ehealth_connector.common.mdht.Patient) element);
-					return patient.getName().getCompleteName() + " - "
-						+ patient.getBirthday().toString();
+					org.ehealth_connector.common.mdht.Patient patient = ((org.ehealth_connector.common.mdht.Patient) element);
+					return patient.getName().getCompleteName() + " - " + patient.getBirthday().toString();
 				}
 				return super.getText(element);
 			}
-			
+
 			@Override
-			public Image getImage(Object element){
+			public Image getImage(Object element) {
 				if (element instanceof org.ehealth_connector.common.mdht.Patient) {
 					if (((org.ehealth_connector.common.mdht.Patient) element)
-						.getAdministrativeGenderCode() == AdministrativeGender.FEMALE) {
+							.getAdministrativeGenderCode() == AdministrativeGender.FEMALE) {
 						return Images.IMG_FRAU.getImage();
 					} else {
 						return Images.IMG_MANN.getImage();
@@ -84,31 +82,28 @@ public class ImportPatientWizardPage1 extends WizardPage {
 				return super.getImage(element);
 			}
 		});
-		
+
 		if (ehcDocument != null) {
 			contentViewer.setInput(Collections.singletonList(ehcDocument.getPatient()));
 		}
-		
+
 		setControl(composite);
 	}
-	
-	public boolean finish(){
+
+	public boolean finish() {
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
-		
+
 		if (!contentSelection.isEmpty()) {
-			org.ehealth_connector.common.mdht.Patient selectedPatient =
-				(org.ehealth_connector.common.mdht.Patient) contentSelection.getFirstElement();
-			String gender =
-				selectedPatient.getAdministrativeGenderCode() == AdministrativeGender.FEMALE ? Person.FEMALE
-						: Person.MALE;
-			Patient existing =
-				KontaktMatcher.findPatient(selectedPatient.getName().getFamilyName(),
+			org.ehealth_connector.common.mdht.Patient selectedPatient = (org.ehealth_connector.common.mdht.Patient) contentSelection
+					.getFirstElement();
+			String gender = selectedPatient.getAdministrativeGenderCode() == AdministrativeGender.FEMALE ? Person.FEMALE
+					: Person.MALE;
+			Patient existing = KontaktMatcher.findPatient(selectedPatient.getName().getFamilyName(),
 					selectedPatient.getName().getGivenNames().get(0),
-					new TimeTool(selectedPatient.getBirthday()).toString(TimeTool.DATE_COMPACT),
-					gender, null, null, null, null, CreateMode.FAIL);
+					new TimeTool(selectedPatient.getBirthday()).toString(TimeTool.DATE_COMPACT), gender, null, null,
+					null, null, CreateMode.FAIL);
 			if (existing != null) {
-				boolean result =
-					MessageDialog.openConfirm(getShell(), "Patient existiert",
+				boolean result = MessageDialog.openConfirm(getShell(), "Patient existiert",
 						"Der Patient existiert bereits sollen die Daten überschrieben werden?");
 				if (!result) {
 					return true;
@@ -116,11 +111,11 @@ public class ImportPatientWizardPage1 extends WizardPage {
 			}
 			ServiceComponent.getService().getOrCreatePatient(selectedPatient);
 		}
-		
+
 		return true;
 	}
-	
-	public void setDocument(AbstractCdaChV1<?> ehcDocument){
+
+	public void setDocument(AbstractCdaChV1<?> ehcDocument) {
 		this.ehcDocument = ehcDocument;
 		if (contentViewer != null && !contentViewer.getControl().isDisposed()) {
 			contentViewer.setInput(Collections.singletonList(ehcDocument.getPatient()));

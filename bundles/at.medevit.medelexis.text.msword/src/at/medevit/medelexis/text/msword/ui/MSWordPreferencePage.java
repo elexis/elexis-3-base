@@ -34,70 +34,69 @@ import ch.elexis.data.Brief;
 import ch.elexis.data.Query;
 
 public class MSWordPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	public static final String MSWORD_SPELLING_CHECK = "at.medevit.medelexis.text.msword/spelling";
 	public static final String MSWORD_OPEN_EXTERN = "at.medevit.medelexis.text.msword/openextern";
 
-	public MSWordPreferencePage(){
+	public MSWordPreferencePage() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	public MSWordPreferencePage(String title){
+
+	public MSWordPreferencePage(String title) {
 		super(title);
 		// TODO Auto-generated constructor stub
 	}
-	
-	public MSWordPreferencePage(String title, ImageDescriptor image){
+
+	public MSWordPreferencePage(String title, ImageDescriptor image) {
 		super(title, image);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(Composite parent) {
 		Composite content = new Composite(parent, SWT.NONE);
 		content.setLayout(new GridLayout(2, true));
 
 		Label lbl = new Label(content, SWT.NONE);
 		lbl.setText(Messages.MSWordPreferencePage_EnableSpellcheck);
-		
+
 		final Button spellingBtn = new Button(content, SWT.CHECK);
 		spellingBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				CoreHub.userCfg.set(MSWORD_SPELLING_CHECK, spellingBtn.getSelection());
 			}
 		});
 		spellingBtn.setSelection(CoreHub.userCfg.get(MSWORD_SPELLING_CHECK, false));
-		
+
 		lbl = new Label(content, SWT.NONE);
 		lbl.setText("Dokumente ausserhalb von Elexis öffnen");
-		
+
 		final Button externBtn = new Button(content, SWT.CHECK);
 		externBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				CoreHub.userCfg.set(MSWORD_OPEN_EXTERN, externBtn.getSelection());
 			}
 		});
 		externBtn.setSelection(CoreHub.userCfg.get(MSWORD_OPEN_EXTERN, false));
-		
+
 		lbl = new Label(content, SWT.NONE);
 		lbl.setText(Messages.MSWordPreferencePage_ConvertAll);
-		
+
 		Button btn = new Button(content, SWT.PUSH);
 		btn.setText(Messages.MSWordPreferencePage_StartConvert);
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
-				ProgressMonitorDialog dialog =
-					new ProgressMonitorDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-						.getShell());
+			public void widgetSelected(SelectionEvent e) {
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 				ConversionJob job = new ConversionJob();
 				try {
 					dialog.run(true, false, job);
@@ -106,11 +105,12 @@ public class MSWordPreferencePage extends PreferencePage implements IWorkbenchPr
 				} catch (InterruptedException ex) {
 					ex.printStackTrace();
 				}
-				
-				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-					.getShell(), Messages.MSWordPreferencePage_ConvertDone, Messages.MSWordPreferencePage_ConvertDone_0 + job.okCnt
-					+ Messages.MSWordPreferencePage_ConvertDone_1 + job.errCnt
-					+ Messages.MSWordPreferencePage_ConvertDone_2);
+
+				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						Messages.MSWordPreferencePage_ConvertDone,
+						Messages.MSWordPreferencePage_ConvertDone_0 + job.okCnt
+								+ Messages.MSWordPreferencePage_ConvertDone_1 + job.errCnt
+								+ Messages.MSWordPreferencePage_ConvertDone_2);
 			}
 		});
 
@@ -121,12 +121,12 @@ public class MSWordPreferencePage extends PreferencePage implements IWorkbenchPr
 
 		int okCnt = 0;
 		int errCnt = 0;
-		
+
 		@Override
-		public void run(final IProgressMonitor monitor){
+		public void run(final IProgressMonitor monitor) {
 			Query<Brief> query = new Query<Brief>(Brief.class);
 			final List<Brief> briefe = query.execute();
-			
+
 			monitor.beginTask(Messages.MSWordPreferencePage_ConvertLetters, briefe.size());
 
 			CommunicationFile file = new CommunicationFile();
@@ -142,7 +142,7 @@ public class MSWordPreferencePage extends PreferencePage implements IWorkbenchPr
 				if (type == FileType.ODT || type == FileType.SXW) {
 					try {
 						monitor.subTask(Messages.MSWordPreferencePage_ConvertLetter + brief.getLabel());
-						
+
 						// writer will start conversion
 						file.write(arr);
 						brief.save(file.getContentAsByteArray(), "doc"); //$NON-NLS-1$

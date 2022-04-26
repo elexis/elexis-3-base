@@ -20,14 +20,5 @@ package org.apache.solr.client.solrj.cloud.autoscaling;
  * Enum that represents trigger event types.
  */
 public enum TriggerEventType {
-  NODEADDED,
-  NODELOST,
-  REPLICALOST,
-  MANUAL,
-  SCHEDULED,
-  SEARCHRATE,
-  INDEXRATE,
-  INVALID,
-  METRIC,
-  INDEXSIZE
+	NODEADDED, NODELOST, REPLICALOST, MANUAL, SCHEDULED, SEARCHRATE, INDEXRATE, INVALID, METRIC, INDEXSIZE
 }

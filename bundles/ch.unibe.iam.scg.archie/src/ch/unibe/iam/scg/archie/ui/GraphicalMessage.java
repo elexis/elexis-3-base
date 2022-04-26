@@ -19,10 +19,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * <p>Messages with a graphical symbol.</p>
- * 
+ * <p>
+ * Messages with a graphical symbol.
+ * </p>
+ *
  * $Id: GraphicalMessage.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -34,8 +36,8 @@ public class GraphicalMessage extends Composite {
 	private Composite parent;
 
 	/**
-	 * @param parent Composite
-	 * @param image Image
+	 * @param parent  Composite
+	 * @param image   Image
 	 * @param message String
 	 */
 	public GraphicalMessage(final Composite parent, final Image image, final String message) {

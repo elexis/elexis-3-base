@@ -25,12 +25,14 @@ import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 import ch.unibe.iam.scg.archie.utils.ProviderHelper;
 
 /**
- * <p>Displays information about a provider that is currently selected. The class
+ * <p>
+ * Displays information about a provider that is currently selected. The class
  * generates a label list based on the set of names and values of provider
- * parameters.</p>
- * 
+ * parameters.
+ * </p>
+ *
  * $Id: ProviderInformatioPanel.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -38,14 +40,14 @@ import ch.unibe.iam.scg.archie.utils.ProviderHelper;
 public class ProviderInformatioPanel extends Composite {
 
 	private Map<String, Object> parameterList;
-	
+
 	private Group parameterGroup;
-	
+
 	private Composite parameterContainer;
-	
+
 	/**
 	 * Default constructor.
-	 * 
+	 *
 	 * @param parent Parent composite.
 	 */
 	public ProviderInformatioPanel(final Composite parent) {
@@ -55,20 +57,20 @@ public class ProviderInformatioPanel extends Composite {
 		parentlayout.marginBottom = 5;
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		layoutData.grabExcessHorizontalSpace = true;
-		
+
 		this.setLayout(parentlayout);
 		this.setLayoutData(layoutData);
-		
-		GridLayout groupLayout = new GridLayout();	
+
+		GridLayout groupLayout = new GridLayout();
 		this.parameterGroup = new Group(this, SWT.NONE);
 		this.parameterGroup.setText("Current Statistics");
 		this.parameterGroup.setLayout(groupLayout);
 		this.parameterGroup.setLayoutData(layoutData);
-		
+
 		GridLayout containerLayout = new GridLayout();
 		containerLayout.numColumns = 2;
 		containerLayout.marginWidth = 2;
-		
+
 		this.parameterContainer = new Composite(this.parameterGroup, SWT.FLAT);
 		this.parameterContainer.setLayout(containerLayout);
 		this.parameterContainer.setLayoutData(layoutData);
@@ -76,7 +78,7 @@ public class ProviderInformatioPanel extends Composite {
 
 	/**
 	 * Updates provider information based on the title and parameter list provided.
-	 * 
+	 *
 	 * @param provider AbstractDataProvider
 	 */
 	public void updateProviderInformation(final AbstractDataProvider provider) {
@@ -105,8 +107,8 @@ public class ProviderInformatioPanel extends Composite {
 		layoutData.horizontalSpan = 2;
 		layoutData.grabExcessHorizontalSpace = true;
 		titleLabel.setLayoutData(layoutData);
-		//titleLabel.setFont(Desk.theFontRegistry.getBold("Arial"));
-		
+		// titleLabel.setFont(Desk.theFontRegistry.getBold("Arial"));
+
 		// generate labels for parameter names and values
 		for (String name : this.parameterList.keySet()) {
 			Label nameLabel = new Label(this.parameterContainer, SWT.NONE);

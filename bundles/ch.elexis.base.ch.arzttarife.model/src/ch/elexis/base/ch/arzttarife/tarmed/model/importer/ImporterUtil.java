@@ -40,7 +40,7 @@ public class ImporterUtil {
 	 * Get a List of Maps containing the rows of the ResultSet with a matching valid
 	 * date information. This is needed as we can not make constraints on a date
 	 * represented as string in the db.
-	 * 
+	 *
 	 * @param input
 	 * @param validFrom
 	 * @return
@@ -84,7 +84,7 @@ public class ImporterUtil {
 	 * Get a List of Maps containing the rows of the ResultSet with a matching valid
 	 * date information. This is needed as we can not make constraints on a date
 	 * represented as string in the db.
-	 * 
+	 *
 	 * @param input
 	 * @param validFrom
 	 * @return
@@ -131,7 +131,7 @@ public class ImporterUtil {
 
 	/**
 	 * Put all the keys from the resultSet into the map using the specified keys.
-	 * 
+	 *
 	 * @param map
 	 * @param resultSet
 	 * @param keys

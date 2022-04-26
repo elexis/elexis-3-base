@@ -26,16 +26,15 @@ import ch.elexis.core.jdt.Nullable;
 import ch.rgw.tools.Log;
 
 public class GDTCommPartnerCollector {
-	
+
 	private static Log logger = Log.get(GDTCommPartnerCollector.class.getName());
-	
+
 	public static final String EP_ID = Activator.PLUGIN_ID + ".communicationPartner";
-		
-	public static @Nullable List<IGDTCommunicationPartner> getRegisteredCommPartners(){
+
+	public static @Nullable List<IGDTCommunicationPartner> getRegisteredCommPartners() {
 		List<IGDTCommunicationPartner> ret = null;
-		
-		IConfigurationElement[] config =
-			Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
+
+		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
 		try {
 			for (IConfigurationElement e : config) {
 				final Object o = e.createExecutableExtension("interface");
@@ -51,69 +50,68 @@ public class GDTCommPartnerCollector {
 				}
 			}
 		} catch (CoreException ex) {
-			logger.log("CoreException in getRegisteredCommPartners: "+ex.getMessage(), Log.WARNINGS);
+			logger.log("CoreException in getRegisteredCommPartners: " + ex.getMessage(), Log.WARNINGS);
 			System.out.println(ex.getMessage());
 		}
 		if (ret == null)
 			return null;
 		return ret;
 	}
-	
-	public static @Nullable IGDTCommunicationPartner identifyCommunicationPartnerByIncomingDirectory(String incomingDirectory) {
-		IConfigurationElement[] config =
-				Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
-			try {
-				for (IConfigurationElement e : config) {
-					final Object o = e.createExecutableExtension("interface");
-					if (o instanceof IGDTCommunicationPartner) {
-						IGDTCommunicationPartner cp = (IGDTCommunicationPartner) o;
-						if (cp != null && cp.getIncomingDirectory() != null
+
+	public static @Nullable IGDTCommunicationPartner identifyCommunicationPartnerByIncomingDirectory(
+			String incomingDirectory) {
+		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
+		try {
+			for (IConfigurationElement e : config) {
+				final Object o = e.createExecutableExtension("interface");
+				if (o instanceof IGDTCommunicationPartner) {
+					IGDTCommunicationPartner cp = (IGDTCommunicationPartner) o;
+					if (cp != null && cp.getIncomingDirectory() != null
 							&& cp.getIncomingDirectory().equalsIgnoreCase(incomingDirectory)) {
-							return cp;
-						}
+						return cp;
 					}
-					if (o instanceof IGDTCommunicationPartnerProvider) {
-						LinkedList<IGDTCommunicationPartner> childPartners = new LinkedList<IGDTCommunicationPartner>();
-						for (IGDTCommunicationPartner igdtCommunicationPartner : childPartners) {
-							if(igdtCommunicationPartner.getIncomingDirectory().equalsIgnoreCase(incomingDirectory)) {
-								return igdtCommunicationPartner;
-							}
+				}
+				if (o instanceof IGDTCommunicationPartnerProvider) {
+					LinkedList<IGDTCommunicationPartner> childPartners = new LinkedList<IGDTCommunicationPartner>();
+					for (IGDTCommunicationPartner igdtCommunicationPartner : childPartners) {
+						if (igdtCommunicationPartner.getIncomingDirectory().equalsIgnoreCase(incomingDirectory)) {
+							return igdtCommunicationPartner;
 						}
 					}
 				}
-			} catch (CoreException ex) {
-				logger.log("CoreException in getRegisteredCommPartners: "+ex.getMessage(), Log.WARNINGS);
-				System.out.println(ex.getMessage());
 			}
-			return null;
+		} catch (CoreException ex) {
+			logger.log("CoreException in getRegisteredCommPartners: " + ex.getMessage(), Log.WARNINGS);
+			System.out.println(ex.getMessage());
+		}
+		return null;
 	}
-	
+
 	public static @Nullable IGDTCommunicationPartner identifyCommunicationPartnerByLabel(String label) {
-		IConfigurationElement[] config =
-				Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
-			try {
-				for (IConfigurationElement e : config) {
-					final Object o = e.createExecutableExtension("interface");
-					if (o instanceof IGDTCommunicationPartner) {
-						IGDTCommunicationPartner cp = (IGDTCommunicationPartner) o;
-						if (cp.getLabel().equalsIgnoreCase(label)) {
-							return cp;
-						}
+		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
+		try {
+			for (IConfigurationElement e : config) {
+				final Object o = e.createExecutableExtension("interface");
+				if (o instanceof IGDTCommunicationPartner) {
+					IGDTCommunicationPartner cp = (IGDTCommunicationPartner) o;
+					if (cp.getLabel().equalsIgnoreCase(label)) {
+						return cp;
 					}
-					if (o instanceof IGDTCommunicationPartnerProvider) {
-						LinkedList<IGDTCommunicationPartner> childPartners = new LinkedList<IGDTCommunicationPartner>();
-						for (IGDTCommunicationPartner igdtCommunicationPartner : childPartners) {
-							if(igdtCommunicationPartner.getLabel().equalsIgnoreCase(label)) {
-								return igdtCommunicationPartner;
-							}
+				}
+				if (o instanceof IGDTCommunicationPartnerProvider) {
+					LinkedList<IGDTCommunicationPartner> childPartners = new LinkedList<IGDTCommunicationPartner>();
+					for (IGDTCommunicationPartner igdtCommunicationPartner : childPartners) {
+						if (igdtCommunicationPartner.getLabel().equalsIgnoreCase(label)) {
+							return igdtCommunicationPartner;
 						}
 					}
 				}
-			} catch (CoreException ex) {
-				logger.log("CoreException in getRegisteredCommPartners: "+ex.getMessage(), Log.WARNINGS);
-				System.out.println(ex.getMessage());
 			}
-			return null;
+		} catch (CoreException ex) {
+			logger.log("CoreException in getRegisteredCommPartners: " + ex.getMessage(), Log.WARNINGS);
+			System.out.println(ex.getMessage());
+		}
+		return null;
 	}
-	
+
 }

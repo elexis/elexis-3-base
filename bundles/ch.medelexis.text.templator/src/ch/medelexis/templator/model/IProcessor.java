@@ -13,8 +13,8 @@ package ch.medelexis.templator.model;
 
 public interface IProcessor {
 	public String getName();
-	
+
 	public boolean doOutput(ProcessingSchema schema);
-	
+
 	public String convert(String input);
 }

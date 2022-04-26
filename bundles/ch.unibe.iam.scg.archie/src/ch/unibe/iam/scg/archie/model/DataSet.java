@@ -21,26 +21,26 @@ import java.util.List;
  * List of Strings serves as table headings. Cells are denoted by their x and y
  * coordinates. Headings have to be set before content.
  * </p>
- * 
+ *
  * <p>
- * <strong>IMPORTANT</strong>: The dataset's content has to be composed out of data types
- * that implement the Comparable interface. This is to ensure that the contents
- * of the dataset can be sorted properly.
+ * <strong>IMPORTANT</strong>: The dataset's content has to be composed out of
+ * data types that implement the Comparable interface. This is to ensure that
+ * the contents of the dataset can be sorted properly.
  * </p>
- * 
+ *
  * Example Structure of a DataSet:
- * 
+ *
  * <pre>
  *      | Heading1| Heading2 |
  *       ====================
  *      | Column0 | Column1  |
  *       --------------------
- * Row0 | 0,0     | 0,1      | 
+ * Row0 | 0,0     | 0,1      |
  * Row1 | 1,0     | 1,1      |
  * </pre>
- * 
+ *
  * $Id: DataSet.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -48,8 +48,7 @@ import java.util.List;
 public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 
 	/**
-	 * Content of the DataSet: ArrayList with Comparable implementing objects
-	 * array.
+	 * Content of the DataSet: ArrayList with Comparable implementing objects array.
 	 */
 	private List<Comparable<?>[]> content;
 
@@ -68,9 +67,9 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	}
 
 	/**
-	 * Constructs a <code>DataSet</code> with a list of objects arrays and a
-	 * heading list.
-	 * 
+	 * Constructs a <code>DataSet</code> with a list of objects arrays and a heading
+	 * list.
+	 *
 	 * @param content
 	 * @param headings
 	 * @throws IllegalArgumentException
@@ -91,12 +90,9 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	}
 
 	/**
-	 * @param x
-	 *            Row index.
-	 * @param y
-	 *            Column index.
-	 * @param value
-	 *            Content.
+	 * @param x     Row index.
+	 * @param y     Column index.
+	 * @param value Content.
 	 */
 	public void setCell(final int x, final int y, final Comparable<?> value) {
 		// Checking Preconditions
@@ -108,10 +104,8 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	}
 
 	/**
-	 * @param x
-	 *            Row index.
-	 * @param y
-	 *            Column index.
+	 * @param x Row index.
+	 * @param y Column index.
 	 * @return Comparable<?> at specified location, null if list is empty.
 	 */
 	public Comparable<?> getCell(final int x, final int y) {
@@ -119,8 +113,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	}
 
 	/**
-	 * @param x
-	 *            Row index.
+	 * @param x Row index.
 	 * @return Comparable<?> Array of specified row.
 	 */
 	public Comparable<?>[] getRow(final int x) {
@@ -128,10 +121,8 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	}
 
 	/**
-	 * @param x
-	 *            Row index.
-	 * @param obj
-	 *            content.
+	 * @param x   Row index.
+	 * @param obj content.
 	 */
 	public void setRow(final int x, final Comparable<?>[] obj) {
 		// Checking Preconditions
@@ -143,8 +134,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	}
 
 	/**
-	 * @param y
-	 *            Column index.
+	 * @param y Column index.
 	 * @return Comparable<?> Array of specified column.
 	 */
 	public Comparable<?>[] getColumn(final int y) {
@@ -160,9 +150,8 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	/**
 	 * Adds an additional row to the dataSet and fills it with the provided row
 	 * content.
-	 * 
-	 * @param row
-	 *            Comparable<?> Array
+	 *
+	 * @param row Comparable<?> Array
 	 */
 	public void addRow(final Comparable<?>[] row) {
 		// Checking Preconditions
@@ -189,7 +178,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 
 	/**
 	 * DataSet can be empty, but not null.
-	 * 
+	 *
 	 * @param content
 	 */
 	public void setContent(final List<Comparable<?>[]> content) {
@@ -216,12 +205,10 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	}
 
 	/**
-	 * Set headings. We assume that headings get set before content.
-	 * Precondition checking for same row length gets done by
-	 * <code>setContent</code>.
-	 * 
-	 * @param headings
-	 *            List
+	 * Set headings. We assume that headings get set before content. Precondition
+	 * checking for same row length gets done by <code>setContent</code>.
+	 *
+	 * @param headings List
 	 */
 	public void setHeadings(final List<String> headings) {
 		// Checking Preconditions
@@ -232,9 +219,9 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	}
 
 	/**
-	 * Creates a string representation of this DataSet. This method is expensive
-	 * and should only be used for debugging purposes.
-	 * 
+	 * Creates a string representation of this DataSet. This method is expensive and
+	 * should only be used for debugging purposes.
+	 *
 	 * @return String representation of this DataSet.
 	 */
 	@Override
@@ -324,7 +311,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 
 	/**
 	 * Checks if the dataset contains any real data or is empty.
-	 * 
+	 *
 	 * @return True if the dataset's content is empty, false else.
 	 */
 	public boolean isEmpty() {

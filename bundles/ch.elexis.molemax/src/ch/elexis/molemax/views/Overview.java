@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    rgw - initial API and implementation
  *    rgw - 2014: Changes for Elexis 2.x
@@ -66,16 +66,17 @@ import ch.rgw.tools.TimeTool;
  * <td>lef back</td>
  * </tr>
  * </table>
- * Images are saved in a directory named ny the date and subdirectories named<br>
+ * Images are saved in a directory named ny the date and subdirectories
+ * named<br>
  * 0-4 (head)<br>
  * 5-8 (waist<br>
  * 9-11 (legs)<br>
  * There is always one image called base.jpg that is the overview image of the
  * given region. Other images in the same subdirectory are detail images that
  * are named x-y-w-h-seq.jpg from their origin
- * 
+ *
  * @author Gerry
- * 
+ *
  */
 public class Overview extends ViewPart implements IActivationListener {
 	public static final String ID = "molemax.overview";
@@ -96,8 +97,8 @@ public class Overview extends ViewPart implements IActivationListener {
 		tk = UiDesk.getToolkit();
 	}
 
-	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(
-			Patient.class, ElexisEvent.EVENT_SELECTED) {
+	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
+			ElexisEvent.EVENT_SELECTED) {
 
 		@Override
 		public void runInUi(ElexisEvent ev) {
@@ -106,8 +107,8 @@ public class Overview extends ViewPart implements IActivationListener {
 
 	};
 
-	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(
-			Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
+			ElexisEvent.EVENT_USER_CHANGED) {
 		@Override
 		public void runInUi(ElexisEvent ev) {
 			// TODO change user - adapt rights
@@ -142,8 +143,7 @@ public class Overview extends ViewPart implements IActivationListener {
 
 	@Override
 	public void dispose() {
-		GlobalEventDispatcher.getInstance()
-				.removeActivationListener(this, this);
+		GlobalEventDispatcher.getInstance().removeActivationListener(this, this);
 		for (int i = 0; i < 12; i++) {
 			if (trackers[i] != null)
 				Tracker.dispose(trackers[i]);
@@ -161,19 +161,16 @@ public class Overview extends ViewPart implements IActivationListener {
 			Point pt = sc.getSize();
 			sub += pt.y;
 		}
-		inlay.setSize(outer.getClientArea().width, outer.getClientArea().height
-				- sub);
+		inlay.setSize(outer.getClientArea().width, outer.getClientArea().height - sub);
 		inlay.layout();
 	}
 
 	/**
-	 * set a new Patient or date - Find all images for this patient and the
-	 * given date
-	 * 
-	 * @param p
-	 *            the patient
-	 * @param dat
-	 *            the date. if date is null, take the latest available sequenze.
+	 * set a new Patient or date - Find all images for this patient and the given
+	 * date
+	 *
+	 * @param p   the patient
+	 * @param dat the date. if date is null, take the latest available sequenze.
 	 */
 	public void setPatient(final Patient p, String dat) {
 		if (p == null) {
@@ -189,7 +186,7 @@ public class Overview extends ViewPart implements IActivationListener {
 		}
 		for (int i = 0; i < 12; i++) {
 			if (trackers[i] != null)
-			Tracker.dispose(trackers[i]);
+				Tracker.dispose(trackers[i]);
 		}
 		pat = p;
 		date = dat;
@@ -215,11 +212,9 @@ public class Overview extends ViewPart implements IActivationListener {
 
 	public void visible(final boolean mode) {
 		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_pat,
-					eeli_user);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_user);
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat,
-					eeli_user);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_user);
 		}
 	}
 
@@ -243,15 +238,13 @@ public class Overview extends ViewPart implements IActivationListener {
 	private void makeActions() {
 		selectDateAction = new Action(Messages.Overview_baseDate) {
 			{
-				setImageDescriptor(Overview
-						.getImageDescriptor("icons/notiz.png"));
+				setImageDescriptor(Overview.getImageDescriptor("icons/notiz.png"));
 				setToolTipText(Messages.Overview_selectSequence);
 			}
 
 			@Override
 			public void run() {
-				BaseSelectorDialog bsd = new BaseSelectorDialog(getViewSite()
-						.getShell(), pat);
+				BaseSelectorDialog bsd = new BaseSelectorDialog(getViewSite().getShell(), pat);
 				if (bsd.open() == Dialog.OK) {
 					setPatient(pat, bsd.ret);
 				}
@@ -260,8 +253,7 @@ public class Overview extends ViewPart implements IActivationListener {
 		};
 		restoreAction = new Action(Messages.Overview_restore) {
 			{
-				setImageDescriptor(Overview
-						.getImageDescriptor("icons/rescue.gif"));
+				setImageDescriptor(Overview.getImageDescriptor("icons/rescue.gif"));
 				setToolTipText(Messages.Overview_restoresequence);
 			}
 
@@ -273,8 +265,7 @@ public class Overview extends ViewPart implements IActivationListener {
 				String dirname = dlg.open();
 				if (dirname != null) {
 					File dir = new File(dirname);
-					if (dir.getName()
-							.matches("20[0-9][0-9][01][0-9][0-3][0-9]")) {
+					if (dir.getName().matches("20[0-9][0-9][01][0-9][0-3][0-9]")) {
 						TimeTool ttDate = new TimeTool(dir.getName());
 						setPatient(pat, ttDate.toString(TimeTool.DATE_GER));
 
@@ -285,9 +276,7 @@ public class Overview extends ViewPart implements IActivationListener {
 								boolean baseSet = false;
 								for (File img : imgs) {
 									if (img.getName().matches("base\\..+")) {
-										dispAll.addImageFromSequence(
-												Integer.parseInt(sub.getName()),
-												img);
+										dispAll.addImageFromSequence(Integer.parseInt(sub.getName()), img);
 										baseSet = true;
 									}
 								}
@@ -296,36 +285,31 @@ public class Overview extends ViewPart implements IActivationListener {
 										if (img.getName().matches("base\\..+")) {
 											continue;
 										}
-										dispAll.addImageFromSequence(
-												Integer.parseInt(sub.getName()),
-												img);
+										dispAll.addImageFromSequence(Integer.parseInt(sub.getName()), img);
 									}
 								}
 
 							}
 						}
 					} else {
-						SWTHelper.showError("Import nicht möglich",
-								"Der Verzeichnisname ist nicht yyyymmdd");
+						SWTHelper.showError("Import nicht möglich", "Der Verzeichnisname ist nicht yyyymmdd");
 					}
 				}
 			}
 		};
 		/*
 		 * newDateAction=new Action("Neu..."){ {
-		 * setImageDescriptor(Desk.theImageRegistry
-		 * .getDescriptor(Desk.IMG_NEW));
+		 * setImageDescriptor(Desk.theImageRegistry .getDescriptor(Desk.IMG_NEW));
 		 * setToolTipText("Eine neue Basissequenz erstellen"); }
-		 * 
+		 *
 		 * @Override public void run() {
-		 * 
+		 *
 		 * super.run(); } };
 		 */
 	}
 
 	public static ImageDescriptor getImageDescriptor(final String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(
-				"ch.elexis.molemax", path); //$NON-NLS-1$
+		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.molemax", path); //$NON-NLS-1$
 	}
 
 }

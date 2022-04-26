@@ -27,42 +27,46 @@ import org.apache.solr.common.params.CommonAdminParams;
 import org.apache.solr.common.util.Pair;
 
 /**
- * This suggester produces a SPLITSHARD request using provided {@link org.apache.solr.client.solrj.cloud.autoscaling.Suggester.Hint#COLL_SHARD} value.
+ * This suggester produces a SPLITSHARD request using provided
+ * {@link org.apache.solr.client.solrj.cloud.autoscaling.Suggester.Hint#COLL_SHARD}
+ * value.
  */
 class SplitShardSuggester extends Suggester {
 
-  @Override
-  public CollectionParams.CollectionAction getAction() {
-    return CollectionParams.CollectionAction.SPLITSHARD;
-  }
+	@Override
+	public CollectionParams.CollectionAction getAction() {
+		return CollectionParams.CollectionAction.SPLITSHARD;
+	}
 
-  @Override
-  @SuppressWarnings({"rawtypes"})
-  SolrRequest init() {
-    @SuppressWarnings({"unchecked"})
-    Set<Pair<String, String>> shards = (Set<Pair<String, String>>) hints.getOrDefault(Hint.COLL_SHARD, Collections.emptySet());
-    if (shards.isEmpty()) {
-      throw new RuntimeException("split-shard requires 'collection' and 'shard'");
-    }
-    if (shards.size() > 1) {
-      throw new RuntimeException("split-shard requires exactly one pair of 'collection' and 'shard'");
-    }
-    Pair<String, String> collShard = shards.iterator().next();
-    @SuppressWarnings({"unchecked"})
-    Map<String, Object> params = (Map<String, Object>)hints.getOrDefault(Hint.PARAMS, Collections.emptyMap());
-    Float splitFuzz = (Float)params.get(CommonAdminParams.SPLIT_FUZZ);
-    CollectionAdminRequest.SplitShard req = CollectionAdminRequest.splitShard(collShard.first()).setShardName(collShard.second());
-    if (splitFuzz != null) {
-      req.setSplitFuzz(splitFuzz);
-    }
-    String splitMethod = (String)params.get(CommonAdminParams.SPLIT_METHOD);
-    if (splitMethod != null) {
-      req.setSplitMethod(splitMethod);
-    }
-    Boolean splitByPrefix = (Boolean)params.get(CommonAdminParams.SPLIT_BY_PREFIX);
-    if (splitByPrefix != null) {
-      req.setSplitByPrefix(splitByPrefix);
-    }
-    return req;
-  }
+	@Override
+	@SuppressWarnings({ "rawtypes" })
+	SolrRequest init() {
+		@SuppressWarnings({ "unchecked" })
+		Set<Pair<String, String>> shards = (Set<Pair<String, String>>) hints.getOrDefault(Hint.COLL_SHARD,
+				Collections.emptySet());
+		if (shards.isEmpty()) {
+			throw new RuntimeException("split-shard requires 'collection' and 'shard'");
+		}
+		if (shards.size() > 1) {
+			throw new RuntimeException("split-shard requires exactly one pair of 'collection' and 'shard'");
+		}
+		Pair<String, String> collShard = shards.iterator().next();
+		@SuppressWarnings({ "unchecked" })
+		Map<String, Object> params = (Map<String, Object>) hints.getOrDefault(Hint.PARAMS, Collections.emptyMap());
+		Float splitFuzz = (Float) params.get(CommonAdminParams.SPLIT_FUZZ);
+		CollectionAdminRequest.SplitShard req = CollectionAdminRequest.splitShard(collShard.first())
+				.setShardName(collShard.second());
+		if (splitFuzz != null) {
+			req.setSplitFuzz(splitFuzz);
+		}
+		String splitMethod = (String) params.get(CommonAdminParams.SPLIT_METHOD);
+		if (splitMethod != null) {
+			req.setSplitMethod(splitMethod);
+		}
+		Boolean splitByPrefix = (Boolean) params.get(CommonAdminParams.SPLIT_BY_PREFIX);
+		if (splitByPrefix != null) {
+			req.setSplitByPrefix(splitByPrefix);
+		}
+		return req;
+	}
 }

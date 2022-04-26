@@ -49,12 +49,11 @@ public class Medicament {
 	public transient Prescription foundPrescription;
 	public transient String stateInfo = "";
 	public transient EntryType entryType;
-	
+
 	public static final String FREETEXT_PREFIX = "[Dosis: ";
 	public static final String FREETEXT_POSTFIX = "]";
-	
-	public static List<Medicament> fromPrescriptions(List<IPrescription> prescriptions,
-		boolean addDsc){
+
+	public static List<Medicament> fromPrescriptions(List<IPrescription> prescriptions, boolean addDsc) {
 		if (prescriptions != null && !prescriptions.isEmpty()) {
 			List<Medicament> ret = new ArrayList<>();
 			for (IPrescription prescription : prescriptions) {
@@ -73,13 +72,13 @@ public class Medicament {
 				addTkgSch(medicament, prescription);
 				// check if it has freetext dosis
 				if (medicament.Pos != null && !medicament.Pos.isEmpty()
-					&& (medicament.Pos.get(0).TT == null || medicament.Pos.get(0).TT.isEmpty())) {
+						&& (medicament.Pos.get(0).TT == null || medicament.Pos.get(0).TT.isEmpty())) {
 					String freeTextDosis = getDosageAsFreeText(prescription.getDosageInstruction());
 					if (freeTextDosis != null) {
 						medicament.AppInstr += (FREETEXT_PREFIX + freeTextDosis + FREETEXT_POSTFIX);
 					}
 				}
-				
+
 				IContact prescriptor = prescription.getPrescriptor();
 				medicament.PrscBy = getPrescriptorEAN(prescriptor);
 				ret.add(medicament);
@@ -88,18 +87,18 @@ public class Medicament {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Add taking scheme private field. Values are:<br/>
-	 * 
+	 *
 	 * <li>«Prd» (Period): Symptommedikation</li>
 	 * <li>«Cnt» (Continuous): Dauermedikation</li>
 	 * <li>«Ond» (On Demand): Reservemedikation</li>
-	 * 
+	 *
 	 * @param medicament
 	 * @param prescription
 	 */
-	private static void addTkgSch(Medicament medicament, IPrescription prescription){
+	private static void addTkgSch(Medicament medicament, IPrescription prescription) {
 		if (medicament.PFields == null) {
 			medicament.PFields = new ArrayList<>();
 		}
@@ -114,15 +113,15 @@ public class Medicament {
 		}
 		medicament.PFields.add(privateField);
 	}
-	
+
 	/**
-	 * Add description private field. This field is intended to be used if the id can not be
-	 * resolved.
-	 * 
+	 * Add description private field. This field is intended to be used if the id
+	 * can not be resolved.
+	 *
 	 * @param medicament
 	 * @param article
 	 */
-	private static void addDsc(Medicament medicament, IArticle article){
+	private static void addDsc(Medicament medicament, IArticle article) {
 		if (medicament.PFields == null) {
 			medicament.PFields = new ArrayList<>();
 		}
@@ -131,20 +130,20 @@ public class Medicament {
 		privateField.Val = article.getText();
 		medicament.PFields.add(privateField);
 	}
-	
-	private static String getDosageAsFreeText(String dosis){
+
+	private static String getDosageAsFreeText(String dosis) {
 		if (dosis != null && !dosis.isEmpty()) {
 			String[] signature = MedicationServiceHolder.get().getSignatureAsStringArray(dosis);
-			boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty()
-				&& signature[2].isEmpty() && signature[3].isEmpty();
+			boolean isFreetext = !signature[0].isEmpty() && signature[1].isEmpty() && signature[2].isEmpty()
+					&& signature[3].isEmpty();
 			if (isFreetext) {
 				return signature[0];
 			}
 		}
 		return null;
 	}
-	
-	private static String getPrescriptorEAN(IContact prescriptor){
+
+	private static String getPrescriptorEAN(IContact prescriptor) {
 		if (prescriptor != null) {
 			IXid ean = prescriptor.getXid(DOMAIN_EAN);
 			if (ean != null && ean.getDomainId() != null && !ean.getDomainId().isEmpty()) {
@@ -153,8 +152,8 @@ public class Medicament {
 		}
 		return null;
 	}
-	
-	private static int getIdType(IArticle article){
+
+	private static int getIdType(IArticle article) {
 		if (article != null) {
 			String gtin = article.getGtin();
 			if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) {
@@ -170,8 +169,8 @@ public class Medicament {
 		}
 		return 1;
 	}
-	
-	private static String getId(IArticle article){
+
+	private static String getId(IArticle article) {
 		String gtin = article.getGtin();
 		if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) {
 			return gtin;
@@ -186,20 +185,19 @@ public class Medicament {
 		if (getIdType(article) == 1) {
 			return article.getText();
 		}
-		throw new IllegalStateException(
-			"No ID (GTIN, Pharmacode) for article [" + article.getLabel() + "]");
+		throw new IllegalStateException("No ID (GTIN, Pharmacode) for article [" + article.getLabel() + "]");
 	}
-	
+
 	public enum State {
-			// prioritized order dont change it
-			NEW, ATC, ATC_SAME, ATC_SAME_DOSAGE, GTIN_SAME, GTIN_SAME_DOSAGE;
-		
-		public static boolean isHigherState(State current, State newState){
+		// prioritized order dont change it
+		NEW, ATC, ATC_SAME, ATC_SAME_DOSAGE, GTIN_SAME, GTIN_SAME_DOSAGE;
+
+		public static boolean isHigherState(State current, State newState) {
 			return current.ordinal() < newState.ordinal();
 		}
 	}
-	
-	public boolean isMedicationExpired(){
+
+	public boolean isMedicationExpired() {
 		if (dateTo != null) {
 			TimeTool now = new TimeTool();
 			now.add(TimeTool.SECOND, 5);

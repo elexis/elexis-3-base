@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.archie.patientstatistik;
 
@@ -20,28 +20,26 @@ import org.eclipse.core.runtime.IStatus;
 import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
 
 public class PatientenJournal extends AbstractTimeSeries {
-	String[] headings = {
-		"Name", "Konsultationen", "Kosten"
-	};
-	
-	public PatientenJournal(){
+	String[] headings = { "Name", "Konsultationen", "Kosten" };
+
+	public PatientenJournal() {
 		super("Patienten");
 	}
-	
+
 	@Override
-	protected List<String> createHeadings(){
+	protected List<String> createHeadings() {
 		return Arrays.asList(headings);
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return "Kosten pro Patient";
 	}
-	
+
 	@Override
-	protected IStatus createContent(IProgressMonitor monitor){
-		
+	protected IStatus createContent(IProgressMonitor monitor) {
+
 		return null;
 	}
-	
+
 }

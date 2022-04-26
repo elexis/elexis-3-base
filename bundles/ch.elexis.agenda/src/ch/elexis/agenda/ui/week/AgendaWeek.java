@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.agenda.ui.week;
 
@@ -42,20 +42,20 @@ import ch.rgw.tools.TimeTool;
 
 public class AgendaWeek extends BaseView {
 	private IAction weekFwdAction, weekBackAction, showCalendarAction;
-	
+
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
-	
-	public AgendaWeek(){
-		
+
+	public AgendaWeek() {
+
 	}
-	
-	public ColumnHeader getHeader(){
+
+	public ColumnHeader getHeader() {
 		return header;
 	}
-	
+
 	@Override
-	protected void create(Composite parent){
+	protected void create(Composite parent) {
 		makePrivateActions();
 		Composite wrapper = new Composite(parent, SWT.NONE);
 		wrapper.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -77,41 +77,40 @@ public class AgendaWeek extends BaseView {
 			checkDay(null, tt);
 		}
 	}
-	
-	void clear(){
+
+	void clear() {
 		sheet.clear();
 	}
-	
+
 	@Override
-	protected IPlannable getSelection(){
+	protected IPlannable getSelection() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	protected void refresh(){
+	protected void refresh() {
 		TimeTool ttMonday = agenda.getActDate();
 		ttMonday.set(TimeTool.DAY_OF_WEEK, TimeTool.MONDAY);
 		StringBuilder sb = new StringBuilder(ttMonday.toString(TimeTool.DATE_GER));
 		ttMonday.addDays(6);
 		sb.append("-").append(ttMonday.toString(TimeTool.DATE_GER)); //$NON-NLS-1$
-		
+
 		showCalendarAction.setText(sb.toString());
 		sheet.refresh();
-		
+
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		refresh();
 	}
-	
-	public String[] getDisplayedDays(){
+
+	public String[] getDisplayedDays() {
 		TimeTool ttMonday = Activator.getDefault().getActDate();
 		ttMonday.set(TimeTool.DAY_OF_WEEK, TimeTool.MONDAY);
 		ttMonday.chop(3);
-		String resources =
-			CoreHub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW,
+		String resources = CoreHub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW,
 				StringTool.join(TimeTool.Wochentage, ",")); //$NON-NLS-1$
 		if (resources == null) {
 			return new String[0];
@@ -126,16 +125,16 @@ public class AgendaWeek extends BaseView {
 			return ret.toArray(new String[0]);
 		}
 	}
-	
-	private void makePrivateActions(){
+
+	private void makePrivateActions() {
 		weekFwdAction = new Action(Messages.AgendaWeek_weekForward) {
 			{
 				setToolTipText(Messages.AgendaWeek_showNextWeek);
 				setImageDescriptor(Images.IMG_NEXT.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				agenda.addDays(7);
 				TimeTool tt = new TimeTool();
 				for (String s : getDisplayedDays()) {
@@ -145,15 +144,15 @@ public class AgendaWeek extends BaseView {
 				refresh();
 			}
 		};
-		
+
 		weekBackAction = new Action(Messages.AgendaWeek_weekBackward) {
 			{
 				setToolTipText(Messages.AgendaWeek_showPreviousWeek);
 				setImageDescriptor(Images.IMG_PREVIOUS.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				agenda.addDays(-7);
 				TimeTool tt = new TimeTool();
 				for (String s : getDisplayedDays()) {
@@ -168,11 +167,10 @@ public class AgendaWeek extends BaseView {
 				setToolTipText(Messages.AgendaWeek_showCalendarToSelect);
 				// setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
 			}
-			
+
 			@Override
-			public void run(){
-				DateSelectorDialog dsl =
-					new DateSelectorDialog(getViewSite().getShell(), agenda.getActDate());
+			public void run() {
+				DateSelectorDialog dsl = new DateSelectorDialog(getViewSite().getShell(), agenda.getActDate());
 				if (dsl.open() == Dialog.OK) {
 					agenda.setActDate(dsl.getSelectedDate());
 					TimeTool tt = new TimeTool();
@@ -180,60 +178,57 @@ public class AgendaWeek extends BaseView {
 						tt.set(s);
 						checkDay(null, tt);
 					}
-					
+
 					refresh();
 				}
 			}
 		};
-		
+
 		final IAction zoomAction = new Action(Messages.AgendaWeek_zoom, Action.AS_DROP_DOWN_MENU) {
 			Menu mine;
 			{
 				setToolTipText(Messages.AgendaWeek_setZoomFactor);
 				setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png")); //$NON-NLS-1$
 				setMenuCreator(new IMenuCreator() {
-					
-					public void dispose(){
+
+					public void dispose() {
 						mine.dispose();
 					}
-					
-					public Menu getMenu(Control parent){
+
+					public Menu getMenu(Control parent) {
 						mine = new Menu(parent);
 						fillMenu();
 						return mine;
 					}
-					
-					public Menu getMenu(Menu parent){
+
+					public Menu getMenu(Menu parent) {
 						mine = new Menu(parent);
 						fillMenu();
 						return mine;
 					}
 				});
 			}
-			
-			private void fillMenu(){
-				String currentFactorString =
-					CoreHub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, "0.4");
+
+			private void fillMenu() {
+				String currentFactorString = CoreHub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, "0.4");
 				int currentFactor = (int) (Float.parseFloat(currentFactorString) * 100);
-				for (String s : new String[] {
-					"40", "60", "80", "100", "120", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-					"140", "160", "200", "300"}) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				for (String s : new String[] { "40", "60", "80", "100", "120", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+						"140", "160", "200", "300" }) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					MenuItem it = new MenuItem(mine, SWT.RADIO);
 					it.setText(s + "%"); //$NON-NLS-1$
 					it.setData(s);
 					it.setSelection(Integer.parseInt(s) == currentFactor);
 					it.addSelectionListener(new SelectionAdapter() {
-						
+
 						@Override
-						public void widgetSelected(SelectionEvent e){
+						public void widgetSelected(SelectionEvent e) {
 							MenuItem mi = (MenuItem) e.getSource();
 							int scale = Integer.parseInt(mi.getText().split("%")[0]); //$NON-NLS-1$
 							double factor = scale / 100.0;
-							CoreHub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE,
-								Double.toString(factor));
+							CoreHub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, Double.toString(factor));
 							sheet.recalc();
 						}
-						
+
 					});
 				}
 			}
@@ -246,5 +241,5 @@ public class AgendaWeek extends BaseView {
 		tmr.add(new Separator());
 		tmr.add(zoomAction);
 	}
-	
+
 }

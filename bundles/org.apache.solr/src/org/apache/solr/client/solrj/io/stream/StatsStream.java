@@ -51,306 +51,300 @@ import org.apache.solr.common.util.NamedList;
 /**
  * @since 6.6.0
  */
-public class StatsStream extends TupleStream implements Expressible  {
+public class StatsStream extends TupleStream implements Expressible {
 
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
+	private Metric[] metrics;
+	private Tuple tuple;
+	private int index;
+	private String zkHost;
+	private SolrParams params;
+	private String collection;
+	protected transient SolrClientCache cache;
+	protected transient CloudSolrClient cloudSolrClient;
+	private StreamContext context;
 
+	public StatsStream(String zkHost, String collection, SolrParams params, Metric[] metrics) throws IOException {
+		init(collection, params, metrics, zkHost);
+	}
 
-  private Metric[] metrics;
-  private Tuple tuple;
-  private int index;
-  private String zkHost;
-  private SolrParams params;
-  private String collection;
-  protected transient SolrClientCache cache;
-  protected transient CloudSolrClient cloudSolrClient;
-  private StreamContext context;
+	public StatsStream(StreamExpression expression, StreamFactory factory) throws IOException {
+		// grab all parameters out
+		String collectionName = factory.getValueOperand(expression, 0);
 
-  public StatsStream(String zkHost,
-                     String collection,
-                     SolrParams params,
-                     Metric[] metrics
-  ) throws IOException {
-    init(collection, params, metrics, zkHost);
-  }
+		if (collectionName.indexOf('"') > -1) {
+			collectionName = collectionName.replaceAll("\"", "").replaceAll(" ", "");
+		}
 
-  public StatsStream(StreamExpression expression, StreamFactory factory) throws IOException{
-    // grab all parameters out
-    String collectionName = factory.getValueOperand(expression, 0);
+		List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
 
-    if(collectionName.indexOf('"') > -1) {
-      collectionName = collectionName.replaceAll("\"", "").replaceAll(" ", "");
-    }
+		StreamExpressionNamedParameter zkHostExpression = factory.getNamedOperand(expression, "zkHost");
+		List<StreamExpression> metricExpressions = factory.getExpressionOperandsRepresentingTypes(expression,
+				Expressible.class, Metric.class);
 
-    List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
+		// Collection Name
+		if (null == collectionName) {
+			throw new IOException(String.format(Locale.ROOT,
+					"invalid expression %s - collectionName expected as first operand", expression));
+		}
 
-    StreamExpressionNamedParameter zkHostExpression = factory.getNamedOperand(expression, "zkHost");
-    List<StreamExpression> metricExpressions = factory.getExpressionOperandsRepresentingTypes(expression, Expressible.class, Metric.class);
+		// Construct the metrics
+		Metric[] metrics = null;
+		if (metricExpressions.size() > 0) {
+			metrics = new Metric[metricExpressions.size()];
+			for (int idx = 0; idx < metricExpressions.size(); ++idx) {
+				metrics[idx] = factory.constructMetric(metricExpressions.get(idx));
+			}
+		} else {
+			metrics = new Metric[1];
+			metrics[0] = new CountMetric();
+		}
 
-    // Collection Name
-    if(null == collectionName){
-      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - collectionName expected as first operand",expression));
-    }
+		// pull out known named params
+		ModifiableSolrParams params = new ModifiableSolrParams();
+		for (StreamExpressionNamedParameter namedParam : namedParams) {
+			if (!namedParam.getName().equals("zkHost")) {
+				params.add(namedParam.getName(), namedParam.getParameter().toString().trim());
+			}
+		}
 
-    // Construct the metrics
-    Metric[] metrics = null;
-    if(metricExpressions.size() > 0) {
-      metrics = new Metric[metricExpressions.size()];
-      for(int idx = 0; idx < metricExpressions.size(); ++idx){
-        metrics[idx] = factory.constructMetric(metricExpressions.get(idx));
-      }
-    } else {
-      metrics = new Metric[1];
-      metrics[0] = new CountMetric();
-    }
+		if (params.get("q") == null) {
+			params.set("q", "*:*");
+		}
 
-    // pull out known named params
-    ModifiableSolrParams params = new ModifiableSolrParams();
-    for(StreamExpressionNamedParameter namedParam : namedParams){
-      if(!namedParam.getName().equals("zkHost")){
-        params.add(namedParam.getName(), namedParam.getParameter().toString().trim());
-      }
-    }
+		// zkHost, optional - if not provided then will look into factory list to get
+		String zkHost = null;
+		if (null == zkHostExpression) {
+			zkHost = factory.getCollectionZkHost(collectionName);
+			if (zkHost == null) {
+				zkHost = factory.getDefaultZkHost();
+			}
+		} else if (zkHostExpression.getParameter() instanceof StreamExpressionValue) {
+			zkHost = ((StreamExpressionValue) zkHostExpression.getParameter()).getValue();
+		}
 
-    if(params.get("q") == null) {
-      params.set("q", "*:*");
-    }
+		// We've got all the required items
+		init(collectionName, params, metrics, zkHost);
+	}
 
-    // zkHost, optional - if not provided then will look into factory list to get
-    String zkHost = null;
-    if(null == zkHostExpression){
-      zkHost = factory.getCollectionZkHost(collectionName);
-      if(zkHost == null) {
-        zkHost = factory.getDefaultZkHost();
-      }
-    } else if(zkHostExpression.getParameter() instanceof StreamExpressionValue){
-      zkHost = ((StreamExpressionValue)zkHostExpression.getParameter()).getValue();
-    }
+	public String getCollection() {
+		return this.collection;
+	}
 
-    // We've got all the required items
-    init(collectionName, params, metrics, zkHost);
-  }
+	private void init(String collection, SolrParams params, Metric[] metrics, String zkHost) throws IOException {
+		this.zkHost = zkHost;
+		this.collection = collection;
+		this.metrics = metrics;
+		this.params = params;
+	}
 
-  public String getCollection() {
-    return this.collection;
-  }
+	@Override
+	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+		// function name
+		StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
+		// collection
+		if (collection.indexOf(',') > -1) {
+			expression.addParameter("\"" + collection + "\"");
+		} else {
+			expression.addParameter(collection);
+		}
 
-  private void init(String collection,
-                    SolrParams params,
-                    Metric[] metrics,
-                    String zkHost) throws IOException {
-    this.zkHost  = zkHost;
-    this.collection = collection;
-    this.metrics = metrics;
-    this.params = params;
-  }
+		// parameters
+		ModifiableSolrParams tmpParams = new ModifiableSolrParams(params);
 
-  @Override
-  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-    // function name
-    StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
-    // collection
-    if(collection.indexOf(',') > -1) {
-      expression.addParameter("\""+collection+"\"");
-    } else {
-      expression.addParameter(collection);
-    }
+		for (Entry<String, String[]> param : tmpParams.getMap().entrySet()) {
+			expression.addParameter(
+					new StreamExpressionNamedParameter(param.getKey(), String.join(",", param.getValue())));
+		}
 
-    // parameters
-    ModifiableSolrParams tmpParams = new ModifiableSolrParams(params);
+		// metrics
+		for (Metric metric : metrics) {
+			expression.addParameter(metric.toExpression(factory));
+		}
 
-    for (Entry<String, String[]> param : tmpParams.getMap().entrySet()) {
-      expression.addParameter(new StreamExpressionNamedParameter(param.getKey(),
-          String.join(",", param.getValue())));
-    }
+		// zkHost
+		expression.addParameter(new StreamExpressionNamedParameter("zkHost", zkHost));
 
-    // metrics
-    for(Metric metric : metrics){
-      expression.addParameter(metric.toExpression(factory));
-    }
+		return expression;
+	}
 
-    // zkHost
-    expression.addParameter(new StreamExpressionNamedParameter("zkHost", zkHost));
+	@Override
+	public Explanation toExplanation(StreamFactory factory) throws IOException {
 
-    return expression;
-  }
+		StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
 
-  @Override
-  public Explanation toExplanation(StreamFactory factory) throws IOException {
+		explanation.setFunctionName(factory.getFunctionName(this.getClass()));
+		explanation.setImplementingClass(this.getClass().getName());
+		explanation.setExpressionType(ExpressionType.STREAM_SOURCE);
+		explanation.setExpression(toExpression(factory).toString());
 
-    StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
+		// child is a datastore so add it at this point
+		StreamExplanation child = new StreamExplanation(getStreamNodeId() + "-datastore");
+		child.setFunctionName(String.format(Locale.ROOT, "solr (%s)", collection));
+		// TODO: fix this so we know the # of workers - check with Joel about a Topic's
+		// ability to be in a
+		// parallel stream.
 
-    explanation.setFunctionName(factory.getFunctionName(this.getClass()));
-    explanation.setImplementingClass(this.getClass().getName());
-    explanation.setExpressionType(ExpressionType.STREAM_SOURCE);
-    explanation.setExpression(toExpression(factory).toString());
+		child.setImplementingClass("Solr/Lucene");
+		child.setExpressionType(ExpressionType.DATASTORE);
 
-    // child is a datastore so add it at this point
-    StreamExplanation child = new StreamExplanation(getStreamNodeId() + "-datastore");
-    child.setFunctionName(String.format(Locale.ROOT, "solr (%s)", collection));
-    // TODO: fix this so we know the # of workers - check with Joel about a Topic's ability to be in a
-    // parallel stream.
+		child.setExpression(
+				params.stream().map(e -> String.format(Locale.ROOT, "%s=%s", e.getKey(), Arrays.toString(e.getValue())))
+						.collect(Collectors.joining(",")));
 
-    child.setImplementingClass("Solr/Lucene");
-    child.setExpressionType(ExpressionType.DATASTORE);
+		explanation.addChild(child);
 
-    child.setExpression(params.stream().map(e -> String.format(Locale.ROOT, "%s=%s", e.getKey(), Arrays.toString(e.getValue()))).collect(Collectors.joining(",")));
+		return explanation;
+	}
 
-    explanation.addChild(child);
+	public void setStreamContext(StreamContext context) {
+		this.context = context;
+		cache = context.getSolrClientCache();
+	}
 
-    return explanation;
-  }
+	public List<TupleStream> children() {
+		return new ArrayList<>();
+	}
 
-  public void setStreamContext(StreamContext context) {
-    this.context = context;
-    cache = context.getSolrClientCache();
-  }
+	public void open() throws IOException {
 
-  public List<TupleStream> children() {
-    return new ArrayList<>();
-  }
+		String json = getJsonFacetString(metrics);
 
-  public void open() throws IOException {
+		ModifiableSolrParams paramsLoc = new ModifiableSolrParams(params);
+		paramsLoc.set("json.facet", json);
+		paramsLoc.set("rows", "0");
 
-    String json = getJsonFacetString(metrics);
+		@SuppressWarnings({ "unchecked" })
+		Map<String, List<String>> shardsMap = (Map<String, List<String>>) context.get("shards");
+		if (shardsMap == null) {
+			QueryRequest request = new QueryRequest(paramsLoc, SolrRequest.METHOD.POST);
+			cloudSolrClient = cache.getCloudSolrClient(zkHost);
+			try {
+				@SuppressWarnings({ "rawtypes" })
+				NamedList response = cloudSolrClient.request(request, collection);
+				getTuples(response, metrics);
+			} catch (Exception e) {
+				throw new IOException(e);
+			}
+		} else {
+			List<String> shards = shardsMap.get(collection);
+			HttpSolrClient client = cache.getHttpSolrClient(shards.get(0));
 
-    ModifiableSolrParams paramsLoc = new ModifiableSolrParams(params);
-    paramsLoc.set("json.facet", json);
-    paramsLoc.set("rows", "0");
+			if (shards.size() > 1) {
+				String shardsParam = getShardString(shards);
+				paramsLoc.add("shards", shardsParam);
+				paramsLoc.add("distrib", "true");
+			}
 
-    @SuppressWarnings({"unchecked"})
-    Map<String, List<String>> shardsMap = (Map<String, List<String>>)context.get("shards");
-    if(shardsMap == null) {
-      QueryRequest request = new QueryRequest(paramsLoc, SolrRequest.METHOD.POST);
-      cloudSolrClient = cache.getCloudSolrClient(zkHost);
-      try {
-        @SuppressWarnings({"rawtypes"})
-        NamedList response = cloudSolrClient.request(request, collection);
-        getTuples(response, metrics);
-      } catch (Exception e) {
-        throw new IOException(e);
-      }
-    } else {
-      List<String> shards = shardsMap.get(collection);
-      HttpSolrClient client = cache.getHttpSolrClient(shards.get(0));
+			QueryRequest request = new QueryRequest(paramsLoc, SolrRequest.METHOD.POST);
+			try {
+				@SuppressWarnings({ "rawtypes" })
+				NamedList response = client.request(request);
+				getTuples(response, metrics);
+			} catch (Exception e) {
+				throw new IOException(e);
+			}
+		}
+	}
 
-      if(shards.size() > 1) {
-        String shardsParam = getShardString(shards);
-        paramsLoc.add("shards", shardsParam);
-        paramsLoc.add("distrib", "true");
-      }
+	private String getShardString(List<String> shards) {
+		StringBuilder builder = new StringBuilder();
+		for (String shard : shards) {
+			if (builder.length() > 0) {
+				builder.append(",");
+			}
+			builder.append(shard);
+		}
+		return builder.toString();
+	}
 
-      QueryRequest request = new QueryRequest(paramsLoc, SolrRequest.METHOD.POST);
-      try {
-        @SuppressWarnings({"rawtypes"})
-        NamedList response = client.request(request);
-        getTuples(response, metrics);
-      } catch (Exception e) {
-        throw new IOException(e);
-      }
-    }
-  }
+	public void close() throws IOException {
 
-  private String getShardString(List<String> shards) {
-    StringBuilder builder = new StringBuilder();
-    for(String shard : shards) {
-      if(builder.length() > 0) {
-        builder.append(",");
-      }
-      builder.append(shard);
-    }
-    return builder.toString();
-  }
+	}
 
-  public void close() throws IOException {
+	public Tuple read() throws IOException {
+		if (index == 0) {
+			++index;
+			return tuple;
+		} else {
+			return Tuple.EOF();
+		}
+	}
 
-  }
+	private String getJsonFacetString(Metric[] _metrics) {
+		StringBuilder buf = new StringBuilder();
+		appendJson(buf, _metrics);
+		return "{" + buf.toString() + "}";
+	}
 
-  public Tuple read() throws IOException {
-    if(index == 0) {
-      ++index;
-      return tuple;
-    } else {
-      return Tuple.EOF();
-    }
-  }
+	private void appendJson(StringBuilder buf, Metric[] _metrics) {
 
-  private String getJsonFacetString(Metric[] _metrics) {
-    StringBuilder buf = new StringBuilder();
-    appendJson(buf, _metrics);
-    return "{"+buf.toString()+"}";
-  }
+		int metricCount = 0;
+		for (Metric metric : _metrics) {
+			String identifier = metric.getIdentifier();
+			if (!identifier.startsWith("count(")) {
+				if (metricCount > 0) {
+					buf.append(",");
+				}
+				if (identifier.startsWith("per(")) {
+					buf.append("\"facet_").append(metricCount).append("\":\"")
+							.append(identifier.replaceFirst("per", "percentile")).append('"');
+				} else if (identifier.startsWith("std(")) {
+					buf.append("\"facet_").append(metricCount).append("\":\"")
+							.append(identifier.replaceFirst("std", "stddev")).append('"');
+				} else {
+					buf.append("\"facet_").append(metricCount).append("\":\"").append(identifier).append('"');
+				}
+				++metricCount;
+			}
+		}
+	}
 
-  private void appendJson(StringBuilder buf,
-                          Metric[] _metrics) {
+	private void getTuples(@SuppressWarnings({ "rawtypes" }) NamedList response, Metric[] metrics) {
 
-    int metricCount = 0;
-    for(Metric metric : _metrics) {
-      String identifier = metric.getIdentifier();
-      if(!identifier.startsWith("count(")) {
-        if(metricCount>0) {
-          buf.append(",");
-        }
-        if(identifier.startsWith("per(")) {
-          buf.append("\"facet_").append(metricCount).append("\":\"").append(identifier.replaceFirst("per", "percentile")).append('"');
-        } else if(identifier.startsWith("std(")) {
-          buf.append("\"facet_").append(metricCount).append("\":\"").append(identifier.replaceFirst("std", "stddev")).append('"');
-        } else {
-          buf.append("\"facet_").append(metricCount).append("\":\"").append(identifier).append('"');
-        }
-        ++metricCount;
-      }
-    }
-  }
+		this.tuple = new Tuple();
+		@SuppressWarnings({ "rawtypes" })
+		NamedList facets = (NamedList) response.get("facets");
+		fillTuple(tuple, facets, metrics);
+	}
 
-  private void getTuples(@SuppressWarnings({"rawtypes"})NamedList response,
-                         Metric[] metrics) {
+	private void fillTuple(Tuple t, @SuppressWarnings({ "rawtypes" }) NamedList nl, Metric[] _metrics) {
 
-    this.tuple = new Tuple();
-    @SuppressWarnings({"rawtypes"})
-    NamedList facets = (NamedList)response.get("facets");
-    fillTuple(tuple, facets, metrics);
-  }
+		if (nl == null) {
+			return;
+		}
 
-  private void fillTuple(Tuple t,
-                         @SuppressWarnings({"rawtypes"})NamedList nl,
-                         Metric[] _metrics) {
+		int m = 0;
+		for (Metric metric : _metrics) {
+			String identifier = metric.getIdentifier();
+			if (!identifier.startsWith("count(")) {
+				if (nl.get("facet_" + m) != null) {
+					Object d = nl.get("facet_" + m);
+					if (d instanceof Number) {
+						if (metric.outputLong) {
+							t.put(identifier, Math.round(((Number) d).doubleValue()));
+						} else {
+							t.put(identifier, ((Number) d).doubleValue());
+						}
+					} else {
+						t.put(identifier, d);
+					}
+				}
+				++m;
+			} else {
+				long l = ((Number) nl.get("count")).longValue();
+				t.put("count(*)", l);
+			}
+		}
+	}
 
-    if(nl == null) {
-      return;
-    }
+	public int getCost() {
+		return 0;
+	}
 
-    int m = 0;
-    for(Metric metric : _metrics) {
-      String identifier = metric.getIdentifier();
-      if(!identifier.startsWith("count(")) {
-        if(nl.get("facet_"+m) != null) {
-          Object d = nl.get("facet_" + m);
-          if(d instanceof Number) {
-            if (metric.outputLong) {
-              t.put(identifier, Math.round(((Number)d).doubleValue()));
-            } else {
-              t.put(identifier, ((Number)d).doubleValue());
-            }
-          } else {
-            t.put(identifier, d);
-          }
-        }
-        ++m;
-      } else {
-        long l = ((Number)nl.get("count")).longValue();
-        t.put("count(*)", l);
-      }
-    }
-  }
-
-  public int getCost() {
-    return 0;
-  }
-
-  @Override
-  public StreamComparator getStreamSort() {
-    return null;
-  }
+	@Override
+	public StreamComparator getStreamSort() {
+		return null;
+	}
 }

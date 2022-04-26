@@ -16,12 +16,11 @@ import at.medevit.elexis.outbox.ui.part.provider.IOutboxElementUiProvider;
 import at.medevit.elexis.outbox.ui.part.provider.OutboxElementUiExtension;
 
 public class OutboxDeleteHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		if (selection instanceof StructuredSelection
-			&& !((StructuredSelection) selection).isEmpty()) {
+		if (selection instanceof StructuredSelection && !((StructuredSelection) selection).isEmpty()) {
 			List<?> iOutboxElements = ((StructuredSelection) selection).toList();
 			for (Object iOutboxElement : iOutboxElements) {
 				if (iOutboxElement instanceof IOutboxElement) {
@@ -34,7 +33,7 @@ public class OutboxDeleteHandler extends AbstractHandler implements IHandler {
 					OutboxServiceComponent.get().deleteOutboxElement(el);
 				}
 			}
-			
+
 		}
 		return null;
 	}

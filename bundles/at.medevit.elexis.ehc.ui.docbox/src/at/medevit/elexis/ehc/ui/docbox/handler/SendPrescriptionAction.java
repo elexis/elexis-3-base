@@ -17,18 +17,17 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.services.IServiceLocator;
 
 public class SendPrescriptionAction extends Action {
-	
+
 	@Override
-	public void runWithEvent(Event event){
+	public void runWithEvent(Event event) {
 		IServiceLocator serviceLocator = PlatformUI.getWorkbench();
-		ICommandService commandService =
-			(ICommandService) serviceLocator.getService(ICommandService.class);
-		
-			// Lookup commmand with its ID
-			Command command =
-				commandService.getCommand("at.medevit.elexis.ehc.ui.docbox.sendPrescription");
-			
-			// Optionally pass a ExecutionEvent instance, default no-param arg creates blank event
+		ICommandService commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
+
+		// Lookup commmand with its ID
+		Command command = commandService.getCommand("at.medevit.elexis.ehc.ui.docbox.sendPrescription");
+
+		// Optionally pass a ExecutionEvent instance, default no-param arg creates blank
+		// event
 		try {
 			command.executeWithChecks(new ExecutionEvent());
 		} catch (ExecutionException e) {
@@ -41,15 +40,14 @@ public class SendPrescriptionAction extends Action {
 			error(e);
 		}
 	}
-	
-	private void error(Exception e){
+
+	private void error(Exception e) {
 		MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-			"Das Rezept konnte nicht gesendet werden. \n\n" + e.getMessage());
+				"Das Rezept konnte nicht gesendet werden. \n\n" + e.getMessage());
 	}
-	
+
 	@Override
-	public ImageDescriptor getImageDescriptor(){
-		return AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.ehc.ui.docbox",
-			"/icons/docbox16.png");
+	public ImageDescriptor getImageDescriptor() {
+		return AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.ehc.ui.docbox", "/icons/docbox16.png");
 	}
 }

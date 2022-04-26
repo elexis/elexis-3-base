@@ -19,21 +19,21 @@ import ch.elexis.core.spotlight.ISpotlightResultContributor;
 import ch.elexis.core.spotlight.ISpotlightService;
 
 public abstract class AbstractSpotlightResultContributor implements ISpotlightResultContributor {
-	
+
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-	
+
 	private HttpSolrClient client;
 	private final String CORE;
-	
-	public AbstractSpotlightResultContributor(String core){
+
+	public AbstractSpotlightResultContributor(String core) {
 		this.CORE = core;
 	}
-	
-	public void activate(IElexisEnvironmentService elexisEnvironmentService){
+
+	public void activate(IElexisEnvironmentService elexisEnvironmentService) {
 		client = new HttpSolrClient.Builder(elexisEnvironmentService.getSolrBaseUrl()).build();
 	}
-	
-	public void deactivate(){
+
+	public void deactivate() {
 		if (client != null) {
 			try {
 				client.close();
@@ -42,45 +42,41 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 			}
 		}
 	}
-	
+
 	@Override
-	public void computeResult(List<String> stringTerms, List<LocalDate> dateTerms,
-		List<Number> numericTerms, ISpotlightResult spotlightResult,
-		Map<String, String> contextParameters){
-		
+	public void computeResult(List<String> stringTerms, List<LocalDate> dateTerms, List<Number> numericTerms,
+			ISpotlightResult spotlightResult, Map<String, String> contextParameters) {
+
 		if (stringTerms.isEmpty()) {
 			return;
 		}
-		
+
 		try {
 			StringBuilder qString = new StringBuilder();
 			final Map<String, String> queryParamMap = new HashMap<String, String>();
-			
+
 			if (contextParameters != null) {
-				String patientId =
-					contextParameters.get(ISpotlightService.CONTEXT_FILTER_PATIENT_ID);
+				String patientId = contextParameters.get(ISpotlightService.CONTEXT_FILTER_PATIENT_ID);
 				if (patientId != null) {
 					qString.append("patient_id:" + patientId + " AND ");
 				}
 			}
-			qString.append(
-				"text:" + stringTerms.stream().reduce((u, t) -> u + " AND text:" + t).get());
+			qString.append("text:" + stringTerms.stream().reduce((u, t) -> u + " AND text:" + t).get());
 			queryParamMap.put("q", qString.toString());
 			queryParamMap.put("sort", "cr_date desc");
 			queryParamMap.put("rows", "5");
-			
+
 			MapSolrParams queryParams = new MapSolrParams(queryParamMap);
-			
+
 			QueryResponse response = client.query(CORE, queryParams);
 			handleResponse(spotlightResult, response);
-			
+
 		} catch (SolrServerException | IOException e) {
 			logger.warn("Error in client.query", e);
 		}
-		
+
 	}
-	
-	protected abstract void handleResponse(ISpotlightResult spotlightResult,
-		QueryResponse response);
-	
+
+	protected abstract void handleResponse(ISpotlightResult spotlightResult, QueryResponse response);
+
 }

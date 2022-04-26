@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.base.ch.labortarif_2009.ui;
@@ -33,58 +33,57 @@ import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 public class Labor2009Selector extends CodeSelectorFactory {
 	CommonViewer cv;
-	
+
 	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
-	private AddVerrechenbarToLeistungsblockAction atla =
-		new AddVerrechenbarToLeistungsblockAction("ch.elexis.base.ch.labortarif_2009.ui.selection");
-	
+	private AddVerrechenbarToLeistungsblockAction atla = new AddVerrechenbarToLeistungsblockAction(
+			"ch.elexis.base.ch.labortarif_2009.ui.selection");
+
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		this.cv = cv;
-		
+
 		cv.setSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				TableViewer tv = (TableViewer) event.getSource();
 				StructuredSelection ss = (StructuredSelection) tv.getSelection();
 				tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
 				if (!ss.isEmpty()) {
 					ILaborLeistung selected = (ILaborLeistung) ss.getFirstElement();
-					ContextServiceHolder.get().getRootContext().setNamed(
-						"ch.elexis.base.ch.labortarif_2009.ui.selection", selected);
+					ContextServiceHolder.get().getRootContext()
+							.setNamed("ch.elexis.base.ch.labortarif_2009.ui.selection", selected);
 				} else {
 					ContextServiceHolder.get().getRootContext()
-						.setNamed("ch.elexis.base.ch.labortarif_2009.ui.selection", null);
+							.setNamed("ch.elexis.base.ch.labortarif_2009.ui.selection", null);
 				}
 			}
 		});
-		
+
 		MenuManager menu = new MenuManager();
 		menu.add(atla);
 		menu.add(tvfa);
 		cv.setContextMenu(menu);
-		
+
 		Labor2009ControlFieldProvider controlFieldProvider = new Labor2009ControlFieldProvider(cv);
-		Labor2009ContentProvider contentProvider =
-			new Labor2009ContentProvider(cv, controlFieldProvider);
-		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new DefaultLabelProvider(),
-			controlFieldProvider, new ViewerConfigurer.DefaultButtonProvider(),
-			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
+		Labor2009ContentProvider contentProvider = new Labor2009ContentProvider(cv, controlFieldProvider);
+		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new DefaultLabelProvider(), controlFieldProvider,
+				new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
 		return vc.setContentType(ContentType.GENERICOBJECT);
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		cv.dispose();
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return LaborTarifConstants.CODESYSTEM_NAME;
 	}
-	
+
 	@Override
-	public Class<?> getElementClass(){
+	public Class<?> getElementClass() {
 		return ILaborLeistung.class;
 	}
 }

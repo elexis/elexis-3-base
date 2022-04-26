@@ -32,8 +32,8 @@ public class Patient {
 	public List<PrivateField> PFields;
 	public transient String patientId;
 	public transient String patientLabel;
-	
-	public static Patient fromPatient(IPatient elexisPatient){
+
+	public static Patient fromPatient(IPatient elexisPatient) {
 		Patient ret = new Patient();
 		ret.FName = elexisPatient.getFirstName();
 		ret.LName = elexisPatient.getLastName();

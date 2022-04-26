@@ -26,9 +26,9 @@ import ch.unibe.iam.scg.archie.ArchieActivator;
  * Database helper class. Contains global database convenience methods for easy
  * access to general statistical data.
  * </p>
- * 
+ *
  * $Id: DatabaseHelper.java 781 2011-08-30 04:50:37Z gerry.weirich@gmail.com $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 781 $
@@ -37,7 +37,7 @@ public class DatabaseHelper {
 
 	/**
 	 * Returns the total number of patients in the system.
-	 * 
+	 *
 	 * @return int number of patients in the system.
 	 */
 	public static int getNumberOfPatients() {
@@ -47,7 +47,7 @@ public class DatabaseHelper {
 
 	/**
 	 * Returns the total number of consultations in the system.
-	 * 
+	 *
 	 * @return int number of consultations in the system.
 	 */
 	public static int getNumberOfConsultations() {
@@ -57,7 +57,7 @@ public class DatabaseHelper {
 
 	/**
 	 * Returns the total number of invoices in the system.
-	 * 
+	 *
 	 * @return Total number of invoices in the system
 	 */
 	public static int getTotalNumberOfInvoices() {
@@ -67,9 +67,8 @@ public class DatabaseHelper {
 
 	/**
 	 * Returns the number of invoices in the system with the given status.
-	 * 
-	 * @param status
-	 *            Invoice status.
+	 *
+	 * @param status Invoice status.
 	 * @return Total number of invoices with the given status.
 	 * @see ch.elexis.data.Rechnung
 	 */
@@ -81,17 +80,16 @@ public class DatabaseHelper {
 
 	/**
 	 * Return the number of patients in the system that have the given gender.
-	 * 
-	 * @param gender
-	 *            Patient's gender.
+	 *
+	 * @param gender Patient's gender.
 	 * @see ch.elexis.data.Person
 	 * @return Number of patients with that gender, 0 if nothing found.
 	 */
 	public static int getNumberGenderPatients(String gender) {
 		// Checking Preconditions.
 		if (!(gender.equals(Patient.MALE) || gender.equals(Patient.FEMALE))) {
-			throw new IllegalArgumentException("Gender has to be either " + Patient.MALE + " or " + Patient.FEMALE
-					+ ".");
+			throw new IllegalArgumentException(
+					"Gender has to be either " + Patient.MALE + " or " + Patient.FEMALE + ".");
 		}
 		JdbcLink link = PersistentObject.getConnection();
 		Stm statement = link.getStatement();
@@ -113,13 +111,10 @@ public class DatabaseHelper {
 	}
 
 	/**
-	 * Returns the int result from the given total column based on the given
-	 * query.
-	 * 
-	 * @param query
-	 *            An SQL query.
-	 * @param totalColumn
-	 *            The column name to retrieve the value from.
+	 * Returns the int result from the given total column based on the given query.
+	 *
+	 * @param query       An SQL query.
+	 * @param totalColumn The column name to retrieve the value from.
 	 * @return The value of the total column or 0 if something went wrong.
 	 * @since 0.9.2
 	 */

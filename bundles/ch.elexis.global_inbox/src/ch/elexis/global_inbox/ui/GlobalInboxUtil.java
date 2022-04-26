@@ -27,23 +27,23 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 public class GlobalInboxUtil {
-	
+
 	private Logger logger;
-	
-	public GlobalInboxUtil(){
+
+	public GlobalInboxUtil() {
 		logger = LoggerFactory.getLogger(getClass());
 	}
-	
+
 	/**
-	 * Try to import the file for the patient, will delete <code>file</code> if import was
-	 * successful
-	 * 
+	 * Try to import the file for the patient, will delete <code>file</code> if
+	 * import was successful
+	 *
 	 * @param file
 	 * @param patientNo
 	 * @param fileName
 	 * @return the document id if import was successful, else <code>null</code>
 	 */
-	public @Nullable String tryImportForPatient(File file, String patientNo, String fileName){
+	public @Nullable String tryImportForPatient(File file, String patientNo, String fileName) {
 		List<Patient> lPat = new Query(Patient.class, Patient.FLD_PATID, patientNo).execute();
 		if (lPat.size() == 1) {
 			if (!isFileOpened(file)) {
@@ -53,41 +53,39 @@ public class GlobalInboxUtil {
 					cat = null;
 				}
 				IDocumentManager dm = (IDocumentManager) Extensions
-					.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
+						.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 				try {
-					
+
 					long heapSize = Runtime.getRuntime().totalMemory();
 					long length = file.length();
 					if (length >= heapSize) {
-						logger.warn("Skipping " + file.getAbsolutePath()
-							+ " as bigger than heap size. (#3652)");
+						logger.warn("Skipping " + file.getAbsolutePath() + " as bigger than heap size. (#3652)");
 						return null;
 					}
-					
+
 					GenericDocument fd = new GenericDocument(pat, fileName, cat, file,
-						new TimeTool().toString(TimeTool.DATE_GER), "", null);
+							new TimeTool().toString(TimeTool.DATE_GER), "", null);
 					file.delete();
-					
-					boolean automaticBilling =
-						CoreHub.localCfg.get(Preferences.PREF_AUTOBILLING, false);
+
+					boolean automaticBilling = CoreHub.localCfg.get(Preferences.PREF_AUTOBILLING, false);
 					return dm.addDocument(fd, automaticBilling);
-					
+
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 					SWTHelper.alert(Messages.InboxView_error, ex.getMessage());
 				}
 			}
 		}
-		
+
 		return null;
-		
+
 	}
-	
-	private boolean isFileOpened(File file){
+
+	private boolean isFileOpened(File file) {
 		try (FileChannel channel = new RandomAccessFile(file, "rw").getChannel();) {
 			// Get an exclusive lock on the whole file
 			try (FileLock lock = channel.lock();) {
-				// we got a lock so this file is not opened 
+				// we got a lock so this file is not opened
 				return false;
 			} catch (OverlappingFileLockException e) {
 				// default file is opened ...
@@ -97,9 +95,9 @@ public class GlobalInboxUtil {
 		}
 		return true;
 	}
-	
-	public static String getCategory(File file){
-		String dir = CoreHub.localCfg.get(Preferences.PREF_DIR, Preferences.PREF_DIR_DEFAULT); //$NON-NLS-1$
+
+	public static String getCategory(File file) {
+		String dir = CoreHub.localCfg.get(Preferences.PREF_DIR, Preferences.PREF_DIR_DEFAULT); // $NON-NLS-1$
 		File parent = file.getParentFile();
 		if (parent == null) {
 			return Messages.Activator_noInbox;
@@ -111,15 +109,15 @@ public class GlobalInboxUtil {
 				} else {
 					return "-"; //$NON-NLS-1$
 				}
-				
+
 			} else {
 				return "??"; //$NON-NLS-1$
 			}
 		}
-		
+
 	}
 
-	public void removeFiles(GlobalInboxEntry globalInboxEntry){
+	public void removeFiles(GlobalInboxEntry globalInboxEntry) {
 		File mainFile = globalInboxEntry.getMainFile();
 		try {
 			Files.delete(mainFile.toPath());
@@ -135,5 +133,5 @@ public class GlobalInboxUtil {
 			}
 		}
 	}
-	
+
 }

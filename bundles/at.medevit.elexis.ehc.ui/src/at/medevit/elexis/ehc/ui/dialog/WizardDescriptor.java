@@ -17,36 +17,36 @@ import org.eclipse.jface.wizard.Wizard;
 import at.medevit.elexis.ehc.ui.extension.IWizardDescriptor;
 
 public class WizardDescriptor implements IWizardDescriptor {
-	
+
 	private String label;
 	private String categoryId;
-	
+
 	private IConfigurationElement configuration;
-	
+
 	private Wizard wizard;
-	
-	public WizardDescriptor(IConfigurationElement el){
+
+	public WizardDescriptor(IConfigurationElement el) {
 		label = el.getAttribute("name");
 		categoryId = el.getAttribute("category");
-		
+
 		configuration = el;
 	}
-	
+
 	@Override
-	public Wizard createWizard() throws CoreException{
+	public Wizard createWizard() throws CoreException {
 		if (wizard == null) {
 			wizard = (Wizard) configuration.createExecutableExtension("class");
 		}
 		return wizard;
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		return label;
 	}
-	
+
 	@Override
-	public String getCategoryId(){
+	public String getCategoryId() {
 		return categoryId;
 	}
 }

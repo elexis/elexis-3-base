@@ -23,9 +23,9 @@ import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
  * facilitates this access by providing one central place for a provider being
  * used.
  * </p>
- * 
+ *
  * $Id: ProviderManager.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -33,8 +33,8 @@ import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 public class ProviderManager extends Observable {
 
 	/**
-	 * Instance of this provider manager. There's always only one thorugh the
-	 * entire lifecycle of this application.
+	 * Instance of this provider manager. There's always only one thorugh the entire
+	 * lifecycle of this application.
 	 */
 	private static ProviderManager INSTANCE;
 
@@ -52,7 +52,7 @@ public class ProviderManager extends Observable {
 
 	/**
 	 * Returns an instance of this provider manager.
-	 * 
+	 *
 	 * @return An instance of this provider manager.
 	 */
 	public static ProviderManager getInstance() {
@@ -64,7 +64,7 @@ public class ProviderManager extends Observable {
 
 	/**
 	 * Returns the currently set provider of this provider manager.
-	 * 
+	 *
 	 * @return A data provider.
 	 */
 	public AbstractDataProvider getProvider() {
@@ -73,19 +73,18 @@ public class ProviderManager extends Observable {
 
 	/**
 	 * Sets the given provider for this manager.
-	 * 
-	 * @param provider
-	 *            A data provider.
+	 *
+	 * @param provider A data provider.
 	 */
 	public void setProvider(AbstractDataProvider provider) {
 		this.provider = provider;
 		this.setChanged();
-		this.notifyObservers(this.getProvider());			
+		this.notifyObservers(this.getProvider());
 	}
 
 	/**
 	 * Checks whether a provider for this manager has already been set or no.
-	 * 
+	 *
 	 * @return True if this manager has a provider, false else.
 	 */
 	public boolean hasProvider() {

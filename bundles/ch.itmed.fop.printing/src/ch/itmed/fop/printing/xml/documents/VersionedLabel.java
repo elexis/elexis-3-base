@@ -24,7 +24,7 @@ public class VersionedLabel {
 
 	/**
 	 * Creates the XML file and returns it as an InputStream.
-	 * 
+	 *
 	 * @return The generated XML as an InputStream
 	 */
 	public static InputStream create() throws Exception {

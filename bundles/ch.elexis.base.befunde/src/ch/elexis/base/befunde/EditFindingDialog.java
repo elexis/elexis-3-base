@@ -51,14 +51,14 @@ public class EditFindingDialog extends TitleAreaDialog {
 	boolean[] multiline;
 	String[] values;
 	Text[] inputs;
-	
-	EditFindingDialog(final Shell parent, final Messwert m, final String n){
+
+	EditFindingDialog(final Shell parent, final Messwert m, final String n) {
 		super(parent);
 		mw = m;
 		name = n;
 		names = Messwert.getSetup().getMap(Messwert.FLD_BEFUNDE);
 		String key = n + Messwert._FIELDS;
-		
+
 		if (names.containsKey(key)) {
 			flds = ((String) names.get(key)).split(Messwert.SETUP_SEPARATOR);
 			multiline = new boolean[flds.length];
@@ -75,9 +75,9 @@ public class EditFindingDialog extends TitleAreaDialog {
 			}
 		}
 	}
-	
+
 	@Override
-	protected Control createDialogArea(final Composite parent){
+	protected Control createDialogArea(final Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if (pat != null) {
@@ -100,8 +100,7 @@ public class EditFindingDialog extends TitleAreaDialog {
 					if (heading.length == 1) {
 						new Label(ret, SWT.NONE).setText(flds[i]);
 					} else {
-						Label hl = SWTHelper.createHyperlink(ret, heading[0],
-							new ScriptListener(heading[1], i));
+						Label hl = SWTHelper.createHyperlink(ret, heading[0], new ScriptListener(heading[1], i));
 						hl.setForeground(UiDesk.getColor(UiDesk.COL_BLUE));
 					}
 					inputs[i] = SWTHelper.createText(ret, multiline[i] ? 4 : 1, SWT.NONE);
@@ -110,34 +109,32 @@ public class EditFindingDialog extends TitleAreaDialog {
 						inputs[i].setEditable(false);
 					}
 				}
-			}
-			else {
+			} else {
 				MessageDialog.openWarning(getParentShell(), "Warnung",
-					"Es sind keine Metriken für die Messung " + name + " vorhanden.");
+						"Es sind keine Metriken für die Messung " + name + " vorhanden.");
 				close();
 			}
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
-		getShell().setText(Messages.EditFindingDialog_captionBefundEditDlg); //$NON-NLS-1$
+		getShell().setText(Messages.EditFindingDialog_captionBefundEditDlg); // $NON-NLS-1$
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if (pat == null) {
-			setTitle(Messages.EditFindingDialog_noPatientSelected); //$NON-NLS-1$
+			setTitle(Messages.EditFindingDialog_noPatientSelected); // $NON-NLS-1$
 		} else {
 			setTitle(pat.getLabel());
 		}
-		setMessage(MessageFormat.format(
-			Messages.EditFindingDialog_enterTextForBefund, name)); //$NON-NLS-1$
+		setMessage(MessageFormat.format(Messages.EditFindingDialog_enterTextForBefund, name)); // $NON-NLS-1$
 		setTitleImage(Images.IMG_LOGO.getImage());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		Map hash;
 		if (mw == null) {
 			hash = new Hashtable();
@@ -157,18 +154,18 @@ public class EditFindingDialog extends TitleAreaDialog {
 		mw.setMap(Messwert.FLD_BEFUNDE, hash);
 		super.okPressed();
 	}
-	
+
 	class ScriptListener extends HyperlinkAdapter {
 		int v;
 		String script;
-		
-		ScriptListener(final String scr, final int i){
+
+		ScriptListener(final String scr, final int i) {
 			script = scr;
 			v = i;
 		}
-		
+
 		@Override
-		public void linkActivated(final HyperlinkEvent e){
+		public void linkActivated(final HyperlinkEvent e) {
 			for (int vals = 0; vals < inputs.length; vals++) {
 				String sval = inputs[vals].getText();
 				if (!StringTool.isNothing(sval)) {
@@ -179,10 +176,10 @@ public class EditFindingDialog extends TitleAreaDialog {
 						// don't mind
 					}
 					script = script.replaceAll("F" + Integer.toString(vals + 1), Double //$NON-NLS-1$
-						.toString(dval));
+							.toString(dval));
 				}
 			}
-			
+
 			try {
 				Object result = null;
 				if (script.startsWith(Script.SCRIPT_MARKER)) {

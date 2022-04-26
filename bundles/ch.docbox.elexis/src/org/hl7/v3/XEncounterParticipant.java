@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for x_EncounterParticipant.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="x_EncounterParticipant">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -22,20 +23,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "x_EncounterParticipant")
 @XmlEnum
 public enum XEncounterParticipant {
-	
+
 	ADM, ATND, CON, DIS, REF;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static XEncounterParticipant fromValue(String v){
+
+	public static XEncounterParticipant fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

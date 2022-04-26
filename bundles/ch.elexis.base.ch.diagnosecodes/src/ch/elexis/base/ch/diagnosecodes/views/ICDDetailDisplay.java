@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.base.ch.diagnosecodes.views;
@@ -35,30 +35,29 @@ public class ICDDetailDisplay implements IDetailDisplay {
 	FormToolkit tk = UiDesk.getToolkit();
 	ScrolledForm form;
 	Text titel;
-	
+
 	@Inject
-	public void selection(
-		@Optional @Named("ch.elexis.base.ch.diagnosecodes.icd10.selection") IDiagnosisTree item){
+	public void selection(@Optional @Named("ch.elexis.base.ch.diagnosecodes.icd10.selection") IDiagnosisTree item) {
 		if (item != null && !form.isDisposed()) {
 			display(item);
 		}
 	}
-	
-	public Class getElementClass(){
+
+	public Class getElementClass() {
 		return IDiagnosisTree.class;
 	}
-	
-	public void display(Object obj){
+
+	public void display(Object obj) {
 		IDiagnosisTree ic = (IDiagnosisTree) obj;
 		form.setText(ic.getCode());
 		titel.setText(ic.getText());
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return "ICD-10"; //$NON-NLS-1$
 	}
-	
-	public Composite createDisplay(Composite parent, IViewSite site){
+
+	public Composite createDisplay(Composite parent, IViewSite site) {
 		parent.setLayout(new FillLayout());
 		form = tk.createScrolledForm(parent);
 		Composite ret = form.getBody();
@@ -72,5 +71,5 @@ public class ICDDetailDisplay implements IDetailDisplay {
 		tk.paintBordersFor(ret);
 		return ret;
 	}
-	
+
 }

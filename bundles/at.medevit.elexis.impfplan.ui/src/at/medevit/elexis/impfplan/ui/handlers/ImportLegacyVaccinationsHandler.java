@@ -18,56 +18,55 @@ import ch.elexis.data.Mandant;
 import ch.elexis.impfplan.model.Vaccination;
 
 /**
- * Calls the vaccination import progress and prepares import result for further usage. This class is
- * only usable if the optional ch.elexis.impflan dependency is resolvable.
- * 
+ * Calls the vaccination import progress and prepares import result for further
+ * usage. This class is only usable if the optional ch.elexis.impflan dependency
+ * is resolvable.
+ *
  * @author Lucia
  *
  */
 public class ImportLegacyVaccinationsHandler extends AbstractHandler {
 	private static Logger log = LoggerFactory.getLogger(ImportLegacyVaccinationsHandler.class);
-	
-	public static final String COMMAND_ID =
-		"at.medevit.elexis.impfplan.ui.command.ImportOtherVaccinations";
-	
+
+	public static final String COMMAND_ID = "at.medevit.elexis.impfplan.ui.command.ImportOtherVaccinations";
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Mandant mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
-		
+
 		IProgressService progService = PlatformUI.getWorkbench().getProgressService();
-		ImportLegacyVaccinationsProgress ivProgress =
-			new ImportLegacyVaccinationsProgress(mandant.storeToString());
+		ImportLegacyVaccinationsProgress ivProgress = new ImportLegacyVaccinationsProgress(mandant.storeToString());
 		try {
 			progService.runInUI(progService, ivProgress, null);
 		} catch (Exception e) {
 			log.error("Error running ImportVaccinationsProgress", e);
 			return "Fehler beim Impf-Import Prozess";
 		}
-		
+
 		// give user feedback about import status
 		StringBuilder sb = new StringBuilder();
 		if (ivProgress.isAbnormalImport()) {
 			List<Vaccination> alreadyImported = ivProgress.getAlreadyImportedVaccinations();
 			Map<Vaccination, ErrorCode> errorMap = ivProgress.getErrorMap();
-			
+
 			if (!errorMap.isEmpty()) {
-				
+
 				for (Vaccination vacc : errorMap.keySet()) {
 					ErrorCode eCode = errorMap.get(vacc);
 					// show id in case patient could not be resolved
 					if (eCode.equals(ErrorCode.PATIENT_NOTFOUND)) {
 						if (vacc.getPatientId().isEmpty() && vacc.getVaccinationType() == null) {
-							// since a bug #8853 in impfplan trash entries with no patientid and vaccination type can exists.
+							// since a bug #8853 in impfplan trash entries with no patientid and vaccination
+							// type can exists.
 							// we only log this out
-							log.warn(
-								"Import warn: patientId and vaccinationType is null for vaccination id: "
+							log.warn("Import warn: patientId and vaccinationType is null for vaccination id: "
 									+ vacc.getId());
 							continue;
 						}
 						sb.append(vacc.getPatientId() + " : "
-							+ (vacc.getVaccinationType() != null
-									? vacc.getVaccinationType().getLabel() : "VaccType [NULL]")
-							+ " - " + eCode.toString());
+								+ (vacc.getVaccinationType() != null ? vacc.getVaccinationType().getLabel()
+										: "VaccType [NULL]")
+								+ " - " + eCode.toString());
 					} else {
 						sb.append(vacc.getLabel() + " - " + eCode.toString());
 					}
@@ -78,7 +77,7 @@ public class ImportLegacyVaccinationsHandler extends AbstractHandler {
 					sb.append("\n");
 				}
 			}
-			
+
 			if (!alreadyImported.isEmpty()) {
 				sb.append("Bereits importiert:\n");
 				for (Vaccination vacc : alreadyImported) {
@@ -89,8 +88,8 @@ public class ImportLegacyVaccinationsHandler extends AbstractHandler {
 		} else {
 			sb.append("Import erfolgreich abgeschlossen!");
 		}
-		
+
 		return sb.toString();
 	}
-	
+
 }

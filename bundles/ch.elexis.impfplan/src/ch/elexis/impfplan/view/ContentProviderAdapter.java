@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.impfplan.view;
 
@@ -15,14 +15,16 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public abstract class ContentProviderAdapter implements IStructuredContentProvider {
-	
+
 	@Override
 	public abstract Object[] getElements(Object inputElement);
-	
+
 	@Override
-	public void dispose(){}
-	
+	public void dispose() {
+	}
+
 	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
-	
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	}
+
 }

@@ -20,17 +20,16 @@ import ch.elexis.omnivore.ui.preferences.PreferencePage;
 
 @Component(property = EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.EVENT_CREATE)
 public class DocHandleInboxService implements EventHandler {
-	
+
 	@Reference
 	private IInboxElementService service;
-	
+
 	@Reference
 	private IConfigService configService;
-	
-	private void createInboxElement(IDocumentHandle docHandle){
+
+	private void createInboxElement(IDocumentHandle docHandle) {
 		if (docHandle != null && !docHandle.isCategory()) {
-			Optional<IEncounter> encounter =
-				EncounterServiceHolder.get().getLatestEncounter(docHandle.getPatient());
+			Optional<IEncounter> encounter = EncounterServiceHolder.get().getLatestEncounter(docHandle.getPatient());
 			IMandator mandator = null;
 			if (encounter.isPresent()) {
 				mandator = encounter.get().getMandator();
@@ -42,17 +41,15 @@ public class DocHandleInboxService implements EventHandler {
 			}
 		}
 	}
-	
+
 	@Override
-	public void handleEvent(Event event){
-		boolean showCreatedInInbox =
-			configService.get(PreferencePage.GLOBAL_SHOW_CREATED_IN_INBOX, true);
+	public void handleEvent(Event event) {
+		boolean showCreatedInInbox = configService.get(PreferencePage.GLOBAL_SHOW_CREATED_IN_INBOX, true);
 		if (showCreatedInInbox) {
 			if (event.getProperty(ElexisEventTopics.ECLIPSE_E4_DATA) instanceof IDocumentHandle) {
-				createInboxElement(
-					(IDocumentHandle) event.getProperty(ElexisEventTopics.ECLIPSE_E4_DATA));
+				createInboxElement((IDocumentHandle) event.getProperty(ElexisEventTopics.ECLIPSE_E4_DATA));
 			}
 		}
-		
+
 	}
 }

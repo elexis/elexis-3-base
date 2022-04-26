@@ -1,10 +1,10 @@
 package ch.medshare.mediport.config;
 
 public abstract class AbstractConfigKeyModel implements ConfigKeys {
-	
+
 	private boolean hasChanged = false;
-	
-	protected void propertyChanged(String newValue, String oldValue){
+
+	protected void propertyChanged(String newValue, String oldValue) {
 		if (newValue != null) {
 			if (!newValue.equals(oldValue)) {
 				hasChanged = true;
@@ -13,16 +13,16 @@ public abstract class AbstractConfigKeyModel implements ConfigKeys {
 			hasChanged = true;
 		}
 	}
-	
-	protected boolean isEmpty(String value){
+
+	protected boolean isEmpty(String value) {
 		return value == null || value.length() == 0;
 	}
-	
-	public void setChanged(boolean changed){
+
+	public void setChanged(boolean changed) {
 		this.hasChanged = changed;
 	}
-	
-	public boolean hasChanged(){
+
+	public boolean hasChanged() {
 		return this.hasChanged;
 	}
 }

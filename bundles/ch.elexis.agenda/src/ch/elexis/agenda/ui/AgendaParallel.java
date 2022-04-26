@@ -7,10 +7,10 @@
  *
  * Sponsoring:
  * 	 mediX Notfallpaxis, diepraxen Stauffacher AG, Zürich
- * 
+ *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -43,27 +43,27 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * A View to display ressources side by side in the same view.
- * 
+ *
  * @author gerry
- * 
+ *
  */
 public class AgendaParallel extends BaseView {
-	
+
 	private IAction dayFwdAction, dayBackAction, showCalendarAction;
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
 	private Composite wrapper;
-	
-	public AgendaParallel(){
-		
+
+	public AgendaParallel() {
+
 	}
-	
-	public ColumnHeader getHeader(){
+
+	public ColumnHeader getHeader() {
 		return header;
 	}
-	
+
 	@Override
-	protected void create(Composite parent){
+	protected void create(Composite parent) {
 		wrapper = new Composite(parent, SWT.NONE);
 		wrapper.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		wrapper.setLayout(new GridLayout());
@@ -84,27 +84,26 @@ public class AgendaParallel extends BaseView {
 		}
 		refresh();
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		sheet.setFocus();
 	}
-	
+
 	@Override
-	protected IPlannable getSelection(){
+	protected IPlannable getSelection() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	/**
-	 * Return the resources to display. This are by default all defined resources, but users can
-	 * exclude some of them from display
-	 * 
+	 * Return the resources to display. This are by default all defined resources,
+	 * but users can exclude some of them from display
+	 *
 	 * @return a stering array with all resources to display
 	 */
-	public String[] getDisplayedResources(){
-		String resources =
-			CoreHub.localCfg.get(PreferenceConstants.AG_RESOURCESTOSHOW,
+	public String[] getDisplayedResources() {
+		String resources = CoreHub.localCfg.get(PreferenceConstants.AG_RESOURCESTOSHOW,
 				StringTool.join(agenda.getResources(), ",")); //$NON-NLS-1$
 		if (resources == null) {
 			return new String[0];
@@ -112,29 +111,29 @@ public class AgendaParallel extends BaseView {
 			return resources.split(","); //$NON-NLS-1$
 		}
 	}
-	
-	void clear(){
+
+	void clear() {
 		sheet.clear();
 	}
-	
+
 	@Override
-	protected void refresh(){
-		showCalendarAction.setText(agenda.getActDate().toString(TimeTool.WEEKDAY)
-			+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$
+	protected void refresh() {
+		showCalendarAction.setText(agenda.getActDate().toString(TimeTool.WEEKDAY) + ", " //$NON-NLS-1$
+				+ agenda.getActDate().toString(TimeTool.DATE_GER));
 		sheet.refresh();
 		wrapper.layout();
 		getViewSite().getActionBars().getToolBarManager().update(true);
 	}
-	
-	private void makePrivateActions(){
+
+	private void makePrivateActions() {
 		dayFwdAction = new Action(Messages.AgendaParallel_dayForward) {
 			{
 				setToolTipText(Messages.AgendaParallel_showNextDay);
 				setImageDescriptor(Images.IMG_NEXT.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				agenda.addDays(1);
 				for (String s : getDisplayedResources()) {
 					checkDay(s, null);
@@ -142,20 +141,20 @@ public class AgendaParallel extends BaseView {
 				refresh();
 			}
 		};
-		
+
 		dayBackAction = new Action(Messages.AgendaParallel_dayBack) {
 			{
 				setToolTipText(Messages.AgendaParallel_showPreviousDay);
 				setImageDescriptor(Images.IMG_PREVIOUS.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				agenda.addDays(-1);
 				for (String s : getDisplayedResources()) {
 					checkDay(s, null);
 				}
-				
+
 				refresh();
 			}
 		};
@@ -164,76 +163,72 @@ public class AgendaParallel extends BaseView {
 				setToolTipText(Messages.AgendaParallel_showCalendarForSelcetion);
 				// setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
 			}
-			
+
 			@Override
-			public void run(){
-				DateSelectorDialog dsl =
-					new DateSelectorDialog(getViewSite().getShell(), agenda.getActDate());
+			public void run() {
+				DateSelectorDialog dsl = new DateSelectorDialog(getViewSite().getShell(), agenda.getActDate());
 				if (dsl.open() == Dialog.OK) {
 					agenda.setActDate(dsl.getSelectedDate());
 					for (String s : getDisplayedResources()) {
 						checkDay(s, null);
 					}
-					
+
 					refresh();
 				}
 			}
 		};
-		
-		final IAction zoomAction =
-			new Action(Messages.AgendaParallel_zoom, Action.AS_DROP_DOWN_MENU) {
-				Menu mine;
-				{
-					setToolTipText(Messages.AgendaParallel_setZoomFactor);
-					setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png")); //$NON-NLS-1$
-					setMenuCreator(new IMenuCreator() {
-						
-						public void dispose(){
-							mine.dispose();
+
+		final IAction zoomAction = new Action(Messages.AgendaParallel_zoom, Action.AS_DROP_DOWN_MENU) {
+			Menu mine;
+			{
+				setToolTipText(Messages.AgendaParallel_setZoomFactor);
+				setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png")); //$NON-NLS-1$
+				setMenuCreator(new IMenuCreator() {
+
+					public void dispose() {
+						mine.dispose();
+					}
+
+					public Menu getMenu(Control parent) {
+						mine = new Menu(parent);
+						fillMenu();
+						return mine;
+					}
+
+					public Menu getMenu(Menu parent) {
+						mine = new Menu(parent);
+						fillMenu();
+						return mine;
+					}
+				});
+			}
+
+			private void fillMenu() {
+				String currentFactorString = CoreHub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, "0.4");
+				int currentFactor = (int) (Float.parseFloat(currentFactorString) * 100);
+				for (String s : new String[] { "40", "60", "80", "100", "120", "140", "160", "200", "300", "400", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+						"500" }) {
+					MenuItem it = new MenuItem(mine, SWT.RADIO);
+					it.setText(s + "%"); //$NON-NLS-1$
+					it.setData(s);
+					it.setSelection(Integer.parseInt(s) == currentFactor);
+					it.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							MenuItem mi = (MenuItem) e.getSource();
+							int scale = Integer.parseInt((String) mi.getData()); // $NON-NLS-1$
+							double factor = scale / 100.0;
+							CoreHub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, Double.toString(factor));
+							sheet.recalc();
 						}
-						
-						public Menu getMenu(Control parent){
-							mine = new Menu(parent);
-							fillMenu();
-							return mine;
-						}
-						
-						public Menu getMenu(Menu parent){
-							mine = new Menu(parent);
-							fillMenu();
-							return mine;
-						}
+
 					});
 				}
-				
-				private void fillMenu(){
-					String currentFactorString =
-						CoreHub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, "0.4");
-					int currentFactor = (int) (Float.parseFloat(currentFactorString) * 100);
-					for (String s : new String[] {
-						"40", "60", "80", "100", "120", "140", "160", "200", "300", "400", "500"}) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
-						MenuItem it = new MenuItem(mine, SWT.RADIO);
-						it.setText(s + "%"); //$NON-NLS-1$
-						it.setData(s);
-						it.setSelection(Integer.parseInt(s) == currentFactor);
-						it.addSelectionListener(new SelectionAdapter() {
-							
-							@Override
-							public void widgetSelected(SelectionEvent e){
-								MenuItem mi = (MenuItem) e.getSource();
-								int scale = Integer.parseInt((String) mi.getData()); //$NON-NLS-1$
-								double factor = scale / 100.0;
-								CoreHub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE,
-									Double.toString(factor));
-								sheet.recalc();
-							}
-							
-						});
-					}
-				}
-			};
+			}
+		};
 		IToolBarManager tmr = getViewSite().getActionBars().getToolBarManager();
-		
+
 		tmr.add(new Separator());
 		tmr.add(dayBackAction);
 		tmr.add(showCalendarAction);

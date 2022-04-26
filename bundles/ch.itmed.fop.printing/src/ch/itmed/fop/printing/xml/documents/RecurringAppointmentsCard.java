@@ -21,7 +21,7 @@ import ch.itmed.fop.printing.xml.elements.AppointmentsInformationElement;
 import ch.itmed.fop.printing.xml.elements.PatientElement;
 
 public final class RecurringAppointmentsCard {
-	
+
 	public static InputStream create() throws Exception {
 		Document doc = DomDocument.newDocument();
 

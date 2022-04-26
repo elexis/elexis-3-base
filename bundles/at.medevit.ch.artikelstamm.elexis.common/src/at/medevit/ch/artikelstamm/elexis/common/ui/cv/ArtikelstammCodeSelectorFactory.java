@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     MEDEVIT <office@medevit.at> - initial API and implementation
  ******************************************************************************/
@@ -66,46 +66,44 @@ import ch.elexis.core.ui.views.KonsDetailView;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
-	
+
 	private SelectorPanelProvider slp;
 	private int eventType = SWT.KeyDown;
 	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
-	
+
 	private static final String DISP_NAME = "Artikel oder Wirkstoff";
-	
+
 	private ArtikelstammCommonViewerContentProvider commonViewContentProvider;
-	
+
 	private ISelectionChangedListener selChange = new ISelectionChangedListener() {
 		@Override
-		public void selectionChanged(SelectionChangedEvent event){
+		public void selectionChanged(SelectionChangedEvent event) {
 			TableViewer tv = (TableViewer) event.getSource();
 			StructuredSelection ss = (StructuredSelection) tv.getSelection();
 			tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
 			if (!ss.isEmpty() && ss.getFirstElement() instanceof IArtikelstammItem) {
 				IArtikelstammItem selected = (IArtikelstammItem) ss.getFirstElement();
 				ContextServiceHolder.get().getRootContext()
-					.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", selected);
+						.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", selected);
 			} else {
 				ContextServiceHolder.get().getRootContext()
-					.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", null);
+						.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", null);
 			}
 		}
 	};
-	
+
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		final CommonViewer cov = cv;
 		cov.setSelectionChangedListener(selChange);
-		
-		FieldDescriptor<?>[] fields = {
-			new FieldDescriptor<IArtikelstammItem>(DISP_NAME, "ldscr", Typ.STRING,
-				null).ignoreCase(false).valueToLower(true)
-		};
-		
+
+		FieldDescriptor<?>[] fields = { new FieldDescriptor<IArtikelstammItem>(DISP_NAME, "ldscr", Typ.STRING, null)
+				.ignoreCase(false).valueToLower(true) };
+
 		// add keyListener to search field
 		Listener keyListener = new Listener() {
 			@Override
-			public void handleEvent(Event event){
+			public void handleEvent(Event event) {
 				if (event.type == eventType) {
 					if (event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR) {
 						slp.fireChangedEvent();
@@ -120,73 +118,66 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		slp = new SelectorPanelProvider(fields, true);
 		slp.setChangeDelay(750);
 		slp.addChangeListener(new AControlFieldListener(slp));
-		
-		commonViewContentProvider =
-			new ArtikelstammCommonViewerContentProvider(cv, slp);
-		
+
+		commonViewContentProvider = new ArtikelstammCommonViewerContentProvider(cv, slp);
+
 		List<IAction> actionList = new ArrayList<>();
 		populateSelectorPanel(slp, commonViewContentProvider, actionList);
 		slp.addActions(actionList.toArray(new IAction[actionList.size()]));
-		
-		SimpleWidgetProvider swp =
-			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null);
-		
-		ILabelDecorator decorator =
-			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
-		
+
+		SimpleWidgetProvider swp = new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null);
+
+		ILabelDecorator decorator = PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+
 		String atcLang = ConfigServiceHolder.get().get(PreferenceConstants.PREF_ATC_CODE_LANGUAGE,
-			ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
+				ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN);
 		ATCArtikelstammDecoratingLabelProvider adlp = new ATCArtikelstammDecoratingLabelProvider(
-			new LagerhaltungArtikelstammLabelProvider(), decorator, atcLang);
-		
-		ViewerConfigurer vc = new ViewerConfigurer(commonViewContentProvider, adlp,
-			slp, new ViewerConfigurer.DefaultButtonProvider(), swp);
-		
+				new LagerhaltungArtikelstammLabelProvider(), decorator, atcLang);
+
+		ViewerConfigurer vc = new ViewerConfigurer(commonViewContentProvider, adlp, slp,
+				new ViewerConfigurer.DefaultButtonProvider(), swp);
+
 		// the dropdown menu on the viewer
 		MenuManager menu = new MenuManager();
-		menu.add(new Action(
-			ch.elexis.core.ui.views.artikel.Messages.ArtikelContextMenu_propertiesAction) {
+		menu.add(new Action(ch.elexis.core.ui.views.artikel.Messages.ArtikelContextMenu_propertiesAction) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 				setToolTipText(ch.elexis.core.ui.views.artikel.Messages.ArtikelContextMenu_propertiesTooltip);
 			}
-			
+
 			@Override
-			public void run(){
-				StructuredSelection structuredSelection =
-					new StructuredSelection(cov.getSelection());
+			public void run() {
+				StructuredSelection structuredSelection = new StructuredSelection(cov.getSelection());
 				Object element = structuredSelection.getFirstElement();
-				ArtikelstammDetailDialog dd =
-					new ArtikelstammDetailDialog(UiDesk.getTopShell(), (IArtikelstammItem) element);
+				ArtikelstammDetailDialog dd = new ArtikelstammDetailDialog(UiDesk.getTopShell(),
+						(IArtikelstammItem) element);
 				dd.open();
 			}
 		});
-		
-		//		menu.add(new AddVerrechenbarContributionItem(cov));
-		
-		MenuManager subMenu =
-			new MenuManager("ATC Gruppen-Selektion",
-				Images.IMG_CATEGORY_GROUP.getImageDescriptor(), null) {
-				@Override
-				public boolean isDynamic(){
-					return true;
+
+		// menu.add(new AddVerrechenbarContributionItem(cov));
+
+		MenuManager subMenu = new MenuManager("ATC Gruppen-Selektion", Images.IMG_CATEGORY_GROUP.getImageDescriptor(),
+				null) {
+			@Override
+			public boolean isDynamic() {
+				return true;
+			}
+
+			@Override
+			public boolean isVisible() {
+				StructuredSelection structuredSelection = new StructuredSelection(cov.getSelection());
+				Object element = structuredSelection.getFirstElement();
+				if (element instanceof IArtikelstammItem) {
+					IArtikelstammItem ai = (IArtikelstammItem) element;
+					return (ai.getAtcCode() != null && ai.getAtcCode().length() > 0);
 				}
-				
-				@Override
-				public boolean isVisible(){
-					StructuredSelection structuredSelection =
-						new StructuredSelection(cov.getSelection());
-					Object element = structuredSelection.getFirstElement();
-					if (element instanceof IArtikelstammItem) {
-						IArtikelstammItem ai = (IArtikelstammItem) element;
-						return (ai.getAtcCode() != null && ai.getAtcCode().length() > 0);
-					}
-					return false;
-				}
-			};
+				return false;
+			}
+		};
 		subMenu.add(new ATCMenuContributionItem(cov, commonViewContentProvider));
 		menu.add(subMenu);
-		
+
 		menu.add(tvfa);
 		menu.add(new Separator());
 		menu.add(new VATMenuContributionItem(cov));
@@ -194,52 +185,49 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		vc.setContentType(ContentType.GENERICOBJECT);
 		return vc;
 	}
-	
+
 	@Override
-	public IDoubleClickListener getDoubleClickListener(){
+	public IDoubleClickListener getDoubleClickListener() {
 		return new ArtikelstammDoubleClickListener();
 	}
-	
+
 	@Override
-	public Class<?> getElementClass(){
+	public Class<?> getElementClass() {
 		return IArtikelstammItem.class;
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return ArtikelstammConstants.CODESYSTEM_NAME;
 	}
-	
+
 	/**
 	 * Overwrite to add actions to the selector panel
-	 * 
+	 *
 	 * @param actionList
-	 * 
+	 *
 	 * @param slp2
 	 */
 	public void populateSelectorPanel(SelectorPanelProvider slp,
-		ArtikelstammCommonViewerContentProvider commonViewerContentProvider,
-		List<IAction> actionList){
-		
-		MephaPrefferedProviderSorterAction mppsa =
-			new MephaPrefferedProviderSorterAction(commonViewerContentProvider);
-		mppsa.setChecked(ConfigServiceHolder.get()
-			.get(MephaPrefferedProviderSorterAction.CFG_PREFER_MEPHA, false));
+			ArtikelstammCommonViewerContentProvider commonViewerContentProvider, List<IAction> actionList) {
+
+		MephaPrefferedProviderSorterAction mppsa = new MephaPrefferedProviderSorterAction(commonViewerContentProvider);
+		mppsa.setChecked(ConfigServiceHolder.get().get(MephaPrefferedProviderSorterAction.CFG_PREFER_MEPHA, false));
 		actionList.add(mppsa);
 		actionList.add(new SupportedATCFilteringAction(commonViewerContentProvider));
 		actionList.add(new BlackboxViewerFilterAction(commonViewerContentProvider, slp));
 	}
-	
+
 	private class ArtikelstammDoubleClickListener implements IDoubleClickListener {
 		private String filterValueStore;
-		
+
 		@Override
-		public void doubleClick(DoubleClickEvent event){
+		public void doubleClick(DoubleClickEvent event) {
 			StructuredSelection selection = (StructuredSelection) event.getSelection();
 			if (selection.getFirstElement() == null)
 				return;
@@ -247,7 +235,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 				filterValueStore = slp.getValues()[0];
 				slp.clearValues();
 				ATCCode a = (ATCCode) selection.getFirstElement();
-				
+
 				commonViewContentProvider.removeAllQueryFilterByType(AtcQueryFilter.class);
 				AtcQueryFilter queryFilter = new AtcQueryFilter();
 				queryFilter.setFilterValue(a.atcCode);
@@ -256,11 +244,10 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 				slp.clearValues();
 				ActiveControl ac = slp.getPanel().getControls().get(0);
 				ac.setText((filterValueStore != null) ? filterValueStore : "");
-				
+
 				commonViewContentProvider.removeAllQueryFilterByType(AtcQueryFilter.class);
 			} else if (selection.getFirstElement() instanceof IArtikelstammItem) {
-				ICodeSelectorTarget target =
-					CodeSelectorHandler.getInstance().getCodeSelectorTarget();
+				ICodeSelectorTarget target = CodeSelectorHandler.getInstance().getCodeSelectorTarget();
 				if (target != null) {
 					Object obj = selection.getFirstElement();
 					target.codeSelected(obj);
@@ -268,39 +255,37 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 			}
 		}
 	}
-	
+
 	private class AControlFieldListener implements ControlFieldListener {
 		private SelectorPanelProvider slp;
 
-		public AControlFieldListener(SelectorPanelProvider slp){
+		public AControlFieldListener(SelectorPanelProvider slp) {
 			this.slp = slp;
 		}
 
 		@Override
-		public void changed(HashMap<String, String> values){
+		public void changed(HashMap<String, String> values) {
 			String val = values.get(DISP_NAME);
-			if (val != null && val.length() == 13 && StringUtils.isNumeric(val)) {	
-				Optional<ICodeElement> result =
-					((ICodeElementServiceContribution) ModelServiceHolder.get()).loadFromCode(val,
-						Collections.emptyMap());
+			if (val != null && val.length() == 13 && StringUtils.isNumeric(val)) {
+				Optional<ICodeElement> result = ((ICodeElementServiceContribution) ModelServiceHolder.get())
+						.loadFromCode(val, Collections.emptyMap());
 				if (result.isPresent()) {
 					KonsDetailView detailView = getKonsDetailView();
-					Optional<IEncounter> encounter =
-						ContextServiceHolder.get().getTyped(IEncounter.class);
+					Optional<IEncounter> encounter = ContextServiceHolder.get().getTyped(IEncounter.class);
 					// TODO use IBillingService here!?
-					//					if (detailView != null && encounter.isPresent()) {
-					//						detailView.addToVerechnung(result.get(0));
-					//						slp.clearValues();
-					//					} else {
-					//						ScannerEvents.beep();
-					//					}
+					// if (detailView != null && encounter.isPresent()) {
+					// detailView.addToVerechnung(result.get(0));
+					// slp.clearValues();
+					// } else {
+					// ScannerEvents.beep();
+					// }
 				}
 			}
 		}
-		
-		private KonsDetailView getKonsDetailView(){
-			IViewReference[] viewReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage().getViewReferences();
+
+		private KonsDetailView getKonsDetailView() {
+			IViewReference[] viewReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.getViewReferences();
 			for (IViewReference viewRef : viewReferences) {
 				if (KonsDetailView.ID.equals(viewRef.getId())) {
 					return (KonsDetailView) viewRef.getPart(false);
@@ -308,12 +293,14 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 			}
 			return null;
 		}
-		
+
 		@Override
-		public void reorder(String field){}
-		
+		public void reorder(String field) {
+		}
+
 		@Override
-		public void selected(){}
+		public void selected() {
+		}
 	}
-	
+
 }

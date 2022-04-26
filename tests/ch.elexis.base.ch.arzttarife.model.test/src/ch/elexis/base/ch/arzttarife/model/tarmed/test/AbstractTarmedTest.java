@@ -20,34 +20,31 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 public abstract class AbstractTarmedTest {
-	
+
 	final IBillingService billingService = AllTestsSuite.getBillingService();
 	final IModelService coreModelService = AllTestsSuite.getCoreModelService();
-	
+
 	IMandator mandator;
 	IPatient patient;
 	ICoverage coverage;
 	IEncounter encounter;
-	
+
 	IBilled billed;
 	Result<IBilled> result;
-	
+
 	public void before() {
 		TimeTool timeTool = new TimeTool();
-		IPerson _mandator =
-			new IContactBuilder.PersonBuilder(coreModelService, "mandator1 " + timeTool.toString(),
-				"Anton" + timeTool.toString(), timeTool.toLocalDate(), Gender.MALE).mandator()
-					.buildAndSave();
+		IPerson _mandator = new IContactBuilder.PersonBuilder(coreModelService, "mandator1 " + timeTool.toString(),
+				"Anton" + timeTool.toString(), timeTool.toLocalDate(), Gender.MALE).mandator().buildAndSave();
 		mandator = coreModelService.load(_mandator.getId(), IMandator.class).get();
-		patient = new IContactBuilder.PatientBuilder(coreModelService, "Armer",
-			"Anton" + timeTool.toString(), timeTool.toLocalDate(), Gender.MALE).buildAndSave();
-		coverage =
-			new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")
+		patient = new IContactBuilder.PatientBuilder(coreModelService, "Armer", "Anton" + timeTool.toString(),
+				timeTool.toLocalDate(), Gender.MALE).buildAndSave();
+		coverage = new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")
 				.buildAndSave();
 		encounter = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
 	}
-	
+
 	public void after() {
 		coreModelService.remove(encounter);
 		coreModelService.remove(coverage);
@@ -56,8 +53,8 @@ public abstract class AbstractTarmedTest {
 		result = null;
 		billed = null;
 	}
-	
-	Result<IBilled> billSingle(IEncounter encounter, TarmedLeistung billable){
+
+	Result<IBilled> billSingle(IEncounter encounter, TarmedLeistung billable) {
 		return billingService.bill(billable, encounter, 1);
 	}
 }

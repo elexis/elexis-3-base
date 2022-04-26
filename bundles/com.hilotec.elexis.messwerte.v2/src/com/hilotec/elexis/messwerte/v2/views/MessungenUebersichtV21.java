@@ -1,14 +1,14 @@
 /*******************************************************************************
- * 
- * The authorship of this code and the accompanying materials is held by 
- * medshare GmbH, Switzerland. All rights reserved. 
+ *
+ * The authorship of this code and the accompanying materials is held by
+ * medshare GmbH, Switzerland. All rights reserved.
  * http://medshare.net
- * 
- * This code and the accompanying materials are made available under 
+ *
+ * This code and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0
- * 
+ *
  * Year of publication: 2012
- * 
+ *
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.v2.views;
@@ -68,45 +68,45 @@ import com.hilotec.elexis.messwerte.v2.data.Messwert;
 import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
 
 public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListener {
-	
+
 	private static int DEFAULT_COL_WIDTH = 80;
 	private static String DATA_PATIENT = "patient"; //$NON-NLS-1$
 	private static String DATA_TYP = "typ"; //$NON-NLS-1$
 	private static String DATA_VIEWER = "viewer"; //$NON-NLS-1$
-	
+
 	private MessungKonfiguration config;
 	private ScrolledForm form;
 	private CTabFolder tabfolder;
 	private final ArrayList<TableViewer> tableViewers;
-	
+
 	private Action neuAktion;
 	private Action editAktion;
 	private Action copyAktion;
 	private Action loeschenAktion;
 	private Action exportAktion;
 	private Action reloadXMLAction;
-	
-	public MessungenUebersichtV21(){
+
+	public MessungenUebersichtV21() {
 		config = MessungKonfiguration.getInstance();
 		tableViewers = new ArrayList<TableViewer>();
 	}
-	
+
 	private class CustomColumnLabelProvider extends ColumnLabelProvider {
-		
+
 		private final String messwertName;
-		
-		public CustomColumnLabelProvider(int columnIndex, String name){
+
+		public CustomColumnLabelProvider(int columnIndex, String name) {
 			messwertName = name;
 		}
-		
+
 		@Override
-		public String getText(Object element){
+		public String getText(Object element) {
 			Messung m = (Messung) element;
 			return m.getMesswert(messwertName).getDarstellungswert();
 		}
 	};
-	
-	private void setCurPatient(Patient patient){
+
+	private void setCurPatient(Patient patient) {
 		if (patient == null) {
 			form.setText(Messages.MessungenUebersicht_kein_Patient);
 		} else {
@@ -121,29 +121,29 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 			refreshContent(patient, t);
 		}
 	}
-	
-	public void catchElexisEvent(final ElexisEvent ev){
+
+	public void catchElexisEvent(final ElexisEvent ev) {
 		UiDesk.asyncExec(new Runnable() {
-			public void run(){
+			public void run() {
 				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 					setCurPatient((Patient) ev.getObject());
 				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
 					setCurPatient(null);
-					
+
 				}
 			}
 		});
 	}
-	
+
 	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class,
-		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-	
-	public ElexisEvent getElexisEventFilter(){
+			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
+
+	public ElexisEvent getElexisEventFilter() {
 		return eetmpl;
 	}
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
 		intializeView(parent);
 		if (form.getCursor() == null)
@@ -155,11 +155,12 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 		if (form.getCursor() != null)
 			form.setCursor(null);
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		CTabItem tab = tabfolder.getSelection();
-		if(tab==null) return;
+		if (tab == null)
+			return;
 		Control c = tab.getControl();
 		TableViewer tv = (TableViewer) c.getData(DATA_VIEWER);
 		if (tv != null) {
@@ -173,19 +174,19 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 			}
 		}
 	}
-	
-	private void intializeView(Composite parent){
+
+	private void intializeView(Composite parent) {
 		form = UiDesk.getToolkit().createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		form.setText(Messages.MessungenUebersicht_kein_Patient);
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
-		
+
 		tabfolder = new CTabFolder(body, SWT.NONE);
 		tabfolder.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tabfolder.addSelectionListener(new SelectionListener() {
-			
-			public void widgetSelected(SelectionEvent e){
+
+			public void widgetSelected(SelectionEvent e) {
 				CTabFolder tf = (CTabFolder) e.widget;
 				Patient p = (Patient) tf.getData(DATA_PATIENT);
 				if (p == null) {
@@ -196,16 +197,16 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 				MessungTyp t = (MessungTyp) c.getData(DATA_TYP);
 				refreshContent(p, t);
 			}
-			
-			public void widgetDefaultSelected(SelectionEvent e){
+
+			public void widgetDefaultSelected(SelectionEvent e) {
 				// Auto-generated method stub, but not needed
 			}
 		});
-		
+
 		ElexisEventDispatcher.getInstance().addListeners(this);
 	}
-	
-	private void initializeContent(){
+
+	private void initializeContent() {
 		tableViewers.clear();
 		config.readFromXML();
 		for (MessungTyp t : config.getTypes()) {
@@ -219,34 +220,34 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 			ti.setControl(c);
 			tv.setInput(null);
 			tv.addDoubleClickListener(new IDoubleClickListener() {
-				public void doubleClick(DoubleClickEvent event){
+				public void doubleClick(DoubleClickEvent event) {
 					editAktion.run();
 				}
 			});
 			ViewMenus menu = new ViewMenus(getViewSite());
-			menu.createControlContextMenu(tv.getControl(), editAktion, copyAktion, loeschenAktion,
-				neuAktion, exportAktion);
+			menu.createControlContextMenu(tv.getControl(), editAktion, copyAktion, loeschenAktion, neuAktion,
+					exportAktion);
 		}
 		tabfolder.setSelection(0);
 	}
-	
-	private void refreshContent(Patient patient, MessungTyp requestedTyp){
-		
+
+	private void refreshContent(Patient patient, MessungTyp requestedTyp) {
+
 		if (patient != null) {
 			if (form.getCursor() == null)
 				form.setCursor(new Cursor(form.getShell().getDisplay(), SWT.CURSOR_WAIT));
-			
+
 			form.setText(patient.getLabel());
 			tabfolder.setData(DATA_PATIENT, patient);
-			
+
 			MessungTyp typToRefresh = requestedTyp;
 			TableViewer viewerToRefresh = null;
-			
+
 			for (TableViewer tv : tableViewers) {
 				Control c = tv.getControl();
 				if (!c.isDisposed()) {
 					MessungTyp typ = (MessungTyp) c.getData(DATA_TYP);
-					
+
 					// bei unbekannten typen (z.B. bei reloadXML) einfach den ersten refreshen
 					if (typToRefresh == null) {
 						typToRefresh = typ;
@@ -261,29 +262,28 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 					}
 				}
 			}
-			if(viewerToRefresh!=null) {
+			if (viewerToRefresh != null) {
 				viewerToRefresh.setInput(Messung.getPatientMessungen(patient, typToRefresh));
 			}
 			if (form.getCursor() != null)
 				form.setCursor(null);
 		}
 	}
-	
-	private TableViewer createTableViewer(Composite parent, MessungTyp t){
-		TableViewer viewer =
-			new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION
-				| SWT.BORDER);
+
+	private TableViewer createTableViewer(Composite parent, MessungTyp t) {
+		TableViewer viewer = new TableViewer(parent,
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		createColumns(parent, viewer, t);
 		final Table table = viewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		
+
 		viewer.setContentProvider(new ArrayContentProvider());
-		
+
 		// Make the selection available to other views
 		getSite().setSelectionProvider(viewer);
 		// Set the sorter for the table
-		
+
 		// Layout the viewer
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
@@ -295,35 +295,33 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 		viewer.setComparator(new MessungenComparator());
 		return viewer;
 	}
-	
-	private void createColumns(final Composite parent, final TableViewer viewer, MessungTyp t){
+
+	private void createColumns(final Composite parent, final TableViewer viewer, MessungTyp t) {
 		// First column is for the measure date
 		TableViewerColumn col;
-		col =
-			createTableViewerColumn(viewer, Messages.MessungenUebersicht_Table_Datum,
-				DEFAULT_COL_WIDTH, 0);
+		col = createTableViewerColumn(viewer, Messages.MessungenUebersicht_Table_Datum, DEFAULT_COL_WIDTH, 0);
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
-			public String getText(Object element){
+			public String getText(Object element) {
 				Messung m = (Messung) element;
 				return m.getDatum();
 			}
 		});
-		
+
 		int i = 0;
 		for (IMesswertTyp dft : t.getMesswertTypen()) {
 			String colTitle = dft.getTitle();
 			if (!dft.getUnit().equals("")) //$NON-NLS-1$
 				colTitle += " [" + dft.getUnit() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-				
+
 			col = createTableViewerColumn(viewer, colTitle, DEFAULT_COL_WIDTH, 0);
 			col.setLabelProvider(new CustomColumnLabelProvider(i, dft.getName()));
 			i++;
 		}
 	}
-	
-	private TableViewerColumn createTableViewerColumn(final TableViewer viewer, String title,
-		int bound, final int colNumber){
+
+	private TableViewerColumn createTableViewerColumn(final TableViewer viewer, String title, int bound,
+			final int colNumber) {
 		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
 		final TableColumn column = viewerColumn.getColumn();
 		column.setText(title);
@@ -333,12 +331,11 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 		column.addSelectionListener(getSelectionAdapter(viewer, column, colNumber));
 		return viewerColumn;
 	}
-	
-	private SelectionAdapter getSelectionAdapter(final TableViewer viewer,
-		final TableColumn column, final int index){
+
+	private SelectionAdapter getSelectionAdapter(final TableViewer viewer, final TableColumn column, final int index) {
 		SelectionAdapter selectionAdapter = new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				MessungenComparator comparator = (MessungenComparator) viewer.getComparator();
 				comparator.setColumn(0);
 				int dir = comparator.getDirection();
@@ -349,28 +346,28 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 		};
 		return selectionAdapter;
 	}
-	
+
 	/**
 	 * Aktionen fuer Menuleiste und Kontextmenu initialisieren
 	 */
-	private void erstelleAktionen(){
+	private void erstelleAktionen() {
 		neuAktion = new Action(Messages.MessungenUebersicht_action_neu) {
 			{
 				setImageDescriptor(Images.IMG_ADDITEM.getImageDescriptor());
 				setToolTipText(Messages.MessungenUebersicht_action_neu_ToolTip);
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Patient p = (Patient) tabfolder.getData(DATA_PATIENT);
 				if (p == null) {
 					return;
 				}
-				
+
 				CTabItem tab = tabfolder.getSelection();
 				Control c = tab.getControl();
 				MessungTyp t = (MessungTyp) c.getData(DATA_TYP);
-				
+
 				Messung messung = new Messung(p, t);
 				MessungBearbeiten dialog = new MessungBearbeiten(getSite().getShell(), messung);
 				if (dialog.open() != Dialog.OK) {
@@ -379,24 +376,24 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 				refreshContent(p, t);
 			}
 		};
-		
+
 		editAktion = new Action(Messages.MessungenUebersicht_action_edit) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 				setToolTipText(Messages.MessungenUebersicht_action_edit_ToolTip);
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Patient p = (Patient) tabfolder.getData(DATA_PATIENT);
 				if (p == null) {
 					return;
 				}
-				
+
 				CTabItem tab = tabfolder.getSelection();
 				Control c = tab.getControl();
 				MessungTyp t = (MessungTyp) c.getData(DATA_TYP);
-				
+
 				TableItem[] tableitems = ((Table) c).getSelection();
 				if (tableitems.length == 1) {
 					Messung messung = (Messung) tableitems[0].getData();
@@ -407,75 +404,75 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 				}
 			}
 		};
-		
+
 		copyAktion = new Action(Messages.MessungenUebersicht_action_copy) {
 			{
 				setImageDescriptor(Images.IMG_CLIPBOARD.getImageDescriptor());
 				setToolTipText(Messages.MessungenUebersicht_action_copy_ToolTip);
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Patient p = (Patient) tabfolder.getData(DATA_PATIENT);
 				if (p == null) {
 					return;
 				}
-				
+
 				CTabItem tab = tabfolder.getSelection();
 				Control c = tab.getControl();
 				MessungTyp t = (MessungTyp) c.getData(DATA_TYP);
-				
+
 				TableItem[] tableitems = ((Table) c).getSelection();
 				if (tableitems.length == 1) {
 					Messung messung = (Messung) tableitems[0].getData();
 					String messungsdatum = messung.getDatum();
 					TimeTool date = new TimeTool();
 					String newdatum = date.toString(TimeTool.DATE_GER);
-					
+
 					if (!messungsdatum.equalsIgnoreCase(newdatum)) {
 						// Nur wenn Messung nich vom selben Tag wie heute!!
 						System.out.println(messung.getDatum());
 						System.out.println(date.toString(TimeTool.DATE_GER));
-						
+
 						Messung messungnew = new Messung(messung.getPatient(), messung.getTyp());
 						messungnew.setDatum(date.toString(TimeTool.DATE_GER));
-						
+
 						for (Messwert messwert : messung.getMesswerte()) {
 							Messwert copytemp = messungnew.getMesswert(messwert.getName());
 							copytemp.setWert(messwert.getWert());
 						}
-						messungnew.set("deleted", "0"); // kopierte Messung als gültig markieren //$NON-NLS-1$ //$NON-NLS-2$
-						
+						messungnew.set("deleted", "0"); // kopierte Messung als gültig //$NON-NLS-1$ //$NON-NLS-2$
+														// markieren
+
 						refreshContent(p, t);
-						
+
 					} else {
 						SWTHelper.showError(Messages.MessungenUebersicht_action_copy_error,
-							Messages.MessungenUebersicht_action_copy_errorMessage);
+								Messages.MessungenUebersicht_action_copy_errorMessage);
 					}
 				}
 			}
 		};
-		
+
 		loeschenAktion = new Action(Messages.MessungenUebersicht_action_loeschen) {
 			{
 				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 				setToolTipText(Messages.MessungenUebersicht_action_loeschen_ToolTip);
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Patient p = (Patient) tabfolder.getData(DATA_PATIENT);
 				if (p == null) {
 					return;
 				}
-				
+
 				CTabItem tab = tabfolder.getSelection();
 				Control c = tab.getControl();
 				MessungTyp t = (MessungTyp) c.getData(DATA_TYP);
-				
+
 				TableItem[] tableitems = ((Table) c).getSelection();
-				if ((tableitems.length > 0)
-					&& SWTHelper.askYesNo(Messages.MessungenUebersicht_action_loeschen_delete_0,
+				if ((tableitems.length > 0) && SWTHelper.askYesNo(Messages.MessungenUebersicht_action_loeschen_delete_0,
 						Messages.MessungenUebersicht_action_loeschen_delete_1)) {
 					for (TableItem ti : tableitems) {
 						Messung messung = (Messung) ti.getData();
@@ -485,87 +482,82 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 				}
 			}
 		};
-		
+
 		exportAktion = new Action(Messages.MessungenUebersicht_action_export) {
 			{
 				setImageDescriptor(Images.IMG_EXPORT.getImageDescriptor());
 				setToolTipText(Messages.MessungenUebersicht_action_export_ToolTip);
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Patient p = (Patient) tabfolder.getData(DATA_PATIENT);
 				CTabItem tab = tabfolder.getSelection();
 				Control c = tab.getControl();
 				MessungTyp t = (MessungTyp) c.getData(DATA_TYP);
-				
+
 				ExportData expData = new ExportData();
 				if (p != null) {
 					expData.setPatientNumberFrom(Integer.parseInt(p.getPatCode()));
 					expData.setPatientNumberTo(Integer.parseInt(p.getPatCode()));
 				}
-				
+
 				ExportDialog expDialog = new ExportDialog(form.getShell(), expData);
-				
+
 				if (expDialog.open() == Dialog.OK) {
-					
+
 					String label = t.getTitle();
 					String date = new TimeTool().toString(TimeTool.DATE_COMPACT);
 					String filename = label + "-export-" + date + ".csv"; //$NON-NLS-1$ //$NON-NLS-2$
-					
+
 					FileDialog fd = new FileDialog(getSite().getShell(), SWT.SAVE);
-					String[] extensions = {
-						"*.csv" //$NON-NLS-1$
+					String[] extensions = { "*.csv" //$NON-NLS-1$
 					};
 					fd.setOverwrite(true);
 					fd.setFilterExtensions(extensions);
 					fd.setFileName(filename);
 					fd.setFilterPath(System.getProperty("user.home")); //$NON-NLS-1$
-					
+
 					String filepath = fd.open();
 					if (filepath != null) {
-						
+
 						try {
 							Exporter exporter = new Exporter(expData, t, filepath);
 							new ProgressMonitorDialog(form.getShell()).run(true, true, exporter);
-							
+
 							if (!exporter.wasAborted()) {
-								SWTHelper.showInfo(MessageFormat.format(
-									Messages.MessungenUebersicht_action_export_title, label),
-									MessageFormat.format(
-										Messages.MessungenUebersicht_action_export_success, label,
-										filepath));
+								SWTHelper.showInfo(
+										MessageFormat.format(Messages.MessungenUebersicht_action_export_title, label),
+										MessageFormat.format(Messages.MessungenUebersicht_action_export_success, label,
+												filepath));
 							} else {
-								SWTHelper.showError(MessageFormat.format(
-									Messages.MessungenUebersicht_action_export_title, label),
-									MessageFormat.format(
-										Messages.MessungenUebersicht_action_export_aborted, label,
-										filepath));
+								SWTHelper.showError(
+										MessageFormat.format(Messages.MessungenUebersicht_action_export_title, label),
+										MessageFormat.format(Messages.MessungenUebersicht_action_export_aborted, label,
+												filepath));
 							}
-							
+
 						} catch (InvocationTargetException e) {
-							SWTHelper.showError(Messages.MessungenUebersichtV21_Error,
-								e.getMessage());
+							SWTHelper.showError(Messages.MessungenUebersichtV21_Error, e.getMessage());
 						} catch (InterruptedException e) {
-							SWTHelper.showInfo(Messages.MessungenUebersichtV21_Cancelled,
-								e.getMessage());
+							SWTHelper.showInfo(Messages.MessungenUebersichtV21_Cancelled, e.getMessage());
 						}
 					} else {
 						SWTHelper.showInfo(Messages.MessungenUebersichtV21_Information,
-							Messages.MessungenUebersicht_action_export_filepath_error);
+								Messages.MessungenUebersicht_action_export_filepath_error);
 					}
 				}
 			}
 		};
-		
+
 		reloadXMLAction = new Action(Messages.MessungenUebersicht_action_reload) {
 			{
 				setImageDescriptor(Images.IMG_REFRESH.getImageDescriptor());
 				setToolTipText(Messages.MessungenUebersicht_action_reload_ToolTip);
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Patient p = (Patient) tabfolder.getData(DATA_PATIENT);
 				if (p == null) {
 					return;
@@ -586,81 +578,76 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 			}
 		};
 	}
-	
+
 	/**
 	 * Menuleiste generieren
 	 */
-	private ViewMenus erstelleMenu(IViewSite site){
+	private ViewMenus erstelleMenu(IViewSite site) {
 		ViewMenus menu = new ViewMenus(site);
 		menu.createToolbar(neuAktion, editAktion, copyAktion, loeschenAktion, exportAktion);
 		menu.createMenu(reloadXMLAction);
 		return menu;
 	}
-	
+
 	class Exporter implements IRunnableWithProgress {
 		private final ExportData expData;
 		private final MessungTyp typ;
 		private final String filepath;
 		private Boolean aborted = false;
-		
+
 		/**
 		 * LongRunningOperation constructor
-		 * 
-		 * @param indeterminate
-		 *            whether the animation is unknown
+		 *
+		 * @param indeterminate whether the animation is unknown
 		 */
-		public Exporter(ExportData xpd, MessungTyp t, String fp){
+		public Exporter(ExportData xpd, MessungTyp t, String fp) {
 			expData = xpd;
 			typ = t;
 			filepath = fp;
 		}
-		
+
 		/**
 		 * Runs the long running operation
-		 * 
-		 * @param monitor
-		 *            the progress monitor
+		 *
+		 * @param monitor the progress monitor
 		 */
-		public void run(IProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException{
-			monitor.beginTask(Messages.MessungenUebersichtV21_Initializing,
-				IProgressMonitor.UNKNOWN);
+		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			monitor.beginTask(Messages.MessungenUebersichtV21_Initializing, IProgressMonitor.UNKNOWN);
 			try {
 				FileOutputStream fout = new FileOutputStream(filepath);
 				OutputStreamWriter writer = new OutputStreamWriter(fout, "ISO-8859-1"); //$NON-NLS-1$
-				
+
 				ArrayList<IMesswertTyp> messwertTypen = typ.getMesswertTypen();
-				
+
 				String headerstring = "PatientenNr;Name;Vorname;Geburtsdatum;Geschlecht;datum;"; //$NON-NLS-1$
-				
+
 				for (IMesswertTyp messwertTyp : messwertTypen) {
 					headerstring = headerstring + messwertTyp.getName();
 					String unit = messwertTyp.getUnit();
 					if (!"".equals(unit))
 						headerstring += "(" //$NON-NLS-1$
-							+ messwertTyp.getUnit() + ")"; //$NON-NLS-2$
-						
+								+ messwertTyp.getUnit() + ")"; // $NON-NLS-2$
+
 					headerstring += ";"; //$NON-NLS-1$
-					
+
 				}
-				
+
 				headerstring = headerstring.substring(0, headerstring.length() - 1);
 				writer.append(headerstring + "\n"); //$NON-NLS-1$
-				
-				List<Messung> messungen =
-					Messung.getMessungenForExport(typ, expData.getDateFrom(), expData.getDateTo());
-				monitor.beginTask(Messages.MessungenUebersicht_action_export_progress,
-					messungen.size());
+
+				List<Messung> messungen = Messung.getMessungenForExport(typ, expData.getDateFrom(),
+						expData.getDateTo());
+				monitor.beginTask(Messages.MessungenUebersicht_action_export_progress, messungen.size());
 				for (Messung m : messungen) {
 					Patient p = Patient.load(m.getPatient().getId());
-					
+
 					int curPatNr = -1;
 					try {
 						curPatNr = Integer.parseInt(p.getPatCode());
-						
-					} catch (Exception e) {}
-					if ((curPatNr >= expData.getPatientNumberFrom())
-						&& (curPatNr <= expData.getPatientNumberTo())) {
+
+					} catch (Exception e) {
+					}
+					if ((curPatNr >= expData.getPatientNumberFrom()) && (curPatNr <= expData.getPatientNumberTo())) {
 						monitor.subTask(p.getLabel() + " - " + m.getDatum()); //$NON-NLS-1$
 						String messungstring = m.getPatient().getPatCode() + ";"; //$NON-NLS-1$
 						messungstring += m.getPatient().getName() + ";"; //$NON-NLS-1$
@@ -684,15 +671,15 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 				writer.close();
 				fout.flush();
 				fout.close();
-				
+
 			} catch (Exception e) {
 				SWTHelper.showError(Messages.MessungenUebersicht_action_export_error, e.toString());
 			}
-			
+
 			monitor.done();
 		}
-		
-		private Boolean wasAborted(){
+
+		private Boolean wasAborted() {
 			return aborted;
 		}
 	}

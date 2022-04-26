@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for ContextControlOverriding.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="ContextControlOverriding">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -19,20 +20,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "ContextControlOverriding")
 @XmlEnum
 public enum ContextControlOverriding {
-	
+
 	ON, OP;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static ContextControlOverriding fromValue(String v){
+
+	public static ContextControlOverriding fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

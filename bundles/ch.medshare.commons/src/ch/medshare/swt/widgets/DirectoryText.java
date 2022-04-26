@@ -12,21 +12,20 @@ import org.eclipse.swt.widgets.Shell;
 import ch.medshare.util.UtilMisc;
 
 public class DirectoryText extends AbstractBrowseText {
-	
-	public DirectoryText(Composite parent, int style){
+
+	public DirectoryText(Composite parent, int style) {
 		super(parent, style);
 	}
-	
+
 	/**
 	 * Helper that opens the directory chooser dialog.
-	 * 
-	 * @param startingDirectory
-	 *            The directory the dialog will open in.
+	 *
+	 * @param startingDirectory The directory the dialog will open in.
 	 * @return File File or <code>null</code>.
-	 * 
+	 *
 	 */
-	private static File getDirectory(Shell shell, File startingDirectory){
-		
+	private static File getDirectory(Shell shell, File startingDirectory) {
+
 		DirectoryDialog fileDialog = new DirectoryDialog(shell, SWT.OPEN);
 		if (startingDirectory != null) {
 			fileDialog.setFilterPath(startingDirectory.getPath());
@@ -38,16 +37,16 @@ public class DirectoryText extends AbstractBrowseText {
 				return new File(dir);
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
-	protected SelectionAdapter getBrowseSelectionAdapter(){
+	protected SelectionAdapter getBrowseSelectionAdapter() {
 		return new SelectionAdapter() {
-			
+
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				File f = new File(getText());
 				if (!f.exists()) {
 					f = null;
@@ -58,8 +57,8 @@ public class DirectoryText extends AbstractBrowseText {
 					setFocus();
 				}
 			}
-			
+
 		};
 	}
-	
+
 }

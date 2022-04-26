@@ -19,31 +19,25 @@ import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class PandemieImporterTest {
-	
+
 	@Test
-	public void performImport() throws FileNotFoundException, SQLException{
+	public void performImport() throws FileNotFoundException, SQLException {
 		PandemieReferenceDataImporter importer = new PandemieReferenceDataImporter();
-		Status retStatus =
-			(Status) importer.performImport(new NullProgressMonitor(),
-				PandemieImporterTest.class
-					.getResourceAsStream("/rsc/PT_20210701.xlsx"),
-				null);
+		Status retStatus = (Status) importer.performImport(new NullProgressMonitor(),
+				PandemieImporterTest.class.getResourceAsStream("/rsc/PT_20210701.xlsx"), null);
 		assertEquals(IStatus.OK, retStatus.getCode());
-		
-		ICodeElementService codeElementService =
-			OsgiServiceUtil.getService(ICodeElementService.class).get();
-		ICodeElement pauschale =
-			codeElementService.loadFromString("Pandemie", "01.01.1050", null).get();
+
+		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElement pauschale = codeElementService.loadFromString("Pandemie", "01.01.1050", null).get();
 		assertNotNull(pauschale);
 		assertNotNull(pauschale.getText());
 		assertEquals(2250, ((IPandemieLeistung) pauschale).getCents());
-		
-		ICodeElement mulitline =
-			codeElementService.loadFromString("Pandemie", "01.01.1300", null).get();
+
+		ICodeElement mulitline = codeElementService.loadFromString("Pandemie", "01.01.1300", null).get();
 		assertNotNull(mulitline);
 		assertNotNull(mulitline.getText());
 		assertTrue(mulitline.getText().startsWith(
-			"Immunologische Analyse auf Sars-CoV-2 Antigene und Schnelltest zum direkten Nachweis von Sars-CoV-2"));
+				"Immunologische Analyse auf Sars-CoV-2 Antigene und Schnelltest zum direkten Nachweis von Sars-CoV-2"));
 		assertFalse(mulitline.getText().contains("\n"));
 		OsgiServiceUtil.ungetService(codeElementService);
 	}

@@ -19,31 +19,31 @@ import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 
 public class AddressesFile extends AbstractCsvImportFile<Kontakt> implements IAeskulapImportFile {
-	
+
 	private File file;
-	
-	public AddressesFile(File file){
+
+	public AddressesFile(File file) {
 		super(file);
 		this.file = file;
 	}
-	
+
 	@Override
-	public File getFile(){
+	public File getFile() {
 		return file;
 	}
-	
-	public static boolean canHandleFile(File file){
+
+	public static boolean canHandleFile(File file) {
 		return FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("csv")
-			&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Adressen");
+				&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Adressen");
 	}
-	
+
 	@Override
-	public boolean isHeaderLine(String[] line){
+	public boolean isHeaderLine(String[] line) {
 		return line.length > 1 && line[1] != null && line[1].equalsIgnoreCase("vorname");
 	}
-	
+
 	@Override
-	public Kontakt create(String[] line){
+	public Kontakt create(String[] line) {
 		String firstname = line[1];
 		String lastname = line[2];
 		String department = line[3];
@@ -55,12 +55,12 @@ public class AddressesFile extends AbstractCsvImportFile<Kontakt> implements IAe
 			bez += lastname;
 			return new Organisation(bez, department);
 		} else {
-			return new Person(lastname, firstname, "", Gender.UNKNOWN.value()); //$NON-NLS-2$
+			return new Person(lastname, firstname, "", Gender.UNKNOWN.value()); // $NON-NLS-2$
 		}
 	}
-	
+
 	@Override
-	public void setProperties(Kontakt contact, String[] line){
+	public void setProperties(Kontakt contact, String[] line) {
 		String street = StringUtils.isBlank(line[5]) ? line[4] : line[4] + ", " + line[5];
 		Anschrift an = contact.getAnschrift();
 		an.setStrasse(street);
@@ -80,10 +80,9 @@ public class AddressesFile extends AbstractCsvImportFile<Kontakt> implements IAe
 		}
 		contact.addXid(getXidDomain(), line[0], true);
 	}
-	
+
 	@Override
-	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite,
-		SubMonitor monitor){
+	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite, SubMonitor monitor) {
 		monitor.beginTask("Aeskuplap Adressen Import", getLineCount());
 		try {
 			String[] line = null;
@@ -107,14 +106,14 @@ public class AddressesFile extends AbstractCsvImportFile<Kontakt> implements IAe
 		}
 		return false;
 	}
-	
+
 	@Override
-	public Type getType(){
+	public Type getType() {
 		return Type.ADDRESSES;
 	}
-	
+
 	@Override
-	public String getXidDomain(){
+	public String getXidDomain() {
 		return IAeskulapImporter.XID_IMPORT_ADDRESS;
 	}
 }

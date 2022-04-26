@@ -16,21 +16,21 @@ import ch.elexis.data.Xid;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
 
 public abstract class AbstractCsvImportFile<T> {
-	
+
 	private File csvFile;
-	
+
 	private CSVReader reader;
-	
-	public AbstractCsvImportFile(File csvFile){
+
+	public AbstractCsvImportFile(File csvFile) {
 		this.csvFile = csvFile;
 	}
-	
+
 	public abstract boolean isHeaderLine(String[] line);
-	
+
 	public abstract String getXidDomain();
-	
+
 	@SuppressWarnings("unchecked")
-	public T getExisting(String id){
+	public T getExisting(String id) {
 		String domain = getXidDomain();
 		if (domain != null) {
 			Xid existingXid = Xid.findXID(domain, id);
@@ -40,20 +40,20 @@ public abstract class AbstractCsvImportFile<T> {
 					return (T) ret;
 				} else {
 					LoggerFactory.getLogger(getClass()).error("XID [" + domain + "] [" + id
-						+ "] referes to object of wrong type [" + ret.getClass() + "]");
+							+ "] referes to object of wrong type [" + ret.getClass() + "]");
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	public abstract T create(String[] line);
-	
+
 	public abstract void setProperties(T contact, String[] line);
-	
+
 	public abstract Type getType();
-	
-	public String[] getNextLine() throws IOException{
+
+	public String[] getNextLine() throws IOException {
 		if (reader == null) {
 			reader = new CSVReader(new FileReader(csvFile), ',', '"');
 			String[] firstLine = reader.readNext();
@@ -70,8 +70,8 @@ public abstract class AbstractCsvImportFile<T> {
 		}
 		return reader.readNext();
 	}
-	
-	public int getLineCount(){
+
+	public int getLineCount() {
 		try {
 			InputStream is = new BufferedInputStream(new FileInputStream(csvFile));
 			try {
@@ -96,8 +96,8 @@ public abstract class AbstractCsvImportFile<T> {
 		}
 		return 1;
 	}
-	
-	public void close(){
+
+	public void close() {
 		try {
 			reader.close();
 		} catch (IOException e) {

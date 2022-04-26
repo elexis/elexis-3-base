@@ -25,9 +25,9 @@ import ch.unibe.iam.scg.archie.Messages;
  * <p>
  * Shows the results of a statistics query.
  * </p>
- * 
+ *
  * $Id: ResultPanel.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -69,8 +69,8 @@ public class ResultPanel extends Composite {
 		this.createMessageContainer();
 
 		// add the intial message to the container
-		new GraphicalMessage(this.messageContainer, ArchieActivator.getInstance().getImageRegistry()
-				.get(ArchieActivator.IMG_COFFEE), Messages.WORKING);
+		new GraphicalMessage(this.messageContainer,
+				ArchieActivator.getInstance().getImageRegistry().get(ArchieActivator.IMG_COFFEE), Messages.WORKING);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class ResultPanel extends Composite {
 	 */
 	public void showEmptyMessage() {
 		this.createMessageContainer();
-		new GraphicalMessage(this.messageContainer, ArchieActivator.getInstance().getImageRegistry()
-				.get(ArchieActivator.IMG_INFO), Messages.RESULT_EMPTY);
+		new GraphicalMessage(this.messageContainer,
+				ArchieActivator.getInstance().getImageRegistry().get(ArchieActivator.IMG_INFO), Messages.RESULT_EMPTY);
 	}
 }

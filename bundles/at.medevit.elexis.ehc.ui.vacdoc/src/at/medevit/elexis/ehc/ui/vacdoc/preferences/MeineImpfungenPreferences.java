@@ -15,50 +15,44 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.inputs.PasswordFieldEditor;
 
-public class MeineImpfungenPreferences extends FieldEditorPreferencePage
-		implements IWorkbenchPreferencePage {
-	
+public class MeineImpfungenPreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		setPreferenceStore(new ConfigServicePreferenceStore(Scope.MANDATOR));
 		setDescription("Mandanten spezifische Einstellungen für meineimpfungen.");
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
+	protected void createFieldEditors() {
 		FieldEditor editor;
-		
+
 		editor = new ComboFieldEditor(MeineImpfungenService.CONFIG_ENDPOINT, "Betriebsart",
-			new String[][] {
-				{
-					"Produktiv", MeineImpfungenService.ENDPOINT_PRODUCTIV
-				}, {
-					"Test", MeineImpfungenService.ENDPOINT_TEST
-				}
-			}, getFieldEditorParent());
+				new String[][] { { "Produktiv", MeineImpfungenService.ENDPOINT_PRODUCTIV },
+						{ "Test", MeineImpfungenService.ENDPOINT_TEST } },
+				getFieldEditorParent());
 		addField(editor);
-		
+
 		editor = new BooleanFieldEditor(MeineImpfungenService.CONFIG_USECERTAUTH,
-			"meineimpfungen mit Zertifikat aufrufen", getFieldEditorParent());
+				"meineimpfungen mit Zertifikat aufrufen", getFieldEditorParent());
 		addField(editor);
-		
-		editor = new FileFieldEditor(MeineImpfungenService.CONFIG_KEYSTORE_PATH, "Keystore",
-			getFieldEditorParent());
+
+		editor = new FileFieldEditor(MeineImpfungenService.CONFIG_KEYSTORE_PATH, "Keystore", getFieldEditorParent());
 		addField(editor);
-		
-		editor = new PasswordFieldEditor(MeineImpfungenService.CONFIG_KEYSTORE_PASS,
-			"Keystore Passwort", getFieldEditorParent());
+
+		editor = new PasswordFieldEditor(MeineImpfungenService.CONFIG_KEYSTORE_PASS, "Keystore Passwort",
+				getFieldEditorParent());
 		addField(editor);
 	}
-	
+
 	@Override
-	public boolean performOk(){
+	public boolean performOk() {
 		boolean ret = super.performOk();
 		if (ret) {
 			boolean configOk = MeineImpfungenServiceHolder.getService().updateConfiguration();
 			if (!configOk) {
 				MessageDialog.openError(getShell(), "meineimpfungen",
-					"Es ist ein Fehler aufgetreten, bitte überprüfen Sie die Konfiguration.");
+						"Es ist ein Fehler aufgetreten, bitte überprüfen Sie die Konfiguration.");
 				return false;
 			}
 		}

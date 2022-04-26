@@ -35,213 +35,211 @@ import ch.elexis.data.Kontakt;
 import ch.gpb.elexis.cst.data.CstProfile;
 
 public class ProfileOverview extends StatusDialog {
-    //List list;
-    private Table table;
-    java.util.List<CstProfile> profiles;
-    private int sortColumn = 0;
-    private boolean sortReverse = false;
-    TableViewer tableViewer;
-    private java.util.List<String[]> lProf = new ArrayList<String[]>();
+	// List list;
+	private Table table;
+	java.util.List<CstProfile> profiles;
+	private int sortColumn = 0;
+	private boolean sortReverse = false;
+	TableViewer tableViewer;
+	private java.util.List<String[]> lProf = new ArrayList<String[]>();
 
-    // TODO: text localisations missing
-    public ProfileOverview(Shell parent) {
-	super(parent);
-	setShellStyle(SWT.BORDER | SWT.RESIZE);
-    }
-
-    @Override
-    protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
-	if (id == IDialogConstants.CANCEL_ID)
-	    return null;
-	return super.createButton(parent, id, label, defaultButton);
-
-    }
-
-    @Override
-    protected Control createDialogArea(Composite parent) {
-
-	// TODO Auto-generated method stub
-	Composite base = (Composite) super.createDialogArea(parent);
-
-	Label lblNewLabel = new Label(base, SWT.NONE);
-	lblNewLabel.setText("Welches Profil ist bei welchem Patienten?");
-
-	tableViewer = new TableViewer(base, SWT.BORDER | SWT.FULL_SELECTION);
-	table = tableViewer.getTable();
-	GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-	gd_table.widthHint = 400;
-	gd_table.minimumWidth = 400;
-	table.setLayoutData(gd_table);
-	table.setHeaderVisible(true);
-	table.setLinesVisible(true);
-
-	java.util.List<CstProfile> p = CstProfile.getAllProfiles(CoreHub.actMandant.getId());
-
-	for (CstProfile cstProfile : p) {
-	    Kontakt k = Kontakt.load(cstProfile.getKontaktId());
-
-	    String[] sProf = new String[4];
-	    sProf[0] = cstProfile.getName();
-	    sProf[1] = k.getLabel();
-	    sProf[2] = cstProfile.getTemplate();
-	    sProf[3] = k.getKuerzel();
-	    lProf.add(sProf);
-
-	}
-	profiles = CstProfile.getAllProfiles(CoreHub.actMandant.getId());
-	String[] colLabels = getColumnLabels();
-	int columnWidth[] = getColumnWidth();
-	SortListener sortListener = new SortListener();
-	TableColumn[] cols = new TableColumn[colLabels.length];
-	for (int i = 0; i < colLabels.length; i++) {
-	    cols[i] = new TableColumn(table, SWT.NONE);
-	    cols[i].setWidth(columnWidth[i]);
-	    cols[i].setText(colLabels[i]);
-	    cols[i].setData(new Integer(i));
-	    cols[i].addSelectionListener(sortListener);
-	}
-	tableViewer.setContentProvider(new ViewContentProvider());
-	tableViewer.setLabelProvider(new ViewLabelProvider());
-	tableViewer.setInput(this);
-	tableViewer.setSorter(new Sorter());
-
-	/*
-	 */
-	return base;
-    }
-
-    private String[] getColumnLabels() {
-	String columnLabels[] = { "Profile", "Patient", "Template", "Patienten-Nr" };
-	return columnLabels;
-    }
-
-    private int[] getColumnWidth() {
-	int columnWidth[] = { 150, 150, 50, 100 };
-	return columnWidth;
-    }
-
-    class ViewContentProvider implements IStructuredContentProvider {
-	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-	}
-
-	public void dispose() {
-	}
-
-	public Object[] getElements(Object parent) {
-	    return lProf.toArray();
-	}
-    }
-
-    class ViewLabelProvider extends LabelProvider implements
-	    ITableLabelProvider, ITableFontProvider, IColorProvider {
-	public String getColumnText(Object obj, int index) {
-	    String[] tableLine = (String[]) obj;
-	    switch (index) {
-	    case 0:
-		return tableLine[0];
-	    case 1:
-		return tableLine[1];
-	    case 2:
-		if (tableLine[2].equals("1")) {
-		    return "ja";
-		}
-		return "nein";
-	    case 3:
-		return tableLine[3];
-
-	    default:
-		return "?";
-	    }
-	}
-
-	public Image getColumnImage(Object obj, int index) {
-	    return null;
-	}
-
-	public Image getImage(Object obj) {
-	    return PlatformUI.getWorkbench().getSharedImages()
-		    .getImage(ISharedImages.IMG_OBJ_ELEMENT);
-	}
-
-	public Font getFont(Object element, int columnIndex) {
-	    Font fontNormal = UiDesk.getFont("Helvetica", 8, SWT.NORMAL); //$NON-NLS-1$
-	    return fontNormal;
+	// TODO: text localisations missing
+	public ProfileOverview(Shell parent) {
+		super(parent);
+		setShellStyle(SWT.BORDER | SWT.RESIZE);
 	}
 
 	@Override
-	public Color getForeground(Object element) {
-	    return null;
+	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
+		if (id == IDialogConstants.CANCEL_ID)
+			return null;
+		return super.createButton(parent, id, label, defaultButton);
+
 	}
 
 	@Override
-	public Color getBackground(Object element) {
-	    String[] tableLine = (String[]) element;
-	    if (tableLine[2].equals("1")) {
-		return UiDesk.getColorFromRGB("FF1188");
-	    }
+	protected Control createDialogArea(Composite parent) {
 
-	    return null;
-	}
-    }
+		// TODO Auto-generated method stub
+		Composite base = (Composite) super.createDialogArea(parent);
 
-    class SortListener extends SelectionAdapter {
+		Label lblNewLabel = new Label(base, SWT.NONE);
+		lblNewLabel.setText("Welches Profil ist bei welchem Patienten?");
 
-	@Override
-	public void widgetSelected(SelectionEvent e) {
-	    TableColumn col = (TableColumn) e.getSource();
+		tableViewer = new TableViewer(base, SWT.BORDER | SWT.FULL_SELECTION);
+		table = tableViewer.getTable();
+		GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_table.widthHint = 400;
+		gd_table.minimumWidth = 400;
+		table.setLayoutData(gd_table);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
 
-	    Integer colNo = (Integer) col.getData();
+		java.util.List<CstProfile> p = CstProfile.getAllProfiles(CoreHub.actMandant.getId());
 
-	    if (colNo != null) {
-		if (colNo == sortColumn) {
-		    sortReverse = !sortReverse;
-		} else {
-		    sortReverse = false;
-		    sortColumn = colNo;
+		for (CstProfile cstProfile : p) {
+			Kontakt k = Kontakt.load(cstProfile.getKontaktId());
+
+			String[] sProf = new String[4];
+			sProf[0] = cstProfile.getName();
+			sProf[1] = k.getLabel();
+			sProf[2] = cstProfile.getTemplate();
+			sProf[3] = k.getKuerzel();
+			lProf.add(sProf);
+
 		}
-		tableViewer.refresh();
-	    }
-
-	}
-
-    }
-
-    class Sorter extends ViewerSorter {
-
-	@Override
-	public int compare(Viewer viewer, Object e1, Object e2) {
-	    if ((e1 instanceof String[]) && (e2 instanceof String[])) {
-		String[] d1 = (String[]) e1;
-		String[] d2 = (String[]) e2;
-		String c1 = "";
-		String c2 = "";
-		switch (sortColumn) {
-		case 0:
-		    c1 = d1[0];
-		    c2 = d2[0];
-		    break;
-		case 1:
-		    c1 = d1[1];
-		    c2 = d2[1];
-		    break;
-		case 2:
-		    c1 = d1[2];
-		    c2 = d2[2];
-		    break;
-		case 3:
-		    c1 = d1[3];
-		    c2 = d2[3];
-		    break;
+		profiles = CstProfile.getAllProfiles(CoreHub.actMandant.getId());
+		String[] colLabels = getColumnLabels();
+		int columnWidth[] = getColumnWidth();
+		SortListener sortListener = new SortListener();
+		TableColumn[] cols = new TableColumn[colLabels.length];
+		for (int i = 0; i < colLabels.length; i++) {
+			cols[i] = new TableColumn(table, SWT.NONE);
+			cols[i].setWidth(columnWidth[i]);
+			cols[i].setText(colLabels[i]);
+			cols[i].setData(new Integer(i));
+			cols[i].addSelectionListener(sortListener);
 		}
-		if (sortReverse) {
-		    return c1.compareTo(c2);
-		} else {
-		    return c2.compareTo(c1);
-		}
-	    }
-	    return 0;
+		tableViewer.setContentProvider(new ViewContentProvider());
+		tableViewer.setLabelProvider(new ViewLabelProvider());
+		tableViewer.setInput(this);
+		tableViewer.setSorter(new Sorter());
+
+		/*
+		 */
+		return base;
 	}
 
-    }
+	private String[] getColumnLabels() {
+		String columnLabels[] = { "Profile", "Patient", "Template", "Patienten-Nr" };
+		return columnLabels;
+	}
+
+	private int[] getColumnWidth() {
+		int columnWidth[] = { 150, 150, 50, 100 };
+		return columnWidth;
+	}
+
+	class ViewContentProvider implements IStructuredContentProvider {
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
+
+		public void dispose() {
+		}
+
+		public Object[] getElements(Object parent) {
+			return lProf.toArray();
+		}
+	}
+
+	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider, IColorProvider {
+		public String getColumnText(Object obj, int index) {
+			String[] tableLine = (String[]) obj;
+			switch (index) {
+			case 0:
+				return tableLine[0];
+			case 1:
+				return tableLine[1];
+			case 2:
+				if (tableLine[2].equals("1")) {
+					return "ja";
+				}
+				return "nein";
+			case 3:
+				return tableLine[3];
+
+			default:
+				return "?";
+			}
+		}
+
+		public Image getColumnImage(Object obj, int index) {
+			return null;
+		}
+
+		public Image getImage(Object obj) {
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
+		}
+
+		public Font getFont(Object element, int columnIndex) {
+			Font fontNormal = UiDesk.getFont("Helvetica", 8, SWT.NORMAL); //$NON-NLS-1$
+			return fontNormal;
+		}
+
+		@Override
+		public Color getForeground(Object element) {
+			return null;
+		}
+
+		@Override
+		public Color getBackground(Object element) {
+			String[] tableLine = (String[]) element;
+			if (tableLine[2].equals("1")) {
+				return UiDesk.getColorFromRGB("FF1188");
+			}
+
+			return null;
+		}
+	}
+
+	class SortListener extends SelectionAdapter {
+
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			TableColumn col = (TableColumn) e.getSource();
+
+			Integer colNo = (Integer) col.getData();
+
+			if (colNo != null) {
+				if (colNo == sortColumn) {
+					sortReverse = !sortReverse;
+				} else {
+					sortReverse = false;
+					sortColumn = colNo;
+				}
+				tableViewer.refresh();
+			}
+
+		}
+
+	}
+
+	class Sorter extends ViewerSorter {
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			if ((e1 instanceof String[]) && (e2 instanceof String[])) {
+				String[] d1 = (String[]) e1;
+				String[] d2 = (String[]) e2;
+				String c1 = "";
+				String c2 = "";
+				switch (sortColumn) {
+				case 0:
+					c1 = d1[0];
+					c2 = d2[0];
+					break;
+				case 1:
+					c1 = d1[1];
+					c2 = d2[1];
+					break;
+				case 2:
+					c1 = d1[2];
+					c2 = d2[2];
+					break;
+				case 3:
+					c1 = d1[3];
+					c2 = d2[3];
+					break;
+				}
+				if (sortReverse) {
+					return c1.compareTo(c2);
+				} else {
+					return c2.compareTo(c1);
+				}
+			}
+			return 0;
+		}
+
+	}
 
 }

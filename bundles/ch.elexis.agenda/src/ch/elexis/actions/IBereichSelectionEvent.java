@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    M. Descher - Initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.actions;
 

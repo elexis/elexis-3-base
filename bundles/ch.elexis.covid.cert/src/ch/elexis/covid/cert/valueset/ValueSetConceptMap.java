@@ -6,9 +6,9 @@ public class ValueSetConceptMap {
 	public String valueSetId;
 	public String valueSetDate;
 	public Map<String, Map<String, String>> valueSetValues;
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return "ValueSet [id=" + valueSetId + ", conceptMap=" + valueSetValues + "]";
 	}
 }

@@ -30,11 +30,13 @@ import ch.unibe.iam.scg.archie.model.DataSet;
 import ch.unibe.iam.scg.archie.model.DatasetTableColumnSorter;
 
 /**
- * <p>Dataset row selection page. Users needs to select the rows he wants to have
- * included in the graph on this page.</p>
- * 
+ * <p>
+ * Dataset row selection page. Users needs to select the rows he wants to have
+ * included in the graph on this page.
+ * </p>
+ *
  * $Id: ContentSelectionPage.java 725 2009-01-23 14:17:31Z hephster $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 725 $
@@ -61,7 +63,7 @@ public class ContentSelectionPage extends WizardPage implements SelectionListene
 
 	/**
 	 * Creates the control of this wizard page.
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -73,9 +75,10 @@ public class ContentSelectionPage extends WizardPage implements SelectionListene
 
 		// create table from the currently model dataset and use current data
 		// provider for label and content providers.
-		this.table = TableFactory.getInstance().createTableFromData(composite, dataset,
-				ProviderManager.getInstance().getProvider().getLabelProvider(),
-				ProviderManager.getInstance().getProvider().getContentProvider()).getTable();
+		this.table = TableFactory.getInstance()
+				.createTableFromData(composite, dataset, ProviderManager.getInstance().getProvider().getLabelProvider(),
+						ProviderManager.getInstance().getProvider().getContentProvider())
+				.getTable();
 
 		// add selection listener
 		this.table.addSelectionListener(this);
@@ -98,7 +101,7 @@ public class ContentSelectionPage extends WizardPage implements SelectionListene
 
 	/**
 	 * Returns false, as this is the last page of the wizard.
-	 * 
+	 *
 	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
 	 */
 	@Override
@@ -108,7 +111,7 @@ public class ContentSelectionPage extends WizardPage implements SelectionListene
 
 	/**
 	 * Does nothing.
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	public void widgetDefaultSelected(SelectionEvent e) {
@@ -116,9 +119,9 @@ public class ContentSelectionPage extends WizardPage implements SelectionListene
 	}
 
 	/**
-	 * Retrieves the selected rows from the table and sets them as indexes of
-	 * the model.
-	 * 
+	 * Retrieves the selected rows from the table and sets them as indexes of the
+	 * model.
+	 *
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	public void widgetSelected(SelectionEvent e) {

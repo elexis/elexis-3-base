@@ -12,40 +12,39 @@ import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
 public class TermineLabelProvider extends LabelProvider implements ITableLabelProvider {
-	
+
 	@Override
-	public Image getColumnImage(Object element, int columnIndex){
+	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
 	}
-	
+
 	@Override
-	public String getColumnText(Object element, int columnIndex){
+	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof Termin) {
 			Termin termin = (Termin) element;
 			StringBuilder sbLabel = new StringBuilder();
-			
+
 			TimeSpan ts = termin.getTimeSpan();
-			
+
 			// day
 			TimeTool tt = new TimeTool();
 			tt.setDate(termin.getDay());
 			sbLabel.append(tt.toString(TimeTool.DATE_GER));
-			String dayShort = tt.toLocalDate().getDayOfWeek().getDisplayName(TextStyle.SHORT,
-				Locale.getDefault());
+			String dayShort = tt.toLocalDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault());
 			if (dayShort != null) {
 				sbLabel.append(" (" + dayShort + ")");
 			}
 			sbLabel.append(", ");
-			
+
 			// start time
 			tt.setTime(ts.from);
 			sbLabel.append(tt.toString(TimeTool.TIME_SMALL));
 			sbLabel.append(" - ");
-			
+
 			// end time
 			tt.setTime(ts.until);
 			sbLabel.append(tt.toString(TimeTool.TIME_SMALL));
-			
+
 			// type
 			sbLabel.append(" (");
 			sbLabel.append(termin.getType());
@@ -53,17 +52,17 @@ public class TermineLabelProvider extends LabelProvider implements ITableLabelPr
 			// status
 			sbLabel.append(termin.getStatus());
 			sbLabel.append("), ");
-			
+
 			// bereich
 			sbLabel.append(termin.getBereich());
-			
+
 			// grund if set
 			if (termin.getGrund() != null && !termin.getGrund().isEmpty()) {
 				sbLabel.append(" (");
 				sbLabel.append(termin.getGrund());
 				sbLabel.append(")");
 			}
-			
+
 			return sbLabel.toString();
 		}
 		return element.toString();

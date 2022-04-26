@@ -19,39 +19,39 @@ import at.medevit.elexis.ehc.ui.extension.IWizardCategory;
 import at.medevit.elexis.ehc.ui.extension.IWizardDescriptor;
 
 public class WizardCategory implements IWizardCategory {
-	
+
 	private List<IWizardDescriptor> wizards;
-	
+
 	private String id;
 	private String label;
-	
-	public WizardCategory(IConfigurationElement el){
+
+	public WizardCategory(IConfigurationElement el) {
 		id = el.getAttribute("id");
 		label = el.getAttribute("name");
 	}
-	
-	public WizardCategory(String id, String label){
+
+	public WizardCategory(String id, String label) {
 		this.id = id;
 		this.label = label;
 	}
-	
+
 	@Override
-	public String getId(){
+	public String getId() {
 		return id;
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		return label;
 	}
-	
+
 	@Override
-	public List<IWizardDescriptor> getWizards(){
+	public List<IWizardDescriptor> getWizards() {
 		return wizards;
 	}
-	
+
 	@Override
-	public void addWizard(IWizardDescriptor wizard){
+	public void addWizard(IWizardDescriptor wizard) {
 		if (wizards == null) {
 			wizards = new ArrayList<IWizardDescriptor>();
 		}

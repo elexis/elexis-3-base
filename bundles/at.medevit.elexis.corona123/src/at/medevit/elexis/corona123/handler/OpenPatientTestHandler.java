@@ -19,38 +19,36 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.model.IPatient;
 
 public class OpenPatientTestHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+
 		IStructuredSelection selection = HandlerUtil.getCurrentStructuredSelection(event);
-		if (selection != null && !selection.isEmpty()
-			&& selection.getFirstElement() instanceof IPatient) {
+		if (selection != null && !selection.isEmpty() && selection.getFirstElement() instanceof IPatient) {
 			IPatient patient = (IPatient) selection.getFirstElement();
 			openPatientTest(patient);
 		}
-		
+
 		return null;
 	}
-	
-	private void openPatientTest(IPatient patient){
+
+	private void openPatientTest(IPatient patient) {
 		if (UrlBuilder.isOrgId()) {
 			String baseUrl = UrlBuilder.getTestBaseUrl();
-			
+
 			String patientParameters = UrlBuilder.getPatientParameters(patient);
 			try {
-				String testDateParameter = "testDate=" + URLEncoder.encode(
-					DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now()), "UTF-8");
-				
+				String testDateParameter = "testDate="
+						+ URLEncoder.encode(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now()), "UTF-8");
+
 				Program.launch(baseUrl + "?" + testDateParameter + "&" + patientParameters);
 			} catch (UnsupportedEncodingException e) {
-				LoggerFactory.getLogger(UrlBuilder.class).error("Error getting testDate parameter",
-					e);
+				LoggerFactory.getLogger(UrlBuilder.class).error("Error getting testDate parameter", e);
 			}
 		} else {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-				"Es ist keine corona123 Organisations ID konfiguriert.");
+					"Es ist keine corona123 Organisations ID konfiguriert.");
 		}
 	}
-	
+
 }

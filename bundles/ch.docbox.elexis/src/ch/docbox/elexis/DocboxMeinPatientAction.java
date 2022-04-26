@@ -1,9 +1,9 @@
 package ch.docbox.elexis;
 
 public class DocboxMeinPatientAction extends DocboxHospitalReferralAction {
-	
-	public DocboxMeinPatientAction(){
+
+	public DocboxMeinPatientAction() {
 		meinPatient = true;
 	}
-	
+
 }

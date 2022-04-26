@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.buchhaltung.model;
@@ -36,39 +36,40 @@ import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
 import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 
 /**
- * An AbstractDataProvider that counts all bills,payments and stornos in a given period of time.
- * 
+ * An AbstractDataProvider that counts all bills,payments and stornos in a given
+ * period of time.
+ *
  * @author gerry
- * 
+ *
  */
 public class FakturaJournal extends AbstractTimeSeries {
 	private static final String NAME = Messages.FakturaJournal_FakturaJournal;
 	private boolean bOnlyActiveMandator;
-	
-	public FakturaJournal(){
+
+	public FakturaJournal() {
 		super(NAME);
 	}
-	
+
 	@GetProperty(name = "Nur aktueller Mandant", widgetType = WidgetTypes.BUTTON_CHECKBOX, index = 1)
-	public boolean getOnlyActiveMandator(){
+	public boolean getOnlyActiveMandator() {
 		return bOnlyActiveMandator;
 	}
-	
+
 	@SetProperty(name = "Nur aktueller Mandant", index = 1)
-	public void setOnlyActiveMandator(boolean val){
+	public void setOnlyActiveMandator(boolean val) {
 		bOnlyActiveMandator = val;
 	}
-	
+
 	@Override
-	protected IStatus createContent(IProgressMonitor monitor){
+	protected IStatus createContent(IProgressMonitor monitor) {
 		int total = 10000000;
 		Query<AccountTransaction> qbe = new Query<AccountTransaction>(AccountTransaction.class);
 		TimeTool ttStart = new TimeTool(this.getStartDate().getTimeInMillis());
 		TimeTool ttEnd = new TimeTool(this.getEndDate().getTimeInMillis());
-		qbe.add(AccountTransaction.FLD_DATE, Query.GREATER_OR_EQUAL,
-			ttStart.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
-		qbe.add(AccountTransaction.FLD_DATE, Query.LESS_OR_EQUAL,
-			ttEnd.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add(AccountTransaction.FLD_DATE, Query.GREATER_OR_EQUAL, ttStart.toString(TimeTool.DATE_COMPACT)); // $NON-NLS-1$
+																												// //$NON-NLS-2$
+		qbe.add(AccountTransaction.FLD_DATE, Query.LESS_OR_EQUAL, ttEnd.toString(TimeTool.DATE_COMPACT)); // $NON-NLS-1$
+																											// //$NON-NLS-2$
 		monitor.beginTask(NAME, total);
 		monitor.subTask(Messages.FakturaJournal_DatabaseQuery);
 		List<AccountTransaction> transactions = qbe.execute();
@@ -120,22 +121,22 @@ public class FakturaJournal extends AbstractTimeSeries {
 			}
 			monitor.worked(step);
 		}
-		
+
 		LoggerFactory.getLogger(FakturaJournal.class)
-			.debug("calculation of account transactions size: " + transactions.size() + " took "
-				+ Long.valueOf((System.currentTimeMillis() - time) / 1000) + " seconds.");
-		
+				.debug("calculation of account transactions size: " + transactions.size() + " took "
+						+ Long.valueOf((System.currentTimeMillis() - time) / 1000) + " seconds.");
+
 		// Set content.
 		this.dataSet.setContent(result);
-		
+
 		// Job finished successfully
 		monitor.done();
-		
+
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
-	protected List<String> createHeadings(){
+	protected List<String> createHeadings() {
 		List<String> ret = new ArrayList<String>();
 		ret.add(Messages.FakturaJournal_PatientNr);
 		ret.add(Messages.FakturaJournal_Date);
@@ -144,11 +145,11 @@ public class FakturaJournal extends AbstractTimeSeries {
 		ret.add(Messages.FakturaJournal_Text);
 		return ret;
 	}
-	
+
 	@Override
-	public String getDescription(){
-		
+	public String getDescription() {
+
 		return Messages.FakturaJournal_Faktura;
 	}
-	
+
 }

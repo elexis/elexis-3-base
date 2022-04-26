@@ -20,54 +20,54 @@ import at.medevit.elexis.inbox.model.IInboxElement;
 public interface IInboxElementUiProvider {
 	/**
 	 * Image that will be placed on the filter action.
-	 * 
+	 *
 	 * @return ImageDescriptor or null
 	 */
 	public ImageDescriptor getFilterImage();
-	
+
 	/**
 	 * Filter that will be applied with the filter action.
-	 * 
+	 *
 	 * @return ViewerFilter or null
 	 */
 	public ViewerFilter getFilter();
-	
+
 	/**
 	 * LabelProvider used by the inbox viewer.
-	 * 
+	 *
 	 * @return LabelProvider or null
 	 */
 	public LabelProvider getLabelProvider();
-	
+
 	/**
 	 * ColorProvider used by the inbox viewer.
-	 * 
+	 *
 	 * @return IColorProvider or null
 	 */
 	public IColorProvider getColorProvider();
-	
+
 	/**
 	 * Test if this provider shall be used for the element.
-	 * 
+	 *
 	 * @param element
 	 * @return
 	 */
 	public boolean isProviderFor(IInboxElement element);
-	
+
 	/**
 	 * Method called when element is double clicked.
-	 * 
+	 *
 	 * @param element
 	 */
 	public void doubleClicked(IInboxElement element);
-	
+
 	/**
 	 * Test if the element should be visible in the ui.
-	 * 
+	 *
 	 * @param element
 	 * @return
 	 */
-	public default boolean isVisible(IInboxElement element){
+	public default boolean isVisible(IInboxElement element) {
 		return true;
 	}
 }

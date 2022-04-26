@@ -1,14 +1,14 @@
 /*******************************************************************************
- * 
- * The authorship of this code and the accompanying materials is held by 
- * medshare GmbH, Switzerland. All rights reserved. 
+ *
+ * The authorship of this code and the accompanying materials is held by
+ * medshare GmbH, Switzerland. All rights reserved.
  * http://medshare.net
- * 
- * This code and the accompanying materials are made available under 
+ *
+ * This code and the accompanying materials are made available under
  * the terms of the Eclipse Public License v1.0
- * 
+ *
  * Year of publication: 2013
- * 
+ *
  *******************************************************************************/
 package net.medshare.connector.viollier.ses;
 
@@ -41,23 +41,21 @@ import ch.elexis.data.Mandant;
 
 public class PortalCookieService {
 	private static Logger log = LoggerFactory.getLogger(PortalCookieService.class);
-	
+
 	private String httpsUrl;
 	HttpsURLConnection con = null;
 	DataInputStream input;
-	
+
 	private String userid;
 	private String password;
-	
+
 	private ViollierConnectorSettings mySettings;
-	
-	public String getCookie() throws ClientProtocolException, IOException, ElexisException{
-		mySettings =
-			new ViollierConnectorSettings(
-				(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
+
+	public String getCookie() throws ClientProtocolException, IOException, ElexisException {
+		mySettings = new ViollierConnectorSettings((Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 		// login URL vom Viollier SES
 		httpsUrl = mySettings.getGlobalLoginUrl();
-		
+
 		// parameter
 		if (!mySettings.getMandantUseGlobalSettings()) {
 			userid = mySettings.getMandantUserName();
@@ -68,17 +66,17 @@ public class PortalCookieService {
 		}
 		if (userid.isEmpty() || password.isEmpty()) {
 			log.error("UserId[" + userid + "]\t Password[" + password + "]");
-			throw new ElexisException(PortalCookieService.class,
-				Messages.Exception_errorMessageNoUserPasswordDefined, ElexisException.EE_NOT_FOUND);
+			throw new ElexisException(PortalCookieService.class, Messages.Exception_errorMessageNoUserPasswordDefined,
+					ElexisException.EE_NOT_FOUND);
 		}
-		
+
 		HttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(httpsUrl);
-		
+
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 		nameValuePairs.add(new BasicNameValuePair("userid", userid));
 		nameValuePairs.add(new BasicNameValuePair("password", password));
-		
+
 		post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 		String cookie = "";
 		HttpResponse response = client.execute(post);
@@ -88,9 +86,9 @@ public class PortalCookieService {
 			headerValue1 = headerValue1.replaceAll("; path=/; Secure; (HttpOnly)?", "");
 			cookie = URLEncoder.encode(headerValue1, "UTF-8");
 		} else
-			throw new ElexisException(PortalCookieService.class,
-				Messages.Handler_errorMessageGetCookie, ElexisException.EE_UNEXPECTED_RESPONSE);
-		
+			throw new ElexisException(PortalCookieService.class, Messages.Handler_errorMessageGetCookie,
+					ElexisException.EE_UNEXPECTED_RESPONSE);
+
 		return cookie;
 	}
 }

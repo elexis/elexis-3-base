@@ -22,9 +22,9 @@ import ch.unibe.iam.scg.archie.utils.ArrayUtils;
  * A ViewerSorter which can sort top down and bottom up depending on the setting
  * of the reverse boolean.
  * </p>
- * 
+ *
  * $Id: ColumnSorter.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -67,10 +67,9 @@ public class ColumnSorter extends ViewerSorter {
 
 	/**
 	 * Sets the sort direction.
-	 * 
-	 * @param sortDirection
-	 *            Sort direction to use, should be one of <code>SWT.UP</code> or
-	 *            <code>SWT.DOWN</code>
+	 *
+	 * @param sortDirection Sort direction to use, should be one of
+	 *                      <code>SWT.UP</code> or <code>SWT.DOWN</code>
 	 */
 	public void setSortDirection(final int sortDirection) {
 		this.sortDirection = sortDirection;
@@ -78,7 +77,7 @@ public class ColumnSorter extends ViewerSorter {
 
 	/**
 	 * Returns the current column index.
-	 * 
+	 *
 	 * @return index Column index.
 	 */
 	public int getIndex() {
@@ -87,20 +86,18 @@ public class ColumnSorter extends ViewerSorter {
 
 	/**
 	 * Sets the current column index.
-	 * 
-	 * @param index
-	 *            Column index.
+	 *
+	 * @param index Column index.
 	 */
 	public void setIndex(final int index) {
 		this.index = index;
 	}
 
 	/**
-	 * Checks whether a given object can be compared. This method checks whether
-	 * an object implements the <code>Comparable</code> interface directly or
-	 * whether it has the <em>compareTo</em> method in it's object methods
-	 * array.
-	 * 
+	 * Checks whether a given object can be compared. This method checks whether an
+	 * object implements the <code>Comparable</code> interface directly or whether
+	 * it has the <em>compareTo</em> method in it's object methods array.
+	 *
 	 * @return True if the object has a compareTo method, false else.
 	 */
 	private boolean isComparable(Object object) {

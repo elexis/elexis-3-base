@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    G. Weirich - small changes to follow API changes
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.extdoc.dialogs;
@@ -51,43 +51,43 @@ import ch.elexis.extdoc.util.*;
 
 public class VerifierDialog extends TitleAreaDialog {
 	private Patient actPatient;
-	
+
 	TableViewer viewer;
-	
+
 	// work-around to get the job
 	// TODO cleaner design
 	BackgroundJob globalJob;
-	
+
 	class DataLoader extends BackgroundJob {
-		public DataLoader(String jobName){
+		public DataLoader(String jobName) {
 			super(jobName);
 		}
-		
-		public IStatus execute(IProgressMonitor monitor){
+
+		public IStatus execute(IProgressMonitor monitor) {
 			List<File> list;
-			
+
 			String[] paths = PreferenceConstants.getActiveBasePaths();
-			
+
 			if (actPatient != null) {
 				result = MatchPatientToPath.getFilesForPatient(actPatient, null);
 			} else {
 				result = Messages.ExterneDokumente_no_patient_found;
 			}
-			
+
 			return Status.OK_STATUS;
 		}
-		
-		public int getSize(){
+
+		public int getSize() {
 			return 1;
 		}
 	}
-	
+
 	class VerifierContentProvider implements IStructuredContentProvider, BackgroundJobListener {
 		private String BASE_JOBNAME = Messages.VerifierDialog_verify_job_name;
-		
+
 		BackgroundJob job;
-		
-		public VerifierContentProvider(){
+
+		public VerifierContentProvider() {
 			// TODO remove job from JobPool when it has finished.
 			// for now, we just use unique names.
 			String jobName = BASE_JOBNAME + " " + StringTool.unique(BASE_JOBNAME); //$NON-NLS-1$
@@ -97,49 +97,46 @@ public class VerifierDialog extends TitleAreaDialog {
 				JobPool.getJobPool().addJob(job);
 			}
 			job.addListener(this);
-			
+
 		}
-		
-		public void inputChanged(Viewer v, Object oldInput, Object newInput){}
-		
-		public void dispose(){
+
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
+
+		public void dispose() {
 			job.removeListener(this);
 			// JobPool.getJobPool().
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		public Object[] getElements(Object parent){
+		public Object[] getElements(Object parent) {
 			Object result = job.getData();
 			if (result == null) {
 				JobPool.getJobPool().activate(job.getJobname(), Job.LONG);
-				return new String[] {
-					Messages.ExterneDokumente_loading
-				};
+				return new String[] { Messages.ExterneDokumente_loading };
 			} else {
 				if (result instanceof List) {
 					return ((List) result).toArray();
 				} else if (result instanceof String) {
-					return new Object[] {
-						result
-					};
+					return new Object[] { result };
 				} else {
 					return null;
 				}
 			}
 		}
-		
-		public void jobFinished(BackgroundJob j){
+
+		public void jobFinished(BackgroundJob j) {
 			viewer.refresh(true);
-			
+
 		}
 	}
-	
+
 	class VerifierLabelProvider extends LabelProvider implements ITableLabelProvider {
 		private static final int STATUS_COLUMN = 0;
 		private static final int DATE_COLUMN = 1;
 		private static final int NAME_COLUMN = 2;
-		
-		public String getColumnText(Object obj, int index){
+
+		public String getColumnText(Object obj, int index) {
 			switch (index) {
 			case DATE_COLUMN:
 				return getDate(obj);
@@ -148,8 +145,8 @@ public class VerifierDialog extends TitleAreaDialog {
 			}
 			return ""; //$NON-NLS-1$
 		}
-		
-		public String getText(Object obj){
+
+		public String getText(Object obj) {
 			if (obj instanceof File) {
 				File file = (File) obj;
 				return file.getName();
@@ -159,23 +156,22 @@ public class VerifierDialog extends TitleAreaDialog {
 				return ""; //$NON-NLS-1$
 			}
 		}
-		
-		public String getDate(Object obj){
+
+		public String getDate(Object obj) {
 			if (obj instanceof File) {
 				File file = (File) obj;
 				long modified = file.lastModified();
 				Calendar cal = Calendar.getInstance();
 				cal.setTimeInMillis(modified);
-				String modifiedTime =
-					DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(
-						cal.getTime());
+				String modifiedTime = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+						.format(cal.getTime());
 				return modifiedTime;
 			} else {
 				return ""; //$NON-NLS-1$
 			}
 		}
-		
-		public Image getColumnImage(Object obj, int index){
+
+		public Image getColumnImage(Object obj, int index) {
 			switch (index) {
 			case STATUS_COLUMN:
 				return Images.IMG_FEHLER.getImage();
@@ -184,38 +180,36 @@ public class VerifierDialog extends TitleAreaDialog {
 			}
 			return null;
 		}
-		
-		public Image getImage(Object obj){
+
+		public Image getImage(Object obj) {
 			if (!(obj instanceof File)) {
 				return null;
 			}
-			
+
 			File file = (File) obj;
 			if (file.isDirectory()) {
-				return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJ_FOLDER);
+				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 			} else {
-				return PlatformUI.getWorkbench().getSharedImages()
-					.getImage(ISharedImages.IMG_OBJ_FILE);
+				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 			}
 		}
 	}
-	
+
 	class TimestampComparator extends ViewerComparator {
-		public int compare(Viewer viewer, Object e1, Object e2){
+		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1 == null) {
 				return 1;
 			}
 			if (e2 == null) {
 				return -1;
 			}
-			
+
 			File file1 = (File) e1;
 			File file2 = (File) e2;
-			
+
 			long modified1 = file1.lastModified();
 			long modified2 = file2.lastModified();
-			
+
 			if (modified1 < modified2) {
 				return -1;
 			} else if (modified1 > modified2) {
@@ -223,66 +217,65 @@ public class VerifierDialog extends TitleAreaDialog {
 			} else {
 				return 0;
 			}
-			
+
 		}
 	}
-	
-	public VerifierDialog(Shell parent, Patient patient){
+
+	public VerifierDialog(Shell parent, Patient patient) {
 		super(parent);
-		
+
 		actPatient = patient;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		parent.setLayout(new GridLayout());
-		
+
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		composite.setLayout(new GridLayout());
-		
-		viewer =
-			new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		
+
+		viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+
 		Table table = viewer.getTable();
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(false);
-		
+
 		TableColumn tc;
-		
+
 		tc = new TableColumn(table, SWT.LEFT);
 		tc.setText(""); //$NON-NLS-1$
 		tc.setWidth(40);
-		
+
 		tc = new TableColumn(table, SWT.LEFT);
 		tc.setText(Messages.ExterneDokumente_file_date);
 		tc.setWidth(120);
 		tc.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event){
+			public void widgetSelected(SelectionEvent event) {
 				// TODO sort by Datum
 				// http://www.vogella.de/articles/EclipseJFaceTable/article.html#sortcolumns
 			}
 		});
-		
+
 		tc = new TableColumn(table, SWT.LEFT);
 		tc.setText(Messages.VerifierDialog_name);
 		tc.setWidth(200);
 		tc.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event){
+			public void widgetSelected(SelectionEvent event) {
 				// TODO sort by Nummer
 			}
 		});
-		
+
 		viewer.setContentProvider(new VerifierContentProvider());
 		viewer.setLabelProvider(new VerifierLabelProvider());
 		viewer.setComparator(new TimestampComparator());
 		viewer.setInput(this);
-		
+
 		// edit file properties at if double clicked
-		
+
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				StructuredSelection selection = (StructuredSelection) viewer.getSelection();
 				if (selection != null) {
 					Object element = selection.getFirstElement();
@@ -292,23 +285,23 @@ public class VerifierDialog extends TitleAreaDialog {
 				}
 			}
 		});
-		
+
 		return composite;
 	}
-	
-	private void openFileEditorDialog(File file){
+
+	private void openFileEditorDialog(File file) {
 		FileEditDialog fed = new FileEditDialog(getShell(), file);
 		fed.open();
 		refresh();
 	}
-	
-	private void refresh(){
+
+	private void refresh() {
 		globalJob.invalidate();
 		viewer.refresh(true);
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		setMessage(Messages.ExterneDokumente_verify_files_Belong_to_patient);
 		setTitle(Messages.ExterneDokumente_verify_files);

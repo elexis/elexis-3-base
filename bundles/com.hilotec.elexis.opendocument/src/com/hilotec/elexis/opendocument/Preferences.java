@@ -60,18 +60,19 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		// Check full path given
 		if (!name.isEmpty()) {
 			File file = new File(name);
-	        if (file.isFile() && file.canExecute()) {
-	            return file.getAbsolutePath();
-	        }
+			if (file.isFile() && file.canExecute()) {
+				return file.getAbsolutePath();
+			}
 		}
-	    for (String dirname : System.getenv("PATH").split(File.pathSeparator)) { //$NON-NLS-1$
-	        File file = new File(dirname, name);
-	        if (file.isFile() && file.canExecute()) {
-	            return file.getAbsolutePath();
-	        }
-	    }
-	    return "";
+		for (String dirname : System.getenv("PATH").split(File.pathSeparator)) { //$NON-NLS-1$
+			File file = new File(dirname, name);
+			if (file.isFile() && file.canExecute()) {
+				return file.getAbsolutePath();
+			}
+		}
+		return "";
 	}
+
 	@Override
 	protected void createFieldEditors() {
 		prefs.setDefault(P_EDITOR, P_EDITOR_DEFAULT);
@@ -83,8 +84,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		editorField = new StringFieldEditor(P_EDITOR, "OpenDocument Editor", getFieldEditorParent());
 		addField(editorField);
 		editorField.setStringValue(findExecutableOnPath(prefs.getString(P_EDITOR)));
-		editorField.getTextControl(getFieldEditorParent()).setToolTipText(
-				"Voller Pfad oder Name der Programms zum Bearbeiten von ODF-Dateien");
+		editorField.getTextControl(getFieldEditorParent())
+				.setToolTipText("Voller Pfad oder Name der Programms zum Bearbeiten von ODF-Dateien");
 		editorArgsField = new MultilineFieldEditor(P_EDITARGS, "Argumente zum Editieren", 5, SWT.V_SCROLL, true,
 				getFieldEditorParent());
 		addField(editorArgsField);
@@ -95,8 +96,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 
 		pdfConverterField = new StringFieldEditor(P_PDFCONVERTER, "PDF-Konverter", getFieldEditorParent());
 		addField(pdfConverterField);
-		pdfConverterField.getTextControl(getFieldEditorParent()).setToolTipText(
-				"Voller Pfad oder Name der Programms zum Konvertieren von ODF-Dateien in PDF");
+		pdfConverterField.getTextControl(getFieldEditorParent())
+				.setToolTipText("Voller Pfad oder Name der Programms zum Konvertieren von ODF-Dateien in PDF");
 		pdfConverterField.setStringValue(findExecutableOnPath(prefs.getString(P_PDFCONVERTER)));
 		pdfArgsField = new MultilineFieldEditor(P_PDFARGS, "Argumente fuer PDF-Konvertierung", 5, SWT.V_SCROLL, false,
 				getFieldEditorParent());
@@ -110,9 +111,10 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public void init(IWorkbench arg0) {
 
 	}
+
 	@Override
-	public boolean performOk(){
-		String editorPath  = findExecutableOnPath(editorField.getStringValue());
+	public boolean performOk() {
+		String editorPath = findExecutableOnPath(editorField.getStringValue());
 		String pdfConverterPath = findExecutableOnPath(pdfConverterField.getStringValue());
 		if (editorPath.isEmpty() || editorPath.isEmpty()) {
 			return false;
@@ -122,6 +124,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 			return super.performOk();
 		}
 	}
+
 	@Override
 	protected void performDefaults() {
 		editorField.setStringValue(findExecutableOnPath(P_EDITOR_DEFAULT));

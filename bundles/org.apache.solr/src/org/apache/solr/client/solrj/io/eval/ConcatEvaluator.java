@@ -24,40 +24,40 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionNamedParamete
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class ConcatEvaluator extends RecursiveObjectEvaluator implements ManyValueWorker {
-  protected static final long serialVersionUID = 1L;
-  private String delim = "";
+	protected static final long serialVersionUID = 1L;
+	private String delim = "";
 
-  public ConcatEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public ConcatEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
+		List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
 
-    for(StreamExpressionNamedParameter namedParam : namedParams){
-      if(namedParam.getName().equals("delim")){
-        this.delim = namedParam.getParameter().toString().trim();
-      } else {
-        throw new IOException("Unexpected named parameter:"+namedParam.getName());
-      }
-    }
+		for (StreamExpressionNamedParameter namedParam : namedParams) {
+			if (namedParam.getName().equals("delim")) {
+				this.delim = namedParam.getParameter().toString().trim();
+			} else {
+				throw new IOException("Unexpected named parameter:" + namedParam.getName());
+			}
+		}
 
-  }
+	}
 
-  @Override
-  public Object doWork(Object... values) throws IOException {
+	@Override
+	public Object doWork(Object... values) throws IOException {
 
-    StringBuilder buff = new StringBuilder();
+		StringBuilder buff = new StringBuilder();
 
-    for(Object o : values) {
-        if(buff.length() > 0) {
-          buff.append(delim);
-        }
-        String s = o.toString();
-        if(s.startsWith("\"") && s.endsWith("\"")) {
-          s = s.substring(1, s.length()-1);
-        }
-        buff.append(s.toString());
-    }
+		for (Object o : values) {
+			if (buff.length() > 0) {
+				buff.append(delim);
+			}
+			String s = o.toString();
+			if (s.startsWith("\"") && s.endsWith("\"")) {
+				s = s.substring(1, s.length() - 1);
+			}
+			buff.append(s.toString());
+		}
 
-    return buff.toString();
-  }
+		return buff.toString();
+	}
 }

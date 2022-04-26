@@ -27,70 +27,69 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class HarmonicFitEvaluator extends RecursiveNumericEvaluator implements ManyValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public HarmonicFitEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-  }
+	public HarmonicFitEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  @SuppressWarnings({"unchecked"})
-  public Object doWork(Object... objects) throws IOException{
+	@Override
+	@SuppressWarnings({ "unchecked" })
+	public Object doWork(Object... objects) throws IOException {
 
-    if(objects.length > 3) {
-      throw new IOException("harmonicFit function takes a maximum of 2 arguments.");
-    }
+		if (objects.length > 3) {
+			throw new IOException("harmonicFit function takes a maximum of 2 arguments.");
+		}
 
-    Object first = objects[0];
+		Object first = objects[0];
 
-    double[] x = null;
-    double[] y = null;
+		double[] x = null;
+		double[] y = null;
 
-    if(objects.length == 1) {
-      //Only the y values passed
+		if (objects.length == 1) {
+			// Only the y values passed
 
-      y = ((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray();
-      x = new double[y.length];
-      for(int i=0; i<y.length; i++) {
-        x[i] = i;
-      }
+			y = ((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray();
+			x = new double[y.length];
+			for (int i = 0; i < y.length; i++) {
+				x[i] = i;
+			}
 
-    } else if(objects.length == 2) {
-        // x and y passed
-        Object second = objects[1];
-        x = ((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray();
-        y = ((List) second).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray();
+		} else if (objects.length == 2) {
+			// x and y passed
+			Object second = objects[1];
+			x = ((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray();
+			y = ((List) second).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray();
 
+		}
 
-    }
+		HarmonicCurveFitter curveFitter = HarmonicCurveFitter.create();
 
-    HarmonicCurveFitter curveFitter = HarmonicCurveFitter.create();
+		WeightedObservedPoints points = new WeightedObservedPoints();
+		for (int i = 0; i < x.length; i++) {
+			points.add(x[i], y[i]);
+		}
 
-    WeightedObservedPoints points = new WeightedObservedPoints();
-    for(int i=0; i<x.length; i++) {
-      points.add(x[i], y[i]);
-    }
+		double[] guess = new HarmonicCurveFitter.ParameterGuesser(points.toList()).guess();
+		curveFitter = curveFitter.withStartPoint(guess);
 
-    double[] guess = new HarmonicCurveFitter.ParameterGuesser(points.toList()).guess();
-    curveFitter = curveFitter.withStartPoint(guess);
+		double[] coef = curveFitter.fit(points.toList());
+		HarmonicOscillator pf = new HarmonicOscillator(coef[0], coef[1], coef[2]);
 
-    double[] coef = curveFitter.fit(points.toList());
-    HarmonicOscillator pf = new HarmonicOscillator(coef[0], coef[1], coef[2]);
+		@SuppressWarnings({ "rawtypes" })
+		List list = new ArrayList();
+		for (double xvalue : x) {
+			double yvalue = pf.value(xvalue);
+			list.add(yvalue);
+		}
 
-    @SuppressWarnings({"rawtypes"})
-    List list = new ArrayList();
-    for(double xvalue : x) {
-      double yvalue= pf.value(xvalue);
-      list.add(yvalue);
-    }
+		@SuppressWarnings({ "unchecked" })
+		VectorFunction vectorFunction = new VectorFunction(pf, list);
+		vectorFunction.addToContext("amplitude", coef[0]);
+		vectorFunction.addToContext("angularFrequency", coef[1]);
+		vectorFunction.addToContext("phase", coef[2]);
 
-    @SuppressWarnings({"unchecked"})
-    VectorFunction vectorFunction =  new VectorFunction(pf, list);
-    vectorFunction.addToContext("amplitude", coef[0]);
-    vectorFunction.addToContext("angularFrequency", coef[1]);
-    vectorFunction.addToContext("phase", coef[2]);
+		return vectorFunction;
 
-    return vectorFunction;
-
-  }
+	}
 }

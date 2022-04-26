@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 
@@ -43,15 +43,15 @@ import ch.rgw.tools.ExHandler;
 
 public class AgendaImages extends PreferencePage implements IWorkbenchPreferencePage {
 	private ConfigServicePreferenceStore prefs;
-	
-	public AgendaImages(){
+
+	public AgendaImages() {
 		prefs = new ConfigServicePreferenceStore(Scope.USER);
 		setPreferenceStore(prefs);
 		setDescription(Messages.AgendaImages_imagesForAgenda);
 	}
-	
+
 	@Override
-	protected Control createContents(final Composite parent){
+	protected Control createContents(final Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout(3, false));
 		for (String t : Termin.TerminTypes) {
@@ -65,11 +65,11 @@ public class AgendaImages extends PreferencePage implements IWorkbenchPreference
 			bCh.setData(t);
 			bCh.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e){
+				public void widgetSelected(SelectionEvent e) {
 					FileDialog fdl = new FileDialog(parent.getShell(), SWT.OPEN);
-					
-					String dpath =
-						PlatformHelper.getBasePath(Activator.PLUGIN_ID).replaceFirst("\\\\bin", "") + File.separator + "icons"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+					String dpath = PlatformHelper.getBasePath(Activator.PLUGIN_ID).replaceFirst("\\\\bin", "") //$NON-NLS-1$ //$NON-NLS-2$
+							+ File.separator + "icons"; //$NON-NLS-1$
 					fdl.setFilterPath(dpath);
 					String name = fdl.open();
 					File src = new File(name);
@@ -78,32 +78,31 @@ public class AgendaImages extends PreferencePage implements IWorkbenchPreference
 						if (img != null) { // File bezeichnet ein lesbares Bild
 							File dest = new File(dpath + File.separator + src.getName());
 							if (!dest.getAbsolutePath().equalsIgnoreCase(src.getAbsolutePath())) {
-								
+
 								// Ist noch nicht im richtigen Verzeichnis
 								if (FileTool.copyFile(src, dest, FileTool.FAIL_IF_EXISTS) == false) {
-									MessageDialog.openError(parent.getShell(),
-										Messages.AgendaImages_cannotCopy, Messages.AgendaImages_6
-											+ name + Messages.AgendaImages_7);
+									MessageDialog.openError(parent.getShell(), Messages.AgendaImages_cannotCopy,
+											Messages.AgendaImages_6 + name + Messages.AgendaImages_7);
 									return;
 								}
 							}
 							String t = (String) ((Button) e.getSource()).getData();
 							ConfigServiceHolder.setUser(PreferenceConstants.AG_TYPIMAGE_PREFIX + t,
-								"icons/" + dest.getName()); //$NON-NLS-1$
+									"icons/" + dest.getName()); //$NON-NLS-1$
 						}
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 					}
 				}
-				
+
 			});
 		}
 		return ret;
 	}
-	
-	public void init(IWorkbench workbench){
+
+	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

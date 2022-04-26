@@ -26,34 +26,33 @@ import org.slf4j.LoggerFactory;
 
 public class XSLTUtil {
 	private static Logger logger = LoggerFactory.getLogger(XSLTUtil.class);
-	
+
 	public static Transformer getTransformerForXSLT(InputStream xslt, URIResolver resolver)
-		throws TransformerConfigurationException{
+			throws TransformerConfigurationException {
 		TransformerFactory factory = TransformerFactory.newInstance();
 		if (resolver != null) {
 			factory.setURIResolver(resolver);
 		}
-		Transformer ret = factory.newTransformer(new StreamSource(
-				xslt));
+		Transformer ret = factory.newTransformer(new StreamSource(xslt));
 		ret.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		ret.setErrorListener(new ErrorListener() {
-			
+
 			@Override
-			public void warning(TransformerException exception) throws TransformerException{
+			public void warning(TransformerException exception) throws TransformerException {
 				logger.warn(exception.getMessage());
 			}
-			
+
 			@Override
-			public void fatalError(TransformerException exception) throws TransformerException{
+			public void fatalError(TransformerException exception) throws TransformerException {
 				logger.error("Fatal Error processing XSLT", exception);
 				throw exception;
 			}
-			
+
 			@Override
-			public void error(TransformerException exception) throws TransformerException{
+			public void error(TransformerException exception) throws TransformerException {
 				logger.error("Error processing XSLT", exception);
 				throw exception;
-				
+
 			}
 		});
 		return ret;

@@ -27,52 +27,53 @@ import ch.rgw.tools.TimeTool;
 
 public class PersistencyHandler {
 	private static Logger logger = LoggerFactory.getLogger(PersistencyHandler.class);
-	
+
 	private static PersistencyHandler m_instance = null;
-	
+
 	private HashMap<String, String> m_csvMap;
 	private String m_csvMapPath;
-	
+
 	/**
 	 * @return the single instance of this class
 	 */
-	public static PersistencyHandler getInstance(){
+	public static PersistencyHandler getInstance() {
 		if (m_instance == null) {
 			m_instance = new PersistencyHandler();
 		}
 		return m_instance;
 	}
-	
+
 	/**
 	 * constructor prepares m_inputMap with all predefined fields
 	 */
-	private PersistencyHandler(){
+	private PersistencyHandler() {
 		super();
 		m_csvMapPath = CoreHub.localCfg.get(Preferences.CFG_PATHMAPPINGFILE, "fail");
 		m_csvMap = new HashMap<String, String>();
-		
+
 	}
-	
+
 	/**
-	 * Tries to insert the Mythic22Result into Elexis and therefore persist it. If the UserID of the
-	 * Mythic22Result is not found the Result will not be persisted and false will be returned Also
-	 * if the Mapping file is not found or does not contain the mappings for certain LabItems the
-	 * LabResults for this LabItem will not be created. If the creation of certain LabResults will
-	 * fail due to missing mapping entries the method will still return true. However if the Mapping
-	 * file was empty or could not be found it will return false
-	 * 
+	 * Tries to insert the Mythic22Result into Elexis and therefore persist it. If
+	 * the UserID of the Mythic22Result is not found the Result will not be
+	 * persisted and false will be returned Also if the Mapping file is not found or
+	 * does not contain the mappings for certain LabItems the LabResults for this
+	 * LabItem will not be created. If the creation of certain LabResults will fail
+	 * due to missing mapping entries the method will still return true. However if
+	 * the Mapping file was empty or could not be found it will return false
+	 *
 	 * @param mythic22Result
 	 * @return true if the Mythic22Result is successfully inserted into Elexis
 	 */
-	public boolean persistMythicResult(Mythic22Result mythic22Result){
-		
+	public boolean persistMythicResult(Mythic22Result mythic22Result) {
+
 		Patient patient = null;
-		
+
 		LinkedList<String> temp = mythic22Result.getDefaultTypeValues().get("PID");
 		if (temp != null && !temp.isEmpty()) {
 			String patientID = temp.getFirst();
 			patient = Patient.loadByPatientID(patientID);
-			
+
 			if (patient == null) {
 				String message = "Patient " + patientID + " could not be found!";
 				Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message);
@@ -88,19 +89,18 @@ public class PersistencyHandler {
 				return false;
 			}
 		}
-		
+
 		if (!getCSVMappingMap().isEmpty()) {
 			for (HaematologicalValue hvalue : mythic22Result.getHaematologicalValues()) {
-				
+
 				if (getCSVMappingMap().containsKey(hvalue.getIdentifier())) {
 					LabItem labitem = LabItem.load(getCSVMappingMap().get(hvalue.getIdentifier()));
-					
+
 					if (labitem != null) {
 						// TODO: Configure overwrite of existing values (for that day)
 						new LabResult(patient, new TimeTool(), labitem, hvalue.getValue(), "");
 					} else {
-						logger.warn("Could not find laboritem for "
-							+ getCSVMappingMap().get(hvalue.getIdentifier()));
+						logger.warn("Could not find laboritem for " + getCSVMappingMap().get(hvalue.getIdentifier()));
 					}
 				}
 			}
@@ -108,19 +108,18 @@ public class PersistencyHandler {
 		}
 		return false;
 	}
-	
-	private HashMap<String, String> getCSVMappingMap(){
-		
-		if (m_csvMap.isEmpty()
-			|| !CoreHub.localCfg.get(Preferences.CFG_PATHMAPPINGFILE, "fail").equals(m_csvMapPath)) {
-			
+
+	private HashMap<String, String> getCSVMappingMap() {
+
+		if (m_csvMap.isEmpty() || !CoreHub.localCfg.get(Preferences.CFG_PATHMAPPINGFILE, "fail").equals(m_csvMapPath)) {
+
 			HashMap<String, String> returnmap = new HashMap<String, String>();
-			
+
 			try {
 				m_csvMapPath = CoreHub.localCfg.get(Preferences.CFG_PATHMAPPINGFILE, "fail");
 				BufferedReader breader = new BufferedReader(new FileReader(m_csvMapPath));
 				String str;
-				
+
 				while ((str = breader.readLine()) != null) {
 					str = str.trim();
 					String[] strArray = str.split(";");
@@ -135,8 +134,8 @@ public class PersistencyHandler {
 			}
 			m_csvMap = returnmap;
 		}
-		
+
 		return m_csvMap;
 	}
-	
+
 }

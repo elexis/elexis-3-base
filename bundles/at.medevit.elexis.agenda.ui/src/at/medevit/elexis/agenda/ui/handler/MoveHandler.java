@@ -17,14 +17,14 @@ import at.medevit.elexis.agenda.ui.view.ParallelView;
 import ch.elexis.core.model.IPeriod;
 
 public class MoveHandler {
-	
+
 	@Inject
 	private ESelectionService selectionService;
-	
+
 	@Execute
-	public Object execute(MPart part){
+	public Object execute(MPart part) {
 		Optional<IPeriod> period = getSelectedPeriod();
-		
+
 		period.ifPresent(p -> {
 			SideBarComposite sideBar = null;
 			if (part.getObject() instanceof AgendaView) {
@@ -40,12 +40,11 @@ public class MoveHandler {
 		});
 		return null;
 	}
-	
-	private Optional<IPeriod> getSelectedPeriod(){
+
+	private Optional<IPeriod> getSelectedPeriod() {
 		try {
 			ISelection activeSelection = (ISelection) selectionService.getSelection();
-			if (activeSelection instanceof StructuredSelection
-				&& !((StructuredSelection) activeSelection).isEmpty()) {
+			if (activeSelection instanceof StructuredSelection && !((StructuredSelection) activeSelection).isEmpty()) {
 				Object element = ((StructuredSelection) activeSelection).getFirstElement();
 				if (element instanceof IPeriod) {
 					return Optional.of((IPeriod) element);

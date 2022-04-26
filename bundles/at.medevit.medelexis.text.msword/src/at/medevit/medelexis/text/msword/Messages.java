@@ -25,11 +25,12 @@ public class Messages extends NLS {
 	public static String WordTextPlugin_PrintError;
 	public static String WordTextPlugin_PrintConnectionIssue;
 	public static String WordTextPlugin_SelectAnotherPrinter;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-	
-	private Messages(){}
+
+	private Messages() {
+	}
 }

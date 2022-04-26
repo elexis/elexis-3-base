@@ -14,18 +14,18 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class SingleClickFunction extends BrowserFunction {
-	
+
 	private ISelectionProvider selectionProvider;
-	
-	public SingleClickFunction(Browser browser, String name){
+
+	public SingleClickFunction(Browser browser, String name) {
 		super(browser, name);
 	}
-	
+
 	@Override
-	public Object function(Object[] arguments){
+	public Object function(Object[] arguments) {
 		if (arguments.length == 1) {
-			IAppointment termin = CoreModelServiceHolder.get()
-				.load((String) arguments[0], IAppointment.class).orElse(null);
+			IAppointment termin = CoreModelServiceHolder.get().load((String) arguments[0], IAppointment.class)
+					.orElse(null);
 			if (termin != null) {
 				ContextServiceHolder.get().getRootContext().setTyped(termin);
 				if (selectionProvider != null) {
@@ -33,11 +33,11 @@ public class SingleClickFunction extends BrowserFunction {
 				}
 				IContact contact = termin.getContact();
 				if (contact != null && contact.isPatient()) {
-					ContextServiceHolder.get().setActivePatient(
-						CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get());
+					ContextServiceHolder.get()
+							.setActivePatient(CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get());
 				}
 			} else {
-				// the event could not be loaded, trigger refetch 
+				// the event could not be loaded, trigger refetch
 				new ScriptingHelper(getBrowser()).refetchEvents();
 			}
 		} else if (arguments.length == 0) {
@@ -47,8 +47,8 @@ public class SingleClickFunction extends BrowserFunction {
 		}
 		return null;
 	}
-	
-	public void setSelectionProvider(ISelectionProvider selectionProvider){
+
+	public void setSelectionProvider(ISelectionProvider selectionProvider) {
 		this.selectionProvider = selectionProvider;
 	}
 }

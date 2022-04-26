@@ -13,17 +13,16 @@ import at.medevit.elexis.outbox.ui.part.model.PatientOutboxElements;
 import ch.elexis.core.data.service.ContextServiceHolder;
 
 public class ActivatePatientCommand extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		
+
 		if (part instanceof OutboxView) {
 			OutboxView view = (OutboxView) part;
-			IStructuredSelection sel =
-				(IStructuredSelection) view.getTreeViewer().getSelection();
+			IStructuredSelection sel = (IStructuredSelection) view.getTreeViewer().getSelection();
 			Object element = sel.getFirstElement();
-			
+
 			if (element instanceof PatientOutboxElements) {
 				PatientOutboxElements patElement = (PatientOutboxElements) element;
 				ContextServiceHolder.get().setActivePatient(patElement.getPatient());

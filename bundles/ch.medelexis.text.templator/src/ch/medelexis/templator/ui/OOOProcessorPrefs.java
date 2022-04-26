@@ -24,38 +24,37 @@ import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.SWTHelper;
 
-public class OOOProcessorPrefs extends FieldEditorPreferencePage implements
-		IWorkbenchPreferencePage {
-	
+public class OOOProcessorPrefs extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+
 	IPreferenceStore store;
 	public static final String PREFERENCE_BRANCH = Preferences.PREFERENCE_BRANCH + "oooprocessor/";
-	
-	public OOOProcessorPrefs(){
+
+	public OOOProcessorPrefs() {
 		super(GRID);
 		store = new SettingsPreferenceStore(CoreHub.localCfg);
 		setPreferenceStore(store);
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
+	protected void createFieldEditors() {
 		Label info = new Label(getFieldEditorParent(), SWT.WRAP);
-		info.setText("Geben Sie bitte den Startbefehl für die Ausgabe des Dokuments ein.\nSetzen Sie % für den Namen des auszugebenden Dokuments");
+		info.setText(
+				"Geben Sie bitte den Startbefehl für die Ausgabe des Dokuments ein.\nSetzen Sie % für den Namen des auszugebenden Dokuments");
 		info.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		addField(new StringFieldEditor(PREFERENCE_BRANCH + "cmd", "Befehl", getFieldEditorParent()));
-		addField(new StringFieldEditor(PREFERENCE_BRANCH + "param", "Parameter",
-			getFieldEditorParent()));
-		
+		addField(new StringFieldEditor(PREFERENCE_BRANCH + "param", "Parameter", getFieldEditorParent()));
+
 	}
-	
+
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	protected void performApply(){
+	protected void performApply() {
 		CoreHub.localCfg.flush();
 	}
-	
+
 }

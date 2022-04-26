@@ -16,10 +16,13 @@
  * limitations under the License.
  */
 package org.apache.solr.common;
+
 import org.apache.solr.common.util.ValidatingJsonMap;
 
-/**A generic interface for any class that is capable of providing its specification as a json schema
+/**
+ * A generic interface for any class that is capable of providing its
+ * specification as a json schema
  */
 public interface SpecProvider {
-  ValidatingJsonMap getSpec();
+	ValidatingJsonMap getSpec();
 }

@@ -20,7 +20,7 @@ import ch.elexis.core.model.IArticle;
 public final class ArticleData {
 	private IArticle article;
 
-	public ArticleData(IArticle v){
+	public ArticleData(IArticle v) {
 		article = v;
 	}
 
@@ -38,8 +38,8 @@ public final class ArticleData {
 		String currentDate = formatter.format(localDate);
 		return currentDate;
 	}
-	
-	public IArticle getArticle(){
+
+	public IArticle getArticle() {
 		return article;
 	}
 }

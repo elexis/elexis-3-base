@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -37,24 +37,21 @@ import ch.elexis.core.ui.views.codesystems.LeistungenView;
 
 public class IcpcPerspektive implements IPerspectiveFactory {
 	public static final String ID = "ch.elexis.icpc.perspective";
-	
-	public void createInitialLayout(IPageLayout layout){
+
+	public void createInitialLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(false);
 		layout.addView(EpisodesView.ID, IPageLayout.LEFT, 0.2f, editorArea);
 		IFolderLayout ifr = layout.createFolder("zentrum", IPageLayout.RIGHT, 0.95f, editorArea); //$NON-NLS-1$
-		IFolderLayout obenrechts =
-			layout.createFolder("obenrechts", IPageLayout.RIGHT, 0.7f, "zentrum");
+		IFolderLayout obenrechts = layout.createFolder("obenrechts", IPageLayout.RIGHT, 0.7f, "zentrum");
 		obenrechts.addView(EncounterView.ID);
 		obenrechts.addView(ReminderView.ID);
-		IFolderLayout untenlinks =
-			layout.createFolder("untenlinks", IPageLayout.BOTTOM, 0.4f, EpisodesView.ID);
+		IFolderLayout untenlinks = layout.createFolder("untenlinks", IPageLayout.BOTTOM, 0.4f, EpisodesView.ID);
 		untenlinks.addView(FaelleView.ID);
 		untenlinks.addView(ch.elexis.core.ui.medication.views.DauerMediView.ID);
 		// layout.addView(FaelleView.ID, IPageLayout.BOTTOM, 0.5f, EpisodesView.ID);
-		IFolderLayout untenrechts =
-			layout.createFolder("untenrechts", IPageLayout.BOTTOM, 0.3f, "obenrechts");
+		IFolderLayout untenrechts = layout.createFolder("untenrechts", IPageLayout.BOTTOM, 0.3f, "obenrechts");
 		// layout.addView(KonsListe.ID,IPageLayout.BOTTOM,0.3f,EncounterView.ID);
 		untenrechts.addView(KonsListe.ID);
 		untenrechts.addView(PatHeuteView.ID);
@@ -65,14 +62,14 @@ public class IcpcPerspektive implements IPerspectiveFactory {
 		ifr.addPlaceholder(AUFZeugnis.ID);
 		ifr.addPlaceholder(TextView.ID);
 		ifr.addPlaceholder(FallDetailView.ID);
-		
+
 		IFolderLayout bfr = layout.createFolder("unten", IPageLayout.BOTTOM, 0.7f, "zentrum");
 		bfr.addView(AUF2.ID);
 		bfr.addView(RezepteView.ID);
-		
-		ElexisFastViewUtil.addToFastViewAfterPerspectiveOpened(ID,
-			UiResourceConstants.PatientenListeView_ID, DiagnosenView.ID, LeistungenView.ID);
-		
+
+		ElexisFastViewUtil.addToFastViewAfterPerspectiveOpened(ID, UiResourceConstants.PatientenListeView_ID,
+				DiagnosenView.ID, LeistungenView.ID);
+
 		layout.addShowViewShortcut(EpisodesView.ID);
 		layout.addShowViewShortcut(EncounterView.ID);
 		layout.addShowViewShortcut(KonsDetailView.ID);

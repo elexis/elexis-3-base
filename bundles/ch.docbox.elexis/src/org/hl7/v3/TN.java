@@ -5,17 +5,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * A restriction of entity name that is effectively a simple string used for a simple name for
- * things and places.
- * 
- * 
+ *
+ * A restriction of entity name that is effectively a simple string used for a
+ * simple name for things and places.
+ *
+ *
  * <p>
  * Java class for TN complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="TN">
  *   &lt;complexContent>
@@ -27,11 +28,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TN")
 public class TN extends EN {
-	
+
 }

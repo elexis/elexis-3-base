@@ -35,7 +35,7 @@ import ch.elexis.data.Labor;
 import ch.elexis.data.Patient;
 
 public class SysmexAction extends Action implements ComPortListener {
-	
+
 	Connection _ctrl;
 	Labor _myLab;
 	Logger _rs232log;
@@ -44,24 +44,24 @@ public class SysmexAction extends Action implements ComPortListener {
 	Patient selectedPatient;
 	boolean background = false;
 	private ShutdownThread shutdownThread = null;
-	
+
 	// Declare filename to the log for test only!! for production must be null!
 	String simulate = null; // "C:\\tmp\\sysmex.log";
-	
+
 	private class ShutdownThread extends Thread {
 		private boolean shouldShutdown = false;
-		
-		public void startSequence(){
+
+		public void startSequence() {
 			_elexislog.log("Start sysmex shutdown sequence", Log.DEBUGMSG);
 			shouldShutdown = true;
 		}
-		
-		public void stopSequence(){
+
+		public void stopSequence() {
 			_elexislog.log("Stop sysmex shutdown sequence", Log.DEBUGMSG);
 			shouldShutdown = false;
 		}
-		
-		public void run(){
+
+		public void run() {
 			try {
 				while (true) {
 					_elexislog.log("Waiting for sysmex shutdown..", Log.DEBUGMSG);
@@ -70,8 +70,8 @@ public class SysmexAction extends Action implements ComPortListener {
 					}
 					_elexislog.log("Sysmex shutdown sequence started (5 sec)..", Log.DEBUGMSG);
 					Thread.sleep(5000);
-					_elexislog.log("Sysmex shutdown sequence over. Should shutdown sysmex="
-						+ shouldShutdown, Log.DEBUGMSG);
+					_elexislog.log("Sysmex shutdown sequence over. Should shutdown sysmex=" + shouldShutdown,
+							Log.DEBUGMSG);
 					if (shouldShutdown) {
 						_elexislog.log("Shutdown", Log.INFOS); //$NON-NLS-1$
 						close();
@@ -82,74 +82,64 @@ public class SysmexAction extends Action implements ComPortListener {
 			}
 		}
 	};
-	
-	public SysmexAction(){
+
+	public SysmexAction() {
 		super(Messages.SysmexAction_ButtonName, AS_CHECK_BOX);
 		setToolTipText(Messages.SysmexAction_ToolTip);
-		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
-			"ch.elexis.connect.sysmex", "icons/sysmex.png")); //$NON-NLS-1$ //$NON-NLS-2$
+		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.connect.sysmex", "icons/sysmex.png")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Init serial connection using {@link Connection}.
 	 */
-	private void initConnection(){
+	private void initConnection() {
 		if (_ctrl != null && _ctrl.isOpen()) {
 			_ctrl.close();
 		}
-		_ctrl =
-			new Connection(Messages.SysmexAction_ConnectionName,
-				CoreHub.localCfg.get(Preferences.PORT,
-					Messages.SysmexAction_DefaultPort), CoreHub.localCfg.get(
-					Preferences.PARAMS, Messages.SysmexAction_DefaultParams),
-				this).withStartOfChunk(
-					new byte[] {
-						Connection.STX
-					}).withEndOfChunk(new byte[] {
-						Connection.ETX
-			}).excludeDelimiters(true);
+		_ctrl = new Connection(Messages.SysmexAction_ConnectionName,
+				CoreHub.localCfg.get(Preferences.PORT, Messages.SysmexAction_DefaultPort),
+				CoreHub.localCfg.get(Preferences.PARAMS, Messages.SysmexAction_DefaultParams), this)
+						.withStartOfChunk(new byte[] { Connection.STX }).withEndOfChunk(new byte[] { Connection.ETX })
+						.excludeDelimiters(true);
 	}
-	
-	private void initPreferences(){
+
+	private void initPreferences() {
 		if (CoreHub.localCfg.get(Preferences.LOG, "n").equalsIgnoreCase("y")) { //$NON-NLS-1$ //$NON-NLS-2$
 			try {
 				_rs232log = new Logger(System.getProperty("user.home") + File.separator + "elexis" //$NON-NLS-1$ //$NON-NLS-2$
-					+ File.separator + "sysmex.log"); //$NON-NLS-1$
+						+ File.separator + "sysmex.log"); //$NON-NLS-1$
 			} catch (FileNotFoundException e) {
-				SWTHelper.showError(Messages.SysmexAction_LogError_Title,
-					Messages.SysmexAction_LogError_Text);
+				SWTHelper.showError(Messages.SysmexAction_LogError_Title, Messages.SysmexAction_LogError_Text);
 				_rs232log = new Logger();
 			}
 		} else {
 			_rs232log = new Logger(false);
 		}
 		background = CoreHub.localCfg.get(Preferences.BACKGROUND, "n") //$NON-NLS-1$
-			.equalsIgnoreCase("y"); //$NON-NLS-1$
+				.equalsIgnoreCase("y"); //$NON-NLS-1$
 	}
-	
+
 	@Override
-	public void run(){
+	public void run() {
 		if (isChecked()) {
 			initPreferences();
 			if (simulate == null) {
 				initConnection();
 				if (_ctrl.connect()) {
-					String timeoutStr =
-						CoreHub.localCfg.get(Preferences.TIMEOUT,
-							Messages.SysmexAction_DefaultTimeout);
+					String timeoutStr = CoreHub.localCfg.get(Preferences.TIMEOUT, Messages.SysmexAction_DefaultTimeout);
 					int timeout = 20;
 					try {
 						timeout = Integer.parseInt(timeoutStr);
 					} catch (NumberFormatException e) {
 						// Do nothing. Use default value
 					}
-					SerialConnectionUi.awaitFrame(_ctrl, UiDesk.getTopShell(),
-						Messages.SysmexAction_WaitMsg, timeout, background, true);
+					SerialConnectionUi.awaitFrame(_ctrl, UiDesk.getTopShell(), Messages.SysmexAction_WaitMsg, timeout,
+							background, true);
 					return;
 				} else {
 					_rs232log.log("Error"); //$NON-NLS-1$
 					SWTHelper.showError(Messages.SysmexAction_RS232_Error_Title,
-						Messages.SysmexAction_RS232_Error_Text);
+							Messages.SysmexAction_RS232_Error_Text);
 				}
 			} else {
 				SWTHelper.showInfo("Simulating!!!", simulate);
@@ -195,53 +185,51 @@ public class SysmexAction extends Action implements ComPortListener {
 		}
 		setChecked(false);
 	}
-	
+
 	/**
 	 * Eine Standard-Fehlermeldung asynchron im UI-Thread zeigen
 	 */
-	private static void showError(final String title, final String message){
+	private static void showError(final String title, final String message) {
 		UiDesk.getDisplay().asyncExec(new Runnable() {
-			
-			public void run(){
+
+			public void run() {
 				Shell shell = UiDesk.getTopShell();
 				MessageDialog.openError(shell, title, message);
 			}
 		});
 	}
-	
+
 	/**
 	 * Einzelne Probe wird verarbeitet
-	 * 
+	 *
 	 * @param probe
 	 */
-	private void processProbe(final IProbe probe){
+	private void processProbe(final IProbe probe) {
 		UiDesk.getDisplay().syncExec(new Runnable() {
-			
-			public void run(){
+
+			public void run() {
 				UiDesk.getDisplay().syncExec(new Runnable() {
-					public void run(){
+					public void run() {
 						// perform direct import if patient with matching patient id is found
 						selectedPatient = Patient.loadByPatientID(probe.getPatientId());
 						if (selectedPatient == null || !selectedPatient.exists()) {
 							Patient suggestedPatient = findSuggestedPatient(probe.getPatientId());
 							// only open selection dialog if there is a suggestion available
 							if (suggestedPatient != null) {
-								WhichPatientDialog wpDialog =
-									new WhichPatientDialog(UiDesk.getTopShell(), suggestedPatient);
+								WhichPatientDialog wpDialog = new WhichPatientDialog(UiDesk.getTopShell(),
+										suggestedPatient);
 								wpDialog.open();
 								selectedPatient = wpDialog.getPatient();
 							}
 						}
 						// case no patient selection could be made yet
 						if (selectedPatient == null || !selectedPatient.exists()) {
-							KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(),
-								Patient.class, Messages.SysmexAction_Patient_Title,
-								Messages.SysmexAction_Patient_Text,
-								Patient.DEFAULT_SORT);
+							KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(), Patient.class,
+									Messages.SysmexAction_Patient_Title, Messages.SysmexAction_Patient_Text,
+									Patient.DEFAULT_SORT);
 							ksl.create();
-							ksl.getShell()
-								.setText(Messages.SysmexAction_Patient_Title);
-								
+							ksl.getShell().setText(Messages.SysmexAction_Patient_Title);
+
 							if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
 								selectedPatient = (Patient) ksl.getSelection();
 							} else {
@@ -250,10 +238,10 @@ public class SysmexAction extends Action implements ComPortListener {
 						}
 						if (selectedPatient == null || !selectedPatient.exists()) {
 							LoggerFactory.getLogger(getClass())
-								.info("No patient for id [" + probe.getPatientId() + "]");
+									.info("No patient for id [" + probe.getPatientId() + "]");
 						} else {
-							LoggerFactory.getLogger(getClass()).info("Found patient ["
-								+ selectedPatient + "] for id [" + probe.getPatientId() + "]");
+							LoggerFactory.getLogger(getClass()).info(
+									"Found patient [" + selectedPatient + "] for id [" + probe.getPatientId() + "]");
 						}
 					}
 				});
@@ -261,51 +249,49 @@ public class SysmexAction extends Action implements ComPortListener {
 					try {
 						probe.write(selectedPatient);
 					} catch (PackageException e) {
-						showError(
-							Messages.SysmexAction_ProbeError_Title, e.getMessage());
+						showError(Messages.SysmexAction_ProbeError_Title, e.getMessage());
 					}
 				} else {
-					showError(Messages.SysmexAction_Patient_Title,
-						Messages.SysmexAction_NoPatientMsg);
+					showError(Messages.SysmexAction_Patient_Title, Messages.SysmexAction_NoPatientMsg);
 				}
 			}
 		});
 	}
-	
+
 	/**
 	 * Finds potential suggestion of a patient.<br>
-	 * Tries to resolve Sysmex sent patient number first and alternatively tries to resolve
-	 * currently selected patient.
-	 * 
+	 * Tries to resolve Sysmex sent patient number first and alternatively tries to
+	 * resolve currently selected patient.
+	 *
 	 * @param sysmexPatId
-	 * @return The patient sent via the Sysmex device. If SysmexPatient is can't be resolved the
-	 *         currently selected patient is used. NULL if neither SysmexPatient or ActivePatient
-	 *         could be resolved.
+	 * @return The patient sent via the Sysmex device. If SysmexPatient is can't be
+	 *         resolved the currently selected patient is used. NULL if neither
+	 *         SysmexPatient or ActivePatient could be resolved.
 	 */
-	private Patient findSuggestedPatient(String sysmexPatId){
+	private Patient findSuggestedPatient(String sysmexPatId) {
 		if (sysmexPatId == null || sysmexPatId.isEmpty()) {
 			return ElexisEventDispatcher.getSelectedPatient();
 		}
-		
+
 		Patient suggestedPatient = Patient.loadByPatientID(sysmexPatId);
 		if (suggestedPatient == null) {
 			return ElexisEventDispatcher.getSelectedPatient();
 		}
 		return suggestedPatient;
 	}
-	
+
 	/**
 	 * Daten werden von der Seriellen Schnittstelle geliefert
 	 */
-	public void gotData(final Connection connection, final byte[] data){
+	public void gotData(final Connection connection, final byte[] data) {
 		stopShutdownSequence();
-		
+
 		String content = new String(data);
 		if (connection != null) {
 			_rs232log.logSTX();
 			_rs232log.log(content);
 		}
-		
+
 		IProbe analysisProbe = null;
 		String model = CoreHub.localCfg.get(Preferences.MODEL, Preferences.MODEL_KX21);
 		if (Preferences.MODEL_KX21N.equals(model)) {
@@ -317,35 +303,33 @@ public class SysmexAction extends Action implements ComPortListener {
 		} else {
 			analysisProbe = new KX21Data();
 		}
-		
+
 		if (content.length() == analysisProbe.getSize()) {
 			analysisProbe.parse(content);
 			processProbe(analysisProbe);
 		} else {
-			showError(Messages.SysmexAction_ErrorTitle,
-				Messages.SysmexAction_WrongDataFormat);
-			
+			showError(Messages.SysmexAction_ErrorTitle, Messages.SysmexAction_WrongDataFormat);
+
 		}
-		
+
 		if (connection != null) {
 			_rs232log.logETX();
 		}
 		ElexisEventDispatcher.reload(LabItem.class);
-		
-		boolean background =
-			CoreHub.localCfg.get(Preferences.BACKGROUND, "n").equalsIgnoreCase("y");
+
+		boolean background = CoreHub.localCfg.get(Preferences.BACKGROUND, "n").equalsIgnoreCase("y");
 		if (!background) {
 			startShutdownSequence();
 		}
 	}
-	
-	private void stopShutdownSequence(){
+
+	private void stopShutdownSequence() {
 		if (shutdownThread != null) {
 			shutdownThread.stopSequence();
 		}
 	}
-	
-	private void startShutdownSequence(){
+
+	private void startShutdownSequence() {
 		if (shutdownThread == null) {
 			shutdownThread = new ShutdownThread();
 			shutdownThread.setPriority(Thread.MIN_PRIORITY);
@@ -353,19 +337,19 @@ public class SysmexAction extends Action implements ComPortListener {
 		}
 		shutdownThread.startSequence();
 	}
-	
-	private void close(){
+
+	private void close() {
 		if (shutdownThread != null) {
 			shutdownThread.interrupt();
 			shutdownThread = null;
 		}
 		_ctrl.close();
 	}
-	
+
 	/**
 	 * Verbindung zu serieller Schnittstelle wurde getrennt
 	 */
-	public void closed(){
+	public void closed() {
 		_elexislog.log("Closed", Log.INFOS); //$NON-NLS-1$
 		setChecked(false);
 	}

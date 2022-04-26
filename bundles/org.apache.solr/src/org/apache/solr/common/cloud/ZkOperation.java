@@ -23,11 +23,11 @@ import org.apache.zookeeper.KeeperException;
  */
 public interface ZkOperation {
 
-    /**
-     * Performs the operation - which may be involved multiple times if the connection
-     * to ZooKeeper closes during this operation
-     *
-     * @return the result of the operation or null
-     */
-    Object execute() throws KeeperException, InterruptedException;
+	/**
+	 * Performs the operation - which may be involved multiple times if the
+	 * connection to ZooKeeper closes during this operation
+	 *
+	 * @return the result of the operation or null
+	 */
+	Object execute() throws KeeperException, InterruptedException;
 }

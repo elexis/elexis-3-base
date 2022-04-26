@@ -23,17 +23,17 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
 public class BefundElement extends ResultElement {
-	
+
 	/**
-	 * Ein neues Resultat hinzufügen. Erstellt ggf. das dazugehörige FindingElement. ID des
-	 * FindingElements ist die id des Messwerts mit angehängtem Spalten-Namen
-	 * 
+	 * Ein neues Resultat hinzufügen. Erstellt ggf. das dazugehörige FindingElement.
+	 * ID des FindingElements ist die id des Messwerts mit angehängtem Spalten-Namen
+	 *
 	 * @param me
 	 * @param mw
 	 * @param fl
 	 * @return
 	 */
-	public static BefundElement addBefund(MedicalElement me, Messwert mw, String field){
+	public static BefundElement addBefund(MedicalElement me, Messwert mw, String field) {
 		List<FindingElement> findings = me.getAnalyses();
 		String raw_id = mw.getId() + field;
 		String id = XMLTool.idToXMLID(raw_id);
@@ -53,8 +53,8 @@ public class BefundElement extends ResultElement {
 		me.addAnalyse(bf);
 		return bf;
 	}
-	
-	BefundElement asExporter(XChangeExporter home, Messwert mw, String field){
+
+	BefundElement asExporter(XChangeExporter home, Messwert mw, String field) {
 		asExporter(home);
 		TimeTool tt = new TimeTool(mw.getDate());
 		String date = tt.toString(TimeTool.DATE_COMPACT);

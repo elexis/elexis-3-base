@@ -17,32 +17,31 @@ import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 
 public class LabItemFile extends AbstractCsvImportFile<LabItem> implements IAeskulapImportFile {
-	
+
 	private File file;
-	
-	public LabItemFile(File file){
+
+	public LabItemFile(File file) {
 		super(file);
 		this.file = file;
 	}
-	
+
 	@Override
-	public File getFile(){
+	public File getFile() {
 		return file;
 	}
-	
-	public static boolean canHandleFile(File file){
+
+	public static boolean canHandleFile(File file) {
 		return FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("csv")
-			&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Labor_LabTyp");
+				&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Labor_LabTyp");
 	}
-	
+
 	@Override
-	public Type getType(){
+	public Type getType() {
 		return Type.LABORITEM;
 	}
-	
+
 	@Override
-	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite,
-		SubMonitor monitor){
+	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite, SubMonitor monitor) {
 		monitor.beginTask("Aeskuplap Labor Parameter Import", getLineCount());
 		try {
 			String[] line = null;
@@ -65,26 +64,26 @@ public class LabItemFile extends AbstractCsvImportFile<LabItem> implements IAesk
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean isHeaderLine(String[] line){
+	public boolean isHeaderLine(String[] line) {
 		return line[0].equalsIgnoreCase("LabTyp_no");
 	}
-	
+
 	@Override
-	public String getXidDomain(){
+	public String getXidDomain() {
 		return IAeskulapImporter.XID_IMPORT_LABITEM;
 	}
-	
+
 	@Override
-	public LabItem create(String[] line){
+	public LabItem create(String[] line) {
 		String sequence = "?";
 		if (!StringUtils.isBlank(line[6].trim())) {
 			sequence = line[6].trim().substring(0, 1);
 		}
 		Labor laboratory = (Labor) getWithXid(IAeskulapImporter.XID_IMPORT_LABCONTACT, line[3]);
-		LabItem labItem = new LabItem(line[7], line[6].trim(), laboratory, null, null, line[4],
-			LabItemTyp.TEXT, "Import", sequence);
+		LabItem labItem = new LabItem(line[7], line[6].trim(), laboratory, null, null, line[4], LabItemTyp.TEXT,
+				"Import", sequence);
 		if (laboratory != null) {
 			String labCode = "";
 			if (!StringUtils.isBlank(line[5])) {
@@ -99,9 +98,9 @@ public class LabItemFile extends AbstractCsvImportFile<LabItem> implements IAesk
 		labItem.addXid(getXidDomain(), line[0], true);
 		return labItem;
 	}
-	
+
 	@Override
-	public void setProperties(LabItem contact, String[] line){
+	public void setProperties(LabItem contact, String[] line) {
 		// no more properties
 	}
 }

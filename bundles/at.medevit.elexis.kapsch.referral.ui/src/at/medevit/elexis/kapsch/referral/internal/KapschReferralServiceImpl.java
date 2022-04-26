@@ -34,25 +34,24 @@ import ch.elexis.data.Person;
 
 @Component(service = KapschReferralService.class)
 public class KapschReferralServiceImpl implements KapschReferralService {
-	
-	public Optional<String> getPatientReferralUrl(Patient patient){
+
+	public Optional<String> getPatientReferralUrl(Patient patient) {
 		URL url = getUrl();
 		Map<String, Object> params = getPatientParameterMap(patient);
 		applyMapping("op_klinikseeschau", params);
 		if (params != null) {
 			String getParams = getMapAsGetParams(params);
 			if (getParams != null) {
-				LoggerFactory.getLogger(getClass())
-					.info("Referral URL " + url.toString() + "?" + getParams);
+				LoggerFactory.getLogger(getClass()).info("Referral URL " + url.toString() + "?" + getParams);
 				return Optional.of(url.toString() + "?" + getParams);
 			}
 		}
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public Optional<String> sendPatient(Patient patient){
-        URL url = getUrl();
+	public Optional<String> sendPatient(Patient patient) {
+		URL url = getUrl();
 		Map<String, Object> params = getPatientParameterMap(patient);
 		applyMapping("op_klinikseeschau", params);
 		if (params != null) {
@@ -65,11 +64,10 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 					conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
 					conn.setDoOutput(true);
 					conn.getOutputStream().write(postDataBytes);
-					
-					BufferedReader in =
-						new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+					BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 					String inputLine;
-					
+
 					while ((inputLine = in.readLine()) != null)
 						System.out.println(inputLine);
 					in.close();
@@ -80,10 +78,9 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 		}
 		return Optional.empty();
 	}
-	
-	private void applyMapping(String mappingname, Map<String, Object> params){
-		try (InputStream inStream =
-			getClass().getResourceAsStream("/rsc/mapping/" + mappingname + ".properties")) {
+
+	private void applyMapping(String mappingname, Map<String, Object> params) {
+		try (InputStream inStream = getClass().getResourceAsStream("/rsc/mapping/" + mappingname + ".properties")) {
 			if (inStream != null) {
 				Properties keyMapping = new Properties();
 				keyMapping.load(inStream);
@@ -96,16 +93,14 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 					}
 				}
 			} else {
-				LoggerFactory.getLogger(getClass())
-					.warn("No mapping properties for [" + mappingname + "] found");
+				LoggerFactory.getLogger(getClass()).warn("No mapping properties for [" + mappingname + "] found");
 			}
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass())
-				.error("Error loading mapping properties for [" + mappingname + "]", e);
+			LoggerFactory.getLogger(getClass()).error("Error loading mapping properties for [" + mappingname + "]", e);
 		}
 	}
-	
-	private byte[] getMapAsPostData(Map<String, Object> params){
+
+	private byte[] getMapAsPostData(Map<String, Object> params) {
 		try {
 			StringBuilder postData = new StringBuilder();
 			for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -122,7 +117,7 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 		}
 	}
 
-	private String getMapAsGetParams(Map<String, Object> params){
+	private String getMapAsGetParams(Map<String, Object> params) {
 		try {
 			StringBuilder postData = new StringBuilder();
 			for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -138,8 +133,8 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 			return null;
 		}
 	}
-	
-	private Map<String, Object> getPatientParameterMap(Patient patient){
+
+	private Map<String, Object> getPatientParameterMap(Patient patient) {
 		Map<String, Object> params = new LinkedHashMap<>();
 		// patient data
 		params.put("PID", patient.getPatCode());
@@ -154,7 +149,7 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 		params.put("eMail", patient.get(Patient.FLD_E_MAIL));
 		params.put("Phone", patient.get(Patient.FLD_PHONE1));
 		params.put("Mobile", patient.get(Patient.FLD_MOBILEPHONE));
-		
+
 		Mandant mandator = ElexisEventDispatcher.getSelectedMandator();
 		params.put("Referral", getMandatorName(mandator));
 		params.put("ReferralStreet", mandator.getAnschrift().getStrasse());
@@ -163,7 +158,7 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 		params.put("ReferralId", getGln(mandator));
 		params.put("ReferralEmail", mandator.get(Patient.FLD_E_MAIL));
 		params.put("ReferralPhone", mandator.get(Patient.FLD_PHONE1));
-		
+
 		Fall fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 		if (fall != null) {
 			Kontakt garant = fall.getGarant();
@@ -177,17 +172,15 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 				if (StringUtils.isNotEmpty((String) fall.getExtInfoStoredObjectByKey("VEKANr"))) {
 					params.put("InsuranceCardNr", (String) fall.getExtInfoStoredObjectByKey("VEKANr"));
 				}
-				if (StringUtils
-					.isNotEmpty((String) fall.getExtInfoStoredObjectByKey("VEKAValid"))) {
-					params.put("InsuranceCardExpiryDate",
-						(String) fall.getExtInfoStoredObjectByKey("VEKAValid"));
+				if (StringUtils.isNotEmpty((String) fall.getExtInfoStoredObjectByKey("VEKAValid"))) {
+					params.put("InsuranceCardExpiryDate", (String) fall.getExtInfoStoredObjectByKey("VEKAValid"));
 				}
 				params.put("EntryReason", fall.getConfiguredBillingSystemLaw().name());
-				if(fall.getConfiguredBillingSystemLaw() == BillingLaw.UVG) {
+				if (fall.getConfiguredBillingSystemLaw() == BillingLaw.UVG) {
 					if (params.containsKey("GuarantorName")) {
 						params.put("UvgName", params.get("GuarantorName"));
 					}
-					if(StringUtils.isNotEmpty(fall.getRequiredString("Unfallnummer"))) {
+					if (StringUtils.isNotEmpty(fall.getRequiredString("Unfallnummer"))) {
 						params.put("AccidentNr", fall.getRequiredString("Unfallnummer"));
 					}
 					if (StringUtils.isNotEmpty(fall.getInfoString("Unfalldatum"))) {
@@ -218,11 +211,11 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 				}
 			}
 		}
-		
+
 		return params;
 	}
-	
-	private Object getMandatorName(Mandant mandator){
+
+	private Object getMandatorName(Mandant mandator) {
 		StringBuilder sb = new StringBuilder();
 		if (StringUtils.isNotBlank(mandator.get(Person.TITLE))) {
 			sb.append(mandator.get(Person.TITLE));
@@ -241,16 +234,16 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 		}
 		return sb.toString();
 	}
-	
-	private String getGln(Kontakt contact){
+
+	private String getGln(Kontakt contact) {
 		return contact.getXid(XidConstants.DOMAIN_EAN);
 	}
-	
-	private String getSsn(Patient patient){
+
+	private String getSsn(Patient patient) {
 		return patient.getXid(XidConstants.DOMAIN_AHV);
 	}
-	
-	private String getSex(Patient patient){
+
+	private String getSex(Patient patient) {
 		Gender gender = patient.getGender();
 		if (gender == Gender.FEMALE) {
 			return "W";
@@ -259,11 +252,11 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 		}
 		return "U";
 	}
-	
-	private URL getUrl(){
+
+	private URL getUrl() {
 		try {
-			String configEndpoint = ConfigServiceHolder.getMandator(
-				KapschReferralService.CONFIG_ENDPOINT, KapschReferralService.ENDPOINT_PRODUCTIV);
+			String configEndpoint = ConfigServiceHolder.getMandator(KapschReferralService.CONFIG_ENDPOINT,
+					KapschReferralService.ENDPOINT_PRODUCTIV);
 			if (KapschReferralService.ENDPOINT_PRODUCTIV.equals(configEndpoint)) {
 				return new URL("https://referral.kapsch.health/webapp");
 			}

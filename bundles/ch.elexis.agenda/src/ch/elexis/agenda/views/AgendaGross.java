@@ -65,18 +65,16 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * A larger view for the agenda with more features than the compact "TagesView"
- * 
+ *
  * @author gerry
- * 
+ *
  */
 public class AgendaGross extends BaseAgendaView {
 	public static final String ID = "ch.elexis.agenda.largeview"; //$NON-NLS-1$
 	public static final String CFG_VERTRELATION = "vertrelation"; //$NON-NLS-1$
 	private static final String SEPARATOR = ",";
-	private static final int[] DEFAULT_COLUMN_WIDTHS = {
-		60, 60, 105, 80, 300, 200
-	};
-	
+	private static final int[] DEFAULT_COLUMN_WIDTHS = { 60, 60, 105, 80, 300, 200 };
+
 	DateTime calendar;
 	Composite cButtons;
 	Text dayMessage;
@@ -86,30 +84,27 @@ public class AgendaGross extends BaseAgendaView {
 	private int[] sashWeights = null;
 	private SashForm sash;
 	private static Button[] bChange;
-	
-	private static final String[] columnTitles = {
-		"von", "bis", "Typ", "Status", "Personalien", "Grund"
-	};
-	
-	public AgendaGross(){
+
+	private static final String[] columnTitles = { "von", "bis", "Typ", "Status", "Personalien", "Grund" };
+
+	public AgendaGross() {
 		BereichSelectionHandler.addBereichSelectionListener(this);
 	}
-	
+
 	@Override
-	public void create(Composite parent){
+	public void create(Composite parent) {
 		parent.setLayout(new GridLayout());
-		
+
 		cButtons = new Composite(parent, SWT.BORDER);
 		RowLayout rl = new RowLayout();
 		cButtons.setLayout(rl);
 		cButtons.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		
+
 		sash = new SashForm(parent, SWT.HORIZONTAL);
 		sash.setLayout(new GridLayout());
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
-		String[] bereiche =
-			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14)
+		String[] bereiche = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14)
 				.split(","); //$NON-NLS-1$
 		ChangeBereichAdapter chb = new ChangeBereichAdapter();
 		bChange = new Button[bereiche.length];
@@ -121,46 +116,44 @@ public class AgendaGross extends BaseAgendaView {
 				bChange[i].setSelection(true);
 			}
 		}
-		
+
 		Composite ret = new Composite(sash, SWT.NONE);
 		Composite right = new Composite(sash, SWT.BORDER);
-		
+
 		ret.setLayout(new GridLayout());
 		right.setLayout(new GridLayout());
 		right.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
+
 		tv = new TableViewer(ret, SWT.FULL_SELECTION | SWT.SINGLE);
 		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
+
 		calendar = new DateTime(right, SWT.CALENDAR | SWT.CALENDAR_WEEKNUMBERS);
 		calendar.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		calendar.setDate(agenda.getActDate().get(TimeTool.YEAR),
-			agenda.getActDate().get(TimeTool.MONTH),
-			agenda.getActDate().get(TimeTool.DAY_OF_MONTH));
+		calendar.setDate(agenda.getActDate().get(TimeTool.YEAR), agenda.getActDate().get(TimeTool.MONTH),
+				agenda.getActDate().get(TimeTool.DAY_OF_MONTH));
 		Button bToday = new Button(right, SWT.PUSH);
 		bToday.setText(Messages.AgendaGross_today);
 		bToday.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bToday.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0){
+			public void widgetSelected(SelectionEvent arg0) {
 				TimeTool dat = new TimeTool();
 				agenda.setActDate(dat);
-				calendar.setDate(dat.get(TimeTool.YEAR), dat.get(TimeTool.MONTH),
-					dat.get(TimeTool.DAY_OF_MONTH));
+				calendar.setDate(dat.get(TimeTool.YEAR), dat.get(TimeTool.MONTH), dat.get(TimeTool.DAY_OF_MONTH));
 				updateDate();
 			}
-			
+
 		});
 		dayMessage = SWTHelper.createText(right, 4, SWT.V_SCROLL);
-		
+
 		// set text field's maximum width to the width of the calendar
 		GridData gd = (GridData) dayMessage.getLayoutData();
 		gd.widthHint = calendar.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-		
+
 		dayMessage.addFocusListener(new FocusAdapter() {
-			
+
 			@Override
-			public void focusLost(FocusEvent arg0){
+			public void focusLost(FocusEvent arg0) {
 				String tx = dayMessage.getText();
 				TagesNachricht tn = TagesNachricht.load(agenda.getActDate());
 				if (tn.exists()) {
@@ -169,7 +162,7 @@ public class AgendaGross extends BaseAgendaView {
 					tn = new TagesNachricht(agenda.getActDate(), " - ", tx); //$NON-NLS-1$
 				}
 			}
-			
+
 		});
 		terminDetail = SWTHelper.createText(right, 5, SWT.NONE);
 		terminDetail.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -177,7 +170,7 @@ public class AgendaGross extends BaseAgendaView {
 		lbDetails.setText("-"); //$NON-NLS-1$
 		lbDetails.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		lbDayString = new Label(ret, SWT.NONE);
-		
+
 		tv.setLabelProvider(new AgendaLabelProvider());
 		Table table = tv.getTable();
 		int[] columnWidths = loadColumnWidths();
@@ -189,39 +182,36 @@ public class AgendaGross extends BaseAgendaView {
 		table.setHeaderVisible(true);
 		makePrivateActions();
 		calendar.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
-			public void widgetSelected(SelectionEvent arg0){
-				LocalDate localDate =
-					LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
+			public void widgetSelected(SelectionEvent arg0) {
+				LocalDate localDate = LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
 				agenda.setActDate(new TimeTool(localDate));
 				updateDate();
 			}
-			
+
 		});
-		
-		sash.setWeights(sashWeights == null ? new int[] {
-			70, 30
-		} : sashWeights);
+
+		sash.setWeights(sashWeights == null ? new int[] { 70, 30 } : sashWeights);
 
 		tv.getControl().addDisposeListener(new DisposeListener() {
 			@Override
-			public void widgetDisposed(DisposeEvent e){
+			public void widgetDisposed(DisposeEvent e) {
 				saveColumnSizes();
 			}
-		});		
+		});
 		// set initial widget values
 		initialize();
 	}
-	
+
 	/*
 	 * Intialize dayMessage field
 	 */
-	protected void initialize(){
+	protected void initialize() {
 		setDayMessage();
 	}
-	
-	protected void setDayMessage(){
+
+	protected void setDayMessage() {
 		TagesNachricht tn = TagesNachricht.load(agenda.getActDate());
 		lbDayString.setText(""); //$NON-NLS-1$
 		dayMessage.setText(""); //$NON-NLS-1$
@@ -230,8 +220,8 @@ public class AgendaGross extends BaseAgendaView {
 			dayMessage.setText(tn.getLangtext());
 		}
 	}
-	
-	protected void updateDate(){
+
+	protected void updateDate() {
 		setDayMessage();
 		/*
 		 * if (pinger != null) { pinger.doSync(); }
@@ -239,8 +229,8 @@ public class AgendaGross extends BaseAgendaView {
 		tv.refresh();
 		tv.getTable().getColumn(0).pack();
 	}
-	
-	private void saveColumnSizes(){
+
+	private void saveColumnSizes() {
 		if (ConfigServiceHolder.getUser(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true)) {
 			StringBuilder sb = new StringBuilder();
 			TableColumn[] columns = tv.getTable().getColumns();
@@ -251,17 +241,16 @@ public class AgendaGross extends BaseAgendaView {
 			ConfigServiceHolder.setUser(PreferenceConstants.AG_BIG_COLUMNWIDTH, sb.toString());
 		}
 	}
-	
-	private int[] loadColumnWidths(){
+
+	private int[] loadColumnWidths() {
 		int colWidth[] = DEFAULT_COLUMN_WIDTHS;
-		
+
 		// load user preferences if settings require it
 		if (ConfigServiceHolder.getUser(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true)) {
-			String defaultColWidths =
-				Arrays.toString(DEFAULT_COLUMN_WIDTHS).replace("[", "").replace("]", "");
-			String userColWidths =
-				ConfigServiceHolder.getUser(PreferenceConstants.AG_BIG_COLUMNWIDTH, defaultColWidths);
-			
+			String defaultColWidths = Arrays.toString(DEFAULT_COLUMN_WIDTHS).replace("[", "").replace("]", "");
+			String userColWidths = ConfigServiceHolder.getUser(PreferenceConstants.AG_BIG_COLUMNWIDTH,
+					defaultColWidths);
+
 			String[] widthStrings = userColWidths.split(SEPARATOR);
 			for (int i = 0; i < widthStrings.length; i++) {
 				colWidth[i] = Integer.parseInt(widthStrings[i].trim());
@@ -269,11 +258,10 @@ public class AgendaGross extends BaseAgendaView {
 		}
 		return colWidth;
 	}
-	
-	private class AgendaLabelProvider extends LabelProvider implements ITableColorProvider,
-			ITableLabelProvider {
-		
-		public Color getBackground(Object element, int columnIndex){
+
+	private class AgendaLabelProvider extends LabelProvider implements ITableColorProvider, ITableLabelProvider {
+
+		public Color getBackground(Object element, int columnIndex) {
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
 				if (columnIndex == 3) {
@@ -284,8 +272,8 @@ public class AgendaGross extends BaseAgendaView {
 			}
 			return null;
 		}
-		
-		public Color getForeground(Object element, int columnIndex){
+
+		public Color getForeground(Object element, int columnIndex) {
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
 				if (columnIndex == 3) {
@@ -296,8 +284,8 @@ public class AgendaGross extends BaseAgendaView {
 			}
 			return null;
 		}
-		
-		public Image getColumnImage(Object element, int columnIndex){
+
+		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex != 4)
 				return null;
 			if (element instanceof IPlannable) {
@@ -307,8 +295,8 @@ public class AgendaGross extends BaseAgendaView {
 			}
 			return null;
 		}
-		
-		public String getColumnText(Object element, int columnIndex){
+
+		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof IPlannable) {
 				IPlannable ip = (IPlannable) element;
 				switch (columnIndex) {
@@ -321,8 +309,7 @@ public class AgendaGross extends BaseAgendaView {
 				case 3:
 					return ip.getStatus();
 				case 4:
-					return ip.isRecurringDate() ? new SerienTermin(ip).getRootTermin().getTitle()
-							: ip.getTitle();
+					return ip.isRecurringDate() ? new SerienTermin(ip).getRootTermin().getTitle() : ip.getTitle();
 				case 5:
 					if (ip instanceof Termin) {
 						Termin termin = (Termin) ip;
@@ -341,13 +328,13 @@ public class AgendaGross extends BaseAgendaView {
 			}
 			return "?"; //$NON-NLS-1$
 		}
-		
+
 	}
-	
+
 	private class ChangeBereichAdapter extends SelectionAdapter {
-		
+
 		@Override
-		public void widgetSelected(SelectionEvent ev){
+		public void widgetSelected(SelectionEvent ev) {
 			Button source = (Button) ev.getSource();
 			String bereich = source.getText();
 			setBereich(bereich);
@@ -356,52 +343,50 @@ public class AgendaGross extends BaseAgendaView {
 			 */
 			tv.refresh();
 		}
-		
+
 	}
-	
+
 	@Override
-	public void setTermin(Termin t){
+	public void setTermin(Termin t) {
 		Kontakt pat = t.getKontakt();
 		StringBuilder sb = new StringBuilder(200);
 		TimeSpan ts = t.getTimeSpan();
-		sb.append(ts.from.toString(TimeTool.TIME_SMALL))
-			.append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
-			.append(" ");
+		sb.append(ts.from.toString(TimeTool.TIME_SMALL)).append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
+				.append(" ");
 		if (t.isRecurringDate()) {
 			sb.append(new SerienTermin(t).getRootTermin().getPersonalia());
 		} else {
 			sb.append(t.getPersonalia());
 		}
 		sb.append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
-			.append(t.getType())
-			.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
+				.append(t.getType()).append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		terminDetail.setText(sb.toString());
 		sb.setLength(0);
-		sb.append(StringTool.unNull(t.get(Termin.FLD_CREATOR))).append("/").append(
-			t.getCreateTime().toString(TimeTool.FULL_GER));
+		sb.append(StringTool.unNull(t.get(Termin.FLD_CREATOR))).append("/")
+				.append(t.getCreateTime().toString(TimeTool.FULL_GER));
 		lbDetails.setText(sb.toString());
 		ElexisEventDispatcher.fireSelectionEvent(t);
 		if (pat != null) {
 			ElexisEventDispatcher.fireSelectionEvent(pat);
 		}
 	}
-	
-	private void makePrivateActions(){
+
+	private void makePrivateActions() {
 		newViewAction = new Action(Messages.AgendaGross_newWindow) {
 			@Override
-			public void run(){
+			public void run() {
 				try {
 					getViewSite().getPage().showView(ID, StringTool.unique("Agenda"), //$NON-NLS-1$
-						IWorkbenchPage.VIEW_VISIBLE);
+							IWorkbenchPage.VIEW_VISIBLE);
 				} catch (PartInitException e) {
 					ExHandler.handle(e);
 				}
 			}
 		};
 	}
-	
+
 	@Override
-	public void bereichSelectionEvent(String bereich){
+	public void bereichSelectionEvent(String bereich) {
 		super.bereichSelectionEvent(bereich);
 		for (Button b : bChange) {
 			if (!b.isDisposed()) {
@@ -412,33 +397,28 @@ public class AgendaGross extends BaseAgendaView {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	@Override
-	public void saveState(IMemento memento){
+	public void saveState(IMemento memento) {
 		int[] w = sash.getWeights();
-		memento.putString(CFG_VERTRELATION,
-			Integer.toString(w[0]) + StringConstants.COMMA + Integer.toString(w[1]));
-		
+		memento.putString(CFG_VERTRELATION, Integer.toString(w[0]) + StringConstants.COMMA + Integer.toString(w[1]));
+
 		super.saveState(memento);
 	}
-	
+
 	@Override
-	public void init(IViewSite site, IMemento memento) throws PartInitException{
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		if (memento == null) {
-			sashWeights = new int[] {
-				70, 30
-			};
+			sashWeights = new int[] { 70, 30 };
 		} else {
 			String state = memento.getString(CFG_VERTRELATION);
 			if (state == null) {
 				state = "70,30"; //$NON-NLS-1$
 			}
 			String[] sw = state.split(StringConstants.COMMA);
-			sashWeights = new int[] {
-				Integer.parseInt(sw[0]), Integer.parseInt(sw[1])
-			};
+			sashWeights = new int[] { Integer.parseInt(sw[0]), Integer.parseInt(sw[1]) };
 		}
 		super.init(site, memento);
 	}

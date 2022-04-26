@@ -30,10 +30,10 @@ import ch.unibe.iam.scg.archie.model.Cohort;
  * Dataset creator for the age distribution histogram of all patients in the
  * system.
  * </p>
- * 
+ *
  * $Id: AgeHistogrammDatasetCreator.java 666 2008-12-13 00:07:54Z peschehimself
  * $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -51,12 +51,12 @@ public class AgeHistogrammDatasetCreator extends AbstractDatasetCreator {
 	private final static int FEMALE_INDEX = 1;
 
 	private int cohortSize;
-	
+
 	private boolean isEmpty;
 
 	/**
 	 * Creates a AgeHistogrammDatasetCreator
-	 * 
+	 *
 	 * @param jobName
 	 * @param cohortSize
 	 */
@@ -75,7 +75,7 @@ public class AgeHistogrammDatasetCreator extends AbstractDatasetCreator {
 
 		Query<Patient> query = new Query<Patient>(Patient.class);
 		List<Patient> patients = query.execute();
-		
+
 		this.isEmpty = patients.size() <= 0;
 
 		monitor.beginTask("Querying Database...", patients.size());
@@ -166,13 +166,13 @@ public class AgeHistogrammDatasetCreator extends AbstractDatasetCreator {
 
 	/**
 	 * Sets the cohort size for this chart creator.
-	 * 
+	 *
 	 * @param cohortSize
 	 */
 	public void setCohortSize(int cohortSize) {
 		this.cohortSize = cohortSize;
 	}
-	
+
 	/**
 	 * @{inheritDoc}
 	 */

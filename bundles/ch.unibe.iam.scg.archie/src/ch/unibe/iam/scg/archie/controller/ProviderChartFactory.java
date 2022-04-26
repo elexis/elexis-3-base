@@ -40,9 +40,9 @@ import ch.unibe.iam.scg.archie.ui.GraphicalMessage;
  * Factory singleton object for creating chart composited based on JFreeChart
  * charts and our custom chart model.
  * </p>
- * 
+ *
  * $Id: ProviderChartFactory.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -50,8 +50,8 @@ import ch.unibe.iam.scg.archie.ui.GraphicalMessage;
 public class ProviderChartFactory {
 
 	/**
-	 * Instance of this chart factory. There's always only one through the
-	 * entire lifecycle of this application.
+	 * Instance of this chart factory. There's always only one through the entire
+	 * lifecycle of this application.
 	 */
 	private static ProviderChartFactory INSTANCE;
 
@@ -69,7 +69,7 @@ public class ProviderChartFactory {
 
 	/**
 	 * Returns an instance of this provider manager.
-	 * 
+	 *
 	 * @return An instance of this provider manager.
 	 */
 	public static ProviderChartFactory getInstance() {
@@ -90,9 +90,8 @@ public class ProviderChartFactory {
 	/**
 	 * Creates a chart from the currently set chart model and attaches it to the
 	 * given parent.
-	 * 
-	 * @param parent
-	 *            Chart composite cotainer.
+	 *
+	 * @param parent Chart composite cotainer.
 	 * @return Composite containing the chart just created.
 	 */
 	public Composite createChart(Composite parent) {
@@ -137,7 +136,7 @@ public class ProviderChartFactory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param pieDataset
 	 * @return
 	 */
@@ -149,7 +148,7 @@ public class ProviderChartFactory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param dataset
 	 * @return
 	 */
@@ -177,7 +176,7 @@ public class ProviderChartFactory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param parent
 	 * @return Composite with a Chart
 	 */
@@ -242,7 +241,7 @@ public class ProviderChartFactory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param pieDataset
 	 * @return
 	 */

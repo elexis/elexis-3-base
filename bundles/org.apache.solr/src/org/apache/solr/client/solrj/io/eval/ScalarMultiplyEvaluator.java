@@ -23,17 +23,19 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class ScalarMultiplyEvaluator extends ScalarAddEvaluator implements TwoValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public ScalarMultiplyEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public ScalarMultiplyEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(2 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expects exactly 2 parameters but found %d",expression,containedEvaluators.size()));
-    }
-  }
+		if (2 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expects exactly 2 parameters but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-  protected double operate(double value, double d) {
-    return value*d;
-  }
+	protected double operate(double value, double d) {
+		return value * d;
+	}
 }

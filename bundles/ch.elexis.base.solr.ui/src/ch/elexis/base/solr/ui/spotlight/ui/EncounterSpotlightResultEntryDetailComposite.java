@@ -14,47 +14,46 @@ import ch.elexis.core.spotlight.ui.ISpotlightResultEntryDetailComposite;
 
 public class EncounterSpotlightResultEntryDetailComposite extends Composite
 		implements ISpotlightResultEntryDetailComposite {
-	
+
 	private Text txtEncounter;
-	
-	public EncounterSpotlightResultEntryDetailComposite(Composite parent, int style){
+
+	public EncounterSpotlightResultEntryDetailComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(1, false));
-		
+
 		txtEncounter = new Text(this, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 		txtEncounter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 	}
-	
+
 	@Override
-	protected void checkSubclass(){
+	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
-	
+
 	@Override
-	public void setSpotlightEntry(ISpotlightResultEntry resultEntry){
-		
+	public void setSpotlightEntry(ISpotlightResultEntry resultEntry) {
+
 		txtEncounter.setText("");
-		
+
 		if (resultEntry != null) {
 			String encounterId = resultEntry.getLoaderString();
-			IEncounter encounter =
-				CoreModelServiceHolder.get().load(encounterId, IEncounter.class).orElse(null);
+			IEncounter encounter = CoreModelServiceHolder.get().load(encounterId, IEncounter.class).orElse(null);
 			if (encounter != null) {
 				txtEncounter.setText(encounter.getHeadVersionInPlaintext());
 			} else {
 				txtEncounter.setText("not found");
 			}
 		}
-		
+
 	}
-	
+
 	@Override
-	public Category appliedForCategory(){
+	public Category appliedForCategory() {
 		return Category.ENCOUNTER;
 	}
 
 	@Override
-	public boolean handleAltKeyPressed(int keyCode){
+	public boolean handleAltKeyPressed(int keyCode) {
 		return true;
 	}
 }

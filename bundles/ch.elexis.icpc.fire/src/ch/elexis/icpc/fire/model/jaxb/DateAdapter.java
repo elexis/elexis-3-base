@@ -10,22 +10,21 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 public class DateAdapter extends XmlAdapter<String, XMLGregorianCalendar> {
-	
-	
-	//YYYY-MM-DD
+
+	// YYYY-MM-DD
 	private final String DATE_FORMAT = "yyyy-MM-dd";
-	
+
 	@Override
-	public String marshal(XMLGregorianCalendar calendar) throws Exception{
+	public String marshal(XMLGregorianCalendar calendar) throws Exception {
 		if (calendar != null) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 			return dateFormat.format(calendar.toGregorianCalendar().getTime());
 		}
 		return null;
 	}
-	
+
 	@Override
-	public XMLGregorianCalendar unmarshal(String dateTimeString) throws Exception{
+	public XMLGregorianCalendar unmarshal(String dateTimeString) throws Exception {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 		Date dateTime = dateFormat.parse(dateTimeString);
 		GregorianCalendar gCalendar = new GregorianCalendar();

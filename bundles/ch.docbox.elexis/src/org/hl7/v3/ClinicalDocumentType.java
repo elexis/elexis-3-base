@@ -8,10 +8,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for ClinicalDocumentType complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="ClinicalDocumentType">
  *   &lt;complexContent>
@@ -23,37 +24,34 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ClinicalDocumentType", propOrder = {
-	"clinicalDocument"
-})
+@XmlType(name = "ClinicalDocumentType", propOrder = { "clinicalDocument" })
 public class ClinicalDocumentType {
-	
+
 	@XmlElement(name = "ClinicalDocument", required = true)
 	protected POCDMT000040ClinicalDocument clinicalDocument;
-	
+
 	/**
 	 * Gets the value of the clinicalDocument property.
-	 * 
+	 *
 	 * @return possible object is {@link POCDMT000040ClinicalDocument }
-	 * 
+	 *
 	 */
-	public POCDMT000040ClinicalDocument getClinicalDocument(){
+	public POCDMT000040ClinicalDocument getClinicalDocument() {
 		return clinicalDocument;
 	}
-	
+
 	/**
 	 * Sets the value of the clinicalDocument property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link POCDMT000040ClinicalDocument }
-	 * 
+	 *
+	 * @param value allowed object is {@link POCDMT000040ClinicalDocument }
+	 *
 	 */
-	public void setClinicalDocument(POCDMT000040ClinicalDocument value){
+	public void setClinicalDocument(POCDMT000040ClinicalDocument value) {
 		this.clinicalDocument = value;
 	}
-	
+
 }

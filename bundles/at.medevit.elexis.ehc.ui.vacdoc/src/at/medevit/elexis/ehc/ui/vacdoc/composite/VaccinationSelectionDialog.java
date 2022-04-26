@@ -15,52 +15,52 @@ import org.eclipse.swt.widgets.Shell;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 
 public class VaccinationSelectionDialog extends Dialog {
-	
+
 	private Composite container;
-	
+
 	private VaccinationSelectionComposite composite;
-	
+
 	private List<Vaccination> vaccinations;
-	
+
 	private List<Vaccination> selectedVaccinations;
-	
-	public VaccinationSelectionDialog(Shell shell){
+
+	public VaccinationSelectionDialog(Shell shell) {
 		super(shell);
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		getShell().setText("Impfungen Auswahl");
 		container = (Composite) super.createDialogArea(parent);
-		
+
 		composite = new VaccinationSelectionComposite(container, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
+
 		if (vaccinations != null) {
 			composite.setInput(vaccinations);
 			composite.setSelection(new StructuredSelection(vaccinations), true);
 		}
-		
+
 		composite.addSelectionChangedListener(new ISelectionChangedListener() {
 			@SuppressWarnings("unchecked")
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				selectedVaccinations = composite.getSelection().toList();
 			}
 		});
-		
+
 		return container;
 	}
-	
-	public void setVaccinations(List<Vaccination> vaccinations){
+
+	public void setVaccinations(List<Vaccination> vaccinations) {
 		if (composite != null && !composite.isDisposed()) {
 			composite.setInput(vaccinations);
 			composite.setSelection(new StructuredSelection(vaccinations), true);
 		}
 		this.vaccinations = vaccinations;
 	}
-	
-	public List<Vaccination> getSelectedVaccinations(){
+
+	public List<Vaccination> getSelectedVaccinations() {
 		return selectedVaccinations;
 	}
 }

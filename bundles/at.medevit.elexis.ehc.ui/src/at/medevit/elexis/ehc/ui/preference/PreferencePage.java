@@ -24,19 +24,19 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	
+
 	public static String EHC_OUTPUTDIR = "at.medevit.elexis.ehc.ui.output.dir"; //$NON-NLS-1$
 	public static String EHC_INPUTDIR = "at.medevit.elexis.ehc.ui.input.dir"; //$NON-NLS-1$
-	
+
 	@Override
-	public void init(IWorkbench workbench){
+	public void init(IWorkbench workbench) {
 		setPreferenceStore(new ConfigServicePreferenceStore(Scope.USER));
 		setDescription("e-Health Connector Einstellungen");
-		
+
 		initDirectories();
 	}
-	
-	public static void initDirectories(){
+
+	public static void initDirectories() {
 		if (ConfigServiceHolder.getUser(EHC_OUTPUTDIR, "notset").equals("notset")) {
 			File outputDir = new File(getDefaultOutputDir());
 			if (!outputDir.exists()) {
@@ -44,7 +44,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			}
 			ConfigServiceHolder.setUser(EHC_OUTPUTDIR, getDefaultOutputDir());
 		}
-		
+
 		if (ConfigServiceHolder.getUser(EHC_INPUTDIR, "notset").equals("notset")) {
 			File inputDir = new File(getDefaultInputDir());
 			if (!inputDir.exists()) {
@@ -53,26 +53,22 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			ConfigServiceHolder.setUser(EHC_INPUTDIR, getDefaultInputDir());
 		}
 	}
-	
+
 	@Override
-	protected void createFieldEditors(){
+	protected void createFieldEditors() {
 		FieldEditor editor;
-		editor =
-			new DirectoryFieldEditor(EHC_OUTPUTDIR, "Standard Ausgabeverzeichnis",
-				getFieldEditorParent());
+		editor = new DirectoryFieldEditor(EHC_OUTPUTDIR, "Standard Ausgabeverzeichnis", getFieldEditorParent());
 		addField(editor);
-		
-		editor =
-			new DirectoryFieldEditor(EHC_INPUTDIR, "Standard Eingangsverzeichnis",
-				getFieldEditorParent());
+
+		editor = new DirectoryFieldEditor(EHC_INPUTDIR, "Standard Eingangsverzeichnis", getFieldEditorParent());
 		addField(editor);
 	}
-	
-	public static String getDefaultOutputDir(){
+
+	public static String getDefaultOutputDir() {
 		return CoreHub.getWritableUserDir() + File.separator + "eHC" + File.separator + "output";
 	}
-	
-	public static String getDefaultInputDir(){
+
+	public static String getDefaultInputDir() {
 		return CoreHub.getWritableUserDir() + File.separator + "eHC" + File.separator + "input";
 	}
 }

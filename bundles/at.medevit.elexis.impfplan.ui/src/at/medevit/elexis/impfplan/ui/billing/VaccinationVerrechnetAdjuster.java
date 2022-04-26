@@ -24,9 +24,9 @@ import ch.elexis.data.Verrechnet;
 
 @Component
 public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
-	
+
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
-	
+
 	@Override
 	public void adjust(IBilled billed) {
 		executor.submit(new Runnable() {
@@ -51,28 +51,26 @@ public class VaccinationVerrechnetAdjuster implements IBilledAdjuster {
 			}
 		});
 	}
-	
-	private void performVaccination(String patientId, IArticle article){
+
+	private void performVaccination(String patientId, IArticle article) {
 		UiDesk.asyncExec(new Runnable() {
 			@Override
-			public void run(){
+			public void run() {
 				Date d = new Date();
 				if (ApplyVaccinationHandler.inProgress()) {
 					d = ApplyVaccinationHandler.getKonsDate();
 				}
-				
+
 				IMandator m = ContextServiceHolder.get().getActiveMandator().orElse(null);
-				ApplicationInputDialog aid =
-					new ApplicationInputDialog(UiDesk.getTopShell(), article);
+				ApplicationInputDialog aid = new ApplicationInputDialog(UiDesk.getTopShell(), article);
 				aid.open();
 				String lotNo = aid.getLotNo();
 				String side = aid.getSide();
-				
-				Vaccination vacc =
-					new Vaccination(patientId, StoreToStringServiceHolder.getStoreToString(article),
+
+				Vaccination vacc = new Vaccination(patientId, StoreToStringServiceHolder.getStoreToString(article),
 						article.getLabel(), article.getGtin(), article.getAtcCode(), d, lotNo,
 						StoreToStringServiceHolder.getStoreToString(m));
-				
+
 				if (side != null && !side.isEmpty()) {
 					vacc.setSide(side);
 				}

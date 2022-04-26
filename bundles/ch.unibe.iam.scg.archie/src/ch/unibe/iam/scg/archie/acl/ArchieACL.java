@@ -24,9 +24,9 @@ import ch.unibe.iam.scg.archie.Messages;
  * <p>
  * Handles the access to Archie based on access control lists defined in Elexis
  * properties.<br/>
- * 
+ *
  * $Id: ArchieACL.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -36,29 +36,27 @@ public class ArchieACL implements IACLContributor {
 	/**
 	 * Access control string that will be displayed in the ACL.
 	 */
-	public static final ACE USE_ARCHIE = new ACE(ACE.ACE_ROOT, "archie", ArchieActivator.PLUGIN_NAME + " "
-			+ Messages.ACL_ACCESS);
+	public static final ACE USE_ARCHIE = new ACE(ACE.ACE_ROOT, "archie",
+			ArchieActivator.PLUGIN_NAME + " " + Messages.ACL_ACCESS);
 
 	/**
 	 * Returns the ACL for this plugin.
-	 * 
+	 *
 	 * @return String[]
 	 */
 	public ACE[] getACL() {
 		return new ACE[] { ArchieACL.USE_ARCHIE };
 	}
 
-
 	/**
 	 * Static function to check whether the currently active user has access to
 	 * archie or not.
-	 * 
+	 *
 	 * @return boolean True if the current user can access archie, false else.
 	 */
 	public static boolean userHasAccess() {
 		return CoreHub.acl.request(USE_ARCHIE);
 	}
-
 
 	/**
 	 * @{inheritDoc}

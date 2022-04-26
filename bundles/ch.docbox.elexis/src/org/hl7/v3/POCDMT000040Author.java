@@ -11,10 +11,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for POCD_MT000040.Author complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="POCD_MT000040.Author">
  *   &lt;complexContent>
@@ -34,15 +35,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "POCD_MT000040.Author", propOrder = {
-	"realmCode", "typeId", "templateId", "functionCode", "time", "assignedAuthor"
-})
+@XmlType(name = "POCD_MT000040.Author", propOrder = { "realmCode", "typeId", "templateId", "functionCode", "time",
+		"assignedAuthor" })
 public class POCDMT000040Author {
-	
+
 	protected List<CS> realmCode;
 	protected POCDMT000040InfrastructureRootTypeId typeId;
 	protected List<II> templateId;
@@ -57,226 +57,225 @@ public class POCDMT000040Author {
 	protected List<String> typeCode;
 	@XmlAttribute
 	protected String contextControlCode;
-	
+
 	/**
 	 * Gets the value of the realmCode property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the realmCode property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the realmCode property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getRealmCode().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link CS }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<CS> getRealmCode(){
+	public List<CS> getRealmCode() {
 		if (realmCode == null) {
 			realmCode = new ArrayList<CS>();
 		}
 		return this.realmCode;
 	}
-	
+
 	/**
 	 * Gets the value of the typeId property.
-	 * 
+	 *
 	 * @return possible object is {@link POCDMT000040InfrastructureRootTypeId }
-	 * 
+	 *
 	 */
-	public POCDMT000040InfrastructureRootTypeId getTypeId(){
+	public POCDMT000040InfrastructureRootTypeId getTypeId() {
 		return typeId;
 	}
-	
+
 	/**
 	 * Sets the value of the typeId property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link POCDMT000040InfrastructureRootTypeId }
-	 * 
+	 *
+	 * @param value allowed object is {@link POCDMT000040InfrastructureRootTypeId }
+	 *
 	 */
-	public void setTypeId(POCDMT000040InfrastructureRootTypeId value){
+	public void setTypeId(POCDMT000040InfrastructureRootTypeId value) {
 		this.typeId = value;
 	}
-	
+
 	/**
 	 * Gets the value of the templateId property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the templateId property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the templateId property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getTemplateId().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link II }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<II> getTemplateId(){
+	public List<II> getTemplateId() {
 		if (templateId == null) {
 			templateId = new ArrayList<II>();
 		}
 		return this.templateId;
 	}
-	
+
 	/**
 	 * Gets the value of the functionCode property.
-	 * 
+	 *
 	 * @return possible object is {@link CE }
-	 * 
+	 *
 	 */
-	public CE getFunctionCode(){
+	public CE getFunctionCode() {
 		return functionCode;
 	}
-	
+
 	/**
 	 * Sets the value of the functionCode property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link CE }
-	 * 
+	 *
+	 * @param value allowed object is {@link CE }
+	 *
 	 */
-	public void setFunctionCode(CE value){
+	public void setFunctionCode(CE value) {
 		this.functionCode = value;
 	}
-	
+
 	/**
 	 * Gets the value of the time property.
-	 * 
+	 *
 	 * @return possible object is {@link TS }
-	 * 
+	 *
 	 */
-	public TS getTime(){
+	public TS getTime() {
 		return time;
 	}
-	
+
 	/**
 	 * Sets the value of the time property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link TS }
-	 * 
+	 *
+	 * @param value allowed object is {@link TS }
+	 *
 	 */
-	public void setTime(TS value){
+	public void setTime(TS value) {
 		this.time = value;
 	}
-	
+
 	/**
 	 * Gets the value of the assignedAuthor property.
-	 * 
+	 *
 	 * @return possible object is {@link POCDMT000040AssignedAuthor }
-	 * 
+	 *
 	 */
-	public POCDMT000040AssignedAuthor getAssignedAuthor(){
+	public POCDMT000040AssignedAuthor getAssignedAuthor() {
 		return assignedAuthor;
 	}
-	
+
 	/**
 	 * Sets the value of the assignedAuthor property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link POCDMT000040AssignedAuthor }
-	 * 
+	 *
+	 * @param value allowed object is {@link POCDMT000040AssignedAuthor }
+	 *
 	 */
-	public void setAssignedAuthor(POCDMT000040AssignedAuthor value){
+	public void setAssignedAuthor(POCDMT000040AssignedAuthor value) {
 		this.assignedAuthor = value;
 	}
-	
+
 	/**
 	 * Gets the value of the nullFlavor property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the nullFlavor property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the nullFlavor property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getNullFlavor().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link String }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<String> getNullFlavor(){
+	public List<String> getNullFlavor() {
 		if (nullFlavor == null) {
 			nullFlavor = new ArrayList<String>();
 		}
 		return this.nullFlavor;
 	}
-	
+
 	/**
 	 * Gets the value of the typeCode property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the typeCode property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the typeCode property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getTypeCode().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link String }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<String> getTypeCode(){
+	public List<String> getTypeCode() {
 		if (typeCode == null) {
 			typeCode = new ArrayList<String>();
 		}
 		return this.typeCode;
 	}
-	
+
 	/**
 	 * Gets the value of the contextControlCode property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getContextControlCode(){
+	public String getContextControlCode() {
 		if (contextControlCode == null) {
 			return "OP";
 		} else {
 			return contextControlCode;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the contextControlCode property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setContextControlCode(String value){
+	public void setContextControlCode(String value) {
 		this.contextControlCode = value;
 	}
-	
+
 }

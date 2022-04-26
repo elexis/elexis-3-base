@@ -15,23 +15,23 @@ import ch.itmed.lmz.risch.laborder.gdt.GdtEncoder;
 
 public final class ApiRequest {
 	private String FormID;
-    private String Benutzer;
-    private String BenutzerMandant;
-    private String Verordnender;
-    private String VerordnenderMandatorID;
-    private String Meldungssprache;
-    private String ComputerName;
-    private String PatDataFormatID = "GDT3.0";
-    private String PatData;
-    
-    public ApiRequest(final String formId) throws UnsupportedOperationException {
-    	FormID = formId;
-    	Benutzer = "default";
-    	BenutzerMandant = "Mandant";
-    	Verordnender = "Verordnender";
-    	VerordnenderMandatorID = "VerordnenderMandatorID";
-    	Meldungssprache = "Meldungssprache";
-    	ComputerName = "ComputerName";
-    	PatData = new GdtEncoder(formId).toString();
-    }
+	private String Benutzer;
+	private String BenutzerMandant;
+	private String Verordnender;
+	private String VerordnenderMandatorID;
+	private String Meldungssprache;
+	private String ComputerName;
+	private String PatDataFormatID = "GDT3.0";
+	private String PatData;
+
+	public ApiRequest(final String formId) throws UnsupportedOperationException {
+		FormID = formId;
+		Benutzer = "default";
+		BenutzerMandant = "Mandant";
+		Verordnender = "Verordnender";
+		VerordnenderMandatorID = "VerordnenderMandatorID";
+		Meldungssprache = "Meldungssprache";
+		ComputerName = "ComputerName";
+		PatData = new GdtEncoder(formId).toString();
+	}
 }

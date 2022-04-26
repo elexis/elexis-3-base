@@ -20,27 +20,24 @@ import ch.elexis.core.services.INamedQuery;
 
 @Component
 public class LaborTarifCodeElementServiceContribution implements ICodeElementServiceContribution {
-	
-	@Reference(target = "(" + IModelService.SERVICEMODELNAME
-		+ "=ch.elexis.base.ch.labortarif.model)")
+
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.labortarif.model)")
 	private IModelService modelService;
-	
+
 	@Override
-	public String getSystem(){
+	public String getSystem() {
 		return LaborTarifConstants.CODESYSTEM_NAME;
 	}
-	
+
 	@Override
-	public CodeElementTyp getTyp(){
+	public CodeElementTyp getTyp() {
 		return CodeElementTyp.SERVICE;
 	}
-	
+
 	@Override
-	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context){
-		INamedQuery<ILaborLeistung> codeQuery =
-			modelService.getNamedQuery(ILaborLeistung.class, "code");
-		List<ILaborLeistung> codes =
-			codeQuery.executeWithParameters(codeQuery.getParameterMap("code", code));
+	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
+		INamedQuery<ILaborLeistung> codeQuery = modelService.getNamedQuery(ILaborLeistung.class, "code");
+		List<ILaborLeistung> codes = codeQuery.executeWithParameters(codeQuery.getParameterMap("code", code));
 		if (codes != null && !codes.isEmpty()) {
 			LocalDate date = getDate(context);
 			for (ILaborLeistung iLaborLeistung : codes) {
@@ -51,8 +48,8 @@ public class LaborTarifCodeElementServiceContribution implements ICodeElementSer
 		}
 		return Optional.empty();
 	}
-	
-	private LocalDate getDate(Map<Object, Object> context){
+
+	private LocalDate getDate(Map<Object, Object> context) {
 		Object date = context.get(ContextKeys.DATE);
 		if (date instanceof LocalDate) {
 			return (LocalDate) date;
@@ -64,11 +61,10 @@ public class LaborTarifCodeElementServiceContribution implements ICodeElementSer
 		return LocalDate.now();
 	}
 
-	
 	@Override
-	public List<ICodeElement> getElements(Map<Object, Object> context){
+	public List<ICodeElement> getElements(Map<Object, Object> context) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

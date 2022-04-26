@@ -11,56 +11,53 @@ import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import ch.elexis.data.NamedBlob;
 
-
 public class EMediplanUiProvider implements IInboxElementUiProvider {
 	private EMediplanLabelProvider labelProvider;
 	private EMediplanViewerFilter filter;
-	
-	public EMediplanUiProvider(){
+
+	public EMediplanUiProvider() {
 		labelProvider = new EMediplanLabelProvider();
 		filter = new EMediplanViewerFilter();
 	}
-	
+
 	@Override
-	public ImageDescriptor getFilterImage(){
-		return ResourceManager.getPluginImageDescriptor("at.medevit.elexis.emediplan.ui",
-			"rsc/logo.png");
+	public ImageDescriptor getFilterImage() {
+		return ResourceManager.getPluginImageDescriptor("at.medevit.elexis.emediplan.ui", "rsc/logo.png");
 	}
-	
+
 	@Override
-	public ViewerFilter getFilter(){
+	public ViewerFilter getFilter() {
 		return filter;
 	}
-	
+
 	@Override
-	public LabelProvider getLabelProvider(){
+	public LabelProvider getLabelProvider() {
 		return labelProvider;
 	}
-	
+
 	@Override
-	public IColorProvider getColorProvider(){
+	public IColorProvider getColorProvider() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public boolean isProviderFor(IInboxElement element){
+	public boolean isProviderFor(IInboxElement element) {
 		Object obj = element.getObject();
 		if (obj instanceof NamedBlob && ((NamedBlob) obj).getId().startsWith("Med_")) {
-			
+
 			return true;
 		}
 		return false;
 	}
-	
+
 	@Override
-	public void doubleClicked(IInboxElement element){
+	public void doubleClicked(IInboxElement element) {
 		Object obj = element.getObject();
 		if (isProviderFor(element)) {
 			NamedBlob document = (NamedBlob) obj;
-			StartupHandler.openEMediplanImportDialog(document.getString(),
-				element.getPatient().getId());
+			StartupHandler.openEMediplanImportDialog(document.getString(), element.getPatient().getId());
 		}
 	}
-	
+
 }

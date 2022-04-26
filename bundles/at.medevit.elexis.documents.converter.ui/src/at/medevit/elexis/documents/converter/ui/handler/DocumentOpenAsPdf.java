@@ -20,26 +20,25 @@ import ch.elexis.core.services.IDocumentConverter;
 import ch.elexis.core.ui.util.CoreUiUtil;
 
 public class DocumentOpenAsPdf extends AbstractHandler implements IHandler {
-	
+
 	@Inject
 	private IDocumentConverter converter;
-	
-	public DocumentOpenAsPdf(){
+
+	public DocumentOpenAsPdf() {
 		CoreUiUtil.injectServices(this);
 	}
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		if (selection instanceof StructuredSelection
-			&& !((StructuredSelection) selection).isEmpty()) {
+		if (selection instanceof StructuredSelection && !((StructuredSelection) selection).isEmpty()) {
 			IDocument iDocument = (IDocument) ((StructuredSelection) selection).getFirstElement();
 			Optional<File> pdfFile = converter.convertToPdf(iDocument);
 			if (pdfFile.isPresent()) {
 				Program.launch(pdfFile.get().getAbsolutePath());
 			} else {
 				MessageDialog.openError(HandlerUtil.getActiveShell(event), "Fehler",
-					"Das Dokument konnte nicht konvertiert werden.");
+						"Das Dokument konnte nicht konvertiert werden.");
 			}
 		}
 		return null;

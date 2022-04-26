@@ -17,21 +17,18 @@ import ch.elexis.admin.IACLContributor;
 import ch.elexis.core.model.RoleConstants;
 
 public class ACLContributor implements IACLContributor {
-	public static final ACE ACE_BEFUNDE =
-		new ACE(ACE.ACE_ROOT, "Messwert", Messages.ACLContributor_messwertACLName); //$NON-NLS-1$ 
+	public static final ACE ACE_BEFUNDE = new ACE(ACE.ACE_ROOT, "Messwert", Messages.ACLContributor_messwertACLName); //$NON-NLS-1$
 	public static final ACE DELETE_PARAM = new ACE(AccessControlDefaults.DELETE, "Messwertrubrik", //$NON-NLS-1$
-		Messages.ACLContributor_messwertRubrikACLName);
+			Messages.ACLContributor_messwertRubrikACLName);
 	public static final ACE ADD_PARAM = new ACE(ACE_BEFUNDE, "Befund zufügen", //$NON-NLS-1$
-		Messages.ACLContributor_addMesswertACLName);
-		
-	public ACE[] getACL(){
-		return new ACE[] {
-			DELETE_PARAM, ADD_PARAM
-		};
+			Messages.ACLContributor_addMesswertACLName);
+
+	public ACE[] getACL() {
+		return new ACE[] { DELETE_PARAM, ADD_PARAM };
 	}
-	
+
 	@Override
-	public void initializeDefaults(AbstractAccessControl ac){
+	public void initializeDefaults(AbstractAccessControl ac) {
 		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_USER, ACE_BEFUNDE);
 		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_EXECUTIVE_DOCTOR, DELETE_PARAM);
 	}

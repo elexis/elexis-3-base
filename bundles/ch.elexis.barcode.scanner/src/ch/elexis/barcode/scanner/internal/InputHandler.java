@@ -1,6 +1,5 @@
 package ch.elexis.barcode.scanner.internal;
 
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -29,63 +28,60 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 	private static Logger logger = LoggerFactory.getLogger(InputHandler.class);
 	List<Connection> connections = new ArrayList<>();
 	ExecutorService executorService = Executors.newSingleThreadExecutor();
-	
+
 	@Override
-	protected void executeToggle(ExecutionEvent event, boolean newState){
-		
+	protected void executeToggle(ExecutionEvent event, boolean newState) {
+
 		if (newState == true) {
 			Set<String> usedComPorts = new HashSet<>();
 			setBaseEnabled(false);
 			executorService.execute(new Runnable() {
-				
+
 				@Override
-				public void run(){
+				public void run() {
 					for (int i = 0; i < PreferencePage.NUMBER_OF_SCANNERS; i++) {
 						String postfix = i > 0 ? String.valueOf(i) : "";
-						String comPort = CoreHub.localCfg
-							.get(PreferencePage.BarcodeScanner_COMPORT + postfix, "");
-						String comSettings = CoreHub.localCfg
-							.get(PreferencePage.BarcodeScanner_SETTINGS + postfix, "9600,8,n,1");
+						String comPort = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_COMPORT + postfix, "");
+						String comSettings = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_SETTINGS + postfix,
+								"9600,8,n,1");
 						if (!comPort.isEmpty()) {
 							if (usedComPorts.add(comPort)) {
 								openConnection(i, postfix, comPort, comSettings);
 							} else {
-								logger.debug("barcode scanner " + (i + 1)
-									+ " com port already in use: " + comPort);
-								
+								logger.debug("barcode scanner " + (i + 1) + " com port already in use: " + comPort);
+
 							}
 						}
 					}
 					if (connections.isEmpty()) {
 						toggleButtonOff();
 						SWTHelper.showInfo("Barcode Scanner",
-							"Die Verbindung zum Barcode Scanner konnte nicht aufgebaut werden.\nProbieren Sie es erneut oder überprüfen Sie bitte die Einstellungen des Barcode Scanners.");
+								"Die Verbindung zum Barcode Scanner konnte nicht aufgebaut werden.\nProbieren Sie es erneut oder überprüfen Sie bitte die Einstellungen des Barcode Scanners.");
 					}
 					setBaseEnabled(true);
 				}
 			});
-			
+
 		} else {
 			closeAllConnections();
 			toggleButtonOff();
 			setBaseEnabled(true);
 		}
-		
+
 	}
 
-	private void openConnection(int i, String postfix, String comPort, String comSettings){
-		Connection barcodeScannerConn =
-			new Connection("Barcode Scanner@" + comPort, comPort, comSettings, this);
+	private void openConnection(int i, String postfix, String comPort, String comSettings) {
+		Connection barcodeScannerConn = new Connection("Barcode Scanner@" + comPort, comPort, comSettings, this);
 		if (barcodeScannerConn.connect()) {
 			logger.debug("barcode scanner " + (i + 1) + " connected to port: " + comPort);
 			connections.add(barcodeScannerConn);
 		} else {
-			SWTHelper.showError("Fehler mit Port", "Konnte Verbindung zu Barcode Scanner " + (i + 1)
-				+ " auf Port " + comPort + " nicht öffnen.");
+			SWTHelper.showError("Fehler mit Port",
+					"Konnte Verbindung zu Barcode Scanner " + (i + 1) + " auf Port " + comPort + " nicht öffnen.");
 		}
 	}
-	
-	private void closeAllConnections(){
+
+	private void closeAllConnections() {
 		int i = 0;
 		for (Connection con : connections) {
 			if (con.isOpen()) {
@@ -100,45 +96,43 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 				try {
 					Thread.sleep(barcodeScannerSize * 2500);
 					logger.debug("closed barcode scanners size: " + barcodeScannerSize);
-					
+
 				} catch (InterruptedException e) {
 					/* ignore */
 				}
 			}
 		});
-		
+
 	}
-	
+
 	@Override
-	public void gotChunk(Connection conn, String chunk){
+	public void gotChunk(Connection conn, String chunk) {
 		logger.debug(conn.getName() + ": gotChunk(): " + chunk);
 		ElexisEventDispatcher.getInstance()
-			.fire(new ElexisEvent(new BarcodeScannerMessage(conn.getName(), conn.getMyPort(), chunk),
-					BarcodeScannerMessage.class,
-				ElexisEvent.EVENT_UPDATE, ElexisEvent.PRIORITY_NORMAL));
+				.fire(new ElexisEvent(new BarcodeScannerMessage(conn.getName(), conn.getMyPort(), chunk),
+						BarcodeScannerMessage.class, ElexisEvent.EVENT_UPDATE, ElexisEvent.PRIORITY_NORMAL));
 	}
-	
-	private void toggleButtonOff(){
-		ICommandService commandService =
-			(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+
+	private void toggleButtonOff() {
+		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command toggleCommand = commandService.getCommand(COMMAND_ID);
-		
+
 		State state = toggleCommand.getState("STYLE");
 		boolean currentState = (Boolean) state.getValue();
 		if (currentState) {
 			// turn it off
 			state.setValue(!currentState);
 			UiDesk.getDisplay().syncExec(new Runnable() {
-				
-				public void run(){
+
+				public void run() {
 					commandService.refreshElements(toggleCommand.getId(), null);
 				}
 			});
 		}
 	}
-	
+
 	@Override
-	public void closed(){
+	public void closed() {
 		logger.info("Closed"); //$NON-NLS-1$
 	}
 }

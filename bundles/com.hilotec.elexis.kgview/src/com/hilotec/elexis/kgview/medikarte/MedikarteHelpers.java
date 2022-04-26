@@ -19,24 +19,19 @@ public class MedikarteHelpers {
 	private final static String PRESC_EI_ZWECK = "hilotec:zweck";
 
 	/**
-	 * Medikation auf der Medikarte des Patienten zusammensuchen.
-	 * Wenn !alle, dann wird nur die noch aktuelle Medikation zurueckgegeben.
+	 * Medikation auf der Medikarte des Patienten zusammensuchen. Wenn !alle, dann
+	 * wird nur die noch aktuelle Medikation zurueckgegeben.
 	 */
-	public static List<Prescription> medikarteMedikation(
-			Patient patient, boolean alle)
-	{
+	public static List<Prescription> medikarteMedikation(Patient patient, boolean alle) {
 		return medikarteMedikation(patient, alle, false);
 	}
 
 	/**
-	 * Medikation auf der Medikarte des Patienten zusammensuchen.
-	 * Wenn !alle, dann wird nur die noch aktuelle Medikation zurueckgegeben.
-	 * Mit geloescht kann gesteuert werden ob auch geloeschte Medikamente
-	 * angezeigt werden sollen.
+	 * Medikation auf der Medikarte des Patienten zusammensuchen. Wenn !alle, dann
+	 * wird nur die noch aktuelle Medikation zurueckgegeben. Mit geloescht kann
+	 * gesteuert werden ob auch geloeschte Medikamente angezeigt werden sollen.
 	 */
-	public static List<Prescription> medikarteMedikation(
-			Patient patient, boolean alle, boolean geloescht)
-	{
+	public static List<Prescription> medikarteMedikation(Patient patient, boolean alle, boolean geloescht) {
 		Query<Prescription> qbe = new Query<Prescription>(Prescription.class);
 
 		// FIXME: sollte mit executed with deleted gehen
@@ -62,10 +57,10 @@ public class MedikarteHelpers {
 		}
 
 		// Medikamente ohne Fav-Medi Verknuepfung oder mit falsch formatierter
-		// Dosis rauswerfen 
+		// Dosis rauswerfen
 		List<Prescription> pl = qbe.execute();
 		Iterator<Prescription> i = pl.iterator();
-		while(i.hasNext()) {
+		while (i.hasNext()) {
 			Prescription p = i.next();
 			if (FavMedikament.load(p.getArtikel()) == null)
 				i.remove();
@@ -75,45 +70,46 @@ public class MedikarteHelpers {
 
 		return pl;
 	}
-	
+
 	/**
 	 * Datum der letzten Aenderung der Medikarte (letztes von oder bis datum)
 	 */
-	public static String medikarteDatum(Patient patient)
-	{
+	public static String medikarteDatum(Patient patient) {
 		// TODO: Koennte man mit einer Query sauberer loesen
 		List<Prescription> medis = medikarteMedikation(patient, false);
 		TimeTool max = new TimeTool(0);
 		TimeTool cur = new TimeTool();
-		for (Prescription p: medis) {
+		for (Prescription p : medis) {
 			cur.set(p.getBeginDate());
-			if (cur.isAfter(max)) max.set(p.getBeginDate());
+			if (cur.isAfter(max))
+				max.set(p.getBeginDate());
 			cur.set(p.getEndDate());
-			if (cur.isAfter(max)) max.set(p.getEndDate());
+			if (cur.isAfter(max))
+				max.set(p.getEndDate());
 		}
-		
+
 		return max.toString(TimeTool.DATE_GER);
 	}
-	
+
 	/**
 	 * Ordnungszahl fuer Verschreibung holen
 	 */
 	@SuppressWarnings("rawtypes")
 	public static int getOrdnungszahl(Prescription presc) {
 		Map ht = presc.getMap(Prescription.FLD_EXTINFO);
-		
+
 		// Ordnungszahl der Verschreibung
 		if (ht.containsKey(PRESC_EI_ORD))
 			return (Integer) ht.get(PRESC_EI_ORD);
-		
+
 		// Standard fuers Medikament
 		FavMedikament fm = FavMedikament.load(presc.getArtikel());
 		if (fm != null)
 			return fm.getOrdnungszahl();
-		
+
 		return 0;
 	}
-	
+
 	/**
 	 * Ordnungszahl fuer Verschreibung setzen
 	 */
@@ -123,33 +119,33 @@ public class MedikarteHelpers {
 		ht.put(PRESC_EI_ORD, ord);
 		presc.setMap(Prescription.FLD_EXTINFO, ht);
 	}
-	
+
 	/**
 	 * Zweck fuer Verschreibung holen
 	 */
 	@SuppressWarnings("rawtypes")
 	public static String getPZweck(Prescription presc) {
 		Map ht = presc.getMap(Prescription.FLD_EXTINFO);
-		
+
 		// Ordnungszahl der Verschreibung
 		if (ht.containsKey(PRESC_EI_ZWECK))
 			return (String) ht.get(PRESC_EI_ZWECK);
-		
+
 		// Standard fuers Medikament
 		FavMedikament fm = FavMedikament.load(presc.getArtikel());
 		if (fm != null)
 			return fm.getZweck();
-		
+
 		return "";
 	}
-	
+
 	/**
 	 * Ordnungszahl fuer Verschreibung setzen
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void setPZweck(Prescription presc, String zweck) {
 		Map ht = presc.getMap(Prescription.FLD_EXTINFO);
-		
+
 		// Wenns dem Standard entspricht speichern wir den Eintrag nicht
 		FavMedikament fm = FavMedikament.load(presc.getArtikel());
 		if (fm != null && fm.getZweck().equals(zweck)) {
@@ -157,7 +153,7 @@ public class MedikarteHelpers {
 		} else {
 			ht.put(PRESC_EI_ZWECK, zweck);
 		}
-		
+
 		presc.setMap(Prescription.FLD_EXTINFO, ht);
 	}
 }

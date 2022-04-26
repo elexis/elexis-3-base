@@ -43,7 +43,7 @@ public final class AppointmentsData {
 	/**
 	 * Searches all future appointments for a given Kontakt. The future is defined
 	 * as > Instant.now();
-	 * 
+	 *
 	 * @param contactId
 	 */
 	private void querryAppointments(String contactId) {

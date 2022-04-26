@@ -16,10 +16,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * <p>
  * Java class for StrucDoc.Tr complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="StrucDoc.Tr">
  *   &lt;complexContent>
@@ -58,19 +59,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "StrucDoc.Tr", propOrder = {
-	"thOrTd"
-})
+@XmlType(name = "StrucDoc.Tr", propOrder = { "thOrTd" })
 public class StrucDocTr {
-	
-	@XmlElements({
-		@XmlElement(name = "td", type = StrucDocTd.class),
-		@XmlElement(name = "th", type = StrucDocTh.class)
-	})
+
+	@XmlElements({ @XmlElement(name = "td", type = StrucDocTd.class),
+			@XmlElement(name = "th", type = StrucDocTh.class) })
 	protected List<Object> thOrTd;
 	@XmlAttribute(name = "ID")
 	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -94,188 +91,184 @@ public class StrucDocTr {
 	@XmlAttribute
 	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
 	protected String valign;
-	
+
 	/**
 	 * Gets the value of the thOrTd property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the thOrTd property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the thOrTd property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getThOrTd().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link StrucDocTd }
 	 * {@link StrucDocTh }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<Object> getThOrTd(){
+	public List<Object> getThOrTd() {
 		if (thOrTd == null) {
 			thOrTd = new ArrayList<Object>();
 		}
 		return this.thOrTd;
 	}
-	
+
 	/**
 	 * Gets the value of the attributeId property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getAttributeId(){
+	public String getAttributeId() {
 		return attributeId;
 	}
-	
+
 	/**
 	 * Sets the value of the attributeId property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setAttributeId(String value){
+	public void setAttributeId(String value) {
 		this.attributeId = value;
 	}
-	
+
 	/**
 	 * Gets the value of the language property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getLanguage(){
+	public String getLanguage() {
 		return language;
 	}
-	
+
 	/**
 	 * Sets the value of the language property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setLanguage(String value){
+	public void setLanguage(String value) {
 		this.language = value;
 	}
-	
+
 	/**
 	 * Gets the value of the styleCode property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the styleCode property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the styleCode property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getStyleCode().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link String }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<String> getStyleCode(){
+	public List<String> getStyleCode() {
 		if (styleCode == null) {
 			styleCode = new ArrayList<String>();
 		}
 		return this.styleCode;
 	}
-	
+
 	/**
 	 * Gets the value of the align property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getAlign(){
+	public String getAlign() {
 		return align;
 	}
-	
+
 	/**
 	 * Sets the value of the align property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setAlign(String value){
+	public void setAlign(String value) {
 		this.align = value;
 	}
-	
+
 	/**
 	 * Gets the value of the char property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getChar(){
+	public String getChar() {
 		return _char;
 	}
-	
+
 	/**
 	 * Sets the value of the char property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setChar(String value){
+	public void setChar(String value) {
 		this._char = value;
 	}
-	
+
 	/**
 	 * Gets the value of the charoff property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getCharoff(){
+	public String getCharoff() {
 		return charoff;
 	}
-	
+
 	/**
 	 * Sets the value of the charoff property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setCharoff(String value){
+	public void setCharoff(String value) {
 		this.charoff = value;
 	}
-	
+
 	/**
 	 * Gets the value of the valign property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getValign(){
+	public String getValign() {
 		return valign;
 	}
-	
+
 	/**
 	 * Sets the value of the valign property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setValign(String value){
+	public void setValign(String value) {
 		this.valign = value;
 	}
-	
+
 }

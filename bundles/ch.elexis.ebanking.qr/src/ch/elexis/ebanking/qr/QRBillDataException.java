@@ -3,43 +3,43 @@ package ch.elexis.ebanking.qr;
 import ch.elexis.core.model.IContact;
 
 public class QRBillDataException extends Exception {
-	
+
 	public enum SourceType {
-			CREDITOR, DEBITOR, AMOUNT, REMARK, HEADER, UNKNOWN
+		CREDITOR, DEBITOR, AMOUNT, REMARK, HEADER, UNKNOWN
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private IContact contact;
 	private SourceType sourceType;
-	
-	public QRBillDataException(SourceType sourceType, String string){
+
+	public QRBillDataException(SourceType sourceType, String string) {
 		super(string);
 		this.sourceType = sourceType;
 	}
-	
-	public QRBillDataException(SourceType sourceType, String string, IContact contact){
+
+	public QRBillDataException(SourceType sourceType, String string, IContact contact) {
 		super(string);
 		this.sourceType = sourceType;
 		this.contact = contact;
 	}
-	
+
 	@Override
-	public String getMessage(){
+	public String getMessage() {
 		return getSourceType() + " " + super.getMessage();
 	}
-	
-	public IContact getContact(){
+
+	public IContact getContact() {
 		return contact;
 	}
-	
-	public void setContact(IContact contact){
+
+	public void setContact(IContact contact) {
 		this.contact = contact;
 	}
-	
-	public SourceType getSourceType(){
+
+	public SourceType getSourceType() {
 		return sourceType;
 	}
 }

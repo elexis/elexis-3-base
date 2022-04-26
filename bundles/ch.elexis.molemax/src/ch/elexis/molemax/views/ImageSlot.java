@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    rgw - initial API and implementation
  *    rgw - 2014: Changes for Elexis 2.x
@@ -69,8 +69,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 	private final Overview home;
 	private final MenuItem mDelete;
 
-	public ImageSlot(final Overview home, final Composite parent,
-			final int slotNr) {
+	public ImageSlot(final Overview home, final Composite parent, final int slotNr) {
 		super(parent, SWT.BORDER);
 		DropTarget dt = new DropTarget(this, DND.DROP_COPY);
 		dt.setTransfer(new Transfer[] { FileTransfer.getInstance() });
@@ -91,15 +90,12 @@ public class ImageSlot extends Composite implements DropTargetListener {
 							ImageData idata = img.getImageData();
 							if (idata != null) {
 								scale = (double) pt.x / (double) idata.width;
-								gc.drawImage(img, 0, 0, idata.width,
-										idata.height, 0, 0,
-										(int) Math.round(idata.width * scale),
-										(int) Math.round(idata.height * scale));
+								gc.drawImage(img, 0, 0, idata.width, idata.height, 0, 0,
+										(int) Math.round(idata.width * scale), (int) Math.round(idata.height * scale));
 							}
 						}
 					} else {
-						SWTHelper.writeCentered(gc, INSUFF_RIGHTS,
-								new Rectangle(0, 0, pt.x, pt.y));
+						SWTHelper.writeCentered(gc, INSUFF_RIGHTS, new Rectangle(0, 0, pt.x, pt.y));
 					}
 
 				}
@@ -128,8 +124,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 				int num = myTracker.length;
 				String question = Messages.ImageSlot_reallydelete;
 				if (num > 1) {
-					question = Messages.ImageSlot_these + Integer.toString(num)
-							+ Messages.ImageSlot_imagesdelete;
+					question = Messages.ImageSlot_these + Integer.toString(num) + Messages.ImageSlot_imagesdelete;
 				}
 				if (SWTHelper.askYesNo(Messages.ImageSlot_imageDel, question)) {
 					Tracker.delete(myTracker);
@@ -174,23 +169,19 @@ public class ImageSlot extends Composite implements DropTargetListener {
 			long diff = today.diff(seq, 60000 * 60 * 24);
 			if (diff > 1) {
 				if (SWTHelper.askYesNo(Messages.ImageSlot_newsequence,
-						Messages.ImageSlot_chosensequenceis + diff
-								+ Messages.ImageSlot_daysold)) {
+						Messages.ImageSlot_chosensequenceis + diff + Messages.ImageSlot_daysold)) {
 					home.setPatient(home.pat, today.toString(TimeTool.DATE_GER));
 				}
 			}
 			for (String file : files) {
 				if (myTracker.length == 0) {
 					myTracker = new Tracker[1];
-					myTracker[0] = new Tracker(home.pat, home.date, mySlot,
-							new File(file));
+					myTracker[0] = new Tracker(home.pat, home.date, mySlot, new File(file));
 				} else {
-					if (SWTHelper.askYesNo(Messages.ImageSlot_replace,
-							Messages.ImageSlot_deleteall)) {
+					if (SWTHelper.askYesNo(Messages.ImageSlot_replace, Messages.ImageSlot_deleteall)) {
 						Tracker.delete(myTracker);
 						myTracker = new Tracker[1];
-						myTracker[0] = new Tracker(home.pat, home.date, mySlot,
-								new File(file));
+						myTracker[0] = new Tracker(home.pat, home.date, mySlot, new File(file));
 					}
 				}
 
@@ -210,8 +201,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 		if (CoreHub.acl.request(MolemaxACL.CHANGE_IMAGES)) {
 			if (file.getName().startsWith("base")) {
 				if (myTracker.length != 0) {
-					if (SWTHelper.askYesNo(Messages.ImageSlot_replace,
-							Messages.ImageSlot_deleteall)) {
+					if (SWTHelper.askYesNo(Messages.ImageSlot_replace, Messages.ImageSlot_deleteall)) {
 						Tracker.delete(myTracker);
 					} else {
 						return;
@@ -223,17 +213,12 @@ public class ImageSlot extends Composite implements DropTargetListener {
 			} else {
 				if (myTracker.length == 0) {
 					SWTHelper.showError("Fehlerhafte Struktur",
-							"Dieses Verzeichnis "
-									+ file.getParentFile().getAbsolutePath()
-									+ " enthält kein Basisbild");
+							"Dieses Verzeichnis " + file.getParentFile().getAbsolutePath() + " enthält kein Basisbild");
 				} else {
 					String[] koord = file.getName().split("-");
-					Rectangle rec = new Rectangle(Integer.parseInt(koord[0]),
-							Integer.parseInt(koord[1]),
-							Integer.parseInt(koord[2]),
-							Integer.parseInt(koord[3]));
-					Tracker t = new Tracker(home.pat, myTracker[0], home.date,
-							mySlot, rec);
+					Rectangle rec = new Rectangle(Integer.parseInt(koord[0]), Integer.parseInt(koord[1]),
+							Integer.parseInt(koord[2]), Integer.parseInt(koord[3]));
+					Tracker t = new Tracker(home.pat, myTracker[0], home.date, mySlot, rec);
 					Tracker[] tOld = home.trackers[mySlot];
 					Tracker[] tNew = new Tracker[tOld.length + 1];
 					for (int i = 0; i < tOld.length; i++) {

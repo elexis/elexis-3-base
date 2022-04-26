@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    M. Descher - Initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.agenda.ui;
 
@@ -27,40 +27,40 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class BereichMenuCreator implements IMenuCreator {
-	
+
 	Menu mine;
 	Activator agenda = Activator.getDefault();
 	String[] sMandanten;
 	MenuItem[] menuItems;
-	
+
 	@Override
-	public void dispose(){}
-	
-	public BereichMenuCreator(){
-		sMandanten =
-			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_praxis)
+	public void dispose() {
+	}
+
+	public BereichMenuCreator() {
+		sMandanten = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_praxis)
 				.split(","); //$NON-NLS-1$
 		menuItems = new MenuItem[sMandanten.length];
 	}
-	
+
 	@Override
-	public Menu getMenu(Control parent){
+	public Menu getMenu(Control parent) {
 		mine = new Menu(parent);
 		fillMenu();
 		return mine;
 	}
-	
+
 	@Override
-	public Menu getMenu(Menu parent){
+	public Menu getMenu(Menu parent) {
 		mine = new Menu(parent);
 		fillMenu();
 		return mine;
 	}
-	
-	private void fillMenu(){
+
+	private void fillMenu() {
 		mine.addListener(SWT.Show, new Listener() {
 			@Override
-			public void handleEvent(Event event){
+			public void handleEvent(Event event) {
 				MenuItem[] menuItems = mine.getItems();
 				for (int i = 0; i < menuItems.length; i++) {
 					if (menuItems[i].getText().equalsIgnoreCase(agenda.getActResource())) {
@@ -71,7 +71,7 @@ public class BereichMenuCreator implements IMenuCreator {
 				}
 			}
 		});
-		
+
 		for (String m : sMandanten) {
 			MenuItem it = new MenuItem(mine, SWT.RADIO);
 			it.setText(m);
@@ -81,13 +81,13 @@ public class BereichMenuCreator implements IMenuCreator {
 				it.setSelection(false);
 			}
 			it.addSelectionListener(new SelectionAdapter() {
-				
+
 				@Override
-				public void widgetSelected(SelectionEvent e){
+				public void widgetSelected(SelectionEvent e) {
 					MenuItem mi = (MenuItem) e.getSource();
 					agenda.setActResource(mi.getText());
 				}
-				
+
 			});
 		}
 	}

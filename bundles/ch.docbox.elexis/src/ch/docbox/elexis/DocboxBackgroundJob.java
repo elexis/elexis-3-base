@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2010, Oliver Egger, visionary ag
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *    
+ *
  *******************************************************************************/
 package ch.docbox.elexis;
 
@@ -64,16 +64,16 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 public class DocboxBackgroundJob extends Job {
-	
+
 	private static Logger log = LoggerFactory.getLogger(DocboxBackgroundJob.class);
-	
-	public DocboxBackgroundJob(){
+
+	public DocboxBackgroundJob() {
 		super(Messages.DocboxBackgroundJob_Title);
 		this.setUser(false);
 		this.setPriority(Job.LONG);
 	}
-	
-	public synchronized int fetchAppointments(final IProgressMonitor monitor){
+
+	public synchronized int fetchAppointments(final IProgressMonitor monitor) {
 		CDACHServices port = UserDocboxPreferences.getPort();
 		int count = 0;
 		List<DocboxTermin> docboxTermine = DocboxTermin.getDocboxTermine();
@@ -82,16 +82,14 @@ public class DocboxBackgroundJob extends Job {
 		if (appointments != null) {
 			for (AppointmentType appointment : appointments) {
 				DocboxTermin docboxTermin = new DocboxTermin();
-				if (appointment.getState() != null
-					&& ((appointment.getState().contains("salesrepresentative") //$NON-NLS-1$
+				if (appointment.getState() != null && ((appointment.getState().contains("salesrepresentative") //$NON-NLS-1$
 						&& UserDocboxPreferences.isAppointmentsPharmaVisits())
 						|| (appointment.getState().contains("emergencyservice")
-							&& UserDocboxPreferences.isAppointmentsEmergencyService())
+								&& UserDocboxPreferences.isAppointmentsEmergencyService())
 						|| (appointment.getState().contains("terminierung") //$NON-NLS-1$
-							&& UserDocboxPreferences.isAppointmentsTerminvereinbarung()))) {
+								&& UserDocboxPreferences.isAppointmentsTerminvereinbarung()))) {
 					++count;
-					docboxTermin.create(appointment,
-						UserDocboxPreferences.getAppointmentsBereich());
+					docboxTermin.create(appointment, UserDocboxPreferences.getAppointmentsBereich());
 					if (docboxTermine.contains(docboxTermin)) {
 						docboxTermine.remove(docboxTermin);
 					}
@@ -105,11 +103,11 @@ public class DocboxBackgroundJob extends Job {
 		monitor.worked(20);
 		return count;
 	}
-	
-	public synchronized int updateDoctorDirectory(final IProgressMonitor monitor){
+
+	public synchronized int updateDoctorDirectory(final IProgressMonitor monitor) {
 		CDACHServices port = UserDocboxPreferences.getPort();
 		int count = 0;
-		
+
 		String myDocboxId = (String) CoreHub.actMandant.getInfoElement("docboxId");
 		if (myDocboxId == null || "".equals(myDocboxId)) {
 			updateDoctorDirectoryByApp(port, count, "self");
@@ -120,8 +118,8 @@ public class DocboxBackgroundJob extends Job {
 		monitor.worked(30);
 		return count;
 	}
-	
-	private int updateDoctorDirectoryByApp(CDACHServices port, int count, String application){
+
+	private int updateDoctorDirectoryByApp(CDACHServices port, int count, String application) {
 		List<POCDMT000040IntendedRecipient> recipients = port.getRecipients(application);
 		if (recipients != null) {
 			for (POCDMT000040IntendedRecipient recipient : recipients) {
@@ -141,7 +139,7 @@ public class DocboxBackgroundJob extends Job {
 				}
 				POCDMT000040Person person = recipient.getInformationRecipient();
 				POCDMT000040Organization organization = recipient.getReceivedOrganization();
-				
+
 				List<PN> pns = person.getName();
 				for (PN pn : pns) {
 					List<Serializable> ens = pn.getContent();
@@ -163,7 +161,7 @@ public class DocboxBackgroundJob extends Job {
 						}
 					}
 				}
-				
+
 				String organizationName = "";
 				List<ON> ons = organization.getName();
 				if (ons != null) {
@@ -178,27 +176,24 @@ public class DocboxBackgroundJob extends Job {
 						}
 					}
 				}
-				
+
 				boolean first = false;
 				String streetAdressLine = "";
 				String city = "";
 				String plz = "";
-				
+
 				List<AD> ads = organization.getAddr();
 				for (AD ad : ads) {
 					List<Serializable> ens = ad.getContent();
 					if (ens != null) {
 						for (Serializable en : ens) {
 							JAXBElement<?> t = (JAXBElement<?>) en;
-							if (t.getDeclaredType().getName()
-								.equals(AdxpStreetAddressLine.class.getName())) {
+							if (t.getDeclaredType().getName().equals(AdxpStreetAddressLine.class.getName())) {
 								if (!first) {
-									streetAdressLine =
-										((AdxpStreetAddressLine) t.getValue()).content();
+									streetAdressLine = ((AdxpStreetAddressLine) t.getValue()).content();
 									first = true;
 								} else {
-									String content =
-										((AdxpStreetAddressLine) t.getValue()).content();
+									String content = ((AdxpStreetAddressLine) t.getValue()).content();
 									if (content != null && content.length() > 0) {
 										streetAdressLine += content;
 									}
@@ -207,14 +202,13 @@ public class DocboxBackgroundJob extends Job {
 							if (t.getDeclaredType().getName().equals(AdxpCity.class.getName())) {
 								city = ((AdxpCity) t.getValue()).content();
 							}
-							if (t.getDeclaredType().getName()
-								.equals(AdxpPostalCode.class.getName())) {
+							if (t.getDeclaredType().getName().equals(AdxpPostalCode.class.getName())) {
 								plz = ((AdxpPostalCode) t.getValue()).content();
 							}
 						}
 					}
 				}
-				
+
 				if (docboxId.length() > 0) {
 					++count;
 					Person p = null;
@@ -228,28 +222,27 @@ public class DocboxBackgroundJob extends Job {
 					}
 					if (p == null || UserDocboxPreferences.isDocboxTest()) {
 						boolean newPerson = p == null;
-						
+
 						if (newPerson) {
 							p = new Person(family, given, "", "");
 							new DocboxContact(docboxId, p);
 						} else {
-							log.warn("newPerson is false, skipping intialization cMatching: "
-								+ cMatching+"/ docboxId: "+docboxId);
+							log.warn("newPerson is false, skipping intialization cMatching: " + cMatching
+									+ "/ docboxId: " + docboxId);
 							continue;
 						}
-						
+
 						p.set(Person.NAME, family);
 						p.set(Person.FIRSTNAME, given);
 						p.set(Person.TITLE, prefix);
-						
-						if (!PersistentObject.checkNull(p.get(Person.FLD_IS_USER))
-							.equals(StringConstants.ONE)) {
+
+						if (!PersistentObject.checkNull(p.get(Person.FLD_IS_USER)).equals(StringConstants.ONE)) {
 							p.set(Kontakt.FLD_NAME3, organizationName);
 						}
 						p.set(Kontakt.FLD_STREET, streetAdressLine);
 						p.set(Kontakt.FLD_ZIP, plz);
 						p.set(Kontakt.FLD_PLACE, city);
-						
+
 						p.addXid(DOMAIN_EAN, ean, true);
 					}
 					p.setInfoElement(application, true);
@@ -258,12 +251,12 @@ public class DocboxBackgroundJob extends Job {
 		}
 		return count;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return true if everything successful, false if a warning or error occurred
 	 */
-	public synchronized int fetchInboxClinicalDocuments(final IProgressMonitor monitor){
+	public synchronized int fetchInboxClinicalDocuments(final IProgressMonitor monitor) {
 		log.debug("fetchInboxClinicalDocuments");//$NON-NLS-1$
 		boolean result = true;
 		int count = 0;
@@ -281,8 +274,8 @@ public class DocboxBackgroundJob extends Job {
 					if (cdaMessage == null) {
 						GregorianCalendar cal = (GregorianCalendar) GregorianCalendar.getInstance();
 						if (documentInfoType.getCreationDate() != null) {
-							cal.setTimeInMillis(documentInfoType.getCreationDate()
-								.toGregorianCalendar().getTimeInMillis());
+							cal.setTimeInMillis(
+									documentInfoType.getCreationDate().toGregorianCalendar().getTimeInMillis());
 						} else {
 							cal = null;
 						}
@@ -291,8 +284,7 @@ public class DocboxBackgroundJob extends Job {
 					} else {
 						log.debug("redo download for document id " + id);//$NON-NLS-1$
 					}
-					Holder<ClinicalDocumentType> clincialDocumentTypeHolder =
-						new Holder<ClinicalDocumentType>();
+					Holder<ClinicalDocumentType> clincialDocumentTypeHolder = new Holder<ClinicalDocumentType>();
 					Holder<byte[]> attachmentHolder = new Holder<byte[]>();
 					port.getClinicalDocument(id, clincialDocumentTypeHolder, attachmentHolder);
 					boolean unzipSuccessful = true;
@@ -303,8 +295,8 @@ public class DocboxBackgroundJob extends Job {
 						}
 					}
 					if (clincialDocumentTypeHolder.value != null && unzipSuccessful) {
-						String receivedCDA = docboxCDA.marshallIntoString(
-							clincialDocumentTypeHolder.value.getClinicalDocument());
+						String receivedCDA = docboxCDA
+								.marshallIntoString(clincialDocumentTypeHolder.value.getClinicalDocument());
 						CdaChXPath cdaChXPath = new CdaChXPath();
 						cdaChXPath.setPatientDocument(receivedCDA);
 						if (cdaMessage.setCda(receivedCDA)) {
@@ -313,8 +305,8 @@ public class DocboxBackgroundJob extends Job {
 							boolean first = !StringTool.isNothing(firstName);
 							boolean last = !StringTool.isNothing(firstName);
 							String patient = (first ? firstName : "") //$NON-NLS-1$
-								+ (first && last ? " " : "")//$NON-NLS-1$ //$NON-NLS-2$
-								+ (last ? lastName : "");//$NON-NLS-1$
+									+ (first && last ? " " : "")//$NON-NLS-1$ //$NON-NLS-2$
+									+ (last ? lastName : "");//$NON-NLS-1$
 							firstName = cdaChXPath.getAuthorFirstName();
 							lastName = cdaChXPath.getAuthorLastName();
 							String organization = cdaChXPath.getCustodianHospitalName();
@@ -322,10 +314,10 @@ public class DocboxBackgroundJob extends Job {
 							first = !StringTool.isNothing(firstName);
 							last = !StringTool.isNothing(lastName);
 							String sender = (first ? firstName : "")//$NON-NLS-1$
-								+ (first && last ? " " : "")//$NON-NLS-1$ //$NON-NLS-2$
-								+ (last ? lastName : "")//$NON-NLS-1$
-								+ (org && (first || last) ? ", " : "")//$NON-NLS-1$ //$NON-NLS-2$
-								+ (org ? organization : "");//$NON-NLS-1$
+									+ (first && last ? " " : "")//$NON-NLS-1$ //$NON-NLS-2$
+									+ (last ? lastName : "")//$NON-NLS-1$
+									+ (org && (first || last) ? ", " : "")//$NON-NLS-1$ //$NON-NLS-2$
+									+ (org ? organization : "");//$NON-NLS-1$
 							if (!cdaMessage.setDownloaded(sender, patient)) {
 								log.debug("failed to set cda message downloaded with id " + id);//$NON-NLS-1$
 								result = false;
@@ -350,18 +342,18 @@ public class DocboxBackgroundJob extends Job {
 			}
 		}
 		ElexisEventDispatcher.reload(CdaMessage.class);
-		
+
 		int newWorked = maxworked - worked;
 		if (newWorked > 0) {
 			monitor.worked(newWorked);
 		}
 		return result ? count : -1;
 	}
-	
-	public static void showResultInPopup(final String message){
+
+	public static void showResultInPopup(final String message) {
 		Display display = UiDesk.getDisplay();
 		display.asyncExec(new Runnable() {
-			public void run(){
+			public void run() {
 				Display display = UiDesk.getDisplay();
 				Shell shell = UiDesk.getTopShell();
 				if (shell != null) {
@@ -371,8 +363,7 @@ public class DocboxBackgroundJob extends Job {
 					TrayItem item = null;
 					if (tray != null) {
 						item = new TrayItem(tray, SWT.NONE);
-						item.setImage(
-							Activator.getImageDescriptor("icons/docbox16.png").createImage());//$NON-NLS-1$
+						item.setImage(Activator.getImageDescriptor("icons/docbox16.png").createImage());//$NON-NLS-1$
 						tip.setText("docbox");//$NON-NLS-1$
 						item.setToolTip(tip);
 					} else {
@@ -396,65 +387,63 @@ public class DocboxBackgroundJob extends Job {
 			}
 		});
 	}
-	
+
 	@Override
-	protected IStatus run(IProgressMonitor monitor){
+	protected IStatus run(IProgressMonitor monitor) {
 		boolean success = true;
 		String msg = ""; //$NON-NLS-1$
 		log.debug("running");
 		if (CoreHub.getLoggedInContact() != null) {
 			try {
 				if (CoreHub.getLoggedInContact() != null && UserDocboxPreferences.hasValidDocboxCredentials()) {
-					
+
 					log.debug("beginTask");
-					
+
 					monitor.beginTask(Messages.DocboxBackgroundJob_Title, 200);
 					monitor.worked(10);
-					
+
 					if (!monitor.isCanceled()) {
 						log.debug("fetchInboxClinicalDocuments");
 						int downloadedDocuments = fetchInboxClinicalDocuments(monitor);
 						if (downloadedDocuments > 0) {
-							msg += String.format(Messages.DocboxBackgroundJob_DocumentsDownloaded,
-								downloadedDocuments);
+							msg += String.format(Messages.DocboxBackgroundJob_DocumentsDownloaded, downloadedDocuments);
 						}
 						log.debug(msg);
 					}
-					
-					if (UserDocboxPreferences.hasAgendaPlugin()
-						&& UserDocboxPreferences.downloadAppointments() && !monitor.isCanceled()) {
+
+					if (UserDocboxPreferences.hasAgendaPlugin() && UserDocboxPreferences.downloadAppointments()
+							&& !monitor.isCanceled()) {
 						log.debug("fetchAppointments");
 						int downloadedAppointments = fetchAppointments(monitor);
 						if (!"".equals(msg)) { //$NON-NLS-1$
 							msg += "\n"; //$NON-NLS-1$
 						}
-						msg += String.format(Messages.DocboxBackgroundJob_AppointmentsUpdated,
-							downloadedAppointments);
+						msg += String.format(Messages.DocboxBackgroundJob_AppointmentsUpdated, downloadedAppointments);
 						log.debug(msg);
 					} else {
 						monitor.worked(60);
 					}
-					
+
 					if (!monitor.isCanceled()) {
 						log.debug("updateDoctorDirectory");
 						int count = updateDoctorDirectory(monitor);
 						if (!"".equals(msg)) { //$NON-NLS-1$
 							msg += "\n"; //$NON-NLS-1$
 						}
-						msg += String.format(Messages.DocboxBackgroundJob_DoctorDirecotoryUpdated,
-							count);
+						msg += String.format(Messages.DocboxBackgroundJob_DoctorDirecotoryUpdated, count);
 						log.debug(msg);
 					} else {
 						monitor.worked(60);
 					}
 					monitor.worked(10);
-					
+
 					monitor.done();
 					if (msg != null && msg.length() > 0) {
 						showResultInPopup(msg);
 					}
-					
-				} else {}
+
+				} else {
+				}
 			} catch (Exception e) {
 				ExHandler.handle(e);
 				log.debug("error in task", e);
@@ -463,5 +452,5 @@ public class DocboxBackgroundJob extends Job {
 		log.debug("stopped");
 		return (success ? Status.OK_STATUS : Status.CANCEL_STATUS);
 	}
-	
+
 }

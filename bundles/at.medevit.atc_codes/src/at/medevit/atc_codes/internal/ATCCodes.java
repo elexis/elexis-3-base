@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     MEDEVIT <office@medevit.at> - initial API and implementation
  ******************************************************************************/
@@ -35,25 +35,25 @@ import at.medevit.atc_codes.parser.ATCDDDParser.ATCDDDDefinition;
 import at.medevit.atc_codes.parser.ATCParser.ATCDefinition;
 
 public class ATCCodes {
-	
+
 	public static final String ATC_CODES_SERIALIZED_FILE = "/lib/ATCCodesMap.ser";
-	
+
 	private static ATCCodes instance = null;
 	private HashMap<String, ATCCode> atcCodesMap = null;
 	private ATCHierarchyComparator ahc = new ATCHierarchyComparator();
-	
-	private ATCCodes(){
+
+	private ATCCodes() {
 		initHashMapFromSerializedObject();
 	}
-	
-	public static ATCCodes getInstance(){
+
+	public static ATCCodes getInstance() {
 		if (instance == null) {
 			instance = new ATCCodes();
 		}
 		return instance;
 	}
-	
-	private void initHashMapFromSerializedObject(){
+
+	private void initHashMapFromSerializedObject() {
 		try {
 			// use buffering
 			InputStream is = ATCCodes.class.getResourceAsStream(ATC_CODES_SERIALIZED_FILE);
@@ -64,8 +64,7 @@ public class ATCCodes {
 			ObjectInput input = new ObjectInputStream(is);
 			try {
 				// deserialize the List
-				atcCodesMap =
-					(HashMap<java.lang.String, at.medevit.atc_codes.ATCCode>) input.readObject();
+				atcCodesMap = (HashMap<java.lang.String, at.medevit.atc_codes.ATCCode>) input.readObject();
 			} finally {
 				input.close();
 			}
@@ -73,27 +72,25 @@ public class ATCCodes {
 			ex.printStackTrace();
 		}
 	}
-	
-	protected HashMap<String, ATCCode> getAtcCodesMap(){
+
+	protected HashMap<String, ATCCode> getAtcCodesMap() {
 		return atcCodesMap;
 	}
-	
-	protected void initHashMap(List<ATCDefinition> atcDefinitions,
-		HashMap<String, ATCDDDDefinition> atcDDDDefinitions, HashMap<String, String> atcCodeToGerman){
+
+	protected void initHashMap(List<ATCDefinition> atcDefinitions, HashMap<String, ATCDDDDefinition> atcDDDDefinitions,
+			HashMap<String, String> atcCodeToGerman) {
 		atcCodesMap = new HashMap<String, at.medevit.atc_codes.ATCCode>();
-		
+
 		for (ATCDefinition def : atcDefinitions) {
 			ATCDDDDefinition dddDef = atcDDDDefinitions.get(def.atcCode);
 			int level = determineLevel(def.atcCode);
-			
+
 			float ddd = 0.0f;
 			ATCCode.DDD_UNIT_TYPE dddUt = null;
 			String dddAc = null;
 			String dddComment = null;
 			if (dddDef != null) {
-				ddd =
-					(dddDef.ddd != null && dddDef.ddd.length() > 0) ? Float.parseFloat(dddDef.ddd)
-							: 0.0f;
+				ddd = (dddDef.ddd != null && dddDef.ddd.length() > 0) ? Float.parseFloat(dddDef.ddd) : 0.0f;
 				if (dddDef.unitType != null)
 					dddUt = ATCCode.DDD_UNIT_TYPE.valueOf(dddDef.unitType.toUpperCase());
 				if (dddDef.admCode != null)
@@ -101,16 +98,15 @@ public class ATCCodes {
 				if (dddDef.dddComment != null)
 					dddComment = dddDef.dddComment;
 			}
-			
+
 			String germanName = atcCodeToGerman.get(def.atcCode);
-			
-			ATCCode c =
-				new ATCCode(def.atcCode, def.name, germanName, level, ddd, dddUt, dddAc, dddComment);
+
+			ATCCode c = new ATCCode(def.atcCode, def.name, germanName, level, ddd, dddUt, dddAc, dddComment);
 			atcCodesMap.put(def.atcCode, c);
 		}
 	}
-	
-	private int determineLevel(String atcCode){
+
+	private int determineLevel(String atcCode) {
 		switch (atcCode.length()) {
 		case 7:
 			return 5;
@@ -126,20 +122,20 @@ public class ATCCodes {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * Used in test code only
-	 * 
+	 *
 	 * @param inFile
 	 * @param parser
 	 * @throws IOException
 	 */
-	protected void readXMLFile(File inFile, DefaultHandler parser) throws IOException{
+	protected void readXMLFile(File inFile, DefaultHandler parser) throws IOException {
 		try {
 			XMLReader xr = XMLReaderFactory.createXMLReader();
 			xr.setContentHandler(parser);
 			xr.setErrorHandler(parser);
-			
+
 			FileReader fr = new FileReader(inFile);
 			xr.parse(new InputSource(fr));
 		} catch (SAXException e) {
@@ -150,57 +146,54 @@ public class ATCCodes {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param atcCode
 	 * @return {@link ATCCode} if valid ATC code, else <code>null</code>
 	 */
-	public ATCCode getATCCode(String atcCode){
+	public ATCCode getATCCode(String atcCode) {
 		if (atcCodesMap != null && atcCode != null) {
 			return atcCodesMap.get(atcCode.trim());
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @see ATCCodeService#getATCCodesMatchingName(String, int)
 	 */
-	public List<ATCCode> getATCCodesMatchingName(String name, int language, int matchType){
+	public List<ATCCode> getATCCodesMatchingName(String name, int language, int matchType) {
 		List<ATCCode> ret = new ArrayList<>();
-		
+
 		Collection<ATCCode> values = atcCodesMap.values();
-		
+
 		if (matchType == ATCCodeService.MATCH_NAME_BY_NAME_ONLY) {
 			matchByNameOnly(ret, values, language, name);
 		} else {
 			matchByNameOrATC(ret, values, language, name);
 		}
-		
+
 		orderByATCHierarchy(ret);
-		
+
 		return ret;
 	}
-	
+
 	/**
 	 * Orders the elements in the list according to the ATC hierarchy
-	 * 
+	 *
 	 * @param ret
 	 */
-	private void orderByATCHierarchy(List<ATCCode> ret){
+	private void orderByATCHierarchy(List<ATCCode> ret) {
 		Collections.sort(ret, ahc);
 	}
-	
-	private void matchByNameOrATC(List<ATCCode> ret, Collection<ATCCode> values, int language,
-		String name){
+
+	private void matchByNameOrATC(List<ATCCode> ret, Collection<ATCCode> values, int language, String name) {
 		if (language == ATCCodeService.ATC_NAME_LANGUAGE_GERMAN) {
 			for (ATCCode atcCode : values) {
-				if ((atcCode.name_german != null && atcCode.name_german.toLowerCase().contains(
-					name.toLowerCase()))
-					|| atcCode.atcCode.contains(name)) {
+				if ((atcCode.name_german != null && atcCode.name_german.toLowerCase().contains(name.toLowerCase()))
+						|| atcCode.atcCode.contains(name)) {
 					ret.add(atcCode);
-				} else if (atcCode.name != null
-					&& atcCode.name.toLowerCase().contains(name.toLowerCase())) {
+				} else if (atcCode.name != null && atcCode.name.toLowerCase().contains(name.toLowerCase())) {
 					ret.add(atcCode);
 				}
 			}
@@ -212,16 +205,13 @@ public class ATCCodes {
 			}
 		}
 	}
-	
-	private void matchByNameOnly(List<ATCCode> ret, Collection<ATCCode> values, int language,
-		String name){
+
+	private void matchByNameOnly(List<ATCCode> ret, Collection<ATCCode> values, int language, String name) {
 		if (language == ATCCodeService.ATC_NAME_LANGUAGE_GERMAN) {
 			for (ATCCode atcCode : values) {
-				if (atcCode.name_german != null
-					&& atcCode.name_german.toLowerCase().contains(name.toLowerCase())) {
+				if (atcCode.name_german != null && atcCode.name_german.toLowerCase().contains(name.toLowerCase())) {
 					ret.add(atcCode);
-				} else if (atcCode.name != null
-					&& atcCode.name.toLowerCase().contains(name.toLowerCase())) {
+				} else if (atcCode.name != null && atcCode.name.toLowerCase().contains(name.toLowerCase())) {
 					ret.add(atcCode);
 				}
 			}
@@ -233,8 +223,8 @@ public class ATCCodes {
 			}
 		}
 	}
-	
-	public List<ATCCode> getAllATCCodes(){
+
+	public List<ATCCode> getAllATCCodes() {
 		ArrayList<ATCCode> list = new ArrayList<ATCCode>(atcCodesMap.values());
 		orderByATCHierarchy(list);
 		return Collections.unmodifiableList(list);

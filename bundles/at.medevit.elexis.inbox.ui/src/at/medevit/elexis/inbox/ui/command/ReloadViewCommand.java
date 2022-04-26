@@ -20,8 +20,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import at.medevit.elexis.inbox.ui.part.InboxView;
 
 public class ReloadViewCommand extends AbstractHandler implements IHandler {
-	
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (part instanceof InboxView) {
 			InboxView view = (InboxView) part;

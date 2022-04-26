@@ -65,31 +65,31 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	private Text txtAtcCode;
 	private Text txtArticleEAN;
 	private VaccinationEffectCheckboxTreeViewer vect;
-	
+
 	private boolean isSupplement = false;
 	private String administratorString = null;
 	private String articleString = null;
 	private DateTime dateOfAdministration;
 	private String articleEAN;
 	private String vaccAgainst;
-	
+
 	private String articleAtcCode;
 	private String lotNo;
 	private GregorianCalendar doa;
-	
+
 	private Mandant mandant;
 	private TimeTool patBDay;
 	private TimeTool selDate;
 	private Patient pat;
-	
+
 	/**
 	 * Create the dialog.
-	 * 
+	 *
 	 * @param parentShell
-	 * @param sp 
+	 * @param sp
 	 * @param b
 	 */
-	public SupplementVaccinationDialog(Shell parentShell, Patient pat){
+	public SupplementVaccinationDialog(Shell parentShell, Patient pat) {
 		super(parentShell);
 		this.pat = pat;
 		mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
@@ -97,152 +97,144 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 		selDate = new TimeTool();
 		isSupplement = true;
 	}
-	
+
 	/**
 	 * Create contents of the dialog.
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		setTitle("Impfung nachtragen");
-		setTitleImage(ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui",
-			"rsc/icons/vaccination_logo.png"));
-		
+		setTitleImage(
+				ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui", "rsc/icons/vaccination_logo.png"));
+
 		Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
 		setMessage(pat.getLabel());
-		
+
 		Composite area = (Composite) super.createDialogArea(parent);
 		Composite container = new Composite(area, SWT.NONE);
 		container.setLayout(new GridLayout(2, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Group mainGroup = new Group(container, SWT.NONE);
 		mainGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD));
 		mainGroup.setText("Pflicht Angaben");
 		GridLayout gd_MainGroup = new GridLayout(2, false);
 		mainGroup.setLayout(gd_MainGroup);
 		mainGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Label lblVerabreichungsdatum = new Label(mainGroup, SWT.NONE);
-		lblVerabreichungsdatum
-			.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblVerabreichungsdatum.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblVerabreichungsdatum.setText("Datum");
-		
+
 		dateOfAdministration = new DateTime(mainGroup, SWT.BORDER | SWT.DROP_DOWN);
 		dateOfAdministration.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				selDate.set(dateOfAdministration.getYear(), dateOfAdministration.getMonth(),
-					dateOfAdministration.getDay());
-				
+						dateOfAdministration.getDay());
+
 				if (selDate.isBefore(patBDay)) {
 					SWTHelper.showInfo("Patient noch nicht geboren",
-						"Das von Ihnen gewählte Datum liegt vor der Geburt des Patienten.");
+							"Das von Ihnen gewählte Datum liegt vor der Geburt des Patienten.");
 					dateOfAdministration.setYear(patBDay.get(TimeTool.YEAR));
 					dateOfAdministration.setMonth(patBDay.get(TimeTool.MONTH));
 					dateOfAdministration.setDay(patBDay.get(TimeTool.DAY_OF_MONTH));
 				}
 			}
 		});
-		
+
 		{ // article name
 			Label lblArtikelname = new Label(mainGroup, SWT.NONE);
 			lblArtikelname.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 			lblArtikelname.setText("Artikelname");
-			
+
 			txtArticleName = new Text(mainGroup, SWT.BORDER);
 			txtArticleName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			txtArticleName.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e){
+				public void modifyText(ModifyEvent e) {
 					articleString = txtArticleName.getText();
 				}
 			});
-			
-			IQuery<IArtikelstammItem> query =
-				ArtikelstammModelServiceHolder.get().getQuery(IArtikelstammItem.class);
+
+			IQuery<IArtikelstammItem> query = ArtikelstammModelServiceHolder.get().getQuery(IArtikelstammItem.class);
 			query.and("atc", COMPARATOR.LIKE, "J07%");
-			IdentifiableProposalProvider<IArtikelstammItem> aopp =
-				new IdentifiableProposalProvider<>(query);
-			ContentProposalAdapter articleProposalAdapter = new ContentProposalAdapter(
-				txtArticleName, new TextContentAdapter(), aopp, null, null);
+			IdentifiableProposalProvider<IArtikelstammItem> aopp = new IdentifiableProposalProvider<>(query);
+			ContentProposalAdapter articleProposalAdapter = new ContentProposalAdapter(txtArticleName,
+					new TextContentAdapter(), aopp, null, null);
 			articleProposalAdapter.addContentProposalListener(new IContentProposalListener() {
-				
+
 				@SuppressWarnings("unchecked")
 				@Override
-				public void proposalAccepted(IContentProposal proposal){
-					IdentifiableContentProposal<IArtikelstammItem> prop =
-						(IdentifiableContentProposal<IArtikelstammItem>) proposal;
+				public void proposalAccepted(IContentProposal proposal) {
+					IdentifiableContentProposal<IArtikelstammItem> prop = (IdentifiableContentProposal<IArtikelstammItem>) proposal;
 					txtArticleName.setText(prop.getLabel());
-					articleString =
-						StoreToStringServiceHolder.getStoreToString(prop.getIdentifiable());
+					articleString = StoreToStringServiceHolder.getStoreToString(prop.getIdentifiable());
 				}
 			});
 		}
 		new Label(container, SWT.NONE);
-		
+
 		Group optionalGroup = new Group(container, SWT.NONE);
 		optionalGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD));
 		optionalGroup.setText("Optionale Angaben");
 		optionalGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		optionalGroup.setLayout(new GridLayout(2, false));
-		
+
 		{ // administrating contact
 			Label lblAdministratingContact = new Label(optionalGroup, SWT.NONE);
-			lblAdministratingContact.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+			lblAdministratingContact.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 			lblAdministratingContact.setText("Nachtrag von");
-			
+
 			txtAdministrator = new Text(optionalGroup, SWT.BORDER);
 			administratorString = mandant.storeToString();
 			txtAdministrator.setText(mandant.getMandantLabel());
 			txtAdministrator.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e){
+				public void modifyText(ModifyEvent e) {
 					administratorString = txtAdministrator.getText();
 				}
 			});
 			txtAdministrator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			PersistentObjectProposalProvider<Mandant> mopp =
-				new PersistentObjectProposalProvider<Mandant>(Mandant.class) {
-					@Override
-					public String getLabelForObject(Mandant a){
-						return a.getMandantLabel();
-					}
-				};
-			
-			ContentProposalAdapter mandatorProposalAdapter =
-				new ContentProposalAdapter(txtAdministrator, new TextContentAdapter(), mopp, null,
-					null);
-			mandatorProposalAdapter
-				.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
-			mandatorProposalAdapter.addContentProposalListener(new IContentProposalListener() {
-				
+			PersistentObjectProposalProvider<Mandant> mopp = new PersistentObjectProposalProvider<Mandant>(
+					Mandant.class) {
 				@Override
-				public void proposalAccepted(IContentProposal proposal){
-					PersistentObjectContentProposal<Mandant> prop =
-						(PersistentObjectContentProposal<Mandant>) proposal;
+				public String getLabelForObject(Mandant a) {
+					return a.getMandantLabel();
+				}
+			};
+
+			ContentProposalAdapter mandatorProposalAdapter = new ContentProposalAdapter(txtAdministrator,
+					new TextContentAdapter(), mopp, null, null);
+			mandatorProposalAdapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+			mandatorProposalAdapter.addContentProposalListener(new IContentProposalListener() {
+
+				@Override
+				public void proposalAccepted(IContentProposal proposal) {
+					PersistentObjectContentProposal<Mandant> prop = (PersistentObjectContentProposal<Mandant>) proposal;
 					administratorString = prop.getPersistentObject().storeToString();
 				}
 			});
-			
+
 			Label lblLotNo = new Label(optionalGroup, SWT.NONE);
 			lblLotNo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 			lblLotNo.setText("Lot-Nr");
-			
+
 			txtLotNo = new Text(optionalGroup, SWT.BORDER);
 			txtLotNo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		}
-		
+
 		/**
-		 * could be useful to define vacc. against at some point, but not needed in the current
-		 * version
+		 * could be useful to define vacc. against at some point, but not needed in the
+		 * current version
 		 */
 		// Label lblArtikelEan = new Label(optionalGroup, SWT.NONE);
 		// lblArtikelEan.setSize(60, 15);
 		// lblArtikelEan.setText("Artikel EAN");
 		//
 		// txtArticleEAN = new Text(optionalGroup, SWT.BORDER);
-		// txtArticleEAN.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		// txtArticleEAN.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
+		// 1, 1));
 		// txtArticleEAN.setSize(348, 21);
 		//
 		// Label lblAtccode = new Label(optionalGroup, SWT.NONE);
@@ -250,9 +242,10 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 		// lblAtccode.setText("ATC-Code");
 		//
 		// txtAtcCode = new Text(optionalGroup, SWT.BORDER);
-		// txtAtcCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		// txtAtcCode.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1,
+		// 1));
 		// txtAtcCode.setSize(314, 21);
-		
+
 		Group expiredGroup = new Group(container, SWT.NONE);
 		expiredGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD));
 		expiredGroup.setText("Bei nicht mehr erhältlichen Impfstoffen");
@@ -262,119 +255,122 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 			Label lblVaccAgainst = new Label(expiredGroup, SWT.NONE);
 			lblVaccAgainst.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false, 1, 1));
 			lblVaccAgainst.setText("Impfung gegen Krankheit(en)");
-			
-			vect = new VaccinationEffectCheckboxTreeViewer(container, SWT.BORDER,
-				vaccAgainst);
+
+			vect = new VaccinationEffectCheckboxTreeViewer(container, SWT.BORDER, vaccAgainst);
 		}
 		return area;
 	}
-	
+
 	/**
 	 * Create contents of the button bar.
-	 * 
+	 *
 	 * @param parent
 	 */
 	@Override
-	protected void createButtonsForButtonBar(Composite parent){
+	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		lotNo = txtLotNo.getText();
-		doa =
-			new GregorianCalendar(dateOfAdministration.getYear(), dateOfAdministration.getMonth(),
+		doa = new GregorianCalendar(dateOfAdministration.getYear(), dateOfAdministration.getMonth(),
 				dateOfAdministration.getDay());
 		vaccAgainst = vect.getCheckedElementsAsCommaSeparatedString();
-		
+
 		super.okPressed();
 	}
-	
-	public TimeTool getDateOfAdministration(){
+
+	public TimeTool getDateOfAdministration() {
 		return new TimeTool(doa.getTime());
 	}
-	
-	public String getAdministratorString(){
+
+	public String getAdministratorString() {
 		return administratorString;
 	}
-	
-	public String getLotNo(){
+
+	public String getLotNo() {
 		return lotNo;
 	}
-	
-	public String getAtcCode(){
+
+	public String getAtcCode() {
 		return articleAtcCode;
 	}
-	
-	public String getArticleString(){
+
+	public String getArticleString() {
 		return articleString;
 	}
-	
-	public String getEAN(){
+
+	public String getEAN() {
 		return articleEAN;
 	}
-	
-	public boolean isSupplement(){
+
+	public boolean isSupplement() {
 		return isSupplement;
 	}
-	
-	public String getVaccAgainst(){
+
+	public String getVaccAgainst() {
 		return vaccAgainst;
 	}
-	
+
 	private class DiseaseTreeContentProvider implements ITreeContentProvider {
-		
+
 		@Override
-		public void dispose(){}
-		
+		public void dispose() {
+		}
+
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
-		
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+
 		@Override
-		public Object[] getElements(Object inputElement){
+		public Object[] getElements(Object inputElement) {
 			return DiseaseDefinitionModel.getDiseaseDefinitions().toArray();
 		}
-		
+
 		@Override
-		public Object[] getChildren(Object parentElement){
+		public Object[] getChildren(Object parentElement) {
 			return null;
 		}
-		
+
 		@Override
-		public Object getParent(Object element){
+		public Object getParent(Object element) {
 			return (DiseaseDefinition) element;
 		}
-		
+
 		@Override
-		public boolean hasChildren(Object element){
+		public boolean hasChildren(Object element) {
 			return false;
 		}
 	}
-	
+
 	private class DiseaseTreeLabelProvider implements ILabelProvider {
-		
+
 		@Override
-		public void addListener(ILabelProviderListener listener){}
-		
+		public void addListener(ILabelProviderListener listener) {
+		}
+
 		@Override
-		public void dispose(){}
-		
+		public void dispose() {
+		}
+
 		@Override
-		public boolean isLabelProperty(Object element, String property){
+		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
-		
+
 		@Override
-		public void removeListener(ILabelProviderListener listener){}
-		
+		public void removeListener(ILabelProviderListener listener) {
+		}
+
 		@Override
-		public Image getImage(Object element){
+		public Image getImage(Object element) {
 			return null;
 		}
-		
+
 		@Override
-		public String getText(Object element){
+		public String getText(Object element) {
 			return ((DiseaseDefinition) element).getDiseaseLabel();
 		}
 	}

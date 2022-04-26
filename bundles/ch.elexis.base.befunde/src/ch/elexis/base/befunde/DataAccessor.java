@@ -28,29 +28,29 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Access data stored in Befunde Access syntax is: Befunde-Data:Patient:all:BD
- * 
+ *
  * @see ch.elexis.util.IDataAccess
  * @author gerry
- * 
+ *
  */
 public class DataAccessor implements IDataAccess {
 	private static final String FIRST = "first";//$NON-NLS-1$
 	private static final String LAST = "last";//$NON-NLS-1$
 	private static final String ALL = "all"; //$NON-NLS-1$
-	
+
 	private static final String PREFIX_DATE = "[Befunde-Data:Patient:-:";
 	private static final String PREFIX_FIRST = "[Befunde-Data:Patient:first:";
 	private static final String PREFIX_LAST = "[Befunde-Data:Patient:last:";
 	private static final String PREFIX_ALL = "[Befunde-Data:Patient:all:";
 	private static final String SUFFIX = "]";
-	
+
 	Map<String, String> hash;
 	Hashtable<String, String[]> columns;
 	ArrayList<String> parameters;
 	private TimeTool today;
-	
+
 	@SuppressWarnings("unchecked")
-	public DataAccessor(){
+	public DataAccessor() {
 		Messwert setup = Messwert.getSetup();
 		columns = new Hashtable<String, String[]>();
 		parameters = new ArrayList<String>();
@@ -69,46 +69,46 @@ public class DataAccessor implements IDataAccess {
 		}
 		today = new TimeTool();
 	}
-	
-	public String getDescription(){
-		return Messages.DataAccessor_dataInBefundePlugin; //$NON-NLS-1$
+
+	public String getDescription() {
+		return Messages.DataAccessor_dataInBefundePlugin; // $NON-NLS-1$
 	}
-	
-	public String getName(){
-		return Messages.DataAccessor_data; //$NON-NLS-1$
+
+	public String getName() {
+		return Messages.DataAccessor_data; // $NON-NLS-1$
 	}
-	
+
 	/**
 	 * A list of the available placeholders. <br>
-	 * For each available type of {@link Messwert} the following placeholders will be delivered
+	 * For each available type of {@link Messwert} the following placeholders will
+	 * be delivered
 	 * <p>
 	 * [Befunde-Data:Patient:-:TypeName:20150408] <br>
 	 * [Befunde-Data:Patient:first:TypeName]<br>
 	 * [Befunde-Data:Patient:last:TypeName]<br>
 	 * [Befunde-Data:Patient:all:TypeName]
 	 * </p>
-	 * 
+	 *
 	 * @return list of placeholders to be integrated
 	 */
-	public List<Element> getList(){
+	public List<Element> getList() {
 		List<Element> ret = new ArrayList<Element>(parameters.size());
 		for (String n : parameters) {
 			// placeholder for finding of specific date
-			String placeholder =
-				PREFIX_DATE + n + ":" + today.toString(TimeTool.DATE_COMPACT) + SUFFIX;
+			String placeholder = PREFIX_DATE + n + ":" + today.toString(TimeTool.DATE_COMPACT) + SUFFIX;
 			String readableName = n + " - " + Messages.DataAccessor_date;
 			ret.add(createElement(readableName, placeholder));
-			
+
 			// placeholder for first finding
 			placeholder = PREFIX_FIRST + n + SUFFIX;
 			readableName = n + " - " + Messages.DataAccessor_first;
 			ret.add(createElement(readableName, placeholder));
-			
+
 			// placeholder for last finding
 			placeholder = PREFIX_LAST + n + SUFFIX;
 			readableName = n + " - " + Messages.DataAccessor_last;
 			ret.add(createElement(readableName, placeholder));
-			
+
 			// placeholder for all findings
 			placeholder = PREFIX_ALL + n + SUFFIX;
 			readableName = n + " - " + Messages.DataAccessor_all;
@@ -116,39 +116,34 @@ public class DataAccessor implements IDataAccess {
 		}
 		return ret;
 	}
-	
-	private IDataAccess.Element createElement(String readableName, String placeholder){
-		return new IDataAccess.Element(IDataAccess.TYPE.STRING, readableName, placeholder,
-			Patient.class, 1);
+
+	private IDataAccess.Element createElement(String readableName, String placeholder) {
+		return new IDataAccess.Element(IDataAccess.TYPE.STRING, readableName, placeholder, Patient.class, 1);
 	}
-	
+
 	/**
 	 * return the Object denoted by the given description
-	 * 
-	 * @param descriptor
-	 *            description of the data: dataname.row if row is omitted: all rows
-	 * @param dependentObject
-	 *            ad this time, only Patient is supported
-	 * @param dates
-	 *            one off all,first, last,date
-	 * @param params
-	 *            not used
+	 *
+	 * @param descriptor      description of the data: dataname.row if row is
+	 *                        omitted: all rows
+	 * @param dependentObject ad this time, only Patient is supported
+	 * @param dates           one off all,first, last,date
+	 * @param params          not used
 	 */
-	
-	public Result<Object> getObject(final String descriptor,
-		final PersistentObject dependentObject, final String dates, final String[] params){
+
+	public Result<Object> getObject(final String descriptor, final PersistentObject dependentObject, final String dates,
+			final String[] params) {
 		Result<Object> ret = null;
 		if (!(dependentObject instanceof Patient)) {
-			ret =
-				new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
-					Messages.DataAccessor_invalidParameter, //$NON-NLS-1$
+			ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
+					Messages.DataAccessor_invalidParameter, // $NON-NLS-1$
 					dependentObject, true);
 		} else {
 			Patient pat = (Patient) dependentObject;
 			String[] data = descriptor.split("\\."); //$NON-NLS-1$
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
 			qbe.add(Messwert.FLD_PATIENT_ID, Query.EQUALS, pat.getId());
-			qbe.add(Messwert.FLD_NAME, Query.EQUALS, data[0]); //$NON-NLS-1$ //$NON-NLS-2$
+			qbe.add(Messwert.FLD_NAME, Query.EQUALS, data[0]); // $NON-NLS-1$ //$NON-NLS-2$
 			List<Messwert> list = qbe.execute();
 			String[][] values;
 			String[] cols = columns.get(data[0]);
@@ -169,7 +164,7 @@ public class DataAccessor implements IDataAccess {
 					for (Messwert m : list) {
 						String date = m.get(Messwert.FLD_DATE);
 						values[i][0] = new TimeTool(date).toString(TimeTool.DATE_GER);
-						Map befs = m.getMap(Messages.DataAccessor_0); //$NON-NLS-1$
+						Map befs = m.getMap(Messages.DataAccessor_0); // $NON-NLS-1$
 						for (int j = 1; j < cols.length; j++) {
 							String vv = (String) befs.get(keys[j]);
 							values[i][j] = vv;
@@ -183,7 +178,7 @@ public class DataAccessor implements IDataAccess {
 						}
 					}
 					ret = new Result<Object>(values);
-				} else if (dates.equals(LAST)) { //$NON-NLS-1$
+				} else if (dates.equals(LAST)) { // $NON-NLS-1$
 					TimeTool today = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 					for (Messwert m : list) {
 						TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
@@ -193,15 +188,14 @@ public class DataAccessor implements IDataAccess {
 						}
 					}
 					if (mwrt == null) {
-						ret =
-							new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
-								Messages.DataAccessor_notFound, //$NON-NLS-1$
+						ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
+								Messages.DataAccessor_notFound, // $NON-NLS-1$
 								params, true);
 					}
-					
-				} else if (dates.equals(FIRST)) { //$NON-NLS-1$
+
+				} else if (dates.equals(FIRST)) { // $NON-NLS-1$
 					TimeTool firstdate = null;
-					
+
 					if (list.size() > 0) {
 						mwrt = list.get(0);
 						firstdate = new TimeTool(mwrt.get(Messwert.FLD_DATE));
@@ -214,18 +208,18 @@ public class DataAccessor implements IDataAccess {
 							}
 						}
 					}
-					
+
 					if (mwrt == null) {
-						ret = new Result<Object>(Result.SEVERITY.ERROR,
-							IDataAccess.OBJECT_NOT_FOUND, Messages.DataAccessor_notFound, //$NON-NLS-1$
-							params, true);
+						ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
+								Messages.DataAccessor_notFound, // $NON-NLS-1$
+								params, true);
 					}
 				} else { // bestimmtes Datum
 					TimeTool find = new TimeTool();
 					if (find.set(params[0]) == false) {
-						ret = new Result<Object>(Result.SEVERITY.ERROR,
-							IDataAccess.INVALID_PARAMETERS, Messages.DataAccessor_dateExpected, //$NON-NLS-1$
-							params, true);
+						ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
+								Messages.DataAccessor_dateExpected, // $NON-NLS-1$
+								params, true);
 					} else {
 						for (Messwert m : list) {
 							TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
@@ -234,14 +228,13 @@ public class DataAccessor implements IDataAccess {
 								break;
 							}
 						}
-						
+
 						// no entry for this date found - display error with date and descriptor
 						if (mwrt == null) {
-							ret =
-								new Result<Object>(Result.SEVERITY.ERROR,
-									IDataAccess.OBJECT_NOT_FOUND,
+							ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
 									descriptor + " [" + find.toString(TimeTool.DATE_GER) + "] " //$NON-NLS-2$
-										+ Messages.DataAccessor_notFound, params, true);
+											+ Messages.DataAccessor_notFound,
+									params, true);
 						}
 					}
 				}
@@ -259,15 +252,14 @@ public class DataAccessor implements IDataAccess {
 						// Bei Feldnamen in der Form Fn benutzen wir n als Index
 						// sonst wird einfach die Spaltenueberschrift benutzt.
 						// F0 entspricht dabei dem Datum
-						
+
 						if (fname.matches("F[0-9]*")) { //$NON-NLS-1$
 							int index = Integer.parseInt(num);
 							if (index < values[1].length) {
 								ret = new Result<Object>(values[1][index]);
 							} else {
-								ret = new Result<Object>(Result.SEVERITY.ERROR,
-									IDataAccess.INVALID_PARAMETERS,
-									Messages.DataAccessor_invalidFieldIndex, fname, true); //$NON-NLS-1$
+								ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
+										Messages.DataAccessor_invalidFieldIndex, fname, true); // $NON-NLS-1$
 							}
 						} else {
 							for (int j = 0; (j < keys.length) && (ret == null); j++) {
@@ -276,9 +268,8 @@ public class DataAccessor implements IDataAccess {
 								}
 							}
 							if (ret == null) {
-								ret = new Result<Object>(Result.SEVERITY.ERROR,
-									IDataAccess.INVALID_PARAMETERS,
-									Messages.DataAccessor_invalidFieldName, fname, true); //$NON-NLS-1$
+								ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
+										Messages.DataAccessor_invalidFieldName, fname, true); // $NON-NLS-1$
 							}
 						}
 					} else {

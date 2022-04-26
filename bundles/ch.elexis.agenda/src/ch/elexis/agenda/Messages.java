@@ -7,20 +7,20 @@
  *
  * Contributors:
  *    Gerry Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.agenda;
 
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-	
+
 	private static final String BUNDLE_NAME = "ch.elexis.agenda.messages"; //$NON-NLS-1$
-	
-	private Messages(){
+
+	private Messages() {
 		// Do not instantiate
 	}
-	
+
 	public static String TagesView_showToday;
 	public static String TagesView_previousDay;
 	public static String TagesView_selectDay;
@@ -38,7 +38,7 @@ public final class Messages extends NLS {
 	public static String TagesView_bereich;
 	public static String TagesView_selectBereich;
 	public static String TagesView_praxis;
-	
+
 	public static String Termin_appCantBeChanged;
 	public static String Termin_appointment_locked;
 	public static String Termin_deleted;
@@ -86,7 +86,7 @@ public final class Messages extends NLS {
 	public static String TerminDialog_noPatSelected;
 	public static String TerminDialog_40;
 	public static String TerminDialog_Mandator;
-	
+
 	public static String TerminDialog_past;
 	public static String TerminDialog_print;
 	public static String AgendaFarben_appstateTypes;
@@ -120,11 +120,11 @@ public final class Messages extends NLS {
 	public static String AgendaDefinitionen_shortCutsForBer;
 	public static String AgendaDefinitionen_shortCutsForBerToUser;
 	public static String Tageseinteilung_no_past_Date;
-	
+
 	public static String AgendaAnzeige_options;
 	public static String AgendaAnzeige_showReason;
 	public static String AgendaAnzeige_saveColumnSize;
-	
+
 	public static String Synchronizer_connctNotSuccessful;
 	public static String AgendaActions_unblock;
 	public static String AgendaActions_state;
@@ -143,7 +143,7 @@ public final class Messages extends NLS {
 	public static String BaseAgendaView_printListOfDay;
 	public static String BaseAgendaView_printPatAppointments;
 	public static String BaseView_dayLimits;
-	
+
 	public static String BaseView_errorHappendPrinting;
 	public static String BaseView_errorWhilePrinting;
 	public static String BaseView_exportAgenda;
@@ -193,7 +193,7 @@ public final class Messages extends NLS {
 	public static String Tageseinteilung_btnNewButton_text;
 	public static String AgendaDefinitionPreferencePage_mntmNewItem_text;
 	public static String AgendaDefinitionPreferencePage_lblAreaTypeLabel_text;
-	
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

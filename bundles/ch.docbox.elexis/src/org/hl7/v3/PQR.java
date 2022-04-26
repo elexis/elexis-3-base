@@ -6,17 +6,18 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * 
- * A representation of a physical quantity in a unit from any code system. Used to show alternative
- * representation for a physical quantity.
- * 
- * 
+ *
+ * A representation of a physical quantity in a unit from any code system. Used
+ * to show alternative representation for a physical quantity.
+ *
+ *
  * <p>
  * Java class for PQR complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="PQR">
  *   &lt;complexContent>
@@ -26,39 +27,38 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PQR")
 public class PQR extends CV {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	@XmlAttribute
 	protected String value;
-	
+
 	/**
 	 * Gets the value of the value property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getValue(){
+	public String getValue() {
 		return value;
 	}
-	
+
 	/**
 	 * Sets the value of the value property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setValue(String value){
+	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 }

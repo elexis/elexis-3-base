@@ -42,8 +42,7 @@ public final class AppointmentCardHandler extends AbstractHandler {
 			String docName = PreferenceConstants.APPOINTMENT_CARD;
 			IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-			String printerName =
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document AppointmentCard on printer: " + printerName);
 			PrintProvider.print(fo, printerName);
 		} catch (Exception e) {

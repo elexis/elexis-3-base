@@ -26,64 +26,60 @@ import net.medshare.connector.viollier.ses.PortalCookieService;
 
 public class OrderStateHandler extends AbstractHandler {
 	private static Logger log = LoggerFactory.getLogger(OrderStateHandler.class);
-	
+
 	private ViollierConnectorSettings mySettings;
 	private String httpsUrl;
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String vorname = "";
 		String name = "";
 		String geburtsdatum = "";
 		String doctor = "";
 		String cookie = "";
-		
-		mySettings =
-			new ViollierConnectorSettings(
-				(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
+
+		mySettings = new ViollierConnectorSettings((Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 		httpsUrl = mySettings.getGlobalLoginUrl();
-		
+
 		// Cookie holen
 		try {
 			cookie = new PortalCookieService().getCookie();
-			
+
 		} catch (IOException e) {
 			log.error("Error getting cookie", e);
 			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleGetCookie,
-				Messages.Handler_errorMessageGetCookie + e.getMessage());
+					Messages.Handler_errorMessageGetCookie + e.getMessage());
 		} catch (ElexisException e) {
 			log.error("No username/password defined", e);
-			MessageDialog.openError(new Shell(),
-				Messages.Exception_errorTitleNoUserPasswordDefined, e.getMessage());
+			MessageDialog.openError(new Shell(), Messages.Exception_errorTitleNoUserPasswordDefined, e.getMessage());
 		}
 		httpsUrl += "&RCSession=" + cookie;
-		
+
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
 		if (patient != null) {
 			try {
-				httpsUrl +=
-					"&appPath=" + URLEncoder.encode("/orderit/viewOrderStatusFromGP?", "UTF-8");
+				httpsUrl += "&appPath=" + URLEncoder.encode("/orderit/viewOrderStatusFromGP?", "UTF-8");
 				vorname = patient.getVorname();
 				httpsUrl += URLEncoder.encode("&firstname=" + vorname, "UTF-8");
 				name = patient.getName();
 				httpsUrl += URLEncoder.encode("&surname=" + name, "UTF-8");
 				geburtsdatum = convertDate(patient.getGeburtsdatum());
 				httpsUrl += URLEncoder.encode("&dateOfBirth=" + geburtsdatum, "UTF-8");
-				
+
 				if (mySettings.getMandantUseGlobalSettings())
 					doctor = mySettings.getGlobalViollierClientId();
 				else
 					doctor = mySettings.getMandantViollierClientId();
-				
+
 				if (!doctor.isEmpty()) {
 					httpsUrl += URLEncoder.encode("&doctor=" + doctor, "UTF-8");
 				}
-				
+
 			} catch (UnsupportedEncodingException e) {
 				log.error("Encoding not supported", e);
 			}
 		}
-		
+
 		// Browser OrderIT öffnen
 		try {
 			IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
@@ -94,14 +90,14 @@ public class OrderStateHandler extends AbstractHandler {
 		}
 		return null;
 	}
-	
-	private String convertDate(String gebDat){
+
+	private String convertDate(String gebDat) {
 		if (gebDat.isEmpty())
 			return "";
 		String tempDay = gebDat.substring(0, 2);
 		String tempMonth = gebDat.substring(3, 5);
 		String tempYear = gebDat.substring(6);
-		
+
 		return tempYear + "-" + tempMonth + "-" + tempDay;
 	}
 }

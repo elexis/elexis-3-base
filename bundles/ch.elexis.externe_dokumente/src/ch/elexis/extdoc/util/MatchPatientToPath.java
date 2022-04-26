@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Niklaus Giger <niklaus.giger@member.fsf.org> - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.extdoc.util;
@@ -27,9 +27,9 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.util.Log;
 
 /***
- * 
+ *
  * @author Niklaus Giger <niklaus.giger@member.fsf.org>
- * 
+ *
  */
 public class MatchPatientToPath {
 
@@ -38,7 +38,7 @@ public class MatchPatientToPath {
 
 	/***
 	 * Constructor: Create a new object for this patient
-	 * 
+	 *
 	 * @param patient
 	 */
 	public MatchPatientToPath(Patient patient) {
@@ -50,13 +50,11 @@ public class MatchPatientToPath {
 		System.out.println(logEntry);
 	}
 
-	public static String[] getFirstAndFamilyNameFromPathOldConvention(
-			String fullPathname) {
+	public static String[] getFirstAndFamilyNameFromPathOldConvention(String fullPathname) {
 		String basename = new File(fullPathname).getName();
 		if (basename.length() <= 6)
-			return new String[] { "", basename.replaceFirst(" *$", "")};
-		String lastname = cleanName(basename.substring(0, 6).replaceFirst(
-				" *$", ""));
+			return new String[] { "", basename.replaceFirst(" *$", "") };
+		String lastname = cleanName(basename.substring(0, 6).replaceFirst(" *$", ""));
 		basename = basename.substring(6);
 		String separatedBySpace = ".*[. \\s].*";
 		if (basename.matches(separatedBySpace)) {
@@ -69,32 +67,26 @@ public class MatchPatientToPath {
 	static public boolean MoveIntoSubDir(String path) {
 		Patient pat = MatchPatientToPath.filenameBelongsToSomePatient(path);
 		if (pat == null) {
-			logAndConsole(
-					"No unique patient found for " + path, ch.rgw.tools.Log.WARNINGS); //$NON-NLS-1$
+			logAndConsole("No unique patient found for " + path, ch.rgw.tools.Log.WARNINGS); //$NON-NLS-1$
 			return false;
 		} else {
 			MatchPatientToPath m = new MatchPatientToPath(pat);
-			String dest = m.ShouldBeMovedToThisSubDir(path,
-					pat.getGeburtsdatum());
+			String dest = m.ShouldBeMovedToThisSubDir(path, pat.getGeburtsdatum());
 			File destDir = new File(dest).getParentFile();
 			if (!destDir.exists() && !destDir.mkdir()) {
-				logAndConsole(String.format(
-						"Could not create subdir %1s created for patient %2s", //$NON-NLS-1$
-						destDir.getAbsolutePath(), pat.toString()),
-						ch.rgw.tools.Log.WARNINGS);
+				logAndConsole(String.format("Could not create subdir %1s created for patient %2s", //$NON-NLS-1$
+						destDir.getAbsolutePath(), pat.toString()), ch.rgw.tools.Log.WARNINGS);
 				return false;
 			}
 
-			logAndConsole(String.format(
-					"MoveIntoSubDir: %1s renameTo %2s", path, dest), //$NON-NLS-1$
+			logAndConsole(String.format("MoveIntoSubDir: %1s renameTo %2s", path, dest), //$NON-NLS-1$
 					ch.rgw.tools.Log.INFOS);
 			boolean success = new File(path).renameTo(new File(dest));
 			return true;
 		}
 	}
 
-	private static String basenameMustBeginWith(String lastname,
-			String firstname) {
+	private static String basenameMustBeginWith(String lastname, String firstname) {
 		firstname = firstToken(firstname);
 
 		lastname = cleanName(lastname);
@@ -119,7 +111,7 @@ public class MatchPatientToPath {
 
 	/***
 	 * Look for first patient with a matching first and family name
-	 * 
+	 *
 	 * @param vorname
 	 * @param nachname
 	 * @return
@@ -133,26 +125,24 @@ public class MatchPatientToPath {
 	}
 
 	/***
-	 * Global: Checks whether the pathname, first and lastname match our
-	 * conventions Checks basename and parent directory
-	 * 
+	 * Global: Checks whether the pathname, first and lastname match our conventions
+	 * Checks basename and parent directory
+	 *
 	 * @param fullPathname
 	 * @param familyName
 	 * @param firstName
 	 * @return
 	 */
-	public static boolean filenameIsValid(String fullPathname,
-			String familyName, String firstName) {
+	public static boolean filenameIsValid(String fullPathname, String familyName, String firstName) {
 		String mustBeginWith = basenameMustBeginWith(familyName, firstName);
 		File path = new File(fullPathname);
 		File parent = new File(path.getParent());
-		return path.getName().startsWith(mustBeginWith)
-				|| parent.getName().startsWith(mustBeginWith);
+		return path.getName().startsWith(mustBeginWith) || parent.getName().startsWith(mustBeginWith);
 	}
 
 	/***
 	 * Global: Checks whether the pathname matches an existing patient
-	 * 
+	 *
 	 * @param fullPathname
 	 * @return patient or null if not none found
 	 */
@@ -163,34 +153,31 @@ public class MatchPatientToPath {
 			return patienten.get(0);
 		else {
 			logAndConsole(
-					String.format(
-							"No unique patient found for %1s => %2s %3s (found %d) ", fullPathname, names[0], //$NON-NLS-1$
-							names[1], patienten.size()), Log.WARNINGS);
+					String.format("No unique patient found for %1s => %2s %3s (found %d) ", fullPathname, names[0], //$NON-NLS-1$
+							names[1], patienten.size()),
+					Log.WARNINGS);
 			return null;
 		}
 	}
 
 	/***
 	 * Return a list of files which belong to this patient
-	 * 
+	 *
 	 * @param actPatient
-	 * @param activePaths
-	 *            or null to search on all
+	 * @param activePaths or null to search on all
 	 * @return a list of files or an error String
 	 */
-	public static Object getFilesForPatient(Patient actPatient,
-			String[] activePaths) {
+	public static Object getFilesForPatient(Patient actPatient, String[] activePaths) {
 		Object result;
 		if (activePaths == null)
 			activePaths = PreferenceConstants.getActiveBasePaths();
-		FilenameFilter filter = new FileFilters(actPatient.getName(),
-				actPatient.getVorname());
-		List<File> list = ListFiles.getList(activePaths, actPatient.getName(),
-				actPatient.getVorname(), actPatient.getGeburtsdatum(), filter);
+		FilenameFilter filter = new FileFilters(actPatient.getName(), actPatient.getVorname());
+		List<File> list = ListFiles.getList(activePaths, actPatient.getName(), actPatient.getVorname(),
+				actPatient.getGeburtsdatum(), filter);
 		/*
 		 * List<File> oldFiles = getAllOldConventionFilesWithFilter(filter);
-		 * Iterator<File> iterator = oldFiles.iterator(); while
-		 * (iterator.hasNext()) { list.add(iterator.next()); }
+		 * Iterator<File> iterator = oldFiles.iterator(); while (iterator.hasNext()) {
+		 * list.add(iterator.next()); }
 		 */
 		if (list.size() > 0) {
 			result = list;
@@ -201,7 +188,7 @@ public class MatchPatientToPath {
 	}
 
 	/***
-	 * 
+	 *
 	 * @param name
 	 * @return name with dashes, underscores removed
 	 */
@@ -218,7 +205,7 @@ public class MatchPatientToPath {
 	}
 
 	/***
-	 * 
+	 *
 	 * @param fullPathName
 	 * @return maximal 6 chars of familyName. Spaces removed
 	 */
@@ -247,28 +234,23 @@ public class MatchPatientToPath {
 	/***
 	 * Returns a pathname where the file should be stored according to the new
 	 * convention
-	 * 
+	 *
 	 * @param fullPathname
 	 * @return null if already stored in the correct place, else new pathname
 	 */
-	public String ShouldBeMovedToThisSubDir(String oldPathname,
-			String geburtsDatum) {
+	public String ShouldBeMovedToThisSubDir(String oldPathname, String geburtsDatum) {
 		String basename = new File(oldPathname).getName();
 		String dirname = new File(oldPathname).getParent();
 		// Convert 31.02.79 -> 1979-02-31
-		String s = dirname
-				+ File.separatorChar
-				+ (new File(getSubDirPath(pat)).getName())
-				+ " " + geburtsDatumToCanonical(geburtsDatum) + File.separatorChar + basename; 
-		return dirname
-				+ File.separatorChar
-				+ (new File(getSubDirPath(pat)).getName())
-				+ " " + geburtsDatumToCanonical(geburtsDatum) + File.separatorChar + basename; //$NON-NLS-1$
+		String s = dirname + File.separatorChar + (new File(getSubDirPath(pat)).getName()) + " "
+				+ geburtsDatumToCanonical(geburtsDatum) + File.separatorChar + basename;
+		return dirname + File.separatorChar + (new File(getSubDirPath(pat)).getName()) + " " //$NON-NLS-1$
+				+ geburtsDatumToCanonical(geburtsDatum) + File.separatorChar + basename;
 	}
 
 	/***
 	 * Get all files corresponding to the old convention
-	 * 
+	 *
 	 * @return a list of string
 	 */
 	public static java.util.List<File> getAllOldConventionFiles() {

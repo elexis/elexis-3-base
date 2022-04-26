@@ -37,79 +37,73 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 public class IEncounterServiceTest {
-	
-	private final IEncounterService encounterService = AllTestsSuite.getEncounterService(); 
+
+	private final IEncounterService encounterService = AllTestsSuite.getEncounterService();
 	private final IBillingService billingService = AllTestsSuite.getBillingService();
 	private final IModelService coreModelService = AllTestsSuite.getCoreModelService();
-	
+
 	private TarmedLeistung code_000010 = TarmedLeistung.getFromCode("00.0010", "KVG");
 	private TarmedLeistung code_000015 = TarmedLeistung.getFromCode("00.0015", "KVG");
 	private TarmedLeistung code_000020 = TarmedLeistung.getFromCode("00.0020", "KVG");
-	
+
 	private TarmedLeistung code_000516_kvgOnly = TarmedLeistung.getFromCode("00.0516", "KVG");
-	
+
 	private IMandator mandator;
 	private IPatient patient;
 	private ICoverage coverage;
 	private IEncounter encounter;
-	
+
 	private Result<IBilled> status;
-	
+
 	@Before
-	public void before(){
+	public void before() {
 		assertNotNull(code_000010);
-		
+
 		TimeTool timeTool = new TimeTool();
-		IPerson _mandator =
-			new IContactBuilder.PersonBuilder(coreModelService, "mandator1 " + timeTool.toString(),
-				"Anton" + timeTool.toString(), timeTool.toLocalDate(), Gender.MALE).mandator()
-					.buildAndSave();
+		IPerson _mandator = new IContactBuilder.PersonBuilder(coreModelService, "mandator1 " + timeTool.toString(),
+				"Anton" + timeTool.toString(), timeTool.toLocalDate(), Gender.MALE).mandator().buildAndSave();
 		mandator = coreModelService.load(_mandator.getId(), IMandator.class).get();
-		patient = new IContactBuilder.PatientBuilder(coreModelService, "Armer",
-			"Anton" + timeTool.toString(), timeTool.toLocalDate().minusYears(8), Gender.MALE).buildAndSave();
-		coverage =
-			new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")
+		patient = new IContactBuilder.PatientBuilder(coreModelService, "Armer", "Anton" + timeTool.toString(),
+				timeTool.toLocalDate().minusYears(8), Gender.MALE).buildAndSave();
+		coverage = new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")
 				.buildAndSave();
 		assertEquals(BillingLaw.KVG, coverage.getBillingSystem().getLaw());
 		encounter = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
-		
+
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
 	}
-	
+
 	@After
-	public void after(){
+	public void after() {
 		coreModelService.remove(encounter);
 		coreModelService.remove(coverage);
 		coreModelService.remove(patient);
 		coreModelService.remove(mandator);
 		status = null;
 	}
-	
+
 	@Test
-	public void addDefaultDiagnosis(){
+	public void addDefaultDiagnosis() {
 		assertEquals(0, encounter.getDiagnoses().size());
 		encounterService.addDefaultDiagnosis(encounter);
 		coreModelService.refresh(encounter);
 		assertEquals(0, encounter.getDiagnoses().size());
-		
-		ConfigServiceHolder.get().get().setActiveUserContact(Preferences.USR_DEFDIAGNOSE,
-			"ch.elexis.data.TICode::U9");
+
+		ConfigServiceHolder.get().get().setActiveUserContact(Preferences.USR_DEFDIAGNOSE, "ch.elexis.data.TICode::U9");
 		encounterService.addDefaultDiagnosis(encounter);
 		coreModelService.refresh(encounter);
 		assertEquals(1, encounter.getDiagnoses().size());
 	}
-	
+
 	@Test
 	@Ignore
 	// FIXME
-	public void testTransferKonsFromKVGToUVGFall_rechargedPrice(){
+	public void testTransferKonsFromKVGToUVGFall_rechargedPrice() {
 
-		
-		ICoverage coverageUVG =
-			new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "UVG")
+		ICoverage coverageUVG = new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "UVG")
 				.buildAndSave();
 		assertEquals(BillingLaw.UVG, coverageUVG.getBillingSystem().getLaw());
-		
+
 		status = billingService.bill(code_000010, encounter, 1);
 		assertTrue(status.isOK());
 		status = billingService.bill(code_000015, encounter, 1);
@@ -121,7 +115,7 @@ public class IEncounterServiceTest {
 		status = billingService.bill(code_000516_kvgOnly, encounter, 3);
 		assertTrue(status.toString(), status.isOK());
 		assertEquals(3, status.get().getAmount(), 0.01d);
-		
+
 		IBilled billed_kvg_000010 = null;
 		IBilled billed_kvg_000015 = null;
 		List<IBilled> billed_beforeTransfer = encounter.getBilled();
@@ -136,34 +130,29 @@ public class IEncounterServiceTest {
 			fail();
 			return;
 		}
-		
+
 		assertEquals(BillingLaw.KVG, encounter.getCoverage().getBillingSystem().getLaw());
 		List<IBilled> billed = encounter.getBilled();
 		assertTrue(billed.contains(billed_kvg_000010));
 		assertTrue(billed.contains(billed_kvg_000015));
-		
-		Result<IEncounter> result =
-			encounterService.transferToCoverage(encounter, coverageUVG, false);
+
+		Result<IEncounter> result = encounterService.transferToCoverage(encounter, coverageUVG, false);
 		assertFalse(result.toString(), result.isOK());
 		assertEquals(BillingLaw.UVG, result.get().getCoverage().getBillingSystem().getLaw());
 		coreModelService.refresh(billed_kvg_000010);
 		assertTrue(billed_kvg_000010.isDeleted());
 		coreModelService.refresh(billed_kvg_000015);
 		assertTrue(billed_kvg_000015.isDeleted());
-		
+
 		List<IBilled> billed_afterTransfer = result.get().getBilled();
 		for (IBilled iBilled : billed_afterTransfer) {
 			if ("00.0010".equals(iBilled.getCode())) {
-				assertTrue(
-					iBilled.getBillable().getId() + " KVG: " + billed_kvg_000010.getPrice()
-						+ " / UVG: " + iBilled.getPrice(),
-					billed_kvg_000010.getPrice().isMoreThan(iBilled.getPrice()));
+				assertTrue(iBilled.getBillable().getId() + " KVG: " + billed_kvg_000010.getPrice() + " / UVG: "
+						+ iBilled.getPrice(), billed_kvg_000010.getPrice().isMoreThan(iBilled.getPrice()));
 				assertEquals(1, iBilled.getAmount(), 0);
 			} else if ("00.0015".equals(iBilled.getCode())) {
-				assertTrue(
-					iBilled.getBillable().getId() + " KVG: " + billed_kvg_000015.getPrice()
-						+ " / UVG: " + iBilled.getPrice(),
-					billed_kvg_000015.getPrice().isMoreThan(iBilled.getPrice()));
+				assertTrue(iBilled.getBillable().getId() + " KVG: " + billed_kvg_000015.getPrice() + " / UVG: "
+						+ iBilled.getPrice(), billed_kvg_000015.getPrice().isMoreThan(iBilled.getPrice()));
 				assertEquals(1, iBilled.getAmount(), 0);
 			} else if ("00.0020".equals(iBilled.getCode())) {
 				assertEquals(2, iBilled.getAmount(), 0);
@@ -171,7 +160,7 @@ public class IEncounterServiceTest {
 				fail("Position 00.0516 should have been removed (KVG only)");
 			}
 		}
-		
+
 	}
-	
+
 }

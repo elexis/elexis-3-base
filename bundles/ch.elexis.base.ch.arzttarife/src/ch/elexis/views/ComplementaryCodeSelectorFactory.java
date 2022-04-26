@@ -37,95 +37,88 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 public class ComplementaryCodeSelectorFactory extends CodeSelectorFactory {
-	
-	public ComplementaryCodeSelectorFactory(){
+
+	public ComplementaryCodeSelectorFactory() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		cv.setSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
-			public void selectionChanged(SelectionChangedEvent event){
+			public void selectionChanged(SelectionChangedEvent event) {
 				TableViewer tv = (TableViewer) event.getSource();
 				StructuredSelection ss = (StructuredSelection) tv.getSelection();
 				if (!ss.isEmpty()) {
 					IComplementaryLeistung selected = (IComplementaryLeistung) ss.getFirstElement();
-					ContextServiceHolder.get().getRootContext().setNamed(
-						"ch.elexis.views.codeselector.complementary.selection", selected);
+					ContextServiceHolder.get().getRootContext()
+							.setNamed("ch.elexis.views.codeselector.complementary.selection", selected);
 				} else {
 					ContextServiceHolder.get().getRootContext()
-						.setNamed("ch.elexis.views.codeselector.complementary.selection", null);
+							.setNamed("ch.elexis.views.codeselector.complementary.selection", null);
 				}
 			}
 		});
-		FieldDescriptor<?>[] fieldDescriptors =
-			new FieldDescriptor<?>[] {
-				new FieldDescriptor<IComplementaryLeistung>("Code", "code",
-					null),
-				new FieldDescriptor<IComplementaryLeistung>("Text", "codeText", null),
-			};
+		FieldDescriptor<?>[] fieldDescriptors = new FieldDescriptor<?>[] {
+				new FieldDescriptor<IComplementaryLeistung>("Code", "code", null),
+				new FieldDescriptor<IComplementaryLeistung>("Text", "codeText", null), };
 		SelectorPanelProvider slp = new SelectorPanelProvider(fieldDescriptors, true);
-		ViewerConfigurer vc =
-			new ViewerConfigurer(new ComplementaryContentProvider(cv, slp),
-				new DefaultLabelProvider(), slp,
-				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
+		ViewerConfigurer vc = new ViewerConfigurer(new ComplementaryContentProvider(cv, slp),
+				new DefaultLabelProvider(), slp, new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		return vc.setContentType(ContentType.GENERICOBJECT);
 	}
-	
+
 	private class ComplementaryContentProvider extends CommonViewerContentProvider {
-		
+
 		private ControlFieldProvider controlFieldProvider;
-		
-		public ComplementaryContentProvider(CommonViewer commonViewer,
-			ControlFieldProvider controlFieldProvider){
+
+		public ComplementaryContentProvider(CommonViewer commonViewer, ControlFieldProvider controlFieldProvider) {
 			super(commonViewer);
 			this.controlFieldProvider = controlFieldProvider;
 		}
-		
+
 		@Override
-		public Object[] getElements(Object inputElement){
+		public Object[] getElements(Object inputElement) {
 			IQuery<?> query = getBaseQuery();
-			
-			java.util.Optional<IEncounter> encounter =
-				ContextServiceHolder.get().getTyped(IEncounter.class);
+
+			java.util.Optional<IEncounter> encounter = ContextServiceHolder.get().getTyped(IEncounter.class);
 			encounter.ifPresent(e -> {
 				query.and("validFrom", COMPARATOR.LESS_OR_EQUAL, e.getDate());
 				query.and("validTo", COMPARATOR.GREATER_OR_EQUAL, e.getDate());
 			});
-			
+
 			// apply filters from control field provider
 			controlFieldProvider.setQuery(query);
 			applyQueryFilters(query);
 			query.orderBy("code", ORDER.ASC);
 			List<?> elements = query.execute();
-			
+
 			return elements.toArray(new Object[elements.size()]);
 		}
-		
+
 		@Override
-		protected IQuery<?> getBaseQuery(){
-			IQuery<IComplementaryLeistung> query =
-				ArzttarifeModelServiceHolder.get().getQuery(IComplementaryLeistung.class);
+		protected IQuery<?> getBaseQuery() {
+			IQuery<IComplementaryLeistung> query = ArzttarifeModelServiceHolder.get()
+					.getQuery(IComplementaryLeistung.class);
 			query.and("id", COMPARATOR.NOT_EQUALS, "VERSION");
 			return query;
 		}
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return "Komplementärmedizin";
 	}
-	
+
 	@Override
-	public Class<?> getElementClass(){
+	public Class<?> getElementClass() {
 		return IComplementaryLeistung.class;
 	}
 }

@@ -43,19 +43,21 @@ import ch.elexis.data.Xid;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Utility class for mapping objects between the Elexis domain and the ehealthconnector domain.
- * 
- * @see <a href="https://sourceforge.net/projects/ehealthconnector/">ehealthconnector</a>
+ * Utility class for mapping objects between the Elexis domain and the
+ * ehealthconnector domain.
+ *
+ * @see <a href=
+ *      "https://sourceforge.net/projects/ehealthconnector/">ehealthconnector</a>
  * @author thomas
  *
  */
 public class EhcCoreMapper {
-	
+
 	private static TimeTool timeTool = new TimeTool();
-	
+
 	private final static Pattern lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)[a-z]?$");
-	
-	public static Name getEhcName(String name){
+
+	public static Name getEhcName(String name) {
 		String[] parts = name.split(" ");
 		if (parts.length == 1) {
 			return new Name("", parts[0]);
@@ -67,11 +69,10 @@ public class EhcCoreMapper {
 		return new Name("", "");
 	}
 
-	public static Patient getEhcPatient(ch.elexis.data.Patient elexisPatient){
-		Patient ret =
-			new Patient(getEhcPersonName(elexisPatient), getEhcGenderCode(elexisPatient),
+	public static Patient getEhcPatient(ch.elexis.data.Patient elexisPatient) {
+		Patient ret = new Patient(getEhcPersonName(elexisPatient), getEhcGenderCode(elexisPatient),
 				getDate(elexisPatient.getGeburtsdatum()));
-		
+
 		// PHONE
 		Telecoms telecoms = new Telecoms();
 		String value = elexisPatient.get(Kontakt.FLD_PHONE1);
@@ -88,28 +89,25 @@ public class EhcCoreMapper {
 		if (elexisAddress != null) {
 			ret.addAddress(getEhcAddress(elexisAddress));
 		}
-		
+
 		String socialSecurityNumber = elexisPatient.getXid(DOMAIN_AHV);
 		if (socialSecurityNumber != null) {
 			socialSecurityNumber = socialSecurityNumber.trim();
 			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", "");
 			if (socialSecurityNumber.length() == 11) {
-				ret.addId(new Identificator(CodeSystems.SwissSSNDeprecated.getCodeSystemId(),
-					socialSecurityNumber));
+				ret.addId(new Identificator(CodeSystems.SwissSSNDeprecated.getCodeSystemId(), socialSecurityNumber));
 			} else if (socialSecurityNumber.length() == 13) {
-				ret.addId(new Identificator(CodeSystems.SwissSSN.getCodeSystemId(),
-					socialSecurityNumber));
+				ret.addId(new Identificator(CodeSystems.SwissSSN.getCodeSystemId(), socialSecurityNumber));
 			} else {
-				LoggerFactory.getLogger(EhcCoreMapper.class)
-					.warn("Ignoring SSN [" + socialSecurityNumber + "] length "
+				LoggerFactory.getLogger(EhcCoreMapper.class).warn("Ignoring SSN [" + socialSecurityNumber + "] length "
 						+ socialSecurityNumber.length() + " not vaild.");
 			}
 		}
 
 		return ret;
 	}
-	
-	public static Address getEhcAddress(Anschrift elexisAddress){
+
+	public static Address getEhcAddress(Anschrift elexisAddress) {
 		String elexisStreet = elexisAddress.getStrasse();
 		String houseNumber = "";
 		// try to get the house number
@@ -118,15 +116,14 @@ public class EhcCoreMapper {
 			houseNumber = matcher.group(1);
 			elexisStreet = elexisStreet.substring(0, matcher.start(1));
 		}
-		
-		Address ehcAddress =
-			new Address(elexisStreet.trim(), houseNumber, elexisAddress.getPlz(),
+
+		Address ehcAddress = new Address(elexisStreet.trim(), houseNumber, elexisAddress.getPlz(),
 				elexisAddress.getOrt());
 		ehcAddress.setAddressline1(elexisAddress.getStrasse());
 		return ehcAddress;
 	}
-	
-	public static Author getEhcAuthor(Mandant elexisMandant){
+
+	public static Author getEhcAuthor(Mandant elexisMandant) {
 		String gln = elexisMandant.getXid(DOMAIN_EAN);
 		Author ret = new Author(getEhcPersonName(elexisMandant), gln);
 		// add old EAN oid
@@ -152,12 +149,12 @@ public class EhcCoreMapper {
 
 		return ret;
 	}
-	
-	public static Organization getEhcOrganization(Mandant elexisMandant){
+
+	public static Organization getEhcOrganization(Mandant elexisMandant) {
 		Rechnungssteller rechnungssteller = elexisMandant.getRechnungssteller();
 		String gln = rechnungssteller.getXid(DOMAIN_EAN);
 		Organization ret = new Organization(rechnungssteller.getLabel(), gln);
-		
+
 		// PHONE
 		Telecoms telecoms = new Telecoms();
 		String value = rechnungssteller.get(Kontakt.FLD_PHONE1);
@@ -178,15 +175,13 @@ public class EhcCoreMapper {
 		return ret;
 	}
 
-	public static Name getEhcPersonName(Person elexisPerson){
-		Name ret =
-			new Name(elexisPerson.getVorname(), elexisPerson.getName(),
-				elexisPerson.get(Person.TITLE));
-		
+	public static Name getEhcPersonName(Person elexisPerson) {
+		Name ret = new Name(elexisPerson.getVorname(), elexisPerson.getName(), elexisPerson.get(Person.TITLE));
+
 		return ret;
 	}
-	
-	public static AdministrativeGender getEhcGenderCode(Person elexisPerson){
+
+	public static AdministrativeGender getEhcGenderCode(Person elexisPerson) {
 		if (elexisPerson.getGeschlecht().equals(Person.FEMALE)) {
 			return AdministrativeGender.FEMALE;
 		} else if (elexisPerson.getGeschlecht().equals(Person.MALE)) {
@@ -194,21 +189,20 @@ public class EhcCoreMapper {
 		}
 		return AdministrativeGender.UNDIFFERENTIATED;
 	}
-	
-	public static Date getDate(String elexisDate){
+
+	public static Date getDate(String elexisDate) {
 		timeTool.set(elexisDate);
 		return timeTool.getTime();
 	}
-	
-	public static ch.elexis.data.Patient getElexisPatient(Patient ehcPatient){
+
+	public static ch.elexis.data.Patient getElexisPatient(Patient ehcPatient) {
 		// try to look up via ids
 		List<Identificator> ids = ehcPatient.getIds();
 		for (Identificator identificator : ids) {
 			String idRoot = identificator.getRoot();
 			if (idRoot.equals(CodeSystems.SwissSSNDeprecated.getCodeSystemId())
-				|| idRoot.equals(CodeSystems.SwissSSN.getCodeSystemId())) {
-				IPersistentObject ret =
-					Xid.findObject(DOMAIN_AHV, identificator.getExtension());
+					|| idRoot.equals(CodeSystems.SwissSSN.getCodeSystemId())) {
+				IPersistentObject ret = Xid.findObject(DOMAIN_AHV, identificator.getExtension());
 				if (ret instanceof Kontakt) {
 					if (((Kontakt) ret).istPatient()) {
 						return ch.elexis.data.Patient.load(ret.getId());
@@ -220,23 +214,20 @@ public class EhcCoreMapper {
 				}
 			}
 		}
-		
-		Query<ch.elexis.data.Patient> qpa =
-			new Query<ch.elexis.data.Patient>(ch.elexis.data.Patient.class);
+
+		Query<ch.elexis.data.Patient> qpa = new Query<ch.elexis.data.Patient>(ch.elexis.data.Patient.class);
 		// initialize data
 		Name ehcName = ehcPatient.getName();
 		Date ehcBirthdate = ehcPatient.getBirthday();
-		String gender =
-			ehcPatient.getAdministrativeGenderCode() == AdministrativeGender.FEMALE ? Person.FEMALE
-					: Person.MALE;
+		String gender = ehcPatient.getAdministrativeGenderCode() == AdministrativeGender.FEMALE ? Person.FEMALE
+				: Person.MALE;
 		TimeTool ttBirthdate = new TimeTool();
 		// add data to query
 		if (ehcName.getFamilyName() != null && !ehcName.getFamilyName().isEmpty()) {
 			qpa.add(ch.elexis.data.Patient.FLD_NAME, Query.EQUALS, ehcName.getFamilyName());
 		}
 		if (ehcName.getGivenNames() != null && !ehcName.getGivenNames().isEmpty()) {
-			qpa.add(ch.elexis.data.Patient.FLD_FIRSTNAME, Query.EQUALS,
-				ehcName.getGivenNames().get(0));
+			qpa.add(ch.elexis.data.Patient.FLD_FIRSTNAME, Query.EQUALS, ehcName.getGivenNames().get(0));
 		}
 		if (ehcBirthdate != null) {
 			ttBirthdate.setTime(ehcBirthdate);
@@ -246,29 +237,28 @@ public class EhcCoreMapper {
 		// create or overwrite Patient
 		ch.elexis.data.Patient ret = null;
 		if (existing.isEmpty()) {
-			ret =
-				new ch.elexis.data.Patient(ehcName.getFamilyName(), ehcName.getGivenNames().get(0),
+			ret = new ch.elexis.data.Patient(ehcName.getFamilyName(), ehcName.getGivenNames().get(0),
 					ttBirthdate.toString(TimeTool.DATE_COMPACT), gender);
 		} else {
 			ret = existing.get(0);
 		}
-		
+
 		return ret;
 	}
-	
-	public static void importEhcAddress(ch.elexis.data.Kontakt kontakt, Address address){
+
+	public static void importEhcAddress(ch.elexis.data.Kontakt kontakt, Address address) {
 		Anschrift elexisAddress = kontakt.getAnschrift();
 		elexisAddress.setOrt(address.getCity());
 		elexisAddress.setPlz(address.getZip());
 		elexisAddress.setStrasse(address.getStreet() + " " + address.getHouseNumber());
 		kontakt.setAnschrift(elexisAddress);
 	}
-	
-	public static void importEhcPhone(ch.elexis.data.Kontakt kontakt, Telecoms telecoms){
+
+	public static void importEhcPhone(ch.elexis.data.Kontakt kontakt, Telecoms telecoms) {
 		Map<String, TelecomAddressUse> phones = telecoms.getPhones();
 		Set<String> keys = phones.keySet();
 		String existing = kontakt.get(Kontakt.FLD_PHONE1);
-		
+
 		for (String key : keys) {
 			if (!key.equals(existing)) {
 				if (existing == null || existing.isEmpty()) {

@@ -22,61 +22,59 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 
 public class SetStatusContributionItem {
-	
+
 	@SuppressWarnings("restriction")
 	@Inject
 	private ECommandService commandService;
-	
+
 	@SuppressWarnings("restriction")
 	@Inject
 	private EHandlerService handlerService;
-	
+
 	@Inject
 	private ESelectionService eSelectionService;
-	
+
 	@AboutToShow
-	public void fill(List<MMenuElement> items){
+	public void fill(List<MMenuElement> items) {
 		IStructuredSelection selection = (IStructuredSelection) eSelectionService.getSelection();
 		IAppointment selectedAppointment = (selection != null) ? (IAppointment) selection.getFirstElement() : null;
 		String state = (selectedAppointment != null) ? selectedAppointment.getState() : null;
-		
+
 		for (String t : AppointmentServiceHolder.get().getStates()) {
 			MDirectMenuItem dynamicItem = MMenuFactory.INSTANCE.createDirectMenuItem();
 			dynamicItem.setType(ItemType.CHECK);
 			dynamicItem.setLabel(t);
-			dynamicItem.setContributionURI(
-				"bundleclass://at.medevit.elexis.agenda.ui/" + getClass().getName());
+			dynamicItem.setContributionURI("bundleclass://at.medevit.elexis.agenda.ui/" + getClass().getName());
 			dynamicItem.setSelected(t.equalsIgnoreCase(state));
 			items.add(dynamicItem);
 		}
 	}
-	
+
 	@SuppressWarnings("restriction")
 	@Execute
-	private void setStatus(MDirectMenuItem menuItem){
+	private void setStatus(MDirectMenuItem menuItem) {
 		HashMap<String, Object> parameters = new HashMap<>();
-		parameters.put("at.medevit.elexis.agenda.ui.command.parameter.statusId",
-			menuItem.getLabel());
-		ParameterizedCommand command = commandService
-			.createCommand("at.medevit.elexis.agenda.ui.command.setStatus", parameters);
+		parameters.put("at.medevit.elexis.agenda.ui.command.parameter.statusId", menuItem.getLabel());
+		ParameterizedCommand command = commandService.createCommand("at.medevit.elexis.agenda.ui.command.setStatus",
+				parameters);
 		if (command != null) {
 			handlerService.executeHandler(command);
 		} else {
 			LoggerFactory.getLogger(getClass()).error("Command not found");
 		}
-		
-		//		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-		//			.getActiveWorkbenchWindow().getService(ICommandService.class);
-		//		Command command =
-		//			commandService.getCommand();
-		//		
+
+		// ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
+		// .getActiveWorkbenchWindow().getService(ICommandService.class);
+		// Command command =
+		// commandService.getCommand();
 		//
-		//		ExecutionEvent ev = new ExecutionEvent(command, parameters, null, null);
-		//		try {
-		//			command.executeWithChecks(ev);
-		//		} catch (ExecutionException | NotDefinedException | NotEnabledException
-		//				| NotHandledException ex) {
-		//			LoggerFactory.getLogger(getClass()).error("Error setting status", ex);
-		//		}
+		//
+		// ExecutionEvent ev = new ExecutionEvent(command, parameters, null, null);
+		// try {
+		// command.executeWithChecks(ev);
+		// } catch (ExecutionException | NotDefinedException | NotEnabledException
+		// | NotHandledException ex) {
+		// LoggerFactory.getLogger(getClass()).error("Error setting status", ex);
+		// }
 	}
 }

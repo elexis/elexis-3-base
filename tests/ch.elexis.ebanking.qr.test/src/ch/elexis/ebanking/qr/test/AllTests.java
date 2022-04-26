@@ -7,9 +7,7 @@ import ch.elexis.ebanking.qr.QRBillDataBuilderTest;
 import ch.elexis.ebanking.qr.QRBillImageTest;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	QRBillDataBuilderTest.class, QRBillImageTest.class
-})
+@Suite.SuiteClasses({ QRBillDataBuilderTest.class, QRBillImageTest.class })
 public class AllTests {
-	
+
 }

@@ -36,30 +36,31 @@ public class MesswertePreferences extends PreferencePage implements IWorkbenchPr
 	// name: Messwerte Iatrix
 	// category: Iatrix
 	public static final String ID = "org.iatrix.messwerte.preferences.MesswertePreferences";
-	
+
 	private static final int VISIBLE_NUMBER_OF_LABORS = 5;
-	
+
 	private ListViewer ownLaborsList;
 	private Spinner spinnerNoCol;
-	
-	public MesswertePreferences(){}
-	
-	public MesswertePreferences(String title){
+
+	public MesswertePreferences() {
+	}
+
+	public MesswertePreferences(String title) {
 		super(title);
 	}
-	
+
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public MesswertePreferences(String title, ImageDescriptor image){
+	public MesswertePreferences(String title, ImageDescriptor image) {
 		super(title, image);
 	}
-	
+
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(Composite parent) {
 		Composite mainArea = new Composite(parent, SWT.NONE);
 		mainArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		
+
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		layout.leftMargin = 0;
@@ -67,47 +68,47 @@ public class MesswertePreferences extends PreferencePage implements IWorkbenchPr
 		layout.topMargin = 0;
 		layout.bottomMargin = 0;
 		mainArea.setLayout(layout);
-		
+
 		TableWrapData twd;
 		Label label;
-		
+
 		Text infoText = new Text(mainArea, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
 		infoText.setLayoutData(SWTHelper.getFillTableWrapData(2, true, 1, false));
-		infoText.setText("Bitte wählen Sie die Labors aus, für welche Sie die Werte"
-			+ " in der Praxis selber ermitteln.");
-		
+		infoText.setText(
+				"Bitte wählen Sie die Labors aus, für welche Sie die Werte" + " in der Praxis selber ermitteln.");
+
 		label = new Label(mainArea, SWT.NONE);
 		label.setText("Praxislabors:");
-		
+
 		ownLaborsList = new ListViewer(mainArea, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		List list = ownLaborsList.getList();
 		twd = SWTHelper.getFillTableWrapData(1, true, 1, false);
 		twd.heightHint = VISIBLE_NUMBER_OF_LABORS * list.getItemHeight();
 		list.setLayoutData(twd);
-		
+
 		ownLaborsList.setContentProvider(new LaborsListContentProvider());
 		ownLaborsList.setLabelProvider(new LaborsListLabelProvider());
 		ownLaborsList.setInput(this);
-		
+
 		Label lblNoCols = new Label(mainArea, SWT.NONE);
 		lblNoCols.setText("Spalten pro Seite:");
-		
+
 		spinnerNoCol = new Spinner(mainArea, SWT.BORDER);
 		spinnerNoCol.setPageIncrement(1);
 		spinnerNoCol.setMaximum(10);
 		spinnerNoCol.setMinimum(1);
 		spinnerNoCol.setSelection(7);
-		
+
 		loadFromConfig();
-		
+
 		return mainArea;
 	}
-	
-	private void loadFromConfig(){
+
+	private void loadFromConfig() {
 		java.util.List<Labor> labors = new ArrayList<Labor>();
-		
-		String localLabors =
-			ConfigServiceHolder.getGlobal(Constants.CFG_LOCAL_LABORS, Constants.CFG_DEFAULT_LOCAL_LABORS);
+
+		String localLabors = ConfigServiceHolder.getGlobal(Constants.CFG_LOCAL_LABORS,
+				Constants.CFG_DEFAULT_LOCAL_LABORS);
 		String[] laborIds = localLabors.split("\\s*,\\s*");
 		for (String laborId : laborIds) {
 			if (!StringTool.isNothing(laborId)) {
@@ -117,18 +118,17 @@ public class MesswertePreferences extends PreferencePage implements IWorkbenchPr
 				}
 			}
 		}
-		
+
 		IStructuredSelection selection = new StructuredSelection(labors);
 		ownLaborsList.setSelection(selection);
-		
-		spinnerNoCol.setSelection(CoreHub.localCfg.get(
-			Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS, new Integer(
-				Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS_DEFAULT)));
+
+		spinnerNoCol.setSelection(CoreHub.localCfg.get(Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS,
+				new Integer(Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS_DEFAULT)));
 	}
-	
-	private void storeToConfig(){
+
+	private void storeToConfig() {
 		java.util.List<String> selectedLaborsIds = new ArrayList<String>();
-		
+
 		IStructuredSelection selection = (IStructuredSelection) ownLaborsList.getSelection();
 		for (Object element : selection.toArray()) {
 			if (element instanceof Labor) {
@@ -136,45 +136,44 @@ public class MesswertePreferences extends PreferencePage implements IWorkbenchPr
 				selectedLaborsIds.add(labor.getId());
 			}
 		}
-		
+
 		String cfgValue = StringTool.join(selectedLaborsIds, ",");
 		ConfigServiceHolder.setGlobal(Constants.CFG_LOCAL_LABORS, cfgValue);
-		
-		if (spinnerNoCol.getSelection() != CoreHub.localCfg.get(
-			Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS,
-			Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS_DEFAULT)) {
-			MessageDialog.openInformation(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
-				"Information", "Bitte schliessen Sie den Messwerte Iatrix View \n "
-					+ "und öffnen Sie Ihn dann erneut um die Änderungen wirksam zu machen.");
-			CoreHub.localCfg.set(Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS,
-				spinnerNoCol.getSelection());
+
+		if (spinnerNoCol.getSelection() != CoreHub.localCfg.get(Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS,
+				Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS_DEFAULT)) {
+			MessageDialog.openInformation(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "Information",
+					"Bitte schliessen Sie den Messwerte Iatrix View \n "
+							+ "und öffnen Sie Ihn dann erneut um die Änderungen wirksam zu machen.");
+			CoreHub.localCfg.set(Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS, spinnerNoCol.getSelection());
 		}
-		
+
 	}
-	
-	public void init(IWorkbench workbench){
+
+	public void init(IWorkbench workbench) {
 		// nothing to do
 	}
-	
-	protected void performDefaults(){
+
+	protected void performDefaults() {
 		// default for labors list: no selection
 		IStructuredSelection selection = new StructuredSelection();
 		ownLaborsList.setSelection(selection);
-		
-		// default for number of columns: CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS_DEFAULT String
+
+		// default for number of columns: CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS_DEFAULT
+		// String
 		spinnerNoCol.setSelection(Constants.CFG_MESSWERTE_VIEW_NUMBER_OF_COLUMNS_DEFAULT);
-		
+
 		super.performDefaults();
 	}
-	
-	public boolean performOk(){
+
+	public boolean performOk() {
 		storeToConfig();
-		
+
 		return true;
 	}
-	
+
 	class LaborsListContentProvider implements IStructuredContentProvider {
-		public Object[] getElements(Object inputElement){
+		public Object[] getElements(Object inputElement) {
 			Query<Labor> query = new Query<Labor>(Labor.class);
 			query.orderBy(false, "Name");
 			java.util.List<Labor> labors = query.execute();
@@ -184,19 +183,19 @@ public class MesswertePreferences extends PreferencePage implements IWorkbenchPr
 				return new Object[] {};
 			}
 		}
-		
-		public void dispose(){
+
+		public void dispose() {
 			// nothing to do
 		}
-		
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// nothing to do
 		}
-		
+
 	}
-	
+
 	class LaborsListLabelProvider extends LabelProvider {
-		public String getText(Object element){
+		public String getText(Object element) {
 			if (element instanceof Labor) {
 				Labor labor = (Labor) element;
 				return labor.getLabel();

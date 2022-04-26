@@ -273,30 +273,19 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 			}
 		}
 
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 0),
-			printerName.getText());
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 1),
-			xslTemplate.getText());
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 2),
-			xslCustomFlag.getSelection());
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 3),
-			pageTemplateName.getText());
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 0), printerName.getText());
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 1), xslTemplate.getText());
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 2), xslCustomFlag.getSelection());
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 3), pageTemplateName.getText());
 		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 4),
-			pageCustomCheckBox.getSelection());
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 5),
-			pageHeight.getText());
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 6),
-			pageWidth.getText());
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 7),
-			textOrientation);
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 8),
-			pageMarginTop.getText());
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 9),
-			pageMarginBottom.getText());
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 10),
-			pageMarginLeft.getText());
-		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 11),
-			pageMarginRight.getText());
+				pageCustomCheckBox.getSelection());
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 5), pageHeight.getText());
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 6), pageWidth.getText());
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 7), textOrientation);
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 8), pageMarginTop.getText());
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 9), pageMarginBottom.getText());
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 10), pageMarginLeft.getText());
+		settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 11), pageMarginRight.getText());
 		if (docName.equals(PreferenceConstants.MEDICATION_LABEL)) {
 			settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 13),
 					responsiblePharmacist.getText());
@@ -316,31 +305,21 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 
 	private void updateValues() {
 		printerName.select(WindowUtil.setComboSelection(printerName, PrinterProvider.getAvailablePrinters(),
-			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0))));
-		xslCustomFlag.setSelection(
-			settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 2)));
-		xslTemplate.setText(
-			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 1)));
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0))));
+		xslCustomFlag.setSelection(settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 2)));
+		xslTemplate.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 1)));
 		pageCustomCheckBox
-			.setSelection(
-				settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 4)));
+				.setSelection(settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 4)));
 		pageTemplateName.select(WindowUtil.setComboSelection(pageTemplateName, ResourceProvider.getPaperFormats(),
-			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 3))));
-		pageWidth.setText(
-			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 6)));
-		pageHeight.setText(
-			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 5)));
-		pageMarginTop.setText(
-			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 8)));
-		pageMarginBottom.setText(
-			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 9)));
-		pageMarginLeft.setText(
-			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 10)));
-		pageMarginRight.setText(
-			settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 11)));
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 3))));
+		pageWidth.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 6)));
+		pageHeight.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 5)));
+		pageMarginTop.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 8)));
+		pageMarginBottom.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 9)));
+		pageMarginLeft.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 10)));
+		pageMarginRight.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 11)));
 
-		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7))
-			.equals("90")) {
+		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7)).equals("90")) {
 			buttonVertical.setSelection(true);
 		} else {
 			buttonHorizontal.setSelection(true);
@@ -348,8 +327,7 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 
 		if (docName.equals(PreferenceConstants.MEDICATION_LABEL)) {
 			responsiblePharmacist
-				.setText(settingsStore
-					.getString(PreferenceConstants.getDocPreferenceConstant(docName, 13)));
+					.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 13)));
 		}
 
 		WindowUtil.checkBoxEvent(pageCustomCheckBox, templateArea, pageCustomArea, pageTemplateName.getText());
@@ -383,7 +361,7 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 
 		/**
 		 * Disables Combo Widgets and Text Widgets inside a Composite.
-		 * 
+		 *
 		 * @param ctrl    The corresponding Composite container
 		 * @param enabled The status of the Widgets, true = enabled, false = disabled
 		 */

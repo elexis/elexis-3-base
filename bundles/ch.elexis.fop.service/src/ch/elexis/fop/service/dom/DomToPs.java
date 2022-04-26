@@ -22,24 +22,25 @@ import ch.elexis.core.services.IFormattedOutput;
 
 public class DomToPs implements IFormattedOutput {
 	private static DomToPs instance;
-	
-	private DomToPs(){}
-	
-	public static DomToPs getInstance(){
+
+	private DomToPs() {
+	}
+
+	public static DomToPs getInstance() {
 		if (instance == null)
 			instance = new DomToPs();
 		return instance;
 	}
-	
+
 	@Override
-	public void transform(Object documentObject, InputStream xslt, OutputStream ps){
+	public void transform(Object documentObject, InputStream xslt, OutputStream ps) {
 		transform(documentObject, xslt, ps, null);
 	}
-	
+
 	@Override
 	public void transform(Object documentObject, InputStream xslt, OutputStream ps,
-		Map<String, String> transformerParameters, URIResolver resolver){
-		DomToMimeType.getInstance().transform(documentObject, xslt, ps,
-			MimeConstants.MIME_POSTSCRIPT, transformerParameters, resolver);
+			Map<String, String> transformerParameters, URIResolver resolver) {
+		DomToMimeType.getInstance().transform(documentObject, xslt, ps, MimeConstants.MIME_POSTSCRIPT,
+				transformerParameters, resolver);
 	}
 }

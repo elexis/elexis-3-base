@@ -33,12 +33,12 @@ import ch.elexis.extdoc.preferences.PreferenceConstants;
 import ch.elexis.extdoc.util.MatchPatientToPath;
 
 public class OmnivoreImporter {
-	
-	public boolean isAvailable(){
+
+	public boolean isAvailable() {
 		return DocumentStoreHolder.get().isPresent();
 	}
-	
-	public Optional<ICategory> getCategory(){
+
+	public Optional<ICategory> getCategory() {
 		if (DocumentStoreHolder.get().isPresent()) {
 			CategorySelectionDialog dialog = new CategorySelectionDialog(Display.getDefault().getActiveShell());
 			if (dialog.open() == Window.OK) {
@@ -47,40 +47,39 @@ public class OmnivoreImporter {
 		}
 		return Optional.empty();
 	}
-	
+
 	public class CategorySelectionDialog extends TitleAreaDialog {
-		
+
 		private ComboViewer categoriesViewer;
-		
+
 		private ICategory selectedCategory;
-		
-		public CategorySelectionDialog(Shell parentShell){
+
+		public CategorySelectionDialog(Shell parentShell) {
 			super(parentShell);
 		}
-		
-		public ICategory getSelectedCategory(){
+
+		public ICategory getSelectedCategory() {
 			return selectedCategory;
 		}
-		
+
 		@Override
-		public void create(){
+		public void create() {
 			super.create();
 			setTitle("Omnivore Kategorie Auswahl");
-			setMessage(
-				"Omnivore Kategorie in die die ext. Dokumente importiert werden sollen auswählen.");
+			setMessage("Omnivore Kategorie in die die ext. Dokumente importiert werden sollen auswählen.");
 		}
-		
+
 		@Override
-		protected Control createDialogArea(Composite parent){
+		protected Control createDialogArea(Composite parent) {
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayout(new GridLayout());
 			ret.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			
+
 			categoriesViewer = new ComboViewer(ret, SWT.BORDER);
 			categoriesViewer.setContentProvider(ArrayContentProvider.getInstance());
 			categoriesViewer.setLabelProvider(new LabelProvider() {
 				@Override
-				public String getText(Object element){
+				public String getText(Object element) {
 					if (element instanceof ICategory) {
 						return ((ICategory) element).getName();
 					}
@@ -89,7 +88,7 @@ public class OmnivoreImporter {
 			});
 			categoriesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				@Override
-				public void selectionChanged(SelectionChangedEvent event){
+				public void selectionChanged(SelectionChangedEvent event) {
 					IStructuredSelection selection = categoriesViewer.getStructuredSelection();
 					if (selection.isEmpty()) {
 						selectedCategory = null;
@@ -99,22 +98,20 @@ public class OmnivoreImporter {
 				}
 			});
 			categoriesViewer.setInput(DocumentStoreHolder.get().get().getCategories());
-			categoriesViewer.getControl()
-				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-			
+			categoriesViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
 			return ret;
 		}
 	}
-	
-	public void importAll(ICategory category, IProgressMonitor progress){
+
+	public void importAll(ICategory category, IProgressMonitor progress) {
 		Query<Patient> query = new Query<Patient>(Patient.class);
 		List<Patient> allPatients = query.execute();
 		progress.beginTask("Externe Dokumente Importieren ...", allPatients.size());
-		
+
 		String[] activePaths = PreferenceConstants.getActiveBasePaths();
 		for (int i = 0; i < allPatients.size(); i++) {
-			progress.setTaskName(
-				"Externe Dokumente Importieren (" + i + "/" + allPatients.size() + ")");
+			progress.setTaskName("Externe Dokumente Importieren (" + i + "/" + allPatients.size() + ")");
 			importPatient(category, allPatients.get(i), activePaths);
 			progress.worked(1);
 			if (progress.isCanceled()) {
@@ -122,14 +119,14 @@ public class OmnivoreImporter {
 			}
 		}
 	}
-	
-	public void importPatient(ICategory category, Patient patient, String[] activePaths){
+
+	public void importPatient(ICategory category, Patient patient, String[] activePaths) {
 		Object object = MatchPatientToPath.getFilesForPatient(patient, activePaths);
 		if (object instanceof List) {
 			@SuppressWarnings("unchecked")
 			List<File> list = (List<File>) object;
-			List<IDocument> importedDocuments = DocumentStoreHolder.get().get()
-					.getDocuments(patient.getId(), null, category, null);
+			List<IDocument> importedDocuments = DocumentStoreHolder.get().get().getDocuments(patient.getId(), null,
+					category, null);
 			for (File file : list) {
 				boolean imported = false;
 				String fileName = file.getName();
@@ -141,14 +138,13 @@ public class OmnivoreImporter {
 					}
 				}
 				if (!imported) {
-					IDocument document =
-						DocumentStoreHolder.get().get().createDocument(patient.getId(),
-						fileName, category.getName());
+					IDocument document = DocumentStoreHolder.get().get().createDocument(patient.getId(), fileName,
+							category.getName());
 					try (FileInputStream fis = new FileInputStream(file)) {
 						DocumentStoreHolder.get().get().saveDocument(document, fis);
 					} catch (ElexisException | IOException e) {
 						LoggerFactory.getLogger(getClass())
-							.error("Error importing file [" + file.getAbsolutePath() + "]", e);
+								.error("Error importing file [" + file.getAbsolutePath() + "]", e);
 					}
 				}
 			}

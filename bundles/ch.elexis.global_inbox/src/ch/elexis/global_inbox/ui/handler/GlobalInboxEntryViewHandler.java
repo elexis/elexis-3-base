@@ -19,11 +19,10 @@ import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 
 public class GlobalInboxEntryViewHandler {
-	
+
 	@Execute
-	public void execute(
-		@Optional @Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry){
-		
+	public void execute(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
+
 		try {
 			File mainFile = globalInboxEntry.getMainFile();
 			String ext = FileTool.getExtension(mainFile.getName());
@@ -35,20 +34,19 @@ public class GlobalInboxEntryViewHandler {
 				if (Program.launch(mainFile.getAbsolutePath()) == false) {
 					Runtime.getRuntime().exec(arg);
 				}
-				
+
 			}
-			
+
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			SWTHelper.showError(Messages.InboxView_couldNotStart, ex.getMessage());
 		}
-		
+
 	}
-	
+
 	@CanExecute
-	public boolean canExecute(
-		@Optional @Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry){
+	public boolean canExecute(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) GlobalInboxEntry globalInboxEntry) {
 		return globalInboxEntry != null;
 	}
-	
+
 }

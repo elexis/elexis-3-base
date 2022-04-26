@@ -18,61 +18,61 @@
 package org.apache.solr.common.util;
 
 public class StringBytes {
-  byte[] bytes;
+	byte[] bytes;
 
-  /**
-   * Offset of first valid byte.
-   */
-  int offset;
+	/**
+	 * Offset of first valid byte.
+	 */
+	int offset;
 
-  /**
-   * Length of used bytes.
-   */
-  int length;
-  private int hash;
+	/**
+	 * Length of used bytes.
+	 */
+	int length;
+	private int hash;
 
-  public StringBytes(byte[] bytes, int offset, int length) {
-    reset(bytes, offset, length);
-  }
+	public StringBytes(byte[] bytes, int offset, int length) {
+		reset(bytes, offset, length);
+	}
 
-  StringBytes reset(byte[] bytes, int offset, int length) {
-    this.bytes = bytes;
-    this.offset = offset;
-    this.length = length;
-    hash = bytes == null ? 0 : Hash.murmurhash3_x86_32(bytes, offset, length, 0);
-    return this;
-  }
+	StringBytes reset(byte[] bytes, int offset, int length) {
+		this.bytes = bytes;
+		this.offset = offset;
+		this.length = length;
+		hash = bytes == null ? 0 : Hash.murmurhash3_x86_32(bytes, offset, length, 0);
+		return this;
+	}
 
-  @Override
-  public boolean equals(Object other) {
-    if (other == null) {
-      return false;
-    }
-    if (other instanceof StringBytes) {
-      return this.bytesEquals((StringBytes) other);
-    }
-    return false;
-  }
+	@Override
+	public boolean equals(Object other) {
+		if (other == null) {
+			return false;
+		}
+		if (other instanceof StringBytes) {
+			return this.bytesEquals((StringBytes) other);
+		}
+		return false;
+	}
 
-  boolean bytesEquals(StringBytes other) {
-    assert other != null;
-    if (length == other.length) {
-      int otherUpto = other.offset;
-      final byte[] otherBytes = other.bytes;
-      final int end = offset + length;
-      for (int upto = offset; upto < end; upto++, otherUpto++) {
-        if (bytes[upto] != otherBytes[otherUpto]) {
-          return false;
-        }
-      }
-      return true;
-    } else {
-      return false;
-    }
-  }
+	boolean bytesEquals(StringBytes other) {
+		assert other != null;
+		if (length == other.length) {
+			int otherUpto = other.offset;
+			final byte[] otherBytes = other.bytes;
+			final int end = offset + length;
+			for (int upto = offset; upto < end; upto++, otherUpto++) {
+				if (bytes[upto] != otherBytes[otherUpto]) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-  @Override
-  public int hashCode() {
-    return hash;
-  }
+	@Override
+	public int hashCode() {
+		return hash;
+	}
 }

@@ -23,22 +23,23 @@ import org.apache.zookeeper.data.ACL;
 
 public class DefaultZkACLProvider implements ZkACLProvider {
 
-  private List<ACL> globalACLsToAdd;
-  
-  @Override
-  public List<ACL> getACLsToAdd(String zNodePath) {
-    // In default (simple) implementation use the same set of ACLs for all znodes
-    if (globalACLsToAdd == null) {
-      synchronized (this) {
-        if (globalACLsToAdd == null) globalACLsToAdd = createGlobalACLsToAdd();
-      }
-    }
-    return globalACLsToAdd;
+	private List<ACL> globalACLsToAdd;
 
-  }
-  
-  protected List<ACL> createGlobalACLsToAdd() {
-    return ZooDefs.Ids.OPEN_ACL_UNSAFE;
-  }
+	@Override
+	public List<ACL> getACLsToAdd(String zNodePath) {
+		// In default (simple) implementation use the same set of ACLs for all znodes
+		if (globalACLsToAdd == null) {
+			synchronized (this) {
+				if (globalACLsToAdd == null)
+					globalACLsToAdd = createGlobalACLsToAdd();
+			}
+		}
+		return globalACLsToAdd;
+
+	}
+
+	protected List<ACL> createGlobalACLsToAdd() {
+		return ZooDefs.Ids.OPEN_ACL_UNSAFE;
+	}
 
 }

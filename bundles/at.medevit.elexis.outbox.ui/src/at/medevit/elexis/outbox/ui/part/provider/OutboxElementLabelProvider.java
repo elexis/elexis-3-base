@@ -24,15 +24,15 @@ import ch.elexis.core.types.Gender;
 import ch.elexis.core.ui.icons.Images;
 
 public class OutboxElementLabelProvider extends LabelProvider implements IColorProvider {
-	
+
 	private OutboxElementUiExtension extension;
-	
-	public OutboxElementLabelProvider(){
+
+	public OutboxElementLabelProvider() {
 		extension = new OutboxElementUiExtension();
 	}
-	
+
 	@Override
-	public String getText(Object element){
+	public String getText(Object element) {
 		if (element instanceof PatientOutboxElements) {
 			return ((PatientOutboxElements) element).toString();
 		} else if (element instanceof IOutboxElement) {
@@ -45,9 +45,9 @@ public class OutboxElementLabelProvider extends LabelProvider implements IColorP
 		}
 		return super.getText(element);
 	}
-	
+
 	@Override
-	public Image getImage(Object element){
+	public Image getImage(Object element) {
 		if (element instanceof PatientOutboxElements) {
 			IPatient pat = ((PatientOutboxElements) element).getPatient();
 			if (pat != null) {
@@ -69,8 +69,8 @@ public class OutboxElementLabelProvider extends LabelProvider implements IColorP
 		}
 		return null;
 	}
-	
-	public Color getForeground(Object element){
+
+	public Color getForeground(Object element) {
 		if (element instanceof IOutboxElement) {
 			Color color = extension.getForeground((IOutboxElement) element);
 			if (color != null) {
@@ -79,8 +79,8 @@ public class OutboxElementLabelProvider extends LabelProvider implements IColorP
 		}
 		return Display.getCurrent().getSystemColor(SWT.COLOR_BLACK);
 	}
-	
-	public Color getBackground(Object element){
+
+	public Color getBackground(Object element) {
 		if (element instanceof IOutboxElement) {
 			Color color = extension.getBackground((IOutboxElement) element);
 			if (color != null) {

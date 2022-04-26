@@ -12,10 +12,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for SLIST_TS complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="SLIST_TS">
  *   &lt;complexContent>
@@ -29,17 +30,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SLIST_TS", propOrder = {
-	"origin", "scale", "digits"
-})
+@XmlType(name = "SLIST_TS", propOrder = { "origin", "scale", "digits" })
 public class SLISTTS extends ANY {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	@XmlElement(required = true)
@@ -49,75 +48,74 @@ public class SLISTTS extends ANY {
 	@XmlList
 	@XmlElement(required = true)
 	protected List<BigInteger> digits;
-	
+
 	/**
 	 * Gets the value of the origin property.
-	 * 
+	 *
 	 * @return possible object is {@link TS }
-	 * 
+	 *
 	 */
-	public TS getOrigin(){
+	public TS getOrigin() {
 		return origin;
 	}
-	
+
 	/**
 	 * Sets the value of the origin property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link TS }
-	 * 
+	 *
+	 * @param value allowed object is {@link TS }
+	 *
 	 */
-	public void setOrigin(TS value){
+	public void setOrigin(TS value) {
 		this.origin = value;
 	}
-	
+
 	/**
 	 * Gets the value of the scale property.
-	 * 
+	 *
 	 * @return possible object is {@link PQ }
-	 * 
+	 *
 	 */
-	public PQ getScale(){
+	public PQ getScale() {
 		return scale;
 	}
-	
+
 	/**
 	 * Sets the value of the scale property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link PQ }
-	 * 
+	 *
+	 * @param value allowed object is {@link PQ }
+	 *
 	 */
-	public void setScale(PQ value){
+	public void setScale(PQ value) {
 		this.scale = value;
 	}
-	
+
 	/**
 	 * Gets the value of the digits property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the digits property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the digits property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getDigits().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link BigInteger }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<BigInteger> getDigits(){
+	public List<BigInteger> getDigits() {
 		if (digits == null) {
 			digits = new ArrayList<BigInteger>();
 		}
 		return this.digits;
 	}
-	
+
 }

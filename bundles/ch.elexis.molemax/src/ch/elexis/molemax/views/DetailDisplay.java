@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    rgw - initial API and implementation
  *    rgw - 2014: Changes for Elexis 2.x
@@ -58,16 +58,13 @@ public class DetailDisplay extends Composite {
 			@Override
 			public void mouseDown(final MouseEvent e) {
 				if (e.button == 1) {
-					mouseTracker = new org.eclipse.swt.widgets.Tracker(self,
-							SWT.RESIZE);
+					mouseTracker = new org.eclipse.swt.widgets.Tracker(self, SWT.RESIZE);
 					Rectangle beg = new Rectangle(e.x, e.y, 5, 5);
 					mouseTracker.setRectangles(new Rectangle[] { beg });
 					mouseTracker.open();
 					Rectangle[] rec = mouseTracker.getRectangles();
 					if ((rec[0].width > 10) && (rec[0].height > 10)) {
-						Tracker in = new Tracker(home.pat,
-								home.trackers[actSlot][0], home.date, actSlot,
-								rec[0]);
+						Tracker in = new Tracker(home.pat, home.trackers[actSlot][0], home.date, actSlot, rec[0]);
 						Tracker[] tOld = home.trackers[actSlot];
 						Tracker[] tNew = new Tracker[tOld.length + 1];
 						for (int i = 0; i < tOld.length; i++) {
@@ -93,8 +90,7 @@ public class DetailDisplay extends Composite {
 			@Override
 			public void mouseDoubleClick(final MouseEvent e) {
 				Tracker[] myTracker = home.trackers[actSlot];
-				List<Tracker> list = Tracker.getTrackersAtPoint(myTracker, e.x,
-						e.y);
+				List<Tracker> list = Tracker.getTrackersAtPoint(myTracker, e.x, e.y);
 				if (list.size() > 0) {
 					home.tmd.setTracker(list);
 					home.setTopControl(home.tmd);
@@ -119,28 +115,14 @@ public class DetailDisplay extends Composite {
 										gc.drawRectangle(bounds);
 									} else {
 										if (i == 0) {
-											gc.drawImage(img, bounds.x,
-													bounds.y);
+											gc.drawImage(img, bounds.x, bounds.y);
 										} else {
-											ImageData idata = img
-													.getImageData();
+											ImageData idata = img.getImageData();
 											if (idata != null) {
-												double scale = (double) bounds.width
-														/ idata.width;
-												gc.drawImage(
-														img,
-														0,
-														0,
-														idata.width,
-														idata.height,
-														bounds.x,
-														bounds.y,
-														(int) Math
-																.round(idata.width
-																		* scale),
-														(int) Math
-																.round(idata.height
-																		* scale));
+												double scale = (double) bounds.width / idata.width;
+												gc.drawImage(img, 0, 0, idata.width, idata.height, bounds.x, bounds.y,
+														(int) Math.round(idata.width * scale),
+														(int) Math.round(idata.height * scale));
 											}
 										}
 									}
@@ -149,8 +131,7 @@ public class DetailDisplay extends Composite {
 						}
 					}
 				} else {
-					SWTHelper.writeCentered(gc, ImageSlot.INSUFF_RIGHTS,
-							getBounds());
+					SWTHelper.writeCentered(gc, ImageSlot.INSUFF_RIGHTS, getBounds());
 				}
 			}
 
@@ -162,8 +143,7 @@ public class DetailDisplay extends Composite {
 			@Override
 			public void drop(final DropTargetEvent event) {
 				if (!CoreHub.acl.request(MolemaxACL.CHANGE_IMAGES)) {
-					SWTHelper
-							.alert(ImageSlot.CAPTION_NOOP, ImageSlot.TEXT_NOOP);
+					SWTHelper.alert(ImageSlot.CAPTION_NOOP, ImageSlot.TEXT_NOOP);
 					return;
 				}
 				Tracker[] myTracker = home.trackers[actSlot];
@@ -176,8 +156,7 @@ public class DetailDisplay extends Composite {
 					if (img == null) {
 						tracker.setFile(new File(files[0]));
 					} else {
-						Tracker in = new Tracker(home.pat, myTracker[0], null,
-								actSlot, myTracker[t].getBounds());
+						Tracker in = new Tracker(home.pat, myTracker[0], null, actSlot, myTracker[t].getBounds());
 						in.setFile(new File(files[0]));
 						Tracker[] tOld = home.trackers[actSlot];
 						Tracker[] tNew = new Tracker[tOld.length + 1];
@@ -217,11 +196,9 @@ public class DetailDisplay extends Composite {
 		mDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				if (SWTHelper.askYesNo(
-						Messages.DetailDisplay_deleteFrameAndImage,
+				if (SWTHelper.askYesNo(Messages.DetailDisplay_deleteFrameAndImage,
 						Messages.DetailDisplay_deleteReally)) {
-					Integer t = (Integer) ((MenuItem) e.getSource())
-							.getParent().getData();
+					Integer t = (Integer) ((MenuItem) e.getSource()).getParent().getData();
 					Tracker[] myTracker = home.trackers[actSlot];
 					myTracker[t].delete();
 					Tracker[] tNew = new Tracker[myTracker.length - 1];

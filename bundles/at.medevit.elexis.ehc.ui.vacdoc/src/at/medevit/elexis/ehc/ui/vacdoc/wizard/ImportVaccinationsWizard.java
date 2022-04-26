@@ -18,29 +18,27 @@ public class ImportVaccinationsWizard extends Wizard implements IImportWizard {
 	private ImportVaccinationsWizardPage1 vaccinationsMainPage;
 	private CdaChVacd ehcDocument;
 
-	public ImportVaccinationsWizard(){
+	public ImportVaccinationsWizard() {
 		setWindowTitle("Impfungen import");
 	}
 
 	@Override
-	public boolean performFinish(){
+	public boolean performFinish() {
 		return vaccinationsMainPage.finish();
 	}
-	
+
 	@Override
-	public void addPages(){
+	public void addPages() {
 		super.addPages();
-		vaccinationsMainPage =
-			new ImportVaccinationsWizardPage1("Impfungen auswählen", ehcDocument);
+		vaccinationsMainPage = new ImportVaccinationsWizardPage1("Impfungen auswählen", ehcDocument);
 		addPage(vaccinationsMainPage);
 	}
-	
+
 	@Override
-	public void setDocument(InputStream document){
+	public void setDocument(InputStream document) {
 		try {
 			document.reset();
-			Optional<CdaChVacd> ehcDocumentOpt =
-				VacdocServiceComponent.getService().loadVacdocDocument(document);
+			Optional<CdaChVacd> ehcDocumentOpt = VacdocServiceComponent.getService().loadVacdocDocument(document);
 			ehcDocumentOpt.ifPresent(d -> ehcDocument = d);
 		} catch (Exception e) {
 			logger.error("Could not open document", e);

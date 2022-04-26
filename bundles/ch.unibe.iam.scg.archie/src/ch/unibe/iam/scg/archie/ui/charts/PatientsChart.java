@@ -22,9 +22,9 @@ import org.jfree.data.general.DefaultPieDataset;
  * <p>
  * Chart composite displaying the patients chart in the dashboard.
  * </p>
- * 
+ *
  * $Id: PatientsChart.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -43,7 +43,7 @@ public class PatientsChart extends AbstractChartComposite {
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ch.unibe.iam.scg.archie.ui.charts.AbstractChartComposite#
 	 *      initializeCreator()
 	 */
@@ -54,22 +54,22 @@ public class PatientsChart extends AbstractChartComposite {
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ch.unibe.iam.scg.archie.ui.charts.AbstractChartComposite#
 	 *      initializeChart()
 	 */
 	@Override
 	protected JFreeChart initializeChart() {
 		// create a chart...
-		JFreeChart chart = ChartFactory.createPieChart(PatientsChart.CHART_TITLE, (DefaultPieDataset) this.creator
-				.getDataset(), true, // legend?
+		JFreeChart chart = ChartFactory.createPieChart(PatientsChart.CHART_TITLE,
+				(DefaultPieDataset) this.creator.getDataset(), true, // legend?
 				true, // tooltips?
 				false // URLs?
-				);
+		);
 
 		// Set chart background color to it's parents background
-		chart.setBackgroundPaint(new Color(this.parent.getBackground().getRed(),
-				this.parent.getBackground().getGreen(), this.parent.getBackground().getBlue()));
+		chart.setBackgroundPaint(new Color(this.parent.getBackground().getRed(), this.parent.getBackground().getGreen(),
+				this.parent.getBackground().getBlue()));
 
 		return chart;
 	}

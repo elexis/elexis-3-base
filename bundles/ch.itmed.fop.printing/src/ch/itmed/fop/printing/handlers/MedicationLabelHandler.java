@@ -41,19 +41,19 @@ public final class MedicationLabelHandler extends AbstractHandler {
 			// print current selection of MedicationView
 			IStructuredSelection selection = HandlerUtil.getCurrentStructuredSelection(event);
 			if (selection != null && !selection.isEmpty()
-				&& selection.getFirstElement() instanceof MedicationTableViewerItem) {
+					&& selection.getFirstElement() instanceof MedicationTableViewerItem) {
 				for (Object obj : selection.toList()) {
 					if (obj instanceof MedicationTableViewerItem) {
 						InputStream xmlDoc = MedicationLabel
-							.create(((MedicationTableViewerItem) obj).getPrescription());
-						InputStream fo = FoTransformer.transformXmlToFo(xmlDoc, ResourceProvider
-							.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
-						
+								.create(((MedicationTableViewerItem) obj).getPrescription());
+						InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+								ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
+
 						String docName = PreferenceConstants.MEDICATION_LABEL;
 						IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
-						
+
 						String printerName = settingsStore
-							.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+								.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 						logger.info("Printing document MedicationLabel on printer: " + printerName);
 						PrintProvider.print(fo, printerName);
 					}
@@ -62,13 +62,12 @@ public final class MedicationLabelHandler extends AbstractHandler {
 				// print selection from context service
 				InputStream xmlDoc = MedicationLabel.create();
 				InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
-					ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
+						ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
 
 				String docName = PreferenceConstants.MEDICATION_LABEL;
 				IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-				String printerName = settingsStore
-					.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+				String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 				logger.info("Printing document MedicationLabel on printer: " + printerName);
 				PrintProvider.print(fo, printerName);
 			}

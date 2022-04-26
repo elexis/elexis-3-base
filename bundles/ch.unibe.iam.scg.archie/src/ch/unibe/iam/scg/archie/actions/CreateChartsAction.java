@@ -22,9 +22,9 @@ import ch.unibe.iam.scg.archie.ui.views.Dashboard;
  * Action contributed to the dashboard view that triggers the creation of the
  * dashboard charts.
  * </p>
- * 
+ *
  * $Id: CreateChartsAction.java 705 2009-01-03 17:48:46Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 705 $
@@ -35,9 +35,8 @@ public class CreateChartsAction extends Action {
 
 	/**
 	 * Public constructor.
-	 * 
-	 * @param dashboard
-	 *            Dashboard to attach the action to.
+	 *
+	 * @param dashboard Dashboard to attach the action to.
 	 */
 	public CreateChartsAction(Dashboard dashboard) {
 		this.dashboard = dashboard;

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -21,14 +21,14 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.core.ui.preferences.inputs.MultiplikatorEditor;
 
 public class LaborleistungPrefs extends PreferencePage implements IWorkbenchPreferencePage {
-	
+
 	@Override
-	protected Control createContents(final Composite parent){
+	protected Control createContents(final Composite parent) {
 		return new MultiplikatorEditor(parent, "EAL"); //$NON-NLS-1$
 	}
-	
-	public void init(final IWorkbench workbench){
-		
+
+	public void init(final IWorkbench workbench) {
+
 	}
-	
+
 }

@@ -20,39 +20,36 @@ import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
 
 public class SetStatusHandler {
-	
+
 	@Inject
 	private ESelectionService selectionService;
-	
+
 	@Execute
-	public Object execute(
-		@Named("at.medevit.elexis.agenda.ui.command.parameter.statusId") String statusId){
+	public Object execute(@Named("at.medevit.elexis.agenda.ui.command.parameter.statusId") String statusId) {
 		Optional<IPeriod> period = getSelectedPeriod();
-		
+
 		period.ifPresent(p -> {
 			AcquireLockBlockingUi.aquireAndRun(p, new ILockHandler() {
 				@Override
-				public void lockFailed(){
+				public void lockFailed() {
 					// do nothing
 				}
-				
+
 				@Override
-				public void lockAcquired(){
+				public void lockAcquired() {
 					((IAppointment) p).setState(statusId);
 					CoreModelServiceHolder.get().save((IAppointment) p);
-					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
-						IAppointment.class);
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 				}
 			});
 		});
 		return null;
 	}
-	
-	private Optional<IPeriod> getSelectedPeriod(){
+
+	private Optional<IPeriod> getSelectedPeriod() {
 		try {
 			ISelection activeSelection = (ISelection) selectionService.getSelection();
-			if (activeSelection instanceof StructuredSelection
-				&& !((StructuredSelection) activeSelection).isEmpty()) {
+			if (activeSelection instanceof StructuredSelection && !((StructuredSelection) activeSelection).isEmpty()) {
 				Object element = ((StructuredSelection) activeSelection).getFirstElement();
 				if (element instanceof IPeriod) {
 					return Optional.of((IPeriod) element);

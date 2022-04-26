@@ -13,23 +13,23 @@ package at.medevit.elexis.ehc.ui.example.wizard;
 import org.eclipse.jface.wizard.Wizard;
 
 public class ExportPatientWizard extends Wizard {
-	
+
 	private ExportPatientWizardPage1 mainPage;
-	
-	public ExportPatientWizard(){
+
+	public ExportPatientWizard() {
 		setWindowTitle("Patientenstammdaten export.");
 	}
-	
+
 	@Override
-	public void addPages(){
+	public void addPages() {
 		super.addPages();
 		mainPage = new ExportPatientWizardPage1("Export Patientenstammdaten.");
 		addPage(mainPage);
 	}
-	
+
 	@Override
-	public boolean performFinish(){
+	public boolean performFinish() {
 		return mainPage.finish();
 	}
-	
+
 }

@@ -18,28 +18,27 @@ import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.rgw.tools.Money;
 
-public class TarmedAllowance
-		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.TarmedPauschalen>
+public class TarmedAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.TarmedPauschalen>
 		implements Identifiable, ITarmedAllowance {
-	
+
 	public static final String STS_CLASS = "ch.elexis.data.TarmedPauschalen";
-	
+
 	private static IBillableOptifier<TarmedAllowance> optifier;
 	private IBillableVerifier verifier;
-	
-	public TarmedAllowance(TarmedPauschalen entity){
+
+	public TarmedAllowance(TarmedPauschalen entity) {
 		super(entity);
 		verifier = new DefaultVerifier();
 	}
-	
+
 	@Override
-	public IBillableOptifier<TarmedAllowance> getOptifier(){
+	public IBillableOptifier<TarmedAllowance> getOptifier() {
 		if (optifier == null) {
 			optifier = new AbstractOptifier<TarmedAllowance>(CoreModelServiceHolder.get(),
-				ContextServiceHolder.get().get()) {
-				
+					ContextServiceHolder.get().get()) {
+
 				@Override
-				protected void setPrice(TarmedAllowance billable, IBilled billed){
+				protected void setPrice(TarmedAllowance billable, IBilled billed) {
 					billed.setFactor(1.0);
 					billed.setPoints(billable.getPrice(billed.getEncounter()).getCents());
 				}
@@ -47,91 +46,91 @@ public class TarmedAllowance
 		}
 		return optifier;
 	}
-	
-	protected Money getPrice(IEncounter iEncounter){
+
+	protected Money getPrice(IEncounter iEncounter) {
 		return new Money();
 	}
-	
+
 	@Override
-	public IBillableVerifier getVerifier(){
+	public IBillableVerifier getVerifier() {
 		return verifier;
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return TarmedPauschalen.CODESYSTEM_NAME;
 	}
-	
+
 	@Override
-	public String getCodeSystemCode(){
+	public String getCodeSystemCode() {
 		return "003";
 	}
-	
+
 	@Override
-	public String getCode(){
+	public String getCode() {
 		return getEntity().getCode();
 	}
-	
+
 	@Override
-	public void setCode(String value){
+	public void setCode(String value) {
 		getEntity().setCode(value);
 	}
-	
+
 	@Override
-	public String getText(){
+	public String getText() {
 		return getEntity().getText();
 	}
-	
+
 	@Override
-	public void setText(String value){
+	public void setText(String value) {
 		getEntity().setText(value);
 	}
-	
+
 	@Override
-	public LocalDate getValidFrom(){
+	public LocalDate getValidFrom() {
 		return getEntity().getValidFrom();
 	}
-	
+
 	@Override
-	public void setValidFrom(LocalDate value){
+	public void setValidFrom(LocalDate value) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public LocalDate getValidTo(){
+	public LocalDate getValidTo() {
 		return getEntity().getValidTo();
 	}
-	
+
 	@Override
-	public void setValidTo(LocalDate value){
+	public void setValidTo(LocalDate value) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public String getChapter(){
+	public String getChapter() {
 		return getEntity().getChapter();
 	}
-	
+
 	@Override
-	public void setChapter(String value){
+	public void setChapter(String value) {
 		getEntity().setChapter(value);
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		return XidServiceHolder.get().getXid(this, domain);
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		return "(" + getCode() + ") " + getChapter() + " - " + getText();
 	}
-	
+
 }

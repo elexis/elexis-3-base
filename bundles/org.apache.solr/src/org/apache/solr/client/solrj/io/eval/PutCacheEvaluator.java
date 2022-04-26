@@ -26,37 +26,39 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class PutCacheEvaluator extends RecursiveObjectEvaluator implements ManyValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public PutCacheEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public PutCacheEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(3 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 3 values but found %d",expression,containedEvaluators.size()));
-    }
-  }
+		if (3 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 3 values but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-  @Override
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  public Object doWork(Object... values) throws IOException {
-    ConcurrentMap objectCache = this.streamContext.getObjectCache();
-    if(values.length == 3) {
-      String space = (String)values[0];
-      String key = (String)values[1];
-      space = space.replace("\"", "");
-      key = key.replace("\"", "");
-      Object value = values[2];
-      ConcurrentMap spaceCache = (ConcurrentMap)objectCache.get(space);
-      if(spaceCache == null) {
-        spaceCache = new ConcurrentHashMap();
-        objectCache.put(space, spaceCache);
-      }
+	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Object doWork(Object... values) throws IOException {
+		ConcurrentMap objectCache = this.streamContext.getObjectCache();
+		if (values.length == 3) {
+			String space = (String) values[0];
+			String key = (String) values[1];
+			space = space.replace("\"", "");
+			key = key.replace("\"", "");
+			Object value = values[2];
+			ConcurrentMap spaceCache = (ConcurrentMap) objectCache.get(space);
+			if (spaceCache == null) {
+				spaceCache = new ConcurrentHashMap();
+				objectCache.put(space, spaceCache);
+			}
 
-      spaceCache.put(key, value);
-      return value;
-    } else {
-      throw new IOException("The putCache function requires three parameters: workspace, key and value");
-    }
+			spaceCache.put(key, value);
+			return value;
+		} else {
+			throw new IOException("The putCache function requires three parameters: workspace, key and value");
+		}
 
-  }
+	}
 }

@@ -8,16 +8,16 @@ import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.rgw.tools.TimeTool;
 
 public class TarmedExclusive {
-	
+
 	private String slaveCode;
 	private TarmedKumulationArt slaveType;
-	
-	public TarmedExclusive(ITarmedKumulation kumulation){
+
+	public TarmedExclusive(ITarmedKumulation kumulation) {
 		slaveCode = kumulation.getSlaveCode();
 		slaveType = kumulation.getSlaveArt();
 	}
-	
-	public boolean isMatching(ITarmedLeistung tarmedLeistung, TimeTool date){
+
+	public boolean isMatching(ITarmedLeistung tarmedLeistung, TimeTool date) {
 		if (slaveType == TarmedKumulationArt.CHAPTER) {
 			return isMatchingChapter(tarmedLeistung);
 		} else if (slaveType == TarmedKumulationArt.SERVICE) {
@@ -31,8 +31,8 @@ public class TarmedExclusive {
 		}
 		return false;
 	}
-	
-	private boolean isMatchingChapter(ITarmedLeistung tarmedLeistung){
+
+	private boolean isMatchingChapter(ITarmedLeistung tarmedLeistung) {
 		if (slaveCode.equals(tarmedLeistung.getCode())) {
 			return true;
 		} else {
@@ -44,22 +44,22 @@ public class TarmedExclusive {
 			}
 		}
 	}
-	
-	public boolean isMatching(TarmedGroup tarmedGroup){
+
+	public boolean isMatching(TarmedGroup tarmedGroup) {
 		if (slaveType != TarmedKumulationArt.GROUP) {
 			return false;
 		}
 		return slaveCode.equals(tarmedGroup.getCode());
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(TarmedKumulationArt.toString(slaveType)).append(" ").append(slaveCode);
 		return sb.toString();
 	}
-	
-	public TarmedKumulationArt getSlaveType(){
+
+	public TarmedKumulationArt getSlaveType() {
 		return slaveType;
 	}
 }

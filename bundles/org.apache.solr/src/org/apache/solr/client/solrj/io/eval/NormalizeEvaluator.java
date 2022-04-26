@@ -28,37 +28,41 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class NormalizeEvaluator extends RecursiveObjectEvaluator implements OneValueWorker {
-  protected static final long serialVersionUID = 1L;
-  
-  public NormalizeEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-    
-    if(1 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 1 value but found %d",expression,containedEvaluators.size()));
-    }
-  }
+	protected static final long serialVersionUID = 1L;
 
-  @Override
-  public Object doWork(Object value){
-    if(null == value){
-      return null;
-    }
-    else if(value instanceof List){
-      return Arrays.stream(StatUtils.normalize(((List<?>)value).stream().mapToDouble(innerValue -> ((Number)innerValue).doubleValue()).toArray())).boxed().collect(Collectors.toList());
-    } else if (value instanceof Matrix) {
-      Matrix matrix = (Matrix) value;
-      double[][] data = matrix.getData();
-      double[][] standardized = new double[data.length][];
-      for(int i=0; i<data.length; i++) {
-        double[] row = data[i];
-        standardized[i] = StatUtils.normalize(row);
-      }
-      Matrix m = new Matrix(standardized);
-      m.setRowLabels(matrix.getRowLabels());
-      m.setColumnLabels(matrix.getColumnLabels());
-      return m;
-    } else {
-      return doWork(Arrays.asList((BigDecimal)value));
-    }
-  }
+	public NormalizeEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+
+		if (1 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 1 value but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
+
+	@Override
+	public Object doWork(Object value) {
+		if (null == value) {
+			return null;
+		} else if (value instanceof List) {
+			return Arrays
+					.stream(StatUtils.normalize(((List<?>) value).stream()
+							.mapToDouble(innerValue -> ((Number) innerValue).doubleValue()).toArray()))
+					.boxed().collect(Collectors.toList());
+		} else if (value instanceof Matrix) {
+			Matrix matrix = (Matrix) value;
+			double[][] data = matrix.getData();
+			double[][] standardized = new double[data.length][];
+			for (int i = 0; i < data.length; i++) {
+				double[] row = data[i];
+				standardized[i] = StatUtils.normalize(row);
+			}
+			Matrix m = new Matrix(standardized);
+			m.setRowLabels(matrix.getRowLabels());
+			m.setColumnLabels(matrix.getColumnLabels());
+			return m;
+		} else {
+			return doWork(Arrays.asList((BigDecimal) value));
+		}
+	}
 }

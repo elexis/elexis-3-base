@@ -28,9 +28,9 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
  * <p>
  * Can be used by any statistic that needs a time span defined.
  * </p>
- * 
+ *
  * $Id: AbstractTimeSeries.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -96,10 +96,9 @@ public abstract class AbstractTimeSeries extends AbstractDataProvider {
 	// /////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Returns the start date property of this data provider, formatted
-	 * according to the valid date format in <code>DateWidget</code>
-	 * class.
-	 * 
+	 * Returns the start date property of this data provider, formatted according to
+	 * the valid date format in <code>DateWidget</code> class.
+	 *
 	 * @return The start date of this query.
 	 */
 	@GetProperty(name = "Start Date", index = -2, widgetType = WidgetTypes.TEXT_DATE, validationRegex = "\\d{2}\\.\\d{2}\\.\\d{4}", validationMessage = "The date needs to have the following format: "
@@ -112,11 +111,9 @@ public abstract class AbstractTimeSeries extends AbstractDataProvider {
 	/**
 	 * Set the start date of this query. Inclusive the given date. Consult the
 	 * <code>DateWidget</code> class for valid date format.
-	 * 
-	 * @param startDate
-	 *            Start date as string in a valid date format.
-	 * @throws SetDataException
-	 *             Exception thrown when the date could not be set.
+	 *
+	 * @param startDate Start date as string in a valid date format.
+	 * @throws SetDataException Exception thrown when the date could not be set.
 	 * @see DateWidget#VALID_DATE_FORMAT
 	 */
 	@SetProperty(name = "Start Date", index = -2)
@@ -131,8 +128,7 @@ public abstract class AbstractTimeSeries extends AbstractDataProvider {
 			cal.get(Calendar.MONTH);
 			cal.get(Calendar.YEAR);
 		} catch (ParseException e) { // converting failure
-			throw new SetDataException(NLS
-					.bind(Messages.ERROR_SET_START_DATE, DateWidget.VALID_DATE_FORMAT));
+			throw new SetDataException(NLS.bind(Messages.ERROR_SET_START_DATE, DateWidget.VALID_DATE_FORMAT));
 		} catch (IllegalArgumentException e) { // illegal date
 			throw new SetDataException(Messages.ERROR_START_DATE_VALID);
 		}
@@ -141,7 +137,7 @@ public abstract class AbstractTimeSeries extends AbstractDataProvider {
 
 	/**
 	 * Returns the end date for this data provider.
-	 * 
+	 *
 	 * @return The end date of this data provider.
 	 */
 	@GetProperty(name = "End Date", widgetType = WidgetTypes.TEXT_DATE, validationRegex = "\\d{2}\\.\\d{2}\\.\\d{4}", validationMessage = "Datumsformat blubb...")
@@ -153,11 +149,9 @@ public abstract class AbstractTimeSeries extends AbstractDataProvider {
 	/**
 	 * Set the end date of this query. Inclusive the given date. Consult the
 	 * <code>DateWidget</code> class for valid date format.
-	 * 
-	 * @param endDate
-	 *            End date as string in a valid date format.
-	 * @throws SetDataException
-	 *             Start date as string in a valid date format.
+	 *
+	 * @param endDate End date as string in a valid date format.
+	 * @throws SetDataException Start date as string in a valid date format.
 	 * @see DateWidget#VALID_DATE_FORMAT
 	 */
 	@SetProperty(name = "End Date")

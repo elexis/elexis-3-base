@@ -50,9 +50,9 @@ import ch.unibe.iam.scg.archie.ui.charts.PatientsConsHistChart;
  * many patients and consultations are in the system, what is the age
  * distribution of patients etc.
  * </p>
- * 
+ *
  * $Id: Dashboard.java 774 2010-01-29 05:47:10Z gerry.weirich $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 774 $
@@ -120,8 +120,8 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 
 	/**
 	 * Initializes the dashboard. This method is also called when a UserChanged
-	 * event is propagated to redraw the contents of the dashboard according to
-	 * the current user's access permissions.
+	 * event is propagated to redraw the contents of the dashboard according to the
+	 * current user's access permissions.
 	 */
 	private void initialize() {
 		// Create according to ACL
@@ -158,7 +158,7 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 
 	/**
 	 * Initialize charts in the given parent.
-	 * 
+	 *
 	 * @param container
 	 */
 	private void initializeCharts() {
@@ -197,10 +197,9 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 	}
 
 	/**
-	 * Initializes the parts of this dashboard. The dashboard consists of two
-	 * parts, one upper part that has the a dashboard overview, a lower part
-	 * containing either a message about the status of the charts or the charts
-	 * themselves.
+	 * Initializes the parts of this dashboard. The dashboard consists of two parts,
+	 * one upper part that has the a dashboard overview, a lower part containing
+	 * either a message about the status of the charts or the charts themselves.
 	 */
 	private void initializeParts() {
 		this.overview = new DashboardOverview(this.container, SWT.NONE);
@@ -255,10 +254,9 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 	}
 
 	/**
-	 * Triggers the update mechanism of the upper part of the dashboard
-	 * containing the system overview. This function should be called when the
-	 * overview should refresh (e.g. after DB changes) without having to restart
-	 * the program.
+	 * Triggers the update mechanism of the upper part of the dashboard containing
+	 * the system overview. This function should be called when the overview should
+	 * refresh (e.g. after DB changes) without having to restart the program.
 	 */
 	public void updateOverview() {
 		this.overview.refresh();
@@ -305,8 +303,6 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 		}
 		this.charts.clear();
 
-		
-
 		UiDesk.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				// Dispose any children if available
@@ -326,7 +322,7 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#done(org.eclipse.core
 	 *      .runtime.jobs.IJobChangeEvent)
 	 */
@@ -335,8 +331,8 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 		// http://www.eclipse.org/swt/faq.php#uithread
 		UiDesk.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				Dashboard.this.refreshChartsAction.setEnabled(++Dashboard.this.jobCounter == Dashboard.this.charts
-						.size());
+				Dashboard.this.refreshChartsAction
+						.setEnabled(++Dashboard.this.jobCounter == Dashboard.this.charts.size());
 			}
 		});
 	}

@@ -17,35 +17,35 @@ import ch.elexis.icpc.model.internal.Encounter;
 import ch.elexis.icpc.model.internal.Episode;
 
 public class IcpcModelAdapterFactory extends AbstractModelAdapterFactory {
-	
+
 	private static IcpcModelAdapterFactory INSTANCE;
-	
-	public static synchronized IcpcModelAdapterFactory getInstance(){
+
+	public static synchronized IcpcModelAdapterFactory getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new IcpcModelAdapterFactory();
 		}
 		return INSTANCE;
 	}
-	
-	private IcpcModelAdapterFactory(){
+
+	private IcpcModelAdapterFactory() {
 		super();
 	}
-	
+
 	@Override
-	protected void initializeMappings(){
+	protected void initializeMappings() {
 		addMapping(new MappingEntry(IcpcCode.class, Code.class, ICPCCode.class));
 		addMapping(new MappingEntry(IcpcEpisode.class, Episode.class, ICPCEpisode.class));
 		addMapping(new MappingEntry(IcpcEncounter.class, Encounter.class, ICPCEncounter.class));
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public <T> T getAdapter(EntityWithId entity, Class<T> clazz, boolean registerEntityChangeEvent){
+	public <T> T getAdapter(EntityWithId entity, Class<T> clazz, boolean registerEntityChangeEvent) {
 		if (entity != null) {
-			Optional<Identifiable> adapter =
-				getInstance().getModelAdapter(entity, clazz, true, registerEntityChangeEvent);
+			Optional<Identifiable> adapter = getInstance().getModelAdapter(entity, clazz, true,
+					registerEntityChangeEvent);
 			return (T) adapter.orElse(null);
 		}
 		return null;
 	}
-	
+
 }

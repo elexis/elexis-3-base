@@ -12,6 +12,7 @@ import ch.elexis.core.data.util.Extensions;
 
 public class Export {
 	public static final String EXT = "com.hilotec.elexis.opendocument.docexport";
+
 	public static class Exporter {
 		private String label;
 		private IDocExporter exporter;

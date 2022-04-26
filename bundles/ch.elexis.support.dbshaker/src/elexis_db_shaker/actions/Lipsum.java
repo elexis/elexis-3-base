@@ -7,9 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
  *
- *    
+ *
+ *
  *******************************************************************************/
 package elexis_db_shaker.actions;
 
@@ -27,8 +27,8 @@ import ch.elexis.core.data.util.PlatformHelper;
 
 public class Lipsum {
 	List<String> sentences;
-	
-	public Lipsum() throws FileNotFoundException{
+
+	public Lipsum() throws FileNotFoundException {
 		String base = PlatformHelper.getBasePath("ch.elexis.support.dbshaker");
 		File rsc = new File(base, "rsc");
 		File flipsum = new File(rsc, "lipsum.txt");
@@ -43,12 +43,12 @@ public class Lipsum {
 			sentences.add(s.trim());
 		}
 	}
-	
-	public String getSentence(){
+
+	public String getSentence() {
 		return sentences.get((int) Math.round(Math.random() * (sentences.size() - 1)));
 	}
-	
-	public String getParagraph(){
+
+	public String getParagraph() {
 		int num = (int) (1 + Math.round(5 * Math.random()));
 		StringBuilder sb = new StringBuilder();
 		while (num-- > 0) {

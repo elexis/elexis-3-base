@@ -13,37 +13,37 @@ import ch.elexis.core.services.IStoreToStringContribution;
 
 @Component(immediate = true)
 public class BefundeStoreToStringContribution implements IStoreToStringContribution {
-	
+
 	// wait for db connection
 	@Reference(cardinality = ReferenceCardinality.MANDATORY, target = "(id=default)")
 	private IElexisEntityManager entityManager;
-	
+
 	@Override
-	public Optional<String> storeToString(Identifiable identifiable){
+	public Optional<String> storeToString(Identifiable identifiable) {
 		// TODO Auto-generated method stub
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public Optional<Identifiable> loadFromString(String storeToString){
+	public Optional<Identifiable> loadFromString(String storeToString) {
 		// TODO Auto-generated method stub
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public Class<?> getEntityForType(String type){
+	public Class<?> getEntityForType(String type) {
 		return ElexisTypeMap.get(type);
 	}
-	
+
 	@Override
-	public String getTypeForEntity(Object entityInstance){
+	public String getTypeForEntity(Object entityInstance) {
 		return ElexisTypeMap.getKeyForObject((EntityWithId) entityInstance);
 	}
-	
+
 	@Override
-	public String getTypeForModel(Class<?> interfaze){
+	public String getTypeForModel(Class<?> interfaze) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

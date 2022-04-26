@@ -7,10 +7,10 @@
  *
  * Sponsoring:
  * 	 mediX Notfallpaxis, diepraxen Stauffacher AG, Zürich
- * 
+ *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -37,41 +37,40 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
 /**
- * The header above the resource columns with the name of the resources (and probably later more
- * elements)
- * 
+ * The header above the resource columns with the name of the resources (and
+ * probably later more elements)
+ *
  * @author gerry
- * 
+ *
  */
 public class ColumnHeader extends Composite {
 	AgendaParallel view;
 	static final String IMG_PERSONS_NAME = Activator.PLUGIN_ID + "/personen"; //$NON-NLS-1$
 	static final String IMG_PERSONS_PATH = "icons/personen.png"; //$NON-NLS-1$
 	ImageHyperlink ihRes;
-	
-	ColumnHeader(Composite parent, AgendaParallel v){
+
+	ColumnHeader(Composite parent, AgendaParallel v) {
 		super(parent, SWT.NONE);
 		view = v;
-		
+
 		if (UiDesk.getImage(IMG_PERSONS_NAME) == null) {
-			UiDesk.getImageRegistry().put(IMG_PERSONS_NAME,
-				Activator.getImageDescriptor(IMG_PERSONS_PATH));
+			UiDesk.getImageRegistry().put(IMG_PERSONS_NAME, Activator.getImageDescriptor(IMG_PERSONS_PATH));
 		}
 		ihRes = new ImageHyperlink(this, SWT.NONE);
 		ihRes.setImage(UiDesk.getImage(IMG_PERSONS_NAME));
 		ihRes.setToolTipText(Messages.ColumnHeader_selectMandatorToShow);
 		ihRes.addHyperlinkListener(new HyperlinkAdapter() {
-			
+
 			@Override
-			public void linkActivated(HyperlinkEvent e){
+			public void linkActivated(HyperlinkEvent e) {
 				new SelectResourceDlg().open();
 			}
-			
+
 		});
-		
+
 	}
-	
-	void recalc(double widthPerColumn, int left_offset, int padding, int textSize){
+
+	void recalc(double widthPerColumn, int left_offset, int padding, int textSize) {
 		GridData gd = (GridData) getLayoutData();
 		gd.heightHint = textSize + 2;
 		for (Control c : getChildren()) {
@@ -94,15 +93,15 @@ public class ColumnHeader extends Composite {
 			l.setBounds(lx, 0, inner, textSize + 2);
 		}
 	}
-	
+
 	class SelectResourceDlg extends TitleAreaDialog {
-		
-		public SelectResourceDlg(){
+
+		public SelectResourceDlg() {
 			super(ColumnHeader.this.getShell());
 		}
-		
+
 		@Override
-		protected Control createDialogArea(Composite parent){
+		protected Control createDialogArea(Composite parent) {
 			Composite ret = (Composite) super.createDialogArea(parent);
 			String[] displayed = view.getDisplayedResources();
 			for (String r : Activator.getDefault().getResources()) {
@@ -115,17 +114,17 @@ public class ColumnHeader extends Composite {
 			}
 			return ret;
 		}
-		
+
 		@Override
-		public void create(){
+		public void create() {
 			super.create();
 			getShell().setText(Messages.ColumnHeader_Mandantors);
 			setTitle(Messages.ColumnHeader_mandatorsForParallelView);
 			setMessage(Messages.ColumnHeader_selectMandators);
 		}
-		
+
 		@Override
-		protected void okPressed(){
+		protected void okPressed() {
 			Composite dlg = (Composite) getDialogArea();
 			String[] res = Activator.getDefault().getResources();
 			ArrayList<String> sel = new ArrayList<String>(res.length);
@@ -139,9 +138,9 @@ public class ColumnHeader extends Composite {
 			view.clear();
 			CoreHub.localCfg.set(PreferenceConstants.AG_RESOURCESTOSHOW, StringTool.join(sel, ",")); //$NON-NLS-1$
 			view.refresh();
-			
+
 			super.okPressed();
 		}
-		
+
 	}
 }

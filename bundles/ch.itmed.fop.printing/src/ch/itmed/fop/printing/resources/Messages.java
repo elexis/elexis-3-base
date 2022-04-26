@@ -29,9 +29,9 @@ public class Messages extends NLS {
 	public static String GeneralPreferences_SettingScope;
 	public static String GeneralPreferences_Default;
 	public static String GeneralPreferences_Custom;
-	
+
 	public static String TemplatePreferences_Description;
-	public static String TemplatePreferences_Title;	
+	public static String TemplatePreferences_Title;
 	public static String TemplatePreferences_SettingsStore;
 	public static String TemplatePreferences_SettingsStore_Global;
 	public static String TemplatePreferences_SettingsStore_Local;
@@ -51,10 +51,10 @@ public class Messages extends NLS {
 	public static String TemplatePreferences_Page_MarginLeft;
 	public static String TemplatePreferences_Page_MarginRight;
 	public static String TemplatePreferences_ResponsiblePharmacist;
-	
+
 	public static String DefaultError_Title;
 	public static String DefaultError_Message;
-	
+
 	public static String Info_NoCase_Title;
 	public static String Info_NoCase_Message;
 	public static String Info_NoConsultation_Title;
@@ -65,7 +65,7 @@ public class Messages extends NLS {
 	public static String Info_NoAppointment_Message;
 	public static String Info_NoPatient_Title;
 	public static String Info_NoPatient_Message;
-	
+
 	public static String Medication_FixedMedication;
 	public static String Medication_ReserveMedication;
 	public static String Medication_Recipe;
@@ -73,9 +73,9 @@ public class Messages extends NLS {
 	public static String Medication_SymptomaticMedication;
 	public static String Medication_Dose_Morning;
 	public static String Medication_Dose_Midday;
-	public static String Medication_Dose_Evening;	
-	public static String Medication_Dose_Night;	
-	
+	public static String Medication_Dose_Evening;
+	public static String Medication_Dose_Night;
+
 	public static String AppointmentCard_Name;
 	public static String RecurringAppointmentsCard_Name;
 	public static String ArticleLabel_Name;

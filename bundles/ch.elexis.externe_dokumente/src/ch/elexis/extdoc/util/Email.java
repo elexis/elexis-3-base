@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Niklaus Giger - Initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.extdoc.util;
 
@@ -38,15 +38,16 @@ import ch.rgw.tools.TimeTool;
 
 @SuppressWarnings("deprecation")
 public class Email {
-	
+
 	private static Logger logger = null;
-	
+
 	/**
 	 * Private helper to encoding for mailto URL
+	 *
 	 * @param p String to encodes
 	 * @return URL-encoded string
 	 */
-	private static String enc(String p){
+	private static String enc(String p) {
 		if (p == null)
 			p = "";
 		try {
@@ -55,63 +56,60 @@ public class Email {
 			throw new RuntimeException();
 		}
 	}
-	
+
 	/**
 	 * Save text to system clipboard
 	 */
-	
-	public static void saveTextToClipboard(String body){
+
+	public static void saveTextToClipboard(String body) {
 		Clipboard clipboard = new Clipboard(UiDesk.getDisplay());
 		TextTransfer textTransfer = TextTransfer.getInstance();
-		clipboard.setContents(new Object[] {
-			body
-		}, new Transfer[] {
-			textTransfer
-		});
+		clipboard.setContents(new Object[] { body }, new Transfer[] { textTransfer });
 		clipboard.dispose();
-		
+
 	}
-	
+
 	/**
 	 * Helper function to get all consultations of a given patients.
-	 * 
-	 * Copied from private function ch.elexis.util.AllDataAccessor to avoid a new version of the
-	 * elexis core in 2.1.7
-	 * 
+	 *
+	 * Copied from private function ch.elexis.util.AllDataAccessor to avoid a new
+	 * version of the elexis core in 2.1.7
+	 *
 	 * TODO: Should be moved somewhere to the elexis-core
 	 */
-	public static String getEmailPreface(Patient patient){
+	public static String getEmailPreface(Patient patient) {
 		StringBuilder sb = new StringBuilder();
-		String s; 
+		String s;
 		sb.append(patient.getName() + " ");
 		sb.append(patient.getVorname() + " ");
-		sb.append(patient.getPostAnschrift(false)+ " ");
+		sb.append(patient.getPostAnschrift(false) + " ");
 		sb.append(patient.get(Patient.FLD_PHONE1) + " ");
 		sb.append(patient.getNatel() + " ");
 		sb.append(patient.getMailAddress() + " ");
 		return sb.toString();
 	}
+
 	/**
 	 * Helper function to get all consultations of a given patients.
-	 * 
-	 * Copied from private function ch.elexis.util.AllDataAccessor to avoid a new version of the
-	 * elexis core in 2.1.7
-	 * 
+	 *
+	 * Copied from private function ch.elexis.util.AllDataAccessor to avoid a new
+	 * version of the elexis core in 2.1.7
+	 *
 	 * TODO: Should be moved somewhere to the elexis-core
 	 */
-	public static String getAllKonsultations(Patient patient){
+	public static String getAllKonsultations(Patient patient) {
 		StringBuilder sb = new StringBuilder();
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Returns true if we are running under Windows
 	 */
-	public static boolean onWindows(){
+	public static boolean onWindows() {
 		return (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0);
 	}
-	
-	public static void runExternalProgram(String app, String params){
+
+	public static void runExternalProgram(String app, String params) {
 		String cmd = app + " " + params;
 		logger.info(cmd);
 		try {
@@ -131,14 +129,13 @@ public class Email {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Opens the configured application to send an email
 	 */
-	public static void openMailApplication(String to, String subject, String body,
-		List<File> attachments){
+	public static void openMailApplication(String to, String subject, String body, List<File> attachments) {
 		logger = LoggerFactory.getLogger("ch.elexis.extdoc");
-		
+
 		if (subject == null)
 			subject = CoreHub.localCfg.get(PreferenceConstants.CONCERNS, "Überweisung");
 		// quote for programs with white spaces in file
@@ -171,8 +168,7 @@ public class Email {
 				if (to != null && to.length() > 0)
 					params += " " + to;
 				runExternalProgram(app, params);
-			} else if (app.toLowerCase().indexOf("thunderbird") >= 0
-				|| app.toLowerCase().indexOf("icedove") >= 0) {
+			} else if (app.toLowerCase().indexOf("thunderbird") >= 0 || app.toLowerCase().indexOf("icedove") >= 0) {
 				params += " -compose \"";
 				if (to != null && to.length() > 0)
 					params = " to='" + to + "',";

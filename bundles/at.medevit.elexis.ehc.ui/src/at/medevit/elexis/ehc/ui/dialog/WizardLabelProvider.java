@@ -20,7 +20,7 @@ import ch.elexis.core.ui.icons.Images;
 
 public class WizardLabelProvider extends LabelProvider implements IBaseLabelProvider {
 	@Override
-	public String getText(Object element){
+	public String getText(Object element) {
 		if (element instanceof IWizardCategory) {
 			return ((IWizardCategory) element).getLabel();
 		} else if (element instanceof IWizardDescriptor) {
@@ -28,9 +28,9 @@ public class WizardLabelProvider extends LabelProvider implements IBaseLabelProv
 		}
 		return super.getText(element);
 	}
-	
+
 	@Override
-	public Image getImage(Object element){
+	public Image getImage(Object element) {
 		if (element instanceof IWizardCategory) {
 			return Images.IMG_BOOK.getImage();
 		} else if (element instanceof IWizardDescriptor) {

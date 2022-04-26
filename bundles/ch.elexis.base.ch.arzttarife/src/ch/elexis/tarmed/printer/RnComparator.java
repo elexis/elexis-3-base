@@ -10,9 +10,9 @@ import ch.rgw.tools.TimeTool;
 public class RnComparator implements Comparator<Element> {
 	TimeTool tt0 = new TimeTool();
 	TimeTool tt1 = new TimeTool();
-	
+
 	@Override
-	public int compare(Element e0, Element e1){
+	public int compare(Element e0, Element e1) {
 		if (!tt0.set(e0.getAttributeValue("date_begin"))) {
 			return 1;
 		}

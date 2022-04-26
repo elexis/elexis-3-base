@@ -13,37 +13,36 @@ import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
 
 public class EventResizeFunction extends AbstractBrowserFunction {
-	
-	public EventResizeFunction(Browser browser, String name){
+
+	public EventResizeFunction(Browser browser, String name) {
 		super(browser, name);
 	}
-	
+
 	@Override
-	public Object function(Object[] arguments){
+	public Object function(Object[] arguments) {
 		if (arguments.length == 3) {
-			IAppointment termin = CoreModelServiceHolder.get()
-				.load((String) arguments[0], IAppointment.class).orElse(null);
+			IAppointment termin = CoreModelServiceHolder.get().load((String) arguments[0], IAppointment.class)
+					.orElse(null);
 			final LocalDateTime startDate = getDateTimeArg(arguments[1]);
 			final LocalDateTime endDate = getDateTimeArg(arguments[2]);
 			if (termin != null) {
 				AcquireLockBlockingUi.aquireAndRun(termin, new ILockHandler() {
 					@Override
-					public void lockFailed(){
+					public void lockFailed() {
 						redraw();
 					}
-					
+
 					@Override
-					public void lockAcquired(){
+					public void lockAcquired() {
 						termin.setStartTime(startDate);
 						termin.setEndTime(endDate);
 						CoreModelServiceHolder.get().save(termin);
-						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD,
-							IAppointment.class);
+						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 						redraw();
 					}
 				});
 			} else {
-				// the event could not be loaded, trigger refetch 
+				// the event could not be loaded, trigger refetch
 				new ScriptingHelper(getBrowser()).refetchEvents();
 			}
 		} else {

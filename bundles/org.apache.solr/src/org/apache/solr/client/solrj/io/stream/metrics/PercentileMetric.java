@@ -25,60 +25,62 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionParameter;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class PercentileMetric extends Metric {
-  private long longMax = -Long.MIN_VALUE;
-  private double doubleMax = -Double.MAX_VALUE;
-  private String columnName;
+	private long longMax = -Long.MIN_VALUE;
+	private double doubleMax = -Double.MAX_VALUE;
+	private String columnName;
 
-  public PercentileMetric(String columnName, int percentile){
+	public PercentileMetric(String columnName, int percentile) {
 
-    init("per", columnName, percentile);
-  }
+		init("per", columnName, percentile);
+	}
 
-  public PercentileMetric(StreamExpression expression, StreamFactory factory) throws IOException{
-    // grab all parameters out
-    String functionName = expression.getFunctionName();
-    String columnName = factory.getValueOperand(expression, 0);
-    int percentile = Integer.parseInt(factory.getValueOperand(expression, 1));
+	public PercentileMetric(StreamExpression expression, StreamFactory factory) throws IOException {
+		// grab all parameters out
+		String functionName = expression.getFunctionName();
+		String columnName = factory.getValueOperand(expression, 0);
+		int percentile = Integer.parseInt(factory.getValueOperand(expression, 1));
 
-    // validate expression contains only what we want.
-    if(null == columnName){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expected %s(columnName)", expression, functionName));
-    }
-    if(2 != expression.getParameters().size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - unknown operands found", expression));
-    }
+		// validate expression contains only what we want.
+		if (null == columnName) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - expected %s(columnName)",
+					expression, functionName));
+		}
+		if (2 != expression.getParameters().size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - unknown operands found", expression));
+		}
 
-    init(functionName, columnName, percentile);
-  }
+		init(functionName, columnName, percentile);
+	}
 
-  private void init(String functionName, String columnName, int percentile){
-    this.columnName = columnName;
-    setFunctionName(functionName);
-    setIdentifier(functionName, "(", columnName, ","+percentile, ")");
-  }
+	private void init(String functionName, String columnName, int percentile) {
+		this.columnName = columnName;
+		setFunctionName(functionName);
+		setIdentifier(functionName, "(", columnName, "," + percentile, ")");
+	}
 
-  public Number getValue() {
-    if(longMax == Long.MIN_VALUE) {
-      return doubleMax;
-    } else {
-      return longMax;
-    }
-  }
+	public Number getValue() {
+		if (longMax == Long.MIN_VALUE) {
+			return doubleMax;
+		} else {
+			return longMax;
+		}
+	}
 
-  public String[] getColumns() {
-    return new String[]{columnName};
-  }
+	public String[] getColumns() {
+		return new String[] { columnName };
+	}
 
-  public void update(Tuple tuple) {
+	public void update(Tuple tuple) {
 
-  }
+	}
 
-  public Metric newInstance() {
-    return new MaxMetric(columnName);
-  }
+	public Metric newInstance() {
+		return new MaxMetric(columnName);
+	}
 
-  @Override
-  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-    return new StreamExpression(getFunctionName()).withParameter(columnName);
-  }
+	@Override
+	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+		return new StreamExpression(getFunctionName()).withParameter(columnName);
+	}
 }

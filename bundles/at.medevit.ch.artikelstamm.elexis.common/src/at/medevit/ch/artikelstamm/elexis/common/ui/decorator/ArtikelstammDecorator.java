@@ -12,41 +12,41 @@ import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import ch.elexis.core.ui.UiDesk;
 
 public class ArtikelstammDecorator implements ILightweightLabelDecorator {
-	
+
 	private static ImageDescriptor warning = PlatformUI.getWorkbench().getSharedImages()
-		.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
-	
-	private static ImageDescriptor ol_gGruen = ResourceManager.getPluginImageDescriptor(
-		"at.medevit.ch.artikelstamm.ui", "rsc/icons/generic_ol_white.png");
-	private static ImageDescriptor ol_oBlue = ResourceManager.getPluginImageDescriptor(
-		"at.medevit.ch.artikelstamm.ui", "rsc/icons/original_ol_white.png");
-	
+			.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
+
+	private static ImageDescriptor ol_gGruen = ResourceManager.getPluginImageDescriptor("at.medevit.ch.artikelstamm.ui",
+			"rsc/icons/generic_ol_white.png");
+	private static ImageDescriptor ol_oBlue = ResourceManager.getPluginImageDescriptor("at.medevit.ch.artikelstamm.ui",
+			"rsc/icons/original_ol_white.png");
+
 	@Override
-	public void addListener(ILabelProviderListener listener){
+	public void addListener(ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public boolean isLabelProperty(Object element, String property){
+	public boolean isLabelProperty(Object element, String property) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
-	public void removeListener(ILabelProviderListener listener){
+	public void removeListener(ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public void decorate(Object element, IDecoration decoration){
+	public void decorate(Object element, IDecoration decoration) {
 		IArtikelstammItem item = (IArtikelstammItem) element;
 		if (item.getPurchasePrice().isZero() && item.getSellingPrice().isZero()) {
 			decoration.addOverlay(warning, IDecoration.TOP_LEFT);

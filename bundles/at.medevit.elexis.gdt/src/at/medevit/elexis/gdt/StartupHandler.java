@@ -32,17 +32,17 @@ import at.medevit.elexis.gdt.tools.GDTCommPartnerCollector;
 
 @Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
 public class StartupHandler implements EventHandler {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
-	
+
 	private ExecutorService executor;
-	
-	public StartupHandler(){
+
+	public StartupHandler() {
 		executor = Executors.newSingleThreadExecutor();
 	}
-	
+
 	@Override
-	public void handleEvent(Event event){
+	public void handleEvent(Event event) {
 		logger.info("APPLICATION STARTUP COMPLETE");
 		// do not block event handling, execute in different thread
 		executor.execute(() -> {
@@ -52,11 +52,10 @@ public class StartupHandler implements EventHandler {
 				return;
 			}
 			for (IGDTCommunicationPartner igdtCommunicationPartner : lp) {
-				if (igdtCommunicationPartner
-					.getConnectionType() == SystemConstants.FILE_COMMUNICATION) {
+				if (igdtCommunicationPartner.getConnectionType() == SystemConstants.FILE_COMMUNICATION) {
 					String incomingDirString = igdtCommunicationPartner.getIncomingDirectory();
 					logger.info("Found directory " + incomingDirString + "to watch by comm partner "
-						+ igdtCommunicationPartner.getLabel());
+							+ igdtCommunicationPartner.getLabel());
 					File incomingDir = null;
 					if (incomingDirString != null)
 						incomingDir = new File(incomingDirString);

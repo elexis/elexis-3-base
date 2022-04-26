@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.agenda.util;
@@ -41,19 +41,20 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Utility-Klasse für Operationen mit und an Plannables
- * 
+ *
  * @author Gerry
- * 
+ *
  */
 public final class Plannables {
-	private Plannables(){}
-	
+	private Plannables() {
+	}
+
 	private static DecimalFormat df = new DecimalFormat("00"); //$NON-NLS-1$
-	
+
 	private static final Logger log = LoggerFactory.getLogger(Plannables.class);
-	
+
 	/** Feststellen, ob zwei Plannables sich überlappen */
-	public static boolean isOverlapped(IPlannable p1, IPlannable p2){
+	public static boolean isOverlapped(IPlannable p1, IPlannable p2) {
 		if (p1.getDay().equals(p2.getDay())) {
 			int Beginn = p1.getStartMinute();
 			int oBeginn = p2.getStartMinute();
@@ -72,9 +73,9 @@ public final class Plannables {
 		}
 		return false;
 	}
-	
+
 	/** Feststellen, ob zwei Plannables identisch sind */
-	public static boolean isEqual(IPlannable p1, IPlannable p2){
+	public static boolean isEqual(IPlannable p1, IPlannable p2) {
 		if (p1.getDay().equals(p2.getDay())) {
 			if (p1.getStartMinute() == p2.getStartMinute()) {
 				if (p1.getDurationInMinutes() == p2.getDurationInMinutes()) {
@@ -84,9 +85,9 @@ public final class Plannables {
 		}
 		return false;
 	}
-	
+
 	/** Feststellen, ob ein Plannable mit einer Liste von Planables kollidiert */
-	public static boolean collides(IPlannable p1, Collection<IPlannable> list){
+	public static boolean collides(IPlannable p1, Collection<IPlannable> list) {
 		for (IPlannable p2 : list) {
 			if (isEqual(p1, p2)) {
 				continue;
@@ -97,9 +98,9 @@ public final class Plannables {
 		}
 		return false;
 	}
-	
+
 	/** Feststellen, ob eine Zeitspane mit einem Plannable der Liste kollidiert */
-	public static boolean collides(TimeSpan ts, Collection<IPlannable> list, Termin exclude){
+	public static boolean collides(TimeSpan ts, Collection<IPlannable> list, Termin exclude) {
 		if (list == null) {
 			return false;
 		}
@@ -115,9 +116,9 @@ public final class Plannables {
 		}
 		return false;
 	}
-	
+
 	/** Feststellen, ob eine Zeitspane mit einem Plannable der Liste kollidiert */
-	public static boolean collides(TimeSpan ts, IPlannable[] list, Termin exclude){
+	public static boolean collides(TimeSpan ts, IPlannable[] list, Termin exclude) {
 		if (list == null) {
 			return false;
 		}
@@ -127,7 +128,7 @@ public final class Plannables {
 			}
 			TimeTool tt = new TimeTool(p.getDay());
 			tt.add(TimeTool.MINUTE, p.getStartMinute());
-			
+
 			TimeSpan o = new TimeSpan(tt, p.getDurationInMinutes());
 			System.out.println(ts.dump() + " / " + o.dump()); //$NON-NLS-1$
 			if (ts.overlap(o) != null) {
@@ -136,28 +137,27 @@ public final class Plannables {
 		}
 		return false;
 	}
-	
+
 	/** Die einem Plannable-Typ zugeordnete Farbe holen */
-	public static Color getTypColor(IPlannable p){
-		String coldesc =
-			ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(),
+	public static Color getTypColor(IPlannable p) {
+		String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(),
 				"FFFFFF"); //$NON-NLS-1$
 		return UiDesk.getColorFromRGB(coldesc);
 		/*
 		 * if(p.getType().equals(Termin.typReserviert())){ return
-		 * Desk.theColorRegistry.get("weiss"); }else{ return Desk.theColorRegistry.get("schwarz"); }
+		 * Desk.theColorRegistry.get("weiss"); }else{ return
+		 * Desk.theColorRegistry.get("schwarz"); }
 		 */
 	}
-	
+
 	/** Das einem Plannable-Typ zugeordnete Bild holen */
-	public static Image getTypImage(IPlannable p){
+	public static Image getTypImage(IPlannable p) {
 		return getTypImage(p.getType());
 	}
-	
+
 	/** Das einem Plannable-Titel zugeordnete Bild holen */
-	public static Image getTypImage(String t){
-		String ipath =
-			ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPIMAGE_PREFIX + t, null);
+	public static Image getTypImage(String t) {
+		String ipath = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPIMAGE_PREFIX + t, null);
 		if (!StringTool.isNothing(ipath)) {
 			Image ret = UiDesk.getImage(ipath);
 			if (ret == null) {
@@ -168,23 +168,21 @@ public final class Plannables {
 		}
 		return null;
 	}
-	
+
 	/** Die einem Plannable-Status zugeordnete Farnbe holen */
-	public static Color getStatusColor(IPlannable p){
+	public static Color getStatusColor(IPlannable p) {
 		if (p.getType().equals(Termin.typReserviert())) {
-			String coldesc =
-				ConfigServiceHolder
-					.getUserCached(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(), "000000"); //$NON-NLS-1$
+			String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(),
+					"000000"); //$NON-NLS-1$
 			return UiDesk.getColorFromRGB(coldesc);
 		}
-		String coldesc =
-			ConfigServiceHolder
-				.getUserCached(PreferenceConstants.AG_STATCOLOR_PREFIX + p.getStatus(), "000000"); //$NON-NLS-1$
+		String coldesc = ConfigServiceHolder.getUserCached(PreferenceConstants.AG_STATCOLOR_PREFIX + p.getStatus(),
+				"000000"); //$NON-NLS-1$
 		return UiDesk.getColorFromRGB(coldesc);
 	}
-	
+
 	/** Die Startzeit eines Plannable in hh:mm - Form holen */
-	public static String getStartTimeAsString(IPlannable p){
+	public static String getStartTimeAsString(IPlannable p) {
 		int s = p.getStartMinute();
 		int h = s / 60;
 		int m = s % 60;
@@ -192,9 +190,9 @@ public final class Plannables {
 		sb.append(df.format(h)).append(":").append(df.format(m)); //$NON-NLS-1$
 		return sb.toString();
 	}
-	
+
 	/** Die End-Zeit eines Plannable in hh:mm - Form holen */
-	public static String getEndTimeAsString(IPlannable p){
+	public static String getEndTimeAsString(IPlannable p) {
 		int s = p.getStartMinute() + p.getDurationInMinutes();
 		int h = s / 60;
 		int m = s % 60;
@@ -202,8 +200,8 @@ public final class Plannables {
 		sb.append(df.format(h)).append(":").append(df.format(m)); //$NON-NLS-1$
 		return sb.toString();
 	}
-	
-	public static Termin getFollowingTermin(String bereich, TimeTool date, Termin termin){
+
+	public static Termin getFollowingTermin(String bereich, TimeTool date, Termin termin) {
 		List<IPlannable> list = loadTermine(bereich, date);
 		boolean mark = false;
 		for (IPlannable p : list) {
@@ -216,31 +214,28 @@ public final class Plannables {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Alle Termine eines Tages sortiert einlesen. Freiräume belassen.
-	 * 
+	 *
 	 * @param mandant
 	 * @param date
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<IPlannable> loadTermine(String bereich, TimeTool date){
+	public static List<IPlannable> loadTermine(String bereich, TimeTool date) {
 		if (StringTool.isNothing(bereich)) {
 			return new ArrayList<IPlannable>();
 		}
-		
-		Query<Termin> qbe = new Query<Termin>(Termin.class, Termin.TABLENAME, false, new String[] {
-			Termin.FLD_TAG, Termin.FLD_BEGINN, Termin.FLD_DAUER, Termin.FLD_LASTEDIT,
-			Termin.FLD_BEREICH
-		});
+
+		Query<Termin> qbe = new Query<Termin>(Termin.class, Termin.TABLENAME, false, new String[] { Termin.FLD_TAG,
+				Termin.FLD_BEGINN, Termin.FLD_DAUER, Termin.FLD_LASTEDIT, Termin.FLD_BEREICH });
 		String day = date.toString(TimeTool.DATE_COMPACT);
 		qbe.add(Termin.FLD_TAG, Query.EQUALS, day);
 		qbe.and();
-		
+
 		qbe.add(Termin.FLD_BEREICH, Query.EQUALS, bereich);
-		if (ConfigServiceHolder.getUserCached(PreferenceConstants.AG_SHOWDELETED, "0")
-			.equals("0")) {
+		if (ConfigServiceHolder.getUserCached(PreferenceConstants.AG_SHOWDELETED, "0").equals("0")) {
 			qbe.and();
 			qbe.add(Termin.FLD_DELETED, Query.EQUALS, "0");
 		}
@@ -260,22 +255,22 @@ public final class Plannables {
 			for (String fld : flds) {
 				String from = fld.substring(0, 4);
 				String until = fld.replaceAll("-", "").substring(4); //$NON-NLS-1$ //$NON-NLS-2$
-				list.add(new Termin(bereich, date.toString(TimeTool.DATE_COMPACT), TimeTool
-					.getMinutesFromTimeString(from), TimeTool.getMinutesFromTimeString(until),
-					Termin.typReserviert(), Termin.statusLeer()));
+				list.add(new Termin(bereich, date.toString(TimeTool.DATE_COMPACT),
+						TimeTool.getMinutesFromTimeString(from), TimeTool.getMinutesFromTimeString(until),
+						Termin.typReserviert(), Termin.statusLeer()));
 			}
-			
+
 		}
 		Collections.sort(list);
 		return list;
 	}
-	
+
 	/**
-	 * Alle Termine eines Tages sortiert einlesen und in Freiräume zwischen zwei Terminen jeweils
-	 * ein Plannable vom Typ Termin.Free einsetzen, so dass eine lückenlose Liste von Plannables
-	 * entsteht.
-	 * */
-	public static IPlannable[] loadDay(String bereich, TimeTool date){
+	 * Alle Termine eines Tages sortiert einlesen und in Freiräume zwischen zwei
+	 * Terminen jeweils ein Plannable vom Typ Termin.Free einsetzen, so dass eine
+	 * lückenlose Liste von Plannables entsteht.
+	 */
+	public static IPlannable[] loadDay(String bereich, TimeTool date) {
 		ArrayList<IPlannable> e = new ArrayList<IPlannable>(50);
 		List<IPlannable> list = loadTermine(bereich, date);
 		IPlannable n = null;
@@ -294,9 +289,8 @@ public final class Plannables {
 					// previous
 					if ((last.getStartMinute() + last.getDurationInMinutes()) < n.getStartMinute()) // Freiraum
 					{
-						IPlannable fr =
-							new Termin.Free(day, last.getStartMinute()
-								+ last.getDurationInMinutes(), n.getStartMinute());
+						IPlannable fr = new Termin.Free(day, last.getStartMinute() + last.getDurationInMinutes(),
+								n.getStartMinute());
 						// Prüfen, ob ein früherer Termin mit diesem Freiraum kollidiert
 						for (IPlannable p : e) {
 							if (Plannables.isOverlapped(p, fr)) {
@@ -317,7 +311,7 @@ public final class Plannables {
 		if (e.isEmpty()) // Keine Termine gefunden
 		{
 			Termin.Free ae = new Termin.Free( // Dann alles frei
-				day, 0, 1439);
+					day, 0, 1439);
 			e.add(ae);
 			return e.toArray(new IPlannable[0]);
 		}
@@ -329,20 +323,17 @@ public final class Plannables {
 			e.add(en);
 		}
 		return e.toArray(new IPlannable[0]);
-		
+
 	}
-	
+
 	/**
 	 * EIn Plannable zeichnen
-	 * 
-	 * @param gc
-	 *            Der GC, in den das Plannable gezeichnet werden soll
-	 * @param p
-	 *            das Plannable param r Rechteck, in das gezeichnet werden soll
-	 * @param times
-	 *            Anfang- und Endzeit des Bereichs, den gc abdeckt
+	 *
+	 * @param gc    Der GC, in den das Plannable gezeichnet werden soll
+	 * @param p     das Plannable param r Rechteck, in das gezeichnet werden soll
+	 * @param times Anfang- und Endzeit des Bereichs, den gc abdeckt
 	 */
-	public static void paint(GC gc, IPlannable p, Rectangle r, int start, int end){
+	public static void paint(GC gc, IPlannable p, Rectangle r, int start, int end) {
 		double minutes = end - start;
 		double pixelPerMinute = (double) r.width / minutes;
 		int x = (int) Math.round((p.getStartMinute() - start) * pixelPerMinute);
@@ -350,11 +341,10 @@ public final class Plannables {
 		gc.setBackground(getTypColor(p));
 		gc.fillRectangle(x, r.y, w, r.height);
 	}
-	
-	public static Hashtable<String, String> getTimePrefFor(String mandantLabel){
+
+	public static Hashtable<String, String> getTimePrefFor(String mandantLabel) {
 		Hashtable<String, String> map = new Hashtable<String, String>();
-		String mTimes =
-			ConfigServiceHolder.getGlobal(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String mTimes = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!StringTool.isNothing(mTimes)) {
 			String[] types = mTimes.split("::"); //$NON-NLS-1$
 			for (String t : types) {
@@ -371,8 +361,8 @@ public final class Plannables {
 		}
 		return map;
 	}
-	
-	public static void setTimePrefFor(String mandantLabel, Hashtable<String, String> map){
+
+	public static void setTimePrefFor(String mandantLabel, Hashtable<String, String> map) {
 		StringBuilder e = new StringBuilder(200);
 		Enumeration<String> keys = map.keys();
 		while (keys.hasMoreElements()) {
@@ -382,20 +372,18 @@ public final class Plannables {
 				e.append("::"); //$NON-NLS-1$
 			}
 		}
-		ConfigServiceHolder.setGlobal(
-			PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, e.toString()); //$NON-NLS-1$
+		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, e.toString()); //$NON-NLS-1$
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static Hashtable<String, String> getDayPrefFor(String mandantLabel){
-		Hashtable<String, String> map =
-			StringTool.foldStrings(ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAYPREFERENCES
-				+ "/" //$NON-NLS-1$
-				+ mandantLabel, null));
+	public static Hashtable<String, String> getDayPrefFor(String mandantLabel) {
+		Hashtable<String, String> map = StringTool
+				.foldStrings(ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAYPREFERENCES + "/" //$NON-NLS-1$
+						+ mandantLabel, null));
 		return map == null ? new Hashtable<String, String>() : map;
 	}
-	
-	public static void setDayPrefFor(String mandantLabel, Hashtable<String, String> map){
+
+	public static void setDayPrefFor(String mandantLabel, Hashtable<String, String> map) {
 		String flat = StringTool.flattenStrings(map);
 		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_DAYPREFERENCES + "/" + mandantLabel, flat); //$NON-NLS-1$
 	}

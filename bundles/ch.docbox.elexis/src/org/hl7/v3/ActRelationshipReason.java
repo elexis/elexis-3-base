@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for ActRelationshipReason.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="ActRelationshipReason">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -19,20 +20,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "ActRelationshipReason")
 @XmlEnum
 public enum ActRelationshipReason {
-	
+
 	RSON, MITGT;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static ActRelationshipReason fromValue(String v){
+
+	public static ActRelationshipReason fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

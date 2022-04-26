@@ -6,11 +6,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for State.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="State">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -19,20 +20,20 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "State")
 @XmlEnum
 public enum State {
-	
+
 	STATE, NAT;
-	
-	public String value(){
+
+	public String value() {
 		return name();
 	}
-	
-	public static State fromValue(String v){
+
+	public static State fromValue(String v) {
 		return valueOf(v);
 	}
-	
+
 }

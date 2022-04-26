@@ -17,34 +17,34 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 @SuppressWarnings("restriction")
 public class PdfFunction extends BrowserFunction {
-	
+
 	@Inject
 	private EPartService partService;
-	
+
 	@Inject
 	private ECommandService commandService;
-	
+
 	@Inject
 	private EHandlerService handlerService;
-	
+
 	private MPart part;
-	
-	public PdfFunction(MPart part, Browser browser, String name){
+
+	public PdfFunction(MPart part, Browser browser, String name) {
 		super(browser, name);
 		this.part = part;
 		CoreUiUtil.injectServices(this, part.getContext());
 	}
-	
+
 	@Override
-	public Object function(Object[] arguments){
+	public Object function(Object[] arguments) {
 		partService.showPart(part, PartState.ACTIVATE);
 		callPdf();
 		return null;
 	}
-	
-	private void callPdf(){
-		ParameterizedCommand command =
-			commandService.createCommand("at.medevit.elexis.agenda.ui.PrintSelectedAgenda", null);
+
+	private void callPdf() {
+		ParameterizedCommand command = commandService.createCommand("at.medevit.elexis.agenda.ui.PrintSelectedAgenda",
+				null);
 		if (command != null) {
 			handlerService.executeHandler(command);
 		} else {

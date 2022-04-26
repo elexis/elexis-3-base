@@ -7,11 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for TextMediaType.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="TextMediaType">
  *   &lt;restriction base="{urn:hl7-org:v3}cs">
@@ -24,12 +25,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlType(name = "TextMediaType")
 @XmlEnum
 public enum TextMediaType {
-	
+
 	@XmlEnumValue("text/html")
 	TEXT_HTML("text/html"), @XmlEnumValue("text/plain")
 	TEXT_PLAIN("text/plain"), @XmlEnumValue("text/rtf")
@@ -37,17 +38,18 @@ public enum TextMediaType {
 	TEXT_SGML("text/sgml"), @XmlEnumValue("text/x-hl7-ft")
 	TEXT_X_HL_7_FT("text/x-hl7-ft"), @XmlEnumValue("text/xml")
 	TEXT_XML("text/xml");
+
 	private final String value;
-	
-	TextMediaType(String v){
+
+	TextMediaType(String v) {
 		value = v;
 	}
-	
-	public String value(){
+
+	public String value() {
 		return value;
 	}
-	
-	public static TextMediaType fromValue(String v){
+
+	public static TextMediaType fromValue(String v) {
 		for (TextMediaType c : TextMediaType.values()) {
 			if (c.value.equals(v)) {
 				return c;
@@ -55,5 +57,5 @@ public enum TextMediaType {
 		}
 		throw new IllegalArgumentException(v);
 	}
-	
+
 }

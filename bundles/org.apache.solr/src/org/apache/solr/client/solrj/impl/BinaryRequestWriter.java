@@ -38,58 +38,61 @@ import static org.apache.solr.common.params.CommonParams.JAVABIN_MIME;
  */
 public class BinaryRequestWriter extends RequestWriter {
 
-  @Override
-  public ContentWriter getContentWriter(@SuppressWarnings({"rawtypes"})SolrRequest req) {
-    if (req instanceof UpdateRequest) {
-      UpdateRequest updateRequest = (UpdateRequest) req;
-      if (isEmpty(updateRequest)) return null;
-      return new ContentWriter() {
-        @Override
-        public void write(OutputStream os) throws IOException {
-          new JavaBinUpdateRequestCodec().marshal(updateRequest, os);
-        }
+	@Override
+	public ContentWriter getContentWriter(@SuppressWarnings({ "rawtypes" }) SolrRequest req) {
+		if (req instanceof UpdateRequest) {
+			UpdateRequest updateRequest = (UpdateRequest) req;
+			if (isEmpty(updateRequest))
+				return null;
+			return new ContentWriter() {
+				@Override
+				public void write(OutputStream os) throws IOException {
+					new JavaBinUpdateRequestCodec().marshal(updateRequest, os);
+				}
 
-        @Override
-        public String getContentType() {
-          return JAVABIN_MIME;
-        }
-      };
-    } else {
-      return req.getContentWriter(JAVABIN_MIME);
-    }
-  }
+				@Override
+				public String getContentType() {
+					return JAVABIN_MIME;
+				}
+			};
+		} else {
+			return req.getContentWriter(JAVABIN_MIME);
+		}
+	}
 
-  @Override
-  public Collection<ContentStream> getContentStreams(@SuppressWarnings({"rawtypes"})SolrRequest req) throws IOException {
-    if (req instanceof UpdateRequest) {
-      UpdateRequest updateRequest = (UpdateRequest) req;
-      if (isEmpty(updateRequest) ) return null;
-      throw new RuntimeException("This Should not happen");
-    } else {
-      return super.getContentStreams(req);
-    }
-  }
+	@Override
+	public Collection<ContentStream> getContentStreams(@SuppressWarnings({ "rawtypes" }) SolrRequest req)
+			throws IOException {
+		if (req instanceof UpdateRequest) {
+			UpdateRequest updateRequest = (UpdateRequest) req;
+			if (isEmpty(updateRequest))
+				return null;
+			throw new RuntimeException("This Should not happen");
+		} else {
+			return super.getContentStreams(req);
+		}
+	}
 
+	@Override
+	public String getUpdateContentType() {
+		return JAVABIN_MIME;
+	}
 
-  @Override
-  public String getUpdateContentType() {
-    return JAVABIN_MIME;
-  }
+	@Override
+	public void write(@SuppressWarnings({ "rawtypes" }) SolrRequest request, OutputStream os) throws IOException {
+		if (request instanceof UpdateRequest) {
+			UpdateRequest updateRequest = (UpdateRequest) request;
+			new JavaBinUpdateRequestCodec().marshal(updateRequest, os);
+		}
+	}
 
-  @Override
-  public void write(@SuppressWarnings({"rawtypes"})SolrRequest request, OutputStream os) throws IOException {
-    if (request instanceof UpdateRequest) {
-      UpdateRequest updateRequest = (UpdateRequest) request;
-      new JavaBinUpdateRequestCodec().marshal(updateRequest, os);
-    }
-  }
-  
-  /*
-   * A hack to get access to the protected internal buffer and avoid an additional copy
-   */
-  public static class BAOS extends ByteArrayOutputStream {
-    public byte[] getbuf() {
-      return super.buf;
-    }
-  }
+	/*
+	 * A hack to get access to the protected internal buffer and avoid an additional
+	 * copy
+	 */
+	public static class BAOS extends ByteArrayOutputStream {
+		public byte[] getbuf() {
+			return super.buf;
+		}
+	}
 }

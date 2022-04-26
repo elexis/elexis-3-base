@@ -16,44 +16,44 @@ public class VaccinationInfo {
 	private Integer totalNumberOfDoses;
 	private String vaccinationDate;
 	private String countryOfVaccination;
-	
-	public String getMedicinalProductCode(){
+
+	public String getMedicinalProductCode() {
 		return medicinalProductCode;
 	}
-	
-	public void setMedicinalProductCode(String medicinalProductCode){
+
+	public void setMedicinalProductCode(String medicinalProductCode) {
 		this.medicinalProductCode = medicinalProductCode;
 	}
-	
-	public Integer getNumberOfDoses(){
+
+	public Integer getNumberOfDoses() {
 		return numberOfDoses;
 	}
-	
-	public void setNumberOfDoses(Integer numberOfDoses){
+
+	public void setNumberOfDoses(Integer numberOfDoses) {
 		this.numberOfDoses = numberOfDoses;
 	}
-	
-	public Integer getTotalNumberOfDoses(){
+
+	public Integer getTotalNumberOfDoses() {
 		return totalNumberOfDoses;
 	}
-	
-	public void setTotalNumberOfDoses(Integer totalNumberOfDoses){
+
+	public void setTotalNumberOfDoses(Integer totalNumberOfDoses) {
 		this.totalNumberOfDoses = totalNumberOfDoses;
 	}
-	
-	public String getVaccinationDate(){
+
+	public String getVaccinationDate() {
 		return vaccinationDate;
 	}
-	
-	public void setVaccinationDate(String vaccinationDate){
+
+	public void setVaccinationDate(String vaccinationDate) {
 		this.vaccinationDate = vaccinationDate;
 	}
-	
-	public String getCountryOfVaccination(){
+
+	public String getCountryOfVaccination() {
 		return countryOfVaccination;
 	}
-	
-	public void setCountryOfVaccination(String countryOfVaccination){
+
+	public void setCountryOfVaccination(String countryOfVaccination) {
 		this.countryOfVaccination = countryOfVaccination;
 	}
 }

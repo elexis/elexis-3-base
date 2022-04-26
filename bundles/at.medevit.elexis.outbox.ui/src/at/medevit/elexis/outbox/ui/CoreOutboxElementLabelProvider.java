@@ -39,21 +39,21 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.CoreUiUtil;
 
 public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider {
-	
+
 	private CoreLabelProvider labelProvider;
-	
+
 	private CoreColorProvider colorProvider;
-	
+
 	private Map<String, IIdentifiedRunnable> identifiedRunnablesMap;
-	
-	public CoreOutboxElementLabelProvider(){
+
+	public CoreOutboxElementLabelProvider() {
 		labelProvider = new CoreLabelProvider();
 		colorProvider = new CoreColorProvider();
-		
+
 		identifiedRunnablesMap = buildIdentifiedRunnablesMap();
 	}
-	
-	private Map<String, IIdentifiedRunnable> buildIdentifiedRunnablesMap(){
+
+	private Map<String, IIdentifiedRunnable> buildIdentifiedRunnablesMap() {
 		List<IIdentifiedRunnable> available = TaskServiceComponent.get().getIdentifiedRunnables();
 		if (available != null && !available.isEmpty()) {
 			Map<String, IIdentifiedRunnable> ret = new HashMap<>();
@@ -62,29 +62,29 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 		}
 		return Collections.emptyMap();
 	}
-	
+
 	@Override
-	public ImageDescriptor getFilterImage(){
+	public ImageDescriptor getFilterImage() {
 		return Images.IMG_MAIL_SEND.getImageDescriptor();
 	}
-	
+
 	@Override
-	public ViewerFilter getFilter(){
+	public ViewerFilter getFilter() {
 		return new NotSentOutboxFilter();
 	}
-	
+
 	@Override
-	public LabelProvider getLabelProvider(){
+	public LabelProvider getLabelProvider() {
 		return labelProvider;
 	}
-	
+
 	@Override
-	public IColorProvider getColorProvider(){
+	public IColorProvider getColorProvider() {
 		return colorProvider;
 	}
-	
+
 	@Override
-	public boolean isProviderFor(IOutboxElement element){
+	public boolean isProviderFor(IOutboxElement element) {
 		OutboxElementType elementType = OutboxElementType.parseType(element.getUri());
 		if (OutboxElementType.DOC.equals(elementType)) {
 			return true;
@@ -93,38 +93,31 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 		}
 		return false;
 	}
-	
+
 	@Override
-	public void doubleClicked(IOutboxElement element){
-		OutboxElementType elementType =
-			OutboxElementType.parseType(((IOutboxElement) element).getUri());
+	public void doubleClicked(IOutboxElement element) {
+		OutboxElementType elementType = OutboxElementType.parseType(((IOutboxElement) element).getUri());
 		if (OutboxElementType.DB.equals(elementType)) {
 			if (((IOutboxElement) element).getObject() instanceof ITaskDescriptor) {
-				ITaskDescriptor taskDescriptor =
-					(ITaskDescriptor) ((IOutboxElement) element).getObject();
+				ITaskDescriptor taskDescriptor = (ITaskDescriptor) ((IOutboxElement) element).getObject();
 				if ("sendMailFromContext".equals(taskDescriptor.getIdentifiedRunnableId())) {
 					// now try to call the send mail task command
 					try {
 						ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-							.getService(ICommandService.class);
-						Command sendMailTaskCommand =
-							commandService.getCommand("ch.elexis.core.mail.ui.sendMailTask");
-						
+								.getService(ICommandService.class);
+						Command sendMailTaskCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMailTask");
+
 						HashMap<String, String> params = new HashMap<String, String>();
-						params.put("ch.elexis.core.mail.ui.sendMailTaskDescriptorId",
-							taskDescriptor.getId());
-						ParameterizedCommand parametrizedCommmand =
-							ParameterizedCommand.generateCommand(sendMailTaskCommand, params);
-						Boolean success =
-							(Boolean) PlatformUI.getWorkbench().getService(IHandlerService.class)
+						params.put("ch.elexis.core.mail.ui.sendMailTaskDescriptorId", taskDescriptor.getId());
+						ParameterizedCommand parametrizedCommmand = ParameterizedCommand
+								.generateCommand(sendMailTaskCommand, params);
+						Boolean success = (Boolean) PlatformUI.getWorkbench().getService(IHandlerService.class)
 								.executeCommand(parametrizedCommmand, null);
 						if (success) {
-							OutboxServiceComponent.get().changeOutboxElementState(element,
-								State.SENT);
+							OutboxServiceComponent.get().changeOutboxElementState(element, State.SENT);
 						}
 					} catch (Exception ex) {
-						LoggerFactory.getLogger(getClass())
-							.warn("Send mail Task command not available", ex);
+						LoggerFactory.getLogger(getClass()).warn("Send mail Task command not available", ex);
 					}
 				}
 			}
@@ -132,63 +125,58 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 			IDocument document = (IDocument) element.getObject();
 			if (document != null) {
 				try {
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-						.getActivePage().showView("ch.elexis.core.ui.documents.views.DocumentsView");
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView("ch.elexis.core.ui.documents.views.DocumentsView");
 				} catch (PartInitException e) {
 					LoggerFactory.getLogger(getClass()).error("Could not open documents view", e);
 				}
 			}
 		}
 	}
-	
+
 	class CoreColorProvider implements IColorProvider {
-		
+
 		@Override
-		public Color getForeground(Object element){
+		public Color getForeground(Object element) {
 			return null;
 		}
-		
+
 		@Override
-		public Color getBackground(Object element){
+		public Color getBackground(Object element) {
 			if (((IOutboxElement) element).getState() == State.SENT) {
 				return CoreUiUtil.getColorForString("d3d3d3");
 			}
 			return null;
 		}
-		
+
 	}
-	
+
 	class CoreLabelProvider extends LabelProvider {
 		private Image taskImage;
-		
+
 		@Override
-		public String getText(Object element){
-			OutboxElementType elementType =
-				OutboxElementType.parseType(((IOutboxElement) element).getUri());
+		public String getText(Object element) {
+			OutboxElementType elementType = OutboxElementType.parseType(((IOutboxElement) element).getUri());
 			if (OutboxElementType.DB.equals(elementType)) {
 				if (((IOutboxElement) element).getObject() instanceof ITaskDescriptor) {
-					return getTaskDescriptorText(
-						(ITaskDescriptor) ((IOutboxElement) element).getObject());
+					return getTaskDescriptorText((ITaskDescriptor) ((IOutboxElement) element).getObject());
 				}
 			}
 			return ((IOutboxElement) element).getLabel();
 		}
-		
-		private String getTaskDescriptorText(ITaskDescriptor taskDescriptor){
+
+		private String getTaskDescriptorText(ITaskDescriptor taskDescriptor) {
 			StringBuilder sb = new StringBuilder();
-			IIdentifiedRunnable ir =
-				identifiedRunnablesMap.get(taskDescriptor.getIdentifiedRunnableId());
-			Optional<ITask> execution =
-				TaskServiceComponent.get().findLatestExecution(taskDescriptor);
+			IIdentifiedRunnable ir = identifiedRunnablesMap.get(taskDescriptor.getIdentifiedRunnableId());
+			Optional<ITask> execution = TaskServiceComponent.get().findLatestExecution(taskDescriptor);
 			if (execution.isPresent()) {
-				sb.append("versendet am " + execution.get().getFinishedAt()
-					.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+				sb.append("versendet am "
+						+ execution.get().getFinishedAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 			} else {
 				sb.append(ir.getLocalizedDescription());
 			}
 			if ("sendMailFromContext".equals(taskDescriptor.getIdentifiedRunnableId())) {
-				MailMessage msg =
-					MailMessage.fromMap((Map) taskDescriptor.getRunContext().get("message"));
+				MailMessage msg = MailMessage.fromMap((Map) taskDescriptor.getRunContext().get("message"));
 				if (msg != null) {
 					sb.append(" an ").append(msg.getTo());
 					if (StringUtils.isNotBlank(msg.getCc())) {
@@ -197,14 +185,13 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 					return sb.toString();
 				}
 			}
-			
+
 			return sb.toString();
 		}
-		
+
 		@Override
-		public Image getImage(Object element){
-			OutboxElementType elementType =
-				OutboxElementType.parseType(((IOutboxElement) element).getUri());
+		public Image getImage(Object element) {
+			OutboxElementType elementType = OutboxElementType.parseType(((IOutboxElement) element).getUri());
 			if (OutboxElementType.DOC.equals(elementType)) {
 				return Images.IMG_DOCUMENT_TEXT.getImage();
 			} else if (OutboxElementType.DB.equals(elementType)) {
@@ -214,14 +201,14 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 			}
 			return null;
 		}
-		
-		private Image getTaskImage(){
+
+		private Image getTaskImage() {
 			if (taskImage == null) {
 				try {
 					taskImage = ImageDescriptor
-						.createFromURL(new URL(
-							"platform:/plugin/ch.elexis.core.ui.tasks/rsc/icons/screwdriver.png"))
-						.createImage();
+							.createFromURL(
+									new URL("platform:/plugin/ch.elexis.core.ui.tasks/rsc/icons/screwdriver.png"))
+							.createImage();
 				} catch (MalformedURLException e) {
 					LoggerFactory.getLogger(getClass()).warn("Error loading task image ", e);
 				}
@@ -229,15 +216,13 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 			return taskImage;
 		}
 	}
-	
+
 	@Override
-	public void delete(IOutboxElement element){
-		OutboxElementType elementType =
-			OutboxElementType.parseType(((IOutboxElement) element).getUri());
+	public void delete(IOutboxElement element) {
+		OutboxElementType elementType = OutboxElementType.parseType(((IOutboxElement) element).getUri());
 		if (OutboxElementType.DB.equals(elementType)) {
 			if (((IOutboxElement) element).getObject() instanceof ITaskDescriptor) {
-				ITaskDescriptor taskDescriptor =
-					(ITaskDescriptor) ((IOutboxElement) element).getObject();
+				ITaskDescriptor taskDescriptor = (ITaskDescriptor) ((IOutboxElement) element).getObject();
 				try {
 					TaskServiceComponent.get().removeTaskDescriptor(taskDescriptor);
 				} catch (TaskException e) {

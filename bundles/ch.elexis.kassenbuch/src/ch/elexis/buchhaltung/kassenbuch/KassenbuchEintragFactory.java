@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
@@ -17,30 +17,28 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 
 /**
- * This factory is needed by ch.elexis.data.Query to create templates for the query by
- * example-operation In most cases, the implementation can just be copied to enable this behjaviour
- * in other plugins.
- * 
+ * This factory is needed by ch.elexis.data.Query to create templates for the
+ * query by example-operation In most cases, the implementation can just be
+ * copied to enable this behjaviour in other plugins.
+ *
  * @author gerry
- * 
+ *
  */
 public class KassenbuchEintragFactory extends PersistentObjectFactory {
-	public PersistentObject createFromString(String code){
+	public PersistentObject createFromString(String code) {
 		try {
 			String[] ci = code.split("::"); //$NON-NLS-1$
 			Class clazz = Class.forName(ci[0]);
-			Method load = clazz.getMethod("load", new Class[] { String.class}); //$NON-NLS-1$
-			return (PersistentObject) (load.invoke(null, new Object[] {
-				ci[1]
-			}));
+			Method load = clazz.getMethod("load", new Class[] { String.class }); //$NON-NLS-1$
+			return (PersistentObject) (load.invoke(null, new Object[] { ci[1] }));
 		} catch (Exception ex) {
 			// ExHandler.handle(ex);
 			return null;
 		}
 	}
-	
+
 	@Override
-	public PersistentObject doCreateTemplate(Class typ){
+	public PersistentObject doCreateTemplate(Class typ) {
 		try {
 			return (PersistentObject) typ.newInstance();
 		} catch (Exception ex) {

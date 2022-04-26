@@ -17,12 +17,12 @@ import com.hilotec.elexis.kgview.patientenfelder.SysAnamneseView;
 
 public class KGViewPerspektive implements IPerspectiveFactory {
 	public static final String ID = "com.hilotec.elexis.kgview.KGViewPerspektive";
-	
+
 	public void createInitialLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(false);
-		
+
 		IFolderLayout ifr = layout.createFolder("right", IPageLayout.RIGHT, 0.95f, editorArea);
 		ifr.addView(FamAnamneseView.ID);
 		ifr.addView(PersAnamneseView.ID);

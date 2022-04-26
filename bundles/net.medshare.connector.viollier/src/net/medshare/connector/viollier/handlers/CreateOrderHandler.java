@@ -34,7 +34,7 @@ public class CreateOrderHandler extends AbstractHandler {
 	private static Logger log = LoggerFactory.getLogger(CreateOrderHandler.class);
 	private ViollierConnectorSettings mySettings;
 	private String httpsUrl;
-	
+
 	/**
 	 * Starte Labor Befundabfrage : <br>
 	 * <ul>
@@ -43,7 +43,7 @@ public class CreateOrderHandler extends AbstractHandler {
 	 * </ul>
 	 */
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String cookie = "";
 		String vorname = "";
 		String name = "";
@@ -55,12 +55,12 @@ public class CreateOrderHandler extends AbstractHandler {
 		String land = "";
 		String socialSecurityNumber = ""; // AHV-Nummer
 		String insuranceCardNumber = ""; // Versicherungskarte
-		
+
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
 		if (patient == null) {
 			log.warn("No patient selected - exit CreateOrderHandler execution");
 			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleNoPatientSelected,
-				Messages.Handler_errorMessageNoPatientSelected);
+					Messages.Handler_errorMessageNoPatientSelected);
 			return null;
 		}
 		// collect patient data
@@ -73,27 +73,24 @@ public class CreateOrderHandler extends AbstractHandler {
 		plz = tempAdr.getPlz();
 		ort = tempAdr.getOrt();
 		land = tempAdr.getLand();
-		
+
 		socialSecurityNumber = getSocialSecuritNumber(patient);
 		insuranceCardNumber = getInsuranceCardNumber(patient);
-		
+
 		// URL zum Direktaufruf von OrderIT
-		mySettings =
-			new ViollierConnectorSettings(
-				(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
+		mySettings = new ViollierConnectorSettings((Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 		httpsUrl = mySettings.getGlobalLoginUrl();
 		// Cookie holen
 		try {
 			cookie = new PortalCookieService().getCookie();
-			
+
 		} catch (IOException e) {
 			log.error("Error getting cookie", e);
 			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleGetCookie,
-				Messages.Handler_errorMessageGetCookie + e.getMessage());
+					Messages.Handler_errorMessageGetCookie + e.getMessage());
 		} catch (ElexisException e) {
 			log.error("No password/user defined", e);
-			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleGetCookie,
-				e.getMessage());
+			MessageDialog.openError(new Shell(), Messages.Handler_errorTitleGetCookie, e.getMessage());
 		}
 		httpsUrl += "&RCSession=" + cookie;
 		try {
@@ -108,23 +105,20 @@ public class CreateOrderHandler extends AbstractHandler {
 			httpsUrl += URLEncoder.encode("&country=" + land, "UTF-8");
 			httpsUrl += URLEncoder.encode("&patientReference=" + patient.getPatCode(), "UTF-8");
 			if (StringUtils.isNotBlank(patient.get(Patient.FLD_MOBILEPHONE))) {
-				httpsUrl += URLEncoder
-					.encode("&mobileNumber=" + patient.get(Patient.FLD_MOBILEPHONE), "UTF-8");
+				httpsUrl += URLEncoder.encode("&mobileNumber=" + patient.get(Patient.FLD_MOBILEPHONE), "UTF-8");
 			}
 			if (StringUtils.isNotBlank(socialSecurityNumber)) {
-				httpsUrl +=
-					URLEncoder.encode("&socialSecurityNumber=" + socialSecurityNumber, "UTF-8");
+				httpsUrl += URLEncoder.encode("&socialSecurityNumber=" + socialSecurityNumber, "UTF-8");
 			}
 			if (StringUtils.isNotBlank(insuranceCardNumber)) {
-				httpsUrl +=
-					URLEncoder.encode("&insuranceCardNumber=" + insuranceCardNumber, "UTF-8");
+				httpsUrl += URLEncoder.encode("&insuranceCardNumber=" + insuranceCardNumber, "UTF-8");
 			}
 			httpsUrl += URLEncoder.encode("&senderName=elexis.info", "UTF-8");
 			httpsUrl += URLEncoder.encode("&senderSoftware=" + getSenderSoftware(), "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			log.error("Enoding not supported", e1);
 		}
-		
+
 		// Browser OrderIT öffnen
 		try {
 			IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
@@ -135,13 +129,13 @@ public class CreateOrderHandler extends AbstractHandler {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get name with version, without qualifier etc.
-	 * 
+	 *
 	 * @return
 	 */
-	private String getSenderSoftware(){
+	private String getSenderSoftware() {
 		StringBuilder sb = new StringBuilder();
 		if (Elexis.APPLICATION_NAME.contains(" ")) {
 			sb.append(Elexis.APPLICATION_NAME.split(" ")[0]);
@@ -150,15 +144,15 @@ public class CreateOrderHandler extends AbstractHandler {
 		}
 		sb.append(" ");
 		String[] parts = Elexis.VERSION.split("\\.");
-		if(parts.length > 3) {
+		if (parts.length > 3) {
 			sb.append(parts[0]).append(".").append(parts[1]).append(".").append(parts[2]);
 		} else {
 			sb.append(Elexis.VERSION);
 		}
 		return sb.toString();
 	}
-	
-	private String getInsuranceCardNumber(Patient patient){
+
+	private String getInsuranceCardNumber(Patient patient) {
 		String ret = "";
 		for (Fall fall : patient.getFaelle()) {
 			if (fall.isOpen()) {
@@ -175,9 +169,9 @@ public class CreateOrderHandler extends AbstractHandler {
 		return ret;
 	}
 
-	private String getSocialSecuritNumber(Patient patient){
+	private String getSocialSecuritNumber(Patient patient) {
 		String ret = patient.getXid(DOMAIN_AHV);
-		if(StringUtils.isBlank(ret)) {
+		if (StringUtils.isBlank(ret)) {
 			for (Fall fall : patient.getFaelle()) {
 				if (fall.isOpen() && StringUtils.isNotBlank(fall.getRequiredString("AHV-Nummer"))) {
 					ret = fall.getRequiredString("AHV-Nummer");
@@ -189,13 +183,13 @@ public class CreateOrderHandler extends AbstractHandler {
 	}
 
 	/**
-	 * retrieve a value of m, f or x for the service; as we have some uncertainty about the actual
-	 * contents of the db
-	 * 
+	 * retrieve a value of m, f or x for the service; as we have some uncertainty
+	 * about the actual contents of the db
+	 *
 	 * @param patient
 	 * @return
 	 */
-	private String parseGender(Patient patient){
+	private String parseGender(Patient patient) {
 		String sexRaw = patient.getGeschlecht();
 		if (sexRaw.length() > 0) {
 			if (sexRaw.equalsIgnoreCase("m"))
@@ -204,14 +198,14 @@ public class CreateOrderHandler extends AbstractHandler {
 		}
 		return "X";
 	}
-	
-	private String convertDate(String gebDat){
+
+	private String convertDate(String gebDat) {
 		if (gebDat.isEmpty())
 			return "";
 		String tempDay = gebDat.substring(0, 2);
 		String tempMonth = gebDat.substring(3, 5);
 		String tempYear = gebDat.substring(6);
-		
+
 		return tempYear + "-" + tempMonth + "-" + tempDay;
 	}
 }

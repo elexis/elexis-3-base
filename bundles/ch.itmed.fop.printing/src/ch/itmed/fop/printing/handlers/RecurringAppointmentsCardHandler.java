@@ -42,8 +42,7 @@ public final class RecurringAppointmentsCardHandler extends AbstractHandler {
 			String docName = PreferenceConstants.RECURRING_APPOINTMENTS_CARD;
 			IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-			String printerName =
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document RecurringAppointmentsCard on printer: " + printerName);
 			PrintProvider.print(fo, printerName);
 		} catch (Exception e) {

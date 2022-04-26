@@ -15,21 +15,19 @@ import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.data.Patient;
 
 public class ActivatePatientCommand extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		
+
 		if (part instanceof InboxView) {
 			InboxView view = (InboxView) part;
-			IStructuredSelection sel =
-				(IStructuredSelection) view.getCheckboxTreeViewer().getSelection();
+			IStructuredSelection sel = (IStructuredSelection) view.getCheckboxTreeViewer().getSelection();
 			Object element = sel.getFirstElement();
-			
+
 			if (element instanceof PatientInboxElements) {
 				PatientInboxElements patElement = (PatientInboxElements) element;
-				Patient patient =
-					(Patient) NoPoUtil.loadAsPersistentObject(patElement.getPatient());
+				Patient patient = (Patient) NoPoUtil.loadAsPersistentObject(patElement.getPatient());
 				ElexisEventDispatcher.fireSelectionEvent(patient);
 			}
 		}

@@ -17,42 +17,41 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;
 
 public interface IAeskulapImportFile {
-	
+
 	/**
 	 * Type of import.
-	 * 
+	 *
 	 * @author thomas
 	 *
 	 */
 	public enum Type {
-			
-			ADDRESSES(1, Kontakt.class), MANDATOR(2, Mandant.class), PATIENT(100, Patient.class),
-			LABORCONTACT(200, Kontakt.class), LABORITEM(210, LabItem.class),
-			LABORRESULT(250, LabResult.class), DIAGDIRECTORY(300, File.class),
-			LETTER(1001, IOpaqueDocument.class), LETTERDIRECTORY(1000, File.class),
-			DOCUMENT(1101, IOpaqueDocument.class), DOCUMENTDIRECTORY(1100, File.class),
-			FILE(1201, IOpaqueDocument.class), FILEDIRECTORY(1200, File.class);
-		
+
+		ADDRESSES(1, Kontakt.class), MANDATOR(2, Mandant.class), PATIENT(100, Patient.class),
+		LABORCONTACT(200, Kontakt.class), LABORITEM(210, LabItem.class), LABORRESULT(250, LabResult.class),
+		DIAGDIRECTORY(300, File.class), LETTER(1001, IOpaqueDocument.class), LETTERDIRECTORY(1000, File.class),
+		DOCUMENT(1101, IOpaqueDocument.class), DOCUMENTDIRECTORY(1100, File.class), FILE(1201, IOpaqueDocument.class),
+		FILEDIRECTORY(1200, File.class);
+
 		private int sequence;
 		private Class<?> elexisClass;
-		
+
 		private static List<Type> sequenced;
-		
-		private Type(int sequence, Class<?> clazz){
+
+		private Type(int sequence, Class<?> clazz) {
 			this.sequence = sequence;
 			this.elexisClass = clazz;
 		}
-		
-		public int getSequence(){
+
+		public int getSequence() {
 			return sequence;
 		}
-		
-		public static List<Type> getSequenced(){
-			if(sequenced == null) {
+
+		public static List<Type> getSequenced() {
+			if (sequenced == null) {
 				List<Type> list = Arrays.asList(values());
 				list.sort(new Comparator<Type>() {
 					@Override
-					public int compare(Type o1, Type o2){
+					public int compare(Type o1, Type o2) {
 						return Integer.valueOf(o1.getSequence()).compareTo(o2.getSequence());
 					}
 				});
@@ -60,77 +59,77 @@ public interface IAeskulapImportFile {
 			}
 			return sequenced;
 		}
-		
-		public boolean checkElexisClass(Object object){
+
+		public boolean checkElexisClass(Object object) {
 			return elexisClass.isAssignableFrom(object.getClass());
 		}
 	}
-	
+
 	/**
 	 * Get the import file.
-	 * 
+	 *
 	 * @return
 	 */
 	public File getFile();
-	
+
 	/**
 	 * Get the {@link Type} of import.
-	 * 
+	 *
 	 * @return
 	 */
 	public Type getType();
-	
+
 	/**
 	 * Import the data from the file.
-	 * 
+	 *
 	 * @param overwrite
 	 * @param monitor
 	 * @return
 	 */
-	public default boolean doImport(boolean overwrite, SubMonitor monitor){
+	public default boolean doImport(boolean overwrite, SubMonitor monitor) {
 		return doImport(null, overwrite, monitor);
 	}
-	
+
 	/**
-	 * Import the data from the file. The transientFiles map can be used to access imported
-	 * transient data.
-	 * 
+	 * Import the data from the file. The transientFiles map can be used to access
+	 * imported transient data.
+	 *
 	 * @param transientFiles
 	 * @param overwrite
 	 * @param monitor
 	 * @return
 	 */
-	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite,
-		SubMonitor monitor);
-	
+	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite, SubMonitor monitor);
+
 	/**
-	 * Test if this is a transient importer. Meaning that the imported data is not persisted.
-	 * 
+	 * Test if this is a transient importer. Meaning that the imported data is not
+	 * persisted.
+	 *
 	 * @return
 	 */
-	public default boolean isTransient(){
+	public default boolean isTransient() {
 		return false;
 	}
-	
+
 	/**
-	 * If {@link IAeskulapImportFile#isTransient()} imported data can be accessed by id using this
-	 * method.
-	 * 
+	 * If {@link IAeskulapImportFile#isTransient()} imported data can be accessed by
+	 * id using this method.
+	 *
 	 * @param id
 	 * @return
 	 */
-	public default Object getTransient(String id){
+	public default Object getTransient(String id) {
 		return null;
 	}
-	
+
 	/**
 	 * Get the object identified with the XID domain and id.
-	 * 
+	 *
 	 * @param domain
 	 * @param id
 	 * @return
 	 */
-	public default Object getWithXid(String domain, String id){
+	public default Object getWithXid(String domain, String id) {
 		Xid existingXid = Xid.findXID(domain, id);
 		if (existingXid != null) {
 			return existingXid.getObject();

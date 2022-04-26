@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.archie.patientstatistik;
@@ -45,17 +45,16 @@ public class Counter extends Job {
 	private Patient p;
 	private TimeTool von;
 	private TimeTool bis;
-	
+
 	public interface IJobFinishedListener {
 		public void jobFinished(Counter counter);
 	}
-	
-	public HashMap<IBillable, List<IBilled>> getValues(){
+
+	public HashMap<IBillable, List<IBilled>> getValues() {
 		return result;
 	}
-	
-	public Counter(final Patient p, final TimeTool von, final TimeTool bis,
-		final IJobFinishedListener lis){
+
+	public Counter(final Patient p, final TimeTool von, final TimeTool bis, final IJobFinishedListener lis) {
 		super("Verrechnungszähler");
 		setUser(true);
 		setSystem(false);
@@ -65,41 +64,45 @@ public class Counter extends Job {
 		this.bis = bis;
 		if (lis != null) {
 			addJobChangeListener(new IJobChangeListener() {
-				
-				public void sleeping(IJobChangeEvent event){}
-				
-				public void scheduled(IJobChangeEvent event){}
-				
-				public void running(IJobChangeEvent event){}
-				
-				public void done(IJobChangeEvent event){
+
+				public void sleeping(IJobChangeEvent event) {
+				}
+
+				public void scheduled(IJobChangeEvent event) {
+				}
+
+				public void running(IJobChangeEvent event) {
+				}
+
+				public void done(IJobChangeEvent event) {
 					UiDesk.getDisplay().asyncExec(new Runnable() {
-						public void run(){
+						public void run() {
 							lis.jobFinished(Counter.this);
-							
+
 						}
 					});
 				}
-				
-				public void awake(IJobChangeEvent event){}
-				
-				public void aboutToRun(IJobChangeEvent event){
-					
+
+				public void awake(IJobChangeEvent event) {
+				}
+
+				public void aboutToRun(IJobChangeEvent event) {
+
 				}
 			});
 		}
 	}
-	
+
 	@Override
-	protected IStatus run(IProgressMonitor monitor){
-		
+	protected IStatus run(IProgressMonitor monitor) {
+
 		monitor.beginTask("Zähle Verrechnungen", tasksum);
 		result = new HashMap<IBillable, List<IBilled>>();
 		IPatient patient = NoPoUtil.loadAsIdentifiable(p, IPatient.class).get();
 		List<ICoverage> coverages = patient.getCoverages();
 		if (!coverages.isEmpty()) {
 			perCase = tasksum / coverages.size();
-			
+
 			IQuery<IEncounter> query = CoreModelServiceHolder.get().getQuery(IEncounter.class);
 			query.startGroup();
 			for (ICoverage coverage : coverages) {
@@ -107,12 +110,10 @@ public class Counter extends Job {
 			}
 			query.andJoinGroups();
 			if (von != null) {
-				query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.GREATER_OR_EQUAL,
-					von.toLocalDate());
+				query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.GREATER_OR_EQUAL, von.toLocalDate());
 			}
 			if (bis != null) {
-				query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.LESS_OR_EQUAL,
-					bis.toLocalDate());
+				query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.LESS_OR_EQUAL, bis.toLocalDate());
 			}
 			List<IEncounter> kk = query.execute();
 			perKons = perCase / kk.size();

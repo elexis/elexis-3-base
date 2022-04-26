@@ -32,7 +32,7 @@ import ch.unibe.iam.scg.archie.ArchieActivator;
  * provider also has to set the size of its elements accordingly so the
  * <code>Job</code> so progress information is being displayed accurately.
  * </p>
- * 
+ *
  * <p>
  * Providers have to <strong>initialize additional default values</strong> of
  * their properties either in the constructor or as part of the class
@@ -40,9 +40,9 @@ import ch.unibe.iam.scg.archie.ArchieActivator;
  * initialize their default values. An error will be thrown in the GUI when no
  * default value has been initialized for a provider property.
  * </p>
- * 
+ *
  * $Id: AbstractDataProvider.java 258 2008-10-06 17:51:15Z psiska
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 258
@@ -59,7 +59,7 @@ public abstract class AbstractDataProvider extends Job {
 
 	/**
 	 * Public constructor.
-	 * 
+	 *
 	 * @param jobName
 	 */
 	public AbstractDataProvider(String jobName) {
@@ -74,23 +74,23 @@ public abstract class AbstractDataProvider extends Job {
 
 	/**
 	 * Returns the description for this data provider.
-	 * 
+	 *
 	 * @return Returns the description for this data provider.
 	 */
 	public abstract String getDescription();
 
 	/**
 	 * Creates headings for each column in the dataset object of this provider.
-	 * 
+	 *
 	 * @return A list of strings (List<String>) containing the headings.
 	 */
 	protected abstract List<String> createHeadings();
 
 	/**
 	 * This method should do all the work necessary to populate the dataset's
-	 * content. It's called in the job's execute method after some
-	 * initializations have been done.
-	 * 
+	 * content. It's called in the job's execute method after some initializations
+	 * have been done.
+	 *
 	 * @return The status of the current job.
 	 * @see org.eclipse.core.runtime.IStatus
 	 */
@@ -105,7 +105,7 @@ public abstract class AbstractDataProvider extends Job {
 
 	/**
 	 * Executes this job.
-	 * 
+	 *
 	 * @param monitor
 	 * @return The status of the current job.
 	 */
@@ -119,9 +119,9 @@ public abstract class AbstractDataProvider extends Job {
 
 	/**
 	 * Returns the content provider for this data provider.
-	 * 
+	 *
 	 * @return IStructuredContentProvider
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider
 	 */
 	public IStructuredContentProvider getContentProvider() {
@@ -130,7 +130,7 @@ public abstract class AbstractDataProvider extends Job {
 
 	/**
 	 * Returns the label provider for this data provider.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.LabelProvider
 	 * @return LabelProvider A label provider for this object.
 	 */
@@ -140,7 +140,7 @@ public abstract class AbstractDataProvider extends Job {
 
 	/**
 	 * Returns the DataSet being held by this data provider.
-	 * 
+	 *
 	 * @see ch.unibe.iam.scg.archie.model.DataSet
 	 * @return The DataSet object for this provider.
 	 */
@@ -149,9 +149,9 @@ public abstract class AbstractDataProvider extends Job {
 	}
 
 	/**
-	 * Initializes content and label providers and sets them accordingly. This
-	 * is a generic method using two default providers for labels and content.
-	 * Every class that has custom providers needs to override this method.
+	 * Initializes content and label providers and sets them accordingly. This is a
+	 * generic method using two default providers for labels and content. Every
+	 * class that has custom providers needs to override this method.
 	 */
 	protected void initializeProviders() {
 		QueryContentProvider content = new QueryContentProvider(this.dataSet);
@@ -163,10 +163,9 @@ public abstract class AbstractDataProvider extends Job {
 
 	/**
 	 * Sets the label provider for this data provider.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.LabelProvider
-	 * @param labelProvider
-	 *            A label provider.
+	 * @param labelProvider A label provider.
 	 */
 	protected void setLabelProvider(ILabelProvider labelProvider) {
 		this.labelProvider = labelProvider;
@@ -174,10 +173,9 @@ public abstract class AbstractDataProvider extends Job {
 
 	/**
 	 * Sets the content provider for this data provider.
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider
-	 * @param contentProvider
-	 *            A content provider for this object.
+	 * @param contentProvider A content provider for this object.
 	 */
 	protected void setContentProvider(IStructuredContentProvider contentProvider) {
 		this.contentProvider = contentProvider;

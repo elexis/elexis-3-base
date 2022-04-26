@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.agenda.views;
 
@@ -84,26 +84,23 @@ import ch.elexis.dialogs.TermineDruckenDialog;
 import ch.rgw.tools.Log;
 import ch.rgw.tools.TimeTool;
 
-
-public abstract class BaseAgendaView extends ViewPart
-		implements HeartListener, IRefreshable, IBereichSelectionEvent {
+public abstract class BaseAgendaView extends ViewPart implements HeartListener, IRefreshable, IBereichSelectionEvent {
 	protected SelectionListener sListen = new SelectionListener();
 	TableViewer tv;
 	BaseAgendaView self;
 	protected LockRequestingRestrictedAction<Termin> terminAendernAction, terminKuerzenAction, terminVerlaengernAction;
 	protected RestrictedAction newTerminAction;
 	protected IAction blockAction;
-	protected IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction,
-			newTerminForAction;
+	protected IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction, newTerminForAction;
 	protected IAction printPatientAction;
 	private BereichMenuCreator bmc = new BereichMenuCreator();
 	MenuManager menu = new MenuManager();
 	protected Log log = Log.get("Agenda"); //$NON-NLS-1$
 	Activator agenda = Activator.getDefault();
-	
+
 	private final ElexisEventListener eeli_termin = new ElexisUiEventListenerImpl(Termin.class,
-		ElexisEvent.EVENT_RELOAD) {
-		public void runInUi(ElexisEvent ev){
+			ElexisEvent.EVENT_RELOAD) {
+		public void runInUi(ElexisEvent ev) {
 			if (tv != null && isActiveControl(tv.getControl())) {
 				if (!tv.getControl().isDisposed()) {
 					tv.refresh(true);
@@ -111,10 +108,10 @@ public abstract class BaseAgendaView extends ViewPart
 			}
 		}
 	};
-	
+
 	private final ElexisEventListener eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
-		ElexisEvent.EVENT_USER_CHANGED) {
-		public void runInUi(ElexisEvent ev){
+			ElexisEvent.EVENT_USER_CHANGED) {
+		public void runInUi(ElexisEvent ev) {
 			updateActions();
 			if (tv != null && isActiveControl(tv.getControl())) {
 				tv.getControl().setFont(UiDesk.getFont(Preferences.USR_DEFAULTFONT));
@@ -126,25 +123,25 @@ public abstract class BaseAgendaView extends ViewPart
 	private IAction bereichMenu;
 
 	private long highestLastUpdate;
-	
+
 	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
-	
-	protected BaseAgendaView(){
+
+	protected BaseAgendaView() {
 		self = this;
 		BereichSelectionHandler.addBereichSelectionListener(this);
 	}
-	
+
 	abstract public void create(Composite parent);
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		setBereich(agenda.getActResource());
 		create(parent);
 		makeActions();
 		tv.setContentProvider(new AgendaContentProvider());
 		tv.setUseHashlookup(true);
 		tv.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event){
+			public void doubleClick(DoubleClickEvent event) {
 				IPlannable pl = getSelection();
 				if (pl == null) {
 					newTerminAction.run();
@@ -164,15 +161,15 @@ public abstract class BaseAgendaView extends ViewPart
 						}
 						tv.refresh(true);
 					}
-					
+
 				}
 			}
-			
+
 		});
-		
+
 		menu.setRemoveAllWhenShown(true);
 		menu.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager){
+			public void menuAboutToShow(IMenuManager manager) {
 				if (ElexisEventDispatcher.getSelected(Termin.class) == null) {
 					manager.add(newTerminAction);
 					manager.add(blockAction);
@@ -185,22 +182,22 @@ public abstract class BaseAgendaView extends ViewPart
 				}
 				updateActions();
 			}
-			
+
 		});
-		
+
 		Menu cMenu = menu.createContextMenu(tv.getControl());
 		tv.getControl().setMenu(cMenu);
-		
+
 		CoreHub.heart.addListener(this);
 		ElexisEventDispatcher.getInstance().addListeners(eeli_termin, eeli_user);
 		getSite().getPage().addPartListener(udpateOnVisible);
-		
+
 		tv.setInput(getViewSite());
 		updateActions();
 		tv.addSelectionChangedListener(sListen);
 	}
-	
-	public IPlannable getSelection(){
+
+	public IPlannable getSelection() {
 		IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 		if ((sel == null || (sel.isEmpty()))) {
 			return null;
@@ -209,21 +206,21 @@ public abstract class BaseAgendaView extends ViewPart
 			return pl;
 		}
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		CoreHub.heart.removeListener(this);
 		getSite().getPage().removePartListener(udpateOnVisible);
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_termin, eeli_user);
 		super.dispose();
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		tv.getControl().setFocus();
 	}
-	
-	public void heartbeat(){
+
+	public void heartbeat() {
 		long lastUpdate = Termin.getHighestLastUpdate(Termin.TABLENAME);
 		log.log("Heartbeat [" + lastUpdate + "]", Log.DEBUGMSG); //$NON-NLS-1$
 		if (lastUpdate > highestLastUpdate) {
@@ -231,23 +228,22 @@ public abstract class BaseAgendaView extends ViewPart
 			refresh();
 		}
 	}
-	
-	
+
 	@Override
-	public void refresh(){
+	public void refresh() {
 		updateActions();
 		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class, ElexisEvent.EVENT_RELOAD));
 	}
-	
-	public void setBereich(String b){
+
+	public void setBereich(String b) {
 		agenda.setActResource(b);
 	}
-	
+
 	public abstract void setTermin(Termin t);
-	
+
 	class AgendaContentProvider implements IStructuredContentProvider {
-		
-		public Object[] getElements(Object inputElement){
+
+		public Object[] getElements(Object inputElement) {
 			if (CoreHub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)) {
 				String resource = agenda.getActResource();
 				TimeTool date = agenda.getActDate();
@@ -256,22 +252,22 @@ public abstract class BaseAgendaView extends ViewPart
 			} else {
 				return new Object[0];
 			}
-			
+
 		}
-		
-		public void dispose(){ /* leer */
+
+		public void dispose() { /* leer */
 		}
-		
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput){/* leer */
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {/* leer */
 		}
-		
+
 	};
-	
+
 	class SelectionListener implements ISelectionChangedListener {
-		
+
 		StructuredViewer sv;
-		
-		public void selectionChanged(SelectionChangedEvent event){
+
+		public void selectionChanged(SelectionChangedEvent event) {
 			IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 			if ((sel == null) || sel.isEmpty()) {
 				ElexisEventDispatcher.clearSelection(Termin.class);
@@ -285,8 +281,8 @@ public abstract class BaseAgendaView extends ViewPart
 			}
 		}
 	}
-	
-	protected void updateActions(){
+
+	protected void updateActions() {
 		dayLimitsAction.setEnabled(CoreHub.acl.request(ACLContributor.CHANGE_DAYSETTINGS));
 		newTerminAction.reflectRight();
 		terminKuerzenAction.reflectRight();
@@ -294,33 +290,32 @@ public abstract class BaseAgendaView extends ViewPart
 		terminAendernAction.reflectRight();
 		AgendaActions.updateActions();
 	}
-	
-	protected void makeActions(){
+
+	protected void makeActions() {
 		dayLimitsAction = new Action(Messages.BaseAgendaView_dayLimits) {
 			@Override
-			public void run(){
-				new TagesgrenzenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-					.getShell(), agenda.getActDate().toString(TimeTool.DATE_COMPACT),
-					agenda.getActResource()).open();
+			public void run() {
+				new TagesgrenzenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						agenda.getActDate().toString(TimeTool.DATE_COMPACT), agenda.getActResource()).open();
 				tv.refresh(true);
 			}
 		};
 		dayLimitsAction.setId("ch.elexis.agenda.actions.dayLimitsAction");
-		
+
 		blockAction = new Action(Messages.TagesView_lockPeriod) {
 			@Override
-			public void run(){
+			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 				if (sel != null && !sel.isEmpty()) {
 					IPlannable p = (IPlannable) sel.getFirstElement();
 					if (p instanceof Termin.Free) {
-						new Termin(agenda.getActResource(), agenda.getActDate().toString(
-							TimeTool.DATE_COMPACT), p.getStartMinute(), p.getDurationInMinutes()
-							+ p.getStartMinute(), Termin.typReserviert(), Termin.statusLeer());
+						new Termin(agenda.getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT),
+								p.getStartMinute(), p.getDurationInMinutes() + p.getStartMinute(),
+								Termin.typReserviert(), Termin.statusLeer());
 						ElexisEventDispatcher.reload(Termin.class);
 					}
 				}
-				
+
 			}
 		};
 		terminAendernAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.CHANGE_APPOINTMENTS,
@@ -337,21 +332,20 @@ public abstract class BaseAgendaView extends ViewPart
 
 			@Override
 			public void doRun(Termin element) {
-					AcquireLockBlockingUi.aquireAndRun((IPersistentObject) element,
-						new ILockHandler() {
-						
-						@Override
-						public void lockFailed(){
-							// do nothing
-						}
-						
-						@Override
-						public void lockAcquired(){
-							TerminDialog dlg = new TerminDialog(element);
-							dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
-							dlg.open();
-						}
-					});
+				AcquireLockBlockingUi.aquireAndRun((IPersistentObject) element, new ILockHandler() {
+
+					@Override
+					public void lockFailed() {
+						// do nothing
+					}
+
+					@Override
+					public void lockAcquired() {
+						TerminDialog dlg = new TerminDialog(element);
+						dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
+						dlg.open();
+					}
+				});
 				if (tv != null) {
 					tv.refresh(true);
 				}
@@ -394,7 +388,7 @@ public abstract class BaseAgendaView extends ViewPart
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 				setToolTipText(Messages.TagesView_createNewTermin);
 			}
-	
+
 			@Override
 			public void doRun() {
 				TerminDialog dlg = new TerminDialog(null);
@@ -404,17 +398,16 @@ public abstract class BaseAgendaView extends ViewPart
 				}
 			}
 		};
-		
+
 		newTerminForAction = new Action("Neuer Termin für...") {
 			{
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 				setToolTipText("Dialog zum Auswählen eines Kontakts für den Termin öffnen");
 			}
-			
+
 			@Override
-			public void run(){
-				KontaktSelektor ksl =
-					new KontaktSelektor(getSite().getShell(), Kontakt.class, "Terminvergabe",
+			public void run() {
+				KontaktSelektor ksl = new KontaktSelektor(getSite().getShell(), Kontakt.class, "Terminvergabe",
 						"Bitte wählen Sie aus, wer einen Termin braucht", Kontakt.DEFAULT_SORT);
 				IPlannable sel = getSelection();
 				TerminDialog dlg = new TerminDialog(null);
@@ -424,20 +417,18 @@ public abstract class BaseAgendaView extends ViewPart
 					tv.refresh(true);
 				}
 			}
-			
+
 		};
 		printAction = new Action(Messages.BaseAgendaView_printDayList) {
 			{
 				setImageDescriptor(Images.IMG_PRINTER.getImageDescriptor());
 				setToolTipText(Messages.BaseAgendaView_printListOfDay);
 			}
-			
+
 			@Override
-			public void run(){
-				IPlannable[] liste =
-					Plannables.loadDay(agenda.getActResource(), agenda.getActDate());
-				TerminListeDruckenDialog dlg =
-					new TerminListeDruckenDialog(getViewSite().getShell(), liste);
+			public void run() {
+				IPlannable[] liste = Plannables.loadDay(agenda.getActResource(), agenda.getActDate());
+				TerminListeDruckenDialog dlg = new TerminListeDruckenDialog(getViewSite().getShell(), liste);
 				dlg.open();
 				if (tv != null) {
 					tv.refresh(true);
@@ -449,26 +440,23 @@ public abstract class BaseAgendaView extends ViewPart
 				setImageDescriptor(Images.IMG_PRINTER.getImageDescriptor());
 				setToolTipText(Messages.BaseAgendaView_printFutureAppsOfSelectedPatient);
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				Patient patient = ElexisEventDispatcher.getSelectedPatient();
 				if (patient != null) {
 					Query<Termin> qbe = new Query<Termin>(Termin.class);
 					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, patient.getId());
 					qbe.add(PersistentObject.FLD_DELETED, Query.NOT_EQUAL, StringConstants.ONE);
-					qbe.add(Termin.FLD_TAG, Query.GREATER_OR_EQUAL,
-						new TimeTool().toString(TimeTool.DATE_COMPACT));
+					qbe.add(Termin.FLD_TAG, Query.GREATER_OR_EQUAL, new TimeTool().toString(TimeTool.DATE_COMPACT));
 					qbe.orderBy(false, Termin.FLD_TAG, Termin.FLD_BEGINN);
 					java.util.List<Termin> list = qbe.execute();
 					if (list != null) {
-						boolean directPrint =
-							CoreHub.localCfg.get(
+						boolean directPrint = CoreHub.localCfg.get(
 								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
 								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
-						
-						TermineDruckenDialog dlg =
-							new TermineDruckenDialog(getViewSite().getShell(),
+
+						TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(),
 								list.toArray(new Termin[0]));
 						if (directPrint) {
 							dlg.setBlockOnOpen(false);
@@ -477,7 +465,7 @@ public abstract class BaseAgendaView extends ViewPart
 								dlg.close();
 							} else {
 								SWTHelper.alert(Messages.BaseAgendaView_errorWhileprinting,
-									Messages.BaseAgendaView_errorHappendPrinting);
+										Messages.BaseAgendaView_errorHappendPrinting);
 							}
 						} else {
 							dlg.setBlockOnOpen(true);
@@ -492,22 +480,22 @@ public abstract class BaseAgendaView extends ViewPart
 				setToolTipText(Messages.BaseAgendaView_exportAppointsments);
 				setImageDescriptor(Images.IMG_GOFURTHER.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				ICalTransfer ict = new ICalTransfer();
 				ict.doExport(agenda.getActDate(), agenda.getActDate(), agenda.getActResource());
 			}
 		};
-		
+
 		importAction = new Action(Messages.BaseAgendaView_importAgenda) {
 			{
 				setToolTipText(Messages.BaseAgendaView_importFromIcal);
 				setImageDescriptor(Images.IMG_IMPORT.getImageDescriptor());
 			}
-			
+
 			@Override
-			public void run(){
+			public void run() {
 				ICalTransfer ict = new ICalTransfer();
 				ict.doImport(agenda.getActResource());
 			}
@@ -518,9 +506,9 @@ public abstract class BaseAgendaView extends ViewPart
 				setToolTipText(Messages.TagesView_selectBereich);
 				setMenuCreator(bmc);
 			}
-			
+
 		};
-		
+
 		mgr = getViewSite().getActionBars().getMenuManager();
 		mgr.add(bereichMenu);
 		mgr.add(dayLimitsAction);
@@ -530,17 +518,17 @@ public abstract class BaseAgendaView extends ViewPart
 		mgr.add(printAction);
 		mgr.add(printPatientAction);
 	}
-	
+
 	@Override
-	public void bereichSelectionEvent(String bereich){
+	public void bereichSelectionEvent(String bereich) {
 		setPartName("Agenda " + bereich);
 		ElexisEventDispatcher.reload(Termin.class);
 		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class, ElexisEvent.EVENT_RELOAD));
 	}
-	
+
 	@Optional
 	@Inject
-	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState){
+	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState) {
 		CoreUiUtil.updateFixLayout(part, currentState);
 	}
 }

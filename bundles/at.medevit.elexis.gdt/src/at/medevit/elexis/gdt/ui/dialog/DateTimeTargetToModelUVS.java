@@ -17,24 +17,23 @@ import java.util.Date;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 
-
 public class DateTimeTargetToModelUVS implements IConverter {
-	
+
 	@Override
-	public Object getFromType(){
+	public Object getFromType() {
 		return Date.class;
 	}
-	
+
 	@Override
-	public Object getToType(){
+	public Object getToType() {
 		return String.class;
 	}
-	
+
 	@Override
-	public Object convert(Object fromObject){
+	public Object convert(Object fromObject) {
 		Date dt = (Date) fromObject;
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
 		return sdf.format(dt);
 	}
-	
+
 }

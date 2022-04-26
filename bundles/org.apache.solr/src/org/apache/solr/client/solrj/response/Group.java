@@ -21,48 +21,51 @@ import org.apache.solr.common.SolrDocumentList;
 import java.io.Serializable;
 
 /**
- * Represents a group. A group contains a common group value that all documents inside the group share and
- * documents that belong to this group.
+ * Represents a group. A group contains a common group value that all documents
+ * inside the group share and documents that belong to this group.
  *
- * A group value can be a field value, function result or a query string depending on the {@link GroupCommand}.
- * In case of a field value or a function result the value is always a indexed value.
+ * A group value can be a field value, function result or a query string
+ * depending on the {@link GroupCommand}. In case of a field value or a function
+ * result the value is always a indexed value.
  *
  * @since solr 3.4
  */
 public class Group implements Serializable {
 
-  private final String _groupValue;
-  private final SolrDocumentList _result;
+	private final String _groupValue;
+	private final SolrDocumentList _result;
 
-  /**
-   * Creates a Group instance.
-   *
-   * @param groupValue The common group value (indexed value) that all documents share.
-   * @param result The documents to be displayed that belong to this group
-   */
-  public Group(String groupValue, SolrDocumentList result) {
-    _groupValue = groupValue;
-    _result = result;
-  }
+	/**
+	 * Creates a Group instance.
+	 *
+	 * @param groupValue The common group value (indexed value) that all documents
+	 *                   share.
+	 * @param result     The documents to be displayed that belong to this group
+	 */
+	public Group(String groupValue, SolrDocumentList result) {
+		_groupValue = groupValue;
+		_result = result;
+	}
 
-  /**
-   * Returns the common group value that all documents share inside this group.
-   * This is an indexed value, not a stored value.
-   *
-   * @return the common group value
-   */
-  public String getGroupValue() {
-    return _groupValue;
-  }
+	/**
+	 * Returns the common group value that all documents share inside this group.
+	 * This is an indexed value, not a stored value.
+	 *
+	 * @return the common group value
+	 */
+	public String getGroupValue() {
+		return _groupValue;
+	}
 
-  /**
-   * Returns the documents to be displayed that belong to this group.
-   * How many documents are returned depend on the <code>group.offset</code> and <code>group.limit</code> parameters.
-   *
-   * @return the documents to be displayed that belong to this group
-   */
-  public SolrDocumentList getResult() {
-    return _result;
-  }
+	/**
+	 * Returns the documents to be displayed that belong to this group. How many
+	 * documents are returned depend on the <code>group.offset</code> and
+	 * <code>group.limit</code> parameters.
+	 *
+	 * @return the documents to be displayed that belong to this group
+	 */
+	public SolrDocumentList getResult() {
+		return _result;
+	}
 
 }

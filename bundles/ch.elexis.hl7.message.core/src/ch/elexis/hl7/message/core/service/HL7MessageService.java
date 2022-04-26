@@ -14,16 +14,16 @@ import ch.elexis.hl7.message.core.message.IHL7Message;
 
 @Component
 public class HL7MessageService implements IHL7MessageService {
-	
+
 	private Map<String, List<IHL7Message>> messages;
-	
-	public HL7MessageService(){
+
+	public HL7MessageService() {
 		messages = new HashMap<>();
 		// add message implementations here
 		addMessage("ADT_A08", new ADT_A08Message());
 	}
-	
-	private void addMessage(String messageTyp, IHL7Message message){
+
+	private void addMessage(String messageTyp, IHL7Message message) {
 		List<IHL7Message> messagesList = messages.get(messageTyp);
 		if (messagesList == null) {
 			messagesList = new ArrayList<>();
@@ -31,10 +31,9 @@ public class HL7MessageService implements IHL7MessageService {
 		messagesList.add(message);
 		messages.put(messageTyp, messagesList);
 	}
-	
+
 	@Override
-	public List<String> validateContext(String messageTyp, Map<String, Object> context)
-		throws ElexisException{
+	public List<String> validateContext(String messageTyp, Map<String, Object> context) throws ElexisException {
 		List<IHL7Message> messageVersions = messages.get(messageTyp);
 		if (messageVersions != null && !messageVersions.isEmpty()) {
 			String versionHint = (String) context.get(IHL7MessageService.CONTEXT_HL7VERSION_HINT);
@@ -49,9 +48,9 @@ public class HL7MessageService implements IHL7MessageService {
 		}
 		throw new ElexisException("No message implementation for typ [" + messageTyp + "]");
 	}
-	
+
 	@Override
-	public String getMessage(String messageTyp, Map<String, Object> context) throws ElexisException{
+	public String getMessage(String messageTyp, Map<String, Object> context) throws ElexisException {
 		List<IHL7Message> messageVersions = messages.get(messageTyp);
 		if (messageVersions != null && !messageVersions.isEmpty()) {
 			String versionHint = (String) context.get(IHL7MessageService.CONTEXT_HL7VERSION_HINT);

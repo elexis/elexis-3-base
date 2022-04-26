@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -55,97 +55,88 @@ public class RechnungsDrucker implements IRnOutputter {
 	private Button bESR, bForms, bIgnoreFaults, bSaveFileAs;
 	String dirname = CoreHub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, null);
 	Text tName;
-	
+
 	private boolean bESRSelected, bFormsSelected, bIgnoreFaultsSelected, bSaveFileAsSelected;
-	
+
 	private boolean modifyInvoiceState;
-	
-	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type,
-		final Collection<Rechnung> rechnungen, Properties props){
-		
+
+	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rechnungen,
+			Properties props) {
+
 		if (!props.isEmpty()) {
 			initSelectedFromProperties(props);
 		} else {
 			modifyInvoiceState = true;
 		}
-		
+
 		rnPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
 		// ElexisEventCascade.getInstance().stop();
 		try {
 			rnp = (RnPrintView2) rnPage.showView(RnPrintView2.ID);
-			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
-				new IRunnableWithProgress() {
-					public void run(final IProgressMonitor monitor){
-						monitor.beginTask(Messages.RechnungsDrucker_PrintingBills,
-							rechnungen.size() * 10);
-						int errors = 0;
-						for (Rechnung rn : rechnungen) {
-							try {
-								if (rnp.doPrint(rn, type, bSaveFileAsSelected ? dirname
-									+ File.separator + rn.getNr() + ".xml" : null, bESRSelected, //$NON-NLS-1$
-									bFormsSelected, !bIgnoreFaultsSelected, monitor) == false) {
-									String errms =
-										Messages.RechnungsDrucker_TheBill + rn.getNr()
-											+ Messages.RechnungsDrucker_Couldntbeprintef;
-									res.add(Result.SEVERITY.ERROR, 1, errms, rn, true);
-									errors++;
-									continue;
-								}
-								if (modifyInvoiceState) {
-									int status_vorher = rn.getStatus();
-									if ((status_vorher == RnStatus.OFFEN)
-										|| (status_vorher == RnStatus.MAHNUNG_1)
+			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(), new IRunnableWithProgress() {
+				public void run(final IProgressMonitor monitor) {
+					monitor.beginTask(Messages.RechnungsDrucker_PrintingBills, rechnungen.size() * 10);
+					int errors = 0;
+					for (Rechnung rn : rechnungen) {
+						try {
+							if (rnp.doPrint(rn, type,
+									bSaveFileAsSelected ? dirname + File.separator + rn.getNr() + ".xml" : null, //$NON-NLS-1$
+									bESRSelected, bFormsSelected, !bIgnoreFaultsSelected, monitor) == false) {
+								String errms = Messages.RechnungsDrucker_TheBill + rn.getNr()
+										+ Messages.RechnungsDrucker_Couldntbeprintef;
+								res.add(Result.SEVERITY.ERROR, 1, errms, rn, true);
+								errors++;
+								continue;
+							}
+							if (modifyInvoiceState) {
+								int status_vorher = rn.getStatus();
+								if ((status_vorher == RnStatus.OFFEN) || (status_vorher == RnStatus.MAHNUNG_1)
 										|| (status_vorher == RnStatus.MAHNUNG_2)
 										|| (status_vorher == RnStatus.MAHNUNG_3)) {
-										rn.setStatus(status_vorher + 1);
-									}
-									rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
+									rn.setStatus(status_vorher + 1);
+								}
+								rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
 										+ RnStatus.getStatusText(rn.getStatus()));
-								}
-							} catch (Exception ex) {
-								ExHandler.handle(ex);
-								String msg = ex.getMessage();
-								if (msg == null) {
-									msg = Messages.RechnungsDrucker_MessageErrorInternal;
-								}
-								SWTHelper.showError(
-									Messages.RechnungsDrucker_MessageErrorWhilePrinting
-										+ rn.getNr(), msg);
-								errors++;
 							}
-						}
-						monitor.done();
-						if (errors == 0) {
-							SWTHelper.showInfo(Messages.RechnungsDrucker_PrintingFinished,
-								Messages.RechnungsDrucker_AllFinishedNoErrors);
-						} else {
-							SWTHelper.showError(Messages.RechnungsDrucker_ErrorsWhilePrinting,
-								Integer.toString(errors)
-									+ Messages.RechnungsDrucker_ErrorsWhiilePrintingAdvice);
+						} catch (Exception ex) {
+							ExHandler.handle(ex);
+							String msg = ex.getMessage();
+							if (msg == null) {
+								msg = Messages.RechnungsDrucker_MessageErrorInternal;
+							}
+							SWTHelper.showError(Messages.RechnungsDrucker_MessageErrorWhilePrinting + rn.getNr(), msg);
+							errors++;
 						}
 					}
-				}, null);
-			
+					monitor.done();
+					if (errors == 0) {
+						SWTHelper.showInfo(Messages.RechnungsDrucker_PrintingFinished,
+								Messages.RechnungsDrucker_AllFinishedNoErrors);
+					} else {
+						SWTHelper.showError(Messages.RechnungsDrucker_ErrorsWhilePrinting,
+								Integer.toString(errors) + Messages.RechnungsDrucker_ErrorsWhiilePrintingAdvice);
+					}
+				}
+			}, null);
+
 			rnPage.hideView(rnp);
-			
+
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
 			ErrorDialog.openError(null, Messages.RechnungsDrucker_ErrorsWhilePrinting,
-				Messages.RechnungsDrucker_CouldntOpenPrintView,
-				ResultAdapter.getResultAsStatus(res));
+					Messages.RechnungsDrucker_CouldntOpenPrintView, ResultAdapter.getResultAsStatus(res));
 			return res;
 		} finally {
 			// ElexisEventCascade.getInstance().start();
 		}
 		return res;
 	}
-	
-	private void initSelectedFromProperties(Properties props){
-		LoggerFactory.getLogger(getClass())
-			.warn("Initializing with properties " + props.toString());
+
+	private void initSelectedFromProperties(Properties props) {
+		LoggerFactory.getLogger(getClass()).warn("Initializing with properties " + props.toString());
 		modifyInvoiceState = true;
 		if (props.get(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE);
@@ -160,13 +151,13 @@ public class RechnungsDrucker implements IRnOutputter {
 			bFormsSelected = Boolean.parseBoolean(value);
 		}
 	}
-	
-	public String getDescription(){
+
+	public String getDescription() {
 		return Messages.RechnungsDrucker_PrintAsTarmed;
 	}
-	
+
 	@Override
-	public Control createSettingsControl(final Object parent){
+	public Control createSettingsControl(final Object parent) {
 		final Composite parentInc = (Composite) parent;
 		Composite ret = new Composite(parentInc, SWT.NONE);
 		ret.setLayout(new GridLayout());
@@ -181,10 +172,10 @@ public class RechnungsDrucker implements IRnOutputter {
 		bIgnoreFaults.setSelection(CoreHub.localCfg.get(PreferenceConstants.RNN_RELAXED, true));
 		bIgnoreFaults.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				CoreHub.localCfg.set(PreferenceConstants.RNN_RELAXED, bIgnoreFaults.getSelection());
 			}
-			
+
 		});
 		Group cSaveCopy = new Group(ret, SWT.NONE);
 		cSaveCopy.setText(Messages.RechnungsDrucker_FileForTrustCenter);
@@ -195,22 +186,22 @@ public class RechnungsDrucker implements IRnOutputter {
 		bSaveFileAs.setSelection(CoreHub.localCfg.get(PreferenceConstants.RNN_SAVECOPY, false));
 		bSaveFileAs.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				CoreHub.localCfg.set(PreferenceConstants.RNN_SAVECOPY, bSaveFileAs.getSelection());
 			}
-			
+
 		});
-		
+
 		Button bSelectFile = new Button(cSaveCopy, SWT.PUSH);
 		bSelectFile.setText(Messages.RechnungsDrucker_Directory);
 		bSelectFile.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog ddlg = new DirectoryDialog(parentInc.getShell());
 				dirname = ddlg.open();
 				if (dirname == null) {
 					SWTHelper.alert(Messages.RechnungsDrucker_DirNameMissingCaption,
-						Messages.RechnungsDrucker_DirnameMissingText);
+							Messages.RechnungsDrucker_DirnameMissingText);
 				} else {
 					CoreHub.localCfg.set(PreferenceConstants.RNN_EXPORTDIR, dirname);
 					tName.setText(dirname);
@@ -221,21 +212,21 @@ public class RechnungsDrucker implements IRnOutputter {
 		tName.setText(CoreHub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, "")); //$NON-NLS-1$
 		return ret;
 	}
-	
-	public boolean canStorno(final Rechnung rn){
+
+	public boolean canStorno(final Rechnung rn) {
 		// We do not need to react on cancel messages
 		return false;
 	}
-	
-	public boolean canBill(final Fall fall){
+
+	public boolean canBill(final Fall fall) {
 		return true;
 	}
-	
-	public void saveComposite(){
+
+	public void saveComposite() {
 		bESRSelected = bESR.getSelection();
 		bFormsSelected = bForms.getSelection();
 		bIgnoreFaultsSelected = bIgnoreFaults.getSelection();
 		bSaveFileAsSelected = bSaveFileAs.getSelection();
 	}
-	
+
 }

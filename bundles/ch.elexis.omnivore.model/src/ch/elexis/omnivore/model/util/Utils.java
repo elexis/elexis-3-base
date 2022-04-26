@@ -8,7 +8,7 @@
  * Contributors:
  *    J. Sigle - Initial implementation in a private branch of Elexis 2.1
  *    N. Giger - Reworked for Elexis 3.4 including unit tests
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.omnivore.model.util;
@@ -31,8 +31,8 @@ public class Utils {
 		query.and("kontakt", COMPARATOR.EQUALS, pat);
 		return query.execute();
 	}
-	
-	public static IVirtualFilesystemHandle getStorageFile(IDocumentHandle docHandle, boolean force){
+
+	public static IVirtualFilesystemHandle getStorageFile(IDocumentHandle docHandle, boolean force) {
 		if (docHandle instanceof DocumentDocHandle) {
 			DocumentDocHandle impl = (DocumentDocHandle) docHandle;
 			return impl.getStorageFile(force);

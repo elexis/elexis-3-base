@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
@@ -17,10 +17,10 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 
 public class ESRLoader extends FlatDataLoader {
-	
-	public ESRLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
+
+	public ESRLoader(CommonViewer cv, Query<? extends PersistentObject> qbe) {
 		super(cv, qbe);
-		
+
 	}
-	
+
 }

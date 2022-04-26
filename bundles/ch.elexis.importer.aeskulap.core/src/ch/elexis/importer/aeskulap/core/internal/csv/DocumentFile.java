@@ -22,42 +22,40 @@ import ch.elexis.importer.aeskulap.core.service.DocumentStoreServiceHolder;
 import ch.rgw.tools.TimeTool;
 
 public class DocumentFile extends AbstractCsvImportFile<IDocument> implements IAeskulapImportFile {
-	
+
 	public static final String CATEGORY_AESKULAP_DOKUMENTE = "Aeskulap-Dokumente";
-	
+
 	private File file;
-	
+
 	private ICategory importCategory;
-	
+
 	private IAeskulapImportFile documentDirectory;
-	
-	public DocumentFile(File file){
+
+	public DocumentFile(File file) {
 		super(file);
 		this.file = file;
 	}
-	
+
 	@Override
-	public File getFile(){
+	public File getFile() {
 		return file;
 	}
-	
-	public static boolean canHandleFile(File file){
+
+	public static boolean canHandleFile(File file) {
 		// can only handle letter if store is available
 		return FilenameUtils.getExtension(file.getName()).equalsIgnoreCase("csv")
-			&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Dokumente");
+				&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Dokumente");
 	}
-	
+
 	@Override
-	public Type getType(){
+	public Type getType() {
 		return Type.DOCUMENT;
 	}
-	
+
 	@Override
-	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite,
-		SubMonitor monitor){
+	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite, SubMonitor monitor) {
 		monitor.beginTask("Aeskuplap Dokumente Import", getLineCount());
-		importCategory =
-			DocumentStoreServiceHolder.get().createCategory(CATEGORY_AESKULAP_DOKUMENTE);
+		importCategory = DocumentStoreServiceHolder.get().createCategory(CATEGORY_AESKULAP_DOKUMENTE);
 		documentDirectory = transientFiles.get(Type.DOCUMENTDIRECTORY);
 		if (documentDirectory != null) {
 			try {
@@ -77,15 +75,12 @@ public class DocumentFile extends AbstractCsvImportFile<IDocument> implements IA
 							setProperties(document, line);
 							document.setExtension(FilenameUtils.getExtension(file.getName()));
 							document.setMimeType(FilenameUtils.getExtension(file.getName()));
-							DocumentStoreServiceHolder.get().saveDocument(document,
-								new FileInputStream(file));
+							DocumentStoreServiceHolder.get().saveDocument(document, new FileInputStream(file));
 							String xid = line[1];
-							Optional<Object> po =
-								DocumentStoreServiceHolder.get().getPersistenceObject(document);
+							Optional<Object> po = DocumentStoreServiceHolder.get().getPersistenceObject(document);
 							if (po.isPresent()) {
 								if (po.get() instanceof IPersistentObject) {
-									((IPersistentObject) po.get()).addXid(getXidDomain(), xid,
-										true);
+									((IPersistentObject) po.get()).addXid(getXidDomain(), xid, true);
 								} else if (po.get() instanceof Identifiable) {
 									((Identifiable) po.get()).addXid(getXidDomain(), xid, true);
 								}
@@ -108,34 +103,34 @@ public class DocumentFile extends AbstractCsvImportFile<IDocument> implements IA
 		}
 		return false;
 	}
-	
-	private String getFilename(String[] line){
+
+	private String getFilename(String[] line) {
 		return new StringBuilder("Doc_").append(line[0]).append("_").append(line[1]).toString();
 	}
-	
+
 	@Override
-	public boolean isHeaderLine(String[] line){
+	public boolean isHeaderLine(String[] line) {
 		return line[0].equalsIgnoreCase("pat_no");
 	}
-	
+
 	@Override
-	public String getXidDomain(){
+	public String getXidDomain() {
 		return IAeskulapImporter.XID_IMPORT_DOCUMENT;
 	}
-	
+
 	@Override
-	public IDocument create(String[] line){
+	public IDocument create(String[] line) {
 		Patient patient = (Patient) getWithXid(IAeskulapImporter.XID_IMPORT_PATIENT, line[0]);
 		if (patient != null) {
-			IDocument document = DocumentStoreServiceHolder.get().createDocument(patient.getId(),
-				line[3], importCategory.getName());
+			IDocument document = DocumentStoreServiceHolder.get().createDocument(patient.getId(), line[3],
+					importCategory.getName());
 			return document;
 		}
 		return null;
 	}
-	
+
 	@Override
-	public void setProperties(IDocument document, String[] line){
+	public void setProperties(IDocument document, String[] line) {
 		TimeTool letterDate = new TimeTool(line[2]);
 		document.setCreated(letterDate.getTime());
 		document.setLastchanged(letterDate.getTime());

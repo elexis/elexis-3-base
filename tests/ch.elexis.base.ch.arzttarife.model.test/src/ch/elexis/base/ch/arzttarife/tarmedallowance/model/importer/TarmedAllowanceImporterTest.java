@@ -21,23 +21,20 @@ import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class TarmedAllowanceImporterTest {
-	
+
 	@Test
-	public void performImport() throws FileNotFoundException, SQLException{
+	public void performImport() throws FileNotFoundException, SQLException {
 		TarmedAllowanceReferenceDataImporter importer = new TarmedAllowanceReferenceDataImporter();
 		Status retStatus = (Status) importer.performImport(new NullProgressMonitor(),
-			PandemieImporterTest.class.getResourceAsStream("/rsc/tarmedpauschalen.xlsx"), null);
+				PandemieImporterTest.class.getResourceAsStream("/rsc/tarmedpauschalen.xlsx"), null);
 		assertEquals(IStatus.OK, retStatus.getCode());
-		
-		ICodeElementService codeElementService =
-			OsgiServiceUtil.getService(ICodeElementService.class).get();
-		
-		ICodeElement eyeNew =
-			codeElementService.loadFromString("Tarmedpauschalen", "08.0908.01.05", null).get();
+
+		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+
+		ICodeElement eyeNew = codeElementService.loadFromString("Tarmedpauschalen", "08.0908.01.05", null).get();
 		assertNotNull(eyeNew);
 		assertNotNull(eyeNew.getText());
-		assertTrue(eyeNew.getText()
-			.startsWith("Katarakt bei PatientIn mit höherem Risiko für Komplikationen"));
+		assertTrue(eyeNew.getText().startsWith("Katarakt bei PatientIn mit höherem Risiko für Komplikationen"));
 		assertFalse(eyeNew.getText().contains("\n"));
 		assertEquals(LocalDate.of(2021, 1, 1), ((ITarmedAllowance) eyeNew).getValidFrom());
 		OsgiServiceUtil.ungetService(codeElementService);

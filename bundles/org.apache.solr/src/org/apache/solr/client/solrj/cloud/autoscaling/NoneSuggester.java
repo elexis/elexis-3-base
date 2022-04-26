@@ -21,21 +21,21 @@ import org.apache.solr.client.solrj.SolrRequest;
 
 public class NoneSuggester extends Suggester {
 
-  public static NoneSuggester get(Policy.Session session) {
-    NoneSuggester suggester = new NoneSuggester();
-    suggester._init(session);
-    return suggester;
-  }
+	public static NoneSuggester get(Policy.Session session) {
+		NoneSuggester suggester = new NoneSuggester();
+		suggester._init(session);
+		return suggester;
+	}
 
-  @Override
-  @SuppressWarnings({"rawtypes"})
-  SolrRequest init() {
-    return null;
-  }
+	@Override
+	@SuppressWarnings({ "rawtypes" })
+	SolrRequest init() {
+		return null;
+	}
 
-  @Override
-  @SuppressWarnings({"rawtypes"})
-  public SolrRequest getSuggestion() {
-    return null;
-  }
+	@Override
+	@SuppressWarnings({ "rawtypes" })
+	public SolrRequest getSuggestion() {
+		return null;
+	}
 }

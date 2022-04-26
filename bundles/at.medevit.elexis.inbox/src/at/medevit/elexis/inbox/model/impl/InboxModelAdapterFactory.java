@@ -8,20 +8,20 @@ public class InboxModelAdapterFactory extends AbstractModelAdapterFactory {
 
 	private static InboxModelAdapterFactory INSTANCE;
 
-	public static synchronized InboxModelAdapterFactory getInstance(){
+	public static synchronized InboxModelAdapterFactory getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new InboxModelAdapterFactory();
 		}
 		return INSTANCE;
 	}
 
-	private InboxModelAdapterFactory(){
+	private InboxModelAdapterFactory() {
 		super();
 	}
 
 	@Override
 	protected void initializeMappings() {
 		addMapping(new MappingEntry(IInboxElement.class, InboxElement.class,
-			ch.elexis.core.jpa.entities.InboxElement.class));
+				ch.elexis.core.jpa.entities.InboxElement.class));
 	}
 }

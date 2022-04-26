@@ -64,153 +64,154 @@ import ch.gpb.elexis.cst.data.CstProfile;
 import ch.gpb.elexis.cst.preferences.CstPreference;
 import ch.gpb.elexis.cst.service.DocumentStoreHolder;
 import ch.rgw.tools.ExHandler;
+
 // TODO: the handling of the omnivore documents is done quick and dirty. There is an API to use these documents,
 // see i.e. in Labor View, and that should be used here for CST Documents
-//   
+//
 public class CstDocumentsComposite extends CstComposite {
 
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-	
-    CstProfile aProfile;
-    private Table tableOmnivore;
-    TableViewer tableViewerOmnivore;
-    private Table tableBrief;
-    TableViewer tableViewerBrief;
-    private Action doubleClickAction;
-    private Action briefLadenAction;
-    IViewSite viewsite;
-    private int sortColumn = 0;
-    private boolean sortReverse = false;
-    String sIdentBriefe;
-    String sIdentOmnivore;
 
-    public CstDocumentsComposite(Composite parent, IViewSite viewsite) {
-	super(parent, SWT.NONE);
-	this.viewsite = viewsite;
+	CstProfile aProfile;
+	private Table tableOmnivore;
+	TableViewer tableViewerOmnivore;
+	private Table tableBrief;
+	TableViewer tableViewerBrief;
+	private Action doubleClickAction;
+	private Action briefLadenAction;
+	IViewSite viewsite;
+	private int sortColumn = 0;
+	private boolean sortReverse = false;
+	String sIdentBriefe;
+	String sIdentOmnivore;
 
-	sIdentBriefe = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_BRIEFE, "CST");
-	sIdentOmnivore = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_OMNIVORE, "CST");
+	public CstDocumentsComposite(Composite parent, IViewSite viewsite) {
+		super(parent, SWT.NONE);
+		this.viewsite = viewsite;
 
+		sIdentBriefe = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_BRIEFE, "CST");
+		sIdentOmnivore = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_OMNIVORE, "CST");
 
-	GridLayout gridLayout = new GridLayout(1, true);
-	setLayout(gridLayout);
+		GridLayout gridLayout = new GridLayout(1, true);
+		setLayout(gridLayout);
 
-	Label lblOmnivoreDocs = new Label(this, SWT.NONE);
-	lblOmnivoreDocs.setText(Messages.Cst_Text_cst_documents_tooltip);
+		Label lblOmnivoreDocs = new Label(this, SWT.NONE);
+		lblOmnivoreDocs.setText(Messages.Cst_Text_cst_documents_tooltip);
 
-	// Table Omnivore Documents
-	tableViewerOmnivore = new TableViewer(this, SWT.BORDER | SWT.FULL_SELECTION);
-	tableOmnivore = tableViewerOmnivore.getTable();
-	tableOmnivore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		// Table Omnivore Documents
+		tableViewerOmnivore = new TableViewer(this, SWT.BORDER | SWT.FULL_SELECTION);
+		tableOmnivore = tableViewerOmnivore.getTable();
+		tableOmnivore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-	Label lblBriefe = new Label(this, SWT.NONE);
-	lblBriefe.setText(Messages.Cst_Text_cst_documents_tooltip_omnivore);
+		Label lblBriefe = new Label(this, SWT.NONE);
+		lblBriefe.setText(Messages.Cst_Text_cst_documents_tooltip_omnivore);
 
-	tableViewerOmnivore.setContentProvider(new DocumentsContentProvider());
-	tableViewerOmnivore.setLabelProvider(new DocumentsLabelProvider());
+		tableViewerOmnivore.setContentProvider(new DocumentsContentProvider());
+		tableViewerOmnivore.setLabelProvider(new DocumentsLabelProvider());
 
-	String[] colLabels = getCategoryColumnLabels();
-	int columnWidth[] = getCategoryColumnWidth();
-	CstDocumentsSortListener categorySortListener = new CstDocumentsSortListener();
-	TableColumn[] cols = new TableColumn[colLabels.length];
-	for (int i = 0; i < colLabels.length; i++) {
-	    cols[i] = new TableColumn(tableOmnivore, SWT.NONE);
-	    cols[i].setWidth(columnWidth[i]);
-	    cols[i].setText(colLabels[i]);
-	    cols[i].setData(new Integer(i));
-	    cols[i].addSelectionListener(categorySortListener);
+		String[] colLabels = getCategoryColumnLabels();
+		int columnWidth[] = getCategoryColumnWidth();
+		CstDocumentsSortListener categorySortListener = new CstDocumentsSortListener();
+		TableColumn[] cols = new TableColumn[colLabels.length];
+		for (int i = 0; i < colLabels.length; i++) {
+			cols[i] = new TableColumn(tableOmnivore, SWT.NONE);
+			cols[i].setWidth(columnWidth[i]);
+			cols[i].setText(colLabels[i]);
+			cols[i].setData(new Integer(i));
+			cols[i].addSelectionListener(categorySortListener);
+		}
+		tableOmnivore.setHeaderVisible(true);
+		tableOmnivore.setLinesVisible(true);
+		tableViewerOmnivore.setInput(this);
+		tableViewerOmnivore.setSorter(new CstDocumentsSorter());
+
+		tableOmnivore.setSize(600, 150);
+		GridData gdCstDoc = new GridData();
+		gdCstDoc.heightHint = 150;
+		gdCstDoc.widthHint = 600;
+		tableOmnivore.setLayoutData(gdCstDoc);
+
+		// TAble Briefe
+		tableViewerBrief = new TableViewer(this, SWT.BORDER | SWT.FULL_SELECTION);
+		tableBrief = tableViewerBrief.getTable();
+		tableBrief.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+
+		tableViewerBrief.setContentProvider(new BriefeContentProvider());
+		tableViewerBrief.setLabelProvider(new BriefeLabelProvider());
+
+		String[] colLabelsBrief = getCategoryColumnLabelsBrief();
+		int columnWidthBrief[] = getCategoryColumnWidthBrief();
+		CstBriefeSortListener briefeListener = new CstBriefeSortListener();
+		TableColumn[] colsBrief = new TableColumn[colLabelsBrief.length];
+		for (int i = 0; i < colLabelsBrief.length; i++) {
+			colsBrief[i] = new TableColumn(tableBrief, SWT.NONE);
+			colsBrief[i].setWidth(columnWidthBrief[i]);
+			colsBrief[i].setText(colLabelsBrief[i]);
+			colsBrief[i].setData(new Integer(i));
+			colsBrief[i].addSelectionListener(briefeListener);
+		}
+		tableBrief.setHeaderVisible(true);
+		tableBrief.setLinesVisible(true);
+		tableViewerBrief.setInput(this);
+		tableViewerBrief.setSorter(new CstBriefeSorter());
+
+		tableBrief.setSize(600, 150);
+		GridData gdBrief = new GridData();
+		gdBrief.heightHint = 150;
+		gdBrief.widthHint = 600;
+		tableBrief.setLayoutData(gdBrief);
+
+		createLayout(this);
+		makeActions();
+		hookDoubleClickAction();
+
 	}
-	tableOmnivore.setHeaderVisible(true);
-	tableOmnivore.setLinesVisible(true);
-	tableViewerOmnivore.setInput(this);
-	tableViewerOmnivore.setSorter(new CstDocumentsSorter());
 
-	tableOmnivore.setSize(600, 150);
-	GridData gdCstDoc = new GridData();
-	gdCstDoc.heightHint = 150;
-	gdCstDoc.widthHint = 600;
-	tableOmnivore.setLayoutData(gdCstDoc);
+	// dynamic Layout elements
+	private void createLayout(Composite parent) {
 
-
-	// TAble Briefe
-	tableViewerBrief = new TableViewer(this, SWT.BORDER | SWT.FULL_SELECTION);
-	tableBrief = tableViewerBrief.getTable();
-	tableBrief.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-
-	tableViewerBrief.setContentProvider(new BriefeContentProvider());
-	tableViewerBrief.setLabelProvider(new BriefeLabelProvider());
-
-	String[] colLabelsBrief = getCategoryColumnLabelsBrief();
-	int columnWidthBrief[] = getCategoryColumnWidthBrief();
-	CstBriefeSortListener briefeListener = new CstBriefeSortListener();
-	TableColumn[] colsBrief = new TableColumn[colLabelsBrief.length];
-	for (int i = 0; i < colLabelsBrief.length; i++) {
-	    colsBrief[i] = new TableColumn(tableBrief, SWT.NONE);
-	    colsBrief[i].setWidth(columnWidthBrief[i]);
-	    colsBrief[i].setText(colLabelsBrief[i]);
-	    colsBrief[i].setData(new Integer(i));
-	    colsBrief[i].addSelectionListener(briefeListener);
 	}
-	tableBrief.setHeaderVisible(true);
-	tableBrief.setLinesVisible(true);
-	tableViewerBrief.setInput(this);
-	tableViewerBrief.setSorter(new CstBriefeSorter());
 
-	tableBrief.setSize(600, 150);
-	GridData gdBrief = new GridData();
-	gdBrief.heightHint = 150;
-	gdBrief.widthHint = 600;
-	tableBrief.setLayoutData(gdBrief);
+	/**
+	 * Get the selections from the gui
+	 *
+	 * @param mAuswahl the existing Befunde Auswahl map
+	 * @return the updated Befunde map
+	 */
+	public void getSelection(Map<Object, Object> mAuswahl) {
 
-	createLayout(this);
-	makeActions();
-	hookDoubleClickAction();
+	}
 
-    }
+	/**
+	 * Set the buttons selected according to the map passed as parameter
+	 *
+	 * @param mapAuswahl
+	 */
+	public void setSelection(Map<String, Object> mapAuswahl) {
 
-    // dynamic Layout elements
-    private void createLayout(Composite parent) {
+	}
 
-    }
+	private void hookDoubleClickAction() {
+		tableViewerOmnivore.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				doubleClickAction.run();
+			}
+		});
+		tableViewerBrief.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				briefLadenAction.run();
+			}
+		});
+	}
 
-    /**
-     * Get the selections from the gui
-     * @param mAuswahl the existing Befunde Auswahl map
-     * @return the updated Befunde map
-     */
-    public void getSelection(Map<Object, Object> mAuswahl) {
+	private void makeActions() {
 
-    }
-
-    /**
-     * Set the buttons selected according to the map passed as parameter
-     * @param mapAuswahl
-     */
-    public void setSelection(Map<String, Object> mapAuswahl) {
-
-    }
-
-    private void hookDoubleClickAction() {
-	tableViewerOmnivore.addDoubleClickListener(new IDoubleClickListener() {
-	    public void doubleClick(DoubleClickEvent event) {
-		doubleClickAction.run();
-	    }
-	});
-	tableViewerBrief.addDoubleClickListener(new IDoubleClickListener() {
-	    public void doubleClick(DoubleClickEvent event) {
-		briefLadenAction.run();
-	    }
-	});
-    }
-
-    private void makeActions() {
-
-	doubleClickAction = new Action() {
-	    public void run() {
-		ISelection selection = tableViewerOmnivore.getSelection();
-		Object obj = ((IStructuredSelection) selection).getFirstElement();
+		doubleClickAction = new Action() {
+			public void run() {
+				ISelection selection = tableViewerOmnivore.getSelection();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
 				IDocument dh = (IDocument) obj;
-				
+
 				try {
 					File temp;
 					temp = File.createTempFile("csf_", dh.getExtension());
@@ -221,222 +222,209 @@ public class CstDocumentsComposite extends CstComposite {
 						if (Program.launch(temp.getAbsolutePath()) == false) {
 							Runtime.getRuntime().exec(temp.getAbsolutePath());
 						}
-						
+
 					}
 				} catch (IOException e) {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-						"Fehler beim Öffnen der Datei");
+							"Fehler beim Öffnen der Datei");
 				}
-	    }
-
-	};
-
-	briefLadenAction = new Action() { //$NON-NLS-1$
-	    @Override
-	    public void run() {
-
-		ISelection selection = tableViewerBrief.getSelection();
-
-		Object obj = ((IStructuredSelection) selection).getFirstElement();
-		Brief brief = (Brief) obj;
-
-		/*
-		try {
-		    TextView tv = (TextView) viewsite.getPage().showView(TextView.ID);
-
-		    CommonViewer cv = new CommonViewer();
-
-		    if (brief != null) {
-			if (tv.openDocument(brief) == false) {
-			    SWTHelper.alert("Messages.BriefAuswahlErrorHeading", //$NON-NLS-1$
-				    "Messages.BriefAuswahlCouldNotLoadText"); //$NON-NLS-1$
 			}
-		    } else {
-			tv.createDocument(null, null);
-		    }
-		    cv.notify(CommonViewer.Message.update);
 
-		} catch (PartInitException e) {
-		    ExHandler.handle(e);
-		}*/
+		};
 
-		
+		briefLadenAction = new Action() { // $NON-NLS-1$
+			@Override
+			public void run() {
 
-		try {
-			TextView tv =
-				(TextView) Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-					.showView(TextView.ID);
+				ISelection selection = tableViewerBrief.getSelection();
 
-		    boolean opened = tv.openDocument(Brief.load(brief.getId()));
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				Brief brief = (Brief) obj;
 
-		} catch (PartInitException e) {
-			ExHandler.handle(e);
-		}
-		catch (Exception e) {
-		    log.error("cannot open letter: " + e.getMessage());
-		}
+				/*
+				 * try { TextView tv = (TextView) viewsite.getPage().showView(TextView.ID);
+				 *
+				 * CommonViewer cv = new CommonViewer();
+				 *
+				 * if (brief != null) { if (tv.openDocument(brief) == false) {
+				 * SWTHelper.alert("Messages.BriefAuswahlErrorHeading", //$NON-NLS-1$
+				 * "Messages.BriefAuswahlCouldNotLoadText"); //$NON-NLS-1$ } } else {
+				 * tv.createDocument(null, null); } cv.notify(CommonViewer.Message.update);
+				 *
+				 * } catch (PartInitException e) { ExHandler.handle(e); }
+				 */
 
-	    }
-	};
-    }
+				try {
+					TextView tv = (TextView) Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(TextView.ID);
 
-    public void clear() {
-	tableViewerOmnivore.getTable().clearAll();
-	tableViewerOmnivore.refresh();
-	tableViewerBrief.refresh();
-    }
+					boolean opened = tv.openDocument(Brief.load(brief.getId()));
 
-    /**
-     * letters are searched for a configurable String in their concern, typically "CST"
-     * 
-     * @return a list of CST related letter
-     */
-    private List<Brief> loadCstBriefe() {
+				} catch (PartInitException e) {
+					ExHandler.handle(e);
+				} catch (Exception e) {
+					log.error("cannot open letter: " + e.getMessage());
+				}
 
-	Patient actPat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
-	if (actPat != null) {
-	    sIdentBriefe = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_BRIEFE, "CST");
-
-	    Query<Brief> qbe = new Query<Brief>(Brief.class);
-	    qbe.add(Brief.FLD_PATIENT_ID, Query.EQUALS, actPat.getId());
-
-
-	    List<Brief> listResult = new ArrayList<>();
-	    List<Brief> list = qbe.execute();
-	    for (Brief brief : list) {
-		// TODO: this must be configurable (Preferences)
-		if (brief.getBetreff().toLowerCase().indexOf(sIdentBriefe.toLowerCase()) > -1) {
-		    listResult.add(brief);
-		}
-	    }
-
-	    return listResult;
+			}
+		};
 	}
 
-	return new ArrayList<Brief>();
-    }
+	public void clear() {
+		tableViewerOmnivore.getTable().clearAll();
+		tableViewerOmnivore.refresh();
+		tableViewerBrief.refresh();
+	}
 
-    /**
-     * Omnivore documents are searched for a configurable category, typically "CST"
-     * 
-     * @return a list of CST related Omnivore documents
-     */
-	private List<IDocument> loadCstdocsOmnivore(){
+	/**
+	 * letters are searched for a configurable String in their concern, typically
+	 * "CST"
+	 *
+	 * @return a list of CST related letter
+	 */
+	private List<Brief> loadCstBriefe() {
+
+		Patient actPat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+		if (actPat != null) {
+			sIdentBriefe = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_BRIEFE, "CST");
+
+			Query<Brief> qbe = new Query<Brief>(Brief.class);
+			qbe.add(Brief.FLD_PATIENT_ID, Query.EQUALS, actPat.getId());
+
+			List<Brief> listResult = new ArrayList<>();
+			List<Brief> list = qbe.execute();
+			for (Brief brief : list) {
+				// TODO: this must be configurable (Preferences)
+				if (brief.getBetreff().toLowerCase().indexOf(sIdentBriefe.toLowerCase()) > -1) {
+					listResult.add(brief);
+				}
+			}
+
+			return listResult;
+		}
+
+		return new ArrayList<Brief>();
+	}
+
+	/**
+	 * Omnivore documents are searched for a configurable category, typically "CST"
+	 *
+	 * @return a list of CST related Omnivore documents
+	 */
+	private List<IDocument> loadCstdocsOmnivore() {
 		sIdentOmnivore = ConfigServiceHolder.getUser(CstPreference.CST_IDENTIFIER_OMNIVORE, "CST");
-		
+
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if (pat == null) {
 			ArrayList<IDocument> emptyList = new ArrayList<IDocument>();
 			return emptyList;
 		}
-		
+
 		List<IDocument> ret = new LinkedList<IDocument>();
-		
+
 		String cat = sIdentOmnivore;
-		
-		ICategory category = DocumentStoreHolder.get().getCategories().stream()
-			.filter(c -> c.getName().equals(cat)).findFirst().orElse(null);
+
+		ICategory category = DocumentStoreHolder.get().getCategories().stream().filter(c -> c.getName().equals(cat))
+				.findFirst().orElse(null);
 		if (category == null) {
 			category = DocumentStoreHolder.get().createCategory(cat);
 		}
-		List<IDocument> root =
-			DocumentStoreHolder.get().getDocuments(pat.getId(), null, category, null);
-		
+		List<IDocument> root = DocumentStoreHolder.get().getDocuments(pat.getId(), null, category, null);
+
 		ret.addAll(root);
-		
+
 		return ret;
 	}
 
-    private String[] getCategoryColumnLabels() {
-	String columnLabels[] = { "Category", "Date", "Titel", "MIME Type" };
-	return columnLabels;
-    }
-
-    private String[] getCategoryColumnLabelsBrief() {
-	String columnLabels[] = { "Date", "Betreff", "MIME Type", "Typ" };
-	return columnLabels;
-    }
-
-    class BriefeContentProvider implements IStructuredContentProvider {
-	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+	private String[] getCategoryColumnLabels() {
+		String columnLabels[] = { "Category", "Date", "Titel", "MIME Type" };
+		return columnLabels;
 	}
 
-	public void dispose() {
+	private String[] getCategoryColumnLabelsBrief() {
+		String columnLabels[] = { "Date", "Betreff", "MIME Type", "Typ" };
+		return columnLabels;
 	}
 
-	public Object[] getElements(Object parent) {
-	    List<Brief> result = loadCstBriefe();
-	    return result.toArray();
-	}
-    }
+	class BriefeContentProvider implements IStructuredContentProvider {
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
 
-    class BriefeLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider,
-	    IColorProvider {
+		public void dispose() {
+		}
 
-	public String getColumnText(Object obj, int index) {
-	    Brief docHandle = (Brief) obj;
-	    switch (index) {
-	    case 0:
-		return docHandle.getDatum();
-	    case 1:
-		return docHandle.getBetreff();
-	    case 2:
-		return docHandle.getTyp();
-	    case 3:
-		return docHandle.getMimeType();
-	    default:
-		return "";
-	    }
+		public Object[] getElements(Object parent) {
+			List<Brief> result = loadCstBriefe();
+			return result.toArray();
+		}
 	}
 
-	public Image getColumnImage(Object obj, int index) {
-	    return null;
+	class BriefeLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider, IColorProvider {
+
+		public String getColumnText(Object obj, int index) {
+			Brief docHandle = (Brief) obj;
+			switch (index) {
+			case 0:
+				return docHandle.getDatum();
+			case 1:
+				return docHandle.getBetreff();
+			case 2:
+				return docHandle.getTyp();
+			case 3:
+				return docHandle.getMimeType();
+			default:
+				return "";
+			}
+		}
+
+		public Image getColumnImage(Object obj, int index) {
+			return null;
+		}
+
+		public Font getFont(Object element, int columnIndex) {
+			Font font = null;
+			return font;
+		}
+
+		@Override
+		public Color getForeground(Object element) {
+
+			return null;
+		}
+
+		@Override
+		public Color getBackground(Object element) {
+			return null;
+		}
 	}
 
-	public Font getFont(Object element, int columnIndex) {
-	    Font font = null;
-	    return font;
+	private int[] getCategoryColumnWidth() {
+		int columnWidth[] = { 80, 200, 100, 100 };
+		return columnWidth;
 	}
 
-	@Override
-	public Color getForeground(Object element) {
-
-	    return null;
+	private int[] getCategoryColumnWidthBrief() {
+		int columnWidth[] = { 80, 200, 100, 100 };
+		return columnWidth;
 	}
 
-	@Override
-	public Color getBackground(Object element) {
-	    return null;
-	}
-    }
+	class DocumentsContentProvider implements IStructuredContentProvider {
+		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		}
 
-    private int[] getCategoryColumnWidth() {
-	int columnWidth[] = { 80, 200, 100, 100 };
-	return columnWidth;
-    }
+		public void dispose() {
+		}
 
-    private int[] getCategoryColumnWidthBrief() {
-	int columnWidth[] = { 80, 200, 100, 100 };
-	return columnWidth;
-    }
-
-    class DocumentsContentProvider implements IStructuredContentProvider {
-	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
-	}
-
-	public void dispose() {
-	}
-
-	public Object[] getElements(Object parent) {
+		public Object[] getElements(Object parent) {
 			List<IDocument> result = loadCstdocsOmnivore();
-	    return result.toArray();
+			return result.toArray();
+		}
 	}
-    }
 
-    class DocumentsLabelProvider extends LabelProvider implements ITableLabelProvider, ITableFontProvider,
-			IColorProvider {
-		
-		public String getColumnText(Object obj, int index){
+	class DocumentsLabelProvider extends LabelProvider
+			implements ITableLabelProvider, ITableFontProvider, IColorProvider {
+
+		public String getColumnText(Object obj, int index) {
 			IDocument docHandle = (IDocument) obj;
 			switch (index) {
 			case 0:
@@ -451,53 +439,53 @@ public class CstDocumentsComposite extends CstComposite {
 				return "";
 			}
 		}
-		
-		public Image getColumnImage(Object obj, int index){
+
+		public Image getColumnImage(Object obj, int index) {
 			return null;
 		}
-		
-		public Font getFont(Object element, int columnIndex){
+
+		public Font getFont(Object element, int columnIndex) {
 			Font font = null;
 			return font;
 		}
-		
+
 		@Override
-		public Color getForeground(Object element){
-			
+		public Color getForeground(Object element) {
+
 			return null;
 		}
-		
+
 		@Override
-		public Color getBackground(Object element){
+		public Color getBackground(Object element) {
 			return null;
 		}
 	}
 
-    class CstDocumentsSortListener extends SelectionAdapter {
+	class CstDocumentsSortListener extends SelectionAdapter {
 
-	@Override
-	public void widgetSelected(SelectionEvent e) {
-	    TableColumn col = (TableColumn) e.getSource();
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			TableColumn col = (TableColumn) e.getSource();
 
-	    Integer colNo = (Integer) col.getData();
+			Integer colNo = (Integer) col.getData();
 
-	    if (colNo != null) {
-		if (colNo == sortColumn) {
-		    sortReverse = !sortReverse;
-		} else {
-		    sortReverse = false;
-		    sortColumn = colNo;
+			if (colNo != null) {
+				if (colNo == sortColumn) {
+					sortReverse = !sortReverse;
+				} else {
+					sortReverse = false;
+					sortColumn = colNo;
+				}
+				tableViewerOmnivore.refresh();
+			}
 		}
-		tableViewerOmnivore.refresh();
-	    }
-	}
 
-    }
+	}
 
 	class CstDocumentsSorter extends ViewerSorter {
-		
+
 		@Override
-		public int compare(Viewer viewer, Object e1, Object e2){
+		public int compare(Viewer viewer, Object e1, Object e2) {
 			if ((e1 instanceof IDocumentHandle) && (e2 instanceof IDocumentHandle)) {
 				IDocumentHandle d1 = (IDocumentHandle) e1;
 				IDocumentHandle d2 = (IDocumentHandle) e2;
@@ -525,65 +513,65 @@ public class CstDocumentsComposite extends CstComposite {
 			}
 			return 0;
 		}
-		
+
 	}
 
-    class CstBriefeSortListener extends SelectionAdapter {
+	class CstBriefeSortListener extends SelectionAdapter {
 
-	@Override
-	public void widgetSelected(SelectionEvent e) {
-	    TableColumn col = (TableColumn) e.getSource();
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			TableColumn col = (TableColumn) e.getSource();
 
-	    Integer colNo = (Integer) col.getData();
+			Integer colNo = (Integer) col.getData();
 
-	    if (colNo != null) {
-		if (colNo == sortColumn) {
-		    sortReverse = !sortReverse;
-		} else {
-		    sortReverse = false;
-		    sortColumn = colNo;
+			if (colNo != null) {
+				if (colNo == sortColumn) {
+					sortReverse = !sortReverse;
+				} else {
+					sortReverse = false;
+					sortColumn = colNo;
+				}
+				tableViewerBrief.refresh();
+			}
 		}
-		tableViewerBrief.refresh();
-	    }
+
 	}
 
-    }
+	class CstBriefeSorter extends ViewerSorter {
 
-    class CstBriefeSorter extends ViewerSorter {
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			if ((e1 instanceof Brief) && (e2 instanceof Brief)) {
+				Brief d1 = (Brief) e1;
+				Brief d2 = (Brief) e2;
+				String c1 = "";
+				String c2 = "";
+				switch (sortColumn) {
+				case 0:
+					c1 = d1.getDatum();
+					c2 = d2.getDatum();
+					break;
+				case 1:
+					c1 = d1.getBetreff();
+					c2 = d2.getBetreff();
+					break;
+				case 2:
+					c1 = d1.getTyp();
+					c2 = d2.getTyp();
+				case 3:
+					c1 = d1.getMimeType();
+					c2 = d2.getMimeType();
+					break;
+				}
+				if (sortReverse) {
+					return c1.compareTo(c2);
+				} else {
+					return c2.compareTo(c1);
+				}
+			}
+			return 0;
+		}
 
-	@Override
-	public int compare(Viewer viewer, Object e1, Object e2) {
-	    if ((e1 instanceof Brief) && (e2 instanceof Brief)) {
-		Brief d1 = (Brief) e1;
-		Brief d2 = (Brief) e2;
-		String c1 = "";
-		String c2 = "";
-		switch (sortColumn) {
-		case 0:
-		    c1 = d1.getDatum();
-		    c2 = d2.getDatum();
-		    break;
-		case 1:
-		    c1 = d1.getBetreff();
-		    c2 = d2.getBetreff();
-		    break;
-		case 2:
-		    c1 = d1.getTyp();
-		    c2 = d2.getTyp();
-		case 3:
-		    c1 = d1.getMimeType();
-		    c2 = d2.getMimeType();
-		    break;
-		}
-		if (sortReverse) {
-		    return c1.compareTo(c2);
-		} else {
-		    return c2.compareTo(c1);
-		}
-	    }
-	    return 0;
 	}
-
-    }
 
 }

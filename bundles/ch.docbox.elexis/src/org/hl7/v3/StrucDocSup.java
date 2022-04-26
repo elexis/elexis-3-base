@@ -8,10 +8,11 @@ import javax.xml.bind.annotation.XmlValue;
 /**
  * <p>
  * Java class for StrucDoc.Sup complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="StrucDoc.Sup">
  *   &lt;complexContent>
@@ -20,37 +21,34 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "StrucDoc.Sup", propOrder = {
-	"content"
-})
+@XmlType(name = "StrucDoc.Sup", propOrder = { "content" })
 public class StrucDocSup {
-	
+
 	@XmlValue
 	protected String content;
-	
+
 	/**
 	 * Gets the value of the content property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getContent(){
+	public String getContent() {
 		return content;
 	}
-	
+
 	/**
 	 * Sets the value of the content property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setContent(String value){
+	public void setContent(String value) {
 		this.content = value;
 	}
-	
+
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.messages;
@@ -19,26 +19,26 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 public class Message extends PersistentObject {
-	
+
 	public static final String FLD_TEXT = "Text";
 	public static final String FLD_TIME = "time";
 	public static final String FLD_FROM = "from";
 	public static final String FLD_TO = "to";
-	
+
 	private static final String TABLENAME = "CH_ELEXIS_MESSAGES"; //$NON-NLS-1$
 	private static final String VERSION = "0.2.0"; //$NON-NLS-1$
 	private static final String createDB = "CREATE TABLE " + TABLENAME + " (" //$NON-NLS-1$//$NON-NLS-2$
-		+ "ID			VARCHAR(25) primary key," + "lastupdate BIGINT," //$NON-NLS-1$ //$NON-NLS-2$
-		+ "deleted		CHAR(1) default '0'," + "origin		VARCHAR(25)," //$NON-NLS-1$ //$NON-NLS-2$
-		+ "destination	VARCHAR(25)," //$NON-NLS-1$
-		+ "dateTime		CHAR(14)," // yyyymmddhhmmss //$NON-NLS-1$
-		+ "msg			TEXT);" + "INSERT INTO " + TABLENAME + " (ID,origin) VALUES ('VERSION','" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		+ VERSION + "');"; //$NON-NLS-1$
-	
+			+ "ID			VARCHAR(25) primary key," + "lastupdate BIGINT," //$NON-NLS-1$ //$NON-NLS-2$
+			+ "deleted		CHAR(1) default '0'," + "origin		VARCHAR(25)," //$NON-NLS-1$ //$NON-NLS-2$
+			+ "destination	VARCHAR(25)," //$NON-NLS-1$
+			+ "dateTime		CHAR(14)," // yyyymmddhhmmss //$NON-NLS-1$
+			+ "msg			TEXT);" + "INSERT INTO " + TABLENAME + " (ID,origin) VALUES ('VERSION','" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ VERSION + "');"; //$NON-NLS-1$
+
 	static {
 		addMapping(TABLENAME, FLD_FROM + "=origin", FLD_TO + "=destination", FLD_TIME + "=dateTime", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			FLD_TEXT + "=msg"); //$NON-NLS-1$
-		
+				FLD_TEXT + "=msg"); //$NON-NLS-1$
+
 		Message ver = load("VERSION"); //$NON-NLS-1$
 		if (ver.state() < PersistentObject.DELETED) {
 			initialize();
@@ -52,23 +52,20 @@ public class Message extends PersistentObject {
 			}
 		}
 	}
-	
-	static void initialize(){
+
+	static void initialize() {
 		createOrModifyTable(createDB);
 	}
-	
-	public Message(final Anwender an, final String text){
+
+	public Message(final Anwender an, final String text) {
 		create(null);
 		TimeTool tt = new TimeTool();
 		String dt = tt.toString(TimeTool.TIMESTAMP);
-		set(new String[] {
-			FLD_FROM, FLD_TO, FLD_TIME, FLD_TEXT
-		}, new String[] {
-			CoreHub.getLoggedInContact().getId(), an.getId(), dt, text
-		});
-		
+		set(new String[] { FLD_FROM, FLD_TO, FLD_TIME, FLD_TEXT },
+				new String[] { CoreHub.getLoggedInContact().getId(), an.getId(), dt, text });
+
 	}
-	
+
 	/**
 	 * @return the raw sender string
 	 * @since 3.7
@@ -76,39 +73,40 @@ public class Message extends PersistentObject {
 	public String getSenderString() {
 		return get(FLD_FROM);
 	}
-	
-	public Anwender getSender(){
+
+	public Anwender getSender() {
 		Anwender an = Anwender.load(getSenderString());
 		return an;
 	}
-	
-	public Anwender getDest(){
+
+	public Anwender getDest() {
 		Anwender an = Anwender.load(get(FLD_TO));
 		return an;
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		StringBuilder sb = new StringBuilder();
 		return sb.toString();
 	}
-	
-	public String getText(){
+
+	public String getText() {
 		return checkNull(get(FLD_TEXT));
 	}
-	
+
 	@Override
-	protected String getTableName(){
+	protected String getTableName() {
 		return TABLENAME;
 	}
-	
-	public static Message load(final String id){
+
+	public static Message load(final String id) {
 		return new Message(id);
 	}
-	
-	protected Message(final String id){
+
+	protected Message(final String id) {
 		super(id);
 	}
-	
-	protected Message(){}
+
+	protected Message() {
+	}
 }

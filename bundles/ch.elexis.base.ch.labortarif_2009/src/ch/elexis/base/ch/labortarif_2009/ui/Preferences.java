@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.base.ch.labortarif_2009.ui;
@@ -41,32 +41,30 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	private static final String SPECNUM = "specnum"; //$NON-NLS-1$
 	public static final String FACHDEF = "abrechnung/labor2009/fachdef"; //$NON-NLS-1$
 	public static final String OPTIMIZE = "abrechnung/labor2009/optify"; //$NON-NLS-1$
-	public static final String OPTIMIZE_ADDITION_DEADLINE =
-		"abrechnung/labor2009/optify/addition/deadline"; //$NON-NLS-1$
-	
+	public static final String OPTIMIZE_ADDITION_DEADLINE = "abrechnung/labor2009/optify/addition/deadline"; //$NON-NLS-1$
+
 	public static final String OPTIMIZE_ADDITION_INITDEADLINE = "30.06.2013"; //$NON-NLS-1$
-	
+
 	int langdef = 0;
 	LinkedList<Button> buttons = new LinkedList<Button>();
-	
-	public Preferences(){
-		String lang = ConfigServiceHolder.get()
-			.getLocal(ch.elexis.core.constants.Preferences.ABL_LANGUAGE, "d").toUpperCase(); //$NON-NLS-1$
+
+	public Preferences() {
+		String lang = ConfigServiceHolder.get().getLocal(ch.elexis.core.constants.Preferences.ABL_LANGUAGE, "d") //$NON-NLS-1$
+				.toUpperCase();
 		if (lang.startsWith("F")) { //$NON-NLS-1$
 			langdef = 1;
 		} else if (lang.startsWith("I")) { //$NON-NLS-1$
 			langdef = 2;
 		}
-		
+
 	}
-	
+
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		new Label(ret, SWT.NONE).setText(Messages.Preferences_pleaseEnterMultiplier);
-		MultiplikatorEditor me =
-			new MultiplikatorEditor(ret, LaborTarifConstants.MULTIPLICATOR_NAME);
+		MultiplikatorEditor me = new MultiplikatorEditor(ret, LaborTarifConstants.MULTIPLICATOR_NAME);
 		me.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		Fachspec[] specs = Fachspec.loadFachspecs(langdef);
 		Group group = new Group(ret, SWT.BORDER);
@@ -74,7 +72,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		group.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		group.setLayout(new GridLayout());
 		String[] olddef = ConfigServiceHolder.getMandatorAsList(FACHDEF).toArray(new String[0]);
-		if(specs!=null) {
+		if (specs != null) {
 			for (Fachspec spec : specs) {
 				Button b = new Button(group, SWT.CHECK);
 				b.setText(spec.name);
@@ -86,7 +84,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 				buttons.add(b);
 			}
 		}
-		
+
 		Group groupOptify = new Group(ret, SWT.NONE);
 		groupOptify.setText(Messages.Preferences_automaticAdditionsGroup);
 		groupOptify.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -96,7 +94,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		bOptify.setText(Messages.Preferences_automaticallyCalculatioAdditions);
 		bOptify.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				CoreHub.localCfg.set(OPTIMIZE, bOptify.getSelection());
 			}
 		});
@@ -104,14 +102,14 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 
 		return ret;
 	}
-	
-	public void init(IWorkbench workbench){
+
+	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
-	public boolean performOk(){
+	public boolean performOk() {
 		LinkedList<String> bb = new LinkedList<String>();
 		for (Button b : buttons) {
 			if (b.getSelection()) {

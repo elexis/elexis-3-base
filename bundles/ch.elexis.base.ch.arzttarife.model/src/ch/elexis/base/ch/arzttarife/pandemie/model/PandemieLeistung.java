@@ -16,27 +16,27 @@ import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.VatInfo;
 
-public class PandemieLeistung
-		extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.PandemieLeistung>
+public class PandemieLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.PandemieLeistung>
 		implements Identifiable, IPandemieLeistung {
-	
+
 	public static final String STS_CLASS = "ch.elexis.data.PandemieLeistung";
-	
+
 	private static IBillableOptifier<PandemieLeistung> optifier;
 	private IBillableVerifier verifier;
-	
-	public PandemieLeistung(ch.elexis.core.jpa.entities.PandemieLeistung entity){
+
+	public PandemieLeistung(ch.elexis.core.jpa.entities.PandemieLeistung entity) {
 		super(entity);
 		verifier = new DefaultVerifier();
 	}
-	
+
 	@Override
-	public IBillableOptifier<PandemieLeistung> getOptifier(){
+	public IBillableOptifier<PandemieLeistung> getOptifier() {
 		if (optifier == null) {
-			optifier = new AbstractOptifier<PandemieLeistung>(CoreModelServiceHolder.get(), ContextServiceHolder.get().get()) {
-				
+			optifier = new AbstractOptifier<PandemieLeistung>(CoreModelServiceHolder.get(),
+					ContextServiceHolder.get().get()) {
+
 				@Override
-				protected void setPrice(PandemieLeistung billable, IBilled billed){
+				protected void setPrice(PandemieLeistung billable, IBilled billed) {
 					// ignore billing system factor
 					billed.setFactor(1.0);
 					int points = 0;
@@ -52,124 +52,124 @@ public class PandemieLeistung
 		}
 		return optifier;
 	}
-	
+
 	@Override
-	public IBillableVerifier getVerifier(){
+	public IBillableVerifier getVerifier() {
 		return verifier;
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return ch.elexis.core.jpa.entities.PandemieLeistung.CODESYSTEM_NAME;
 	}
-	
+
 	@Override
-	public String getCodeSystemCode(){
+	public String getCodeSystemCode() {
 		return "351";
 	}
-	
+
 	@Override
-	public VatInfo getVatInfo(){
+	public VatInfo getVatInfo() {
 		return VatInfo.VAT_NONE;
 	}
-	
+
 	@Override
-	public String getCode(){
+	public String getCode() {
 		return getEntity().getCode();
 	}
-	
+
 	@Override
-	public void setCode(String value){
+	public void setCode(String value) {
 		getEntity().setCode(value);
 	}
-	
+
 	@Override
-	public String getText(){
+	public String getText() {
 		return getEntity().getTitle();
 	}
-	
+
 	@Override
-	public void setText(String value){
+	public void setText(String value) {
 		getEntity().setTitle(value);
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return getEntity().getDescription();
 	}
-	
+
 	@Override
-	public void setDescription(String value){
+	public void setDescription(String value) {
 		getEntity().setDescription(value);
 	}
-	
+
 	@Override
-	public String getChapter(){
+	public String getChapter() {
 		return getEntity().getChapter();
 	}
-	
+
 	@Override
-	public void setChapter(String value){
+	public void setChapter(String value) {
 		getEntity().setChapter(value);
 	}
-	
+
 	@Override
-	public int getCents(){
+	public int getCents() {
 		return getEntity().getCents();
 	}
-	
+
 	@Override
-	public void setCents(int value){
+	public void setCents(int value) {
 		getEntity().setCents(value);
 	}
-	
+
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		return "(" + getCode() + ") " + getText();
 	}
-	
+
 	@Override
-	public boolean addXid(String domain, String id, boolean updateIfExists){
+	public boolean addXid(String domain, String id, boolean updateIfExists) {
 		return XidServiceHolder.get().addXid(this, domain, id, updateIfExists);
 	}
-	
+
 	@Override
-	public IXid getXid(String domain){
+	public IXid getXid(String domain) {
 		return XidServiceHolder.get().getXid(this, domain);
 	}
-	
+
 	@Override
-	public void setId(String id){
+	public void setId(String id) {
 		getEntityMarkDirty().setId(id);
 	}
-	
+
 	@Override
-	public LocalDate getValidFrom(){
+	public LocalDate getValidFrom() {
 		return getEntity().getValidFrom();
 	}
-	
+
 	@Override
-	public LocalDate getValidTo(){
+	public LocalDate getValidTo() {
 		return getEntity().getValidTo();
 	}
-	
+
 	@Override
-	public void setValidFrom(LocalDate value){
+	public void setValidFrom(LocalDate value) {
 		getEntityMarkDirty().setValidFrom(value);
 	}
-	
+
 	@Override
-	public void setValidTo(LocalDate value){
+	public void setValidTo(LocalDate value) {
 		getEntityMarkDirty().setValidTo(value);
 	}
-	
+
 	@Override
-	public int getTaxpoints(){
+	public int getTaxpoints() {
 		return getEntity().getTaxpoints();
 	}
-	
+
 	@Override
-	public void setTaxpoints(int value){
+	public void setTaxpoints(int value) {
 		getEntityMarkDirty().setTaxpoints(value);
 	}
 }

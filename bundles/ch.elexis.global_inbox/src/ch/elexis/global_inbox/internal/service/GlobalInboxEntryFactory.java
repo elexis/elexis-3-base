@@ -33,15 +33,15 @@ import ch.elexis.global_inbox.ui.GlobalInboxUtil;
 @SuppressWarnings("rawtypes")
 @Component(immediate = true)
 public class GlobalInboxEntryFactory {
-	
+
 	private static IStoreToStringService storeToStringService;
 	private static IModelService modelService;
 	private static IConfigService configService;
-	
+
 	private static List<Function> extensionFileHandlers = new ArrayList<Function>();
-	
+
 	@Activate
-	public void activate(){
+	public void activate() {
 		String giDirSetting = configService.getLocal(Preferences.PREF_DIR, "NOTSET");
 		if ("NOTSET".equals(giDirSetting)) {
 			File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox");
@@ -51,50 +51,50 @@ public class GlobalInboxEntryFactory {
 			}
 		}
 	}
-	
+
 	@Reference
-	public void setStoreToStringService(IStoreToStringService storeToStringService){
+	public void setStoreToStringService(IStoreToStringService storeToStringService) {
 		GlobalInboxEntryFactory.storeToStringService = storeToStringService;
 	}
-	
+
 	@Reference
-	public void setConfigService(IConfigService configService){
+	public void setConfigService(IConfigService configService) {
 		GlobalInboxEntryFactory.configService = configService;
 	}
-	
+
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
-	public void setModelService(IModelService modelService){
+	public void setModelService(IModelService modelService) {
 		GlobalInboxEntryFactory.modelService = modelService;
 	}
-	
+
 	@Reference(target = "(service.name=ch.elexis.global_inbox.extensionfilehandler)", cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
-	public void setExtensionFileHandler(Function extensionFileHandler){
+	public void setExtensionFileHandler(Function extensionFileHandler) {
 		GlobalInboxEntryFactory.extensionFileHandlers.add(extensionFileHandler);
 	}
-	
-	public void unsetExtensionFileHandler(Function extensionFileHandler){
+
+	public void unsetExtensionFileHandler(Function extensionFileHandler) {
 		GlobalInboxEntryFactory.extensionFileHandlers.remove(extensionFileHandler);
 	}
-	
-	public static GlobalInboxEntry createEntry(File mainFile, File[] extensionFiles){
+
+	public static GlobalInboxEntry createEntry(File mainFile, File[] extensionFiles) {
 		GlobalInboxEntry globalInboxEntry = new GlobalInboxEntry(mainFile, extensionFiles);
 		String category = GlobalInboxUtil.getCategory(mainFile);
 		String mimeType = null;
 		try {
 			mimeType = Files.probeContentType(mainFile.toPath());
-		} catch (IOException e) {}
+		} catch (IOException e) {
+		}
 		if (mimeType == null) {
 			mimeType = FilenameUtils.getExtension(mainFile.getAbsolutePath());
 		}
 		globalInboxEntry.setMimetype(mimeType);
 		globalInboxEntry.setCategory(category);
-		globalInboxEntry
-			.setSendInfoTo(configService.getLocal(Preferences.PREF_INFO_IN_INBOX, false));
+		globalInboxEntry.setSendInfoTo(configService.getLocal(Preferences.PREF_INFO_IN_INBOX, false));
 		return globalInboxEntry;
-		
+
 	}
-	
-	public static GlobalInboxEntry populateExtensionInformation(GlobalInboxEntry globalInboxEntry){
+
+	public static GlobalInboxEntry populateExtensionInformation(GlobalInboxEntry globalInboxEntry) {
 		File[] extensionFiles = globalInboxEntry.getExtensionFiles();
 		for (File file : extensionFiles) {
 			String absolutePath = file.getAbsolutePath();
@@ -108,10 +108,9 @@ public class GlobalInboxEntryFactory {
 		}
 		return globalInboxEntry;
 	}
-	
-	private static void integrateAdditionalInformation(Map<String, Object> result,
-		GlobalInboxEntry gie){
-		
+
+	private static void integrateAdditionalInformation(Map<String, Object> result, GlobalInboxEntry gie) {
+
 		Object dateTokens = result.get("dateTokens");
 		if (dateTokens instanceof List) {
 			@SuppressWarnings("unchecked")
@@ -120,47 +119,45 @@ public class GlobalInboxEntryFactory {
 				gie.setDateTokens(_dateTokens);
 			}
 		}
-		
+
 		Object object = result.get("creationDateCandidate");
 		if (object instanceof LocalDate) {
 			gie.setCreationDateCandidate((LocalDate) object);
 		}
-		
+
 		Object patientCandidates = result.get("patientCandidates");
 		if (patientCandidates instanceof List) {
 			@SuppressWarnings("unchecked")
 			List<String> patientCandidatesSts = (List<String>) patientCandidates;
 			if (patientCandidatesSts != null && !patientCandidatesSts.isEmpty()) {
-				List<Identifiable> _patients = patientCandidatesSts
-					.stream().map(storeToString -> storeToStringService
-						.loadFromString(storeToString).orElse(null))
-					.filter(Objects::nonNull).collect(Collectors.toList());
+				List<Identifiable> _patients = patientCandidatesSts.stream()
+						.map(storeToString -> storeToStringService.loadFromString(storeToString).orElse(null))
+						.filter(Objects::nonNull).collect(Collectors.toList());
 				List<IPatient> patients = _patients.stream()
-					.map(i -> modelService.load(i.getId(), IPatient.class).orElse(null))
-					.collect(Collectors.toList());
+						.map(i -> modelService.load(i.getId(), IPatient.class).orElse(null))
+						.collect(Collectors.toList());
 				gie.setPatientCandidates(patients);
 				if (patients.size() > 0) {
 					gie.setPatient(patients.get(0));
 				}
 			}
 		}
-		
+
 		Object senderCandidates = result.get("senderCandidates");
 		if (senderCandidates instanceof List) {
 			@SuppressWarnings("unchecked")
 			List<String> senderCandidatesSts = (List<String>) senderCandidates;
 			if (senderCandidatesSts != null && !senderCandidatesSts.isEmpty()) {
-				List<Identifiable> _senders = senderCandidatesSts
-					.stream().map(storeToString -> storeToStringService
-						.loadFromString(storeToString).orElse(null))
-					.filter(Objects::nonNull).collect(Collectors.toList());
+				List<Identifiable> _senders = senderCandidatesSts.stream()
+						.map(storeToString -> storeToStringService.loadFromString(storeToString).orElse(null))
+						.filter(Objects::nonNull).collect(Collectors.toList());
 				List<IContact> senders = _senders.stream()
-					.map(i -> modelService.load(i.getId(), IContact.class).orElse(null))
-					.collect(Collectors.toList());
+						.map(i -> modelService.load(i.getId(), IContact.class).orElse(null))
+						.collect(Collectors.toList());
 				gie.setSenderCandidates(senders);
 			}
 		}
-		
+
 	}
-	
+
 }

@@ -9,35 +9,36 @@ import ch.rgw.tools.StringTool;
 
 public abstract class PatientTextFView extends SimpleTextFView implements ElexisEventListener {
 	protected final String dbfield;
-	
-	protected PatientTextFView(String field){
+
+	protected PatientTextFView(String field) {
 		dbfield = field;
 	}
-	
+
 	@Override
-	protected void initialize(){
+	protected void initialize() {
 		Patient p = ElexisEventDispatcher.getSelectedPatient();
 		if (p != null) {
 			patientChanged(p);
 		}
-		
+
 		ElexisEventDispatcher.getInstance().addListeners(this);
 	}
-	
+
 	@Override
-	protected void fieldChanged(){
+	protected void fieldChanged() {
 		Patient p = ElexisEventDispatcher.getSelectedPatient();
-		if(p!=null) p.set(dbfield, getText());
+		if (p != null)
+			p.set(dbfield, getText());
 	}
-	
-	private void patientChanged(Patient p){
+
+	private void patientChanged(Patient p) {
 		setEnabled(true);
 		setText(StringTool.unNull(p.get(dbfield)));
 	}
-	
-	public void catchElexisEvent(final ElexisEvent ev){
+
+	public void catchElexisEvent(final ElexisEvent ev) {
 		UiDesk.asyncExec(new Runnable() {
-			public void run(){
+			public void run() {
 				Patient p = (Patient) ev.getObject();
 				if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
 					p.set(dbfield, getText());
@@ -48,16 +49,16 @@ public abstract class PatientTextFView extends SimpleTextFView implements Elexis
 			}
 		});
 	}
-	
+
 	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class,
-		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-	
-	public ElexisEvent getElexisEventFilter(){
+			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
+
+	public ElexisEvent getElexisEventFilter() {
 		return eetmpl;
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		ElexisEventDispatcher.getInstance().removeListeners(this);
 		super.dispose();
 	}

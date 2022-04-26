@@ -7,10 +7,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for HXIT_CE complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="HXIT_CE">
  *   &lt;complexContent>
@@ -22,40 +23,37 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "HXIT_CE", propOrder = {
-	"validTime"
-})
+@XmlType(name = "HXIT_CE", propOrder = { "validTime" })
 public class HXITCE extends CE {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	protected IVLTS validTime;
-	
+
 	/**
 	 * Gets the value of the validTime property.
-	 * 
+	 *
 	 * @return possible object is {@link IVLTS }
-	 * 
+	 *
 	 */
-	public IVLTS getValidTime(){
+	public IVLTS getValidTime() {
 		return validTime;
 	}
-	
+
 	/**
 	 * Sets the value of the validTime property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link IVLTS }
-	 * 
+	 *
+	 * @param value allowed object is {@link IVLTS }
+	 *
 	 */
-	public void setValidTime(IVLTS value){
+	public void setValidTime(IVLTS value) {
 		this.validTime = value;
 	}
-	
+
 }

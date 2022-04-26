@@ -20,23 +20,23 @@ public class ZipUtil {
 	static final int BUFFER_SIZE = 1000 * 1024;
 
 	@SuppressWarnings("unchecked")
-	public static void unzipToDirectory(File sourceFile, File directory){
+	public static void unzipToDirectory(File sourceFile, File directory) {
 		try {
 			BufferedOutputStream dest = null;
 			BufferedInputStream is = null;
 			ZipEntry entry;
 			ZipFile zipfile = new ZipFile(sourceFile);
-			
+
 			// create files
 			Enumeration<ZipEntry> zipEntryEnum = (Enumeration<ZipEntry>) zipfile.entries();
 			while (zipEntryEnum.hasMoreElements()) {
 				entry = (ZipEntry) zipEntryEnum.nextElement();
-				
+
 				// create an absolute path for the entry
 				String entryName = directory.getAbsolutePath() + File.separator + entry.getName();
 				entryName = entryName.replace('/', File.separatorChar);
 				entryName = entryName.replace('\\', File.separatorChar);
-				
+
 				// check if we need to create directories first
 				String entryDir = entryName.substring(0, entryName.lastIndexOf(File.separatorChar));
 				File dir = new File(entryDir);
@@ -62,26 +62,25 @@ public class ZipUtil {
 			throw new IllegalStateException(e);
 		}
 	}
-	
-	private static void zipAddDirectory(ZipOutputStream zout, File fileSource,
-		String directoryName){
+
+	private static void zipAddDirectory(ZipOutputStream zout, File fileSource, String directoryName) {
 		// get sub-folder/files list
 		File[] files = fileSource.listFiles();
-		
+
 		for (int i = 0; i < files.length; i++) {
 			// add sub directories
 			if (files[i].isDirectory()) {
-				String subDirectoryName = directoryName.isEmpty() ? files[i].getName() : directoryName + File.separator + files[i].getName();
+				String subDirectoryName = directoryName.isEmpty() ? files[i].getName()
+						: directoryName + File.separator + files[i].getName();
 				zipAddDirectory(zout, files[i], subDirectoryName);
 				continue;
 			}
-			
+
 			// add files
 			try {
-				String entryName =
-					directoryName.isEmpty() ? files[i].getName() : directoryName + File.separator
-						+ files[i].getName();
-				
+				String entryName = directoryName.isEmpty() ? files[i].getName()
+						: directoryName + File.separator + files[i].getName();
+
 				byte[] buffer = new byte[BUFFER_SIZE];
 				FileInputStream fin = new FileInputStream(files[i]);
 				// write the file to the zip
@@ -92,18 +91,18 @@ public class ZipUtil {
 				}
 				zout.closeEntry();
 				fin.close();
-				
+
 			} catch (IOException e) {
 				throw new IllegalStateException(e);
 			}
 		}
 	}
 
-	public static void zipDirectory(File sourceDirectory, FileOutputStream fout){
+	public static void zipDirectory(File sourceDirectory, FileOutputStream fout) {
 		ZipOutputStream zout = null;
 		try {
 			zout = new ZipOutputStream(fout);
-			
+
 			// start adding the directory to the zip
 			zipAddDirectory(zout, sourceDirectory, ""); //$NON-NLS-1$
 		} finally {
@@ -116,12 +115,12 @@ public class ZipUtil {
 			}
 		}
 	}
-	
-	public static void copyFile(File srcFile, File destFile) throws IOException{
+
+	public static void copyFile(File srcFile, File destFile) throws IOException {
 		if (destFile.exists() && destFile.isDirectory()) {
 			throw new IOException("Destination '" + destFile + "' exists but is a directory"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		try (FileInputStream fis = new FileInputStream(srcFile);
 				FileOutputStream fos = new FileOutputStream(destFile);
 				FileChannel input = fis.getChannel();
@@ -134,17 +133,17 @@ public class ZipUtil {
 				pos += output.transferFrom(input, pos, count);
 			}
 		}
-		
+
 		if (srcFile.length() != destFile.length()) {
 			throw new IOException("Failed to copy full contents from '" + srcFile + "' to '" //$NON-NLS-1$ //$NON-NLS-2$
-				+ destFile + "'"); //$NON-NLS-1$
+					+ destFile + "'"); //$NON-NLS-1$
 		}
 	}
 
-	public static boolean deleteRecursive(File path){
+	public static boolean deleteRecursive(File path) {
 		if (!path.exists())
 			throw new IllegalArgumentException("Path [" + path.getAbsolutePath() //$NON-NLS-1$
-				+ "] does not exist"); //$NON-NLS-1$
+					+ "] does not exist"); //$NON-NLS-1$
 		boolean ret = true;
 		if (path.isDirectory()) {
 			for (File f : path.listFiles()) {

@@ -26,44 +26,47 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class DerivativeEvaluator extends RecursiveObjectEvaluator implements OneValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public DerivativeEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-  }
+	public DerivativeEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object value) throws IOException {
-    if (null == value) {
-      throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value", toExpression(constructingFactory)));
-    }
+	@Override
+	public Object doWork(Object value) throws IOException {
+		if (null == value) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
+					toExpression(constructingFactory)));
+		}
 
-    if (!(value instanceof VectorFunction)) {
-      throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - found type %s for the first value, expecting a FunctionVector", toExpression(constructingFactory), value.getClass().getSimpleName()));
-    }
+		if (!(value instanceof VectorFunction)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for the first value, expecting a FunctionVector",
+					toExpression(constructingFactory), value.getClass().getSimpleName()));
+		}
 
-    VectorFunction vectorFunction = (VectorFunction) value;
+		VectorFunction vectorFunction = (VectorFunction) value;
 
-    DifferentiableUnivariateFunction func = null;
-    double[] x = (double[])vectorFunction.getFromContext("x");
+		DifferentiableUnivariateFunction func = null;
+		double[] x = (double[]) vectorFunction.getFromContext("x");
 
-    if(!(vectorFunction.getFunction() instanceof DifferentiableUnivariateFunction)) {
-      double[] y = (double[])vectorFunction.getFromContext("y");
-      func = new AkimaSplineInterpolator().interpolate(x, y);
-    } else {
-      func = (DifferentiableUnivariateFunction) vectorFunction.getFunction();
-    }
+		if (!(vectorFunction.getFunction() instanceof DifferentiableUnivariateFunction)) {
+			double[] y = (double[]) vectorFunction.getFromContext("y");
+			func = new AkimaSplineInterpolator().interpolate(x, y);
+		} else {
+			func = (DifferentiableUnivariateFunction) vectorFunction.getFunction();
+		}
 
-    UnivariateFunction derfunc = func.derivative();
-    double[] dvalues = new double[x.length];
-    for(int i=0; i<x.length; i++) {
-      dvalues[i] = derfunc.value(x[i]);
-    }
+		UnivariateFunction derfunc = func.derivative();
+		double[] dvalues = new double[x.length];
+		for (int i = 0; i < x.length; i++) {
+			dvalues[i] = derfunc.value(x[i]);
+		}
 
-    VectorFunction vf = new VectorFunction(derfunc, dvalues);
-    vf.addToContext("x", x);
-    vf.addToContext("y", dvalues);
+		VectorFunction vf = new VectorFunction(derfunc, dvalues);
+		vf.addToContext("x", x);
+		vf.addToContext("y", dvalues);
 
-    return vf;
-  }
+		return vf;
+	}
 }

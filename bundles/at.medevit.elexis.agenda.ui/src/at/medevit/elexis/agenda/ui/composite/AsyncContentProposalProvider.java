@@ -23,27 +23,25 @@ import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 
-public abstract class AsyncContentProposalProvider<T extends Identifiable>
-		implements IContentProposalProvider {
-	
-	private List<IdentifiableContentProposal<T>> proposals =
-		new LinkedList<IdentifiableContentProposal<T>>();
+public abstract class AsyncContentProposalProvider<T extends Identifiable> implements IContentProposalProvider {
+
+	private List<IdentifiableContentProposal<T>> proposals = new LinkedList<IdentifiableContentProposal<T>>();
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	private String[] dbFields = null;
 	private ContentProposalAdapter adapter = null;
-	
+
 	private static final int PROPOSAL_MONITORING_DELAY = 1000;
 	private int lastQueriedContentHash = 0;
 	private String contents = null;
 	private boolean startMonitoring = false;
-	
-	public AsyncContentProposalProvider(String... dbFields){
-		
+
+	public AsyncContentProposalProvider(String... dbFields) {
+
 		this.dbFields = dbFields;
 		getWidget().addDisposeListener(new DisposeListener() {
-			
+
 			@Override
-			public void widgetDisposed(DisposeEvent e){
+			public void widgetDisposed(DisposeEvent e) {
 				stopMonitoringProposalChanges();
 				if (executor != null) {
 					executor.shutdown();
@@ -51,20 +49,20 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable>
 			}
 		});
 	}
-	
+
 	public abstract IQuery<T> createBaseQuery();
-	
+
 	public abstract Text getWidget();
-	
+
 	/**
 	 * Starts proposal change monitoring if not started already
 	 */
-	private void monitorProposalChanges(final Display display){
+	private void monitorProposalChanges(final Display display) {
 		if (!startMonitoring) {
 			startMonitoring = true;
 			Objects.requireNonNull(adapter, "no adapter configured");
 			CompletableFuture.runAsync(() -> {
-				
+
 				while (startMonitoring) {
 					try {
 						// delay - wait for any other contents
@@ -73,17 +71,17 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable>
 						// ignore
 					}
 					if (contents.hashCode() != lastQueriedContentHash) {
-						//content changed - query content
+						// content changed - query content
 						IQuery<T> query = createBaseQuery();
-						
+
 						String[] searchParts = contents.toLowerCase().split(" ");
 						lastQueriedContentHash = contents.hashCode();
 						int i = 0;
 						for (String searchPart : searchParts) {
 							if (i < dbFields.length) {
 								if ("dob".equals(dbFields[i])) {
-									query.and(dbFields[i], COMPARATOR.LIKE,
-										getElexisDateSearchString(searchPart), true);
+									query.and(dbFields[i], COMPARATOR.LIKE, getElexisDateSearchString(searchPart),
+											true);
 								} else {
 									query.and(dbFields[i], COMPARATOR.LIKE, searchPart + "%", true);
 								}
@@ -92,20 +90,19 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable>
 						}
 						query.limit(100);
 						proposals.clear();
-						
+
 						for (T o : query.execute()) {
 							if (o != null) {
 								proposals.add(new IdentifiableContentProposal<T>(o.getLabel(), o));
 							}
 						}
 						display.syncExec(() -> {
-							if (adapter != null && adapter.getControl() != null
-								&& !adapter.getControl().isDisposed()) {
+							if (adapter != null && adapter.getControl() != null && !adapter.getControl().isDisposed()) {
 								// trigger call getProposals
 								Event event = new Event();
 								event.character = ' ';
 								adapter.getControl().notifyListeners(SWT.KeyDown, event);
-								
+
 								event = new Event();
 								event.character = ' ';
 								adapter.getControl().notifyListeners(SWT.Modify, event);
@@ -119,38 +116,38 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable>
 			}, executor);
 		}
 	}
-	
-	private void stopMonitoringProposalChanges(){
+
+	private void stopMonitoringProposalChanges() {
 		startMonitoring = false;
 	}
-	
+
 	@Override
-	public IContentProposal[] getProposals(String contents, int position){
+	public IContentProposal[] getProposals(String contents, int position) {
 		if (contents == null || contents.length() < 1)
 			return null;
 		this.contents = contents;
 		monitorProposalChanges(Display.getDefault());
 		return proposals.toArray(new ContentProposal[] {});
 	}
-	
+
 	/**
 	 * The label to add on the content proposal.
-	 * 
+	 *
 	 * @param a
 	 * @return
 	 */
-	public String getLabelForObject(T a){
+	public String getLabelForObject(T a) {
 		return a.getLabel();
 	}
-	
+
 	/**
 	 * Get a database search String for a Elexis date database value. <br />
 	 * Used for S:D: mapped values in Query#add, copied and slightly adapted.
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
-	public static String getElexisDateSearchString(String value){
+	public static String getElexisDateSearchString(String value) {
 		StringBuilder sb = null;
 		String ret = value.replaceAll("%", "");
 		final String filler = "%%%%%%%%";
@@ -187,9 +184,9 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable>
 		}
 		return ret;
 	}
-	
-	public void configureContentProposalAdapter(ContentProposalAdapter adapter){
+
+	public void configureContentProposalAdapter(ContentProposalAdapter adapter) {
 		this.adapter = adapter;
-		
+
 	}
 }

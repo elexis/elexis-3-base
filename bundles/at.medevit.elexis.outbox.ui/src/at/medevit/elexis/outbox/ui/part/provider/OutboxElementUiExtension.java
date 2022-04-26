@@ -27,20 +27,20 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.outbox.model.IOutboxElement;
 
 public class OutboxElementUiExtension {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(OutboxElementUiExtension.class);
-	
+
 	private List<IOutboxElementUiProvider> providers;
-	
-	public OutboxElementUiExtension(){
+
+	public OutboxElementUiExtension() {
 		providers = getExtensions();
 	}
-	
-	public List<IOutboxElementUiProvider> getProviders(){
+
+	public List<IOutboxElementUiProvider> getProviders() {
 		return providers;
 	}
-	
-	private IOutboxElementUiProvider getProvider(IOutboxElement element){
+
+	private IOutboxElementUiProvider getProvider(IOutboxElement element) {
 		for (IOutboxElementUiProvider iOutboxElementUiProvider : providers) {
 			if (iOutboxElementUiProvider.isProviderFor(element)) {
 				return iOutboxElementUiProvider;
@@ -48,8 +48,8 @@ public class OutboxElementUiExtension {
 		}
 		return null;
 	}
-	
-	private List<IOutboxElementUiProvider> getExtensions(){
+
+	private List<IOutboxElementUiProvider> getExtensions() {
 		List<IOutboxElementUiProvider> ret = new ArrayList<>();
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
 		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.outbox.ui.elementsui");
@@ -70,47 +70,47 @@ public class OutboxElementUiExtension {
 		}
 		return ret;
 	}
-	
-	public String getText(IOutboxElement element){
+
+	public String getText(IOutboxElement element) {
 		IOutboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getLabelProvider() != null) {
 			return provider.getLabelProvider().getText(element);
 		}
 		return null;
 	}
-	
-	public Image getImage(IOutboxElement element){
+
+	public Image getImage(IOutboxElement element) {
 		IOutboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getLabelProvider() != null) {
 			return provider.getLabelProvider().getImage(element);
 		}
 		return null;
 	}
-	
-	public Color getForeground(IOutboxElement element){
+
+	public Color getForeground(IOutboxElement element) {
 		IOutboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getColorProvider() != null) {
 			return provider.getColorProvider().getForeground(element);
 		}
 		return null;
 	}
-	
-	public Color getBackground(IOutboxElement element){
+
+	public Color getBackground(IOutboxElement element) {
 		IOutboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getColorProvider() != null) {
 			return provider.getColorProvider().getBackground(element);
 		}
 		return null;
 	}
-	
-	public void fireDoubleClicked(IOutboxElement element){
+
+	public void fireDoubleClicked(IOutboxElement element) {
 		IOutboxElementUiProvider provider = getProvider(element);
 		if (provider != null) {
 			provider.doubleClicked(element);
 		}
 	}
-	
-	public IOutboxElementUiProvider getProviderFor(IOutboxElement element){
+
+	public IOutboxElementUiProvider getProviderFor(IOutboxElement element) {
 		return getProvider(element);
 	}
 }

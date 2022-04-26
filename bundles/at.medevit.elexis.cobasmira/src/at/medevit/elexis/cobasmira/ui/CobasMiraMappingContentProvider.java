@@ -8,17 +8,19 @@ import org.eclipse.jface.viewers.Viewer;
 import at.medevit.elexis.cobasmira.model.CobasMiraMappingLabitem;
 
 public class CobasMiraMappingContentProvider implements IStructuredContentProvider {
-	
+
 	@Override
-	public Object[] getElements(Object inputElement){
+	public Object[] getElements(Object inputElement) {
 		List<CobasMiraMappingLabitem> list = (List<CobasMiraMappingLabitem>) inputElement;
 		return list.toArray();
 	}
-	
+
 	@Override
-	public void dispose(){}
-	
+	public void dispose() {
+	}
+
 	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
-	
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	}
+
 }

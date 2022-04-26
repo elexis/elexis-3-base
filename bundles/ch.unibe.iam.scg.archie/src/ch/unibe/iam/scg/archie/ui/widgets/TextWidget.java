@@ -36,9 +36,9 @@ import ch.unibe.iam.scg.archie.ui.Decorators;
  * which is able to validate itself, decorate itself, provide content assistance
  * and a quick-fix.
  * </p>
- * 
+ *
  * $Id: TextWidget.java 764 2009-07-24 11:20:03Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 764 $
@@ -53,11 +53,11 @@ public class TextWidget extends AbstractWidget {
 	protected SmartField smartField;
 
 	/**
-	 * @param parent Composite
-	 * @param style Integer
+	 * @param parent    Composite
+	 * @param style     Integer
 	 * @param labelText String
-	 * @param regex String Optional <code>RegexValidation</code>,
-	 * can be <code>null</code> if not desired.
+	 * @param regex     String Optional <code>RegexValidation</code>, can be
+	 *                  <code>null</code> if not desired.
 	 */
 	public TextWidget(Composite parent, int style, final String labelText, RegexValidation regex) {
 		super(parent, style, labelText, regex);
@@ -109,8 +109,8 @@ public class TextWidget extends AbstractWidget {
 
 	/**
 	 * Sets the text (contents) of the containing smart field.
-	 * 
-	 * @param value 
+	 *
+	 * @param value
 	 */
 	@Override
 	public void setValue(Object value) {
@@ -125,9 +125,10 @@ public class TextWidget extends AbstractWidget {
 	public boolean isValid() {
 		return this.smartField.isValid();
 	}
-	
+
 	/**
-	 * @see org.eclipse.swt.widgets.Widget#addListener(int, org.eclipse.swt.widgets.Listener)
+	 * @see org.eclipse.swt.widgets.Widget#addListener(int,
+	 *      org.eclipse.swt.widgets.Listener)
 	 */
 	@Override
 	public void addListener(int eventType, Listener listener) {
@@ -136,8 +137,8 @@ public class TextWidget extends AbstractWidget {
 	}
 
 	/**
-	 * A SmartField has a control (e.g. a text field) a decoration and optional
-	 * a quick-fix menu. It is able to validate itself.
+	 * A SmartField has a control (e.g. a text field) a decoration and optional a
+	 * quick-fix menu. It is able to validate itself.
 	 */
 	protected class SmartField {
 
@@ -157,7 +158,7 @@ public class TextWidget extends AbstractWidget {
 
 		/**
 		 * Is valid if not empty by default.
-		 * 
+		 *
 		 * @return true if valid, false else.
 		 */
 		public boolean isValid() {
@@ -178,7 +179,7 @@ public class TextWidget extends AbstractWidget {
 
 		/**
 		 * Is never in warning state by default.
-		 * 
+		 *
 		 * @return false
 		 */
 		public boolean isWarning() {
@@ -187,7 +188,7 @@ public class TextWidget extends AbstractWidget {
 
 		/**
 		 * No quick-fix by default.
-		 * 
+		 *
 		 * @return false
 		 */
 		public boolean hasQuickFix() {
@@ -202,8 +203,7 @@ public class TextWidget extends AbstractWidget {
 		}
 
 		/**
-		 * @param contents
-		 *            String Content to add to field.
+		 * @param contents String Content to add to field.
 		 */
 		public void setContents(final String contents) {
 			this.contentAdapter.setControlContents(TextWidget.this.control, contents, contents.length());
@@ -269,9 +269,9 @@ public class TextWidget extends AbstractWidget {
 	}
 
 	/**
-	 * Every time the field gets modified this gets run. Checks in what state
-	 * the field is an decorates accordingly.
-	 * 
+	 * Every time the field gets modified this gets run. Checks in what state the
+	 * field is an decorates accordingly.
+	 *
 	 * @param smartField
 	 */
 	protected void handleModify(final SmartField smartField) {
@@ -370,6 +370,6 @@ public class TextWidget extends AbstractWidget {
 	@Override
 	public void setDescription(final String description) {
 		this.label.setToolTipText(description);
-		this.control.setToolTipText(description);	
+		this.control.setToolTipText(description);
 	}
 }

@@ -30,11 +30,11 @@ import ch.elexis.data.PersistentObject;
 import ch.itmed.fop.printing.resources.Messages;
 
 public final class SelectedAppointmentCardHandler extends AbstractHandler {
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IHandlerService handlerService =
-			(IHandlerService) HandlerUtil.getActiveSite(event).getService(IHandlerService.class);
+		IHandlerService handlerService = (IHandlerService) HandlerUtil.getActiveSite(event)
+				.getService(IHandlerService.class);
 		// transfer selection to elexis event dispatcher
 		IStructuredSelection currentSelection = HandlerUtil.getCurrentStructuredSelection(event);
 		if (!currentSelection.isEmpty()) {
@@ -42,23 +42,20 @@ public final class SelectedAppointmentCardHandler extends AbstractHandler {
 		}
 		// call default command
 		try {
-			handlerService.executeCommand("ch.itmed.fop.printing.command.AppointmentCardPrint",
-				null);
-		} catch (ExecutionException | NotDefinedException | NotEnabledException
-				| NotHandledException e) {
+			handlerService.executeCommand("ch.itmed.fop.printing.command.AppointmentCardPrint", null);
+		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
 			SWTHelper.showError(Messages.DefaultError_Title, Messages.DefaultError_Message);
 			LoggerFactory.getLogger(getClass()).error(e.getLocalizedMessage(), e);
 		}
 		return null;
 	}
-	
-	private PersistentObject getAsPersistentObject(IStructuredSelection currentSelection){
+
+	private PersistentObject getAsPersistentObject(IStructuredSelection currentSelection) {
 		PersistentObject ret = null;
 		if (currentSelection.getFirstElement() instanceof PersistentObject) {
 			ret = (PersistentObject) currentSelection.getFirstElement();
 		} else if (currentSelection.getFirstElement() instanceof Identifiable) {
-			ret =
-				NoPoUtil.loadAsPersistentObject((Identifiable) currentSelection.getFirstElement());
+			ret = NoPoUtil.loadAsPersistentObject((Identifiable) currentSelection.getFirstElement());
 		}
 		return ret;
 	}

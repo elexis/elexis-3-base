@@ -35,76 +35,79 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
  */
 public class ConcatOperation implements StreamOperation {
 
-  private static final long serialVersionUID = 1;
-  private UUID operationNodeId = UUID.randomUUID();
-  
-  private String[] fields;
-  private String as;
-  private String delim;
+	private static final long serialVersionUID = 1;
+	private UUID operationNodeId = UUID.randomUUID();
 
-  public ConcatOperation(String[] fields, String as, String delim) {
-    this.fields = fields;
-    this.as = as;
-    this.delim = delim;
-  }
+	private String[] fields;
+	private String as;
+	private String delim;
 
-  public ConcatOperation(StreamExpression expression, StreamFactory factory) throws IOException {
+	public ConcatOperation(String[] fields, String as, String delim) {
+		this.fields = fields;
+		this.as = as;
+		this.delim = delim;
+	}
 
-    if(3 == expression.getParameters().size()){
-      StreamExpressionNamedParameter fieldsParam = factory.getNamedOperand(expression, "fields");
-      String fieldsStr = ((StreamExpressionValue)fieldsParam.getParameter()).getValue();
-      this.fields = fieldsStr.split(",");
-      for(int i=0; i<fields.length; i++) {
-        fields[i] = fields[i].trim();
-      }
+	public ConcatOperation(StreamExpression expression, StreamFactory factory) throws IOException {
 
-      StreamExpressionNamedParameter asParam = factory.getNamedOperand(expression, "as");
-      this.as = ((StreamExpressionValue)asParam.getParameter()).getValue();
+		if (3 == expression.getParameters().size()) {
+			StreamExpressionNamedParameter fieldsParam = factory.getNamedOperand(expression, "fields");
+			String fieldsStr = ((StreamExpressionValue) fieldsParam.getParameter()).getValue();
+			this.fields = fieldsStr.split(",");
+			for (int i = 0; i < fields.length; i++) {
+				fields[i] = fields[i].trim();
+			}
 
-      StreamExpressionNamedParameter delim = factory.getNamedOperand(expression, "delim");
-      this.delim = ((StreamExpressionValue)delim.getParameter()).getValue();
-    } else{
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - unknown operands found", expression));
-    }
-  }
+			StreamExpressionNamedParameter asParam = factory.getNamedOperand(expression, "as");
+			this.as = ((StreamExpressionValue) asParam.getParameter()).getValue();
 
-  @Override
-  public void operate(Tuple tuple) {
-    StringBuilder buf = new StringBuilder();
-    for(String field : fields) {
-      if(buf.length() > 0) {
-        buf.append(delim);
-      }
-      Object value = tuple.get(field);
-      if(null == value){ value = "null"; }
-      buf.append(value);
-    }
+			StreamExpressionNamedParameter delim = factory.getNamedOperand(expression, "delim");
+			this.delim = ((StreamExpressionValue) delim.getParameter()).getValue();
+		} else {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - unknown operands found", expression));
+		}
+	}
 
-    tuple.put(as, buf.toString());
-  }
+	@Override
+	public void operate(Tuple tuple) {
+		StringBuilder buf = new StringBuilder();
+		for (String field : fields) {
+			if (buf.length() > 0) {
+				buf.append(delim);
+			}
+			Object value = tuple.get(field);
+			if (null == value) {
+				value = "null";
+			}
+			buf.append(value);
+		}
 
-  @Override
-  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-    StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
-    
-    StringBuilder sb = new StringBuilder();
-    for(String field : fields){
-      if(sb.length() > 0){ sb.append(","); }
-      sb.append(field);
-    }
-    expression.addParameter(new StreamExpressionNamedParameter("fields",sb.toString()));
-    expression.addParameter(new StreamExpressionNamedParameter("delim",delim));
-    expression.addParameter(new StreamExpressionNamedParameter("as",as));
-    return expression;
-  }
+		tuple.put(as, buf.toString());
+	}
 
-  @Override
-  public Explanation toExplanation(StreamFactory factory) throws IOException {
-    return new Explanation(operationNodeId.toString())
-      .withExpressionType(ExpressionType.OPERATION)
-      .withFunctionName(factory.getFunctionName(getClass()))
-      .withImplementingClass(getClass().getName())
-      .withExpression(toExpression(factory).toString());
-  }
-  
+	@Override
+	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+		StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
+
+		StringBuilder sb = new StringBuilder();
+		for (String field : fields) {
+			if (sb.length() > 0) {
+				sb.append(",");
+			}
+			sb.append(field);
+		}
+		expression.addParameter(new StreamExpressionNamedParameter("fields", sb.toString()));
+		expression.addParameter(new StreamExpressionNamedParameter("delim", delim));
+		expression.addParameter(new StreamExpressionNamedParameter("as", as));
+		return expression;
+	}
+
+	@Override
+	public Explanation toExplanation(StreamFactory factory) throws IOException {
+		return new Explanation(operationNodeId.toString()).withExpressionType(ExpressionType.OPERATION)
+				.withFunctionName(factory.getFunctionName(getClass())).withImplementingClass(getClass().getName())
+				.withExpression(toExpression(factory).toString());
+	}
+
 }

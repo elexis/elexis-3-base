@@ -54,7 +54,7 @@ public final class PrintProvider {
 
 	/**
 	 * Prints the documents.
-	 * 
+	 *
 	 * @param foStream
 	 * @param printerName
 	 * @throws IOException

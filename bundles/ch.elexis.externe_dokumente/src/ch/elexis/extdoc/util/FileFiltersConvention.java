@@ -2,26 +2,27 @@ package ch.elexis.extdoc.util;
 
 /**
  * Filter fuer die folgende Festlegung:
- * 
- * - Die ersten 6 Zeichen des Nachnamens. Falls kuerzer, mit Leerzeichen aufgefuellt
- * 
+ *
+ * - Die ersten 6 Zeichen des Nachnamens. Falls kuerzer, mit Leerzeichen
+ * aufgefuellt
+ *
  * - Der Vorname (nur der erste, falls es mehrere gibt)
- * 
+ *
  */
 public class FileFiltersConvention {
-	
+
 	private String shortName;
-	
+
 	public final static String BirthdayNotKnown = "1111-11-11"; //$NON-NLS-1$
-	
-	public FileFiltersConvention(String lastname, String firstname){
+
+	public FileFiltersConvention(String lastname, String firstname) {
 		firstname = MatchPatientToPath.firstToken(firstname);
-		
+
 		lastname = MatchPatientToPath.cleanName(lastname);
 		firstname = MatchPatientToPath.cleanName(firstname);
-		
+
 		String shortLastname;
-		
+
 		if (lastname.length() >= 6) {
 			// Nachname ist lang genug
 			shortLastname = lastname.substring(0, 6);
@@ -36,8 +37,8 @@ public class FileFiltersConvention {
 		}
 		shortName = shortLastname + firstname;
 	}
-	
-	public String getShortName(){
+
+	public String getShortName() {
 		return shortName;
 	}
 }

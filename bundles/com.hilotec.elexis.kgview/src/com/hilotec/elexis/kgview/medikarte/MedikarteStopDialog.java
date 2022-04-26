@@ -16,7 +16,6 @@ import ch.rgw.tools.TimeTool;
 import com.hilotec.elexis.kgview.data.FavMedikament;
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
-
 /**
  * Dialog zum Stoppen eines Medikaments. Das gewuenschte Datum kann ausgewaehlt
  * werden.

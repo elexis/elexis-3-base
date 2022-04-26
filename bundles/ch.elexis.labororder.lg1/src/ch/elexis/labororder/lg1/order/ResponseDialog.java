@@ -19,23 +19,23 @@ import org.slf4j.LoggerFactory;
 import com.equo.chromium.swt.Browser;
 
 public class ResponseDialog extends Dialog {
-	
+
 	private String responseText;
 	private Label title;
 	private Browser browser;
-	
-	public ResponseDialog(String text, Shell shell){
+
+	public ResponseDialog(String text, Shell shell) {
 		super(shell);
 		this.responseText = text;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite container){
+	protected Control createDialogArea(Composite container) {
 		Composite parent = (Composite) super.createDialogArea(container);
-		
+
 		title = new Label(parent, SWT.NONE);
 		title.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		
+
 		if (StringUtils.isNotBlank(responseText)) {
 			title.setText("Es ist folgendes Problem aufgetreten");
 			browser = new Browser(parent, SWT.BORDER);
@@ -47,22 +47,20 @@ public class ResponseDialog extends Dialog {
 		}
 		return parent;
 	}
-	
+
 	@Override
-	protected Control createButtonBar(Composite parent){
+	protected Control createButtonBar(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridData data =
-			new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
 		data.exclude = true;
 		composite.setLayoutData(data);
 		return composite;
 	}
-	
-	public static void openMedapp(String location){
+
+	public static void openMedapp(String location) {
 		Display.getDefault().asyncExec(() -> {
 			try {
-				IWorkbenchBrowserSupport browserSupport =
-					PlatformUI.getWorkbench().getBrowserSupport();
+				IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
 				IWebBrowser externalBrowser = browserSupport.getExternalBrowser();
 				externalBrowser.openURL(new URI(location).toURL());
 			} catch (Exception ex) {

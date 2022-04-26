@@ -18,12 +18,11 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import ch.novcom.elexis.mednet.plugin.ui.dialog.ContactLinkRecordEditDialog;
 
-
 public class ContactLinkRecordCreate extends AbstractHandler {
 	public static final String COMMANDID = "ch.novcom.elexis.mednet.plugin.data.contactlinkrecord.create"; //$NON-NLS-1$
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			// create and open the dialog
 			Shell parent = HandlerUtil.getActiveShell(event);

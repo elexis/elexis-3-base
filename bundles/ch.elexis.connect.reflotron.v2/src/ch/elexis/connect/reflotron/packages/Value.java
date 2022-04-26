@@ -16,17 +16,17 @@ import ch.rgw.tools.TimeTool;
 
 public class Value {
 	private static final String BUNDLE_NAME = "ch.elexis.connect.reflotron.packages.valuetexts";
-	
+
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-	
-	private static String getString(String paramName, String key){
+
+	private static String getString(String paramName, String key) {
 		return RESOURCE_BUNDLE.getString(paramName + "." + key);
 	}
-	
-	public static Value getValue(final String paramName, final String unit) throws PackageException{
+
+	public static Value getValue(final String paramName, final String unit) throws PackageException {
 		return new Value(paramName, unit);
 	}
-	
+
 	String _shortName;
 	String _longName;
 	String _unit;
@@ -34,22 +34,22 @@ public class Value {
 	String _refMann;
 	String _refFrau;
 	ILaboratory _labor;
-	
+
 	String warning = "";
-	
-	public String getWarning(){
+
+	public String getWarning() {
 		return this.warning;
 	}
-	
-	public String get_shortName(){
+
+	public String get_shortName() {
 		return _shortName;
 	}
-	
-	public String get_longName(){
+
+	public String get_longName() {
 		return _longName;
 	}
-	
-	Value(final String paramName, final String unit) throws PackageException{
+
+	Value(final String paramName, final String unit) throws PackageException {
 		_shortName = getString(paramName, "kuerzel");
 		_longName = getString(paramName, "text");
 		String valueTextUnit = getString(paramName, "unit");
@@ -60,32 +60,29 @@ public class Value {
 		_refMann = getString(paramName, "refM");
 		_refFrau = getString(paramName, "refF");
 	}
-	
-	private void initialize(){
+
+	private void initialize() {
 		_labor = LabImportUtilHolder.get().getOrCreateLabor(Messages.Reflotron_Value_LabKuerzel);
-		
+
 		_labItem = LabImportUtilHolder.get().getLabItem(_shortName, _labor);
-		
+
 		if (_labItem == null) {
-			_labItem =
-				LabImportUtilHolder.get().createLabItem(_shortName, _longName, _labor, _refMann,
-					_refFrau, _unit, LabItemTyp.NUMERIC, Messages.Reflotron_Value_LabName, "50");
+			_labItem = LabImportUtilHolder.get().createLabItem(_shortName, _longName, _labor, _refMann, _refFrau, _unit,
+					LabItemTyp.NUMERIC, Messages.Reflotron_Value_LabName, "50");
 		}
 	}
-	
-	public TransientLabResult fetchValue(Patient patient, String value, String flags,
-		TimeTool date){
+
+	public TransientLabResult fetchValue(Patient patient, String value, String flags, TimeTool date) {
 		if (_labItem == null) {
 			initialize();
 		}
-		IPatient iPatient =
-			CoreModelServiceHolder.get().load(patient.getId(), IPatient.class).orElse(null);
+		IPatient iPatient = CoreModelServiceHolder.get().load(patient.getId(), IPatient.class).orElse(null);
 		// do not set a flag or comment if none is given
 		if (flags == null || flags.isEmpty()) {
 			return new TransientLabResult.Builder(iPatient, _labor, _labItem, value).date(date)
-				.build(LabImportUtilHolder.get());
+					.build(LabImportUtilHolder.get());
 		}
-		
+
 		String comment = "";
 		int resultFlags = 0;
 		if (flags.equals("1")) {
@@ -99,8 +96,8 @@ public class Value {
 		if (flags.equals("*") || flags.equals("E")) {
 			comment = Messages.Reflotron_Value_Error;
 		}
-		
-		return new TransientLabResult.Builder(iPatient, _labor, _labItem, value).date(date)
-			.comment(comment).flags(Integer.valueOf(resultFlags)).build(LabImportUtilHolder.get());
+
+		return new TransientLabResult.Builder(iPatient, _labor, _labItem, value).date(date).comment(comment)
+				.flags(Integer.valueOf(resultFlags)).build(LabImportUtilHolder.get());
 	}
 }

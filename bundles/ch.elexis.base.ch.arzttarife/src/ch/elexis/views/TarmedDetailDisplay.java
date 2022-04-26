@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -43,45 +43,40 @@ import ch.elexis.core.ui.views.IDetailDisplay;
 import ch.rgw.tools.TimeTool;
 
 public class TarmedDetailDisplay implements IDetailDisplay {
-	
+
 	public static final TimeTool INFINITE = new TimeTool("19991231");
-	
+
 	private FormToolkit tk;
 	private ScrolledForm form;
-	private String[] fields = {
-		Messages.TarmedDetailDisplay_DigniQuant, Messages.TarmedDetailDisplay_DigniQual,
-		Messages.TarmedDetailDisplay_Sparte, Messages.TarmedDetailDisplay_RiskClass,
-		Messages.TarmedDetailDisplay_TPDoc, Messages.TarmedDetailDisplay_TPTec,
-		Messages.TarmedDetailDisplay_TPAss, Messages.TarmedDetailDisplay_NumbereAss,
-		Messages.TarmedDetailDisplay_TimeAct, Messages.TarmedDetailDisplay_TimeBeforeAfter,
-		Messages.TarmedDetailDisplay_TimeWrite, Messages.TarmedDetailDisplay_TimeChange,
-		Messages.TarmedDetailDisplay_TimeRoom, Messages.TarmedDetailDisplay_Relation,
-		Messages.TarmedDetailDisplay_NameInternal
+	private String[] fields = { Messages.TarmedDetailDisplay_DigniQuant, Messages.TarmedDetailDisplay_DigniQual,
+			Messages.TarmedDetailDisplay_Sparte, Messages.TarmedDetailDisplay_RiskClass,
+			Messages.TarmedDetailDisplay_TPDoc, Messages.TarmedDetailDisplay_TPTec, Messages.TarmedDetailDisplay_TPAss,
+			Messages.TarmedDetailDisplay_NumbereAss, Messages.TarmedDetailDisplay_TimeAct,
+			Messages.TarmedDetailDisplay_TimeBeforeAfter, Messages.TarmedDetailDisplay_TimeWrite,
+			Messages.TarmedDetailDisplay_TimeChange, Messages.TarmedDetailDisplay_TimeRoom,
+			Messages.TarmedDetailDisplay_Relation, Messages.TarmedDetailDisplay_NameInternal };
+	private String[] retrieve = { "DigniQuanti", "DigniQuali", "Sparte", "Anaesthesie", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"TP_AL", "TP_TL", "TP_ASSI", "ANZ_ASSI", "LSTGIMES_MIN", "VBNB_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			"BEFUND_MIN", "WECHSEL_MIN", "RAUM_MIN", "Bezug", "Nickname" //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
 	};
-	private String[] retrieve = {
-		"DigniQuanti", "DigniQuali", "Sparte", "Anaesthesie", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"TP_AL", "TP_TL", "TP_ASSI", "ANZ_ASSI", "LSTGIMES_MIN", "VBNB_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-		"BEFUND_MIN", "WECHSEL_MIN", "RAUM_MIN", "Bezug", "Nickname" //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
-	};
-	
+
 	private Text[] inputs = new Text[fields.length];
 	private FormText medinter, techinter, exclusion, inclusion, limits, hirarchy;
 	private FormText validity;
 	private ITarmedLeistung actCode;
-	
-	public TarmedDetailDisplay(){
-		
+
+	public TarmedDetailDisplay() {
+
 	}
-	
+
 	@Inject
-	public void selection(
-		@Optional @Named("ch.elexis.views.codeselector.tarmed.selection") ITarmedLeistung tarmed){
+	public void selection(@Optional @Named("ch.elexis.views.codeselector.tarmed.selection") ITarmedLeistung tarmed) {
 		if (tarmed != null && !form.isDisposed()) {
 			display(tarmed);
 		}
 	}
-	
-	public Composite createDisplay(Composite parent, IViewSite notUsed){
+
+	public Composite createDisplay(Composite parent, IViewSite notUsed) {
 		tk = UiDesk.getToolkit();
 		form = tk.createScrolledForm(parent);
 		TableWrapLayout twl = new TableWrapLayout();
@@ -95,17 +90,17 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		final int last = fields.length - 1;
 		inputs[last].addFocusListener(new FocusAdapter() {
 			@Override
-			public void focusLost(FocusEvent e){
+			public void focusLost(FocusEvent e) {
 				if (actCode != null) {
 					actCode.setNickname(inputs[last].getText());
 				}
 			}
-			
+
 		});
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		cFields.setLayoutData(twd);
-		
+
 		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_MedInter);
 		medinter = tk.createFormText(form.getBody(), false);
 		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_TecInter);
@@ -124,22 +119,20 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		validity = tk.createFormText(form.getBody(), false);
 		return form.getBody();
 	}
-	
-	public Class getElementClass(){
+
+	public Class getElementClass() {
 		return ITarmedLeistung.class;
 	}
-	
-	public void display(Object obj){
+
+	public void display(Object obj) {
 		if (obj instanceof ITarmedLeistung) {
 			actCode = (ITarmedLeistung) obj;
 			form.setText(actCode.getLabel());
 			inputs[0].setText(actCode.getDigniQuanti());
 			inputs[1].setText(actCode.getDigniQuali());
 			inputs[2].setText(actCode.getSparte());
-			inputs[3]
-				.setText(
-					TarmedDefinitionenUtil.getTextForRisikoKlasse(
-						(String) actCode.getExtension().getExtInfo("ANAESTHESIE"))); //$NON-NLS-1$
+			inputs[3].setText(TarmedDefinitionenUtil
+					.getTextForRisikoKlasse((String) actCode.getExtension().getExtInfo("ANAESTHESIE"))); //$NON-NLS-1$
 			for (int i = 4; i < fields.length - 1; i++) {
 				String val = (String) actCode.getExtension().getExtInfo(retrieve[i]);
 				if (val == null) {
@@ -147,18 +140,17 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 				}
 				inputs[i].setText(val);
 			}
-			inputs[fields.length - 1].setText(actCode.getNickname()); //$NON-NLS-1$
+			inputs[fields.length - 1].setText(actCode.getNickname()); // $NON-NLS-1$
 			medinter.setText(actCode.getExtension().getMedInterpretation(), false, false);
 			techinter.setText(actCode.getExtension().getTechInterpretation(), false, false);
-			List<ITarmedKumulation> kumulations =
-				actCode.getKumulations(TarmedKumulationArt.SERVICE);
-			exclusion.setText(getKumulationsString(kumulations, actCode.getCode(),
-				TarmedKumulationTyp.EXCLUSION), false, false);
-			inclusion.setText(getKumulationsString(kumulations, actCode.getCode(),
-				TarmedKumulationTyp.INCLUSION), false, false); //$NON-NLS-1$
+			List<ITarmedKumulation> kumulations = actCode.getKumulations(TarmedKumulationArt.SERVICE);
+			exclusion.setText(getKumulationsString(kumulations, actCode.getCode(), TarmedKumulationTyp.EXCLUSION),
+					false, false);
+			inclusion.setText(getKumulationsString(kumulations, actCode.getCode(), TarmedKumulationTyp.INCLUSION),
+					false, false); // $NON-NLS-1$
 			List<String> hirarchyCodes = actCode.getHierarchy(actCode.getValidFrom());
 			hirarchy.setText(String.join(", ", hirarchyCodes), false, false);
-			
+
 			String limit = (String) actCode.getExtension().getExtInfo("limits"); //$NON-NLS-1$
 			if (limit != null) {
 				StringBuilder sb = new StringBuilder();
@@ -169,7 +161,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 					if (f.length == 6) {
 						sb.append("<li>"); //$NON-NLS-1$
 						if (f[0].equals("<=")) { //$NON-NLS-1$
-							sb.append(Messages.TarmedDetailDisplay_max).append(" "); //$NON-NLS-2$
+							sb.append(Messages.TarmedDetailDisplay_max).append(" "); // $NON-NLS-2$
 						} else {
 							sb.append(f[0]).append(" "); //$NON-NLS-1$
 						}
@@ -189,7 +181,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 			} else {
 				limits.setText("", false, false); //$NON-NLS-1$
 			}
-			
+
 			// validity
 			String text;
 			TimeTool tGueltigVon = new TimeTool(actCode.getValidFrom());
@@ -207,27 +199,24 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 				text = ""; //$NON-NLS-1$
 			}
 			validity.setText(text, false, false);
-			
+
 			form.reflow(true);
 		}
-		
+
 	}
-	
-	private String getKumulationsString(List<ITarmedKumulation> list, String code,
-		TarmedKumulationTyp typ){
+
+	private String getKumulationsString(List<ITarmedKumulation> list, String code, TarmedKumulationTyp typ) {
 		StringBuilder sb = new StringBuilder();
 		if (list != null) {
 			List<ITarmedKumulation> slaveServices = list.stream()
-				.filter(k -> k.getTyp() == typ && k.getSlaveArt() == TarmedKumulationArt.SERVICE
-					&& k.getSlaveCode().equals(code)
-					&& k.getMasterArt() == TarmedKumulationArt.SERVICE)
-				.collect(Collectors.toList());
+					.filter(k -> k.getTyp() == typ && k.getSlaveArt() == TarmedKumulationArt.SERVICE
+							&& k.getSlaveCode().equals(code) && k.getMasterArt() == TarmedKumulationArt.SERVICE)
+					.collect(Collectors.toList());
 			List<ITarmedKumulation> masterServices = list.stream()
-				.filter(k -> k.getTyp() == typ && k.getMasterArt() == TarmedKumulationArt.SERVICE
-					&& k.getMasterCode().equals(code)
-					&& k.getSlaveArt() == TarmedKumulationArt.SERVICE)
-				.collect(Collectors.toList());
-			
+					.filter(k -> k.getTyp() == typ && k.getMasterArt() == TarmedKumulationArt.SERVICE
+							&& k.getMasterCode().equals(code) && k.getSlaveArt() == TarmedKumulationArt.SERVICE)
+					.collect(Collectors.toList());
+
 			if (!slaveServices.isEmpty() || !masterServices.isEmpty()) {
 				sb.append("Leistungen: ");
 				StringJoiner sj = new StringJoiner(", ");
@@ -245,14 +234,13 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 				}
 				sb.append(sj.toString());
 			}
-			List<ITarmedKumulation> slaveGroups =
-				list.stream()
+			List<ITarmedKumulation> slaveGroups = list.stream()
 					.filter(k -> k.getTyp() == typ && k.getSlaveArt() == TarmedKumulationArt.GROUP)
 					.collect(Collectors.toList());
 			List<ITarmedKumulation> masterGroups = list.stream()
-				.filter(k -> k.getTyp() == typ && k.getMasterArt() == TarmedKumulationArt.GROUP)
-				.collect(Collectors.toList());
-			
+					.filter(k -> k.getTyp() == typ && k.getMasterArt() == TarmedKumulationArt.GROUP)
+					.collect(Collectors.toList());
+
 			if (!slaveGroups.isEmpty() || !masterGroups.isEmpty()) {
 				sb.append(" ");
 				sb.append("Gruppen: ");
@@ -274,9 +262,9 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		}
 		return sb.toString();
 	}
-	
-	public String getTitle(){
+
+	public String getTitle() {
 		return "Tarmed"; //$NON-NLS-1$
 	}
-	
+
 }

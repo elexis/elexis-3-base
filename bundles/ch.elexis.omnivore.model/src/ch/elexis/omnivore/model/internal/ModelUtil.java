@@ -11,21 +11,21 @@ import ch.rgw.tools.MimeTool;
 
 @Component
 public class ModelUtil {
-	
+
 	private static IModelService modelService;
-	
+
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
-	public void setModelService(IModelService modelService){
+	public void setModelService(IModelService modelService) {
 		ModelUtil.modelService = modelService;
 	}
-	
+
 	/**
 	 * Get the file extension part of the input String.
-	 * 
+	 *
 	 * @param input
 	 * @return
 	 */
-	public static String evaluateFileExtension(String input){
+	public static String evaluateFileExtension(String input) {
 		String ext = MimeTool.getExtension(input);
 		if (StringUtils.isEmpty(ext)) {
 			ext = FilenameUtils.getExtension(input);
@@ -35,8 +35,8 @@ public class ModelUtil {
 		}
 		return ext;
 	}
-	
-	public static <T> T loadCoreModel(EntityWithId entity, Class<T> clazz){
+
+	public static <T> T loadCoreModel(EntityWithId entity, Class<T> clazz) {
 		if (entity != null) {
 			return (T) modelService.load(entity.getId(), clazz).orElse(null);
 		}

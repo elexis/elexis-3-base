@@ -29,64 +29,64 @@ import org.apache.solr.common.SolrException.ErrorCode;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.common.util.SuppressForbidden;
 
-
 /**
- * 
- * 
+ *
+ *
  * @since solr 1.3
  */
 public abstract class SolrResponse implements Serializable, MapWriter {
 
-  /** make this compatible with earlier versions */
-  private static final long serialVersionUID = -7931100103360242645L;
+	/** make this compatible with earlier versions */
+	private static final long serialVersionUID = -7931100103360242645L;
 
-  /** Elapsed time in milliseconds for the request as seen from the client. */
-  public abstract long getElapsedTime();
-  
-  public abstract void setResponse(NamedList<Object> rsp);
+	/** Elapsed time in milliseconds for the request as seen from the client. */
+	public abstract long getElapsedTime();
 
-  public abstract void setElapsedTime(long elapsedTime);
-  
-  public abstract NamedList<Object> getResponse();
+	public abstract void setResponse(NamedList<Object> rsp);
 
-  @Override
-  public void writeMap(EntryWriter ew) throws IOException {
-    getResponse().writeMap(ew);
-  }
+	public abstract void setElapsedTime(long elapsedTime);
 
-  public Exception getException() {
-    @SuppressWarnings({"rawtypes"})
-    NamedList exp = (NamedList) getResponse().get("exception");
-    if (exp == null) {
-      return null;
-    }
-    Integer rspCode = (Integer) exp.get("rspCode");
-    ErrorCode errorCode = rspCode != null && rspCode != -1 ? ErrorCode.getErrorCode(rspCode) : ErrorCode.SERVER_ERROR;
-    return new SolrException(errorCode, (String)exp.get("msg"));
-  }
-  
-  @SuppressForbidden(reason = "XXX: security hole")
-  @Deprecated
-  public static byte[] serializable(SolrResponse response) {
-    try {
-      ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-      ObjectOutputStream outputStream = new ObjectOutputStream(byteStream);
-      outputStream.writeObject(response);
-      return byteStream.toByteArray();
-    } catch (Exception e) {
-      throw new SolrException(ErrorCode.SERVER_ERROR, e);
-    }
-  }
-  
-  @SuppressForbidden(reason = "XXX: security hole")
-  @Deprecated
-  public static SolrResponse deserialize(byte[] bytes) {
-    try {
-      ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes);
-      ObjectInputStream inputStream = new ObjectInputStream(byteStream);
-      return (SolrResponse) inputStream.readObject();
-    } catch (Exception e) {
-      throw new SolrException(ErrorCode.SERVER_ERROR, e);
-    }
-  }
+	public abstract NamedList<Object> getResponse();
+
+	@Override
+	public void writeMap(EntryWriter ew) throws IOException {
+		getResponse().writeMap(ew);
+	}
+
+	public Exception getException() {
+		@SuppressWarnings({ "rawtypes" })
+		NamedList exp = (NamedList) getResponse().get("exception");
+		if (exp == null) {
+			return null;
+		}
+		Integer rspCode = (Integer) exp.get("rspCode");
+		ErrorCode errorCode = rspCode != null && rspCode != -1 ? ErrorCode.getErrorCode(rspCode)
+				: ErrorCode.SERVER_ERROR;
+		return new SolrException(errorCode, (String) exp.get("msg"));
+	}
+
+	@SuppressForbidden(reason = "XXX: security hole")
+	@Deprecated
+	public static byte[] serializable(SolrResponse response) {
+		try {
+			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+			ObjectOutputStream outputStream = new ObjectOutputStream(byteStream);
+			outputStream.writeObject(response);
+			return byteStream.toByteArray();
+		} catch (Exception e) {
+			throw new SolrException(ErrorCode.SERVER_ERROR, e);
+		}
+	}
+
+	@SuppressForbidden(reason = "XXX: security hole")
+	@Deprecated
+	public static SolrResponse deserialize(byte[] bytes) {
+		try {
+			ByteArrayInputStream byteStream = new ByteArrayInputStream(bytes);
+			ObjectInputStream inputStream = new ObjectInputStream(byteStream);
+			return (SolrResponse) inputStream.readObject();
+		} catch (Exception e) {
+			throw new SolrException(ErrorCode.SERVER_ERROR, e);
+		}
+	}
 }

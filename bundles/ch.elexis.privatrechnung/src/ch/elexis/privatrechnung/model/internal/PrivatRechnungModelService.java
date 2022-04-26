@@ -25,105 +25,102 @@ import ch.elexis.core.services.IXidService;
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.elexis.privatrechnung.model")
 public class PrivatRechnungModelService extends AbstractModelService
 		implements IModelService, IStoreToStringContribution {
-	
+
 	public static final String XIDDOMAIN = "www.xid.ch/id/customservice";
-	
+
 	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
-	
+
 	@Reference
 	private IXidService xidService;
-	
+
 	@Reference
 	private EventAdmin eventAdmin;
-	
+
 	@Activate
-	public void activate(){
+	public void activate() {
 		adapterFactory = PrivatRechnungModelAdapterFactory.getInstance();
-		
-		xidService.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Privatleistung",
-			XidConstants.ASSIGNMENT_LOCAL);
+
+		xidService.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Privatleistung", XidConstants.ASSIGNMENT_LOCAL);
 	}
-	
+
 	@Override
-	public <T> IQuery<T> getQuery(Class<T> clazz, boolean refreshCache, boolean includeDeleted){
-		return new PrivatRechnungModelQuery<>(clazz, refreshCache,
-			(EntityManager) entityManager.getEntityManager(), includeDeleted);
+	public <T> IQuery<T> getQuery(Class<T> clazz, boolean refreshCache, boolean includeDeleted) {
+		return new PrivatRechnungModelQuery<>(clazz, refreshCache, (EntityManager) entityManager.getEntityManager(),
+				includeDeleted);
 	}
-	
+
 	@Override
-	protected EntityManager getEntityManager(boolean managed){
+	protected EntityManager getEntityManager(boolean managed) {
 		return (EntityManager) entityManager.getEntityManager(managed);
 	}
-	
+
 	@Override
-	protected void closeEntityManager(EntityManager entityManager){
+	protected void closeEntityManager(EntityManager entityManager) {
 		this.entityManager.closeEntityManager(entityManager);
 	}
-	
+
 	@Override
-	protected EventAdmin getEventAdmin(){
+	protected EventAdmin getEventAdmin() {
 		return eventAdmin;
 	}
-	
+
 	@Override
-	protected ElexisEvent getCreateEvent(Identifiable identifiable){
+	protected ElexisEvent getCreateEvent(Identifiable identifiable) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public Optional<String> storeToString(Identifiable identifiable){
+	public Optional<String> storeToString(Identifiable identifiable) {
 		if (identifiable instanceof Leistung) {
-			return Optional
-				.of(Leistung.STS_CLASS + StringConstants.DOUBLECOLON + identifiable.getId());
+			return Optional.of(Leistung.STS_CLASS + StringConstants.DOUBLECOLON + identifiable.getId());
 		}
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public Optional<Identifiable> loadFromString(String storeToString){
+	public Optional<Identifiable> loadFromString(String storeToString) {
 		if (storeToString.startsWith(Leistung.STS_CLASS + StringConstants.DOUBLECOLON)) {
 			String[] split = splitIntoTypeAndId(storeToString);
 			String id = split[1];
 			EntityManager em = (EntityManager) entityManager.getEntityManager();
 			EntityWithId dbObject = em.find(ch.elexis.core.jpa.entities.PrivatLeistung.class, id);
 			return Optional.ofNullable(PrivatRechnungModelAdapterFactory.getInstance()
-				.getModelAdapter(dbObject, null, false).orElse(null));
+					.getModelAdapter(dbObject, null, false).orElse(null));
 		}
 		return Optional.empty();
 	}
-	
+
 	@Override
-	public void clearCache(){
+	public void clearCache() {
 		entityManager.clearCache();
 	}
-	
+
 	@Override
-	public Class<?> getEntityForType(String type){
+	public Class<?> getEntityForType(String type) {
 		if (Leistung.STS_CLASS.equals(type)) {
 			return ch.elexis.core.jpa.entities.PrivatLeistung.class;
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getTypeForEntity(Object entityInstance){
+	public String getTypeForEntity(Object entityInstance) {
 		if (entityInstance instanceof ch.elexis.core.jpa.entities.PrivatLeistung) {
 			return Leistung.STS_CLASS;
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getTypeForModel(Class<?> interfaze){
+	public String getTypeForModel(Class<?> interfaze) {
 		Class<? extends EntityWithId> entityClass = adapterFactory.getEntityClass(interfaze);
 		if (entityClass != null) {
 			try {
 				return getTypeForEntity(entityClass.newInstance());
 			} catch (InstantiationException | IllegalAccessException e) {
-				LoggerFactory.getLogger(getClass())
-					.error("Error getting type for model [" + interfaze + "]", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e);
 			}
 		}
 		return null;

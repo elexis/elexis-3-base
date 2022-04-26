@@ -52,25 +52,25 @@ public class RFEView extends ViewPart {
 	HashMap<Integer, String> mapIndexToCode = new HashMap<Integer, String>();
 	private IEncounter currentEncounter;
 	static final int No_More_Valid = 1;
-	
+
 	@Inject
-	void selectedEncounter(@Optional IEncounter encounter){
+	void selectedEncounter(@Optional IEncounter encounter) {
 		adjustTable(encounter);
 		currentEncounter = encounter;
 	}
-	
-	private void adjustTable(IEncounter encounter){
+
+	private void adjustTable(IEncounter encounter) {
 		List<IReasonForEncounter> rfeForKOns;
 		if (encounter != null) {
 			rfeForKOns = getReasonsForEncounter(encounter);
 		} else {
 			rfeForKOns = Collections.emptyList();
 		}
-		
-		if(tabs == null) {
+
+		if (tabs == null) {
 			return;
 		}
-		
+
 		CTabItem top = tabs.getSelection();
 		if (top != null) {
 			Control c = top.getControl();
@@ -94,21 +94,20 @@ public class RFEView extends ViewPart {
 			}
 		}
 	}
-	
-	private List<IReasonForEncounter> getReasonsForEncounter(IEncounter encounter){
-		IQuery<IReasonForEncounter> query =
-			ArzttarifeModelServiceHolder.get().getQuery(IReasonForEncounter.class);
+
+	private List<IReasonForEncounter> getReasonsForEncounter(IEncounter encounter) {
+		IQuery<IReasonForEncounter> query = ArzttarifeModelServiceHolder.get().getQuery(IReasonForEncounter.class);
 		query.and("konsID", COMPARATOR.EQUALS, encounter.getId());
 		return query.execute();
 	}
-	
-	private void removeReasonsForEncounter(IEncounter encounter){
+
+	private void removeReasonsForEncounter(IEncounter encounter) {
 		List<IReasonForEncounter> existingReasons = getReasonsForEncounter(encounter);
 		existingReasons.forEach(reason -> ArzttarifeModelServiceHolder.get().remove(reason));
 	}
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		tabs = new CTabFolder(parent, SWT.BOTTOM);
 		tabs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		CTabItem ctLong = new CTabItem(tabs, SWT.NONE);
@@ -119,7 +118,7 @@ public class RFEView extends ViewPart {
 		ctMedium.setText("kurz");
 		mediumTable = new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK);
 		ctMedium.setControl(mediumTable);
-		
+
 		CTabItem ctStat = new CTabItem(tabs, SWT.NONE);
 		ctStat.setText("Statistik");
 		Composite cStat = new Composite(tabs, SWT.NONE);
@@ -133,12 +132,12 @@ public class RFEView extends ViewPart {
 		cCalc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		bRecalc.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				for (Control c : cCalc.getChildren()) {
 					c.dispose();
 				}
-				IQuery<IReasonForEncounter> query =
-					ArzttarifeModelServiceHolder.get().getQuery(IReasonForEncounter.class);
+				IQuery<IReasonForEncounter> query = ArzttarifeModelServiceHolder.get()
+						.getQuery(IReasonForEncounter.class);
 				int[] result = new int[ReasonsForEncounter.getCodeToReasonMap().values().size()];
 				int all = 0;
 				for (IReasonForEncounter rfe : query.execute()) {
@@ -161,7 +160,7 @@ public class RFEView extends ViewPart {
 				}
 				cCalc.layout(true);
 			}
-			
+
 		});
 		int i = 0;
 		for (String code : ReasonsForEncounter.getCodeToReasonMap().keySet()) {
@@ -182,35 +181,34 @@ public class RFEView extends ViewPart {
 		longTable.addSelectionListener(new ClickListener(longTable));
 		mediumTable.addSelectionListener(new ClickListener(mediumTable));
 	}
-	
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	class ClickListener extends SelectionAdapter {
 		Table table;
-		
-		ClickListener(Table table){
+
+		ClickListener(Table table) {
 			this.table = table;
 		}
-		
+
 		@Override
-		public void widgetSelected(SelectionEvent e){
+		public void widgetSelected(SelectionEvent e) {
 			if (currentEncounter != null) {
 				int[] sel = table.getSelectionIndices();
 				if (sel.length > 0) {
 					removeReasonsForEncounter(currentEncounter);
-					
+
 					for (int s : sel) {
 						if (s == No_More_Valid) {
 							break;
 						}
 						String code = mapIndexToCode.get(s);
-						IReasonForEncounter reason =
-							ArzttarifeModelServiceHolder.get().create(IReasonForEncounter.class);
+						IReasonForEncounter reason = ArzttarifeModelServiceHolder.get()
+								.create(IReasonForEncounter.class);
 						reason.setEncounter(currentEncounter);
 						reason.setCode(code);
 						ArzttarifeModelServiceHolder.get().save(reason);

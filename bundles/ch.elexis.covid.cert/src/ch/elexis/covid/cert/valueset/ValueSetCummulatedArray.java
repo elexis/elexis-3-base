@@ -7,9 +7,9 @@ public class ValueSetCummulatedArray {
 	public String Date;
 	public String Version;
 	public Map<String, String>[] entries;
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return "ValueSet [id=" + Id + ", conceptList=" + entries + "]";
 	}
 }

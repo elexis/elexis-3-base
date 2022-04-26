@@ -19,7 +19,3 @@
  * Operations for the Streaming Aggregation API
  **/
 package org.apache.solr.client.solrj.io.ops;
-
-
-
-

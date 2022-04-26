@@ -8,12 +8,14 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-
 /**
- * <p>Java-Klasse für Patient complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ * <p>
+ * Java-Klasse für Patient complex type.
+ *
+ * <p>
+ * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser
+ * Klasse enthalten ist.
+ *
  * <pre>
  * &lt;complexType name="Patient">
  *   &lt;complexContent>
@@ -28,8 +30,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Patient", propOrder = {
@@ -37,110 +39,94 @@ import javax.xml.datatype.XMLGregorianCalendar;
 })
 public class Patient {
 
-    @XmlElement(name = "last_name", required = true)
-    protected String lastName;
-    @XmlElement(name = "first_name", required = true)
-    protected String firstName;
-    @XmlElement(name = "birth_date", required = true)
-    @XmlSchemaType(name = "date")
-    protected XMLGregorianCalendar birthDate;
-    @XmlElement(required = true, nillable = true)
-    protected String covercard;
+	@XmlElement(name = "last_name", required = true)
+	protected String lastName;
+	@XmlElement(name = "first_name", required = true)
+	protected String firstName;
+	@XmlElement(name = "birth_date", required = true)
+	@XmlSchemaType(name = "date")
+	protected XMLGregorianCalendar birthDate;
+	@XmlElement(required = true, nillable = true)
+	protected String covercard;
 
-    /**
-     * Ruft den Wert der lastName-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getLastName() {
-        return lastName;
-    }
+	/**
+	 * Ruft den Wert der lastName-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link String }
+	 *
+	 */
+	public String getLastName() {
+		return lastName;
+	}
 
-    /**
-     * Legt den Wert der lastName-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setLastName(String value) {
-        this.lastName = value;
-    }
+	/**
+	 * Legt den Wert der lastName-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link String }
+	 *
+	 */
+	public void setLastName(String value) {
+		this.lastName = value;
+	}
 
-    /**
-     * Ruft den Wert der firstName-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getFirstName() {
-        return firstName;
-    }
+	/**
+	 * Ruft den Wert der firstName-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link String }
+	 *
+	 */
+	public String getFirstName() {
+		return firstName;
+	}
 
-    /**
-     * Legt den Wert der firstName-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setFirstName(String value) {
-        this.firstName = value;
-    }
+	/**
+	 * Legt den Wert der firstName-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link String }
+	 *
+	 */
+	public void setFirstName(String value) {
+		this.firstName = value;
+	}
 
-    /**
-     * Ruft den Wert der birthDate-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public XMLGregorianCalendar getBirthDate() {
-        return birthDate;
-    }
+	/**
+	 * Ruft den Wert der birthDate-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link XMLGregorianCalendar }
+	 *
+	 */
+	public XMLGregorianCalendar getBirthDate() {
+		return birthDate;
+	}
 
-    /**
-     * Legt den Wert der birthDate-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public void setBirthDate(XMLGregorianCalendar value) {
-        this.birthDate = value;
-    }
+	/**
+	 * Legt den Wert der birthDate-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link XMLGregorianCalendar }
+	 *
+	 */
+	public void setBirthDate(XMLGregorianCalendar value) {
+		this.birthDate = value;
+	}
 
-    /**
-     * Ruft den Wert der covercard-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getCovercard() {
-        return covercard;
-    }
+	/**
+	 * Ruft den Wert der covercard-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link String }
+	 *
+	 */
+	public String getCovercard() {
+		return covercard;
+	}
 
-    /**
-     * Legt den Wert der covercard-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setCovercard(String value) {
-        this.covercard = value;
-    }
+	/**
+	 * Legt den Wert der covercard-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link String }
+	 *
+	 */
+	public void setCovercard(String value) {
+		this.covercard = value;
+	}
 
 }

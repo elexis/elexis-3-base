@@ -28,53 +28,51 @@ import ch.rgw.tools.Result;
 @Component
 public class AutomaticImportService {
 	public static final String MY_LAB = "Eigenlabor";
-	
+
 	private Timer timer = new Timer(true);
-	
+
 	@Reference
 	IVirtualFilesystemService vfsService;
-	
+
 	@Activate
-	public void activate(){
+	public void activate() {
 		timer.schedule(new AutomaticImportTask(), 5000, 5000);
 	}
-	
+
 	private class AutomaticImportTask extends TimerTask {
 		private final ReentrantLock running = new ReentrantLock();
-		
+
 		@Override
-		public void run(){
+		public void run() {
 			if (CoreHub.localCfg.get(Preferences.CFG_DIRECTORY_AUTOIMPORT, false)) {
-				File dir =
-					new File(CoreHub.localCfg.get(Preferences.CFG_DIRECTORY, File.separator));
+				File dir = new File(CoreHub.localCfg.get(Preferences.CFG_DIRECTORY, File.separator));
 				if ((dir.exists()) && (dir.isDirectory()) && isElexisRunning()) {
 					if (shouldImport(dir)) {
 						if (running.tryLock()) {
 							runImport(dir);
 							running.unlock();
 						} else {
-							LoggerFactory.getLogger(AutomaticImportTask.class).warn(
-								"Import from [" + dir.getAbsolutePath() + "] already running");
+							LoggerFactory.getLogger(AutomaticImportTask.class)
+									.warn("Import from [" + dir.getAbsolutePath() + "] already running");
 						}
 					}
 				}
 			}
 		}
-		
-		private boolean isElexisRunning(){
-			return ConfigServiceHolder.isPresent()
-				&& ElexisEventDispatcher.getSelectedMandator() != null;
+
+		private boolean isElexisRunning() {
+			return ConfigServiceHolder.isPresent() && ElexisEventDispatcher.getSelectedMandator() != null;
 		}
-		
-		private boolean shouldImport(File dir){
+
+		private boolean shouldImport(File dir) {
 			return !getImportFiles(dir).isEmpty();
 		}
-		
-		private List<File> getImportFiles(File dir){
+
+		private List<File> getImportFiles(File dir) {
 			List<File> ret = new ArrayList<>();
 			String[] filenames = dir.list(new FilenameFilter() {
-				
-				public boolean accept(File arg0, String arg1){
+
+				public boolean accept(File arg0, String arg1) {
 					if (arg1.toLowerCase().endsWith(".hl7")) {
 						return true;
 					}
@@ -84,15 +82,14 @@ public class AutomaticImportService {
 			for (String string : filenames) {
 				File file = new File(dir, string);
 				long currentMillis = System.currentTimeMillis();
-				if (file.exists() && !file.isDirectory()
-					&& (file.lastModified() + 10000) < currentMillis) {
+				if (file.exists() && !file.isDirectory() && (file.lastModified() + 10000) < currentMillis) {
 					ret.add(file);
 				}
 			}
 			return ret;
 		}
-		
-		private void runImport(File dir){
+
+		private void runImport(File dir) {
 			int err = 0;
 			int files = 0;
 			Result<?> r = null;
@@ -101,7 +98,7 @@ public class AutomaticImportService {
 				files++;
 				Display display = Display.getDefault();
 				if (display != null) {
-					
+
 					IVirtualFilesystemHandle vfsFile;
 					try {
 						vfsFile = vfsService.of(importFile);
@@ -112,14 +109,14 @@ public class AutomaticImportService {
 						err = 1;
 						LoggerFactory.getLogger(getClass()).warn("File error", e);
 					}
-					
+
 				}
 			}
 			if (err > 0) {
-				ResultAdapter.displayResult(r, Integer.toString(err) + " von "
-					+ Integer.toString(files) + " Dateien hatten Fehler\n");
+				ResultAdapter.displayResult(r,
+						Integer.toString(err) + " von " + Integer.toString(files) + " Dateien hatten Fehler\n");
 			}
 		}
 	}
-	
+
 }

@@ -31,10 +31,12 @@ import ch.unibe.iam.scg.archie.model.DataSet;
  * Creates a <code>TableViewer</code> from data provided by an implementation of
  * <code>AbstractDataProvider</code>.
  * </p>
- * <p>Uses singleton pattern.</p>
- * 
+ * <p>
+ * Uses singleton pattern.
+ * </p>
+ *
  * $Id: TableFactory.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -50,9 +52,9 @@ public class TableFactory {
 	}
 
 	/**
-	 * Returns an instance of this object. Static method as this class
-	 * implements the Singleton pattern.
-	 * 
+	 * Returns an instance of this object. Static method as this class implements
+	 * the Singleton pattern.
+	 *
 	 * @return TabeFactory Instance
 	 */
 	public static final TableFactory getInstance() {
@@ -64,9 +66,8 @@ public class TableFactory {
 
 	/**
 	 * Creates a tableviewer from the given provider.
-	 * 
-	 * @param parent
-	 *            Composite that holds the table.
+	 *
+	 * @param parent          Composite that holds the table.
 	 * @param dataset
 	 * @param labelProvider
 	 * @param contentProvider
@@ -94,11 +95,9 @@ public class TableFactory {
 
 	/**
 	 * Creates the table based on the DataProvider passed to this function.
-	 * 
-	 * @param parent
-	 *            Composite that holds the table.
-	 * @param provider
-	 *            A data provider.
+	 *
+	 * @param parent   Composite that holds the table.
+	 * @param provider A data provider.
 	 * @return A table object.
 	 */
 	private Table createTable(final Composite parent, final DataSet dataset) {
@@ -116,15 +115,12 @@ public class TableFactory {
 	}
 
 	/**
-	 * Creates all columns in this table. This method sets a weight to each
-	 * column so that all columns are layed out equally in their container.
-	 * 
-	 * @param table
-	 *            The table to perform column operations on.
-	 * @param provider
-	 *            A data provider.
-	 * @param layout
-	 *            Layout to use for the columns.
+	 * Creates all columns in this table. This method sets a weight to each column
+	 * so that all columns are layed out equally in their container.
+	 *
+	 * @param table    The table to perform column operations on.
+	 * @param provider A data provider.
+	 * @param layout   Layout to use for the columns.
 	 */
 	private void createColumns(final Table table, final DataSet dataset, TableColumnLayout layout) {
 		int i = 0;
@@ -149,9 +145,8 @@ public class TableFactory {
 	/**
 	 * Adds a selection listener to all columns in order to be able to sort by
 	 * column later.
-	 * 
-	 * @param viewer
-	 *            A TableViewer object.
+	 *
+	 * @param viewer A TableViewer object.
 	 */
 	private void addColumnSort(TableViewer viewer) {
 		TableColumn[] cols = viewer.getTable().getColumns();

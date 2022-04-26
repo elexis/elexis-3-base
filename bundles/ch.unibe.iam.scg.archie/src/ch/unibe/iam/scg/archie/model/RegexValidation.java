@@ -17,9 +17,9 @@ package ch.unibe.iam.scg.archie.model;
  * Expression (regex) pattern <code>String</code> and associated error message
  * <code>String</code> (if a regex match should fail).
  * </p>
- * 
+ *
  * $Id: RegexValidation.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $
@@ -30,10 +30,8 @@ public class RegexValidation {
 	private String message; // Message if the regex match fails.
 
 	/**
-	 * @param pattern
-	 *            String regex pattern.
-	 * @param message
-	 *            String error message if regex match fails.
+	 * @param pattern String regex pattern.
+	 * @param message String error message if regex match fails.
 	 * @throws IllegalArgumentException
 	 */
 	public RegexValidation(final String pattern, final String message) throws IllegalArgumentException {
@@ -52,8 +50,7 @@ public class RegexValidation {
 	}
 
 	/**
-	 * @param pattern
-	 *            String regex pattern
+	 * @param pattern String regex pattern
 	 */
 	public void setPattern(final String pattern) {
 		this.pattern = pattern;
@@ -67,8 +64,7 @@ public class RegexValidation {
 	}
 
 	/**
-	 * @param message
-	 *            set error message if regex match fails.
+	 * @param message set error message if regex match fails.
 	 */
 	public void setMessage(final String message) {
 		this.message = message;

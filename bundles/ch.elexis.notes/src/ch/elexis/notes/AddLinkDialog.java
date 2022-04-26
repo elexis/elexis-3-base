@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.notes;
 
@@ -26,18 +26,17 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 
-
 public class AddLinkDialog extends TitleAreaDialog {
 	private Note note;
 	Text tXref;
-	
-	AddLinkDialog(Shell shell, Note note){
+
+	AddLinkDialog(Shell shell, Note note) {
 		super(shell);
 		this.note = note;
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(2, false));
@@ -46,7 +45,7 @@ public class AddLinkDialog extends TitleAreaDialog {
 		Button bChoose = new Button(ret, SWT.PUSH);
 		bChoose.setText(Messages.AddLinkDialog_searchCaption);
 		bChoose.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
 				String file = fd.open();
 				if (file != null) {
@@ -56,19 +55,19 @@ public class AddLinkDialog extends TitleAreaDialog {
 		});
 		return ret;
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		setTitle(Messages.AddLinkDialog_addLinkDialogTitle);
 		setMessage(Messages.AddLinkDialog_addLinkDialogMessage);
 		setTitleImage(Images.IMG_LOGO.getImage());
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		note.addRef(tXref.getText());
 		super.okPressed();
 	}
-	
+
 }

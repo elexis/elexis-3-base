@@ -23,167 +23,156 @@ import org.apache.solr.common.SolrException;
 /**
  * @since solr 1.3
  */
-public abstract class CoreAdminParams
-{
-  /** What Core are we talking about **/
-  public final static String CORE = "core";
+public abstract class CoreAdminParams {
+	/** What Core are we talking about **/
+	public final static String CORE = "core";
 
-  /** Should the STATUS request include index info **/
-  public final static String INDEX_INFO = "indexInfo";
-  
-  /** If you rename something, what is the new name **/
-  public final static String NAME = "name";
+	/** Should the STATUS request include index info **/
+	public final static String INDEX_INFO = "indexInfo";
 
-  /** Core data directory **/
-  public final static String DATA_DIR = "dataDir";
+	/** If you rename something, what is the new name **/
+	public final static String NAME = "name";
 
-  /** Core updatelog directory **/
-  public final static String ULOG_DIR = "ulogDir";
+	/** Core data directory **/
+	public final static String DATA_DIR = "dataDir";
 
-  /** Name of the other core in actions involving 2 cores **/
-  public final static String OTHER = "other";
+	/** Core updatelog directory **/
+	public final static String ULOG_DIR = "ulogDir";
 
-  /** What action **/
-  public final static String ACTION = "action";
-  
-  /** If you specify a schema, what is its name **/
-  public final static String SCHEMA = "schema";
+	/** Name of the other core in actions involving 2 cores **/
+	public final static String OTHER = "other";
 
-  /** If you specify a configset, what is its name **/
-  public final static String CONFIGSET = "configSet";
-  
-  /** If you specify a config, what is its name **/
-  public final static String CONFIG = "config";
-  
-  /** Specifies a core instance dir. */
-  public final static String INSTANCE_DIR = "instanceDir";
+	/** What action **/
+	public final static String ACTION = "action";
 
-  /** If you specify a file, what is its name **/
-  public final static String FILE = "file";
-  
-  /** If you merge indexes, what are the index directories.
-   * The directories are specified by multiple indexDir parameters. */
-  public final static String INDEX_DIR = "indexDir";
+	/** If you specify a schema, what is its name **/
+	public final static String SCHEMA = "schema";
 
-  /** If you merge indexes, what is the source core's name
-   * More than one source core can be specified by multiple srcCore parameters */
-  public final static String SRC_CORE = "srcCore";
+	/** If you specify a configset, what is its name **/
+	public final static String CONFIGSET = "configSet";
 
-  /** The collection name in solr cloud */
-  public final static String COLLECTION = "collection";
+	/** If you specify a config, what is its name **/
+	public final static String CONFIG = "config";
 
-  /** The replica name in solr cloud */
-  public final static String REPLICA = "replica";
-  
-  /** The shard id in solr cloud */
-  public final static String SHARD = "shard";
+	/** Specifies a core instance dir. */
+	public final static String INSTANCE_DIR = "instanceDir";
 
-  /** The target core to which a split index should be written to
-   * Multiple targetCores can be specified by multiple targetCore parameters */
-  public final static String TARGET_CORE = "targetCore";
+	/** If you specify a file, what is its name **/
+	public final static String FILE = "file";
 
-  /** The hash ranges to be used to split a shard or an index */
-  public final static String RANGES = "ranges";
+	/**
+	 * If you merge indexes, what are the index directories. The directories are
+	 * specified by multiple indexDir parameters.
+	 */
+	public final static String INDEX_DIR = "indexDir";
 
-  public final static String GET_RANGES = "getRanges";
+	/**
+	 * If you merge indexes, what is the source core's name More than one source
+	 * core can be specified by multiple srcCore parameters
+	 */
+	public final static String SRC_CORE = "srcCore";
 
-  public static final String ROLES = "roles";
+	/** The collection name in solr cloud */
+	public final static String COLLECTION = "collection";
 
-  public static final String REQUESTID = "requestid";
+	/** The replica name in solr cloud */
+	public final static String REPLICA = "replica";
 
-  public static final String CORE_NODE_NAME = "coreNodeName";
-  
-  /** Prefix for core property name=value pair **/
-  public final static String PROPERTY_PREFIX = "property.";
+	/** The shard id in solr cloud */
+	public final static String SHARD = "shard";
 
-  /** If you unload a core, delete the index too */
-  public final static String DELETE_INDEX = "deleteIndex";
+	/**
+	 * The target core to which a split index should be written to Multiple
+	 * targetCores can be specified by multiple targetCore parameters
+	 */
+	public final static String TARGET_CORE = "targetCore";
 
-  public static final String DELETE_DATA_DIR = "deleteDataDir";
+	/** The hash ranges to be used to split a shard or an index */
+	public final static String RANGES = "ranges";
 
-  public static final String DELETE_INSTANCE_DIR = "deleteInstanceDir";
+	public final static String GET_RANGES = "getRanges";
 
-  public static final String DELETE_METRICS_HISTORY = "deleteMetricsHistory";
+	public static final String ROLES = "roles";
 
-  public static final String LOAD_ON_STARTUP = "loadOnStartup";
-  
-  public static final String TRANSIENT = "transient";
+	public static final String REQUESTID = "requestid";
 
-  // Node to create a replica on for ADDREPLICA at least.
-  public static final String NODE = "node";
+	public static final String CORE_NODE_NAME = "coreNodeName";
 
-  /**
-   * A parameter to specify the name of the backup repository to be used.
-   */
-  public static final String BACKUP_REPOSITORY = "repository";
+	/** Prefix for core property name=value pair **/
+	public final static String PROPERTY_PREFIX = "property.";
 
-  /**
-   * A parameter to specify the location where the backup should be stored.
-   */
-  public static final String BACKUP_LOCATION = "location";
+	/** If you unload a core, delete the index too */
+	public final static String DELETE_INDEX = "deleteIndex";
 
-  /**
-   * A parameter to specify the name of the commit to be stored during the backup operation.
-   */
-  public static final String COMMIT_NAME = "commitName";
+	public static final String DELETE_DATA_DIR = "deleteDataDir";
 
-  /**
-   * A boolean parameter specifying if a core is being created as part of a new collection
-   */
-  public static final String NEW_COLLECTION = "newCollection";
+	public static final String DELETE_INSTANCE_DIR = "deleteInstanceDir";
 
-  /**
-   * Tells the CoreAdminHandler that the new Core will be a replica of a particular {@link org.apache.solr.common.cloud.Replica.Type}
-   */
-  public static final String REPLICA_TYPE = "replicaType";
+	public static final String DELETE_METRICS_HISTORY = "deleteMetricsHistory";
 
-  public enum CoreAdminAction {
-    STATUS(true),
-    UNLOAD,
-    RELOAD,
-    CREATE,
-    SWAP,
-    RENAME,
-    MERGEINDEXES,
-    SPLIT,
-    PREPRECOVERY,
-    REQUESTRECOVERY,
-    REQUESTSYNCSHARD,
-    DELETEALIAS,
-    REQUESTBUFFERUPDATES,
-    REQUESTAPPLYUPDATES,
-    OVERSEEROP,
-    REQUESTSTATUS(true),
-    REJOINLEADERELECTION,
-    //internal API used by force shard leader election
-    FORCEPREPAREFORLEADERSHIP,
-    INVOKE,
-    //Internal APIs to backup and restore a core
-    BACKUPCORE,
-    RESTORECORE,
-    CREATESNAPSHOT,
-    DELETESNAPSHOT,
-    LISTSNAPSHOTS;
+	public static final String LOAD_ON_STARTUP = "loadOnStartup";
 
-    public final boolean isRead;
+	public static final String TRANSIENT = "transient";
 
-    CoreAdminAction(boolean isRead) {
-      this.isRead = isRead;
-    }
+	// Node to create a replica on for ADDREPLICA at least.
+	public static final String NODE = "node";
 
-    CoreAdminAction() {
-      this.isRead = false;
-    }
+	/**
+	 * A parameter to specify the name of the backup repository to be used.
+	 */
+	public static final String BACKUP_REPOSITORY = "repository";
 
-    public static CoreAdminAction get( String p ) {
-      if (p != null) {
-        try {
-          return CoreAdminAction.valueOf(p.toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException e) {
-          throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "Wrong core admin action");
-        }
-      }
-      return null; 
-    }
-  }
+	/**
+	 * A parameter to specify the location where the backup should be stored.
+	 */
+	public static final String BACKUP_LOCATION = "location";
+
+	/**
+	 * A parameter to specify the name of the commit to be stored during the backup
+	 * operation.
+	 */
+	public static final String COMMIT_NAME = "commitName";
+
+	/**
+	 * A boolean parameter specifying if a core is being created as part of a new
+	 * collection
+	 */
+	public static final String NEW_COLLECTION = "newCollection";
+
+	/**
+	 * Tells the CoreAdminHandler that the new Core will be a replica of a
+	 * particular {@link org.apache.solr.common.cloud.Replica.Type}
+	 */
+	public static final String REPLICA_TYPE = "replicaType";
+
+	public enum CoreAdminAction {
+		STATUS(true), UNLOAD, RELOAD, CREATE, SWAP, RENAME, MERGEINDEXES, SPLIT, PREPRECOVERY, REQUESTRECOVERY,
+		REQUESTSYNCSHARD, DELETEALIAS, REQUESTBUFFERUPDATES, REQUESTAPPLYUPDATES, OVERSEEROP, REQUESTSTATUS(true),
+		REJOINLEADERELECTION,
+		// internal API used by force shard leader election
+		FORCEPREPAREFORLEADERSHIP, INVOKE,
+		// Internal APIs to backup and restore a core
+		BACKUPCORE, RESTORECORE, CREATESNAPSHOT, DELETESNAPSHOT, LISTSNAPSHOTS;
+
+		public final boolean isRead;
+
+		CoreAdminAction(boolean isRead) {
+			this.isRead = isRead;
+		}
+
+		CoreAdminAction() {
+			this.isRead = false;
+		}
+
+		public static CoreAdminAction get(String p) {
+			if (p != null) {
+				try {
+					return CoreAdminAction.valueOf(p.toUpperCase(Locale.ROOT));
+				} catch (IllegalArgumentException e) {
+					throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "Wrong core admin action");
+				}
+			}
+			return null;
+		}
+	}
 }

@@ -23,20 +23,20 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.ui.UiDesk;
 
 public class ChangeMandantCommand extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		MandantSelectorDialog msDialog = new MandantSelectorDialog(UiDesk.getTopShell());
 		if (msDialog.open() == TitleAreaDialog.OK) {
-			IMandator mandant = NoPoUtil
-				.loadAsIdentifiable(msDialog.getSelectedMandant(), IMandator.class).orElse(null);
-			
+			IMandator mandant = NoPoUtil.loadAsIdentifiable(msDialog.getSelectedMandant(), IMandator.class)
+					.orElse(null);
+
 			IWorkbenchPart part = HandlerUtil.getActivePart(event);
 			if (part instanceof InboxView) {
 				InboxView view = (InboxView) part;
 				CheckboxTreeViewer viewer = view.getCheckboxTreeViewer();
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				
+
 				if (selection != null && !selection.isEmpty()) {
 					List<?> selectionList = selection.toList();
 					for (Object selObj : selectionList) {
@@ -59,17 +59,15 @@ public class ChangeMandantCommand extends AbstractHandler implements IHandler {
 		}
 		return null;
 	}
-	
-	private void refreshView(CheckboxTreeViewer viewer, PatientInboxElements patInboxElements){
-		InboxElementContentProvider contentProvider =
-			(InboxElementContentProvider) viewer.getContentProvider();
+
+	private void refreshView(CheckboxTreeViewer viewer, PatientInboxElements patInboxElements) {
+		InboxElementContentProvider contentProvider = (InboxElementContentProvider) viewer.getContentProvider();
 		contentProvider.refreshElement(patInboxElements);
 		viewer.refresh(false);
 	}
-	
-	private void refreshView(CheckboxTreeViewer viewer, IInboxElement inboxElement){
-		InboxElementContentProvider contentProvider =
-			(InboxElementContentProvider) viewer.getContentProvider();
+
+	private void refreshView(CheckboxTreeViewer viewer, IInboxElement inboxElement) {
+		InboxElementContentProvider contentProvider = (InboxElementContentProvider) viewer.getContentProvider();
 		contentProvider.refreshElement(inboxElement);
 		viewer.refresh(false);
 	}

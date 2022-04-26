@@ -26,9 +26,9 @@ import ch.unibe.iam.scg.archie.model.Cohort;
  * <p>
  * Tests the custom cohort object.
  * </p>
- * 
+ *
  * $Id: CohortTest.java 705 2009-01-03 17:48:46Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 705 $
@@ -110,7 +110,7 @@ public class CohortTest {
 	/**
 	 * Static method for JUnit 4 test classes to make them accessible to a
 	 * TestRunner designed to work with earlier versions of JUnit.
-	 * 
+	 *
 	 * @return A Test that can be used in test suites.
 	 */
 	public static junit.framework.Test suite() {

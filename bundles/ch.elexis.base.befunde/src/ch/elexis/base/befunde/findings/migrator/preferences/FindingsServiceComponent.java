@@ -9,24 +9,24 @@ import ch.elexis.core.findings.templates.service.IFindingsTemplateService;
 @Component
 public class FindingsServiceComponent {
 	private static IMigratorService migratorService;
-	
+
 	private static IFindingsTemplateService templateService;
-	
+
 	@Reference(unbind = "-")
-	public void setMigratorService(IMigratorService migratorService){
+	public void setMigratorService(IMigratorService migratorService) {
 		FindingsServiceComponent.migratorService = migratorService;
 	}
-	
+
 	@Reference(unbind = "-")
-	public void setTemplateService(IFindingsTemplateService templateService){
+	public void setTemplateService(IFindingsTemplateService templateService) {
 		FindingsServiceComponent.templateService = templateService;
 	}
-	
-	public static IMigratorService getMigratorService(){
+
+	public static IMigratorService getMigratorService() {
 		return migratorService;
 	}
-	
-	public static IFindingsTemplateService getTemplateService(){
+
+	public static IFindingsTemplateService getTemplateService() {
 		return templateService;
 	}
 }

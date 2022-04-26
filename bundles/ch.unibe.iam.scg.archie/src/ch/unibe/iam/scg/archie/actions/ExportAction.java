@@ -33,9 +33,9 @@ import ch.unibe.iam.scg.archie.utils.StringHelper;
  * <p>
  * Action to export result data to a CSV file.
  * </p>
- * 
+ *
  * $Id: ExportAction.java 683 2008-12-16 22:31:33Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 683 $
@@ -67,7 +67,7 @@ public class ExportAction extends Action {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param view
 	 */
 	public ExportAction(StatisticsView view) {
@@ -99,9 +99,8 @@ public class ExportAction extends Action {
 
 	/**
 	 * Saves a CSV list to the given filename.
-	 * 
-	 * @param fileName
-	 *            Filename to save the CSV export to.
+	 *
+	 * @param fileName Filename to save the CSV export to.
 	 */
 	private void saveFile(String fileName) {
 		try {
@@ -114,9 +113,8 @@ public class ExportAction extends Action {
 
 	/**
 	 * Suggests a filename to the user based on the cleaned up name of the data
-	 * provider we're looking at and the today's date being appened to that
-	 * name.
-	 * 
+	 * provider we're looking at and the today's date being appened to that name.
+	 *
 	 * @return Cleaned up filename suggestion.
 	 * @see StringHelper
 	 */

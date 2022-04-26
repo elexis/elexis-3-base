@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 
@@ -36,23 +36,23 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 	private static final String NAME = Messages.ZahlungsJournal_PaymentJournal;
 	private static final String FIELD_ACTMANDATOR = "Nur aktueller Mandant"; //$NON-NLS-1$
 	private boolean bOnlyActiveMandator;
-	
-	public ZahlungsJournal(){
+
+	public ZahlungsJournal() {
 		super(NAME);
 	}
-	
+
 	@GetProperty(name = FIELD_ACTMANDATOR, widgetType = WidgetTypes.BUTTON_CHECKBOX, index = 1)
-	public boolean getOnlyActiveMandator(){
+	public boolean getOnlyActiveMandator() {
 		return bOnlyActiveMandator;
 	}
-	
+
 	@SetProperty(name = FIELD_ACTMANDATOR, index = 1)
-	public void setOnlyActiveMandator(boolean val){
+	public void setOnlyActiveMandator(boolean val) {
 		bOnlyActiveMandator = val;
 	}
-	
+
 	@Override
-	protected IStatus createContent(IProgressMonitor monitor){
+	protected IStatus createContent(IProgressMonitor monitor) {
 		int total = 10000000;
 		Query<AccountTransaction> qbe = new Query<AccountTransaction>(AccountTransaction.class);
 		TimeTool ttStart = new TimeTool(this.getStartDate().getTimeInMillis());
@@ -71,7 +71,7 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 		}
 		int step = total / sum;
 		monitor.worked(20 * step);
-		
+
 		PatientIdFormatter pif = new PatientIdFormatter(8);
 		String actMnId = CoreHub.actMandant.getId();
 		for (AccountTransaction at : transactions) {
@@ -107,11 +107,11 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 					} else {
 						row[3] = Messages.ZahlungsJournal_ZA;
 					}
-					
+
 				} else {
 					row[3] = Messages.ZahlungsJournal_AD;
 				}
-				
+
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
@@ -119,18 +119,18 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 			}
 			monitor.worked(step);
 		}
-		
+
 		// Set content.
 		this.dataSet.setContent(result);
-		
+
 		// Job finished successfully
 		monitor.done();
-		
+
 		return Status.OK_STATUS;
 	}
-	
+
 	@Override
-	protected List<String> createHeadings(){
+	protected List<String> createHeadings() {
 		ArrayList<String> ret = new ArrayList<String>();
 		ret.add(Messages.ZahlungsJournal_PatientNr);
 		ret.add(Messages.ZahlungsJournal_Date);
@@ -139,10 +139,10 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 		ret.add(Messages.ZahlungsJournal_Text);
 		return ret;
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return NAME;
 	}
-	
+
 }

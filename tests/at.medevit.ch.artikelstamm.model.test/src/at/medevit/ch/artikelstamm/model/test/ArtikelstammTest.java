@@ -32,65 +32,57 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
 
 public class ArtikelstammTest extends AbstractTest {
-	
+
 	private static IElexisEntityManager entityManager;
 	private static IModelService modelService;
-	
+
 	@BeforeClass
-	public static void beforeClass() throws IOException{
-		modelService =
-			OsgiServiceUtil
-				.getService(IModelService.class,
-					"(" + IModelService.SERVICEMODELNAME + "=at.medevit.ch.artikelstamm.model)")
-				.get();
+	public static void beforeClass() throws IOException {
+		modelService = OsgiServiceUtil.getService(IModelService.class,
+				"(" + IModelService.SERVICEMODELNAME + "=at.medevit.ch.artikelstamm.model)").get();
 		entityManager = OsgiServiceUtil.getService(IElexisEntityManager.class).get();
 		entityManager.getEntityManager(); // initialize the db
-		
+
 		assertTrue(entityManager.executeSQLScript("test_initArtikelstamm",
-			TestUtil.loadFile(ArtikelstammTest.class, "/rsc/artstamm.sql")));
+				TestUtil.loadFile(ArtikelstammTest.class, "/rsc/artstamm.sql")));
 	}
-	
+
 	@Test
-	public void createRemove(){
+	public void createRemove() {
 		IArtikelstammItem item = modelService.create(IArtikelstammItem.class);
 		assertNotNull(item);
 		// create event?
 		modelService.remove(item);
 	}
-	
+
 	@Test
-	public void loadFromStoreToStringService(){
-		IStoreToStringService storeToStringService =
-			OsgiServiceUtil.getService(IStoreToStringService.class).get();
-		Identifiable loadFromString =
-			storeToStringService
-				.loadFromString(
-					"ch.artikelstamm.elexis.common.ArtikelstammItem::0768043838016013402350116")
-				.get();
+	public void loadFromStoreToStringService() {
+		IStoreToStringService storeToStringService = OsgiServiceUtil.getService(IStoreToStringService.class).get();
+		Identifiable loadFromString = storeToStringService
+				.loadFromString("ch.artikelstamm.elexis.common.ArtikelstammItem::0768043838016013402350116").get();
 		assertEquals("0768043838016013402350116", loadFromString.getId());
 		assertTrue(loadFromString instanceof IArtikelstammItem);
-		assertEquals("Dafalgan Sirup 30 mg/ml Kind 90 ml",
-			((IArtikelstammItem) loadFromString).getName());
+		assertEquals("Dafalgan Sirup 30 mg/ml Kind 90 ml", ((IArtikelstammItem) loadFromString).getName());
 	}
-	
+
 	@Test
-	public void loadFromCodeElementService(){
-		ICodeElementService codeElementService =
-			OsgiServiceUtil.getService(ICodeElementService.class).get();
-		ICodeElement loadFromString =
-			codeElementService.loadFromString("Artikelstamm", "7680438380160", null).get();
+	public void loadFromCodeElementService() {
+		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
+		ICodeElement loadFromString = codeElementService.loadFromString("Artikelstamm", "7680438380160", null).get();
 		assertEquals("0768043838016013402350116", ((Identifiable) loadFromString).getId());
 		assertTrue(loadFromString instanceof IArtikelstammItem);
 	}
-	
+
 	@Test
-	public void queryLoadImportedArticles() throws ParseException{
-		// 0768047505038514989010116, 1537373533999, 0, P, 0, 116, 7680475050385, 1498901, 
-		// Dafalgan 150 Supp 150 mg 10 Stk, , N02BE01, 7601001010703, Bristol-Myers Squibb SA, 
-		// 1.11, 2.05, 10, 1, D, 0, , , , , 0, 10, 0, , , , 4750502, 
-		
-		IArtikelstammItem dafalganArticle =
-			modelService.load("0768047505038514989010116", IArtikelstammItem.class).get();
+	public void queryLoadImportedArticles() throws ParseException {
+		// 0768047505038514989010116, 1537373533999, 0, P, 0, 116, 7680475050385,
+		// 1498901,
+		// Dafalgan 150 Supp 150 mg 10 Stk, , N02BE01, 7601001010703, Bristol-Myers
+		// Squibb SA,
+		// 1.11, 2.05, 10, 1, D, 0, , , , , 0, 10, 0, , , , 4750502,
+
+		IArtikelstammItem dafalganArticle = modelService.load("0768047505038514989010116", IArtikelstammItem.class)
+				.get();
 		assertEquals(ArticleTyp.ARTIKELSTAMM, dafalganArticle.getTyp());
 		assertEquals(ArticleSubTyp.PHARMA, dafalganArticle.getSubTyp());
 		assertFalse(dafalganArticle.isProduct());
@@ -113,46 +105,45 @@ public class ArtikelstammTest extends AbstractTest {
 		assertEquals(Integer.valueOf(10), dafalganArticle.getDeductible());
 		assertEquals("Bristol-Myers Squibb SA", dafalganArticle.getManufacturerLabel());
 		assertEquals("D", dafalganArticle.getSwissmedicCategory());
-		
-		IArtikelstammItem coDafalganProduct =
-			modelService.load("5132101", IArtikelstammItem.class).get();
+
+		IArtikelstammItem coDafalganProduct = modelService.load("5132101", IArtikelstammItem.class).get();
 		assertTrue(coDafalganProduct.isProduct());
 		assertEquals(ArticleSubTyp.UNKNOWN, coDafalganProduct.getSubTyp());
 		List<IArticle> packages = coDafalganProduct.getPackages();
 		assertEquals(2, packages.size());
-		
+
 		IQuery<IArtikelstammItem> query = modelService.getQuery(IArtikelstammItem.class);
 		query.and("gtin", COMPARATOR.LIKE, "768047504%");
 		List<IArtikelstammItem> result = query.execute();
 		assertEquals(2, result.size());
 	}
-	
+
 	@Test
-	public void setGetUnsetUserDefinedPrice() throws ParseException{
-		IArtikelstammItem coDafalganArticle =
-			modelService.load("0768051321014614988870116", IArtikelstammItem.class).get();
+	public void setGetUnsetUserDefinedPrice() throws ParseException {
+		IArtikelstammItem coDafalganArticle = modelService.load("0768051321014614988870116", IArtikelstammItem.class)
+				.get();
 		assertEquals(new Money("6.05"), coDafalganArticle.getSellingPrice());
 		assertFalse(coDafalganArticle.isUserDefinedPrice());
-		
+
 		coDafalganArticle.setUserDefinedPriceValue(new Money("7.12"));
 		assertEquals(new Money("7.12"), coDafalganArticle.getSellingPrice());
 		assertTrue(coDafalganArticle.isUserDefinedPrice());
-		
+
 		coDafalganArticle.restoreOriginalSellingPrice();
 		assertEquals(new Money("6.05"), coDafalganArticle.getSellingPrice());
 		assertFalse(coDafalganArticle.isUserDefinedPrice());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
-	public void billing() throws ParseException{
+	public void billing() throws ParseException {
 		createEncounter();
 		createUserSetActiveInContext();
-		
-		IArtikelstammItem dafalganArticle =
-			modelService.load("0768047505038514989010116", IArtikelstammItem.class).get();
+
+		IArtikelstammItem dafalganArticle = modelService.load("0768047505038514989010116", IArtikelstammItem.class)
+				.get();
 		assertEquals("402", dafalganArticle.getCodeSystemCode());
-		
+
 		Result<IBilled> result = dafalganArticle.getOptifier().add(dafalganArticle, encounter, 1.5);
 		assertTrue(result.isOK());
 		assertFalse(encounter.getBilled().isEmpty());
@@ -162,6 +153,6 @@ public class ArtikelstammTest extends AbstractTest {
 		assertEquals(dafalganArticle.getPurchasePrice(), billed.getNetPrice());
 		assertEquals(dafalganArticle.getName(), billed.getText());
 		assertEquals(encounter, billed.getEncounter());
-		
+
 	}
 }

@@ -38,42 +38,38 @@ import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.rgw.tools.Result;
 
 public class BlueMedicationUploadHandler extends AbstractHandler implements IHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		StructuredSelection selection =
-			(StructuredSelection) HandlerUtil.getCurrentSelection(event);
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		StructuredSelection selection = (StructuredSelection) HandlerUtil.getCurrentSelection(event);
 		String resulttyp = event.getParameter("at.medevit.elexis.bluemedication.ui.resulttyp");
 		if (!selection.isEmpty()) {
 			Object object = selection.getFirstElement();
 			if (object instanceof IDocumentHandle) {
 				IDocumentHandle docHandle = (IDocumentHandle) object;
 				if (docHandle.getMimeType().toLowerCase().endsWith("pdf")
-					|| docHandle.getTitle().toLowerCase().endsWith(".pdf")) {
+						|| docHandle.getTitle().toLowerCase().endsWith(".pdf")) {
 					Shell activeshell = HandlerUtil.getActiveShell(event);
 					ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(activeshell);
 					try {
 						progressDialog.run(true, false, new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor)
-								throws InvocationTargetException, InterruptedException{
-								monitor.beginTask(
-									"BlueMedication Upload von " + docHandle.getLabel(),
-									IProgressMonitor.UNKNOWN);
-								Result<UploadResult> result = BlueMedicationServiceHolder
-									.getService().uploadDocument(docHandle.getPatient(),
-										Utils.createTemporaryFile(docHandle, docHandle.getTitle()),
-										resulttyp);
+									throws InvocationTargetException, InterruptedException {
+								monitor.beginTask("BlueMedication Upload von " + docHandle.getLabel(),
+										IProgressMonitor.UNKNOWN);
+								Result<UploadResult> result = BlueMedicationServiceHolder.getService().uploadDocument(
+										docHandle.getPatient(),
+										Utils.createTemporaryFile(docHandle, docHandle.getTitle()), resulttyp);
 								if (result.isOK()) {
 									Display.getDefault().syncExec(() -> {
 										// open the uri of the result
 										Program.launch(result.get().getUrl());
-										BlueMedicationServiceHolder.getService()
-											.addPendingUploadResult(docHandle, result.get());
-										BlueMedicationServiceHolder.getService()
-											.startPollForResult(docHandle, result.get(),
-												new Consumer<Object>() {
+										BlueMedicationServiceHolder.getService().addPendingUploadResult(docHandle,
+												result.get());
+										BlueMedicationServiceHolder.getService().startPollForResult(docHandle,
+												result.get(), new Consumer<Object>() {
 													@Override
-													public void accept(Object object){
+													public void accept(Object object) {
 														Display.getDefault().asyncExec(() -> {
 															download(object);
 														});
@@ -84,29 +80,24 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 									List<Result<UploadResult>.msg> messages = result.getMessages();
 									if (messages != null && !messages.isEmpty()) {
 										String text = messages.get(0).getText();
-										if (StringUtils.isNotBlank(text)
-											&& text.startsWith("Error result code [")) {
-											String resultCode = text.substring(
-												text.indexOf('[') + 1,
-												text.indexOf(']'));
+										if (StringUtils.isNotBlank(text) && text.startsWith("Error result code [")) {
+											String resultCode = text.substring(text.indexOf('[') + 1,
+													text.indexOf(']'));
 											if (StringUtils.isNotBlank(resultCode)) {
 												if ("A6".equals(resultCode)) {
 													Display.getDefault().syncExec(() -> {
-														MessageDialog.openError(
-															Display.getDefault().getActiveShell(),
-															"BlueMedication",
-															"Der Medikationsabgleich kann in BlueMedication nicht durchgeführt werden.\n"
-																+ "Bitte melden Sie den Fehler A6 an help.bluemedication@bluecare.ch");
+														MessageDialog.openError(Display.getDefault().getActiveShell(),
+																"BlueMedication",
+																"Der Medikationsabgleich kann in BlueMedication nicht durchgeführt werden.\n"
+																		+ "Bitte melden Sie den Fehler A6 an help.bluemedication@bluecare.ch");
 													});
 												} else {
 													Display.getDefault().syncExec(() -> {
-														MessageDialog.openError(
-															Display.getDefault().getActiveShell(),
-															"BlueMedication",
-															"Beim Aufruf von BlueMedication ist ein technischer Fehler aufgetreten\n"
-																+ "Bitte melden Sie den Fehler "
-																+ resultCode
-																+ " an help.bluemedication@bluecare.ch");
+														MessageDialog.openError(Display.getDefault().getActiveShell(),
+																"BlueMedication",
+																"Beim Aufruf von BlueMedication ist ein technischer Fehler aufgetreten\n"
+																		+ "Bitte melden Sie den Fehler " + resultCode
+																		+ " an help.bluemedication@bluecare.ch");
 													});
 												}
 												return;
@@ -114,16 +105,15 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 										}
 									}
 									Display.getDefault().syncExec(() -> {
-										MessageDialog.openError(
-											Display.getDefault().getActiveShell(), "BlueMedication",
-											"Beim Hochladen der Datei ist ein Fehler aufgetreten.\n\nBitte HIN client Konfiguration prüfen.");
+										MessageDialog.openError(Display.getDefault().getActiveShell(), "BlueMedication",
+												"Beim Hochladen der Datei ist ein Fehler aufgetreten.\n\nBitte HIN client Konfiguration prüfen.");
 									});
 								}
 							}
 						});
 					} catch (InvocationTargetException | InterruptedException e) {
 						MessageDialog.openError(activeshell, "BlueMedication",
-							"BlueMedication Upload konnte nicht gestartet werden.");
+								"BlueMedication Upload konnte nicht gestartet werden.");
 						LoggerFactory.getLogger(getClass()).error("Error on upload", e);
 					}
 				}
@@ -131,30 +121,26 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 		}
 		return null;
 	}
-	
-	private void download(Object object){
-		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-			.getActiveWorkbenchWindow().getService(ICommandService.class);
-		
-		IEvaluationService evaluationService = (IEvaluationService) PlatformUI.getWorkbench()
-			.getActiveWorkbenchWindow().getService(IEvaluationService.class);
-		EvaluationContext context =
-			new EvaluationContext(evaluationService.getCurrentState(),
+
+	private void download(Object object) {
+		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getService(ICommandService.class);
+
+		IEvaluationService evaluationService = (IEvaluationService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getService(IEvaluationService.class);
+		EvaluationContext context = new EvaluationContext(evaluationService.getCurrentState(),
 				evaluationService.getCurrentState().getDefaultVariable());
 		context.addVariable("selection", new StructuredSelection(object));
-		Command downloadCommand =
-			commandService.getCommand("at.medevit.elexis.emediplan.ui.blueMedicationDownload");
+		Command downloadCommand = commandService.getCommand("at.medevit.elexis.emediplan.ui.blueMedicationDownload");
 
 		HashMap<String, String> params = new HashMap<String, String>();
-		ParameterizedCommand parametrizedCommmand =
-			ParameterizedCommand.generateCommand(downloadCommand, params);
+		ParameterizedCommand parametrizedCommmand = ParameterizedCommand.generateCommand(downloadCommand, params);
 		try {
-			PlatformUI.getWorkbench().getService(IHandlerService.class)
-				.executeCommandInContext(parametrizedCommmand, null, context);
-		} catch (NotDefinedException | NotEnabledException | NotHandledException
-				| ExecutionException e) {
+			PlatformUI.getWorkbench().getService(IHandlerService.class).executeCommandInContext(parametrizedCommmand,
+					null, context);
+		} catch (NotDefinedException | NotEnabledException | NotHandledException | ExecutionException e) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-				"Beim automatischen Download ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
+					"Beim automatischen Download ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
 		}
 	}
 }

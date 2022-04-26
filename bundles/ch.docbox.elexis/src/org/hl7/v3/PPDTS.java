@@ -9,10 +9,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for PPD_TS complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="PPD_TS">
  *   &lt;complexContent>
@@ -25,66 +26,60 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PPD_TS", propOrder = {
-	"standardDeviation"
-})
-@XmlSeeAlso({
-	IVXBPPDTS.class, SXCMPPDTS.class
-})
+@XmlType(name = "PPD_TS", propOrder = { "standardDeviation" })
+@XmlSeeAlso({ IVXBPPDTS.class, SXCMPPDTS.class })
 public class PPDTS extends TS {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	protected PQ standardDeviation;
 	@XmlAttribute
 	protected ProbabilityDistributionType distributionType;
-	
+
 	/**
 	 * Gets the value of the standardDeviation property.
-	 * 
+	 *
 	 * @return possible object is {@link PQ }
-	 * 
+	 *
 	 */
-	public PQ getStandardDeviation(){
+	public PQ getStandardDeviation() {
 		return standardDeviation;
 	}
-	
+
 	/**
 	 * Sets the value of the standardDeviation property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link PQ }
-	 * 
+	 *
+	 * @param value allowed object is {@link PQ }
+	 *
 	 */
-	public void setStandardDeviation(PQ value){
+	public void setStandardDeviation(PQ value) {
 		this.standardDeviation = value;
 	}
-	
+
 	/**
 	 * Gets the value of the distributionType property.
-	 * 
+	 *
 	 * @return possible object is {@link ProbabilityDistributionType }
-	 * 
+	 *
 	 */
-	public ProbabilityDistributionType getDistributionType(){
+	public ProbabilityDistributionType getDistributionType() {
 		return distributionType;
 	}
-	
+
 	/**
 	 * Sets the value of the distributionType property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link ProbabilityDistributionType }
-	 * 
+	 *
+	 * @param value allowed object is {@link ProbabilityDistributionType }
+	 *
 	 */
-	public void setDistributionType(ProbabilityDistributionType value){
+	public void setDistributionType(ProbabilityDistributionType value) {
 		this.distributionType = value;
 	}
-	
+
 }

@@ -32,19 +32,19 @@ import ch.elexis.data.Patient;
 import ch.elexis.labororder.lg1.messages.Messages;
 
 public class LabOrderAction extends Action {
-	
+
 	private Gson gson;
 	private String appkey;
-	
-	public LabOrderAction(){
+
+	public LabOrderAction() {
 		setId("ch.elexis.laborder.lg1.laborder"); //$NON-NLS-1$
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.labororder.lg1", //$NON-NLS-1$
-			"rsc/lg1_logo.png"));
+				"rsc/lg1_logo.png"));
 		setText(Messages.LabOrderAction_nameAction);
 	}
-	
+
 	@Override
-	public void run(){
+	public void run() {
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
 		if (patient != null) {
 			try {
@@ -52,13 +52,12 @@ public class LabOrderAction extends Action {
 			} catch (IOException e) {
 				LoggerFactory.getLogger(getClass()).error("Error contacting LG1 web service", e);
 				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-					"Es ist ein Fehler beim LG1 Aufruf aufgetreten.\n\n"
-						+ e.getLocalizedMessage());
+						"Es ist ein Fehler beim LG1 Aufruf aufgetreten.\n\n" + e.getLocalizedMessage());
 			}
 		}
 	}
-	
-	private void sendPostRequest(Patient patient) throws IOException{
+
+	private void sendPostRequest(Patient patient) throws IOException {
 		HttpClient httpclient = HttpClients.createDefault();
 		HttpPost httppost = new HttpPost("https://ms2.medapp.ch/rest/lg1/v1/call-medapp/");
 
@@ -68,26 +67,23 @@ public class LabOrderAction extends Action {
 		params.add(new BasicNameValuePair("service", "orderentry"));
 		params.add(new BasicNameValuePair("data", getData(patient)));
 		httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-		
-		//Execute and get the response.
+
+		// Execute and get the response.
 		HttpResponse response = httpclient.execute(httppost);
-		LoggerFactory.getLogger(getClass()).info("Got response code ["
-			+ response.getStatusLine().getStatusCode() + "] from [" + httppost.getURI().toString()
-			+ "]");
+		LoggerFactory.getLogger(getClass()).info("Got response code [" + response.getStatusLine().getStatusCode()
+				+ "] from [" + httppost.getURI().toString() + "]");
 		HttpEntity entity = response.getEntity();
 		if (entity != null) {
 			try (InputStream instream = entity.getContent()) {
 				String responseText = IOUtils.toString(instream, "UTF-8");
 				if (StringUtils.isNotBlank(responseText)) {
-					ResponseDialog dialog =
-						new ResponseDialog(responseText, Display.getDefault().getActiveShell());
+					ResponseDialog dialog = new ResponseDialog(responseText, Display.getDefault().getActiveShell());
 					dialog.open();
 				} else {
 					Header[] responseHeaders = response.getAllHeaders();
 					String location = "https://medapp.ch/";
 					for (Header header : responseHeaders) {
-						if (header.getName().equalsIgnoreCase("location")
-							&& header.getValue().startsWith("http")) {
+						if (header.getName().equalsIgnoreCase("location") && header.getValue().startsWith("http")) {
 							location = header.getValue();
 						}
 					}
@@ -96,9 +92,9 @@ public class LabOrderAction extends Action {
 			}
 		}
 	}
-	
-	private String getAppkey(){
-		if(appkey == null) {
+
+	private String getAppkey() {
+		if (appkey == null) {
 			try (InputStream input = getClass().getResourceAsStream("/rsc/config")) {
 				appkey = IOUtils.toString(input, "UTF-8");
 			} catch (IOException e) {
@@ -108,13 +104,13 @@ public class LabOrderAction extends Action {
 		}
 		return appkey;
 	}
-	
-	private String getData(Patient patient){
+
+	private String getData(Patient patient) {
 		if (gson == null) {
 			gson = new GsonBuilder().disableHtmlEscaping().create();
 		}
-		ch.elexis.labororder.lg1.order.model.Patient lg1Patient =
-			ch.elexis.labororder.lg1.order.model.Patient.of(patient);
+		ch.elexis.labororder.lg1.order.model.Patient lg1Patient = ch.elexis.labororder.lg1.order.model.Patient
+				.of(patient);
 		Map<String, ch.elexis.labororder.lg1.order.model.Patient> map = new HashMap<>();
 		map.put("patient", lg1Patient);
 		return gson.toJson(map);

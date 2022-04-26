@@ -9,15 +9,13 @@ import at.medevit.ch.artikelstamm.ATCCodeCacheService;
 @Component
 public class ATCCodeCacheServiceHolder {
 	private static ATCCodeCacheService atcCodeCacheService = null;
-	
+
 	@Reference
-	public void setATCCodeService(ATCCodeCacheService atcCodeCacheService){
+	public void setATCCodeService(ATCCodeCacheService atcCodeCacheService) {
 		ATCCodeCacheServiceHolder.atcCodeCacheService = atcCodeCacheService;
 	}
-	
-	public static int getAvailableArticlesByATCCode(ATCCode atcCode){
-		return atcCodeCacheService != null
-				? atcCodeCacheService.getAvailableArticlesByATCCode(atcCode)
-				: 0;
+
+	public static int getAvailableArticlesByATCCode(ATCCode atcCode) {
+		return atcCodeCacheService != null ? atcCodeCacheService.getAvailableArticlesByATCCode(atcCode) : 0;
 	}
 }

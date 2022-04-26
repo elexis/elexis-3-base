@@ -92,12 +92,12 @@ public class MedisBuilder {
 				tMedi.setStopGrund((short) 0);
 			}
 			tMedi.setMediDauer(getType(prescription.getEntryType()));
-			
+
 			String stopDateString = prescription.getEndDate();
 			if (stopDateString != null && !stopDateString.isEmpty()) {
 				tMedi.setEndDate(XmlUtil.getXmlGregorianCalendar(new TimeTool(stopDateString)));
 			}
-			
+
 			return tMedi;
 		}
 

@@ -30,28 +30,28 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.rgw.tools.Log;
 
 public class DirectoryWatcher implements FileAlterationListener {
-	
+
 	private List<File> directories;
 	private FileAlterationObserver observer;
 	private FileAlterationMonitor monitor;
 	private static DirectoryWatcher instance = null;
 	private Log logger = Log.get(DirectoryWatcher.class.getName());
 	private List<FileAlterationObserver> observers;
-	
-	private DirectoryWatcher(){
+
+	private DirectoryWatcher() {
 		observers = new LinkedList<FileAlterationObserver>();
 		directories = new LinkedList<File>();
 		monitor = new FileAlterationMonitor(2000);
 		monitor.addObserver(observer);
 	}
-	
-	public static DirectoryWatcher getInstance(){
+
+	public static DirectoryWatcher getInstance() {
 		if (instance == null)
 			instance = new DirectoryWatcher();
 		return instance;
 	}
-	
-	public void addDirectoryToWatch(File directory){
+
+	public void addDirectoryToWatch(File directory) {
 		if (directory.isDirectory()) {
 			logger.log("Adding directory: " + directory, Log.DEBUGMSG);
 			FileAlterationObserver observer = new FileAlterationObserver(directory);
@@ -65,29 +65,29 @@ public class DirectoryWatcher implements FileAlterationListener {
 			logger.log("Invalid directory entry passed: " + directory, Log.DEBUGMSG);
 		}
 	}
-	
-	public void watch(){
+
+	public void watch() {
 		logger.log("Watching " + observers.size() + " directories.", Log.DEBUGMSG);
-		
+
 		try {
 			monitor.start();
 		} catch (Exception e) {
 			logger.log(e.getMessage(), Log.INFOS);
 		}
-		
+
 		// Need to iterate through all registered directories
 		for (File directory : directories) {
 			LinkedList<File> files = (LinkedList<File>) FileUtils.listFiles(directory, null, false);
 			Collections.sort(files, new DateTimeAscending());
-			
+
 			for (Iterator<File> iterator = files.iterator(); iterator.hasNext();) {
 				File file = (File) iterator.next();
 				processFile(file);
 			}
 		}
 	}
-	
-	public void unwatch(){
+
+	public void unwatch() {
 		logger.log("Unwatching " + observers.size() + " directories.", Log.DEBUGMSG);
 		try {
 			monitor.stop();
@@ -95,20 +95,19 @@ public class DirectoryWatcher implements FileAlterationListener {
 			logger.log(e.getMessage(), Log.INFOS);
 		}
 	}
-	
+
 	@Override
-	public void onFileCreate(File file){
+	public void onFileCreate(File file) {
 		logger.log("Incoming file " + file, Log.DEBUGMSG);
 		processFile(file);
 	}
-	
-	private void processFile(File file){
+
+	private void processFile(File file) {
 		if (GDTFileHelper.containsSatzNachricht(file)) {
 			// TODO File may contain multiple independent GDT Messages, split!!
 			GDTFileInputHandler.handle(file);
 		} else {
-			if (CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_FILETRANSFER_DELETE_NON_GDT_FILES,
-				false)) {
+			if (CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_FILETRANSFER_DELETE_NON_GDT_FILES, false)) {
 				boolean success = file.delete();
 				if (success) {
 					logger.log("Deleted non GDT file " + file, Log.DEBUGMSG);
@@ -118,34 +117,42 @@ public class DirectoryWatcher implements FileAlterationListener {
 			}
 		}
 	}
-	
+
 	@Override
-	public void onFileChange(File arg0){}
-	
+	public void onFileChange(File arg0) {
+	}
+
 	@Override
-	public void onFileDelete(File arg0){}
-	
+	public void onFileDelete(File arg0) {
+	}
+
 	@Override
-	public void onDirectoryChange(File arg0){}
-	
+	public void onDirectoryChange(File arg0) {
+	}
+
 	@Override
-	public void onDirectoryCreate(File arg0){}
-	
+	public void onDirectoryCreate(File arg0) {
+	}
+
 	@Override
-	public void onDirectoryDelete(File arg0){}
-	
+	public void onDirectoryDelete(File arg0) {
+	}
+
 	@Override
-	public void onStart(FileAlterationObserver arg0){}
-	
+	public void onStart(FileAlterationObserver arg0) {
+	}
+
 	@Override
-	public void onStop(FileAlterationObserver arg0){}
-	
+	public void onStop(FileAlterationObserver arg0) {
+	}
+
 	/**
-	 * We need to order the files in ascending order according to their creation dateTime.
+	 * We need to order the files in ascending order according to their creation
+	 * dateTime.
 	 */
 	private final class DateTimeAscending implements Comparator<File> {
 		@Override
-		public int compare(File arg0, File arg1){
+		public int compare(File arg0, File arg1) {
 			if (FileUtils.isFileNewer(arg0, arg1))
 				return 1;
 			if (FileUtils.isFileOlder(arg1, arg0))

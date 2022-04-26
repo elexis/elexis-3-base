@@ -39,33 +39,31 @@ import ch.rgw.tools.TimeTool;
 
 public class ApplyVaccinationHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(ApplyVaccinationHandler.class);
-	
+
 	private static boolean inProgress = false;
 	private GenericObjectDropTarget dropTarget;
 	private static TimeTool doa;
 	private static IEncounter actEncounter;
 	private LeistungenView leistungenView;
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if (dropTarget == null) {
-			dropTarget =
-				new GenericObjectDropTarget("Impfplan", UiDesk.getTopShell(), new DropReceiver());
+			dropTarget = new GenericObjectDropTarget("Impfplan", UiDesk.getTopShell(), new DropReceiver());
 		}
-		
+
 		// open the LeistungenView
 		try {
 			if (StringTool.isNothing(LeistungenView.ID)) {
 				SWTHelper.alert("Fehler", "LeistungenView.ID");
 			}
-			
-			leistungenView =
-				(LeistungenView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-					.getActivePage().showView(LeistungenView.ID);
+
+			leistungenView = (LeistungenView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.showView(LeistungenView.ID);
 			CodeSelectorHandler csHandler = CodeSelectorHandler.getInstance();
 			csHandler.setCodeSelectorTarget(dropTarget);
 			csHandler.getCodeSelectorTarget().registered(false);
-			
+
 			for (CTabItem cti : leistungenView.ctab.getItems()) {
 				if (cti.getText().equalsIgnoreCase(ArtikelstammConstants.CODESYSTEM_NAME)) {
 					leistungenView.setSelected(cti);
@@ -78,16 +76,16 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 		}
 		return null;
 	}
-	
-	public static Date getKonsDate(){
+
+	public static Date getKonsDate() {
 		doa = new TimeTool(actEncounter.getDate());
 		return doa.getTime();
 	}
-	
-	public static boolean inProgress(){
+
+	public static boolean inProgress() {
 		return inProgress;
 	}
-	
+
 	/**
 	 * waits for dropps/double-clicks on vaccinations
 	 *
@@ -116,8 +114,8 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 				}
 			}
 		}
-		
-		public boolean accept(List<Object> list){
+
+		public boolean accept(List<Object> list) {
 			if (ContextServiceHolder.get().getActivePatient().isPresent()) {
 				for (Object object : list) {
 					if (object instanceof IArticle) {

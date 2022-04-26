@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 
 package ch.elexis.base.ch.diagnosecodes.views;
@@ -38,61 +38,58 @@ import ch.elexis.core.ui.util.viewers.ViewerConfigurer.ContentType;
 import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 
 public class ICDCodeSelectorFactory extends CodeSelectorFactory {
-	
+
 	private CommonViewer commonViewer;
-	
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		commonViewer = cv;
-		ViewerConfigurer vc = new ViewerConfigurer(new ICD10ContentProvider(commonViewer),
-			new LabelProvider() {
-				@Override
-				public String getText(Object element){
-					if (element instanceof IDiagnosisTree) {
-						return ((IDiagnosisTree) element).getLabel();
-					}
-					return super.getText(element);
+		ViewerConfigurer vc = new ViewerConfigurer(new ICD10ContentProvider(commonViewer), new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof IDiagnosisTree) {
+					return ((IDiagnosisTree) element).getLabel();
 				}
-			},
-			new DefaultControlFieldProvider(cv, new String[] {
-				"Code", "Text" //$NON-NLS-1$//$NON-NLS-2$
-			}), new ViewerConfigurer.DefaultButtonProvider(),
-			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
-			
+				return super.getText(element);
+			}
+		}, new DefaultControlFieldProvider(cv, new String[] { "Code", "Text" //$NON-NLS-1$//$NON-NLS-2$
+		}), new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
+
 		commonViewer.setNamedSelection("ch.elexis.base.ch.diagnosecodes.icd10.selection");
 		vc.setContentType(ContentType.GENERICOBJECT);
 		return vc;
 	}
-	
+
 	@Override
-	public Class getElementClass(){
+	public Class getElementClass() {
 		return IDiagnosisTree.class;
 	}
-	
+
 	@Override
-	public void dispose(){}
-	
+	public void dispose() {
+	}
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return "ICD-10"; //$NON-NLS-1$
 	}
-	
-	private class ICD10ContentProvider extends CommonViewerContentProvider
-			implements ITreeContentProvider {
-		
-		public ICD10ContentProvider(CommonViewer commonViewer){
+
+	private class ICD10ContentProvider extends CommonViewerContentProvider implements ITreeContentProvider {
+
+		public ICD10ContentProvider(CommonViewer commonViewer) {
 			super(commonViewer);
 			// initial order by
 			fieldOrderBy = "code";
 			fieldOrder = ORDER.ASC;
 		}
-		
+
 		@Override
-		protected IQuery<?> getBaseQuery(){
+		protected IQuery<?> getBaseQuery() {
 			return ICD10ModelServiceHolder.get().getQuery(IDiagnosisTree.class);
 		}
-		
+
 		@Override
-		public Object[] getElements(Object inputElement){
+		public Object[] getElements(Object inputElement) {
 			// CommonViewer inputElement can be ignored
 			List<IDiagnosisTree> roots = Collections.emptyList();
 			@SuppressWarnings("unchecked")
@@ -109,8 +106,7 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 				}
 				List<IDiagnosisTree> found = query.execute();
 				List<IDiagnosisTree> foundCopy = new ArrayList<>(found);
-				roots = found.parallelStream().filter(d -> shouldBeVisible(d, foundCopy))
-					.collect(Collectors.toList());
+				roots = found.parallelStream().filter(d -> shouldBeVisible(d, foundCopy)).collect(Collectors.toList());
 			} else {
 				query.startGroup();
 				query.or(ModelPackage.Literals.IDIAGNOSIS_TREE__PARENT, COMPARATOR.EQUALS, null);
@@ -123,8 +119,8 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 			}
 			return roots.toArray();
 		}
-		
-		private boolean hasActiveFilter(Map<String, String> fieldFilterValues){
+
+		private boolean hasActiveFilter(Map<String, String> fieldFilterValues) {
 			if (fieldFilterValues != null && !fieldFilterValues.isEmpty()) {
 				for (String key : fieldFilterValues.keySet()) {
 					String value = fieldFilterValues.get(key);
@@ -135,8 +131,8 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 			}
 			return false;
 		}
-		
-		private boolean shouldBeVisible(IDiagnosisTree diagnosis, List<IDiagnosisTree> foundCopy){
+
+		private boolean shouldBeVisible(IDiagnosisTree diagnosis, List<IDiagnosisTree> foundCopy) {
 			List<IDiagnosisTree> children = diagnosis.getChildren();
 			// leafs are always visible
 			if (children.isEmpty()) {
@@ -150,30 +146,30 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 			}
 			return false;
 		}
-		
+
 		@Override
-		public Object[] getChildren(Object parentElement){
+		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof IDiagnosisTree) {
 				return ((IDiagnosisTree) parentElement).getChildren().toArray();
 			}
 			return null;
 		}
-		
+
 		@Override
-		public Object getParent(Object element){
+		public Object getParent(Object element) {
 			if (element instanceof IDiagnosisTree) {
 				return ((IDiagnosisTree) element).getParent();
 			}
 			return null;
 		}
-		
+
 		@Override
-		public boolean hasChildren(Object element){
+		public boolean hasChildren(Object element) {
 			if (element instanceof IDiagnosisTree) {
 				return !((IDiagnosisTree) element).getChildren().isEmpty();
 			}
 			return false;
 		}
 	}
-	
+
 }

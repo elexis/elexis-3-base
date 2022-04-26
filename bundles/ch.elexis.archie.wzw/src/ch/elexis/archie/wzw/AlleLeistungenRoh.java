@@ -17,17 +17,15 @@ import ch.elexis.core.model.IPatient;
 public class AlleLeistungenRoh extends BaseStats {
 	static final String NAME = "Alle Leistungen roh";
 	static final String DESC = "Listet sämtliche Leistungen im gegebenen Zeitraum";
-	static final String[] HEADINGS = {
-		"Mandant", "Patient-ID", "Patient-Name", "Patient Geschlecht", "Patient Alter", "Datum",
-		"Gesetz", "Codesystem", "Code", "Text", "Anzahl", "Umsatz"
-	};
-	
-	public AlleLeistungenRoh(){
+	static final String[] HEADINGS = { "Mandant", "Patient-ID", "Patient-Name", "Patient Geschlecht", "Patient Alter",
+			"Datum", "Gesetz", "Codesystem", "Code", "Text", "Anzahl", "Umsatz" };
+
+	public AlleLeistungenRoh() {
 		super(NAME, DESC, HEADINGS);
 	}
-	
+
 	@Override
-	protected IStatus createContent(IProgressMonitor monitor){
+	protected IStatus createContent(IProgressMonitor monitor) {
 		List<Comparable<?>[]> lines = new ArrayList<Comparable<?>[]>(10000);
 		List<IEncounter> conses = getConses(monitor);
 		if (!conses.isEmpty()) {
@@ -44,16 +42,11 @@ public class AlleLeistungenRoh extends BaseStats {
 							for (IBilled v : k.getBilled()) {
 								IBillable vv = v.getBillable();
 								if (vv != null) {
-									String[] line = new String[] {
-										md, pat.getPatientNr(), pat.getLabel(),
-										pat.getGender().toString(),
-										Integer.toString(pat.getAgeInYears()),
-										k.getDate().toString(),
-										g == null ? "?" : g, vv.getCodeSystemName(),
-										vv.getCode() == null ? "?" : vv.getCode(), vv.getText(),
-										Double.toString(v.getAmount()),
-										Double.toString(v.getTotal().getAmount())
-									};
+									String[] line = new String[] { md, pat.getPatientNr(), pat.getLabel(),
+											pat.getGender().toString(), Integer.toString(pat.getAgeInYears()),
+											k.getDate().toString(), g == null ? "?" : g, vv.getCodeSystemName(),
+											vv.getCode() == null ? "?" : vv.getCode(), vv.getText(),
+											Double.toString(v.getAmount()), Double.toString(v.getTotal().getAmount()) };
 									lines.add(line);
 								} else {
 									System.out.println(v.getLabel());
@@ -66,13 +59,13 @@ public class AlleLeistungenRoh extends BaseStats {
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				
+
 			}
 		}
 		// Und an Archie übermitteln
 		this.dataSet.setContent(lines);
 		return Status.OK_STATUS;
-		
+
 	}
-	
+
 }

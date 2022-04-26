@@ -16,9 +16,9 @@ import ch.elexis.core.services.holder.CodeElementServiceHolder;
 
 @Component
 public class TarmedVerrechnebarAdjuster implements IBillableAdjuster {
-	
+
 	@Override
-	public IBillable adjust(IBillable billable, IEncounter encounter){
+	public IBillable adjust(IBillable billable, IEncounter encounter) {
 		if (billable instanceof ITarmedLeistung) {
 			ITarmedLeistung leistung = (ITarmedLeistung) billable;
 			String leistungLaw = leistung.getLaw();
@@ -26,13 +26,14 @@ public class TarmedVerrechnebarAdjuster implements IBillableAdjuster {
 			if (StringUtils.isNotEmpty(leistungLaw)) {
 				ICoverage coverage = encounter.getCoverage();
 				String law = coverage.getBillingSystem().getLaw().name();
-				
+
 				// law is not compatible for this leistung law look for compatible one
 				if (!leistungLaw.equalsIgnoreCase(law)) {
-					Optional<ICodeElementServiceContribution> tarmedCode = CodeElementServiceHolder
-						.get().getContribution(CodeElementTyp.SERVICE, "Tarmed");
-					billable = (IBillable) tarmedCode.get().loadFromCode(leistung.getCode(),
-						CodeElementServiceHolder.createContext(encounter)).orElse(null);
+					Optional<ICodeElementServiceContribution> tarmedCode = CodeElementServiceHolder.get()
+							.getContribution(CodeElementTyp.SERVICE, "Tarmed");
+					billable = (IBillable) tarmedCode.get()
+							.loadFromCode(leistung.getCode(), CodeElementServiceHolder.createContext(encounter))
+							.orElse(null);
 				}
 			}
 		}

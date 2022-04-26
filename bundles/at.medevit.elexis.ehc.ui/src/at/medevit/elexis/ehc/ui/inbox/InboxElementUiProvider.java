@@ -30,55 +30,53 @@ import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 
 public class InboxElementUiProvider implements IInboxElementUiProvider {
 	private static Logger logger = LoggerFactory.getLogger(InboxElementUiProvider.class);
-	
+
 	private EhcDocumentLabelProvider labelProvider;
 	private EhcDocumentViewerFilter filter;
-	
-	public InboxElementUiProvider(){
+
+	public InboxElementUiProvider() {
 		labelProvider = new EhcDocumentLabelProvider();
 		filter = new EhcDocumentViewerFilter();
 	}
-	
+
 	@Override
-	public ImageDescriptor getFilterImage(){
-		return ResourceManager
-			.getPluginImageDescriptor("at.medevit.elexis.ehc.ui", "icons/ehc.jpg");
+	public ImageDescriptor getFilterImage() {
+		return ResourceManager.getPluginImageDescriptor("at.medevit.elexis.ehc.ui", "icons/ehc.jpg");
 	}
-	
+
 	@Override
-	public ViewerFilter getFilter(){
+	public ViewerFilter getFilter() {
 		return filter;
 	}
-	
+
 	@Override
-	public LabelProvider getLabelProvider(){
+	public LabelProvider getLabelProvider() {
 		return labelProvider;
 	}
-	
+
 	@Override
-	public IColorProvider getColorProvider(){
+	public IColorProvider getColorProvider() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
-	public boolean isProviderFor(IInboxElement element){
+	public boolean isProviderFor(IInboxElement element) {
 		Object obj = element.getObject();
 		if (obj instanceof EhcDocument) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	@Override
-	public void doubleClicked(IInboxElement element){
+	public void doubleClicked(IInboxElement element) {
 		// open the ehc view and display the ehc document
 		Object obj = element.getObject();
 		if (obj instanceof EhcDocument) {
 			EhcDocument document = (EhcDocument) obj;
 			try {
-				EHealthConnectorView view =
-					(EHealthConnectorView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				EHealthConnectorView view = (EHealthConnectorView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 						.getActivePage().showView(EHealthConnectorView.ID);
 				view.displayReport(document.getLocation().openStream(), null);
 			} catch (PartInitException | IOException e) {

@@ -23,26 +23,27 @@ import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.common.params.CollectionParams;
 
 /**
- * This suggester produces a DELETENODE request using provided {@link org.apache.solr.client.solrj.cloud.autoscaling.Suggester.Hint#SRC_NODE}.
+ * This suggester produces a DELETENODE request using provided
+ * {@link org.apache.solr.client.solrj.cloud.autoscaling.Suggester.Hint#SRC_NODE}.
  */
 class DeleteNodeSuggester extends Suggester {
 
-  @Override
-  public CollectionParams.CollectionAction getAction() {
-    return CollectionParams.CollectionAction.DELETENODE;
-  }
+	@Override
+	public CollectionParams.CollectionAction getAction() {
+		return CollectionParams.CollectionAction.DELETENODE;
+	}
 
-  @Override
-  @SuppressWarnings({"rawtypes"})
-  SolrRequest init() {
-    @SuppressWarnings({"unchecked"})
-    Set<String> srcNodes = (Set<String>) hints.get(Hint.SRC_NODE);
-    if (srcNodes.isEmpty()) {
-      throw new RuntimeException("delete-node requires 'src_node' hint");
-    }
-    if (srcNodes.size() > 1) {
-      throw new RuntimeException("delete-node requires exactly one 'src_node' hint");
-    }
-    return CollectionAdminRequest.deleteNode(srcNodes.iterator().next());
-  }
+	@Override
+	@SuppressWarnings({ "rawtypes" })
+	SolrRequest init() {
+		@SuppressWarnings({ "unchecked" })
+		Set<String> srcNodes = (Set<String>) hints.get(Hint.SRC_NODE);
+		if (srcNodes.isEmpty()) {
+			throw new RuntimeException("delete-node requires 'src_node' hint");
+		}
+		if (srcNodes.size() > 1) {
+			throw new RuntimeException("delete-node requires exactly one 'src_node' hint");
+		}
+		return CollectionAdminRequest.deleteNode(srcNodes.iterator().next());
+	}
 }

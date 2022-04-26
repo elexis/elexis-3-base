@@ -9,10 +9,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for anonymous complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -27,16 +28,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-	"id", "msgTitle", "msgBody", "param"
-})
+@XmlType(name = "", propOrder = { "id", "msgTitle", "msgBody", "param" })
 @XmlRootElement(name = "deleteAgendaEntry")
 public class DeleteAgendaEntry {
-	
+
 	@XmlElement(required = true)
 	protected String id;
 	@XmlElement(required = true)
@@ -45,89 +44,85 @@ public class DeleteAgendaEntry {
 	protected String msgBody;
 	@XmlElement(required = true)
 	protected String param;
-	
+
 	/**
 	 * Gets the value of the id property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getId(){
+	public String getId() {
 		return id;
 	}
-	
+
 	/**
 	 * Sets the value of the id property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setId(String value){
+	public void setId(String value) {
 		this.id = value;
 	}
-	
+
 	/**
 	 * Gets the value of the msgTitle property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getMsgTitle(){
+	public String getMsgTitle() {
 		return msgTitle;
 	}
-	
+
 	/**
 	 * Sets the value of the msgTitle property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setMsgTitle(String value){
+	public void setMsgTitle(String value) {
 		this.msgTitle = value;
 	}
-	
+
 	/**
 	 * Gets the value of the msgBody property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getMsgBody(){
+	public String getMsgBody() {
 		return msgBody;
 	}
-	
+
 	/**
 	 * Sets the value of the msgBody property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setMsgBody(String value){
+	public void setMsgBody(String value) {
 		this.msgBody = value;
 	}
-	
+
 	/**
 	 * Gets the value of the param property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getParam(){
+	public String getParam() {
 		return param;
 	}
-	
+
 	/**
 	 * Sets the value of the param property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setParam(String value){
+	public void setParam(String value) {
 		this.param = value;
 	}
-	
+
 }

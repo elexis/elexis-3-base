@@ -77,10 +77,10 @@ public class ConsultationBuilder {
 	 * Consultations that where already exported, are not handled anymore - due to
 	 * this medications that were open at this time, and stopped in between are not
 	 * covered. We have to pick them up here
-	 * 
+	 *
 	 * @param config
 	 * @return
-	 * 
+	 *
 	 * @throws DatatypeConfigurationException
 	 */
 	public static Map<String, Set<TMedi>> initializeUnreferencedStopMedisPerPatient(FireConfig config)

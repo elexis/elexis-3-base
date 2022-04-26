@@ -32,7 +32,7 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 
 public class EZPrinter {
-	
+
 	public static class EZPrinterData {
 		Money amountTarmed;
 		Money amountDrug;
@@ -40,28 +40,28 @@ public class EZPrinter {
 		Money amountMigel;
 		Money amountPhysio;
 		Money amountUnclassified;
-		
+
 		Money due;
 		Money paid;
-		
+
 		String paymentMode;
-		
-		public EZPrinterData(){
+
+		public EZPrinterData() {
 			amountTarmed = new Money();
 			amountDrug = new Money();
 			amountLab = new Money();
 			amountMigel = new Money();
 			amountPhysio = new Money();
 			amountUnclassified = new Money();
-			
+
 			due = new Money();
 			paid = new Money();
-			
+
 			paymentMode = XMLExporter.TIERS_GARANT;
 		}
 	}
-	
-	private Kontakt getAddressee(String paymentMode, Fall fall, Patient patient){
+
+	private Kontakt getAddressee(String paymentMode, Fall fall, Patient patient) {
 		Kontakt addressee;
 		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			// TP
@@ -85,78 +85,71 @@ public class EZPrinter {
 		addressee.getPostAnschrift(true); // damit sicher eine existiert
 		return addressee;
 	}
-	
+
 	private String printer;
-	
-	public Brief doPrint(Rechnung rn, EZPrinterData ezData, TextContainer text, ESR esr,
-		IProgressMonitor monitor){
-		
+
+	public Brief doPrint(Rechnung rn, EZPrinterData ezData, TextContainer text, ESR esr, IProgressMonitor monitor) {
+
 		Money mEZDue = new Money(ezData.due);
 		mEZDue.addMoney(ezData.paid);
-		
+
 		Brief actBrief;
 		Fall fall = rn.getFall();
 		Patient pat = fall.getPatient();
 		Mandant mnd = rn.getMandant();
 		Rechnungssteller rs = mnd.getRechnungssteller();
 		Kontakt addressee = getAddressee(ezData.paymentMode, fall, pat);
-		
-		String tmpl = TT_TARMED_EZ; //$NON-NLS-1$
-		if ((rn.getStatus() == RnStatus.MAHNUNG_1)
-			|| (rn.getStatus() == RnStatus.MAHNUNG_1_GEDRUCKT)) {
+
+		String tmpl = TT_TARMED_EZ; // $NON-NLS-1$
+		if ((rn.getStatus() == RnStatus.MAHNUNG_1) || (rn.getStatus() == RnStatus.MAHNUNG_1_GEDRUCKT)) {
 			tmpl = TT_TARMED_M1;
-		} else if ((rn.getStatus() == RnStatus.MAHNUNG_2)
-			|| (rn.getStatus() == RnStatus.MAHNUNG_2_GEDRUCKT)) {
+		} else if ((rn.getStatus() == RnStatus.MAHNUNG_2) || (rn.getStatus() == RnStatus.MAHNUNG_2_GEDRUCKT)) {
 			tmpl = TT_TARMED_M2;
-		} else if ((rn.getStatus() == RnStatus.MAHNUNG_3)
-			|| (rn.getStatus() == RnStatus.MAHNUNG_3_GEDRUCKT)) {
+		} else if ((rn.getStatus() == RnStatus.MAHNUNG_3) || (rn.getStatus() == RnStatus.MAHNUNG_3_GEDRUCKT)) {
 			tmpl = TT_TARMED_M3;
 		}
-		actBrief =
-			XMLPrinterUtil.createBrief(tmpl, addressee, text);
-		
+		actBrief = XMLPrinterUtil.createBrief(tmpl, addressee, text);
+
 		List<Zahlung> extra = rn.getZahlungen();
 		Kontakt bank = Kontakt.load(rs.getInfoString(TarmedACL.getInstance().RNBANK));
 		final StringBuilder sb = new StringBuilder();
-		sb.append(Messages.RnPrintView_tarmedPoints)
-			.append(ezData.amountTarmed.getAmountAsString()).append(StringConstants.LF);
+		sb.append(Messages.RnPrintView_tarmedPoints).append(ezData.amountTarmed.getAmountAsString())
+				.append(StringConstants.LF);
 		sb.append(Messages.RnPrintView_medicaments).append(ezData.amountDrug.getAmountAsString())
-			.append(StringConstants.LF);
+				.append(StringConstants.LF);
 		sb.append(Messages.RnPrintView_labpoints).append(ezData.amountLab.getAmountAsString())
-			.append(StringConstants.LF);
+				.append(StringConstants.LF);
 		sb.append(Messages.RnPrintView_migelpoints).append(ezData.amountMigel.getAmountAsString())
-			.append(StringConstants.LF);
-		sb.append(Messages.RnPrintView_physiopoints)
-			.append(ezData.amountPhysio.getAmountAsString()).append(StringConstants.LF);
-		sb.append(Messages.RnPrintView_otherpoints)
-			.append(ezData.amountUnclassified.getAmountAsString()).append(StringConstants.LF);
-		
+				.append(StringConstants.LF);
+		sb.append(Messages.RnPrintView_physiopoints).append(ezData.amountPhysio.getAmountAsString())
+				.append(StringConstants.LF);
+		sb.append(Messages.RnPrintView_otherpoints).append(ezData.amountUnclassified.getAmountAsString())
+				.append(StringConstants.LF);
+
 		for (Zahlung z : extra) {
 			Money betrag = new Money(z.getBetrag()).multiply(-1.0);
 			if (!betrag.isNegative()) {
-				sb.append(z.getBemerkung())
-					.append(":\t").append(betrag.getAmountAsString()).append(StringConstants.LF); //$NON-NLS-1$ 
+				sb.append(z.getBemerkung()).append(":\t").append(betrag.getAmountAsString()).append(StringConstants.LF); //$NON-NLS-1$
 				mEZDue.addMoney(betrag);
 			}
 		}
-		sb.append("--------------------------------------").append(StringConstants.LF); //$NON-NLS-1$ 
-		
+		sb.append("--------------------------------------").append(StringConstants.LF); //$NON-NLS-1$
+
 		sb.append(Messages.RnPrintView_sum).append(mEZDue);
-		
+
 		if (!ezData.paid.isZero()) {
-			sb.append(Messages.RnPrintView_prepaid).append(ezData.paid.getAmountAsString())
-				.append(StringConstants.LF);
-			// sb.append("Noch zu zahlen:\t").append(xmlex.mDue.getAmountAsString()).append("\n");
+			sb.append(Messages.RnPrintView_prepaid).append(ezData.paid.getAmountAsString()).append(StringConstants.LF);
+			// sb.append("Noch zu
+			// zahlen:\t").append(xmlex.mDue.getAmountAsString()).append("\n");
 			sb.append(Messages.RnPrintView_topay)
-				.append(mEZDue.subtractMoney(ezData.paid).roundTo5().getAmountAsString())
-				.append(StringConstants.LF);
+					.append(mEZDue.subtractMoney(ezData.paid).roundTo5().getAmountAsString())
+					.append(StringConstants.LF);
 		}
-		
+
 		text.getPlugin().setFont("Serif", SWT.NORMAL, 9); //$NON-NLS-1$
 		text.replace("\\[Leistungen\\]", sb.toString());
-		
-		if (esr.printBESR(bank, addressee, rs,
-			mEZDue.roundTo5().getCentsAsString(), text) == false) {
+
+		if (esr.printBESR(bank, addressee, rs, mEZDue.roundTo5().getCentsAsString(), text) == false) {
 			return actBrief;
 		}
 		printer = CoreHub.localCfg.get("Drucker/A4ESR/Name", null); //$NON-NLS-1$
@@ -177,10 +170,10 @@ public class EZPrinter {
 			rn.addTrace(Rechnung.REJECTED, "Druckerfehler");
 			return actBrief;
 		}
-		
+
 		monitor.worked(2);
-		
+
 		return actBrief;
 	}
-	
+
 }

@@ -14,26 +14,26 @@ import ch.elexis.core.importer.div.importers.ILabItemResolver;
 import ch.elexis.hl7.model.AbstractData;
 import ch.novcom.elexis.mednet.plugin.data.PatientDocumentManager;
 
-public class MedNetLabItemResolver implements ILabItemResolver{
+public class MedNetLabItemResolver implements ILabItemResolver {
 	String institutionName = "";
-	
-	public MedNetLabItemResolver(String institution){
+
+	public MedNetLabItemResolver(String institution) {
 		this.institutionName = institution;
 	}
-	
+
 	@Override
-	public String getTestName(AbstractData data){
+	public String getTestName(AbstractData data) {
 		return data.getName();
 	}
-	
+
 	@Override
-	public String getTestGroupName(AbstractData data){
+	public String getTestGroupName(AbstractData data) {
 		return this.institutionName;
 	}
-	
+
 	@Override
-	public String getNextTestGroupSequence(AbstractData data){
+	public String getNextTestGroupSequence(AbstractData data) {
 		return PatientDocumentManager.DEFAULT_PRIO;
 	}
-	
+
 }

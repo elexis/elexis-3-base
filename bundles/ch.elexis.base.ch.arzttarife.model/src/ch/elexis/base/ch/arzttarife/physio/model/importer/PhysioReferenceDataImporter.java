@@ -29,20 +29,19 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.rgw.tools.TimeTool;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=physio")
-public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
-		implements IReferenceDataImporter {
-	
+public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
+
 	private LocalDate validFrom;
 	private LocalDate endOfEpoch = new TimeTool(TimeTool.END_OF_UNIX_EPOCH).toLocalDate();
-	
+
 	@Override
-	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion){
+	public IStatus performImport(IProgressMonitor monitor, InputStream input, Integer newVersion) {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		validFrom = getValidFromVersion(newVersion).toLocalDate();
-		
+
 		try {
 			CSVReader reader = new CSVReader(new InputStreamReader(input, "ISO-8859-1"), ';');
 			monitor.beginTask("Importiere Physio", 100);
@@ -55,7 +54,7 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 				updateOrCreateFromLine(line);
 			}
 			closeAllOlder();
-			
+
 			monitor.done();
 			return Status.OK_STATUS;
 		} catch (IOException uee) {
@@ -63,18 +62,17 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 			return Status.CANCEL_STATUS;
 		}
 	}
-	
+
 	/**
 	 * Convert version Integer in yymmdd format to date.
-	 * 
+	 *
 	 * @param newVersion
 	 * @return
 	 */
-	private TimeTool getValidFromVersion(Integer newVersion){
+	private TimeTool getValidFromVersion(Integer newVersion) {
 		String intString = Integer.toString(newVersion);
 		if (intString.length() != 6) {
-			throw new IllegalStateException(
-				"Version " + newVersion + " can not be parsed to valid date.");
+			throw new IllegalStateException("Version " + newVersion + " can not be parsed to valid date.");
 		}
 		String year = intString.substring(0, 2);
 		String month = intString.substring(2, 4);
@@ -85,12 +83,12 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 		ret.set(TimeTool.DAY_OF_MONTH, Integer.parseInt(day));
 		return ret;
 	}
-	
-	private void closeAllOlder(){
+
+	private void closeAllOlder() {
 		// get all entries
 		LocalDate defaultValidFrom = LocalDate.of(1970, 1, 1);
 		List<PhysioLeistung> entries = EntityUtil.loadAll(PhysioLeistung.class);
-		
+
 		for (PhysioLeistung physio : entries) {
 			LocalDate pValidFrom = physio.getValidFrom();
 			LocalDate pValidUntil = physio.getValidUntil();
@@ -110,10 +108,10 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 			}
 		}
 	}
-	
-	private void updateOrCreateFromLine(String[] line){
-		List<PhysioLeistung> entries = EntityUtil
-			.loadByNamedQuery(Collections.singletonMap("ziffer", line[0]), PhysioLeistung.class);
+
+	private void updateOrCreateFromLine(String[] line) {
+		List<PhysioLeistung> entries = EntityUtil.loadByNamedQuery(Collections.singletonMap("ziffer", line[0]),
+				PhysioLeistung.class);
 		List<PhysioLeistung> openEntries = new ArrayList<PhysioLeistung>();
 		// get open entries -> field FLD_GUELTIG_BIS not set
 		for (PhysioLeistung physio : entries) {
@@ -151,7 +149,7 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 					// close entry and create new entry
 					physio.setValidUntil(validFrom);
 					EntityUtil.save(Collections.singletonList(physio));
-					
+
 					PhysioLeistung newPhysio = new PhysioLeistung();
 					newPhysio.setZiffer(line[0]);
 					newPhysio.setTitel(line[1]);
@@ -166,8 +164,8 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 			}
 		}
 	}
-	
-	private void applyFixPrice(PhysioLeistung physio, String string){
+
+	private void applyFixPrice(PhysioLeistung physio, String string) {
 		physio.setTp(string);
 		StringBuilder sb = new StringBuilder();
 		String existingText = physio.getTitel();
@@ -177,14 +175,13 @@ public class PhysioReferenceDataImporter extends AbstractReferenceDataImporter
 		sb.append(PhysioLeistung.FIXEDPRICE);
 		physio.setTitel(sb.toString());
 	}
-	
-	private boolean lineHasFixPrice(String[] line){
-		return line.length > 3 && line[3] != null && !line[3].isEmpty()
-			&& Character.isDigit(line[3].charAt(0));
+
+	private boolean lineHasFixPrice(String[] line) {
+		return line.length > 3 && line[3] != null && !line[3].isEmpty() && Character.isDigit(line[3].charAt(0));
 	}
-	
+
 	@Override
-	public int getCurrentVersion(){
+	public int getCurrentVersion() {
 		IQuery<IPhysioLeistung> query = ArzttarifeModelServiceHolder.get().getQuery(IPhysioLeistung.class);
 		query.and("validFrom", COMPARATOR.NOT_EQUALS, null);
 		query.and("validUntil", COMPARATOR.EQUALS, null);

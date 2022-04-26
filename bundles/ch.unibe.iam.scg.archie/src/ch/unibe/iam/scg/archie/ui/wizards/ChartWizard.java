@@ -21,9 +21,9 @@ import ch.unibe.iam.scg.archie.model.ChartModel;
  * Main entry point for the chart wizard. Contains all the necessary chart
  * wizard pages for building a chart model.
  * </p>
- * 
+ *
  * $Id: ChartWizard.java 747 2009-07-23 09:14:53Z peschehimself $
- * 
+ *
  * @author Peter Siska
  * @author Dennis Schenk
  * @version $Rev: 747 $

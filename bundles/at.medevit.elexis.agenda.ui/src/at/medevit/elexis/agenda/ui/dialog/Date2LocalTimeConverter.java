@@ -8,24 +8,23 @@ import java.util.Date;
 import org.eclipse.core.databinding.conversion.IConverter;
 
 public class Date2LocalTimeConverter implements IConverter<Date, LocalTime> {
-	
+
 	@Override
-	public Object getFromType(){
+	public Object getFromType() {
 		return Date.class;
 	}
-	
+
 	@Override
-	public Object getToType(){
+	public Object getToType() {
 		return LocalTime.class;
 	}
-	
+
 	@Override
-	public LocalTime convert(Date fromObject){
+	public LocalTime convert(Date fromObject) {
 		if (fromObject != null) {
-			return LocalDateTime.ofInstant(fromObject.toInstant(), ZoneId.systemDefault())
-				.toLocalTime();
+			return LocalDateTime.ofInstant(fromObject.toInstant(), ZoneId.systemDefault()).toLocalTime();
 		}
 		return null;
 	}
-	
+
 }

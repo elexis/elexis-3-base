@@ -21,60 +21,58 @@ import ch.elexis.core.ui.views.codesystems.CodeSelectorFactory;
 public class LoincCodeSelectorFactory extends CodeSelectorFactory {
 	SelectorPanelProvider slp;
 	CommonViewer cv;
-	
+
 	private LoincTableContentProvider contentProvider;
-	
-	public LoincCodeSelectorFactory(){
-		
+
+	public LoincCodeSelectorFactory() {
+
 	}
-	
+
 	@Override
-	public SelectionDialog getSelectionDialog(Shell parent, Object data){
+	public SelectionDialog getSelectionDialog(Shell parent, Object data) {
 		return new LoincSelektor(parent, data);
 	}
-	
+
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		this.cv = cv;
 		this.contentProvider = new LoincTableContentProvider();
-		ViewerConfigurer vc =
-			new ViewerConfigurer(contentProvider, new LoincLabelProvider(),
-				new LoincCodeControlFieldProvider(cv),
-				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-					SimpleWidgetProvider.TYPE_TABLE, SWT.NONE, null));
-		
-		ElexisEventDispatcher.getInstance().addListeners(
-			new UpdateEventListener(cv, LoincCode.class, ElexisEvent.EVENT_RELOAD));
-		
+		ViewerConfigurer vc = new ViewerConfigurer(contentProvider, new LoincLabelProvider(),
+				new LoincCodeControlFieldProvider(cv), new ViewerConfigurer.DefaultButtonProvider(),
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE, SWT.NONE, null));
+
+		ElexisEventDispatcher.getInstance()
+				.addListeners(new UpdateEventListener(cv, LoincCode.class, ElexisEvent.EVENT_RELOAD));
+
 		return vc;
 	}
-	
+
 	@Override
-	public Class getElementClass(){
+	public Class getElementClass() {
 		return LoincCode.class;
 	}
-	
+
 	@Override
-	public void dispose(){
+	public void dispose() {
 		cv.dispose();
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return "LOINC"; //$NON-NLS-1$
 	}
-	
+
 	private class UpdateEventListener extends ElexisUiEventListenerImpl {
-		
+
 		CommonViewer viewer;
-		
-		UpdateEventListener(CommonViewer viewer, final Class<?> clazz, int mode){
+
+		UpdateEventListener(CommonViewer viewer, final Class<?> clazz, int mode) {
 			super(clazz, mode);
 			this.viewer = viewer;
 		}
-		
+
 		@Override
-		public void runInUi(ElexisEvent ev){
+		public void runInUi(ElexisEvent ev) {
 			contentProvider.changed(null);
 			viewer.notify(CommonViewer.Message.update);
 		}

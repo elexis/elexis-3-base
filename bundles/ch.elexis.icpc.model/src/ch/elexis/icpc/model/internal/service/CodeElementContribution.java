@@ -17,29 +17,27 @@ import ch.elexis.icpc.model.internal.Code;
 
 @Component
 public class CodeElementContribution implements ICodeElementServiceContribution {
-	
+
 	@Override
-	public String getSystem(){
+	public String getSystem() {
 		return Code.CODESYSTEM_NAME;
 	}
-	
+
 	@Override
-	public CodeElementTyp getTyp(){
+	public CodeElementTyp getTyp() {
 		return CodeElementTyp.DIAGNOSE;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context){
-		return (Optional<ICodeElement>) (Optional<?>) IcpcModelServiceHolder.get().load(code,
-			IcpcCode.class);
+	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
+		return (Optional<ICodeElement>) (Optional<?>) IcpcModelServiceHolder.get().load(code, IcpcCode.class);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ICodeElement> getElements(Map<Object, Object> context){
-		if (context.get(ContextKeys.TREE_ROOTS) != null
-			&& context.get(ContextKeys.TREE_ROOTS).equals(Boolean.TRUE)) {
+	public List<ICodeElement> getElements(Map<Object, Object> context) {
+		if (context.get(ContextKeys.TREE_ROOTS) != null && context.get(ContextKeys.TREE_ROOTS).equals(Boolean.TRUE)) {
 			return (List<ICodeElement>) (List<?>) Code.getRootCodes();
 		}
 		IQuery<IcpcCode> query = IcpcModelServiceHolder.get().getQuery(IcpcCode.class);

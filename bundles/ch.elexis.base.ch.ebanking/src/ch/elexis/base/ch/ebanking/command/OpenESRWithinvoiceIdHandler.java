@@ -13,12 +13,11 @@ import ch.elexis.base.ch.ebanking.esr.ESRRecordDialog;
 import ch.elexis.data.Query;
 
 public class OpenESRWithinvoiceIdHandler extends AbstractHandler {
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String invoiceId = event.getParameter("ch.elexis.ebanking_ch.command.openESR.InvoiceId");
-		String paymentDate =
-			event.getParameter("ch.elexis.ebanking_ch.command.openESR.PaymentDate");
+		String paymentDate = event.getParameter("ch.elexis.ebanking_ch.command.openESR.PaymentDate");
 		if (StringUtils.isNotBlank(invoiceId) && StringUtils.isNotBlank(paymentDate)) {
 			Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class);
 			qbe.add(ESRRecord.RECHNUNGS_ID, Query.EQUALS, invoiceId);
@@ -26,8 +25,7 @@ public class OpenESRWithinvoiceIdHandler extends AbstractHandler {
 			List<ESRRecord> esrRecords = qbe.execute();
 			if (!esrRecords.isEmpty()) {
 				for (ESRRecord esrRecord : esrRecords) {
-					ESRRecordDialog erd =
-						new ESRRecordDialog(Display.getDefault().getActiveShell(), esrRecord);
+					ESRRecordDialog erd = new ESRRecordDialog(Display.getDefault().getActiveShell(), esrRecord);
 					erd.open();
 				}
 			}

@@ -11,16 +11,17 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * 
+ *
  * A dimensioned quantity expressing the result of a measurement act.
- * 
- * 
+ *
+ *
  * <p>
  * Java class for PQ complex type.
- * 
+ *
  * <p>
- * The following schema fragment specifies the expected content contained within this class.
- * 
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="PQ">
  *   &lt;complexContent>
@@ -34,20 +35,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PQ", propOrder = {
-	"translation"
-})
-@XmlSeeAlso({
-	HXITPQ.class, IVXBPQ.class, SXCMPQ.class, PPDPQ.class
-})
+@XmlType(name = "PQ", propOrder = { "translation" })
+@XmlSeeAlso({ HXITPQ.class, IVXBPQ.class, SXCMPQ.class, PPDPQ.class })
 public class PQ extends QTY {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	protected List<PQR> translation;
@@ -56,79 +53,78 @@ public class PQ extends QTY {
 	@XmlAttribute
 	@XmlJavaTypeAdapter(CollapsedStringAdapter.class)
 	protected String unit;
-	
+
 	/**
 	 * Gets the value of the translation property.
-	 * 
+	 *
 	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the translation property.
-	 * 
+	 * This accessor method returns a reference to the live list, not a snapshot.
+	 * Therefore any modification you make to the returned list will be present
+	 * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
+	 * for the translation property.
+	 *
 	 * <p>
 	 * For example, to add a new item, do as follows:
-	 * 
+	 *
 	 * <pre>
 	 * getTranslation().add(newItem);
 	 * </pre>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link PQR }
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public List<PQR> getTranslation(){
+	public List<PQR> getTranslation() {
 		if (translation == null) {
 			translation = new ArrayList<PQR>();
 		}
 		return this.translation;
 	}
-	
+
 	/**
 	 * Gets the value of the value property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getValue(){
+	public String getValue() {
 		return value;
 	}
-	
+
 	/**
 	 * Sets the value of the value property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setValue(String value){
+	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	/**
 	 * Gets the value of the unit property.
-	 * 
+	 *
 	 * @return possible object is {@link String }
-	 * 
+	 *
 	 */
-	public String getUnit(){
+	public String getUnit() {
 		if (unit == null) {
 			return "1";
 		} else {
 			return unit;
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the unit property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
+	 *
+	 * @param value allowed object is {@link String }
+	 *
 	 */
-	public void setUnit(String value){
+	public void setUnit(String value) {
 		this.unit = value;
 	}
-	
+
 }

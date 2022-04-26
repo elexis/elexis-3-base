@@ -27,38 +27,36 @@ public final class ArticlesElement {
 	public static Element create(Document doc) throws Exception {
 		return create(doc, true);
 	}
-	
-	public static Element create(Document doc, IArticle a){
+
+	public static Element create(Document doc, IArticle a) {
 		ArticleData articleData = new ArticleData(a);
 		Element p = doc.createElement("Articles");
-		
+
 		Element article = doc.createElement("Article");
-		
+
 		Element name = doc.createElement("Name");
 		name.appendChild(doc.createTextNode(articleData.getName()));
 		article.appendChild(name);
-		
+
 		Element price = doc.createElement("Price");
 		price.appendChild(doc.createTextNode(articleData.getPrice()));
 		article.appendChild(price);
-		
+
 		Element delivery = doc.createElement("DeliveryDate");
 		delivery.appendChild(doc.createTextNode(articleData.getDeliveryDate()));
 		article.appendChild(delivery);
-		
+
 		p.appendChild(article);
-		
+
 		return p;
 	}
-	
-	public static Element create(Document doc, boolean includeMedication) throws Exception{
+
+	public static Element create(Document doc, boolean includeMedication) throws Exception {
 		ConsultationData cd = new ConsultationData();
 		List<ArticleData> articles = cd.load();
-		
+
 		if (!includeMedication) {
-			articles =
-				articles.stream().filter(ad -> !isMedication(ad, cd))
-					.collect(Collectors.toList());
+			articles = articles.stream().filter(ad -> !isMedication(ad, cd)).collect(Collectors.toList());
 		}
 
 		Element p = doc.createElement("Articles");
@@ -83,12 +81,12 @@ public final class ArticlesElement {
 
 		return p;
 	}
-	
-	private static boolean isMedication(ArticleData ad, ConsultationData cd){
+
+	private static boolean isMedication(ArticleData ad, ConsultationData cd) {
 		List<Prescription> medication = cd.getMedication();
 		if (!medication.isEmpty()) {
 			Optional<Prescription> found = medication.stream()
-				.filter(m -> ad.getArticle().getId().equals(m.getArtikel().getId())).findFirst();
+					.filter(m -> ad.getArticle().getId().equals(m.getArtikel().getId())).findFirst();
 			if (found.isPresent()) {
 				return true;
 			}

@@ -30,146 +30,146 @@ import static org.apache.solr.common.util.Utils.toJSONString;
  */
 public class ZkNodeProps implements JSONWriter.Writable {
 
-  protected final Map<String,Object> propMap;
+	protected final Map<String, Object> propMap;
 
-  /**
-   * Construct ZKNodeProps from map.
-   */
-  public ZkNodeProps(Map<String,Object> propMap) {
-    this.propMap = propMap;
-    // TODO: store an unmodifiable map, but in a way that guarantees not to wrap more than once.
-    // Always wrapping introduces a memory leak.
-  }
+	/**
+	 * Construct ZKNodeProps from map.
+	 */
+	public ZkNodeProps(Map<String, Object> propMap) {
+		this.propMap = propMap;
+		// TODO: store an unmodifiable map, but in a way that guarantees not to wrap
+		// more than once.
+		// Always wrapping introduces a memory leak.
+	}
 
-  public ZkNodeProps plus(String key , Object val) {
-    return plus(Collections.singletonMap(key,val));
-  }
+	public ZkNodeProps plus(String key, Object val) {
+		return plus(Collections.singletonMap(key, val));
+	}
 
-  public ZkNodeProps plus(Map<String, Object> newVals) {
-    LinkedHashMap<String, Object> copy = new LinkedHashMap<>(propMap);
-    if (newVals == null || newVals.isEmpty()) return new ZkNodeProps(copy);
-    copy.putAll(newVals);
-    return new ZkNodeProps(copy);
-  }
+	public ZkNodeProps plus(Map<String, Object> newVals) {
+		LinkedHashMap<String, Object> copy = new LinkedHashMap<>(propMap);
+		if (newVals == null || newVals.isEmpty())
+			return new ZkNodeProps(copy);
+		copy.putAll(newVals);
+		return new ZkNodeProps(copy);
+	}
 
+	/**
+	 * Constructor that populates the from array of Strings in form key1, value1,
+	 * key2, value2, ..., keyN, valueN
+	 */
+	public ZkNodeProps(String... keyVals) {
+		this(Utils.makeMap((Object[]) keyVals));
+	}
 
-  /**
-   * Constructor that populates the from array of Strings in form key1, value1,
-   * key2, value2, ..., keyN, valueN
-   */
-  public ZkNodeProps(String... keyVals) {
-    this( Utils.makeMap((Object[]) keyVals) );
-  }
+	public static ZkNodeProps fromKeyVals(Object... keyVals) {
+		return new ZkNodeProps(Utils.makeMap(keyVals));
+	}
 
-  public static ZkNodeProps fromKeyVals(Object... keyVals)  {
-    return new ZkNodeProps( Utils.makeMap(keyVals) );
-  }
+	/**
+	 * Get property keys.
+	 */
+	public Set<String> keySet() {
+		return propMap.keySet();
+	}
 
+	/**
+	 * Get all properties as map.
+	 */
+	public Map<String, Object> getProperties() {
+		return propMap;
+	}
 
-  /**
-   * Get property keys.
-   */
-  public Set<String> keySet() {
-    return propMap.keySet();
-  }
+	/** Returns a shallow writable copy of the properties */
+	public Map<String, Object> shallowCopy() {
+		return new LinkedHashMap<>(propMap);
+	}
 
-  /**
-   * Get all properties as map.
-   */
-  public Map<String, Object> getProperties() {
-    return propMap;
-  }
+	/**
+	 * Create Replica from json string that is typically stored in zookeeper.
+	 */
+	@SuppressWarnings({ "unchecked" })
+	public static ZkNodeProps load(byte[] bytes) {
+		Map<String, Object> props = null;
+		if (bytes[0] == 2) {
+			try (JavaBinCodec jbc = new JavaBinCodec()) {
+				props = (Map<String, Object>) jbc.unmarshal(bytes);
+			} catch (IOException e) {
+				throw new RuntimeException("Unable to parse javabin content");
+			}
+		} else {
+			props = (Map<String, Object>) Utils.fromJSON(bytes);
+		}
+		return new ZkNodeProps(props);
+	}
 
-  /** Returns a shallow writable copy of the properties */
-  public Map<String,Object> shallowCopy() {
-    return new LinkedHashMap<>(propMap);
-  }
+	@Override
+	public void write(JSONWriter jsonWriter) {
+		jsonWriter.write(propMap);
+	}
 
-  /**
-   * Create Replica from json string that is typically stored in zookeeper.
-   */
-  @SuppressWarnings({"unchecked"})
-  public static ZkNodeProps load(byte[] bytes) {
-    Map<String, Object> props = null;
-    if (bytes[0] == 2) {
-      try (JavaBinCodec jbc = new JavaBinCodec()) {
-        props = (Map<String, Object>) jbc.unmarshal(bytes);
-      } catch (IOException e) {
-        throw new RuntimeException("Unable to parse javabin content");
-      }
-    } else {
-      props = (Map<String, Object>) Utils.fromJSON(bytes);
-    }
-    return new ZkNodeProps(props);
-  }
+	/**
+	 * Get a string property value.
+	 */
+	public String getStr(String key) {
+		Object o = propMap.get(key);
+		return o == null ? null : o.toString();
+	}
 
-  @Override
-  public void write(JSONWriter jsonWriter) {
-    jsonWriter.write(propMap);
-  }
-  
-  /**
-   * Get a string property value.
-   */
-  public String getStr(String key) {
-    Object o = propMap.get(key);
-    return o == null ? null : o.toString();
-  }
+	/**
+	 * Get a string property value.
+	 */
+	public Integer getInt(String key, Integer def) {
+		Object o = propMap.get(key);
+		return o == null ? def : Integer.valueOf(o.toString());
+	}
 
-  /**
-   * Get a string property value.
-   */
-  public Integer getInt(String key, Integer def) {
-    Object o = propMap.get(key);
-    return o == null ? def : Integer.valueOf(o.toString());
-  }
+	/**
+	 * Get a string property value.
+	 */
+	public String getStr(String key, String def) {
+		Object o = propMap.get(key);
+		return o == null ? def : o.toString();
+	}
 
-  /**
-   * Get a string property value.
-   */
-  public String getStr(String key,String def) {
-    Object o = propMap.get(key);
-    return o == null ? def : o.toString();
-  }
+	public Object get(String key) {
+		return propMap.get(key);
+	}
 
-  public Object get(String key) {
-    return propMap.get(key);
-  }
+	@Override
+	public String toString() {
+		return toJSONString(this);
+		/***
+		 * StringBuilder sb = new StringBuilder(); Set<Entry<String,Object>> entries =
+		 * propMap.entrySet(); for(Entry<String,Object> entry : entries) {
+		 * sb.append(entry.getKey() + "=" + entry.getValue() + "\n"); } return
+		 * sb.toString();
+		 ***/
+	}
 
-  @Override
-  public String toString() {
-    return toJSONString(this);
-    /***
-    StringBuilder sb = new StringBuilder();
-    Set<Entry<String,Object>> entries = propMap.entrySet();
-    for(Entry<String,Object> entry : entries) {
-      sb.append(entry.getKey() + "=" + entry.getValue() + "\n");
-    }
-    return sb.toString();
-    ***/
-  }
+	/**
+	 * Check if property key exists.
+	 */
+	public boolean containsKey(String key) {
+		return propMap.containsKey(key);
+	}
 
-  /**
-   * Check if property key exists.
-   */
-  public boolean containsKey(String key) {
-    return propMap.containsKey(key);
-  }
+	public boolean getBool(String key, boolean b) {
+		Object o = propMap.get(key);
+		if (o == null)
+			return b;
+		if (o instanceof Boolean)
+			return (boolean) o;
+		return Boolean.parseBoolean(o.toString());
+	}
 
-  public boolean getBool(String key, boolean b) {
-    Object o = propMap.get(key);
-    if (o == null) return b;
-    if (o instanceof Boolean) return (boolean) o;
-    return Boolean.parseBoolean(o.toString());
-  }
+	@Override
+	public boolean equals(Object that) {
+		return that instanceof ZkNodeProps && ((ZkNodeProps) that).propMap.equals(this.propMap);
+	}
 
-  @Override
-  public boolean equals(Object that) {
-    return that instanceof ZkNodeProps && ((ZkNodeProps)that).propMap.equals(this.propMap);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(propMap);
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(propMap);
+	}
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
+ *
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -29,48 +29,48 @@ import ch.elexis.icpc.model.icpc.IcpcEncounter;
 public class EncounterView extends ViewPart {
 	public static final String ID = "ch.elexis.icpc.encounterView";
 	private EncounterDisplay display;
-	
+
 	@Inject
-	void activePatient(@Optional IPatient patient){
+	void activePatient(@Optional IPatient patient) {
 		if (display != null && !display.isDisposed()) {
 			Display.getDefault().asyncExec(() -> {
 				display.setEncounter(null);
 			});
 		}
 	}
-	
+
 	@Inject
-	void selectedEncounter(@Optional IcpcEncounter encounter){
+	void selectedEncounter(@Optional IcpcEncounter encounter) {
 		if (display != null && !display.isDisposed()) {
 			Display.getDefault().asyncExec(() -> {
 				display.setEncounter(encounter);
 			});
 		}
 	}
-	
-	public EncounterView(){
+
+	public EncounterView() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public void createPartControl(Composite parent){
+	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
 		display = new EncounterDisplay(parent);
 		display.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 	}
-	
+
 	@Override
-	public void setFocus(){
+	public void setFocus() {
 		display.setFocus();
 	}
-	
-	public void selectionEvent(PersistentObject obj){
+
+	public void selectionEvent(PersistentObject obj) {
 		if (obj instanceof IcpcEncounter) {
 			display.setEncounter((IcpcEncounter) obj);
 		} else if (obj instanceof Patient) {
 			display.setEncounter(null);
 		}
-		
+
 	}
-	
+
 }

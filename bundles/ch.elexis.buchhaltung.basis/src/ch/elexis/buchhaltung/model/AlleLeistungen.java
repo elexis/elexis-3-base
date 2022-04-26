@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Gerry Weirich - initial implementation
- *    
+ *
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 
@@ -44,28 +44,28 @@ import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
 
 public class AlleLeistungen extends AbstractTimeSeries {
 	private static final String NAME = Messages.AlleLeistungen_Title;
-	
+
 	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-	
+
 	private boolean hasUserId;
-	
-	public AlleLeistungen(){
+
+	public AlleLeistungen() {
 		super(NAME);
 		VersionInfo elexisVersion = new VersionInfo(CoreHub.Version);
 		hasUserId = !elexisVersion.isOlder("2.1.7"); //$NON-NLS-1$
 	}
-	
+
 	@Override
-	public String getDescription(){
+	public String getDescription() {
 		return Messages.AlleLeistungen_Description;
 	}
-	
+
 	@Override
-	protected List<String> createHeadings(){
+	protected List<String> createHeadings() {
 		List<String> ret = new ArrayList<String>();
 		ret.add(Messages.AlleLeistungen_InvoicingParty);
 		ret.add(Messages.AlleLeistungen_Mandator);
-		if (hasUserId) { //$NON-NLS-1$
+		if (hasUserId) { // $NON-NLS-1$
 			ret.add(Messages.AlleLeistungen_User);
 		}
 		ret.add(Messages.AlleLeistungen_Doctor);
@@ -91,15 +91,15 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		ret.add(Messages.AlleLeistungen_BillState);
 		return ret;
 	}
-	
+
 	@Override
-	protected IStatus createContent(IProgressMonitor monitor){
+	protected IStatus createContent(IProgressMonitor monitor) {
 		int total = 10000000;
 		IQuery<IEncounter> query = CoreModelServiceHolder.get().getQuery(IEncounter.class);
 		query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.GREATER_OR_EQUAL,
-			new TimeTool(this.getStartDate().getTimeInMillis()).toLocalDate());
+				new TimeTool(this.getStartDate().getTimeInMillis()).toLocalDate());
 		query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.LESS_OR_EQUAL,
-			new TimeTool(this.getEndDate().getTimeInMillis()).toLocalDate());
+				new TimeTool(this.getEndDate().getTimeInMillis()).toLocalDate());
 		monitor.beginTask(NAME, total);
 		monitor.subTask(Messages.FakturaJournal_DatabaseQuery);
 		List<IEncounter> consultations = query.execute();
@@ -117,15 +117,15 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		for (IEncounter cons : consultations) {
 			IPatient patient = cons.getPatient();
 			IMandator mandant = cons.getMandator();
-			
+
 			IInvoice consInvoice = cons.getInvoice();
 			InvoiceState consInvoiceState = cons.getInvoiceState();
 			String billState = (consInvoice != null ? "RG " + consInvoice.getNumber() + ": " : "")
-				+ consInvoiceState.getLocaleText();
+					+ consInvoiceState.getLocaleText();
 			if (consInvoiceState.numericValue() >= InvoiceState.FROM_TODAY.numericValue()
-				&& consInvoiceState.numericValue() <= InvoiceState.NOT_FROM_YOU.numericValue())
+					&& consInvoiceState.numericValue() <= InvoiceState.NOT_FROM_YOU.numericValue())
 				billState = Messages.AlleLeistungen_NoBill;
-			
+
 			List<IBilled> activities = cons.getBilled();
 			if (mandant != null && patient != null && activities != null && !activities.isEmpty()) {
 				for (IBilled verrechnet : activities) {
@@ -134,8 +134,8 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					int index = 0;
 					row[index++] = mandant.getBiller().getLabel();
 					row[index++] = mandant.getLabel();
-					
-					if (hasUserId) { //$NON-NLS-1$
+
+					if (hasUserId) { // $NON-NLS-1$
 						IContact user = verrechnet.getBiller();
 						if (user != null)
 							row[index++] = user.getLabel();
@@ -153,30 +153,24 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					row[index++] = patient.getZip();
 					row[index++] = patient.getCity();
 					row[index++] = verrechnet.getText();
-					
+
 					if (verrechenbar != null) {
 						try {
-							row[index++] =
-								verrechenbar.getCode() == null ? "?" : verrechenbar.getCode(); //$NON-NLS-1$
+							row[index++] = verrechenbar.getCode() == null ? "?" : verrechenbar.getCode(); //$NON-NLS-1$
 							if (verrechenbar instanceof ITarmedLeistung)
-								row[index++] =
-									Double.toString(((double) ((ITarmedLeistung) verrechenbar)
-										.getAL()) / 100);
+								row[index++] = Double
+										.toString(((double) ((ITarmedLeistung) verrechenbar).getAL()) / 100);
 							else
 								row[index++] = ""; //$NON-NLS-1$
 							if (verrechenbar instanceof ITarmedLeistung)
-								row[index++] =
-									Double.toString(
-										((double) ((ITarmedLeistung) verrechenbar)
-										.getTL()) / 100);
+								row[index++] = Double
+										.toString(((double) ((ITarmedLeistung) verrechenbar).getTL()) / 100);
 							else
 								row[index++] = ""; //$NON-NLS-1$
 						} catch (NoClassDefFoundError error) {
-							ElexisStatus status =
-								new ElexisStatus(ElexisStatus.ERROR,
-									"ch.elexis.buchhaltung.basis", //$NON-NLS-1$
-									ElexisStatus.CODE_NOFEEDBACK,
-									Messages.AlleLeistungen_TarmedMissing, ElexisStatus.LOG_FATALS);
+							ElexisStatus status = new ElexisStatus(ElexisStatus.ERROR, "ch.elexis.buchhaltung.basis", //$NON-NLS-1$
+									ElexisStatus.CODE_NOFEEDBACK, Messages.AlleLeistungen_TarmedMissing,
+									ElexisStatus.LOG_FATALS);
 							StatusManager.getManager().handle(status, StatusManager.SHOW);
 							return Status.CANCEL_STATUS;
 						}
@@ -190,13 +184,13 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					row[index++] = verrechnet.getFactor();
 					// include partial quantity info in secondary scale
 					row[index++] = verrechnet.getAmount();
-					row[index++] = verrechnet.getNetPrice(); //verrechnet.getKosten();
-					row[index++] = ""; //verrechnet.getEffPreis();
+					row[index++] = verrechnet.getNetPrice(); // verrechnet.getKosten();
+					row[index++] = ""; // verrechnet.getEffPreis();
 					row[index++] = verrechnet.getTotal().getAmount();
 					row[index++] = getVatScale(verrechnet);
-					
+
 					row[index++] = billState;
-					
+
 					if (monitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
 					}
@@ -205,37 +199,36 @@ public class AlleLeistungen extends AbstractTimeSeries {
 			}
 			monitor.worked(step);
 		}
-		
-		LoggerFactory.getLogger(AlleLeistungen.class)
-			.debug("calculation of konsultations size: " + consultations.size() + " took "
-			+ Long.valueOf((System.currentTimeMillis() - time) / 1000) + " seconds.");
-		
+
+		LoggerFactory.getLogger(AlleLeistungen.class).debug("calculation of konsultations size: " + consultations.size()
+				+ " took " + Long.valueOf((System.currentTimeMillis() - time) / 1000) + " seconds.");
+
 		// Set content.
 		this.dataSet.setContent(result);
-		
+
 		// Job finished successfully
 		monitor.done();
-		
+
 		return Status.OK_STATUS;
 	}
-	
-	private String getVatScale(IBilled verrechnet){
+
+	private String getVatScale(IBilled verrechnet) {
 		String scale = (String) verrechnet.getExtInfo(Verrechnet.VATSCALE);
 		if (scale != null)
 			return scale;
 		else
 			return "0.0"; //$NON-NLS-1$
 	}
-	
-	private int getVatInfoCode(IBilled verrechnet){
+
+	private int getVatInfoCode(IBilled verrechnet) {
 		String scale = getVatScale(verrechnet);
 		if (scale != null)
 			return guessVatCode(scale);
 		else
 			return 0;
 	}
-	
-	private int guessVatCode(String vatRate){
+
+	private int guessVatCode(String vatRate) {
 		if (vatRate != null && !vatRate.isEmpty()) {
 			double scale = Double.parseDouble(vatRate);
 			// make a guess for the correct code

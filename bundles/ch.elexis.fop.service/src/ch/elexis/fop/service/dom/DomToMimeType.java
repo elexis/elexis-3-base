@@ -37,59 +37,56 @@ import ch.elexis.fop.service.XSLTUtil;
 public class DomToMimeType {
 	private static Logger logger = LoggerFactory.getLogger(DomToMimeType.class);
 	private static DomToMimeType instance;
-	
-	private DomToMimeType(){
-		
+
+	private DomToMimeType() {
+
 	}
-	
-	public static DomToMimeType getInstance(){
+
+	public static DomToMimeType getInstance() {
 		if (instance == null)
 			instance = new DomToMimeType();
 		return instance;
 	}
-	
+
 	/**
 	 * Transform a given DOM Document object into a specific output object
-	 * 
-	 * @param jaxbObject
-	 *            a {@link JAXB} annotated element as source
-	 * @param xslt
-	 *            the XSLT stylesheet as {@link InputStream} element
-	 * @param outputStream
-	 *            the {@link OutputStream} to output to
-	 * @param outputFormat
-	 *            the requested output format {@link MimeConstants}
-	 * @param transformerParameters
-	 *            key/value parameters to be passed to the transformer, can be <code>null</code>
+	 *
+	 * @param jaxbObject            a {@link JAXB} annotated element as source
+	 * @param xslt                  the XSLT stylesheet as {@link InputStream}
+	 *                              element
+	 * @param outputStream          the {@link OutputStream} to output to
+	 * @param outputFormat          the requested output format
+	 *                              {@link MimeConstants}
+	 * @param transformerParameters key/value parameters to be passed to the
+	 *                              transformer, can be <code>null</code>
 	 */
-	public void transform(Object documentObject, InputStream xslt, OutputStream outputStream,
-		String outputFormat, Map<String, String> transformerParameters, URIResolver resolver){
+	public void transform(Object documentObject, InputStream xslt, OutputStream outputStream, String outputFormat,
+			Map<String, String> transformerParameters, URIResolver resolver) {
 		if (!(documentObject instanceof Document))
 			return;
 		FOUserAgent foUserAgent = FormattedOutputFactory.getFopFactory().newFOUserAgent();
 		// configure foUserAgent as desired
-		
+
 		// Setup output
 		try {
 			// Construct fop with desired output format
-			Fop fop = FormattedOutputFactory.getFopFactory().newFop(outputFormat, foUserAgent,
-				outputStream);
+			Fop fop = FormattedOutputFactory.getFopFactory().newFop(outputFormat, foUserAgent, outputStream);
 			// Setup XSLT
 			Transformer transformer = XSLTUtil.getTransformerForXSLT(xslt, resolver);
-			
+
 			if (transformerParameters != null && transformerParameters.keySet().size() > 0) {
 				for (String keyParameter : transformerParameters.keySet()) {
 					transformer.setParameter(keyParameter, transformerParameters.get(keyParameter));
 				}
 			}
-			
+
 			// Setup input for XSLT transformation
 			DOMSource src = new DOMSource((Document) documentObject);
-			
+
 			// Resulting SAX events (the generated FO) must be piped through to
 			// FOP
 			Result res = new SAXResult(fop.getDefaultHandler());
-			
+
 			// Start XSLT transformation and FOP processing
 			transformer.transform(src, res);
 		} catch (TransformerException e) {

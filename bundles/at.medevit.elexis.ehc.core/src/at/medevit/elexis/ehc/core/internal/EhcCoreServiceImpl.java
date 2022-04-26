@@ -48,25 +48,25 @@ import ch.elexis.data.Patient;
 
 @Component
 public class EhcCoreServiceImpl implements EhcCoreService {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(EhcCoreServiceImpl.class);
-	
-	public EhcCoreServiceImpl(){
+
+	public EhcCoreServiceImpl() {
 		// make sure CDACH is registered and initialized
 		ChFactory.eINSTANCE.createCdaChV1().init();
 	}
-	
+
 	@Override
-	public AbstractCdaChV1<?> createCdaChDocument(Patient patient, Mandant mandant){
+	public AbstractCdaChV1<?> createCdaChDocument(Patient patient, Mandant mandant) {
 		CdaChImpl ret = new CdaChImpl(ChFactory.eINSTANCE.createCdaChV1().init());
-		
+
 		ret.setPatient(EhcCoreMapper.getEhcPatient(patient));
 		ret.addAuthor(EhcCoreMapper.getEhcAuthor(mandant));
 		return ret;
 	}
-	
+
 	@Override
-	public ClinicalDocument loadDocument(InputStream document){
+	public ClinicalDocument loadDocument(InputStream document) {
 		try {
 			return CDAUtil.load(document);
 		} catch (Exception e) {
@@ -74,25 +74,25 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		}
 		return null;
 	}
-	
+
 	@Override
-	public AbstractCdaChV1<?> getAsCdaChDocument(ClinicalDocument clinicalDocument){
+	public AbstractCdaChV1<?> getAsCdaChDocument(ClinicalDocument clinicalDocument) {
 		if (clinicalDocument instanceof ClinicalDocument) {
 			return new CdaChImpl(clinicalDocument);
 		}
 		return null;
 	}
-	
+
 	@Override
-	public Patient getOrCreatePatient(org.ehealth_connector.common.mdht.Patient ehcPatient){
+	public Patient getOrCreatePatient(org.ehealth_connector.common.mdht.Patient ehcPatient) {
 		Patient patient = EhcCoreMapper.getElexisPatient(ehcPatient);
 		EhcCoreMapper.importEhcAddress(patient, ehcPatient.getAddress());
 		EhcCoreMapper.importEhcPhone(patient, ehcPatient.getTelecoms());
 		return patient;
 	}
-	
+
 	@Override
-	public InputStream getXdmAsStream(ClinicalDocument document) throws Exception{
+	public InputStream getXdmAsStream(ClinicalDocument document) throws Exception {
 		ConvenienceCommunication conCom = new ConvenienceCommunication();
 		ByteArrayOutputStream outputStream = null;
 		// write document and create an InputStream
@@ -106,8 +106,8 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		conCom.createXdmContents(outputStream);
 		return new ByteArrayInputStream(outputStream.toByteArray());
 	}
-	
-	private org.ehealth_connector.common.mdht.Patient getPatient(ClinicalDocument document){
+
+	private org.ehealth_connector.common.mdht.Patient getPatient(ClinicalDocument document) {
 		EList<RecordTarget> targets = document.getRecordTargets();
 		if (targets != null && !targets.isEmpty()) {
 			if (targets.size() > 1) {
@@ -115,12 +115,11 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 			}
 			return new org.ehealth_connector.common.mdht.Patient(EcoreUtil.copy(targets.get(0)));
 		}
-		throw new IllegalStateException(
-			"Document " + document.getTitle() + " has no record target");
+		throw new IllegalStateException("Document " + document.getTitle() + " has no record target");
 	}
-	
+
 	@Override
-	public List<ClinicalDocument> getXdmDocuments(File file){
+	public List<ClinicalDocument> getXdmDocuments(File file) {
 		List<ClinicalDocument> ret = null;
 		ConvenienceCommunication conCom = new ConvenienceCommunication();
 		XdmContents contents = conCom.getXdmContents(file.getAbsolutePath());
@@ -137,18 +136,17 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 							ret.add(clinicalDocument);
 						}
 					} catch (Exception e) {
-						logger
-							.error("Could not load document " + xdsDocument.getNewDocumentUniqueId()
-								+ " from xdm " + file.getAbsolutePath());
+						logger.error("Could not load document " + xdsDocument.getNewDocumentUniqueId() + " from xdm "
+								+ file.getAbsolutePath());
 					}
 				}
 			}
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public List<org.ehealth_connector.common.mdht.Patient> getXdmPatients(File file){
+	public List<org.ehealth_connector.common.mdht.Patient> getXdmPatients(File file) {
 		List<org.ehealth_connector.common.mdht.Patient> ret = null;
 		ConvenienceCommunication conCom = new ConvenienceCommunication();
 		XdmContents contents = conCom.getXdmContents(file.getAbsolutePath());
@@ -161,14 +159,12 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		}
 		return ret;
 	}
-	
+
 	@Override
-	public String createXdmContainer(Patient patient, Mandant mandant, List<File> attachments,
-		String xdmPath){
+	public String createXdmContainer(Patient patient, Mandant mandant, List<File> attachments, String xdmPath) {
 		if (patient != null && mandant != null && attachments != null && xdmPath != null) {
 			ConvenienceCommunication conCom = new ConvenienceCommunication();
-			org.ehealth_connector.common.mdht.Patient ehealthPatient =
-				EhcCoreMapper.getEhcPatient(patient);
+			org.ehealth_connector.common.mdht.Patient ehealthPatient = EhcCoreMapper.getEhcPatient(patient);
 			System.out.println(ehealthPatient.getIds());
 			StringBuilder retInfo = new StringBuilder();
 			retInfo.append(xdmPath);
@@ -186,11 +182,10 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 						} else if (attachmentPath.toLowerCase().endsWith("pdf")) {
 							dc = DocumentDescriptor.PDF;
 						} else {
-							dc = new DocumentDescriptor(
-								FilenameUtils.getExtension(attachmentPath),
-								Files.probeContentType(f.toPath()));
+							dc = new DocumentDescriptor(FilenameUtils.getExtension(attachmentPath),
+									Files.probeContentType(f.toPath()));
 						}
-						
+
 						FileInputStream in = FileUtils.openInputStream(f);
 						DocumentMetadata metaData = conCom.addDocument(dc, in);
 						metaData.setPatient(ehealthPatient);
@@ -200,16 +195,16 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 						IOUtils.closeQuietly(in);
 						retInfo.append(":::");
 						retInfo.append(attachmentPath);
-						
+
 					} else {
-						LoggerFactory.getLogger(EhcCoreService.class)
-							.warn("creating xdm - patient [{}] - file does not exists [{}]",
-								patient.getId(), f.getAbsolutePath());
+						LoggerFactory.getLogger(EhcCoreService.class).warn(
+								"creating xdm - patient [{}] - file does not exists [{}]", patient.getId(),
+								f.getAbsolutePath());
 					}
 				} catch (IOException e) {
 					LoggerFactory.getLogger(EhcCoreService.class).error(
-						"creating xdm - patient [{}] - cannot add file [{}]", patient.getId(),
-						f.getAbsolutePath(), e);
+							"creating xdm - patient [{}] - cannot add file [{}]", patient.getId(), f.getAbsolutePath(),
+							e);
 				}
 			}
 			try {
@@ -218,15 +213,15 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 					return retInfo.toString();
 				}
 			} catch (Exception e) {
-				LoggerFactory.getLogger(EhcCoreService.class).error(
-					"creating xdm - patient [{}] - cannot create xdm contents", patient.getId(), e);
+				LoggerFactory.getLogger(EhcCoreService.class)
+						.error("creating xdm - patient [{}] - cannot create xdm contents", patient.getId(), e);
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
-	public boolean isCdaDocument(File file){
+	public boolean isCdaDocument(File file) {
 		if (file != null) {
 			try {
 				FileInputStream in = FileUtils.openInputStream(file);

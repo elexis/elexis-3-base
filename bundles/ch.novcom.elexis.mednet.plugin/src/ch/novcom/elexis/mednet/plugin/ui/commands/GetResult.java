@@ -30,40 +30,36 @@ public class GetResult extends AbstractHandler {
 	 * Logger used to log all activities of the module
 	 */
 	private final static Logger LOGGER = LoggerFactory.getLogger(GetResult.class.getName());
-	
 
 	public static final String ID = "ch.novcom.elexis.mednet.plugin.ui.commands.getresult";//$NON-NLS-1$
-	
+
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException{
-		
-		ProgressMonitorDialog progress =
-			new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
-		
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+
+		ProgressMonitorDialog progress = new ProgressMonitorDialog(HandlerUtil.getActiveShell(event));
+
 		try {
 			progress.run(true, false, new IRunnableWithProgress() {
 
 				@Override
-				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException{
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 					DocumentImporterPage dip = new DocumentImporterPage();
 					try {
 						dip.doImport(monitor);
 					} catch (Exception e) {
-						LOGGER.error("execute() - "+"Exception calling doImport",e);//$NON-NLS-1$
+						LOGGER.error("execute() - " + "Exception calling doImport", e);//$NON-NLS-1$
 					}
-			
+
 				}
 			});
 
 		} catch (InvocationTargetException | InterruptedException e) {
 			MessageDialog.openError(HandlerUtil.getActiveShell(event), "Fehler",
-				"Fehler beim PDF erzeugen.\n" + e.getMessage());
+					"Fehler beim PDF erzeugen.\n" + e.getMessage());
 		}
-		
+
 		return null;
 	}
-	
 
 }

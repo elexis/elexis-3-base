@@ -7,9 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
  *
- *    
+ *
+ *
  *******************************************************************************/
 package elexis_db_shaker.actions;
 
@@ -41,45 +41,48 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionedResource;
 
 /**
- * Our sample action implements workbench action delegate. The action proxy will be created by the
- * workbench and shown in the UI. When the user tries to use the action, this delegate will be
- * created and execution will be delegated to it.
- * 
+ * Our sample action implements workbench action delegate. The action proxy will
+ * be created by the workbench and shown in the UI. When the user tries to use
+ * the action, this delegate will be created and execution will be delegated to
+ * it.
+ *
  * @see IWorkbenchWindowActionDelegate
  */
 public class Shake implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
 	boolean zufallsnamen;
 	int TOTAL = Integer.MAX_VALUE;
-	
+
 	/**
 	 * The constructor.
 	 */
-	public Shake(){}
-	
+	public Shake() {
+	}
+
 	/**
-	 * The action has been activated. The argument of the method represents the 'real' action
-	 * sitting in the workbench UI.
-	 * 
+	 * The action has been activated. The argument of the method represents the
+	 * 'real' action sitting in the workbench UI.
+	 *
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
-	public void run(IAction action){
-		if(!CoreHub.acl.request(DBShakerACL.EXEC_DBSHAKER)) {
-			MessageDialog.openInformation(UiDesk.getTopShell(), "Insufficient rights", "Insufficient rights to execute.");
+	public void run(IAction action) {
+		if (!CoreHub.acl.request(DBShakerACL.EXEC_DBSHAKER)) {
+			MessageDialog.openInformation(UiDesk.getTopShell(), "Insufficient rights",
+					"Insufficient rights to execute.");
 			return;
-		};
-		
+		}
+		;
+
 		final SettingsDialog sd = new SettingsDialog(window.getShell());
 		if (sd.open() == Dialog.OK) {
-			if (SWTHelper
-				.askYesNo("Wirklich Datenbank anonymisieren",
+			if (SWTHelper.askYesNo("Wirklich Datenbank anonymisieren",
 					"Achtung! Diese Aktion macht die Datenbank unwiderruflich unbrauchbar! Wirklich anonymisieren?")) {
 				zufallsnamen = sd.replaceNames;
 				IWorkbench wb = PlatformUI.getWorkbench();
 				IProgressService ps = wb.getProgressService();
 				try {
 					ps.busyCursorWhile(new IRunnableWithProgress() {
-						public void run(IProgressMonitor pm){
+						public void run(IProgressMonitor pm) {
 							pm.beginTask("Anonymisiere Datenbank", TOTAL);
 							int jobs = 1;
 							if (sd.replaceKons) {
@@ -114,8 +117,8 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 			}
 		}
 	}
-	
-	private void doPurgeDB(IProgressMonitor monitor, int workUnits){
+
+	private void doPurgeDB(IProgressMonitor monitor, int workUnits) {
 		monitor.subTask("Bereinige Datenbank");
 		JdbcLink j = PersistentObject.getConnection();
 		j.exec("DELETE FROM kontakt where deleted='1'");
@@ -140,8 +143,8 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 		j.exec("DELETE FROM CH_ELEXIS_OMNIVORE_DATA where deleted='1'");
 		monitor.worked(workUnits);
 	}
-	
-	private void doShakeKons(IProgressMonitor monitor, int workUnits){
+
+	private void doShakeKons(IProgressMonitor monitor, int workUnits) {
 		try {
 			monitor.subTask("Anonymisiere Konsultationen");
 			Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
@@ -168,8 +171,8 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 			SWTHelper.showError("Fehler", e.getMessage());
 		}
 	}
-	
-	private void doShakeNames(IProgressMonitor monitor, int workUnits){
+
+	private void doShakeNames(IProgressMonitor monitor, int workUnits) {
 		monitor.subTask("Anonymisiere Patienten und Kontakte");
 		Query<Kontakt> qbe = new Query<Kontakt>(Kontakt.class);
 		List<Kontakt> list = qbe.execute();
@@ -181,20 +184,20 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 			// Mandanten behalten
 			// if(k.get(Kontakt.FLD_IS_MANDATOR).equalsIgnoreCase(StringConstants.ONE))
 			// continue;
-			
+
 			if (zufallsnamen) {
 				k.set("Bezeichnung1", n.getRandomNachname());
 			} else {
 				k.set("Bezeichnung1", getWord());
 			}
-			
+
 			if (zufallsnamen) {
 				vorname = n.getRandomVorname();
 			} else {
 				vorname = getWord();
 			}
 			k.set("Bezeichnung2", vorname);
-			
+
 			if (k.istPerson()) {
 				Person p = Person.load(k.getId());
 				p.set(Person.SEX, StringTool.isFemale(vorname) ? Person.FEMALE : Person.MALE);
@@ -214,8 +217,8 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 			monitor.worked(workPerName);
 		}
 	}
-	
-	private String getPhone(){
+
+	private String getPhone() {
 		StringBuilder ret = new StringBuilder();
 		ret.append("555-");
 		for (int i = 0; i < 7; i++) {
@@ -223,8 +226,8 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 		}
 		return ret.toString();
 	}
-	
-	private String getWord(){
+
+	private String getWord() {
 		int l = (int) Math.round(Math.random() * 5 + 5);
 		StringBuilder ret = new StringBuilder();
 		ret.append(Character.toUpperCase(getLetter()));
@@ -233,33 +236,37 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 		}
 		return ret.toString();
 	}
-	
-	private char getLetter(){
+
+	private char getLetter() {
 		return (char) Math.round(Math.random() * ('z' - 'a') + 'a');
 	}
-	
+
 	/**
-	 * Selection in the workbench has been changed. We can change the state of the 'real' action
-	 * here if we want, but this can only happen after the delegate has been created.
-	 * 
+	 * Selection in the workbench has been changed. We can change the state of the
+	 * 'real' action here if we want, but this can only happen after the delegate
+	 * has been created.
+	 *
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
-	public void selectionChanged(IAction action, ISelection selection){}
-	
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
+
 	/**
-	 * We can use this method to dispose of any system resources we previously allocated.
-	 * 
+	 * We can use this method to dispose of any system resources we previously
+	 * allocated.
+	 *
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
-	public void dispose(){}
-	
+	public void dispose() {
+	}
+
 	/**
-	 * We will cache window object in order to be able to provide parent shell for the message
-	 * dialog.
-	 * 
+	 * We will cache window object in order to be able to provide parent shell for
+	 * the message dialog.
+	 *
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
-	public void init(IWorkbenchWindow window){
+	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}
 }

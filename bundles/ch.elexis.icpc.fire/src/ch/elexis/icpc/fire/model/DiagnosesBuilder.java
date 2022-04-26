@@ -18,23 +18,22 @@ public class DiagnosesBuilder {
 
 	private Konsultation consultation;
 	private FireConfig config;
-	
-	public DiagnosesBuilder(FireConfig config){
+
+	public DiagnosesBuilder(FireConfig config) {
 		this.config = config;
 	}
-	
-	public DiagnosesBuilder consultation(Konsultation consultation){
+
+	public DiagnosesBuilder consultation(Konsultation consultation) {
 		this.consultation = consultation;
 		return this;
 	}
-	
-	public Optional<Diagnoses> build(){
-		IEncounter encounter =
-			CoreModelServiceHolder.get().load(consultation.getId(), IEncounter.class).orElse(null);
+
+	public Optional<Diagnoses> build() {
+		IEncounter encounter = CoreModelServiceHolder.get().load(consultation.getId(), IEncounter.class).orElse(null);
 		IQuery<IcpcEncounter> query = IcpcModelServiceHolder.get().getQuery(IcpcEncounter.class);
 		query.and(IcpcPackage.Literals.ICPC_ENCOUNTER__ENCOUNTER, COMPARATOR.EQUALS, encounter);
 		List<IcpcEncounter> icpcEncounters = query.execute();
-		
+
 		if (!icpcEncounters.isEmpty()) {
 			Diagnoses ret = config.getFactory().createTConsultationDiagnoses();
 			for (IcpcEncounter enc : icpcEncounters) {
@@ -45,10 +44,9 @@ public class DiagnosesBuilder {
 					tDiag.setDescription(diag.getText());
 					ret.getDiagnose().add(tDiag);
 				}
-				
+
 				IcpcCode reason = enc.getRfe();
-				if (reason != null)
-				{
+				if (reason != null) {
 					TDiagnose tReason = config.getFactory().createTDiagnose();
 					tReason.setIcpc(reason.getCode());
 					tReason.setDescription(reason.getText());
@@ -58,9 +56,9 @@ public class DiagnosesBuilder {
 			if (!ret.getDiagnose().isEmpty()) {
 				return Optional.of(ret);
 			}
-			
+
 		}
 		return Optional.empty();
 	}
-	
+
 }

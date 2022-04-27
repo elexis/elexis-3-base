@@ -46,6 +46,7 @@ import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.ICustomService;
 import ch.elexis.core.model.IDiagnosisReference;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IEncounter;
@@ -63,6 +64,8 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
+import ch.elexis.core.types.ArticleSubTyp;
+import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.core.types.Country;
 import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.tarmedprefs.TarmedRequirements;
@@ -751,7 +754,7 @@ public class Tarmed45Exporter {
 								&& "311".equals(billable.getCodeSystemCode())) {
 							serviceType.setTariffType("312");
 						}
-						serviceType.setCode(billable.getCode());
+						serviceType.setCode(getServiceCode(billed));
 						serviceType.setQuantity(billed.getAmount());
 						serviceType.setRecordId(recordNumber++);
 						serviceType.setSession(session);
@@ -770,6 +773,12 @@ public class Tarmed45Exporter {
 						serviceType.setResponsibleId(XMLExporterUtil.getResponsibleEAN(encounter));
 						serviceType.setObligation(getObligation(billed, billable));
 
+						// all 406 will have code 2000
+						if ("406".equals(billable.getCodeSystemCode()) && !isCovid(billable)) {
+							serviceType.setCode("2000");
+							serviceType.setName(serviceType.getName() + " [" + getServiceCode(billed) + "]");
+						}
+						
 						servicesType.getServiceExOrService().add(serviceType);
 					}
 				}
@@ -798,6 +807,26 @@ public class Tarmed45Exporter {
 		}
 
 		return servicesType;
+	}
+
+	private String getServiceCode(IBilled billed) {
+		String ret = billed.getCode();
+		IBillable billable = billed.getBillable();
+		if (billable instanceof ICustomService || (billable instanceof IArticle
+				&& ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL)) {
+			if (billable.getId().equals(ret)) {
+				ret = "";
+			}
+		}
+		return ret;
+	}
+
+	private boolean isCovid(IBillable billable) {
+		if (billable instanceof IArticle) {
+			return ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL
+					&& ((IArticle) billable).getSubTyp() == ArticleSubTyp.COVID;
+		}
+		return false;
 	}
 
 	private String getServiceExOrServiceCode(Object obj) {

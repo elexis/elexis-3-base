@@ -68,6 +68,7 @@
     <module>ch.elexis.molemax.feature</module>
     <module>ch.elexis.notes.feature</module>
     <module>ch.elexis.omnivore.feature</module>
+    <module>ch.elexis.pdfBills.feature</module>
     <module>ch.elexis.privatrechnung.feature</module>
     <module>ch.elexis.stickynotes.feature</module>
     <module>ch.elexis.support.dbshaker.feature</module>
@@ -94,6 +95,7 @@
     <module>waelti.statistics.feature</module>
     <module>ch.itmed.fop.printing.feature</module>
     <module>at.medevit.elexis.bluemedication.feature</module>
+    <module>at.medevit.elexis.text.docx.feature</module>
     <module>ch.medelexis.openoffice.feature</module>
     <module>at.medevit.medelexis.text.msword.feature</module>
     <module>at.medevit.elexis.documents.converter.feature</module>

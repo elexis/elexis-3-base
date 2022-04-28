@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<invoice:request xmlns:invoice="http://www.xmlData.ch/xmlInvoice/XSD"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd"
+	role="production">
+	<invoice:header>
+		<invoice:sender ean_party="7601002145411" />
+		<invoice:intermediate ean_party="2000000000000" />
+		<invoice:recipient ean_party="2000000000000" />
+	</invoice:header>
+	<invoice:prolog>
+		<invoice:package version="217" id="0">Elexis
+		</invoice:package>
+		<invoice:generator>
+			<invoice:software version="100" id="0">JDOM
+			</invoice:software>
+		</invoice:generator>
+		<invoice:validator focus="tarmed" version_software="217"
+			version_db="401" id="0">Elexis TarmedVerifier</invoice:validator>
+	</invoice:prolog>
+	<invoice:invoice invoice_timestamp="1378911876"
+		invoice_id="003294000012" invoice_date="2013-09-11T00:00:00" resend="false"
+		case_id="K35e39f69cb312197046">
+		<invoice:balance currency="CHF" amount="29.41"
+			amount_prepaid="0.00" amount_due="29.40" amount_tarmed="29.41"
+			unit_tarmed.mt="17.22" amount_tarmed.mt="15.84" unit_tarmed.tt="14.75"
+			amount_tarmed.tt="13.57" amount_cantonal="0.00" amount_unclassified="0.00"
+			amount_lab="0.00" amount_physio="0.00" amount_drug="0.00"
+			amount_migel="0.00" amount_obligations="29.41">
+			<invoice:vat vat="0.00">
+				<invoice:vat_rate vat_rate="0.00" amount="29.41"
+					vat="0.00" />
+			</invoice:vat>
+		</invoice:balance>
+		<invoice:esr9 type="16or27" participant_number="01-162-8"
+			reference_number="12 34562 00001 88888 88888 88885"
+			coding_line="0100002514506&gt;123456200001888888888888885+ 010001628&gt;">
+			<invoice:bank>
+				<invoice:company>
+					<invoice:companyname>Bank AG</invoice:companyname>
+					<invoice:department>Abteilung VESR</invoice:department>
+					<invoice:postal>
+						<invoice:pobox>Postfach</invoice:pobox>
+						<invoice:street>Bankstrasse 11</invoice:street>
+						<invoice:zip statecode="BS">4002</invoice:zip>
+						<invoice:city>Basel</invoice:city>
+					</invoice:postal>
+				</invoice:company>
+			</invoice:bank>
+		</invoice:esr9>
+		<invoice:tiers_payant invoice_modification="false"
+			purpose="invoice">
+			<invoice:biller ean_party="2011234567890" zsr="H121111"
+					uid_number="CHE108791452">
+					<invoice:company>
+						<invoice:companyname>Biller AG</invoice:companyname>
+						<invoice:department>Abteilung Inkasso</invoice:department>
+						<invoice:postal>
+							<invoice:street>Billerweg 128</invoice:street>
+							<invoice:zip>4414</invoice:zip>
+							<invoice:city>Frenkendorf</invoice:city>
+						</invoice:postal>
+						<invoice:telecom>
+							<invoice:phone>061 956 99 00</invoice:phone>
+							<invoice:fax>061 956 99 10</invoice:fax>
+						</invoice:telecom>
+						<invoice:online>
+							<invoice:email>info@biller.ch</invoice:email>
+						</invoice:online>
+					</invoice:company>
+				</invoice:biller>
+			<invoice:provider ean_party="7634567890111" zsr="P123456"
+					specialty="FMH Innere Medizin">
+					<invoice:person salutation="Frau" title="Dr. med.">
+						<invoice:familyname>Ärztin</invoice:familyname>
+						<invoice:givenname>Patricia</invoice:givenname>
+						<invoice:postal>
+							<invoice:street>Arztgasse 17b5</invoice:street>
+							<invoice:zip statecode="BS">4000</invoice:zip>
+							<invoice:city>Basel</invoice:city>
+						</invoice:postal>
+						<invoice:telecom>
+							<invoice:phone>061 956 99 00</invoice:phone>
+							<invoice:fax>061 956 99 10</invoice:fax>
+						</invoice:telecom>
+					</invoice:person>
+				</invoice:provider>
+							<invoice:insurance ean_party="7634567890000">
+					<invoice:company>
+						<invoice:companyname>Krankenkasse AG</invoice:companyname>
+						<invoice:department>Sektion Basel</invoice:department>
+						<invoice:postal>
+							<invoice:street>Kassengraben 222</invoice:street>
+							<invoice:zip>4000</invoice:zip>
+							<invoice:city>Basel</invoice:city>
+						</invoice:postal>
+					</invoice:company>
+				</invoice:insurance>
+			<invoice:patient gender="male" birthdate="1964-02-28T00:00:00"
+					ssn="7561234567890">
+					<invoice:person salutation="Herr">
+						<invoice:familyname>Muster</invoice:familyname>
+						<invoice:givenname>Peter</invoice:givenname>
+						<invoice:subaddressing>c/o Mieter Karl</invoice:subaddressing>
+						<invoice:postal>
+							<invoice:street>Musterstrasse 5</invoice:street>
+							<invoice:zip>7304</invoice:zip>
+							<invoice:city>Maienfeld</invoice:city>
+						</invoice:postal>
+					</invoice:person>
+					<invoice:card card_id="12345678901234567890"
+						expiry_date="2013-06-28T00:00:00" />
+				</invoice:patient>
+			<invoice:guarantor>
+					<invoice:person salutation="Herr">
+						<invoice:familyname>Garant</invoice:familyname>
+						<invoice:givenname>Xaver</invoice:givenname>
+						<invoice:postal>
+							<invoice:street>Garantenallee 12</invoice:street>
+							<invoice:zip>7300</invoice:zip>
+							<invoice:city>Chur</invoice:city>
+						</invoice:postal>
+					</invoice:person>
+				</invoice:guarantor>
+			<invoice:referrer ean_party="2034567890333" zsr="R234567"
+					specialty="FMH Inner Medizin">
+					<invoice:person salutation="Herr" title="Dr. med.">
+						<invoice:familyname>Ueberweiser</invoice:familyname>
+						<invoice:givenname>Herbert</invoice:givenname>
+						<invoice:postal>
+							<invoice:street>Referrerstrasse 11</invoice:street>
+							<invoice:zip statecode="AG">5000</invoice:zip>
+							<invoice:city>Aarau</invoice:city>
+						</invoice:postal>
+						<invoice:telecom>
+							<invoice:phone>061 956 99 00</invoice:phone>
+							<invoice:fax>061 956 99 10</invoice:fax>
+						</invoice:telecom>
+					</invoice:person>
+				</invoice:referrer>
+		</invoice:tiers_payant>
+		<invoice:detail date_begin="2013-09-10T00:00:00"
+			date_end="2013-09-10T00:00:00" canton="AG" service_locality="practice">
+			<invoice:diagnosis type="by_contract" code="R5" />
+			<invoice:kvg reason="accident" case_id="WEI/9940/0019.01829.03.5"
+				case_date="2003-02-04T00:00:00" />
+			<invoice:services>
+				<invoice:record_tarmed treatment="ambulatory"
+					tariff_type="001" ean_provider="7601002145411" ean_responsible="7601002145411"
+					billing_role="both" medical_role="self_employed" body_location="none"
+					unit.mt="17.22" unit_factor.mt="0.92" scale_factor.mt="1.0"
+					external_factor.mt="1.0" amount.mt="15.84" unit.tt="14.75"
+					unit_factor.tt="0.92" scale_factor.tt="1.0" external_factor.tt="1.0"
+					amount.tt="13.57" amount="29.41" vat_rate="0.0" validate="true"
+					obligation="true" record_id="1" number="1" quantity="1.0"
+					date_begin="2013-09-10T00:00:00" code="00.2205">Formalisierter Arztbericht /
+					Zwischenbericht / Verlaufsbericht / {IV}-Fragebogen (Beiblatt)
+				</invoice:record_tarmed>
+			</invoice:services>
+		</invoice:detail>
+	</invoice:invoice>
+</invoice:request>
+

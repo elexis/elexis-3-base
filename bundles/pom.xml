@@ -125,10 +125,12 @@
     <module>ch.elexis.omnivore.model</module>
     <module>ch.elexis.omnivore.data</module>
     <module>ch.elexis.omnivore.ui</module>
+    <module>ch.elexis.pdfBills</module>
     <module>ch.elexis.privatrechnung</module>
     <module>ch.elexis.stickynotes</module>
     <module>ch.elexis.support.dbshaker</module>
     <module>ch.gpb.elexis.cst</module>
+    <module>at.medevit.elexis.text.docx</module>
     <module>at.medevit.medelexis.text.msword</module>
     <module>ch.medelexis.openoffice</module>
     <module>ch.medelexis.text.templator</module>

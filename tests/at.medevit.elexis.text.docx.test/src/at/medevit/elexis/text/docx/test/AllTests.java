@@ -6,9 +6,7 @@ import org.junit.runners.Suite;
 import at.medevit.elexis.text.docx.DocxTextPluginTest;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	DocxTextPluginTest.class
-})
+@Suite.SuiteClasses({ DocxTextPluginTest.class })
 public class AllTests {
-	
+
 }

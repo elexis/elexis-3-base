@@ -16,18 +16,14 @@ import ch.elexis.pdfBills.ElexisPDFGeneratorTest;
 import ch.elexis.pdfBills.RnOutputter;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-	ElexisPDFGeneratorTest.class
-})
+@Suite.SuiteClasses({ ElexisPDFGeneratorTest.class })
 public class AllTests {
-	
-	public static final File fragmentRsc =
-		new File(PlatformHelper.getBasePath("ch.elexis.pdfBills.test"), "rsc");
-	
-	public static final File pluginRsc =
-		new File(PlatformHelper.getBasePath("ch.elexis.pdfBills"), "rsc");
-	
-	public static Document getBillDocument(String string){
+
+	public static final File fragmentRsc = new File(PlatformHelper.getBasePath("ch.elexis.pdfBills.test"), "rsc");
+
+	public static final File pluginRsc = new File(PlatformHelper.getBasePath("ch.elexis.pdfBills"), "rsc");
+
+	public static Document getBillDocument(String string) {
 		File xmlFile = new File(fragmentRsc, "xml" + File.separator + string + ".xml");
 		if (xmlFile.exists()) {
 			try {
@@ -39,14 +35,14 @@ public class AllTests {
 		}
 		return null;
 	}
-	
-	public static String getBillXmlFilePath(String string){
+
+	public static String getBillXmlFilePath(String string) {
 		File result = new File(fragmentRsc, "xml" + File.separator + string + ".xml");
 		return result.getAbsolutePath();
 	}
-	
-	public static void setOutputDir(String string){
+
+	public static void setOutputDir(String string) {
 		CoreHub.localCfg.set(RnOutputter.CFG_ROOT + RnOutputter.PDFDIR,
-			fragmentRsc.getAbsolutePath() + File.separator + string);
+				fragmentRsc.getAbsolutePath() + File.separator + string);
 	}
 }

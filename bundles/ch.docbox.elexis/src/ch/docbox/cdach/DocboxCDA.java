@@ -729,7 +729,7 @@ public class DocboxCDA {
 	static synchronized Marshaller getCdaMarshaller() {
 		if (DocboxCDA.marshaller == null) {
 			ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-			
+
 			try {
 				Thread.currentThread().setContextClassLoader(DocboxCDA.class.getClassLoader());
 				JAXBContext jaxbContext = JAXBContext.newInstance("org.hl7.v3");
@@ -742,8 +742,8 @@ public class DocboxCDA {
 				LoggerFactory.getLogger(DocboxCDA.class).error("Failure in JAXBContext.newInstance", e);
 				e.printStackTrace(System.out);
 				marshaller = null;
-			} 
-			
+			}
+
 			Thread.currentThread().setContextClassLoader(tccl);
 		}
 		return marshaller;
@@ -752,7 +752,7 @@ public class DocboxCDA {
 	static synchronized Unmarshaller getCdaUnmarshaller() {
 		if (DocboxCDA.unmarshaller == null) {
 			ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-			
+
 			try {
 				Thread.currentThread().setContextClassLoader(DocboxCDA.class.getClassLoader());
 				JAXBContext jaxbContext = JAXBContext.newInstance("org.hl7.v3");
@@ -762,7 +762,7 @@ public class DocboxCDA {
 				e.printStackTrace(System.out);
 				marshaller = null;
 			}
-			
+
 			Thread.currentThread().setContextClassLoader(tccl);
 		}
 		return unmarshaller;

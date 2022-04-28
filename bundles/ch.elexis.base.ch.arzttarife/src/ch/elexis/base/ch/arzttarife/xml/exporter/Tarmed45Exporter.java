@@ -777,7 +777,7 @@ public class Tarmed45Exporter {
 							serviceType.setCode("2000");
 							serviceType.setName(serviceType.getName() + " [" + getServiceCode(billed) + "]");
 						}
-						
+
 						servicesType.getServiceExOrService().add(serviceType);
 					}
 				}
@@ -811,8 +811,8 @@ public class Tarmed45Exporter {
 	private String getServiceCode(IBilled billed) {
 		String ret = billed.getCode();
 		IBillable billable = billed.getBillable();
-		if (billable instanceof ICustomService || (billable instanceof IArticle
-				&& ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL)) {
+		if (billable instanceof ICustomService
+				|| (billable instanceof IArticle && ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL)) {
 			if (billable.getId().equals(ret)) {
 				ret = "";
 			}

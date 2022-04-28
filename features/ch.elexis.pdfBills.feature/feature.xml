@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.pdfBills.feature"
+      label="PDF Rechnungsdrucker mit QR-Code"
+      version="3.9.0.qualifier"
+      provider-name="medelexis.ch">
+
+   <description url="http://www.medelexis.ch">
+      Gibt Rechnungen als PDF mit QR-Code aus (Auch für Mac geeignet). 
+Mehr Info unter https://wikijs.medelexis.ch/de/KonfigurationQR-Rechnungen
+   </description>
+
+   <copyright url="http://elexis.info/de_contributers.html">
+      Medelexis AG, sramakri und Werner Trüb
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.elexis.pdfBills"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.jdom"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

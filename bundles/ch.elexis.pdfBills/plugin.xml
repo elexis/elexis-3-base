@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.data.RechnungsManager">
+      <Rechnung
+            name="PDF-Rechnungsdrucker.Rechnung1"
+            outputter="ch.elexis.pdfBills.RnOutputter">
+      </Rechnung>
+      <Rechnung
+            name="QR-PDF-Rechnungsdrucker.Rechnung1"
+            outputter="ch.elexis.pdfBills.QrRnOutputter">
+      </Rechnung>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="ch.elexis.pdfBills.PreferencePage"
+            id="ch.elexis.pdfBills.preferences"
+            name="PDF Rechnungsdruck">
+      </page>
+   </extension>
+
+</plugin>

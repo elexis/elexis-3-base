@@ -21,6 +21,9 @@
    <feature url="features/ch.elexis.privatrechnung.feature_0.0.0.jar" id="ch.elexis.privatrechnung.feature" version="0.0.0">
       <category name="finances"/>
    </feature>
+   <feature url="features/ch.elexis.pdfBills.feature_0.0.0.jar" id="ch.elexis.pdfBills.feature" version="0.0.0">
+      <category name="finances"/>
+   </feature>
    <feature url="features/ch.medelexis.openoffice.feature_0.0.0.jar" id="ch.medelexis.openoffice.feature" version="0.0.0">
       <category name="documentmanagement"/>
    </feature>
@@ -40,6 +43,9 @@
       <category name="dataexchange"/>
    </feature>
    <feature url="features/com.hilotec.elexis.opendocument.feature_0.0.0.jar" id="com.hilotec.elexis.opendocument.feature" version="0.0.0">
+      <category name="documentmanagement"/>
+   </feature>
+   <feature url="features/at.medevit.elexis.text.docx.feature_0.0.0.jar" id="at.medevit.elexis.text.docx.feature" version="0.0.0">
       <category name="documentmanagement"/>
    </feature>
    <feature url="features/org.iatrix.messwerte.feature_0.0.0.jar" id="org.iatrix.messwerte.feature" version="0.0.0">

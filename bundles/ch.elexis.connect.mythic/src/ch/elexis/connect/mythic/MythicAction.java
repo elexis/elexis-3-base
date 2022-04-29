@@ -93,7 +93,7 @@ public class MythicAction extends Action implements ComPortListener {
 
 	public void gotChunk(final Connection connection, final String data) {
 
-		// System.out.println(data+"\n");
+		// System.out.println(data+StringUtils.LF);
 		if (actPatient != null) {
 			if (data.startsWith("END_RESULT")) {
 				actPatient = null;
@@ -113,7 +113,7 @@ public class MythicAction extends Action implements ComPortListener {
 		int idx = StringTool.getIndex(results, line[0]);
 		if (idx != -1) {
 			if (line.length > 7) {
-				String ref = "";
+				String ref = StringUtils.EMPTY;
 				if (StringUtils.isNotBlank(line[5]) && StringUtils.isNotBlank(line[6])) {
 					ref = line[5] + "-" + line[6];
 				} else if (StringUtils.isNotBlank(line[5])) {
@@ -128,7 +128,7 @@ public class MythicAction extends Action implements ComPortListener {
 							LabItemTyp.NUMERIC, "MTH Mythic", "50");
 				}
 
-				String comment = "";
+				String comment = StringUtils.EMPTY;
 				if ((line[2].length() > 0) || (line[3].length() > 0)) {
 					comment = line[2] + ";" + line[3];
 				}

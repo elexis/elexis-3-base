@@ -107,7 +107,7 @@ public class Vaccination extends PersistentObject {
 
 		create(null);
 
-		String vaccAgainst = "";
+		String vaccAgainst = StringUtils.EMPTY;
 		if (articleATCCode != null) {
 			vaccAgainst = StringUtils.join(ArticleToImmunisationModel.getImmunisationForAtcCode(articleATCCode), ",");
 		}
@@ -137,8 +137,8 @@ public class Vaccination extends PersistentObject {
 
 	@Override
 	public String getLabel() {
-		return getDateOfAdministration().toString(TimeTool.DATE_COMPACT) + " " + getBusinessName() + " (" + getLotNo()
-				+ ") - " + getAdministratorLabel();
+		return getDateOfAdministration().toString(TimeTool.DATE_COMPACT) + StringUtils.SPACE + getBusinessName() + " ("
+				+ getLotNo() + ") - " + getAdministratorLabel();
 	}
 
 	public TimeTool getDateOfAdministration() {
@@ -192,17 +192,17 @@ public class Vaccination extends PersistentObject {
 			Mandant mandant = loadMandant(value);
 
 			if (mandant == null) {
-				return "";
+				return StringUtils.EMPTY;
 			}
 
 			String title = Person.load(mandant.getId()).get(Person.TITLE);
 			if (title == null || title.isEmpty()) {
-				return mandant.getName() + " " + mandant.getVorname();
+				return mandant.getName() + StringUtils.SPACE + mandant.getVorname();
 			}
-			return title + " " + mandant.getName() + " " + mandant.getVorname();
+			return title + StringUtils.SPACE + mandant.getName() + StringUtils.SPACE + mandant.getVorname();
 		} else {
 			if (value == null || value.length() < 2)
-				return "";
+				return StringUtils.EMPTY;
 
 			return value;
 		}

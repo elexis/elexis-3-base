@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -31,7 +32,7 @@ public class EditCatsDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Text ret = new Text(parent, SWT.MULTI | SWT.BORDER);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		ret.setText(StringTool.join(KassenbuchEintrag.getCategories(), "\n"));
+		ret.setText(StringTool.join(KassenbuchEintrag.getCategories(), StringUtils.LF));
 		return ret;
 	}
 
@@ -45,8 +46,10 @@ public class EditCatsDialog extends TitleAreaDialog {
 
 	@Override
 	protected void okPressed() {
-		String ncats = ((Text) getDialogArea()).getText().replaceAll("\n", KassenbuchEintrag.GLOBAL_CFG_SEPARATOR);
-		ConfigServiceHolder.setGlobal(KassenbuchEintrag.CATEGORIES, ncats.replaceAll("\r", ""));
+		String ncats = ((Text) getDialogArea()).getText().replaceAll(StringUtils.LF,
+				KassenbuchEintrag.GLOBAL_CFG_SEPARATOR);
+		ConfigServiceHolder.setGlobal(KassenbuchEintrag.CATEGORIES,
+				ncats.replaceAll(StringUtils.CR, StringUtils.EMPTY));
 		super.okPressed();
 	}
 

@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.laborimport.viollier.v2.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -34,7 +35,7 @@ public class ViollierLogger {
 
 	private PrintStream log;
 	private static ViollierLogger logger = null;
-	private String insetStr = ""; //$NON-NLS-1$
+	private String insetStr = StringUtils.EMPTY;
 
 	/**
 	 * Liefert die aktuell gültige Logger Instanz

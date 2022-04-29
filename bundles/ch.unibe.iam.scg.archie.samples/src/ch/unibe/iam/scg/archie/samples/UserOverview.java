@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.samples;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +83,7 @@ public class UserOverview extends AbstractDataProvider {
 		monitor.subTask("Counting user entries");
 		for (final Konsultation consult : consultQuery.execute()) {
 			String author = consult.getAuthor();
-			if (!author.equals("")) {
+			if (!author.equals(StringUtils.EMPTY)) {
 				int count = 1;
 				if (userEntryMap.containsKey(author)) {
 					count = userEntryMap.get(author);

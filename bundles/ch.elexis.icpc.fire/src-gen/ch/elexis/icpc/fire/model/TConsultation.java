@@ -8,6 +8,7 @@
 
 package ch.elexis.icpc.fire.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -319,7 +320,7 @@ public class TConsultation {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = StringUtils.EMPTY, propOrder = {
         "reason",
         "diagnose"
     })
@@ -409,7 +410,7 @@ public class TConsultation {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = StringUtils.EMPTY, propOrder = {
         "labor"
     })
     public static class Labors {
@@ -468,7 +469,7 @@ public class TConsultation {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = StringUtils.EMPTY, propOrder = {
         "medi"
     })
     public static class Medis {

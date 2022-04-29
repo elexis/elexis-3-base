@@ -11,6 +11,7 @@
  ******************************************************************************/
 package ch.elexis.base.textplugin;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -439,7 +440,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 		Rectangle rect = table.getItem(rowcount - 1).getBounds(columncount - 1);
 		table.setSize(rect.x + rect.width + 5, rect.y + rect.height + 5);
 
-		page.replaceTextRange(start, end - start, " ");
+		page.replaceTextRange(start, end - start, StringUtils.SPACE);
 		page.addTable(table, start);
 	}
 
@@ -520,7 +521,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 		boldToolItem.setSelection(isBold);
 		italicToolItem.setSelection(isItalic);
 		underlineToolItem.setSelection(isUnderline);
-		fontCombo.select(fontCombo.indexOf(fontName != null ? fontName : ""));
+		fontCombo.select(fontCombo.indexOf(fontName != null ? fontName : StringUtils.EMPTY));
 		fontHeigtCombo.select(fontHeigtCombo.indexOf(String.valueOf(fontHeight)));
 	}
 

@@ -11,6 +11,7 @@
  ******************************************************************************/
 package ch.elexis.base.textplugin;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -286,7 +287,7 @@ public class Page extends EStyledText
 	}
 
 	public void clear() {
-		setText("");
+		setText(StringUtils.EMPTY);
 		for (Iterator<TextBox> it = textBoxes.iterator(); it.hasNext();) {
 			TextBox box = it.next();
 			box.dispose();
@@ -445,7 +446,7 @@ public class Page extends EStyledText
 			Iterator<String> wit = words.iterator();
 			String word = wit.hasNext() ? wit.next() : null;
 			while (word != null) {
-				if (word.equals("\r")) {
+				if (word.equals(StringUtils.CR)) {
 					gc.drawString(line.toString(), leftMargin, y);
 					line.setLength(0);
 					x = ex = leftMargin;
@@ -479,7 +480,7 @@ public class Page extends EStyledText
 		boolean previosWordIsLineReturn = false;
 		for (StringTokenizer st = new StringTokenizer(text, delims, true); st.hasMoreTokens();) {
 			String word = st.nextToken();
-			if (word.equals("\n") || word.equals("\r")) {
+			if (word.equals(StringUtils.LF) || word.equals(StringUtils.CR)) {
 				if (!previosWordIsLineReturn) {
 					words.add(word);
 					previosWordIsLineReturn = false;

@@ -11,6 +11,7 @@
 
 package ch.itmed.fop.printing.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -71,11 +72,11 @@ public final class MedicationData {
 	public String getPrescriptionDate() {
 		return prescription.getDateFrom() != null
 				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateFrom())
-				: "";
+				: StringUtils.EMPTY;
 	}
 
 	public String getPrescriptionAuthor() {
-		return prescription.getPrescriptor() != null ? prescription.getPrescriptor().getLabel() : "";
+		return prescription.getPrescriptor() != null ? prescription.getPrescriptor().getLabel() : StringUtils.EMPTY;
 	}
 
 	public String getResponsiblePharmacist() {
@@ -98,6 +99,6 @@ public final class MedicationData {
 		case 5:
 			return Messages.Medication_SymptomaticMedication; // SYMPTOMATIC_MEDICATION
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 }

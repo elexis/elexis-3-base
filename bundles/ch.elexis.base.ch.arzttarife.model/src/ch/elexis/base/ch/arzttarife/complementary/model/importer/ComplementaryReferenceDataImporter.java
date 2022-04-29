@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.complementary.model.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -69,7 +70,7 @@ public class ComplementaryReferenceDataImporter extends AbstractReferenceDataImp
 
 					LocalDate validFrom = LocalDate.parse(line[validfrom_index], csvDateTimeFormatter);
 					LocalDate validTo = LocalDate.parse(line[validto_index], csvDateTimeFormatter);
-					String chapterString = line[chapternr_index] + " " + line[chaptertext_index];
+					String chapterString = line[chapternr_index] + StringUtils.SPACE + line[chaptertext_index];
 
 					String id = line[code_index] + "-" + validFrom.format(elexisDateTimeFormatter);
 					ComplementaryLeistung complementary = new ComplementaryLeistung();

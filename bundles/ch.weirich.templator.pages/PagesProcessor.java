@@ -294,7 +294,7 @@ public class ch.weirich.templator.pages.PagesProcessor implements ch.medelexis.t
      5  invokevirtual java.lang.String.replaceAll(java.lang.String, java.lang.String) : java.lang.String [252]
      8  astore_2 [replacement]
      9  aload_2 [replacement]
-    10  ldc <String "\n"> [255]
+    10  ldc <String StringUtils.LF> [255]
     12  ldc_w <String "<sf:br/>"> [257]
     15  invokevirtual java.lang.String.replaceAll(java.lang.String, java.lang.String) : java.lang.String [252]
     18  astore_2 [replacement]

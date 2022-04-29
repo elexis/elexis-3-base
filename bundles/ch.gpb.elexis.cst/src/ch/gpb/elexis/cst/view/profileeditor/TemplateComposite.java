@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -82,7 +83,7 @@ public class TemplateComposite extends CstComposite {
 			}
 			if (control instanceof Text) {
 				Text b = (Text) control;
-				b.setText("");
+				b.setText(StringUtils.EMPTY);
 			}
 
 		}

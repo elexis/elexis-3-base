@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -108,7 +109,7 @@ public class EHealthConnectorView extends ViewPart {
 				displayReport(inputStream, path);
 			} catch (FileNotFoundException fne) {
 				inputStream = new URL(path).openStream();
-				displayReport(inputStream, "");
+				displayReport(inputStream, StringUtils.EMPTY);
 			}
 
 		} catch (IOException e) {
@@ -126,7 +127,7 @@ public class EHealthConnectorView extends ViewPart {
 	 */
 	public void displayReport(InputStream inputStream, String path) {
 		if (path == null) {
-			path = "";
+			path = StringUtils.EMPTY;
 		}
 		displayedReport = cdaLoader.buildXmlDocument(inputStream, path);
 		browser.setUrl(displayedReport.getAbsolutePath());

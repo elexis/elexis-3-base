@@ -12,6 +12,7 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.command;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -36,7 +37,7 @@ public class ShowGDTMessage extends AbstractHandler {
 			StringBuilder title = new StringBuilder();
 			title.append(gdtpEntry.getEntryRelatedPatient().getLabel());
 			title.append(" - ");
-			title.append(gdtpEntry.getMessageDirection() + " " + gdtpEntry.getMessageType());
+			title.append(gdtpEntry.getMessageDirection() + StringUtils.SPACE + gdtpEntry.getMessageType());
 
 			new SimpleTextViewer(title.toString(), gdtpEntry.getMessage());
 

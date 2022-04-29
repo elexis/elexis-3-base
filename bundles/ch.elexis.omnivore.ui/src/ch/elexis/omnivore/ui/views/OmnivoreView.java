@@ -128,14 +128,14 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private Action exportAction;
 	private Action doubleClickAction;
 	private Action flatViewAction;
-	private final String[] colLabels = { "", Messages.OmnivoreView_categoryColumn, Messages.OmnivoreView_dateColumn, //$NON-NLS-1$
-			Messages.OmnivoreView_dateOriginColumn, Messages.OmnivoreView_titleColumn,
+	private final String[] colLabels = { StringUtils.EMPTY, Messages.OmnivoreView_categoryColumn,
+			Messages.OmnivoreView_dateColumn, Messages.OmnivoreView_dateOriginColumn, Messages.OmnivoreView_titleColumn,
 			Messages.OmnivoreView_keywordsColumn };
 	private final String colWidth = "20,80,80,150,500";
 	private final String sortSettings = "0,1,-1,false";
 	private boolean bFlat = false;
-	private String searchTitle = "";
-	private String searchKW = "";
+	private String searchTitle = StringUtils.EMPTY;
+	private String searchKW = StringUtils.EMPTY;
 	// ISource selectedSource = null;
 	static Logger log = LoggerFactory.getLogger(OmnivoreView.class);
 
@@ -221,7 +221,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		private void addFilters(IQuery<IDocumentHandle> qbe) {
 			qbe.and("title", COMPARATOR.LIKE, "%" + searchTitle + "%");
 			// Add every keyword
-			for (String kw : searchKW.split(" ")) {
+			for (String kw : searchKW.split(StringUtils.SPACE)) {
 				qbe.and("keywords", COMPARATOR.LIKE, "%" + kw + "%");
 			}
 		}
@@ -241,7 +241,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		/** Filter a list of DocHandles */
 		private List<IDocumentHandle> filterList(List<IDocumentHandle> list) {
 			List<IDocumentHandle> result = new LinkedList<IDocumentHandle>();
-			String[] kws = searchKW.toLowerCase().split(" ");
+			String[] kws = searchKW.toLowerCase().split(StringUtils.SPACE);
 			for (IDocumentHandle dh : list) {
 				if (filterMatches(kws, dh))
 					result.add(dh);
@@ -312,19 +312,19 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			IDocumentHandle dh = (IDocumentHandle) obj;
 			switch (index) {
 			case 0:
-				return ""; //$NON-NLS-1$
+				return StringUtils.EMPTY;
 			case 1:
 				if (bFlat)
 					return dh.getCategory().getName();
-				return dh.isCategory() ? dh.getTitle() : ""; //$NON-NLS-1$
+				return dh.isCategory() ? dh.getTitle() : StringUtils.EMPTY;
 			case 2:
-				return dh.isCategory() ? "" : dateFormat.format(dh.getLastchanged()); //$NON-NLS-1$
+				return dh.isCategory() ? StringUtils.EMPTY : dateFormat.format(dh.getLastchanged());
 			case 3:
-				return dh.isCategory() ? "" : dateFormat.format(dh.getCreated()); //$NON-NLS-1$
+				return dh.isCategory() ? StringUtils.EMPTY : dateFormat.format(dh.getCreated());
 			case 4:
-				return dh.isCategory() ? "" : dh.getTitle(); //$NON-NLS-1$
+				return dh.isCategory() ? StringUtils.EMPTY : dh.getTitle();
 			case 5:
-				return dh.isCategory() ? "" : dh.getKeywords(); //$NON-NLS-1$
+				return dh.isCategory() ? StringUtils.EMPTY : dh.getKeywords();
 			default:
 				return "?"; //$NON-NLS-1$
 			}
@@ -482,9 +482,9 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 						IDocumentHandle dh = (IDocumentHandle) selection.toList().get(index);
 						sb.append(StoreToStringServiceHolder.getStoreToString(dh)).append(","); //$NON-NLS-1$
 						log.debug("dragSetData; unsupported dataType {} returning {}", //$NON-NLS-1$
-								event.dataType, sb.toString().replace(",$", ""));
+								event.dataType, sb.toString().replace(",$", StringUtils.EMPTY));
 					}
-					event.data = sb.toString().replace(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					event.data = sb.toString().replace(",$", StringUtils.EMPTY); //$NON-NLS-1$
 				}
 			}
 		});

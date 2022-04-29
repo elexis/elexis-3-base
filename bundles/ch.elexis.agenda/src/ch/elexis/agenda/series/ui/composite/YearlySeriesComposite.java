@@ -1,5 +1,6 @@
 package ch.elexis.agenda.series.ui.composite;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -56,7 +57,7 @@ public class YearlySeriesComposite extends Composite {
 	}
 
 	public void setDay(int day) {
-		txtDay.setText(day + "");
+		txtDay.setText(day + StringUtils.EMPTY);
 	}
 
 	public int getMonth() {
@@ -64,6 +65,6 @@ public class YearlySeriesComposite extends Composite {
 	}
 
 	public void setMonth(int month) {
-		txtMonth.setText(month + "");
+		txtMonth.setText(month + StringUtils.EMPTY);
 	}
 }

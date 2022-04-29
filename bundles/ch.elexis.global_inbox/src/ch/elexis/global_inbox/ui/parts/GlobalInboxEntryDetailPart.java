@@ -1,6 +1,7 @@
 
 package ch.elexis.global_inbox.ui.parts;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -310,19 +311,20 @@ public class GlobalInboxEntryDetailPart {
 		}
 
 		if (globalInboxEntry == null) {
-			txtTitle.setText("");
+			txtTitle.setText(StringUtils.EMPTY);
 			csec.setCategoryByName(null);
 			archivingDate.setSelection(null);
 			creationDateSelector.setSelectionOptionsAndDefault(Collections.emptyList(), null);
 			cvPatient.setInput(null);
 			cvSender.setInput(null);
-			txtKeywords.setText("");
+			txtKeywords.setText(StringUtils.EMPTY);
 			return;
 		}
 
 		txtTitle.setText(globalInboxEntry.getTitle());
 		csec.setCategoryByName(globalInboxEntry.getCategory());
-		txtKeywords.setText(globalInboxEntry.getKeywords() != null ? this.globalInboxEntry.getKeywords() : "");
+		txtKeywords.setText(
+				globalInboxEntry.getKeywords() != null ? this.globalInboxEntry.getKeywords() : StringUtils.EMPTY);
 		btnInfoTo.setSelection(globalInboxEntry.isSendInfoTo());
 
 		Date selectedArchivingDate = globalInboxEntry.getArchivingDate();

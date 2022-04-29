@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.MessageFormat;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -217,7 +218,7 @@ public class ESRRecordDialog extends TitleAreaDialog {
 					AccountTransaction transaction = zahlungsObj.getTransaction();
 					transaction.setAccount(ESR.getAccount());
 				}
-				rec.set(Messages.ESRRecordDialog_booked, ""); //$NON-NLS-1$
+				rec.set(Messages.ESRRecordDialog_booked, StringUtils.EMPTY);
 			}
 		} else if (bDelete.getSelection()) {
 			rec.delete();

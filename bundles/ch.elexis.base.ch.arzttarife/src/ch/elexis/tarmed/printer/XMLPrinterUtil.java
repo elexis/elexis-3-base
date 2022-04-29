@@ -1,5 +1,6 @@
 package ch.elexis.tarmed.printer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -150,12 +151,12 @@ public class XMLPrinterUtil {
 				titelMahnung = Messages.RnPrintView_thirdM;
 				break;
 			default:
-				titelMahnung = ""; //$NON-NLS-1$
+				titelMahnung = StringUtils.EMPTY;
 			}
 			;
 		} else {
 			titel = Messages.RnPrintView_getback;
-			titelMahnung = ""; //$NON-NLS-1$
+			titelMahnung = StringUtils.EMPTY;
 		}
 
 		text.replace("\\[Titel\\]", titel); //$NON-NLS-1$
@@ -173,9 +174,9 @@ public class XMLPrinterUtil {
 			text.replace("\\[F60\\]", ahv); //$NON-NLS-1$
 		} else {
 			text.replace("\\[NIF\\]", TarmedRequirements.getKSK(mandator)); //$NON-NLS-1$
-			text.replace("\\[F60\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			text.replace("\\[F60\\]", StringUtils.EMPTY); //$NON-NLS-1$
 		}
-		text.replace("\\?\\?\\??[a-zA-Z0-9 \\.]+\\?\\?\\??", "");
+		text.replace("\\?\\?\\??[a-zA-Z0-9 \\.]+\\?\\?\\??", StringUtils.EMPTY);
 	}
 
 	private static void replace44HeaderFields(TextContainer text, Rechnung rn, Document xmlRn) {
@@ -186,7 +187,8 @@ public class XMLPrinterUtil {
 			String requestDate = xmlInvoice.getAttributeValue(XMLExporter.ATTR_REQUEST_DATE);
 			TimeTool date = new TimeTool(requestDate);
 			text.replace("\\[F1\\]", //$NON-NLS-1$
-					requestId + " - " + date.toString(TimeTool.DATE_GER) + " " + date.toString(TimeTool.TIME_FULL));
+					requestId + " - " + date.toString(TimeTool.DATE_GER) + StringUtils.SPACE
+							+ date.toString(TimeTool.TIME_FULL));
 		} else {
 			text.replace("\\[F1\\]", rn.getRnId()); //$NON-NLS-1$
 		}
@@ -199,7 +201,7 @@ public class XMLPrinterUtil {
 	public static String getValue(final Element s, final String field) {
 		String ret = s.getAttributeValue(field);
 		if (StringTool.isNothing(ret)) {
-			return " "; //$NON-NLS-1$
+			return StringUtils.SPACE;
 		}
 		return ret;
 	}

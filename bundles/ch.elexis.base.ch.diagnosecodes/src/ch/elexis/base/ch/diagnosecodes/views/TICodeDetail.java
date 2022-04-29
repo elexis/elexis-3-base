@@ -12,6 +12,7 @@
 
 package ch.elexis.base.ch.diagnosecodes.views;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -62,10 +63,10 @@ public class TICodeDetail implements IDetailDisplay {
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout(2, false));
 		tk.createLabel(body, "Code"); //$NON-NLS-1$
-		tID = tk.createText(body, ""); //$NON-NLS-1$
+		tID = tk.createText(body, StringUtils.EMPTY);
 		tID.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.createLabel(body, Messages.TICodeDetail_fulltext);
-		tFull = tk.createText(body, ""); //$NON-NLS-1$
+		tFull = tk.createText(body, StringUtils.EMPTY);
 		tFull.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		return body;
 	}

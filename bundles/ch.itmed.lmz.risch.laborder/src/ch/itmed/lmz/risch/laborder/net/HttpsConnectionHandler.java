@@ -11,6 +11,7 @@
 
 package ch.itmed.lmz.risch.laborder.net;
 
+import org.apache.commons.lang3.StringUtils;
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -140,7 +141,7 @@ public final class HttpsConnectionHandler {
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(httpsURLConnection.getInputStream()));
 			String inputLine;
-			String returnUrl = "";
+			String returnUrl = StringUtils.EMPTY;
 			while ((inputLine = in.readLine()) != null) {
 				Base64.Decoder decoder = Base64.getDecoder();
 				byte[] bytesDecoded = decoder.decode(inputLine);

@@ -12,6 +12,7 @@
 
 package ch.unibe.iam.scg.archie.actions;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -106,7 +107,8 @@ public class ExportAction extends Action {
 		try {
 			CSVWriter.writeFile(ProviderManager.getInstance().getProvider(), fileName);
 		} catch (IOException e) {
-			ArchieActivator.LOG.log("Could not save the given file." + "\n" + e.getLocalizedMessage(), Log.ERRORS);
+			ArchieActivator.LOG.log("Could not save the given file." + StringUtils.LF + e.getLocalizedMessage(),
+					Log.ERRORS);
 			SWTHelper.showError(Messages.ERROR_WRITING_FILE_TITLE, Messages.ERROR_WRITING_FILE);
 		}
 	}

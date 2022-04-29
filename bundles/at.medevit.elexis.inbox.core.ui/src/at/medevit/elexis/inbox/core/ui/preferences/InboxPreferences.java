@@ -1,5 +1,6 @@
 package at.medevit.elexis.inbox.core.ui.preferences;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -156,7 +157,7 @@ public class InboxPreferences extends PreferencePage implements IWorkbenchPrefer
 		StringBuilder sb = new StringBuilder();
 		for (String s : lvChoosen.getList().getItems()) {
 			sb.append(s);
-			sb.append(" ");
+			sb.append(StringUtils.SPACE);
 		}
 		return prefixPrevLabel + ":\t" + sb.toString();
 	}

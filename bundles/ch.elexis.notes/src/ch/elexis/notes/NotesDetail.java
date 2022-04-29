@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.notes;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -62,7 +63,7 @@ public class NotesDetail extends Composite {
 		etf.createContainer(fNote.getBody(), new SaveCallback())
 				.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		etf.setSaveOnFocusLost(true);
-		tKeywords = tk.createText(fNote.getBody(), ""); //$NON-NLS-1$
+		tKeywords = tk.createText(fNote.getBody(), StringUtils.EMPTY);
 		tKeywords.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tKeywords.addFocusListener(new FocusAdapter() {
 
@@ -102,7 +103,7 @@ public class NotesDetail extends Composite {
 		actNote = note;
 		fNote.setText(note.get("Title")); //$NON-NLS-1$
 		etf.loadFromByteArray(note.getContent(), false);
-		// etf.insertText("",note.get("Contents"),SWT.LEFT);
+		// etf.insertText(StringUtils.EMPTY,note.get("Contents"),SWT.LEFT);
 		tKeywords.setText(note.getKeywords());
 		lRefs.removeAll();
 		for (String s : note.getRefs()) {
@@ -118,7 +119,7 @@ public class NotesDetail extends Composite {
 	public void execute(String filename) {
 		try {
 			int r = filename.lastIndexOf('.');
-			String ext = ""; //$NON-NLS-1$
+			String ext = StringUtils.EMPTY;
 			if (r != -1) {
 				ext = filename.substring(r + 1);
 			}

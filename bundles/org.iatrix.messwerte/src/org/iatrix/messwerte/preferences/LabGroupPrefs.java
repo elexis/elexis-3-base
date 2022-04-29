@@ -12,6 +12,7 @@
 
 package org.iatrix.messwerte.preferences;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -138,7 +139,7 @@ public class LabGroupPrefs extends PreferencePage implements IWorkbenchPreferenc
 		newButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-						"Neue Laborgruppe", "Bitte wählen Sie einen Namen für die Gruppe", "", null);
+						"Neue Laborgruppe", "Bitte wählen Sie einen Namen für die Gruppe", StringUtils.EMPTY, null);
 				int rc = dialog.open();
 				if (rc == Window.OK) {
 					String name = dialog.getValue();

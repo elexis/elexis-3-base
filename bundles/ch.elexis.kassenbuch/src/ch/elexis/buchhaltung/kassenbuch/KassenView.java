@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.SortedSet;
 
 import org.eclipse.jface.action.IAction;
@@ -165,9 +166,9 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 			case 1:
 				return kb.getDate();
 			case 2:
-				return betrag.isNegative() ? "" : betrag.getAmountAsString();
+				return betrag.isNegative() ? StringUtils.EMPTY : betrag.getAmountAsString();
 			case 3:
-				return betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : "";
+				return betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : StringUtils.EMPTY;
 			case 4:
 				return kb.getSaldo().getAmountAsString();
 			case 5:

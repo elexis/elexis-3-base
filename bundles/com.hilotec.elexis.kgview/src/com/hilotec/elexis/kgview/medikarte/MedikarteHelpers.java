@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview.medikarte;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class MedikarteHelpers {
 			qbe.or();
 			qbe.add(Prescription.FLD_DATE_UNTIL, StringTool.leer, null);
 			qbe.or();
-			qbe.add(Prescription.FLD_DATE_UNTIL, Query.EQUALS, "");
+			qbe.add(Prescription.FLD_DATE_UNTIL, Query.EQUALS, StringUtils.EMPTY);
 			qbe.endGroup();
 		}
 
@@ -136,7 +137,7 @@ public class MedikarteHelpers {
 		if (fm != null)
 			return fm.getZweck();
 
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	/**

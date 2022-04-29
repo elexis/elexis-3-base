@@ -1,5 +1,6 @@
 package ch.elexis.icpc.model.internal;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -114,7 +115,7 @@ public class Code extends AbstractIdModelAdapter<ICPCCode> implements Identifiab
 
 	@Override
 	public String getLabel() {
-		return getId() + " " + getText();
+		return getId() + StringUtils.SPACE + getText();
 	}
 
 	@Override

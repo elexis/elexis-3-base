@@ -1,6 +1,7 @@
 
 package ch.pharmedsolutions.www.zsrservice;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -40,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "glnId", "title", "firstName", "lastName", "street", "pobox", "zip", "city", "phone",
-		"fax" })
+@XmlType(name = StringUtils.EMPTY, propOrder = { "glnId", "title", "firstName", "lastName", "street", "pobox", "zip",
+		"city", "phone", "fax" })
 @XmlRootElement(name = "Information")
 public class Information {
 

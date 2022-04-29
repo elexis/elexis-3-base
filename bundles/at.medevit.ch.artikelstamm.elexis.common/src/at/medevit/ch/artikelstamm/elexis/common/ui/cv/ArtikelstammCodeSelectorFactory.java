@@ -243,7 +243,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 			} else if (selection.getFirstElement() instanceof ATCFilterInfoListElement) {
 				slp.clearValues();
 				ActiveControl ac = slp.getPanel().getControls().get(0);
-				ac.setText((filterValueStore != null) ? filterValueStore : "");
+				ac.setText((filterValueStore != null) ? filterValueStore : StringUtils.EMPTY);
 
 				commonViewContentProvider.removeAllQueryFilterByType(AtcQueryFilter.class);
 			} else if (selection.getFirstElement() instanceof IArtikelstammItem) {

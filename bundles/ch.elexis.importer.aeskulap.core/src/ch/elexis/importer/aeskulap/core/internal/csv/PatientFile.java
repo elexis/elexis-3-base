@@ -110,16 +110,16 @@ public class PatientFile extends AbstractCsvImportFile<Patient> implements IAesk
 		// We'll collect several fields there
 		StringBuilder sb = new StringBuilder();
 		if (!StringUtils.isBlank(line[21])) {
-			sb.append("Verstorben: ").append(line[21]).append("\n");
+			sb.append("Verstorben: ").append(line[21]).append(StringUtils.LF);
 		}
 		if (!StringUtils.isBlank(line[14])) {
-			sb.append("Kommentar: ").append(line[14]).append("\n");
+			sb.append("Kommentar: ").append(line[14]).append(StringUtils.LF);
 		}
 		if (!StringUtils.isBlank(line[15])) {
-			sb.append("Warnung: ").append(line[15]).append("\n");
+			sb.append("Warnung: ").append(line[15]).append(StringUtils.LF);
 		}
 		if (!StringUtils.isBlank(line[11])) {
-			sb.append("Beruf: ").append(line[11]).append("\n");
+			sb.append("Beruf: ").append(line[11]).append(StringUtils.LF);
 		}
 		patient.setBemerkung(sb.toString());
 

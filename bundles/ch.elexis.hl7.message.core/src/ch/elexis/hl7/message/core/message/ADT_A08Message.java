@@ -1,5 +1,6 @@
 package ch.elexis.hl7.message.core.message;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,8 +45,8 @@ public class ADT_A08Message implements IHL7Message {
 			Mandant eMandant = (Mandant) context.get(IHL7MessageService.CONTEXT_MANDANTOR);
 			HL7Mandant mandant = HL7MessageUtil.mandantOf(eMandant);
 
-			HL7_ADT_A08 message = new HL7_ADT_A08("CHELEXIS", "PATDATA", receivingApplication, "", receivingFacility,
-					uniqueMessageControlID, uniqueProcessingID, mandant);
+			HL7_ADT_A08 message = new HL7_ADT_A08("CHELEXIS", "PATDATA", receivingApplication, StringUtils.EMPTY,
+					receivingFacility, uniqueMessageControlID, uniqueProcessingID, mandant);
 			Patient ePatient = (Patient) context.get(IHL7MessageService.CONTEXT_PATIENT);
 			HL7Patient patient = HL7MessageUtil.patientOf(ePatient);
 

@@ -1,5 +1,6 @@
 package ch.elexis.icpc.fire.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -160,7 +161,8 @@ public class ConsultationBuilder {
 	private Map<String, Set<TMedi>> groupUnreferencedStopMedisByDate(Set<TMedi> unreferencedStoppedMedis) {
 		Map<String, Set<TMedi>> group = new HashMap<>();
 		for (TMedi tMedi : unreferencedStoppedMedis) {
-			String date = "" + tMedi.getEndDate().getYear() + String.format("%02d", tMedi.getEndDate().getMonth())
+			String date = StringUtils.EMPTY + tMedi.getEndDate().getYear()
+					+ String.format("%02d", tMedi.getEndDate().getMonth())
 					+ String.format("%02d", tMedi.getEndDate().getDay());
 			Set<TMedi> dateSet = group.get(date);
 			if (dateSet == null) {

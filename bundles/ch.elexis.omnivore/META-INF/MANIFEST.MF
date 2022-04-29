@@ -9,4 +9,5 @@ Bundle-Vendor: elexis.ch, jsigle.com
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: ch.elexis.omnivore
+Require-Bundle: org.apache.commons.lang3;bundle-version="3.12.0"
 

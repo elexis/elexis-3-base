@@ -1,5 +1,6 @@
 package ch.elexis.icpc.fire.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -168,7 +169,7 @@ public class MedisBuilder {
 		case SYMPTOMATIC_MEDICATION:
 			return "Symptom";
 		default:
-			return "";
+			return StringUtils.EMPTY;
 		}
 	}
 

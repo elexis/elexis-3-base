@@ -1,5 +1,6 @@
 package ch.elexis.hl7.message.core.message;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
 import ch.elexis.data.Anwender;
@@ -61,73 +62,73 @@ public class HL7MessageUtil {
 	private static void setContactInfo(HL7Kontakt hKontakt, Kontakt eKontakt) {
 		String name = eKontakt.get(Kontakt.FLD_NAME1);
 		if (name == null) {
-			name = ""; //$NON-NLS-1$
+			name = StringUtils.EMPTY;
 		}
 		hKontakt.setName(name.trim());
 
 		String firstname = eKontakt.get(Kontakt.FLD_NAME2);
 		if (firstname == null) {
-			firstname = ""; //$NON-NLS-1$
+			firstname = StringUtils.EMPTY;
 		}
 		hKontakt.setFirstname(firstname.trim());
 
 		String title = eKontakt.get("Titel"); //$NON-NLS-1$
 		if (title == null) {
-			title = ""; //$NON-NLS-1$
+			title = StringUtils.EMPTY;
 		}
 		hKontakt.setTitle(title.trim());
 
 		String phone1 = eKontakt.get(Kontakt.FLD_PHONE1);
 		if (phone1 == null) {
-			phone1 = ""; //$NON-NLS-1$
+			phone1 = StringUtils.EMPTY;
 		}
 		hKontakt.setPhone1(phone1.trim());
 
 		String phone2 = eKontakt.get(Kontakt.FLD_PHONE2);
 		if (phone2 == null) {
-			phone2 = ""; //$NON-NLS-1$
+			phone2 = StringUtils.EMPTY;
 		}
 		hKontakt.setPhone2(phone2.trim());
 
 		String email = eKontakt.get(Kontakt.FLD_E_MAIL);
 		if (email == null) {
-			email = ""; //$NON-NLS-1$
+			email = StringUtils.EMPTY;
 		}
 		hKontakt.setEmail(email.trim());
 
 		String fax = eKontakt.get(Kontakt.FLD_FAX);
 		if (fax == null) {
-			fax = ""; //$NON-NLS-1$
+			fax = StringUtils.EMPTY;
 		}
 		hKontakt.setFax(fax.trim());
 
 		String street = eKontakt.get(Kontakt.FLD_STREET);
 		if (street == null) {
-			street = ""; //$NON-NLS-1$
+			street = StringUtils.EMPTY;
 		}
 		hKontakt.setAddress1(street.trim());
 
 		String other = eKontakt.get(Patient.FLD_NAME3);
 		if (other == null) {
-			other = ""; //$NON-NLS-1$
+			other = StringUtils.EMPTY;
 		}
 		hKontakt.setAddress2(other.trim());
 
 		String city = eKontakt.get(Patient.FLD_PLACE);
 		if (city == null) {
-			city = ""; //$NON-NLS-1$
+			city = StringUtils.EMPTY;
 		}
 		hKontakt.setCity(city.trim());
 
 		String zip = eKontakt.get(Patient.FLD_ZIP);
 		if (zip == null) {
-			zip = ""; //$NON-NLS-1$
+			zip = StringUtils.EMPTY;
 		}
 		hKontakt.setZip(zip.trim());
 
 		String country = eKontakt.get(Patient.FLD_COUNTRY);
 		if (country == null) {
-			country = ""; //$NON-NLS-1$
+			country = StringUtils.EMPTY;
 		}
 		hKontakt.setCountry(country.trim());
 	}

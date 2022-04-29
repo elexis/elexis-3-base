@@ -1,5 +1,6 @@
 package at.medevit.elexis.outbox.ui.part;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -97,7 +98,7 @@ public class OutboxView extends ViewPart {
 				filter.setSearchText(filterText.getText());
 				viewer.refresh();
 			} else {
-				filter.setSearchText("");
+				filter.setSearchText(StringUtils.EMPTY);
 				viewer.refresh();
 			}
 		});

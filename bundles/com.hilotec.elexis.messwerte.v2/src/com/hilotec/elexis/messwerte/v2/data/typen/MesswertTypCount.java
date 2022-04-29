@@ -13,6 +13,7 @@
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
@@ -52,7 +53,7 @@ public class MesswertTypCount extends MesswertBase implements IMesswertTyp {
 	}
 
 	public String getDefault(Messwert messwert) {
-		return ""; //$NON-NLS-1$
+		return StringUtils.EMPTY;
 	}
 
 	public void setCounterMode(String cn) {
@@ -82,7 +83,7 @@ public class MesswertTypCount extends MesswertBase implements IMesswertTyp {
 	@Override
 	public void saveInput(Messwert messwert) {
 		String s = messwert.getWert();
-		if (s.equals("")) { //$NON-NLS-1$
+		if (s.equals(StringUtils.EMPTY)) {
 			int value = ConfigServiceHolder.getGlobal(CONFIG_BASE_NAME + counterMode, startValue);
 			if (value < startValue) {
 				value = startValue;
@@ -113,7 +114,7 @@ public class MesswertTypCount extends MesswertBase implements IMesswertTyp {
 			return df.format(Double.parseDouble(messwert.getWert()));
 		} catch (Exception e) {
 		}
-		return ""; //$NON-NLS-1$
+		return StringUtils.EMPTY;
 	}
 
 }

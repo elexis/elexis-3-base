@@ -12,6 +12,7 @@
 
 package ch.elexis.views;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -91,14 +92,14 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 		Font boldFont = new Font(Display.getCurrent(), bfd[0]);
 		lbl.setFont(boldFont);
 
-		codeChapter = toolkit.createText(info, "");
+		codeChapter = toolkit.createText(info, StringUtils.EMPTY);
 		codeChapter.setEditable(false);
 		codeChapter.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 
 		lbl = toolkit.createLabel(info, "Code");
 		lbl.setFont(boldFont);
 
-		codeCode = toolkit.createText(info, "");
+		codeCode = toolkit.createText(info, StringUtils.EMPTY);
 		codeCode.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		codeCode.setLayoutData(twd);
@@ -106,7 +107,7 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 		lbl = toolkit.createLabel(info, "Text");
 		lbl.setFont(boldFont);
 
-		codeText = toolkit.createText(info, "");
+		codeText = toolkit.createText(info, StringUtils.EMPTY);
 		codeText.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		codeText.setLayoutData(twd);
@@ -114,7 +115,7 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 		lbl = toolkit.createLabel(info, "Beschreibung");
 		lbl.setFont(boldFont);
 
-		codeDescription = toolkit.createText(info, "", SWT.MULTI);
+		codeDescription = toolkit.createText(info, StringUtils.EMPTY, SWT.MULTI);
 		codeDescription.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		codeDescription.setLayoutData(twd);
@@ -122,7 +123,7 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 		lbl = toolkit.createLabel(info, "Pauschal Preis");
 		lbl.setFont(boldFont);
 
-		codeFixedValue = toolkit.createText(info, "", SWT.MULTI);
+		codeFixedValue = toolkit.createText(info, StringUtils.EMPTY, SWT.MULTI);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		codeFixedValue.setLayoutData(twd);
 		codeFixedValue.addModifyListener(new ModifyListener() {
@@ -185,17 +186,17 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 			if (complementary.isFixedValueSet()) {
 				codeFixedValue.setText(Double.toString(complementary.getFixedValue() / 100.0));
 			} else {
-				codeFixedValue.setText("");
+				codeFixedValue.setText(StringUtils.EMPTY);
 			}
 		} else {
 			complementary = null;
 			form.setText("Keine Leistung ausgewählt.");
 
-			codeChapter.setText("");
-			codeCode.setText("");
-			codeText.setText("");
-			codeDescription.setText("");
-			codeFixedValue.setText("");
+			codeChapter.setText(StringUtils.EMPTY);
+			codeCode.setText(StringUtils.EMPTY);
+			codeText.setText(StringUtils.EMPTY);
+			codeDescription.setText(StringUtils.EMPTY);
+			codeFixedValue.setText(StringUtils.EMPTY);
 			subDetail.hide();
 		}
 		infoSection.layout();

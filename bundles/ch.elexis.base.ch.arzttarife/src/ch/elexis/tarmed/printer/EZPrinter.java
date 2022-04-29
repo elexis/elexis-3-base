@@ -1,5 +1,6 @@
 package ch.elexis.tarmed.printer;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_EZ;
 import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_M1;
 import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_M2;
@@ -140,7 +141,7 @@ public class EZPrinter {
 		if (!ezData.paid.isZero()) {
 			sb.append(Messages.RnPrintView_prepaid).append(ezData.paid.getAmountAsString()).append(StringConstants.LF);
 			// sb.append("Noch zu
-			// zahlen:\t").append(xmlex.mDue.getAmountAsString()).append("\n");
+			// zahlen:\t").append(xmlex.mDue.getAmountAsString()).append(StringUtils.LF);
 			sb.append(Messages.RnPrintView_topay)
 					.append(mEZDue.subtractMoney(ezData.paid).roundTo5().getAmountAsString())
 					.append(StringConstants.LF);

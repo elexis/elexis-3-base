@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.buchhaltung.kassenbuch.KassenbuchTextTemplateRequirement.TT_LIST;
 
 import java.util.Enumeration;
@@ -87,8 +88,8 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 			mKat.addMoney(betrag);
 			table[i][0] = kb.get("BelegNr");
 			table[i][1] = kb.getDate();
-			table[i][2] = betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : "";
-			table[i][3] = betrag.isNegative() ? "" : betrag.getAmountAsString();
+			table[i][2] = betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : StringUtils.EMPTY;
+			table[i][3] = betrag.isNegative() ? StringUtils.EMPTY : betrag.getAmountAsString();
 			table[i][4] = kb.getSaldo().getAmountAsString();
 			table[i][5] = kb.getText();
 		}
@@ -96,13 +97,13 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 		text.getPlugin().insertTable("[Liste]", ITextPlugin.FIRST_ROW_IS_HEADER, table,
 				new int[] { 5, 15, 15, 15, 20, 30 });
 		Enumeration<String> keys = mCategories.keys();
-		Object cursor = text.getPlugin().insertText("##end##", "", SWT.LEFT);
+		Object cursor = text.getPlugin().insertText("##end##", StringUtils.EMPTY, SWT.LEFT);
 		if (cursor != null) {
 			while (keys.hasMoreElements()) {
 				String cat = keys.nextElement();
 				Money betrag = mCategories.get(cat);
 				StringBuilder sb = new StringBuilder();
-				sb.append("\n").append(cat).append("\t\t\t").append(betrag.getAmountAsString());
+				sb.append(StringUtils.LF).append(cat).append("\t\t\t").append(betrag.getAmountAsString());
 				cursor = text.getPlugin().insertText(cursor, sb.toString(), SWT.LEFT);
 			}
 		}

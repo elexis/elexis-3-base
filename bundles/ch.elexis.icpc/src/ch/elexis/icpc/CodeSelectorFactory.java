@@ -107,7 +107,7 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 		public void changed(HashMap<String, String> values) {
 			String filterText = values.get("Text").toLowerCase();
 			if (filterText == null || filterText.isEmpty() || filterText.equals("%")) {
-				setFilterValue("");
+				setFilterValue(StringUtils.EMPTY);
 			} else {
 				setFilterValue(filterText);
 			}
@@ -121,7 +121,8 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 		public boolean matchFilter(IDiagnosisTree element) {
 			if (StringUtils.isNotBlank(filterValue)) {
 				if (element.getChildren().isEmpty()) {
-					return (element.getCode() + " " + element.getText()).toLowerCase().contains(filterValue);
+					return (element.getCode() + StringUtils.SPACE + element.getText()).toLowerCase()
+							.contains(filterValue);
 				} else {
 					return getChildren(element).length > 0;
 				}

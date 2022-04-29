@@ -1,5 +1,6 @@
 package at.medevit.elexis.ehc.vacdoc.service.internal;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
@@ -187,14 +188,14 @@ public class VacdocServiceImpl implements VacdocService {
 			if (article != null && articleStoreToString.isPresent()) {
 				new Vaccination(elexisPatient.getId(), articleStoreToString.get(), article.getLabel(),
 						article.getGtin(), article.getAtcCode(), immunization.getApplyDate(), consumable.getLotNr(),
-						((author != null) ? author.getCompleteName() : ""));
+						((author != null) ? author.getCompleteName() : StringUtils.EMPTY));
 			} else {
 				logger.warn("Article [" + consumable.getTradeName() + "] not found GTIN ["
-						+ ((gtin != null) ? gtin.getExtension() : "") + "]");
-				new Vaccination(elexisPatient.getId(), "", consumable.getTradeName(),
-						((gtin != null) ? gtin.getExtension() : ""), ((atcCode != null) ? atcCode.getCode() : ""),
-						immunization.getApplyDate(), consumable.getLotNr(),
-						((author != null) ? author.getCompleteName() : ""));
+						+ ((gtin != null) ? gtin.getExtension() : StringUtils.EMPTY) + "]");
+				new Vaccination(elexisPatient.getId(), StringUtils.EMPTY, consumable.getTradeName(),
+						((gtin != null) ? gtin.getExtension() : StringUtils.EMPTY),
+						((atcCode != null) ? atcCode.getCode() : StringUtils.EMPTY), immunization.getApplyDate(),
+						consumable.getLotNr(), ((author != null) ? author.getCompleteName() : StringUtils.EMPTY));
 			}
 		}
 	}

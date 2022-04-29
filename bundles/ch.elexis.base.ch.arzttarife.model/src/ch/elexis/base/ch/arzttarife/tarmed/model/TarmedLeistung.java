@@ -376,7 +376,7 @@ public class TarmedLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 		if (exclusions == null) {
 			Map<String, String> map = getExtension().getLimits();
 			if (map == null) {
-				return "";
+				return StringUtils.EMPTY;
 			}
 			return StringUtils.defaultString(map.get("exclusion"));
 		}
@@ -469,7 +469,7 @@ public class TarmedLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 		if (law != null) {
 			if (!ArzttarifeUtil.isAvailableLaw(law)) {
 				query.startGroup();
-				query.or("law", COMPARATOR.EQUALS, "");
+				query.or("law", COMPARATOR.EQUALS, StringUtils.EMPTY);
 				query.or("law", COMPARATOR.EQUALS, null);
 				query.andJoinGroups();
 			} else {
@@ -524,7 +524,8 @@ public class TarmedLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 	@Override
 	public String getLabel() {
-		return getCode() + " " + getText() + ((getLaw() != null && !getLaw().isEmpty()) ? " (" + getLaw() + ")" : "");
+		return getCode() + StringUtils.SPACE + getText()
+				+ ((getLaw() != null && !getLaw().isEmpty()) ? " (" + getLaw() + ")" : StringUtils.EMPTY);
 	}
 
 	@Override

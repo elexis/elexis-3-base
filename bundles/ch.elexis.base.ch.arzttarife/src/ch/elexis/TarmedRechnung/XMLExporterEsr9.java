@@ -47,7 +47,8 @@ public class XMLExporterEsr9 {
 			element.setAttribute(ATTR_PARTICIPANT_NUMBER, participantNumber);
 			element.setAttribute(ATTR_TYPE, "16or27"); //$NON-NLS-1$
 			String refnr = besr.makeRefNr(true);
-			String codingline = besr.createCodeline(XMLTool.moneyToXmlDouble(balance.getDue()).replaceFirst("[.,]", ""), //$NON-NLS-1$ //$NON-NLS-2$
+			String codingline = besr.createCodeline(
+					XMLTool.moneyToXmlDouble(balance.getDue()).replaceFirst("[.,]", StringUtils.EMPTY), //$NON-NLS-1$
 					null);
 			element.setAttribute("reference_number", refnr); //$NON-NLS-1$
 			element.setAttribute("coding_line", codingline); //$NON-NLS-1$
@@ -57,7 +58,7 @@ public class XMLExporterEsr9 {
 			return null;
 		}
 		String bankid = (String) actMandant.getBiller().getExtInfo(XMLExporter.ta.RNBANK);
-		if (StringUtils.isNotBlank(bankid)) { // $NON-NLS-1$
+		if (StringUtils.isNotBlank(bankid)) {
 			Optional<IOrganization> bank = CoreModelServiceHolder.get().load(bankid, IOrganization.class);
 			bank.ifPresent(b -> {
 				Element eBank = new Element("bank", XMLExporter.nsinvoice); //$NON-NLS-1$

@@ -11,6 +11,7 @@
 
 package ch.itmed.fop.printing.preferences.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Iterator;
 import java.util.List;
 
@@ -257,9 +258,10 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		setTitle(Messages.getDocumentName(selectionIndex) + " " + Messages.TemplatePreferences_Title);
+		setTitle(Messages.getDocumentName(selectionIndex) + StringUtils.SPACE + Messages.TemplatePreferences_Title);
 		setMessage(Messages.TemplatePreferences_Description);
-		getShell().setText(Messages.getDocumentName(selectionIndex) + " " + Messages.TemplatePreferences_Title);
+		getShell().setText(
+				Messages.getDocumentName(selectionIndex) + StringUtils.SPACE + Messages.TemplatePreferences_Title);
 	}
 
 	@Override
@@ -354,7 +356,7 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 				xslCustomFileDialog.setEnabled(true);
 			} else {
 				xslTemplate.setEnabled(false);
-				xslTemplate.setText("");
+				xslTemplate.setText(StringUtils.EMPTY);
 				xslCustomFileDialog.setEnabled(false);
 			}
 		}

@@ -5,6 +5,8 @@
 
 package org.iatrix.bestellung.rose;
 
+import org.apache.commons.lang3.StringUtils;
+
 public interface Constants {
 	public static final String CFG_BASE = "org.iatrix.bestellung.rose";
 
@@ -15,7 +17,7 @@ public interface Constants {
 	public static final String CFG_ASAS_PROXY_PORT = CFG_BASE + "/asas_port";
 	public static final String CFG_ROSE_SUPPLIER = CFG_BASE + "/supplier";
 
-	public static final String DEFAULT_ROSE_CLIENT_NUMBER = "";
+	public static final String DEFAULT_ROSE_CLIENT_NUMBER = StringUtils.EMPTY;
 
 	/* actually not significant... */
 	public static final String DEFAULT_ROSE_USERNAME = "elexis";

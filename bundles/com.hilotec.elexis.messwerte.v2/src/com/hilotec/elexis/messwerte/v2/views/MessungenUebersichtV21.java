@@ -13,6 +13,7 @@
 
 package com.hilotec.elexis.messwerte.v2.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -311,7 +312,7 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 		int i = 0;
 		for (IMesswertTyp dft : t.getMesswertTypen()) {
 			String colTitle = dft.getTitle();
-			if (!dft.getUnit().equals("")) //$NON-NLS-1$
+			if (!dft.getUnit().equals(StringUtils.EMPTY))
 				colTitle += " [" + dft.getUnit() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 
 			col = createTableViewerColumn(viewer, colTitle, DEFAULT_COL_WIDTH, 0);
@@ -624,7 +625,7 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 				for (IMesswertTyp messwertTyp : messwertTypen) {
 					headerstring = headerstring + messwertTyp.getName();
 					String unit = messwertTyp.getUnit();
-					if (!"".equals(unit))
+					if (!StringUtils.EMPTY.equals(unit))
 						headerstring += "(" //$NON-NLS-1$
 								+ messwertTyp.getUnit() + ")"; // $NON-NLS-2$
 
@@ -633,7 +634,7 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 				}
 
 				headerstring = headerstring.substring(0, headerstring.length() - 1);
-				writer.append(headerstring + "\n"); //$NON-NLS-1$
+				writer.append(headerstring + StringUtils.LF);
 
 				List<Messung> messungen = Messung.getMessungenForExport(typ, expData.getDateFrom(),
 						expData.getDateTo());
@@ -659,7 +660,7 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 							messungstring += messwert.getWert() + ";"; //$NON-NLS-1$
 						}
 						messungstring = messungstring.substring(0, messungstring.length() - 1);
-						writer.append(messungstring + "\n"); //$NON-NLS-1$
+						writer.append(messungstring + StringUtils.LF);
 					}
 					monitor.worked(1);
 					if (monitor.isCanceled()) {

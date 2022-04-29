@@ -1,6 +1,7 @@
 
 package ch.docbox.ws.cdachservicesv2;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(name = StringUtils.EMPTY, propOrder = {
     "update"
 })
 @XmlRootElement(name = "getCalendarUpdatesResponse")

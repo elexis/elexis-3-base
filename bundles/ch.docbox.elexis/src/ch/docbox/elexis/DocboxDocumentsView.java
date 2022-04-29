@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
 import javax.inject.Inject;
@@ -207,8 +208,8 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 			if ((e1 instanceof CdaMessage) && (e2 instanceof CdaMessage)) {
 				CdaMessage d1 = (CdaMessage) e1;
 				CdaMessage d2 = (CdaMessage) e2;
-				String c1 = "";
-				String c2 = "";
+				String c1 = StringUtils.EMPTY;
+				String c2 = StringUtils.EMPTY;
 				switch (sortColumn) {
 				case 0:
 					c1 = d1.getCreationDate();
@@ -415,7 +416,7 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 						String plz = xpath.getPatientPlz();
 						String city = xpath.getPatientCity();
 
-						Patient p = new Patient(family, given, "", "");
+						Patient p = new Patient(family, given, StringUtils.EMPTY, StringUtils.EMPTY);
 						p.set(Person.NAME, family);
 						p.set(Person.FIRSTNAME, given);
 
@@ -436,7 +437,7 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 						p.set(Patient.BIRTHDATE, xpath.getPatientDateOfBirth());
 
 						String ahv = xpath.getPatientAhv13();
-						if (ahv != null && !"".equals(ahv)) {
+						if (ahv != null && !StringUtils.EMPTY.equals(ahv)) {
 							p.addXid(DOMAIN_AHV, xpath.getPatientAhv13(), true);
 						}
 

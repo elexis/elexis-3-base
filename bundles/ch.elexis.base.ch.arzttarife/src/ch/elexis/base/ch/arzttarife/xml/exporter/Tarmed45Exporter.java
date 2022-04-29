@@ -484,7 +484,7 @@ public class Tarmed45Exporter {
 			providerAddressType.setZsr(zsr);
 		}
 		String spec = (String) provider.getExtInfo(TarmedACL.getInstance().SPEC);
-		if (StringUtils.isNotBlank(spec)) { // $NON-NLS-1$
+		if (StringUtils.isNotBlank(spec)) {
 			providerAddressType.setSpecialty(spec);
 		}
 		Object companyOrPerson = getCompanyOrPerson(provider, false);
@@ -507,7 +507,7 @@ public class Tarmed45Exporter {
 		}
 
 		String spec = (String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().SPEC);
-		if (StringUtils.isNotBlank(spec)) { // $NON-NLS-1$
+		if (StringUtils.isNotBlank(spec)) {
 			billerAddressType.setSpecialty(spec);
 		}
 		Object companyOrPerson = getCompanyOrPerson(biller, false);
@@ -719,7 +719,7 @@ public class Tarmed45Exporter {
 							if (rfes.size() > 0) {
 								StringBuilder sb = new StringBuilder();
 								for (IReasonForEncounter rfe : rfes) {
-									sb.append("551_").append(rfe.getCode()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+									sb.append("551_").append(rfe.getCode()).append(StringUtils.SPACE); //$NON-NLS-1$
 								}
 								serviceExType.setRemark(sb.toString());
 							}
@@ -814,7 +814,7 @@ public class Tarmed45Exporter {
 		if (billable instanceof ICustomService
 				|| (billable instanceof IArticle && ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL)) {
 			if (billable.getId().equals(ret)) {
-				ret = "";
+				ret = StringUtils.EMPTY;
 			}
 		}
 		return ret;
@@ -1229,7 +1229,7 @@ public class Tarmed45Exporter {
 		esrQRType.setCreditor(esrAddressType);
 
 		String bankid = (String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().RNBANK);
-		if (StringUtils.isNotBlank(bankid)) { // $NON-NLS-1$
+		if (StringUtils.isNotBlank(bankid)) {
 			Optional<IOrganization> bank = CoreModelServiceHolder.get().load(bankid, IOrganization.class);
 			bank.ifPresent(b -> {
 				EsrAddressType bankEsrAddressType = new EsrAddressType();
@@ -1283,8 +1283,8 @@ public class Tarmed45Exporter {
 		esr9Type.setParticipantNumber(participantNumber);
 		esr9Type.setType("16or27");
 		esr9Type.setReferenceNumber(getBesr(invoice).makeRefNr(true));
-		String codingline = getBesr(invoice)
-				.createCodeline(XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", ""), null); //$NON-NLS-1$ //$NON-NLS-2$
+		String codingline = getBesr(invoice).createCodeline(
+				XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", StringUtils.EMPTY), null); //$NON-NLS-1$
 		esr9Type.setCodingLine(codingline);
 
 		IContact creditor = invoice.getMandator().getBiller();
@@ -1306,7 +1306,7 @@ public class Tarmed45Exporter {
 		esr9Type.setCreditor(esrAddressType);
 
 		String bankid = (String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().RNBANK);
-		if (StringUtils.isNotBlank(bankid)) { // $NON-NLS-1$
+		if (StringUtils.isNotBlank(bankid)) {
 			Optional<IOrganization> bank = CoreModelServiceHolder.get().load(bankid, IOrganization.class);
 			bank.ifPresent(b -> {
 				EsrAddressType bankEsrAddressType = new EsrAddressType();
@@ -1372,10 +1372,9 @@ public class Tarmed45Exporter {
 			Demand demand = new ProcessingType.Demand();
 			demand.setTcDemandId(0);
 
-			String tcToken = getBesr(invoice).createCodeline(
-					XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", //$NON-NLS-1$
-							""), //$NON-NLS-1$
-					tcCode);
+			String tcToken = getBesr(invoice)
+					.createCodeline(XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", //$NON-NLS-1$
+							StringUtils.EMPTY), tcCode);
 			demand.setTcToken(tcToken);
 			demand.setInsuranceDemandDate(XMLExporterUtil.makeXMLDate(invoice.getDate()));
 

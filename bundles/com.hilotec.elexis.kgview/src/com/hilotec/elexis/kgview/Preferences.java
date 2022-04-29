@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -67,7 +68,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	 * @return Konfigurierte Einnahmevorschriften im aktuellen Mandant.
 	 */
 	public static String[] getEinnahmevorschriften() {
-		String s = ConfigServiceHolder.getMandator(CFG_EVLISTE, "");
+		String s = ConfigServiceHolder.getMandator(CFG_EVLISTE, StringUtils.EMPTY);
 		return s.split(",");
 	}
 

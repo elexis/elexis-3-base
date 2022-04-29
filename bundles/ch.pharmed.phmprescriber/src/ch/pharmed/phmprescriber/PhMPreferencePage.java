@@ -5,6 +5,7 @@
 
 package ch.pharmed.phmprescriber;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -309,25 +310,25 @@ public class PhMPreferencePage extends PreferencePage implements IWorkbenchPrefe
 	 */
 	private String createCFGString() {
 
-		String returnValue = ""; //$NON-NLS-1$
+		String returnValue = StringUtils.EMPTY;
 
-		returnValue += textboxZSRid.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		returnValue += textboxGLNid.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		returnValue += textboxZSRid.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+		returnValue += textboxGLNid.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 
-		returnValue += textboxTitle.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		returnValue += textboxFirstname.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		returnValue += textboxLastname.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		returnValue += textboxTitle.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+		returnValue += textboxFirstname.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+		returnValue += textboxLastname.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 
-		returnValue += textboxStreet.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		returnValue += textboxPostbox.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		returnValue += textboxZip.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		returnValue += textboxCity.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		returnValue += textboxStreet.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+		returnValue += textboxPostbox.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+		returnValue += textboxZip.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+		returnValue += textboxCity.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 
-		returnValue += textboxPhone.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		returnValue += textboxFax.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		returnValue += textboxPhone.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+		returnValue += textboxFax.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 
-		returnValue += textboxSpecialty1.getText().replace(";", "") + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		returnValue += textboxSpecialty2.getText().replace(";", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		returnValue += textboxSpecialty1.getText().replace(";", StringUtils.EMPTY) + ";"; //$NON-NLS-1$ //$NON-NLS-2$
+		returnValue += textboxSpecialty2.getText().replace(";", StringUtils.EMPTY); //$NON-NLS-1$
 
 		return returnValue;
 

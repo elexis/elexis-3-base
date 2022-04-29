@@ -1,5 +1,6 @@
 package at.medevit.elexis.loinc.ui.providers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -48,7 +49,7 @@ public class LoincCodeControlFieldProvider implements ControlFieldProvider {
 		lblFilter.setText("Filter: ");
 
 		txtFilter = new Text(ret, SWT.BORDER | SWT.SEARCH);
-		txtFilter.setText(""); //$NON-NLS-1$
+		txtFilter.setText(StringUtils.EMPTY);
 
 		ToolBarManager tbManager = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
 		tbManager.add(new Action("neu erstellen") {

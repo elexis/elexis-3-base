@@ -1,5 +1,6 @@
 package ch.elexis.connect.afinion;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -61,8 +62,8 @@ public class Logger {
 		debug = debug.replace("\029", "<029>"); //$NON-NLS-1$ //$NON-NLS-2$
 		debug = debug.replace("\030", "<030>"); //$NON-NLS-1$ //$NON-NLS-2$
 		debug = debug.replace("\031", "<031>"); //$NON-NLS-1$ //$NON-NLS-2$
-		debug = debug.replace(" ", "<SPACE>"); //$NON-NLS-1$ //$NON-NLS-2$
-		debug = debug.replace("\n", "<LF>"); //$NON-NLS-1$ //$NON-NLS-2$
+		debug = debug.replace(StringUtils.SPACE, "<SPACE>"); //$NON-NLS-1$
+		debug = debug.replace(StringUtils.LF, "<LF>"); //$NON-NLS-1$
 		debug = debug.replace("\t", "<HT>"); //$NON-NLS-1$ //$NON-NLS-2$
 		debug = debug.replace("\"", "<QUOTE>"); //$NON-NLS-1$ //$NON-NLS-2$
 		return debug;

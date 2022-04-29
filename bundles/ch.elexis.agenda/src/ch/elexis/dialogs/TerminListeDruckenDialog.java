@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.dialogs;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.agenda.text.AgendaTextTemplateRequirement.TT_AGENDA_LIST;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -61,7 +62,7 @@ public class TerminListeDruckenDialog extends TitleAreaDialog implements ICallba
 			termine[i][1] = Plannables.getEndTimeAsString(liste[i - 1]);
 			termine[i][2] = liste[i - 1].getType();
 			Patient pat = Patient.load(liste[i - 1].getText());
-			String patCode = "";
+			String patCode = StringUtils.EMPTY;
 			if (pat.exists()) {
 				patCode = ", Id: " + pat.getPatCode();
 			}

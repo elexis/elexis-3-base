@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Date;
 
 import ch.gpb.elexis.cst.service.CstService;
@@ -43,7 +44,7 @@ public class MinimaxValue {
 	private double dMaxOfSpan3;
 
 	private String name = "no name set";
-	private String text = "";
+	private String text = StringUtils.EMPTY;
 
 	public MinimaxValue(double dRangeStart, double dRangeEnd, String sAbstract, Date sDateStartOfSpan1,
 			Date sDateEndOfSpan1, double dMaxOfSpan1, double dMinOfSpan1, Date sDateStartOfSpan2, Date sDateEndOfSpan2,

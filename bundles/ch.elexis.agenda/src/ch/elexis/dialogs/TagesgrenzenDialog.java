@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.dialogs;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class TagesgrenzenDialog extends TitleAreaDialog {
 		StringBuilder sb = new StringBuilder();
 		for (Termin t : lt) {
 			sb.append(t.getTimeSpan().from.toString(TimeTool.TIME_SMALL)).append("-")
-					.append(t.getTimeSpan().until.toString(TimeTool.TIME_SMALL)).append("\n");
+					.append(t.getTimeSpan().until.toString(TimeTool.TIME_SMALL)).append(StringUtils.LF);
 		}
 		text.setText(sb.toString());
 		return ret;

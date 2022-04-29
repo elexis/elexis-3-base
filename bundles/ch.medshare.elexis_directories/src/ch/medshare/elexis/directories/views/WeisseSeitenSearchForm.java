@@ -12,6 +12,7 @@
 
 package ch.medshare.elexis.directories.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
@@ -44,7 +45,7 @@ public class WeisseSeitenSearchForm extends Composite {
 
 	private List<KontaktEntry> kontakte = new Vector<KontaktEntry>();
 
-	private String searchInfoText = "";
+	private String searchInfoText = StringUtils.EMPTY;
 
 	public WeisseSeitenSearchForm(Composite parent, int style) {
 		super(parent, style);
@@ -139,10 +140,8 @@ public class WeisseSeitenSearchForm extends Composite {
 	 * Retourniert String array für Dialoge
 	 */
 	private String[] getFields(KontaktEntry entry) {
-		final String name = entry.getName() + " " //$NON-NLS-1$
-				+ entry.getVorname();
-		final String geo = entry.getPlz() + " " //$NON-NLS-1$
-				+ entry.getOrt();
+		final String name = entry.getName() + StringUtils.SPACE + entry.getVorname();
+		final String geo = entry.getPlz() + StringUtils.SPACE + entry.getOrt();
 		if (!entry.isDetail()) { // Sind Detailinformationen vorhanden
 			readKontakte(name, geo); // Detail infos lesen
 			KontaktEntry detailEntry = null;
@@ -163,8 +162,9 @@ public class WeisseSeitenSearchForm extends Composite {
 				}
 			}
 		}
-		return new String[] { entry.getName(), entry.getVorname(), "", entry.getAdresse(), entry.getPlz(), //$NON-NLS-1$
-				entry.getOrt(), entry.getTelefon(), entry.getZusatz(), entry.getFax(), entry.getEmail() };
+		return new String[] { entry.getName(), entry.getVorname(), StringUtils.EMPTY, entry.getAdresse(),
+				entry.getPlz(), entry.getOrt(), entry.getTelefon(), entry.getZusatz(), entry.getFax(),
+				entry.getEmail() };
 	}
 
 	/**

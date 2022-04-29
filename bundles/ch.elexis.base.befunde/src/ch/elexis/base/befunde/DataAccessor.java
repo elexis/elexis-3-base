@@ -12,6 +12,7 @@
 
 package ch.elexis.base.befunde;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -169,7 +170,7 @@ public class DataAccessor implements IDataAccess {
 							String vv = (String) befs.get(keys[j]);
 							values[i][j] = vv;
 							if (values[i][j] == null) {
-								values[i][j] = ""; //$NON-NLS-1$
+								values[i][j] = StringUtils.EMPTY;
 							}
 						}
 						i++;
@@ -277,7 +278,7 @@ public class DataAccessor implements IDataAccess {
 					}
 				}
 			} else {
-				ret = new Result<Object>("");
+				ret = new Result<Object>(StringUtils.EMPTY);
 			}
 		}
 		return ret;

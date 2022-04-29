@@ -1,5 +1,6 @@
 package ch.docbox.ws.cdachservices;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
+@XmlType(name = StringUtils.EMPTY)
 @XmlRootElement(name = "checkAccess")
 public class CheckAccess {
 

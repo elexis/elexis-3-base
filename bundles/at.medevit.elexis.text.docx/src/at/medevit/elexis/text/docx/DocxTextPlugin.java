@@ -1,5 +1,6 @@
 package at.medevit.elexis.text.docx;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -179,9 +180,9 @@ public class DocxTextPlugin implements ITextPlugin {
 			}
 			return MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Warnung",
 					"Bei Benutzung der Docx-Document Textausgabe wird empfohlen unter Einstellungen > Textverarbeitung folgende Optionen zu aktivieren.\n\n"
-							+ "* " + ch.elexis.core.ui.preferences.Messages.Texterstellung_texteditlocaldesc + "\n"
-							+ "* " + "Brief extern speichern" + "\n\n" + missingOptionText.toString() + "\n"
-							+ "Wollen Sie trotzdem weiter machen?");
+							+ "* " + ch.elexis.core.ui.preferences.Messages.Texterstellung_texteditlocaldesc
+							+ StringUtils.LF + "* " + "Brief extern speichern" + "\n\n" + missingOptionText.toString()
+							+ StringUtils.LF + "Wollen Sie trotzdem weiter machen?");
 		}
 	}
 
@@ -221,7 +222,7 @@ public class DocxTextPlugin implements ITextPlugin {
 			List<Text> found = visitor.getFound();
 			if (!found.isEmpty()) {
 				for (Text foundText : found) {
-					foundText.setValue("");
+					foundText.setValue(StringUtils.EMPTY);
 					R r = (R) foundText.getParent();
 					// do not insert table with no content
 					if (contents.length > 0) {
@@ -268,7 +269,7 @@ public class DocxTextPlugin implements ITextPlugin {
 			if (!found.isEmpty()) {
 				Object ret = null;
 				for (Text foundText : found) {
-					foundText.setValue("");
+					foundText.setValue(StringUtils.EMPTY);
 					R r = (R) foundText.getParent();
 					ret = TextUtil.insertText(r, text, align, currentStyleInfo);
 				}
@@ -538,7 +539,7 @@ public class DocxTextPlugin implements ITextPlugin {
 	// if (!found.isEmpty()) {
 	// try {
 	// for (Text foundText : found) {
-	// foundText.setValue("");
+	// foundText.setValue(StringUtils.EMPTY);
 	// R r = (R) foundText.getParent();
 	// ImageUtil.insertImage(r, image, currentDocument);
 	// }

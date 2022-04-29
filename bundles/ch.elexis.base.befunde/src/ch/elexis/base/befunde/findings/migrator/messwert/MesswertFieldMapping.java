@@ -1,5 +1,6 @@
 package ch.elexis.base.befunde.findings.migrator.messwert;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +93,7 @@ public class MesswertFieldMapping {
 	public static List<MesswertFieldMapping> getMappings() {
 		List<MesswertFieldMapping> ret = new ArrayList<MesswertFieldMapping>();
 		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
-			String mapping = ConfigServiceHolder.getMandator(MAPPING_CONFIG, "");
+			String mapping = ConfigServiceHolder.getMandator(MAPPING_CONFIG, StringUtils.EMPTY);
 			String[] mappings = mapping.split(Messwert.SETUP_SEPARATOR);
 			for (String string : mappings) {
 				MesswertFieldMapping createdMapping = MesswertFieldMapping.createFromString(string);

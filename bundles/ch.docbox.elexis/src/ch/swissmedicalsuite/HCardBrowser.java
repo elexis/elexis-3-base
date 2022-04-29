@@ -10,6 +10,7 @@
 
 package ch.swissmedicalsuite;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
@@ -45,7 +46,7 @@ public class HCardBrowser {
 		}
 		this.browserUrl = browserUrl;
 		this.gln = gln;
-		log.log("hcardbrowser initiated " + browserUrl + " " + gln, Log.DEBUGMSG);
+		log.log("hcardbrowser initiated " + browserUrl + StringUtils.SPACE + gln, Log.DEBUGMSG);
 	}
 
 	public void setProxyPort() {
@@ -53,7 +54,7 @@ public class HCardBrowser {
 			int port = HCardAPI.INSTANCE.getUserProxyPort(gln);
 			log.log("getting proxy port for gln:" + gln + " port " + port, Log.DEBUGMSG);
 
-			System.setProperty("https.proxyPort", "" + port);
+			System.setProperty("https.proxyPort", StringUtils.EMPTY + port);
 			glnOld = gln;
 
 			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
@@ -97,7 +98,7 @@ public class HCardBrowser {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public int setTerminvereinbarung() {

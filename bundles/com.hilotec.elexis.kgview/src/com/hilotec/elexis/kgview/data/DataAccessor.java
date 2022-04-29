@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class DataAccessor implements IDataAccess {
 	private String[] emptyRow(int count) {
 		String[] row = new String[count];
 		for (int i = 0; i < row.length; i++)
-			row[i] = "";
+			row[i] = StringUtils.EMPTY;
 		return row;
 	}
 
@@ -74,16 +75,16 @@ public class DataAccessor implements IDataAccess {
 		}
 
 		// Zeilen fuer Spaltenueberschriften zaehlen
-		int extra = 2 * evs.size() - (evs.contains("") ? 2 : 1);
+		int extra = 2 * evs.size() - (evs.contains(StringUtils.EMPTY) ? 2 : 1);
 		String[][] res = new String[l.size() + extra][];
 
 		// Einnahmevorschriften Sortieren
 		String evs_ordered[] = new String[evs.size()];
 		int i = 0;
 		// Zuerst Medikamente ohne Vorschrift
-		if (evs.contains("")) {
-			evs_ordered[i++] = "";
-			evs.remove("");
+		if (evs.contains(StringUtils.EMPTY)) {
+			evs_ordered[i++] = StringUtils.EMPTY;
+			evs.remove(StringUtils.EMPTY);
 		}
 		// Dann die konfigurierten Vorschriften in der konfigurierten
 		// Reihenfolge
@@ -106,7 +107,7 @@ public class DataAccessor implements IDataAccess {
 			// Ueberschrift
 			if (i != 0)
 				res[i++] = emptyRow(7);
-			if (!ev.equals("")) {
+			if (!ev.equals(StringUtils.EMPTY)) {
 				String[] row = emptyRow(7);
 				row[0] = "_" + ev + "_";
 				res[i++] = row;
@@ -174,7 +175,7 @@ public class DataAccessor implements IDataAccess {
 
 		// Nur Wurzel oder weniger -> abbrechen.
 		if (depth <= 1) {
-			return new Result<Object>("");
+			return new Result<Object>(StringUtils.EMPTY);
 		}
 
 		List<String[]> rows = new ArrayList<String[]>();

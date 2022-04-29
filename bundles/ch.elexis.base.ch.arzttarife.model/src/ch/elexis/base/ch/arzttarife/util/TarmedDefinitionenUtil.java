@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -50,7 +51,7 @@ public class TarmedDefinitionenUtil {
 		if (!result.isEmpty()) {
 			return result.get(0).getTitel();
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public static String getKuerzel(String spalte, String titel) {
@@ -63,6 +64,6 @@ public class TarmedDefinitionenUtil {
 		if (!result.isEmpty()) {
 			return result.get(0).getKuerzel();
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 }

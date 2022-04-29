@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +121,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 
 			IInvoice consInvoice = cons.getInvoice();
 			InvoiceState consInvoiceState = cons.getInvoiceState();
-			String billState = (consInvoice != null ? "RG " + consInvoice.getNumber() + ": " : "")
+			String billState = (consInvoice != null ? "RG " + consInvoice.getNumber() + ": " : StringUtils.EMPTY)
 					+ consInvoiceState.getLocaleText();
 			if (consInvoiceState.numericValue() >= InvoiceState.FROM_TODAY.numericValue()
 					&& consInvoiceState.numericValue() <= InvoiceState.NOT_FROM_YOU.numericValue())
@@ -140,10 +141,10 @@ public class AlleLeistungen extends AbstractTimeSeries {
 						if (user != null)
 							row[index++] = user.getLabel();
 						else
-							row[index++] = ""; //$NON-NLS-1$
+							row[index++] = StringUtils.EMPTY;
 					}
 					IContact familyDoctor = patient.getFamilyDoctor();
-					row[index++] = familyDoctor != null ? familyDoctor.getLabel() : "";
+					row[index++] = familyDoctor != null ? familyDoctor.getLabel() : StringUtils.EMPTY;
 					row[index++] = cons.getDate().format(dateFormat);
 					row[index++] = patient.getLastName();
 					row[index++] = patient.getFirstName();
@@ -161,12 +162,12 @@ public class AlleLeistungen extends AbstractTimeSeries {
 								row[index++] = Double
 										.toString(((double) ((ITarmedLeistung) verrechenbar).getAL()) / 100);
 							else
-								row[index++] = ""; //$NON-NLS-1$
+								row[index++] = StringUtils.EMPTY;
 							if (verrechenbar instanceof ITarmedLeistung)
 								row[index++] = Double
 										.toString(((double) ((ITarmedLeistung) verrechenbar).getTL()) / 100);
 							else
-								row[index++] = ""; //$NON-NLS-1$
+								row[index++] = StringUtils.EMPTY;
 						} catch (NoClassDefFoundError error) {
 							ElexisStatus status = new ElexisStatus(ElexisStatus.ERROR, "ch.elexis.buchhaltung.basis", //$NON-NLS-1$
 									ElexisStatus.CODE_NOFEEDBACK, Messages.AlleLeistungen_TarmedMissing,
@@ -176,16 +177,16 @@ public class AlleLeistungen extends AbstractTimeSeries {
 						}
 						row[index++] = verrechenbar.getCodeSystemName();
 					} else {
-						row[index++] = ""; //$NON-NLS-1$
-						row[index++] = ""; //$NON-NLS-1$
-						row[index++] = ""; //$NON-NLS-1$
-						row[index++] = ""; //$NON-NLS-1$
+						row[index++] = StringUtils.EMPTY;
+						row[index++] = StringUtils.EMPTY;
+						row[index++] = StringUtils.EMPTY;
+						row[index++] = StringUtils.EMPTY;
 					}
 					row[index++] = verrechnet.getFactor();
 					// include partial quantity info in secondary scale
 					row[index++] = verrechnet.getAmount();
 					row[index++] = verrechnet.getNetPrice(); // verrechnet.getKosten();
-					row[index++] = ""; // verrechnet.getEffPreis();
+					row[index++] = StringUtils.EMPTY; // verrechnet.getEffPreis();
 					row[index++] = verrechnet.getTotal().getAmount();
 					row[index++] = getVatScale(verrechnet);
 

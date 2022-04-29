@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.labor.viollier.v2.labimport;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -263,10 +264,10 @@ public class PatientLabor {
 				sequence = DEFAULT_PRIO;
 			}
 			labItem = LabImportUtilHolder.get().createLabItem(kuerzel, Messages.PatientLabor_nameDokumentLaborParameter,
-					myLab, "", "", //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+					myLab, StringUtils.EMPTY, StringUtils.EMPTY, // $NON-NLS-1$//$NON-NLS-2$
 					"pdf", LabItemTyp.DOCUMENT, group, sequence); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (orderId == null || "".equals(orderId)) { //$NON-NLS-1$
+		if (orderId == null || StringUtils.EMPTY.equals(orderId)) {
 			orderId = LABOR_NAME;
 		}
 

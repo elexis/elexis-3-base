@@ -1,5 +1,6 @@
 package ch.elexis.agenda.series.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.agenda.series.SerienTermin.decimalFormat;
 
 import java.util.Calendar;
@@ -282,8 +283,8 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		linkCustomText.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				InputDialog inp = new InputDialog(getShell(), "Enter Text", "Enter Text/Name for the appointment", "",
-						null);
+				InputDialog inp = new InputDialog(getShell(), "Enter Text", "Enter Text/Name for the appointment",
+						StringUtils.EMPTY, null);
 				if (inp.open() == Dialog.OK) {
 					txtContact.setText(inp.getValue());
 					serienTermin.setContact(null);
@@ -476,7 +477,7 @@ public class SerienTerminDialog extends TitleAreaDialog {
 				serienTermin.setSeriesPatternString(sb.toString());
 				break;
 			case MONTHLY:
-				serienTermin.setSeriesPatternString(msc.getDay() + "");
+				serienTermin.setSeriesPatternString(msc.getDay() + StringUtils.EMPTY);
 				break;
 			case YEARLY:
 				serienTermin.setSeriesPatternString(

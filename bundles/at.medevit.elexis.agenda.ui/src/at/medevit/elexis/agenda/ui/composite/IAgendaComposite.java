@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.composite;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public interface IAgendaComposite {
 
 	public default Optional<Integer> getConfiguredFontSize() {
 		String confFont = ConfigServiceHolder.get()
-				.getActiveUserContact(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, "");
+				.getActiveUserContact(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, StringUtils.EMPTY);
 		String[] parts = confFont.split("\\|");
 		if (parts.length > 3) {
 			try {
@@ -48,7 +49,7 @@ public interface IAgendaComposite {
 
 	public default Optional<String> getConfiguredFontFamily() {
 		String confFont = ConfigServiceHolder.get()
-				.getActiveUserContact(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, "");
+				.getActiveUserContact(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, StringUtils.EMPTY);
 		String[] parts = confFont.split("\\|");
 		if (parts.length > 3) {
 			return Optional.of(parts[1]);

@@ -11,6 +11,7 @@
 
 package ch.novcom.elexis.mednet.plugin.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -239,13 +240,13 @@ public class DocumentImporter {
 				&& pdfFile != null && Files.exists(pdfFile) && Files.isRegularFile(pdfFile)) {
 
 			// Pick the most informations from the PDF Filename
-			String samplingDateTime = "";
-			String transmissionDateTime = "";
-			String patientId = "";
-			String patientLastName = "";
-			String patientFirstName = "";
-			String patientBirthDate = "";
-			String orderNr = "";
+			String samplingDateTime = StringUtils.EMPTY;
+			String transmissionDateTime = StringUtils.EMPTY;
+			String patientId = StringUtils.EMPTY;
+			String patientLastName = StringUtils.EMPTY;
+			String patientFirstName = StringUtils.EMPTY;
+			String patientBirthDate = StringUtils.EMPTY;
+			String orderNr = StringUtils.EMPTY;
 
 			Matcher filenameMatcher = documentFilenamePattern.matcher(getBaseName(pdfFile));
 
@@ -266,7 +267,7 @@ public class DocumentImporter {
 			if (patient == null) {
 				// Search the Patient
 				patient = DocumentImporter.getPatient(patientId, patientLastName, patientFirstName, patientBirthDate,
-						"", askUser);
+						StringUtils.EMPTY, askUser);
 			}
 
 			// If we found a patient we can add the PDF
@@ -354,16 +355,16 @@ public class DocumentImporter {
 			LOGGER.info(logPrefix + "import form -- PDF: " + pdfFile.toString());//$NON-NLS-1$
 
 			// Pick the most informations from the PDF Filename
-			String documentDateTime = "";
-			String patientId = "";
-			String patientLastName = "";
-			String patientFirstName = "";
-			String patientBirthDate = "";
-			String orderNr = "";
-			String institutionId = "";
-			String institutionName = "";
-			String formularId = "";
-			String formularName = "";
+			String documentDateTime = StringUtils.EMPTY;
+			String patientId = StringUtils.EMPTY;
+			String patientLastName = StringUtils.EMPTY;
+			String patientFirstName = StringUtils.EMPTY;
+			String patientBirthDate = StringUtils.EMPTY;
+			String orderNr = StringUtils.EMPTY;
+			String institutionId = StringUtils.EMPTY;
+			String institutionName = StringUtils.EMPTY;
+			String formularId = StringUtils.EMPTY;
+			String formularName = StringUtils.EMPTY;
 			ContactLinkRecord contactLink = null;
 
 			// If it is not a document, maybe it is a form
@@ -406,8 +407,8 @@ public class DocumentImporter {
 			}
 
 			// search for the Patient
-			patient = DocumentImporter.getPatient(patientId, patientLastName, patientFirstName, patientBirthDate, "",
-					askUser);
+			patient = DocumentImporter.getPatient(patientId, patientLastName, patientFirstName, patientBirthDate,
+					StringUtils.EMPTY, askUser);
 
 			// If we found a patient we can add the PDF
 			if (patient != null) {
@@ -582,8 +583,8 @@ public class DocumentImporter {
 			return result.get(0);
 		} else if (result.size() >= 1) {
 			// If the get more than one Patient, we should log it
-			LOGGER.error("getPatientFromDB() " + "Multiple patients found for :" + lastname + " " + firstname + " "
-					+ birthdate + " " + sex);
+			LOGGER.error("getPatientFromDB() " + "Multiple patients found for :" + lastname + StringUtils.SPACE
+					+ firstname + StringUtils.SPACE + birthdate + StringUtils.SPACE + sex);
 			return null;
 		} else {
 			return null;

@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -277,7 +278,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 				setProxyHost(proxyHostFieldEditor.getStringValue());
 				setProxyPort(proxyPortFieldEditor.getStringValue());
 
-				if (getSha1DocboxSecretKey() == null || "".equals(getSha1DocboxSecretKey())) {
+				if (getSha1DocboxSecretKey() == null || StringUtils.EMPTY.equals(getSha1DocboxSecretKey())) {
 					MessageBox box = new MessageBox(UiDesk.getDisplay().getActiveShell(), SWT.ICON_ERROR);
 					box.setText(Messages.UserDocboxPreferences_NoSecretKeyTitle);
 					box.setMessage(Messages.UserDocboxPreferences_NoSecretKey);
@@ -401,7 +402,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public int getAgendaIndex() {
 		String agendaBereich = getAppointmentsBereich();
-		if (agendaBereich != null && !"".equals(agendaBereich)) { //$NON-NLS-1$
+		if (agendaBereich != null && !StringUtils.EMPTY.equals(agendaBereich)) {
 			for (int i = 0; bereiche != null && i < bereiche.length; ++i) {
 				if (bereiche[i].equals(agendaBereich)) {
 					return i;
@@ -417,7 +418,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	}
 
 	public static String getDocboxLoginID(boolean prefixed) {
-		String loginId = ConfigServiceHolder.getMandator(WsClientConfig.USR_DEFDOCBXLOGINID, "");//$NON-NLS-1$
+		String loginId = ConfigServiceHolder.getMandator(WsClientConfig.USR_DEFDOCBXLOGINID, StringUtils.EMPTY);
 		if (!prefixed && loginId.startsWith(WsClientConfig.TESTLOGINIDPREFIX)) {
 			loginId = loginId.substring(WsClientConfig.TESTLOGINIDPREFIX.length());
 		}
@@ -425,7 +426,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	}
 
 	public static String getSha1DocboxPassword() {
-		String sha1Password = ConfigServiceHolder.getMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, "");//$NON-NLS-1$
+		String sha1Password = ConfigServiceHolder.getMandator(WsClientConfig.USR_DEFDOCBOXPASSWORD, StringUtils.EMPTY);
 		return sha1Password;
 	}
 
@@ -436,12 +437,12 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	 * @return
 	 */
 	public static String getSha1DocboxSecretKey() {
-		String docboxSha1SecretKey = "";
+		String docboxSha1SecretKey = StringUtils.EMPTY;
 		showSha1SecretKey = false;
 		if (isDocboxTest()) {
 			return CDACHServicesClient.getSHA1("docboxtest");
 		}
-		URL baseUrl = ch.docbox.ws.cdachservices.CDACHServices_Service.class.getResource("");
+		URL baseUrl = ch.docbox.ws.cdachservices.CDACHServices_Service.class.getResource(StringUtils.EMPTY);
 		try {
 			URL url = new URL(baseUrl + "/product.key");
 			InputStream in = url.openStream();
@@ -449,18 +450,18 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			docboxSha1SecretKey = bufferedReader.readLine();
 		} catch (Exception e) {
 			docboxSha1SecretKey = CDACHServicesClient
-					.getSHA1(ConfigServiceHolder.getMandator(WsClientConfig.USR_SECRETKEY, ""));
+					.getSHA1(ConfigServiceHolder.getMandator(WsClientConfig.USR_SECRETKEY, StringUtils.EMPTY));
 			showSha1SecretKey = true;
 		}
 		return docboxSha1SecretKey;
 	}
 
 	public static String getPathFiles() {
-		return ConfigServiceHolder.getMandator(USR_DEFDOCBOXPATHFILES, "");//$NON-NLS-1$
+		return ConfigServiceHolder.getMandator(USR_DEFDOCBOXPATHFILES, StringUtils.EMPTY);
 	}
 
 	public static String getPathHCardAPI() {
-		return ConfigServiceHolder.getMandator(USR_DEFDOCBOXPATHHCARDAPI, "");//$NON-NLS-1$
+		return ConfigServiceHolder.getMandator(USR_DEFDOCBOXPATHHCARDAPI, StringUtils.EMPTY);
 	}
 
 	public static boolean getAgendaSettingsPerUser() {
@@ -472,7 +473,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	}
 
 	private static String getHost() {
-		String host = "";
+		String host = StringUtils.EMPTY;
 		if (useHCard()) {
 			if (isDocboxTest()) {
 				host = "swissmedicalsuite.test.docbox.ch"; //$NON-NLS-1$
@@ -494,14 +495,14 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	}
 
 	public static String getDocboxBrowserUrl() {
-		String test = isDocboxTest() ? "test" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+		String test = isDocboxTest() ? "test" : StringUtils.EMPTY; //$NON-NLS-1$
 		String host = getHost(); // $NON-NLS-1$
 		String cgibin = "cgi-bin"; //$NON-NLS-1$
 		return "https://" + host + "/" + cgibin + "/WebObjects/docbox" + test + ".woa/wa/default"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public static String getDocboxServiceUrl() {
-		String test = isDocboxTest() ? "test" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+		String test = isDocboxTest() ? "test" : StringUtils.EMPTY; //$NON-NLS-1$
 		String host = getHost();
 		String cgibin = "cgi-bin"; //$NON-NLS-1$
 		return "https://" + host + "/" + cgibin + "/WebObjects/docboxservice" + test + ".woa/ws/CDACHServices"; //$NON-NLS-1$//$NON-NLS-2$
@@ -560,7 +561,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	}
 
 	private String getSelectedAgendaBereich() {
-		String bereich = ""; //$NON-NLS-1$
+		String bereich = StringUtils.EMPTY;
 		if (this.agendaBereichCombo.getSelectionIndex() != -1) {
 			return bereiche[agendaBereichCombo.getSelectionIndex()];
 		}
@@ -594,25 +595,26 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			port.checkAccess(_checkAccess_success, message);
 		} catch (Exception e) {
 			message.value = "Verbindungsproblem mit docbox";
-			message.value += "\n";
+			message.value += StringUtils.LF;
 			message.value = e.getMessage();
 			return false;
 		} catch (java.lang.NoClassDefFoundError e) {
 			message.value = "Verbindungsproblem mit docbox";
-			message.value += "\n";
+			message.value += StringUtils.LF;
 			message.value += e.getMessage();
 			return false;
 		} catch (java.lang.ExceptionInInitializerError e2) {
 			message.value = "Verbindungsproblem mit docbox";
-			message.value += "\n";
+			message.value += StringUtils.LF;
 			return false;
 		}
 		return _checkAccess_success.value;
 	}
 
 	public static boolean hasValidDocboxCredentials() {
-		return ((!"".equals(getDocboxLoginID(true)) && !"".equals(getSha1DocboxPassword())) || useHCard()) //$NON-NLS-1$ //$NON-NLS-2$
-				&& !"".equals(getSha1DocboxSecretKey()); //$NON-NLS-1$
+		return ((!StringUtils.EMPTY.equals(getDocboxLoginID(true))
+				&& !StringUtils.EMPTY.equals(getSha1DocboxPassword())) || useHCard()) // $NON-NLS-1$
+				&& !StringUtils.EMPTY.equals(getSha1DocboxSecretKey());
 	}
 
 	public void init(IWorkbench workbench) {
@@ -671,7 +673,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static String getAppointmentsBereich() {
 		if (CoreHub.getLoggedInContact() == null || !ContextServiceHolder.get().getActiveMandator().isPresent()) {
-			return ""; //$NON-NLS-1$
+			return StringUtils.EMPTY;
 		}
 		return getSettingsForUser().getString(USR_APPOINTMENTSBEREICH); // $NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -718,7 +720,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	}
 
 	public static boolean downloadAppointments() {
-		return getAppointmentsBereich() != null && !"".equals(getAppointmentsBereich())
+		return getAppointmentsBereich() != null && !StringUtils.EMPTY.equals(getAppointmentsBereich())
 				&& (UserDocboxPreferences.isAppointmentsPharmaVisits()
 						|| UserDocboxPreferences.isAppointmentsEmergencyService()
 						|| UserDocboxPreferences.isAppointmentsTerminvereinbarung());
@@ -726,9 +728,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static String getProxyHost() {
 		if (CoreHub.getLoggedInContact() == null || !ContextServiceHolder.get().getActiveMandator().isPresent()) {
-			return ""; //$NON-NLS-1$
+			return StringUtils.EMPTY;
 		}
-		return ConfigServiceHolder.getMandator(USR_PROXYHOST, ""); //$NON-NLS-1$ //$NON-NLS-2$
+		return ConfigServiceHolder.getMandator(USR_PROXYHOST, StringUtils.EMPTY); // $NON-NLS-1$
 	}
 
 	public static void setProxyHost(String proxyHost) {
@@ -737,9 +739,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static String getProxyPort() {
 		if (CoreHub.getLoggedInContact() == null || !ContextServiceHolder.get().getActiveMandator().isPresent()) {
-			return ""; //$NON-NLS-1$
+			return StringUtils.EMPTY;
 		}
-		return ConfigServiceHolder.getMandator(USR_PROXYPORT, ""); //$NON-NLS-1$ //$NON-NLS-2$
+		return ConfigServiceHolder.getMandator(USR_PROXYPORT, StringUtils.EMPTY); // $NON-NLS-1$
 	}
 
 	public static void setProxyPort(String proxyPort) {

@@ -1,10 +1,12 @@
 package org.iatrix.messwerte;
 
+import org.apache.commons.lang3.StringUtils;
+
 public interface Constants {
 	public static final String CFG_BASE = "org.iatrix.messwerte";
 
 	public static final String CFG_LOCAL_LABORS = CFG_BASE + "/local_labors";
-	public static final String CFG_DEFAULT_LOCAL_LABORS = "";
+	public static final String CFG_DEFAULT_LOCAL_LABORS = StringUtils.EMPTY;
 
 	public static final String CFG_MESSWERTE_VIEW_COLUMN_WIDTH_PREFIX = CFG_BASE + "/messwerte_view_column_width_";
 

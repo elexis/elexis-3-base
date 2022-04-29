@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.elexis.fop.service;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -120,7 +121,7 @@ public class FormattedOutputFactory implements IFormattedOutputFactory {
 		} catch (FOPException e) {
 			LoggerFactory.getLogger(FormattedOutputFactory.class).error("Error getting fonts", e);
 		}
-		return new String[] { "" };
+		return new String[] { StringUtils.EMPTY };
 	}
 
 	public static void initialize() {

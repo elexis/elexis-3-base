@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -132,7 +133,7 @@ public class TarmedGroup extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa
 		if (law != null) {
 			if (!ArzttarifeUtil.isAvailableLaw(law)) {
 				query.startGroup();
-				query.or("law", COMPARATOR.EQUALS, "");
+				query.or("law", COMPARATOR.EQUALS, StringUtils.EMPTY);
 				query.or("law", COMPARATOR.EQUALS, null);
 				query.andJoinGroups();
 			} else {

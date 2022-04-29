@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Date;
 import java.util.List;
 
@@ -219,7 +220,7 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 		}
 
 		Date birthday = null;
-		if (!"".equals(patient.getGeburtsdatum())) {
+		if (!StringUtils.EMPTY.equals(patient.getGeburtsdatum())) {
 			TimeTool ttBirthday = new TimeTool(patient.getGeburtsdatum());
 			birthday = ttBirthday.getTime();
 		}
@@ -237,11 +238,12 @@ public class DocboxHospitalReferralAction extends DocboxAction {
 				null, CoreHub.actMandant.getMailAddress(), null, null, null);
 		POCDMT000040Custodian custodian = docboxCDA.getCustodian(null, null, null, null, null, null);
 
-		log.log("Invoking addReferral for patient " + patient.getVorname() + " " + patient.getName(), Log.DEBUGMSG);
+		log.log("Invoking addReferral for patient " + patient.getVorname() + StringUtils.SPACE + patient.getName(),
+				Log.DEBUGMSG);
 
 		ClinicalDocumentType _addReferral_document = new ClinicalDocumentType();
-		_addReferral_document.setClinicalDocument(docboxCDA.getClinicalDocument("", recordTarget, author, custodian,
-				null, docboxCDA.getCodeReferral(), null, null));
+		_addReferral_document.setClinicalDocument(docboxCDA.getClinicalDocument(StringUtils.EMPTY, recordTarget, author,
+				custodian, null, docboxCDA.getCodeReferral(), null, null));
 
 		log.log(docboxCDA.marshallIntoString(_addReferral_document.getClinicalDocument()), Log.DEBUGMSG);
 

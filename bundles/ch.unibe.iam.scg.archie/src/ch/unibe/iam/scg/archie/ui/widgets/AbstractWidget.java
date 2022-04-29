@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.widgets;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -53,7 +54,7 @@ public abstract class AbstractWidget extends Composite {
 		super(parent, style);
 
 		// Check Arguments
-		if (labelText == null || labelText.equals("")) {
+		if (labelText == null || labelText.equals(StringUtils.EMPTY)) {
 			throw new IllegalArgumentException("LabelText can not be null or empty!");
 		}
 

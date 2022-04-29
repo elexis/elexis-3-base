@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -98,8 +99,8 @@ public class TherapieVorschlagComposite extends CstComposite {
 	}
 
 	public void clear() {
-		txtDiagnose.setText("");
-		txtTherapie.setText("");
+		txtDiagnose.setText(StringUtils.EMPTY);
+		txtTherapie.setText(StringUtils.EMPTY);
 	}
 
 }

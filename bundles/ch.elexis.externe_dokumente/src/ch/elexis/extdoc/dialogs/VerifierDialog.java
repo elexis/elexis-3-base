@@ -13,6 +13,7 @@
 
 package ch.elexis.extdoc.dialogs;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.text.DateFormat;
@@ -90,7 +91,7 @@ public class VerifierDialog extends TitleAreaDialog {
 		public VerifierContentProvider() {
 			// TODO remove job from JobPool when it has finished.
 			// for now, we just use unique names.
-			String jobName = BASE_JOBNAME + " " + StringTool.unique(BASE_JOBNAME); //$NON-NLS-1$
+			String jobName = BASE_JOBNAME + StringUtils.SPACE + StringTool.unique(BASE_JOBNAME);
 			job = new DataLoader(jobName);
 			globalJob = job;
 			if (JobPool.getJobPool().getJob(job.getJobname()) == null) {
@@ -143,7 +144,7 @@ public class VerifierDialog extends TitleAreaDialog {
 			case NAME_COLUMN:
 				return getText(obj);
 			}
-			return ""; //$NON-NLS-1$
+			return StringUtils.EMPTY;
 		}
 
 		public String getText(Object obj) {
@@ -153,7 +154,7 @@ public class VerifierDialog extends TitleAreaDialog {
 			} else if (obj instanceof String) {
 				return obj.toString();
 			} else {
-				return ""; //$NON-NLS-1$
+				return StringUtils.EMPTY;
 			}
 		}
 
@@ -167,7 +168,7 @@ public class VerifierDialog extends TitleAreaDialog {
 						.format(cal.getTime());
 				return modifiedTime;
 			} else {
-				return ""; //$NON-NLS-1$
+				return StringUtils.EMPTY;
 			}
 		}
 
@@ -245,7 +246,7 @@ public class VerifierDialog extends TitleAreaDialog {
 		TableColumn tc;
 
 		tc = new TableColumn(table, SWT.LEFT);
-		tc.setText(""); //$NON-NLS-1$
+		tc.setText(StringUtils.EMPTY);
 		tc.setWidth(40);
 
 		tc = new TableColumn(table, SWT.LEFT);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.Collator;
 
 import org.eclipse.jface.viewers.Viewer;
@@ -33,8 +34,8 @@ public class ProfileSorter extends ViewerSorter {
 		if ((e1 instanceof CstProfile) && (e2 instanceof CstProfile)) {
 			CstProfile d1 = (CstProfile) e1;
 			CstProfile d2 = (CstProfile) e2;
-			String c1 = "";
-			String c2 = "";
+			String c1 = StringUtils.EMPTY;
+			String c2 = StringUtils.EMPTY;
 			switch (sortColumn) {
 			case 0:
 				c1 = d1.getName();

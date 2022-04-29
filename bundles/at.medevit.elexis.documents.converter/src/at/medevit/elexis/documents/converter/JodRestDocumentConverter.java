@@ -77,7 +77,7 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 		StringBuilder ret = new StringBuilder();
 		ret.append(iDocument.getPatient().getCode()).append("_");
 
-		ret.append(iDocument.getPatient().getLastName()).append(" ");
+		ret.append(iDocument.getPatient().getLastName()).append(StringUtils.SPACE);
 		ret.append(iDocument.getPatient().getFirstName()).append("_");
 		String title = iDocument.getTitle();
 		if (iDocument.getExtension() != null && title.endsWith(iDocument.getExtension())) {
@@ -86,11 +86,11 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 		ret.append(title).append("_");
 		ret.append(new SimpleDateFormat("ddMMyyyy_HHmmss").format(iDocument.getLastchanged()));
 
-		return ret.toString().replaceAll("[^a-züäöA-ZÜÄÖ0-9 _\\.\\-]", "");
+		return ret.toString().replaceAll("[^a-züäöA-ZÜÄÖ0-9 _\\.\\-]", StringUtils.EMPTY);
 	}
 
 	private String getAppBasePath() {
-		return configService.get("jodrestconverter/basepath", "");
+		return configService.get("jodrestconverter/basepath", StringUtils.EMPTY);
 	}
 
 	@Override

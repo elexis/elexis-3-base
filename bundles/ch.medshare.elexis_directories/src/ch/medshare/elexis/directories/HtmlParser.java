@@ -12,6 +12,8 @@
 
 package ch.medshare.elexis.directories;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class HtmlParser {
 	private final StringBuffer htmlText;
 	private int currentPos = 0;
@@ -51,7 +53,7 @@ public class HtmlParser {
 
 	public String extractTo(String endKeyString) {
 		int newPos = getNextPos(endKeyString);
-		String text = "";
+		String text = StringUtils.EMPTY;
 		if (newPos >= 0) {
 			text = htmlText.substring(currentPos, newPos);
 			currentPos = newPos + endKeyString.length();
@@ -78,7 +80,7 @@ public class HtmlParser {
 		if (moveTo(startKeyString)) {
 			return extractTo(endKeyString);
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public int getNextPos(String keyString, int pos) {

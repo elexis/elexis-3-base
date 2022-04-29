@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -254,7 +255,7 @@ public class EhcDocument extends PersistentObject {
 		String rootPath = xdmFile.getParent();
 		String rootName = xdmFile.getName();
 
-		rootName = rootName.replaceAll("\\.", "");
+		rootName = rootName.replaceAll("\\.", StringUtils.EMPTY);
 		File file = null;
 		for (int i = 0; i < 100; i++) {
 			file = new File(rootPath + File.separator + rootName + "_" + i + ".xml");
@@ -268,7 +269,7 @@ public class EhcDocument extends PersistentObject {
 
 	@Override
 	public String getLabel() {
-		return getName().replaceAll("\\[[A-Z]+\\]", "");
+		return getName().replaceAll("\\[[A-Z]+\\]", StringUtils.EMPTY);
 	}
 
 	@Override

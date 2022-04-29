@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.composite;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -490,7 +491,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		if (!fr.hasValueFor(cfgName)) {
 			FontData[] fd = PreferenceConverter
-					.basicGetFontData(ConfigServiceHolder.get().getActiveUserContact(cfgName, ""));
+					.basicGetFontData(ConfigServiceHolder.get().getActiveUserContact(cfgName, StringUtils.EMPTY));
 			fr.put(cfgName, fd);
 		}
 		return fr.get(cfgName);

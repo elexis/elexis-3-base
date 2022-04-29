@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.ebanking;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 
 import org.eclipse.jface.viewers.Viewer;
@@ -91,6 +92,6 @@ public class FilterSearchField extends ViewerFilter {
 			searchString = s.toLowerCase(); // $NON-NLS-1$ //$NON-NLS-2$
 		// filter "dirty" characters
 		if (searchString != null)
-			searchString = searchString.replaceAll("[^#<>\\.$, a-zA-Z0-9]", "");
+			searchString = searchString.replaceAll("[^#<>\\.$, a-zA-Z0-9]", StringUtils.EMPTY);
 	}
 }

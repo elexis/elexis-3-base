@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.dialog;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -238,8 +239,8 @@ public class CstCopyProfileDialog extends SelectionDialog {
 			if ((e1 instanceof Patient) && (e2 instanceof Patient)) {
 				Patient d1 = (Patient) e1;
 				Patient d2 = (Patient) e2;
-				String c1 = "";
-				String c2 = "";
+				String c1 = StringUtils.EMPTY;
+				String c2 = StringUtils.EMPTY;
 				switch (sortColumn) {
 				case 0:
 					c1 = d1.getId();

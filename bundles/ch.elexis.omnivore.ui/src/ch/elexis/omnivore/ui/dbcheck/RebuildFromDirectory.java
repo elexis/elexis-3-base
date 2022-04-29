@@ -64,7 +64,7 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 						"Omnivore Konfiguration Speichern im Dateisystem nicht aktiv.");
 			}
 			InputDialog dlg = new InputDialog(Display.getDefault().getActiveShell(), "Verzeichnis",
-					"Absoluter Pfad zum Verzeichnis aus dem wieder hergestellt werden soll.", "",
+					"Absoluter Pfad zum Verzeichnis aus dem wieder hergestellt werden soll.", StringUtils.EMPTY,
 					new IInputValidator() {
 
 						@Override

@@ -1,5 +1,6 @@
 package ch.elexis.agenda.series;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -36,7 +37,7 @@ public class SerienTermin {
 	 * Y early
 	 *
 	 * [SERIES_PATTERN]
-	 * daily		""
+	 * daily		StringUtils.EMPTY
 	 * weekly		Number_of_weeks_between, day { day } .
 	 * monthly		day_of_month
 	 * yearly		ddMM
@@ -108,7 +109,7 @@ public class SerienTermin {
 
 		contact = ElexisEventDispatcher.getSelectedPatient();
 		if (contact == null)
-			freeText = "";
+			freeText = StringUtils.EMPTY;
 	}
 
 	public SerienTermin(IPlannable pl) {
@@ -222,7 +223,7 @@ public class SerienTermin {
 			for (int i = 1; i < separatedSeriesPattern[1].length(); i++) {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(dateIncrementer.getTime());
-				int dayValue = Integer.parseInt(separatedSeriesPattern[1].charAt(i) + "");
+				int dayValue = Integer.parseInt(separatedSeriesPattern[1].charAt(i) + StringUtils.EMPTY);
 				cal.set(Calendar.DAY_OF_WEEK, dayValue);
 				writeSubsequentDateEntry(new TimeTool(cal.getTime()));
 			}
@@ -242,7 +243,7 @@ public class SerienTermin {
 				for (int j = 0; j < separatedSeriesPattern[1].length(); j++) {
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(dateIncrementer.getTime());
-					int dayValue = Integer.parseInt(separatedSeriesPattern[1].charAt(j) + "");
+					int dayValue = Integer.parseInt(separatedSeriesPattern[1].charAt(j) + StringUtils.EMPTY);
 					cal.set(Calendar.DAY_OF_WEEK, dayValue);
 					writeSubsequentDateEntry(new TimeTool(cal.getTime()));
 				}
@@ -329,7 +330,7 @@ public class SerienTermin {
 		case WEEKLY:
 			Calendar cal2 = Calendar.getInstance();
 			cal2.setTime(cal.getTime());
-			int firstDay = Integer.parseInt(getSeriesPatternString().split(",")[1].charAt(0) + "");
+			int firstDay = Integer.parseInt(getSeriesPatternString().split(",")[1].charAt(0) + StringUtils.EMPTY);
 			cal2.set(Calendar.DAY_OF_WEEK, firstDay);
 			TimeTool ret = new TimeTool(cal2.getTime());
 			return ret;
@@ -442,7 +443,7 @@ public class SerienTermin {
 			for (int i = 1; i < seriesPattern[1].length(); i++) {
 				Calendar calWeekOne = Calendar.getInstance();
 				calWeekOne.setTime(dateIncrementer.getTime());
-				int dayValue = Integer.parseInt(seriesPattern[1].charAt(i) + "");
+				int dayValue = Integer.parseInt(seriesPattern[1].charAt(i) + StringUtils.EMPTY);
 				calWeekOne.set(Calendar.DAY_OF_WEEK, dayValue);
 				seriesTimesList.add(new TimeTool(calWeekOne.getTime()));
 			}
@@ -463,7 +464,7 @@ public class SerienTermin {
 				for (int j = 0; j < seriesPattern[1].length(); j++) {
 					Calendar calSub = Calendar.getInstance();
 					calSub.setTime(dateIncrementer.getTime());
-					int dayValue = Integer.parseInt(seriesPattern[1].charAt(j) + "");
+					int dayValue = Integer.parseInt(seriesPattern[1].charAt(j) + StringUtils.EMPTY);
 					calSub.set(Calendar.DAY_OF_WEEK, dayValue);
 					seriesTimesList.add(new TimeTool(calSub.getTime()));
 				}

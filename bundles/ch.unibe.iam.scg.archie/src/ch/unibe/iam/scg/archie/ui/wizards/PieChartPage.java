@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.wizards;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -79,7 +80,7 @@ public class PieChartPage extends AbstractChartPage implements Listener {
 	 */
 	public void handleEvent(Event event) {
 		// Initialize a variable with the no error status
-		Status status = new Status(IStatus.OK, ArchieActivator.PLUGIN_NAME, 0, "", null);
+		Status status = new Status(IStatus.OK, ArchieActivator.PLUGIN_NAME, 0, StringUtils.EMPTY, null);
 
 		// If the event is triggered by the destination or departure fields
 		// set the corresponding status variable to the right value
@@ -219,6 +220,7 @@ public class PieChartPage extends AbstractChartPage implements Listener {
 	@Override
 	public boolean canFlipToNextPage() {
 		return this.getErrorMessage() == null && this.keysColumn.getSelectionIndex() != -1
-				&& this.valuesColumn.getSelectionIndex() != -1 && !this.chartName.getValue().toString().equals("");
+				&& this.valuesColumn.getSelectionIndex() != -1
+				&& !this.chartName.getValue().toString().equals(StringUtils.EMPTY);
 	}
 }

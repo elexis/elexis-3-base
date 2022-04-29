@@ -1,5 +1,6 @@
 package at.medevit.elexis.impfplan.ui.handlers;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Map;
 
@@ -70,11 +71,11 @@ public class ImportLegacyVaccinationsHandler extends AbstractHandler {
 					} else {
 						sb.append(vacc.getLabel() + " - " + eCode.toString());
 					}
-					sb.append("\n");
+					sb.append(StringUtils.LF);
 				}
 				if (sb.length() > 0) {
 					sb.insert(0, "Fehler beim Import:\n");
-					sb.append("\n");
+					sb.append(StringUtils.LF);
 				}
 			}
 
@@ -82,7 +83,7 @@ public class ImportLegacyVaccinationsHandler extends AbstractHandler {
 				sb.append("Bereits importiert:\n");
 				for (Vaccination vacc : alreadyImported) {
 					sb.append(vacc.getLabel());
-					sb.append("\n");
+					sb.append(StringUtils.LF);
 				}
 			}
 		} else {

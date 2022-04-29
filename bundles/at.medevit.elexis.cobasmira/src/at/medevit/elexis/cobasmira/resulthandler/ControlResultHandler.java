@@ -1,5 +1,6 @@
 package at.medevit.elexis.cobasmira.resulthandler;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class ControlResultHandler {
 			fos = new FileOutputStream(CoreHub.localCfg.get(Preferences.CONTROLLOGFILE, "controlLog.txt"), true);
 			OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
 			out.write(entryDate.toDBString(true) + "," + cmp.getPatientIdentification() + "," + cmp.getTestName() + ","
-					+ Float.toString(cmp.getConcentration()) + "\n");
+					+ Float.toString(cmp.getConcentration()) + StringUtils.LF);
 			out.close();
 		} catch (FileNotFoundException e) {
 			logger.warn("Logfileexists but is a directory rather than a regular file, "

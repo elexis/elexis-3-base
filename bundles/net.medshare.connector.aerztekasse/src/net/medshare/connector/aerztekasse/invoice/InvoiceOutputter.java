@@ -12,6 +12,7 @@
  *******************************************************************************/
 package net.medshare.connector.aerztekasse.invoice;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -81,8 +82,8 @@ public class InvoiceOutputter extends XMLExporter {
 	@Override
 	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn, Properties props) {
 		final Result<Rechnung> ret = new Result<Rechnung>();
-		transmittedInvoices = ""; //$NON-NLS-1$
-		failedInvoices = ""; //$NON-NLS-1$
+		transmittedInvoices = StringUtils.EMPTY;
+		failedInvoices = StringUtils.EMPTY;
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		if (outputDir == null) {
 			SWTHelper.SimpleDialog dlg = new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider() {
@@ -208,11 +209,12 @@ public class InvoiceOutputter extends XMLExporter {
 								// Übermittlung an Ärztekasse fehlgeschlagen
 								for (Rechnung rn : rnn) {
 									rn.reject(RnStatus.REJECTCODE.REJECTED_BY_PEER,
-											Messages.InvoiceOutputter_TransmissionFailed + " " + responseState + "/" //$NON-NLS-1$ //$NON-NLS-2$
+											Messages.InvoiceOutputter_TransmissionFailed + StringUtils.SPACE
+													+ responseState + "/" //$NON-NLS-1$
 													+ responseError);
 									failedInvoicesCount++;
 									failedInvoices += Messages.InvoiceOutputter_FailureInvoiceNr + rn.getNr() + " : " //$NON-NLS-1$
-											+ " " + responseState + "/" + responseError; //$NON-NLS-1$ //$NON-NLS-2$
+											+ StringUtils.SPACE + responseState + "/" + responseError; //$NON-NLS-1$
 
 									monitor.worked(1);
 									if (monitor.isCanceled()) {
@@ -242,9 +244,9 @@ public class InvoiceOutputter extends XMLExporter {
 			ret.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
 		}
 		if (!ret.isOK()) {
-			String errorStr = ""; //$NON-NLS-1$
+			String errorStr = StringUtils.EMPTY;
 			for (Result<Rechnung>.msg errorMsg : ret.getMessages()) {
-				errorStr += errorMsg.getText() + "\n"; //$NON-NLS-1$
+				errorStr += errorMsg.getText() + StringUtils.LF;
 			}
 			SWTHelper.alert(Messages.InvoiceOutputter_ErrorInvoice + ret.get().getNr(), errorStr);
 		}
@@ -319,8 +321,8 @@ public class InvoiceOutputter extends XMLExporter {
 		boolean returnValue = false;
 		try {
 			transferState = false;
-			responseState = ""; //$NON-NLS-1$
-			responseError = ""; //$NON-NLS-1$
+			responseState = StringUtils.EMPTY;
+			responseError = StringUtils.EMPTY;
 
 			if (settings == null) {
 				settings = new AerztekasseSettings((CoreHub.actMandant));

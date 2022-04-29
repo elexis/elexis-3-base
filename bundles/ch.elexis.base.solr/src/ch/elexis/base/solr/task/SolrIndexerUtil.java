@@ -1,5 +1,6 @@
 package ch.elexis.base.solr.task;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 
 import org.apache.solr.client.solrj.SolrServerException;
@@ -22,8 +23,8 @@ public class SolrIndexerUtil {
 		request.setParam("extractOnly", "true");
 		request.setParam("extractFormat", "text");
 
-		String content = "";
-		String metadata = "";
+		String content = StringUtils.EMPTY;
+		String metadata = StringUtils.EMPTY;
 
 		NamedList<Object> result = solr.request(request, collection);
 		for (int i = 0; i < result.size(); i++) {

@@ -24,13 +24,15 @@
 
 package ch.swissmedicalsuite;
 
+import org.apache.commons.lang3.StringUtils;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.ptr.PointerByReference;
 
 public interface HCardAPI extends Library {
-	HCardAPI INSTANCE = (HCardAPI) Native.loadLibrary((Platform.isWindows() ? "hCardAPI" : ""), HCardAPI.class);
+	HCardAPI INSTANCE = (HCardAPI) Native.loadLibrary((Platform.isWindows() ? "hCardAPI" : StringUtils.EMPTY),
+			HCardAPI.class);
 
 	int getVersion();
 

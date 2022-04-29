@@ -4,6 +4,7 @@
  *******************************************************************************/
 package at.gruber.elexis.mythic22.persistency;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
@@ -98,7 +99,7 @@ public class PersistencyHandler {
 
 					if (labitem != null) {
 						// TODO: Configure overwrite of existing values (for that day)
-						new LabResult(patient, new TimeTool(), labitem, hvalue.getValue(), "");
+						new LabResult(patient, new TimeTool(), labitem, hvalue.getValue(), StringUtils.EMPTY);
 					} else {
 						logger.warn("Could not find laboritem for " + getCSVMappingMap().get(hvalue.getIdentifier()));
 					}

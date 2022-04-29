@@ -8,6 +8,7 @@
 
 package at.medevit.ch.artikelstamm;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -202,7 +203,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(name = StringUtils.EMPTY, propOrder = {
     "products",
     "limitations",
     "items"
@@ -480,7 +481,7 @@ public class ARTIKELSTAMM {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = StringUtils.EMPTY, propOrder = {
         "item"
     })
     public static class ITEMS {
@@ -625,7 +626,7 @@ public class ARTIKELSTAMM {
          * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
+        @XmlType(name = StringUtils.EMPTY, propOrder = {
             "gtin",
             "phar",
             "salecd",
@@ -1285,7 +1286,7 @@ public class ARTIKELSTAMM {
              * 
              */
             @XmlAccessorType(XmlAccessType.FIELD)
-            @XmlType(name = "", propOrder = {
+            @XmlType(name = StringUtils.EMPTY, propOrder = {
                 "name",
                 "gln"
             })
@@ -1384,7 +1385,7 @@ public class ARTIKELSTAMM {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = StringUtils.EMPTY, propOrder = {
         "limitation"
     })
     public static class LIMITATIONS {
@@ -1445,7 +1446,7 @@ public class ARTIKELSTAMM {
          * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
+        @XmlType(name = StringUtils.EMPTY, propOrder = {
             "limnamebag",
             "dscr",
             "dscrf",
@@ -1606,7 +1607,7 @@ public class ARTIKELSTAMM {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = StringUtils.EMPTY, propOrder = {
         "product"
     })
     public static class PRODUCTS {
@@ -1677,7 +1678,7 @@ public class ARTIKELSTAMM {
          * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
+        @XmlType(name = StringUtils.EMPTY, propOrder = {
             "prodno",
             "salecd",
             "dscr",

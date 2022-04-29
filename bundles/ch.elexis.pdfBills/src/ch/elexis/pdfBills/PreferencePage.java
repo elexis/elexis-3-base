@@ -132,8 +132,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PrinterSettingsDialog dialog = new PrinterSettingsDialog(Display.getDefault().getActiveShell(),
-						CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, ""),
-						CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, ""));
+						CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY),
+						CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY));
 				if (dialog.open() == Dialog.OK) {
 					CoreHub.localCfg.set(RnOutputter.CFG_PRINT_PRINTER, dialog.getPrinter());
 					CoreHub.localCfg.set(RnOutputter.CFG_PRINT_TRAY, dialog.getMediaTray());
@@ -156,8 +156,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PrinterSettingsDialog dialog = new PrinterSettingsDialog(Display.getDefault().getActiveShell(),
-						CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, ""),
-						CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, ""));
+						CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY),
+						CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY));
 				if (dialog.open() == Dialog.OK) {
 					CoreHub.localCfg.set(RnOutputter.CFG_ESR_PRINT_PRINTER, dialog.getPrinter());
 					CoreHub.localCfg.set(RnOutputter.CFG_ESR_PRINT_TRAY, dialog.getMediaTray());
@@ -180,7 +180,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		label.setText("Befehl");
 		printCommandText = new Text(printerConfigComposite, SWT.BORDER);
 		printCommandText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		printCommandText.setText(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_COMMAND, ""));
+		printCommandText.setText(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_COMMAND, StringUtils.EMPTY));
 
 		if (CoreUtil.isWindows()) {
 			final Button useScript = new Button(printerConfigComposite, SWT.CHECK);
@@ -241,12 +241,12 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		label.setText("ESR 1ste Zeile");
 		headerLine1Text = new Text(composite, SWT.BORDER);
 		headerLine1Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		headerLine1Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_HEADER_1, ""));
+		headerLine1Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_HEADER_1, StringUtils.EMPTY));
 		label = new Label(composite, SWT.NONE);
 		label.setText("ESR 2te Zeile");
 		headerLine2Text = new Text(composite, SWT.BORDER);
 		headerLine2Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		headerLine2Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_HEADER_2, ""));
+		headerLine2Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_HEADER_2, StringUtils.EMPTY));
 
 		label = new Label(composite, SWT.NONE);
 		label.setText("Mahnung 2 Tage");
@@ -289,10 +289,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				Mandant mandant = (Mandant) event.getStructuredSelection().getFirstElement();
-				mandantHeaderLine1Text.setText(
-						ConfigServiceHolder.getGlobal(RnOutputter.CFG_ESR_HEADER_1 + "/" + mandant.getId(), ""));
-				mandantHeaderLine2Text.setText(
-						ConfigServiceHolder.getGlobal(RnOutputter.CFG_ESR_HEADER_2 + "/" + mandant.getId(), ""));
+				mandantHeaderLine1Text.setText(ConfigServiceHolder
+						.getGlobal(RnOutputter.CFG_ESR_HEADER_1 + "/" + mandant.getId(), StringUtils.EMPTY));
+				mandantHeaderLine2Text.setText(ConfigServiceHolder
+						.getGlobal(RnOutputter.CFG_ESR_HEADER_2 + "/" + mandant.getId(), StringUtils.EMPTY));
 				mandantReminderDays2Text.setText(ConfigServiceHolder
 						.getGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2 + "/" + mandant.getId(), "14"));
 				mandantReminderDays3Text.setText(ConfigServiceHolder
@@ -431,13 +431,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 	private String getEsrPrinterConfigText() {
 		StringBuilder sb = new StringBuilder();
-		if (!CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, "").isEmpty()) {
-			sb.append(CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, ""));
+		if (!CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY).isEmpty()) {
+			sb.append(CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY));
 		} else {
 			sb.append("Kein Drucker");
 		}
-		if (!CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, "").isEmpty()) {
-			sb.append(", Fach ").append(CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, ""));
+		if (!CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY).isEmpty()) {
+			sb.append(", Fach ").append(CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY));
 		} else {
 			sb.append(", Kein Fach");
 		}
@@ -446,13 +446,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 	private String getPrinterConfigText() {
 		StringBuilder sb = new StringBuilder();
-		if (!CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, "").isEmpty()) {
-			sb.append(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, ""));
+		if (!CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY).isEmpty()) {
+			sb.append(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY));
 		} else {
 			sb.append("Kein Drucker");
 		}
-		if (!CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, "").isEmpty()) {
-			sb.append(", Fach ").append(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, ""));
+		if (!CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY).isEmpty()) {
+			sb.append(", Fach ").append(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY));
 		} else {
 			sb.append(", Kein Fach");
 		}
@@ -515,7 +515,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 	private static String getDefault(String cfgKey) {
 		// first try old settings ... then default
-		String oldKey = cfgKey.replaceFirst("4.4/", "").replaceFirst("4.0/", "");
+		String oldKey = cfgKey.replaceFirst("4.4/", StringUtils.EMPTY).replaceFirst("4.0/", StringUtils.EMPTY);
 		String oldSetting = CoreHub.localCfg.get(oldKey, null);
 		if (oldSetting != null) {
 			return oldSetting;
@@ -534,7 +534,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				return "0.0";
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	private void createSettings(TabItem item, String version) {

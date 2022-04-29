@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.model;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.unibe.iam.scg.archie.utils.ArrayUtils;
 
 /**
@@ -259,15 +260,15 @@ public class ChartModel {
 	public String toString() {
 		final StringBuilder output = new StringBuilder();
 		output.append("********************************************************************************\n");
-		output.append("Type: " + this.chartType + "\n");
-		output.append("Name: " + this.chartName + "\n");
-		output.append("Keys Index: " + this.keysIndex + "\n");
-		output.append("Values Index: " + this.valuesIndex + "\n");
-		output.append("Rows: " + ArrayUtils.toString(this.rows) + "\n");
-		output.append("Columns: " + ArrayUtils.toString(this.columns) + "\n");
-		output.append("Category Column Index: " + this.categoryColumnIndex + "\n");
-		output.append("Line Chart: " + this.isLineChart + "\n");
-		output.append("3D: " + this.isThreeDimensional + "\n");
+		output.append("Type: " + this.chartType + StringUtils.LF);
+		output.append("Name: " + this.chartName + StringUtils.LF);
+		output.append("Keys Index: " + this.keysIndex + StringUtils.LF);
+		output.append("Values Index: " + this.valuesIndex + StringUtils.LF);
+		output.append("Rows: " + ArrayUtils.toString(this.rows) + StringUtils.LF);
+		output.append("Columns: " + ArrayUtils.toString(this.columns) + StringUtils.LF);
+		output.append("Category Column Index: " + this.categoryColumnIndex + StringUtils.LF);
+		output.append("Line Chart: " + this.isLineChart + StringUtils.LF);
+		output.append("3D: " + this.isThreeDimensional + StringUtils.LF);
 		output.append("Dataset:\n\n" + this.dataSet.toString());
 		output.append("********************************************************************************\n");
 		return output.toString();

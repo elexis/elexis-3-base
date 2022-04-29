@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -117,7 +118,7 @@ public class Konsliste extends ViewPart implements ElexisEventListener {
 			public void update(ViewerCell cell) {
 				Konsultation k = (Konsultation) cell.getElement();
 				KonsData kd = KonsData.load(k);
-				String s = "";
+				String s = StringUtils.EMPTY;
 				switch (cell.getColumnIndex()) {
 				case 0:
 					int typ = kd.getKonsTyp();
@@ -134,7 +135,7 @@ public class Konsliste extends ViewPart implements ElexisEventListener {
 					s = k.getDatum();
 					break;
 				case 2:
-					s = (kd == null ? "" : kd.getKonsBeginn());
+					s = (kd == null ? StringUtils.EMPTY : kd.getKonsBeginn());
 					break;
 				case 3:
 					s = k.getFall().getLabel();

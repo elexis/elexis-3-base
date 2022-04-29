@@ -11,6 +11,7 @@
  ******************************************************************************/
 package ch.elexis.molemax.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -526,7 +527,7 @@ public class Tracker extends PersistentObject {
 			date = getLastSequenceDate(p);
 		}
 		StringBuilder ret = new StringBuilder();
-		ret.append(CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, "")).append(File.separator);
+		ret.append(CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, StringUtils.EMPTY)).append(File.separator);
 		String name = p.getName();
 		ret.append(name.length() > 2 ? name.substring(0, 2) : name);
 		String vname = p.getVorname();

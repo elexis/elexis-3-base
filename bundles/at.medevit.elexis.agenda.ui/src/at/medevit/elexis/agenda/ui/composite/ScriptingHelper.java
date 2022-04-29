@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.composite;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class ScriptingHelper {
 	private String parseTime(String time) {
 		if (time.length() < 6 || time.lastIndexOf(":") != 5) {
 			StringBuilder builder = new StringBuilder(6);
-			time = time.replaceAll(":", "");
+			time = time.replaceAll(":", StringUtils.EMPTY);
 			int length = time.length();
 			for (int i = 0; i < 6; i++) {
 				if (i > 0 && i % 2 == 0) {

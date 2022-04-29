@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.labor.viollier.v2;
 
+import org.apache.commons.lang3.StringUtils;
 import java.net.InetAddress;
 import java.text.MessageFormat;
 
@@ -368,14 +369,14 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 // SWTHelper
 // .showInfo(
 //						"Ausgewählte Einstellungen", //$NON-NLS-1$
-//						"JMedTransfer Jar: " + mySettings.getJMedTransferJar() + "\n" //$NON-NLS-1$ //$NON-NLS-2$
-//							+ "JMedTransfer Param: " + mySettings.getJMedTransferParam() + "\n" //$NON-NLS-1$ //$NON-NLS-2$
-//							+ "Download Dir: " + mySettings.getDirDownload() + "\n" //$NON-NLS-1$ //$NON-NLS-2$
-//							+ "Archive Dir: " + mySettings.getDirArchive() + "\n" //$NON-NLS-1$ //$NON-NLS-2$
-//							+ "Error Dir: " + mySettings.getDirError() + "\n" //$NON-NLS-1$ //$NON-NLS-2$
-//							+ "Purge Archive: " + Integer.toString(mySettings.getArchivePurgeInterval()) + "\n" //$NON-NLS-1$ //$NON-NLS-2$
-//							+ "Dok. Kategorie: " + mySettings.getDocumentCategory() + "\n" //$NON-NLS-1$ //$NON-NLS-2$
-//							+ "Save Ref Range: " + Boolean.toString(mySettings.getSaveRefRange()) + "\n" //$NON-NLS-1$ //$NON-NLS-2$
+//						"JMedTransfer Jar: " + mySettings.getJMedTransferJar() + StringUtils.LF //$NON-NLS-1$
+//							+ "JMedTransfer Param: " + mySettings.getJMedTransferParam() + StringUtils.LF //$NON-NLS-1$
+//							+ "Download Dir: " + mySettings.getDirDownload() + StringUtils.LF //$NON-NLS-1$
+//							+ "Archive Dir: " + mySettings.getDirArchive() + StringUtils.LF //$NON-NLS-1$
+//							+ "Error Dir: " + mySettings.getDirError() + StringUtils.LF //$NON-NLS-1$
+//							+ "Purge Archive: " + Integer.toString(mySettings.getArchivePurgeInterval()) + StringUtils.LF //$NON-NLS-1$
+//							+ "Dok. Kategorie: " + mySettings.getDocumentCategory() + StringUtils.LF //$NON-NLS-1$
+//							+ "Save Ref Range: " + Boolean.toString(mySettings.getSaveRefRange()) + StringUtils.LF //$NON-NLS-1$
 // );
 // }
 //
@@ -420,7 +421,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 	 */
 	private void showMandantSettings() {
 		Boolean mandantUseGlobalSettings = mySettings.isMandantUsingGlobalSettings();
-		String mandantname = ""; //$NON-NLS-1$
+		String mandantname = StringUtils.EMPTY;
 		try {
 			mandantname = mySettings.getMandant().getLabel();
 		} catch (Exception e) {

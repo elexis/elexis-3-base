@@ -12,6 +12,7 @@
 
 package ch.berchtold.emanuel.privatrechnung.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileReader;
 import java.util.List;
@@ -164,10 +165,10 @@ public class Importer extends ImporterPage {
 	// 6,validUntil 7,factor 8
 	private void importLine(final String[] line) {
 		if (line.length == 8) {
-			if (line[6].equals("")) {
+			if (line[6].equals(StringUtils.EMPTY)) {
 				line[6] = TimeTool.BEGINNING_OF_UNIX_EPOCH;
 			}
-			if (line[7].equals("")) {
+			if (line[7].equals(StringUtils.EMPTY)) {
 				line[7] = TimeTool.END_OF_UNIX_EPOCH;
 			}
 			IQuery<IPrivatLeistung> query = PrivatModelServiceHolder.get().getQuery(IPrivatLeistung.class);

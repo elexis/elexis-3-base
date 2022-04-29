@@ -13,6 +13,7 @@
  *******************************************************************************/
 package elexis_db_shaker.actions;
 
+import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -180,7 +181,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 		Namen n = new Namen();
 		monitor.worked(Math.round(workUnits * .2f));
 		for (Kontakt k : list) {
-			String vorname = "";
+			String vorname = StringUtils.EMPTY;
 			// Mandanten behalten
 			// if(k.get(Kontakt.FLD_IS_MANDATOR).equalsIgnoreCase(StringConstants.ONE))
 			// continue;
@@ -202,15 +203,15 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 				Person p = Person.load(k.getId());
 				p.set(Person.SEX, StringTool.isFemale(vorname) ? Person.FEMALE : Person.MALE);
 			}
-			k.set(Kontakt.FLD_ANSCHRIFT, "");
+			k.set(Kontakt.FLD_ANSCHRIFT, StringUtils.EMPTY);
 			k.set(Kontakt.FLD_PHONE1, getPhone());
-			k.set(Kontakt.FLD_PHONE2, Math.random() > 0.6 ? getPhone() : "");
-			k.set(Kontakt.FLD_MOBILEPHONE, Math.random() > 0.5 ? getPhone() : "");
-			k.set(Kontakt.FLD_E_MAIL, "");
-			k.set(Kontakt.FLD_PLACE, "");
-			k.set(Kontakt.FLD_STREET, "");
-			k.set(Kontakt.FLD_ZIP, "");
-			k.set(Kontakt.FLD_FAX, Math.random() > 0.8 ? getPhone() : "");
+			k.set(Kontakt.FLD_PHONE2, Math.random() > 0.6 ? getPhone() : StringUtils.EMPTY);
+			k.set(Kontakt.FLD_MOBILEPHONE, Math.random() > 0.5 ? getPhone() : StringUtils.EMPTY);
+			k.set(Kontakt.FLD_E_MAIL, StringUtils.EMPTY);
+			k.set(Kontakt.FLD_PLACE, StringUtils.EMPTY);
+			k.set(Kontakt.FLD_STREET, StringUtils.EMPTY);
+			k.set(Kontakt.FLD_ZIP, StringUtils.EMPTY);
+			k.set(Kontakt.FLD_FAX, Math.random() > 0.8 ? getPhone() : StringUtils.EMPTY);
 			if (monitor.isCanceled()) {
 				break;
 			}

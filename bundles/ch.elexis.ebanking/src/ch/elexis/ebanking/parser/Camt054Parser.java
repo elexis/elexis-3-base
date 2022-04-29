@@ -1,5 +1,6 @@
 package ch.elexis.ebanking.parser;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class Camt054Parser {
 
 		@Override
 		public String getAttributeNamespace(int arg0) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 
 		@Override
@@ -130,8 +131,8 @@ public class Camt054Parser {
 										? creditorReferenceInformation2.getRef()
 										: null;
 								records.add(new Camt054Record(storno ? "005" : "002",
-										amount != null ? amount.movePointRight(2).toString().replaceAll("[\\.,]", "")
-												: "",
+										amount != null ? amount.movePointRight(2).toString().replaceAll("[\\.,]",
+												StringUtils.EMPTY) : StringUtils.EMPTY,
 										ref, esrTn, readDate != null ? readDate.toGregorianCalendar().getTime() : null,
 										bookingDate != null ? bookingDate.getDt().toGregorianCalendar().getTime()
 												: null,
@@ -143,8 +144,8 @@ public class Camt054Parser {
 
 				// sammelgutschrift
 				records.add(new Camt054Record("999",
-						entryAmt != null ? entryAmt.getValue().movePointRight(2).toString().replaceAll("[\\.,]", "")
-								: null,
+						entryAmt != null ? entryAmt.getValue().movePointRight(2).toString().replaceAll("[\\.,]",
+								StringUtils.EMPTY) : null,
 						null, esrTn, credDate.toGregorianCalendar().getTime(), credDate.toGregorianCalendar().getTime(),
 						credDate.toGregorianCalendar().getTime()));
 			}

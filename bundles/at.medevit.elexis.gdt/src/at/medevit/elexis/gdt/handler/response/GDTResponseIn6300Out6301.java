@@ -12,6 +12,7 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.handler.response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -60,10 +61,10 @@ public class GDTResponseIn6300Out6301 {
 
 		return new GDTSatzNachricht6301(pat.get(Patient.FLD_PATID), pat.getName(), pat.getVorname(),
 				GDTSatzNachrichtHelper.deliverBirthdate(pat), null, pat.get(Patient.TITLE), null,
-				pat.get(Patient.FLD_ZIP) + " " + pat.get(Patient.FLD_PLACE), pat.get(Patient.FLD_STREET), null,
-				GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.FLD_SEX)), null, null, null, gdtSender,
-				CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, null), GDTConstants.ZEICHENSATZ_IBM_CP_437 + "",
-				GDTConstants.GDT_VERSION);
+				pat.get(Patient.FLD_ZIP) + StringUtils.SPACE + pat.get(Patient.FLD_PLACE), pat.get(Patient.FLD_STREET),
+				null, GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.FLD_SEX)), null, null, null,
+				gdtSender, CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, null),
+				GDTConstants.ZEICHENSATZ_IBM_CP_437 + StringUtils.EMPTY, GDTConstants.GDT_VERSION);
 	}
 
 }

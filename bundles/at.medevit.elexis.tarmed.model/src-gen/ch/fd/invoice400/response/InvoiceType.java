@@ -7,6 +7,7 @@
 
 package ch.fd.invoice400.response;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -295,7 +296,7 @@ public class InvoiceType {
 	 * 
 	 */
 	@XmlAccessorType(XmlAccessType.FIELD)
-	@XmlType(name = "")
+	@XmlType(name = StringUtils.EMPTY)
 	public static class Biller {
 		
 		@XmlAttribute(name = "ean_party", required = true)
@@ -344,7 +345,7 @@ public class InvoiceType {
 	 * 
 	 */
 	@XmlAccessorType(XmlAccessType.FIELD)
-	@XmlType(name = "")
+	@XmlType(name = StringUtils.EMPTY)
 	public static class Insurance {
 		
 		@XmlAttribute(name = "ean_party", required = true)

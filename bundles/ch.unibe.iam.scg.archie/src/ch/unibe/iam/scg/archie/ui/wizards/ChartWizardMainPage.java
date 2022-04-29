@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.wizards;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.IWizard;
@@ -155,7 +156,7 @@ public class ChartWizardMainPage extends AbstractChartPage implements Listener {
 	 */
 	private IStatus getErrorStatus() {
 		// Initialize a variable with the no error status
-		Status status = new Status(IStatus.OK, ArchieActivator.PLUGIN_NAME, 0, "", null);
+		Status status = new Status(IStatus.OK, ArchieActivator.PLUGIN_NAME, 0, StringUtils.EMPTY, null);
 
 		if (!this.hasValidDataset()) {
 			status = new Status(IStatus.ERROR, ArchieActivator.PLUGIN_NAME, 0, Messages.CHART_WIZARD_PAGE_ERROR_DATASET,

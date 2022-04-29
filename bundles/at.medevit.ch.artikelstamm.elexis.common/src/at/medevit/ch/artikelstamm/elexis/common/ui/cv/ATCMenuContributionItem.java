@@ -10,6 +10,7 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.elexis.common.ui.cv;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.jface.action.ContributionItem;
@@ -61,9 +62,9 @@ public class ATCMenuContributionItem extends ContributionItem {
 			for (ATCCode atcCode : atcHierarchy) {
 				MenuItem temp = new MenuItem(menu, SWT.PUSH);
 				if (prefAtcLanguage.equals(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN)) {
-					temp.setText(atcCode.atcCode + " " + atcCode.name_german);
+					temp.setText(atcCode.atcCode + StringUtils.SPACE + atcCode.name_german);
 				} else {
-					temp.setText(atcCode.atcCode + " " + atcCode.name);
+					temp.setText(atcCode.atcCode + StringUtils.SPACE + atcCode.name);
 				}
 				final ATCCode tempC = atcCode;
 				temp.addSelectionListener(new SelectionAdapter() {

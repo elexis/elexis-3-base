@@ -445,7 +445,7 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 		String originalPpub = (String) getExtInfo(ArtikelstammConstants.EXTINFO_VAL_PPUB_OVERRIDE_STORE);
 		if (originalPpub == null) {
 			setExtInfo(ArtikelstammConstants.EXTINFO_VAL_PPUB_OVERRIDE_STORE,
-					(getSellingPrice() != null) ? Double.toString(getSellingPrice().doubleValue()) : "");
+					(getSellingPrice() != null) ? Double.toString(getSellingPrice().doubleValue()) : StringUtils.EMPTY);
 		}
 		// setSellingPrice((value != null) ? value.negate() : null);
 		getEntity().setPpub((value != null) ? "-" + Double.toString(value.doubleValue()) : null);

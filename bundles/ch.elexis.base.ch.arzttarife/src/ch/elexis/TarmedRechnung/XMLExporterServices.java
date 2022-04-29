@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.TarmedRechnung;
 
+import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -389,7 +390,7 @@ public class XMLExporterServices {
 							if (rfes.size() > 0) {
 								StringBuilder sb = new StringBuilder();
 								for (IReasonForEncounter rfe : rfes) {
-									sb.append("551_").append(rfe.getCode()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+									sb.append("551_").append(rfe.getCode()).append(StringUtils.SPACE); //$NON-NLS-1$
 								}
 								el.setAttribute(XMLExporter.ATTR_REMARK, sb.toString());
 							}
@@ -550,7 +551,7 @@ public class XMLExporterServices {
 	}
 
 	private static String getPharmaCode(IArticle iArticle) {
-		String ret = "";
+		String ret = StringUtils.EMPTY;
 		String systemName = iArticle.getCodeSystemName();
 		if (systemName != null && systemName.equals("Artikelstamm")) {
 			try {
@@ -582,7 +583,7 @@ public class XMLExporterServices {
 		if (billable instanceof ICustomService
 				|| (billable instanceof IArticle && ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL)) {
 			if (billable.getId().equals(ret)) {
-				ret = "";
+				ret = StringUtils.EMPTY;
 			}
 		}
 		return ret;

@@ -1,5 +1,6 @@
 package waelti.statistics.export;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class CSVWriter {
 			buf.append(CSVWriter.delimiter);
 		}
 		buf.deleteCharAt(buf.length() - 1); // last delimiter not needed
-		buf.append("\n");
+		buf.append(StringUtils.LF);
 		writer.write(buf.toString());
 	}
 

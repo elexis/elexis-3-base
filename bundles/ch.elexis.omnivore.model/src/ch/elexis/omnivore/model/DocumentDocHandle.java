@@ -42,7 +42,7 @@ import ch.elexis.omnivore.model.internal.Preferences;
 public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		implements Identifiable, IDocumentHandle {
 
-	private String storeId = "";
+	private String storeId = StringUtils.EMPTY;
 
 	public DocumentDocHandle(DocHandle entity) {
 		super(entity);
@@ -60,7 +60,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 
 	@Override
 	public String getDescription() {
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	@Override
@@ -369,7 +369,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			if (date != null) {
 				SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 				sb.append(format.format(date));
-				sb.append(" ");
+				sb.append(StringUtils.SPACE);
 			}
 			sb.append(getTitle());
 			return sb.toString();

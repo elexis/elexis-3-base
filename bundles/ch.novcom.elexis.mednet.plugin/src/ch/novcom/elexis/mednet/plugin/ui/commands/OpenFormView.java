@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.commands;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -70,7 +71,7 @@ public class OpenFormView extends AbstractHandler {
 			pat = (Patient) strucSelection.getFirstElement();
 		}
 
-		String configuredGDTId = CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, "");
+		String configuredGDTId = CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, StringUtils.EMPTY);
 		if (pat == null) {
 			pat = ElexisEventDispatcher.getSelectedPatient();
 		}
@@ -79,7 +80,7 @@ public class OpenFormView extends AbstractHandler {
 		}
 
 		String socialSecurityNumber = pat.getXid(XidConstants.DOMAIN_AHV); // AHV-Nummer
-		String birthdate = "";
+		String birthdate = StringUtils.EMPTY;
 		try {
 			birthdate = OpenFormView.toGDT.format(OpenFormView.fromDatabase.parse(pat.getGeburtsdatum()));
 		} catch (ParseException pe) {
@@ -89,9 +90,9 @@ public class OpenFormView extends AbstractHandler {
 		// If we have the selected Patient, we can create a simple GDT File
 		GDTSatzNachricht6301 gdt6301 = new GDTSatzNachricht6301(pat.get(Patient.FLD_PATID), pat.getName(),
 				pat.getVorname(), birthdate, null, pat.get(Patient.TITLE), socialSecurityNumber,
-				pat.get(Patient.FLD_ZIP) + " " + pat.get(Patient.FLD_PLACE), pat.get(Patient.FLD_STREET), null,
-				GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.FLD_SEX)), null, null, null, null,
-				configuredGDTId, GDTConstants.ZEICHENSATZ_IBM_CP_437 + "", GDTConstants.GDT_VERSION);
+				pat.get(Patient.FLD_ZIP) + StringUtils.SPACE + pat.get(Patient.FLD_PLACE), pat.get(Patient.FLD_STREET),
+				null, GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.FLD_SEX)), null, null, null, null,
+				configuredGDTId, GDTConstants.ZEICHENSATZ_IBM_CP_437 + StringUtils.EMPTY, GDTConstants.GDT_VERSION);
 
 		File file = null;
 		// Finally we can write this GDT to a temporary file that will be deleted after
@@ -99,7 +100,8 @@ public class OpenFormView extends AbstractHandler {
 		try {
 			file = File.createTempFile("mednet-" + pat.get(Patient.FLD_PATID) + "-", ".gdt");//$NON-NLS-1$
 			file.deleteOnExit();
-			Files.write(file.toPath(), String.join("\n", gdt6301.getMessage()).getBytes(OpenFormView.GDT_ENCODING));
+			Files.write(file.toPath(),
+					String.join(StringUtils.LF, gdt6301.getMessage()).getBytes(OpenFormView.GDT_ENCODING));
 		} catch (IOException ioe) {
 			// If there are some ioeException logs it
 			LOGGER.error(logPrefix + "IOException creating gdtFile.", ioe);//$NON-NLS-1$

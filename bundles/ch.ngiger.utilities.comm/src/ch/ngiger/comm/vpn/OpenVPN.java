@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.ngiger.comm.vpn;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -68,8 +69,8 @@ public class OpenVPN {
 			File myFile = new File(ovpnConfig);
 			File parent = new File(myFile.getParent());
 			String parentDir = parent.getParent();
-			String cmd = "";
-			String exe = "";
+			String cmd = StringUtils.EMPTY;
+			String exe = StringUtils.EMPTY;
 			String os = System.getProperty("os.name").toLowerCase();
 			// Under Windows we start OpenVPN here
 			if (os.indexOf("win") >= 0) {
@@ -77,7 +78,7 @@ public class OpenVPN {
 				cmd += " start /min ";
 				File ovpnExe = new File(parentDir + File.separator + "bin" + File.separator, "openvpn");
 				exe = ovpnExe.getAbsolutePath();
-				cmd += " " + ovpnExe + " --config " + myFile.getName();
+				cmd += StringUtils.SPACE + ovpnExe + " --config " + myFile.getName();
 				FileWriter fos = new FileWriter(temp);
 				logger.info(cmd);
 				fos.write(cmd);

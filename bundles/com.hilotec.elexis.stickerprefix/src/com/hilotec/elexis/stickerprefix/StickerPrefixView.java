@@ -1,5 +1,6 @@
 package com.hilotec.elexis.stickerprefix;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,7 +149,8 @@ public class StickerPrefixView extends ViewPart {
 	private void addPatientToList(Patient patient) {
 		TableItem item = new TableItem(patientList, 0);
 		item.setData(patient);
-		item.setText(0, patient.getName() + " " + patient.getVorname() + " " + patient.getGeburtsdatum().toString());
+		item.setText(0, patient.getName() + StringUtils.SPACE + patient.getVorname() + StringUtils.SPACE
+				+ patient.getGeburtsdatum().toString());
 	}
 
 	/*

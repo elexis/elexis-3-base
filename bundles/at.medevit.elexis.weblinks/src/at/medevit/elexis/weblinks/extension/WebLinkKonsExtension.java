@@ -10,6 +10,7 @@
  ******************************************************************************/
 package at.medevit.elexis.weblinks.extension;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class WebLinkKonsExtension implements IKonsExtension {
 	}
 
 	public static void updatePlaceholders() {
-		String selection = "";
+		String selection = StringUtils.EMPTY;
 		if (textField != null) {
 			String text = textField.getContentsPlaintext();
 			GenericRange gr = textField.getSelectedRange();
@@ -87,7 +88,7 @@ public class WebLinkKonsExtension implements IKonsExtension {
 			} else {
 				selection = text.substring(gr.getPos(), gr.getPos() + gr.getLength());
 			}
-			selection = selection.trim().replace("\r\n", " "); //$NON-NLS-1$ //$NON-NLS-2$
+			selection = selection.trim().replace("\r\n", StringUtils.SPACE); //$NON-NLS-1$
 		}
 
 		WebLinkElementUtil.setPlaceholder("text.selection", selection);

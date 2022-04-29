@@ -52,7 +52,7 @@ public class Labor2009ControlFieldProvider extends DefaultControlFieldProvider {
 		String[] values = getValues();
 		if (values != null && values.length == 1) {
 			String filterValue = values[0];
-			String[] filterParts = filterValue.split(" ");
+			String[] filterParts = filterValue.split(StringUtils.SPACE);
 			if (filterParts != null) {
 				for (String string : filterParts) {
 					if (StringUtils.isNotBlank(string)) {

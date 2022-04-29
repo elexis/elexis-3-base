@@ -1,5 +1,6 @@
 package ch.elexis.base.solr.internal.bean;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -41,7 +42,7 @@ public class EncounterBean {
 		if (mandator != null) {
 			bean.setMandator_id(mandator.getId());
 		} else {
-			bean.setMandator_id("");
+			bean.setMandator_id(StringUtils.EMPTY);
 			// TODO on production
 			// throw new IllegalArgumentException("mandator is null");
 		}

@@ -1,5 +1,6 @@
 package ch.elexis.base.solr.ui.spotlight.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,7 +32,7 @@ public class DocumentSpotlightResultEntryDetailComposite extends Composite
 	@Override
 	public void setSpotlightEntry(ISpotlightResultEntry resultEntry) {
 
-		txtDocument.setText("");
+		txtDocument.setText(StringUtils.EMPTY);
 
 		if (resultEntry != null) {
 			String text = (String) resultEntry.getObject().get();

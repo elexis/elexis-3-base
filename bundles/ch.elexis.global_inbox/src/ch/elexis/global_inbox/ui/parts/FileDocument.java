@@ -1,5 +1,6 @@
 package ch.elexis.global_inbox.ui.parts;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -167,7 +168,7 @@ class FileDocument implements IDocument {
 		if (lastIndexOf > -1) {
 			return _url.substring(lastIndexOf + 1);
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package at.medevit.elexis.emediplan.ui.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
@@ -24,7 +25,7 @@ public class DebugImportHandler extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		InputDialog inputDialog = new InputDialog(Display.getDefault().getActiveShell(), "eMediplan JSON",
-				"Bitte geben Sie das eMediplan JSON ein das importiert werden soll", "", null,
+				"Bitte geben Sie das eMediplan JSON ein das importiert werden soll", StringUtils.EMPTY, null,
 				SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		if (inputDialog.open() == MessageDialog.OK) {
 			String importJson = inputDialog.getValue();

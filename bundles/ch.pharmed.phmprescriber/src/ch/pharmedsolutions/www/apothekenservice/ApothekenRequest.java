@@ -1,6 +1,7 @@
 
 package ch.pharmedsolutions.www.apothekenservice;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "software", "password", "zsrId" })
+@XmlType(name = StringUtils.EMPTY, propOrder = { "software", "password", "zsrId" })
 @XmlRootElement(name = "ApothekenRequest")
 public class ApothekenRequest {
 

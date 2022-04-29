@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.core;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
@@ -58,15 +59,15 @@ public class EhcCoreMapper {
 	private final static Pattern lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)[a-z]?$");
 
 	public static Name getEhcName(String name) {
-		String[] parts = name.split(" ");
+		String[] parts = name.split(StringUtils.SPACE);
 		if (parts.length == 1) {
-			return new Name("", parts[0]);
+			return new Name(StringUtils.EMPTY, parts[0]);
 		} else if (parts.length == 2) {
 			return new Name(parts[0], parts[1]);
 		} else if (parts.length >= 3) {
 			return new Name(parts[0], parts[1], parts[2]);
 		}
-		return new Name("", "");
+		return new Name(StringUtils.EMPTY, StringUtils.EMPTY);
 	}
 
 	public static Patient getEhcPatient(ch.elexis.data.Patient elexisPatient) {
@@ -93,7 +94,7 @@ public class EhcCoreMapper {
 		String socialSecurityNumber = elexisPatient.getXid(DOMAIN_AHV);
 		if (socialSecurityNumber != null) {
 			socialSecurityNumber = socialSecurityNumber.trim();
-			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", "");
+			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", StringUtils.EMPTY);
 			if (socialSecurityNumber.length() == 11) {
 				ret.addId(new Identificator(CodeSystems.SwissSSNDeprecated.getCodeSystemId(), socialSecurityNumber));
 			} else if (socialSecurityNumber.length() == 13) {
@@ -109,7 +110,7 @@ public class EhcCoreMapper {
 
 	public static Address getEhcAddress(Anschrift elexisAddress) {
 		String elexisStreet = elexisAddress.getStrasse();
-		String houseNumber = "";
+		String houseNumber = StringUtils.EMPTY;
 		// try to get the house number
 		Matcher matcher = lastIntPattern.matcher(elexisStreet);
 		if (matcher.find()) {
@@ -250,7 +251,7 @@ public class EhcCoreMapper {
 		Anschrift elexisAddress = kontakt.getAnschrift();
 		elexisAddress.setOrt(address.getCity());
 		elexisAddress.setPlz(address.getZip());
-		elexisAddress.setStrasse(address.getStreet() + " " + address.getHouseNumber());
+		elexisAddress.setStrasse(address.getStreet() + StringUtils.SPACE + address.getHouseNumber());
 		kontakt.setAnschrift(elexisAddress);
 	}
 

@@ -1,5 +1,6 @@
 package ch.elexis.laborimport.eurolyser;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.List;
 
@@ -67,15 +68,15 @@ public class EurolyserLine {
 	}
 
 	private String getResultUnit(String string) {
-		String[] parts = string.split(" ");
+		String[] parts = string.split(StringUtils.SPACE);
 		if (parts.length > 1) {
 			return parts[1].trim();
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	private String getResultValue(String string) {
-		String[] parts = string.split(" ");
+		String[] parts = string.split(StringUtils.SPACE);
 		if (parts.length > 0) {
 			return parts[0].trim();
 		}
@@ -119,7 +120,8 @@ public class EurolyserLine {
 	 * @return
 	 */
 	public boolean isRelevant() {
-		String confMandantId = ConfigServiceHolder.getMandator(EurolyserImporter.CONFIG_IMPORT_MANDANTONLY, "").trim();
+		String confMandantId = ConfigServiceHolder
+				.getMandator(EurolyserImporter.CONFIG_IMPORT_MANDANTONLY, StringUtils.EMPTY).trim();
 		if (!confMandantId.isEmpty()) {
 			return confMandantId.equalsIgnoreCase(mandantId);
 		}
@@ -240,9 +242,9 @@ public class EurolyserLine {
 	}
 
 	private IPatient resolvePatient(HashMap<String, IPatient> filePatientMap) {
-		String lastname = "";
-		String firstname = "";
-		String[] nameParts = patientName.split(" ");
+		String lastname = StringUtils.EMPTY;
+		String firstname = StringUtils.EMPTY;
+		String[] nameParts = patientName.split(StringUtils.SPACE);
 		if (nameParts.length > 0) {
 			lastname = nameParts[0];
 		}
@@ -264,7 +266,7 @@ public class EurolyserLine {
 		}
 
 		Patient pat = (Patient) KontaktSelektor.showInSync(Patient.class, "Patient ausw\u00E4hlen",
-				"Wer ist " + lastname + " " + firstname + "?");
+				"Wer ist " + lastname + StringUtils.SPACE + firstname + "?");
 		if (pat != null) {
 			CoreModelServiceHolder.get().load(pat.getId(), IPatient.class).orElse(null);
 		}

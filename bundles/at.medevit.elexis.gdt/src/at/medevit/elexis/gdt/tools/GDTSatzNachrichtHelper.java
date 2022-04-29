@@ -12,6 +12,7 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.tools;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -49,9 +50,9 @@ public class GDTSatzNachrichtHelper {
 		String sexCode = null;
 		sex = sex.trim();
 		if (sex.equalsIgnoreCase("m"))
-			sexCode = GDTConstants.SEX_MALE + "";
+			sexCode = GDTConstants.SEX_MALE + StringUtils.EMPTY;
 		if (sex.equalsIgnoreCase("w") || sex.equalsIgnoreCase("f"))
-			sexCode = GDTConstants.SEX_FEMALE + "";
+			sexCode = GDTConstants.SEX_FEMALE + StringUtils.EMPTY;
 		return sexCode;
 	}
 

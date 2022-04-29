@@ -65,7 +65,7 @@ public class FileCommPartnerComposite extends Composite {
 		GridData gridData3Col = SWTHelper.getFillGridData(3, true, 1, false);
 
 		Label label = new Label(this, SWT.RIGHT);
-		label.setText("");
+		label.setText(StringUtils.EMPTY);
 		label.setLayoutData(gridData3Col);
 		label.setBackground(UiDesk.getColor(UiDesk.COL_LIGHTGREY));
 
@@ -228,7 +228,7 @@ public class FileCommPartnerComposite extends Composite {
 		btnAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				InputDialog inDlg = new InputDialog(getShell(), "Gerät", "Gerät hinzufügen", "", null); //$NON-NLS-1$
+				InputDialog inDlg = new InputDialog(getShell(), "Gerät", "Gerät hinzufügen", StringUtils.EMPTY, null);
 				if (inDlg.open() == Dialog.OK) {
 					String id = UUID.randomUUID().toString();
 					if (!add(id, inDlg.getValue())) {
@@ -273,7 +273,7 @@ public class FileCommPartnerComposite extends Composite {
 	private void removeFileCommPartner(String id) {
 		String cfg = getAllFileCommPartners();
 		if (cfg.contains(id)) {
-			String newCfg = cfg.replaceFirst(FileCommPartner.COMM_PARTNER_SEPERATOR + id, "");
+			String newCfg = cfg.replaceFirst(FileCommPartner.COMM_PARTNER_SEPERATOR + id, StringUtils.EMPTY);
 			updateFileCommPartner(newCfg);
 		}
 	}

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.medshare.mediport;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -332,7 +333,7 @@ public class MediportClientSetsPrefPage extends MediPortAbstractPrefPage {
 
 	private void writeParam() {
 		Integer clientNum = this.currentClientNum;
-		ClientParam param = new ClientParam(""); //$NON-NLS-1$
+		ClientParam param = new ClientParam(StringUtils.EMPTY);
 		if (clientNum != null) {
 			Client client = props.getClient(clientNum);
 			Integer paramNum = this.currentParamNum;

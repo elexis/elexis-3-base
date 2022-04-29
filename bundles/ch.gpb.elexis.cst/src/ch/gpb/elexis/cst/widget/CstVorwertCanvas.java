@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.widget;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -219,7 +220,7 @@ public class CstVorwertCanvas extends CstCanvas {
 	public String toString() {
 		// return super.toString();
 		StringBuffer result = new StringBuffer();
-		result.append("");
+		result.append(StringUtils.EMPTY);
 		for (ValueFinding finding : getFindings()) {
 			result.append(
 					"(" + CstService.getCompactFromDate(finding.getDateOfFinding()) + ":" + finding.getValue() + ")");

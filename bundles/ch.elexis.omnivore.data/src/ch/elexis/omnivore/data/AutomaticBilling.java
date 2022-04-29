@@ -38,7 +38,7 @@ import ch.rgw.tools.Result;
 public class AutomaticBilling {
 
 	public static boolean isEnabled() {
-		String blockId = ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING_BLOCK, "");
+		String blockId = ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING_BLOCK, StringUtils.EMPTY);
 		return ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING, false) && !blockId.isEmpty();
 	}
 
@@ -62,7 +62,7 @@ public class AutomaticBilling {
 						IEncounter encounter = getEncounter();
 						if (encounter != null) {
 							String blockId = ConfigServiceHolder.get().getLocal(PreferenceConstants.AUTO_BILLING_BLOCK,
-									"");
+									StringUtils.EMPTY);
 							if (StringUtils.isNotBlank(blockId)) {
 								ICodeElementBlock block = CoreModelServiceHolder.get()
 										.load(blockId, ICodeElementBlock.class).orElse(null);
@@ -89,7 +89,7 @@ public class AutomaticBilling {
 
 	private void addBlockToEncounter(ICodeElementBlock block, IEncounter encounter) {
 		List<ICodeElement> elements = block.getElements(encounter);
-		StringJoiner notOkResults = new StringJoiner("\n");
+		StringJoiner notOkResults = new StringJoiner(StringUtils.LF);
 		for (ICodeElement element : elements) {
 			if (element instanceof IBillable) {
 				Result<IBilled> result = BillingServiceHolder.get().bill((IBillable) element, encounter, 1);

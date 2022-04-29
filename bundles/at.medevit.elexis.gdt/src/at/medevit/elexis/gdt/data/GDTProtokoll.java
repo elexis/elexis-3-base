@@ -12,6 +12,7 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
@@ -135,8 +136,8 @@ public class GDTProtokoll extends PersistentObject {
 		StringBuilder sb = new StringBuilder();
 		TimeTool tt = new TimeTool(get(FLD_DATETIME));
 		Patient pat = Patient.loadByPatientID(get(FLD_PATIENT_ID));
-		sb.append(tt.toString(TimeTool.DATE_GER) + ": " + pat.getLabel() + " " + FLD_MESSAGE_TYPE + " "
-				+ FLD_MESSAGE_DIRECTION);
+		sb.append(tt.toString(TimeTool.DATE_GER) + ": " + pat.getLabel() + StringUtils.SPACE + FLD_MESSAGE_TYPE
+				+ StringUtils.SPACE + FLD_MESSAGE_DIRECTION);
 		return sb.toString();
 	}
 
@@ -144,8 +145,8 @@ public class GDTProtokoll extends PersistentObject {
 		StringBuilder sb = new StringBuilder();
 		TimeTool tt = new TimeTool(get(FLD_DATETIME));
 
-		sb.append(
-				tt.toString(TimeTool.DATE_GER) + ": " + get(FLD_BEZEICHNUNG) + " " + "[" + get(FLD_GEGENSTELLE) + "]");
+		sb.append(tt.toString(TimeTool.DATE_GER) + ": " + get(FLD_BEZEICHNUNG) + StringUtils.SPACE + "["
+				+ get(FLD_GEGENSTELLE) + "]");
 		return sb.toString();
 	}
 

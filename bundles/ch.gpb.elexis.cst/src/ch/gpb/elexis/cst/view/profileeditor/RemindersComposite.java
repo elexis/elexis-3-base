@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -377,7 +378,7 @@ public class RemindersComposite extends CstComposite implements HeartListener/* 
 				cell.setImage(imgDecision);
 				break;
 			case 2:
-				cell.setText(element.getItemType().name() + "" + "   f�llig am:"
+				cell.setText(element.getItemType().name() + StringUtils.EMPTY + "   f�llig am:"
 						+ CstService.getGermanFromCompact(element.getDate()));
 
 				if (new Date().after(CstService.getDateFromCompact(element.getDate()))) {

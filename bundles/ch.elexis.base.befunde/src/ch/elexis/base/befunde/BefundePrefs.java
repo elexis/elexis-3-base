@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.elexis.base.befunde;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -107,7 +108,7 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				InputDialog id = new InputDialog(getShell(), Messages.BefundePrefs_enterNameCaption, // $NON-NLS-1$
-						Messages.BefundePrefs_enterNameMessage, "", //$NON-NLS-1$ //$NON-NLS-2$
+						Messages.BefundePrefs_enterNameMessage, StringUtils.EMPTY, // $NON-NLS-1$
 						new FindingNameInputValidator());
 				if (id.open() == Dialog.OK) {
 					String name = id.getValue();
@@ -137,11 +138,11 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 				if (ci != null) {
 					PrefsPage pp = (PrefsPage) ci.getControl();
 					if (pp.remove()) {
-						names = names.replaceFirst(ci.getText(), ""); //$NON-NLS-1$
+						names = names.replaceFirst(ci.getText(), StringUtils.EMPTY);
 						names = names.replaceAll(Messwert.SETUP_SEPARATOR + Messwert.SETUP_SEPARATOR,
 								Messwert.SETUP_SEPARATOR);
-						names.replaceFirst(Messwert.SETUP_SEPARATOR + "$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						names = names.replaceFirst("^" + Messwert.SETUP_SEPARATOR, ""); //$NON-NLS-1$ //$NON-NLS-2$
+						names.replaceFirst(Messwert.SETUP_SEPARATOR + "$", StringUtils.EMPTY); //$NON-NLS-1$
+						names = names.replaceFirst("^" + Messwert.SETUP_SEPARATOR, StringUtils.EMPTY); //$NON-NLS-1$
 						fields.put("names", names); //$NON-NLS-1$
 						lastIDX = -1;
 						ci.dispose();
@@ -164,7 +165,8 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 				if (tab != null) {
 					// ask user for desired new name
 					InputDialog id = new InputDialog(getShell(), Messages.BefundePrefs_enterRenameCaption,
-							Messages.BefundePrefs_enterRenameMessage, "", new FindingNameInputValidator());
+							Messages.BefundePrefs_enterRenameMessage, StringUtils.EMPTY,
+							new FindingNameInputValidator());
 					if (id.open() == Dialog.OK) {
 						String oldName = tab.getText();
 						String newName = id.getValue();

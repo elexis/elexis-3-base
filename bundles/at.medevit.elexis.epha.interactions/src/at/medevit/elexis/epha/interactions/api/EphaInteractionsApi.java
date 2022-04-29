@@ -1,5 +1,6 @@
 package at.medevit.elexis.epha.interactions.api;
 
+import org.apache.commons.lang3.StringUtils;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -42,7 +43,7 @@ public class EphaInteractionsApi {
 
 		String jsonString = gson.toJson(model);
 		// remove bad chars
-		jsonString = jsonString.replaceAll("/", " ");
+		jsonString = jsonString.replaceAll("/", StringUtils.SPACE);
 		final Response response = target.request().post(Entity.json(jsonString));
 
 		if (response.getStatus() >= 300) {

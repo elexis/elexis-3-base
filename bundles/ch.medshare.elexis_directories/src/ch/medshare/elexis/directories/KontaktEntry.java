@@ -13,6 +13,7 @@
 
 package ch.medshare.elexis.directories;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 
 import ch.elexis.data.Patient;
@@ -131,6 +132,6 @@ public class KontaktEntry {
 
 	public String toString() {
 		return getName() + ", " + getZusatz() + ", " + getAdresse() + ", " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				+ getPlz() + " " + getOrt() + " " + getTelefon(); //$NON-NLS-1$ //$NON-NLS-2$
+				+ getPlz() + StringUtils.SPACE + getOrt() + StringUtils.SPACE + getTelefon(); // $NON-NLS-1$
 	}
 }

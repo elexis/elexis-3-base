@@ -13,6 +13,7 @@
 
 package com.hilotec.elexis.messwerte.v2.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -234,7 +235,7 @@ public class ExportDialog extends Dialog {
 	private void calcMinMaxPatNumbers() {
 		this.getShell().setCursor(new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT));
 		Query<Patient> qpat = new Query<Patient>(Patient.class);
-		qpat.add(Patient.FLD_PATID, Query.NOT_EQUAL, ""); //$NON-NLS-1$
+		qpat.add(Patient.FLD_PATID, Query.NOT_EQUAL, StringUtils.EMPTY);
 		List<Patient> listPatient = qpat.execute();
 		if (listPatient != null) {
 			int minPatNr = Integer.MAX_VALUE;

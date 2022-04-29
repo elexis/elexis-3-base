@@ -1,5 +1,6 @@
 package ch.docbox.ws.cdachservices;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -31,7 +32,7 @@ import org.hl7.v3.ClinicalDocumentType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "document", "attachment" })
+@XmlType(name = StringUtils.EMPTY, propOrder = { "document", "attachment" })
 @XmlRootElement(name = "sendClinicalDocument")
 public class SendClinicalDocument {
 

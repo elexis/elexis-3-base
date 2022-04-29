@@ -272,7 +272,7 @@ public class TerminDialog extends TitleAreaDialog {
 		topRight.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		topRight.setLayout(new GridLayout(2, true));
 		Label sep = new Label(topRight, SWT.NONE);
-		sep.setText(" "); //$NON-NLS-1$
+		sep.setText(StringUtils.SPACE);
 		sep.setLayoutData(SWTHelper.getFillGridData(2, false, 1, false));
 		/*
 		 * bPrev=new Button(topRight,SWT.PUSH); bPrev.setText("<--"); //$NON-NLS-1$
@@ -435,10 +435,10 @@ public class TerminDialog extends TitleAreaDialog {
 			@Override
 			public void linkActivated(final HyperlinkEvent e) {
 				InputDialog inp = new InputDialog(getShell(), Messages.TerminDialog_enterText,
-						Messages.TerminDialog_enterFreeText, "", null); //$NON-NLS-1$
+						Messages.TerminDialog_enterFreeText, StringUtils.EMPTY, null);
 				if (inp.open() == Dialog.OK) {
 					tName.setText(inp.getValue());
-					tNr.setText(""); //$NON-NLS-1$
+					tNr.setText(StringUtils.EMPTY);
 					actKontakt = null;
 				}
 			}
@@ -595,13 +595,13 @@ public class TerminDialog extends TitleAreaDialog {
 		}
 		if (actKontakt == null) {
 			setTitle(Messages.TerminDialog_noPatSelected);
-			tNr.setText(""); //$NON-NLS-1$
+			tNr.setText(StringUtils.EMPTY);
 			if (actPlannable instanceof Termin) {
 				tName.setText(((Termin) actPlannable).getPersonalia());
 			} else {
-				tName.setText(""); //$NON-NLS-1$
+				tName.setText(StringUtils.EMPTY);
 			}
-			tBem.setText(""); //$NON-NLS-1$
+			tBem.setText(StringUtils.EMPTY);
 		} else {
 			setTitle(actKontakt.getLabel());
 			tNr.setText(Kontakt.FLD_SHORT_LABEL);
@@ -1027,7 +1027,8 @@ public class TerminDialog extends TitleAreaDialog {
 
 	private String getPhoneEnhancedLabel(Kontakt actKontakt) {
 		String telephoneLabel = actKontakt.getTelephoneLabel();
-		String label = actKontakt.getLabel() + ((telephoneLabel.length() > 0) ? " (" + telephoneLabel + ")" : "");
+		String label = actKontakt.getLabel()
+				+ ((telephoneLabel.length() > 0) ? " (" + telephoneLabel + ")" : StringUtils.EMPTY);
 		return label;
 	}
 

@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Date;
 
 import org.eclipse.jface.action.IAction;
@@ -150,7 +151,7 @@ public class DocboxTerminvereinbarungAction extends DocboxAction {
 		// FIXME phone, phoneBusiness notyet found
 		// Patient personaldaten
 		Date birthday = null;
-		if (!"".equals(patient.getGeburtsdatum())) {
+		if (!StringUtils.EMPTY.equals(patient.getGeburtsdatum())) {
 			TimeTool ttBirthday = new TimeTool(patient.getGeburtsdatum());
 			birthday = ttBirthday.getTime();
 		}
@@ -173,8 +174,8 @@ public class DocboxTerminvereinbarungAction extends DocboxAction {
 		}
 
 		ClinicalDocumentType _addReferral_document = new ClinicalDocumentType();
-		_addReferral_document.setClinicalDocument(docboxCDA.getClinicalDocument("", recordTarget, author, custodian,
-				informationRecipient, docboxCDA.getCodeReferral(), null, null));
+		_addReferral_document.setClinicalDocument(docboxCDA.getClinicalDocument(StringUtils.EMPTY, recordTarget, author,
+				custodian, informationRecipient, docboxCDA.getCodeReferral(), null, null));
 
 		log.log("makeReferral ended...", Log.DEBUGMSG);
 

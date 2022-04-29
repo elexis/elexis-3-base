@@ -1,5 +1,6 @@
 package at.medevit.medelexis.text.msword.plugin.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -94,7 +95,7 @@ public class DocxWordSlidingSearchAndReplace {
 				}
 			}
 			// remove final linebreak
-			sb.replace(sb.length() - 2, sb.length(), "");//$NON-NLS-1$
+			sb.replace(sb.length() - 2, sb.length(), StringUtils.EMPTY);
 			ret = sb.toString();
 		}
 		return ret;
@@ -113,7 +114,7 @@ public class DocxWordSlidingSearchAndReplace {
 			else
 				sb.append(text.substring(lastEnd, matcher.start()));
 
-			String replace = ""; //$NON-NLS-1$
+			String replace = StringUtils.EMPTY;
 			if (callback != null) {
 				Object obj = callback.replace(text.substring(matcher.start(), matcher.end()));
 				if (obj instanceof String) {
@@ -145,7 +146,7 @@ public class DocxWordSlidingSearchAndReplace {
 							cRun.createText().setText(columns[columnIdx]);
 						}
 					}
-					replace = "";
+					replace = StringUtils.EMPTY;
 				}
 			} else {
 				replace = replaceText;

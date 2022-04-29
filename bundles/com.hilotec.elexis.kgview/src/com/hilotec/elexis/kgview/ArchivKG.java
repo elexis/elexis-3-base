@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -309,14 +310,14 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 			sb.append("<b>Konsultation</b> ");
 		}
 		sb.append("<a href=\"kons:" + k.getId() + "\">");
-		sb.append(k.getDatum() + " " + kd.getKonsBeginn() + "</a>");
+		sb.append(k.getDatum() + StringUtils.SPACE + kd.getKonsBeginn() + "</a>");
 
 		// FIXME: Warum ist das noetig?
 		if (k.getFall() != null) {
-			sb.append(" " + k.getFall().getAbrechnungsSystem());
+			sb.append(StringUtils.SPACE + k.getFall().getAbrechnungsSystem());
 		}
 
-		String sAutor = "";
+		String sAutor = StringUtils.EMPTY;
 		Anwender autor = kd.getAutor();
 		if (autor != null) {
 			sAutor = autor.getKuerzel();
@@ -353,7 +354,7 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 	}
 
 	private String cleanUp(String text) {
-		return text.replace(">", "&gt;").replace("<", "&lt;").replace("\n", "<br/>");
+		return text.replace(">", "&gt;").replace("<", "&lt;").replace(StringUtils.LF, "<br/>");
 	}
 
 	public void catchElexisEvent(final ElexisEvent ev) {

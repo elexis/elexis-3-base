@@ -199,8 +199,8 @@ public class ElexisPDFGenerator {
 					parameters.put("bottomMargin", bottomMargin);
 					parameters.put("besrMarginVertical", besrMarginVertical);
 					parameters.put("besrMarginHorizontal", besrMarginHorizontal);
-					parameters.put("headerLine1", getConfigValue(RnOutputter.CFG_ESR_HEADER_1, " "));
-					parameters.put("headerLine2", getConfigValue(RnOutputter.CFG_ESR_HEADER_2, " "));
+					parameters.put("headerLine1", getConfigValue(RnOutputter.CFG_ESR_HEADER_1, StringUtils.SPACE));
+					parameters.put("headerLine2", getConfigValue(RnOutputter.CFG_ESR_HEADER_2, StringUtils.SPACE));
 					parameters.put("eanList", eanList);
 					parameters.put("vatList", vatList);
 					parameters.put("amountTotal", XMLTool.moneyToXmlDouble(mTotal));
@@ -211,7 +211,7 @@ public class ElexisPDFGenerator {
 					if (CoreHub.localCfg.get(RnOutputter.CFG_PRINT_USEGUARANTORPOSTAL, false)) {
 						parameters.put("guarantorPostal", getGuarantorPostal(rechnung));
 					} else {
-						parameters.put("guarantorPostal", "");
+						parameters.put("guarantorPostal", StringUtils.EMPTY);
 					}
 					Optional<IInvoice> invoice = getInvoice();
 					if (invoice.isPresent()) {
@@ -220,10 +220,10 @@ public class ElexisPDFGenerator {
 						parameters.put("creditorLine", getCreditorLine(invoice.get()));
 						parameters.put("insuranceLine", getInsuranceLine(invoice.get()));
 					} else {
-						parameters.put("billerLine", "");
-						parameters.put("guarantorLine", "");
-						parameters.put("creditorLine", "");
-						parameters.put("insuranceLine", "");
+						parameters.put("billerLine", StringUtils.EMPTY);
+						parameters.put("guarantorLine", StringUtils.EMPTY);
+						parameters.put("creditorLine", StringUtils.EMPTY);
+						parameters.put("insuranceLine", StringUtils.EMPTY);
 					}
 					if (invoiceState == InvoiceState.DEMAND_NOTE_2
 							|| invoiceState == InvoiceState.DEMAND_NOTE_2_PRINTED) {
@@ -297,10 +297,10 @@ public class ElexisPDFGenerator {
 				IPerson person = CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
 				StringBuilder ret = new StringBuilder();
 				if (StringUtils.isNotBlank(person.getTitel())) {
-					ret.append(" ").append(person.getTitel());
+					ret.append(StringUtils.SPACE).append(person.getTitel());
 				}
-				ret.append(" ").append(person.getDescription1());
-				ret.append(" ").append(person.getDescription2());
+				ret.append(StringUtils.SPACE).append(person.getDescription1());
+				ret.append(StringUtils.SPACE).append(person.getDescription2());
 				return ret.toString();
 			}
 		}
@@ -324,7 +324,7 @@ public class ElexisPDFGenerator {
 				}
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	private String getEncodedQr(Rechnung rechnung) {
@@ -361,7 +361,7 @@ public class ElexisPDFGenerator {
 				}
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	private String getErrorMessage(QRBillDataException e, Optional<IInvoice> invoice) {
@@ -420,15 +420,15 @@ public class ElexisPDFGenerator {
 	public void printBill(File rsc) {
 		printed = new ArrayList<>();
 		if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_BESR, true)) {
-			File pdf = new File(CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.PDFDIR, "") + File.separator
-					+ billNr + "_esr.pdf");
+			File pdf = new File(CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.PDFDIR, StringUtils.EMPTY)
+					+ File.separator + billNr + "_esr.pdf");
 			generatePatBill(rsc, pdf);
 			printPdf(pdf, true);
 			printed.add(pdf);
 		}
 		if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_RF, true)) {
-			File pdf = new File(CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.PDFDIR, "") + File.separator
-					+ billNr + "_rf.pdf");
+			File pdf = new File(CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.PDFDIR, StringUtils.EMPTY)
+					+ File.separator + billNr + "_rf.pdf");
 			generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);
@@ -438,15 +438,15 @@ public class ElexisPDFGenerator {
 	public void printQrBill(File rsc) {
 		printed = new ArrayList<>();
 		if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_BESR, true)) {
-			File pdf = new File(CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.PDFDIR, "") + File.separator
-					+ billNr + "_esr.pdf");
+			File pdf = new File(CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.PDFDIR, StringUtils.EMPTY)
+					+ File.separator + billNr + "_esr.pdf");
 			generateQrPatBill(rsc, pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);
 		}
 		if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_RF, true)) {
-			File pdf = new File(CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.PDFDIR, "") + File.separator
-					+ billNr + "_rf.pdf");
+			File pdf = new File(CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.PDFDIR, StringUtils.EMPTY)
+					+ File.separator + billNr + "_rf.pdf");
 			generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);
@@ -484,13 +484,13 @@ public class ElexisPDFGenerator {
 					&& !isScriptWinInitialized()) {
 				initializeScriptWin();
 			}
-			String toPrinter = CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, "");
-			String toTray = CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, "");
+			String toPrinter = CoreHub.localCfg.get(RnOutputter.CFG_PRINT_PRINTER, StringUtils.EMPTY);
+			String toTray = CoreHub.localCfg.get(RnOutputter.CFG_PRINT_TRAY, StringUtils.EMPTY);
 			if (useEsrPrinter) {
-				toPrinter = CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, "");
-				toTray = CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, "");
+				toPrinter = CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_PRINTER, StringUtils.EMPTY);
+				toTray = CoreHub.localCfg.get(RnOutputter.CFG_ESR_PRINT_TRAY, StringUtils.EMPTY);
 			}
-			String printCommand = CoreHub.localCfg.get(RnOutputter.CFG_PRINT_COMMAND, "");
+			String printCommand = CoreHub.localCfg.get(RnOutputter.CFG_PRINT_COMMAND, StringUtils.EMPTY);
 			if (printCommand != null) {
 				PrintProcess process = new PrintProcess(printCommand);
 				process.setPrinter(toPrinter);
@@ -504,7 +504,7 @@ public class ElexisPDFGenerator {
 
 	private boolean isPrintingConfigured() {
 		return CoreHub.localCfg.get(RnOutputter.CFG_PRINT_DIRECT, false)
-				&& !CoreHub.localCfg.get(RnOutputter.CFG_PRINT_COMMAND, "").isEmpty();
+				&& !CoreHub.localCfg.get(RnOutputter.CFG_PRINT_COMMAND, StringUtils.EMPTY).isEmpty();
 	}
 
 	private boolean isScriptWinInitialized() {
@@ -586,7 +586,7 @@ public class ElexisPDFGenerator {
 				String[] eanArray = eanSet.toArray(new String[eanSet.size()]);
 				for (int i = 0; i < eanArray.length; i++) {
 					if (i > 0) {
-						eanList.append(" ");
+						eanList.append(StringUtils.SPACE);
 					}
 					eanList.append(i + 1).append("/").append(eanArray[i]);
 				}
@@ -617,7 +617,7 @@ public class ElexisPDFGenerator {
 				String[] eanArray = eanSet.toArray(new String[eanSet.size()]);
 				for (int i = 0; i < eanArray.length; i++) {
 					if (i > 0) {
-						eanList.append(" ");
+						eanList.append(StringUtils.SPACE);
 					}
 					eanList.append(i + 1).append("/").append(eanArray[i]);
 				}
@@ -626,7 +626,7 @@ public class ElexisPDFGenerator {
 				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e);
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	private String getVatList() {
@@ -646,7 +646,7 @@ public class ElexisPDFGenerator {
 				StringBuilder vatrateList = new StringBuilder();
 				for (int i = 0; i < vatRateArray.length; i++) {
 					if (i > 0) {
-						vatrateList.append(" ");
+						vatrateList.append(StringUtils.SPACE);
 					}
 					vatrateList.append(i).append("/").append(vatRateArray[i]);
 				}
@@ -670,7 +670,7 @@ public class ElexisPDFGenerator {
 				StringBuilder vatrateList = new StringBuilder();
 				for (int i = 0; i < vatRateArray.length; i++) {
 					if (i > 0) {
-						vatrateList.append(" ");
+						vatrateList.append(StringUtils.SPACE);
 					}
 					vatrateList.append(i).append("/").append(vatRateArray[i]);
 				}
@@ -679,7 +679,7 @@ public class ElexisPDFGenerator {
 				LoggerFactory.getLogger(getClass()).error("Error getting vat rates", e);
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	private String[] getVatRateArray(HashSet<String> vatrateSet) {
@@ -713,7 +713,7 @@ public class ElexisPDFGenerator {
 				return "4.5";//$NON-NLS-1$
 			}
 		}
-		return "";//$NON-NLS-1$
+		return StringUtils.EMPTY;
 	}
 
 	protected File getXsltForBill(File rsc, XsltType type) {

@@ -1,5 +1,7 @@
 package ch.medshare.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 public interface SystemProperties {
 	/**
 	 * The platform-dependent file separator (e.g., "/" on UNIX, "\" for Windows)
@@ -27,8 +29,8 @@ public interface SystemProperties {
 	public static final String JAVA_VERSION = System.getProperty("java.version"); //$NON-NLS-1$
 
 	/**
-	 * The platform-dependent line separator (e.g., "\n" on UNIX, "\r\n" for
-	 * Windows)
+	 * The platform-dependent line separator (e.g., StringUtils.LF on UNIX, "\r\n"
+	 * for Windows)
 	 */
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
 

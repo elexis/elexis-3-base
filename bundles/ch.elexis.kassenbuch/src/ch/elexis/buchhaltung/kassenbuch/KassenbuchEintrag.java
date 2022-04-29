@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -125,8 +126,8 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 	 * create a new journal entry without recalculating the whole cash journal.
 	 * Instead, take the balance out of the given last entry.
 	 *
-	 * @param beleg  Identifier for the entry. Can be null or "", then it will be
-	 *               generated automatically
+	 * @param beleg  Identifier for the entry. Can be null or StringUtils.EMPTY,
+	 *               then it will be generated automatically
 	 * @param date   date for the transaction. Can be null, then today will be
 	 *               assumed
 	 * @param amount sum of the transaction
@@ -218,7 +219,7 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 
 	@Override
 	public String getLabel() {
-		return getAmount().getAmountAsString() + " " + getText();
+		return getAmount().getAmountAsString() + StringUtils.SPACE + getText();
 	}
 
 	public String getKategorie() {
@@ -258,24 +259,24 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 	}
 
 	public static String[] getCategories() {
-		String cats = ConfigServiceHolder.getGlobal(CATEGORIES, "");
+		String cats = ConfigServiceHolder.getGlobal(CATEGORIES, StringUtils.EMPTY);
 		return cats.split(GLOBAL_CFG_SEPARATOR);
 	}
 
 	public static void addKategorie(String cat) {
-		String updatedCats = append(cat, ConfigServiceHolder.getGlobal(CATEGORIES, ""));
+		String updatedCats = append(cat, ConfigServiceHolder.getGlobal(CATEGORIES, StringUtils.EMPTY));
 
 		if (updatedCats != null)
 			ConfigServiceHolder.setGlobal(CATEGORIES, updatedCats);
 	}
 
 	public static String[] getPaymentModes() {
-		String payments = ConfigServiceHolder.getGlobal(PAYMENT_MODES, "");
+		String payments = ConfigServiceHolder.getGlobal(PAYMENT_MODES, StringUtils.EMPTY);
 		return payments.split(GLOBAL_CFG_SEPARATOR);
 	}
 
 	public static void addPaymentMode(String payment) {
-		String updatedPaymentModes = append(payment, ConfigServiceHolder.getGlobal(PAYMENT_MODES, ""));
+		String updatedPaymentModes = append(payment, ConfigServiceHolder.getGlobal(PAYMENT_MODES, StringUtils.EMPTY));
 
 		if (updatedPaymentModes != null)
 			ConfigServiceHolder.setGlobal(PAYMENT_MODES, updatedPaymentModes);

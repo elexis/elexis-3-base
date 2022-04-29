@@ -16,6 +16,7 @@
 
 package ch.elexis.laborimport.analytica;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
@@ -32,7 +33,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String FTP = "F"; //$NON-NLS-1$
 
 	public static final String BATCH_OR_FTP = "F"; //$NON-NLS-1$
-	public static final String BATCH_DATEI = ""; //$NON-NLS-1$
+	public static final String BATCH_DATEI = StringUtils.EMPTY;
 	public static final String FTP_HOST = "analytica/ftp_host"; //$NON-NLS-1$
 	public static final String FTP_USER = "analytica/ftp_user"; //$NON-NLS-1$
 	public static final String FTP_PWD = "analytica/ftp_pwd"; //$NON-NLS-1$
@@ -40,8 +41,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String OVPN_DIR = "/etc/openvpn/openvpn.cfg"; //$NON-NLS-1$
 
 	public static final String DEFAULT_FTP_HOST = "172.23.45.1"; //$NON-NLS-1$
-	public static final String DEFAULT_FTP_USER = ""; //$NON-NLS-1$
-	public static final String DEFAULT_FTP_PWD = ""; //$NON-NLS-1$
+	public static final String DEFAULT_FTP_USER = StringUtils.EMPTY;
+	public static final String DEFAULT_FTP_PWD = StringUtils.EMPTY;
 	public static final String DEFAULT_DL_DIR = "C:\\LaborDownloads"; //$NON-NLS-1$
 	public static final String DEFAULT_OVPN_DIR = "C:\\Programme\\OpenVPN\\config\\praxis.ovpn"; //$NON-NLS-1$
 
@@ -55,7 +56,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 		prefs.setDefault(OVPN_DIR, DEFAULT_OVPN_DIR); // $NON-NLS-1$
 		prefs.setDefault(DL_DIR, DEFAULT_DL_DIR); // $NON-NLS-1$
-		prefs.setDefault(BATCH_DATEI, ""); //$NON-NLS-1$
+		prefs.setDefault(BATCH_DATEI, StringUtils.EMPTY);
 		prefs.setDefault(BATCH_OR_FTP, FTP); // $NON-NLS-1$
 
 		setPreferenceStore(prefs);

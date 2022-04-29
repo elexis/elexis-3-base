@@ -4,6 +4,7 @@
  *******************************************************************************/
 package at.gruber.elexis.mythic22.inputhandler;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -39,10 +40,10 @@ public class InputHandler {
 	private InputHandler() {
 		super();
 		for (String s : Mythic22Result.FIELDS) {
-			m_inputMap.put(s, "");
+			m_inputMap.put(s, StringUtils.EMPTY);
 		}
 		for (String s : Mythic22Result.HAEMATOLOGICALFIELDS) {
-			m_inputMap.put(s, "");
+			m_inputMap.put(s, StringUtils.EMPTY);
 		}
 	}
 
@@ -67,9 +68,9 @@ public class InputHandler {
 
 		String processedInput = processMatrices(input);
 
-		String[] lines = processedInput.split("\n");
+		String[] lines = processedInput.split(StringUtils.LF);
 		// prepare the header line of the mythic22 input
-		lines[0] = lines[0].replaceFirst(" ", ";");
+		lines[0] = lines[0].replaceFirst(StringUtils.SPACE, ";");
 
 		for (String line : lines) {
 			String key = line.substring(0, line.indexOf(";"));
@@ -94,13 +95,13 @@ public class InputHandler {
 					input.indexOf(";T\n", input.indexOf(Mythic22Result.LMNESHADEMATRIX)));
 
 			// third matrix takes up exactly 3 lines
-			int endIndex = getIndexof(input, "\n", input.indexOf(Mythic22Result.THRES5DLMNEMATRIX), 3);
+			int endIndex = getIndexof(input, StringUtils.LF, input.indexOf(Mythic22Result.THRES5DLMNEMATRIX), 3);
 			String thres5dLmneMatrix = input.substring(input.indexOf(Mythic22Result.THRES5DLMNEMATRIX), endIndex);
 
 			// remove matrices from initial input
-			input = input.replaceFirst(lmneMatrix + ";T\n", "");
-			input = input.replaceFirst(lmneShadeMatrix + ";T\n", "");
-			input = input.replaceFirst(thres5dLmneMatrix + '\n', "");
+			input = input.replaceFirst(lmneMatrix + ";T\n", StringUtils.EMPTY);
+			input = input.replaceFirst(lmneShadeMatrix + ";T\n", StringUtils.EMPTY);
+			input = input.replaceFirst(thres5dLmneMatrix + '\n', StringUtils.EMPTY);
 
 			// place processed matrices in m_inputMap
 			m_inputMap.put(Mythic22Result.LMNEMATRIX, lmneMatrix.substring(lmneMatrix.indexOf('\n') + 1));

@@ -1,5 +1,6 @@
 package ch.elexis.connect.afinion.packages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -74,21 +75,21 @@ public class HeaderPart extends AbstractPart {
 		int minutes = cal.get(Calendar.MINUTE);
 		int seconds = cal.get(Calendar.SECOND);
 
-		String dateStr = (date < 10 ? "0" : "") + Integer.valueOf(date).toString();
-		String monthStr = (month < 10 ? "0" : "") + Integer.valueOf(month).toString();
+		String dateStr = (date < 10 ? "0" : StringUtils.EMPTY) + Integer.valueOf(date).toString();
+		String monthStr = (month < 10 ? "0" : StringUtils.EMPTY) + Integer.valueOf(month).toString();
 		String yearStr = Integer.valueOf(year).toString();
-		String hourStr = (hour < 10 ? "0" : "") + Integer.valueOf(hour).toString();
-		String minuteStr = (minutes < 10 ? "0" : "") + Integer.valueOf(minutes).toString();
-		String secondStr = (seconds < 10 ? "0" : "") + Integer.valueOf(seconds).toString();
+		String hourStr = (hour < 10 ? "0" : StringUtils.EMPTY) + Integer.valueOf(hour).toString();
+		String minuteStr = (minutes < 10 ? "0" : StringUtils.EMPTY) + Integer.valueOf(minutes).toString();
+		String secondStr = (seconds < 10 ? "0" : StringUtils.EMPTY) + Integer.valueOf(seconds).toString();
 
-		return dateStr + "." + monthStr + "." + yearStr + " " + hourStr + ":" + minuteStr + ":" + secondStr + " ("
-				+ cal.getTimeZone().getID() + ")";
+		return dateStr + "." + monthStr + "." + yearStr + StringUtils.SPACE + hourStr + ":" + minuteStr + ":"
+				+ secondStr + " (" + cal.getTimeZone().getID() + ")";
 	}
 
 	public String toString() {
-		String str = "";
+		String str = StringUtils.EMPTY;
 		str += "H-Record " + recordNum + ";";
-		str += " " + toTimeStampString(getCalendar()) + ";";
+		str += StringUtils.SPACE + toTimeStampString(getCalendar()) + ";";
 		str += " Run#:" + runNr + ";";
 		str += " ID:" + id + ";";
 		str += " Lot#:" + lotNr + ";";

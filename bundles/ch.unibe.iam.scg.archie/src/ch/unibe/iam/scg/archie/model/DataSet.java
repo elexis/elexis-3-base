@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -265,14 +266,14 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 				// fill up with blanks
 				int difference = columnWidths[i] - heading.length();
 				for (int j = 0; j < difference; j++) {
-					output.append(" ");
+					output.append(StringUtils.SPACE);
 				}
 			}
 
 			// append a blank an the end of each heading
-			output.append(" ");
+			output.append(StringUtils.SPACE);
 		}
-		output.append("\n");
+		output.append(StringUtils.LF);
 
 		// append heading separator
 		for (int i = 0; i < totalWidth; i++) {
@@ -282,7 +283,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 		for (int i = 0; i < this.headings.size(); i++) {
 			output.append("---");
 		}
-		output.append("\n");
+		output.append(StringUtils.LF);
 
 		// print out rows
 		for (int x = 0; x < this.content.size(); x++) {
@@ -297,13 +298,13 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 					// fill up with blanks
 					int difference = columnWidths[y] - cellValue.length();
 					for (int j = 0; j < difference; j++) {
-						output.append(" ");
+						output.append(StringUtils.SPACE);
 					}
 				}
 				// append a blank at the end of each column
-				output.append(" ");
+				output.append(StringUtils.SPACE);
 			}
-			output.append("\n");
+			output.append(StringUtils.LF);
 		}
 
 		return output.toString();

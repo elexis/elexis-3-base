@@ -1,7 +1,9 @@
 package at.medevit.elexis.outbox.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum OutboxElementType {
-	FILE("FILE://"), DB(""), DOC("DOC://");
+	FILE("FILE://"), DB(StringUtils.EMPTY), DOC("DOC://");
 
 	private final String prefix;
 

@@ -1,5 +1,6 @@
 package ch.elexis.tarmed.printer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 
@@ -93,12 +94,12 @@ public class Rn44Comparator implements Comparator<Object> {
 	private void clearValues() {
 		cal1 = null;
 		cal2 = null;
-		tarifType1 = "";
-		tarifType2 = "";
-		code1 = "";
-		code2 = "";
-		name1 = "";
-		name2 = "";
+		tarifType1 = StringUtils.EMPTY;
+		tarifType2 = StringUtils.EMPTY;
+		code1 = StringUtils.EMPTY;
+		code2 = StringUtils.EMPTY;
+		name1 = StringUtils.EMPTY;
+		name2 = StringUtils.EMPTY;
 	}
 
 	private void initRecordValues2(Object object) {
@@ -143,7 +144,7 @@ public class Rn44Comparator implements Comparator<Object> {
 			RecordParamedType param = (RecordParamedType) rec;
 			return param.getTariffType();
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 }

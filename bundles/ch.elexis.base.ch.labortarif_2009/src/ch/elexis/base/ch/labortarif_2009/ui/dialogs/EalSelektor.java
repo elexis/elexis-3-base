@@ -10,6 +10,7 @@
  ******************************************************************************/
 package ch.elexis.base.ch.labortarif_2009.ui.dialogs;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class EalSelektor extends FilteredItemsSelectionDialog {
 			@Override
 			public String getText(Object element) {
 				if (element == null) {
-					return "";
+					return StringUtils.EMPTY;
 				}
 				return labelCache.get((ILaborLeistung) element);
 			}
@@ -56,8 +57,8 @@ public class EalSelektor extends FilteredItemsSelectionDialog {
 	protected Control createDialogArea(Composite parent) {
 		String oldListLabel = WorkbenchMessages.FilteredItemsSelectionDialog_listLabel;
 
-		setMessage("");
-		WorkbenchMessages.FilteredItemsSelectionDialog_listLabel = ""; //$NON-NLS-1$
+		setMessage(StringUtils.EMPTY);
+		WorkbenchMessages.FilteredItemsSelectionDialog_listLabel = StringUtils.EMPTY;
 		Control ret = super.createDialogArea(parent);
 
 		WorkbenchMessages.FilteredItemsSelectionDialog_listLabel = oldListLabel;
@@ -109,7 +110,7 @@ public class EalSelektor extends FilteredItemsSelectionDialog {
 			labelCache = new HashMap<ILaborLeistung, String>();
 			allCodes = new ArrayList<ILaborLeistung>();
 			allCodes.addAll(ModelServiceHolder.get().getQuery(ILaborLeistung.class).execute());
-			progressMonitor.beginTask("", allCodes.size());
+			progressMonitor.beginTask(StringUtils.EMPTY, allCodes.size());
 			for (ILaborLeistung labor2009Tarif : allCodes) {
 				if (progressMonitor.isCanceled()) {
 					return;

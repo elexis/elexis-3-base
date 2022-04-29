@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview.medikarte;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -108,9 +109,9 @@ public class MedikarteEintragDialog extends TitleAreaDialog {
 		cEV = new Combo(comp, SWT.DROP_DOWN | SWT.BORDER);
 		HashMap<String, Integer> evMap = new HashMap<String, Integer>();
 		int evIndex = 0;
-		cEV.add("");
+		cEV.add(StringUtils.EMPTY);
 		cEV.select(0);
-		evMap.put("", evIndex++);
+		evMap.put(StringUtils.EMPTY, evIndex++);
 		for (String ev : Preferences.getEinnahmevorschriften()) {
 			if (evMap.containsKey(ev))
 				continue;
@@ -186,8 +187,8 @@ public class MedikarteEintragDialog extends TitleAreaDialog {
 
 		// Fuehrende Ganzzahl parsen
 		if (s.matches("[0-9]+ .*")) {
-			s = s.replaceAll("[ \t]+", " ");
-			String[] parts = s.split(" ");
+			s = s.replaceAll("[ \t]+", StringUtils.SPACE);
+			String[] parts = s.split(StringUtils.SPACE);
 			if (parts.length != 2)
 				return false;
 			s = parts[1];
@@ -210,7 +211,7 @@ public class MedikarteEintragDialog extends TitleAreaDialog {
 	}
 
 	private boolean validateInput() {
-		setMessage("");
+		setMessage(StringUtils.EMPTY);
 
 		// Datumsfelder pruefen
 		if (!validateDate(tVon.getText(), false) || !validateDate(tBis.getText(), true)) {
@@ -257,7 +258,7 @@ public class MedikarteEintragDialog extends TitleAreaDialog {
 			return;
 		}
 
-		if (presc != null && !presc.isDeleted() && presc.getEndDate().equals("")) {
+		if (presc != null && !presc.isDeleted() && presc.getEndDate().equals(StringUtils.EMPTY)) {
 			TimeTool ttOld = new TimeTool(presc.getBeginDate());
 			TimeTool ttNew = new TimeTool(tVon.getText());
 			// Wenn das neue vonDatum >= das alte von Datum ist, setzen wir das

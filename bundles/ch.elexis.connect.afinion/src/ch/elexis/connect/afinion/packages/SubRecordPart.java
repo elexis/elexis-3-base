@@ -1,5 +1,6 @@
 package ch.elexis.connect.afinion.packages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -88,8 +89,8 @@ public class SubRecordPart extends AbstractPart {
 	public String toString() {
 		NumberFormat nf = new DecimalFormat("###.##");
 
-		String str = "";
-		str += " " + kuerzel + ": " + nf.format(result) + unit + ";";
+		String str = StringUtils.EMPTY;
+		str += StringUtils.SPACE + kuerzel + ": " + nf.format(result) + unit + ";";
 		str += " Min:" + nf.format(min) + ";";
 		str += " Max:" + nf.format(max) + ";";
 		str += " Decimals:" + decimals + ";";

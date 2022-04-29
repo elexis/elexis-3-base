@@ -1,5 +1,6 @@
 package ch.medshare.connect.abacusjunior.packages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.MissingResourceException;
 
@@ -21,7 +22,7 @@ public class DataPackage extends Package {
 		TimeTool date = new TimeTool();
 		IPatient iPatient = CoreModelServiceHolder.get().load(actPatient.getId(), IPatient.class).orElse(null);
 
-		for (String line : getMessage().split("\n")) {
+		for (String line : getMessage().split(StringUtils.LF)) {
 			String[] cells = line.split("\t");
 			if (cells.length >= 2) {
 				if (cells[0].equals("DATE")) {
@@ -37,8 +38,8 @@ public class DataPackage extends Package {
 				try {
 					Value val = Value.getValue(cells[0]);
 
-					TransientLabResult result = val.fetchValue(iPatient, cells[1], cells.length >= 3 ? cells[2] : "",
-							date);
+					TransientLabResult result = val.fetchValue(iPatient, cells[1],
+							cells.length >= 3 ? cells[2] : StringUtils.EMPTY, date);
 					LabImportUtilHolder.get().importLabResults(Collections.singletonList(result),
 							new DefaultLabImportUiHandler());
 				} catch (MissingResourceException ex) {

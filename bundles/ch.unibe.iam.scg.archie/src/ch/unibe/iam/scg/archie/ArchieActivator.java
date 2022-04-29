@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -217,7 +218,7 @@ public class ArchieActivator extends AbstractUIPlugin {
 						if (executable instanceof AbstractDataProvider) {
 
 							// compose category prefix
-							String category = element.getAttribute("category") == null ? ""
+							String category = element.getAttribute("category") == null ? StringUtils.EMPTY
 									: this.getCategoryNameFromId(element.getAttribute("category")) + ": ";
 
 							// add to list of available statistics
@@ -226,7 +227,7 @@ public class ArchieActivator extends AbstractUIPlugin {
 						}
 					} catch (CoreException e) {
 						String errorMessage = "Error while trying to load the data provider: " + element.getName()
-								+ "\n" + e.getLocalizedMessage();
+								+ StringUtils.LF + e.getLocalizedMessage();
 						ArchieActivator.LOG.log(errorMessage, Log.WARNINGS);
 						e.printStackTrace();
 					}
@@ -281,6 +282,6 @@ public class ArchieActivator extends AbstractUIPlugin {
 				return category.getValue();
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 }

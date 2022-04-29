@@ -1,5 +1,6 @@
 package ch.elexis.agenda.data;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.rgw.tools.TimeTool;
 
@@ -28,9 +29,10 @@ public class TerminUtil {
 		 * if (StringTool.isNothing(ds)) { // default für Tagesgrenzen falls nicht
 		 * definiert ds = "0000-0800\n1800-2359"; //$NON-NLS-1$ } String[] flds =
 		 * ds.split("\r*\n\r*"); //$NON-NLS-1$ for (String fld : flds) { String from =
-		 * fld.substring(0, 4); String until = fld.replaceAll("-", "").substring(4);
-		 * //$NON-NLS-1$ //$NON-NLS-2$ // Lege Termine für die Tagesgrenzen an new
-		 * Termin(resource, day, TimeTool.getMinutesFromTimeString(from),
+		 * fld.substring(0, 4); String until = fld.replaceAll("-",
+		 * StringUtils.EMPTY).substring(4); //$NON-NLS-1$ //$NON-NLS-2$ // Lege Termine
+		 * für die Tagesgrenzen an new Termin(resource, day,
+		 * TimeTool.getMinutesFromTimeString(from),
 		 * TimeTool.getMinutesFromTimeString(until), Termin.typReserviert(),
 		 * Termin.statusLeer()); }
 		 *

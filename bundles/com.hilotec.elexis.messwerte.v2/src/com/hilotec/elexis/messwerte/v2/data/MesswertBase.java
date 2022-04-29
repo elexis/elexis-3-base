@@ -14,6 +14,7 @@
 
 package com.hilotec.elexis.messwerte.v2.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -188,7 +189,7 @@ public abstract class MesswertBase {
 	}
 
 	public String getActualValue() {
-		return ""; //$NON-NLS-1$
+		return StringUtils.EMPTY;
 	}
 
 	public boolean isShown() {
@@ -363,7 +364,7 @@ public abstract class MesswertBase {
 	}
 
 	public String evalateFormula(String formula, Messwert messwert) {
-		return evalateFormula(formula, messwert, ""); //$NON-NLS-1$
+		return evalateFormula(formula, messwert, StringUtils.EMPTY);
 	}
 
 	public String evalateFormula(String formula, Messwert messwert, String defaultValue) {

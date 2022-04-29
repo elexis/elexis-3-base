@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.composite;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -369,7 +370,7 @@ public class SideBarComposite extends Composite {
 
 	private String loadConfigurationString(String configKey) {
 		return ConfigServiceHolder.get().getActiveUserContact(
-				"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, "");
+				"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, StringUtils.EMPTY);
 	}
 
 	public void addMovePeriod(IPeriod period) {

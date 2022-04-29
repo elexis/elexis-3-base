@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.views;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -71,7 +72,8 @@ public class NutritionDetailDisplay implements IDetailDisplay {
 		form.setText(ll.getLabel());
 		tblLab.reload(ll);
 
-		String text = ll.getDescription() != null ? "<form>" + ll.getDescription().replaceAll("\n", "<br/>") + "</form>"
+		String text = ll.getDescription() != null
+				? "<form>" + ll.getDescription().replaceAll(StringUtils.LF, "<br/>") + "</form>"
 				: "<form/>";
 		description.setText(text, true, false);
 		form.reflow(true);

@@ -11,6 +11,7 @@
 
 package ch.medelexis.templator.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,7 +96,7 @@ public class TextPluginImpl implements ITextPlugin {
 			for (int s = 0; s < contents[z].length; s++) {
 				sbu.append(contents[z][s]).append("\t");
 			}
-			sbu.append("\n");
+			sbu.append(StringUtils.LF);
 		}
 		String repl = sbu.toString();
 		place = "\\[" + place.substring(1, place.length() - 1) + "\\]";

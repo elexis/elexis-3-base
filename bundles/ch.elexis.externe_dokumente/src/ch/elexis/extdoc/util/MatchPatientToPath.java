@@ -12,6 +12,7 @@
 
 package ch.elexis.extdoc.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
@@ -53,12 +54,12 @@ public class MatchPatientToPath {
 	public static String[] getFirstAndFamilyNameFromPathOldConvention(String fullPathname) {
 		String basename = new File(fullPathname).getName();
 		if (basename.length() <= 6)
-			return new String[] { "", basename.replaceFirst(" *$", "") };
-		String lastname = cleanName(basename.substring(0, 6).replaceFirst(" *$", ""));
+			return new String[] { StringUtils.EMPTY, basename.replaceFirst(" *$", StringUtils.EMPTY) };
+		String lastname = cleanName(basename.substring(0, 6).replaceFirst(" *$", StringUtils.EMPTY));
 		basename = basename.substring(6);
 		String separatedBySpace = ".*[. \\s].*";
 		if (basename.matches(separatedBySpace)) {
-			return new String[] { basename.replaceFirst("[. \\s].*", ""), lastname };
+			return new String[] { basename.replaceFirst("[. \\s].*", StringUtils.EMPTY), lastname };
 		} else {
 			return new String[] { basename, lastname };
 		}
@@ -102,7 +103,7 @@ public class MatchPatientToPath {
 			StringBuilder sb = new StringBuilder();
 			sb.append(lastname);
 			while (sb.length() < 6) {
-				sb.append(" "); //$NON-NLS-1$
+				sb.append(StringUtils.SPACE);
 			}
 			shortLastname = sb.toString();
 		}
@@ -195,7 +196,7 @@ public class MatchPatientToPath {
 	public static String cleanName(String name) {
 		if (name.length() == 0)
 			return name;
-		name = name.replaceAll("-", "").replaceAll("_", "");
+		name = name.replaceAll("-", StringUtils.EMPTY).replaceAll("_", StringUtils.EMPTY);
 		if (name.split("[. \\s]", 0).length > 1) {
 			String clean = name.split("[. \\s]", 0)[0].toLowerCase(); //$NON-NLS-1$
 			clean = clean.substring(0, 1).toUpperCase() + clean.substring(1);
@@ -210,12 +211,12 @@ public class MatchPatientToPath {
 	 * @return maximal 6 chars of familyName. Spaces removed
 	 */
 	static public String firstToken(String fullPathName) {
-		String firstToken = fullPathName.replaceFirst("[_\\p{Space}].*", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String firstToken = fullPathName.replaceFirst("[_\\p{Space}].*", StringUtils.EMPTY); //$NON-NLS-1$
 		return firstToken;
 	}
 
 	public static String getSubDirPath(Patient pat) {
-		String s = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD1, "") + File.separatorChar //$NON-NLS-1$
+		String s = CoreHub.localCfg.get(PreferenceConstants.BASIS_PFAD1, StringUtils.EMPTY) + File.separatorChar
 				+ basenameMustBeginWith(pat.getName(), pat.getVorname());
 		return s;
 	}
@@ -242,9 +243,9 @@ public class MatchPatientToPath {
 		String basename = new File(oldPathname).getName();
 		String dirname = new File(oldPathname).getParent();
 		// Convert 31.02.79 -> 1979-02-31
-		String s = dirname + File.separatorChar + (new File(getSubDirPath(pat)).getName()) + " "
+		String s = dirname + File.separatorChar + (new File(getSubDirPath(pat)).getName()) + StringUtils.SPACE
 				+ geburtsDatumToCanonical(geburtsDatum) + File.separatorChar + basename;
-		return dirname + File.separatorChar + (new File(getSubDirPath(pat)).getName()) + " " //$NON-NLS-1$
+		return dirname + File.separatorChar + (new File(getSubDirPath(pat)).getName()) + StringUtils.SPACE
 				+ geburtsDatumToCanonical(geburtsDatum) + File.separatorChar + basename;
 	}
 

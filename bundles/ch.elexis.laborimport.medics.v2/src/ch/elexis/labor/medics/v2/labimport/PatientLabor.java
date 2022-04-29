@@ -1,5 +1,6 @@
 package ch.elexis.labor.medics.v2.labimport;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -210,8 +211,8 @@ public class PatientLabor {
 			if (sequence == null || sequence.length() == 0) {
 				sequence = "50";
 			}
-			labItem = new LabItem(data.getName(), data.getName(), myLab, null, null, "", LabItemTyp.TEXT, group, //$NON-NLS-1$
-					sequence); // $NON-NLS-2$
+			labItem = new LabItem(data.getName(), data.getName(), myLab, null, null, StringUtils.EMPTY, LabItemTyp.TEXT,
+					group, sequence); // $NON-NLS-2$
 		}
 
 		TimeTool dateTime = new TimeTool();
@@ -280,8 +281,9 @@ public class PatientLabor {
 				if (sequence == null || sequence.length() == 0) {
 					sequence = "50";
 				}
-				labItem = new LabItem(kuerzel, Messages.PatientLabor_nameDokumentLaborParameter, myLab, "", "", //$NON-NLS-1$//$NON-NLS-2$
-																												// //$NON-NLS-3$
+				labItem = new LabItem(kuerzel, Messages.PatientLabor_nameDokumentLaborParameter, myLab,
+						StringUtils.EMPTY, StringUtils.EMPTY, // $NON-NLS-1$
+						// //$NON-NLS-3$
 						FileTool.getExtension(filename), LabItemTyp.DOCUMENT, group, sequence); // $NON-NLS-1$
 																								// //$NON-NLS-2$
 			}

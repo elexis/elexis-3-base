@@ -1,5 +1,6 @@
 package at.medevit.elexis.ehc.ui.vacdoc.wizard;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
 import java.io.ByteArrayInputStream;
@@ -121,7 +122,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 	}
 
 	public boolean finish() {
-		String outputFile = "";
+		String outputFile = StringUtils.EMPTY;
 		try {
 			Patient elexisPatient = ElexisEventDispatcher.getSelectedPatient();
 			Mandant elexisMandant = ElexisEventDispatcher.getSelectedMandator();

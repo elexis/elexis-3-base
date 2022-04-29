@@ -4,6 +4,7 @@
  */
 package org.iatrix.messwerte.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -363,13 +364,13 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 		}
 
 		public String getColumnText(Object obj, int index) {
-			String text = "";
+			String text = StringUtils.EMPTY;
 
 			if (obj instanceof LabRowGroup) {
 				if (index == 0) {
 					LabRowGroup labRowGroup = (LabRowGroup) obj;
 					text = labRowGroup.group.groupName;
-					int spaceIndex = text.indexOf(" ");
+					int spaceIndex = text.indexOf(StringUtils.SPACE);
 					if (spaceIndex >= 0) {
 						text = text.substring(spaceIndex + 1);
 					}
@@ -570,7 +571,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 
 		pagesLabel = new Label(infoArea, SWT.RIGHT);
 		pagesLabel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		pagesLabel.setText("");
+		pagesLabel.setText(StringUtils.EMPTY);
 
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		Table table = viewer.getTable();
@@ -1251,7 +1252,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 
 						tableDateColumns[i].getColumn().setText(strDate);
 					} else {
-						tableDateColumns[i].getColumn().setText("");
+						tableDateColumns[i].getColumn().setText(StringUtils.EMPTY);
 					}
 					tableDates[i] = tableDate;
 				} catch (IndexOutOfBoundsException e) {
@@ -1260,7 +1261,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 
 			} else {
 				// no date column available
-				tableDateColumns[i].getColumn().setText("");
+				tableDateColumns[i].getColumn().setText(StringUtils.EMPTY);
 				tableDates[i] = null;
 			}
 		}
@@ -1270,7 +1271,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 		if (actPatient != null) {
 			pagesLabel.setText("Seite " + (currentPage + 1) + "/" + (lastPage + 1));
 		} else {
-			pagesLabel.setText("");
+			pagesLabel.setText(StringUtils.EMPTY);
 		}
 
 		// update action status
@@ -1317,7 +1318,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 	class Group {
 		private boolean isLabGroup = false;;
 		private LabGroup labGroup = null;
-		private String groupName = "";
+		private String groupName = StringUtils.EMPTY;
 
 		Group(LabGroup labGroup) {
 			this.labGroup = labGroup;
@@ -1407,7 +1408,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 		}
 
 		public Object getValue(Object element) {
-			String value = "";
+			String value = StringUtils.EMPTY;
 
 			ViewerCell cell = focusCellManager.getFocusCell();
 			int columnIndex = cell.getColumnIndex();
@@ -1474,7 +1475,8 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 								if (labItem.getTyp() == LabItemTyp.TEXT) {
 									labResult = new LabResult(actPatient, timeTool, labItem, "text", newValue);
 								} else {
-									labResult = new LabResult(actPatient, timeTool, labItem, newValue, "");
+									labResult = new LabResult(actPatient, timeTool, labItem, newValue,
+											StringUtils.EMPTY);
 								}
 
 								// update data structure

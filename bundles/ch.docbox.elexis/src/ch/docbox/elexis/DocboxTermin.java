@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -76,7 +77,7 @@ public class DocboxTermin {
 	}
 
 	private String getTerminUniqueId(String appointmentId, String bereich, boolean first) {
-		return appointmentId + "[-" + bereich + "-]" + (first ? "" : "2");
+		return appointmentId + "[-" + bereich + "-]" + (first ? StringUtils.EMPTY : "2");
 
 	}
 
@@ -88,7 +89,7 @@ public class DocboxTermin {
 				return id.substring(0, pos);
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public boolean create(AppointmentType appointment, String bereich) {
@@ -163,8 +164,8 @@ public class DocboxTermin {
 								Integer.toString((int) (startMinutes + appointment.getDuration()) % (24 * 60)) });
 			}
 
-			String text = "";
-			String grund = "";
+			String text = StringUtils.EMPTY;
+			String grund = StringUtils.EMPTY;
 
 			if (appointment.getReasonDetails() != null) {
 				grund = appointment.getReasonDetails();
@@ -207,8 +208,8 @@ public class DocboxTermin {
 			setText(text);
 			setGrund(grund);
 			setLocked(true);
-			log.log("Termin " + elexisTermin.getId() + " " + elexisTermin.getText() + " " + elexisTermin.getGrund()
-					+ " - " + elexisTermin.getDay(), Log.DEBUGMSG);
+			log.log("Termin " + elexisTermin.getId() + StringUtils.SPACE + elexisTermin.getText() + StringUtils.SPACE
+					+ elexisTermin.getGrund() + " - " + elexisTermin.getDay(), Log.DEBUGMSG);
 
 		} catch (Exception exception) {
 			log.log(exception, "Termin konnte nicht gespeichert werden", Log.ERRORS);
@@ -248,8 +249,8 @@ public class DocboxTermin {
 			elexisTerminDayAfter.delete();
 		}
 		if (elexisTermin != null && elexisTermin.exists()) {
-			log.log("Terminid " + elexisTermin.getId() + " " + elexisTermin.getText() + " " + elexisTermin.getGrund()
-					+ "- " + elexisTermin.getBereich(), Log.DEBUGMSG);
+			log.log("Terminid " + elexisTermin.getId() + StringUtils.SPACE + elexisTermin.getText() + StringUtils.SPACE
+					+ elexisTermin.getGrund() + "- " + elexisTermin.getBereich(), Log.DEBUGMSG);
 			if (elexisTermin.isLocked()) {
 				elexisTermin.setLocked(false);
 			}
@@ -270,7 +271,8 @@ public class DocboxTermin {
 		for (Termin termin : termine) {
 			DocboxTermin docboxTermin = new DocboxTermin();
 			docboxTermin.loadTermin(termin.getId());
-			log.log("Terminid " + termin.getId() + " " + termin.getText() + " " + termin.getGrund(), Log.DEBUGMSG);
+			log.log("Terminid " + termin.getId() + StringUtils.SPACE + termin.getText() + StringUtils.SPACE
+					+ termin.getGrund(), Log.DEBUGMSG);
 			docboxTermine.add(docboxTermin);
 		}
 		return docboxTermine;

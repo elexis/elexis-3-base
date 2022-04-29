@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -162,7 +163,8 @@ public class ParametersPanel extends Composite {
 			GetProperty getter = method.getAnnotation(GetProperty.class);
 
 			RegexValidation regex = null; // can be null
-			if (!getter.validationRegex().equals("") && !getter.validationMessage().equals("")) {
+			if (!getter.validationRegex().equals(StringUtils.EMPTY)
+					&& !getter.validationMessage().equals(StringUtils.EMPTY)) {
 				regex = new RegexValidation(getter.validationRegex(), getter.validationMessage());
 			}
 
@@ -171,7 +173,7 @@ public class ParametersPanel extends Composite {
 					getter.vendorClass());
 
 			// set a description if not empty
-			if (!getter.description().equals("")) {
+			if (!getter.description().equals(StringUtils.EMPTY)) {
 				widget.setDescription(getter.description());
 			}
 

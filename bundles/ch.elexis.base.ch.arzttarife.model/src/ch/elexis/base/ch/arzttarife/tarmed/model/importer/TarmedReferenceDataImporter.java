@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter i
 
 		// init database connection
 		cacheDb = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:tarmed_import", "h2");
-		cacheDb.connect("", "");
+		cacheDb.connect(StringUtils.EMPTY, StringUtils.EMPTY);
 
 		if (openAccessDatabase(input) != Status.OK_STATUS || deleteCachedAccessTables() != Status.OK_STATUS
 				|| importAllAccessTables() != Status.OK_STATUS) {
@@ -182,14 +183,14 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter i
 	}
 
 	protected String getLaw() {
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	/**
 	 * Import all Access tables (using cache cachedDbTables)
 	 */
 	private IStatus importAllAccessTables() {
-		String tablename = "";
+		String tablename = StringUtils.EMPTY;
 		Iterator<String> iter;
 		try {
 			chapterCount = aw.getDatabase().getTable("KAPITEL_TEXT").getRowCount();
@@ -261,7 +262,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter i
 	}
 
 	private IStatus deleteCachedAccessTables() {
-		String tablename = "";
+		String tablename = StringUtils.EMPTY;
 		Iterator<String> iter;
 		iter = cachedDbTables.iterator();
 		while (iter.hasNext()) {

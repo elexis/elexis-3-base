@@ -1,5 +1,6 @@
 package ch.elexis.covid.cert.service;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,7 +88,7 @@ public class CertificatesService {
 	}
 
 	public String getOtp() {
-		return configService.getActiveMandator(CFG_OTP, "");
+		return configService.getActiveMandator(CFG_OTP, StringUtils.EMPTY);
 	}
 
 	/**

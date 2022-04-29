@@ -1,5 +1,6 @@
 package ch.gpb.elexis.cst.dialog;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -211,8 +212,8 @@ public class ProfileOverview extends StatusDialog {
 			if ((e1 instanceof String[]) && (e2 instanceof String[])) {
 				String[] d1 = (String[]) e1;
 				String[] d2 = (String[]) e2;
-				String c1 = "";
-				String c2 = "";
+				String c1 = StringUtils.EMPTY;
+				String c2 = StringUtils.EMPTY;
 				switch (sortColumn) {
 				case 0:
 					c1 = d1[0];

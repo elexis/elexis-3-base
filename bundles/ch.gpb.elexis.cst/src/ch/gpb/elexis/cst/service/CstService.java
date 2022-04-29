@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.service;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -365,7 +366,7 @@ public class CstService {
 			values.add(matcher.group());
 		}
 		Collections.sort(values); // Sort the arraylist
-		String maxValue = "";
+		String maxValue = StringUtils.EMPTY;
 		try {
 			// get the bottom most (highest) value from the list
 			maxValue = values.get(values.size() - 1);
@@ -455,7 +456,8 @@ public class CstService {
 	public static String getBefundArtSeparator(Map<Object, Object> mapAuswahl, String befundArt) {
 		String result = null;
 
-		// mapAuswahl may contain the key, but with a "" value (and not null), so we
+		// mapAuswahl may contain the key, but with a StringUtils.EMPTY value (and not
+		// null), so we
 		// return null explicitly on empty strings
 		Iterator<Object> itKeys = mapAuswahl.keySet().iterator();
 		while (itKeys.hasNext()) {
@@ -788,7 +790,7 @@ public class CstService {
 	public static double getNumericFromLabResult(String sResult) {
 		double result = 0;
 
-		String sRes = sResult.replaceAll("[^0-9?!\\.]", "");
+		String sRes = sResult.replaceAll("[^0-9?!\\.]", StringUtils.EMPTY);
 
 		try {
 			result = new Double(sRes).doubleValue();

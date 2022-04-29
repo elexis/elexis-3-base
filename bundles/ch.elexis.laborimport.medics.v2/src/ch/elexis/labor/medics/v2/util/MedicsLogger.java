@@ -7,6 +7,7 @@
  ********************************************************/
 package ch.elexis.labor.medics.v2.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -22,7 +23,7 @@ public class MedicsLogger {
 
 	private PrintStream log;
 	private static MedicsLogger logger = null;
-	private String insetStr = ""; //$NON-NLS-1$
+	private String insetStr = StringUtils.EMPTY;
 
 	public static MedicsLogger getLogger() {
 		if (logger == null) {

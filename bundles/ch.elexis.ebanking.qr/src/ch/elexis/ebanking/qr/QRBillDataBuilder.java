@@ -100,7 +100,8 @@ public class QRBillDataBuilder {
 		ret.setRmtInfTp(referenceType);
 		ret.setRmtInfRef(reference);
 
-		ret.setRmtInfUstrd(StringUtils.defaultString(referenceUnstructuredRemark).replaceAll("\\r|\\n", ""));
+		ret.setRmtInfUstrd(
+				StringUtils.defaultString(referenceUnstructuredRemark).replaceAll("\\r|\\n", StringUtils.EMPTY));
 		ret.setRmtInfTrailer(referenceTrailer);
 
 		return ret;
@@ -110,13 +111,13 @@ public class QRBillDataBuilder {
 		try {
 			BeanUtils.setProperty(qrBillData, prefix + "AdrTp", "K");
 
-			BeanUtils.setProperty(qrBillData, prefix + "Name",
-					AddressFormatUtil.getFullnameWithSalutation(contact).replaceAll("\n", " ").trim());
+			BeanUtils.setProperty(qrBillData, prefix + "Name", AddressFormatUtil.getFullnameWithSalutation(contact)
+					.replaceAll(StringUtils.LF, StringUtils.SPACE).trim());
 
 			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine1", contact.getStreet().trim());
 
 			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine2",
-					StringUtils.left(contact.getZip().trim() + " " + contact.getCity().trim(), 16));
+					StringUtils.left(contact.getZip().trim() + StringUtils.SPACE + contact.getCity().trim(), 16));
 
 			Country country = contact.getCountry();
 			if (Country.NDF == country) {

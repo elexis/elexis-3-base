@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview.medikarte;
 
+import org.apache.commons.lang3.StringUtils;
 import static com.hilotec.elexis.kgview.text.KGTextTemplateRequirement.TT_MEDICARD;
 
 import java.util.Collections;
@@ -163,7 +164,7 @@ public class MedikarteView extends ViewPart implements ElexisEventListener {
 				if (tis == null || tis.length != 1)
 					return;
 				Prescription presc = (Prescription) tis[0].getData();
-				if (presc.isDeleted() || !presc.getEndDate().equals(""))
+				if (presc.isDeleted() || !presc.getEndDate().equals(StringUtils.EMPTY))
 					return;
 				new MedikarteStopDialog(getSite().getShell(), presc).open();
 				refresh();

@@ -1,5 +1,6 @@
 package at.medevit.medelexis.text.msword.plugin.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -30,7 +31,7 @@ public class DocxWordRunProperties {
 				return strFont;
 			}
 		}
-		return ""; //$NON-NLS-1$
+		return StringUtils.EMPTY;
 	}
 
 	public String getColor() {
@@ -41,7 +42,7 @@ public class DocxWordRunProperties {
 				return strColor;
 			}
 		}
-		return ""; //$NON-NLS-1$
+		return StringUtils.EMPTY;
 	}
 
 	public boolean isBold() {

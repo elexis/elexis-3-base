@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.widgets;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
@@ -151,7 +152,7 @@ public class NumericWidget extends TextWidget {
 		protected String getErrorMessage() {
 			String error = Messages.FIELD_NUMERIC_ERROR;
 			if (NumericWidget.this.hasRegexValidation()) {
-				error += "\n" + NumericWidget.this.regexValidation.getMessage();
+				error += StringUtils.LF + NumericWidget.this.regexValidation.getMessage();
 			}
 			return error;
 		}

@@ -78,7 +78,7 @@ public class TarmedRequirements {
 		} else if (xid == null) {
 			return EAN_PSEUDO;
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public static String getRecipientEAN(final IContact contact) {
@@ -94,7 +94,7 @@ public class TarmedRequirements {
 
 	public static String getSuvaNr(final IContact k) {
 		IXid ret = k.getXid(DOMAIN_SUVA);
-		return ret != null ? ret.getDomainId() : "";
+		return ret != null ? ret.getDomainId() : StringUtils.EMPTY;
 	}
 
 	/**
@@ -149,11 +149,11 @@ public class TarmedRequirements {
 		if (!KSK.matches("[a-zA-Z] ?[0-9]{4,4}\\.?[0-9]{2,2}")) { //$NON-NLS-1$
 			return "invalid"; //$NON-NLS-1$
 		}
-		KSK = KSK.replaceAll("[^a-zA-Z0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		KSK = KSK.replaceAll("[^a-zA-Z0-9]", StringUtils.EMPTY); //$NON-NLS-1$
 		if (bCompact) {
 			return KSK;
 		}
-		KSK = KSK.substring(0, 1) + " " + KSK.substring(1, 5) + "." + KSK.substring(5); //$NON-NLS-1$ //$NON-NLS-2$
+		KSK = KSK.substring(0, 1) + StringUtils.SPACE + KSK.substring(1, 5) + "." + KSK.substring(5); //$NON-NLS-1$
 		return KSK.trim();
 	}
 
@@ -167,7 +167,7 @@ public class TarmedRequirements {
 				xid = contact.getXid(DOMAIN_KSK);
 			}
 		}
-		return xid != null ? xid.getDomainId().replaceAll("[\\s\\.\\-]", "").trim() : ""; //$NON-NLS-1$ //$NON-NLS-2$
+		return xid != null ? xid.getDomainId().replaceAll("[\\s\\.\\-]", StringUtils.EMPTY).trim() : StringUtils.EMPTY; //$NON-NLS-1$
 	}
 
 	public static String getNIF(final IContact contact) {
@@ -180,7 +180,7 @@ public class TarmedRequirements {
 				xid = contact.getXid(DOMAIN_NIF);
 			}
 		}
-		return xid != null ? xid.getDomainId().trim() : "";
+		return xid != null ? xid.getDomainId().trim() : StringUtils.EMPTY;
 	}
 
 	public static boolean setEAN(final IContact k, final String ean) {
@@ -205,7 +205,7 @@ public class TarmedRequirements {
 
 	public static String getAHV(final IPerson p) {
 		IXid ahv = p.getXid(DOMAIN_AHV);
-		String ret = ahv != null ? ahv.getDomainId() : "";
+		String ret = ahv != null ? ahv.getDomainId() : StringUtils.EMPTY;
 		if (ret.length() == 0) {
 			ret = StringUtils.defaultString((String) p.getExtInfo(SSN));
 			if (ret.length() == 0) {

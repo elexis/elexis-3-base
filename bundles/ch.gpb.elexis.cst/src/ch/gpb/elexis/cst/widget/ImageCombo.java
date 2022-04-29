@@ -16,6 +16,8 @@ package ch.gpb.elexis.cst.widget;
  *                       side in collapsed state, select all only called
  *                       if textfield is editable
  *******************************************************************************/
+
+import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
@@ -415,7 +417,7 @@ public class ImageCombo extends Composite {
 		String[] items = getStringsFromTable();
 		int textWidth = 0;
 		GC gc = new GC(this.comboComposite);
-		int spacer = gc.stringExtent(" ").x; //$NON-NLS-1$
+		int spacer = gc.stringExtent(StringUtils.SPACE).x;
 		for (int i = 0; i < items.length; i++) {
 			textWidth = Math.max(gc.stringExtent(items[i]).x, textWidth);
 		}
@@ -804,7 +806,7 @@ public class ImageCombo extends Composite {
 	 */
 	public void removeAll() {
 		checkWidget();
-		this.text.setText(""); //$NON-NLS-1$
+		this.text.setText(StringUtils.EMPTY);
 		this.table.removeAll();
 	}
 
@@ -885,7 +887,7 @@ public class ImageCombo extends Composite {
 		checkWidget();
 		if (index == -1) {
 			this.table.deselectAll();
-			this.text.setText(""); //$NON-NLS-1$
+			this.text.setText(StringUtils.EMPTY);
 			return;
 		}
 		if (0 <= index && index < this.table.getItemCount()) {

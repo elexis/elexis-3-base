@@ -75,7 +75,7 @@ public class DataAccessor implements IDataAccess {
 
 		if (descriptor.equals("Name")) { //$NON-NLS-1$
 			if (selectedArticel != null)
-				ret = new Result<Object>(StringUtils.defaultIfBlank(selectedArticel.getText(), ""));
+				ret = new Result<Object>(StringUtils.defaultIfBlank(selectedArticel.getText(), StringUtils.EMPTY));
 			else
 				ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
 						"Kein Artikel selektiert.", //$NON-NLS-1$
@@ -96,7 +96,7 @@ public class DataAccessor implements IDataAccess {
 						null, false);
 		} else if (descriptor.equals("EAN")) { //$NON-NLS-1$
 			if (selectedArticel != null)
-				ret = new Result<Object>(StringUtils.defaultIfBlank(selectedArticel.getGtin(), ""));
+				ret = new Result<Object>(StringUtils.defaultIfBlank(selectedArticel.getGtin(), StringUtils.EMPTY));
 			else
 				ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
 						"Kein Artikel selektiert.", //$NON-NLS-1$
@@ -114,14 +114,16 @@ public class DataAccessor implements IDataAccess {
 						null, false);
 		} else if (descriptor.equals("Dosis")) { //$NON-NLS-1$
 			if (selectedPrescription != null)
-				ret = new Result<Object>(StringUtils.defaultIfBlank(selectedPrescription.getDosageInstruction(), ""));
+				ret = new Result<Object>(
+						StringUtils.defaultIfBlank(selectedPrescription.getDosageInstruction(), StringUtils.EMPTY));
 			else
-				ret = new Result<Object>(""); //$NON-NLS-1$
+				ret = new Result<Object>(StringUtils.EMPTY);
 		} else if (descriptor.equals("Vorschrift")) { //$NON-NLS-1$
 			if (selectedPrescription != null)
-				ret = new Result<Object>(StringUtils.defaultIfBlank(selectedPrescription.getRemark(), ""));
+				ret = new Result<Object>(
+						StringUtils.defaultIfBlank(selectedPrescription.getRemark(), StringUtils.EMPTY));
 			else
-				ret = new Result<Object>(""); //$NON-NLS-1$
+				ret = new Result<Object>(StringUtils.EMPTY);
 		}
 		return ret;
 

@@ -4,6 +4,7 @@
  *******************************************************************************/
 package ch.elexis.openoffice;
 
+import org.apache.commons.lang3.StringUtils;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.Panel;
@@ -343,7 +344,7 @@ public class OOTextPlugin implements ITextPlugin {
 		// opening an OpenOffice.org document.
 		Clipboard clipboard = new Clipboard(Display.getCurrent());
 		if (clipboard.getAvailableTypeNames().length != 0) {
-			clipboard.setContents(new Object[] { " " }, new Transfer[] { TextTransfer.getInstance() }); //$NON-NLS-1$
+			clipboard.setContents(new Object[] { StringUtils.SPACE }, new Transfer[] { TextTransfer.getInstance() });
 			clipboard.clearContents();
 		}
 		clipboard.dispose();
@@ -541,9 +542,9 @@ public class OOTextPlugin implements ITextPlugin {
 					} else if (replace instanceof String) {
 						// String
 						// repl=((String)replace).replaceAll("\\r\\n[\\r\\n]*",
-						// "\n")
-						String repl = ((String) replace).replaceAll("\\r", "\n");
-						repl = repl.replaceAll("\\n\\n+", "\n");
+						// StringUtils.LF)
+						String repl = ((String) replace).replaceAll("\\r", StringUtils.LF);
+						repl = repl.replaceAll("\\n\\n+", StringUtils.LF);
 						r.setText(repl);
 					} else if (replace instanceof String[][]) {
 						String[][] contents = (String[][]) replace;
@@ -551,7 +552,7 @@ public class OOTextPlugin implements ITextPlugin {
 							ITextTable textTable = this.document.getTextTableService()
 									.constructTextTable(contents.length, contents[0].length);
 							this.document.getTextService().getTextContentService().insertTextContent(r, textTable);
-							r.setText("");
+							r.setText(StringUtils.EMPTY);
 							for (int row = 0; row < contents.length; row++) {
 								String[] zeile = contents[row];
 								for (int col = 0; col < zeile.length; col++) {
@@ -602,7 +603,7 @@ public class OOTextPlugin implements ITextPlugin {
 															 * + offset
 															 */, contents[0].length);
 				this.document.getTextService().getTextContentService().insertTextContent(r, textTable);
-				r.setText("");
+				r.setText(StringUtils.EMPTY);
 				ITextTablePropertyStore props = textTable.getPropertyStore();
 				long w = props.getWidth();
 				long percent = w / 100;

@@ -10,6 +10,7 @@
  */
 package ch.medelexis.templator.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -106,7 +107,7 @@ public class StorageController extends Job implements HeartListener {
 			}
 		}
 		GenericDocument gd = new GenericDocument(mf.pat, mf.name, mf.category, mf.fileOnDisk,
-				new TimeTool().toString(TimeTool.DATE_GER), "", null);
+				new TimeTool().toString(TimeTool.DATE_GER), StringUtils.EMPTY, null);
 		dm.addDocument(gd);
 		mf.guid = gd.getGUID();
 		mf.timestamp = mf.fileOnDisk.lastModified();

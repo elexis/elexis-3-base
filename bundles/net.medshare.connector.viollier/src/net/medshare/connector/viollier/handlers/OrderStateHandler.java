@@ -1,5 +1,6 @@
 package net.medshare.connector.viollier.handlers;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -32,11 +33,11 @@ public class OrderStateHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String vorname = "";
-		String name = "";
-		String geburtsdatum = "";
-		String doctor = "";
-		String cookie = "";
+		String vorname = StringUtils.EMPTY;
+		String name = StringUtils.EMPTY;
+		String geburtsdatum = StringUtils.EMPTY;
+		String doctor = StringUtils.EMPTY;
+		String cookie = StringUtils.EMPTY;
 
 		mySettings = new ViollierConnectorSettings((Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 		httpsUrl = mySettings.getGlobalLoginUrl();
@@ -93,7 +94,7 @@ public class OrderStateHandler extends AbstractHandler {
 
 	private String convertDate(String gebDat) {
 		if (gebDat.isEmpty())
-			return "";
+			return StringUtils.EMPTY;
 		String tempDay = gebDat.substring(0, 2);
 		String tempMonth = gebDat.substring(3, 5);
 		String tempYear = gebDat.substring(6);

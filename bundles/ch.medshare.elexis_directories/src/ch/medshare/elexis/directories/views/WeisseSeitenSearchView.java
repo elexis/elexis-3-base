@@ -12,6 +12,7 @@
 
 package ch.medshare.elexis.directories.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class WeisseSeitenSearchView extends ViewPart {
 			KontaktEntry entry = (KontaktEntry) element;
 			switch (columnIndex) {
 			case 0:
-				return entry.getName() + " " + entry.getVorname(); //$NON-NLS-1$
+				return entry.getName() + StringUtils.SPACE + entry.getVorname();
 			case 1:
 				return entry.getAdresse();
 			case 2:

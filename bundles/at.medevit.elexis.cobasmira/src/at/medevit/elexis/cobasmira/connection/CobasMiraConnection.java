@@ -1,5 +1,6 @@
 package at.medevit.elexis.cobasmira.connection;
 
+import org.apache.commons.lang3.StringUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -75,12 +76,13 @@ public class CobasMiraConnection implements PropertyChangeListener {
 
 				logger.debug("Opening connection to " + portName);
 				logger.debug("BaudRate: " + serialPort.getBaudRate());
-				logger.debug("STPB/DTB/PAR: " + serialPort.getStopBits() + " " + serialPort.getDataBits() + " "
-						+ serialPort.getParity());
+				logger.debug("STPB/DTB/PAR: " + serialPort.getStopBits() + StringUtils.SPACE + serialPort.getDataBits()
+						+ StringUtils.SPACE + serialPort.getParity());
 				logger.debug("FCM: " + serialPort.getFlowControlMode() + " should be: "
 						+ (SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT));
-				logger.debug("CTS/CD/DTR/DSR/RTS: " + serialPort.isCTS() + " " + serialPort.isCD() + " "
-						+ serialPort.isDTR() + " " + serialPort.isDSR() + " " + serialPort.isRTS());
+				logger.debug("CTS/CD/DTR/DSR/RTS: " + serialPort.isCTS() + StringUtils.SPACE + serialPort.isCD()
+						+ StringUtils.SPACE + serialPort.isDTR() + StringUtils.SPACE + serialPort.isDSR()
+						+ StringUtils.SPACE + serialPort.isRTS());
 
 				InputStream in = serialPort.getInputStream();
 				// OutputStream out = serialPort.getOutputStream();

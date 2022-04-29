@@ -1,5 +1,6 @@
 package ch.medshare.connect.abacusjunior.packages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ResourceBundle;
 
 import ch.elexis.core.importer.div.importers.TransientLabResult;
@@ -69,7 +70,7 @@ public class Value {
 					.build(LabImportUtilHolder.get());
 		}
 
-		String comment = "";
+		String comment = StringUtils.EMPTY;
 		int resultFlags = 0;
 		if (flags.equals("1")) {
 			// comment = Messages.getString("Value.High");

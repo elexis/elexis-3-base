@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.ui.part;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.core.commands.Command;
@@ -110,7 +111,7 @@ public class InboxView extends ViewPart {
 					filter.setSearchText(filterText.getText());
 					viewer.refresh();
 				} else {
-					filter.setSearchText("");
+					filter.setSearchText(StringUtils.EMPTY);
 					viewer.refresh();
 				}
 			}

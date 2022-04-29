@@ -12,6 +12,7 @@
 
 package ch.elexis.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -136,7 +137,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 			for (int i = 4; i < fields.length - 1; i++) {
 				String val = (String) actCode.getExtension().getExtInfo(retrieve[i]);
 				if (val == null) {
-					val = ""; //$NON-NLS-1$
+					val = StringUtils.EMPTY;
 				}
 				inputs[i].setText(val);
 			}
@@ -161,9 +162,9 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 					if (f.length == 6) {
 						sb.append("<li>"); //$NON-NLS-1$
 						if (f[0].equals("<=")) { //$NON-NLS-1$
-							sb.append(Messages.TarmedDetailDisplay_max).append(" "); // $NON-NLS-2$
+							sb.append(Messages.TarmedDetailDisplay_max).append(StringUtils.SPACE);
 						} else {
-							sb.append(f[0]).append(" "); //$NON-NLS-1$
+							sb.append(f[0]).append(StringUtils.SPACE);
 						}
 						sb.append(f[1]).append(Messages.TarmedDetailDisplay_times);
 						if (f[3].equals("P")) { //$NON-NLS-1$
@@ -171,7 +172,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 						} else {
 							sb.append(Messages.TarmedDetailDisplay_after);
 						}
-						sb.append(f[2]).append(" "); //$NON-NLS-1$
+						sb.append(f[2]).append(StringUtils.SPACE);
 						sb.append(TarmedDefinitionenUtil.getTextForZR_Einheit(f[4]));
 						sb.append("</li>"); //$NON-NLS-1$
 					}
@@ -179,7 +180,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 				sb.append("</form>"); //$NON-NLS-1$
 				limits.setText(sb.toString(), true, false);
 			} else {
-				limits.setText("", false, false); //$NON-NLS-1$
+				limits.setText(StringUtils.EMPTY, false, false);
 			}
 
 			// validity
@@ -190,13 +191,13 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 				String from = tGueltigVon.toString(TimeTool.DATE_GER);
 				String to;
 				if (tGueltigBis.isSameDay(INFINITE)) {
-					to = "";
+					to = StringUtils.EMPTY;
 				} else {
 					to = tGueltigBis.toString(TimeTool.DATE_GER);
 				}
 				text = from + "-" + to; //$NON-NLS-1$
 			} else {
-				text = ""; //$NON-NLS-1$
+				text = StringUtils.EMPTY;
 			}
 			validity.setText(text, false, false);
 
@@ -242,7 +243,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 					.collect(Collectors.toList());
 
 			if (!slaveGroups.isEmpty() || !masterGroups.isEmpty()) {
-				sb.append(" ");
+				sb.append(StringUtils.SPACE);
 				sb.append("Gruppen: ");
 				StringJoiner sj = new StringJoiner(", ");
 				for (ITarmedKumulation tarmedKumulation : slaveGroups) {

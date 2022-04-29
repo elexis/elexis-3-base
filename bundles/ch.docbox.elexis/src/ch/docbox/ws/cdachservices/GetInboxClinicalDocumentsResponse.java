@@ -1,5 +1,6 @@
 package ch.docbox.ws.cdachservices;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "document" })
+@XmlType(name = StringUtils.EMPTY, propOrder = { "document" })
 @XmlRootElement(name = "getInboxClinicalDocumentsResponse")
 public class GetInboxClinicalDocumentsResponse {
 

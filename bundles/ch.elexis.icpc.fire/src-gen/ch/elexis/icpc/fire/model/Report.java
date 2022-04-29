@@ -8,6 +8,7 @@
 
 package ch.elexis.icpc.fire.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +78,7 @@ import ch.elexis.icpc.fire.model.jaxb.DateTimeAdapter;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(name = StringUtils.EMPTY, propOrder = {
     "consultations",
     "patients",
     "doctors"
@@ -241,7 +242,7 @@ public class Report {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = StringUtils.EMPTY, propOrder = {
         "consultation"
     })
     public static class Consultations {
@@ -300,7 +301,7 @@ public class Report {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = StringUtils.EMPTY, propOrder = {
         "doctor"
     })
     public static class Doctors {
@@ -359,7 +360,7 @@ public class Report {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = StringUtils.EMPTY, propOrder = {
         "patient"
     })
     public static class Patients {

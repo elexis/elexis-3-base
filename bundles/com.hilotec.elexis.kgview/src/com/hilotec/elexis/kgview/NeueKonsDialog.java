@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Date;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -104,10 +105,10 @@ public class NeueKonsDialog extends TitleAreaDialog {
 	/** Zeit in format hh:mm validieren, wirft eine Exception im Fehlerfall */
 	private void validateTime(String zeit) throws TimeFormatException {
 		if (!zeit.matches("[0-9]{1,2}:[0-9]{1,2}"))
-			throw new TimeFormatException("");
+			throw new TimeFormatException(StringUtils.EMPTY);
 		String[] parts = zeit.split(":");
 		if (Integer.parseInt(parts[0]) > 23 || Integer.parseInt(parts[1]) > 60)
-			throw new TimeFormatException("");
+			throw new TimeFormatException(StringUtils.EMPTY);
 	}
 
 	@Override

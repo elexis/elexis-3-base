@@ -1,5 +1,6 @@
 package ch.elexis.global_inbox.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -64,7 +65,7 @@ public class GlobalInboxUtil {
 					}
 
 					GenericDocument fd = new GenericDocument(pat, fileName, cat, file,
-							new TimeTool().toString(TimeTool.DATE_GER), "", null);
+							new TimeTool().toString(TimeTool.DATE_GER), StringUtils.EMPTY, null);
 					file.delete();
 
 					boolean automaticBilling = CoreHub.localCfg.get(Preferences.PREF_AUTOBILLING, false);

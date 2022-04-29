@@ -12,6 +12,7 @@
  *******************************************************************************/
 package net.medshare.connector.aerztekasse.data;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;
@@ -145,20 +146,20 @@ public class AerztekasseSettings {
 		globalUrl = null;
 
 		// Globale Settings
-		globalUsername = ConfigServiceHolder.getGlobal(cfgUsername, ""); //$NON-NLS-1$
-		globalPassword = ConfigServiceHolder.getGlobal(cfgPassword, ""); //$NON-NLS-1$
-		globalUrl = ConfigServiceHolder.getGlobal(cfgUrl, ""); //$NON-NLS-1$
+		globalUsername = ConfigServiceHolder.getGlobal(cfgUsername, StringUtils.EMPTY);
+		globalPassword = ConfigServiceHolder.getGlobal(cfgPassword, StringUtils.EMPTY);
+		globalUrl = ConfigServiceHolder.getGlobal(cfgUrl, StringUtils.EMPTY);
 
 		// Mandanten Settings
 		settingText = ConfigServiceHolder.getMandator(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
 		mandantUseGlobalSettings = Boolean.parseBoolean(settingText);
-		mandantUsername = ConfigServiceHolder.getMandator(cfgUsername, ""); //$NON-NLS-1$
-		mandantPassword = ConfigServiceHolder.getMandator(cfgPassword, ""); //$NON-NLS-1$
+		mandantUsername = ConfigServiceHolder.getMandator(cfgUsername, StringUtils.EMPTY);
+		mandantPassword = ConfigServiceHolder.getMandator(cfgPassword, StringUtils.EMPTY);
 
 		// Machine Settings
 		settingText = machineCfg.get(cfgMachineUseGlobalSettings, "true"); //$NON-NLS-1$
 		machineUseGlobalSettings = Boolean.parseBoolean(settingText);
-		machineUrl = machineCfg.get(cfgUrl, ""); //$NON-NLS-1$
+		machineUrl = machineCfg.get(cfgUrl, StringUtils.EMPTY);
 	}
 
 	public void saveSettings() {

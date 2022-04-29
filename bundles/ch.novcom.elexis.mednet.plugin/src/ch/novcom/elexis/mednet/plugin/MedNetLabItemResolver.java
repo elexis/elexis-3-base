@@ -10,12 +10,13 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.core.importer.div.importers.ILabItemResolver;
 import ch.elexis.hl7.model.AbstractData;
 import ch.novcom.elexis.mednet.plugin.data.PatientDocumentManager;
 
 public class MedNetLabItemResolver implements ILabItemResolver {
-	String institutionName = "";
+	String institutionName = StringUtils.EMPTY;
 
 	public MedNetLabItemResolver(String institution) {
 		this.institutionName = institution;

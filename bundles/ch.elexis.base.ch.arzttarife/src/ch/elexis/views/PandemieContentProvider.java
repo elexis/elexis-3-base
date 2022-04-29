@@ -1,5 +1,6 @@
 package ch.elexis.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
@@ -49,7 +50,7 @@ public class PandemieContentProvider extends CommonViewerContentProvider {
 		IQuery<IPandemieLeistung> query = ArzttarifeModelServiceHolder.get().getQuery(IPandemieLeistung.class);
 		query.and("id", COMPARATOR.NOT_EQUALS, "VERSION");
 		query.startGroup();
-		query.or("org", COMPARATOR.EQUALS, "");
+		query.or("org", COMPARATOR.EQUALS, StringUtils.EMPTY);
 		query.or("org", COMPARATOR.LIKE, "%Arztpraxis%");
 		query.andJoinGroups();
 		return query;

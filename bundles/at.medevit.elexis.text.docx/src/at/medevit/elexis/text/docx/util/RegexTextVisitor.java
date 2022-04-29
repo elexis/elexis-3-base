@@ -1,5 +1,6 @@
 package at.medevit.elexis.text.docx.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -79,14 +80,14 @@ public class RegexTextVisitor extends TraversalUtilVisitor<Text> {
 					Tbl table = TableUtil.insertTable((R) cursor, 0, (String[][]) replacement, null,
 							DocxUtil.getDocumentWidth(currentDocument), true);
 					TableUtil.addBorders(table, 1);
-					replaced = "";
+					replaced = StringUtils.EMPTY;
 				} else if (replacement instanceof IImage) {
 					try {
 						ImageUtil.insertImage((R) cursor, (IImage) replacement, currentDocument);
 					} catch (Exception e) {
 						LoggerFactory.getLogger(getClass()).error("Error inserting image", e);
 					}
-					replaced = "";
+					replaced = StringUtils.EMPTY;
 				} else if (replacement == null) {
 					replaced = matcher.replaceFirst(Matcher.quoteReplacement("??Auswahl??"));
 				}

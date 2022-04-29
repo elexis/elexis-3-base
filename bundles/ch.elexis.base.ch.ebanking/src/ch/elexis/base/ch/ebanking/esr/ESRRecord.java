@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -200,21 +201,21 @@ public class ESRRecord extends PersistentObject {
 			String rnid = qbe_r.findSingle("RnNummer", "=", Integer.toString(rnnr)); //$NON-NLS-1$ //$NON-NLS-2$
 			if (rnid == null) {
 				rejectCode = REJECT.RN_NUMMER;
-				vals[6] = ""; //$NON-NLS-1$
-				mandantID = ""; //$NON-NLS-1$
+				vals[6] = StringUtils.EMPTY;
+				mandantID = StringUtils.EMPTY;
 			} else {
 				vals[6] = rnid;
 				rn = Rechnung.load(rnid);
 				if (rn == null) {
 					rejectCode = REJECT.RN_NUMMER;
-					vals[6] = ""; //$NON-NLS-1$
-					mandantID = ""; //$NON-NLS-1$
+					vals[6] = StringUtils.EMPTY;
+					mandantID = StringUtils.EMPTY;
 				} else {
 					m = rn.getMandant();
 					if (m == null) {
 						rejectCode = REJECT.MANDANT;
-						vals[6] = ""; //$NON-NLS-1$
-						mandantID = ""; //$NON-NLS-1$
+						vals[6] = StringUtils.EMPTY;
+						mandantID = StringUtils.EMPTY;
 					} else {
 						mandantID = m.getId();
 					}
@@ -228,12 +229,12 @@ public class ESRRecord extends PersistentObject {
 				if (rejectCode == REJECT.OK) {
 					rejectCode = REJECT.PAT_NUMMER;
 				}
-				vals[7] = ""; //$NON-NLS-1$
+				vals[7] = StringUtils.EMPTY;
 			} else if ((rn != null) && (!rn.getFall().getPatient().getId().equals(PatID))) {
 				if (rejectCode == REJECT.OK) {
 					rejectCode = REJECT.PAT_FALSCH;
 				}
-				vals[7] = ""; //$NON-NLS-1$
+				vals[7] = StringUtils.EMPTY;
 			} else {
 
 				vals[7] = PatID;
@@ -278,13 +279,13 @@ public class ESRRecord extends PersistentObject {
 		vals[0] = new TimeTool().toString(TimeTool.DATE_COMPACT);
 		vals[1] = camt054Record.getReadDate() != null
 				? new TimeTool(camt054Record.getReadDate()).toString(TimeTool.DATE_GER)
-				: "";
+				: StringUtils.EMPTY;
 		vals[2] = camt054Record.getBookingDate() != null
 				? new TimeTool(camt054Record.getBookingDate()).toString(TimeTool.DATE_GER)
-				: "";
+				: StringUtils.EMPTY;
 		vals[3] = camt054Record.getValuDate() != null
 				? new TimeTool(camt054Record.getValuDate()).toString(TimeTool.DATE_GER)
-				: "";
+				: StringUtils.EMPTY;
 		vals[10] = file;
 
 		rejectCode = REJECT.OK;
@@ -301,21 +302,21 @@ public class ESRRecord extends PersistentObject {
 			String rnid = qbe_r.findSingle("RnNummer", "=", Integer.toString(rnnr)); //$NON-NLS-1$ //$NON-NLS-2$
 			if (rnid == null) {
 				rejectCode = REJECT.RN_NUMMER;
-				vals[6] = ""; //$NON-NLS-1$
-				mandantID = ""; //$NON-NLS-1$
+				vals[6] = StringUtils.EMPTY;
+				mandantID = StringUtils.EMPTY;
 			} else {
 				vals[6] = rnid;
 				rn = Rechnung.load(rnid);
 				if (rn == null) {
 					rejectCode = REJECT.RN_NUMMER;
-					vals[6] = ""; //$NON-NLS-1$
-					mandantID = ""; //$NON-NLS-1$
+					vals[6] = StringUtils.EMPTY;
+					mandantID = StringUtils.EMPTY;
 				} else {
 					m = rn.getMandant();
 					if (m == null) {
 						rejectCode = REJECT.MANDANT;
-						vals[6] = ""; //$NON-NLS-1$
-						mandantID = ""; //$NON-NLS-1$
+						vals[6] = StringUtils.EMPTY;
+						mandantID = StringUtils.EMPTY;
 					} else {
 						mandantID = m.getId();
 					}
@@ -330,12 +331,12 @@ public class ESRRecord extends PersistentObject {
 				if (rejectCode == REJECT.OK) {
 					rejectCode = REJECT.PAT_NUMMER;
 				}
-				vals[7] = ""; //$NON-NLS-1$
+				vals[7] = StringUtils.EMPTY;
 			} else if ((rn != null) && (!rn.getFall().getPatient().getId().equals(PatID))) {
 				if (rejectCode == REJECT.OK) {
 					rejectCode = REJECT.PAT_FALSCH;
 				}
-				vals[7] = ""; //$NON-NLS-1$
+				vals[7] = StringUtils.EMPTY;
 			} else {
 
 				vals[7] = PatID;

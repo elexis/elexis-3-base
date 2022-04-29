@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -202,8 +203,8 @@ public class KonsData extends PersistentObject {
 
 	public String getKonsBeginn() {
 		String ts = get(FLD_KONSBEGINN);
-		if (ts == null || ts.equals(""))
-			return "";
+		if (ts == null || ts.equals(StringUtils.EMPTY))
+			return StringUtils.EMPTY;
 
 		TimeTool t = new TimeTool();
 		t.setTimeInMillis(Long.parseLong(ts));
@@ -278,7 +279,7 @@ public class KonsData extends PersistentObject {
 	}
 
 	public void setAutor(Anwender anw) {
-		String id = "";
+		String id = StringUtils.EMPTY;
 		if (anw != null)
 			id = anw.getId();
 		set(FLD_AUTOR, id);
@@ -308,7 +309,7 @@ public class KonsData extends PersistentObject {
 					nonempty |= !StringTool.isNothing(get(KGFIELDS[i]));
 				}
 				if (!nonempty)
-					set(FLD_AUTOR, "");
+					set(FLD_AUTOR, StringUtils.EMPTY);
 			}
 		}
 		return super.set(field, value);

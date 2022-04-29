@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.importers.openmedical;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -54,7 +55,7 @@ public class MedTransfer {
 		int result = 0;
 		Object openmedicalObject = null;
 		Method openmedicalDownloadMethod = null;
-		String iniFilename = ""; //$NON-NLS-1$
+		String iniFilename = StringUtils.EMPTY;
 
 		// try to dynamically load the openmedical JAR file
 		if (jarFilePath != null) {
@@ -138,7 +139,7 @@ public class MedTransfer {
 	 * @return Voller Pfad und Dateiname des Ini-Files
 	 */
 	private static String extractIni(String jarFilePath) {
-		String retVal = ""; //$NON-NLS-1$
+		String retVal = StringUtils.EMPTY;
 		File iniFile;
 
 		try {

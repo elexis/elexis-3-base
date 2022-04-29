@@ -11,6 +11,7 @@
 
 package ch.itmed.fop.printing.data;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -31,7 +32,7 @@ public class ContactData {
 		if (kontakt != null) {
 			return kontakt.getPostAnschrift(true);
 		} else {
-			return "";
+			return StringUtils.EMPTY;
 		}
 	}
 
@@ -39,7 +40,7 @@ public class ContactData {
 		if (kontakt != null) {
 			return kontakt.getSalutation();
 		} else {
-			return "";
+			return StringUtils.EMPTY;
 		}
 	}
 

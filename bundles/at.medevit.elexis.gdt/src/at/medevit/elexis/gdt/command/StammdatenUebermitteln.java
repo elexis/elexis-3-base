@@ -12,6 +12,7 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.command;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -55,7 +56,7 @@ public class StammdatenUebermitteln extends AbstractHandler {
 			}
 		}
 
-		String configuredGDTId = CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, "");
+		String configuredGDTId = CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, StringUtils.EMPTY);
 		if (pat == null) {
 			pat = ElexisEventDispatcher.getSelectedPatient();
 		}
@@ -65,9 +66,9 @@ public class StammdatenUebermitteln extends AbstractHandler {
 
 		GDTSatzNachricht6301 gdt6301 = new GDTSatzNachricht6301(pat.get(Patient.FLD_PATID), pat.getName(),
 				pat.getVorname(), pat.getGeburtsdatum(), null, pat.get(Patient.TITLE), null,
-				pat.get(Patient.FLD_ZIP) + " " + pat.get(Patient.FLD_PLACE), pat.get(Patient.FLD_STREET), null,
-				GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.FLD_SEX)), null, null, null, null,
-				configuredGDTId, GDTConstants.ZEICHENSATZ_IBM_CP_437 + "", GDTConstants.GDT_VERSION);
+				pat.get(Patient.FLD_ZIP) + StringUtils.SPACE + pat.get(Patient.FLD_PLACE), pat.get(Patient.FLD_STREET),
+				null, GDTSatzNachrichtHelper.bestimmeGeschlechtsWert(pat.get(Patient.FLD_SEX)), null, null, null, null,
+				configuredGDTId, GDTConstants.ZEICHENSATZ_IBM_CP_437 + StringUtils.EMPTY, GDTConstants.GDT_VERSION);
 
 		StammdatenUebermittelnDialog sud = new StammdatenUebermittelnDialog(Display.getCurrent().getActiveShell(),
 				gdt6301, commPartnerClass);

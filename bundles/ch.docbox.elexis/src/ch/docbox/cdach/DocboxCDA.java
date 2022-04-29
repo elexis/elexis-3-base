@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.cdach;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -165,17 +166,17 @@ public class DocboxCDA {
 		assignedAuthor.setAssignedPerson(person);
 
 		ArrayList<ENXP> nameList = new ArrayList<ENXP>();
-		if (prefix != null && !prefix.equals("")) {
+		if (prefix != null && !prefix.equals(StringUtils.EMPTY)) {
 			EnPrefix name = new EnPrefix();
 			name.setContent(prefix);
 			nameList.add(name);
 		}
-		if (given != null && !given.equals("")) {
+		if (given != null && !given.equals(StringUtils.EMPTY)) {
 			EnGiven name = new EnGiven();
 			name.setContent(given);
 			nameList.add(name);
 		}
-		if (family != null && !family.equals("")) {
+		if (family != null && !family.equals(StringUtils.EMPTY)) {
 			EnFamily name = new EnFamily();
 			name.setContent(family);
 			nameList.add(name);
@@ -193,15 +194,15 @@ public class DocboxCDA {
 
 		author.setAssignedAuthor(assignedAuthor);
 
-		if (ean != null && !ean.equals("")) {
+		if (ean != null && !ean.equals(StringUtils.EMPTY)) {
 			author.getAssignedAuthor().getId().add(getII(ean, oid_ean));
 		}
 
-		if (docboxId != null && !docboxId.equals("")) {
+		if (docboxId != null && !docboxId.equals(StringUtils.EMPTY)) {
 			author.getAssignedAuthor().getId().add(getII(docboxId, getOidUserDocboxId()));
 		}
 
-		if (userHospitalId != null && !userHospitalId.equals("")) {
+		if (userHospitalId != null && !userHospitalId.equals(StringUtils.EMPTY)) {
 			author.getAssignedAuthor().getId().add(getII(userHospitalId, getOidDoctorHospitalId()));
 		}
 
@@ -321,25 +322,25 @@ public class DocboxCDA {
 		AD addr = new AD();
 		addr.getUse().add(use);
 
-		if (streetAddrLine != null && !streetAddrLine.equals("")) {
+		if (streetAddrLine != null && !streetAddrLine.equals(StringUtils.EMPTY)) {
 			AdxpStreetAddressLine item = new AdxpStreetAddressLine();
 			item.setContent(streetAddrLine);
 			addr.getContent().add(item);
 		}
 
-		if (streetAddrLine2 != null && !streetAddrLine2.equals("")) {
+		if (streetAddrLine2 != null && !streetAddrLine2.equals(StringUtils.EMPTY)) {
 			AdxpStreetAddressLine item = new AdxpStreetAddressLine();
 			item.setContent(streetAddrLine2);
 			addr.getContent().add(item);
 		}
 
-		if (postalCode != null && !postalCode.equals("")) {
+		if (postalCode != null && !postalCode.equals(StringUtils.EMPTY)) {
 			AdxpPostalCode item = new AdxpPostalCode();
 			item.setContent(postalCode);
 			addr.getContent().add(item);
 		}
 
-		if (city != null && !city.equals("")) {
+		if (city != null && !city.equals(StringUtils.EMPTY)) {
 			AdxpCity item = new AdxpCity();
 			item.setContent(city);
 			addr.getContent().add(item);
@@ -349,24 +350,24 @@ public class DocboxCDA {
 
 	public ArrayList<TEL> getTelecomList(String mobile, String phone, String phoneBusiness, String email) {
 		ArrayList<TEL> telecomList = new ArrayList<TEL>();
-		if (mobile != null && !mobile.equals("")) {
+		if (mobile != null && !mobile.equals(StringUtils.EMPTY)) {
 			TEL tel = new TEL();
 			tel.setValue("tel:" + mobile);
 			telecomList.add(tel);
 		}
-		if (phone != null && !phone.equals("")) {
+		if (phone != null && !phone.equals(StringUtils.EMPTY)) {
 			TEL tel = new TEL();
 			tel.getUse().add("HP");
 			tel.setValue("tel:" + phone);
 			telecomList.add(tel);
 		}
-		if (phoneBusiness != null && !phoneBusiness.equals("")) {
+		if (phoneBusiness != null && !phoneBusiness.equals(StringUtils.EMPTY)) {
 			TEL tel = new TEL();
 			tel.getUse().add("WP");
 			tel.setValue("tel:" + phoneBusiness);
 			telecomList.add(tel);
 		}
-		if (email != null && !email.equals("")) {
+		if (email != null && !email.equals(StringUtils.EMPTY)) {
 			TEL tel = new TEL();
 			tel.setValue("mailto:" + email);
 			telecomList.add(tel);
@@ -384,11 +385,11 @@ public class DocboxCDA {
 		POCDMT000040PatientRole patientRole = new POCDMT000040PatientRole();
 		recordTarget.setPatientRole(patientRole);
 
-		if (idpatient != null && !idpatient.equals("")) {
+		if (idpatient != null && !idpatient.equals(StringUtils.EMPTY)) {
 			patientRole.getId().add(getII(idpatient, getOidPraxisSoftwareId()));
 		}
 
-		if (ahv13 != null && !ahv13.equals("")) {
+		if (ahv13 != null && !ahv13.equals(StringUtils.EMPTY)) {
 			patientRole.getId().add(getII(ahv13, oid_ahv13));
 		}
 
@@ -403,12 +404,12 @@ public class DocboxCDA {
 		}
 
 		ArrayList<ENXP> nameList = new ArrayList<ENXP>();
-		if (given != null && !given.equals("")) {
+		if (given != null && !given.equals(StringUtils.EMPTY)) {
 			EnGiven name = new EnGiven();
 			name.setContent(given);
 			nameList.add(name);
 		}
-		if (family != null && !family.equals("")) {
+		if (family != null && !family.equals(StringUtils.EMPTY)) {
 			EnFamily name = new EnFamily();
 			name.setContent(family);
 			nameList.add(name);
@@ -538,17 +539,17 @@ public class DocboxCDA {
 		}
 
 		ArrayList<ENXP> nameList = new ArrayList<ENXP>();
-		if (prefix != null && !prefix.equals("")) {
+		if (prefix != null && !prefix.equals(StringUtils.EMPTY)) {
 			EnPrefix name = new EnPrefix();
 			name.setContent(prefix);
 			nameList.add(name);
 		}
-		if (given != null && !given.equals("")) {
+		if (given != null && !given.equals(StringUtils.EMPTY)) {
 			EnGiven name = new EnGiven();
 			name.setContent(given);
 			nameList.add(name);
 		}
-		if (family != null && !family.equals("")) {
+		if (family != null && !family.equals(StringUtils.EMPTY)) {
 			EnFamily name = new EnFamily();
 			name.setContent(family);
 			nameList.add(name);
@@ -590,7 +591,7 @@ public class DocboxCDA {
 		// Dokumententid, Anwendungsspezifisch <id
 		// extension="807563C2-5146-11D5-A672-00B0D022E945"
 		// root="1.2.756.999999.1.1.1.1"/>
-		if (documentId == null || "".equals(documentId)) {
+		if (documentId == null || StringUtils.EMPTY.equals(documentId)) {
 			cda.setId(getII(new java.rmi.dgc.VMID().toString(), oid_hl7));
 		} else {
 			cda.setId(getII(documentId, oid_docbox));
@@ -1116,7 +1117,7 @@ public class DocboxCDA {
 		if (name == null) {
 			return false;
 		}
-		String text = "";
+		String text = StringUtils.EMPTY;
 		if (left) {
 			text += "Links:";
 		}
@@ -1142,8 +1143,8 @@ public class DocboxCDA {
 		StringBuffer out = new StringBuffer(); // Used to hold the output.
 		char current; // Used to reference the current character.
 
-		if (in == null || ("".equals(in)))
-			return ""; // vacancy test.
+		if (in == null || (StringUtils.EMPTY.equals(in)))
+			return StringUtils.EMPTY; // vacancy test.
 		for (int i = 0; i < in.length(); i++) {
 			current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not
 									// happen.
@@ -1191,7 +1192,7 @@ public class DocboxCDA {
 	 * [ja:|nein:|unbekannt:]Bemerkung
 	 */
 	public boolean addSchwangerschaft(Boolean schwanger, String bemerkung) {
-		String first = "";
+		String first = StringUtils.EMPTY;
 		if (schwanger != null && schwanger.booleanValue() == true) {
 			first = "ja:";
 		} else if (schwanger != null && schwanger.booleanValue() == false) {
@@ -1199,7 +1200,7 @@ public class DocboxCDA {
 		} else {
 			first = "unbekannt:";
 		}
-		String text = first + (bemerkung != null ? bemerkung : "");
+		String text = first + (bemerkung != null ? bemerkung : StringUtils.EMPTY);
 		addComponentToBody("Schwangerschaft/Stillzeit", text, "KSCH");
 		return true;
 	}
@@ -1210,7 +1211,7 @@ public class DocboxCDA {
 	 * Allergien
 	 */
 	public boolean addAllergien(Boolean allergie, String allergieListe) {
-		String first = "";
+		String first = StringUtils.EMPTY;
 		if (allergie != null && allergie.booleanValue() == true) {
 			first = "ja:";
 		} else if (allergie != null && allergie.booleanValue() == false) {
@@ -1219,7 +1220,7 @@ public class DocboxCDA {
 			first = "unbekannt:";
 		}
 		if (allergieListe == null) {
-			allergieListe = "";
+			allergieListe = StringUtils.EMPTY;
 		}
 		this.addComponentToBody("Allergien", first + allergieListe, "KALL");
 		return true;

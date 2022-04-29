@@ -119,7 +119,7 @@ public class QRBillData {
 
 	public void setCdtrInfName(String cdtrInfName) throws QRBillDataException {
 		// clear name line of not allowed characters
-		cdtrInfName = cdtrInfName.replaceAll(notPattern(cdtrInfNamePattern), "");
+		cdtrInfName = cdtrInfName.replaceAll(notPattern(cdtrInfNamePattern), StringUtils.EMPTY);
 		if (!cdtrInfName.matches(cdtrInfNamePattern)) {
 			throw new QRBillDataException(SourceType.CREDITOR,
 					"Invalid value [" + cdtrInfName + "] for [" + cdtrInfNamePattern + "]");
@@ -133,7 +133,8 @@ public class QRBillData {
 
 	public void setCdtrInfStrtNmOrAdrLine1(String cdtrInfStrtNmOrAdrLine1) throws QRBillDataException {
 		// clear adr line of not allowed characters
-		cdtrInfStrtNmOrAdrLine1 = cdtrInfStrtNmOrAdrLine1.replaceAll(notPattern(cdtrInfStrtNmOrAdrLine1Pattern), "");
+		cdtrInfStrtNmOrAdrLine1 = cdtrInfStrtNmOrAdrLine1.replaceAll(notPattern(cdtrInfStrtNmOrAdrLine1Pattern),
+				StringUtils.EMPTY);
 		if (!cdtrInfStrtNmOrAdrLine1.matches(cdtrInfStrtNmOrAdrLine1Pattern)) {
 			throw new QRBillDataException(SourceType.CREDITOR,
 					"Invalid value [" + cdtrInfStrtNmOrAdrLine1 + "] for [" + cdtrInfStrtNmOrAdrLine1Pattern + "]");
@@ -147,7 +148,8 @@ public class QRBillData {
 
 	public void setCdtrInfStrtNmOrAdrLine2(String cdtrInfStrtNmOrAdrLine2) throws QRBillDataException {
 		// clear adr line of not allowed characters
-		cdtrInfStrtNmOrAdrLine2 = cdtrInfStrtNmOrAdrLine2.replaceAll(notPattern(cdtrInfStrtNmOrAdrLine2Pattern), "");
+		cdtrInfStrtNmOrAdrLine2 = cdtrInfStrtNmOrAdrLine2.replaceAll(notPattern(cdtrInfStrtNmOrAdrLine2Pattern),
+				StringUtils.EMPTY);
 		if (!cdtrInfStrtNmOrAdrLine2.matches(cdtrInfStrtNmOrAdrLine2Pattern)) {
 			throw new QRBillDataException(SourceType.CREDITOR,
 					"Invalid value [" + cdtrInfStrtNmOrAdrLine2 + "] for [" + cdtrInfStrtNmOrAdrLine2Pattern + "]");
@@ -323,7 +325,7 @@ public class QRBillData {
 
 	public void setUltmtDbtrName(String ultmtDbtrName) throws QRBillDataException {
 		// clear name line of not allowed characters
-		ultmtDbtrName = ultmtDbtrName.replaceAll(notPattern(ultmtDbtrNamePattern), "");
+		ultmtDbtrName = ultmtDbtrName.replaceAll(notPattern(ultmtDbtrNamePattern), StringUtils.EMPTY);
 		if (!ultmtDbtrName.matches(ultmtDbtrNamePattern)) {
 			throw new QRBillDataException(SourceType.DEBITOR,
 					"Invalid value [" + ultmtDbtrName + "] for [" + ultmtDbtrNamePattern + "]");
@@ -338,7 +340,7 @@ public class QRBillData {
 	public void setUltmtDbtrStrtNmOrAdrLine1(String ultmtDbtrStrtNmOrAdrLine1) throws QRBillDataException {
 		// clear adr line of not allowed characters
 		ultmtDbtrStrtNmOrAdrLine1 = ultmtDbtrStrtNmOrAdrLine1.replaceAll(notPattern(ultmtDbtrStrtNmOrAdrLine1Pattern),
-				"");
+				StringUtils.EMPTY);
 		if (!ultmtDbtrStrtNmOrAdrLine1.matches(ultmtDbtrStrtNmOrAdrLine1Pattern)) {
 			throw new QRBillDataException(SourceType.DEBITOR,
 					"Invalid value [" + ultmtDbtrStrtNmOrAdrLine1 + "] for [" + ultmtDbtrStrtNmOrAdrLine1Pattern + "]");
@@ -357,7 +359,7 @@ public class QRBillData {
 	public void setUltmtDbtrStrtNmOrAdrLine2(String ultmtDbtrStrtNmOrAdrLine2) throws QRBillDataException {
 		// clear adr line of not allowed characters
 		ultmtDbtrStrtNmOrAdrLine2 = ultmtDbtrStrtNmOrAdrLine2.replaceAll(notPattern(ultmtDbtrStrtNmOrAdrLine2Pattern),
-				"");
+				StringUtils.EMPTY);
 		if (!ultmtDbtrStrtNmOrAdrLine2.matches(ultmtDbtrStrtNmOrAdrLine2Pattern)) {
 			throw new QRBillDataException(SourceType.DEBITOR,
 					"Invalid value [" + ultmtDbtrStrtNmOrAdrLine2 + "] for [" + ultmtDbtrStrtNmOrAdrLine2Pattern + "]");

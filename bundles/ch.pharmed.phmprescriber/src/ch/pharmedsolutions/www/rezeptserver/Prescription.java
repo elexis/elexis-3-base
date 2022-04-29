@@ -1,6 +1,7 @@
 
 package ch.pharmedsolutions.www.rezeptserver;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -41,8 +42,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "software", "password", "zsrId", "date", "accidentId", "accidentDate", "products",
-		"patient", "glnTargetpharmacy" })
+@XmlType(name = StringUtils.EMPTY, propOrder = { "software", "password", "zsrId", "date", "accidentId", "accidentDate",
+		"products", "patient", "glnTargetpharmacy" })
 @XmlRootElement(name = "Prescription")
 public class Prescription {
 

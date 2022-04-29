@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.labor.viollier.v2.labimport;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -121,7 +122,7 @@ public class LabOrderImport extends ImporterPage {
 
 	private boolean doAllFiles = true;
 	private Text tSingleHL7Filename;
-	private String singleHL7Filename = "";; //$NON-NLS-1$
+	private String singleHL7Filename = StringUtils.EMPTY;;
 	private Button bOverwrite;
 	private Button bFile;
 	private Button bDirect;
@@ -265,7 +266,7 @@ public class LabOrderImport extends ImporterPage {
 
 		ViollierLogger.getLogger()
 				.println(MessageFormat.format(Messages.LabOrderImport_EndImport, df.format(new Date())));
-		ViollierLogger.getLogger().println(""); //$NON-NLS-1$
+		ViollierLogger.getLogger().println(StringUtils.EMPTY);
 
 		// Bereinigung der alten Archiv Dateien
 		deleteOldArchivFiles();
@@ -385,7 +386,7 @@ public class LabOrderImport extends ImporterPage {
 			}
 		} catch (ElexisException ex) {
 			saveResult = SaveResult.ERROR;
-			String cause = ""; //$NON-NLS-1$
+			String cause = StringUtils.EMPTY;
 			if (ex.getCause() != null) {
 				if (ex.getCause().getMessage() != null) {
 					cause = ex.getCause().getMessage();
@@ -442,7 +443,7 @@ public class LabOrderImport extends ImporterPage {
 							+ FileTool.getExtension(filename);
 
 					labor.saveLaborItem(title, settings.getDocumentCategory(), pdfFile, dateTime.getTime(), orderId,
-							filename, "", "");
+							filename, StringUtils.EMPTY, StringUtils.EMPTY);
 
 				}
 			}
@@ -519,7 +520,7 @@ public class LabOrderImport extends ImporterPage {
 					.println(MessageFormat.format(Messages.LabOrderImport_PurgeArchiveDir, archivDeleted));
 		}
 
-		ViollierLogger.getLogger().println(""); //$NON-NLS-1$
+		ViollierLogger.getLogger().println(StringUtils.EMPTY);
 	}
 
 	/**
@@ -568,7 +569,7 @@ public class LabOrderImport extends ImporterPage {
 		SaveResult retVal = SaveResult.ERROR;
 		try {
 			Xid.localRegisterXIDDomainIfNotExists(DOMAIN_VIONR, "vioNumber", Xid.ASSIGNMENT_LOCAL);
-			if ("".equals(getVioNr(patient))) {
+			if (StringUtils.EMPTY.equals(getVioNr(patient))) {
 				new Xid(patient, DOMAIN_VIONR, vioNumber);
 				retVal = SaveResult.SUCCESS;
 				ViollierLogger.getLogger().println(MessageFormat.format(Messages.LabOrderImport_InfoSaveXid, vioNumber,
@@ -719,7 +720,7 @@ public class LabOrderImport extends ImporterPage {
 			String patName = observation.getPatientName();
 			List<Patient> patientList = readPatienten(patientId);
 			for (Patient listPat : patientList) {
-				if (patName.equalsIgnoreCase(listPat.getName() + " " + listPat.getVorname())) { //$NON-NLS-1$
+				if (patName.equalsIgnoreCase(listPat.getName() + StringUtils.SPACE + listPat.getVorname())) {
 					patient = listPat;
 				}
 			}
@@ -824,7 +825,7 @@ public class LabOrderImport extends ImporterPage {
 		lblJMedTransfer.setText(Messages.LabOrderImport_JMedTransfer);
 		final Text txtJMedTransfer = new Text(composite, SWT.BORDER | SWT.READ_ONLY);
 		txtJMedTransfer.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		String jmedTransfer = settings.getJMedTransferJar() + " " + settings.getJMedTransferParam(); //$NON-NLS-1$
+		String jmedTransfer = settings.getJMedTransferJar() + StringUtils.SPACE + settings.getJMedTransferParam();
 		if (jmedTransfer != null) {
 			txtJMedTransfer.setText(jmedTransfer);
 		}
@@ -915,7 +916,7 @@ public class LabOrderImport extends ImporterPage {
 				fdl.setFilterPath(txtDirDownload.getText());
 				singleHL7Filename = fdl.open();
 				if (singleHL7Filename == null) {
-					singleHL7Filename = ""; //$NON-NLS-1$
+					singleHL7Filename = StringUtils.EMPTY;
 				}
 
 				tSingleHL7Filename.setText(singleHL7Filename);
@@ -989,7 +990,7 @@ public class LabOrderImport extends ImporterPage {
 	 */
 	private static Patient selectPatient(ObservationMessage observation) {
 		Patient retVal = null;
-		String patDemographics = observation.getPatientName() + " " + observation.getPatientBirthdate(); //$NON-NLS-1$
+		String patDemographics = observation.getPatientName() + StringUtils.SPACE + observation.getPatientBirthdate();
 		retVal = (Patient) KontaktSelektor.showInSync(Patient.class, Messages.LabOrderImport_SelectPatient,
 				MessageFormat.format(Messages.LabOrderImport_WhoIs, patDemographics));
 		return retVal;
@@ -1048,8 +1049,8 @@ public class LabOrderImport extends ImporterPage {
 	 * @return ID des Eintrags in KontaktOrderManagement oder null
 	 */
 	private static String getAuftragsId(ObservationMessage observation) {
-		String orderId = ""; //$NON-NLS-1$
-		String auftragsNrFiller = "";
+		String orderId = StringUtils.EMPTY;
+		String auftragsNrFiller = StringUtils.EMPTY;
 		try {
 			auftragsNrFiller = observation.getOrderNumberFiller();
 		} catch (Exception ex) {
@@ -1074,7 +1075,7 @@ public class LabOrderImport extends ImporterPage {
 		patientVioNrQuery.add(Xid.FLD_DOMAIN, Query.EQUALS, DOMAIN_VIONR);
 		List<Xid> patienten = patientVioNrQuery.execute();
 		if (patienten.isEmpty()) {
-			return "";
+			return StringUtils.EMPTY;
 		} else {
 			return ((Xid) patienten.get(0)).getDomainId();
 		}

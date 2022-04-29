@@ -1,5 +1,6 @@
 package at.medevit.elexis.ehc.ui.docbox.wizard;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -135,6 +136,6 @@ public class ExportPrescriptionWizardPage1 extends WizardPage {
 
 	public String getRezeptFileName() {
 		String ret = ExportPrescriptionWizard.getRezept().getLabel();
-		return ret.replaceAll(" ", "_");
+		return ret.replaceAll(StringUtils.SPACE, "_");
 	}
 }

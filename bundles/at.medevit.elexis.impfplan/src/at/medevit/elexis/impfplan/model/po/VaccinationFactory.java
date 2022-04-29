@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.impfplan.model.po;
 
+import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Method;
 
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class VaccinationFactory extends PersistentObjectFactory {
 			Method load = clazz.getMethod("load", new Class[] { String.class }); //$NON-NLS-1$
 			return (PersistentObject) (load.invoke(null, new Object[] { ci[1] }));
 		} catch (Exception ex) {
-			log.warn("", ex);
+			log.warn(StringUtils.EMPTY, ex);
 			return null;
 		}
 	}
@@ -77,7 +78,7 @@ public class VaccinationFactory extends PersistentObjectFactory {
 			ret = Class.forName(fullyQualifiedClassName);
 			return ret;
 		} catch (ClassNotFoundException ex) {
-			log.warn("", ex);
+			log.warn(StringUtils.EMPTY, ex);
 			return ret;
 		}
 	}

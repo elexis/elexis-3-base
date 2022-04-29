@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.icd10;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +92,7 @@ public class Icd10Diagnosis extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 	@Override
 	public String getLabel() {
-		return getCode() + " " + getText();
+		return getCode() + StringUtils.SPACE + getText();
 	}
 
 	@Override

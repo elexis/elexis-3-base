@@ -1,5 +1,6 @@
 package at.medevit.elexis.cobasmira.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -56,14 +57,14 @@ public class CobasMiraLogLabelProvider extends ColumnLabelProvider implements IT
 				} else if (blockType == CobasMiraMessage.BLOCK_TYPE_ERROR_MESSAGE) {
 					return elem.getErrorMessageString();
 				} else if (blockType == CobasMiraMessage.BLOCK_TYPE_RACK_INFORMATION) {
-					return "";
+					return StringUtils.EMPTY;
 				}
 			}
 
 			if (columnIndex == 3) {
 				int status = elem.getElexisStatus();
 				if (status == CobasMiraMessage.ELEXIS_RESULT_IGNORED)
-					return "";
+					return StringUtils.EMPTY;
 				if (status == CobasMiraMessage.ELEXIS_RESULT_INTEGRATION_OK)
 					return "OK";
 				if (status == CobasMiraMessage.ELEXIS_RESULT_LABITEM_NOT_FOUND)

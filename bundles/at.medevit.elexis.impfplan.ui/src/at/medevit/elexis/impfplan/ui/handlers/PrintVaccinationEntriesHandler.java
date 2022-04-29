@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.impfplan.ui.handlers;
 
+import org.apache.commons.lang3.StringUtils;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
@@ -95,7 +96,7 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 	private void createPDF(Patient patient, List<Image> images) throws IOException {
 		PDDocumentInformation pdi = new PDDocumentInformation();
 		Mandant mandant = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
-		pdi.setAuthor(mandant.getName() + " " + mandant.getVorname());
+		pdi.setAuthor(mandant.getName() + StringUtils.SPACE + mandant.getVorname());
 		pdi.setCreationDate(new GregorianCalendar());
 		pdi.setTitle("Impfausweis " + patient.getLabel());
 
@@ -122,7 +123,8 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 
 			String dateLabel = sdf.format(Calendar.getInstance().getTime());
 			String title = Person.load(mandant.getId()).get(Person.TITLE);
-			String mandantLabel = title + " " + mandant.getName() + " " + mandant.getVorname();
+			String mandantLabel = title + StringUtils.SPACE + mandant.getName() + StringUtils.SPACE
+					+ mandant.getVorname();
 			contentStream.beginText();
 			contentStream.setFont(subFont, 10);
 			contentStream.moveTextPositionByAmount(40, pageSize.getUpperRightY() - 55);

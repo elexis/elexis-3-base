@@ -159,7 +159,7 @@ public class PatientTests {
 
 		patientLabel = UiDesk.getToolkit().createForm(composite);
 		patientLabel.getBody().setLayout(new GridLayout(1, true));
-		patientLabel.setText("");
+		patientLabel.setText(StringUtils.EMPTY);
 
 		testsViewer = new TableViewer(composite, SWT.V_SCROLL);
 		testsViewer.setContentProvider(ArrayContentProvider.getInstance());
@@ -351,7 +351,7 @@ public class PatientTests {
 			public void widgetSelected(SelectionEvent e) {
 				java.util.Optional<IMandator> activeMandator = ContextServiceHolder.get().getActiveMandator();
 				if (activeMandator.isPresent()) {
-					String otp = configService.getActiveMandator(CertificatesService.CFG_OTP, "");
+					String otp = configService.getActiveMandator(CertificatesService.CFG_OTP, StringUtils.EMPTY);
 					InputDialog otpDialog = new InputDialog(Display.getDefault().getActiveShell(), "COVID Zert OTP",
 							"Das one time password (OTP) von " + activeMandator.get().getLabel() + " setzen.", otp,
 							null, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
@@ -414,7 +414,7 @@ public class PatientTests {
 			testsViewer.setInput(input);
 			setButtonsEnabled(composite, true);
 		} else {
-			patientLabel.setText("");
+			patientLabel.setText(StringUtils.EMPTY);
 			patientLabel.layout();
 
 			testsViewer.setInput(Collections.emptyList());

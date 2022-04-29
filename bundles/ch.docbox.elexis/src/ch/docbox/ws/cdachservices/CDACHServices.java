@@ -1,5 +1,6 @@
 package ch.docbox.ws.cdachservices;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -31,8 +32,8 @@ public interface CDACHServices {
 	@RequestWrapper(localName = "checkAccess", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.CheckAccess")
 	@ResponseWrapper(localName = "checkAccessResponse", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.CheckAccessResponse")
 	public void checkAccess(
-			@WebParam(name = "success", targetNamespace = "", mode = WebParam.Mode.OUT) Holder<Boolean> success,
-			@WebParam(name = "message", targetNamespace = "", mode = WebParam.Mode.OUT) Holder<String> message);
+			@WebParam(name = "success", targetNamespace = StringUtils.EMPTY, mode = WebParam.Mode.OUT) Holder<Boolean> success,
+			@WebParam(name = "message", targetNamespace = StringUtils.EMPTY, mode = WebParam.Mode.OUT) Holder<String> message);
 
 	/**
 	 *
@@ -45,11 +46,12 @@ public interface CDACHServices {
 	@WebMethod(action = "http://ws.docbox.ch/CDACHServices/addReferral")
 	@RequestWrapper(localName = "addReferral", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.AddReferral")
 	@ResponseWrapper(localName = "addReferralResponse", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.AddReferralResponse")
-	public void addReferral(@WebParam(name = "document", targetNamespace = "") ClinicalDocumentType document,
-			@WebParam(name = "attachment", targetNamespace = "") byte[] attachment,
-			@WebParam(name = "success", targetNamespace = "", mode = WebParam.Mode.OUT) Holder<Boolean> success,
-			@WebParam(name = "message", targetNamespace = "", mode = WebParam.Mode.OUT) Holder<String> message,
-			@WebParam(name = "documentID", targetNamespace = "", mode = WebParam.Mode.OUT) Holder<String> documentID);
+	public void addReferral(
+			@WebParam(name = "document", targetNamespace = StringUtils.EMPTY) ClinicalDocumentType document,
+			@WebParam(name = "attachment", targetNamespace = StringUtils.EMPTY) byte[] attachment,
+			@WebParam(name = "success", targetNamespace = StringUtils.EMPTY, mode = WebParam.Mode.OUT) Holder<Boolean> success,
+			@WebParam(name = "message", targetNamespace = StringUtils.EMPTY, mode = WebParam.Mode.OUT) Holder<String> message,
+			@WebParam(name = "documentID", targetNamespace = StringUtils.EMPTY, mode = WebParam.Mode.OUT) Holder<String> documentID);
 
 	/**
 	 *
@@ -57,10 +59,11 @@ public interface CDACHServices {
 	 * @return returns java.util.List<ch.docbox.ws.cdachservices.DocumentInfoType>
 	 */
 	@WebMethod(action = "http://ws.docbox.ch/CDACHServices/getInboxClinicalDocuments")
-	@WebResult(name = "document", targetNamespace = "")
+	@WebResult(name = "document", targetNamespace = StringUtils.EMPTY)
 	@RequestWrapper(localName = "getInboxClinicalDocuments", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.GetInboxClinicalDocuments")
 	@ResponseWrapper(localName = "getInboxClinicalDocumentsResponse", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.GetInboxClinicalDocumentsResponse")
-	public List<DocumentInfoType> getInboxClinicalDocuments(@WebParam(name = "code", targetNamespace = "") CE code);
+	public List<DocumentInfoType> getInboxClinicalDocuments(
+			@WebParam(name = "code", targetNamespace = StringUtils.EMPTY) CE code);
 
 	/**
 	 *
@@ -71,16 +74,17 @@ public interface CDACHServices {
 	@WebMethod(action = "http://ws.docbox.ch/CDACHServices/getClinicalDocument")
 	@RequestWrapper(localName = "getClinicalDocument", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.GetClinicalDocument")
 	@ResponseWrapper(localName = "getClinicalDocumentResponse", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.GetClinicalDocumentResponse")
-	public void getClinicalDocument(@WebParam(name = "documentID", targetNamespace = "") String documentID,
-			@WebParam(name = "document", targetNamespace = "", mode = WebParam.Mode.OUT) Holder<ClinicalDocumentType> document,
-			@WebParam(name = "attachment", targetNamespace = "", mode = WebParam.Mode.OUT) Holder<byte[]> attachment);
+	public void getClinicalDocument(
+			@WebParam(name = "documentID", targetNamespace = StringUtils.EMPTY) String documentID,
+			@WebParam(name = "document", targetNamespace = StringUtils.EMPTY, mode = WebParam.Mode.OUT) Holder<ClinicalDocumentType> document,
+			@WebParam(name = "attachment", targetNamespace = StringUtils.EMPTY, mode = WebParam.Mode.OUT) Holder<byte[]> attachment);
 
 	/**
 	 *
 	 * @return returns java.util.List<ch.docbox.ws.cdachservices.AppointmentType>
 	 */
 	@WebMethod(action = "http://ws.docbox.ch/CDACHServices/getCalendar")
-	@WebResult(name = "appointment", targetNamespace = "")
+	@WebResult(name = "appointment", targetNamespace = StringUtils.EMPTY)
 	@RequestWrapper(localName = "getCalendar", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.GetCalendar")
 	@ResponseWrapper(localName = "getCalendarResponse", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.GetCalendarResponse")
 	public List<AppointmentType> getCalendar();
@@ -94,13 +98,13 @@ public interface CDACHServices {
 	 * @return returns boolean
 	 */
 	@WebMethod(action = "http://ws.docbox.ch/CDACHServices/deleteAgendaEntry")
-	@WebResult(name = "success", targetNamespace = "")
+	@WebResult(name = "success", targetNamespace = StringUtils.EMPTY)
 	@RequestWrapper(localName = "deleteAgendaEntry", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.DeleteAgendaEntry")
 	@ResponseWrapper(localName = "deleteAgendaEntryResponse", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.DeleteAgendaEntryResponse")
-	public boolean deleteAgendaEntry(@WebParam(name = "id", targetNamespace = "") String id,
-			@WebParam(name = "msgTitle", targetNamespace = "") String msgTitle,
-			@WebParam(name = "msgBody", targetNamespace = "") String msgBody,
-			@WebParam(name = "param", targetNamespace = "") String param);
+	public boolean deleteAgendaEntry(@WebParam(name = "id", targetNamespace = StringUtils.EMPTY) String id,
+			@WebParam(name = "msgTitle", targetNamespace = StringUtils.EMPTY) String msgTitle,
+			@WebParam(name = "msgBody", targetNamespace = StringUtils.EMPTY) String msgBody,
+			@WebParam(name = "param", targetNamespace = StringUtils.EMPTY) String param);
 
 	/**
 	 *
@@ -113,11 +117,12 @@ public interface CDACHServices {
 	@WebMethod(action = "http://ws.docbox.ch/CDACHServices/sendClinicalDocument")
 	@RequestWrapper(localName = "sendClinicalDocument", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.SendClinicalDocument")
 	@ResponseWrapper(localName = "sendClinicalDocumentResponse", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.SendClinicalDocumentResponse")
-	public void sendClinicalDocument(@WebParam(name = "document", targetNamespace = "") ClinicalDocumentType document,
-			@WebParam(name = "attachment", targetNamespace = "") byte[] attachment,
-			@WebParam(name = "success", targetNamespace = "", mode = WebParam.Mode.OUT) Holder<Boolean> success,
-			@WebParam(name = "message", targetNamespace = "", mode = WebParam.Mode.OUT) Holder<String> message,
-			@WebParam(name = "documentID", targetNamespace = "", mode = WebParam.Mode.OUT) Holder<String> documentID);
+	public void sendClinicalDocument(
+			@WebParam(name = "document", targetNamespace = StringUtils.EMPTY) ClinicalDocumentType document,
+			@WebParam(name = "attachment", targetNamespace = StringUtils.EMPTY) byte[] attachment,
+			@WebParam(name = "success", targetNamespace = StringUtils.EMPTY, mode = WebParam.Mode.OUT) Holder<Boolean> success,
+			@WebParam(name = "message", targetNamespace = StringUtils.EMPTY, mode = WebParam.Mode.OUT) Holder<String> message,
+			@WebParam(name = "documentID", targetNamespace = StringUtils.EMPTY, mode = WebParam.Mode.OUT) Holder<String> documentID);
 
 	/**
 	 *
@@ -125,10 +130,10 @@ public interface CDACHServices {
 	 * @return returns java.util.List<org.hl7.v3.POCDMT000040IntendedRecipient>
 	 */
 	@WebMethod(action = "http://ws.docbox.ch/CDACHServices/getRecipients")
-	@WebResult(name = "recipient", targetNamespace = "")
+	@WebResult(name = "recipient", targetNamespace = StringUtils.EMPTY)
 	@RequestWrapper(localName = "getRecipients", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.GetRecipients")
 	@ResponseWrapper(localName = "getRecipientsResponse", targetNamespace = "http://ws.docbox.ch/CDACHServices/", className = "ch.docbox.ws.cdachservices.GetRecipientsResponse")
 	public List<POCDMT000040IntendedRecipient> getRecipients(
-			@WebParam(name = "type", targetNamespace = "") String type);
+			@WebParam(name = "type", targetNamespace = StringUtils.EMPTY) String type);
 
 }

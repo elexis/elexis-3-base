@@ -12,6 +12,7 @@
 
 package ch.elexis.laborimport.bioanalytica;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -150,7 +151,7 @@ public class Groups implements ILabItemResolver {
 				String order = m.group(1).trim();
 				String key = m.group(2).trim();
 				String groupKey = m.group(3).trim();
-				String name = "";
+				String name = StringUtils.EMPTY;
 				if (m.group(5) != null) {
 					name = m.group(5);
 				}
@@ -185,7 +186,7 @@ public class Groups implements ILabItemResolver {
 		Code code = codes.get(key);
 		if (code != null) {
 			Group group = groups.get(code.group.key);
-			name = group.key + " " + group.name;
+			name = group.key + StringUtils.SPACE + group.name;
 		} else {
 			String dat = new TimeTool().toString(TimeTool.DATE_GER);
 			name = UNKNOWN_PREFIX;
@@ -309,7 +310,7 @@ public class Groups implements ILabItemResolver {
 			LabResultData labData = (LabResultData) data;
 			return Groups.getGroupNameOfCode(labData.getCode());
 		}
-		return Groups.getGroupNameOfCode(data.getName() + " " + data.getGroup());
+		return Groups.getGroupNameOfCode(data.getName() + StringUtils.SPACE + data.getGroup());
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package at.medevit.ch.artikelstamm.ui.internal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.databinding.conversion.Converter;
 
 public class IntToStringConverterSelbstbehalt extends Converter {
@@ -13,7 +14,7 @@ public class IntToStringConverterSelbstbehalt extends Converter {
 		if (fromObject instanceof Integer) {
 			int value = (Integer) fromObject;
 			if (value >= 0)
-				return value + "";
+				return value + StringUtils.EMPTY;
 		}
 		return null;
 	}

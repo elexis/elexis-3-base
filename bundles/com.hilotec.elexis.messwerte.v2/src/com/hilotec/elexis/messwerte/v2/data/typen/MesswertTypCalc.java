@@ -13,6 +13,7 @@
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
@@ -32,7 +33,7 @@ import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
  * @author Antoine Kaufmann
  */
 public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
-	private String defVal = ""; //$NON-NLS-1$
+	private String defVal = StringUtils.EMPTY;
 
 	/**
 	 * Decimal Format für die Anzeige
@@ -63,7 +64,7 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 		String wert = defVal;
 		try {
 			wert = evalateFormula(formula, messwert, defVal);
-			if ("".equals(wert))
+			if (StringUtils.EMPTY.equals(wert))
 				return wert;
 			try {
 				return df.format(Double.parseDouble(wert));
@@ -96,7 +97,7 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable) {
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
-		if (!dft.getUnit().equals("")) { //$NON-NLS-1$
+		if (!dft.getUnit().equals(StringUtils.EMPTY)) {
 			labelText += " [" + dft.getUnit() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		TextField tf = new TextField(parent, ActiveControl.READONLY, labelText);

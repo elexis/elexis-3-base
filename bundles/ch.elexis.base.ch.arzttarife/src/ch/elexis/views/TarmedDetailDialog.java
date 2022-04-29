@@ -12,6 +12,7 @@
 
 package ch.elexis.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,7 +158,7 @@ public class TarmedDetailDialog extends Dialog {
 					if (selection != null && !selection.isEmpty()) {
 						BezugComboItem selected = (BezugComboItem) selection.getFirstElement();
 						if (selected.isNoBezug) {
-							billed.setExtInfo("Bezug", "");
+							billed.setExtInfo("Bezug", StringUtils.EMPTY);
 						} else {
 							billed.setExtInfo("Bezug", selected.getCode());
 						}

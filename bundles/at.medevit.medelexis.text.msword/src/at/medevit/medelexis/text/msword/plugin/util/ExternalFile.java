@@ -4,6 +4,7 @@
  ******************************************************************************/
 package at.medevit.medelexis.text.msword.plugin.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,9 +32,9 @@ public class ExternalFile {
 	FileType fileType;
 
 	public enum FileType {
-		UNKNOWN(""), DOCX("_rels/.rels"), SXW("application/vnd.sun.xml.writer"), ODT( //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		UNKNOWN(StringUtils.EMPTY), DOCX("_rels/.rels"), SXW("application/vnd.sun.xml.writer"), ODT( //$NON-NLS-1$ //$NON-NLS-2$
 				"application/vnd.oasis.opendocument.text"), //$NON-NLS-1$
-		ERROR(""); //$NON-NLS-1$
+		ERROR(StringUtils.EMPTY);
 
 		private final String mime;
 

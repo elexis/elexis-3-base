@@ -17,6 +17,7 @@
 
 package com.hilotec.elexis.messwerte.v2.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.text.MessageFormat;
@@ -121,7 +122,7 @@ public class MessungenUebersichtV20 extends ViewPart implements ElexisEventListe
 			i++;
 			for (IMesswertTyp dft : typ.getMesswertTypen()) {
 				cols[i] = new TableColumn(table, SWT.NONE);
-				if (dft.getUnit().equals("")) { //$NON-NLS-1$
+				if (dft.getUnit().equals(StringUtils.EMPTY)) {
 					cols[i].setText(dft.getTitle());
 				} else {
 					cols[i].setText(dft.getTitle() + " [" + dft.getUnit() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -310,7 +311,7 @@ public class MessungenUebersichtV20 extends ViewPart implements ElexisEventListe
 								+ messwert.getTyp().getUnit() + ")" + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					headerstring = headerstring.substring(0, headerstring.length() - 1);
-					writer.append(headerstring + "\n"); //$NON-NLS-1$
+					writer.append(headerstring + StringUtils.LF);
 
 					for (int i = 0; i < tableitems.length; i++) {
 						Messung messung = (Messung) tableitems[i].getData();
@@ -319,7 +320,7 @@ public class MessungenUebersichtV20 extends ViewPart implements ElexisEventListe
 							messungstring = messungstring + messwert.getTyp().erstelleDarstellungswert(messwert) + ";"; //$NON-NLS-1$
 						}
 						messungstring = messungstring.substring(0, messungstring.length() - 1);
-						writer.append(messungstring + "\n"); //$NON-NLS-1$
+						writer.append(messungstring + StringUtils.LF);
 					}
 
 					writer.flush();

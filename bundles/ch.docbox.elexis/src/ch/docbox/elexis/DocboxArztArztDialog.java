@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -123,7 +124,7 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 		label.setText(Messages.DocboxArztArztDialog_TextTitle);
 
 		textTitle = new Text(com, SWT.BORDER);
-		textTitle.setText("");
+		textTitle.setText(StringUtils.EMPTY);
 		textTitle.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
 		Label l2 = new Label(com, SWT.NONE);
@@ -291,12 +292,14 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 							port.sendClinicalDocument(cda, byteArrayOutputStream.toByteArray(), success, errorMessage,
 									documentId);
 							if (!success.value.booleanValue()) {
-								stop(Messages.DocboxArztArztAction_SendDocumentFailed + "\n" + errorMessage.value);
+								stop(Messages.DocboxArztArztAction_SendDocumentFailed + StringUtils.LF
+										+ errorMessage.value);
 								return;
 							}
 						} catch (Exception e) {
 							ExHandler.handle(e);
-							stop(Messages.DocboxArztArztAction_SendDocumentFailed + "\n" + errorMessage.value);
+							stop(Messages.DocboxArztArztAction_SendDocumentFailed + StringUtils.LF
+									+ errorMessage.value);
 							return;
 						}
 						done = true;
@@ -376,7 +379,7 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 		}
 
 		Date birthday = null;
-		if (!"".equals(patient.getGeburtsdatum())) {
+		if (!StringUtils.EMPTY.equals(patient.getGeburtsdatum())) {
 			TimeTool ttBirthday = new TimeTool(patient.getGeburtsdatum());
 			birthday = ttBirthday.getTime();
 		}
@@ -390,7 +393,7 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 				CoreHub.actMandant.getVorname(), CoreHub.actMandant.getName(), CoreHub.actMandant.getNatel(), null,
 				null, CoreHub.actMandant.getMailAddress(), null, null, null);
 
-		POCDMT000040Custodian custodian = docboxCDA.getCustodian("",
+		POCDMT000040Custodian custodian = docboxCDA.getCustodian(StringUtils.EMPTY,
 				docboxCDA.getAddress(CoreHub.actMandant.getAnschrift().getStrasse(), null,
 						CoreHub.actMandant.getAnschrift().getPlz(), CoreHub.actMandant.getAnschrift().getOrt(), "WP"),
 				null, null, null, null);
@@ -399,7 +402,7 @@ public class DocboxArztArztDialog extends TitleAreaDialog {
 		if (kontakt != null) {
 			String organization = kontakt.get(Kontakt.FLD_NAME3);
 			if (kontakt.get(Kontakt.FLD_IS_USER).equals(StringConstants.ONE)) {
-				organization = "";
+				organization = StringUtils.EMPTY;
 			}
 			informationRecipient = docboxCDA.getInformationRecipient(kontakt.get(Person.TITLE),
 					kontakt.get(Kontakt.FLD_NAME2), kontakt.get(Kontakt.FLD_NAME1),

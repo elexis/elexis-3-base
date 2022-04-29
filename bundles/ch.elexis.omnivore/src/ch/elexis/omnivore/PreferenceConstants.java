@@ -1,5 +1,7 @@
 package ch.elexis.omnivore;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class PreferenceConstants {
 
 	public static final String PREFBASE = Constants.PLUGIN_ID + "/";
@@ -40,8 +42,10 @@ public class PreferenceConstants {
 	// I've tested the construction of the preferences dialog with fields for some
 	// 26 rules, worked
 	// like a charm :-)
-	public static final String[] PREF_SRC_PATTERN = { "", "", "", "", "" };
-	public static final String[] PREF_DEST_DIR = { "", "", "", "", "" };
+	public static final String[] PREF_SRC_PATTERN = { StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+			StringUtils.EMPTY, StringUtils.EMPTY };
+	public static final String[] PREF_DEST_DIR = { StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+			StringUtils.EMPTY, StringUtils.EMPTY };
 	public static final int nPREF_SRC_PATTERN = PREF_SRC_PATTERN.length;
 	public static final int nPREF_DEST_DIR = PREF_DEST_DIR.length;
 }

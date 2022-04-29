@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view;
 
+import org.apache.commons.lang3.StringUtils;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -341,16 +342,16 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 
 	protected String getHeader(Patient patient) {
 		String title = Messages.Cst_Text_Interpretation_Mitochondrienlabor + " (" + profile.getName() + ") "
-				+ Messages.Cst_Text_fuer + " " + patient.getName() + " " + patient.getVorname() + " "
-				+ patient.getGeburtsdatum();
+				+ Messages.Cst_Text_fuer + StringUtils.SPACE + patient.getName() + StringUtils.SPACE
+				+ patient.getVorname() + StringUtils.SPACE + patient.getGeburtsdatum();
 		return title;
 	}
 
 	protected String getSubTitle(Patient patient, CstProfile aProfile) {
 		String title = Messages.CstProfileEditor_Datum + ": " + CstService.getReadableDateAndTime() + "    ("
-				+ Messages.Cst_Text_Auswertungstyp_effektiv + " " + Messages.Cst_Text_startdatum + " "
-				+ CstService.getGermanFromCompact(aProfile.getValidFrom()) + " " + Messages.CstProfileEditor_Crawlback
-				+ " " + aProfile.getCrawlBack() + ")";
+				+ Messages.Cst_Text_Auswertungstyp_effektiv + StringUtils.SPACE + Messages.Cst_Text_startdatum
+				+ StringUtils.SPACE + CstService.getGermanFromCompact(aProfile.getValidFrom()) + StringUtils.SPACE
+				+ Messages.CstProfileEditor_Crawlback + StringUtils.SPACE + aProfile.getCrawlBack() + ")";
 		return title;
 	}
 
@@ -441,9 +442,9 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 		if (cstProimmun != null) {
 
 			String sLabeltxt = Messages.Cst_Text_Proimmun + "\r\n" + Messages.Cst_Text_IggAntikoerper + "\r\n" + "\r\n"
-					+ cstProimmun.getTested() + "\r\n" + "\r\n" + " von " + cstProimmun.getToBeTested() + " "
-					+ Messages.Cst_Text_getesteten + "\r\n" + Messages.Cst_Text_Lebensmittel + "\r\n\r\n"
-					+ CstService.getGermanFromCompact(cstProimmun.getDatum());
+					+ cstProimmun.getTested() + "\r\n" + "\r\n" + " von " + cstProimmun.getToBeTested()
+					+ StringUtils.SPACE + Messages.Cst_Text_getesteten + "\r\n" + Messages.Cst_Text_Lebensmittel
+					+ "\r\n\r\n" + CstService.getGermanFromCompact(cstProimmun.getDatum());
 
 			Label lblDarmfunktion = new Label(compoDarmfunktion, SWT.NONE);
 			lblDarmfunktion.setLayoutData(new GridData(GridData.FILL_VERTICAL));
@@ -1111,16 +1112,16 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 
 		try {
 			if (sRangeStart.startsWith("-")) {
-				sRangeStart = sRangeStart.replace("-", "");
+				sRangeStart = sRangeStart.replace("-", StringUtils.EMPTY);
 				dRangeEnd = Double.parseDouble(sRangeStart);
 				dRangeStart = 0;
 			} else if (sRangeStart.startsWith("<")) {
-				sRangeStart = sRangeStart.replace("<", "");
+				sRangeStart = sRangeStart.replace("<", StringUtils.EMPTY);
 				dRangeEnd = Double.parseDouble(sRangeStart);
 				dRangeStart = 0;
 
 			} else if (sRangeStart.startsWith(">")) {
-				sRangeStart = sRangeStart.replace(">", "");
+				sRangeStart = sRangeStart.replace(">", StringUtils.EMPTY);
 				dRangeStart = Double.parseDouble(sRangeStart);
 				dRangeEnd = 0;
 
@@ -1208,7 +1209,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 					date1 = formatter.parse(m.get(Messwert.FLD_DATE));
 					da = shortDf.format(date1);
 				} catch (ParseException e) {
-					log.error(e.toString() + " " + m.get(Messwert.FLD_DATE));
+					log.error(e.toString() + StringUtils.SPACE + m.get(Messwert.FLD_DATE));
 				}
 
 				Set<String> keys = hash.keySet();
@@ -1226,8 +1227,8 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 							sysdia[1] = hash.get(key).toString();
 						}
 						String diastol = sysdia[1];
-						if (diastol.contains(" ")) {
-							String[] korrD = diastol.split(" ");
+						if (diastol.contains(StringUtils.SPACE)) {
+							String[] korrD = diastol.split(StringUtils.SPACE);
 							sysdia[1] = korrD[0];
 						}
 
@@ -1290,7 +1291,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 				DateFormat shortDf = DateFormat.getDateInstance(DateFormat.SHORT);
 
 				@SuppressWarnings("unused")
-				String da = "";
+				String da = StringUtils.EMPTY;
 				try {
 					date1 = formatter.parse(messwert.get(Messwert.FLD_DATE));
 					da = shortDf.format(date1);

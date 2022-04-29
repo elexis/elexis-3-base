@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.cdach;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -158,7 +159,7 @@ public class CdaChXPath {
 		} else {
 			final NodeList nodes = (NodeList) result;
 			if (nodes.getLength() > 0) {
-				String text = "";
+				String text = StringUtils.EMPTY;
 				Node node = nodes.item(0).getFirstChild();
 				do {
 					if (node != null) {
@@ -281,7 +282,7 @@ public class CdaChXPath {
 
 	private String getSubStringBefore(String str, String niddle) {
 		if ((str == null) || (str.trim().length() == 0)) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 		if (str.lastIndexOf(niddle) > -1) {
 			String result = str.substring(0, str.lastIndexOf(niddle));
@@ -291,27 +292,27 @@ public class CdaChXPath {
 		if ((str.equals("ja")) || (str.equals("nein")) || (str.equals("unbekannt"))) {
 			return str;
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	private String getSubStringAfter(String str, String niddle) {
 		if ((str == null) || (str.trim().length() == 0)) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 		if (str.lastIndexOf(niddle) > -1) {
 			String result = str.substring(str.lastIndexOf(niddle) + 1);
 			return result;
 		}
 		if ((str.equals("ja")) || (str.equals("nein")) || (str.equals("unbekannt"))) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 		return str;
 	}
 
 	private String formatString(String str) {
 
-		if (str == null || "".equals(str)) {
-			return "";
+		if (str == null || StringUtils.EMPTY.equals(str)) {
+			return StringUtils.EMPTY;
 		}
 		StringBuffer str1 = new StringBuffer();
 		String[] stringArray = explodeString(str);
@@ -324,7 +325,7 @@ public class CdaChXPath {
 		for (int i = 0; i < len; i++) {
 			str1.append(stringArray[i]);
 			if (i != (len - 1)) {
-				str1.append("\n");
+				str1.append(StringUtils.LF);
 			}
 
 		}
@@ -335,13 +336,13 @@ public class CdaChXPath {
 
 	private String[] explodeString(String str) {
 
-		str = str.replaceAll("\\n|\\r", "");
+		str = str.replaceAll("\\n|\\r", StringUtils.EMPTY);
 
 		String exp1 = "(&lt;|<)(?i)br[\\s]*/?(&gt;|>)";
 		String exp2 = "^" + exp1;
 
-		while (str.split(exp1)[0].length() == 0 && !"".equals(str)) {
-			str = str.replaceAll(exp2, "");
+		while (str.split(exp1)[0].length() == 0 && !StringUtils.EMPTY.equals(str)) {
+			str = str.replaceAll(exp2, StringUtils.EMPTY);
 		}
 
 		return str.split(exp1);
@@ -411,7 +412,7 @@ public class CdaChXPath {
 		if (this.getAuthorFirstName() == null) {
 			return getAuthorLastName();
 		}
-		return this.getAuthorFirstName() + " " + getAuthorLastName();
+		return this.getAuthorFirstName() + StringUtils.SPACE + getAuthorLastName();
 	}
 
 	public int getReceivers() {
@@ -477,22 +478,22 @@ public class CdaChXPath {
 	public String getDocboxReferralInfo() {
 		StringBuffer strBuf = new StringBuffer();
 
-		strBuf.append("Docbox Dokument ID:\t" + getDocumentIdDocbox() + "\n");
-		strBuf.append("Auftrags ID docbox:\t" + getAuftragsnummmer() + "\n");
-		strBuf.append("Spital:\t" + getReferralHospitalName() + "\n");
-		strBuf.append("SpitalId:\t" + getReferralHospitalId() + "\n");
-		strBuf.append("Fachbereich:\t" + getReferralDepartmentName() + "\n");
-		strBuf.append("FachbereichId:\t" + getReferralDepartmentId() + "\n");
-		strBuf.append("Sender Arzt ID docbox:\t" + getAuthorDocboxId() + "\n");
-		strBuf.append("Sender Arzt Nachname:\t" + getAuthorLastName() + "\n");
-		strBuf.append("Sender Arzt Vorname:\t" + getAuthorFirstName() + "\n");
-		strBuf.append("Empfänger ID docbox:\t" + getReceiverDocboxId(0) + "\n");
-		strBuf.append("Empfänger Nachname:\t" + getReceiverLastName(0) + "\n");
-		strBuf.append("Empfänger Vorname:\t" + getReceiverFirstName(0) + "\n");
-		strBuf.append("PID-Hausarzt docbox:\t" + getPatientNumber() + "\n");
-		strBuf.append("Patient Nachname:\t" + getPatientLastName() + "\n");
-		strBuf.append("Patient Vorname:\t" + getPatientFirstName() + "\n");
-		strBuf.append("Patient Geburtstag:\t" + getPatientDateOfBirth() + "\n");
+		strBuf.append("Docbox Dokument ID:\t" + getDocumentIdDocbox() + StringUtils.LF);
+		strBuf.append("Auftrags ID docbox:\t" + getAuftragsnummmer() + StringUtils.LF);
+		strBuf.append("Spital:\t" + getReferralHospitalName() + StringUtils.LF);
+		strBuf.append("SpitalId:\t" + getReferralHospitalId() + StringUtils.LF);
+		strBuf.append("Fachbereich:\t" + getReferralDepartmentName() + StringUtils.LF);
+		strBuf.append("FachbereichId:\t" + getReferralDepartmentId() + StringUtils.LF);
+		strBuf.append("Sender Arzt ID docbox:\t" + getAuthorDocboxId() + StringUtils.LF);
+		strBuf.append("Sender Arzt Nachname:\t" + getAuthorLastName() + StringUtils.LF);
+		strBuf.append("Sender Arzt Vorname:\t" + getAuthorFirstName() + StringUtils.LF);
+		strBuf.append("Empfänger ID docbox:\t" + getReceiverDocboxId(0) + StringUtils.LF);
+		strBuf.append("Empfänger Nachname:\t" + getReceiverLastName(0) + StringUtils.LF);
+		strBuf.append("Empfänger Vorname:\t" + getReceiverFirstName(0) + StringUtils.LF);
+		strBuf.append("PID-Hausarzt docbox:\t" + getPatientNumber() + StringUtils.LF);
+		strBuf.append("Patient Nachname:\t" + getPatientLastName() + StringUtils.LF);
+		strBuf.append("Patient Vorname:\t" + getPatientFirstName() + StringUtils.LF);
+		strBuf.append("Patient Geburtstag:\t" + getPatientDateOfBirth() + StringUtils.LF);
 
 		return strBuf.toString();
 	}
@@ -1307,7 +1308,7 @@ public class CdaChXPath {
 	public boolean addAuthorToDocument(String docboxId, String eanCode, String firstName, String lastName) {
 		// create author tag
 		NodeList nodeList = doc.getElementsByTagNameNS("urn:hl7-org:v3", "author");
-		String prefix = "";
+		String prefix = StringUtils.EMPTY;
 		Element author = null;
 		if (nodeList.getLength() == 0) {
 			// we do not have an author tag yet, we have to create on
@@ -1405,7 +1406,7 @@ public class CdaChXPath {
 	 */
 	public boolean addCustodianToDocument(String docboxId, String organizationId, String name) {
 		NodeList nodeList = doc.getElementsByTagNameNS("urn:hl7-org:v3", "custodian");
-		String prefix = "";
+		String prefix = StringUtils.EMPTY;
 		Element custodian = null;
 		if (nodeList.getLength() == 0) {
 			// we do not have an author tag yet, we have to create on

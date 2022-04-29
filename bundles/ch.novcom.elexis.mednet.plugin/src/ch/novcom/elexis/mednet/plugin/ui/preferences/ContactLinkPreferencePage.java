@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.preferences;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import java.text.MessageFormat;
@@ -175,13 +176,13 @@ public class ContactLinkPreferencePage extends PreferencePage implements IWorkbe
 				return kontakt.getLabel(true);
 			case 3:
 				return (contactLinkRecord.docImport_isActive() ? "on" : "off")
-						+ (contactLinkRecord.getCategoryDoc().isEmpty() ? ""
+						+ (contactLinkRecord.getCategoryDoc().isEmpty() ? StringUtils.EMPTY
 								: " ( " + contactLinkRecord.getCategoryDoc() + " )");
 			case 4:
 				return contactLinkRecord.getDocImport_id();
 			case 5:
 				return (contactLinkRecord.formImport_isActive() ? "on" : "off")
-						+ (contactLinkRecord.getCategoryForm().isEmpty() ? ""
+						+ (contactLinkRecord.getCategoryForm().isEmpty() ? StringUtils.EMPTY
 								: " ( " + contactLinkRecord.getCategoryForm() + " )");
 			case 6:
 				return contactLinkRecord.getXIDDomain();

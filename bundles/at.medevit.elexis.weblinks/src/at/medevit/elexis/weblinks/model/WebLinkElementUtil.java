@@ -10,6 +10,7 @@
  ******************************************************************************/
 package at.medevit.elexis.weblinks.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +84,7 @@ public class WebLinkElementUtil {
 	}
 
 	private static List<String> loadIds() {
-		String allIds = ConfigServiceHolder.getUser(CFG_WEBLINK_IDS, "");
+		String allIds = ConfigServiceHolder.getUser(CFG_WEBLINK_IDS, StringUtils.EMPTY);
 		String[] ids = allIds.split(ID_DELIMITER_ESCAPED);
 		ArrayList<String> ret = new ArrayList<String>();
 		for (String id : ids) {
@@ -98,7 +99,7 @@ public class WebLinkElementUtil {
 		StringBuilder sb = new StringBuilder();
 
 		if (ids.isEmpty()) {
-			ConfigServiceHolder.setUser(CFG_WEBLINK_IDS, "");
+			ConfigServiceHolder.setUser(CFG_WEBLINK_IDS, StringUtils.EMPTY);
 		} else {
 			for (String string : ids) {
 				sb.append(string);

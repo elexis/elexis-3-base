@@ -250,13 +250,13 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 					if (actBank != null && actBank.isValid()) {
 						// clear all bank data
 						actBank = null;
-						actMandant.setExtInfoStoredObjectByKey(ta.RNBANK, ""); //$NON-NLS-1$
+						actMandant.setExtInfoStoredObjectByKey(ta.RNBANK, StringUtils.EMPTY);
 						// clear data set with BankLister dialog
-						actMandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, ""); //$NON-NLS-1$
+						actMandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, StringUtils.EMPTY);
 						actMandant.setExtInfoStoredObjectByKey(ta.ESRSUB, Messages.RechnungsPrefs_13); // $NON-NLS-1$
-						actMandant.setExtInfoStoredObjectByKey(Messages.RechnungsPrefs_department, ""); //$NON-NLS-1$
-						actMandant.setExtInfoStoredObjectByKey(Messages.RechnungsPrefs_POBox, ""); //$NON-NLS-1$
-						actMandant.setExtInfoStoredObjectByKey("IBAN", ""); //$NON-NLS-1$
+						actMandant.setExtInfoStoredObjectByKey(Messages.RechnungsPrefs_department, StringUtils.EMPTY);
+						actMandant.setExtInfoStoredObjectByKey(Messages.RechnungsPrefs_POBox, StringUtils.EMPTY);
+						actMandant.setExtInfoStoredObjectByKey("IBAN", StringUtils.EMPTY);
 					}
 
 					// check if Post account is already available
@@ -301,7 +301,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 				if (bBank.getSelection()) {
 					if (actBank == null) {
 						// invalidate available post data
-						actMandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, ""); //$NON-NLS-1$
+						actMandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, StringUtils.EMPTY);
 						new BankLister(getShell()).open();
 					}
 				}
@@ -432,7 +432,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 					Kontakt k = (Kontakt) ks.getSelection();
 					ConfigServiceHolder.setGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER,
 							(k != null) ? k.getId() : null);
-					String label = (k != null) ? k.getLabel() : "";
+					String label = (k != null) ? k.getLabel() : StringUtils.EMPTY;
 					lblFixProvider.setText(label);
 				} else {
 					ConfigServiceHolder.setGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null);
@@ -447,7 +447,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 
 		if (StringUtils.isNotBlank(ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null))) {
 			Kontakt k = Kontakt.load(ConfigServiceHolder.getGlobal(PreferenceConstants.TARMEDBIL_FIX_PROVIDER, null));
-			String label = (k != null) ? k.getLabel() : "";
+			String label = (k != null) ? k.getLabel() : StringUtils.EMPTY;
 			lblFixProvider.setText(label);
 		}
 
@@ -723,11 +723,11 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 
 		actBank = Kontakt.load(actMandant.getInfoString(ta.RNBANK));
 		if (actBank != null && actBank.isValid()) {
-			tPost.setText(""); //$NON-NLS-1$
+			tPost.setText(StringUtils.EMPTY);
 			tBank.setText(actBank.getLabel());
 		} else {
 			tPost.setText(actMandant.getInfoString(ta.ESRNUMBER));
-			tBank.setText(""); //$NON-NLS-1$
+			tBank.setText(StringUtils.EMPTY);
 
 			actBank = null;
 		}
@@ -746,7 +746,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		if (tcName != null) {
 			cbTC.setText(tcName);
 		} else {
-			cbTC.setText("");
+			cbTC.setText(StringUtils.EMPTY);
 		}
 
 		bBillsElec.setSelection(CoreHub.getUserSetting(actMandant).get(PreferenceConstants.BILL_ELECTRONICALLY, false));

@@ -1,5 +1,6 @@
 package ch.elexis.connect.afinion;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -257,15 +258,15 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 						if (patientList.size() == 1) {
 							probePat = patientList.get(0);
 							patientDeviceStr = record.getId();
-							patientElexisStr = probePat.getName() + " " + probePat.getVorname();
+							patientElexisStr = probePat.getName() + StringUtils.SPACE + probePat.getVorname();
 						}
 					}
 				}
 
-				if ((patientDeviceStr == null) || (patientDeviceStr.equals(""))) {
+				if ((patientDeviceStr == null) || (patientDeviceStr.equals(StringUtils.EMPTY))) {
 					patientDeviceStr = Messages.AfinionAS100Action_NoPatientInfo;
 				}
-				String warning = "";
+				String warning = StringUtils.EMPTY;
 				// Gemäss Mail von Frau Rytz (Axis-Shield) vom 3.8.09: Anstelle der Warnung soll
 				// der
 				// Wert als <min

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -161,7 +162,7 @@ public class CstResultEffektiv extends CstResultPart {
 				// GridData gd = new GridData(300, 22);
 				GridData gd = new GridData(SWT.DEFAULT, 22);
 				l1.setLayoutData(gd);
-				l1.setText(" " + group.getName() + " ");
+				l1.setText(StringUtils.SPACE + group.getName() + StringUtils.SPACE);
 				l1.setFont(fontBig);
 				l1.setBackground(GRAY);
 				l1.setForeground(WHITE);
@@ -179,7 +180,8 @@ public class CstResultEffektiv extends CstResultPart {
 					Label l2 = new Label(baseComposite, SWT.NONE);
 					l2.setLayoutData(new GridData(794, 20));
 
-					String txL2 = "         " + String.valueOf(++count) + ": " + labItem.getLabItem().getName() + " ";
+					String txL2 = "         " + String.valueOf(++count) + ": " + labItem.getLabItem().getName()
+							+ StringUtils.SPACE;
 
 					if (labItem.getLabItem().getEinheit().length() > 0) {
 						txL2 += " (" + labItem.getLabItem().getEinheit() + ")";
@@ -329,7 +331,7 @@ public class CstResultEffektiv extends CstResultPart {
 							double dRangeEnd = dRanges[1];
 
 							// Formatting the Result values
-							String sResult = "";
+							String sResult = StringUtils.EMPTY;
 
 							try {
 								if (labResultLatest != null && labResultLatest.getResult() != null) {
@@ -337,7 +339,7 @@ public class CstResultEffektiv extends CstResultPart {
 									log.info("raw result: " + sResult);
 								}
 							} catch (Exception e1) {
-								log.info("Error opening result view: " + e1.getMessage() + " "
+								log.info("Error opening result view: " + e1.getMessage() + StringUtils.SPACE
 										+ labItem.getLabItem().getName(), Log.INFOS);
 							}
 

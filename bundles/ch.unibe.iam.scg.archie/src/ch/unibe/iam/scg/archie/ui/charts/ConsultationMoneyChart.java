@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.charts;
 
+import org.apache.commons.lang3.StringUtils;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 
@@ -55,7 +56,7 @@ public class ConsultationMoneyChart extends AbstractChartComposite {
 	@Override
 	protected JFreeChart initializeChart() {
 		JFreeChart chart = ChartFactory.createTimeSeriesChart(ConsultationMoneyChart.CHART_TITLE, // title
-				"", // x-axis label
+				StringUtils.EMPTY, // x-axis label
 				"Amount", // y-axis label
 				(XYDataset) this.creator.getDataset(), // data
 				true, // create legend?

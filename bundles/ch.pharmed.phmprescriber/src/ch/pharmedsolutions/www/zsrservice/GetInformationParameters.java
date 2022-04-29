@@ -1,6 +1,7 @@
 
 package ch.pharmedsolutions.www.zsrservice;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "zsrId" })
+@XmlType(name = StringUtils.EMPTY, propOrder = { "zsrId" })
 @XmlRootElement(name = "getInformationParameters")
 public class GetInformationParameters {
 

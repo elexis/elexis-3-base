@@ -1,5 +1,6 @@
 package ch.elexis.connect.afinion.packages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -69,13 +70,14 @@ public class Record {
 	}
 
 	public String getText() {
-		String text = "";
+		String text = StringUtils.EMPTY;
 		for (int i = 0; i < parts.length; i++) {
 			if (parts[i].isValid()) {
 				if (text.length() > 0) {
 					text += ", ";
 				}
-				text += parts[i].getKuerzel() + " " + parts[i].getResultStr() + " " + parts[i].getUnit();
+				text += parts[i].getKuerzel() + StringUtils.SPACE + parts[i].getResultStr() + StringUtils.SPACE
+						+ parts[i].getUnit();
 			}
 		}
 		return text;
@@ -92,17 +94,17 @@ public class Record {
 		for (int i = 0; i < parts.length; i++) {
 			if (parts[i].isValid()) {
 				Value val = Value.getValue(parts[i].getKuerzel(), parts[i].getUnit());
-				results.add(val.fetchValue(patient, parts[i].getResultStr(), "", this.header.getDate()));
+				results.add(val.fetchValue(patient, parts[i].getResultStr(), StringUtils.EMPTY, this.header.getDate()));
 			}
 		}
 		LabImportUtilHolder.get().importLabResults(results, new DefaultLabImportUiHandler());
 	}
 
 	public String toString() {
-		String str = header.toString() + "\n";
+		String str = header.toString() + StringUtils.LF;
 		for (int i = 0; i < parts.length; i++) {
 			str += "S-Record " + i + ";";
-			str += parts[i].toString() + "\n";
+			str += parts[i].toString() + StringUtils.LF;
 		}
 		return str;
 	}

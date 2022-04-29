@@ -216,7 +216,7 @@ public class AppointmentDetailComposite extends Composite {
 		compContext.setLayoutData(gd);
 
 		txtContact = new Text(compContext, SWT.BORDER | SWT.MULTI);
-		txtContact.setText("");
+		txtContact.setText(StringUtils.EMPTY);
 		txtContact.setBackground(compContext.getBackground());
 		txtContact.setEditable(false);
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
@@ -405,26 +405,26 @@ public class AppointmentDetailComposite extends Composite {
 		if (c.isPresent() && c.get().getLabel().equals(currentSearchText)) {
 			StringBuilder b = new StringBuilder();
 			b.append(c.get().getDescription1());
-			b.append(" ");
+			b.append(StringUtils.SPACE);
 			b.append(c.get().getDescription2());
-			b.append(" ");
-			b.append(Optional.ofNullable(c.get().getDescription3()).orElse(""));
+			b.append(StringUtils.SPACE);
+			b.append(Optional.ofNullable(c.get().getDescription3()).orElse(StringUtils.EMPTY));
 
 			if (c.get().isPatient()) {
 
 				IPatient p = CoreModelServiceHolder.get().load(c.get().getId(), IPatient.class).get();
 				if (p.getDateOfBirth() != null) {
-					b.append("\n");
+					b.append(StringUtils.LF);
 					b.append(p.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 				}
 			}
-			b.append("\n");
-			b.append(Optional.ofNullable(c.get().getMobile()).filter(i -> i != null && !i.isEmpty()).map(i -> "\n" + i)
-					.orElse(""));
-			b.append(Optional.ofNullable(c.get().getPhone1()).filter(i -> i != null && !i.isEmpty()).map(i -> "\n" + i)
-					.orElse(""));
-			b.append(Optional.ofNullable(c.get().getPhone2()).filter(i -> i != null && !i.isEmpty()).map(i -> "\n" + i)
-					.orElse(""));
+			b.append(StringUtils.LF);
+			b.append(Optional.ofNullable(c.get().getMobile()).filter(i -> i != null && !i.isEmpty())
+					.map(i -> StringUtils.LF + i).orElse(StringUtils.EMPTY));
+			b.append(Optional.ofNullable(c.get().getPhone1()).filter(i -> i != null && !i.isEmpty())
+					.map(i -> StringUtils.LF + i).orElse(StringUtils.EMPTY));
+			b.append(Optional.ofNullable(c.get().getPhone2()).filter(i -> i != null && !i.isEmpty())
+					.map(i -> StringUtils.LF + i).orElse(StringUtils.EMPTY));
 			txtContact.setText(b.toString());
 		} else {
 			if (!c.isPresent() && StringUtils.isBlank(currentSearchText)) {

@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -171,7 +172,7 @@ public class CdaMessage extends PersistentObject {
 	@Override
 	public String getLabel() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(get("Date")).append(" ").append(get("Title"));
+		sb.append(get("Date")).append(StringUtils.SPACE).append(get("Title"));
 		return sb.toString();
 	}
 
@@ -211,7 +212,7 @@ public class CdaMessage extends PersistentObject {
 		if (files != null && files.length > 0) {
 			for (String file : files) {
 				int pos = file.lastIndexOf(".");
-				String ext = "";
+				String ext = StringUtils.EMPTY;
 				if (pos > 0) {
 					ext = file.substring(pos);
 				}
@@ -297,7 +298,7 @@ public class CdaMessage extends PersistentObject {
 	}
 
 	public String[] getFiles() {
-		return getFilesListing().split("\n");
+		return getFilesListing().split(StringUtils.LF);
 	}
 
 	public boolean hasAssignedToOmnivore() {
@@ -355,10 +356,10 @@ public class CdaMessage extends PersistentObject {
 					String fileName = zipEntry.getName();
 					fileList.add(fileName);
 					if (fileName.contains("/")) {
-						fileName = fileName.replaceAll("/", "");
+						fileName = fileName.replaceAll("/", StringUtils.EMPTY);
 					}
 					if (fileName.contains("\\")) {
-						fileName = fileName.replaceAll("\\\\", "");
+						fileName = fileName.replaceAll("\\\\", StringUtils.EMPTY);
 					}
 					logger.debug("exporting file out of attachment to " + path + "," + fileName);
 					File file = new File(directory, fileName);
@@ -376,7 +377,7 @@ public class CdaMessage extends PersistentObject {
 				zipInputStream.closeEntry();
 			}
 			zipInputStream.close();
-			String fileListConcatenated = "";
+			String fileListConcatenated = StringUtils.EMPTY;
 			for (int i = 0; i < fileList.size(); ++i) {
 				fileListConcatenated += fileList.get(i);
 				if (i < fileList.size() - 1) {

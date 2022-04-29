@@ -12,6 +12,7 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.handler.response;
 
+import org.apache.commons.lang3.StringUtils;
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.constants.GDTPreferenceConstants;
 import at.medevit.elexis.gdt.messages.GDTSatzNachricht6310;
@@ -50,8 +51,8 @@ public class GDTResponseIn6310Out6311 {
 				in.getValue(GDTConstants.FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD),
 				(in.getTestIdent().length > 1) ? in.getTestIdent()[0].getAbnahmeDatum() : null,
 				(in.getTestIdent().length > 1) ? in.getTestIdent()[0].getAbnahmeZeit() : null, gdtSender,
-				CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, null), GDTConstants.ZEICHENSATZ_IBM_CP_437 + "",
-				GDTConstants.GDT_VERSION);
+				CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_ID, null),
+				GDTConstants.ZEICHENSATZ_IBM_CP_437 + StringUtils.EMPTY, GDTConstants.GDT_VERSION);
 
 		return gdt6311;
 	}

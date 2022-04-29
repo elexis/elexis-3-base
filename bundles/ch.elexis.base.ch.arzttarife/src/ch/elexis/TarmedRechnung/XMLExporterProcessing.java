@@ -1,5 +1,6 @@
 package ch.elexis.TarmedRechnung;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,8 @@ public class XMLExporterProcessing {
 	//
 	// demand.setAttribute("tc_token", //$NON-NLS-1$
 	// xmlExporter.getBesr().createCodeline(
-	// XMLTool.moneyToXmlDouble(xmlExporter.getDueMoney()).replaceFirst("[.,]", ""),
+	// XMLTool.moneyToXmlDouble(xmlExporter.getDueMoney()).replaceFirst("[.,]",
+	// StringUtils.EMPTY),
 	// //$NON-NLS-1$//$NON-NLS-2$
 	// tcCode));
 	// demand.setAttribute("insurance_demand_date", //$NON-NLS-1$

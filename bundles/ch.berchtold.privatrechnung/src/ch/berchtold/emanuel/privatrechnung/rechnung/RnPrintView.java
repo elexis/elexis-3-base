@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.berchtold.emanuel.privatrechnung.rechnung;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -132,9 +133,10 @@ public class RnPrintView extends ViewPart {
 			tc.createFromTemplateName(null, BerchtoldPrivatrechnungTextTemplateRequirement.getESRTemplate(),
 					Brief.RECHNUNG, adressat, rn.getNr());
 			fillFields();
-			ESR esr = new ESR(CoreHub.localCfg.get(PreferenceConstants.esrIdentity + "/" + id, ""),
-					CoreHub.localCfg.get(PreferenceConstants.esrUser + "/" + id, ""), rn.getRnId(), 27);
-			Kontakt bank = Kontakt.load(CoreHub.localCfg.get(PreferenceConstants.cfgBank + "/" + id, ""));
+			ESR esr = new ESR(CoreHub.localCfg.get(PreferenceConstants.esrIdentity + "/" + id, StringUtils.EMPTY),
+					CoreHub.localCfg.get(PreferenceConstants.esrUser + "/" + id, StringUtils.EMPTY), rn.getRnId(), 27);
+			Kontakt bank = Kontakt
+					.load(CoreHub.localCfg.get(PreferenceConstants.cfgBank + "/" + id, StringUtils.EMPTY));
 			if (!bank.isValid()) {
 				SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
 			}
@@ -149,7 +151,7 @@ public class RnPrintView extends ViewPart {
 				for (IBilled vv : lv) {
 					zeile.addMoney(vv.getTotal());
 				}
-				pos = tc.getPlugin().insertText(pos, "\t\t" + zeile.getAmountAsString() + "\n", SWT.LEFT);
+				pos = tc.getPlugin().insertText(pos, "\t\t" + zeile.getAmountAsString() + StringUtils.LF, SWT.LEFT);
 			}
 			pos = tc.getPlugin().insertText(pos,
 					"_____________________________________\nSumme\t\t\t" + sum.getAmountAsString(), SWT.LEFT);
@@ -162,7 +164,7 @@ public class RnPrintView extends ViewPart {
 			tc.createFromTemplateName(null, BerchtoldPrivatrechnungTextTemplateRequirement.getBill1Template(),
 					Brief.RECHNUNG, adressat, rn.getNr());
 			fillFields();
-			Object pos = tc.getPlugin().insertText("[Leistungen]", "\n", SWT.LEFT);
+			Object pos = tc.getPlugin().insertText("[Leistungen]", StringUtils.LF, SWT.LEFT);
 			sum = new Money();
 			int page = 1;
 			tc.getPlugin().setFont("Helvetica", SWT.NORMAL, 8);
@@ -171,14 +173,15 @@ public class RnPrintView extends ViewPart {
 				/*
 				 * tc.getPlugin().setFont("Helvetica", SWT.BOLD, 10); pos =
 				 * tc.getPlugin().insertText(pos, new
-				 * TimeTool(k.getDatum()).toString(TimeTool.DATE_GER) + "\n", SWT.LEFT);
+				 * TimeTool(k.getDatum()).toString(TimeTool.DATE_GER) + StringUtils.LF,
+				 * SWT.LEFT);
 				 */
 				String date = new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER);
 				for (IBilled vv : encounter.getBilled()) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(date).append("\t").append(vv.getAmount()).append("\t").append(vv.getText()).append("\t")
 							.append(vv.getScaledPrice()).append("\t").append(vv.getTotal().getAmountAsString())
-							.append("\n");
+							.append(StringUtils.LF);
 					pos = tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
 					sum.addMoney(vv.getTotal());
 					cmAvail -= lineHeight;
@@ -193,7 +196,7 @@ public class RnPrintView extends ViewPart {
 						}
 
 						insertPage(++page, adressat, rn);
-						pos = tc.getPlugin().insertText("[Leistungen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+						pos = tc.getPlugin().insertText("[Leistungen]", StringUtils.LF, SWT.LEFT); //$NON-NLS-1$
 						cmAvail = CoreHub.localCfg.get(PreferenceConstants.cfgTemplateBill2Height + "/" + id, 20.0);
 
 					}

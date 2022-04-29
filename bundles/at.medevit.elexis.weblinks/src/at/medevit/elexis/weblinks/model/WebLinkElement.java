@@ -10,6 +10,7 @@
  ******************************************************************************/
 package at.medevit.elexis.weblinks.model;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class WebLinkElement {
@@ -47,8 +48,8 @@ public class WebLinkElement {
 	}
 
 	private void init() {
-		text = ConfigServiceHolder.getUser(WebLinkElementUtil.getTextConfig(id), "");
-		link = ConfigServiceHolder.getUser(WebLinkElementUtil.getLinkConfig(id), "");
+		text = ConfigServiceHolder.getUser(WebLinkElementUtil.getTextConfig(id), StringUtils.EMPTY);
+		link = ConfigServiceHolder.getUser(WebLinkElementUtil.getLinkConfig(id), StringUtils.EMPTY);
 	}
 
 	public void save() {

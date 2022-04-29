@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.physio.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -149,7 +150,7 @@ public class PhysioLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 	@Override
 	public String getLabel() {
-		return getZiffer() + " " + getText();
+		return getZiffer() + StringUtils.SPACE + getText();
 	}
 
 	@Override

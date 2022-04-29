@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.emediplan.core.model.print;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.format.DateTimeFormatter;
 
 import ch.elexis.core.model.IContact;
@@ -193,6 +194,7 @@ public class ContactInfo {
 
 	@Override
 	public String toString() {
-		return "ContactInfo: " + firstname + " " + lastname + " " + city + " " + zip + " " + menumber;
+		return "ContactInfo: " + firstname + StringUtils.SPACE + lastname + StringUtils.SPACE + city + StringUtils.SPACE
+				+ zip + StringUtils.SPACE + menumber;
 	}
 }

@@ -1,5 +1,6 @@
 package ch.elexis.omnivore.ui.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,7 +34,7 @@ public class UiUtils {
 
 	public static void open(IDocumentHandle handle) {
 		try {
-			String ext = StringConstants.SPACE; // ""; //$NON-NLS-1$
+			String ext = StringConstants.SPACE; // StringUtils.EMPTY;
 			File temp = Utils.createTemporaryFile(handle, handle.getTitle());
 
 			Program proggie = Program.findProgram(ext);

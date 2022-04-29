@@ -1,5 +1,6 @@
 package ch.medshare.mediport.config;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,14 +14,14 @@ import ch.medshare.util.SystemProperties;
 import ch.medshare.util.UtilMisc;
 
 public class Client extends AbstractConfigKeyModel {
-	private String ean = ""; //$NON-NLS-1$
+	private String ean = StringUtils.EMPTY;
 	private String send_dir = "data/send"; //$NON-NLS-1$
 	private String receive_dir = "data/receive"; //$NON-NLS-1$
 	private String receivetest_dir = "data/receive/test"; //$NON-NLS-1$
 	private String error_dir = "data/error"; //$NON-NLS-1$
 	private String docstat_dir = "data/docstatus"; //$NON-NLS-1$
 	private String partner_file = "data/partner/partnerinfo.txt"; //$NON-NLS-1$
-	private String stylesheet = ""; //$NON-NLS-1$
+	private String stylesheet = StringUtils.EMPTY;
 
 	public Map<Integer, ClientParam> paramMap = new HashMap<Integer, ClientParam>();
 

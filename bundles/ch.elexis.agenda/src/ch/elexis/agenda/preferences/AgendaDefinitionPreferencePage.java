@@ -1,5 +1,6 @@
 package ch.elexis.agenda.preferences;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 
 import org.eclipse.jface.action.MenuManager;
@@ -108,7 +109,7 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 				}
 			}
 			comboViewerAreaType.setSelection(new StructuredSelection(AreaType.GENERIC));
-			linkAreaTypeValue.setText("");
+			linkAreaTypeValue.setText(StringUtils.EMPTY);
 
 		});
 
@@ -153,7 +154,7 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 					linkAreaTypeValue.setText("<a>select</a>");
 				}
 			} else {
-				linkAreaTypeValue.setText("");
+				linkAreaTypeValue.setText(StringUtils.EMPTY);
 			}
 		});
 

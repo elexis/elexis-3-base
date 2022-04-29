@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.nutrition.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
@@ -136,7 +137,7 @@ public class NutritionLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.co
 
 	@Override
 	public String getLabel() {
-		return getCode() + " " + getText();
+		return getCode() + StringUtils.SPACE + getText();
 	}
 
 	@Override

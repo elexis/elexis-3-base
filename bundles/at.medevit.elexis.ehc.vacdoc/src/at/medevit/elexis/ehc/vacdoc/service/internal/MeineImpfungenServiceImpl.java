@@ -1,5 +1,6 @@
 package at.medevit.elexis.ehc.vacdoc.service.internal;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
 import java.io.BufferedReader;
@@ -296,7 +297,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	private String getDocumentAsString(DocumentEntryType docEntry) throws IOException {
 		InputStream inputStream = getDocumentAsInputStream(docEntry);
 		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
-			return buffer.lines().collect(Collectors.joining("\n"));
+			return buffer.lines().collect(Collectors.joining(StringUtils.LF));
 		}
 	}
 
@@ -351,7 +352,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		String socialSecurityNumber = elexisPatient.getXid(DOMAIN_AHV);
 		if (socialSecurityNumber != null) {
 			socialSecurityNumber = socialSecurityNumber.trim();
-			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", "");
+			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", StringUtils.EMPTY);
 			if (socialSecurityNumber.length() == 11) {
 				return new Identificator(CodeSystems.SwissSSNDeprecated.getCodeSystemId(), socialSecurityNumber);
 			} else if (socialSecurityNumber.length() == 13) {

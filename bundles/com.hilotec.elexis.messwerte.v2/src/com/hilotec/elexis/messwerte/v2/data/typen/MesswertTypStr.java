@@ -14,6 +14,7 @@
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
@@ -30,7 +31,7 @@ import com.hilotec.elexis.messwerte.v2.data.MesswertBase;
  * @author Antoine Kaufmann
  */
 public class MesswertTypStr extends MesswertBase implements IMesswertTyp {
-	String defVal = ""; //$NON-NLS-1$
+	String defVal = StringUtils.EMPTY;
 
 	/**
 	 * Anzahl Zeilen, die das Textfeld haben soll
@@ -87,7 +88,7 @@ public class MesswertTypStr extends MesswertBase implements IMesswertTyp {
 		}
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
-		if (!dft.getUnit().equals("")) { //$NON-NLS-1$
+		if (!dft.getUnit().equals(StringUtils.EMPTY)) {
 			labelText += " [" + dft.getUnit() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (labelText.length() == 0) {

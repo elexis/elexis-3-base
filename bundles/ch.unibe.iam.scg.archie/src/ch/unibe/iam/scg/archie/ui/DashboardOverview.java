@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 
 import org.eclipse.swt.SWT;
@@ -160,17 +161,17 @@ public class DashboardOverview extends Composite {
 
 		int consultationsTotal = DatabaseHelper.getNumberOfConsultations();
 
-		this.patients.setText(Messages.PATIENTS + ": " + patientsTotal + "\n" + Messages.MALE + ": "
-				+ writePercent(patientsMale, patientsTotal) + "\n" + Messages.FEMALE + ": "
-				+ writePercent(patientsFemale, patientsTotal) + "\n" + Messages.UNKNOWN + ": "
+		this.patients.setText(Messages.PATIENTS + ": " + patientsTotal + StringUtils.LF + Messages.MALE + ": "
+				+ writePercent(patientsMale, patientsTotal) + StringUtils.LF + Messages.FEMALE + ": "
+				+ writePercent(patientsFemale, patientsTotal) + StringUtils.LF + Messages.UNKNOWN + ": "
 				+ writePercent(patientsTotal - patientsFemale - patientsMale, patientsTotal));
 
-		this.invoices.setText(Messages.INVOICES + ": " + invoicesTotal + "\n" + Messages.PAID + ": "
-				+ writePercent(invoicesPaid, invoicesTotal) + "\n" + Messages.OPEN + ": "
-				+ writePercent(invoicesOpen, invoicesTotal) + "\n" + Messages.OTHER + ": "
+		this.invoices.setText(Messages.INVOICES + ": " + invoicesTotal + StringUtils.LF + Messages.PAID + ": "
+				+ writePercent(invoicesPaid, invoicesTotal) + StringUtils.LF + Messages.OPEN + ": "
+				+ writePercent(invoicesOpen, invoicesTotal) + StringUtils.LF + Messages.OTHER + ": "
 				+ writePercent(invoicesTotal - invoicesOpen - invoicesPaid, invoicesTotal));
 
-		this.consultations.setText(Messages.CONSULTATIONS + ": " + consultationsTotal + "\n");
+		this.consultations.setText(Messages.CONSULTATIONS + ": " + consultationsTotal + StringUtils.LF);
 	}
 
 	/**

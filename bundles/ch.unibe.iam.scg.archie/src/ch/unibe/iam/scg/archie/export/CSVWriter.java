@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.export;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -99,19 +100,19 @@ public class CSVWriter {
 
 		// provider title
 		writer.write(provider.getName());
-		writer.write("\n");
+		writer.write(StringUtils.LF);
 		writer.write(dateFormat.format(Calendar.getInstance().getTime()));
-		writer.write("\n");
-		writer.write("\n");
+		writer.write(StringUtils.LF);
+		writer.write(StringUtils.LF);
 
 		// write parameters
 		Map<String, Object> getters = ProviderHelper.getGetterMap(provider, true);
 		for (Object name : getters.keySet().toArray()) {
 			writer.write(name + " = " + getters.get(name));
-			writer.write("\n");
+			writer.write(StringUtils.LF);
 		}
-		writer.write("\n");
-		writer.write("\n");
+		writer.write(StringUtils.LF);
+		writer.write(StringUtils.LF);
 	}
 
 	/**
@@ -124,11 +125,11 @@ public class CSVWriter {
 	private static void writeRow(FileWriter writer, Object[] objects) throws IOException {
 		StringBuffer buf = new StringBuffer();
 		for (Object obj : objects) {
-			buf.append(obj != null ? obj.toString() : "");
+			buf.append(obj != null ? obj.toString() : StringUtils.EMPTY);
 			buf.append(CSVWriter.DELIMITER);
 		}
 		buf.deleteCharAt(buf.length() - 1); // last delimiter not needed
-		buf.append("\n");
+		buf.append(StringUtils.LF);
 		writer.write(buf.toString());
 	}
 }

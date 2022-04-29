@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.notes;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class NotesContentProvider implements ITreeContentProvider {
 
 	public Object[] getElements(Object inputElement) {
 		qbe.clear();
-		qbe.add("Parent", "", null); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add("Parent", StringUtils.EMPTY, null); //$NON-NLS-1$
 		List<Note> res = qbe.execute();
 		Collections.sort(res, nc);
 

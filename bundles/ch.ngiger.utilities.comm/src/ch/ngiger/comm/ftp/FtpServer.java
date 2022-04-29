@@ -13,6 +13,7 @@
 
 package ch.ngiger.comm.ftp;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -160,8 +161,8 @@ public class FtpServer extends FTPClient {
 	}
 
 	private void uploadSemaphore(String semaName) throws IOException {
-		fullSemaName = System.getProperty("user.home", "") + //$NON-NLS-1$
-				System.getProperty("file.separator") + semaName; //$NON-NLS-1$
+		fullSemaName = System.getProperty("user.home", StringUtils.EMPTY) + System.getProperty("file.separator") //$NON-NLS-2$
+				+ semaName;
 		File file = new File(fullSemaName); // $NON-NLS-1$
 		file.createNewFile();
 		uploadFile(file.getName(), file.getPath());

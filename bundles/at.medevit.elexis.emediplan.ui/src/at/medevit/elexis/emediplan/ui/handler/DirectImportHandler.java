@@ -77,7 +77,8 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 				if (!notFoundMedicament.isEmpty()) {
 					StringBuilder sb = new StringBuilder();
 					sb.append("Folgende Medikamente konnte im Artikelstamm nicht gefunden werden\n\n");
-					notFoundMedicament.forEach(m -> sb.append(" - " + getDsc(m) + " " + m.AppInstr + " " + m.TkgRsn));
+					notFoundMedicament.forEach(m -> sb
+							.append(" - " + getDsc(m) + StringUtils.SPACE + m.AppInstr + StringUtils.SPACE + m.TkgRsn));
 					MessageDialog.openWarning(Display.getDefault().getActiveShell(), "Warnung", sb.toString());
 				}
 			}

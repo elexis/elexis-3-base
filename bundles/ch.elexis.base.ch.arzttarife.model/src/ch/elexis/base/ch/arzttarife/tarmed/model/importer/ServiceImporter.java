@@ -534,7 +534,7 @@ public class ServiceImporter {
 			List<Map<String, String>> validResults = ImporterUtil.getValidValueMaps(rsub, validFrom);
 			if (!validResults.isEmpty()) {
 				Map<String, String> row = ImporterUtil.getLatestMap(validResults);
-				ret[0] = StringUtils.abbreviate(row.get("BEZ_255"), 255); //$NON-NLS-1$
+				ret[0] = StringUtils.abbreviate(row.get("BEZ_255"), 255);
 				ret[1] = row.get("MED_INTERPRET"); //$NON-NLS-1$
 				ret[2] = row.get("TECH_INTERPRET"); //$NON-NLS-1$
 			}
@@ -548,7 +548,7 @@ public class ServiceImporter {
 	}
 
 	private String getQLDignitaet() throws SQLException, IOException {
-		String ret = "";
+		String ret = StringUtils.EMPTY;
 		Stm subStm = cacheDb.getStatement();
 		try {
 			ResultSet rsub = subStm.query(String.format("SELECT * FROM %sLEISTUNG_DIGNIQUALI WHERE LNR='%s'",
@@ -579,6 +579,6 @@ public class ServiceImporter {
 		if (law != null && !law.isEmpty()) {
 			return "-" + law;
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 }

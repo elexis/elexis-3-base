@@ -12,6 +12,7 @@
 
 package ch.elexis.actions;
 
+import org.apache.commons.lang3.StringUtils;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -81,7 +82,7 @@ public class Synchronizer {
 			}
 			if (sync != null) {
 				if (!sync.connect(ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_DBUSER, "sa"), //$NON-NLS-1$
-						ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_DBPWD, ""))) { //$NON-NLS-1$
+						ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_DBPWD, StringUtils.EMPTY))) {
 					log.warn(Messages.Synchronizer_connctNotSuccessful + sync.lastErrorString);
 					sync = null;
 				} else {
@@ -250,7 +251,7 @@ public class Synchronizer {
 		t.set("Grund", res.getString("Grund")); //$NON-NLS-1$ //$NON-NLS-2$
 		String pers = res.getString("Personalien"); //$NON-NLS-1$
 		String[] px = Termin.findID(pers);
-		px[1] = px[1].replaceFirst("\\([mw]\\)", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		px[1] = px[1].replaceFirst("\\([mw]\\)", StringUtils.EMPTY); //$NON-NLS-1$
 		qPat.clear();
 		List<Patient> list = qPat.queryFields(new String[] { "Name", "Vorname", "Geburtsdatum" }, px, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if ((list == null) || (list.size() != 1)) {

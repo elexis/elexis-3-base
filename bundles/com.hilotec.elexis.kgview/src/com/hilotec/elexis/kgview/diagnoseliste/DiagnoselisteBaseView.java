@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview.diagnoseliste;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +105,7 @@ class MultilinePaintListener implements Listener {
  * Nicht-persistente Representation eines Diagnosebaums.
  */
 class DNode {
-	public String text = "";
+	public String text = StringUtils.EMPTY;
 	public ArrayList<DNode> children = new ArrayList<DNode>();
 
 	/**
@@ -127,7 +128,7 @@ class DNode {
 	 * Text aufgeraeumt zurueckgeben
 	 */
 	public String getClean() {
-		return text.trim().replaceAll("[ \t]+", " ").replaceAll("\n+", "\n");
+		return text.trim().replaceAll("[ \t]+", StringUtils.SPACE).replaceAll("\n+", StringUtils.LF);
 	}
 
 	/**
@@ -302,11 +303,11 @@ class DLParser {
 				if (e.getNodeName().equals("ul")) {
 					parseUL(e, dn);
 				} else if (e.getNodeName().equals("br")) {
-					dn.append("\n");
+					dn.append(StringUtils.LF);
 				} else if (e.getNodeName().equals("p")) {
-					dn.append("\n");
+					dn.append(StringUtils.LF);
 					parseLI(e, dn);
-					dn.append("\n");
+					dn.append(StringUtils.LF);
 				} else {
 					parseLI(e, dn);
 				}
@@ -330,7 +331,7 @@ class DLParser {
 			html = "<?xml version=\"1.0\" encoding=\"" + enc + "\"?>" + "<root>\n" + html + "\n</root>";
 			html = html.replaceAll("<br>", "<br/>");
 			html = html.replaceAll("<BR>", "<br/>");
-			html = html.replaceAll("ALIGN=JUSTIFY", "");
+			html = html.replaceAll("ALIGN=JUSTIFY", StringUtils.EMPTY);
 			html = html.replaceAll("&shy;", "-");
 
 			System.out.println("Cleaned xml:\n{{" + html + "}}");
@@ -363,7 +364,7 @@ class DLParser {
 				}
 
 				// level Zahl aus class parsen
-				int lvl = Integer.parseInt(c.replaceAll("^liste?-", "").substring(0, 1));
+				int lvl = Integer.parseInt(c.replaceAll("^liste?-", StringUtils.EMPTY).substring(0, 1));
 				while (stack.size() > lvl)
 					stack.pop();
 				if (stack.size() < lvl) {
@@ -374,7 +375,7 @@ class DLParser {
 				DNode dn = stack.peek().newChild();
 				parseManualP(dn, e);
 				// Text etwas aufraeumen
-				dn.text = dn.text.substring(1).replaceAll("[ \t\n\r]+", " ");
+				dn.text = dn.text.substring(1).replaceAll("[ \t\n\r]+", StringUtils.SPACE);
 				dn.text = dn.text.trim();
 				stack.push(dn);
 			}
@@ -400,7 +401,7 @@ class DLParser {
 			if (n instanceof Text) {
 				dn.append(n.getNodeValue());
 			} else if (n instanceof Element && n.getNodeName().equalsIgnoreCase("br")) {
-				dn.append("\n");
+				dn.append(StringUtils.LF);
 			} else {
 				throw new Exception("Ungueltigen Node angetroffen: {" + n.getNodeName() + "}");
 			}
@@ -857,7 +858,7 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 				DiagnoselisteItem di = (DiagnoselisteItem) tis[0].getData();
 				if (StringTool.isNothing(di.getICPC()))
 					return;
-				di.setICPC("");
+				di.setICPC(StringUtils.EMPTY);
 				setupTI(tis[0], di);
 			}
 		};

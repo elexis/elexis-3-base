@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
@@ -267,7 +268,7 @@ public class FormWatcher {
 				}
 
 			} catch (IOException e) {
-				LOGGER.error(logPrefix + "IOException importing document: " + file.toString() + " ", e);//$NON-NLS-1$
+				LOGGER.error(logPrefix + "IOException importing document: " + file.toString() + StringUtils.SPACE, e);
 			}
 		} else if (file != null && !Files.isReadable(file)) {
 			LOGGER.warn(logPrefix + "Following file is not readable: " + file.toString());//$NON-NLS-1$

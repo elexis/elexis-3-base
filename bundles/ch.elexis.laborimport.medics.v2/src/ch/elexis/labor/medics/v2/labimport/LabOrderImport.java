@@ -88,7 +88,7 @@ public class LabOrderImport extends ImporterPage {
 
 		MedicsLogger.getLogger()
 				.println(MessageFormat.format("{0}: Medics Laborimport beendet", df.format(new Date()))); //$NON-NLS-1$
-		MedicsLogger.getLogger().println(""); //$NON-NLS-1$
+		MedicsLogger.getLogger().println(StringUtils.EMPTY);
 
 		// Bereinigung der alten Archiv Dateien
 		deleteOldArchivFiles();
@@ -128,7 +128,7 @@ public class LabOrderImport extends ImporterPage {
 					.println(MessageFormat.format("{0} Dateien aus Archiv Verzeichnis gelöscht.", archivDeleted)); //$NON-NLS-1$
 		}
 
-		MedicsLogger.getLogger().println(""); //$NON-NLS-1$
+		MedicsLogger.getLogger().println(StringUtils.EMPTY);
 	}
 
 	@Override

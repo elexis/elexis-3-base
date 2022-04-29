@@ -75,7 +75,7 @@ public class XMLExporterTiers {
 		biller.setAttribute(XMLExporter.ATTR_EAN_PARTY, TarmedRequirements.getEAN(mandant.getBiller()));
 		XMLExporterUtil.setAttributeIfNotEmpty(biller, "zsr", TarmedRequirements.getKSK(mandant.getBiller()));
 		String spec = (String) mandant.getBiller().getExtInfo(ta.SPEC);
-		if (StringUtils.isNotBlank(spec)) { // $NON-NLS-1$
+		if (StringUtils.isNotBlank(spec)) {
 			biller.setAttribute("specialty", spec); //$NON-NLS-1$
 		}
 		biller.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant.getBiller())); // 11600-11680
@@ -91,7 +91,7 @@ public class XMLExporterTiers {
 			provider.setAttribute("zsr", TarmedRequirements.getKSK(contact)); //$NON-NLS-1$
 			logger.info("Fixed provider [" + contact.getLabel() + "] ean [" + TarmedRequirements.getEAN(contact) + "]");
 			spec = (String) contact.getExtInfo(ta.SPEC);
-			if (StringUtils.isNotBlank(spec)) { // $NON-NLS-1$
+			if (StringUtils.isNotBlank(spec)) {
 				provider.setAttribute("specialty", spec); //$NON-NLS-1$
 			}
 			provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(contact));
@@ -100,7 +100,7 @@ public class XMLExporterTiers {
 			provider.setAttribute("zsr", TarmedRequirements.getKSK(mandant)); //$NON-NLS-1$
 			logger.info("Provider [" + mandant.getLabel() + "] ean [" + TarmedRequirements.getEAN(mandant) + "]");
 			spec = (String) mandant.getExtInfo(ta.SPEC);
-			if (StringUtils.isNotBlank(spec)) { // $NON-NLS-1$
+			if (StringUtils.isNotBlank(spec)) {
 				provider.setAttribute("specialty", spec); //$NON-NLS-1$
 			}
 			provider.addContent(XMLExporterUtil.buildRechnungsstellerAdressElement(mandant));

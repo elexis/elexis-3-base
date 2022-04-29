@@ -14,6 +14,7 @@
 
 package ch.elexis.base.ch.migel.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.jface.action.MenuManager;
@@ -80,7 +81,7 @@ public class MiGelSelector extends CodeSelectorFactory {
 					@Override
 					public String getText(Object element) {
 						if (element instanceof IArticle) {
-							return ((IArticle) element).getCode() + " " + ((IArticle) element).getName();
+							return ((IArticle) element).getCode() + StringUtils.SPACE + ((IArticle) element).getName();
 						}
 						return super.getText(element);
 					}

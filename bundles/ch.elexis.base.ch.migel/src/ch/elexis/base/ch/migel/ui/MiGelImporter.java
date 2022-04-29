@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.base.ch.migel.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -68,34 +69,34 @@ public class MiGelImporter extends ImporterPage {
 
 		public String getStringValue(String[] line) {
 			if (exists(line)) {
-				if (this == NAME && line[index].contains("\n")) {
+				if (this == NAME && line[index].contains(StringUtils.LF)) {
 					line[index] = getJoinedFirstLines(line[index]);
 				}
 				return line[index];
 			} else {
-				return "";
+				return StringUtils.EMPTY;
 			}
 		}
 
 		private String getJoinedFirstLines(String string) {
-			String[] parts = string.split("\n");
+			String[] parts = string.split(StringUtils.LF);
 			if (parts.length > 1) {
 				StringBuilder ret = new StringBuilder();
 				if (!parts[1].isEmpty()) {
 					if (parts[0].endsWith(",")) {
-						ret.append(parts[0] + " " + parts[1]);
+						ret.append(parts[0] + StringUtils.SPACE + parts[1]);
 					} else {
 						ret.append(parts[0] + ", " + parts[1]);
 					}
 				} else {
-					ret.append(parts[0] + "\n");
+					ret.append(parts[0] + StringUtils.LF);
 				}
-				StringJoiner rest = new StringJoiner("\n");
+				StringJoiner rest = new StringJoiner(StringUtils.LF);
 				for (int i = 2; i < parts.length; i++) {
 					rest.add(parts[i]);
 				}
 				if (rest.length() > 0) {
-					ret.append("\n").append(rest);
+					ret.append(StringUtils.LF).append(rest);
 				}
 				return ret.toString();
 			} else {
@@ -194,10 +195,10 @@ public class MiGelImporter extends ImporterPage {
 				String unit = ImportFields.UNIT.getStringValue(line);
 				// try to parse amount from unit
 				if (amount.isEmpty() && !unit.isEmpty() && Character.isDigit(unit.charAt(0))) {
-					String[] parts = unit.split(" ");
+					String[] parts = unit.split(StringUtils.SPACE);
 					if (parts != null && parts.length > 1) {
 						amount = parts[0];
-						StringJoiner unitWithoutDigit = new StringJoiner(" ");
+						StringJoiner unitWithoutDigit = new StringJoiner(StringUtils.SPACE);
 						for (int i = 1; i < parts.length; i++) {
 							unitWithoutDigit.add(parts[i]);
 						}
@@ -238,7 +239,7 @@ public class MiGelImporter extends ImporterPage {
 		Matcher matcher = pattern.matcher(shortname);
 		StringBuffer sb = new StringBuffer();
 		while (matcher.find()) {
-			matcher.appendReplacement(sb, matcher.group(1) + " " + matcher.group(2));
+			matcher.appendReplacement(sb, matcher.group(1) + StringUtils.SPACE + matcher.group(2));
 		}
 		matcher.appendTail(sb);
 		return sb.toString();

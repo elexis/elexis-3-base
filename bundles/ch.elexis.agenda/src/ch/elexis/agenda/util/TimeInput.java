@@ -12,6 +12,7 @@
 
 package ch.elexis.agenda.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
@@ -107,10 +108,10 @@ public class TimeInput extends Composite {
 	private boolean isAcceptable(String input) {
 		return true;
 		/*
-		 * String in=input.replaceFirst("[:\\.]", ""); if(in.length()>4){ return false;
-		 * } if(in.length()==0){ return true; } try{ int hour,minute; if(in.length()<3){
-		 * hour=Integer.parseInt(in); if( (hour>0) && (hour<24)){ return true; } }else{
-		 * hour=Integer.parseInt(in.substring(0,2));
+		 * String in=input.replaceFirst("[:\\.]", StringUtils.EMPTY); if(in.length()>4){
+		 * return false; } if(in.length()==0){ return true; } try{ int hour,minute;
+		 * if(in.length()<3){ hour=Integer.parseInt(in); if( (hour>0) && (hour<24)){
+		 * return true; } }else{ hour=Integer.parseInt(in.substring(0,2));
 		 * minute=Integer.parseInt(in.substring(2)); if( (hour<0) || (hour>24)){ return
 		 * false; } if( (minute<0) || ( minute>60)){ return false; } } return true;
 		 * }catch(NumberFormatException ex){ return false; }

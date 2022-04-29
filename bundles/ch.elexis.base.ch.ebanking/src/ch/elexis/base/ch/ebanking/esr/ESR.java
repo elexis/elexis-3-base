@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -79,7 +80,7 @@ public class ESR {
 	 */
 	public ESR(String ESR_tn, String ESR_subid, String usr, int l) {
 		tn = ESR_tn;
-		id = ESR_subid == null ? "" : ESR_subid; //$NON-NLS-1$
+		id = ESR_subid == null ? StringUtils.EMPTY : ESR_subid;
 		reflen = l - 1;
 		userdata = usr;
 	}
@@ -134,7 +135,7 @@ public class ESR {
 			return refnr;
 		}
 		if (refnr.length() == 16) {
-			return refnr.substring(0, 2) + " " + refnr.substring(3, 6) + " " //$NON-NLS-1$ //$NON-NLS-2$
+			return refnr.substring(0, 2) + StringUtils.SPACE + refnr.substring(3, 6) + StringUtils.SPACE // $NON-NLS-1$
 					+ refnr.substring(7);
 		} else if (refnr.length() == 27) {
 			String g1 = refnr.substring(0, 2);
@@ -143,7 +144,8 @@ public class ESR {
 			String g4 = refnr.substring(12, 17);
 			String g5 = refnr.substring(17, 22);
 			String g6 = refnr.substring(22);
-			return g1 + " " + g2 + " " + g3 + " " + g4 + " " + g5 + " " + g6; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			return g1 + StringUtils.SPACE + g2 + StringUtils.SPACE + g3 + StringUtils.SPACE + g4 + StringUtils.SPACE
+					+ g5 + StringUtils.SPACE + g6; // $NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		} else {
 			return "** ERROR **"; //$NON-NLS-1$
 		}
@@ -176,7 +178,7 @@ public class ESR {
 	 */
 	public String wrap(String number) {
 		int row = 0;
-		String nr = number.replaceAll("[^0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String nr = number.replaceAll("[^0-9]", StringUtils.EMPTY); //$NON-NLS-1$
 		for (int i = 0; i < nr.length(); i++) {
 			int col = Integer.parseInt(nr.substring(i, i + 1));
 			row = checksum[row][col];
@@ -257,10 +259,10 @@ public class ESR {
 
 			// Bank
 			StringBuilder badr = new StringBuilder();
-			badr.append(bank.get("Bezeichnung1")).append(" ").append( //$NON-NLS-1$ //$NON-NLS-2$
-					bank.get("Bezeichnung2")).append("\n").append( //$NON-NLS-1$ //$NON-NLS-2$
+			badr.append(bank.get("Bezeichnung1")).append(StringUtils.SPACE).append( //$NON-NLS-1$
+					bank.get("Bezeichnung2")).append(StringUtils.LF).append( //$NON-NLS-1$
 							bank.get("Plz")) //$NON-NLS-1$
-					.append(" ").append(bank.get("Ort")); //$NON-NLS-1$ //$NON-NLS-2$
+					.append(StringUtils.SPACE).append(bank.get("Ort")); //$NON-NLS-1$
 			// auf Abschnitt
 			p.insertTextAt(xBase, yBase + 8, wAdresse, hAdr - 2, badr.toString(), SWT.LEFT);
 			// auf Giro-Zettel
@@ -298,11 +300,11 @@ public class ESR {
 		p.insertTextAt(xGiro + xKonto, yBase + yKonto, wKonto, hKonto, konto, SWT.LEFT);
 
 		// remove leading zeros from reference number
-		String refNr = makeRefNr(false).replaceFirst("^0+", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String refNr = makeRefNr(false).replaceFirst("^0+", StringUtils.EMPTY); //$NON-NLS-1$
 
 		// Schzuldneradresse. Links mit refNr grad darüber, auf Giro-Abshcnitt ohne
 		// refNr
-		String abs1 = refNr + "\n" + schuldner.getPostAnschrift(true); //$NON-NLS-1$
+		String abs1 = refNr + StringUtils.LF + schuldner.getPostAnschrift(true);
 		p.insertTextAt(xBase, yBase + yGarant1, wAdresse, 25, abs1, SWT.LEFT);
 		p.insertTextAt(xGiro + xRef, yBase + yGarant2, wAdresse, 25, schuldner.getPostAnschrift(true), SWT.LEFT);
 

@@ -1,5 +1,6 @@
 package net.medshare.connector.viollier.handlers;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -36,8 +37,8 @@ public class DiagnoseQueryPatientHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String cookie = "";
-		String vioNumber = "";
+		String cookie = StringUtils.EMPTY;
+		String vioNumber = StringUtils.EMPTY;
 
 		mySettings = new ViollierConnectorSettings((Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 		httpsUrl = mySettings.getGlobalLoginUrl();
@@ -104,7 +105,7 @@ public class DiagnoseQueryPatientHandler extends AbstractHandler {
 		patientVioNrQuery.add(Xid.FLD_DOMAIN, Query.EQUALS, DOMAIN_VIONR);
 		List<Xid> patienten = patientVioNrQuery.execute();
 		if (patienten.isEmpty()) {
-			return "";
+			return StringUtils.EMPTY;
 		} else {
 			return ((Xid) patienten.get(0)).getDomainId();
 		}

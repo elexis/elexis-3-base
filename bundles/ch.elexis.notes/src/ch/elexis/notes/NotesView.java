@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.notes;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -125,9 +126,9 @@ public class NotesView extends ViewPart implements IActivationListener, ElexisEv
 			public void run() {
 				InputDialog id = new InputDialog(getViewSite().getShell(),
 						Messages.NotesView_createMainCategoryDlgTitle, Messages.NotesView_createMainCategoryDlgMessage,
-						"", null); //$NON-NLS-1$
+						StringUtils.EMPTY, null);
 				if (id.open() == Dialog.OK) {
-					/* Note note= */new Note(null, id.getValue(), ""); //$NON-NLS-1$
+					/* Note note= */new Note(null, id.getValue(), StringUtils.EMPTY);
 					master.tv.refresh();
 				}
 			}
@@ -142,9 +143,9 @@ public class NotesView extends ViewPart implements IActivationListener, ElexisEv
 				Note act = (Note) ElexisEventDispatcher.getSelected(Note.class);
 				if (act != null) {
 					InputDialog id = new InputDialog(getViewSite().getShell(), Messages.NotesView_newNoteDlgTitle,
-							Messages.NotesView_newNoteDlgMessage, "", null); //$NON-NLS-1$
+							Messages.NotesView_newNoteDlgMessage, StringUtils.EMPTY, null);
 					if (id.open() == Dialog.OK) {
-						/* Note note= */new Note(act, id.getValue(), ""); //$NON-NLS-1$
+						/* Note note= */new Note(act, id.getValue(), StringUtils.EMPTY);
 						master.tv.refresh();
 					}
 				}
@@ -192,7 +193,7 @@ public class NotesView extends ViewPart implements IActivationListener, ElexisEv
 								byte[] pdf = res.get();
 								InputDialog id = new InputDialog(getViewSite().getShell(),
 										Messages.NotesView_importDocuDlgTitle, Messages.NotesView_importDocDlgMessage,
-										"", null); //$NON-NLS-1$
+										StringUtils.EMPTY, null);
 								if (id.open() == Dialog.OK) {
 									String name = id.getValue();
 									String basedir = CoreHub.localCfg.get(Preferences.CFGTREE, null);

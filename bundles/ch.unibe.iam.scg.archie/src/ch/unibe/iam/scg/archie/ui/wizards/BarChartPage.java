@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.wizards;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,7 +104,7 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 	 */
 	public void handleEvent(Event event) {
 		// Initialize a variable with the no error status
-		Status status = new Status(IStatus.OK, ArchieActivator.PLUGIN_NAME, 0, "", null);
+		Status status = new Status(IStatus.OK, ArchieActivator.PLUGIN_NAME, 0, StringUtils.EMPTY, null);
 
 		// throw an error if nothing selected
 		int[] selected = this.getSelectedIndexes();
@@ -310,7 +311,7 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 	@Override
 	public boolean canFlipToNextPage() {
 		return this.chartName != null && this.chartName.getValue() != null
-				&& !this.chartName.getValue().toString().equals("") && this.getErrorMessage() == null
+				&& !this.chartName.getValue().toString().equals(StringUtils.EMPTY) && this.getErrorMessage() == null
 				&& this.getNumberSelected() > 0;
 	}
 }

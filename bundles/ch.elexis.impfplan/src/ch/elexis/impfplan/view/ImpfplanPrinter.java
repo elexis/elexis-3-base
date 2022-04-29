@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.impfplan.view;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.impfplan.text.ImpfplanTextTemplateRequirement.TT_VACCINATIONS;
 
 import java.util.Collection;
@@ -72,7 +73,7 @@ public class ImpfplanPrinter extends TitleAreaDialog implements ICallback {
 				vts = VaccinationType.findDueFor(actPatient);
 				StringBuilder sb = new StringBuilder();
 				for (VaccinationType vt : vts) {
-					sb.append(vt.get(VaccinationType.NAME)).append("\n"); //$NON-NLS-1$
+					sb.append(vt.get(VaccinationType.NAME)).append(StringUtils.LF);
 				}
 				text.replace(Messages.ImpfplanPrinter_recommendPlaceholder, sb.toString());
 			} catch (ElexisException e) {

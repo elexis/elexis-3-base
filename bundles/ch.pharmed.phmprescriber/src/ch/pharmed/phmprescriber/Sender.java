@@ -5,6 +5,7 @@
 
 package ch.pharmed.phmprescriber;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,7 +44,7 @@ public class Sender {
 	private Physician ph;
 	private Rezept rp;
 	private Patient pat;
-	private String GLN = ""; //$NON-NLS-1$
+	private String GLN = StringUtils.EMPTY;
 
 	private String presID;
 	private String QRCode;
@@ -115,7 +116,7 @@ public class Sender {
 		}
 
 		// (3) Check Interaction if enabled
-		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_INTERATCIONS, ""); //$NON-NLS-1$
+		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_INTERATCIONS, StringUtils.EMPTY);
 
 		// If so, run the check
 		if (strCFG.equals("true")) { //$NON-NLS-1$

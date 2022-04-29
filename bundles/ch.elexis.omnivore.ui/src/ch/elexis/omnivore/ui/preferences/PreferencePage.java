@@ -13,6 +13,7 @@
 
 package ch.elexis.omnivore.ui.preferences;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.omnivore.PreferenceConstants.BASEPATH;
 import static ch.elexis.omnivore.PreferenceConstants.DATE_MODIFIABLE;
 import static ch.elexis.omnivore.PreferenceConstants.OmnivoreMax_Filename_Length_Default;
@@ -272,8 +273,9 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			// Cave: The labels show 1-based rule numbers, although the actual array indizes
 			// are 0
 			// based.
-			gAutoArchiveRule.setText(ch.elexis.omnivore.data.Messages.Preferences_Rule + " " + (i + 1)); // The brackets
-																											// are
+			gAutoArchiveRule.setText(ch.elexis.omnivore.data.Messages.Preferences_Rule + StringUtils.SPACE + (i + 1)); // The
+																														// brackets
+			// are
 			// needed, or the string representations of i and 1 will both be added...
 
 			log.debug("i {} val {}", i, PREF_SRC_PATTERN[i]);
@@ -348,7 +350,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			if (Preferences.PREFERENCE_cotf_elements[i].contains("constant")) {
 				gCotfRuleGridLayoutData.horizontalAlignment = GridData.BEGINNING;
 				gCotfRuleGridLayoutData.verticalAlignment = GridData.BEGINNING;
-				addField(new StringFieldEditor(prefName, "", 10, gCotfRule));
+				addField(new StringFieldEditor(prefName, StringUtils.EMPTY, 10, gCotfRule));
 			} else {
 				String str0 = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i] + "_"
 						+ Preferences.PREFERENCE_cotf_parameters[0];
@@ -391,14 +393,15 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 						selectBlock(block);
 						CoreHub.localCfg.set(PreferenceConstants.AUTO_BILLING_BLOCK, block.getId());
 					} else {
-						CoreHub.localCfg.set(PreferenceConstants.AUTO_BILLING_BLOCK, "");
+						CoreHub.localCfg.set(PreferenceConstants.AUTO_BILLING_BLOCK, StringUtils.EMPTY);
 						selectBlock(null);
 					}
 				}
 			}
 		});
-		if (!CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING_BLOCK, "").isEmpty()) {
-			selectBlock(Leistungsblock.load(CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING_BLOCK, "")));
+		if (!CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING_BLOCK, StringUtils.EMPTY).isEmpty()) {
+			selectBlock(Leistungsblock
+					.load(CoreHub.localCfg.get(PreferenceConstants.AUTO_BILLING_BLOCK, StringUtils.EMPTY)));
 		}
 	}
 
@@ -406,7 +409,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		if (block != null && block.exists()) {
 			tAutomaticBillingBlock.setText(block.getLabel());
 		} else {
-			tAutomaticBillingBlock.setText("");
+			tAutomaticBillingBlock.setText(StringUtils.EMPTY);
 		}
 	}
 

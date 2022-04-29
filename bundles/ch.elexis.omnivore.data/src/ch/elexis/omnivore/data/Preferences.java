@@ -1,5 +1,6 @@
 package ch.elexis.omnivore.data;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.omnivore.PreferenceConstants.BASEPATH;
 import static ch.elexis.omnivore.PreferenceConstants.DATE_MODIFIABLE;
 import static ch.elexis.omnivore.PreferenceConstants.OmnivoreMax_Filename_Length_Default;
@@ -110,8 +111,9 @@ public class Preferences {
 	 *
 	 * @return Either null if the index is out of bounds, or if the respective
 	 *         String is technically undefined (which should never be the case); or
-	 *         the respective String (which may also be "", i.e. an empty string),
-	 *         if the user has cleared or left clear the respective input field.
+	 *         the respective String (which may also be StringUtils.EMPTY, i.e. an
+	 *         empty string), if the user has cleared or left clear the respective
+	 *         input field.
 	 *
 	 * @author Joerg Sigle
 	 */
@@ -124,10 +126,10 @@ public class Preferences {
 		// The preferences keys should already have been constructed by init - but if
 		// not, let's do
 		// it here for the one that we need now:
-		if (PREF_SRC_PATTERN[i].equals("")) {
+		if (PREF_SRC_PATTERN[i].equals(StringUtils.EMPTY)) {
 			PREF_SRC_PATTERN[i] = PREFERENCE_SRC_PATTERN + i.toString().trim(); // $NON-NLS-1$
 		}
-		return CoreHub.localCfg.get(PREF_SRC_PATTERN[i], "").trim();
+		return CoreHub.localCfg.get(PREF_SRC_PATTERN[i], StringUtils.EMPTY).trim();
 	}
 
 	// ----------------------------------------------------------------------------
@@ -141,8 +143,9 @@ public class Preferences {
 	 *
 	 * @return Either null if the index is out of bounds, or if the respective
 	 *         String is technically undefined (which should never be the case); or
-	 *         the respective String (which may also be "", i.e. an empty string),
-	 *         if the user has cleared or left clear the respective input field.
+	 *         the respective String (which may also be StringUtils.EMPTY, i.e. an
+	 *         empty string), if the user has cleared or left clear the respective
+	 *         input field.
 	 *
 	 * @author Joerg Sigle
 	 */
@@ -155,10 +158,10 @@ public class Preferences {
 		// The preferences keys should already have been constructed by init - but if
 		// not, let's do
 		// it here for the one that we need now:
-		if (PREF_DEST_DIR[i].equals("")) {
+		if (PREF_DEST_DIR[i].equals(StringUtils.EMPTY)) {
 			PREF_DEST_DIR[i] = PREFERENCE_DEST_DIR + i.toString().trim(); // $NON-NLS-1$
 		}
-		return CoreHub.localCfg.get(PREF_DEST_DIR[i], "").trim();
+		return CoreHub.localCfg.get(PREF_DEST_DIR[i], StringUtils.EMPTY).trim();
 	}
 
 	// ----------------------------------------------------------------------------

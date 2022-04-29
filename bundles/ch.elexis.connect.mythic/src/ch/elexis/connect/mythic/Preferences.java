@@ -12,6 +12,7 @@
 
 package ch.elexis.connect.mythic;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -74,7 +75,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		if (idx < param.length) {
 			return param[idx];
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public void init(final IWorkbench workbench) {

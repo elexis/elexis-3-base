@@ -543,7 +543,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 			appointment.setSeriesPatternString(sb.toString());
 			break;
 		case MONTHLY:
-			appointment.setSeriesPatternString(msc.getDay() + "");
+			appointment.setSeriesPatternString(msc.getDay() + StringUtils.EMPTY);
 			break;
 		case YEARLY:
 			appointment

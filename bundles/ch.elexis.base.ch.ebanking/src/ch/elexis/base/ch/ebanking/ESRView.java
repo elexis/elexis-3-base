@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.ebanking;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.base.ch.ebanking.EBankingACLContributor.DISPLAY_ESR;
 
 import java.text.DateFormat;
@@ -245,8 +246,8 @@ public class ESRView extends ViewPart {
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				Rechnung r1 = ((ESRRecord) e1).getRechnung();
 				Rechnung r2 = ((ESRRecord) e2).getRechnung();
-				String rNr1 = (r1 != null) ? r1.getNr() : "";
-				String rNr2 = (r2 != null) ? r2.getNr() : "";
+				String rNr1 = (r1 != null) ? r1.getNr() : StringUtils.EMPTY;
+				String rNr2 = (r2 != null) ? r2.getNr() : StringUtils.EMPTY;
 				return StringTool.compareNumericStrings(rNr1, rNr2);
 			}
 		};
@@ -330,8 +331,8 @@ public class ESRView extends ViewPart {
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				Patient pat1 = ((ESRRecord) e1).getPatient();
 				Patient pat2 = ((ESRRecord) e2).getPatient();
-				String patLab1 = (pat1 != null) ? pat1.getLabel() : "";
-				String patLab2 = (pat2 != null) ? pat2.getLabel() : "";
+				String patLab1 = (pat1 != null) ? pat1.getLabel() : StringUtils.EMPTY;
+				String patLab2 = (pat2 != null) ? pat2.getLabel() : StringUtils.EMPTY;
 				return patLab1.compareTo(patLab2);
 			}
 		};

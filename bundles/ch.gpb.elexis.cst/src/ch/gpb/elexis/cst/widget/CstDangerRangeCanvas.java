@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.widget;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -145,7 +146,7 @@ public class CstDangerRangeCanvas extends CstCanvas {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			log.error("DangerRangeCanvas error: " + "greenEnd:" + greenEnd + " xLenToFill: " + xLenToFill + "  "
-					+ "title: " + title + " " + e1.getMessage());
+					+ "title: " + title + StringUtils.SPACE + e1.getMessage());
 		}
 
 		gc.setForeground(BLACK);

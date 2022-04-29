@@ -1,5 +1,6 @@
 package ch.medshare.mediport.gui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -50,10 +51,9 @@ public class ErrorInvoiceForm extends Composite {
 		if (index >= 0) {
 			int index2 = xmlContent.indexOf("?>\n"); //$NON-NLS-1$
 			if (index2 == -1) {
-				newLine = newLine + "\n";
+				newLine = newLine + StringUtils.LF;
 			}
-			return xmlContent.substring(0, index + 2) + "\n" + newLine //$NON-NLS-1$
-					+ xmlContent.substring(index + 2);
+			return xmlContent.substring(0, index + 2) + StringUtils.LF + newLine + xmlContent.substring(index + 2);
 		}
 		return newLine;
 	}

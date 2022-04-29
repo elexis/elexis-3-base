@@ -12,6 +12,7 @@
 
 package ch.elexis.icpc.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.jface.layout.GridDataFactory;
@@ -158,17 +159,17 @@ public class EncounterDisplay extends Composite {
 		actEncounter = e;
 		if (e == null) {
 			form.setText("Keine Episode gewählt");
-			lRfe.setText("");
-			lDiag.setText("");
-			lProc.setText("");
+			lRfe.setText(StringUtils.EMPTY);
+			lDiag.setText(StringUtils.EMPTY);
+			lProc.setText(StringUtils.EMPTY);
 		} else {
 			form.setText(e.getEpisode().getLabel());
 			IcpcCode rfe = e.getRfe();
-			lRfe.setText(rfe == null ? "" : rfe.getLabel());
+			lRfe.setText(rfe == null ? StringUtils.EMPTY : rfe.getLabel());
 			IcpcCode diag = e.getDiag();
-			lDiag.setText(diag == null ? "" : diag.getLabel());
+			lDiag.setText(diag == null ? StringUtils.EMPTY : diag.getLabel());
 			IcpcCode proc = e.getProc();
-			lProc.setText(proc == null ? "" : proc.getLabel());
+			lProc.setText(proc == null ? StringUtils.EMPTY : proc.getLabel());
 		}
 	}
 

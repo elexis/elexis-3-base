@@ -1,5 +1,6 @@
 package at.medevit.elexis.text.docx.dataaccess;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,7 @@ import ch.rgw.tools.Result;
 
 public class SignatureImageDataAccess implements IDataAccess {
 
-	public static final String CFG_USERSIGNATURE_GLOBAL = "";
+	public static final String CFG_USERSIGNATURE_GLOBAL = StringUtils.EMPTY;
 
 	@Override
 	public String getName() {
@@ -63,7 +64,7 @@ public class SignatureImageDataAccess implements IDataAccess {
 			}
 		}
 		// default replace with empty String
-		return new Result<Object>("");
+		return new Result<Object>(StringUtils.EMPTY);
 	}
 
 	private Optional<IImage> getUserImage(IUser user) {

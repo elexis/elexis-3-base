@@ -1,5 +1,6 @@
 package at.medevit.elexis.loinc.model.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,7 +78,7 @@ public class LoincCodeService implements ILoincCodeService {
 
 		for (int i = 0; i < fieldMapping.size(); i++) {
 			if (i >= parts.length) {
-				code.set(fieldMapping.get(i), "");
+				code.set(fieldMapping.get(i), StringUtils.EMPTY);
 			}
 			code.set(fieldMapping.get(i), parts[i]);
 		}

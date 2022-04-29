@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -154,7 +155,7 @@ public class MedNetSettings {
 		String logPrefix = "loadSettings() - ";//$NON-NLS-1$
 
 		// Global Settings
-		String exePathString = ConfigServiceHolder.getGlobal(cfgExePath, "");
+		String exePathString = ConfigServiceHolder.getGlobal(cfgExePath, StringUtils.EMPTY);
 		if (exePathString != null && !exePathString.isEmpty()) {
 			exePath = Paths.get(exePathString);
 			if (!Files.isRegularFile(exePath)) {
@@ -164,7 +165,8 @@ public class MedNetSettings {
 			}
 		}
 
-		String cfgFormsArchivePurgeIntervalString = ConfigServiceHolder.getGlobal(cfgFormsArchivePurgeInterval, ""); //$NON-NLS-1$
+		String cfgFormsArchivePurgeIntervalString = ConfigServiceHolder.getGlobal(cfgFormsArchivePurgeInterval,
+				StringUtils.EMPTY);
 		if (cfgFormsArchivePurgeIntervalString != null && !cfgFormsArchivePurgeIntervalString.isEmpty()) {
 			try {
 				archivePurgeInterval = Integer.parseInt(cfgFormsArchivePurgeIntervalString);
@@ -177,7 +179,7 @@ public class MedNetSettings {
 			archivePurgeInterval = MedNetSettings.DEFAULT_ARCHIVEPURGEINTERVAL;
 		}
 
-		String cfgDBVersionString = ConfigServiceHolder.getGlobal(cfgDBVersion, ""); //$NON-NLS-1$
+		String cfgDBVersionString = ConfigServiceHolder.getGlobal(cfgDBVersion, StringUtils.EMPTY);
 		if (cfgDBVersionString != null && !cfgDBVersionString.isEmpty()) {
 			try {
 				dbVersion = Integer.parseInt(cfgDBVersionString);

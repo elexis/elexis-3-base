@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.events.MouseEvent;
@@ -94,7 +95,7 @@ public class KonsTimerView extends KonsTimeView implements Runnable {
 
 	protected void setEnabled(boolean en) {
 		if (!en) {
-			timerLbl.setText("");
+			timerLbl.setText(StringUtils.EMPTY);
 		}
 		startBtn.setEnabled(en);
 		resetBtn.setEnabled(en);

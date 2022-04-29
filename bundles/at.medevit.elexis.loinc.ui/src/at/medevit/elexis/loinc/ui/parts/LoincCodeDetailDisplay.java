@@ -1,5 +1,6 @@
 package at.medevit.elexis.loinc.ui.parts;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -80,14 +81,14 @@ public class LoincCodeDetailDisplay implements IDetailDisplay {
 		Font boldFont = new Font(Display.getCurrent(), bfd[0]);
 		lbl.setFont(boldFont);
 
-		codeCode = toolkit.createText(info, "");
+		codeCode = toolkit.createText(info, StringUtils.EMPTY);
 		codeCode.setEditable(false);
 		codeCode.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 
 		lbl = toolkit.createLabel(info, "Kurz Beschreibung");
 		lbl.setFont(boldFont);
 
-		codeShortDesc = toolkit.createText(info, "");
+		codeShortDesc = toolkit.createText(info, StringUtils.EMPTY);
 		codeShortDesc.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		codeShortDesc.setLayoutData(twd);
@@ -95,7 +96,7 @@ public class LoincCodeDetailDisplay implements IDetailDisplay {
 		lbl = toolkit.createLabel(info, "Einheit");
 		lbl.setFont(boldFont);
 
-		codeUnit = toolkit.createText(info, "");
+		codeUnit = toolkit.createText(info, StringUtils.EMPTY);
 		codeUnit.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		codeUnit.setLayoutData(twd);
@@ -103,7 +104,7 @@ public class LoincCodeDetailDisplay implements IDetailDisplay {
 		lbl = toolkit.createLabel(info, "Text");
 		lbl.setFont(boldFont);
 
-		codeText = toolkit.createText(info, "", SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+		codeText = toolkit.createText(info, StringUtils.EMPTY, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		codeText.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.heightHint = 100;
@@ -112,7 +113,7 @@ public class LoincCodeDetailDisplay implements IDetailDisplay {
 		lbl = toolkit.createLabel(info, "Klassifikation");
 		lbl.setFont(boldFont);
 
-		codeClazz = toolkit.createText(info, "");
+		codeClazz = toolkit.createText(info, StringUtils.EMPTY);
 		codeClazz.setEditable(false);
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		codeClazz.setLayoutData(twd);
@@ -137,11 +138,11 @@ public class LoincCodeDetailDisplay implements IDetailDisplay {
 			actCode = null;
 			form.setText("Kein LOINC Code ausgewählt.");
 
-			codeCode.setText("");
-			codeShortDesc.setText("");
-			codeUnit.setText("");
-			codeText.setText("");
-			codeClazz.setText("");
+			codeCode.setText(StringUtils.EMPTY);
+			codeShortDesc.setText(StringUtils.EMPTY);
+			codeUnit.setText(StringUtils.EMPTY);
+			codeText.setText(StringUtils.EMPTY);
+			codeClazz.setText(StringUtils.EMPTY);
 		}
 		infoSection.layout();
 		form.reflow(true);

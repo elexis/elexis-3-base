@@ -4,6 +4,7 @@
  ******************************************************************************/
 package at.medevit.medelexis.text.msword.plugin.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -104,7 +105,7 @@ public class ZipUtil {
 			zout = new ZipOutputStream(fout);
 
 			// start adding the directory to the zip
-			zipAddDirectory(zout, sourceDirectory, ""); //$NON-NLS-1$
+			zipAddDirectory(zout, sourceDirectory, StringUtils.EMPTY);
 		} finally {
 			if (zout != null) {
 				try {

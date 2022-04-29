@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.dialogs;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.agenda.text.AgendaTextTemplateRequirement.TT_APPOINTMENT_CARD;
 
 import java.util.Arrays;
@@ -88,7 +89,7 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 		for (Termin t : liste) {
 			TimeTool day = new TimeTool(t.getDay());
 			sb.append(day.toString(TimeTool.WEEKDAY)).append(", ").append(day.toString(TimeTool.DATE_GER)).append(" - ")
-					.append(Plannables.getStartTimeAsString(t)).append("\n");
+					.append(Plannables.getStartTimeAsString(t)).append(StringUtils.LF);
 		}
 		text.replace("\\[Termine\\]", sb.toString());
 		if (text.getPlugin().isDirectOutput()) {
@@ -126,7 +127,8 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 			return false;
 		}
 
-		String printer = CoreHub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, "");
+		String printer = CoreHub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME,
+				StringUtils.EMPTY);
 		String tray = CoreHub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, null);
 
 		return text.getPlugin().print(printer, tray, false);

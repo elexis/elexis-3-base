@@ -1,5 +1,6 @@
 package waelti.statistics.views;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -33,7 +34,7 @@ public class TableViewerFactory {
 		viewer.setLabelProvider(this.query.getLabelProvider());
 		this.addColumnSort(viewer);
 
-		viewer.setInput(""); // fill the table
+		viewer.setInput(StringUtils.EMPTY); // fill the table
 		packColumns(viewer.getTable()); // width of single columns
 		return viewer;
 	}

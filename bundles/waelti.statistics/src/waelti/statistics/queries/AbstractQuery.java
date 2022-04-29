@@ -1,5 +1,6 @@
 package waelti.statistics.queries;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Calendar;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public abstract class AbstractQuery extends BackgroundJob {
 	 */
 	public String getHeader() {
 		String header = "Auswertungsname: ";
-		header += this.getTitle() + "\n";
+		header += this.getTitle() + StringUtils.LF;
 		header += "Auswertungsdatum: " + QueryUtil.convertFromCalendar(Calendar.getInstance());
 
 		return header;

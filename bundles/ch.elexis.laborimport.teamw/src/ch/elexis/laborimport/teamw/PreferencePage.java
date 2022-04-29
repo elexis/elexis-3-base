@@ -14,6 +14,7 @@
 
 package ch.elexis.laborimport.teamw;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
@@ -41,10 +42,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String DOCUMENT_CATEGORY = "teamw/documentcategory";
 
 	public static final String DEFAULT_FTP_HOST = "195.144.61.180"; //$NON-NLS-1$
-	public static final String DEFAULT_FTP_USER = ""; //$NON-NLS-1$
-	public static final String DEFAULT_FTP_PWD = ""; //$NON-NLS-1$
+	public static final String DEFAULT_FTP_USER = StringUtils.EMPTY;
+	public static final String DEFAULT_FTP_PWD = StringUtils.EMPTY;
 	public static final String DEFAULT_DL_DIR = "/tmp/teamw"; //$NON-NLS-1$
-	public static final String DEFAULT_BATCH_DATEI = ""; //$NON-NLS-1$
+	public static final String DEFAULT_BATCH_DATEI = StringUtils.EMPTY;
 
 	public static final String DEFAULT_DOCUMENT_CATEGORY = "TeamW Laborbefunde";
 

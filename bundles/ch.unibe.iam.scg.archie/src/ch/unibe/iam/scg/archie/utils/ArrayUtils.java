@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Method;
 
 /**
@@ -50,7 +51,7 @@ public class ArrayUtils {
 		}
 
 		for (int i = 0; i < array.length; i++) {
-			String prefix = (i == 0) ? "[" : "";
+			String prefix = (i == 0) ? "[" : StringUtils.EMPTY;
 			String suffix = (i == array.length - 1) ? "]" : ",";
 
 			buffer.append(prefix);

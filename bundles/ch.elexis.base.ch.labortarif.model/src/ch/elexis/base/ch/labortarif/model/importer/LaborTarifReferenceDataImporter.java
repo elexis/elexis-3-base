@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.labortarif.model.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -339,20 +340,20 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 		String fach2011 = StringTool.getSafe(line, 6);
 		String fach2012 = StringTool.getSafe(line, 7);
 		String code2018 = StringTool.getSafe(line, 1);
-		if (fach2012.equals("") && !fach2011.equals("")) {
+		if (fach2012.equals(StringUtils.EMPTY) && !fach2011.equals(StringUtils.EMPTY)) {
 			if (isCode(code2018)) {
 				return 2018;
 			} else {
 				return 2011;
 			}
-		} else if (fach2011.equals("") && !fach2012.equals("")) {
+		} else if (fach2011.equals(StringUtils.EMPTY) && !fach2012.equals(StringUtils.EMPTY)) {
 			return 2012;
 		}
 		return -1;
 	}
 
 	private boolean isCode(String code2018) {
-		code2018 = code2018.replaceAll("[\\.,']", "");
+		code2018 = code2018.replaceAll("[\\.,']", StringUtils.EMPTY);
 		Integer value = Integer.valueOf(code2018);
 		return value >= 1000;
 	}

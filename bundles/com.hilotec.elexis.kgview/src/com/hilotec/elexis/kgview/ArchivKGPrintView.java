@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview;
 
+import org.apache.commons.lang3.StringUtils;
 import static com.hilotec.elexis.kgview.text.KGTextTemplateRequirement.TT_ARCHIV_KG;
 
 import org.eclipse.swt.SWT;
@@ -60,14 +61,14 @@ public class ArchivKGPrintView extends ViewPart {
 		}
 		tp.setStyle(SWT.BOLD);
 		pos = tp.insertText(pos, styp, SWT.LEFT);
-		pos = tp.insertText(pos, " " + k.getDatum() + " " + kd.getKonsBeginn(), SWT.LEFT);
+		pos = tp.insertText(pos, StringUtils.SPACE + k.getDatum() + StringUtils.SPACE + kd.getKonsBeginn(), SWT.LEFT);
 		tp.setStyle(SWT.NORMAL);
 
 		if (k.getFall() != null) {
-			pos = tp.insertText(pos, " " + k.getFall().getAbrechnungsSystem(), SWT.LEFT);
+			pos = tp.insertText(pos, StringUtils.SPACE + k.getFall().getAbrechnungsSystem(), SWT.LEFT);
 		}
 
-		String sAutor = "";
+		String sAutor = StringUtils.EMPTY;
 		Anwender autor = kd.getAutor();
 		if (autor != null) {
 			sAutor = autor.getKuerzel();
@@ -84,7 +85,7 @@ public class ArchivKGPrintView extends ViewPart {
 		pos = addParagraph("Therapie", kd.getTherapie(), tp, pos);
 		pos = addParagraph("Verlauf", kd.getVerlauf(), tp, pos);
 		pos = addParagraph("Procedere", kd.getProzedere(), kd.getProzedereICPC(), tp, pos);
-		pos = tp.insertText(pos, "\n", 0);
+		pos = tp.insertText(pos, StringUtils.LF, 0);
 
 		return pos;
 	}
@@ -100,10 +101,10 @@ public class ArchivKGPrintView extends ViewPart {
 		tp.setStyle(SWT.BOLD);
 		pos = tp.insertText(pos, titel, SWT.LEFT);
 		tp.setStyle(SWT.NORMAL);
-		pos = tp.insertText(pos, "\n", SWT.LEFT);
+		pos = tp.insertText(pos, StringUtils.LF, SWT.LEFT);
 
 		if (icpc != null && !icpc.isEmpty())
-			pos = tp.insertText(pos, "ICPC: " + icpc.replace(",", ", ") + "\n", SWT.LEFT);
+			pos = tp.insertText(pos, "ICPC: " + icpc.replace(",", ", ") + StringUtils.LF, SWT.LEFT);
 
 		pos = tp.insertText(pos, text + "\n\n", SWT.LEFT);
 		return pos;
@@ -114,7 +115,7 @@ public class ArchivKGPrintView extends ViewPart {
 		ITextPlugin tp = text.getPlugin();
 		Patient pat = kons.getFall().getPatient();
 
-		Object pos = tp.insertText("[ArchivKG]", "", SWT.LEFT);
+		Object pos = tp.insertText("[ArchivKG]", StringUtils.EMPTY, SWT.LEFT);
 		;
 		for (Konsultation k : ArchivKG.getKonsultationen(pat, reversed)) {
 			pos = processKonsultation(k, tp, pos);

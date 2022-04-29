@@ -1,5 +1,6 @@
 package at.medevit.elexis.ehc.ui.vacdoc.composite;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -48,7 +49,7 @@ public class VaccinationSelectionComposite extends Composite {
 			public String getText(Object element) {
 				if (element instanceof Vaccination) {
 					Vaccination vaccination = ((Vaccination) element);
-					return vaccination.getDateOfAdministration().toString(TimeTool.DATE_GER) + " "
+					return vaccination.getDateOfAdministration().toString(TimeTool.DATE_GER) + StringUtils.SPACE
 							+ vaccination.getBusinessName() + " (" + vaccination.getLotNo() + ") - "
 							+ vaccination.getAdministratorLabel();
 				}

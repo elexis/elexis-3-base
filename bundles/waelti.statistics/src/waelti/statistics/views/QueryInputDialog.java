@@ -1,5 +1,6 @@
 package waelti.statistics.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Hashtable;
 import java.util.Set;
 
@@ -161,7 +162,7 @@ public class QueryInputDialog extends TitleAreaDialog {
 	 * i = (y > j) ? j : y; // smaller deviation is preferred.
 	 *
 	 * buf.deleteCharAt(i); // replace space with a new line char. buf.insert(i,
-	 * "\n"); } return buf.toString(); }
+	 * StringUtils.LF); } return buf.toString(); }
 	 */
 
 	/**

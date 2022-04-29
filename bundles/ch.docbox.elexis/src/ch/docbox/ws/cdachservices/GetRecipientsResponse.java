@@ -1,5 +1,6 @@
 package ch.docbox.ws.cdachservices;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,7 +32,7 @@ import org.hl7.v3.POCDMT000040IntendedRecipient;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "recipient" })
+@XmlType(name = StringUtils.EMPTY, propOrder = { "recipient" })
 @XmlRootElement(name = "getRecipientsResponse")
 public class GetRecipientsResponse {
 

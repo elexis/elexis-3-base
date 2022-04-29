@@ -12,6 +12,7 @@
 
 package ch.elexis.agenda.preferences;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.jface.preference.PreferencePage;
@@ -129,8 +130,10 @@ public class AgendaDruck extends PreferencePage implements IWorkbenchPreferenceP
 	private void setInitialValues() {
 		setTemplates();
 
-		tTerminPrinter.setText(CoreHub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, "")); //$NON-NLS-1$
-		tTerminTray.setText(CoreHub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, "")); //$NON-NLS-1$
+		tTerminPrinter.setText(
+				CoreHub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, StringUtils.EMPTY));
+		tTerminTray.setText(
+				CoreHub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, StringUtils.EMPTY));
 
 		boolean directPrint = CoreHub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
 				PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);

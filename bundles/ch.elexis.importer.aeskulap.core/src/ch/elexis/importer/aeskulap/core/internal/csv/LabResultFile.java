@@ -101,7 +101,7 @@ public class LabResultFile extends AbstractCsvImportFile<LabResult> implements I
 		TimeTool date = new TimeTool(line[9]);
 		LabResult labResult = new LabResult(patient, date, item, getResult(line), getComment(line));
 
-		String orderId = "";
+		String orderId = StringUtils.EMPTY;
 		LabOrder order = importOrderMap.get(patient);
 		if (order == null) {
 			orderId = LabOrder.getNextOrderId();
@@ -141,7 +141,7 @@ public class LabResultFile extends AbstractCsvImportFile<LabResult> implements I
 	}
 
 	public String normalizeTextValue(String value) {
-		return value.replaceAll("_x000D_", "");
+		return value.replaceAll("_x000D_", StringUtils.EMPTY);
 	}
 
 	private String getResultString(String[] line) {
@@ -150,7 +150,7 @@ public class LabResultFile extends AbstractCsvImportFile<LabResult> implements I
 		} else if (!StringUtils.isBlank(line[6])) {
 			return normalizeNumericValue(line[6]);
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	private String getResult(String[] line) {

@@ -1,5 +1,6 @@
 package ch.elexis.covid.cert.service.rest.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -103,7 +104,8 @@ public class TestModel {
 		ZonedDateTime utcDateTime = zonedNow.withZoneSameInstant(ZoneId.of("Z"));
 		testinfo.setSampleDateTime(TestInfo.formatter.format(utcDateTime));
 		testinfo.setMemberStateOfTest("CH");
-		testinfo.setTestingCentreOrFacility(ConfigServiceHolder.get().get(CertificatesService.CFG_TESTCENTERNAME, ""));
+		testinfo.setTestingCentreOrFacility(
+				ConfigServiceHolder.get().get(CertificatesService.CFG_TESTCENTERNAME, StringUtils.EMPTY));
 		setTestInfo(new TestInfo[] { testinfo });
 		return this;
 	}

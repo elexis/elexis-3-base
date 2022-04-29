@@ -13,6 +13,7 @@
 
 package ch.elexis.omnivore.data;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.omnivore.PreferenceConstants.PREFBASE;
 
 import java.io.File;
@@ -58,10 +59,11 @@ public class Utils {
 			for (Integer i = 0; i < Preferences.getOmnivorenRulesForAutoArchiving(); i++) {
 				SrcPattern = Preferences.getOmnivoreRuleForAutoArchivingSrcPattern(i);
 				DestDir = Preferences.getOmnivoreRuleForAutoArchivingDestDir(i);
-				if ((SrcPattern != null) && (DestDir != null) && ((SrcPattern != "" || DestDir != ""))) {
+				if ((SrcPattern != null) && (DestDir != null)
+						&& ((SrcPattern != StringUtils.EMPTY || DestDir != StringUtils.EMPTY))) {
 					if (file.getAbsolutePath().contains(SrcPattern)) {
 						log.debug("SrcPattern {} found in file.getAbsolutePath() pos {}", SrcPattern, i);
-						if (DestDir == "") {
+						if (DestDir == StringUtils.EMPTY) {
 							log.debug("DestDir is empty. No more rules will be evaluated for this file. Returning.");
 						}
 						newFile = VirtualFilesystemServiceHolder.get().of(DestDir);
@@ -151,7 +153,7 @@ public class Utils {
 					// If the num_digits for this element is empty, then return an empty result -
 					// the element is disabled.
 					if (snum_digits.isEmpty()) {
-						return "";
+						return StringUtils.EMPTY;
 					}
 
 					Integer num_digits = -1;
@@ -166,7 +168,7 @@ public class Utils {
 					// if num_digits for this element is <= 0, then return an empty result - the
 					// element is disabled.
 					if (num_digits <= 0) {
-						return "";
+						return StringUtils.EMPTY;
 					}
 
 					if (num_digits > Preferences.nPreferences_cotf_element_digits_max) {
@@ -175,24 +177,28 @@ public class Utils {
 
 					// Remove all characters that shall not appear in the generated filename
 					String element_data_processed5 = (element_data
-							.replaceAll(java.util.regex.Matcher.quoteReplacement(Preferences.cotf_unwanted_chars), "")
+							.replaceAll(java.util.regex.Matcher.quoteReplacement(Preferences.cotf_unwanted_chars),
+									StringUtils.EMPTY)
 							.toString().trim());
 
 					// filter out some special unwanted strings from the title that may have
 					// eeclipse-javadoc:%E2%98%82=ch.elexis.core.data/%5C/usr%5C/lib%5C/jvm%5C/java-8-oracle%5C/jre%5C/lib%5C/rt.jar%3Cjava.util.regex(Matcher.class%E2%98%83Matcher~quoteReplacement~Ljava.lang.String;%E2%98%82java.lang.Stringntered
 					// while importing and partially renaming files
 					String element_data_processed4 = element_data_processed5
-							.replaceAll("_noa[0-9]+\056[a-zA-Z0-9]{0,3}", ""); // remove
+							.replaceAll("_noa[0-9]+\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove
 					// filename remainders like _noa635253160443574060.doc
 					String element_data_processed3 = element_data_processed4.replaceAll("noa[0-9]+\056[a-zA-Z0-9]{0,3}",
-							""); // remove
+							StringUtils.EMPTY); // remove
 					// filename remainders like noa635253160443574060.doc
 					String element_data_processed2 = element_data_processed3
-							.replaceAll("_omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", ""); // remove filename remainders like
+							.replaceAll("_omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove filename
+																										// remainders
+																										// like
 					// _omni_635253160443574060_vore.pdf
 					String element_data_processed1 = element_data_processed2
-							.replaceAll("omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", ""); // remove filename remainders like
-																						// omni_635253160443574060_vore.pdf
+							.replaceAll("omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove filename
+																									// remainders like
+					// omni_635253160443574060_vore.pdf
 
 					// Limit the length of the result if it exceeds the specified or predefined max
 					// number of digits
@@ -235,7 +241,7 @@ public class Utils {
 				return element_data_processed.toString(); // This also breaks the for loop
 			} // if ... equals(element_key)
 		} // for int i...
-		return ""; // default return value, if nothing is defined.
+		return StringUtils.EMPTY; // default return value, if nothing is defined.
 	}
 
 	/**
@@ -257,7 +263,7 @@ public class Utils {
 
 	public static String createNiceFileName(IDocumentHandle dh) {
 		StringBuffer tmp = new StringBuffer();
-		tmp.append(getFileElement("constant1", ""));
+		tmp.append(getFileElement("constant1", StringUtils.EMPTY));
 		tmp.append(getFileElement("PID", dh.getPatient().getPatientNr())); // getPatient() liefert in etwa:
 																			// ch.elexis.com@1234567;
 																			// getPatient().getId() eine DB-ID;
@@ -315,7 +321,7 @@ public class Utils {
 				.round(Math.ceil(Math.log(Preferences.nPreferences_cotf_element_digits_max) / Math.log(2)));
 		tmp.append(getFileElement("random", new BigInteger(needed_bits, random).toString()));
 
-		tmp.append(getFileElement("constant2", ""));
+		tmp.append(getFileElement("constant2", StringUtils.EMPTY));
 		return tmp.toString();
 	}
 
@@ -349,7 +355,7 @@ public class Utils {
 		}
 
 		if (fileExtension == null) {
-			fileExtension = "";
+			fileExtension = StringUtils.EMPTY;
 		}
 
 		String config_temp_filename = Utils.createNiceFileName(documentHandle);

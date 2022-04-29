@@ -5,6 +5,7 @@
 
 package ch.medshare.mediport;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -204,7 +205,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 								rn.reject(REJECTCODE.INTERNAL_ERROR, errorMsg);
 							} else {
 								String title = Messages.MediportOutputter_error_Rechnung; // $NON-NLS-1$
-								title = title + " " + rn.getNr();
+								title = title + StringUtils.SPACE + rn.getNr();
 								MessageDialog.openError(new Shell(), title, errorMsg);
 							}
 						}
@@ -224,7 +225,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 									rn.reject(REJECTCODE.INTERNAL_ERROR, errorMsg);
 								} else {
 									String title = Messages.MediportOutputter_error_Rechnung; // $NON-NLS-1$
-									title = title + " " + rn.getNr();
+									title = title + StringUtils.SPACE + rn.getNr();
 									MessageDialog.openError(new Shell(), title, errorMsg);
 								}
 							}
@@ -420,7 +421,7 @@ public class MediportOutputter extends ch.elexis.TarmedRechnung.XMLExporter {
 
 		if (message != null) {
 			return MessageDialog.openQuestion(new Shell(), getDescription(),
-					message + "\n" + Messages.MediportOutputter_question_Fortfahren); //$NON-NLS-1$ //$NON-NLS-2$
+					message + StringUtils.LF + Messages.MediportOutputter_question_Fortfahren); // $NON-NLS-1$
 		}
 
 		return true;

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.emediplan.core.internal;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -176,7 +177,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error encoding QR", e);
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	private String getEncodedLogo() {
@@ -187,7 +188,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error encoding logo", e);
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	protected Optional<Image> getQrCode(@NonNull String json) {
@@ -350,7 +351,8 @@ public class EMediplanServiceImpl implements EMediplanService {
 			if (patient == null) {
 				String bDate = medication.Patient.BDt;
 				Patient kontakt = KontaktMatcher.findPatient(medication.Patient.LName, medication.Patient.FName,
-						bDate != null ? bDate.replace("-", "") : null, null, null, null, null, null, CreateMode.ASK);
+						bDate != null ? bDate.replace("-", StringUtils.EMPTY) : null, null, null, null, null, null,
+						CreateMode.ASK);
 				if (kontakt != null) {
 					patient = CoreModelServiceHolder.get().load(kontakt.getId(), IPatient.class).orElse(null);
 				}

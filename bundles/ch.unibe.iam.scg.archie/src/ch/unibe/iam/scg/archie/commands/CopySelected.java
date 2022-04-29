@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.commands;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -82,10 +83,10 @@ public class CopySelected extends AbstractHandler {
 	 * @return String composed from the array fields, separated by <code>\t</code>
 	 */
 	private String datasetRowToString(Comparable<?>[] row) {
-		String rowString = "";
+		String rowString = StringUtils.EMPTY;
 		for (int i = 0; i < row.length; i++) {
 			rowString += row[i].toString();
-			rowString += (i == row.length - 1) ? "" : "\t";
+			rowString += (i == row.length - 1) ? StringUtils.EMPTY : "\t";
 		}
 		rowString += System.getProperty("line.separator");
 		return rowString;

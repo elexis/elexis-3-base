@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -196,7 +197,7 @@ public class BefundSelectionComposite extends CstComposite {
 			}
 
 			if (control instanceof Text) {
-				((Text) control).setText("");
+				((Text) control).setText(StringUtils.EMPTY);
 				Iterator<String> itKeys = mapAuswahl.keySet().iterator();
 				while (itKeys.hasNext()) {
 					Object key = (Object) itKeys.next();

@@ -12,6 +12,7 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.ui.dialog;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.core.databinding.Binding;
@@ -126,7 +127,7 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 				txtIDReceiver.setText(cp.getIDReceiver());
 				if (cp.getOutgoingDefaultCharset() >= 0)
 					gdt6301.setValue(GDTConstants.FELDKENNUNG_VERWENDETER_ZEICHENSATZ,
-							cp.getOutgoingDefaultCharset() + "");
+							cp.getOutgoingDefaultCharset() + StringUtils.EMPTY);
 			}
 		});
 
@@ -206,7 +207,8 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 		comboViewerGeschlecht = new ComboViewer(grpOptionaleDaten, SWT.NONE);
 		Combo comboGeschlecht = comboViewerGeschlecht.getCombo();
 		comboViewerGeschlecht.setContentProvider(ArrayContentProvider.getInstance());
-		comboViewerGeschlecht.setInput(new String[] { GDTConstants.SEX_MALE + "", GDTConstants.SEX_FEMALE + "" });
+		comboViewerGeschlecht.setInput(new String[] { GDTConstants.SEX_MALE + StringUtils.EMPTY,
+				GDTConstants.SEX_FEMALE + StringUtils.EMPTY });
 		comboViewerGeschlecht.setLabelProvider(new ComboViewerGeschlechtLabelProvider());
 		comboGeschlecht.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -227,8 +229,10 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 		Combo comboVersichertenart = comboViewerVersichertenart.getCombo();
 		comboVersichertenart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboViewerVersichertenart.setContentProvider(ArrayContentProvider.getInstance());
-		comboViewerVersichertenart.setInput(new String[] { GDTConstants.VERSICHERTENART_FAMILIENVERSICHERTER + "",
-				GDTConstants.VERSICHERTENART_MITGLIED + "", GDTConstants.VERSICHERTENART_RENTNER + "" });
+		comboViewerVersichertenart
+				.setInput(new String[] { GDTConstants.VERSICHERTENART_FAMILIENVERSICHERTER + StringUtils.EMPTY,
+						GDTConstants.VERSICHERTENART_MITGLIED + StringUtils.EMPTY,
+						GDTConstants.VERSICHERTENART_RENTNER + StringUtils.EMPTY });
 		comboViewerVersichertenart.setLabelProvider(new ComboViewerVersichertenartLabelProvider());
 
 		Label lblStrasse = new Label(grpOptionaleDaten, SWT.NONE);

@@ -13,6 +13,7 @@
 
 package ch.elexis.extdoc.dialogs;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,7 +56,7 @@ public class FileEditDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		String fileName = file.getName();
-		String fileExtension = ""; //$NON-NLS-1$
+		String fileExtension = StringUtils.EMPTY;
 
 		// extract name and extension
 		Pattern p = Pattern.compile("^(.+)\\.([^.]+)$"); //$NON-NLS-1$

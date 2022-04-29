@@ -1,16 +1,17 @@
 package ch.medshare.mediport.config;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.medshare.mediport.MediPortAbstractPrefPage;
 import ch.medshare.util.SystemProperties;
 
 public class ClientParam extends AbstractConfigKeyModel {
-	private String name = ""; //$NON-NLS-1$
-	private String dir = ""; //$NON-NLS-1$
+	private String name = StringUtils.EMPTY;
+	private String dir = StringUtils.EMPTY;
 	private String docattr = MediPortAbstractPrefPage.TIER_PAYANT;
 	private String docprinted = "false"; //$NON-NLS-1$
 	private String disttype = "0"; //$NON-NLS-1$
 	private String printlanguage = "D"; //$NON-NLS-1$
-	private String trustcenterean = ""; //$NON-NLS-1$
+	private String trustcenterean = StringUtils.EMPTY;
 	private String ispaperinvoice = "false"; //$NON-NLS-1$
 
 	public ClientParam(String name) {

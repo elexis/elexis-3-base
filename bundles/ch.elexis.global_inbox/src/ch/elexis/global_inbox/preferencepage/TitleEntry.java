@@ -1,5 +1,6 @@
 package ch.elexis.global_inbox.preferencepage;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.regex.Pattern;
 
 public class TitleEntry {
@@ -10,7 +11,7 @@ public class TitleEntry {
 	public TitleEntry(String value) {
 		String[] split = value.split(Pattern.quote(TitleCompletionPreferencePage.STORE_SEPARATOR));
 		title = split[0];
-		categoryName = (split.length > 1) ? split[1] : "";
+		categoryName = (split.length > 1) ? split[1] : StringUtils.EMPTY;
 	}
 
 	public TitleEntry() {

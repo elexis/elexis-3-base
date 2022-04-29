@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.extdoc.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -49,7 +50,7 @@ public class Email {
 	 */
 	private static String enc(String p) {
 		if (p == null)
-			p = "";
+			p = StringUtils.EMPTY;
 		try {
 			return URLEncoder.encode(p, "UTF-8").replace("+", "%20");
 		} catch (UnsupportedEncodingException e) {
@@ -80,12 +81,12 @@ public class Email {
 	public static String getEmailPreface(Patient patient) {
 		StringBuilder sb = new StringBuilder();
 		String s;
-		sb.append(patient.getName() + " ");
-		sb.append(patient.getVorname() + " ");
-		sb.append(patient.getPostAnschrift(false) + " ");
-		sb.append(patient.get(Patient.FLD_PHONE1) + " ");
-		sb.append(patient.getNatel() + " ");
-		sb.append(patient.getMailAddress() + " ");
+		sb.append(patient.getName() + StringUtils.SPACE);
+		sb.append(patient.getVorname() + StringUtils.SPACE);
+		sb.append(patient.getPostAnschrift(false) + StringUtils.SPACE);
+		sb.append(patient.get(Patient.FLD_PHONE1) + StringUtils.SPACE);
+		sb.append(patient.getNatel() + StringUtils.SPACE);
+		sb.append(patient.getMailAddress() + StringUtils.SPACE);
 		return sb.toString();
 	}
 
@@ -110,7 +111,7 @@ public class Email {
 	}
 
 	public static void runExternalProgram(String app, String params) {
-		String cmd = app + " " + params;
+		String cmd = app + StringUtils.SPACE + params;
 		logger.info(cmd);
 		try {
 			File temp = File.createTempFile("batch", ".cmd");
@@ -140,7 +141,7 @@ public class Email {
 			subject = CoreHub.localCfg.get(PreferenceConstants.CONCERNS, "Überweisung");
 		// quote for programs with white spaces in file
 		String app = CoreHub.localCfg.get(PreferenceConstants.EMAIL_PROGRAM, "mailto:");
-		String params = "";
+		String params = StringUtils.EMPTY;
 		try {
 			if (app.toLowerCase().indexOf("outlook") >= 0) {
 				params += " --composer --subject '" + subject + "'";
@@ -151,7 +152,7 @@ public class Email {
 					}
 				}
 				if (to != null && to.length() > 0)
-					params += " " + to;
+					params += StringUtils.SPACE + to;
 				runExternalProgram(app, params);
 			} else if (app.toLowerCase().indexOf("kmail") >= 0) {
 				params += " --composer --subject '" + subject + "'";
@@ -166,7 +167,7 @@ public class Email {
 					}
 				}
 				if (to != null && to.length() > 0)
-					params += " " + to;
+					params += StringUtils.SPACE + to;
 				runExternalProgram(app, params);
 			} else if (app.toLowerCase().indexOf("thunderbird") >= 0 || app.toLowerCase().indexOf("icedove") >= 0) {
 				params += " -compose \"";
@@ -196,7 +197,7 @@ public class Email {
 				app += "subject=" + enc(subject);
 				app += "&body=" + enc(body);
 				saveTextToClipboard(body);
-				runExternalProgram(app, "");
+				runExternalProgram(app, StringUtils.EMPTY);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

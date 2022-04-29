@@ -1,5 +1,6 @@
 package ch.elexis.global_inbox;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -16,7 +17,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String PREF_DIR = PREFERENCE_BRANCH + "dir"; //$NON-NLS-1$
 	public static final String PREF_AUTOBILLING = PREFERENCE_BRANCH + "autobilling"; //$NON-NLS-1$
 	public static final String PREF_INFO_IN_INBOX = PREFERENCE_BRANCH + "infoToInbox"; //$NON-NLS-1$
-	public static final String PREF_DIR_DEFAULT = "";
+	public static final String PREF_DIR_DEFAULT = StringUtils.EMPTY;
 	public static final String PREF_TITLE_COMPLETION = PREFERENCE_BRANCH + "titleCompletions"; //$NON-NLS-1$
 
 	public Preferences() {

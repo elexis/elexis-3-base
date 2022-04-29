@@ -76,10 +76,12 @@ public class PandemieReferenceDataImporter extends AbstractReferenceDataImporter
 					pl.setPandemic(line.get(1));
 					pl.setChapter(getChapter(line));
 					pl.setCode(line.get(4));
-					pl.setTitle(StringUtils.abbreviate(line.get(5).replace("\n", "").replace("\r", ""), 255));
+					pl.setTitle(StringUtils.abbreviate(line.get(5).replace(StringUtils.LF, StringUtils.EMPTY)
+							.replace(StringUtils.CR, StringUtils.EMPTY), 255));
 					pl.setValidFrom(getValidFrom(line));
 					pl.setDescription(line.get(6));
-					pl.setOrg(StringUtils.abbreviate(line.get(7).replace("\n", ";").replace("\r", ""), 255));
+					pl.setOrg(StringUtils.abbreviate(
+							line.get(7).replace(StringUtils.LF, ";").replace(StringUtils.CR, StringUtils.EMPTY), 255));
 
 					if (isCents(line)) {
 						pl.setCents(getAsCents(line.get(13)));

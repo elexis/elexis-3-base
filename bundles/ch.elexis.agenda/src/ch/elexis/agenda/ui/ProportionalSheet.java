@@ -15,6 +15,7 @@
 
 package ch.elexis.agenda.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,7 +72,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 	private boolean ctrlKeyDown = false;
 
 	private TimeTool setTerminTo(int x, int y) {
-		String resource = ""; //$NON-NLS-1$
+		String resource = StringUtils.EMPTY;
 		for (int i = 0; i < resources.length; i++) {
 			double lower = left_offset + i * (widthPerColumn + padding);
 			double upper = lower + widthPerColumn;

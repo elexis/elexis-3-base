@@ -11,6 +11,7 @@
 
 package ch.elexis.omnivore.ui.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -160,7 +161,7 @@ public class FileImportDialog extends TitleAreaDialog {
 				String old = cbCategories.getText();
 				InputDialog id = new InputDialog(getShell(), MessageFormat.format("Kategorie {0}löschen", old),
 						"Geben Sie bitte an, in welche andere Kategorie die Dokumente dieser Kategorie verschoben werden sollen",
-						"", null);
+						StringUtils.EMPTY, null);
 				if (id.open() == Dialog.OK) {
 					CategoryUtil.removeCategory(old, id.getValue());
 					cbCategories.remove(old);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -164,7 +165,7 @@ public class PatientDocumentManager {
 		} else {
 			// If the document already exists, log it
 			LOGGER.warn(logPrefix + "This document already exists in the omnivore database. It will not be imported: " //$NON-NLS-1$
-					+ title + " " + file.toString());
+					+ title + StringUtils.SPACE + file.toString());
 			return false;
 		}
 	}
@@ -262,7 +263,8 @@ public class PatientDocumentManager {
 					MedNetMessages.PatientDocumentManager_documentTitel, // Test Name
 					institution, // If institution is empty, the labitem will be linked to the internal
 									// laboratory
-					"", "", "pdf", LabItemTyp.DOCUMENT, institution.getLabel(true), DEFAULT_PRIO_DOCUMENT);// $NON-NLS-1$
+					StringUtils.EMPTY, StringUtils.EMPTY, "pdf", LabItemTyp.DOCUMENT, institution.getLabel(true),
+					DEFAULT_PRIO_DOCUMENT);
 		}
 
 		// Finally create a new laboratory Result to save to the database
@@ -274,7 +276,7 @@ public class PatientDocumentManager {
 		SimpleDateFormat samplingDateTimeFormatter = new SimpleDateFormat(
 				MedNetMessages.PatientDocumentManager_LabResultTitleSamplingFormat);
 
-		String title = "";
+		String title = StringUtils.EMPTY;
 		if (samplingDateTime != null && transmissionDateTime != null) {
 			title = MessageFormat.format(MedNetMessages.PatientDocumentManager_LabResultTitle, orderId,
 					samplingDateTimeFormatter.format(samplingDateTime),
@@ -327,9 +329,10 @@ public class PatientDocumentManager {
 			// If the option overwrite results is set to true, we overwrite the result
 			if (overwriteResults) {
 				LOGGER.warn(logPrefix + "An older version of this document will be overwritten:" + labItem.getKuerzel()
-						+ "-" + labItem.getName() + " " + labResult.getObservationTime().toDBString(true) + " "
-						+ labResult.getTransmissionTime().toDBString(true) + " " + samplingDate.toDBString(true) + " "
-						+ labResult.getResult() + " " + title + " ");// $NON-NLS-1$
+						+ "-" + labItem.getName() + StringUtils.SPACE + labResult.getObservationTime().toDBString(true)
+						+ StringUtils.SPACE + labResult.getTransmissionTime().toDBString(true) + StringUtils.SPACE
+						+ samplingDate.toDBString(true) + StringUtils.SPACE + labResult.getResult() + StringUtils.SPACE
+						+ title + StringUtils.SPACE);
 				labResult.setResult(title);
 				labResult.set(LabResult.TIME, samplingTime);
 				labResult.setObservationTime(samplingDate);
@@ -338,11 +341,12 @@ public class PatientDocumentManager {
 				saved = true;
 			} else {
 
-				LOGGER.warn(
-						logPrefix + "Another version of this document is still in the database:" + labItem.getKuerzel()
-								+ "-" + labItem.getName() + " " + labResult.getObservationTime().toDBString(true) + " "
-								+ labResult.getTransmissionTime().toDBString(true) + " " + samplingDate.toDBString(true)
-								+ " " + labResult.getResult() + " " + title + " ");// $NON-NLS-1$
+				LOGGER.warn(logPrefix + "Another version of this document is still in the database:"
+						+ labItem.getKuerzel() + "-" + labItem.getName() + StringUtils.SPACE
+						+ labResult.getObservationTime().toDBString(true) + StringUtils.SPACE
+						+ labResult.getTransmissionTime().toDBString(true) + StringUtils.SPACE
+						+ samplingDate.toDBString(true) + StringUtils.SPACE + labResult.getResult() + StringUtils.SPACE
+						+ title + StringUtils.SPACE);
 			}
 		}
 

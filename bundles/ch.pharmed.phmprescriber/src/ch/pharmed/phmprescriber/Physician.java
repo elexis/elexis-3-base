@@ -5,6 +5,7 @@
 
 package ch.pharmed.phmprescriber;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,22 +25,22 @@ import ch.rgw.tools.TimeTool;
 public class Physician {
 
 	// Define properties
-	private String title = "";
-	private String lastname = "";
-	private String firstname = "";
-	private String specialty1 = "";
-	private String specialty2 = "";
-	private String street = "";
-	private String postbox = "";
-	private String zip = "";
-	private String city = "";
+	private String title = StringUtils.EMPTY;
+	private String lastname = StringUtils.EMPTY;
+	private String firstname = StringUtils.EMPTY;
+	private String specialty1 = StringUtils.EMPTY;
+	private String specialty2 = StringUtils.EMPTY;
+	private String street = StringUtils.EMPTY;
+	private String postbox = StringUtils.EMPTY;
+	private String zip = StringUtils.EMPTY;
+	private String city = StringUtils.EMPTY;
 
-	private String phone = "";
+	private String phone = StringUtils.EMPTY;
 
-	private String fax = "";
+	private String fax = StringUtils.EMPTY;
 
-	private String zsrid = "";
-	private String glnid = "";
+	private String zsrid = StringUtils.EMPTY;
+	private String glnid = StringUtils.EMPTY;
 
 	HashMap<String, String> shops;
 
@@ -166,7 +167,7 @@ public class Physician {
 
 	public void getAttributesFromConfig() {
 
-		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_PHM_PHY, "");
+		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_PHM_PHY, StringUtils.EMPTY);
 
 		// Split string and include also blanks
 		String[] attributes = strCFG.split("\\;", -1);
@@ -251,7 +252,7 @@ public class Physician {
 	public Boolean hasShops() {
 
 		// (1) Check, if we need to update the shops from the WebService
-		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_PHM_LASTREQUEST, "");
+		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_PHM_LASTREQUEST, StringUtils.EMPTY);
 
 		TimeTool now = new TimeTool(new Date());
 
@@ -339,7 +340,7 @@ public class Physician {
 
 	private String createCFGStringShops(HashMap<String, String> hm) {
 
-		String strShops = "";
+		String strShops = StringUtils.EMPTY;
 
 		// Iterate over the hash map
 		if (hm.size() > 0) {
@@ -360,7 +361,7 @@ public class Physician {
 
 		HashMap<String, String> hmShops = new HashMap<String, String>();
 
-		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_PHM_SHOPS, "");
+		String strCFG = ConfigServiceHolder.getGlobal(Constants.CFG_PHM_SHOPS, StringUtils.EMPTY);
 
 		// Split string and include also blanks
 		String[] attributes = strCFG.split("\\;", -1);

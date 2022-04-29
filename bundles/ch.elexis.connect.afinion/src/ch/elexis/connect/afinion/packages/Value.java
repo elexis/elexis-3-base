@@ -1,5 +1,6 @@
 package ch.elexis.connect.afinion.packages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ResourceBundle;
 
 import ch.elexis.connect.afinion.Messages;
@@ -80,7 +81,7 @@ public class Value {
 					.build(LabImportUtilHolder.get());
 		}
 
-		String comment = "";
+		String comment = StringUtils.EMPTY;
 		int resultFlags = 0;
 		if (flags.equals("1")) {
 			// comment = Messages.getString("Value.High");

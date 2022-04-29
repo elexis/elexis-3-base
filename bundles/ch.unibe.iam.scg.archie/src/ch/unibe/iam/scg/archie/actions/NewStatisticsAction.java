@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.actions;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -112,8 +113,8 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 				SWTHelper.showError(Messages.ERROR, e.getMessage());
 				return;
 			} catch (Exception e) {
-				ArchieActivator.LOG.log(Messages.ACTION_NEWSTAT_ERROR_COULDNT_UPDATE_PROVIDER + " " + provider.getName()
-						+ ".\n" + e.getLocalizedMessage(), Log.WARNINGS);
+				ArchieActivator.LOG.log(Messages.ACTION_NEWSTAT_ERROR_COULDNT_UPDATE_PROVIDER + StringUtils.SPACE
+						+ provider.getName() + ".\n" + e.getLocalizedMessage(), Log.WARNINGS);
 				e.printStackTrace();
 			}
 
@@ -123,7 +124,8 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 						.showView(StatisticsView.ID);
 			} catch (PartInitException e) {
 				ArchieActivator.LOG.log(
-						Messages.ACTION_NEWSTAT_ERROR_COULDNT_INIT_VIEW + "\n" + e.getLocalizedMessage(), Log.WARNINGS);
+						Messages.ACTION_NEWSTAT_ERROR_COULDNT_INIT_VIEW + StringUtils.LF + e.getLocalizedMessage(),
+						Log.WARNINGS);
 				e.printStackTrace();
 			}
 

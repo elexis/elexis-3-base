@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -62,11 +63,11 @@ public class QueryLabelProvider extends LabelProvider implements ITableLabelProv
 		Comparable<?>[] row = (Comparable[]) element;
 		if (row[columnIndex] == null) {
 			logger.warn("Row result in column [" + columnIndex + "] is null");
-			return "";
+			return StringUtils.EMPTY;
 		}
 		if (row[columnIndex].getClass() == Money.class) {
 			Currency cur = Currency.getInstance(Locale.getDefault());
-			return cur + " " + row[columnIndex].toString();
+			return cur + StringUtils.SPACE + row[columnIndex].toString();
 		}
 		return row[columnIndex].toString();
 	}

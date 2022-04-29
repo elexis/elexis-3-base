@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.core.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -85,7 +86,7 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 				}
 				return observationTime.toString(TimeTool.DATE_GER);
 			default:
-				return "";
+				return StringUtils.EMPTY;
 			}
 		}
 
@@ -108,7 +109,7 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 				}
 				return observationTime.format(formatter);
 			default:
-				return "";
+				return StringUtils.EMPTY;
 			}
 		}
 	}
@@ -135,7 +136,7 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			}
 
 			if (!sb.toString().isEmpty() && sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
-				sb.replace(sb.length() - 2, sb.length(), "");
+				sb.replace(sb.length() - 2, sb.length(), StringUtils.EMPTY);
 			}
 			return sb.toString();
 		} else if (object instanceof ILabResult) {
@@ -149,7 +150,7 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			}
 
 			if (!sb.toString().isEmpty() && sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
-				sb.replace(sb.length() - 2, sb.length(), "");
+				sb.replace(sb.length() - 2, sb.length(), StringUtils.EMPTY);
 			}
 			return sb.toString();
 		}

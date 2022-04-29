@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.agenda.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
 import java.util.Hashtable;
@@ -178,14 +179,14 @@ public class Import_Agenda extends ImporterPage {
 				map.put(dest_bereich, tMandant.getText());
 				dest_bereich = cbBereich.getText();
 				orig_mandant = map.get(dest_bereich);
-				tMandant.setText(orig_mandant == null ? "" : orig_mandant); //$NON-NLS-1$
+				tMandant.setText(orig_mandant == null ? StringUtils.EMPTY : orig_mandant);
 			}
 
 		});
 		cbBereich.select(0);
 		orig_mandant = map.get(dest_bereich);
 		if (orig_mandant == null) {
-			orig_mandant = ""; //$NON-NLS-1$
+			orig_mandant = StringUtils.EMPTY;
 		}
 		new Label(cMandant, SWT.NONE).setText("Entspricht"); //$NON-NLS-1$
 		Composite cr = new Composite(cMandant, SWT.NONE);

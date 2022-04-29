@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.util;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.rgw.tools.StringTool;
 
 public class PatientIdFormatter {
@@ -23,7 +24,7 @@ public class PatientIdFormatter {
 
 	public String format(String id) {
 		if (id == null) {
-			id = ""; //$NON-NLS-1$
+			id = StringUtils.EMPTY;
 		}
 		return StringTool.pad(StringTool.LEFT, '0', id, stellen);
 	}

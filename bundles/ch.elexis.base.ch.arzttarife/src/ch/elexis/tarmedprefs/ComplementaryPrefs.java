@@ -12,6 +12,7 @@
 
 package ch.elexis.tarmedprefs;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -96,8 +97,8 @@ public class ComplementaryPrefs extends FieldEditorPreferencePage implements IWo
 			Text text = getTextControl();
 			if (text != null) {
 				int value = getPreferenceStore().getInt(getPreferenceName());
-				text.setText("" + (float) value / 100);//$NON-NLS-1$
-				oldValue = "" + value; //$NON-NLS-1$
+				text.setText(StringUtils.EMPTY + (float) value / 100);
+				oldValue = StringUtils.EMPTY + value;
 			}
 
 		}
@@ -107,7 +108,7 @@ public class ComplementaryPrefs extends FieldEditorPreferencePage implements IWo
 			Text text = getTextControl();
 			if (text != null) {
 				int value = getPreferenceStore().getDefaultInt(getPreferenceName());
-				text.setText("" + (float) value / 100);//$NON-NLS-1$
+				text.setText(StringUtils.EMPTY + (float) value / 100);
 			}
 			valueChanged();
 		}

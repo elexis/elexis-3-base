@@ -1,5 +1,6 @@
 package ch.elexis.tarmed.printer;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_S1;
 import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_S2;
 
@@ -181,7 +182,7 @@ public class XML40Printer {
 		if (fall.getAbrechnungsSystem().equals("UVG")) { //$NON-NLS-1$
 			text.replace("\\[F58\\]", fall.getBeginnDatum()); //$NON-NLS-1$
 		} else {
-			text.replace("\\[F58\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			text.replace("\\[F58\\]", StringUtils.EMPTY); //$NON-NLS-1$
 		}
 
 		Element detail = invoice.getChild("detail", ns); //$NON-NLS-1$
@@ -194,11 +195,11 @@ public class XML40Printer {
 		}
 		text.replace("\\[F51\\]", type); //$NON-NLS-1$
 		if (type.equals("freetext")) { //$NON-NLS-1$
-			text.replace("\\[F52\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			text.replace("\\[F52\\]", StringUtils.EMPTY); //$NON-NLS-1$
 			text.replace("\\[F53\\]", diagnosis.getText()); //$NON-NLS-1$
 		} else {
 			text.replace("\\[F52\\]", diagnosis.getAttributeValue("code")); //$NON-NLS-1$ //$NON-NLS-2$
-			text.replace("\\[F53\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			text.replace("\\[F53\\]", StringUtils.EMPTY); //$NON-NLS-1$
 		}
 
 		// lookup EAN numbers in services and set field 98
@@ -249,8 +250,8 @@ public class XML40Printer {
 			});
 		}
 		XMLPrinterUtil.replaceHeaderFields(text, rn, xmlRn, ezData.paymentMode);
-		text.replace("\\[F.+\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		Object cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+		text.replace("\\[F.+\\]", StringUtils.EMPTY); //$NON-NLS-1$
+		Object cursor = text.getPlugin().insertText("[Rechnungszeilen]", StringUtils.LF, SWT.LEFT); //$NON-NLS-1$
 		TimeTool r = new TimeTool();
 		int page = 1;
 		double seitentotal = 0.0;
@@ -262,7 +263,7 @@ public class XML40Printer {
 		monitor.worked(2);
 		for (Element s : ls) {
 			tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
-			cursor = tp.insertText(cursor, "\t" + s.getText() + "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+			cursor = tp.insertText(cursor, "\t" + s.getText() + StringUtils.LF, SWT.LEFT); //$NON-NLS-1$
 			tp.setFont("Helvetica", SWT.NORMAL, 8); //$NON-NLS-1$
 			sb.setLength(0);
 			if (r.set(s.getAttributeValue("date_begin")) == false) { //$NON-NLS-1$
@@ -343,7 +344,7 @@ public class XML40Printer {
 
 			sb.append(am);
 			seitentotal += dLine;
-			sb.append("\n"); //$NON-NLS-1$
+			sb.append(StringUtils.LF);
 			cursor = tp.insertText(cursor, sb.toString(), SWT.LEFT);
 			cmAvail -= cmPerLine;
 			if (cmAvail <= 0) {
@@ -365,13 +366,13 @@ public class XML40Printer {
 				}
 
 				XMLPrinterUtil.insertPage(TT_TARMED_S2, ++page, adressat, rn, xmlRn, ezData.paymentMode, text);
-				cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+				cursor = text.getPlugin().insertText("[Rechnungszeilen]", StringUtils.LF, SWT.LEFT); //$NON-NLS-1$
 				cmAvail = cmMiddlePage;
 				monitor.worked(2);
 			}
 
 		}
-		cursor = tp.insertText(cursor, "\n", SWT.LEFT); //$NON-NLS-1$
+		cursor = tp.insertText(cursor, StringUtils.LF, SWT.LEFT);
 		if (cmAvail < cmFooter) {
 			if (tcCode != null) {
 				esr.printESRCodeLine(text.getPlugin(), offenRp, tcCode);
@@ -383,13 +384,13 @@ public class XML40Printer {
 				return false;
 			}
 			XMLPrinterUtil.insertPage(TT_TARMED_S2, ++page, adressat, rn, xmlRn, ezData.paymentMode, text);
-			cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+			cursor = text.getPlugin().insertText("[Rechnungszeilen]", StringUtils.LF, SWT.LEFT); //$NON-NLS-1$
 			monitor.worked(2);
 		}
 		StringBuilder footer = new StringBuilder(100);
 		// Element balance=invoice.getChild("balance",ns); //$NON-NLS-1$
 
-		cursor = text.getPlugin().insertTextAt(0, 220, 190, 45, " ", SWT.LEFT); //$NON-NLS-1$
+		cursor = text.getPlugin().insertTextAt(0, 220, 190, 45, StringUtils.SPACE, SWT.LEFT);
 		cursor = XMLPrinterUtil.print(cursor, tp, true, "\tTARMED AL \t"); //$NON-NLS-1$
 		footer.append(balance.getAttributeValue("amount_tarmed.mt")) //$NON-NLS-1$
 				.append("  (").append(balance.getAttributeValue("unit_tarmed.mt")).append(")\t"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -420,7 +421,7 @@ public class XML40Printer {
 
 		Element vat = balance.getChild("vat", ns);
 		String vatNumber = XMLPrinterUtil.getValue(vat, "vat_number");
-		if (vatNumber.equals(" "))
+		if (vatNumber.equals(StringUtils.SPACE))
 			vatNumber = "keine";
 
 		footer.append("\n\n■ MwSt.Nr. \t\t"); //$NON-NLS-1$
@@ -448,8 +449,8 @@ public class XML40Printer {
 
 				vatBuilder.append("■ ").append(Integer.toString(code)).append("\t")
 						.append(XMLPrinterUtil.getValue(rate, "vat_rate")).append("\t\t").append(amount).append(tabs)
-						.append(XMLPrinterUtil.getValue(rate, "vat")).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-																					// //$NON-NLS-3$
+						.append(XMLPrinterUtil.getValue(rate, "vat")).append(StringUtils.LF); //$NON-NLS-1$
+				// //$NON-NLS-3$
 				// insert according to code
 				if (code == 0) {
 					vatLines.add(0, vatBuilder.toString());

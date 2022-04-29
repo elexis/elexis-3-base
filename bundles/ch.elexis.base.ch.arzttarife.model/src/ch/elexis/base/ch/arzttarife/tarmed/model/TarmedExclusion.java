@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class TarmedExclusion {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(TarmedKumulationArt.toString(slaveType)).append(" ").append(slaveCode);
+		sb.append(TarmedKumulationArt.toString(slaveType)).append(StringUtils.SPACE).append(slaveCode);
 		return sb.toString();
 	}
 }

@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -110,14 +111,14 @@ public class DocboxView extends ViewPart {
 	}
 
 	private String getSSOLoginParams(String page) {
-		String ts = "" + System.currentTimeMillis() / 1000;
+		String ts = StringUtils.EMPTY + System.currentTimeMillis() / 1000;
 		String username = UserDocboxPreferences.getDocboxLoginID(false);
 		String signature = UserDocboxPreferences.getSSOSignature(ts);
 		try {
 			return "?ts=" + ts + "&loginId=" + URLEncoder.encode(username, "UTF-8") + "&sig="
 					+ URLEncoder.encode(signature, "UTF-8") + "&page=" + URLEncoder.encode(page, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 	}
 

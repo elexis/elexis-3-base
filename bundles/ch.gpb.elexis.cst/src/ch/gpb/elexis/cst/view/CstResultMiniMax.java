@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -126,7 +127,7 @@ public class CstResultMiniMax extends CstResultPart {
 
 					newHeigth += (lineCompo.getSize().y);
 
-					String txL2 = "";
+					String txL2 = StringUtils.EMPTY;
 
 					if (labItem.getLabItem().getEinheit().length() > 0) {
 						txL2 += " (" + labItem.getLabItem().getEinheit() + ")";

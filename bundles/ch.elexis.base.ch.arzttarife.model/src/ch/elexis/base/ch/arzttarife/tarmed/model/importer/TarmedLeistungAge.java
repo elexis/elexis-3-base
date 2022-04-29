@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -38,7 +39,7 @@ public class TarmedLeistungAge {
 
 	private String getAsText(String age, String tolerance, String unit) {
 		if (age.equals("-1")) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 		StringBuilder sb = new StringBuilder();
 		try {

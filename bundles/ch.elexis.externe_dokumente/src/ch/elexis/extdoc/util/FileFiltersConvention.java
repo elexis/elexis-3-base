@@ -1,5 +1,7 @@
 package ch.elexis.extdoc.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Filter fuer die folgende Festlegung:
  *
@@ -31,7 +33,7 @@ public class FileFiltersConvention {
 			StringBuilder sb = new StringBuilder();
 			sb.append(lastname);
 			while (sb.length() < 6) {
-				sb.append(" "); //$NON-NLS-1$
+				sb.append(StringUtils.SPACE);
 			}
 			shortLastname = sb.toString();
 		}

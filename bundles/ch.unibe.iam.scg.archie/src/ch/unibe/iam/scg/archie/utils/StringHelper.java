@@ -11,6 +11,8 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * <p>
  * Helper class for string handling.
@@ -37,7 +39,7 @@ public class StringHelper {
 		String safe = name.trim();
 
 		// remove illegal characters
-		safe = safe.replaceAll("[\\/|\\\\|\\*|\\:|\\||\"|\'|\\<|\\>|\\{|\\}|\\?|\\%|,]", "");
+		safe = safe.replaceAll("[\\/|\\\\|\\*|\\:|\\||\"|\'|\\<|\\>|\\{|\\}|\\?|\\%|,]", StringUtils.EMPTY);
 
 		// replace . dots with _ and remove the _ if at the end
 		safe = safe.replaceAll("\\.", "_");

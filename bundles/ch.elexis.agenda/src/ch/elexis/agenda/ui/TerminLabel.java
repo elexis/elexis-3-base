@@ -15,6 +15,7 @@
 
 package ch.elexis.agenda.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -206,8 +207,8 @@ public class TerminLabel extends Composite {
 
 		// l.setForeground(Plannables.getStatusColor(t));
 		StringBuilder sb = new StringBuilder();
-		sb.append(appointment.isRecurringDate() ? "Terminserie\n" : "");
-		sb.append(appointment.getLabel()).append("\n").append(appointment.getGrund()); //$NON-NLS-1$
+		sb.append(appointment.isRecurringDate() ? "Terminserie\n" : StringUtils.EMPTY);
+		sb.append(appointment.getLabel()).append(StringUtils.LF).append(appointment.getGrund());
 		sb.append("\n--------\n").append(appointment.getStatusHistoryDesc()); //$NON-NLS-1$
 
 		String grund = rootAppointment.getGrund();

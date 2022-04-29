@@ -4,6 +4,8 @@
  *******************************************************************************/
 package at.gruber.elexis.mythic22.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * This class represents one haematological value These values are delivered
  * from mythic22
@@ -57,7 +59,7 @@ public class HaematologicalValue {
 			m_highPanicValue = str[i++];
 
 			// else: field is empty because no values have been sent from mythic22 ->
-			// Attributes are an empty String ""
+			// Attributes are an empty String StringUtils.EMPTY
 		}
 	}
 

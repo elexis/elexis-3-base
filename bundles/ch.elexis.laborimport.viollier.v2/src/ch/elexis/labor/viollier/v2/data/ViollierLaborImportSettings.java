@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.labor.viollier.v2.data;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;
@@ -475,32 +476,32 @@ public class ViollierLaborImportSettings {
 		globalDocumentCategory = null;
 
 		// Globale Settings
-		globalJMedTransferJar = ConfigServiceHolder.getGlobal(cfgJMedTransferJar, ""); //$NON-NLS-1$
-		globalJMedTransferParam = ConfigServiceHolder.getGlobal(cfgJMedTransferParam, ""); //$NON-NLS-1$
-		globalDirDownload = ConfigServiceHolder.getGlobal(cfgDirDownload, ""); //$NON-NLS-1$
-		globalDirArchive = ConfigServiceHolder.getGlobal(cfgDirArchive, ""); //$NON-NLS-1$
-		globalDirError = ConfigServiceHolder.getGlobal(cfgDirError, ""); //$NON-NLS-1$
-		temp = ConfigServiceHolder.getGlobal(cfgArchivePurgeInterval, ""); //$NON-NLS-1$
+		globalJMedTransferJar = ConfigServiceHolder.getGlobal(cfgJMedTransferJar, StringUtils.EMPTY);
+		globalJMedTransferParam = ConfigServiceHolder.getGlobal(cfgJMedTransferParam, StringUtils.EMPTY);
+		globalDirDownload = ConfigServiceHolder.getGlobal(cfgDirDownload, StringUtils.EMPTY);
+		globalDirArchive = ConfigServiceHolder.getGlobal(cfgDirArchive, StringUtils.EMPTY);
+		globalDirError = ConfigServiceHolder.getGlobal(cfgDirError, StringUtils.EMPTY);
+		temp = ConfigServiceHolder.getGlobal(cfgArchivePurgeInterval, StringUtils.EMPTY);
 		try {
 			globalArchivePurgeInterval = Integer.parseInt(temp);
 		} catch (Exception e) {
 		}
-		globalDocumentCategory = ConfigServiceHolder.getGlobal(cfgDocumentCategory, ""); //$NON-NLS-1$
+		globalDocumentCategory = ConfigServiceHolder.getGlobal(cfgDocumentCategory, StringUtils.EMPTY);
 
 		// Mandanten Settings
 		settingText = ConfigServiceHolder.getMandator(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
 		mandantUseGlobalSettings = Boolean.parseBoolean(settingText);
-		mandantDocumentCategory = ConfigServiceHolder.getMandator(cfgDocumentCategory, ""); //$NON-NLS-1$
+		mandantDocumentCategory = ConfigServiceHolder.getMandator(cfgDocumentCategory, StringUtils.EMPTY);
 
 		// Machine Settings
 		settingText = machineCfg.get(cfgMachineUseGlobalSettings, "true"); //$NON-NLS-1$
 		machineUseGlobalSettings = Boolean.parseBoolean(settingText);
-		machineJMedTransferJar = machineCfg.get(cfgJMedTransferJar, ""); //$NON-NLS-1$
-		machineJMedTransferParam = machineCfg.get(cfgJMedTransferParam, ""); //$NON-NLS-1$
-		machineDirDownload = machineCfg.get(cfgDirDownload, ""); //$NON-NLS-1$
-		machineDirArchive = machineCfg.get(cfgDirArchive, ""); //$NON-NLS-1$
-		machineDirError = machineCfg.get(cfgDirError, ""); //$NON-NLS-1$
-		temp = machineCfg.get(cfgArchivePurgeInterval, ""); //$NON-NLS-1$
+		machineJMedTransferJar = machineCfg.get(cfgJMedTransferJar, StringUtils.EMPTY);
+		machineJMedTransferParam = machineCfg.get(cfgJMedTransferParam, StringUtils.EMPTY);
+		machineDirDownload = machineCfg.get(cfgDirDownload, StringUtils.EMPTY);
+		machineDirArchive = machineCfg.get(cfgDirArchive, StringUtils.EMPTY);
+		machineDirError = machineCfg.get(cfgDirError, StringUtils.EMPTY);
+		temp = machineCfg.get(cfgArchivePurgeInterval, StringUtils.EMPTY);
 		try {
 			machineArchivePurgeInterval = Integer.parseInt(temp);
 		} catch (Exception e) {

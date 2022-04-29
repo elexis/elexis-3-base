@@ -420,7 +420,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 						buf.append("\n\n");
 						for (IPrescription prescription : prescriptions) {
 							buf.append(prescription.getArticle().getName());
-							buf.append("\n");
+							buf.append(StringUtils.LF);
 						}
 						MessageDialog.openInformation(getShell(), "Artikel", buf.toString());
 					} else if (selections.length > 1) {

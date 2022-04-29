@@ -12,6 +12,7 @@
 
 package ch.elexis.base.messages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -180,8 +181,8 @@ public class MsgDetailDialog extends Dialog {
 			StructuredSelection ss = ((StructuredSelection) cbTo.getSelection());
 			if (!ss.isEmpty()) {
 				Anwender anw = (Anwender) ss.getFirstElement();
-				Reminder rem = new Reminder(null, new TimeTool().toString(TimeTool.DATE_GER), Visibility.ALWAYS, "",
-						incomingMsg.get(Message.FLD_TEXT));
+				Reminder rem = new Reminder(null, new TimeTool().toString(TimeTool.DATE_GER), Visibility.ALWAYS,
+						StringUtils.EMPTY, incomingMsg.get(Message.FLD_TEXT));
 				ElexisEventDispatcher.getInstance()
 						.fire(new ElexisEvent(rem, Reminder.class, ElexisEvent.EVENT_CREATE));
 				rem.addResponsible(anw);

@@ -1,5 +1,6 @@
 package ch.medshare.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
@@ -8,7 +9,7 @@ public class UtilMisc {
 
 	public static String replaceWithForwardSlash(String path) {
 		String[] parts = path.split("[\\\\]"); //$NON-NLS-1$
-		String newPath = ""; //$NON-NLS-1$
+		String newPath = StringUtils.EMPTY;
 		for (String part : parts) {
 			newPath += part + "/"; //$NON-NLS-1$
 		}

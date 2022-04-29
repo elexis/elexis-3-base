@@ -1,5 +1,6 @@
 package ch.docbox.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -103,7 +104,7 @@ public class DocboxContact extends PersistentObject {
 	 * loads a contacts docboxId if there is an existing entry for it
 	 *
 	 * @param contact {@link Kontakt} which's docboxId you are looking for
-	 * @return the docboxId or "" if none was found
+	 * @return the docboxId or StringUtils.EMPTY if none was found
 	 */
 	public static String getDocboxIdFor(Kontakt contact) {
 		Query<DocboxContact> qbe = new Query<DocboxContact>(DocboxContact.class);
@@ -112,7 +113,7 @@ public class DocboxContact extends PersistentObject {
 		if (list != null && !list.isEmpty()) {
 			return list.get(0).getDocboxId();
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	/**

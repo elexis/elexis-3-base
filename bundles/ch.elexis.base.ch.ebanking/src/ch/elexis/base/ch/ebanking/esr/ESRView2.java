@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -203,7 +204,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			String text = ""; //$NON-NLS-1$
+			String text = StringUtils.EMPTY;
 
 			if (element instanceof ESRRecord) {
 				ESRRecord rec = (ESRRecord) element;

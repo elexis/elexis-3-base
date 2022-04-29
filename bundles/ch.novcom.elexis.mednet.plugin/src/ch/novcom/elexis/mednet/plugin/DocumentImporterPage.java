@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -111,13 +112,13 @@ public class DocumentImporterPage extends ImporterPage {
 			} else {
 				// If the monitor has been canceled we should break
 				LOGGER.warn(logPrefix + "Following institution is not configured " + configFormPath.getInstitutionName() //$NON-NLS-1$
-						+ " " + configFormPath.getInstitutionID());
+						+ StringUtils.SPACE + configFormPath.getInstitutionID());
 				continue;
 			}
 
 			if (contactLink == null || institutionKontakt == null) {
-				LOGGER.warn(logPrefix + "No contact found for " + configFormPath.getInstitutionName() + " " //$NON-NLS-1$
-						+ configFormPath.getInstitutionID());
+				LOGGER.warn(logPrefix + "No contact found for " + configFormPath.getInstitutionName()
+						+ StringUtils.SPACE + configFormPath.getInstitutionID());
 				continue;
 			}
 
@@ -284,9 +285,9 @@ public class DocumentImporterPage extends ImporterPage {
 				Path hl7File = hl7FilesIterator.next();
 				String hl7FileName = DocumentImporter.getBaseName(hl7File);
 
-				String hl7_transactionDateTime = "";
-				String hl7_orderNr = "";
-				String hl7_recipient = "";
+				String hl7_transactionDateTime = StringUtils.EMPTY;
+				String hl7_orderNr = StringUtils.EMPTY;
+				String hl7_recipient = StringUtils.EMPTY;
 
 				// If the HL7 has not the same structure as the pdf, maybe it is the old
 				// structure
@@ -379,7 +380,7 @@ public class DocumentImporterPage extends ImporterPage {
 				}
 
 				// If we have a HL7 File we will read informations from the HL7 File
-				String filename = "";
+				String filename = StringUtils.EMPTY;
 				if (pair.hl7 != null) {
 					filename = pair.hl7.getFileName().toString();
 				} else if (pair.pdf != null) {
@@ -470,14 +471,14 @@ public class DocumentImporterPage extends ImporterPage {
 			// If everything has been successfully imported
 			SWTHelper.showInfo(MedNetMessages.DocumentImporterPage_ImportCompletedTitle,
 					MessageFormat.format(MedNetMessages.DocumentImporterPage_ImportCompletedSSuccessText,
-							String.valueOf(importSuccess.size()), String.join("\n", importSuccess)));
+							String.valueOf(importSuccess.size()), String.join(StringUtils.LF, importSuccess)));
 
 		} else {
 			// If we had errors, open a MessageBox
 			SWTHelper.showError(MedNetMessages.DocumentImporterPage_errorTitle,
 					MessageFormat.format(MedNetMessages.DocumentImporterPage_ImportError,
 							String.valueOf(importSuccess.size()), String.valueOf(importFailures.size()),
-							String.join("\n", importFailures)));
+							String.join(StringUtils.LF, importFailures)));
 
 		}
 		if (monitor != null) {

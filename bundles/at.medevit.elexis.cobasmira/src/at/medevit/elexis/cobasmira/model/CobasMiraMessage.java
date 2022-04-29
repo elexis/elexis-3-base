@@ -1,5 +1,6 @@
 package at.medevit.elexis.cobasmira.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.LinkedList;
 
 import org.slf4j.Logger;
@@ -62,10 +63,10 @@ public class CobasMiraMessage {
 	}
 
 	public void setText(String in) {
-		String[] results = in.trim().split("\n");
+		String[] results = in.trim().split(StringUtils.LF);
 		logger.debug("setText(), blockType=" + blockType + " results.length: " + results.length);
 		for (int i = 0; i < results.length; i++) {
-			logger.debug("(for) i:" + i + " " + blockType + "==" + BLOCK_TYPE_PATIENT_RESULTS);
+			logger.debug("(for) i:" + i + StringUtils.SPACE + blockType + "==" + BLOCK_TYPE_PATIENT_RESULTS);
 			if (blockType == BLOCK_TYPE_PATIENT_RESULTS) {
 				logger.debug("Adding patientResult: " + results[i]);
 				patientResults.add(new CobasMiraPatientResult(results[i]));
@@ -127,7 +128,7 @@ public class CobasMiraMessage {
 	public String getErrorMessageString() {
 		if (errMessage != null)
 			return errMessage.getErrorDescription();
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public int getElexisStatus() {
@@ -143,7 +144,7 @@ public class CobasMiraMessage {
 			String testName = patientResults.get(0).getTestName();
 			float testResult = patientResults.get(0).getConcentration();
 			String patientID = patientResults.get(0).getPatientIdentification();
-			return patientID + " " + testName + " " + testResult;
+			return patientID + StringUtils.SPACE + testName + StringUtils.SPACE + testResult;
 		}
 		return "More than 1 result contained";
 	}

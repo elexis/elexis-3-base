@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.icd10.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -145,8 +146,8 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 							String t = lf.nextLine();
 							switch (t.charAt(1)) {
 							case 'T':
-								kapitel.setText(t.substring(2).replaceAll("\n", " - ")); //$NON-NLS-1$//$NON-NLS-2$
-																							// //$NON-NLS-3$
+								kapitel.setText(t.substring(2).replaceAll(StringUtils.LF, " - ")); //$NON-NLS-1$
+								// //$NON-NLS-3$
 								break;
 							case 'I':
 								setExtInfo("Incl:", t.substring(2), kapitel);
@@ -155,7 +156,7 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 								setExtInfo("Excl:", t.substring(2), kapitel);
 								break;
 							case 'G':
-								String gruppen = t.substring(2).replaceAll("\n", "::"); //$NON-NLS-1$ //$NON-NLS-2$
+								String gruppen = t.substring(2).replaceAll(StringUtils.LF, "::"); //$NON-NLS-1$
 								setExtInfo("Gruppen", t.substring(2), kapitel);
 								Matcher match = pat_group.matcher(gruppen + "::"); //$NON-NLS-1$
 								while (match.find() == true) {
@@ -273,8 +274,8 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 				br.close();
 				return ret;
 			}
-			while (prev.startsWith(" ") || (prev.startsWith("P"))) { //$NON-NLS-1$ //$NON-NLS-2$
-				ret += "\n" + prev.trim(); //$NON-NLS-1$
+			while (prev.startsWith(StringUtils.SPACE) || (prev.startsWith("P"))) { //$NON-NLS-1$
+				ret += StringUtils.LF + prev.trim();
 				prev = br.readLine();
 				if (prev == null) {
 					br.close();
@@ -282,7 +283,7 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 				}
 			}
 			while (prev.substring(0, 2).equals(ret.substring(0, 2))) {
-				ret += "\n" + nextLine().substring(2); //$NON-NLS-1$
+				ret += StringUtils.LF + nextLine().substring(2);
 				return ret;
 			}
 			while (prev.startsWith("LZ")) { //$NON-NLS-1$

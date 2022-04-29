@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,8 +100,10 @@ public class ProviderHelper {
 		try {
 			return method.invoke(provider);
 		} catch (Exception e) {
-			ArchieActivator.LOG.log("Could not invoke a method for a provider." + "\n" + "Method: " + method.getName()
-					+ "\n" + provider.getClass().getName() + "\n" + e.getLocalizedMessage(), Log.ERRORS);
+			ArchieActivator.LOG.log(
+					"Could not invoke a method for a provider." + StringUtils.LF + "Method: " + method.getName()
+							+ StringUtils.LF + provider.getClass().getName() + StringUtils.LF + e.getLocalizedMessage(),
+					Log.ERRORS);
 		}
 		return null;
 	}

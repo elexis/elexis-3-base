@@ -1,5 +1,6 @@
 package ch.elexis.base.befunde.findings.migrator.preferences;
 
+import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -108,7 +109,7 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 					if (element instanceof MesswertFieldMapping) {
 						return ((MesswertFieldMapping) element).getFindingsCodeLabel();
 					}
-					return "";
+					return StringUtils.EMPTY;
 				}
 			});
 			column.setEditingSupport(new EditingSupport(viewerBefundeMapping) {
@@ -304,7 +305,7 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 				return arg0.compareTo(arg1);
 			}
 		});
-		ret.put("", 0);
+		ret.put(StringUtils.EMPTY, 0);
 		for (int i = 0; i < codesStrings.size(); i++) {
 			ret.put(codesStrings.get(i), new Integer(i + 1));
 		}

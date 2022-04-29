@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.impfplan.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -201,15 +202,15 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		// check if 2 row height is needed
 		boolean wrapText = false;
 		for (Vaccination vacc : _vaccinations) {
-			if (wrapTextByWidth(gc, vacc.getShortBusinessName(), maxLengthBasisImpf, false).contains("\n")) {
+			if (wrapTextByWidth(gc, vacc.getShortBusinessName(), maxLengthBasisImpf, false).contains(StringUtils.LF)) {
 				wrapText = true;
 				break;
 			}
-			if (wrapTextByWidth(gc, vacc.getLotNo(), maxLengthLotNr, true).contains("\n")) {
+			if (wrapTextByWidth(gc, vacc.getLotNo(), maxLengthLotNr, true).contains(StringUtils.LF)) {
 				wrapText = true;
 				break;
 			}
-			if (wrapTextByWidth(gc, vacc.getAdministratorLabel(), maxLengthDoctor, false).contains("\n")) {
+			if (wrapTextByWidth(gc, vacc.getAdministratorLabel(), maxLengthDoctor, false).contains(StringUtils.LF)) {
 				wrapText = true;
 				break;
 			}
@@ -592,12 +593,12 @@ public class VaccinationCompositePaintListener implements PaintListener {
 			if (stringWidth > maxTextWidth) {
 				int maxChars = maxTextWidth * textLength / stringWidth;
 				if (maxChars < textLength) {
-					int idxLastSpace = text.substring(0, maxChars).lastIndexOf(" ") + 1;
+					int idxLastSpace = text.substring(0, maxChars).lastIndexOf(StringUtils.SPACE) + 1;
 					if (idxLastSpace > 1 && idxLastSpace < textLength) {
 						return text.replaceFirst("(.{" + idxLastSpace + "})", "$1\n");
 					} else {
 						return text.replaceFirst("(.{" + maxChars + "})",
-								"$1" + (wrapWithoutSeperator ? "" : "-") + "\n");
+								"$1" + (wrapWithoutSeperator ? StringUtils.EMPTY : "-") + StringUtils.LF);
 					}
 				}
 			}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.ui.dialog;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -180,12 +181,12 @@ public class ContactLinkRecordEditDialog extends TitleAreaDialog {
 		} else {
 			this.mednetIDSelection.deselectAll();
 			;
-			this.category_doc.setText("");
-			this.category_form.setText("");
+			this.category_doc.setText(StringUtils.EMPTY);
+			this.category_form.setText(StringUtils.EMPTY);
 			this.docImport_isActive.setSelection(true);
-			this.docImport_Id.setText("");
+			this.docImport_Id.setText(StringUtils.EMPTY);
 			this.formImport_isActive.setSelection(true);
-			this.xidDomain.setText("");
+			this.xidDomain.setText(StringUtils.EMPTY);
 		}
 
 		return result;

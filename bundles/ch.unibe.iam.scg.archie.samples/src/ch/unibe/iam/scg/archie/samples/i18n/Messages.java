@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.samples.i18n;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -43,7 +44,7 @@ public final class Messages extends NLS {
 	public static String CONSULTATION_STATS_AVERAGE_COSTS;
 	public static String CONSULTATION_STATS_TOTAL_PROFITS;
 	public static String CONSULTATION_STATS_AVERAGE_PROFITS;
-	public static String CONSULTATION_STATS_REGEX_MESSAGE = "";
+	public static String CONSULTATION_STATS_REGEX_MESSAGE = StringUtils.EMPTY;
 	public static String CONSULTATION_STATS_COHORT_SIZE_EXCEPTION;
 	public static String CONSULTATION_TIME_STATS_TITLE;
 	public static String CONSULTATION_TIME_STATS_DESCRIPTION;

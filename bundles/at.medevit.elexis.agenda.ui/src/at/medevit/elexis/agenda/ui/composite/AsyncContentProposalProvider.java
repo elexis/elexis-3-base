@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.composite;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -74,7 +75,7 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable> imple
 						// content changed - query content
 						IQuery<T> query = createBaseQuery();
 
-						String[] searchParts = contents.toLowerCase().split(" ");
+						String[] searchParts = contents.toLowerCase().split(StringUtils.SPACE);
 						lastQueriedContentHash = contents.hashCode();
 						int i = 0;
 						for (String searchPart : searchParts) {
@@ -149,7 +150,7 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable> imple
 	 */
 	public static String getElexisDateSearchString(String value) {
 		StringBuilder sb = null;
-		String ret = value.replaceAll("%", "");
+		String ret = value.replaceAll("%", StringUtils.EMPTY);
 		final String filler = "%%%%%%%%";
 		// are we looking for the year?
 		if (ret.matches("[0-9]{3,}")) {
@@ -159,9 +160,9 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable> imple
 		} else {
 			// replace single digits as in 1.2.1932 with double digits
 			// as in 01.02.1932
-			int dotCount = ret.length() - ret.replace(".", "").length();
+			int dotCount = ret.length() - ret.replace(".", StringUtils.EMPTY).length();
 			String[] parts = ret.split("\\.");
-			StringJoiner sj = new StringJoiner("");
+			StringJoiner sj = new StringJoiner(StringUtils.EMPTY);
 			for (String string : parts) {
 				if (string.length() == 1 && Character.isDigit(string.charAt(0))) {
 					sj.add("0" + string);

@@ -74,7 +74,7 @@ public class ComplementarySubDetail extends Composite {
 					newComplementary.setChapter(complementary.getChapter());
 					newComplementary.setCode(complementary.getCode());
 					newComplementary.setText(newAlternativeText);
-					newComplementary.setDescription("");
+					newComplementary.setDescription(StringUtils.EMPTY);
 					newComplementary.setValidFrom(complementary.getValidFrom());
 					newComplementary.setValidTo(complementary.getValidTo());
 

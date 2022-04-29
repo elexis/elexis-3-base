@@ -1,5 +1,6 @@
 package ch.elexis.ebanking.qr;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.core.model.IContact;
 
 public class QRBillDataException extends Exception {
@@ -28,7 +29,7 @@ public class QRBillDataException extends Exception {
 
 	@Override
 	public String getMessage() {
-		return getSourceType() + " " + super.getMessage();
+		return getSourceType() + StringUtils.SPACE + super.getMessage();
 	}
 
 	public IContact getContact() {

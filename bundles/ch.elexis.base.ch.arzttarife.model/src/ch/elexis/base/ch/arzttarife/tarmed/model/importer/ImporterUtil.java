@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -30,7 +31,7 @@ public class ImporterUtil {
 	public static String getAsString(ResultSet res, String field) throws SQLException, IOException {
 		String ret = res.getString(field);
 		if (ret == null) {
-			return "";
+			return StringUtils.EMPTY;
 		} else {
 			return ret;
 		}

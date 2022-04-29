@@ -1,5 +1,6 @@
 package ch.elexis.barcode.scanner.internal;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +42,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	private void setDetaults() {
 		for (int i = 0; i < NUMBER_OF_SCANNERS; i++) {
-			String postfix = i > 0 ? String.valueOf(i) : "";
+			String postfix = i > 0 ? String.valueOf(i) : StringUtils.EMPTY;
 			getPreferenceStore().setDefault(PreferencePage.BarcodeScanner_SETTINGS + postfix, "9600,8,n,1");
 		}
 	}
@@ -50,13 +51,13 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	protected void createFieldEditors() {
 		Group group = null;
 		List<String> ports = new ArrayList<>();
-		ports.add("");
+		ports.add(StringUtils.EMPTY);
 		ports.addAll(Arrays.asList(Connection.getComPorts()));
 		if (ports.size() > 1) {
 			String[] comPorts = ports.toArray(new String[0]);
 
 			for (int i = 0; i < NUMBER_OF_SCANNERS; i++) {
-				String postfix = i > 0 ? String.valueOf(i) : "";
+				String postfix = i > 0 ? String.valueOf(i) : StringUtils.EMPTY;
 				group = new Group(getFieldEditorParent(), SWT.None);
 				group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 				group.setLayout(new GridLayout(1, true));

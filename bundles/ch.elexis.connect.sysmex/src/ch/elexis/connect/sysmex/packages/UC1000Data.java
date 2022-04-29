@@ -144,8 +144,8 @@ public class UC1000Data extends AbstractUrinData {
 	}
 
 	private void write(ResultInfo resultInfo, Value value, Patient patient) {
-		String result = "";
-		String comment = "";
+		String result = StringUtils.EMPTY;
+		String comment = StringUtils.EMPTY;
 		if (StringUtils.isNotBlank(resultInfo.getSemiQualitativValue())) {
 			result = resultInfo.getSemiQualitativValue();
 			if (StringUtils.isNotBlank(resultInfo.getQualitativValue())) {

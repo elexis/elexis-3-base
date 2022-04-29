@@ -62,7 +62,7 @@ public class SwissmedicSearchAction extends Action implements IKonsExtension, IH
 			medication = selectedMedication.get();
 
 			String ean = null;
-			String num = "";
+			String num = StringUtils.EMPTY;
 
 			IArticle article = medication.getArticle();
 			if (article != null) {

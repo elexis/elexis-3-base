@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -68,8 +69,8 @@ public class AgendaImages extends PreferencePage implements IWorkbenchPreference
 				public void widgetSelected(SelectionEvent e) {
 					FileDialog fdl = new FileDialog(parent.getShell(), SWT.OPEN);
 
-					String dpath = PlatformHelper.getBasePath(Activator.PLUGIN_ID).replaceFirst("\\\\bin", "") //$NON-NLS-1$ //$NON-NLS-2$
-							+ File.separator + "icons"; //$NON-NLS-1$
+					String dpath = PlatformHelper.getBasePath(Activator.PLUGIN_ID).replaceFirst("\\\\bin", //$NON-NLS-1$
+							StringUtils.EMPTY) + File.separator + "icons"; //$NON-NLS-1$
 					fdl.setFilterPath(dpath);
 					String name = fdl.open();
 					File src = new File(name);

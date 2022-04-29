@@ -1,5 +1,6 @@
 package at.medevit.elexis.cobasmira.resulthandler;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,9 +75,9 @@ public class ImportPatientResult {
 				// CobasMiraCodes.getRemarkString(coMiPaRe.remark));
 				LabResult lr;
 				if (noDecPlaces == 0) {
-					lr = new LabResult(p, resultDate, l, Integer.toString(result.intValue()), "");
+					lr = new LabResult(p, resultDate, l, Integer.toString(result.intValue()), StringUtils.EMPTY);
 				} else {
-					lr = new LabResult(p, resultDate, l, result.toString(), "");
+					lr = new LabResult(p, resultDate, l, result.toString(), StringUtils.EMPTY);
 				}
 
 				lr.set("Quelle", l.getLabor().getKuerzel());

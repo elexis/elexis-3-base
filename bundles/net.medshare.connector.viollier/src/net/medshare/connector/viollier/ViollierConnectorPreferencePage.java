@@ -12,6 +12,7 @@
  *******************************************************************************/
 package net.medshare.connector.viollier;
 
+import org.apache.commons.lang3.StringUtils;
 import java.net.InetAddress;
 import java.text.MessageFormat;
 
@@ -189,7 +190,7 @@ public class ViollierConnectorPreferencePage extends FieldEditorPreferencePage i
 		// =====================================================================
 		// Mandant Settings
 		// =====================================================================
-		String mandantname = ""; //$NON-NLS-1$
+		String mandantname = StringUtils.EMPTY;
 		try {
 			mandantname = mySettings.getMandant().getLabel();
 		} catch (Exception e) {
@@ -338,7 +339,7 @@ public class ViollierConnectorPreferencePage extends FieldEditorPreferencePage i
 
 	private void showMandantSettings() {
 		Boolean mandantUseGlobalSettings = mySettings.isMandantUsingGlobalSettings();
-		String mandantname = ""; //$NON-NLS-1$
+		String mandantname = StringUtils.EMPTY;
 		try {
 			mandantname = mySettings.getMandant().getLabel();
 		} catch (Exception e) {

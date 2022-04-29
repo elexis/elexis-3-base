@@ -12,6 +12,7 @@
 
 package ch.elexis.base.ch.diagnosecodes.views;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -66,7 +67,7 @@ public class ICDDetailDisplay implements IDetailDisplay {
 		g1.setLayout(new FillLayout());
 		g1.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		g1.setText("Text"); //$NON-NLS-1$
-		titel = tk.createText(g1, ""); //$NON-NLS-1$
+		titel = tk.createText(g1, StringUtils.EMPTY);
 		tk.adapt(g1);
 		tk.paintBordersFor(ret);
 		return ret;

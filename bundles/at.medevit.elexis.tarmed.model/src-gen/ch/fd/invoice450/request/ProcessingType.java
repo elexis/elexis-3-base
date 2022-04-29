@@ -8,6 +8,7 @@
 
 package ch.fd.invoice450.request;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -218,7 +219,7 @@ public class ProcessingType {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
+    @XmlType(name = StringUtils.EMPTY)
     public static class Demand {
 
         @XmlAttribute(name = "tc_demand_id", required = true)

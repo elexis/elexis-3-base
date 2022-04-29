@@ -44,17 +44,17 @@ public class CreateOrderHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String cookie = "";
-		String vorname = "";
-		String name = "";
-		String geburtsdatum = "";
-		String gender = "";
-		String address = "";
-		String plz = "";
-		String ort = "";
-		String land = "";
-		String socialSecurityNumber = ""; // AHV-Nummer
-		String insuranceCardNumber = ""; // Versicherungskarte
+		String cookie = StringUtils.EMPTY;
+		String vorname = StringUtils.EMPTY;
+		String name = StringUtils.EMPTY;
+		String geburtsdatum = StringUtils.EMPTY;
+		String gender = StringUtils.EMPTY;
+		String address = StringUtils.EMPTY;
+		String plz = StringUtils.EMPTY;
+		String ort = StringUtils.EMPTY;
+		String land = StringUtils.EMPTY;
+		String socialSecurityNumber = StringUtils.EMPTY; // AHV-Nummer
+		String insuranceCardNumber = StringUtils.EMPTY; // Versicherungskarte
 
 		Patient patient = ElexisEventDispatcher.getSelectedPatient();
 		if (patient == null) {
@@ -137,12 +137,12 @@ public class CreateOrderHandler extends AbstractHandler {
 	 */
 	private String getSenderSoftware() {
 		StringBuilder sb = new StringBuilder();
-		if (Elexis.APPLICATION_NAME.contains(" ")) {
-			sb.append(Elexis.APPLICATION_NAME.split(" ")[0]);
+		if (Elexis.APPLICATION_NAME.contains(StringUtils.SPACE)) {
+			sb.append(Elexis.APPLICATION_NAME.split(StringUtils.SPACE)[0]);
 		} else {
 			sb.append(Elexis.APPLICATION_NAME);
 		}
-		sb.append(" ");
+		sb.append(StringUtils.SPACE);
 		String[] parts = Elexis.VERSION.split("\\.");
 		if (parts.length > 3) {
 			sb.append(parts[0]).append(".").append(parts[1]).append(".").append(parts[2]);
@@ -153,7 +153,7 @@ public class CreateOrderHandler extends AbstractHandler {
 	}
 
 	private String getInsuranceCardNumber(Patient patient) {
-		String ret = "";
+		String ret = StringUtils.EMPTY;
 		for (Fall fall : patient.getFaelle()) {
 			if (fall.isOpen()) {
 				if (StringUtils.isNotBlank((String) fall.getExtInfoStoredObjectByKey("VEKANr"))) {
@@ -201,7 +201,7 @@ public class CreateOrderHandler extends AbstractHandler {
 
 	private String convertDate(String gebDat) {
 		if (gebDat.isEmpty())
-			return "";
+			return StringUtils.EMPTY;
 		String tempDay = gebDat.substring(0, 2);
 		String tempMonth = gebDat.substring(3, 5);
 		String tempYear = gebDat.substring(6);

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.annotations;
 
+import org.apache.commons.lang3.StringUtils;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -51,7 +52,7 @@ public @interface GetProperty {
 	 *
 	 * @return String A description.
 	 */
-	public String description() default "";
+	public String description() default StringUtils.EMPTY;
 
 	/**
 	 * Property index. Defines the order in which this property is displayed and
@@ -71,7 +72,7 @@ public @interface GetProperty {
 	 * @see java.util.regex.Pattern
 	 * @return String Regular expression pattern.
 	 */
-	public String validationRegex() default "";
+	public String validationRegex() default StringUtils.EMPTY;
 
 	/**
 	 * A validation error message that will be displayed upon unsuccessful
@@ -79,7 +80,7 @@ public @interface GetProperty {
 	 *
 	 * @return String Validation error message.
 	 */
-	public String validationMessage() default "";
+	public String validationMessage() default StringUtils.EMPTY;
 
 	/**
 	 * Returns a list of items for a given getter method. This is only used if the
@@ -89,7 +90,7 @@ public @interface GetProperty {
 	 *
 	 * @return Array of strings, empty string array by default.
 	 */
-	public String[] items() default { "" };
+	public String[] items() default { StringUtils.EMPTY };
 
 	/**
 	 * Custom widget implementors can define their own widget class and pass it to

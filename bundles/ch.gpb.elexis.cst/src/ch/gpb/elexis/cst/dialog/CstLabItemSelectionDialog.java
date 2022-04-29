@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.dialog;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -252,8 +253,8 @@ public class CstLabItemSelectionDialog extends SelectionDialog {
 			if ((e1 instanceof LabItem) && (e2 instanceof LabItem)) {
 				LabItem d1 = (LabItem) e1;
 				LabItem d2 = (LabItem) e2;
-				String c1 = "";
-				String c2 = "";
+				String c1 = StringUtils.EMPTY;
+				String c2 = StringUtils.EMPTY;
 				switch (sortColumn) {
 				case 0:
 					c1 = d1.getName();

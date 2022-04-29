@@ -1,5 +1,6 @@
 package waelti.statistics.queries.providers;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -24,7 +25,7 @@ public class QueryLabelProvider extends LabelProvider implements ITableLabelProv
 		Object[] row = (Object[]) element;
 		if (row[columnIndex].getClass() == Money.class) {
 			Currency cur = Currency.getInstance(Locale.getDefault());
-			return cur + " " + row[columnIndex].toString();
+			return cur + StringUtils.SPACE + row[columnIndex].toString();
 		} else {
 			return row[columnIndex].toString();
 		}

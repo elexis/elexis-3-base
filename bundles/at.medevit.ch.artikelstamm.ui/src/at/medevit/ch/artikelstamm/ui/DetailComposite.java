@@ -10,6 +10,7 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 import java.util.List;
 
@@ -316,18 +317,18 @@ public class DetailComposite extends ScrolledComposite {
 				ATCCode rootCode = atcHierarchy.get(atcHierarchy.size() - 1);
 				TreeItem root = new TreeItem(treeATC, SWT.None);
 				if (prefAtcLanguage.equals(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN)) {
-					root.setText(rootCode.atcCode + " " + rootCode.name_german);
+					root.setText(rootCode.atcCode + StringUtils.SPACE + rootCode.name_german);
 				} else {
-					root.setText(rootCode.atcCode + " " + rootCode.name);
+					root.setText(rootCode.atcCode + StringUtils.SPACE + rootCode.name);
 				}
 				TreeItem parent = root;
 				for (int i = atcHierarchy.size() - 2; i >= 0; i--) {
 					ATCCode code = atcHierarchy.get(i);
 					TreeItem newItem = new TreeItem(parent, SWT.None);
 					if (prefAtcLanguage.equals(ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN)) {
-						newItem.setText(code.atcCode + " " + code.name_german);
+						newItem.setText(code.atcCode + StringUtils.SPACE + code.name_german);
 					} else {
-						newItem.setText(code.atcCode + " " + code.name);
+						newItem.setText(code.atcCode + StringUtils.SPACE + code.name);
 					}
 
 					parent = newItem;

@@ -48,14 +48,14 @@ public class AddressesFile extends AbstractCsvImportFile<Kontakt> implements IAe
 		String lastname = line[2];
 		String department = line[3];
 		if (StringUtils.isBlank(firstname) || StringUtils.isBlank(lastname)) {
-			String bez = firstname == null ? "" : firstname;
+			String bez = firstname == null ? StringUtils.EMPTY : firstname;
 			if (bez.length() > 0) {
-				bez += " ";
+				bez += StringUtils.SPACE;
 			}
 			bez += lastname;
 			return new Organisation(bez, department);
 		} else {
-			return new Person(lastname, firstname, "", Gender.UNKNOWN.value()); // $NON-NLS-2$
+			return new Person(lastname, firstname, StringUtils.EMPTY, Gender.UNKNOWN.value());
 		}
 	}
 

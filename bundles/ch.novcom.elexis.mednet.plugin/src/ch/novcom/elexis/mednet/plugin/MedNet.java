@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -158,7 +159,7 @@ public class MedNet {
 		}
 		command.add("-output:" + file.toString());
 
-		LOGGER.debug(logPrefix + "launch MedNet " + String.join(" ", command));//$NON-NLS-1$
+		LOGGER.debug(logPrefix + "launch MedNet " + String.join(StringUtils.SPACE, command));
 
 		ProcessBuilder probuilder = new ProcessBuilder(command);
 		probuilder.directory(MedNet.getSettings().getExePath().getParent().toFile());
@@ -295,8 +296,8 @@ public class MedNet {
 		for (String line : resultStringList) {
 			MedNetConfigFormPath item = new MedNetConfigFormPath(line);
 			result.put(item.getAccountID(), item);
-			LOGGER.debug(logPrefix + "Form Path loaded: " + item.getAccountID() + " " + item.getAccountLastname() + " " //$NON-NLS-1$
-					+ item.getPath());
+			LOGGER.debug(logPrefix + "Form Path loaded: " + item.getAccountID() + StringUtils.SPACE
+					+ item.getAccountLastname() + StringUtils.SPACE + item.getPath());
 		}
 
 		// finally return the temporary fileCreated
@@ -379,8 +380,9 @@ public class MedNet {
 			MedNetConfigDocumentPath item = new MedNetConfigDocumentPath(line);
 			result.add(item);
 
-			LOGGER.debug(logPrefix + "Document Path loaded: " + item.getAccountID() + " " + item.getAccountLastname() //$NON-NLS-1$
-					+ " " + item.getInstitutionID() + " " + item.getInstitutionName() + " " + item.getPath());
+			LOGGER.debug(logPrefix + "Document Path loaded: " + item.getAccountID() + StringUtils.SPACE
+					+ item.getAccountLastname() + StringUtils.SPACE + item.getInstitutionID() + StringUtils.SPACE
+					+ item.getInstitutionName() + StringUtils.SPACE + item.getPath());
 		}
 
 		// finally return the temporary fileCreated

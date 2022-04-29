@@ -163,7 +163,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		testingCenter.setLayoutData(gd);
 		testingCenter.setMessage("Test Ort Name (z.B. Praxis Name) max. 50 Zeichen");
 		testingCenter.setToolTipText("Test Ort Name (z.B. Praxis Name) max. 50 Zeichen");
-		testingCenter.setText(ConfigServiceHolder.get().get(CertificatesService.CFG_TESTCENTERNAME, ""));
+		testingCenter.setText(ConfigServiceHolder.get().get(CertificatesService.CFG_TESTCENTERNAME, StringUtils.EMPTY));
 		testingCenter.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -199,7 +199,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = 400;
 		otpText.setLayoutData(gd);
-		otpText.setText(ConfigServiceHolder.get().getActiveMandator(CertificatesService.CFG_OTP, ""));
+		otpText.setText(ConfigServiceHolder.get().getActiveMandator(CertificatesService.CFG_OTP, StringUtils.EMPTY));
 		otpText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -235,7 +235,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 						ConfigServiceHolder.get().set(cfg, block.getId());
 					} else {
 						ConfigServiceHolder.get().set(cfg, null);
-						tAutomaticBillingBlock.setText("");
+						tAutomaticBillingBlock.setText(StringUtils.EMPTY);
 					}
 				}
 			}
@@ -259,7 +259,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	}
 
 	private void updateTextLabel() {
-		String timeStampString = ConfigServiceHolder.get().getActiveMandator(CertificatesService.CFG_OTP_TIMESTAMP, "");
+		String timeStampString = ConfigServiceHolder.get().getActiveMandator(CertificatesService.CFG_OTP_TIMESTAMP,
+				StringUtils.EMPTY);
 		if (StringUtils.isNotBlank(timeStampString)) {
 			LocalDateTime timeStamp = LocalDateTime.parse(timeStampString);
 			textLabel.setText(

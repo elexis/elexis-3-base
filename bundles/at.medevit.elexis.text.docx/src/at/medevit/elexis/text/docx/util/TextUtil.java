@@ -1,5 +1,6 @@
 package at.medevit.elexis.text.docx.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,7 +69,7 @@ public class TextUtil {
 		R ret = null;
 
 		boolean cursorInTbl = DocxUtil.getParentTbl(cursor) != null;
-		List<String> newLineSplit = Arrays.asList(text.split("\n", -1));
+		List<String> newLineSplit = Arrays.asList(text.split(StringUtils.LF, -1));
 		for (int i = 0; i < newLineSplit.size(); i++) {
 			if (i == 0) {
 				ret = insertLine(cursor, newLineSplit.get(i), styleInfo);
@@ -100,7 +101,7 @@ public class TextUtil {
 	private static R addText(R cursor, String text, StyleInfo styleInfo) {
 		R ret = null;
 
-		List<String> newLineSplit = Arrays.asList(text.split("\n", -1));
+		List<String> newLineSplit = Arrays.asList(text.split(StringUtils.LF, -1));
 		for (int i = 0; i < newLineSplit.size(); i++) {
 			if (i == 0) {
 				ret = DocxUtil.appendRun(cursor);

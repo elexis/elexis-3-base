@@ -12,6 +12,7 @@
 
 package ch.elexis.impfplan.view;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -42,7 +43,7 @@ public class VaccinationLabelProvider extends LabelProvider implements ITableLab
 				return ((VaccinationType) element).getLabel();
 			}
 		}
-		return ""; //$NON-NLS-1$
+		return StringUtils.EMPTY;
 	}
 
 }

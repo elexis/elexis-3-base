@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.impfplan.model.vaccplans;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -78,7 +79,7 @@ public abstract class AbstractVaccinationPlan {
 		 *         plain ATC-Code information without its allocation to base or extended
 		 */
 		public String getClearedDiseaseAtcCode() {
-			return diseaseAtcCode.replaceAll("/[BbEe]$", "");
+			return diseaseAtcCode.replaceAll("/[BbEe]$", StringUtils.EMPTY);
 		}
 	}
 

@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.rcprap;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.net.URL;
 
@@ -28,7 +29,7 @@ public class SingleSourceUtil {
 		if (IS_RAP) {
 			String baseUrl = System.getenv("BASE_URL");
 			if (baseUrl == null) {
-				baseUrl = "";
+				baseUrl = StringUtils.EMPTY;
 			}
 			HTML_BASE_URL = baseUrl + "/agenda/static/html/"; //$NON-NLS-1$
 		} else {

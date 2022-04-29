@@ -10,6 +10,7 @@
  ******************************************************************************/
 package ch.elexis.views;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -104,7 +105,7 @@ public class TarmedSelectorPanelProvider extends SelectorPanelProvider {
 
 	private void updateLawFilter(IEncounter encounter) {
 		ICoverage coverage = encounter.getCoverage();
-		String law = "";
+		String law = StringUtils.EMPTY;
 		if (coverage != null) {
 			String konsLaw = coverage.getBillingSystem().getLaw().name();
 			if (ArzttarifeUtil.isAvailableLaw(konsLaw)) {

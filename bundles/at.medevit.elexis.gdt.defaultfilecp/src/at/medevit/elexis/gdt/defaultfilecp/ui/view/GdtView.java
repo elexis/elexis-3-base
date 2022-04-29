@@ -1,5 +1,6 @@
 package at.medevit.elexis.gdt.defaultfilecp.ui.view;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,7 +82,7 @@ public class GdtView extends ViewPart {
 			content.setLayout(new GridLayout(3, false));
 
 			Label label = new Label(content, SWT.RIGHT);
-			label.setText("");
+			label.setText(StringUtils.EMPTY);
 			label.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 			label.setBackground(UiDesk.getColor(UiDesk.COL_LIGHTGREY));
 
@@ -90,7 +91,7 @@ public class GdtView extends ViewPart {
 			label.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 
 			Button btnNewExamination = new Button(content, SWT.PUSH);
-			btnNewExamination.setText("");
+			btnNewExamination.setText(StringUtils.EMPTY);
 			btnNewExamination.setImage(Images.IMG_SYSTEM_MONITOR.getImage());
 			btnNewExamination.setToolTipText("Neue Untersuchung anfordern");
 			btnNewExamination.setData(fileCommPartner.getId());
@@ -124,7 +125,7 @@ public class GdtView extends ViewPart {
 			});
 
 			Button btnBaseDataRequest = new Button(content, SWT.PUSH);
-			btnBaseDataRequest.setText("");
+			btnBaseDataRequest.setText(StringUtils.EMPTY);
 			btnBaseDataRequest.setImage(Images.IMG_USER_IDLE.getImage());
 			btnBaseDataRequest.setToolTipText("Stammdaten übermitteln");
 			btnBaseDataRequest.setData(fileCommPartner.getId());
@@ -166,7 +167,7 @@ public class GdtView extends ViewPart {
 			lastExaminationComposite.setToolTipText(lastExaminationToolTip);
 
 			Button btnShowLastExamination = new Button(lastExaminationComposite, SWT.PUSH);
-			btnShowLastExamination.setText("");
+			btnShowLastExamination.setText(StringUtils.EMPTY);
 			btnShowLastExamination.setToolTipText(lastExaminationToolTip);
 			btnShowLastExamination.setImage(Images.IMG_EYE_WO_SHADOW.getImage());
 			btnShowLastExamination.setData(lastExaminationId);

@@ -157,6 +157,7 @@
 
 package ch.medshare.elexis.directories;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException; //20120713js
 import java.net.MalformedURLException;
@@ -204,9 +205,9 @@ public class DirectoriesContentParser extends HtmlParser {
 
 	private static final String ADR_LISTENTRY_TAG = "<div class='row local-listing'"; //$NON-NLS-1$
 	private static final String ADR_SINGLEDETAILENTRY_TAG = "<div class='eight columns details'";; //$NON-NLS-1$
-	private static String metaPLZTrunc = "";
-	private static String metaOrtTrunc = "";
-	private static String metaStrasseTrunc = "";
+	private static String metaPLZTrunc = StringUtils.EMPTY;
+	private static String metaOrtTrunc = StringUtils.EMPTY;
+	private static String metaStrasseTrunc = StringUtils.EMPTY;
 	private final Logger logger = LoggerFactory.getLogger("ch.medshare.elexis_directories");
 
 	public DirectoriesContentParser(String htmlText) {
@@ -218,9 +219,9 @@ public class DirectoriesContentParser extends HtmlParser {
 	 */
 	private String reverseString(String text) {
 		if (text == null) {
-			return "";
+			return StringUtils.EMPTY;
 		}
-		String reversed = "";
+		String reversed = StringUtils.EMPTY;
 		for (char c : text.toCharArray()) {
 			reversed = c + reversed;
 		}
@@ -239,9 +240,9 @@ public class DirectoriesContentParser extends HtmlParser {
 	 * code so far.
 	 */
 	private String[] getVornameNachname(String text) {
-		String vorname = ""; //$NON-NLS-1$
+		String vorname = StringUtils.EMPTY;
 		String nachname = text;
-		int nameEndIndex = text.trim().indexOf(" "); //$NON-NLS-1$
+		int nameEndIndex = text.trim().indexOf(StringUtils.SPACE);
 		if (nameEndIndex > 0) {
 			vorname = text.trim().substring(nameEndIndex).trim();
 			nachname = text.trim().substring(0, nameEndIndex).trim();
@@ -256,10 +257,10 @@ public class DirectoriesContentParser extends HtmlParser {
 	 * @return
 	 */
 	private String removeDirt(String text) {
-		text = text.replaceAll("^+\\s", "");
-		text = text.replaceAll("\\s+$", "");
+		text = text.replaceAll("^+\\s", StringUtils.EMPTY);
+		text = text.replaceAll("\\s+$", StringUtils.EMPTY);
 
-		return text.replace("<span class=\"highlight\">", "").replace("</span>", "");
+		return text.replace("<span class=\"highlight\">", StringUtils.EMPTY).replace("</span>", StringUtils.EMPTY);
 	}
 
 	/**
@@ -275,14 +276,15 @@ public class DirectoriesContentParser extends HtmlParser {
 		String searchInfoText = extract("<title>", "</title>");
 
 		if (searchInfoText == null) {
-			return "";//$NON-NLS-1$
+			return StringUtils.EMPTY;
 		}
 
 		logger.debug("DirectoriesContentParser.java: getSearchInfo(): searchInfoText != null\n");
 		logger.debug("DirectoriesContentParser.java: getSearchInfo(): \"" + searchInfoText + "\"\n\n");
 
-		return searchInfoText.replace("<strong class=\"what\">", "").replace("<strong class=\"where\">", "") //$NON-NLS-3$ //$NON-NLS-4$
-				.replace("<strong>", "").replace("</strong>", "").trim();
+		return searchInfoText.replace("<strong class=\"what\">", StringUtils.EMPTY)
+				.replace("<strong class=\"where\">", StringUtils.EMPTY) // $NON-NLS-3$
+				.replace("<strong>", StringUtils.EMPTY).replace("</strong>", StringUtils.EMPTY).trim();
 	}
 
 	/**
@@ -308,24 +310,24 @@ public class DirectoriesContentParser extends HtmlParser {
 			logger.debug(
 					"Processing a <meta> field to help processing the 'details' field later on which is very unstructured after 20131124...\n");
 			moveTo("<meta content='Adresse von ");
-			metaStrasseTrunc = removeDirt(extract("Strasse: ", ",")).replaceAll("[^A-Za-z0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-																										// //20131127js
-			metaPLZTrunc = removeDirt(extract("PLZ: ", ",")).replaceAll("[^A-Za-z0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-																								// //20131127js
-			metaOrtTrunc = removeDirt(extract("Ort: ", ",")).replaceAll("[^A-Za-z0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-																								// //20131127js
+			metaStrasseTrunc = removeDirt(extract("Strasse: ", ",")).replaceAll("[^A-Za-z0-9]", StringUtils.EMPTY); //$NON-NLS-1$
+			// //20131127js
+			metaPLZTrunc = removeDirt(extract("PLZ: ", ",")).replaceAll("[^A-Za-z0-9]", StringUtils.EMPTY); //$NON-NLS-1$
+			// //20131127js
+			metaOrtTrunc = removeDirt(extract("Ort: ", ",")).replaceAll("[^A-Za-z0-9]", StringUtils.EMPTY); //$NON-NLS-1$
+			// //20131127js
 			if (metaStrasseTrunc == null)
 				logger.debug("WARNING: metaStrasseTrunc == null\n");
 			else
-				logger.debug("metaStrasseTrunc == " + metaStrasseTrunc + "\n");
+				logger.debug("metaStrasseTrunc == " + metaStrasseTrunc + StringUtils.LF);
 			if (metaPLZTrunc == null)
 				logger.debug("WARNING: metaPLZTrunc == null\n");
 			else
-				logger.debug("metaPLZTrunc == " + metaPLZTrunc + "\n");
+				logger.debug("metaPLZTrunc == " + metaPLZTrunc + StringUtils.LF);
 			if (metaOrtTrunc == null)
 				logger.debug("WARNING: metaOrtTrunc == null\n");
 			else
-				logger.debug("metaOrtTrunc == " + metaOrtTrunc + "\n");
+				logger.debug("metaOrtTrunc == " + metaOrtTrunc + StringUtils.LF);
 		}
 		;
 
@@ -335,15 +337,16 @@ public class DirectoriesContentParser extends HtmlParser {
 		int detailIndex = getNextPos(ADR_SINGLEDETAILENTRY_TAG);
 
 		logger.debug("DirectoriesContentParser.java: extractKontakte() initial values of...\n");
-		logger.debug("DirectoriesContentParser.java: extractKontakte().listIndex: " + listIndex + "\n");
-		logger.debug("DirectoriesContentParser.java: extractKontakte().detailIndex: " + detailIndex + "\n");
+		logger.debug("DirectoriesContentParser.java: extractKontakte().listIndex: " + listIndex + StringUtils.LF);
+		logger.debug("DirectoriesContentParser.java: extractKontakte().detailIndex: " + detailIndex + StringUtils.LF);
 
 		while (listIndex > 0 || detailIndex > 0) {
 			KontaktEntry entry = null;
 
 			logger.debug("DirectoriesContentParser.java: extractKontakte() intraloop values of...\n");
-			logger.debug("DirectoriesContentParser.java: extractKontakte().listIndex: " + listIndex + "\n");
-			logger.debug("DirectoriesContentParser.java: extractKontakte().detailIndex: " + detailIndex + "\n");
+			logger.debug("DirectoriesContentParser.java: extractKontakte().listIndex: " + listIndex + StringUtils.LF);
+			logger.debug(
+					"DirectoriesContentParser.java: extractKontakte().detailIndex: " + detailIndex + StringUtils.LF);
 
 			if (detailIndex < 0 || (listIndex >= 0 && listIndex < detailIndex)) {
 				// Parsing Liste
@@ -356,7 +359,7 @@ public class DirectoriesContentParser extends HtmlParser {
 			}
 
 			if (entry != null) {
-				logger.debug("DirectoriesContentParser.java: entry: " + entry.toString() + "\n");
+				logger.debug("DirectoriesContentParser.java: entry: " + entry.toString() + StringUtils.LF);
 			} else {
 				logger.debug("DirectoriesContentParser.java: entry: NULL\n");
 			}
@@ -398,8 +401,8 @@ public class DirectoriesContentParser extends HtmlParser {
 
 		int nextEntryPoxIndex = getNextPos(ADR_LISTENTRY_TAG); // 20120712js
 
-		logger.debug(
-				"DirectoriesContentParser.java: extractListKontakt() nextEntryPoxIndex: " + nextEntryPoxIndex + "\n");
+		logger.debug("DirectoriesContentParser.java: extractListKontakt() nextEntryPoxIndex: " + nextEntryPoxIndex
+				+ StringUtils.LF);
 
 		logger.debug(
 				"DirectoriesContentParser.java: Shouldn't the \\\" in the following line and similar ones throughout this file be changed to a simple ' ???\n");
@@ -418,11 +421,12 @@ public class DirectoriesContentParser extends HtmlParser {
 		String nachname = vornameNachname[1];
 
 		// Anne Müller case debug output:
-		logger.debug("DirectoriesContentParser.java: extractListKontakt() nameVornameText: " + nameVornameText + "\n");
+		logger.debug("DirectoriesContentParser.java: extractListKontakt() nameVornameText: " + nameVornameText
+				+ StringUtils.LF);
 		logger.debug(
 				"DirectoriesContentParser.java: extractListKontakt() Possibly add better processing of a successor to role/categories/profession fields here as well, see comments above.\n");
 
-		String zusatz = ""; // 20120712js
+		String zusatz = StringUtils.EMPTY; // 20120712js
 
 		// This is obviously much worse structured XML in a technical sense.
 		// It's all direct layout control, rather than providing logically structured
@@ -449,7 +453,7 @@ public class DirectoriesContentParser extends HtmlParser {
 			// results.
 
 		// Anne Müller case debug output:
-		logger.debug("DirectoriesContentParser.java: extractListKontakt() catIndex: " + catIndex + "\n");
+		logger.debug("DirectoriesContentParser.java: extractListKontakt() catIndex: " + catIndex + StringUtils.LF);
 		logger.debug("DirectoriesContentParser.java: extractListKontakt() zusatz: \"" + zusatz + "\"\n\n");
 
 		String adressTxt = extract("<span class='address'>", "</span>"); // 20131127js
@@ -469,9 +473,9 @@ public class DirectoriesContentParser extends HtmlParser {
 		// "Gemeinschaftspraxis, Monbijoustrasse 124, 3007 Bern" (test case: search for:
 		// anne
 		// müller, bern)
-		String strasse = "";
-		String plz = "";
-		String ort = "";
+		String strasse = StringUtils.EMPTY;
+		String plz = StringUtils.EMPTY;
+		String ort = StringUtils.EMPTY;
 		if (adressTxt.contains(", ")) {
 			// Use lastIndexOf() to separate only PLZ Ort, no matter how many comma separted
 			// entries
@@ -479,7 +483,7 @@ public class DirectoriesContentParser extends HtmlParser {
 			int CommaPos = adressTxt.lastIndexOf(", ");
 			if (CommaPos > -1) {
 				strasse = removeDirt(adressTxt.substring(0, CommaPos));
-				int SpacePos = adressTxt.indexOf(" ", CommaPos + 2);
+				int SpacePos = adressTxt.indexOf(StringUtils.SPACE, CommaPos + 2);
 				if (SpacePos > -1) {
 					plz = removeDirt(adressTxt.substring(CommaPos + 2, SpacePos));
 					ort = removeDirt(adressTxt.substring(SpacePos + 1));
@@ -490,10 +494,10 @@ public class DirectoriesContentParser extends HtmlParser {
 				ort = removeDirt(adressTxt);
 			}
 		}
-		if (strasse != "") {
+		if (strasse != StringUtils.EMPTY) {
 			int CommaPos = strasse.lastIndexOf(", ");
 			if (CommaPos > -1) {
-				if (zusatz == "") {
+				if (zusatz == StringUtils.EMPTY) {
 					zusatz = removeDirt(strasse.substring(0, CommaPos));
 				} else {
 					// Puts the new one to the end of the old one:
@@ -508,7 +512,7 @@ public class DirectoriesContentParser extends HtmlParser {
 		// list,
 		// where nextEntryPoxIndex will already be -1 (!).
 		// You can test that with meier, bern, or hamacher, bern.
-		String telNr = ""; // 20120712js
+		String telNr = StringUtils.EMPTY; // 20120712js
 		int phonePos = (getNextPos("<span class='phone'")); // 20120712js
 		if (phonePos >= 0 && ((phonePos < nextEntryPoxIndex) || nextEntryPoxIndex == -1)) { // 20120712js
 			moveTo("<span class='phone'"); // 20120712js
@@ -524,7 +528,7 @@ public class DirectoriesContentParser extends HtmlParser {
 			// the phone number
 			// in the List format output.
 			moveTo("number\""); // 20120712js
-			telNr = extract(">", "</").replace("&nbsp;", "").replace("*", "").trim(); // 20120712js
+			telNr = extract(">", "</").replace("&nbsp;", StringUtils.EMPTY).replace("*", StringUtils.EMPTY).trim(); // 20120712js
 		} // 20120712js
 
 		// 20120713js: Please note: Fax and E-mail are NOT available in the List format
@@ -532,7 +536,7 @@ public class DirectoriesContentParser extends HtmlParser {
 		// 20131127js: And this is still the case in the next revision after
 		// 20131124js...
 		return new KontaktEntry(vorname, nachname, zusatz, // $NON-NLS-1$
-				strasse, plz, ort, telNr, "", "", false); //$NON-NLS-1$
+				strasse, plz, ort, telNr, StringUtils.EMPTY, StringUtils.EMPTY, false);
 	}
 
 	/**
@@ -592,18 +596,18 @@ public class DirectoriesContentParser extends HtmlParser {
 		// Wegen des hinzugefügten loops für ggf. mehrere Adressen auch im
 		// Detailergebnis: Variablen hier vorab definiert,
 		// damit sie später bei return ausserhalb des loops noch sichtbar sind.
-		String vorname = "";
-		String nachname = "";
+		String vorname = StringUtils.EMPTY;
+		String nachname = StringUtils.EMPTY;
 
-		String streetAddress = "";
-		String poBox = "";
-		String plzCode = ""; // 20120712js
-		String ort = ""; // 20120712js
+		String streetAddress = StringUtils.EMPTY;
+		String poBox = StringUtils.EMPTY;
+		String plzCode = StringUtils.EMPTY; // 20120712js
+		String ort = StringUtils.EMPTY; // 20120712js
 
-		String zusatz = "";
-		String tel = ""; // 20120712js
-		String fax = ""; // 20120712js
-		String email = ""; // 20120712js
+		String zusatz = StringUtils.EMPTY;
+		String tel = StringUtils.EMPTY; // 20120712js
+		String fax = StringUtils.EMPTY; // 20120712js
+		String email = StringUtils.EMPTY; // 20120712js
 
 		Boolean doItOnceMore = true;
 		while (doItOnceMore) { // 20120712js
@@ -618,18 +622,19 @@ public class DirectoriesContentParser extends HtmlParser {
 			}
 			String[] vornameNachname = getVornameNachname(nameVornameText);
 
-			if (vorname.equals("")) {
+			if (vorname.equals(StringUtils.EMPTY)) {
 				vorname = vornameNachname[0];
 				nachname = vornameNachname[1];
 			} else {
 
 				// Das hier ist vielleicht besser, wenn's geht:
-				nachname = nachname + " " + vorname;
-				vorname = vornameNachname[1] + " " + vornameNachname[0];
+				nachname = nachname + StringUtils.SPACE + vorname;
+				vorname = vornameNachname[1] + StringUtils.SPACE + vornameNachname[0];
 			}
 
 			// Anne Müller case debug output:
-			logger.debug("DirectoriesContentParser.java: extractKontakt() nameVornameText: " + nameVornameText + "\n");
+			logger.debug("DirectoriesContentParser.java: extractKontakt() nameVornameText: " + nameVornameText
+					+ StringUtils.LF);
 
 			if (moveTo("<div class='profession'>")) { // 20120712js
 				zusatz = extractTo("</div>"); // 20120712js
@@ -647,7 +652,7 @@ public class DirectoriesContentParser extends HtmlParser {
 			String adressTxt = extract("<p class='address'>", "</p>").trim(); // 20120712js
 
 			// Anne Müller, Bern or Eggimann Meier, Bern case debug output:
-			logger.debug("DirectoriesContentParser.java: adressTxt: " + adressTxt + "\n");
+			logger.debug("DirectoriesContentParser.java: adressTxt: " + adressTxt + StringUtils.LF);
 
 			// HtmlParser parser = new HtmlParser(adressTxt);
 
@@ -660,15 +665,15 @@ public class DirectoriesContentParser extends HtmlParser {
 			if (metaStrasseTrunc == null)
 				logger.debug("WARNING: metaStrasseTrunc == null\n");
 			else
-				logger.debug("metaStrasseTrunc == " + metaStrasseTrunc + "\n");
+				logger.debug("metaStrasseTrunc == " + metaStrasseTrunc + StringUtils.LF);
 			if (metaPLZTrunc == null)
 				logger.debug("WARNING: metaPLZTrunc == null\n");
 			else
-				logger.debug("metaPLZTrunc == " + metaPLZTrunc + "\n");
+				logger.debug("metaPLZTrunc == " + metaPLZTrunc + StringUtils.LF);
 			if (metaOrtTrunc == null)
 				logger.debug("WARNING: metaOrtTrunc == null\n");
 			else
-				logger.debug("metaOrtTrunc == " + metaOrtTrunc + "\n");
+				logger.debug("metaOrtTrunc == " + metaOrtTrunc + StringUtils.LF);
 			for (String thisLine : addressLines) {
 				if (thisLine != null) {
 					thisLine = thisLine.trim();
@@ -677,12 +682,12 @@ public class DirectoriesContentParser extends HtmlParser {
 				if (thisLine == null)
 					logger.debug("WARNING: thisLine == null\n");
 				else {
-					logger.debug("thisLine == " + thisLine + "\n");
+					logger.debug("thisLine == " + thisLine + StringUtils.LF);
 					if (thisLine.startsWith(metaStrasseTrunc)) {
 						streetAddress = removeDirt(thisLine);
 					}
 					if (thisLine.startsWith(metaPLZTrunc)) {
-						int i = thisLine.indexOf(" ");
+						int i = thisLine.indexOf(StringUtils.SPACE);
 						plzCode = removeDirt(thisLine.substring(0, i));
 						ort = removeDirt(thisLine.substring(i + 1));
 					}
@@ -694,8 +699,8 @@ public class DirectoriesContentParser extends HtmlParser {
 			// der MetaInfo:
 			// Falls eine Zeile "Postfach" oder "Postfach..." gefunden wird, diese nach
 			// poBoxA tun.
-			String poBoxA = "";
-			String poBoxB = "";
+			String poBoxA = StringUtils.EMPTY;
+			String poBoxB = StringUtils.EMPTY;
 			for (String thisLine : addressLines) {
 				if (thisLine != null) {
 					thisLine = thisLine.trim();
@@ -704,7 +709,7 @@ public class DirectoriesContentParser extends HtmlParser {
 				if (thisLine == null)
 					logger.debug("WARNING: thisLine == null\n");
 				else {
-					logger.debug("thisLine == " + thisLine + "\n");
+					logger.debug("thisLine == " + thisLine + StringUtils.LF);
 					if (thisLine.startsWith("Postfach")) {
 						poBoxA = removeDirt(thisLine);
 					}
@@ -714,7 +719,7 @@ public class DirectoriesContentParser extends HtmlParser {
 			// abweichende) PLZ Ort von PoBox sein.
 			// Diesen dann bitte mit Komma Leerzeichen getrennt an den Eintrag der poBox
 			// anhängen.
-			if (poBoxA != "") {
+			if (poBoxA != StringUtils.EMPTY) {
 				for (String thisLine : addressLines) {
 					if (thisLine != null) {
 						thisLine = thisLine.trim();
@@ -723,14 +728,14 @@ public class DirectoriesContentParser extends HtmlParser {
 					if (thisLine == null)
 						logger.debug("WARNING: thisLine == null\n");
 					else {
-						logger.debug("thisLine == " + thisLine + "\n");
+						logger.debug("thisLine == " + thisLine + StringUtils.LF);
 						if (thisLine.contains(metaOrtTrunc) && (!thisLine.startsWith(metaPLZTrunc))) {
 							poBoxB = thisLine;
 						}
 					}
 				}
 			}
-			if (poBoxB.equals("")) {
+			if (poBoxB.equals(StringUtils.EMPTY)) {
 				poBox = poBoxA;
 			} else {
 				poBox = poBoxA + ", " + poBoxB;
@@ -742,19 +747,19 @@ public class DirectoriesContentParser extends HtmlParser {
 			if (streetAddress == null)
 				logger.debug("WARNING: streetAddress == null\n");
 			else
-				logger.debug("streetAddress == " + streetAddress + "\n");
+				logger.debug("streetAddress == " + streetAddress + StringUtils.LF);
 			if (poBox == null)
 				logger.debug("WARNING: poBox == null\n");
 			else
-				logger.debug("poBox == " + poBox + "\n");
+				logger.debug("poBox == " + poBox + StringUtils.LF);
 			if (plzCode == null)
 				logger.debug("WARNING: plzCode == null\n");
 			else
-				logger.debug("plzCode == " + plzCode + "\n");
+				logger.debug("plzCode == " + plzCode + StringUtils.LF);
 			if (ort == null)
 				logger.debug("WARNING: ort == null\n");
 			else
-				logger.debug("ort == " + ort + "\n");
+				logger.debug("ort == " + ort + StringUtils.LF);
 
 			// If zusatz is empty, then we copy the content of poBox into zusatz.
 			if (zusatz == null || zusatz.length() == 0) {
@@ -776,7 +781,8 @@ public class DirectoriesContentParser extends HtmlParser {
 						// of the phone number
 						// in the List format output.
 						moveTo("number\""); // 20120712js
-						tel = extract(">", "</").replace("&nbsp;", "").replace("*", "").trim(); // 20120712js
+						tel = extract(">", "</").replace("&nbsp;", StringUtils.EMPTY).replace("*", StringUtils.EMPTY)
+								.trim(); // 20120712js
 					}
 				}
 			}
@@ -786,7 +792,8 @@ public class DirectoriesContentParser extends HtmlParser {
 				if (moveTo("<span>\nFax:")) { // 20131127js
 
 					moveTo("number'"); // 20120712js
-					fax = extract(">", "</").replace("&nbsp;", "").replace("*", "").trim(); // 20120712js
+					fax = extract(">", "</").replace("&nbsp;", StringUtils.EMPTY).replace("*", StringUtils.EMPTY)
+							.trim(); // 20120712js
 				}
 			}
 			logger.debug("jsdebug: Trying to parse e-mail...\n");
@@ -796,7 +803,7 @@ public class DirectoriesContentParser extends HtmlParser {
 				// If desired (or a user who does not know better uses that), it can be entered
 				// directly into several mail clients and will cause a message to be sent to
 				// each of the contained addresses.
-				if (email.equals("")) {
+				if (email.equals(StringUtils.EMPTY)) {
 					email = extract("href=\"mailto:", "\">").trim();
 				} else {
 					email = email + "; " + extract("href=\"mailto:", "\">").trim();

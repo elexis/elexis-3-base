@@ -62,7 +62,7 @@ public class AeskulapImporter extends ImporterPage {
 			if (problems.isEmpty()) {
 				StringBuilder sb = new StringBuilder();
 				files.stream().filter(af -> af.getType() != Type.LETTERDIRECTORY)
-						.forEach(f -> sb.append(f.getFile().getName() + "\n"));
+						.forEach(f -> sb.append(f.getFile().getName() + StringUtils.LF));
 				Display.getDefault().asyncExec(() -> {
 					MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Info",
 							"Die Dateien\n\n" + sb.toString() + "\nwurden erfolgreich importiert.");
@@ -70,7 +70,7 @@ public class AeskulapImporter extends ImporterPage {
 			} else {
 				StringBuilder sb = new StringBuilder();
 				problems.stream().filter(af -> af.getType() != Type.LETTERDIRECTORY)
-						.forEach(f -> sb.append(f.getFile().getName() + "\n"));
+						.forEach(f -> sb.append(f.getFile().getName() + StringUtils.LF));
 				Display.getDefault().asyncExec(() -> {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 							"Bei folgenden Dateien\n\n" + sb.toString() + "\nist ein Problem aufgetreten.");

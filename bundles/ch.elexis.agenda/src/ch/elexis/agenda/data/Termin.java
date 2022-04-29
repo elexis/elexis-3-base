@@ -12,6 +12,7 @@
 
 package ch.elexis.agenda.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.Iterator;
@@ -613,12 +614,13 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	}
 
 	/*
-	 * public String getPersonalia(int width,FontRenderContext frc) { return ""; }
+	 * public String getPersonalia(int width,FontRenderContext frc) { return
+	 * StringUtils.EMPTY; }
 	 */
 	public String getPersonalia() {
 		String patid = get(FLD_PATIENT);
 		Patient pat = Patient.load(patid);
-		String Personalien = ""; //$NON-NLS-1$
+		String Personalien = StringUtils.EMPTY;
 		if (pat.exists()) {
 			Personalien = pat.getPersonalia();
 		} else {
@@ -689,7 +691,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	 * zum Namen gerechnet wird.
 	 *
 	 * @return Ein StringArray mit 3 Elementen: Name, Vorname, GebDat. Jedes Element
-	 *         kann "" sein, keines ist null.
+	 *         kann StringUtils.EMPTY sein, keines ist null.
 	 */
 	public static String[] findID(final String pers) {
 
@@ -707,7 +709,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		}
 
 		String nam, vn, gd;
-		nam = ""; //$NON-NLS-1$
+		nam = StringUtils.EMPTY;
 		vn = null;
 		gd = null;
 		for (int i = p1.length - 1; i >= 0; i--) {
@@ -720,7 +722,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 				if (vn == null) {
 					vn = p1[i];
 				} else {
-					nam = p1[i] + " " + nam; //$NON-NLS-1$
+					nam = p1[i] + StringUtils.SPACE + nam;
 				}
 			}
 		}
@@ -860,7 +862,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 				bemerkung = get("remark");
 			} else {
 				create(id);
-				bemerkung = ""; //$NON-NLS-1$
+				bemerkung = StringUtils.EMPTY;
 			}
 		}
 
@@ -926,8 +928,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		TimeSpan ts = getTimeSpan();
 		sb.append(new TimeTool(getDay()).toString(TimeTool.DATE_GER)).append(",");
 		sb.append(ts.from.toString(TimeTool.TIME_SMALL)).append("-").append(ts.until.toString(TimeTool.TIME_SMALL))
-				.append(" ").append(getPersonalia()).append(" (").append(getType()).append(",").append(getStatus())
-				.append(") ");
+				.append(StringUtils.SPACE).append(getPersonalia()).append(" (").append(getType()).append(",")
+				.append(getStatus()).append(") ");
 		return sb.toString();
 	}
 
@@ -1043,7 +1045,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 
 		@Override
 		public String getReason() {
-			return "";
+			return StringUtils.EMPTY;
 		}
 	}
 

@@ -101,11 +101,13 @@ public class TarmedAllowanceReferenceDataImporter extends AbstractReferenceDataI
 	}
 
 	private String getText(List<String> line) {
-		return StringUtils.abbreviate(line.get(9).replace("\n", ";").replace("\r", ""), 255);
+		return StringUtils
+				.abbreviate(line.get(9).replace(StringUtils.LF, ";").replace(StringUtils.CR, StringUtils.EMPTY), 255);
 	}
 
 	private String getChapter(List<String> line) {
-		return StringUtils.abbreviate(line.get(5).replace("\n", ";").replace("\r", ""), 255);
+		return StringUtils
+				.abbreviate(line.get(5).replace(StringUtils.LF, ";").replace(StringUtils.CR, StringUtils.EMPTY), 255);
 	}
 
 	private List<TarmedPauschalen> getExisting(String code, LocalDate validFrom) {

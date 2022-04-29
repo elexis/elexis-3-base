@@ -10,6 +10,7 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.elexis.common.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,7 +70,7 @@ public class ArtikelstammImporterPage extends ImporterPage {
 
 					@Override
 					public void run() {
-						if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "",
+						if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), StringUtils.EMPTY,
 								"Der Importer ist durch einen anderen Benutzer gestartet.\nDie Artikelstammeinträge werden bereits importiert.\n\n"
 										+ "Startzeit: "
 										+ new TimeTool(lock.getLockCurrentMillis()).toString(TimeTool.LARGE_GER)
@@ -182,7 +183,7 @@ public class ArtikelstammImporterPage extends ImporterPage {
 				sb.append(entry.getKey() + ":\n");
 				List<String> value = entry.getValue();
 				for (String string : value) {
-					sb.append("\t" + string + "\n");
+					sb.append("\t" + string + StringUtils.LF);
 				}
 			}
 

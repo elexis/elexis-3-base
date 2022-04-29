@@ -225,7 +225,7 @@ public class CovidCertificateApi {
 				// load the key
 				PrivateKey privateKey = getPrivateKey();
 				// canonicalize
-				String normalizedJson = payload.replaceAll("[\\n\\r\\t ]", "");
+				String normalizedJson = payload.replaceAll("[\\n\\r\\t ]", StringUtils.EMPTY);
 				byte[] bytes = normalizedJson.getBytes(StandardCharsets.UTF_8);
 				try {
 					// sign
@@ -261,7 +261,7 @@ public class CovidCertificateApi {
 						"/rsc/" + keyProperties.getProperty(mode == Mode.TEST ? "testkey" : "prodkey"));
 				if (inputStream != null) {
 					String pemString = IOUtils.toString(inputStream, "UTF-8");
-					pemString = pemString.replaceAll("(\\r|\\n|\\r\\n)+", "");
+					pemString = pemString.replaceAll("(\\r|\\n|\\r\\n)+", StringUtils.EMPTY);
 					String keyString = StringUtils.substringBetween(pemString, "-----BEGIN PRIVATE KEY-----",
 							"-----END PRIVATE KEY-----");
 

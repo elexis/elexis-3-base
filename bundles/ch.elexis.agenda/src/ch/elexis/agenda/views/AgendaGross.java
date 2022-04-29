@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.elexis.agenda.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.util.Arrays;
 
@@ -213,8 +214,8 @@ public class AgendaGross extends BaseAgendaView {
 
 	protected void setDayMessage() {
 		TagesNachricht tn = TagesNachricht.load(agenda.getActDate());
-		lbDayString.setText(""); //$NON-NLS-1$
-		dayMessage.setText(""); //$NON-NLS-1$
+		lbDayString.setText(StringUtils.EMPTY);
+		dayMessage.setText(StringUtils.EMPTY);
 		if (tn.exists()) {
 			lbDayString.setText(tn.getZeile());
 			dayMessage.setText(tn.getLangtext());
@@ -247,7 +248,8 @@ public class AgendaGross extends BaseAgendaView {
 
 		// load user preferences if settings require it
 		if (ConfigServiceHolder.getUser(PreferenceConstants.AG_BIG_SAVE_COLUMNWIDTH, true)) {
-			String defaultColWidths = Arrays.toString(DEFAULT_COLUMN_WIDTHS).replace("[", "").replace("]", "");
+			String defaultColWidths = Arrays.toString(DEFAULT_COLUMN_WIDTHS).replace("[", StringUtils.EMPTY)
+					.replace("]", StringUtils.EMPTY);
 			String userColWidths = ConfigServiceHolder.getUser(PreferenceConstants.AG_BIG_COLUMNWIDTH,
 					defaultColWidths);
 
@@ -320,9 +322,9 @@ public class AgendaGross extends BaseAgendaView {
 								grund = tokens[0];
 							}
 						}
-						return grund == null ? "" : grund; //$NON-NLS-1$
+						return grund == null ? StringUtils.EMPTY : grund;
 					} else {
-						return ""; //$NON-NLS-1$
+						return StringUtils.EMPTY;
 					}
 				}
 			}
@@ -352,7 +354,7 @@ public class AgendaGross extends BaseAgendaView {
 		StringBuilder sb = new StringBuilder(200);
 		TimeSpan ts = t.getTimeSpan();
 		sb.append(ts.from.toString(TimeTool.TIME_SMALL)).append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
-				.append(" ");
+				.append(StringUtils.SPACE);
 		if (t.isRecurringDate()) {
 			sb.append(new SerienTermin(t).getRootTermin().getPersonalia());
 		} else {

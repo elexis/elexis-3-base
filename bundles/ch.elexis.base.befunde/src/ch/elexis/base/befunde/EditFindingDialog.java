@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.elexis.base.befunde;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Hashtable;
@@ -104,7 +105,7 @@ public class EditFindingDialog extends TitleAreaDialog {
 						hl.setForeground(UiDesk.getColor(UiDesk.COL_BLUE));
 					}
 					inputs[i] = SWTHelper.createText(ret, multiline[i] ? 4 : 1, SWT.NONE);
-					inputs[i].setText(values[i] == null ? "" : values[i]); //$NON-NLS-1$
+					inputs[i].setText(values[i] == null ? StringUtils.EMPTY : values[i]);
 					if (heading.length > 1) {
 						inputs[i].setEditable(false);
 					}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -373,7 +374,7 @@ public class CstDocumentsComposite extends CstComposite {
 			case 3:
 				return docHandle.getMimeType();
 			default:
-				return "";
+				return StringUtils.EMPTY;
 			}
 		}
 
@@ -436,7 +437,7 @@ public class CstDocumentsComposite extends CstComposite {
 			case 3:
 				return docHandle.getMimeType();
 			default:
-				return "";
+				return StringUtils.EMPTY;
 			}
 		}
 
@@ -489,8 +490,8 @@ public class CstDocumentsComposite extends CstComposite {
 			if ((e1 instanceof IDocumentHandle) && (e2 instanceof IDocumentHandle)) {
 				IDocumentHandle d1 = (IDocumentHandle) e1;
 				IDocumentHandle d2 = (IDocumentHandle) e2;
-				String c1 = "";
-				String c2 = "";
+				String c1 = StringUtils.EMPTY;
+				String c2 = StringUtils.EMPTY;
 				switch (sortColumn) {
 				case 1:
 					c1 = dateFormat.format(d1.getCreated());
@@ -544,8 +545,8 @@ public class CstDocumentsComposite extends CstComposite {
 			if ((e1 instanceof Brief) && (e2 instanceof Brief)) {
 				Brief d1 = (Brief) e1;
 				Brief d2 = (Brief) e2;
-				String c1 = "";
-				String c2 = "";
+				String c1 = StringUtils.EMPTY;
+				String c2 = StringUtils.EMPTY;
 				switch (sortColumn) {
 				case 0:
 					c1 = d1.getDatum();

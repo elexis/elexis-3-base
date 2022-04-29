@@ -15,6 +15,7 @@
 // 8.12.07 G.Weirich avoid duplicate imports
 package ch.elexis.base.ch.arzttarife.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.FileInputStream;
 
 import javax.inject.Inject;
@@ -75,8 +76,8 @@ public class TarmedImporter extends ImporterPage {
 	// then real import
 	boolean updateIDs = false;
 
-	String selectedLaw = "";
-	String[] availableLaws = new String[] { "", "KVG", "UVG", "MVG", "IVG" };
+	String selectedLaw = StringUtils.EMPTY;
+	String[] availableLaws = new String[] { StringUtils.EMPTY, "KVG", "UVG", "MVG", "IVG" };
 
 	@Inject
 	private IReferenceDataImporterService importerService;
@@ -141,7 +142,7 @@ public class TarmedImporter extends ImporterPage {
 				if (selection != null && !selection.isEmpty()) {
 					selectedLaw = (String) selection.getFirstElement();
 				} else {
-					selectedLaw = "";
+					selectedLaw = StringUtils.EMPTY;
 				}
 			}
 		});

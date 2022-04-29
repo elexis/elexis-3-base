@@ -14,6 +14,7 @@
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -50,15 +51,15 @@ public class MesswertTypData extends MesswertBase implements IMesswertTyp {
 	}
 
 	public String erstelleDarstellungswert(Messwert messwert) {
-		if (messwert.getWert().equals("")) { //$NON-NLS-1$
-			return ""; //$NON-NLS-1$
+		if (messwert.getWert().equals(StringUtils.EMPTY)) {
+			return StringUtils.EMPTY;
 		}
 		Messung m = Messung.load(messwert.getWert());
 		return m.getDatum();
 	}
 
 	public String getDefault(Messwert messwert) {
-		return ""; //$NON-NLS-1$
+		return StringUtils.EMPTY;
 	}
 
 	public void setDefault(String str) {
@@ -83,7 +84,7 @@ public class MesswertTypData extends MesswertBase implements IMesswertTyp {
 			((Combo) widget).add(messung.getDatum(), i);
 		}
 
-		if (!messwert.getWert().equals("")) { //$NON-NLS-1$
+		if (!messwert.getWert().equals(StringUtils.EMPTY)) {
 			for (int i = 0; i < refChoices.size(); i++) {
 				if (refChoices.get(i).getId().equals(messwert.getWert())) {
 					((Combo) widget).select(i);
@@ -98,9 +99,9 @@ public class MesswertTypData extends MesswertBase implements IMesswertTyp {
 	}
 
 	public String getDarstellungswert(String wert) {
-		String retVal = ""; //$NON-NLS-1$
+		String retVal = StringUtils.EMPTY;
 		if (wert != null) {
-			if (!"".equals(wert)) { //$NON-NLS-1$
+			if (!StringUtils.EMPTY.equals(wert)) {
 				Messung m = Messung.load(wert);
 				retVal = m.getDatum();
 			}
@@ -122,7 +123,7 @@ public class MesswertTypData extends MesswertBase implements IMesswertTyp {
 	 * @return Messwert oder null, wenn noch keine Messung zugewiesen ist
 	 */
 	public Messung getMessung(Messwert messwert) {
-		if (messwert.getWert().equals("")) { //$NON-NLS-1$
+		if (messwert.getWert().equals(StringUtils.EMPTY)) {
 			return null;
 		}
 

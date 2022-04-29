@@ -1,5 +1,6 @@
 package ch.elexis.labororder.lg1.order.model;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
 import java.util.ArrayList;
@@ -18,20 +19,20 @@ import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.TimeTool;
 
 public class Patient {
-	String id = "";
-	String dateofbirth = "";
-	String gender = "";
-	String title = "";
-	String lastname = "";
-	String firstname = "";
-	String street = "";
-	String zip = "";
-	String city = "";
-	String country = "";
-	String insurancenumber = "";
-	String insurancename = "";
-	String insurancegln = "";
-	String billing = "";
+	String id = StringUtils.EMPTY;
+	String dateofbirth = StringUtils.EMPTY;
+	String gender = StringUtils.EMPTY;
+	String title = StringUtils.EMPTY;
+	String lastname = StringUtils.EMPTY;
+	String firstname = StringUtils.EMPTY;
+	String street = StringUtils.EMPTY;
+	String zip = StringUtils.EMPTY;
+	String city = StringUtils.EMPTY;
+	String country = StringUtils.EMPTY;
+	String insurancenumber = StringUtils.EMPTY;
+	String insurancename = StringUtils.EMPTY;
+	String insurancegln = StringUtils.EMPTY;
+	String billing = StringUtils.EMPTY;
 
 	public static Patient of(ch.elexis.data.Patient patient) {
 		Patient ret = new Patient();
@@ -126,10 +127,10 @@ public class Patient {
 		}
 		if (nummer == null) {
 			nummer = fall.getInfoString(TarmedRequirements.CASE_NUMBER);
-			if ("".equals(nummer)) { //$NON-NLS-1$
+			if (StringUtils.EMPTY.equals(nummer)) {
 				nummer = fall.getInfoString(TarmedRequirements.ACCIDENT_NUMBER);
 			}
-			if ("".equals(nummer)) { //$NON-NLS-1$
+			if (StringUtils.EMPTY.equals(nummer)) {
 				nummer = fall.getInfoString(TarmedRequirements.INSURANCE_NUMBER);
 			}
 		}

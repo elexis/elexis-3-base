@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.laborimport.viollier.v2.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import ch.elexis.core.ui.util.SWTHelper;
@@ -145,7 +146,7 @@ public class KontaktOrderManagement extends PersistentObject {
 	private static KontaktOrderManagement checkVersion1() {
 		try {
 			Query<KontaktOrderManagement> query = new Query<KontaktOrderManagement>(KontaktOrderManagement.class);
-			query.add(KontaktOrderManagement.FLD_ORDER_NR, Query.GREATER, ""); //$NON-NLS-1$
+			query.add(KontaktOrderManagement.FLD_ORDER_NR, Query.GREATER, StringUtils.EMPTY);
 			List<KontaktOrderManagement> list = query.execute();
 			if (list.size() > 0) {
 				updateToVersion2();

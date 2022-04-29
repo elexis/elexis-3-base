@@ -85,7 +85,7 @@ public class LabItemFile extends AbstractCsvImportFile<LabItem> implements IAesk
 		LabItem labItem = new LabItem(line[7], line[6].trim(), laboratory, null, null, line[4], LabItemTyp.TEXT,
 				"Import", sequence);
 		if (laboratory != null) {
-			String labCode = "";
+			String labCode = StringUtils.EMPTY;
 			if (!StringUtils.isBlank(line[5])) {
 				labCode = line[5];
 			} else if (!StringUtils.isBlank(line[7])) {

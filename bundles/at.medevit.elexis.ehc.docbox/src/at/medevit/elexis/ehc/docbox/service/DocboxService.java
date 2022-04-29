@@ -1,5 +1,6 @@
 package at.medevit.elexis.ehc.docbox.service;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -157,12 +158,12 @@ public class DocboxService {
 		Rechnungssteller rechnungssteller = rezept.getMandant().getRechnungssteller();
 		Organization organization = null;
 		if (rechnungssteller.istOrganisation()) {
-			organization = new Organization(rechnungssteller.get(Rechnungssteller.FLD_NAME1) + " "
+			organization = new Organization(rechnungssteller.get(Rechnungssteller.FLD_NAME1) + StringUtils.SPACE
 					+ rechnungssteller.get(Rechnungssteller.FLD_NAME2));
 		} else {
-			organization = new Organization(
-					rechnungssteller.get(Person.TITLE) + " " + rechnungssteller.get(Rechnungssteller.FLD_NAME1) + " "
-							+ rechnungssteller.get(Rechnungssteller.FLD_NAME2));
+			organization = new Organization(rechnungssteller.get(Person.TITLE) + StringUtils.SPACE
+					+ rechnungssteller.get(Rechnungssteller.FLD_NAME1) + StringUtils.SPACE
+					+ rechnungssteller.get(Rechnungssteller.FLD_NAME2));
 		}
 		organization.addAddress(EhcCoreMapper.getEhcAddress(rechnungssteller.getAnschrift()));
 		String phone = (String) rechnungssteller.get(Rechnungssteller.FLD_PHONE1);
@@ -311,7 +312,7 @@ public class DocboxService {
 			if (doseFloats.size() == 1) {
 				// assume per day
 				if (doseFloats.get(0) > 0) {
-					addEffectiveTime(administration, "", "1", "d");
+					addEffectiveTime(administration, StringUtils.EMPTY, "1", "d");
 					addDoseQuantity(administration, doseFloats.get(0), "1");
 				}
 			} else {
@@ -465,19 +466,19 @@ public class DocboxService {
 
 		String zsr = rechnungssteller.getXid(DOMAIN_KSK);
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr.replaceAll("\\.", "");
+			return zsr.replaceAll("\\.", StringUtils.EMPTY);
 		}
 		zsr = rechnungssteller.getInfoString("KSK");
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr.replaceAll("\\.", "");
+			return zsr.replaceAll("\\.", StringUtils.EMPTY);
 		}
 		zsr = mandant.getXid(DOMAIN_KSK);
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr.replaceAll("\\.", "");
+			return zsr.replaceAll("\\.", StringUtils.EMPTY);
 		}
 		zsr = mandant.getInfoString("KSK");
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr.replaceAll("\\.", "");
+			return zsr.replaceAll("\\.", StringUtils.EMPTY);
 		}
 		throw new IllegalStateException("Keine ZSR gefunden");
 	}

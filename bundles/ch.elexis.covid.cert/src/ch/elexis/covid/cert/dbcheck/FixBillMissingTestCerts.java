@@ -1,5 +1,6 @@
 package ch.elexis.covid.cert.dbcheck;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDate;
@@ -73,7 +74,7 @@ public class FixBillMissingTestCerts extends ExternalMaintenance {
 		public String getInsurance() {
 			Optional<IContact> insurance = encounters.stream().map(e -> e.getCoverage().getCostBearer())
 					.filter(c -> c != null && c.isOrganization()).findFirst();
-			return insurance.isPresent() ? insurance.get().getLabel() : "";
+			return insurance.isPresent() ? insurance.get().getLabel() : StringUtils.EMPTY;
 		}
 
 		public String getInvoiceNumber() {
@@ -235,7 +236,7 @@ public class FixBillMissingTestCerts extends ExternalMaintenance {
 				line[2] = fixInfo.patient.getFirstName();
 				line[3] = fixInfo.patient.getDateOfBirth() != null
 						? fixInfo.patient.getDateOfBirth().toLocalDate().toString()
-						: "";
+						: StringUtils.EMPTY;
 				line[4] = fixInfo.localDate.toString();
 				line[5] = fixInfo.getInsurance();
 				line[6] = fixInfo.getInvoiceNumber();

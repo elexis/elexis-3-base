@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.widget;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -104,9 +105,9 @@ public class NoValuesCanvas extends CstCanvas {
 		 * if (finding.getMaxOfSpan3() == -1) { gc.drawText("Resultat:\t keine Werte",
 		 * xOff1 + 10, 100, true);
 		 *
-		 * } else { gc.drawText( "Resultat:\t " + finding.getMaxOfSpan3() + "\n" +
-		 * CstService.getGermanFromDate(finding.getDateStartOfSpan3()), xOff1 + 10, 100,
-		 * true); }
+		 * } else { gc.drawText( "Resultat:\t " + finding.getMaxOfSpan3() +
+		 * StringUtils.LF + CstService.getGermanFromDate(finding.getDateStartOfSpan3()),
+		 * xOff1 + 10, 100, true); }
 		 */
 		gc.setForeground(BLACK);
 

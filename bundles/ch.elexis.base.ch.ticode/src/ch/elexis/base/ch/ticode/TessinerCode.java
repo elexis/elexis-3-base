@@ -12,6 +12,7 @@
 
 package ch.elexis.base.ch.ticode;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -55,7 +56,7 @@ public class TessinerCode implements IDiagnosisTree {
 
 	@Override
 	public String getLabel() {
-		return code + " " + text; //$NON-NLS-1$
+		return code + StringUtils.SPACE + text;
 	}
 
 	@Override

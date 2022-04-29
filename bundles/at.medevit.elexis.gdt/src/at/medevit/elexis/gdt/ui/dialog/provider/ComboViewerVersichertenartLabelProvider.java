@@ -12,6 +12,7 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.ui.dialog.provider;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.LabelProvider;
 
 import at.medevit.elexis.gdt.constants.GDTConstants;
@@ -22,11 +23,11 @@ public class ComboViewerVersichertenartLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		;
 		String value = (String) element;
-		if (value.equalsIgnoreCase(GDTConstants.VERSICHERTENART_FAMILIENVERSICHERTER + ""))
+		if (value.equalsIgnoreCase(GDTConstants.VERSICHERTENART_FAMILIENVERSICHERTER + StringUtils.EMPTY))
 			return "Familie";
-		if (value.equalsIgnoreCase(GDTConstants.VERSICHERTENART_RENTNER + ""))
+		if (value.equalsIgnoreCase(GDTConstants.VERSICHERTENART_RENTNER + StringUtils.EMPTY))
 			return "Rentner";
-		if (value.equalsIgnoreCase(GDTConstants.VERSICHERTENART_MITGLIED + ""))
+		if (value.equalsIgnoreCase(GDTConstants.VERSICHERTENART_MITGLIED + StringUtils.EMPTY))
 			return "Mitglied";
 		return "Unbekannt";
 	}

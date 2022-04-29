@@ -18,6 +18,7 @@
 
 package ch.medshare.elexis.directories;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,18 +84,19 @@ public class DirectoriesHelper {
 
 		// Remove long lines that are a bit annoying during debugging:
 		// single line links to adds:
-		text = text.replaceAll("<div class='ad'.*></div>\n", "");
+		text = text.replaceAll("<div class='ad'.*></div>\n", StringUtils.EMPTY);
 		// single line google maps coordinates
-		text = text.replaceAll("<div data-east='.*></div>\n", "");
+		text = text.replaceAll("<div data-east='.*></div>\n", StringUtils.EMPTY);
 
-		text = text.replace("</nobr>", "").replace("<nobr>", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		text = text.replace("</nobr>", StringUtils.EMPTY).replace("<nobr>", StringUtils.EMPTY); //$NON-NLS-1$ //$NON-NLS-2$
+																								// //$NON-NLS-3$
 		text = text.replace("&amp;", "&"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// This may also break the tree structure, but as of 20120712, it might not even
 		// exist in
 		// the incoming html code any more. js
-		text = text.replace("<b class=\"searchWords\">", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		text = text.replace("</b>", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replace("<b class=\"searchWords\">", StringUtils.EMPTY); //$NON-NLS-1$
+		text = text.replace("</b>", StringUtils.EMPTY); //$NON-NLS-1$
 
 		text = text.replace((char) 160, ' '); // Spezielles Blank Zeichen wird ersetzt
 
@@ -116,7 +118,7 @@ public class DirectoriesHelper {
 		 *
 		 * text = text.replace("&#xE0;", "à");//$NON-NLS-1$ //$NON-NLS-2$
 		 *
-		 * text = text.replace("&#xA0;", " ");//$NON-NLS-1$ //$NON-NLS-2$
+		 * text = text.replace("&#xA0;", StringUtils.SPACE);//$NON-NLS-1$
 		 */
 
 		text = text.replace("&#xE4;", "ä");//$NON-NLS-1$ //$NON-NLS-2$
@@ -132,7 +134,7 @@ public class DirectoriesHelper {
 
 		text = text.replace("&#xE0;", "à");//$NON-NLS-1$ //$NON-NLS-2$
 
-		text = text.replace("&#xA0;", " ");//$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replace("&#xA0;", StringUtils.SPACE);//$NON-NLS-1$
 
 		return text;
 	}
@@ -180,9 +182,9 @@ public class DirectoriesHelper {
 
 		String urlPattern = "http://tel.local.ch/{0}/q/?what={1}&where={2}&mode=text"; //$NON-NLS-1$
 
-		System.out.print("jsdebug: DirectoriesHelper.java: " + urlPattern + "\n");
+		System.out.print("jsdebug: DirectoriesHelper.java: " + urlPattern + StringUtils.LF);
 		System.out.print("jsdebug: DirectoriesHelper.java: language: " + Locale.getDefault().getLanguage() + "  name: "
-				+ name + "  geo: " + geo + "\n");
+				+ name + "  geo: " + geo + StringUtils.LF);
 
 		System.out.print("jsToDo:  DirectoriesHelper.java: ToDo: maybe add &range=all to the search request.\n");
 
@@ -267,7 +269,7 @@ public class DirectoriesHelper {
 		 * URL content = getURL(name, geo);
 		 *
 		 * System.out.print("jsdebug: DirectoriesHelper.java URL content=");
-		 * System.out.print(content.toString()); System.out.print("\n");
+		 * System.out.print(content.toString()); System.out.print(StringUtils.LF);
 		 *
 		 * InputStream input = content.openStream();
 		 *
@@ -300,12 +302,13 @@ public class DirectoriesHelper {
 		// ALL (!)
 		// does suffice to achieve that.
 		//
-		// WARNING: userAgent="" works just as well as userAgent="Mozilla/5.0" etc.
+		// WARNING: userAgent=StringUtils.EMPTY works just as well as
+		// userAgent="Mozilla/5.0" etc.
 		// But: Removing the line "connection.addRequestProperty("User-Agent"...) below
 		// returns the unwanted result where we only receive a WAP page! 20120712js
 
 		// String userAgent = "Mozilla/5.0";
-		// String userAgent = ""; //receives: <div class='container'>
+		// String userAgent = StringUtils.EMPTY; //receives: <div class='container'>
 		String userAgent = "Elexis/js www.jsigle.com/prog/elexis"; // receives: <div
 																	// class='container'>
 
@@ -313,8 +316,8 @@ public class DirectoriesHelper {
 		URLConnection connection = null;
 		InputStream input = null;
 
-		System.out.print("jsdebug: DirectoriesHelper.java userAgent=" + userAgent + "\n");
-		System.out.print("jsdebug: DirectoriesHelper.java URLcontent=" + URLcontent.toString() + "\n");
+		System.out.print("jsdebug: DirectoriesHelper.java userAgent=" + userAgent + StringUtils.LF);
+		System.out.print("jsdebug: DirectoriesHelper.java URLcontent=" + URLcontent.toString() + StringUtils.LF);
 
 		StringBuffer sb = new StringBuffer();
 
@@ -363,7 +366,8 @@ public class DirectoriesHelper {
 
 		} catch (IOException e) {
 			// LOG.error("Error reading " + URLcontent, e);
-			System.out.print("jsErrorMessage: Error reading: " + URLcontent.toString() + " " + e.toString());
+			System.out.print(
+					"jsErrorMessage: Error reading: " + URLcontent.toString() + StringUtils.SPACE + e.toString());
 		} finally {
 			if (input != null) {
 				try {
@@ -372,8 +376,8 @@ public class DirectoriesHelper {
 					// if (LOG.isWarnEnabled()) {
 					// LOG.warn("Error closing input stream: " + url, e);
 					// }
-					System.out.print("jsErrorMessage: Error closing input stream: " + URLcontent.toString() + " "
-							+ e.toString());
+					System.out.print("jsErrorMessage: Error closing input stream: " + URLcontent.toString()
+							+ StringUtils.SPACE + e.toString());
 				} // catch
 			} // if
 		} // finally

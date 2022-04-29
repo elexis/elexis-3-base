@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -77,9 +78,9 @@ public class ChapterImporter {
 					tl.setId(id);
 					tl.setCode_(code);
 					tl.setParent(parentId);
-					tl.setDigniQuali("");
-					tl.setDigniQuanti("");
-					tl.setSparte("");
+					tl.setDigniQuali(StringUtils.EMPTY);
+					tl.setDigniQuanti(StringUtils.EMPTY);
+					tl.setSparte(StringUtils.EMPTY);
 					tl.setChapter(true);
 
 					String text = ImporterUtil.getAsString(res, "BEZ_255"); //$NON-NLS-1$
@@ -172,7 +173,7 @@ public class ChapterImporter {
 		if (law != null && !law.isEmpty()) {
 			return "-" + law;
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public String getIdForCode(String lookupCode, LocalDate lookupValidFrom, String lookupLaw) {

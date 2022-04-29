@@ -11,6 +11,7 @@
 
 package ch.itmed.lmz.risch.laborder.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -73,7 +74,7 @@ public final class PatientData {
 	}
 
 	public String getBirthDate() {
-		return patient.getGeburtsdatum().replace(".", "");
+		return patient.getGeburtsdatum().replace(".", StringUtils.EMPTY);
 	}
 
 	public String getStreet() {
@@ -108,7 +109,7 @@ public final class PatientData {
 				return kontakt.get("Bezeichnung1");
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public String getInsurancePolicyNumber() {
@@ -116,7 +117,7 @@ public final class PatientData {
 			return fall.getRequiredString("Versicherungsnummer").isEmpty() ? fall.getRequiredString("Unfallnummer")
 					: fall.getRequiredString("Versicherungsnummer");
 		} else {
-			return "";
+			return StringUtils.EMPTY;
 		}
 	}
 
@@ -135,10 +136,10 @@ public final class PatientData {
 			} else if (insuranceType.equals("MV")) {
 				return "4";
 			} else {
-				return "";
+				return StringUtils.EMPTY;
 			}
 		} else {
-			return "";
+			return StringUtils.EMPTY;
 		}
 	}
 

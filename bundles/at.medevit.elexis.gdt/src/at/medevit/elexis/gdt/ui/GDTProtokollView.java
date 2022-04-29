@@ -12,6 +12,7 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -68,13 +69,13 @@ public class GDTProtokollView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		initTableViewer(parent);// new TableViewerBuilder(parent);
 
-		ColumnBuilder messageDirection = createColumn("");
+		ColumnBuilder messageDirection = createColumn(StringUtils.EMPTY);
 		messageDirection.bindToProperty("messageDirection");
 		messageDirection.format(new ICellFormatter() {
 			@Override
 			public void formatCell(ViewerCell cell, Object value) {
 				String direction = (String) value;
-				cell.setText("");
+				cell.setText(StringUtils.EMPTY);
 				if (direction.equalsIgnoreCase(GDTProtokoll.MESSAGE_DIRECTION_IN)) {
 					cell.setImage(ResourceManager.getPluginImage("at.medevit.elexis.gdt", "rsc/icons/incoming.png"));
 				} else if (direction.equalsIgnoreCase(GDTProtokoll.MESSAGE_DIRECTION_OUT)) {

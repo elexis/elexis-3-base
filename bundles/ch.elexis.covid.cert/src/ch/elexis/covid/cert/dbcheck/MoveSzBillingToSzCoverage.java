@@ -1,5 +1,6 @@
 package ch.elexis.covid.cert.dbcheck;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +65,7 @@ public class MoveSzBillingToSzCoverage extends ExternalMaintenance {
 				+ (canNotMoveCount > 0
 						? "\nEs gab " + canNotMoveCount
 								+ " Selbstzahler Konsultationen die nicht verschoben werden konnten."
-						: "");
+						: StringUtils.EMPTY);
 	}
 
 	private void move(IEncounter encounter) {

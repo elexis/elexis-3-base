@@ -14,6 +14,7 @@
 
 package ch.elexis.extdoc.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -225,7 +226,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			case NAME_COLUMN:
 				return getText(obj);
 			}
-			return ""; //$NON-NLS-1$
+			return StringUtils.EMPTY;
 		}
 
 		public String getText(Object obj) {
@@ -235,7 +236,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			} else if (obj instanceof String) {
 				return obj.toString();
 			} else {
-				return ""; //$NON-NLS-1$
+				return StringUtils.EMPTY;
 			}
 		}
 
@@ -250,7 +251,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 						tl.toString(TimeTool.DATE_ISO), tl.toString(TimeTool.TIME_SMALL));
 				return modifiedTime;
 			} else {
-				return ""; //$NON-NLS-1$
+				return StringUtils.EMPTY;
 			}
 		}
 
@@ -568,7 +569,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 					String inhalt = Email.getEmailPreface(actPatient);
 					inhalt += "\n\n\nMedikation: \n" + actPatient.getMedikation();
 					inhalt += "\nAlle Konsultationen\n" + Email.getAllKonsultations(actPatient) + "\n\n";
-					Email.openMailApplication("", // No default to address
+					Email.openMailApplication(StringUtils.EMPTY, // No default to address
 							null, inhalt, attachements);
 				}
 			}

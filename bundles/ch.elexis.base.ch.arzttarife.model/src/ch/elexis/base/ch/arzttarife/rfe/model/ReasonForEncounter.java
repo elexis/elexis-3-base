@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.rfe.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
@@ -41,7 +42,7 @@ public class ReasonForEncounter extends AbstractIdDeleteModelAdapter<ch.elexis.c
 
 	@Override
 	public String getCode() {
-		return getEntity().getType() != null ? getEntity().getType() : "";
+		return getEntity().getType() != null ? getEntity().getType() : StringUtils.EMPTY;
 	}
 
 	@Override

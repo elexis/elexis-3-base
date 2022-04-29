@@ -12,6 +12,7 @@
 
 package ch.elexis.notes;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,8 +61,8 @@ public class NotesList extends Composite {
 		clearSearchFieldHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				tFilter.setText(""); //$NON-NLS-1$
-				filterExpr = ""; //$NON-NLS-1$
+				tFilter.setText(StringUtils.EMPTY);
+				filterExpr = StringUtils.EMPTY;
 				matches.clear();
 				tv.collapseAll();
 				tv.removeFilter(notesFilter);

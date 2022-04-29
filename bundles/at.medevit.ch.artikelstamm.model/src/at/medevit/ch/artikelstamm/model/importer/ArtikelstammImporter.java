@@ -10,6 +10,7 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.model.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -118,7 +119,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		if (newVersion == null) {
 			int month = importStamm.getBUILDDATETIME().getMonth();
 			int year = importStamm.getBUILDDATETIME().getYear();
-			newVersion = Integer.valueOf("" + (year - 2000) + month);
+			newVersion = Integer.valueOf(StringUtils.EMPTY + (year - 2000) + month);
 			log.info("[PI] No newVersion provided. Setting to [{}].", newVersion);
 		}
 
@@ -137,10 +138,10 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 		int currentVersion = VersionUtil.getCurrentVersion();
 
-		log.info("[PI] Aktualisiere{}{} {} vom {} von v{} auf v{}. Importer-Version {}", bPharma ? " Pharma" : "",
-				bNonPharma ? " NonPharma" : "", importStamm.getDATASOURCE(),
-				importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime(), currentVersion, newVersion,
-				bundleVersion);
+		log.info("[PI] Aktualisiere{}{} {} vom {} von v{} auf v{}. Importer-Version {}",
+				bPharma ? " Pharma" : StringUtils.EMPTY, bNonPharma ? " NonPharma" : StringUtils.EMPTY,
+				importStamm.getDATASOURCE(), importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime(),
+				currentVersion, newVersion, bundleVersion);
 
 		subMonitor.setTaskName("Lese Produkte und Limitationen...");
 		subMonitor.subTask("Lese Produkt-Details");
@@ -265,7 +266,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 	private static void setValuesOnArtikelstammProdukt(ArtikelstammItem ai, PRODUCT product,
 			final int cummulatedVersion) {
 		ai.setBb(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
-		ai.setCummVersion(cummulatedVersion + "");
+		ai.setCummVersion(cummulatedVersion + StringUtils.EMPTY);
 		ai.setAtc(product.getATC());
 		ai.setDscr(trimDSCR(product.getDSCR(), product.getPRODNO()));
 	}
@@ -388,7 +389,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 	private static void setValuesOnArtikelstammItem(ArtikelstammItem ai, ITEM item, final int cummulatedVersion,
 			boolean keepOverriddenPublicPrice, boolean keepOverriddenPkgSize) {
 
-		ai.setCummVersion(cummulatedVersion + "");
+		ai.setCummVersion(cummulatedVersion + StringUtils.EMPTY);
 		ai.setPhar((item.getPHAR() != null) ? String.format("%07d", item.getPHAR()) : null);
 
 		SALECDType salecd = item.getSALECD();

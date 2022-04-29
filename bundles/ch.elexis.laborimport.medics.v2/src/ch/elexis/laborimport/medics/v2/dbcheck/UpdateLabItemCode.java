@@ -1,5 +1,6 @@
 package ch.elexis.laborimport.medics.v2.dbcheck;
 
+import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -101,7 +102,7 @@ public class UpdateLabItemCode extends ExternalMaintenance {
 					@Override
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						UpdateLabItemCode update = new UpdateLabItemCode();
-						String result = update.executeMaintenance(monitor, "");
+						String result = update.executeMaintenance(monitor, StringUtils.EMPTY);
 						LoggerFactory.getLogger(UpdateLabItemCode.class).info("LabItems update result:" + result);
 					}
 				});

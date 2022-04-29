@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
 
 import ch.elexis.base.ch.arzttarife.model.service.ArzttarifeModelServiceHolder;
@@ -12,7 +13,7 @@ public class VersionUtil {
 	private static final String DATASET_LAW_SEPARATOR = ":=:";
 
 	public static int getCurrentVersion() {
-		return getCurrentVersion("");
+		return getCurrentVersion(StringUtils.EMPTY);
 	}
 
 	public static int getCurrentVersion(String law) {
@@ -74,7 +75,7 @@ public class VersionUtil {
 			String oldVersions = (String) ArzttarifeModelServiceHolder.get().getEntityProperty("tx255",
 					versionEntry.get());
 			if (oldVersions == null) {
-				oldVersions = "";
+				oldVersions = StringUtils.EMPTY;
 			}
 			String[] parts = oldVersions.split("\\" + DATASET_VERSION_SEPARATOR);
 			for (String part : parts) {

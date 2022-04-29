@@ -1,5 +1,6 @@
 package at.medevit.elexis.outbox.ui.command;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -154,7 +155,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 						OutboxServiceComponent.get().changeOutboxElementState((IOutboxElement) iOutboxElement,
 								State.SENT);
 					} else {
-						warnings.append("\n");
+						warnings.append(StringUtils.LF);
 						warnings.append(lblOutBoxElement);
 					}
 				}

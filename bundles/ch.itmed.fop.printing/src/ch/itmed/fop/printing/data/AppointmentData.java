@@ -11,6 +11,7 @@
 
 package ch.itmed.fop.printing.data;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -65,7 +66,7 @@ public final class AppointmentData {
 
 		// the date of the appointment
 		appointmentDate.append(timeTool.toString(TimeTool.DATE_GER));
-		appointmentDate.append(" ");
+		appointmentDate.append(StringUtils.SPACE);
 
 		// start time of the appointment
 		timeTool.setTime(timeSpan.from);
@@ -92,7 +93,7 @@ public final class AppointmentData {
 
 		// the date of the appointment
 		appointmentDate.append(timeTool.toString(TimeTool.DATE_GER));
-		appointmentDate.append(" ");
+		appointmentDate.append(StringUtils.SPACE);
 
 		// start time of the appointment
 		timeTool.setTime(timeSpan.from);

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.privatrechnung.rechnung;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -110,15 +111,15 @@ public class RnPrintView extends ViewPart {
 		Object pos = null;
 		// Das Wort Leistungen soll jeder selbst in die Vorlage nehmen:
 		// pos = tc.getPlugin().insertText("[Leistungen]", "Leistungen\n\n", SWT.LEFT);
-		pos = tc.getPlugin().insertText("[Leistungen]", "", SWT.LEFT);
+		pos = tc.getPlugin().insertText("[Leistungen]", StringUtils.EMPTY, SWT.LEFT);
 		Money sum = new Money();
 		VatRateSum vatSummer = new VatRateSum();
 		for (Konsultation k : kons) {
 			IEncounter encounter = NoPoUtil.loadAsIdentifiable(k, IEncounter.class).get();
 			tc.getPlugin().setStyle(SWT.BOLD);
 			// print date
-			pos = tc.getPlugin().insertText(pos, new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER) + "\n",
-					SWT.LEFT);
+			pos = tc.getPlugin().insertText(pos,
+					new TimeTool(k.getDatum()).toString(TimeTool.DATE_GER) + StringUtils.LF, SWT.LEFT);
 			tc.getPlugin().setStyle(SWT.NORMAL);
 			// print header for Leistungen
 			StringBuilder header = new StringBuilder();
@@ -128,7 +129,7 @@ public class RnPrintView extends ViewPart {
 			// print info for each Leistung
 			for (IBilled vv : encounter.getBilled()) {
 				tc.getPlugin().setStyle(SWT.BOLD);
-				pos = tc.getPlugin().insertText(pos, "- " + vv.getText() + "\n", SWT.LEFT);
+				pos = tc.getPlugin().insertText(pos, "- " + vv.getText() + StringUtils.LF, SWT.LEFT);
 				tc.getPlugin().setStyle(SWT.NORMAL);
 
 				Money preis = vv.getScaledPrice().roundTo5();
@@ -136,7 +137,7 @@ public class RnPrintView extends ViewPart {
 				StringBuilder sb = new StringBuilder();
 				sb.append(vv.getAmount()).append("\t").append(getVatRate(vv, subtotal, vatSummer)).append("\t")
 						.append(preis.getAmountAsString()).append("\t").append(subtotal.getAmountAsString())
-						.append("\n");
+						.append(StringUtils.LF);
 				pos = tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
 				sum.addMoney(subtotal);
 			}
@@ -152,7 +153,7 @@ public class RnPrintView extends ViewPart {
 		pos = tc.getPlugin().insertText(pos, "\n\nMWSt.Nr. \t", SWT.LEFT);
 		tc.getPlugin().setStyle(SWT.NORMAL);
 		if (vatNumber != null && vatNumber.length() > 0)
-			pos = tc.getPlugin().insertText(pos, vatNumber + "\n", SWT.LEFT);
+			pos = tc.getPlugin().insertText(pos, vatNumber + StringUtils.LF, SWT.LEFT);
 		else
 			pos = tc.getPlugin().insertText(pos, "keine\n", SWT.LEFT);
 
@@ -165,13 +166,13 @@ public class RnPrintView extends ViewPart {
 		for (VatRateElement rate : vatValues) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(nf.format(rate.scale)).append("\t").append(nf.format(rate.sumamount)).append("\t")
-					.append(nf.format(rate.sumvat)).append("\n");
+					.append(nf.format(rate.sumvat)).append(StringUtils.LF);
 			pos = tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
 		}
 
 		tc.getPlugin().setStyle(SWT.BOLD);
 		pos = tc.getPlugin().insertText(pos,
-				"\nTotal\t" + sum.getAmountAsString() + "\t" + nf.format(vatSummer.sumvat) + "\n", SWT.LEFT);
+				"\nTotal\t" + sum.getAmountAsString() + "\t" + nf.format(vatSummer.sumvat) + StringUtils.LF, SWT.LEFT);
 		tc.getPlugin().setStyle(SWT.NORMAL);
 
 		String toPrinter = CoreHub.localCfg.get("Drucker/A4/Name", null);
@@ -179,9 +180,9 @@ public class RnPrintView extends ViewPart {
 		tc.createFromTemplateName(null, PrivaterechnungTextTemplateRequirement.getESRTemplate(), Brief.RECHNUNG,
 				adressat, rn.getNr());
 		fillFields();
-		ESR esr = new ESR(ConfigServiceHolder.getGlobal(PreferenceConstants.esrIdentity, ""),
-				ConfigServiceHolder.getGlobal(PreferenceConstants.esrUser, ""), rn.getRnId(), 27);
-		Kontakt bank = Kontakt.load(ConfigServiceHolder.getGlobal(PreferenceConstants.cfgBank, ""));
+		ESR esr = new ESR(ConfigServiceHolder.getGlobal(PreferenceConstants.esrIdentity, StringUtils.EMPTY),
+				ConfigServiceHolder.getGlobal(PreferenceConstants.esrUser, StringUtils.EMPTY), rn.getRnId(), 27);
+		Kontakt bank = Kontakt.load(ConfigServiceHolder.getGlobal(PreferenceConstants.cfgBank, StringUtils.EMPTY));
 		if (!bank.isValid()) {
 			SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
 		}

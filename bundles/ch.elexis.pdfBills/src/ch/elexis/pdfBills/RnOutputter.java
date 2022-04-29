@@ -126,7 +126,7 @@ public class RnOutputter implements IRnOutputter {
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
 		final File rsc = new File(PlatformHelper.getBasePath(PLUGIN_ID), "rsc");
-		final StringJoiner mailErrors = new StringJoiner("\n- ", "- ", "");
+		final StringJoiner mailErrors = new StringJoiner("\n- ", "- ", StringUtils.EMPTY);
 		try {
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(), new IRunnableWithProgress() {
 				public void run(final IProgressMonitor monitor) {
@@ -141,8 +141,8 @@ public class RnOutputter implements IRnOutputter {
 							errors++;
 							continue;
 						}
-						String fname = CoreHub.localCfg.get(CFG_ROOT + XMLDIR, "") + File.separator + rn.getNr()
-								+ ".xml";
+						String fname = CoreHub.localCfg.get(CFG_ROOT + XMLDIR, StringUtils.EMPTY) + File.separator
+								+ rn.getNr() + ".xml";
 						try {
 							FileOutputStream fout = new FileOutputStream(fname);
 							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8");
@@ -294,8 +294,9 @@ public class RnOutputter implements IRnOutputter {
 			params.put("ch.elexis.core.mail.ui.sendMailNoUi.subject", "Rechnungskopie vom " + rechnung.getDatumRn());
 			params.put("ch.elexis.core.mail.ui.sendMailNoUi.text",
 					"Anbei finden Sie eine Kopie der Rechnung vom " + rechnung.getDatumRn()
-							+ " für Ihre Unterlagen.\n\nBeste Grüsse\n" + rechnung.getMandant().get(Person.TITLE) + " "
-							+ rechnung.getMandant().getVorname() + " " + rechnung.getMandant().getName());
+							+ " für Ihre Unterlagen.\n\nBeste Grüsse\n" + rechnung.getMandant().get(Person.TITLE)
+							+ StringUtils.SPACE + rechnung.getMandant().getVorname() + StringUtils.SPACE
+							+ rechnung.getMandant().getName());
 
 			ParameterizedCommand parametrizedCommmand = ParameterizedCommand.generateCommand(sendMailCommand, params);
 			return (String) PlatformUI.getWorkbench().getService(IHandlerService.class)
@@ -397,8 +398,8 @@ public class RnOutputter implements IRnOutputter {
 			}
 
 		});
-		tXml.setText(CoreHub.localCfg.get(CFG_ROOT + XMLDIR, ""));
-		tPdf.setText(CoreHub.localCfg.get(CFG_ROOT + PDFDIR, ""));
+		tXml.setText(CoreHub.localCfg.get(CFG_ROOT + XMLDIR, StringUtils.EMPTY));
+		tPdf.setText(CoreHub.localCfg.get(CFG_ROOT + PDFDIR, StringUtils.EMPTY));
 		return (Control) ret;
 	}
 

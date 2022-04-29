@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.ebanking;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.DecimalFormat;
 
 import org.eclipse.jface.viewers.ITableColorProvider;
@@ -20,7 +21,7 @@ public class ESRLabelProvider extends LabelProvider implements ITableLabelProvid
 	DecimalFormat df = new DecimalFormat("###0.00"); //$NON-NLS-1$
 
 	public String getColumnText(Object element, int columnIndex) {
-		String text = ""; //$NON-NLS-1$
+		String text = StringUtils.EMPTY;
 
 		ESRRecord rec = (ESRRecord) element;
 

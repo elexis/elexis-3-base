@@ -47,7 +47,7 @@ public class Medicament {
 	public transient String dateTo;
 	public transient State state = State.NEW;
 	public transient Prescription foundPrescription;
-	public transient String stateInfo = "";
+	public transient String stateInfo = StringUtils.EMPTY;
 	public transient EntryType entryType;
 
 	public static final String FREETEXT_PREFIX = "[Dosis: ";
@@ -58,7 +58,7 @@ public class Medicament {
 			List<Medicament> ret = new ArrayList<>();
 			for (IPrescription prescription : prescriptions) {
 				Medicament medicament = new Medicament();
-				medicament.Unit = "";
+				medicament.Unit = StringUtils.EMPTY;
 				medicament.AutoMed = 0;
 				medicament.AppInstr = prescription.getRemark();
 				medicament.TkgRsn = prescription.getDisposalComment();

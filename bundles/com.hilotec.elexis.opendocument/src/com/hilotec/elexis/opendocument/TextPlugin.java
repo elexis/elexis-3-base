@@ -56,6 +56,7 @@
 
 package com.hilotec.elexis.opendocument;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -184,7 +185,7 @@ public class TextPlugin implements ITextPlugin {
 		private String label() {
 			MessageDigest m;
 			try {
-				String pass = "" + flags;
+				String pass = StringUtils.EMPTY + flags;
 				if (font != null)
 					pass += "_" + font;
 				if (size != null)
@@ -359,7 +360,8 @@ public class TextPlugin implements ITextPlugin {
 	private boolean ensureClosed() {
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
 		if (actPatient != null) {
-			logger.info("ensureClosed: " + actPatient.getVorname() + " " + actPatient.getName().toString());
+			logger.info(
+					"ensureClosed: " + actPatient.getVorname() + StringUtils.SPACE + actPatient.getName().toString());
 		}
 
 		while (editorRunning()) {
@@ -925,7 +927,7 @@ public class TextPlugin implements ITextPlugin {
 				boolean last = (i == row.length - 1);
 
 				if (col == null) {
-					col = "";
+					col = StringUtils.EMPTY;
 				}
 
 				// Create cell

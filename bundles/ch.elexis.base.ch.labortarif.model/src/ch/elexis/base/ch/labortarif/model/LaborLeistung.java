@@ -119,15 +119,15 @@ public class LaborLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.j
 		String text = StringTool.getFirstLine(getText(), 80);
 
 		if (StringUtils.isNotBlank(getCode())) {
-			StringBuilder sb = new StringBuilder(getCode()).append(" ").append(text) //$NON-NLS-1$
-					.append(" (").append(getSpeciality()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+			StringBuilder sb = new StringBuilder(getCode()).append(StringUtils.SPACE).append(text).append(" (") //$NON-NLS-1$
+					.append(getSpeciality()).append(")"); //$NON-NLS-1$
 			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 			if (getValidFrom() != null) {
 				sb.append(" (").append(getValidFrom().format(dateFormatter)); //$NON-NLS-1$
 				if (getValidTo() != null) {
 					sb.append("-").append(getValidTo().format(dateFormatter)).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
-					sb.append("-").append(" ").append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append("-").append(StringUtils.SPACE).append(")"); //$NON-NLS-1$
 				}
 			}
 			return sb.toString();

@@ -1,5 +1,7 @@
 package ch.elexis.base.befunde.findings.migrator.preferences;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class MesswertFieldMapping {
 
 	private String localMesswert;
@@ -113,7 +115,7 @@ public class MesswertFieldMapping {
 		if (findingsCode != null) {
 			return findingsCode;
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public String getFindingsCode() {

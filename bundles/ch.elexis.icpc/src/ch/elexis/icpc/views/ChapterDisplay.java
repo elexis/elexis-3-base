@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.icpc.views;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -126,17 +127,17 @@ public class ChapterDisplay extends Composite {
 
 		Section sCrit = tk.createSection(cRight, Section.EXPANDED);
 		sCrit.setText("Kriterien");
-		tCrit = tk.createText(sCrit, "\n", SWT.BORDER | SWT.MULTI);
+		tCrit = tk.createText(sCrit, StringUtils.LF, SWT.BORDER | SWT.MULTI);
 		sCrit.setClient(tCrit);
 		Section sIncl = tk.createSection(cRight, Section.EXPANDED);
 		sIncl.setText("Einschliesslich");
-		tIncl = tk.createText(sIncl, "\n", SWT.BORDER | SWT.MULTI);
+		tIncl = tk.createText(sIncl, StringUtils.LF, SWT.BORDER | SWT.MULTI);
 		sIncl.setClient(tIncl);
 		Section sExcl = tk.createSection(cRight, Section.EXPANDED);
 		sExcl.setText("Ausser");
-		tExcl = tk.createText(sExcl, "", SWT.BORDER | SWT.MULTI);
+		tExcl = tk.createText(sExcl, StringUtils.EMPTY, SWT.BORDER | SWT.MULTI);
 		Section sNote = tk.createSection(cRight, Section.EXPANDED);
-		tNote = tk.createText(cRight, "\n", SWT.BORDER | SWT.MULTI);
+		tNote = tk.createText(cRight, StringUtils.LF, SWT.BORDER | SWT.MULTI);
 		sNote.setText("Anmerkung");
 
 	}

@@ -73,7 +73,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 
 			roots = tiCodeElementContribution
 					.getElements(Collections.singletonMap(ICodeElementService.ContextKeys.TREE_ROOTS, Boolean.TRUE));
-			value = "";
+			value = StringUtils.EMPTY;
 		}
 
 		@Override
@@ -134,7 +134,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 		public void changed(HashMap<String, String> values) {
 			String filterText = values.get(TICKey).toLowerCase();
 			if (filterText == null || filterText.isEmpty() || filterText.equals("%")) {
-				setFilterValue("");
+				setFilterValue(StringUtils.EMPTY);
 			} else {
 				setFilterValue(filterText);
 			}
@@ -144,7 +144,8 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 
 		public boolean matchFilter(IDiagnosisTree element) {
 			if (StringUtils.isNotBlank(value)) {
-				return (element.getCode() + " " + element.getText().toLowerCase()).contains(value.toLowerCase());
+				return (element.getCode() + StringUtils.SPACE + element.getText().toLowerCase())
+						.contains(value.toLowerCase());
 			}
 			return true;
 		}
@@ -169,7 +170,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 	static class TICodeLabelProvider extends LabelProvider {
 		public String getText(Object element) {
 			IDiagnosisTree c = (IDiagnosisTree) element;
-			return c.getCode() + " " + c.getText(); //$NON-NLS-1$
+			return c.getCode() + StringUtils.SPACE + c.getText();
 		}
 
 		@Override

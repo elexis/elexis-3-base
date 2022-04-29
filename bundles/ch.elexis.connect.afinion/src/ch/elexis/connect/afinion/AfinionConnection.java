@@ -1,5 +1,6 @@
 package ch.elexis.connect.afinion;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -118,7 +119,7 @@ public class AfinionConnection extends Connection {
 			if (strBuf.length() > 0) {
 				strBuf.append(", "); //$NON-NLS-1$
 				if (counter > 16) {
-					strBuf.append("\n"); //$NON-NLS-1$
+					strBuf.append(StringUtils.LF);
 					counter = 1;
 				}
 			}
@@ -191,14 +192,14 @@ public class AfinionConnection extends Connection {
 		int minutes = this.currentCal.get(Calendar.MINUTE);
 		int seconds = this.currentCal.get(Calendar.SECOND);
 
-		String dayStr = (day < 10 ? "0" : "") + Integer.valueOf(day).toString(); //$NON-NLS-1$ //$NON-NLS-2$
-		String monthStr = (month < 10 ? "0" : "") + Integer.valueOf(month).toString();
+		String dayStr = (day < 10 ? "0" : StringUtils.EMPTY) + Integer.valueOf(day).toString(); //$NON-NLS-1$
+		String monthStr = (month < 10 ? "0" : StringUtils.EMPTY) + Integer.valueOf(month).toString();
 		String yearStr = Integer.valueOf(year).toString();
-		String hourStr = (hour < 10 ? "0" : "") + Integer.valueOf(hour).toString(); //$NON-NLS-1$ //$NON-NLS-2$
-		String minuteStr = (minutes < 10 ? "0" : "") + Integer.valueOf(minutes).toString(); //$NON-NLS-1$ //$NON-NLS-2$
-		String secondStr = (seconds < 10 ? "0" : "") + Integer.valueOf(seconds).toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		String hourStr = (hour < 10 ? "0" : StringUtils.EMPTY) + Integer.valueOf(hour).toString(); //$NON-NLS-1$
+		String minuteStr = (minutes < 10 ? "0" : StringUtils.EMPTY) + Integer.valueOf(minutes).toString(); //$NON-NLS-1$
+		String secondStr = (seconds < 10 ? "0" : StringUtils.EMPTY) + Integer.valueOf(seconds).toString(); //$NON-NLS-1$
 
-		String dateStr = yearStr + monthStr + dayStr + " " + hourStr + ":" + minuteStr + ":" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String dateStr = yearStr + monthStr + dayStr + StringUtils.SPACE + hourStr + ":" + minuteStr + ":" //$NON-NLS-1$ //$NON-NLS-2$
 				+ secondStr;
 		strBuf.append(dateStr);
 		String text = "Request starting at:" + dateStr;
@@ -233,7 +234,7 @@ public class AfinionConnection extends Connection {
 		os.write(DLE);
 		debug("<ETX>"); //$NON-NLS-1$
 		os.write(ETX);
-		debugln(""); //$NON-NLS-1$
+		debugln(StringUtils.EMPTY);
 	}
 
 	private void sendPacketACK(String packetNr) {
@@ -379,7 +380,7 @@ public class AfinionConnection extends Connection {
 	 */
 	private void readToEndAndACK(final String packetNr, final InputStream inputStream) throws IOException {
 		readToEnd(inputStream);
-		debugln(""); //$NON-NLS-1$
+		debugln(StringUtils.EMPTY);
 		if (packetNr != null) {
 			sendPacketACK(packetNr);
 		}
@@ -434,7 +435,7 @@ public class AfinionConnection extends Connection {
 			if (data == STX) {
 				debug("<STX>"); //$NON-NLS-1$
 
-				String packetNr = ""; //$NON-NLS-1$
+				String packetNr = StringUtils.EMPTY;
 				for (int i = 0; i < 4; i++) {
 					data = inputStream.read();
 					packetNr += (char) data;

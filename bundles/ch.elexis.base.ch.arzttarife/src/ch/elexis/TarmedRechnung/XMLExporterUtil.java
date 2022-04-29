@@ -270,7 +270,7 @@ public class XMLExporterUtil {
 			if (attr == null) {
 				// the replaceAll is an ugly fix problems in a database from Bruno Büchel in
 				// Yverdon
-				ret.setText(val.replaceAll("\u001f", "")); // Unit-Separator
+				ret.setText(val.replaceAll("\u001f", StringUtils.EMPTY)); // Unit-Separator
 			} else {
 				ret.setAttribute(attr, val);
 			}

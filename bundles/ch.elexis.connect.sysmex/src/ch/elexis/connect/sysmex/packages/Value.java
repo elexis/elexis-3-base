@@ -1,5 +1,6 @@
 package ch.elexis.connect.sysmex.packages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.ResourceBundle;
 
@@ -66,7 +67,7 @@ public class Value {
 	}
 
 	public void fetchValue(Patient patient, String value, Integer flags, TimeTool date) {
-		fetchValue(patient, value, flags, date, "");
+		fetchValue(patient, value, flags, date, StringUtils.EMPTY);
 	}
 
 	public void fetchValue(Patient patient, String value, Integer flags, TimeTool date, String comment) {

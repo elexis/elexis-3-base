@@ -1,5 +1,6 @@
 package ch.elexis.labor.medics.v2.order;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
 import java.io.File;
@@ -65,8 +66,8 @@ public class LabOrderAction extends Action {
 		Kontakt costBearer = null;
 		Kontakt rechnungsempfaenger = null;
 		Date beginDate = null;
-		String vnr = ""; //$NON-NLS-1$
-		String plan = ""; //$NON-NLS-1$
+		String vnr = StringUtils.EMPTY;
+		String plan = StringUtils.EMPTY;
 		// Patient und Kostentraeger bestimmen
 		if (patient == null) {
 			MessageDialog.openError(new Shell(), Messages.LabOrderAction_errorTitleNoPatientSelected,
@@ -126,7 +127,7 @@ public class LabOrderAction extends Action {
 			if (patient != null) {
 				patLabel = patient.getLabel();
 			}
-			String orderNrText = ""; //$NON-NLS-1$
+			String orderNrText = StringUtils.EMPTY;
 			if (orderNr >= 0) {
 				orderNrText = new Long(orderNr).toString();
 			}
@@ -165,10 +166,10 @@ public class LabOrderAction extends Action {
 		if (nummer == null) {
 			// Zweiter Algorithmus (von Tony)
 			nummer = fall.getInfoString(TarmedRequirements.CASE_NUMBER);
-			if ("".equals(nummer)) { //$NON-NLS-1$
+			if (StringUtils.EMPTY.equals(nummer)) {
 				nummer = fall.getInfoString(TarmedRequirements.ACCIDENT_NUMBER);
 			}
-			if ("".equals(nummer)) { //$NON-NLS-1$
+			if (StringUtils.EMPTY.equals(nummer)) {
 				nummer = fall.getInfoString(TarmedRequirements.INSURANCE_NUMBER);
 			}
 		}
@@ -180,73 +181,73 @@ public class LabOrderAction extends Action {
 
 		String name = kontakt.get(Kontakt.FLD_NAME1);
 		if (name == null) {
-			name = ""; //$NON-NLS-1$
+			name = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setName(name.trim());
 
 		String firstname = kontakt.get(Kontakt.FLD_NAME2);
 		if (firstname == null) {
-			firstname = ""; //$NON-NLS-1$
+			firstname = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setFirstname(firstname.trim());
 
 		String title = kontakt.get("Titel"); //$NON-NLS-1$
 		if (title == null) {
-			title = ""; //$NON-NLS-1$
+			title = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setTitle(title.trim());
 
 		String phone1 = kontakt.get(Kontakt.FLD_PHONE1);
 		if (phone1 == null) {
-			phone1 = ""; //$NON-NLS-1$
+			phone1 = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setPhone1(phone1.trim());
 
 		String phone2 = kontakt.get(Kontakt.FLD_PHONE2);
 		if (phone2 == null) {
-			phone2 = ""; //$NON-NLS-1$
+			phone2 = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setPhone2(phone2.trim());
 
 		String email = kontakt.get(Kontakt.FLD_E_MAIL);
 		if (email == null) {
-			email = ""; //$NON-NLS-1$
+			email = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setEmail(email.trim());
 
 		String fax = kontakt.get(Kontakt.FLD_FAX);
 		if (fax == null) {
-			fax = ""; //$NON-NLS-1$
+			fax = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setFax(fax.trim());
 
 		String street = kontakt.get(Kontakt.FLD_STREET);
 		if (street == null) {
-			street = ""; //$NON-NLS-1$
+			street = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setAddress1(street.trim());
 
 		String other = kontakt.get(Patient.FLD_NAME3);
 		if (other == null) {
-			other = ""; //$NON-NLS-1$
+			other = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setAddress2(other.trim());
 
 		String city = kontakt.get(Patient.FLD_PLACE);
 		if (city == null) {
-			city = ""; //$NON-NLS-1$
+			city = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setCity(city.trim());
 
 		String zip = kontakt.get(Patient.FLD_ZIP);
 		if (zip == null) {
-			zip = ""; //$NON-NLS-1$
+			zip = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setZip(zip.trim());
 
 		String country = kontakt.get(Patient.FLD_COUNTRY);
 		if (country == null) {
-			country = ""; //$NON-NLS-1$
+			country = StringUtils.EMPTY;
 		}
 		hl7Kontakt.setCountry(country.trim());
 	}
@@ -266,8 +267,9 @@ public class LabOrderAction extends Action {
 		mandant.setLabel(CoreHub.actMandant.get(Anwender.FLD_LABEL));
 		mandant.setEan(CoreHub.actMandant.getXid(DOMAIN_EAN));
 
-		HL7_OML_O21 omlO21 = new HL7_OML_O21("CHELEXIS", "PATDATA", Messages.LabOrderAction_receivingApplication, "",
-				Messages.LabOrderAction_receivingFacility, uniqueMessageControlID, uniqueProcessingID, mandant);
+		HL7_OML_O21 omlO21 = new HL7_OML_O21("CHELEXIS", "PATDATA", Messages.LabOrderAction_receivingApplication,
+				StringUtils.EMPTY, Messages.LabOrderAction_receivingFacility, uniqueMessageControlID,
+				uniqueProcessingID, mandant);
 
 		// Patient
 		HL7Patient hl7Patient = new HL7Patient();

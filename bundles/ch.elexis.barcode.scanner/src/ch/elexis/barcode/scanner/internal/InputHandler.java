@@ -1,5 +1,6 @@
 package ch.elexis.barcode.scanner.internal;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,8 +41,9 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 				@Override
 				public void run() {
 					for (int i = 0; i < PreferencePage.NUMBER_OF_SCANNERS; i++) {
-						String postfix = i > 0 ? String.valueOf(i) : "";
-						String comPort = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_COMPORT + postfix, "");
+						String postfix = i > 0 ? String.valueOf(i) : StringUtils.EMPTY;
+						String comPort = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_COMPORT + postfix,
+								StringUtils.EMPTY);
 						String comSettings = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_SETTINGS + postfix,
 								"9600,8,n,1");
 						if (!comPort.isEmpty()) {

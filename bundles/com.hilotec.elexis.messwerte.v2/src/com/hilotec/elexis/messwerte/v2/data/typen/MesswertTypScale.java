@@ -14,6 +14,7 @@
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
@@ -116,7 +117,7 @@ public class MesswertTypScale extends MesswertBase implements IMesswertTyp {
 	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable) {
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
-		if (!dft.getUnit().equals("")) { //$NON-NLS-1$
+		if (!dft.getUnit().equals(StringUtils.EMPTY)) {
 			labelText += " [" + dft.getUnit() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		SpinnerField sf = new SpinnerField(parent, 0, labelText, min, max);

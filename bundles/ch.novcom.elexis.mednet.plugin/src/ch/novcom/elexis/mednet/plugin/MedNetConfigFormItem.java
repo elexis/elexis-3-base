@@ -1,5 +1,6 @@
 package ch.novcom.elexis.mednet.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,14 +10,14 @@ public class MedNetConfigFormItem implements Comparable<MedNetConfigFormItem> {
 	private final static Pattern csvLinePattern = Pattern.compile(
 			"^\"(?<accountID>[^\"]*)\";\"(?<accountTitle>[^\"]*)\";\"(?<accountLastname>[^\"]*)\";\"(?<accountFirstname>[^\"]*)\";\"(?<institutionID>[^\"]*)\";\"(?<institutionName>[^\"]*)\";\"(?<formID>[^\"]*)\";\"(?<formName>[^\"]*)\"$");//$NON-NLS-1$
 
-	private String accountID = "";
-	private String accountTitle = "";
-	private String accountLastname = "";
-	private String accountFirstname = "";
-	private String institutionID = "";
-	private String institutionName = "";
-	private String formID = "";
-	private String formName = "";
+	private String accountID = StringUtils.EMPTY;
+	private String accountTitle = StringUtils.EMPTY;
+	private String accountLastname = StringUtils.EMPTY;
+	private String accountFirstname = StringUtils.EMPTY;
+	private String institutionID = StringUtils.EMPTY;
+	private String institutionName = StringUtils.EMPTY;
+	private String formID = StringUtils.EMPTY;
+	private String formName = StringUtils.EMPTY;
 
 	public MedNetConfigFormItem(String line) {
 

@@ -13,6 +13,7 @@
 
 package com.hilotec.elexis.kgview;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -107,7 +108,7 @@ public class Activator extends AbstractUIPlugin {
 						if (z > n) {
 							int g = z / n;
 							z %= n;
-							parts[i] = g + " " + z + "/" + n;
+							parts[i] = g + StringUtils.SPACE + z + "/" + n;
 						}
 
 					}

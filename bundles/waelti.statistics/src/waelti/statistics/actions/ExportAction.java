@@ -1,5 +1,6 @@
 package waelti.statistics.actions;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -58,11 +59,11 @@ public class ExportAction extends Action {
 
 	private String getNameSuggestion() {
 		String name = this.view.getQuery().getTitle().toLowerCase();
-		name += " ";
+		name += StringUtils.SPACE;
 		name += Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-		name += " ";
+		name += StringUtils.SPACE;
 		name += (Calendar.getInstance().get(Calendar.MONTH) + 1);
-		name += " ";
+		name += StringUtils.SPACE;
 		name += Calendar.getInstance().get(Calendar.YEAR);
 		return name;
 	}

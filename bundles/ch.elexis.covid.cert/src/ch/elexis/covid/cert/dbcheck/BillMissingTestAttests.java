@@ -1,5 +1,6 @@
 package ch.elexis.covid.cert.dbcheck;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDate;
@@ -80,7 +81,7 @@ public class BillMissingTestAttests extends ExternalMaintenance {
 			try (FileWriter fw = new FileWriter(file)) {
 				for (IPatient patient : notBillablePatients) {
 					fw.write(patient.getPatientNr() + "," + patient.getLastName() + "," + patient.getFirstName() + ","
-							+ patient.getDateOfBirth() + "\n");
+							+ patient.getDateOfBirth() + StringUtils.LF);
 
 				}
 			} catch (Exception e) {
@@ -91,7 +92,7 @@ public class BillMissingTestAttests extends ExternalMaintenance {
 		return "Es wurden " + billCount + " Bescheinigungen neu verrechnet." + (notBillableCount > 0 ? "\nEs gab "
 				+ notBillableCount
 				+ " Patienten bei denen nicht verrechnet werden konnte. (NotBillablePatients.csv Datei im user home elexis Verzeichnis)"
-				: "");
+				: StringUtils.EMPTY);
 	}
 
 	private void billAttests(IPatient patient, boolean positive) {

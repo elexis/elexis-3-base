@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.widgets;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.IControlContentAdapter;
@@ -164,7 +165,7 @@ public class TextWidget extends AbstractWidget {
 		public boolean isValid() {
 			// empty fields are invalid by default - which means that every
 			// field is required by default.
-			if (this.getContents().equals("")) {
+			if (this.getContents().equals(StringUtils.EMPTY)) {
 				return false;
 			}
 
@@ -231,7 +232,7 @@ public class TextWidget extends AbstractWidget {
 			case Decorators.VALID:
 				return this.getValidMessage();
 			default:
-				return "";
+				return StringUtils.EMPTY;
 			}
 		}
 
@@ -241,7 +242,7 @@ public class TextWidget extends AbstractWidget {
 		protected String getErrorMessage() {
 			String error = Messages.FIELD_GENERAL_ERROR;
 			if (TextWidget.this.hasRegexValidation()) {
-				error += " " + TextWidget.this.regexValidation.getMessage();
+				error += StringUtils.SPACE + TextWidget.this.regexValidation.getMessage();
 			}
 			return error;
 		}

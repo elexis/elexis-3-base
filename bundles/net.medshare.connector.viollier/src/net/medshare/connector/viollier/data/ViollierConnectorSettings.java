@@ -12,6 +12,7 @@
  *******************************************************************************/
 package net.medshare.connector.viollier.data;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Mandant;
@@ -263,9 +264,9 @@ public class ViollierConnectorSettings {
 		globalLoginUrl = ConfigServiceHolder.getGlobal(cfgLoginUrl, Messages.DefaultSetting_LoginUrl);
 		globalConsultItUrl = ConfigServiceHolder.getGlobal(cfgConsultItUrl, Messages.DefaultSetting_ConsultItUrl);
 		globalOrderItUrl = ConfigServiceHolder.getGlobal(cfgOrderItUrl, Messages.DefaultSetting_OrderItUrl);
-		globalUserName = ConfigServiceHolder.getGlobal(cfgUserName, "");
-		globalUserPassword = ConfigServiceHolder.getGlobal(cfgUserPassword, "");
-		globalViollierClientId = ConfigServiceHolder.getGlobal(cfgViollierClientId, "");
+		globalUserName = ConfigServiceHolder.getGlobal(cfgUserName, StringUtils.EMPTY);
+		globalUserPassword = ConfigServiceHolder.getGlobal(cfgUserPassword, StringUtils.EMPTY);
+		globalViollierClientId = ConfigServiceHolder.getGlobal(cfgViollierClientId, StringUtils.EMPTY);
 		globalPreferedPresentation = false;
 		settingText = ConfigServiceHolder.getGlobal(cfgCumulativePresentation, "1");
 		if (settingText.equals("1"))
@@ -274,9 +275,9 @@ public class ViollierConnectorSettings {
 		// Mandanten Settings
 		settingText = ConfigServiceHolder.getMandator(cfgMandantUseGlobalSettings, "true"); //$NON-NLS-1$
 		mandantUseGlobalSettings = Boolean.parseBoolean(settingText);
-		mandantUserName = ConfigServiceHolder.getMandator(cfgUserName, "");
-		mandantUserPassword = ConfigServiceHolder.getMandator(cfgUserPassword, "");
-		mandantViollierClientId = ConfigServiceHolder.getMandator(cfgViollierClientId, "");
+		mandantUserName = ConfigServiceHolder.getMandator(cfgUserName, StringUtils.EMPTY);
+		mandantUserPassword = ConfigServiceHolder.getMandator(cfgUserPassword, StringUtils.EMPTY);
+		mandantViollierClientId = ConfigServiceHolder.getMandator(cfgViollierClientId, StringUtils.EMPTY);
 
 		// Machine Settings
 		settingText = machineCfg.get(cfgMachineUseGlobalSettings, "true"); //$NON-NLS-1$

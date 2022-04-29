@@ -1,5 +1,6 @@
 package at.medevit.elexis.inbox.ui.dialog;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -35,7 +36,8 @@ public class MandantSelectorDialog extends TitleAreaDialog {
 		Query<Mandant> qbe = new Query<Mandant>(Mandant.class);
 		lMandant = qbe.execute();
 		for (PersistentObject m : lMandant) {
-			lbMandant.add(m.get(Kontakt.FLD_NAME2) + " " + m.get(Kontakt.FLD_NAME1) + " - " + m.getLabel());
+			lbMandant.add(
+					m.get(Kontakt.FLD_NAME2) + StringUtils.SPACE + m.get(Kontakt.FLD_NAME1) + " - " + m.getLabel());
 		}
 		return lbMandant;
 	}

@@ -12,6 +12,7 @@
 
 package ch.elexis.agenda.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -254,7 +255,7 @@ public final class Plannables {
 			String[] flds = ds.split("\r*\n\r*"); //$NON-NLS-1$
 			for (String fld : flds) {
 				String from = fld.substring(0, 4);
-				String until = fld.replaceAll("-", "").substring(4); //$NON-NLS-1$ //$NON-NLS-2$
+				String until = fld.replaceAll("-", StringUtils.EMPTY).substring(4); //$NON-NLS-1$
 				list.add(new Termin(bereich, date.toString(TimeTool.DATE_COMPACT),
 						TimeTool.getMinutesFromTimeString(from), TimeTool.getMinutesFromTimeString(until),
 						Termin.typReserviert(), Termin.statusLeer()));
@@ -344,7 +345,8 @@ public final class Plannables {
 
 	public static Hashtable<String, String> getTimePrefFor(String mandantLabel) {
 		Hashtable<String, String> map = new Hashtable<String, String>();
-		String mTimes = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String mTimes = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, //$NON-NLS-1$
+				StringUtils.EMPTY);
 		if (!StringTool.isNothing(mTimes)) {
 			String[] types = mTimes.split("::"); //$NON-NLS-1$
 			for (String t : types) {

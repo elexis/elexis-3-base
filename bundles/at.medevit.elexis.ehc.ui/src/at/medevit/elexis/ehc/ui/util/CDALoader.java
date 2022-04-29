@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +57,7 @@ public class CDALoader {
 	}
 
 	public File buildXmlDocument(InputStream inStream) {
-		return buildXmlDocument(inStream, "");
+		return buildXmlDocument(inStream, StringUtils.EMPTY);
 	}
 
 	public File buildXmlDocument(InputStream inStream, String path) {
@@ -179,7 +180,7 @@ public class CDALoader {
 	}
 
 	private static String initDefaultXsl() {
-		String path = "";
+		String path = StringUtils.EMPTY;
 		try {
 			File tmpXsl = new File(tmpXslFile);
 

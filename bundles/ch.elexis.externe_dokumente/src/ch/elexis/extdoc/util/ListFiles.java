@@ -1,5 +1,6 @@
 package ch.elexis.extdoc.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -38,8 +39,8 @@ public class ListFiles {
 			if (!StringTool.isNothing(path)) {
 				File mainDirectory = new File(path);
 				if (mainDirectory.isDirectory()) {
-					String subDir = new String(mainDirectory + File.separator + convention.getShortName()) + " " //$NON-NLS-1$
-							+ MatchPatientToPath.geburtsDatumToCanonical(geburtsDatum);
+					String subDir = new String(mainDirectory + File.separator + convention.getShortName())
+							+ StringUtils.SPACE + MatchPatientToPath.geburtsDatumToCanonical(geburtsDatum);
 					File subDirectory = new File(subDir);
 					File[] files = subDirectory.listFiles();
 					if (files != null) {
@@ -81,8 +82,8 @@ public class ListFiles {
 									list.add(file);
 							}
 						}
-						String subDir = new String(mainDirectory + File.separator + convention.getShortName()) + " " //$NON-NLS-1$
-								+ MatchPatientToPath.geburtsDatumToCanonical(geburtsDatum);
+						String subDir = new String(mainDirectory + File.separator + convention.getShortName())
+								+ StringUtils.SPACE + MatchPatientToPath.geburtsDatumToCanonical(geburtsDatum);
 						File subDirectory = new File(subDir);
 						files = subDirectory.listFiles();
 						if (files != null) {

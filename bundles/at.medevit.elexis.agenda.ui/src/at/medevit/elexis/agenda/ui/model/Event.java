@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.model;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPeriod;
@@ -147,10 +148,10 @@ public class Event {
 			}
 			// fullcalendar will no create title html div if no title is blank, add space
 			if (ret.title.isEmpty()) {
-				ret.title = " ";
+				ret.title = StringUtils.SPACE;
 			}
-			ret.description = termin.getReason().replaceAll("\n", "<br />") + "<br /><br />"
-					+ termin.getStateHistoryFormatted("dd.MM.yyyy HH:mm:ss").replaceAll("\n", "<br />");
+			ret.description = termin.getReason().replaceAll(StringUtils.LF, "<br />") + "<br /><br />"
+					+ termin.getStateHistoryFormatted("dd.MM.yyyy HH:mm:ss").replaceAll(StringUtils.LF, "<br />");
 			ret.borderColor = getStateColor(userContact, iPeriod);
 			ret.backgroundColor = getTypColor(userContact, iPeriod);
 			ret.textColor = getTextColor(ret.backgroundColor.substring(1));

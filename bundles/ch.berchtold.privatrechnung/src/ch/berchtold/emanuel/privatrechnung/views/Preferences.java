@@ -12,6 +12,7 @@
 
 package ch.berchtold.emanuel.privatrechnung.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -123,14 +124,14 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		if (m != null) {
 			String id = m.getId();
 
-			sfESR.setStringValue(cfg.get(PreferenceConstants.cfgTemplateESR + "/" + id, ""));
-			sf1st.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBill + "/" + id, ""));
-			ifh1.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBillHeight + "/" + id, ""));
-			sf2nd.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBill2 + "/" + id, ""));
-			if2nd.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBill2Height + "/" + id, ""));
-			kfBank.set(Kontakt.load(cfg.get(PreferenceConstants.cfgBank + "/" + id, "")));
-			sfESRNr.setStringValue(cfg.get(PreferenceConstants.esrIdentity + "/" + id, ""));
-			sfESRKd.setStringValue(cfg.get(PreferenceConstants.esrUser + "/" + id, ""));
+			sfESR.setStringValue(cfg.get(PreferenceConstants.cfgTemplateESR + "/" + id, StringUtils.EMPTY));
+			sf1st.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBill + "/" + id, StringUtils.EMPTY));
+			ifh1.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBillHeight + "/" + id, StringUtils.EMPTY));
+			sf2nd.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBill2 + "/" + id, StringUtils.EMPTY));
+			if2nd.setStringValue(cfg.get(PreferenceConstants.cfgTemplateBill2Height + "/" + id, StringUtils.EMPTY));
+			kfBank.set(Kontakt.load(cfg.get(PreferenceConstants.cfgBank + "/" + id, StringUtils.EMPTY)));
+			sfESRNr.setStringValue(cfg.get(PreferenceConstants.esrIdentity + "/" + id, StringUtils.EMPTY));
+			sfESRKd.setStringValue(cfg.get(PreferenceConstants.esrUser + "/" + id, StringUtils.EMPTY));
 		}
 	}
 

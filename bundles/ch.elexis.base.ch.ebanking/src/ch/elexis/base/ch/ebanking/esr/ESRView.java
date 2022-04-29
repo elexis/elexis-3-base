@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.base.ch.ebanking.EBankingACLContributor.DISPLAY_ESR;
 
 import java.io.File;
@@ -223,7 +224,7 @@ public class ESRView extends ViewPart implements IActivationListener {
 				qbe.startGroup();
 				qbe.add("MandantID", "=", CoreHub.actMandant.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				qbe.or();
-				qbe.add("MandantID", "", null); //$NON-NLS-1$ //$NON-NLS-2$
+				qbe.add("MandantID", StringUtils.EMPTY, null); //$NON-NLS-1$
 				qbe.add("RejectCode", "<>", "0"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				qbe.endGroup();
 				qbe.and();

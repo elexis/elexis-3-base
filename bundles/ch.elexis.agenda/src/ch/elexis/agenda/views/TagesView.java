@@ -12,6 +12,7 @@
 
 package ch.elexis.agenda.views;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ITableColorProvider;
@@ -188,7 +189,7 @@ public class TagesView extends BaseAgendaView {
 				IPlannable p = (IPlannable) element;
 				StringBuilder sb = new StringBuilder();
 				sb.append(Plannables.getStartTimeAsString(p)).append("-") //$NON-NLS-1$
-						.append(Plannables.getEndTimeAsString(p)).append(" ");
+						.append(Plannables.getEndTimeAsString(p)).append(StringUtils.SPACE);
 
 				if (p.isRecurringDate()) {
 					sb.append(new SerienTermin(p).getRootTermin().getTitle());
@@ -231,7 +232,7 @@ public class TagesView extends BaseAgendaView {
 		StringBuilder sb = new StringBuilder(200);
 		TimeSpan ts = t.getTimeSpan();
 		sb.append(ts.from.toString(TimeTool.TIME_SMALL)).append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
-				.append(" ");
+				.append(StringUtils.SPACE);
 		if (t.isRecurringDate()) {
 			sb.append(new SerienTermin(t).getRootTermin().getPersonalia());
 		} else {

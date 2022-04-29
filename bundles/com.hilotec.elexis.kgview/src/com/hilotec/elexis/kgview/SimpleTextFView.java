@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -69,7 +70,7 @@ abstract public class SimpleTextFView extends ViewPart {
 		modifiable = en && canEdit;
 		textfield.setEditable(modifiable);
 		if (!en) {
-			setText("");
+			setText(StringUtils.EMPTY);
 		}
 	}
 
@@ -90,7 +91,7 @@ abstract public class SimpleTextFView extends ViewPart {
 	 * Wenn
 	 */
 	protected void setEmpty() {
-		setPartName((isEmpty() ? "" : "* ") + origPName);
+		setPartName((isEmpty() ? StringUtils.EMPTY : "* ") + origPName);
 	}
 
 	// Helper-Funktionen die in Subklassen ueberschrieben werden koennen,

@@ -12,6 +12,7 @@
 
 package ch.elexis.icpc;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,7 +55,7 @@ public class DataAccessor implements IDataAccess {
 	}
 
 	private String code(IcpcCode ic) {
-		return (ic == null ? "" : ic.getCode());
+		return (ic == null ? StringUtils.EMPTY : ic.getCode());
 	}
 
 	/**
@@ -169,12 +170,12 @@ public class DataAccessor implements IDataAccess {
 				result[i][0] = ep.getTitle();
 				result[i][1] = ep.getStartDate();
 				result[i][2] = getStatusText(ep.getStatus());
-				result[i][3] = result[i][4] = "";
+				result[i][3] = result[i][4] = StringUtils.EMPTY;
 				i++;
 
 				/* Zeilen fuer Encounters generieren */
 				for (IcpcEncounter en : encounters.get(ep)) {
-					result[i][0] = "";
+					result[i][0] = StringUtils.EMPTY;
 					result[i][1] = en.getEncounter().getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 					result[i][2] = code(en.getRfe());
 					result[i][3] = code(en.getDiag());

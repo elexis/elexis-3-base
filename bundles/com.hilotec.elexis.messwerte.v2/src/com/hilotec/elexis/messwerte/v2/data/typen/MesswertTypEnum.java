@@ -13,6 +13,7 @@
 
 package com.hilotec.elexis.messwerte.v2.data.typen;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -117,7 +118,7 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 		}
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
-		if (!dft.getUnit().equals("")) { //$NON-NLS-1$
+		if (!dft.getUnit().equals(StringUtils.EMPTY)) {
 			labelText += " [" + dft.getUnit() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		Composite c = new Composite(parent, SWT.NONE);
@@ -142,7 +143,7 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 			}
 		} catch (Exception e) {
 		}
-		return ""; //$NON-NLS-1$
+		return StringUtils.EMPTY;
 	}
 
 	@Override

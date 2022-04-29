@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -196,8 +197,8 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 
 					if (patient != null) {
 						log.debug("Cst receives event with patient:" + patient.getName());
-						labelLeft.setText(
-								Messages.Cst_Text_Profile_fuer + " " + patient.getName() + " " + patient.getVorname());
+						labelLeft.setText(Messages.Cst_Text_Profile_fuer + StringUtils.SPACE + patient.getName()
+								+ StringUtils.SPACE + patient.getVorname());
 						labelLeft.redraw();
 
 						loadProfileData();
@@ -376,7 +377,8 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 		if (patient == null) {
 			labelLeft.setText(Messages.CstCategory_nopatientselected);
 		} else {
-			labelLeft.setText(Messages.Cst_Text_Profile_fuer + " " + patient.getName() + " " + patient.getVorname());
+			labelLeft.setText(Messages.Cst_Text_Profile_fuer + StringUtils.SPACE + patient.getName() + StringUtils.SPACE
+					+ patient.getVorname());
 		}
 
 		labelLeft.setSize(100, 20);
@@ -943,8 +945,8 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 
 	private void loadProfileData() {
 		Mandant m = CoreHub.actMandant;
-		log.info("load CST Profiles for mandant: " + m.getId() + " " + m.getName(), Log.INFOS);
-		log.info("and patient: " + patient.getId() + " " + patient.getName(), Log.INFOS);
+		log.info("load CST Profiles for mandant: " + m.getId() + StringUtils.SPACE + m.getName(), Log.INFOS);
+		log.info("and patient: " + patient.getId() + StringUtils.SPACE + patient.getName(), Log.INFOS);
 
 		cstProfiles = CstProfile.getCstGroups(patient, m.getId());
 
@@ -1479,7 +1481,8 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 			 */
 		} else {
 			log.info("patient ausgew�hlt" + patient.getName(), Log.INFOS);
-			labelLeft.setText(Messages.Cst_Text_Profile_fuer + " " + patient.getName() + " " + patient.getVorname());
+			labelLeft.setText(Messages.Cst_Text_Profile_fuer + StringUtils.SPACE + patient.getName() + StringUtils.SPACE
+					+ patient.getVorname());
 
 			if (prevPatient != null && !prevPatient.getId().toString().equals(patient.getId().toString())) {
 				loadProfileData();
@@ -1523,7 +1526,7 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 			case 3:
 				return CstService.parseCompactDate(cstProfile.getValidTo());
 			default:
-				return "";
+				return StringUtils.EMPTY;
 			}
 		}
 
@@ -1579,8 +1582,8 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 			if ((e1 instanceof CstProfile) && (e2 instanceof CstProfile)) {
 				CstProfile d1 = (CstProfile) e1;
 				CstProfile d2 = (CstProfile) e2;
-				String c1 = "";
-				String c2 = "";
+				String c1 = StringUtils.EMPTY;
+				String c2 = StringUtils.EMPTY;
 				switch (sortColumn) {
 				case 0:
 					c1 = d1.getName();

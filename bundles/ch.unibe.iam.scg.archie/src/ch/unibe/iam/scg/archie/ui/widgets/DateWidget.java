@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.widgets;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -264,7 +265,7 @@ public class DateWidget extends TextWidget {
 			String format = DateWidget.VALID_DATE_FORMAT;
 			String error = NLS.bind(Messages.ERROR_DATE_FORMAT, format.toUpperCase());
 			if (DateWidget.this.hasRegexValidation()) {
-				error += " " + DateWidget.this.regexValidation.getMessage();
+				error += StringUtils.SPACE + DateWidget.this.regexValidation.getMessage();
 			}
 			return error;
 		}
@@ -272,7 +273,7 @@ public class DateWidget extends TextWidget {
 		@Override
 		public boolean isValid() {
 			// An empty field is never valid.
-			if (this.getContents().equals("")) {
+			if (this.getContents().equals(StringUtils.EMPTY)) {
 				return false;
 			}
 

@@ -1,5 +1,6 @@
 package ch.elexis.hl7.message.ui.preference;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.StringJoiner;
 
 public class Receiver {
@@ -20,11 +21,11 @@ public class Receiver {
 	}
 
 	public String getApplication() {
-		return application == null ? "" : application;
+		return application == null ? StringUtils.EMPTY : application;
 	}
 
 	public String getFacility() {
-		return facility == null ? "" : facility;
+		return facility == null ? StringUtils.EMPTY : facility;
 	}
 
 	public void setApplication(String text) {

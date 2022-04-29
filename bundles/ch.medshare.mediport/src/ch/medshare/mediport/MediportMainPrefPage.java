@@ -11,6 +11,7 @@
 
 package ch.medshare.mediport;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -111,12 +112,12 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 					props = MPCProperties.reload(installDir);
 					if (props != null) {
 						boolean overwrite = false;
-						String ean = props.getProperty(ConfigKeys.SENDER_EAN, ""); //$NON-NLS-1$
-						String dn = props.getProperty(ConfigKeys.MEDIPORT_DN, ""); //$NON-NLS-1$
-						String ip = props.getProperty(ConfigKeys.MEDIPORT_IP, ""); //$NON-NLS-1$
-						if (!"".equals(txtSenderEAN.getText()) //$NON-NLS-1$
-								|| !"".equals(txtSenderDN.getText()) //$NON-NLS-1$
-								|| !"".equals(cbServerIp.getText())) { //$NON-NLS-1$
+						String ean = props.getProperty(ConfigKeys.SENDER_EAN, StringUtils.EMPTY);
+						String dn = props.getProperty(ConfigKeys.MEDIPORT_DN, StringUtils.EMPTY);
+						String ip = props.getProperty(ConfigKeys.MEDIPORT_IP, StringUtils.EMPTY);
+						if (!StringUtils.EMPTY.equals(txtSenderEAN.getText())
+								|| !StringUtils.EMPTY.equals(txtSenderDN.getText())
+								|| !StringUtils.EMPTY.equals(cbServerIp.getText())) {
 							if (!ean.equals(txtSenderEAN.getText()) || !dn.equals(txtSenderDN.getText())
 									|| !ip.equals(cbServerIp.getText())) {
 
@@ -179,7 +180,7 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 					File toDir = new File(prefs.getString(MPC_INSTALL_DIR) + File.separator + "config");
 					log.log("INIT: Check Keystorefile = " + keystoreFile.getCanonicalPath(), Log.DEBUGMSG);
 					log.log("INIT: Check config path = " + toDir.getCanonicalPath(), Log.DEBUGMSG);
-					String msg = "";
+					String msg = StringUtils.EMPTY;
 					if (!keystoreFile.exists()) {
 						msg = Messages.MediportMainPrefPage_error_msg_InitAbCD_SrcNotFound
 								+ keystoreFile.getCanonicalPath(); // $NON-NLS-1$
@@ -200,12 +201,12 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 						} else {
 							log.log("INIT: " + toPath + " existiert nicht...", Log.DEBUGMSG);
 							MessageDialog.openError(getShell(), Messages.MediportMainPrefPage_error_title_InitAbCD,
-									Messages.MediportMainPrefPage_error_msg_InitAbCD + "\r" + msg); //$NON-NLS-1$
+									Messages.MediportMainPrefPage_error_msg_InitAbCD + StringUtils.CR + msg);
 						}
 					} else {
 						log.log("INIT: " + msg, Log.DEBUGMSG);
 						MessageDialog.openError(getShell(), Messages.MediportMainPrefPage_error_title_InitAbCD,
-								Messages.MediportMainPrefPage_error_msg_InitAbCD + "\r" + msg); //$NON-NLS-1$
+								Messages.MediportMainPrefPage_error_msg_InitAbCD + StringUtils.CR + msg);
 					}
 				} else {
 					throw new IOException(Messages.MediportMainPrefPage_error_msg_Dateiformat); // $NON-NLS-1$
@@ -320,11 +321,11 @@ public class MediportMainPrefPage extends MediPortAbstractPrefPage {
 
 		String installDir = txtInstallDir.getText();
 		if (installDir != null && installDir.length() > 0) {
-			String configFilename = ""; //$NON-NLS-1$
+			String configFilename = StringUtils.EMPTY;
 			try {
-				if (!"".equals(txtSenderEAN.getText()) //$NON-NLS-1$
-						|| !"".equals(txtSenderDN.getText()) //$NON-NLS-1$
-						|| !"".equals(cbServerIp.getText())) { //$NON-NLS-1$
+				if (!StringUtils.EMPTY.equals(txtSenderEAN.getText())
+						|| !StringUtils.EMPTY.equals(txtSenderDN.getText())
+						|| !StringUtils.EMPTY.equals(cbServerIp.getText())) {
 					props = MPCProperties.reload(installDir);
 					configFilename = props.getConfigFilenamePath();
 					props.put(ConfigKeys.SENDER_EAN, this.txtSenderEAN.getText());

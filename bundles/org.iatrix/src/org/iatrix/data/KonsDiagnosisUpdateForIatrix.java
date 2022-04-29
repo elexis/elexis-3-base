@@ -1,5 +1,6 @@
 package org.iatrix.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,7 +29,7 @@ public class KonsDiagnosisUpdateForIatrix extends ExternalMaintenance {
 	public KonsDiagnosisUpdateForIatrix(){}
 	
 	private void addDiagnoseIfNotExists(Patient actPat, String newDiag) {
-		if (newDiag.length() == 0 || newDiag.contentEquals(" ")) {
+		if (newDiag.length() == 0 || newDiag.contentEquals(StringUtils.SPACE)) {
 			log.debug("{}/{} {} skip empty diagnose {}",curItem, nrItems, actPat.getPersonalia(), newDiag);
 			return;
 		}
@@ -63,7 +64,7 @@ public class KonsDiagnosisUpdateForIatrix extends ExternalMaintenance {
 			}
 			String newDiag = episode.getTitle();
 			if (episode.getStartDate().length() > 0) {
-				newDiag = episode.getStartDate() + " " + episode.getTitle();
+				newDiag = episode.getStartDate() + StringUtils.SPACE + episode.getTitle();
 			}
 			if (actPat != null) {
 				List<IDiagnose> diagnoses = episode.getDiagnoses();
@@ -72,13 +73,13 @@ public class KonsDiagnosisUpdateForIatrix extends ExternalMaintenance {
 						if (newDiag.length() == 0) {
 							newDiag = diag.getLabel();
 						} else {
-							newDiag = newDiag + " " + diag.getLabel();
+							newDiag = newDiag + StringUtils.SPACE + diag.getLabel();
 						}
 						addDiagnoseIfNotExists(actPat, newDiag);
-						newDiag = "";
+						newDiag = StringUtils.EMPTY;
 					}
 				} else {
-					addDiagnoseIfNotExists(actPat, episode.getStartDate() + " " + episode.getTitle());
+					addDiagnoseIfNotExists(actPat, episode.getStartDate() + StringUtils.SPACE + episode.getTitle());
 				}
 			}
 			pm.worked(1);

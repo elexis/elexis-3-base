@@ -1,7 +1,9 @@
 package at.medevit.elexis.inbox.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum InboxElementType {
-	FILE("FILE://"), DB("");
+	FILE("FILE://"), DB(StringUtils.EMPTY);
 
 	private final String prefix;
 

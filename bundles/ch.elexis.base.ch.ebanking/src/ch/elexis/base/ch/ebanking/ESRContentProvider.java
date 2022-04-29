@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.ebanking;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,7 +53,7 @@ public class ESRContentProvider extends ArrayContentProvider {
 		Display.getCurrent().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				_lblSUMME.setText("");
+				_lblSUMME.setText(StringUtils.EMPTY);
 			}
 		});
 
@@ -70,7 +71,7 @@ public class ESRContentProvider extends ArrayContentProvider {
 		Display.getCurrent().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				_lblSUMME.setText(sum + "");
+				_lblSUMME.setText(sum + StringUtils.EMPTY);
 				if (sum.isNegative()) {
 					_lblSUMME.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 				} else {

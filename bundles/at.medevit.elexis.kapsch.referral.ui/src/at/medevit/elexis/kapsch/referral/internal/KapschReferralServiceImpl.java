@@ -222,13 +222,13 @@ public class KapschReferralServiceImpl implements KapschReferralService {
 		}
 		if (StringUtils.isNotBlank(mandator.get(Person.FIRSTNAME))) {
 			if (sb.length() > 0) {
-				sb.append(" ");
+				sb.append(StringUtils.SPACE);
 			}
 			sb.append(mandator.get(Person.FIRSTNAME));
 		}
 		if (StringUtils.isNotBlank(mandator.get(Person.NAME))) {
 			if (sb.length() > 0) {
-				sb.append(" ");
+				sb.append(StringUtils.SPACE);
 			}
 			sb.append(mandator.get(Person.NAME));
 		}

@@ -12,6 +12,7 @@
 
 package ch.elexis.TarmedRechnung;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.Collection;
 import java.util.Properties;
@@ -209,7 +210,7 @@ public class RechnungsDrucker implements IRnOutputter {
 			}
 		});
 		tName = new Text(cSaveCopy, SWT.BORDER | SWT.READ_ONLY);
-		tName.setText(CoreHub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, "")); //$NON-NLS-1$
+		tName.setText(CoreHub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, StringUtils.EMPTY));
 		return ret;
 	}
 

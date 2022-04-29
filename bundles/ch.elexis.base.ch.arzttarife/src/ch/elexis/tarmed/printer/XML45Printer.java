@@ -71,7 +71,7 @@ public class XML45Printer {
 
 	private static final String FREETEXT = "freetext";
 	private static final String BY_CONTRACT = "by_contract";
-	private static final String SPACE = " ";
+	private static final String SPACE = StringUtils.SPACE;
 
 	private static double cmPerLine = 0.67; // Höhe pro Zeile (0.65 plus Toleranz)
 	private static double cmFirstPage = 12.0; // Platz auf der ersten Seite
@@ -185,7 +185,7 @@ public class XML45Printer {
 		addFallSpecificLines();
 		addDiagnoses(body.getTreatment());
 		addRemarks(body.getRemark());
-		// adds values to reminder fields or "" if it's no reminder
+		// adds values to reminder fields or StringUtils.EMPTY if it's no reminder
 		addReminderFields(request.getPayload().getReminder(), rn.getNr());
 
 		List<Object> serviceRecords = services.getServiceExOrService();
@@ -199,8 +199,8 @@ public class XML45Printer {
 		SortedList<Object> serviceRecordsSorted = new SortedList<Object>(serviceRecords, new Rn45Comparator());
 
 		XMLPrinterUtil.replaceHeaderFields(text, rn, xmlRn, ezData.paymentMode);
-		text.replace("\\[F.+\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		Object cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+		text.replace("\\[F.+\\]", StringUtils.EMPTY); //$NON-NLS-1$
+		Object cursor = text.getPlugin().insertText("[Rechnungszeilen]", StringUtils.LF, SWT.LEFT); //$NON-NLS-1$
 		int page = 1;
 		sideTotal = 0.0;
 		ITextPlugin tp = text.getPlugin();
@@ -211,8 +211,8 @@ public class XML45Printer {
 		for (Object obj : serviceRecordsSorted) {
 			tp.setFont("Helvetica", SWT.NORMAL, 8); //$NON-NLS-1$
 			sb.setLength(0);
-			String recText = "";
-			String name = "";
+			String recText = StringUtils.EMPTY;
+			String name = StringUtils.EMPTY;
 
 			if (obj instanceof ServiceType) {
 				recText = getRecordServiceString((ServiceType) obj, sb, eanMap);
@@ -227,7 +227,7 @@ public class XML45Printer {
 			}
 			cursor = tp.insertText(cursor, recText, SWT.LEFT);
 			tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
-			cursor = tp.insertText(cursor, "\t" + name + "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+			cursor = tp.insertText(cursor, "\t" + name + StringUtils.LF, SWT.LEFT); //$NON-NLS-1$
 
 			cmAvail -= cmPerLine;
 			if (cmAvail <= cmPerLine) {
@@ -239,7 +239,7 @@ public class XML45Printer {
 
 				XMLPrinterUtil.insertPage(TarmedTemplateRequirement.TT_TARMED_45_S2, ++page, adressat, rn, xmlRn,
 						ezData.paymentMode, text);
-				cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+				cursor = text.getPlugin().insertText("[Rechnungszeilen]", StringUtils.LF, SWT.LEFT); //$NON-NLS-1$
 				cmAvail = cmMiddlePage;
 				monitor.worked(2);
 			}
@@ -266,8 +266,8 @@ public class XML45Printer {
 	}
 
 	private void addReminderFields(ReminderType reminder, String nr) {
-		String reminderDate = "";
-		String reminderNr = "";
+		String reminderDate = StringUtils.EMPTY;
+		String reminderNr = StringUtils.EMPTY;
 
 		if (reminder != null) {
 			String reminderLevel = reminder.getReminderLevel();
@@ -303,7 +303,7 @@ public class XML45Printer {
 		tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
 		cursor = tp.insertText(cursor, footer.toString(), SWT.LEFT);
 		// needed to make sure ESRCodeLine gets inserted correctly
-		cursor = text.getPlugin().insertTextAt(0, 0, 0, 0, "", SWT.LEFT); //$NON-NLS-1$
+		cursor = text.getPlugin().insertTextAt(0, 0, 0, 0, StringUtils.EMPTY, SWT.LEFT);
 		sideTotal = 0.0;
 	}
 
@@ -322,7 +322,8 @@ public class XML45Printer {
 				gesetzNummer = "Verfügungs-Nr.";
 				gesetzZSRNIF = "NIF-Nr.(P)";
 			}
-			String vekaNumber = StringUtils.defaultIfBlank((String) fall.getExtInfoStoredObjectByKey("VEKANr"), "");
+			String vekaNumber = StringUtils.defaultIfBlank((String) fall.getExtInfoStoredObjectByKey("VEKANr"),
+					StringUtils.EMPTY);
 
 			text.replace("\\[F44.Datum\\]", gesetzDatum);
 			text.replace("\\[F44.Nummer\\]", gesetzNummer);
@@ -461,7 +462,7 @@ public class XML45Printer {
 
 		tTime.set(rec.getDateBegin().toGregorianCalendar());
 		sb.append(tTime.toString(TimeTool.DATE_GER)).append("\t"); //$NON-NLS-1$
-		sb.append(rec.getTariffType() != null ? rec.getTariffType() : "").append("\t");//$NON-NLS-1$ //$NON-NLS-2$
+		sb.append(rec.getTariffType() != null ? rec.getTariffType() : StringUtils.EMPTY).append("\t");//$NON-NLS-1$
 		String code = rec.getCode();
 		sb.append(code).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (code.length() < 10) {
@@ -505,10 +506,10 @@ public class XML45Printer {
 
 		double amount = rec.getAmount();
 		double vatRate = rec.getVatRate();
-		sb.append(Integer.toString(XMLPrinterUtil.guessVatCode(vatRate + ""))).append("\t"); //$NON-NLS-1$
+		sb.append(Integer.toString(XMLPrinterUtil.guessVatCode(vatRate + StringUtils.EMPTY))).append("\t");
 		sb.append(df.format(amount));
 		sideTotal += amount;
-		sb.append("\n"); //$NON-NLS-1$
+		sb.append(StringUtils.LF);
 
 		return sb.toString();
 	}
@@ -569,10 +570,10 @@ public class XML45Printer {
 
 		double amount = tarmed.getAmount();
 		double vatRate = tarmed.getVatRate();
-		sb.append(Integer.toString(XMLPrinterUtil.guessVatCode(vatRate + ""))).append("\t"); //$NON-NLS-1$
+		sb.append(Integer.toString(XMLPrinterUtil.guessVatCode(vatRate + StringUtils.EMPTY))).append("\t");
 		sb.append(df.format(amount));
 		sideTotal += amount;
-		sb.append("\n"); //$NON-NLS-1$
+		sb.append(StringUtils.LF);
 
 		return sb.toString();
 	}
@@ -584,13 +585,13 @@ public class XML45Printer {
 	}
 
 	private void addBalanceLines(Object cursor, ITextPlugin tp, Balance45Adapter balance, Money paid) {
-		cursor = text.getPlugin().insertTextAt(0, 255, 190, 45, " ", SWT.LEFT); //$NON-NLS-1$
+		cursor = text.getPlugin().insertTextAt(0, 255, 190, 45, StringUtils.SPACE, SWT.LEFT);
 		String balanceHeaders = "Code\tSatz\tBetrag\tMWSt\tMWSt.-Nr.:\t"; //$NON-NLS-1$
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, balanceHeaders);
 
 		VatType vat = balance.getVat();
 		String vatNumber = vat.getVatNumber();
-		if (vatNumber == null || vatNumber.equals(" ")) {
+		if (vatNumber == null || vatNumber.equals(StringUtils.SPACE)) {
 			vatNumber = "keine";
 		} else {
 			vatNumber = vatNumber + " MWST";
@@ -599,7 +600,7 @@ public class XML45Printer {
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, true, "Anzahlung:\t"); //$NON-NLS-1$
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, df.format(paid) + "\t\t\t"); //$NON-NLS-1$
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "Gesamtbetrag:\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, false, df.format(balance.getAmount()) + "\n"); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, false, df.format(balance.getAmount()) + StringUtils.LF);
 
 		// second line
 		String secondLine = "0\t" + df.format(getVatRate(0, vat)) + "\t" + df.format(getVatAmount(0, vat)) + "\t"
@@ -616,10 +617,10 @@ public class XML45Printer {
 		}
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "davon PFL:\t"); //$NON-NLS-1$
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, false,
-				df.format(balance.getAmountObligations()) + "\n"); //$NON-NLS-1$
+				df.format(balance.getAmountObligations()) + StringUtils.LF);
 		// third line
 		String thirdLine = "1\t" + df.format(getVatRate(1, vat)) + "\t" + df.format(getVatAmount(1, vat)) + "\t" //$NON-NLS-1$
-				+ df.format(getVatVat(1, vat)) + "\n"; //$NON-NLS-1$
+				+ df.format(getVatVat(1, vat)) + StringUtils.LF;
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, thirdLine); // $NON-NLS-1$
 
 		// forth line
@@ -627,7 +628,8 @@ public class XML45Printer {
 				+ df.format(vat.getVat()) + "\t\t\t\t\t\t\t\t\t";
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.LEFT, false, forthLine);
 		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, "Fälliger Betrag:\t"); //$NON-NLS-1$
-		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true, df.format(balance.getAmountDue()) + "\n"); //$NON-NLS-1$
+		cursor = XMLPrinterUtil.print(cursor, tp, 7, SWT.RIGHT, true,
+				df.format(balance.getAmountDue()) + StringUtils.LF);
 	}
 
 	private void addDiagnoses(TreatmentType treatment) {
@@ -643,8 +645,8 @@ public class XML45Printer {
 		}
 
 		List<String> occuredCodes = new ArrayList<String>();
-		String type = "";
-		String freetext = "";
+		String type = StringUtils.EMPTY;
+		String freetext = StringUtils.EMPTY;
 		StringBuilder dCodesBuilder = new StringBuilder();
 		for (DiagnosisType diagnose : diagnoses) {
 			String dType = diagnose.getType();
@@ -704,7 +706,7 @@ public class XML45Printer {
 		List<VatRateType> vatRates = vat.getVatRate();
 		for (VatRateType vatRate : vatRates) {
 			double rate = vatRate.getVatRate();
-			int vatCode = XMLPrinterUtil.guessVatCode(rate + "");
+			int vatCode = XMLPrinterUtil.guessVatCode(rate + StringUtils.EMPTY);
 			if (vatCode == code) {
 				return vatRate;
 			}

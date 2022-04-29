@@ -13,6 +13,7 @@
 
 package com.hilotec.elexis.messwerte.v2.views;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -165,7 +166,7 @@ public class MessungBearbeiten extends TitleAreaDialog {
 			Label l = new Label(c, SWT.NONE);
 			IMesswertTyp dft = messwert.getTyp();
 			String labelText = dft.getTitle();
-			if (!dft.getUnit().equals("")) { //$NON-NLS-1$
+			if (!dft.getUnit().equals(StringUtils.EMPTY)) {
 				labelText += " [" + dft.getUnit() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			l.setText(labelText);
@@ -185,7 +186,7 @@ public class MessungBearbeiten extends TitleAreaDialog {
 			c.setLayout(new GridLayout());
 			Browser browser = new Browser(c, SWT.NONE);
 			String url = (p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY_URL) : null;
-			browser.setUrl(url == null ? "" : url); //$NON-NLS-1$
+			browser.setUrl(url == null ? StringUtils.EMPTY : url);
 			GridData gd = SWTHelper.getFillGridData(1, true, 1, true);
 			String bounds = (p != null) ? p.getAttribute(MessungKonfiguration.ELEMENT_LAYOUTDISPLAY_SIZE) : null;
 			if (bounds != null) {
@@ -242,7 +243,7 @@ public class MessungBearbeiten extends TitleAreaDialog {
 				c.setLayout(new GridLayout());
 
 				String labelText = dft.getTitle();
-				if (!dft.getUnit().equals("")) { //$NON-NLS-1$
+				if (!dft.getUnit().equals(StringUtils.EMPTY)) {
 					labelText += " [" + dft.getUnit() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
@@ -307,7 +308,7 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		getShell().setText(Messages.MessungBearbeiten_EditMessung);
 		String title = messung.getTyp().getTitle();
 		String descr = messung.getTyp().getDescription();
-		if (!"".equals(descr)) //$NON-NLS-1$
+		if (!StringUtils.EMPTY.equals(descr))
 			title = title + ": " + descr; //$NON-NLS-1$
 		setTitle(title);
 	}

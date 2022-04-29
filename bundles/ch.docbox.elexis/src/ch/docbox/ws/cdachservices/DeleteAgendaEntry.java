@@ -1,5 +1,6 @@
 package ch.docbox.ws.cdachservices;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "id", "msgTitle", "msgBody", "param" })
+@XmlType(name = StringUtils.EMPTY, propOrder = { "id", "msgTitle", "msgBody", "param" })
 @XmlRootElement(name = "deleteAgendaEntry")
 public class DeleteAgendaEntry {
 

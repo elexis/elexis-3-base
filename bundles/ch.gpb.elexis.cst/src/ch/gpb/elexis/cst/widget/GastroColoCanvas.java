@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.widget;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -54,8 +55,8 @@ public class GastroColoCanvas extends CstCanvas {
 		gc.drawRectangle(0, 0, iPixX - 1, iPixY - 1);
 
 		gc.drawText(Messages.Cst_Text_Gastroduodenoskopie + "\r\n" + Messages.Cst_Text_Magenspiegelung + "\r\n"
-				+ Messages.Cst_Text_am + " " + CstService.getReadableFromCompact(cstGastroColo.getDatumGastro()), 10,
-				yRow1);
+				+ Messages.Cst_Text_am + StringUtils.SPACE
+				+ CstService.getReadableFromCompact(cstGastroColo.getDatumGastro()), 10, yRow1);
 
 		gc.drawText(Messages.Cst_Text_Makrobefund, 125, yRow1);
 
@@ -101,7 +102,7 @@ public class GastroColoCanvas extends CstCanvas {
 		int yRow2 = 65;
 
 		// x -100
-		gc.drawText(Messages.Cst_Text_Coloskopie_Dickdarmspiegelung + Messages.Cst_Text_am + " "
+		gc.drawText(Messages.Cst_Text_Coloskopie_Dickdarmspiegelung + Messages.Cst_Text_am + StringUtils.SPACE
 				+ CstService.getReadableFromCompact(cstGastroColo.getDatumColo()), 10, yRow2);
 
 		gc.drawText(Messages.Cst_Text_Makrobefund, 125, yRow2);

@@ -9,6 +9,7 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
+import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
 import java.io.Serializable;
@@ -109,7 +110,7 @@ public class DocboxBackgroundJob extends Job {
 		int count = 0;
 
 		String myDocboxId = (String) CoreHub.actMandant.getInfoElement("docboxId");
-		if (myDocboxId == null || "".equals(myDocboxId)) {
+		if (myDocboxId == null || StringUtils.EMPTY.equals(myDocboxId)) {
 			updateDoctorDirectoryByApp(port, count, "self");
 		}
 		count = updateDoctorDirectoryByApp(port, count, "doctodoc");
@@ -123,11 +124,11 @@ public class DocboxBackgroundJob extends Job {
 		List<POCDMT000040IntendedRecipient> recipients = port.getRecipients(application);
 		if (recipients != null) {
 			for (POCDMT000040IntendedRecipient recipient : recipients) {
-				String docboxId = "";
-				String ean = "";
-				String given = "";
-				String family = "";
-				String prefix = "";
+				String docboxId = StringUtils.EMPTY;
+				String ean = StringUtils.EMPTY;
+				String given = StringUtils.EMPTY;
+				String family = StringUtils.EMPTY;
+				String prefix = StringUtils.EMPTY;
 				List<II> iis = recipient.getId();
 				for (II ii : iis) {
 					if ("1.3.88".equals(ii.getRoot())) {
@@ -162,7 +163,7 @@ public class DocboxBackgroundJob extends Job {
 					}
 				}
 
-				String organizationName = "";
+				String organizationName = StringUtils.EMPTY;
 				List<ON> ons = organization.getName();
 				if (ons != null) {
 					for (ON on : ons) {
@@ -178,9 +179,9 @@ public class DocboxBackgroundJob extends Job {
 				}
 
 				boolean first = false;
-				String streetAdressLine = "";
-				String city = "";
-				String plz = "";
+				String streetAdressLine = StringUtils.EMPTY;
+				String city = StringUtils.EMPTY;
+				String plz = StringUtils.EMPTY;
 
 				List<AD> ads = organization.getAddr();
 				for (AD ad : ads) {
@@ -224,7 +225,7 @@ public class DocboxBackgroundJob extends Job {
 						boolean newPerson = p == null;
 
 						if (newPerson) {
-							p = new Person(family, given, "", "");
+							p = new Person(family, given, StringUtils.EMPTY, StringUtils.EMPTY);
 							new DocboxContact(docboxId, p);
 						} else {
 							log.warn("newPerson is false, skipping intialization cMatching: " + cMatching
@@ -304,20 +305,20 @@ public class DocboxBackgroundJob extends Job {
 							String lastName = cdaChXPath.getPatientLastName();
 							boolean first = !StringTool.isNothing(firstName);
 							boolean last = !StringTool.isNothing(firstName);
-							String patient = (first ? firstName : "") //$NON-NLS-1$
-									+ (first && last ? " " : "")//$NON-NLS-1$ //$NON-NLS-2$
-									+ (last ? lastName : "");//$NON-NLS-1$
+							String patient = (first ? firstName : StringUtils.EMPTY)
+									+ (first && last ? StringUtils.SPACE : StringUtils.EMPTY)// $NON-NLS-1$
+									+ (last ? lastName : StringUtils.EMPTY);
 							firstName = cdaChXPath.getAuthorFirstName();
 							lastName = cdaChXPath.getAuthorLastName();
 							String organization = cdaChXPath.getCustodianHospitalName();
 							boolean org = !StringTool.isNothing(organization);
 							first = !StringTool.isNothing(firstName);
 							last = !StringTool.isNothing(lastName);
-							String sender = (first ? firstName : "")//$NON-NLS-1$
-									+ (first && last ? " " : "")//$NON-NLS-1$ //$NON-NLS-2$
-									+ (last ? lastName : "")//$NON-NLS-1$
-									+ (org && (first || last) ? ", " : "")//$NON-NLS-1$ //$NON-NLS-2$
-									+ (org ? organization : "");//$NON-NLS-1$
+							String sender = (first ? firstName : StringUtils.EMPTY)
+									+ (first && last ? StringUtils.SPACE : StringUtils.EMPTY)// $NON-NLS-1$
+									+ (last ? lastName : StringUtils.EMPTY)
+									+ (org && (first || last) ? ", " : StringUtils.EMPTY)//$NON-NLS-1$
+									+ (org ? organization : StringUtils.EMPTY);
 							if (!cdaMessage.setDownloaded(sender, patient)) {
 								log.debug("failed to set cda message downloaded with id " + id);//$NON-NLS-1$
 								result = false;
@@ -391,7 +392,7 @@ public class DocboxBackgroundJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		boolean success = true;
-		String msg = ""; //$NON-NLS-1$
+		String msg = StringUtils.EMPTY;
 		log.debug("running");
 		if (CoreHub.getLoggedInContact() != null) {
 			try {
@@ -415,8 +416,8 @@ public class DocboxBackgroundJob extends Job {
 							&& !monitor.isCanceled()) {
 						log.debug("fetchAppointments");
 						int downloadedAppointments = fetchAppointments(monitor);
-						if (!"".equals(msg)) { //$NON-NLS-1$
-							msg += "\n"; //$NON-NLS-1$
+						if (!StringUtils.EMPTY.equals(msg)) {
+							msg += StringUtils.LF;
 						}
 						msg += String.format(Messages.DocboxBackgroundJob_AppointmentsUpdated, downloadedAppointments);
 						log.debug(msg);
@@ -427,8 +428,8 @@ public class DocboxBackgroundJob extends Job {
 					if (!monitor.isCanceled()) {
 						log.debug("updateDoctorDirectory");
 						int count = updateDoctorDirectory(monitor);
-						if (!"".equals(msg)) { //$NON-NLS-1$
-							msg += "\n"; //$NON-NLS-1$
+						if (!StringUtils.EMPTY.equals(msg)) {
+							msg += StringUtils.LF;
 						}
 						msg += String.format(Messages.DocboxBackgroundJob_DoctorDirecotoryUpdated, count);
 						log.debug(msg);

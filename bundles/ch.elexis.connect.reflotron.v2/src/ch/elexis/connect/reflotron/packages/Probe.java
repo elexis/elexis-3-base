@@ -1,5 +1,6 @@
 package ch.elexis.connect.reflotron.packages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -94,7 +95,7 @@ public class Probe {
 			return val.get_longName() + ";" + val.get_shortName() + ";" + value + ";" + unit;
 		}
 
-		TransientLabResult result = val.fetchValue(patient, value, "", getDate()); //$NON-NLS-1$
+		TransientLabResult result = val.fetchValue(patient, value, StringUtils.EMPTY, getDate());
 
 		LabImportUtilHolder.get().importLabResults(Collections.singletonList(result), new DefaultLabImportUiHandler());
 
@@ -103,9 +104,9 @@ public class Probe {
 
 	private String[] splitResultFields() throws PackageException {
 		// replace all multispaces with a single space
-		resultat = resultat.replaceAll("\\s+", " ").trim();
+		resultat = resultat.replaceAll("\\s+", StringUtils.SPACE).trim();
 
-		String[] split = resultat.split(" ");
+		String[] split = resultat.split(StringUtils.SPACE);
 		String regex = "^[a-zA-Z0-9/]+$"; // letter,digit, '/'
 
 		// might be an enzym

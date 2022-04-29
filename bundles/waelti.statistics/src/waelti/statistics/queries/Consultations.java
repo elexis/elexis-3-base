@@ -1,5 +1,6 @@
 package waelti.statistics.queries;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -347,7 +348,7 @@ public class Consultations extends AbstractTimeSeries {
 
 	@GetProperty(value = "Kohortengrösse", index = 2)
 	public String getCohortSize() {
-		return "" + this.cohortSize;
+		return StringUtils.EMPTY + this.cohortSize;
 	}
 
 	@SetProperty("Kohortengrösse")

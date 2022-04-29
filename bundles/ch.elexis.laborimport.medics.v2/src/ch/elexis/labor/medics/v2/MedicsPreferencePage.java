@@ -1,5 +1,6 @@
 package ch.elexis.labor.medics.v2;
 
+import org.apache.commons.lang3.StringUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -29,10 +30,10 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 	public static final String DOKUMENT_CATEGORY = "medics/extern"; //$NON-NLS-1$
 	public static final String DELETE_ARCHIV_DAYS = "medics/del_archiv/days"; //$NON-NLS-1$
 
-	private static final String DEFAULT_DOWNLOAD = ""; //$NON-NLS-1$
-	private static final String DEFAULT_UPLOAD = ""; //$NON-NLS-1$
-	private static final String DEFAULT_IMED = ""; //$NON-NLS-1$
-	private static final String DEFAULT_ARCHIV = ""; //$NON-NLS-1$
+	private static final String DEFAULT_DOWNLOAD = StringUtils.EMPTY;
+	private static final String DEFAULT_UPLOAD = StringUtils.EMPTY;
+	private static final String DEFAULT_IMED = StringUtils.EMPTY;
+	private static final String DEFAULT_ARCHIV = StringUtils.EMPTY;
 	private static final String DEFAULT_MEDICS_URL = Messages.MedicsPreferencePage_defaultMedicsUrl;
 	private static final boolean DEFAULT_BROWSER_EXTERN = false;
 	private static final String DEFAULT_DOKUMENT_CATEGORY = Messages.MedicsPreferencePage_documentCategoryName;

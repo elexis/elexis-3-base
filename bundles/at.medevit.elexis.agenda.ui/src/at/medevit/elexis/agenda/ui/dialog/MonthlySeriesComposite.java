@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.dialog;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -42,7 +43,7 @@ public class MonthlySeriesComposite extends Composite {
 	}
 
 	public void setDay(int day) {
-		txtDay.setText(day + "");
+		txtDay.setText(day + StringUtils.EMPTY);
 	}
 
 }

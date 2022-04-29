@@ -1,5 +1,6 @@
 package ch.elexis.base.befunde.findings.migrator.strategy;
 
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +114,7 @@ public class NumericMigration extends AbstractMigrationStrategy implements IMigr
 		List<BigDecimal> ret = new ArrayList<>();
 
 		List<String> parts = new ArrayList<>();
-		String[] spacesSplits = result.split(" ");
+		String[] spacesSplits = result.split(StringUtils.SPACE);
 		for (String spacesSplit : spacesSplits) {
 			String[] slashSplits = spacesSplit.split("\\/");
 			for (String slashSplit : slashSplits) {

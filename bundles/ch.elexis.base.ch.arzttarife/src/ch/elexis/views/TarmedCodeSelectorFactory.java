@@ -12,6 +12,7 @@
 
 package ch.elexis.views;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -108,7 +109,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	private class ToggleFiltersAction extends Action {
 
 		public ToggleFiltersAction() {
-			super("", Action.AS_CHECK_BOX);
+			super(StringUtils.EMPTY, Action.AS_CHECK_BOX);
 			// initial state, active filters
 			setChecked(true);
 		}

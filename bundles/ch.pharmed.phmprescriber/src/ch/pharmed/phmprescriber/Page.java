@@ -5,6 +5,7 @@
 
 package ch.pharmed.phmprescriber;
 
+import org.apache.commons.lang3.StringUtils;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -151,7 +152,8 @@ class Page implements Printable {
 		metrics = g.getFontMetrics(fntBold);
 		intMeasureY += metrics.getHeight();
 
-		g.drawString(ph.getTitle() + " " + ph.getFirstname() + " " + ph.getLastname(), intMarginLeft, intMeasureY); //$NON-NLS-1$ //$NON-NLS-2$
+		g.drawString(ph.getTitle() + StringUtils.SPACE + ph.getFirstname() + StringUtils.SPACE + ph.getLastname(),
+				intMarginLeft, intMeasureY); // $NON-NLS-1$
 
 		// Set font to default
 		g.setFont(fnt);
@@ -174,11 +176,11 @@ class Page implements Printable {
 
 		intMeasureY += intSpace;
 
-		g.drawString(ph.getStreet() + " " + ph.getPostbox(), intMarginLeft, intMeasureY); //$NON-NLS-1$
+		g.drawString(ph.getStreet() + StringUtils.SPACE + ph.getPostbox(), intMarginLeft, intMeasureY);
 
 		intMeasureY += intDefaultHeight;
 
-		g.drawString(ph.getZip() + " " + ph.getCity(), intMarginLeft, intMeasureY); //$NON-NLS-1$
+		g.drawString(ph.getZip() + StringUtils.SPACE + ph.getCity(), intMarginLeft, intMeasureY);
 
 		intMeasureY += intSpace;
 
@@ -236,10 +238,10 @@ class Page implements Printable {
 		// -- (5) Patient
 		g.setFont(fntBold);
 
-		g.drawString(pat.getName() + " " + pat.getVorname(), intMarginLeft, intMeasureY); //$NON-NLS-1$
+		g.drawString(pat.getName() + StringUtils.SPACE + pat.getVorname(), intMarginLeft, intMeasureY);
 
 		metrics = g.getFontMetrics(fntBold);
-		int xPat = intMarginLeft + metrics.stringWidth(pat.getName() + " " + pat.getVorname()); //$NON-NLS-1$
+		int xPat = intMarginLeft + metrics.stringWidth(pat.getName() + StringUtils.SPACE + pat.getVorname());
 
 		g.setFont(fnt);
 		g.drawString(", " + BORN + pat.getGeburtsdatum(), xPat, intMeasureY); //$NON-NLS-1$

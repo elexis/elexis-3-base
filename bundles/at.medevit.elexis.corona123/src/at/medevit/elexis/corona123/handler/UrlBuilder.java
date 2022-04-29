@@ -22,7 +22,7 @@ import ch.elexis.core.types.Gender;
 public class UrlBuilder {
 
 	public static String getPatientParameters(IPatient patient) {
-		String parameters = "";
+		String parameters = StringUtils.EMPTY;
 		try {
 			parameters += "firstName=" + URLEncoder.encode(patient.getFirstName(), "UTF-8");
 			parameters += "&lastName=" + URLEncoder.encode(patient.getLastName(), "UTF-8");
@@ -81,7 +81,7 @@ public class UrlBuilder {
 	}
 
 	public static String getVaccinationDefaultParameters() {
-		String ret = "";
+		String ret = StringUtils.EMPTY;
 		try {
 			ret += "&takesAnticoagulants=" + URLEncoder.encode("false", "UTF-8");
 			ret += "&hasAllergies=" + URLEncoder.encode("false", "UTF-8");
@@ -102,7 +102,7 @@ public class UrlBuilder {
 	}
 
 	private static String getInsurance(IPatient patient) {
-		String ret = "";
+		String ret = StringUtils.EMPTY;
 		Optional<ICoverage> activeCoverage = ContextServiceHolder.get().getActiveCoverage();
 		if (activeCoverage.isPresent()) {
 			ICoverage coverage = activeCoverage.get();
@@ -110,7 +110,8 @@ public class UrlBuilder {
 				if (coverage.getCostBearer() != null && coverage.getCostBearer().isOrganization()) {
 					IOrganization costBearer = CoreModelServiceHolder.get()
 							.load(coverage.getCostBearer().getId(), IOrganization.class).get();
-					return costBearer.getDescription1() + " " + StringUtils.defaultString(costBearer.getDescription2());
+					return costBearer.getDescription1() + StringUtils.SPACE
+							+ StringUtils.defaultString(costBearer.getDescription2());
 				}
 			}
 		}
@@ -119,7 +120,8 @@ public class UrlBuilder {
 				if (coverage.getCostBearer() != null && coverage.getCostBearer().isOrganization()) {
 					IOrganization costBearer = CoreModelServiceHolder.get()
 							.load(coverage.getCostBearer().getId(), IOrganization.class).get();
-					return costBearer.getDescription1() + " " + StringUtils.defaultString(costBearer.getDescription2());
+					return costBearer.getDescription1() + StringUtils.SPACE
+							+ StringUtils.defaultString(costBearer.getDescription2());
 				}
 			}
 		}
@@ -127,7 +129,7 @@ public class UrlBuilder {
 	}
 
 	private static String getInsuranceCardNumber(IPatient patient) {
-		String ret = "";
+		String ret = StringUtils.EMPTY;
 		Optional<ICoverage> activeCoverage = ContextServiceHolder.get().getActiveCoverage();
 		if (activeCoverage.isPresent()) {
 			ICoverage coverage = activeCoverage.get();
@@ -162,8 +164,9 @@ public class UrlBuilder {
 	private static String getContactNameWithTitle(IContact contact) {
 		if (contact.isPerson()) {
 			IPerson person = CoreModelServiceHolder.get().load(contact.getId(), IPerson.class).get();
-			return StringUtils.defaultString(person.getTitel()) + " " + StringUtils.defaultString(person.getFirstName())
-					+ " " + StringUtils.defaultString(person.getLastName()) + ", "
+			return StringUtils.defaultString(person.getTitel()) + StringUtils.SPACE
+					+ StringUtils.defaultString(person.getFirstName()) + StringUtils.SPACE
+					+ StringUtils.defaultString(person.getLastName()) + ", "
 					+ StringUtils.defaultString(person.getCity());
 		} else {
 			return contact.getDescription1();
@@ -193,7 +196,7 @@ public class UrlBuilder {
 	}
 
 	private static String getOrgId() {
-		return ConfigServiceHolder.get().get(PreferenceConstants.CFG_CORONA123_ORGID, "");
+		return ConfigServiceHolder.get().get(PreferenceConstants.CFG_CORONA123_ORGID, StringUtils.EMPTY);
 	}
 
 	public static boolean isOrgId() {

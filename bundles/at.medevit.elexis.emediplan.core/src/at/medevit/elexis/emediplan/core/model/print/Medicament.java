@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.emediplan.core.model.print;
 
+import org.apache.commons.lang3.StringUtils;
 import java.time.format.DateTimeFormatter;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -62,14 +63,15 @@ public class Medicament {
 		}
 		ret.startDate = prescription.getDateFrom() != null
 				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateFrom())
-				: "";
+				: StringUtils.EMPTY;
 		ret.endDate = prescription.getDateTo() != null
 				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateTo())
-				: "";
+				: StringUtils.EMPTY;
 		ret.remarks = prescription.getRemark();
 		ret.reason = prescription.getDisposalComment();
 
-		String prescriptorId = prescription.getPrescriptor() != null ? prescription.getPrescriptor().getId() : "";
+		String prescriptorId = prescription.getPrescriptor() != null ? prescription.getPrescriptor().getId()
+				: StringUtils.EMPTY;
 		ret.prescriptor = getPrescriptorLabel(prescriptorId);
 		return ret;
 	}
@@ -81,9 +83,11 @@ public class Medicament {
 				String title = prescriptor.get(Person.TITLE);
 				String firstname = prescriptor.get(Person.FLD_NAME2);
 				String lastname = prescriptor.get(Person.FLD_NAME1);
-				return ((title != null && !title.isEmpty()) ? title + " " : "")
-						+ ((firstname != null && !firstname.isEmpty()) ? firstname + " " : "")
-						+ ((lastname != null && !lastname.isEmpty()) ? lastname + " " : "");
+				return ((title != null && !title.isEmpty()) ? title + StringUtils.SPACE : StringUtils.EMPTY)
+						+ ((firstname != null && !firstname.isEmpty()) ? firstname + StringUtils.SPACE
+								: StringUtils.EMPTY)
+						+ ((lastname != null && !lastname.isEmpty()) ? lastname + StringUtils.SPACE
+								: StringUtils.EMPTY);
 			}
 		}
 		return null;

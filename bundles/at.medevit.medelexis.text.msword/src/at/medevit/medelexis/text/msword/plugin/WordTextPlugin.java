@@ -4,6 +4,7 @@
  ******************************************************************************/
 package at.medevit.medelexis.text.msword.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -469,9 +470,9 @@ public class WordTextPlugin implements ITextPlugin {
 		// try to fix line endings
 		int idx = ret.indexOf("\r\n"); //$NON-NLS-1$
 		if (idx == -1) {
-			idx = ret.indexOf("\n"); //$NON-NLS-1$
+			idx = ret.indexOf(StringUtils.LF);
 			if (idx != -1) {
-				ret = ret.replaceAll("\n", "\r"); //$NON-NLS-1$ //$NON-NLS-2$
+				ret = ret.replaceAll(StringUtils.LF, StringUtils.CR); // $NON-NLS-1$
 			}
 		}
 		return ret;
@@ -694,7 +695,7 @@ public class WordTextPlugin implements ITextPlugin {
 		synchronized (this) {
 			OleWrapperManager manager = new OleWrapperManager();
 
-			OleWordRange range = findAndReplaceFirst(place, ""); //$NON-NLS-1$
+			OleWordRange range = findAndReplaceFirst(place, StringUtils.EMPTY);
 			manager.add(range);
 			if (range != null && contents != null) {
 				OleWordTable table = range.getTables(manager).add(range, contents.length, contents[0].length, manager);

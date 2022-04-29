@@ -12,6 +12,7 @@
 
 package ch.elexis.extdoc.dialogs;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -70,12 +71,12 @@ public class MoveIntoSubDirsDialog extends Action {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 			SWTHelper.showInfo("Fehler beim Auslagern!!",
-					Messages.MoveIntoSubDirsDialog_finished + "\n" + e.getMessage());
+					Messages.MoveIntoSubDirsDialog_finished + StringUtils.LF + e.getMessage());
 			logger.info("Fehler beim Auslagern!!" + e.getLocalizedMessage()); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			SWTHelper.showInfo("Fehler beim Auslagern!",
-					Messages.MoveIntoSubDirsDialog_finished + "\n" + e.getMessage());
+					Messages.MoveIntoSubDirsDialog_finished + StringUtils.LF + e.getMessage());
 			logger.info("Fehler beim Auslagern!!" + e.getLocalizedMessage()); //$NON-NLS-1$
 		}
 		return;

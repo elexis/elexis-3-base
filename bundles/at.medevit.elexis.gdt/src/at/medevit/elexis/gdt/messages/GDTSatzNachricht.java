@@ -12,6 +12,7 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.messages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,7 +51,7 @@ public class GDTSatzNachricht {
 			String gdtVersion) {
 		charCounterSatzLaenge = 0;
 
-		values.put(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION, satzart + "");
+		values.put(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION, satzart + StringUtils.EMPTY);
 		values.put(GDTConstants.FELDKENNUNG_GDT_ID_EMPFAENGER, gdtIdReceiver);
 		values.put(GDTConstants.FELDKENNUNG_GDT_ID_SENDER, gdtIdSender);
 		values.put(GDTConstants.FELDKENNUNG_VERWENDETER_ZEICHENSATZ, zeichensatz);
@@ -69,7 +70,7 @@ public class GDTSatzNachricht {
 
 	protected void addLine(int feldkennung) {
 		added.add(feldkennung);
-		addLine(feldkennung + "" + values.get(feldkennung));
+		addLine(feldkennung + StringUtils.EMPTY + values.get(feldkennung));
 	}
 
 	/**
@@ -145,8 +146,8 @@ public class GDTSatzNachricht {
 
 	protected void finalizeMessage() {
 		charCounterSatzLaenge += 14;
-		String line = "014" + GDTConstants.FELDKENNUNG_SATZLAENGE + "" + fivePlaces.format(charCounterSatzLaenge)
-				+ CRLF;
+		String line = "014" + GDTConstants.FELDKENNUNG_SATZLAENGE + StringUtils.EMPTY
+				+ fivePlaces.format(charCounterSatzLaenge) + CRLF;
 		message.add(1, line);
 	}
 

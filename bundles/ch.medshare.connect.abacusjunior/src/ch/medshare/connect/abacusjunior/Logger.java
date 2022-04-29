@@ -1,5 +1,6 @@
 package ch.medshare.connect.abacusjunior;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,8 +37,8 @@ public class Logger {
 		debug = debug.replace("\005", "<ENQ>");
 		debug = debug.replace("\006", "<ACK>");
 		debug = debug.replace("\021", "<NAK>");
-		debug = debug.replace(" ", "<SPACE>");
-		debug = debug.replace("\n", "<LF>");
+		debug = debug.replace(StringUtils.SPACE, "<SPACE>");
+		debug = debug.replace(StringUtils.LF, "<LF>");
 		debug = debug.replace("\t", "<HT>");
 		debug = debug.replace("\"", "<QUOTE>");
 
@@ -53,8 +54,8 @@ public class Logger {
 		debug = debug.replace("\005", "<ENQ>");
 		debug = debug.replace("\006", "<ACK>");
 		debug = debug.replace("\021", "<NAK>");
-		debug = debug.replace(" ", "<SPACE>");
-		debug = debug.replace("\n", "<LF>");
+		debug = debug.replace(StringUtils.SPACE, "<SPACE>");
+		debug = debug.replace(StringUtils.LF, "<LF>");
 		debug = debug.replace("\t", "<HT>");
 		debug = debug.replace("\"", "<QUOTE>");
 

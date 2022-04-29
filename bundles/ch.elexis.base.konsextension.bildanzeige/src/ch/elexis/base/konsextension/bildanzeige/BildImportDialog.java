@@ -11,6 +11,7 @@
 
 package ch.elexis.base.konsextension.bildanzeige;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayOutputStream;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -80,7 +81,7 @@ public class BildImportDialog extends TitleAreaDialog {
 		titel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		new Label(ret, SWT.NONE).setText(Messages.BildImportDialog_DescriptionOfImage);
 		info = new Text(ret, SWT.BORDER | SWT.MULTI);
-		info.setText("\n"); //$NON-NLS-1$
+		info.setText(StringUtils.LF);
 		info.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return ret;
 	}

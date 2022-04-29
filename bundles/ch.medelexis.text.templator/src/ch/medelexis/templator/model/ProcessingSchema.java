@@ -11,6 +11,7 @@
 
 package ch.medelexis.templator.model;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -134,7 +135,7 @@ public class ProcessingSchema extends Document {
 	}
 
 	public File getTemplateFile() {
-		File basedir = new File(CoreHub.localCfg.get(Preferences.PREF_TEMPLATEBASE, ""));
+		File basedir = new File(CoreHub.localCfg.get(Preferences.PREF_TEMPLATEBASE, StringUtils.EMPTY));
 		String name = doc.getRootElement().getAttributeValue("template");
 		File ret = name == null ? null : new File(basedir, name);
 		return ret;

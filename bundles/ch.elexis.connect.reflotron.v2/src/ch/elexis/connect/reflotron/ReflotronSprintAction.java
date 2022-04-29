@@ -1,5 +1,6 @@
 package ch.elexis.connect.reflotron;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
@@ -199,16 +200,16 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 						if (patientList.size() == 1) {
 							probePat = patientList.get(0);
 							patientDeviceStr = probe.getIdent();
-							patientElexisStr = probePat.getName() + " " + probePat.getVorname();
+							patientElexisStr = probePat.getName() + StringUtils.SPACE + probePat.getVorname();
 						}
 					}
 				}
 
-				if ((patientDeviceStr == null) || (patientDeviceStr.equals(""))) {
+				if ((patientDeviceStr == null) || (patientDeviceStr.equals(StringUtils.EMPTY))) {
 					patientDeviceStr = Messages.ReflotronSprintAction_NoPatientInfo;
 				}
 				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-				String warning = ""; // derzeit keine
+				String warning = StringUtils.EMPTY; // derzeit keine
 				String text = MessageFormat.format(Messages.ReflotronSprintAction_ValueInfoMsg, patientDeviceStr,
 						patientElexisStr, sdf.format(probe.getDate().getTime()), probe.getResultat(), warning);
 

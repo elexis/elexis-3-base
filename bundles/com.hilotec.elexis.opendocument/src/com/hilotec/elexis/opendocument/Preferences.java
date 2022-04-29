@@ -12,6 +12,7 @@
 
 package com.hilotec.elexis.opendocument;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -35,7 +36,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String P_PDFARGS = BASE + "pdfargs"; //$NON-NLS-1$
 	public static final String P_WRAPPERSCRIPT = BASE + "wrapperscript"; //$NON-NLS-1$
 	public static final String P_EDITOR_DEFAULT = "lowriter"; //$NON-NLS-1$
-	public static final String P_EDITARGS_DEFAULT = ""; //$NON-NLS-1$
+	public static final String P_EDITARGS_DEFAULT = StringUtils.EMPTY;
 	public static final String P_PRINTARGS_DEFAULT = "--headless -p"; //$NON-NLS-1$
 	public static final String P_PDFCONVERTER_DEFAULT = "lowriter"; //$NON-NLS-1$
 	public static final String P_PDFARGS_DEFAULT = "--headless --convert-to pdf"; //$NON-NLS-1$
@@ -70,7 +71,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 				return file.getAbsolutePath();
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	@Override

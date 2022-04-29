@@ -15,6 +15,7 @@
 
 package com.hilotec.elexis.messwerte.v2.data;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.text.MessageFormat;
@@ -240,7 +241,7 @@ public class MessungKonfiguration {
 					Element edtf = (Element) ndtf;
 					String fn = edtf.getAttribute(ATTR_NAME);
 					String ft = edtf.getAttribute(ATTR_TITLE);
-					if (ft.equals("")) { //$NON-NLS-1$
+					if (ft.equals(StringUtils.EMPTY)) {
 						ft = fn;
 					}
 
@@ -296,7 +297,7 @@ public class MessungKonfiguration {
 
 						// Wenn kein vernuenftiger Standardwert angegeben wurde
 						// nehmen wir die erste Auswahlmoeglichkeit
-						if (typ.getDefault(null).equals("")) { //$NON-NLS-1$
+						if (typ.getDefault(null).equals(StringUtils.EMPTY)) {
 							for (int k = 0; k < children.getLength(); k++) {
 								if (ELEMENT_ENUM_OPTION.equals(children.item(k).getNodeName())) {
 									if (children.item(k).getNodeType() == Node.ELEMENT_NODE) {

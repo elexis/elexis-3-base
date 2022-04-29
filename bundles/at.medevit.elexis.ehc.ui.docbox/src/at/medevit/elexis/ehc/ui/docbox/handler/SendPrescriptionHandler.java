@@ -1,5 +1,6 @@
 package at.medevit.elexis.ehc.ui.docbox.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -95,7 +96,7 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 
 	public String getRezeptFileName() {
 		String ret = prescription.getLabel();
-		return ret.replaceAll(" ", "_");
+		return ret.replaceAll(StringUtils.SPACE, "_");
 	}
 
 	@Override

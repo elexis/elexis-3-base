@@ -8,6 +8,7 @@
 
 package ch.fd.invoice440.request;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -223,7 +224,7 @@ public class PatientAddressType {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
+    @XmlType(name = StringUtils.EMPTY)
     public static class Card {
 
         @XmlAttribute(name = "card_id", required = true)

@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model.importer;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -95,7 +96,7 @@ public class GroupImporter {
 		if (law != null && !law.isEmpty()) {
 			return "-" + law;
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	private static class TransientTarmedGroup {

@@ -1,5 +1,6 @@
 package ch.elexis.laborimport.eurolyser.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -109,7 +110,7 @@ public class LabImportPage extends ImporterPage {
 	}
 
 	private void archiveFile(File file) {
-		String prefix = "";
+		String prefix = StringUtils.EMPTY;
 		while (!file.renameTo(new File(archiveDir, prefix + file.getName()))) {
 			prefix += "_";
 		}

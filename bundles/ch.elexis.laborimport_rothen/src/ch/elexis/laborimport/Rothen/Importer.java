@@ -13,6 +13,7 @@
 
 package ch.elexis.laborimport.Rothen;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -266,7 +267,8 @@ public class Importer extends ImporterPage {
 				bFile.setSelection(true);
 				bDirect.setSelection(false);
 
-				String filename = CoreHub.localCfg.get("ImporterPage/" + home.getTitle() + "/filename", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				String filename = CoreHub.localCfg.get("ImporterPage/" + home.getTitle() + "/filename", //$NON-NLS-1$ //$NON-NLS-2$
+						StringUtils.EMPTY);
 				tFilename.setText(filename);
 
 				home.results[0] = new Integer(FILE).toString();
@@ -275,10 +277,10 @@ public class Importer extends ImporterPage {
 				bFile.setSelection(false);
 				bDirect.setSelection(true);
 
-				tFilename.setText("");
+				tFilename.setText(StringUtils.EMPTY);
 
 				home.results[0] = new Integer(DIRECT).toString();
-				home.results[1] = "";
+				home.results[1] = StringUtils.EMPTY;
 			}
 
 			if (openmedicalObject == null) {
@@ -318,13 +320,13 @@ public class Importer extends ImporterPage {
 						bFile.setSelection(false);
 						bDirect.setSelection(true);
 
-						tFilename.setText("");
+						tFilename.setText(StringUtils.EMPTY);
 
 						home.results[0] = new Integer(DIRECT).toString();
-						home.results[1] = "";
+						home.results[1] = StringUtils.EMPTY;
 
 						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/type", DIRECT); //$NON-NLS-1$ //$NON-NLS-2$
-						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						CoreHub.localCfg.set("ImporterPage/" + home.getTitle() + "/filename", StringUtils.EMPTY); //$NON-NLS-1$
 					}
 				}
 			};
@@ -344,7 +346,7 @@ public class Importer extends ImporterPage {
 					// .getString("ImporterPage.allFiles") }); //$NON-NLS-1$
 					String filename = fdl.open();
 					if (filename == null) {
-						filename = "";
+						filename = StringUtils.EMPTY;
 					}
 
 					tFilename.setText(filename);

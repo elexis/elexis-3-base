@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class ResponsibleComposite extends Composite {
 					if (selected != noMandant) {
 						mandant.setInfoElement(TarmedRequirements.RESPONSIBLE_INFO_KEY, selected.getId());
 					} else {
-						mandant.setInfoElement(TarmedRequirements.RESPONSIBLE_INFO_KEY, "");
+						mandant.setInfoElement(TarmedRequirements.RESPONSIBLE_INFO_KEY, StringUtils.EMPTY);
 					}
 				}
 			}
@@ -104,7 +105,7 @@ public class ResponsibleComposite extends Composite {
 
 		@Override
 		public String getLabel(boolean shortLabel) {
-			return "";
+			return StringUtils.EMPTY;
 		}
 	}
 }

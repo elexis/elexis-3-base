@@ -10,6 +10,7 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view.profileeditor;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -285,7 +286,7 @@ public class DateRangeComposite extends CstComposite {
 		cdtPeriod3Start.setBackground(BLACK);
 		cdtPeriod3End.setBackground(BLACK);
 
-		lblMessage.setText("");
+		lblMessage.setText(StringUtils.EMPTY);
 		lblMessage.setForeground(BLACK);
 
 	}

@@ -1,5 +1,6 @@
 package ch.elexis.docbox.ws.client;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,45 +24,45 @@ public class WsClientConfig {
 		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return getDocboxLoginID(false);
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public static String getPassword() {
 		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return getSha1DocboxPassword();
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public static String getSecretkey() {
 		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
 			return getSha1DocboxSecretKey();
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public static String getP12Path() {
 		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
-			return ConfigServiceHolder.getMandator(USR_DEFDOCBOXP12PATH, "");
+			return ConfigServiceHolder.getMandator(USR_DEFDOCBOXP12PATH, StringUtils.EMPTY);
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public static String getP12Password() {
 		if (ContextServiceHolder.get().getActiveMandator().isPresent()) {
-			return ConfigServiceHolder.getMandator(USR_DEFDOCBOXP12PASSWORD, "");
+			return ConfigServiceHolder.getMandator(USR_DEFDOCBOXP12PASSWORD, StringUtils.EMPTY);
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public static String getDocboxServiceUrl() {
-		String test = isDocboxTest() ? "test" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+		String test = isDocboxTest() ? "test" : StringUtils.EMPTY; //$NON-NLS-1$
 		String host = getHost();
 		return "https://" + host + "/cgi-bin/WebObjects/docboxservice" + test + ".woa/ws/CDACHServicesV2"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	private static String getHost() {
-		String host = "";
+		String host = StringUtils.EMPTY;
 		if (isDocboxTest()) {
 			host = "ihe.test.docbox.ch"; //$NON-NLS-1$
 		} else {
@@ -77,18 +78,19 @@ public class WsClientConfig {
 	 * @return
 	 */
 	private static String getSha1DocboxSecretKey() {
-		String docboxSha1SecretKey = "";
+		String docboxSha1SecretKey = StringUtils.EMPTY;
 		if (isDocboxTest()) {
 			return WsClientUtil.getSHA1("docboxtest");
 		}
-		URL baseUrl = ch.docbox.ws.cdachservicesv2.CDACHServicesV2_Service.class.getResource("");
+		URL baseUrl = ch.docbox.ws.cdachservicesv2.CDACHServicesV2_Service.class.getResource(StringUtils.EMPTY);
 		try {
 			URL url = new URL(baseUrl + "/product.key");
 			InputStream in = url.openStream();
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 			docboxSha1SecretKey = bufferedReader.readLine();
 		} catch (Exception e) {
-			docboxSha1SecretKey = WsClientUtil.getSHA1(ConfigServiceHolder.getMandator(USR_SECRETKEY, ""));
+			docboxSha1SecretKey = WsClientUtil
+					.getSHA1(ConfigServiceHolder.getMandator(USR_SECRETKEY, StringUtils.EMPTY));
 		}
 		return docboxSha1SecretKey;
 	}
@@ -98,7 +100,7 @@ public class WsClientConfig {
 	}
 
 	private static String getDocboxLoginID(boolean prefixed) {
-		String loginId = ConfigServiceHolder.getMandator(USR_DEFDOCBXLOGINID, "");//$NON-NLS-1$
+		String loginId = ConfigServiceHolder.getMandator(USR_DEFDOCBXLOGINID, StringUtils.EMPTY);
 		if (!prefixed && loginId.startsWith(TESTLOGINIDPREFIX)) {
 			loginId = loginId.substring(TESTLOGINIDPREFIX.length());
 		}
@@ -106,7 +108,7 @@ public class WsClientConfig {
 	}
 
 	public static String getSha1DocboxPassword() {
-		String sha1Password = ConfigServiceHolder.getMandator(USR_DEFDOCBOXPASSWORD, "");//$NON-NLS-1$
+		String sha1Password = ConfigServiceHolder.getMandator(USR_DEFDOCBOXPASSWORD, StringUtils.EMPTY);
 		return sha1Password;
 	}
 }

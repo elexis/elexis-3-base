@@ -12,6 +12,7 @@
  *******************************************************************************/
 package net.medshare.connector.aerztekasse.view;
 
+import org.apache.commons.lang3.StringUtils;
 import java.net.InetAddress;
 import java.text.MessageFormat;
 
@@ -290,7 +291,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 
 	private void showMandantSettings() {
 		Boolean mandantUseGlobalSettings = aerztekasseSettings.isMandantUsingGlobalSettings();
-		String mandantname = ""; //$NON-NLS-1$
+		String mandantname = StringUtils.EMPTY;
 		try {
 			mandantname = aerztekasseSettings.getMandant().getLabel();
 		} catch (Exception e) {

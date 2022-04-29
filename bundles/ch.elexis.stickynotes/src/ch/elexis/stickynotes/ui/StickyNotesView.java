@@ -13,6 +13,7 @@
 
 package ch.elexis.stickynotes.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -120,7 +121,7 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 	private void deselect() {
 		actNote = null;
 		actPatient = null;
-		etf.setText(""); //$NON-NLS-1$
+		etf.setText(StringUtils.EMPTY);
 		// form.setText(Messages.StickyNotesView_NoPatientSelected);
 		setPartName(Messages.StickyNotesView_StickyNotesName);
 	}

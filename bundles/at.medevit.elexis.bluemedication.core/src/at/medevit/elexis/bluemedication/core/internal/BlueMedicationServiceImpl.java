@@ -159,7 +159,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 					}
 				}
 				ApiResponse<?> response = apiInstance.dispatchPostWithHttpInfo(internalData, externalData,
-						patientFirstName, patientLastName, patientSex, patientBirthdate, "", "", "", "", "");
+						patientFirstName, patientLastName, patientSex, patientBirthdate, StringUtils.EMPTY,
+						StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
 				if (response.getStatusCode() >= 300) {
 					return new Result<UploadResult>(SEVERITY.ERROR, 0,
 							"Response status code was [" + response.getStatusCode() + "]", null, false);
@@ -252,7 +253,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 							jsonOutput);
 					apiInstance.checkPostWithHttpInfo(new String(jsonOutput.toByteArray(), "UTF-8"));
 					if (client.getRedirectUrl() != null) {
-						return new Result<UploadResult>(new UploadResult(client.getRedirectUrl(), "", "check", true));
+						return new Result<UploadResult>(
+								new UploadResult(client.getRedirectUrl(), StringUtils.EMPTY, "check", true));
 					} else {
 						return new Result<UploadResult>(SEVERITY.ERROR, 0, "No redirect", null, false);
 					}

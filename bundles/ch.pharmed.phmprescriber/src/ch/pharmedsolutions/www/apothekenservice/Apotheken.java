@@ -1,6 +1,7 @@
 
 package ch.pharmedsolutions.www.apothekenservice;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "apotheken" })
+@XmlType(name = StringUtils.EMPTY, propOrder = { "apotheken" })
 @XmlRootElement(name = "Apotheken")
 public class Apotheken {
 

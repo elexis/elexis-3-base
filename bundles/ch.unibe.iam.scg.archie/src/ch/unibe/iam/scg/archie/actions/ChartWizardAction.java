@@ -17,6 +17,7 @@
  */
 package ch.unibe.iam.scg.archie.actions;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
@@ -97,7 +98,7 @@ public class ChartWizardAction extends Action {
 			try {
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ChartView.ID);
 			} catch (PartInitException e) {
-				ArchieActivator.LOG.log("Could not create the chart view." + "\n" + e.getLocalizedMessage(),
+				ArchieActivator.LOG.log("Could not create the chart view." + StringUtils.LF + e.getLocalizedMessage(),
 						Log.ERRORS);
 				e.printStackTrace();
 			}

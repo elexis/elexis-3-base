@@ -37,7 +37,7 @@ public final class CaseData {
 				return costBearer.getDescription1();
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 
 	public String getInsurancePolicyNumber() {
@@ -57,6 +57,6 @@ public final class CaseData {
 				}
 			}
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 }

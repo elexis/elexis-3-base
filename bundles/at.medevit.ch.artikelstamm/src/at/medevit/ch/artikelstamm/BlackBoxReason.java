@@ -10,6 +10,8 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum BlackBoxReason {
 
 	NOT_BLACKBOXED(0), IS_ON_STOCK(1), IS_REFERENCED_IN_FIXMEDICATION(2), IS_REFERENCED_IN_CONSULTATION(3), INACTIVE(9);
@@ -26,13 +28,13 @@ public enum BlackBoxReason {
 	}
 
 	public String getNumericalReasonString() {
-		return numercialReason + "";
+		return numercialReason + StringUtils.EMPTY;
 	}
 
 	public String getReasonExplanationString() {
 		switch (numercialReason) {
 		case 0:
-			return "";
+			return StringUtils.EMPTY;
 		case 1:
 			return "Artikel wird auf Lager geführt";
 		case 2:

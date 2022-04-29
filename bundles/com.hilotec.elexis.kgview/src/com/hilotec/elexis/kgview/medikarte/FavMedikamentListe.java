@@ -1,5 +1,6 @@
 package com.hilotec.elexis.kgview.medikarte;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -224,7 +225,7 @@ public class FavMedikamentListe extends ViewPart implements ElexisEventListener 
 			if (pk == null || pk.isEmpty() || pk.equals("0")) {
 				sb.append("Kann nicht verknüpft werden: ");
 				sb.append(fm.getBezeichnung());
-				sb.append("\n");
+				sb.append(StringUtils.LF);
 				continue;
 			}
 
@@ -235,7 +236,7 @@ public class FavMedikamentListe extends ViewPart implements ElexisEventListener 
 			if (al.isEmpty()) {
 				sb.append("Keine Alternative gefunden: ");
 				sb.append(fm.getBezeichnung());
-				sb.append("\n");
+				sb.append(StringUtils.LF);
 				continue;
 			}
 
@@ -252,7 +253,7 @@ public class FavMedikamentListe extends ViewPart implements ElexisEventListener 
 			if (!rl) {
 				sb.append("Medikament nicht neu verknuepft: ");
 				sb.append(fm.getBezeichnung());
-				sb.append("\n");
+				sb.append(StringUtils.LF);
 			}
 		}
 

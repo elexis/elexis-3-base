@@ -12,6 +12,7 @@
 
 package ch.elexis.icpc;
 
+import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -100,7 +101,7 @@ public class DetailDisplay implements IDetailDisplay {
 	}
 
 	private String checkNull(String string) {
-		return string != null ? string : "";
+		return string != null ? string : StringUtils.EMPTY;
 	}
 
 	public Class getElementClass() {

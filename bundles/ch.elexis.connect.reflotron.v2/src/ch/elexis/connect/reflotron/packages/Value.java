@@ -1,5 +1,6 @@
 package ch.elexis.connect.reflotron.packages;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ResourceBundle;
 
 import ch.elexis.connect.reflotron.Messages;
@@ -35,7 +36,7 @@ public class Value {
 	String _refFrau;
 	ILaboratory _labor;
 
-	String warning = "";
+	String warning = StringUtils.EMPTY;
 
 	public String getWarning() {
 		return this.warning;
@@ -83,7 +84,7 @@ public class Value {
 					.build(LabImportUtilHolder.get());
 		}
 
-		String comment = "";
+		String comment = StringUtils.EMPTY;
 		int resultFlags = 0;
 		if (flags.equals("1")) {
 			// comment = Messages.getString("Value.High");

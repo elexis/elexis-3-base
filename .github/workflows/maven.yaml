@@ -34,8 +34,18 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
     - name: Build with Maven
-      run: xvfb-run mvn -V clean verify -Dgit.target.branch=${GITHUB_REF##*/} -Dgit.core.branch=${GITHUB_REF##*/}
-      env: 
+      run: |
+            HTTP_STATUS=`curl -LI https://download.elexis.info/elexis/${GITHUB_REF##*/}/p2/elexis-3-core/p2.index -o /dev/null -w '%{http_code}\n' -s`
+            echo for branch ${GITHUB_REF##*/} the HTTP_STATUS was ${HTTP_STATUS}
+            if [ "${HTTP_STATUS}" == "200" ]; then
+              echo Using ${GITHUB_REF##*/}
+              export BRANCH=${GITHUB_REF##*/}
+            else
+              export BRANCH=master
+              echo bad branch name. Trying master
+            fi
+            xvfb-run mvn -V clean verify -Dgit.target.branch=${BRANCH} -Dgit.core.branch=${BRANCH}
+      env:
         LC_ALL: de_CH.UTF-8
         LANG: en_US.UTF-8
     - name: Publish Unit Test Results

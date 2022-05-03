@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.medelexis.text.msword.feature"
       label="Microsoft Word Anbindung"
-      version="3.8.0.qualifier"
+      version="3.9.0.qualifier"
       provider-name="medelexis.ch">
 
    <description url="http://www.medelexis.ch">

@@ -550,7 +550,8 @@ public class Tarmed45Exporter {
 					if (StringUtils.isNotBlank(person.getTitel())) {
 						personType.setTitle(StringUtils.abbreviate(person.getTitel(), 35));
 					}
-					if (StringUtils.isBlank(salutation)) {
+					if (StringUtils.isBlank(salutation)
+							&& StringUtils.isNotBlank(PersonFormatUtil.getSalutation(person))) {
 						personType.setSalutation(StringUtils.abbreviate(PersonFormatUtil.getSalutation(person), 35));
 					}
 				}

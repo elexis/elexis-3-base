@@ -14,6 +14,7 @@ package ch.elexis.agenda.preferences;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -33,7 +34,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Query;
@@ -112,6 +112,7 @@ public class AgendaDruck extends PreferencePage implements IWorkbenchPreferenceP
 	/* fill combo box with available templates */
 	private void setTemplates() {
 		cTerminTemplate.removeAll();
+		cTerminTemplate.add(StringUtils.EMPTY);
 
 		String currentTemplate = CoreHub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE,
 				PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT);

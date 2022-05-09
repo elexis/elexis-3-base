@@ -14,6 +14,8 @@ package ch.elexis.tarmedprefs;
 
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -160,6 +162,13 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		for (Mandant m : list) {
 			cbMands.add(m.getLabel());
 			hMandanten.put(m.getLabel(), m);
+			Collections.sort((List<Mandant>) list, new Comparator<Mandant>() {
+				@Override
+				public int compare(Mandant o1, Mandant o2) {
+					return ((Mandant) o1).getLabel(true).compareToIgnoreCase(o2.getLabel(true));
+				}
+
+			});
 		}
 		Group adrs = new Group(ret, SWT.NONE);
 		adrs.setLayout(new GridLayout(2, false));

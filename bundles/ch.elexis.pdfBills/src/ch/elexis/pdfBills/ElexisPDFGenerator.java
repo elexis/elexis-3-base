@@ -213,10 +213,10 @@ public class ElexisPDFGenerator {
 					} else {
 						parameters.put("guarantorPostal", StringUtils.EMPTY);
 					}
-					if (CoreHub.localCfg.get(RnOutputter.CFG_ESR_COUVERT_RIGHT, false)) {
-						parameters.put("couvertRight", "true");
+					if (CoreHub.localCfg.get(RnOutputter.CFG_ESR_COUVERT_LEFT, false)) {
+						parameters.put("couvertLeft", "true");
 					} else {
-						parameters.put("couvertRight", StringUtils.EMPTY);
+						parameters.put("couvertLeft", StringUtils.EMPTY);
 					}
 					Optional<IInvoice> invoice = getInvoice();
 					if (invoice.isPresent()) {
@@ -304,8 +304,8 @@ public class ElexisPDFGenerator {
 				if (StringUtils.isNotBlank(person.getTitel())) {
 					ret.append(StringUtils.SPACE).append(person.getTitel());
 				}
-				ret.append(StringUtils.SPACE).append(person.getDescription1());
 				ret.append(StringUtils.SPACE).append(person.getDescription2());
+				ret.append(StringUtils.SPACE).append(person.getDescription1());
 				return ret.toString();
 			}
 		}

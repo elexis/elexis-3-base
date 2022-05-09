@@ -12,7 +12,7 @@
 	<xsl:param name="qrJpeg" select="''" />
 	<xsl:param name="reminderDays" select="''" />	
 	<xsl:param name="guarantorPostal" select="''" />
-	<xsl:param name="couvertRight" select="''" />
+	<xsl:param name="couvertLeft" select="''" />
 	<xsl:param name="billerLine" select="''" />
 	<xsl:param name="guarantorLine" select="''" />
 	<xsl:param name="insuranceLine" select="''" />
@@ -69,10 +69,10 @@
 								<fo:table-column />
 								<fo:table-body font-size="10px"
 									font-family="tahoma,arial,helvetica,sans-serif">
-									<fo:table-row>
-										<xsl:choose>
-											<xsl:when
-												test="string-length($couvertRight) > 1">
+									<xsl:choose>
+										<xsl:when
+											test="string-length($couvertLeft) > 1">
+											<fo:table-row>
 												<fo:table-cell>
 													<fo:block margin-top="1cm">
 														<fo:block font-size="7px" margin-bottom="3mm">
@@ -92,8 +92,30 @@
 														</xsl:call-template>
 													</fo:block>
 												</fo:table-cell>
-											</xsl:when>
-											<xsl:otherwise>
+											</fo:table-row>
+											<fo:table-row>
+												<fo:table-cell display-align="after">
+													<fo:block>
+														<fo:block font-size="7px">
+															Patient
+														</fo:block>
+														<xsl:call-template name="patbill_patient_info">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+												<fo:table-cell>
+													<fo:block margin-top="5mm">
+														<fo:block font-size="7px">
+															Rechnungsinformationen
+														</fo:block>
+														<xsl:call-template name="patbill_bill_info">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+											</fo:table-row>
+										</xsl:when>
+										<xsl:otherwise>
+											<fo:table-row>
 												<fo:table-cell>
 													<fo:block margin-top="1cm">
 														<fo:block font-size="7px">
@@ -113,29 +135,29 @@
 														</xsl:call-template>
 													</fo:block>
 												</fo:table-cell>
-											</xsl:otherwise>
-										</xsl:choose>
-									</fo:table-row>
-									<fo:table-row>
-										<fo:table-cell>
-											<fo:block margin-top="5mm">
-												<fo:block font-size="7px">
-													Rechnungsinformationen
-												</fo:block>
-												<xsl:call-template name="patbill_bill_info">
-												</xsl:call-template>
-											</fo:block>
-										</fo:table-cell>
-										<fo:table-cell display-align="after">
-											<fo:block>
-												<fo:block font-size="7px">
-													Patient
-												</fo:block>
-												<xsl:call-template name="patbill_patient_info">
-												</xsl:call-template>
-											</fo:block>
-										</fo:table-cell>
-									</fo:table-row>
+											</fo:table-row>
+											<fo:table-row>
+												<fo:table-cell>
+													<fo:block margin-top="5mm">
+														<fo:block font-size="7px">
+															Rechnungsinformationen
+														</fo:block>
+														<xsl:call-template name="patbill_bill_info">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+												<fo:table-cell display-align="after">
+													<fo:block>
+														<fo:block font-size="7px">
+															Patient
+														</fo:block>
+														<xsl:call-template name="patbill_patient_info">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+											</fo:table-row>
+										</xsl:otherwise>
+									</xsl:choose>
 								</fo:table-body>
 							</fo:table>
 							<fo:table table-layout="fixed" width="100%"

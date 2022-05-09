@@ -112,15 +112,15 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		printerConfigComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		final Button couvertRight = new Button(printerConfigComposite, SWT.CHECK);
-		couvertRight.setText("Couvert-Fenster rechts");
+		couvertRight.setText("Couvert-Fenster links");
 		couvertRight.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		couvertRight.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(RnOutputter.CFG_ESR_COUVERT_RIGHT, couvertRight.getSelection());
+				CoreHub.localCfg.set(RnOutputter.CFG_ESR_COUVERT_LEFT, couvertRight.getSelection());
 			}
 		});
-		couvertRight.setSelection(CoreHub.localCfg.get(RnOutputter.CFG_ESR_COUVERT_RIGHT, false));
+		couvertRight.setSelection(CoreHub.localCfg.get(RnOutputter.CFG_ESR_COUVERT_LEFT, false));
 
 		final Button doPrint = new Button(printerConfigComposite, SWT.CHECK);
 		doPrint.setText("Direkter Druck");

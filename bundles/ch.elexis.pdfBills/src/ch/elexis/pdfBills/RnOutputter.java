@@ -80,6 +80,8 @@ public class RnOutputter implements IRnOutputter {
 	public static final String CFG_ESR_REMINDERDAYS_M2 = CFG_ROOT + "esr.reminderdays.m2";
 	public static final String CFG_ESR_REMINDERDAYS_M3 = CFG_ROOT + "esr.reminderdays.m3";
 
+	public static final String CFG_ESR_COUVERT_RIGHT = CFG_ROOT + "esr.couvert.right";
+
 	public static final String CFG_PRINT_DIRECT = CFG_ROOT + "print.direct";
 
 	public static final String CFG_PRINT_PRINTER = CFG_ROOT + "print.printer";

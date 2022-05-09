@@ -213,6 +213,11 @@ public class ElexisPDFGenerator {
 					} else {
 						parameters.put("guarantorPostal", StringUtils.EMPTY);
 					}
+					if (CoreHub.localCfg.get(RnOutputter.CFG_ESR_COUVERT_RIGHT, false)) {
+						parameters.put("couvertRight", "true");
+					} else {
+						parameters.put("couvertRight", StringUtils.EMPTY);
+					}
 					Optional<IInvoice> invoice = getInvoice();
 					if (invoice.isPresent()) {
 						parameters.put("billerLine", getBillerLine(invoice.get()));
@@ -375,10 +380,15 @@ public class ElexisPDFGenerator {
 			}
 		}
 		if (e.getSourceType() == SourceType.DEBITOR) {
-			sb.append("Problem mit der Kostenträger Information für ["
-					+ invoice.get().getCoverage().getCostBearer().getLabel() + "].");
-			if (e.getContact() != null) {
-				sb.append("Bitte die Addresse auf Vollständigkeit überprüfen.");
+			if (invoice.get().getCoverage().getCostBearer() != null) {
+				sb.append("Problem mit der Kostenträger Information für ["
+						+ invoice.get().getCoverage().getCostBearer().getLabel() + "].");
+				if (e.getContact() != null) {
+					sb.append("Bitte die Addresse auf Vollständigkeit überprüfen.");
+				}
+			} else {
+				sb.append("Problem mit der Kostenträger Information für [" + invoice.get().getCoverage().getLabel()
+						+ "] kein Kostenträger.");
 			}
 		}
 		if (e.getSourceType() == SourceType.AMOUNT) {

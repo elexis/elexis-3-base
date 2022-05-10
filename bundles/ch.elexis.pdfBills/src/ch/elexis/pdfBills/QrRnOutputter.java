@@ -110,7 +110,7 @@ public class QrRnOutputter implements IRnOutputter {
 
 	@Override
 	public String getDescription() {
-		return "QR PDF Output";
+		return "Rechnung ausdrucken";
 	}
 
 	@Override

@@ -102,6 +102,8 @@ public class ElexisPDFGenerator {
 	private List<File> printed;
 	private Rechnung rechnung;
 
+	private boolean print;
+
 	private enum XsltType {
 		RECLAIM, PATBILL, PATBILL_M1, PATBILL_M2, PATBILL_M3
 	}
@@ -111,6 +113,7 @@ public class ElexisPDFGenerator {
 	}
 
 	public ElexisPDFGenerator(String billXmlFile, String nr, InvoiceState invoiceState) {
+		this.print = true;
 		this.billXmlFile = billXmlFile;
 		this.billNr = nr;
 		this.invoiceState = invoiceState;
@@ -488,7 +491,7 @@ public class ElexisPDFGenerator {
 	}
 
 	private boolean printPdf(File pdf, boolean useEsrPrinter) {
-		if (isPrintingConfigured()) {
+		if (print && isPrintingConfigured()) {
 			// check if script initialization for windows should be performed
 			if (CoreUtil.isWindows() && CoreHub.localCfg.get(RnOutputter.CFG_PRINT_USE_SCRIPT, false)
 					&& !isScriptWinInitialized()) {
@@ -788,5 +791,9 @@ public class ElexisPDFGenerator {
 	 */
 	public List<File> getPrintedBill() {
 		return printed;
+	}
+
+	public void setPrint(boolean value) {
+		this.print = value;
 	}
 }

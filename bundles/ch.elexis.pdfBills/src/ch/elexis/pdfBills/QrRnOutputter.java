@@ -55,6 +55,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
@@ -108,6 +109,8 @@ public class QrRnOutputter implements IRnOutputter {
 
 	private boolean modifyInvoiceState;
 
+	private boolean pdfOnly;
+
 	@Override
 	public String getDescription() {
 		return "Rechnung ausdrucken";
@@ -150,6 +153,9 @@ public class QrRnOutputter implements IRnOutputter {
 							fout.close();
 							// create an new generator for the bill
 							ElexisPDFGenerator epdf = new ElexisPDFGenerator(fname, rn.getNr(), rn.getInvoiceState());
+							if (pdfOnly) {
+								epdf.setPrint(false);
+							}
 							// consider fallback to non QR bill, always fall back for tarmed xml version
 							// lower 4.5
 							EsrType outputEsrType = ex.getEsrTypeOrFallback(
@@ -202,6 +208,7 @@ public class QrRnOutputter implements IRnOutputter {
 						}
 						monitor.worked(1);
 					}
+					pdfOnly = false;
 					monitor.done();
 					if (errors > 0) {
 						SWTHelper.alert("Fehler bei der Übermittlung", Integer.toString(errors)
@@ -414,6 +421,21 @@ public class QrRnOutputter implements IRnOutputter {
 		tXml.setText(CoreHub.localCfg.get(CFG_ROOT + XMLDIR, StringUtils.EMPTY));
 		tPdf.setText(CoreHub.localCfg.get(CFG_ROOT + PDFDIR, StringUtils.EMPTY));
 		return (Control) ret;
+	}
+
+	@Override
+	public void customizeDialog(Object rnOutputDialog) {
+		if (rnOutputDialog instanceof RnOutputDialog) {
+			((RnOutputDialog) rnOutputDialog).setOkButtonText("Ausdrucken");
+			Button button = ((RnOutputDialog) rnOutputDialog).addCustomButton("nur PDF");
+			button.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					pdfOnly = true;
+					((RnOutputDialog) rnOutputDialog).customButtonPressed(IDialogConstants.OK_ID);
+				}
+			});
+		}
 	}
 
 	@Override

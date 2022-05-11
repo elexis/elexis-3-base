@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
@@ -54,6 +55,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	private TabItem t44Settings;
 	private TabItem mailConfig;
 	private TabItem headerConfig;
+	private TabItem outputConfig;
 
 	private Text headerLine1Text;
 	private Text headerLine2Text;
@@ -106,6 +108,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		headerConfig = new TabItem(tabFolder, SWT.NONE);
 		headerConfig.setText("Rechnungskopf");
 		createHeaderConfig(headerConfig);
+
+		outputConfig = new TabItem(tabFolder, SWT.NONE);
+		outputConfig.setText("Ausgabe");
+		createOutputConfig(outputConfig);
 
 		final Composite printerConfigComposite = new Composite(ret, SWT.NONE);
 		printerConfigComposite.setLayout(new GridLayout(2, false));
@@ -237,6 +243,82 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		useGuarantorPostalAddress.setSelection(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_USEGUARANTORPOSTAL, false));
 
 		return ret;
+	}
+
+	private void createOutputConfig(TabItem item) {
+		Composite composite = new Composite(tabFolder, SWT.NONE);
+		composite.setLayout(new GridLayout(2, false));
+
+		final Button useGlobalConfig = new Button(composite, SWT.CHECK);
+		useGlobalConfig.setText("Globale Ausgabe Verzeichnisse");
+		useGlobalConfig.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+		Button bXML = new Button(composite, SWT.PUSH);
+		bXML.setText("XML Verzeichnis");
+		Text tXml = new Text(composite, SWT.BORDER);
+		tXml.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		Button bPDF = new Button(composite, SWT.PUSH);
+		bPDF.setText("PDF Verzeichnis");
+		Text tPdf = new Text(composite, SWT.BORDER);
+		tPdf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+
+		bXML.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dd = new DirectoryDialog(getShell());
+				String dir = dd.open();
+				if (dir != null) {
+					tXml.setText(dir);
+				}
+			}
+
+		});
+		bPDF.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dd = new DirectoryDialog(getShell());
+				String dir = dd.open();
+				if (dir != null) {
+					tPdf.setText(dir);
+				}
+			}
+		});
+		tXml.setText(CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, StringUtils.EMPTY));
+		tPdf.setText(CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, StringUtils.EMPTY));
+
+		tXml.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				CoreHub.globalCfg.set(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, tXml.getText());
+			}
+		});
+		tPdf.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				CoreHub.globalCfg.set(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, tPdf.getText());
+			}
+		});
+
+		useGlobalConfig.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				CoreHub.localCfg.set(OutputterUtil.CFG_PRINT_GLOBALOUTPUTDIRS, useGlobalConfig.getSelection());
+				if (useGlobalConfig.getSelection()) {
+					bPDF.setEnabled(true);
+					bXML.setEnabled(true);
+					tPdf.setEnabled(true);
+					tXml.setEnabled(true);
+				} else {
+					bPDF.setEnabled(false);
+					bXML.setEnabled(false);
+					tPdf.setEnabled(false);
+					tXml.setEnabled(false);
+				}
+			}
+		});
+		useGlobalConfig.setSelection(CoreHub.localCfg.get(OutputterUtil.CFG_PRINT_GLOBALOUTPUTDIRS, true));
+
+		item.setControl(composite);
 	}
 
 	private void createHeaderConfig(TabItem item) {

@@ -433,15 +433,15 @@ public class ElexisPDFGenerator {
 	public void printBill(File rsc) {
 		printed = new ArrayList<>();
 		if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_BESR, true)) {
-			File pdf = new File(CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.PDFDIR, StringUtils.EMPTY)
-					+ File.separator + billNr + "_esr.pdf");
+			File pdf = new File(
+					OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_esr.pdf");
 			generatePatBill(rsc, pdf);
 			printPdf(pdf, true);
 			printed.add(pdf);
 		}
 		if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_RF, true)) {
-			File pdf = new File(CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.PDFDIR, StringUtils.EMPTY)
-					+ File.separator + billNr + "_rf.pdf");
+			File pdf = new File(
+					OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf");
 			generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);
@@ -451,15 +451,15 @@ public class ElexisPDFGenerator {
 	public void printQrBill(File rsc) {
 		printed = new ArrayList<>();
 		if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_BESR, true)) {
-			File pdf = new File(CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.PDFDIR, StringUtils.EMPTY)
-					+ File.separator + billNr + "_esr.pdf");
+			File pdf = new File(
+					OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_esr.pdf");
 			generateQrPatBill(rsc, pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);
 		}
 		if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_RF, true)) {
-			File pdf = new File(CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.PDFDIR, StringUtils.EMPTY)
-					+ File.separator + billNr + "_rf.pdf");
+			File pdf = new File(
+					OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf");
 			generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);

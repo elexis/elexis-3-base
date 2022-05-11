@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -143,8 +144,7 @@ public class RnOutputter implements IRnOutputter {
 							errors++;
 							continue;
 						}
-						String fname = CoreHub.localCfg.get(CFG_ROOT + XMLDIR, StringUtils.EMPTY) + File.separator
-								+ rn.getNr() + ".xml";
+						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT) + File.separator + rn.getNr() + ".xml";
 						try {
 							FileOutputStream fout = new FileOutputStream(fname);
 							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8");
@@ -369,39 +369,49 @@ public class RnOutputter implements IRnOutputter {
 			}
 		});
 
-		Button bXML = new Button(ret, SWT.PUSH);
-		bXML.setText("XML Verzeichnis");
-		tXml = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
-		tXml.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		Button bPDF = new Button(ret, SWT.PUSH);
-		bPDF.setText("PDF Verzeichnis");
-		tPdf = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
-		tPdf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		if (OutputterUtil.useGlobalOutputDirs()) {
+			Label lXML = new Label(ret, SWT.NONE);
+			lXML.setText("XML Verzeichnis: " + CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, null));
+			lXML.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+			Label lPDF = new Label(ret, SWT.NONE);
+			lPDF.setText("PDF Verzeichnis: " + CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, null));
+			lPDF.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		} else {
+			Button bXML = new Button(ret, SWT.PUSH);
+			bXML.setText("XML Verzeichnis");
+			tXml = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
+			tXml.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			Button bPDF = new Button(ret, SWT.PUSH);
+			bPDF.setText("PDF Verzeichnis");
+			tPdf = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
+			tPdf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
-		bXML.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dd = new DirectoryDialog(compParent.getShell());
-				String dir = dd.open();
-				if (dir != null) {
-					tXml.setText(dir);
+			bXML.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					DirectoryDialog dd = new DirectoryDialog(compParent.getShell());
+					String dir = dd.open();
+					if (dir != null) {
+						tXml.setText(dir);
+					}
 				}
-			}
 
-		});
-		bPDF.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dd = new DirectoryDialog(compParent.getShell());
-				String dir = dd.open();
-				if (dir != null) {
-					tPdf.setText(dir);
+			});
+			bPDF.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					DirectoryDialog dd = new DirectoryDialog(compParent.getShell());
+					String dir = dd.open();
+					if (dir != null) {
+						tPdf.setText(dir);
+					}
 				}
-			}
 
-		});
-		tXml.setText(CoreHub.localCfg.get(CFG_ROOT + XMLDIR, StringUtils.EMPTY));
-		tPdf.setText(CoreHub.localCfg.get(CFG_ROOT + PDFDIR, StringUtils.EMPTY));
+			});
+			tXml.setText(CoreHub.localCfg.get(CFG_ROOT + XMLDIR, StringUtils.EMPTY));
+			tPdf.setText(CoreHub.localCfg.get(CFG_ROOT + PDFDIR, StringUtils.EMPTY));
+		}
+
 		return (Control) ret;
 	}
 
@@ -409,8 +419,10 @@ public class RnOutputter implements IRnOutputter {
 	public void saveComposite() {
 		CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_BESR, bWithEsr.getSelection());
 		CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_RF, bWithRf.getSelection());
-		CoreHub.localCfg.set(CFG_ROOT + XMLDIR, tXml.getText());
-		CoreHub.localCfg.set(CFG_ROOT + PDFDIR, tPdf.getText());
+		if (!OutputterUtil.useGlobalOutputDirs()) {
+			CoreHub.localCfg.set(CFG_ROOT + XMLDIR, tXml.getText());
+			CoreHub.localCfg.set(CFG_ROOT + PDFDIR, tPdf.getText());
+		}
 		CoreHub.localCfg.flush();
 	}
 }

@@ -139,6 +139,7 @@ public class BlueMedicationUploadHandler extends AbstractHandler implements IHan
 			PlatformUI.getWorkbench().getService(IHandlerService.class).executeCommandInContext(parametrizedCommmand,
 					null, context);
 		} catch (NotDefinedException | NotEnabledException | NotHandledException | ExecutionException e) {
+			LoggerFactory.getLogger(getClass()).error("Error on download", e);
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 					"Beim automatischen Download ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
 		}

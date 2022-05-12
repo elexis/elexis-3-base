@@ -138,6 +138,7 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 				}
 			}
 		} else {
+			LoggerFactory.getLogger(getClass()).error("Error on download", emediplan.toString());
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 					"Beim download ist ein Fehler aufgetreten. Bitte starten sie den Abgleich neu.");
 		}

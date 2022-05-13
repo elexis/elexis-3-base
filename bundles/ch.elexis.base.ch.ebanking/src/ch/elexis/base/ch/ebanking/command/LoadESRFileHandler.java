@@ -9,6 +9,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
@@ -60,6 +61,8 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 						monitor.beginTask(Messages.ESRView_reading_ESR, (int) (file.length() / 25));
 						Result<List<ESRRecord>> result = esrf.read(file, monitor);
 						if (result.isOK()) {
+							boolean skipPaidAll = false;
+							boolean bookPaidAll = false;
 							for (ESRRecord rec : result.get()) {
 								monitor.worked(1);
 								if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
@@ -81,9 +84,24 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 									} else {
 										Rechnung rn = rec.getRechnung();
 										if (rn.getStatus() == RnStatus.BEZAHLT) {
-											if (SWTHelper.askYesNo(Messages.ESRView_paid, Messages.ESRView_rechnung
-													+ rn.getNr() + Messages.ESRView_ispaid) == false) {
+											if (skipPaidAll) {
 												continue;
+											}
+											if (!bookPaidAll) {
+												int ret = SWTHelper.ask(Messages.ESRView_paid,
+														Messages.ESRView_rechnung + rn.getNr()
+																+ Messages.ESRView_ispaid,
+														IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL,
+														IDialogConstants.OK_LABEL + " für Alle",
+														IDialogConstants.CANCEL_LABEL + " für Alle");
+												if (ret == 3) {
+													skipPaidAll = true;
+												} else if (ret == 2) {
+													bookPaidAll = true;
+												}
+												if (ret == 1 || skipPaidAll) {
+													continue;
+												}
 											}
 										}
 										if (rn.getStatus() == RnStatus.IN_BETREIBUNG) {

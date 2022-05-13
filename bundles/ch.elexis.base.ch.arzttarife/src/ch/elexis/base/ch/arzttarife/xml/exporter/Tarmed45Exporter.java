@@ -587,8 +587,7 @@ public class Tarmed45Exporter {
 			onlineAddressType.getUrl().add(website);
 		}
 
-		return onlineAddressType.getEmail().isEmpty() && onlineAddressType.getUrl().isEmpty() ? null
-				: onlineAddressType;
+		return onlineAddressType.getEmail().isEmpty() ? null : onlineAddressType;
 	}
 
 	protected TelecomAddressType getTelecom(IContact contact) {

@@ -21,12 +21,14 @@ import ch.elexis.core.documents.DocumentStore;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.findings.IDocumentReference;
 import ch.elexis.core.findings.IFindingsService;
+import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.global_inbox.Preferences;
@@ -57,11 +59,13 @@ public class GlobalInboxEntryImportHandler {
 		if (patient == null) {
 			patient = contextService.getActivePatient().orElse(null);
 		}
-		String category = globalInboxEntry.getCategory();
 		IContact sender = globalInboxEntry.getSender();
 
+		ICategory category = getCategoryOrDefault(globalInboxEntry.getCategory());
+
 		File mainFile = globalInboxEntry.getMainFile();
-		IDocument document = documentStore.createDocument(null, patient.getId(), mainFile.getName(), category);
+		IDocument document = documentStore.createDocument(null, patient.getId(), mainFile.getName(),
+				category.getName());
 		document.setTitle(title);
 		document.setMimeType(globalInboxEntry.getMimetype());
 		document.setKeywords(globalInboxEntry.getKeywords());
@@ -109,6 +113,20 @@ public class GlobalInboxEntryImportHandler {
 		}
 
 		eventBroker.send(Constants.EVENT_UI_REMOVE_AND_SELECT_NEXT, globalInboxEntry);
+	}
+
+	private ICategory getCategoryOrDefault(String category) {
+		IDocumentStore defaultStore = documentStore.getDefaultDocumentStore();
+		ICategory ret = defaultStore.getCategoryDefault();
+
+		List<ICategory> categories = defaultStore.getCategories();
+		for (ICategory iCategory : categories) {
+			if (iCategory.getName().equals(category)) {
+				ret = iCategory;
+				break;
+			}
+		}
+		return ret;
 	}
 
 	@CanExecute

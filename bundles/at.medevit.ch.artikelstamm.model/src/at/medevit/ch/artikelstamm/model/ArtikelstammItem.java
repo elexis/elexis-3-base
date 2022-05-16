@@ -583,4 +583,14 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 		}
 		return "999";
 	}
+
+	@Override
+	public String getPackageSizeString() {
+		return StringUtils.EMPTY;
+	}
+
+	@Override
+	public void setPackageSizeString(String value) {
+		throw new UnsupportedOperationException();
+	}
 }

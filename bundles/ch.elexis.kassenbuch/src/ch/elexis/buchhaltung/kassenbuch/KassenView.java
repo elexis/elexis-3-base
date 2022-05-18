@@ -12,22 +12,23 @@
 package ch.elexis.buchhaltung.kassenbuch;
 
 import org.apache.commons.lang3.StringUtils;
-import java.util.SortedSet;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -71,6 +72,8 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 		ttVon.addDays(-14);
 	}
 
+	public static KassenbuchViewerComparator comparator;
+
 	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout());
@@ -81,30 +84,20 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tc = new TableColumn[tableHeaders.length];
 		Table table = new Table(body, SWT.SINGLE | SWT.FULL_SELECTION);
+		tv = new TableViewer(table);
+		tv.setContentProvider(ArrayContentProvider.getInstance());
+
+		comparator = new KassenbuchViewerComparator();
+		tv.setComparator(comparator);
+
 		for (int i = 0; i < tc.length; i++) {
 			tc[i] = new TableColumn(table, SWT.NONE);
 			tc[i].setText(tableHeaders[i]);
 			tc[i].setWidth(tableCols[i]);
+			tc[i].addSelectionListener(getSelectionAdapter(tc[i], i));
 		}
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		tv = new TableViewer(table);
-		tv.setContentProvider(new IStructuredContentProvider() {
-			public void dispose() {
-			}
-
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
-
-			public Object[] getElements(Object inputElement) {
-				SortedSet<KassenbuchEintrag> set = KassenbuchEintrag.getBookings(ttVon, ttBis);
-				if (set != null) {
-					return set.toArray();
-				} else {
-					return new KassenbuchEintrag[0];
-				}
-			}
-		});
 		tv.setLabelProvider(new KBLabelProvider());
 		tv.setUseHashlookup(true);
 		makeActions();
@@ -125,7 +118,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 
 			}
 		});
-		tv.setInput(this);
+		tv.setInput(KassenbuchEintrag.getBookings(ttVon, ttBis));
 		GlobalEventDispatcher.addActivationListener(this, this);
 		setFormText();
 	}
@@ -378,4 +371,90 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 			}
 		});
 	}
+
+	private SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
+		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				comparator.setColumn(index);
+				tv.getTable().setSortDirection(comparator.getDirection());
+				tv.getTable().setSortColumn(column);
+				tv.refresh();
+			}
+		};
+		return selectionAdapter;
+	}
+}
+
+class KassenbuchViewerComparator extends ViewerComparator {
+
+	private int propertyIndex;
+	private boolean direction = true;
+
+	public KassenbuchViewerComparator() {
+		this.propertyIndex = 0;
+	}
+
+	@Override
+	public int compare(Viewer viewer, Object e1, Object e2) {
+		if (e1 instanceof KassenbuchEintrag && e2 instanceof KassenbuchEintrag) {
+			KassenbuchEintrag kb1 = (KassenbuchEintrag) e1;
+			KassenbuchEintrag kb2 = (KassenbuchEintrag) e2;
+			Money betrag1 = kb1.getAmount();
+			Money betrag2 = kb2.getAmount();
+
+			int rc = 0;
+			switch (propertyIndex) {
+			case 0:
+				rc = kb1.getBelegNr().compareTo(kb2.getBelegNr());
+				break;
+			case 1:
+				rc = kb1.getDate().compareTo(kb2.getDate());
+				break;
+			case 2:
+			case 3:
+				rc = Double.compare(betrag1.getAmount(), betrag2.getAmount());
+				break;
+			case 4:
+				rc = kb1.getSaldo().compareTo(kb2.getSaldo());
+				break;
+			case 5:
+				rc = kb1.getKategorie().compareToIgnoreCase(kb2.getKategorie());
+				break;
+			case 6:
+				rc = kb1.getPaymentMode().compareToIgnoreCase(kb2.getPaymentMode());
+				break;
+			case 7:
+				rc = kb1.getText().compareToIgnoreCase(kb2.getText());
+				break;
+			default:
+				break;
+			}
+
+			if (direction) {
+				rc = -rc;
+			}
+			return rc;
+		}
+		return 0;
+	}
+
+	/**
+	 * for sort direction
+	 *
+	 * @return SWT.DOWN or SWT.UP
+	 */
+	public int getDirection() {
+		return direction ? SWT.DOWN : SWT.UP;
+	}
+
+	public void setColumn(int column) {
+		if (column == this.propertyIndex) {
+			direction = !direction;
+		} else {
+			this.propertyIndex = column;
+			direction = true;
+		}
+	}
+
 }

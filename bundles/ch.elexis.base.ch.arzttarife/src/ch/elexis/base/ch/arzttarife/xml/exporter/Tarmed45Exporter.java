@@ -167,7 +167,7 @@ public class Tarmed45Exporter {
 
 			return TarmedJaxbUtil.marshallInvoiceRequest(requestType, dest);
 
-		} catch (Exception e) {
+		} catch (DatatypeConfigurationException e) {
 			LoggerFactory.getLogger(getClass()).error("Error generating tarmed xml model", e);
 			return false;
 		}
@@ -567,7 +567,7 @@ public class Tarmed45Exporter {
 
 			return personType;
 		}
-		throw new IllegalStateException("Contact is no organization and no person");
+		throw new IllegalStateException("Contact [" + contact.getLabel() + "] is no organization and no person");
 	}
 
 	protected OnlineAddressType getOnline(IContact contact) {

@@ -11,15 +11,17 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
+import java.util.SortedSet;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -85,7 +87,22 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 		tc = new TableColumn[tableHeaders.length];
 		Table table = new Table(body, SWT.SINGLE | SWT.FULL_SELECTION);
 		tv = new TableViewer(table);
-		tv.setContentProvider(ArrayContentProvider.getInstance());
+		tv.setContentProvider(new IStructuredContentProvider() {
+			public void dispose() {
+			}
+
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
+
+			public Object[] getElements(Object inputElement) {
+				SortedSet<KassenbuchEintrag> set = KassenbuchEintrag.getBookings(ttVon, ttBis);
+				if (set != null) {
+					return set.toArray();
+				} else {
+					return new KassenbuchEintrag[0];
+				}
+			}
+		});
 
 		comparator = new KassenbuchViewerComparator();
 		tv.setComparator(comparator);
@@ -118,7 +135,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 
 			}
 		});
-		tv.setInput(KassenbuchEintrag.getBookings(ttVon, ttBis));
+		tv.setInput(this);
 		GlobalEventDispatcher.addActivationListener(this, this);
 		setFormText();
 	}

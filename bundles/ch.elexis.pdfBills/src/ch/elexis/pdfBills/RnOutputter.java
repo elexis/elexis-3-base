@@ -201,7 +201,11 @@ public class RnOutputter implements IRnOutputter {
 			}, null);
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
+			if (StringUtils.isNotBlank(ex.getMessage())) {
+				res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
+			} else if (ex.getCause() != null && StringUtils.isNotBlank(ex.getCause().getMessage())) {
+				res.add(Result.SEVERITY.ERROR, 2, ex.getCause().getMessage(), null, true);
+			}
 			ErrorDialog.openError(null, "Fehler bei der Ausgabe", "Konnte Rechnungsdruck nicht starten",
 					ResultAdapter.getResultAsStatus(res));
 			return res;

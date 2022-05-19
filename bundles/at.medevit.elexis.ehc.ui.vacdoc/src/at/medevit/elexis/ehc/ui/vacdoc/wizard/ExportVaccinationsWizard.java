@@ -35,4 +35,8 @@ public class ExportVaccinationsWizard extends Wizard {
 	public enum ExportType {
 		CDA, XDM
 	}
+
+	protected boolean isResizable() {
+		return true;
+	}
 }

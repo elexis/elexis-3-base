@@ -142,5 +142,9 @@ public class ColumnHeader extends Composite {
 			super.okPressed();
 		}
 
+		@Override
+		protected boolean isResizable() {
+			return true;
+		}
 	}
 }

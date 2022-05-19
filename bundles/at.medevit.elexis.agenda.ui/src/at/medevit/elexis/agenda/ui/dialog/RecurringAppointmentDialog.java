@@ -332,6 +332,11 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		return area;
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
+
 	private Optional<IContact> getAppointmentContact() {
 		return Optional.ofNullable(appointment.getContact());
 	}

@@ -11,9 +11,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Shell;
 
-import ch.rgw.tools.TimeTool;
-
 import com.ibm.icu.util.Calendar;
+
+import ch.rgw.tools.TimeTool;
 
 public class DatePeriodSelectorDialog extends TitleAreaDialog {
 
@@ -84,5 +84,10 @@ public class DatePeriodSelectorDialog extends TitleAreaDialog {
 	protected Point getInitialSize() {
 		Point p = startDateTime.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		return new Point((p.x * 2) + 10, 300);
+	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 }

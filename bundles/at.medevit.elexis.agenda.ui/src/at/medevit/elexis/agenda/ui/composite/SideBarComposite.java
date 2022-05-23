@@ -31,6 +31,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -177,16 +179,18 @@ public class SideBarComposite extends Composite {
 		GridData gd = (GridData) dayMessage.getLayoutData();
 		gd.widthHint = calendar.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 
-		dayMessage.addFocusListener(new FocusAdapter() {
+		dayMessage.addModifyListener(new ModifyListener() {
+			
 			@Override
-			public void focusLost(FocusEvent arg0) {
+			public void modifyText(ModifyEvent e) {
 				String tx = dayMessage.getText();
 				LocalDate date = LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
 				Optional<IDayMessage> message = CoreModelServiceHolder.get().load(date.format(yyyyMMdd),
 						IDayMessage.class);
 				if (message.isPresent()) {
 					message.get().setMessage(tx);
-				} else {
+					CoreModelServiceHolder.get().save(message.get());
+				} else if(StringUtils.isNotBlank(tx)) {
 					IDayMessage newMessage = CoreModelServiceHolder.get().create(IDayMessage.class);
 					newMessage.setDate(date);
 					newMessage.setMessage(tx);
@@ -327,6 +331,7 @@ public class SideBarComposite extends Composite {
 					calendar.setDate(timespan.getFrom().getYear(), timespan.getFrom().getMonthValue() - 1,
 							timespan.getFrom().getDayOfMonth());
 				}
+				updateDayMessage();
 			}
 		}
 	}

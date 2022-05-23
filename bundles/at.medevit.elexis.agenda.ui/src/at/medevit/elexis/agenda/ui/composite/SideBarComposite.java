@@ -1,8 +1,8 @@
 package at.medevit.elexis.agenda.ui.composite;
 
-import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
@@ -28,6 +29,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -41,6 +44,7 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
@@ -48,6 +52,7 @@ import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
 import at.medevit.elexis.agenda.ui.function.LoadEventTimeSpan;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IDayMessage;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.model.agenda.Area;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
@@ -57,6 +62,7 @@ import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.SWTHelper;
 
 public class SideBarComposite extends Composite {
 
@@ -81,6 +87,9 @@ public class SideBarComposite extends Composite {
 	private IEventBroker eventBroker;
 
 	private DateTime calendar;
+
+	private DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
+	private Text dayMessage;
 
 	public SideBarComposite(Composite parent, int style) {
 		this(parent, false, style);
@@ -114,8 +123,11 @@ public class SideBarComposite extends Composite {
 		calendar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				agendaComposite
-						.setSelectedDate(LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay()));
+				if (e.stateMask > 0) {
+					agendaComposite.setSelectedDate(
+							LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay()));
+				}
+				updateDayMessage();
 			}
 		});
 
@@ -155,6 +167,33 @@ public class SideBarComposite extends Composite {
 		}
 		areaComposite.pack();
 		areaScrolledComposite.setContent(areaComposite);
+
+		label = new Label(this, SWT.NONE);
+		label.setFont(boldFont);
+		label.setText("Tagesnachricht");
+		dayMessage = SWTHelper.createText(this, 4, SWT.V_SCROLL);
+
+		// set text field's maximum width to the width of the calendar
+		GridData gd = (GridData) dayMessage.getLayoutData();
+		gd.widthHint = calendar.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+
+		dayMessage.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				String tx = dayMessage.getText();
+				LocalDate date = LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
+				Optional<IDayMessage> message = CoreModelServiceHolder.get().load(date.format(yyyyMMdd),
+						IDayMessage.class);
+				if (message.isPresent()) {
+					message.get().setMessage(tx);
+				} else {
+					IDayMessage newMessage = CoreModelServiceHolder.get().create(IDayMessage.class);
+					newMessage.setDate(date);
+					newMessage.setMessage(tx);
+					CoreModelServiceHolder.get().save(newMessage);
+				}
+			}
+		});
 
 		label = new Label(this, SWT.NONE);
 		label.setFont(boldFont);
@@ -256,13 +295,23 @@ public class SideBarComposite extends Composite {
 			Menu contextMenu = menuManager.createContextMenu(moveTable.getTable());
 			moveTable.getTable().setMenu(contextMenu);
 
-			GridData gd = new GridData(SWT.LEFT, SWT.BOTTOM, false, false);
+			gd = new GridData(SWT.LEFT, SWT.BOTTOM, false, false);
 			gd.widthHint = 150;
 			moveTable.getTable().setLayoutData(gd);
 			movePeriods = new ArrayList<>();
 		}
 
 		hideContent();
+	}
+
+	private void updateDayMessage() {
+		LocalDate date = LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
+		Optional<IDayMessage> message = CoreModelServiceHolder.get().load(date.format(yyyyMMdd), IDayMessage.class);
+		if (message.isPresent()) {
+			dayMessage.setText(message.get().getMessage());
+		} else {
+			dayMessage.setText(StringUtils.EMPTY);
+		}
 	}
 
 	@Inject
@@ -312,6 +361,7 @@ public class SideBarComposite extends Composite {
 			gridData.exclude = false;
 		}
 		getParent().layout();
+		updateDayMessage();
 	}
 
 	public void setAgendaComposite(IAgendaComposite agendaComposite) {

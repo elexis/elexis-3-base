@@ -169,4 +169,8 @@ public class EditEpisodeDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 }

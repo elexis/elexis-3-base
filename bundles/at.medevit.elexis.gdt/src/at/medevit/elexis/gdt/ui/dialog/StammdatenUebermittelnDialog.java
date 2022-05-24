@@ -14,6 +14,7 @@ package at.medevit.elexis.gdt.ui.dialog;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -372,5 +373,10 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 
 	public String getTargetIdSelection() {
 		return targetIdSelection;
+	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 }

@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -251,4 +252,8 @@ public class FileImportDialog extends TitleAreaDialog {
 		}
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 }

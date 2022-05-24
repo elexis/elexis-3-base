@@ -48,7 +48,6 @@ import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.TimeZone;
@@ -268,6 +267,10 @@ public class ICalTransfer {
 			super.okPressed();
 		}
 
+		@Override
+		protected boolean isResizable() {
+			return true;
+		}
 	}
 
 	class ICalExportDlg extends TitleAreaDialog {
@@ -395,5 +398,9 @@ public class ICalTransfer {
 			super.okPressed();
 		}
 
+		@Override
+		protected boolean isResizable() {
+			return true;
+		}
 	}
 }

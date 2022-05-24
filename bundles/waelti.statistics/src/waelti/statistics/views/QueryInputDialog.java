@@ -18,11 +18,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.core.ui.util.SWTHelper;
 import waelti.statistics.actions.NewQueryAction;
 import waelti.statistics.queries.AbstractQuery;
 import waelti.statistics.queries.Consultations;
 import waelti.statistics.queries.PatientCosts;
-import ch.elexis.core.ui.util.SWTHelper;
 
 /**
  * This Dialog represents the dialog in which the user can choose which query
@@ -190,5 +190,10 @@ public class QueryInputDialog extends TitleAreaDialog {
 			return false;
 		}
 
+	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 }

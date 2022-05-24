@@ -13,6 +13,7 @@ package ch.elexis.base.ch.ebanking.esr;
 
 import java.text.MessageFormat;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -225,4 +226,8 @@ public class ESRRecordDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 }

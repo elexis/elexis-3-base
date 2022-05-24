@@ -41,4 +41,9 @@ public class EditPaymentModesDialog extends TitleAreaDialog {
 		ConfigServiceHolder.setGlobal(KassenbuchEintrag.PAYMENT_MODES, nPaymentModes.replaceAll("\r", ""));
 		super.okPressed();
 	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 }

@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -346,5 +347,10 @@ public class MessungBearbeiten extends TitleAreaDialog {
 			mw.getTyp().setShown(false);
 		}
 		return super.close();
+	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 }

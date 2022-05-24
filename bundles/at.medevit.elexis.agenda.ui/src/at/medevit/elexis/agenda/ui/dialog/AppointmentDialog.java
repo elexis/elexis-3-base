@@ -52,4 +52,9 @@ public class AppointmentDialog extends Dialog {
 		super.okPressed();
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
+
 }

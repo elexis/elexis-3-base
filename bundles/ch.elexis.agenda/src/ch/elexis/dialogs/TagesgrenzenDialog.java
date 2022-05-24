@@ -14,6 +14,7 @@ package ch.elexis.dialogs;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -87,4 +88,8 @@ public class TagesgrenzenDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 }

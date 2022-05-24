@@ -525,6 +525,11 @@ public class TerminDialog extends TitleAreaDialog {
 		return sc;
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
+
 	/**
 	 * mögliche Termintypen setzen (nur die, die eine Dauer!=0 haben)
 	 *

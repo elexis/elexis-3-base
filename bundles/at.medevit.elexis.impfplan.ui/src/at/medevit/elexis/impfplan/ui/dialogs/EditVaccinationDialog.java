@@ -14,6 +14,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -27,8 +28,6 @@ import ch.elexis.core.ui.proposals.PersistentObjectProposalProvider;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
-
-import org.eclipse.swt.widgets.DateTime;
 
 public class EditVaccinationDialog extends TitleAreaDialog {
 	private Vaccination vacc;
@@ -139,4 +138,8 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 }

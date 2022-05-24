@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -34,12 +35,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.hilotec.elexis.messwerte.v2.data.ExportData;
+import com.tiff.common.ui.datepicker.DatePickerCombo;
+
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
-
-import com.hilotec.elexis.messwerte.v2.data.ExportData;
-import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class ExportDialog extends Dialog {
 
@@ -255,5 +256,10 @@ public class ExportDialog extends Dialog {
 			patNrMax = -1;
 		}
 		this.getShell().setCursor(null);
+	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 }

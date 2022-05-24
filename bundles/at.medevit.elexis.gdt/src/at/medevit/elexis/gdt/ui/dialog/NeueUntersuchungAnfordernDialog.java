@@ -14,6 +14,7 @@ package at.medevit.elexis.gdt.ui.dialog;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -341,6 +342,11 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 		}
 
 		return area;
+	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 
 	/**

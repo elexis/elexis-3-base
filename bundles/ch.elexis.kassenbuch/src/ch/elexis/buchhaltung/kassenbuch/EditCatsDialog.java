@@ -53,4 +53,8 @@ public class EditCatsDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 }

@@ -45,4 +45,8 @@ public class ImportVaccinationsWizard extends Wizard implements IImportWizard {
 			MessageDialog.openError(getShell(), "Fehler", "Konnte das Dokument nicht öffnen.");
 		}
 	}
+
+	protected boolean isResizable() {
+		return true;
+	}
 }

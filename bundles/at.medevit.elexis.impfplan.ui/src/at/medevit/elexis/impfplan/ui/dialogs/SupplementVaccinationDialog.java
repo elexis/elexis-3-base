@@ -261,6 +261,11 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 		return area;
 	}
 
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
+
 	/**
 	 * Create contents of the button bar.
 	 *

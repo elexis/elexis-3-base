@@ -43,4 +43,9 @@ public class EditPaymentModesDialog extends TitleAreaDialog {
 				nPaymentModes.replaceAll(StringUtils.CR, StringUtils.EMPTY));
 		super.okPressed();
 	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
 }

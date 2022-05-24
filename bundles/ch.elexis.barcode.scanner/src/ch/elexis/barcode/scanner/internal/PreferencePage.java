@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -26,6 +27,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String BarcodeScanner_COMPORT = "barcode/Symbol/port";
 	public static final String BarcodeScanner_AUTOSTART = "barcode/Symbol/autostart";
 	public static final String BarcodeScanner_SETTINGS = "barcode/Symbol/settings";
+	public static final String BarcodeScanner_WAITFORNEWLINE = "barcode/Symbol/waitfornewline";
 
 	public static final int NUMBER_OF_SCANNERS = 2;
 
@@ -69,7 +71,13 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 				addField(new ComboFieldEditor(BarcodeScanner_COMPORT + postfix, "Com-Schnittstelle", comPorts, c));
 
-				addField(new StringFieldEditor(BarcodeScanner_SETTINGS + postfix, "Einstellungen", c));
+				StringFieldEditor settingsEditor = new StringFieldEditor(BarcodeScanner_SETTINGS + postfix,
+						"Einstellungen", c);
+				addField(settingsEditor);
+				settingsEditor.getTextControl(c).setToolTipText("baudrate,databits,parity,stopbits[,flowcontrol]");
+
+				addField(new BooleanFieldEditor(BarcodeScanner_WAITFORNEWLINE + postfix,
+						"Daten in Zeilen empfangen", SWT.None, c));
 			}
 
 			addField(new BooleanFieldEditor(BarcodeScanner_AUTOSTART, "Bei Start automatisch verbinden", SWT.None,

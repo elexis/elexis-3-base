@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.State;
@@ -44,9 +45,11 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 						String comPort = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_COMPORT + postfix, "");
 						String comSettings = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_SETTINGS + postfix,
 								"9600,8,n,1");
+						boolean waitForNewline = CoreHub.localCfg
+								.get(PreferencePage.BarcodeScanner_WAITFORNEWLINE + postfix, false);
 						if (!comPort.isEmpty()) {
 							if (usedComPorts.add(comPort)) {
-								openConnection(i, postfix, comPort, comSettings);
+								openConnection(i, postfix, comPort, comSettings, waitForNewline);
 							} else {
 								logger.debug("barcode scanner " + (i + 1) + " com port already in use: " + comPort);
 
@@ -70,8 +73,11 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 
 	}
 
-	private void openConnection(int i, String postfix, String comPort, String comSettings) {
+	private void openConnection(int i, String postfix, String comPort, String comSettings, boolean waitForNewline) {
 		Connection barcodeScannerConn = new Connection("Barcode Scanner@" + comPort, comPort, comSettings, this);
+		if (waitForNewline) {
+			barcodeScannerConn.withEndOfChunk(new byte[] { 0x0A }).excludeDelimiters(true);
+		}
 		if (barcodeScannerConn.connect()) {
 			logger.debug("barcode scanner " + (i + 1) + " connected to port: " + comPort);
 			connections.add(barcodeScannerConn);

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.data.RechnungsManager">
+      <Rechnung
+            name="ch.elexis.pdfBills.privat.Rechnung1"
+            outputter="ch.elexis.pdfBills.privat.PrivatQrRnOutputter">
+      </Rechnung>
+   </extension>
+
+</plugin>

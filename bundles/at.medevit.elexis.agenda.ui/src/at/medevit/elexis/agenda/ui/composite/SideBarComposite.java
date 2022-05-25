@@ -29,8 +29,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -65,6 +63,7 @@ import ch.elexis.core.ui.e4.locks.ILockHandler;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.utils.CoreUtil;
 
 public class SideBarComposite extends Composite {
 
@@ -125,7 +124,7 @@ public class SideBarComposite extends Composite {
 		calendar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (e.stateMask > 0) {
+				if (e.stateMask > 0 || CoreUtil.isMac()) {
 					agendaComposite.setSelectedDate(
 							LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay()));
 				}

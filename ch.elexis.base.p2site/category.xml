@@ -267,6 +267,9 @@
    <feature id="at.medevit.elexis.corona123.feature">
       <category name="dataexchange"/>
    </feature>
+   <feature id="ch.elexis.pdfBills.privat.feature">
+      <category name="finances"/>
+   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>

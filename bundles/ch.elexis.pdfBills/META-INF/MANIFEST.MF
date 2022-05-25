@@ -18,3 +18,5 @@ Import-Package: ch.elexis.base.ch.ebanking.esr,
  org.jdom,
  org.jdom.output
 Service-Component: OSGI-INF/ch.elexis.pdfBills.MailClientHolder.xml
+Export-Package: ch.elexis.pdfBills,
+ ch.elexis.pdfBills.print

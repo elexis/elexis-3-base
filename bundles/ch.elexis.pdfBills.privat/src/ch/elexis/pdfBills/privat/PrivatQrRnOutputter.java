@@ -1,4 +1,4 @@
-package ch.elexis.pdfBills;
+package ch.elexis.pdfBills.privat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,27 +47,33 @@ import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
-import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
+import ch.elexis.pdfBills.OutputterUtil;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
-public class RnOutputter implements IRnOutputter {
+public class PrivatQrRnOutputter implements IRnOutputter {
 	public static final String PDFDIR = "pdfdir";
-	public static final String PLUGIN_ID = "ch.elexis.pdfBills";
 	public static final String XMLDIR = "xmldir";
-	public static final String CFG_ROOT = "pdf-output/";
+
+	public static final String CFG_ROOT = "qrpdf-output/";
+	public static final String CFG_ROOT_PRIVAT = "privatqrpdf-output/";
+
+	public static final String PLUGIN_ID = "ch.elexis.pdfBills.privat";
 	public static final String CFG_MARGINLEFT = "margin.left";
 	public static final String CFG_MARGINRIGHT = "margin.right";
 	public static final String CFG_MARGINTOP = "margin.top";
@@ -81,8 +87,6 @@ public class RnOutputter implements IRnOutputter {
 	public static final String CFG_ESR_REMINDERDAYS_M2 = CFG_ROOT + "esr.reminderdays.m2";
 	public static final String CFG_ESR_REMINDERDAYS_M3 = CFG_ROOT + "esr.reminderdays.m3";
 
-	public static final String CFG_ESR_COUVERT_LEFT = CFG_ROOT + "esr.couvert.left";
-
 	public static final String CFG_PRINT_DIRECT = CFG_ROOT + "print.direct";
 
 	public static final String CFG_PRINT_PRINTER = CFG_ROOT + "print.printer";
@@ -94,13 +98,11 @@ public class RnOutputter implements IRnOutputter {
 	public static final String CFG_PRINT_COMMAND = CFG_ROOT + "print.command";
 	public static final String CFG_PRINT_USE_SCRIPT = CFG_ROOT + "print.usescript";
 
-	public static final String CFG_PRINT_BESR = "print.besr";
-	public static final String CFG_PRINT_RF = "print.rf";
+	protected static final String CFG_PRINT_BESR = "print.besr";
+	protected static final String CFG_PRINT_RF = "print.rf";
 
 	protected static final String CFG_MAIL_CPY = "mail.copy";
 	protected static final String CFG_MAIL_MANDANT_ACCOUNT = "mail.mandant.account";
-
-	public static final String CFG_PRINT_USEGUARANTORPOSTAL = CFG_ROOT + "guarantor.postaladdress";
 
 	private Text tXml;
 	private Text tPdf;
@@ -112,9 +114,11 @@ public class RnOutputter implements IRnOutputter {
 
 	private boolean modifyInvoiceState;
 
+	private boolean pdfOnly;
+
 	@Override
 	public String getDescription() {
-		return "PDF Output";
+		return "Privatrechnung drucken";
 	}
 
 	@Override
@@ -137,14 +141,14 @@ public class RnOutputter implements IRnOutputter {
 					int errors = 0;
 					for (Rechnung rn : rnn) {
 						XMLExporter ex = new XMLExporter();
-						ex.setEsrType(EsrType.esr9);
 						Document dRn = ex.doExport(rn, null, type, true);
 						monitor.worked(1);
 						if (rn.getStatus() == RnStatus.FEHLERHAFT) {
 							errors++;
 							continue;
 						}
-						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT) + File.separator + rn.getNr() + ".xml";
+						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT_PRIVAT) + File.separator + rn.getNr()
+								+ ".xml";
 						try {
 							FileOutputStream fout = new FileOutputStream(fname);
 							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8");
@@ -154,7 +158,20 @@ public class RnOutputter implements IRnOutputter {
 							fout.close();
 							// create an new generator for the bill
 							ElexisPDFGenerator epdf = new ElexisPDFGenerator(fname, rn.getNr(), rn.getInvoiceState());
-							epdf.printBill(rsc);
+							if (pdfOnly) {
+								epdf.setPrint(false);
+							}
+							// consider fallback to non QR bill, always fall back for tarmed xml version
+							// lower 4.5
+							EsrType outputEsrType = ex.getEsrTypeOrFallback(
+									CoreModelServiceHolder.get().load(rn.getId(), IInvoice.class).get());
+							if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) {
+								epdf.printQrBill(rsc);
+							} else {
+								LoggerFactory.getLogger(getClass()).warn("Fallback to ESR9 for xml version ["
+										+ epdf.getBillVersion() + "] and esrType [" + outputEsrType + "]");
+								epdf.printBill(rsc);
+							}
 							if (modifyInvoiceState) {
 								int status_vorher = rn.getStatus();
 								if ((status_vorher == RnStatus.OFFEN) || (status_vorher == RnStatus.MAHNUNG_1)
@@ -181,6 +198,12 @@ public class RnOutputter implements IRnOutputter {
 									mailErrors.add("Keine Garant für Rechnung " + rn.getNr());
 								}
 							}
+						} catch (IllegalStateException e) {
+							ExHandler.handle(e);
+							SWTHelper.showError("Fehler beim Rechnungsdruck",
+									"Bei der Ausgabe ist folgender Fehler aufgetreten.\n\n" + e.getMessage());
+							rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: " + fname);
+							continue;
 						} catch (Exception e1) {
 							ExHandler.handle(e1);
 							SWTHelper.showError("Fehler beim Rechnungsdruck",
@@ -190,6 +213,7 @@ public class RnOutputter implements IRnOutputter {
 						}
 						monitor.worked(1);
 					}
+					pdfOnly = false;
 					monitor.done();
 					if (errors > 0) {
 						SWTHelper.alert("Fehler bei der Übermittlung", Integer.toString(errors)
@@ -201,11 +225,7 @@ public class RnOutputter implements IRnOutputter {
 			}, null);
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			if (StringUtils.isNotBlank(ex.getMessage())) {
-				res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
-			} else if (ex.getCause() != null && StringUtils.isNotBlank(ex.getCause().getMessage())) {
-				res.add(Result.SEVERITY.ERROR, 2, ex.getCause().getMessage(), null, true);
-			}
+			res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
 			ErrorDialog.openError(null, "Fehler bei der Ausgabe", "Konnte Rechnungsdruck nicht starten",
 					ResultAdapter.getResultAsStatus(res));
 			return res;
@@ -245,15 +265,15 @@ public class RnOutputter implements IRnOutputter {
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_ESR) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_ESR);
-			CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_BESR, Boolean.parseBoolean(value));
+			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, Boolean.parseBoolean(value));
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM);
-			CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_RF, Boolean.parseBoolean(value));
+			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, Boolean.parseBoolean(value));
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_MAIL) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_MAIL);
-			CoreHub.localCfg.set(CFG_ROOT + CFG_MAIL_CPY, Boolean.parseBoolean(value));
+			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_MAIL_CPY, Boolean.parseBoolean(value));
 		}
 	}
 
@@ -285,12 +305,12 @@ public class RnOutputter implements IRnOutputter {
 		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		try {
 			String attachmentsString = getAttachmentsString(printed);
-			Command sendMailCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMailNoUi");
+			Command sendMailCommand = commandService
+					.getCommand("ch.elexis.core.mail.ui.sendMailNoUi");
 
 			HashMap<String, String> params = new HashMap<String, String>();
-			String accountid = ConfigServiceHolder.getGlobal(
-					RnOutputter.CFG_ROOT + RnOutputter.CFG_MAIL_MANDANT_ACCOUNT + "/" + rechnung.getMandant().getId(),
-					null);
+			String accountid = ConfigServiceHolder.getGlobal(PrivatQrRnOutputter.CFG_ROOT
+					+ PrivatQrRnOutputter.CFG_MAIL_MANDANT_ACCOUNT + "/" + rechnung.getMandant().getId(), null);
 			if (accountid != null) {
 				params.put("ch.elexis.core.mail.ui.sendMailNoUi.accountid", accountid);
 			}
@@ -341,22 +361,22 @@ public class RnOutputter implements IRnOutputter {
 		ret.setLayout(new GridLayout(2, false));
 		bWithEsr = new Button(ret, SWT.CHECK);
 		bWithEsr.setText("Mit ESR");
-		bWithEsr.setSelection(CoreHub.localCfg.get(CFG_ROOT + CFG_PRINT_BESR, true));
+		bWithEsr.setSelection(CoreHub.localCfg.get(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, true));
 		bWithEsr.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_BESR, bWithEsr.getSelection());
+				CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, bWithEsr.getSelection());
 			}
 		});
 		bWithEsr.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 
 		bWithRf = new Button(ret, SWT.CHECK);
 		bWithRf.setText("Mit Rechnungsformular");
-		bWithRf.setSelection(CoreHub.localCfg.get(CFG_ROOT + CFG_PRINT_RF, true));
+		bWithRf.setSelection(CoreHub.localCfg.get(CFG_ROOT_PRIVAT + CFG_PRINT_RF, true));
 		bWithRf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_RF, bWithRf.getSelection());
+				CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, bWithRf.getSelection());
 			}
 		});
 		bWithRf.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
@@ -365,11 +385,11 @@ public class RnOutputter implements IRnOutputter {
 		bCopyMail.setText("Kopie als mail");
 		bCopyMail.setSelection(false);
 		bCopyMail.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		bCopyMail.setSelection(CoreHub.localCfg.get(CFG_ROOT + CFG_MAIL_CPY, false));
+		bCopyMail.setSelection(CoreHub.localCfg.get(CFG_ROOT_PRIVAT + CFG_MAIL_CPY, false));
 		bCopyMail.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(CFG_ROOT + CFG_MAIL_CPY, bCopyMail.getSelection());
+				CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_MAIL_CPY, bCopyMail.getSelection());
 			}
 		});
 
@@ -412,20 +432,34 @@ public class RnOutputter implements IRnOutputter {
 				}
 
 			});
-			tXml.setText(CoreHub.localCfg.get(CFG_ROOT + XMLDIR, StringUtils.EMPTY));
-			tPdf.setText(CoreHub.localCfg.get(CFG_ROOT + PDFDIR, StringUtils.EMPTY));
+			tXml.setText(CoreHub.localCfg.get(CFG_ROOT_PRIVAT + XMLDIR, StringUtils.EMPTY));
+			tPdf.setText(CoreHub.localCfg.get(CFG_ROOT_PRIVAT + PDFDIR, StringUtils.EMPTY));
 		}
-
 		return (Control) ret;
 	}
 
 	@Override
+	public void customizeDialog(Object rnOutputDialog) {
+		if (rnOutputDialog instanceof RnOutputDialog) {
+			((RnOutputDialog) rnOutputDialog).setOkButtonText("Ausdrucken");
+			Button button = ((RnOutputDialog) rnOutputDialog).addCustomButton("nur PDF");
+			button.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					pdfOnly = true;
+					((RnOutputDialog) rnOutputDialog).customButtonPressed(IDialogConstants.OK_ID);
+				}
+			});
+		}
+	}
+
+	@Override
 	public void saveComposite() {
-		CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_BESR, bWithEsr.getSelection());
-		CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_RF, bWithRf.getSelection());
+		CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, bWithEsr.getSelection());
+		CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, bWithRf.getSelection());
 		if (!OutputterUtil.useGlobalOutputDirs()) {
-			CoreHub.localCfg.set(CFG_ROOT + XMLDIR, tXml.getText());
-			CoreHub.localCfg.set(CFG_ROOT + PDFDIR, tPdf.getText());
+			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + XMLDIR, tXml.getText());
+			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + PDFDIR, tPdf.getText());
 		}
 		CoreHub.localCfg.flush();
 	}

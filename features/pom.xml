@@ -69,6 +69,7 @@
     <module>ch.elexis.notes.feature</module>
     <module>ch.elexis.omnivore.feature</module>
     <module>ch.elexis.pdfBills.feature</module>
+    <module>ch.elexis.pdfBills.privat.feature</module>    
     <module>ch.elexis.privatrechnung.feature</module>
     <module>ch.elexis.stickynotes.feature</module>
     <module>ch.elexis.support.dbshaker.feature</module>

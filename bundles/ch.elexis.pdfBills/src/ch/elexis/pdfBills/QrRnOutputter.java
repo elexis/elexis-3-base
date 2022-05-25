@@ -94,8 +94,8 @@ public class QrRnOutputter implements IRnOutputter {
 	public static final String CFG_PRINT_COMMAND = CFG_ROOT + "print.command";
 	public static final String CFG_PRINT_USE_SCRIPT = CFG_ROOT + "print.usescript";
 
-	protected static final String CFG_PRINT_BESR = "print.besr";
-	protected static final String CFG_PRINT_RF = "print.rf";
+	public static final String CFG_PRINT_BESR = "print.besr";
+	public static final String CFG_PRINT_RF = "print.rf";
 
 	protected static final String CFG_MAIL_CPY = "mail.copy";
 	protected static final String CFG_MAIL_MANDANT_ACCOUNT = "mail.mandant.account";

@@ -753,7 +753,7 @@ public class Tarmed45Exporter {
 								&& "311".equals(billable.getCodeSystemCode())) {
 							serviceType.setTariffType("312");
 						}
-						serviceType.setCode(getServiceCode(billed));
+						serviceType.setCode(billable.getCode());
 						serviceType.setQuantity(billed.getAmount());
 						serviceType.setRecordId(recordNumber++);
 						serviceType.setSession(session);

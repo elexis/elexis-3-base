@@ -16,9 +16,11 @@ import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.IBillingSystemService;
 import ch.elexis.core.utils.OsgiServiceUtil;
+import ch.elexis.tarmedprefs.TarmedRequirementsTest;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ XMLExporterTest.class, XMLExporterTiersTest.class, Tarmed45ExporterTest.class })
+@Suite.SuiteClasses({ TarmedRequirementsTest.class, XMLExporterTest.class, XMLExporterTiersTest.class,
+		Tarmed45ExporterTest.class })
 public class AllPluginTests {
 
 	public static final String UVG_NAME = Messages.Fall_UVG_Name;

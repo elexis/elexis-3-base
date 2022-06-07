@@ -24,6 +24,7 @@ import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.IXid;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.data.Xid;
 
@@ -72,6 +73,11 @@ public class TarmedRequirements {
 				setEAN(contact, (String) contact.getExtInfo("EAN"));
 				xid = contact.getXid(DOMAIN_EAN);
 			}
+		} else if (StringUtils.isEmpty(xid.getDomainId())) {
+			LoggerFactory.getLogger(TarmedRequirements.class)
+					.warn("Removing empty EAN Xid of [" + contact.getId() + "]");
+			CoreModelServiceHolder.get().remove(xid);
+			xid = null;
 		}
 		if (xid != null && xid.getDomainId() != null && !xid.getDomainId().isEmpty()) {
 			return xid.getDomainId().trim();

@@ -1210,22 +1210,7 @@ public class Tarmed45Exporter {
 			}
 		}
 
-		IContact creditor = invoice.getMandator().getBiller();
-		// update creditor if configured
-		if (StringUtils.isNotBlank((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
-			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get()
-					.load((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER), IContact.class);
-			if (loadedCreditor.isPresent()) {
-				creditor = loadedCreditor.get();
-			}
-		}
-		EsrAddressType esrAddressType = new EsrAddressType();
-		Object creditorCompanyOrPerson = getCompanyOrPerson(creditor, false);
-		if (creditorCompanyOrPerson instanceof CompanyType) {
-			esrAddressType.setCompany((CompanyType) creditorCompanyOrPerson);
-		} else if (creditorCompanyOrPerson instanceof PersonType) {
-			esrAddressType.setPerson((PersonType) creditorCompanyOrPerson);
-		}
+		EsrAddressType esrAddressType = getEsrCreditor(invoice);
 		esrQRType.setCreditor(esrAddressType);
 
 		String bankid = (String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().RNBANK);
@@ -1261,6 +1246,26 @@ public class Tarmed45Exporter {
 		return esrQRType;
 	}
 
+	private EsrAddressType getEsrCreditor(IInvoice invoice) {
+		IContact creditor = invoice.getMandator().getBiller();
+		// update creditor if configured
+		if (StringUtils.isNotBlank((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
+			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get()
+					.load((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER), IContact.class);
+			if (loadedCreditor.isPresent()) {
+				creditor = loadedCreditor.get();
+			}
+		}
+		EsrAddressType esrAddressType = new EsrAddressType();
+		Object creditorCompanyOrPerson = getCompanyOrPerson(creditor, false);
+		if (creditorCompanyOrPerson instanceof CompanyType) {
+			esrAddressType.setCompany((CompanyType) creditorCompanyOrPerson);
+		} else if (creditorCompanyOrPerson instanceof PersonType) {
+			esrAddressType.setPerson((PersonType) creditorCompanyOrPerson);
+		}
+		return esrAddressType;
+	}
+
 	private ESR getBesr(IInvoice invoice) {
 		if (besr == null) {
 			besr = new ESR((String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().ESRNUMBER),
@@ -1287,22 +1292,7 @@ public class Tarmed45Exporter {
 				.createCodeline(XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", ""), null); //$NON-NLS-1$ //$NON-NLS-2$
 		esr9Type.setCodingLine(codingline);
 
-		IContact creditor = invoice.getMandator().getBiller();
-		// update creditor if configured
-		if (StringUtils.isNotBlank((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER))) {
-			Optional<IContact> loadedCreditor = CoreModelServiceHolder.get()
-					.load((String) creditor.getExtInfo(TarmedACL.getInstance().RNACCOUNTOWNER), IContact.class);
-			if (loadedCreditor.isPresent()) {
-				creditor = loadedCreditor.get();
-			}
-		}
-		EsrAddressType esrAddressType = new EsrAddressType();
-		Object creditorCompanyOrPerson = getCompanyOrPerson(creditor, false);
-		if (creditorCompanyOrPerson instanceof CompanyType) {
-			esrAddressType.setCompany((CompanyType) creditorCompanyOrPerson);
-		} else if (creditorCompanyOrPerson instanceof PersonType) {
-			esrAddressType.setPerson((PersonType) creditorCompanyOrPerson);
-		}
+		EsrAddressType esrAddressType = getEsrCreditor(invoice);
 		esr9Type.setCreditor(esrAddressType);
 
 		String bankid = (String) invoice.getMandator().getBiller().getExtInfo(TarmedACL.getInstance().RNBANK);
@@ -1442,6 +1432,15 @@ public class Tarmed45Exporter {
 					if (updateBiller != null) {
 						request.getPayload().getBody().getTiersGarant().setBiller(updateBiller);
 					}
+					// update creditor information
+					EsrAddressType creditor = getEsrCreditor(invoice);
+					if (creditor != null) {
+						if (request.getPayload().getBody().getEsrQR() != null) {
+							request.getPayload().getBody().getEsrQR().setCreditor(creditor);
+						} else if (request.getPayload().getBody().getEsr9() != null) {
+							request.getPayload().getBody().getEsr9().setCreditor(creditor);
+						}
+					}
 				} else if (request.getPayload().getBody().getTiersPayant() != null
 						&& invoice.getCoverage().getPatient() != null) {
 					// TP contacts
@@ -1469,6 +1468,15 @@ public class Tarmed45Exporter {
 					BillerAddressType updateBiller = getBiller(invoice);
 					if (updateBiller != null) {
 						request.getPayload().getBody().getTiersPayant().setBiller(updateBiller);
+					}
+					// update creditor information
+					EsrAddressType creditor = getEsrCreditor(invoice);
+					if (creditor != null) {
+						if (request.getPayload().getBody().getEsrQR() != null) {
+							request.getPayload().getBody().getEsrQR().setCreditor(creditor);
+						} else if (request.getPayload().getBody().getEsr9() != null) {
+							request.getPayload().getBody().getEsr9().setCreditor(creditor);
+						}
 					}
 				}
 

@@ -46,6 +46,11 @@ public final class MedicationElement {
 		p.appendChild(c);
 
 		c = doc.createElement("Dose");
+		if (md.isFreetext()) {
+			c.setAttribute("Freetext", "true");
+		} else {
+			c.setAttribute("Freetext", "false");
+		}
 		c.appendChild(doc.createTextNode(md.getDose()));
 		p.appendChild(c);
 

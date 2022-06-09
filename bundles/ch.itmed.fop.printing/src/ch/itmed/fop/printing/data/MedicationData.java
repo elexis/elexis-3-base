@@ -15,11 +15,13 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Prescription;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
@@ -99,5 +101,11 @@ public final class MedicationData {
 			return Messages.Medication_SymptomaticMedication; // SYMPTOMATIC_MEDICATION
 		}
 		return "";
+	}
+
+	public boolean isFreetext() {
+		String[] signature = MedicationServiceHolder.get()
+				.getSignatureAsStringArray(prescription.getDosageInstruction());
+		return !signature[0].isEmpty() && signature[1].isEmpty() && signature[2].isEmpty() && signature[3].isEmpty();
 	}
 }

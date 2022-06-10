@@ -44,7 +44,6 @@ import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.data.TerminUtil;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.constants.Preferences;
@@ -53,6 +52,7 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
@@ -61,6 +61,7 @@ import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -142,7 +143,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		if (resource == null) {
 			resource = agenda.getActResource();
 		}
-		TerminUtil.updateBoundaries(resource, date);
+		OsgiServiceUtil.getService(IAppointmentService.class).get().assertBlockTimes(date.toLocalDate(), resource);
 	}
 
 	protected void updateActions() {

@@ -12,7 +12,6 @@
 
 package ch.elexis.agenda.util;
 
-import org.apache.commons.lang3.StringUtils;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +21,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -33,6 +33,7 @@ import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Query;
@@ -222,6 +223,7 @@ public final class Plannables {
 	 * @param mandant
 	 * @param date
 	 * @return
+	 * @deprecated is this equal to {@link IAppointmentService#updateBoundaries(String, java.time.LocalDate)}
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<IPlannable> loadTermine(String bereich, TimeTool date) {

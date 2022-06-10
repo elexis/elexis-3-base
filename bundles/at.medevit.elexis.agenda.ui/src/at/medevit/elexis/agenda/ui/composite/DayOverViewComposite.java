@@ -1,6 +1,5 @@
 package at.medevit.elexis.agenda.ui.composite;
 
-import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -11,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -356,7 +356,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		query.and(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS, appointment.getSchedule());
 		list = query.execute();
 		if (list.isEmpty()) {
-			appointmentService.updateBoundaries(appointment.getSchedule(), appointment.getStartTime().toLocalDate());
+			appointmentService.assertBlockTimes(appointment.getStartTime().toLocalDate(), appointment.getSchedule());
 			list = query.execute();
 		}
 		list = list.stream().sorted(Comparator.comparing(a -> a.getStartTime())).collect(Collectors.toList());

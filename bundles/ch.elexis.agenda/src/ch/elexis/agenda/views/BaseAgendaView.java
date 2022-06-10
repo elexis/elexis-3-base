@@ -44,7 +44,6 @@ import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.agenda.data.TerminUtil;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
@@ -58,6 +57,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.data.interfaces.IPersistentObject;
+import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.RestrictedAction;
@@ -71,6 +71,7 @@ import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IRefreshable;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
@@ -247,7 +248,8 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 			if (CoreHub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)) {
 				String resource = agenda.getActResource();
 				TimeTool date = agenda.getActDate();
-				TerminUtil.updateBoundaries(resource, date);
+				OsgiServiceUtil.getService(IAppointmentService.class).get().assertBlockTimes(date.toLocalDate(),
+						resource);
 				return Plannables.loadDay(resource, date);
 			} else {
 				return new Object[0];

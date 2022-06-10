@@ -272,7 +272,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			for (String resource : resources) {
 				LocalDate updateDate = LocalDate.from(from);
 				do {
-					AppointmentServiceHolder.get().updateBoundaries(resource, updateDate);
+					AppointmentServiceHolder.get().assertBlockTimes(updateDate, resource);
 					updateDate = updateDate.plusDays(1);
 				} while (updateDate.isBefore(to) || updateDate.isEqual(to));
 			}

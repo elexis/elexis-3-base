@@ -36,6 +36,9 @@ public class Event {
 	private String description;
 	private String resource;
 
+	// https://fullcalendar.io/docs/event-object
+	private String allDay;
+	
 	public String getId() {
 		return id;
 	}

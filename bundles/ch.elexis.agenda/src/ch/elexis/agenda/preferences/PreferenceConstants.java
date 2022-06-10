@@ -18,7 +18,7 @@ public class PreferenceConstants {
 	public static final String AG_BEREICHE = Preferences.AG_BEREICHE; // $NON-NLS-1$
 
 	public static final String AG_BEREICH_PREFIX = Preferences.AG_BEREICH_PREFIX;
-	public static final String AG_BEREICH_TYPE_POSTFIX = Preferences.AG_BEREICH_TYPE_POSTFIX; // $NON-NLS-1$
+	public static final String AG_BEREICH_TYPE_POSTFIX = Preferences.AG_BEREICH_TYPE_POSTFIX;
 
 	public static final String AG_TERMINTYPEN = "agenda/TerminTypen"; //$NON-NLS-1$
 	public static final String AG_TERMINSTATUS = "agenda/TerminStatus"; //$NON-NLS-1$
@@ -28,7 +28,7 @@ public class PreferenceConstants {
 	public static final String AG_STATCOLOR_PREFIX = "agenda/farben/status/"; //$NON-NLS-1$
 	public static final String AG_TYPIMAGE_PREFIX = "agenda/bilder/typ/"; //$NON-NLS-1$
 	public static final String AG_TIMEPREFERENCES = "agenda/zeitvorgaben"; //$NON-NLS-1$
-	public static final String AG_DAYPREFERENCES = "agenda/tagesvorgaben"; //$NON-NLS-1$
+	public static final String AG_DAYPREFERENCES = Preferences.AG_DAYPREFERENCES;
 	public static final String AG_SHOW_REASON = "agenda/show_reason"; //$NON-NLS-1$
 	public static final String AG_BEREICH = "agenda/bereich"; //$NON-NLS-1$
 	public static final String AG_BIG_SAVE_COLUMNWIDTH = "agenda/big/savecolumnwidth";

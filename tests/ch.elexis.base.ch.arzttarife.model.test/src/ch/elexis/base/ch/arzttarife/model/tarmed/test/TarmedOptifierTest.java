@@ -45,6 +45,7 @@ import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.holder.CodeElementServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Money;
@@ -145,6 +146,7 @@ public class TarmedOptifierTest {
 				.date(new TimeTool("02.04.2018").toLocalDateTime()).buildAndSave();
 		resetKons(konsPeriodEnd);
 
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
 	}
 

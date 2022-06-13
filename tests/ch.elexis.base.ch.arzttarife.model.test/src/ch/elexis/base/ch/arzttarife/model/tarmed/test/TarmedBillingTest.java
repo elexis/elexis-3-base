@@ -30,6 +30,7 @@ import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.test.matchers.IBillingMatch;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.OsgiServiceUtil;
@@ -66,6 +67,7 @@ public class TarmedBillingTest {
 		coverage = new ICoverageBuilder(coreModelService, patient, "Fallbezeichnung", "Fallgrund", "KVG")
 				.buildAndSave();
 		encounter = new IEncounterBuilder(coreModelService, coverage, mandator).buildAndSave();
+		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
 	}
 

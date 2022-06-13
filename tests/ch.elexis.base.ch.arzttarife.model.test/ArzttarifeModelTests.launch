@@ -15,6 +15,12 @@
     <setAttribute key="deselected_workspace_bundles"/>
     <booleanAttribute key="includeOptional" value="false"/>
     <stringAttribute key="location" value="${workspace_loc}/../junit-workspace"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.DisabledIds"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.EnabledIds"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.FilterDisabledIds"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.FilterEnabledIds"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.StatisticsDisabledIds"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.StatisticsEnabledIds"/>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
         <listEntry value="/ch.elexis.base.ch.arzttarife.model.test/src/ch/elexis/base/ch/arzttarife/model/test/AllTestsSuite.java"/>
     </listAttribute>
@@ -71,6 +77,8 @@
         <setEntry value="org.apache.felix.gogo.runtime@default:default"/>
         <setEntry value="org.apache.felix.gogo.shell@default:default"/>
         <setEntry value="org.apache.felix.scr@1:true"/>
+        <setEntry value="org.apache.httpcomponents.httpclient@default:default"/>
+        <setEntry value="org.apache.httpcomponents.httpcore@default:default"/>
         <setEntry value="org.apache.poi.ooxml.schemas@default:default"/>
         <setEntry value="org.apache.poi.ooxml@default:default"/>
         <setEntry value="org.apache.poi@default:default"/>
@@ -111,6 +119,9 @@
         <setEntry value="org.jdom@default:default"/>
         <setEntry value="org.junit@default:default"/>
         <setEntry value="org.jvnet.mimepull@default:default"/>
+        <setEntry value="org.keycloak.keycloak-authz-client@default:default"/>
+        <setEntry value="org.keycloak.keycloak-common@default:default"/>
+        <setEntry value="org.keycloak.keycloak-core@default:default"/>
         <setEntry value="org.postgresql.jdbc@default:default"/>
         <setEntry value="org.slf4j.api@default:default"/>
         <setEntry value="osgi.enterprise@default:default"/>

@@ -3,6 +3,7 @@
    <service>
       <provide interface="ch.elexis.core.spotlight.ISpotlightResultContributor"/>
    </service>
+   <reference cardinality="1..1" field="contextService" interface="ch.elexis.core.services.IContextService" name="contextService"/>
    <reference cardinality="1..1" field="elexisEnvironmentService" interface="ch.elexis.core.eenv.IElexisEnvironmentService" name="elexisEnvironmentService"/>
    <implementation class="ch.elexis.base.solr.spotlight.DocumentSpotlightResultContributor"/>
 </scr:component>

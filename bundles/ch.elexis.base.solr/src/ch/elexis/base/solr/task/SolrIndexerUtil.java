@@ -1,8 +1,8 @@
 package ch.elexis.base.solr.task;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;

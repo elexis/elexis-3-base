@@ -19,3 +19,5 @@
  * Annotations mapping to Jackson
  */
 package org.apache.solr.common.annotation;
+
+

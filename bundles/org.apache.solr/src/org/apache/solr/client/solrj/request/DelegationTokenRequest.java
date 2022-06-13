@@ -33,114 +33,108 @@ import org.apache.solr.common.params.SolrParams;
  *
  * @since Solr 6.2
  */
-public abstract class DelegationTokenRequest<Q extends DelegationTokenRequest<Q, R>, R extends DelegationTokenResponse>
-		extends SolrRequest<R> {
+public abstract class DelegationTokenRequest
+    <Q extends DelegationTokenRequest<Q,R>, R extends DelegationTokenResponse>
+    extends SolrRequest<R> {
 
-	protected static final String OP_KEY = "op";
-	protected static final String TOKEN_KEY = "token";
+  protected static final String OP_KEY = "op";
+  protected static final String TOKEN_KEY = "token";
 
-	public DelegationTokenRequest(METHOD m) {
-		// path doesn't really matter -- the filter will respond to any path.
-		// setting the path to admin/collections lets us pass through CloudSolrServer
-		// without having to specify a collection (that may not even exist yet).
-		super(m, "/admin/collections");
-	}
+  public DelegationTokenRequest(METHOD m) {
+    // path doesn't really matter -- the filter will respond to any path.
+    // setting the path to admin/collections lets us pass through CloudSolrServer
+    // without having to specify a collection (that may not even exist yet).
+    super(m, "/admin/collections");
+  }
 
-	protected abstract Q getThis();
+  protected abstract Q getThis();
 
-	@Override
-	protected abstract R createResponse(SolrClient client);
+  @Override
+  protected abstract R createResponse(SolrClient client);
 
-	public static class Get extends DelegationTokenRequest<Get, DelegationTokenResponse.Get> {
-		protected String renewer;
+  public static class Get extends DelegationTokenRequest<Get, DelegationTokenResponse.Get> {
+    protected String renewer;
 
-		public Get() {
-			this(null);
-		}
+    public Get() {
+      this(null);
+    }
 
-		public Get(String renewer) {
-			super(METHOD.GET);
-			this.renewer = renewer;
-			setResponseParser(new DelegationTokenResponse.JsonMapResponseParser());
-			setQueryParams(new TreeSet<String>(Arrays.asList(OP_KEY)));
-		}
+    public Get(String renewer) {
+      super(METHOD.GET);
+      this.renewer = renewer;
+      setResponseParser(new DelegationTokenResponse.JsonMapResponseParser());
+      setQueryParams(new TreeSet<String>(Arrays.asList(OP_KEY)));
+    }
 
-		@Override
-		protected Get getThis() {
-			return this;
-		}
+    @Override
+    protected Get getThis() {
+      return this;
+    }
 
-		@Override
-		public SolrParams getParams() {
-			ModifiableSolrParams params = new ModifiableSolrParams();
-			params.set(OP_KEY, "GETDELEGATIONTOKEN");
-			if (renewer != null)
-				params.set("renewer", renewer);
-			return params;
-		}
+    @Override
+    public SolrParams getParams() {
+      ModifiableSolrParams params = new ModifiableSolrParams();
+      params.set(OP_KEY, "GETDELEGATIONTOKEN");
+      if (renewer != null) params.set("renewer", renewer);
+      return params;
+    }
 
-		@Override
-		public DelegationTokenResponse.Get createResponse(SolrClient client) {
-			return new DelegationTokenResponse.Get();
-		}
-	}
+    @Override
+    public DelegationTokenResponse.Get createResponse(SolrClient client) { return new DelegationTokenResponse.Get(); }
+  }
 
-	public static class Renew extends DelegationTokenRequest<Renew, DelegationTokenResponse.Renew> {
-		protected String token;
+  public static class Renew extends DelegationTokenRequest<Renew, DelegationTokenResponse.Renew> {
+    protected String token;
 
-		@Override
-		protected Renew getThis() {
-			return this;
-		}
+    @Override
+    protected Renew getThis() {
+      return this;
+    }
 
-		public Renew(String token) {
-			super(METHOD.PUT);
-			this.token = token;
-			setResponseParser(new DelegationTokenResponse.JsonMapResponseParser());
-			setQueryParams(new TreeSet<String>(Arrays.asList(OP_KEY, TOKEN_KEY)));
-		}
+    public Renew(String token) {
+      super(METHOD.PUT);
+      this.token = token;
+      setResponseParser(new DelegationTokenResponse.JsonMapResponseParser());
+      setQueryParams(new TreeSet<String>(Arrays.asList(OP_KEY, TOKEN_KEY)));
+    }
 
-		@Override
-		public SolrParams getParams() {
-			ModifiableSolrParams params = new ModifiableSolrParams();
-			params.set(OP_KEY, "RENEWDELEGATIONTOKEN");
-			params.set(TOKEN_KEY, token);
-			return params;
-		}
+    @Override
+    public SolrParams getParams() {
+      ModifiableSolrParams params = new ModifiableSolrParams();
+      params.set(OP_KEY, "RENEWDELEGATIONTOKEN");
+      params.set(TOKEN_KEY, token);
+      return params;
+    }
 
-		@Override
-		public DelegationTokenResponse.Renew createResponse(SolrClient client) {
-			return new DelegationTokenResponse.Renew();
-		}
-	}
+    @Override
+    public DelegationTokenResponse.Renew createResponse(SolrClient client) { return new DelegationTokenResponse.Renew(); }
+  }
 
-	public static class Cancel extends DelegationTokenRequest<Cancel, DelegationTokenResponse.Cancel> {
-		protected String token;
+  public static class Cancel extends DelegationTokenRequest<Cancel, DelegationTokenResponse.Cancel> {
+    protected String token;
 
-		public Cancel(String token) {
-			super(METHOD.PUT);
-			this.token = token;
-			setResponseParser(new NoOpResponseParser());
-			Set<String> queryParams = new TreeSet<String>();
-			setQueryParams(new TreeSet<String>(Arrays.asList(OP_KEY, TOKEN_KEY)));
-		}
+    public Cancel(String token) {
+      super(METHOD.PUT);
+      this.token = token;
+      setResponseParser(new NoOpResponseParser());
+      Set<String> queryParams = new TreeSet<String>();
+      setQueryParams(new TreeSet<String>(Arrays.asList(OP_KEY, TOKEN_KEY)));
+    }
 
-		@Override
-		protected Cancel getThis() {
-			return this;
-		}
+    @Override
+    protected Cancel getThis() {
+      return this;
+    }
 
-		@Override
-		public SolrParams getParams() {
-			ModifiableSolrParams params = new ModifiableSolrParams();
-			params.set(OP_KEY, "CANCELDELEGATIONTOKEN");
-			params.set(TOKEN_KEY, token);
-			return params;
-		}
+    @Override
+    public SolrParams getParams() {
+      ModifiableSolrParams params = new ModifiableSolrParams();
+      params.set(OP_KEY, "CANCELDELEGATIONTOKEN");
+      params.set(TOKEN_KEY, token);
+      return params;
+    }
 
-		@Override
-		public DelegationTokenResponse.Cancel createResponse(SolrClient client) {
-			return new DelegationTokenResponse.Cancel();
-		}
-	}
+    @Override
+    public DelegationTokenResponse.Cancel createResponse(SolrClient client) { return new DelegationTokenResponse.Cancel(); }
+  }
 }

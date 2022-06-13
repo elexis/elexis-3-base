@@ -24,79 +24,87 @@ import java.util.Map;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.common.util.NamedList;
 
-public class CollectionAdminResponse extends SolrResponseBase {
-	@SuppressWarnings("unchecked")
-	public NamedList<NamedList<Object>> getCollectionStatus() {
-		return (NamedList<NamedList<Object>>) getResponse().get("success");
-	}
+public class CollectionAdminResponse extends SolrResponseBase
+{
+  @SuppressWarnings("unchecked")
+  public NamedList<NamedList<Object>> getCollectionStatus()
+  {
+    return (NamedList<NamedList<Object>>) getResponse().get( "success" );
+  }
 
-	public boolean isSuccess() {
-		return getResponse().get("success") != null;
-	}
+  public boolean isSuccess()
+  {
+    return getResponse().get( "success" ) != null;
+  }
 
-	public String getWarning() {
-		return (String) getResponse().get("warning");
-	}
+  public String getWarning()
+  {
+    return (String) getResponse().get( "warning" );
+  }
 
-	// this messages are typically from individual nodes, since
-	// all the failures at the router are propagated as exceptions
-	@SuppressWarnings("unchecked")
-	public NamedList<String> getErrorMessages() {
-		return (NamedList<String>) getResponse().get("failure");
-	}
+  // this messages are typically from individual nodes, since
+  // all the failures at the router are propagated as exceptions
+  @SuppressWarnings("unchecked")
+  public NamedList<String> getErrorMessages()
+  {
+     return (NamedList<String>) getResponse().get( "failure" );
+  }
 
-	@SuppressWarnings("unchecked")
-	public Map<String, NamedList<Integer>> getCollectionCoresStatus() {
-		Map<String, NamedList<Integer>> res = new HashMap<>();
-		NamedList<NamedList<Object>> cols = getCollectionStatus();
-		if (cols != null) {
-			for (Map.Entry<String, NamedList<Object>> e : cols) {
-				NamedList<Object> item = e.getValue();
-				String core = (String) item.get("core");
-				if (core != null) {
-					res.put(core, (NamedList<Integer>) item.get("responseHeader"));
-				}
-			}
-		}
+  @SuppressWarnings("unchecked")
+  public Map<String, NamedList<Integer>> getCollectionCoresStatus()
+  {
+    Map<String, NamedList<Integer>> res = new HashMap<>();
+    NamedList<NamedList<Object>> cols = getCollectionStatus();
+    if( cols != null ) {
+      for (Map.Entry<String, NamedList<Object>> e : cols) {
+        NamedList<Object> item = e.getValue();
+        String core = (String) item.get("core");
+        if (core != null) {
+          res.put(core, (NamedList<Integer>)item.get("responseHeader"));
+        }
+      }
+    }
 
-		return res;
-	}
+    return res;
+  }
 
-	@SuppressWarnings("unchecked")
-	public Map<String, String> getAliases() {
-		NamedList<Object> response = getResponse();
-		if (response.get("aliases") != null) {
-			return ((Map<String, String>) response.get("aliases"));
-		}
-		return Collections.emptyMap();
-	}
+  @SuppressWarnings("unchecked")
+  public Map<String, String> getAliases()
+  {
+    NamedList<Object> response = getResponse();
+    if (response.get("aliases") != null) {
+      return ((Map<String, String>)response.get("aliases"));
+    }
+    return Collections.emptyMap();
+  }
 
-	public Map<String, List<String>> getAliasesAsLists() {
-		// TODO we compute on each call... should this be done once & cached?
-		return Aliases.convertMapOfCommaDelimitedToMapOfList(getAliases());
-	}
+  public Map<String, List<String>> getAliasesAsLists() {
+    // TODO we compute on each call... should this be done once & cached?
+    return Aliases.convertMapOfCommaDelimitedToMapOfList(getAliases());
+  }
 
-	@SuppressWarnings({ "unchecked" })
-	public Map<String, Map<String, String>> getAliasProperties() {
-		NamedList<Object> response = getResponse();
-		if (response.get("properties") != null) {
-			return ((Map<String, Map<String, String>>) response.get("properties"));
-		}
-		return Collections.emptyMap();
-	}
+  @SuppressWarnings({"unchecked"})
+  public Map<String, Map<String, String>> getAliasProperties() {
+    NamedList<Object> response = getResponse();
+    if (response.get("properties") != null) {
+      return ((Map<String, Map<String, String>>)response.get("properties"));
+    }
+    return Collections.emptyMap();
+  }
 
-	@SuppressWarnings("unchecked")
-	public Map<String, NamedList<Integer>> getCollectionNodesStatus() {
-		Map<String, NamedList<Integer>> res = new HashMap<>();
-		NamedList<NamedList<Object>> cols = getCollectionStatus();
-		if (cols != null) {
-			for (Map.Entry<String, NamedList<Object>> e : cols) {
-				if (e.getKey() != null) {
-					res.put(e.getKey(), (NamedList<Integer>) (e.getValue().get("responseHeader")));
-				}
-			}
-		}
+  @SuppressWarnings("unchecked")
+  public Map<String, NamedList<Integer>> getCollectionNodesStatus()
+  {
+    Map<String, NamedList<Integer>> res = new HashMap<>();
+    NamedList<NamedList<Object>> cols = getCollectionStatus();
+    if( cols != null ) {
+      for (Map.Entry<String,NamedList<Object>> e : cols) {
+        if (e.getKey() != null) {
+          res.put(e.getKey(), (NamedList<Integer>) (e.getValue().get("responseHeader")));
+        }
+      }
+    }
 
-		return res;
-	}
+    return res;
+  }
 }

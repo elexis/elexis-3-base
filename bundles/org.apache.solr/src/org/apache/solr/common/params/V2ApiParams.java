@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.solr.common.annotation;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.SOURCE;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+package org.apache.solr.common.params;
 
 /**
- * Annotation for classes in Solr that are not thread safe. This provides a
- * clear indication of the thread safety of the class.
+ * String constants used in sending and receiving V2 API requests.
  */
-@Documented
-@Retention(SOURCE)
-@Target(TYPE)
-public @interface SolrSingleThreaded {
+public class V2ApiParams {
+  private V2ApiParams() { /* Private ctor prevents instantiation */ }
 
+  public static final String COLLECTIONS_API_PATH = "/collections";
+  public static final String C_API_PATH = "/c";
+
+  public static final String BACKUPS_API_PATH = COLLECTIONS_API_PATH + "/backups";
+  public static final String BACKUPS_API_SHORT_PATH = C_API_PATH + "/backups";
+
+  public static final String LIST_BACKUPS_CMD = "list-backups";
+  public static final String DELETE_BACKUPS_CMD = "delete-backups";
 }

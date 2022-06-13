@@ -22,51 +22,51 @@ import java.util.Objects;
  * Basic string stream expression
  */
 public class StreamExpressionValue implements StreamExpressionParameter {
+  
+  private String value;
+  
+  public StreamExpressionValue(String value){
+    this.value = value;
+  }
+  
+  public String getValue(){
+    return this.value;
+  }
+  
+  public void setValue(String value){
+    this.value = value;
+  }
+  
+  public StreamExpressionValue withValue(String value){
+    this.value = value;
+    return this;
+  }
+  
+  @Override
+  public String toString(){
+    return this.value;
+  }
+  
+  @Override
+  public boolean equals(Object other){
+    if(other.getClass() != StreamExpressionValue.class){
+      return false;
+    }
+    
+    StreamExpressionValue check = (StreamExpressionValue)other;
+    
+    if(null == this.value && null == check.value){
+      return true;
+    }
+    if(null == this.value || null == check.value){
+      return false;
+    }
+    
+    return this.value.equals(((StreamExpressionValue)other).value);
+  }
 
-	private String value;
-
-	public StreamExpressionValue(String value) {
-		this.value = value;
-	}
-
-	public String getValue() {
-		return this.value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public StreamExpressionValue withValue(String value) {
-		this.value = value;
-		return this;
-	}
-
-	@Override
-	public String toString() {
-		return this.value;
-	}
-
-	@Override
-	public boolean equals(Object other) {
-		if (other.getClass() != StreamExpressionValue.class) {
-			return false;
-		}
-
-		StreamExpressionValue check = (StreamExpressionValue) other;
-
-		if (null == this.value && null == check.value) {
-			return true;
-		}
-		if (null == this.value || null == check.value) {
-			return false;
-		}
-
-		return this.value.equals(((StreamExpressionValue) other).value);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(value);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(value);
+  }
 }

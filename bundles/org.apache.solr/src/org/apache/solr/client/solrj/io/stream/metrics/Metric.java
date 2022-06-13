@@ -27,52 +27,49 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public abstract class Metric implements Expressible {
 
-	private UUID metricNodeId = UUID.randomUUID();
-	private String functionName;
-	private String identifier;
-	public boolean outputLong; // This is only used for SQL in facet mode.
+  private UUID metricNodeId = UUID.randomUUID();
+  private String functionName;
+  private String identifier;
+  public boolean outputLong; // This is only used for SQL in facet mode.
 
-	public String getFunctionName() {
-		return functionName;
-	}
+  public String getFunctionName(){
+    return functionName;
+  }
 
-	public void setFunctionName(String functionName) {
-		this.functionName = functionName;
-	}
-
-	public String getIdentifier() {
-		return identifier;
-	}
-
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public void setIdentifier(String... identifierParts) {
-		StringBuilder sb = new StringBuilder();
-		for (String part : identifierParts) {
-			sb.append(part);
-		}
-		this.identifier = sb.toString();
-	}
-
-	@Override
-	public Explanation toExplanation(StreamFactory factory) throws IOException {
-		return new Explanation(getMetricNodeId().toString()).withFunctionName(functionName)
-				.withImplementingClass(getClass().getName()).withExpression(toExpression(factory).toString())
-				.withExpressionType(ExpressionType.METRIC);
-	}
-
-	public UUID getMetricNodeId() {
-		return metricNodeId;
-	}
-
-	public abstract Number getValue();
-
-	public abstract void update(Tuple tuple);
-
-	public abstract Metric newInstance();
-
-	public abstract String[] getColumns();
+  public void setFunctionName(String functionName){
+    this.functionName = functionName;
+  }
+  
+  public String getIdentifier(){
+    return identifier;
+  }
+  public void setIdentifier(String identifier){
+    this.identifier = identifier;
+  }
+  public void setIdentifier(String ... identifierParts){
+    StringBuilder sb = new StringBuilder();
+    for(String part : identifierParts){
+      sb.append(part);
+    }
+    this.identifier = sb.toString();
+  }
+  
+  @Override
+  public Explanation toExplanation(StreamFactory factory) throws IOException {
+    return new Explanation(getMetricNodeId().toString())
+      .withFunctionName(functionName)
+      .withImplementingClass(getClass().getName())
+      .withExpression(toExpression(factory).toString())
+      .withExpressionType(ExpressionType.METRIC);
+  }
+  
+  public UUID getMetricNodeId(){
+    return metricNodeId;
+  }
+  
+  public abstract Number getValue();
+  public abstract void update(Tuple tuple);
+  public abstract Metric newInstance();
+  public abstract String[] getColumns();
 
 }

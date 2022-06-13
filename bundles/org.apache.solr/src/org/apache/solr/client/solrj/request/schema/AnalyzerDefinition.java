@@ -20,43 +20,43 @@ import java.util.List;
 import java.util.Map;
 
 public class AnalyzerDefinition {
-	private Map<String, Object> attributes;
+  private Map<String, Object> attributes;
 
-	private List<Map<String, Object>> charFilters;
+  private List<Map<String, Object>> charFilters;
 
-	private Map<String, Object> tokenizer;
+  private Map<String, Object> tokenizer;
 
-	private List<Map<String, Object>> filters;
+  private List<Map<String, Object>> filters;
 
-	public Map<String, Object> getAttributes() {
-		return attributes;
-	}
+  public Map<String, Object> getAttributes() {
+    return attributes;
+  }
 
-	public void setAttributes(Map<String, Object> attributes) {
-		this.attributes = attributes;
-	}
+  public void setAttributes(Map<String, Object> attributes) {
+    this.attributes = attributes;
+  }
 
-	public List<Map<String, Object>> getCharFilters() {
-		return charFilters;
-	}
+  public List<Map<String, Object>> getCharFilters() {
+    return charFilters;
+  }
 
-	public void setCharFilters(List<Map<String, Object>> charFilters) {
-		this.charFilters = charFilters;
-	}
+  public void setCharFilters(List<Map<String, Object>> charFilters) {
+    this.charFilters = charFilters;
+  }
 
-	public Map<String, Object> getTokenizer() {
-		return tokenizer;
-	}
+  public Map<String, Object> getTokenizer() {
+    return tokenizer;
+  }
 
-	public void setTokenizer(Map<String, Object> tokenizer) {
-		this.tokenizer = tokenizer;
-	}
+  public void setTokenizer(Map<String, Object> tokenizer) {
+    this.tokenizer = tokenizer;
+  }
 
-	public List<Map<String, Object>> getFilters() {
-		return filters;
-	}
+  public List<Map<String, Object>> getFilters() {
+    return filters;
+  }
 
-	public void setFilters(List<Map<String, Object>> filters) {
-		this.filters = filters;
-	}
+  public void setFilters(List<Map<String, Object>> filters) {
+    this.filters = filters;
+  }
 }

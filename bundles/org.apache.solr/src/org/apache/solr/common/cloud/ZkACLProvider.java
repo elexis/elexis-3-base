@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.zookeeper.data.ACL;
 
 public interface ZkACLProvider {
-
-	List<ACL> getACLsToAdd(String zNodePath);
+  
+  List<ACL> getACLsToAdd(String zNodePath);
 
 }

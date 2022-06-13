@@ -22,45 +22,44 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class mimicks the operation of
- * {@link java.util.concurrent.CountDownLatch}, but it also periodically checks
- * the state of the provided {@link SolrCloseable} and terminates the wait if
- * it's closed by throwing an {@link InterruptedException}.
+ * This class mimicks the operation of {@link java.util.concurrent.CountDownLatch}, but it also
+ * periodically checks the state of the provided {@link SolrCloseable} and terminates the wait
+ * if it's closed by throwing an {@link InterruptedException}.
  */
 public class SolrCloseableLatch {
 
-	private final SolrCloseable closeable;
-	private final CountDownLatch latch;
+  private final SolrCloseable closeable;
+  private final CountDownLatch latch;
 
-	public SolrCloseableLatch(int count, SolrCloseable closeable) {
-		Objects.requireNonNull(closeable);
-		this.closeable = closeable;
-		this.latch = new CountDownLatch(count);
-	}
+  public SolrCloseableLatch(int count, SolrCloseable closeable) {
+    Objects.requireNonNull(closeable);
+    this.closeable = closeable;
+    this.latch = new CountDownLatch(count);
+  }
 
-	public void await() throws InterruptedException {
-		await(Long.MAX_VALUE, TimeUnit.SECONDS);
-	}
+  public void await() throws InterruptedException {
+    await(Long.MAX_VALUE, TimeUnit.SECONDS);
+  }
 
-	public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
-		timeout = unit.toMillis(timeout);
-		while (timeout > 0) {
-			if (latch.await(100, TimeUnit.MILLISECONDS)) {
-				return true;
-			}
-			if (closeable.isClosed()) {
-				throw new InterruptedException(closeable + " has been closed.");
-			}
-			timeout -= 100;
-		}
-		return false;
-	}
+  public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+    timeout = unit.toMillis(timeout);
+    while (timeout > 0) {
+      if (latch.await(100, TimeUnit.MILLISECONDS)) {
+        return true;
+      }
+      if (closeable.isClosed()) {
+        throw new InterruptedException(closeable + " has been closed.");
+      }
+      timeout -= 100;
+    }
+    return false;
+  }
 
-	public void countDown() {
-		latch.countDown();
-	}
+  public void countDown() {
+    latch.countDown();
+  }
 
-	public long getCount() {
-		return latch.getCount();
-	}
+  public long getCount() {
+    return latch.getCount();
+  }
 }

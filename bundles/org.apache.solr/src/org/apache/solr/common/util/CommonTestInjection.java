@@ -20,24 +20,23 @@ package org.apache.solr.common.util;
 import java.util.Map;
 
 /**
- * Allows random faults to be injected in running code during test runs across
- * all solr packages.
+ * Allows random faults to be injected in running code during test runs across all solr packages.
  *
  * @lucene.internal
  */
 public class CommonTestInjection {
 
-	private volatile static Map<String, String> additionalSystemProps = null;
+  private volatile static Map<String, String> additionalSystemProps = null;
 
-	public static void reset() {
-		additionalSystemProps = null;
-	}
+  public static void reset() {
+    additionalSystemProps = null;
+  }
 
-	public static void setAdditionalProps(Map<String, String> additionalSystemProps) {
-		CommonTestInjection.additionalSystemProps = additionalSystemProps;
-	}
+  public static void setAdditionalProps(Map<String, String> additionalSystemProps) {
+    CommonTestInjection.additionalSystemProps = additionalSystemProps;
+  }
 
-	public static Map<String, String> injectAdditionalProps() {
-		return additionalSystemProps;
-	}
+  public static Map<String,String> injectAdditionalProps() {
+    return additionalSystemProps;
+  }
 }

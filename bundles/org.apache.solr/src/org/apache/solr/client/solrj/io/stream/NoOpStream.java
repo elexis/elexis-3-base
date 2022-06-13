@@ -30,70 +30,74 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 /**
- * A simple no-operation stream. Immediately returns eof. Mostly intended for
- * use as a place holder in
- * {@link org.apache.solr.client.solrj.io.stream.expr.InjectionDefense}.
+ * A simple no-operation stream. Immediately returns eof. Mostly intended for use as
+ * a place holder in {@link org.apache.solr.client.solrj.io.stream.expr.InjectionDefense}.
  *
  * @since 8.0.0
  */
 public class NoOpStream extends TupleStream implements Expressible {
 
-	private static final long serialVersionUID = 1;
-	private boolean finished;
+  private static final long serialVersionUID = 1;
+  private boolean finished;
 
-	public NoOpStream() throws IOException {
-	}
 
-	public NoOpStream(StreamExpression expression, StreamFactory factory) throws IOException {
-	}
 
-	@Override
-	public StreamExpression toExpression(StreamFactory factory) throws IOException {
-		return toExpression(factory, true);
-	}
+  public NoOpStream() throws IOException {
+  }
 
-	private StreamExpression toExpression(StreamFactory factory, boolean includeStreams) throws IOException {
-		// function name
-		StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
+  public NoOpStream(StreamExpression expression, StreamFactory factory) throws IOException {
+  }
 
-		return expression;
-	}
 
-	@Override
-	public Explanation toExplanation(StreamFactory factory) throws IOException {
+  @Override
+  public StreamExpression toExpression(StreamFactory factory) throws IOException{
+    return toExpression(factory, true);
+  }
 
-		return new StreamExplanation(getStreamNodeId().toString())
-				.withFunctionName(factory.getFunctionName(this.getClass()))
-				.withImplementingClass(this.getClass().getName()).withExpressionType(ExpressionType.STREAM_DECORATOR)
-				.withExpression(toExpression(factory, false).toString());
-	}
+  private StreamExpression toExpression(StreamFactory factory, boolean includeStreams) throws IOException {
+    // function name
+    StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
 
-	public void setStreamContext(StreamContext context) {
-	}
+    return expression;
+  }
 
-	public List<TupleStream> children() {
-		List<TupleStream> l = new ArrayList<TupleStream>();
-		return l;
-	}
+  @Override
+  public Explanation toExplanation(StreamFactory factory) throws IOException {
 
-	public void open() throws IOException {
+    return new StreamExplanation(getStreamNodeId().toString())
+        .withFunctionName(factory.getFunctionName(this.getClass()))
+        .withImplementingClass(this.getClass().getName())
+        .withExpressionType(ExpressionType.STREAM_DECORATOR)
+        .withExpression(toExpression(factory, false).toString());
+  }
 
-	}
+  public void setStreamContext(StreamContext context) {
+  }
 
-	public void close() throws IOException {
-	}
+  public List<TupleStream> children() {
+    List<TupleStream> l =  new ArrayList<TupleStream>();
+    return l;
+  }
 
-	public Tuple read() throws IOException {
-		return Tuple.EOF();
-	}
+  public void open() throws IOException {
 
-	/** Return the stream sort - ie, the order in which records are returned */
-	public StreamComparator getStreamSort() {
-		return null;
-	}
+  }
 
-	public int getCost() {
-		return 0;
-	}
+  public void close() throws IOException {
+  }
+
+  public Tuple read() throws IOException {
+    return Tuple.EOF();
+  }
+
+  /** Return the stream sort - ie, the order in which records are returned */
+  public StreamComparator getStreamSort(){
+    return null;
+  }
+
+  public int getCost() {
+    return 0;
+  }
+
 
 }

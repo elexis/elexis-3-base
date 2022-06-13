@@ -16,66 +16,67 @@
  */
 package org.apache.solr.client.solrj.impl;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.solr.client.solrj.ResponseParser;
-import org.apache.solr.common.SolrException;
-import org.apache.solr.common.util.NamedList;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.solr.client.solrj.ResponseParser;
+import org.apache.solr.common.SolrException;
+import org.apache.solr.common.util.NamedList;
+
 /**
- * Simply puts the entire response into an entry in a NamedList. This parser
- * isn't parse response into a QueryResponse.
+ * Simply puts the entire response into an entry in a NamedList.
+ * This parser isn't parse response into a QueryResponse.
  */
 public class NoOpResponseParser extends ResponseParser {
 
-	private String writerType = "xml";
+  private String writerType = "xml";
 
-	public NoOpResponseParser() {
-	}
+  public NoOpResponseParser() {
+  }
 
-	public NoOpResponseParser(String writerType) {
-		this.writerType = writerType;
-	}
+  public NoOpResponseParser(String writerType) {
+    this.writerType = writerType;
+  }
 
-	@Override
-	public String getWriterType() {
-		return writerType;
-	}
+  @Override
+  public String getWriterType() {
+    return writerType;
+  }
 
-	public void setWriterType(String writerType) {
-		this.writerType = writerType;
-	}
+  public void setWriterType(String writerType) {
+    this.writerType = writerType;
+  }
 
-	@Override
-	public NamedList<Object> processResponse(Reader reader) {
-		try {
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(reader, writer);
-			String output = writer.toString();
-			NamedList<Object> list = new NamedList<>();
-			list.add("response", output);
-			return list;
-		} catch (IOException e) {
-			throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "parsing error", e);
-		}
-	}
+  @Override
+  public NamedList<Object> processResponse(Reader reader) {
+    try {
+      StringWriter writer = new StringWriter();
+      IOUtils.copy(reader, writer);
+      String output = writer.toString();
+      NamedList<Object> list = new NamedList<>();
+      list.add("response", output);
+      return list;
+    } catch (IOException e) {
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "parsing error", e);
+    }
+  }
 
-	@Override
-	public NamedList<Object> processResponse(InputStream body, String encoding) {
-		try {
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(body, writer, encoding);
-			String output = writer.toString();
-			NamedList<Object> list = new NamedList<>();
-			list.add("response", output);
-			return list;
-		} catch (IOException e) {
-			throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "parsing error", e);
-		}
-	}
+  @Override
+  public NamedList<Object> processResponse(InputStream body, String encoding) {
+    try {
+      StringWriter writer = new StringWriter();
+      IOUtils.copy(body, writer, encoding);
+      String output = writer.toString();
+      NamedList<Object> list = new NamedList<>();
+      list.add("response", output);
+      return list;
+    } catch (IOException e) {
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "parsing error", e);
+    }
+  }
 
 }
+

@@ -22,53 +22,56 @@ package org.apache.solr.common.params;
  *
  * @since solr 1.2
  */
-public interface UpdateParams {
+public interface UpdateParams
+{
 
-	/** Open up a new searcher as part of a commit */
-	public static String OPEN_SEARCHER = "openSearcher";
+  /** Open up a new searcher as part of a commit */
+  public static String OPEN_SEARCHER = "openSearcher";
 
-	/** wait for the searcher to be registered/visible */
-	public static String WAIT_SEARCHER = "waitSearcher";
+  /** wait for the searcher to be registered/visible */
+  public static String WAIT_SEARCHER = "waitSearcher";
 
-	public static String SOFT_COMMIT = "softCommit";
+  public static String SOFT_COMMIT = "softCommit";
+  
+  /** overwrite indexing fields */
+  public static String OVERWRITE = "overwrite";
+  
+  /** Commit everything after the command completes */
+  public static String COMMIT = "commit";
 
-	/** overwrite indexing fields */
-	public static String OVERWRITE = "overwrite";
+  /** Commit within a certain time period (in ms) */
+  public static String COMMIT_WITHIN = "commitWithin";
 
-	/** Commit everything after the command completes */
-	public static String COMMIT = "commit";
+  /** Optimize the index and commit everything after the command completes */
+  public static String OPTIMIZE = "optimize";
 
-	/** Commit within a certain time period (in ms) */
-	public static String COMMIT_WITHIN = "commitWithin";
+  /** expert: calls IndexWriter.prepareCommit */
+  public static String PREPARE_COMMIT = "prepareCommit";
 
-	/** Optimize the index and commit everything after the command completes */
-	public static String OPTIMIZE = "optimize";
+  /** Rollback update commands */
+  public static String ROLLBACK = "rollback";
 
-	/** expert: calls IndexWriter.prepareCommit */
-	public static String PREPARE_COMMIT = "prepareCommit";
+  public static String COLLECTION = "collection";
 
-	/** Rollback update commands */
-	public static String ROLLBACK = "rollback";
+  /** Select the update processor chain to use.  A RequestHandler may or may not respect this parameter */
+  public static final String UPDATE_CHAIN = "update.chain";
 
-	public static String COLLECTION = "collection";
+  /** Override the content type used for UpdateLoader **/
+  public static final String ASSUME_CONTENT_TYPE = "update.contentType";
+  
+  /**
+   If optimizing, set the maximum number of segments left in the index after optimization.  Integer.MAX_INT is the default to respect maxMergeSegmentsMB
+   */
+  public static final String MAX_OPTIMIZE_SEGMENTS = "maxSegments";
 
-	/**
-	 * Select the update processor chain to use. A RequestHandler may or may not
-	 * respect this parameter
-	 */
-	public static final String UPDATE_CHAIN = "update.chain";
+  public static final String EXPUNGE_DELETES = "expungeDeletes";
 
-	/** Override the content type used for UpdateLoader **/
-	public static final String ASSUME_CONTENT_TYPE = "update.contentType";
+  /** Return versions of updates? */
+  public static final String VERSIONS = "versions";
 
-	/**
-	 * If optimizing, set the maximum number of segments left in the index after
-	 * optimization. Integer.MAX_INT is the default to respect maxMergeSegmentsMB
-	 */
-	public static final String MAX_OPTIMIZE_SEGMENTS = "maxSegments";
-
-	public static final String EXPUNGE_DELETES = "expungeDeletes";
-
-	/** Return versions of updates? */
-	public static final String VERSIONS = "versions";
+  /**
+   * If set to true, then Solr must fail to process any Atomic Update which can not 
+   * be done "In-Place" with out re-indexing the entire document.
+   */
+  public static final String REQUIRE_PARTIAL_DOC_UPDATES_INPLACE = "update.partial.requireInPlace";
 }

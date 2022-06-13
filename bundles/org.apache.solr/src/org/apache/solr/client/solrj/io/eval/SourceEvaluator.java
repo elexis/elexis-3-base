@@ -21,17 +21,16 @@ import java.util.UUID;
 import org.apache.solr.client.solrj.io.stream.StreamContext;
 
 public abstract class SourceEvaluator implements StreamEvaluator {
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
+  
+  protected UUID nodeId = UUID.randomUUID();
+  protected StreamContext streamContext;
 
-	protected UUID nodeId = UUID.randomUUID();
-	protected StreamContext streamContext;
-
-	public void setStreamContext(StreamContext streamContext) {
-		this.streamContext = streamContext;
-	}
-
-	public StreamContext getStreamContext() {
-		return streamContext;
-	}
+  public void setStreamContext(StreamContext streamContext) {
+    this.streamContext = streamContext;
+  }
+  public StreamContext getStreamContext(){
+    return streamContext;
+  }
 
 }

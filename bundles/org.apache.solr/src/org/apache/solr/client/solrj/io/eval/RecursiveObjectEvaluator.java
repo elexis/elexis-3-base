@@ -23,14 +23,13 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public abstract class RecursiveObjectEvaluator extends RecursiveEvaluator {
-	protected static final long serialVersionUID = 1L;
-
-	public RecursiveObjectEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
-	}
-
-	public RecursiveObjectEvaluator(StreamExpression expression, StreamFactory factory,
-			List<String> ignoredNamedParameters) throws IOException {
-		super(expression, factory, ignoredNamedParameters);
-	}
+  protected static final long serialVersionUID = 1L;
+  
+  public RecursiveObjectEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory);
+  }
+  
+  public RecursiveObjectEvaluator(StreamExpression expression, StreamFactory factory, List<String> ignoredNamedParameters) throws IOException{
+    super(expression, factory, ignoredNamedParameters);
+  }
 }

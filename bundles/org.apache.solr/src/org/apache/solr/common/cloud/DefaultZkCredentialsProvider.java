@@ -20,22 +20,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class DefaultZkCredentialsProvider implements ZkCredentialsProvider {
+  
+  private Collection<ZkCredentials> zkCredentials;
 
-	private Collection<ZkCredentials> zkCredentials;
-
-	@Override
-	public Collection<ZkCredentials> getCredentials() {
-		if (zkCredentials == null) {
-			synchronized (this) {
-				if (zkCredentials == null)
-					zkCredentials = createCredentials();
-			}
-		}
-		return zkCredentials;
-	}
-
-	protected Collection<ZkCredentials> createCredentials() {
-		return new ArrayList<ZkCredentials>();
-	}
-
+  @Override
+  public Collection<ZkCredentials> getCredentials() {
+    if (zkCredentials == null) {
+      synchronized (this) {
+        if (zkCredentials == null) zkCredentials = createCredentials();
+      }
+    }
+    return zkCredentials;
+  }
+  
+  protected Collection<ZkCredentials> createCredentials() {
+    return new ArrayList<ZkCredentials>();
+  }
+  
 }

@@ -19,35 +19,33 @@
  * JDBC Driver Package
  *
  * Sample usage
- *
  * <pre>
  * Connection con = null;
  * Statement stmt = null;
  * ResultSet rs = null;
  *
  * try {
- * 	con = DriverManager.getConnection("jdbc:solr://zkHost:port?collection=collection&amp;aggregationMode=map_reduce");
- * 	stmt = con.createStatement();
- * 	rs = stmt.executeQuery("select a, sum(b) from tablex group by a");
- * 	while (rs.next()) {
- * 		String a = rs.getString("a");
- * 		double sumB = rs.getString("sum(b)");
- * 	}
+ *  con = DriverManager.getConnection("jdbc:solr://zkHost:port?collection=collection&amp;aggregationMode=map_reduce");
+ *  stmt = con.createStatement();
+ *  rs = stmt.executeQuery("select a, sum(b) from tablex group by a");
+ *  while(rs.next()) {
+ *    String a = rs.getString("a");
+ *    double sumB = rs.getString("sum(b)");
+ *  }
  * } finally {
- * 	rs.close();
- * 	stmt.close();
- * 	con.close();
+ *  rs.close();
+ *  stmt.close();
+ *  con.close();
  * }
  * </pre>
  *
  * Connection properties can also be passed in using a Properties object.
  *
- * The <b>collection</b> parameter is mandatory and should point to a SolrCloud
- * collection that is configured with the /sql request handler.
+ * The <b>collection</b> parameter is mandatory and should point to a SolrCloud collection that is configured with the /sql
+ * request handler.
  *
- * The aggregationMode parameter is optional. It can be used to switch between
- * Map/Reduce (map_reduce) or the JSON Facet API (facet) for group by
- * aggregations. The default is "facet".
+ * The aggregationMode parameter is optional. It can be used to switch between Map/Reduce (map_reduce) or the JSON Facet API (facet) for
+ * group by aggregations. The default is "facet".
  **/
 
 package org.apache.solr.client.solrj.io.sql;

@@ -22,74 +22,67 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 public class ConditionalKeyMapWriter implements MapWriter {
-	private final MapWriter delegate;
-	private final Predicate<CharSequence> predicate;
+  private final MapWriter delegate;
+  private final Predicate<CharSequence> predicate;
 
-	public ConditionalKeyMapWriter(MapWriter delegate, Predicate<CharSequence> predicate) {
-		this.delegate = delegate;
-		this.predicate = predicate;
-	}
+  public ConditionalKeyMapWriter(MapWriter delegate, Predicate<CharSequence> predicate) {
+    this.delegate = delegate;
+    this.predicate = predicate;
+  }
 
-	public static class EntryWriterWrapper implements EntryWriter {
-		private final EntryWriter delegate;
-		private final Predicate<CharSequence> predicate;
+  public static class EntryWriterWrapper implements EntryWriter {
+    private final EntryWriter delegate;
+    private final Predicate<CharSequence> predicate;
 
-		public EntryWriterWrapper(EntryWriter delegate, Predicate<CharSequence> predicate) {
-			this.delegate = delegate;
-			this.predicate = predicate;
-		}
+    public EntryWriterWrapper(EntryWriter delegate, Predicate<CharSequence> predicate) {
+      this.delegate = delegate;
+      this.predicate = predicate;
+    }
 
-		@Override
-		public EntryWriter put(CharSequence k, Object v) throws IOException {
-			if (predicate.test(k))
-				delegate.put(k, v);
-			return this;
-		}
+    @Override
+    public EntryWriter put(CharSequence k, Object v) throws IOException {
+      if (predicate.test(k)) delegate.put(k, v);
+      return this;
+    }
 
-		@Override
-		public EntryWriter put(CharSequence k, int v) throws IOException {
-			if (predicate.test(k))
-				delegate.put(k, v);
-			return this;
-		}
+    @Override
+    public EntryWriter put(CharSequence k, int v) throws IOException {
+      if (predicate.test(k)) delegate.put(k, v);
+      return this;
+    }
 
-		@Override
-		public EntryWriter put(CharSequence k, long v) throws IOException {
-			if (predicate.test(k))
-				delegate.put(k, v);
-			return this;
-		}
+    @Override
+    public EntryWriter put(CharSequence k, long v) throws IOException {
+      if (predicate.test(k)) delegate.put(k, v);
+      return this;
+    }
 
-		@Override
-		public EntryWriter put(CharSequence k, float v) throws IOException {
-			if (predicate.test(k))
-				delegate.put(k, v);
-			return this;
-		}
+    @Override
+    public EntryWriter put(CharSequence k, float v) throws IOException {
+      if (predicate.test(k)) delegate.put(k, v);
+      return this;
+    }
 
-		@Override
-		public EntryWriter put(CharSequence k, double v) throws IOException {
-			if (predicate.test(k))
-				delegate.put(k, v);
-			return this;
-		}
+    @Override
+    public EntryWriter put(CharSequence k, double v) throws IOException {
+      if (predicate.test(k)) delegate.put(k, v);
+      return this;
+    }
 
-		@Override
-		public EntryWriter put(CharSequence k, boolean v) throws IOException {
-			if (predicate.test(k))
-				delegate.put(k, v);
-			return this;
-		}
-	}
+    @Override
+    public EntryWriter put(CharSequence k, boolean v) throws IOException {
+      if (predicate.test(k)) delegate.put(k, v);
+      return this;
+    }
+  }
 
-	@Override
-	public void writeMap(EntryWriter ew) throws IOException {
-		if (delegate != null)
-			delegate.writeMap(new EntryWriterWrapper(ew, predicate));
-	}
+  @Override
+  public void writeMap(EntryWriter ew) throws IOException {
+    if (delegate != null) delegate.writeMap(new EntryWriterWrapper(ew, predicate));
+  }
 
-	public static Predicate<CharSequence> dedupeKeyPredicate(Set<CharSequence> keys) {
-		return (k) -> keys.add(k);
-	}
+  public static Predicate<CharSequence> dedupeKeyPredicate(Set<CharSequence> keys) {
+    return (k) -> keys.add(k);
+  }
 
 }

@@ -33,115 +33,115 @@ import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
 /**
- * Connects to Zookeeper to pick replicas from a specific collection to send the
- * query to. Under the covers the SolrStream instances send the query to the
- * replicas. SolrStreams are opened using a thread pool, but a single thread is
- * used to iterate and merge Tuples from each SolrStream.
- *
+ * Connects to Zookeeper to pick replicas from a specific collection to send the query to.
+ * Under the covers the SolrStream instances send the query to the replicas.
+ * SolrStreams are opened using a thread pool, but a single thread is used
+ * to iterate and merge Tuples from each SolrStream.
  * @since 5.1.0
  **/
 
 public class SearchFacadeStream extends TupleStream implements Expressible {
 
-	private static final long serialVersionUID = 1;
-	private TupleStream innerStream;
+  private static final long serialVersionUID = 1;
+  private TupleStream innerStream;
 
-	public SearchFacadeStream(StreamExpression expression, StreamFactory factory) throws IOException {
-		// grab all parameters out
-		String collectionName = factory.getValueOperand(expression, 0);
+  public SearchFacadeStream(StreamExpression expression, StreamFactory factory) throws IOException{
+    // grab all parameters out
+    String collectionName = factory.getValueOperand(expression, 0);
 
-		// Handle comma delimited list of collections.
-		if (collectionName.indexOf('"') > -1) {
-			collectionName = collectionName.replaceAll("\"", "").replaceAll(" ", "");
-		}
+    //Handle comma delimited list of collections.
+    if(collectionName.indexOf('"') > -1) {
+      collectionName = collectionName.replaceAll("\"", "").replaceAll(" ", "");
+    }
 
-		List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
-		StreamExpressionNamedParameter zkHostExpression = factory.getNamedOperand(expression, "zkHost");
+    List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
+    StreamExpressionNamedParameter zkHostExpression = factory.getNamedOperand(expression, "zkHost");
 
-		// Collection Name
-		if (null == collectionName) {
-			throw new IOException(String.format(Locale.ROOT,
-					"invalid expression %s - collectionName expected as first operand", expression));
-		}
+    // Collection Name
+    if(null == collectionName){
+      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - collectionName expected as first operand",expression));
+    }
 
-		ModifiableSolrParams mParams = new ModifiableSolrParams();
-		for (StreamExpressionNamedParameter namedParam : namedParams) {
-			if (!namedParam.getName().equals("zkHost") && !namedParam.getName().equals("aliases")) {
-				mParams.add(namedParam.getName(), namedParam.getParameter().toString().trim());
-			}
-		}
 
-		// zkHost, optional - if not provided then will look into factory list to get
-		String zkHost = null;
-		if (null == zkHostExpression) {
-			zkHost = factory.getCollectionZkHost(collectionName);
-			if (zkHost == null) {
-				zkHost = factory.getDefaultZkHost();
-			}
-		} else if (zkHostExpression.getParameter() instanceof StreamExpressionValue) {
-			zkHost = ((StreamExpressionValue) zkHostExpression.getParameter()).getValue();
-		}
-		/*
-		 * if(null == zkHost){ throw new IOException(String.format(Locale.
-		 * ROOT,"invalid expression %s - zkHost not found for collection '%s'"
-		 * ,expression,collectionName)); }
-		 */
+    ModifiableSolrParams mParams = new ModifiableSolrParams();
+    for(StreamExpressionNamedParameter namedParam : namedParams){
+      if(!namedParam.getName().equals("zkHost") && !namedParam.getName().equals("aliases")){
+        mParams.add(namedParam.getName(), namedParam.getParameter().toString().trim());
+      }
+    }
 
-		if (mParams.get(CommonParams.QT) != null && mParams.get(CommonParams.QT).equals("/export")) {
-			CloudSolrStream cloudSolrStream = new CloudSolrStream();
-			cloudSolrStream.init(collectionName, zkHost, mParams);
-			this.innerStream = cloudSolrStream;
-		} else {
+    // zkHost, optional - if not provided then will look into factory list to get
+    String zkHost = null;
+    if(null == zkHostExpression){
+      zkHost = factory.getCollectionZkHost(collectionName);
+      if(zkHost == null) {
+        zkHost = factory.getDefaultZkHost();
+      }
+    }
+    else if(zkHostExpression.getParameter() instanceof StreamExpressionValue){
+      zkHost = ((StreamExpressionValue)zkHostExpression.getParameter()).getValue();
+    }
+    /*
+    if(null == zkHost){
+      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - zkHost not found for collection '%s'",expression,collectionName));
+    }
+    */
 
-			if (mParams.get("partitionKeys") != null) {
-				throw new IOException(
-						"partitionKeys can only be used in the search function when the /export handler is specified");
-			}
+    if(mParams.get(CommonParams.QT) != null && mParams.get(CommonParams.QT).equals("/export")) {
+      CloudSolrStream cloudSolrStream = new CloudSolrStream();
+      cloudSolrStream.init(collectionName, zkHost, mParams);
+      this.innerStream = cloudSolrStream;
+    } else {
 
-			SearchStream searchStream = new SearchStream();
-			searchStream.init(zkHost, collectionName, mParams);
-			this.innerStream = searchStream;
-		}
-	}
+      if(mParams.get("partitionKeys") != null) {
+        throw new IOException("partitionKeys can only be used in the search function when the /export handler is specified");
+      }
 
-	@Override
-	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-		return ((Expressible) innerStream).toExpression(factory);
-	}
+      SearchStream searchStream = new SearchStream();
+      searchStream.init(zkHost, collectionName, mParams);
+      this.innerStream = searchStream;
+    }
+  }
 
-	@Override
-	public Explanation toExplanation(StreamFactory factory) throws IOException {
-		return innerStream.toExplanation(factory);
-	}
+  @Override
+  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+    return ((Expressible)innerStream).toExpression(factory);
+  }
 
-	public void setStreamContext(StreamContext context) {
-		this.innerStream.setStreamContext(context);
-	}
+  @Override
+  public Explanation toExplanation(StreamFactory factory) throws IOException {
+    return innerStream.toExplanation(factory);
+  }
 
-	/**
-	 * Opens the CloudSolrStream
-	 *
-	 ***/
-	public void open() throws IOException {
-		innerStream.open();
-	}
+  public void setStreamContext(StreamContext context) {
+    this.innerStream.setStreamContext(context);
+  }
 
-	public List<TupleStream> children() {
-		return innerStream.children();
-	}
+  /**
+   * Opens the CloudSolrStream
+   *
+   ***/
+  public void open() throws IOException {
+    innerStream.open();
+  }
 
-	/**
-	 * Closes the CloudSolrStream
-	 **/
-	public void close() throws IOException {
-		innerStream.close();
-	}
+  public List<TupleStream> children() {
+    return innerStream.children();
+  }
 
-	public Tuple read() throws IOException {
-		return innerStream.read();
-	}
+  /**
+   *  Closes the CloudSolrStream
+   **/
+  public void close() throws IOException {
+    innerStream.close();
+  }
 
-	public StreamComparator getStreamSort() {
-		return innerStream.getStreamSort();
-	}
+
+  public Tuple read() throws IOException {
+    return innerStream.read();
+  }
+
+  public StreamComparator getStreamSort(){
+    return innerStream.getStreamSort();
+  }
 }

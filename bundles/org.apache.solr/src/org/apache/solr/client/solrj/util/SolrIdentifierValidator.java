@@ -22,52 +22,51 @@ import java.util.regex.Pattern;
 import org.apache.solr.common.SolrException;
 
 /**
- * Ensures that provided identifiers align with Solr's
- * recommendations/requirements for choosing collection, core, etc identifiers.
- *
- * Identifiers are allowed to contain underscores, periods, hyphens, and
- * alphanumeric characters.
+ * Ensures that provided identifiers align with Solr's recommendations/requirements for choosing
+ * collection, core, etc identifiers.
+ *  
+ * Identifiers are allowed to contain underscores, periods, hyphens, and alphanumeric characters.
  */
 public class SolrIdentifierValidator {
-	final static Pattern identifierPattern = Pattern.compile("^(?!\\-)[\\._A-Za-z0-9\\-]+$");
+  final static Pattern identifierPattern = Pattern.compile("^(?!\\-)[\\._A-Za-z0-9\\-]+$");
 
-	public enum IdentifierType {
-		SHARD, COLLECTION, CORE, ALIAS
-	}
+  public enum IdentifierType {
+    SHARD, COLLECTION, CORE, ALIAS
+  }
 
-	public static String validateName(IdentifierType type, String name) {
-		if (!validateIdentifier(name))
-			throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, getIdentifierMessage(type, name));
-		return name;
-	}
+  public static String validateName(IdentifierType type, String name) {
+    if (!validateIdentifier(name))
+      throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, getIdentifierMessage(type, name));
+    return name;
+  }
 
-	public static String validateShardName(String shardName) {
-		return validateName(IdentifierType.SHARD, shardName);
-	}
+  public static String validateShardName(String shardName) {
+    return validateName(IdentifierType.SHARD, shardName);
+  }
+  
+  public static String validateCollectionName(String collectionName) {
+    return validateName(IdentifierType.COLLECTION, collectionName);
+  }
 
-	public static String validateCollectionName(String collectionName) {
-		return validateName(IdentifierType.COLLECTION, collectionName);
-	}
+  public static String validateAliasName(String alias) {
+    return validateName(IdentifierType.ALIAS, alias);
+  }
 
-	public static String validateAliasName(String alias) {
-		return validateName(IdentifierType.ALIAS, alias);
-	}
+  public static String validateCoreName(String coreName) {
+    return validateName(IdentifierType.CORE, coreName);
+  }
 
-	public static String validateCoreName(String coreName) {
-		return validateName(IdentifierType.CORE, coreName);
-	}
+  private static boolean validateIdentifier(String identifier) {
+    if (identifier == null || ! identifierPattern.matcher(identifier).matches()) {
+      return false;
+    }
+    return true;
+  }
 
-	private static boolean validateIdentifier(String identifier) {
-		if (identifier == null || !identifierPattern.matcher(identifier).matches()) {
-			return false;
-		}
-		return true;
-	}
-
-	public static String getIdentifierMessage(IdentifierType identifierType, String name) {
-		String typeStr = identifierType.toString().toLowerCase(Locale.ROOT);
-		return "Invalid " + typeStr + ": [" + name + "]. " + typeStr + " names must consist entirely of periods, "
-				+ "underscores, hyphens, and alphanumerics as well not start with a hyphen";
-	}
+  public static String getIdentifierMessage(IdentifierType identifierType, String name) {
+      String typeStr = identifierType.toString().toLowerCase(Locale.ROOT);
+    return "Invalid " + typeStr + ": [" + name + "]. " + typeStr + " names must consist entirely of periods, "
+        + "underscores, hyphens, and alphanumerics as well not start with a hyphen";
+  }
 
 }

@@ -32,71 +32,71 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 
 // we use this class to expose nasty stuff for tests
-@SuppressWarnings({ "try" })
+@SuppressWarnings({"try"})
 public class SolrZooKeeper extends ZooKeeper {
-	final Set<Thread> spawnedThreads = new CopyOnWriteArraySet<>();
+  final Set<Thread> spawnedThreads = new CopyOnWriteArraySet<>();
+  
+  // for test debug
+  //static Map<SolrZooKeeper,Exception> clients = new ConcurrentHashMap<SolrZooKeeper,Exception>();
 
-	// for test debug
-	// static Map<SolrZooKeeper,Exception> clients = new
-	// ConcurrentHashMap<SolrZooKeeper,Exception>();
-
-	public SolrZooKeeper(String connectString, int sessionTimeout, Watcher watcher) throws IOException {
-		super(connectString, sessionTimeout, watcher);
-		// clients.put(this, new RuntimeException());
-	}
-
-	public ClientCnxn getConnection() {
-		return cnxn;
-	}
-
-	public SocketAddress getSocketAddress() {
-		return testableLocalSocketAddress();
-	}
-
-	public void closeCnxn() {
-		final Thread t = new Thread() {
-			@Override
-			public void run() {
-				try {
-					AccessController.doPrivileged((PrivilegedAction<Void>) this::closeZookeeperChannel);
-				} finally {
-					spawnedThreads.remove(this);
-				}
-			}
-
-			@SuppressForbidden(reason = "Hack for Zookeper needs access to private methods.")
-			private Void closeZookeeperChannel() {
-				final ClientCnxn cnxn = getConnection();
-				synchronized (cnxn) {
-					try {
-						final Field sendThreadFld = cnxn.getClass().getDeclaredField("sendThread");
-						sendThreadFld.setAccessible(true);
-						Object sendThread = sendThreadFld.get(cnxn);
-						if (sendThread != null) {
-							Method method = sendThread.getClass().getDeclaredMethod("testableCloseSocket");
-							method.setAccessible(true);
-							try {
-								method.invoke(sendThread);
-							} catch (InvocationTargetException e) {
-								// is fine
-							}
-						}
-					} catch (Exception e) {
-						throw new RuntimeException("Closing Zookeeper send channel failed.", e);
-					}
-				}
-				return null; // Void
-			}
-		};
-		spawnedThreads.add(t);
-		t.start();
-	}
-
-	@Override
-	public synchronized void close() throws InterruptedException {
-		super.close();
-	}
-
+  public SolrZooKeeper(String connectString, int sessionTimeout,
+      Watcher watcher) throws IOException {
+    super(connectString, sessionTimeout, watcher);
+    //clients.put(this, new RuntimeException());
+  }
+  
+  public ClientCnxn getConnection() {
+    return cnxn;
+  }
+  
+  public SocketAddress getSocketAddress() {
+    return testableLocalSocketAddress();
+  }
+  
+  public void closeCnxn() {
+    final Thread t = new Thread() {
+      @Override
+      public void run() {
+        try {
+          AccessController.doPrivileged((PrivilegedAction<Void>) this::closeZookeeperChannel);
+        } finally {
+          spawnedThreads.remove(this);
+        }
+      }
+      
+      @SuppressForbidden(reason = "Hack for Zookeper needs access to private methods.")
+      private Void closeZookeeperChannel() {
+        final ClientCnxn cnxn = getConnection();
+        synchronized (cnxn) {
+          try {
+            final Field sendThreadFld = cnxn.getClass().getDeclaredField("sendThread");
+            sendThreadFld.setAccessible(true);
+            Object sendThread = sendThreadFld.get(cnxn);
+            if (sendThread != null) {
+              Method method = sendThread.getClass().getDeclaredMethod("testableCloseSocket");
+              method.setAccessible(true);
+              try {
+                method.invoke(sendThread);
+              } catch (InvocationTargetException e) {
+                // is fine
+              }
+            }
+          } catch (Exception e) {
+            throw new RuntimeException("Closing Zookeeper send channel failed.", e);
+          }
+        }
+        return null; // Void
+      }
+    };
+    spawnedThreads.add(t);
+    t.start();
+  }
+  
+  @Override
+  public synchronized void close() throws InterruptedException {
+    super.close();
+  }
+  
 //  public static void assertCloses() {
 //    if (clients.size() > 0) {
 //      Iterator<Exception> stacktraces = clients.values().iterator();
@@ -105,5 +105,5 @@ public class SolrZooKeeper extends ZooKeeper {
 //      throw new RuntimeException("Found a bad one!", cause);
 //    }
 //  }
-
+  
 }

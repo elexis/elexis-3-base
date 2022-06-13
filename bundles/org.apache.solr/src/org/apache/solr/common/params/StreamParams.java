@@ -21,21 +21,21 @@ package org.apache.solr.common.params;
  */
 public interface StreamParams {
 
-	// parameters
-	String EXPR = "expr";
+  // parameters
+  String EXPR = "expr";
 
-	// stream properties
-	String TUPLE = "tuple";
-	String DOCS = "docs";
-	String RETURN_VALUE = "return-value";
-	String RESULT_SET = "result-set";
+  // stream properties
+  String TUPLE = "tuple";
+  String DOCS = "docs";
+  String RETURN_VALUE = "return-value";
+  String RESULT_SET = "result-set";
 
-	// tuple properties
-	String RESPONSE_TIME = "RESPONSE_TIME";
-	String EOF = "EOF";
-	String EXCEPTION = "EXCEPTION";
-	String METRICS = "_METRICS_";
+  // tuple properties
+  String RESPONSE_TIME = "RESPONSE_TIME";
+  String EOF = "EOF";
+  String EXCEPTION = "EXCEPTION";
+  String METRICS = "_METRICS_";
 
-	// other common tuple properties
-	String P_VALUE = "p-value";
+  // other common tuple properties
+  String P_VALUE = "p-value";
 }

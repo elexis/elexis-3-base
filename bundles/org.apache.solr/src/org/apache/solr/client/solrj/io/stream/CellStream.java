@@ -35,119 +35,118 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
  */
 public class CellStream extends TupleStream implements Expressible {
 
-	private static final long serialVersionUID = 1;
-	private TupleStream stream;
-	private String name;
-	private Tuple tuple;
-	private Tuple EOFTuple;
+  private static final long serialVersionUID = 1;
+  private TupleStream stream;
+  private String name;
+  private Tuple tuple;
+  private Tuple EOFTuple;
 
-	public CellStream(String name, TupleStream stream) throws IOException {
-		init(name, stream);
-	}
+  public CellStream(String name, TupleStream stream) throws IOException {
+    init(name, stream);
+  }
 
-	public CellStream(StreamExpression expression, StreamFactory factory) throws IOException {
-		String name = factory.getValueOperand(expression, 0);
-		List<StreamExpression> streamExpressions = factory.getExpressionOperandsRepresentingTypes(expression,
-				Expressible.class, TupleStream.class);
+  public CellStream(StreamExpression expression, StreamFactory factory) throws IOException {
+    String name = factory.getValueOperand(expression, 0);
+    List<StreamExpression> streamExpressions = factory.getExpressionOperandsRepresentingTypes(expression, Expressible.class, TupleStream.class);
 
-		if (streamExpressions.size() != 1) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - expecting 1 stream but found %d",
-					expression, streamExpressions.size()));
-		}
+    if(streamExpressions.size() != 1){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting 1 stream but found %d",expression, streamExpressions.size()));
+    }
 
-		TupleStream tupleStream = factory.constructStream(streamExpressions.get(0));
-		init(name, tupleStream);
-	}
+    TupleStream tupleStream = factory.constructStream(streamExpressions.get(0));
+    init(name, tupleStream);
+  }
 
-	public String getName() {
-		return this.name;
-	}
+  public String getName() {
+    return this.name;
+  }
 
-	private void init(String name, TupleStream tupleStream) {
-		this.name = name;
-		this.stream = tupleStream;
-	}
+  private void init(String name, TupleStream tupleStream) {
+    this.name = name;
+    this.stream = tupleStream;
+  }
 
-	@Override
-	public StreamExpression toExpression(StreamFactory factory) throws IOException {
-		return toExpression(factory, true);
-	}
+  @Override
+  public StreamExpression toExpression(StreamFactory factory) throws IOException{
+    return toExpression(factory, true);
+  }
 
-	private StreamExpression toExpression(StreamFactory factory, boolean includeStreams) throws IOException {
-		// function name
-		StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
-		expression.addParameter(name);
-		if (includeStreams) {
-			expression.addParameter(((Expressible) stream).toExpression(factory));
-		}
-		return expression;
-	}
+  private StreamExpression toExpression(StreamFactory factory, boolean includeStreams) throws IOException {
+    // function name
+    StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
+    expression.addParameter(name);
+    if(includeStreams) {
+      expression.addParameter(((Expressible)stream).toExpression(factory));
+    }
+    return expression;
+  }
 
-	@Override
-	public Explanation toExplanation(StreamFactory factory) throws IOException {
+  @Override
+  public Explanation toExplanation(StreamFactory factory) throws IOException {
 
-		StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
-		explanation.setFunctionName(factory.getFunctionName(this.getClass()));
-		explanation.setImplementingClass(this.getClass().getName());
-		explanation.setExpressionType(ExpressionType.STREAM_DECORATOR);
-		explanation.setExpression(toExpression(factory, false).toString());
-		explanation.addChild(stream.toExplanation(factory));
+    StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
+    explanation.setFunctionName(factory.getFunctionName(this.getClass()));
+    explanation.setImplementingClass(this.getClass().getName());
+    explanation.setExpressionType(ExpressionType.STREAM_DECORATOR);
+    explanation.setExpression(toExpression(factory, false).toString());
+    explanation.addChild(stream.toExplanation(factory));
 
-		return explanation;
-	}
+    return explanation;
+  }
 
-	public void setStreamContext(StreamContext context) {
-		this.stream.setStreamContext(context);
-	}
+  public void setStreamContext(StreamContext context) {
+    this.stream.setStreamContext(context);
+  }
 
-	public List<TupleStream> children() {
-		List<TupleStream> l = new ArrayList<TupleStream>();
-		l.add(stream);
+  public List<TupleStream> children() {
+    List<TupleStream> l =  new ArrayList<TupleStream>();
+    l.add(stream);
 
-		return l;
-	}
+    return l;
+  }
 
-	public Tuple read() throws IOException {
-		if (tuple.EOF) {
-			return tuple;
-		} else {
-			Tuple t = tuple;
-			tuple = EOFTuple;
-			return t;
-		}
-	}
+  public Tuple read() throws IOException {
+    if(tuple.EOF) {
+      return tuple;
+    } else {
+      Tuple t = tuple;
+      tuple = EOFTuple;
+      return t;
+    }
+  }
 
-	public void close() throws IOException {
-	}
+  public void close() throws IOException {
+  }
 
-	public void open() throws IOException {
-		try {
-			stream.open();
-			List<Tuple> list = new ArrayList<>();
-			while (true) {
-				Tuple tuple = stream.read();
-				if (tuple.EOF) {
-					EOFTuple = tuple;
-					break;
-				} else {
-					list.add(tuple);
-				}
-			}
+  public void open() throws IOException {
+    try {
+      stream.open();
+      List<Tuple> list = new ArrayList<>();
+      while(true) {
+        Tuple tuple = stream.read();
+        if(tuple.EOF) {
+          EOFTuple = tuple;
+          break;
+        } else {
+          list.add(tuple);
+        }
+      }
 
-			tuple = new Tuple();
-			tuple.put(name, list);
-		} finally {
-			stream.close();
-		}
-	}
+      tuple = new Tuple();
+      tuple.put(name, list);
+    } finally {
+      stream.close();
+    }
+  }
 
-	/** Return the stream sort - ie, the order in which records are returned */
-	public StreamComparator getStreamSort() {
-		return null;
-	}
+  /** Return the stream sort - ie, the order in which records are returned */
+  public StreamComparator getStreamSort(){
+    return null;
+  }
 
-	public int getCost() {
-		return 0;
-	}
+  public int getCost() {
+    return 0;
+  }
+
 
 }

@@ -22,62 +22,57 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient.Builder;
 
 public abstract class SolrClientBuilder<B extends SolrClientBuilder<B>> {
 
-	protected HttpClient httpClient;
-	protected ResponseParser responseParser;
-	protected Integer connectionTimeoutMillis = 15000;
-	protected Integer socketTimeoutMillis = 120000;
+  protected HttpClient httpClient;
+  protected ResponseParser responseParser;
+  protected Integer connectionTimeoutMillis = 15000;
+  protected Integer socketTimeoutMillis = 120000;
 
-	/** The solution for the unchecked cast warning. */
-	public abstract B getThis();
-
-	/**
-	 * Provides a {@link HttpClient} for the builder to use when creating clients.
-	 */
-	public B withHttpClient(HttpClient httpClient) {
-		this.httpClient = httpClient;
-		return getThis();
-	}
-
-	/**
-	 * Provides a {@link ResponseParser} for created clients to use when handling
-	 * requests.
-	 */
-	public B withResponseParser(ResponseParser responseParser) {
-		this.responseParser = responseParser;
-		return getThis();
-	}
-
-	/**
-	 * Tells {@link Builder} that created clients should obey the following timeout
-	 * when connecting to Solr servers.
-	 * <p>
-	 * For valid values see
-	 * {@link org.apache.http.client.config.RequestConfig#getConnectTimeout()}
-	 * </p>
-	 */
-	public B withConnectionTimeout(int connectionTimeoutMillis) {
-		if (connectionTimeoutMillis < 0) {
-			throw new IllegalArgumentException("connectionTimeoutMillis must be a non-negative integer.");
-		}
-
-		this.connectionTimeoutMillis = connectionTimeoutMillis;
-		return getThis();
-	}
-
-	/**
-	 * Tells {@link Builder} that created clients should set the following read
-	 * timeout on all sockets.
-	 * <p>
-	 * For valid values see
-	 * {@link org.apache.http.client.config.RequestConfig#getSocketTimeout()}
-	 * </p>
-	 */
-	public B withSocketTimeout(int socketTimeoutMillis) {
-		if (socketTimeoutMillis < 0) {
-			throw new IllegalArgumentException("socketTimeoutMillis must be a non-negative integer.");
-		}
-
-		this.socketTimeoutMillis = socketTimeoutMillis;
-		return getThis();
-	}
+  /** The solution for the unchecked cast warning. */
+  public abstract B getThis();
+  
+  /**
+   * Provides a {@link HttpClient} for the builder to use when creating clients.
+   */
+  public B withHttpClient(HttpClient httpClient) {
+    this.httpClient = httpClient;
+    return getThis();
+  }
+  
+  /**
+   * Provides a {@link ResponseParser} for created clients to use when handling requests.
+   */
+  public B withResponseParser(ResponseParser responseParser) {
+    this.responseParser = responseParser;
+    return getThis();
+  }
+  
+  /**
+   * Tells {@link Builder} that created clients should obey the following timeout when connecting to Solr servers.
+   * <p>
+   * For valid values see {@link org.apache.http.client.config.RequestConfig#getConnectTimeout()}
+   * </p>
+   */
+  public B withConnectionTimeout(int connectionTimeoutMillis) {
+    if (connectionTimeoutMillis < 0) {
+      throw new IllegalArgumentException("connectionTimeoutMillis must be a non-negative integer.");
+    }
+    
+    this.connectionTimeoutMillis = connectionTimeoutMillis;
+    return getThis();
+  }
+  
+  /**
+   * Tells {@link Builder} that created clients should set the following read timeout on all sockets.
+   * <p>
+   * For valid values see {@link org.apache.http.client.config.RequestConfig#getSocketTimeout()}
+   * </p>
+   */
+  public B withSocketTimeout(int socketTimeoutMillis) {
+    if (socketTimeoutMillis < 0) {
+      throw new IllegalArgumentException("socketTimeoutMillis must be a non-negative integer.");
+    }
+    
+    this.socketTimeoutMillis = socketTimeoutMillis;
+    return getThis();
+  }
 }

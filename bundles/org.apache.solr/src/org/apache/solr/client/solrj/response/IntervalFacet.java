@@ -20,65 +20,66 @@ import java.util.List;
 
 /**
  * Objects of this class will contain the result of all the intervals defined
- * for a specific field.
+ * for a specific field. 
  */
 public class IntervalFacet {
+ 
+  /**
+   * The field for which interval facets where calculated
+   */
+  private final String field;
 
-	/**
-	 * The field for which interval facets where calculated
-	 */
-	private final String field;
+  /**
+   * The list of interval facets calculated for {@link #field}
+   */
+  private final List<Count> intervals;
+  
+  IntervalFacet(String field, List<Count> values) {
+    this.field = field;
+    this.intervals = values;
+  }
+  
+  /**
+   * @return The field for which interval facets where calculated
+   */
+  public String getField() {
+    return field;
+  }
 
-	/**
-	 * The list of interval facets calculated for {@link #field}
-	 */
-	private final List<Count> intervals;
+  /**
+   * @return The list of interval facets calculated for {@link #field}
+   */
+  public List<Count> getIntervals() {
+    return intervals;
+  }
+  
+  /**
+   * Holds counts for facet intervals defined in a field
+   */
+  public static class Count {
+    /**
+     * The key of this interval. This is the original 
+     * interval string or the value of the "key" local
+     * param
+     */
+    private final String key;
+    /**
+     * The count of this interval
+     */
+    private final int count;
+    
+    Count(String key, int count) {
+      super();
+      this.key = key;
+      this.count = count;
+    }
+    
+    public String getKey() {
+      return key;
+    }
 
-	IntervalFacet(String field, List<Count> values) {
-		this.field = field;
-		this.intervals = values;
-	}
-
-	/**
-	 * @return The field for which interval facets where calculated
-	 */
-	public String getField() {
-		return field;
-	}
-
-	/**
-	 * @return The list of interval facets calculated for {@link #field}
-	 */
-	public List<Count> getIntervals() {
-		return intervals;
-	}
-
-	/**
-	 * Holds counts for facet intervals defined in a field
-	 */
-	public static class Count {
-		/**
-		 * The key of this interval. This is the original interval string or the value
-		 * of the "key" local param
-		 */
-		private final String key;
-		/**
-		 * The count of this interval
-		 */
-		private final int count;
-
-		Count(String key, int count) {
-			super();
-			this.key = key;
-			this.count = count;
-		}
-
-		public String getKey() {
-			return key;
-		}
-
-		public int getCount() {
-			return count;
-		}
-	}
+    public int getCount() {
+      return count;
+    }
+  }
 }

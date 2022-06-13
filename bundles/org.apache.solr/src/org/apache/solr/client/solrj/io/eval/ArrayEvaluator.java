@@ -29,49 +29,43 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionValue;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class ArrayEvaluator extends RecursiveObjectEvaluator implements ManyValueWorker {
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
+  
+  @SuppressWarnings({"rawtypes"})
+  private Comparator<Comparable> sortComparator;
+  
+  @SuppressWarnings({"unchecked"})
+  public ArrayEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory, Arrays.asList("sort"));
+    
+    StreamExpressionNamedParameter sortParam = factory.getNamedOperand(expression, "sort");
+    if(null != sortParam && sortParam.getParameter() instanceof StreamExpressionValue){
+      String sortOrder = ((StreamExpressionValue)sortParam.getParameter()).getValue().trim().toLowerCase(Locale.ROOT);
+      if("asc".equals(sortOrder) || "desc".equals(sortOrder)){
+        sortComparator = "asc".equals(sortOrder) ? (left,right) -> left.compareTo(right) : (left,right) -> right.compareTo(left);
+      }
+      else{
+        throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - invalid 'sort' parameter - expecting either 'asc' or 'desc'", expression));
+      }
+    }    
+  }
 
-	@SuppressWarnings({ "rawtypes" })
-	private Comparator<Comparable> sortComparator;
-
-	@SuppressWarnings({ "unchecked" })
-	public ArrayEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory, Arrays.asList("sort"));
-
-		StreamExpressionNamedParameter sortParam = factory.getNamedOperand(expression, "sort");
-		if (null != sortParam && sortParam.getParameter() instanceof StreamExpressionValue) {
-			String sortOrder = ((StreamExpressionValue) sortParam.getParameter()).getValue().trim()
-					.toLowerCase(Locale.ROOT);
-			if ("asc".equals(sortOrder) || "desc".equals(sortOrder)) {
-				sortComparator = "asc".equals(sortOrder) ? (left, right) -> left.compareTo(right)
-						: (left, right) -> right.compareTo(left);
-			} else {
-				throw new IOException(String.format(Locale.ROOT,
-						"Invalid expression %s - invalid 'sort' parameter - expecting either 'asc' or 'desc'",
-						expression));
-			}
-		}
-	}
-
-	@Override
-	public Object doWork(Object... values) throws IOException {
-
-		List<Object> newList = Arrays.stream(values).collect(Collectors.toList());
-
-		if (null != sortComparator) {
-			// validate everything is comparable
-			for (Object value : newList) {
-				if (!(value instanceof Comparable<?>)) {
-					throw new IOException(String.format(Locale.ROOT,
-							"Unable to evaluate because a non-Comparable value ('%s') was found and sorting was requested",
-							value.toString()));
-				}
-			}
-
-			newList = newList.stream().map(value -> (Comparable) value).sorted(sortComparator)
-					.collect(Collectors.toList());
-		}
-
-		return newList;
-	}
+  @Override
+  public Object doWork(Object ... values) throws IOException{
+  
+    List<Object> newList = Arrays.stream(values).collect(Collectors.toList());
+    
+    if(null != sortComparator){
+      // validate everything is comparable
+      for(Object value : newList){
+        if(!(value instanceof Comparable<?>)){
+          throw new IOException(String.format(Locale.ROOT, "Unable to evaluate because a non-Comparable value ('%s') was found and sorting was requested", value.toString()));
+        }
+      }
+      
+      newList = newList.stream().map(value -> (Comparable)value).sorted(sortComparator).collect(Collectors.toList());
+    }
+    
+    return newList;
+  }
 }

@@ -19,3 +19,4 @@
  * Streaming Graph Traversals
  **/
 package org.apache.solr.client.solrj.io.graph;
+

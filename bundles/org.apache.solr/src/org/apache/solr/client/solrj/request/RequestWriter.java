@@ -32,110 +32,109 @@ import org.apache.solr.common.util.ContentStream;
 /**
  * A RequestWriter is used to write requests to Solr.
  * <p>
- * A subclass can override the methods in this class to supply a custom format
- * in which a request can be sent.
+ * A subclass can override the methods in this class to supply a custom format in which a request can be sent.
  *
  *
  * @since solr 1.4
  */
 public class RequestWriter {
 
-	public interface ContentWriter {
 
-		void write(OutputStream os) throws IOException;
+  public interface ContentWriter {
 
-		String getContentType();
-	}
+    void write(OutputStream os) throws IOException;
 
-	/**
-	 * Use this to do a push writing instead of pull. If this method returns null
-	 * {@link org.apache.solr.client.solrj.request.RequestWriter#getContentStreams(SolrRequest)}
-	 * is invoked to do a pull write.
-	 */
-	public ContentWriter getContentWriter(@SuppressWarnings({ "rawtypes" }) SolrRequest req) {
-		if (req instanceof UpdateRequest) {
-			UpdateRequest updateRequest = (UpdateRequest) req;
-			if (isEmpty(updateRequest))
-				return null;
-			return new ContentWriter() {
-				@Override
-				public void write(OutputStream os) throws IOException {
-					OutputStreamWriter writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
-					updateRequest.writeXML(writer);
-					writer.flush();
-				}
+    String getContentType();
+  }
 
-				@Override
-				public String getContentType() {
-					return ClientUtils.TEXT_XML;
-				}
-			};
-		}
-		return req.getContentWriter(ClientUtils.TEXT_XML);
-	}
+  /**
+   * Use this to do a push writing instead of pull. If this method returns null
+   * {@link org.apache.solr.client.solrj.request.RequestWriter#getContentStreams(SolrRequest)} is
+   * invoked to do a pull write.
+   */
+  public ContentWriter getContentWriter(@SuppressWarnings({"rawtypes"})SolrRequest req) {
+    if (req instanceof UpdateRequest) {
+      UpdateRequest updateRequest = (UpdateRequest) req;
+      if (isEmpty(updateRequest)) return null;
+      return new ContentWriter() {
+        @Override
+        public void write(OutputStream os) throws IOException {
+          OutputStreamWriter writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
+          updateRequest.writeXML(writer);
+          writer.flush();
+        }
 
-	/**
-	 * @deprecated Use {@link #getContentWriter(SolrRequest)}.
-	 */
-	@Deprecated
-	@SuppressWarnings({ "unchecked" })
-	public Collection<ContentStream> getContentStreams(@SuppressWarnings({ "rawtypes" }) SolrRequest req)
-			throws IOException {
-		if (req instanceof UpdateRequest) {
-			return null;
-		}
-		return req.getContentStreams();
-	}
+        @Override
+        public String getContentType() {
+          return ClientUtils.TEXT_XML;
+        }
+      };
+    }
+    return req.getContentWriter(ClientUtils.TEXT_XML);
+  }
 
-	protected boolean isEmpty(UpdateRequest updateRequest) {
-		return isNull(updateRequest.getDocuments()) && isNull(updateRequest.getDeleteByIdMap())
-				&& isNull(updateRequest.getDeleteQuery()) && updateRequest.getDocIterator() == null;
-	}
+  /**
+   * @deprecated Use {@link #getContentWriter(SolrRequest)}.
+   */
+  @Deprecated
+  @SuppressWarnings({"unchecked"})
+  public Collection<ContentStream> getContentStreams(@SuppressWarnings({"rawtypes"})SolrRequest req) throws IOException {
+    if (req instanceof UpdateRequest) {
+      return null;
+    }
+    return req.getContentStreams();
+  }
 
-	public String getPath(@SuppressWarnings({ "rawtypes" }) SolrRequest req) {
-		return req.getPath();
-	}
+  protected boolean isEmpty(UpdateRequest updateRequest) {
+    return isNull(updateRequest.getDocuments()) &&
+            isNull(updateRequest.getDeleteByIdMap()) &&
+            isNull(updateRequest.getDeleteQuery()) &&
+            updateRequest.getDocIterator() == null;
+  }
 
-	public void write(@SuppressWarnings({ "rawtypes" }) SolrRequest request, OutputStream os) throws IOException {
-		if (request instanceof UpdateRequest) {
-			UpdateRequest updateRequest = (UpdateRequest) request;
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
-			updateRequest.writeXML(writer);
-			writer.flush();
-		}
-	}
+  public String getPath(@SuppressWarnings({"rawtypes"})SolrRequest req) {
+    return req.getPath();
+  }
 
-	public String getUpdateContentType() {
-		return ClientUtils.TEXT_XML;
-	}
+  public void write(@SuppressWarnings({"rawtypes"})SolrRequest request, OutputStream os) throws IOException {
+    if (request instanceof UpdateRequest) {
+      UpdateRequest updateRequest = (UpdateRequest) request;
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+      updateRequest.writeXML(writer);
+      writer.flush();
+    }
+  }
 
-	public static class StringPayloadContentWriter implements ContentWriter {
-		public final String payload;
-		public final String type;
+  public String getUpdateContentType() {
+    return ClientUtils.TEXT_XML;
+  }
 
-		public StringPayloadContentWriter(String payload, String type) {
-			this.payload = payload;
-			this.type = type;
-		}
+  public static class StringPayloadContentWriter implements ContentWriter {
+    public final String payload;
+    public final String type;
 
-		@Override
-		public void write(OutputStream os) throws IOException {
-			if (payload == null)
-				return;
-			os.write(payload.getBytes(StandardCharsets.UTF_8));
-		}
+    public StringPayloadContentWriter(String payload, String type) {
+      this.payload = payload;
+      this.type = type;
+    }
 
-		@Override
-		public String getContentType() {
-			return type;
-		}
-	}
+    @Override
+    public void write(OutputStream os) throws IOException {
+      if (payload == null) return;
+      os.write(payload.getBytes(StandardCharsets.UTF_8));
+    }
 
-	protected boolean isNull(@SuppressWarnings({ "rawtypes" }) List l) {
-		return l == null || l.isEmpty();
-	}
+    @Override
+    public String getContentType() {
+      return type;
+    }
+  }
 
-	protected boolean isNull(@SuppressWarnings({ "rawtypes" }) Map l) {
-		return l == null || l.isEmpty();
-	}
+  protected boolean isNull(@SuppressWarnings({"rawtypes"})List l) {
+    return l == null || l.isEmpty();
+  }
+  
+  protected boolean isNull(@SuppressWarnings({"rawtypes"})Map l) {
+    return l == null || l.isEmpty();
+  }
 }

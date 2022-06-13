@@ -30,57 +30,48 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class FindDelayEvaluator extends RecursiveNumericEvaluator implements TwoValueWorker {
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
+  
+  public FindDelayEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory);
+  }
 
-	public FindDelayEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
-	}
+  @Override
+  public Object doWork(Object first, Object second) throws IOException{
+    if(null == first){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
+    }
+    if(null == second){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the second value",toExpression(constructingFactory)));
+    }
+    if(!(first instanceof List<?>)){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the first value, expecting a list of numbers",toExpression(constructingFactory), first.getClass().getSimpleName()));
+    }
+    if(!(second instanceof List<?>)){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the second value, expecting a list of numbers",toExpression(constructingFactory), first.getClass().getSimpleName()));
+    }
 
-	@Override
-	public Object doWork(Object first, Object second) throws IOException {
-		if (null == first) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
-					toExpression(constructingFactory)));
-		}
-		if (null == second) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the second value",
-					toExpression(constructingFactory)));
-		}
-		if (!(first instanceof List<?>)) {
-			throw new IOException(String.format(Locale.ROOT,
-					"Invalid expression %s - found type %s for the first value, expecting a list of numbers",
-					toExpression(constructingFactory), first.getClass().getSimpleName()));
-		}
-		if (!(second instanceof List<?>)) {
-			throw new IOException(String.format(Locale.ROOT,
-					"Invalid expression %s - found type %s for the second value, expecting a list of numbers",
-					toExpression(constructingFactory), first.getClass().getSimpleName()));
-		}
+    // Get first and second lists as arrays, where second is in reverse order
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    double[] firstArray = ((List)first).stream().mapToDouble(value -> ((Number)value).doubleValue()).toArray();
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    double[] secondArray = StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+        ((LinkedList)((List)second).stream().collect(Collectors.toCollection(LinkedList::new))).descendingIterator(),
+        Spliterator.ORDERED), false).mapToDouble(value -> ((Number)value).doubleValue()).toArray();
+    
+    double[] convolution = MathArrays.convolve(firstArray, secondArray);
+    double maxValue = -Double.MAX_VALUE;
+    double indexOfMaxValue = -1;
 
-		// Get first and second lists as arrays, where second is in reverse order
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		double[] firstArray = ((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray();
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		double[] secondArray = StreamSupport
-				.stream(Spliterators.spliteratorUnknownSize(
-						((LinkedList) ((List) second).stream().collect(Collectors.toCollection(LinkedList::new)))
-								.descendingIterator(),
-						Spliterator.ORDERED), false)
-				.mapToDouble(value -> ((Number) value).doubleValue()).toArray();
+    for(int idx = 0; idx < convolution.length; ++idx) {
+      double abs = Math.abs(convolution[idx]);
+      if(abs > maxValue) {
+        maxValue = abs;
+        indexOfMaxValue = idx;
+      }
+    }
 
-		double[] convolution = MathArrays.convolve(firstArray, secondArray);
-		double maxValue = -Double.MAX_VALUE;
-		double indexOfMaxValue = -1;
+    return (indexOfMaxValue + 1) - secondArray.length;
 
-		for (int idx = 0; idx < convolution.length; ++idx) {
-			double abs = Math.abs(convolution[idx]);
-			if (abs > maxValue) {
-				maxValue = abs;
-				indexOfMaxValue = idx;
-			}
-		}
-
-		return (indexOfMaxValue + 1) - secondArray.length;
-
-	}
+  }
 }

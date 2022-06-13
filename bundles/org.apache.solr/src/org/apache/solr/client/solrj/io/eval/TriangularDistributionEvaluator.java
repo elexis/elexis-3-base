@@ -24,23 +24,23 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class TriangularDistributionEvaluator extends RecursiveNumericEvaluator implements ManyValueWorker {
 
-	private static final long serialVersionUID = 1;
+  private static final long serialVersionUID = 1;
 
-	public TriangularDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
-	}
+  public TriangularDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+    super(expression, factory);
+  }
 
-	@Override
-	public Object doWork(Object... values) throws IOException {
+  @Override
+  public Object doWork(Object... values) throws IOException {
 
-		if (values.length != 3) {
-			throw new IOException("Triangular distribution requires three numeric parameters low, mode, high");
-		}
+    if (values.length != 3) {
+      throw new IOException("Triangular distribution requires three numeric parameters low, mode, high");
+    }
 
-		double low = ((Number) values[0]).doubleValue();
-		double mode = ((Number) values[1]).doubleValue();
-		double high = ((Number) values[2]).doubleValue();
+    double low = ((Number) values[0]).doubleValue();
+    double mode = ((Number) values[1]).doubleValue();
+    double high = ((Number) values[2]).doubleValue();
 
-		return new TriangularDistribution(low, mode, high);
-	}
+    return new TriangularDistribution(low, mode, high);
+  }
 }

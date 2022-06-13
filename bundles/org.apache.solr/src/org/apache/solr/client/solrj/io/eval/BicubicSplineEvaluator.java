@@ -25,52 +25,52 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class BicubicSplineEvaluator extends RecursiveObjectEvaluator implements ManyValueWorker {
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
 
-	public BicubicSplineEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
-	}
+  public BicubicSplineEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory);
+  }
 
-	@Override
-	public Object doWork(Object... objects) throws IOException {
+  @Override
+  public Object doWork(Object... objects) throws IOException {
 
-		if (objects.length != 3) {
-			throw new IOException("The bicubicSpline function requires three paremeters," + objects.length + " found.");
-		}
+    if(objects.length != 3) {
+      throw new IOException("The bicubicSpline function requires three paremeters,"+objects.length+" found.");
+    }
 
-		Object first = objects[0];
-		Object second = objects[1];
-		Object third = objects[2];
+    Object first = objects[0];
+    Object second = objects[1];
+    Object third = objects[2];
 
-		double[] x = null;
-		double[] y = null;
-		double[][] grid = null;
+    double[] x = null;
+    double[] y = null;
+    double[][] grid = null;
 
-		if (first instanceof List && second instanceof List && third instanceof Matrix) {
-			@SuppressWarnings({ "unchecked" })
-			List<Number> xlist = (List<Number>) first;
-			x = new double[xlist.size()];
+    if(first instanceof List && second instanceof List && third instanceof Matrix) {
+      @SuppressWarnings({"unchecked"})
+      List<Number> xlist = (List<Number>) first;
+      x = new double[xlist.size()];
 
-			for (int i = 0; i < x.length; i++) {
-				x[i] = xlist.get(i).doubleValue();
-			}
+      for(int i=0; i<x.length; i++) {
+        x[i]=xlist.get(i).doubleValue();
+      }
 
-			@SuppressWarnings({ "unchecked" })
-			List<Number> ylist = (List<Number>) second;
-			y = new double[ylist.size()];
+      @SuppressWarnings({"unchecked"})
+      List<Number> ylist = (List<Number>) second;
+      y = new double[ylist.size()];
 
-			for (int i = 0; i < y.length; i++) {
-				y[i] = ylist.get(i).doubleValue();
-			}
+      for(int i=0; i<y.length; i++) {
+        y[i] = ylist.get(i).doubleValue();
+      }
 
-			Matrix matrix = (Matrix) third;
-			grid = matrix.getData();
+      Matrix matrix = (Matrix)third;
+      grid = matrix.getData();
 
-			PiecewiseBicubicSplineInterpolator interpolator = new PiecewiseBicubicSplineInterpolator();
-			BivariateFunction bivariateFunction = interpolator.interpolate(x, y, grid);
-			return bivariateFunction;
-		} else {
-			throw new IOException("The bicubicSpline function expects two numeric arrays and a matrix as parameters.");
-		}
-	}
+      PiecewiseBicubicSplineInterpolator interpolator = new PiecewiseBicubicSplineInterpolator();
+      BivariateFunction bivariateFunction = interpolator.interpolate(x, y, grid);
+      return bivariateFunction;
+    } else {
+      throw new IOException("The bicubicSpline function expects two numeric arrays and a matrix as parameters.");
+    }
+  }
 }

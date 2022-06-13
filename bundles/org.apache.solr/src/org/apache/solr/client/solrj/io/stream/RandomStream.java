@@ -17,6 +17,8 @@
 
 package org.apache.solr.client.solrj.io.stream;
 
+import static org.apache.solr.common.params.CommonParams.SORT;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,225 +52,222 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
-import static org.apache.solr.common.params.CommonParams.SORT;
-
 /**
- * The RandomStream emits a stream of psuedo random Tuples that match the query
- * parameters. Sample expression syntax: random(collection, q="Hello word",
- * rows="50", fl="title, body")
- *
+ *  The RandomStream emits a stream of psuedo random Tuples that match the query parameters. Sample expression syntax:
+ *  random(collection, q="Hello word", rows="50", fl="title, body")
  * @since 6.1.0
  **/
 
-public class RandomStream extends TupleStream implements Expressible {
+public class RandomStream extends TupleStream implements Expressible  {
 
-	private String zkHost;
-	private Map<String, String> props;
-	private String collection;
-	protected transient SolrClientCache cache;
-	protected transient CloudSolrClient cloudSolrClient;
-	private Iterator<SolrDocument> documentIterator;
-	private int x;
-	private boolean outputX;
+  private String zkHost;
+  private Map<String, String> props;
+  private String collection;
+  protected transient SolrClientCache cache;
+  protected transient CloudSolrClient cloudSolrClient;
+  private Iterator<SolrDocument> documentIterator;
+  private int x;
+  private boolean outputX;
 
-	public RandomStream() {
-		// Used by the RandomFacade
-	}
+  public RandomStream() {
+    // Used by the RandomFacade
+  }
 
-	public RandomStream(String zkHost, String collection, Map<String, String> props) throws IOException {
-		init(zkHost, collection, props);
-	}
+  public RandomStream(String zkHost,
+                      String collection,
+                     Map<String, String> props) throws IOException {
+    init(zkHost, collection, props);
+  }
 
-	public RandomStream(StreamExpression expression, StreamFactory factory) throws IOException {
-		// grab all parameters out
-		String collectionName = factory.getValueOperand(expression, 0);
-		List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
-		StreamExpressionNamedParameter zkHostExpression = factory.getNamedOperand(expression, "zkHost");
+  public RandomStream(StreamExpression expression, StreamFactory factory) throws IOException{
+    // grab all parameters out
+    String collectionName = factory.getValueOperand(expression, 0);
+    List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
+    StreamExpressionNamedParameter zkHostExpression = factory.getNamedOperand(expression, "zkHost");
 
-		// Collection Name
-		if (null == collectionName) {
-			throw new IOException(String.format(Locale.ROOT,
-					"invalid expression %s - collectionName expected as first operand", expression));
-		}
 
-		// pull out known named params
-		Map<String, String> params = new HashMap<String, String>();
-		for (StreamExpressionNamedParameter namedParam : namedParams) {
-			if (!namedParam.getName().equals("zkHost") && !namedParam.getName().equals("buckets")
-					&& !namedParam.getName().equals("bucketSorts") && !namedParam.getName().equals("limit")) {
-				params.put(namedParam.getName(), namedParam.getParameter().toString().trim());
-			}
-		}
+    // Collection Name
+    if(null == collectionName){
+      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - collectionName expected as first operand",expression));
+    }
 
-		// zkHost, optional - if not provided then will look into factory list to get
-		String zkHost = null;
-		if (null == zkHostExpression) {
-			zkHost = factory.getCollectionZkHost(collectionName);
-			if (zkHost == null) {
-				zkHost = factory.getDefaultZkHost();
-			}
-		} else if (zkHostExpression.getParameter() instanceof StreamExpressionValue) {
-			zkHost = ((StreamExpressionValue) zkHostExpression.getParameter()).getValue();
-		}
-		if (null == zkHost) {
-			throw new IOException(String.format(Locale.ROOT,
-					"invalid expression %s - zkHost not found for collection '%s'", expression, collectionName));
-		}
 
-		// We've got all the required items
-		init(zkHost, collectionName, params);
-	}
+    // pull out known named params
+    Map<String,String> params = new HashMap<String,String>();
+    for(StreamExpressionNamedParameter namedParam : namedParams){
+      if(!namedParam.getName().equals("zkHost") && !namedParam.getName().equals("buckets") && !namedParam.getName().equals("bucketSorts") && !namedParam.getName().equals("limit")){
+        params.put(namedParam.getName(), namedParam.getParameter().toString().trim());
+      }
+    }
 
-	void init(String zkHost, String collection, Map<String, String> props) throws IOException {
-		this.zkHost = zkHost;
-		this.props = props;
-		this.collection = collection;
-		if (props.containsKey(CommonParams.FL)) {
-			String fl = props.get(CommonParams.FL);
-			if (fl != null) {
-				if (fl.equals("*")) {
-					outputX = true;
-				} else {
-					String[] fields = fl.split(",");
-					for (String f : fields) {
-						if (f.trim().equals("x")) {
-							outputX = true;
-						}
-					}
-				}
-			} else {
-				outputX = true;
-			}
-		} else {
-			outputX = true;
-		}
-	}
 
-	@Override
-	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-		// function name
-		StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
 
-		// collection
-		expression.addParameter(collection);
+    // zkHost, optional - if not provided then will look into factory list to get
+    String zkHost = null;
+    if(null == zkHostExpression){
+      zkHost = factory.getCollectionZkHost(collectionName);
+      if(zkHost == null) {
+        zkHost = factory.getDefaultZkHost();
+      }
+    }
+    else if(zkHostExpression.getParameter() instanceof StreamExpressionValue){
+      zkHost = ((StreamExpressionValue)zkHostExpression.getParameter()).getValue();
+    }
+    if(null == zkHost){
+      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - zkHost not found for collection '%s'",expression,collectionName));
+    }
 
-		// parameters
-		for (Entry<String, String> param : props.entrySet()) {
-			expression.addParameter(new StreamExpressionNamedParameter(param.getKey(), param.getValue()));
-		}
+    // We've got all the required items
+    init(zkHost, collectionName, params);
+  }
 
-		// zkHost
-		expression.addParameter(new StreamExpressionNamedParameter("zkHost", zkHost));
+  void init(String zkHost, String collection, Map<String, String> props) throws IOException {
+    this.zkHost  = zkHost;
+    this.props   = props;
+    this.collection = collection;
+    if(props.containsKey(CommonParams.FL)) {
+      String fl = props.get(CommonParams.FL);
+      if(fl != null) {
+        if(fl.equals("*")) {
+          outputX = true;
+        } else {
+          String[] fields = fl.split(",");
+          for (String f : fields) {
+            if (f.trim().equals("x")) {
+              outputX = true;
+            }
+          }
+        }
+      } else {
+        outputX = true;
+      }
+    } else {
+      outputX = true;
+    }
+  }
 
-		return expression;
-	}
+  @Override
+  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+    // function name
+    StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
 
-	@Override
-	public Explanation toExplanation(StreamFactory factory) throws IOException {
+    // collection
+    expression.addParameter(collection);
 
-		StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
+    // parameters
+    for(Entry<String,String> param : props.entrySet()){
+      expression.addParameter(new StreamExpressionNamedParameter(param.getKey(), param.getValue()));
+    }
 
-		explanation.setFunctionName(factory.getFunctionName(this.getClass()));
-		explanation.setImplementingClass(this.getClass().getName());
-		explanation.setExpressionType(ExpressionType.STREAM_SOURCE);
-		explanation.setExpression(toExpression(factory).toString());
+    // zkHost
+    expression.addParameter(new StreamExpressionNamedParameter("zkHost", zkHost));
 
-		// child is a datastore so add it at this point
-		StreamExplanation child = new StreamExplanation(getStreamNodeId() + "-datastore");
-		child.setFunctionName(String.format(Locale.ROOT, "solr (%s)", collection));
-		child.setImplementingClass("Solr/Lucene");
-		child.setExpressionType(ExpressionType.DATASTORE);
-		if (null != props) {
-			child.setExpression(
-					props.entrySet().stream().map(e -> String.format(Locale.ROOT, "%s=%s", e.getKey(), e.getValue()))
-							.collect(Collectors.joining(",")));
-		}
-		explanation.addChild(child);
+    return expression;
+  }
 
-		return explanation;
-	}
+  @Override
+  public Explanation toExplanation(StreamFactory factory) throws IOException {
 
-	public void setStreamContext(StreamContext context) {
-		cache = context.getSolrClientCache();
-	}
+    StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
+    
+    explanation.setFunctionName(factory.getFunctionName(this.getClass()));
+    explanation.setImplementingClass(this.getClass().getName());
+    explanation.setExpressionType(ExpressionType.STREAM_SOURCE);
+    explanation.setExpression(toExpression(factory).toString());
+    
+    // child is a datastore so add it at this point
+    StreamExplanation child = new StreamExplanation(getStreamNodeId() + "-datastore");
+    child.setFunctionName(String.format(Locale.ROOT, "solr (%s)", collection));
+    child.setImplementingClass("Solr/Lucene");
+    child.setExpressionType(ExpressionType.DATASTORE);
+    if(null != props){
+      child.setExpression(props.entrySet().stream().map(e -> String.format(Locale.ROOT, "%s=%s", e.getKey(), e.getValue())).collect(Collectors.joining(",")));
+    }
+    explanation.addChild(child);
+    
+    return explanation;
+  }
 
-	public List<TupleStream> children() {
-		List<TupleStream> l = new ArrayList<>();
-		return l;
-	}
+  public void setStreamContext(StreamContext context) {
+    cache = context.getSolrClientCache();
+  }
 
-	public void open() throws IOException {
-		if (cache != null) {
-			cloudSolrClient = cache.getCloudSolrClient(zkHost);
-		} else {
-			final List<String> hosts = new ArrayList<>();
-			hosts.add(zkHost);
-			cloudSolrClient = new CloudSolrClient.Builder(hosts, Optional.empty()).withSocketTimeout(30000)
-					.withConnectionTimeout(15000).build();
-		}
+  public List<TupleStream> children() {
+    List<TupleStream> l =  new ArrayList<>();
+    return l;
+  }
 
-		ModifiableSolrParams params = getParams(this.props);
+  public void open() throws IOException {
+    if(cache != null) {
+      cloudSolrClient = cache.getCloudSolrClient(zkHost);
+    } else {
+      final List<String> hosts = new ArrayList<>();
+      hosts.add(zkHost);
+      cloudSolrClient = new CloudSolrClient.Builder(hosts, Optional.empty()).withSocketTimeout(30000).withConnectionTimeout(15000).build();
+    }
 
-		params.remove(SORT); // Override any sort.
+    ModifiableSolrParams params = getParams(this.props);
 
-		Random rand = new Random();
-		int seed = rand.nextInt();
+    params.remove(SORT); //Override any sort.
 
-		String sortField = "random_" + seed;
-		params.add(SORT, sortField + " asc");
+    Random rand = new Random();
+    int seed = rand.nextInt();
 
-		QueryRequest request = new QueryRequest(params, SolrRequest.METHOD.POST);
-		try {
-			QueryResponse response = request.process(cloudSolrClient, collection);
-			SolrDocumentList docs = response.getResults();
-			documentIterator = docs.iterator();
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
-	}
+    String sortField = "random_"+seed;
+    params.add(SORT, sortField+" asc");
 
-	public void close() throws IOException {
-		if (cache == null) {
-			cloudSolrClient.close();
-		}
-	}
+    QueryRequest request = new QueryRequest(params, SolrRequest.METHOD.POST);
+    try {
+      QueryResponse response = request.process(cloudSolrClient, collection);
+      SolrDocumentList docs = response.getResults();
+      documentIterator = docs.iterator();
+    } catch (Exception e) {
+      throw new IOException(e);
+    }
+  }
 
-	public Tuple read() throws IOException {
-		if (documentIterator.hasNext()) {
-			Tuple tuple = new Tuple();
-			SolrDocument doc = documentIterator.next();
+  public void close() throws IOException {
+    if(cache == null) {
+      cloudSolrClient.close();
+    }
+  }
 
-			// Put the generated x-axis first. If there really is an x field it will
-			// overwrite it.
-			if (outputX) {
-				tuple.put("x", x++);
-			}
+  public Tuple read() throws IOException {
+    if(documentIterator.hasNext()) {
+      Tuple tuple = new Tuple();
+      SolrDocument doc = documentIterator.next();
 
-			for (Entry<String, Object> entry : doc.entrySet()) {
-				tuple.put(entry.getKey(), entry.getValue());
-			}
+      // Put the generated x-axis first. If there really is an x field it will overwrite it.
+      if(outputX) {
+        tuple.put("x", x++);
+      }
 
-			return tuple;
-		} else {
-			return Tuple.EOF();
-		}
-	}
+      for(Entry<String, Object> entry : doc.entrySet()) {
+        tuple.put(entry.getKey(), entry.getValue());
+      }
 
-	private ModifiableSolrParams getParams(Map<String, String> props) {
-		ModifiableSolrParams params = new ModifiableSolrParams();
-		for (Entry<String, String> entry : props.entrySet()) {
-			String value = entry.getValue();
-			params.add(entry.getKey(), value);
-		}
-		return params;
-	}
 
-	public int getCost() {
-		return 0;
-	}
+      return tuple;
+    } else {
+      return Tuple.EOF();
+    }
+  }
 
-	@Override
-	public StreamComparator getStreamSort() {
-		return null;
-	}
+  private ModifiableSolrParams getParams(Map<String, String> props) {
+    ModifiableSolrParams params = new ModifiableSolrParams();
+    for(Entry<String, String> entry : props.entrySet()) {
+      String value = entry.getValue();
+      params.add(entry.getKey(), value);
+    }
+    return params;
+  }
+
+  public int getCost() {
+    return 0;
+  }
+
+  @Override
+  public StreamComparator getStreamSort() {
+    return null;
+  }
 }

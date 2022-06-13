@@ -25,31 +25,29 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class LeftShiftEvaluator extends RecursiveObjectEvaluator implements TwoValueWorker {
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
 
-	public LeftShiftEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
+  public LeftShiftEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory);
 
-		if (2 != containedEvaluators.size()) {
-			throw new IOException(
-					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 2 value but found %d",
-							expression, containedEvaluators.size()));
-		}
-	}
+    if(2 != containedEvaluators.size()){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 2 value but found %d",expression,containedEvaluators.size()));
+    }
+  }
 
-	@Override
-	public Object doWork(Object value1, Object value2) throws IOException {
-		if (value1 instanceof List && value2 instanceof Number) {
-			List<?> actual = (List<?>) value1;
-			int val = ((Number) value2).intValue();
+  @Override
+  public Object doWork(Object value1, Object value2) throws IOException {
+    if (value1 instanceof List && value2 instanceof Number) {
+      List<?> actual = (List<?>) value1;
+      int val = ((Number) value2).intValue();
 
-			List<Object> shifted = new ArrayList<>();
-			for (int i = val; i < actual.size(); i++) {
-				shifted.add(actual.get(i));
-			}
-			return shifted;
-		} else {
-			throw new IOException("The ltrim function takes two parameters: an array and number to trim it by");
-		}
-	}
+      List<Object> shifted = new ArrayList<>();
+      for (int i = val; i < actual.size(); i++) {
+        shifted.add(actual.get(i));
+      }
+      return shifted;
+    } else {
+      throw new IOException("The ltrim function takes two parameters: an array and number to trim it by");
+    }
+  }
 }

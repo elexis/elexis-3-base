@@ -23,11 +23,11 @@ import java.util.Set;
  *
  */
 public abstract class Snitch {
-	@SuppressWarnings({ "rawtypes" })
-	public static final Set<Class> WELL_KNOWN_SNITCHES = Collections.singleton(ImplicitSnitch.class);
+  @SuppressWarnings({"rawtypes"})
+  public static final Set<Class> WELL_KNOWN_SNITCHES = Collections.singleton(ImplicitSnitch.class);
 
-	public abstract void getTags(String solrNode, Set<String> requestedTags, SnitchContext ctx);
+  public abstract void getTags(String solrNode, Set<String> requestedTags, SnitchContext ctx);
 
-	public abstract boolean isKnownTag(String tag);
+  public abstract boolean isKnownTag(String tag);
 
 }

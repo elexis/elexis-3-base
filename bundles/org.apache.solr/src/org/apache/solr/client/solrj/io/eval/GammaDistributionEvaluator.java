@@ -25,26 +25,24 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class GammaDistributionEvaluator extends RecursiveNumericEvaluator implements TwoValueWorker {
 
-	private static final long serialVersionUID = 1;
+  private static final long serialVersionUID = 1;
 
-	public GammaDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
-	}
+  public GammaDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+    super(expression, factory);
+  }
 
-	@Override
-	public Object doWork(Object first, Object second) throws IOException {
-		if (null == first) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
-					toExpression(constructingFactory)));
-		}
-		if (null == second) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the second value",
-					toExpression(constructingFactory)));
-		}
+  @Override
+  public Object doWork(Object first, Object second) throws IOException{
+    if(null == first){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
+    }
+    if(null == second){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the second value",toExpression(constructingFactory)));
+    }
 
-		Number shape = (Number) first;
-		Number scale = (Number) second;
+    Number shape = (Number)first;
+    Number scale = (Number)second;
 
-		return new GammaDistribution(shape.doubleValue(), scale.doubleValue());
-	}
+    return new GammaDistribution(shape.doubleValue(), scale.doubleValue());
+  }
 }

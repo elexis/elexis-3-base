@@ -25,36 +25,31 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class MeanDifferenceEvaluator extends RecursiveNumericEvaluator implements TwoValueWorker {
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
 
-	public MeanDifferenceEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
-	}
+  public MeanDifferenceEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory);
+  }
 
-	@Override
-	@SuppressWarnings({ "unchecked" })
-	public Object doWork(Object first, Object second) throws IOException {
-		if (null == first) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
-					toExpression(constructingFactory)));
-		}
-		if (null == second) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the second value",
-					toExpression(constructingFactory)));
-		}
-		if (!(first instanceof List<?>)) {
-			throw new IOException(String.format(Locale.ROOT,
-					"Invalid expression %s - found type %s for the first value, expecting a list of numbers",
-					toExpression(constructingFactory), first.getClass().getSimpleName()));
-		}
-		if (!(second instanceof List<?>)) {
-			throw new IOException(String.format(Locale.ROOT,
-					"Invalid expression %s - found type %s for the second value, expecting a list of numbers",
-					toExpression(constructingFactory), first.getClass().getSimpleName()));
-		}
+  @Override
+  @SuppressWarnings({"unchecked"})
+  public Object doWork(Object first, Object second) throws IOException{
+    if(null == first){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
+    }
+    if(null == second){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the second value",toExpression(constructingFactory)));
+    }
+    if(!(first instanceof List<?>)){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the first value, expecting a list of numbers",toExpression(constructingFactory), first.getClass().getSimpleName()));
+    }
+    if(!(second instanceof List<?>)){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the second value, expecting a list of numbers",toExpression(constructingFactory), first.getClass().getSimpleName()));
+    }
 
-		return StatUtils.meanDifference(
-				((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray(),
-				((List) second).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray());
-	}
+    return StatUtils.meanDifference(
+        ((List) first).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray(),
+        ((List) second).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray()
+    );
+  }
 }

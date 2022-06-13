@@ -17,9 +17,9 @@
 package org.apache.solr.client.solrj.io.eval;
 
 import java.io.IOException;
-import java.util.Locale;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -27,44 +27,42 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class SumColumnsEvaluator extends RecursiveObjectEvaluator implements OneValueWorker {
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
 
-	public SumColumnsEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
+  public SumColumnsEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory);
 
-		if (1 != containedEvaluators.size()) {
-			throw new IOException(
-					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 1 value but found %d",
-							expression, containedEvaluators.size()));
-		}
-	}
+    if(1 != containedEvaluators.size()){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 1 value but found %d",expression,containedEvaluators.size()));
+    }
+  }
 
-	@Override
-	public Object doWork(Object value) throws IOException {
-		if (null == value) {
-			return null;
-		} else if (value instanceof Matrix) {
+  @Override
+  public Object doWork(Object value) throws IOException{
+    if(null == value){
+      return null;
+    } else if (value instanceof Matrix) {
 
-			// First transpose the matrix
-			Matrix matrix = (Matrix) value;
-			double[][] data = matrix.getData();
-			RealMatrix realMatrix = new Array2DRowRealMatrix(data, false);
+      //First transpose the matrix
+      Matrix matrix = (Matrix) value;
+      double[][] data = matrix.getData();
+      RealMatrix realMatrix = new Array2DRowRealMatrix(data, false);
 
-			List<Number> sums = new ArrayList<>(data[0].length);
+      List<Number> sums = new ArrayList<>(data[0].length);
 
-			for (int i = 0; i < data[0].length; i++) {
-				double sum = 0;
-				double[] col = realMatrix.getColumn(i);
-				for (int j = 0; j < col.length; j++) {
-					sum += col[j];
-				}
+      for(int i=0; i<data[0].length; i++) {
+        double sum = 0;
+        double[] col = realMatrix.getColumn(i);
+        for(int j=0; j<col.length; j++){
+          sum+=col[j];
+        }
 
-				sums.add(sum);
-			}
+        sums.add(sum);
+      }
 
-			return sums;
-		} else {
-			throw new IOException("Grand sum function only operates on a matrix");
-		}
-	}
+      return sums;
+    } else {
+      throw new IOException("Grand sum function only operates on a matrix");
+    }
+  }
 }

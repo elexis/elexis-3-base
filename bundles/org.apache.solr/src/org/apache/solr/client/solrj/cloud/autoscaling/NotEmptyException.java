@@ -18,18 +18,19 @@ package org.apache.solr.client.solrj.cloud.autoscaling;
 
 /**
  *
+ * @deprecated to be removed in Solr 9.0 (see SOLR-14656)
  */
 public class NotEmptyException extends Exception {
 
-	private final String path;
+  private final String path;
 
-	public NotEmptyException(String path) {
-		super("Path not empty: " + path);
-		this.path = path;
-	}
+  public NotEmptyException(String path) {
+    super("Path not empty: " + path);
+    this.path = path;
+  }
 
-	public String getPath() {
-		return path;
-	}
+  public String getPath() {
+    return path;
+  }
 
 }

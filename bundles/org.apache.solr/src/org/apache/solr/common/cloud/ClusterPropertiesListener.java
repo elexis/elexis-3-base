@@ -20,21 +20,20 @@ package org.apache.solr.common.cloud;
 import java.util.Map;
 
 /**
- * Listener that can be used with
- * {@link ZkStateReader#registerClusterPropertiesListener(ClusterPropertiesListener)}
+ * Listener that can be used with {@link ZkStateReader#registerClusterPropertiesListener(ClusterPropertiesListener)}
  * and called whenever the cluster properties changes.
  */
 public interface ClusterPropertiesListener {
 
-	/**
-	 * Called when a change in the cluster properties occurs.
-	 *
-	 * Note that, due to the way Zookeeper watchers are implemented, a single call
-	 * may be the result of several state changes
-	 *
-	 * @param properties current cluster properties
-	 *
-	 * @return true if the listener should be removed
-	 */
-	boolean onChange(Map<String, Object> properties);
+  /**
+   * Called when a change in the cluster properties occurs.
+   *
+   * Note that, due to the way Zookeeper watchers are implemented, a single call may be
+   * the result of several state changes
+   *
+   * @param properties current cluster properties
+   *
+   * @return true if the listener should be removed
+   */
+  boolean onChange(Map<String, Object> properties);
 }

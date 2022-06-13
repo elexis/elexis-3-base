@@ -22,92 +22,93 @@ import java.io.Writer;
 import java.util.Arrays;
 
 /**
- * Use this to serialize an object into Json. This only supports standard
- * Objects and not the server-side Objects
+ * Use this to serialize an object into Json. This only supports standard Objects
+ * and not the server-side Objects
  */
 public class SolrJSONWriter implements JsonTextWriter {
-	// indent up to 40 spaces
-	static final char[] indentChars = new char[81];
+  // indent up to 40 spaces
+  static final char[] indentChars = new char[81];
 
-	static {
-		Arrays.fill(indentChars, ' ');
-		indentChars[0] = '\n'; // start with a newline
-	}
+  static {
+    Arrays.fill(indentChars, ' ');
+    indentChars[0] = '\n';  // start with a newline
+  }
 
-	final protected String namedListStyle;
-	final FastWriter writer;
-	protected int level;
-	protected boolean doIndent;
+  final protected String namedListStyle;
+  final FastWriter writer;
+  protected int level;
+  protected boolean doIndent;
 
-	public SolrJSONWriter(Writer writer) {
-		this(writer, JSON_NL_MAP);
-	}
+  public SolrJSONWriter(Writer writer) {
+    this(writer, JSON_NL_MAP);
+  }
 
-	public SolrJSONWriter(Writer writer, String namedListStyle) {
-		this.writer = writer == null ? null : FastWriter.wrap(writer);
-		this.namedListStyle = namedListStyle;
-	}
+  public SolrJSONWriter(Writer writer, String namedListStyle) {
+    this.writer = writer == null ? null : FastWriter.wrap(writer);
+    this.namedListStyle = namedListStyle;
+  }
 
-	public SolrJSONWriter writeObj(Object o) throws IOException {
-		writeVal(null, o);
-		return this;
-	}
+  public SolrJSONWriter writeObj(Object o) throws IOException {
+    writeVal(null, o);
+    return this;
+  }
 
-	/**
-	 * done with all writing
-	 */
-	public void close() throws IOException {
-		if (writer != null)
-			writer.flushBuffer();
-	}
+  /**
+   * done with all writing
+   */
+  public void close() throws IOException {
+    if (writer != null) writer.flushBuffer();
+  }
 
-	@Override
-	public String getNamedListStyle() {
-		return namedListStyle;
-	}
 
-	@Override
-	public void _writeChar(char c) throws IOException {
-		writer.write(c);
-	}
+  @Override
+  public String getNamedListStyle() {
+    return namedListStyle;
+  }
 
-	@Override
-	public void _writeStr(String s) throws IOException {
-		writer.write(s);
-	}
+  @Override
+  public void _writeChar(char c) throws IOException {
+    writer.write(c);
+  }
 
-	public void setLevel(int level) {
-		this.level = level;
-	}
+  @Override
+  public void _writeStr(String s) throws IOException {
+    writer.write(s);
+  }
 
-	public int level() {
-		return level;
-	}
 
-	@Override
-	public int incLevel() {
-		return ++level;
-	}
+  public void setLevel(int level) {
+    this.level = level;
+  }
 
-	@Override
-	public int decLevel() {
-		return --level;
-	}
+  public int level() {
+    return level;
+  }
 
-	@Override
-	public SolrJSONWriter setIndent(boolean doIndent) {
-		this.doIndent = doIndent;
-		return this;
-	}
+  @Override
+  public int incLevel() {
+    return ++level;
+  }
 
-	@Override
-	public boolean doIndent() {
-		return doIndent;
-	}
+  @Override
+  public int decLevel() {
+    return --level;
+  }
 
-	@Override
-	public Writer getWriter() {
-		return writer;
-	}
+  @Override
+  public SolrJSONWriter setIndent(boolean doIndent) {
+    this.doIndent = doIndent;
+    return this;
+  }
+
+  @Override
+  public boolean doIndent() {
+    return doIndent;
+  }
+
+  @Override
+  public Writer getWriter() {
+    return writer;
+  }
 
 }

@@ -17,8 +17,8 @@
 package org.apache.solr.client.solrj.io.stream;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.solr.client.solrj.io.ModelCache;
@@ -28,105 +28,104 @@ import org.apache.solr.client.solrj.routing.RequestReplicaListTransformerGenerat
 import org.apache.solr.common.params.SolrParams;
 
 /**
- * The StreamContext is passed to TupleStreams using the
- * TupleStream.setStreamContext() method. The StreamContext is used to pass
- * shared context to concentrically wrapped TupleStreams.
+ *  The StreamContext is passed to TupleStreams using the TupleStream.setStreamContext() method.
+ *  The StreamContext is used to pass shared context to concentrically wrapped TupleStreams.
  *
- * Note: The StreamContext contains the SolrClientCache which is used to cache
- * SolrClients for reuse across multiple TupleStreams.
+ *  Note: The StreamContext contains the SolrClientCache which is used to cache SolrClients for reuse
+ *  across multiple TupleStreams.
  **/
 
-public class StreamContext implements Serializable {
 
-	@SuppressWarnings({ "rawtypes" })
-	private Map entries = new HashMap();
-	@SuppressWarnings({ "rawtypes" })
-	private Map tupleContext = new HashMap();
-	private Map<String, Object> lets = new HashMap<>();
-	@SuppressWarnings({ "rawtypes" })
-	private ConcurrentMap objectCache;
-	public int workerID;
-	public int numWorkers;
-	private SolrClientCache clientCache;
-	private ModelCache modelCache;
-	private StreamFactory streamFactory;
-	private SolrParams requestParams;
-	private RequestReplicaListTransformerGenerator requestReplicaListTransformerGenerator;
+public class StreamContext implements Serializable{
 
-	@SuppressWarnings({ "rawtypes" })
-	public ConcurrentMap getObjectCache() {
-		return this.objectCache;
-	}
+  @SuppressWarnings({"rawtypes"})
+  private Map entries = new HashMap();
+  @SuppressWarnings({"rawtypes"})
+  private Map tupleContext = new HashMap();
+  private Map<String, Object> lets = new HashMap<>();
+  @SuppressWarnings({"rawtypes"})
+  private ConcurrentMap objectCache;
+  public int workerID;
+  public int numWorkers;
+  private SolrClientCache clientCache;
+  private ModelCache modelCache;
+  private StreamFactory streamFactory;
+  private SolrParams requestParams;
+  private RequestReplicaListTransformerGenerator requestReplicaListTransformerGenerator;
 
-	public void setObjectCache(@SuppressWarnings({ "rawtypes" }) ConcurrentMap objectCache) {
-		this.objectCache = objectCache;
-	}
+  @SuppressWarnings({"rawtypes"})
+  public ConcurrentMap getObjectCache() {
+    return this.objectCache;
+  }
 
-	public Map<String, Object> getLets() {
-		return lets;
-	}
+  public void setObjectCache(@SuppressWarnings({"rawtypes"})ConcurrentMap objectCache) {
+    this.objectCache = objectCache;
+  }
 
-	public Object get(Object key) {
-		return entries.get(key);
-	}
+  public Map<String, Object> getLets(){
+    return lets;
+  }
 
-	@SuppressWarnings({ "unchecked" })
-	public void put(Object key, Object value) {
-		this.entries.put(key, value);
-	}
+  public Object get(Object key) {
+    return entries.get(key);
+  }
 
-	public boolean containsKey(Object key) {
-		return entries.containsKey(key);
-	}
+  @SuppressWarnings({"unchecked"})
+  public void put(Object key, Object value) {
+    this.entries.put(key, value);
+  }
 
-	@SuppressWarnings({ "rawtypes" })
-	public Map getEntries() {
-		return this.entries;
-	}
+  public boolean containsKey(Object key) {
+    return entries.containsKey(key);
+  }
 
-	public void setSolrClientCache(SolrClientCache clientCache) {
-		this.clientCache = clientCache;
-	}
+  @SuppressWarnings({"rawtypes"})
+  public Map getEntries() {
+    return this.entries;
+  }
 
-	public void setModelCache(ModelCache modelCache) {
-		this.modelCache = modelCache;
-	}
+  public void setSolrClientCache(SolrClientCache clientCache) {
+    this.clientCache = clientCache;
+  }
 
-	public SolrClientCache getSolrClientCache() {
-		return this.clientCache;
-	}
+  public void setModelCache(ModelCache modelCache) {
+    this.modelCache = modelCache;
+  }
 
-	public ModelCache getModelCache() {
-		return this.modelCache;
-	}
+  public SolrClientCache getSolrClientCache() {
+    return this.clientCache;
+  }
 
-	public void setStreamFactory(StreamFactory streamFactory) {
-		this.streamFactory = streamFactory;
-	}
+  public ModelCache getModelCache() {
+    return this.modelCache;
+  }
 
-	@SuppressWarnings({ "rawtypes" })
-	public Map getTupleContext() {
-		return tupleContext;
-	}
+  public void setStreamFactory(StreamFactory streamFactory) {
+    this.streamFactory = streamFactory;
+  }
 
-	public StreamFactory getStreamFactory() {
-		return this.streamFactory;
-	}
+  @SuppressWarnings({"rawtypes"})
+  public Map getTupleContext() {
+    return tupleContext;
+  }
 
-	public void setRequestParams(SolrParams requestParams) {
-		this.requestParams = requestParams;
-	}
+  public StreamFactory getStreamFactory() {
+    return this.streamFactory;
+  }
 
-	public SolrParams getRequestParams() {
-		return requestParams;
-	}
+  public void setRequestParams(SolrParams requestParams) {
+    this.requestParams = requestParams;
+  }
 
-	public void setRequestReplicaListTransformerGenerator(
-			RequestReplicaListTransformerGenerator requestReplicaListTransformerGenerator) {
-		this.requestReplicaListTransformerGenerator = requestReplicaListTransformerGenerator;
-	}
+  public SolrParams getRequestParams() {
+    return requestParams;
+  }
 
-	public RequestReplicaListTransformerGenerator getRequestReplicaListTransformerGenerator() {
-		return requestReplicaListTransformerGenerator;
-	}
+  public void setRequestReplicaListTransformerGenerator(RequestReplicaListTransformerGenerator requestReplicaListTransformerGenerator) {
+    this.requestReplicaListTransformerGenerator = requestReplicaListTransformerGenerator;
+  }
+
+  public RequestReplicaListTransformerGenerator getRequestReplicaListTransformerGenerator() {
+    return requestReplicaListTransformerGenerator;
+  }
 }

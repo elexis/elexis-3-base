@@ -33,79 +33,81 @@ import org.apache.http.protocol.HttpContext;
 
 @SuppressWarnings("deprecation")
 public class SolrPortAwareCookieSpecFactory implements CookieSpecFactory, CookieSpecProvider {
-	public static final String POLICY_NAME = "solr-portaware";
-	private final CookieSpec cookieSpec;
+  public static final String POLICY_NAME = "solr-portaware";
+  private final CookieSpec cookieSpec;
 
-	public SolrPortAwareCookieSpecFactory(final String[] datepatterns) {
-		super();
-		this.cookieSpec = new PortAwareCookieSpec(datepatterns);
-	}
+  public SolrPortAwareCookieSpecFactory(final String[] datepatterns) {
+    super();
+    this.cookieSpec = new PortAwareCookieSpec(datepatterns);
+  }
 
-	public SolrPortAwareCookieSpecFactory() {
-		this(null);
-	}
+  public SolrPortAwareCookieSpecFactory() {
+    this(null);
+  }
 
-	@Override
-	public CookieSpec newInstance(final HttpParams params) {
-		if (params != null) {
-			String[] patterns = null;
-			final Collection<?> param = (Collection<?>) params.getParameter(CookieSpecPNames.DATE_PATTERNS);
-			if (param != null) {
-				patterns = new String[param.size()];
-				patterns = param.toArray(patterns);
-			}
-			return new PortAwareCookieSpec(patterns);
-		} else {
-			return new PortAwareCookieSpec(null);
-		}
-	}
+  @Override
+  public CookieSpec newInstance(final HttpParams params) {
+    if (params != null) {
+      String[] patterns = null;
+      final Collection<?> param = (Collection<?>) params.getParameter(
+          CookieSpecPNames.DATE_PATTERNS);
+      if (param != null) {
+        patterns = new String[param.size()];
+        patterns = param.toArray(patterns);
+      }
+      return new PortAwareCookieSpec(patterns);
+    } else {
+      return new PortAwareCookieSpec(null);
+    }
+  }
 
-	@Override
-	public CookieSpec create(final HttpContext context) {
-		return this.cookieSpec;
-	}
+  @Override
+  public CookieSpec create(final HttpContext context) {
+    return this.cookieSpec;
+  }
 
-	public static class PortAwareCookieSpec extends NetscapeDraftSpec {
-		public PortAwareCookieSpec(String patterns[]) {
-			super(patterns);
-			super.registerAttribHandler(ClientCookie.DOMAIN_ATTR, new PortAwareDomainHandler());
-		}
+  public static class PortAwareCookieSpec extends NetscapeDraftSpec {
+    public PortAwareCookieSpec(String patterns[]) {
+      super(patterns);
+      super.registerAttribHandler(ClientCookie.DOMAIN_ATTR, new PortAwareDomainHandler());
+    }
 
-		public PortAwareCookieSpec() {
-			this(null);
-		}
-	}
+    public PortAwareCookieSpec() {
+      this(null);
+    }
+  }
 
-	/**
-	 * A domain handler to validate and match cookies based on the domain and
-	 * origin. The domain is tested against host and port both, and if it doesn't
-	 * match, it delegates the handling to the base class' matching/validation
-	 * logic.
-	 */
-	public static class PortAwareDomainHandler extends NetscapeDomainHandler {
+  /**
+   * A domain handler to validate and match cookies based on the domain and origin.
+   * The domain is tested against host and port both, and if it doesn't match, it
+   * delegates the handling to the base class' matching/validation logic.
+   */
+  public static class PortAwareDomainHandler extends NetscapeDomainHandler {
 
-		public void validate(final Cookie cookie, final CookieOrigin origin) throws MalformedCookieException {
-			if (origin != null && origin.getHost() != null && cookie != null) {
-				String hostPort = origin.getHost() + ":" + origin.getPort();
-				String domain = cookie.getDomain();
+    public void validate(final Cookie cookie, final CookieOrigin origin)
+        throws MalformedCookieException {
+      if (origin != null && origin.getHost() != null && cookie != null) {
+        String hostPort = origin.getHost() + ":" + origin.getPort();
+        String domain = cookie.getDomain();
 
-				if (hostPort.equals(domain)) {
-					return;
-				}
-			}
-			super.validate(cookie, origin);
-		}
+        if (hostPort.equals(domain)) {
+          return;
+        }
+      }
+      super.validate(cookie, origin);
+    }
 
-		@Override
-		public boolean match(final Cookie cookie, final CookieOrigin origin) {
-			if (origin != null && origin.getHost() != null && cookie != null) {
-				String hostPort = origin.getHost() + ":" + origin.getPort();
-				String domain = cookie.getDomain();
-				if (hostPort.equals(domain)) {
-					return true;
-				}
-			}
-			return super.match(cookie, origin);
-		}
-	}
+    @Override
+    public boolean match(final Cookie cookie, final CookieOrigin origin) {
+      if (origin != null && origin.getHost() != null && cookie != null) {
+        String hostPort = origin.getHost() + ":" + origin.getPort();
+        String domain = cookie.getDomain();
+        if (hostPort.equals(domain)) {
+          return true;
+        }
+      }
+      return super.match(cookie, origin);
+    }
+  }
 }
+

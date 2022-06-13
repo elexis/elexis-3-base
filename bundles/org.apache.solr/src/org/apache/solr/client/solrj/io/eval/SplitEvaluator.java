@@ -25,31 +25,29 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class SplitEvaluator extends RecursiveObjectEvaluator implements TwoValueWorker {
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
 
-	public SplitEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
+  public SplitEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory);
 
-		if (2 != containedEvaluators.size()) {
-			throw new IOException(
-					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 2 values but found %d",
-							expression, containedEvaluators.size()));
-		}
-	}
+    if(2 != containedEvaluators.size()){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 2 values but found %d",expression,containedEvaluators.size()));
+    }
+  }
 
-	@Override
-	public Object doWork(Object value1, Object value2) {
-		if (null == value1) {
-			return null;
-		}
-		String s = value1.toString();
-		String p = value2.toString();
-		String[] tokens = s.split(p, -1);
-		List<String> strings = new ArrayList<>(tokens.length);
-		for (String tok : tokens) {
-			strings.add(tok);
-		}
+  @Override
+  public Object doWork(Object value1, Object value2){
+    if(null == value1){
+      return null;
+    }
+    String s = value1.toString();
+    String p = value2.toString();
+    String[] tokens = s.split(p, -1);
+    List<String> strings = new ArrayList<>(tokens.length);
+    for(String tok : tokens) {
+      strings.add(tok);
+    }
 
-		return strings;
-	}
+    return strings;
+  }
 }

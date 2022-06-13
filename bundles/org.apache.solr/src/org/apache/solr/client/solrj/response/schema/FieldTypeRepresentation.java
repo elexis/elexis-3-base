@@ -21,26 +21,26 @@ import java.util.List;
 import org.apache.solr.client.solrj.request.schema.FieldTypeDefinition;
 
 public class FieldTypeRepresentation extends FieldTypeDefinition {
-	private List<String> fields;
+  private List<String> fields;
 
-	private List<String> dynamicFields;
+  private List<String> dynamicFields;
 
-	public FieldTypeRepresentation() {
-	}
+  public FieldTypeRepresentation() {
+  }
 
-	public List<String> getFields() {
-		return fields;
-	}
+  public List<String> getFields() {
+    return fields;
+  }
 
-	public void setFields(List<String> fields) {
-		this.fields = fields;
-	}
+  public void setFields(List<String> fields) {
+    this.fields = fields;
+  }
 
-	public List<String> getDynamicFields() {
-		return dynamicFields;
-	}
+  public List<String> getDynamicFields() {
+    return dynamicFields;
+  }
 
-	public void setDynamicFields(List<String> dynamicFields) {
-		this.dynamicFields = dynamicFields;
-	}
+  public void setDynamicFields(List<String> dynamicFields) {
+    this.dynamicFields = dynamicFields;
+  }
 }

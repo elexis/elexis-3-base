@@ -25,39 +25,37 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class MatchesEvaluator extends RecursiveBooleanEvaluator implements ManyValueWorker {
-	protected static final long serialVersionUID = 1L;
-	private Pattern pattern;
+  protected static final long serialVersionUID = 1L;
+  private Pattern pattern;
 
-	public MatchesEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
+  public MatchesEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory);
 
-		if (containedEvaluators.size() != 2) {
-			throw new IOException(
-					String.format(Locale.ROOT, "Invalid expression %s - expecting two parameters but found %d",
-							expression, containedEvaluators.size()));
-		}
-	}
+    if(containedEvaluators.size() != 2){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting two parameters but found %d",expression,containedEvaluators.size()));
+    }
+  }
 
-	public Object doWork(Object... values) throws IOException {
-		if (values[1] instanceof String) {
-			String s = values[0].toString();
-			if (pattern == null) {
-				String p = (String) values[1];
-				pattern = Pattern.compile(p.replace("\"", ""));
-			}
+  public Object doWork(Object... values) throws IOException {
+    if(values[1] instanceof String) {
+      String s = values[0].toString();
+      if(pattern == null) {
+        String p = (String) values[1];
+        pattern = Pattern.compile(p.replace("\"", ""));
+      }
 
-			if (s.startsWith("\"")) {
-				s = s.replace("\"", "");
-			}
+      if(s.startsWith("\"")) {
+        s = s.replace("\"", "");
+      }
 
-			Matcher matcher = pattern.matcher(s);
-			return matcher.find();
-		} else {
-			throw new IOException("The matches function requires a String regex");
-		}
-	}
+      Matcher matcher = pattern.matcher(s);
+      return matcher.find();
+    } else {
+      throw new IOException("The matches function requires a String regex");
+    }
+  }
 
-	protected Checker constructChecker(Object value) throws IOException {
-		return null;
-	}
+  protected Checker constructChecker(Object value) throws IOException {
+    return null;
+  }
 }

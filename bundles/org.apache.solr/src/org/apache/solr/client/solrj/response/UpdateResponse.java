@@ -16,12 +16,14 @@
  */
 package org.apache.solr.client.solrj.response;
 
+
 /**
  * TODO -- mostly a stub until we have a defined output format
- *
+ * 
  *
  * @since solr 1.3
  */
-public class UpdateResponse extends SolrResponseBase {
-	// nothing special now...
+public class UpdateResponse extends SolrResponseBase
+{
+  // nothing special now...
 }

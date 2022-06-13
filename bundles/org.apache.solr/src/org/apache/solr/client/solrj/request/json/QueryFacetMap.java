@@ -25,17 +25,15 @@ import java.util.Map;
  * Ready for use in {@link JsonQueryRequest#withFacet(String, Map)}
  */
 public class QueryFacetMap extends JsonFacetMap<QueryFacetMap> {
-	public QueryFacetMap(String queryString) {
-		super("query");
+  public QueryFacetMap(String queryString) {
+    super("query");
 
-		if (queryString == null) {
-			throw new IllegalArgumentException("Parameter 'queryString' must be non-null");
-		}
-		put("q", queryString);
-	}
+    if (queryString == null) {
+      throw new IllegalArgumentException("Parameter 'queryString' must be non-null");
+    }
+    put("q", queryString);
+  }
 
-	@Override
-	public QueryFacetMap getThis() {
-		return this;
-	}
+  @Override
+  public QueryFacetMap getThis() { return this; }
 }

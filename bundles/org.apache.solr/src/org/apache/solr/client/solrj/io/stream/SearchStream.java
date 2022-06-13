@@ -50,222 +50,221 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
-public class SearchStream extends TupleStream implements Expressible {
+public class SearchStream extends TupleStream implements Expressible  {
 
-	private String zkHost;
-	private ModifiableSolrParams params;
-	private String collection;
-	protected transient SolrClientCache cache;
-	protected transient CloudSolrClient cloudSolrClient;
-	private Iterator<SolrDocument> documentIterator;
-	protected StreamComparator comp;
+  private String zkHost;
+  private ModifiableSolrParams params;
+  private String collection;
+  protected transient SolrClientCache cache;
+  protected transient CloudSolrClient cloudSolrClient;
+  private Iterator<SolrDocument> documentIterator;
+  protected StreamComparator comp;
 
-	public SearchStream() {
-	}
+  public SearchStream() {}
 
-	public SearchStream(StreamExpression expression, StreamFactory factory) throws IOException {
-		// grab all parameters out
-		String collectionName = factory.getValueOperand(expression, 0);
-		List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
-		StreamExpressionNamedParameter zkHostExpression = factory.getNamedOperand(expression, "zkHost");
 
-		// Collection Name
-		if (null == collectionName) {
-			throw new IOException(String.format(Locale.ROOT,
-					"invalid expression %s - collectionName expected as first operand", expression));
-		}
+  public SearchStream(StreamExpression expression, StreamFactory factory) throws IOException{
+    // grab all parameters out
+    String collectionName = factory.getValueOperand(expression, 0);
+    List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
+    StreamExpressionNamedParameter zkHostExpression = factory.getNamedOperand(expression, "zkHost");
 
-		// Named parameters - passed directly to solr as solrparams
-		if (0 == namedParams.size()) {
-			throw new IOException(String.format(Locale.ROOT,
-					"invalid expression %s - at least one named parameter expected. eg. 'q=*:*'", expression));
-		}
 
-		// pull out known named params
-		ModifiableSolrParams params = new ModifiableSolrParams();
-		for (StreamExpressionNamedParameter namedParam : namedParams) {
-			if (!namedParam.getName().equals("zkHost") && !namedParam.getName().equals("buckets")
-					&& !namedParam.getName().equals("bucketSorts") && !namedParam.getName().equals("limit")) {
-				params.add(namedParam.getName(), namedParam.getParameter().toString().trim());
-			}
-		}
+    // Collection Name
+    if(null == collectionName){
+      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - collectionName expected as first operand",expression));
+    }
 
-		// zkHost, optional - if not provided then will look into factory list to get
-		String zkHost = null;
-		if (null == zkHostExpression) {
-			zkHost = factory.getCollectionZkHost(collectionName);
-			if (zkHost == null) {
-				zkHost = factory.getDefaultZkHost();
-			}
-		} else if (zkHostExpression.getParameter() instanceof StreamExpressionValue) {
-			zkHost = ((StreamExpressionValue) zkHostExpression.getParameter()).getValue();
-		}
-		if (null == zkHost) {
-			throw new IOException(String.format(Locale.ROOT,
-					"invalid expression %s - zkHost not found for collection '%s'", expression, collectionName));
-		}
+    // Named parameters - passed directly to solr as solrparams
+    if(0 == namedParams.size()){
+      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - at least one named parameter expected. eg. 'q=*:*'",expression));
+    }
 
-		// We've got all the required items
-		init(zkHost, collectionName, params);
-	}
+    // pull out known named params
+    ModifiableSolrParams params = new ModifiableSolrParams();
+    for(StreamExpressionNamedParameter namedParam : namedParams){
+      if(!namedParam.getName().equals("zkHost") && !namedParam.getName().equals("buckets") && !namedParam.getName().equals("bucketSorts") && !namedParam.getName().equals("limit")){
+        params.add(namedParam.getName(), namedParam.getParameter().toString().trim());
+      }
+    }
 
-	void init(String zkHost, String collection, ModifiableSolrParams params) throws IOException {
-		this.zkHost = zkHost;
-		this.params = params;
+    // zkHost, optional - if not provided then will look into factory list to get
+    String zkHost = null;
+    if(null == zkHostExpression){
+      zkHost = factory.getCollectionZkHost(collectionName);
+      if(zkHost == null) {
+        zkHost = factory.getDefaultZkHost();
+      }
+    }
+    else if(zkHostExpression.getParameter() instanceof StreamExpressionValue){
+      zkHost = ((StreamExpressionValue)zkHostExpression.getParameter()).getValue();
+    }
+    if(null == zkHost){
+      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - zkHost not found for collection '%s'",expression,collectionName));
+    }
 
-		if (this.params.get(CommonParams.Q) == null) {
-			this.params.add(CommonParams.Q, "*:*");
-		}
-		this.collection = collection;
-		if (params.get(CommonParams.SORT) != null) {
-			this.comp = parseComp(params.get(CommonParams.SORT), params.get(CommonParams.FL));
-		}
-	}
+    // We've got all the required items
+    init(zkHost, collectionName, params);
+  }
 
-	@Override
-	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-		// function name
-		StreamExpression expression = new StreamExpression("search");
+  void init(String zkHost, String collection, ModifiableSolrParams params) throws IOException {
+    this.zkHost  = zkHost;
+    this.params   = params;
 
-		// collection
-		if (collection.indexOf(',') > -1) {
-			expression.addParameter("\"" + collection + "\"");
-		} else {
-			expression.addParameter(collection);
-		}
+    if(this.params.get(CommonParams.Q) == null) {
+      this.params.add(CommonParams.Q, "*:*");
+    }
+    this.collection = collection;
+    if(params.get(CommonParams.SORT) != null) {
+      this.comp = parseComp(params.get(CommonParams.SORT), params.get(CommonParams.FL));
+    }
+  }
 
-		for (Entry<String, String[]> param : params.getMap().entrySet()) {
-			for (String val : param.getValue()) {
-				// SOLR-8409: Escaping the " is a special case.
-				// Do note that in any other BASE streams with parameters where a " might come
-				// into play
-				// that this same replacement needs to take place.
-				expression.addParameter(new StreamExpressionNamedParameter(param.getKey(), val.replace("\"", "\\\"")));
-			}
-		}
+  @Override
+  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+    // function name
+    StreamExpression expression = new StreamExpression("search");
 
-		// zkHost
-		expression.addParameter(new StreamExpressionNamedParameter("zkHost", zkHost));
+    // collection
+    if(collection.indexOf(',') > -1) {
+      expression.addParameter("\""+collection+"\"");
+    } else {
+      expression.addParameter(collection);
+    }
 
-		return expression;
-	}
+    for (Entry<String, String[]> param : params.getMap().entrySet()) {
+      for (String val : param.getValue()) {
+        // SOLR-8409: Escaping the " is a special case.
+        // Do note that in any other BASE streams with parameters where a " might come into play
+        // that this same replacement needs to take place.
+        expression.addParameter(new StreamExpressionNamedParameter(param.getKey(),
+            val.replace("\"", "\\\"")));
+      }
+    }
 
-	@Override
-	public Explanation toExplanation(StreamFactory factory) throws IOException {
+    // zkHost
+    expression.addParameter(new StreamExpressionNamedParameter("zkHost", zkHost));
 
-		StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
+    return expression;
+  }
 
-		explanation.setFunctionName("search");
-		explanation.setImplementingClass(this.getClass().getName());
-		explanation.setExpressionType(ExpressionType.STREAM_SOURCE);
-		explanation.setExpression(toExpression(factory).toString());
+  @Override
+  public Explanation toExplanation(StreamFactory factory) throws IOException {
 
-		// child is a datastore so add it at this point
-		StreamExplanation child = new StreamExplanation(getStreamNodeId() + "-datastore");
-		child.setFunctionName(String.format(Locale.ROOT, "solr (%s)", collection));
-		child.setImplementingClass("Solr/Lucene");
-		child.setExpressionType(ExpressionType.DATASTORE);
+    StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
 
-		explanation.addChild(child);
+    explanation.setFunctionName("search");
+    explanation.setImplementingClass(this.getClass().getName());
+    explanation.setExpressionType(ExpressionType.STREAM_SOURCE);
+    explanation.setExpression(toExpression(factory).toString());
 
-		return explanation;
-	}
+    // child is a datastore so add it at this point
+    StreamExplanation child = new StreamExplanation(getStreamNodeId() + "-datastore");
+    child.setFunctionName(String.format(Locale.ROOT, "solr (%s)", collection));
+    child.setImplementingClass("Solr/Lucene");
+    child.setExpressionType(ExpressionType.DATASTORE);
 
-	public void setStreamContext(StreamContext context) {
-		cache = context.getSolrClientCache();
-	}
+    explanation.addChild(child);
 
-	public List<TupleStream> children() {
-		List<TupleStream> l = new ArrayList<>();
-		return l;
-	}
+    return explanation;
+  }
 
-	public void open() throws IOException {
-		if (cache != null) {
-			cloudSolrClient = cache.getCloudSolrClient(zkHost);
-		} else {
-			final List<String> hosts = new ArrayList<>();
-			hosts.add(zkHost);
-			cloudSolrClient = new CloudSolrClient.Builder(hosts, Optional.empty()).build();
-		}
+  public void setStreamContext(StreamContext context) {
+    cache = context.getSolrClientCache();
+  }
 
-		QueryRequest request = new QueryRequest(params, SolrRequest.METHOD.POST);
-		try {
-			QueryResponse response = request.process(cloudSolrClient, collection);
-			SolrDocumentList docs = response.getResults();
-			documentIterator = docs.iterator();
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
-	}
+  public List<TupleStream> children() {
+    List<TupleStream> l =  new ArrayList<>();
+    return l;
+  }
 
-	public void close() throws IOException {
-		if (cache == null) {
-			cloudSolrClient.close();
-		}
-	}
+  public void open() throws IOException {
+    if(cache != null) {
+      cloudSolrClient = cache.getCloudSolrClient(zkHost);
+    } else {
+      final List<String> hosts = new ArrayList<>();
+      hosts.add(zkHost);
+      cloudSolrClient = new CloudSolrClient.Builder(hosts, Optional.empty()).build();
+    }
 
-	public Tuple read() throws IOException {
-		if (documentIterator.hasNext()) {
-			Tuple tuple = new Tuple();
-			SolrDocument doc = documentIterator.next();
-			for (Entry<String, Object> entry : doc.entrySet()) {
-				tuple.put(entry.getKey(), entry.getValue());
-			}
-			return tuple;
-		} else {
-			return Tuple.EOF();
-		}
-	}
 
-	public int getCost() {
-		return 0;
-	}
+    QueryRequest request = new QueryRequest(params, SolrRequest.METHOD.POST);
+    try {
+      QueryResponse response = request.process(cloudSolrClient, collection);
+      SolrDocumentList docs = response.getResults();
+      documentIterator = docs.iterator();
+    } catch (Exception e) {
+      throw new IOException(e);
+    }
+  }
 
-	@Override
-	public StreamComparator getStreamSort() {
-		return comp;
-	}
+  public void close() throws IOException {
+    if(cache == null) {
+      cloudSolrClient.close();
+    }
+  }
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private StreamComparator parseComp(String sort, String fl) throws IOException {
+  public Tuple read() throws IOException {
+    if(documentIterator.hasNext()) {
+      Tuple tuple = new Tuple();
+      SolrDocument doc = documentIterator.next();
+      for(Entry<String, Object> entry : doc.entrySet()) {
+        tuple.put(entry.getKey(), entry.getValue());
+      }
+      return tuple;
+    } else {
+      return Tuple.EOF();
+    }
+  }
 
-		HashSet fieldSet = null;
 
-		if (fl != null) {
-			fieldSet = new HashSet();
-			String[] fls = fl.split(",");
-			for (String f : fls) {
-				fieldSet.add(f.trim()); // Handle spaces in the field list.
-			}
-		}
+  public int getCost() {
+    return 0;
+  }
 
-		String[] sorts = sort.split(",");
-		StreamComparator[] comps = new StreamComparator[sorts.length];
-		for (int i = 0; i < sorts.length; i++) {
-			String s = sorts[i];
+  @Override
+  public StreamComparator getStreamSort() {
+    return comp;
+  }
 
-			String[] spec = s.trim().split("\\s+"); // This should take into account spaces in the sort spec.
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private StreamComparator parseComp(String sort, String fl) throws IOException {
 
-			if (spec.length != 2) {
-				throw new IOException("Invalid sort spec:" + s);
-			}
+    HashSet fieldSet = null;
 
-			String fieldName = spec[0].trim();
-			String order = spec[1].trim();
+    if(fl != null) {
+      fieldSet = new HashSet();
+      String[] fls = fl.split(",");
+      for (String f : fls) {
+        fieldSet.add(f.trim()); //Handle spaces in the field list.
+      }
+    }
 
-			if (fieldSet != null && !fieldSet.contains(spec[0])) {
-				throw new IOException("Fields in the sort spec must be included in the field list:" + spec[0]);
-			}
+    String[] sorts = sort.split(",");
+    StreamComparator[] comps = new StreamComparator[sorts.length];
+    for(int i=0; i<sorts.length; i++) {
+      String s = sorts[i];
 
-			comps[i] = new FieldComparator(fieldName,
-					order.equalsIgnoreCase("asc") ? ComparatorOrder.ASCENDING : ComparatorOrder.DESCENDING);
-		}
+      String[] spec = s.trim().split("\\s+"); //This should take into account spaces in the sort spec.
 
-		if (comps.length > 1) {
-			return new MultipleFieldComparator(comps);
-		} else {
-			return comps[0];
-		}
-	}
+      if (spec.length != 2) {
+        throw new IOException("Invalid sort spec:" + s);
+      }
+
+      String fieldName = spec[0].trim();
+      String order = spec[1].trim();
+
+      if(fieldSet != null && !fieldSet.contains(spec[0])) {
+        throw new IOException("Fields in the sort spec must be included in the field list:"+spec[0]);
+      }
+
+      comps[i] = new FieldComparator(fieldName, order.equalsIgnoreCase("asc") ? ComparatorOrder.ASCENDING : ComparatorOrder.DESCENDING);
+    }
+
+    if(comps.length > 1) {
+      return new MultipleFieldComparator(comps);
+    } else {
+      return comps[0];
+    }
+  }
 }

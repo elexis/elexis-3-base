@@ -23,84 +23,85 @@ import org.apache.solr.client.solrj.request.schema.FieldTypeDefinition;
 
 public class SchemaRepresentation {
 
-	private String name;
+  private String name;
 
-	private float version;
+  private float version;
 
-	private String uniqueKey;
+  private String uniqueKey;
 
-	private Map<String, Object> similarity;
+  private Map<String, Object> similarity;
 
-	private List<Map<String, Object>> fields;
+  private List<Map<String, Object>> fields;
 
-	private List<Map<String, Object>> dynamicFields;
+  private List<Map<String, Object>> dynamicFields;
 
-	private List<FieldTypeDefinition> fieldTypes;
+  private List<FieldTypeDefinition> fieldTypes;
 
-	private List<Map<String, Object>> copyFields;
+  private List<Map<String, Object>> copyFields;
 
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public float getVersion() {
-		return version;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setVersion(float version) {
-		this.version = version;
-	}
+  public float getVersion() {
+    return version;
+  }
 
-	public String getUniqueKey() {
-		return uniqueKey;
-	}
+  public void setVersion(float version) {
+    this.version = version;
+  }
 
-	public void setUniqueKey(String uniqueKey) {
-		this.uniqueKey = uniqueKey;
-	}
+  public String getUniqueKey() {
+    return uniqueKey;
+  }
 
-	public Map<String, Object> getSimilarity() {
-		return similarity;
-	}
+  public void setUniqueKey(String uniqueKey) {
+    this.uniqueKey = uniqueKey;
+  }
 
-	public void setSimilarity(Map<String, Object> similarity) {
-		this.similarity = similarity;
-	}
+  public Map<String, Object> getSimilarity() {
+    return similarity;
+  }
 
-	public List<Map<String, Object>> getFields() {
-		return fields;
-	}
+  public void setSimilarity(Map<String, Object> similarity) {
+    this.similarity = similarity;
+  }
 
-	public void setFields(List<Map<String, Object>> fields) {
-		this.fields = fields;
-	}
+  public List<Map<String, Object>> getFields() {
+    return fields;
+  }
 
-	public List<Map<String, Object>> getDynamicFields() {
-		return dynamicFields;
-	}
+  public void setFields(List<Map<String, Object>> fields) {
+    this.fields = fields;
+  }
 
-	public void setDynamicFields(List<Map<String, Object>> dynamicFields) {
-		this.dynamicFields = dynamicFields;
-	}
+  public List<Map<String, Object>> getDynamicFields() {
+    return dynamicFields;
+  }
 
-	public List<FieldTypeDefinition> getFieldTypes() {
-		return fieldTypes;
-	}
+  public void setDynamicFields(List<Map<String, Object>> dynamicFields) {
+    this.dynamicFields = dynamicFields;
+  }
 
-	public void setFieldTypes(List<FieldTypeDefinition> fieldTypes) {
-		this.fieldTypes = fieldTypes;
-	}
+  public List<FieldTypeDefinition> getFieldTypes() {
+    return fieldTypes;
+  }
 
-	public List<Map<String, Object>> getCopyFields() {
-		return copyFields;
-	}
+  public void setFieldTypes(List<FieldTypeDefinition> fieldTypes) {
+    this.fieldTypes = fieldTypes;
+  }
 
-	public void setCopyFields(List<Map<String, Object>> copyFields) {
-		this.copyFields = copyFields;
-	}
+  public List<Map<String, Object>> getCopyFields() {
+    return copyFields;
+  }
+
+  public void setCopyFields(List<Map<String, Object>> copyFields) {
+    this.copyFields = copyFields;
+  }
 
 }

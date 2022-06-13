@@ -27,25 +27,26 @@ import org.apache.solr.common.util.NamedList;
  */
 public class InputStreamResponseParser extends ResponseParser {
 
-	private final String writerType;
+  private final String writerType;
 
-	public InputStreamResponseParser(String writerType) {
-		this.writerType = writerType;
-	}
+  public InputStreamResponseParser(String writerType) {
+    this.writerType = writerType;
+  }
 
-	@Override
-	public String getWriterType() {
-		return writerType;
-	}
+  @Override
+  public String getWriterType() {
+    return writerType;
+  }
 
-	@Override
-	public NamedList<Object> processResponse(Reader reader) {
-		throw new UnsupportedOperationException();
-	}
+  @Override
+  public NamedList<Object> processResponse(Reader reader) {
+    throw new UnsupportedOperationException();
+  }
 
-	@Override
-	public NamedList<Object> processResponse(InputStream body, String encoding) {
-		throw new UnsupportedOperationException();
-	}
+  @Override
+  public NamedList<Object> processResponse(InputStream body, String encoding) {
+    throw new UnsupportedOperationException();
+  }
 
 }
+

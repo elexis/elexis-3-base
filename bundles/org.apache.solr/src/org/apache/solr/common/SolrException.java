@@ -20,8 +20,8 @@ import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.solr.common.util.NamedList;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -31,233 +31,303 @@ import org.slf4j.MDC;
  */
 public class SolrException extends RuntimeException {
 
-	public static final String ROOT_ERROR_CLASS = "root-error-class";
-	public static final String ERROR_CLASS = "error-class";
-	final private Map<String, String> mdcContext;
+  public static final String ROOT_ERROR_CLASS = "root-error-class";
+  public static final String ERROR_CLASS = "error-class";
+  final private Map<String, String> mdcContext;
 
-	/**
-	 * This list of valid HTTP Status error codes that Solr may return in the case
-	 * of a "Server Side" error.
-	 *
-	 * @since solr 1.2
-	 */
-	public enum ErrorCode {
-		BAD_REQUEST(400), UNAUTHORIZED(401), FORBIDDEN(403), NOT_FOUND(404), CONFLICT(409), UNSUPPORTED_MEDIA_TYPE(415),
-		SERVER_ERROR(500), SERVICE_UNAVAILABLE(503), INVALID_STATE(510), UNKNOWN(0);
+  /**
+   * This list of valid HTTP Status error codes that Solr may return in 
+   * the case of a "Server Side" error.
+   *
+   * @since solr 1.2
+   */
+  public enum ErrorCode {
+    BAD_REQUEST( 400 ),
+    UNAUTHORIZED( 401 ),
+    FORBIDDEN( 403 ),
+    NOT_FOUND( 404 ),
+    CONFLICT( 409 ),
+    UNSUPPORTED_MEDIA_TYPE( 415 ),
+    SERVER_ERROR( 500 ),
+    SERVICE_UNAVAILABLE( 503 ),
+    INVALID_STATE( 510 ),
+    UNKNOWN(0);
+    public final int code;
+    
+    private ErrorCode( int c )
+    {
+      code = c;
+    }
+    public static ErrorCode getErrorCode(int c){
+      for (ErrorCode err : values()) {
+        if(err.code == c) return err;
+      }
+      return UNKNOWN;
+    }
+  };
 
-		public final int code;
+  public SolrException(ErrorCode code, String msg) {
+    super(msg);
+    this.code = code.code;
+    this.mdcContext = MDC.getCopyOfContextMap();
+  }
+  public SolrException(ErrorCode code, String msg, Throwable th) {
+    super(msg, th);
+    this.code = code.code;
+    this.mdcContext = MDC.getCopyOfContextMap();
+  }
 
-		private ErrorCode(int c) {
-			code = c;
-		}
+  public SolrException(ErrorCode code, Throwable th) {
+    super(th);
+    this.code = code.code;
+    this.mdcContext = MDC.getCopyOfContextMap();
+  }
 
-		public static ErrorCode getErrorCode(int c) {
-			for (ErrorCode err : values()) {
-				if (err.code == c)
-					return err;
-			}
-			return UNKNOWN;
-		}
-	};
+  /**
+   * Constructor that can set arbitrary http status code. Not for 
+   * use in Solr, but may be used by clients in subclasses to capture 
+   * errors returned by the servlet container or other HTTP proxies.
+   */
+  protected SolrException(int code, String msg, Throwable th) {
+    super(msg, th);
+    this.code = code;
+    this.mdcContext = MDC.getCopyOfContextMap();
+  }
+  
+  int code=0;
+  protected NamedList<String> metadata;
 
-	public SolrException(ErrorCode code, String msg) {
-		super(msg);
-		this.code = code.code;
-		this.mdcContext = MDC.getCopyOfContextMap();
-	}
+  /**
+   * The HTTP Status code associated with this Exception.  For SolrExceptions 
+   * thrown by Solr "Server Side", this should valid {@link ErrorCode}, 
+   * however client side exceptions may contain an arbitrary error code based 
+   * on the behavior of the Servlet Container hosting Solr, or any HTTP 
+   * Proxies that may exist between the client and the server.
+   *
+   * @return The HTTP Status code associated with this Exception
+   */
+  public int code() { return code; }
 
-	public SolrException(ErrorCode code, String msg, Throwable th) {
-		super(msg, th);
-		this.code = code.code;
-		this.mdcContext = MDC.getCopyOfContextMap();
-	}
+  public void setMetadata(NamedList<String> metadata) {
+    this.metadata = metadata;
+  }
 
-	public SolrException(ErrorCode code, Throwable th) {
-		super(th);
-		this.code = code.code;
-		this.mdcContext = MDC.getCopyOfContextMap();
-	}
+  public NamedList<String> getMetadata() {
+    return metadata;
+  }
 
-	/**
-	 * Constructor that can set arbitrary http status code. Not for use in Solr, but
-	 * may be used by clients in subclasses to capture errors returned by the
-	 * servlet container or other HTTP proxies.
-	 */
-	protected SolrException(int code, String msg, Throwable th) {
-		super(msg, th);
-		this.code = code;
-		this.mdcContext = MDC.getCopyOfContextMap();
-	}
+  public String getMetadata(String key) {
+    return (metadata != null && key != null) ? metadata.get(key) : null;
+  }
 
-	int code = 0;
-	protected NamedList<String> metadata;
+  public void setMetadata(String key, String value) {
+    if (key == null || value == null)
+      throw new IllegalArgumentException("Exception metadata cannot be null!");
 
-	/**
-	 * The HTTP Status code associated with this Exception. For SolrExceptions
-	 * thrown by Solr "Server Side", this should valid {@link ErrorCode}, however
-	 * client side exceptions may contain an arbitrary error code based on the
-	 * behavior of the Servlet Container hosting Solr, or any HTTP Proxies that may
-	 * exist between the client and the server.
-	 *
-	 * @return The HTTP Status code associated with this Exception
-	 */
-	public int code() {
-		return code;
-	}
+    if (metadata == null)
+      metadata = new NamedList<String>();
+    metadata.add(key, value);
+  }
+  
+  public String getThrowable() {
+    return getMetadata(ERROR_CLASS);
+  }
 
-	public void setMetadata(NamedList<String> metadata) {
-		this.metadata = metadata;
-	}
+  public String getRootThrowable() {
+    return getMetadata(ROOT_ERROR_CLASS);
+  }
 
-	public NamedList<String> getMetadata() {
-		return metadata;
-	}
+  /** 
+   * This method was initially created to aid in testing situations that were known to cause ERRORs.  It should no longer be used by any new code.
+   *
+   * @see #ignorePatterns 
+   * @deprecated Use the Logger directly
+   */
+  @Deprecated
+  public void log(Logger log) {
+    log(log,this);
+  }
+  
+  /** 
+   * This method was initially created to aid in testing situations that were known to cause ERRORs.  It should no longer be used by any new code.
+   *
+   * @see #ignorePatterns 
+   * @deprecated Use the Logger directly
+   */
+  @Deprecated
+  public static void log(Logger log, Throwable e) {
+    if (log.isErrorEnabled()) {
+      String ignore = doIgnoreToStr(null, e);
+      if (ignore != null) {
+        log.info(ignore);
+        return;
+      }
+      log.error(e.toString(), e); // nowarn (we are inside of isErrorEnabled, toString as msg is ok)
+    }
+  }
 
-	public String getMetadata(String key) {
-		return (metadata != null && key != null) ? metadata.get(key) : null;
-	}
+  /** 
+   * This method was initially created to aid in testing situations that were known to cause ERRORs.  It should no longer be used by any new code.
+   *
+   * @see #ignorePatterns 
+   * @deprecated Use the Logger directly
+   */
+  @Deprecated
+  public static void log(Logger log, String msg, Throwable e) {
+    if (log.isErrorEnabled()) {
+      String ignore = doIgnoreToStr(msg, e);
+      if (ignore != null) {
+        log.info(ignore);
+        return;
+      }
+      log.error(msg, e);
+    }
+  }
+  
+  /** 
+   * This method was initially created to aid in testing situations that were known to cause ERRORs.  It should no longer be used by any new code.
+   *
+   * @see #ignorePatterns 
+   * @deprecated Use the Logger directly
+   */
+  @Deprecated
+  public static void log(Logger log, String msg) {
+    if (log.isErrorEnabled()) {
+      String ignore = doIgnoreToStr(msg, null);
+      if (ignore != null) {
+        log.info(ignore);
+        return;
+      }
+      log.error(msg);
+    }
+  }
 
-	public void setMetadata(String key, String value) {
-		if (key == null || value == null)
-			throw new IllegalArgumentException("Exception metadata cannot be null!");
+  /** 
+   * This method was initially created to aid in testing situations that were known to cause ERRORs.  It should no longer be used by any new code.
+   *
+   * @see #ignorePatterns 
+   * @deprecated use {@link Throwable#printStackTrace} directly
+   */
+  @Deprecated
+  public static String toStr(Throwable e) {
+    CharArrayWriter cw = new CharArrayWriter();
+    PrintWriter pw = new PrintWriter(cw);
+    e.printStackTrace(pw);
+    pw.flush();
+    return cw.toString();
+  }
 
-		if (metadata == null)
-			metadata = new NamedList<String>();
-		metadata.add(key, value);
-	}
+  /**
+   * For test code: If non-null, prevents calls to {@link #log} from logging any msg or exception (stack trace) that matches an included regular expressions.
+   *
+   * A {@link java.util.concurrent.CopyOnWriteArraySet is recommended}.
+   *
+   * @deprecated use <code>ErrorLogMuter</code> in Solr test-framework.
+   */
+  @Deprecated
+  public static Set<String> ignorePatterns;
 
-	public String getThrowable() {
-		return getMetadata(ERROR_CLASS);
-	}
+  /** 
+   * Returns null if this exception does not match any ignore patterns; or an INFO message string to log instead if it does.
+   *
+   * @param t the original exception (only used for assertion checking)
+   * @param stacktrace the stringified stack trace of the exception, used for the acutal regex checking
+   * @see #ignorePatterns
+   * @see #toStr
+   * @deprecated use <code>ErrorLogMuter</code> in Solr test-framework.
+   */
+  @Deprecated
+  public static String doIgnore(Throwable t, String stacktrace) { 
+    if (t != null && t instanceof AssertionError) return null;
+    
+    Set<String> ignorePatterns = SolrException.ignorePatterns; // guard against races, albeit unlikely
+    // legacy public API: caller is required to have already stringified exception...
+    return doIgnoreToStr(ignorePatterns, stacktrace, null);
+  }
 
-	public String getRootThrowable() {
-		return getMetadata(ROOT_ERROR_CLASS);
-	}
+  /** 
+   * @see #doIgnoreToStr(Set, String, Throwable) 
+   * @deprecated Not needed once {@link #ignorePatterns} is removed
+   */
+  @Deprecated
+  private static String doIgnoreToStr(String msg, Throwable t) {
+    if (t != null && t instanceof AssertionError) return null;
+    
+    Set<String> ignorePatterns = SolrException.ignorePatterns; // guard against races, albeit unlikely
+    return doIgnoreToStr(ignorePatterns, msg, t);
+  }
+  
+  /** 
+   * Returns null if the stringToCheck + exceptionToCheck does not match any of the ignore patterns; 
+   * or an INFO message string to log instead if it does.
+   *
+   * @param ignorePats patterns to match against
+   * @param stringToCheck arbitrary string to check against each ignore pattern
+   * @param exceptionToCheck if non-null, will be stringified and concatenated with stringToCheck before testing patterns
+   * @see #ignorePatterns
+   * @see #toStr
+   * @deprecated Not needed once {@link #ignorePatterns} is removed
+   */
+  @Deprecated
+  private static String doIgnoreToStr(Set<String> ignorePats, String stringToCheck, Throwable exceptionToCheck) {
+    if (null == ignorePats) return null;
+    
+    // we have some patterns, so we can't avoid stringifying exception for checks.
+    if (null != exceptionToCheck) {
+      // legacy concat of msg + throwable...
+      stringToCheck = (null == stringToCheck ? "" : stringToCheck+':') + toStr(exceptionToCheck);
+    }
+    
+    for (String regex : ignorePats) {
+      Pattern pattern = Pattern.compile(regex); // TODO why do we compile late; why not up-front?
+      
+      if (pattern.matcher(stringToCheck).find()) return "Ignoring exception matching " + regex;
+    }
 
-	public void log(Logger log) {
-		log(log, this);
-	}
+    return null;
+  }
+  
+    public static Throwable getRootCause(Throwable t) {
+    while (true) {
+      Throwable cause = t.getCause();
+      if (cause!=null) {
+        t = cause;
+      } else {
+        break;
+      }
+    }
+    return t;
+  }
 
-	public static void log(Logger log, Throwable e) {
-		String stackTrace = toStr(e);
-		String ignore = doIgnore(e, stackTrace);
-		if (ignore != null) {
-			log.info(ignore);
-			return;
-		}
-		log.error(stackTrace);
+  @SuppressWarnings({"unchecked"})
+  public void logInfoWithMdc(Logger logger, String msg) {
+    Map<String, String> previousMdcContext = MDC.getCopyOfContextMap();
+    MDC.setContextMap(mdcContext);
+    try {
+      logger.info(msg);
+    } finally{
+      MDC.setContextMap(previousMdcContext);
+    }
+  }
 
-	}
+  public void logDebugWithMdc(Logger logger, String msg) {
+    Map<String, String> previousMdcContext = MDC.getCopyOfContextMap();
+    MDC.setContextMap(mdcContext);
+    try {
+      logger.debug(msg);
+    } finally{
+      MDC.setContextMap(previousMdcContext);
+    }
+  }
 
-	public static void log(Logger log, String msg, Throwable e) {
-		String stackTrace = msg + ':' + toStr(e);
-		String ignore = doIgnore(e, stackTrace);
-		if (ignore != null) {
-			log.info(ignore);
-			return;
-		}
-		log.error(stackTrace);
-	}
-
-	public static void log(Logger log, String msg) {
-		String ignore = doIgnore(null, msg);
-		if (ignore != null) {
-			log.info(ignore);
-			return;
-		}
-		log.error(msg);
-	}
-
-	// public String toString() { return toStr(this); } // oops, inf loop
-	@Override
-	public String toString() {
-		return super.toString();
-	}
-
-	public static String toStr(Throwable e) {
-		CharArrayWriter cw = new CharArrayWriter();
-		PrintWriter pw = new PrintWriter(cw);
-		e.printStackTrace(pw);
-		pw.flush();
-		return cw.toString();
-
-		/**
-		 * This doesn't work for some reason!!!!! StringWriter sw = new StringWriter();
-		 * PrintWriter pw = new PrintWriter(sw); e.printStackTrace(pw); pw.flush();
-		 * System.out.println("The STRING:" + sw.toString()); return sw.toString();
-		 **/
-	}
-
-	/**
-	 * For test code - do not log exceptions that match any of these regular
-	 * expressions. A {@link java.util.concurrent.CopyOnWriteArraySet is
-	 * recommended}.
-	 */
-	public static Set<String> ignorePatterns;
-
-	/**
-	 * Returns null if this exception does not match any ignore patterns, or a
-	 * message string to use if it does.
-	 */
-	public static String doIgnore(Throwable t, String m) {
-		Set<String> ignorePatterns = SolrException.ignorePatterns; // guard against races, albeit unlikely
-		if (ignorePatterns == null || m == null)
-			return null;
-		if (t != null && t instanceof AssertionError)
-			return null;
-
-		for (String regex : ignorePatterns) {
-			Pattern pattern = Pattern.compile(regex); // TODO why do we compile late; why not up-front?
-			Matcher matcher = pattern.matcher(m);
-
-			if (matcher.find())
-				return "Ignoring exception matching " + regex;
-		}
-
-		return null;
-	}
-
-	public static Throwable getRootCause(Throwable t) {
-		while (true) {
-			Throwable cause = t.getCause();
-			if (cause != null) {
-				t = cause;
-			} else {
-				break;
-			}
-		}
-		return t;
-	}
-
-	@SuppressWarnings({ "unchecked" })
-	public void logInfoWithMdc(Logger logger, String msg) {
-		Map<String, String> previousMdcContext = MDC.getCopyOfContextMap();
-		MDC.setContextMap(mdcContext);
-		try {
-			logger.info(msg);
-		} finally {
-			MDC.setContextMap(previousMdcContext);
-		}
-	}
-
-	public void logDebugWithMdc(Logger logger, String msg) {
-		Map<String, String> previousMdcContext = MDC.getCopyOfContextMap();
-		MDC.setContextMap(mdcContext);
-		try {
-			logger.debug(msg);
-		} finally {
-			MDC.setContextMap(previousMdcContext);
-		}
-	}
-
-	public void logWarnWithMdc(Logger logger, String msg) {
-		Map<String, String> previousMdcContext = MDC.getCopyOfContextMap();
-		MDC.setContextMap(mdcContext);
-		try {
-			logger.warn(msg);
-		} finally {
-			MDC.setContextMap(previousMdcContext);
-		}
-	}
+  public void logWarnWithMdc(Logger logger, String msg) {
+    Map<String, String> previousMdcContext = MDC.getCopyOfContextMap();
+    MDC.setContextMap(mdcContext);
+    try {
+      logger.warn(msg);
+    } finally{
+      MDC.setContextMap(previousMdcContext);
+    }
+  }
 
 }

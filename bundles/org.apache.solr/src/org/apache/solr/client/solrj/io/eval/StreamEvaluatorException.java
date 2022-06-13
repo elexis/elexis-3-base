@@ -20,13 +20,13 @@ import java.util.Locale;
 
 public class StreamEvaluatorException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	public StreamEvaluatorException(String message, Object... args) {
-		super(String.format(Locale.ROOT, message, args));
-	}
-
-	public StreamEvaluatorException(Throwable cause, String message, Object... args) {
-		super(String.format(Locale.ROOT, message, args), cause);
-	}
+  public StreamEvaluatorException(String message, Object ... args){
+    super(String.format(Locale.ROOT, message, args));
+  }
+  
+  public StreamEvaluatorException(Throwable cause, String message, Object ... args){
+    super(String.format(Locale.ROOT, message, args), cause);
+  }
 }

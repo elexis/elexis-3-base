@@ -20,5 +20,5 @@ package org.apache.solr.client.solrj.io.stream.expr;
  * Base interface of a stream parameter
  */
 public interface StreamExpressionParameter {
-
+  
 }

@@ -15,56 +15,56 @@
  * limitations under the License.
  */
 package org.apache.solr.client.solrj.io.comp;
-
 import java.io.Serializable;
 
 public class HashKey implements Serializable {
 
-	private static final long serialVersionUID = 1;
+  private static final long serialVersionUID = 1;
 
-	private Object[] parts;
+  private Object[] parts;
 
-	public HashKey(String value) {
-		parts = value.split("::");
-	}
 
-	public HashKey(Object[] parts) {
-		this.parts = parts;
-	}
+  public HashKey(String value) {
+    parts = value.split("::");
+  }
 
-	public Object[] getParts() {
-		return parts;
-	}
+  public HashKey(Object[] parts) {
+    this.parts = parts;
+  }
 
-	public int hashCode() {
-		int h = 0;
-		for (Object o : parts) {
-			h += o.hashCode();
-		}
+  public Object[] getParts() {
+    return parts;
+  }
 
-		return h;
-	}
+  public int hashCode() {
+    int h = 0;
+    for(Object o : parts) {
+      h+=o.hashCode();
+    }
 
-	public boolean equals(Object o) {
-		HashKey h = (HashKey) o;
-		for (int i = 0; i < parts.length; i++) {
-			if (!parts[i].equals(h.parts[i])) {
-				return false;
-			}
-		}
+    return h;
+  }
 
-		return true;
-	}
+  public boolean equals(Object o) {
+    HashKey h = (HashKey)o;
+    for(int i=0; i<parts.length; i++) {
+      if(!parts[i].equals(h.parts[i])) {
+        return false;
+      }
+    }
 
-	public String toString() {
-		StringBuilder buf = new StringBuilder();
-		for (int i = 0; i < parts.length; i++) {
-			if (i > 0) {
-				buf.append("::");
-			}
-			buf.append(parts[i].toString());
-		}
+    return true;
+  }
 
-		return buf.toString();
-	}
+  public String toString() {
+    StringBuilder buf = new StringBuilder();
+    for(int i=0; i<parts.length; i++) {
+      if(i > 0) {
+        buf.append("::");
+      }
+      buf.append(parts[i].toString());
+    }
+
+    return buf.toString();
+  }
 }

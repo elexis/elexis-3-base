@@ -21,108 +21,104 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents the result of a group command. This can be the result
- * of the following parameter:
+ * This class represents the result of a group command.
+ * This can be the result of the following parameter:
  * <ul>
- * <li>group.field
- * <li>group.func
- * <li>group.query
+ *   <li> group.field
+ *   <li> group.func
+ *   <li> group.query
  * </ul>
  *
  * An instance of this class contains:
  * <ul>
- * <li>The name of this command. This can be the field, function or query
- * grouped by.
- * <li>The total number of documents that have matched.
- * <li>The total number of groups that have matched.
- * <li>The groups to be displayed. Depending on the start and rows parameter.
+ *   <li> The name of this command. This can be the field, function or query grouped by.
+ *   <li> The total number of documents that have matched.
+ *   <li> The total number of groups that have matched.
+ *   <li> The groups to be displayed. Depending on the start and rows parameter.
  * </ul>
  *
- * In case of <code>group.query</code> only one group is present and ngroups is
- * always <code>null</code>.
+ * In case of <code>group.query</code> only one group is present and ngroups is always <code>null</code>.
  *
  * @since solr 3.4
  */
 public class GroupCommand implements Serializable {
 
-	private final String _name;
-	private final List<Group> _values = new ArrayList<>();
-	private final int _matches;
-	private final Integer _ngroups;
+  private final String _name;
+  private final List<Group> _values = new ArrayList<>();
+  private final int _matches;
+  private final Integer _ngroups;
 
-	/**
-	 * Creates a GroupCommand instance
-	 *
-	 * @param name    The name of this command
-	 * @param matches The total number of documents found for this command
-	 */
-	public GroupCommand(String name, int matches) {
-		_name = name;
-		_matches = matches;
-		_ngroups = null;
-	}
+  /**
+   * Creates a GroupCommand instance
+   *
+   * @param name    The name of this command
+   * @param matches The total number of documents found for this command
+   */
+  public GroupCommand(String name, int matches) {
+    _name = name;
+    _matches = matches;
+    _ngroups = null;
+  }
 
-	/**
-	 * Creates a GroupCommand instance.
-	 *
-	 * @param name    The name of this command
-	 * @param matches The total number of documents found for this command
-	 * @param nGroups The total number of groups found for this command.
-	 */
-	public GroupCommand(String name, int matches, int nGroups) {
-		_name = name;
-		_matches = matches;
-		_ngroups = nGroups;
-	}
+  /**
+   * Creates a GroupCommand instance.
+   *
+   * @param name    The name of this command
+   * @param matches The total number of documents found for this command
+   * @param nGroups The total number of groups found for this command.
+   */
+  public GroupCommand(String name, int matches, int nGroups) {
+    _name = name;
+    _matches = matches;
+    _ngroups = nGroups;
+  }
 
-	/**
-	 * Returns the name of this command. This can be the field, function or query
-	 * grouped by.
-	 *
-	 * @return the name of this command
-	 */
-	public String getName() {
-		return _name;
-	}
+  /**
+   * Returns the name of this command. This can be the field, function or query grouped by.
+   *
+   * @return the name of this command
+   */
+  public String getName() {
+    return _name;
+  }
 
-	/**
-	 * Adds a group to this command.
-	 *
-	 * @param group A group to be added
-	 */
-	public void add(Group group) {
-		_values.add(group);
-	}
+  /**
+   * Adds a group to this command.
+   *
+   * @param group A group to be added
+   */
+  public void add(Group group) {
+    _values.add(group);
+  }
 
-	/**
-	 * Returns the groups to be displayed. The number of groups returned depend on
-	 * the <code>start</code> and <code>rows</code> parameters.
-	 *
-	 * @return the groups to be displayed.
-	 */
-	public List<Group> getValues() {
-		return _values;
-	}
+  /**
+   * Returns the groups to be displayed.
+   * The number of groups returned depend on the <code>start</code> and <code>rows</code> parameters.
+   *
+   * @return the groups to be displayed.
+   */
+  public List<Group> getValues() {
+    return _values;
+  }
 
-	/**
-	 * Returns the total number of documents found for this command.
-	 *
-	 * @return the total number of documents found for this command.
-	 */
-	public int getMatches() {
-		return _matches;
-	}
+  /**
+   * Returns the total number of documents found for this command.
+   *
+   * @return the total number of documents found for this command.
+   */
+  public int getMatches() {
+    return _matches;
+  }
 
-	/**
-	 * Returns the total number of groups found for this command. Returns
-	 * <code>null</code> if the <code>group.ngroups</code> parameter is unset or
-	 * <code>false</code> or if this is a group command query (parameter =
-	 * <code>group.query</code>).
-	 *
-	 * @return the total number of groups found for this command.
-	 */
-	public Integer getNGroups() {
-		return _ngroups;
-	}
+  /**
+   * Returns the total number of groups found for this command.
+   * Returns <code>null</code> if the <code>group.ngroups</code> parameter is unset or <code>false</code> or
+   * if this is a group command query (parameter = <code>group.query</code>).
+   *
+   * @return the total number of groups found for this command.
+   */
+  public Integer getNGroups() {
+    return _ngroups;
+  }
 
 }

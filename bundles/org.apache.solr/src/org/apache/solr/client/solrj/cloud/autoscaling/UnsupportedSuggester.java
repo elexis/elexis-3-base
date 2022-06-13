@@ -25,37 +25,39 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This suggester simply logs the request but does not produce any suggestions.
+ *
+ * @deprecated to be removed in Solr 9.0 (see SOLR-14656)
  */
 public class UnsupportedSuggester extends Suggester {
-	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-	private final CollectionParams.CollectionAction action;
+  private final CollectionParams.CollectionAction action;
 
-	public static UnsupportedSuggester get(Policy.Session session, CollectionParams.CollectionAction action) {
-		UnsupportedSuggester suggester = new UnsupportedSuggester(action);
-		suggester._init(session);
-		return suggester;
-	}
+  public static UnsupportedSuggester get(Policy.Session session, CollectionParams.CollectionAction action) {
+    UnsupportedSuggester suggester = new UnsupportedSuggester(action);
+    suggester._init(session);
+    return suggester;
+  }
 
-	public UnsupportedSuggester(CollectionParams.CollectionAction action) {
-		this.action = action;
-	}
+  public UnsupportedSuggester(CollectionParams.CollectionAction action) {
+    this.action = action;
+  }
 
-	@Override
-	public CollectionParams.CollectionAction getAction() {
-		return action;
-	}
+  @Override
+  public CollectionParams.CollectionAction getAction() {
+    return action;
+  }
 
-	@Override
-	@SuppressWarnings({ "rawtypes" })
-	SolrRequest init() {
-		log.warn("Unsupported suggester for action {} with hings {} - no suggestion available", action, hints);
-		return null;
-	}
+  @Override
+  @SuppressWarnings({"rawtypes"})
+  SolrRequest init() {
+    log.warn("Unsupported suggester for action {} with hings {} - no suggestion available", action, hints);
+    return null;
+  }
 
-	@Override
-	@SuppressWarnings({ "rawtypes" })
-	public SolrRequest getSuggestion() {
-		return null;
-	}
+  @Override
+  @SuppressWarnings({"rawtypes"})
+  public SolrRequest getSuggestion() {
+    return null;
+  }
 }

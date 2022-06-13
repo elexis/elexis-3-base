@@ -29,37 +29,36 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 import org.apache.solr.common.params.StreamParams;
 
 public class AnovaEvaluator extends RecursiveNumericListEvaluator implements ManyValueWorker {
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
+  
+  public AnovaEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory);
+    
+    if(containedEvaluators.size() < 1){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting at least one value but found %d",expression,containedEvaluators.size()));
+    }
+  }
 
-	public AnovaEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
-
-		if (containedEvaluators.size() < 1) {
-			throw new IOException(
-					String.format(Locale.ROOT, "Invalid expression %s - expecting at least one value but found %d",
-							expression, containedEvaluators.size()));
-		}
-	}
-
-	@Override
-	public Object doWork(Object... values) throws IOException {
-
-		// at this point we know every incoming value is an array of BigDecimals
-
-		@SuppressWarnings({ "unchecked" })
-		List<double[]> anovaInput = Arrays.stream(values)
-				// for each List, convert to double[]
-				.map(value -> ((List<Number>) value).stream().mapToDouble(Number::doubleValue).toArray())
-				// turn into List<double[]>
-				.collect(Collectors.toList());
-
-		OneWayAnova anova = new OneWayAnova();
-		double p = anova.anovaPValue(anovaInput);
-		double f = anova.anovaFValue(anovaInput);
-		Tuple tuple = new Tuple();
-		tuple.put(StreamParams.P_VALUE, p);
-		tuple.put("f-ratio", f);
-		return tuple;
-	}
+  @Override
+  public Object doWork(Object... values) throws IOException {
+    
+    // at this point we know every incoming value is an array of BigDecimals
+    
+    @SuppressWarnings({"unchecked"})
+    List<double[]> anovaInput = Arrays.stream(values)
+        // for each List, convert to double[]
+        .map(value -> ((List<Number>)value).stream().mapToDouble(Number::doubleValue).toArray())
+        // turn into List<double[]>
+        .collect(Collectors.toList());
+    
+    OneWayAnova anova = new OneWayAnova();
+    double p = anova.anovaPValue(anovaInput);
+    double f = anova.anovaFValue(anovaInput);
+    Tuple tuple = new Tuple();
+    tuple.put(StreamParams.P_VALUE, p);
+    tuple.put("f-ratio", f);
+    return tuple;
+  }
+  
 
 }

@@ -25,21 +25,20 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class ConstantDistributionEvaluator extends RecursiveNumericEvaluator implements OneValueWorker {
 
-	private static final long serialVersionUID = 1;
+  private static final long serialVersionUID = 1;
 
-	public ConstantDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
-	}
+  public ConstantDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+    super(expression, factory);
+  }
 
-	@Override
-	public Object doWork(Object first) throws IOException {
-		if (null == first) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
-					toExpression(constructingFactory)));
-		}
+  @Override
+  public Object doWork(Object first) throws IOException{
+    if(null == first){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
+    }
 
-		Number constant = (Number) first;
+    Number constant = (Number)first;
 
-		return new ConstantRealDistribution(constant.doubleValue());
-	}
+    return new ConstantRealDistribution(constant.doubleValue());
+  }
 }

@@ -23,43 +23,37 @@ import java.util.Map;
  *
  */
 public class MapSolrParams extends SolrParams {
-	protected final Map<String, String> map;
+  protected final Map<String,String> map;
 
-	public MapSolrParams(Map<String, String> map) {
-		this.map = map;
-	}
+  public MapSolrParams(Map<String,String> map) {
+    this.map = map;
+  }
 
-	@Override
-	public String get(String name) {
-		Object o = map.get(name);
-		if (o == null)
-			return null;
-		if (o instanceof String)
-			return (String) o;
-		if (o instanceof String[]) {
-			String[] strings = (String[]) o;
-			if (strings.length == 0)
-				return null;
-			return strings[0];
-		}
-		return String.valueOf(o);
-	}
+  @Override
+  public String get(String name) {
+    Object  o = map.get(name);
+    if(o == null) return null;
+    if (o instanceof String) return  (String) o;
+    if (o instanceof String[]) {
+      String[] strings = (String[]) o;
+      if(strings.length == 0) return null;
+      return strings[0];
+    }
+    return String.valueOf(o);
+  }
 
-	@Override
-	public String[] getParams(String name) {
-		Object val = map.get(name);
-		if (val instanceof String[])
-			return (String[]) val;
-		return val == null ? null : new String[] { String.valueOf(val) };
-	}
+  @Override
+  public String[] getParams(String name) {
+    Object val = map.get(name);
+    if (val instanceof String[]) return (String[]) val;
+    return val==null ? null : new String[]{String.valueOf(val)};
+  }
 
-	@Override
-	public Iterator<String> getParameterNamesIterator() {
-		return map.keySet().iterator();
-	}
+  @Override
+  public Iterator<String> getParameterNamesIterator() {
+    return map.keySet().iterator();
+  }
 
-	public Map<String, String> getMap() {
-		return map;
-	}
+  public Map<String,String> getMap() { return map; }
 
 }

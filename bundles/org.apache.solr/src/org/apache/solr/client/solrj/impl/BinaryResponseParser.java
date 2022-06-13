@@ -16,61 +16,61 @@
  */
 package org.apache.solr.client.solrj.impl;
 
-import org.apache.solr.client.solrj.ResponseParser;
-import org.apache.solr.common.SolrException;
-import org.apache.solr.common.util.NamedList;
-import org.apache.solr.common.util.JavaBinCodec;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+
+import org.apache.solr.client.solrj.ResponseParser;
+import org.apache.solr.common.SolrException;
+import org.apache.solr.common.util.JavaBinCodec;
+import org.apache.solr.common.util.NamedList;
 
 /**
  *
  * @since solr 1.3
  */
 public class BinaryResponseParser extends ResponseParser {
-	public static final String BINARY_CONTENT_TYPE = "application/octet-stream";
+  public static final String BINARY_CONTENT_TYPE = "application/octet-stream";
 
-	protected JavaBinCodec.StringCache stringCache;
+  protected JavaBinCodec.StringCache stringCache;
 
-	public BinaryResponseParser setStringCache(JavaBinCodec.StringCache cache) {
-		this.stringCache = cache;
-		return this;
-	}
+  public BinaryResponseParser setStringCache(JavaBinCodec.StringCache cache) {
+    this.stringCache = cache;
+    return this;
+  }
 
-	@Override
-	public String getWriterType() {
-		return "javabin";
-	}
+  @Override
+  public String getWriterType() {
+    return "javabin";
+  }
 
-	@Override
-	@SuppressWarnings({ "unchecked" })
-	public NamedList<Object> processResponse(InputStream body, String encoding) {
-		try {
-			return (NamedList<Object>) createCodec().unmarshal(body);
-		} catch (IOException e) {
-			throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "parsing error", e);
+  @Override
+  @SuppressWarnings({"unchecked"})
+  public NamedList<Object> processResponse(InputStream body, String encoding) {
+    try {
+      return (NamedList<Object>) createCodec().unmarshal(body);
+    } catch (IOException e) {
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "parsing error", e);
 
-		}
-	}
+    }
+  }
 
-	protected JavaBinCodec createCodec() {
-		return new JavaBinCodec(null, stringCache);
-	}
+  protected JavaBinCodec createCodec() {
+    return new JavaBinCodec(null, stringCache);
+  }
 
-	@Override
-	public String getContentType() {
-		return BINARY_CONTENT_TYPE;
-	}
+  @Override
+  public String getContentType() {
+    return BINARY_CONTENT_TYPE;
+  }
 
-	@Override
-	public String getVersion() {
-		return "2";
-	}
+  @Override
+  public String getVersion() {
+    return "2";
+  }
 
-	@Override
-	public NamedList<Object> processResponse(Reader reader) {
-		throw new RuntimeException("Cannot handle character stream");
-	}
+  @Override
+  public NamedList<Object> processResponse(Reader reader) {
+    throw new RuntimeException("Cannot handle character stream");
+  }
 }

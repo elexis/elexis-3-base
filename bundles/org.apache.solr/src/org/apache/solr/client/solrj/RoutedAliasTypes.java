@@ -17,32 +17,31 @@
 
 package org.apache.solr.client.solrj;
 
+
 /**
  * Types of Routed Alias supported.
  *
- * Routed Alias collections have a naming pattern of XYZ where X is the alias
- * name, Y is the separator prefix and Z is the data driven value distinguishing
- * the bucket.
+ * Routed Alias collections have a naming pattern of XYZ where X is the alias name, Y is the separator prefix and
+ * Z is the data driven value distinguishing the bucket.
  */
 public enum RoutedAliasTypes {
-	TIME {
-		@Override
-		public String getSeparatorPrefix() {
-			return "__TRA__";
-		}
-	},
-	CATEGORY {
-		@Override
-		public String getSeparatorPrefix() {
-			return "__CRA__";
-		}
-	},
-	DIMENSIONAL {
-		public String getSeparatorPrefix() {
-			throw new UnsupportedOperationException("dimensions within dimensions are not allowed");
-		}
-	};
-
-	public abstract String getSeparatorPrefix();
+  TIME {
+    @Override
+    public String getSeparatorPrefix() {
+      return "__TRA__";
+    }
+  },
+  CATEGORY {
+    @Override
+    public String getSeparatorPrefix() {
+      return "__CRA__";
+    }
+  },
+  DIMENSIONAL {
+    public String getSeparatorPrefix() {
+      throw new UnsupportedOperationException("dimensions within dimensions are not allowed");
+    }
+  };
+  public abstract String getSeparatorPrefix();
 
 }

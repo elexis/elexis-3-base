@@ -31,29 +31,29 @@ import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.protocol.HttpContext;
 
 /**
- * This HTTP request interceptor adds HTTP authentication credentials to every
- * outgoing request. This implementation is required since Solr client is not
- * capable of performing non preemptive authentication. By adding the Http
- * authentication credentials to every request, this interceptor enables
- * "preemptive" authentication.
+ * This HTTP request interceptor adds HTTP authentication credentials to every outgoing
+ * request. This implementation is required since Solr client is not capable of performing
+ * non preemptive authentication. By adding the Http authentication credentials to every request,
+ * this interceptor enables "preemptive" authentication.
  */
 public class PreemptiveAuth implements HttpRequestInterceptor {
-	private AuthScheme authScheme = null;
+  private AuthScheme authScheme = null;
 
-	public PreemptiveAuth(AuthScheme authScheme) {
-		this.authScheme = authScheme;
-	}
+  public PreemptiveAuth(AuthScheme authScheme) {
+    this.authScheme = authScheme;
+  }
 
-	@Override
-	public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
+  @Override
+  public void process(final HttpRequest request, final HttpContext context) throws HttpException,
+      IOException {
 
-		AuthState authState = (AuthState) context.getAttribute(ClientContext.TARGET_AUTH_STATE);
-		// If no auth scheme available yet, try to initialize it preemptively
-		if (authState.getAuthScheme() == null) {
-			CredentialsProvider credsProvider = (CredentialsProvider) context
-					.getAttribute(ClientContext.CREDS_PROVIDER);
-			Credentials creds = credsProvider.getCredentials(AuthScope.ANY);
-			authState.update(authScheme, creds);
-		}
-	}
+    AuthState authState = (AuthState) context.getAttribute(ClientContext.TARGET_AUTH_STATE);
+    // If no auth scheme available yet, try to initialize it preemptively
+    if (authState.getAuthScheme() == null) {
+      CredentialsProvider credsProvider = (CredentialsProvider) context
+          .getAttribute(ClientContext.CREDS_PROVIDER);
+      Credentials creds = credsProvider.getCredentials(AuthScope.ANY);
+      authState.update(authScheme, creds);
+    }
+  }
 }

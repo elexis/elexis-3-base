@@ -21,44 +21,45 @@ import java.io.IOException;
 
 import org.apache.solr.common.MapWriter;
 
+/**
+ *
+ * @deprecated to be removed in Solr 9.0 (see SOLR-14656)
+ */
 class RangeVal implements MapWriter {
-	final Number min, max, actual;
+  final Number min, max, actual;
 
-	RangeVal(Number min, Number max, Number actual) {
-		this.min = min;
-		this.max = max;
-		this.actual = actual;
-	}
+  RangeVal(Number min, Number max, Number actual) {
+    this.min = min;
+    this.max = max;
+    this.actual = actual;
+  }
 
-	public boolean match(Number testVal) {
-		if (testVal == null)
-			return false;
-		return Double.compare(testVal.doubleValue(), min.doubleValue()) >= 0
-				&& Double.compare(testVal.doubleValue(), max.doubleValue()) <= 0;
-	}
+  public boolean match(Number testVal) {
+    if (testVal == null) return false;
+    return Double.compare(testVal.doubleValue(), min.doubleValue()) >= 0 &&
+        Double.compare(testVal.doubleValue(), max.doubleValue()) <= 0;
+  }
 
-	public Double realDelta(double v) {
-		if (actual != null)
-			return v - actual.doubleValue();
-		else
-			return delta(v);
-	}
+  public Double realDelta(double v) {
+    if (actual != null) return v - actual.doubleValue();
+    else return delta(v);
+  }
 
-	public Double delta(double v) {
-		if (v >= max.doubleValue())
-			return v - max.doubleValue();
-		if (v <= min.doubleValue())
-			return v - min.doubleValue();
-		return 0d;
-	}
+  public Double delta(double v) {
+    if (v >= max.doubleValue()) return v - max.doubleValue();
+    if (v <= min.doubleValue()) return v - min.doubleValue();
+    return 0d;
+  }
 
-	@Override
-	public String toString() {
-		return jsonStr();
-	}
+  @Override
+  public String toString() {
+    return jsonStr();
+  }
 
-	@Override
-	public void writeMap(EntryWriter ew) throws IOException {
-		ew.put("min", min).put("max", max).putIfNotNull("actual", actual);
-	}
+  @Override
+  public void writeMap(EntryWriter ew) throws IOException {
+    ew.put("min", min)
+        .put("max", max)
+        .putIfNotNull("actual", actual);
+  }
 }

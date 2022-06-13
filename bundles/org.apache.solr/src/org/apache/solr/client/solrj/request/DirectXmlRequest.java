@@ -25,37 +25,38 @@ import org.apache.solr.common.params.SolrParams;
 
 /**
  * Send arbitrary XML to a request handler
- *
+ * 
  *
  * @since solr 1.3
  */
 public class DirectXmlRequest extends SolrRequest<UpdateResponse> implements IsUpdateRequest {
 
-	final String xml;
-	private SolrParams params;
+  final String xml;
+  private SolrParams params;
 
-	public DirectXmlRequest(String path, String body) {
-		super(METHOD.POST, path);
-		xml = body;
-	}
+  public DirectXmlRequest(String path, String body) {
+    super( METHOD.POST, path );
+    xml = body;
+  }
 
-	@Override
-	public RequestWriter.ContentWriter getContentWriter(String expectedType) {
-		return new StringPayloadContentWriter(xml, ClientUtils.TEXT_XML);
-	}
+  @Override
+  public RequestWriter.ContentWriter getContentWriter(String expectedType) {
+    return new StringPayloadContentWriter(xml, ClientUtils.TEXT_XML);
+  }
 
-	@Override
-	protected UpdateResponse createResponse(SolrClient client) {
-		return new UpdateResponse();
-	}
+  @Override
+  protected UpdateResponse createResponse(SolrClient client) {
+    return new UpdateResponse();
+  }
 
-	@Override
-	public SolrParams getParams() {
-		return params;
-	}
+  @Override
+  public SolrParams getParams() {
+    return params;
+  }
 
-	public void setParams(SolrParams params) {
-		this.params = params;
-	}
+
+  public void setParams(SolrParams params) {
+    this.params = params;
+  }
 
 }

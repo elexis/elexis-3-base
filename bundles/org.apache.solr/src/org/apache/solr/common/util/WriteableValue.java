@@ -21,5 +21,5 @@ import java.io.IOException;
 import org.apache.solr.common.util.JavaBinCodec.ObjectResolver;
 
 public abstract class WriteableValue implements ObjectResolver {
-	public abstract void write(String name, TextWriter writer) throws IOException;
+  public abstract void write(String name, TextWriter writer) throws IOException;
 }

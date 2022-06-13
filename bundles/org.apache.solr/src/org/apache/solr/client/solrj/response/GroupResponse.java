@@ -21,35 +21,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Overall grouping result. Contains a list of {@link GroupCommand} instances
- * that is the result of one the following parameters:
+ * Overall grouping result. Contains a list of {@link GroupCommand} instances that is the result of
+ * one the following parameters:
  * <ul>
- * <li>group.field
- * <li>group.func
- * <li>group.query
+ *   <li>group.field
+ *   <li>group.func
+ *   <li>group.query
  * </ul>
  *
  * @since solr 3.4
  */
 public class GroupResponse implements Serializable {
 
-	private final List<GroupCommand> _values = new ArrayList<>();
+  private final List<GroupCommand> _values = new ArrayList<>();
 
-	/**
-	 * Adds a grouping command to the response.
-	 *
-	 * @param command The grouping command to add
-	 */
-	public void add(GroupCommand command) {
-		_values.add(command);
-	}
+  /**
+   * Adds a grouping command to the response.
+   *
+   * @param command The grouping command to add
+   */
+  public void add(GroupCommand command) {
+    _values.add(command);
+  }
 
-	/**
-	 * Returns all grouping commands.
-	 *
-	 * @return all grouping commands
-	 */
-	public List<GroupCommand> getValues() {
-		return _values;
-	}
+  /**
+   * Returns all grouping commands.
+   *
+   * @return all grouping commands
+   */
+  public List<GroupCommand> getValues() {
+    return _values;
+  }
 }

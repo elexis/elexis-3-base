@@ -35,58 +35,60 @@ import org.slf4j.LoggerFactory;
  */
 public class ExceptionStream extends TupleStream {
 
-	private TupleStream stream;
-	private Exception openException;
-	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private TupleStream stream;
+  private Exception openException;
+  private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-	public ExceptionStream(TupleStream stream) {
-		this.stream = stream;
-	}
+  public ExceptionStream(TupleStream stream) {
+    this.stream = stream;
+  }
 
-	public List<TupleStream> children() {
-		return null;
-	}
+  public List<TupleStream> children() {
+    return null;
+  }
 
-	public void open() {
-		try {
-			stream.open();
-		} catch (Exception e) {
-			this.openException = e;
-		}
-	}
+  public void open() {
+    try {
+      stream.open();
+    } catch (Exception e) {
+      this.openException = e;
+    }
+  }
 
-	public Tuple read() {
-		if (openException != null) {
-			// There was an exception during the open.
-			SolrException.log(log, openException);
-			return Tuple.EXCEPTION(openException.getMessage(), true);
-		}
+  public Tuple read() {
+    if(openException != null) {
+      //There was an exception during the open.
+      SolrException.log(log, openException);
+      return Tuple.EXCEPTION(openException.getMessage(), true);
+    }
 
-		try {
-			return stream.read();
-		} catch (Exception e) {
-			SolrException.log(log, e);
-			return Tuple.EXCEPTION(e.getMessage(), true);
-		}
-	}
+    try {
+      return stream.read();
+    } catch (Exception e) {
+      SolrException.log(log, e);
+      return Tuple.EXCEPTION(e.getMessage(), true);
+    }
+  }
+  
+  @Override
+  public Explanation toExplanation(StreamFactory factory) throws IOException {
 
-	@Override
-	public Explanation toExplanation(StreamFactory factory) throws IOException {
+    return new StreamExplanation(getStreamNodeId().toString())
+      .withFunctionName("non-expressible")
+      .withImplementingClass(this.getClass().getName())
+      .withExpressionType(ExpressionType.STREAM_SOURCE)
+      .withExpression("non-expressible");
+  }
 
-		return new StreamExplanation(getStreamNodeId().toString()).withFunctionName("non-expressible")
-				.withImplementingClass(this.getClass().getName()).withExpressionType(ExpressionType.STREAM_SOURCE)
-				.withExpression("non-expressible");
-	}
+  public StreamComparator getStreamSort() {
+    return this.stream.getStreamSort();
+  }
 
-	public StreamComparator getStreamSort() {
-		return this.stream.getStreamSort();
-	}
+  public void close() throws IOException {
+    stream.close();
+  }
 
-	public void close() throws IOException {
-		stream.close();
-	}
-
-	public void setStreamContext(StreamContext context) {
-		this.stream.setStreamContext(context);
-	}
+  public void setStreamContext(StreamContext context) {
+    this.stream.setStreamContext(context);
+  }
 }

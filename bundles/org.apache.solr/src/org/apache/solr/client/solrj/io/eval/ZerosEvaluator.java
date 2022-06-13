@@ -25,25 +25,23 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class ZerosEvaluator extends RecursiveNumericEvaluator implements OneValueWorker {
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
 
-	public ZerosEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
+  public ZerosEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
+    super(expression, factory);
 
-		if (1 != containedEvaluators.size()) {
-			throw new IOException(
-					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 1 value but found %d",
-							expression, containedEvaluators.size()));
-		}
-	}
+    if(1 != containedEvaluators.size()){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 1 value but found %d",expression,containedEvaluators.size()));
+    }
+  }
 
-	@Override
-	public Object doWork(Object value) {
-		int size = ((Number) value).intValue();
-		List<Number> ones = new ArrayList<>();
-		for (int i = 0; i < size; i++) {
-			ones.add(0);
-		}
-		return ones;
-	}
+  @Override
+  public Object doWork(Object value){
+    int size = ((Number)value).intValue();
+    List<Number> ones = new ArrayList<>();
+    for(int i=0; i<size; i++) {
+      ones.add(0);
+    }
+    return ones;
+  }
 }

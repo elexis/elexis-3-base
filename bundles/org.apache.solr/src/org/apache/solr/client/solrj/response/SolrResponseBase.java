@@ -23,78 +23,79 @@ import org.apache.solr.common.MapWriter;
 import org.apache.solr.common.util.NamedList;
 
 /**
- *
+ * 
  *
  * @since solr 1.3
  */
-public class SolrResponseBase extends SolrResponse implements MapWriter {
-	private long elapsedTime = -1;
-	private NamedList<Object> response = null;
-	private String requestUrl = null;
+public class SolrResponseBase extends SolrResponse implements MapWriter
+{
+  private long elapsedTime = -1;
+  private NamedList<Object> response = null;
+  private String requestUrl = null;
 
-	@Override
-	public void writeMap(EntryWriter ew) throws IOException {
-		if (response != null)
-			response.writeMap(ew);
-	}
+  @Override
+  public void writeMap(EntryWriter ew) throws IOException {
+    if (response != null) response.writeMap(ew);
+  }
 
-	@Override
-	public long getElapsedTime() {
-		return elapsedTime;
-	}
+  @Override
+  public long getElapsedTime() {
+    return elapsedTime;
+  }
 
-	public void setElapsedTime(long elapsedTime) {
-		this.elapsedTime = elapsedTime;
-	}
+  public void setElapsedTime(long elapsedTime) {
+    this.elapsedTime = elapsedTime;
+  }
 
-	@Override
-	public NamedList<Object> getResponse() {
-		return response;
-	}
+  @Override
+  public NamedList<Object> getResponse() {
+    return response;
+  }
 
-	@Override
-	public void setResponse(NamedList<Object> response) {
-		this.response = response;
-	}
+  @Override
+  public void setResponse(NamedList<Object> response) {
+    this.response = response;
+  }
 
-	@Override
-	public String toString() {
-		return response.toString();
-	}
+  @Override
+  public String toString() {
+    return response.toString();
+  }
+  
+  @SuppressWarnings({"rawtypes"})
+  public NamedList getResponseHeader() {
+    return (NamedList) response.get("responseHeader");
+  }
+  
+  // these two methods are based on the logic in SolrCore.setResponseHeaderValues(...)
+  public int getStatus() {
+    @SuppressWarnings({"rawtypes"})
+    NamedList header = getResponseHeader();
+    if (header != null) {
+        return (Integer) header.get("status");
+    }
+    else {
+        return 0;
+    }
+  }
+  
+  public int getQTime() {
+    @SuppressWarnings({"rawtypes"})
+    NamedList header = getResponseHeader();
+    if (header != null) {
+        return (Integer) header.get("QTime");
+    }
+    else {
+        return 0;
+    }
+  }
 
-	@SuppressWarnings({ "rawtypes" })
-	public NamedList getResponseHeader() {
-		return (NamedList) response.get("responseHeader");
-	}
+  public String getRequestUrl() {
+    return requestUrl;
+  }
 
-	// these two methods are based on the logic in
-	// SolrCore.setResponseHeaderValues(...)
-	public int getStatus() {
-		@SuppressWarnings({ "rawtypes" })
-		NamedList header = getResponseHeader();
-		if (header != null) {
-			return (Integer) header.get("status");
-		} else {
-			return 0;
-		}
-	}
-
-	public int getQTime() {
-		@SuppressWarnings({ "rawtypes" })
-		NamedList header = getResponseHeader();
-		if (header != null) {
-			return (Integer) header.get("QTime");
-		} else {
-			return 0;
-		}
-	}
-
-	public String getRequestUrl() {
-		return requestUrl;
-	}
-
-	public void setRequestUrl(String requestUrl) {
-		this.requestUrl = requestUrl;
-	}
-
+  public void setRequestUrl(String requestUrl) {
+    this.requestUrl = requestUrl;
+  }
+  
 }

@@ -32,82 +32,79 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 
 public class DelegationTokenHttpSolrClient extends HttpSolrClient {
-	public final static String DELEGATION_TOKEN_PARAM = "delegation";
+  public final static String DELEGATION_TOKEN_PARAM = "delegation";
 
-	/**
-	 * Package protected constructor for use by
-	 * {@linkplain org.apache.solr.client.solrj.impl.HttpSolrClient.Builder}.
-	 *
-	 * @lucene.internal
-	 *
-	 * @deprecated use
-	 *             {@link DelegationTokenHttpSolrClient#DelegationTokenHttpSolrClient(HttpSolrClient.Builder)}
-	 *             instead, as it is a more extension/subclassing-friendly
-	 *             alternative
-	 */
-	@Deprecated
-	DelegationTokenHttpSolrClient(String baseURL, HttpClient client, ResponseParser parser, boolean allowCompression,
-			String delegationToken) {
-		super(baseURL, client, parser, allowCompression);
-		if (delegationToken == null) {
-			throw new IllegalArgumentException("Delegation token cannot be null");
-		}
-		setQueryParams(new TreeSet<>(Arrays.asList(DELEGATION_TOKEN_PARAM)));
-		invariantParams = new ModifiableSolrParams();
-		invariantParams.set(DELEGATION_TOKEN_PARAM, delegationToken);
-	}
+  /**
+   * Package protected constructor for use by 
+   * {@linkplain org.apache.solr.client.solrj.impl.HttpSolrClient.Builder}.
+   * @lucene.internal
+   * 
+   * @deprecated use {@link DelegationTokenHttpSolrClient#DelegationTokenHttpSolrClient(HttpSolrClient.Builder)} instead, as it is a more
+   * extension/subclassing-friendly alternative
+   */
+  @Deprecated
+  DelegationTokenHttpSolrClient(String baseURL,
+                                HttpClient client,
+                                ResponseParser parser,
+                                boolean allowCompression,
+                                String delegationToken) {
+    super(baseURL, client, parser, allowCompression);
+    if (delegationToken == null) {
+      throw new IllegalArgumentException("Delegation token cannot be null");
+    }
+    setQueryParams(new TreeSet<>(Arrays.asList(DELEGATION_TOKEN_PARAM)));
+    invariantParams = new ModifiableSolrParams();
+    invariantParams.set(DELEGATION_TOKEN_PARAM, delegationToken);
+  }
+  
+  protected DelegationTokenHttpSolrClient(Builder builder) {
+    super(builder);
+    setQueryParams(new TreeSet<>(Arrays.asList(DELEGATION_TOKEN_PARAM)));
+  }
 
-	protected DelegationTokenHttpSolrClient(Builder builder) {
-		super(builder);
-		setQueryParams(new TreeSet<>(Arrays.asList(DELEGATION_TOKEN_PARAM)));
-	}
+  /**
+   * This constructor is defined at "protected" scope. Ideally applications should
+   * use {@linkplain org.apache.solr.client.solrj.impl.HttpSolrClient.Builder} instance
+   * to configure this Solr client instance.
+   *
+   * @param baseURL The base url to communicate with the Solr server
+   * @param client Http client instance to use for communication
+   * @param parser Response parser instance to use to decode response from Solr server
+   * @param allowCompression Should compression be allowed ?
+   * @param invariantParams The parameters which should be passed with every request.
+   * 
+   * @deprecated use {@link DelegationTokenHttpSolrClient#DelegationTokenHttpSolrClient(HttpSolrClient.Builder)} instead, as it is a more
+   * extension/subclassing-friendly alternative
+   */
+  @Deprecated
+  protected DelegationTokenHttpSolrClient(String baseURL,
+      HttpClient client,
+      ResponseParser parser,
+      boolean allowCompression,
+      ModifiableSolrParams invariantParams) {
+    super(baseURL, client, parser, allowCompression, invariantParams);
 
-	/**
-	 * This constructor is defined at "protected" scope. Ideally applications should
-	 * use {@linkplain org.apache.solr.client.solrj.impl.HttpSolrClient.Builder}
-	 * instance to configure this Solr client instance.
-	 *
-	 * @param baseURL          The base url to communicate with the Solr server
-	 * @param client           Http client instance to use for communication
-	 * @param parser           Response parser instance to use to decode response
-	 *                         from Solr server
-	 * @param allowCompression Should compression be allowed ?
-	 * @param invariantParams  The parameters which should be passed with every
-	 *                         request.
-	 *
-	 * @deprecated use
-	 *             {@link DelegationTokenHttpSolrClient#DelegationTokenHttpSolrClient(HttpSolrClient.Builder)}
-	 *             instead, as it is a more extension/subclassing-friendly
-	 *             alternative
-	 */
-	@Deprecated
-	protected DelegationTokenHttpSolrClient(String baseURL, HttpClient client, ResponseParser parser,
-			boolean allowCompression, ModifiableSolrParams invariantParams) {
-		super(baseURL, client, parser, allowCompression, invariantParams);
+    setQueryParams(new TreeSet<>(Arrays.asList(DELEGATION_TOKEN_PARAM)));
+  }
 
-		setQueryParams(new TreeSet<>(Arrays.asList(DELEGATION_TOKEN_PARAM)));
-	}
+  @Override
+  protected HttpRequestBase createMethod(@SuppressWarnings({"rawtypes"})final SolrRequest request, String collection) throws IOException, SolrServerException {
+    SolrParams params = request.getParams();
+    if (params != null && params.getParams(DELEGATION_TOKEN_PARAM) != null) {
+      throw new IllegalArgumentException(DELEGATION_TOKEN_PARAM + " parameter not supported");
+    }
+    return super.createMethod(request, collection);
+  }
 
-	@Override
-	protected HttpRequestBase createMethod(@SuppressWarnings({ "rawtypes" }) final SolrRequest request,
-			String collection) throws IOException, SolrServerException {
-		SolrParams params = request.getParams();
-		if (params != null && params.getParams(DELEGATION_TOKEN_PARAM) != null) {
-			throw new IllegalArgumentException(DELEGATION_TOKEN_PARAM + " parameter not supported");
-		}
-		return super.createMethod(request, collection);
-	}
-
-	@Override
-	public void setQueryParams(Set<String> queryParams) {
-		queryParams = queryParams == null
-				? Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(DELEGATION_TOKEN_PARAM)))
-				: queryParams;
-		if (!queryParams.contains(DELEGATION_TOKEN_PARAM)) {
-			queryParams = new HashSet<String>(queryParams);
-			queryParams.add(DELEGATION_TOKEN_PARAM);
-			queryParams = Collections.unmodifiableSet(queryParams);
-		}
-		super.setQueryParams(queryParams);
-	}
+  @Override
+  public void setQueryParams(Set<String> queryParams) {
+    queryParams = queryParams == null ?
+        Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(DELEGATION_TOKEN_PARAM))): queryParams;
+    if (!queryParams.contains(DELEGATION_TOKEN_PARAM)) {
+      queryParams = new HashSet<String>(queryParams);
+      queryParams.add(DELEGATION_TOKEN_PARAM);
+      queryParams = Collections.unmodifiableSet(queryParams);
+    }
+    super.setQueryParams(queryParams);
+  }
 }

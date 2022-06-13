@@ -16,44 +16,44 @@
  */
 package org.apache.solr.client.solrj.io.eval;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings({"rawtypes"})
 public class VectorFunction extends ArrayList {
 
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
 
-	private Object function;
-	private Map context = new HashMap();
+  private Object function;
+  private Map context = new HashMap();
 
-	@SuppressWarnings({ "unchecked" })
-	public VectorFunction(Object function, double[] results) {
-		this.function = function;
-		for (double d : results) {
-			add(d);
-		}
-	}
+  @SuppressWarnings({"unchecked"})
+  public VectorFunction(Object function, double[] results) {
+    this.function = function;
+    for(double d : results) {
+      add(d);
+    }
+  }
 
-	@SuppressWarnings({ "unchecked" })
-	public VectorFunction(Object function, List<Number> values) {
-		this.function = function;
-		addAll(values);
-	}
+  @SuppressWarnings({"unchecked"})
+  public VectorFunction(Object function, List<Number> values) {
+    this.function = function;
+    addAll(values);
+  }
 
-	public Object getFunction() {
-		return this.function;
-	}
+  public Object getFunction() {
+    return this.function;
+  }
 
-	@SuppressWarnings({ "unchecked" })
-	public void addToContext(Object key, Object value) {
-		this.context.put(key, value);
-	}
+  @SuppressWarnings({"unchecked"})
+  public void addToContext(Object key, Object value) {
+    this.context.put(key, value);
+  }
 
-	public Object getFromContext(Object key) {
-		return this.context.get(key);
-	}
+  public Object getFromContext(Object key) {
+    return this.context.get(key);
+  }
 
 }

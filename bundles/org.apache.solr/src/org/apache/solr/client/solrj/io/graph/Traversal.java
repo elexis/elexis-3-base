@@ -17,80 +17,87 @@
 
 package org.apache.solr.client.solrj.io.graph;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.solr.client.solrj.io.Tuple;
-import java.util.*;
 
 public class Traversal {
 
-	private List<Map<String, Node>> graph = new ArrayList<>();
-	private List<String> fields = new ArrayList<>();
-	private List<String> collections = new ArrayList<>();
-	private Set<Scatter> scatter = new HashSet<>();
-	private Set<String> collectionSet = new HashSet<>();
-	private boolean trackTraversal;
-	private int depth;
+  private List<Map<String, Node>> graph = new ArrayList<>();
+  private List<String> fields = new ArrayList<>();
+  private List<String> collections = new ArrayList<>();
+  private Set<Scatter> scatter = new HashSet<>();
+  private Set<String> collectionSet = new HashSet<>();
+  private boolean trackTraversal;
+  private int depth;
 
-	public void addLevel(Map<String, Node> level, String collection, String field) {
-		graph.add(level);
-		collections.add(collection);
-		collectionSet.add(collection);
-		fields.add(field);
-		++depth;
-	}
+  public void addLevel(Map<String, Node> level, String collection, String field) {
+    graph.add(level);
+    collections.add(collection);
+    collectionSet.add(collection);
+    fields.add(field);
+    ++depth;
+  }
 
-	public int getDepth() {
-		return depth;
-	}
+  public int getDepth() {
+    return depth;
+  }
 
-	public boolean getTrackTraversal() {
-		return this.trackTraversal;
-	}
+  public boolean getTrackTraversal() {
+    return this.trackTraversal;
+  }
 
-	public boolean visited(String nodeId, String ancestorId, Tuple tuple) {
-		for (Map<String, Node> level : graph) {
-			Node node = level.get(nodeId);
-			if (node != null) {
-				node.add(depth + "^" + ancestorId, tuple);
-				return true;
-			}
-		}
-		return false;
-	}
+  public boolean visited(String nodeId, String ancestorId, Tuple tuple) {
+    for(Map<String, Node> level : graph) {
+      Node node = level.get(nodeId);
+      if(node != null) {
+        node.add(depth+"^"+ancestorId, tuple);
+        return true;
+      }
+    }
+    return false;
+  }
 
-	public boolean isMultiCollection() {
-		return collectionSet.size() > 1;
-	}
+  public boolean isMultiCollection() {
+    return collectionSet.size() > 1;
+  }
 
-	public List<Map<String, Node>> getGraph() {
-		return graph;
-	}
+  public List<Map<String, Node>> getGraph() {
+    return graph;
+  }
 
-	public void setScatter(Set<Scatter> scatter) {
-		this.scatter = scatter;
-	}
+  public void setScatter(Set<Scatter> scatter) {
+    this.scatter = scatter;
+  }
 
-	public Set<Scatter> getScatter() {
-		return this.scatter;
-	}
+  public Set<Scatter> getScatter() {
+    return this.scatter;
+  }
 
-	public void setTrackTraversal(boolean trackTraversal) {
-		this.trackTraversal = trackTraversal;
-	}
+  public void setTrackTraversal(boolean trackTraversal) {
+    this.trackTraversal = trackTraversal;
+  }
 
-	public List<String> getCollections() {
-		return this.collections;
-	}
+  public List<String> getCollections() {
+    return this.collections;
+  }
 
-	public List<String> getFields() {
-		return this.fields;
-	}
+  public List<String> getFields() {
+    return this.fields;
+  }
 
-	public enum Scatter {
-		BRANCHES, LEAVES;
-	}
+  public enum Scatter {
+    BRANCHES,
+    LEAVES;
+  }
 
-	@SuppressWarnings({ "unchecked" })
-	public Iterator<Tuple> iterator() {
-		return new TraversalIterator(this, scatter);
-	}
+  @SuppressWarnings({"unchecked"})
+  public Iterator<Tuple> iterator() {
+    return new TraversalIterator(this, scatter);
+  }
 }

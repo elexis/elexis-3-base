@@ -25,26 +25,24 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class BinomialDistributionEvaluator extends RecursiveNumericEvaluator implements TwoValueWorker {
 
-	private static final long serialVersionUID = 1;
+  private static final long serialVersionUID = 1;
 
-	public BinomialDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
-	}
+  public BinomialDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+    super(expression, factory);
+  }
 
-	@Override
-	public Object doWork(Object first, Object second) throws IOException {
-		if (null == first) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
-					toExpression(constructingFactory)));
-		}
-		if (null == second) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the second value",
-					toExpression(constructingFactory)));
-		}
+  @Override
+  public Object doWork(Object first, Object second) throws IOException{
+    if(null == first){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
+    }
+    if(null == second){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the second value",toExpression(constructingFactory)));
+    }
 
-		Number numberOfTrials = (Number) first;
-		Number successProb = (Number) second;
+    Number numberOfTrials = (Number)first;
+    Number successProb = (Number)second;
 
-		return new BinomialDistribution(numberOfTrials.intValue(), successProb.doubleValue());
-	}
+    return new BinomialDistribution(numberOfTrials.intValue(), successProb.doubleValue());
+  }
 }

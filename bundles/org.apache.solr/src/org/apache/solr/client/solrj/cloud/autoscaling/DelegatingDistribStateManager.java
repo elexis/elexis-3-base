@@ -28,90 +28,84 @@ import org.apache.zookeeper.Op;
 import org.apache.zookeeper.OpResult;
 import org.apache.zookeeper.Watcher;
 
+/**
+ *
+ * @deprecated to be removed in Solr 9.0 (see SOLR-14656)
+ */
 public class DelegatingDistribStateManager implements DistribStateManager {
-	private final DistribStateManager delegate;
+  private final DistribStateManager delegate;
 
-	public DelegatingDistribStateManager(DistribStateManager delegate) {
-		this.delegate = delegate;
-	}
+  public DelegatingDistribStateManager(DistribStateManager delegate) {
+    this.delegate = delegate;
+  }
 
-	@Override
-	public boolean hasData(String path) throws IOException, KeeperException, InterruptedException {
-		return delegate.hasData(path);
-	}
+  @Override
+  public boolean hasData(String path) throws IOException, KeeperException, InterruptedException {
+    return delegate.hasData(path);
+  }
 
-	@Override
-	public List<String> listData(String path)
-			throws NoSuchElementException, IOException, KeeperException, InterruptedException {
-		return delegate.listData(path);
-	}
+  @Override
+  public List<String> listData(String path) throws NoSuchElementException, IOException, KeeperException, InterruptedException {
+    return delegate.listData(path);
+  }
 
-	@Override
-	public List<String> listData(String path, Watcher watcher)
-			throws NoSuchElementException, IOException, KeeperException, InterruptedException {
-		return delegate.listData(path, watcher);
-	}
+  @Override
+  public List<String> listData(String path, Watcher watcher) throws NoSuchElementException, IOException, KeeperException, InterruptedException {
+    return delegate.listData(path, watcher);
+  }
 
-	@Override
-	public VersionedData getData(String path, Watcher watcher)
-			throws NoSuchElementException, IOException, KeeperException, InterruptedException {
-		return delegate.getData(path, watcher);
-	}
+  @Override
+  public VersionedData getData(String path, Watcher watcher) throws NoSuchElementException, IOException, KeeperException, InterruptedException {
+    return delegate.getData(path, watcher);
+  }
 
-	@Override
-	public VersionedData getData(String path)
-			throws NoSuchElementException, IOException, KeeperException, InterruptedException {
-		return delegate.getData(path);
-	}
+  @Override
+  public VersionedData getData(String path) throws NoSuchElementException, IOException, KeeperException, InterruptedException {
+    return delegate.getData(path);
+  }
 
-	@Override
-	public void makePath(String path)
-			throws AlreadyExistsException, IOException, KeeperException, InterruptedException {
-		delegate.makePath(path);
-	}
+  @Override
+  public void makePath(String path) throws AlreadyExistsException, IOException, KeeperException, InterruptedException {
+    delegate.makePath(path);
+  }
 
-	@Override
-	public void makePath(String path, byte[] data, CreateMode createMode, boolean failOnExists)
-			throws AlreadyExistsException, IOException, KeeperException, InterruptedException {
-		delegate.makePath(path, data, createMode, failOnExists);
-	}
+  @Override
+  public void makePath(String path, byte[] data, CreateMode createMode, boolean failOnExists) throws AlreadyExistsException, IOException, KeeperException, InterruptedException {
+    delegate.makePath(path, data, createMode, failOnExists);
+  }
 
-	@Override
-	public String createData(String path, byte[] data, CreateMode mode)
-			throws AlreadyExistsException, IOException, KeeperException, InterruptedException {
-		return delegate.createData(path, data, mode);
-	}
+  @Override
+  public String createData(String path, byte[] data, CreateMode mode) throws AlreadyExistsException, IOException, KeeperException, InterruptedException {
+    return delegate.createData(path, data, mode);
+  }
 
-	@Override
-	public void removeData(String path, int version) throws NoSuchElementException, NotEmptyException, IOException,
-			BadVersionException, KeeperException, InterruptedException {
-		delegate.removeData(path, version);
-	}
+  @Override
+  public void removeData(String path, int version) throws NoSuchElementException, NotEmptyException, IOException, BadVersionException, KeeperException, InterruptedException {
+    delegate.removeData(path, version);
+  }
 
-	@Override
-	public void setData(String path, byte[] data, int version)
-			throws BadVersionException, NoSuchElementException, IOException, KeeperException, InterruptedException {
-		delegate.setData(path, data, version);
-	}
+  @Override
+  public void setData(String path, byte[] data, int version) throws BadVersionException, NoSuchElementException, IOException, KeeperException, InterruptedException {
+    delegate.setData(path, data, version);
+  }
 
-	@Override
-	public List<OpResult> multi(Iterable<Op> ops) throws BadVersionException, NoSuchElementException,
-			AlreadyExistsException, IOException, KeeperException, InterruptedException {
-		return delegate.multi(ops);
-	}
+  @Override
+  public List<OpResult> multi(Iterable<Op> ops) throws BadVersionException, NoSuchElementException, AlreadyExistsException, IOException, KeeperException, InterruptedException {
+    return delegate.multi(ops);
+  }
 
-	@Override
-	public AutoScalingConfig getAutoScalingConfig(Watcher watcher) throws InterruptedException, IOException {
-		return delegate.getAutoScalingConfig(watcher);
-	}
+  @Override
+  public AutoScalingConfig getAutoScalingConfig(Watcher watcher) throws InterruptedException, IOException {
+    return delegate.getAutoScalingConfig(watcher);
+  }
 
-	@Override
-	public AutoScalingConfig getAutoScalingConfig() throws InterruptedException, IOException {
-		return delegate.getAutoScalingConfig();
-	}
+  @Override
+  public AutoScalingConfig getAutoScalingConfig() throws InterruptedException, IOException {
+    return delegate.getAutoScalingConfig();
+  }
 
-	@Override
-	public void close() throws IOException {
-		delegate.close();
-	}
+  @Override
+  public void close() throws IOException {
+    delegate.close();
+  }
 }

@@ -22,16 +22,18 @@ import java.util.Random;
 
 public class ShufflingReplicaListTransformer implements ReplicaListTransformer {
 
-	private final Random r;
+  private final Random r;
 
-	public ShufflingReplicaListTransformer(Random r) {
-		this.r = r;
-	}
+  public ShufflingReplicaListTransformer(Random r)
+  {
+    this.r = r;
+  }
 
-	public void transform(List<?> choices) {
-		if (choices.size() > 1) {
-			Collections.shuffle(choices, r);
-		}
-	}
+  public void transform(List<?> choices)
+  {
+    if (choices.size() > 1) {
+      Collections.shuffle(choices, r);
+    }
+  }
 
 }

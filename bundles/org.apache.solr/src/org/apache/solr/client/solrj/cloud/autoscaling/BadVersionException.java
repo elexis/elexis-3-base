@@ -18,23 +18,24 @@ package org.apache.solr.client.solrj.cloud.autoscaling;
 
 /**
  *
+ * @deprecated to be removed in Solr 9.0 (see SOLR-14656)
  */
 public class BadVersionException extends Exception {
 
-	private final String path;
-	private final int requested;
+  private final String path;
+  private final int requested;
 
-	public BadVersionException(int requested, String path) {
-		super(path);
-		this.path = path;
-		this.requested = requested;
-	}
+  public BadVersionException(int requested, String path) {
+    super(path);
+    this.path = path;
+    this.requested = requested;
+  }
 
-	public String getPath() {
-		return path;
-	}
+  public String getPath() {
+    return path;
+  }
 
-	public int getRequested() {
-		return requested;
-	}
+  public int getRequested() {
+    return requested;
+  }
 }

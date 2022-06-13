@@ -25,26 +25,24 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class BetaDistributionEvaluator extends RecursiveNumericEvaluator implements TwoValueWorker {
 
-	private static final long serialVersionUID = 1;
+  private static final long serialVersionUID = 1;
 
-	public BetaDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
-	}
+  public BetaDistributionEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+    super(expression, factory);
+  }
 
-	@Override
-	public Object doWork(Object first, Object second) throws IOException {
-		if (null == first) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
-					toExpression(constructingFactory)));
-		}
-		if (null == second) {
-			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the second value",
-					toExpression(constructingFactory)));
-		}
+  @Override
+  public Object doWork(Object first, Object second) throws IOException{
+    if(null == first){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
+    }
+    if(null == second){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the second value",toExpression(constructingFactory)));
+    }
 
-		Number shape1 = (Number) first;
-		Number shape2 = (Number) second;
+    Number shape1 = (Number)first;
+    Number shape2 = (Number)second;
 
-		return new BetaDistribution(shape1.doubleValue(), shape2.doubleValue());
-	}
+    return new BetaDistribution(shape1.doubleValue(), shape2.doubleValue());
+  }
 }

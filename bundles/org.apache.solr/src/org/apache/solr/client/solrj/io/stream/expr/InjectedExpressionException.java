@@ -18,7 +18,7 @@
 package org.apache.solr.client.solrj.io.stream.expr;
 
 class InjectedExpressionException extends IllegalStateException {
-	InjectedExpressionException(String s) {
-		super(s);
-	}
+  InjectedExpressionException(String s) {
+    super(s);
+  }
 }

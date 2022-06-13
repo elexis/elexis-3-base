@@ -20,10 +20,10 @@ package org.apache.solr.client.solrj.io.eval;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.solr.client.solrj.io.Tuple;
 import org.apache.solr.client.solrj.io.stream.StreamContext;
@@ -34,140 +34,134 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionNamedParamete
 import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionValue;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
+
 /**
  * The MemsetEvaluator reads a TupleStream and copies the values from specific
- * fields into arrays that are bound to variable names in a map. The LetStream
- * looks specifically for the MemsetEvaluator and makes the variables visible to
- * other functions.
+ * fields into arrays that are bound to variable names in a map. The LetStream looks specifically
+ * for the MemsetEvaluator and makes the variables visible to other functions.
  **/
 
 public class MemsetEvaluator extends RecursiveEvaluator {
-	protected static final long serialVersionUID = 1L;
+  protected static final long serialVersionUID = 1L;
 
-	private TupleStream in;
-	private String[] cols;
-	private String[] vars;
-	private int size = -1;
+  private TupleStream in;
+  private String[] cols;
+  private String[] vars;
+  private int size = -1;
 
-	public MemsetEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-		super(expression, factory);
+  public MemsetEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+    super(expression, factory);
 
-		/*
-		 * Instantiate and validate all the parameters
-		 */
+    /*
+    * Instantiate and validate all the parameters
+    */
 
-		List<StreamExpression> streamExpressions = factory.getExpressionOperandsRepresentingTypes(expression,
-				Expressible.class, TupleStream.class);
-		StreamExpressionNamedParameter colsExpression = factory.getNamedOperand(expression, "cols");
-		StreamExpressionNamedParameter varsExpression = factory.getNamedOperand(expression, "vars");
-		StreamExpressionNamedParameter sizeExpression = factory.getNamedOperand(expression, "size");
+    List<StreamExpression> streamExpressions = factory.getExpressionOperandsRepresentingTypes(expression, Expressible.class, TupleStream.class);
+    StreamExpressionNamedParameter colsExpression = factory.getNamedOperand(expression, "cols");
+    StreamExpressionNamedParameter varsExpression = factory.getNamedOperand(expression, "vars");
+    StreamExpressionNamedParameter sizeExpression = factory.getNamedOperand(expression, "size");
 
-		if (1 != streamExpressions.size()) {
-			throw new IOException(
-					String.format(Locale.ROOT, "Invalid expression %s - expecting a single stream but found %d",
-							expression, streamExpressions.size()));
-		}
+    if(1 != streamExpressions.size()){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting a single stream but found %d",expression, streamExpressions.size()));
+    }
 
-		if (null == colsExpression || !(colsExpression.getParameter() instanceof StreamExpressionValue)) {
-			throw new IOException(String.format(Locale.ROOT,
-					"Invalid expression %s - expecting single 'cols' parameter listing fields to sort over but didn't find one",
-					expression));
-		}
+    if(null == colsExpression || !(colsExpression.getParameter() instanceof StreamExpressionValue)){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting single 'cols' parameter listing fields to sort over but didn't find one",expression));
+    }
 
-		if (null == varsExpression || !(varsExpression.getParameter() instanceof StreamExpressionValue)) {
-			throw new IOException(String.format(Locale.ROOT,
-					"Invalid expression %s - expecting single 'vars' parameter listing fields to sort over but didn't find one",
-					expression));
-		}
+    if(null == varsExpression || !(varsExpression.getParameter() instanceof StreamExpressionValue)){
+      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting single 'vars' parameter listing fields to sort over but didn't find one",expression));
+    }
 
-		if (null != sizeExpression) {
-			StreamExpressionValue sizeExpressionValue = (StreamExpressionValue) sizeExpression.getParameter();
-			String sizeString = sizeExpressionValue.getValue();
-			size = Integer.parseInt(sizeString);
-		}
+    if(null != sizeExpression) {
+      StreamExpressionValue sizeExpressionValue = (StreamExpressionValue)sizeExpression.getParameter();
+      String sizeString = sizeExpressionValue.getValue();
+      size = Integer.parseInt(sizeString);
+    }
 
-		in = factory.constructStream(streamExpressions.get(0));
+    in = factory.constructStream(streamExpressions.get(0));
 
-		StreamExpressionValue colsExpressionValue = (StreamExpressionValue) colsExpression.getParameter();
-		StreamExpressionValue varsExpressionValue = (StreamExpressionValue) varsExpression.getParameter();
-		String colsString = colsExpressionValue.getValue();
-		String varsString = varsExpressionValue.getValue();
+    StreamExpressionValue colsExpressionValue = (StreamExpressionValue)colsExpression.getParameter();
+    StreamExpressionValue varsExpressionValue = (StreamExpressionValue)varsExpression.getParameter();
+    String colsString = colsExpressionValue.getValue();
+    String varsString = varsExpressionValue.getValue();
 
-		vars = varsString.split(",");
-		cols = colsString.split(",");
+    vars = varsString.split(",");
+    cols = colsString.split(",");
 
-		if (cols.length != vars.length) {
-			throw new IOException("The cols and vars lists must be the same size");
-		}
+    if(cols.length != vars.length) {
+      throw new IOException("The cols and vars lists must be the same size");
+    }
 
-		for (int i = 0; i < cols.length; i++) {
-			cols[i] = cols[i].trim();
-			vars[i] = vars[i].trim();
-		}
-	}
+    for(int i=0; i<cols.length; i++) {
+      cols[i]  = cols[i].trim();
+      vars[i]  = vars[i].trim();
+    }
+  }
 
-	public MemsetEvaluator(StreamExpression expression, StreamFactory factory, List<String> ignoredNamedParameters)
-			throws IOException {
-		super(expression, factory, ignoredNamedParameters);
-	}
+  public MemsetEvaluator(StreamExpression expression, StreamFactory factory, List<String> ignoredNamedParameters) throws IOException {
+    super(expression, factory, ignoredNamedParameters);
+  }
 
-	public void setStreamContext(StreamContext streamContext) {
-		this.streamContext = streamContext;
-	}
+  public void setStreamContext(StreamContext streamContext) {
+    this.streamContext = streamContext;
+  }
 
-	@Override
-	public Object evaluate(Tuple tuple) throws IOException {
+  @Override
+  public Object evaluate(Tuple tuple) throws IOException {
 
-		/*
-		 * Read all the tuples from the underlying stream and load specific fields into
-		 * arrays. Then return a map with the variables names bound to the arrays.
-		 */
+    /*
+    * Read all the tuples from the underlying stream and
+    * load specific fields into arrays. Then return
+    * a map with the variables names bound to the arrays.
+    */
 
-		try {
-			in.setStreamContext(streamContext);
-			in.open();
-			Map<String, List<Number>> arrays = new HashMap<>();
+    try {
+      in.setStreamContext(streamContext);
+      in.open();
+      Map<String, List<Number>> arrays = new HashMap<>();
 
-			// Initialize the variables
-			for (String var : vars) {
-				if (size > -1) {
-					arrays.put(var, new ArrayList<>(size));
-				} else {
-					arrays.put(var, new ArrayList<>());
-				}
-			}
+      //Initialize the variables
+      for(String var : vars) {
+        if(size > -1) {
+          arrays.put(var, new ArrayList<>(size));
+        } else {
+          arrays.put(var, new ArrayList<>());
+        }
+      }
 
-			int count = 0;
+      int count = 0;
 
-			while (true) {
-				Tuple t = in.read();
-				if (t.EOF) {
-					break;
-				}
+      while (true) {
+        Tuple t = in.read();
+        if (t.EOF) {
+          break;
+        }
 
-				if (size == -1 || count < size) {
-					for (int i = 0; i < cols.length; i++) {
-						String col = cols[i];
-						String var = vars[i];
-						List<Number> array = arrays.get(var);
-						Number number = (Number) t.get(col);
-						array.add(number);
-					}
-				}
-				++count;
-			}
+        if(size == -1 || count < size) {
+          for (int i = 0; i < cols.length; i++) {
+            String col = cols[i];
+            String var = vars[i];
+            List<Number> array = arrays.get(var);
+            Number number = (Number) t.get(col);
+            array.add(number);
+          }
+        }
+        ++count;
+      }
 
-			return arrays;
-		} catch (UncheckedIOException e) {
-			throw e.getCause();
-		} finally {
-			in.close();
-		}
-	}
+      return arrays;
+    } catch (UncheckedIOException e) {
+      throw e.getCause();
+    } finally {
+      in.close();
+    }
+  }
 
-	@Override
-	public Object doWork(Object... values) throws IOException {
-		// Nothing to do here
-		throw new IOException("This call should never occur");
-	}
+  @Override
+  public Object doWork(Object... values) throws IOException {
+    // Nothing to do here
+    throw new IOException("This call should never occur");
+  }
 }
+

@@ -22,27 +22,27 @@ import java.util.List;
 import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.SolrClient;
 
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 public class HttpClusterStateProvider extends BaseHttpClusterStateProvider {
 
-	private final HttpClient httpClient;
-	private final boolean clientIsInternal;
+  private final HttpClient httpClient;
+  private final boolean clientIsInternal;
 
-	public HttpClusterStateProvider(List<String> solrUrls, HttpClient httpClient) throws Exception {
-		this.httpClient = httpClient == null ? HttpClientUtil.createClient(null) : httpClient;
-		this.clientIsInternal = httpClient == null;
-		init(solrUrls);
-	}
+  public HttpClusterStateProvider(List<String> solrUrls, HttpClient httpClient) throws Exception {
+    this.httpClient = httpClient == null? HttpClientUtil.createClient(null): httpClient;
+    this.clientIsInternal = httpClient == null;
+    init(solrUrls);
+  }
 
-	@Override
-	protected SolrClient getSolrClient(String baseUrl) {
-		return new HttpSolrClient.Builder().withBaseSolrUrl(baseUrl).withHttpClient(httpClient).build();
-	}
+  @Override
+  protected SolrClient getSolrClient(String baseUrl) {
+    return new HttpSolrClient.Builder().withBaseSolrUrl(baseUrl).withHttpClient(httpClient).build();
+  }
 
-	@Override
-	public void close() throws IOException {
-		if (this.clientIsInternal && this.httpClient != null) {
-			HttpClientUtil.close(httpClient);
-		}
-	}
+  @Override
+  public void close() throws IOException {
+    if (this.clientIsInternal && this.httpClient != null) {
+      HttpClientUtil.close(httpClient);
+    }
+  }
 }

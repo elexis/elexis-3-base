@@ -22,9 +22,9 @@ import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
-import ch.elexis.core.services.IQueryCursor;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.IQueryCursor;
 import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 
 public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifiedRunnable {

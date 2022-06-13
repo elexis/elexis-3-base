@@ -8,12 +8,15 @@ import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.MapSolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.eenv.AccessToken;
 import ch.elexis.core.eenv.IElexisEnvironmentService;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.spotlight.ISpotlightResult;
 import ch.elexis.core.spotlight.ISpotlightResultContributor;
 import ch.elexis.core.spotlight.ISpotlightService;
@@ -23,14 +26,16 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	private HttpSolrClient client;
+	private IContextService contextService;
 	private final String CORE;
 
 	public AbstractSpotlightResultContributor(String core) {
 		this.CORE = core;
 	}
 
-	public void activate(IElexisEnvironmentService elexisEnvironmentService) {
+	public void activate(IElexisEnvironmentService elexisEnvironmentService, IContextService contextService) {
 		client = new HttpSolrClient.Builder(elexisEnvironmentService.getSolrBaseUrl()).build();
+		this.contextService = contextService;
 	}
 
 	public void deactivate() {
@@ -68,7 +73,12 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 
 			MapSolrParams queryParams = new MapSolrParams(queryParamMap);
 
-			QueryResponse response = client.query(CORE, queryParams);
+			QueryRequest queryRequest = new QueryRequest(queryParams);
+			contextService.getTyped(AccessToken.class).ifPresent(accessToken -> {
+				queryRequest.addHeader("Authorization", "Bearer " + accessToken.getToken());
+			});
+
+			QueryResponse response = queryRequest.process(client, CORE);
 			handleResponse(spotlightResult, response);
 
 		} catch (SolrServerException | IOException e) {

@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 import ch.elexis.base.solr.internal.SolrConstants;
 import ch.elexis.base.solr.internal.bean.EncounterBean;
 import ch.elexis.core.eenv.IElexisEnvironmentService;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.spotlight.ISpotlightResult;
 import ch.elexis.core.spotlight.ISpotlightResultContributor;
 import ch.elexis.core.spotlight.ISpotlightResultEntry.Category;
@@ -21,13 +22,16 @@ public class EncounterSpotlightResultContributor extends AbstractSpotlightResult
 	@Reference
 	private IElexisEnvironmentService elexisEnvironmentService;
 
+	@Reference
+	private IContextService contextService;
+
 	public EncounterSpotlightResultContributor() {
 		super(SolrConstants.CORE_ENCOUNTERS);
 	}
 
 	@Activate
 	public void activate() {
-		super.activate(elexisEnvironmentService);
+		super.activate(elexisEnvironmentService, contextService);
 	}
 
 	@Deactivate

@@ -11,6 +11,10 @@
 
 package ch.itmed.fop.printing.data;
 
+import static ch.elexis.core.model.PatientConstants.FLD_EXTINFO_LEGAL_GUARDIAN;
+
+import org.apache.commons.lang3.StringUtils;
+
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -28,11 +32,38 @@ public class ContactData {
 	}
 
 	public String getAddress() {
+		return getAddress(false);
+	}
+
+	public String getAddress(boolean useLegalGuardian) {
 		if (kontakt != null) {
+			if (hasLegalGuardian()) {
+				return getLegalGuardian().getPostAnschrift(true);
+			}
 			return kontakt.getPostAnschrift(true);
 		} else {
 			return "";
 		}
+
+	}
+
+	private boolean hasLegalGuardian() {
+		if (kontakt.istPerson())	{
+			String guardianId = (String) kontakt.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
+			return StringUtils.isNotBlank(guardianId);
+		}
+		return false;
+	}
+
+	private Kontakt getLegalGuardian() {
+		String guardianId = (String) kontakt.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
+		if (StringUtils.isNotBlank(guardianId)) {
+			Kontakt guardian = Kontakt.load((String) guardianId);
+			if (guardian.exists()) {
+				return guardian;
+			}
+		}
+		return null;
 	}
 
 	public String getSalutaton() {

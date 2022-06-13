@@ -19,13 +19,17 @@ import ch.itmed.fop.printing.data.ContactData;
 public class ContactElement {
 
 	public static Element create(Document doc) throws Exception {
+		return create(doc, false);
+	}
+
+	public static Element create(Document doc, boolean useLegalGuardian) throws Exception {
 		ContactData cd = new ContactData();
 		cd.load();
 
 		Element p = doc.createElement("Contact");
 
 		Element c = doc.createElement("Address");
-		String address = cd.getAddress();
+		String address = cd.getAddress(useLegalGuardian);
 		String[] addressParts = address.split("[\\r\\n]+");
 		for (String addressPart : addressParts) {
 			Element part = doc.createElement("Part");

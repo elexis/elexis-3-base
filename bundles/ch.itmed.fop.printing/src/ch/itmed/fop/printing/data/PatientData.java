@@ -11,7 +11,11 @@
 
 package ch.itmed.fop.printing.data;
 
+import static ch.elexis.core.model.PatientConstants.FLD_EXTINFO_LEGAL_GUARDIAN;
+
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -19,6 +23,7 @@ import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Messages;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -27,6 +32,14 @@ import ch.elexis.data.Person;
 public class PatientData {
 	private Patient patient;
 
+	private boolean useLegalGuardian;
+
+	private Kontakt legalGuardian;
+
+	public PatientData(boolean useLegalGuardian) {
+		this.useLegalGuardian = useLegalGuardian;
+	}
+
 	public void load() throws NullPointerException {
 		patient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 		if (patient == null) {
@@ -34,8 +47,11 @@ public class PatientData {
 					ch.itmed.fop.printing.resources.Messages.Info_NoPatient_Message);
 			throw new NullPointerException("No patient selected");
 		}
+		if (useLegalGuardian) {
+			initLegalGuardian();
+		}
 	}
-
+	
 	public void loadFromAgenda() throws NullPointerException {
 		Termin t = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 		if (t == null) {
@@ -53,6 +69,35 @@ public class PatientData {
 
 		String pid = t.getKontakt().getId();
 		patient = Patient.load(pid);
+
+		if (useLegalGuardian) {
+			initLegalGuardian();
+		}
+	}
+
+	private void initLegalGuardian() {
+		if (patient != null && patient.exists() && hasLegalGuardian()) {
+			legalGuardian = getLegalGuardian();
+		}
+	}
+
+	private boolean hasLegalGuardian() {
+		if (patient.istPerson()) {
+			String guardianId = (String) patient.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
+			return StringUtils.isNotBlank(guardianId);
+		}
+		return false;
+	}
+	
+	private Kontakt getLegalGuardian() {
+		String guardianId = (String) patient.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
+		if (StringUtils.isNotBlank(guardianId)) {
+			Kontakt guardian = Kontakt.load((String) guardianId);
+			if (guardian.exists()) {
+				return guardian;
+			}
+		}
+		return null;
 	}
 
 	public String getFirstName() {
@@ -90,19 +135,35 @@ public class PatientData {
 	}
 
 	public String getPostalCode() {
-		return PersistentObject.checkNull(patient.get(Patient.FLD_ZIP));
+		if (legalGuardian != null) {
+			return PersistentObject.checkNull(legalGuardian.get(Patient.FLD_ZIP));
+		} else {
+			return PersistentObject.checkNull(patient.get(Patient.FLD_ZIP));
+		}
 	}
 
 	public String getCity() {
-		return PersistentObject.checkNull(patient.get(Patient.FLD_PLACE));
+		if (legalGuardian != null) {
+			return PersistentObject.checkNull(legalGuardian.get(Patient.FLD_PLACE));
+		} else {
+			return PersistentObject.checkNull(patient.get(Patient.FLD_PLACE));
+		}
 	}
 
 	public String getCountry() {
-		return PersistentObject.checkNull(patient.get("Land"));
+		if (legalGuardian != null) {
+			return PersistentObject.checkNull(legalGuardian.get("Land"));
+		} else {
+			return PersistentObject.checkNull(patient.get("Land"));
+		}
 	}
 
 	public String getStreet() {
-		return PersistentObject.checkNull(patient.get(Patient.FLD_STREET));
+		if (legalGuardian != null) {
+			return PersistentObject.checkNull(legalGuardian.get(Patient.FLD_STREET));
+		} else {
+			return PersistentObject.checkNull(patient.get(Patient.FLD_STREET));
+		}
 	}
 
 	public String getPhone1() {
@@ -118,7 +179,11 @@ public class PatientData {
 	}
 
 	public String getCompleteAddress() {
-		return patient.getPostAnschrift(true);
+		if (legalGuardian != null) {
+			return legalGuardian.getPostAnschrift(true);
+		} else {
+			return patient.getPostAnschrift(true);
+		}
 	}
 
 	public String getOrderNumber() {

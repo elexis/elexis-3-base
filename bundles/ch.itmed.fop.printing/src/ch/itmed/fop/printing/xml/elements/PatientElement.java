@@ -17,8 +17,13 @@ import org.w3c.dom.Element;
 import ch.itmed.fop.printing.data.PatientData;
 
 public class PatientElement {
+
 	public static Element create(Document doc, boolean loadFromAgenda) throws Exception {
-		PatientData pd = new PatientData();
+		return create(doc, loadFromAgenda, false);
+	}
+
+	public static Element create(Document doc, boolean loadFromAgenda, boolean useLegalGuardian) throws Exception {
+		PatientData pd = new PatientData(useLegalGuardian);
 
 		if (loadFromAgenda) {
 			pd.loadFromAgenda();

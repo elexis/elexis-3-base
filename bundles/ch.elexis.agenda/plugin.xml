@@ -13,11 +13,13 @@
       <view
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.views.AgendaGross"
+            icon="icons/calendar.png"
             id="ch.elexis.agenda.largeview"
             name="%Agenda_gross"/>
       <view
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.ui.week.AgendaWeek"
+            icon="icons/calendar.png"
             id="ch.elexis.agenda.week"
             name="%Wochenanzeige">
       </view>
@@ -29,6 +31,7 @@
             allowMultiple="false"
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.ui.AgendaParallel"
+            icon="icons/calendar.png"
             id="ch.elexis.agenda.parallelview"
             name="%Parallelanzeige"
             restorable="true">
@@ -36,6 +39,7 @@
       <view
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.ui.TerminListeView"
+            icon="icons/calendar.png"
             id="ch.elexis.agenda.Terminliste"
             name="%Terminliste"
             restorable="true">

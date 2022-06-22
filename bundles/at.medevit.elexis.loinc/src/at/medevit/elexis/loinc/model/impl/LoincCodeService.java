@@ -24,18 +24,18 @@ public class LoincCodeService implements ILoincCodeService {
 	private Map<Integer, String> fieldMapping;
 	private Integer codeMapping = -1;
 
-	public static final VersionInfo TOP2000VERSION = new VersionInfo("1.1.0");
-	public static final VersionInfo CLINICALVERSION = new VersionInfo("1.0.0");
+	public static final VersionInfo TOP2000VERSION = new VersionInfo("1.1.0"); //$NON-NLS-1$
+	public static final VersionInfo CLINICALVERSION = new VersionInfo("1.0.0"); //$NON-NLS-1$
 
 	public LoincCode getByCode(String code) {
 		Query<LoincCode> qbe = new Query<LoincCode>(LoincCode.class);
-		qbe.add("ID", "!=", LoincCode.VERSIONID);
-		qbe.add("ID", "!=", LoincCode.VERSIONTOPID);
-		qbe.add("ID", "!=", LoincCode.VERSIONCLINICALID);
-		qbe.add(LoincCode.FLD_CODE, "=", code);
+		qbe.add("ID", "!=", LoincCode.VERSIONID); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add("ID", "!=", LoincCode.VERSIONTOPID); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add("ID", "!=", LoincCode.VERSIONCLINICALID); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add(LoincCode.FLD_CODE, "=", code); //$NON-NLS-1$
 		List<LoincCode> res = qbe.execute();
 		if (res.isEmpty()) {
-			logger.info("Code [" + code + "] not found");
+			logger.debug("Code [" + code + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		} else {
 			return res.get(0);
@@ -44,31 +44,31 @@ public class LoincCodeService implements ILoincCodeService {
 
 	public List<LoincCode> getAllCodes() {
 		Query<LoincCode> qbe = new Query<LoincCode>(LoincCode.class);
-		qbe.add("ID", "!=", LoincCode.VERSIONID);
-		qbe.add("ID", "!=", LoincCode.VERSIONTOPID);
-		qbe.add("ID", "!=", LoincCode.VERSIONCLINICALID);
+		qbe.add("ID", "!=", LoincCode.VERSIONID); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add("ID", "!=", LoincCode.VERSIONTOPID); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add("ID", "!=", LoincCode.VERSIONCLINICALID); //$NON-NLS-1$ //$NON-NLS-2$
 		return qbe.execute();
 	}
 
 	public void importFromCsv(InputStream csv, Map<Integer, String> fieldMapping) throws IOException {
-		logger.info("Import from CSV stream " + csv);
+		logger.info("Import from CSV stream " + csv); //$NON-NLS-1$
 
 		initMapping(fieldMapping);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(csv));
 
 		String line;
 		while ((line = reader.readLine()) != null) {
-			String[] parts = line.split(",", -1);
-			if (parts[codeMapping].matches("[0-9\\-]*")) {
+			String[] parts = line.split(",", -1); //$NON-NLS-1$
+			if (parts[codeMapping].matches("[0-9\\-]*")) { //$NON-NLS-1$
 				LoincCode existing = getByCode(parts[0]);
 				if (existing != null) {
 					merge(existing, parts);
 				} else {
-					logger.info("Creating object [" + parts[codeMapping] + "]");
+					logger.debug("Creating object [" + parts[codeMapping] + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 					create(parts);
 				}
 			} else {
-				logger.warn("Import skipping object [" + parts[codeMapping] + "]");
+				logger.warn("Import skipping object [" + parts[codeMapping] + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -100,40 +100,40 @@ public class LoincCodeService implements ILoincCodeService {
 			}
 		}
 		if (codeMapping == -1) {
-			throw new IllegalStateException("Fieldmapping is missing the code field.");
+			throw new IllegalStateException("Fieldmapping is missing the code field."); //$NON-NLS-1$
 		}
 	}
 
 	public void updateData() {
-		logger.info("Update Top 2000 to version " + TOP2000VERSION.version());
-		logger.info("Update Top 2000 from version " + LoincCode.getDataVersion(LoincCode.VERSIONTOPID).version());
+		logger.info("Update Top 2000 to version " + TOP2000VERSION.version()); //$NON-NLS-1$
+		logger.info("Update Top 2000 from version " + LoincCode.getDataVersion(LoincCode.VERSIONTOPID).version()); //$NON-NLS-1$
 		if (TOP2000VERSION.isNewer(LoincCode.getDataVersion(LoincCode.VERSIONTOPID))) {
 			try {
 				importFromCsv(loadTop2000(), getTop2000FieldMapping());
 				LoincCode.setDataVersion(LoincCode.VERSIONTOPID, TOP2000VERSION.version());
 			} catch (IOException e) {
-				logger.error("Top 2000 import failed.", e);
+				logger.error("Top 2000 import failed.", e); //$NON-NLS-1$
 			}
 		}
 
-		logger.info("Update Clinical to version " + CLINICALVERSION.version());
-		logger.info("Update Clinical from version " + LoincCode.getDataVersion(LoincCode.VERSIONCLINICALID).version());
+		logger.info("Update Clinical to version " + CLINICALVERSION.version()); //$NON-NLS-1$
+		logger.info("Update Clinical from version " + LoincCode.getDataVersion(LoincCode.VERSIONCLINICALID).version()); //$NON-NLS-1$
 		if (CLINICALVERSION.isNewer(LoincCode.getDataVersion(LoincCode.VERSIONCLINICALID))) {
 			try {
 				importFromCsv(loadClinical(), getClinicalFieldMapping());
 				LoincCode.setDataVersion(LoincCode.VERSIONCLINICALID, CLINICALVERSION.version());
 			} catch (IOException e) {
-				logger.error("Clinical import failed.", e);
+				logger.error("Clinical import failed.", e); //$NON-NLS-1$
 			}
 		}
 	}
 
 	private static InputStream loadClinical() {
-		return LoincCodeService.class.getResourceAsStream("/rsc/LOINC_CLINICAL.CSV");
+		return LoincCodeService.class.getResourceAsStream("/rsc/LOINC_CLINICAL.CSV"); //$NON-NLS-1$
 	}
 
 	private static InputStream loadTop2000() {
-		return LoincCodeService.class.getResourceAsStream("/rsc/TOP_2000_COMMON_LAB_RESULTS_SI_LOINC_V1-1.CSV");
+		return LoincCodeService.class.getResourceAsStream("/rsc/TOP_2000_COMMON_LAB_RESULTS_SI_LOINC_V1-1.CSV"); //$NON-NLS-1$
 	}
 
 	private static Map<Integer, String> getClinicalFieldMapping() {

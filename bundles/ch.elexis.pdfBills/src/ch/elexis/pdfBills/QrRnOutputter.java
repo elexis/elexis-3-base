@@ -221,32 +221,37 @@ public class QrRnOutputter implements IRnOutputter {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
-			ErrorDialog.openError(null, "Fehler bei der Ausgabe", "Konnte Rechnungsdruck nicht starten",
-					ResultAdapter.getResultAsStatus(res));
+			Display.getDefault().syncExec(() -> {
+				ErrorDialog.openError(null, "Fehler bei der Ausgabe", "Konnte Rechnungsdruck nicht starten",
+						ResultAdapter.getResultAsStatus(res));
+			});
 			return res;
 		}
 		if (mailErrors.length() > 2) {
-			MessageDialog dialog = new MessageDialog(Display.getDefault().getActiveShell(), "Fehler beim Mail-Versand",
-					null, "Beim Mail-Versand sind folgende Fehler aufgetreten:\n" + mailErrors.toString(),
-					MessageDialog.ERROR, 0, new String[] { IDialogConstants.OK_LABEL, "als Text öffnen" }) {
+			Display.getDefault().syncExec(() -> {
+				MessageDialog dialog = new MessageDialog(Display.getDefault().getActiveShell(),
+						"Fehler beim Mail-Versand", null,
+						"Beim Mail-Versand sind folgende Fehler aufgetreten:\n" + mailErrors.toString(),
+						MessageDialog.ERROR, 0, new String[] { IDialogConstants.OK_LABEL, "als Text öffnen" }) {
 
-				@Override
-				protected void buttonPressed(int buttonId) {
-					if (buttonId == 1) {
-						try {
-							Path tmpFile = Files.createTempFile("error_", "rechnung.txt");
-							try (FileWriter fo = new FileWriter(tmpFile.toFile())) {
-								fo.write(mailErrors.toString());
+					@Override
+					protected void buttonPressed(int buttonId) {
+						if (buttonId == 1) {
+							try {
+								Path tmpFile = Files.createTempFile("error_", "rechnung.txt");
+								try (FileWriter fo = new FileWriter(tmpFile.toFile())) {
+									fo.write(mailErrors.toString());
+								}
+								Program.launch(tmpFile.toString());
+							} catch (IOException e) {
+								LoggerFactory.getLogger(getClass()).error("Error writing tmp file", e);
 							}
-							Program.launch(tmpFile.toString());
-						} catch (IOException e) {
-							LoggerFactory.getLogger(getClass()).error("Error writing tmp file", e);
 						}
+						super.buttonPressed(buttonId);
 					}
-					super.buttonPressed(buttonId);
-				}
-			};
-			dialog.open();
+				};
+				dialog.open();
+			});
 		}
 		return res;
 	}

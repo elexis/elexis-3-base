@@ -106,8 +106,6 @@ public class QrRnOutputter implements IRnOutputter {
 	private Button bWithEsr;
 	private Button bWithRf;
 
-	private Button bCopyMail;
-
 	private boolean modifyInvoiceState;
 
 	private boolean pdfOnly;
@@ -380,17 +378,7 @@ public class QrRnOutputter implements IRnOutputter {
 		});
 		bWithRf.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 
-		bCopyMail = new Button(ret, SWT.CHECK);
-		bCopyMail.setText("Kopie als mail");
-		bCopyMail.setSelection(false);
-		bCopyMail.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		bCopyMail.setSelection(CoreHub.localCfg.get(CFG_ROOT + CFG_MAIL_CPY, false));
-		bCopyMail.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(CFG_ROOT + CFG_MAIL_CPY, bCopyMail.getSelection());
-			}
-		});
+		CoreHub.localCfg.set(CFG_ROOT + CFG_MAIL_CPY, false);
 
 		if (OutputterUtil.useGlobalOutputDirs()) {
 			Label lXML = new Label(ret, SWT.NONE);

@@ -22,6 +22,7 @@ import javax.xml.datatype.DatatypeFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1193,9 +1194,11 @@ public class Tarmed45Exporter {
 
 		String iban = (String) invoice.getMandator().getBiller().getExtInfo("IBAN");
 		if (StringUtils.isEmpty(iban)) {
-			MessageDialog.openError(null, Messages.XMLExporter_MandatorErrorCaption,
-					Messages.XMLExporter_MandatorErrorEsr + " [" + invoice.getMandator().getLabel() //$NON-NLS-1$
-							+ "]"); //$NON-NLS-1$
+			Display.getDefault().syncExec(() -> {
+				MessageDialog.openError(null, Messages.XMLExporter_MandatorErrorCaption,
+						Messages.XMLExporter_MandatorErrorEsr + " [" + invoice.getMandator().getLabel() //$NON-NLS-1$
+								+ "]"); //$NON-NLS-1$
+			});
 			return null;
 		}
 		esrQRType.setIban(iban);
@@ -1288,9 +1291,11 @@ public class Tarmed45Exporter {
 
 		String participantNumber = getBesr(invoice).makeParticipantNumber(true);
 		if (StringUtils.isEmpty(participantNumber)) {
-			MessageDialog.openError(null, Messages.XMLExporter_MandatorErrorCaption,
-					Messages.XMLExporter_MandatorErrorEsr + " [" + invoice.getMandator().getLabel() //$NON-NLS-1$
-							+ "]"); //$NON-NLS-1$
+			Display.getDefault().syncExec(() -> {
+				MessageDialog.openError(null, Messages.XMLExporter_MandatorErrorCaption,
+						Messages.XMLExporter_MandatorErrorEsr + " [" + invoice.getMandator().getLabel() //$NON-NLS-1$
+								+ "]"); //$NON-NLS-1$
+			});
 			return null;
 		}
 		esr9Type.setParticipantNumber(participantNumber);

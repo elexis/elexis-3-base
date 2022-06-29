@@ -775,7 +775,15 @@ public class Tarmed45Exporter {
 						// all 406 will have code 2000
 						if ("406".equals(billable.getCodeSystemCode()) && !isCovid(billable)) {
 							serviceType.setCode("2000");
-							serviceType.setName(serviceType.getName() + " [" + getServiceCode(billed) + "]");
+							if ((billable instanceof IArticle
+									&& ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL)
+									&& StringUtils.isBlank(getServiceCode(billed))
+									&& StringUtils.isNotBlank(((IArticle) billable).getGtin())) {
+								serviceType
+										.setName(serviceType.getName() + " [" + ((IArticle) billable).getGtin() + "]");
+							} else {
+								serviceType.setName(serviceType.getName() + " [" + getServiceCode(billed) + "]");
+							}
 						}
 
 						servicesType.getServiceExOrService().add(serviceType);

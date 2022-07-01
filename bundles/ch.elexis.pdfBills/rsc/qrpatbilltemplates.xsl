@@ -1135,6 +1135,9 @@
 									</xsl:choose>
 								</fo:block>
 							</fo:block-container>
+							<fo:block>
+								&#160;&#160;
+							</fo:block>
 							<fo:table table-layout="fixed" border-collapse="collapse">
 								<fo:table-column text-align="left" />
 								<fo:table-column text-align="left" />
@@ -1287,6 +1290,9 @@
 									</xsl:call-template>	
 								</fo:block>							
 							</fo:block-container>
+							<fo:block>
+								&#160;&#160;
+							</fo:block>
 							<fo:table table-layout="fixed" width="100%" height="100%"
 								border-collapse="collapse">
 								<fo:table-column text-align="left" />

@@ -19,10 +19,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: ch.elexis.base.solr.task
 Import-Package: org.apache.commons.io;version="2.6.0",
  org.apache.commons.lang3;version="3.12.0",
- org.apache.http;version="4.4.14",
- org.apache.http.auth;version="4.5.13",
- org.apache.http.client;version="4.5.10",
- org.apache.http.client.protocol;version="4.5.13",
- org.apache.http.impl.auth;version="4.5.13",
- org.apache.http.impl.client;version="4.5.13",
- org.apache.http.protocol;version="4.4.14"
+ org.apache.http.client;version="4.5.10"

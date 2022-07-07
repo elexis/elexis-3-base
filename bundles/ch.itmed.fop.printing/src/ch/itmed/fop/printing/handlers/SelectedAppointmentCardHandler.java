@@ -18,6 +18,7 @@ import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,7 @@ public final class SelectedAppointmentCardHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IHandlerService handlerService = (IHandlerService) HandlerUtil.getActiveSite(event)
-				.getService(IHandlerService.class);
+		IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 		// transfer selection to elexis event dispatcher
 		IStructuredSelection currentSelection = HandlerUtil.getCurrentStructuredSelection(event);
 		if (!currentSelection.isEmpty()) {

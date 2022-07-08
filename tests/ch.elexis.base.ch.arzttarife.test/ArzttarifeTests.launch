@@ -78,6 +78,8 @@
         <setEntry value="org.apache.commons.math3@default:default"/>
         <setEntry value="org.apache.commons.pool@default:default"/>
         <setEntry value="org.apache.felix.scr@1:true"/>
+        <setEntry value="org.apache.httpcomponents.httpclient@default:default"/>
+        <setEntry value="org.apache.httpcomponents.httpcore@default:default"/>
         <setEntry value="org.apache.poi.ooxml.schemas@default:default"/>
         <setEntry value="org.apache.poi.ooxml@default:default"/>
         <setEntry value="org.apache.poi@default:default"/>
@@ -137,6 +139,7 @@
         <setEntry value="org.eclipse.help@default:default"/>
         <setEntry value="org.eclipse.jdt.junit.runtime@default:default"/>
         <setEntry value="org.eclipse.jdt.junit4.runtime@default:default"/>
+        <setEntry value="org.eclipse.jetty.osgi.alpn.fragment@default:default"/>
         <setEntry value="org.eclipse.jface.databinding@default:default"/>
         <setEntry value="org.eclipse.jface.nl_de@default:false"/>
         <setEntry value="org.eclipse.jface.nl_fr@default:false"/>
@@ -146,11 +149,13 @@
         <setEntry value="org.eclipse.nebula.cwt@default:default"/>
         <setEntry value="org.eclipse.nebula.widgets.cdatetime@default:default"/>
         <setEntry value="org.eclipse.nebula.widgets.nattable.core@default:default"/>
+        <setEntry value="org.eclipse.nebula.widgets.nattable.extension.nebula@default:default"/>
+        <setEntry value="org.eclipse.nebula.widgets.richtext@default:default"/>
         <setEntry value="org.eclipse.nebula.widgets.tablecombo@default:default"/>
         <setEntry value="org.eclipse.osgi.compatibility.state@default:false"/>
         <setEntry value="org.eclipse.osgi.services@default:default"/>
         <setEntry value="org.eclipse.osgi.util@default:default"/>
-        <setEntry value="org.eclipse.osgi@-1:true"/>
+        <setEntry value="org.eclipse.osgi@1:true"/>
         <setEntry value="org.eclipse.pde.junit.runtime@default:default"/>
         <setEntry value="org.eclipse.persistence.antlr@default:default"/>
         <setEntry value="org.eclipse.persistence.asm@default:default"/>
@@ -187,6 +192,11 @@
         <setEntry value="org.jdom@default:default"/>
         <setEntry value="org.junit@default:default"/>
         <setEntry value="org.jvnet.mimepull@default:default"/>
+        <setEntry value="org.keycloak.keycloak-adapter-core@default:default"/>
+        <setEntry value="org.keycloak.keycloak-adapter-spi@default:default"/>
+        <setEntry value="org.keycloak.keycloak-authz-client@default:default"/>
+        <setEntry value="org.keycloak.keycloak-common@default:default"/>
+        <setEntry value="org.keycloak.keycloak-core@default:default"/>
         <setEntry value="org.postgresql.jdbc@default:default"/>
         <setEntry value="org.slf4j.api@default:default"/>
         <setEntry value="org.w3c.css.sac@default:default"/>
@@ -200,6 +210,7 @@
         <setEntry value="ch.elexis.base.ch.arzttarife.model@default:default"/>
         <setEntry value="ch.elexis.base.ch.arzttarife.test@default:false"/>
         <setEntry value="ch.elexis.base.ch.arzttarife@default:default"/>
+        <setEntry value="ch.elexis.base.ch.ebanking.test@default:default"/>
         <setEntry value="ch.elexis.base.ch.ebanking@default:default"/>
         <setEntry value="ch.elexis.base.ch.labortarif.model@default:default"/>
         <setEntry value="ch.elexis.base.ch.ticode@default:default"/>
@@ -219,6 +230,8 @@
         <setEntry value="ch.elexis.core.mail@default:default"/>
         <setEntry value="ch.elexis.core.model@default:default"/>
         <setEntry value="ch.elexis.core.serial@default:default"/>
+        <setEntry value="ch.elexis.core.services.test.ws-bind@default:default"/>
+        <setEntry value="ch.elexis.core.services.test.ws@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
         <setEntry value="ch.elexis.core.ui.contacts@default:default"/>
@@ -231,6 +244,7 @@
         <setEntry value="ch.elexis.core.ui.medication@default:default"/>
         <setEntry value="ch.elexis.core.ui@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
+        <setEntry value="ch.elexis.ebanking.tests@default:default"/>
         <setEntry value="ch.elexis.ebanking@default:default"/>
         <setEntry value="ch.medelexis.medication.ui@default:false"/>
         <setEntry value="ch.rgw.utility@default:default"/>

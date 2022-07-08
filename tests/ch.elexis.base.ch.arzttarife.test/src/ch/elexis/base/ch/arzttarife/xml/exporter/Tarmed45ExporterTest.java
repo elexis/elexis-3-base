@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import at.medevit.elexis.tarmed.model.TarmedJaxbUtil;
@@ -21,6 +22,7 @@ import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.data.Verrechnet;
+import ch.fd.invoice450.request.PatientAddressType;
 import ch.fd.invoice450.request.RequestType;
 import ch.fd.invoice450.request.VatRateType;
 import ch.fd.invoice450.request.VatType;
@@ -83,5 +85,29 @@ public class Tarmed45ExporterTest {
 		Tarmed45Validator validator = new Tarmed45Validator();
 		List<String> errors = validator.validateRequest(new ByteArrayInputStream(output.toByteArray()));
 		assertTrue(Arrays.toString(errors.toArray()), errors.isEmpty());
+	}
+
+	@Test
+	public void doExportPatientMobileTest() throws IOException {
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		assertNotNull(szenario);
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
+		Tarmed45Exporter exporter = new Tarmed45Exporter();
+
+		List<IInvoice> invoices = szenario.getInvoices();
+		Optional<IInvoice> mobileInvoice = invoices.stream()
+				.filter(i -> StringUtils.isNotBlank(i.getCoverage().getPatient().getMobile())).findFirst();
+
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		assertTrue(exporter.doExport(mobileInvoice.get(), output, IRnOutputter.TYPE.ORIG));
+
+		RequestType invoiceRequest = TarmedJaxbUtil
+				.unmarshalInvoiceRequest450(new ByteArrayInputStream(output.toByteArray()));
+		assertNotNull(invoiceRequest);
+		assertNotNull(invoiceRequest.getPayload().getBody().getTiersGarant().getPatient());
+		PatientAddressType patient = invoiceRequest.getPayload().getBody().getTiersGarant().getPatient();
+		assertEquals(2, patient.getPerson().getTelecom().getPhone().size());
+		assertEquals("444-444 44 44", patient.getPerson().getTelecom().getPhone().get(0));
 	}
 }

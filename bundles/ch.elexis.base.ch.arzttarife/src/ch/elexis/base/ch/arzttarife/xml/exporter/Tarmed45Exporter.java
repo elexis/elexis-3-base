@@ -594,6 +594,9 @@ public class Tarmed45Exporter {
 	protected TelecomAddressType getTelecom(IContact contact) {
 		TelecomAddressType telecomAddressType = new TelecomAddressType();
 
+		if (StringUtils.isNotBlank(contact.getMobile())) {
+			telecomAddressType.getPhone().add(StringUtils.abbreviate(contact.getMobile(), 25));
+		}
 		if (StringUtils.isNotBlank(contact.getPhone1())) {
 			telecomAddressType.getPhone().add(StringUtils.abbreviate(contact.getPhone1(), 25));
 		}

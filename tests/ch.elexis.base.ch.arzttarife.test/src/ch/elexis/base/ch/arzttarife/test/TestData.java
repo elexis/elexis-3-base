@@ -156,6 +156,7 @@ public class TestData {
 
 			List<Fall> _fall = createPatientWithFaelle("Beatrice", "Spitzkiel", "14.04.1957", "w", false, false);
 			_fall.get(0).getPatient().set(Patient.FLD_PHONE1, "555-555 55 55");
+			_fall.get(0).getPatient().set(Patient.FLD_MOBILEPHONE, "444-444 44 44");
 			// load and refresh jpa cache after using PO set
 			CoreModelServiceHolder.get().load(_fall.get(0).getPatient().getId(), IPatient.class);
 			createPatientWithFaelle("Karin", "Zirbelkiefer", "24.04.1951", "w", true, false);

@@ -10,8 +10,8 @@ import at.medevit.ch.artikelstamm.DATASOURCEType;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 
 public class VersionUtil {
-	private static DateFormat df = new SimpleDateFormat("ddMMyy HH:mm");
-	private static final String VERSION_ENTRY_ID = "VERSION";
+	private static DateFormat df = new SimpleDateFormat("ddMMyy HH:mm"); //$NON-NLS-1$
+	private static final String VERSION_ENTRY_ID = "VERSION"; //$NON-NLS-1$
 
 	public static DATASOURCEType getDatasourceType() {
 		Optional<IArtikelstammItem> versionEntry = ModelServiceHolder.get().load(VERSION_ENTRY_ID,
@@ -19,7 +19,7 @@ public class VersionUtil {
 		if (versionEntry.isPresent()) {
 			return DATASOURCEType.fromValue(versionEntry.get().getAdditionalDescription());
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Verison entry"); //$NON-NLS-1$
 	}
 
 	public static void setDataSourceType(DATASOURCEType datasource) {
@@ -29,14 +29,14 @@ public class VersionUtil {
 			versionEntry.get().setAdditionalDescription(datasource.value());
 			ModelServiceHolder.get().save(versionEntry.get());
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Verison entry"); //$NON-NLS-1$
 	}
 
 	public static int getCurrentVersion() {
 		Optional<IArtikelstammItem> versionEntry = ModelServiceHolder.get().load(VERSION_ENTRY_ID,
 				IArtikelstammItem.class);
 		if (versionEntry.isPresent()) {
-			Object ppub = ModelServiceHolder.get().getEntityProperty("ppub", versionEntry.get());
+			Object ppub = ModelServiceHolder.get().getEntityProperty("ppub", versionEntry.get()); //$NON-NLS-1$
 			if (ppub instanceof String) {
 				try {
 					return Integer.parseInt(((String) ppub).trim());
@@ -52,27 +52,27 @@ public class VersionUtil {
 		Optional<IArtikelstammItem> versionEntry = ModelServiceHolder.get().load(VERSION_ENTRY_ID,
 				IArtikelstammItem.class);
 		if (versionEntry.isPresent()) {
-			ModelServiceHolder.get().setEntityProperty("ppub", Integer.toString(newVersion), versionEntry.get());
+			ModelServiceHolder.get().setEntityProperty("ppub", Integer.toString(newVersion), versionEntry.get()); //$NON-NLS-1$
 			ModelServiceHolder.get().save(versionEntry.get());
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Verison entry"); //$NON-NLS-1$
 	}
 
 	public static void setImportSetCreationDate(Date time) {
 		Optional<IArtikelstammItem> versionEntry = ModelServiceHolder.get().load(VERSION_ENTRY_ID,
 				IArtikelstammItem.class);
 		if (versionEntry.isPresent()) {
-			ModelServiceHolder.get().setEntityProperty("dscr", df.format(time.getTime()), versionEntry.get());
+			ModelServiceHolder.get().setEntityProperty("dscr", df.format(time.getTime()), versionEntry.get()); //$NON-NLS-1$
 			ModelServiceHolder.get().save(versionEntry.get());
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Verison entry"); //$NON-NLS-1$
 	}
 
 	public static Date getImportSetCreationDate() {
 		Optional<IArtikelstammItem> versionEntry = ModelServiceHolder.get().load(VERSION_ENTRY_ID,
 				IArtikelstammItem.class);
 		if (versionEntry.isPresent()) {
-			Object value = ModelServiceHolder.get().getEntityProperty("dscr", versionEntry.get());
+			Object value = ModelServiceHolder.get().getEntityProperty("dscr", versionEntry.get()); //$NON-NLS-1$
 			if (value instanceof String) {
 				try {
 					return df.parse((String) value);
@@ -82,6 +82,6 @@ public class VersionUtil {
 			}
 			return null;
 		}
-		throw new IllegalArgumentException("No Verison entry");
+		throw new IllegalArgumentException("No Verison entry"); //$NON-NLS-1$
 	}
 }

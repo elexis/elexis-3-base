@@ -41,14 +41,14 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 		controlFieldProvider.setQuery(query);
 		// or match the gtin
 		if (controlFieldProvider.getValues() != null && controlFieldProvider.getValues().length > 0) {
-			query.or("gtin", COMPARATOR.LIKE, controlFieldProvider.getValues()[0] + "%");
+			query.or("gtin", COMPARATOR.LIKE, controlFieldProvider.getValues()[0] + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		query.startGroup();
 		// apply additional filters like atc, mepha, ...
 		applyQueryFilters(query);
 		query.andJoinGroups();
 
-		query.orderBy("ldscr", ORDER.ASC);
+		query.orderBy("ldscr", ORDER.ASC); //$NON-NLS-1$
 		List<?> elements = query.execute();
 		commonViewer.setLimitReached(elements.size() == QUERY_LIMIT, QUERY_LIMIT);
 		if (addAtcElements) {
@@ -106,14 +106,14 @@ public class ArtikelstammCommonViewerContentProvider extends LazyCommonViewerCon
 	private void addFilterInformation(AtcQueryFilter atcQueryFilter, List<Object> elements) {
 		String atcFilterValue = atcQueryFilter.getFilterValue();
 		String atcInfo = ATCCodeServiceHolder.get().get().getForATCCode(atcFilterValue).name_german;
-		String label = "ATC Filter " + atcFilterValue + " (" + atcInfo + ")";
+		String label = "ATC Filter " + atcFilterValue + " (" + atcInfo + ")"; //$NON-NLS-2$ //$NON-NLS-3$
 		ATCFilterInfoListElement aficle = new ATCFilterInfoListElement(label);
 		elements.add(0, aficle);
 	}
 
 	private void insertATCCodeValues(List<Object> elements) {
 		if (fieldFilterValues != null) {
-			String name = fieldFilterValues.get("ldscr");
+			String name = fieldFilterValues.get("ldscr"); //$NON-NLS-1$
 
 			if (name == null || name.length() < 1)
 				return;

@@ -41,18 +41,18 @@ import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 public class ArtikelstammHelper {
 	private static Logger log = LoggerFactory.getLogger(ArtikelstammHelper.class);
 
-	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v5.xsd";
+	public static String PHARMA_XSD_LOCATION = "Elexis_Artikelstamm_v5.xsd"; //$NON-NLS-1$
 	private static URL schemaLocationUrl = null;
 
 	private static SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-	static DateFormat dateFormat = new SimpleDateFormat("ddMMyy");
-	public static DateFormat monthAndYearWritten = new SimpleDateFormat("MMM yyyy");
+	static DateFormat dateFormat = new SimpleDateFormat("ddMMyy"); //$NON-NLS-1$
+	public static DateFormat monthAndYearWritten = new SimpleDateFormat("MMM yyyy"); //$NON-NLS-1$
 
 	static {
 		try {
-			schemaLocationUrl = new URL("platform:/plugin/at.medevit.ch.artikelstamm/lib/" + PHARMA_XSD_LOCATION);
+			schemaLocationUrl = new URL("platform:/plugin/at.medevit.ch.artikelstamm/lib/" + PHARMA_XSD_LOCATION); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			log.error("Error resolving Artikelstamm schema", e);
+			log.error("Error resolving Artikelstamm schema", e); //$NON-NLS-1$
 		}
 	}
 
@@ -108,19 +108,19 @@ public class ArtikelstammHelper {
 	public static String createUUID(int version, String gtin, BigInteger phar, final boolean includeVersion) {
 		StringBuilder sb = new StringBuilder();
 		if (gtin.length() > 0) {
-			sb.append(String.format("%014d", Long.parseLong(gtin)));
+			sb.append(String.format("%014d", Long.parseLong(gtin))); //$NON-NLS-1$
 		} else {
-			sb.append("00000000000000");
+			sb.append("00000000000000"); //$NON-NLS-1$
 		}
 		if (phar != null) {
-			sb.append(String.format("%07d", phar));
+			sb.append(String.format("%07d", phar)); //$NON-NLS-1$
 		} else {
-			sb.append("0000000");
+			sb.append("0000000"); //$NON-NLS-1$
 		}
 		if (version > 9999 || version < 0)
 			version = 0;
 		if (includeVersion)
-			sb.append(String.format("%04d", version));
+			sb.append(String.format("%04d", version)); //$NON-NLS-1$
 		return sb.toString();
 	}
 
@@ -165,9 +165,9 @@ public class ArtikelstammHelper {
 		Date outputDate = converted.getCREATIONDATETIME().toGregorianCalendar().getTime();
 		String filename;
 		if (string != null) {
-			filename = "artikelstamm_" + dateFormat.format(outputDate) + "_" + string + ".xml";
+			filename = "artikelstamm_" + dateFormat.format(outputDate) + "_" + string + ".xml"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			filename = "artikelstamm_" + dateFormat.format(outputDate) + ".xml";
+			filename = "artikelstamm_" + dateFormat.format(outputDate) + ".xml"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		return new File(inboundFileObj.getParent(), filename);
@@ -216,7 +216,7 @@ public class ArtikelstammHelper {
 			}
 		}
 		if (itemGTINCache.containsKey(gtin)) {
-			System.out.println("[INFO] Resolved over GTIN " + gtin);
+			System.out.println("[INFO] Resolved over GTIN " + gtin); //$NON-NLS-1$
 			return itemGTINCache.get(gtin);
 		}
 		return null;
@@ -232,7 +232,7 @@ public class ArtikelstammHelper {
 	 */
 	public String getSwissmedicNo8ForArtikelstammItem(ARTIKELSTAMM.ITEMS.ITEM item) {
 		String gtin = item.getGTIN();
-		if (gtin != null && gtin.startsWith("7680"))
+		if (gtin != null && gtin.startsWith("7680")) //$NON-NLS-1$
 			return gtin.substring(4, 12);
 		return null;
 	}

@@ -45,8 +45,8 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 	@Inject
 	private IEclipseContext eclipseContext;
 
-	private Image blackBoxedImage = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui",
-			"/rsc/icons/flag-black.png");
+	private Image blackBoxedImage = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", //$NON-NLS-1$
+			"/rsc/icons/flag-black.png"); //$NON-NLS-1$
 
 	public LagerhaltungArtikelstammLabelProvider() {
 		// trigger injection of application context
@@ -67,7 +67,7 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 		IArtikelstammItem ai = (IArtikelstammItem) element;
 		if (eclipseContext != null) {
 			MPart mPart = eclipseContext.getActive(MPart.class);
-			if (mPart != null && "ch.elexis.LeistungenView".equals(mPart.getElementId())
+			if (mPart != null && "ch.elexis.LeistungenView".equals(mPart.getElementId()) //$NON-NLS-1$
 					&& ContextServiceHolder.get().getTyped(IEncounter.class).isPresent()) {
 				availability = getAvailability(ai,
 						Optional.of(ContextServiceHolder.get().getTyped(IEncounter.class).get().getMandator()));
@@ -78,7 +78,7 @@ public class LagerhaltungArtikelstammLabelProvider extends ArtikelstammLabelProv
 			availability = StockServiceHolder.get().getCumulatedStockForArticle(ai);
 		}
 		if (availability != null) {
-			return ai.getLabel() + " (LB: " + availability + ")";
+			return ai.getLabel() + " (LB: " + availability + ")"; //$NON-NLS-2$
 		}
 		return ai.getLabel();
 	}

@@ -10,15 +10,15 @@ import at.medevit.ch.artikelstamm.DATASOURCEType;
 import ch.elexis.core.jpa.entities.ArtikelstammItem;
 
 public class VersionUtil {
-	private static DateFormat df = new SimpleDateFormat("ddMMyy HH:mm");
-	private static final String VERSION_ENTRY_ID = "VERSION";
+	private static DateFormat df = new SimpleDateFormat("ddMMyy HH:mm"); //$NON-NLS-1$
+	private static final String VERSION_ENTRY_ID = "VERSION"; //$NON-NLS-1$
 
 	public static DATASOURCEType getDatasourceType() {
 		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
 		if (versionEntry != null) {
 			return DATASOURCEType.fromValue(versionEntry.getAdddscr());
 		}
-		throw new IllegalArgumentException("No Version entry");
+		throw new IllegalArgumentException("No Version entry"); //$NON-NLS-1$
 	}
 
 	public static void setDataSourceType(DATASOURCEType datasource) {
@@ -28,7 +28,7 @@ public class VersionUtil {
 			EntityUtil.save(Collections.singletonList(versionEntry));
 			return;
 		}
-		throw new IllegalArgumentException("No Version entry");
+		throw new IllegalArgumentException("No Version entry"); //$NON-NLS-1$
 	}
 
 	public static int getCurrentVersion() {
@@ -51,7 +51,7 @@ public class VersionUtil {
 			EntityUtil.save(Collections.singletonList(versionEntry));
 			return;
 		}
-		throw new IllegalArgumentException("No Version entry");
+		throw new IllegalArgumentException("No Version entry"); //$NON-NLS-1$
 	}
 
 	public static void setImportSetCreationDate(Date time) {
@@ -61,7 +61,7 @@ public class VersionUtil {
 			EntityUtil.save(Collections.singletonList(versionEntry));
 			return;
 		}
-		throw new IllegalArgumentException("No Version entry");
+		throw new IllegalArgumentException("No Version entry"); //$NON-NLS-1$
 	}
 
 	public static Date getImportSetCreationDate() {
@@ -74,6 +74,6 @@ public class VersionUtil {
 				return null;
 			}
 		}
-		throw new IllegalArgumentException("No Version entry");
+		throw new IllegalArgumentException("No Version entry"); //$NON-NLS-1$
 	}
 }

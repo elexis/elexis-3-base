@@ -37,9 +37,9 @@ import ch.rgw.tools.Money;
 public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.ArtikelstammItem>
 		implements Identifiable, IArtikelstammItem {
 
-	private static final String EXTINFO_VAL_VAT_OVERRIDEN = "VAT_OVERRIDE";
-	private static final String EXTINFO_VAL_PPUB_OVERRIDE_STORE = "PPUB_OVERRIDE_STORE";
-	private static final String EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE = "PKG_SIZE_OVERRIDE_STORE";
+	private static final String EXTINFO_VAL_VAT_OVERRIDEN = "VAT_OVERRIDE"; //$NON-NLS-1$
+	private static final String EXTINFO_VAL_PPUB_OVERRIDE_STORE = "PPUB_OVERRIDE_STORE"; //$NON-NLS-1$
+	private static final String EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE = "PKG_SIZE_OVERRIDE_STORE"; //$NON-NLS-1$
 
 	private static IBillableOptifier<ArtikelstammItem> optifier;
 	private IBillableVerifier verifier;
@@ -164,7 +164,7 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 	@Override
 	public void setPackageSize(int value) {
 		if (value < 0) {
-			throw new IllegalArgumentException("value must not be lower than 0");
+			throw new IllegalArgumentException("value must not be lower than 0"); //$NON-NLS-1$
 		}
 		getEntity().setPkg_size(value);
 	}
@@ -294,8 +294,8 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 	@Override
 	public List<IArticle> getPackages() {
 		IQuery<IArtikelstammItem> query = ArtikelstammModelServiceHolder.get().getQuery(IArtikelstammItem.class);
-		query.and("prodno", COMPARATOR.EQUALS, getId());
-		query.and("type", COMPARATOR.NOT_EQUALS, "X");
+		query.and("prodno", COMPARATOR.EQUALS, getId()); //$NON-NLS-1$
+		query.and("type", COMPARATOR.NOT_EQUALS, "X"); //$NON-NLS-1$ //$NON-NLS-2$
 		return (List<IArticle>) (List<?>) query.execute();
 	}
 
@@ -405,7 +405,7 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 	public boolean isUserDefinedPrice() {
 		String ppub = getEntity().getPpub();
 		if (StringUtils.isNotBlank(ppub)) {
-			return ppub.startsWith("-");
+			return ppub.startsWith("-"); //$NON-NLS-1$
 		}
 		return false;
 	}
@@ -413,13 +413,13 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 	@Override
 	public void setUserDefinedPrice(boolean activate) {
 		if (activate) {
-			String ppub = StringUtils.defaultString(getEntity().getPpub(), "0");
+			String ppub = StringUtils.defaultString(getEntity().getPpub(), "0"); //$NON-NLS-1$
 			setExtInfo(ArtikelstammConstants.EXTINFO_VAL_PPUB_OVERRIDE_STORE, ppub);
 			double value = 0;
 			try {
 				value = Double.valueOf(ppub);
 			} catch (NumberFormatException nfe) {
-				LoggerFactory.getLogger(getClass()).error("Error #setUserDefinedPrice [{}] value is [{}], setting 0",
+				LoggerFactory.getLogger(getClass()).error("Error #setUserDefinedPrice [{}] value is [{}], setting 0", //$NON-NLS-1$
 						getId(), ppub);
 			}
 			setUserDefinedPriceValue(new Money(value));
@@ -448,7 +448,7 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 					(getSellingPrice() != null) ? Double.toString(getSellingPrice().doubleValue()) : StringUtils.EMPTY);
 		}
 		// setSellingPrice((value != null) ? value.negate() : null);
-		getEntity().setPpub((value != null) ? "-" + Double.toString(value.doubleValue()) : null);
+		getEntity().setPpub((value != null) ? "-" + Double.toString(value.doubleValue()) : null); //$NON-NLS-1$
 	}
 
 	@Override
@@ -463,7 +463,7 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 
 	@Override
 	public boolean isBlackBoxed() {
-		return !("0".equals(getEntity().getBb()));
+		return !("0".equals(getEntity().getBb())); //$NON-NLS-1$
 	}
 
 	@Override
@@ -504,7 +504,7 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 	@Override
 	public String getLabel() {
 		return (getAdditionalDescription() != null && getAdditionalDescription().length() > 0)
-				? getName() + " (" + getAdditionalDescription() + ")"
+				? getName() + " (" + getAdditionalDescription() + ")" //$NON-NLS-1$ //$NON-NLS-2$
 				: getName();
 	}
 
@@ -542,7 +542,7 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 	@Override
 	public void setUserDefinedPkgSizeValue(int value) {
 		if (value < 0) {
-			throw new IllegalArgumentException("value must not be lower than 0");
+			throw new IllegalArgumentException("value must not be lower than 0"); //$NON-NLS-1$
 		}
 		int pkgSize = getPackageSize();
 		setExtInfo(EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE, Integer.toString(pkgSize));
@@ -564,7 +564,7 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 	public boolean isVaccination() {
 		String atcCode = getAtcCode();
 		if (atcCode != null) {
-			if (atcCode.toUpperCase().startsWith("J07") && !atcCode.toUpperCase().startsWith("J07AX")) {
+			if (atcCode.toUpperCase().startsWith("J07") && !atcCode.toUpperCase().startsWith("J07AX")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
 			}
 		}
@@ -576,12 +576,12 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 		String gtin = getGtin();
 		if (gtin != null && gtin.length() > 3) {
 			if (getType() == TYPE.P || isInSLList()) {
-				return "402";
+				return "402"; //$NON-NLS-1$
 			} else if (getType() == TYPE.N) {
-				return "406";
+				return "406"; //$NON-NLS-1$
 			}
 		}
-		return "999";
+		return "999"; //$NON-NLS-1$
 	}
 
 	@Override

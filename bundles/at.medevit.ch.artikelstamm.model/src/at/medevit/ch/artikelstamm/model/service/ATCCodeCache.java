@@ -51,7 +51,7 @@ public class ATCCodeCache implements ATCCodeCacheService {
 	private static HashMap<String, Integer> cache;
 
 	private static Logger log = LoggerFactory.getLogger(ATCCodeCache.class);
-	private static final String NAMED_BLOB_PREFIX = "ATC_ARTSTAMM_CACHE";
+	private static final String NAMED_BLOB_PREFIX = "ATC_ARTSTAMM_CACHE"; //$NON-NLS-1$
 
 	private static void initCache() throws IOException, ClassNotFoundException {
 		deserializeFromDatabase(determineBlobId());
@@ -62,12 +62,12 @@ public class ATCCodeCache implements ATCCodeCacheService {
 		try {
 			initCache();
 		} catch (Exception e) {
-			log.warn("Error initializing cache failed [" + e.getMessage() + "] activating anyway");
+			log.warn("Error initializing cache failed [" + e.getMessage() + "] activating anyway"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	private static String determineBlobId() {
-		return NAMED_BLOB_PREFIX + "_" + VersionUtil.getCurrentVersion();
+		return NAMED_BLOB_PREFIX + "_" + VersionUtil.getCurrentVersion(); //$NON-NLS-1$
 	}
 
 	@SuppressWarnings("unchecked")
@@ -96,7 +96,7 @@ public class ATCCodeCache implements ATCCodeCacheService {
 				try {
 					initCache();
 				} catch (IOException | ClassNotFoundException e) {
-					log.error("Error initializing cache", e);
+					log.error("Error initializing cache", e); //$NON-NLS-1$
 					cache = null;
 					return -1;
 				}
@@ -111,10 +111,10 @@ public class ATCCodeCache implements ATCCodeCacheService {
 	public static void rebuildCache(IProgressMonitor monitor) {
 		ATCCodeService atcCodeService = AtcCodeServiceHolder.get().orElse(null);
 		if (atcCodeService == null) {
-			log.error("No ATCCodeService available");
+			log.error("No ATCCodeService available"); //$NON-NLS-1$
 			return;
 		} else {
-			log.info("Start rebuilding ATCCodeCache ...");
+			log.info("Start rebuilding ATCCodeCache ..."); //$NON-NLS-1$
 		}
 		List<ATCCode> allATCCodes = atcCodeService.getAllATCCodes();
 		int numberOfATCCodes = allATCCodes.size();
@@ -122,8 +122,8 @@ public class ATCCodeCache implements ATCCodeCacheService {
 		cache = new HashMap<String, Integer>(numberOfATCCodes);
 
 		TreeMap<String, Integer> tm = new TreeMap<String, Integer>();
-		String queryString = "SELECT DISTINCT(atc) FROM artikelstamm_ch";
-		log.debug("ArtikelstammImporter {} numberOfATCCodes using query {}:", numberOfATCCodes, queryString);
+		String queryString = "SELECT DISTINCT(atc) FROM artikelstamm_ch"; //$NON-NLS-1$
+		log.debug("ArtikelstammImporter {} numberOfATCCodes using query {}:", numberOfATCCodes, queryString); //$NON-NLS-1$
 		ModelServiceHolder.get().executeNativeQuery(queryString).forEach(o -> {
 			if (o instanceof String) {
 				String atc = (String) o;
@@ -180,9 +180,9 @@ public class ATCCodeCache implements ATCCodeCacheService {
 			CoreModelServiceHolder.get().save(cacheStorage);
 			monitor.worked(1);
 		} catch (IOException e) {
-			log.error("Error on cache generation", e);
+			log.error("Error on cache generation", e); //$NON-NLS-1$
 		}
-		log.info("Rebuilding ATCCodeCache finished");
+		log.info("Rebuilding ATCCodeCache finished"); //$NON-NLS-1$
 		monitor.done();
 	}
 }

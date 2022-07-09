@@ -84,10 +84,10 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 			if (!ss.isEmpty() && ss.getFirstElement() instanceof IArtikelstammItem) {
 				IArtikelstammItem selected = (IArtikelstammItem) ss.getFirstElement();
 				ContextServiceHolder.get().getRootContext()
-						.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", selected);
+						.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", selected); //$NON-NLS-1$
 			} else {
 				ContextServiceHolder.get().getRootContext()
-						.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", null);
+						.setNamed("at.medevit.ch.artikelstamm.elexis.common.ui.selection", null); //$NON-NLS-1$
 			}
 		}
 	};
@@ -97,7 +97,7 @@ public class ArtikelstammCodeSelectorFactory extends CodeSelectorFactory {
 		final CommonViewer cov = cv;
 		cov.setSelectionChangedListener(selChange);
 
-		FieldDescriptor<?>[] fields = { new FieldDescriptor<IArtikelstammItem>(DISP_NAME, "ldscr", Typ.STRING, null)
+		FieldDescriptor<?>[] fields = { new FieldDescriptor<IArtikelstammItem>(DISP_NAME, "ldscr", Typ.STRING, null) //$NON-NLS-1$
 				.ignoreCase(false).valueToLower(true) };
 
 		// add keyListener to search field

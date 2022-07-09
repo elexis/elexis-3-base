@@ -63,7 +63,7 @@ public class ArtikelstammImporterPage extends ImporterPage {
 
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception {
-		ILocalLock lock = ConfigServiceHolder.get().getLocalLock("ArtikelstammImporter");
+		ILocalLock lock = ConfigServiceHolder.get().getLocalLock("ArtikelstammImporter"); //$NON-NLS-1$
 		try {
 			if (!lock.tryLock()) {
 				Display.getDefault().syncExec(new Runnable() {
@@ -90,7 +90,7 @@ public class ArtikelstammImporterPage extends ImporterPage {
 				return Status.OK_STATUS;
 			}
 
-			LoggerFactory.getLogger(getClass()).info("ArtikelstammImporterPage.doImport " + results[0]);
+			LoggerFactory.getLogger(getClass()).info("ArtikelstammImporterPage.doImport " + results[0]); //$NON-NLS-1$
 			IReferenceDataImporter refImporter = getImporter();
 			IStatus status = refImporter.performImport(monitor, new FileInputStream(results[0]), null);
 			if (!status.isOK()) {
@@ -106,8 +106,8 @@ public class ArtikelstammImporterPage extends ImporterPage {
 
 	private IReferenceDataImporter getImporter() {
 		// default importer
-		return importerService.getImporter("artikelstamm_v5")
-				.orElseThrow(() -> new IllegalStateException("No ReferenceDataImporter available"));
+		return importerService.getImporter("artikelstamm_v5") //$NON-NLS-1$
+				.orElseThrow(() -> new IllegalStateException("No ReferenceDataImporter available")); //$NON-NLS-1$
 	}
 
 	@Override
@@ -133,10 +133,10 @@ public class ArtikelstammImporterPage extends ImporterPage {
 
 		int version = VersionUtil.getCurrentVersion();
 		StringBuilder sb = new StringBuilder();
-		sb.append(" v" + version);
+		sb.append(" v" + version); //$NON-NLS-1$
 		Date importSetCreationDate = VersionUtil.getImportSetCreationDate();
 		if (importSetCreationDate != null) {
-			sb.append(" / " + ArtikelstammHelper.monthAndYearWritten.format(VersionUtil.getImportSetCreationDate()));
+			sb.append(" / " + ArtikelstammHelper.monthAndYearWritten.format(VersionUtil.getImportSetCreationDate())); //$NON-NLS-1$
 		}
 		lblVERSION.setText(sb.toString());
 
@@ -164,7 +164,7 @@ public class ArtikelstammImporterPage extends ImporterPage {
 						if (entry == null) {
 							entry = new ArrayList<String>();
 						}
-						entry.add(iCodeElement.getText() + " [" + iCodeElement.getCode() + "]");
+						entry.add(iCodeElement.getText() + " [" + iCodeElement.getCode() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}
@@ -180,10 +180,10 @@ public class ArtikelstammImporterPage extends ImporterPage {
 			sb.append(
 					"Die folgenden Artikelstamm-Referenzen in den genannten Leistungsblöcken sind nicht mehr auflösbar:\n\n");
 			for (Entry<String, List<String>> entry : entrySet) {
-				sb.append(entry.getKey() + ":\n");
+				sb.append(entry.getKey() + ":\n"); //$NON-NLS-1$
 				List<String> value = entry.getValue();
 				for (String string : value) {
-					sb.append("\t" + string + StringUtils.LF);
+					sb.append("\t" + string + StringUtils.LF); //$NON-NLS-1$
 				}
 			}
 

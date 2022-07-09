@@ -22,20 +22,20 @@ import at.medevit.ch.artikelstamm.IArtikelstammItem;
 
 public class ArtikelstammLabelProvider extends LabelProvider implements IColorProvider {
 
-	private static Image emptyTransparent = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui",
-			"rsc/icons/emptyTransparent.png");
-	private static Image pharmaMain = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui",
-			"rsc/icons/pharma.png");
-	private static Image nonPharmaMain = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui",
-			"rsc/icons/nonPharma.png");
-	private static Image slMain = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", "rsc/icons/sl.png");
+	private static Image emptyTransparent = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", //$NON-NLS-1$
+			"rsc/icons/emptyTransparent.png"); //$NON-NLS-1$
+	private static Image pharmaMain = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", //$NON-NLS-1$
+			"rsc/icons/pharma.png"); //$NON-NLS-1$
+	private static Image nonPharmaMain = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", //$NON-NLS-1$
+			"rsc/icons/nonPharma.png"); //$NON-NLS-1$
+	private static Image slMain = ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", "rsc/icons/sl.png"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	@Override
 	public String getText(Object element) {
 		IArtikelstammItem item = (IArtikelstammItem) element;
 		StringBuilder sb = new StringBuilder();
 		if (item.getDeductible() > 0) {
-			sb.append("[" + item.getDeductible() + "%] ");
+			sb.append("[" + item.getDeductible() + "%] "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		sb.append(item.getLabel());
 		return sb.toString();

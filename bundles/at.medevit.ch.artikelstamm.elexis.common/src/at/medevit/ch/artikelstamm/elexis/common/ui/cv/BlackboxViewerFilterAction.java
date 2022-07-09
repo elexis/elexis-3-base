@@ -21,7 +21,7 @@ public class BlackboxViewerFilterAction extends Action {
 	private QueryFilter blackboxOnlyFilter = new BlackboxOnlyQueryFilter();
 	private SelectorPanelProvider slp;
 
-	private static final String FILTER_CFG = "BlackboxViewerFilterAction.showInactiveItems";
+	private static final String FILTER_CFG = "BlackboxViewerFilterAction.showInactiveItems"; //$NON-NLS-1$
 
 	public BlackboxViewerFilterAction(CommonViewerContentProvider commonViewerContentProvider,
 			SelectorPanelProvider selectorPanel) {
@@ -39,7 +39,7 @@ public class BlackboxViewerFilterAction extends Action {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return ResourceManager.getPluginImageDescriptor("at.medevit.ch.artikelstamm.ui", "/rsc/icons/flag-black.png");
+		return ResourceManager.getPluginImageDescriptor("at.medevit.ch.artikelstamm.ui", "/rsc/icons/flag-black.png"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class BlackboxViewerFilterAction extends Action {
 	private class BlackboxOnlyQueryFilter implements QueryFilter {
 		@Override
 		public void apply(IQuery<?> query) {
-			query.and("bb", COMPARATOR.EQUALS, "0");
+			query.and("bb", COMPARATOR.EQUALS, "0"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

@@ -22,7 +22,7 @@ public class ATCCodeServiceConsumer {
 
 	public synchronized void bind(ATCCodeService consumer) {
 		atcCodeService = consumer;
-		log.debug("Binding " + consumer);
+		log.debug("Binding " + consumer); //$NON-NLS-1$
 	}
 
 	public synchronized void unbind(ATCCodeService consumer) {

@@ -16,10 +16,10 @@ public class ArtikelstammDecorator implements ILightweightLabelDecorator {
 	private static ImageDescriptor warning = PlatformUI.getWorkbench().getSharedImages()
 			.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 
-	private static ImageDescriptor ol_gGruen = ResourceManager.getPluginImageDescriptor("at.medevit.ch.artikelstamm.ui",
-			"rsc/icons/generic_ol_white.png");
-	private static ImageDescriptor ol_oBlue = ResourceManager.getPluginImageDescriptor("at.medevit.ch.artikelstamm.ui",
-			"rsc/icons/original_ol_white.png");
+	private static ImageDescriptor ol_gGruen = ResourceManager.getPluginImageDescriptor("at.medevit.ch.artikelstamm.ui", //$NON-NLS-1$
+			"rsc/icons/generic_ol_white.png"); //$NON-NLS-1$
+	private static ImageDescriptor ol_oBlue = ResourceManager.getPluginImageDescriptor("at.medevit.ch.artikelstamm.ui", //$NON-NLS-1$
+			"rsc/icons/original_ol_white.png"); //$NON-NLS-1$
 
 	@Override
 	public void addListener(ILabelProviderListener listener) {
@@ -57,9 +57,9 @@ public class ArtikelstammDecorator implements ILightweightLabelDecorator {
 		}
 		String genericType = item.getGenericType();
 		if (genericType != null) {
-			if (genericType.startsWith("G")) {
+			if (genericType.startsWith("G")) { //$NON-NLS-1$
 				decoration.addOverlay(ol_gGruen, IDecoration.BOTTOM_LEFT);
-			} else if (genericType.startsWith("O")) {
+			} else if (genericType.startsWith("O")) { //$NON-NLS-1$
 				decoration.addOverlay(ol_oBlue, IDecoration.BOTTOM_LEFT);
 			}
 		}

@@ -34,11 +34,11 @@ public class Activator implements BundleActivator {
 	}
 
 	public static File getATCFile() {
-		return ctx.getDataFile("rsc/2013ATC.XML");
+		return ctx.getDataFile("rsc/2013ATC.XML"); //$NON-NLS-1$
 	}
 
 	public static File getATC_DDDFile() {
-		return ctx.getDataFile("rsc/2013ATC_ddd.xml");
+		return ctx.getDataFile("rsc/2013ATC_ddd.xml"); //$NON-NLS-1$
 	}
 
 }

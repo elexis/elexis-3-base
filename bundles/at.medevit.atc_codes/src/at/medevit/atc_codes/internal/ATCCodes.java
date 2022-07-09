@@ -36,7 +36,7 @@ import at.medevit.atc_codes.parser.ATCParser.ATCDefinition;
 
 public class ATCCodes {
 
-	public static final String ATC_CODES_SERIALIZED_FILE = "/lib/ATCCodesMap.ser";
+	public static final String ATC_CODES_SERIALIZED_FILE = "/lib/ATCCodesMap.ser"; //$NON-NLS-1$
 
 	private static ATCCodes instance = null;
 	private HashMap<String, ATCCode> atcCodesMap = null;
@@ -59,7 +59,7 @@ public class ATCCodes {
 			InputStream is = ATCCodes.class.getResourceAsStream(ATC_CODES_SERIALIZED_FILE);
 			if (is == null) {
 				// patch to load library from within non-osgi environment
-				is = ATCCodes.class.getResourceAsStream("/ATCCodesMap.ser");
+				is = ATCCodes.class.getResourceAsStream("/ATCCodesMap.ser"); //$NON-NLS-1$
 			}
 			ObjectInput input = new ObjectInputStream(is);
 			try {

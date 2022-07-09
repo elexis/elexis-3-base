@@ -23,7 +23,7 @@ public class ATCParser extends DefaultHandler {
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		if (localName.equals("row")) {
+		if (localName.equals("row")) { //$NON-NLS-1$
 			ATCDefinition def = new ATCDefinition();
 			def.atcCode = attributes.getValue(0);
 			def.name = attributes.getValue(1);

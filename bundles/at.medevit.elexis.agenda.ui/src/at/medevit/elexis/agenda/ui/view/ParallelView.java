@@ -25,6 +25,11 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class ParallelView {
 
+	/*
+	 * @deprecated will be replaced with AgendaView.
+	 */
+	@Deprecated
+
 	private ParallelComposite composite;
 
 	private SideBarComposite sideBar;

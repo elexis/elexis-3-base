@@ -93,10 +93,6 @@ public class PatientElement {
 		c.appendChild(doc.createTextNode(pd.getEmail()));
 		p.appendChild(c);
 
-		c = doc.createElement("PrintingDate");
-		c.appendChild(doc.createTextNode(pd.getPrintingDate()));
-		p.appendChild(c);
-
 		c = doc.createElement("CompleteAddress");
 		String address = pd.getCompleteAddress();
 		String[] addressParts = address.split("[\\r\\n]+");

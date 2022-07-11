@@ -84,9 +84,9 @@
 			</xsl:if>
 		</fo:block>
 		<fo:block>
-			Druckdatum:
-			<xsl:value-of select="PrintingDate" />
-			&#160;
-			</fo:block>
+		Druckdatum:
+		<xsl:value-of select="/Page/@currentDate" />
+		&#160;
+	</fo:block>
 	</xsl:template>
 </xsl:stylesheet>

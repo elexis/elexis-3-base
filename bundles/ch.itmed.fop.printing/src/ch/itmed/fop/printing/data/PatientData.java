@@ -13,9 +13,6 @@ package ch.itmed.fop.printing.data;
 
 import static ch.elexis.core.model.PatientConstants.FLD_EXTINFO_LEGAL_GUARDIAN;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +51,7 @@ public class PatientData {
 			initLegalGuardian();
 		}
 	}
-
+	
 	public void loadFromAgenda() throws NullPointerException {
 		Termin t = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 		if (t == null) {
@@ -91,7 +88,7 @@ public class PatientData {
 		}
 		return false;
 	}
-
+	
 	private Kontakt getLegalGuardian() {
 		String guardianId = (String) patient.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
 		if (StringUtils.isNotBlank(guardianId)) {
@@ -195,12 +192,5 @@ public class PatientData {
 
 	public String getEmail() {
 		return patient.getMailAddress();
-	}
-
-	public String getPrintingDate() {
-		LocalDate localDate = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.YYYY").withZone(ZoneId.systemDefault());
-		String currentDate = formatter.format(localDate);
-		return currentDate;
 	}
 }

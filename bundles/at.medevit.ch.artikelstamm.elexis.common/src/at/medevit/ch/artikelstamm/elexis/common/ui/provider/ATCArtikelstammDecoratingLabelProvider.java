@@ -33,19 +33,19 @@ public class ATCArtikelstammDecoratingLabelProvider extends DecoratingLabelProvi
 
 			IArtikelstammItem ai = (IArtikelstammItem) element;
 			if (ai.isOverrideVatInfo()) {
-				ret = ret + " (MWSt: " + resolveVatInfoLabel(ai.getVatInfo()) + ")";
+				ret = ret + " (MWSt: " + resolveVatInfoLabel(ai.getVatInfo()) + ")"; //$NON-NLS-2$
 			}
 			if (ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_PRICE_IN_OVERVIEW, true)) {
 				Money publicPrice = ai.getSellingPrice();
 				if (publicPrice != null && publicPrice.getAmount() > 0.0d) {
-					ret = ret + " <" + ai.getSellingPrice().getAmount() + "> ";
+					ret = ret + " <" + ai.getSellingPrice().getAmount() + "> "; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 
 			return ret;
 		} else if (element instanceof ATCCode) {
 			String atcLabel = atcLabelProvider.getText(element);
-			String atcLabelWAvailability = atcLabel + " ["
+			String atcLabelWAvailability = atcLabel + " [" //$NON-NLS-1$
 					+ determineNumberOfAvailableArticlesForAtcCode((ATCCode) element) + " Artikel]";
 			return atcLabelWAvailability;
 		} else if (element instanceof ATCFilterInfoListElement) {

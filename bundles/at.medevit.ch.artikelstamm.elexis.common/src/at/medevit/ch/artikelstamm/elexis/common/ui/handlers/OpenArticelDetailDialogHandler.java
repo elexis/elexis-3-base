@@ -25,7 +25,7 @@ public class OpenArticelDetailDialogHandler extends AbstractHandler implements I
 				dd.open();
 			} else {
 				throw new ExecutionException(
-						"Invalid article type " + prescription.get().getArticle().getClass().getName());
+						"Invalid article type " + prescription.get().getArticle().getClass().getName()); //$NON-NLS-1$
 			}
 		}
 		return null;

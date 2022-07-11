@@ -18,7 +18,7 @@ public class AtcQueryFilter implements QueryFilter {
 	@Override
 	public void apply(IQuery<?> query) {
 		if (filterValue != null && !filterValue.isEmpty()) {
-			query.and("atc", COMPARATOR.LIKE, filterValue + "%");
+			query.and("atc", COMPARATOR.LIKE, filterValue + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

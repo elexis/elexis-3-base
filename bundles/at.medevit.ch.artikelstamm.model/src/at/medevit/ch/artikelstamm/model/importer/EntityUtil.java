@@ -51,7 +51,7 @@ public class EntityUtil {
 			StringBuilder queryName = new StringBuilder();
 			queryName.append(clazz.getSimpleName());
 			for (String property : propertyMap.keySet()) {
-				queryName.append(".").append(property);
+				queryName.append(".").append(property); //$NON-NLS-1$
 			}
 			TypedQuery<T> namedQuery = em.createNamedQuery(queryName.toString(), clazz);
 			for (String property : propertyMap.keySet()) {

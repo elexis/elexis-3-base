@@ -102,7 +102,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 			@Nullable Integer newVersion) {
 
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
-		String bundleVersion = Platform.getBundle("at.medevit.ch.artikelstamm.model").getVersion().toString();
+		String bundleVersion = Platform.getBundle("at.medevit.ch.artikelstamm.model").getVersion().toString(); //$NON-NLS-1$
 
 		subMonitor.setTaskName("Einlesen der Aktualisierungsdaten");
 		ARTIKELSTAMM importStamm = null;
@@ -110,7 +110,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 			importStamm = ArtikelstammHelper.unmarshallInputStream(input);
 		} catch (JAXBException | SAXException je) {
 			String msg = "Fehler beim Einlesen der Import-Datei";
-			Status status = new Status(IStatus.ERROR, "at.medevit.ch.artikelstamm.model.importer", 0x01, msg, je);
+			Status status = new Status(IStatus.ERROR, "at.medevit.ch.artikelstamm.model.importer", 0x01, msg, je); //$NON-NLS-1$
 			log.error(msg, je);
 			return status;
 		}
@@ -120,17 +120,17 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 			int month = importStamm.getBUILDDATETIME().getMonth();
 			int year = importStamm.getBUILDDATETIME().getYear();
 			newVersion = Integer.valueOf(StringUtils.EMPTY + (year - 2000) + month);
-			log.info("[PI] No newVersion provided. Setting to [{}].", newVersion);
+			log.info("[PI] No newVersion provided. Setting to [{}].", newVersion); //$NON-NLS-1$
 		}
 
 		try {
 			DATASOURCEType datasourceType = VersionUtil.getDatasourceType();
-			String message = "Trying to import dataset sourced [" + importStamm.getDATASOURCE().value()
-					+ "] while existent database is sourced [" + datasourceType.value()
-					+ "]. Please contact support. Exiting.";
+			String message = "Trying to import dataset sourced [" + importStamm.getDATASOURCE().value() //$NON-NLS-1$
+					+ "] while existent database is sourced [" + datasourceType.value() //$NON-NLS-1$
+					+ "]. Please contact support. Exiting."; //$NON-NLS-1$
 			if (importStamm.getDATASOURCE() != datasourceType) {
 				log.error(message);
-				return new Status(Status.ERROR, "at.medevit.ch.artikelstamm.model.importer", message);
+				return new Status(Status.ERROR, "at.medevit.ch.artikelstamm.model.importer", message); //$NON-NLS-1$
 			}
 		} catch (IllegalArgumentException iae) {
 			VersionUtil.setDataSourceType(importStamm.getDATASOURCE());
@@ -138,8 +138,8 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 		int currentVersion = VersionUtil.getCurrentVersion();
 
-		log.info("[PI] Aktualisiere{}{} {} vom {} von v{} auf v{}. Importer-Version {}",
-				bPharma ? " Pharma" : StringUtils.EMPTY, bNonPharma ? " NonPharma" : StringUtils.EMPTY,
+		log.info("[PI] Aktualisiere{}{} {} vom {} von v{} auf v{}. Importer-Version {}", //$NON-NLS-1$
+				bPharma ? " Pharma" : StringUtils.EMPTY, bNonPharma ? " NonPharma" : StringUtils.EMPTY, //$NON-NLS-1$ //$NON-NLS-2$
 				importStamm.getDATASOURCE(), importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime(),
 				currentVersion, newVersion, bundleVersion);
 
@@ -155,7 +155,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		subMonitor.worked(5);
 
 		long startTime = System.currentTimeMillis();
-		subMonitor.setTaskName("Importiere Artikelstamm " + importStamm.getCREATIONDATETIME().getMonth() + "/"
+		subMonitor.setTaskName("Importiere Artikelstamm " + importStamm.getCREATIONDATETIME().getMonth() + "/" //$NON-NLS-2$
 				+ importStamm.getCREATIONDATETIME().getYear());
 		if (bPharma) {
 			subMonitor.subTask("Importiere Pharma Products");
@@ -164,7 +164,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		subMonitor.subTask("Importiere Artikel");
 		updateOrAddItems(newVersion, importStamm, bPharma, bNonPharma, subMonitor.split(50));
 
-		EntityUtil.executeUpdate("UPDATE ArtikelstammItem ai SET ai.ldscr=LOWER(ai.dscr)");
+		EntityUtil.executeUpdate("UPDATE ArtikelstammItem ai SET ai.ldscr=LOWER(ai.dscr)"); //$NON-NLS-1$
 
 		// update the version number for type importStammType
 		subMonitor.setTaskName("Setze neue Versionsnummer");
@@ -179,27 +179,27 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		}
 
 		log.info(
-				"[PI] Artikelstamm import took " + ((endTime - startTime) / 1000)
-						+ "sec.Used {} {} version {}. . Importer-Version {}. Will rebuild ATCCodeCache",
+				"[PI] Artikelstamm import took " + ((endTime - startTime) / 1000) //$NON-NLS-1$
+						+ "sec.Used {} {} version {}. . Importer-Version {}. Will rebuild ATCCodeCache", //$NON-NLS-1$
 				VersionUtil.getDatasourceType().toString(), VersionUtil.getImportSetCreationDate(), newVersion,
 				bundleVersion);
 
 		ATCCodeCache.rebuildCache(subMonitor.split(2));
-		log.info("[PI] Artikelstamm finished rebuilding ATCCodeCache");
+		log.info("[PI] Artikelstamm finished rebuilding ATCCodeCache"); //$NON-NLS-1$
 
 		return Status.OK_STATUS;
 	}
 
 	private static void inactivateNonBlackboxedItems() {
-		log.debug("[BB] Setting all items inactive for isOddb2xml {}...", isOddb2xml);
-		String cmd = "UPDATE ARTIKELSTAMM_CH SET BB='" + Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason())
-				+ "' WHERE BB='" + Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()) + "'";
+		log.debug("[BB] Setting all items inactive for isOddb2xml {}...", isOddb2xml); //$NON-NLS-1$
+		String cmd = "UPDATE ARTIKELSTAMM_CH SET BB='" + Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason()) //$NON-NLS-1$
+				+ "' WHERE BB='" + Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()) + "'"; //$NON-NLS-1$ //$NON-NLS-2$
 		if (isOddb2xml) {
-			cmd += " AND TYPE='P'";
+			cmd += " AND TYPE='P'"; //$NON-NLS-1$
 		}
-		log.debug("Executing {}", cmd);
+		log.debug("Executing {}", cmd); //$NON-NLS-1$
 		ModelServiceHolder.get().executeNativeUpdate(cmd);
-		log.debug("Done Executing {}", cmd);
+		log.debug("Done Executing {}", cmd); //$NON-NLS-1$
 	}
 
 	private static void populateProducsAndLimitationsMap(ARTIKELSTAMM importStamm) {
@@ -221,7 +221,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		List<PRODUCT> importProductList = importStamm.getPRODUCTS().getPRODUCT();
 		subMonitor.beginTask("Importiere " + importProductList.size() + " Produkte", importProductList.size());
 
-		log.debug("[IP] Update or import {} products...", importProductList.size());
+		log.debug("[IP] Update or import {} products...", importProductList.size()); //$NON-NLS-1$
 		List<Object> products = new ArrayList<>();
 		for (PRODUCT product : importProductList) {
 			String prodno = product.getPRODNO();
@@ -237,9 +237,9 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 				foundProduct.setBb(StringConstants.ZERO);
 				foundProduct.setAdddscr(StringConstants.EMPTY);
 
-				log.trace("[IP] Adding product " + foundProduct.getId() + " (" + foundProduct.getDscr() + ")");
+				log.trace("[IP] Adding product " + foundProduct.getId() + " (" + foundProduct.getDscr() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
-			log.trace("[IP] Updating product " + foundProduct.getId() + " (" + product.getDSCR() + ")");
+			log.trace("[IP] Updating product " + foundProduct.getId() + " (" + product.getDSCR() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			setValuesOnArtikelstammProdukt(foundProduct, product, newVersion);
 			products.add(foundProduct);
 
@@ -257,7 +257,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 	private static String trimDSCR(String dscr, String itemId) {
 		if (dscr.length() > 100) {
-			log.trace("[IP] Delimiting dscr [{}] for product/item [{}] to 100 characters.", itemId, dscr);
+			log.trace("[IP] Delimiting dscr [{}] for product/item [{}] to 100 characters.", itemId, dscr); //$NON-NLS-1$
 			dscr = dscr.substring(0, 100);
 		}
 		return dscr;
@@ -278,17 +278,17 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		List<ITEM> importItemList = importStamm.getITEMS().getITEM();
 		subMonitor.beginTask("Importiere " + importItemList.size() + " items", importItemList.size());
 
-		log.debug("[II] Update or import {} items...", importItemList.size());
+		log.debug("[II] Update or import {} items...", importItemList.size()); //$NON-NLS-1$
 		List<Object> foundItems = new ArrayList<>();
 		for (ITEM item : importItemList) {
 			ArtikelstammItem foundItem = null;
 			List<ArtikelstammItem> result = EntityUtil
-					.loadByNamedQuery(Collections.singletonMap("gtin", item.getGTIN()), ArtikelstammItem.class);
+					.loadByNamedQuery(Collections.singletonMap("gtin", item.getGTIN()), ArtikelstammItem.class); //$NON-NLS-1$
 			if (result.size() > 0) {
 				if (result.size() == 1) {
 					foundItem = result.get(0);
 				} else {
-					log.warn("[II] Found multiple items ({}) for GTIN [{}] type {}", result.size(), item.getGTIN(),
+					log.warn("[II] Found multiple items ({}) for GTIN [{}] type {}", result.size(), item.getGTIN(), //$NON-NLS-1$
 							item.getPHARMATYPE());
 					// Is the case in Stauffacher DB, where legacy articles have been imported
 					for (ArtikelstammItem artikelstammItem : result) {
@@ -297,9 +297,9 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 						if (bbReason == BlackBoxReason.INACTIVE
 								|| (isOddb2xml && bbReason == BlackBoxReason.NOT_BLACKBOXED)
 										&& artikelstammItem.getType() != null
-										&& artikelstammItem.getType().equals("N")) {
+										&& artikelstammItem.getType().equals("N")) { //$NON-NLS-1$
 							foundItem = artikelstammItem;
-							log.warn("[II] isOddb2xml {} Selected ID [{}] of {} items to update.", isOddb2xml,
+							log.warn("[II] isOddb2xml {} Selected ID [{}] of {} items to update.", isOddb2xml, //$NON-NLS-1$
 									foundItem.getId(), result.size());
 							break;
 						}
@@ -307,8 +307,8 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 				}
 			}
 
-			if ((bPharma && item.getPHARMATYPE().contentEquals("P"))
-					|| (bNonPharma && item.getPHARMATYPE().contentEquals("N"))) {
+			if ((bPharma && item.getPHARMATYPE().contentEquals("P")) //$NON-NLS-1$
+					|| (bNonPharma && item.getPHARMATYPE().contentEquals("N"))) { //$NON-NLS-1$
 				boolean keepOverriddenPublicPrice = false;
 				boolean keepOverriddenPkgSize = false;
 
@@ -320,7 +320,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 						pharmaType = TYPE.valueOf(ptString.toUpperCase());
 					}
 					BigInteger code = (item.getPHAR() != null) ? item.getPHAR() : BigInteger.ZERO;
-					String pharmaCode = String.format("%07d", code);
+					String pharmaCode = String.format("%07d", code); //$NON-NLS-1$
 
 					foundItem = new ArtikelstammItem();
 					foundItem.setId(ArtikelstammHelper.createUUID(newVersion, item.getGTIN(), code));
@@ -331,15 +331,15 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 					foundItem.setDscr(trimmedDscr);
 					foundItem.setBb(StringConstants.ZERO);
 					foundItem.setAdddscr(StringConstants.EMPTY);
-					log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")");
+					log.trace("[II] Adding article " + foundItem.getId() + " (" + item.getDSCR() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				} else {
 					// check if article has overridden public price
 					keepOverriddenPublicPrice = isUserDefinedPrice(foundItem);
 					keepOverriddenPkgSize = isUserDefinedPkgSize(foundItem);
 				}
-				log.trace("[II] Updating article {} {}  {} {} ({})", item.getPHARMATYPE(),
-						bPharma && item.getPHARMATYPE().contentEquals("P"),
-						bNonPharma && item.getPHARMATYPE().contentEquals("N"), foundItem.getId());
+				log.trace("[II] Updating article {} {}  {} {} ({})", item.getPHARMATYPE(), //$NON-NLS-1$
+						bPharma && item.getPHARMATYPE().contentEquals("P"), //$NON-NLS-1$
+						bNonPharma && item.getPHARMATYPE().contentEquals("N"), foundItem.getId()); //$NON-NLS-1$
 				setValuesOnArtikelstammItem(foundItem, item, newVersion, keepOverriddenPublicPrice,
 						keepOverriddenPkgSize);
 			}
@@ -359,11 +359,11 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 	private static Double getUserDefinedPriceValue(ArtikelstammItem item) {
 		String ppub = item.getPpub();
-		if (ppub != null && ppub.startsWith("-")) {
+		if (ppub != null && ppub.startsWith("-")) { //$NON-NLS-1$
 			try {
 				return Double.valueOf(ppub);
 			} catch (NumberFormatException nfe) {
-				log.error("Error #getUserDefinedPrice [{}] value is [{}], setting 0", item.getId(), ppub);
+				log.error("Error #getUserDefinedPrice [{}] value is [{}], setting 0", item.getId(), ppub); //$NON-NLS-1$
 			}
 		}
 		return null;
@@ -390,24 +390,24 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 			boolean keepOverriddenPublicPrice, boolean keepOverriddenPkgSize) {
 
 		ai.setCummVersion(cummulatedVersion + StringUtils.EMPTY);
-		ai.setPhar((item.getPHAR() != null) ? String.format("%07d", item.getPHAR()) : null);
+		ai.setPhar((item.getPHAR() != null) ? String.format("%07d", item.getPHAR()) : null); //$NON-NLS-1$
 
 		SALECDType salecd = item.getSALECD();
 		// For ODDB2XML we must override the SALECD == N for NonPharma as
 		// ZurRoses is eliminating way too many articles
-		boolean oddb2xmlOverride = (isOddb2xml && item.getPHARMATYPE().contentEquals("N"));
+		boolean oddb2xmlOverride = (isOddb2xml && item.getPHARMATYPE().contentEquals("N")); //$NON-NLS-1$
 		if (SALECDType.A == salecd || oddb2xmlOverride) {
 			ai.setBb(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
-			log.debug("{} Clearing blackboxed as salecd {} is A isSL {} or oddb2xml override {}", item.getGTIN(),
+			log.debug("{} Clearing blackboxed as salecd {} is A isSL {} or oddb2xml override {}", item.getGTIN(), //$NON-NLS-1$
 					salecd, item.isSLENTRY(), oddb2xmlOverride);
 		} else {
-			log.debug("{} Setting blackboxed as 5 {} != {} SALECDTypt.A  isSL {}", item.getGTIN(), salecd, SALECDType.A,
+			log.debug("{} Setting blackboxed as 5 {} != {} SALECDTypt.A  isSL {}", item.getGTIN(), salecd, SALECDType.A, //$NON-NLS-1$
 					salecd, item.isSLENTRY());
 			ai.setBb(Integer.toString(BlackBoxReason.INACTIVE.getNumercialReason()));
 		}
 
 		ai.setGtin(item.getGTIN());
-		ai.setType(item.getPHARMATYPE().contentEquals("P") ? "P" : "N");
+		ai.setType(item.getPHARMATYPE().contentEquals("P") ? "P" : "N"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		ai.setDscr(trimDSCR(item.getDSCR(), item.getGTIN()));
 
 		PRODUCT product = (item.getPRODNO() != null) ? products.get(item.getPRODNO()) : null;
@@ -449,7 +449,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		} else {
 			if (item.getPPUB() != null) {
 				setExtInfo(ArtikelstammItem.EXTINFO_VAL_PPUB_OVERRIDE_STORE, item.getPPUB().toString(), ai);
-				log.info("[II] [{}] Updating ppub override store to [{}]", ai.getId(), item.getPPUB());
+				log.info("[II] [{}] Updating ppub override store to [{}]", ai.getId(), item.getPPUB()); //$NON-NLS-1$
 			}
 		}
 
@@ -467,16 +467,16 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 						(pkgSize != null && pkgSize.length() > 6) ? pkgSize.substring(0, 6).toString() : pkgSize);
 				ai.setPkg_size(value);
 			} catch (NumberFormatException e) {
-				log.warn("[II] Non numeric pkg size for [{}] being [{}].", ai.getId(), pkgSize);
+				log.warn("[II] Non numeric pkg size for [{}] being [{}].", ai.getId(), pkgSize); //$NON-NLS-1$
 			}
 			if (pkgSize != null && pkgSize.length() > 6) {
-				log.warn("[II] Delimited pkg size for [{}] being [{}] to 6 characters.", ai.getId(),
+				log.warn("[II] Delimited pkg size for [{}] being [{}] to 6 characters.", ai.getId(), //$NON-NLS-1$
 						item.getPKGSIZE().toString());
 			}
 		} else {
 			if (item.getPKGSIZE() != null) {
 				setExtInfo(ArtikelstammItem.EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE, item.getPKGSIZE().toString(), ai);
-				log.info("[II] [{}] Updating PKG_SIZE override store to [{}] fld {}", ai.getId(), item.getPKGSIZE(),
+				log.info("[II] [{}] Updating PKG_SIZE override store to [{}] fld {}", ai.getId(), item.getPKGSIZE(), //$NON-NLS-1$
 						ai.getPkg_size());
 			}
 		}

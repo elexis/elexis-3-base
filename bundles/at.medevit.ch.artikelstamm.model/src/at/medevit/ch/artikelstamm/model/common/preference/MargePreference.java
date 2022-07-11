@@ -19,26 +19,26 @@ public class MargePreference {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < marges.length; i++) {
 			Marge m = marges[i];
-			sb.append(m.getStartInterval() + "/" + m.getEndInterval() + "/" + m.getAddition());
+			sb.append(m.getStartInterval() + "/" + m.getEndInterval() + "/" + m.getAddition()); //$NON-NLS-1$ //$NON-NLS-2$
 			if (i != marges.length)
-				sb.append("$");
+				sb.append("$"); //$NON-NLS-1$
 		}
 		ConfigServiceHolder.get().set(PreferenceConstants.PREV_CSV_MARGE_STORAGE, sb.toString());
 	}
 
 	private static void initMarges() {
 		String margeStorageString = ConfigServiceHolder.get().get(PreferenceConstants.PREV_CSV_MARGE_STORAGE,
-				"0/0/0$0/0/0$0/0/0");
-		String[] margeStorageEntry = margeStorageString.split("\\$");
+				"0/0/0$0/0/0$0/0/0"); //$NON-NLS-1$
+		String[] margeStorageEntry = margeStorageString.split("\\$"); //$NON-NLS-1$
 		marges = new Marge[margeStorageEntry.length];
 		for (int i = 0; i < margeStorageEntry.length; i++) {
 			String entry = margeStorageEntry[i];
-			String[] values = entry.split("/");
+			String[] values = entry.split("/"); //$NON-NLS-1$
 			if (values.length == 3) {
 				marges[i] = new Marge();
-				marges[i].setStartInterval(Double.parseDouble(values[0] == null ? "0.0" : values[0]));
-				marges[i].setEndInterval(Double.parseDouble(values[1] == null ? "0.0" : values[1]));
-				marges[i].setAddition(Double.parseDouble(values[2] == null ? "0.0" : values[2]));
+				marges[i].setStartInterval(Double.parseDouble(values[0] == null ? "0.0" : values[0])); //$NON-NLS-1$
+				marges[i].setEndInterval(Double.parseDouble(values[1] == null ? "0.0" : values[1])); //$NON-NLS-1$
+				marges[i].setAddition(Double.parseDouble(values[2] == null ? "0.0" : values[2])); //$NON-NLS-1$
 			}
 		}
 	}

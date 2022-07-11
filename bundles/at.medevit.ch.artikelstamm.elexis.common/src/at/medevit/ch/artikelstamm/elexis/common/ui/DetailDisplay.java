@@ -127,11 +127,11 @@ public class DetailDisplay implements IDetailDisplay {
 		StringBuilder sb = new StringBuilder();
 		int version = VersionUtil.getCurrentVersion();
 		if (version != 99999) {
-			sb.append(" v" + version);
+			sb.append(" v" + version); //$NON-NLS-1$
 		}
 		Date creationDate = VersionUtil.getImportSetCreationDate();
 		if (creationDate != null) {
-			sb.append(" / " + ArtikelstammHelper.monthAndYearWritten.format(creationDate));
+			sb.append(" / " + ArtikelstammHelper.monthAndYearWritten.format(creationDate)); //$NON-NLS-1$
 		}
 
 		// the default datasource is oddb2xml
@@ -141,7 +141,7 @@ public class DetailDisplay implements IDetailDisplay {
 		} catch (IllegalArgumentException e) {
 			/** ignore **/
 		}
-		sb.append(" / " + datasourceType.value());
+		sb.append(" / " + datasourceType.value()); //$NON-NLS-1$
 
 		label.setText("Datensatz-Basis: " + sb.toString());
 
@@ -193,7 +193,7 @@ public class DetailDisplay implements IDetailDisplay {
 				e.doit = false;
 		});
 		IObservableValue<Integer> propertyStkProPack = PojoProperties
-				.value(IArtikelstammItem.class, "packageSize", Integer.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "packageSize", Integer.class).observeDetail(item); //$NON-NLS-1$
 		IObservableValue<String> targetStkProPack = WidgetProperties.text(SWT.Modify).observe(txtStkProPack);
 		bindingContext.bindValue(targetStkProPack, propertyStkProPack,
 				new SavingUpdateValueStrategy<String, Integer>(CoreModelServiceHolder.get(), item).setAutoSave(true)
@@ -220,7 +220,7 @@ public class DetailDisplay implements IDetailDisplay {
 
 		});
 		IObservableValue<Integer> propertyStkProAbgabe = PojoProperties
-				.value(IArtikelstammItem.class, "sellingSize", Integer.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "sellingSize", Integer.class).observeDetail(item); //$NON-NLS-1$
 		IObservableValue<String> targetStkProAbgabe = WidgetProperties.text(SWT.Modify).observe(txtStkProAbgabe);
 
 		bindingContext.bindValue(targetStkProAbgabe, propertyStkProAbgabe,

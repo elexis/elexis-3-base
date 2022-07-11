@@ -64,7 +64,7 @@ public class ArtikelstammModelService extends AbstractModelService
 	@Override
 	public Optional<Identifiable> loadFromString(String storeToString) {
 		if (storeToString == null) {
-			LoggerFactory.getLogger(getClass()).warn("StoreToString is null");
+			LoggerFactory.getLogger(getClass()).warn("StoreToString is null"); //$NON-NLS-1$
 			return Optional.empty();
 		}
 
@@ -81,7 +81,7 @@ public class ArtikelstammModelService extends AbstractModelService
 	@Override
 	public List<Identifiable> loadFromStringWithIdPart(String partialStoreToString) {
 		if (partialStoreToString == null) {
-			LoggerFactory.getLogger(getClass()).warn("StoreToString is null");
+			LoggerFactory.getLogger(getClass()).warn("StoreToString is null"); //$NON-NLS-1$
 			return Collections.emptyList();
 		}
 
@@ -92,8 +92,8 @@ public class ArtikelstammModelService extends AbstractModelService
 			if (clazz != null) {
 				EntityManager em = (EntityManager) entityManager.getEntityManager();
 				TypedQuery<? extends EntityWithId> query = em.createQuery(
-						"SELECT entity FROM " + clazz.getSimpleName() + " entity WHERE entity.id LIKE :idpart", clazz);
-				query.setParameter("idpart", id + "%");
+						"SELECT entity FROM " + clazz.getSimpleName() + " entity WHERE entity.id LIKE :idpart", clazz); //$NON-NLS-1$ //$NON-NLS-2$
+				query.setParameter("idpart", id + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 				List<? extends EntityWithId> found = query.getResultList();
 				if (!found.isEmpty()) {
 					return found.parallelStream().map(e -> adapterFactory.getModelAdapter(e, null, false).orElse(null))
@@ -146,37 +146,37 @@ public class ArtikelstammModelService extends AbstractModelService
 	@Override
 	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
 		boolean includeBlackBoxed = getIncludeBlackBoxed(context);
-		INamedQuery<IArtikelstammItem> query = getNamedQuery(IArtikelstammItem.class, "gtin");
-		List<IArtikelstammItem> found = query.executeWithParameters(query.getParameterMap("gtin", code));
+		INamedQuery<IArtikelstammItem> query = getNamedQuery(IArtikelstammItem.class, "gtin"); //$NON-NLS-1$
+		List<IArtikelstammItem> found = query.executeWithParameters(query.getParameterMap("gtin", code)); //$NON-NLS-1$
 		if (!includeBlackBoxed) {
 			found = found.stream().filter(ai -> !ai.isBlackBoxed()).collect(Collectors.toList());
 		}
 		if (found.size() > 0) {
 			if (found.size() > 1) {
-				LoggerFactory.getLogger(getClass()).warn("Found more than 1 code element for gtin [" + code + "]");
+				LoggerFactory.getLogger(getClass()).warn("Found more than 1 code element for gtin [" + code + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return Optional.of(found.get(0));
 		} else {
 			// try pharma code for compatibility
 			IQuery<IArtikelstammItem> pharmaQuery = getQuery(IArtikelstammItem.class);
-			pharmaQuery.and("phar", COMPARATOR.EQUALS, code);
+			pharmaQuery.and("phar", COMPARATOR.EQUALS, code); //$NON-NLS-1$
 			found = pharmaQuery.execute();
 			if (found.size() > 0) {
 				if (found.size() > 1) {
-					LoggerFactory.getLogger(getClass()).warn("Found more than 1 code element for phar [" + code + "]");
+					LoggerFactory.getLogger(getClass()).warn("Found more than 1 code element for phar [" + code + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return Optional.of(found.get(0));
 			}
 		}
 
-		if (context.containsKey("CONSIDER_PRODNO")) {
+		if (context.containsKey("CONSIDER_PRODNO")) { //$NON-NLS-1$
 			IQuery<IArtikelstammItem> prodnoQuery = getQuery(IArtikelstammItem.class);
-			prodnoQuery.and("id", COMPARATOR.EQUALS, code);
+			prodnoQuery.and("id", COMPARATOR.EQUALS, code); //$NON-NLS-1$
 			found = prodnoQuery.execute();
 			if (found.size() > 0) {
 				if (found.size() > 1) {
 					LoggerFactory.getLogger(getClass())
-							.warn("Found more than 1 code element for prodno [" + code + "]");
+							.warn("Found more than 1 code element for prodno [" + code + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return Optional.of(found.get(0));
 			}
@@ -227,7 +227,7 @@ public class ArtikelstammModelService extends AbstractModelService
 			try {
 				return getTypeForEntity(entityClass.newInstance());
 			} catch (InstantiationException | IllegalAccessException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;

@@ -28,7 +28,7 @@ public class MephaPrefferedProviderSorterAction extends Action {
 
 	private CommonViewerContentProvider commonViewerContentProvider;
 
-	public static final String CFG_PREFER_MEPHA = "artikelstammPreferMepha";
+	public static final String CFG_PREFER_MEPHA = "artikelstammPreferMepha"; //$NON-NLS-1$
 
 	private MephaPrefferdQueryFilter queryFilter;
 
@@ -39,7 +39,7 @@ public class MephaPrefferedProviderSorterAction extends Action {
 
 	@Override
 	public String getText() {
-		return "Mepha";
+		return "Mepha"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class MephaPrefferedProviderSorterAction extends Action {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return Images.lookupImageDescriptor("mepha.png", ImageSize._16x16_DefaultIconSize);
+		return Images.lookupImageDescriptor("mepha.png", ImageSize._16x16_DefaultIconSize); //$NON-NLS-1$
 	}
 
 	@Override
@@ -73,8 +73,8 @@ public class MephaPrefferedProviderSorterAction extends Action {
 		public void apply(IQuery<?> query) {
 			// #3627 need to work-around
 			Map<String, Object> caseContext = new HashMap<>();
-			caseContext.put("when|comp_gln|equals|7601001001121", Integer.valueOf(1));
-			caseContext.put("otherwise", Integer.valueOf(2));
+			caseContext.put("when|comp_gln|equals|7601001001121", Integer.valueOf(1)); //$NON-NLS-1$
+			caseContext.put("otherwise", Integer.valueOf(2)); //$NON-NLS-1$
 			query.orderBy(caseContext, ORDER.ASC);
 		}
 	}

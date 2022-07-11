@@ -25,18 +25,18 @@ public class ATCDDDParser extends DefaultHandler {
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		if (localName.equals("row")) {
+		if (localName.equals("row")) { //$NON-NLS-1$
 			ATCDDDDefinition def = new ATCDDDDefinition();
 			for (int i = 0; i < attributes.getLength(); i++) {
 				String key = attributes.getLocalName(i);
 				String value = attributes.getValue(i);
-				if (key.equalsIgnoreCase("DDD")) {
+				if (key.equalsIgnoreCase("DDD")) { //$NON-NLS-1$
 					def.ddd = value;
-				} else if (key.equalsIgnoreCase("UnitType")) {
+				} else if (key.equalsIgnoreCase("UnitType")) { //$NON-NLS-1$
 					def.unitType = value;
-				} else if (key.equalsIgnoreCase("AdmCode")) {
+				} else if (key.equalsIgnoreCase("AdmCode")) { //$NON-NLS-1$
 					def.admCode = value;
-				} else if (key.equalsIgnoreCase("DDDComment")) {
+				} else if (key.equalsIgnoreCase("DDDComment")) { //$NON-NLS-1$
 					def.dddComment = value;
 				}
 			}

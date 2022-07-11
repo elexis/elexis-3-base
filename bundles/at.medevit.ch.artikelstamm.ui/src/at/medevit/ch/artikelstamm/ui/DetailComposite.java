@@ -105,7 +105,7 @@ public class DetailComposite extends ScrolledComposite {
 		lblDSCR = new Label(headerComposite, SWT.NONE);
 		lblDSCR.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		lblDSCR.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-		lblDSCR.setFont(SWTResourceManager.getFont("Lucida Grande", 16, SWT.BOLD));
+		lblDSCR.setFont(SWTResourceManager.getFont("Lucida Grande", 16, SWT.BOLD)); //$NON-NLS-1$
 		GridData gd_lblDSCR = new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1);
 		gd_lblDSCR.widthHint = 435;
 		lblDSCR.setLayoutData(gd_lblDSCR);
@@ -193,7 +193,7 @@ public class DetailComposite extends ScrolledComposite {
 		btnUserDefinedPrice.setToolTipText("Benutzerdefinierter Preis");
 		btnUserDefinedPrice.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnUserDefinedPrice.setImage(
-				ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", "rsc/icons/money--pencil.png"));
+				ResourceManager.getPluginImage("at.medevit.ch.artikelstamm.ui", "rsc/icons/money--pencil.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		btnUserDefinedPrice.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -351,44 +351,44 @@ public class DetailComposite extends ScrolledComposite {
 		//
 		IObservableValue observeTextLblDSCRObserveWidget = WidgetProperties.text().observe(lblDSCR);
 		IObservableValue itemDSCRObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "label", String.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "label", String.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextLblDSCRObserveWidget, itemDSCRObserveDetailValue,
 				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 		//
 		IObservableValue observeTextLblGTINObserveWidget = WidgetProperties.text().observe(txtGTIN);
 		IObservableValue itemGTINObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "gtin", String.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "gtin", String.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextLblGTINObserveWidget, itemGTINObserveDetailValue,
 				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 		//
 		IObservableValue observeTextLblPHZNRObserveWidget = WidgetProperties.text().observe(txtPHZNR);
 		IObservableValue itemPHARObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "PHAR", String.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "PHAR", String.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextLblPHZNRObserveWidget, itemPHARObserveDetailValue,
 				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 
 		IObservableValue observeTextProductNrObserveWidget = WidgetProperties.text().observe(txtProductNr);
 		IObservableValue itemProductNrObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "productId", String.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "productId", String.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextProductNrObserveWidget, itemProductNrObserveDetailValue,
 				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 
 		IObservableValue observeTextLblHERSTELLERObserveWidget = WidgetProperties.text().observe(lblHERSTELLER);
 		IObservableValue itemManufacturerLabelObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "manufacturerLabel", String.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "manufacturerLabel", String.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextLblHERSTELLERObserveWidget, itemManufacturerLabelObserveDetailValue, null,
 				null);
 		//
 		IObservableValue observeTextLblEXFACTORYPRICEObserveWidget = WidgetProperties.text().observe(lblEXFACTORYPRICE);
 		IObservableValue itemExFactoryPriceObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "purchasePrice", Double.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "purchasePrice", Double.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextLblEXFACTORYPRICEObserveWidget, itemExFactoryPriceObserveDetailValue, null,
 				null);
 		//
 		IObservableValue observeTextLblPUBLICPRICEObserveWidget = WidgetProperties
 				.text(new int[] { SWT.Modify, SWT.FocusOut }).observeDelayed(100, txtPUBLICPRICE);
 		IObservableValue itemPublicPriceObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "sellingPrice", Money.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "sellingPrice", Money.class).observeDetail(item); //$NON-NLS-1$
 		UpdateValueStrategy strategy_2 = new SavingUpdateValueStrategy(ModelServiceHolder.get(), item);
 		strategy_2.setConverter(new IConverter<String, Money>() {
 			@Override
@@ -419,13 +419,13 @@ public class DetailComposite extends ScrolledComposite {
 		IObservableValue observeTextLblABGABEKATEGORIEObserveWidget = WidgetProperties.text()
 				.observe(txtABGABEKATEGORIE);
 		IObservableValue itemSwissmedicCategoryObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "swissmedicCategory", String.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "swissmedicCategory", String.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextLblABGABEKATEGORIEObserveWidget, itemSwissmedicCategoryObserveDetailValue,
 				null, null);
 
 		IObservableValue observeTextLblSELBSTBEHALTObserveWidget = WidgetProperties.text().observe(lblSELBSTBEHALT);
 		IObservableValue itemDeductibleObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "deductible", Integer.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "deductible", Integer.class).observeDetail(item); //$NON-NLS-1$
 		UpdateValueStrategy strategy_1 = new UpdateValueStrategy();
 		strategy_1.setConverter(new IntToStringConverterSelbstbehalt());
 		bindingContext.bindValue(observeTextLblSELBSTBEHALTObserveWidget, itemDeductibleObserveDetailValue, null,
@@ -434,39 +434,39 @@ public class DetailComposite extends ScrolledComposite {
 		IObservableValue observeSelectionBtnCheckIsNarcoticObserveWidget = WidgetProperties.selection()
 				.observe(btnCheckIsNarcotic);
 		IObservableValue itemNarcoticObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "narcotic", Boolean.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "narcotic", Boolean.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeSelectionBtnCheckIsNarcoticObserveWidget, itemNarcoticObserveDetailValue,
 				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 
 		IObservableValue observeTextLblLIMITATIONTEXTObserveWidget = WidgetProperties.text().observe(txtLIMITATIONTEXT);
 		IObservableValue itemLimitationTextObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "limitationText", String.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "limitationText", String.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextLblLIMITATIONTEXTObserveWidget, itemLimitationTextObserveDetailValue, null,
 				null);
 
 		IObservableValue observeTextLblLIMITATIONPOINTSObserveWidget = WidgetProperties.text()
 				.observe(txtLIMITATIONPOINTS);
 		IObservableValue itemLimitationPointsObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "limitationPoints", String.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "limitationPoints", String.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextLblLIMITATIONPOINTSObserveWidget, itemLimitationPointsObserveDetailValue,
 				null, null);
 
 		IObservableValue observeSelectionBtnLPPVEntryObserveWidget = WidgetProperties.selection().observe(btnLPPVEntry);
 		IObservableValue itemInLPPVObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "inLPPV", Boolean.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "inLPPV", Boolean.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeSelectionBtnLPPVEntryObserveWidget, itemInLPPVObserveDetailValue,
 				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 
 		IObservableValue observeSelectionBtnK70EntryObserveWidget = WidgetProperties.selection().observe(btnK70Entry);
 		IObservableValue itemInK70ObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "inK70", Boolean.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "inK70", Boolean.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeSelectionBtnK70EntryObserveWidget, itemInK70ObserveDetailValue,
 				new SavingUpdateValueStrategy(ModelServiceHolder.get(), item), null);
 
 		IObservableValue observeSelectionBtnlLimitationObserveWidget = WidgetProperties.selection()
 				.observe(btnlLimitation);
 		IObservableValue itemLimitedObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "limited", Boolean.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "limited", Boolean.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeSelectionBtnlLimitationObserveWidget, itemLimitedObserveDetailValue,
 				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 
@@ -481,14 +481,14 @@ public class DetailComposite extends ScrolledComposite {
 		IObservableValue observeSelectionBtnUserDefinedPriceObserveWidget = WidgetProperties.selection()
 				.observe(btnUserDefinedPrice);
 		IObservableValue itemCalculatedPriceObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "userDefinedPrice", Boolean.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "userDefinedPrice", Boolean.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeSelectionBtnUserDefinedPriceObserveWidget,
 				itemCalculatedPriceObserveDetailValue, new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 
 		IObservableValue observeEditableTxtPUBLICPRICEObserveWidget = WidgetProperties.editable()
 				.observe(txtPUBLICPRICE);
 		IObservableValue itemUserDefinedPriceObserveDetailValue = PojoProperties
-				.value(IArtikelstammItem.class, "userDefinedPrice", Boolean.class).observeDetail(item);
+				.value(IArtikelstammItem.class, "userDefinedPrice", Boolean.class).observeDetail(item); //$NON-NLS-1$
 		bindingContext.bindValue(observeEditableTxtPUBLICPRICEObserveWidget, itemUserDefinedPriceObserveDetailValue,
 				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 

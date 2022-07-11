@@ -24,7 +24,7 @@ public class ATCLabelProvider extends LabelProvider implements IColorProvider {
 		case ATCCodeLanguageConstants.ATC_LANGUAGE_VAL_GERMAN:
 			ATCCode a = ((ATCCode) element);
 			String displayName = (a.name_german != null) ? a.name_german : a.name;
-			return displayName + " (" + a.atcCode + ")";
+			return displayName + " (" + a.atcCode + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		default:
 			return ((ATCCode) element).name;
 		}
@@ -42,7 +42,7 @@ public class ATCLabelProvider extends LabelProvider implements IColorProvider {
 
 	@Override
 	public Color getBackground(Object element) {
-		return UiDesk.getColorFromRGB("FFFACD");
+		return UiDesk.getColorFromRGB("FFFACD"); //$NON-NLS-1$
 	}
 
 	public static void setPrefAtcLanguage(String prefAtcLanguage) {

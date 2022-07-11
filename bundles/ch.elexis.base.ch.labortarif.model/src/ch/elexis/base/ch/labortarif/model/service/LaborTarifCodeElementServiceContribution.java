@@ -36,8 +36,8 @@ public class LaborTarifCodeElementServiceContribution implements ICodeElementSer
 
 	@Override
 	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
-		INamedQuery<ILaborLeistung> codeQuery = modelService.getNamedQuery(ILaborLeistung.class, "code");
-		List<ILaborLeistung> codes = codeQuery.executeWithParameters(codeQuery.getParameterMap("code", code));
+		INamedQuery<ILaborLeistung> codeQuery = modelService.getNamedQuery(ILaborLeistung.class, "code"); //$NON-NLS-1$
+		List<ILaborLeistung> codes = codeQuery.executeWithParameters(codeQuery.getParameterMap("code", code)); //$NON-NLS-1$
 		if (codes != null && !codes.isEmpty()) {
 			LocalDate date = getDate(context);
 			for (ILaborLeistung iLaborLeistung : codes) {

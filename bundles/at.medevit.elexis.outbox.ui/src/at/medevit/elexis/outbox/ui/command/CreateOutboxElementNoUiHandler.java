@@ -22,8 +22,8 @@ public class CreateOutboxElementNoUiHandler extends AbstractHandler {
 		IPatient patient = ContextServiceHolder.get().getActivePatient().orElse(null);
 		IMandator mandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 
-		String dburi = event.getParameter("at.medevit.elexis.outbox.ui.command.getOrCreateElementNoUi.dburi");
-		String sentParam = event.getParameter("at.medevit.elexis.outbox.ui.command.getOrCreateElementNoUi.sent");
+		String dburi = event.getParameter("at.medevit.elexis.outbox.ui.command.getOrCreateElementNoUi.dburi"); //$NON-NLS-1$
+		String sentParam = event.getParameter("at.medevit.elexis.outbox.ui.command.getOrCreateElementNoUi.sent"); //$NON-NLS-1$
 		if (StringUtils.isNotEmpty(dburi)) {
 			IOutboxElement ret = null;
 			boolean sent = Boolean.parseBoolean(sentParam);

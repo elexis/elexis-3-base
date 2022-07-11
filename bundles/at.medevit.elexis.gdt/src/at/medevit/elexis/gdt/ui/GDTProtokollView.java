@@ -41,7 +41,7 @@ import ch.rgw.tools.TimeTool;
 
 public class GDTProtokollView extends ViewPart {
 
-	public static final String ID = "at.medevit.elexis.gdt.ui.GDTProtokollView";
+	public static final String ID = "at.medevit.elexis.gdt.ui.GDTProtokollView"; //$NON-NLS-1$
 
 	private TableViewer tableViewer;
 	private Table table;
@@ -70,16 +70,16 @@ public class GDTProtokollView extends ViewPart {
 		initTableViewer(parent);// new TableViewerBuilder(parent);
 
 		ColumnBuilder messageDirection = createColumn(StringUtils.EMPTY);
-		messageDirection.bindToProperty("messageDirection");
+		messageDirection.bindToProperty("messageDirection"); //$NON-NLS-1$
 		messageDirection.format(new ICellFormatter() {
 			@Override
 			public void formatCell(ViewerCell cell, Object value) {
 				String direction = (String) value;
 				cell.setText(StringUtils.EMPTY);
 				if (direction.equalsIgnoreCase(GDTProtokoll.MESSAGE_DIRECTION_IN)) {
-					cell.setImage(ResourceManager.getPluginImage("at.medevit.elexis.gdt", "rsc/icons/incoming.png"));
+					cell.setImage(ResourceManager.getPluginImage("at.medevit.elexis.gdt", "rsc/icons/incoming.png")); //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (direction.equalsIgnoreCase(GDTProtokoll.MESSAGE_DIRECTION_OUT)) {
-					cell.setImage(ResourceManager.getPluginImage("at.medevit.elexis.gdt", "rsc/icons/outgoing.png"));
+					cell.setImage(ResourceManager.getPluginImage("at.medevit.elexis.gdt", "rsc/icons/outgoing.png")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		});
@@ -87,7 +87,7 @@ public class GDTProtokollView extends ViewPart {
 		messageDirection.build();
 
 		ColumnBuilder entryTime = createColumn("Datum/Uhrzeit");
-		entryTime.bindToProperty("entryTime");
+		entryTime.bindToProperty("entryTime"); //$NON-NLS-1$
 		entryTime.format(new IValueFormatter<TimeTool, String>() {
 			@Override
 			public String format(TimeTool obj) {
@@ -114,19 +114,19 @@ public class GDTProtokollView extends ViewPart {
 		gdtSatz.build();
 
 		ColumnBuilder bezeichnung = createColumn("Bezeichnung");
-		bezeichnung.bindToProperty("bezeichnung");
+		bezeichnung.bindToProperty("bezeichnung"); //$NON-NLS-1$
 		bezeichnung.makeEditable();
 		bezeichnung.setPercentWidth(25);
 		bezeichnung.build();
 
 		ColumnBuilder bemerkungen = createColumn("Bemerkungen");
-		bemerkungen.bindToProperty("bemerkungen");
+		bemerkungen.bindToProperty("bemerkungen"); //$NON-NLS-1$
 		bemerkungen.makeEditable();
 		bemerkungen.setPercentWidth(25);
 		bemerkungen.build();
 
 		ColumnBuilder patient = createColumn("Patient");
-		patient.bindToProperty("entryRelatedPatient");
+		patient.bindToProperty("entryRelatedPatient"); //$NON-NLS-1$
 		patient.format(new IValueFormatter<Patient, String>() {
 			@Override
 			public String format(Patient obj) {
@@ -143,7 +143,7 @@ public class GDTProtokollView extends ViewPart {
 		patient.build();
 
 		ColumnBuilder gegenstelle = createColumn("Gegenstelle");
-		gegenstelle.bindToProperty("gegenstelle");
+		gegenstelle.bindToProperty("gegenstelle"); //$NON-NLS-1$
 		gegenstelle.setPercentWidth(15);
 		gegenstelle.build();
 
@@ -209,7 +209,7 @@ public class GDTProtokollView extends ViewPart {
 		public abstract Object get(T element);
 
 		public Object set(T element, Object value) {
-			throw new UnsupportedOperationException("Overwrite value.set() to set values!");
+			throw new UnsupportedOperationException("Overwrite value.set() to set values!"); //$NON-NLS-1$
 		}
 	}
 

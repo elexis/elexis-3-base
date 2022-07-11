@@ -61,7 +61,7 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable> imple
 	private void monitorProposalChanges(final Display display) {
 		if (!startMonitoring) {
 			startMonitoring = true;
-			Objects.requireNonNull(adapter, "no adapter configured");
+			Objects.requireNonNull(adapter, "no adapter configured"); //$NON-NLS-1$
 			CompletableFuture.runAsync(() -> {
 
 				while (startMonitoring) {
@@ -80,11 +80,11 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable> imple
 						int i = 0;
 						for (String searchPart : searchParts) {
 							if (i < dbFields.length) {
-								if ("dob".equals(dbFields[i])) {
+								if ("dob".equals(dbFields[i])) { //$NON-NLS-1$
 									query.and(dbFields[i], COMPARATOR.LIKE, getElexisDateSearchString(searchPart),
 											true);
 								} else {
-									query.and(dbFields[i], COMPARATOR.LIKE, searchPart + "%", true);
+									query.and(dbFields[i], COMPARATOR.LIKE, searchPart + "%", true); //$NON-NLS-1$
 								}
 							}
 							i++;
@@ -150,22 +150,22 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable> imple
 	 */
 	public static String getElexisDateSearchString(String value) {
 		StringBuilder sb = null;
-		String ret = value.replaceAll("%", StringUtils.EMPTY);
-		final String filler = "%%%%%%%%";
+		String ret = value.replaceAll("%", StringUtils.EMPTY); //$NON-NLS-1$
+		final String filler = "%%%%%%%%"; //$NON-NLS-1$
 		// are we looking for the year?
-		if (ret.matches("[0-9]{3,}")) {
+		if (ret.matches("[0-9]{3,}")) { //$NON-NLS-1$
 			sb = new StringBuilder(ret);
 			sb.append(filler);
 			ret = sb.substring(0, 8);
 		} else {
 			// replace single digits as in 1.2.1932 with double digits
 			// as in 01.02.1932
-			int dotCount = ret.length() - ret.replace(".", StringUtils.EMPTY).length();
-			String[] parts = ret.split("\\.");
+			int dotCount = ret.length() - ret.replace(".", StringUtils.EMPTY).length(); //$NON-NLS-1$
+			String[] parts = ret.split("\\."); //$NON-NLS-1$
 			StringJoiner sj = new StringJoiner(StringUtils.EMPTY);
 			for (String string : parts) {
 				if (string.length() == 1 && Character.isDigit(string.charAt(0))) {
-					sj.add("0" + string);
+					sj.add("0" + string); //$NON-NLS-1$
 				} else {
 					sj.add(string);
 				}

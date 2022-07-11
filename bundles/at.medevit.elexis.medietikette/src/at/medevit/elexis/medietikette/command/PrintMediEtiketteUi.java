@@ -125,9 +125,9 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 			if (object instanceof IPrescription) {
 				ret.add((IPrescription) object);
 			} else if (object.getClass().getName()
-					.equals("ch.elexis.core.ui.medication.views.MedicationTableViewerItem")) {
+					.equals("ch.elexis.core.ui.medication.views.MedicationTableViewerItem")) { //$NON-NLS-1$
 				try {
-					Method method = object.getClass().getMethod("getPrescription", new Class[0]);
+					Method method = object.getClass().getMethod("getPrescription", new Class[0]); //$NON-NLS-1$
 					if (method != null) {
 						IPrescription pres = (IPrescription) method.invoke(object, new Object[0]);
 						if (pres != null) {
@@ -136,7 +136,7 @@ public class PrintMediEtiketteUi extends AbstractHandler {
 					}
 				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException e) {
-					logger.warn("Could not get selected prescription.", e);
+					logger.warn("Could not get selected prescription.", e); //$NON-NLS-1$
 				}
 			}
 		}

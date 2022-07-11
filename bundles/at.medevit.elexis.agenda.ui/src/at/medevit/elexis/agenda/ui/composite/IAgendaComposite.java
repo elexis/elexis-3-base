@@ -12,8 +12,8 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 public interface IAgendaComposite {
 
 	public enum AgendaSpanSize {
-		MIN5("5 min", "00:05:00"), MIN10("10 min", "00:10:00"), MIN15("15 min", "00:15:00"),
-		MIN20("20 min", "00:20:00"), MIN30("30 min", "00:30:00");
+		MIN5("5 min", "00:05:00"), MIN10("10 min", "00:10:00"), MIN15("15 min", "00:15:00"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		MIN20("20 min", "00:20:00"), MIN30("30 min", "00:30:00"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 		private String label;
 		private String calendarString;
@@ -35,13 +35,13 @@ public interface IAgendaComposite {
 	public default Optional<Integer> getConfiguredFontSize() {
 		String confFont = ConfigServiceHolder.get()
 				.getActiveUserContact(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, StringUtils.EMPTY);
-		String[] parts = confFont.split("\\|");
+		String[] parts = confFont.split("\\|"); //$NON-NLS-1$
 		if (parts.length > 3) {
 			try {
 				Float floatValue = Float.parseFloat(parts[2].trim());
 				return Optional.of(floatValue.intValue());
 			} catch (NumberFormatException e) {
-				LoggerFactory.getLogger(getClass()).debug("Could not parse font size [" + parts[2] + "]");
+				LoggerFactory.getLogger(getClass()).debug("Could not parse font size [" + parts[2] + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return Optional.empty();
@@ -50,7 +50,7 @@ public interface IAgendaComposite {
 	public default Optional<String> getConfiguredFontFamily() {
 		String confFont = ConfigServiceHolder.get()
 				.getActiveUserContact(ch.elexis.core.constants.Preferences.USR_AGENDAFONT, StringUtils.EMPTY);
-		String[] parts = confFont.split("\\|");
+		String[] parts = confFont.split("\\|"); //$NON-NLS-1$
 		if (parts.length > 3) {
 			return Optional.of(parts[1]);
 		}

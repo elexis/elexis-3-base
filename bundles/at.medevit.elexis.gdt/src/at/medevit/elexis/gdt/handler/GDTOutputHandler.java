@@ -52,7 +52,7 @@ public class GDTOutputHandler {
 				GDTProtokoll.addEntry(GDTProtokoll.MESSAGE_DIRECTION_OUT, cp, gdtSatzNachricht);
 			} else {
 				String message = "Fehler beim Schreiben der GDT Satznachricht "
-						+ gdtSatzNachricht.getValue(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION) + " auf "
+						+ gdtSatzNachricht.getValue(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION) + " auf " //$NON-NLS-1$
 						+ cp.getLabel();
 				Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message);
 				StatusManager.getManager().handle(status, StatusManager.SHOW);
@@ -77,15 +77,15 @@ public class GDTOutputHandler {
 				// fallback to default if no viewer is configured
 				handlerProgram = cp.getExternalHandlerProgram(HandlerProgramType.DEFAULT);
 			}
-			logger.info("Handler program of [" + cp.getLabel() + "] [" + handlerProgram + "]");
+			logger.info("Handler program of [" + cp.getLabel() + "] [" + handlerProgram + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (handlerProgram != null) {
 				CommandLine cmdLine = CommandLine.parse(handlerProgram);
-				logger.info("Command line [" + handlerProgram + "]");
+				logger.info("Command line [" + handlerProgram + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					DefaultExecutor executor = new DefaultExecutor();
 					executor.setExitValues(null); // Ignore the exit value
 					int exitValue = executor.execute(cmdLine);
-					logger.debug("Return value of " + cmdLine + ": " + exitValue);
+					logger.debug("Return value of " + cmdLine + ": " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (ExecuteException e) {
 					String message = "Fehler beim Ausführen von " + cmdLine;
 					Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message, e);

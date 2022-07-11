@@ -34,9 +34,9 @@ public class EncounterBean {
 		IPatient patient = orig.getPatient();
 		if (patient != null) {
 			bean.setPatient_id(patient.getId());
-			bean.setLabel(orig.getDate() + " - " + patient.getLabel());
+			bean.setLabel(orig.getDate() + " - " + patient.getLabel()); //$NON-NLS-1$
 		} else {
-			throw new IllegalArgumentException("patient is null");
+			throw new IllegalArgumentException("patient is null"); //$NON-NLS-1$
 		}
 		IMandator mandator = orig.getMandator();
 		if (mandator != null) {

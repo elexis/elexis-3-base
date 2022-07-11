@@ -50,7 +50,7 @@ public class VaccinationSelectionComposite extends Composite {
 				if (element instanceof Vaccination) {
 					Vaccination vaccination = ((Vaccination) element);
 					return vaccination.getDateOfAdministration().toString(TimeTool.DATE_GER) + StringUtils.SPACE
-							+ vaccination.getBusinessName() + " (" + vaccination.getLotNo() + ") - "
+							+ vaccination.getBusinessName() + " (" + vaccination.getLotNo() + ") - " //$NON-NLS-1$ //$NON-NLS-2$
 							+ vaccination.getAdministratorLabel();
 				}
 				return super.getText(element);

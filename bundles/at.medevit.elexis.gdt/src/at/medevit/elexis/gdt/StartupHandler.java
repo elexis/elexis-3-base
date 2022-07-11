@@ -43,18 +43,18 @@ public class StartupHandler implements EventHandler {
 
 	@Override
 	public void handleEvent(Event event) {
-		logger.info("APPLICATION STARTUP COMPLETE");
+		logger.info("APPLICATION STARTUP COMPLETE"); //$NON-NLS-1$
 		// do not block event handling, execute in different thread
 		executor.execute(() -> {
 			List<IGDTCommunicationPartner> lp = GDTCommPartnerCollector.getRegisteredCommPartners();
 			if (lp == null) {
-				logger.info("There are no registered communication partners");
+				logger.info("There are no registered communication partners"); //$NON-NLS-1$
 				return;
 			}
 			for (IGDTCommunicationPartner igdtCommunicationPartner : lp) {
 				if (igdtCommunicationPartner.getConnectionType() == SystemConstants.FILE_COMMUNICATION) {
 					String incomingDirString = igdtCommunicationPartner.getIncomingDirectory();
-					logger.info("Found directory " + incomingDirString + "to watch by comm partner "
+					logger.info("Found directory " + incomingDirString + "to watch by comm partner " //$NON-NLS-1$ //$NON-NLS-2$
 							+ igdtCommunicationPartner.getLabel());
 					File incomingDir = null;
 					if (incomingDirString != null)

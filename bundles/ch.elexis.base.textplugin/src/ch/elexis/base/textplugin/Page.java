@@ -476,7 +476,7 @@ public class Page extends EStyledText
 
 	private List<String> split(final String text) {
 		List<String> words = new ArrayList<String>();
-		String delims = " \n\r";
+		String delims = " \n\r"; //$NON-NLS-1$
 		boolean previosWordIsLineReturn = false;
 		for (StringTokenizer st = new StringTokenizer(text, delims, true); st.hasMoreTokens();) {
 			String word = st.nextToken();

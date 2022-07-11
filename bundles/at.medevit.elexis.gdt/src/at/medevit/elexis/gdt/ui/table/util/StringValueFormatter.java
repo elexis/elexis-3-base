@@ -47,7 +47,7 @@ public class StringValueFormatter implements IValueFormatter<Object, String> {
 		try {
 			return format.parseObject(str);
 		} catch (ParseException e) {
-			throw new RuntimeException("INVALID VALUE: " + e.getMessage() + " for \"" + str + "\"", e);
+			throw new RuntimeException("INVALID VALUE: " + e.getMessage() + " for \"" + str + "\"", e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 }

@@ -34,8 +34,8 @@ public class DatenEinerUntersuchungAnzeigen extends AbstractHandler {
 
 	private Logger log = LoggerFactory.getLogger(DatenEinerUntersuchungAnzeigen.class);
 
-	public static final String ID = "at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen";
-	public static final String PARAM_ID = "at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen.gdtProtokollSource";
+	public static final String ID = "at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen"; //$NON-NLS-1$
+	public static final String PARAM_ID = "at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen.gdtProtokollSource"; //$NON-NLS-1$
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -54,11 +54,11 @@ public class DatenEinerUntersuchungAnzeigen extends AbstractHandler {
 		}
 
 		if (gdtpEntry == null) {
-			log.error("gdtpEntry is null");
+			log.error("gdtpEntry is null"); //$NON-NLS-1$
 			return null;
 		}
 
-		String[] message = gdtpEntry.getMessage().split("\r\n");
+		String[] message = gdtpEntry.getMessage().split("\r\n"); //$NON-NLS-1$
 		GDTSatzNachricht6310 incoming = GDTSatzNachricht6310.createfromStringArray(message);
 		GDTSatzNachricht6311 outgoing = GDTResponseIn6310Out6311.createResponse(incoming);
 		IGDTCommunicationPartner cp = GDTCommPartnerCollector
@@ -66,7 +66,7 @@ public class DatenEinerUntersuchungAnzeigen extends AbstractHandler {
 		if (cp != null) {
 			GDTOutputHandler.handleOutput(outgoing, cp, HandlerProgramType.VIEWER);
 		} else {
-			log.error("No communication partner found for [" + gdtpEntry.getGegenstelle() + "]");
+			log.error("No communication partner found for [" + gdtpEntry.getGegenstelle() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		return null;

@@ -30,8 +30,8 @@ import ch.elexis.global_inbox.ui.GlobalInboxUtil;
 
 public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 
-	private static final String LOCAL_LOCK_INBOXIMPORT = "GlobalInboxImport";
-	private final Pattern PATIENT_MATCH_PATTERN = Pattern.compile("([0-9]+)_(.+)");
+	private static final String LOCAL_LOCK_INBOXIMPORT = "GlobalInboxImport"; //$NON-NLS-1$
+	private final Pattern PATIENT_MATCH_PATTERN = Pattern.compile("([0-9]+)_(.+)"); //$NON-NLS-1$
 
 	private Logger log;
 	private List<GlobalInboxEntry> entries;
@@ -93,7 +93,7 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 				}
 				Object dm = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 				if (dm == null) {
-					log.warn("No document management service found.");
+					log.warn("No document management service found."); //$NON-NLS-1$
 					return Status.OK_STATUS;
 				}
 				IDocumentManager documentManager = (IDocumentManager) dm;
@@ -117,10 +117,10 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 				}
 				schedule(120000L);
 			} else {
-				log.info("Skipping document import, lock present.");
+				log.info("Skipping document import, lock present."); //$NON-NLS-1$
 				long lockMillis = lock.getLockCurrentMillis();
 				if (lockMillis == -1 || (System.currentTimeMillis() - lockMillis) > (120000L * 2)) {
-					log.warn("Removing pending lock " + lock.getLockMessage() + "@" + lockMillis);
+					log.warn("Removing pending lock " + lock.getLockMessage() + "@" + lockMillis); //$NON-NLS-1$ //$NON-NLS-2$
 					lock.unlock();
 				}
 			}
@@ -160,7 +160,7 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 						String tryImportForPatient = giutil.tryImportForPatient(file, patientNo, fileName);
 						if (tryImportForPatient != null) {
 							// TODO does this match the up-until-now behavior?
-							log.info("Auto imported file [{}], document id is [{}]", file, tryImportForPatient);
+							log.info("Auto imported file [{}], document id is [{}]", file, tryImportForPatient); //$NON-NLS-1$
 							continue;
 						}
 					}

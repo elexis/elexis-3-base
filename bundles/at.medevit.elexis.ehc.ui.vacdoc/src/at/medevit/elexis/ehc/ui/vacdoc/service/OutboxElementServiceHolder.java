@@ -20,7 +20,7 @@ public class OutboxElementServiceHolder {
 
 	public static IOutboxElementService getService() {
 		if (outboxElementService == null) {
-			throw new IllegalStateException("No IOutboxElementService available");
+			throw new IllegalStateException("No IOutboxElementService available"); //$NON-NLS-1$
 		}
 		return outboxElementService;
 	}

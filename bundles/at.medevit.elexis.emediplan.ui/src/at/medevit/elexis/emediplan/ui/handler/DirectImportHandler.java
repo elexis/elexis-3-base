@@ -36,13 +36,13 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		mediplanService = EMediplanServiceHolder.getService();
-		String emediplan = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.emediplan");
-		String patientid = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.patientid");
-		String stopreason = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.stopreason");
+		String emediplan = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.emediplan"); //$NON-NLS-1$
+		String patientid = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.patientid"); //$NON-NLS-1$
+		String stopreason = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.stopreason"); //$NON-NLS-1$
 		String medicationType = event.getParameter("at.medevit.elexis.emediplan.ui.directImport.parameter.medication"); //$NON-NLS-1$
 		// if not set use all
 		if (medicationType == null || medicationType.isEmpty()) {
-			medicationType = "all";
+			medicationType = "all"; //$NON-NLS-1$
 		}
 
 		if (StringUtils.isNotEmpty(patientid) && StringUtils.isNotEmpty(emediplan)) {
@@ -78,7 +78,7 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 					StringBuilder sb = new StringBuilder();
 					sb.append("Folgende Medikamente konnte im Artikelstamm nicht gefunden werden\n\n");
 					notFoundMedicament.forEach(m -> sb
-							.append(" - " + getDsc(m) + StringUtils.SPACE + m.AppInstr + StringUtils.SPACE + m.TkgRsn));
+							.append(" - " + getDsc(m) + StringUtils.SPACE + m.AppInstr + StringUtils.SPACE + m.TkgRsn)); //$NON-NLS-1$
 					MessageDialog.openWarning(Display.getDefault().getActiveShell(), "Warnung", sb.toString());
 				}
 			}
@@ -88,20 +88,20 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 
 	private String getDsc(Medicament medicament) {
 		String ret = medicament.Id;
-		if (StringUtils.isNotBlank(mediplanService.getPFieldValue(medicament, "Dsc"))) {
-			ret = mediplanService.getPFieldValue(medicament, "Dsc");
+		if (StringUtils.isNotBlank(mediplanService.getPFieldValue(medicament, "Dsc"))) { //$NON-NLS-1$
+			ret = mediplanService.getPFieldValue(medicament, "Dsc"); //$NON-NLS-1$
 		}
 		return ret;
 	}
 
 	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType) {
-		if ("all".equals(medicationType)) {
+		if ("all".equals(medicationType)) { //$NON-NLS-1$
 			return patient.getMedication(Collections.emptyList());
-		} else if ("fix".equals(medicationType)) {
+		} else if ("fix".equals(medicationType)) { //$NON-NLS-1$
 			return patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION));
-		} else if ("reserve".equals(medicationType)) {
+		} else if ("reserve".equals(medicationType)) { //$NON-NLS-1$
 			return patient.getMedication(Arrays.asList(EntryType.RESERVE_MEDICATION));
-		} else if ("symptomatic".equals(medicationType)) {
+		} else if ("symptomatic".equals(medicationType)) { //$NON-NLS-1$
 			return patient.getMedication(Arrays.asList(EntryType.SYMPTOMATIC_MEDICATION));
 		}
 		return Collections.emptyList();
@@ -109,11 +109,11 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 
 	private IPrescription createPrescription(Medicament medicament, IPatient patient) {
 		medicament.entryType = EntryType.FIXED_MEDICATION;
-		String takingScheme = mediplanService.getPFieldValue(medicament, "TkgSch");
+		String takingScheme = mediplanService.getPFieldValue(medicament, "TkgSch"); //$NON-NLS-1$
 		if (StringUtils.isNotBlank(takingScheme)) {
-			if ("Prd".equals(takingScheme)) {
+			if ("Prd".equals(takingScheme)) { //$NON-NLS-1$
 				medicament.entryType = EntryType.SYMPTOMATIC_MEDICATION;
-			} else if ("Ond".equals(takingScheme)) {
+			} else if ("Ond".equals(takingScheme)) { //$NON-NLS-1$
 				medicament.entryType = EntryType.RESERVE_MEDICATION;
 			}
 		} else if (medicament.Pos != null && !medicament.Pos.isEmpty()) {

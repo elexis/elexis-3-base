@@ -60,10 +60,10 @@ public class OutboxElementService implements IOutboxElementService {
 	public List<IOutboxElement> getOutboxElements(String uri, State state) {
 		IQuery<IOutboxElement> query = modelService.getQuery(IOutboxElement.class);
 		if (uri != null) {
-			query.and("uri", COMPARATOR.EQUALS, uri);
+			query.and("uri", COMPARATOR.EQUALS, uri); //$NON-NLS-1$
 		}
 		if (state != null) {
-			query.and("state", COMPARATOR.EQUALS, Integer.toString(state.ordinal()));
+			query.and("state", COMPARATOR.EQUALS, Integer.toString(state.ordinal())); //$NON-NLS-1$
 		}
 		return query.execute();
 	}
@@ -72,13 +72,13 @@ public class OutboxElementService implements IOutboxElementService {
 	public List<IOutboxElement> getOutboxElements(IMandator mandator, IPatient patient, State state) {
 		IQuery<IOutboxElement> query = modelService.getQuery(IOutboxElement.class);
 		if (mandator != null) {
-			query.and("mandant", COMPARATOR.EQUALS, mandator);
+			query.and("mandant", COMPARATOR.EQUALS, mandator); //$NON-NLS-1$
 		}
 		if (patient != null) {
-			query.and("patient", COMPARATOR.EQUALS, patient);
+			query.and("patient", COMPARATOR.EQUALS, patient); //$NON-NLS-1$
 		}
 		if (state != null) {
-			query.and("state", COMPARATOR.EQUALS, Integer.toString(state.ordinal()));
+			query.and("state", COMPARATOR.EQUALS, Integer.toString(state.ordinal())); //$NON-NLS-1$
 		}
 		return query.execute();
 	}
@@ -107,13 +107,13 @@ public class OutboxElementService implements IOutboxElementService {
 
 	@Activate
 	public void activate() {
-		System.out.println("active providers");
+		System.out.println("active providers"); //$NON-NLS-1$
 		ElementsProviderExtension.activateAll();
 	}
 
 	@Deactivate
 	public void deactivate() {
-		System.out.println("deactive providers");
+		System.out.println("deactive providers"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -128,7 +128,7 @@ public class OutboxElementService implements IOutboxElementService {
 				return in.get();
 			}
 		} else if (object instanceof Identifiable) {
-			throw new UnsupportedOperationException("Identifiable to InputStream");
+			throw new UnsupportedOperationException("Identifiable to InputStream"); //$NON-NLS-1$
 		}
 		return null;
 	}

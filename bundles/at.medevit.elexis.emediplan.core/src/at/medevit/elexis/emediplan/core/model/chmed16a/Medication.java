@@ -71,8 +71,8 @@ public class Medication {
 
 	public String getNamedBlobId() {
 		if (Id == null) {
-			throw new IllegalStateException("id cannot be null");
+			throw new IllegalStateException("id cannot be null"); //$NON-NLS-1$
 		}
-		return "Med_" + Id;
+		return "Med_" + Id; //$NON-NLS-1$
 	}
 }

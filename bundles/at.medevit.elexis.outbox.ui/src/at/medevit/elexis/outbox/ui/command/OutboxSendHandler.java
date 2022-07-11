@@ -79,7 +79,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 	private void sendOutboxElements(ExecutionEvent event, Patient patient, List<?> iOutboxElements) {
 		List<File> attachments = new ArrayList<>();
 		File tmpDir = CoreHub.getTempDir();
-		attachmentsFolder = new File(tmpDir, "_outbox" + System.currentTimeMillis() + "_");
+		attachmentsFolder = new File(tmpDir, "_outbox" + System.currentTimeMillis() + "_"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!attachmentsFolder.exists()) {
 			attachmentsFolder.mkdir();
 		}
@@ -98,7 +98,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 					.getService(ICommandService.class);
 			try {
 				String attachmentsString = getAttachmentsString(attachments);
-				if (event.getCommand().getId().endsWith("sendAsMailXDM")) {
+				if (event.getCommand().getId().endsWith("sendAsMailXDM")) { //$NON-NLS-1$
 					// send as xdm
 					Object obj = createXDM(patient, commandService, attachmentsString);
 					if (obj instanceof String) {
@@ -113,7 +113,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 
 				}
 			} catch (Exception ex) {
-				throw new RuntimeException("ch.elexis.core.mail.ui.sendMail not found", ex);
+				throw new RuntimeException("ch.elexis.core.mail.ui.sendMail not found", ex); //$NON-NLS-1$
 			}
 		}
 		// cleanup
@@ -134,7 +134,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 
 	private void sendMailWithXdm(Patient patient, List<?> iOutboxElements, ICommandService commandService,
 			String retInfo) throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
-		String[] retInfos = retInfo.split(":::");
+		String[] retInfos = retInfo.split(":::"); //$NON-NLS-1$
 		// a retInfo must contain at least one xdm and one attachment
 		if (retInfos.length > 1 && openSendMailDlg(patient, iOutboxElements, commandService, retInfos[0])) {
 
@@ -169,13 +169,13 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 
 	private Object createXDM(Patient patient, ICommandService commandService, String attachmentsString)
 			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
-		Command xdmCommand = commandService.getCommand("at.medevit.elexis.ehc.ui.vacdoc.CreateXdmHandler");
+		Command xdmCommand = commandService.getCommand("at.medevit.elexis.ehc.ui.vacdoc.CreateXdmHandler"); //$NON-NLS-1$
 		if (xdmCommand.isDefined()) {
 			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("at.medevit.elexis.ehc.ui.vacdoc.tmp.dir", attachmentsFolder.getAbsolutePath());
-			params.put("at.medevit.elexis.ehc.ui.vacdoc.attachments", attachmentsString);
+			params.put("at.medevit.elexis.ehc.ui.vacdoc.tmp.dir", attachmentsFolder.getAbsolutePath()); //$NON-NLS-1$
+			params.put("at.medevit.elexis.ehc.ui.vacdoc.attachments", attachmentsString); //$NON-NLS-1$
 			if (patient != null) {
-				params.put("at.medevit.elexis.ehc.ui.vacdoc.patient.id", patient.getId());
+				params.put("at.medevit.elexis.ehc.ui.vacdoc.patient.id", patient.getId()); //$NON-NLS-1$
 			}
 			ParameterizedCommand parametrizedCommmand = ParameterizedCommand.generateCommand(xdmCommand, params);
 			if (parametrizedCommmand != null) {
@@ -194,12 +194,12 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 	private boolean openSendMailDlg(Patient patient, List<?> iOutboxElements, ICommandService commandService,
 			String attachmentsString)
 			throws ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
-		Command sendMailCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMail");
+		Command sendMailCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMail"); //$NON-NLS-1$
 
 		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("ch.elexis.core.mail.ui.sendMail.attachments", attachmentsString);
+		params.put("ch.elexis.core.mail.ui.sendMail.attachments", attachmentsString); //$NON-NLS-1$
 		if (patient != null) {
-			params.put("ch.elexis.core.mail.ui.sendMail.subject", "Patient: " + patient.getLabel());
+			params.put("ch.elexis.core.mail.ui.sendMail.subject", "Patient: " + patient.getLabel()); //$NON-NLS-1$
 		}
 
 		ParameterizedCommand parametrizedCommmand = ParameterizedCommand.generateCommand(sendMailCommand, params);
@@ -215,7 +215,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 		} catch (IOException e) {
 			MessageDialog.openError(Display.getCurrent().getActiveShell(), "Fehler",
 					"Fehler beim versenden der Dokumente.");
-			LoggerFactory.getLogger(getClass()).error("Could not export Outbox.", e);
+			LoggerFactory.getLogger(getClass()).error("Could not export Outbox.", e); //$NON-NLS-1$
 		}
 		return Optional.empty();
 	}
@@ -225,7 +225,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 			try {
 				FileUtils.deleteDirectory(attachmentsFolder);
 			} catch (IOException e) {
-				LoggerFactory.getLogger(getClass()).error("Cannot delete attachments folder at {}.",
+				LoggerFactory.getLogger(getClass()).error("Cannot delete attachments folder at {}.", //$NON-NLS-1$
 						attachmentsFolder.getAbsolutePath(), e);
 			}
 		}
@@ -235,7 +235,7 @@ public class OutboxSendHandler extends AbstractHandler implements IHandler {
 		StringBuilder sb = new StringBuilder();
 		for (File file : attachments) {
 			if (sb.length() > 0) {
-				sb.append(":::");
+				sb.append(":::"); //$NON-NLS-1$
 			}
 			sb.append(file.getAbsolutePath());
 		}

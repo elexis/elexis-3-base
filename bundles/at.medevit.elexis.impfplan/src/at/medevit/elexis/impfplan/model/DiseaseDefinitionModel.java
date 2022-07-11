@@ -19,7 +19,7 @@ import ch.elexis.core.jdt.Nullable;
 
 public class DiseaseDefinitionModel {
 
-	public static final String VACCINATION_ATC_GROUP_TRAILER = "J07";
+	public static final String VACCINATION_ATC_GROUP_TRAILER = "J07"; //$NON-NLS-1$
 
 	private static List<DiseaseDefinition> diseases = null;
 
@@ -32,30 +32,30 @@ public class DiseaseDefinitionModel {
 	private static void initDiseases() {
 		diseases = new ArrayList<>();
 
-		diseases.add(new DiseaseDefinition("J07AF", "Diphterie", "Diphteria"));
-		diseases.add(new DiseaseDefinition("J07AM", "Starrkrampf", "Tetanus"));
-		diseases.add(new DiseaseDefinition("J07AJ", "Keuchhusten", "Pertussis"));
-		diseases.add(new DiseaseDefinition("J07BF", "Kinderlähmung", "Poliomyelitis"));
-		diseases.add(new DiseaseDefinition("J07AG", "Haemophilus influenzae (Hib)"));
-		diseases.add(new DiseaseDefinition("J07BD", "Masern", "Measles"));
-		diseases.add(new DiseaseDefinition("J07BE", "Mumps"));
-		diseases.add(new DiseaseDefinition("J07BJ", "Röteln", "Rubella"));
-		diseases.add(new DiseaseDefinition("J07BC01", "Hepatitis B"));
-		diseases.add(new DiseaseDefinition("J07BM", "humanes Papilloma Virus (Mädchen)"));
-		diseases.add(new DiseaseDefinition("J07BB", "Influenza (> 65)"));
-		diseases.add(new DiseaseDefinition("J07BC02", "Hepatitis A*"));
-		diseases.add(new DiseaseDefinition("J07AL", "Pneumokokken", "Pneumococca"));
-		diseases.add(new DiseaseDefinition("J07AH", "Meningokokken", "Meningococca"));
-		diseases.add(new DiseaseDefinition("J07BA01", "FSME", "Encephalitis tick borne"));
-		diseases.add(new DiseaseDefinition("J07AP", "Typhus"));
-		diseases.add(new DiseaseDefinition("J07BK01", "Windpocken", "Varizellen"));
-		diseases.add(new DiseaseDefinition("J07BL", "Gelbfieber", "Yellow fever"));
-		diseases.add(new DiseaseDefinition("J07AE", "Cholera"));
-		diseases.add(new DiseaseDefinition("J07BA02", "japanische Encephalitis", "Encephalitis japanese"));
-		diseases.add(new DiseaseDefinition("J07BH", "Rotaviren", "Rota virus"));
-		diseases.add(new DiseaseDefinition("J07BG", "Tollwut", "Rabies"));
-		diseases.add(new DiseaseDefinition("J07AN", "Tuberkulose"));
-		diseases.add(new DiseaseDefinition("J07BK02", "Herpes Zoster"));
+		diseases.add(new DiseaseDefinition("J07AF", "Diphterie", "Diphteria")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07AM", "Starrkrampf", "Tetanus")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07AJ", "Keuchhusten", "Pertussis")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07BF", "Kinderlähmung", "Poliomyelitis")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07AG", "Haemophilus influenzae (Hib)")); //$NON-NLS-1$ //$NON-NLS-2$
+		diseases.add(new DiseaseDefinition("J07BD", "Masern", "Measles")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07BE", "Mumps")); //$NON-NLS-1$
+		diseases.add(new DiseaseDefinition("J07BJ", "Röteln", "Rubella")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07BC01", "Hepatitis B")); //$NON-NLS-1$ //$NON-NLS-2$
+		diseases.add(new DiseaseDefinition("J07BM", "humanes Papilloma Virus (Mädchen)")); //$NON-NLS-1$ //$NON-NLS-2$
+		diseases.add(new DiseaseDefinition("J07BB", "Influenza (> 65)")); //$NON-NLS-1$ //$NON-NLS-2$
+		diseases.add(new DiseaseDefinition("J07BC02", "Hepatitis A*")); //$NON-NLS-1$ //$NON-NLS-2$
+		diseases.add(new DiseaseDefinition("J07AL", "Pneumokokken", "Pneumococca")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07AH", "Meningokokken", "Meningococca")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07BA01", "FSME", "Encephalitis tick borne")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07AP", "Typhus")); //$NON-NLS-1$ //$NON-NLS-2$
+		diseases.add(new DiseaseDefinition("J07BK01", "Windpocken", "Varizellen")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07BL", "Gelbfieber", "Yellow fever")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07AE", "Cholera")); //$NON-NLS-1$ //$NON-NLS-2$
+		diseases.add(new DiseaseDefinition("J07BA02", "japanische Encephalitis", "Encephalitis japanese")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07BH", "Rotaviren", "Rota virus")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07BG", "Tollwut", "Rabies")); //$NON-NLS-1$ //$NON-NLS-3$
+		diseases.add(new DiseaseDefinition("J07AN", "Tuberkulose")); //$NON-NLS-1$ //$NON-NLS-2$
+		diseases.add(new DiseaseDefinition("J07BK02", "Herpes Zoster")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		diseases = Collections.unmodifiableList(diseases);
 	}
@@ -92,7 +92,7 @@ public class DiseaseDefinitionModel {
 			if (diseaseSynonym == null) {
 				return diseaseLabel;
 			}
-			return diseaseLabel + " - " + diseaseSynonym;
+			return diseaseLabel + " - " + diseaseSynonym; //$NON-NLS-1$
 		}
 	}
 
@@ -108,6 +108,6 @@ public class DiseaseDefinitionModel {
 				return dd.toString();
 			}
 		}
-		return "?????";
+		return "?????"; //$NON-NLS-1$
 	}
 }

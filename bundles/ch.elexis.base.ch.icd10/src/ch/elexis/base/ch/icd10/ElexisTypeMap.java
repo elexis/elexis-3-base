@@ -20,7 +20,7 @@ public class ElexisTypeMap {
 	private static final HashMap<String, Class<? extends EntityWithId>> stsToClassMap;
 	private static final HashMap<Class<? extends EntityWithId>, String> classToStsMap;
 
-	public static final String TYPE_ICD10 = "ch.elexis.data.ICD10";
+	public static final String TYPE_ICD10 = "ch.elexis.data.ICD10"; //$NON-NLS-1$
 
 	static {
 		stsToClassMap = new HashMap<String, Class<? extends EntityWithId>>();

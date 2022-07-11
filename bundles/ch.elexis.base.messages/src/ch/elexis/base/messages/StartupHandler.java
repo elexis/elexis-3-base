@@ -18,7 +18,7 @@ public class StartupHandler implements EventHandler {
 
 	@Override
 	public void handleEvent(Event event) {
-		LoggerFactory.getLogger(getClass()).info("APPLICATION STARTUP COMPLETE");
+		LoggerFactory.getLogger(getClass()).info("APPLICATION STARTUP COMPLETE"); //$NON-NLS-1$
 		heartListener = new MsgHeartListener();
 		CoreHub.heart.addListener(heartListener);
 	}

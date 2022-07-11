@@ -25,8 +25,8 @@ public class ModelUtil {
 	}
 
 	public static Optional<IDiagnosisTree> loadDiagnosisWithCode(String code) {
-		INamedQuery<IDiagnosisTree> query = icd10ModelService.getNamedQuery(IDiagnosisTree.class, "code");
-		List<IDiagnosisTree> found = query.executeWithParameters(query.getParameterMap("code", code));
+		INamedQuery<IDiagnosisTree> query = icd10ModelService.getNamedQuery(IDiagnosisTree.class, "code"); //$NON-NLS-1$
+		List<IDiagnosisTree> found = query.executeWithParameters(query.getParameterMap("code", code)); //$NON-NLS-1$
 		if (!found.isEmpty()) {
 			return Optional.of(found.get(0));
 		}
@@ -34,8 +34,8 @@ public class ModelUtil {
 	}
 
 	public static List<IDiagnosisTree> loadDiagnosisWithParent(String parentId) {
-		INamedQuery<IDiagnosisTree> query = icd10ModelService.getNamedQuery(IDiagnosisTree.class, "parent");
-		return query.executeWithParameters(query.getParameterMap("parent", parentId));
+		INamedQuery<IDiagnosisTree> query = icd10ModelService.getNamedQuery(IDiagnosisTree.class, "parent"); //$NON-NLS-1$
+		return query.executeWithParameters(query.getParameterMap("parent", parentId)); //$NON-NLS-1$
 	}
 
 	public static List<IDiagnosisTree> loadAllDiagnosis() {

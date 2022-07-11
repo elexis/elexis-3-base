@@ -52,17 +52,17 @@ public class OutboxElementUiExtension {
 	private List<IOutboxElementUiProvider> getExtensions() {
 		List<IOutboxElementUiProvider> ret = new ArrayList<>();
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
-		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.outbox.ui.elementsui");
+		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.outbox.ui.elementsui"); //$NON-NLS-1$
 		if (exp != null) {
 			IExtension[] extensions = exp.getExtensions();
 			for (IExtension ex : extensions) {
 				IConfigurationElement[] elems = ex.getConfigurationElements();
 				for (IConfigurationElement el : elems) {
-					if (el.getName().equals("uiprovider")) {
+					if (el.getName().equals("uiprovider")) { //$NON-NLS-1$
 						try {
-							ret.add((IOutboxElementUiProvider) el.createExecutableExtension("class"));
+							ret.add((IOutboxElementUiProvider) el.createExecutableExtension("class")); //$NON-NLS-1$
 						} catch (CoreException e) {
-							logger.error("Error creating IOutboxElementsProvider {}", e);
+							logger.error("Error creating IOutboxElementsProvider {}", e); //$NON-NLS-1$
 						}
 					}
 				}

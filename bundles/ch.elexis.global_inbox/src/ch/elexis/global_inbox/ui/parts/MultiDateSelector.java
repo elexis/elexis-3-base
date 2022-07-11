@@ -102,7 +102,7 @@ public class MultiDateSelector extends Composite {
 		Collections.sort(selectionOptions, Collections.reverseOrder());
 		for (LocalDate option : selectionOptions) {
 			Link dateLink = new Link(optionsComposite, SWT.FLAT);
-			dateLink.setText("<a>" + TimeUtil.formatSafe(option, TimeUtil.DATE_GER_SHORT) + "</a>");
+			dateLink.setText("<a>" + TimeUtil.formatSafe(option, TimeUtil.DATE_GER_SHORT) + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 			dateLink.setData(TimeUtil.toDate(option));
 			dateLink.addSelectionListener(new SelectionAdapter() {
 				@Override

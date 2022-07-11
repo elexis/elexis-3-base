@@ -45,7 +45,7 @@ public class GDTFileInputHandler {
 		IGDTCommunicationPartner cp = GDTCommPartnerCollector
 				.identifyCommunicationPartnerByIncomingDirectory(file.getParent());
 		if (cp == null) {
-			logger.log("IGDTCommunicationPartner for file " + file.getAbsolutePath() + " is null, skipping.",
+			logger.log("IGDTCommunicationPartner for file " + file.getAbsolutePath() + " is null, skipping.", //$NON-NLS-1$ //$NON-NLS-2$
 					Log.ERRORS);
 			return;
 		}
@@ -80,19 +80,19 @@ public class GDTFileInputHandler {
 		try {
 			boolean deleted = file.delete();
 			if (deleted) {
-				logger.log("Deleted " + file.getAbsolutePath(), Log.DEBUGMSG);
+				logger.log("Deleted " + file.getAbsolutePath(), Log.DEBUGMSG); //$NON-NLS-1$
 			} else {
-				logger.log("Error deleting " + file.getAbsolutePath(), Log.WARNINGS);
+				logger.log("Error deleting " + file.getAbsolutePath(), Log.WARNINGS); //$NON-NLS-1$
 			}
 		} catch (SecurityException e) {
-			logger.log(e, "Error deleting " + file.getAbsolutePath(), Log.WARNINGS);
+			logger.log(e, "Error deleting " + file.getAbsolutePath(), Log.WARNINGS); //$NON-NLS-1$
 		}
 	}
 
 	public static String[] readFileGetUTF8(File file) {
 		int encoding = GDTConstants.ZEICHENSATZ_IBM_CP_437;
 		try {
-			List<String> dataList = FileUtils.readLines(file, "cp437");
+			List<String> dataList = FileUtils.readLines(file, "cp437"); //$NON-NLS-1$
 			String[] data = dataList.toArray(new String[] {});
 			String usedEncoding = GDTSatzNachrichtHelper
 					.getValueIfExists(GDTConstants.FELDKENNUNG_VERWENDETER_ZEICHENSATZ, data);
@@ -106,7 +106,7 @@ public class GDTFileInputHandler {
 			if (usedEncodingInt == GDTConstants.ZEICHENSATZ_7BIT) {
 				return FileUtils.readLines(file, GDTConstants.ZEICHENSATZ_7BIT_CHARSET_STRING).toArray(new String[] {});
 			} else if (usedEncodingInt == GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252) {
-				return FileUtils.readLines(file, "Cp1252").toArray(new String[] {});
+				return FileUtils.readLines(file, "Cp1252").toArray(new String[] {}); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			String message = "GDT: Ein-/Ausgabe Fehler beim Lesen von " + file.getAbsolutePath();

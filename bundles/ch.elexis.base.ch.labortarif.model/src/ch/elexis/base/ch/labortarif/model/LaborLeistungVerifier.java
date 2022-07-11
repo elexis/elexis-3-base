@@ -19,9 +19,9 @@ public class LaborLeistungVerifier implements IBillableVerifier {
 			if (laborLeistung.isValidOn(date)) {
 				return Result.OK();
 			} else {
-				DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+				DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); //$NON-NLS-1$
 				return new Result<IBillable>(Result.SEVERITY.ERROR, 2,
-						laborLeistung.getCode() + " (" + laborLeistung.getValidFrom().format(dateFormatter) + "-"
+						laborLeistung.getCode() + " (" + laborLeistung.getValidFrom().format(dateFormatter) + "-" //$NON-NLS-1$ //$NON-NLS-2$
 								+ laborLeistung.getValidTo().format(dateFormatter)
 								+ ") Gültigkeit beinhaltet nicht das Konsultationsdatum " + date.format(dateFormatter),
 						billable, false);

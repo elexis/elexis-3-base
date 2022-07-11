@@ -135,12 +135,12 @@ public class TableViewerColumnSorter extends ViewerComparator {
 		try {
 			EditingSupport editingSupport;
 			{
-				Method getEditingMethod = ViewerColumn.class.getDeclaredMethod("getEditingSupport", new Class[] {});
+				Method getEditingMethod = ViewerColumn.class.getDeclaredMethod("getEditingSupport", new Class[] {}); //$NON-NLS-1$
 				getEditingMethod.setAccessible(true);
 				editingSupport = (EditingSupport) getEditingMethod.invoke(m_column, new Object[] {});
 			}
 			if (editingSupport != null) {
-				Method getValueMethod = EditingSupport.class.getDeclaredMethod("getValue",
+				Method getValueMethod = EditingSupport.class.getDeclaredMethod("getValue", //$NON-NLS-1$
 						new Class[] { Object.class });
 				getValueMethod.setAccessible(true);
 				return getValueMethod.invoke(editingSupport, new Object[] { o });

@@ -29,8 +29,8 @@ import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 
 public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifiedRunnable {
 
-	public static final String RUNNABLE_ID = "solrEncounterIndexer";
-	public static final String DESCRIPTION = "Index encouters into SOLR";
+	public static final String RUNNABLE_ID = "solrEncounterIndexer"; //$NON-NLS-1$
+	public static final String DESCRIPTION = "Index encouters into SOLR"; //$NON-NLS-1$
 
 	private IModelService coreModelService;
 	private IConfigService configService;
@@ -62,7 +62,7 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 			checkResponse(solr.ping(SolrConstants.CORE_ENCOUNTERS));
 
 			String lastIndexRunLastUpdateString = configService.get(SolrConstants.CONFIG_KEY_LASTINDEXRUN_ENCOUNTER,
-					"0");
+					"0"); //$NON-NLS-1$
 			Long lastIndexRunLastUpdate = Long.valueOf(lastIndexRunLastUpdateString);
 
 			long newestLastUpdate = indexEncounters(solr, lastIndexRunLastUpdate, progressMonitor, logger, failures);
@@ -112,9 +112,9 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 					}
 
 				} catch (IOException | SolrServerException | IllegalArgumentException e) {
-					logger.warn("addBean exception on encounter [{}]", encounter.getId(), e);
+					logger.warn("addBean exception on encounter [{}]", encounter.getId(), e); //$NON-NLS-1$
 					failures.add(new SingleIdentifiableTaskResult(
-							StoreToStringServiceHolder.getStoreToString(encounter), "commit", e.getMessage()));
+							StoreToStringServiceHolder.getStoreToString(encounter), "commit", e.getMessage())); //$NON-NLS-1$
 				}
 
 				encounterCursor.clear();
@@ -132,8 +132,8 @@ public class EncounterIndexerIdentifiedRunnable extends AbstractIndexerIdentifie
 
 		checkResponse(solr.commit(SolrConstants.CORE_ENCOUNTERS));
 
-		resultMap.put(IIdentifiedRunnable.ReturnParameter.RESULT_DATA, noIndexed + " indexed / " + noRemovedFromIndex
-				+ " removed from index. Indexed LU " + lastIndexRunLastUpdate + " -> " + newestLastUpdate);
+		resultMap.put(IIdentifiedRunnable.ReturnParameter.RESULT_DATA, noIndexed + " indexed / " + noRemovedFromIndex //$NON-NLS-1$
+				+ " removed from index. Indexed LU " + lastIndexRunLastUpdate + " -> " + newestLastUpdate); //$NON-NLS-1$ //$NON-NLS-2$
 		if (noIndexed == 0 && noRemovedFromIndex == 0 && failures.size() == 0) {
 			resultMap.put(IIdentifiedRunnable.ReturnParameter.MARKER_DO_NOT_PERSIST, true);
 		}

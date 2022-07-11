@@ -42,7 +42,7 @@ public class InboxElementLabelProvider extends LabelProvider implements IColorPr
 			} else {
 				Object obj = ((IInboxElement) element).getObject();
 				if (obj != null) {
-					return "unbekannt [" + obj.getClass().getSimpleName() + "]";
+					return "unbekannt [" + obj.getClass().getSimpleName() + "]"; //$NON-NLS-2$
 				} else {
 					return "unbekannt";
 				}

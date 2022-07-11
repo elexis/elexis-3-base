@@ -37,7 +37,7 @@ public class MandantSelectorDialog extends TitleAreaDialog {
 		lMandant = qbe.execute();
 		for (PersistentObject m : lMandant) {
 			lbMandant.add(
-					m.get(Kontakt.FLD_NAME2) + StringUtils.SPACE + m.get(Kontakt.FLD_NAME1) + " - " + m.getLabel());
+					m.get(Kontakt.FLD_NAME2) + StringUtils.SPACE + m.get(Kontakt.FLD_NAME1) + " - " + m.getLabel()); //$NON-NLS-1$
 		}
 		return lbMandant;
 	}

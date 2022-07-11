@@ -53,7 +53,7 @@ public class DirectoryWatcher implements FileAlterationListener {
 
 	public void addDirectoryToWatch(File directory) {
 		if (directory.isDirectory()) {
-			logger.log("Adding directory: " + directory, Log.DEBUGMSG);
+			logger.log("Adding directory: " + directory, Log.DEBUGMSG); //$NON-NLS-1$
 			FileAlterationObserver observer = new FileAlterationObserver(directory);
 			directories.add(directory);
 			observer.addListener(this);
@@ -62,12 +62,12 @@ public class DirectoryWatcher implements FileAlterationListener {
 			this.unwatch();
 			this.watch();
 		} else {
-			logger.log("Invalid directory entry passed: " + directory, Log.DEBUGMSG);
+			logger.log("Invalid directory entry passed: " + directory, Log.DEBUGMSG); //$NON-NLS-1$
 		}
 	}
 
 	public void watch() {
-		logger.log("Watching " + observers.size() + " directories.", Log.DEBUGMSG);
+		logger.log("Watching " + observers.size() + " directories.", Log.DEBUGMSG); //$NON-NLS-1$ //$NON-NLS-2$
 
 		try {
 			monitor.start();
@@ -88,7 +88,7 @@ public class DirectoryWatcher implements FileAlterationListener {
 	}
 
 	public void unwatch() {
-		logger.log("Unwatching " + observers.size() + " directories.", Log.DEBUGMSG);
+		logger.log("Unwatching " + observers.size() + " directories.", Log.DEBUGMSG); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			monitor.stop();
 		} catch (Exception e) {
@@ -98,7 +98,7 @@ public class DirectoryWatcher implements FileAlterationListener {
 
 	@Override
 	public void onFileCreate(File file) {
-		logger.log("Incoming file " + file, Log.DEBUGMSG);
+		logger.log("Incoming file " + file, Log.DEBUGMSG); //$NON-NLS-1$
 		processFile(file);
 	}
 
@@ -110,9 +110,9 @@ public class DirectoryWatcher implements FileAlterationListener {
 			if (CoreHub.localCfg.get(GDTPreferenceConstants.CFG_GDT_FILETRANSFER_DELETE_NON_GDT_FILES, false)) {
 				boolean success = file.delete();
 				if (success) {
-					logger.log("Deleted non GDT file " + file, Log.DEBUGMSG);
+					logger.log("Deleted non GDT file " + file, Log.DEBUGMSG); //$NON-NLS-1$
 				} else {
-					logger.log("Error deleting file " + file, Log.WARNINGS);
+					logger.log("Error deleting file " + file, Log.WARNINGS); //$NON-NLS-1$
 				}
 			}
 		}

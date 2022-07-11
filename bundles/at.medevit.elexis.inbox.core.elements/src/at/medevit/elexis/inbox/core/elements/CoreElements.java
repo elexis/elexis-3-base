@@ -24,7 +24,7 @@ public class CoreElements implements IInboxElementsProvider {
 		if (labResultCreateEventHandler != null) {
 			labResultCreateEventHandler.setActive(true);
 		} else {
-			LoggerFactory.getLogger(getClass()).warn("No create event handler to activate");
+			LoggerFactory.getLogger(getClass()).warn("No create event handler to activate"); //$NON-NLS-1$
 		}
 	}
 
@@ -33,7 +33,7 @@ public class CoreElements implements IInboxElementsProvider {
 		if (labResultCreateEventHandler != null) {
 			labResultCreateEventHandler.setActive(false);
 		} else {
-			LoggerFactory.getLogger(getClass()).warn("No create event handler to deactivate");
+			LoggerFactory.getLogger(getClass()).warn("No create event handler to deactivate"); //$NON-NLS-1$
 		}
 	}
 

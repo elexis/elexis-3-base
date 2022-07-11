@@ -40,27 +40,27 @@ public class Camt054Record {
 	private void validate() throws Camet054Exception {
 		try {
 			if (Integer.parseInt(amount) < 0) {
-				throw new Camet054Exception("amount is negativ: " + amount);
+				throw new Camet054Exception("amount is negativ: " + amount); //$NON-NLS-1$
 			}
 		} catch (NumberFormatException e) {
-			throw new Camet054Exception("amount not valid", e);
+			throw new Camet054Exception("amount not valid", e); //$NON-NLS-1$
 		}
 
 		// sammelbuchungen hat keine eigene esr laut testfiles
-		if (!"999".equals(mode) && (reference == null || reference.length() != 27)) {
-			throw new Camet054Exception("reference is not valid: " + reference);
+		if (!"999".equals(mode) && (reference == null || reference.length() != 27)) { //$NON-NLS-1$
+			throw new Camet054Exception("reference is not valid: " + reference); //$NON-NLS-1$
 		}
 
 		if (bookingDate != null && bookingDate.before(new Date(0))) {
-			throw new Camet054Exception("booking date is not valid: " + bookingDate);
+			throw new Camet054Exception("booking date is not valid: " + bookingDate); //$NON-NLS-1$
 		}
 
 		if (valuDate != null && valuDate.before(new Date(0))) {
-			throw new Camet054Exception("valu date is not valid: " + valuDate);
+			throw new Camet054Exception("valu date is not valid: " + valuDate); //$NON-NLS-1$
 		}
 
 		if (readDate != null && readDate.before(new Date(0))) {
-			throw new Camet054Exception("read date is not valid: " + readDate);
+			throw new Camet054Exception("read date is not valid: " + readDate); //$NON-NLS-1$
 		}
 	}
 
@@ -118,7 +118,7 @@ public class Camt054Record {
 
 	@Override
 	public String toString() {
-		return "Camt054Record [mode=" + mode + ", reference=" + reference + ", amount=" + amount + ", tn=" + tn
-				+ ", bookingDate=" + bookingDate + ", valuDate=" + valuDate + ", readDate=" + readDate + "]";
+		return "Camt054Record [mode=" + mode + ", reference=" + reference + ", amount=" + amount + ", tn=" + tn //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				+ ", bookingDate=" + bookingDate + ", valuDate=" + valuDate + ", readDate=" + readDate + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 }

@@ -59,7 +59,7 @@ public class MessagePreferencePage extends FieldEditorPreferencePage implements 
 			@Override
 			public String getText(Object element) {
 				if (element instanceof Receiver) {
-					return ((Receiver) element).getApplication() + " - " + ((Receiver) element).getFacility();
+					return ((Receiver) element).getApplication() + " - " + ((Receiver) element).getFacility(); //$NON-NLS-1$
 				}
 				return super.getText(element);
 			}

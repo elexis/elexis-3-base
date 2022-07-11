@@ -11,8 +11,8 @@ import at.medevit.elexis.outbox.ui.part.OutboxView;
 
 public class AutoActivePatientHandler extends AbstractHandler implements IHandler {
 
-	public static final String CMD_ID = "at.medevit.elexis.outbox.ui.autoSelectPatient";
-	public static final String STATE_ID = "org.eclipse.ui.commands.toggleState";
+	public static final String CMD_ID = "at.medevit.elexis.outbox.ui.autoSelectPatient"; //$NON-NLS-1$
+	public static final String STATE_ID = "org.eclipse.ui.commands.toggleState"; //$NON-NLS-1$
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

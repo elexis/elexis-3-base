@@ -9,7 +9,7 @@ public class TitleEntryContentProposal extends ContentProposal {
 	private TitleEntry entry;
 
 	public TitleEntryContentProposal(TitleEntry entry) {
-		super(entry.getTitle() + " (" + entry.getCategoryName() + ")", null);
+		super(entry.getTitle() + " (" + entry.getCategoryName() + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
 		this.entry = entry;
 	}
 

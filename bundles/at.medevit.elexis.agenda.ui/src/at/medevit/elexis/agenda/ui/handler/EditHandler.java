@@ -52,7 +52,7 @@ public class EditHandler {
 				}
 			}
 		} catch (Exception e) {
-			LoggerFactory.getLogger(getClass()).error("Error setting status", e);
+			LoggerFactory.getLogger(getClass()).error("Error setting status", e); //$NON-NLS-1$
 		}
 		return Optional.empty();
 	}

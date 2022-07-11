@@ -27,39 +27,39 @@ import ch.rgw.tools.VersionInfo;
 
 public class GDTProtokoll extends PersistentObject {
 
-	public static final String FLD_DATETIME = "DateTime";
-	public static final String FLD_PATIENT_ID = "PatientID";
-	public static final String FLD_BEZEICHNUNG = "Bezeichnung";
-	public static final String FLD_BEMERKUNGEN = "Bemerkungen";
-	public static final String FLD_MESSAGE_TYPE = "MessageType";
-	public static final String FLD_MESSAGE_DIRECTION = "MessageDirection";
-	public static final String FLD_GEGENSTELLE = "Remote";
-	public static final String FLD_MESSAGE = "Message";
-	static final String VERSION = "1.0.1";
+	public static final String FLD_DATETIME = "DateTime"; //$NON-NLS-1$
+	public static final String FLD_PATIENT_ID = "PatientID"; //$NON-NLS-1$
+	public static final String FLD_BEZEICHNUNG = "Bezeichnung"; //$NON-NLS-1$
+	public static final String FLD_BEMERKUNGEN = "Bemerkungen"; //$NON-NLS-1$
+	public static final String FLD_MESSAGE_TYPE = "MessageType"; //$NON-NLS-1$
+	public static final String FLD_MESSAGE_DIRECTION = "MessageDirection"; //$NON-NLS-1$
+	public static final String FLD_GEGENSTELLE = "Remote"; //$NON-NLS-1$
+	public static final String FLD_MESSAGE = "Message"; //$NON-NLS-1$
+	static final String VERSION = "1.0.1"; //$NON-NLS-1$
 
-	public static final String MESSAGE_DIRECTION_IN = "IN";
-	public static final String MESSAGE_DIRECTION_OUT = "OUT";
+	public static final String MESSAGE_DIRECTION_IN = "IN"; //$NON-NLS-1$
+	public static final String MESSAGE_DIRECTION_OUT = "OUT"; //$NON-NLS-1$
 
-	static final String TABLENAME = "at_medevit_elexis_gdt_protokoll";
+	static final String TABLENAME = "at_medevit_elexis_gdt_protokoll"; //$NON-NLS-1$
 
-	static final String createDB = "CREATE TABLE " + TABLENAME + "(" + "ID VARCHAR(25) primary key,"
-			+ "lastupdate BIGINT," + "deleted CHAR(1) default '0'," + FLD_DATETIME + " VARCHAR(24)," + FLD_PATIENT_ID
-			+ " VARCHAR(25)," + FLD_BEZEICHNUNG + " VARCHAR(60)," + FLD_BEMERKUNGEN + " VARCHAR(80)," + FLD_MESSAGE_TYPE
-			+ " VARCHAR(4)," + FLD_MESSAGE_DIRECTION + " VARCHAR(3)," + FLD_GEGENSTELLE + " VARCHAR(60)," + FLD_MESSAGE
-			+ "	TEXT);" + "CREATE INDEX " + TABLENAME + "idx1 on " + TABLENAME + " (" + FLD_DATETIME + ");"
-			+ "INSERT INTO " + TABLENAME + " (ID,DateTime) VALUES ('VERSION'," + JdbcLink.wrap("1.0.0") + ");";
+	static final String createDB = "CREATE TABLE " + TABLENAME + "(" + "ID VARCHAR(25) primary key," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ "lastupdate BIGINT," + "deleted CHAR(1) default '0'," + FLD_DATETIME + " VARCHAR(24)," + FLD_PATIENT_ID //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ " VARCHAR(25)," + FLD_BEZEICHNUNG + " VARCHAR(60)," + FLD_BEMERKUNGEN + " VARCHAR(80)," + FLD_MESSAGE_TYPE //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ " VARCHAR(4)," + FLD_MESSAGE_DIRECTION + " VARCHAR(3)," + FLD_GEGENSTELLE + " VARCHAR(60)," + FLD_MESSAGE //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ "	TEXT);" + "CREATE INDEX " + TABLENAME + "idx1 on " + TABLENAME + " (" + FLD_DATETIME + ");" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			+ "INSERT INTO " + TABLENAME + " (ID,DateTime) VALUES ('VERSION'," + JdbcLink.wrap("1.0.0") + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 	static {
 		addMapping(TABLENAME, FLD_DATETIME, FLD_PATIENT_ID, FLD_BEZEICHNUNG, FLD_BEMERKUNGEN, FLD_MESSAGE_TYPE,
 				FLD_MESSAGE_DIRECTION, FLD_GEGENSTELLE, FLD_MESSAGE);
-		GDTProtokoll version = load("VERSION");
+		GDTProtokoll version = load("VERSION"); //$NON-NLS-1$
 		if (!version.exists()) {
 			createOrModifyTable(createDB);
 		} else {
 			VersionInfo vi = new VersionInfo(version.get(FLD_DATETIME));
 			if (vi.isOlder(VERSION)) {
 				{ // 1.0.1
-					createOrModifyTable("ALTER TABLE " + TABLENAME + " MODIFY " + FLD_GEGENSTELLE + " VARCHAR(255);");
+					createOrModifyTable("ALTER TABLE " + TABLENAME + " MODIFY " + FLD_GEGENSTELLE + " VARCHAR(255);"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					version.set(FLD_DATETIME, VERSION);
 				}
 			}
@@ -87,7 +87,7 @@ public class GDTProtokoll extends PersistentObject {
 
 		set(new String[] { FLD_DATETIME, FLD_PATIENT_ID, FLD_MESSAGE_TYPE, FLD_MESSAGE_DIRECTION, FLD_GEGENSTELLE,
 				FLD_MESSAGE, FLD_BEZEICHNUNG }, new TimeTool().toString(TimeTool.TIMESTAMP),
-				(pat != null) ? pat.getId() : "nicht zugeordnet",
+				(pat != null) ? pat.getId() : "nicht zugeordnet", //$NON-NLS-1$
 				satzNachricht.getValue(GDTConstants.FELDKENNUNG_SATZIDENTIFIKATION), messageDirection, cp.getLabel(),
 				sb.toString(), satzNachricht.getValue(GDTConstants.FELDKENNUNG_TEST_IDENT));
 
@@ -99,7 +99,7 @@ public class GDTProtokoll extends PersistentObject {
 						+ satzNachricht.getValue(GDTConstants.FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD));
 				break;
 			case GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_ZEIGEN:
-				set(FLD_BEZEICHNUNG, "Anzeige Untersuchung: "
+				set(FLD_BEZEICHNUNG, "Anzeige Untersuchung: " //$NON-NLS-1$
 						+ satzNachricht.getValue(GDTConstants.FELDKENNUNG_GERAETE_UND_VERFAHRENSSPEZIFISCHES_KENNFELD));
 				break;
 			case GDTConstants.SATZART_STAMMDATEN_UEBERMITTELN:
@@ -136,7 +136,7 @@ public class GDTProtokoll extends PersistentObject {
 		StringBuilder sb = new StringBuilder();
 		TimeTool tt = new TimeTool(get(FLD_DATETIME));
 		Patient pat = Patient.loadByPatientID(get(FLD_PATIENT_ID));
-		sb.append(tt.toString(TimeTool.DATE_GER) + ": " + pat.getLabel() + StringUtils.SPACE + FLD_MESSAGE_TYPE
+		sb.append(tt.toString(TimeTool.DATE_GER) + ": " + pat.getLabel() + StringUtils.SPACE + FLD_MESSAGE_TYPE //$NON-NLS-1$
 				+ StringUtils.SPACE + FLD_MESSAGE_DIRECTION);
 		return sb.toString();
 	}
@@ -145,8 +145,8 @@ public class GDTProtokoll extends PersistentObject {
 		StringBuilder sb = new StringBuilder();
 		TimeTool tt = new TimeTool(get(FLD_DATETIME));
 
-		sb.append(tt.toString(TimeTool.DATE_GER) + ": " + get(FLD_BEZEICHNUNG) + StringUtils.SPACE + "["
-				+ get(FLD_GEGENSTELLE) + "]");
+		sb.append(tt.toString(TimeTool.DATE_GER) + ": " + get(FLD_BEZEICHNUNG) + StringUtils.SPACE + "[" //$NON-NLS-1$ //$NON-NLS-2$
+				+ get(FLD_GEGENSTELLE) + "]"); //$NON-NLS-1$
 		return sb.toString();
 	}
 
@@ -157,7 +157,7 @@ public class GDTProtokoll extends PersistentObject {
 
 	public static GDTProtokoll[] getAllEntries() {
 		Query<GDTProtokoll> qbe = new Query<GDTProtokoll>(GDTProtokoll.class);
-		qbe.add("ID", Query.NOT_EQUAL, "VERSION");
+		qbe.add("ID", Query.NOT_EQUAL, "VERSION"); //$NON-NLS-1$ //$NON-NLS-2$
 		List<GDTProtokoll> qre = qbe.execute();
 		return qre.toArray(new GDTProtokoll[] {});
 	}
@@ -165,7 +165,7 @@ public class GDTProtokoll extends PersistentObject {
 	public static GDTProtokoll[] getEntriesForPatient(Patient pat) {
 		String ID = pat.getId();
 		Query<GDTProtokoll> qbe = new Query<GDTProtokoll>(GDTProtokoll.class);
-		qbe.add("ID", Query.NOT_EQUAL, "VERSION");
+		qbe.add("ID", Query.NOT_EQUAL, "VERSION"); //$NON-NLS-1$ //$NON-NLS-2$
 		qbe.add(GDTProtokoll.FLD_PATIENT_ID, Query.EQUALS, ID);
 		List<GDTProtokoll> qre = qbe.execute();
 		return qre.toArray(new GDTProtokoll[] {});

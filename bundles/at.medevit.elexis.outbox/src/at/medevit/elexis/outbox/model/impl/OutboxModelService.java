@@ -68,11 +68,11 @@ public class OutboxModelService extends AbstractModelService implements IModelSe
 	@Override
 	public Optional<Identifiable> loadFromString(String storeToString) {
 		if (storeToString == null) {
-			LoggerFactory.getLogger(getClass()).warn("StoreToString is null");
+			LoggerFactory.getLogger(getClass()).warn("StoreToString is null"); //$NON-NLS-1$
 			return Optional.empty();
 		}
 
-		if (storeToString.startsWith("at.medevit.elexis.outbox.model")) {
+		if (storeToString.startsWith("at.medevit.elexis.outbox.model")) { //$NON-NLS-1$
 			String[] split = splitIntoTypeAndId(storeToString);
 
 			// map string to classname
@@ -125,7 +125,7 @@ public class OutboxModelService extends AbstractModelService implements IModelSe
 			try {
 				return getTypeForEntity(entityClass.newInstance());
 			} catch (InstantiationException | IllegalAccessException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;

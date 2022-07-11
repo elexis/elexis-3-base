@@ -9,10 +9,10 @@ public class MesswertFieldMapping {
 
 	private String findingsCode;
 
-	private static final String MAPPING_FIELD_SEPARATOR = "||";
-	private static final String MAPPING_FIELD_SEPARATOR_ESCAPED = "\\|\\|";
-	private static final String MAPPING_SEPARATOR = "<->";
-	private static final String MAPPING_TYPE = "_MESSWERTFIELDMAPPING_";
+	private static final String MAPPING_FIELD_SEPARATOR = "||"; //$NON-NLS-1$
+	private static final String MAPPING_FIELD_SEPARATOR_ESCAPED = "\\|\\|"; //$NON-NLS-1$
+	private static final String MAPPING_SEPARATOR = "<->"; //$NON-NLS-1$
+	private static final String MAPPING_TYPE = "_MESSWERTFIELDMAPPING_"; //$NON-NLS-1$
 
 	/**
 	 * Create a BefundFieldMapping from a String representation (see
@@ -98,9 +98,9 @@ public class MesswertFieldMapping {
 
 	public String getLocalFieldLabel() {
 		if (localMesswert != null && localMesswertField != null) {
-			return localMesswert + "." + localMesswertField;
+			return localMesswert + "." + localMesswertField; //$NON-NLS-1$
 		}
-		return "?";
+		return "?"; //$NON-NLS-1$
 	}
 
 	public String getLocalBefund() {

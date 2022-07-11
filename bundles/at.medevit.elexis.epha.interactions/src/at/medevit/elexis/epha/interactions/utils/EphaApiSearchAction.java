@@ -87,18 +87,18 @@ public class EphaApiSearchAction extends Action implements IKonsExtension, IHand
 						.map(p -> Substance.of(p.getArticle())).collect(Collectors.toList()));
 				if (ret instanceof AdviceResponse && ((AdviceResponse) ret).getData() != null) {
 					if (((AdviceResponse) ret).getData().getSafety() > EphaConstants.SAFTEY_INFO) {
-						if (MessageDialog.open(MessageDialog.INFORMATION, Display.getDefault().getActiveShell(), "Epha",
+						if (MessageDialog.open(MessageDialog.INFORMATION, Display.getDefault().getActiveShell(), "Epha", //$NON-NLS-1$
 								getMessage((AdviceResponse) ret), SWT.SHEET, "Epha Interaktionen öffnen",
 								IDialogConstants.OK_LABEL) == 0) {
 							Program.launch(((AdviceResponse) ret).getData().getLink());
 						}
 					} else if (((AdviceResponse) ret).getData().getSafety() > EphaConstants.SAFTEY_WARN) {
-						if (MessageDialog.open(MessageDialog.WARNING, Display.getDefault().getActiveShell(), "Epha",
+						if (MessageDialog.open(MessageDialog.WARNING, Display.getDefault().getActiveShell(), "Epha", //$NON-NLS-1$
 								getMessage((AdviceResponse) ret), SWT.SHEET, "Epha Interaktionen öffnen") == 0) {
 							Program.launch(((AdviceResponse) ret).getData().getLink());
 						}
 					} else {
-						if (MessageDialog.open(MessageDialog.ERROR, Display.getDefault().getActiveShell(), "Epha",
+						if (MessageDialog.open(MessageDialog.ERROR, Display.getDefault().getActiveShell(), "Epha", //$NON-NLS-1$
 								getMessage((AdviceResponse) ret), SWT.SHEET, "Epha Interaktionen öffnen") == 0) {
 							Program.launch(((AdviceResponse) ret).getData().getLink());
 						}
@@ -106,7 +106,7 @@ public class EphaApiSearchAction extends Action implements IKonsExtension, IHand
 				} else if (ret instanceof AdviceResponse && ((AdviceResponse) ret).getMeta() != null) {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
 							"Es ist folgender Fehler aufgetreten.\n\n" + ((AdviceResponse) ret).getMeta().getStatus()
-									+ " - " + ((AdviceResponse) ret).getMeta().getMessage());
+									+ " - " + ((AdviceResponse) ret).getMeta().getMessage()); //$NON-NLS-1$
 				} else {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
 							"Es ist folgender Fehler aufgetreten.\n\n" + ret);
@@ -139,19 +139,19 @@ public class EphaApiSearchAction extends Action implements IKonsExtension, IHand
 			List<Map<String, String>> fails = response.getData().getFails();
 			ret.append("\n\nFolgende Medikamente konnten bei epha nicht gefunden werden:");
 			for (Map<String, String> failMap : fails) {
-				if (StringUtils.isNoneBlank(failMap.get("name"))) {
-					ret.append("\n- " + failMap.get("name"));
-				} else if (StringUtils.isNoneBlank(failMap.get("gtin"))) {
+				if (StringUtils.isNoneBlank(failMap.get("name"))) { //$NON-NLS-1$
+					ret.append("\n- " + failMap.get("name")); //$NON-NLS-1$ //$NON-NLS-2$
+				} else if (StringUtils.isNoneBlank(failMap.get("gtin"))) { //$NON-NLS-1$
 					ICodeElementServiceContribution artikelstammContribution = CodeElementServiceHolder.get()
-							.getContribution(CodeElementTyp.ARTICLE, "Artikelstamm").orElse(null);
+							.getContribution(CodeElementTyp.ARTICLE, "Artikelstamm").orElse(null); //$NON-NLS-1$
 					if (artikelstammContribution != null) {
-						ICodeElement loaded = artikelstammContribution.loadFromCode(failMap.get("gtin")).orElse(null);
+						ICodeElement loaded = artikelstammContribution.loadFromCode(failMap.get("gtin")).orElse(null); //$NON-NLS-1$
 						if (loaded != null) {
-							ret.append("\n- " + loaded.getText());
+							ret.append("\n- " + loaded.getText()); //$NON-NLS-1$
 							continue;
 						}
 					}
-					ret.append("\n- GTIN: " + failMap.get("gtin"));
+					ret.append("\n- GTIN: " + failMap.get("gtin")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}

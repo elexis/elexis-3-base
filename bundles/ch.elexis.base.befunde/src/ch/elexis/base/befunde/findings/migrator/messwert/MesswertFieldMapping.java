@@ -10,16 +10,16 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class MesswertFieldMapping {
 
-	private static final String MAPPING_CONFIG = "ch.elexis.core.findins/messwert/mapping";
+	private static final String MAPPING_CONFIG = "ch.elexis.core.findins/messwert/mapping"; //$NON-NLS-1$
 
 	private String localMesswert;
 	private String localMesswertField;
 
 	private String findingsCode;
 
-	private static final String MAPPING_FIELD_SEPARATOR_ESCAPED = "\\|\\|";
-	private static final String MAPPING_SEPARATOR = "<->";
-	private static final String MAPPING_TYPE = "_MESSWERTFIELDMAPPING_";
+	private static final String MAPPING_FIELD_SEPARATOR_ESCAPED = "\\|\\|"; //$NON-NLS-1$
+	private static final String MAPPING_SEPARATOR = "<->"; //$NON-NLS-1$
+	private static final String MAPPING_TYPE = "_MESSWERTFIELDMAPPING_"; //$NON-NLS-1$
 
 	/**
 	 * Create a BefundFieldMapping from a String representation (see
@@ -102,7 +102,7 @@ public class MesswertFieldMapping {
 				}
 			}
 		} else {
-			throw new IllegalStateException("No mandant config available");
+			throw new IllegalStateException("No mandant config available"); //$NON-NLS-1$
 		}
 		return ret;
 	}

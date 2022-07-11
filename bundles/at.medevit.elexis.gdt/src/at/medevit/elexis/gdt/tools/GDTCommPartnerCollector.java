@@ -29,7 +29,7 @@ public class GDTCommPartnerCollector {
 
 	private static Log logger = Log.get(GDTCommPartnerCollector.class.getName());
 
-	public static final String EP_ID = Activator.PLUGIN_ID + ".communicationPartner";
+	public static final String EP_ID = Activator.PLUGIN_ID + ".communicationPartner"; //$NON-NLS-1$
 
 	public static @Nullable List<IGDTCommunicationPartner> getRegisteredCommPartners() {
 		List<IGDTCommunicationPartner> ret = null;
@@ -37,7 +37,7 @@ public class GDTCommPartnerCollector {
 		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
 		try {
 			for (IConfigurationElement e : config) {
-				final Object o = e.createExecutableExtension("interface");
+				final Object o = e.createExecutableExtension("interface"); //$NON-NLS-1$
 				if (o instanceof IGDTCommunicationPartner) {
 					if (ret == null)
 						ret = new LinkedList<IGDTCommunicationPartner>();
@@ -50,7 +50,7 @@ public class GDTCommPartnerCollector {
 				}
 			}
 		} catch (CoreException ex) {
-			logger.log("CoreException in getRegisteredCommPartners: " + ex.getMessage(), Log.WARNINGS);
+			logger.log("CoreException in getRegisteredCommPartners: " + ex.getMessage(), Log.WARNINGS); //$NON-NLS-1$
 			System.out.println(ex.getMessage());
 		}
 		if (ret == null)
@@ -63,7 +63,7 @@ public class GDTCommPartnerCollector {
 		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
 		try {
 			for (IConfigurationElement e : config) {
-				final Object o = e.createExecutableExtension("interface");
+				final Object o = e.createExecutableExtension("interface"); //$NON-NLS-1$
 				if (o instanceof IGDTCommunicationPartner) {
 					IGDTCommunicationPartner cp = (IGDTCommunicationPartner) o;
 					if (cp != null && cp.getIncomingDirectory() != null
@@ -81,7 +81,7 @@ public class GDTCommPartnerCollector {
 				}
 			}
 		} catch (CoreException ex) {
-			logger.log("CoreException in getRegisteredCommPartners: " + ex.getMessage(), Log.WARNINGS);
+			logger.log("CoreException in getRegisteredCommPartners: " + ex.getMessage(), Log.WARNINGS); //$NON-NLS-1$
 			System.out.println(ex.getMessage());
 		}
 		return null;
@@ -91,7 +91,7 @@ public class GDTCommPartnerCollector {
 		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(EP_ID);
 		try {
 			for (IConfigurationElement e : config) {
-				final Object o = e.createExecutableExtension("interface");
+				final Object o = e.createExecutableExtension("interface"); //$NON-NLS-1$
 				if (o instanceof IGDTCommunicationPartner) {
 					IGDTCommunicationPartner cp = (IGDTCommunicationPartner) o;
 					if (cp.getLabel().equalsIgnoreCase(label)) {
@@ -108,7 +108,7 @@ public class GDTCommPartnerCollector {
 				}
 			}
 		} catch (CoreException ex) {
-			logger.log("CoreException in getRegisteredCommPartners: " + ex.getMessage(), Log.WARNINGS);
+			logger.log("CoreException in getRegisteredCommPartners: " + ex.getMessage(), Log.WARNINGS); //$NON-NLS-1$
 			System.out.println(ex.getMessage());
 		}
 		return null;

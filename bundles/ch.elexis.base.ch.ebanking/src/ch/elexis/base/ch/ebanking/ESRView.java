@@ -453,7 +453,7 @@ public class ESRView extends ViewPart {
 				break;
 			}
 			btnDatePeriod
-					.setText("Zeitraum: " + sdf.format(startDate.getTime()) + " - " + sdf.format(endDate.getTime()));
+					.setText("Zeitraum: " + sdf.format(startDate.getTime()) + " - " + sdf.format(endDate.getTime())); //$NON-NLS-2$
 		}
 
 		if (CoreHub.acl.request(DISPLAY_ESR) == true) {
@@ -483,7 +483,7 @@ public class ESRView extends ViewPart {
 					qbe.startGroup();
 					qbe.add(ESRRecord.FLD_BOOKING_DATE, Query.EQUALS, null);
 					qbe.or();
-					qbe.addToken(ESRRecord.FLD_BOOKING_DATE + " IS NULL");
+					qbe.addToken(ESRRecord.FLD_BOOKING_DATE + " IS NULL"); //$NON-NLS-1$
 					qbe.endGroup();
 				} else {
 					// we select by date

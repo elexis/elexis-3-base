@@ -233,7 +233,7 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 		@Override
 		public String isValid(String newText) {
 			newText = newText.trim();
-			if (newText.endsWith(".")) {
+			if (newText.endsWith(".")) { //$NON-NLS-1$
 				return Messages.BefundePrefs_dotEndingNameNotAllowed;
 			}
 			return null;

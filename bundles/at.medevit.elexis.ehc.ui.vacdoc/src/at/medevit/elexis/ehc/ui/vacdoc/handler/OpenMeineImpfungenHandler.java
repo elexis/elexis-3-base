@@ -44,19 +44,19 @@ public class OpenMeineImpfungenHandler extends AbstractHandler implements IHandl
 								if (patients.size() == 1) {
 									StringBuilder link = new StringBuilder();
 									link.append(MeineImpfungenServiceHolder.getService().getBaseUrl());
-									if (link.lastIndexOf("/") != (link.length() - 1)) {
-										link.append("/");
+									if (link.lastIndexOf("/") != (link.length() - 1)) { //$NON-NLS-1$
+										link.append("/"); //$NON-NLS-1$
 									}
 									if (ConfigServiceHolder.getMandator(MeineImpfungenService.CONFIG_USECERTAUTH,
 											false)) {
-										link.append("certauth/");
+										link.append("certauth/"); //$NON-NLS-1$
 									}
 									getPatientId(patients.get(0)).ifPresent(pid -> {
-										link.append("specialist-person-home.html?personId=").append(pid);
+										link.append("specialist-person-home.html?personId=").append(pid); //$NON-NLS-1$
 										Program.launch(link.toString());
 									});
 								} else {
-									MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
+									MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen", //$NON-NLS-1$
 											"Mehrere Patienten für [" + patient.getLabel(false)
 													+ "] auf meineimpfungen gefunden.");
 								}
@@ -68,7 +68,7 @@ public class OpenMeineImpfungenHandler extends AbstractHandler implements IHandl
 						}
 					});
 				} catch (InvocationTargetException | InterruptedException e) {
-					LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).warn("Exception on patient lookup", e);
+					LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).warn("Exception on patient lookup", e); //$NON-NLS-1$
 					MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
 							"Es ist ein Fehler aufgetreten.");
 				}
@@ -77,7 +77,7 @@ public class OpenMeineImpfungenHandler extends AbstractHandler implements IHandl
 						"Kein Patient ausgewählt");
 			}
 		} catch (IllegalStateException ise) {
-			LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).error("Service not available", ise);
+			LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).error("Service not available", ise); //$NON-NLS-1$
 			MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
 					"meineimpfungen nicht verfügbar");
 		}

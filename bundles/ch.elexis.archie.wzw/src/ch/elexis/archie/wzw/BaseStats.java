@@ -27,7 +27,7 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 public abstract class BaseStats extends AbstractTimeSeries {
 	protected String desc;
 	protected String[] headings;
-	private String dateMethod = "Rechnungsdatum";
+	private String dateMethod = "Rechnungsdatum"; //$NON-NLS-1$
 	private boolean bOnlyActiveMandator;
 	protected int clicksPerRound;
 	protected int HUGE_NUMBER = 1000000;
@@ -83,10 +83,10 @@ public abstract class BaseStats extends AbstractTimeSeries {
 		final TimeTool from = new TimeTool(dateFrom);
 		final TimeTool to = new TimeTool(dateUntil);
 
-		if (getDateType().equals("Konsultationsdatum")) {
+		if (getDateType().equals("Konsultationsdatum")) { //$NON-NLS-1$
 			query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.GREATER_OR_EQUAL, from.toLocalDate());
 			query.and(ModelPackage.Literals.IENCOUNTER__DATE, COMPARATOR.LESS_OR_EQUAL, to.toLocalDate());
-		} else if (getDateType().equals("Rechnungsdatum")) {
+		} else if (getDateType().equals("Rechnungsdatum")) { //$NON-NLS-1$
 			query.and(ModelPackage.Literals.IENCOUNTER__INVOICE, COMPARATOR.NOT_EQUALS, null);
 			filters.add(new IFilter() {
 				@Override
@@ -101,7 +101,7 @@ public abstract class BaseStats extends AbstractTimeSeries {
 					return rndate.isAfterOrEqual(from) && rndate.isBeforeOrEqual(to);
 				}
 			});
-		} else if (getDateType().equals("Zahlungsdatum")) {
+		} else if (getDateType().equals("Zahlungsdatum")) { //$NON-NLS-1$
 			query.and(ModelPackage.Literals.IENCOUNTER__INVOICE, COMPARATOR.NOT_EQUALS, null);
 			filters.add(new IFilter() {
 				@Override

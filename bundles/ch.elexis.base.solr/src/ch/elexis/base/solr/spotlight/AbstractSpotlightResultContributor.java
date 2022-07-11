@@ -43,7 +43,7 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 			try {
 				client.close();
 			} catch (IOException e) {
-				logger.warn("Error closing client", e);
+				logger.warn("Error closing client", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -63,26 +63,26 @@ public abstract class AbstractSpotlightResultContributor implements ISpotlightRe
 			if (contextParameters != null) {
 				String patientId = contextParameters.get(ISpotlightService.CONTEXT_FILTER_PATIENT_ID);
 				if (patientId != null) {
-					qString.append("patient_id:" + patientId + " AND ");
+					qString.append("patient_id:" + patientId + " AND "); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
-			qString.append("text:" + stringTerms.stream().reduce((u, t) -> u + " AND text:" + t).get());
-			queryParamMap.put("q", qString.toString());
-			queryParamMap.put("sort", "cr_date desc");
-			queryParamMap.put("rows", "5");
+			qString.append("text:" + stringTerms.stream().reduce((u, t) -> u + " AND text:" + t).get()); //$NON-NLS-1$ //$NON-NLS-2$
+			queryParamMap.put("q", qString.toString()); //$NON-NLS-1$
+			queryParamMap.put("sort", "cr_date desc"); //$NON-NLS-1$ //$NON-NLS-2$
+			queryParamMap.put("rows", "5"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			MapSolrParams queryParams = new MapSolrParams(queryParamMap);
 
 			QueryRequest queryRequest = new QueryRequest(queryParams);
 			contextService.getTyped(AccessToken.class).ifPresent(accessToken -> {
-				queryRequest.addHeader("Authorization", "Bearer " + accessToken.getToken());
+				queryRequest.addHeader("Authorization", "Bearer " + accessToken.getToken()); //$NON-NLS-1$ //$NON-NLS-2$
 			});
 
 			QueryResponse response = queryRequest.process(client, CORE);
 			handleResponse(spotlightResult, response);
 
 		} catch (SolrServerException | IOException e) {
-			logger.warn("Error in client.query", e);
+			logger.warn("Error in client.query", e); //$NON-NLS-1$
 		}
 
 	}

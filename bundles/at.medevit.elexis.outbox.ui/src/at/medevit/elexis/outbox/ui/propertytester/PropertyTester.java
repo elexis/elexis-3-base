@@ -17,7 +17,7 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 		if (receiver instanceof TreeSelection) {
 			receiver = ((TreeSelection) receiver).getFirstElement();
 		}
-		if ("xdmEnabled".equals(property)) {
+		if ("xdmEnabled".equals(property)) { //$NON-NLS-1$
 			try {
 				if (receiver instanceof List<?>) {
 					List<?> receiverAsList = (List<?>) receiver;
@@ -26,7 +26,7 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 			} catch (Exception ise) {
 				// do nothing, false is returned
 			}
-		} else if ("isObjectClass".equals(property)) {
+		} else if ("isObjectClass".equals(property)) { //$NON-NLS-1$
 			if (StringUtils.isNotBlank((String) args[0])) {
 				String className = (String) args[0];
 				if (receiver instanceof IOutboxElement) {

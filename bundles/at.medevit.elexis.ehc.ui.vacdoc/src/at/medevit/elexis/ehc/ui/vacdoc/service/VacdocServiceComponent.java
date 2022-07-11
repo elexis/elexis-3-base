@@ -20,7 +20,7 @@ public class VacdocServiceComponent {
 
 	public static VacdocService getService() {
 		if (vacdocService == null) {
-			throw new IllegalStateException("No VacdocService available");
+			throw new IllegalStateException("No VacdocService available"); //$NON-NLS-1$
 		}
 		return vacdocService;
 	}

@@ -107,7 +107,7 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		setTitleImage(ResourceManager.getPluginImage("at.medevit.elexis.gdt", "rsc/icons/TitleIcon6302.png"));
+		setTitleImage(ResourceManager.getPluginImage("at.medevit.elexis.gdt", "rsc/icons/TitleIcon6302.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		setMessage("GDT Satznachricht 6302");
 		setTitle("Neue Untersuchung anfordern");
 		Composite area = (Composite) super.createDialogArea(parent);
@@ -366,7 +366,7 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 
 	protected void initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
-		IObservableMap gdt6302ValuesObserveMap = PojoObservables.observeMap(gdt6302, "values", Integer.class,
+		IObservableMap gdt6302ValuesObserveMap = PojoObservables.observeMap(gdt6302, "values", Integer.class, //$NON-NLS-1$
 				String.class);
 
 		Text[] control = { txtPatientenKennung, txtPatientNachname, txtPatientVorname, txtIDReceiver, txtIDSender,

@@ -70,7 +70,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		try {
 			return CDAUtil.load(document);
 		} catch (Exception e) {
-			logger.warn("Error loading document.", e);
+			logger.warn("Error loading document.", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -111,11 +111,11 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		EList<RecordTarget> targets = document.getRecordTargets();
 		if (targets != null && !targets.isEmpty()) {
 			if (targets.size() > 1) {
-				logger.warn("Document " + document.getTitle() + " has more than one record target");
+				logger.warn("Document " + document.getTitle() + " has more than one record target"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return new org.ehealth_connector.common.mdht.Patient(EcoreUtil.copy(targets.get(0)));
 		}
-		throw new IllegalStateException("Document " + document.getTitle() + " has no record target");
+		throw new IllegalStateException("Document " + document.getTitle() + " has no record target"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 							ret.add(clinicalDocument);
 						}
 					} catch (Exception e) {
-						logger.error("Could not load document " + xdsDocument.getNewDocumentUniqueId() + " from xdm "
+						logger.error("Could not load document " + xdsDocument.getNewDocumentUniqueId() + " from xdm " //$NON-NLS-1$ //$NON-NLS-2$
 								+ file.getAbsolutePath());
 					}
 				}
@@ -173,13 +173,13 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 					if (f.exists()) {
 						String attachmentPath = f.getAbsolutePath();
 						DocumentDescriptor dc = null;
-						if (attachmentPath.toLowerCase().endsWith("xml")) {
+						if (attachmentPath.toLowerCase().endsWith("xml")) { //$NON-NLS-1$
 							if (isCdaDocument(f)) {
 								dc = DocumentDescriptor.CDA_R2;
 							} else {
 								dc = DocumentDescriptor.XML;
 							}
-						} else if (attachmentPath.toLowerCase().endsWith("pdf")) {
+						} else if (attachmentPath.toLowerCase().endsWith("pdf")) { //$NON-NLS-1$
 							dc = DocumentDescriptor.PDF;
 						} else {
 							dc = new DocumentDescriptor(FilenameUtils.getExtension(attachmentPath),
@@ -193,28 +193,28 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 							metaData.setDestinationPatientId(ehealthPatient.getIds().get(0));
 						}
 						IOUtils.closeQuietly(in);
-						retInfo.append(":::");
+						retInfo.append(":::"); //$NON-NLS-1$
 						retInfo.append(attachmentPath);
 
 					} else {
 						LoggerFactory.getLogger(EhcCoreService.class).warn(
-								"creating xdm - patient [{}] - file does not exists [{}]", patient.getId(),
+								"creating xdm - patient [{}] - file does not exists [{}]", patient.getId(), //$NON-NLS-1$
 								f.getAbsolutePath());
 					}
 				} catch (IOException e) {
 					LoggerFactory.getLogger(EhcCoreService.class).error(
-							"creating xdm - patient [{}] - cannot add file [{}]", patient.getId(), f.getAbsolutePath(),
+							"creating xdm - patient [{}] - cannot add file [{}]", patient.getId(), f.getAbsolutePath(), //$NON-NLS-1$
 							e);
 				}
 			}
 			try {
 				conCom.createXdmContents(xdmPath);
-				if (retInfo.toString().contains(":::")) {
+				if (retInfo.toString().contains(":::")) { //$NON-NLS-1$
 					return retInfo.toString();
 				}
 			} catch (Exception e) {
 				LoggerFactory.getLogger(EhcCoreService.class)
-						.error("creating xdm - patient [{}] - cannot create xdm contents", patient.getId(), e);
+						.error("creating xdm - patient [{}] - cannot create xdm contents", patient.getId(), e); //$NON-NLS-1$
 			}
 		}
 		return null;

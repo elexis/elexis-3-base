@@ -44,7 +44,7 @@ public class SetStatusContributionItem {
 			MDirectMenuItem dynamicItem = MMenuFactory.INSTANCE.createDirectMenuItem();
 			dynamicItem.setType(ItemType.CHECK);
 			dynamicItem.setLabel(t);
-			dynamicItem.setContributionURI("bundleclass://at.medevit.elexis.agenda.ui/" + getClass().getName());
+			dynamicItem.setContributionURI("bundleclass://at.medevit.elexis.agenda.ui/" + getClass().getName()); //$NON-NLS-1$
 			dynamicItem.setSelected(t.equalsIgnoreCase(state));
 			items.add(dynamicItem);
 		}
@@ -54,13 +54,13 @@ public class SetStatusContributionItem {
 	@Execute
 	private void setStatus(MDirectMenuItem menuItem) {
 		HashMap<String, Object> parameters = new HashMap<>();
-		parameters.put("at.medevit.elexis.agenda.ui.command.parameter.statusId", menuItem.getLabel());
-		ParameterizedCommand command = commandService.createCommand("at.medevit.elexis.agenda.ui.command.setStatus",
+		parameters.put("at.medevit.elexis.agenda.ui.command.parameter.statusId", menuItem.getLabel()); //$NON-NLS-1$
+		ParameterizedCommand command = commandService.createCommand("at.medevit.elexis.agenda.ui.command.setStatus", //$NON-NLS-1$
 				parameters);
 		if (command != null) {
 			handlerService.executeHandler(command);
 		} else {
-			LoggerFactory.getLogger(getClass()).error("Command not found");
+			LoggerFactory.getLogger(getClass()).error("Command not found"); //$NON-NLS-1$
 		}
 
 		// ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()

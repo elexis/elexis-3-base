@@ -39,7 +39,7 @@ public class TitleCompletionPreferencePage extends PreferencePage implements IWo
 
 	private java.util.List<TitleEntry> storedCompletions;
 
-	static final String STORE_SEPARATOR = "|";
+	static final String STORE_SEPARATOR = "|"; //$NON-NLS-1$
 
 	@Override
 	public void init(IWorkbench workbench) {

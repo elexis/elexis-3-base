@@ -38,7 +38,7 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 
 		private final String text;
 
-		private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+		private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); //$NON-NLS-1$
 
 		private LabelFields(final String text) {
 			this.text = text;
@@ -76,7 +76,7 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			case LAB_RESULT:
 				return labResult.getResult();
 			case REF_RANGE:
-				return labResult.getRefMale() + "/" + labResult.getRefFemale();
+				return labResult.getRefMale() + "/" + labResult.getRefFemale(); //$NON-NLS-1$
 			case ORIGIN:
 				return labResult.getOrigin().getLabel();
 			case DATE:
@@ -99,7 +99,7 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			case LAB_RESULT:
 				return labResult.getResult();
 			case REF_RANGE:
-				return labResult.getReferenceMale() + "/" + labResult.getReferenceFemale();
+				return labResult.getReferenceMale() + "/" + labResult.getReferenceFemale(); //$NON-NLS-1$
 			case ORIGIN:
 				return labResult.getOrigin().getLabel();
 			case DATE:
@@ -132,10 +132,10 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			StringBuilder sb = new StringBuilder();
 			for (LabelFields lblField : labelFields) {
 				sb.append(lblField.getValue(labResult));
-				sb.append(", ");
+				sb.append(", "); //$NON-NLS-1$
 			}
 
-			if (!sb.toString().isEmpty() && sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
+			if (!sb.toString().isEmpty() && sb.substring(sb.length() - 2, sb.length()).equals(", ")) { //$NON-NLS-1$
 				sb.replace(sb.length() - 2, sb.length(), StringUtils.EMPTY);
 			}
 			return sb.toString();
@@ -146,10 +146,10 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 			StringBuilder sb = new StringBuilder();
 			for (LabelFields lblField : labelFields) {
 				sb.append(lblField.getValue(labResult));
-				sb.append(", ");
+				sb.append(", "); //$NON-NLS-1$
 			}
 
-			if (!sb.toString().isEmpty() && sb.substring(sb.length() - 2, sb.length()).equals(", ")) {
+			if (!sb.toString().isEmpty() && sb.substring(sb.length() - 2, sb.length()).equals(", ")) { //$NON-NLS-1$
 				sb.replace(sb.length() - 2, sb.length(), StringUtils.EMPTY);
 			}
 			return sb.toString();

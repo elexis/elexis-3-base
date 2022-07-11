@@ -36,7 +36,7 @@ public class Labor2009Selector extends CodeSelectorFactory {
 
 	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
 	private AddVerrechenbarToLeistungsblockAction atla = new AddVerrechenbarToLeistungsblockAction(
-			"ch.elexis.base.ch.labortarif_2009.ui.selection");
+			"ch.elexis.base.ch.labortarif_2009.ui.selection"); //$NON-NLS-1$
 
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
@@ -51,10 +51,10 @@ public class Labor2009Selector extends CodeSelectorFactory {
 				if (!ss.isEmpty()) {
 					ILaborLeistung selected = (ILaborLeistung) ss.getFirstElement();
 					ContextServiceHolder.get().getRootContext()
-							.setNamed("ch.elexis.base.ch.labortarif_2009.ui.selection", selected);
+							.setNamed("ch.elexis.base.ch.labortarif_2009.ui.selection", selected); //$NON-NLS-1$
 				} else {
 					ContextServiceHolder.get().getRootContext()
-							.setNamed("ch.elexis.base.ch.labortarif_2009.ui.selection", null);
+							.setNamed("ch.elexis.base.ch.labortarif_2009.ui.selection", null); //$NON-NLS-1$
 				}
 			}
 		});

@@ -93,13 +93,13 @@ public class InboxElementService implements IInboxElementService {
 	public List<IInboxElement> getInboxElements(IMandator mandant, IPatient patient, State state) {
 		IQuery<IInboxElement> query = modelService.getQuery(IInboxElement.class);
 		if (mandant != null) {
-			query.and("mandant", COMPARATOR.EQUALS, mandant);
+			query.and("mandant", COMPARATOR.EQUALS, mandant); //$NON-NLS-1$
 		}
 		if (patient != null) {
-			query.and("patient", COMPARATOR.EQUALS, patient);
+			query.and("patient", COMPARATOR.EQUALS, patient); //$NON-NLS-1$
 		}
 		if (state != null) {
-			query.and("state", COMPARATOR.EQUALS, Integer.toString(state.ordinal()));
+			query.and("state", COMPARATOR.EQUALS, Integer.toString(state.ordinal())); //$NON-NLS-1$
 		}
 		return query.execute();
 	}
@@ -138,18 +138,18 @@ public class InboxElementService implements IInboxElementService {
 				if (copyFile) {
 					try {
 						StringBuilder pathBuilder = new StringBuilder();
-						pathBuilder.append("inbox");
+						pathBuilder.append("inbox"); //$NON-NLS-1$
 						pathBuilder.append(File.separator);
 						pathBuilder.append(patient.getPatientNr());
-						pathBuilder.append("_");
+						pathBuilder.append("_"); //$NON-NLS-1$
 						pathBuilder.append(System.currentTimeMillis());
-						pathBuilder.append("_");
+						pathBuilder.append("_"); //$NON-NLS-1$
 						pathBuilder.append(src.getName());
 						File dest = new File(CoreHub.getWritableUserDir(), pathBuilder.toString());
 						FileUtils.copyFile(src, dest);
 						path = dest.getAbsolutePath();
 					} catch (IOException e) {
-						LoggerFactory.getLogger(InboxElementService.class).error("file copy error", e);
+						LoggerFactory.getLogger(InboxElementService.class).error("file copy error", e); //$NON-NLS-1$
 						return;
 					}
 				}
@@ -167,7 +167,7 @@ public class InboxElementService implements IInboxElementService {
 
 	@Override
 	public void deactivateProviders() {
-		LoggerFactory.getLogger(getClass()).info("Deactivating all ElementProviders");
+		LoggerFactory.getLogger(getClass()).info("Deactivating all ElementProviders"); //$NON-NLS-1$
 		ElementsProviderExtension.deactivateAll();
 	}
 
@@ -177,7 +177,7 @@ public class InboxElementService implements IInboxElementService {
 		// IInboxElementService
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		executor.execute(() -> {
-			LoggerFactory.getLogger(getClass()).info("Activating all ElementProviders");
+			LoggerFactory.getLogger(getClass()).info("Activating all ElementProviders"); //$NON-NLS-1$
 			ElementsProviderExtension.activateAll();
 		});
 		executor.shutdown();

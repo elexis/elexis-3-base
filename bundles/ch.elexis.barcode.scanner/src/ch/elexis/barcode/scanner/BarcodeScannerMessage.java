@@ -55,7 +55,7 @@ public class BarcodeScannerMessage {
 
 	@Override
 	public String toString() {
-		return "BarcodeScannerMessage [name=" + name + ", port=" + port + ", chunk=" + chunk + "]";
+		return "BarcodeScannerMessage [name=" + name + ", port=" + port + ", chunk=" + chunk + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 }

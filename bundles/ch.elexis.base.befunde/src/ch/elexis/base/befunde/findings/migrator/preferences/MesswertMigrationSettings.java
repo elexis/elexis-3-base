@@ -96,7 +96,7 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 					if (element instanceof MesswertFieldMapping) {
 						return ((MesswertFieldMapping) element).getLocalFieldLabel();
 					}
-					return "?";
+					return "?"; //$NON-NLS-1$
 				}
 			});
 
@@ -180,7 +180,7 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 								monitor.beginTask("Messwerte Migration", patients.size());
 								for (int count = 0; count < patients.size(); count++) {
 									Patient patient = patients.get(count);
-									monitor.subTask("Patient (" + count + "/" + patients.size() + ")");
+									monitor.subTask("Patient (" + count + "/" + patients.size() + ")"); //$NON-NLS-2$ //$NON-NLS-3$
 									FindingsServiceComponent.getMigratorService()
 											.migratePatientsFindings(patient.getId(), IObservation.class, null);
 									monitor.worked(1);
@@ -229,7 +229,7 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 
 	private boolean isMesswertAvailable() {
 		try {
-			Class<?> clazz = getClass().getClassLoader().loadClass("ch.elexis.befunde.Messwert");
+			Class<?> clazz = getClass().getClassLoader().loadClass("ch.elexis.befunde.Messwert"); //$NON-NLS-1$
 			return clazz != null;
 		} catch (ClassNotFoundException e) {
 			return false;
@@ -244,7 +244,7 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 	private long countNotMigratedMesswerte(List<Messwert> messwerte) {
 		long ret = 0;
 		for (Messwert messwert : messwerte) {
-			if ("__SETUP__".equals(messwert.getId())) {
+			if ("__SETUP__".equals(messwert.getId())) { //$NON-NLS-1$
 				continue;
 			}
 			if (!hasMigratedObservations(messwert.storeToString())) {
@@ -259,10 +259,10 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 		if (stm != null) {
 			try {
 				ResultSet result = stm.query(
-						"SELECT ID FROM CH_ELEXIS_CORE_FINDINGS_OBSERVATION WHERE originuri = '" + originuri + "';");
+						"SELECT ID FROM CH_ELEXIS_CORE_FINDINGS_OBSERVATION WHERE originuri = '" + originuri + "';"); //$NON-NLS-1$ //$NON-NLS-2$
 				return result.next();
 			} catch (SQLException e) {
-				LoggerFactory.getLogger(getClass()).error("Error on migrated lookup", e);
+				LoggerFactory.getLogger(getClass()).error("Error on migrated lookup", e); //$NON-NLS-1$
 			} finally {
 				PersistentObject.getDefaultConnection().releaseStatement(stm);
 			}
@@ -275,7 +275,7 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 		List<String> codesStrings = new ArrayList<String>();
 		// load the templates and collect the codes from the template titles
 		FindingsTemplates templatesResource = FindingsServiceComponent.getTemplateService()
-				.getFindingsTemplates("Standard Vorlagen");
+				.getFindingsTemplates("Standard Vorlagen"); //$NON-NLS-1$
 		EList<FindingsTemplate> templates = templatesResource.getFindingsTemplates();
 		List<ICoding> codes = new ArrayList<>();
 		for (FindingsTemplate findingsTemplate : templates) {
@@ -285,7 +285,7 @@ public class MesswertMigrationSettings extends PreferencePage implements IWorkbe
 						.getFindingsTemplates();
 				for (FindingsTemplate subFindingsTemplate : subTemplates) {
 					codes.add(new TransientCoding(CodingSystem.ELEXIS_LOCAL_CODESYSTEM.getSystem(),
-							findingsTemplate.getTitle() + "." + subFindingsTemplate.getTitle(),
+							findingsTemplate.getTitle() + "." + subFindingsTemplate.getTitle(), //$NON-NLS-1$
 							subFindingsTemplate.getTitle()));
 				}
 				// add component

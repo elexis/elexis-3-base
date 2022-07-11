@@ -23,7 +23,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Patient;
 
 public class ApplicationInputDialog extends TitleAreaDialog {
-	private static final String DEF_SIDE = "left";
+	private static final String DEF_SIDE = "left"; //$NON-NLS-1$
 	private boolean showSideOption;
 	private String lotNo, side;
 
@@ -41,7 +41,7 @@ public class ApplicationInputDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		setTitle("Impfungsdetails");
 		setTitleImage(
-				ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui", "rsc/icons/vaccination_logo.png"));
+				ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui", "rsc/icons/vaccination_logo.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		Patient sp = ElexisEventDispatcher.getSelectedPatient();
 		setMessage((sp != null) ? sp.getLabel() : "missing patient name"); //$NON-NLS-1$
 

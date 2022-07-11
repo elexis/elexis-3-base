@@ -90,7 +90,7 @@ public class ElexisTextPlugin implements ITextPlugin {
 	}
 
 	public String getMimeType() {
-		return "Mime-Type";
+		return "Mime-Type"; //$NON-NLS-1$
 	}
 
 	public boolean insertTable(final String place, final int properties, final String[][] contents,

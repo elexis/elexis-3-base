@@ -46,7 +46,7 @@ public class Camt054Parser {
 			Unmarshaller um = jc.createUnmarshaller();
 			return ((JAXBElement<Document>) um.unmarshal(xr)).getValue();
 		} catch (Exception e) {
-			throw new Camet054Exception("parse error", e);
+			throw new Camet054Exception("parse error", e); //$NON-NLS-1$
 		}
 	}
 
@@ -62,7 +62,7 @@ public class Camt054Parser {
 
 		@Override
 		public String getNamespaceURI() {
-			return "urn:iso:std:iso:20022:tech:xsd:camt.054.001.06";
+			return "urn:iso:std:iso:20022:tech:xsd:camt.054.001.06"; //$NON-NLS-1$
 		}
 	}
 
@@ -130,8 +130,8 @@ public class Camt054Parser {
 								String ref = creditorReferenceInformation2 != null
 										? creditorReferenceInformation2.getRef()
 										: null;
-								records.add(new Camt054Record(storno ? "005" : "002",
-										amount != null ? amount.movePointRight(2).toString().replaceAll("[\\.,]",
+								records.add(new Camt054Record(storno ? "005" : "002", //$NON-NLS-1$ //$NON-NLS-2$
+										amount != null ? amount.movePointRight(2).toString().replaceAll("[\\.,]", //$NON-NLS-1$
 												StringUtils.EMPTY) : StringUtils.EMPTY,
 										ref, esrTn, readDate != null ? readDate.toGregorianCalendar().getTime() : null,
 										bookingDate != null ? bookingDate.getDt().toGregorianCalendar().getTime()
@@ -143,8 +143,8 @@ public class Camt054Parser {
 				}
 
 				// sammelgutschrift
-				records.add(new Camt054Record("999",
-						entryAmt != null ? entryAmt.getValue().movePointRight(2).toString().replaceAll("[\\.,]",
+				records.add(new Camt054Record("999", //$NON-NLS-1$
+						entryAmt != null ? entryAmt.getValue().movePointRight(2).toString().replaceAll("[\\.,]", //$NON-NLS-1$
 								StringUtils.EMPTY) : null,
 						null, esrTn, credDate.toGregorianCalendar().getTime(), credDate.toGregorianCalendar().getTime(),
 						credDate.toGregorianCalendar().getTime()));

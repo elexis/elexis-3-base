@@ -11,8 +11,8 @@ public class OpenImportHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String emediplan = event.getParameter("at.medevit.elexis.emediplan.ui.openImport.parameter.emediplan");
-		String patientid = event.getParameter("at.medevit.elexis.emediplan.ui.openImport.parameter.patientid");
+		String emediplan = event.getParameter("at.medevit.elexis.emediplan.ui.openImport.parameter.emediplan"); //$NON-NLS-1$
+		String patientid = event.getParameter("at.medevit.elexis.emediplan.ui.openImport.parameter.patientid"); //$NON-NLS-1$
 		StartupHandler.openEMediplanImportDialog(emediplan, patientid);
 		return null;
 	}

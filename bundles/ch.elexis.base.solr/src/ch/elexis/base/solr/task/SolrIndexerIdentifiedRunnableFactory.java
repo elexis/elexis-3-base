@@ -43,7 +43,7 @@ public class SolrIndexerIdentifiedRunnableFactory implements IIdentifiedRunnable
 			SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForLetter((ITaskService) taskService);
 			SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForDocument((ITaskService) taskService);
 		} catch (TaskException e) {
-			LoggerFactory.getLogger(getClass()).error("initialize", e);
+			LoggerFactory.getLogger(getClass()).error("initialize", e); //$NON-NLS-1$
 			throw new ComponentException(e);
 		}
 	}

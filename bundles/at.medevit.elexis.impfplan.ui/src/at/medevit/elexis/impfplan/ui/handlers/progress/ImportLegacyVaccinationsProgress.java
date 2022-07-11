@@ -84,8 +84,8 @@ public class ImportLegacyVaccinationsProgress implements IRunnableWithProgress {
 
 			// validate patient ref
 			if (!Patient.load(patId).exists()) {
-				if (!vacc.getId().equals("VERSION")) {
-					log.warn(ErrorCode.PATIENT_NOTFOUND + " [" + patId + "], Vacc[" + vacc.getId() + "], "
+				if (!vacc.getId().equals("VERSION")) { //$NON-NLS-1$
+					log.warn(ErrorCode.PATIENT_NOTFOUND + " [" + patId + "], Vacc[" + vacc.getId() + "], " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							+ vacc.getLabel());
 					errorMap.put(vacc, ErrorCode.PATIENT_NOTFOUND);
 				}
@@ -94,7 +94,7 @@ public class ImportLegacyVaccinationsProgress implements IRunnableWithProgress {
 
 			// is vaccination type set
 			if (vacc.getVaccinationType() == null) {
-				log.warn(ErrorCode.VACC_TYPE_NOT_SET + " - VaccinationTyp ref. missing, Vacc[" + vacc.getId() + "], "
+				log.warn(ErrorCode.VACC_TYPE_NOT_SET + " - VaccinationTyp ref. missing, Vacc[" + vacc.getId() + "], " //$NON-NLS-1$ //$NON-NLS-2$
 						+ vacc.getLabel());
 				errorMap.put(vacc, ErrorCode.VACC_TYPE_NOT_SET);
 				continue;
@@ -103,14 +103,14 @@ public class ImportLegacyVaccinationsProgress implements IRunnableWithProgress {
 			// is vaccination against field set
 			String vaccAgainst = vacc.getVaccinationType().getVaccAgainst();
 			if (vaccAgainst == null || vaccAgainst.isEmpty()) {
-				log.warn(ErrorCode.VACC_AGAINST_NOT_SET + ", Vacc[" + vacc.getId() + "], " + vacc.getLabel());
+				log.warn(ErrorCode.VACC_AGAINST_NOT_SET + ", Vacc[" + vacc.getId() + "], " + vacc.getLabel()); //$NON-NLS-1$ //$NON-NLS-2$
 				errorMap.put(vacc, ErrorCode.VACC_AGAINST_NOT_SET);
 				continue;
 			}
 
 			// did we already import this vaccination
 			if (alreadyImported(patId, vacc)) {
-				log.debug("Already imported: " + vacc.getId() + ", " + vacc.getLabel());
+				log.debug("Already imported: " + vacc.getId() + ", " + vacc.getLabel()); //$NON-NLS-1$ //$NON-NLS-2$
 				alreadyImported.add(vacc);
 				continue;
 			}
@@ -124,7 +124,7 @@ public class ImportLegacyVaccinationsProgress implements IRunnableWithProgress {
 		}
 		monitor.worked(1);
 		monitor.done();
-		log.debug("Vaccination import completed");
+		log.debug("Vaccination import completed"); //$NON-NLS-1$
 	}
 
 	/**

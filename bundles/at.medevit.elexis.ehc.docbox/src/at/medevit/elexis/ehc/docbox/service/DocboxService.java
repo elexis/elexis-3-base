@@ -72,7 +72,7 @@ public class DocboxService {
 
 	public static final String DOMAIN_KSK = "www.xid.ch/id/ksk"; //$NON-NLS-1$
 
-	public static final String[] DOSE_TIME = { "190001010800", "190001011200", "190001011600", "190001012000" };
+	public static final String[] DOSE_TIME = { "190001010800", "190001011200", "190001011600", "190001012000" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 	private static EhcCoreService ehcCoreService;
 
@@ -109,30 +109,30 @@ public class DocboxService {
 
 		// CDA type and template id
 		InfrastructureRootTypeId typeId = CDAFactory.eINSTANCE.createInfrastructureRootTypeId();
-		typeId.setRoot("2.16.840.1.113883.1.3");
-		typeId.setExtension("POCD_HD000040");
+		typeId.setRoot("2.16.840.1.113883.1.3"); //$NON-NLS-1$
+		typeId.setExtension("POCD_HD000040"); //$NON-NLS-1$
 		clinicalDocument.setTypeId(typeId);
 
-		II id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.1.1.1");
-		id.setExtension("CDA-CH");
+		II id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.1.1.1"); //$NON-NLS-1$
+		id.setExtension("CDA-CH"); //$NON-NLS-1$
 		clinicalDocument.setId(id);
 		clinicalDocument.getTemplateIds().add(id);
 
-		id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105");
-		id.setExtension("SwissMedicalSuite_ERezept");
+		id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105"); //$NON-NLS-1$
+		id.setExtension("SwissMedicalSuite_ERezept"); //$NON-NLS-1$
 		clinicalDocument.setId(id);
 		clinicalDocument.getTemplateIds().add(id);
 
 		// set loinc code
 		CE loinccode = DatatypesFactory.eINSTANCE.createCE();
-		loinccode.setCodeSystem("2.16.840.1.113883.6.1");
-		loinccode.setCode("57833-6");
+		loinccode.setCodeSystem("2.16.840.1.113883.6.1"); //$NON-NLS-1$
+		loinccode.setCode("57833-6"); //$NON-NLS-1$
 		loinccode.setDisplayName("Prescriptions");
-		loinccode.setCodeSystemName("LOINC");
+		loinccode.setCodeSystemName("LOINC"); //$NON-NLS-1$
 		clinicalDocument.setCode(loinccode);
 
 		// RezeptID
-		id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105.1.6");
+		id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105.1.6"); //$NON-NLS-1$
 		id.setExtension(getRezeptId(rezept));
 		clinicalDocument.setId(id);
 		// Ausstellungsdatum
@@ -142,8 +142,8 @@ public class DocboxService {
 		clinicalDocument.setEffectiveTime(timestamp);
 		// confidentiality
 		CE confidentiality = DatatypesFactory.eINSTANCE.createCE();
-		confidentiality.setCodeSystem("2.16.840.1.113883.5.25");
-		confidentiality.setCode("N");
+		confidentiality.setCodeSystem("2.16.840.1.113883.5.25"); //$NON-NLS-1$
+		confidentiality.setCode("N"); //$NON-NLS-1$
 		clinicalDocument.setConfidentialityCode(confidentiality);
 
 		// add empty id to patient role
@@ -173,7 +173,7 @@ public class DocboxService {
 		}
 		document.setCustodian(organization);
 		// add ZSR to custodian organization
-		id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105.1.1.2");
+		id = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.1.105.1.1.2"); //$NON-NLS-1$
 		id.setExtension(getZsr(rezept));
 		clinicalDocument.getCustodian().getAssignedCustodian().getRepresentedCustodianOrganization().getIds().add(id);
 		// CDA body und rezeptzeilen
@@ -183,8 +183,8 @@ public class DocboxService {
 		CE prescriptionCode = DatatypesFactory.eINSTANCE.createCE();
 		prescriptionCode.setNullFlavor(NullFlavor.NA);
 		CD translationCode = DatatypesFactory.eINSTANCE.createCD();
-		translationCode.setCodeSystem("2.16.756.5.30.1.105.2.2");
-		translationCode.setCode("VERORDNETEMEDIKAMENTE");
+		translationCode.setCodeSystem("2.16.756.5.30.1.105.2.2"); //$NON-NLS-1$
+		translationCode.setCode("VERORDNETEMEDIKAMENTE"); //$NON-NLS-1$
 		prescriptionCode.getTranslations().add(translationCode);
 		section.setCode(prescriptionCode);
 
@@ -200,7 +200,7 @@ public class DocboxService {
 			administration.setMoodCode(x_DocumentSubstanceMood.RQO);
 			// pharmacode
 			String pharmaCode = prescription.getArtikel().getPharmaCode();
-			II pharmacodeId = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.2.6.1");
+			II pharmacodeId = DatatypesFactory.eINSTANCE.createII("2.16.756.5.30.2.6.1"); //$NON-NLS-1$
 			pharmacodeId.setExtension(pharmaCode);
 			administration.getIds().add(pharmacodeId);
 
@@ -209,7 +209,7 @@ public class DocboxService {
 			ManufacturedProduct product = CDAFactory.eINSTANCE.createManufacturedProduct();
 			Material material = CDAFactory.eINSTANCE.createMaterial();
 			if (atcCode != null && !atcCode.isEmpty()) {
-				material.setCode(DatatypesFactory.eINSTANCE.createCE(atcCode, "2.16.840.1.113883.6.73"));
+				material.setCode(DatatypesFactory.eINSTANCE.createCE(atcCode, "2.16.840.1.113883.6.73")); //$NON-NLS-1$
 			} else {
 				material.setCode(DatatypesFactory.eINSTANCE.createCE());
 			}
@@ -225,7 +225,7 @@ public class DocboxService {
 			// artikel, dosierung und bemerkung in text
 			ED text = DatatypesFactory.eINSTANCE.createED();
 			TEL reference = DatatypesFactory.eINSTANCE.createTEL();
-			reference.setValue("#m" + idx);
+			reference.setValue("#m" + idx); //$NON-NLS-1$
 			text.setReference(reference);
 			// text.addText("<reference value=\"#m" + idx + "\" />");
 			administration.setText(text);
@@ -242,34 +242,34 @@ public class DocboxService {
 
 	private static void addMedicationText(StringBuilder sectionText, Prescription prescription, int id) {
 		// article
-		sectionText.append("<tr>\n<td>\n");
-		sectionText.append("<content ID=\"m" + id + "\"> " + prescription.getArtikel().getLabel() + "</content>");
-		sectionText.append("\n</td>");
+		sectionText.append("<tr>\n<td>\n"); //$NON-NLS-1$
+		sectionText.append("<content ID=\"m" + id + "\"> " + prescription.getArtikel().getLabel() + "</content>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		sectionText.append("\n</td>"); //$NON-NLS-1$
 		// dose
-		sectionText.append("\n<td>\n");
+		sectionText.append("\n<td>\n"); //$NON-NLS-1$
 		sectionText.append(prescription.getDosis());
-		sectionText.append("\n</td>");
+		sectionText.append("\n</td>"); //$NON-NLS-1$
 		// valid date range
-		sectionText.append("\n<td>\n");
+		sectionText.append("\n<td>\n"); //$NON-NLS-1$
 		String endDate = prescription.getEndDate();
 		if (endDate != null && !endDate.isEmpty()) {
 			sectionText.append("Gültig bis " + endDate);
 		}
-		sectionText.append("\n</td>");
+		sectionText.append("\n</td>"); //$NON-NLS-1$
 		// remarks
-		sectionText.append("\n<td>\n");
+		sectionText.append("\n<td>\n"); //$NON-NLS-1$
 		sectionText.append(prescription.getBemerkung());
-		sectionText.append("\n</td>\n</tr>");
+		sectionText.append("\n</td>\n</tr>"); //$NON-NLS-1$
 	}
 
 	private static void addMedicationTextStart(StringBuilder sectionText) {
-		sectionText.append("<table>\n<thead>\n<tr>\n")
+		sectionText.append("<table>\n<thead>\n<tr>\n") //$NON-NLS-1$
 				.append("<th>Präparat</th><th>Dosis</th><th>Gültigkeit</th><th>Verabreichung</th>")
-				.append("\n</tr>\n</thead>\n").append("<tbody>\n");
+				.append("\n</tr>\n</thead>\n").append("<tbody>\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static void addMedicationTextEnd(StringBuilder sectionText) {
-		sectionText.append("\n</tbody>\n</table>\n");
+		sectionText.append("\n</tbody>\n</table>\n"); //$NON-NLS-1$
 	}
 
 	private static void addQuantity(SubstanceAdministration administration, int quantity) {
@@ -312,8 +312,8 @@ public class DocboxService {
 			if (doseFloats.size() == 1) {
 				// assume per day
 				if (doseFloats.get(0) > 0) {
-					addEffectiveTime(administration, StringUtils.EMPTY, "1", "d");
-					addDoseQuantity(administration, doseFloats.get(0), "1");
+					addEffectiveTime(administration, StringUtils.EMPTY, "1", "d"); //$NON-NLS-1$ //$NON-NLS-2$
+					addDoseQuantity(administration, doseFloats.get(0), "1"); //$NON-NLS-1$
 				}
 			} else {
 				// morning, midday, evening, night
@@ -321,9 +321,9 @@ public class DocboxService {
 					if (doseFloats.get(i) > 0) {
 						SubstanceAdministration doseAdministration = addDoseAdministration(administration);
 						if (i < 4) {
-							addEffectiveTime(doseAdministration, DOSE_TIME[i], "1", "d");
+							addEffectiveTime(doseAdministration, DOSE_TIME[i], "1", "d"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
-						addDoseQuantity(doseAdministration, doseFloats.get(i), "1");
+						addDoseQuantity(doseAdministration, doseFloats.get(i), "1"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -387,9 +387,9 @@ public class DocboxService {
 
 		try {
 			foImpl.transform(new ByteArrayInputStream(cdaOutput.toByteArray()),
-					DocboxService.class.getResourceAsStream("/rsc/xsl/prescription.xsl"), out);
+					DocboxService.class.getResourceAsStream("/rsc/xsl/prescription.xsl"), out); //$NON-NLS-1$
 		} catch (Exception e) {
-			logger.error("Could not create prescription PDF" + e);
+			logger.error("Could not create prescription PDF" + e); //$NON-NLS-1$
 		}
 
 		return out;
@@ -407,7 +407,7 @@ public class DocboxService {
 		boolean success = send.sendClinicalDocument(xmlFile, pdfFile);
 		String message = send.getMessage();
 		if (!success) {
-			message = "FAILED " + message;
+			message = "FAILED " + message; //$NON-NLS-1$
 		}
 		return message;
 	}
@@ -416,24 +416,24 @@ public class DocboxService {
 		Date now = new Date();
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("202");
+		sb.append("202"); //$NON-NLS-1$
 		sb.append(getIdZsr(rezept));
-		sb.append(new SimpleDateFormat("yyyy").format(now));
-		sb.append(new SimpleDateFormat("MM").format(now));
-		sb.append(new SimpleDateFormat("dd").format(now));
-		sb.append(new SimpleDateFormat("HH").format(now));
-		sb.append(new SimpleDateFormat("mm").format(now));
-		sb.append(new SimpleDateFormat("ss").format(now));
+		sb.append(new SimpleDateFormat("yyyy").format(now)); //$NON-NLS-1$
+		sb.append(new SimpleDateFormat("MM").format(now)); //$NON-NLS-1$
+		sb.append(new SimpleDateFormat("dd").format(now)); //$NON-NLS-1$
+		sb.append(new SimpleDateFormat("HH").format(now)); //$NON-NLS-1$
+		sb.append(new SimpleDateFormat("mm").format(now)); //$NON-NLS-1$
+		sb.append(new SimpleDateFormat("ss").format(now)); //$NON-NLS-1$
 		// Milliseconds ...
-		String millis = new SimpleDateFormat("SS").format(now);
+		String millis = new SimpleDateFormat("SS").format(now); //$NON-NLS-1$
 		if (millis.length() == 1) {
-			sb.append("0").append(millis);
+			sb.append("0").append(millis); //$NON-NLS-1$
 		} else if (millis.length() == 2) {
 			sb.append(millis);
 		} else if (millis.length() == 3) {
 			sb.append(millis.substring(1));
 		} else {
-			sb.append("00");
+			sb.append("00"); //$NON-NLS-1$
 		}
 
 		String checkString = sb.toString();
@@ -444,7 +444,7 @@ public class DocboxService {
 			}
 			sb.append(String.valueOf(checkSum % 10));
 		} catch (NumberFormatException ne) {
-			logger.error("Could not generate checksum for [" + checkString + "]");
+			logger.error("Could not generate checksum for [" + checkString + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			throw ne;
 		}
 		return sb.toString();
@@ -457,7 +457,7 @@ public class DocboxService {
 				return zsr.substring(zsr.length() - 6, zsr.length());
 			}
 		}
-		throw new IllegalStateException("Keine ZSR gefunden");
+		throw new IllegalStateException("Keine ZSR gefunden"); //$NON-NLS-1$
 	}
 
 	private static String getZsr(Rezept rezept) {
@@ -466,21 +466,21 @@ public class DocboxService {
 
 		String zsr = rechnungssteller.getXid(DOMAIN_KSK);
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr.replaceAll("\\.", StringUtils.EMPTY);
+			return zsr.replaceAll("\\.", StringUtils.EMPTY); //$NON-NLS-1$
 		}
-		zsr = rechnungssteller.getInfoString("KSK");
+		zsr = rechnungssteller.getInfoString("KSK"); //$NON-NLS-1$
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr.replaceAll("\\.", StringUtils.EMPTY);
+			return zsr.replaceAll("\\.", StringUtils.EMPTY); //$NON-NLS-1$
 		}
 		zsr = mandant.getXid(DOMAIN_KSK);
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr.replaceAll("\\.", StringUtils.EMPTY);
+			return zsr.replaceAll("\\.", StringUtils.EMPTY); //$NON-NLS-1$
 		}
-		zsr = mandant.getInfoString("KSK");
+		zsr = mandant.getInfoString("KSK"); //$NON-NLS-1$
 		if (zsr != null && !zsr.isEmpty() && zsr.length() >= 6) {
-			return zsr.replaceAll("\\.", StringUtils.EMPTY);
+			return zsr.replaceAll("\\.", StringUtils.EMPTY); //$NON-NLS-1$
 		}
-		throw new IllegalStateException("Keine ZSR gefunden");
+		throw new IllegalStateException("Keine ZSR gefunden"); //$NON-NLS-1$
 	}
 
 }

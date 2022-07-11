@@ -34,7 +34,7 @@ public class GDTFileHelper {
 
 	private static Log logger = Log.get(GDTFileHelper.class.getName());
 
-	static DecimalFormat threePlaces = new DecimalFormat("000");
+	static DecimalFormat threePlaces = new DecimalFormat("000"); //$NON-NLS-1$
 
 	/**
 	 * Identifies a file being a GDT Satznachricht or not
@@ -47,7 +47,7 @@ public class GDTFileHelper {
 			List<String> contents = FileUtils.readLines(file);
 			if (contents.size() == 0)
 				return false;
-			if (contents.get(0).substring(3, 7).equalsIgnoreCase("8000"))
+			if (contents.get(0).substring(3, 7).equalsIgnoreCase("8000")) //$NON-NLS-1$
 				return true;
 		} catch (IOException e) {
 			return false;
@@ -89,12 +89,12 @@ public class GDTFileHelper {
 			if (cp.getFixedCommmunicationFileName() != null) {
 				filename = cp.getFixedCommmunicationFileName();
 			} else {
-				filename = filenameHeader + ".GDT";
+				filename = filenameHeader + ".GDT"; //$NON-NLS-1$
 			}
 		} else if (cp.getRequiredFileType().equalsIgnoreCase(GDTConstants.GDT_FILETRANSFER_TYPE_HOCHZAEHLEND)) {
 			int counter = 0;
 			while (true) {
-				filename = filenameHeader + "." + threePlaces.format(counter);
+				filename = filenameHeader + "." + threePlaces.format(counter); //$NON-NLS-1$
 				File file = new File(directory + File.separatorChar + filename);
 				if (file.exists()) {
 					counter++;
@@ -103,7 +103,7 @@ public class GDTFileHelper {
 				}
 			}
 		} else {
-			logger.log("Invalid file transfer type returned, neither fest nor hochzaehlend!", Log.ERRORS);
+			logger.log("Invalid file transfer type returned, neither fest nor hochzaehlend!", Log.ERRORS); //$NON-NLS-1$
 		}
 		return filename;
 	}

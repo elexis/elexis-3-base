@@ -45,7 +45,7 @@ public class SupplementVaccinationHandler extends AbstractHandler {
 						administratorString);
 				v.setVaccAgainst(svd.getVaccAgainst());
 			}
-			logger.debug("Supplement vaccination: " + articleString + " added");
+			logger.debug("Supplement vaccination: " + articleString + " added"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return null;
 	}

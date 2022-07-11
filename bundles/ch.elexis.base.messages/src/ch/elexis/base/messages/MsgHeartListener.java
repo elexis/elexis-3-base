@@ -94,7 +94,7 @@ public class MsgHeartListener implements HeartListener {
 				// create AudioInputStream from user defined file
 				File soundFile = new File(soundFilePath);
 				if (!soundFile.exists()) {
-					log.warn("Sound file [" + soundFilePath + "] not found");
+					log.warn("Sound file [" + soundFilePath + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 				}
 				audioInStream = AudioSystem.getAudioInputStream(soundFile);
@@ -107,7 +107,7 @@ public class MsgHeartListener implements HeartListener {
 			clip.start();
 
 		} catch (Exception e) {
-			log.error("Could not play message sound", e);
+			log.error("Could not play message sound", e); //$NON-NLS-1$
 			return;
 		}
 	}

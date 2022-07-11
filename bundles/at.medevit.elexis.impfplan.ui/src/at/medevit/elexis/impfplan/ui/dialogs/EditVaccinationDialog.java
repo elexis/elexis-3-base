@@ -47,7 +47,7 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		setTitle("Angaben zur Impfung ändern");
 		setTitleImage(
-				ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui", "rsc/icons/vaccination_logo.png"));
+				ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui", "rsc/icons/vaccination_logo.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		Patient sp = ElexisEventDispatcher.getSelectedPatient();
 		setMessage((sp != null) ? sp.getLabel() : "missing patient name"); //$NON-NLS-1$
 

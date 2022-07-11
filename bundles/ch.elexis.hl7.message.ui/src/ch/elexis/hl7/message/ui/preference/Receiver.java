@@ -11,7 +11,7 @@ public class Receiver {
 	public static Receiver of(String string) {
 		Receiver ret = new Receiver();
 
-		String[] parts = string.split("\\|");
+		String[] parts = string.split("\\|"); //$NON-NLS-1$
 		if (parts != null && parts.length == 2) {
 			ret.application = parts[0];
 			ret.facility = parts[1];
@@ -30,20 +30,20 @@ public class Receiver {
 
 	public void setApplication(String text) {
 		if (text == null) {
-			text = "?";
+			text = "?"; //$NON-NLS-1$
 		}
 		application = text;
 	}
 
 	public void setFacility(String text) {
 		if (text == null) {
-			text = "?";
+			text = "?"; //$NON-NLS-1$
 		}
 		facility = text;
 	}
 
 	public String toString() {
-		StringJoiner sj = new StringJoiner("|");
+		StringJoiner sj = new StringJoiner("|"); //$NON-NLS-1$
 		sj.add(application).add(facility);
 		return sj.toString();
 	}

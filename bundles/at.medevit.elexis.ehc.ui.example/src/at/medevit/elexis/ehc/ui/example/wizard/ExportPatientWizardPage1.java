@@ -103,7 +103,7 @@ public class ExportPatientWizardPage1 extends WizardPage {
 				String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
 						PreferencePage.getDefaultOutputDir());
 				document.saveToFile(
-						outputDir + File.separator + selectedPatient.get(Patient.FLD_PATID) + "_patientdata.xml");
+						outputDir + File.separator + selectedPatient.get(Patient.FLD_PATID) + "_patientdata.xml"); //$NON-NLS-1$
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -354,7 +354,7 @@ public class ESR {
 			HashMap<Integer, Account> accountsMap = Account.getAccounts();
 			Collection<Account> accounts = accountsMap.values();
 			for (Account account : accounts) {
-				if (account.getName().contains("ESR")) {
+				if (account.getName().contains("ESR")) { //$NON-NLS-1$
 					esrAccount = account;
 					break;
 				}

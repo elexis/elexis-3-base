@@ -32,7 +32,7 @@ public class Labor2009ControlFieldProvider extends DefaultControlFieldProvider {
 	private LocalDate filterDate;
 
 	public Labor2009ControlFieldProvider(CommonViewer viewer) {
-		super(viewer, new String[] { "filter=Filter" });
+		super(viewer, new String[] { "filter=Filter" }); //$NON-NLS-1$
 		CoreUiUtil.injectServicesWithContext(this);
 	}
 
@@ -57,9 +57,9 @@ public class Labor2009ControlFieldProvider extends DefaultControlFieldProvider {
 				for (String string : filterParts) {
 					if (StringUtils.isNotBlank(string)) {
 						if (Character.isDigit(string.charAt(0))) {
-							query.and(ModelPackage.Literals.ICODE_ELEMENT__CODE, COMPARATOR.LIKE, string + "%", true);
+							query.and(ModelPackage.Literals.ICODE_ELEMENT__CODE, COMPARATOR.LIKE, string + "%", true); //$NON-NLS-1$
 						} else {
-							query.and("name", COMPARATOR.LIKE, string + "%", true);
+							query.and("name", COMPARATOR.LIKE, string + "%", true); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 				}

@@ -43,7 +43,7 @@ public class NumericMigration extends AbstractMigrationStrategy implements IMigr
 			}
 			return Optional.of(observation);
 		} catch (ElexisException e) {
-			logger.error("Error creating observation", e);
+			logger.error("Error creating observation", e); //$NON-NLS-1$
 		}
 		return Optional.empty();
 	}
@@ -64,17 +64,17 @@ public class NumericMigration extends AbstractMigrationStrategy implements IMigr
 			}
 		}
 		if (sb.length() > 0) {
-			String value = sb.toString().replaceAll(",", ".");
-			if (value.startsWith(".")) {
-				value = "0" + value;
+			String value = sb.toString().replaceAll(",", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			if (value.startsWith(".")) { //$NON-NLS-1$
+				value = "0" + value; //$NON-NLS-1$
 			}
-			if (value.endsWith(".")) {
-				value = value + "0";
+			if (value.endsWith(".")) { //$NON-NLS-1$
+				value = value + "0"; //$NON-NLS-1$
 			}
 			try {
 				return new BigDecimal(value);
 			} catch (NumberFormatException ne) {
-				logger.error("Could not parse numeric result [" + result + "] value [" + value + "]");
+				logger.error("Could not parse numeric result [" + result + "] value [" + value + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		return null;
@@ -116,7 +116,7 @@ public class NumericMigration extends AbstractMigrationStrategy implements IMigr
 		List<String> parts = new ArrayList<>();
 		String[] spacesSplits = result.split(StringUtils.SPACE);
 		for (String spacesSplit : spacesSplits) {
-			String[] slashSplits = spacesSplit.split("\\/");
+			String[] slashSplits = spacesSplit.split("\\/"); //$NON-NLS-1$
 			for (String slashSplit : slashSplits) {
 				parts.add(slashSplit);
 			}

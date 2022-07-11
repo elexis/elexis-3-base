@@ -57,9 +57,9 @@ public class MesswertMigrator implements IMigratorContribution {
 		if (initialized()) {
 			MesswertMigrationStrategyFactory.clearCodeToTemplateCache();
 			MesswertMigrationStrategyFactory.setFindingsTemplateService(templateService);
-			logger.debug("Initialized, activation successful");
+			logger.debug("Initialized, activation successful"); //$NON-NLS-1$
 		} else {
-			logger.error("Not initialized, activation failed");
+			logger.error("Not initialized, activation failed"); //$NON-NLS-1$
 		}
 	}
 
@@ -119,11 +119,11 @@ public class MesswertMigrator implements IMigratorContribution {
 						try {
 							new UpdateFindingTextCommand(observation.get()).execute();
 						} catch (ElexisException e) {
-							logger.warn("Updating finding text [" + name + ((String) key) + "] failed");
+							logger.warn("Updating finding text [" + name + ((String) key) + "] failed"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 				} else {
-					logger.warn("No mapping for [" + name + ((String) key) + "], not migrated");
+					logger.warn("No mapping for [" + name + ((String) key) + "], not migrated"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			if (migrationError) {
@@ -139,7 +139,7 @@ public class MesswertMigrator implements IMigratorContribution {
 			Stm stm = connection.getStatement();
 			try {
 				for (IObservation observation : observations) {
-					stm.exec("DELETE FROM CH_ELEXIS_CORE_FINDINGS_OBSERVATION WHERE ID='" + observation.getId() + "';");
+					stm.exec("DELETE FROM CH_ELEXIS_CORE_FINDINGS_OBSERVATION WHERE ID='" + observation.getId() + "';"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} finally {
 				connection.releaseStatement(stm);
@@ -173,13 +173,13 @@ public class MesswertMigrator implements IMigratorContribution {
 		if (stm != null) {
 			try {
 				ResultSet result = stm.query(
-						"SELECT ID FROM CH_ELEXIS_CORE_FINDINGS_OBSERVATION WHERE originuri = '" + originuri + "';");
+						"SELECT ID FROM CH_ELEXIS_CORE_FINDINGS_OBSERVATION WHERE originuri = '" + originuri + "';"); //$NON-NLS-1$ //$NON-NLS-2$
 				while ((result != null) && result.next()) {
 					String id = result.getString(1);
 					findingsService.findById(id, IObservation.class, true).ifPresent(o -> ret.add(o));
 				}
 			} catch (SQLException e) {
-				LoggerFactory.getLogger(getClass()).error("Error on migrated lookup", e);
+				LoggerFactory.getLogger(getClass()).error("Error on migrated lookup", e); //$NON-NLS-1$
 			} finally {
 				PersistentObject.getDefaultConnection().releaseStatement(stm);
 			}

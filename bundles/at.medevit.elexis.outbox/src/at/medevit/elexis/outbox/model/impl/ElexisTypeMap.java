@@ -20,7 +20,7 @@ public class ElexisTypeMap {
 	private static final HashMap<String, Class<? extends EntityWithId>> stsToClassMap;
 	private static final HashMap<Class<? extends EntityWithId>, String> classToStsMap;
 
-	public static final String TYPE_OUTBOXELEMENT = "at.medevit.elexis.outbox.model.OutboxElement";
+	public static final String TYPE_OUTBOXELEMENT = "at.medevit.elexis.outbox.model.OutboxElement"; //$NON-NLS-1$
 
 	static {
 		stsToClassMap = new HashMap<String, Class<? extends EntityWithId>>();

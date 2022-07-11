@@ -27,14 +27,14 @@ public class TIMakro implements IKonsMakro {
 		Optional<IEncounter> encounter = ContextServiceHolder.get().getRootContext().getTyped(IEncounter.class);
 		if (encounter.isPresent()) {
 			try {
-				Optional<ICodeElement> tiCode = CodeElementServiceHolder.get().loadFromString("TI-Code", makro, null);
+				Optional<ICodeElement> tiCode = CodeElementServiceHolder.get().loadFromString("TI-Code", makro, null); //$NON-NLS-1$
 				if (tiCode.isPresent()) {
 					encounter.get().addDiagnosis((IDiagnosis) tiCode.get());
 					CoreModelServiceHolder.get().save(encounter.get());
 					return StringConstants.EMPTY;
 				}
 			} catch (Exception e) {
-				logger.debug("Could not resolve TI Code [" + makro + "]");
+				logger.debug("Could not resolve TI Code [" + makro + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;

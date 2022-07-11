@@ -50,7 +50,7 @@ public class GlobalInboxUtil {
 			if (!isFileOpened(file)) {
 				Patient pat = lPat.get(0);
 				String cat = GlobalInboxUtil.getCategory(file);
-				if (cat.equals("-") || cat.equals("??")) {
+				if (cat.equals("-") || cat.equals("??")) { //$NON-NLS-1$ //$NON-NLS-2$
 					cat = null;
 				}
 				IDocumentManager dm = (IDocumentManager) Extensions
@@ -60,7 +60,7 @@ public class GlobalInboxUtil {
 					long heapSize = Runtime.getRuntime().totalMemory();
 					long length = file.length();
 					if (length >= heapSize) {
-						logger.warn("Skipping " + file.getAbsolutePath() + " as bigger than heap size. (#3652)");
+						logger.warn("Skipping " + file.getAbsolutePath() + " as bigger than heap size. (#3652)"); //$NON-NLS-1$ //$NON-NLS-2$
 						return null;
 					}
 
@@ -83,7 +83,7 @@ public class GlobalInboxUtil {
 	}
 
 	private boolean isFileOpened(File file) {
-		try (FileChannel channel = new RandomAccessFile(file, "rw").getChannel();) {
+		try (FileChannel channel = new RandomAccessFile(file, "rw").getChannel();) { //$NON-NLS-1$
 			// Get an exclusive lock on the whole file
 			try (FileLock lock = channel.lock();) {
 				// we got a lock so this file is not opened
@@ -123,14 +123,14 @@ public class GlobalInboxUtil {
 		try {
 			Files.delete(mainFile.toPath());
 		} catch (IOException e) {
-			logger.warn("Could not delete " + mainFile, e);
+			logger.warn("Could not delete " + mainFile, e); //$NON-NLS-1$
 		}
 		File[] extensionFiles = globalInboxEntry.getExtensionFiles();
 		for (File extensionFile : extensionFiles) {
 			try {
 				Files.delete(extensionFile.toPath());
 			} catch (IOException e) {
-				logger.warn("Could not delete " + extensionFile, e);
+				logger.warn("Could not delete " + extensionFile, e); //$NON-NLS-1$
 			}
 		}
 	}

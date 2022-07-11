@@ -35,7 +35,7 @@ import ch.elexis.core.ui.services.EncounterServiceHolder;
 import ch.elexis.data.Patient;
 
 public class AddVaccinationToKons {
-	private static final String TARMED_5MIN_TARIF = "00.0010";
+	private static final String TARMED_5MIN_TARIF = "00.0010"; //$NON-NLS-1$
 
 	private static Object selectKonsLock = new Object();
 	private IEncounter actEncounter;
@@ -46,7 +46,7 @@ public class AddVaccinationToKons {
 		this.patient = patient;
 		this.art = art;
 		if (art == null) {
-			CodeElementServiceHolder.get().getContribution(CodeElementTyp.ARTICLE, "Artikelstamm")
+			CodeElementServiceHolder.get().getContribution(CodeElementTyp.ARTICLE, "Artikelstamm") //$NON-NLS-1$
 					.ifPresent(contribution -> {
 						Optional<ICodeElement> loaded = contribution.loadFromCode(ean);
 						if (loaded.isPresent()) {
@@ -78,7 +78,7 @@ public class AddVaccinationToKons {
 						Samdas samdas = new Samdas(actEncounter.getVersionedEntry().getHead());
 						Record rec = samdas.getRecord();
 						String recText = rec.getText();
-						recText += "\nImpfung - " + art.getName();
+						recText += "\nImpfung - " + art.getName(); //$NON-NLS-1$
 						rec.setText(recText);
 						EncounterServiceHolder.get().updateVersionedEntry(actEncounter, samdas);
 
@@ -87,7 +87,7 @@ public class AddVaccinationToKons {
 							List<IBilled> leistungen = actEncounter.getBilled();
 							for (IBilled verrechnet : leistungen) {
 								IBillable verrechenbar = verrechnet.getBillable();
-								if (verrechenbar != null && verrechenbar.getCodeSystemName().equals("Tarmed")
+								if (verrechenbar != null && verrechenbar.getCodeSystemName().equals("Tarmed") //$NON-NLS-1$
 										&& verrechenbar.getCode().equals(TARMED_5MIN_TARIF)) {
 									addedCons = false;
 									break;
@@ -111,7 +111,7 @@ public class AddVaccinationToKons {
 		if (encounter.getCoverage() != null) {
 			BillingLaw law = encounter.getCoverage().getBillingSystem().getLaw();
 			Optional<ICodeElementServiceContribution> tarmedContribution = CodeElementServiceHolder.get()
-					.getContribution(CodeElementTyp.SERVICE, "Tarmed");
+					.getContribution(CodeElementTyp.SERVICE, "Tarmed"); //$NON-NLS-1$
 			if (tarmedContribution.isPresent()) {
 				Map<Object, Object> context = new HashMap<>();
 				context.put(ContextKeys.DATE, encounterDate);

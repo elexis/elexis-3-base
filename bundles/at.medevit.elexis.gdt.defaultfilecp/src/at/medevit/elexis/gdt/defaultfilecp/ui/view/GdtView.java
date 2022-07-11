@@ -105,17 +105,17 @@ public class GdtView extends ViewPart {
 						ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
 								.getService(ICommandService.class);
 						Command command = commandService
-								.getCommand("at.medevit.elexis.gdt.command.NeueUntersuchungAnfordern");
+								.getCommand("at.medevit.elexis.gdt.command.NeueUntersuchungAnfordern"); //$NON-NLS-1$
 						if (command != null) {
 							HashMap<String, String> params = new HashMap<String, String>();
-							params.put("at.medevit.elexis.gdt.cmd.parameter.targetId",
+							params.put("at.medevit.elexis.gdt.cmd.parameter.targetId", //$NON-NLS-1$
 									String.valueOf(((Button) event.getSource()).getData()));
 
 							ExecutionEvent ee = new ExecutionEvent(command, params, null, getSite().getPage());
 							try {
 								command.executeWithChecks(ee);
 							} catch (CommandException e) {
-								LoggerFactory.getLogger(GdtView.class).error("command execution", e);
+								LoggerFactory.getLogger(GdtView.class).error("command execution", e); //$NON-NLS-1$
 								openPatientNotSelectedDialog();
 							}
 						}
@@ -140,17 +140,17 @@ public class GdtView extends ViewPart {
 						ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
 								.getService(ICommandService.class);
 						Command command = commandService
-								.getCommand("at.medevit.elexis.gdt.command.StammdatenUebermitteln");
+								.getCommand("at.medevit.elexis.gdt.command.StammdatenUebermitteln"); //$NON-NLS-1$
 						if (command != null) {
 							HashMap<String, String> params = new HashMap<String, String>();
-							params.put("at.medevit.elexis.gdt.cmd.parameter.targetId",
+							params.put("at.medevit.elexis.gdt.cmd.parameter.targetId", //$NON-NLS-1$
 									String.valueOf(((Button) event.getSource()).getData()));
 
 							ExecutionEvent ee = new ExecutionEvent(command, params, null, getSite().getPage());
 							try {
 								command.executeWithChecks(ee);
 							} catch (CommandException e) {
-								LoggerFactory.getLogger(GdtView.class).error("command execution", e);
+								LoggerFactory.getLogger(GdtView.class).error("command execution", e); //$NON-NLS-1$
 								MessageDialog.openError(getSite().getShell(), "Error",
 										"Stammdatenübermittlung fehlgeschlagen.");
 							}
@@ -180,16 +180,16 @@ public class GdtView extends ViewPart {
 					ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
 							.getService(ICommandService.class);
 					Command command = commandService
-							.getCommand("at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen");
+							.getCommand("at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen"); //$NON-NLS-1$
 					if (command != null) {
 						HashMap<String, String> params = new HashMap<String, String>();
-						params.put("at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen.gdtProtokollSource",
+						params.put("at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen.gdtProtokollSource", //$NON-NLS-1$
 								String.valueOf(((Button) event.getSource()).getData()));
 						ExecutionEvent ee = new ExecutionEvent(command, params, null, getSite().getPage());
 						try {
 							command.executeWithChecks(ee);
 						} catch (CommandException e) {
-							LoggerFactory.getLogger(GdtView.class).error("command execution", e);
+							LoggerFactory.getLogger(GdtView.class).error("command execution", e); //$NON-NLS-1$
 							MessageDialog.openError(getSite().getShell(), "Error",
 									"Letzte Untersuchung anzeigen fehlgeschlagen.");
 						}
@@ -210,8 +210,8 @@ public class GdtView extends ViewPart {
 	}
 
 	private String getLabel(FileCommPartner fileCommPartner) {
-		return fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferName()) + " ("
-				+ fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferDirectory()) + ")";
+		return fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferName()) + " (" //$NON-NLS-1$
+				+ fileCommPartner.getSettings().getString(fileCommPartner.getFileTransferDirectory()) + ")"; //$NON-NLS-1$
 	}
 
 	private void openPatientNotSelectedDialog() {

@@ -66,23 +66,23 @@ public class EphaSearchAction extends Action implements IKonsExtension, IHandler
 				StringBuilder sb = new StringBuilder();
 				for (IPrescription prescription : fixMedication) {
 					if (prescription.getArticle() == null) {
-						logger.warn("Article of prescription ID=" + prescription.getId() + " not valid");
+						logger.warn("Article of prescription ID=" + prescription.getId() + " not valid"); //$NON-NLS-1$ //$NON-NLS-2$
 						continue;
 					}
 					String ean = prescription.getArticle().getGtin();
 
 					if (ean == null || ean.isEmpty() || ean.length() < 9) {
-						logger.warn("Could not get EAN for aritcle with id " + prescription.getArticle().getId());
+						logger.warn("Could not get EAN for aritcle with id " + prescription.getArticle().getId()); //$NON-NLS-1$
 						continue;
 					}
 
 					if (sb.length() == 0) {
 						sb.append(ean);
 					} else {
-						sb.append("," + ean);
+						sb.append("," + ean); //$NON-NLS-1$
 					}
 				}
-				String url = "https://epha.ch/matrix/visual/gtin:" + sb.toString() + "/"; //$NON-NLS-1$
+				String url = "https://epha.ch/matrix/visual/gtin:" + sb.toString() + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 				Program.launch(url);
 			}
 		}

@@ -38,7 +38,7 @@ public class Labor2009ContentProvider extends LazyCommonViewerContentProvider {
 		controlFieldProvider.setQuery(query);
 		// apply additional filters like atc, mepha, ...
 		applyQueryFilters(query);
-		query.orderBy("code", ORDER.ASC);
+		query.orderBy("code", ORDER.ASC); //$NON-NLS-1$
 		List<?> elements = query.execute();
 
 		return elements.toArray(new Object[elements.size()]);
@@ -47,7 +47,7 @@ public class Labor2009ContentProvider extends LazyCommonViewerContentProvider {
 	@Override
 	protected IQuery<?> getBaseQuery() {
 		IQuery<ILaborLeistung> query = ModelServiceHolder.get().getQuery(ILaborLeistung.class);
-		query.and("id", COMPARATOR.NOT_EQUALS, "1");
+		query.and("id", COMPARATOR.NOT_EQUALS, "1"); //$NON-NLS-1$ //$NON-NLS-2$
 		return query;
 	}
 }

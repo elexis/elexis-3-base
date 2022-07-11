@@ -10,9 +10,9 @@ public class SolrCellMetadata {
 	public SolrCellMetadata(String metadata) {
 		metadataMap = new HashMap<String, String>();
 		String _metadata = metadata.substring(1, metadata.length() - 1);
-		String[] split = _metadata.split(",");
+		String[] split = _metadata.split(","); //$NON-NLS-1$
 		for (String kv : split) {
-			String[] kvEntry = kv.split("=");
+			String[] kvEntry = kv.split("="); //$NON-NLS-1$
 			if (kvEntry.length == 2) {
 				String key = kvEntry[0].toLowerCase();
 				String value = kvEntry[1];

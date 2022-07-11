@@ -66,8 +66,8 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 			public String getText(Object element) {
 				if (element instanceof Immunization) {
 					Immunization immunization = (Immunization) element;
-					return "(" + immunization.getApplyDate() + ") " + immunization.getConsumable().getTradeName()
-							+ " - " + immunization.getAuthor().getCompleteName();
+					return "(" + immunization.getApplyDate() + ") " + immunization.getConsumable().getTradeName() //$NON-NLS-1$ //$NON-NLS-2$
+							+ " - " + immunization.getAuthor().getCompleteName(); //$NON-NLS-1$
 				}
 				return super.getText(element);
 			}
@@ -77,7 +77,7 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 				if (element instanceof Immunization) {
 					Immunization immunization = (Immunization) element;
 					if (isExisting(immunization, vaccinations)) {
-						return UiDesk.getColorFromRGB("D3D3D3");
+						return UiDesk.getColorFromRGB("D3D3D3"); //$NON-NLS-1$
 					}
 				}
 				return super.getBackground(element);
@@ -112,7 +112,7 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 
 	private List<Vaccination> getVaccinations(Patient elexisPatient) {
 		Query<Vaccination> qbe = new Query<>(Vaccination.class);
-		qbe.add("ID", Query.NOT_EQUAL, StringConstants.VERSION_LITERAL);
+		qbe.add("ID", Query.NOT_EQUAL, StringConstants.VERSION_LITERAL); //$NON-NLS-1$
 		qbe.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, elexisPatient.getId());
 		qbe.orderBy(false, Vaccination.FLD_DOA);
 		return qbe.execute();
@@ -159,7 +159,7 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 
 			VacdocServiceComponent.getService().importImmunizations(elexisPatient, getSelectedImmunizations());
 		} catch (Exception e) {
-			ImportVaccinationsWizard.logger.error("Import failed.", e);
+			ImportVaccinationsWizard.logger.error("Import failed.", e); //$NON-NLS-1$
 			MessageDialog.openError(getShell(), "Error", "Es ist ein Fehler beim Impfungen importieren aufgetreten.");
 			return false;
 		}

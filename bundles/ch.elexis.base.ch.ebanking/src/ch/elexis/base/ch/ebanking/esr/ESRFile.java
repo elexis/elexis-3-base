@@ -73,7 +73,7 @@ public class ESRFile {
 					true);
 		}
 		String fileName = file.getName();
-		if ("xml".equalsIgnoreCase(FilenameUtils.getExtension(fileName))) {
+		if ("xml".equalsIgnoreCase(FilenameUtils.getExtension(fileName))) { //$NON-NLS-1$
 
 			try (InputStream inputStream = new FileInputStream(file)) {
 				Camt054Parser camt054Parser = new Camt054Parser();

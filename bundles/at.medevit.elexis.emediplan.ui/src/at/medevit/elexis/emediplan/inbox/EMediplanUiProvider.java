@@ -22,7 +22,7 @@ public class EMediplanUiProvider implements IInboxElementUiProvider {
 
 	@Override
 	public ImageDescriptor getFilterImage() {
-		return ResourceManager.getPluginImageDescriptor("at.medevit.elexis.emediplan.ui", "rsc/logo.png");
+		return ResourceManager.getPluginImageDescriptor("at.medevit.elexis.emediplan.ui", "rsc/logo.png"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class EMediplanUiProvider implements IInboxElementUiProvider {
 	@Override
 	public boolean isProviderFor(IInboxElement element) {
 		Object obj = element.getObject();
-		if (obj instanceof NamedBlob && ((NamedBlob) obj).getId().startsWith("Med_")) {
+		if (obj instanceof NamedBlob && ((NamedBlob) obj).getId().startsWith("Med_")) { //$NON-NLS-1$
 
 			return true;
 		}

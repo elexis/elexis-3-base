@@ -47,7 +47,7 @@ public class VacdocServiceImpl implements VacdocService {
 	public VacdocServiceImpl() {
 		EClass vacdClass = ChPackage.eINSTANCE.getCdaChVacdV1();
 		if (vacdClass == null) {
-			logger.warn("Could not load VACD class from ch package");
+			logger.warn("Could not load VACD class from ch package"); //$NON-NLS-1$
 		}
 	}
 
@@ -115,7 +115,7 @@ public class VacdocServiceImpl implements VacdocService {
 
 				String identifier = vaccination.get(Vaccination.FLD_EAN);
 				if (identifier != null && !identifier.isEmpty()) {
-					Identificator ean = new Identificator("1.3.160", identifier);
+					Identificator ean = new Identificator("1.3.160", identifier); //$NON-NLS-1$
 					consumable.setManufacturedProductId(ean);
 				}
 
@@ -168,7 +168,7 @@ public class VacdocServiceImpl implements VacdocService {
 			final CdaChLoader<CdaChVacd> loader = new CdaChLoader<CdaChVacd>();
 			return Optional.of(loader.loadFromStream(document, CdaChVacd.class, CdaChVacdV1.class));
 		} catch (Exception e) {
-			logger.error("problem loading xml document", e);
+			logger.error("problem loading xml document", e); //$NON-NLS-1$
 		}
 		return Optional.empty();
 	}
@@ -190,8 +190,8 @@ public class VacdocServiceImpl implements VacdocService {
 						article.getGtin(), article.getAtcCode(), immunization.getApplyDate(), consumable.getLotNr(),
 						((author != null) ? author.getCompleteName() : StringUtils.EMPTY));
 			} else {
-				logger.warn("Article [" + consumable.getTradeName() + "] not found GTIN ["
-						+ ((gtin != null) ? gtin.getExtension() : StringUtils.EMPTY) + "]");
+				logger.warn("Article [" + consumable.getTradeName() + "] not found GTIN [" //$NON-NLS-1$ //$NON-NLS-2$
+						+ ((gtin != null) ? gtin.getExtension() : StringUtils.EMPTY) + "]"); //$NON-NLS-1$
 				new Vaccination(elexisPatient.getId(), StringUtils.EMPTY, consumable.getTradeName(),
 						((gtin != null) ? gtin.getExtension() : StringUtils.EMPTY),
 						((atcCode != null) ? atcCode.getCode() : StringUtils.EMPTY), immunization.getApplyDate(),
@@ -205,11 +205,11 @@ public class VacdocServiceImpl implements VacdocService {
 		String atcStr = (atcCode != null) ? atcCode.getCode() : null;
 		if (gtinStr != null) {
 			INamedQuery<IArtikelstammItem> query = ArtikelstammModelServiceHolder.get()
-					.getNamedQuery(IArtikelstammItem.class, "gtin");
-			return query.executeWithParametersSingleResult(query.getParameterMap("gtin", gtinStr)).orElse(null);
+					.getNamedQuery(IArtikelstammItem.class, "gtin"); //$NON-NLS-1$
+			return query.executeWithParametersSingleResult(query.getParameterMap("gtin", gtinStr)).orElse(null); //$NON-NLS-1$
 		} else if (atcStr != null && !atcStr.isEmpty()) {
 			IQuery<IArtikelstammItem> query = ArtikelstammModelServiceHolder.get().getQuery(IArtikelstammItem.class);
-			query.and("atc", COMPARATOR.EQUALS, atcStr);
+			query.and("atc", COMPARATOR.EQUALS, atcStr); //$NON-NLS-1$
 			List<IArtikelstammItem> articles = query.execute();
 			if (articles != null && !articles.isEmpty()) {
 				String displayName = (atcCode != null) ? atcCode.getDisplayName().toLowerCase() : null;

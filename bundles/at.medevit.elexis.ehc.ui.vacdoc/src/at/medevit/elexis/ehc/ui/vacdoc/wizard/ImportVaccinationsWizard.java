@@ -41,7 +41,7 @@ public class ImportVaccinationsWizard extends Wizard implements IImportWizard {
 			Optional<CdaChVacd> ehcDocumentOpt = VacdocServiceComponent.getService().loadVacdocDocument(document);
 			ehcDocumentOpt.ifPresent(d -> ehcDocument = d);
 		} catch (Exception e) {
-			logger.error("Could not open document", e);
+			logger.error("Could not open document", e); //$NON-NLS-1$
 			MessageDialog.openError(getShell(), "Fehler", "Konnte das Dokument nicht öffnen.");
 		}
 	}

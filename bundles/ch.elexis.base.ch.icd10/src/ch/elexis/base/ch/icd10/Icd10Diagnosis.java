@@ -15,7 +15,7 @@ import ch.elexis.core.services.holder.XidServiceHolder;
 public class Icd10Diagnosis extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.ICD10>
 		implements IDiagnosisTree, WithExtInfo, Identifiable {
 
-	public static final String CODESYSTEM_NAME = "ICD-10";
+	public static final String CODESYSTEM_NAME = "ICD-10"; //$NON-NLS-1$
 
 	public Icd10Diagnosis(ICD10 entity) {
 		super(entity);
@@ -74,7 +74,7 @@ public class Icd10Diagnosis extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 	@Override
 	public IDiagnosisTree getParent() {
 		String parentCode = getEntity().getParent();
-		if (parentCode != null && "NIL".equals(parentCode)) {
+		if (parentCode != null && "NIL".equals(parentCode)) { //$NON-NLS-1$
 			return ModelUtil.loadDiagnosisWithCode(parentCode).orElse(null);
 		}
 		return null;

@@ -20,7 +20,7 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class MessagePreferences extends PreferencePage implements IWorkbenchPreferencePage {
-	public static final String DEF_SOUND_PATH = "/sounds/notify_sound.wav";
+	public static final String DEF_SOUND_PATH = "/sounds/notify_sound.wav"; //$NON-NLS-1$
 
 	private Text txtSoundFilePath;
 	private Button btnBrowse, btnSoundOn, btnAnswerAutoclear;
@@ -70,8 +70,8 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog fd = new FileDialog(btnBrowse.getShell(), SWT.OPEN);
 				fd.setText(Messages.Prefs_FS_Open);
-				fd.setFilterPath("C:/");
-				String[] filterExt = { "*.wav" };
+				fd.setFilterPath("C:/"); //$NON-NLS-1$
+				String[] filterExt = { "*.wav" }; //$NON-NLS-1$
 				fd.setFilterExtensions(filterExt);
 				String filePath = fd.open();
 				if (filePath != null) {

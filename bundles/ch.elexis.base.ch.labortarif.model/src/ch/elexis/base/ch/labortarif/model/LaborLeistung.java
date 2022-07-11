@@ -22,7 +22,7 @@ import ch.rgw.tools.StringTool;
 public class LaborLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.Labor2009Tarif>
 		implements Identifiable, ILaborLeistung {
 
-	public static final String STS_CLASS = "ch.elexis.labortarif2009.data.Labor2009Tarif";
+	public static final String STS_CLASS = "ch.elexis.labortarif2009.data.Labor2009Tarif"; //$NON-NLS-1$
 
 	private static IBillableOptifier<ILaborLeistung> optifier;
 	private IBillableVerifier verifier;
@@ -44,7 +44,7 @@ public class LaborLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.j
 
 	@Override
 	public String getCodeSystemCode() {
-		return "317";
+		return "317"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -121,13 +121,13 @@ public class LaborLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.j
 		if (StringUtils.isNotBlank(getCode())) {
 			StringBuilder sb = new StringBuilder(getCode()).append(StringUtils.SPACE).append(text).append(" (") //$NON-NLS-1$
 					.append(getSpeciality()).append(")"); //$NON-NLS-1$
-			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); //$NON-NLS-1$
 			if (getValidFrom() != null) {
 				sb.append(" (").append(getValidFrom().format(dateFormatter)); //$NON-NLS-1$
 				if (getValidTo() != null) {
 					sb.append("-").append(getValidTo().format(dateFormatter)).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
-					sb.append("-").append(StringUtils.SPACE).append(")"); //$NON-NLS-1$
+					sb.append("-").append(StringUtils.SPACE).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			return sb.toString();

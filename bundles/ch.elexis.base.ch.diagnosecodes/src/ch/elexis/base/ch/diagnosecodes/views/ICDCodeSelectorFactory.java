@@ -55,7 +55,7 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 		}), new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 
-		commonViewer.setNamedSelection("ch.elexis.base.ch.diagnosecodes.icd10.selection");
+		commonViewer.setNamedSelection("ch.elexis.base.ch.diagnosecodes.icd10.selection"); //$NON-NLS-1$
 		vc.setContentType(ContentType.GENERICOBJECT);
 		return vc;
 	}
@@ -79,7 +79,7 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 		public ICD10ContentProvider(CommonViewer commonViewer) {
 			super(commonViewer);
 			// initial order by
-			fieldOrderBy = "code";
+			fieldOrderBy = "code"; //$NON-NLS-1$
 			fieldOrder = ORDER.ASC;
 		}
 
@@ -94,11 +94,11 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 			List<IDiagnosisTree> roots = Collections.emptyList();
 			@SuppressWarnings("unchecked")
 			IQuery<IDiagnosisTree> query = (IQuery<IDiagnosisTree>) getBaseQuery();
-			query.and("id", COMPARATOR.NOT_EQUALS, "1");
+			query.and("id", COMPARATOR.NOT_EQUALS, "1"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (hasActiveFilter(fieldFilterValues)) {
 				query.startGroup();
 				for (String key : fieldFilterValues.keySet()) {
-					query.and(key, COMPARATOR.LIKE, "%" + fieldFilterValues.get(key) + "%");
+					query.and(key, COMPARATOR.LIKE, "%" + fieldFilterValues.get(key) + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				query.andJoinGroups();
 				if (fieldOrderBy != null) {
@@ -110,7 +110,7 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 			} else {
 				query.startGroup();
 				query.or(ModelPackage.Literals.IDIAGNOSIS_TREE__PARENT, COMPARATOR.EQUALS, null);
-				query.or(ModelPackage.Literals.IDIAGNOSIS_TREE__PARENT, COMPARATOR.EQUALS, "NIL");
+				query.or(ModelPackage.Literals.IDIAGNOSIS_TREE__PARENT, COMPARATOR.EQUALS, "NIL"); //$NON-NLS-1$
 				query.andJoinGroups();
 				if (fieldOrderBy != null) {
 					query.orderBy(fieldOrderBy, fieldOrder);

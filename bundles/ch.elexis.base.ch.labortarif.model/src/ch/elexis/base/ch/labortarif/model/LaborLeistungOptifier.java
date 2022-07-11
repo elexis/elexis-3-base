@@ -40,7 +40,7 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 			return ConfigServiceHolder.get().get(activeMandator.get(),
 					ch.elexis.core.constants.Preferences.LEISTUNGSCODES_OPTIFY, true);
 		} else {
-			LoggerFactory.getLogger(getClass()).warn("No active Mandator, default is to optify.");
+			LoggerFactory.getLogger(getClass()).warn("No active Mandator, default is to optify."); //$NON-NLS-1$
 			return true;
 		}
 	}
@@ -61,8 +61,8 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 			for (IBilled billed : list) {
 				IBillable existing = billed.getBillable();
 				if (existing == null) {
-					return new Result<IBilled>(SEVERITY.ERROR, 1, "Could not resolve billable for billed ["
-							+ billed.getId() + "] in encounter [" + encounter.getId() + "]", null, true);
+					return new Result<IBilled>(SEVERITY.ERROR, 1, "Could not resolve billable for billed [" //$NON-NLS-1$
+							+ billed.getId() + "] in encounter [" + encounter.getId() + "]", null, true); //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (existing instanceof ILaborLeistung) {
 					String existingCode = existing.getCode();
 					if (existingCode.equals("4707.00")) { // Pauschale //$NON-NLS-1$
@@ -215,19 +215,19 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 				Result<IBilled> result = super.add((ILaborLeistung) codeElement.get(), encounter, 1.0);
 				return result.get();
 			} else {
-				throw new IllegalStateException("No labor tarif code element [" + code + "] found");
+				throw new IllegalStateException("No labor tarif code element [" + code + "] found"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
-			throw new IllegalStateException("No labor tarif code element contribution");
+			throw new IllegalStateException("No labor tarif code element contribution"); //$NON-NLS-1$
 		}
 	}
 
 	private boolean isSchnellAnalyse(ILaborLeistung laborLeistung) {
 		String chapter = laborLeistung.getChapter().trim();
 		if (chapter != null && !chapter.isEmpty()) {
-			String[] chapters = chapter.split(",");
+			String[] chapters = chapter.split(","); //$NON-NLS-1$
 			for (String string : chapters) {
-				if (string.trim().equals("5.1.2.2.1")) {
+				if (string.trim().equals("5.1.2.2.1")) { //$NON-NLS-1$
 					return true;
 				}
 			}

@@ -54,12 +54,12 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	private static final int OFFSET = 15;
 
 	private final Color COLOR_WHITE = UiDesk.getColor(UiDesk.COL_WHITE);
-	private final Color COLOR_BOTTOM = UiDesk.getColorFromRGB("D0DCF2"); // rgb(208, 220, 242)
+	private final Color COLOR_BOTTOM = UiDesk.getColorFromRGB("D0DCF2"); // rgb(208, 220, 242) //$NON-NLS-1$
 	private final Color COLOR_DARKGREY = UiDesk.getColor(UiDesk.COL_DARKGREY);
-	private final Color COLOR_LIGHTGREY = UiDesk.getColorFromRGB("F0F0F0");
+	private final Color COLOR_LIGHTGREY = UiDesk.getColorFromRGB("F0F0F0"); //$NON-NLS-1$
 	private final Color COLOR_BLACK = UiDesk.getColor(UiDesk.COL_BLACK);
-	private final Color COLOR_GREEN = UiDesk.getColorFromRGB("39961C");
-	private final Color COLOR_CREME = UiDesk.getColorFromRGB("FEFFB1"); // rgb(254, 255, 177)
+	private final Color COLOR_GREEN = UiDesk.getColorFromRGB("39961C"); //$NON-NLS-1$
+	private final Color COLOR_CREME = UiDesk.getColorFromRGB("FEFFB1"); // rgb(254, 255, 177) //$NON-NLS-1$
 
 	private final Font headerFont, boldFont, defaultFont;
 	private final int fontHeightDefaultFont, fontHeightBoldFont;
@@ -102,7 +102,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		defaultFont = UiDesk.getFont(Preferences.USR_DEFAULTFONT);
 		FontDescriptor boldDescriptor = FontDescriptor.createFrom(defaultFont).setStyle(SWT.BOLD);
 		boldFont = boldDescriptor.createFont(disp);
-		headerFont = new Font(disp, "Helvetica", 16, SWT.BOLD);
+		headerFont = new Font(disp, "Helvetica", 16, SWT.BOLD); //$NON-NLS-1$
 
 		distanceBetweenDiseases = (int) (distanceBetweenDiseases * getScaleFactor());
 
@@ -118,8 +118,8 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	}
 
 	private boolean shouldScale() {
-		String osName = System.getProperty("os.name").toLowerCase();
-		if (osName.startsWith("win")) {
+		String osName = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+		if (osName.startsWith("win")) { //$NON-NLS-1$
 			if (getWindowsVersion() < 10) {
 				return true;
 			}
@@ -128,7 +128,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	}
 
 	private double getWindowsVersion() {
-		String osVersion = System.getProperty("os.version").toLowerCase();
+		String osVersion = System.getProperty("os.version").toLowerCase(); //$NON-NLS-1$
 		try {
 			return Double.valueOf(osVersion);
 		} catch (NumberFormatException e) {
@@ -264,7 +264,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		lengthOfBasisimpfungen = _vphd.base.size() * distanceBetweenDiseases;
 		lengthOfDoctor = determineMaxAdministratorLabelLength(gc, wrapText) + OFFSET;
 		lengthOfLotNr = determineMaxLotNr(gc, wrapText) + OFFSET;
-		lengthOfDateString = gc.textExtent("09.07.2014").x + OFFSET;
+		lengthOfDateString = gc.textExtent("09.07.2014").x + OFFSET; //$NON-NLS-1$
 		leftStart = _vphd.extended.size() * distanceBetweenDiseases + SEPARATOR_WIDTH_BASE_EXTENDED;
 		int lNames = determineMaxVaccNameLength(gc);
 
@@ -277,7 +277,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		gc.setFont(defaultFont);
 
 		if (showSide) {
-			lengthOfSide = gc.textExtent("rechts").x + OFFSET;
+			lengthOfSide = gc.textExtent("rechts").x + OFFSET; //$NON-NLS-1$
 			minWidth = lengthOfSide + lengthOfBasisimpfungen + lengthOfDoctor + lengthOfLotNr + lengthOfDateString
 					+ leftStart + lNames;
 		} else {
@@ -595,10 +595,10 @@ public class VaccinationCompositePaintListener implements PaintListener {
 				if (maxChars < textLength) {
 					int idxLastSpace = text.substring(0, maxChars).lastIndexOf(StringUtils.SPACE) + 1;
 					if (idxLastSpace > 1 && idxLastSpace < textLength) {
-						return text.replaceFirst("(.{" + idxLastSpace + "})", "$1\n");
+						return text.replaceFirst("(.{" + idxLastSpace + "})", "$1\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					} else {
-						return text.replaceFirst("(.{" + maxChars + "})",
-								"$1" + (wrapWithoutSeperator ? StringUtils.EMPTY : "-") + StringUtils.LF);
+						return text.replaceFirst("(.{" + maxChars + "})", //$NON-NLS-1$ //$NON-NLS-2$
+								"$1" + (wrapWithoutSeperator ? StringUtils.EMPTY : "-") + StringUtils.LF); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}
@@ -615,7 +615,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 	 */
 	private void highlightSelectedEntry(GC gc, int heightStart, int width, int pageIdx) {
 		gc.setForeground(COLOR_CREME);
-		gc.setBackground(UiDesk.getColorFromRGB("FEFFCB"));
+		gc.setBackground(UiDesk.getColorFromRGB("FEFFCB")); //$NON-NLS-1$
 		gc.drawRectangle(0, heightStart, width, entryHeight - 1);
 		// gc.fillRectangle(0, heightStart, width, ENTRY_HEIGHT - 1);
 		gc.fillGradientRectangle(0, heightStart, width, entryHeight - 1, true);
@@ -652,9 +652,9 @@ public class VaccinationCompositePaintListener implements PaintListener {
 		int months = (daysTo / 30);
 
 		if (months >= 48) {
-			return (daysTo / 365) + "J";
+			return (daysTo / 365) + "J"; //$NON-NLS-1$
 		} else {
-			return months + "m";
+			return months + "m"; //$NON-NLS-1$
 		}
 	}
 
@@ -672,7 +672,7 @@ public class VaccinationCompositePaintListener implements PaintListener {
 					gc.setBackground(db.backgroundColor);
 				}
 
-				gc.drawText("X", db.leftTrim + 5, heightStart);
+				gc.drawText("X", db.leftTrim + 5, heightStart); //$NON-NLS-1$
 				gc.setBackground(background);
 			}
 		}

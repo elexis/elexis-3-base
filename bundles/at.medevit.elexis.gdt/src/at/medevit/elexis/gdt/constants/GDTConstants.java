@@ -14,16 +14,16 @@ package at.medevit.elexis.gdt.constants;
 
 public class GDTConstants {
 
-	public static final String GDT_VERSION = "02.10";
-	public static final String SOFTWAREVERWANTWORTLICHER = "MEDELEXIS AG";
-	public static final String SOFTWARE = "MEDELEXIS";
-	public static final String SOFTWARE_RELEASE_STAND = "2.1";
+	public static final String GDT_VERSION = "02.10"; //$NON-NLS-1$
+	public static final String SOFTWAREVERWANTWORTLICHER = "MEDELEXIS AG"; //$NON-NLS-1$
+	public static final String SOFTWARE = "MEDELEXIS"; //$NON-NLS-1$
+	public static final String SOFTWARE_RELEASE_STAND = "2.1"; //$NON-NLS-1$
 
-	public static final String GDT_SHORT_ID_DEFAULT = "ELXS";
+	public static final String GDT_SHORT_ID_DEFAULT = "ELXS"; //$NON-NLS-1$
 
 	// Dateityp für Datenaustausch
-	public static final String GDT_FILETRANSFER_TYP_FEST = "fest";
-	public static final String GDT_FILETRANSFER_TYPE_HOCHZAEHLEND = "hochzaehlend";
+	public static final String GDT_FILETRANSFER_TYP_FEST = "fest"; //$NON-NLS-1$
+	public static final String GDT_FILETRANSFER_TYPE_HOCHZAEHLEND = "hochzaehlend"; //$NON-NLS-1$
 
 	// Nach GDT 2.1 definierte Satzarten
 	public static final int SATZART_STAMMDATEN_ANFORDERN = 6300;
@@ -95,18 +95,18 @@ public class GDTConstants {
 	public static final int FELDKENNUNG_ERGEBNIS_TEXT = 8480;
 	public static final int FELDKENNUNG_SIGNATUR = 8990;
 
-	public static final String FELDKENNUNG_SOFTWAREVERANTWORTLICHER = "0102";
-	public static final String FELDKENNUNG_SOFTWARE = "0103";
-	public static final String FELDKENNUNG_RELEASE_STAND_DER_SOFTWARE = "0132";
+	public static final String FELDKENNUNG_SOFTWAREVERANTWORTLICHER = "0102"; //$NON-NLS-1$
+	public static final String FELDKENNUNG_SOFTWARE = "0103"; //$NON-NLS-1$
+	public static final String FELDKENNUNG_RELEASE_STAND_DER_SOFTWARE = "0132"; //$NON-NLS-1$
 
 	// Feldkennung Zeichensatz 9206 Inhalt
 	public static final int ZEICHENSATZ_7BIT = 1;
 	public static final int ZEICHENSATZ_IBM_CP_437 = 2; // STANDARD-ZEICHENSATZ
 	public static final int ZEICHENSATZ_ISO8859_1_ANSI_CP_1252 = 3;
 
-	public static final String ZEICHENSATZ_7BIT_CHARSET_STRING = "US-ASCII";
-	public static final String ZEICHENSATZ_IBM_CP_437_CHARSET_STRING = "cp437"; // STANDARD-ZEICHENSATZ
-	public static final String ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING = "Cp1252";
+	public static final String ZEICHENSATZ_7BIT_CHARSET_STRING = "US-ASCII"; //$NON-NLS-1$
+	public static final String ZEICHENSATZ_IBM_CP_437_CHARSET_STRING = "cp437"; // STANDARD-ZEICHENSATZ //$NON-NLS-1$
+	public static final String ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING = "Cp1252"; //$NON-NLS-1$
 
 	// Feldkennung Versichertenart 3108 Inhalt
 	public static final int VERSICHERTENART_MITGLIED = 1;

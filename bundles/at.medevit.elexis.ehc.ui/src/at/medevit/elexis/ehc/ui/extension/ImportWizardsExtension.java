@@ -29,7 +29,7 @@ import at.medevit.elexis.ehc.ui.dialog.WizardDescriptor;
 public class ImportWizardsExtension {
 	private static Logger logger = LoggerFactory.getLogger(ImportWizardsExtension.class);
 
-	private static final String OTHER_CATEGORYID = "at.medevit.elexis.ehc.ui.OtherCategoryId";
+	private static final String OTHER_CATEGORYID = "at.medevit.elexis.ehc.ui.OtherCategoryId"; //$NON-NLS-1$
 
 	private static List<IWizardCategory> cacheCategoriesList;
 
@@ -56,7 +56,7 @@ public class ImportWizardsExtension {
 				IImportWizard wizard = (IImportWizard) iWizardDescriptor.createWizard();
 				wizard.setDocument(document);
 			} catch (CoreException e) {
-				logger.error("Could not create import wizard.", e);
+				logger.error("Could not create import wizard.", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -66,16 +66,16 @@ public class ImportWizardsExtension {
 
 		cacheWizardsList = new ArrayList<IWizardDescriptor>();
 
-		logger.info("Initializing or refreshing Import Wizards.");
+		logger.info("Initializing or refreshing Import Wizards."); //$NON-NLS-1$
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
-		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.ehc.ui.ehcimport");
+		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.ehc.ui.ehcimport"); //$NON-NLS-1$
 		if (exp != null) {
 			IExtension[] extensions = exp.getExtensions();
-			logger.info("Initializing or refreshing Import Wizards found " + extensions.length + " implementations.");
+			logger.info("Initializing or refreshing Import Wizards found " + extensions.length + " implementations."); //$NON-NLS-1$ //$NON-NLS-2$
 			for (IExtension ex : extensions) {
 				IConfigurationElement[] elems = ex.getConfigurationElements();
 				for (IConfigurationElement el : elems) {
-					if (el.getName().equals("category")) {
+					if (el.getName().equals("category")) { //$NON-NLS-1$
 						WizardCategory category = new WizardCategory(el);
 						cacheCategoriesList.add(category);
 					}
@@ -84,7 +84,7 @@ public class ImportWizardsExtension {
 			for (IExtension ex : extensions) {
 				IConfigurationElement[] elems = ex.getConfigurationElements();
 				for (IConfigurationElement el : elems) {
-					if (el.getName().equals("wizard")) {
+					if (el.getName().equals("wizard")) { //$NON-NLS-1$
 						WizardDescriptor descriptor = new WizardDescriptor(el);
 						IWizardCategory matchingCategory = null;
 						// find matching category

@@ -41,7 +41,7 @@ public class FilterSearchField extends ViewerFilter {
 			Rechnung rn = e.getRechnung();
 			if (rn != null) {
 				String rgNr = rn.getNr();
-				if (rgNr.matches(".*" + useSearchString + ".*"))
+				if (rgNr.matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 					return true;
 			}
 			return false;
@@ -69,17 +69,17 @@ public class FilterSearchField extends ViewerFilter {
 				}
 				break;
 			default:
-				if (betrag.getAmountAsString().matches(".*" + useSearchString + ".*"))
+				if (betrag.getAmountAsString().matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 					return true;
 			}
 			return false;
 		default:
 			String patLabel = e.getPatient().getLabel().toLowerCase();
-			if (patLabel.matches(".*" + useSearchString + ".*"))
+			if (patLabel.matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
-			if (e.getEinlesedatatum().matches(".*" + useSearchString + ".*"))
+			if (e.getEinlesedatatum().matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
-			if (e.getVerarbeitungsdatum().matches(".*" + useSearchString + ".*"))
+			if (e.getVerarbeitungsdatum().matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
 			return false;
 		}
@@ -92,6 +92,6 @@ public class FilterSearchField extends ViewerFilter {
 			searchString = s.toLowerCase(); // $NON-NLS-1$ //$NON-NLS-2$
 		// filter "dirty" characters
 		if (searchString != null)
-			searchString = searchString.replaceAll("[^#<>\\.$, a-zA-Z0-9]", StringUtils.EMPTY);
+			searchString = searchString.replaceAll("[^#<>\\.$, a-zA-Z0-9]", StringUtils.EMPTY); //$NON-NLS-1$
 	}
 }

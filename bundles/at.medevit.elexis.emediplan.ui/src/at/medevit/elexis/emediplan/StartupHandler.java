@@ -57,9 +57,9 @@ public class StartupHandler implements EventHandler {
 								PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 										.showView(MedicationView.PART_ID);
 							} catch (PartInitException e) {
-								logger.warn("cannot open view with id: " + MedicationView.PART_ID, e);
+								logger.warn("cannot open view with id: " + MedicationView.PART_ID, e); //$NON-NLS-1$
 							}
-							logger.debug("Opening ImportEMediplanDialog");
+							logger.debug("Opening ImportEMediplanDialog"); //$NON-NLS-1$
 							ImportEMediplanDialog dlg = new ImportEMediplanDialog(UiDesk.getTopShell(), medication,
 									selectedPatientId != null);
 							dlg.open();
@@ -71,7 +71,7 @@ public class StartupHandler implements EventHandler {
 	}
 
 	private boolean hasMediplanHeader(String chunk) {
-		return chunk.startsWith("CHMED");
+		return chunk.startsWith("CHMED"); //$NON-NLS-1$
 	}
 
 	public static String getDecodedJsonString(@NonNull String encodedJson) {
@@ -88,15 +88,15 @@ public class StartupHandler implements EventHandler {
 				sb.append(read);
 			}
 		} catch (IOException e) {
-			LoggerFactory.getLogger(StartupHandler.class).error("Error decoding json", e);
-			throw new IllegalStateException("Error decoding json", e);
+			LoggerFactory.getLogger(StartupHandler.class).error("Error decoding json", e); //$NON-NLS-1$
+			throw new IllegalStateException("Error decoding json", e); //$NON-NLS-1$
 		}
 		return sb.toString();
 	}
 
 	@Override
 	public void handleEvent(Event event) {
-		logger.info("APPLICATION STARTUP COMPLETE");
+		logger.info("APPLICATION STARTUP COMPLETE"); //$NON-NLS-1$
 		elexisEventListenerImpl = new ElexisEventListenerImpl(BarcodeScannerMessage.class, ElexisEvent.EVENT_UPDATE) {
 			public void run(ElexisEvent ev) {
 				BarcodeScannerMessage b = (BarcodeScannerMessage) ev.getGenericObject();

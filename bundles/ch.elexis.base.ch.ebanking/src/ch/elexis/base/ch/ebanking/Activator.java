@@ -28,7 +28,7 @@ public class Activator extends AbstractUIPlugin {
 						.getService(ICommandService.class);
 				Command command = commandService.getCommand(LoadESRFileHandler.COMMAND_ID);
 				command.isEnabled();
-				return new Status(IStatus.OK, "my.plugin.id", "Init commands workaround performed succesfully");
+				return new Status(IStatus.OK, "my.plugin.id", "Init commands workaround performed succesfully"); //$NON-NLS-1$
 			}
 
 		};

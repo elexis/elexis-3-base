@@ -18,9 +18,9 @@ public class CreateXdmHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String paramAttachments = event.getParameter("at.medevit.elexis.ehc.ui.vacdoc.attachments");
-		String paramPatientId = event.getParameter("at.medevit.elexis.ehc.ui.vacdoc.patient.id");
-		String paramTmpDir = event.getParameter("at.medevit.elexis.ehc.ui.vacdoc.tmp.dir");
+		String paramAttachments = event.getParameter("at.medevit.elexis.ehc.ui.vacdoc.attachments"); //$NON-NLS-1$
+		String paramPatientId = event.getParameter("at.medevit.elexis.ehc.ui.vacdoc.patient.id"); //$NON-NLS-1$
+		String paramTmpDir = event.getParameter("at.medevit.elexis.ehc.ui.vacdoc.tmp.dir"); //$NON-NLS-1$
 
 		if (paramAttachments != null && paramPatientId != null && paramTmpDir != null) {
 			Patient patient = Patient.load(paramPatientId);
@@ -28,12 +28,12 @@ public class CreateXdmHandler extends AbstractHandler implements IHandler {
 				Mandant mandant = ElexisEventDispatcher.getSelectedMandator();
 				List<File> files = new ArrayList<>();
 
-				for (String attachmentPath : paramAttachments.split(":::")) {
+				for (String attachmentPath : paramAttachments.split(":::")) { //$NON-NLS-1$
 					File f = new File(attachmentPath);
 					files.add(f);
 				}
 				return EhcCoreServiceHolder.getService().createXdmContainer(patient, mandant, files,
-						paramTmpDir + File.separator + "export.xdm");
+						paramTmpDir + File.separator + "export.xdm"); //$NON-NLS-1$
 			}
 		}
 		return null;

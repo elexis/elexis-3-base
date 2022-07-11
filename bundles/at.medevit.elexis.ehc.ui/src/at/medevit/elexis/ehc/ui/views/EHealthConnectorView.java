@@ -49,10 +49,10 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.CoreUiUtil;
 
 public class EHealthConnectorView extends ViewPart {
-	public final static String ID = "at.medevit.elexis.eHealthConnectorView";
+	public final static String ID = "at.medevit.elexis.eHealthConnectorView"; //$NON-NLS-1$
 
 	private static Logger log = LoggerFactory.getLogger(EHealthConnectorView.class);
-	private static Image circle = ResourceManager.getPluginImage("at.medevit.elexis.ehc.ui", "icons/arrow-circle.png");
+	private static Image circle = ResourceManager.getPluginImage("at.medevit.elexis.ehc.ui", "icons/arrow-circle.png"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private Text txtUrl;
 	private Browser browser;
@@ -113,9 +113,9 @@ public class EHealthConnectorView extends ViewPart {
 			}
 
 		} catch (IOException e) {
-			log.warn("Could not resolve CDA report on path [" + path + "]", e);
+			log.warn("Could not resolve CDA report on path [" + path + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
 			MessageDialog.openError(UiDesk.getTopShell(), Messages.Dlg_ResolveError,
-					Messages.Dlg_ResolveErrorMsg + "[" + path + "]");
+					Messages.Dlg_ResolveErrorMsg + "[" + path + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -138,7 +138,7 @@ public class EHealthConnectorView extends ViewPart {
 			try {
 				return new FileInputStream(displayedReport);
 			} catch (FileNotFoundException e) {
-				log.error("Could not open displayed report.", e);
+				log.error("Could not open displayed report.", e); //$NON-NLS-1$
 			}
 		}
 		return null;

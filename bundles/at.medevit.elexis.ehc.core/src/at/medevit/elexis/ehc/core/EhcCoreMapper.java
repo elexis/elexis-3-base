@@ -56,7 +56,7 @@ public class EhcCoreMapper {
 
 	private static TimeTool timeTool = new TimeTool();
 
-	private final static Pattern lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)[a-z]?$");
+	private final static Pattern lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)[a-z]?$"); //$NON-NLS-1$
 
 	public static Name getEhcName(String name) {
 		String[] parts = name.split(StringUtils.SPACE);
@@ -77,11 +77,11 @@ public class EhcCoreMapper {
 		// PHONE
 		Telecoms telecoms = new Telecoms();
 		String value = elexisPatient.get(Kontakt.FLD_PHONE1);
-		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
 			telecoms.addPhone(value, TelecomAddressUse.PRIVATE);
 		}
 		value = elexisPatient.get(Kontakt.FLD_MOBILEPHONE);
-		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
 			telecoms.addPhone(value, TelecomAddressUse.MOBILE);
 		}
 		ret.setTelecoms(telecoms);
@@ -94,14 +94,14 @@ public class EhcCoreMapper {
 		String socialSecurityNumber = elexisPatient.getXid(DOMAIN_AHV);
 		if (socialSecurityNumber != null) {
 			socialSecurityNumber = socialSecurityNumber.trim();
-			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", StringUtils.EMPTY);
+			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", StringUtils.EMPTY); //$NON-NLS-1$
 			if (socialSecurityNumber.length() == 11) {
 				ret.addId(new Identificator(CodeSystems.SwissSSNDeprecated.getCodeSystemId(), socialSecurityNumber));
 			} else if (socialSecurityNumber.length() == 13) {
 				ret.addId(new Identificator(CodeSystems.SwissSSN.getCodeSystemId(), socialSecurityNumber));
 			} else {
-				LoggerFactory.getLogger(EhcCoreMapper.class).warn("Ignoring SSN [" + socialSecurityNumber + "] length "
-						+ socialSecurityNumber.length() + " not vaild.");
+				LoggerFactory.getLogger(EhcCoreMapper.class).warn("Ignoring SSN [" + socialSecurityNumber + "] length " //$NON-NLS-1$ //$NON-NLS-2$
+						+ socialSecurityNumber.length() + " not vaild."); //$NON-NLS-1$
 			}
 		}
 
@@ -129,16 +129,16 @@ public class EhcCoreMapper {
 		Author ret = new Author(getEhcPersonName(elexisMandant), gln);
 		// add old EAN oid
 		if (gln != null) {
-			ret.addId(new Identificator("1.3.88", gln));
+			ret.addId(new Identificator("1.3.88", gln)); //$NON-NLS-1$
 		}
 		// PHONE
 		Telecoms telecoms = new Telecoms();
 		String value = elexisMandant.get(Kontakt.FLD_PHONE1);
-		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
 			telecoms.addPhone(value, TelecomAddressUse.PRIVATE);
 		}
 		value = elexisMandant.get(Kontakt.FLD_MOBILEPHONE);
-		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
 			telecoms.addPhone(value, TelecomAddressUse.MOBILE);
 		}
 		ret.setTelecoms(telecoms);
@@ -159,11 +159,11 @@ public class EhcCoreMapper {
 		// PHONE
 		Telecoms telecoms = new Telecoms();
 		String value = rechnungssteller.get(Kontakt.FLD_PHONE1);
-		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
 			telecoms.addPhone(value, TelecomAddressUse.PRIVATE);
 		}
 		value = rechnungssteller.get(Kontakt.FLD_MOBILEPHONE);
-		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
 			telecoms.addPhone(value, TelecomAddressUse.MOBILE);
 		}
 		ret.setTelecoms(telecoms);
@@ -209,7 +209,7 @@ public class EhcCoreMapper {
 						return ch.elexis.data.Patient.load(ret.getId());
 					}
 				}
-				System.out.println("foud ret " + ret);
+				System.out.println("foud ret " + ret); //$NON-NLS-1$
 				if (ret instanceof ch.elexis.data.Patient) {
 					return (ch.elexis.data.Patient) ret;
 				}

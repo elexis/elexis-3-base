@@ -175,7 +175,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 				int stateMask = e.stateMask;
 				if ((stateMask & SWT.SHIFT) == SWT.SHIFT && medication.chunk != null) {
 					File userDir = CoreUtil.getWritableUserDir();
-					File jsonOutput = new File(userDir, "emediplan.json");
+					File jsonOutput = new File(userDir, "emediplan.json"); //$NON-NLS-1$
 					try (FileWriter writer = new FileWriter(jsonOutput)) {
 						writer.write(StartupHandler.getDecodedJsonString(medication.chunk));
 					} catch (IOException e1) {
@@ -252,8 +252,8 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 				Medicament mdm = (Medicament) element;
 				if (mdm.artikelstammItem != null) {
 					return mdm.artikelstammItem.getName();
-				} else if (StringUtils.isNotBlank(mediplanService.getPFieldValue(mdm, "Dsc"))) {
-					return mediplanService.getPFieldValue(mdm, "Dsc");
+				} else if (StringUtils.isNotBlank(mediplanService.getPFieldValue(mdm, "Dsc"))) { //$NON-NLS-1$
+					return mediplanService.getPFieldValue(mdm, "Dsc"); //$NON-NLS-1$
 				}
 				return mdm.Id;
 			}
@@ -263,19 +263,19 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 				if (element instanceof Medicament) {
 					Medicament medicament = (Medicament) element;
 					if (medicament.artikelstammItem == null) {
-						return UiDesk.getColorFromRGB("FFDDDD");
+						return UiDesk.getColorFromRGB("FFDDDD"); //$NON-NLS-1$
 					} else if (State.GTIN_SAME_DOSAGE.equals(medicament.state)) {
-						return UiDesk.getColorFromRGB("D3D3D3");
+						return UiDesk.getColorFromRGB("D3D3D3"); //$NON-NLS-1$
 					} else if (State.ATC.equals(medicament.state)) {
-						return UiDesk.getColorFromRGB("FFDDDD");
+						return UiDesk.getColorFromRGB("FFDDDD"); //$NON-NLS-1$
 					} else if (State.ATC_SAME.equals(medicament.state)
 							|| State.ATC_SAME_DOSAGE.equals(medicament.state)) {
-						return UiDesk.getColorFromRGB("FFDDDD");
+						return UiDesk.getColorFromRGB("FFDDDD"); //$NON-NLS-1$
 					} else if (State.GTIN_SAME.equals(medicament.state)) {
-						return UiDesk.getColorFromRGB("FFFEC3");
+						return UiDesk.getColorFromRGB("FFFEC3"); //$NON-NLS-1$
 					}
 				}
-				return UiDesk.getColorFromRGB("FFFFFF");
+				return UiDesk.getColorFromRGB("FFFFFF"); //$NON-NLS-1$
 			}
 
 			@Override
@@ -318,7 +318,7 @@ public class ImportEMediplanDialog extends TitleAreaDialog {
 					buf.append(mdm.dateFrom);
 				}
 				if (mdm.dateTo != null) {
-					buf.append("-");
+					buf.append("-"); //$NON-NLS-1$
 					buf.append(mdm.dateTo);
 				}
 				return buf.toString();

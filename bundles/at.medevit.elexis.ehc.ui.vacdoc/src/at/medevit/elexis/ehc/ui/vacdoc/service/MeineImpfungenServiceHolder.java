@@ -20,7 +20,7 @@ public class MeineImpfungenServiceHolder {
 
 	public static MeineImpfungenService getService() {
 		if (miService == null) {
-			throw new IllegalStateException("No MeineImpfungenService available");
+			throw new IllegalStateException("No MeineImpfungenService available"); //$NON-NLS-1$
 		}
 		return miService;
 	}

@@ -226,7 +226,7 @@ public class InboxView extends ViewPart {
 									InboxServiceHolder.get().createInboxElement(patient,
 											ContextServiceHolder.get().getActiveMandator().orElse(null), file, true);
 								} catch (Exception e) {
-									LoggerFactory.getLogger(InboxView.class).warn("drop error", e);
+									LoggerFactory.getLogger(InboxView.class).warn("drop error", e); //$NON-NLS-1$
 								}
 							}
 						}

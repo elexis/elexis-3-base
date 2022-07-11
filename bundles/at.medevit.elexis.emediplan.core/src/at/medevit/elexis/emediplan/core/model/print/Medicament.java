@@ -62,10 +62,10 @@ public class Medicament {
 			ret.type = "täglich";
 		}
 		ret.startDate = prescription.getDateFrom() != null
-				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateFrom())
+				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateFrom()) //$NON-NLS-1$
 				: StringUtils.EMPTY;
 		ret.endDate = prescription.getDateTo() != null
-				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateTo())
+				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateTo()) //$NON-NLS-1$
 				: StringUtils.EMPTY;
 		ret.remarks = prescription.getRemark();
 		ret.reason = prescription.getDisposalComment();

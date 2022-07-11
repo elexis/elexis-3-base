@@ -43,7 +43,7 @@ import org.eclipse.ui.menus.UIElement;
  */
 public abstract class ToggleHandler extends AbstractHandler implements IElementUpdater {
 
-	public static final String COMMAND_ID = "ch.elexis.base.barcode.scanner.ListenerProcess";
+	public static final String COMMAND_ID = "ch.elexis.base.barcode.scanner.ListenerProcess"; //$NON-NLS-1$
 
 	public final Object execute(ExecutionEvent event) throws ExecutionException {
 		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
@@ -52,7 +52,7 @@ public abstract class ToggleHandler extends AbstractHandler implements IElementU
 		State state = event.getCommand().getState(IMenuStateIds.STYLE);
 		if (state == null)
 			throw new ExecutionException(
-					"You need to declare a ToggleState with id=STYLE for your command to use ToggleHandler!");
+					"You need to declare a ToggleState with id=STYLE for your command to use ToggleHandler!"); //$NON-NLS-1$
 		boolean currentState = (Boolean) state.getValue();
 		boolean newState = !currentState;
 		state.setValue(newState);

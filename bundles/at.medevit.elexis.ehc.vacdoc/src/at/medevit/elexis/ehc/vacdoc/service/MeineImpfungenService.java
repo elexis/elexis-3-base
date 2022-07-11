@@ -15,18 +15,18 @@ import org.ehealth_connector.common.mdht.Patient;
  */
 public interface MeineImpfungenService {
 
-	public static final String CONFIG_ENDPOINT = "meineimpfungen.endpoint";
-	public static final String ENDPOINT_PRODUCTIV = "productiv";
-	public static final String ENDPOINT_TEST = "test";
+	public static final String CONFIG_ENDPOINT = "meineimpfungen.endpoint"; //$NON-NLS-1$
+	public static final String ENDPOINT_PRODUCTIV = "productiv"; //$NON-NLS-1$
+	public static final String ENDPOINT_TEST = "test"; //$NON-NLS-1$
 
-	public static final String CONFIG_USECERTAUTH = "meineimpfungen.usecertauth";
+	public static final String CONFIG_USECERTAUTH = "meineimpfungen.usecertauth"; //$NON-NLS-1$
 
-	public static final String CONFIG_KEYSTORE_PATH = "meineimpfungen.keystorePath";
-	public static final String CONFIG_KEYSTORE_PASS = "meineimpfungen.keystorePass";
+	public static final String CONFIG_KEYSTORE_PATH = "meineimpfungen.keystorePath"; //$NON-NLS-1$
+	public static final String CONFIG_KEYSTORE_PASS = "meineimpfungen.keystorePass"; //$NON-NLS-1$
 
-	public static final String PDQ_REQUEST_PATID_OID = "2.16.756.5.30.1.147.1.1";
+	public static final String PDQ_REQUEST_PATID_OID = "2.16.756.5.30.1.147.1.1"; //$NON-NLS-1$
 
-	public static final String XDS_REPOSITORY_OID = "2.16.756.5.30.1.147.2.3.2";
+	public static final String XDS_REPOSITORY_OID = "2.16.756.5.30.1.147.2.3.2"; //$NON-NLS-1$
 
 	/**
 	 * Get all {@link CdaChVacd} instances available for the patient from the web

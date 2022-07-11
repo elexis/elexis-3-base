@@ -38,7 +38,7 @@ import ch.elexis.data.Patient;
 
 public class NeueUntersuchungAnfordern extends AbstractHandler {
 
-	private static final String PARAM_TARGET_ID = "at.medevit.elexis.gdt.cmd.parameter.targetId";
+	private static final String PARAM_TARGET_ID = "at.medevit.elexis.gdt.cmd.parameter.targetId"; //$NON-NLS-1$
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

@@ -247,7 +247,7 @@ public class PatientenHitlist extends BaseStats {
 						int tarmedTl = (int) ArzttarifeUtil.getTL(billed);
 
 						ITarmedLeistung tl = (ITarmedLeistung) billable;
-						if (tl.getCode().equals("00.0060")) {
+						if (tl.getCode().equals("00.0060")) { //$NON-NLS-1$
 							numVisits++;
 						}
 						Optional<IBillingSystemFactor> billingFactor = BillingServiceHolder.get()
@@ -262,12 +262,12 @@ public class PatientenHitlist extends BaseStats {
 						costTarmedTL += ctl;
 					} else if (billable instanceof IPhysioLeistung) {
 						costPhysio += cost;
-					} else if ("Medicals".equals(billable.getCodeSystemName())
-							|| "MiGeL".equals(billable.getCodeSystemName())) {
+					} else if ("Medicals".equals(billable.getCodeSystemName()) //$NON-NLS-1$
+							|| "MiGeL".equals(billable.getCodeSystemName())) { //$NON-NLS-1$
 						costMedical += cost;
-					} else if ("Medikamente".equals(billable.getCodeSystemName())
-							|| "400".equals(billable.getCodeSystemCode())
-							|| "402".equals(billable.getCodeSystemCode())) {
+					} else if ("Medikamente".equals(billable.getCodeSystemName()) //$NON-NLS-1$
+							|| "400".equals(billable.getCodeSystemCode()) //$NON-NLS-1$
+							|| "402".equals(billable.getCodeSystemCode())) { //$NON-NLS-1$
 						costMedikamente += cost;
 					} else if (billable instanceof ILaborLeistung) {
 						costLabor += cost;

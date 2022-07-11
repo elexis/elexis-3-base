@@ -64,7 +64,7 @@ public class ImportPatientWizardPage1 extends WizardPage {
 			public String getText(Object element) {
 				if (element instanceof org.ehealth_connector.common.mdht.Patient) {
 					org.ehealth_connector.common.mdht.Patient patient = ((org.ehealth_connector.common.mdht.Patient) element);
-					return patient.getName().getCompleteName() + " - " + patient.getBirthday().toString();
+					return patient.getName().getCompleteName() + " - " + patient.getBirthday().toString(); //$NON-NLS-1$
 				}
 				return super.getText(element);
 			}

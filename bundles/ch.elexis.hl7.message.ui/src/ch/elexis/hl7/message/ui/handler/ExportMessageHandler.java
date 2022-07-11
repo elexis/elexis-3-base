@@ -26,7 +26,7 @@ public class ExportMessageHandler extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String messageTyp = event.getParameter("ch.elexis.hl7.message.ui.exportmessage.typ");
+		String messageTyp = event.getParameter("ch.elexis.hl7.message.ui.exportmessage.typ"); //$NON-NLS-1$
 		if (messageTyp != null && !messageTyp.isEmpty()) {
 			if (exportMessage(messageTyp)) {
 				return null;
@@ -49,7 +49,7 @@ public class ExportMessageHandler extends AbstractHandler implements IHandler {
 			} else if (receivers.size() > 1) {
 				String[] choices = new String[receivers.size()];
 				for (int i = 0; i < receivers.size(); i++) {
-					choices[i] = receivers.get(i).getApplication() + " - " + receivers.get(i).getFacility();
+					choices[i] = receivers.get(i).getApplication() + " - " + receivers.get(i).getFacility(); //$NON-NLS-1$
 				}
 				ChoiceDialog choiceDialog = new ChoiceDialog(Display.getDefault().getActiveShell(), "Empfänger Auswahl",
 						"Mehrere Empfänger konfiguriert, welcher soll verwendet werden?.", choices);
@@ -88,13 +88,13 @@ public class ExportMessageHandler extends AbstractHandler implements IHandler {
 				return false;
 			}
 		} catch (ElexisException e) {
-			LoggerFactory.getLogger(getClass()).error("Error generating message", e);
+			LoggerFactory.getLogger(getClass()).error("Error generating message", e); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 					"Es ist ein Fehler bei der Generierung der Message vom Typ [" + messageTyp
 							+ "] aufgetreten. Es wurde keine Message exportiert.");
 			return false;
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error writing file", e);
+			LoggerFactory.getLogger(getClass()).error("Error writing file", e); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 					"Es ist ein Fehler beim Schreiben der Message vom Typ [" + messageTyp + "] aufgetreten.");
 			return false;
@@ -107,8 +107,8 @@ public class ExportMessageHandler extends AbstractHandler implements IHandler {
 		String firstline;
 		try {
 			firstline = reader.readLine();
-			if (firstline.startsWith("MSH")) {
-				if (firstline.contains("8859-1") || firstline.contains("8859/1")) {
+			if (firstline.startsWith("MSH")) { //$NON-NLS-1$
+				if (firstline.contains("8859-1") || firstline.contains("8859/1")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return StandardCharsets.ISO_8859_1.name();
 				}
 			}

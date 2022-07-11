@@ -38,16 +38,16 @@ public class EphaInteractionsApi {
 
 	public synchronized Object advice(List<Substance> model) {
 		WebTarget target = jaxrsClient.target(getBaseUrl())
-				.path("clinic/advice/" + Locale.getDefault().getLanguage() + "/");
-		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]");
+				.path("clinic/advice/" + Locale.getDefault().getLanguage() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		LoggerFactory.getLogger(getClass()).info("API target [" + target + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String jsonString = gson.toJson(model);
 		// remove bad chars
-		jsonString = jsonString.replaceAll("/", StringUtils.SPACE);
+		jsonString = jsonString.replaceAll("/", StringUtils.SPACE); //$NON-NLS-1$
 		final Response response = target.request().post(Entity.json(jsonString));
 
 		if (response.getStatus() >= 300) {
-			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class);
+			String message = "[" + response.getStatus() + "]\n" + response.readEntity(String.class); //$NON-NLS-1$ //$NON-NLS-2$
 			LoggerFactory.getLogger(getClass()).error(message);
 			return message;
 		} else {
@@ -56,12 +56,12 @@ public class EphaInteractionsApi {
 	}
 
 	private String getBaseUrl() {
-		return "https://api.epha.health/";
+		return "https://api.epha.health/"; //$NON-NLS-1$
 	}
 
 	private Client createJaxrsClient() {
 		try {
-			SSLContext sslcontext = SSLContext.getInstance("TLS");
+			SSLContext sslcontext = SSLContext.getInstance("TLS"); //$NON-NLS-1$
 			sslcontext.init(null, new TrustManager[] { new X509TrustManager() {
 				public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
 				}
@@ -77,7 +77,7 @@ public class EphaInteractionsApi {
 			return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((s1, s2) -> true)
 					.withConfig(new ClientConfig()).build();
 		} catch (Exception e) {
-			LoggerFactory.getLogger(getClass()).warn("Error creating jaxrs client", e);
+			LoggerFactory.getLogger(getClass()).warn("Error creating jaxrs client", e); //$NON-NLS-1$
 		}
 		return null;
 	}

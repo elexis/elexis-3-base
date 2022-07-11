@@ -61,7 +61,7 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 		String medicationType = event.getParameter("ch.elexis.core.ui.medication.commandParameter.medication"); //$NON-NLS-1$
 		// if not set use all
 		if (medicationType == null || medicationType.isEmpty()) {
-			medicationType = "all";
+			medicationType = "all"; //$NON-NLS-1$
 		}
 
 		List<IPrescription> prescriptions = getPrescriptions(patient, medicationType, event);
@@ -80,14 +80,14 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 				// open with system viewer
 				try {
 					Program.launch(SaveEMediplanUtil.writeTempPdf(pdfOutput));
-					ContextServiceHolder.get().postEvent(ElexisEventTopics.BASE + "emediplan/ui/create", letter);
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.BASE + "emediplan/ui/create", letter); //$NON-NLS-1$
 				} catch (IOException e) {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 							"Das Rezept konnte nicht angezeigt werden.");
 				}
 				bundleContext.ungetService(eMediplanServiceRef);
 			} else {
-				LoggerFactory.getLogger(getClass()).error("No EMediplanService available");
+				LoggerFactory.getLogger(getClass()).error("No EMediplanService available"); //$NON-NLS-1$
 				MessageDialog.openError(HandlerUtil.getActiveShell(event), "Fehler",
 						"Kein eMediplan Service gefunden.");
 			}
@@ -106,7 +106,7 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 
 	@SuppressWarnings("unchecked")
 	private List<IPrescription> getPrescriptions(IPatient patient, String medicationType, ExecutionEvent event) {
-		if ("selection".equals(medicationType)) {
+		if ("selection".equals(medicationType)) { //$NON-NLS-1$
 			ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
 			if (selection != null && !selection.isEmpty()) {
 				List<IPrescription> ret = new ArrayList<>();
@@ -125,16 +125,16 @@ public class CreateAndOpenHandler extends AbstractHandler implements IHandler {
 				}
 				return ret;
 			}
-		} else if ("all".equals(medicationType)) {
+		} else if ("all".equals(medicationType)) { //$NON-NLS-1$
 			List<IPrescription> ret = new ArrayList<>();
 			ret.addAll(patient.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION,
 					EntryType.SYMPTOMATIC_MEDICATION)));
 			return ret;
-		} else if ("fix".equals(medicationType)) {
+		} else if ("fix".equals(medicationType)) { //$NON-NLS-1$
 			return patient.getMedication(Collections.singletonList(EntryType.FIXED_MEDICATION));
-		} else if ("reserve".equals(medicationType)) {
+		} else if ("reserve".equals(medicationType)) { //$NON-NLS-1$
 			return patient.getMedication(Collections.singletonList(EntryType.RESERVE_MEDICATION));
-		} else if ("symptomatic".equals(medicationType)) {
+		} else if ("symptomatic".equals(medicationType)) { //$NON-NLS-1$
 			return patient.getMedication(Collections.singletonList(EntryType.SYMPTOMATIC_MEDICATION));
 		}
 		return Collections.emptyList();

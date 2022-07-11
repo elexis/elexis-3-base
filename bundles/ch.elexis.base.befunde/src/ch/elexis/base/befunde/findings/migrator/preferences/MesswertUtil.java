@@ -13,7 +13,7 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.rgw.tools.StringTool;
 
 public class MesswertUtil {
-	private static final String MAPPING_CONFIG = "ch.elexis.core.findins/messwert/mapping";
+	private static final String MAPPING_CONFIG = "ch.elexis.core.findins/messwert/mapping"; //$NON-NLS-1$
 
 	/**
 	 * Get the setup Messwert from the DB connection.
@@ -61,7 +61,7 @@ public class MesswertUtil {
 
 		@SuppressWarnings("rawtypes")
 		Map befunde = setup.getMap("Befunde"); //$NON-NLS-1$
-		String befundFields = (String) befunde.get(befund + "_FIELDS");
+		String befundFields = (String) befunde.get(befund + "_FIELDS"); //$NON-NLS-1$
 		if (befundFields != null) {
 			String[] fields = befundFields.split(Messwert.SETUP_SEPARATOR);
 			for (String field : fields) {
@@ -91,7 +91,7 @@ public class MesswertUtil {
 				}
 			}
 		} else {
-			throw new IllegalStateException("No mandant config available");
+			throw new IllegalStateException("No mandant config available"); //$NON-NLS-1$
 		}
 		return ret;
 	}
@@ -144,15 +144,15 @@ public class MesswertUtil {
 			}
 			ConfigServiceHolder.setMandator(MAPPING_CONFIG, sb.toString());
 		} else {
-			throw new IllegalStateException("No mandant config available");
+			throw new IllegalStateException("No mandant config available"); //$NON-NLS-1$
 		}
 	}
 
 	@SuppressWarnings("rawtypes")
 	public static boolean isExistingMesswert(String name) {
 		Messwert setup = getSetup();
-		Map setupMap = setup.getMap("Befunde");
-		String names = (String) setupMap.get("names");
+		Map setupMap = setup.getMap("Befunde"); //$NON-NLS-1$
+		String names = (String) setupMap.get("names"); //$NON-NLS-1$
 		if (names != null) {
 			String[] namesParts = names.split(Messwert.SETUP_SEPARATOR);
 			for (String string : namesParts) {

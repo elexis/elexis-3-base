@@ -46,7 +46,7 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 				new ScriptingHelper(getBrowser()).refetchEvents();
 			}
 		} else {
-			throw new IllegalArgumentException("Unexpected arguments");
+			throw new IllegalArgumentException("Unexpected arguments"); //$NON-NLS-1$
 		}
 		return null;
 	}

@@ -70,7 +70,7 @@ public abstract class AbstractVaccinationPlan {
 
 		@Override
 		public String toString() {
-			return "(" + beginAgeInMonths + ")-(" + endAgeInMonths + "): " + getClearedDiseaseAtcCode();
+			return "(" + beginAgeInMonths + ")-(" + endAgeInMonths + "): " + getClearedDiseaseAtcCode(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		/**
@@ -79,7 +79,7 @@ public abstract class AbstractVaccinationPlan {
 		 *         plain ATC-Code information without its allocation to base or extended
 		 */
 		public String getClearedDiseaseAtcCode() {
-			return diseaseAtcCode.replaceAll("/[BbEe]$", StringUtils.EMPTY);
+			return diseaseAtcCode.replaceAll("/[BbEe]$", StringUtils.EMPTY); //$NON-NLS-1$
 		}
 	}
 

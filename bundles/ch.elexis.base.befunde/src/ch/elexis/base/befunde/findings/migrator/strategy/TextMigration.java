@@ -33,7 +33,7 @@ public class TextMigration extends AbstractMigrationStrategy implements IMigrati
 
 			return Optional.of(observation);
 		} catch (ElexisException e) {
-			logger.error("Error creating observation", e);
+			logger.error("Error creating observation", e); //$NON-NLS-1$
 		}
 		return Optional.empty();
 	}

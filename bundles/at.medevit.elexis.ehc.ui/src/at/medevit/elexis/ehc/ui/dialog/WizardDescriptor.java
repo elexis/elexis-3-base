@@ -26,8 +26,8 @@ public class WizardDescriptor implements IWizardDescriptor {
 	private Wizard wizard;
 
 	public WizardDescriptor(IConfigurationElement el) {
-		label = el.getAttribute("name");
-		categoryId = el.getAttribute("category");
+		label = el.getAttribute("name"); //$NON-NLS-1$
+		categoryId = el.getAttribute("category"); //$NON-NLS-1$
 
 		configuration = el;
 	}
@@ -35,7 +35,7 @@ public class WizardDescriptor implements IWizardDescriptor {
 	@Override
 	public Wizard createWizard() throws CoreException {
 		if (wizard == null) {
-			wizard = (Wizard) configuration.createExecutableExtension("class");
+			wizard = (Wizard) configuration.createExecutableExtension("class"); //$NON-NLS-1$
 		}
 		return wizard;
 	}

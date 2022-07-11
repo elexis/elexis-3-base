@@ -38,7 +38,7 @@ public class MessageUtil {
 	public static void export(String typ, String message, String encoding) throws IOException {
 		Optional<File> outputDir = PreferenceUtil.getOutputDirectory();
 		if (outputDir.isPresent()) {
-			File outputFile = new File(outputDir.get(), System.currentTimeMillis() + "_" + typ + ".hl7");
+			File outputFile = new File(outputDir.get(), System.currentTimeMillis() + "_" + typ + ".hl7"); //$NON-NLS-1$ //$NON-NLS-2$
 			try (BufferedWriter writer = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(outputFile), encoding))) {
 				writer.write(message);

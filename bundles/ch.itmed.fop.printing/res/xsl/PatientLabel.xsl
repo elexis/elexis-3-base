@@ -2,13 +2,14 @@
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:fo="http://www.w3.org/1999/XSL/Format">
+
 	<xsl:output method="xml" indent="yes" />
 	<xsl:variable name="pageWidth">
 		<xsl:value-of select="Page/@pageWidth" />
 	</xsl:variable>
 	<xsl:variable name="pageHeight">
 		<xsl:value-of select="Page/@pageHeight" />
-		</xsl:variable>
+	</xsl:variable>
 	<xsl:variable name="marginTop">
 		<xsl:value-of select="Page/@marginTop" />
 	</xsl:variable>
@@ -79,7 +80,13 @@
 			<xsl:if test="/Page/Patient/MobilePhone/text()">
 				&#160;Mobil:&#160;
 				<xsl:value-of select="MobilePhone" />
+
 			</xsl:if>
 		</fo:block>
+		<fo:block>
+		Druckdatum:
+		<xsl:value-of select="/Page/@currentDate" />
+		&#160;
+	</fo:block>
 	</xsl:template>
 </xsl:stylesheet>

@@ -328,7 +328,7 @@ public class GDTSatzNachricht6310 extends GDTSatzNachricht {
 			for (int i = 0; i < testIdent.length; i++) {
 				TestIdent t = testIdent[i];
 				if (t.getTestIdent() == null) {
-					addLine(GDTConstants.FELDKENNUNG_TEST_IDENT + "TestNumber" + (i + 1));
+					addLine(GDTConstants.FELDKENNUNG_TEST_IDENT + "TestNumber" + (i + 1)); //$NON-NLS-1$
 				} else {
 					addLine(GDTConstants.FELDKENNUNG_TEST_IDENT + t.getTestIdent());
 				}

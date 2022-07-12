@@ -42,9 +42,9 @@ public class GlobalInboxEntryFactory {
 
 	@Activate
 	public void activate() {
-		String giDirSetting = configService.getLocal(Preferences.PREF_DIR, "NOTSET");
-		if ("NOTSET".equals(giDirSetting)) {
-			File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox");
+		String giDirSetting = configService.getLocal(Preferences.PREF_DIR, "NOTSET"); //$NON-NLS-1$
+		if ("NOTSET".equals(giDirSetting)) { //$NON-NLS-1$
+			File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox"); //$NON-NLS-1$
 			boolean created = giDir.mkdir();
 			if (created) {
 				CoreHub.localCfg.set(Preferences.PREF_DIR, giDir.getAbsolutePath());
@@ -111,7 +111,7 @@ public class GlobalInboxEntryFactory {
 
 	private static void integrateAdditionalInformation(Map<String, Object> result, GlobalInboxEntry gie) {
 
-		Object dateTokens = result.get("dateTokens");
+		Object dateTokens = result.get("dateTokens"); //$NON-NLS-1$
 		if (dateTokens instanceof List) {
 			@SuppressWarnings("unchecked")
 			List<LocalDate> _dateTokens = (List<LocalDate>) dateTokens;
@@ -120,12 +120,12 @@ public class GlobalInboxEntryFactory {
 			}
 		}
 
-		Object object = result.get("creationDateCandidate");
+		Object object = result.get("creationDateCandidate"); //$NON-NLS-1$
 		if (object instanceof LocalDate) {
 			gie.setCreationDateCandidate((LocalDate) object);
 		}
 
-		Object patientCandidates = result.get("patientCandidates");
+		Object patientCandidates = result.get("patientCandidates"); //$NON-NLS-1$
 		if (patientCandidates instanceof List) {
 			@SuppressWarnings("unchecked")
 			List<String> patientCandidatesSts = (List<String>) patientCandidates;
@@ -143,7 +143,7 @@ public class GlobalInboxEntryFactory {
 			}
 		}
 
-		Object senderCandidates = result.get("senderCandidates");
+		Object senderCandidates = result.get("senderCandidates"); //$NON-NLS-1$
 		if (senderCandidates instanceof List) {
 			@SuppressWarnings("unchecked")
 			List<String> senderCandidatesSts = (List<String>) senderCandidates;

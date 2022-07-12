@@ -51,17 +51,17 @@ public class ElementsProviderExtension {
 	private static void updateInstances() {
 		instances = new ArrayList<IInboxElementsProvider>();
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
-		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.inbox.elementsprovider");
+		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.inbox.elementsprovider"); //$NON-NLS-1$
 		if (exp != null) {
 			IExtension[] extensions = exp.getExtensions();
 			for (IExtension ex : extensions) {
 				IConfigurationElement[] elems = ex.getConfigurationElements();
 				for (IConfigurationElement el : elems) {
-					if (el.getName().equals("provider")) {
+					if (el.getName().equals("provider")) { //$NON-NLS-1$
 						try {
-							instances.add((IInboxElementsProvider) el.createExecutableExtension("class"));
+							instances.add((IInboxElementsProvider) el.createExecutableExtension("class")); //$NON-NLS-1$
 						} catch (CoreException e) {
-							logger.error("Error creating IInboxElementsProvider " + e);
+							logger.error("Error creating IInboxElementsProvider " + e); //$NON-NLS-1$
 						}
 					}
 				}

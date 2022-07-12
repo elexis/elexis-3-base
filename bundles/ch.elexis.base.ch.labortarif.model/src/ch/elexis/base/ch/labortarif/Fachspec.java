@@ -8,7 +8,7 @@ public class Fachspec {
 	public static Fachspec[] loadFachspecs(int langdef) {
 		ExcelWrapper excelWrapper = new ExcelWrapper();
 		excelWrapper.setFieldTypes(new Class[] { Integer.class, String.class, Integer.class, Integer.class });
-		if (excelWrapper.load(Fachspec.class.getResourceAsStream("/rsc/arztpraxen.xls"), langdef)) {
+		if (excelWrapper.load(Fachspec.class.getResourceAsStream("/rsc/arztpraxen.xls"), langdef)) { //$NON-NLS-1$
 			int first = excelWrapper.getFirstRow();
 			int last = excelWrapper.getLastRow();
 			Fachspec[] fspecs = new Fachspec[last - first + 1];

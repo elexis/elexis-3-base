@@ -41,13 +41,13 @@ public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRu
 	/**
 	 * run parameter: the url the solr service is accessible from
 	 */
-	public static final String RCP_STRING_SERVICE_URL = "service_url";
+	public static final String RCP_STRING_SERVICE_URL = "service_url"; //$NON-NLS-1$
 	/**
 	 * run parameter: the maximum runtime in seconds before the runnable stops,
 	 * defaults to 8*60=480
 	 */
-	public static final String RCP_STRING_MAX_RUNTIME_SECONDS = "maxRuntimeInSeconds";
-	public static final String RCP_STRING_MAX_RUNTIME_SECONDS_DEFAULT = "480";
+	public static final String RCP_STRING_MAX_RUNTIME_SECONDS = "maxRuntimeInSeconds"; //$NON-NLS-1$
+	public static final String RCP_STRING_MAX_RUNTIME_SECONDS_DEFAULT = "480"; //$NON-NLS-1$
 
 	private String solrServiceUrl;
 	private SolrIndexerUtil util;
@@ -76,8 +76,8 @@ public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRu
 		util = new SolrIndexerUtil();
 
 		solrServiceUrl = (String) runContext.get(RCP_STRING_SERVICE_URL);
-		if (solrServiceUrl == null || !solrServiceUrl.startsWith("http")) {
-			throw new TaskException(TaskException.EXECUTION_REJECTED, "Invalid service url provided.");
+		if (solrServiceUrl == null || !solrServiceUrl.startsWith("http")) { //$NON-NLS-1$
+			throw new TaskException(TaskException.EXECUTION_REJECTED, "Invalid service url provided."); //$NON-NLS-1$
 		}
 
 		startTime = System.currentTimeMillis();
@@ -96,14 +96,14 @@ public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRu
 			if (IElexisEnvironmentService.ES_STATION_ID_DEFAULT.equals(contextService.get().getStationIdentifier())) {
 				// this is Elexis-Server running in EE
 				// see https://solr.apache.org/guide/8_11/basic-authentication-plugin.html
-				String solrPassword = System.getenv("X_EE_SOLR_ELEXIS_SERVER_PASSWORD");
+				String solrPassword = System.getenv("X_EE_SOLR_ELEXIS_SERVER_PASSWORD"); //$NON-NLS-1$
 				if (StringUtils.isNotBlank(solrPassword)) {
 					HttpClient httpClient = createBasicAuthHttpClient(IElexisEnvironmentService.ES_STATION_ID_DEFAULT,
 							solrPassword);
 					solrClientBuilder.withHttpClient(httpClient);
 				} else {
 					LoggerFactory.getLogger(getClass()).error(
-							"Combination EE/ES found, but password is blank in env X_EE_SOLR_ELEXIS_SERVER_PASSWORD");
+							"Combination EE/ES found, but password is blank in env X_EE_SOLR_ELEXIS_SERVER_PASSWORD"); //$NON-NLS-1$
 				}
 			}
 		}
@@ -117,7 +117,7 @@ public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRu
 
 	protected void checkResponse(SolrResponseBase response) throws SolrServerException {
 		if (response.getStatus() != 0) {
-			throw new SolrServerException("solr response is " + response.getStatus());
+			throw new SolrServerException("solr response is " + response.getStatus()); //$NON-NLS-1$
 		}
 	}
 
@@ -154,7 +154,7 @@ public abstract class AbstractIndexerIdentifiedRunnable implements IIdentifiedRu
 				Credentials credentials = credsProvider
 						.getCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()));
 				if (credentials == null) {
-					throw new HttpException("No credentials provided for preemptive authentication.");
+					throw new HttpException("No credentials provided for preemptive authentication."); //$NON-NLS-1$
 				}
 				authState.update(new BasicScheme(), credentials);
 			}

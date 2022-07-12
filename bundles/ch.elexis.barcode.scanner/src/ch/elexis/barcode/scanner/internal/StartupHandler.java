@@ -23,7 +23,7 @@ public class StartupHandler implements EventHandler {
 
 	@Override
 	public void handleEvent(Event event) {
-		logger.info("APPLICATION STARTUP COMPLETE");
+		logger.info("APPLICATION STARTUP COMPLETE"); //$NON-NLS-1$
 		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		boolean settings = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_AUTOSTART, false);
 		if (settings) {
@@ -33,7 +33,7 @@ public class StartupHandler implements EventHandler {
 						Command cmd = commandService.getCommand(ToggleHandler.COMMAND_ID);
 						cmd.executeWithChecks(new ExecutionEvent(cmd, new HashMap<>(), null, null));
 					} catch (Exception e) {
-						logger.warn("cannot load barcode scanner on startup", e);
+						logger.warn("cannot load barcode scanner on startup", e); //$NON-NLS-1$
 					}
 				}
 			});

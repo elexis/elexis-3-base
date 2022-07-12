@@ -104,8 +104,8 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 	public void doubleClicked(IInboxElement element) {
 		if (element instanceof LabGroupedInboxElements) {
 			if (rocheView == null && labView == null) {
-				rocheView = PlatformUI.getWorkbench().getViewRegistry().find("at.medevit.elexis.roche.labor.view");
-				labView = PlatformUI.getWorkbench().getViewRegistry().find("ch.elexis.Labor");
+				rocheView = PlatformUI.getWorkbench().getViewRegistry().find("at.medevit.elexis.roche.labor.view"); //$NON-NLS-1$
+				labView = PlatformUI.getWorkbench().getViewRegistry().find("ch.elexis.Labor"); //$NON-NLS-1$
 			}
 			Display.getDefault().asyncExec(() -> {
 				try {
@@ -116,7 +116,7 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(labView.getId());
 					}
 				} catch (PartInitException e) {
-					LoggerFactory.getLogger(getClass()).warn("Error showing lab view", e);
+					LoggerFactory.getLogger(getClass()).warn("Error showing lab view", e); //$NON-NLS-1$
 				}
 			});
 		}

@@ -43,16 +43,16 @@ public class CDALoader {
 
 	private static DocumentBuilderFactory factory = null;
 	private static String defaultXsl = null;
-	private static String cdaReportsBase = "cdareports";
-	private static String tmpCDAFile = cdaReportsBase + File.separator + "tmp_cdafile.xml";
-	private static String tmpXslFile = cdaReportsBase + File.separator + "tmp_stylesheet.xsl";
+	private static String cdaReportsBase = "cdareports"; //$NON-NLS-1$
+	private static String tmpCDAFile = cdaReportsBase + File.separator + "tmp_cdafile.xml"; //$NON-NLS-1$
+	private static String tmpXslFile = cdaReportsBase + File.separator + "tmp_stylesheet.xsl"; //$NON-NLS-1$
 
 	public CDALoader() {
 		File eHealthCDA = new File(cdaReportsBase);
 		if (!eHealthCDA.exists() || !eHealthCDA.isDirectory()) {
 			eHealthCDA.mkdir();
 		}
-		defaultXsl = "type=\"text/xsl\" href=\"" + initDefaultXsl() + "\"";
+		defaultXsl = "type=\"text/xsl\" href=\"" + initDefaultXsl() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		factory = DocumentBuilderFactory.newInstance();
 	}
 
@@ -68,11 +68,11 @@ public class CDALoader {
 
 			// modify stylesheet if necessary
 			XPath xpath = XPathFactory.newInstance().newXPath();
-			String expression = "/processing-instruction('xml-stylesheet')";
+			String expression = "/processing-instruction('xml-stylesheet')"; //$NON-NLS-1$
 			ProcessingInstruction pi = (ProcessingInstruction) xpath.evaluate(expression, doc, XPathConstants.NODE);
 
 			if (pi == null) {
-				pi = doc.createProcessingInstruction("xml-stylesheet", defaultXsl);
+				pi = doc.createProcessingInstruction("xml-stylesheet", defaultXsl); //$NON-NLS-1$
 				doc.insertBefore(pi, doc.getDocumentElement());
 			} else if (!isValidStylesheet(pi.getNodeValue(), path)) {
 				pi.setData(defaultXsl);
@@ -85,14 +85,14 @@ public class CDALoader {
 			StreamResult result = new StreamResult(new File(cdaFile.getAbsolutePath()));
 			transformer.transform(source, result);
 
-			log.debug("Done parsing XML");
+			log.debug("Done parsing XML"); //$NON-NLS-1$
 
 		} catch (SAXException sax) {
-			log.error("XML file causes troubles - either no proper XML or InputStream corrupt", sax);
+			log.error("XML file causes troubles - either no proper XML or InputStream corrupt", sax); //$NON-NLS-1$
 		} catch (ParserConfigurationException | XPathExpressionException | IOException e) {
-			log.error("Error while trying to parse inpustream", e);
+			log.error("Error while trying to parse inpustream", e); //$NON-NLS-1$
 		} catch (TransformerException te) {
-			log.error("Could not transform content from InputStream into file [" + cdaFile.getName() + "]", te);
+			log.error("Could not transform content from InputStream into file [" + cdaFile.getName() + "]", te); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return cdaFile;
 	}
@@ -112,17 +112,17 @@ public class CDALoader {
 	}
 
 	private boolean isValidStylesheet(String value, String cdaFilePath) {
-		if (value.startsWith("type=\"text/xsl")) {
-			String hrefAttribute = "href=\"";
+		if (value.startsWith("type=\"text/xsl")) { //$NON-NLS-1$
+			String hrefAttribute = "href=\""; //$NON-NLS-1$
 			int hrefStart = value.indexOf(hrefAttribute) + 6;
-			int hrefEnd = value.indexOf("\"", hrefStart + 1);
+			int hrefEnd = value.indexOf("\"", hrefStart + 1); //$NON-NLS-1$
 			String xslPath = value.substring(hrefStart, hrefEnd);
 
 			if (!validHttpLink(xslPath)) {
 				if (!validLocalXsl(xslPath, cdaFilePath)) {
 					return false;
 				}
-				log.debug("Use XSL given in the stylesheet line entry");
+				log.debug("Use XSL given in the stylesheet line entry"); //$NON-NLS-1$
 				return true;
 			}
 		}
@@ -186,7 +186,7 @@ public class CDALoader {
 
 			// copy of xsl only needed if not there yet
 			if (!tmpXsl.exists()) {
-				URL xslUrl = FileLocator.resolve(CDALoader.class.getResource("/rsc/vhitg-cda-v3.xsl"));
+				URL xslUrl = FileLocator.resolve(CDALoader.class.getResource("/rsc/vhitg-cda-v3.xsl")); //$NON-NLS-1$
 				Files.copy(xslUrl.openStream(), tmpXsl.toPath());
 			}
 			path = tmpXsl.getAbsolutePath();

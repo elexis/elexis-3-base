@@ -29,15 +29,15 @@ import ch.elexis.core.ui.util.SWTHelper;
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	private static Logger log = LoggerFactory.getLogger(PreferencePage.class);
 
-	public static final String ID = "at.medevit.elexis.impfplan.ui.preferences";
+	public static final String ID = "at.medevit.elexis.impfplan.ui.preferences"; //$NON-NLS-1$
 
-	public static final String PREFBASE = "plugins/impfplan/";
-	public static final String VAC_PDF_OUTPUTDIR = PREFBASE + "outputdir";
-	public static final String VAC_SORT_ORDER = PREFBASE + "sortorder";
-	public static final String VAC_BILLING_POS = PREFBASE + "defleistungen";
-	public static final String VAC_SHOW_SIDE = PREFBASE + "showside";
-	public static final String VAC_AUTO_BILL = PREFBASE + "autobill";
-	public static final String VAC_DEFAULT_SIDE = PREFBASE + "defaultside";
+	public static final String PREFBASE = "plugins/impfplan/"; //$NON-NLS-1$
+	public static final String VAC_PDF_OUTPUTDIR = PREFBASE + "outputdir"; //$NON-NLS-1$
+	public static final String VAC_SORT_ORDER = PREFBASE + "sortorder"; //$NON-NLS-1$
+	public static final String VAC_BILLING_POS = PREFBASE + "defleistungen"; //$NON-NLS-1$
+	public static final String VAC_SHOW_SIDE = PREFBASE + "showside"; //$NON-NLS-1$
+	public static final String VAC_AUTO_BILL = PREFBASE + "autobill"; //$NON-NLS-1$
+	public static final String VAC_DEFAULT_SIDE = PREFBASE + "defaultside"; //$NON-NLS-1$
 
 	private Text txtLog;
 	private Label lblInfo;
@@ -46,10 +46,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	public PreferencePage() {
 		try {
-			Class formerVaccClass = Class.forName("ch.elexis.impfplan.model.Vaccination");
+			Class formerVaccClass = Class.forName("ch.elexis.impfplan.model.Vaccination"); //$NON-NLS-1$
 			visibleImportPart = true;
 		} catch (ClassNotFoundException e1) {
-			log.debug("ch.elexis.impfplan Plugin not present - disable import in preferences");
+			log.debug("ch.elexis.impfplan Plugin not present - disable import in preferences"); //$NON-NLS-1$
 			visibleImportPart = false;
 		}
 	}
@@ -80,7 +80,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 		RadioGroupFieldEditor radioGroup = new RadioGroupFieldEditor(VAC_DEFAULT_SIDE,
 				"Standard Seite (nur relevant, wenn Seite einblenden aktiv ist)", 2,
-				new String[][] { { "links", "left" }, { "rechts", "right" } }, getFieldEditorParent(), true);
+				new String[][] { { "links", "left" }, { "rechts", "right" } }, getFieldEditorParent(), true); //$NON-NLS-2$ //$NON-NLS-4$
 		addField(radioGroup);
 
 		Composite area = new Composite(getFieldEditorParent().getParent(), SWT.NONE);
@@ -91,7 +91,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 		lblInfo.setText("Um Impfungen aus dem früherem Impfplan zu importieren drücken Sie 'Import starten'");
 
 		btnImport = new Button(area, SWT.PUSH);
-		btnImport.setImage(ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui", "rsc/icons/start_task.png"));
+		btnImport.setImage(ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui", "rsc/icons/start_task.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		btnImport.setText("Import starten");
 		btnImport.setToolTipText("Impfungen aus anderem Impflan importieren");
 		btnImport.addSelectionListener(new SelectionAdapter() {
@@ -105,7 +105,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 					}
 				} catch (Exception ex) {
 					log.error(
-							"Exception while trying to execute command: " + ImportLegacyVaccinationsHandler.COMMAND_ID,
+							"Exception while trying to execute command: " + ImportLegacyVaccinationsHandler.COMMAND_ID, //$NON-NLS-1$
 							ex);
 					SWTHelper.showError("Fehler", "Fehler beim Versuch den Impf-Import auszuführen!");
 				}

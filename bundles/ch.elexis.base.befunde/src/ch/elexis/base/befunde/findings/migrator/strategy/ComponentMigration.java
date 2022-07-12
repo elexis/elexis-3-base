@@ -35,7 +35,7 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 
 		// determine if component code
 		String code = mapping.getFindingsCode();
-		String[] parts = code.split("\\.");
+		String[] parts = code.split("\\."); //$NON-NLS-1$
 		if (parts.length == 2) {
 			componentGrpCode = parts[0];
 			componentCode = parts[1];
@@ -101,8 +101,8 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 					}
 					return true;
 				} else {
-					logger.error("Could only set " + valuesSet + " of " + values.size() + " values of Messwert ["
-							+ messwert.getId() + "]");
+					logger.error("Could only set " + valuesSet + " of " + values.size() + " values of Messwert [" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ messwert.getId() + "]"); //$NON-NLS-1$
 					return false;
 				}
 			} else if (type == ObservationType.TEXT) {
@@ -163,7 +163,7 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 			return (IObservation) templateService.createFinding(Patient.load(messwert.get(Messwert.FLD_PATIENT_ID)),
 					template);
 		} catch (ElexisException e) {
-			logger.error("Error creating observation", e);
+			logger.error("Error creating observation", e); //$NON-NLS-1$
 		}
 		return null;
 	}

@@ -6,9 +6,9 @@ import ch.elexis.data.Patient;
 
 public interface KapschReferralService {
 
-	public static final String CONFIG_ENDPOINT = "kapsch.referral.endpoint";
-	public static final String ENDPOINT_PRODUCTIV = "productiv";
-	public static final String ENDPOINT_TEST = "test";
+	public static final String CONFIG_ENDPOINT = "kapsch.referral.endpoint"; //$NON-NLS-1$
+	public static final String ENDPOINT_PRODUCTIV = "productiv"; //$NON-NLS-1$
+	public static final String ENDPOINT_TEST = "test"; //$NON-NLS-1$
 
 	/**
 	 * Get an URL String containing the Patient Information parameters. The URL can

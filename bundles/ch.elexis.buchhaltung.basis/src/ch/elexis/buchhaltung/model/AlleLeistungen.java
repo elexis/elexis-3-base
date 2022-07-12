@@ -46,7 +46,7 @@ import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
 public class AlleLeistungen extends AbstractTimeSeries {
 	private static final String NAME = Messages.AlleLeistungen_Title;
 
-	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy"); //$NON-NLS-1$
 
 	private boolean hasUserId;
 
@@ -121,7 +121,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 
 			IInvoice consInvoice = cons.getInvoice();
 			InvoiceState consInvoiceState = cons.getInvoiceState();
-			String billState = (consInvoice != null ? "RG " + consInvoice.getNumber() + ": " : StringUtils.EMPTY)
+			String billState = (consInvoice != null ? "RG " + consInvoice.getNumber() + ": " : StringUtils.EMPTY) //$NON-NLS-1$ //$NON-NLS-2$
 					+ consInvoiceState.getLocaleText();
 			if (consInvoiceState.numericValue() >= InvoiceState.FROM_TODAY.numericValue()
 					&& consInvoiceState.numericValue() <= InvoiceState.NOT_FROM_YOU.numericValue())
@@ -201,8 +201,8 @@ public class AlleLeistungen extends AbstractTimeSeries {
 			monitor.worked(step);
 		}
 
-		LoggerFactory.getLogger(AlleLeistungen.class).debug("calculation of konsultations size: " + consultations.size()
-				+ " took " + Long.valueOf((System.currentTimeMillis() - time) / 1000) + " seconds.");
+		LoggerFactory.getLogger(AlleLeistungen.class).debug("calculation of konsultations size: " + consultations.size() //$NON-NLS-1$
+				+ " took " + Long.valueOf((System.currentTimeMillis() - time) / 1000) + " seconds."); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Set content.
 		this.dataSet.setContent(result);

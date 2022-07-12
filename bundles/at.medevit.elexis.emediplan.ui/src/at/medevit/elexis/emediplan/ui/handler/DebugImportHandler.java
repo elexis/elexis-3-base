@@ -38,14 +38,14 @@ public class DebugImportHandler extends AbstractHandler implements IHandler {
 	protected String getEncodedJson(@NonNull String json) {
 		StringBuilder sb = new StringBuilder();
 		// header for compresses json
-		sb.append("CHMED16A1");
+		sb.append("CHMED16A1"); //$NON-NLS-1$
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
 			gzip.write(json.getBytes());
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error encoding json", e);
-			throw new IllegalStateException("Error encoding json", e);
+			LoggerFactory.getLogger(getClass()).error("Error encoding json", e); //$NON-NLS-1$
+			throw new IllegalStateException("Error encoding json", e); //$NON-NLS-1$
 		}
 		sb.append(Base64.getEncoder().encodeToString(out.toByteArray()));
 		return sb.toString();

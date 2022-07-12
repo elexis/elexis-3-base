@@ -45,7 +45,7 @@ public class ADT_A08Message implements IHL7Message {
 			Mandant eMandant = (Mandant) context.get(IHL7MessageService.CONTEXT_MANDANTOR);
 			HL7Mandant mandant = HL7MessageUtil.mandantOf(eMandant);
 
-			HL7_ADT_A08 message = new HL7_ADT_A08("CHELEXIS", "PATDATA", receivingApplication, StringUtils.EMPTY,
+			HL7_ADT_A08 message = new HL7_ADT_A08("CHELEXIS", "PATDATA", receivingApplication, StringUtils.EMPTY, //$NON-NLS-1$ //$NON-NLS-2$
 					receivingFacility, uniqueMessageControlID, uniqueProcessingID, mandant);
 			Patient ePatient = (Patient) context.get(IHL7MessageService.CONTEXT_PATIENT);
 			HL7Patient patient = HL7MessageUtil.patientOf(ePatient);
@@ -56,14 +56,14 @@ public class ADT_A08Message implements IHL7Message {
 			try {
 				return message.createText(patient, consultation);
 			} catch (HL7Exception e) {
-				throw new ElexisException("Error creating HL7 message, see wrapped exception", e);
+				throw new ElexisException("Error creating HL7 message, see wrapped exception", e); //$NON-NLS-1$
 			}
 		}
-		throw new ElexisException("No context for creating HL7 message available");
+		throw new ElexisException("No context for creating HL7 message available"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getHL7Version() {
-		return "2.3.1";
+		return "2.3.1"; //$NON-NLS-1$
 	}
 }

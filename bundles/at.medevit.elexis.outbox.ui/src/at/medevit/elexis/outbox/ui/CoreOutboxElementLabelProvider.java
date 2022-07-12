@@ -100,15 +100,15 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 		if (OutboxElementType.DB.equals(elementType)) {
 			if (((IOutboxElement) element).getObject() instanceof ITaskDescriptor) {
 				ITaskDescriptor taskDescriptor = (ITaskDescriptor) ((IOutboxElement) element).getObject();
-				if ("sendMailFromContext".equals(taskDescriptor.getIdentifiedRunnableId())) {
+				if ("sendMailFromContext".equals(taskDescriptor.getIdentifiedRunnableId())) { //$NON-NLS-1$
 					// now try to call the send mail task command
 					try {
 						ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
 								.getService(ICommandService.class);
-						Command sendMailTaskCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMailTask");
+						Command sendMailTaskCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMailTask"); //$NON-NLS-1$
 
 						HashMap<String, String> params = new HashMap<String, String>();
-						params.put("ch.elexis.core.mail.ui.sendMailTaskDescriptorId", taskDescriptor.getId());
+						params.put("ch.elexis.core.mail.ui.sendMailTaskDescriptorId", taskDescriptor.getId()); //$NON-NLS-1$
 						ParameterizedCommand parametrizedCommmand = ParameterizedCommand
 								.generateCommand(sendMailTaskCommand, params);
 						Boolean success = (Boolean) PlatformUI.getWorkbench().getService(IHandlerService.class)
@@ -117,7 +117,7 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 							OutboxServiceComponent.get().changeOutboxElementState(element, State.SENT);
 						}
 					} catch (Exception ex) {
-						LoggerFactory.getLogger(getClass()).warn("Send mail Task command not available", ex);
+						LoggerFactory.getLogger(getClass()).warn("Send mail Task command not available", ex); //$NON-NLS-1$
 					}
 				}
 			}
@@ -126,9 +126,9 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 			if (document != null) {
 				try {
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-							.showView("ch.elexis.core.ui.documents.views.DocumentsView");
+							.showView("ch.elexis.core.ui.documents.views.DocumentsView"); //$NON-NLS-1$
 				} catch (PartInitException e) {
-					LoggerFactory.getLogger(getClass()).error("Could not open documents view", e);
+					LoggerFactory.getLogger(getClass()).error("Could not open documents view", e); //$NON-NLS-1$
 				}
 			}
 		}
@@ -144,7 +144,7 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 		@Override
 		public Color getBackground(Object element) {
 			if (((IOutboxElement) element).getState() == State.SENT) {
-				return CoreUiUtil.getColorForString("d3d3d3");
+				return CoreUiUtil.getColorForString("d3d3d3"); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -171,12 +171,12 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 			Optional<ITask> execution = TaskServiceComponent.get().findLatestExecution(taskDescriptor);
 			if (execution.isPresent()) {
 				sb.append("versendet am "
-						+ execution.get().getFinishedAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+						+ execution.get().getFinishedAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))); //$NON-NLS-1$
 			} else {
 				sb.append(ir.getLocalizedDescription());
 			}
-			if ("sendMailFromContext".equals(taskDescriptor.getIdentifiedRunnableId())) {
-				MailMessage msg = MailMessage.fromMap((Map) taskDescriptor.getRunContext().get("message"));
+			if ("sendMailFromContext".equals(taskDescriptor.getIdentifiedRunnableId())) { //$NON-NLS-1$
+				MailMessage msg = MailMessage.fromMap((Map) taskDescriptor.getRunContext().get("message")); //$NON-NLS-1$
 				if (msg != null) {
 					sb.append(" an ").append(msg.getTo());
 					if (StringUtils.isNotBlank(msg.getCc())) {
@@ -207,10 +207,10 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 				try {
 					taskImage = ImageDescriptor
 							.createFromURL(
-									new URL("platform:/plugin/ch.elexis.core.ui.tasks/rsc/icons/screwdriver.png"))
+									new URL("platform:/plugin/ch.elexis.core.ui.tasks/rsc/icons/screwdriver.png")) //$NON-NLS-1$
 							.createImage();
 				} catch (MalformedURLException e) {
-					LoggerFactory.getLogger(getClass()).warn("Error loading task image ", e);
+					LoggerFactory.getLogger(getClass()).warn("Error loading task image ", e); //$NON-NLS-1$
 				}
 			}
 			return taskImage;
@@ -226,7 +226,7 @@ public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider 
 				try {
 					TaskServiceComponent.get().removeTaskDescriptor(taskDescriptor);
 				} catch (TaskException e) {
-					LoggerFactory.getLogger(getClass()).warn("Error removing mail Task", e);
+					LoggerFactory.getLogger(getClass()).warn("Error removing mail Task", e); //$NON-NLS-1$
 				}
 			}
 		}

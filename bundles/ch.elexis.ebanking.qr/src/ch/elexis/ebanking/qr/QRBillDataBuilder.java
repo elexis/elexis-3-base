@@ -35,17 +35,17 @@ public class QRBillDataBuilder {
 
 	public QRBillDataBuilder(IContact cdtrInf, Money money, String currency, IContact ultmtDbtr) {
 		// default header values
-		this.headerQRType = "SPC";
-		this.headerVersion = "0200";
-		this.headerCoding = "1";
+		this.headerQRType = "SPC"; //$NON-NLS-1$
+		this.headerVersion = "0200"; //$NON-NLS-1$
+		this.headerCoding = "1"; //$NON-NLS-1$
 
 		cdtrInf(cdtrInf);
 		amount(money, currency);
 		ultmtDbtr(ultmtDbtr);
 
 		// default remark value
-		this.referenceType = "NON";
-		this.referenceTrailer = "EPD";
+		this.referenceType = "NON"; //$NON-NLS-1$
+		this.referenceTrailer = "EPD"; //$NON-NLS-1$
 	}
 
 	public QRBillDataBuilder cdtrInf(IContact contact) {
@@ -69,9 +69,9 @@ public class QRBillDataBuilder {
 		this.reference = reference;
 		if (StringUtils.isNotBlank(reference)) {
 			if (reference.length() == 27) {
-				this.referenceType = "QRR";
+				this.referenceType = "QRR"; //$NON-NLS-1$
 			} else if (reference.length() <= 25) {
-				this.referenceType = "SCOR";
+				this.referenceType = "SCOR"; //$NON-NLS-1$
 			}
 		}
 		return this;
@@ -89,19 +89,19 @@ public class QRBillDataBuilder {
 		ret.setHeaderVersion(headerVersion);
 		ret.setHeaderCoding(headerCoding);
 
-		ret.setCdtrInfIBAN(StringUtils.defaultString((String) cdtrInfContact.getExtInfo("IBAN")));
-		setAddress(ret, "cdtrInf", cdtrInfContact);
+		ret.setCdtrInfIBAN(StringUtils.defaultString((String) cdtrInfContact.getExtInfo("IBAN"))); //$NON-NLS-1$
+		setAddress(ret, "cdtrInf", cdtrInfContact); //$NON-NLS-1$
 
-		ret.setCcyAmtAmt(String.format("%.2f", amount.getAmount()).replaceAll(",", "."));
+		ret.setCcyAmtAmt(String.format("%.2f", amount.getAmount()).replaceAll(",", ".")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		ret.setCcyAmtCcy(amountCurrency);
 
-		setAddress(ret, "ultmtDbtr", ultmtDbtrContact);
+		setAddress(ret, "ultmtDbtr", ultmtDbtrContact); //$NON-NLS-1$
 
 		ret.setRmtInfTp(referenceType);
 		ret.setRmtInfRef(reference);
 
 		ret.setRmtInfUstrd(
-				StringUtils.defaultString(referenceUnstructuredRemark).replaceAll("\\r|\\n", StringUtils.EMPTY));
+				StringUtils.defaultString(referenceUnstructuredRemark).replaceAll("\\r|\\n", StringUtils.EMPTY)); //$NON-NLS-1$
 		ret.setRmtInfTrailer(referenceTrailer);
 
 		return ret;
@@ -109,21 +109,21 @@ public class QRBillDataBuilder {
 
 	private void setAddress(QRBillData qrBillData, String prefix, IContact contact) throws QRBillDataException {
 		try {
-			BeanUtils.setProperty(qrBillData, prefix + "AdrTp", "K");
+			BeanUtils.setProperty(qrBillData, prefix + "AdrTp", "K"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			BeanUtils.setProperty(qrBillData, prefix + "Name", AddressFormatUtil.getFullnameWithSalutation(contact)
+			BeanUtils.setProperty(qrBillData, prefix + "Name", AddressFormatUtil.getFullnameWithSalutation(contact) //$NON-NLS-1$
 					.replaceAll(StringUtils.LF, StringUtils.SPACE).trim());
 
-			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine1", contact.getStreet().trim());
+			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine1", contact.getStreet().trim()); //$NON-NLS-1$
 
-			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine2",
+			BeanUtils.setProperty(qrBillData, prefix + "StrtNmOrAdrLine2", //$NON-NLS-1$
 					StringUtils.left(contact.getZip().trim() + StringUtils.SPACE + contact.getCity().trim(), 16));
 
 			Country country = contact.getCountry();
 			if (Country.NDF == country) {
 				country = Country.CH;
 			}
-			BeanUtils.setProperty(qrBillData, prefix + "Ctry", StringUtils.left(country.toString(), 2));
+			BeanUtils.setProperty(qrBillData, prefix + "Ctry", StringUtils.left(country.toString(), 2)); //$NON-NLS-1$
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			Throwable cause = e.getCause();
 			if (cause != null && cause instanceof QRBillDataException) {

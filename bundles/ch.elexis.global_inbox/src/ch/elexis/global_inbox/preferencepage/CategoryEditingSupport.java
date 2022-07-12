@@ -28,7 +28,7 @@ public class CategoryEditingSupport extends EditingSupport {
 		super(viewer);
 		this.viewer = viewer;
 		omnivoreDocumentStore = OsgiServiceUtil
-				.getService(IDocumentStore.class, "(storeid=ch.elexis.data.store.omnivore)").orElse(null);
+				.getService(IDocumentStore.class, "(storeid=ch.elexis.data.store.omnivore)").orElse(null); //$NON-NLS-1$
 		if (omnivoreDocumentStore != null) {
 			categories = omnivoreDocumentStore.getCategories().stream().map(category -> category.getName())
 					.sorted(Comparator.naturalOrder()).collect(Collectors.toList());

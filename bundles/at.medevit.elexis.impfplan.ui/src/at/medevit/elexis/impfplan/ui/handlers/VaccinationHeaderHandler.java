@@ -16,10 +16,10 @@ import org.eclipse.core.commands.ExecutionException;
 
 public class VaccinationHeaderHandler extends AbstractHandler {
 
-	public static final String COMMAND_ID = "at.medevit.elexis.impfplan.ui.view.vaccinationHeader";
-	public static final String HEADER_TYPE_PARAM = "at.medevit.elexis.impfplan.ui.view.vaccinationHeader.headerType";
+	public static final String COMMAND_ID = "at.medevit.elexis.impfplan.ui.view.vaccinationHeader"; //$NON-NLS-1$
+	public static final String HEADER_TYPE_PARAM = "at.medevit.elexis.impfplan.ui.view.vaccinationHeader.headerType"; //$NON-NLS-1$
 
-	public static final String HEADER_WITH_ADMINISTERED_VACCINES = "HWAV";
+	public static final String HEADER_WITH_ADMINISTERED_VACCINES = "HWAV"; //$NON-NLS-1$
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

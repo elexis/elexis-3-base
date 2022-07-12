@@ -109,7 +109,7 @@ public class LoincCodeCsvImporter extends ImporterPage {
 	private static class LoincFileBasedImporter extends Composite {
 
 		public Text tFname;
-		private String[] filterExts = { "*.csv" };
+		private String[] filterExts = { "*.csv" }; //$NON-NLS-1$
 		private String[] filterNames = { Messages.ImporterPage_allFiles };
 
 		public LoincFileBasedImporter(final Composite parent, final ImporterPage home, final String message,

@@ -31,7 +31,7 @@ class FileDocument implements IDocument {
 
 	public static FileDocument of(File file) throws IOException {
 		if (file == null) {
-			throw new IllegalArgumentException("must not be null");
+			throw new IllegalArgumentException("must not be null"); //$NON-NLS-1$
 		}
 
 		BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
@@ -154,7 +154,7 @@ class FileDocument implements IDocument {
 
 	@Override
 	public String getStoreId() {
-		return "filesystem";
+		return "filesystem"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -209,7 +209,7 @@ class FileDocument implements IDocument {
 		try {
 			return new FileInputStream(file);
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).warn("[{}] getContent()", file.getAbsolutePath(), e);
+			LoggerFactory.getLogger(getClass()).warn("[{}] getContent()", file.getAbsolutePath(), e); //$NON-NLS-1$
 		}
 		return null;
 	}

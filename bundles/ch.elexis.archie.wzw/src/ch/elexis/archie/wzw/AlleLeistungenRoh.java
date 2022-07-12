@@ -36,7 +36,7 @@ public class AlleLeistungenRoh extends BaseStats {
 					if (fall != null) {
 						IPatient pat = fall.getPatient();
 						IMandator m = k.getMandator();
-						String md = m == null ? "?" : m.getLabel();
+						String md = m == null ? "?" : m.getLabel(); //$NON-NLS-1$
 						String g = fall.getBillingSystem().getName();
 						if (pat != null) {
 							for (IBilled v : k.getBilled()) {
@@ -44,8 +44,8 @@ public class AlleLeistungenRoh extends BaseStats {
 								if (vv != null) {
 									String[] line = new String[] { md, pat.getPatientNr(), pat.getLabel(),
 											pat.getGender().toString(), Integer.toString(pat.getAgeInYears()),
-											k.getDate().toString(), g == null ? "?" : g, vv.getCodeSystemName(),
-											vv.getCode() == null ? "?" : vv.getCode(), vv.getText(),
+											k.getDate().toString(), g == null ? "?" : g, vv.getCodeSystemName(), //$NON-NLS-1$
+											vv.getCode() == null ? "?" : vv.getCode(), vv.getText(), //$NON-NLS-1$
 											Double.toString(v.getAmount()), Double.toString(v.getTotal().getAmount()) };
 									lines.add(line);
 								} else {

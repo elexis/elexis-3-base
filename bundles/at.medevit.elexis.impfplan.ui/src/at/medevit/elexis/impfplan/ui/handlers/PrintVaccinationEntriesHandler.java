@@ -60,7 +60,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
 
 public class PrintVaccinationEntriesHandler extends AbstractHandler {
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMM yyyy");
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MMMM yyyy"); //$NON-NLS-1$
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -153,7 +153,7 @@ public class PrintVaccinationEntriesHandler extends AbstractHandler {
 					+ "\nDas Ausgabeverzeichnis kann unter Einstellungen\\Klinische Hilfsmittel\\Impfplan definiert werden.");
 		}
 		File outputDir = new File(outputPath);
-		File pdf = new File(outputDir, "impfplan_" + patient.getPatCode() + ".pdf");
+		File pdf = new File(outputDir, "impfplan_" + patient.getPatCode() + ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
 		document.save(pdf);
 		document.close();
 		// open with system viewer

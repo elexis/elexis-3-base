@@ -65,7 +65,7 @@ public class ExportPrescriptionWizardPage2 extends WizardPage {
 	private void writePdf(ByteArrayOutputStream pdf) throws FileNotFoundException, IOException {
 		String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
 				PreferencePage.getDefaultOutputDir());
-		File pdfFile = new File(outputDir + File.separator + getRezeptFileName() + ".pdf");
+		File pdfFile = new File(outputDir + File.separator + getRezeptFileName() + ".pdf"); //$NON-NLS-1$
 		try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
 			fos.write(pdf.toByteArray());
 			fos.flush();
@@ -77,7 +77,7 @@ public class ExportPrescriptionWizardPage2 extends WizardPage {
 			String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
 					PreferencePage.getDefaultOutputDir());
 			ExportPrescriptionWizard.getDocument()
-					.saveToFile(outputDir + File.separator + getRezeptFileName() + ".xml");
+					.saveToFile(outputDir + File.separator + getRezeptFileName() + ".xml"); //$NON-NLS-1$
 			ByteArrayOutputStream pdf = DocboxService.getPrescriptionPdf(ExportPrescriptionWizard.getDocument());
 			writePdf(pdf);
 		} catch (Exception e) {
@@ -89,6 +89,6 @@ public class ExportPrescriptionWizardPage2 extends WizardPage {
 
 	public String getRezeptFileName() {
 		String ret = ExportPrescriptionWizard.getRezept().getLabel();
-		return ret.replaceAll(StringUtils.SPACE, "_");
+		return ret.replaceAll(StringUtils.SPACE, "_"); //$NON-NLS-1$
 	}
 }

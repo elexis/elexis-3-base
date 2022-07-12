@@ -28,7 +28,7 @@ public class GDTSatzNachrichtType extends PropertyTester {
 		String messageType = gdtEntry.getMessageType();
 		int messageTypeInt = Integer.parseInt(messageType);
 
-		if (property.equalsIgnoreCase("isGDTSatznachricht6310")
+		if (property.equalsIgnoreCase("isGDTSatznachricht6310") //$NON-NLS-1$
 				&& messageTypeInt == GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_UEBERMITTELN)
 			return true;
 

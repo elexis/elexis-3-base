@@ -3,7 +3,7 @@ package at.medevit.elexis.inbox.model;
 import org.apache.commons.lang3.StringUtils;
 
 public enum InboxElementType {
-	FILE("FILE://"), DB(StringUtils.EMPTY);
+	FILE("FILE://"), DB(StringUtils.EMPTY); //$NON-NLS-1$
 
 	private final String prefix;
 
@@ -17,7 +17,7 @@ public enum InboxElementType {
 
 	public static InboxElementType parseType(String uri) {
 		if (uri != null) {
-			if (uri.contains("::")) {
+			if (uri.contains("::")) { //$NON-NLS-1$
 				return DB;
 			} else if (uri.startsWith(FILE.getPrefix())) {
 				return FILE;

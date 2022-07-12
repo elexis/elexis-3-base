@@ -25,7 +25,7 @@ public class AutoSelectPatientHandler {
 
 	@Inject
 	public void initialize(EModelService modelService, MPart part) {
-		MUIElement toolItem = modelService.find("ch.elexis.global_inbox.directtoolitem.autoSelectPatient",
+		MUIElement toolItem = modelService.find("ch.elexis.global_inbox.directtoolitem.autoSelectPatient", //$NON-NLS-1$
 				part.getToolbar());
 		isActive = ((MDirectToolItem) toolItem).isSelected();
 	}

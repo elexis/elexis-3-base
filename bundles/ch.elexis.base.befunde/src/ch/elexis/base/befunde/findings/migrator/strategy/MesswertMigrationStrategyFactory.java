@@ -53,9 +53,9 @@ public class MesswertMigrationStrategyFactory {
 		return new AbstractMigrationStrategy() {
 			@Override
 			public Optional<IObservation> migrate() {
-				logger.warn("No migration available for mapping " + mapping.getLocalBefund() + "."
-						+ mapping.getLocalBefundField() + " to " + mapping.getFindingsCode() + " using template "
-						+ ((template != null) ? template.getTitle() : "none"));
+				logger.warn("No migration available for mapping " + mapping.getLocalBefund() + "." //$NON-NLS-1$ //$NON-NLS-2$
+						+ mapping.getLocalBefundField() + " to " + mapping.getFindingsCode() + " using template " //$NON-NLS-1$ //$NON-NLS-2$
+						+ ((template != null) ? template.getTitle() : "none")); //$NON-NLS-1$
 				return Optional.empty();
 			}
 		};
@@ -64,9 +64,9 @@ public class MesswertMigrationStrategyFactory {
 	private static FindingsTemplate getTemplate(MesswertFieldMapping mapping) {
 		FindingsTemplate template = codeToTemplateMap.get(mapping.getFindingsCode());
 		if (template == null) {
-			FindingsTemplates availableTemplates = tempalteService.getFindingsTemplates("Standard Vorlagen");
+			FindingsTemplates availableTemplates = tempalteService.getFindingsTemplates("Standard Vorlagen"); //$NON-NLS-1$
 
-			String[] parts = mapping.getFindingsCode().split("\\.");
+			String[] parts = mapping.getFindingsCode().split("\\."); //$NON-NLS-1$
 			if (parts.length > 0) {
 				for (FindingsTemplate fTemplate : availableTemplates.getFindingsTemplates()) {
 					if (fTemplate.getTitle().equals(parts[0])) {

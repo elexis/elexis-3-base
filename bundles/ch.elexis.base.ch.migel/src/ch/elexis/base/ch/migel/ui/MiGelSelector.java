@@ -55,10 +55,10 @@ public class MiGelSelector extends CodeSelectorFactory {
 			tvfa.updateSelection(ss.isEmpty() ? null : ss.getFirstElement());
 
 			if (!ss.isEmpty()) {
-				ContextServiceHolder.get().getRootContext().setNamed("ch.elexis.base.ch.migel.ui.selection",
+				ContextServiceHolder.get().getRootContext().setNamed("ch.elexis.base.ch.migel.ui.selection", //$NON-NLS-1$
 						(IArticle) ss.getFirstElement());
 			} else {
-				ContextServiceHolder.get().getRootContext().setNamed("ch.elexis.base.ch.migel.ui.selection", null);
+				ContextServiceHolder.get().getRootContext().setNamed("ch.elexis.base.ch.migel.ui.selection", null); //$NON-NLS-1$
 			}
 		}
 	};
@@ -68,7 +68,7 @@ public class MiGelSelector extends CodeSelectorFactory {
 		MenuManager menu = new MenuManager();
 		menu.add(tvfa);
 
-		cv.setNamedSelection("ch.elexis.base.ch.migel.ui.selection");
+		cv.setNamedSelection("ch.elexis.base.ch.migel.ui.selection"); //$NON-NLS-1$
 		cv.setContextMenu(menu);
 		cv.setSelectionChangedListener(selChangeListener);
 
@@ -121,7 +121,7 @@ public class MiGelSelector extends CodeSelectorFactory {
 			// apply filters from control field provider
 			controlFieldProvider.setQuery(query);
 			applyQueryFilters(query);
-			query.orderBy("SubID", ORDER.ASC);
+			query.orderBy("SubID", ORDER.ASC); //$NON-NLS-1$
 			List<?> elements = query.execute();
 
 			return elements.toArray(new Object[elements.size()]);

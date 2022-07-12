@@ -88,12 +88,12 @@ public class GlobalInboxPart {
 
 			if (globalInboxEntry != null) {
 				File mainFile = globalInboxEntry.getPdfPreviewFile();
-				if (globalInboxEntry.getMimetype().toLowerCase().contains("pdf")) {
+				if (globalInboxEntry.getMimetype().toLowerCase().contains("pdf")) { //$NON-NLS-1$
 					try {
 						IDocument mainFileDocument = FileDocument.of(mainFile);
 						eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, mainFileDocument);
 					} catch (IOException e) {
-						LoggerFactory.getLogger(getClass()).warn("Exception", e);
+						LoggerFactory.getLogger(getClass()).warn("Exception", e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -104,14 +104,14 @@ public class GlobalInboxPart {
 			public void doubleClick(DoubleClickEvent event) {
 				// call view command
 				ParameterizedCommand command = commandService
-						.createCommand("ch.elexis.global_inbox.command.globalinboxentryview");
+						.createCommand("ch.elexis.global_inbox.command.globalinboxentryview"); //$NON-NLS-1$
 				handlerService.executeHandler(command);
 			}
 		});
 
 		inboxConfigStat = cp.reload();
 
-		menuService.registerContextMenu(table, "ch.elexis.global_inbox.popupmenu.globalinboxentries");
+		menuService.registerContextMenu(table, "ch.elexis.global_inbox.popupmenu.globalinboxentries"); //$NON-NLS-1$
 
 		tv.setInput(this);
 	}

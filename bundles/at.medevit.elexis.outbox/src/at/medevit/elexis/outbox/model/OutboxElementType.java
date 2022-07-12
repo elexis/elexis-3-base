@@ -3,7 +3,7 @@ package at.medevit.elexis.outbox.model;
 import org.apache.commons.lang3.StringUtils;
 
 public enum OutboxElementType {
-	FILE("FILE://"), DB(StringUtils.EMPTY), DOC("DOC://");
+	FILE("FILE://"), DB(StringUtils.EMPTY), DOC("DOC://"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private final String prefix;
 
@@ -22,7 +22,7 @@ public enum OutboxElementType {
 
 			} else if (uri.startsWith(DOC.getPrefix())) {
 				return DOC;
-			} else if (uri.contains("::")) {
+			} else if (uri.contains("::")) { //$NON-NLS-1$
 				return DB;
 			}
 		}

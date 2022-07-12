@@ -37,7 +37,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	}
 
 	public static void initDirectories() {
-		if (ConfigServiceHolder.getUser(EHC_OUTPUTDIR, "notset").equals("notset")) {
+		if (ConfigServiceHolder.getUser(EHC_OUTPUTDIR, "notset").equals("notset")) { //$NON-NLS-1$ //$NON-NLS-2$
 			File outputDir = new File(getDefaultOutputDir());
 			if (!outputDir.exists()) {
 				outputDir.mkdirs();
@@ -45,7 +45,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			ConfigServiceHolder.setUser(EHC_OUTPUTDIR, getDefaultOutputDir());
 		}
 
-		if (ConfigServiceHolder.getUser(EHC_INPUTDIR, "notset").equals("notset")) {
+		if (ConfigServiceHolder.getUser(EHC_INPUTDIR, "notset").equals("notset")) { //$NON-NLS-1$ //$NON-NLS-2$
 			File inputDir = new File(getDefaultInputDir());
 			if (!inputDir.exists()) {
 				inputDir.mkdirs();
@@ -65,10 +65,10 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	}
 
 	public static String getDefaultOutputDir() {
-		return CoreHub.getWritableUserDir() + File.separator + "eHC" + File.separator + "output";
+		return CoreHub.getWritableUserDir() + File.separator + "eHC" + File.separator + "output"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static String getDefaultInputDir() {
-		return CoreHub.getWritableUserDir() + File.separator + "eHC" + File.separator + "input";
+		return CoreHub.getWritableUserDir() + File.separator + "eHC" + File.separator + "input"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

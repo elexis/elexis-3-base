@@ -99,7 +99,7 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		setTitleImage(ResourceManager.getPluginImage("at.medevit.elexis.gdt", "rsc/icons/TitleIcon6301.png"));
+		setTitleImage(ResourceManager.getPluginImage("at.medevit.elexis.gdt", "rsc/icons/TitleIcon6301.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		setMessage("GDT Satznachricht 6301");
 		setTitle("Stammdaten übermitteln");
 		Composite area = (Composite) super.createDialogArea(parent);
@@ -322,7 +322,7 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 
 	protected void initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
-		IObservableMap gdt6301ValuesObserveMap = PojoObservables.observeMap(gdt6301, "values", Integer.class,
+		IObservableMap gdt6301ValuesObserveMap = PojoObservables.observeMap(gdt6301, "values", Integer.class, //$NON-NLS-1$
 				String.class);
 
 		Text[] control = { txtPatientenKennung, txtPatientNachname, txtPatientVorname, txtIDReceiver, txtIDSender,

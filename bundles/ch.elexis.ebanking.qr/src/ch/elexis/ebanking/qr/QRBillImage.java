@@ -46,7 +46,7 @@ public class QRBillImage {
 		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
 		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
 		hintMap.put(EncodeHintType.QR_VERSION, 18);
-		hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+		hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8"); //$NON-NLS-1$
 
 		QRCodeWriter qrCodeWriter = new QRCodeWriter();
 		try {
@@ -63,7 +63,7 @@ public class QRBillImage {
 			addCross(data);
 			return Optional.of(new Image(Display.getDefault(), data));
 		} catch (WriterException e) {
-			LoggerFactory.getLogger(getClass()).error("Error creating QR", e);
+			LoggerFactory.getLogger(getClass()).error("Error creating QR", e); //$NON-NLS-1$
 			return Optional.empty();
 		}
 	}
@@ -125,10 +125,10 @@ public class QRBillImage {
 				imageLoader.compression = 100;
 				imageLoader.save(output, SWT.IMAGE_JPEG);
 
-				return Optional.of("data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()));
+				return Optional.of("data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray())); //$NON-NLS-1$
 
 			} catch (IOException e) {
-				LoggerFactory.getLogger(getClass()).error("Error encoding QR", e);
+				LoggerFactory.getLogger(getClass()).error("Error encoding QR", e); //$NON-NLS-1$
 			} finally {
 				qr.dispose();
 			}

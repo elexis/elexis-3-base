@@ -102,7 +102,7 @@ public class GlobalInboxEntryDetailPart {
 		label = new Label(parent, SWT.None);
 		label.setText("Kategorie");
 
-		csec = new CategorySelectionEditComposite(parent, SWT.None, "ch.elexis.data.store.omnivore", true);
+		csec = new CategorySelectionEditComposite(parent, SWT.None, "ch.elexis.data.store.omnivore", true); //$NON-NLS-1$
 		csec.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		csec.addSelectionChangeListener(sc -> {
 			ICategory category = (ICategory) sc.getStructuredSelection().getFirstElement();
@@ -283,7 +283,7 @@ public class GlobalInboxEntryDetailPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ParameterizedCommand cmd = commandService
-						.createCommand("ch.elexis.global_inbox.command.globalinboxentryview");
+						.createCommand("ch.elexis.global_inbox.command.globalinboxentryview"); //$NON-NLS-1$
 				if (handlerService.canExecute(cmd)) {
 					handlerService.executeHandler(cmd);
 				}
@@ -376,7 +376,7 @@ public class GlobalInboxEntryDetailPart {
 			}
 
 			ParameterizedCommand cmd = commandService
-					.createCommand("ch.elexis.global_inbox.command.globalinboxentryimport");
+					.createCommand("ch.elexis.global_inbox.command.globalinboxentryimport"); //$NON-NLS-1$
 			if (handlerService.canExecute(cmd)) {
 				handlerService.executeHandler(cmd);
 				setGlobalInboxEntry(null);

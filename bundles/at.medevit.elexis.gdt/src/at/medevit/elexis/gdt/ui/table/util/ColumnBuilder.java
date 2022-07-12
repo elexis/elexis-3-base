@@ -167,7 +167,7 @@ public class ColumnBuilder {
 	 */
 	public ColumnBuilder makeEditable(CellEditor cellEditor, IValueFormatter valueFormatter) {
 		if (cellEditor.getControl().getParent() != viewer.getTable())
-			throw new RuntimeException("Parent of cell editor needs to be the table!");
+			throw new RuntimeException("Parent of cell editor needs to be the table!"); //$NON-NLS-1$
 		this.editor = cellEditor;
 		this.editorFormat = valueFormatter;
 		return this;
@@ -202,8 +202,8 @@ public class ColumnBuilder {
 		// set label provider
 		if (customLabelProvider != null) {
 			if (cellFormatter != null) {
-				throw new RuntimeException("If you specify a custom label provider, it is not allowed "
-						+ "to specify a cell formatter. You need to do the formatting in your labelprovider!");
+				throw new RuntimeException("If you specify a custom label provider, it is not allowed " //$NON-NLS-1$
+						+ "to specify a cell formatter. You need to do the formatting in your labelprovider!"); //$NON-NLS-1$
 			}
 			viewerColumn.setLabelProvider(customLabelProvider);
 		} else {
@@ -225,7 +225,7 @@ public class ColumnBuilder {
 
 		// set column layout data
 		if (widthPixel != null && widthPercent != null) {
-			throw new RuntimeException("You can specify a width in pixel OR in percent, but not both!");
+			throw new RuntimeException("You can specify a width in pixel OR in percent, but not both!"); //$NON-NLS-1$
 		}
 		if (widthPercent == null) {
 			// default width of 100px if nothing specified
@@ -240,7 +240,7 @@ public class ColumnBuilder {
 		if (editor != null) {
 			if (valueHandler == null) {
 				throw new RuntimeException(
-						"makeEditable() requires that the column is bound to some value using bindTo...()");
+						"makeEditable() requires that the column is bound to some value using bindTo...()"); //$NON-NLS-1$
 			}
 
 			viewerColumn.setEditingSupport(new PropertyEditingSupport(viewer, valueHandler, editorFormat, editor));

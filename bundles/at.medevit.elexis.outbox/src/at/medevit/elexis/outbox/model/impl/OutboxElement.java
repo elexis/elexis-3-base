@@ -118,13 +118,13 @@ public class OutboxElement extends AbstractIdDeleteModelAdapter<ch.elexis.core.j
 		if (element instanceof IDocument) {
 			String lbl = ((IDocument) element).getLabel();
 			String ext = ((IDocument) element).getExtension();
-			return lbl.endsWith(ext) ? lbl : lbl + "." + ext.toLowerCase();
+			return lbl.endsWith(ext) ? lbl : lbl + "." + ext.toLowerCase(); //$NON-NLS-1$
 		} else if (element instanceof Identifiable) {
 			return ((Identifiable) element).getLabel();
 		} else if (element instanceof Path) {
 			return ((Path) element).getFileName().toString();
 		}
-		return "OutboxElement " + this.getId() + " with no object.";
+		return "OutboxElement " + this.getId() + " with no object."; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

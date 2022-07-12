@@ -25,7 +25,7 @@ public class SwitchFunction extends BrowserFunction {
 			if (part.getObject() instanceof AgendaView) {
 				((AgendaView) part.getObject()).setTopControl(to);
 			} else {
-				LoggerFactory.getLogger(getClass()).error("Part object class " + part.getObject() + " unknown");
+				LoggerFactory.getLogger(getClass()).error("Part object class " + part.getObject() + " unknown"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;

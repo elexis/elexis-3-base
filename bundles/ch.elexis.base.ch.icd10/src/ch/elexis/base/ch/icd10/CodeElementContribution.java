@@ -34,7 +34,7 @@ public class CodeElementContribution implements ICodeElementServiceContribution 
 	@Override
 	public List<ICodeElement> getElements(Map<Object, Object> context) {
 		if (context.get(ContextKeys.TREE_ROOTS) != null && context.get(ContextKeys.TREE_ROOTS).equals(Boolean.TRUE)) {
-			return (List<ICodeElement>) (List<?>) ModelUtil.loadDiagnosisWithParent("NIL");
+			return (List<ICodeElement>) (List<?>) ModelUtil.loadDiagnosisWithParent("NIL"); //$NON-NLS-1$
 		}
 		return (List<ICodeElement>) (List<?>) ModelUtil.loadAllDiagnosis();
 	}

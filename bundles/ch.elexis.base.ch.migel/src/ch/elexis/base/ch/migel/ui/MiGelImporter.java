@@ -83,10 +83,10 @@ public class MiGelImporter extends ImporterPage {
 			if (parts.length > 1) {
 				StringBuilder ret = new StringBuilder();
 				if (!parts[1].isEmpty()) {
-					if (parts[0].endsWith(",")) {
+					if (parts[0].endsWith(",")) { //$NON-NLS-1$
 						ret.append(parts[0] + StringUtils.SPACE + parts[1]);
 					} else {
-						ret.append(parts[0] + ", " + parts[1]);
+						ret.append(parts[0] + ", " + parts[1]); //$NON-NLS-1$
 					}
 				} else {
 					ret.append(parts[0] + StringUtils.LF);
@@ -170,7 +170,7 @@ public class MiGelImporter extends ImporterPage {
 
 	}
 
-	static Pattern pattern = Pattern.compile("([a-z0-9A-Z])([A-Z][a-z])");
+	static Pattern pattern = Pattern.compile("([a-z0-9A-Z])([A-Z][a-z])"); //$NON-NLS-1$
 
 	private IStatus importCSV(final File file, final IProgressMonitor monitor)
 			throws FileNotFoundException, IOException {
@@ -187,7 +187,7 @@ public class MiGelImporter extends ImporterPage {
 				}
 				// category only 1 line and max 80 char
 				if (!category.isEmpty()) {
-					text.append(StringTool.getFirstLine(category, 80, "[\\n\\r]")).append(" - ");
+					text.append(StringTool.getFirstLine(category, 80, "[\\n\\r]")).append(" - "); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				text.append(ImportFields.NAME.getStringValue(line));
 
@@ -212,11 +212,11 @@ public class MiGelImporter extends ImporterPage {
 				IArticle migelArticle = new IArticleBuilder(CoreModelServiceHolder.get(), shortname,
 						ImportFields.POSNUMER.getStringValue(line), ArticleTyp.MIGEL).build();
 
-				CoreModelServiceHolder.get().setEntityProperty("id", MiGelCodeElementService.MIGEL_NAME + code,
+				CoreModelServiceHolder.get().setEntityProperty("id", MiGelCodeElementService.MIGEL_NAME + code, //$NON-NLS-1$
 						migelArticle);
 				migelArticle.setPackageUnit(unit);
 				migelArticle.setSellingPrice(ImportFields.PRICE.getMoneyValue(line));
-				migelArticle.setExtInfo("FullText", text.toString());
+				migelArticle.setExtInfo("FullText", text.toString()); //$NON-NLS-1$
 
 				if (!amount.isEmpty()) {
 					try {
@@ -235,7 +235,7 @@ public class MiGelImporter extends ImporterPage {
 	}
 
 	private String getShortname(String text) {
-		String shortname = StringTool.getFirstLine(text, 120, "[\\n\\r]");
+		String shortname = StringTool.getFirstLine(text, 120, "[\\n\\r]"); //$NON-NLS-1$
 		Matcher matcher = pattern.matcher(shortname);
 		StringBuffer sb = new StringBuffer();
 		while (matcher.find()) {

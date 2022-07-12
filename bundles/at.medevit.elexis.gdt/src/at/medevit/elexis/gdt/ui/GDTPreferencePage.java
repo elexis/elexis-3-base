@@ -28,9 +28,9 @@ import static at.medevit.elexis.gdt.constants.GDTPreferenceConstants.*;
 public class GDTPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public static String[][] comboCharsetSelektor = new String[][] {
-			{ "7Bit", GDTConstants.ZEICHENSATZ_7BIT_CHARSET_STRING },
-			{ "IBM (Standard) CP 437", GDTConstants.ZEICHENSATZ_IBM_CP_437_CHARSET_STRING },
-			{ "ISO8859-1 (ANSI) CP 1252", GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING } };
+			{ "7Bit", GDTConstants.ZEICHENSATZ_7BIT_CHARSET_STRING }, //$NON-NLS-1$
+			{ "IBM (Standard) CP 437", GDTConstants.ZEICHENSATZ_IBM_CP_437_CHARSET_STRING }, //$NON-NLS-1$
+			{ "ISO8859-1 (ANSI) CP 1252", GDTConstants.ZEICHENSATZ_ISO8859_1_ANSI_CP_1252_CHARSET_STRING } }; //$NON-NLS-1$
 
 	/**
 	 * Create the preference page.

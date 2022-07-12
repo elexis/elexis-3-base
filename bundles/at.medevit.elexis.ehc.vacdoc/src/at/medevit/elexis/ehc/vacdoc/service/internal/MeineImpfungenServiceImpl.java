@@ -75,23 +75,23 @@ import ch.elexis.data.Patient;
 public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 
 	// use dummy sub id of ehc dev OID for now -> TODO get an Elexis OID
-	public static final String ORGANIZATIONAL_ID = "2.16.756.5.30.1.139.1.1.3.9999";
+	public static final String ORGANIZATIONAL_ID = "2.16.756.5.30.1.139.1.1.3.9999"; //$NON-NLS-1$
 
-	private static final String TEST_PDQ_REQUEST_URL = "https://test.suisse-open-exchange.healthcare/services/mpi/services/PDQSupplier_Port_Soap12";
+	private static final String TEST_PDQ_REQUEST_URL = "https://test.suisse-open-exchange.healthcare/services/mpi/services/PDQSupplier_Port_Soap12"; //$NON-NLS-1$
 
-	private static final String TEST_XDS_REGISTRY_URL = "https://test.suisse-open-exchange.healthcare/services/registry/services/DocumentRegistry";
+	private static final String TEST_XDS_REGISTRY_URL = "https://test.suisse-open-exchange.healthcare/services/registry/services/DocumentRegistry"; //$NON-NLS-1$
 
-	private static final String TEST_XDS_REPOSITORY_URL = "https://test.meineimpfungen.ch/ihe/xds/DocumentRepository";
+	private static final String TEST_XDS_REPOSITORY_URL = "https://test.meineimpfungen.ch/ihe/xds/DocumentRepository"; //$NON-NLS-1$
 
-	private static final String TEST_ATNA_URL = "tls://test.suisse-open-exchange.healthcare:5544";
+	private static final String TEST_ATNA_URL = "tls://test.suisse-open-exchange.healthcare:5544"; //$NON-NLS-1$
 
-	private static final String PRODUCTIV_PDQ_REQUEST_URL = "https://suisse-open-exchange.healthcare/services/mpi/services/PDQSupplier_Port_Soap12";
+	private static final String PRODUCTIV_PDQ_REQUEST_URL = "https://suisse-open-exchange.healthcare/services/mpi/services/PDQSupplier_Port_Soap12"; //$NON-NLS-1$
 
-	private static final String PRODUCTIV_XDS_REGISTRY_URL = "https://suisse-open-exchange.healthcare/services/registry/services/DocumentRegistry";
+	private static final String PRODUCTIV_XDS_REGISTRY_URL = "https://suisse-open-exchange.healthcare/services/registry/services/DocumentRegistry"; //$NON-NLS-1$
 
-	private static final String PRODUCTIV_XDS_REPOSITORY_URL = "https://meineimpfungen.ch/ihe/xds/DocumentRepository";
+	private static final String PRODUCTIV_XDS_REPOSITORY_URL = "https://meineimpfungen.ch/ihe/xds/DocumentRepository"; //$NON-NLS-1$
 
-	private static final String PRODUCTIV_ATNA_URL = "tls://suisse-open-exchange.healthcare:5544";
+	private static final String PRODUCTIV_ATNA_URL = "tls://suisse-open-exchange.healthcare:5544"; //$NON-NLS-1$
 
 	private AffinityDomain affinityDomain;
 
@@ -138,7 +138,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		try {
 			auditorConfig.setAuditRepositoryUri(affinityDomain.getAtnaConfig().getAuditRepositoryUri());
 		} catch (Exception e) {
-			logger.error("Audit configuration problem", e);
+			logger.error("Audit configuration problem", e); //$NON-NLS-1$
 		}
 	}
 
@@ -162,7 +162,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 
 		AtnaConfig atnaConfig = new AtnaConfig();
 		atnaConfig.setAuditRepositoryUri(getAtnaUrl());
-		atnaConfig.setAuditSourceId("EHC-Elexis");
+		atnaConfig.setAuditSourceId("EHC-Elexis"); //$NON-NLS-1$
 		ret.setAtnaConfig(atnaConfig);
 		return ret;
 	}
@@ -207,17 +207,17 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		if (keystorePass != null && keystorePath != null) {
 			try {
 				if (!currentTrustStore.isPresent()) {
-					currentTrustStore = sslStoreService.loadKeyStore(getKeyStore(endpoint), "trustit", "JKS");
+					currentTrustStore = sslStoreService.loadKeyStore(getKeyStore(endpoint), "trustit", "JKS"); //$NON-NLS-1$ //$NON-NLS-2$
 					currentTrustStore.ifPresent(store -> sslStoreService.addTrustStore(store));
 				}
 				// remove previous key store and add new key store
 				currentKeyStore.ifPresent(store -> sslStoreService.removeKeyStore(store));
-				currentKeyStore = sslStoreService.loadKeyStore(keystorePath, keystorePass, "PKCS12");
+				currentKeyStore = sslStoreService.loadKeyStore(keystorePath, keystorePass, "PKCS12"); //$NON-NLS-1$
 				currentKeyStore.ifPresent(store -> sslStoreService.addKeyStore(store, keystorePass));
 
 				updateAffinityDomain();
 			} catch (SecurityDomainException | URISyntaxException e) {
-				logger.error("Could not update affinity domain.", e);
+				logger.error("Could not update affinity domain.", e); //$NON-NLS-1$
 				return false;
 			}
 		} else {
@@ -230,9 +230,9 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 
 	private InputStream getKeyStore(String endpoint) {
 		if (ENDPOINT_PRODUCTIV.equals(endpoint)) {
-			return getClass().getResourceAsStream("/rsc/myvaccines-truststore.jks");
+			return getClass().getResourceAsStream("/rsc/myvaccines-truststore.jks"); //$NON-NLS-1$
 		}
-		return getClass().getResourceAsStream("/rsc/myvtest-truststore.jks");
+		return getClass().getResourceAsStream("/rsc/myvtest-truststore.jks"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -248,7 +248,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 			for (DocumentEntryType documentEntryType : entryTypes) {
 				if (documentEntryType.getAvailabilityStatus() != null
 						&& documentEntryType.getAvailabilityStatus() == AvailabilityStatusType.APPROVED_LITERAL) {
-					if ("text/xml".equals(documentEntryType.getMimeType())) {
+					if ("text/xml".equals(documentEntryType.getMimeType())) { //$NON-NLS-1$
 						InputStream documentStream = getDocumentAsInputStream(documentEntryType);
 						if (documentStream != null) {
 							Optional<CdaChVacd> vacdocOpt = vacdocService.loadVacdocDocument(documentStream);
@@ -258,7 +258,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Could not load CdaChVacd", e);
+			logger.error("Could not load CdaChVacd", e); //$NON-NLS-1$
 			e.printStackTrace(System.err);
 		}
 		return ret;
@@ -277,13 +277,13 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		if (ids != null && !ids.isEmpty()) {
 			FindDocumentsQuery fdq = new FindDocumentsQuery(ids.get(0), null, null, null, null, null, null, null,
 					AvailabilityStatus.APPROVED);
-			logger.debug("getDocumentEntryTypes");
+			logger.debug("getDocumentEntryTypes"); //$NON-NLS-1$
 			final ConvenienceCommunicationCh convComm = new ConvenienceCommunicationCh(affinityDomain);
-			logger.debug("queryDocuments");
+			logger.debug("queryDocuments"); //$NON-NLS-1$
 			final XDSQueryResponseType regDocQuery = convComm.queryDocuments(fdq);
 			if (regDocQuery != null) {
 				final List<DocumentEntryResponseType> docEntrieResponses = regDocQuery.getDocumentEntryResponses();
-				logger.info("Document Entries found: " + docEntrieResponses.size());
+				logger.info("Document Entries found: " + docEntrieResponses.size()); //$NON-NLS-1$
 				for (final DocumentEntryResponseType docEntryResponse : docEntrieResponses) {
 					final DocumentEntryType docEntry = docEntryResponse.getDocumentEntry();
 					ret.add(docEntry);
@@ -296,7 +296,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 
 	private String getDocumentAsString(DocumentEntryType docEntry) throws IOException {
 		InputStream inputStream = getDocumentAsInputStream(docEntry);
-		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
+		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) { //$NON-NLS-1$
 			return buffer.lines().collect(Collectors.joining(StringUtils.LF));
 		}
 	}
@@ -314,11 +314,11 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		XDSRetrieveResponseType rrt = convComm.retrieveDocument(documentRequest);
 		try {
 			if ((rrt.getErrorList() != null)) {
-				logger.error("error retriveing doc " + docEntry.getEntryUUID() + " - "
+				logger.error("error retriveing doc " + docEntry.getEntryUUID() + " - " //$NON-NLS-1$ //$NON-NLS-2$
 						+ rrt.getErrorList().getHighestSeverity().getName());
 			}
 			if ((rrt.getAttachments() == null) || rrt.getAttachments().size() != 1) {
-				logger.error("document not downloaded or more than one");
+				logger.error("document not downloaded or more than one"); //$NON-NLS-1$
 				return null;
 			}
 			return rrt.getAttachments().get(0).getStream();
@@ -342,7 +342,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		MasterPatientIndexQueryResponse ret = ConvenienceMasterPatientIndexV3.queryPatientDemographics(mpiQuery,
 				affinityDomain);
 		if (!ret.getSuccess()) {
-			throw new IllegalStateException("Error contacting meineimpfungen Service");
+			throw new IllegalStateException("Error contacting meineimpfungen Service"); //$NON-NLS-1$
 		}
 		return ret.getPatients();
 	}
@@ -352,7 +352,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		String socialSecurityNumber = elexisPatient.getXid(DOMAIN_AHV);
 		if (socialSecurityNumber != null) {
 			socialSecurityNumber = socialSecurityNumber.trim();
-			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", StringUtils.EMPTY);
+			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", StringUtils.EMPTY); //$NON-NLS-1$
 			if (socialSecurityNumber.length() == 11) {
 				return new Identificator(CodeSystems.SwissSSNDeprecated.getCodeSystemId(), socialSecurityNumber);
 			} else if (socialSecurityNumber.length() == 13) {
@@ -365,9 +365,9 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 	@Override
 	public String getBaseUrl() {
 		if (ENDPOINT_PRODUCTIV.equals(configService.getActiveMandator(CONFIG_ENDPOINT, ENDPOINT_TEST))) {
-			return "https://meineimpfungen.ch/";
+			return "https://meineimpfungen.ch/"; //$NON-NLS-1$
 		}
-		return "https://test.meineimpfungen.ch/";
+		return "https://test.meineimpfungen.ch/"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -380,7 +380,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 			setMetadataCdaCh(metaData, document);
 			response = convComm.submit();
 		} catch (final Exception e) {
-			logger.error("Error uploading document", e);
+			logger.error("Error uploading document", e); //$NON-NLS-1$
 			return false;
 		}
 		if (response.getStatus() != null) {
@@ -388,7 +388,7 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 				return true;
 			} else {
 				response.getErrorList().getError().forEach(e -> {
-					logger.error("Error response " + e.getErrorCode().getName() + ": " + e.getCodeContext());
+					logger.error("Error response " + e.getErrorCode().getName() + ": " + e.getCodeContext()); //$NON-NLS-1$ //$NON-NLS-2$
 				});
 			}
 		}
@@ -419,9 +419,9 @@ public class MeineImpfungenServiceImpl implements MeineImpfungenService {
 		// TODO this workaround is only needed as long as meineimpfungen and the current
 		// eHC release use different coding for vaccination documents.
 		metaData.setTypeCode(
-				new Code("2.16.756.5.30.1.127.3.10.1.27", "60043", "epd_xds_typeCode", "elektronischer Impfausweis"));// TypeCode.IMMUNIZATION_RECORD);
-		metaData.setFormatCode(new Code("2.16.756.5.30.1.127.3.10.1.9", "urn:epd:2015:EPD_Immunization Content",
-				"epd_xds_formatCode", "eImpfDossier"));// FormatCode.IMMUNIZATION_CONTENT
+				new Code("2.16.756.5.30.1.127.3.10.1.27", "60043", "epd_xds_typeCode", "elektronischer Impfausweis"));// TypeCode.IMMUNIZATION_RECORD); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		metaData.setFormatCode(new Code("2.16.756.5.30.1.127.3.10.1.9", "urn:epd:2015:EPD_Immunization Content", //$NON-NLS-1$ //$NON-NLS-2$
+				"epd_xds_formatCode", "eImpfDossier"));// FormatCode.IMMUNIZATION_CONTENT //$NON-NLS-1$ //$NON-NLS-2$
 
 		return true;
 	}

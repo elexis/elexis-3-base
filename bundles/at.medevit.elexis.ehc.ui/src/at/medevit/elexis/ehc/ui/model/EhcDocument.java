@@ -55,9 +55,9 @@ public class EhcDocument extends PersistentObject {
 
 	// @formatter:off
 	static final String create =
-			"CREATE TABLE " + TABLENAME + " (" + //$NON-NLS-1$
+			"CREATE TABLE " + TABLENAME + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 			"ID VARCHAR(25) primary key, " + //$NON-NLS-1$
-			"lastupdate BIGINT," +
+			"lastupdate BIGINT," + //$NON-NLS-1$
 			"deleted CHAR(1) default '0'," + //$NON-NLS-1$
 
 			"name VARCHAR(255)," + //$NON-NLS-1$
@@ -66,8 +66,8 @@ public class EhcDocument extends PersistentObject {
 			"location VARCHAR(255)" + //$NON-NLS-1$
 
 			");" + //$NON-NLS-1$
-			"CREATE INDEX ehcdoc1 ON " + TABLENAME + " (" + FLD_PATIENT + ");" + //$NON-NLS-1$
-			"INSERT INTO " + TABLENAME + " (ID," + FLD_PATIENT + ") VALUES (" + JdbcLink.wrap(VERSIONID) + "," + JdbcLink.wrap(VERSION) + ");"; //$NON-NLS-1$
+			"CREATE INDEX ehcdoc1 ON " + TABLENAME + " (" + FLD_PATIENT + ");" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"INSERT INTO " + TABLENAME + " (ID," + FLD_PATIENT + ") VALUES (" + JdbcLink.wrap(VERSIONID) + "," + JdbcLink.wrap(VERSION) + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	// @formatter:on
 
 	static {
@@ -113,7 +113,7 @@ public class EhcDocument extends PersistentObject {
 	}
 
 	public boolean isEhcType(EhcDocType type) {
-		return getName().contains("[" + type + "]");
+		return getName().contains("[" + type + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private Patient getPatientFromDocument(URL location) {
@@ -131,7 +131,7 @@ public class EhcDocument extends PersistentObject {
 				}
 			}
 		} catch (IOException e) {
-			logger.error("Could not open location.", e);
+			logger.error("Could not open location.", e); //$NON-NLS-1$
 		}
 		return ret;
 	}
@@ -148,7 +148,7 @@ public class EhcDocument extends PersistentObject {
 		try {
 			return new URL(get(FLD_LOCATION));
 		} catch (MalformedURLException e) {
-			logger.error("Could create URL for location.", e);
+			logger.error("Could create URL for location.", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -180,14 +180,14 @@ public class EhcDocument extends PersistentObject {
 	}
 
 	public static boolean isEhcXml(URL url) {
-		if (url.getPath().endsWith(".xml")) {
+		if (url.getPath().endsWith(".xml")) { //$NON-NLS-1$
 			try (InputStream stream = url.openStream();
 					BufferedReader br = new BufferedReader(new InputStreamReader(stream));) {
 				String line = null;
 				for (int i = 0; i < 100; i++) {
 					line = br.readLine();
 					if (line != null) {
-						if (line.contains("<ClinicalDocument")) {
+						if (line.contains("<ClinicalDocument")) { //$NON-NLS-1$
 							return true;
 						}
 					} else {
@@ -202,7 +202,7 @@ public class EhcDocument extends PersistentObject {
 	}
 
 	public static boolean isEhcXdm(URL url) {
-		if (url.getPath().endsWith(".zip") || url.getPath().endsWith(".xdm")) {
+		if (url.getPath().endsWith(".zip") || url.getPath().endsWith(".xdm")) { //$NON-NLS-1$ //$NON-NLS-2$
 			String fileName = url.getFile();
 			if (fileName != null && !fileName.isEmpty()) {
 				File file = new File(fileName);
@@ -225,7 +225,7 @@ public class EhcDocument extends PersistentObject {
 	 */
 	public static EhcDocument createFromXml(URL fileUrl) {
 		File file = new File(fileUrl.getFile());
-		return new EhcDocument(file.getName() + " [" + EhcDocType.CLINICALDOCUMENT + "]", fileUrl, new TimeTool());
+		return new EhcDocument(file.getName() + " [" + EhcDocType.CLINICALDOCUMENT + "]", fileUrl, new TimeTool()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -238,14 +238,14 @@ public class EhcDocument extends PersistentObject {
 	 */
 	public static EhcDocument createFromXdm(URL fileUrl) {
 		File xdmFile = new File(fileUrl.getPath());
-		EhcDocument ret = new EhcDocument(xdmFile.getName() + " [" + EhcDocType.XDM + "]", fileUrl, new TimeTool());
+		EhcDocument ret = new EhcDocument(xdmFile.getName() + " [" + EhcDocType.XDM + "]", fileUrl, new TimeTool()); //$NON-NLS-1$ //$NON-NLS-2$
 		List<ClinicalDocument> documents = ServiceComponent.getEhcService().getXdmDocuments(xdmFile);
 		for (ClinicalDocument clinicalDocument : documents) {
 			File documentFile = getXdmDocumentFile(clinicalDocument, xdmFile);
 			try (FileOutputStream outputStream = new FileOutputStream(documentFile)) {
 				CDAUtil.save(clinicalDocument, outputStream);
 			} catch (Exception e) {
-				logger.error("Could not create EhcDocument from xdm.", e);
+				logger.error("Could not create EhcDocument from xdm.", e); //$NON-NLS-1$
 			}
 		}
 		return ret;
@@ -255,10 +255,10 @@ public class EhcDocument extends PersistentObject {
 		String rootPath = xdmFile.getParent();
 		String rootName = xdmFile.getName();
 
-		rootName = rootName.replaceAll("\\.", StringUtils.EMPTY);
+		rootName = rootName.replaceAll("\\.", StringUtils.EMPTY); //$NON-NLS-1$
 		File file = null;
 		for (int i = 0; i < 100; i++) {
-			file = new File(rootPath + File.separator + rootName + "_" + i + ".xml");
+			file = new File(rootPath + File.separator + rootName + "_" + i + ".xml"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (!file.exists()) {
 				break;
 			}
@@ -269,7 +269,7 @@ public class EhcDocument extends PersistentObject {
 
 	@Override
 	public String getLabel() {
-		return getName().replaceAll("\\[[A-Z]+\\]", StringUtils.EMPTY);
+		return getName().replaceAll("\\[[A-Z]+\\]", StringUtils.EMPTY); //$NON-NLS-1$
 	}
 
 	@Override

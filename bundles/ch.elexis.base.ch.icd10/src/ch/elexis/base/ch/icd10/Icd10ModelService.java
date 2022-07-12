@@ -69,11 +69,11 @@ public class Icd10ModelService extends AbstractModelService implements IModelSer
 	@Override
 	public Optional<Identifiable> loadFromString(String storeToString) {
 		if (storeToString == null) {
-			LoggerFactory.getLogger(getClass()).warn("StoreToString is null");
+			LoggerFactory.getLogger(getClass()).warn("StoreToString is null"); //$NON-NLS-1$
 			return Optional.empty();
 		}
 
-		if (storeToString.startsWith("ch.elexis.data")) {
+		if (storeToString.startsWith("ch.elexis.data")) { //$NON-NLS-1$
 			String[] split = splitIntoTypeAndId(storeToString);
 
 			// map string to classname
@@ -85,8 +85,8 @@ public class Icd10ModelService extends AbstractModelService implements IModelSer
 				EntityWithId dbObject = em.find(clazz, id);
 				// workaround for loading diagnosis of encounter
 				if (dbObject == null) {
-					TypedQuery<? extends EntityWithId> codeQuery = em.createNamedQuery("ICD10.code", clazz);
-					codeQuery.setParameter("code", id);
+					TypedQuery<? extends EntityWithId> codeQuery = em.createNamedQuery("ICD10.code", clazz); //$NON-NLS-1$
+					codeQuery.setParameter("code", id); //$NON-NLS-1$
 					Object result = codeQuery.getSingleResult();
 					if (result instanceof EntityWithId) {
 						dbObject = (EntityWithId) result;
@@ -137,7 +137,7 @@ public class Icd10ModelService extends AbstractModelService implements IModelSer
 			try {
 				return getTypeForEntity(entityClass.newInstance());
 			} catch (InstantiationException | IllegalAccessException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;

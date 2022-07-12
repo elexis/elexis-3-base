@@ -59,24 +59,24 @@ public class PrintSelectedAgendaHandler {
 								OutputType.PDF);
 						ByteArrayOutputStream pdf = new ByteArrayOutputStream();
 						Map<String, String> parameters = new HashMap<>();
-						parameters.put("current-date",
-								LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+						parameters.put("current-date", //$NON-NLS-1$
+								LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))); //$NON-NLS-1$
 
-						outputter.transform(letter, getClass().getResourceAsStream("/rsc/xslt/areaperiods2fo.xslt"),
+						outputter.transform(letter, getClass().getResourceAsStream("/rsc/xslt/areaperiods2fo.xslt"), //$NON-NLS-1$
 								pdf, parameters);
 						bundleContext.ungetService(serviceRef);
 						// save and open the file ...
 						File file = null;
 						FileOutputStream fout = null;
 						try {
-							file = File.createTempFile(letter.getArea() + "_", ".pdf");
+							file = File.createTempFile(letter.getArea() + "_", ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
 							fout = new FileOutputStream(file);
 							fout.write(pdf.toByteArray());
 						} catch (IOException e) {
 							Display.getDefault().syncExec(() -> {
 								MessageDialog.openError(shell, "Fehler", "Fehler beim PDF anlegen.\n" + e.getMessage());
 							});
-							LoggerFactory.getLogger(getClass()).error("Error creating PDF", e);
+							LoggerFactory.getLogger(getClass()).error("Error creating PDF", e); //$NON-NLS-1$
 						} finally {
 							if (fout != null) {
 								try {
@@ -90,7 +90,7 @@ public class PrintSelectedAgendaHandler {
 							Program.launch(file.getAbsolutePath());
 						}
 					} else {
-						LoggerFactory.getLogger(getClass()).warn("No formatted output factory available.");
+						LoggerFactory.getLogger(getClass()).warn("No formatted output factory available."); //$NON-NLS-1$
 					}
 				}
 			}
@@ -113,7 +113,7 @@ public class PrintSelectedAgendaHandler {
 				}
 				return ret;
 			} else {
-				throw new IllegalStateException("Can not determine area of period " + periods.get(0));
+				throw new IllegalStateException("Can not determine area of period " + periods.get(0)); //$NON-NLS-1$
 			}
 		}
 		return Collections.emptyMap();

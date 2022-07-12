@@ -49,7 +49,7 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if (dropTarget == null) {
-			dropTarget = new GenericObjectDropTarget("Impfplan", UiDesk.getTopShell(), new DropReceiver());
+			dropTarget = new GenericObjectDropTarget("Impfplan", UiDesk.getTopShell(), new DropReceiver()); //$NON-NLS-1$
 		}
 
 		// open the LeistungenView
@@ -72,7 +72,7 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Error trying to open LeistungenView", e);
+			logger.error("Error trying to open LeistungenView", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -102,7 +102,7 @@ public class ApplyVaccinationHandler extends AbstractHandler {
 
 						actEncounter = addVacToKons.findOrCreateKons();
 						if (actEncounter == null) {
-							logger.warn("Could not insert vaccination as no consultation was found for this patient");
+							logger.warn("Could not insert vaccination as no consultation was found for this patient"); //$NON-NLS-1$
 							MessageDialog.openError(Display.getDefault().getActiveShell(), "Nicht erstellbar",
 									"Konnte Impfung nich eintragen, da keine Konsultation vorhanden ist.");
 						}

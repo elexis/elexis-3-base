@@ -140,7 +140,7 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	private void createContents(Composite parent) {
-		Objects.requireNonNull(appointment, "Appointment cannot be null");
+		Objects.requireNonNull(appointment, "Appointment cannot be null"); //$NON-NLS-1$
 
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(4, false));
@@ -150,8 +150,8 @@ public class AppointmentDetailComposite extends Composite {
 		txtPatSearch = new Text(container, SWT.SEARCH | SWT.ICON_SEARCH);
 		txtPatSearch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		txtPatSearch.setMessage("Vorname, Nachname, Geburtsdatum, PatientNr, oder Freitext");
-		AsyncContentProposalProvider<IPatient> aopp = new AsyncContentProposalProvider<IPatient>("description1",
-				"description2", "dob", "code") {
+		AsyncContentProposalProvider<IPatient> aopp = new AsyncContentProposalProvider<IPatient>("description1", //$NON-NLS-1$
+				"description2", "dob", "code") { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			@Override
 			public IQuery<IPatient> createBaseQuery() {
 				return CoreModelServiceHolder.get().getQuery(IPatient.class);
@@ -301,9 +301,9 @@ public class AppointmentDetailComposite extends Composite {
 							.collect(Collectors.toList());
 
 					ParameterizedCommand command = commandService.createCommand(
-							"ch.elexis.agenda.commands.printAppointmentLabel",
-							Collections.singletonMap("ch.elexis.agenda.param.appointmentids",
-									appointments.stream().map(t -> t.getId()).collect(Collectors.joining(","))));
+							"ch.elexis.agenda.commands.printAppointmentLabel", //$NON-NLS-1$
+							Collections.singletonMap("ch.elexis.agenda.param.appointmentids", //$NON-NLS-1$
+									appointments.stream().map(t -> t.getId()).collect(Collectors.joining(",")))); //$NON-NLS-1$
 					handlerService.executeHandler(command);
 				});
 			}
@@ -415,7 +415,7 @@ public class AppointmentDetailComposite extends Composite {
 				IPatient p = CoreModelServiceHolder.get().load(c.get().getId(), IPatient.class).get();
 				if (p.getDateOfBirth() != null) {
 					b.append(StringUtils.LF);
-					b.append(p.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+					b.append(p.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))); //$NON-NLS-1$
 				}
 			}
 			b.append(StringUtils.LF);
@@ -442,8 +442,8 @@ public class AppointmentDetailComposite extends Composite {
 	private List<IAppointment> loadAppointments(IContact contact) {
 		if (contact != null) {
 			IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class);
-			query.and("patId", COMPARATOR.EQUALS, contact.getId());
-			query.and("tag", COMPARATOR.GREATER_OR_EQUAL, LocalDate.now());
+			query.and("patId", COMPARATOR.EQUALS, contact.getId()); //$NON-NLS-1$
+			query.and("tag", COMPARATOR.GREATER_OR_EQUAL, LocalDate.now()); //$NON-NLS-1$
 			return query.execute();
 		}
 		return Collections.emptyList();
@@ -491,7 +491,7 @@ public class AppointmentDetailComposite extends Composite {
 		Label lblDateFrom = new Label(compDateTime, SWT.NULL);
 		lblDateFrom.setText("Tag");
 		txtDateFromDrop = new CDateTime(compDateTime, CDT.BORDER | CDT.DROP_DOWN | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
-		txtDateFromDrop.setPattern("EEE, dd.MM.yyyy ");
+		txtDateFromDrop.setPattern("EEE, dd.MM.yyyy "); //$NON-NLS-1$
 		txtDateFromDrop.setLayoutData(new GridData());
 		txtDateFromDrop.addSelectionListener(dateTimeSelectionAdapter);
 		txtDateFromDrop.addSelectionListener(new SelectionAdapter() {
@@ -503,7 +503,7 @@ public class AppointmentDetailComposite extends Composite {
 		});
 
 		txtDateFromNoDrop = new CDateTime(compDateTime, CDT.BORDER | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
-		txtDateFromNoDrop.setPattern("EEE, dd.MM.yyyy ");
+		txtDateFromNoDrop.setPattern("EEE, dd.MM.yyyy "); //$NON-NLS-1$
 		txtDateFromNoDrop.setLayoutData(new GridData());
 		txtDateFromNoDrop.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -542,7 +542,7 @@ public class AppointmentDetailComposite extends Composite {
 		Label lblArea = new Label(compArea, SWT.NULL);
 		lblArea.setText("Bereich");
 		comboArea = new Combo(compArea, SWT.DROP_DOWN);
-		comboArea.setItems(configService.get("agenda/bereiche", "Praxis").split(","));
+		comboArea.setItems(configService.get("agenda/bereiche", "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		comboArea.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

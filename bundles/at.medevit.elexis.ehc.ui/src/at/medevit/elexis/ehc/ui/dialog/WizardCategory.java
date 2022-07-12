@@ -26,7 +26,7 @@ public class WizardCategory implements IWizardCategory {
 	private String label;
 
 	public WizardCategory(IConfigurationElement el) {
-		id = el.getAttribute("id");
+		id = el.getAttribute("id"); //$NON-NLS-1$
 		label = el.getAttribute("name");
 	}
 

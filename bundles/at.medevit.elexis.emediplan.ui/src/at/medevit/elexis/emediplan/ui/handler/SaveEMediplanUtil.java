@@ -19,7 +19,7 @@ import ch.rgw.tools.TimeTool;
 public class SaveEMediplanUtil {
 
 	public static String writeTempPdf(ByteArrayOutputStream pdf) throws FileNotFoundException, IOException {
-		File pdfFile = File.createTempFile("eMediplan_" + System.currentTimeMillis(), ".pdf");
+		File pdfFile = File.createTempFile("eMediplan_" + System.currentTimeMillis(), ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
 		try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
 			fos.write(pdf.toByteArray());
 			fos.flush();
@@ -29,10 +29,10 @@ public class SaveEMediplanUtil {
 
 	public static IDocument saveEMediplan(IPatient patient, IMandator mandant, byte[] content) {
 		TimeTool now = new TimeTool();
-		Brief letter = new Brief("eMediplan " + now.toString(TimeTool.DATE_GER), now, Mandant.load(mandant.getId()),
+		Brief letter = new Brief("eMediplan " + now.toString(TimeTool.DATE_GER), now, Mandant.load(mandant.getId()), //$NON-NLS-1$
 				null, null, Brief.UNKNOWN);
 		letter.setPatient(Patient.load(patient.getId()));
-		letter.save(content, "pdf");
+		letter.save(content, "pdf"); //$NON-NLS-1$
 		return CoreModelServiceHolder.get().load(letter.getId(), IDocumentLetter.class).orElse(null);
 	}
 }

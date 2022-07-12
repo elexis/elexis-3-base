@@ -12,7 +12,7 @@ package ch.elexis.buchhaltung.basis;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.buchhaltung.basis.messages";
+	private static final String BUNDLE_NAME = "ch.elexis.buchhaltung.basis.messages"; //$NON-NLS-1$
 	public static String AlleLeistungen_ActivityText;
 	public static String AlleLeistungen_BillState;
 	public static String AlleLeistungen_Description;

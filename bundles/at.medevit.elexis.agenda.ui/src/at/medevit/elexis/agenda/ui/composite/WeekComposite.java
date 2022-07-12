@@ -76,29 +76,29 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		browser = new Browser(this, SWT.NONE);
 		scriptingHelper = new ScriptingHelper(browser);
 
-		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper, uiSynchronize);
+		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper, uiSynchronize); //$NON-NLS-1$
 
-		new SingleClickFunction(browser, "singleClickFunction").setSelectionProvider(this);
+		new SingleClickFunction(browser, "singleClickFunction").setSelectionProvider(this); //$NON-NLS-1$
 
-		new DoubleClickFunction(browser, "doubleClickFunction");
+		new DoubleClickFunction(browser, "doubleClickFunction"); //$NON-NLS-1$
 
-		new ContextMenuFunction(part, browser, "contextMenuFunction").setSelectionProvider(this);
+		new ContextMenuFunction(part, browser, "contextMenuFunction").setSelectionProvider(this); //$NON-NLS-1$
 
-		new EventDropFunction(browser, "eventDropFunction");
+		new EventDropFunction(browser, "eventDropFunction"); //$NON-NLS-1$
 
-		new EventResizeFunction(browser, "eventResizeFunction");
+		new EventResizeFunction(browser, "eventResizeFunction"); //$NON-NLS-1$
 
-		dayClickFunction = new DayClickFunction(browser, "dayClickFunction");
+		dayClickFunction = new DayClickFunction(browser, "dayClickFunction"); //$NON-NLS-1$
 
 		if (enableSwitch) {
-			new SwitchFunction(part, browser, "switchFunction");
-			String targetUrl = SingleSourceUtil.resolve("switchWeek.html");
-			logger.debug("Open url [" + targetUrl + "]");
+			new SwitchFunction(part, browser, "switchFunction"); //$NON-NLS-1$
+			String targetUrl = SingleSourceUtil.resolve("switchWeek.html"); //$NON-NLS-1$
+			logger.debug("Open url [" + targetUrl + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			browser.setUrl(targetUrl);
 
 		} else {
-			String targetUrl = SingleSourceUtil.resolve("defaultWeek.html");
-			logger.debug("Open url [" + targetUrl + "]");
+			String targetUrl = SingleSourceUtil.resolve("defaultWeek.html"); //$NON-NLS-1$
+			logger.debug("Open url [" + targetUrl + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			browser.setUrl(targetUrl);
 
 		}
@@ -111,13 +111,13 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		});
 
 		// register context menu for browser
-		menuService.registerContextMenu(browser, "at.medevit.elexis.agenda.ui.popupmenu.week");
+		menuService.registerContextMenu(browser, "at.medevit.elexis.agenda.ui.popupmenu.week"); //$NON-NLS-1$
 
 		browser.addProgressListener(new ProgressAdapter() {
 			@Override
 			public void completed(ProgressEvent event) {
-				String dayStartsAt = ConfigServiceHolder.get().get("agenda/beginnStundeTagesdarstellung", "0000");
-				String dayEndsAt = ConfigServiceHolder.get().get("agenda/endStundeTagesdarstellung", "2359");
+				String dayStartsAt = ConfigServiceHolder.get().get("agenda/beginnStundeTagesdarstellung", "0000"); //$NON-NLS-1$ //$NON-NLS-2$
+				String dayEndsAt = ConfigServiceHolder.get().get("agenda/endStundeTagesdarstellung", "2359"); //$NON-NLS-1$ //$NON-NLS-2$
 				uiSynchronize.asyncExec(() -> {
 					scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
 
@@ -175,7 +175,7 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 
 	@Override
 	public String getConfigId() {
-		return "week";
+		return "week"; //$NON-NLS-1$
 	}
 
 	@Override

@@ -47,12 +47,12 @@ public class AlleLeistungen extends BaseStats {
 									System.out.println(v.getLabel());
 								} else {
 									String sname = vv.getCodeSystemName();
-									String scode = vv.getCode() == null ? "?" : vv.getCode();
+									String scode = vv.getCode() == null ? "?" : vv.getCode(); //$NON-NLS-1$
 									TarifStat ts = tstats.get(sname + scode);
 									if (ts == null) {
 										ts = new TarifStat();
 										ts.tarif = vv.getCodeSystemName();
-										ts.ziffer = vv.getCode() == null ? "?" : vv.getCode();
+										ts.ziffer = vv.getCode() == null ? "?" : vv.getCode(); //$NON-NLS-1$
 										ts.text = vv.getText();
 										tstats.put(sname + scode, ts);
 									}

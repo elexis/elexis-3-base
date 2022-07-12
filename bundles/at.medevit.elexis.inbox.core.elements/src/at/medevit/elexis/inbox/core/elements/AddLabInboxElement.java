@@ -42,7 +42,7 @@ public class AddLabInboxElement implements Runnable {
 				}
 			}
 			if (waitForFields == MAX_WAIT) {
-				logger.warn(String.format("Could not get data from result [%s].", labResult.getId()));
+				logger.warn(String.format("Could not get data from result [%s].", labResult.getId())); //$NON-NLS-1$
 				return;
 			}
 		}
@@ -59,16 +59,16 @@ public class AddLabInboxElement implements Runnable {
 			}
 		} else if (doctor.isMandator()) {
 			// stammarzt is defined
-			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
-					+ patient.getLabel() + " for mandant " + doctor.getLabel());
+			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient " //$NON-NLS-1$ //$NON-NLS-2$
+					+ patient.getLabel() + " for mandant " + doctor.getLabel()); //$NON-NLS-1$
 			ServiceComponent.get().createInboxElement(patient, ServiceComponent.load(doctor.getId(), IMandator.class),
 					labResult);
 		}
 
 		// an assigned contact was found that is different than the stammarzt
 		if (assignedMandant != null && !assignedMandant.equals(doctor)) {
-			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient "
-					+ patient.getLabel() + " for mandant " + assignedMandant.getLabel());
+			logger.debug("Creating InboxElement for result [" + labResult.getId() + "] and patient " //$NON-NLS-1$ //$NON-NLS-2$
+					+ patient.getLabel() + " for mandant " + assignedMandant.getLabel()); //$NON-NLS-1$
 			ServiceComponent.get().createInboxElement(patient, assignedMandant, labResult);
 		}
 	}

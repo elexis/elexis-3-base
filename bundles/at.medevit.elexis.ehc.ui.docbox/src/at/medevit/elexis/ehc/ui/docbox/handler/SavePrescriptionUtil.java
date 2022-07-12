@@ -9,6 +9,6 @@ public class SavePrescriptionUtil {
 		Brief letter = new Brief("Docbox Rezept " + prescription.getDate(), new TimeTool(), prescription.getMandant(),
 				null, null, Brief.RP);
 		letter.setPatient(prescription.getPatient());
-		letter.save(content, "pdf");
+		letter.save(content, "pdf"); //$NON-NLS-1$
 	}
 }

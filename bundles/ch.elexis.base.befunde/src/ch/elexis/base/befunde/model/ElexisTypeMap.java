@@ -20,7 +20,7 @@ public class ElexisTypeMap {
 	private static final HashMap<String, Class<? extends EntityWithId>> stsToClassMap;
 	private static final HashMap<Class<? extends EntityWithId>, String> classToStsMap;
 
-	public static final String TYPE_MESSWERT = "ch.elexis.befunde.Messwert";
+	public static final String TYPE_MESSWERT = "ch.elexis.befunde.Messwert"; //$NON-NLS-1$
 
 	static {
 		stsToClassMap = new HashMap<String, Class<? extends EntityWithId>>();

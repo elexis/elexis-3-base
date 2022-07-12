@@ -20,7 +20,7 @@ public class HL7MessageService implements IHL7MessageService {
 	public HL7MessageService() {
 		messages = new HashMap<>();
 		// add message implementations here
-		addMessage("ADT_A08", new ADT_A08Message());
+		addMessage("ADT_A08", new ADT_A08Message()); //$NON-NLS-1$
 	}
 
 	private void addMessage(String messageTyp, IHL7Message message) {
@@ -46,7 +46,7 @@ public class HL7MessageService implements IHL7MessageService {
 			}
 			return messageVersions.get(0).validateContext(context);
 		}
-		throw new ElexisException("No message implementation for typ [" + messageTyp + "]");
+		throw new ElexisException("No message implementation for typ [" + messageTyp + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -63,6 +63,6 @@ public class HL7MessageService implements IHL7MessageService {
 			}
 			return messageVersions.get(0).getMessage(context);
 		}
-		throw new ElexisException("No message implementation for typ [" + messageTyp + "]");
+		throw new ElexisException("No message implementation for typ [" + messageTyp + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

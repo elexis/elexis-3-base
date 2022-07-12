@@ -153,17 +153,17 @@ public class EMediplanServiceImpl implements EMediplanService {
 			IFormattedOutputFactory fopFactory = bundleContext.getService(fopFactoryRef);
 			IFormattedOutput foOutput = fopFactory.getFormattedOutputImplementation(ObjectType.JAXB, OutputType.PDF);
 			HashMap<String, String> parameters = new HashMap<>();
-			parameters.put("logoJpeg", getEncodedLogo());
-			parameters.put("commentText", ConfigServiceHolder.get().getActiveUserContact(
+			parameters.put("logoJpeg", getEncodedLogo()); //$NON-NLS-1$
+			parameters.put("commentText", ConfigServiceHolder.get().getActiveUserContact( //$NON-NLS-1$
 					Preferences.MEDICATION_SETTINGS_EMEDIPLAN_HEADER_COMMENT, Messages.Medication_headerComment));
 			qrCode.ifPresent(qr -> {
-				parameters.put("qrJpeg", getEncodedQr(qr));
+				parameters.put("qrJpeg", getEncodedQr(qr)); //$NON-NLS-1$
 			});
-			foOutput.transform(jaxbModel, EMediplanServiceImpl.class.getResourceAsStream("/rsc/xslt/emediplan.xslt"),
+			foOutput.transform(jaxbModel, EMediplanServiceImpl.class.getResourceAsStream("/rsc/xslt/emediplan.xslt"), //$NON-NLS-1$
 					output, parameters);
 			bundleContext.ungetService(fopFactoryRef);
 		} else {
-			throw new IllegalStateException("No IFormattedOutputFactory available");
+			throw new IllegalStateException("No IFormattedOutputFactory available"); //$NON-NLS-1$
 		}
 	}
 
@@ -173,20 +173,20 @@ public class EMediplanServiceImpl implements EMediplanService {
 			imageLoader.data = new ImageData[] { qr.getImageData() };
 			imageLoader.compression = 100;
 			imageLoader.save(output, SWT.IMAGE_JPEG);
-			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray());
+			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error encoding QR", e);
+			LoggerFactory.getLogger(getClass()).error("Error encoding QR", e); //$NON-NLS-1$
 		}
 		return StringUtils.EMPTY;
 	}
 
 	private String getEncodedLogo() {
-		try (InputStream input = getClass().getResourceAsStream("/rsc/img/Logo_Full.jpeg");
+		try (InputStream input = getClass().getResourceAsStream("/rsc/img/Logo_Full.jpeg"); //$NON-NLS-1$
 				ByteArrayOutputStream output = new ByteArrayOutputStream()) {
 			IOUtils.copy(input, output);
-			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray());
+			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error encoding logo", e);
+			LoggerFactory.getLogger(getClass()).error("Error encoding logo", e); //$NON-NLS-1$
 		}
 		return StringUtils.EMPTY;
 	}
@@ -211,7 +211,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 			}
 			return Optional.of(new Image(Display.getDefault(), data));
 		} catch (WriterException e) {
-			LoggerFactory.getLogger(getClass()).error("Error creating QR", e);
+			LoggerFactory.getLogger(getClass()).error("Error creating QR", e); //$NON-NLS-1$
 			return Optional.empty();
 		}
 	}
@@ -226,14 +226,14 @@ public class EMediplanServiceImpl implements EMediplanService {
 	protected String getEncodedJson(@NonNull String json) {
 		StringBuilder sb = new StringBuilder();
 		// header for compresses json
-		sb.append("CHMED16A1");
+		sb.append("CHMED16A1"); //$NON-NLS-1$
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
 			gzip.write(json.getBytes());
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error encoding json", e);
-			throw new IllegalStateException("Error encoding json", e);
+			LoggerFactory.getLogger(getClass()).error("Error encoding json", e); //$NON-NLS-1$
+			throw new IllegalStateException("Error encoding json", e); //$NON-NLS-1$
 		}
 		sb.append(Base64.getEncoder().encodeToString(out.toByteArray()));
 		return sb.toString();
@@ -260,8 +260,8 @@ public class EMediplanServiceImpl implements EMediplanService {
 				sb.append(read);
 			}
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error decoding json", e);
-			throw new IllegalStateException("Error decoding json", e);
+			LoggerFactory.getLogger(getClass()).error("Error decoding json", e); //$NON-NLS-1$
+			throw new IllegalStateException("Error decoding json", e); //$NON-NLS-1$
 		}
 		return sb.toString();
 	}
@@ -278,7 +278,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 		Medication medication = Medication.fromPrescriptions(author, patient, prescriptions, addDesc);
 		// TODO remove after verification
 		Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-		logger.info("EMEDIPLAN JSON\n\n" + prettyGson.toJson(medication) + "\n\n");
+		logger.info("EMEDIPLAN JSON\n\n" + prettyGson.toJson(medication) + "\n\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		return Optional.ofNullable(gson.toJson(medication));
 	}
@@ -287,12 +287,12 @@ public class EMediplanServiceImpl implements EMediplanService {
 	public Medication createModelFromChunk(String chunk) {
 		String json = getDecodedJsonString(chunk);
 		if (chunk.length() > 8) {
-			logger.debug("json version: " + chunk.substring(5, 8));
+			logger.debug("json version: " + chunk.substring(5, 8)); //$NON-NLS-1$
 			Medication ret = createModelFromJsonString(json);
 			ret.chunk = chunk;
 			return ret;
 		} else {
-			logger.error("invalid json length - cannot parseable");
+			logger.error("invalid json length - cannot parseable"); //$NON-NLS-1$
 		}
 
 		return null;
@@ -326,7 +326,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 									toAdd.Pos = new ArrayList<>();
 									toAdd.Pos.add(p);
 								} catch (Exception e) {
-									logger.warn("cannot clone medicament id: " + toAdd.Id, e);
+									logger.warn("cannot clone medicament id: " + toAdd.Id, e); //$NON-NLS-1$
 								}
 								addMedicamentToMedication(medication, medicaments, toAdd);
 							}
@@ -351,7 +351,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 			if (patient == null) {
 				String bDate = medication.Patient.BDt;
 				Patient kontakt = KontaktMatcher.findPatient(medication.Patient.LName, medication.Patient.FName,
-						bDate != null ? bDate.replace("-", StringUtils.EMPTY) : null, null, null, null, null, null,
+						bDate != null ? bDate.replace("-", StringUtils.EMPTY) : null, null, null, null, null, null, //$NON-NLS-1$
 						CreateMode.ASK);
 				if (kontakt != null) {
 					patient = CoreModelServiceHolder.get().load(kontakt.getId(), IPatient.class).orElse(null);
@@ -380,7 +380,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 					}
 					size--;
 					if (size != 0) {
-						buf.append("-");
+						buf.append("-"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -400,7 +400,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 
 	private void transformAppInstrToFreeTextDosage(Medicament toAdd) {
 		if (toAdd.dosis.isEmpty() && toAdd.AppInstr != null) {
-			String[] split = toAdd.AppInstr.split("\\" + Medicament.FREETEXT_PREFIX);
+			String[] split = toAdd.AppInstr.split("\\" + Medicament.FREETEXT_PREFIX); //$NON-NLS-1$
 			if (split.length > 1) {
 				toAdd.AppInstr = split[0];
 				int idx = split[1].lastIndexOf(Medicament.FREETEXT_POSTFIX);
@@ -494,7 +494,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 						? "Medikament aus gleicher Wirkstoffgruppe bereits vorhanden."
 						: "Medikament mit gleichem Wirkstoff bereits vorhanden.");
 				if (medicament.foundPrescription != null && medicament.foundPrescription.getArtikel() != null) {
-					buf.append("\n(" + medicament.foundPrescription.getArtikel().getName() + ")");
+					buf.append("\n(" + medicament.foundPrescription.getArtikel().getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} else if (State.NEW.equals(medicament.state)) {
 				buf.append("Neues Medikament");
@@ -515,17 +515,17 @@ public class EMediplanServiceImpl implements EMediplanService {
 
 	private void findArticleForMedicament(Medicament medicament) {
 		Optional<ICodeElementServiceContribution> artikelstammContribution = CodeElementServiceHolder.get()
-				.getContribution(CodeElementTyp.ARTICLE, "Artikelstamm");
+				.getContribution(CodeElementTyp.ARTICLE, "Artikelstamm"); //$NON-NLS-1$
 		if (artikelstammContribution.isPresent()) {
 			Optional<ICodeElement> loaded = artikelstammContribution.get().loadFromCode(medicament.Id);
 			if (loaded.isPresent()) {
 				medicament.artikelstammItem = (IArtikelstammItem) loaded.get();
 			} else {
 				logger.warn(
-						"Could not load article for code [" + medicament.Id + "] id type [" + medicament.IdType + "]");
+						"Could not load article for code [" + medicament.Id + "] id type [" + medicament.IdType + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		} else {
-			logger.error("No Artikelstamm code contribution available");
+			logger.error("No Artikelstamm code contribution available"); //$NON-NLS-1$
 		}
 	}
 
@@ -544,14 +544,14 @@ public class EMediplanServiceImpl implements EMediplanService {
 					// because version incompatibility of 16A the MedicalData 'Med' attribute will
 					// be removed
 					// MedicalData 'Med' has different types in the version 16A
-					if (json.getAsJsonObject().get("Patient") != null) {
-						json.getAsJsonObject().get("Patient").getAsJsonObject().remove("Med");
+					if (json.getAsJsonObject().get("Patient") != null) { //$NON-NLS-1$
+						json.getAsJsonObject().get("Patient").getAsJsonObject().remove("Med"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					u = g.fromJson(json, Medication.class);
-					logger.warn("json parsed successfully - by removing the 'Med' attribute");
+					logger.warn("json parsed successfully - by removing the 'Med' attribute"); //$NON-NLS-1$
 				}
 			} catch (Exception e) {
-				logger.error("unexpected json error", e);
+				logger.error("unexpected json error", e); //$NON-NLS-1$
 			}
 			return u;
 
@@ -563,7 +563,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 	public boolean createInboxEntry(Medication medication, IMandator mandant) {
 
 		if (service == null) {
-			throw new IllegalStateException("No IInboxElementService for inbox defined");
+			throw new IllegalStateException("No IInboxElementService for inbox defined"); //$NON-NLS-1$
 		}
 
 		if (medication != null) {
@@ -584,15 +584,15 @@ public class EMediplanServiceImpl implements EMediplanService {
 				}
 			}
 
-			StringBuffer buf = new StringBuffer("cannot add medication to list:");
-			buf.append("[");
-			buf.append("med chunk:" + medication.chunk);
-			buf.append("med patient id:" + (medication.Patient != null ? medication.Patient.patientId : "null"));
+			StringBuffer buf = new StringBuffer("cannot add medication to list:"); //$NON-NLS-1$
+			buf.append("["); //$NON-NLS-1$
+			buf.append("med chunk:" + medication.chunk); //$NON-NLS-1$
+			buf.append("med patient id:" + (medication.Patient != null ? medication.Patient.patientId : "null")); //$NON-NLS-1$ //$NON-NLS-2$
 
-			buf.append("]");
+			buf.append("]"); //$NON-NLS-1$
 			logger.warn(buf.toString());
 		} else {
-			logger.error("cannot add medication to list: medication is null");
+			logger.error("cannot add medication to list: medication is null"); //$NON-NLS-1$
 		}
 
 		return false;

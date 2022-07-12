@@ -40,7 +40,7 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 			Patient patient = ElexisEventDispatcher.getSelectedPatient();
 
 			String vaccinations = event.getParameter("at.medevit.elexis.ehc.ui.vacdoc.commandParameter.vaccinations"); //$NON-NLS-1$
-			if ("dialog".equals(vaccinations)) {
+			if ("dialog".equals(vaccinations)) { //$NON-NLS-1$
 				VaccinationSelectionDialog dialog = new VaccinationSelectionDialog(HandlerUtil.getActiveShell(event));
 				Query<Vaccination> qbe = new Query<Vaccination>(Vaccination.class);
 				Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
@@ -108,7 +108,7 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 						}
 					});
 				} catch (InvocationTargetException | InterruptedException e) {
-					LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).warn("Exception on patient lookup", e);
+					LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).warn("Exception on patient lookup", e); //$NON-NLS-1$
 					MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
 							"Es ist ein Fehler aufgetreten.");
 				}
@@ -117,7 +117,7 @@ public class UploadMeineImpfungenHandler extends AbstractHandler implements IHan
 						"Kein Patient, oder keine Impfung ausgewählt");
 			}
 		} catch (IllegalStateException ise) {
-			LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).error("Service not available", ise);
+			LoggerFactory.getLogger(OpenMeineImpfungenHandler.class).error("Service not available", ise); //$NON-NLS-1$
 			MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
 					"meineimpfungen nicht verfügbar");
 		}

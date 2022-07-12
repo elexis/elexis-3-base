@@ -8,12 +8,12 @@ import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 
 public class LabGroupedInboxElements extends GroupedInboxElements {
 
-	private static DateTimeFormatter defaultDateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+	private static DateTimeFormatter defaultDateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); //$NON-NLS-1$
 
 	@Override
 	public String getUri() {
 		if (getPatient() != null) {
-			return "lab://" + StoreToStringServiceHolder.getStoreToString(getPatient());
+			return "lab://" + StoreToStringServiceHolder.getStoreToString(getPatient()); //$NON-NLS-1$
 		}
 		return null;
 	}

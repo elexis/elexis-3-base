@@ -34,12 +34,12 @@ public class DetailDisplay implements IDetailDisplay {
 	Form form;
 	DisplayPanel panel;
 	FieldDescriptor<?>[] fields = {
-			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_chapter, "chapter", Typ.STRING, null),
-			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_code, "code", Typ.STRING, null),
-			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_fachbereich, "speciality", Typ.STRING, null),
-			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_name, "text", Typ.STRING, null),
-			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_limitation, "limitation", Typ.STRING, null),
-			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_taxpoints, "points", Typ.STRING, null) };
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_chapter, "chapter", Typ.STRING, null), //$NON-NLS-1$
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_code, "code", Typ.STRING, null), //$NON-NLS-1$
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_fachbereich, "speciality", Typ.STRING, null), //$NON-NLS-1$
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_name, "text", Typ.STRING, null), //$NON-NLS-1$
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_limitation, "limitation", Typ.STRING, null), //$NON-NLS-1$
+			new FieldDescriptor<ILaborLeistung>(Messages.DetailDisplay_taxpoints, "points", Typ.STRING, null) }; //$NON-NLS-1$
 
 	@Inject
 	public void selection(@Optional @Named("ch.elexis.base.ch.labortarif_2009.ui.selection") ILaborLeistung item) {

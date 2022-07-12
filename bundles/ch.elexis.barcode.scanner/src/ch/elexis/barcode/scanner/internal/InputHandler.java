@@ -45,14 +45,14 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 						String comPort = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_COMPORT + postfix,
 								StringUtils.EMPTY);
 						String comSettings = CoreHub.localCfg.get(PreferencePage.BarcodeScanner_SETTINGS + postfix,
-								"9600,8,n,1");
+								"9600,8,n,1"); //$NON-NLS-1$
 						boolean waitForNewline = CoreHub.localCfg
 								.get(PreferencePage.BarcodeScanner_WAITFORNEWLINE + postfix, false);
 						if (!comPort.isEmpty()) {
 							if (usedComPorts.add(comPort)) {
 								openConnection(i, postfix, comPort, comSettings, waitForNewline);
 							} else {
-								logger.debug("barcode scanner " + (i + 1) + " com port already in use: " + comPort);
+								logger.debug("barcode scanner " + (i + 1) + " com port already in use: " + comPort); //$NON-NLS-1$ //$NON-NLS-2$
 
 							}
 						}
@@ -80,7 +80,7 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 			barcodeScannerConn.withEndOfChunk(new byte[] { 0x0A }).excludeDelimiters(true);
 		}
 		if (barcodeScannerConn.connect()) {
-			logger.debug("barcode scanner " + (i + 1) + " connected to port: " + comPort);
+			logger.debug("barcode scanner " + (i + 1) + " connected to port: " + comPort); //$NON-NLS-1$ //$NON-NLS-2$
 			connections.add(barcodeScannerConn);
 		} else {
 			SWTHelper.showError("Fehler mit Port",
@@ -102,7 +102,7 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 			public void run() {
 				try {
 					Thread.sleep(barcodeScannerSize * 2500);
-					logger.debug("closed barcode scanners size: " + barcodeScannerSize);
+					logger.debug("closed barcode scanners size: " + barcodeScannerSize); //$NON-NLS-1$
 
 				} catch (InterruptedException e) {
 					/* ignore */
@@ -114,7 +114,7 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 
 	@Override
 	public void gotChunk(Connection conn, String chunk) {
-		logger.debug(conn.getName() + ": gotChunk(): " + chunk);
+		logger.debug(conn.getName() + ": gotChunk(): " + chunk); //$NON-NLS-1$
 		ElexisEventDispatcher.getInstance()
 				.fire(new ElexisEvent(new BarcodeScannerMessage(conn.getName(), conn.getMyPort(), chunk),
 						BarcodeScannerMessage.class, ElexisEvent.EVENT_UPDATE, ElexisEvent.PRIORITY_NORMAL));
@@ -124,7 +124,7 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command toggleCommand = commandService.getCommand(COMMAND_ID);
 
-		State state = toggleCommand.getState("STYLE");
+		State state = toggleCommand.getState("STYLE"); //$NON-NLS-1$
 		boolean currentState = (Boolean) state.getValue();
 		if (currentState) {
 			// turn it off

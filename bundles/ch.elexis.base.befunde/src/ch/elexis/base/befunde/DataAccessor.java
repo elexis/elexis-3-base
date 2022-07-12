@@ -39,11 +39,11 @@ public class DataAccessor implements IDataAccess {
 	private static final String LAST = "last";//$NON-NLS-1$
 	private static final String ALL = "all"; //$NON-NLS-1$
 
-	private static final String PREFIX_DATE = "[Befunde-Data:Patient:-:";
-	private static final String PREFIX_FIRST = "[Befunde-Data:Patient:first:";
-	private static final String PREFIX_LAST = "[Befunde-Data:Patient:last:";
-	private static final String PREFIX_ALL = "[Befunde-Data:Patient:all:";
-	private static final String SUFFIX = "]";
+	private static final String PREFIX_DATE = "[Befunde-Data:Patient:-:"; //$NON-NLS-1$
+	private static final String PREFIX_FIRST = "[Befunde-Data:Patient:first:"; //$NON-NLS-1$
+	private static final String PREFIX_LAST = "[Befunde-Data:Patient:last:"; //$NON-NLS-1$
+	private static final String PREFIX_ALL = "[Befunde-Data:Patient:all:"; //$NON-NLS-1$
+	private static final String SUFFIX = "]"; //$NON-NLS-1$
 
 	Map<String, String> hash;
 	Hashtable<String, String[]> columns;
@@ -96,23 +96,23 @@ public class DataAccessor implements IDataAccess {
 		List<Element> ret = new ArrayList<Element>(parameters.size());
 		for (String n : parameters) {
 			// placeholder for finding of specific date
-			String placeholder = PREFIX_DATE + n + ":" + today.toString(TimeTool.DATE_COMPACT) + SUFFIX;
-			String readableName = n + " - " + Messages.DataAccessor_date;
+			String placeholder = PREFIX_DATE + n + ":" + today.toString(TimeTool.DATE_COMPACT) + SUFFIX; //$NON-NLS-1$
+			String readableName = n + " - " + Messages.DataAccessor_date; //$NON-NLS-1$
 			ret.add(createElement(readableName, placeholder));
 
 			// placeholder for first finding
 			placeholder = PREFIX_FIRST + n + SUFFIX;
-			readableName = n + " - " + Messages.DataAccessor_first;
+			readableName = n + " - " + Messages.DataAccessor_first; //$NON-NLS-1$
 			ret.add(createElement(readableName, placeholder));
 
 			// placeholder for last finding
 			placeholder = PREFIX_LAST + n + SUFFIX;
-			readableName = n + " - " + Messages.DataAccessor_last;
+			readableName = n + " - " + Messages.DataAccessor_last; //$NON-NLS-1$
 			ret.add(createElement(readableName, placeholder));
 
 			// placeholder for all findings
 			placeholder = PREFIX_ALL + n + SUFFIX;
-			readableName = n + " - " + Messages.DataAccessor_all;
+			readableName = n + " - " + Messages.DataAccessor_all; //$NON-NLS-1$
 			ret.add(createElement(readableName, placeholder));
 		}
 		return ret;
@@ -233,7 +233,7 @@ public class DataAccessor implements IDataAccess {
 						// no entry for this date found - display error with date and descriptor
 						if (mwrt == null) {
 							ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
-									descriptor + " [" + find.toString(TimeTool.DATE_GER) + "] " //$NON-NLS-2$
+									descriptor + " [" + find.toString(TimeTool.DATE_GER) + "] "  //$NON-NLS-1$//$NON-NLS-2$
 											+ Messages.DataAccessor_notFound,
 									params, true);
 						}

@@ -58,7 +58,7 @@ public class DownloadMeineImpfungenHandler extends AbstractHandler implements IH
 											dialog.open();
 										} catch (Exception e) {
 											LoggerFactory.getLogger(DownloadMeineImpfungenHandler.class)
-													.error("Error processing downloaded eVACDOC", e);
+													.error("Error processing downloaded eVACDOC", e); //$NON-NLS-1$
 										}
 									});
 								} else {
@@ -74,7 +74,7 @@ public class DownloadMeineImpfungenHandler extends AbstractHandler implements IH
 						}
 					});
 				} catch (InvocationTargetException | InterruptedException e) {
-					LoggerFactory.getLogger(DownloadMeineImpfungenHandler.class).warn("Exception on patient lookup", e);
+					LoggerFactory.getLogger(DownloadMeineImpfungenHandler.class).warn("Exception on patient lookup", e); //$NON-NLS-1$
 					MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
 							"Es ist ein Fehler aufgetreten.");
 				}
@@ -83,7 +83,7 @@ public class DownloadMeineImpfungenHandler extends AbstractHandler implements IH
 						"Kein Patient ausgewählt");
 			}
 		} catch (IllegalStateException ise) {
-			LoggerFactory.getLogger(DownloadMeineImpfungenHandler.class).error("Service not available", ise);
+			LoggerFactory.getLogger(DownloadMeineImpfungenHandler.class).error("Service not available", ise); //$NON-NLS-1$
 			MessageDialog.openError(HandlerUtil.getActiveShell(event), "meineimpfungen",
 					"meineimpfungen nicht verfügbar");
 		}

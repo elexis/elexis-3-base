@@ -52,7 +52,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 				new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 
-		cv.setNamedSelection("ch.elexis.base.ch.diagnosecodes.ti.selection");
+		cv.setNamedSelection("ch.elexis.base.ch.diagnosecodes.ti.selection"); //$NON-NLS-1$
 		vc.setContentType(ContentType.GENERICOBJECT);
 		return vc;
 	}
@@ -68,8 +68,8 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 		public TICodeContentProvider(CommonViewer viewer) {
 			this.viewer = viewer;
 			tiCodeElementContribution = CodeElementServiceHolder.get()
-					.getContribution(CodeElementTyp.DIAGNOSE, "TI-Code")
-					.orElseThrow(() -> new IllegalStateException("No TI CodeElementContribution available"));
+					.getContribution(CodeElementTyp.DIAGNOSE, "TI-Code") //$NON-NLS-1$
+					.orElseThrow(() -> new IllegalStateException("No TI CodeElementContribution available")); //$NON-NLS-1$
 
 			roots = tiCodeElementContribution
 					.getElements(Collections.singletonMap(ICodeElementService.ContextKeys.TREE_ROOTS, Boolean.TRUE));
@@ -133,7 +133,7 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 
 		public void changed(HashMap<String, String> values) {
 			String filterText = values.get(TICKey).toLowerCase();
-			if (filterText == null || filterText.isEmpty() || filterText.equals("%")) {
+			if (filterText == null || filterText.isEmpty() || filterText.equals("%")) { //$NON-NLS-1$
 				setFilterValue(StringUtils.EMPTY);
 			} else {
 				setFilterValue(filterText);

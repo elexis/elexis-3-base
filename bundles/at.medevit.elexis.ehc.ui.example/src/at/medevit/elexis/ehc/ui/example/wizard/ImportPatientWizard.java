@@ -57,7 +57,7 @@ public class ImportPatientWizard extends Wizard implements IImportWizard {
 				mainPage.setDocument(ehcDocument);
 			}
 		} catch (IOException e) {
-			logger.error("Could not open document", e);
+			logger.error("Could not open document", e); //$NON-NLS-1$
 			MessageDialog.openError(getShell(), "Fehler", "Konnte das Dokument nicht öffnen.");
 		}
 	}

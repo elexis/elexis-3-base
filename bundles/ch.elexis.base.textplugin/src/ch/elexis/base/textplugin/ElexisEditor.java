@@ -54,7 +54,7 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 	private boolean isBold;
 	private boolean isItalic;
 	private boolean isUnderline;
-	private String fontName = "Arial";
+	private String fontName = "Arial"; //$NON-NLS-1$
 	private int fontHeight = 10;
 	protected ToolBar toolBar;
 	private ToolItem newBoxToolItem;
@@ -111,56 +111,56 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 	}
 
 	private void checkImages() {
-		if (imageRegistry.get("new-box") == null) {
-			imageRegistry.put("new-box", getImageDescriptor("icons/new-box.gif"));
+		if (imageRegistry.get("new-box") == null) { //$NON-NLS-1$
+			imageRegistry.put("new-box", getImageDescriptor("icons/new-box.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("italic") == null) {
-			imageRegistry.put("italic", getImageDescriptor("icons/italic.gif"));
+		if (imageRegistry.get("italic") == null) { //$NON-NLS-1$
+			imageRegistry.put("italic", getImageDescriptor("icons/italic.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("bold") == null) {
-			imageRegistry.put("bold", getImageDescriptor("icons/bold.gif"));
+		if (imageRegistry.get("bold") == null) { //$NON-NLS-1$
+			imageRegistry.put("bold", getImageDescriptor("icons/bold.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("underline") == null) {
-			imageRegistry.put("underline", getImageDescriptor("icons/underline.gif"));
+		if (imageRegistry.get("underline") == null) { //$NON-NLS-1$
+			imageRegistry.put("underline", getImageDescriptor("icons/underline.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("font") == null) {
-			imageRegistry.put("font", getImageDescriptor("icons/font.gif"));
+		if (imageRegistry.get("font") == null) { //$NON-NLS-1$
+			imageRegistry.put("font", getImageDescriptor("icons/font.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("highlight-boxes") == null) {
-			imageRegistry.put("highlight-boxes", getImageDescriptor("icons/highlight-boxes.gif"));
+		if (imageRegistry.get("highlight-boxes") == null) { //$NON-NLS-1$
+			imageRegistry.put("highlight-boxes", getImageDescriptor("icons/highlight-boxes.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("delete") == null) {
-			imageRegistry.put("delete", getImageDescriptor("icons/delete.gif"));
+		if (imageRegistry.get("delete") == null) { //$NON-NLS-1$
+			imageRegistry.put("delete", getImageDescriptor("icons/delete.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("paste") == null) {
-			imageRegistry.put("paste", getImageDescriptor("icons/paste.gif"));
+		if (imageRegistry.get("paste") == null) { //$NON-NLS-1$
+			imageRegistry.put("paste", getImageDescriptor("icons/paste.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("copy") == null) {
-			imageRegistry.put("copy", getImageDescriptor("icons/copy.gif"));
+		if (imageRegistry.get("copy") == null) { //$NON-NLS-1$
+			imageRegistry.put("copy", getImageDescriptor("icons/copy.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("cut") == null) {
-			imageRegistry.put("cut", getImageDescriptor("icons/cut.gif"));
+		if (imageRegistry.get("cut") == null) { //$NON-NLS-1$
+			imageRegistry.put("cut", getImageDescriptor("icons/cut.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("save") == null) {
-			imageRegistry.put("save", getImageDescriptor("icons/save.gif"));
+		if (imageRegistry.get("save") == null) { //$NON-NLS-1$
+			imageRegistry.put("save", getImageDescriptor("icons/save.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("saveas") == null) {
-			imageRegistry.put("saveas", getImageDescriptor("icons/saveas.gif"));
+		if (imageRegistry.get("saveas") == null) { //$NON-NLS-1$
+			imageRegistry.put("saveas", getImageDescriptor("icons/saveas.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (imageRegistry.get("print") == null) {
-			imageRegistry.put("print", getImageDescriptor("icons/printer.png"));
+		if (imageRegistry.get("print") == null) { //$NON-NLS-1$
+			imageRegistry.put("print", getImageDescriptor("icons/printer.png")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -201,44 +201,44 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 
 		newBoxToolItem = new ToolItem(toolBar, SWT.PUSH);
 		newBoxToolItem.setToolTipText("Insert new text-box");
-		newBoxToolItem.setImage(imageRegistry.get("new-box"));
+		newBoxToolItem.setImage(imageRegistry.get("new-box")); //$NON-NLS-1$
 
 		deleteToolItem = new ToolItem(toolBar, SWT.PUSH);
 		deleteToolItem.setToolTipText("Delete current text-box");
-		deleteToolItem.setImage(imageRegistry.get("delete"));
+		deleteToolItem.setImage(imageRegistry.get("delete")); //$NON-NLS-1$
 
 		highlightToolItem = new ToolItem(toolBar, SWT.CHECK);
 		highlightToolItem.setToolTipText("Highlight text-boxes");
 		highlightToolItem.setSelection(true);
-		highlightToolItem.setImage(imageRegistry.get("highlight-boxes"));
+		highlightToolItem.setImage(imageRegistry.get("highlight-boxes")); //$NON-NLS-1$
 
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
 		saveToolItem = new ToolItem(toolBar, SWT.PUSH);
 		saveToolItem.setToolTipText("Save");
-		saveToolItem.setImage(imageRegistry.get("save"));
+		saveToolItem.setImage(imageRegistry.get("save")); //$NON-NLS-1$
 
 		saveAsToolItem = new ToolItem(toolBar, SWT.PUSH);
 		saveAsToolItem.setToolTipText("Save As");
-		saveAsToolItem.setImage(imageRegistry.get("saveas"));
+		saveAsToolItem.setImage(imageRegistry.get("saveas")); //$NON-NLS-1$
 
 		printToolItem = new ToolItem(toolBar, SWT.PUSH);
 		printToolItem.setToolTipText("Print");
-		printToolItem.setImage(imageRegistry.get("print"));
+		printToolItem.setImage(imageRegistry.get("print")); //$NON-NLS-1$
 
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
 		boldToolItem = new ToolItem(toolBar, SWT.CHECK);
 		boldToolItem.setToolTipText("Bold");
-		boldToolItem.setImage(imageRegistry.get("bold"));
+		boldToolItem.setImage(imageRegistry.get("bold")); //$NON-NLS-1$
 
 		italicToolItem = new ToolItem(toolBar, SWT.CHECK);
 		italicToolItem.setToolTipText("Italic");
-		italicToolItem.setImage(imageRegistry.get("italic"));
+		italicToolItem.setImage(imageRegistry.get("italic")); //$NON-NLS-1$
 
 		underlineToolItem = new ToolItem(toolBar, SWT.CHECK);
 		underlineToolItem.setToolTipText("Underline");
-		underlineToolItem.setImage(imageRegistry.get("underline"));
+		underlineToolItem.setImage(imageRegistry.get("underline")); //$NON-NLS-1$
 
 		ToolItem sep = new ToolItem(toolBar, SWT.SEPARATOR);
 
@@ -276,15 +276,15 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 
 		cutToolItem = new ToolItem(toolBar, SWT.PUSH);
 		cutToolItem.setToolTipText("Cut");
-		cutToolItem.setImage(imageRegistry.get("cut"));
+		cutToolItem.setImage(imageRegistry.get("cut")); //$NON-NLS-1$
 
 		copyToolItem = new ToolItem(toolBar, SWT.PUSH);
 		copyToolItem.setToolTipText("Copy");
-		copyToolItem.setImage(imageRegistry.get("copy"));
+		copyToolItem.setImage(imageRegistry.get("copy")); //$NON-NLS-1$
 
 		pasteToolItem = new ToolItem(toolBar, SWT.PUSH);
 		pasteToolItem.setToolTipText("Paste");
-		pasteToolItem.setImage(imageRegistry.get("paste"));
+		pasteToolItem.setImage(imageRegistry.get("paste")); //$NON-NLS-1$
 
 		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
@@ -346,17 +346,17 @@ public class ElexisEditor extends Composite implements ExtendedModifyListener {
 
 	private void testInsertTable() {
 		String[][] contents = new String[6][];
-		contents[0] = new String[] { "Whatever", "Chemical", "Programming" };
-		contents[1] = new String[] { "1", "Mercur", "Python" };
-		contents[2] = new String[] { "2", "Iridium", "Ruby" };
-		contents[3] = new String[] { "3", "Iron", "C++" };
-		contents[4] = new String[] { "4", "Gold", "Java" };
-		contents[5] = new String[] { "5", "Silver", "Pascal" };
+		contents[0] = new String[] { "Whatever", "Chemical", "Programming" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		contents[1] = new String[] { "1", "Mercur", "Python" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		contents[2] = new String[] { "2", "Iridium", "Ruby" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		contents[3] = new String[] { "3", "Iron", "C++" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		contents[4] = new String[] { "4", "Gold", "Java" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		contents[5] = new String[] { "5", "Silver", "Pascal" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		ElexisTextPlugin.tempInstance.setFont("Verdana", SWT.NONE, 13);
+		ElexisTextPlugin.tempInstance.setFont("Verdana", SWT.NONE, 13); //$NON-NLS-1$
 
 		// test insert table
-		ElexisTextPlugin.tempInstance.insertTable("ab", ITextPlugin.FIRST_ROW_IS_HEADER | ITextPlugin.GRID_VISIBLE,
+		ElexisTextPlugin.tempInstance.insertTable("ab", ITextPlugin.FIRST_ROW_IS_HEADER | ITextPlugin.GRID_VISIBLE, //$NON-NLS-1$
 				contents, null);
 	}
 

@@ -7,14 +7,14 @@ import ch.elexis.core.exceptions.ElexisException;
 
 public interface IHL7MessageService {
 
-	public String CONTEXT_PATIENT = "context.patient";
-	public String CONTEXT_CONSULTATION = "context.consultation";
-	public String CONTEXT_MANDANTOR = "context.mandator";
+	public String CONTEXT_PATIENT = "context.patient"; //$NON-NLS-1$
+	public String CONTEXT_CONSULTATION = "context.consultation"; //$NON-NLS-1$
+	public String CONTEXT_MANDANTOR = "context.mandator"; //$NON-NLS-1$
 
-	public String CONTEXT_RECEIVINGAPPLICATION = "context.msg.receivingapplication";
-	public String CONTEXT_RECEIVINGFACILITY = "context.msg.receivingfacility";
+	public String CONTEXT_RECEIVINGAPPLICATION = "context.msg.receivingapplication"; //$NON-NLS-1$
+	public String CONTEXT_RECEIVINGFACILITY = "context.msg.receivingfacility"; //$NON-NLS-1$
 
-	public String CONTEXT_HL7VERSION_HINT = "context.hl7version";
+	public String CONTEXT_HL7VERSION_HINT = "context.hl7version"; //$NON-NLS-1$
 
 	/**
 	 * Test if the context contains the objects needed to create the message. The

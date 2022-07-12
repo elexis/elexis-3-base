@@ -20,7 +20,7 @@ public class EhcCoreServiceHolder {
 
 	public static EhcCoreService getService() {
 		if (ehcCoreService == null) {
-			throw new IllegalStateException("No EhcCoreService available");
+			throw new IllegalStateException("No EhcCoreService available"); //$NON-NLS-1$
 		}
 		return ehcCoreService;
 	}

@@ -38,9 +38,9 @@ import ch.elexis.data.Patient;
 
 public class StammdatenUebermitteln extends AbstractHandler {
 
-	public static final String ID = "at.medevit.elexis.gdt.command.StammdatenUebermitteln";
-	public static final String PARAM_ID = "at.medevit.elexis.gdt.cmd.parameter.partnerClassname";
-	private static final String PARAM_TARGET_ID = "at.medevit.elexis.gdt.cmd.parameter.targetId";
+	public static final String ID = "at.medevit.elexis.gdt.command.StammdatenUebermitteln"; //$NON-NLS-1$
+	public static final String PARAM_ID = "at.medevit.elexis.gdt.cmd.parameter.partnerClassname"; //$NON-NLS-1$
+	private static final String PARAM_TARGET_ID = "at.medevit.elexis.gdt.cmd.parameter.targetId"; //$NON-NLS-1$
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

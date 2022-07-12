@@ -24,10 +24,10 @@ import ch.elexis.core.ui.util.SWTHelper;
 
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public static final String BarcodeScanner_COMPORT = "barcode/Symbol/port";
-	public static final String BarcodeScanner_AUTOSTART = "barcode/Symbol/autostart";
-	public static final String BarcodeScanner_SETTINGS = "barcode/Symbol/settings";
-	public static final String BarcodeScanner_WAITFORNEWLINE = "barcode/Symbol/waitfornewline";
+	public static final String BarcodeScanner_COMPORT = "barcode/Symbol/port"; //$NON-NLS-1$
+	public static final String BarcodeScanner_AUTOSTART = "barcode/Symbol/autostart"; //$NON-NLS-1$
+	public static final String BarcodeScanner_SETTINGS = "barcode/Symbol/settings"; //$NON-NLS-1$
+	public static final String BarcodeScanner_WAITFORNEWLINE = "barcode/Symbol/waitfornewline"; //$NON-NLS-1$
 
 	public static final int NUMBER_OF_SCANNERS = 2;
 
@@ -44,7 +44,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	private void setDetaults() {
 		for (int i = 0; i < NUMBER_OF_SCANNERS; i++) {
 			String postfix = i > 0 ? String.valueOf(i) : StringUtils.EMPTY;
-			getPreferenceStore().setDefault(PreferencePage.BarcodeScanner_SETTINGS + postfix, "9600,8,n,1");
+			getPreferenceStore().setDefault(PreferencePage.BarcodeScanner_SETTINGS + postfix, "9600,8,n,1"); //$NON-NLS-1$
 		}
 	}
 

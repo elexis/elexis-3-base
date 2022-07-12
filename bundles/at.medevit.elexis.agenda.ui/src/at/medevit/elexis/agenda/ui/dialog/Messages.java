@@ -3,7 +3,7 @@ package at.medevit.elexis.agenda.ui.dialog;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	public static final String BUNDLE_NAME = "at.medevit.elexis.agenda.ui.dialog.messages";
+	public static final String BUNDLE_NAME = "at.medevit.elexis.agenda.ui.dialog.messages"; //$NON-NLS-1$
 
 	public static String SerienTerminDialog;
 	public static String MonthlySeriesComposite_lblAtThe_text;

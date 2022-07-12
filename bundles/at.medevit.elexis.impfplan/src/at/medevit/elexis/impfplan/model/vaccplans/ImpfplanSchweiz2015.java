@@ -19,15 +19,15 @@ public class ImpfplanSchweiz2015 extends AbstractVaccinationPlan {
 
 	private List<RequiredVaccination> vaccPlan;
 
-	private final static String vaccPlanCH2013[] = { "2;J07AF/B,J07AM/B,J07AJ/B,J07BF/B,J07AG/B,J07AL/E",
-			"4;J07AF/B,J07AM/B,J07AJ/B,J07BF/B,J07AG/B,J07AL/E", "6;J07AF/B,J07AM/B,J07AJ/B,J07BF/B,J07AG/B",
-			"12;J07BD/B,J07BE/B,J07BJ/B,J07AL/E", "12-15;J07AH/E",
-			"15-24;J07AF/B,J07AM/B,J07AJ/B,J07BF/B,J07AG/B,J07BD/B,J07BE/B,J07BJ/B",
-			"48-84;J07AF/B,J07AM/B,J07AJ/B,J07BF/B", "132-180;J07AF/B,J07AM/B,J07AJ/B,J07BC01/B,J07BM/B",
-			"300-348;J07AF/B,J07AM/B,J07AJ/B", "540;J07AF/B,J07AM/B", "780;J07AF/B,J07AM/B,J07AL,J07BB" };
+	private final static String vaccPlanCH2013[] = { "2;J07AF/B,J07AM/B,J07AJ/B,J07BF/B,J07AG/B,J07AL/E", //$NON-NLS-1$
+			"4;J07AF/B,J07AM/B,J07AJ/B,J07BF/B,J07AG/B,J07AL/E", "6;J07AF/B,J07AM/B,J07AJ/B,J07BF/B,J07AG/B", //$NON-NLS-1$ //$NON-NLS-2$
+			"12;J07BD/B,J07BE/B,J07BJ/B,J07AL/E", "12-15;J07AH/E", //$NON-NLS-1$ //$NON-NLS-2$
+			"15-24;J07AF/B,J07AM/B,J07AJ/B,J07BF/B,J07AG/B,J07BD/B,J07BE/B,J07BJ/B", //$NON-NLS-1$
+			"48-84;J07AF/B,J07AM/B,J07AJ/B,J07BF/B", "132-180;J07AF/B,J07AM/B,J07AJ/B,J07BC01/B,J07BM/B", //$NON-NLS-1$ //$NON-NLS-2$
+			"300-348;J07AF/B,J07AM/B,J07AJ/B", "540;J07AF/B,J07AM/B", "780;J07AF/B,J07AM/B,J07AL,J07BB" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	public ImpfplanSchweiz2015() {
-		super("VACC_CH_2015", "Schweizerischer Impfplan 2015");
+		super("VACC_CH_2015", "Schweizerischer Impfplan 2015"); //$NON-NLS-1$
 		// vaccPlan is needed for initialization only
 		vaccPlan = null;
 	}
@@ -40,7 +40,7 @@ public class ImpfplanSchweiz2015 extends AbstractVaccinationPlan {
 	@Override
 	public List<String> getOrderedBaseDiseases() {
 		List<String> rv = new ArrayList<>();
-		String[] values = "J07AF,J07AM,J07AJ,J07BF,J07AG,J07BC01,J07BC02,J07BD,J07BE,J07BJ,J07BM".split(",");
+		String[] values = "J07AF,J07AM,J07AJ,J07BF,J07AG,J07BC01,J07BC02,J07BD,J07BE,J07BJ,J07BM".split(","); //$NON-NLS-1$ //$NON-NLS-2$
 		for (String string : values) {
 			rv.add(string);
 		}
@@ -51,7 +51,7 @@ public class ImpfplanSchweiz2015 extends AbstractVaccinationPlan {
 	@Override
 	public List<String> getOrderedExtendedDiseases() {
 		List<String> rv = new ArrayList<>();
-		String[] values = "J07BK,J07AL,J07AH,J07BA01".split(",");
+		String[] values = "J07BK,J07AL,J07AH,J07BA01".split(","); //$NON-NLS-1$ //$NON-NLS-2$
 		for (String string : values) {
 			rv.add(string);
 		}
@@ -62,7 +62,7 @@ public class ImpfplanSchweiz2015 extends AbstractVaccinationPlan {
 	@Override
 	protected List<RequiredVaccination> addBaseVaccinations(List<RequiredVaccination> baseVaccinations) {
 		for (RequiredVaccination rv : vaccPlan) {
-			if (rv.diseaseAtcCode.endsWith("/B"))
+			if (rv.diseaseAtcCode.endsWith("/B")) //$NON-NLS-1$
 				baseVaccinations.add(rv);
 		}
 		return baseVaccinations;
@@ -71,7 +71,7 @@ public class ImpfplanSchweiz2015 extends AbstractVaccinationPlan {
 	@Override
 	protected List<RequiredVaccination> addExtendedVaccinations(List<RequiredVaccination> extendedVaccinations) {
 		for (RequiredVaccination rv : vaccPlan) {
-			if (rv.diseaseAtcCode.endsWith("/E"))
+			if (rv.diseaseAtcCode.endsWith("/E")) //$NON-NLS-1$
 				extendedVaccinations.add(rv);
 		}
 		return extendedVaccinations;
@@ -79,9 +79,9 @@ public class ImpfplanSchweiz2015 extends AbstractVaccinationPlan {
 
 	private List<RequiredVaccination> parseVaccPlan(List<RequiredVaccination> vaccPlan) {
 		for (String line : vaccPlanCH2013) {
-			String[] split = line.split(";");
+			String[] split = line.split(";"); //$NON-NLS-1$
 			int[] timeFrames = splitTimeFrames(split[0]);
-			List<String> atcCodes = Arrays.asList(split[1].split(","));
+			List<String> atcCodes = Arrays.asList(split[1].split(",")); //$NON-NLS-1$
 
 			for (String atc : atcCodes) {
 				RequiredVaccination rv = new RequiredVaccination(timeFrames[0], timeFrames[1], atc);
@@ -95,7 +95,7 @@ public class ImpfplanSchweiz2015 extends AbstractVaccinationPlan {
 		int[] retVal = new int[2];
 		Arrays.fill(retVal, -1);
 
-		String[] split = timeString.split("-");
+		String[] split = timeString.split("-"); //$NON-NLS-1$
 		for (int i = 0; i < split.length; i++) {
 			retVal[i] = Integer.parseInt(split[i]);
 		}

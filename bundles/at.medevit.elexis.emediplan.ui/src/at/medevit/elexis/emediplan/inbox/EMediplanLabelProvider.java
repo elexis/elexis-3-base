@@ -27,6 +27,6 @@ public class EMediplanLabelProvider extends LabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		return ResourceManager.getPluginImage("at.medevit.elexis.emediplan.ui", "rsc/logo.png");
+		return ResourceManager.getPluginImage("at.medevit.elexis.emediplan.ui", "rsc/logo.png"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

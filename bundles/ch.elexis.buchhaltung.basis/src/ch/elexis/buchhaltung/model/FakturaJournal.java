@@ -123,8 +123,8 @@ public class FakturaJournal extends AbstractTimeSeries {
 		}
 
 		LoggerFactory.getLogger(FakturaJournal.class)
-				.debug("calculation of account transactions size: " + transactions.size() + " took "
-						+ Long.valueOf((System.currentTimeMillis() - time) / 1000) + " seconds.");
+				.debug("calculation of account transactions size: " + transactions.size() + " took " //$NON-NLS-1$ //$NON-NLS-2$
+						+ Long.valueOf((System.currentTimeMillis() - time) / 1000) + " seconds."); //$NON-NLS-1$
 
 		// Set content.
 		this.dataSet.setContent(result);

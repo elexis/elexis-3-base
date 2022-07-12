@@ -38,7 +38,7 @@ public class TarmedJaxbUtil {
 			marshaller.marshal(request, outStream);
 			return true;
 		} catch (JAXBException e) {
-			log.error("Marshalling MDInvoiceRequest_400 file failed", e);
+			log.error("Marshalling MDInvoiceRequest_400 file failed", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -57,7 +57,7 @@ public class TarmedJaxbUtil {
 			marshaller.marshal(request, outStream);
 			return true;
 		} catch (JAXBException e) {
-			log.error("Marshalling generalInvoiceRequest_440 failed", e);
+			log.error("Marshalling generalInvoiceRequest_440 failed", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -76,7 +76,7 @@ public class TarmedJaxbUtil {
 			marshaller.marshal(request, outStream);
 			return true;
 		} catch (JAXBException e) {
-			log.error("Marshalling generalInvoiceRequest_450 failed", e);
+			log.error("Marshalling generalInvoiceRequest_450 failed", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -96,7 +96,7 @@ public class TarmedJaxbUtil {
 			marshaller.marshal(response, outStream);
 			return true;
 		} catch (JAXBException e) {
-			log.error("Marshalling MDInvoiceResponse_400 file failed", e);
+			log.error("Marshalling MDInvoiceResponse_400 file failed", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -115,7 +115,7 @@ public class TarmedJaxbUtil {
 			marshaller.marshal(response, outStream);
 			return true;
 		} catch (JAXBException e) {
-			log.error("Marshalling generalInvoiceResponse_440 failed", e);
+			log.error("Marshalling generalInvoiceResponse_440 failed", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -135,7 +135,7 @@ public class TarmedJaxbUtil {
 			marshaller.marshal(response, outStream);
 			return true;
 		} catch (JAXBException e) {
-			log.error("Marshalling generalInvoiceResponse_450 failed", e);
+			log.error("Marshalling generalInvoiceResponse_450 failed", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -160,7 +160,7 @@ public class TarmedJaxbUtil {
 
 			return marshaller;
 		} catch (PropertyException propE) {
-			log.error("Error setting marshall properties - concerns XML with schema [" + schemaLocation + "]", propE);
+			log.error("Error setting marshall properties - concerns XML with schema [" + schemaLocation + "]", propE); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return marshaller;
 	}
@@ -185,7 +185,7 @@ public class TarmedJaxbUtil {
 				return request;
 			}
 		} catch (JAXBException e) {
-			log.error("Unmarshalling MDInvoiceRequest_400 file failed", e);
+			log.error("Unmarshalling MDInvoiceRequest_400 file failed", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -211,7 +211,7 @@ public class TarmedJaxbUtil {
 				return request;
 			}
 		} catch (JAXBException e) {
-			log.error("Unmarshalling generalInvoiceRequest_440 failed", e);
+			log.error("Unmarshalling generalInvoiceRequest_440 failed", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -238,7 +238,7 @@ public class TarmedJaxbUtil {
 				return request;
 			}
 		} catch (JAXBException e) {
-			log.error("Unmarshalling generalInvoiceRequest_450 failed", e);
+			log.error("Unmarshalling generalInvoiceRequest_450 failed", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -263,7 +263,7 @@ public class TarmedJaxbUtil {
 				return response;
 			}
 		} catch (JAXBException e) {
-			log.error("Unmarshalling MDInvoiceResponse_400 file failed", e);
+			log.error("Unmarshalling MDInvoiceResponse_400 file failed", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -289,7 +289,7 @@ public class TarmedJaxbUtil {
 				return response;
 			}
 		} catch (JAXBException e) {
-			log.error("Unmarshalling generalInvoiceResponse_440 failed", e);
+			log.error("Unmarshalling generalInvoiceResponse_440 failed", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -316,7 +316,7 @@ public class TarmedJaxbUtil {
 				return response;
 			}
 		} catch (JAXBException e) {
-			log.error("Unmarshalling generalInvoiceResponse_450 failed", e);
+			log.error("Unmarshalling generalInvoiceResponse_450 failed", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -337,7 +337,7 @@ public class TarmedJaxbUtil {
 			}
 
 		} catch (JDOMException | JAXBException e) {
-			log.error("Unmarshalling generalInvoiceRequest_440 from jDom document failed", e);
+			log.error("Unmarshalling generalInvoiceRequest_440 from jDom document failed", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -359,7 +359,7 @@ public class TarmedJaxbUtil {
 			}
 
 		} catch (JDOMException | JAXBException e) {
-			log.error("Unmarshalling generalInvoiceRequest_450 from jDom document failed", e);
+			log.error("Unmarshalling generalInvoiceRequest_450 from jDom document failed", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -372,13 +372,13 @@ public class TarmedJaxbUtil {
 		if (location != null && !location.isEmpty()) {
 			if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_400_LOCATION)
 					|| location.equalsIgnoreCase(Constants.INVOICE_RESPONSE_400_LOCATION)) {
-				return "4.0";
+				return "4.0"; //$NON-NLS-1$
 			} else if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_440_LOCATION)
 					|| location.equalsIgnoreCase(Constants.INVOICE_RESPONSE_440_LOCATION)) {
-				return "4.4";
+				return "4.4"; //$NON-NLS-1$
 			} else if (location.equalsIgnoreCase(Constants.INVOICE_REQUEST_450_LOCATION)
 					|| location.equalsIgnoreCase(Constants.INVOICE_RESPONSE_450_LOCATION)) {
-				return "4.5";
+				return "4.5"; //$NON-NLS-1$
 			}
 		}
 		return location;

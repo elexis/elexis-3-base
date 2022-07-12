@@ -12,7 +12,7 @@ package ch.elexis.base.ch.diagnosecodes;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.base.ch.diagnosecodes.messages";
+	private static final String BUNDLE_NAME = "ch.elexis.base.ch.diagnosecodes.messages"; //$NON-NLS-1$
 	public static String ICDCodeSelectorFactory_couldntCreate;
 	public static String ICDCodeSelectorFactory_errorLoading;
 	public static String ICDImporter_createTable;

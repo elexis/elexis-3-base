@@ -16,7 +16,7 @@ public class EntityManagerHolder {
 
 	public static IElexisEntityManager get() {
 		if (entityManager == null) {
-			throw new IllegalStateException("No IElexisEntityManager available");
+			throw new IllegalStateException("No IElexisEntityManager available"); //$NON-NLS-1$
 		}
 		return entityManager;
 	}

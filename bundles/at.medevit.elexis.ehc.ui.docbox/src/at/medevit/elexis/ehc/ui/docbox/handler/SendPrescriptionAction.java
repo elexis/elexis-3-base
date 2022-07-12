@@ -24,7 +24,7 @@ public class SendPrescriptionAction extends Action {
 		ICommandService commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
 
 		// Lookup commmand with its ID
-		Command command = commandService.getCommand("at.medevit.elexis.ehc.ui.docbox.sendPrescription");
+		Command command = commandService.getCommand("at.medevit.elexis.ehc.ui.docbox.sendPrescription"); //$NON-NLS-1$
 
 		// Optionally pass a ExecutionEvent instance, default no-param arg creates blank
 		// event
@@ -48,6 +48,6 @@ public class SendPrescriptionAction extends Action {
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.ehc.ui.docbox", "/icons/docbox16.png");
+		return AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.ehc.ui.docbox", "/icons/docbox16.png"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

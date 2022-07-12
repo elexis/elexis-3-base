@@ -25,7 +25,7 @@ import at.medevit.elexis.gdt.ui.SimpleTextViewer;
 
 public class ShowGDTMessage extends AbstractHandler {
 
-	public static final String ID = "at.medevit.elexis.gdt.command.showGDTMessage";
+	public static final String ID = "at.medevit.elexis.gdt.command.showGDTMessage"; //$NON-NLS-1$
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -36,7 +36,7 @@ public class ShowGDTMessage extends AbstractHandler {
 
 			StringBuilder title = new StringBuilder();
 			title.append(gdtpEntry.getEntryRelatedPatient().getLabel());
-			title.append(" - ");
+			title.append(" - "); //$NON-NLS-1$
 			title.append(gdtpEntry.getMessageDirection() + StringUtils.SPACE + gdtpEntry.getMessageType());
 
 			new SimpleTextViewer(title.toString(), gdtpEntry.getMessage());

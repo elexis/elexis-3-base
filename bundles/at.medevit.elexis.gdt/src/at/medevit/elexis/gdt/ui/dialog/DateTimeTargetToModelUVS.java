@@ -32,7 +32,7 @@ public class DateTimeTargetToModelUVS implements IConverter {
 	@Override
 	public Object convert(Object fromObject) {
 		Date dt = (Date) fromObject;
-		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy"); //$NON-NLS-1$
 		return sdf.format(dt);
 	}
 

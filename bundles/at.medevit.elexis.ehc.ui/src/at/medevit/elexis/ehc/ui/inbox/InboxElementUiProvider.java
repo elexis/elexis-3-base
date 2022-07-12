@@ -81,7 +81,7 @@ public class InboxElementUiProvider implements IInboxElementUiProvider {
 						.getActivePage().showView(EHealthConnectorView.ID);
 				view.displayReport(document.getLocation().openStream(), null);
 			} catch (PartInitException | IOException e) {
-				logger.error("Could not open ehc document", e);
+				logger.error("Could not open ehc document", e); //$NON-NLS-1$
 			}
 		}
 	}

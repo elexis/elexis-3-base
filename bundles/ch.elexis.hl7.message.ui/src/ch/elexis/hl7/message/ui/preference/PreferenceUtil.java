@@ -12,15 +12,15 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class PreferenceUtil {
 
-	public static final String PREF_RECEIVERS = "ch.elexis.hl7.message.ui/receivers";
+	public static final String PREF_RECEIVERS = "ch.elexis.hl7.message.ui/receivers"; //$NON-NLS-1$
 
-	public static final String PREF_FILESYSTEM_OUTPUTDIR = "ch.elexis.hl7.message.ui/output/directory";
+	public static final String PREF_FILESYSTEM_OUTPUTDIR = "ch.elexis.hl7.message.ui/output/directory"; //$NON-NLS-1$
 
 	public static List<Receiver> getReceivers() {
 		List<Receiver> ret = new ArrayList<>();
 		String receiversString = ConfigServiceHolder.getGlobal(PREF_RECEIVERS, null);
 		if (receiversString != null && !receiversString.isEmpty()) {
-			String[] receiversParts = receiversString.split("\\|\\|");
+			String[] receiversParts = receiversString.split("\\|\\|"); //$NON-NLS-1$
 			if (receiversParts != null) {
 				for (String receiverString : receiversParts) {
 					ret.add(Receiver.of(receiverString));
@@ -44,7 +44,7 @@ public class PreferenceUtil {
 	}
 
 	public static void setReceivers(List<Receiver> receivers) {
-		StringJoiner sj = new StringJoiner("||");
+		StringJoiner sj = new StringJoiner("||"); //$NON-NLS-1$
 		for (Receiver receiver : receivers) {
 			sj.add(receiver.toString());
 		}

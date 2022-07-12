@@ -26,6 +26,6 @@ public class EhcDocumentLabelProvider extends LabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		return ResourceManager.getPluginImage("at.medevit.elexis.ehc.ui", "icons/ehc.jpg");
+		return ResourceManager.getPluginImage("at.medevit.elexis.ehc.ui", "icons/ehc.jpg"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

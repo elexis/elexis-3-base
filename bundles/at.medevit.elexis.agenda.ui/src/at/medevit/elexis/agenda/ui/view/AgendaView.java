@@ -100,7 +100,7 @@ public class AgendaView {
 		parallelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parallelSideBar.setAgendaComposite(parallelComposite);
 
-		setTopControl("parallel");
+		setTopControl("parallel"); //$NON-NLS-1$
 	}
 
 	@Focus
@@ -111,9 +111,9 @@ public class AgendaView {
 	}
 
 	public void setTopControl(String name) {
-		if ("parallel".equalsIgnoreCase(name)) {
+		if ("parallel".equalsIgnoreCase(name)) { //$NON-NLS-1$
 			stackLayout.topControl = parallelParent;
-		} else if ("week".equalsIgnoreCase(name)) {
+		} else if ("week".equalsIgnoreCase(name)) { //$NON-NLS-1$
 			stackLayout.topControl = weekParent;
 		}
 		container.layout();

@@ -217,7 +217,7 @@ public class GlobalInboxEntry {
 	 */
 	public File getPdfPreviewFile() {
 		for (File extFile : extensionFiles) {
-			if (extFile.getName().endsWith(".preview.pdf")) {
+			if (extFile.getName().endsWith(".preview.pdf")) { //$NON-NLS-1$
 				return extFile;
 			}
 		}

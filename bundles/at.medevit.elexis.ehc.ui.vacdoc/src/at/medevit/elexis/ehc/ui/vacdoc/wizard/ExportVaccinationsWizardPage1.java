@@ -164,7 +164,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 			throws Exception, FileNotFoundException, IOException {
 		// write a XDM document for exchange
 		InputStream xdmDocumentStream = service.getXdmAsStream(document);
-		String outputFile = outputDir + File.separator + getVaccinationsFileName(elexisPatient) + ".xdm";
+		String outputFile = outputDir + File.separator + getVaccinationsFileName(elexisPatient) + ".xdm"; //$NON-NLS-1$
 		FileOutputStream outputStream = new FileOutputStream(outputFile);
 		IOUtils.copy(xdmDocumentStream, outputStream);
 		xdmDocumentStream.close();
@@ -177,8 +177,8 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		CDAUtil.save(document.getMdht(), out);
 		InputStream in = new ByteArrayInputStream(out.toByteArray());
-		String outputFile = outputDir + File.separator + getVaccinationsFileName(elexisPatient) + "_"
-				+ System.currentTimeMillis() + ".xml";
+		String outputFile = outputDir + File.separator + getVaccinationsFileName(elexisPatient) + "_" //$NON-NLS-1$
+				+ System.currentTimeMillis() + ".xml"; //$NON-NLS-1$
 		FileOutputStream outputStream = new FileOutputStream(outputFile);
 		IOUtils.copy(in, outputStream);
 		in.close();
@@ -187,6 +187,6 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 	}
 
 	private String getVaccinationsFileName(Patient patient) {
-		return "vacc_" + patient.getPatCode();
+		return "vacc_" + patient.getPatCode(); //$NON-NLS-1$
 	}
 }

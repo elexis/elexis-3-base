@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 public class SortColumnComparator extends ViewerComparator {
-	public static final String SORT_BY = SortColumnComparator.class.getName() + ".sortBy";
+	public static final String SORT_BY = SortColumnComparator.class.getName() + ".sortBy"; //$NON-NLS-1$
 
 	@SuppressWarnings("unchecked")
 	@Override

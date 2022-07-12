@@ -91,7 +91,7 @@ public class WebLinkKonsExtension implements IKonsExtension {
 			selection = selection.trim().replace("\r\n", StringUtils.SPACE); //$NON-NLS-1$
 		}
 
-		WebLinkElementUtil.setPlaceholder("text.selection", selection);
+		WebLinkElementUtil.setPlaceholder("text.selection", selection); //$NON-NLS-1$
 	}
 
 }

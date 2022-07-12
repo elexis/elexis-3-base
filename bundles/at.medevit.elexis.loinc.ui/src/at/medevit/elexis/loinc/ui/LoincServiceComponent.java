@@ -18,12 +18,12 @@ public class LoincServiceComponent {
 	private static boolean updated = false;
 
 	public static ILoincCodeService getService() {
-		logger.info("Get updated " + updated + " service " + service);
+		logger.info("Get updated " + updated + " service " + service); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!updated) {
 			// the update job
 			final IRunnableWithProgress job = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					monitor.setTaskName("Updating Data");
+					monitor.setTaskName("Updating Data"); //$NON-NLS-1$
 					service.updateData();
 				}
 			};
@@ -34,9 +34,9 @@ public class LoincServiceComponent {
 						PlatformUI.getWorkbench().getProgressService().busyCursorWhile(job);
 						updated = true;
 					} catch (InvocationTargetException e) {
-						throw new IllegalStateException("Update failed." + e);
+						throw new IllegalStateException("Update failed." + e); //$NON-NLS-1$
 					} catch (InterruptedException e) {
-						throw new IllegalStateException("Update failed." + e);
+						throw new IllegalStateException("Update failed." + e); //$NON-NLS-1$
 					}
 				}
 			});

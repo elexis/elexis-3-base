@@ -35,7 +35,7 @@ public class Substance {
 
 	public static Substance of(IArticle article) {
 		Substance ret = new Substance();
-		ret.setType("drug");
+		ret.setType("drug"); //$NON-NLS-1$
 		if (StringUtils.isNotBlank(article.getGtin())) {
 			ret.setGtin(article.getGtin());
 		} else {

@@ -29,7 +29,7 @@ import ch.elexis.impfplan.model.Vaccination;
 public class ImportLegacyVaccinationsHandler extends AbstractHandler {
 	private static Logger log = LoggerFactory.getLogger(ImportLegacyVaccinationsHandler.class);
 
-	public static final String COMMAND_ID = "at.medevit.elexis.impfplan.ui.command.ImportOtherVaccinations";
+	public static final String COMMAND_ID = "at.medevit.elexis.impfplan.ui.command.ImportOtherVaccinations"; //$NON-NLS-1$
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -40,7 +40,7 @@ public class ImportLegacyVaccinationsHandler extends AbstractHandler {
 		try {
 			progService.runInUI(progService, ivProgress, null);
 		} catch (Exception e) {
-			log.error("Error running ImportVaccinationsProgress", e);
+			log.error("Error running ImportVaccinationsProgress", e); //$NON-NLS-1$
 			return "Fehler beim Impf-Import Prozess";
 		}
 
@@ -60,16 +60,16 @@ public class ImportLegacyVaccinationsHandler extends AbstractHandler {
 							// since a bug #8853 in impfplan trash entries with no patientid and vaccination
 							// type can exists.
 							// we only log this out
-							log.warn("Import warn: patientId and vaccinationType is null for vaccination id: "
+							log.warn("Import warn: patientId and vaccinationType is null for vaccination id: " //$NON-NLS-1$
 									+ vacc.getId());
 							continue;
 						}
-						sb.append(vacc.getPatientId() + " : "
+						sb.append(vacc.getPatientId() + " : " //$NON-NLS-1$
 								+ (vacc.getVaccinationType() != null ? vacc.getVaccinationType().getLabel()
-										: "VaccType [NULL]")
-								+ " - " + eCode.toString());
+										: "VaccType [NULL]") //$NON-NLS-1$
+								+ " - " + eCode.toString()); //$NON-NLS-1$
 					} else {
-						sb.append(vacc.getLabel() + " - " + eCode.toString());
+						sb.append(vacc.getLabel() + " - " + eCode.toString()); //$NON-NLS-1$
 					}
 					sb.append(StringUtils.LF);
 				}

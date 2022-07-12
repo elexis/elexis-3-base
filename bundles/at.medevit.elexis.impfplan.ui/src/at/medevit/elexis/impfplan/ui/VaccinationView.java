@@ -56,14 +56,14 @@ import ch.rgw.tools.TimeTool;
 
 public class VaccinationView extends ViewPart {
 
-	public static final String PART_ID = "at.medevit.elexis.impfplan.ui.ImpfplanViewPart";
+	public static final String PART_ID = "at.medevit.elexis.impfplan.ui.ImpfplanViewPart"; //$NON-NLS-1$
 
 	private static VaccinationPlanHeaderDefinition vaccinationHeaderDefinition;
 	private static List<Vaccination> vaccinations;
 	private VaccinationComposite vaccinationComposite;
 	private VaccinationCompositePaintListener vcPaintListener;
 
-	public static final String HEADER_ID_SHOW_ADMINISTERED = "HISA";
+	public static final String HEADER_ID_SHOW_ADMINISTERED = "HISA"; //$NON-NLS-1$
 	private Patient pat;
 	/**
 	 * knowledge if the sortByVaccination icon is active
@@ -154,7 +154,7 @@ public class VaccinationView extends ViewPart {
 		});
 
 		vaccinationComposite.setMenu(menuManager.createContextMenu(vaccinationComposite));
-		getSite().registerContextMenu(PART_ID + ".contextMenu", menuManager, vaccinationComposite);
+		getSite().registerContextMenu(PART_ID + ".contextMenu", menuManager, vaccinationComposite); //$NON-NLS-1$
 		getSite().setSelectionProvider(vaccinationComposite);
 		if (ElexisEventDispatcher.getSelectedPatient() != null) {
 			setPatient(ElexisEventDispatcher.getSelectedPatient());
@@ -188,7 +188,7 @@ public class VaccinationView extends ViewPart {
 		if (patientChanged) {
 			boolean sortDir = ConfigServiceHolder.getUser(PreferencePage.VAC_SORT_ORDER, false);
 			Query<Vaccination> qbe = new Query<>(Vaccination.class);
-			qbe.add("ID", Query.NOT_EQUAL, StringConstants.VERSION_LITERAL);
+			qbe.add("ID", Query.NOT_EQUAL, StringConstants.VERSION_LITERAL); //$NON-NLS-1$
 			qbe.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, pat.getId());
 			qbe.orderBy(sortDir, Vaccination.FLD_DOA);
 			vaccinations = qbe.execute();
@@ -207,7 +207,7 @@ public class VaccinationView extends ViewPart {
 					List<String> immunisationForAtcCode = ArticleToImmunisationModel.getImmunisationForAtcCode(atcCode);
 					atc.addAll(immunisationForAtcCode);
 				} else {
-					atc.addAll(Arrays.asList(vacc.get(Vaccination.FLD_VACC_AGAINST).split(",")));
+					atc.addAll(Arrays.asList(vacc.get(Vaccination.FLD_VACC_AGAINST).split(","))); //$NON-NLS-1$
 				}
 			}
 			vaccinationHeaderDefinition = new VaccinationPlanHeaderDefinition(HEADER_ID_SHOW_ADMINISTERED,

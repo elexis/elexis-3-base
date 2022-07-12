@@ -20,10 +20,10 @@ import ch.rgw.tools.VersionInfo;
 
 public class Message extends PersistentObject {
 
-	public static final String FLD_TEXT = "Text";
-	public static final String FLD_TIME = "time";
-	public static final String FLD_FROM = "from";
-	public static final String FLD_TO = "to";
+	public static final String FLD_TEXT = "Text"; //$NON-NLS-1$
+	public static final String FLD_TIME = "time"; //$NON-NLS-1$
+	public static final String FLD_FROM = "from"; //$NON-NLS-1$
+	public static final String FLD_TO = "to"; //$NON-NLS-1$
 
 	private static final String TABLENAME = "CH_ELEXIS_MESSAGES"; //$NON-NLS-1$
 	private static final String VERSION = "0.2.0"; //$NON-NLS-1$

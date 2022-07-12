@@ -17,7 +17,7 @@ public class KapschReferralServiceHolder {
 
 	public static KapschReferralService get() {
 		if (service == null) {
-			throw new IllegalStateException("No service available");
+			throw new IllegalStateException("No service available"); //$NON-NLS-1$
 		}
 		return service;
 	}

@@ -48,7 +48,7 @@ public class DatabaseICD10CodingContribution implements ICodingContribution {
 
 	private boolean isPresent() {
 		if (PersistentObject.getDefaultConnection() != null) {
-			return PersistentObject.tableExists("ICD10");
+			return PersistentObject.tableExists("ICD10"); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -58,7 +58,7 @@ public class DatabaseICD10CodingContribution implements ICodingContribution {
 		Stm statement = PersistentObject.getDefaultConnection().getStatement();
 		try {
 			ResultSet result = statement.query(
-					"SELECT ICDCode, ICDTxt FROM ICD10 WHERE ID <> 1 AND ICDTxt NOT LIKE '%Kapitel%' AND ICDCode NOT LIKE '%-%'");
+					"SELECT ICDCode, ICDTxt FROM ICD10 WHERE ID <> 1 AND ICDTxt NOT LIKE '%Kapitel%' AND ICDCode NOT LIKE '%-%'"); //$NON-NLS-1$
 			while (result.next()) {
 				String code = result.getString(1);
 				String text = result.getString(2);

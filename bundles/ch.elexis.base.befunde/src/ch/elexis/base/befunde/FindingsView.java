@@ -190,7 +190,7 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 					public void handleEvent(Event event) {
 						items = table.getItems();
 						for (int i = 0; i < items.length; i++) {
-							SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+							SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 							Date date1 = null;
 							Date date2 = null;
 							try {
@@ -211,7 +211,7 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 									}
 								}
 							} catch (ParseException e) {
-								log.log(e, "Date parsing exception", Log.WARNINGS);
+								log.log(e, "Date parsing exception", Log.WARNINGS); //$NON-NLS-1$
 							}
 						}
 

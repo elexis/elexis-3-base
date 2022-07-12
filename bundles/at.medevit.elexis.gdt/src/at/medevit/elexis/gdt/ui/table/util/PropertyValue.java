@@ -85,7 +85,7 @@ public class PropertyValue implements IValue {
 			if (properties[i] instanceof PropertyDescriptor) {
 				currentObject = BeanPropertyHelper.readProperty(currentObject, (PropertyDescriptor) properties[i]);
 			} else {
-				throw new RuntimeException("Invalid property: " + properties[i]);
+				throw new RuntimeException("Invalid property: " + properties[i]); //$NON-NLS-1$
 			}
 
 		}
@@ -100,7 +100,7 @@ public class PropertyValue implements IValue {
 		Object currentObject = object;
 		for (int i = 0; i < properties.length; i++) {
 			if (currentObject == null)
-				throw new RuntimeException("Value cannot be set because of null value in nested property!");
+				throw new RuntimeException("Value cannot be set because of null value in nested property!"); //$NON-NLS-1$
 
 			if (properties[i] instanceof String) {
 				properties[i] = BeanPropertyHelper.getPropertyDescriptor(currentObject.getClass(),
@@ -114,7 +114,7 @@ public class PropertyValue implements IValue {
 				else
 					currentObject = BeanPropertyHelper.readProperty(currentObject, (PropertyDescriptor) properties[i]);
 			} else {
-				throw new RuntimeException("Invalid property: " + properties[i]);
+				throw new RuntimeException("Invalid property: " + properties[i]); //$NON-NLS-1$
 			}
 
 		}

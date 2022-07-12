@@ -46,7 +46,7 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 				try {
 					CDAUtil.save(cdaPrescription.getDocRoot().getClinicalDocument(), cdaOutput);
 				} catch (Exception ex) {
-					LoggerFactory.getLogger(getClass()).error("Error creating InputStream for sending", ex);
+					LoggerFactory.getLogger(getClass()).error("Error creating InputStream for sending", ex); //$NON-NLS-1$
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 							"Das Rezept konnte nicht erstellt werden. " + ex.getMessage());
 					return null;
@@ -64,8 +64,8 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 
 				ByteArrayInputStream pdfInput = new ByteArrayInputStream(pdfPrescription.toByteArray());
 				String message = DocboxService.sendPrescription(cdaInput, pdfInput);
-				if (!message.startsWith("FAILED")) {
-					SavePrescriptionUtil.savePrescription(prescription, "pdf", pdfPrescription.toByteArray());
+				if (!message.startsWith("FAILED")) { //$NON-NLS-1$
+					SavePrescriptionUtil.savePrescription(prescription, "pdf", pdfPrescription.toByteArray()); //$NON-NLS-1$
 					new OutputLog(prescription, this);
 					try {
 						Program.launch(writeTempPdf(pdfPrescription));
@@ -86,7 +86,7 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 	}
 
 	private String writeTempPdf(ByteArrayOutputStream pdf) throws FileNotFoundException, IOException {
-		File pdfFile = File.createTempFile(getRezeptFileName(), ".pdf");
+		File pdfFile = File.createTempFile(getRezeptFileName(), ".pdf"); //$NON-NLS-1$
 		try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
 			fos.write(pdf.toByteArray());
 			fos.flush();
@@ -96,12 +96,12 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 
 	public String getRezeptFileName() {
 		String ret = prescription.getLabel();
-		return ret.replaceAll(StringUtils.SPACE, "_");
+		return ret.replaceAll(StringUtils.SPACE, "_"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getOutputterID() {
-		return "at.medevit.elexis.ehc.ui.docbox.outputter";
+		return "at.medevit.elexis.ehc.ui.docbox.outputter"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -112,8 +112,8 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 	@Override
 	public Image getSymbol() {
 		if (symbol == null) {
-			ImageDescriptor iDesc = AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.ehc.ui.docbox",
-					"/icons/docbox16.png");
+			ImageDescriptor iDesc = AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.ehc.ui.docbox", //$NON-NLS-1$
+					"/icons/docbox16.png"); //$NON-NLS-1$
 			symbol = iDesc.createImage();
 		}
 		return symbol;

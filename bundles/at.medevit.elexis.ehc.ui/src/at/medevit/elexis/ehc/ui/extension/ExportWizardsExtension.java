@@ -27,7 +27,7 @@ import at.medevit.elexis.ehc.ui.dialog.WizardDescriptor;
 public class ExportWizardsExtension {
 	private static Logger logger = LoggerFactory.getLogger(ExportWizardsExtension.class);
 
-	private static final String OTHER_CATEGORYID = "at.medevit.elexis.ehc.ui.OtherCategoryId";
+	private static final String OTHER_CATEGORYID = "at.medevit.elexis.ehc.ui.OtherCategoryId"; //$NON-NLS-1$
 
 	private static List<IWizardCategory> cacheCategoriesList;
 
@@ -52,16 +52,16 @@ public class ExportWizardsExtension {
 
 		cacheWizardsList = new ArrayList<IWizardDescriptor>();
 
-		logger.info("Initializing or refreshing Export Wizards.");
+		logger.info("Initializing or refreshing Export Wizards."); //$NON-NLS-1$
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
-		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.ehc.ui.ehcexport");
+		IExtensionPoint exp = exr.getExtensionPoint("at.medevit.elexis.ehc.ui.ehcexport"); //$NON-NLS-1$
 		if (exp != null) {
 			IExtension[] extensions = exp.getExtensions();
-			logger.info("Initializing or refreshing Export Wizards found " + extensions.length + " implementations.");
+			logger.info("Initializing or refreshing Export Wizards found " + extensions.length + " implementations."); //$NON-NLS-1$ //$NON-NLS-2$
 			for (IExtension ex : extensions) {
 				IConfigurationElement[] elems = ex.getConfigurationElements();
 				for (IConfigurationElement el : elems) {
-					if (el.getName().equals("category")) {
+					if (el.getName().equals("category")) { //$NON-NLS-1$
 						WizardCategory category = new WizardCategory(el);
 						cacheCategoriesList.add(category);
 					}
@@ -70,7 +70,7 @@ public class ExportWizardsExtension {
 			for (IExtension ex : extensions) {
 				IConfigurationElement[] elems = ex.getConfigurationElements();
 				for (IConfigurationElement el : elems) {
-					if (el.getName().equals("wizard")) {
+					if (el.getName().equals("wizard")) { //$NON-NLS-1$
 						WizardDescriptor descriptor = new WizardDescriptor(el);
 						IWizardCategory matchingCategory = null;
 						// find matching category

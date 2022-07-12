@@ -36,7 +36,7 @@ import ch.elexis.data.Patient;
 
 public class UntersuchungAnzeigenMenu extends ContributionItem {
 
-	public static final String ID = "at.medevit.elexis.gdt.dynamic.UntersuchungAnzeigenMenu";
+	public static final String ID = "at.medevit.elexis.gdt.dynamic.UntersuchungAnzeigenMenu"; //$NON-NLS-1$
 
 	public UntersuchungAnzeigenMenu() {
 	}

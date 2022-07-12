@@ -53,7 +53,7 @@ public class Medication {
 	public static Medication fromPrescriptions(@NonNull IMandator author, @NonNull IPatient patient,
 			@NonNull List<IPrescription> prescriptions) {
 		Medication ret = new Medication();
-		ret.date = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(LocalDateTime.now());
+		ret.date = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(LocalDateTime.now()); //$NON-NLS-1$
 
 		ret.patientInfo = ContactInfo.fromPatient(patient);
 		ret.mandantInfo = ContactInfo.fromKontakt(author);

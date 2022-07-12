@@ -24,7 +24,7 @@ import at.medevit.elexis.gdt.constants.GDTConstants;
 
 public class GDTSatzNachricht {
 
-	final static String CRLF = "\r\n";
+	final static String CRLF = "\r\n"; //$NON-NLS-1$
 
 	LinkedList<String> message = null;
 	HashMap<Integer, String> values = new LinkedHashMap<Integer, String>();
@@ -34,8 +34,8 @@ public class GDTSatzNachricht {
 
 	int charCounterSatzLaenge = 0;
 
-	DecimalFormat threePlaces = new DecimalFormat("000");
-	DecimalFormat fivePlaces = new DecimalFormat("00000");
+	DecimalFormat threePlaces = new DecimalFormat("000"); //$NON-NLS-1$
+	DecimalFormat fivePlaces = new DecimalFormat("00000"); //$NON-NLS-1$
 
 	/**
 	 * Erzeugt das Grundgerüst einer GDT Satznachricht, beinhaltet bereits folgende
@@ -146,7 +146,7 @@ public class GDTSatzNachricht {
 
 	protected void finalizeMessage() {
 		charCounterSatzLaenge += 14;
-		String line = "014" + GDTConstants.FELDKENNUNG_SATZLAENGE + StringUtils.EMPTY
+		String line = "014" + GDTConstants.FELDKENNUNG_SATZLAENGE + StringUtils.EMPTY //$NON-NLS-1$
 				+ fivePlaces.format(charCounterSatzLaenge) + CRLF;
 		message.add(1, line);
 	}

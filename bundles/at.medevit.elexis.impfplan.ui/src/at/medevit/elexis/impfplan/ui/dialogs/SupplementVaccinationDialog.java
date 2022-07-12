@@ -107,7 +107,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		setTitle("Impfung nachtragen");
 		setTitleImage(
-				ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui", "rsc/icons/vaccination_logo.png"));
+				ResourceManager.getPluginImage("at.medevit.elexis.impfplan.ui", "rsc/icons/vaccination_logo.png")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		Patient selectedPatient = ElexisEventDispatcher.getSelectedPatient();
 		setMessage(pat.getLabel());
@@ -118,7 +118,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Group mainGroup = new Group(container, SWT.NONE);
-		mainGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD));
+		mainGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD)); //$NON-NLS-1$
 		mainGroup.setText("Pflicht Angaben");
 		GridLayout gd_MainGroup = new GridLayout(2, false);
 		mainGroup.setLayout(gd_MainGroup);
@@ -159,7 +159,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 			});
 
 			IQuery<IArtikelstammItem> query = ArtikelstammModelServiceHolder.get().getQuery(IArtikelstammItem.class);
-			query.and("atc", COMPARATOR.LIKE, "J07%");
+			query.and("atc", COMPARATOR.LIKE, "J07%"); //$NON-NLS-1$ //$NON-NLS-2$
 			IdentifiableProposalProvider<IArtikelstammItem> aopp = new IdentifiableProposalProvider<>(query);
 			ContentProposalAdapter articleProposalAdapter = new ContentProposalAdapter(txtArticleName,
 					new TextContentAdapter(), aopp, null, null);
@@ -177,7 +177,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 		new Label(container, SWT.NONE);
 
 		Group optionalGroup = new Group(container, SWT.NONE);
-		optionalGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD));
+		optionalGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD)); //$NON-NLS-1$
 		optionalGroup.setText("Optionale Angaben");
 		optionalGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		optionalGroup.setLayout(new GridLayout(2, false));
@@ -247,7 +247,7 @@ public class SupplementVaccinationDialog extends TitleAreaDialog {
 		// txtAtcCode.setSize(314, 21);
 
 		Group expiredGroup = new Group(container, SWT.NONE);
-		expiredGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD));
+		expiredGroup.setFont(SWTResourceManager.getFont("Noto Sans", 9, SWT.BOLD)); //$NON-NLS-1$
 		expiredGroup.setText("Bei nicht mehr erhältlichen Impfstoffen");
 		expiredGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		expiredGroup.setLayout(new GridLayout(2, false));

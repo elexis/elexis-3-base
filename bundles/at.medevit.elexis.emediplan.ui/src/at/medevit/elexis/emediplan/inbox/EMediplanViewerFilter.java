@@ -25,7 +25,7 @@ public class EMediplanViewerFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof IInboxElement) {
 			Object o = ((IInboxElement) element).getObject();
-			if (o instanceof NamedBlob && ((NamedBlob) o).getId().startsWith("Med_")) {
+			if (o instanceof NamedBlob && ((NamedBlob) o).getId().startsWith("Med_")) { //$NON-NLS-1$
 				return true;
 			}
 			return false;

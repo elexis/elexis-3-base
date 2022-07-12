@@ -16,12 +16,12 @@ public class OpenESRWithinvoiceIdHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		String invoiceId = event.getParameter("ch.elexis.ebanking_ch.command.openESR.InvoiceId");
-		String paymentDate = event.getParameter("ch.elexis.ebanking_ch.command.openESR.PaymentDate");
+		String invoiceId = event.getParameter("ch.elexis.ebanking_ch.command.openESR.InvoiceId"); //$NON-NLS-1$
+		String paymentDate = event.getParameter("ch.elexis.ebanking_ch.command.openESR.PaymentDate"); //$NON-NLS-1$
 		if (StringUtils.isNotBlank(invoiceId) && StringUtils.isNotBlank(paymentDate)) {
 			Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class);
 			qbe.add(ESRRecord.RECHNUNGS_ID, Query.EQUALS, invoiceId);
-			qbe.add("Verarbeitet", Query.EQUALS, paymentDate);
+			qbe.add("Verarbeitet", Query.EQUALS, paymentDate); //$NON-NLS-1$
 			List<ESRRecord> esrRecords = qbe.execute();
 			if (!esrRecords.isEmpty()) {
 				for (ESRRecord esrRecord : esrRecords) {

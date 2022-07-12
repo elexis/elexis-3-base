@@ -75,7 +75,7 @@ public class GlobalInboxEntryImportHandler {
 		try (InputStream fin = new FileInputStream(mainFile)) {
 			document = documentStore.saveDocument(document, fin);
 		} catch (IOException | ElexisException e) {
-			LoggerFactory.getLogger(getClass()).warn("Import error", e);
+			LoggerFactory.getLogger(getClass()).warn("Import error", e); //$NON-NLS-1$
 			SWTHelper.showError("Import error", e.getMessage());
 			documentStore.removeDocument(document);
 			return;
@@ -88,7 +88,7 @@ public class GlobalInboxEntryImportHandler {
 		try {
 			findingService.saveFinding(documentReference);
 		} catch (IllegalStateException e) {
-			LoggerFactory.getLogger(getClass()).warn("Import error - could not save documentReference");
+			LoggerFactory.getLogger(getClass()).warn("Import error - could not save documentReference"); //$NON-NLS-1$
 			SWTHelper.showError("Import error", "Could not save documentReference");
 			documentStore.removeDocument(document);
 			return;

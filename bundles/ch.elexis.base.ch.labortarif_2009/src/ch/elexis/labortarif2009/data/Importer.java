@@ -99,8 +99,8 @@ public class Importer extends ImporterPage {
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception {
 		try (FileInputStream tarifInputStream = new FileInputStream(results[0])) {
-			IReferenceDataImporter importer = importerService.getImporter("analysenliste")
-					.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available."));
+			IReferenceDataImporter importer = importerService.getImporter("analysenliste") //$NON-NLS-1$
+					.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available.")); //$NON-NLS-1$
 			return importer.performImport(monitor, tarifInputStream, getVersionFromValid(validFrom));
 		}
 	}

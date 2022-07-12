@@ -49,9 +49,9 @@ public class GDTSatzNachrichtHelper {
 
 		String sexCode = null;
 		sex = sex.trim();
-		if (sex.equalsIgnoreCase("m"))
+		if (sex.equalsIgnoreCase("m")) //$NON-NLS-1$
 			sexCode = GDTConstants.SEX_MALE + StringUtils.EMPTY;
-		if (sex.equalsIgnoreCase("w") || sex.equalsIgnoreCase("f"))
+		if (sex.equalsIgnoreCase("w") || sex.equalsIgnoreCase("f")) //$NON-NLS-1$ //$NON-NLS-2$
 			sexCode = GDTConstants.SEX_FEMALE + StringUtils.EMPTY;
 		return sexCode;
 	}
@@ -61,7 +61,7 @@ public class GDTSatzNachrichtHelper {
 		try {
 			TimeTool tt = new TimeTool(pat.getGeburtsdatum(), true);
 			Date d = tt.getTime();
-			SimpleDateFormat sd = new SimpleDateFormat("ddMMyyyy");
+			SimpleDateFormat sd = new SimpleDateFormat("ddMMyyyy"); //$NON-NLS-1$
 			dob = sd.format(d);
 		} catch (TimeFormatException e) {
 			return null;

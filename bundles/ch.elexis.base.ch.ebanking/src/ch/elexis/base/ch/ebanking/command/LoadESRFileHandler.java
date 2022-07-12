@@ -42,7 +42,7 @@ import ch.rgw.tools.TimeTool;
 
 public class LoadESRFileHandler extends AbstractHandler implements IElementUpdater {
 
-	public static final String COMMAND_ID = "ch.elexis.ebanking_ch.command.loadESRFile";
+	public static final String COMMAND_ID = "ch.elexis.ebanking_ch.command.loadESRFile"; //$NON-NLS-1$
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 

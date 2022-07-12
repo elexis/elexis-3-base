@@ -79,7 +79,7 @@ public class InboxWatcher {
 			executor.execute(new DirectoryWatcher());
 		} catch (IOException e) {
 			logger.error(LinuxIoNtifyHint);
-			logger.error("Error creating filesystem watcher", e);
+			logger.error("Error creating filesystem watcher", e); //$NON-NLS-1$
 		}
 	}
 
@@ -91,7 +91,7 @@ public class InboxWatcher {
 				watcher.close();
 			}
 		} catch (IOException e) {
-			logger.error("Error closing filesystem watcher", e);
+			logger.error("Error closing filesystem watcher", e); //$NON-NLS-1$
 		}
 	}
 
@@ -152,7 +152,7 @@ public class InboxWatcher {
 							// A new Path was created
 							Path newPath = ((WatchEvent<Path>) watchEvent).context();
 							String newInboxPath = activeInboxString + File.separator + newPath.getFileName().toString();
-							URL fileUrl = new URL("file:///" + newInboxPath);
+							URL fileUrl = new URL("file:///" + newInboxPath); //$NON-NLS-1$
 							documentStrategy.execute(fileUrl);
 						}
 					}
@@ -161,7 +161,7 @@ public class InboxWatcher {
 					}
 				}
 			} catch (InterruptedException | MalformedURLException e) {
-				logger.error("Filesystem watching interrupted stopping", e);
+				logger.error("Filesystem watching interrupted stopping", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -185,10 +185,10 @@ public class InboxWatcher {
 				for (File file : files) {
 					if (!file.isDirectory()) {
 						try {
-							URL fileUrl = new URL("file:///" + file.getAbsolutePath());
+							URL fileUrl = new URL("file:///" + file.getAbsolutePath()); //$NON-NLS-1$
 							documentStrategy.execute(fileUrl);
 						} catch (MalformedURLException e) {
-							logger.error("Error initializing inbox.", e);
+							logger.error("Error initializing inbox.", e); //$NON-NLS-1$
 						}
 					}
 				}
@@ -225,7 +225,7 @@ public class InboxWatcher {
 						watchKeys.put(activeInboxString, key);
 					}
 				} catch (IOException e) {
-					logger.error("Error creating filesystem key", e);
+					logger.error("Error creating filesystem key", e); //$NON-NLS-1$
 				}
 			}
 		}

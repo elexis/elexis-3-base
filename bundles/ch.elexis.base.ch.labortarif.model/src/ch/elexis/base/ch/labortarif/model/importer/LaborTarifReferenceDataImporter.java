@@ -39,14 +39,14 @@ import ch.rgw.tools.TimeTool;
 @Component(service = IReferenceDataImporter.class, property = IReferenceDataImporter.REFERENCEDATAID + "=analysenliste")
 public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImporter {
 
-	private static String FLD_CODE = "code";
-	private static String FLD_CHAPTER = "chapter";
-	private static String FLD_TP = "tp";
-	private static String FLD_NAME = "name";
-	private static String FLD_LIMITATIO = "limitatio";
-	private static String FLD_FACHBEREICH = "fachbereich";
-	private static String FLD_GUELTIGVON = "gueltigVon";
-	private static String FLD_GUELTIGBIS = "gueltigBis";
+	private static String FLD_CODE = "code"; //$NON-NLS-1$
+	private static String FLD_CHAPTER = "chapter"; //$NON-NLS-1$
+	private static String FLD_TP = "tp"; //$NON-NLS-1$
+	private static String FLD_NAME = "name"; //$NON-NLS-1$
+	private static String FLD_LIMITATIO = "limitatio"; //$NON-NLS-1$
+	private static String FLD_FACHBEREICH = "fachbereich"; //$NON-NLS-1$
+	private static String FLD_GUELTIGVON = "gueltigVon"; //$NON-NLS-1$
+	private static String FLD_GUELTIGBIS = "gueltigBis"; //$NON-NLS-1$
 
 	int langdef = 0;
 	LocalDate validFrom;
@@ -84,7 +84,7 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 				int last = exw.getLastRow();
 				int count = last - first;
 				if (monitor != null)
-					monitor.beginTask("Import EAL", count);
+					monitor.beginTask("Import EAL", count); //$NON-NLS-1$
 
 				String[] line = exw.getRow(1).toArray(new String[0]);
 				// determine format of file according to year of tarif
@@ -138,7 +138,7 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 	private TimeTool getValidFromVersion(Integer newVersion) {
 		String intString = Integer.toString(newVersion);
 		if (intString.length() != 6) {
-			throw new IllegalStateException("Version " + newVersion + " can not be parsed to valid date.");
+			throw new IllegalStateException("Version " + newVersion + " can not be parsed to valid date."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		String year = intString.substring(0, 2);
 		String month = intString.substring(2, 4);
@@ -152,9 +152,9 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 
 	private void updateOrCreateFromImportedValues() {
 		// get all entries with matching code
-		INamedQuery<ILaborLeistung> query = ModelServiceHolder.get().getNamedQuery(ILaborLeistung.class, "code");
+		INamedQuery<ILaborLeistung> query = ModelServiceHolder.get().getNamedQuery(ILaborLeistung.class, "code"); //$NON-NLS-1$
 		List<ILaborLeistung> entries = query
-				.executeWithParameters(query.getParameterMap("code", importedValues.get(FLD_CODE)));
+				.executeWithParameters(query.getParameterMap("code", importedValues.get(FLD_CODE))); //$NON-NLS-1$
 		List<ILaborLeistung> openEntries = new ArrayList<ILaborLeistung>();
 		// get open entries -> field FLD_GUELTIG_BIS not set
 		for (ILaborLeistung existing : entries) {
@@ -213,14 +213,14 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 	private String concatChapter(ILaborLeistung existing, String chapter) {
 		String existingChapter = existing.getChapter();
 		if (existingChapter != null && !existingChapter.isEmpty()) {
-			return chaptersMakeUnique(existingChapter + ", " + chapter);
+			return chaptersMakeUnique(existingChapter + ", " + chapter); //$NON-NLS-1$
 		} else {
 			return chaptersMakeUnique(chapter);
 		}
 	}
 
 	private String chaptersMakeUnique(String chapters) {
-		String[] parts = chapters.split(", ");
+		String[] parts = chapters.split(", "); //$NON-NLS-1$
 		if (parts != null && parts.length > 1) {
 			StringBuilder sb = new StringBuilder();
 			HashSet<String> set = new HashSet<>();
@@ -229,7 +229,7 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 			Arrays.sort(array);
 			for (String string : array) {
 				if (sb.length() > 0) {
-					sb.append(", ");
+					sb.append(", "); //$NON-NLS-1$
 				}
 				sb.append(string);
 			}
@@ -268,8 +268,8 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 	private void fillImportedValues2018(String[] line) {
 		importedValues.clear();
 		importedValues.put(FLD_CHAPTER, StringTool.getSafe(line, 0));
-		if (StringTool.getSafe(line, 6).equals("1") || StringTool.getSafe(line, 6).equalsIgnoreCase("true")) {
-			importedValues.put(FLD_CHAPTER, StringTool.getSafe(line, 0) + ", 5.1.2.2.1");
+		if (StringTool.getSafe(line, 6).equals("1") || StringTool.getSafe(line, 6).equalsIgnoreCase("true")) { //$NON-NLS-1$ //$NON-NLS-2$
+			importedValues.put(FLD_CHAPTER, StringTool.getSafe(line, 0) + ", 5.1.2.2.1"); //$NON-NLS-1$
 		}
 		// convert code to nnnn.mm
 		String code = convertCodeString(StringTool.getSafe(line, 1));
@@ -304,19 +304,19 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 
 	private String convertCodeString(String code) {
 		// split by all possible delimiters after reading for xls
-		String[] parts = code.split("[\\.,']");
+		String[] parts = code.split("[\\.,']"); //$NON-NLS-1$
 		StringBuilder sb = new StringBuilder();
 		for (String part : parts) {
 			sb.append(part);
 			// at one point we should reach nnnn -> then add the '.' delimiter
 			if (sb.length() == 4)
-				sb.append(".");
+				sb.append("."); //$NON-NLS-1$
 		}
 		// if there was no "sub number" add "00"
 		if (sb.length() == 5)
-			sb.append("00");
+			sb.append("00"); //$NON-NLS-1$
 		else if (sb.length() == 6)
-			sb.append("0");
+			sb.append("0"); //$NON-NLS-1$
 
 		return sb.toString();
 	}
@@ -353,7 +353,7 @@ public class LaborTarifReferenceDataImporter extends AbstractReferenceDataImport
 	}
 
 	private boolean isCode(String code2018) {
-		code2018 = code2018.replaceAll("[\\.,']", StringUtils.EMPTY);
+		code2018 = code2018.replaceAll("[\\.,']", StringUtils.EMPTY); //$NON-NLS-1$
 		Integer value = Integer.valueOf(code2018);
 		return value >= 1000;
 	}

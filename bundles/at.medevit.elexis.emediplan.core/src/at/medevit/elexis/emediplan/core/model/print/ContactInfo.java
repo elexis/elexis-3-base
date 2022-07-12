@@ -38,10 +38,10 @@ public class ContactInfo {
 
 	public static ContactInfo fromPatient(IPatient pat) {
 		ContactInfo ret = new ContactInfo();
-		ret.setBirthdate(pat.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+		ret.setBirthdate(pat.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))); //$NON-NLS-1$
 		ret.setCity(pat.getCity());
 		ret.setFirstname(pat.getFirstName());
-		ret.setGender(pat.getGender() == Gender.FEMALE ? "W" : "M");
+		ret.setGender(pat.getGender() == Gender.FEMALE ? "W" : "M"); //$NON-NLS-1$ //$NON-NLS-2$
 		ret.setLastname(pat.getLastName());
 		ret.setStreet1(pat.getStreet());
 		ret.setZip(pat.getZip());
@@ -73,9 +73,9 @@ public class ContactInfo {
 			ret.setLastname(per.getLastName());
 			ret.setFirstname(per.getFirstName());
 			if (per.getDateOfBirth() != null) {
-				ret.setBirthdate(per.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+				ret.setBirthdate(per.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))); //$NON-NLS-1$
 			}
-			ret.setGender(per.getGender() == Gender.FEMALE ? "W" : "M");
+			ret.setGender(per.getGender() == Gender.FEMALE ? "W" : "M"); //$NON-NLS-1$ //$NON-NLS-2$
 			ret.setTel(per.getPhone1());
 			ret.setTitle(per.getTitel());
 		} else {
@@ -194,7 +194,7 @@ public class ContactInfo {
 
 	@Override
 	public String toString() {
-		return "ContactInfo: " + firstname + StringUtils.SPACE + lastname + StringUtils.SPACE + city + StringUtils.SPACE
+		return "ContactInfo: " + firstname + StringUtils.SPACE + lastname + StringUtils.SPACE + city + StringUtils.SPACE //$NON-NLS-1$
 				+ zip + StringUtils.SPACE + menumber;
 	}
 }

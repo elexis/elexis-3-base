@@ -16,7 +16,7 @@ public class VaccinationCompositeMouseListener implements MouseListener {
 	public void mouseDoubleClick(MouseEvent e) {
 		if (vcpl.isTitleArea()) {
 			Program.launch(
-					"https://www.bag.admin.ch/dam/bag/de/dokumente/mt/i-und-b/richtlinien-empfehlungen/neue-empfehlungen-2019/schweizerischer-impfplan-synopsis.pdf.download.pdf/schweizerischer-impfplan-synopsis-de.pdf");
+					"https://www.bag.admin.ch/dam/bag/de/dokumente/mt/i-und-b/richtlinien-empfehlungen/neue-empfehlungen-2019/schweizerischer-impfplan-synopsis.pdf.download.pdf/schweizerischer-impfplan-synopsis-de.pdf"); //$NON-NLS-1$
 		}
 	}
 

@@ -16,12 +16,12 @@ public class SolrIndexerUtil {
 			throws SolrServerException, IOException {
 
 		// extract content and metadata using SolrCell
-		ContentStreamUpdateRequest request = new ContentStreamUpdateRequest("/update/extract");
+		ContentStreamUpdateRequest request = new ContentStreamUpdateRequest("/update/extract"); //$NON-NLS-1$
 
 		final ByteArrayStream stream = new ContentStreamBase.ByteArrayStream(input, null);
 		request.addContentStream(stream);
-		request.setParam("extractOnly", "true");
-		request.setParam("extractFormat", "text");
+		request.setParam("extractOnly", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		request.setParam("extractFormat", "text"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String content = StringUtils.EMPTY;
 		String metadata = StringUtils.EMPTY;
@@ -31,7 +31,7 @@ public class SolrIndexerUtil {
 			String name = result.getName(i);
 			if (name == null) {
 				content = String.valueOf(result.getVal(i));
-			} else if ("null_metadata".equals(name)) {
+			} else if ("null_metadata".equals(name)) { //$NON-NLS-1$
 				metadata = String.valueOf(result.getVal(i));
 			}
 		}

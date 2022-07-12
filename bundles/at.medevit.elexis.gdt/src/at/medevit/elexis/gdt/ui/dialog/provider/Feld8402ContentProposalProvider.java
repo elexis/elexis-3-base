@@ -87,7 +87,7 @@ public class Feld8402ContentProposalProvider implements IContentProposalProvider
 			}
 
 			public String getLabel() {
-				return proposal + " - " + label;
+				return proposal + " - " + label; //$NON-NLS-1$
 			}
 
 			public int getCursorPosition() {

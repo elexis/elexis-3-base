@@ -109,9 +109,9 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 		try {
 			// input is expected to be a zip file, containing the icd-10 who 2006 files as
 			// described
-			File zipFile = Files.createTempFile("icd10_", ".zip").toFile();
+			File zipFile = Files.createTempFile("icd10_", ".zip").toFile(); //$NON-NLS-1$ //$NON-NLS-2$
 			FileUtils.copyInputStreamToFile(input, zipFile);
-			File unzipDirectory = Files.createTempDirectory("icd10_").toFile();
+			File unzipDirectory = Files.createTempDirectory("icd10_").toFile(); //$NON-NLS-1$
 			FileTool.unzip(zipFile, unzipDirectory);
 			monitor.worked(500);
 			if (monitor.isCanceled()) {
@@ -135,11 +135,11 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 					ICD10 kapitel = chapters.get(kap);
 					if (kapitel == null) { // Neues Kapitel anlegen
 						kapitel = new ICD10();
-						kapitel.setParent("NIL");
+						kapitel.setParent("NIL"); //$NON-NLS-1$
 						kapitel.setCode(kap);
-						kapitel.setEncoded("1;N;X;X;" + kap + ";" + kap + ";" + kap + ";" + kap + ";" + kap + ";" + kap
-								+ ";Kapitel " + kap + ";;;;;");
-						kapitel.setText(kapitel.getEnoded().split(";")[TEXT]);
+						kapitel.setEncoded("1;N;X;X;" + kap + ";" + kap + ";" + kap + ";" + kap + ";" + kap + ";" + kap //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+								+ ";Kapitel " + kap + ";;;;;"); //$NON-NLS-2$
+						kapitel.setText(kapitel.getEnoded().split(";")[TEXT]); //$NON-NLS-1$
 						chapters.put(kap, kapitel);
 						LineFeeder lf = new LineFeeder(new File(unzipDirectory, "KAP" + kap + ".asc")); //$NON-NLS-1$ //$NON-NLS-2$
 						while (lf.peek() == '0') {
@@ -150,14 +150,14 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 								// //$NON-NLS-3$
 								break;
 							case 'I':
-								setExtInfo("Incl:", t.substring(2), kapitel);
+								setExtInfo("Incl:", t.substring(2), kapitel); //$NON-NLS-1$
 								break;
 							case 'E':
-								setExtInfo("Excl:", t.substring(2), kapitel);
+								setExtInfo("Excl:", t.substring(2), kapitel); //$NON-NLS-1$
 								break;
 							case 'G':
 								String gruppen = t.substring(2).replaceAll(StringUtils.LF, "::"); //$NON-NLS-1$
-								setExtInfo("Gruppen", t.substring(2), kapitel);
+								setExtInfo("Gruppen", t.substring(2), kapitel); //$NON-NLS-1$
 								Matcher match = pat_group.matcher(gruppen + "::"); //$NON-NLS-1$
 								while (match.find() == true) {
 									String code = match.group(1);
@@ -166,15 +166,15 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 										ICD10 icdgroup = new ICD10();
 										icdgroup.setParent(kapitel.getId());
 										icdgroup.setCode(code);
-										icdgroup.setEncoded("1;N;X;X;" + kap + ";" + code + ";" + gs[0] + ";" + gs[0]
-												+ ";" + code + ";" + code + ";" + match.group(2));
-										icdgroup.setText(icdgroup.getEnoded().split(";")[TEXT]);
+										icdgroup.setEncoded("1;N;X;X;" + kap + ";" + code + ";" + gs[0] + ";" + gs[0] //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+												+ ";" + code + ";" + code + ";" + match.group(2)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+										icdgroup.setText(icdgroup.getEnoded().split(";")[TEXT]); //$NON-NLS-1$
 										groups.put(gs[0], icdgroup);
 									}
 								}
 								break;
 							default:
-								setExtInfo("Zusatz", t.substring(2), kapitel);
+								setExtInfo("Zusatz", t.substring(2), kapitel); //$NON-NLS-1$
 							}
 						}
 						// save chapters and groups
@@ -188,14 +188,14 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 						node.setParent(kapitel.getId());
 						node.setCode(fields[CODE]);
 						node.setEncoded(in);
-						node.setText(node.getEnoded().split(";")[TEXT]);
+						node.setText(node.getEnoded().split(";")[TEXT]); //$NON-NLS-1$
 					} else {
 						if (fields[0].equals("3")) { //$NON-NLS-1$
 							node = new ICD10();
 							node.setParent(mygroup.getId());
 							node.setCode(fields[CODE]);
 							node.setEncoded(in);
-							node.setText(node.getEnoded().split(";")[TEXT]);
+							node.setText(node.getEnoded().split(";")[TEXT]); //$NON-NLS-1$
 							supercodes.put(fields[CODE], node);
 						} else {
 							ICD10 icdSuper = supercodes.get(supercode);
@@ -204,13 +204,13 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 								node.setParent(mygroup.getId());
 								node.setCode(fields[CODE]);
 								node.setEncoded(in);
-								node.setText(node.getEnoded().split(";")[TEXT]);
+								node.setText(node.getEnoded().split(";")[TEXT]); //$NON-NLS-1$
 							} else {
 								node = new ICD10();
 								node.setParent(icdSuper.getId());
 								node.setCode(fields[CODE]);
 								node.setEncoded(in);
-								node.setText(node.getEnoded().split(";")[TEXT]);
+								node.setText(node.getEnoded().split(";")[TEXT]); //$NON-NLS-1$
 							}
 						}
 					}
@@ -225,9 +225,9 @@ public class Icd10ReferenceDataImporter extends AbstractReferenceDataImporter im
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Error importing icd10 zip file", e);
-			return new Status(Status.ERROR, "ch.elexis.base.ch.icd10",
-					"Error importing icd10 zip file [" + e.getMessage() + "]");
+			logger.error("Error importing icd10 zip file", e); //$NON-NLS-1$
+			return new Status(Status.ERROR, "ch.elexis.base.ch.icd10", //$NON-NLS-1$
+					"Error importing icd10 zip file [" + e.getMessage() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return Status.OK_STATUS;
 	}

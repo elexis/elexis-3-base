@@ -306,11 +306,11 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 
 	private boolean isTerminTypeIsReserviert(IAppointment pi) {
-		return pi.getType().equals(ConfigServiceHolder.get().getAsList("agenda/TerminTypen").get(1));
+		return pi.getType().equals(ConfigServiceHolder.get().getAsList("agenda/TerminTypen").get(1)); //$NON-NLS-1$
 	}
 
 	private boolean isTerminTypeIsFree(IAppointment pi) {
-		return pi.getType().equals(ConfigServiceHolder.get().getAsList("agenda/TerminTypen").get(0));
+		return pi.getType().equals(ConfigServiceHolder.get().getAsList("agenda/TerminTypen").get(0)); //$NON-NLS-1$
 	}
 
 	private int getStartMinute(IAppointment pi) {
@@ -351,8 +351,8 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		}
 
 		IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class,
-				!ConfigServiceHolder.get().getActiveUserContact("agenda/zeige_geloeschte", "0").equals("0"));
-		query.and("tag", COMPARATOR.EQUALS, appointment.getStartTime().toLocalDate());
+				!ConfigServiceHolder.get().getActiveUserContact("agenda/zeige_geloeschte", "0").equals("0")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		query.and("tag", COMPARATOR.EQUALS, appointment.getStartTime().toLocalDate()); //$NON-NLS-1$
 		query.and(ModelPackage.Literals.IAPPOINTMENT__SCHEDULE, COMPARATOR.EQUALS, appointment.getSchedule());
 		list = query.execute();
 		if (list.isEmpty()) {
@@ -367,7 +367,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			if (!iAppointment.getId().equals(appointment.getId())) {
 				if (isOverlapping(appointment.getStartTime(), appointment.getEndTime(), iAppointment.getStartTime(),
 						iAppointment.getEndTime())) {
-					System.out.println("Collide " + appointment.getLabel() + " with " + iAppointment.getLabel());
+					System.out.println("Collide " + appointment.getLabel() + " with " + iAppointment.getLabel()); //$NON-NLS-1$ //$NON-NLS-2$
 					return true;
 				}
 			}
@@ -382,7 +382,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	private int getRasterStartTime() {
 		try {
 			// @REF ConfigServiceHolder.getUser("agenda/dayView/Start", 7);
-			return Integer.parseInt(ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/Start", "7"));
+			return Integer.parseInt(ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/Start", "7")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (NumberFormatException e) {
 			return rasterIndex;
 		}
@@ -391,7 +391,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	private int getRasterEndTime() {
 		try {
 			// @REF ConfigServiceHolder.getUser("agenda/dayView/End", 19);
-			return Integer.parseInt(ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/End", "19"));
+			return Integer.parseInt(ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/End", "19")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (NumberFormatException e) {
 			return rasterIndex;
 		}
@@ -400,7 +400,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	private int getRasterIndex() {
 		try {
 			// @REF ConfigServiceHolder.getUser("agenda/dayView/raster", 3)
-			return Integer.parseInt(ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/raster", "3"));
+			return Integer.parseInt(ConfigServiceHolder.get().getActiveUserContact("agenda/dayView/raster", "3")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (NumberFormatException e) {
 			return rasterIndex;
 		}
@@ -410,7 +410,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		// @REF ConfigServiceHolder.setUser("agenda/dayView/raster", rasterIndex);
 		// //$NON-NLS-1$
 		ContextServiceHolder.get().getActiveUserContact()
-				.ifPresent(c -> ConfigServiceHolder.get().set(c, "agenda/dayView/raster", String.valueOf(rasterIndex)));
+				.ifPresent(c -> ConfigServiceHolder.get().set(c, "agenda/dayView/raster", String.valueOf(rasterIndex))); //$NON-NLS-1$
 	}
 
 	private void updateMessage(final boolean collision) {
@@ -420,7 +420,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 		if (collision) {
 			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY)); // $NON-NLS-1$
-			msg += "\t" + " - Terminkollision!";
+			msg += "\t" + " - Terminkollision!"; //$NON-NLS-1$
 		}
 
 		getShell().getDisplay().asyncExec(new Runnable() {
@@ -461,8 +461,8 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 		// p.getType(), "FFFFFF"); //$NON-NLS-1$
 		// return UiDesk.getColorFromRGB(coldesc);
 
-		String cfgName = "agenda/farben/typ/";
-		String coldesc = ConfigServiceHolder.get().getActiveUserContact(cfgName + p.getType(), "FFFFFF");
+		String cfgName = "agenda/farben/typ/"; //$NON-NLS-1$
+		String coldesc = ConfigServiceHolder.get().getActiveUserContact(cfgName + p.getType(), "FFFFFF"); //$NON-NLS-1$
 		ColorRegistry cr = JFaceResources.getColorRegistry();
 		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
 
@@ -487,7 +487,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	private Font getSmallFont() {
 		// @REF UiDesk.getFont(Preferences.USR_SMALLFONT))
-		String cfgName = "anwender/smallfont";
+		String cfgName = "anwender/smallfont"; //$NON-NLS-1$
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		if (!fr.hasValueFor(cfgName)) {
 			FontData[] fd = PreferenceConverter

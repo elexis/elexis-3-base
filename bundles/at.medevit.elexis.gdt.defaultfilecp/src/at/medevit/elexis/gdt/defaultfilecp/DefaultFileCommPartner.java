@@ -44,23 +44,23 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 
 	@Override
 	public String getLabel() {
-		return defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getFileTransferName()) + " ("
+		return defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getFileTransferName()) + " (" //$NON-NLS-1$
 				+ defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getFileTransferDirectory())
-				+ ")";
+				+ ")"; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getIDReceiver() {
 		return StringUtils.defaultIfBlank(
 				defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getFileTransferIdReceiver()),
-				"MEDICALDEVICE");
+				"MEDICALDEVICE"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getShortIDReceiver() {
 		return StringUtils.defaultIfBlank(
 				defaultFileCommPartner.getSettings().getString(defaultFileCommPartner.getFileTransferShortIdReceiver()),
-				"MDEV");
+				"MDEV"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -122,14 +122,14 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					.getString(defaultFileCommPartner.getFileTransferExecuteable());
 		}
 		LoggerFactory.getLogger(getClass())
-				.info("Find external handler [" + executable + "] of [" + defaultFileCommPartner.getId() + "] in ["
-						+ defaultFileCommPartner.getSettings().getClass().getSimpleName() + "]");
+				.info("Find external handler [" + executable + "] of [" + defaultFileCommPartner.getId() + "] in [" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						+ defaultFileCommPartner.getSettings().getClass().getSimpleName() + "]"); //$NON-NLS-1$
 		if (StringUtils.isNotBlank(executable)) {
 			File execFile = new File(executable);
 			if (execFile.canExecute()) {
 				return executable;
 			} else {
-				LoggerFactory.getLogger(getClass()).warn("Can not execute external handler [" + executable + "]");
+				LoggerFactory.getLogger(getClass()).warn("Can not execute external handler [" + executable + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;
@@ -172,7 +172,7 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					@Override
 					public String getShortIDReceiver() {
 						return StringUtils.defaultIfBlank(defaultFileCommPartner.getSettings()
-								.getString(fileCommPartner.getFileTransferShortIdReceiver()), "MDEV");
+								.getString(fileCommPartner.getFileTransferShortIdReceiver()), "MDEV"); //$NON-NLS-1$
 					}
 
 					@Override
@@ -197,9 +197,9 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					@Override
 					public String getLabel() {
 						return defaultFileCommPartner.getSettings().getString(fileCommPartner.getFileTransferName())
-								+ " (" + defaultFileCommPartner.getSettings()
+								+ " (" + defaultFileCommPartner.getSettings() //$NON-NLS-1$
 										.getString(fileCommPartner.getFileTransferDirectory())
-								+ ")";
+								+ ")"; //$NON-NLS-1$
 					}
 
 					@Override
@@ -216,7 +216,7 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 					@Override
 					public String getIDReceiver() {
 						return StringUtils.defaultIfBlank(defaultFileCommPartner.getSettings()
-								.getString(fileCommPartner.getFileTransferIdReceiver()), "MEDICALDEVICE");
+								.getString(fileCommPartner.getFileTransferIdReceiver()), "MEDICALDEVICE"); //$NON-NLS-1$
 					}
 
 					@Override
@@ -235,16 +235,16 @@ public class DefaultFileCommPartner implements IGDTCommunicationPartnerProvider 
 									.getString(fileCommPartner.getFileTransferExecuteable());
 						}
 						LoggerFactory.getLogger(getClass())
-								.info("Find external handler [" + executable + "] of [" + fileCommPartner.getId()
-										+ "] in [" + defaultFileCommPartner.getSettings().getClass().getSimpleName()
-										+ "]");
+								.info("Find external handler [" + executable + "] of [" + fileCommPartner.getId() //$NON-NLS-1$ //$NON-NLS-2$
+										+ "] in [" + defaultFileCommPartner.getSettings().getClass().getSimpleName() //$NON-NLS-1$
+										+ "]"); //$NON-NLS-1$
 						if (StringUtils.isNotBlank(executable)) {
 							File execFile = new File(executable);
 							if (execFile.canExecute()) {
 								return executable;
 							} else {
 								LoggerFactory.getLogger(getClass())
-										.warn("Can not execute external handler [" + executable + "]");
+										.warn("Can not execute external handler [" + executable + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 						}
 						return null;

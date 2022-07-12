@@ -50,8 +50,8 @@ public class Medicament {
 	public transient String stateInfo = StringUtils.EMPTY;
 	public transient EntryType entryType;
 
-	public static final String FREETEXT_PREFIX = "[Dosis: ";
-	public static final String FREETEXT_POSTFIX = "]";
+	public static final String FREETEXT_PREFIX = "[Dosis: "; //$NON-NLS-1$
+	public static final String FREETEXT_POSTFIX = "]"; //$NON-NLS-1$
 
 	public static List<Medicament> fromPrescriptions(List<IPrescription> prescriptions, boolean addDsc) {
 		if (prescriptions != null && !prescriptions.isEmpty()) {
@@ -103,13 +103,13 @@ public class Medicament {
 			medicament.PFields = new ArrayList<>();
 		}
 		PrivateField privateField = new PrivateField();
-		privateField.Nm = "TkgSch";
+		privateField.Nm = "TkgSch"; //$NON-NLS-1$
 		if (prescription.getEntryType() == EntryType.SYMPTOMATIC_MEDICATION) {
-			privateField.Val = "Prd";
+			privateField.Val = "Prd"; //$NON-NLS-1$
 		} else if (prescription.getEntryType() == EntryType.RESERVE_MEDICATION) {
-			privateField.Val = "Ond";
+			privateField.Val = "Ond"; //$NON-NLS-1$
 		} else {
-			privateField.Val = "Cnt";
+			privateField.Val = "Cnt"; //$NON-NLS-1$
 		}
 		medicament.PFields.add(privateField);
 	}
@@ -126,7 +126,7 @@ public class Medicament {
 			medicament.PFields = new ArrayList<>();
 		}
 		PrivateField privateField = new PrivateField();
-		privateField.Nm = "Dsc";
+		privateField.Nm = "Dsc"; //$NON-NLS-1$
 		privateField.Val = article.getText();
 		medicament.PFields.add(privateField);
 	}
@@ -156,7 +156,7 @@ public class Medicament {
 	private static int getIdType(IArticle article) {
 		if (article != null) {
 			String gtin = article.getGtin();
-			if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) {
+			if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) { //$NON-NLS-1$
 				return 2;
 			}
 			String pharma = null;
@@ -172,7 +172,7 @@ public class Medicament {
 
 	private static String getId(IArticle article) {
 		String gtin = article.getGtin();
-		if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) {
+		if (gtin != null && !gtin.isEmpty() && gtin.startsWith("76")) { //$NON-NLS-1$
 			return gtin;
 		}
 		String pharma = null;
@@ -185,7 +185,7 @@ public class Medicament {
 		if (getIdType(article) == 1) {
 			return article.getText();
 		}
-		throw new IllegalStateException("No ID (GTIN, Pharmacode) for article [" + article.getLabel() + "]");
+		throw new IllegalStateException("No ID (GTIN, Pharmacode) for article [" + article.getLabel() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public enum State {

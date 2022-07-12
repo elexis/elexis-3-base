@@ -83,7 +83,7 @@ public class WeeklySeriesComposite extends Composite {
 	}
 
 	public void setWeekNumberLabel(int weekNumber, int year) {
-		lblWeekNumber.setText(weekNumber + "/" + year);
+		lblWeekNumber.setText(weekNumber + "/" + year); //$NON-NLS-1$
 		layout();
 	}
 }

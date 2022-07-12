@@ -19,13 +19,13 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class WebLinkElementUtil {
-	private static final String CFG_WEBLINK = "elexis.weblink";
-	private static final String CFG_WEBLINK_TEXT = CFG_WEBLINK + ".text";
-	private static final String CFG_WEBLINK_LINK = CFG_WEBLINK + ".link";
-	private static final String CFG_WEBLINK_IDS = CFG_WEBLINK + ".ids";
+	private static final String CFG_WEBLINK = "elexis.weblink"; //$NON-NLS-1$
+	private static final String CFG_WEBLINK_TEXT = CFG_WEBLINK + ".text"; //$NON-NLS-1$
+	private static final String CFG_WEBLINK_LINK = CFG_WEBLINK + ".link"; //$NON-NLS-1$
+	private static final String CFG_WEBLINK_IDS = CFG_WEBLINK + ".ids"; //$NON-NLS-1$
 
-	private static final String ID_DELIMITER = "||";
-	private static final String ID_DELIMITER_ESCAPED = "\\|\\|";
+	private static final String ID_DELIMITER = "||"; //$NON-NLS-1$
+	private static final String ID_DELIMITER_ESCAPED = "\\|\\|"; //$NON-NLS-1$
 
 	private static HashMap<String, String> placeholders = new HashMap<String, String>();
 
@@ -111,10 +111,10 @@ public class WebLinkElementUtil {
 	}
 
 	public static String getTextConfig(String id) {
-		return CFG_WEBLINK_TEXT + "." + id;
+		return CFG_WEBLINK_TEXT + "." + id; //$NON-NLS-1$
 	}
 
 	public static String getLinkConfig(String id) {
-		return CFG_WEBLINK_LINK + "." + id;
+		return CFG_WEBLINK_LINK + "." + id; //$NON-NLS-1$
 	}
 }

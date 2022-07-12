@@ -17,7 +17,7 @@ import ch.elexis.core.services.IStoreToStringContribution;
 @Component
 public class CodeElementContribution implements ICodeElementServiceContribution, IStoreToStringContribution {
 
-	public static final String STS_CLASS = "ch.elexis.data.TICode";
+	public static final String STS_CLASS = "ch.elexis.data.TICode"; //$NON-NLS-1$
 
 	@Override
 	public String getSystem() {

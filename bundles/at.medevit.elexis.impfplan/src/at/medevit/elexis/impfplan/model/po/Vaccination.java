@@ -32,44 +32,44 @@ import ch.rgw.tools.TimeTool;
 
 public class Vaccination extends PersistentObject {
 
-	public static final String TABLENAME = "AT_MEDEVIT_ELEXIS_IMPFPLAN";
-	static final String VERSION = "1.0.0";
+	public static final String TABLENAME = "AT_MEDEVIT_ELEXIS_IMPFPLAN"; //$NON-NLS-1$
+	static final String VERSION = "1.0.0"; //$NON-NLS-1$
 
 	//@formatter:off
-	public static final String FLD_PATIENT_ID = "Patient_ID";
-	public static final String FLD_ARTIKEL_REF = "Artikel_REF";
-	/** Handelsname */	public static final String FLD_BUSS_NAME = "BusinessName";
-	/** EAN Code */		public static final String FLD_EAN = "ean";
-	/** ATC Code */		public static final String FLD_ATCCODE = "ATCCode";
-	/** Chargen-No */	public static final String FLD_LOT_NO ="lotnr";
-	/** Verabr. Datum*/	public static final String FLD_DOA = "dateOfAdministration";
+	public static final String FLD_PATIENT_ID = "Patient_ID"; //$NON-NLS-1$
+	public static final String FLD_ARTIKEL_REF = "Artikel_REF"; //$NON-NLS-1$
+	/** Handelsname */	public static final String FLD_BUSS_NAME = "BusinessName"; //$NON-NLS-1$
+	/** EAN Code */		public static final String FLD_EAN = "ean"; //$NON-NLS-1$
+	/** ATC Code */		public static final String FLD_ATCCODE = "ATCCode"; //$NON-NLS-1$
+	/** Chargen-No */	public static final String FLD_LOT_NO ="lotnr"; //$NON-NLS-1$
+	/** Verabr. Datum*/	public static final String FLD_DOA = "dateOfAdministration"; //$NON-NLS-1$
 	/** Verabreicher, entweder ein Mandant im lokalen System, oder ein Kontakt-String */
-						public static final String FLD_ADMINISTRATOR = "administrator";
-	/** Impfung gegen */public static final String FLD_VACC_AGAINST = "vaccAgainst";
+						public static final String FLD_ADMINISTRATOR = "administrator"; //$NON-NLS-1$
+	/** Impfung gegen */public static final String FLD_VACC_AGAINST = "vaccAgainst"; //$NON-NLS-1$
 	/** side where vaccination was applied (optional)*/
-						public static final String SIDE = "Side";
+						public static final String SIDE = "Side"; //$NON-NLS-1$
 
 	/** Definition of the database table */
 	static final String createDB =
-		"CREATE TABLE " + TABLENAME
-			+ "("
-			+ "ID VARCHAR(25) primary key," // has to be of type varchar else version.exists fails
-			+ "lastupdate BIGINT,"
-			+ "deleted CHAR(1) default '0'," // will never be set to 1
-			+ FLD_PATIENT_ID +" VARCHAR(25),"
-			+ FLD_ARTIKEL_REF +" VARCHAR(255),"
-			+ FLD_BUSS_NAME +" VARCHAR(255),"
-			+ FLD_EAN +" VARCHAR(13),"
-			+ FLD_ATCCODE +" VARCHAR(20),"
-			+ FLD_LOT_NO +" VARCHAR(255),"
-			+ FLD_DOA +" CHAR(8),"
-			+ FLD_ADMINISTRATOR +" VARCHAR(255),"
-			+ FLD_VACC_AGAINST +" VARCHAR(255),"
-			+ PersistentObject.FLD_EXTINFO + " BLOB"
-			+ "); "
+		"CREATE TABLE " + TABLENAME //$NON-NLS-1$
+			+ "(" //$NON-NLS-1$
+			+ "ID VARCHAR(25) primary key," // has to be of type varchar else version.exists fails //$NON-NLS-1$
+			+ "lastupdate BIGINT," //$NON-NLS-1$
+			+ "deleted CHAR(1) default '0'," // will never be set to 1 //$NON-NLS-1$
+			+ FLD_PATIENT_ID +" VARCHAR(25)," //$NON-NLS-1$
+			+ FLD_ARTIKEL_REF +" VARCHAR(255)," //$NON-NLS-1$
+			+ FLD_BUSS_NAME +" VARCHAR(255)," //$NON-NLS-1$
+			+ FLD_EAN +" VARCHAR(13)," //$NON-NLS-1$
+			+ FLD_ATCCODE +" VARCHAR(20)," //$NON-NLS-1$
+			+ FLD_LOT_NO +" VARCHAR(255)," //$NON-NLS-1$
+			+ FLD_DOA +" CHAR(8)," //$NON-NLS-1$
+			+ FLD_ADMINISTRATOR +" VARCHAR(255)," //$NON-NLS-1$
+			+ FLD_VACC_AGAINST +" VARCHAR(255)," //$NON-NLS-1$
+			+ PersistentObject.FLD_EXTINFO + " BLOB" //$NON-NLS-1$
+			+ "); " //$NON-NLS-1$
 
-			+ "INSERT INTO " + TABLENAME + " (ID,"+FLD_PATIENT_ID+","+FLD_DOA+") VALUES ('"+StringConstants.VERSION_LITERAL+"',"
-			+ JdbcLink.wrap(VERSION) +","+new TimeTool().toString(TimeTool.DATE_COMPACT)+");";
+			+ "INSERT INTO " + TABLENAME + " (ID,"+FLD_PATIENT_ID+","+FLD_DOA+") VALUES ('"+StringConstants.VERSION_LITERAL+"'," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			+ JdbcLink.wrap(VERSION) +","+new TimeTool().toString(TimeTool.DATE_COMPACT)+");"; //$NON-NLS-1$ //$NON-NLS-2$
 	//@formatter:on
 
 	static {
@@ -109,7 +109,7 @@ public class Vaccination extends PersistentObject {
 
 		String vaccAgainst = StringUtils.EMPTY;
 		if (articleATCCode != null) {
-			vaccAgainst = StringUtils.join(ArticleToImmunisationModel.getImmunisationForAtcCode(articleATCCode), ",");
+			vaccAgainst = StringUtils.join(ArticleToImmunisationModel.getImmunisationForAtcCode(articleATCCode), ","); //$NON-NLS-1$
 		}
 
 		String[] fields = new String[] { FLD_PATIENT_ID, FLD_ARTIKEL_REF, FLD_BUSS_NAME, FLD_EAN, FLD_ATCCODE,
@@ -137,8 +137,8 @@ public class Vaccination extends PersistentObject {
 
 	@Override
 	public String getLabel() {
-		return getDateOfAdministration().toString(TimeTool.DATE_COMPACT) + StringUtils.SPACE + getBusinessName() + " ("
-				+ getLotNo() + ") - " + getAdministratorLabel();
+		return getDateOfAdministration().toString(TimeTool.DATE_COMPACT) + StringUtils.SPACE + getBusinessName() + " (" //$NON-NLS-1$
+				+ getLotNo() + ") - " + getAdministratorLabel(); //$NON-NLS-1$
 	}
 
 	public TimeTool getDateOfAdministration() {
@@ -152,7 +152,7 @@ public class Vaccination extends PersistentObject {
 
 	public String getDateOfAdministrationLabel() {
 		String doa = get(FLD_DOA);
-		if (doa.endsWith("0000")) {
+		if (doa.endsWith("0000")) { //$NON-NLS-1$
 			return doa.substring(0, doa.length() - 4);
 		}
 		TimeTool ttDoA = new TimeTool(doa);
@@ -165,8 +165,8 @@ public class Vaccination extends PersistentObject {
 
 	public String getShortBusinessName() {
 		String businessName = get(FLD_BUSS_NAME);
-		if (businessName.contains("(")) {
-			return businessName.substring(0, businessName.indexOf("("));
+		if (businessName.contains("(")) { //$NON-NLS-1$
+			return businessName.substring(0, businessName.indexOf("(")); //$NON-NLS-1$
 		}
 		return businessName;
 	}
@@ -188,7 +188,7 @@ public class Vaccination extends PersistentObject {
 	 */
 	public @NonNull String getAdministratorLabel() {
 		String value = get(FLD_ADMINISTRATOR);
-		if (value.startsWith("ch.elexis")) {
+		if (value.startsWith("ch.elexis")) { //$NON-NLS-1$
 			Mandant mandant = loadMandant(value);
 
 			if (mandant == null) {
@@ -248,7 +248,7 @@ public class Vaccination extends PersistentObject {
 	public List<String> getVaccAgainstList() {
 		List<String> vaccAgainst = new ArrayList<String>();
 		String vaccAgaisntString = get(FLD_VACC_AGAINST);
-		String[] split = vaccAgaisntString.split(",");
+		String[] split = vaccAgaisntString.split(","); //$NON-NLS-1$
 		for (String va : split) {
 			vaccAgainst.add(va);
 		}

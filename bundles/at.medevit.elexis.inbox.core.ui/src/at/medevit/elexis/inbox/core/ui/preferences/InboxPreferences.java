@@ -27,17 +27,17 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 
 public class InboxPreferences extends PreferencePage implements IWorkbenchPreferencePage {
-	private static final String INBOX = "inbox/";
-	public static final String INBOX_LABRESULT_LBL_CHOOSEN = INBOX + "labresult/label/choosen";
-	public static final String INBOX_LABRESULT_LBL_AVAILABLE = INBOX + "labresult/label/available";
+	private static final String INBOX = "inbox/"; //$NON-NLS-1$
+	public static final String INBOX_LABRESULT_LBL_CHOOSEN = INBOX + "labresult/label/choosen"; //$NON-NLS-1$
+	public static final String INBOX_LABRESULT_LBL_AVAILABLE = INBOX + "labresult/label/available"; //$NON-NLS-1$
 
 	// Default choosen / available
-	public static final String DEF_CHOOSEN = LabResultLabelProvider.LabelFields.LAB_VALUE_SHORT.toString() + ","
-			+ LabResultLabelProvider.LabelFields.LAB_VALUE_NAME.toString() + ","
+	public static final String DEF_CHOOSEN = LabResultLabelProvider.LabelFields.LAB_VALUE_SHORT.toString() + "," //$NON-NLS-1$
+			+ LabResultLabelProvider.LabelFields.LAB_VALUE_NAME.toString() + "," //$NON-NLS-1$
 			+ LabResultLabelProvider.LabelFields.LAB_RESULT.toString();
 
-	public static final String DEF_AVAILABLE = LabResultLabelProvider.LabelFields.REF_RANGE.toString() + ","
-			+ LabResultLabelProvider.LabelFields.ORIGIN.toString() + ","
+	public static final String DEF_AVAILABLE = LabResultLabelProvider.LabelFields.REF_RANGE.toString() + "," //$NON-NLS-1$
+			+ LabResultLabelProvider.LabelFields.ORIGIN.toString() + "," //$NON-NLS-1$
 			+ LabResultLabelProvider.LabelFields.DATE.toString();
 
 	private static List<LabelFields> choosenLabels;
@@ -51,12 +51,12 @@ public class InboxPreferences extends PreferencePage implements IWorkbenchPrefer
 	public InboxPreferences() {
 		super("Inbox");
 
-		choosen = ConfigServiceHolder.getUser(INBOX_LABRESULT_LBL_CHOOSEN, DEF_CHOOSEN).split(",");
+		choosen = ConfigServiceHolder.getUser(INBOX_LABRESULT_LBL_CHOOSEN, DEF_CHOOSEN).split(","); //$NON-NLS-1$
 		int nrValues = LabResultLabelProvider.LabelFields.values().length;
 		if (choosen.length == nrValues) {
 			available = new String[] {};
 		} else {
-			available = ConfigServiceHolder.getUser(INBOX_LABRESULT_LBL_AVAILABLE, DEF_AVAILABLE).split(",");
+			available = ConfigServiceHolder.getUser(INBOX_LABRESULT_LBL_AVAILABLE, DEF_AVAILABLE).split(","); //$NON-NLS-1$
 		}
 	}
 
@@ -159,14 +159,14 @@ public class InboxPreferences extends PreferencePage implements IWorkbenchPrefer
 			sb.append(s);
 			sb.append(StringUtils.SPACE);
 		}
-		return prefixPrevLabel + ":\t" + sb.toString();
+		return prefixPrevLabel + ":\t" + sb.toString(); //$NON-NLS-1$
 	}
 
 	private String getListAsString(String[] items) {
 		StringBuilder sb = new StringBuilder();
 		for (String item : items) {
 			sb.append(item);
-			sb.append(",");
+			sb.append(","); //$NON-NLS-1$
 		}
 		return sb.toString();
 	}
@@ -176,7 +176,7 @@ public class InboxPreferences extends PreferencePage implements IWorkbenchPrefer
 	}
 
 	private static void loadChoosenLabel() {
-		String[] labels = ConfigServiceHolder.getUser(INBOX_LABRESULT_LBL_CHOOSEN, DEF_CHOOSEN).split(",");
+		String[] labels = ConfigServiceHolder.getUser(INBOX_LABRESULT_LBL_CHOOSEN, DEF_CHOOSEN).split(","); //$NON-NLS-1$
 		choosenLabels = new ArrayList<LabResultLabelProvider.LabelFields>();
 
 		for (String label : labels) {

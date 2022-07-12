@@ -27,7 +27,7 @@ public class ContactData {
 		kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Kontakt.class);
 		if (kontakt == null) {
 			SWTHelper.showInfo(Messages.Info_NoContact_Title, Messages.Info_NoContact_Message);
-			throw new NullPointerException("No contact selected");
+			throw new NullPointerException("No contact selected"); //$NON-NLS-1$
 		}
 	}
 

@@ -325,7 +325,7 @@ public class ParametersPanel extends Composite {
 		// Log error as FATAL
 		if (widget == null) {
 			ArchieActivator.LOG.log(
-					"Could not create custom vendor widget. Widget class was: [" + vendorClass.getName() + "]",
+					"Could not create custom vendor widget. Widget class was: [" + vendorClass.getName() + "]", //$NON-NLS-1$ //$NON-NLS-2$
 					Log.FATALS);
 		}
 

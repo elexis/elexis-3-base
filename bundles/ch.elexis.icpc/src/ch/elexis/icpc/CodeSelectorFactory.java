@@ -51,7 +51,7 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 				new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 		vc.setContentType(ContentType.GENERICOBJECT);
-		cv.setNamedSelection("ch.elexis.icpc.selection");
+		cv.setNamedSelection("ch.elexis.icpc.selection"); //$NON-NLS-1$
 		return vc;
 	}
 
@@ -63,7 +63,7 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 
 	@Override
 	public String getCodeSystemName() {
-		return "ICPC";
+		return "ICPC"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -89,8 +89,8 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 
 		public Object[] getElements(Object inputElement) {
 			ICodeElementServiceContribution icpcCodeElementContribution = CodeElementServiceHolder.get()
-					.getContribution(CodeElementTyp.DIAGNOSE, "ICPC")
-					.orElseThrow(() -> new IllegalStateException("No ICPC CodeElementContribution available"));
+					.getContribution(CodeElementTyp.DIAGNOSE, "ICPC") //$NON-NLS-1$
+					.orElseThrow(() -> new IllegalStateException("No ICPC CodeElementContribution available")); //$NON-NLS-1$
 
 			List<ICodeElement> roots = icpcCodeElementContribution
 					.getElements(Collections.singletonMap(ICodeElementService.ContextKeys.TREE_ROOTS, Boolean.TRUE));
@@ -105,8 +105,8 @@ public class CodeSelectorFactory extends ch.elexis.core.ui.views.codesystems.Cod
 		}
 
 		public void changed(HashMap<String, String> values) {
-			String filterText = values.get("Text").toLowerCase();
-			if (filterText == null || filterText.isEmpty() || filterText.equals("%")) {
+			String filterText = values.get("Text").toLowerCase(); //$NON-NLS-1$
+			if (filterText == null || filterText.isEmpty() || filterText.equals("%")) { //$NON-NLS-1$
 				setFilterValue(StringUtils.EMPTY);
 			} else {
 				setFilterValue(filterText);

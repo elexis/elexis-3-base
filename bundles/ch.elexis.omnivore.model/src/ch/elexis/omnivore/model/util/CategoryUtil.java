@@ -43,14 +43,14 @@ public class CategoryUtil {
 
 	public static List<IDocumentHandle> getCategoriesByName(String name) {
 		IQuery<IDocumentHandle> query = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-		query.and("category", COMPARATOR.EQUALS, name, true);
-		query.and("mimetype", COMPARATOR.EQUALS, CATEGORY_MIMETYPE);
+		query.and("category", COMPARATOR.EQUALS, name, true); //$NON-NLS-1$
+		query.and("mimetype", COMPARATOR.EQUALS, CATEGORY_MIMETYPE); //$NON-NLS-1$
 		return query.execute();
 	}
 
 	public static List<String> getCategoriesNames() {
 		INamedQuery<String> findCategoriesQuery = OmnivoreModelServiceHolder.get().getNamedQueryByName(String.class,
-				IDocumentHandle.class, "DocHandle.select.category.names");
+				IDocumentHandle.class, "DocHandle.select.category.names"); //$NON-NLS-1$
 		List<String> result = findCategoriesQuery.executeWithParameters(Collections.emptyMap());
 		return result;
 	}
@@ -66,8 +66,8 @@ public class CategoryUtil {
 
 	private static IDocumentHandle findDefaultCategory() {
 		IQuery<IDocumentHandle> query = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-		query.and("mimetype", COMPARATOR.EQUALS, CATEGORY_MIMETYPE);
-		query.and("category", COMPARATOR.EQUALS, Constants.DEFAULT_CATEGORY);
+		query.and("mimetype", COMPARATOR.EQUALS, CATEGORY_MIMETYPE); //$NON-NLS-1$
+		query.and("category", COMPARATOR.EQUALS, Constants.DEFAULT_CATEGORY); //$NON-NLS-1$
 
 		List<IDocumentHandle> existing = query.execute();
 		return existing.isEmpty() ? null : existing.get(0);
@@ -75,7 +75,7 @@ public class CategoryUtil {
 
 	public static List<IDocumentHandle> getCategories() {
 		INamedQuery<IDocumentHandle> findCategoriesQuery = OmnivoreModelServiceHolder.get()
-				.getNamedQueryByName(IDocumentHandle.class, IDocumentHandle.class, "DocHandle.select.categories");
+				.getNamedQueryByName(IDocumentHandle.class, IDocumentHandle.class, "DocHandle.select.categories"); //$NON-NLS-1$
 		// filter duplicates, ordered with TreeMap
 		TreeMap<String, IDocumentHandle> uniqueMap = new TreeMap<>();
 		findCategoriesQuery.executeWithParameters(Collections.emptyMap()).forEach(dh -> {
@@ -92,8 +92,8 @@ public class CategoryUtil {
 
 	public static List<IDocumentHandle> getDocumentsWithCategoryByName(String name) {
 		IQuery<IDocumentHandle> query = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-		query.and("mimetype", COMPARATOR.NOT_EQUALS, CATEGORY_MIMETYPE);
-		query.and("category", COMPARATOR.EQUALS, name, true);
+		query.and("mimetype", COMPARATOR.NOT_EQUALS, CATEGORY_MIMETYPE); //$NON-NLS-1$
+		query.and("category", COMPARATOR.EQUALS, name, true); //$NON-NLS-1$
 		return query.execute();
 	}
 
@@ -103,24 +103,24 @@ public class CategoryUtil {
 
 		if (findCategoriesByName(newname).isEmpty()) {
 			OmnivoreModelServiceHolder.get().executeNativeUpdate(
-					"UPDATE CH_ELEXIS_OMNIVORE_DATA SET category='" + newname + "' WHERE category='" + oldname + "'");
-			OmnivoreModelServiceHolder.get().executeNativeUpdate("UPDATE CH_ELEXIS_OMNIVORE_DATA SET title='" + newname
-					+ "' WHERE title='" + oldname + "' AND mimetype='" + CATEGORY_MIMETYPE + "'");
+					"UPDATE CH_ELEXIS_OMNIVORE_DATA SET category='" + newname + "' WHERE category='" + oldname + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			OmnivoreModelServiceHolder.get().executeNativeUpdate("UPDATE CH_ELEXIS_OMNIVORE_DATA SET title='" + newname //$NON-NLS-1$
+					+ "' WHERE title='" + oldname + "' AND mimetype='" + CATEGORY_MIMETYPE + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			LoggerFactory.getLogger(CategoryUtil.class)
-					.info("Renaming category [" + oldname + "], moving entries to category [" + newname + "]");
+					.info("Renaming category [" + oldname + "], moving entries to category [" + newname + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			throw new IllegalStateException("Category [" + newname + "] already exists");
+			throw new IllegalStateException("Category [" + newname + "] already exists"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	public static void removeCategory(String name, String destName) {
 		OmnivoreModelServiceHolder.get().executeNativeUpdate(
-				"UPDATE CH_ELEXIS_OMNIVORE_DATA SET category='" + destName + "' WHERE category='" + name + "'");
+				"UPDATE CH_ELEXIS_OMNIVORE_DATA SET category='" + destName + "' WHERE category='" + name + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		OmnivoreModelServiceHolder.get()
-				.executeNativeUpdate("UPDATE CH_ELEXIS_OMNIVORE_DATA SET deleted='1' WHERE title='" + name
-						+ "' AND mimetype='" + CATEGORY_MIMETYPE + "'");
+				.executeNativeUpdate("UPDATE CH_ELEXIS_OMNIVORE_DATA SET deleted='1' WHERE title='" + name //$NON-NLS-1$
+						+ "' AND mimetype='" + CATEGORY_MIMETYPE + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		LoggerFactory.getLogger(CategoryUtil.class)
-				.info("Removing category [" + name + "], moving entries to category [" + destName + "]");
+				.info("Removing category [" + name + "], moving entries to category [" + destName + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public static void ensureCategoryAvailability(String category) {

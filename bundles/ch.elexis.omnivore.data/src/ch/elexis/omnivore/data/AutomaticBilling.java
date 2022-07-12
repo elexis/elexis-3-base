@@ -71,7 +71,7 @@ public class AutomaticBilling {
 										addBlockToEncounter(block, encounter);
 									} else {
 										LoggerFactory.getLogger(getClass()).warn(String.format(
-												"Could not add block [%s] for document of patient [%s] because no valid kons found.",
+												"Could not add block [%s] for document of patient [%s] because no valid kons found.", //$NON-NLS-1$
 												block.getCode(), patient.getLabel()));
 									}
 								}
@@ -80,7 +80,7 @@ public class AutomaticBilling {
 					} catch (Exception e) {
 						ElexisEventDispatcher.getInstance().fireMessageEvent(new MessageEvent(MessageType.ERROR,
 								"Error", "Es ist ein Fehler bei der automatischen Verrechnung aufgetreten."));
-						LoggerFactory.getLogger(getClass()).error("Error billing block", e);
+						LoggerFactory.getLogger(getClass()).error("Error billing block", e); //$NON-NLS-1$
 					}
 				}
 			});
@@ -95,7 +95,7 @@ public class AutomaticBilling {
 				Result<IBilled> result = BillingServiceHolder.get().bill((IBillable) element, encounter, 1);
 				if (!result.isOK()) {
 					String message = patient.getLabel() + "\nDokument import Verrechnung von [" + element.getCode()
-							+ "]\n\n" + ResultDialog.getResultMessage(result);
+							+ "]\n\n" + ResultDialog.getResultMessage(result); //$NON-NLS-1$
 					if (!notOkResults.toString().contains(message)) {
 						notOkResults.add(message);
 					}

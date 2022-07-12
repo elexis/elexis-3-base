@@ -39,7 +39,7 @@ public final class MedicationData {
 		prescription = ContextServiceHolder.get().getTyped(IPrescription.class).orElse(null);
 		if (prescription == null) {
 			SWTHelper.showInfo("Keine Medikation ausgewählt", "Bitte wählen Sie vor dem Drucken eine Medikation.");
-			throw new NullPointerException("No prescription selected");
+			throw new NullPointerException("No prescription selected"); //$NON-NLS-1$
 		}
 	}
 
@@ -53,7 +53,7 @@ public final class MedicationData {
 
 	public String getDeliveryDate() {
 		LocalDate localDate = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.YYYY").withZone(ZoneId.systemDefault());
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.YYYY").withZone(ZoneId.systemDefault()); //$NON-NLS-1$
 		String currentDate = formatter.format(localDate);
 		return currentDate;
 	}
@@ -72,7 +72,7 @@ public final class MedicationData {
 
 	public String getPrescriptionDate() {
 		return prescription.getDateFrom() != null
-				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateFrom())
+				? DateTimeFormatter.ofPattern("dd.MM.yyyy").format(prescription.getDateFrom()) //$NON-NLS-1$
 				: StringUtils.EMPTY;
 	}
 

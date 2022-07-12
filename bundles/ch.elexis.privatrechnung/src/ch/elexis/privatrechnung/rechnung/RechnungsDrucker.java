@@ -138,7 +138,7 @@ public class RechnungsDrucker implements IRnOutputter {
 							rn.addTrace(Rechnung.OUTPUT,
 									getDescription() + ": " + RnStatus.getStatusText(rn.getStatus()));
 						} catch (Exception ex) {
-							SWTHelper.showError("Fehler beim Drucken der Rechnung " + rn.getRnId(), ex.getMessage());
+							SWTHelper.showError("Fehler beim Drucken der Rechnung " + rn.getRnId(), ex.getMessage()); //$NON-NLS-1$
 							errors++;
 						}
 					}

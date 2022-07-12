@@ -33,7 +33,7 @@ public final class AppointmentsData {
 		kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Patient.class);
 		if (kontakt == null) {
 			SWTHelper.showInfo(Messages.Info_NoPatient_Title, Messages.Info_NoPatient_Message);
-			throw new NullPointerException("No patient selected");
+			throw new NullPointerException("No patient selected"); //$NON-NLS-1$
 		}
 		appointmentsData = new ArrayList<>();
 		querryAppointments(kontakt.getId());
@@ -49,7 +49,7 @@ public final class AppointmentsData {
 	private void querryAppointments(String contactId) {
 		Instant instant = Instant.now();
 
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYYMMdd").withZone(ZoneId.systemDefault());
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYYMMdd").withZone(ZoneId.systemDefault()); //$NON-NLS-1$
 		String currentDate = formatter.format(instant);
 
 		Query<Termin> query = new Query<>(Termin.class);

@@ -38,8 +38,8 @@ public final class Decorators {
 	/** Error, but quick-fix is available */
 	public static final int QUICKFIX = 3;
 
-	private static final String DEC_VALID = "DEC_VALID";
-	private static final String DEC_IMG_ID = "decorationValid";
+	private static final String DEC_VALID = "DEC_VALID"; //$NON-NLS-1$
+	private static final String DEC_IMG_ID = "decorationValid"; //$NON-NLS-1$
 
 	private static FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
 

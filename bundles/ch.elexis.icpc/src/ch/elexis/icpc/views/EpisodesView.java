@@ -37,7 +37,7 @@ import ch.elexis.icpc.model.icpc.IcpcEpisode;
 import ch.elexis.icpc.service.IcpcModelServiceHolder;
 
 public class EpisodesView extends ViewPart {
-	public static final String ID = "ch.elexis.icpc.episodesView";
+	public static final String ID = "ch.elexis.icpc.episodesView"; //$NON-NLS-1$
 	EpisodesDisplay display;
 	KonsFilter episodesFilter = new KonsFilter(this);
 	private IAction addEpisodeAction, removeEpisodeAction, editEpisodeAction, activateEpisodeAction, konsFilterAction,

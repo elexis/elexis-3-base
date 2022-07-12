@@ -64,43 +64,43 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
 public class RnOutputter implements IRnOutputter {
-	public static final String PDFDIR = "pdfdir";
-	public static final String PLUGIN_ID = "ch.elexis.pdfBills";
-	public static final String XMLDIR = "xmldir";
-	public static final String CFG_ROOT = "pdf-output/";
-	public static final String CFG_MARGINLEFT = "margin.left";
-	public static final String CFG_MARGINRIGHT = "margin.right";
-	public static final String CFG_MARGINTOP = "margin.top";
-	public static final String CFG_MARGINBOTTOM = "margin.bottom";
-	public static final String CFG_BESR_MARGIN_VERTICAL = "margin.besr.vertical";
-	public static final String CFG_BESR_MARGIN_HORIZONTAL = "margin.besr.horizontal";
+	public static final String PDFDIR = "pdfdir"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "ch.elexis.pdfBills"; //$NON-NLS-1$
+	public static final String XMLDIR = "xmldir"; //$NON-NLS-1$
+	public static final String CFG_ROOT = "pdf-output/"; //$NON-NLS-1$
+	public static final String CFG_MARGINLEFT = "margin.left"; //$NON-NLS-1$
+	public static final String CFG_MARGINRIGHT = "margin.right"; //$NON-NLS-1$
+	public static final String CFG_MARGINTOP = "margin.top"; //$NON-NLS-1$
+	public static final String CFG_MARGINBOTTOM = "margin.bottom"; //$NON-NLS-1$
+	public static final String CFG_BESR_MARGIN_VERTICAL = "margin.besr.vertical"; //$NON-NLS-1$
+	public static final String CFG_BESR_MARGIN_HORIZONTAL = "margin.besr.horizontal"; //$NON-NLS-1$
 
-	public static final String CFG_ESR_HEADER_1 = CFG_ROOT + "esr.header.line1";
-	public static final String CFG_ESR_HEADER_2 = CFG_ROOT + "esr.header.line2";
+	public static final String CFG_ESR_HEADER_1 = CFG_ROOT + "esr.header.line1"; //$NON-NLS-1$
+	public static final String CFG_ESR_HEADER_2 = CFG_ROOT + "esr.header.line2"; //$NON-NLS-1$
 
-	public static final String CFG_ESR_REMINDERDAYS_M2 = CFG_ROOT + "esr.reminderdays.m2";
-	public static final String CFG_ESR_REMINDERDAYS_M3 = CFG_ROOT + "esr.reminderdays.m3";
+	public static final String CFG_ESR_REMINDERDAYS_M2 = CFG_ROOT + "esr.reminderdays.m2"; //$NON-NLS-1$
+	public static final String CFG_ESR_REMINDERDAYS_M3 = CFG_ROOT + "esr.reminderdays.m3"; //$NON-NLS-1$
 
-	public static final String CFG_ESR_COUVERT_LEFT = CFG_ROOT + "esr.couvert.left";
+	public static final String CFG_ESR_COUVERT_LEFT = CFG_ROOT + "esr.couvert.left"; //$NON-NLS-1$
 
-	public static final String CFG_PRINT_DIRECT = CFG_ROOT + "print.direct";
+	public static final String CFG_PRINT_DIRECT = CFG_ROOT + "print.direct"; //$NON-NLS-1$
 
-	public static final String CFG_PRINT_PRINTER = CFG_ROOT + "print.printer";
-	public static final String CFG_PRINT_TRAY = CFG_ROOT + "print.tray";
+	public static final String CFG_PRINT_PRINTER = CFG_ROOT + "print.printer"; //$NON-NLS-1$
+	public static final String CFG_PRINT_TRAY = CFG_ROOT + "print.tray"; //$NON-NLS-1$
 
-	public static final String CFG_ESR_PRINT_PRINTER = CFG_ROOT + "esr.print.printer";
-	public static final String CFG_ESR_PRINT_TRAY = CFG_ROOT + "esr.print.tray";
+	public static final String CFG_ESR_PRINT_PRINTER = CFG_ROOT + "esr.print.printer"; //$NON-NLS-1$
+	public static final String CFG_ESR_PRINT_TRAY = CFG_ROOT + "esr.print.tray"; //$NON-NLS-1$
 
-	public static final String CFG_PRINT_COMMAND = CFG_ROOT + "print.command";
-	public static final String CFG_PRINT_USE_SCRIPT = CFG_ROOT + "print.usescript";
+	public static final String CFG_PRINT_COMMAND = CFG_ROOT + "print.command"; //$NON-NLS-1$
+	public static final String CFG_PRINT_USE_SCRIPT = CFG_ROOT + "print.usescript"; //$NON-NLS-1$
 
-	public static final String CFG_PRINT_BESR = "print.besr";
-	public static final String CFG_PRINT_RF = "print.rf";
+	public static final String CFG_PRINT_BESR = "print.besr"; //$NON-NLS-1$
+	public static final String CFG_PRINT_RF = "print.rf"; //$NON-NLS-1$
 
-	protected static final String CFG_MAIL_CPY = "mail.copy";
-	protected static final String CFG_MAIL_MANDANT_ACCOUNT = "mail.mandant.account";
+	protected static final String CFG_MAIL_CPY = "mail.copy"; //$NON-NLS-1$
+	protected static final String CFG_MAIL_MANDANT_ACCOUNT = "mail.mandant.account"; //$NON-NLS-1$
 
-	public static final String CFG_PRINT_USEGUARANTORPOSTAL = CFG_ROOT + "guarantor.postaladdress";
+	public static final String CFG_PRINT_USEGUARANTORPOSTAL = CFG_ROOT + "guarantor.postaladdress"; //$NON-NLS-1$
 
 	private Text tXml;
 	private Text tPdf;
@@ -126,8 +126,8 @@ public class RnOutputter implements IRnOutputter {
 
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
-		final File rsc = new File(PlatformHelper.getBasePath(PLUGIN_ID), "rsc");
-		final StringJoiner mailErrors = new StringJoiner("\n- ", "- ", StringUtils.EMPTY);
+		final File rsc = new File(PlatformHelper.getBasePath(PLUGIN_ID), "rsc"); //$NON-NLS-1$
+		final StringJoiner mailErrors = new StringJoiner("\n- ", "- ", StringUtils.EMPTY); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(), new IRunnableWithProgress() {
 				public void run(final IProgressMonitor monitor) {
@@ -142,10 +142,10 @@ public class RnOutputter implements IRnOutputter {
 							errors++;
 							continue;
 						}
-						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT) + File.separator + rn.getNr() + ".xml";
+						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT) + File.separator + rn.getNr() + ".xml"; //$NON-NLS-1$
 						try {
 							FileOutputStream fout = new FileOutputStream(fname);
-							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8");
+							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8"); //$NON-NLS-1$
 							XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
 							xout.output(dRn, cout);
 							cout.close();
@@ -183,7 +183,7 @@ public class RnOutputter implements IRnOutputter {
 							ExHandler.handle(e1);
 							SWTHelper.showError("Fehler beim Rechnungsdruck",
 									"Konnte Datei " + fname + " nicht schreiben");
-							rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: " + fname);
+							rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: " + fname); //$NON-NLS-1$
 							continue;
 						}
 						monitor.worked(1);
@@ -217,13 +217,13 @@ public class RnOutputter implements IRnOutputter {
 				protected void buttonPressed(int buttonId) {
 					if (buttonId == 1) {
 						try {
-							Path tmpFile = Files.createTempFile("error_", "rechnung.txt");
+							Path tmpFile = Files.createTempFile("error_", "rechnung.txt"); //$NON-NLS-1$ //$NON-NLS-2$
 							try (FileWriter fo = new FileWriter(tmpFile.toFile())) {
 								fo.write(mailErrors.toString());
 							}
 							Program.launch(tmpFile.toString());
 						} catch (IOException e) {
-							LoggerFactory.getLogger(getClass()).error("Error writing tmp file", e);
+							LoggerFactory.getLogger(getClass()).error("Error writing tmp file", e); //$NON-NLS-1$
 						}
 					}
 					super.buttonPressed(buttonId);
@@ -235,7 +235,7 @@ public class RnOutputter implements IRnOutputter {
 	}
 
 	private void initSelectedFromProperties(Properties props) {
-		LoggerFactory.getLogger(getClass()).warn("Initializing with properties " + props.toString());
+		LoggerFactory.getLogger(getClass()).warn("Initializing with properties " + props.toString()); //$NON-NLS-1$
 		modifyInvoiceState = true;
 		if (props.get(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE);
@@ -283,20 +283,20 @@ public class RnOutputter implements IRnOutputter {
 		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		try {
 			String attachmentsString = getAttachmentsString(printed);
-			Command sendMailCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMailNoUi");
+			Command sendMailCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMailNoUi"); //$NON-NLS-1$
 
 			HashMap<String, String> params = new HashMap<String, String>();
 			String accountid = ConfigServiceHolder.getGlobal(
-					RnOutputter.CFG_ROOT + RnOutputter.CFG_MAIL_MANDANT_ACCOUNT + "/" + rechnung.getMandant().getId(),
+					RnOutputter.CFG_ROOT + RnOutputter.CFG_MAIL_MANDANT_ACCOUNT + "/" + rechnung.getMandant().getId(), //$NON-NLS-1$
 					null);
 			if (accountid != null) {
-				params.put("ch.elexis.core.mail.ui.sendMailNoUi.accountid", accountid);
+				params.put("ch.elexis.core.mail.ui.sendMailNoUi.accountid", accountid); //$NON-NLS-1$
 			}
-			params.put("ch.elexis.core.mail.ui.sendMailNoUi.mandant", rechnung.getMandant().getId());
-			params.put("ch.elexis.core.mail.ui.sendMailNoUi.to", receiver.getMailAddress());
-			params.put("ch.elexis.core.mail.ui.sendMailNoUi.attachments", attachmentsString);
-			params.put("ch.elexis.core.mail.ui.sendMailNoUi.subject", "Rechnungskopie vom " + rechnung.getDatumRn());
-			params.put("ch.elexis.core.mail.ui.sendMailNoUi.text",
+			params.put("ch.elexis.core.mail.ui.sendMailNoUi.mandant", rechnung.getMandant().getId()); //$NON-NLS-1$
+			params.put("ch.elexis.core.mail.ui.sendMailNoUi.to", receiver.getMailAddress()); //$NON-NLS-1$
+			params.put("ch.elexis.core.mail.ui.sendMailNoUi.attachments", attachmentsString); //$NON-NLS-1$
+			params.put("ch.elexis.core.mail.ui.sendMailNoUi.subject", "Rechnungskopie vom " + rechnung.getDatumRn()); //$NON-NLS-1$
+			params.put("ch.elexis.core.mail.ui.sendMailNoUi.text", //$NON-NLS-1$
 					"Anbei finden Sie eine Kopie der Rechnung vom " + rechnung.getDatumRn()
 							+ " für Ihre Unterlagen.\n\nBeste Grüsse\n" + rechnung.getMandant().get(Person.TITLE)
 							+ StringUtils.SPACE + rechnung.getMandant().getVorname() + StringUtils.SPACE
@@ -306,7 +306,7 @@ public class RnOutputter implements IRnOutputter {
 			return (String) PlatformUI.getWorkbench().getService(IHandlerService.class)
 					.executeCommand(parametrizedCommmand, null);
 		} catch (Exception me) {
-			throw new RuntimeException("ch.elexis.core.mail.ui.sendMailNoUi not found", me);
+			throw new RuntimeException("ch.elexis.core.mail.ui.sendMailNoUi not found", me); //$NON-NLS-1$
 		}
 	}
 
@@ -314,7 +314,7 @@ public class RnOutputter implements IRnOutputter {
 		StringBuilder sb = new StringBuilder();
 		for (File file : attachments) {
 			if (sb.length() > 0) {
-				sb.append(":::");
+				sb.append(":::"); //$NON-NLS-1$
 			}
 			sb.append(file.getAbsolutePath());
 		}

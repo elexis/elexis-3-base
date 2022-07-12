@@ -142,17 +142,17 @@ public class ElexisPDFGenerator {
 
 	private void initializeMarginSettings() {
 		bottomMargin = PreferencePage
-				.getSetting(RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_MARGINBOTTOM) + "cm";
+				.getSetting(RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_MARGINBOTTOM) + "cm"; //$NON-NLS-1$ //$NON-NLS-2$
 		leftMargin = PreferencePage
-				.getSetting(RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_MARGINLEFT) + "cm";
+				.getSetting(RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_MARGINLEFT) + "cm"; //$NON-NLS-1$ //$NON-NLS-2$
 		rightMargin = PreferencePage
-				.getSetting(RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_MARGINRIGHT) + "cm";
+				.getSetting(RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_MARGINRIGHT) + "cm"; //$NON-NLS-1$ //$NON-NLS-2$
 		topMargin = PreferencePage
-				.getSetting(RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_MARGINTOP) + "cm";
+				.getSetting(RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_MARGINTOP) + "cm"; //$NON-NLS-1$ //$NON-NLS-2$
 		besrMarginVertical = PreferencePage.getSetting(
-				RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_BESR_MARGIN_VERTICAL) + "cm";
+				RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_BESR_MARGIN_VERTICAL) + "cm"; //$NON-NLS-1$ //$NON-NLS-2$
 		besrMarginHorizontal = PreferencePage.getSetting(
-				RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_BESR_MARGIN_HORIZONTAL) + "cm";
+				RnOutputter.CFG_ROOT + getMarginBillVersion() + "/" + RnOutputter.CFG_BESR_MARGIN_HORIZONTAL) + "cm"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public String getBillVersion() {
@@ -160,8 +160,8 @@ public class ElexisPDFGenerator {
 	}
 
 	private String getMarginBillVersion() {
-		if ("4.5".equals(billVersion)) {
-			return "4.4";
+		if ("4.5".equals(billVersion)) { //$NON-NLS-1$
+			return "4.4"; //$NON-NLS-1$
 		}
 		return billVersion;
 	}
@@ -171,7 +171,7 @@ public class ElexisPDFGenerator {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			return dbf.newDocumentBuilder().parse(new File(billXmlFile));
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error parsing XML", e);
+			LoggerFactory.getLogger(getClass()).error("Error parsing XML", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -195,53 +195,53 @@ public class ElexisPDFGenerator {
 							OutputType.PDF);
 
 					Map<String, String> parameters = new HashMap<>();
-					parameters.put("versionParam", "2.0");
-					parameters.put("leftMargin", leftMargin);
-					parameters.put("rightMargin", rightMargin);
-					parameters.put("topMargin", topMargin);
-					parameters.put("bottomMargin", bottomMargin);
-					parameters.put("besrMarginVertical", besrMarginVertical);
-					parameters.put("besrMarginHorizontal", besrMarginHorizontal);
-					parameters.put("headerLine1", getConfigValue(RnOutputter.CFG_ESR_HEADER_1, StringUtils.SPACE));
-					parameters.put("headerLine2", getConfigValue(RnOutputter.CFG_ESR_HEADER_2, StringUtils.SPACE));
-					parameters.put("eanList", eanList);
-					parameters.put("vatList", vatList);
-					parameters.put("amountTotal", XMLTool.moneyToXmlDouble(mTotal));
-					parameters.put("amountDue", XMLTool.moneyToXmlDouble(mDue));
+					parameters.put("versionParam", "2.0"); //$NON-NLS-1$ //$NON-NLS-2$
+					parameters.put("leftMargin", leftMargin); //$NON-NLS-1$
+					parameters.put("rightMargin", rightMargin); //$NON-NLS-1$
+					parameters.put("topMargin", topMargin); //$NON-NLS-1$
+					parameters.put("bottomMargin", bottomMargin); //$NON-NLS-1$
+					parameters.put("besrMarginVertical", besrMarginVertical); //$NON-NLS-1$
+					parameters.put("besrMarginHorizontal", besrMarginHorizontal); //$NON-NLS-1$
+					parameters.put("headerLine1", getConfigValue(RnOutputter.CFG_ESR_HEADER_1, StringUtils.SPACE)); //$NON-NLS-1$
+					parameters.put("headerLine2", getConfigValue(RnOutputter.CFG_ESR_HEADER_2, StringUtils.SPACE)); //$NON-NLS-1$
+					parameters.put("eanList", eanList); //$NON-NLS-1$
+					parameters.put("vatList", vatList); //$NON-NLS-1$
+					parameters.put("amountTotal", XMLTool.moneyToXmlDouble(mTotal)); //$NON-NLS-1$
+					parameters.put("amountDue", XMLTool.moneyToXmlDouble(mDue)); //$NON-NLS-1$
 					if (withQr) {
-						parameters.put("qrJpeg", getEncodedQr(rechnung));
+						parameters.put("qrJpeg", getEncodedQr(rechnung)); //$NON-NLS-1$
 					}
 					if (CoreHub.localCfg.get(RnOutputter.CFG_PRINT_USEGUARANTORPOSTAL, false)) {
-						parameters.put("guarantorPostal", getGuarantorPostal(rechnung));
+						parameters.put("guarantorPostal", getGuarantorPostal(rechnung)); //$NON-NLS-1$
 					} else {
-						parameters.put("guarantorPostal", StringUtils.EMPTY);
+						parameters.put("guarantorPostal", StringUtils.EMPTY); //$NON-NLS-1$
 					}
 					if (CoreHub.localCfg.get(RnOutputter.CFG_ESR_COUVERT_LEFT, false)) {
-						parameters.put("couvertLeft", "true");
+						parameters.put("couvertLeft", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
-						parameters.put("couvertLeft", StringUtils.EMPTY);
+						parameters.put("couvertLeft", StringUtils.EMPTY); //$NON-NLS-1$
 					}
 					Optional<IInvoice> invoice = getInvoice();
 					if (invoice.isPresent()) {
-						parameters.put("billerLine", getBillerLine(invoice.get()));
-						parameters.put("guarantorLine", getGuarantorLine(invoice.get()));
-						parameters.put("creditorLine", getCreditorLine(invoice.get()));
-						parameters.put("insuranceLine", getInsuranceLine(invoice.get()));
+						parameters.put("billerLine", getBillerLine(invoice.get())); //$NON-NLS-1$
+						parameters.put("guarantorLine", getGuarantorLine(invoice.get())); //$NON-NLS-1$
+						parameters.put("creditorLine", getCreditorLine(invoice.get())); //$NON-NLS-1$
+						parameters.put("insuranceLine", getInsuranceLine(invoice.get())); //$NON-NLS-1$
 					} else {
-						parameters.put("billerLine", StringUtils.EMPTY);
-						parameters.put("guarantorLine", StringUtils.EMPTY);
-						parameters.put("creditorLine", StringUtils.EMPTY);
-						parameters.put("insuranceLine", StringUtils.EMPTY);
+						parameters.put("billerLine", StringUtils.EMPTY); //$NON-NLS-1$
+						parameters.put("guarantorLine", StringUtils.EMPTY); //$NON-NLS-1$
+						parameters.put("creditorLine", StringUtils.EMPTY); //$NON-NLS-1$
+						parameters.put("insuranceLine", StringUtils.EMPTY); //$NON-NLS-1$
 					}
 					if (invoiceState == InvoiceState.DEMAND_NOTE_2
 							|| invoiceState == InvoiceState.DEMAND_NOTE_2_PRINTED) {
-						parameters.put("reminderDays", getConfigValue(RnOutputter.CFG_ESR_REMINDERDAYS_M2, "14"));
+						parameters.put("reminderDays", getConfigValue(RnOutputter.CFG_ESR_REMINDERDAYS_M2, "14")); //$NON-NLS-1$ //$NON-NLS-2$
 					} else if (invoiceState == InvoiceState.DEMAND_NOTE_3
 							|| invoiceState == InvoiceState.DEMAND_NOTE_3_PRINTED) {
-						parameters.put("reminderDays", getConfigValue(RnOutputter.CFG_ESR_REMINDERDAYS_M3, "14"));
+						parameters.put("reminderDays", getConfigValue(RnOutputter.CFG_ESR_REMINDERDAYS_M3, "14")); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					if (mReminders != null && !mReminders.isZero()) {
-						parameters.put("amountReminders", XMLTool.moneyToXmlDouble(mReminders));
+						parameters.put("amountReminders", XMLTool.moneyToXmlDouble(mReminders)); //$NON-NLS-1$
 					}
 
 					foOutputt.transform(inputStream, xsltStream, out, parameters, new BundleURIResolver());
@@ -250,11 +250,11 @@ public class ElexisPDFGenerator {
 				}
 				bundleContext.ungetService(fopFactoryRef);
 			} else {
-				throw new IllegalStateException("No IFormattedOutput implementation available");
+				throw new IllegalStateException("No IFormattedOutput implementation available"); //$NON-NLS-1$
 			}
 		} catch (Exception e) {
-			LoggerFactory.getLogger(getClass()).error("Error outputting bill", e);
-			throw new IllegalStateException("Error outputting bill", e);
+			LoggerFactory.getLogger(getClass()).error("Error outputting bill", e); //$NON-NLS-1$
+			throw new IllegalStateException("Error outputting bill", e); //$NON-NLS-1$
 		}
 	}
 
@@ -355,7 +355,7 @@ public class ElexisPDFGenerator {
 				String additionalInformation = (String) biller.getExtInfo(TarmedACL.getInstance().RNINFORMATION);
 
 				QRBillDataBuilder builder = new QRBillDataBuilder(reloadAsPersonOrOrganization(creditor),
-						invoice.get().getOpenAmount(), "CHF", reloadAsPersonOrOrganization(getDebitor(invoice.get())))
+						invoice.get().getOpenAmount(), "CHF", reloadAsPersonOrOrganization(getDebitor(invoice.get()))) //$NON-NLS-1$
 								.reference(esr.makeRefNr(false)).unstructuredRemark(additionalInformation);
 				try {
 					Optional<String> encodedImage = new QRBillImage(builder.build()).getEncodedImage();
@@ -363,7 +363,7 @@ public class ElexisPDFGenerator {
 						return encodedImage.get();
 					}
 				} catch (QRBillDataException e) {
-					LoggerFactory.getLogger(getClass()).error("Error creating qr code", e);
+					LoggerFactory.getLogger(getClass()).error("Error creating qr code", e); //$NON-NLS-1$
 					MessageDialog.openWarning(Display.getDefault().getActiveShell(), "QR code Fehler",
 							getErrorMessage(e, invoice));
 				}
@@ -377,7 +377,7 @@ public class ElexisPDFGenerator {
 		sb.append("Fehler beim Erstellen des QR codes.\n");
 		if (e.getSourceType() == SourceType.CREDITOR) {
 			sb.append("Problem mit der Rechnungssteller Information für ["
-					+ invoice.get().getMandator().getBiller().getLabel() + "].\n");
+					+ invoice.get().getMandator().getBiller().getLabel() + "].\n"); //$NON-NLS-1$
 			if (e.getContact() != null) {
 				sb.append("Bitte die Addresse auf Vollständigkeit überprüfen.");
 			}
@@ -385,7 +385,7 @@ public class ElexisPDFGenerator {
 		if (e.getSourceType() == SourceType.DEBITOR) {
 			if (invoice.get().getCoverage().getCostBearer() != null) {
 				sb.append("Problem mit der Kostenträger Information für ["
-						+ invoice.get().getCoverage().getCostBearer().getLabel() + "].");
+						+ invoice.get().getCoverage().getCostBearer().getLabel() + "]."); //$NON-NLS-1$
 				if (e.getContact() != null) {
 					sb.append("Bitte die Addresse auf Vollständigkeit überprüfen.");
 				}
@@ -422,7 +422,7 @@ public class ElexisPDFGenerator {
 	private String getConfigValue(String configId, String defaultValue) {
 		if (rechnung != null) {
 			Mandant mandant = rechnung.getMandant();
-			String mandantValue = ConfigServiceHolder.getGlobal(configId + "/" + mandant.getId(), null);
+			String mandantValue = ConfigServiceHolder.getGlobal(configId + "/" + mandant.getId(), null); //$NON-NLS-1$
 			if (StringUtils.isNotBlank(mandantValue)) {
 				return mandantValue;
 			}
@@ -434,14 +434,14 @@ public class ElexisPDFGenerator {
 		printed = new ArrayList<>();
 		if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_BESR, true)) {
 			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_esr.pdf");
+					OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_esr.pdf"); //$NON-NLS-1$
 			generatePatBill(rsc, pdf);
 			printPdf(pdf, true);
 			printed.add(pdf);
 		}
 		if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_RF, true)) {
 			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf");
+					OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf"); //$NON-NLS-1$
 			generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);
@@ -452,14 +452,14 @@ public class ElexisPDFGenerator {
 		printed = new ArrayList<>();
 		if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_BESR, true)) {
 			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_esr.pdf");
+					OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_esr.pdf"); //$NON-NLS-1$
 			generateQrPatBill(rsc, pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);
 		}
 		if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_RF, true)) {
 			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf");
+					OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf"); //$NON-NLS-1$
 			generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);
@@ -521,7 +521,7 @@ public class ElexisPDFGenerator {
 	}
 
 	private boolean isScriptWinInitialized() {
-		ScriptInitializer initializer = new ScriptInitializer("/rsc/script/win/SumatraPDF.exe");
+		ScriptInitializer initializer = new ScriptInitializer("/rsc/script/win/SumatraPDF.exe"); //$NON-NLS-1$
 		if (!initializer.existsInScriptFolder()) {
 			return false;
 		}
@@ -532,7 +532,7 @@ public class ElexisPDFGenerator {
 	}
 
 	private void initializeScriptWin() {
-		ScriptInitializer initializer = new ScriptInitializer("/rsc/script/win/SumatraPDF.exe");
+		ScriptInitializer initializer = new ScriptInitializer("/rsc/script/win/SumatraPDF.exe"); //$NON-NLS-1$
 		if (initializer.existsInScriptFolder()) {
 			if (MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Script existiert bereits", "Script ["
 					+ initializer.getFilename() + "] existiert bereits, soll die Datei überschrieben werden?")) {
@@ -544,15 +544,15 @@ public class ElexisPDFGenerator {
 	}
 
 	protected boolean isTierGarant() {
-		if ("4.4".equals(billVersion)) {
+		if ("4.4".equals(billVersion)) { //$NON-NLS-1$
 			try {
 				XPath xPath = XPathFactory.newInstance().newXPath();
-				XPathExpression expr = xPath.compile("/request/payload/body/tiers_garant");
+				XPathExpression expr = xPath.compile("/request/payload/body/tiers_garant"); //$NON-NLS-1$
 				Object result = expr.evaluate(domDocument, XPathConstants.NODESET);
 				NodeList nodes = (NodeList) result;
 				return nodes.getLength() > 0;
 			} catch (XPathExpressionException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e); //$NON-NLS-1$
 			}
 		}
 		// default is garant
@@ -576,11 +576,11 @@ public class ElexisPDFGenerator {
 	}
 
 	private String getEanList() {
-		if ("4.4".equals(billVersion)) {
+		if ("4.4".equals(billVersion)) { //$NON-NLS-1$
 			HashSet<String> eanSet = new HashSet<>();
 			try {
 				XPath xPath = XPathFactory.newInstance().newXPath();
-				XPathExpression expr = xPath.compile("/request/payload/body/services");
+				XPathExpression expr = xPath.compile("/request/payload/body/services"); //$NON-NLS-1$
 				Object result = expr.evaluate(domDocument, XPathConstants.NODESET);
 				NodeList servicesElements = (NodeList) result;
 				for (int i = 0; i < servicesElements.getLength(); i++) {
@@ -590,8 +590,8 @@ public class ElexisPDFGenerator {
 						Node child = childNodes.item(j);
 						if (child instanceof Element) {
 							Element element = (Element) child;
-							eanSet.add(element.getAttribute("responsible_id"));
-							eanSet.add(element.getAttribute("provider_id"));
+							eanSet.add(element.getAttribute("responsible_id")); //$NON-NLS-1$
+							eanSet.add(element.getAttribute("provider_id")); //$NON-NLS-1$
 						}
 					}
 				}
@@ -601,17 +601,17 @@ public class ElexisPDFGenerator {
 					if (i > 0) {
 						eanList.append(StringUtils.SPACE);
 					}
-					eanList.append(i + 1).append("/").append(eanArray[i]);
+					eanList.append(i + 1).append("/").append(eanArray[i]); //$NON-NLS-1$
 				}
 				return eanList.toString();
 			} catch (XPathExpressionException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e); //$NON-NLS-1$
 			}
-		} else if ("4.5".equals(billVersion)) {
+		} else if ("4.5".equals(billVersion)) { //$NON-NLS-1$
 			HashSet<String> eanSet = new HashSet<>();
 			try {
 				XPath xPath = XPathFactory.newInstance().newXPath();
-				XPathExpression expr = xPath.compile("/request/payload/body/services");
+				XPathExpression expr = xPath.compile("/request/payload/body/services"); //$NON-NLS-1$
 				Object result = expr.evaluate(domDocument, XPathConstants.NODESET);
 				NodeList servicesElements = (NodeList) result;
 				for (int i = 0; i < servicesElements.getLength(); i++) {
@@ -621,8 +621,8 @@ public class ElexisPDFGenerator {
 						Node child = childNodes.item(j);
 						if (child instanceof Element) {
 							Element element = (Element) child;
-							eanSet.add(element.getAttribute("responsible_id"));
-							eanSet.add(element.getAttribute("provider_id"));
+							eanSet.add(element.getAttribute("responsible_id")); //$NON-NLS-1$
+							eanSet.add(element.getAttribute("provider_id")); //$NON-NLS-1$
 						}
 					}
 				}
@@ -632,27 +632,27 @@ public class ElexisPDFGenerator {
 					if (i > 0) {
 						eanList.append(StringUtils.SPACE);
 					}
-					eanList.append(i + 1).append("/").append(eanArray[i]);
+					eanList.append(i + 1).append("/").append(eanArray[i]); //$NON-NLS-1$
 				}
 				return eanList.toString();
 			} catch (XPathExpressionException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting bill type", e); //$NON-NLS-1$
 			}
 		}
 		return StringUtils.EMPTY;
 	}
 
 	private String getVatList() {
-		if ("4.4".equals(billVersion)) {
+		if ("4.4".equals(billVersion)) { //$NON-NLS-1$
 			HashSet<String> vatrateSet = new HashSet<>();
 			try {
 				XPath xPath = XPathFactory.newInstance().newXPath();
-				XPathExpression expr = xPath.compile("/request/payload/body/balance/vat/vat_rate");
+				XPathExpression expr = xPath.compile("/request/payload/body/balance/vat/vat_rate"); //$NON-NLS-1$
 				Object result = expr.evaluate(domDocument, XPathConstants.NODESET);
 				NodeList vatrateElements = (NodeList) result;
 				for (int i = 0; i < vatrateElements.getLength(); i++) {
 					Node vatrateElement = vatrateElements.item(i);
-					vatrateSet.add(((Element) vatrateElement).getAttribute("vat_rate"));
+					vatrateSet.add(((Element) vatrateElement).getAttribute("vat_rate")); //$NON-NLS-1$
 				}
 				String[] vatRateArray = getVatRateArray(vatrateSet);
 
@@ -661,22 +661,22 @@ public class ElexisPDFGenerator {
 					if (i > 0) {
 						vatrateList.append(StringUtils.SPACE);
 					}
-					vatrateList.append(i).append("/").append(vatRateArray[i]);
+					vatrateList.append(i).append("/").append(vatRateArray[i]); //$NON-NLS-1$
 				}
 				return vatrateList.toString();
 			} catch (XPathExpressionException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting vat rates", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting vat rates", e); //$NON-NLS-1$
 			}
-		} else if ("4.5".equals(billVersion)) {
+		} else if ("4.5".equals(billVersion)) { //$NON-NLS-1$
 			HashSet<String> vatrateSet = new HashSet<>();
 			try {
 				XPath xPath = XPathFactory.newInstance().newXPath();
-				XPathExpression expr = xPath.compile("/request/payload/body/*/balance/vat/vat_rate");
+				XPathExpression expr = xPath.compile("/request/payload/body/*/balance/vat/vat_rate"); //$NON-NLS-1$
 				Object result = expr.evaluate(domDocument, XPathConstants.NODESET);
 				NodeList vatrateElements = (NodeList) result;
 				for (int i = 0; i < vatrateElements.getLength(); i++) {
 					Node vatrateElement = vatrateElements.item(i);
-					vatrateSet.add(((Element) vatrateElement).getAttribute("vat_rate"));
+					vatrateSet.add(((Element) vatrateElement).getAttribute("vat_rate")); //$NON-NLS-1$
 				}
 				String[] vatRateArray = getVatRateArray(vatrateSet);
 
@@ -685,18 +685,18 @@ public class ElexisPDFGenerator {
 					if (i > 0) {
 						vatrateList.append(StringUtils.SPACE);
 					}
-					vatrateList.append(i).append("/").append(vatRateArray[i]);
+					vatrateList.append(i).append("/").append(vatRateArray[i]); //$NON-NLS-1$
 				}
 				return vatrateList.toString();
 			} catch (XPathExpressionException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting vat rates", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting vat rates", e); //$NON-NLS-1$
 			}
 		}
 		return StringUtils.EMPTY;
 	}
 
 	private String[] getVatRateArray(HashSet<String> vatrateSet) {
-		String[] ret = { "0", "2.5", "7.7" };
+		String[] ret = { "0", "2.5", "7.7" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String[] vatrates = vatrateSet.toArray(new String[vatrateSet.size()]);
 		for (int i = 0; i < vatrates.length && i < 3; i++) {
 			try {
@@ -707,14 +707,14 @@ public class ElexisPDFGenerator {
 					ret[2] = vatrates[i];
 				}
 			} catch (NumberFormatException e) {
-				LoggerFactory.getLogger(getClass()).warn("Not valid vat rate found, using default", vatrates[i]);
+				LoggerFactory.getLogger(getClass()).warn("Not valid vat rate found, using default", vatrates[i]); //$NON-NLS-1$
 			}
 		}
 		return ret;
 	}
 
 	protected String getXmlVersion() {
-		Attr attr = domDocument.getDocumentElement().getAttributeNode("xsi:schemaLocation");
+		Attr attr = domDocument.getDocumentElement().getAttributeNode("xsi:schemaLocation"); //$NON-NLS-1$
 		String location = null;
 		if (attr != null) {
 			location = attr.getValue();
@@ -730,54 +730,54 @@ public class ElexisPDFGenerator {
 	}
 
 	protected File getXsltForBill(File rsc, XsltType type) {
-		if ("4.0".equals(billVersion)) {
+		if ("4.0".equals(billVersion)) { //$NON-NLS-1$
 			if (type == XsltType.PATBILL) {
-				return new File(rsc, "section2.xsl");
+				return new File(rsc, "section2.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.RECLAIM) {
-				return new File(rsc, "1359.xsl");
+				return new File(rsc, "1359.xsl"); //$NON-NLS-1$
 			}
-		} else if ("4.4".equals(billVersion)) {
+		} else if ("4.4".equals(billVersion)) { //$NON-NLS-1$
 			if (type == XsltType.PATBILL) {
-				return new File(rsc, "44_patbill.xsl");
+				return new File(rsc, "44_patbill.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.PATBILL_M1) {
-				return new File(rsc, "44_patbill_m1.xsl");
+				return new File(rsc, "44_patbill_m1.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.PATBILL_M2) {
-				return new File(rsc, "44_patbill_m2.xsl");
+				return new File(rsc, "44_patbill_m2.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.PATBILL_M3) {
-				return new File(rsc, "44_patbill_m3.xsl");
+				return new File(rsc, "44_patbill_m3.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.RECLAIM) {
-				return new File(rsc, "44_reclaim.xsl");
+				return new File(rsc, "44_reclaim.xsl"); //$NON-NLS-1$
 			}
-		} else if ("4.5".equals(billVersion)) {
+		} else if ("4.5".equals(billVersion)) { //$NON-NLS-1$
 			if (type == XsltType.PATBILL) {
-				return new File(rsc, "45_patbill.xsl");
+				return new File(rsc, "45_patbill.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.PATBILL_M1) {
-				return new File(rsc, "45_patbill_m1.xsl");
+				return new File(rsc, "45_patbill_m1.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.PATBILL_M2) {
-				return new File(rsc, "45_patbill_m2.xsl");
+				return new File(rsc, "45_patbill_m2.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.PATBILL_M3) {
-				return new File(rsc, "45_patbill_m3.xsl");
+				return new File(rsc, "45_patbill_m3.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.RECLAIM) {
-				return new File(rsc, "45_reclaim.xsl");
+				return new File(rsc, "45_reclaim.xsl"); //$NON-NLS-1$
 			}
 		}
 		return null;
 	}
 
 	protected File getQrXsltForBill(File rsc, XsltType type) {
-		if ("4.0".equals(billVersion) || "4.4".equals(billVersion)) {
-			throw new IllegalStateException("No QR patbill for tarmed 4.0 or 4.4 bills");
-		} else if ("4.5".equals(billVersion)) {
+		if ("4.0".equals(billVersion) || "4.4".equals(billVersion)) { //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalStateException("No QR patbill for tarmed 4.0 or 4.4 bills"); //$NON-NLS-1$
+		} else if ("4.5".equals(billVersion)) { //$NON-NLS-1$
 			if (type == XsltType.PATBILL) {
-				return new File(rsc, "45_qr_patbill.xsl");
+				return new File(rsc, "45_qr_patbill.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.PATBILL_M1) {
-				return new File(rsc, "45_qr_patbill_m1.xsl");
+				return new File(rsc, "45_qr_patbill_m1.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.PATBILL_M2) {
-				return new File(rsc, "45_qr_patbill_m2.xsl");
+				return new File(rsc, "45_qr_patbill_m2.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.PATBILL_M3) {
-				return new File(rsc, "45_qr_patbill_m3.xsl");
+				return new File(rsc, "45_qr_patbill_m3.xsl"); //$NON-NLS-1$
 			} else if (type == XsltType.RECLAIM) {
-				return new File(rsc, "45_reclaim.xsl");
+				return new File(rsc, "45_reclaim.xsl"); //$NON-NLS-1$
 			}
 		}
 		return null;

@@ -86,7 +86,7 @@ public class ComboWidget extends AbstractWidget {
 		if (value instanceof String) {
 			((Combo) this.control).setText(value.toString());
 		} else {
-			throw new IllegalArgumentException("Must be a string.");
+			throw new IllegalArgumentException("Must be a string."); //$NON-NLS-1$
 		}
 	}
 

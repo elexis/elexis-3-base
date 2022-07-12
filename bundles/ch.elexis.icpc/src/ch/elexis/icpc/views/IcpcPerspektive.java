@@ -36,7 +36,7 @@ import ch.elexis.core.ui.views.codesystems.DiagnosenView;
 import ch.elexis.core.ui.views.codesystems.LeistungenView;
 
 public class IcpcPerspektive implements IPerspectiveFactory {
-	public static final String ID = "ch.elexis.icpc.perspective";
+	public static final String ID = "ch.elexis.icpc.perspective"; //$NON-NLS-1$
 
 	public void createInitialLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
@@ -44,14 +44,14 @@ public class IcpcPerspektive implements IPerspectiveFactory {
 		layout.setFixed(false);
 		layout.addView(EpisodesView.ID, IPageLayout.LEFT, 0.2f, editorArea);
 		IFolderLayout ifr = layout.createFolder("zentrum", IPageLayout.RIGHT, 0.95f, editorArea); //$NON-NLS-1$
-		IFolderLayout obenrechts = layout.createFolder("obenrechts", IPageLayout.RIGHT, 0.7f, "zentrum");
+		IFolderLayout obenrechts = layout.createFolder("obenrechts", IPageLayout.RIGHT, 0.7f, "zentrum"); //$NON-NLS-1$ //$NON-NLS-2$
 		obenrechts.addView(EncounterView.ID);
 		obenrechts.addView(ReminderView.ID);
-		IFolderLayout untenlinks = layout.createFolder("untenlinks", IPageLayout.BOTTOM, 0.4f, EpisodesView.ID);
+		IFolderLayout untenlinks = layout.createFolder("untenlinks", IPageLayout.BOTTOM, 0.4f, EpisodesView.ID); //$NON-NLS-1$
 		untenlinks.addView(FaelleView.ID);
 		untenlinks.addView(ch.elexis.core.ui.medication.views.DauerMediView.ID);
 		// layout.addView(FaelleView.ID, IPageLayout.BOTTOM, 0.5f, EpisodesView.ID);
-		IFolderLayout untenrechts = layout.createFolder("untenrechts", IPageLayout.BOTTOM, 0.3f, "obenrechts");
+		IFolderLayout untenrechts = layout.createFolder("untenrechts", IPageLayout.BOTTOM, 0.3f, "obenrechts"); //$NON-NLS-1$ //$NON-NLS-2$
 		// layout.addView(KonsListe.ID,IPageLayout.BOTTOM,0.3f,EncounterView.ID);
 		untenrechts.addView(KonsListe.ID);
 		untenrechts.addView(PatHeuteView.ID);
@@ -63,7 +63,7 @@ public class IcpcPerspektive implements IPerspectiveFactory {
 		ifr.addPlaceholder(TextView.ID);
 		ifr.addPlaceholder(FallDetailView.ID);
 
-		IFolderLayout bfr = layout.createFolder("unten", IPageLayout.BOTTOM, 0.7f, "zentrum");
+		IFolderLayout bfr = layout.createFolder("unten", IPageLayout.BOTTOM, 0.7f, "zentrum"); //$NON-NLS-1$ //$NON-NLS-2$
 		bfr.addView(AUF2.ID);
 		bfr.addView(RezepteView.ID);
 

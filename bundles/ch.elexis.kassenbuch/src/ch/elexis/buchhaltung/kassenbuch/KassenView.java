@@ -188,7 +188,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 			case 7:
 				return kb.getText();
 			}
-			return "?";
+			return "?"; //$NON-NLS-1$
 		}
 
 		public void addListener(ILabelProviderListener listener) {
@@ -273,13 +273,13 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 		};
 		saldoAction = new RestrictedAction(ACLContributor.BOOKING, "Saldo") {
 			{
-				setImageDescriptor(getPluginImageDescriptor("icons/sigma.ico"));
+				setImageDescriptor(getPluginImageDescriptor("icons/sigma.ico")); //$NON-NLS-1$
 				setToolTipText("Zwischenbilanz erstellen");
 			}
 
 			public void doRun() {
 				InputDialog inp = new InputDialog(getSite().getShell(), "Kassenbestand abgleichen",
-						"Geben Sie bitte den abgezählten Betrag in der Kasse ein", "0.00", null);
+						"Geben Sie bitte den abgezählten Betrag in der Kasse ein", "0.00", null); //$NON-NLS-2$
 				if (inp.open() == Dialog.OK) {
 					try {
 						Money money = new Money(inp.getValue());
@@ -302,7 +302,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 
 		dateAction = new RestrictedAction(ACLContributor.VIEW, "Zeitraum") {
 			{
-				setImageDescriptor(getPluginImageDescriptor("icons/calendar.png"));
+				setImageDescriptor(getPluginImageDescriptor("icons/calendar.png")); //$NON-NLS-1$
 				setToolTipText("Anzeigezeitraum einstellen");
 			}
 

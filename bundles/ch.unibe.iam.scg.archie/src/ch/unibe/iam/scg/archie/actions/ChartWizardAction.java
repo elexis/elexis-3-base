@@ -65,7 +65,7 @@ public class ChartWizardAction extends Action {
 		super(Messages.CHART_WIZARD_TITLE, AS_PUSH_BUTTON);
 
 		this.setToolTipText(Messages.CHART_WIZARD_DESCRIPTION);
-		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/chart_pie.png"));
+		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/chart_pie.png")); //$NON-NLS-1$
 
 		this.setEnabled(false);
 	}
@@ -98,7 +98,7 @@ public class ChartWizardAction extends Action {
 			try {
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ChartView.ID);
 			} catch (PartInitException e) {
-				ArchieActivator.LOG.log("Could not create the chart view." + StringUtils.LF + e.getLocalizedMessage(),
+				ArchieActivator.LOG.log("Could not create the chart view." + StringUtils.LF + e.getLocalizedMessage(), //$NON-NLS-1$
 						Log.ERRORS);
 				e.printStackTrace();
 			}

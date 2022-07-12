@@ -78,11 +78,11 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	public DataSet(final List<Comparable<?>[]> content, final List<String> headings) throws IllegalArgumentException {
 		// Checking Preconditions
 		if (content == null || headings == null || content.isEmpty() || headings.isEmpty()) {
-			throw new IllegalArgumentException("Argument lists and headings must not be null and not empty!");
+			throw new IllegalArgumentException("Argument lists and headings must not be null and not empty!"); //$NON-NLS-1$
 		}
 		// Columns and headings length must match.
 		if (content.get(0).length != headings.size()) {
-			throw new IllegalArgumentException("Number of columns has to match provided number of headings!");
+			throw new IllegalArgumentException("Number of columns has to match provided number of headings!"); //$NON-NLS-1$
 		}
 
 		this.content = content;
@@ -99,7 +99,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 		// Checking Preconditions
 		if (x > this.content.size() || y > this.content.get(x).length - 1) {
 			throw new IllegalArgumentException(
-					"Your trying to update a dataset element at a position that is greater than the dataset's boundaries.");
+					"Your trying to update a dataset element at a position that is greater than the dataset's boundaries."); //$NON-NLS-1$
 		}
 		this.content.get(x)[y] = value;
 	}
@@ -129,7 +129,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 		// Checking Preconditions
 		if (x > this.content.size()) {
 			throw new IllegalArgumentException(
-					"Your trying to access a row in the dataset that is greater than the dataset's boundaries.");
+					"Your trying to access a row in the dataset that is greater than the dataset's boundaries."); //$NON-NLS-1$
 		}
 		this.content.set(x, obj);
 	}
@@ -158,7 +158,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 		// Checking Preconditions
 		if (row.length != this.width) {
 			throw new IllegalArgumentException(
-					"The number of columns of a row being added to the dataset hat so equal the number of columns in the dataset.");
+					"The number of columns of a row being added to the dataset hat so equal the number of columns in the dataset."); //$NON-NLS-1$
 		}
 		this.content.add(row);
 	}
@@ -185,14 +185,14 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	public void setContent(final List<Comparable<?>[]> content) {
 		// Checking Preconditions
 		if (content == null) {
-			throw new IllegalArgumentException("Content of a dataset can not be null!");
+			throw new IllegalArgumentException("Content of a dataset can not be null!"); //$NON-NLS-1$
 		}
 		if (this.headings.isEmpty()) {
 			throw new IllegalArgumentException(
-					"Can not set content before headings are set, also headings can not be empty!");
+					"Can not set content before headings are set, also headings can not be empty!"); //$NON-NLS-1$
 		}
 		if (!content.isEmpty() && content.get(0).length != this.headings.size()) {
-			throw new IllegalArgumentException("Provided number of content does not match the number of headings!");
+			throw new IllegalArgumentException("Provided number of content does not match the number of headings!"); //$NON-NLS-1$
 		}
 		this.content = content;
 		this.width = this.headings.size();
@@ -214,7 +214,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 	public void setHeadings(final List<String> headings) {
 		// Checking Preconditions
 		if (headings == null || headings.isEmpty()) {
-			throw new IllegalArgumentException("Provided table headings can not be null or empty!");
+			throw new IllegalArgumentException("Provided table headings can not be null or empty!"); //$NON-NLS-1$
 		}
 		this.headings = headings;
 	}
@@ -258,7 +258,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 		// headings string
 		for (int i = 0; i < this.headings.size(); i++) {
 			String heading = this.headings.get(i);
-			output.append("| ");
+			output.append("| "); //$NON-NLS-1$
 			output.append(heading);
 
 			// heading is smaller than the maximum column width
@@ -277,11 +277,11 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 
 		// append heading separator
 		for (int i = 0; i < totalWidth; i++) {
-			output.append("-");
+			output.append("-"); //$NON-NLS-1$
 		}
 		// and three spaces plus for each column
 		for (int i = 0; i < this.headings.size(); i++) {
-			output.append("---");
+			output.append("---"); //$NON-NLS-1$
 		}
 		output.append(StringUtils.LF);
 
@@ -291,7 +291,7 @@ public class DataSet implements Iterable<Comparable<?>[]>, Cloneable {
 			// get columns
 			for (int y = 0; y < row.length; y++) {
 				String cellValue = this.getCell(x, y).toString();
-				output.append("| ");
+				output.append("| "); //$NON-NLS-1$
 				output.append(cellValue);
 
 				if (cellValue.length() < columnWidths[y]) {

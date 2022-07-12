@@ -27,7 +27,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.model.icpc.IcpcEncounter;
 
 public class EncounterView extends ViewPart {
-	public static final String ID = "ch.elexis.icpc.encounterView";
+	public static final String ID = "ch.elexis.icpc.encounterView"; //$NON-NLS-1$
 	private EncounterDisplay display;
 
 	@Inject

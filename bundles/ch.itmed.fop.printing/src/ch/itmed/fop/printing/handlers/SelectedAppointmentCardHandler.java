@@ -42,7 +42,7 @@ public final class SelectedAppointmentCardHandler extends AbstractHandler {
 		}
 		// call default command
 		try {
-			handlerService.executeCommand("ch.itmed.fop.printing.command.AppointmentCardPrint", null);
+			handlerService.executeCommand("ch.itmed.fop.printing.command.AppointmentCardPrint", null); //$NON-NLS-1$
 		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
 			SWTHelper.showError(Messages.DefaultError_Title, Messages.DefaultError_Message);
 			LoggerFactory.getLogger(getClass()).error(e.getLocalizedMessage(), e);

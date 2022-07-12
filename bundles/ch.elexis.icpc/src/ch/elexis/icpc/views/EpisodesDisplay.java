@@ -118,7 +118,7 @@ public class EpisodesDisplay extends Composite {
 				ret.add("Status: " + Messages.getStatusText(ep.getStatus()));
 				List<IDiagnosis> diags = ep.getDiagnosis();
 				for (IDiagnosis dg : diags) {
-					ret.add(dg.getCodeSystemName() + ": " + dg.getLabel());
+					ret.add(dg.getCodeSystemName() + ": " + dg.getLabel()); //$NON-NLS-1$
 				}
 				return ret.toArray();
 			}

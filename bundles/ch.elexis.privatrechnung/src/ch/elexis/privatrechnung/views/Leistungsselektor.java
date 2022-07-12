@@ -54,9 +54,9 @@ public class Leistungsselektor extends CodeSelectorFactory {
 
 			if (!ss.isEmpty()) {
 				IPrivatLeistung ea = (IPrivatLeistung) ss.getFirstElement();
-				ContextServiceHolder.get().getRootContext().setNamed("ch.elexis.privatrechnung.views.selection", ea);
+				ContextServiceHolder.get().getRootContext().setNamed("ch.elexis.privatrechnung.views.selection", ea); //$NON-NLS-1$
 			} else {
-				ContextServiceHolder.get().getRootContext().setNamed("ch.elexis.privatrechnung.views.selection", null);
+				ContextServiceHolder.get().getRootContext().setNamed("ch.elexis.privatrechnung.views.selection", null); //$NON-NLS-1$
 			}
 		}
 	};
@@ -77,7 +77,7 @@ public class Leistungsselektor extends CodeSelectorFactory {
 				new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 
-		cv.setNamedSelection("ch.elexis.privatrechnung.views.selection");
+		cv.setNamedSelection("ch.elexis.privatrechnung.views.selection"); //$NON-NLS-1$
 		cv.setSelectionChangedListener(selChangeListener);
 
 		return vc.setContentType(ContentType.GENERICOBJECT);
@@ -101,8 +101,8 @@ public class Leistungsselektor extends CodeSelectorFactory {
 	private static class PrivatSelectorPanelProvider extends SelectorPanelProvider {
 
 		private static FieldDescriptor<?>[] fields = {
-				new FieldDescriptor<IPrivatLeistung>("Kuerzel", "shortName", Typ.STRING, null),
-				new FieldDescriptor<IPrivatLeistung>("Name", "name", Typ.STRING, null) };
+				new FieldDescriptor<IPrivatLeistung>("Kuerzel", "shortName", Typ.STRING, null), //$NON-NLS-2$
+				new FieldDescriptor<IPrivatLeistung>("Name", "name", Typ.STRING, null) }; //$NON-NLS-2$
 
 		private CommonViewer commonViewer;
 

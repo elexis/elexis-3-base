@@ -32,22 +32,22 @@ import ch.elexis.data.Sticker;
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	static final String EXPL_BD_SYST = "BD syst.";
-	public static final String CFG_BD_SYST = "icpc/fire/field_bd_syst";
+	public static final String CFG_BD_SYST = "icpc/fire/field_bd_syst"; //$NON-NLS-1$
 	static final String EXPL_BD_DIAST = "BD diast.";
-	public static final String CFG_BD_DIAST = "icpc/fire/field_bd_diast";
+	public static final String CFG_BD_DIAST = "icpc/fire/field_bd_diast"; //$NON-NLS-1$
 	static final String EXPL_PULS = "Puls";
-	public static final String CFG_PULS = "icpc/fire/field_puls";
+	public static final String CFG_PULS = "icpc/fire/field_puls"; //$NON-NLS-1$
 	static final String EXPL_HEIGHT = "Grösse";
-	public static final String CFG_HEIGHT = "icpc/fire/field_groesse";
+	public static final String CFG_HEIGHT = "icpc/fire/field_groesse"; //$NON-NLS-1$
 	static final String EXPL_BU = "Bauchumfang";
-	public static final String CFG_BU = "icpc/fire/field_bu";
+	public static final String CFG_BU = "icpc/fire/field_bu"; //$NON-NLS-1$
 	static final String EXPL_WEIGHT = "Gewicht";
-	public static final String CFG_WEIGHT = "icpc/fire/field_gewicht";
-	public static final String CFG_BASE_IS_HAM_STICKER = "icpc/fire/isHamSticker/";
-	public static final String CFGPARAM = "ICPC_FIRE_LAST_UPLOAD";
+	public static final String CFG_WEIGHT = "icpc/fire/field_gewicht"; //$NON-NLS-1$
+	public static final String CFG_BASE_IS_HAM_STICKER = "icpc/fire/isHamSticker/"; //$NON-NLS-1$
+	public static final String CFGPARAM = "ICPC_FIRE_LAST_UPLOAD"; //$NON-NLS-1$
 
 	public Preferences() {
-		super("Fire", GRID);
+		super("Fire", GRID); //$NON-NLS-1$
 
 	}
 
@@ -93,7 +93,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		// default date must be specified otherwise DateTimeFieldEditor shows the
 		// current date for null
-		getPreferenceStore().setDefault(CFGPARAM, "20180101");
+		getPreferenceStore().setDefault(CFGPARAM, "20180101"); //$NON-NLS-1$
 	}
 
 	@Override

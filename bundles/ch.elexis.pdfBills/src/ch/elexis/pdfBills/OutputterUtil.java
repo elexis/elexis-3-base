@@ -6,12 +6,12 @@ import ch.elexis.core.data.activator.CoreHub;
 
 public class OutputterUtil {
 
-	public static final String CFG_ROOT = "pdf-outputter/";
+	public static final String CFG_ROOT = "pdf-outputter/"; //$NON-NLS-1$
 
-	public static final String CFG_PRINT_GLOBALOUTPUTDIRS = CFG_ROOT + "global.output.dirs";
+	public static final String CFG_PRINT_GLOBALOUTPUTDIRS = CFG_ROOT + "global.output.dirs"; //$NON-NLS-1$
 
-	public static final String CFG_PRINT_GLOBALPDFDIR = CFG_ROOT + "global.output.pdfdir";
-	public static final String CFG_PRINT_GLOBALXMLDIR = CFG_ROOT + "global.output.xmldir";
+	public static final String CFG_PRINT_GLOBALPDFDIR = CFG_ROOT + "global.output.pdfdir"; //$NON-NLS-1$
+	public static final String CFG_PRINT_GLOBALXMLDIR = CFG_ROOT + "global.output.xmldir"; //$NON-NLS-1$
 
 	/**
 	 * Test if global output directories should be used.

@@ -48,12 +48,12 @@ import ch.rgw.tools.TimeTool;
 
 public class RnPrintView extends ViewPart {
 	// constants to access vat information from the extinfo of the Rechnungssteller
-	public static final String VAT_ISMANDANTVAT = "at.medevit.medelexis.vat_ch/IsMandantVat";
-	public static final String VAT_MANDANTVATNUMBER = "at.medevit.medelexis.vat_ch/MandantVatNumber";
+	public static final String VAT_ISMANDANTVAT = "at.medevit.medelexis.vat_ch/IsMandantVat"; //$NON-NLS-1$
+	public static final String VAT_MANDANTVATNUMBER = "at.medevit.medelexis.vat_ch/MandantVatNumber"; //$NON-NLS-1$
 
 	private static NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
 
-	final static String ID = "ch.elexis.privatrechnung.view";
+	final static String ID = "ch.elexis.privatrechnung.view"; //$NON-NLS-1$
 	TextContainer tc;
 	Fall fall;
 
@@ -111,7 +111,7 @@ public class RnPrintView extends ViewPart {
 		Object pos = null;
 		// Das Wort Leistungen soll jeder selbst in die Vorlage nehmen:
 		// pos = tc.getPlugin().insertText("[Leistungen]", "Leistungen\n\n", SWT.LEFT);
-		pos = tc.getPlugin().insertText("[Leistungen]", StringUtils.EMPTY, SWT.LEFT);
+		pos = tc.getPlugin().insertText("[Leistungen]", StringUtils.EMPTY, SWT.LEFT); //$NON-NLS-1$
 		Money sum = new Money();
 		VatRateSum vatSummer = new VatRateSum();
 		for (Konsultation k : kons) {
@@ -123,27 +123,27 @@ public class RnPrintView extends ViewPart {
 			tc.getPlugin().setStyle(SWT.NORMAL);
 			// print header for Leistungen
 			StringBuilder header = new StringBuilder();
-			header.append("Anzahl").append("\t").append("MWSt.").append("\t").append("Einzelpreis").append("\t")
-					.append("Betrag").append("\n\n");
+			header.append("Anzahl").append("\t").append("MWSt.").append("\t").append("Einzelpreis").append("\t") //$NON-NLS-2$ //$NON-NLS-4$ //$NON-NLS-6$
+					.append("Betrag").append("\n\n"); //$NON-NLS-2$
 			pos = tc.getPlugin().insertText(pos, header.toString(), SWT.LEFT);
 			// print info for each Leistung
 			for (IBilled vv : encounter.getBilled()) {
 				tc.getPlugin().setStyle(SWT.BOLD);
-				pos = tc.getPlugin().insertText(pos, "- " + vv.getText() + StringUtils.LF, SWT.LEFT);
+				pos = tc.getPlugin().insertText(pos, "- " + vv.getText() + StringUtils.LF, SWT.LEFT); //$NON-NLS-1$
 				tc.getPlugin().setStyle(SWT.NORMAL);
 
 				Money preis = vv.getScaledPrice().roundTo5();
 				Money subtotal = vv.getTotal().roundTo5();
 				StringBuilder sb = new StringBuilder();
-				sb.append(vv.getAmount()).append("\t").append(getVatRate(vv, subtotal, vatSummer)).append("\t")
-						.append(preis.getAmountAsString()).append("\t").append(subtotal.getAmountAsString())
+				sb.append(vv.getAmount()).append("\t").append(getVatRate(vv, subtotal, vatSummer)).append("\t") //$NON-NLS-1$ //$NON-NLS-2$
+						.append(preis.getAmountAsString()).append("\t").append(subtotal.getAmountAsString()) //$NON-NLS-1$
 						.append(StringUtils.LF);
 				pos = tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
 				sum.addMoney(subtotal);
 			}
 		}
 		pos = tc.getPlugin().insertText(pos,
-				"____________________________________________________________________\nTotal:\t\t\t"
+				"____________________________________________________________________\nTotal:\t\t\t" //$NON-NLS-1$
 						+ sum.roundTo5().getAmountAsString(),
 				SWT.LEFT);
 
@@ -158,24 +158,24 @@ public class RnPrintView extends ViewPart {
 			pos = tc.getPlugin().insertText(pos, "keine\n", SWT.LEFT);
 
 		tc.getPlugin().setStyle(SWT.BOLD);
-		pos = tc.getPlugin().insertText(pos, "\nSatz\tBetrag\tMWSt\n", SWT.LEFT);
+		pos = tc.getPlugin().insertText(pos, "\nSatz\tBetrag\tMWSt\n", SWT.LEFT); //$NON-NLS-1$
 		tc.getPlugin().setStyle(SWT.NORMAL);
 
 		VatRateElement[] vatValues = vatSummer.rates.values().toArray(new VatRateElement[0]);
 		Arrays.sort(vatValues);
 		for (VatRateElement rate : vatValues) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(nf.format(rate.scale)).append("\t").append(nf.format(rate.sumamount)).append("\t")
+			sb.append(nf.format(rate.scale)).append("\t").append(nf.format(rate.sumamount)).append("\t") //$NON-NLS-2$
 					.append(nf.format(rate.sumvat)).append(StringUtils.LF);
 			pos = tc.getPlugin().insertText(pos, sb.toString(), SWT.LEFT);
 		}
 
 		tc.getPlugin().setStyle(SWT.BOLD);
 		pos = tc.getPlugin().insertText(pos,
-				"\nTotal\t" + sum.getAmountAsString() + "\t" + nf.format(vatSummer.sumvat) + StringUtils.LF, SWT.LEFT);
+				"\nTotal\t" + sum.getAmountAsString() + "\t" + nf.format(vatSummer.sumvat) + StringUtils.LF, SWT.LEFT); //$NON-NLS-2$
 		tc.getPlugin().setStyle(SWT.NORMAL);
 
-		String toPrinter = CoreHub.localCfg.get("Drucker/A4/Name", null);
+		String toPrinter = CoreHub.localCfg.get("Drucker/A4/Name", null); //$NON-NLS-1$
 		tc.getPlugin().print(toPrinter, null, false);
 		tc.createFromTemplateName(null, PrivaterechnungTextTemplateRequirement.getESRTemplate(), Brief.RECHNUNG,
 				adressat, rn.getNr());
@@ -187,17 +187,17 @@ public class RnPrintView extends ViewPart {
 			SWTHelper.showError("Keine Bank", "Bitte geben Sie eine Bank für die Zahlungen ein");
 		}
 		esr.printBESR(bank, adressat, rn.getMandant(), sum.getCentsAsString(), tc);
-		tc.replace("\\[Leistungen\\]", sum.getAmountAsString());
-		tc.getPlugin().print(CoreHub.localCfg.get("Drucker/A4ESR/Name", null), null, false);
+		tc.replace("\\[Leistungen\\]", sum.getAmountAsString()); //$NON-NLS-1$
+		tc.getPlugin().print(CoreHub.localCfg.get("Drucker/A4ESR/Name", null), null, false); //$NON-NLS-1$
 		tc.getPlugin().setFont(null, SWT.NORMAL, 0.0f);
 		return ret;
 	}
 
 	private void fillFields() {
-		Kontakt versicherung = Kontakt.load(fall.getInfoString("Versicherung"));
+		Kontakt versicherung = Kontakt.load(fall.getInfoString("Versicherung")); //$NON-NLS-1$
 		if (versicherung.isValid()) {
-			tc.replace("\\?\\?Versicherung\\.Name\\?\\?]", versicherung.getLabel());
-			tc.replace("\\?\\?Versicherung\\.Anschrift\\?\\?", versicherung.getPostAnschrift(true));
+			tc.replace("\\?\\?Versicherung\\.Name\\?\\?]", versicherung.getLabel()); //$NON-NLS-1$
+			tc.replace("\\?\\?Versicherung\\.Anschrift\\?\\?", versicherung.getPostAnschrift(true)); //$NON-NLS-1$
 		}
 
 	}

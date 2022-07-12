@@ -52,7 +52,7 @@ public class PieChartPage extends AbstractChartPage implements Listener {
 	/**
 	 * Name of this page.
 	 */
-	protected static final String PAGE_NAME = "PieChartPage";
+	protected static final String PAGE_NAME = "PieChartPage"; //$NON-NLS-1$
 
 	private TextWidget chartName;
 
@@ -66,7 +66,7 @@ public class PieChartPage extends AbstractChartPage implements Listener {
 	 */
 	public PieChartPage() {
 		super(PieChartPage.PAGE_NAME, Messages.CHART_WIZARD_PIE_CHART_PAGE_TITLE,
-				ArchieActivator.getImageDescriptor("icons/chart_pie_big.png"));
+				ArchieActivator.getImageDescriptor("icons/chart_pie_big.png")); //$NON-NLS-1$
 		super.setDescription(Messages.CHART_WIZARD_PIE_CHART_PAGE_DESCRIPTION);
 	}
 

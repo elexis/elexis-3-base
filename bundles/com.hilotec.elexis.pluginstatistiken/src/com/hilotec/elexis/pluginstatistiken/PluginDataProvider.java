@@ -39,7 +39,7 @@ public class PluginDataProvider extends AbstractTimeSeries {
 	KonfigurationQuery query = null;
 	String currentQuery;
 	String queries[];
-	private static final String DATE_PRESCRIPTION_FORMAT = "dd.MM.yyyy";
+	private static final String DATE_PRESCRIPTION_FORMAT = "dd.MM.yyyy"; //$NON-NLS-1$
 
 	public PluginDataProvider() {
 		super("Pluginstatistiken");
@@ -70,7 +70,7 @@ public class PluginDataProvider extends AbstractTimeSeries {
 			data = query.getDaten(gerFormat.format(this.getStartDate().getTime()),
 					gerFormat.format(this.getEndDate().getTime()), monitor);
 		} catch (PluginstatistikException e) {
-			Log.get("Messwertstatistiken").log(e.getMessage(), Log.ERRORS);
+			Log.get("Messwertstatistiken").log(e.getMessage(), Log.ERRORS); //$NON-NLS-1$
 			return Status.CANCEL_STATUS;
 		}
 		List<String> names = query.getColNames();

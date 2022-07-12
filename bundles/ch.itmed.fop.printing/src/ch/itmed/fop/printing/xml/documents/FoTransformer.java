@@ -34,7 +34,7 @@ import ch.elexis.core.ui.util.SWTHelper;
 public class FoTransformer {
 	private static Logger logger = LoggerFactory.getLogger(FoTransformer.class);
 
-	public static String DEBUG_MODE = "fop.printing.debug";
+	public static String DEBUG_MODE = "fop.printing.debug"; //$NON-NLS-1$
 
 	/**
 	 * Creates an FO file and returns it as an InputStream.
@@ -45,14 +45,14 @@ public class FoTransformer {
 	public static InputStream transformXmlToFo(InputStream xmlInputStream, File xslFile) throws Exception {
 
 		if (xslFile.exists() == false) {
-			logger.error("XSL template " + xslFile.getAbsolutePath() + " not found");
+			logger.error("XSL template " + xslFile.getAbsolutePath() + " not found"); //$NON-NLS-1$ //$NON-NLS-2$
 			SWTHelper.showError("Druck fehlgeschlagen",
 					"Die Vorlage " + xslFile.toString() + " konnte nicht gefunden werden.");
 			return null;
 		}
 
 		if (xmlInputStream == null) {
-			logger.error("Failed to create XML file");
+			logger.error("Failed to create XML file"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -62,8 +62,8 @@ public class FoTransformer {
 
 			// setup pretty printing xml
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); //$NON-NLS-1$ //$NON-NLS-2$
 			StreamResult result = new StreamResult(new StringWriter());
 			StreamSource source = new StreamSource(new ByteArrayInputStream(bo.toByteArray()));
 			transformer.transform(source, result);

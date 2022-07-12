@@ -172,21 +172,21 @@ public class ArchieActivator extends AbstractUIPlugin {
 		super.initializeImageRegistry(registry);
 
 		// Put images into the image registry for this plugin.
-		registry.put(IMG_NEW_QUERY, ArchieActivator.getImageDescriptor("icons/database_go.png"));
-		registry.put(IMG_COFFEE, ArchieActivator.getImageDescriptor("icons/kteatime.png"));
-		registry.put(IMG_IMPORTANT, ArchieActivator.getImageDescriptor("icons/important.png"));
-		registry.put(IMG_WARNING, ArchieActivator.getImageDescriptor("icons/warning.png"));
-		registry.put(IMG_ERROR, ArchieActivator.getImageDescriptor("icons/error.png"));
-		registry.put(IMG_INFO, ArchieActivator.getImageDescriptor("icons/info.png"));
-		registry.put(IMG_CANCEL, ArchieActivator.getImageDescriptor("icons/cancel.png"));
-		registry.put(IMG_BUTTON_CALENDAR, ArchieActivator.getImageDescriptor("icons/calendar.png"));
-		registry.put(IMG_DEC_VALID, ArchieActivator.getImageDescriptor("icons/tick.png"));
-		registry.put(IMG_CHART_PIE_BIG, ArchieActivator.getImageDescriptor("icons/chart_pie_big.png"));
-		registry.put(IMG_CHART_BAR_BIG, ArchieActivator.getImageDescriptor("icons/chart_bar_big.png"));
-		registry.put(IMG_PATIENT_MALE, ArchieActivator.getImageDescriptor("icons/user.png"));
-		registry.put(IMG_PATIENT_FEMALE, ArchieActivator.getImageDescriptor("icons/user_female.png"));
-		registry.put(IMG_GO, ArchieActivator.getImageDescriptor("icons/control.png"));
-		registry.put(IMG_REFRESH, ArchieActivator.getImageDescriptor("icons/arrow_circle_double.png"));
+		registry.put(IMG_NEW_QUERY, ArchieActivator.getImageDescriptor("icons/database_go.png")); //$NON-NLS-1$
+		registry.put(IMG_COFFEE, ArchieActivator.getImageDescriptor("icons/kteatime.png")); //$NON-NLS-1$
+		registry.put(IMG_IMPORTANT, ArchieActivator.getImageDescriptor("icons/important.png")); //$NON-NLS-1$
+		registry.put(IMG_WARNING, ArchieActivator.getImageDescriptor("icons/warning.png")); //$NON-NLS-1$
+		registry.put(IMG_ERROR, ArchieActivator.getImageDescriptor("icons/error.png")); //$NON-NLS-1$
+		registry.put(IMG_INFO, ArchieActivator.getImageDescriptor("icons/info.png")); //$NON-NLS-1$
+		registry.put(IMG_CANCEL, ArchieActivator.getImageDescriptor("icons/cancel.png")); //$NON-NLS-1$
+		registry.put(IMG_BUTTON_CALENDAR, ArchieActivator.getImageDescriptor("icons/calendar.png")); //$NON-NLS-1$
+		registry.put(IMG_DEC_VALID, ArchieActivator.getImageDescriptor("icons/tick.png")); //$NON-NLS-1$
+		registry.put(IMG_CHART_PIE_BIG, ArchieActivator.getImageDescriptor("icons/chart_pie_big.png")); //$NON-NLS-1$
+		registry.put(IMG_CHART_BAR_BIG, ArchieActivator.getImageDescriptor("icons/chart_bar_big.png")); //$NON-NLS-1$
+		registry.put(IMG_PATIENT_MALE, ArchieActivator.getImageDescriptor("icons/user.png")); //$NON-NLS-1$
+		registry.put(IMG_PATIENT_FEMALE, ArchieActivator.getImageDescriptor("icons/user_female.png")); //$NON-NLS-1$
+		registry.put(IMG_GO, ArchieActivator.getImageDescriptor("icons/control.png")); //$NON-NLS-1$
+		registry.put(IMG_REFRESH, ArchieActivator.getImageDescriptor("icons/arrow_circle_double.png")); //$NON-NLS-1$
 	}
 
 	// ///////////////////////////////////////////////////////////////////////////
@@ -205,28 +205,28 @@ public class ArchieActivator extends AbstractUIPlugin {
 
 			IExtensionRegistry reg = Platform.getExtensionRegistry();
 			IConfigurationElement[] extensions = reg
-					.getConfigurationElementsFor("ch.unibe.iam.scg.archie.dataprovider");
+					.getConfigurationElementsFor("ch.unibe.iam.scg.archie.dataprovider"); //$NON-NLS-1$
 			for (int i = 0; i < extensions.length; i++) {
 				IConfigurationElement element = extensions[i];
 				// only DataProvider elements, as only they have the class
 				// attribute
-				if ("DataProvider".equals(element.getName())) {
+				if ("DataProvider".equals(element.getName())) { //$NON-NLS-1$
 					try {
-						Object executable = element.createExecutableExtension("class");
+						Object executable = element.createExecutableExtension("class"); //$NON-NLS-1$
 
 						// check if we have the right class
 						if (executable instanceof AbstractDataProvider) {
 
 							// compose category prefix
-							String category = element.getAttribute("category") == null ? StringUtils.EMPTY
-									: this.getCategoryNameFromId(element.getAttribute("category")) + ": ";
+							String category = element.getAttribute("category") == null ? StringUtils.EMPTY //$NON-NLS-1$
+									: this.getCategoryNameFromId(element.getAttribute("category")) + ": "; //$NON-NLS-1$ //$NON-NLS-2$
 
 							// add to list of available statistics
 							AbstractDataProvider provider = (AbstractDataProvider) executable;
 							this.providers.put(category + provider.getName(), provider);
 						}
 					} catch (CoreException e) {
-						String errorMessage = "Error while trying to load the data provider: " + element.getName()
+						String errorMessage = "Error while trying to load the data provider: " + element.getName() //$NON-NLS-1$
 								+ StringUtils.LF + e.getLocalizedMessage();
 						ArchieActivator.LOG.log(errorMessage, Log.WARNINGS);
 						e.printStackTrace();
@@ -253,13 +253,13 @@ public class ArchieActivator extends AbstractUIPlugin {
 			this.categories = new Hashtable<String, String>();
 
 			IExtensionRegistry reg = Platform.getExtensionRegistry();
-			IConfigurationElement[] elements = reg.getConfigurationElementsFor("ch.unibe.iam.scg.archie.dataprovider");
+			IConfigurationElement[] elements = reg.getConfigurationElementsFor("ch.unibe.iam.scg.archie.dataprovider"); //$NON-NLS-1$
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement element = elements[i];
 
 				// only category elements
-				if ("category".equals(element.getName())) {
-					this.categories.put(element.getAttribute("id"), element.getAttribute("name"));
+				if ("category".equals(element.getName())) { //$NON-NLS-1$
+					this.categories.put(element.getAttribute("id"), element.getAttribute("name")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -273,9 +273,9 @@ public class ArchieActivator extends AbstractUIPlugin {
 	 */
 	private String getCategoryNameFromId(String categoryId) {
 		if (this.categories == null) {
-			String error = "Provider categories have to be initialized first.";
+			String error = "Provider categories have to be initialized first."; //$NON-NLS-1$
 			ArchieActivator.LOG.log(error, Log.ERRORS);
-			throw new IllegalStateException("Provider categories have to be initialized first.");
+			throw new IllegalStateException("Provider categories have to be initialized first."); //$NON-NLS-1$
 		}
 		for (Entry<String, String> category : this.categories.entrySet()) {
 			if (category.getKey().equals(categoryId)) {

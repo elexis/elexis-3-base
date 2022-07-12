@@ -47,12 +47,12 @@ public class ArrayUtils {
 		StringBuffer buffer = new StringBuffer();
 
 		if (array == null) {
-			return buffer.append("null").toString();
+			return buffer.append("null").toString(); //$NON-NLS-1$
 		}
 
 		for (int i = 0; i < array.length; i++) {
-			String prefix = (i == 0) ? "[" : StringUtils.EMPTY;
-			String suffix = (i == array.length - 1) ? "]" : ",";
+			String prefix = (i == 0) ? "[" : StringUtils.EMPTY; //$NON-NLS-1$
+			String suffix = (i == array.length - 1) ? "]" : ","; //$NON-NLS-1$ //$NON-NLS-2$
 
 			buffer.append(prefix);
 			buffer.append(array[i]);

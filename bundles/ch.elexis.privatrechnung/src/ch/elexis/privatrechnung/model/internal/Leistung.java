@@ -23,11 +23,11 @@ import ch.rgw.tools.TimeTool;
 public class Leistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.PrivatLeistung>
 		implements IPrivatLeistung {
 
-	private static final String CODESYSTEM_NAME = "Privat";
+	private static final String CODESYSTEM_NAME = "Privat"; //$NON-NLS-1$
 	private static IBillableOptifier<IPrivatLeistung> optifier;
 	private static IBillableVerifier verifier;
 
-	public static final String STS_CLASS = "ch.elexis.privatrechnung.data.Leistung";
+	public static final String STS_CLASS = "ch.elexis.privatrechnung.data.Leistung"; //$NON-NLS-1$
 
 	public Leistung(PrivatLeistung entity) {
 		super(entity);
@@ -130,7 +130,7 @@ public class Leistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.en
 		try {
 			getEntityMarkDirty().setCost(Integer.parseInt(string));
 		} catch (NumberFormatException e) {
-			LoggerFactory.getLogger(getClass()).error("Error setting cost", e);
+			LoggerFactory.getLogger(getClass()).error("Error setting cost", e); //$NON-NLS-1$
 		}
 	}
 
@@ -139,7 +139,7 @@ public class Leistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.en
 		try {
 			getEntityMarkDirty().setPrice(Integer.parseInt(string));
 		} catch (NumberFormatException e) {
-			LoggerFactory.getLogger(getClass()).error("Error setting price", e);
+			LoggerFactory.getLogger(getClass()).error("Error setting price", e); //$NON-NLS-1$
 		}
 	}
 
@@ -148,7 +148,7 @@ public class Leistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.en
 		try {
 			getEntityMarkDirty().setTime(Integer.parseInt(string));
 		} catch (NumberFormatException e) {
-			LoggerFactory.getLogger(getClass()).error("Error setting price", e);
+			LoggerFactory.getLogger(getClass()).error("Error setting price", e); //$NON-NLS-1$
 		}
 	}
 
@@ -168,6 +168,6 @@ public class Leistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.en
 
 	@Override
 	public String getLabel() {
-		return getCode() + " - " + getText();
+		return getCode() + " - " + getText(); //$NON-NLS-1$
 	}
 }

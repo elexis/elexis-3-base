@@ -28,7 +28,7 @@ public class Cohort implements Comparable<Cohort> {
 	/**
 	 * Delimiter used for the title of a cohort.
 	 */
-	public final static String TITLE_DELIMITER = " - ";
+	public final static String TITLE_DELIMITER = " - "; //$NON-NLS-1$
 
 	private int lowerBound;
 	private int upperBound;
@@ -45,7 +45,7 @@ public class Cohort implements Comparable<Cohort> {
 	public Cohort(final int lowerBound, final int upperBound, final Object value) {
 		// Checking Preconditions:
 		if (lowerBound > upperBound) {
-			throw new IllegalArgumentException("lowerBound has to be smaller than upperBound!");
+			throw new IllegalArgumentException("lowerBound has to be smaller than upperBound!"); //$NON-NLS-1$
 		}
 		this.setLowerBound(lowerBound);
 		this.setUpperBound(upperBound);

@@ -191,15 +191,15 @@ public class KonfigurationQuery {
 	 * @throws PluginstatistikException
 	 */
 	private ITabelle getTabelle(String name) throws PluginstatistikException {
-		String fromParts[] = name.split(":");
+		String fromParts[] = name.split(":"); //$NON-NLS-1$
 		if (fromParts.length < 2) {
-			throw new PluginstatistikException("Abfrage: Tabellenbezeichner ungueltig formatiert: '" + from + "'");
+			throw new PluginstatistikException("Abfrage: Tabellenbezeichner ungueltig formatiert: '" + from + "'"); //$NON-NLS-2$
 		}
 		String dqPart = fromParts[0];
 		String tabPart = fromParts[1];
 		IDatenquelle dq = Konfiguration.getInstance().getDatenquelle(dqPart);
 		if (dq == null) {
-			throw new PluginstatistikException("Abfrage: Unbekannte Datenquelle: '" + dqPart + "'");
+			throw new PluginstatistikException("Abfrage: Unbekannte Datenquelle: '" + dqPart + "'"); //$NON-NLS-2$
 		}
 		ITabelle t = dq.getTabelle(tabPart);
 		if (t == null) {
@@ -225,8 +225,8 @@ public class KonfigurationQuery {
 		List<Datensatz> data = new LinkedList<Datensatz>();
 
 		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("startdatum", startDatum);
-		parameters.put("enddatum", endDatum);
+		parameters.put("startdatum", startDatum); //$NON-NLS-1$
+		parameters.put("enddatum", endDatum); //$NON-NLS-1$
 
 		monitor.beginTask("Initialisiere Datenquelle", 1);
 		ITabelle from = getTabelle(this.from);

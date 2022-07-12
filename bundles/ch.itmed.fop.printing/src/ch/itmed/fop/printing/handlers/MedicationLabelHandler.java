@@ -54,7 +54,7 @@ public final class MedicationLabelHandler extends AbstractHandler {
 
 						String printerName = settingsStore
 								.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
-						logger.info("Printing document MedicationLabel on printer: " + printerName);
+						logger.info("Printing document MedicationLabel on printer: " + printerName); //$NON-NLS-1$
 						PrintProvider.print(fo, printerName);
 					}
 				}
@@ -68,13 +68,13 @@ public final class MedicationLabelHandler extends AbstractHandler {
 				IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
 				String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
-				logger.info("Printing document MedicationLabel on printer: " + printerName);
+				logger.info("Printing document MedicationLabel on printer: " + printerName); //$NON-NLS-1$
 				PrintProvider.print(fo, printerName);
 			}
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			if (msg != null) {
-				if (msg.equals("No prescription selected")) {
+				if (msg.equals("No prescription selected")) { //$NON-NLS-1$
 					// Make sure we don't show 2 error messages.
 					return null;
 				}

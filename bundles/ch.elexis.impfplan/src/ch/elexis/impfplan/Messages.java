@@ -12,7 +12,7 @@ package ch.elexis.impfplan;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.impfplan.messages";
+	private static final String BUNDLE_NAME = "ch.elexis.impfplan.messages"; //$NON-NLS-1$
 	public static String AddVaccinationDialog_dateOnlyAbout;
 	public static String AddVaccinationDialog_enterVaccinationText;
 	public static String AddVaccinationDialog_enterVaccinationTextError;

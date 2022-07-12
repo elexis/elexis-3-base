@@ -48,7 +48,7 @@ public class UiUtils {
 			}
 
 		} catch (Exception ex) {
-			LoggerFactory.getLogger(UiUtils.class).error("Error on omnivore open", ex);
+			LoggerFactory.getLogger(UiUtils.class).error("Error on omnivore open", ex); //$NON-NLS-1$
 			SWTHelper.showError(ch.elexis.omnivore.ui.Messages.DocHandle_runErrorHeading, ex.getMessage());
 		}
 	}
@@ -185,7 +185,7 @@ public class UiUtils {
 	private static IDocumentHandle createDocHandle(String category, byte[] doc, IPatient pat, Date creationDate,
 			String title, String mime, String keyw) {
 		IDocumentHandle ret = OmnivoreModelServiceHolder.get().create(IDocumentHandle.class);
-		OmnivoreModelServiceHolder.get().setEntityProperty("category", category, ret);
+		OmnivoreModelServiceHolder.get().setEntityProperty("category", category, ret); //$NON-NLS-1$
 		ret.setPatient(pat);
 		ret.setCreated(creationDate);
 		ret.setTitle(title);
@@ -199,7 +199,7 @@ public class UiUtils {
 	private static IDocumentHandle createDocHandle(String category, byte[] doc, IPatient pat, String title, String mime,
 			String keyw) {
 		IDocumentHandle ret = OmnivoreModelServiceHolder.get().create(IDocumentHandle.class);
-		OmnivoreModelServiceHolder.get().setEntityProperty("category", category, ret);
+		OmnivoreModelServiceHolder.get().setEntityProperty("category", category, ret); //$NON-NLS-1$
 		ret.setPatient(pat);
 		ret.setTitle(title);
 		ret.setMimeType(mime);

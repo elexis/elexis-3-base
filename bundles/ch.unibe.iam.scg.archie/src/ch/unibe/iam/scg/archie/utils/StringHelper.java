@@ -39,20 +39,20 @@ public class StringHelper {
 		String safe = name.trim();
 
 		// remove illegal characters
-		safe = safe.replaceAll("[\\/|\\\\|\\*|\\:|\\||\"|\'|\\<|\\>|\\{|\\}|\\?|\\%|,]", StringUtils.EMPTY);
+		safe = safe.replaceAll("[\\/|\\\\|\\*|\\:|\\||\"|\'|\\<|\\>|\\{|\\}|\\?|\\%|,]", StringUtils.EMPTY); //$NON-NLS-1$
 
 		// replace . dots with _ and remove the _ if at the end
-		safe = safe.replaceAll("\\.", "_");
-		if (safe.endsWith("_")) {
+		safe = safe.replaceAll("\\.", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (safe.endsWith("_")) { //$NON-NLS-1$
 			safe = safe.substring(0, safe.length() - 1);
 		}
 
 		// replace whitespace characters with _
-		safe = safe.replaceAll("\\s+", "_");
+		safe = safe.replaceAll("\\s+", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// replace double or more spaces with a single one
 		if (singleSpaces) {
-			safe = safe.replaceAll("_{2,}", "_");
+			safe = safe.replaceAll("_{2,}", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		return safe;
@@ -66,6 +66,6 @@ public class StringHelper {
 	 * @return boolean True if a string has numeric characters only, false else.
 	 */
 	public static final boolean isNumeric(final String inputData) {
-		return inputData.matches("-?\\d+(.\\d+)?");
+		return inputData.matches("-?\\d+(.\\d+)?"); //$NON-NLS-1$
 	}
 }

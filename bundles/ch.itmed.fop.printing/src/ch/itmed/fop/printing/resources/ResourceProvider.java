@@ -41,11 +41,11 @@ import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.preferences.SettingsProvider;
 
 public class ResourceProvider {
-	private static final String PLUGIN_ID = "ch.itmed.fop.printing";
-	private static final String xslResourcePath = "/res/xsl/";
-	private static final String xmlResourcePath = "/res/xml/PaperSizes.xml";
-	public static final String IMAGE_ELLIPSIS_V_PATH = "/res/icons/vertical.png";
-	public static final String IMAGE_ELLIPSIS_H_PATH = "/res/icons/horizontal.png";
+	private static final String PLUGIN_ID = "ch.itmed.fop.printing"; //$NON-NLS-1$
+	private static final String xslResourcePath = "/res/xsl/"; //$NON-NLS-1$
+	private static final String xmlResourcePath = "/res/xml/PaperSizes.xml"; //$NON-NLS-1$
+	public static final String IMAGE_ELLIPSIS_V_PATH = "/res/icons/vertical.png"; //$NON-NLS-1$
+	public static final String IMAGE_ELLIPSIS_H_PATH = "/res/icons/horizontal.png"; //$NON-NLS-1$
 
 	private static Logger logger = LoggerFactory.getLogger(ResourceProvider.class);
 
@@ -58,7 +58,7 @@ public class ResourceProvider {
 			return new File(xslPath);
 		}
 
-		return loadBundleFile(xslResourcePath + docName + ".xsl");
+		return loadBundleFile(xslResourcePath + docName + ".xsl"); //$NON-NLS-1$
 	}
 
 	public static File loadBundleFile(String path) {
@@ -67,7 +67,7 @@ public class ResourceProvider {
 		try {
 			url = FileLocator.toFileURL(url);
 		} catch (IOException e) {
-			logger.error("Could not locate bundle file at " + path, e);
+			logger.error("Could not locate bundle file at " + path, e); //$NON-NLS-1$
 		}
 		String bundleLocation = url.getPath();
 		return new File(bundleLocation);
@@ -94,11 +94,11 @@ public class ResourceProvider {
 			Document doc = builder.parse(bundle.getEntry(xmlResourcePath).toString());
 			XPathFactory xPathfactory = XPathFactory.newInstance();
 			XPath xpath = xPathfactory.newXPath();
-			XPathExpression expr = xpath.compile("/paperSizes/paperSize");
+			XPathExpression expr = xpath.compile("/paperSizes/paperSize"); //$NON-NLS-1$
 			NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = (Node) nodeList.item(i);
-				paperSizes.add(node.getAttributes().getNamedItem("id").getNodeValue());
+				paperSizes.add(node.getAttributes().getNamedItem("id").getNodeValue()); //$NON-NLS-1$
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -119,14 +119,14 @@ public class ResourceProvider {
 			Bundle bundle = Platform.getBundle(PLUGIN_ID);
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(bundle.getEntry("/res/xml/PaperSizes.xml").toString());
+			Document doc = builder.parse(bundle.getEntry("/res/xml/PaperSizes.xml").toString()); //$NON-NLS-1$
 			XPathFactory xPathfactory = XPathFactory.newInstance();
 			XPath xpath = xPathfactory.newXPath();
-			XPathExpression expr = xpath.compile("/paperSizes/paperSize");
+			XPathExpression expr = xpath.compile("/paperSizes/paperSize"); //$NON-NLS-1$
 			NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = (Node) nodeList.item(i);
-				if (node.getAttributes().getNamedItem("id").getNodeValue().equals(paperFormatName)) {
+				if (node.getAttributes().getNamedItem("id").getNodeValue().equals(paperFormatName)) { //$NON-NLS-1$
 					NodeList childNodeList = node.getChildNodes();
 
 					for (int k = 0; k < childNodeList.getLength(); k++) {

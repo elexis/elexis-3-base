@@ -31,7 +31,7 @@ public class FixOrDeleteInvalidDocHandles extends ExternalMaintenance {
 	public String executeMaintenance(IProgressMonitor pm, String DBVersion) {
 		// query all except version and categories
 		IQuery<IDocumentHandle> query = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-		query.and("id", COMPARATOR.NOT_EQUALS, "1");
+		query.and("id", COMPARATOR.NOT_EQUALS, "1"); //$NON-NLS-1$ //$NON-NLS-2$
 		query.and(ModelPackage.Literals.IDOCUMENT__MIME_TYPE, COMPARATOR.NOT_EQUALS, Constants.CATEGORY_MIMETYPE);
 		try (IQueryCursor<IDocumentHandle> cursor = query.executeAsCursor()) {
 			pm.beginTask("Bitte warten, Omnivore Eiträge werden geprüft ...", cursor.size());
@@ -39,7 +39,7 @@ public class FixOrDeleteInvalidDocHandles extends ExternalMaintenance {
 			repairCount = 0;
 			while (cursor.hasNext()) {
 				IDocumentHandle docHandle = cursor.next();
-				logger.info("Loading content of DocHandle [" + docHandle.getId() + "]");
+				logger.info("Loading content of DocHandle [" + docHandle.getId() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				InputStream ret = docHandle.getContent();
 				if (ret == null) {
 					IVirtualFilesystemHandle vfsHandle = Utils.getStorageFile(docHandle, true);
@@ -60,7 +60,7 @@ public class FixOrDeleteInvalidDocHandles extends ExternalMaintenance {
 							}
 						}
 					} catch (IOException e) {
-						logger.warn("DocHandle [" + docHandle.getId() + "]", e);
+						logger.warn("DocHandle [" + docHandle.getId() + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}
@@ -71,16 +71,16 @@ public class FixOrDeleteInvalidDocHandles extends ExternalMaintenance {
 
 	private void repair(IDocumentHandle docHandle, IVirtualFilesystemHandle file) {
 		repairCount++;
-		logger.warn("Repair DocHandle [" + docHandle.getLabel() + "] of patient ["
-				+ (docHandle.getPatient() != null ? docHandle.getPatient().getPatientNr() : "no patient")
-				+ "] with file [" + file.getName() + "]");
+		logger.warn("Repair DocHandle [" + docHandle.getLabel() + "] of patient [" //$NON-NLS-1$ //$NON-NLS-2$
+				+ (docHandle.getPatient() != null ? docHandle.getPatient().getPatientNr() : "no patient") //$NON-NLS-1$
+				+ "] with file [" + file.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		docHandle.setMimeType(file.getName());
 	}
 
 	private void delete(IDocumentHandle docHandle) {
 		deleteCount++;
-		logger.warn("Delete DocHandle [" + docHandle.getLabel() + "] of patient ["
-				+ (docHandle.getPatient() != null ? docHandle.getPatient().getPatientNr() : "no patient") + "]");
+		logger.warn("Delete DocHandle [" + docHandle.getLabel() + "] of patient [" //$NON-NLS-1$ //$NON-NLS-2$
+				+ (docHandle.getPatient() != null ? docHandle.getPatient().getPatientNr() : "no patient") + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		OmnivoreModelServiceHolder.get().delete(docHandle);
 	}
 

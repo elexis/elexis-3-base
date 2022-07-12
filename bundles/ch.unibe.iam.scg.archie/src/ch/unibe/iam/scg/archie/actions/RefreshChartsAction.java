@@ -39,7 +39,7 @@ public class RefreshChartsAction extends Action {
 		this.dashboard = dashboard;
 
 		this.setToolTipText(Messages.RefreshChart);
-		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/arrow_circle_double.png"));
+		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/arrow_circle_double.png")); //$NON-NLS-1$
 
 		this.setEnabled(false);
 	}

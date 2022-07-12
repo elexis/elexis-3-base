@@ -84,7 +84,7 @@ public class ConsultationMoneyChart extends AbstractChartComposite {
 		}
 
 		DateAxis axis = (DateAxis) plot.getDomainAxis();
-		axis.setDateFormatOverride(new SimpleDateFormat("MMM-yyyy"));
+		axis.setDateFormatOverride(new SimpleDateFormat("MMM-yyyy")); //$NON-NLS-1$
 
 		return chart;
 	}

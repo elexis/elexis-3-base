@@ -139,7 +139,7 @@ public class DataAccessor implements IDataAccess {
 	public Result<Object> getObject(String descriptor, PersistentObject dependentObject, String dates,
 			String[] params) {
 
-		if (descriptor.toLowerCase().equals("encounters")) {
+		if (descriptor.toLowerCase().equals("encounters")) { //$NON-NLS-1$
 			/*
 			 * Tabelle in der Form: Problem1 | Datum | aktiv/inaktiv | Datum | RFE |
 			 * Diagnose | Procedere . . . . . Problem2 | Datum | aktiv/inaktiv . . . . .
@@ -176,7 +176,7 @@ public class DataAccessor implements IDataAccess {
 				/* Zeilen fuer Encounters generieren */
 				for (IcpcEncounter en : encounters.get(ep)) {
 					result[i][0] = StringUtils.EMPTY;
-					result[i][1] = en.getEncounter().getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+					result[i][1] = en.getEncounter().getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")); //$NON-NLS-1$
 					result[i][2] = code(en.getRfe());
 					result[i][3] = code(en.getDiag());
 					result[i][4] = code(en.getProc());

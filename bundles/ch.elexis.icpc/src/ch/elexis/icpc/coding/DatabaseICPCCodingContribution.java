@@ -48,7 +48,7 @@ public class DatabaseICPCCodingContribution implements ICodingContribution {
 
 	private boolean isPresent() {
 		if (PersistentObject.getDefaultConnection() != null) {
-			return PersistentObject.tableExists("ICD10");
+			return PersistentObject.tableExists("ICD10"); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -58,7 +58,7 @@ public class DatabaseICPCCodingContribution implements ICodingContribution {
 		Stm statement = PersistentObject.getDefaultConnection().getStatement();
 		try {
 			ResultSet result = statement
-					.query("SELECT ID, short FROM ch_elexis_icpc WHERE ID <> 1 AND short IS NOT NULL");
+					.query("SELECT ID, short FROM ch_elexis_icpc WHERE ID <> 1 AND short IS NOT NULL"); //$NON-NLS-1$
 			while (result.next()) {
 				String code = result.getString(1);
 				String text = result.getString(2);

@@ -34,7 +34,7 @@ import ch.rgw.tools.MimeTool;
 
 public class xChangeContributor implements IExchangeContributor {
 
-	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 
 	public void exportHook(MedicalElement me) {
 		XChangeContainer container = me.getContainer();
@@ -42,7 +42,7 @@ public class xChangeContributor implements IExchangeContributor {
 		IPatient iPatient = CoreModelServiceHolder.get().load(pat.getId(), IPatient.class).orElse(null);
 		if (iPatient != null) {
 			IQuery<IDocumentHandle> query = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-			query.and("kontakt", COMPARATOR.EQUALS, iPatient);
+			query.and("kontakt", COMPARATOR.EQUALS, iPatient); //$NON-NLS-1$
 			List<IDocumentHandle> docs = query.execute();
 			for (IDocumentHandle dh : docs) {
 				try {
@@ -51,7 +51,7 @@ public class xChangeContributor implements IExchangeContributor {
 					de.setTitle(dh.getTitle());
 					de.setOriginator(ElexisEventDispatcher.getSelectedMandator());
 					de.setDate(dateFormat.format(dh.getCreated()));
-					de.addMeta("Keywords", dh.getKeywords());
+					de.addMeta("Keywords", dh.getKeywords()); //$NON-NLS-1$
 					de.addMeta("category", dh.getCategory().getName()); //$NON-NLS-1$
 					de.addMeta("plugin", Constants.PLUGIN_ID); //$NON-NLS-1$
 					de.setHint(Messages.xChangeContributor_thisIsAnOmnivoreDoc);
@@ -70,7 +70,7 @@ public class xChangeContributor implements IExchangeContributor {
 					me.addDocument(de);
 					container.addChoice(de, dh.getTitle(), dh);
 				} catch (Exception e) {
-					LoggerFactory.getLogger(getClass()).error("Error exporting document", e);
+					LoggerFactory.getLogger(getClass()).error("Error exporting document", e); //$NON-NLS-1$
 				}
 			}
 		}

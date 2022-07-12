@@ -31,79 +31,79 @@ public class PatientElement {
 			pd.load();
 		}
 
-		Element p = doc.createElement("Patient");
+		Element p = doc.createElement("Patient"); //$NON-NLS-1$
 
-		Element c = doc.createElement("FirstName");
+		Element c = doc.createElement("FirstName"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getFirstName()));
 		p.appendChild(c);
 
-		c = doc.createElement("LastName");
+		c = doc.createElement("LastName"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getLastName()));
 		p.appendChild(c);
 
-		c = doc.createElement("Birthdate");
+		c = doc.createElement("Birthdate"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getBirthdate()));
 		p.appendChild(c);
 
-		c = doc.createElement("Sex");
+		c = doc.createElement("Sex"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getSex()));
 		p.appendChild(c);
 
-		c = doc.createElement("PID");
+		c = doc.createElement("PID"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getPid()));
 		p.appendChild(c);
 
-		c = doc.createElement("Salutation");
+		c = doc.createElement("Salutation"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getSalutation()));
 		p.appendChild(c);
 
-		c = doc.createElement("Title");
+		c = doc.createElement("Title"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getTitle()));
 		p.appendChild(c);
 
-		c = doc.createElement("PostalCode");
+		c = doc.createElement("PostalCode"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getPostalCode()));
 		p.appendChild(c);
 
-		c = doc.createElement("City");
+		c = doc.createElement("City"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getCity()));
 		p.appendChild(c);
 
-		c = doc.createElement("Country");
+		c = doc.createElement("Country"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getCountry()));
 		p.appendChild(c);
 
-		c = doc.createElement("Street");
+		c = doc.createElement("Street"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getStreet()));
 		p.appendChild(c);
 
-		c = doc.createElement("Phone1");
+		c = doc.createElement("Phone1"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getPhone1()));
 		p.appendChild(c);
 
-		c = doc.createElement("Phone2");
+		c = doc.createElement("Phone2"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getPhone2()));
 		p.appendChild(c);
 
-		c = doc.createElement("MobilePhone");
+		c = doc.createElement("MobilePhone"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getMobilePhone()));
 		p.appendChild(c);
 
-		c = doc.createElement("Email");
+		c = doc.createElement("Email"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getEmail()));
 		p.appendChild(c);
 
-		c = doc.createElement("CompleteAddress");
+		c = doc.createElement("CompleteAddress"); //$NON-NLS-1$
 		String address = pd.getCompleteAddress();
-		String[] addressParts = address.split("[\\r\\n]+");
+		String[] addressParts = address.split("[\\r\\n]+"); //$NON-NLS-1$
 		for (String addressPart : addressParts) {
-			Element part = doc.createElement("Part");
+			Element part = doc.createElement("Part"); //$NON-NLS-1$
 			part.appendChild(doc.createTextNode(addressPart));
 			c.appendChild(part);
 		}
 		p.appendChild(c);
 
-		c = doc.createElement("OrderNumber");
+		c = doc.createElement("OrderNumber"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(pd.getOrderNumber()));
 		p.appendChild(c);
 

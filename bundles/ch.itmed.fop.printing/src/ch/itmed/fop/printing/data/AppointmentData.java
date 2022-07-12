@@ -48,7 +48,7 @@ public final class AppointmentData {
 			});
 			if (appointment == null) {
 				SWTHelper.showInfo(Messages.Info_NoAppointment_Title, Messages.Info_NoAppointment_Message);
-				throw new NullPointerException("No appointment selected");
+				throw new NullPointerException("No appointment selected"); //$NON-NLS-1$
 			}
 		}
 	}
@@ -62,7 +62,7 @@ public final class AppointmentData {
 		TimeTool timeTool = new TimeTool();
 		timeTool.setDate(appointment.getDay());
 		appointmentDate.append(timeTool.toString(TimeTool.WEEKDAY));
-		appointmentDate.append(", ");
+		appointmentDate.append(", "); //$NON-NLS-1$
 
 		// the date of the appointment
 		appointmentDate.append(timeTool.toString(TimeTool.DATE_GER));
@@ -71,7 +71,7 @@ public final class AppointmentData {
 		// start time of the appointment
 		timeTool.setTime(timeSpan.from);
 		appointmentDate.append(timeTool.toString(TimeTool.TIME_SMALL));
-		appointmentDate.append(" - ");
+		appointmentDate.append(" - "); //$NON-NLS-1$
 
 		// end time of the appointment
 		timeTool.setTime(timeSpan.until);
@@ -89,7 +89,7 @@ public final class AppointmentData {
 		TimeTool timeTool = new TimeTool();
 		timeTool.setDate(appointment.getDay());
 		appointmentDate.append(timeTool.toString(TimeTool.WEEKDAY));
-		appointmentDate.append(", ");
+		appointmentDate.append(", "); //$NON-NLS-1$
 
 		// the date of the appointment
 		appointmentDate.append(timeTool.toString(TimeTool.DATE_GER));

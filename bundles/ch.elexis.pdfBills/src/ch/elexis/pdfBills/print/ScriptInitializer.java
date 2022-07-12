@@ -40,11 +40,11 @@ public class ScriptInitializer {
 						InputStream fin = ScriptInitializer.class.getResourceAsStream(scriptFileRscPath)) {
 					IOUtils.copy(fin, fout);
 				} catch (IOException e) {
-					throw new IllegalStateException("Could not initialize script [" + scriptFileRscPath + "]", e);
+					throw new IllegalStateException("Could not initialize script [" + scriptFileRscPath + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		} else {
-			throw new IllegalStateException("Could not initialize script [" + scriptFileRscPath + "]");
+			throw new IllegalStateException("Could not initialize script [" + scriptFileRscPath + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -61,7 +61,7 @@ public class ScriptInitializer {
 				return outFile.exists();
 			}
 		} else {
-			throw new IllegalStateException("Could test script [" + scriptFileRscPath + "]");
+			throw new IllegalStateException("Could test script [" + scriptFileRscPath + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return false;
 	}
@@ -83,7 +83,7 @@ public class ScriptInitializer {
 	public static File getOrCreateScriptFolder() {
 		File writeableDir = CoreHub.getWritableUserDir();
 		if (writeableDir != null && writeableDir.exists()) {
-			File scriptFolder = new File(writeableDir, "pdfScript");
+			File scriptFolder = new File(writeableDir, "pdfScript"); //$NON-NLS-1$
 			if (!scriptFolder.exists()) {
 				scriptFolder.mkdir();
 			}
@@ -99,7 +99,7 @@ public class ScriptInitializer {
 		} catch (IOException e) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 					"Fehler beim Einlesen der Script Befehle.");
-			LoggerFactory.getLogger(ScriptInitializer.class).error("Error reading print commands properties", e);
+			LoggerFactory.getLogger(ScriptInitializer.class).error("Error reading print commands properties", e); //$NON-NLS-1$
 		}
 		return ret;
 	}

@@ -25,7 +25,7 @@ public class PrivatRechnungCodeElementServiceContribution implements ICodeElemen
 
 	@Override
 	public String getSystem() {
-		return "Privat";
+		return "Privat"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -35,8 +35,8 @@ public class PrivatRechnungCodeElementServiceContribution implements ICodeElemen
 
 	@Override
 	public Optional<ICodeElement> loadFromCode(String code, Map<Object, Object> context) {
-		INamedQuery<IPrivatLeistung> codeQuery = modelService.getNamedQuery(IPrivatLeistung.class, "code");
-		List<IPrivatLeistung> codes = codeQuery.executeWithParameters(codeQuery.getParameterMap("code", code));
+		INamedQuery<IPrivatLeistung> codeQuery = modelService.getNamedQuery(IPrivatLeistung.class, "code"); //$NON-NLS-1$
+		List<IPrivatLeistung> codes = codeQuery.executeWithParameters(codeQuery.getParameterMap("code", code)); //$NON-NLS-1$
 		if (codes != null && !codes.isEmpty()) {
 			LocalDate date = getDate(context);
 			for (IPrivatLeistung iLaborLeistung : codes) {

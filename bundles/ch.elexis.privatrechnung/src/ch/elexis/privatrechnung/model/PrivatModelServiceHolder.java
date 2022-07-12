@@ -16,7 +16,7 @@ public class PrivatModelServiceHolder {
 
 	public static IModelService get() {
 		if (modelService == null) {
-			throw new IllegalStateException("No IModelService available");
+			throw new IllegalStateException("No IModelService available"); //$NON-NLS-1$
 		}
 		return modelService;
 	}

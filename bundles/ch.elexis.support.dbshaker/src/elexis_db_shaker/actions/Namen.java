@@ -33,9 +33,9 @@ public class Namen {
 	public Namen() {
 		try {
 			vornamen = new LinkedList<String>();
-			String base = PlatformHelper.getBasePath("ch.elexis.support.dbshaker");
-			File rsc = new File(base, "rsc");
-			File fFirstnames = new File(rsc, "vornamen.txt");
+			String base = PlatformHelper.getBasePath("ch.elexis.support.dbshaker"); //$NON-NLS-1$
+			File rsc = new File(base, "rsc"); //$NON-NLS-1$
+			File fFirstnames = new File(rsc, "vornamen.txt"); //$NON-NLS-1$
 			Reader infilevn = new FileReader(fFirstnames);
 			BufferedReader vn = new BufferedReader(infilevn);
 			String line;
@@ -45,7 +45,7 @@ public class Namen {
 			vn.close();
 
 			nachnamen = new LinkedList<String>();
-			File fLastNames = new File(rsc, "nachnamen.txt");
+			File fLastNames = new File(rsc, "nachnamen.txt"); //$NON-NLS-1$
 			Reader infilenn = new FileReader(fLastNames);
 			BufferedReader nn = new BufferedReader(infilenn);
 			while ((line = nn.readLine()) != null) {
@@ -54,7 +54,7 @@ public class Namen {
 			nn.close();
 
 		} catch (FileNotFoundException e) {
-			SWTHelper.alert("File not found", e.getMessage());
+			SWTHelper.alert("File not found", e.getMessage()); //$NON-NLS-1$
 
 		} catch (IOException e) {
 			e.printStackTrace();

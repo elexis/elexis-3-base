@@ -38,7 +38,7 @@ public class LaborsBuilder {
 		query.startGroup();
 		query.add(LabResult.DATE, Query.EQUALS, dayString);
 		query.or();
-		query.add(LabResult.OBSERVATIONTIME, Query.LIKE, dayString + "%");
+		query.add(LabResult.OBSERVATIONTIME, Query.LIKE, dayString + "%"); //$NON-NLS-1$
 		query.endGroup();
 
 		List<LabResult> results = query.execute();
@@ -55,7 +55,7 @@ public class LaborsBuilder {
 
 					String ref = getRefString(labResult, patient.getGender());
 					if (ref != null) {
-						String[] rx = ref.split("\\s*\\-\\s*");
+						String[] rx = ref.split("\\s*\\-\\s*"); //$NON-NLS-1$
 						if (rx.length > 1) {
 							Float min = toFloat(rx[0]);
 							Float max = toFloat(rx[1]);
@@ -94,7 +94,7 @@ public class LaborsBuilder {
 	}
 
 	private Float toFloat(String string) {
-		string = string.trim().replaceAll(",", ".");
+		string = string.trim().replaceAll(",", "."); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			return Float.parseFloat(string);
 		} catch (NumberFormatException e) {

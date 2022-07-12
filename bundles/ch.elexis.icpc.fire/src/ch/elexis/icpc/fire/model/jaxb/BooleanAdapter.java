@@ -6,13 +6,13 @@ public class BooleanAdapter extends XmlAdapter<String, Boolean> {
 	@Override
 	public String marshal(Boolean v) throws Exception {
 		if (v != null && v.booleanValue()) {
-			return "1";
+			return "1"; //$NON-NLS-1$
 		}
-		return "0";
+		return "0"; //$NON-NLS-1$
 	}
 
 	@Override
 	public Boolean unmarshal(String v) throws Exception {
-		return "1".equals(v);
+		return "1".equals(v); //$NON-NLS-1$
 	}
 }

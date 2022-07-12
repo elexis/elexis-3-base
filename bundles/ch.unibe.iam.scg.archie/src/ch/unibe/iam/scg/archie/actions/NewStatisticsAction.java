@@ -67,10 +67,10 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 	private ArrayList<IPropertyChangeListener> listeners;
 
 	/** constant for a running job */
-	public static final String JOB_RUNNING = "JOB_RUNNING";
+	public static final String JOB_RUNNING = "JOB_RUNNING"; //$NON-NLS-1$
 
 	/** constant for a finished job */
-	public static final String JOB_DONE = "JOB_DONE";
+	public static final String JOB_DONE = "JOB_DONE"; //$NON-NLS-1$
 
 	/**
 	 * Action for creating a new statistical analysis. This class serves as a
@@ -86,7 +86,7 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 		ProviderManager.getInstance().addObserver(this);
 
 		this.setToolTipText(Messages.ACTION_NEWSTAT_DESCRIPTION);
-		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/database_go.png"));
+		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/database_go.png")); //$NON-NLS-1$
 
 		// disabled by default
 		this.setEnabled(false);
@@ -114,7 +114,7 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 				return;
 			} catch (Exception e) {
 				ArchieActivator.LOG.log(Messages.ACTION_NEWSTAT_ERROR_COULDNT_UPDATE_PROVIDER + StringUtils.SPACE
-						+ provider.getName() + ".\n" + e.getLocalizedMessage(), Log.WARNINGS);
+						+ provider.getName() + ".\n" + e.getLocalizedMessage(), Log.WARNINGS); //$NON-NLS-1$
 				e.printStackTrace();
 			}
 

@@ -41,19 +41,19 @@ public class AppointmentsInformationElement {
 			al = ad.load();
 		}
 
-		Element p = doc.createElement("AppointmentsInformation");
+		Element p = doc.createElement("AppointmentsInformation"); //$NON-NLS-1$
 
 		if (!al.isEmpty()) {
-			Element l = doc.createElement("AppointmentsList");
+			Element l = doc.createElement("AppointmentsList"); //$NON-NLS-1$
 
 			if (!al.isEmpty()) {
 				for (AppointmentData ad : al) {
-					Element appointment = doc.createElement("ListAppointment");
-					appointment.setAttribute("area", ad.getAgendaArea());
+					Element appointment = doc.createElement("ListAppointment"); //$NON-NLS-1$
+					appointment.setAttribute("area", ad.getAgendaArea()); //$NON-NLS-1$
 					appointment.appendChild(doc.createTextNode(ad.getAppointmentDetailed()));
 					l.appendChild(appointment);
-					Element appointmentNoEnd = doc.createElement("ListAppointmentNoEnd");
-					appointmentNoEnd.setAttribute("area", ad.getAgendaArea());
+					Element appointmentNoEnd = doc.createElement("ListAppointmentNoEnd"); //$NON-NLS-1$
+					appointmentNoEnd.setAttribute("area", ad.getAgendaArea()); //$NON-NLS-1$
 					appointmentNoEnd.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));
 					l.appendChild(appointmentNoEnd);
 				}
@@ -75,24 +75,24 @@ public class AppointmentsInformationElement {
 			for (Entry<String, List<AppointmentData>> area : appointmentPerArea) {
 				List<AppointmentData> areaAppointments = area.getValue();
 
-				Element c = doc.createElement("AgendaArea");
+				Element c = doc.createElement("AgendaArea"); //$NON-NLS-1$
 				c.appendChild(doc.createTextNode(area.getKey()));
 				p.appendChild(c);
 
-				c = doc.createElement("Appointments");
+				c = doc.createElement("Appointments"); //$NON-NLS-1$
 				for (AppointmentData ad : areaAppointments) {
-					Element appointment = doc.createElement("Appointment");
+					Element appointment = doc.createElement("Appointment"); //$NON-NLS-1$
 					appointment.appendChild(doc.createTextNode(ad.getAppointmentDetailed()));
 					c.appendChild(appointment);
-					Element appointmentNoEnd = doc.createElement("AppointmentNoEnd");
+					Element appointmentNoEnd = doc.createElement("AppointmentNoEnd"); //$NON-NLS-1$
 					appointmentNoEnd.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));
 					c.appendChild(appointmentNoEnd);
 				}
 				p.appendChild(c);
 			}
 		} else {
-			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Keine Termin Serie",
-					"Keine Termin Serie zum selektierten Patienten gefunden");
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Keine Termin Serie", //$NON-NLS-1$
+					"Keine Termin Serie zum selektierten Patienten gefunden"); //$NON-NLS-1$
 		}
 
 		return p;

@@ -88,7 +88,7 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 
 		TreeViewerColumn col = new TreeViewerColumn(treeViewer, SWT.NONE);
 		col.getColumn().setWidth(225);
-		col.getColumn().setText("Impfung gegen Krankheit(en)");
+		col.getColumn().setText("Impfung gegen Krankheit(en)"); //$NON-NLS-1$
 
 		treeViewer.setContentProvider(new DiseaseTreeContentProvider());
 		treeViewer.setLabelProvider(new DiseaseTreeLabelProvider());
@@ -129,7 +129,7 @@ public class EditVaccinationDialog extends TitleAreaDialog {
 		for (Object element : checkedElements) {
 			DiseaseDefinition disease = (DiseaseDefinition) element;
 			sb.append(disease.getATCCode());
-			sb.append(",");
+			sb.append(","); //$NON-NLS-1$
 		}
 		vt.setVaccAgainst(sb.toString());
 

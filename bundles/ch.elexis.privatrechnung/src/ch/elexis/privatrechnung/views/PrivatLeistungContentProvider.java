@@ -27,21 +27,21 @@ public class PrivatLeistungContentProvider implements ICommonViewerContentProvid
 	public PrivatLeistungContentProvider(CommonViewer commonViewer) {
 		this.commonViewer = commonViewer;
 
-		this.childrenQuery = PrivatModelServiceHolder.get().getNamedQuery(IPrivatLeistung.class, "parent");
+		this.childrenQuery = PrivatModelServiceHolder.get().getNamedQuery(IPrivatLeistung.class, "parent"); //$NON-NLS-1$
 
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
 		List<IPrivatLeistung> roots = childrenQuery
-				.executeWithParameters(childrenQuery.getParameterMap("parent", "NIL"));
+				.executeWithParameters(childrenQuery.getParameterMap("parent", "NIL")); //$NON-NLS-1$ //$NON-NLS-2$
 		return roots.toArray(new Object[roots.size()]);
 	}
 
 	@Override
 	public void changed(HashMap<String, String> values) {
-		nameFilter = values.get("name");
-		codeFilter = values.get("shortName");
+		nameFilter = values.get("name"); //$NON-NLS-1$
+		codeFilter = values.get("shortName"); //$NON-NLS-1$
 		commonViewer.notify(Message.update_keeplabels);
 	}
 
@@ -77,7 +77,7 @@ public class PrivatLeistungContentProvider implements ICommonViewerContentProvid
 		if (parentElement instanceof IPrivatLeistung) {
 			IPrivatLeistung parentLeistung = (IPrivatLeistung) parentElement;
 			List<IPrivatLeistung> ret = childrenQuery
-					.executeWithParameters(childrenQuery.getParameterMap("parent", parentLeistung.getCode()));
+					.executeWithParameters(childrenQuery.getParameterMap("parent", parentLeistung.getCode())); //$NON-NLS-1$
 			ret = getFiltered(ret);
 			return ret.toArray(new Object[ret.size()]);
 		}
@@ -109,7 +109,7 @@ public class PrivatLeistungContentProvider implements ICommonViewerContentProvid
 		if (parentElement instanceof IPrivatLeistung) {
 			IPrivatLeistung parentLeistung = (IPrivatLeistung) parentElement;
 			List<IPrivatLeistung> ret = childrenQuery
-					.executeWithParameters(childrenQuery.getParameterMap("parent", parentLeistung.getCode()));
+					.executeWithParameters(childrenQuery.getParameterMap("parent", parentLeistung.getCode())); //$NON-NLS-1$
 			ret = getFiltered(ret);
 			return !ret.isEmpty();
 		}

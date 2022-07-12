@@ -65,14 +65,14 @@ public class ExportFireHandler extends AbstractHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(ExportFireHandler.class);
 
-	public static final String FIRESTICKERNAME = "Fire (ICPC)";
+	public static final String FIRESTICKERNAME = "Fire (ICPC)"; //$NON-NLS-1$
 
 	private Sticker fireSticker;
 
 	public ExportFireHandler() {
 		String id = new Query<Sticker>(Sticker.class).findSingle(Sticker.FLD_NAME, Query.EQUALS, FIRESTICKERNAME);
 		if (id == null) {
-			fireSticker = new Sticker(FIRESTICKERNAME, "0066CC", "C0C0C0");
+			fireSticker = new Sticker(FIRESTICKERNAME, "0066CC", "C0C0C0"); //$NON-NLS-1$ //$NON-NLS-2$
 			fireSticker.setClassForSticker(Konsultation.class);
 		} else {
 			fireSticker = Sticker.load(id);
@@ -85,7 +85,7 @@ public class ExportFireHandler extends AbstractHandler {
 	 * @return
 	 */
 	public static TimeTool getTtFrom() {
-		TimeTool ttFrom = new TimeTool("20180101");
+		TimeTool ttFrom = new TimeTool("20180101"); //$NON-NLS-1$
 		String lastupdate = ConfigServiceHolder.getGlobal(Preferences.CFGPARAM, null);
 		if (lastupdate != null) {
 			ttFrom = new TimeTool(lastupdate);
@@ -117,8 +117,8 @@ public class ExportFireHandler extends AbstractHandler {
 		List<Konsultation> konsen = qbe.execute();
 		if (konsen.size() > 0) {
 			FileDialog fd = new FileDialog(Hub.getActiveShell(), SWT.SAVE);
-			fd.setFileName("elexis-fire" + new TimeTool().toString(TimeTool.DATE_COMPACT) + ".xml");
-			fd.setFilterExtensions(new String[] { "xml" });
+			fd.setFileName("elexis-fire" + new TimeTool().toString(TimeTool.DATE_COMPACT) + ".xml"); //$NON-NLS-1$ //$NON-NLS-2$
+			fd.setFilterExtensions(new String[] { "xml" }); //$NON-NLS-1$
 			fd.setFilterNames(new String[] { "XML-Dateien" });
 			String expath = fd.open();
 			if (expath != null) {
@@ -126,7 +126,7 @@ public class ExportFireHandler extends AbstractHandler {
 				try {
 					progress.run(true, true, createReportExportRunnable(konsen, expath));
 				} catch (InvocationTargetException | InterruptedException e) {
-					logger.warn("Exception during FIRE export", e);
+					logger.warn("Exception during FIRE export", e); //$NON-NLS-1$
 				}
 			}
 		}
@@ -161,7 +161,7 @@ public class ExportFireHandler extends AbstractHandler {
 						if (monitor.isCanceled()) {
 							return;
 						}
-						monitor.setTaskName("FIRE exporting (" + ++counter + "/" + consultations.size() + ")");
+						monitor.setTaskName("FIRE exporting (" + ++counter + "/" + consultations.size() + ")"); //$NON-NLS-2$ //$NON-NLS-3$
 						// validate
 						Fall fall = konsultation.getFall();
 						if (fall == null) {
@@ -187,7 +187,7 @@ public class ExportFireHandler extends AbstractHandler {
 
 								konsultation.addSticker(fireSticker);
 							} catch (IllegalStateException e) {
-								logger.warn("Could not add consultation.", e);
+								logger.warn("Could not add consultation.", e); //$NON-NLS-1$
 							}
 						}
 						monitor.worked(1);
@@ -205,7 +205,7 @@ public class ExportFireHandler extends AbstractHandler {
 									new TimeTool().toString(TimeTool.DATE_COMPACT));
 						} catch (IOException e) {
 							openError("Error", "Error writing report, see logs for details.");
-							logger.error("Error writing report.", e);
+							logger.error("Error writing report.", e); //$NON-NLS-1$
 						}
 					}
 				} else {
@@ -213,7 +213,7 @@ public class ExportFireHandler extends AbstractHandler {
 				}
 			} catch (DatatypeConfigurationException | NumberFormatException e) {
 				openError("Error", "Error creating report, see logs for details.");
-				logger.error("Could not create XML output", e);
+				logger.error("Could not create XML output", e); //$NON-NLS-1$
 			}
 		}
 

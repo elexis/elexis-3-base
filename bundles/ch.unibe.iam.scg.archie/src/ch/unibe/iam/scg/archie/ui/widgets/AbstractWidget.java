@@ -55,7 +55,7 @@ public abstract class AbstractWidget extends Composite {
 
 		// Check Arguments
 		if (labelText == null || labelText.equals(StringUtils.EMPTY)) {
-			throw new IllegalArgumentException("LabelText can not be null or empty!");
+			throw new IllegalArgumentException("LabelText can not be null or empty!"); //$NON-NLS-1$
 		}
 
 		// can be null

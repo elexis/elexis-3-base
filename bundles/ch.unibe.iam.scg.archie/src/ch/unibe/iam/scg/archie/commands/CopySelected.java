@@ -86,9 +86,9 @@ public class CopySelected extends AbstractHandler {
 		String rowString = StringUtils.EMPTY;
 		for (int i = 0; i < row.length; i++) {
 			rowString += row[i].toString();
-			rowString += (i == row.length - 1) ? StringUtils.EMPTY : "\t";
+			rowString += (i == row.length - 1) ? StringUtils.EMPTY : "\t"; //$NON-NLS-1$
 		}
-		rowString += System.getProperty("line.separator");
+		rowString += System.getProperty("line.separator"); //$NON-NLS-1$
 		return rowString;
 	}
 }

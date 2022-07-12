@@ -12,7 +12,7 @@ package ch.elexis.omnivore.ui;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.omnivore.ui.messages";
+	private static final String BUNDLE_NAME = "ch.elexis.omnivore.ui.messages"; //$NON-NLS-1$
 	public static String DocHandle_cantReadCaption;
 	public static String DocHandle_configErrorCaption;
 	public static String DocHandle_configErrorText;

@@ -123,7 +123,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private TreeViewer viewer;
 	private Tree table;
 	RestrictedAction editAction, deleteAction, importAction;
-	public static String importAction_ID = "ch.elexis.omnivore.data.OmnivoreView.importAction";
+	public static String importAction_ID = "ch.elexis.omnivore.data.OmnivoreView.importAction"; //$NON-NLS-1$
 
 	private Action exportAction;
 	private Action doubleClickAction;
@@ -131,8 +131,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	private final String[] colLabels = { StringUtils.EMPTY, Messages.OmnivoreView_categoryColumn,
 			Messages.OmnivoreView_dateColumn, Messages.OmnivoreView_dateOriginColumn, Messages.OmnivoreView_titleColumn,
 			Messages.OmnivoreView_keywordsColumn };
-	private final String colWidth = "20,80,80,150,500";
-	private final String sortSettings = "0,1,-1,false";
+	private final String colWidth = "20,80,80,150,500"; //$NON-NLS-1$
+	private final String sortSettings = "0,1,-1,false"; //$NON-NLS-1$
 	private boolean bFlat = false;
 	private String searchTitle = StringUtils.EMPTY;
 	private String searchKW = StringUtils.EMPTY;
@@ -219,10 +219,10 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 
 		/** Add filters for search to query */
 		private void addFilters(IQuery<IDocumentHandle> qbe) {
-			qbe.and("title", COMPARATOR.LIKE, "%" + searchTitle + "%");
+			qbe.and("title", COMPARATOR.LIKE, "%" + searchTitle + "%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			// Add every keyword
 			for (String kw : searchKW.split(StringUtils.SPACE)) {
-				qbe.and("keywords", COMPARATOR.LIKE, "%" + kw + "%");
+				qbe.and("keywords", COMPARATOR.LIKE, "%" + kw + "%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 
@@ -260,7 +260,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 					}
 				}
 				IQuery<IDocumentHandle> qbe = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-				qbe.and("kontakt", COMPARATOR.EQUALS, pat);
+				qbe.and("kontakt", COMPARATOR.EQUALS, pat); //$NON-NLS-1$
 				addFilters(qbe);
 				List<IDocumentHandle> root = qbe.execute().parallelStream().filter(d -> d.isCategory())
 						.collect(Collectors.toList());
@@ -268,7 +268,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			} else if (pat != null) {
 				// Flat view -> all documents that
 				IQuery<IDocumentHandle> qbe = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-				qbe.and("kontakt", COMPARATOR.EQUALS, pat);
+				qbe.and("kontakt", COMPARATOR.EQUALS, pat); //$NON-NLS-1$
 				addFilters(qbe);
 				List<IDocumentHandle> docs = qbe.execute().parallelStream().filter(d -> !d.isCategory())
 						.collect(Collectors.toList());
@@ -306,7 +306,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 
 	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-		private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+		private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 
 		public String getColumnText(Object obj, int index) {
 			IDocumentHandle dh = (IDocumentHandle) obj;
@@ -398,7 +398,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		viewer.addSelectionChangedListener(ev -> {
 			IDocumentHandle docHandle = (IDocumentHandle) ev.getStructuredSelection().getFirstElement();
 			if (docHandle != null && !docHandle.isCategory()) {
-				if (StringUtils.containsIgnoreCase(docHandle.getMimeType(), "pdf")) {
+				if (StringUtils.containsIgnoreCase(docHandle.getMimeType(), "pdf")) { //$NON-NLS-1$
 					eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, docHandle);
 				}
 			}
@@ -482,7 +482,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 						IDocumentHandle dh = (IDocumentHandle) selection.toList().get(index);
 						sb.append(StoreToStringServiceHolder.getStoreToString(dh)).append(","); //$NON-NLS-1$
 						log.debug("dragSetData; unsupported dataType {} returning {}", //$NON-NLS-1$
-								event.dataType, sb.toString().replace(",$", StringUtils.EMPTY));
+								event.dataType, sb.toString().replace(",$", StringUtils.EMPTY)); //$NON-NLS-1$
 					}
 					event.data = sb.toString().replace(",$", StringUtils.EMPTY); //$NON-NLS-1$
 				}
@@ -508,11 +508,11 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	}
 
 	private void applySortDirection() {
-		String[] usrSortSettings = sortSettings.split(",");
+		String[] usrSortSettings = sortSettings.split(","); //$NON-NLS-1$
 
 		if (ConfigServiceHolder.getUser(PreferencePage.SAVE_SORT_DIRECTION, false)) {
 			String sortSet = ConfigServiceHolder.getUser(PreferencePage.USR_SORT_DIRECTION_SETTINGS, sortSettings);
-			usrSortSettings = sortSet.split(",");
+			usrSortSettings = sortSet.split(","); //$NON-NLS-1$
 		}
 
 		int propertyIdx = Integer.parseInt(usrSortSettings[0]);
@@ -546,10 +546,10 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 
 	private void applyUsersColumnWidthSetting() {
 		TreeColumn[] treeColumns = table.getColumns();
-		String[] userColWidth = colWidth.split(",");
+		String[] userColWidth = colWidth.split(","); //$NON-NLS-1$
 		if (ConfigServiceHolder.getUser(PreferencePage.SAVE_COLUM_WIDTH, false)) {
 			String ucw = ConfigServiceHolder.getUser(PreferencePage.USR_COLUMN_WIDTH_SETTINGS, colWidth);
-			userColWidth = ucw.split(",");
+			userColWidth = ucw.split(","); //$NON-NLS-1$
 		}
 
 		for (int i = 0; i < treeColumns.length && (i < userColWidth.length); i++) {
@@ -644,8 +644,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 						ListDialog ld = new ListDialog(getViewSite().getShell());
 
 						IQuery<IDocumentHandle> qbe = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-						qbe.and("mimetype", COMPARATOR.EQUALS, CATEGORY_MIMETYPE);
-						qbe.and("id", COMPARATOR.NOT_EQUALS, dh.getId());
+						qbe.and("mimetype", COMPARATOR.EQUALS, CATEGORY_MIMETYPE); //$NON-NLS-1$
+						qbe.and("id", COMPARATOR.NOT_EQUALS, dh.getId()); //$NON-NLS-1$
 						List<IDocumentHandle> mainCategories = qbe.execute();
 
 						ld.setInput(mainCategories);
@@ -793,7 +793,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		StringBuilder sb = new StringBuilder();
 		for (TreeColumn tc : treeColumns) {
 			sb.append(tc.getWidth());
-			sb.append(",");
+			sb.append(","); //$NON-NLS-1$
 		}
 		ConfigServiceHolder.setUser(PreferencePage.USR_COLUMN_WIDTH_SETTINGS, sb.toString());
 	}
@@ -803,7 +803,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		int direction = ovComparator.getDirectionDigit();
 		int catDirection = ovComparator.getCategoryDirection();
 		ConfigServiceHolder.setUser(PreferencePage.USR_SORT_DIRECTION_SETTINGS,
-				propertyIdx + "," + direction + "," + catDirection + "," + bFlat);
+				propertyIdx + "," + direction + "," + catDirection + "," + bFlat); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public void refresh() {

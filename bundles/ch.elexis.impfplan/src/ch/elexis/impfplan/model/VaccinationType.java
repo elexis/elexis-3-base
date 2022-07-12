@@ -36,7 +36,7 @@ public class VaccinationType extends PersistentObject {
 	public static final String DELAY1TO2 = "delay_1to2"; //$NON-NLS-1$
 	public static final String PRODUCT = "product"; //$NON-NLS-1$
 	public static final String NAME = "name"; //$NON-NLS-1$
-	public static final String VACC_AGAINST = "vaccAgainst";
+	public static final String VACC_AGAINST = "vaccAgainst"; //$NON-NLS-1$
 
 	private static final String TABLENAME = "CH_ELEXIS_IMPFPLAN_VACCINATION_TYPES"; //$NON-NLS-1$
 	private static final String VERSION = "0.2.0"; //$NON-NLS-1$
@@ -66,7 +66,7 @@ public class VaccinationType extends PersistentObject {
 			+ VERSION + "');"; //$NON-NLS-1$
 
 	public static final String upd020 = "ALTER TABLE " + TABLENAME //$NON-NLS-1$
-			+ " ADD " + FLD_EXTINFO + " longblob"; //$NON-NLS-1$
+			+ " ADD " + FLD_EXTINFO + " longblob"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	static {
 		addMapping(TABLENAME, NAME, PRODUCT, DELAY1TO2, DELAY2TO3, DELAY3TO4, DELAY_REP, REMARKS, RECOMMENDED_AGE,
@@ -256,7 +256,7 @@ public class VaccinationType extends PersistentObject {
 			return Collections.emptyList();
 		} else {
 			List<String> atcCodes = new ArrayList<String>();
-			String[] singleCodes = vaccAgainst.split(",");
+			String[] singleCodes = vaccAgainst.split(","); //$NON-NLS-1$
 			for (String atc : singleCodes) {
 				atcCodes.add(atc);
 			}

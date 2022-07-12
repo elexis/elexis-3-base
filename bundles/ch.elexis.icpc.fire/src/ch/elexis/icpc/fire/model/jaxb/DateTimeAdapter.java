@@ -12,7 +12,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class DateTimeAdapter extends XmlAdapter<String, XMLGregorianCalendar> {
 
 	// YYYY-MM-DDTHH:MM:SS
-	private final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+	private final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"; //$NON-NLS-1$
 
 	@Override
 	public String marshal(XMLGregorianCalendar calendar) throws Exception {

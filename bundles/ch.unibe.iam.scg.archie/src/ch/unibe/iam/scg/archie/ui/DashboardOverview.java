@@ -161,17 +161,17 @@ public class DashboardOverview extends Composite {
 
 		int consultationsTotal = DatabaseHelper.getNumberOfConsultations();
 
-		this.patients.setText(Messages.PATIENTS + ": " + patientsTotal + StringUtils.LF + Messages.MALE + ": "
-				+ writePercent(patientsMale, patientsTotal) + StringUtils.LF + Messages.FEMALE + ": "
-				+ writePercent(patientsFemale, patientsTotal) + StringUtils.LF + Messages.UNKNOWN + ": "
+		this.patients.setText(Messages.PATIENTS + ": " + patientsTotal + StringUtils.LF + Messages.MALE + ": " //$NON-NLS-1$ //$NON-NLS-2$
+				+ writePercent(patientsMale, patientsTotal) + StringUtils.LF + Messages.FEMALE + ": " //$NON-NLS-1$
+				+ writePercent(patientsFemale, patientsTotal) + StringUtils.LF + Messages.UNKNOWN + ": " //$NON-NLS-1$
 				+ writePercent(patientsTotal - patientsFemale - patientsMale, patientsTotal));
 
-		this.invoices.setText(Messages.INVOICES + ": " + invoicesTotal + StringUtils.LF + Messages.PAID + ": "
-				+ writePercent(invoicesPaid, invoicesTotal) + StringUtils.LF + Messages.OPEN + ": "
-				+ writePercent(invoicesOpen, invoicesTotal) + StringUtils.LF + Messages.OTHER + ": "
+		this.invoices.setText(Messages.INVOICES + ": " + invoicesTotal + StringUtils.LF + Messages.PAID + ": " //$NON-NLS-1$ //$NON-NLS-2$
+				+ writePercent(invoicesPaid, invoicesTotal) + StringUtils.LF + Messages.OPEN + ": " //$NON-NLS-1$
+				+ writePercent(invoicesOpen, invoicesTotal) + StringUtils.LF + Messages.OTHER + ": " //$NON-NLS-1$
 				+ writePercent(invoicesTotal - invoicesOpen - invoicesPaid, invoicesTotal));
 
-		this.consultations.setText(Messages.CONSULTATIONS + ": " + consultationsTotal + StringUtils.LF);
+		this.consultations.setText(Messages.CONSULTATIONS + ": " + consultationsTotal + StringUtils.LF); //$NON-NLS-1$
 	}
 
 	/**
@@ -199,6 +199,6 @@ public class DashboardOverview extends Composite {
 	private String writePercent(final float givenAmount, final float totalAmount) {
 		BigDecimal percent = new BigDecimal(calculatePercent(givenAmount, totalAmount));
 		percent = percent.setScale(1, BigDecimal.ROUND_HALF_UP);
-		return percent.doubleValue() + " %";
+		return percent.doubleValue() + " %"; //$NON-NLS-1$
 	}
 }

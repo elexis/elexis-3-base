@@ -57,7 +57,7 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 	/**
 	 * Name of this page.
 	 */
-	protected static final String PAGE_NAME = "BarChartPage";
+	protected static final String PAGE_NAME = "BarChartPage"; //$NON-NLS-1$
 
 	/**
 	 * Constant for bar chart type in the combo box.
@@ -88,7 +88,7 @@ public class BarChartPage extends AbstractChartPage implements Listener {
 	 */
 	public BarChartPage() {
 		super(BarChartPage.PAGE_NAME, Messages.CHART_WIZARD_BAR_CHART_PAGE_TITLE,
-				ArchieActivator.getImageDescriptor("icons/chart_bar_big.png"));
+				ArchieActivator.getImageDescriptor("icons/chart_bar_big.png")); //$NON-NLS-1$
 		super.setDescription(Messages.CHART_WIZARD_BAR_CHART_PAGE_DESCRIPTION);
 
 		this.columnButtons = new HashMap<Button, Integer>();

@@ -46,14 +46,14 @@ public final class CaseData {
 			if (iCoverage.get().getInsuranceNumber() != null) {
 				return iCoverage.get().getInsuranceNumber();
 			} else {
-				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Unfallnummer"))) {
-					return (String) iCoverage.get().getExtInfo("Unfallnummer");
+				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Unfallnummer"))) { //$NON-NLS-1$
+					return (String) iCoverage.get().getExtInfo("Unfallnummer"); //$NON-NLS-1$
 				}
-				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Fallnummer"))) {
-					return (String) iCoverage.get().getExtInfo("Fallnummer");
+				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Fallnummer"))) { //$NON-NLS-1$
+					return (String) iCoverage.get().getExtInfo("Fallnummer"); //$NON-NLS-1$
 				}
-				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Versicherungsnummer"))) {
-					return (String) iCoverage.get().getExtInfo("Versicherungsnummer");
+				if (StringUtils.isNotBlank((String) iCoverage.get().getExtInfo("Versicherungsnummer"))) { //$NON-NLS-1$
+					return (String) iCoverage.get().getExtInfo("Versicherungsnummer"); //$NON-NLS-1$
 				}
 			}
 		}

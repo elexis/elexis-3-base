@@ -26,7 +26,7 @@ import ch.elexis.core.services.IXidService;
 public class PrivatRechnungModelService extends AbstractModelService
 		implements IModelService, IStoreToStringContribution {
 
-	public static final String XIDDOMAIN = "www.xid.ch/id/customservice";
+	public static final String XIDDOMAIN = "www.xid.ch/id/customservice"; //$NON-NLS-1$
 
 	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
@@ -41,7 +41,7 @@ public class PrivatRechnungModelService extends AbstractModelService
 	public void activate() {
 		adapterFactory = PrivatRechnungModelAdapterFactory.getInstance();
 
-		xidService.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Privatleistung", XidConstants.ASSIGNMENT_LOCAL);
+		xidService.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Privatleistung", XidConstants.ASSIGNMENT_LOCAL); //$NON-NLS-1$
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class PrivatRechnungModelService extends AbstractModelService
 			try {
 				return getTypeForEntity(entityClass.newInstance());
 			} catch (InstantiationException | IllegalAccessException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;

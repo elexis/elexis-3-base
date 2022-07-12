@@ -37,7 +37,7 @@ public class ArchieACL implements IACLContributor {
 	/**
 	 * Access control string that will be displayed in the ACL.
 	 */
-	public static final ACE USE_ARCHIE = new ACE(ACE.ACE_ROOT, "archie",
+	public static final ACE USE_ARCHIE = new ACE(ACE.ACE_ROOT, "archie", //$NON-NLS-1$
 			ArchieActivator.PLUGIN_NAME + StringUtils.SPACE + Messages.ACL_ACCESS);
 
 	/**

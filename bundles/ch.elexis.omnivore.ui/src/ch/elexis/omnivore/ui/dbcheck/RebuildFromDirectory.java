@@ -48,9 +48,9 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 	private boolean matchMimetype;
 
 	// @formatter:off
-	private static final String DOCHANDLE_MIME_QUERY = "SELECT ID FROM ch_elexis_omnivore_data"
-			+ " WHERE deleted = '0'"
-			+ " AND mimetype = ?1";
+	private static final String DOCHANDLE_MIME_QUERY = "SELECT ID FROM ch_elexis_omnivore_data" //$NON-NLS-1$
+			+ " WHERE deleted = '0'" //$NON-NLS-1$
+			+ " AND mimetype = ?1"; //$NON-NLS-1$
 	// @formatter:on
 	private INativeQuery mimeQuery;
 
@@ -73,7 +73,7 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 							if (file.exists() && file.isDirectory()) {
 								return null;
 							}
-							return "[" + newText + "] ist kein vorhandenes Verzeichnis";
+							return "[" + newText + "] ist kein vorhandenes Verzeichnis"; //$NON-NLS-1$
 						}
 					}, SWT.NONE) {
 				@Override
@@ -135,7 +135,7 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 											IDocumentHandle.class, true);
 								} else {
 									LoggerFactory.getLogger(getClass())
-											.warn("Multiple DB entries for file [" + importFile.getName() + "]");
+											.warn("Multiple DB entries for file [" + importFile.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 							}
 						}
@@ -144,12 +144,12 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 								documentHandle.get().setContent(fi);
 								imported++;
 							} catch (IOException e) {
-								LoggerFactory.getLogger(getClass()).error("Error importing file", e);
+								LoggerFactory.getLogger(getClass()).error("Error importing file", e); //$NON-NLS-1$
 							}
 							moveToImported(importFile);
 						} else {
 							LoggerFactory.getLogger(getClass())
-									.warn("No DB entry for file [" + importFile.getName() + "]");
+									.warn("No DB entry for file [" + importFile.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						pm.worked(1);
 						total++;
@@ -178,27 +178,27 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 
 	private void moveToImported(File importFile) {
 		try {
-			File importedDir = new File(importFile.getParentFile(), "imported");
+			File importedDir = new File(importFile.getParentFile(), "imported"); //$NON-NLS-1$
 			FileUtils.moveFileToDirectory(importFile, importedDir, true);
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error moving file to imported dir", e);
+			LoggerFactory.getLogger(getClass()).error("Error moving file to imported dir", e); //$NON-NLS-1$
 		}
 	}
 
 	private void writeCsv(List<IDocumentHandle> invalidEntries, File importDir) {
 		CSVWriter csv = null;
 		try {
-			csv = new CSVWriter(new FileWriter(new File(importDir, "invalid_omnivore.csv")));
+			csv = new CSVWriter(new FileWriter(new File(importDir, "invalid_omnivore.csv"))); //$NON-NLS-1$
 			// @formatter:off
 			String[] header = new String[] {
-				"id", // line 0
-				"patnr", // line 1
-				"patdesc1", // line 2
-				"patdesc2", // line 3
-				"category", // line 4
-				"title", // line 5
-				"mime", // line 6
-				"keywords", // line 7
+				"id", // line 0 //$NON-NLS-1$
+				"patnr", // line 1 //$NON-NLS-1$
+				"patdesc1", // line 2 //$NON-NLS-1$
+				"patdesc2", // line 3 //$NON-NLS-1$
+				"category", // line 4 //$NON-NLS-1$
+				"title", // line 5 //$NON-NLS-1$
+				"mime", // line 6 //$NON-NLS-1$
+				"keywords", // line 7 //$NON-NLS-1$
 			};
 			csv.writeNext(header);
 			for (IDocumentHandle entry : invalidEntries) {
@@ -210,11 +210,11 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 					line[2] = pat.getDescription1();
 					line[3] = pat.getDescription2();
 				} else {
-					line[1] = "no pat";
-					line[2] = "no pat";
-					line[3] = "no pat";
+					line[1] = "no pat"; //$NON-NLS-1$
+					line[2] = "no pat"; //$NON-NLS-1$
+					line[3] = "no pat"; //$NON-NLS-1$
 				}
-				line[4] = entry.getCategory() != null ? entry.getCategory().getName() : "no cat";
+				line[4] = entry.getCategory() != null ? entry.getCategory().getName() : "no cat"; //$NON-NLS-1$
 				line[5] = entry.getTitle();
 				line[6] = entry.getMimeType();
 				line[7] = entry.getKeywords();
@@ -222,7 +222,7 @@ public class RebuildFromDirectory extends ExternalMaintenance {
 			}
 		} catch (IOException e) {
 			LoggerFactory.getLogger(getClass())
-				.error("Error writing csv with invalid omnivore entries", e);
+				.error("Error writing csv with invalid omnivore entries", e); //$NON-NLS-1$
 		}finally {
 			if (csv != null) {
 				try {

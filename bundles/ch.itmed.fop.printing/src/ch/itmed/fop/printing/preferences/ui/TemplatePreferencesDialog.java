@@ -120,7 +120,7 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					textOrientation = "0";
+					textOrientation = "0"; //$NON-NLS-1$
 					break;
 				}
 			}
@@ -136,7 +136,7 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 			public void handleEvent(Event e) {
 				switch (e.type) {
 				case SWT.Selection:
-					textOrientation = "90";
+					textOrientation = "90"; //$NON-NLS-1$
 					break;
 				}
 			}
@@ -169,7 +169,7 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
 				dialog.setFilterNames(new String[] { Messages.TemplatePreferences_XslFileChooser_XslFilter,
 						Messages.TemplatePreferences_XslFileChooser_AllFilesFilter });
-				dialog.setFilterExtensions(new String[] { "*.xsl", "*.*" });
+				dialog.setFilterExtensions(new String[] { "*.xsl", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
 				String xslPath = dialog.open();
 				if (xslPath != null) {
 					xslTemplate.setText(xslPath);
@@ -270,7 +270,7 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 			boolean answer = SWTHelper.askYesNo("Globale Einstellungen",
 					"Wollen Sie die globalen Einstellungen überschreiben?");
 			if (!answer) {
-				System.out.println("Einstellungen nicht gespeichert!!!!");
+				System.out.println("Einstellungen nicht gespeichert!!!!"); //$NON-NLS-1$
 				return;
 			}
 		}
@@ -321,7 +321,7 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 		pageMarginLeft.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 10)));
 		pageMarginRight.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 11)));
 
-		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7)).equals("90")) {
+		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7)).equals("90")) { //$NON-NLS-1$
 			buttonVertical.setSelection(true);
 		} else {
 			buttonHorizontal.setSelection(true);

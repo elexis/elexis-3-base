@@ -26,7 +26,7 @@ public final class MandatorData {
 		mandator = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
 		if (mandator == null) {
 			SWTHelper.showInfo("Kein Mandant ausgewählt", "Bitte wählen Sie vor dem Drucken einen Mandanten!");
-			throw new NullPointerException("No mandator selected");
+			throw new NullPointerException("No mandator selected"); //$NON-NLS-1$
 		}
 	}
 
@@ -47,10 +47,10 @@ public final class MandatorData {
 	}
 
 	public String getPhone() {
-		return mandator.get("Telefon1");
+		return mandator.get("Telefon1"); //$NON-NLS-1$
 	}
 
 	public String getTitle() {
-		return mandator.get("Titel");
+		return mandator.get("Titel"); //$NON-NLS-1$
 	}
 }

@@ -30,7 +30,7 @@ public class Code extends AbstractIdModelAdapter<ICPCCode> implements Identifiab
 			Messages.IcpcCode_comp_3, Messages.IcpcCode_comp_4, Messages.IcpcCode_comp_5, Messages.IcpcCode_comp_6,
 			Messages.IcpcCode_comp_7 };
 
-	public static final String CODESYSTEM_NAME = "ICPC";
+	public static final String CODESYSTEM_NAME = "ICPC"; //$NON-NLS-1$
 
 	private static List<IDiagnosisTree> rootCodes;
 
@@ -198,7 +198,7 @@ public class Code extends AbstractIdModelAdapter<ICPCCode> implements Identifiab
 		private String text;
 
 		public TransientCode(String string) {
-			String[] parts = string.split(": ");
+			String[] parts = string.split(": "); //$NON-NLS-1$
 			code = parts[0];
 			text = parts[1];
 		}
@@ -252,7 +252,7 @@ public class Code extends AbstractIdModelAdapter<ICPCCode> implements Identifiab
 
 		@Override
 		public String getLabel() {
-			return code + ": " + text;
+			return code + ": " + text; //$NON-NLS-1$
 		}
 
 		@Override
@@ -286,8 +286,8 @@ public class Code extends AbstractIdModelAdapter<ICPCCode> implements Identifiab
 			if (NumberUtils.isCreatable(code) && children == null) {
 				// perform db lookup
 				IQuery<IcpcCode> query = IcpcModelServiceHolder.get().getQuery(IcpcCode.class);
-				query.and("id", COMPARATOR.LIKE, parent.getId() + "%");
-				query.and("component", COMPARATOR.EQUALS, getId());
+				query.and("id", COMPARATOR.LIKE, parent.getId() + "%"); //$NON-NLS-1$ //$NON-NLS-2$
+				query.and("component", COMPARATOR.EQUALS, getId()); //$NON-NLS-1$
 				children = (List<IDiagnosisTree>) (List<?>) query.execute();
 				children.forEach(c -> c.setParent(this));
 				return children;

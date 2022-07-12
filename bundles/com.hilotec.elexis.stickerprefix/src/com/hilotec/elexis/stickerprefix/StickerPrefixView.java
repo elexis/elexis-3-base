@@ -31,7 +31,7 @@ public class StickerPrefixView extends ViewPart {
 	private Button addPrefix;
 	private Button removePrefix;
 
-	private final String PREFIX = "zzzz_";
+	private final String PREFIX = "zzzz_"; //$NON-NLS-1$
 
 	@Override
 	public void createPartControl(Composite parent) {

@@ -120,11 +120,11 @@ public class Core implements IDatenquelle {
 	 */
 	public Core() {
 		tabellen = new LinkedList<ITabelle>();
-		tabellen.add(new CoreTabelle("Patient", Patient.class));
-		tabellen.add(new CoreTabelle("Fall", Fall.class));
-		tabellen.add(new CoreTabelle("Konsultation", Konsultation.class));
-		tabellen.add(new CoreTabelle("Verrechnet", Verrechnet.class));
-		tabellen.add(new CoreTabelle("Kontakt", Kontakt.class));
+		tabellen.add(new CoreTabelle("Patient", Patient.class)); //$NON-NLS-1$
+		tabellen.add(new CoreTabelle("Fall", Fall.class)); //$NON-NLS-1$
+		tabellen.add(new CoreTabelle("Konsultation", Konsultation.class)); //$NON-NLS-1$
+		tabellen.add(new CoreTabelle("Verrechnet", Verrechnet.class)); //$NON-NLS-1$
+		tabellen.add(new CoreTabelle("Kontakt", Kontakt.class)); //$NON-NLS-1$
 	}
 
 	/*
@@ -134,7 +134,7 @@ public class Core implements IDatenquelle {
 	 * com.hilotec.elexis.pluginstatistiken.schnittstelle.IDatenquelle#getName()
 	 */
 	public String getName() {
-		return "Core";
+		return "Core"; //$NON-NLS-1$
 	}
 
 	/*

@@ -45,7 +45,7 @@ public class PatientData {
 		if (patient == null) {
 			SWTHelper.showInfo(ch.itmed.fop.printing.resources.Messages.Info_NoPatient_Title,
 					ch.itmed.fop.printing.resources.Messages.Info_NoPatient_Message);
-			throw new NullPointerException("No patient selected");
+			throw new NullPointerException("No patient selected"); //$NON-NLS-1$
 		}
 		if (useLegalGuardian) {
 			initLegalGuardian();
@@ -63,7 +63,7 @@ public class PatientData {
 				}
 			}
 			if (t == null) {
-				throw new NullPointerException("No appointment selected");
+				throw new NullPointerException("No appointment selected"); //$NON-NLS-1$
 			}
 		}
 
@@ -131,7 +131,7 @@ public class PatientData {
 	}
 
 	public String getTitle() {
-		return PersistentObject.checkNull(patient.get("Titel"));
+		return PersistentObject.checkNull(patient.get("Titel")); //$NON-NLS-1$
 	}
 
 	public String getPostalCode() {
@@ -152,9 +152,9 @@ public class PatientData {
 
 	public String getCountry() {
 		if (legalGuardian != null) {
-			return PersistentObject.checkNull(legalGuardian.get("Land"));
+			return PersistentObject.checkNull(legalGuardian.get("Land")); //$NON-NLS-1$
 		} else {
-			return PersistentObject.checkNull(patient.get("Land"));
+			return PersistentObject.checkNull(patient.get("Land")); //$NON-NLS-1$
 		}
 	}
 
@@ -167,15 +167,15 @@ public class PatientData {
 	}
 
 	public String getPhone1() {
-		return PersistentObject.checkNull(patient.get("Telefon1"));
+		return PersistentObject.checkNull(patient.get("Telefon1")); //$NON-NLS-1$
 	}
 
 	public String getPhone2() {
-		return PersistentObject.checkNull(patient.get("Telefon2"));
+		return PersistentObject.checkNull(patient.get("Telefon2")); //$NON-NLS-1$
 	}
 
 	public String getMobilePhone() {
-		return PersistentObject.checkNull(patient.get("NatelNr"));
+		return PersistentObject.checkNull(patient.get("NatelNr")); //$NON-NLS-1$
 	}
 
 	public String getCompleteAddress() {

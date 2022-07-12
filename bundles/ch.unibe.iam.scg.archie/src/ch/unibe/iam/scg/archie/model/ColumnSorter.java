@@ -102,6 +102,6 @@ public class ColumnSorter extends ViewerSorter {
 	 */
 	private boolean isComparable(Object object) {
 		return ArrayUtils.hasInterface(object.getClass().getInterfaces(), Comparable.class)
-				|| ArrayUtils.hasMethod(object.getClass().getMethods(), "compareTo");
+				|| ArrayUtils.hasMethod(object.getClass().getMethods(), "compareTo"); //$NON-NLS-1$
 	}
 }

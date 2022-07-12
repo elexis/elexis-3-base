@@ -42,7 +42,7 @@ public class CreateChartsAction extends Action {
 		this.dashboard = dashboard;
 
 		this.setToolTipText(Messages.CreateChart);
-		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/control.png"));
+		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/control.png")); //$NON-NLS-1$
 	}
 
 	/**

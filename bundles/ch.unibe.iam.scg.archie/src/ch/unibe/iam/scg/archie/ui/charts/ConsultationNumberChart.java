@@ -56,7 +56,7 @@ public class ConsultationNumberChart extends AbstractChartComposite {
 	protected JFreeChart initializeChart() {
 		JFreeChart chart = ChartFactory.createTimeSeriesChart(ConsultationNumberChart.CHART_TITLE, // title
 				StringUtils.EMPTY, // x-axis label
-				"Count", // y-axis label
+				"Count", // y-axis label //$NON-NLS-1$
 				(XYDataset) this.creator.getDataset(), // data
 				false, // create legend?
 				true, // generate tooltips?
@@ -82,7 +82,7 @@ public class ConsultationNumberChart extends AbstractChartComposite {
 		}
 
 		DateAxis axis = (DateAxis) plot.getDomainAxis();
-		axis.setDateFormatOverride(new SimpleDateFormat("MMM-yyyy"));
+		axis.setDateFormatOverride(new SimpleDateFormat("MMM-yyyy")); //$NON-NLS-1$
 
 		return chart;
 	}

@@ -37,7 +37,7 @@ public class IcpcReferenceDataImporter extends AbstractReferenceDataImporter imp
 		monitor.beginTask("Importiere ICPC-2", 727);
 		Database db = null;
 		try {
-			File tempFile = File.createTempFile("tmp_icpc-2", ".mdb");
+			File tempFile = File.createTempFile("tmp_icpc-2", ".mdb"); //$NON-NLS-1$ //$NON-NLS-2$
 			tempFile.deleteOnExit();
 
 			try (OutputStream outputStream = new FileOutputStream(tempFile)) {
@@ -46,8 +46,8 @@ public class IcpcReferenceDataImporter extends AbstractReferenceDataImporter imp
 				return doImport(monitor, db);
 			}
 		} catch (Exception e) {
-			LoggerFactory.getLogger(getClass()).error("Import error", e);
-			return new Status(Status.ERROR, "ICPC", 3, e.getMessage(), null);
+			LoggerFactory.getLogger(getClass()).error("Import error", e); //$NON-NLS-1$
+			return new Status(Status.ERROR, "ICPC", 3, e.getMessage(), null); //$NON-NLS-1$
 		} finally {
 			IOUtils.closeQuietly(db);
 		}
@@ -55,7 +55,7 @@ public class IcpcReferenceDataImporter extends AbstractReferenceDataImporter imp
 
 	@Override
 	public int getCurrentVersion() {
-		long count = IcpcModelServiceHolder.get().executeNativeQuery("SELECT ID FROM CH_ELEXIS_ICPC WHERE ID != 'ver'")
+		long count = IcpcModelServiceHolder.get().executeNativeQuery("SELECT ID FROM CH_ELEXIS_ICPC WHERE ID != 'ver'") //$NON-NLS-1$
 				.count();
 		return count > 0 ? 1 : 0;
 	}
@@ -65,29 +65,29 @@ public class IcpcReferenceDataImporter extends AbstractReferenceDataImporter imp
 
 		monitor.subTask("Lösche alte Daten");
 		IQuery<IcpcCode> query = IcpcModelServiceHolder.get().getQuery(IcpcCode.class);
-		query.and("id", COMPARATOR.NOT_EQUALS, "ver");
+		query.and("id", COMPARATOR.NOT_EQUALS, "ver"); //$NON-NLS-1$ //$NON-NLS-2$
 		List<IcpcCode> existing = query.execute();
 		existing.forEach(ec -> IcpcModelServiceHolder.get().remove(ec));
 		monitor.worked(1);
 		monitor.subTask("Lese Daten ein");
 		List<Object> codeEntities = new ArrayList<>();
-		Table table = db.getTable("ICPC2eGM");
+		Table table = db.getTable("ICPC2eGM"); //$NON-NLS-1$
 		Iterator<Row> it = table.iterator();
 		while (it.hasNext()) {
 			Row row = it.next();
 			ICPCCode entity = new ICPCCode();
-			entity.setId((String) row.get("CODE"));
-			Object component = row.get("COMPONENT");
+			entity.setId((String) row.get("CODE")); //$NON-NLS-1$
+			Object component = row.get("COMPONENT"); //$NON-NLS-1$
 			entity.setComponent(component != null ? String.valueOf(component) : null);
-			entity.setText((String) row.get("TEXT"));
-			entity.setSynonyms((String) row.get("SYNONYMS"));
-			entity.setShortName((String) row.get("SHORT"));
-			entity.setIcd10((String) row.get("ICD-10"));
-			entity.setCriteria((String) row.get("CRIT"));
-			entity.setInclusion((String) row.get("INCL"));
-			entity.setExclusion((String) row.get("EXCL"));
-			entity.setConsider((String) row.get("CONS"));
-			entity.setNote((String) row.get("NOTE"));
+			entity.setText((String) row.get("TEXT")); //$NON-NLS-1$
+			entity.setSynonyms((String) row.get("SYNONYMS")); //$NON-NLS-1$
+			entity.setShortName((String) row.get("SHORT")); //$NON-NLS-1$
+			entity.setIcd10((String) row.get("ICD-10")); //$NON-NLS-1$
+			entity.setCriteria((String) row.get("CRIT")); //$NON-NLS-1$
+			entity.setInclusion((String) row.get("INCL")); //$NON-NLS-1$
+			entity.setExclusion((String) row.get("EXCL")); //$NON-NLS-1$
+			entity.setConsider((String) row.get("CONS")); //$NON-NLS-1$
+			entity.setNote((String) row.get("NOTE")); //$NON-NLS-1$
 			codeEntities.add(entity);
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;

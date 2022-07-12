@@ -27,8 +27,8 @@ public class Utils {
 
 	public static List<IDocumentHandle> getMembers(IDocumentHandle dh, IPatient pat) {
 		IQuery<IDocumentHandle> query = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
-		query.and("category", COMPARATOR.EQUALS, dh.getTitle());
-		query.and("kontakt", COMPARATOR.EQUALS, pat);
+		query.and("category", COMPARATOR.EQUALS, dh.getTitle()); //$NON-NLS-1$
+		query.and("kontakt", COMPARATOR.EQUALS, pat); //$NON-NLS-1$
 		return query.execute();
 	}
 

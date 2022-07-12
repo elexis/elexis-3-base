@@ -62,7 +62,7 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 	/**
 	 * ID of this view.
 	 */
-	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.views.Dashboard";
+	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.views.Dashboard"; //$NON-NLS-1$
 
 	/**
 	 * List of chart composites in this dashboard.

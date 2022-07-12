@@ -118,7 +118,7 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 			item.setText(3, Messages.GeneralPreferences_Default);
 		}
 
-		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7)).equals("90")) {
+		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7)).equals("90")) { //$NON-NLS-1$
 			item.setText(4, Messages.GeneralPreferences_OrientationPortrait);
 		} else {
 			item.setText(4, Messages.GeneralPreferences_OrientationLandscape);
@@ -158,7 +158,7 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 				item.setText(3, Messages.GeneralPreferences_Default);
 			}
 
-			if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 7)).equals("90")) {
+			if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 7)).equals("90")) { //$NON-NLS-1$
 				item.setText(4, Messages.GeneralPreferences_OrientationPortrait);
 			} else {
 				item.setText(4, Messages.GeneralPreferences_OrientationLandscape);

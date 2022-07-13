@@ -30,7 +30,10 @@ public class DocumentIndexerIdentifiedRunnable extends AbstractIDocumentIndexerI
 		return DESCRIPTION;
 	}
 
-	private final String QUERY = "SELECT ID FROM CH_ELEXIS_OMNIVORE_DATA WHERE !(DOCUMENT_STATUS & 2) AND (DOCUMENT_STATUS & 1) AND PatID IS NOT NULL ORDER BY lastUpdate DESC LIMIT 1000"; //$NON-NLS-1$
+	// Exclude DocumentStatus.INDEXED,
+	// exclude DocumentStatus.NOT_FOUND_OR_NO_CONTENT,
+	// require DocumentStatus.PREPROCESSED
+	private final String QUERY = "SELECT ID FROM CH_ELEXIS_OMNIVORE_DATA WHERE !(DOCUMENT_STATUS & 2) AND !(DOCUMENT_STATUS & 8) AND (DOCUMENT_STATUS & 1) AND PatID IS NOT NULL ORDER BY lastUpdate DESC LIMIT 1000"; //$NON-NLS-1$
 
 	@Override
 	protected String getSolrCore() {

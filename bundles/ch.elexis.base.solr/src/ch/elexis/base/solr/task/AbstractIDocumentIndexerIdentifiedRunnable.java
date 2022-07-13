@@ -89,8 +89,11 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 				byte[] content;
 				try (InputStream is = document.getContent()) {
 					if (is == null) {
-						logger.info("[{}] content is null, skipping", document.getId()); //$NON-NLS-1$
-						failures.add(new SingleIdentifiableTaskResult(currentDocumentId, "content is null, skipping")); //$NON-NLS-1$
+						logger.info("[{}] content is null, marking and skipping", document.getId()); //$NON-NLS-1$
+						failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
+								"content is null, marking and skipping")); //$NON-NLS-1$
+						document.setStatus(DocumentStatus.NOT_FOUND_OR_NO_CONTENT, true);
+						getModelService().save(document);
 						continue;
 					}
 					content = IOUtils.toByteArray(is);

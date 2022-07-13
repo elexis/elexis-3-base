@@ -11,8 +11,8 @@ import ch.elexis.omnivore.model.IDocumentHandle;
 
 public class DocumentIndexerIdentifiedRunnable extends AbstractIDocumentIndexerIdentifiedRunnable {
 
-	public static final String RUNNABLE_ID = "solrDocumentIndexer";
-	public static final String DESCRIPTION = "Index omnivore documents into SOLR";
+	public static final String RUNNABLE_ID = "solrDocumentIndexer"; //$NON-NLS-1$
+	public static final String DESCRIPTION = "Index omnivore documents into SOLR"; //$NON-NLS-1$
 
 	private IModelService omnivoreModelService;
 
@@ -30,7 +30,10 @@ public class DocumentIndexerIdentifiedRunnable extends AbstractIDocumentIndexerI
 		return DESCRIPTION;
 	}
 
-	private final String QUERY = "SELECT ID FROM CH_ELEXIS_OMNIVORE_DATA WHERE !(DOCUMENT_STATUS & 2) AND (DOCUMENT_STATUS & 1) AND PatID IS NOT NULL ORDER BY lastUpdate DESC LIMIT 1000";
+	// Exclude DocumentStatus.INDEXED,
+	// exclude DocumentStatus.NOT_FOUND_OR_NO_CONTENT,
+	// require DocumentStatus.PREPROCESSED
+	private final String QUERY = "SELECT ID FROM CH_ELEXIS_OMNIVORE_DATA WHERE !(DOCUMENT_STATUS & 2) AND !(DOCUMENT_STATUS & 8) AND (DOCUMENT_STATUS & 1) AND PatID IS NOT NULL ORDER BY lastUpdate DESC LIMIT 1000"; //$NON-NLS-1$
 
 	@Override
 	protected String getSolrCore() {

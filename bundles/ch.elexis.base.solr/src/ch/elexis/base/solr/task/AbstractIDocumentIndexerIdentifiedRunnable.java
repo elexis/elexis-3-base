@@ -54,8 +54,8 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 				// assert document exists
 				IDocument document = loadDocument(currentDocumentId);
 				if (document == null) {
-					logger.warn("[{}] not loadable , skipping", currentDocumentId);
-					failures.add(new SingleIdentifiableTaskResult(currentDocumentId, "not loadable (null), skipping"));
+					logger.warn("[{}] not loadable , skipping", currentDocumentId); //$NON-NLS-1$
+					failures.add(new SingleIdentifiableTaskResult(currentDocumentId, "not loadable (null), skipping")); //$NON-NLS-1$
 					continue;
 				}
 
@@ -69,9 +69,9 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 						getModelService().save(document);
 						indexRemovedList.add(document);
 					} catch (SolrServerException sse) {
-						logger.warn("[{}] could not be deleted from solr index", currentDocumentId, sse);
+						logger.warn("[{}] could not be deleted from solr index", currentDocumentId, sse); //$NON-NLS-1$
 						failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
-								"could not be deleted from solr index"));
+								"could not be deleted from solr index")); //$NON-NLS-1$
 					}
 					continue;
 				}
@@ -79,9 +79,9 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 				// assert has patient
 				String patientId = document.getPatient() != null ? document.getPatient().getId() : null;
 				if (patientId == null) {
-					logger.warn("[{}] no associated patient, skipping", currentDocumentId);
+					logger.warn("[{}] no associated patient, skipping", currentDocumentId); //$NON-NLS-1$
 					failures.add(
-							new SingleIdentifiableTaskResult(currentDocumentId, "no assocatied patient, skipping"));
+							new SingleIdentifiableTaskResult(currentDocumentId, "no assocatied patient, skipping")); //$NON-NLS-1$
 					continue;
 				}
 
@@ -89,8 +89,11 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 				byte[] content;
 				try (InputStream is = document.getContent()) {
 					if (is == null) {
-						logger.info("[{}] content is null, skipping", document.getId());
-						failures.add(new SingleIdentifiableTaskResult(currentDocumentId, "content is null, skipping"));
+						logger.info("[{}] content is null, marking and skipping", document.getId()); //$NON-NLS-1$
+						failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
+								"content is null, marking and skipping")); //$NON-NLS-1$
+						document.setStatus(DocumentStatus.NOT_FOUND_OR_NO_CONTENT, true);
+						getModelService().save(document);
 						continue;
 					}
 					content = IOUtils.toByteArray(is);
@@ -98,19 +101,19 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 
 				String[] solrCellData = null;
 				if (content.length == 0) {
-					logger.info("[{}] content length is 0, marking indexed", document.getId());
+					logger.info("[{}] content length is 0, marking indexed", document.getId()); //$NON-NLS-1$
 					failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
-							"content length is 0, marking indexed "));
+							"content length is 0, marking indexed ")); //$NON-NLS-1$
 				} else {
 					try {
 						solrCellData = getUtil().performSolrCellRequest(solr, getSolrCore(), content);
 					} catch (SolrException e) {
-						if (e.getMessage().contains("EncryptedDocumentException")) {
-							logger.warn("[{}] " + e.getMessage() + ", marking indexed", document.getId());
+						if (e.getMessage().contains("EncryptedDocumentException")) { //$NON-NLS-1$
+							logger.warn("[{}] " + e.getMessage() + ", marking indexed", document.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 							failures.add(new SingleIdentifiableTaskResult(document.getId(),
-									e.getMessage() + ", marking indexed"));
+									e.getMessage() + ", marking indexed")); //$NON-NLS-1$
 						} else {
-							logger.error("[{}] " + e.getMessage(), id);
+							logger.error("[{}] " + e.getMessage(), id); //$NON-NLS-1$
 							throw e;
 						}
 					}
@@ -120,8 +123,8 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 				try {
 					getModelService().save(document);
 				} catch (IllegalStateException e) {
-					logger.warn("[{}] could not be saved, see logs", currentDocumentId);
-					failures.add(new SingleIdentifiableTaskResult(currentDocumentId, "could not be saved, see logs"));
+					logger.warn("[{}] could not be saved, see logs", currentDocumentId); //$NON-NLS-1$
+					failures.add(new SingleIdentifiableTaskResult(currentDocumentId, "could not be saved, see logs")); //$NON-NLS-1$
 					continue;
 				}
 
@@ -129,10 +132,10 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 					IDocumentBean documentBean = new IDocumentBean();
 					documentBean.setId(document.getId());
 					LocalDate localDate = TimeUtil.toLocalDate(document.getCreated());
-					String date = (localDate != null) ? TimeUtil.formatSafe(localDate) : "??.??.????";
+					String date = (localDate != null) ? TimeUtil.formatSafe(localDate) : "??.??.????"; //$NON-NLS-1$
 					String title = StringUtils.isNotBlank(document.getTitle()) ? document.getTitle().trim()
 							: document.getKeywords();
-					documentBean.setLabel(date + " - " + title);
+					documentBean.setLabel(date + " - " + title); //$NON-NLS-1$
 					documentBean.setPatientId(patientId);
 					documentBean.setLastUpdate(document.getLastupdate());
 					documentBean.setCreationDate(document.getCreated());
@@ -145,7 +148,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 						handleWarn(logger, document, currentDocumentId, sse);
 						continue;
 					} catch (RemoteSolrException rse) {
-						if (rse.getMessage().contains("OOXMLParser")) {
+						if (rse.getMessage().contains("OOXMLParser")) { //$NON-NLS-1$
 							handleWarn(logger, document, currentDocumentId, rse);
 							continue;
 						}
@@ -154,7 +157,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 				}
 
 				if (subMonitor.isCanceled()) {
-					logger.info("Task is cancelled");
+					logger.info("Task is cancelled"); //$NON-NLS-1$
 					break;
 				}
 
@@ -184,7 +187,7 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 		}
 
 		resultMap.put(IIdentifiedRunnable.ReturnParameter.RESULT_DATA,
-				indexedList.size() + " indexed / " + indexRemovedList.size() + " index removed");
+				indexedList.size() + " indexed / " + indexRemovedList.size() + " index removed"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (failures.size() > 0) {
 			resultMap.put(IIdentifiedRunnable.ReturnParameter.MARKER_WARN, null);
 			resultMap.put(IIdentifiedRunnable.ReturnParameter.RESULT_CLASS,
@@ -208,9 +211,9 @@ public abstract class AbstractIDocumentIndexerIdentifiedRunnable extends Abstrac
 	 * @param ex
 	 */
 	private void handleWarn(Logger logger, IDocument document, String currentDocumentId, Exception ex) {
-		logger.warn("[{}] could not add to solr index, unsetting index status", currentDocumentId, ex);
+		logger.warn("[{}] could not add to solr index, unsetting index status", currentDocumentId, ex); //$NON-NLS-1$
 		failures.add(new SingleIdentifiableTaskResult(currentDocumentId,
-				"could not add to solr index, unsetting index status"));
+				"could not add to solr index, unsetting index status")); //$NON-NLS-1$
 		document.setStatus(DocumentStatus.INDEXED, false);
 		getModelService().save(document);
 	}

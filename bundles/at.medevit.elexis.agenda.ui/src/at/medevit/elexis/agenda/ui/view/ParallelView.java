@@ -23,6 +23,11 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
+/**
+ * @deprecated ParallelView and WeekView are allready on use in AgendaView.
+ *
+ */
+@Deprecated
 public class ParallelView {
 
 	private ParallelComposite composite;

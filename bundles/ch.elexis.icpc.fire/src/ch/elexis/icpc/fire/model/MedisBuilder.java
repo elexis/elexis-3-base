@@ -67,7 +67,7 @@ public class MedisBuilder {
 					long gtinL = Long.valueOf(gtin);
 					tMedi.setGTIN(BigInteger.valueOf(gtinL));
 				} catch (NumberFormatException e) {
-					LoggerFactory.getLogger(MedisBuilder.class).warn("no numeric gtin found", e);
+					LoggerFactory.getLogger(MedisBuilder.class).warn("no numeric gtin found", e); //$NON-NLS-1$
 				}
 			}
 			ArrayList<Float> floatDosis = Prescription.getDoseAsFloats(prescription.getDosis());
@@ -111,7 +111,7 @@ public class MedisBuilder {
 		Query<Prescription> query = new Query<Prescription>(Prescription.class);
 		query.add(Prescription.FLD_PATIENT_ID, Query.EQUALS, patient.getId());
 		TimeTool consTime = new TimeTool(consultation.getDatum());
-		query.add(Prescription.FLD_DATE_FROM, Query.LIKE, consTime.toString(TimeTool.DATE_COMPACT) + "%");
+		query.add(Prescription.FLD_DATE_FROM, Query.LIKE, consTime.toString(TimeTool.DATE_COMPACT) + "%"); //$NON-NLS-1$
 
 		List<Prescription> prescriptions = query.execute();
 		Set<TMedi> unreferencedStoppedMedis = unreferencedStopMedisPerPatient.get(patient.getId());

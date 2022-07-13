@@ -43,12 +43,12 @@ public final class VersionedLabelHandler extends AbstractHandler {
 			IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
 			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
-			logger.info("Printing document VersionedLabel on printer: " + printerName);
+			logger.info("Printing document VersionedLabel on printer: " + printerName); //$NON-NLS-1$
 			PrintProvider.print(fo, printerName);
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			if (msg != null) {
-				if (msg.equals("No patient selected") || msg.equals("No case selected")) {
+				if (msg.equals("No patient selected") || msg.equals("No case selected")) { //$NON-NLS-1$ //$NON-NLS-2$
 					// Make sure we don't show 2 error messages.
 					return null;
 				}

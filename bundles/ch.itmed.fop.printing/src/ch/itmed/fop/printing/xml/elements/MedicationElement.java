@@ -35,69 +35,69 @@ public final class MedicationElement {
 	}
 
 	private static Element createElement(Document doc, MedicationData md) {
-		Element p = doc.createElement("Medication");
+		Element p = doc.createElement("Medication"); //$NON-NLS-1$
 
-		Element c = doc.createElement("ArticleName");
+		Element c = doc.createElement("ArticleName"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getArticleName()));
 		p.appendChild(c);
 
-		c = doc.createElement("ArticlePrice");
+		c = doc.createElement("ArticlePrice"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getArticlePrice()));
 		p.appendChild(c);
 
-		c = doc.createElement("Dose");
+		c = doc.createElement("Dose"); //$NON-NLS-1$
 		if (md.isFreetext()) {
-			c.setAttribute("Freetext", "true");
+			c.setAttribute("Freetext", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			c.setAttribute("Freetext", "false");
+			c.setAttribute("Freetext", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		c.appendChild(doc.createTextNode(md.getDose()));
 		p.appendChild(c);
 
-		c = doc.createElement("DoseTableHeader");
-		Element hi = doc.createElement("HeaderItem");
+		c = doc.createElement("DoseTableHeader"); //$NON-NLS-1$
+		Element hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
 		hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Morning));
 		c.appendChild(hi);
-		hi = doc.createElement("HeaderItem");
+		hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
 		hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Midday));
 		c.appendChild(hi);
-		hi = doc.createElement("HeaderItem");
+		hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
 		hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Evening));
 		c.appendChild(hi);
-		hi = doc.createElement("HeaderItem");
+		hi = doc.createElement("HeaderItem"); //$NON-NLS-1$
 		hi.appendChild(doc.createTextNode(Messages.Medication_Dose_Night));
 		c.appendChild(hi);
 		p.appendChild(c);
 
-		c = doc.createElement("DoseTableBody");
+		c = doc.createElement("DoseTableBody"); //$NON-NLS-1$
 		for (String i : md.getDoseArray()) {
-			Element di = doc.createElement("DoseItem");
+			Element di = doc.createElement("DoseItem"); //$NON-NLS-1$
 			di.appendChild(doc.createTextNode(i));
 			c.appendChild(di);
 		}
 		p.appendChild(c);
 
-		c = doc.createElement("DosageInstructions");
+		c = doc.createElement("DosageInstructions"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getDosageInstructions()));
 		p.appendChild(c);
 
-		c = doc.createElement("PrescriptionDate");
+		c = doc.createElement("PrescriptionDate"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getPrescriptionDate()));
 		p.appendChild(c);
 
-		c = doc.createElement("DeliveryDate");
+		c = doc.createElement("DeliveryDate"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getDeliveryDate()));
 		p.appendChild(c);
 
-		c = doc.createElement("PrescriptionAuthor");
+		c = doc.createElement("PrescriptionAuthor"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getPrescriptionAuthor()));
 		p.appendChild(c);
 
-		c = doc.createElement("ResponsiblePharmacist");
+		c = doc.createElement("ResponsiblePharmacist"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getResponsiblePharmacist()));
 		p.appendChild(c);
 
-		c = doc.createElement("MedicationType");
+		c = doc.createElement("MedicationType"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(md.getMedicationType()));
 		p.appendChild(c);
 

@@ -18,8 +18,8 @@ import ch.rgw.tools.TimeTool;
 
 public class XmlUtil {
 
-	private static final String JAXB_HEADER_KEY = "com.sun.xml.bind.xmlHeaders";
-	private static final String DEFAULT_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+	private static final String JAXB_HEADER_KEY = "com.sun.xml.bind.xmlHeaders"; //$NON-NLS-1$
+	private static final String DEFAULT_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 
 	private static Logger logger = LoggerFactory.getLogger(XmlUtil.class);
 
@@ -37,7 +37,7 @@ public class XmlUtil {
 			marshaller.marshal(report, outStream);
 			return true;
 		} catch (JAXBException e) {
-			logger.error("Marshalling Report file failed", e);
+			logger.error("Marshalling Report file failed", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -47,14 +47,14 @@ public class XmlUtil {
 		Marshaller marshaller = jaxbContext.createMarshaller();
 		try {
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-			marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "/rsc/fireDbDe_20170322.xsd");
+			marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "/rsc/fireDbDe_20170322.xsd"); //$NON-NLS-1$
 			marshaller.setProperty(JAXB_HEADER_KEY, DEFAULT_HEADER);
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
 			return marshaller;
 		} catch (PropertyException propE) {
-			logger.error("Error setting marshall properties - concerns XML with schema [" + "/rsc/fireDbDe_20170322.xsd"
-					+ "]", propE);
+			logger.error("Error setting marshall properties - concerns XML with schema [" + "/rsc/fireDbDe_20170322.xsd" //$NON-NLS-1$ //$NON-NLS-2$
+					+ "]", propE); //$NON-NLS-1$
 		}
 		return marshaller;
 	}

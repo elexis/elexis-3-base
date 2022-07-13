@@ -4,18 +4,18 @@ import org.apache.commons.lang3.StringUtils;
 
 public class PreferenceConstants {
 
-	public static final String PREFBASE = Constants.PLUGIN_ID + "/";
-	public static final String STOREFSGLOBAL = PREFBASE + "store_in_fs_global";
-	public static final String STOREFS = PREFBASE + "store_in_fs";
-	public static final String BASEPATH = PREFBASE + "basepath";
-	public static final String CATEGORIES = PREFBASE + "categories";
-	public static final String DATE_MODIFIABLE = PREFBASE + "date_modifiable";
-	public static final String PREFERENCE_SRC_PATTERN = PREFBASE + "src_pattern";
-	public static final String PREFERENCE_DEST_DIR = PREFBASE + "dest_dir";
-	public static final String PREF_MAX_FILENAME_LENGTH = PREFBASE + "max_filename_length";
-	public static final String TWAINACCESS_TYPE = PREFBASE + "twainaccess_type";
-	public static final String AUTO_BILLING = PREFBASE + "automatic_billing";
-	public static final String AUTO_BILLING_BLOCK = PREFBASE + "automatic_billing_block";
+	public static final String PREFBASE = Constants.PLUGIN_ID + "/"; //$NON-NLS-1$
+	public static final String STOREFSGLOBAL = PREFBASE + "store_in_fs_global"; //$NON-NLS-1$
+	public static final String STOREFS = PREFBASE + "store_in_fs"; //$NON-NLS-1$
+	public static final String BASEPATH = PREFBASE + "basepath"; //$NON-NLS-1$
+	public static final String CATEGORIES = PREFBASE + "categories"; //$NON-NLS-1$
+	public static final String DATE_MODIFIABLE = PREFBASE + "date_modifiable"; //$NON-NLS-1$
+	public static final String PREFERENCE_SRC_PATTERN = PREFBASE + "src_pattern"; //$NON-NLS-1$
+	public static final String PREFERENCE_DEST_DIR = PREFBASE + "dest_dir"; //$NON-NLS-1$
+	public static final String PREF_MAX_FILENAME_LENGTH = PREFBASE + "max_filename_length"; //$NON-NLS-1$
+	public static final String TWAINACCESS_TYPE = PREFBASE + "twainaccess_type"; //$NON-NLS-1$
+	public static final String AUTO_BILLING = PREFBASE + "automatic_billing"; //$NON-NLS-1$
+	public static final String AUTO_BILLING_BLOCK = PREFBASE + "automatic_billing_block"; //$NON-NLS-1$
 
 	// The following setting is used in ch.elexis.omnivore.data/DocHandle.java.
 	// Linux and MacOS may be able to handle longer filenames, but we observed that

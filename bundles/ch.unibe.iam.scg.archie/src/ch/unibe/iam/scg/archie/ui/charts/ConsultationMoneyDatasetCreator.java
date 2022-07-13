@@ -45,8 +45,8 @@ import ch.elexis.data.Query;
  */
 public class ConsultationMoneyDatasetCreator extends AbstractDatasetCreator {
 
-	private static final String DATE_DB_FORMAT = "yyyyMMdd";
-	private static final String DATE_CONS_FORMAT = "dd.MM.yyyy";
+	private static final String DATE_DB_FORMAT = "yyyyMMdd"; //$NON-NLS-1$
+	private static final String DATE_CONS_FORMAT = "dd.MM.yyyy"; //$NON-NLS-1$
 
 	private boolean isEmpty;
 
@@ -79,9 +79,9 @@ public class ConsultationMoneyDatasetCreator extends AbstractDatasetCreator {
 		before.add(Calendar.MONTH, -7);
 		before.set(Calendar.DAY_OF_MONTH, before.getMinimum(Calendar.DAY_OF_MONTH));
 
-		query.add("Datum", ">=", databaseFormat.format(before.getTime()));
-		query.add("Datum", "<", databaseFormat.format(now.getTime()));
-		query.add("MandantID", "=", CoreHub.actMandant.getId());
+		query.add("Datum", ">=", databaseFormat.format(before.getTime())); //$NON-NLS-1$ //$NON-NLS-2$
+		query.add("Datum", "<", databaseFormat.format(now.getTime())); //$NON-NLS-1$ //$NON-NLS-2$
+		query.add("MandantID", "=", CoreHub.actMandant.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 
 		monitor.subTask("querying database");
 		final List<Konsultation> consults = query.execute();

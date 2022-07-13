@@ -19,13 +19,13 @@ import ch.itmed.fop.printing.data.CaseData;
 public final class CaseElement {
 	public static Element create(Document doc) throws Exception {
 		CaseData cd = new CaseData();
-		Element p = doc.createElement("Case");
+		Element p = doc.createElement("Case"); //$NON-NLS-1$
 
-		Element c = doc.createElement("CostBearer");
+		Element c = doc.createElement("CostBearer"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(cd.getCostBearer()));
 		p.appendChild(c);
 
-		c = doc.createElement("InsurancePolicyNumber");
+		c = doc.createElement("InsurancePolicyNumber"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(cd.getInsurancePolicyNumber()));
 		p.appendChild(c);
 

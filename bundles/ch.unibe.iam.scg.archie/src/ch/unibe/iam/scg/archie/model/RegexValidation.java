@@ -36,7 +36,7 @@ public class RegexValidation {
 	 */
 	public RegexValidation(final String pattern, final String message) throws IllegalArgumentException {
 		if (pattern == null || message == null) {
-			throw new IllegalArgumentException("Arguments pattern and message must not be null.");
+			throw new IllegalArgumentException("Arguments pattern and message must not be null."); //$NON-NLS-1$
 		}
 		this.pattern = pattern;
 		this.message = message;

@@ -67,7 +67,7 @@ public final class PrintProvider {
 		// Make sure that the position of the marker is not at the end of stream
 		foStream.reset();
 
-		FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+		FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI()); //$NON-NLS-1$
 		DocPrintJob printJob = createDocPrintJob(printerName);
 		FOUserAgent userAgent = fopFactory.newFOUserAgent();
 		PageableRenderer renderer = new PageableRenderer(userAgent);
@@ -92,6 +92,6 @@ public final class PrintProvider {
 
 		Doc doc = new SimpleDoc(renderer, DocFlavor.SERVICE_FORMATTED.PAGEABLE, null);
 		printJob.print(doc, null);
-		logger.info("Print job sent to printer: " + printerName);
+		logger.info("Print job sent to printer: " + printerName); //$NON-NLS-1$
 	}
 }

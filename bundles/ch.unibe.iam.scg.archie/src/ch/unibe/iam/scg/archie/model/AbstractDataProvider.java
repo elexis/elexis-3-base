@@ -99,7 +99,7 @@ public abstract class AbstractDataProvider extends Job {
 	/** {@inheritDoc} */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		ArchieActivator.LOG.log("Job + " + this.getName(), Log.INFOS);
+		ArchieActivator.LOG.log("Job + " + this.getName(), Log.INFOS); //$NON-NLS-1$
 		return this.execute(monitor);
 	}
 

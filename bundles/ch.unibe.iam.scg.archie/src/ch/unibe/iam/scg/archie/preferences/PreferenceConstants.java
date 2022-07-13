@@ -19,7 +19,7 @@ public class PreferenceConstants {
 	/**
 	 * Cohort size in dashboard overview charts.
 	 */
-	public static final String P_COHORT_SIZE = "archieCohortSize";
+	public static final String P_COHORT_SIZE = "archieCohortSize"; //$NON-NLS-1$
 
 	/**
 	 * Default cohort size

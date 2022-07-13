@@ -47,7 +47,7 @@ public class ChartWizardMainPage extends AbstractChartPage implements Listener {
 	/**
 	 * Name of this page.
 	 */
-	protected static final String PAGE_NAME = "ChartWizardMainPage";
+	protected static final String PAGE_NAME = "ChartWizardMainPage"; //$NON-NLS-1$
 
 	/**
 	 * Buttons for chart type selection.

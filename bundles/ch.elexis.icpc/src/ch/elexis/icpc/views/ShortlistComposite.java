@@ -24,8 +24,8 @@ import ch.elexis.icpc.service.IcpcModelServiceHolder;
 
 public class ShortlistComposite extends Composite {
 
-	private String[] SHORTLIST_CODES = new String[] { "K86", "K74", "K75", "K77", "T90", "R95", "K78", "K90", "K92",
-			"P17", "R96", "P70", "A96" };
+	private String[] SHORTLIST_CODES = new String[] { "K86", "K74", "K75", "K77", "T90", "R95", "K78", "K90", "K92", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+			"P17", "R96", "P70", "A96" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 	/**
 	 * Create the composite.

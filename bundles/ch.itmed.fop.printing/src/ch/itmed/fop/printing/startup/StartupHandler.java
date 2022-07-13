@@ -22,11 +22,11 @@ import org.slf4j.LoggerFactory;
 
 @Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
 public class StartupHandler implements EventHandler {
-	private static final String CONTEXT_ID = "ch.elexis.context.itmed.fop.printing";
+	private static final String CONTEXT_ID = "ch.elexis.context.itmed.fop.printing"; //$NON-NLS-1$
 
 	@Override
 	public void handleEvent(Event event) {
-		LoggerFactory.getLogger(getClass()).info("APPLICATION STARTUP COMPLETE");
+		LoggerFactory.getLogger(getClass()).info("APPLICATION STARTUP COMPLETE"); //$NON-NLS-1$
 		IContextService contextService = (IContextService) PlatformUI.getWorkbench().getService(IContextService.class);
 		contextService.activateContext(CONTEXT_ID, null, true);
 	}

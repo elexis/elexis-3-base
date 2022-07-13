@@ -74,7 +74,7 @@ public class ChartModelManager {
 	 */
 	public void setBarChartModel(ChartModel barChartModel) {
 		if (barChartModel.getChartType() != ChartModel.CHART_BAR) {
-			throw new IllegalArgumentException("This method can only be used for bar chart models.");
+			throw new IllegalArgumentException("This method can only be used for bar chart models."); //$NON-NLS-1$
 		}
 		this.barChartModel = barChartModel;
 	}
@@ -89,7 +89,7 @@ public class ChartModelManager {
 		} else if (chartModel.getChartType() == ChartModel.CHART_BAR) {
 			this.setBarChartModel(chartModel);
 		} else {
-			throw new IllegalArgumentException("The model has to have a valid chart type.");
+			throw new IllegalArgumentException("The model has to have a valid chart type."); //$NON-NLS-1$
 		}
 	}
 
@@ -105,7 +105,7 @@ public class ChartModelManager {
 	 */
 	public void setPieChartModel(ChartModel pieChartModel) {
 		if (pieChartModel.getChartType() != ChartModel.CHART_PIE) {
-			throw new IllegalArgumentException("This method can only be used for pie chart models.");
+			throw new IllegalArgumentException("This method can only be used for pie chart models."); //$NON-NLS-1$
 		}
 		this.pieChartModel = pieChartModel;
 	}

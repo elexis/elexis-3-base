@@ -29,15 +29,15 @@ public class Lipsum {
 	List<String> sentences;
 
 	public Lipsum() throws FileNotFoundException {
-		String base = PlatformHelper.getBasePath("ch.elexis.support.dbshaker");
-		File rsc = new File(base, "rsc");
-		File flipsum = new File(rsc, "lipsum.txt");
+		String base = PlatformHelper.getBasePath("ch.elexis.support.dbshaker"); //$NON-NLS-1$
+		File rsc = new File(base, "rsc"); //$NON-NLS-1$
+		File flipsum = new File(rsc, "lipsum.txt"); //$NON-NLS-1$
 		InputStream lipsum = new FileInputStream(flipsum);
 		InputStreamReader ir = new InputStreamReader(lipsum);
 		BufferedReader br = new BufferedReader(ir);
 		sentences = new LinkedList<String>();
 		Scanner scanner = new Scanner(br);
-		scanner.useDelimiter("\\.");
+		scanner.useDelimiter("\\."); //$NON-NLS-1$
 		while (scanner.hasNext()) {
 			String s = scanner.next();
 			sentences.add(s.trim());
@@ -52,9 +52,9 @@ public class Lipsum {
 		int num = (int) (1 + Math.round(5 * Math.random()));
 		StringBuilder sb = new StringBuilder();
 		while (num-- > 0) {
-			sb.append(getSentence()).append(". ");
+			sb.append(getSentence()).append(". "); //$NON-NLS-1$
 		}
-		sb.append("\n\n");
+		sb.append("\n\n"); //$NON-NLS-1$
 		return sb.toString();
 	}
 }

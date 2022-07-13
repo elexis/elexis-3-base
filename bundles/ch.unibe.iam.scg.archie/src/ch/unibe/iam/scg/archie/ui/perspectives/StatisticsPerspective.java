@@ -39,7 +39,7 @@ public class StatisticsPerspective implements IPerspectiveFactory {
 	/**
 	 * ID of this perspective.
 	 */
-	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.perspectives.StatisticsPerspective";
+	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.perspectives.StatisticsPerspective"; //$NON-NLS-1$
 
 	/**
 	 * Creates the initial perspective layout.
@@ -52,8 +52,8 @@ public class StatisticsPerspective implements IPerspectiveFactory {
 		layout.setEditorAreaVisible(false);
 		layout.setFixed(false);
 
-		IFolderLayout main = layout.createFolder("main", IPageLayout.LEFT, 1.0f, editorArea);
-		IFolderLayout sidebar = layout.createFolder("right", IPageLayout.RIGHT, 0.6f, "main");
+		IFolderLayout main = layout.createFolder("main", IPageLayout.LEFT, 1.0f, editorArea); //$NON-NLS-1$
+		IFolderLayout sidebar = layout.createFolder("right", IPageLayout.RIGHT, 0.6f, "main"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Main area
 		main.addView(Dashboard.ID);

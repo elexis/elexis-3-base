@@ -92,13 +92,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		t44Settings = new TabItem(tabFolder, SWT.NONE);
-		t44Settings.setText("Tarmed 4.4 / 4.5");
-		createSettings(t44Settings, "4.4");
+		t44Settings.setText("Tarmed 4.4 / 4.5"); //$NON-NLS-1$
+		createSettings(t44Settings, "4.4"); //$NON-NLS-1$
 		getSettings(t44Settings);
 
 		t40Settings = new TabItem(tabFolder, SWT.NONE);
-		t40Settings.setText("Tarmed 4.0");
-		createSettings(t40Settings, "4.0");
+		t40Settings.setText("Tarmed 4.0"); //$NON-NLS-1$
+		createSettings(t40Settings, "4.0"); //$NON-NLS-1$
 		getSettings(t40Settings);
 
 		mailConfig = new TabItem(tabFolder, SWT.NONE);
@@ -212,9 +212,9 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 					CoreHub.localCfg.set(RnOutputter.CFG_PRINT_USE_SCRIPT, useScript.getSelection());
 					if (useScript.getSelection() && StringUtils.isBlank(printCommandText.getText())) {
 						Properties commandsProperties = ScriptInitializer
-								.getPrintCommands("/rsc/script/win/printcommands.properties");
-						if (commandsProperties != null && commandsProperties.get("printer") != null) {
-							printCommandText.setText((String) commandsProperties.get("printer"));
+								.getPrintCommands("/rsc/script/win/printcommands.properties"); //$NON-NLS-1$
+						if (commandsProperties != null && commandsProperties.get("printer") != null) { //$NON-NLS-1$
+							printCommandText.setText((String) commandsProperties.get("printer")); //$NON-NLS-1$
 						}
 						printCommandText.setEditable(false);
 					} else {
@@ -345,12 +345,12 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		label.setText("Mahnung 2 Tage");
 		reminderDays2Text = new Text(composite, SWT.BORDER);
 		reminderDays2Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		reminderDays2Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_REMINDERDAYS_M2, "14"));
+		reminderDays2Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_REMINDERDAYS_M2, "14")); //$NON-NLS-1$
 		label = new Label(composite, SWT.NONE);
 		label.setText("Mahnung 3 Tage");
 		reminderDays3Text = new Text(composite, SWT.BORDER);
 		reminderDays3Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		reminderDays3Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_REMINDERDAYS_M3, "14"));
+		reminderDays3Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_REMINDERDAYS_M3, "14")); //$NON-NLS-1$
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
@@ -383,13 +383,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			public void selectionChanged(SelectionChangedEvent event) {
 				Mandant mandant = (Mandant) event.getStructuredSelection().getFirstElement();
 				mandantHeaderLine1Text.setText(ConfigServiceHolder
-						.getGlobal(RnOutputter.CFG_ESR_HEADER_1 + "/" + mandant.getId(), StringUtils.EMPTY));
+						.getGlobal(RnOutputter.CFG_ESR_HEADER_1 + "/" + mandant.getId(), StringUtils.EMPTY)); //$NON-NLS-1$
 				mandantHeaderLine2Text.setText(ConfigServiceHolder
-						.getGlobal(RnOutputter.CFG_ESR_HEADER_2 + "/" + mandant.getId(), StringUtils.EMPTY));
+						.getGlobal(RnOutputter.CFG_ESR_HEADER_2 + "/" + mandant.getId(), StringUtils.EMPTY)); //$NON-NLS-1$
 				mandantReminderDays2Text.setText(ConfigServiceHolder
-						.getGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2 + "/" + mandant.getId(), "14"));
+						.getGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2 + "/" + mandant.getId(), "14")); //$NON-NLS-1$ //$NON-NLS-2$
 				mandantReminderDays3Text.setText(ConfigServiceHolder
-						.getGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3 + "/" + mandant.getId(), "14"));
+						.getGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3 + "/" + mandant.getId(), "14")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 
@@ -402,7 +402,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			public void modifyText(ModifyEvent e) {
 				Mandant mandant = (Mandant) ((IStructuredSelection) mandantsCombo.getSelection()).getFirstElement();
 				if (mandant != null) {
-					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_1 + "/" + mandant.getId(),
+					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_1 + "/" + mandant.getId(), //$NON-NLS-1$
 							mandantHeaderLine1Text.getText());
 				}
 			}
@@ -416,7 +416,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			public void modifyText(ModifyEvent e) {
 				Mandant mandant = (Mandant) ((IStructuredSelection) mandantsCombo.getSelection()).getFirstElement();
 				if (mandant != null) {
-					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_2 + "/" + mandant.getId(),
+					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_2 + "/" + mandant.getId(), //$NON-NLS-1$
 							mandantHeaderLine2Text.getText());
 				}
 			}
@@ -431,7 +431,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			public void modifyText(ModifyEvent e) {
 				Mandant mandant = (Mandant) ((IStructuredSelection) mandantsCombo.getSelection()).getFirstElement();
 				if (mandant != null) {
-					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2 + "/" + mandant.getId(),
+					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2 + "/" + mandant.getId(), //$NON-NLS-1$
 							mandantReminderDays2Text.getText());
 				}
 			}
@@ -446,7 +446,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 			public void modifyText(ModifyEvent e) {
 				Mandant mandant = (Mandant) ((IStructuredSelection) mandantsCombo.getSelection()).getFirstElement();
 				if (mandant != null) {
-					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3 + "/" + mandant.getId(),
+					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3 + "/" + mandant.getId(), //$NON-NLS-1$
 							mandantReminderDays3Text.getText());
 				}
 			}
@@ -487,13 +487,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 					Object selected = event.getStructuredSelection().getFirstElement();
 					if (selected instanceof String && StringUtils.isNotBlank((String) selected)) {
 						ConfigServiceHolder.setGlobal(
-								RnOutputter.CFG_ROOT + RnOutputter.CFG_MAIL_MANDANT_ACCOUNT + "/" + mandant.getId(),
+								RnOutputter.CFG_ROOT + RnOutputter.CFG_MAIL_MANDANT_ACCOUNT + "/" + mandant.getId(), //$NON-NLS-1$
 								(String) selected);
 					}
 				}
 			});
 			String selectedAccount = ConfigServiceHolder.getGlobal(
-					RnOutputter.CFG_ROOT + RnOutputter.CFG_MAIL_MANDANT_ACCOUNT + "/" + mandant.getId(), null);
+					RnOutputter.CFG_ROOT + RnOutputter.CFG_MAIL_MANDANT_ACCOUNT + "/" + mandant.getId(), null); //$NON-NLS-1$
 			if (StringUtils.isNotBlank(selectedAccount)) {
 				accountsViewer.setSelection(new StructuredSelection(selectedAccount));
 			}
@@ -608,23 +608,23 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 	private static String getDefault(String cfgKey) {
 		// first try old settings ... then default
-		String oldKey = cfgKey.replaceFirst("4.4/", StringUtils.EMPTY).replaceFirst("4.0/", StringUtils.EMPTY);
+		String oldKey = cfgKey.replaceFirst("4.4/", StringUtils.EMPTY).replaceFirst("4.0/", StringUtils.EMPTY); //$NON-NLS-1$ //$NON-NLS-2$
 		String oldSetting = CoreHub.localCfg.get(oldKey, null);
 		if (oldSetting != null) {
 			return oldSetting;
 		} else {
 			if (cfgKey.endsWith(RnOutputter.CFG_MARGINLEFT)) {
-				return "1.5";
+				return "1.5"; //$NON-NLS-1$
 			} else if (cfgKey.endsWith(RnOutputter.CFG_MARGINRIGHT)) {
-				return "0.7";
+				return "0.7"; //$NON-NLS-1$
 			} else if (cfgKey.endsWith(RnOutputter.CFG_MARGINTOP)) {
-				return "1";
+				return "1"; //$NON-NLS-1$
 			} else if (cfgKey.endsWith(RnOutputter.CFG_MARGINBOTTOM)) {
-				return "1.5";
+				return "1.5"; //$NON-NLS-1$
 			} else if (cfgKey.endsWith(RnOutputter.CFG_BESR_MARGIN_VERTICAL)) {
-				return "0.75";
+				return "0.75"; //$NON-NLS-1$
 			} else if (cfgKey.endsWith(RnOutputter.CFG_BESR_MARGIN_HORIZONTAL)) {
-				return "0.0";
+				return "0.0"; //$NON-NLS-1$
 			}
 		}
 		return StringUtils.EMPTY;
@@ -636,27 +636,27 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		new Label(composite, 256).setText("Rand links [cm]");
 		Text pdfLeftMargin = new Text(composite, 128);
 		pdfLeftMargin.setLayoutData(SWTHelper.getFillGridData(2, true, 2, false));
-		pdfLeftMargin.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_MARGINLEFT);
+		pdfLeftMargin.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_MARGINLEFT); //$NON-NLS-1$
 		new Label(composite, 512).setText("Rand rechts [cm]");
 		Text pdfRightMargin = new Text(composite, 128);
 		pdfRightMargin.setLayoutData(SWTHelper.getFillGridData(2, true, 2, false));
-		pdfRightMargin.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_MARGINRIGHT);
+		pdfRightMargin.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_MARGINRIGHT); //$NON-NLS-1$
 		new Label(composite, 1024).setText("Rand oben [cm]");
 		Text pdfTopMargin = new Text(composite, 128);
 		pdfTopMargin.setLayoutData(SWTHelper.getFillGridData(2, true, 2, false));
-		pdfTopMargin.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_MARGINTOP);
+		pdfTopMargin.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_MARGINTOP); //$NON-NLS-1$
 		new Label(composite, 128).setText("Rand unten [cm]");
 		Text pdfBottumMagin = new Text(composite, 128);
 		pdfBottumMagin.setLayoutData(SWTHelper.getFillGridData(2, true, 2, false));
-		pdfBottumMagin.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_MARGINBOTTOM);
+		pdfBottumMagin.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_MARGINBOTTOM); //$NON-NLS-1$
 		new Label(composite, 128).setText("BESR Abstand zu Rand unten [cm]");
 		Text pdfBesrMarginVertical = new Text(composite, 128);
 		pdfBesrMarginVertical.setLayoutData(SWTHelper.getFillGridData(2, true, 2, false));
-		pdfBesrMarginVertical.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_BESR_MARGIN_VERTICAL);
+		pdfBesrMarginVertical.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_BESR_MARGIN_VERTICAL); //$NON-NLS-1$
 		new Label(composite, 128).setText("BESR Abstand zu Rand rechts [cm]");
 		Text pdfBesrMarginHorizontal = new Text(composite, 128);
 		pdfBesrMarginHorizontal.setLayoutData(SWTHelper.getFillGridData(2, true, 2, false));
-		pdfBesrMarginHorizontal.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_BESR_MARGIN_HORIZONTAL);
+		pdfBesrMarginHorizontal.setData(RnOutputter.CFG_ROOT + version + "/" + RnOutputter.CFG_BESR_MARGIN_HORIZONTAL); //$NON-NLS-1$
 		item.setControl(composite);
 	}
 

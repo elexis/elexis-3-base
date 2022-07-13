@@ -122,26 +122,26 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 	private void doPurgeDB(IProgressMonitor monitor, int workUnits) {
 		monitor.subTask("Bereinige Datenbank");
 		JdbcLink j = PersistentObject.getConnection();
-		j.exec("DELETE FROM kontakt where deleted='1'");
-		j.exec("DELETE FROM briefe where deleted='1'");
-		j.exec("DELETE FROM faelle where deleted='1'");
-		j.exec("DELETE FROM behandlungen where deleted='1'");
-		j.exec("DELETE FROM artikel where deleted='1'");
-		j.exec("DELETE FROM leistungen where deleted='1'");
-		j.exec("DELETE FROM output_log");
-		j.exec("DELETE FROM rechnungen where deleted='1'");
-		j.exec("DELETE FROM reminders where deleted='1'");
-		j.exec("DELETE FROM traces");
-		j.exec("DELETE FROM laboritems where deleted='1'");
-		j.exec("DELETE FROM laborwerte where deleted='1'");
-		j.exec("DELETE FROM rezepte where deleted='1'");
-		j.exec("DELETE FROM heap where deleted='1'");
-		j.exec("DELETE FROM auf where deleted='1'");
-		j.exec("DELETE FROM heap2 where deleted='1'");
-		j.exec("DELETE FROM logs where deleted='1'");
-		j.exec("DELETE FROM xid where deleted='1'");
-		j.exec("DELETE FROM etiketten where deleted='1'");
-		j.exec("DELETE FROM CH_ELEXIS_OMNIVORE_DATA where deleted='1'");
+		j.exec("DELETE FROM kontakt where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM briefe where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM faelle where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM behandlungen where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM artikel where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM leistungen where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM output_log"); //$NON-NLS-1$
+		j.exec("DELETE FROM rechnungen where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM reminders where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM traces"); //$NON-NLS-1$
+		j.exec("DELETE FROM laboritems where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM laborwerte where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM rezepte where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM heap where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM auf where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM heap2 where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM logs where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM xid where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM etiketten where deleted='1'"); //$NON-NLS-1$
+		j.exec("DELETE FROM CH_ELEXIS_OMNIVORE_DATA where deleted='1'"); //$NON-NLS-1$
 		monitor.worked(workUnits);
 	}
 
@@ -160,7 +160,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 				while (numPars-- > 0) {
 					par.append(lipsum.getParagraph());
 				}
-				vr.update(par.toString(), "random contents");
+				vr.update(par.toString(), "random contents"); //$NON-NLS-1$
 				k.setEintrag(vr, true);
 				k.purgeEintrag();
 				if (monitor.isCanceled()) {
@@ -187,9 +187,9 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 			// continue;
 
 			if (zufallsnamen) {
-				k.set("Bezeichnung1", n.getRandomNachname());
+				k.set("Bezeichnung1", n.getRandomNachname()); //$NON-NLS-1$
 			} else {
-				k.set("Bezeichnung1", getWord());
+				k.set("Bezeichnung1", getWord()); //$NON-NLS-1$
 			}
 
 			if (zufallsnamen) {
@@ -197,7 +197,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 			} else {
 				vorname = getWord();
 			}
-			k.set("Bezeichnung2", vorname);
+			k.set("Bezeichnung2", vorname); //$NON-NLS-1$
 
 			if (k.istPerson()) {
 				Person p = Person.load(k.getId());
@@ -221,7 +221,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 
 	private String getPhone() {
 		StringBuilder ret = new StringBuilder();
-		ret.append("555-");
+		ret.append("555-"); //$NON-NLS-1$
 		for (int i = 0; i < 7; i++) {
 			ret.append((char) Math.round(Math.random() * ('9' - '0') + '0'));
 		}

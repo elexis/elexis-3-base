@@ -20,7 +20,7 @@ import ch.elexis.core.ui.util.Log;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "ch.elexis.icpc";
+	public static final String PLUGIN_ID = "ch.elexis.icpc"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
@@ -42,7 +42,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		log = Log.get("ICPC");
+		log = Log.get("ICPC"); //$NON-NLS-1$
 	}
 
 	/*

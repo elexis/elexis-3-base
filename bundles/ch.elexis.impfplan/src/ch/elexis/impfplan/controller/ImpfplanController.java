@@ -25,7 +25,7 @@ public final class ImpfplanController {
 
 	public static List<VaccinationType> allVaccs() {
 		Query<VaccinationType> q = new Query<VaccinationType>(VaccinationType.class);
-		q.add(VaccinationType.FLD_ID.toUpperCase(), "!=", "VERSION");
+		q.add(VaccinationType.FLD_ID.toUpperCase(), "!=", "VERSION"); //$NON-NLS-1$ //$NON-NLS-2$
 		return q.execute();
 	}
 

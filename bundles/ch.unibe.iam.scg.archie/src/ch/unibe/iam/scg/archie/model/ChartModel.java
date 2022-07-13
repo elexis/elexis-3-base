@@ -259,7 +259,7 @@ public class ChartModel {
 	@Override
 	public String toString() {
 		final StringBuilder output = new StringBuilder();
-		output.append("********************************************************************************\n");
+		output.append("********************************************************************************\n"); //$NON-NLS-1$
 		output.append("Type: " + this.chartType + StringUtils.LF);
 		output.append("Name: " + this.chartName + StringUtils.LF);
 		output.append("Keys Index: " + this.keysIndex + StringUtils.LF);
@@ -270,7 +270,7 @@ public class ChartModel {
 		output.append("Line Chart: " + this.isLineChart + StringUtils.LF);
 		output.append("3D: " + this.isThreeDimensional + StringUtils.LF);
 		output.append("Dataset:\n\n" + this.dataSet.toString());
-		output.append("********************************************************************************\n");
+		output.append("********************************************************************************\n"); //$NON-NLS-1$
 		return output.toString();
 	}
 

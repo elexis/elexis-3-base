@@ -79,7 +79,7 @@ public class AddVaccinationDialog extends TitleAreaDialog {
 		IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 		if (sel.isEmpty()) {
 			MessageDialog.openError(getShell(), Messages.AddVaccinationDialog_enterVaccinationTitle,
-					Messages.AddVaccinationDialog_enterVaccinationTextError + ".");
+					Messages.AddVaccinationDialog_enterVaccinationTextError + "."); //$NON-NLS-1$
 			return;
 		}
 		result = (VaccinationType) sel.getFirstElement();

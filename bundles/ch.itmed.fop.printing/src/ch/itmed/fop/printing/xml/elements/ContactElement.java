@@ -26,19 +26,19 @@ public class ContactElement {
 		ContactData cd = new ContactData();
 		cd.load();
 
-		Element p = doc.createElement("Contact");
+		Element p = doc.createElement("Contact"); //$NON-NLS-1$
 
-		Element c = doc.createElement("Address");
+		Element c = doc.createElement("Address"); //$NON-NLS-1$
 		String address = cd.getAddress(useLegalGuardian);
-		String[] addressParts = address.split("[\\r\\n]+");
+		String[] addressParts = address.split("[\\r\\n]+"); //$NON-NLS-1$
 		for (String addressPart : addressParts) {
-			Element part = doc.createElement("Part");
+			Element part = doc.createElement("Part"); //$NON-NLS-1$
 			part.appendChild(doc.createTextNode(addressPart));
 			c.appendChild(part);
 		}
 		p.appendChild(c);
 
-		c = doc.createElement("Salutation");
+		c = doc.createElement("Salutation"); //$NON-NLS-1$
 		c.appendChild(doc.createTextNode(cd.getSalutaton()));
 		p.appendChild(c);
 

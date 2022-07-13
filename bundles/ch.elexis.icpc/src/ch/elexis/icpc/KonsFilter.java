@@ -62,7 +62,7 @@ public class KonsFilter implements IObjectFilterProvider, IFilter {
 	}
 
 	public String getId() {
-		return "ch.elexis.icpc.konsfilter";
+		return "ch.elexis.icpc.konsfilter"; //$NON-NLS-1$
 	}
 
 	public boolean select(final Object toTest) {

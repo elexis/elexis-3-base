@@ -39,7 +39,7 @@ public class OpaqueDocumentAdapter implements IOpaqueDocument {
 		try {
 			return IOUtils.toByteArray(documentHandle.getContent());
 		} catch (IOException e) {
-			throw new ElexisException("Error getting content", e);
+			throw new ElexisException("Error getting content", e); //$NON-NLS-1$
 		}
 	}
 

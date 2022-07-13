@@ -91,7 +91,7 @@ public class VitalSignsBuilder {
 	}
 
 	private Optional<String> getBdVitalParm(BDIdentifier identifier) {
-		String[] split = config.getBdSystTab().split("\\s*\\:\\s*");
+		String[] split = config.getBdSystTab().split("\\s*\\:\\s*"); //$NON-NLS-1$
 		String bdsyst = null, bddiast = null;
 		if (split.length > 1) {
 			HashMap<String, String> vals = xc.getResult(split[0].trim(), consultation.getDatum());
@@ -99,7 +99,7 @@ public class VitalSignsBuilder {
 			if (config.getBdSystTab().equals(config.getBdDiastTab())) {
 				String bd = vals.get(split[1].trim());
 				if (bd != null) {
-					String[] bds = bd.split("\\s*\\/\\s*");
+					String[] bds = bd.split("\\s*\\/\\s*"); //$NON-NLS-1$
 					if (bds.length > 1) {
 						bdsyst = bds[0].trim();
 						bddiast = bds[1].trim();
@@ -107,7 +107,7 @@ public class VitalSignsBuilder {
 				}
 			} else {
 				bdsyst = vals.get(split[1].trim());
-				split = config.getBdDiastTab().split("\\s:\\s");
+				split = config.getBdDiastTab().split("\\s:\\s"); //$NON-NLS-1$
 				if (split.length > 1) {
 					vals = xc.getResult(split[0].trim(), consultation.getDatum());
 					bddiast = vals.get(split[1]).trim();
@@ -171,7 +171,7 @@ public class VitalSignsBuilder {
 	}
 
 	private Optional<String> getVitalParm(String parameter) {
-		String[] split = parameter.split("\\s*\\:\\s*");
+		String[] split = parameter.split("\\s*\\:\\s*"); //$NON-NLS-1$
 		if (split.length > 1) {
 			HashMap<String, String> vals = xc.getResult(split[0].trim(), consultation.getDatum());
 			if (vals != null && !vals.isEmpty()) {

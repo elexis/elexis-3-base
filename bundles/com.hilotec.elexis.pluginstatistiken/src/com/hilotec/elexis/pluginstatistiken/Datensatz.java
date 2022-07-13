@@ -104,7 +104,7 @@ public class Datensatz {
 		if (name.indexOf('.') < 0) {
 			return null;
 		}
-		String parts[] = name.split("\\.");
+		String parts[] = name.split("\\."); //$NON-NLS-1$
 		String as = parts[0];
 		String spalte = parts[1];
 

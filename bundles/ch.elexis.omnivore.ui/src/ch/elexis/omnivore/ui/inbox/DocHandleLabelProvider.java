@@ -29,7 +29,7 @@ public class DocHandleLabelProvider extends LabelProvider {
 	@Override
 	public Image getImage(Object element) {
 		if (image == null) {
-			image = AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.omnivore.ui", "icons/fressen.gif")
+			image = AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.omnivore.ui", "icons/fressen.gif") //$NON-NLS-1$ //$NON-NLS-2$
 					.createImage();
 		}
 		return image;

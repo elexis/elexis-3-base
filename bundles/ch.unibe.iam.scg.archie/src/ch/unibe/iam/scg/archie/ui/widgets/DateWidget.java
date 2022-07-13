@@ -57,7 +57,7 @@ public class DateWidget extends TextWidget {
 	/**
 	 * Valid DateFormat pattern for DateTextFieldComposites.
 	 */
-	public final static String VALID_DATE_FORMAT = "dd.MM.yyyy";
+	public final static String VALID_DATE_FORMAT = "dd.MM.yyyy"; //$NON-NLS-1$
 
 	/**
 	 * A simple date format used in this class.

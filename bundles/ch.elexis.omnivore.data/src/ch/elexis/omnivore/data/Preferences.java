@@ -38,19 +38,19 @@ public class Preferences {
 
 			// workaround for bug https://redmine.medelexis.ch/issues/9501 -> migrate old
 			// key to new key
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/store_in_fs_global", STOREFSGLOBAL, true);
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/store_in_fs_global", STOREFSGLOBAL, true); //$NON-NLS-1$
 			// bug from omnivore
-			CoreHubHelper.transformConfigKey("ch.elexis.omnivore//store_in_fs_global", STOREFSGLOBAL, true);
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/store_in_fs", STOREFS, true);
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/store_in_fs", STOREFS, false);
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/basepath", BASEPATH, true);
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/basepath", BASEPATH, false);
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/categories", STOREFS, false);
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/date_modifiable", STOREFS, false);
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/columnwidths", STOREFS, false);
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/savecolwidths", STOREFS, false);
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/sortdirection", STOREFS, false);
-			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/savesortdirection", STOREFS, false);
+			CoreHubHelper.transformConfigKey("ch.elexis.omnivore//store_in_fs_global", STOREFSGLOBAL, true); //$NON-NLS-1$
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/store_in_fs", STOREFS, true); //$NON-NLS-1$
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/store_in_fs", STOREFS, false); //$NON-NLS-1$
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/basepath", BASEPATH, true); //$NON-NLS-1$
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/basepath", BASEPATH, false); //$NON-NLS-1$
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/categories", STOREFS, false); //$NON-NLS-1$
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/date_modifiable", STOREFS, false); //$NON-NLS-1$
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/columnwidths", STOREFS, false); //$NON-NLS-1$
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/savecolwidths", STOREFS, false); //$NON-NLS-1$
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/sortdirection", STOREFS, false); //$NON-NLS-1$
+			CoreHubHelper.transformConfigKey("plugins/omnivore-direct/savesortdirection", STOREFS, false); //$NON-NLS-1$
 
 			boolean isGlobal = ConfigServiceHolder.getGlobal(STOREFSGLOBAL, false);
 			if (isGlobal) {
@@ -214,15 +214,15 @@ public class Preferences {
 	// long, but that will
 	// probably be handled elsewhere.
 	public static final Integer nPreferences_cotf_element_digits_max = 80;
-	public static final String PREFERENCE_COTF = "cotf_";
-	public static final String[] PREFERENCE_cotf_elements = { "constant1", "PID", "fn", "gn", "dob", "dt", "dk",
-			"dguid", "random", "constant2" };
-	public static final String[] PREFERENCE_cotf_parameters = { "fill_leading_char", "num_digits",
-			"add_trailing_char" };
+	public static final String PREFERENCE_COTF = "cotf_"; //$NON-NLS-1$
+	public static final String[] PREFERENCE_cotf_elements = { "constant1", "PID", "fn", "gn", "dob", "dt", "dk", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			"dguid", "random", "constant2" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	public static final String[] PREFERENCE_cotf_parameters = { "fill_leading_char", "num_digits", //$NON-NLS-1$ //$NON-NLS-2$
+			"add_trailing_char" }; //$NON-NLS-1$
 	// The following unwanted characters, and all below codePoint=32 will be cleaned
 	// in advance.
 	// Please see the getOmnivoreTemp_Filename_Element for details.
-	public static final String cotf_unwanted_chars = "[\\:/:*?()+,\';\"\r\t\n´`<>]";
+	public static final String cotf_unwanted_chars = "[\\:/:*?()+,\';\"\r\t\n´`<>]"; //$NON-NLS-1$
 	// Dank Eclipse's mglw. etwas übermässiger "Optimierung" werden externalisierte
 	// Strings nun als
 	// Felder von Messges angesprochen -

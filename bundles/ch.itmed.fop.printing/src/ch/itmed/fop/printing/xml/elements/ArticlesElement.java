@@ -30,19 +30,19 @@ public final class ArticlesElement {
 
 	public static Element create(Document doc, IArticle a) {
 		ArticleData articleData = new ArticleData(a);
-		Element p = doc.createElement("Articles");
+		Element p = doc.createElement("Articles"); //$NON-NLS-1$
 
-		Element article = doc.createElement("Article");
+		Element article = doc.createElement("Article"); //$NON-NLS-1$
 
-		Element name = doc.createElement("Name");
+		Element name = doc.createElement("Name"); //$NON-NLS-1$
 		name.appendChild(doc.createTextNode(articleData.getName()));
 		article.appendChild(name);
 
-		Element price = doc.createElement("Price");
+		Element price = doc.createElement("Price"); //$NON-NLS-1$
 		price.appendChild(doc.createTextNode(articleData.getPrice()));
 		article.appendChild(price);
 
-		Element delivery = doc.createElement("DeliveryDate");
+		Element delivery = doc.createElement("DeliveryDate"); //$NON-NLS-1$
 		delivery.appendChild(doc.createTextNode(articleData.getDeliveryDate()));
 		article.appendChild(delivery);
 
@@ -59,20 +59,20 @@ public final class ArticlesElement {
 			articles = articles.stream().filter(ad -> !isMedication(ad, cd)).collect(Collectors.toList());
 		}
 
-		Element p = doc.createElement("Articles");
+		Element p = doc.createElement("Articles"); //$NON-NLS-1$
 
 		for (ArticleData a : articles) {
-			Element article = doc.createElement("Article");
+			Element article = doc.createElement("Article"); //$NON-NLS-1$
 
-			Element name = doc.createElement("Name");
+			Element name = doc.createElement("Name"); //$NON-NLS-1$
 			name.appendChild(doc.createTextNode(a.getName()));
 			article.appendChild(name);
 
-			Element price = doc.createElement("Price");
+			Element price = doc.createElement("Price"); //$NON-NLS-1$
 			price.appendChild(doc.createTextNode(a.getPrice()));
 			article.appendChild(price);
 
-			Element delivery = doc.createElement("DeliveryDate");
+			Element delivery = doc.createElement("DeliveryDate"); //$NON-NLS-1$
 			delivery.appendChild(doc.createTextNode(a.getDeliveryDate()));
 			article.appendChild(delivery);
 

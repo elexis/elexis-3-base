@@ -144,10 +144,10 @@ public class Episode extends AbstractIdModelAdapter<ICPCEpisode> implements Iden
 	public String getLabel() {
 		StringBuffer sb = new StringBuffer();
 		if (StringUtils.isNotBlank(getNumber())) {
-			sb.append(getNumber()).append(": ");
+			sb.append(getNumber()).append(": "); //$NON-NLS-1$
 		}
 		sb.append(getTitle());
-		sb.append(" [" + (getStatus() == 1 ? Messages.Active : Messages.Inactive) + "]");
+		sb.append(" [" + (getStatus() == 1 ? Messages.Active : Messages.Inactive) + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		return sb.toString();
 	}

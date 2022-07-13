@@ -43,20 +43,20 @@ import ch.elexis.core.data.util.Extensions;
  * @author Antoine Kaufmann
  */
 public class Konfiguration {
-	public static final String STATISTIKEN_FILENAME = "statistiken.xml";
-	public static final String ELEM_QUERY = "query";
-	public static final String ELEM_FROM = "from";
-	public static final String ELEM_COLS = "cols";
-	public static final String ELEM_WHERE = "where";
-	public static final String ELEM_JOIN = "join";
-	public static final String ATTR_TITLE = "title";
-	public static final String ATTR_NAME = "name";
-	public static final String ATTR_SOURCE = "source";
-	public static final String ATTR_TABLE = "table";
-	public static final String ATTR_AS = "as";
-	public static final String ATTR_TYPE = "type";
+	public static final String STATISTIKEN_FILENAME = "statistiken.xml"; //$NON-NLS-1$
+	public static final String ELEM_QUERY = "query"; //$NON-NLS-1$
+	public static final String ELEM_FROM = "from"; //$NON-NLS-1$
+	public static final String ELEM_COLS = "cols"; //$NON-NLS-1$
+	public static final String ELEM_WHERE = "where"; //$NON-NLS-1$
+	public static final String ELEM_JOIN = "join"; //$NON-NLS-1$
+	public static final String ATTR_TITLE = "title"; //$NON-NLS-1$
+	public static final String ATTR_NAME = "name"; //$NON-NLS-1$
+	public static final String ATTR_SOURCE = "source"; //$NON-NLS-1$
+	public static final String ATTR_TABLE = "table"; //$NON-NLS-1$
+	public static final String ATTR_AS = "as"; //$NON-NLS-1$
+	public static final String ATTR_TYPE = "type"; //$NON-NLS-1$
 
-	public static final String DATASOURCE_EXT = "com.hilotec.elexis.pluginstatistiken.Datenquelle";
+	public static final String DATASOURCE_EXT = "com.hilotec.elexis.pluginstatistiken.Datenquelle"; //$NON-NLS-1$
 
 	Logger log = LoggerFactory.getLogger(getClass());
 	ArrayList<KonfigurationQuery> queries;
@@ -166,7 +166,7 @@ public class Konfiguration {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.error("Einlesen der XML-Datei felgeschlagen: " + e.getMessage());
+			log.error("Einlesen der XML-Datei felgeschlagen: " + e.getMessage()); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Hilotec Pluginstatistiken Fehler",
 					"Einlesen der XML-Datei felgeschlagen: " + e.getMessage());
 		}
@@ -176,13 +176,13 @@ public class Konfiguration {
 		for (IConfigurationElement ic : Extensions.getExtensions(DATASOURCE_EXT)) {
 			try {
 				IDatenquelle dq;
-				dq = (IDatenquelle) ic.createExecutableExtension("class");
+				dq = (IDatenquelle) ic.createExecutableExtension("class"); //$NON-NLS-1$
 				datenquellen.put(dq.getName(), dq);
 			} catch (CoreException ce) {
-				log.error("Initialisieren der Datenquelle " + ic.getAttribute("name") + " fehlgeschlagen: "
+				log.error("Initialisieren der Datenquelle " + ic.getAttribute("name") + " fehlgeschlagen: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						+ ce.getMessage());
 				MessageDialog.openError(Display.getDefault().getActiveShell(), "Hilotec Pluginstatistiken Fehler",
-						"Initialisieren der Datenquelle " + ic.getAttribute("name") + " fehlgeschlagen: "
+						"Initialisieren der Datenquelle " + ic.getAttribute("name") + " fehlgeschlagen: " //$NON-NLS-2$
 								+ ce.getMessage());
 			}
 		}

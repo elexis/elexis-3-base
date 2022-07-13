@@ -7,7 +7,7 @@ import ch.elexis.admin.IACLContributor;
 
 public class DBShakerACL implements IACLContributor {
 
-	public static final ACE EXEC_DBSHAKER = new ACE(AccessControlDefaults.ADMIN, "ch.elexis.support.dbshaker",
+	public static final ACE EXEC_DBSHAKER = new ACE(AccessControlDefaults.ADMIN, "ch.elexis.support.dbshaker", //$NON-NLS-1$
 			"Datenbank anonymisieren (DBShaker)");
 
 	@Override

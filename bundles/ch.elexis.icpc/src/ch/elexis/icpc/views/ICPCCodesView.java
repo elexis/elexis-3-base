@@ -22,7 +22,7 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.icpc.Messages;
 
 public class ICPCCodesView extends ViewPart {
-	public static final String ID = "ch.elexis.icpc.codesView";
+	public static final String ID = "ch.elexis.icpc.codesView"; //$NON-NLS-1$
 	String mode;
 	ChapterDisplay[] chapters;
 	ShortlistComposite shortlistComposite;
@@ -43,7 +43,7 @@ public class ICPCCodesView extends ViewPart {
 		}
 
 		CTabItem shortlistCTabItem = new CTabItem(ctab, SWT.NONE);
-		shortlistCTabItem.setText("Shortlist");
+		shortlistCTabItem.setText("Shortlist"); //$NON-NLS-1$
 		shortlistComposite = new ShortlistComposite(ctab, SWT.NONE);
 		shortlistCTabItem.setControl(shortlistComposite);
 

@@ -18,7 +18,7 @@ public class PrintProcess {
 
 	private static Logger logger = LoggerFactory.getLogger(PrintProcess.class);
 
-	private static final String PATTERN_STRING = "\\[.*?\\]";
+	private static final String PATTERN_STRING = "\\[.*?\\]"; //$NON-NLS-1$
 
 	private String command;
 
@@ -26,7 +26,7 @@ public class PrintProcess {
 
 	private HashMap<String, String> contextVariables;
 
-	private static String[] variables = new String[] { "printer", "filename", "scriptdirectory", "tray" };
+	private static String[] variables = new String[] { "printer", "filename", "scriptdirectory", "tray" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 	public PrintProcess(String command) {
 		this.command = command;
@@ -42,20 +42,20 @@ public class PrintProcess {
 		try {
 			String preparedCommand = getPreparedCommand(command);
 			if (CoreUtil.isWindows()) {
-				preparedCommand = "cmd /C " + preparedCommand;
+				preparedCommand = "cmd /C " + preparedCommand; //$NON-NLS-1$
 			}
-			logger.info("Executing print command [" + preparedCommand + "]");
+			logger.info("Executing print command [" + preparedCommand + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			Process process = Runtime.getRuntime().exec(preparedCommand);
 
 			if (process.waitFor(30, TimeUnit.SECONDS)) {
 				return process.exitValue() == 0;
 			} else {
-				logger.error("Error executing print command [" + preparedCommand + "] process terminated.");
+				logger.error("Error executing print command [" + preparedCommand + "] process terminated."); //$NON-NLS-1$ //$NON-NLS-2$
 				process.destroy();
 				return false;
 			}
 		} catch (IOException | InterruptedException e) {
-			logger.error("Error executing print command", e);
+			logger.error("Error executing print command", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -75,8 +75,8 @@ public class PrintProcess {
 					.get(preparedCommand.substring(matcher.start() + 1, matcher.end() - 1));
 			if (replacement != null) {
 				// escape win characters in replacement
-				if (replacement.contains("\\")) {
-					replacement = replacement.replaceAll("\\\\", "\\\\\\\\");
+				if (replacement.contains("\\")) { //$NON-NLS-1$
+					replacement = replacement.replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				preparedCommand = matcher.replaceFirst((String) replacement);
 			} else {
@@ -100,7 +100,7 @@ public class PrintProcess {
 	}
 
 	public static String getVariablesAsString() {
-		StringJoiner sj = new StringJoiner(", ");
+		StringJoiner sj = new StringJoiner(", "); //$NON-NLS-1$
 		for (String variable : variables) {
 			sj.add(variable);
 		}

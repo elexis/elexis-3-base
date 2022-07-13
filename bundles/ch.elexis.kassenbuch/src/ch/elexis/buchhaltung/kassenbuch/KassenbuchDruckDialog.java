@@ -86,18 +86,18 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 			}
 			Money betrag = kb.getAmount();
 			mKat.addMoney(betrag);
-			table[i][0] = kb.get("BelegNr");
+			table[i][0] = kb.get("BelegNr"); //$NON-NLS-1$
 			table[i][1] = kb.getDate();
 			table[i][2] = betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : StringUtils.EMPTY;
 			table[i][3] = betrag.isNegative() ? StringUtils.EMPTY : betrag.getAmountAsString();
 			table[i][4] = kb.getSaldo().getAmountAsString();
 			table[i][5] = kb.getText();
 		}
-		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
-		text.getPlugin().insertTable("[Liste]", ITextPlugin.FIRST_ROW_IS_HEADER, table,
+		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
+		text.getPlugin().insertTable("[Liste]", ITextPlugin.FIRST_ROW_IS_HEADER, table, //$NON-NLS-1$
 				new int[] { 5, 15, 15, 15, 20, 30 });
 		Enumeration<String> keys = mCategories.keys();
-		Object cursor = text.getPlugin().insertText("##end##", StringUtils.EMPTY, SWT.LEFT);
+		Object cursor = text.getPlugin().insertText("##end##", StringUtils.EMPTY, SWT.LEFT); //$NON-NLS-1$
 		if (cursor != null) {
 			while (keys.hasMoreElements()) {
 				String cat = keys.nextElement();

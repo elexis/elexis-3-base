@@ -33,15 +33,15 @@ import com.hilotec.elexis.pluginstatistiken.PluginstatistikException;
 public class KonfigurationWhere {
 	private Element element;
 
-	public static final String ELEM_OR = "or";
-	public static final String ELEM_AND = "and";
-	public static final String ELEM_NOT = "not";
-	public static final String ELEM_EQUAL = "equal";
-	public static final String ELEM_GREATERTHAN = "greaterthan";
-	public static final String ELEM_LESSTHAN = "lessthan";
-	public static final String ATTR_A = "a";
-	public static final String ATTR_B = "b";
-	public static final String REGEX_PLUGINREF = "^\\[.*\\]$";
+	public static final String ELEM_OR = "or"; //$NON-NLS-1$
+	public static final String ELEM_AND = "and"; //$NON-NLS-1$
+	public static final String ELEM_NOT = "not"; //$NON-NLS-1$
+	public static final String ELEM_EQUAL = "equal"; //$NON-NLS-1$
+	public static final String ELEM_GREATERTHAN = "greaterthan"; //$NON-NLS-1$
+	public static final String ELEM_LESSTHAN = "lessthan"; //$NON-NLS-1$
+	public static final String ATTR_A = "a"; //$NON-NLS-1$
+	public static final String ATTR_B = "b"; //$NON-NLS-1$
+	public static final String REGEX_PLUGINREF = "^\\[.*\\]$"; //$NON-NLS-1$
 
 	enum ElementTyp {
 		E_INVALID,
@@ -117,7 +117,7 @@ public class KonfigurationWhere {
 		if (val.matches(REGEX_PLUGINREF)) {
 			String feld = ds.getFeld(val.substring(1, val.length() - 1));
 			if (feld == null) {
-				throw new PluginstatistikException("Ungueltige Referenz: '" + "'");
+				throw new PluginstatistikException("Ungueltige Referenz: '" + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				val = feld;
 			}
@@ -200,7 +200,7 @@ public class KonfigurationWhere {
 
 		case E_INVALID:
 		default:
-			Log.get("Messwertstatistiken").log("Ungueltige Operation: " + e.getTagName(), Log.ERRORS);
+			Log.get("Messwertstatistiken").log("Ungueltige Operation: " + e.getTagName(), Log.ERRORS); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 	}

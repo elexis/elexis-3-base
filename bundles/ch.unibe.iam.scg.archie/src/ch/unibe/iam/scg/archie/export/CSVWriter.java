@@ -40,7 +40,7 @@ import ch.unibe.iam.scg.archie.utils.ProviderHelper;
 public class CSVWriter {
 
 	/** Default delimiter for the CSV data */
-	private static String DELIMITER = ";";
+	private static String DELIMITER = ";"; //$NON-NLS-1$
 
 	/**
 	 * Writes contents of a data provider into the given file in a CSV-format.
@@ -108,7 +108,7 @@ public class CSVWriter {
 		// write parameters
 		Map<String, Object> getters = ProviderHelper.getGetterMap(provider, true);
 		for (Object name : getters.keySet().toArray()) {
-			writer.write(name + " = " + getters.get(name));
+			writer.write(name + " = " + getters.get(name)); //$NON-NLS-1$
 			writer.write(StringUtils.LF);
 		}
 		writer.write(StringUtils.LF);

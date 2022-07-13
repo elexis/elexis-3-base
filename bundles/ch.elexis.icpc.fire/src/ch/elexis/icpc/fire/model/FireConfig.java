@@ -16,7 +16,7 @@ import ch.elexis.icpc.fire.ui.Preferences;
 
 public class FireConfig {
 
-	public static String XID_FIRE_PATID = "http://elexis.ch/icpc/fire/patid";
+	public static String XID_FIRE_PATID = "http://elexis.ch/icpc/fire/patid"; //$NON-NLS-1$
 
 	private String bdSystTab, bdDiastTab, pulseTab, heightTab, weightTab, waistTab;
 
@@ -27,7 +27,7 @@ public class FireConfig {
 	public FireConfig() {
 		factory = new ObjectFactory();
 
-		Xid.localRegisterXIDDomainIfNotExists(XID_FIRE_PATID, "IcpcFirePatId", Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_FIRE_PATID, "IcpcFirePatId", Xid.ASSIGNMENT_LOCAL); //$NON-NLS-1$
 	}
 
 	public BigInteger getPatId(Patient patient) {
@@ -37,7 +37,7 @@ public class FireConfig {
 			long parseLong = Long.parseLong(patientNr);
 			return BigInteger.valueOf(parseLong);
 		} catch (NumberFormatException nfe) {
-			log.warn("Error parsing patientNr [{}], falling back to XID_FIRE_PATID", patientNr);
+			log.warn("Error parsing patientNr [{}], falling back to XID_FIRE_PATID", patientNr); //$NON-NLS-1$
 		}
 
 		try {
@@ -69,7 +69,7 @@ public class FireConfig {
 		if (ean != null && !ean.isEmpty()) {
 			return new BigInteger(ean);
 		}
-		throw new IllegalStateException("Mandant " + mandant.getLabel() + " has no EAN specified.");
+		throw new IllegalStateException("Mandant " + mandant.getLabel() + " has no EAN specified."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private boolean readVitalSignsConfig() {

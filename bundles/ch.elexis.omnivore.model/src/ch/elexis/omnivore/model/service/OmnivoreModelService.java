@@ -68,11 +68,11 @@ public class OmnivoreModelService extends AbstractModelService implements IModel
 	@Override
 	public Optional<Identifiable> loadFromString(String storeToString) {
 		if (storeToString == null) {
-			LoggerFactory.getLogger(getClass()).warn("StoreToString is null");
+			LoggerFactory.getLogger(getClass()).warn("StoreToString is null"); //$NON-NLS-1$
 			return Optional.empty();
 		}
 
-		if (storeToString.startsWith("ch.elexis.omnivore.data")) {
+		if (storeToString.startsWith("ch.elexis.omnivore.data")) { //$NON-NLS-1$
 			String[] split = splitIntoTypeAndId(storeToString);
 
 			// map string to classname
@@ -126,7 +126,7 @@ public class OmnivoreModelService extends AbstractModelService implements IModel
 			try {
 				return getTypeForEntity(entityClass.newInstance());
 			} catch (InstantiationException | IllegalAccessException e) {
-				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e);
+				LoggerFactory.getLogger(getClass()).error("Error getting type for model [" + interfaze + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;

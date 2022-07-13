@@ -42,7 +42,7 @@ public class DatabaseHelper {
 	 */
 	public static int getNumberOfPatients() {
 		return DatabaseHelper.getTotalFromQuery(
-				"SELECT COUNT(ID) AS total FROM KONTAKT WHERE istPatient = '1' AND deleted = '0'", "total");
+				"SELECT COUNT(ID) AS total FROM KONTAKT WHERE istPatient = '1' AND deleted = '0'", "total"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -51,8 +51,8 @@ public class DatabaseHelper {
 	 * @return int number of consultations in the system.
 	 */
 	public static int getNumberOfConsultations() {
-		return DatabaseHelper.getTotalFromQuery("SELECT COUNT(ID) AS total FROM BEHANDLUNGEN WHERE deleted = '0'",
-				"total");
+		return DatabaseHelper.getTotalFromQuery("SELECT COUNT(ID) AS total FROM BEHANDLUNGEN WHERE deleted = '0'", //$NON-NLS-1$
+				"total"); //$NON-NLS-1$
 	}
 
 	/**
@@ -61,8 +61,8 @@ public class DatabaseHelper {
 	 * @return Total number of invoices in the system
 	 */
 	public static int getTotalNumberOfInvoices() {
-		return DatabaseHelper.getTotalFromQuery("SELECT COUNT(ID) AS total FROM RECHNUNGEN where deleted = '0'",
-				"total");
+		return DatabaseHelper.getTotalFromQuery("SELECT COUNT(ID) AS total FROM RECHNUNGEN where deleted = '0'", //$NON-NLS-1$
+				"total"); //$NON-NLS-1$
 	}
 
 	/**
@@ -74,8 +74,8 @@ public class DatabaseHelper {
 	 */
 	public static int getNumberOfInvoices(int status) {
 		return DatabaseHelper.getTotalFromQuery(
-				"SELECT COUNT(id) AS total FROM RECHNUNGEN WHERE deleted = '0' AND RnStatus = '" + status + "'",
-				"total");
+				"SELECT COUNT(id) AS total FROM RECHNUNGEN WHERE deleted = '0' AND RnStatus = '" + status + "'", //$NON-NLS-1$ //$NON-NLS-2$
+				"total"); //$NON-NLS-1$
 	}
 
 	/**
@@ -89,19 +89,19 @@ public class DatabaseHelper {
 		// Checking Preconditions.
 		if (!(gender.equals(Patient.MALE) || gender.equals(Patient.FEMALE))) {
 			throw new IllegalArgumentException(
-					"Gender has to be either " + Patient.MALE + " or " + Patient.FEMALE + ".");
+					"Gender has to be either " + Patient.MALE + " or " + Patient.FEMALE + "."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		JdbcLink link = PersistentObject.getConnection();
 		Stm statement = link.getStatement();
 		ResultSet result = statement
-				.query("SELECT Geschlecht, COUNT(ID) AS total FROM KONTAKT WHERE istPatient = '1' AND geschlecht = '"
-						+ gender + "' AND deleted = '0' GROUP BY Geschlecht");
+				.query("SELECT Geschlecht, COUNT(ID) AS total FROM KONTAKT WHERE istPatient = '1' AND geschlecht = '" //$NON-NLS-1$
+						+ gender + "' AND deleted = '0' GROUP BY Geschlecht"); //$NON-NLS-1$
 		try {
 			while (result != null && result.next()) {
-				return result.getInt("total");
+				return result.getInt("total"); //$NON-NLS-1$
 			}
 		} catch (SQLException e) {
-			ArchieActivator.LOG.log("Error while trying to data from database.\n" + e.getLocalizedMessage(),
+			ArchieActivator.LOG.log("Error while trying to data from database.\n" + e.getLocalizedMessage(), //$NON-NLS-1$
 					Log.WARNINGS);
 			e.printStackTrace();
 		} finally {
@@ -128,7 +128,7 @@ public class DatabaseHelper {
 				return result.getInt(totalColumn);
 			}
 		} catch (SQLException e) {
-			ArchieActivator.LOG.log("Error while trying to data from database.\n" + e.getLocalizedMessage(),
+			ArchieActivator.LOG.log("Error while trying to data from database.\n" + e.getLocalizedMessage(), //$NON-NLS-1$
 					Log.WARNINGS);
 			e.printStackTrace();
 		} finally {

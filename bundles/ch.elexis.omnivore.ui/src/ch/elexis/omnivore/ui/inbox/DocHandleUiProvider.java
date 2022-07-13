@@ -22,7 +22,7 @@ public class DocHandleUiProvider implements IInboxElementUiProvider {
 
 	@Override
 	public ImageDescriptor getFilterImage() {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.omnivore.ui", "icons/fressen.gif");
+		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.omnivore.ui", "icons/fressen.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

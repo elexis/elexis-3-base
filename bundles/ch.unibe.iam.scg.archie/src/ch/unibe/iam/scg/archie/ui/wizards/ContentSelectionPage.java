@@ -51,7 +51,7 @@ public class ContentSelectionPage extends WizardPage implements SelectionListene
 	/**
 	 * Name of this page.
 	 */
-	protected static final String PAGE_NAME = "ContentSelectionPage";
+	protected static final String PAGE_NAME = "ContentSelectionPage"; //$NON-NLS-1$
 
 	/**
 	 * Constructs ChartWizardMainPage

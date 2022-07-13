@@ -41,7 +41,7 @@ public class CodeElementContribution implements ICodeElementServiceContribution 
 			return (List<ICodeElement>) (List<?>) Code.getRootCodes();
 		}
 		IQuery<IcpcCode> query = IcpcModelServiceHolder.get().getQuery(IcpcCode.class);
-		query.and("id", COMPARATOR.NOT_EQUALS, "ver");
+		query.and("id", COMPARATOR.NOT_EQUALS, "ver"); //$NON-NLS-1$ //$NON-NLS-2$
 		return (List<ICodeElement>) (List<?>) query.execute();
 	}
 }

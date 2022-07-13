@@ -55,7 +55,7 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 	/**
 	 * ID of this view.
 	 */
-	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.views.StatisticsSidebarView";
+	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.views.StatisticsSidebarView"; //$NON-NLS-1$
 
 	protected Combo list;
 

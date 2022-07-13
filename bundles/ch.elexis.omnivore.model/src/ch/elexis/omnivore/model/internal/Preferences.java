@@ -24,8 +24,8 @@ public class Preferences {
 		} else {
 			ret = ConfigServiceHolder.getLocal(BASEPATH, null);
 		}
-		if (ret.contains("no protocol: ")) {
-			ret = ret.replaceAll("no protocol: ", StringUtils.EMPTY);
+		if (ret.contains("no protocol: ")) { //$NON-NLS-1$
+			ret = ret.replaceAll("no protocol: ", StringUtils.EMPTY); //$NON-NLS-1$
 		}
 		return ret;
 	}

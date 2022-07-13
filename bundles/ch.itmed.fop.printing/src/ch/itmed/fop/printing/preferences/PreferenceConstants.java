@@ -18,20 +18,20 @@ public class PreferenceConstants {
 	private static HashMap<String, ArrayList<String>> hm;
 	private static ArrayList<String> docNames;
 
-	private static final String SETTINGS_BASE_PATH = "itmed/fop/";
+	private static final String SETTINGS_BASE_PATH = "itmed/fop/"; //$NON-NLS-1$
 
-	public static final String SETTINGS_PROVIDER_PAGES = SETTINGS_BASE_PATH + "SettingsProviderPages";
-	public static final String SETTINGS_PROVIDER_PRINTERS = SETTINGS_BASE_PATH + "SettingsProviderPrinters";
-	public static final String SETTINGS_PROVIDER_TEMPLATES = SETTINGS_BASE_PATH + "SettingsProviderTemplates";
+	public static final String SETTINGS_PROVIDER_PAGES = SETTINGS_BASE_PATH + "SettingsProviderPages"; //$NON-NLS-1$
+	public static final String SETTINGS_PROVIDER_PRINTERS = SETTINGS_BASE_PATH + "SettingsProviderPrinters"; //$NON-NLS-1$
+	public static final String SETTINGS_PROVIDER_TEMPLATES = SETTINGS_BASE_PATH + "SettingsProviderTemplates"; //$NON-NLS-1$
 
-	public static final String APPOINTMENT_CARD = "AppointmentCard";
-	public static final String RECURRING_APPOINTMENTS_CARD = "RecurringAppointmentsCard";
-	public static final String ARTICLE_LABEL = "ArticleLabel";
-	public static final String MEDICATION_LABEL = "MedicationLabel";
-	public static final String PATIENT_LABEL = "PatientLabel";
-	public static final String VERSIONED_LABEL = "VersionedLabel";
-	public static final String PATIENT_ADDRESS_LABEL = "PatientAddressLabel";
-	public static final String CONTACT_ADDRESS_LABEL = "ContactAddressLabel";
+	public static final String APPOINTMENT_CARD = "AppointmentCard"; //$NON-NLS-1$
+	public static final String RECURRING_APPOINTMENTS_CARD = "RecurringAppointmentsCard"; //$NON-NLS-1$
+	public static final String ARTICLE_LABEL = "ArticleLabel"; //$NON-NLS-1$
+	public static final String MEDICATION_LABEL = "MedicationLabel"; //$NON-NLS-1$
+	public static final String PATIENT_LABEL = "PatientLabel"; //$NON-NLS-1$
+	public static final String VERSIONED_LABEL = "VersionedLabel"; //$NON-NLS-1$
+	public static final String PATIENT_ADDRESS_LABEL = "PatientAddressLabel"; //$NON-NLS-1$
+	public static final String CONTACT_ADDRESS_LABEL = "ContactAddressLabel"; //$NON-NLS-1$
 
 	public static final int APPOINTMENT_CARD_ID = 0;
 	public static final int RECURRING_APPOINTMENTS_CARD_ID = 1;
@@ -42,20 +42,20 @@ public class PreferenceConstants {
 	public static final int PATIENT_ADDRESSLABEL_ID = 6;
 	public static final int CONTACT_ADDRESS_LABEL_ID = 7;
 
-	private static final String PRINTER_NAME = "/printer/name"; // 0
-	private static final String XSL_TEMPLATE_PATH = "/xsl/templatePath"; // 1
-	private static final String XSL_CUSTOM_FLAG = "/xsl/customFlag"; // 2
-	private static final String PAGE_TEMPLATE = "/page/template"; // 3
-	private static final String PAGE_CUSTOM_FLAG = "/page/customFlag"; // 4
-	private static final String PAGE_HEIGHT = "/page/height"; // 5
-	private static final String PAGE_WIDTH = "/page/width"; // 6
-	private static final String PAGE_TEXT_ORIENTATION = "/page/textOrientation"; // 7
-	private static final String PAGE_MARGIN_TOP = "/page/marginTop"; // 8
-	private static final String PAGE_MARGIN_BOTTOM = "/page/marginBottom"; // 9
-	private static final String PAGE_MARGIN_LEFT = "/page/marginLeft"; // 10
-	private static final String PAGE_MARGIN_RIGHT = "/page/marginRight"; // 11
-	private static final String SETTING_SCOPE = "/settingScope"; // 12
-	private static final String MEDICATION_RESPONSIBLE_PHARMACIST = "medication/responsiblePharmacist"; // 13
+	private static final String PRINTER_NAME = "/printer/name"; // 0 //$NON-NLS-1$
+	private static final String XSL_TEMPLATE_PATH = "/xsl/templatePath"; // 1 //$NON-NLS-1$
+	private static final String XSL_CUSTOM_FLAG = "/xsl/customFlag"; // 2 //$NON-NLS-1$
+	private static final String PAGE_TEMPLATE = "/page/template"; // 3 //$NON-NLS-1$
+	private static final String PAGE_CUSTOM_FLAG = "/page/customFlag"; // 4 //$NON-NLS-1$
+	private static final String PAGE_HEIGHT = "/page/height"; // 5 //$NON-NLS-1$
+	private static final String PAGE_WIDTH = "/page/width"; // 6 //$NON-NLS-1$
+	private static final String PAGE_TEXT_ORIENTATION = "/page/textOrientation"; // 7 //$NON-NLS-1$
+	private static final String PAGE_MARGIN_TOP = "/page/marginTop"; // 8 //$NON-NLS-1$
+	private static final String PAGE_MARGIN_BOTTOM = "/page/marginBottom"; // 9 //$NON-NLS-1$
+	private static final String PAGE_MARGIN_LEFT = "/page/marginLeft"; // 10 //$NON-NLS-1$
+	private static final String PAGE_MARGIN_RIGHT = "/page/marginRight"; // 11 //$NON-NLS-1$
+	private static final String SETTING_SCOPE = "/settingScope"; // 12 //$NON-NLS-1$
+	private static final String MEDICATION_RESPONSIBLE_PHARMACIST = "medication/responsiblePharmacist"; // 13 //$NON-NLS-1$
 
 	/**
 	 * @param docName

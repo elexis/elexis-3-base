@@ -49,7 +49,7 @@ public class DocumentManagement implements IDocumentManager {
 		IPatient iPatient = CoreModelServiceHolder.get().load(doc.getPatient().getId(), IPatient.class).orElse(null);
 		if (iPatient != null) {
 			IDocumentHandle docHandle = OmnivoreModelServiceHolder.get().create(IDocumentHandle.class);
-			OmnivoreModelServiceHolder.get().setEntityProperty("id", doc.getGUID(), docHandle);
+			OmnivoreModelServiceHolder.get().setEntityProperty("id", doc.getGUID(), docHandle); //$NON-NLS-1$
 			String category = doc.getCategory();
 			if (category == null || category.length() < 1) {
 				category = CategoryUtil.getDefaultCategory().getName();
@@ -74,7 +74,7 @@ public class DocumentManagement implements IDocumentManager {
 			}
 			return docHandle.getId();
 		} else {
-			throw new IllegalStateException("No patient available");
+			throw new IllegalStateException("No patient available"); //$NON-NLS-1$
 		}
 	}
 
@@ -97,27 +97,27 @@ public class DocumentManagement implements IDocumentManager {
 		IQuery<IDocumentHandle> qbe = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
 		if (pat != null) {
 			IPatient iPatient = CoreModelServiceHolder.get().load(pat.getId(), IPatient.class).orElse(null);
-			qbe.and("kontakt", COMPARATOR.EQUALS, iPatient);
+			qbe.and("kontakt", COMPARATOR.EQUALS, iPatient); //$NON-NLS-1$
 		}
 		if (dateMatch != null) {
 			LocalDate from = dateMatch.from.toLocalDate();
 			LocalDate until = dateMatch.until.toLocalDate();
-			qbe.and("creationDate", COMPARATOR.GREATER_OR_EQUAL, from);
-			qbe.and("creationDate", COMPARATOR.LESS_OR_EQUAL, until);
+			qbe.and("creationDate", COMPARATOR.GREATER_OR_EQUAL, from); //$NON-NLS-1$
+			qbe.and("creationDate", COMPARATOR.LESS_OR_EQUAL, until); //$NON-NLS-1$
 		}
 		List<RegexpFilter> filters = new ArrayList<>();
 		if (titleMatch != null) {
 			if (titleMatch.matches("/.+/")) { //$NON-NLS-1$
 				filters.add(new RegexpFilter(titleMatch.substring(1, titleMatch.length() - 1)));
 			} else {
-				qbe.and("title", COMPARATOR.EQUALS, titleMatch);
+				qbe.and("title", COMPARATOR.EQUALS, titleMatch); //$NON-NLS-1$
 			}
 		}
 		if (keywordMatch != null) {
 			if (keywordMatch.matches("/.+/")) { //$NON-NLS-1$
 				filters.add(new RegexpFilter(keywordMatch.substring(1, keywordMatch.length() - 1)));
 			} else {
-				qbe.and("keywords", COMPARATOR.LIKE, "%" + keywordMatch + "%"); //$NON-NLS-1$ //$NON-NLS-2$
+				qbe.and("keywords", COMPARATOR.LIKE, "%" + keywordMatch + "%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 
@@ -125,7 +125,7 @@ public class DocumentManagement implements IDocumentManager {
 			if (categoryMatch.matches("/.+/")) { //$NON-NLS-1$
 				filters.add(new RegexpFilter(categoryMatch.substring(1, categoryMatch.length() - 1)));
 			} else {
-				qbe.and("category", COMPARATOR.EQUALS, categoryMatch);
+				qbe.and("category", COMPARATOR.EQUALS, categoryMatch); //$NON-NLS-1$
 			}
 		}
 

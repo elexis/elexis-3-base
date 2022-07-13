@@ -67,12 +67,12 @@ public class ReportBuilder {
 				try {
 					c.setDate(XmlUtil.getXmlGregorianCalendar(new TimeTool(konsultation.getDatum())));
 				} catch (DatatypeConfigurationException e) {
-					LoggerFactory.getLogger(ReportBuilder.class).warn("date error", e);
+					LoggerFactory.getLogger(ReportBuilder.class).warn("date error", e); //$NON-NLS-1$
 				}
 			});
 		} else {
 			LoggerFactory.getLogger(getClass())
-					.warn("Invalid fireConfig, skipping consultation [" + konsultation.getId() + "]");
+					.warn("Invalid fireConfig, skipping consultation [" + konsultation.getId() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -113,7 +113,7 @@ public class ReportBuilder {
 		String insurer = null;
 		Boolean mc = null;
 		Query<Fall> qbe = new Query<>(Fall.class, Fall.FLD_PATIENT_ID, patient.getId());
-		qbe.add(Fall.FLD_BILLINGSYSTEM, Query.EQUALS, "KVG");
+		qbe.add(Fall.FLD_BILLINGSYSTEM, Query.EQUALS, "KVG"); //$NON-NLS-1$
 		qbe.orderBy(true, Fall.FLD_DATUM_VON);
 		List<Fall> qre = qbe.execute();
 		for (Fall fall : qre) {
@@ -158,14 +158,14 @@ public class ReportBuilder {
 
 			TDoctor tDoctor = fireConfig.getFactory().createTDoctor();
 			tDoctor.setId(docId);
-			tDoctor.setSystem("Elexis");
+			tDoctor.setSystem("Elexis"); //$NON-NLS-1$
 			tDoctor.setFirstName(mandant.getVorname());
 			tDoctor.setLastName(mandant.getName());
 
 			try {
 				tDoctor.setGeburtstag(XmlUtil.getXmlGregorianCalendar(new TimeTool(mandant.getGeburtsdatum())));
 			} catch (DatatypeConfigurationException e) {
-				LoggerFactory.getLogger(ReportBuilder.class).warn("date error", e);
+				LoggerFactory.getLogger(ReportBuilder.class).warn("date error", e); //$NON-NLS-1$
 			}
 
 			report.getDoctors().getDoctor().add(tDoctor);

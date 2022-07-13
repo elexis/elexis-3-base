@@ -34,7 +34,7 @@ public final class ArticleData {
 
 	public String getDeliveryDate() {
 		LocalDate localDate = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.YYYY").withZone(ZoneId.systemDefault());
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.YYYY").withZone(ZoneId.systemDefault()); //$NON-NLS-1$
 		String currentDate = formatter.format(localDate);
 		return currentDate;
 	}

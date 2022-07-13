@@ -29,7 +29,7 @@ import ch.elexis.omnivore.model.util.CategoryUtil;
 @Component(immediate = true, property = "storeid=ch.elexis.data.store.omnivore")
 public class OmnivoreDocumentStore implements IDocumentStore {
 
-	private static final String STORE_ID = "ch.elexis.data.store.omnivore";
+	private static final String STORE_ID = "ch.elexis.data.store.omnivore"; //$NON-NLS-1$
 
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
 	private IModelService coreModelService;
@@ -44,7 +44,7 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 
 	@Override
 	public String getName() {
-		return "Omnivore";
+		return "Omnivore"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 			modelService.save(document);
 			return document;
 		} catch (PersistenceException e) {
-			throw new ElexisException("cannot save", e);
+			throw new ElexisException("cannot save", e); //$NON-NLS-1$
 		}
 	}
 
@@ -163,7 +163,7 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 				CategoryUtil.removeCategory(oldCategory.getName(), newCategory);
 			} else {
 				throw new IllegalStateException(
-						"at least one document to category reference exists with id: " + existing.get(0).getId());
+						"at least one document to category reference exists with id: " + existing.get(0).getId()); //$NON-NLS-1$
 			}
 		}
 	}

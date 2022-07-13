@@ -62,7 +62,7 @@ public class QueryLabelProvider extends LabelProvider implements ITableLabelProv
 	public String getColumnText(final Object element, final int columnIndex) {
 		Comparable<?>[] row = (Comparable[]) element;
 		if (row[columnIndex] == null) {
-			logger.warn("Row result in column [" + columnIndex + "] is null");
+			logger.warn("Row result in column [" + columnIndex + "] is null"); //$NON-NLS-1$ //$NON-NLS-2$
 			return StringUtils.EMPTY;
 		}
 		if (row[columnIndex].getClass() == Money.class) {

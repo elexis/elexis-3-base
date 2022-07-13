@@ -84,7 +84,7 @@ public class CheckboxWidget extends AbstractWidget {
 		if (value instanceof Boolean) {
 			((Button) this.control).setSelection((Boolean) value);
 		} else {
-			throw new IllegalArgumentException("Must be a boolean.");
+			throw new IllegalArgumentException("Must be a boolean."); //$NON-NLS-1$
 		}
 	}
 

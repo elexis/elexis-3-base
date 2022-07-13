@@ -128,7 +128,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		if (getEntity().getCategory() != null) {
 			return new TransientCategory(getEntity().getCategory());
 		}
-		return new TransientCategory("?");
+		return new TransientCategory("?"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 
 	@Override
 	public String getStoreId() {
-		return StringUtils.isNotEmpty(storeId) ? storeId : "ch.elexis.data.store.omnivore";
+		return StringUtils.isNotEmpty(storeId) ? storeId : "ch.elexis.data.store.omnivore"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -220,7 +220,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 				}
 			}
 		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error setting content", e);
+			LoggerFactory.getLogger(getClass()).error("Error setting content", e); //$NON-NLS-1$
 		}
 	}
 
@@ -241,11 +241,11 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 
 					return bytes;
 				} else {
-					LoggerFactory.getLogger(getClass()).error("Error content of [{}] from [{}] does not exist", getId(),
+					LoggerFactory.getLogger(getClass()).error("Error content of [{}] from [{}] does not exist", getId(), //$NON-NLS-1$
 							vfsHandle);
 				}
 			} catch (Exception ex) {
-				LoggerFactory.getLogger(getClass()).error("Getting content of [{}] fails [{}]", getId(), vfsHandle, ex);
+				LoggerFactory.getLogger(getClass()).error("Getting content of [{}] fails [{}]", getId(), vfsHandle, ex); //$NON-NLS-1$
 				throw new IllegalStateException(ex);
 			}
 		}
@@ -255,7 +255,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 	@Override
 	public long getContentLength() {
 		INativeQuery nativeQuery = CoreModelServiceHolder.get()
-				.getNativeQuery("SELECT LENGTH(DOC) FROM CH_ELEXIS_OMNIVORE_DATA WHERE ID = ?1");
+				.getNativeQuery("SELECT LENGTH(DOC) FROM CH_ELEXIS_OMNIVORE_DATA WHERE ID = ?1"); //$NON-NLS-1$
 		Iterator<?> result = nativeQuery
 				.executeWithParameters(nativeQuery.getIndexedParameterMap(Integer.valueOf(1), getId())).iterator();
 		if (result.hasNext()) {
@@ -305,21 +305,21 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 						} else {
 							if (getEntity().getKontakt() == null) {
 								LoggerFactory.getLogger(getClass())
-										.error("DocHandle [" + getEntity().getId() + "] has no patient");
+										.error("DocHandle [" + getEntity().getId() + "] has no patient"); //$NON-NLS-1$ //$NON-NLS-2$
 							} else {
 								LoggerFactory.getLogger(getClass())
-										.error("Contact [" + getEntity().getKontakt().getId() + "] is not a patient");
+										.error("Contact [" + getEntity().getKontakt().getId() + "] is not a patient"); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 						}
 					}
 
 				} catch (IOException e) {
-					LoggerFactory.getLogger(getClass()).error("DocHandle [" + getEntity().getId() + "] IOException", e);
+					LoggerFactory.getLogger(getClass()).error("DocHandle [" + getEntity().getId() + "] IOException", e); //$NON-NLS-1$ //$NON-NLS-2$
 					return null;
 				}
 			}
 			if (Preferences.storeInFilesystem()) {
-				LoggerFactory.getLogger(getClass()).error("Config error: " + Messages.DocHandle_configErrorText);
+				LoggerFactory.getLogger(getClass()).error("Config error: " + Messages.DocHandle_configErrorText); //$NON-NLS-1$
 			}
 		}
 		return null;
@@ -342,7 +342,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			out.write(doc);
 			getEntity().setDoc(null);
 		} catch (IOException ios) {
-			LoggerFactory.getLogger(getClass()).error("Exporting dochandle [" + getId() + "] to filesystem fails.");
+			LoggerFactory.getLogger(getClass()).error("Exporting dochandle [" + getId() + "] to filesystem fails."); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 		return true;
@@ -367,7 +367,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			// avoid adding only a space - causes trouble in renaming of categories
 			Date date = getCreated();
 			if (date != null) {
-				SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+				SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 				sb.append(format.format(date));
 				sb.append(StringUtils.SPACE);
 			}

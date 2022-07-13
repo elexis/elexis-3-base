@@ -112,7 +112,7 @@ public class ProviderInformatioPanel extends Composite {
 		// generate labels for parameter names and values
 		for (String name : this.parameterList.keySet()) {
 			Label nameLabel = new Label(this.parameterContainer, SWT.NONE);
-			nameLabel.setText(name + ":");
+			nameLabel.setText(name + ":"); //$NON-NLS-1$
 
 			Label valueLabel = new Label(this.parameterContainer, SWT.NONE);
 			valueLabel.setText(this.parameterList.get(name).toString());

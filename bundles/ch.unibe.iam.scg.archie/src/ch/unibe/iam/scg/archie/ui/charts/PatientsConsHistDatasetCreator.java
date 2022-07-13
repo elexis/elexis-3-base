@@ -152,8 +152,8 @@ public class PatientsConsHistDatasetCreator extends AbstractDatasetCreator {
 
 			Double[] ConsCosts = new Double[2];
 			ConsCosts = (Double[]) entry.getValue().getValue();
-			((DefaultKeyedValues2DDataset) this.dataset).addValue(ConsCosts[MALE_INDEX], "Male", entry.getKey());
-			((DefaultKeyedValues2DDataset) this.dataset).addValue(ConsCosts[FEMALE_INDEX], "Female", entry.getKey());
+			((DefaultKeyedValues2DDataset) this.dataset).addValue(ConsCosts[MALE_INDEX], "Male", entry.getKey()); //$NON-NLS-1$
+			((DefaultKeyedValues2DDataset) this.dataset).addValue(ConsCosts[FEMALE_INDEX], "Female", entry.getKey()); //$NON-NLS-1$
 		}
 
 		monitor.done();

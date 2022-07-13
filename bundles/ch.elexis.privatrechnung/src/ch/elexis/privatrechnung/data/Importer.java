@@ -78,8 +78,8 @@ public class Importer extends ImporterPage {
 	@Override
 	public Composite createPage(final Composite parent) {
 		FileBasedImporter fbi = new FileBasedImporter(parent, this);
-		fbi.setFilter(new String[] { "*.csv", "*.xls", "*" },
-				new String[] { "Character Separated Values", "Microsoft Excel 97", "All Files" });
+		fbi.setFilter(new String[] { "*.csv", "*.xls", "*" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new String[] { "Character Separated Values", "Microsoft Excel 97", "All Files" }); //$NON-NLS-1$ //$NON-NLS-2$
 		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return fbi;
 	}
@@ -99,17 +99,17 @@ public class Importer extends ImporterPage {
 		// Leistung.createTable();
 		File file = new File(results[0]);
 		if (!file.canRead()) {
-			log.log("Can't read " + results[0], Log.ERRORS);
-			return new Status(Status.ERROR, "ch.elexis.privatrechnung", "Can't read " + results[0]);
+			log.log("Can't read " + results[0], Log.ERRORS); //$NON-NLS-1$
+			return new Status(Status.ERROR, "ch.elexis.privatrechnung", "Can't read " + results[0]); //$NON-NLS-1$
 		}
 		Result<String> res;
-		if (results[0].endsWith(".xls")) {
+		if (results[0].endsWith(".xls")) { //$NON-NLS-1$
 			res = importExcel(file.getAbsolutePath(), monitor);
 			;
-		} else if (results[0].endsWith(".csv")) {
+		} else if (results[0].endsWith(".csv")) { //$NON-NLS-1$
 			res = importCSV(file.getAbsolutePath(), monitor);
 		} else {
-			return new Status(Status.ERROR, "ch.elexis.privatrechnung", "Unsupported file format");
+			return new Status(Status.ERROR, "ch.elexis.privatrechnung", "Unsupported file format"); //$NON-NLS-1$
 		}
 		if (res.isOK()) {
 
@@ -173,7 +173,7 @@ public class Importer extends ImporterPage {
 				line[7] = TimeTool.END_OF_UNIX_EPOCH;
 			}
 			IQuery<IPrivatLeistung> query = PrivatModelServiceHolder.get().getQuery(IPrivatLeistung.class);
-			query.and("shortname", COMPARATOR.EQUALS, line[1]);
+			query.and("shortname", COMPARATOR.EQUALS, line[1]); //$NON-NLS-1$
 			List<IPrivatLeistung> res = query.execute();
 			IPrivatLeistung lst;
 			if (res.size() > 0) {

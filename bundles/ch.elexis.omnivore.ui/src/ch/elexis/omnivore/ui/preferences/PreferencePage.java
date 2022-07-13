@@ -73,13 +73,13 @@ import ch.elexis.omnivore.ui.jobs.OutsourceUiJob;
 public class PreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public static Logger log = LoggerFactory.getLogger("ch.elexis.omnivore.PreferencePage"); //$NON-NLS-1$
 
-	public static final String USR_COLUMN_WIDTH_SETTINGS = PREFBASE + "/columnwidths";
-	public static final String SAVE_COLUM_WIDTH = PREFBASE + "/savecolwidths";
+	public static final String USR_COLUMN_WIDTH_SETTINGS = PREFBASE + "/columnwidths"; //$NON-NLS-1$
+	public static final String SAVE_COLUM_WIDTH = PREFBASE + "/savecolwidths"; //$NON-NLS-1$
 
-	public static final String USR_SORT_DIRECTION_SETTINGS = PREFBASE + "/sortdirection";
-	public static final String SAVE_SORT_DIRECTION = PREFBASE + "/savesortdirection";
+	public static final String USR_SORT_DIRECTION_SETTINGS = PREFBASE + "/sortdirection"; //$NON-NLS-1$
+	public static final String SAVE_SORT_DIRECTION = PREFBASE + "/savesortdirection"; //$NON-NLS-1$
 
-	public static final String GLOBAL_SHOW_CREATED_IN_INBOX = PREFBASE + "showCreatedInInbox";
+	public static final String GLOBAL_SHOW_CREATED_IN_INBOX = PREFBASE + "showCreatedInInbox"; //$NON-NLS-1$
 
 	private BooleanFieldEditor bStoreFSGlobal;
 	private BooleanFieldEditor bStoreFS;
@@ -252,8 +252,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			// Just to check whether the loop is actually used, even if nothing appears in
 			// the
 			// preference dialog:
-			log.debug(PREF_SRC_PATTERN[i] + " : " + ch.elexis.omnivore.data.Messages.Preferences_SRC_PATTERN);
-			log.debug(PREF_DEST_DIR[i] + " : " + ch.elexis.omnivore.data.Messages.Preferences_DEST_DIR);
+			log.debug(PREF_SRC_PATTERN[i] + " : " + ch.elexis.omnivore.data.Messages.Preferences_SRC_PATTERN); //$NON-NLS-1$
+			log.debug(PREF_DEST_DIR[i] + " : " + ch.elexis.omnivore.data.Messages.Preferences_DEST_DIR); //$NON-NLS-1$
 
 			Group gAutoArchiveRule = new Group(gAutoArchiveRules, SWT.NONE);
 
@@ -278,7 +278,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			// are
 			// needed, or the string representations of i and 1 will both be added...
 
-			log.debug("i {} val {}", i, PREF_SRC_PATTERN[i]);
+			log.debug("i {} val {}", i, PREF_SRC_PATTERN[i]); //$NON-NLS-1$
 			addField(new StringFieldEditor(PREF_SRC_PATTERN[i],
 					ch.elexis.omnivore.data.Messages.Preferences_SRC_PATTERN, gAutoArchiveRule));
 			addField(new DirectoryFieldEditor(PREF_DEST_DIR[i], ch.elexis.omnivore.data.Messages.Preferences_DEST_DIR,
@@ -343,21 +343,21 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			gCotfRule.setLayoutData(gCotfRuleGridLayoutData);
 
 			gCotfRule.setText(Preferences.PREFERENCE_cotf_elements_messages[i]);
-			String prefName = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i] + "_"
+			String prefName = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i] + "_" //$NON-NLS-1$
 					+ Preferences.PREFERENCE_cotf_parameters[1];
-			log.debug("Add  {} val {}", i, prefName);
+			log.debug("Add  {} val {}", i, prefName); //$NON-NLS-1$
 
-			if (Preferences.PREFERENCE_cotf_elements[i].contains("constant")) {
+			if (Preferences.PREFERENCE_cotf_elements[i].contains("constant")) { //$NON-NLS-1$
 				gCotfRuleGridLayoutData.horizontalAlignment = GridData.BEGINNING;
 				gCotfRuleGridLayoutData.verticalAlignment = GridData.BEGINNING;
 				addField(new StringFieldEditor(prefName, StringUtils.EMPTY, 10, gCotfRule));
 			} else {
-				String str0 = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i] + "_"
+				String str0 = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i] + "_" //$NON-NLS-1$
 						+ Preferences.PREFERENCE_cotf_parameters[0];
-				String str2 = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i] + "_"
+				String str2 = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i] + "_" //$NON-NLS-1$
 						+ Preferences.PREFERENCE_cotf_parameters[2];
-				log.debug("{}: keyl {} {} {} {}", i, str0, prefName, str2);
-				log.debug("val {} {} {} {}", Preferences.PREFERENCE_cotf_parameters_messages[0],
+				log.debug("{}: keyl {} {} {} {}", i, str0, prefName, str2); //$NON-NLS-1$
+				log.debug("val {} {} {} {}", Preferences.PREFERENCE_cotf_parameters_messages[0], //$NON-NLS-1$
 						Preferences.PREFERENCE_cotf_parameters_messages[1],
 						Preferences.PREFERENCE_cotf_parameters_messages[2]);
 				addField(
@@ -386,7 +386,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				SelectionDialog dialog = CodeSelectorFactory.getSelectionDialog("Block", getShell(), //$NON-NLS-1$
-						"ignoreErrors");
+						"ignoreErrors"); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					if (dialog.getResult() != null && dialog.getResult().length > 0) {
 						Leistungsblock block = (Leistungsblock) dialog.getResult()[0];

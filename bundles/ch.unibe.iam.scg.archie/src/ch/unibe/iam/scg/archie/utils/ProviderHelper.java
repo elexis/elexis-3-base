@@ -101,7 +101,7 @@ public class ProviderHelper {
 			return method.invoke(provider);
 		} catch (Exception e) {
 			ArchieActivator.LOG.log(
-					"Could not invoke a method for a provider." + StringUtils.LF + "Method: " + method.getName()
+					"Could not invoke a method for a provider." + StringUtils.LF + "Method: " + method.getName() //$NON-NLS-1$ //$NON-NLS-2$
 							+ StringUtils.LF + provider.getClass().getName() + StringUtils.LF + e.getLocalizedMessage(),
 					Log.ERRORS);
 		}

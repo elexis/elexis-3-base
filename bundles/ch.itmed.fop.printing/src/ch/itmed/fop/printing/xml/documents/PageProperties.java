@@ -26,40 +26,40 @@ public final class PageProperties {
 	public static Element setProperties(Document doc, String docName) {
 		IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-		Element page = doc.createElement("Page");
+		Element page = doc.createElement("Page"); //$NON-NLS-1$
 
 		// set default values
-		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 5), "89");
-		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 6), "57");
-		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 7), "0");
-		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 8), "6");
-		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 9), "6");
-		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 10), "6");
-		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 11), "6");
+		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 5), "89"); //$NON-NLS-1$
+		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 6), "57"); //$NON-NLS-1$
+		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 7), "0"); //$NON-NLS-1$
+		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 8), "6"); //$NON-NLS-1$
+		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 9), "6"); //$NON-NLS-1$
+		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 10), "6"); //$NON-NLS-1$
+		settingsStore.setDefault(PreferenceConstants.getDocPreferenceConstant(docName, 11), "6"); //$NON-NLS-1$
 
-		page.setAttribute("pageHeight",
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 5)) + "mm");
-		page.setAttribute("pageWidth",
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 6)) + "mm");
-		page.setAttribute("textOrientation",
+		page.setAttribute("pageHeight", //$NON-NLS-1$
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 5)) + "mm"); //$NON-NLS-1$
+		page.setAttribute("pageWidth", //$NON-NLS-1$
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 6)) + "mm"); //$NON-NLS-1$
+		page.setAttribute("textOrientation", //$NON-NLS-1$
 				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7)));
-		page.setAttribute("marginTop",
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 8)) + "mm");
-		page.setAttribute("marginBottom",
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 9)) + "mm");
-		page.setAttribute("marginLeft",
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 10)) + "mm");
-		page.setAttribute("marginRight",
-				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 11)) + "mm");
+		page.setAttribute("marginTop", //$NON-NLS-1$
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 8)) + "mm"); //$NON-NLS-1$
+		page.setAttribute("marginBottom", //$NON-NLS-1$
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 9)) + "mm"); //$NON-NLS-1$
+		page.setAttribute("marginLeft", //$NON-NLS-1$
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 10)) + "mm"); //$NON-NLS-1$
+		page.setAttribute("marginRight", //$NON-NLS-1$
+				settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 11)) + "mm"); //$NON-NLS-1$
 
 		return page;
 	}
 
 	public static void setCurrentDate(Element page) {
 		LocalDate localDate = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.YYYY").withZone(ZoneId.systemDefault());
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.YYYY").withZone(ZoneId.systemDefault()); //$NON-NLS-1$
 		String currentDate = formatter.format(localDate);
 
-		page.setAttribute("currentDate", currentDate);
+		page.setAttribute("currentDate", currentDate); //$NON-NLS-1$
 	}
 }

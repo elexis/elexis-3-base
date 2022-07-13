@@ -40,7 +40,7 @@ public class HistogramTooltipGenerator extends AbstractCategoryItemLabelGenerato
 	private static final long serialVersionUID = -52348756900309688L;
 
 	/** The default format string. */
-	public static final String DEFAULT_TOOL_TIP_FORMAT_STRING = "({0}, {1}) = {2}";
+	public static final String DEFAULT_TOOL_TIP_FORMAT_STRING = "({0}, {1}) = {2}"; //$NON-NLS-1$
 
 	/**
 	 * @param labelFormat
@@ -55,7 +55,7 @@ public class HistogramTooltipGenerator extends AbstractCategoryItemLabelGenerato
 	 */
 	public String generateToolTip(CategoryDataset dataset, int row, int column) {
 		if (dataset == null) {
-			throw new IllegalArgumentException("Null 'dataset' argument.");
+			throw new IllegalArgumentException("Null 'dataset' argument."); //$NON-NLS-1$
 		}
 		String result = null;
 		Object[] items = createItemArray(dataset, row, column);
@@ -69,7 +69,7 @@ public class HistogramTooltipGenerator extends AbstractCategoryItemLabelGenerato
 	@Override
 	protected Object[] createItemArray(CategoryDataset dataset, int row, int column) {
 		Object[] result = new Object[4];
-		String nullValueString = "-";
+		String nullValueString = "-"; //$NON-NLS-1$
 
 		result[0] = dataset.getRowKey(row).toString();
 		result[1] = dataset.getColumnKey(column).toString();

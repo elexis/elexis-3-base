@@ -22,19 +22,19 @@ public class IcpcModelServiceHolder {
 
 	public static IModelService get() {
 		if (modelService == null) {
-			throw new IllegalStateException("No IModelService available");
+			throw new IllegalStateException("No IModelService available"); //$NON-NLS-1$
 		}
 		return modelService;
 	}
 
 	public static List<IcpcCode> loadAllFromComponent(String chapter, String component, boolean order) {
 		IQuery<IcpcCode> query = get().getQuery(IcpcCode.class);
-		query.and("component", COMPARATOR.EQUALS, component.substring(0, 1));
+		query.and("component", COMPARATOR.EQUALS, component.substring(0, 1)); //$NON-NLS-1$
 		query.startGroup();
-		query.and("ID", COMPARATOR.LIKE, "*%");
-		query.or("ID", COMPARATOR.LIKE, chapter.substring(0, 1) + "%");
+		query.and("ID", COMPARATOR.LIKE, "*%"); //$NON-NLS-1$ //$NON-NLS-2$
+		query.or("ID", COMPARATOR.LIKE, chapter.substring(0, 1) + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 		query.andJoinGroups();
-		query.orderBy("ID", order ? ORDER.ASC : ORDER.DESC);
+		query.orderBy("ID", order ? ORDER.ASC : ORDER.DESC); //$NON-NLS-1$
 		return query.execute();
 	}
 }

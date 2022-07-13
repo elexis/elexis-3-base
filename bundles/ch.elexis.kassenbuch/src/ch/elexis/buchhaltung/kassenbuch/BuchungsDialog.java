@@ -134,7 +134,7 @@ public class BuchungsDialog extends TitleAreaDialog {
 			}
 			act = new KassenbuchEintrag(liBeleg.getText(), tt.toString(TimeTool.DATE_GER), money, bt, last);
 		} else {
-			act.set(new String[] { "BelegNr", "Datum", "Betrag", "Text" }, liBeleg.getText(),
+			act.set(new String[] { "BelegNr", "Datum", "Betrag", "Text" }, liBeleg.getText(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					tt.toString(TimeTool.DATE_GER), money.getCentsAsString(), text.getText());
 			KassenbuchEintrag.recalc();
 		}

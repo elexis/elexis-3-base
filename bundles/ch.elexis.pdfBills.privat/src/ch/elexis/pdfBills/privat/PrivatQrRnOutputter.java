@@ -67,42 +67,42 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
 public class PrivatQrRnOutputter implements IRnOutputter {
-	public static final String PDFDIR = "pdfdir";
-	public static final String XMLDIR = "xmldir";
+	public static final String PDFDIR = "pdfdir"; //$NON-NLS-1$
+	public static final String XMLDIR = "xmldir"; //$NON-NLS-1$
 
-	public static final String CFG_ROOT = "qrpdf-output/";
-	public static final String CFG_ROOT_PRIVAT = "privatqrpdf-output/";
+	public static final String CFG_ROOT = "qrpdf-output/"; //$NON-NLS-1$
+	public static final String CFG_ROOT_PRIVAT = "privatqrpdf-output/"; //$NON-NLS-1$
 
-	public static final String PLUGIN_ID = "ch.elexis.pdfBills.privat";
-	public static final String CFG_MARGINLEFT = "margin.left";
-	public static final String CFG_MARGINRIGHT = "margin.right";
-	public static final String CFG_MARGINTOP = "margin.top";
-	public static final String CFG_MARGINBOTTOM = "margin.bottom";
-	public static final String CFG_BESR_MARGIN_VERTICAL = "margin.besr.vertical";
-	public static final String CFG_BESR_MARGIN_HORIZONTAL = "margin.besr.horizontal";
+	public static final String PLUGIN_ID = "ch.elexis.pdfBills.privat"; //$NON-NLS-1$
+	public static final String CFG_MARGINLEFT = "margin.left"; //$NON-NLS-1$
+	public static final String CFG_MARGINRIGHT = "margin.right"; //$NON-NLS-1$
+	public static final String CFG_MARGINTOP = "margin.top"; //$NON-NLS-1$
+	public static final String CFG_MARGINBOTTOM = "margin.bottom"; //$NON-NLS-1$
+	public static final String CFG_BESR_MARGIN_VERTICAL = "margin.besr.vertical"; //$NON-NLS-1$
+	public static final String CFG_BESR_MARGIN_HORIZONTAL = "margin.besr.horizontal"; //$NON-NLS-1$
 
-	public static final String CFG_ESR_HEADER_1 = CFG_ROOT + "esr.header.line1";
-	public static final String CFG_ESR_HEADER_2 = CFG_ROOT + "esr.header.line2";
+	public static final String CFG_ESR_HEADER_1 = CFG_ROOT + "esr.header.line1"; //$NON-NLS-1$
+	public static final String CFG_ESR_HEADER_2 = CFG_ROOT + "esr.header.line2"; //$NON-NLS-1$
 
-	public static final String CFG_ESR_REMINDERDAYS_M2 = CFG_ROOT + "esr.reminderdays.m2";
-	public static final String CFG_ESR_REMINDERDAYS_M3 = CFG_ROOT + "esr.reminderdays.m3";
+	public static final String CFG_ESR_REMINDERDAYS_M2 = CFG_ROOT + "esr.reminderdays.m2"; //$NON-NLS-1$
+	public static final String CFG_ESR_REMINDERDAYS_M3 = CFG_ROOT + "esr.reminderdays.m3"; //$NON-NLS-1$
 
-	public static final String CFG_PRINT_DIRECT = CFG_ROOT + "print.direct";
+	public static final String CFG_PRINT_DIRECT = CFG_ROOT + "print.direct"; //$NON-NLS-1$
 
-	public static final String CFG_PRINT_PRINTER = CFG_ROOT + "print.printer";
-	public static final String CFG_PRINT_TRAY = CFG_ROOT + "print.tray";
+	public static final String CFG_PRINT_PRINTER = CFG_ROOT + "print.printer"; //$NON-NLS-1$
+	public static final String CFG_PRINT_TRAY = CFG_ROOT + "print.tray"; //$NON-NLS-1$
 
-	public static final String CFG_ESR_PRINT_PRINTER = CFG_ROOT + "esr.print.printer";
-	public static final String CFG_ESR_PRINT_TRAY = CFG_ROOT + "esr.print.tray";
+	public static final String CFG_ESR_PRINT_PRINTER = CFG_ROOT + "esr.print.printer"; //$NON-NLS-1$
+	public static final String CFG_ESR_PRINT_TRAY = CFG_ROOT + "esr.print.tray"; //$NON-NLS-1$
 
-	public static final String CFG_PRINT_COMMAND = CFG_ROOT + "print.command";
-	public static final String CFG_PRINT_USE_SCRIPT = CFG_ROOT + "print.usescript";
+	public static final String CFG_PRINT_COMMAND = CFG_ROOT + "print.command"; //$NON-NLS-1$
+	public static final String CFG_PRINT_USE_SCRIPT = CFG_ROOT + "print.usescript"; //$NON-NLS-1$
 
-	protected static final String CFG_PRINT_BESR = "print.besr";
-	protected static final String CFG_PRINT_RF = "print.rf";
+	protected static final String CFG_PRINT_BESR = "print.besr"; //$NON-NLS-1$
+	protected static final String CFG_PRINT_RF = "print.rf"; //$NON-NLS-1$
 
-	protected static final String CFG_MAIL_CPY = "mail.copy";
-	protected static final String CFG_MAIL_MANDANT_ACCOUNT = "mail.mandant.account";
+	protected static final String CFG_MAIL_CPY = "mail.copy"; //$NON-NLS-1$
+	protected static final String CFG_MAIL_MANDANT_ACCOUNT = "mail.mandant.account"; //$NON-NLS-1$
 
 	private Text tXml;
 	private Text tPdf;
@@ -132,8 +132,8 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
-		final File rsc = new File(PlatformHelper.getBasePath(PLUGIN_ID), "rsc");
-		final StringJoiner mailErrors = new StringJoiner("\n- ", "- ", StringUtils.EMPTY);
+		final File rsc = new File(PlatformHelper.getBasePath(PLUGIN_ID), "rsc"); //$NON-NLS-1$
+		final StringJoiner mailErrors = new StringJoiner("\n- ", "- ", StringUtils.EMPTY); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(), new IRunnableWithProgress() {
 				public void run(final IProgressMonitor monitor) {
@@ -148,10 +148,10 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 							continue;
 						}
 						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT_PRIVAT) + File.separator + rn.getNr()
-								+ ".xml";
+								+ ".xml"; //$NON-NLS-1$
 						try {
 							FileOutputStream fout = new FileOutputStream(fname);
-							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8");
+							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8"); //$NON-NLS-1$
 							XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
 							xout.output(dRn, cout);
 							cout.close();
@@ -165,11 +165,11 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 							// lower 4.5
 							EsrType outputEsrType = ex.getEsrTypeOrFallback(
 									CoreModelServiceHolder.get().load(rn.getId(), IInvoice.class).get());
-							if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) {
+							if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) { //$NON-NLS-1$
 								epdf.printQrBill(rsc);
 							} else {
-								LoggerFactory.getLogger(getClass()).warn("Fallback to ESR9 for xml version ["
-										+ epdf.getBillVersion() + "] and esrType [" + outputEsrType + "]");
+								LoggerFactory.getLogger(getClass()).warn("Fallback to ESR9 for xml version [" //$NON-NLS-1$
+										+ epdf.getBillVersion() + "] and esrType [" + outputEsrType + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 								epdf.printBill(rsc);
 							}
 							if (modifyInvoiceState) {
@@ -202,13 +202,13 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 							ExHandler.handle(e);
 							SWTHelper.showError("Fehler beim Rechnungsdruck",
 									"Bei der Ausgabe ist folgender Fehler aufgetreten.\n\n" + e.getMessage());
-							rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: " + fname);
+							rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: " + fname); //$NON-NLS-1$
 							continue;
 						} catch (Exception e1) {
 							ExHandler.handle(e1);
 							SWTHelper.showError("Fehler beim Rechnungsdruck",
 									"Konnte Datei " + fname + " nicht schreiben");
-							rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: " + fname);
+							rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: " + fname); //$NON-NLS-1$
 							continue;
 						}
 						monitor.worked(1);
@@ -239,13 +239,13 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 				protected void buttonPressed(int buttonId) {
 					if (buttonId == 1) {
 						try {
-							Path tmpFile = Files.createTempFile("error_", "rechnung.txt");
+							Path tmpFile = Files.createTempFile("error_", "rechnung.txt"); //$NON-NLS-1$ //$NON-NLS-2$
 							try (FileWriter fo = new FileWriter(tmpFile.toFile())) {
 								fo.write(mailErrors.toString());
 							}
 							Program.launch(tmpFile.toString());
 						} catch (IOException e) {
-							LoggerFactory.getLogger(getClass()).error("Error writing tmp file", e);
+							LoggerFactory.getLogger(getClass()).error("Error writing tmp file", e); //$NON-NLS-1$
 						}
 					}
 					super.buttonPressed(buttonId);
@@ -257,7 +257,7 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 	}
 
 	private void initSelectedFromProperties(Properties props) {
-		LoggerFactory.getLogger(getClass()).warn("Initializing with properties " + props.toString());
+		LoggerFactory.getLogger(getClass()).warn("Initializing with properties " + props.toString()); //$NON-NLS-1$
 		modifyInvoiceState = true;
 		if (props.get(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_MODIFY_INVOICESTATE);
@@ -306,19 +306,19 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 		try {
 			String attachmentsString = getAttachmentsString(printed);
 			Command sendMailCommand = commandService
-					.getCommand("ch.elexis.core.mail.ui.sendMailNoUi");
+					.getCommand("ch.elexis.core.mail.ui.sendMailNoUi"); //$NON-NLS-1$
 
 			HashMap<String, String> params = new HashMap<String, String>();
 			String accountid = ConfigServiceHolder.getGlobal(PrivatQrRnOutputter.CFG_ROOT
-					+ PrivatQrRnOutputter.CFG_MAIL_MANDANT_ACCOUNT + "/" + rechnung.getMandant().getId(), null);
+					+ PrivatQrRnOutputter.CFG_MAIL_MANDANT_ACCOUNT + "/" + rechnung.getMandant().getId(), null); //$NON-NLS-1$
 			if (accountid != null) {
-				params.put("ch.elexis.core.mail.ui.sendMailNoUi.accountid", accountid);
+				params.put("ch.elexis.core.mail.ui.sendMailNoUi.accountid", accountid); //$NON-NLS-1$
 			}
-			params.put("ch.elexis.core.mail.ui.sendMailNoUi.mandant", rechnung.getMandant().getId());
-			params.put("ch.elexis.core.mail.ui.sendMailNoUi.to", receiver.getMailAddress());
-			params.put("ch.elexis.core.mail.ui.sendMailNoUi.attachments", attachmentsString);
-			params.put("ch.elexis.core.mail.ui.sendMailNoUi.subject", "Rechnungskopie vom " + rechnung.getDatumRn());
-			params.put("ch.elexis.core.mail.ui.sendMailNoUi.text",
+			params.put("ch.elexis.core.mail.ui.sendMailNoUi.mandant", rechnung.getMandant().getId()); //$NON-NLS-1$
+			params.put("ch.elexis.core.mail.ui.sendMailNoUi.to", receiver.getMailAddress()); //$NON-NLS-1$
+			params.put("ch.elexis.core.mail.ui.sendMailNoUi.attachments", attachmentsString); //$NON-NLS-1$
+			params.put("ch.elexis.core.mail.ui.sendMailNoUi.subject", "Rechnungskopie vom " + rechnung.getDatumRn()); //$NON-NLS-1$
+			params.put("ch.elexis.core.mail.ui.sendMailNoUi.text", //$NON-NLS-1$
 					"Anbei finden Sie eine Kopie der Rechnung vom " + rechnung.getDatumRn()
 							+ " für Ihre Unterlagen.\n\nBeste Grüsse\n" + rechnung.getMandant().get(Person.TITLE)
 							+ StringUtils.SPACE + rechnung.getMandant().getVorname() + StringUtils.SPACE
@@ -328,7 +328,7 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 			return (String) PlatformUI.getWorkbench().getService(IHandlerService.class)
 					.executeCommand(parametrizedCommmand, null);
 		} catch (Exception me) {
-			throw new RuntimeException("ch.elexis.core.mail.ui.sendMailNoUi not found", me);
+			throw new RuntimeException("ch.elexis.core.mail.ui.sendMailNoUi not found", me); //$NON-NLS-1$
 		}
 	}
 
@@ -336,7 +336,7 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 		StringBuilder sb = new StringBuilder();
 		for (File file : attachments) {
 			if (sb.length() > 0) {
-				sb.append(":::");
+				sb.append(":::"); //$NON-NLS-1$
 			}
 			sb.append(file.getAbsolutePath());
 		}

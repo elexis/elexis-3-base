@@ -90,9 +90,9 @@ public class ConsultationBuilder {
 
 		Query<Prescription> qre = new Query<>(Prescription.class);
 		qre.add(Prescription.FLD_DATE_UNTIL, Query.GREATER_OR_EQUAL,
-				ExportFireHandler.getTtFrom().toString(TimeTool.DATE_COMPACT) + "%");
+				ExportFireHandler.getTtFrom().toString(TimeTool.DATE_COMPACT) + "%"); //$NON-NLS-1$
 		qre.add(Prescription.FLD_DATE_UNTIL, Query.LESS_OR_EQUAL,
-				ExportFireHandler.getTtTo().toString(TimeTool.DATE_COMPACT) + "%");
+				ExportFireHandler.getTtTo().toString(TimeTool.DATE_COMPACT) + "%"); //$NON-NLS-1$
 		List<Prescription> execute = qre.execute();
 
 		for (Prescription prescription : execute) {
@@ -126,12 +126,12 @@ public class ConsultationBuilder {
 					TConsultation pseudoTConsultation = fireConfig.getFactory().createTConsultation();
 					BigInteger patId = fireConfig.getPatId(Patient.load(patientId));
 					pseudoTConsultation.setPatId(patId);
-					pseudoTConsultation.setConsType("7");
+					pseudoTConsultation.setConsType("7"); //$NON-NLS-1$
 					try {
 						pseudoTConsultation
 								.setDate(XmlUtil.getXmlGregorianCalendar(new TimeTool(entryForPatientByDate.getKey())));
 					} catch (DatatypeConfigurationException e) {
-						LoggerFactory.getLogger(ConsultationBuilder.class).warn("date error", e);
+						LoggerFactory.getLogger(ConsultationBuilder.class).warn("date error", e); //$NON-NLS-1$
 					}
 					Medis medis = new Medis();
 					Set<TMedi> entries = entryForPatientByDate.getValue();
@@ -162,8 +162,8 @@ public class ConsultationBuilder {
 		Map<String, Set<TMedi>> group = new HashMap<>();
 		for (TMedi tMedi : unreferencedStoppedMedis) {
 			String date = StringUtils.EMPTY + tMedi.getEndDate().getYear()
-					+ String.format("%02d", tMedi.getEndDate().getMonth())
-					+ String.format("%02d", tMedi.getEndDate().getDay());
+					+ String.format("%02d", tMedi.getEndDate().getMonth()) //$NON-NLS-1$
+					+ String.format("%02d", tMedi.getEndDate().getDay()); //$NON-NLS-1$
 			Set<TMedi> dateSet = group.get(date);
 			if (dateSet == null) {
 				dateSet = new HashSet<>();

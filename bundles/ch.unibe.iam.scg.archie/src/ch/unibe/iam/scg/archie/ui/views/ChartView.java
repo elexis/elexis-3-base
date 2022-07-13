@@ -36,7 +36,7 @@ public class ChartView extends ViewPart {
 	/**
 	 * ID of this view.
 	 */
-	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.views.ChartView";
+	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.views.ChartView"; //$NON-NLS-1$
 
 	/**
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -62,7 +62,7 @@ public class ChartView extends ViewPart {
 	public void setDirty() {
 		// this function has to be called only when the view already exists
 		if (this.container == null) {
-			throw new IllegalStateException("The ChartView can only be set dirty if already created.");
+			throw new IllegalStateException("The ChartView can only be set dirty if already created."); //$NON-NLS-1$
 		}
 
 		// clean children of this container

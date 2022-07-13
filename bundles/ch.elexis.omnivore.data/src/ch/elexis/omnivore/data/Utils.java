@@ -62,9 +62,9 @@ public class Utils {
 				if ((SrcPattern != null) && (DestDir != null)
 						&& ((SrcPattern != StringUtils.EMPTY || DestDir != StringUtils.EMPTY))) {
 					if (file.getAbsolutePath().contains(SrcPattern)) {
-						log.debug("SrcPattern {} found in file.getAbsolutePath() pos {}", SrcPattern, i);
+						log.debug("SrcPattern {} found in file.getAbsolutePath() pos {}", SrcPattern, i); //$NON-NLS-1$
 						if (DestDir == StringUtils.EMPTY) {
-							log.debug("DestDir is empty. No more rules will be evaluated for this file. Returning.");
+							log.debug("DestDir is empty. No more rules will be evaluated for this file. Returning."); //$NON-NLS-1$
 						}
 						newFile = VirtualFilesystemServiceHolder.get().of(DestDir);
 						if (newFile.isDirectory()) {
@@ -72,28 +72,28 @@ public class Utils {
 						}
 
 						if (newFile.isDirectory()) {
-							log.debug("new File {} is a directory ; archiveFile not attempted",
+							log.debug("new File {} is a directory ; archiveFile not attempted", //$NON-NLS-1$
 									newFile.getAbsolutePath());
 							SWTHelper.showError(Messages.DocHandle_MoveErrorCaption, MessageFormat
 									.format(Messages.DocHandle_MoveErrorDestIsDir, DestDir, file.getName()));
 							return null;
 						} else {
 							if (!newFile.isDirectory()) {
-								log.debug("new File {} already exits ; archiveFile not attempted",
+								log.debug("new File {} already exits ; archiveFile not attempted", //$NON-NLS-1$
 										newFile.getAbsolutePath());
 								SWTHelper.showError(Messages.DocHandle_MoveErrorCaption, MessageFormat
 										.format(Messages.DocHandle_MoveErrorDestIsFile, DestDir, file.getName()));
 								return null;
 							} else {
-								log.debug("Will move file {} {} to: {} {}", file.getAbsolutePath(), file.exists(),
+								log.debug("Will move file {} {} to: {} {}", file.getAbsolutePath(), file.exists(), //$NON-NLS-1$
 										newFile.getAbsolutePath(), newFile.exists());
 								IVirtualFilesystemHandle moveTo = file.moveTo(newFile);
 								if (moveTo != null) {
-									log.debug("Archived incoming file {} to: {}", file.getAbsolutePath(),
+									log.debug("Archived incoming file {} to: {}", file.getAbsolutePath(), //$NON-NLS-1$
 											newFile.getAbsolutePath());
 									return moveTo;
 								} else {
-									log.debug("Failed archiveFile incoming file {} to: {}", file.getAbsolutePath(),
+									log.debug("Failed archiveFile incoming file {} to: {}", file.getAbsolutePath(), //$NON-NLS-1$
 											newFile.getAbsolutePath());
 									// SWTHelper.showError(Messages.DocHandle_MoveErrorCaption,Messages.DocHandle_MoveError);
 									return null;
@@ -107,15 +107,15 @@ public class Utils {
 			ExHandler.handle(throwable);
 			try {
 				if (file != null && newFile != null) {
-					log.debug("Exception while moving file {} {} to: {} {}", file.getAbsolutePath(), file.exists(),
+					log.debug("Exception while moving file {} {} to: {} {}", file.getAbsolutePath(), file.exists(), //$NON-NLS-1$
 							newFile.getAbsolutePath(), newFile.exists());
 				} else {
-					log.debug("Exception while moving file [{}] {} src {} dest {}",
-							(file != null) ? file.getAbsolutePath() : "null",
-							(file != null) ? file.exists() : "invalid", SrcPattern, DestDir);
+					log.debug("Exception while moving file [{}] {} src {} dest {}", //$NON-NLS-1$
+							(file != null) ? file.getAbsolutePath() : "null", //$NON-NLS-1$
+							(file != null) ? file.exists() : "invalid", SrcPattern, DestDir); //$NON-NLS-1$
 				}
 			} catch (IOException e) {
-				log.error("Exception", e);
+				log.error("Exception", e); //$NON-NLS-1$
 			}
 			SWTHelper.showError(Messages.DocHandle_MoveErrorCaption, Messages.DocHandle_MoveError);
 			return null;
@@ -131,24 +131,24 @@ public class Utils {
 	static private String processFileElement(IPreferenceStore preferenceStore, String element_key,
 			String element_data) {
 
-		log.debug("processFileElement: element_key=<{}> data <{}>", element_key, element_data);
+		log.debug("processFileElement: element_key=<{}> data <{}>", element_key, element_data); //$NON-NLS-1$
 		StringBuffer element_data_processed = new StringBuffer();
 		Integer nCotfRules = Preferences.PREFERENCE_cotf_elements.length;
 		for (int i = 0; i < nCotfRules; i++) {
 			if (Preferences.PREFERENCE_cotf_elements[i].equals(element_key)) {
-				if (element_key.contains("constant")) {
+				if (element_key.contains("constant")) { //$NON-NLS-1$
 					String search = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i]
-							+ "_" + Preferences.PREFERENCE_cotf_parameters[1];
+							+ "_" + Preferences.PREFERENCE_cotf_parameters[1]; //$NON-NLS-1$
 					String constant = preferenceStore.getString(search).trim();
-					log.debug("processFileElement: {} returning constant=<{}>", search, constant);
+					log.debug("processFileElement: {} returning constant=<{}>", search, constant); //$NON-NLS-1$
 					if (constant.length() > 0)
-						log.debug("processFileElement: {} returning constant=<{}>", search, constant);
+						log.debug("processFileElement: {} returning constant=<{}>", search, constant); //$NON-NLS-1$
 					return constant;
 				} else {
 					// Shall we return ANY digits at all for this element, and later on: shall we
 					// cut down or extend the processed string to some defined number of digits?
 					String snumId = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i]
-							+ "_" + Preferences.PREFERENCE_cotf_parameters[1];
+							+ "_" + Preferences.PREFERENCE_cotf_parameters[1]; //$NON-NLS-1$
 					String snum_digits = preferenceStore.getString(snumId).trim();
 					// If the num_digits for this element is empty, then return an empty result -
 					// the element is disabled.
@@ -185,18 +185,18 @@ public class Utils {
 					// eeclipse-javadoc:%E2%98%82=ch.elexis.core.data/%5C/usr%5C/lib%5C/jvm%5C/java-8-oracle%5C/jre%5C/lib%5C/rt.jar%3Cjava.util.regex(Matcher.class%E2%98%83Matcher~quoteReplacement~Ljava.lang.String;%E2%98%82java.lang.Stringntered
 					// while importing and partially renaming files
 					String element_data_processed4 = element_data_processed5
-							.replaceAll("_noa[0-9]+\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove
+							.replaceAll("_noa[0-9]+\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove //$NON-NLS-1$
 					// filename remainders like _noa635253160443574060.doc
-					String element_data_processed3 = element_data_processed4.replaceAll("noa[0-9]+\056[a-zA-Z0-9]{0,3}",
+					String element_data_processed3 = element_data_processed4.replaceAll("noa[0-9]+\056[a-zA-Z0-9]{0,3}", //$NON-NLS-1$
 							StringUtils.EMPTY); // remove
 					// filename remainders like noa635253160443574060.doc
 					String element_data_processed2 = element_data_processed3
-							.replaceAll("_omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove filename
+							.replaceAll("_omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove filename //$NON-NLS-1$
 																										// remainders
 																										// like
 					// _omni_635253160443574060_vore.pdf
 					String element_data_processed1 = element_data_processed2
-							.replaceAll("omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove filename
+							.replaceAll("omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove filename //$NON-NLS-1$
 																									// remainders like
 					// omni_635253160443574060_vore.pdf
 
@@ -211,7 +211,7 @@ public class Utils {
 					// Note: We could also check whether the num_digits has been given. Instead, I
 					// use the default max num of digits if not.
 					String leadId = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i]
-							+ "_" + Preferences.PREFERENCE_cotf_parameters[0];
+							+ "_" + Preferences.PREFERENCE_cotf_parameters[0]; //$NON-NLS-1$
 					String lead_fill_char = preferenceStore.getString(leadId).trim();
 
 					if ((lead_fill_char != null) && (lead_fill_char.length() > 0)
@@ -226,17 +226,17 @@ public class Utils {
 					// If an add trailing character is given, add one (typically, this would be a
 					// space or an underscore)
 					String trailId = PREFBASE + Preferences.PREFERENCE_COTF + Preferences.PREFERENCE_cotf_elements[i]
-							+ "_" + Preferences.PREFERENCE_cotf_parameters[2];
+							+ "_" + Preferences.PREFERENCE_cotf_parameters[2]; //$NON-NLS-1$
 					String add_trail_char = preferenceStore.getString(trailId).trim();
 
 					if ((add_trail_char != null) && (add_trail_char.length() > 0)) {
 						add_trail_char = add_trail_char.substring(0, 1);
 						element_data_processed.append(add_trail_char);
 					}
-					log.debug("{} {} {} {} <{}> {} <{>}", i, snumId, snum_digits, leadId, lead_fill_char, trailId,
+					log.debug("{} {} {} {} <{}> {} <{>}", i, snumId, snum_digits, leadId, lead_fill_char, trailId, //$NON-NLS-1$
 							add_trail_char);
 				}
-				log.debug("processFileElement: element_data_processed=<{}>", element_data_processed);
+				log.debug("processFileElement: element_data_processed=<{}>", element_data_processed); //$NON-NLS-1$
 
 				return element_data_processed.toString(); // This also breaks the for loop
 			} // if ... equals(element_key)
@@ -263,23 +263,23 @@ public class Utils {
 
 	public static String createNiceFileName(IDocumentHandle dh) {
 		StringBuffer tmp = new StringBuffer();
-		tmp.append(getFileElement("constant1", StringUtils.EMPTY));
-		tmp.append(getFileElement("PID", dh.getPatient().getPatientNr())); // getPatient() liefert in etwa:
+		tmp.append(getFileElement("constant1", StringUtils.EMPTY)); //$NON-NLS-1$
+		tmp.append(getFileElement("PID", dh.getPatient().getPatientNr())); // getPatient() liefert in etwa: //$NON-NLS-1$
 																			// ch.elexis.com@1234567;
 																			// getPatient().getId() eine DB-ID;
 																			// getPatient().getKuerzel() die
 																			// Patientennummer.
-		tmp.append(getFileElement("fn", dh.getPatient().getLastName()));
-		tmp.append(getFileElement("gn", dh.getPatient().getFirstName()));
-		tmp.append(getFileElement("dob",
-				dh.getPatient().getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
+		tmp.append(getFileElement("fn", dh.getPatient().getLastName())); //$NON-NLS-1$
+		tmp.append(getFileElement("gn", dh.getPatient().getFirstName())); //$NON-NLS-1$
+		tmp.append(getFileElement("dob", //$NON-NLS-1$
+				dh.getPatient().getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))); //$NON-NLS-1$
 
-		tmp.append(getFileElement("dt", dh.getTitle())); // not more than 80 characters, laut javadoc
-		tmp.append(getFileElement("dk", dh.getKeywords()));
+		tmp.append(getFileElement("dt", dh.getTitle())); // not more than 80 characters, laut javadoc //$NON-NLS-1$
+		tmp.append(getFileElement("dk", dh.getKeywords())); //$NON-NLS-1$
 		// Da könnten auch noch Felder wie die Document Create Time etc. rein - siehe
 		// auch unten, die Methoden getPatient() etc.
 
-		tmp.append(getFileElement("dguid", dh.getId()));
+		tmp.append(getFileElement("dguid", dh.getId())); //$NON-NLS-1$
 
 		// N.B.: We may NOT REALLY assume for sure that another filename, derived from a
 		// createTempFile() result, where the random portion would be moved forward in
@@ -319,9 +319,9 @@ public class Utils {
 		SecureRandom random = new SecureRandom();
 		int needed_bits = (int) Math
 				.round(Math.ceil(Math.log(Preferences.nPreferences_cotf_element_digits_max) / Math.log(2)));
-		tmp.append(getFileElement("random", new BigInteger(needed_bits, random).toString()));
+		tmp.append(getFileElement("random", new BigInteger(needed_bits, random).toString())); //$NON-NLS-1$
 
-		tmp.append(getFileElement("constant2", StringUtils.EMPTY));
+		tmp.append(getFileElement("constant2", StringUtils.EMPTY)); //$NON-NLS-1$
 		return tmp.toString();
 	}
 
@@ -335,8 +335,8 @@ public class Utils {
 		String fileExtension = null;
 		String mimeType = documentHandle.getMimeType();
 		// somewhen we might event feature correct mimetypes in the db ...
-		if ("pdf".equalsIgnoreCase(mimeType)) {
-			mimeType = "application/pdf";
+		if ("pdf".equalsIgnoreCase(mimeType)) { //$NON-NLS-1$
+			mimeType = "application/pdf"; //$NON-NLS-1$
 		}
 		try {
 			MimeType docMimeType = new MimeType(mimeType);
@@ -348,8 +348,8 @@ public class Utils {
 				fileExtension = FileTool.getExtension(documentHandle.getTitle());
 			}
 
-			if (fileExtension == null && mimeType != null && !mimeType.contains(".") && !mimeType.contains(".")
-					&& !mimeType.contains("/")) {
+			if (fileExtension == null && mimeType != null && !mimeType.contains(".") && !mimeType.contains(".") //$NON-NLS-1$ //$NON-NLS-2$
+					&& !mimeType.contains("/")) { //$NON-NLS-1$
 				fileExtension = mimeType;
 			}
 		}
@@ -361,23 +361,23 @@ public class Utils {
 		String config_temp_filename = Utils.createNiceFileName(documentHandle);
 		File temp = null;
 		try {
-			Path tmpDir = Files.createTempDirectory("elexis");
+			Path tmpDir = Files.createTempDirectory("elexis"); //$NON-NLS-1$
 			if (config_temp_filename.length() > 0) {
-				temp = new File(tmpDir.toString(), config_temp_filename + "." + fileExtension);
+				temp = new File(tmpDir.toString(), config_temp_filename + "." + fileExtension); //$NON-NLS-1$
 
 			} else {
 				// use title if given
 				if (title != null && !title.isEmpty()) {
 					// Remove all characters that shall not appear in the generated filename
 					String cleanTitle = title
-							.replaceAll(java.util.regex.Matcher.quoteReplacement(Preferences.cotf_unwanted_chars), "_");
-					if (!cleanTitle.toLowerCase().contains("." + fileExtension.toLowerCase())) {
-						temp = new File(tmpDir.toString(), cleanTitle + "." + fileExtension);
+							.replaceAll(java.util.regex.Matcher.quoteReplacement(Preferences.cotf_unwanted_chars), "_"); //$NON-NLS-1$
+					if (!cleanTitle.toLowerCase().contains("." + fileExtension.toLowerCase())) { //$NON-NLS-1$
+						temp = new File(tmpDir.toString(), cleanTitle + "." + fileExtension); //$NON-NLS-1$
 					} else {
 						temp = new File(tmpDir.toString(), cleanTitle);
 					}
 				} else {
-					temp = Files.createTempFile(tmpDir, "omni_", "_vore." + fileExtension).toFile();
+					temp = Files.createTempFile(tmpDir, "omni_", "_vore." + fileExtension).toFile(); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			tmpDir.toFile().deleteOnExit();
@@ -391,12 +391,12 @@ public class Utils {
 			try (FileOutputStream fos = new FileOutputStream(temp)) {
 				fos.write(b);
 			}
-			log.debug("createTemporaryFile {} size {} ext {} ", temp.getAbsolutePath(), Files.size(temp.toPath()),
+			log.debug("createTemporaryFile {} size {} ext {} ", temp.getAbsolutePath(), Files.size(temp.toPath()), //$NON-NLS-1$
 					fileExtension);
 		} catch (FileNotFoundException e) {
-			log.warn("File not found " + e);
+			log.warn("File not found " + e); //$NON-NLS-1$
 		} catch (IOException e) {
-			log.warn("Error creating file " + e);
+			log.warn("Error creating file " + e); //$NON-NLS-1$
 		}
 
 		return temp;

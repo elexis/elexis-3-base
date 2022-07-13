@@ -22,9 +22,9 @@ public class ElexisTypeMap {
 	private static final HashMap<String, Class<? extends EntityWithId>> stsToClassMap;
 	private static final HashMap<Class<? extends EntityWithId>, String> classToStsMap;
 
-	public static final String TYPE_ICPCCODE = "ch.elexis.icpc.IcpcCode";
-	public static final String TYPE_ICPCENCOUNTER = "ch.elexis.icpc.Encounter";
-	public static final String TYPE_ICPCEPISODE = "ch.elexis.icpc.Episode";
+	public static final String TYPE_ICPCCODE = "ch.elexis.icpc.IcpcCode"; //$NON-NLS-1$
+	public static final String TYPE_ICPCENCOUNTER = "ch.elexis.icpc.Encounter"; //$NON-NLS-1$
+	public static final String TYPE_ICPCEPISODE = "ch.elexis.icpc.Episode"; //$NON-NLS-1$
 
 	static {
 		stsToClassMap = new HashMap<String, Class<? extends EntityWithId>>();

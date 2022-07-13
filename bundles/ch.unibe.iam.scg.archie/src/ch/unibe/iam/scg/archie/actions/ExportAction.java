@@ -48,7 +48,7 @@ public class ExportAction extends Action {
 	/**
 	 * Default extensions for CSV exports.
 	 */
-	private static String DEFAULT_EXTENSION = "csv";
+	private static String DEFAULT_EXTENSION = "csv"; //$NON-NLS-1$
 
 	/**
 	 * Determines whether the files are allowed to have more than one _ spacers.
@@ -61,7 +61,7 @@ public class ExportAction extends Action {
 
 		this.setText(Messages.ACTION_EXPORT_TITLE);
 		this.setToolTipText(Messages.ACTION_EXPORT_DESCRIPTION);
-		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/page_excel.png"));
+		this.setImageDescriptor(ArchieActivator.getImageDescriptor("icons/page_excel.png")); //$NON-NLS-1$
 
 		// disabled by default
 		this.setEnabled(false);
@@ -85,12 +85,12 @@ public class ExportAction extends Action {
 		final FileDialog chooser = new FileDialog(this.view.getSite().getShell(), SWT.SAVE);
 
 		// set default extension for the exported file
-		chooser.setFilterExtensions(new String[] { "*." + ExportAction.DEFAULT_EXTENSION, "*.*" });
+		chooser.setFilterExtensions(new String[] { "*." + ExportAction.DEFAULT_EXTENSION, "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
 		chooser.setFilterNames(new String[] { "CSV Files", "All Files" });
 
 		// get a default name based on the current date
 		final String name = this.getNameSuggestion().toLowerCase();
-		chooser.setFileName(name + "." + ExportAction.DEFAULT_EXTENSION);
+		chooser.setFileName(name + "." + ExportAction.DEFAULT_EXTENSION); //$NON-NLS-1$
 
 		final String fileName = chooser.open();
 		if (fileName != null) {
@@ -107,7 +107,7 @@ public class ExportAction extends Action {
 		try {
 			CSVWriter.writeFile(ProviderManager.getInstance().getProvider(), fileName);
 		} catch (IOException e) {
-			ArchieActivator.LOG.log("Could not save the given file." + StringUtils.LF + e.getLocalizedMessage(),
+			ArchieActivator.LOG.log("Could not save the given file." + StringUtils.LF + e.getLocalizedMessage(), //$NON-NLS-1$
 					Log.ERRORS);
 			SWTHelper.showError(Messages.ERROR_WRITING_FILE_TITLE, Messages.ERROR_WRITING_FILE);
 		}
@@ -125,8 +125,8 @@ public class ExportAction extends Action {
 				ExportAction.SINGLE_SPACED_FILES);
 
 		// append today's date
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		name += "_" + format.format(Calendar.getInstance().getTime());
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd"); //$NON-NLS-1$
+		name += "_" + format.format(Calendar.getInstance().getTime()); //$NON-NLS-1$
 		return name;
 	}
 }

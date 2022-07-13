@@ -224,12 +224,12 @@ public class ProviderChartFactory {
 				if (cell instanceof Money) {
 					value = ((Money) cell).doubleValue();
 				} else {
-					String strValue = cell.toString().replaceAll(",", ".");
+					String strValue = cell.toString().replaceAll(",", "."); //$NON-NLS-1$ //$NON-NLS-2$
 					if (strValue != null) {
 						try {
 							value = Double.parseDouble(strValue);
 						} catch (NumberFormatException e) {
-							LoggerFactory.getLogger(getClass()).warn("Could not parse [" + strValue + "] as double");
+							LoggerFactory.getLogger(getClass()).warn("Could not parse [" + strValue + "] as double"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 				}

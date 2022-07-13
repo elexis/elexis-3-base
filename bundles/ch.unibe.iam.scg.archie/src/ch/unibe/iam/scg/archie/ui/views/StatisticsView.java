@@ -47,7 +47,7 @@ public class StatisticsView extends ViewPart {
 	/**
 	 * ID of this view.
 	 */
-	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.views.StatisticsView";
+	public static final String ID = ArchieActivator.PLUGIN_ID + ".ui.views.StatisticsView"; //$NON-NLS-1$
 
 	private Composite container;
 

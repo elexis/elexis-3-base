@@ -25,10 +25,10 @@ import ch.elexis.core.model.RoleConstants;
  */
 public class ACLContributor implements IACLContributor {
 
-	public static ACE KB = new ACE(ACE.ACE_ROOT, "Kassenbuch", "Kassenbuch");
-	public static final ACE BOOKING = new ACE(KB, "Buchung", "Buchung");
-	public static final ACE STORNO = new ACE(KB, "Storno", "Storno");
-	public static final ACE VIEW = new ACE(KB, "Display", "Anzeigen");
+	public static ACE KB = new ACE(ACE.ACE_ROOT, "Kassenbuch", "Kassenbuch"); //$NON-NLS-1$
+	public static final ACE BOOKING = new ACE(KB, "Buchung", "Buchung"); //$NON-NLS-1$
+	public static final ACE STORNO = new ACE(KB, "Storno", "Storno"); //$NON-NLS-1$
+	public static final ACE VIEW = new ACE(KB, "Display", "Anzeigen"); //$NON-NLS-1$
 
 	public ACE[] getACL() {
 		return new ACE[] { KB, BOOKING, STORNO, VIEW };

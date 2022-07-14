@@ -29,7 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import at.medevit.medelexis.text.msword.Messages;
 import at.medevit.medelexis.text.msword.plugin.util.CommunicationFile;
 import at.medevit.medelexis.text.msword.plugin.util.CommunicationFile.FileType;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Query;
 
@@ -70,10 +70,10 @@ public class MSWordPreferencePage extends PreferencePage implements IWorkbenchPr
 		spellingBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.userCfg.set(MSWORD_SPELLING_CHECK, spellingBtn.getSelection());
+				ConfigServiceHolder.setUser(MSWORD_SPELLING_CHECK, spellingBtn.getSelection());
 			}
 		});
-		spellingBtn.setSelection(CoreHub.userCfg.get(MSWORD_SPELLING_CHECK, false));
+		spellingBtn.setSelection(ConfigServiceHolder.getUser(MSWORD_SPELLING_CHECK, false));
 
 		lbl = new Label(content, SWT.NONE);
 		lbl.setText("Dokumente ausserhalb von Elexis öffnen");
@@ -82,10 +82,10 @@ public class MSWordPreferencePage extends PreferencePage implements IWorkbenchPr
 		externBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.userCfg.set(MSWORD_OPEN_EXTERN, externBtn.getSelection());
+				ConfigServiceHolder.setUser(MSWORD_OPEN_EXTERN, externBtn.getSelection());
 			}
 		});
-		externBtn.setSelection(CoreHub.userCfg.get(MSWORD_OPEN_EXTERN, false));
+		externBtn.setSelection(ConfigServiceHolder.getUser(MSWORD_OPEN_EXTERN, false));
 
 		lbl = new Label(content, SWT.NONE);
 		lbl.setText(Messages.MSWordPreferencePage_ConvertAll);

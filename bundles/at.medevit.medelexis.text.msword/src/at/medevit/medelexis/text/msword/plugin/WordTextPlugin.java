@@ -4,7 +4,6 @@
  ******************************************************************************/
 package at.medevit.medelexis.text.msword.plugin;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Status;
@@ -69,9 +69,9 @@ import at.medevit.medelexis.text.msword.plugin.util.OleWordTable;
 import at.medevit.medelexis.text.msword.plugin.util.OleWordTextFrame;
 import at.medevit.medelexis.text.msword.plugin.util.OleWrapperManager;
 import at.medevit.medelexis.text.msword.ui.MSWordPreferencePage;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.data.status.ElexisStatus;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.MimeTypeUtil;
@@ -287,7 +287,7 @@ public class WordTextPlugin implements ITextPlugin {
 	public boolean loadFromByteArray(byte[] bs, boolean asTemplate) {
 		synchronized (this) {
 			try {
-				if (!asTemplate && CoreHub.userCfg.get(MSWordPreferencePage.MSWORD_OPEN_EXTERN, false)) {
+				if (!asTemplate && ConfigServiceHolder.getUser(MSWordPreferencePage.MSWORD_OPEN_EXTERN, false)) {
 					externalOpenDocument = new ExternalFile();
 					externalOpenDocument.write(bs);
 					externalOpenDocument.open();
@@ -314,7 +314,7 @@ public class WordTextPlugin implements ITextPlugin {
 	public boolean loadFromStream(InputStream is, boolean asTemplate) {
 		synchronized (this) {
 			try {
-				if (!asTemplate && CoreHub.userCfg.get(MSWordPreferencePage.MSWORD_OPEN_EXTERN, false)) {
+				if (!asTemplate && ConfigServiceHolder.getUser(MSWordPreferencePage.MSWORD_OPEN_EXTERN, false)) {
 					externalOpenDocument = new ExternalFile();
 					externalOpenDocument.write(is);
 					externalOpenDocument.open();

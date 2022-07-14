@@ -11,7 +11,7 @@ import org.eclipse.swt.ole.win32.Variant;
 import org.eclipse.swt.widgets.Display;
 
 import at.medevit.medelexis.text.msword.ui.MSWordPreferencePage;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class OleWordApplication extends OleWrapper {
 
@@ -35,7 +35,7 @@ public class OleWordApplication extends OleWrapper {
 
 		// set some default options
 		OleWordOptions options = getOptions(manager);
-		if (!CoreHub.userCfg.get(MSWordPreferencePage.MSWORD_SPELLING_CHECK, false)) {
+		if (!ConfigServiceHolder.getUser(MSWordPreferencePage.MSWORD_SPELLING_CHECK, false)) {
 			options.setCheckGrammarAsYouType(false);
 			options.setCheckGrammarWithSpelling(false);
 			options.setCheckSpellingAsYouType(false);

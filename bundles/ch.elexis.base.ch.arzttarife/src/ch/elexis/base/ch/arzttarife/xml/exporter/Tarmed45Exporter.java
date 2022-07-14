@@ -1411,6 +1411,11 @@ public class Tarmed45Exporter {
 
 			// update payload and balance
 			if (request.getPayload() != null && request.getPayload().getBody() != null) {
+				// update treatment
+				TreatmentType updateTreatment = getTreatment(invoice);
+				if (updateTreatment != null) {
+					request.getPayload().getBody().setTreatment(updateTreatment);
+				}
 				// update esr information
 				if (esrType == EsrType.esr9 && request.getPayload().getBody().getEsrQR() != null) {
 					request.getPayload().getBody().setEsrQR(null);

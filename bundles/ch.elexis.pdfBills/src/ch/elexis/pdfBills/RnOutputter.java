@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -80,6 +81,8 @@ public class RnOutputter implements IRnOutputter {
 	public static final String CFG_ESR_REMINDERDAYS_M2 = CFG_ROOT + "esr.reminderdays.m2";
 	public static final String CFG_ESR_REMINDERDAYS_M3 = CFG_ROOT + "esr.reminderdays.m3";
 
+	public static final String CFG_ESR_COUVERT_LEFT = CFG_ROOT + "esr.couvert.left";
+
 	public static final String CFG_PRINT_DIRECT = CFG_ROOT + "print.direct";
 
 	public static final String CFG_PRINT_PRINTER = CFG_ROOT + "print.printer";
@@ -105,8 +108,6 @@ public class RnOutputter implements IRnOutputter {
 	private Button bWithEsr;
 	private Button bWithRf;
 
-	private Button bCopyMail;
-
 	private boolean modifyInvoiceState;
 
 	@Override
@@ -126,7 +127,7 @@ public class RnOutputter implements IRnOutputter {
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
 		final File rsc = new File(PlatformHelper.getBasePath(PLUGIN_ID), "rsc");
-		final StringJoiner mailErrors = new StringJoiner("\n- ", "- ", "");
+		final StringJoiner mailErrors = new StringJoiner("\n- ", "- ", StringUtils.EMPTY);
 		try {
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(), new IRunnableWithProgress() {
 				public void run(final IProgressMonitor monitor) {
@@ -141,8 +142,7 @@ public class RnOutputter implements IRnOutputter {
 							errors++;
 							continue;
 						}
-						String fname = CoreHub.localCfg.get(CFG_ROOT + XMLDIR, "") + File.separator + rn.getNr()
-								+ ".xml";
+						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT) + File.separator + rn.getNr() + ".xml";
 						try {
 							FileOutputStream fout = new FileOutputStream(fname);
 							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8");
@@ -199,7 +199,11 @@ public class RnOutputter implements IRnOutputter {
 			}, null);
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
+			if (StringUtils.isNotBlank(ex.getMessage())) {
+				res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
+			} else if (ex.getCause() != null && StringUtils.isNotBlank(ex.getCause().getMessage())) {
+				res.add(Result.SEVERITY.ERROR, 2, ex.getCause().getMessage(), null, true);
+			}
 			ErrorDialog.openError(null, "Fehler bei der Ausgabe", "Konnte Rechnungsdruck nicht starten",
 					ResultAdapter.getResultAsStatus(res));
 			return res;
@@ -294,8 +298,9 @@ public class RnOutputter implements IRnOutputter {
 			params.put("ch.elexis.core.mail.ui.sendMailNoUi.subject", "Rechnungskopie vom " + rechnung.getDatumRn());
 			params.put("ch.elexis.core.mail.ui.sendMailNoUi.text",
 					"Anbei finden Sie eine Kopie der Rechnung vom " + rechnung.getDatumRn()
-							+ " für Ihre Unterlagen.\n\nBeste Grüsse\n" + rechnung.getMandant().get(Person.TITLE) + " "
-							+ rechnung.getMandant().getVorname() + " " + rechnung.getMandant().getName());
+							+ " für Ihre Unterlagen.\n\nBeste Grüsse\n" + rechnung.getMandant().get(Person.TITLE)
+							+ StringUtils.SPACE + rechnung.getMandant().getVorname() + StringUtils.SPACE
+							+ rechnung.getMandant().getName());
 
 			ParameterizedCommand parametrizedCommmand = ParameterizedCommand.generateCommand(sendMailCommand, params);
 			return (String) PlatformUI.getWorkbench().getService(IHandlerService.class)
@@ -354,51 +359,51 @@ public class RnOutputter implements IRnOutputter {
 		});
 		bWithRf.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 
-		bCopyMail = new Button(ret, SWT.CHECK);
-		bCopyMail.setText("Kopie als mail");
-		bCopyMail.setSelection(false);
-		bCopyMail.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		bCopyMail.setSelection(CoreHub.localCfg.get(CFG_ROOT + CFG_MAIL_CPY, false));
-		bCopyMail.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(CFG_ROOT + CFG_MAIL_CPY, bCopyMail.getSelection());
-			}
-		});
+		CoreHub.localCfg.set(CFG_ROOT + CFG_MAIL_CPY, false);
 
-		Button bXML = new Button(ret, SWT.PUSH);
-		bXML.setText("XML Verzeichnis");
-		tXml = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
-		tXml.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		Button bPDF = new Button(ret, SWT.PUSH);
-		bPDF.setText("PDF Verzeichnis");
-		tPdf = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
-		tPdf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		if (OutputterUtil.useGlobalOutputDirs()) {
+			Label lXML = new Label(ret, SWT.NONE);
+			lXML.setText("XML Verzeichnis: " + CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, null));
+			lXML.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+			Label lPDF = new Label(ret, SWT.NONE);
+			lPDF.setText("PDF Verzeichnis: " + CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, null));
+			lPDF.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		} else {
+			Button bXML = new Button(ret, SWT.PUSH);
+			bXML.setText("XML Verzeichnis");
+			tXml = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
+			tXml.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			Button bPDF = new Button(ret, SWT.PUSH);
+			bPDF.setText("PDF Verzeichnis");
+			tPdf = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
+			tPdf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
-		bXML.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dd = new DirectoryDialog(compParent.getShell());
-				String dir = dd.open();
-				if (dir != null) {
-					tXml.setText(dir);
+			bXML.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					DirectoryDialog dd = new DirectoryDialog(compParent.getShell());
+					String dir = dd.open();
+					if (dir != null) {
+						tXml.setText(dir);
+					}
 				}
-			}
 
-		});
-		bPDF.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dd = new DirectoryDialog(compParent.getShell());
-				String dir = dd.open();
-				if (dir != null) {
-					tPdf.setText(dir);
+			});
+			bPDF.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					DirectoryDialog dd = new DirectoryDialog(compParent.getShell());
+					String dir = dd.open();
+					if (dir != null) {
+						tPdf.setText(dir);
+					}
 				}
-			}
 
-		});
-		tXml.setText(CoreHub.localCfg.get(CFG_ROOT + XMLDIR, ""));
-		tPdf.setText(CoreHub.localCfg.get(CFG_ROOT + PDFDIR, ""));
+			});
+			tXml.setText(CoreHub.localCfg.get(CFG_ROOT + XMLDIR, StringUtils.EMPTY));
+			tPdf.setText(CoreHub.localCfg.get(CFG_ROOT + PDFDIR, StringUtils.EMPTY));
+		}
+
 		return (Control) ret;
 	}
 
@@ -406,8 +411,10 @@ public class RnOutputter implements IRnOutputter {
 	public void saveComposite() {
 		CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_BESR, bWithEsr.getSelection());
 		CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_RF, bWithRf.getSelection());
-		CoreHub.localCfg.set(CFG_ROOT + XMLDIR, tXml.getText());
-		CoreHub.localCfg.set(CFG_ROOT + PDFDIR, tPdf.getText());
+		if (!OutputterUtil.useGlobalOutputDirs()) {
+			CoreHub.localCfg.set(CFG_ROOT + XMLDIR, tXml.getText());
+			CoreHub.localCfg.set(CFG_ROOT + PDFDIR, tPdf.getText());
+		}
 		CoreHub.localCfg.flush();
 	}
 }

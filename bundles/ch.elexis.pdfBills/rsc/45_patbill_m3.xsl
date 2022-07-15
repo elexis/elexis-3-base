@@ -13,6 +13,7 @@
 	<xsl:param name="headerLine2" select="''" />
 	<xsl:param name="reminderDays" select="''" />
 	<xsl:param name="guarantorPostal" select="''" />
+	<xsl:param name="couvertLeft" select="''" />
 	<xsl:template match="invoice:*">
 		<xsl:variable name="pType" select="$printerType" />
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
@@ -65,48 +66,95 @@
 								<fo:table-column />
 								<fo:table-body font-size="10px"
 									font-family="tahoma,arial,helvetica,sans-serif">
-									<fo:table-row>
-										<fo:table-cell>
-											<fo:block margin-top="1cm">
-												<fo:block font-size="7px">
-													Rechnungssteller
-												</fo:block>
-												<xsl:call-template name="patbill_biller_address">
-												</xsl:call-template>
-											</fo:block>
-
-										</fo:table-cell>
-										<fo:table-cell>
-											<fo:block margin-top="1cm">
-												<fo:block font-size="7px" margin-bottom="3mm">
-													<xsl:call-template name="patbill_header_line">
-													</xsl:call-template>
-												</fo:block>
-												<xsl:call-template name="patbill_garant_address">
-												</xsl:call-template>
-											</fo:block>
-										</fo:table-cell>
-									</fo:table-row>
-									<fo:table-row>
-										<fo:table-cell>
-											<fo:block margin-top="5mm">
-												<fo:block font-size="7px">
-													Rechnungsinformationen
-												</fo:block>
-												<xsl:call-template name="patbill_bill_info">
-												</xsl:call-template>
-											</fo:block>
-										</fo:table-cell>
-										<fo:table-cell display-align="after">
-											<fo:block>
-												<fo:block font-size="7px">
-													Patient
-												</fo:block>
-												<xsl:call-template name="patbill_patient_info">
-												</xsl:call-template>
-											</fo:block>
-										</fo:table-cell>
-									</fo:table-row>
+									<xsl:choose>
+										<xsl:when
+											test="string-length($couvertLeft) > 1">
+											<fo:table-row>
+												<fo:table-cell>
+													<fo:block margin-top="1cm">
+														<fo:block font-size="7px" margin-bottom="3mm">
+															<xsl:call-template name="patbill_header_line">
+															</xsl:call-template>
+														</fo:block>
+														<xsl:call-template name="patbill_garant_address">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+												<fo:table-cell>
+													<fo:block margin-top="1cm">
+														<fo:block font-size="7px">
+															Rechnungssteller
+														</fo:block>
+														<xsl:call-template name="patbill_biller_address">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+											</fo:table-row>
+											<fo:table-row>
+												<fo:table-cell display-align="after">
+													<fo:block>
+														<fo:block font-size="7px">
+															Patient
+														</fo:block>
+														<xsl:call-template name="patbill_patient_info">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+												<fo:table-cell>
+													<fo:block margin-top="5mm">
+														<fo:block font-size="7px">
+															Rechnungsinformationen
+														</fo:block>
+														<xsl:call-template name="patbill_bill_info">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+											</fo:table-row>
+										</xsl:when>
+										<xsl:otherwise>
+											<fo:table-row>
+												<fo:table-cell>
+													<fo:block margin-top="1cm">
+														<fo:block font-size="7px">
+															Rechnungssteller
+														</fo:block>
+														<xsl:call-template name="patbill_biller_address">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+												<fo:table-cell>
+													<fo:block margin-top="1cm">
+														<fo:block font-size="7px" margin-bottom="3mm">
+															<xsl:call-template name="patbill_header_line">
+															</xsl:call-template>
+														</fo:block>
+														<xsl:call-template name="patbill_garant_address">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+											</fo:table-row>
+											<fo:table-row>
+												<fo:table-cell>
+													<fo:block margin-top="5mm">
+														<fo:block font-size="7px">
+															Rechnungsinformationen
+														</fo:block>
+														<xsl:call-template name="patbill_bill_info">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+												<fo:table-cell display-align="after">
+													<fo:block>
+														<fo:block font-size="7px">
+															Patient
+														</fo:block>
+														<xsl:call-template name="patbill_patient_info">
+														</xsl:call-template>
+													</fo:block>
+												</fo:table-cell>
+											</fo:table-row>
+										</xsl:otherwise>
+									</xsl:choose>
 								</fo:table-body>
 							</fo:table>
 							<fo:table table-layout="fixed" width="100%"

@@ -1,5 +1,6 @@
 package ch.elexis.pdfBills.print;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -79,7 +80,7 @@ public class PrintProcess {
 				}
 				preparedCommand = matcher.replaceFirst((String) replacement);
 			} else {
-				preparedCommand = matcher.replaceFirst("");
+				preparedCommand = matcher.replaceFirst(StringUtils.EMPTY);
 			}
 			matcher = pattern.matcher(preparedCommand);
 		}

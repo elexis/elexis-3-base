@@ -1,5 +1,6 @@
 package ch.elexis.pdfBills.print;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -120,7 +121,7 @@ public class PrinterSettingsDialog extends TitleAreaDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				InputDialog dlg = new InputDialog(getParentShell(), "Zusätzlicher Schacht",
-						"Bitten den Namen des zusätzlichen Schacht konfigurieren.", "", null, SWT.NONE);
+						"Bitten den Namen des zusätzlichen Schacht konfigurieren.", StringUtils.EMPTY, null, SWT.NONE);
 				if (dlg.open() == Window.OK) {
 					if (dlg.getValue() != null && !dlg.getValue().isEmpty()) {
 						addCustomMediaTray(dlg.getValue());
@@ -198,7 +199,7 @@ public class PrinterSettingsDialog extends TitleAreaDialog {
 		IStructuredSelection selMediaTray = (IStructuredSelection) cvTrays.getSelection();
 		if (selMediaTray != null) {
 			if (selMediaTray.isEmpty()) {
-				selTray = "";
+				selTray = StringUtils.EMPTY;
 			} else {
 				selTray = ((MediaTray) selMediaTray.getFirstElement()).toString();
 			}

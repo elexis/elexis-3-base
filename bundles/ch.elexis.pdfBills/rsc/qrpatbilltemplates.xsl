@@ -68,6 +68,20 @@
 				</fo:block>
 			</xsl:when>
 			<xsl:otherwise>
+				<!-- Adressat Anrede eingefügt mit salutation -->
+				<fo:block>
+					<xsl:choose>
+						<xsl:when
+							test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0">
+							<xsl:value-of
+								select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:person/@salutation" />
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of
+								select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:insurance/invoice:company/@salutation" />
+						</xsl:otherwise>
+					</xsl:choose>
+				</fo:block>
 				<xsl:choose>
 					<xsl:when
 						test="(string-length($guarantorLine) > 1 and count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0) or 
@@ -87,20 +101,6 @@
 						</xsl:choose>
 					</xsl:when>
 					<xsl:otherwise>
-						<!-- Adressat Anrede eingefügt mit salutation -->
-						<fo:block>
-							<xsl:choose>
-								<xsl:when
-									test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant) > 0">
-									<xsl:value-of
-										select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:guarantor/invoice:person/@salutation" />
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:value-of
-										select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:insurance/invoice:company/@salutation" />
-								</xsl:otherwise>
-							</xsl:choose>
-						</fo:block>
 						<fo:block>
 							<xsl:choose>
 								<xsl:when
@@ -1135,6 +1135,9 @@
 									</xsl:choose>
 								</fo:block>
 							</fo:block-container>
+							<fo:block>
+								&#160;&#160;
+							</fo:block>
 							<fo:table table-layout="fixed" border-collapse="collapse">
 								<fo:table-column text-align="left" />
 								<fo:table-column text-align="left" />
@@ -1287,6 +1290,9 @@
 									</xsl:call-template>	
 								</fo:block>							
 							</fo:block-container>
+							<fo:block>
+								&#160;&#160;
+							</fo:block>
 							<fo:table table-layout="fixed" width="100%" height="100%"
 								border-collapse="collapse">
 								<fo:table-column text-align="left" />

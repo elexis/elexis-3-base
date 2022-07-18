@@ -142,7 +142,9 @@ public class GlobalInboxPart {
 		UiDesk.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				tv.refresh();
+				if (tv != null && tv.getControl() != null && !tv.getControl().isDisposed()) {
+					tv.refresh();
+				}
 			}
 		});
 	}

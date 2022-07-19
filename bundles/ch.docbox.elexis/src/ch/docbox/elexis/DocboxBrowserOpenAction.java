@@ -12,6 +12,7 @@ package ch.docbox.elexis;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -62,8 +63,8 @@ public class DocboxBrowserOpenAction extends DocboxAction {
 					log.log("hcardbrowser retval " + retval, Log.DEBUGMSG);
 				}
 			} else {
-				DocboxView docboxView = (DocboxView) window.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-						.showView("ch.docbox.elexis.DocboxView");
+				DocboxView docboxView = (DocboxView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+						.getActivePage().showView("ch.docbox.elexis.DocboxView");
 				if (docboxView != null) {
 					Termin termin = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 					if (termin != null) {

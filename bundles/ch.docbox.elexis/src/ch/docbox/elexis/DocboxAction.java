@@ -13,6 +13,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -26,7 +27,6 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  * @see IWorkbenchWindowActionDelegate
  */
 public abstract class DocboxAction implements IWorkbenchWindowActionDelegate {
-	protected IWorkbenchWindow window;
 
 	/**
 	 * The constructor.
@@ -36,7 +36,8 @@ public abstract class DocboxAction implements IWorkbenchWindowActionDelegate {
 
 	public boolean hasValidDocboxCredentials() {
 		if (!UserDocboxPreferences.hasValidDocboxCredentials()) {
-			PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(window.getShell(),
+			PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(
+					Display.getDefault().getActiveShell(),
 					UserDocboxPreferences.ID, null, null);
 			if (preferenceDialog.open() == Dialog.CANCEL) {
 				return false;
@@ -72,6 +73,6 @@ public abstract class DocboxAction implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
 	public void init(IWorkbenchWindow window) {
-		this.window = window;
+
 	}
 }

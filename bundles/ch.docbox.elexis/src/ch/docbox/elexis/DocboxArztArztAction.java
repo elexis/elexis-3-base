@@ -13,7 +13,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import ch.elexis.core.data.activator.CoreHub;
@@ -85,16 +84,6 @@ public class DocboxArztArztAction extends DocboxAction {
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
 	public void dispose() {
-	}
-
-	/**
-	 * We will cache window object in order to be able to provide parent shell for
-	 * the message dialog.
-	 *
-	 * @see IWorkbenchWindowActionDelegate#init
-	 */
-	public void init(IWorkbenchWindow window) {
-		this.window = window;
 	}
 
 }

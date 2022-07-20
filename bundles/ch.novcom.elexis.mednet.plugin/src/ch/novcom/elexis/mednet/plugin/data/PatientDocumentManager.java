@@ -10,7 +10,6 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin.data;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +27,10 @@ import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.exceptions.ElexisException;
-import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.types.PathologicDescription;
 import ch.elexis.core.types.PathologicDescription.Description;
+import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
@@ -305,6 +305,7 @@ public class PatientDocumentManager {
 			samplingDate.setTime(samplingDateTime);
 			samplingTime = PatientDocumentManager.LABRESULT_TIME_FORMATTER.format(samplingDateTime);
 		} else {
+			samplingDateTime = transmissionDateTime;
 			samplingDate.setTime(transmissionDateTime);
 			samplingTime = PatientDocumentManager.LABRESULT_TIME_FORMATTER.format(transmissionDateTime);
 		}

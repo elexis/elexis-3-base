@@ -1,6 +1,6 @@
 package ch.elexis.TarmedRechnung;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IInvoice;

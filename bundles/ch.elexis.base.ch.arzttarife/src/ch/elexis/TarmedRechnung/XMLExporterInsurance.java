@@ -1,6 +1,6 @@
 package ch.elexis.TarmedRechnung;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;

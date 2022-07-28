@@ -1,61 +1,149 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
-<setAttribute key="additional_plugins">
-<setEntry value="ch.elexis.core.scripting.beanshell:3.2.0.qualifier:default:true"/>
-<setEntry value="com.hilotec.elexis.messwerte.v2:3.0.0.qualifier:default:true"/>
-</setAttribute>
-<booleanAttribute key="append.args" value="true"/>
-<booleanAttribute key="askclear" value="false"/>
-<booleanAttribute key="automaticAdd" value="false"/>
-<booleanAttribute key="automaticValidate" value="false"/>
-<stringAttribute key="bootstrap" value=""/>
-<stringAttribute key="checked" value="[NONE]"/>
-<booleanAttribute key="clearConfig" value="true"/>
-<booleanAttribute key="clearws" value="true"/>
-<booleanAttribute key="clearwslog" value="false"/>
-<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/pde-junit"/>
-<booleanAttribute key="default" value="false"/>
-<stringAttribute key="featureDefaultLocation" value="workspace"/>
-<stringAttribute key="featurePluginResolution" value="workspace"/>
-<booleanAttribute key="includeOptional" value="false"/>
-<stringAttribute key="location" value="${workspace_loc}/../junit-workspace"/>
-<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/com.hilotec.elexis.messwerte.v2_test/src/com/hilotec/elexis/messwerte/v2_test/AllPluginTests.java"/>
-</listAttribute>
-<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
-<listEntry value="1"/>
-</listAttribute>
-<stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
-<booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
-<stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
-<stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit4"/>
-<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.hilotec.elexis.messwerte.v2_test.AllPluginTests"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="com.hilotec.elexis.messwerte.v2_test"/>
-<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dosgi.requiredJavaVersion=1.5&#13;&#10;-Xms64m&#13;&#10;-Xmx1024m&#13;&#10;-Dch.elexis.username=007 &#13;&#10;-Dch.elexis.password=topsecret &#13;&#10;-Delexis-run-mode=RunFromScratch&#10;-Dcom.hilotec.unitests=1"/>
-<stringAttribute key="pde.version" value="3.3"/>
-<stringAttribute key="product" value="ch.elexis.core.application.product"/>
-<booleanAttribute key="run_in_ui_thread" value="true"/>
-<setAttribute key="selected_features">
-<setEntry value="ch.elexis.core.application.feature:default"/>
-<setEntry value="org.eclipse.equinox.executable:default"/>
-<setEntry value="org.eclipse.equinox.p2.core.feature:default"/>
-<setEntry value="org.eclipse.equinox.p2.extras.feature:default"/>
-<setEntry value="org.eclipse.equinox.p2.rcp.feature:default"/>
-<setEntry value="org.eclipse.equinox.p2.user.ui:default"/>
-<setEntry value="org.eclipse.help:default"/>
-<setEntry value="org.eclipse.platform:default"/>
-<setEntry value="org.eclipse.rcp:default"/>
-</setAttribute>
-<stringAttribute key="selected_target_plugins" value="bouncycastle.bcprov-jdk14@default:default,ch.qos.logback.classic*1.0.7.v20121108-1250@default:default,ch.qos.logback.core*1.0.7.v20121108-1250@default:default,ch.qos.logback.slf4j@default:false,com.ibm.icu@default:default,com.mysql.jdbc@default:default,jfree.chart-swt@default:default,jfree.chart@default:default,jfree.jcommon@default:default,junit@default:default,org.apache.commons.dbcp@default:default,org.apache.commons.pool@default:default,org.beanshell.bsh@default:default,org.eclipse.ant.core@default:default,org.eclipse.core.commands@default:default,org.eclipse.core.contenttype@default:default,org.eclipse.core.databinding.beans@default:default,org.eclipse.core.databinding.observable@default:default,org.eclipse.core.databinding.property@default:default,org.eclipse.core.databinding@default:default,org.eclipse.core.expressions@default:default,org.eclipse.core.filesystem.win32.x86@default:false,org.eclipse.core.filesystem@default:default,org.eclipse.core.jobs@default:default,org.eclipse.core.resources.win32.x86@default:false,org.eclipse.core.resources@default:default,org.eclipse.core.runtime.compatibility.registry@default:false,org.eclipse.core.runtime@default:true,org.eclipse.core.variables@default:default,org.eclipse.emf.common@default:default,org.eclipse.emf.ecore@default:default,org.eclipse.equinox.app@default:default,org.eclipse.equinox.common@2:true,org.eclipse.equinox.p2.core@default:default,org.eclipse.equinox.p2.engine@default:default,org.eclipse.equinox.p2.metadata.repository@default:default,org.eclipse.equinox.p2.metadata@default:default,org.eclipse.equinox.p2.repository@default:default,org.eclipse.equinox.preferences@default:default,org.eclipse.equinox.registry@default:default,org.eclipse.equinox.security.win32.x86@default:false,org.eclipse.equinox.security@default:default,org.eclipse.help@default:default,org.eclipse.jface.databinding@default:default,org.eclipse.jface.text@default:default,org.eclipse.jface@default:default,org.eclipse.nebula.cwt@default:default,org.eclipse.nebula.widgets.cdatetime@default:default,org.eclipse.nebula.widgets.tablecombo@default:default,org.eclipse.osgi@-1:true,org.eclipse.swt.win32.win32.x86@default:false,org.eclipse.swt@default:default,org.eclipse.text@default:default,org.eclipse.ui.forms@default:default,org.eclipse.ui.ide@default:default,org.eclipse.ui.win32@default:false,org.eclipse.ui.workbench@default:default,org.eclipse.ui@default:default,org.h2@default:default,org.hamcrest.core@default:default,org.jdom@default:default,org.junit@default:default,org.postgresql@default:default,org.slf4j.api@default:default,org.slf4j.nop@default:false"/>
-<stringAttribute key="selected_workspace_plugins" value="ch.elexis.core.data.tests@default:false,ch.elexis.core.data@default:default,ch.elexis.core.logging.default_configuration@default:false,ch.elexis.core.scripting.beanshell@default:default,ch.elexis.core.ui.icons@default:default,ch.elexis.core.ui@default:default,ch.elexis.core@default:default,ch.rgw.utility.tests@default:false,ch.rgw.utility@default:default,ch.unibe.iam.scg.archie.samples@default:false,ch.unibe.iam.scg.archie@default:default,com.hilotec.elexis.messwerte.v2@default:default,com.hilotec.elexis.messwerte.v2_test@default:false,com.hilotec.elexis.pluginstatistiken@default:default"/>
-<booleanAttribute key="show_selected_only" value="false"/>
-<stringAttribute key="testApplication" value="ch.elexis.core.application.ElexisApp"/>
-<booleanAttribute key="tracing" value="false"/>
-<booleanAttribute key="useCustomFeatures" value="true"/>
-<booleanAttribute key="useDefaultConfig" value="true"/>
-<booleanAttribute key="useDefaultConfigArea" value="false"/>
-<booleanAttribute key="useProduct" value="true"/>
+    <setAttribute key="additional_plugins">
+        <setEntry value="ch.elexis.core.scripting.beanshell:3.9.0.qualifier:default:true:default:default"/>
+        <setEntry value="com.hilotec.elexis.messwerte.v2:3.9.0.qualifier:default:true:default:default"/>
+    </setAttribute>
+    <booleanAttribute key="append.args" value="true"/>
+    <booleanAttribute key="askclear" value="false"/>
+    <booleanAttribute key="automaticAdd" value="false"/>
+    <booleanAttribute key="automaticValidate" value="false"/>
+    <stringAttribute key="bootstrap" value=""/>
+    <stringAttribute key="checked" value="[NONE]"/>
+    <booleanAttribute key="clearConfig" value="true"/>
+    <booleanAttribute key="clearws" value="true"/>
+    <booleanAttribute key="clearwslog" value="false"/>
+    <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/pde-junit"/>
+    <booleanAttribute key="default" value="false"/>
+    <stringAttribute key="featureDefaultLocation" value="workspace"/>
+    <stringAttribute key="featurePluginResolution" value="workspace"/>
+    <booleanAttribute key="includeOptional" value="false"/>
+    <stringAttribute key="location" value="${workspace_loc}/../junit-workspace"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.DisabledIds"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.EnabledIds"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.FilterDisabledIds"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.FilterEnabledIds"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.StatisticsDisabledIds"/>
+    <setAttribute key="name.schedenig.eclipse.grepconsole.StatisticsEnabledIds"/>
+    <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+        <listEntry value="/com.hilotec.elexis.messwerte.v2_test/src/com/hilotec/elexis/messwerte/v2_test/AllPluginTests.java"/>
+    </listAttribute>
+    <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+        <listEntry value="1"/>
+    </listAttribute>
+    <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
+    <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
+    <stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
+    <stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit4"/>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.hilotec.elexis.messwerte.v2_test.AllPluginTests"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="com.hilotec.elexis.messwerte.v2_test"/>
+    <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dosgi.requiredJavaVersion=1.5&#13;&#10;-Xms64m&#13;&#10;-Xmx1024m&#13;&#10;-Dch.elexis.username=007 &#13;&#10;-Dch.elexis.password=topsecret &#13;&#10;-Delexis-run-mode=RunFromScratch&#10;-Dcom.hilotec.unitests=1"/>
+    <stringAttribute key="pde.version" value="3.3"/>
+    <stringAttribute key="product" value="ch.elexis.core.application.product"/>
+    <booleanAttribute key="run_in_ui_thread" value="true"/>
+    <setAttribute key="selected_features">
+        <setEntry value="ch.elexis.core.application.feature:default"/>
+        <setEntry value="org.eclipse.equinox.p2.core.feature:default"/>
+        <setEntry value="org.eclipse.equinox.p2.extras.feature:default"/>
+        <setEntry value="org.eclipse.equinox.p2.rcp.feature:default"/>
+        <setEntry value="org.eclipse.equinox.p2.user.ui:default"/>
+        <setEntry value="org.eclipse.help:default"/>
+        <setEntry value="org.eclipse.platform:default"/>
+        <setEntry value="org.eclipse.rcp:default"/>
+    </setAttribute>
+    <setAttribute key="selected_target_bundles">
+        <setEntry value="bouncycastle.bcprov-jdk14@default:default"/>
+        <setEntry value="ch.qos.logback.classic*1.0.7.v20121108-1250@default:default"/>
+        <setEntry value="ch.qos.logback.core*1.0.7.v20121108-1250@default:default"/>
+        <setEntry value="ch.qos.logback.slf4j@default:false"/>
+        <setEntry value="com.ibm.icu@default:default"/>
+        <setEntry value="com.mysql.jdbc@default:default"/>
+        <setEntry value="jfree.chart-swt@default:default"/>
+        <setEntry value="jfree.chart@default:default"/>
+        <setEntry value="jfree.jcommon@default:default"/>
+        <setEntry value="junit@default:default"/>
+        <setEntry value="org.apache.commons.dbcp@default:default"/>
+        <setEntry value="org.apache.commons.pool@default:default"/>
+        <setEntry value="org.beanshell.bsh@default:default"/>
+        <setEntry value="org.eclipse.ant.core@default:default"/>
+        <setEntry value="org.eclipse.core.commands@default:default"/>
+        <setEntry value="org.eclipse.core.contenttype@default:default"/>
+        <setEntry value="org.eclipse.core.databinding.beans@default:default"/>
+        <setEntry value="org.eclipse.core.databinding.observable@default:default"/>
+        <setEntry value="org.eclipse.core.databinding.property@default:default"/>
+        <setEntry value="org.eclipse.core.databinding@default:default"/>
+        <setEntry value="org.eclipse.core.expressions@default:default"/>
+        <setEntry value="org.eclipse.core.filesystem.win32.x86@default:false"/>
+        <setEntry value="org.eclipse.core.filesystem@default:default"/>
+        <setEntry value="org.eclipse.core.jobs@default:default"/>
+        <setEntry value="org.eclipse.core.resources.win32.x86@default:false"/>
+        <setEntry value="org.eclipse.core.resources@default:default"/>
+        <setEntry value="org.eclipse.core.runtime.compatibility.registry@default:false"/>
+        <setEntry value="org.eclipse.core.runtime@default:true"/>
+        <setEntry value="org.eclipse.core.variables@default:default"/>
+        <setEntry value="org.eclipse.emf.common@default:default"/>
+        <setEntry value="org.eclipse.emf.ecore@default:default"/>
+        <setEntry value="org.eclipse.equinox.app@default:default"/>
+        <setEntry value="org.eclipse.equinox.common@2:true"/>
+        <setEntry value="org.eclipse.equinox.p2.core@default:default"/>
+        <setEntry value="org.eclipse.equinox.p2.engine@default:default"/>
+        <setEntry value="org.eclipse.equinox.p2.metadata.repository@default:default"/>
+        <setEntry value="org.eclipse.equinox.p2.metadata@default:default"/>
+        <setEntry value="org.eclipse.equinox.p2.repository@default:default"/>
+        <setEntry value="org.eclipse.equinox.preferences@default:default"/>
+        <setEntry value="org.eclipse.equinox.registry@default:default"/>
+        <setEntry value="org.eclipse.equinox.security.win32.x86@default:false"/>
+        <setEntry value="org.eclipse.equinox.security@default:default"/>
+        <setEntry value="org.eclipse.help@default:default"/>
+        <setEntry value="org.eclipse.jface.databinding@default:default"/>
+        <setEntry value="org.eclipse.jface.text@default:default"/>
+        <setEntry value="org.eclipse.jface@default:default"/>
+        <setEntry value="org.eclipse.nebula.cwt@default:default"/>
+        <setEntry value="org.eclipse.nebula.widgets.cdatetime@default:default"/>
+        <setEntry value="org.eclipse.nebula.widgets.tablecombo@default:default"/>
+        <setEntry value="org.eclipse.osgi@-1:true"/>
+        <setEntry value="org.eclipse.swt.win32.win32.x86@default:false"/>
+        <setEntry value="org.eclipse.swt@default:default"/>
+        <setEntry value="org.eclipse.text@default:default"/>
+        <setEntry value="org.eclipse.ui.forms@default:default"/>
+        <setEntry value="org.eclipse.ui.ide@default:default"/>
+        <setEntry value="org.eclipse.ui.win32@default:false"/>
+        <setEntry value="org.eclipse.ui.workbench@default:default"/>
+        <setEntry value="org.eclipse.ui@default:default"/>
+        <setEntry value="org.h2@default:default"/>
+        <setEntry value="org.hamcrest.core@default:default"/>
+        <setEntry value="org.jdom@default:default"/>
+        <setEntry value="org.junit@default:default"/>
+        <setEntry value="org.postgresql@default:default"/>
+        <setEntry value="org.slf4j.api@default:default"/>
+        <setEntry value="org.slf4j.nop@default:false"/>
+    </setAttribute>
+    <setAttribute key="selected_workspace_bundles">
+        <setEntry value="ch.elexis.core.data.tests@default:false"/>
+        <setEntry value="ch.elexis.core.data@default:default"/>
+        <setEntry value="ch.elexis.core.logging.default_configuration@default:false"/>
+        <setEntry value="ch.elexis.core.scripting.beanshell@default:default"/>
+        <setEntry value="ch.elexis.core.ui.icons@default:default"/>
+        <setEntry value="ch.elexis.core.ui@default:default"/>
+        <setEntry value="ch.elexis.core@default:default"/>
+        <setEntry value="ch.rgw.utility.tests@default:false"/>
+        <setEntry value="ch.rgw.utility@default:default"/>
+        <setEntry value="ch.unibe.iam.scg.archie.samples@default:false"/>
+        <setEntry value="ch.unibe.iam.scg.archie@default:default"/>
+        <setEntry value="com.hilotec.elexis.messwerte.v2@default:default"/>
+        <setEntry value="com.hilotec.elexis.messwerte.v2_test@default:false"/>
+        <setEntry value="com.hilotec.elexis.pluginstatistiken@default:default"/>
+    </setAttribute>
+    <booleanAttribute key="show_selected_only" value="false"/>
+    <stringAttribute key="testApplication" value="ch.elexis.core.application.ElexisApp"/>
+    <booleanAttribute key="tracing" value="false"/>
+    <booleanAttribute key="useCustomFeatures" value="true"/>
+    <booleanAttribute key="useDefaultConfig" value="true"/>
+    <booleanAttribute key="useDefaultConfigArea" value="false"/>
+    <booleanAttribute key="useProduct" value="true"/>
 </launchConfiguration>

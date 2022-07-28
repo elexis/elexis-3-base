@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ch.elexis.core.model.FallConstants;
 import ch.elexis.core.model.ICoverage;

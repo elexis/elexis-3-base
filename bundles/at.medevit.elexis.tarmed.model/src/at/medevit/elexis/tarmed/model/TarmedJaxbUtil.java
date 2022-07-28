@@ -10,10 +10,10 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.Namespace;
-import org.jdom.output.DOMOutputter;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.output.DOMOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -322,7 +322,7 @@ public class TarmedJaxbUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static RequestType unmarshalInvoiceRequest440(org.jdom.Document jdomDoc) {
+	public static RequestType unmarshalInvoiceRequest440(org.jdom2.Document jdomDoc) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(RequestType.class);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -343,7 +343,7 @@ public class TarmedJaxbUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static ch.fd.invoice450.request.RequestType unmarshalInvoiceRequest450(org.jdom.Document jdomDoc) {
+	public static ch.fd.invoice450.request.RequestType unmarshalInvoiceRequest450(org.jdom2.Document jdomDoc) {
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(ch.fd.invoice450.request.RequestType.class);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -364,7 +364,7 @@ public class TarmedJaxbUtil {
 		return null;
 	}
 
-	public static String getXMLVersion(org.jdom.Document jdomDoc) {
+	public static String getXMLVersion(org.jdom2.Document jdomDoc) {
 		Element root = jdomDoc.getRootElement();
 		String location = root.getAttributeValue(Constants.SCHEMA_LOCATION,
 				Namespace.getNamespace(Constants.DEFAULT_NAMESPACE));

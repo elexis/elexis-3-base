@@ -12,8 +12,8 @@
 
 package ch.elexis.TarmedRechnung;
 
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;

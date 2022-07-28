@@ -2,7 +2,7 @@ package ch.elexis.TarmedRechnung;
 
 import java.util.Arrays;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum;
 import ch.elexis.TarmedRechnung.XMLExporter.VatRateSum.VatRateElement;

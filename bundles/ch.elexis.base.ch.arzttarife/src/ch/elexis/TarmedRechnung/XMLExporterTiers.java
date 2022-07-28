@@ -1,7 +1,7 @@
 package ch.elexis.TarmedRechnung;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

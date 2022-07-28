@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tarife für ambulante Arztbehandlungen in der Schweiz
 Bundle-SymbolicName: ch.elexis.base.ch.arzttarife;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.10.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
- ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0",
+Require-Bundle: ch.rgw.utility;bundle-version="3.10.0",
+ ch.elexis.core.data;bundle-version="3.10.0",
+ ch.elexis.core.ui;bundle-version="3.10.0",
  ch.elexis.core.ui.importer.div;bundle-version="3.9.0",
  ch.elexis.base.ch.ebanking;bundle-version="3.9.0",
  ch.elexis.core.ui.dbcheck;bundle-version="3.9.0",
@@ -28,10 +28,10 @@ Import-Package: javax.inject,
  org.eclipse.ui.forms,
  org.eclipse.ui.forms.events,
  org.eclipse.ui.forms.widgets,
- org.jdom,
- org.jdom.input,
- org.jdom.output,
- org.jdom.transform
+ org.jdom2;version="2.0.6",
+ org.jdom2.input;version="2.0.6",
+ org.jdom2.output;version="2.0.6",
+ org.jdom2.transform;version="2.0.6"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.adjuster.TarmedVerrechnebarAdjuster.xml,

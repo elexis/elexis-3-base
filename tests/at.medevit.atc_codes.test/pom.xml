@@ -6,10 +6,9 @@
 	<parent>
 		<groupId>ch.elexis.base</groupId>
 		<artifactId>ch.elexis.base.tests</artifactId>
-		<version>3.9.0-SNAPSHOT</version>
+		<version>3.10.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>at.medevit.atc_codes.test</artifactId>
-	<version>3.9.0-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 
 	<build>
@@ -18,7 +17,6 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
-				<version>${tycho.version}</version>
 				<configuration>
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<testClass>at.medevit.atc_codes.internal.ATCCodesTest</testClass>

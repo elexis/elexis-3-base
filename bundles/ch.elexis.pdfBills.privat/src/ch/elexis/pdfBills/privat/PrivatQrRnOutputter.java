@@ -37,9 +37,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.progress.IProgressService;
-import org.jdom.Document;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.TarmedRechnung.XMLExporter;
@@ -305,8 +305,7 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		try {
 			String attachmentsString = getAttachmentsString(printed);
-			Command sendMailCommand = commandService
-					.getCommand("ch.elexis.core.mail.ui.sendMailNoUi"); //$NON-NLS-1$
+			Command sendMailCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMailNoUi"); //$NON-NLS-1$
 
 			HashMap<String, String> params = new HashMap<String, String>();
 			String accountid = ConfigServiceHolder.getGlobal(PrivatQrRnOutputter.CFG_ROOT

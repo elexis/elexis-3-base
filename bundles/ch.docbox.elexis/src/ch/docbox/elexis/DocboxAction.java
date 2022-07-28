@@ -37,8 +37,7 @@ public abstract class DocboxAction implements IWorkbenchWindowActionDelegate {
 	public boolean hasValidDocboxCredentials() {
 		if (!UserDocboxPreferences.hasValidDocboxCredentials()) {
 			PreferenceDialog preferenceDialog = PreferencesUtil.createPreferenceDialogOn(
-					Display.getDefault().getActiveShell(),
-					UserDocboxPreferences.ID, null, null);
+					Display.getDefault().getActiveShell(), UserDocboxPreferences.ID, null, null);
 			if (preferenceDialog.open() == Dialog.CANCEL) {
 				return false;
 			}

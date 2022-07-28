@@ -27,73 +27,75 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RetryUtil {
-  private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  
-  public interface RetryCmd {
-    void execute() throws Throwable;
-  }
-  
-  public interface BooleanRetryCmd {
-    boolean execute();
-  }
-  
-  public static void retryOnThrowable(@SuppressWarnings({"rawtypes"})Class clazz, long timeoutms, long intervalms, RetryCmd cmd) throws Throwable {
-    retryOnThrowable(Collections.singleton(clazz), timeoutms, intervalms, cmd);
-  }
-  
-  public static void retryOnThrowable(@SuppressWarnings({"rawtypes"})Set<Class> classes,
-                                      long timeoutms, long intervalms, RetryCmd cmd) throws Throwable {
-    long timeout = System.nanoTime() + TimeUnit.NANOSECONDS.convert(timeoutms, TimeUnit.MILLISECONDS);
-    while (true) {
-      try {
-        cmd.execute();
-      } catch (Throwable t) {
-        if (isInstanceOf(classes, t) && System.nanoTime() < timeout) {
-          if (log.isInfoEnabled()) {
-            log.info("Retry due to Throwable, {} ", t.getClass().getName(), t);
-          }
-          Thread.sleep(intervalms);
-          continue;
-        }
-        throw t;
-      }
-      // success
-      break;
-    }
-  }
-  
-  private static boolean isInstanceOf(@SuppressWarnings({"rawtypes"})Set<Class> classes, Throwable t) {
-    for (@SuppressWarnings({"rawtypes"})Class c : classes) {
-      if (c.isInstance(t)) {
-        return true;
-      }
-    }
-    return false;
-  }
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public static void retryUntil(String errorMessage, int retries, long pauseTime, TimeUnit pauseUnit, BooleanRetryCmd cmd)
-      throws InterruptedException {
-    while (retries-- > 0) {
-      if (cmd.execute())
-        return;
-      pauseUnit.sleep(pauseTime);
-    }
-    throw new SolrException(ErrorCode.SERVER_ERROR, errorMessage);
-  }
-  
-  public static void retryOnBoolean(long timeoutms, long intervalms, BooleanRetryCmd cmd) {
-    long timeout = System.nanoTime() + TimeUnit.NANOSECONDS.convert(timeoutms, TimeUnit.MILLISECONDS);
-    while (true) {
-      boolean resp = cmd.execute();
-      if (!resp && System.nanoTime() < timeout) {
-        continue;
-      } else if (System.nanoTime() >= timeout) {
-        throw new SolrException(ErrorCode.SERVER_ERROR, "Timed out while retrying operation");
-      }
-      
-      // success
-      break;
-    }
-  }
-  
+	public interface RetryCmd {
+		void execute() throws Throwable;
+	}
+
+	public interface BooleanRetryCmd {
+		boolean execute();
+	}
+
+	public static void retryOnThrowable(@SuppressWarnings({ "rawtypes" }) Class clazz, long timeoutms, long intervalms,
+			RetryCmd cmd) throws Throwable {
+		retryOnThrowable(Collections.singleton(clazz), timeoutms, intervalms, cmd);
+	}
+
+	public static void retryOnThrowable(@SuppressWarnings({ "rawtypes" }) Set<Class> classes, long timeoutms,
+			long intervalms, RetryCmd cmd) throws Throwable {
+		long timeout = System.nanoTime() + TimeUnit.NANOSECONDS.convert(timeoutms, TimeUnit.MILLISECONDS);
+		while (true) {
+			try {
+				cmd.execute();
+			} catch (Throwable t) {
+				if (isInstanceOf(classes, t) && System.nanoTime() < timeout) {
+					if (log.isInfoEnabled()) {
+						log.info("Retry due to Throwable, {} ", t.getClass().getName(), t);
+					}
+					Thread.sleep(intervalms);
+					continue;
+				}
+				throw t;
+			}
+			// success
+			break;
+		}
+	}
+
+	private static boolean isInstanceOf(@SuppressWarnings({ "rawtypes" }) Set<Class> classes, Throwable t) {
+		for (@SuppressWarnings({ "rawtypes" })
+		Class c : classes) {
+			if (c.isInstance(t)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void retryUntil(String errorMessage, int retries, long pauseTime, TimeUnit pauseUnit,
+			BooleanRetryCmd cmd) throws InterruptedException {
+		while (retries-- > 0) {
+			if (cmd.execute())
+				return;
+			pauseUnit.sleep(pauseTime);
+		}
+		throw new SolrException(ErrorCode.SERVER_ERROR, errorMessage);
+	}
+
+	public static void retryOnBoolean(long timeoutms, long intervalms, BooleanRetryCmd cmd) {
+		long timeout = System.nanoTime() + TimeUnit.NANOSECONDS.convert(timeoutms, TimeUnit.MILLISECONDS);
+		while (true) {
+			boolean resp = cmd.execute();
+			if (!resp && System.nanoTime() < timeout) {
+				continue;
+			} else if (System.nanoTime() >= timeout) {
+				throw new SolrException(ErrorCode.SERVER_ERROR, "Timed out while retrying operation");
+			}
+
+			// success
+			break;
+		}
+	}
+
 }

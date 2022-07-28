@@ -21,7 +21,7 @@ public class DocumentSpotlightResultContributor extends AbstractSpotlightResultC
 
 	@Reference
 	private IElexisEnvironmentService elexisEnvironmentService;
-	
+
 	@Reference
 	private IContextService contextService;
 

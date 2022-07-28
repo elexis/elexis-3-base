@@ -22,15 +22,15 @@ package org.apache.solr.client.solrj.cloud.autoscaling;
  */
 public class NotEmptyException extends Exception {
 
-  private final String path;
+	private final String path;
 
-  public NotEmptyException(String path) {
-    super("Path not empty: " + path);
-    this.path = path;
-  }
+	public NotEmptyException(String path) {
+		super("Path not empty: " + path);
+		this.path = path;
+	}
 
-  public String getPath() {
-    return path;
-  }
+	public String getPath() {
+		return path;
+	}
 
 }

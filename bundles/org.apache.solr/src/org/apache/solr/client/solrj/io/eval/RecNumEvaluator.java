@@ -26,30 +26,28 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionParameter;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class RecNumEvaluator extends SourceEvaluator {
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  private int index = -1;
+	private int index = -1;
 
-  public RecNumEvaluator(StreamExpression expression, StreamFactory factory) {
+	public RecNumEvaluator(StreamExpression expression, StreamFactory factory) {
 
-  }
+	}
 
-  @Override
-  public Object evaluate(Tuple tuple) throws IOException {
-    return ++index;
-  }
+	@Override
+	public Object evaluate(Tuple tuple) throws IOException {
+		return ++index;
+	}
 
-  @Override
-  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-    return new StreamExpression(factory.getFunctionName(getClass()));
-  }
+	@Override
+	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+		return new StreamExpression(factory.getFunctionName(getClass()));
+	}
 
-  @Override
-  public Explanation toExplanation(StreamFactory factory) throws IOException {
-    return new Explanation(nodeId.toString())
-        .withExpressionType(ExpressionType.EVALUATOR)
-        .withImplementingClass(getClass().getName())
-        .withExpression(toExpression(factory).toString());
-  }
+	@Override
+	public Explanation toExplanation(StreamFactory factory) throws IOException {
+		return new Explanation(nodeId.toString()).withExpressionType(ExpressionType.EVALUATOR)
+				.withImplementingClass(getClass().getName()).withExpression(toExpression(factory).toString());
+	}
 
 }

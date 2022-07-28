@@ -24,36 +24,38 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class NotNullEvaluator extends RecursiveBooleanEvaluator implements ManyValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public NotNullEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public NotNullEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(containedEvaluators.size() != 1){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting one parameter but found %d",expression,containedEvaluators.size()));
-    }
-  }
+		if (containedEvaluators.size() != 1) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting one parameter but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-  public Object doWork(Object ... values) throws IOException {
+	public Object doWork(Object... values) throws IOException {
 
-    if(values[0] == null) {
-      return false;
-    }
+		if (values[0] == null) {
+			return false;
+		}
 
-    if(values[0] instanceof String) {
-      //Check to see if the this tuple had a null value for that string.
-      @SuppressWarnings({"rawtypes"})
-      Map tupleContext = getStreamContext().getTupleContext();
-      String nullField = (String)tupleContext.get("null");
-      if(nullField != null && nullField.equals(values[0])) {
-        return false;
-      }
-    }
+		if (values[0] instanceof String) {
+			// Check to see if the this tuple had a null value for that string.
+			@SuppressWarnings({ "rawtypes" })
+			Map tupleContext = getStreamContext().getTupleContext();
+			String nullField = (String) tupleContext.get("null");
+			if (nullField != null && nullField.equals(values[0])) {
+				return false;
+			}
+		}
 
-    return true;
-  }
+		return true;
+	}
 
-  protected Checker constructChecker(Object value) throws IOException {
-    return null;
-  }
+	protected Checker constructChecker(Object value) throws IOException {
+		return null;
+	}
 }

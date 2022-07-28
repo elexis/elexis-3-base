@@ -191,12 +191,14 @@ public class Utils {
 							StringUtils.EMPTY); // remove
 					// filename remainders like noa635253160443574060.doc
 					String element_data_processed2 = element_data_processed3
-							.replaceAll("_omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove filename //$NON-NLS-1$
+							.replaceAll("_omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove //$NON-NLS-1$
+																										// filename
 																										// remainders
 																										// like
 					// _omni_635253160443574060_vore.pdf
 					String element_data_processed1 = element_data_processed2
-							.replaceAll("omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove filename //$NON-NLS-1$
+							.replaceAll("omni_[0-9]+_vore\056[a-zA-Z0-9]{0,3}", StringUtils.EMPTY); // remove //$NON-NLS-1$
+																									// filename
 																									// remainders like
 					// omni_635253160443574060_vore.pdf
 
@@ -264,7 +266,8 @@ public class Utils {
 	public static String createNiceFileName(IDocumentHandle dh) {
 		StringBuffer tmp = new StringBuffer();
 		tmp.append(getFileElement("constant1", StringUtils.EMPTY)); //$NON-NLS-1$
-		tmp.append(getFileElement("PID", dh.getPatient().getPatientNr())); // getPatient() liefert in etwa: //$NON-NLS-1$
+		tmp.append(getFileElement("PID", dh.getPatient().getPatientNr())); // getPatient() liefert in //$NON-NLS-1$
+																			// etwa:
 																			// ch.elexis.com@1234567;
 																			// getPatient().getId() eine DB-ID;
 																			// getPatient().getKuerzel() die

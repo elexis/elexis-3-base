@@ -19,68 +19,66 @@ package org.apache.solr.client.solrj.request.schema;
 import java.util.Map;
 
 public class FieldTypeDefinition {
-  private Map<String, Object> attributes;
+	private Map<String, Object> attributes;
 
-  private AnalyzerDefinition analyzer;
+	private AnalyzerDefinition analyzer;
 
-  private AnalyzerDefinition indexAnalyzer;
+	private AnalyzerDefinition indexAnalyzer;
 
-  private AnalyzerDefinition queryAnalyzer;
+	private AnalyzerDefinition queryAnalyzer;
 
-  private AnalyzerDefinition multiTermAnalyzer;
+	private AnalyzerDefinition multiTermAnalyzer;
 
-  private Map<String, Object> similarity;
+	private Map<String, Object> similarity;
 
-  public FieldTypeDefinition() {
-  }
+	public FieldTypeDefinition() {
+	}
 
-  public Map<String, Object> getAttributes() {
-    return attributes;
-  }
+	public Map<String, Object> getAttributes() {
+		return attributes;
+	}
 
-  public void setAttributes(Map<String, Object> attributes) {
-    this.attributes = attributes;
-  }
+	public void setAttributes(Map<String, Object> attributes) {
+		this.attributes = attributes;
+	}
 
-  public Map<String, Object> getSimilarity() {
-    return similarity;
-  }
+	public Map<String, Object> getSimilarity() {
+		return similarity;
+	}
 
-  public void setSimilarity(Map<String, Object> similarity) {
-    this.similarity = similarity;
-  }
+	public void setSimilarity(Map<String, Object> similarity) {
+		this.similarity = similarity;
+	}
 
-  public AnalyzerDefinition getAnalyzer() {
-    return analyzer;
-  }
+	public AnalyzerDefinition getAnalyzer() {
+		return analyzer;
+	}
 
-  public void setAnalyzer(AnalyzerDefinition analyzer) {
-    this.analyzer = analyzer;
-  }
+	public void setAnalyzer(AnalyzerDefinition analyzer) {
+		this.analyzer = analyzer;
+	}
 
-  public AnalyzerDefinition getIndexAnalyzer() {
-    return indexAnalyzer;
-  }
+	public AnalyzerDefinition getIndexAnalyzer() {
+		return indexAnalyzer;
+	}
 
-  public void setIndexAnalyzer(AnalyzerDefinition indexAnalyzer) {
-    this.indexAnalyzer = indexAnalyzer;
-  }
+	public void setIndexAnalyzer(AnalyzerDefinition indexAnalyzer) {
+		this.indexAnalyzer = indexAnalyzer;
+	}
 
-  public AnalyzerDefinition getQueryAnalyzer() {
-    return queryAnalyzer;
-  }
+	public AnalyzerDefinition getQueryAnalyzer() {
+		return queryAnalyzer;
+	}
 
-  public void setQueryAnalyzer(AnalyzerDefinition queryAnalyzer) {
-    this.queryAnalyzer = queryAnalyzer;
-  }
+	public void setQueryAnalyzer(AnalyzerDefinition queryAnalyzer) {
+		this.queryAnalyzer = queryAnalyzer;
+	}
 
-  public AnalyzerDefinition getMultiTermAnalyzer() {
-    return multiTermAnalyzer;
-  }
+	public AnalyzerDefinition getMultiTermAnalyzer() {
+		return multiTermAnalyzer;
+	}
 
-  public void setMultiTermAnalyzer(AnalyzerDefinition multiTermAnalyzer) {
-    this.multiTermAnalyzer = multiTermAnalyzer;
-  }
+	public void setMultiTermAnalyzer(AnalyzerDefinition multiTermAnalyzer) {
+		this.multiTermAnalyzer = multiTermAnalyzer;
+	}
 }
-
-

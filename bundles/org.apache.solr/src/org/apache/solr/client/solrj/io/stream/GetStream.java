@@ -36,87 +36,87 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
  */
 public class GetStream extends TupleStream implements Expressible {
 
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  private StreamContext streamContext;
-  private String name;
-  private Iterator<Tuple> tupleIterator;
+	private StreamContext streamContext;
+	private String name;
+	private Iterator<Tuple> tupleIterator;
 
-  public GetStream(String name) throws IOException {
-    init(name);
-  }
+	public GetStream(String name) throws IOException {
+		init(name);
+	}
 
-  public GetStream(StreamExpression expression, StreamFactory factory) throws IOException {
-    String name = factory.getValueOperand(expression, 0);
-    init(name);
-  }
+	public GetStream(StreamExpression expression, StreamFactory factory) throws IOException {
+		String name = factory.getValueOperand(expression, 0);
+		init(name);
+	}
 
-  private void init(String name) {
-    this.name = name;
-  }
+	private void init(String name) {
+		this.name = name;
+	}
 
-  @Override
-  public StreamExpression toExpression(StreamFactory factory) throws IOException{
-    return toExpression(factory, true);
-  }
+	@Override
+	public StreamExpression toExpression(StreamFactory factory) throws IOException {
+		return toExpression(factory, true);
+	}
 
-  private StreamExpression toExpression(StreamFactory factory, boolean includeStreams) throws IOException {
-    // function name
-    StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
-    expression.addParameter(name);
-    return expression;
-  }
+	private StreamExpression toExpression(StreamFactory factory, boolean includeStreams) throws IOException {
+		// function name
+		StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
+		expression.addParameter(name);
+		return expression;
+	}
 
-  @Override
-  public Explanation toExplanation(StreamFactory factory) throws IOException {
+	@Override
+	public Explanation toExplanation(StreamFactory factory) throws IOException {
 
-    StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
-    explanation.setFunctionName(factory.getFunctionName(this.getClass()));
-    explanation.setImplementingClass(this.getClass().getName());
-    explanation.setExpressionType(ExpressionType.STREAM_SOURCE);
-    explanation.setExpression(toExpression(factory, false).toString());
-    return explanation;
-  }
+		StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
+		explanation.setFunctionName(factory.getFunctionName(this.getClass()));
+		explanation.setImplementingClass(this.getClass().getName());
+		explanation.setExpressionType(ExpressionType.STREAM_SOURCE);
+		explanation.setExpression(toExpression(factory, false).toString());
+		return explanation;
+	}
 
-  public void setStreamContext(StreamContext context) {
-    this.streamContext = context;
-  }
+	public void setStreamContext(StreamContext context) {
+		this.streamContext = context;
+	}
 
-  public List<TupleStream> children() {
-    List<TupleStream> l =  new ArrayList<>();
-    return l;
-  }
+	public List<TupleStream> children() {
+		List<TupleStream> l = new ArrayList<>();
+		return l;
+	}
 
-  public Tuple read() throws IOException {
-    if (tupleIterator.hasNext()) {
-      Tuple t = tupleIterator.next();
-      return t.clone();
-    } else {
-      return Tuple.EOF();
-    }
-  }
+	public Tuple read() throws IOException {
+		if (tupleIterator.hasNext()) {
+			Tuple t = tupleIterator.next();
+			return t.clone();
+		} else {
+			return Tuple.EOF();
+		}
+	}
 
-  public void close() throws IOException {
-  }
+	public void close() throws IOException {
+	}
 
-  @SuppressWarnings({"unchecked"})
-  public void open() throws IOException {
-    Map<String, Object> lets = streamContext.getLets();
-    Object o = lets.get(name);
-    @SuppressWarnings({"rawtypes"})
-    List l = null;
-    if(o instanceof List) {
-      l = (List)o;
-      tupleIterator = l.iterator();
-    }
-  }
+	@SuppressWarnings({ "unchecked" })
+	public void open() throws IOException {
+		Map<String, Object> lets = streamContext.getLets();
+		Object o = lets.get(name);
+		@SuppressWarnings({ "rawtypes" })
+		List l = null;
+		if (o instanceof List) {
+			l = (List) o;
+			tupleIterator = l.iterator();
+		}
+	}
 
-  /** Return the stream sort - ie, the order in which records are returned */
-  public StreamComparator getStreamSort(){
-    return null;
-  }
+	/** Return the stream sort - ie, the order in which records are returned */
+	public StreamComparator getStreamSort() {
+		return null;
+	}
 
-  public int getCost() {
-    return 0;
-  }
+	public int getCost() {
+		return 0;
+	}
 }

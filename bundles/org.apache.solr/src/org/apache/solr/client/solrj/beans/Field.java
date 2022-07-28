@@ -24,16 +24,16 @@ import static org.apache.solr.client.solrj.beans.DocumentObjectBinder.DEFAULT;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-
 /**
- * This class can be used to annotate a field or a setter an any class
- * and SlrJ would help you convert to SolrInputDocument and from SolrDocument
+ * This class can be used to annotate a field or a setter an any class and SlrJ
+ * would help you convert to SolrInputDocument and from SolrDocument
  *
  * @since solr 1.3
  */
-@Target({FIELD, METHOD})
+@Target({ FIELD, METHOD })
 @Retention(RUNTIME)
 public @interface Field {
-  boolean child() default false;
-  String value() default DEFAULT;
+	boolean child() default false;
+
+	String value() default DEFAULT;
 }

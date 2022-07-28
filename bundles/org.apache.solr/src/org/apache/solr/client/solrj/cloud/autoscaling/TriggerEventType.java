@@ -22,14 +22,5 @@ package org.apache.solr.client.solrj.cloud.autoscaling;
  * @deprecated to be removed in Solr 9.0 (see SOLR-14656)
  */
 public enum TriggerEventType {
-  NODEADDED,
-  NODELOST,
-  REPLICALOST,
-  MANUAL,
-  SCHEDULED,
-  SEARCHRATE,
-  INDEXRATE,
-  INVALID,
-  METRIC,
-  INDEXSIZE
+	NODEADDED, NODELOST, REPLICALOST, MANUAL, SCHEDULED, SEARCHRATE, INDEXRATE, INVALID, METRIC, INDEXSIZE
 }

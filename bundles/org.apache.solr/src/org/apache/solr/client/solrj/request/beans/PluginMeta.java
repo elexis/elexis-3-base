@@ -26,39 +26,38 @@ import org.apache.solr.common.util.ReflectMapWriter;
  * POJO for a plugin metadata used in container plugins
  */
 public class PluginMeta implements ReflectMapWriter {
-  @JsonProperty(required = true)
-  public String name;
+	@JsonProperty(required = true)
+	public String name;
 
-  @JsonProperty(value = "class", required = true)
-  public String klass;
+	@JsonProperty(value = "class", required = true)
+	public String klass;
 
-  @JsonProperty
-  public String version;
+	@JsonProperty
+	public String version;
 
-  @JsonProperty("path-prefix")
-  public String pathPrefix;
+	@JsonProperty("path-prefix")
+	public String pathPrefix;
 
+	public PluginMeta copy() {
+		PluginMeta result = new PluginMeta();
+		result.name = name;
+		result.klass = klass;
+		result.version = version;
+		return result;
+	}
 
-  public PluginMeta copy() {
-    PluginMeta result = new PluginMeta();
-    result.name = name;
-    result.klass = klass;
-    result.version = version;
-    return result;
-  }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PluginMeta) {
+			PluginMeta that = (PluginMeta) obj;
+			return Objects.equals(this.name, that.name) && Objects.equals(this.klass, that.klass)
+					&& Objects.equals(this.version, that.version);
+		}
+		return false;
+	}
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof PluginMeta) {
-      PluginMeta that = (PluginMeta) obj;
-      return Objects.equals(this.name, that.name) &&
-          Objects.equals(this.klass, that.klass) &&
-          Objects.equals(this.version, that.version);
-    }
-    return false;
-  }
-  @Override
-  public int hashCode() {
-    return Objects.hash(name, version, klass);
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, version, klass);
+	}
 }

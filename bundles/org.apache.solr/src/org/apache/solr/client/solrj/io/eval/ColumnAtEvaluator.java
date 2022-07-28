@@ -25,30 +25,32 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class ColumnAtEvaluator extends RecursiveObjectEvaluator implements TwoValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public ColumnAtEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public ColumnAtEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(2 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 2 values but found %d",expression,containedEvaluators.size()));
-    }
-  }
+		if (2 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 2 values but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-  @Override
-  public Object doWork(Object value1, Object value2) throws IOException {
+	@Override
+	public Object doWork(Object value1, Object value2) throws IOException {
 
-    if(value1 instanceof Matrix) {
-      Matrix matrix = (Matrix) value1;
-      Number index = (Number) value2;
-      double[][] data = matrix.getData();
-      List<Number> list = new ArrayList<>();
-      for(double[] row : data) {
-        list.add(row[index.intValue()]);
-      }
-      return list;
-    } else {
-      throw new IOException("The rowAt function expects a matrix as the first parameter");
-    }
-  }
+		if (value1 instanceof Matrix) {
+			Matrix matrix = (Matrix) value1;
+			Number index = (Number) value2;
+			double[][] data = matrix.getData();
+			List<Number> list = new ArrayList<>();
+			for (double[] row : data) {
+				list.add(row[index.intValue()]);
+			}
+			return list;
+		} else {
+			throw new IOException("The rowAt function expects a matrix as the first parameter");
+		}
+	}
 }

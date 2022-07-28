@@ -29,45 +29,47 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class FFTEvaluator extends RecursiveNumericEvaluator implements OneValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  private static List<String> clabels = new ArrayList<>();
+	private static List<String> clabels = new ArrayList<>();
 
-  static {
-    clabels.add("real");
-    clabels.add("imaginary");
-  }
+	static {
+		clabels.add("real");
+		clabels.add("imaginary");
+	}
 
-  public FFTEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public FFTEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(containedEvaluators.size() < 1){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting at least one value but found %d",expression,containedEvaluators.size()));
-    }
-  }
+		if (containedEvaluators.size() < 1) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting at least one value but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-  @Override
-  public Object doWork(Object v) throws IOException {
+	@Override
+	public Object doWork(Object v) throws IOException {
 
-    double[] data = ((List<?>)v).stream().mapToDouble(value -> ((Number)value).doubleValue()).toArray();
+		double[] data = ((List<?>) v).stream().mapToDouble(value -> ((Number) value).doubleValue()).toArray();
 
-    FastFourierTransformer fastFourierTransformer = new FastFourierTransformer(DftNormalization.STANDARD);
-    Complex[] complex = fastFourierTransformer.transform(data, TransformType.FORWARD);
+		FastFourierTransformer fastFourierTransformer = new FastFourierTransformer(DftNormalization.STANDARD);
+		Complex[] complex = fastFourierTransformer.transform(data, TransformType.FORWARD);
 
-    double[] real = new double[complex.length];
-    double[] imaginary = new double[complex.length];
+		double[] real = new double[complex.length];
+		double[] imaginary = new double[complex.length];
 
-    for(int i=0; i<real.length; ++i) {
-      real[i] = complex[i].getReal();
-      imaginary[i] = complex[i].getImaginary();
-    }
+		for (int i = 0; i < real.length; ++i) {
+			real[i] = complex[i].getReal();
+			imaginary[i] = complex[i].getImaginary();
+		}
 
-    double[][] d = new double[2][];
-    d[0]=real;
-    d[1]=imaginary;
+		double[][] d = new double[2][];
+		d[0] = real;
+		d[1] = imaginary;
 
-    Matrix matrix = new Matrix(d);
-    matrix.setRowLabels(clabels);
-    return matrix;
-  }
+		Matrix matrix = new Matrix(d);
+		matrix.setRowLabels(clabels);
+		return matrix;
+	}
 }

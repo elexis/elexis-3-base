@@ -305,8 +305,7 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		try {
 			String attachmentsString = getAttachmentsString(printed);
-			Command sendMailCommand = commandService
-					.getCommand("ch.elexis.core.mail.ui.sendMailNoUi"); //$NON-NLS-1$
+			Command sendMailCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMailNoUi"); //$NON-NLS-1$
 
 			HashMap<String, String> params = new HashMap<String, String>();
 			String accountid = ConfigServiceHolder.getGlobal(PrivatQrRnOutputter.CFG_ROOT

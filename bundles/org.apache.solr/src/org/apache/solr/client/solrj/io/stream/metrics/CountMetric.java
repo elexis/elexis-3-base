@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.solr.client.solrj.io.stream.metrics;
+
 import java.io.IOException;
 import java.util.Locale;
 
@@ -24,65 +25,66 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionParameter;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class CountMetric extends Metric {
-  private String columnName;
-  private long count;
-  private boolean isAllColumns;
+	private String columnName;
+	private long count;
+	private boolean isAllColumns;
 
-  public CountMetric() {
-    this("*");
-  }
+	public CountMetric() {
+		this("*");
+	}
 
-  public CountMetric(String columnName) {
-    init("count", columnName);
-  }
+	public CountMetric(String columnName) {
+		init("count", columnName);
+	}
 
-  public CountMetric(StreamExpression expression, StreamFactory factory) throws IOException{
-    // grab all parameters out
-    String functionName = expression.getFunctionName();
-    String columnName = factory.getValueOperand(expression, 0);
+	public CountMetric(StreamExpression expression, StreamFactory factory) throws IOException {
+		// grab all parameters out
+		String functionName = expression.getFunctionName();
+		String columnName = factory.getValueOperand(expression, 0);
 
-    if(1 != expression.getParameters().size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - unknown operands found", expression));
-    }
+		if (1 != expression.getParameters().size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - unknown operands found", expression));
+		}
 
-    init(functionName, columnName);
-  }
+		init(functionName, columnName);
+	}
 
-  public String[] getColumns() {
-    if(isAllColumns()) {
-      return new String[0];
-    }
-    return new String[]{columnName};
-  }
+	public String[] getColumns() {
+		if (isAllColumns()) {
+			return new String[0];
+		}
+		return new String[] { columnName };
+	}
 
-  private void init(String functionName, String columnName){
-    this.columnName = columnName;
-    this.isAllColumns = "*".equals(this.columnName);
-    this.outputLong = true;
-    setFunctionName(functionName);
-    setIdentifier(functionName, "(", columnName, ")");
-  }
+	private void init(String functionName, String columnName) {
+		this.columnName = columnName;
+		this.isAllColumns = "*".equals(this.columnName);
+		this.outputLong = true;
+		setFunctionName(functionName);
+		setIdentifier(functionName, "(", columnName, ")");
+	}
 
-  private boolean isAllColumns() {
-    return isAllColumns;
-  }
+	private boolean isAllColumns() {
+		return isAllColumns;
+	}
 
-  public void update(Tuple tuple) {
-    if(isAllColumns() || tuple.get(columnName) != null) {
-      ++count;
-    }
-  }
+	public void update(Tuple tuple) {
+		if (isAllColumns() || tuple.get(columnName) != null) {
+			++count;
+		}
+	}
 
-  public Long getValue() {
-    return count;
-  }
+	public Long getValue() {
+		return count;
+	}
 
-  public Metric newInstance() {
-    return new CountMetric(columnName);
-  }
+	public Metric newInstance() {
+		return new CountMetric(columnName);
+	}
 
-  @Override
-  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-    return new StreamExpression(getFunctionName()).withParameter(columnName);
-  }
+	@Override
+	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+		return new StreamExpression(getFunctionName()).withParameter(columnName);
+	}
 }

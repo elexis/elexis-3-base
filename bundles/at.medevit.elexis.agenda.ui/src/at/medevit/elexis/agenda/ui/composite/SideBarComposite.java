@@ -179,7 +179,7 @@ public class SideBarComposite extends Composite {
 		gd.widthHint = calendar.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 
 		dayMessage.addModifyListener(new ModifyListener() {
-			
+
 			@Override
 			public void modifyText(ModifyEvent e) {
 				String tx = dayMessage.getText();
@@ -189,7 +189,7 @@ public class SideBarComposite extends Composite {
 				if (message.isPresent()) {
 					message.get().setMessage(tx);
 					CoreModelServiceHolder.get().save(message.get());
-				} else if(StringUtils.isNotBlank(tx)) {
+				} else if (StringUtils.isNotBlank(tx)) {
 					IDayMessage newMessage = CoreModelServiceHolder.get().create(IDayMessage.class);
 					newMessage.setDate(date);
 					newMessage.setMessage(tx);

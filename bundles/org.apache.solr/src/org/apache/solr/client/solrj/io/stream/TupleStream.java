@@ -46,171 +46,168 @@ import org.apache.solr.common.cloud.ZkStateReader;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 
-
 /**
  * @since 5.1.0
  */
 public abstract class TupleStream implements Closeable, Serializable, MapWriter {
 
-  private static final long serialVersionUID = 1;
-  
-  private UUID streamNodeId = UUID.randomUUID();
+	private static final long serialVersionUID = 1;
 
-  public TupleStream() {
+	private UUID streamNodeId = UUID.randomUUID();
 
-  }
-  public abstract void setStreamContext(StreamContext context);
+	public TupleStream() {
 
-  public abstract List<TupleStream> children();
+	}
 
-  public abstract void open() throws IOException;
+	public abstract void setStreamContext(StreamContext context);
 
-  public abstract void close() throws IOException;
+	public abstract List<TupleStream> children();
 
-  public abstract Tuple read() throws IOException;
+	public abstract void open() throws IOException;
 
-  public abstract StreamComparator getStreamSort();
-  
-  public abstract Explanation toExplanation(StreamFactory factory) throws IOException;
-  
-  public int getCost() {
-    return 0;
-  }
+	public abstract void close() throws IOException;
 
-  @Override
-  public void writeMap(EntryWriter ew) throws IOException {
-    open();
-    ew.put("docs", (IteratorWriter) iw -> {
-      try {
-        for ( ; ; ) {
-          Tuple tuple = read();
-          if (tuple != null) {
-            iw.add(tuple);
-            if (tuple.EOF) {
-              close();
-              break;
-            }
-          } else {
-            break;
-          }
-        }
-      } catch (Throwable e) {
-        close();
-        Throwable ex = e;
-        while(ex != null) {
-          String m = ex.getMessage();
-          if(m != null && m.contains("Broken pipe")) {
-            throw new IgnoreException();
-          }
-          ex = ex.getCause();
-        }
+	public abstract Tuple read() throws IOException;
 
-        if(e instanceof IOException) {
-          throw e;
-        } else {
-          throw new IOException(e);
-        }
-      }
-    });
-  }
+	public abstract StreamComparator getStreamSort();
 
-  public UUID getStreamNodeId(){
-    return streamNodeId;
-  }
+	public abstract Explanation toExplanation(StreamFactory factory) throws IOException;
 
-  public static List<String> getShards(String zkHost,
-                                       String collection,
-                                       StreamContext streamContext)
-      throws IOException {
-    return getShards(zkHost, collection, streamContext, new ModifiableSolrParams());
-  }
+	public int getCost() {
+		return 0;
+	}
 
-  static List<Replica> getReplicas(String zkHost,
-                                   String collection,
-                                   StreamContext streamContext,
-                                   SolrParams requestParams)
-      throws IOException {
-    List<Replica> replicas = new LinkedList<>();
+	@Override
+	public void writeMap(EntryWriter ew) throws IOException {
+		open();
+		ew.put("docs", (IteratorWriter) iw -> {
+			try {
+				for (;;) {
+					Tuple tuple = read();
+					if (tuple != null) {
+						iw.add(tuple);
+						if (tuple.EOF) {
+							close();
+							break;
+						}
+					} else {
+						break;
+					}
+				}
+			} catch (Throwable e) {
+				close();
+				Throwable ex = e;
+				while (ex != null) {
+					String m = ex.getMessage();
+					if (m != null && m.contains("Broken pipe")) {
+						throw new IgnoreException();
+					}
+					ex = ex.getCause();
+				}
 
-    //SolrCloud Sharding
-    SolrClientCache solrClientCache = (streamContext != null ? streamContext.getSolrClientCache() : null);
-    final SolrClientCache localSolrClientCache; // tracks any locally allocated cache that needs to be closed locally
-    if (solrClientCache == null) { // streamContext was null OR streamContext.getSolrClientCache() returned null
-      solrClientCache = localSolrClientCache = new SolrClientCache();
-    } else {
-      localSolrClientCache = null;
-    }
+				if (e instanceof IOException) {
+					throw e;
+				} else {
+					throw new IOException(e);
+				}
+			}
+		});
+	}
 
-    if (zkHost == null) {
-      throw new IOException(String.format(Locale.ROOT,"invalid expression - zkHost not found for collection '%s'",collection));
-    }
+	public UUID getStreamNodeId() {
+		return streamNodeId;
+	}
 
-    CloudSolrClient cloudSolrClient = solrClientCache.getCloudSolrClient(zkHost);
-    ZkStateReader zkStateReader = cloudSolrClient.getZkStateReader();
-    ClusterState clusterState = zkStateReader.getClusterState();
-    Slice[] slices = CloudSolrStream.getSlices(collection, zkStateReader, true);
-    Set<String> liveNodes = clusterState.getLiveNodes();
+	public static List<String> getShards(String zkHost, String collection, StreamContext streamContext)
+			throws IOException {
+		return getShards(zkHost, collection, streamContext, new ModifiableSolrParams());
+	}
 
-    RequestReplicaListTransformerGenerator requestReplicaListTransformerGenerator;
-    final ModifiableSolrParams solrParams;
-    if (streamContext != null) {
-      solrParams = new ModifiableSolrParams(streamContext.getRequestParams());
-      requestReplicaListTransformerGenerator = streamContext.getRequestReplicaListTransformerGenerator();
-    } else {
-      solrParams = new ModifiableSolrParams();
-      requestReplicaListTransformerGenerator = null;
-    }
-    if (requestReplicaListTransformerGenerator == null) {
-      requestReplicaListTransformerGenerator = new RequestReplicaListTransformerGenerator();
-    }
-    solrParams.add(requestParams);
+	static List<Replica> getReplicas(String zkHost, String collection, StreamContext streamContext,
+			SolrParams requestParams) throws IOException {
+		List<Replica> replicas = new LinkedList<>();
 
-    ReplicaListTransformer replicaListTransformer = requestReplicaListTransformerGenerator.getReplicaListTransformer(solrParams);
+		// SolrCloud Sharding
+		SolrClientCache solrClientCache = (streamContext != null ? streamContext.getSolrClientCache() : null);
+		final SolrClientCache localSolrClientCache; // tracks any locally allocated cache that needs to be closed
+													// locally
+		if (solrClientCache == null) { // streamContext was null OR streamContext.getSolrClientCache() returned null
+			solrClientCache = localSolrClientCache = new SolrClientCache();
+		} else {
+			localSolrClientCache = null;
+		}
 
-    List<Replica> sortedReplicas = new ArrayList<>();
-    for(Slice slice : slices) {
-      slice.getReplicas().stream().filter(r -> r.isActive(liveNodes)).forEach(sortedReplicas::add);
-      replicaListTransformer.transform(sortedReplicas);
-      if (sortedReplicas.size() > 0) {
-        replicas.add(sortedReplicas.get(0));
-      }
-      sortedReplicas.clear();
-    }
+		if (zkHost == null) {
+			throw new IOException(String.format(Locale.ROOT,
+					"invalid expression - zkHost not found for collection '%s'", collection));
+		}
 
-    if (localSolrClientCache != null) {
-      localSolrClientCache.close();
-    }
+		CloudSolrClient cloudSolrClient = solrClientCache.getCloudSolrClient(zkHost);
+		ZkStateReader zkStateReader = cloudSolrClient.getZkStateReader();
+		ClusterState clusterState = zkStateReader.getClusterState();
+		Slice[] slices = CloudSolrStream.getSlices(collection, zkStateReader, true);
+		Set<String> liveNodes = clusterState.getLiveNodes();
 
-    return replicas;
-  }
+		RequestReplicaListTransformerGenerator requestReplicaListTransformerGenerator;
+		final ModifiableSolrParams solrParams;
+		if (streamContext != null) {
+			solrParams = new ModifiableSolrParams(streamContext.getRequestParams());
+			requestReplicaListTransformerGenerator = streamContext.getRequestReplicaListTransformerGenerator();
+		} else {
+			solrParams = new ModifiableSolrParams();
+			requestReplicaListTransformerGenerator = null;
+		}
+		if (requestReplicaListTransformerGenerator == null) {
+			requestReplicaListTransformerGenerator = new RequestReplicaListTransformerGenerator();
+		}
+		solrParams.add(requestParams);
 
-  @SuppressWarnings({"unchecked"})
-  public static List<String> getShards(String zkHost,
-                                       String collection,
-                                       StreamContext streamContext,
-                                       SolrParams requestParams)
-      throws IOException {
+		ReplicaListTransformer replicaListTransformer = requestReplicaListTransformerGenerator
+				.getReplicaListTransformer(solrParams);
 
-    List<String> shards;
-    Map<String, List<String>> shardsMap = streamContext != null ? (Map<String, List<String>>)streamContext.get("shards") : null;
-    if(shardsMap != null) {
-      //Manual Sharding
-      shards = shardsMap.get(collection);
-    } else {
-      shards = getReplicas(zkHost, collection, streamContext, requestParams).stream()
-          .map(Replica::getCoreUrl).collect(Collectors.toList());
-    }
+		List<Replica> sortedReplicas = new ArrayList<>();
+		for (Slice slice : slices) {
+			slice.getReplicas().stream().filter(r -> r.isActive(liveNodes)).forEach(sortedReplicas::add);
+			replicaListTransformer.transform(sortedReplicas);
+			if (sortedReplicas.size() > 0) {
+				replicas.add(sortedReplicas.get(0));
+			}
+			sortedReplicas.clear();
+		}
 
-    return shards;
-  }
+		if (localSolrClientCache != null) {
+			localSolrClientCache.close();
+		}
 
-  public static class IgnoreException extends IOException {
-    public void printStackTrace(PrintWriter pw) {
-      pw.print("Early Client Disconnect");
-    }
+		return replicas;
+	}
 
-    public String getMessage() {
-      return "Early Client Disconnect";
-    }
-  }
+	@SuppressWarnings({ "unchecked" })
+	public static List<String> getShards(String zkHost, String collection, StreamContext streamContext,
+			SolrParams requestParams) throws IOException {
+
+		List<String> shards;
+		Map<String, List<String>> shardsMap = streamContext != null
+				? (Map<String, List<String>>) streamContext.get("shards")
+				: null;
+		if (shardsMap != null) {
+			// Manual Sharding
+			shards = shardsMap.get(collection);
+		} else {
+			shards = getReplicas(zkHost, collection, streamContext, requestParams).stream().map(Replica::getCoreUrl)
+					.collect(Collectors.toList());
+		}
+
+		return shards;
+	}
+
+	public static class IgnoreException extends IOException {
+		public void printStackTrace(PrintWriter pw) {
+			pw.print("Early Client Disconnect");
+		}
+
+		public String getMessage() {
+			return "Early Client Disconnect";
+		}
+	}
 }

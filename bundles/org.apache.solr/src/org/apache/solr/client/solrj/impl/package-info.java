@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-/** 
- * Concrete implementations of client API classes.
 
+/**
+ * Concrete implementations of client API classes.
+ *
  */
 package org.apache.solr.client.solrj.impl;
-
-

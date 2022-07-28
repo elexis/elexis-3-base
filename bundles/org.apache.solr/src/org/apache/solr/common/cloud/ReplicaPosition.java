@@ -17,39 +17,39 @@
 
 package org.apache.solr.common.cloud;
 
-
 public class ReplicaPosition implements Comparable<ReplicaPosition> {
-  public final String shard;
-  public final int index;
-  public final Replica.Type type;
-  public String node;
+	public final String shard;
+	public final int index;
+	public final Replica.Type type;
+	public String node;
 
-  public ReplicaPosition(String shard, int replicaIdx, Replica.Type type) {
-    this.shard = shard;
-    this.index = replicaIdx;
-    this.type = type;
-  }
-  public ReplicaPosition(String shard, int replicaIdx, Replica.Type type, String node) {
-    this.shard = shard;
-    this.index = replicaIdx;
-    this.type = type;
-    this.node = node;
-  }
+	public ReplicaPosition(String shard, int replicaIdx, Replica.Type type) {
+		this.shard = shard;
+		this.index = replicaIdx;
+		this.type = type;
+	}
 
-  @Override
-  public int compareTo(ReplicaPosition that) {
-    //this is to ensure that we try one replica from each shard first instead of
-    // all replicas from same shard
-    return Integer.compare(index, that.index);
-  }
+	public ReplicaPosition(String shard, int replicaIdx, Replica.Type type, String node) {
+		this.shard = shard;
+		this.index = replicaIdx;
+		this.type = type;
+		this.node = node;
+	}
 
-  @Override
-  public String toString() {
-    return shard + ":" + index + "["+ type +"] @" + node;
-  }
+	@Override
+	public int compareTo(ReplicaPosition that) {
+		// this is to ensure that we try one replica from each shard first instead of
+		// all replicas from same shard
+		return Integer.compare(index, that.index);
+	}
 
-  public ReplicaPosition setNode(String node) {
-    this.node = node;
-    return this;
-  }
+	@Override
+	public String toString() {
+		return shard + ":" + index + "[" + type + "] @" + node;
+	}
+
+	public ReplicaPosition setNode(String node) {
+		this.node = node;
+		return this;
+	}
 }

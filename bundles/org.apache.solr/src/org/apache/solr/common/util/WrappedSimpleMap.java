@@ -23,38 +23,37 @@ import java.util.function.BiConsumer;
 
 import org.apache.solr.cluster.api.SimpleMap;
 
-public class WrappedSimpleMap<T>  implements SimpleMap<T> {
-    private final Map<String, T> delegate;
+public class WrappedSimpleMap<T> implements SimpleMap<T> {
+	private final Map<String, T> delegate;
 
-    @Override
-    public T get(String key) {
-        return delegate.get(key);
-    }
+	@Override
+	public T get(String key) {
+		return delegate.get(key);
+	}
 
-    @Override
-    public void forEachEntry(BiConsumer<String, ? super T> fun) {
-        delegate.forEach(fun);
+	@Override
+	public void forEachEntry(BiConsumer<String, ? super T> fun) {
+		delegate.forEach(fun);
 
-    }
+	}
 
-    @Override
-    public int size() {
-        return delegate.size();
-    }
+	@Override
+	public int size() {
+		return delegate.size();
+	}
 
+	public WrappedSimpleMap(Map<String, T> delegate) {
+		this.delegate = delegate;
+	}
 
-    public WrappedSimpleMap(Map<String, T> delegate) {
-        this.delegate = delegate;
-    }
+	@Override
+	public Map<String, T> asMap(Map<String, T> sink) {
+		sink.putAll(delegate);
+		return sink;
+	}
 
-  @Override
-  public Map<String, T> asMap(Map<String, T> sink) {
-    sink.putAll(delegate);
-    return sink;
-  }
-
-    @Override
-    public Map<String, T> asMap() {
-        return Collections.unmodifiableMap(delegate);
-    }
+	@Override
+	public Map<String, T> asMap() {
+		return Collections.unmodifiableMap(delegate);
+	}
 }

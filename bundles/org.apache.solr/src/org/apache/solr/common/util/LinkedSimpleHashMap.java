@@ -22,19 +22,19 @@ import java.util.function.BiConsumer;
 
 import org.apache.solr.cluster.api.SimpleMap;
 
-public class LinkedSimpleHashMap<T> extends LinkedHashMap<String, T>  implements SimpleMap<T> {
-    @Override
-    public T get(String key) {
-        return super.get(key);
-    }
+public class LinkedSimpleHashMap<T> extends LinkedHashMap<String, T> implements SimpleMap<T> {
+	@Override
+	public T get(String key) {
+		return super.get(key);
+	}
 
-    @Override
-    public void forEachEntry(BiConsumer<String, ? super T> fun) {
+	@Override
+	public void forEachEntry(BiConsumer<String, ? super T> fun) {
 
-    }
+	}
 
-    @Override
-    public Map<String, T> asMap() {
-        return this;
-    }
+	@Override
+	public Map<String, T> asMap() {
+		return this;
+	}
 }

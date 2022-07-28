@@ -51,7 +51,7 @@ public class PatientData {
 			initLegalGuardian();
 		}
 	}
-	
+
 	public void loadFromAgenda() throws NullPointerException {
 		Termin t = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 		if (t == null) {
@@ -88,7 +88,7 @@ public class PatientData {
 		}
 		return false;
 	}
-	
+
 	private Kontakt getLegalGuardian() {
 		String guardianId = (String) patient.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
 		if (StringUtils.isNotBlank(guardianId)) {

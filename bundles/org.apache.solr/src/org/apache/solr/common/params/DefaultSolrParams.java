@@ -24,44 +24,44 @@ import java.util.LinkedHashSet;
  */
 public class DefaultSolrParams extends SolrParams {
 
-  protected final SolrParams params;
-  protected final SolrParams defaults;
+	protected final SolrParams params;
+	protected final SolrParams defaults;
 
-  public DefaultSolrParams(SolrParams params, SolrParams defaults) {
-    assert params != null && defaults != null;
-    this.params = params;
-    this.defaults = defaults;
-  }
+	public DefaultSolrParams(SolrParams params, SolrParams defaults) {
+		assert params != null && defaults != null;
+		this.params = params;
+		this.defaults = defaults;
+	}
 
-  @Override
-  public String get(String param) {
-    String val = params.get(param);
-    return val!=null ? val : defaults.get(param);
-  }
+	@Override
+	public String get(String param) {
+		String val = params.get(param);
+		return val != null ? val : defaults.get(param);
+	}
 
-  @Override
-  public String[] getParams(String param) {
-    String[] vals = params.getParams(param);
-    return vals!=null ? vals : defaults.getParams(param);
-  }
+	@Override
+	public String[] getParams(String param) {
+		String[] vals = params.getParams(param);
+		return vals != null ? vals : defaults.getParams(param);
+	}
 
-  @Override
-  public Iterator<String> getParameterNamesIterator() {
-    // We need to compute the set of all param names in advance 
-    // So we don't wind up with an iterator that returns the same
-    // String more then once (SOLR-6780)
-    LinkedHashSet<String> allKeys = new LinkedHashSet<>();
-    for (SolrParams p : new SolrParams [] {params, defaults}) {
-      Iterator<String> localKeys = p.getParameterNamesIterator();
-      while (localKeys.hasNext()) {
-        allKeys.add(localKeys.next());
-      }
-    }
-    return allKeys.iterator();
-  }
+	@Override
+	public Iterator<String> getParameterNamesIterator() {
+		// We need to compute the set of all param names in advance
+		// So we don't wind up with an iterator that returns the same
+		// String more then once (SOLR-6780)
+		LinkedHashSet<String> allKeys = new LinkedHashSet<>();
+		for (SolrParams p : new SolrParams[] { params, defaults }) {
+			Iterator<String> localKeys = p.getParameterNamesIterator();
+			while (localKeys.hasNext()) {
+				allKeys.add(localKeys.next());
+			}
+		}
+		return allKeys.iterator();
+	}
 
-  @Override
-  public String toString() {
-    return "{params("+params+"),defaults("+defaults+")}";
-  }
+	@Override
+	public String toString() {
+		return "{params(" + params + "),defaults(" + defaults + ")}";
+	}
 }

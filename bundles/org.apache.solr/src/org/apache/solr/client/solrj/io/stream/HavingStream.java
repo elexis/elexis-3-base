@@ -33,142 +33,144 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 /**
- * The HavingStream iterates over an internal stream and applies a BooleanOperation to each tuple. If the BooleanOperation
- * evaluates to true then the HavingStream emits the tuple, if it returns false the tuple is not emitted.
+ * The HavingStream iterates over an internal stream and applies a
+ * BooleanOperation to each tuple. If the BooleanOperation evaluates to true
+ * then the HavingStream emits the tuple, if it returns false the tuple is not
+ * emitted.
+ *
  * @since 6.4.0
  **/
 
 public class HavingStream extends TupleStream implements Expressible {
 
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  private TupleStream stream;
-  private RecursiveBooleanEvaluator evaluator;
-  private StreamContext streamContext;
+	private TupleStream stream;
+	private RecursiveBooleanEvaluator evaluator;
+	private StreamContext streamContext;
 
-  private transient Tuple currentGroupHead;
+	private transient Tuple currentGroupHead;
 
-  public HavingStream(TupleStream stream, RecursiveBooleanEvaluator evaluator) throws IOException {
-    init(stream, evaluator);
-  }
+	public HavingStream(TupleStream stream, RecursiveBooleanEvaluator evaluator) throws IOException {
+		init(stream, evaluator);
+	}
 
+	public HavingStream(StreamExpression expression, StreamFactory factory) throws IOException {
+		// grab all parameters out
+		List<StreamExpression> streamExpressions = factory.getExpressionOperandsRepresentingTypes(expression,
+				Expressible.class, TupleStream.class);
+		List<StreamExpression> evaluatorExpressions = factory.getExpressionOperandsRepresentingTypes(expression,
+				RecursiveBooleanEvaluator.class);
 
-  public HavingStream(StreamExpression expression, StreamFactory factory) throws IOException{
-    // grab all parameters out
-    List<StreamExpression> streamExpressions = factory.getExpressionOperandsRepresentingTypes(expression, Expressible.class, TupleStream.class);
-    List<StreamExpression> evaluatorExpressions = factory.getExpressionOperandsRepresentingTypes(expression, RecursiveBooleanEvaluator.class);
+		// validate expression contains only what we want.
+		if (expression.getParameters().size() != streamExpressions.size() + 1) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - unknown operands found", expression));
+		}
 
-    // validate expression contains only what we want.
-    if(expression.getParameters().size() != streamExpressions.size() + 1){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - unknown operands found", expression));
-    }
+		if (1 != streamExpressions.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting a single stream but found %d",
+							expression, streamExpressions.size()));
+		}
 
-    if(1 != streamExpressions.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting a single stream but found %d",expression, streamExpressions.size()));
-    }
+		StreamEvaluator evaluator = null;
+		if (evaluatorExpressions != null && evaluatorExpressions.size() == 1) {
+			StreamExpression ex = evaluatorExpressions.get(0);
+			evaluator = factory.constructEvaluator(ex);
+			if (!(evaluator instanceof RecursiveBooleanEvaluator)) {
+				throw new IOException(
+						"The HavingStream requires a RecursiveBooleanEvaluator. A StreamEvaluator was provided.");
+			}
+		} else {
+			throw new IOException("The HavingStream requires a RecursiveBooleanEvaluator.");
+		}
 
+		init(factory.constructStream(streamExpressions.get(0)), (RecursiveBooleanEvaluator) evaluator);
+	}
 
-    StreamEvaluator evaluator = null;
-    if(evaluatorExpressions != null && evaluatorExpressions.size() == 1) {
-      StreamExpression ex = evaluatorExpressions.get(0);
-      evaluator = factory.constructEvaluator(ex);
-      if(!(evaluator instanceof RecursiveBooleanEvaluator)) {
-        throw new IOException("The HavingStream requires a RecursiveBooleanEvaluator. A StreamEvaluator was provided.");
-      }
-    } else {
-      throw new IOException("The HavingStream requires a RecursiveBooleanEvaluator.");
-    }
+	private void init(TupleStream stream, RecursiveBooleanEvaluator evaluator) throws IOException {
+		this.stream = stream;
+		this.evaluator = evaluator;
+	}
 
-    init(factory.constructStream(streamExpressions.get(0)), (RecursiveBooleanEvaluator)evaluator);
-  }
+	@Override
+	public StreamExpression toExpression(StreamFactory factory) throws IOException {
+		return toExpression(factory, true);
+	}
 
-  private void init(TupleStream stream, RecursiveBooleanEvaluator evaluator) throws IOException{
-    this.stream = stream;
-    this.evaluator = evaluator;
-  }
+	private StreamExpression toExpression(StreamFactory factory, boolean includeStreams) throws IOException {
+		// function name
+		StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
 
-  @Override
-  public StreamExpression toExpression(StreamFactory factory) throws IOException{
-    return toExpression(factory, true);
-  }
+		// stream
+		if (includeStreams) {
+			expression.addParameter(((Expressible) stream).toExpression(factory));
+		} else {
+			expression.addParameter("<stream>");
+		}
 
-  private StreamExpression toExpression(StreamFactory factory, boolean includeStreams) throws IOException {
-    // function name
-    StreamExpression expression = new StreamExpression(factory.getFunctionName(this.getClass()));
+		if (evaluator instanceof Expressible) {
+			expression.addParameter(evaluator.toExpression(factory));
+		} else {
+			throw new IOException(
+					"This HavingStream contains a non-expressible evaluator - it cannot be converted to an expression");
+		}
 
-    // stream
-    if(includeStreams){
-      expression.addParameter(((Expressible) stream).toExpression(factory));
-    }
-    else{
-      expression.addParameter("<stream>");
-    }
+		return expression;
+	}
 
-    if(evaluator instanceof Expressible) {
-      expression.addParameter(evaluator.toExpression(factory));
-    } else {
-      throw new IOException("This HavingStream contains a non-expressible evaluator - it cannot be converted to an expression");
-    }
+	@Override
+	public Explanation toExplanation(StreamFactory factory) throws IOException {
 
-    return expression;
-  }
+		return new StreamExplanation(getStreamNodeId().toString())
+				.withChildren(new Explanation[] { stream.toExplanation(factory) })
+				.withFunctionName(factory.getFunctionName(this.getClass()))
+				.withImplementingClass(this.getClass().getName()).withExpressionType(ExpressionType.STREAM_DECORATOR)
+				.withExpression(toExpression(factory, false).toString())
+				.withHelpers(new Explanation[] { evaluator.toExplanation(factory) });
+	}
 
-  @Override
-  public Explanation toExplanation(StreamFactory factory) throws IOException {
+	public void setStreamContext(StreamContext context) {
+		this.streamContext = context;
+		this.stream.setStreamContext(context);
+		this.evaluator.setStreamContext(context);
+	}
 
-    return new StreamExplanation(getStreamNodeId().toString())
-        .withChildren(new Explanation[]{
-            stream.toExplanation(factory)
-        })
-        .withFunctionName(factory.getFunctionName(this.getClass()))
-        .withImplementingClass(this.getClass().getName())
-        .withExpressionType(ExpressionType.STREAM_DECORATOR)
-        .withExpression(toExpression(factory, false).toString())
-        .withHelpers(new Explanation[]{
-            evaluator.toExplanation(factory)
-        });
-  }
+	public List<TupleStream> children() {
+		List<TupleStream> l = new ArrayList<TupleStream>();
+		l.add(stream);
+		return l;
+	}
 
-  public void setStreamContext(StreamContext context) {
-    this.streamContext = context;
-    this.stream.setStreamContext(context);
-    this.evaluator.setStreamContext(context);
-  }
+	public void open() throws IOException {
+		stream.open();
+	}
 
-  public List<TupleStream> children() {
-    List<TupleStream> l =  new ArrayList<TupleStream>();
-    l.add(stream);
-    return l;
-  }
+	public void close() throws IOException {
+		stream.close();
+	}
 
-  public void open() throws IOException {
-    stream.open();
-  }
+	public Tuple read() throws IOException {
+		while (true) {
+			Tuple tuple = stream.read();
+			if (tuple.EOF) {
+				return tuple;
+			}
 
-  public void close() throws IOException {
-    stream.close();
-  }
+			streamContext.getTupleContext().clear();
+			if ((boolean) evaluator.evaluate(tuple)) {
+				return tuple;
+			}
+		}
+	}
 
-  public Tuple read() throws IOException {
-    while(true) {
-      Tuple tuple = stream.read();
-      if(tuple.EOF) {
-        return tuple;
-      }
+	/** Return the stream sort - ie, the order in which records are returned */
+	public StreamComparator getStreamSort() {
+		return stream.getStreamSort();
+	}
 
-      streamContext.getTupleContext().clear();
-      if((boolean)evaluator.evaluate(tuple)){
-        return tuple;
-      }
-    }
-  }
-
-  /** Return the stream sort - ie, the order in which records are returned */
-  public StreamComparator getStreamSort(){
-    return stream.getStreamSort();
-  }
-
-  public int getCost() {
-    return 0;
-  }
+	public int getCost() {
+		return 0;
+	}
 }

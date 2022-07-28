@@ -26,24 +26,25 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class EuclideanEvaluator extends RecursiveEvaluator {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public EuclideanEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-  }
+	public EuclideanEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  public EuclideanEvaluator(StreamExpression expression, StreamFactory factory, List<String> ignoredNamedParameters) throws IOException{
-    super(expression, factory, ignoredNamedParameters);
-  }
+	public EuclideanEvaluator(StreamExpression expression, StreamFactory factory, List<String> ignoredNamedParameters)
+			throws IOException {
+		super(expression, factory, ignoredNamedParameters);
+	}
 
-  @Override
-  public Object evaluate(Tuple tuple) throws IOException {
-    return new EuclideanDistance();
-  }
+	@Override
+	public Object evaluate(Tuple tuple) throws IOException {
+		return new EuclideanDistance();
+	}
 
-  @Override
-  public Object doWork(Object... values) throws IOException {
-    // Nothing to do here
-    throw new IOException("This call should never occur");
-  }
+	@Override
+	public Object doWork(Object... values) throws IOException {
+		// Nothing to do here
+		throw new IOException("This call should never occur");
+	}
 }

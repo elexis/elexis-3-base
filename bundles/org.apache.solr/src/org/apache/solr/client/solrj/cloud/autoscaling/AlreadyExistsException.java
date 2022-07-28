@@ -22,15 +22,15 @@ package org.apache.solr.client.solrj.cloud.autoscaling;
  */
 public class AlreadyExistsException extends Exception {
 
-  private final String id;
+	private final String id;
 
-  public AlreadyExistsException(String id) {
-    super("Already exists: " + id);
-    this.id = id;
-  }
+	public AlreadyExistsException(String id) {
+		super("Already exists: " + id);
+		this.id = id;
+	}
 
-  public String getId() {
-    return id;
-  }
+	public String getId() {
+		return id;
+	}
 
 }

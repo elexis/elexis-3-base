@@ -29,96 +29,99 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionParameter;
 import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionValue;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
-
 /**
- *  Wraps multiple Equalitors.
+ * Wraps multiple Equalitors.
  **/
 
 public class MultipleFieldEqualitor implements StreamEqualitor {
 
-  private static final long serialVersionUID = 1;
-  private UUID equalitorNodeId = UUID.randomUUID();
+	private static final long serialVersionUID = 1;
+	private UUID equalitorNodeId = UUID.randomUUID();
 
-  private StreamEqualitor[] eqs;
+	private StreamEqualitor[] eqs;
 
-  public MultipleFieldEqualitor(StreamEqualitor... eqs) {
-    this.eqs = eqs;
-  }
-  
-  public StreamEqualitor[] getEqs(){
-    return eqs;
-  }
+	public MultipleFieldEqualitor(StreamEqualitor... eqs) {
+		this.eqs = eqs;
+	}
 
-  @Override
-  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-    StringBuilder sb = new StringBuilder();
-    for(Equalitor<Tuple> eq : eqs){
-      if(eq instanceof Expressible){
-        if(sb.length() > 0){ sb.append(","); }
-        sb.append(((Expressible)eq).toExpression(factory));
-      }
-      else{
-        throw new IOException("This MultiEqualitor contains a non-expressible equalitor - it cannot be converted to an expression");
-      }
-    }
-    
-    return new StreamExpressionValue(sb.toString());
-  }
+	public StreamEqualitor[] getEqs() {
+		return eqs;
+	}
 
-  @Override
-  public Explanation toExplanation(StreamFactory factory) throws IOException {
-    return new Explanation(equalitorNodeId.toString())
-      .withExpressionType(ExpressionType.EQUALITOR)
-      .withImplementingClass(getClass().getName())
-      .withExpression(toExpression(factory).toString());
-  }
-  
-  @Override
-  public boolean isDerivedFrom(StreamEqualitor base){
-    if(null == base){ return false; }
-    if(base instanceof MultipleFieldEqualitor){
-      MultipleFieldEqualitor baseEq = (MultipleFieldEqualitor)base;
-      
-      if(baseEq.eqs.length >= eqs.length){
-        for(int idx = 0; idx < eqs.length; ++idx){
-          if(!eqs[idx].isDerivedFrom(baseEq.eqs[idx])){
-            return false;
-          }
-        }        
-        return true;
-      }
-    }
-    
-    return false;
-  }
-  
-  @Override
-  public boolean isDerivedFrom(StreamComparator base){
-    if(null == base){ return false; }
-    if(base instanceof StreamComparator){
-      MultipleFieldComparator baseComps = (MultipleFieldComparator)base;
-      
-      if(baseComps.getComps().length >= eqs.length){
-        for(int idx = 0; idx < eqs.length; ++idx){
-          if(!eqs[idx].isDerivedFrom(baseComps.getComps()[idx])){
-            return false;
-          }
-        }        
-        return true;
-      }
-    }
-    
-    return false;
+	@Override
+	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		for (Equalitor<Tuple> eq : eqs) {
+			if (eq instanceof Expressible) {
+				if (sb.length() > 0) {
+					sb.append(",");
+				}
+				sb.append(((Expressible) eq).toExpression(factory));
+			} else {
+				throw new IOException(
+						"This MultiEqualitor contains a non-expressible equalitor - it cannot be converted to an expression");
+			}
+		}
 
-  }
-  
-  public boolean test(Tuple t1, Tuple t2) {
-    for(Equalitor<Tuple> eq : eqs) {
-      if(!eq.test(t1, t2)){
-        return false;
-      }
-    }
+		return new StreamExpressionValue(sb.toString());
+	}
 
-    return true;
-  }
+	@Override
+	public Explanation toExplanation(StreamFactory factory) throws IOException {
+		return new Explanation(equalitorNodeId.toString()).withExpressionType(ExpressionType.EQUALITOR)
+				.withImplementingClass(getClass().getName()).withExpression(toExpression(factory).toString());
+	}
+
+	@Override
+	public boolean isDerivedFrom(StreamEqualitor base) {
+		if (null == base) {
+			return false;
+		}
+		if (base instanceof MultipleFieldEqualitor) {
+			MultipleFieldEqualitor baseEq = (MultipleFieldEqualitor) base;
+
+			if (baseEq.eqs.length >= eqs.length) {
+				for (int idx = 0; idx < eqs.length; ++idx) {
+					if (!eqs[idx].isDerivedFrom(baseEq.eqs[idx])) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isDerivedFrom(StreamComparator base) {
+		if (null == base) {
+			return false;
+		}
+		if (base instanceof StreamComparator) {
+			MultipleFieldComparator baseComps = (MultipleFieldComparator) base;
+
+			if (baseComps.getComps().length >= eqs.length) {
+				for (int idx = 0; idx < eqs.length; ++idx) {
+					if (!eqs[idx].isDerivedFrom(baseComps.getComps()[idx])) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+
+	public boolean test(Tuple t1, Tuple t2) {
+		for (Equalitor<Tuple> eq : eqs) {
+			if (!eq.test(t1, t2)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

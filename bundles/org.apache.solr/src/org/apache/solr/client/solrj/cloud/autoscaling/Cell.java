@@ -24,52 +24,55 @@ import org.apache.solr.client.solrj.cloud.autoscaling.Variable.Type;
 import org.apache.solr.common.MapWriter;
 import org.apache.solr.common.util.Utils;
 
-/**Each instance represents an attribute that is being tracked by the framework such as , freedisk, cores etc
+/**
+ * Each instance represents an attribute that is being tracked by the framework
+ * such as , freedisk, cores etc
  *
  * @deprecated to be removed in Solr 9.0 (see SOLR-14656)
  */
 public class Cell implements MapWriter {
-  final int index;
-  final Type type;
-  final String name;
-  Object val, approxVal;
-  Row row;
+	final int index;
+	final Type type;
+	final String name;
+	Object val, approxVal;
+	Row row;
 
-  public Cell(int index, String name, Object val, Object approxVal, Type type, Row row) {
-    this.index = index;
-    this.name = name;
-    this.val = val;
-    this.approxVal = approxVal;
-    this.type = type;
-    this.row = row;
-  }
+	public Cell(int index, String name, Object val, Object approxVal, Type type, Row row) {
+		this.index = index;
+		this.name = name;
+		this.val = val;
+		this.approxVal = approxVal;
+		this.type = type;
+		this.row = row;
+	}
 
-  @Override
-  public void writeMap(EntryWriter ew) throws IOException {
-    ew.put(name, val);
-  }
-  public Row getRow(){
-    return row;
-  }
+	@Override
+	public void writeMap(EntryWriter ew) throws IOException {
+		ew.put(name, val);
+	}
 
-  @Override
-  public String toString() {
-    return Utils.toJSONString(this.toMap(new HashMap<>()));
-  }
+	public Row getRow() {
+		return row;
+	}
 
-  public Cell copy() {
-    return new Cell(index, name, val, approxVal, this.type, row);
-  }
+	@Override
+	public String toString() {
+		return Utils.toJSONString(this.toMap(new HashMap<>()));
+	}
 
-  public String getName() {
-    return name;
-  }
+	public Cell copy() {
+		return new Cell(index, name, val, approxVal, this.type, row);
+	}
 
-  public Object getValue() {
-    return val;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public Object getApproxValue() {
-    return approxVal;
-  }
+	public Object getValue() {
+		return val;
+	}
+
+	public Object getApproxValue() {
+		return approxVal;
+	}
 }

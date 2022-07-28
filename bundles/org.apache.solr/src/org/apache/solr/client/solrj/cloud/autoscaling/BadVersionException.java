@@ -22,20 +22,20 @@ package org.apache.solr.client.solrj.cloud.autoscaling;
  */
 public class BadVersionException extends Exception {
 
-  private final String path;
-  private final int requested;
+	private final String path;
+	private final int requested;
 
-  public BadVersionException(int requested, String path) {
-    super(path);
-    this.path = path;
-    this.requested = requested;
-  }
+	public BadVersionException(int requested, String path) {
+		super(path);
+		this.path = path;
+		this.requested = requested;
+	}
 
-  public String getPath() {
-    return path;
-  }
+	public String getPath() {
+		return path;
+	}
 
-  public int getRequested() {
-    return requested;
-  }
+	public int getRequested() {
+		return requested;
+	}
 }

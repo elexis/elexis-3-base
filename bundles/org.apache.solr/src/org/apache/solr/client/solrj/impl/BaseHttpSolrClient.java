@@ -27,56 +27,58 @@ import org.apache.solr.common.util.NamedList;
 
 public abstract class BaseHttpSolrClient extends SolrClient {
 
-  /**
-   * Subclass of SolrException that allows us to capture an arbitrary HTTP
-   * status code that may have been returned by the remote server or a
-   * proxy along the way.
-   */
-  public static class RemoteSolrException extends SolrException {
-    /**
-     * @param remoteHost the host the error was received from
-     * @param code Arbitrary HTTP status code
-     * @param msg Exception Message
-     * @param th Throwable to wrap with this Exception
-     */
-    public RemoteSolrException(String remoteHost, int code, String msg, Throwable th) {
-      super(code, "Error from server at " + remoteHost + ": " + msg, th);
-    }
-  }
+	/**
+	 * Subclass of SolrException that allows us to capture an arbitrary HTTP status
+	 * code that may have been returned by the remote server or a proxy along the
+	 * way.
+	 */
+	public static class RemoteSolrException extends SolrException {
+		/**
+		 * @param remoteHost the host the error was received from
+		 * @param code       Arbitrary HTTP status code
+		 * @param msg        Exception Message
+		 * @param th         Throwable to wrap with this Exception
+		 */
+		public RemoteSolrException(String remoteHost, int code, String msg, Throwable th) {
+			super(code, "Error from server at " + remoteHost + ": " + msg, th);
+		}
+	}
 
-  /**
-   * This should be thrown when a server has an error in executing the request and
-   * it sends a proper payload back to the client
-   */
-  public static class RemoteExecutionException extends HttpSolrClient.RemoteSolrException {
-    @SuppressWarnings({"rawtypes"})
-    private NamedList meta;
+	/**
+	 * This should be thrown when a server has an error in executing the request and
+	 * it sends a proper payload back to the client
+	 */
+	public static class RemoteExecutionException extends HttpSolrClient.RemoteSolrException {
+		@SuppressWarnings({ "rawtypes" })
+		private NamedList meta;
 
-    public RemoteExecutionException(String remoteHost, int code, String msg, @SuppressWarnings({"rawtypes"})NamedList meta) {
-      super(remoteHost, code, msg + (meta != null ? ": " + meta : ""), null);
-      this.meta = meta;
-    }
+		public RemoteExecutionException(String remoteHost, int code, String msg,
+				@SuppressWarnings({ "rawtypes" }) NamedList meta) {
+			super(remoteHost, code, msg + (meta != null ? ": " + meta : ""), null);
+			this.meta = meta;
+		}
 
+		public static HttpSolrClient.RemoteExecutionException create(String host,
+				@SuppressWarnings({ "rawtypes" }) NamedList errResponse) {
+			Object errObj = errResponse.get("error");
+			if (errObj != null) {
+				Number code = (Number) getObjectByPath(errObj, true, Collections.singletonList("code"));
+				String msg = (String) getObjectByPath(errObj, true, Collections.singletonList("msg"));
+				return new HttpSolrClient.RemoteExecutionException(host,
+						code == null ? ErrorCode.UNKNOWN.code : code.intValue(), msg == null ? "Unknown Error" : msg,
+						errResponse);
 
-    public static HttpSolrClient.RemoteExecutionException create(String host, @SuppressWarnings({"rawtypes"})NamedList errResponse) {
-      Object errObj = errResponse.get("error");
-      if (errObj != null) {
-        Number code = (Number) getObjectByPath(errObj, true, Collections.singletonList("code"));
-        String msg = (String) getObjectByPath(errObj, true, Collections.singletonList("msg"));
-        return new HttpSolrClient.RemoteExecutionException(host, code == null ? ErrorCode.UNKNOWN.code : code.intValue(),
-            msg == null ? "Unknown Error" : msg, errResponse);
+			} else {
+				throw new RuntimeException("No error");
+			}
 
-      } else {
-        throw new RuntimeException("No error");
-      }
+		}
 
-    }
+		@SuppressWarnings({ "rawtypes" })
+		public NamedList getMetaData() {
 
-    @SuppressWarnings({"rawtypes"})
-    public NamedList getMetaData() {
-
-      return meta;
-    }
-  }
+			return meta;
+		}
+	}
 
 }

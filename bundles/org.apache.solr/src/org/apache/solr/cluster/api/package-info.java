@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-/** 
+
+/**
  * API interfaces for core SolrCloud classes
  */
 package org.apache.solr.cluster.api;

@@ -438,17 +438,15 @@ public class ElexisPDFGenerator {
 	public void printBill(File rsc) {
 		printed = new ArrayList<>();
 		if (CoreHub.localCfg.get(PrivatQrRnOutputter.CFG_ROOT_PRIVAT + RnOutputter.CFG_PRINT_BESR, true)) {
-			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator + billNr
-							+ "_esr.pdf"); //$NON-NLS-1$
+			File pdf = new File(OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator
+					+ billNr + "_esr.pdf"); //$NON-NLS-1$
 			generatePatBill(rsc, pdf);
 			printPdf(pdf, true);
 			printed.add(pdf);
 		}
 		if (CoreHub.localCfg.get(PrivatQrRnOutputter.CFG_ROOT_PRIVAT + RnOutputter.CFG_PRINT_RF, true)) {
-			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator + billNr
-							+ "_rf.pdf"); //$NON-NLS-1$
+			File pdf = new File(OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator
+					+ billNr + "_rf.pdf"); //$NON-NLS-1$
 			generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);
@@ -458,17 +456,15 @@ public class ElexisPDFGenerator {
 	public void printQrBill(File rsc) {
 		printed = new ArrayList<>();
 		if (CoreHub.localCfg.get(PrivatQrRnOutputter.CFG_ROOT_PRIVAT + QrRnOutputter.CFG_PRINT_BESR, true)) {
-			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator + billNr
-							+ "_esr.pdf"); //$NON-NLS-1$
+			File pdf = new File(OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator
+					+ billNr + "_esr.pdf"); //$NON-NLS-1$
 			generateQrPatBill(rsc, pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);
 		}
 		if (CoreHub.localCfg.get(PrivatQrRnOutputter.CFG_ROOT_PRIVAT + QrRnOutputter.CFG_PRINT_RF, true)) {
-			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator + billNr
-							+ "_rf.pdf"); //$NON-NLS-1$
+			File pdf = new File(OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator
+					+ billNr + "_rf.pdf"); //$NON-NLS-1$
 			generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
 			printPdf(pdf, false);
 			printed.add(pdf);

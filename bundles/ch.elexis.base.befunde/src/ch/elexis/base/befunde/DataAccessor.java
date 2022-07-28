@@ -233,7 +233,7 @@ public class DataAccessor implements IDataAccess {
 						// no entry for this date found - display error with date and descriptor
 						if (mwrt == null) {
 							ret = new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
-									descriptor + " [" + find.toString(TimeTool.DATE_GER) + "] "  //$NON-NLS-1$//$NON-NLS-2$
+									descriptor + " [" + find.toString(TimeTool.DATE_GER) + "] " //$NON-NLS-1$//$NON-NLS-2$
 											+ Messages.DataAccessor_notFound,
 									params, true);
 						}

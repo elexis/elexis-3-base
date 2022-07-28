@@ -38,7 +38,7 @@ public class Event {
 
 	// https://fullcalendar.io/docs/event-object
 	private String allDay;
-	
+
 	public String getId() {
 		return id;
 	}
@@ -190,7 +190,7 @@ public class Event {
 	public static String getTypColor(IContact userContact, IPeriod iPeriod) {
 		if (iPeriod instanceof IAppointment) {
 			IAppointment termin = (IAppointment) iPeriod;
-			return "#" + ConfigServiceHolder.get().get(userContact, "agenda/farben/typ/" + termin.getType(),  //$NON-NLS-1$//$NON-NLS-2$
+			return "#" + ConfigServiceHolder.get().get(userContact, "agenda/farben/typ/" + termin.getType(), //$NON-NLS-1$//$NON-NLS-2$
 					DEFAULT_BG_COLOR);
 		}
 		return "#" + DEFAULT_BG_COLOR; //$NON-NLS-1$

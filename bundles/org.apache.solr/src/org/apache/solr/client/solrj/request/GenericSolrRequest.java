@@ -23,32 +23,32 @@ import org.apache.solr.client.solrj.response.SimpleSolrResponse;
 import org.apache.solr.common.params.SolrParams;
 
 public class GenericSolrRequest extends SolrRequest<SimpleSolrResponse> {
-  public SolrParams params;
-  public SimpleSolrResponse response = new SimpleSolrResponse();
-  public ContentWriter contentWriter;
+	public SolrParams params;
+	public SimpleSolrResponse response = new SimpleSolrResponse();
+	public ContentWriter contentWriter;
 
-  public GenericSolrRequest(METHOD m, String path, SolrParams params) {
-    super(m, path);
-    this.params = params;
-  }
+	public GenericSolrRequest(METHOD m, String path, SolrParams params) {
+		super(m, path);
+		this.params = params;
+	}
 
-  public GenericSolrRequest setContentWriter(ContentWriter contentWriter) {
-    this.contentWriter = contentWriter;
-    return this;
-  }
+	public GenericSolrRequest setContentWriter(ContentWriter contentWriter) {
+		this.contentWriter = contentWriter;
+		return this;
+	}
 
-  @Override
-  public ContentWriter getContentWriter(String expectedType) {
-    return contentWriter;
-  }
+	@Override
+	public ContentWriter getContentWriter(String expectedType) {
+		return contentWriter;
+	}
 
-  @Override
-  public SolrParams getParams() {
-    return params;
-  }
+	@Override
+	public SolrParams getParams() {
+		return params;
+	}
 
-  @Override
-  protected SimpleSolrResponse createResponse(SolrClient client) {
-    return response;
-  }
+	@Override
+	protected SimpleSolrResponse createResponse(SolrClient client) {
+		return response;
+	}
 }

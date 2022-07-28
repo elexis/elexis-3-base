@@ -24,19 +24,21 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class GetAttributesEvaluator extends RecursiveObjectEvaluator implements OneValueWorker {
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public GetAttributesEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public GetAttributesEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object value) throws IOException {
-    if(!(value instanceof Attributes)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for value, expecting an Attributes",toExpression(constructingFactory), value.getClass().getSimpleName()));
-    } else {
-      Attributes attributes = (Attributes)value;
-      return attributes.getAttributes();
-    }
-  }
+	@Override
+	public Object doWork(Object value) throws IOException {
+		if (!(value instanceof Attributes)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for value, expecting an Attributes",
+					toExpression(constructingFactory), value.getClass().getSimpleName()));
+		} else {
+			Attributes attributes = (Attributes) value;
+			return attributes.getAttributes();
+		}
+	}
 }

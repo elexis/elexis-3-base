@@ -24,7 +24,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for classes in Solr that are not thread safe. This provides a clear indication of the thread safety of the class.
+ * Annotation for classes in Solr that are not thread safe. This provides a
+ * clear indication of the thread safety of the class.
  */
 @Documented
 @Retention(SOURCE)

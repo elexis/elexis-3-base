@@ -22,304 +22,306 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-
 /**
  * Parameters used across many handlers
  */
 public interface CommonParams {
 
-  /** 
-   * Override for the concept of "NOW" to be used throughout this request, 
-   * expressed as milliseconds since epoch.  This is primarily used in 
-   * distributed search to ensure consistent time values are used across 
-   * multiple sub-requests.
-   */
-  String NOW = "NOW";
+	/**
+	 * Override for the concept of "NOW" to be used throughout this request,
+	 * expressed as milliseconds since epoch. This is primarily used in distributed
+	 * search to ensure consistent time values are used across multiple
+	 * sub-requests.
+	 */
+	String NOW = "NOW";
 
-  /** 
-   * Specifies the TimeZone used by the client for the purposes of 
-   * any DateMath rounding that may take place when executing the request
-   */
-  String TZ = "TZ";
+	/**
+	 * Specifies the TimeZone used by the client for the purposes of any DateMath
+	 * rounding that may take place when executing the request
+	 */
+	String TZ = "TZ";
 
-  /** the Request Handler (formerly known as the Query Type) - which Request Handler should handle the request */
-  String QT ="qt";
-  
-  /** the response writer type - the format of the response */
-  String WT ="wt";
-  
-  /** query string */
-  String Q ="q";
+	/**
+	 * the Request Handler (formerly known as the Query Type) - which Request
+	 * Handler should handle the request
+	 */
+	String QT = "qt";
 
-  /** rank query */
-  String RQ ="rq";
-  
-  /** distrib string */
-  String DISTRIB = "distrib";
-  
-  /** sort order */
-  String SORT ="sort";
-  
-  /** Lucene query string(s) for filtering the results without affecting scoring */
-  String FQ ="fq";
-  
-  /** zero based offset of matching documents to retrieve */
-  String START ="start";
-  int START_DEFAULT = 0;
-  
-  /** number of documents to return starting at "start" */
-  String ROWS ="rows";
-  int ROWS_DEFAULT = 10;
+	/** the response writer type - the format of the response */
+	String WT = "wt";
 
-  // SOLR-4228 start
-  /** handler value for SolrPing */
-  String PING_HANDLER = "/admin/ping";
-  
-  /** "action" parameter for SolrPing */
-  String ACTION = "action";
-  
-  /** "disable" value for SolrPing action */
-  String DISABLE = "disable";
-  
-  /** "enable" value for SolrPing action */
-  String ENABLE = "enable";
-  
-  /** "ping" value for SolrPing action */
-  String PING = "ping";
-  // SOLR-4228 end
+	/** query string */
+	String Q = "q";
 
-  /** stylesheet to apply to XML results */
-  String XSL ="xsl";
-  
-  /** version parameter to check request-response compatibility */
-  String VERSION ="version";
-  
-  /** query and init param for field list */
-  String FL = "fl";
-  
-  /** default query field */
-  String DF = "df";
+	/** rank query */
+	String RQ = "rq";
 
-  /** Transformer param -- used with XSLT */
-  String TR = "tr";
-  
-  /** whether to include debug data for all components pieces, including doing explains*/
-  String DEBUG_QUERY = "debugQuery";
+	/** distrib string */
+	String DISTRIB = "distrib";
 
-  /**
-   * Whether to provide debug info for specific items.
-   *
-   * @see #DEBUG_QUERY
-   */
-  String DEBUG = "debug";
+	/** sort order */
+	String SORT = "sort";
 
-  /**
-   * {@link #DEBUG} value indicating an interest in debug output related to timing
-   */
-  String TIMING = "timing";
-  /**
-   * {@link #DEBUG} value indicating an interest in debug output related to the results (explains)
-   */
-  String RESULTS = "results";
-  /**
-   * {@link #DEBUG} value indicating an interest in debug output related to the Query (parsing, etc.)
-   */
-  String QUERY = "query";
-  /**
-   * {@link #DEBUG} value indicating an interest in debug output related to the distributed tracking
-   */
-  String TRACK = "track";
-  /** 
-   * boolean indicating whether score explanations should structured (true), 
-   * or plain text (false)
-   */
-  String EXPLAIN_STRUCT = "debug.explain.structured";
-  
-  /** another query to explain against */
-  String EXPLAIN_OTHER = "explainOther";
-  
+	/**
+	 * Lucene query string(s) for filtering the results without affecting scoring
+	 */
+	String FQ = "fq";
 
-  /** If the content stream should come from a URL (using URLConnection) */
-  String STREAM_URL = "stream.url";
+	/** zero based offset of matching documents to retrieve */
+	String START = "start";
+	int START_DEFAULT = 0;
 
-  /** If the content stream should come from a File (using FileReader) */
-  String STREAM_FILE = "stream.file";
-  
-  /** If the content stream should come directly from a field */
-  String STREAM_BODY = "stream.body";
-  
-  /** 
-   * Explicitly set the content type for the input stream
-   * If multiple streams are specified, the explicit contentType
-   * will be used for all of them.  
-   */
-  String STREAM_CONTENTTYPE = "stream.contentType";
-  
-  /**
-   * Whether or not the search may be terminated early within a segment.
-   */
-  String SEGMENT_TERMINATE_EARLY = "segmentTerminateEarly";
-  boolean SEGMENT_TERMINATE_EARLY_DEFAULT = false;
+	/** number of documents to return starting at "start" */
+	String ROWS = "rows";
+	int ROWS_DEFAULT = 10;
 
-  /**
-   * Timeout value in milliseconds.  If not set, or the value is &gt; 0, there is no timeout.
-   */
-  String TIME_ALLOWED = "timeAllowed";
+	// SOLR-4228 start
+	/** handler value for SolrPing */
+	String PING_HANDLER = "/admin/ping";
 
-  /**
-   * The number of hits that need to be counted accurately. If more than {@link #MIN_EXACT_COUNT} documents
-   * match a query, then the value in "numFound" may be an estimate to speedup search.
-   */
-  String MIN_EXACT_COUNT = "minExactCount";
-  
-  /** 'true' if the header should include the handler name */
-  String HEADER_ECHO_HANDLER = "echoHandler";
-  
-  /** include the parameters in the header **/
-  String HEADER_ECHO_PARAMS = "echoParams";
+	/** "action" parameter for SolrPing */
+	String ACTION = "action";
 
-  /** include header in the response */
-  String OMIT_HEADER = "omitHeader";
-  String CORES_HANDLER_PATH = "/admin/cores";
-  String COLLECTIONS_HANDLER_PATH = "/admin/collections";
-  String INFO_HANDLER_PATH = "/admin/info";
-  String HEALTH_CHECK_HANDLER_PATH = INFO_HANDLER_PATH + "/health";
-  String CONFIGSETS_HANDLER_PATH = "/admin/configs";
-  String AUTHZ_PATH = "/admin/authorization";
-  String AUTHC_PATH = "/admin/authentication";
-  String ZK_PATH = "/admin/zookeeper";
-  String ZK_STATUS_PATH = "/admin/zookeeper/status";
-  String SYSTEM_INFO_PATH = "/admin/info/system";
-  String METRICS_PATH = "/admin/metrics";
-  String METRICS_HISTORY_PATH = "/admin/metrics/history";
-  String AUTOSCALING_PATH = "/admin/autoscaling";
-  String AUTOSCALING_HISTORY_PATH = "/admin/autoscaling/history";
-  String AUTOSCALING_DIAGNOSTICS_PATH = "/admin/autoscaling/diagnostics";
-  String AUTOSCALING_SUGGESTIONS_PATH = "/admin/autoscaling/suggestions";
+	/** "disable" value for SolrPing action */
+	String DISABLE = "disable";
 
-  String STATUS = "status";
+	/** "enable" value for SolrPing action */
+	String ENABLE = "enable";
 
-  String OK = "OK";
-  String FAILURE = "FAILURE";
+	/** "ping" value for SolrPing action */
+	String PING = "ping";
+	// SOLR-4228 end
 
-  Set<String> ADMIN_PATHS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-      CORES_HANDLER_PATH,
-      COLLECTIONS_HANDLER_PATH,
-      HEALTH_CHECK_HANDLER_PATH,
-      CONFIGSETS_HANDLER_PATH,
-      SYSTEM_INFO_PATH,
-      ZK_PATH,
-      ZK_STATUS_PATH,
-      AUTHC_PATH,
-      AUTHZ_PATH,
-      METRICS_PATH,
-      METRICS_HISTORY_PATH,
-      AUTOSCALING_PATH,
-      AUTOSCALING_HISTORY_PATH,
-      AUTOSCALING_DIAGNOSTICS_PATH,
-      AUTOSCALING_SUGGESTIONS_PATH)));
-  String APISPEC_LOCATION = "apispec/";
-  String INTROSPECT = "/_introspect";
+	/** stylesheet to apply to XML results */
+	String XSL = "xsl";
 
-  /** valid values for: <code>echoParams</code> */
-  enum EchoParamStyle {
-    EXPLICIT,
-    ALL,
-    NONE;
-    
-    public static EchoParamStyle get( String v ) {
-      if( v != null ) {
-        v = v.toUpperCase(Locale.ROOT);
-        if( v.equals( "EXPLICIT" ) ) {
-          return EXPLICIT;
-        }
-        if( v.equals( "ALL") ) {
-          return ALL;
-        }
-        if( v.equals( "NONE") ) {  // the same as nothing...
-          return NONE;
-        }
-      }
-      return null;
-    }
-  }
+	/** version parameter to check request-response compatibility */
+	String VERSION = "version";
 
-  /** which parameters to log (if not supplied all parameters will be logged) **/
-  String LOG_PARAMS_LIST = "logParamsList";
+	/** query and init param for field list */
+	String FL = "fl";
 
-  String EXCLUDE = "ex";
-  String TAG = "tag";
-  String TERMS = "terms";
-  String OUTPUT_KEY = "key";
-  String FIELD = "f";
-  String VALUE = "v";
-  String THREADS = "threads";
-  String TRUE = Boolean.TRUE.toString();
-  String FALSE = Boolean.FALSE.toString();
+	/** default query field */
+	String DF = "df";
 
-  /** document type in {@link CollectionAdminParams#SYSTEM_COLL} collection. **/
-  String TYPE = "type";
+	/** Transformer param -- used with XSLT */
+	String TR = "tr";
 
-  /** Used as a local parameter on queries.  cache=false means don't check any query or filter caches.
-   * cache=true is the default.
-   */
-  String CACHE = "cache";
+	/**
+	 * whether to include debug data for all components pieces, including doing
+	 * explains
+	 */
+	String DEBUG_QUERY = "debugQuery";
 
-  /** Used as a local param on filter queries in conjunction with cache=false.  Filters are checked in order, from
-   * smallest cost to largest. If cost&gt;=100 and the query implements PostFilter, then that interface will be used to do post query filtering.
-   */
-  String COST = "cost";
+	/**
+	 * Whether to provide debug info for specific items.
+	 *
+	 * @see #DEBUG_QUERY
+	 */
+	String DEBUG = "debug";
 
-  /**
-   * Request ID parameter added to all distributed queries (that do not opt out)
-   *
-   * @see #DISABLE_REQUEST_ID
-   */
-  String REQUEST_ID = "rid";
+	/**
+	 * {@link #DEBUG} value indicating an interest in debug output related to timing
+	 */
+	String TIMING = "timing";
+	/**
+	 * {@link #DEBUG} value indicating an interest in debug output related to the
+	 * results (explains)
+	 */
+	String RESULTS = "results";
+	/**
+	 * {@link #DEBUG} value indicating an interest in debug output related to the
+	 * Query (parsing, etc.)
+	 */
+	String QUERY = "query";
+	/**
+	 * {@link #DEBUG} value indicating an interest in debug output related to the
+	 * distributed tracking
+	 */
+	String TRACK = "track";
+	/**
+	 * boolean indicating whether score explanations should structured (true), or
+	 * plain text (false)
+	 */
+	String EXPLAIN_STRUCT = "debug.explain.structured";
 
-  /**
-   * An opt-out flag to prevent the addition of {@link #REQUEST_ID} tracing on distributed queries
-   *
-   * Defaults to 'false' if not specified.
-   *
-   * @see #REQUEST_ID
-   */
-  String DISABLE_REQUEST_ID = "disableRequestId";
+	/** another query to explain against */
+	String EXPLAIN_OTHER = "explainOther";
 
-  /**
-   * Request Purpose parameter added to each internal shard request when using debug=track
-   */
-  String REQUEST_PURPOSE = "requestPurpose";
+	/** If the content stream should come from a URL (using URLConnection) */
+	String STREAM_URL = "stream.url";
 
-  /**
-   * When querying a node, prefer local node's cores for distributed queries.
-   * @deprecated Use {@code ShardParams.SHARDS_PREFERENCE}
-   */
-  @Deprecated // SOLR-14035
-  String PREFER_LOCAL_SHARDS = "preferLocalShards";
+	/** If the content stream should come from a File (using FileReader) */
+	String STREAM_FILE = "stream.file";
 
-  String JAVABIN = "javabin";
+	/** If the content stream should come directly from a field */
+	String STREAM_BODY = "stream.body";
 
-  String JSON = "json";
+	/**
+	 * Explicitly set the content type for the input stream If multiple streams are
+	 * specified, the explicit contentType will be used for all of them.
+	 */
+	String STREAM_CONTENTTYPE = "stream.contentType";
 
-  String PATH = "path";
+	/**
+	 * Whether or not the search may be terminated early within a segment.
+	 */
+	String SEGMENT_TERMINATE_EARLY = "segmentTerminateEarly";
+	boolean SEGMENT_TERMINATE_EARLY_DEFAULT = false;
 
-  String NAME = "name";
-  String VALUE_LONG = "val";
+	/**
+	 * Timeout value in milliseconds. If not set, or the value is &gt; 0, there is
+	 * no timeout.
+	 */
+	String TIME_ALLOWED = "timeAllowed";
 
-  String VERSION_FIELD="_version_";
+	/**
+	 * The number of hits that need to be counted accurately. If more than
+	 * {@link #MIN_EXACT_COUNT} documents match a query, then the value in
+	 * "numFound" may be an estimate to speedup search.
+	 */
+	String MIN_EXACT_COUNT = "minExactCount";
 
-  String FAIL_ON_VERSION_CONFLICTS ="failOnVersionConflicts";
+	/** 'true' if the header should include the handler name */
+	String HEADER_ECHO_HANDLER = "echoHandler";
 
-  String ID = "id";
-  String JSON_MIME = "application/json";
+	/** include the parameters in the header **/
+	String HEADER_ECHO_PARAMS = "echoParams";
 
-  String JAVABIN_MIME = "application/javabin";
+	/** include header in the response */
+	String OMIT_HEADER = "omitHeader";
+	String CORES_HANDLER_PATH = "/admin/cores";
+	String COLLECTIONS_HANDLER_PATH = "/admin/collections";
+	String INFO_HANDLER_PATH = "/admin/info";
+	String HEALTH_CHECK_HANDLER_PATH = INFO_HANDLER_PATH + "/health";
+	String CONFIGSETS_HANDLER_PATH = "/admin/configs";
+	String AUTHZ_PATH = "/admin/authorization";
+	String AUTHC_PATH = "/admin/authentication";
+	String ZK_PATH = "/admin/zookeeper";
+	String ZK_STATUS_PATH = "/admin/zookeeper/status";
+	String SYSTEM_INFO_PATH = "/admin/info/system";
+	String METRICS_PATH = "/admin/metrics";
+	String METRICS_HISTORY_PATH = "/admin/metrics/history";
+	String AUTOSCALING_PATH = "/admin/autoscaling";
+	String AUTOSCALING_HISTORY_PATH = "/admin/autoscaling/history";
+	String AUTOSCALING_DIAGNOSTICS_PATH = "/admin/autoscaling/diagnostics";
+	String AUTOSCALING_SUGGESTIONS_PATH = "/admin/autoscaling/suggestions";
 
-  String FILE = "file";
-  String FILES = "files";
+	String STATUS = "status";
 
-  String CHILDDOC = "_childDocuments_";
+	String OK = "OK";
+	String FAILURE = "FAILURE";
+
+	Set<String> ADMIN_PATHS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(CORES_HANDLER_PATH,
+			COLLECTIONS_HANDLER_PATH, HEALTH_CHECK_HANDLER_PATH, CONFIGSETS_HANDLER_PATH, SYSTEM_INFO_PATH, ZK_PATH,
+			ZK_STATUS_PATH, AUTHC_PATH, AUTHZ_PATH, METRICS_PATH, METRICS_HISTORY_PATH, AUTOSCALING_PATH,
+			AUTOSCALING_HISTORY_PATH, AUTOSCALING_DIAGNOSTICS_PATH, AUTOSCALING_SUGGESTIONS_PATH)));
+	String APISPEC_LOCATION = "apispec/";
+	String INTROSPECT = "/_introspect";
+
+	/** valid values for: <code>echoParams</code> */
+	enum EchoParamStyle {
+		EXPLICIT, ALL, NONE;
+
+		public static EchoParamStyle get(String v) {
+			if (v != null) {
+				v = v.toUpperCase(Locale.ROOT);
+				if (v.equals("EXPLICIT")) {
+					return EXPLICIT;
+				}
+				if (v.equals("ALL")) {
+					return ALL;
+				}
+				if (v.equals("NONE")) { // the same as nothing...
+					return NONE;
+				}
+			}
+			return null;
+		}
+	}
+
+	/** which parameters to log (if not supplied all parameters will be logged) **/
+	String LOG_PARAMS_LIST = "logParamsList";
+
+	String EXCLUDE = "ex";
+	String TAG = "tag";
+	String TERMS = "terms";
+	String OUTPUT_KEY = "key";
+	String FIELD = "f";
+	String VALUE = "v";
+	String THREADS = "threads";
+	String TRUE = Boolean.TRUE.toString();
+	String FALSE = Boolean.FALSE.toString();
+
+	/** document type in {@link CollectionAdminParams#SYSTEM_COLL} collection. **/
+	String TYPE = "type";
+
+	/**
+	 * Used as a local parameter on queries. cache=false means don't check any query
+	 * or filter caches. cache=true is the default.
+	 */
+	String CACHE = "cache";
+
+	/**
+	 * Used as a local param on filter queries in conjunction with cache=false.
+	 * Filters are checked in order, from smallest cost to largest. If cost&gt;=100
+	 * and the query implements PostFilter, then that interface will be used to do
+	 * post query filtering.
+	 */
+	String COST = "cost";
+
+	/**
+	 * Request ID parameter added to all distributed queries (that do not opt out)
+	 *
+	 * @see #DISABLE_REQUEST_ID
+	 */
+	String REQUEST_ID = "rid";
+
+	/**
+	 * An opt-out flag to prevent the addition of {@link #REQUEST_ID} tracing on
+	 * distributed queries
+	 *
+	 * Defaults to 'false' if not specified.
+	 *
+	 * @see #REQUEST_ID
+	 */
+	String DISABLE_REQUEST_ID = "disableRequestId";
+
+	/**
+	 * Request Purpose parameter added to each internal shard request when using
+	 * debug=track
+	 */
+	String REQUEST_PURPOSE = "requestPurpose";
+
+	/**
+	 * When querying a node, prefer local node's cores for distributed queries.
+	 *
+	 * @deprecated Use {@code ShardParams.SHARDS_PREFERENCE}
+	 */
+	@Deprecated // SOLR-14035
+	String PREFER_LOCAL_SHARDS = "preferLocalShards";
+
+	String JAVABIN = "javabin";
+
+	String JSON = "json";
+
+	String PATH = "path";
+
+	String NAME = "name";
+	String VALUE_LONG = "val";
+
+	String VERSION_FIELD = "_version_";
+
+	String FAIL_ON_VERSION_CONFLICTS = "failOnVersionConflicts";
+
+	String ID = "id";
+	String JSON_MIME = "application/json";
+
+	String JAVABIN_MIME = "application/javabin";
+
+	String FILE = "file";
+	String FILES = "files";
+
+	String CHILDDOC = "_childDocuments_";
 
 }
-

@@ -178,9 +178,8 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 			ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IArtikelstammItem.class);
 		}
 
-		log.info(
-				"[PI] Artikelstamm import took " + ((endTime - startTime) / 1000) //$NON-NLS-1$
-						+ "sec.Used {} {} version {}. . Importer-Version {}. Will rebuild ATCCodeCache", //$NON-NLS-1$
+		log.info("[PI] Artikelstamm import took " + ((endTime - startTime) / 1000) //$NON-NLS-1$
+				+ "sec.Used {} {} version {}. . Importer-Version {}. Will rebuild ATCCodeCache", //$NON-NLS-1$
 				VersionUtil.getDatasourceType().toString(), VersionUtil.getImportSetCreationDate(), newVersion,
 				bundleVersion);
 

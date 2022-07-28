@@ -27,28 +27,26 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpressionParameter;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class UuidEvaluator extends SourceEvaluator {
-  private static final long serialVersionUID = 1L;
-  
-  public UuidEvaluator(StreamExpression expression, StreamFactory factory) {
-    
-  }
-  
-  @Override
-  public Object evaluate(Tuple tuple) throws IOException {
-    return UUID.randomUUID().toString();
-  }
-  
-  @Override
-  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-    return new StreamExpression(factory.getFunctionName(getClass()));
-  }
+	private static final long serialVersionUID = 1L;
 
-  @Override
-  public Explanation toExplanation(StreamFactory factory) throws IOException {
-    return new Explanation(nodeId.toString())
-      .withExpressionType(ExpressionType.EVALUATOR)
-      .withImplementingClass(getClass().getName())
-      .withExpression(toExpression(factory).toString());
-  }
+	public UuidEvaluator(StreamExpression expression, StreamFactory factory) {
+
+	}
+
+	@Override
+	public Object evaluate(Tuple tuple) throws IOException {
+		return UUID.randomUUID().toString();
+	}
+
+	@Override
+	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+		return new StreamExpression(factory.getFunctionName(getClass()));
+	}
+
+	@Override
+	public Explanation toExplanation(StreamFactory factory) throws IOException {
+		return new Explanation(nodeId.toString()).withExpressionType(ExpressionType.EVALUATOR)
+				.withImplementingClass(getClass().getName()).withExpression(toExpression(factory).toString());
+	}
 
 }

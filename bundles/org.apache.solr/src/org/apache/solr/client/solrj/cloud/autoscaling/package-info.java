@@ -22,4 +22,3 @@
  */
 
 package org.apache.solr.client.solrj.cloud.autoscaling;
-

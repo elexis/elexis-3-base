@@ -26,6 +26,7 @@ import org.apache.solr.common.util.NamedList;
  * Represents an individual bucket result of a "term" or "range" facet.
  *
  * Allows access to JSON like:
+ *
  * <pre>
  *   {
  *     "val": "termX",
@@ -37,27 +38,28 @@ import org.apache.solr.common.util.NamedList;
  * Buckets may contain nested facets of any type.
  */
 public class BucketJsonFacet extends NestableJsonFacet {
-  private Object val;
+	private Object val;
 
-  public BucketJsonFacet(NamedList<Object> singleBucket) {
-    super(singleBucket); // sets "count", and stats or nested facets
+	public BucketJsonFacet(NamedList<Object> singleBucket) {
+		super(singleBucket); // sets "count", and stats or nested facets
 
-    val = singleBucket.get("val");
-  }
+		val = singleBucket.get("val");
+	}
 
-  /**
-   * Retrieves the value (sometimes called the "key") of this bucket.
-   *
-   * The type of this object depends on the type of field being faceted on.  Usually a Date, Double, Integer, or String
-   */
-  public Object getVal() {
-    return val;
-  }
+	/**
+	 * Retrieves the value (sometimes called the "key") of this bucket.
+	 *
+	 * The type of this object depends on the type of field being faceted on.
+	 * Usually a Date, Double, Integer, or String
+	 */
+	public Object getVal() {
+		return val;
+	}
 
-  @Override
-  protected Set<String> getKeysToSkip() {
-    final HashSet<String> keysToSkip = new HashSet<>();
-    keysToSkip.add("val");
-    return keysToSkip;
-  }
+	@Override
+	protected Set<String> getKeysToSkip() {
+		final HashSet<String> keysToSkip = new HashSet<>();
+		keysToSkip.add("val");
+		return keysToSkip;
+	}
 }

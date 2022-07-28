@@ -22,11 +22,5 @@ package org.apache.solr.client.solrj.cloud.autoscaling;
  * @deprecated to be removed in Solr 9.0 (see SOLR-14656)
  */
 public enum TriggerEventProcessorStage {
-  STARTED,
-  ABORTED,
-  SUCCEEDED,
-  FAILED,
-  BEFORE_ACTION,
-  AFTER_ACTION,
-  IGNORED
+	STARTED, ABORTED, SUCCEEDED, FAILED, BEFORE_ACTION, AFTER_ACTION, IGNORED
 }

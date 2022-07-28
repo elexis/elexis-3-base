@@ -48,7 +48,7 @@ public class ContactData {
 	}
 
 	private boolean hasLegalGuardian() {
-		if (kontakt.istPerson())	{
+		if (kontakt.istPerson()) {
 			String guardianId = (String) kontakt.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
 			return StringUtils.isNotBlank(guardianId);
 		}

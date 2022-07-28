@@ -15,11 +15,7 @@
  * limitations under the License.
  */
 
-
-
 /**
  * Comparators for the Streaming Aggregation API
  **/
 package org.apache.solr.client.solrj.io.comp;
-
-

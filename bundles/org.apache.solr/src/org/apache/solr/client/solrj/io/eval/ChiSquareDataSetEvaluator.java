@@ -26,41 +26,40 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 import org.apache.solr.common.params.StreamParams;
 
-
 public class ChiSquareDataSetEvaluator extends RecursiveNumericListEvaluator implements TwoValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public ChiSquareDataSetEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public ChiSquareDataSetEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object value1, Object value2) throws IOException {
+	@Override
+	public Object doWork(Object value1, Object value2) throws IOException {
 
-    @SuppressWarnings({"unchecked"})
-    List<Number> listA = (List<Number>) value1;
-    @SuppressWarnings({"unchecked"})
-    List<Number> listB = (List<Number>) value2;
+		@SuppressWarnings({ "unchecked" })
+		List<Number> listA = (List<Number>) value1;
+		@SuppressWarnings({ "unchecked" })
+		List<Number> listB = (List<Number>) value2;
 
-    long[] sampleA = new long[listA.size()];
-    long[] sampleB = new long[listB.size()];
+		long[] sampleA = new long[listA.size()];
+		long[] sampleB = new long[listB.size()];
 
-    for(int i=0; i<sampleA.length; i++) {
-      sampleA[i] = listA.get(i).longValue();
-    }
+		for (int i = 0; i < sampleA.length; i++) {
+			sampleA[i] = listA.get(i).longValue();
+		}
 
-    for(int i=0; i<sampleB.length; i++) {
-      sampleB[i] = listB.get(i).longValue();
-    }
+		for (int i = 0; i < sampleB.length; i++) {
+			sampleB[i] = listB.get(i).longValue();
+		}
 
-    ChiSquareTest chiSquareTest = new ChiSquareTest();
-    double chiSquare = chiSquareTest.chiSquareDataSetsComparison(sampleA, sampleB);
-    double p = chiSquareTest.chiSquareTestDataSetsComparison(sampleA, sampleB);
+		ChiSquareTest chiSquareTest = new ChiSquareTest();
+		double chiSquare = chiSquareTest.chiSquareDataSetsComparison(sampleA, sampleB);
+		double p = chiSquareTest.chiSquareTestDataSetsComparison(sampleA, sampleB);
 
-    Tuple tuple = new Tuple();
-    tuple.put("chisquare-statistic", chiSquare);
-    tuple.put(StreamParams.P_VALUE, p);
-    return tuple;
+		Tuple tuple = new Tuple();
+		tuple.put("chisquare-statistic", chiSquare);
+		tuple.put(StreamParams.P_VALUE, p);
+		return tuple;
 
-  }
+	}
 }

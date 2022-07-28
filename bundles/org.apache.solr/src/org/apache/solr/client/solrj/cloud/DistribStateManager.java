@@ -42,114 +42,128 @@ import org.apache.zookeeper.Watcher;
  */
 public interface DistribStateManager extends SolrCloseable {
 
-  // state accessors
+	// state accessors
 
-  boolean hasData(String path) throws IOException, KeeperException, InterruptedException;
+	boolean hasData(String path) throws IOException, KeeperException, InterruptedException;
 
-  List<String> listData(String path) throws NoSuchElementException, IOException, KeeperException, InterruptedException;
+	List<String> listData(String path)
+			throws NoSuchElementException, IOException, KeeperException, InterruptedException;
 
-  List<String> listData(String path, Watcher watcher) throws NoSuchElementException, IOException, KeeperException, InterruptedException;
+	List<String> listData(String path, Watcher watcher)
+			throws NoSuchElementException, IOException, KeeperException, InterruptedException;
 
-  VersionedData getData(String path, Watcher watcher) throws NoSuchElementException, IOException, KeeperException, InterruptedException;
+	VersionedData getData(String path, Watcher watcher)
+			throws NoSuchElementException, IOException, KeeperException, InterruptedException;
 
-  default VersionedData getData(String path) throws NoSuchElementException, IOException, KeeperException, InterruptedException {
-    return getData(path, null);
-  }
+	default VersionedData getData(String path)
+			throws NoSuchElementException, IOException, KeeperException, InterruptedException {
+		return getData(path, null);
+	}
 
-  // state mutators
+	// state mutators
 
-  void makePath(String path) throws AlreadyExistsException, IOException, KeeperException, InterruptedException;
+	void makePath(String path) throws AlreadyExistsException, IOException, KeeperException, InterruptedException;
 
-  void makePath(String path, byte[] data, CreateMode createMode, boolean failOnExists) throws AlreadyExistsException, IOException, KeeperException, InterruptedException;
+	void makePath(String path, byte[] data, CreateMode createMode, boolean failOnExists)
+			throws AlreadyExistsException, IOException, KeeperException, InterruptedException;
 
-  /**
-   * Create data (leaf) node at specified path.
-   * @param path base path name of the node.
-   * @param data data to be stored.
-   * @param mode creation mode.
-   * @return actual path of the node - in case of sequential nodes this will differ from the base path because
-   * of the appended sequence number.
-   */
-  String createData(String path, byte[] data, CreateMode mode) throws AlreadyExistsException, IOException, KeeperException, InterruptedException;
+	/**
+	 * Create data (leaf) node at specified path.
+	 *
+	 * @param path base path name of the node.
+	 * @param data data to be stored.
+	 * @param mode creation mode.
+	 * @return actual path of the node - in case of sequential nodes this will
+	 *         differ from the base path because of the appended sequence number.
+	 */
+	String createData(String path, byte[] data, CreateMode mode)
+			throws AlreadyExistsException, IOException, KeeperException, InterruptedException;
 
-  void removeData(String path, int version) throws NoSuchElementException, IOException, NotEmptyException, KeeperException, InterruptedException, BadVersionException;
+	void removeData(String path, int version) throws NoSuchElementException, IOException, NotEmptyException,
+			KeeperException, InterruptedException, BadVersionException;
 
-  void setData(String path, byte[] data, int version) throws BadVersionException, NoSuchElementException, IOException, KeeperException, InterruptedException;
+	void setData(String path, byte[] data, int version)
+			throws BadVersionException, NoSuchElementException, IOException, KeeperException, InterruptedException;
 
-  List<OpResult> multi(final Iterable<Op> ops) throws BadVersionException, NoSuchElementException, AlreadyExistsException, IOException, KeeperException, InterruptedException;
+	List<OpResult> multi(final Iterable<Op> ops) throws BadVersionException, NoSuchElementException,
+			AlreadyExistsException, IOException, KeeperException, InterruptedException;
 
-  AutoScalingConfig getAutoScalingConfig(Watcher watcher) throws InterruptedException, IOException;
+	AutoScalingConfig getAutoScalingConfig(Watcher watcher) throws InterruptedException, IOException;
 
-  default AutoScalingConfig getAutoScalingConfig() throws InterruptedException, IOException {
-    return getAutoScalingConfig(null);
-  }
+	default AutoScalingConfig getAutoScalingConfig() throws InterruptedException, IOException {
+		return getAutoScalingConfig(null);
+	}
 
-  /**
-   * List a subtree including the root path, using breadth-first traversal.
-   * @param root root path
-   * @return list of full paths, with the root path being the first element
-   */
-  default List<String> listTree(String root) throws NoSuchElementException, IOException, KeeperException, InterruptedException {
-    Deque<String> queue = new LinkedList<String>();
-    List<String> tree = new ArrayList<String>();
-    if (!root.startsWith("/")) {
-      root = "/" + root;
-    }
-    queue.add(root);
-    tree.add(root);
-    while (true) {
-      String node = queue.pollFirst();
-      if (node == null) {
-        break;
-      }
-      List<String> children = listData(node);
-      for (final String child : children) {
-        final String childPath = node + (node.equals("/") ? "" : "/") + child;
-        queue.add(childPath);
-        tree.add(childPath);
-      }
-    }
-    return tree;
-  }
+	/**
+	 * List a subtree including the root path, using breadth-first traversal.
+	 *
+	 * @param root root path
+	 * @return list of full paths, with the root path being the first element
+	 */
+	default List<String> listTree(String root)
+			throws NoSuchElementException, IOException, KeeperException, InterruptedException {
+		Deque<String> queue = new LinkedList<String>();
+		List<String> tree = new ArrayList<String>();
+		if (!root.startsWith("/")) {
+			root = "/" + root;
+		}
+		queue.add(root);
+		tree.add(root);
+		while (true) {
+			String node = queue.pollFirst();
+			if (node == null) {
+				break;
+			}
+			List<String> children = listData(node);
+			for (final String child : children) {
+				final String childPath = node + (node.equals("/") ? "" : "/") + child;
+				queue.add(childPath);
+				tree.add(childPath);
+			}
+		}
+		return tree;
+	}
 
-  default PerReplicaStates getReplicaStates(String path) throws KeeperException, InterruptedException {
-    throw new UnsupportedOperationException("Not implemented");
+	default PerReplicaStates getReplicaStates(String path) throws KeeperException, InterruptedException {
+		throw new UnsupportedOperationException("Not implemented");
 
+	}
 
-  }
-
-  /**
-   * Remove data recursively.
-   * @param root root path
-   * @param ignoreMissing ignore errors if root or any children path is missing
-   * @param includeRoot when true delete also the root path
-   */
-  default void removeRecursively(String root, boolean ignoreMissing, boolean includeRoot) throws NoSuchElementException, IOException, NotEmptyException, KeeperException, InterruptedException, BadVersionException {
-    List<String> tree;
-    try {
-      tree = listTree(root);
-    } catch (NoSuchElementException e) {
-      if (ignoreMissing) {
-        return;
-      } else {
-        throw e;
-      }
-    }
-    Collections.reverse(tree);
-    for (String p : tree) {
-      if (p.equals("/")) {
-        continue;
-      }
-      if (p.equals(root) && !includeRoot) {
-        continue;
-      }
-      try {
-        removeData(p, -1);
-      } catch (NoSuchElementException e) {
-        if (!ignoreMissing) {
-          throw e;
-        }
-      }
-    }
-  }
+	/**
+	 * Remove data recursively.
+	 *
+	 * @param root          root path
+	 * @param ignoreMissing ignore errors if root or any children path is missing
+	 * @param includeRoot   when true delete also the root path
+	 */
+	default void removeRecursively(String root, boolean ignoreMissing, boolean includeRoot)
+			throws NoSuchElementException, IOException, NotEmptyException, KeeperException, InterruptedException,
+			BadVersionException {
+		List<String> tree;
+		try {
+			tree = listTree(root);
+		} catch (NoSuchElementException e) {
+			if (ignoreMissing) {
+				return;
+			} else {
+				throw e;
+			}
+		}
+		Collections.reverse(tree);
+		for (String p : tree) {
+			if (p.equals("/")) {
+				continue;
+			}
+			if (p.equals(root) && !includeRoot) {
+				continue;
+			}
+			try {
+				removeData(p, -1);
+			} catch (NoSuchElementException e) {
+				if (!ignoreMissing) {
+					throw e;
+				}
+			}
+		}
+	}
 }

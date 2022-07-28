@@ -76,8 +76,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 				addField(settingsEditor);
 				settingsEditor.getTextControl(c).setToolTipText("baudrate,databits,parity,stopbits[,flowcontrol]");
 
-				addField(new BooleanFieldEditor(BarcodeScanner_WAITFORNEWLINE + postfix,
-						"Daten in Zeilen empfangen", SWT.None, c));
+				addField(new BooleanFieldEditor(BarcodeScanner_WAITFORNEWLINE + postfix, "Daten in Zeilen empfangen",
+						SWT.None, c));
 			}
 
 			addField(new BooleanFieldEditor(BarcodeScanner_AUTOSTART, "Bei Start automatisch verbinden", SWT.None,

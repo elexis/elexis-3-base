@@ -15,7 +15,7 @@ public class OutputterUtil {
 
 	/**
 	 * Test if global output directories should be used.
-	 * 
+	 *
 	 * @return
 	 */
 	public static boolean useGlobalOutputDirs() {

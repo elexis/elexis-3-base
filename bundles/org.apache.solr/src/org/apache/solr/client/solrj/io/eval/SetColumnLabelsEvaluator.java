@@ -26,31 +26,35 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class SetColumnLabelsEvaluator extends RecursiveObjectEvaluator implements TwoValueWorker {
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public SetColumnLabelsEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public SetColumnLabelsEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object value1, Object value2) throws IOException {
-    if(!(value1 instanceof Matrix)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for value, expecting a Matrix",toExpression(constructingFactory), value1.getClass().getSimpleName()));
-    } else if(!(value2 instanceof List)) {
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for value, expecting an array of labels.",toExpression(constructingFactory), value2.getClass().getSimpleName()));
-    } else {
-      Matrix matrix = (Matrix)value1;
+	@Override
+	public Object doWork(Object value1, Object value2) throws IOException {
+		if (!(value1 instanceof Matrix)) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - found type %s for value, expecting a Matrix",
+							toExpression(constructingFactory), value1.getClass().getSimpleName()));
+		} else if (!(value2 instanceof List)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for value, expecting an array of labels.",
+					toExpression(constructingFactory), value2.getClass().getSimpleName()));
+		} else {
+			Matrix matrix = (Matrix) value1;
 
-      @SuppressWarnings({"rawtypes"})
-      List colLabels =  (List)value2;
-      //Convert numeric labels to strings.
-      List<String> strLabels = new ArrayList<>(colLabels.size());
-      for(Object o : colLabels) {
-        strLabels.add(o.toString());
-      }
+			@SuppressWarnings({ "rawtypes" })
+			List colLabels = (List) value2;
+			// Convert numeric labels to strings.
+			List<String> strLabels = new ArrayList<>(colLabels.size());
+			for (Object o : colLabels) {
+				strLabels.add(o.toString());
+			}
 
-      matrix.setColumnLabels(strLabels);
-      return matrix;
-    }
-  }
+			matrix.setColumnLabels(strLabels);
+			return matrix;
+		}
+	}
 }

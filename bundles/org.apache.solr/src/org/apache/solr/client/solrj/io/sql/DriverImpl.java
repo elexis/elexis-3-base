@@ -39,94 +39,95 @@ import org.apache.solr.common.util.SuppressForbidden;
 
 public class DriverImpl implements Driver {
 
-  static {
-    try {
-      DriverManager.registerDriver(new DriverImpl());
-    } catch (SQLException e) {
-      throw new RuntimeException("Can't register driver!", e);
-    }
-  }
+	static {
+		try {
+			DriverManager.registerDriver(new DriverImpl());
+		} catch (SQLException e) {
+			throw new RuntimeException("Can't register driver!", e);
+		}
+	}
 
-  public Connection connect(String url, Properties props) throws SQLException {
-    if(!acceptsURL(url)) {
-      return null;
-    }
+	public Connection connect(String url, Properties props) throws SQLException {
+		if (!acceptsURL(url)) {
+			return null;
+		}
 
-    URI uri = processUrl(url);
+		URI uri = processUrl(url);
 
-    loadParams(uri, props);
+		loadParams(uri, props);
 
-    if (!props.containsKey("collection")) {
-      throw new SQLException("The connection url has no connection properties. At a mininum the collection must be specified.");
-    }
-    String collection = (String) props.remove("collection");
+		if (!props.containsKey("collection")) {
+			throw new SQLException(
+					"The connection url has no connection properties. At a mininum the collection must be specified.");
+		}
+		String collection = (String) props.remove("collection");
 
-    if (!props.containsKey("aggregationMode")) {
-      props.setProperty("aggregationMode", "facet");
-    }
+		if (!props.containsKey("aggregationMode")) {
+			props.setProperty("aggregationMode", "facet");
+		}
 
-    // JDBC requires metadata like field names from the SQLHandler. Force this property to be true.
-    props.setProperty("includeMetadata", "true");
+		// JDBC requires metadata like field names from the SQLHandler. Force this
+		// property to be true.
+		props.setProperty("includeMetadata", "true");
 
-    String zkHost = uri.getAuthority() + uri.getPath();
+		String zkHost = uri.getAuthority() + uri.getPath();
 
-    return new ConnectionImpl(url, zkHost, collection, props);
-  }
+		return new ConnectionImpl(url, zkHost, collection, props);
+	}
 
-  public Connection connect(String url) throws SQLException {
-    return connect(url, new Properties());
-  }
+	public Connection connect(String url) throws SQLException {
+		return connect(url, new Properties());
+	}
 
-  public int getMajorVersion() {
-    return 1;
-  }
+	public int getMajorVersion() {
+		return 1;
+	}
 
-  public int getMinorVersion() {
-    return 0;
-  }
+	public int getMinorVersion() {
+		return 0;
+	}
 
-  public boolean acceptsURL(String url) {
-    return url != null && url.startsWith("jdbc:solr");
-  }
+	public boolean acceptsURL(String url) {
+		return url != null && url.startsWith("jdbc:solr");
+	}
 
-  public boolean jdbcCompliant() {
-    return false;
-  }
+	public boolean jdbcCompliant() {
+		return false;
+	}
 
+	@SuppressForbidden(reason = "Required by jdbc")
 
-  @SuppressForbidden(reason="Required by jdbc")
+	public Logger getParentLogger() {
+		return null;
+	}
 
-  public Logger getParentLogger() {
-    return null;
-  }
+	public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) {
+		return null;
+	}
 
-  public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) {
-    return null;
-  }
+	protected URI processUrl(String url) throws SQLException {
+		URI uri;
+		try {
+			uri = new URI(url.replaceFirst("jdbc:", ""));
+		} catch (URISyntaxException e) {
+			throw new SQLException(e);
+		}
 
-  protected URI processUrl(String url) throws SQLException {
-    URI uri;
-    try {
-      uri = new URI(url.replaceFirst("jdbc:", ""));
-    } catch (URISyntaxException e) {
-      throw new SQLException(e);
-    }
+		if (uri.getAuthority() == null) {
+			throw new SQLException("The zkHost must not be null");
+		}
 
-    if (uri.getAuthority() == null) {
-      throw new SQLException("The zkHost must not be null");
-    }
+		return uri;
+	}
 
-    return uri;
-  }
-
-  private void loadParams(URI uri, Properties props) throws SQLException {
-    List<NameValuePair> parsedParams = URLEncodedUtils.parse(uri, "UTF-8");
-    for (NameValuePair pair : parsedParams) {
-      if (pair.getValue() != null) {
-        props.put(pair.getName(), pair.getValue());
-      } else {
-        props.put(pair.getName(), "");
-      }
-    }
-  }
+	private void loadParams(URI uri, Properties props) throws SQLException {
+		List<NameValuePair> parsedParams = URLEncodedUtils.parse(uri, "UTF-8");
+		for (NameValuePair pair : parsedParams) {
+			if (pair.getValue() != null) {
+				props.put(pair.getName(), pair.getValue());
+			} else {
+				props.put(pair.getName(), "");
+			}
+		}
+	}
 }

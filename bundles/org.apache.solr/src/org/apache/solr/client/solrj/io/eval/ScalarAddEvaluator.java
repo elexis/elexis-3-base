@@ -25,51 +25,54 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class ScalarAddEvaluator extends RecursiveObjectEvaluator implements TwoValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public ScalarAddEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public ScalarAddEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(2 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expects exactly 2 values but found %d",expression,containedEvaluators.size()));
-    }
-  }
+		if (2 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expects exactly 2 values but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-  @Override
-  public Object doWork(Object value1, Object value2) throws IOException{
+	@Override
+	public Object doWork(Object value1, Object value2) throws IOException {
 
-    double d = ((Number)value1).doubleValue();
-    if(value2 instanceof List){
-      @SuppressWarnings({"unchecked"})
-      List<Number> nums = (List<Number>)value2;
-      List<Number> out = new ArrayList<>();
-      for(Number num : nums) {
-        out.add(operate(num.doubleValue(), d));
-      }
+		double d = ((Number) value1).doubleValue();
+		if (value2 instanceof List) {
+			@SuppressWarnings({ "unchecked" })
+			List<Number> nums = (List<Number>) value2;
+			List<Number> out = new ArrayList<>();
+			for (Number num : nums) {
+				out.add(operate(num.doubleValue(), d));
+			}
 
-      return out;
+			return out;
 
-    } else if (value2 instanceof Matrix) {
-      Matrix matrix = (Matrix) value2;
-      double[][] data = matrix.getData();
-      double[][] newData = new double[data.length][];
-      for(int i=0; i<data.length; i++) {
-        double[] row = data[i];
-        double[] newRow = new double[row.length];
+		} else if (value2 instanceof Matrix) {
+			Matrix matrix = (Matrix) value2;
+			double[][] data = matrix.getData();
+			double[][] newData = new double[data.length][];
+			for (int i = 0; i < data.length; i++) {
+				double[] row = data[i];
+				double[] newRow = new double[row.length];
 
-        for(int j=0; j<row.length; j++) {
-          newRow[j] = operate(row[j], d);
-        }
+				for (int j = 0; j < row.length; j++) {
+					newRow[j] = operate(row[j], d);
+				}
 
-        newData[i] = newRow;
-      }
-      return new Matrix(newData);
-    } else {
-      throw new IOException("scalar add, subtract, multiply and divide operate on numeric arrays and matrices only.");
-    }
-  }
+				newData[i] = newRow;
+			}
+			return new Matrix(newData);
+		} else {
+			throw new IOException(
+					"scalar add, subtract, multiply and divide operate on numeric arrays and matrices only.");
+		}
+	}
 
-  protected double operate(double value, double d) {
-    return value+d;
-  }
+	protected double operate(double value, double d) {
+		return value + d;
+	}
 }

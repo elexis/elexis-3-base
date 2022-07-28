@@ -27,98 +27,116 @@ import java.util.stream.IntStream;
 import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
-public class TimeDifferencingEvaluator extends RecursiveObjectEvaluator implements ManyValueWorker{
+public class TimeDifferencingEvaluator extends RecursiveObjectEvaluator implements ManyValueWorker {
 
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public TimeDifferencingEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-    if (!(1 == containedEvaluators.size() ||  containedEvaluators.size() == 2)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting one or two values but found %d",expression, containedEvaluators.size()));
-    }
-  }
-  @Override
-  public Object doWork(Object... values) throws IOException {
-    if (!(1 == values.length || values.length == 2)) {
-      throw new IOException(String.format(Locale.ROOT, "%s(...) only works with 1 or 2 values but %d were provided", constructingFactory.getFunctionName(getClass()), values.length));
-    }
-    if (values[0] instanceof List) {
-      @SuppressWarnings({"unchecked"})
-      List<Number> timeseriesValues = (List<Number>) values[0];
-      Number lagValue = 1;
+	public TimeDifferencingEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+		if (!(1 == containedEvaluators.size() || containedEvaluators.size() == 2)) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting one or two values but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-      if (1 == values.length) {
-        if (!(timeseriesValues instanceof List<?>)) {
-          throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - found type %s for the first value, expecting a List", toExpression(constructingFactory), values[0].getClass().getSimpleName()));
-        }
-        if (!(timeseriesValues.size() > 1)) {
-          throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - found list size of %s for the first value, expecting a List of size > 0.", toExpression(constructingFactory), timeseriesValues.size()));
-        }
-      }
-      if (2 == values.length) {
-        lagValue = (Number) values[1];
-        if (!(lagValue instanceof Number)) {
-          throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - found type %s for the second value, expecting a Number", toExpression(constructingFactory), values[1].getClass().getSimpleName()));
-        }
-        if (lagValue.intValue() > timeseriesValues.size()) {
-          throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - found a lag size of %s for the second value, the first value has a List size of %s, expecting a lag value less than the List size", toExpression(constructingFactory), lagValue.intValue(), timeseriesValues.size()));
-        }
-      }
-      final int lag = lagValue.intValue();
-      return IntStream.range(lag, timeseriesValues.size())
-          .mapToObj(n -> (timeseriesValues.get(n).doubleValue() - timeseriesValues.get(n - lag).doubleValue()))
-          .collect(Collectors.toList());
-    } else if(values[0] instanceof Matrix) {
+	@Override
+	public Object doWork(Object... values) throws IOException {
+		if (!(1 == values.length || values.length == 2)) {
+			throw new IOException(
+					String.format(Locale.ROOT, "%s(...) only works with 1 or 2 values but %d were provided",
+							constructingFactory.getFunctionName(getClass()), values.length));
+		}
+		if (values[0] instanceof List) {
+			@SuppressWarnings({ "unchecked" })
+			List<Number> timeseriesValues = (List<Number>) values[0];
+			Number lagValue = 1;
 
-      //Diff each row of the matrix
+			if (1 == values.length) {
+				if (!(timeseriesValues instanceof List<?>)) {
+					throw new IOException(String.format(Locale.ROOT,
+							"Invalid expression %s - found type %s for the first value, expecting a List",
+							toExpression(constructingFactory), values[0].getClass().getSimpleName()));
+				}
+				if (!(timeseriesValues.size() > 1)) {
+					throw new IOException(String.format(Locale.ROOT,
+							"Invalid expression %s - found list size of %s for the first value, expecting a List of size > 0.",
+							toExpression(constructingFactory), timeseriesValues.size()));
+				}
+			}
+			if (2 == values.length) {
+				lagValue = (Number) values[1];
+				if (!(lagValue instanceof Number)) {
+					throw new IOException(String.format(Locale.ROOT,
+							"Invalid expression %s - found type %s for the second value, expecting a Number",
+							toExpression(constructingFactory), values[1].getClass().getSimpleName()));
+				}
+				if (lagValue.intValue() > timeseriesValues.size()) {
+					throw new IOException(String.format(Locale.ROOT,
+							"Invalid expression %s - found a lag size of %s for the second value, the first value has a List size of %s, expecting a lag value less than the List size",
+							toExpression(constructingFactory), lagValue.intValue(), timeseriesValues.size()));
+				}
+			}
+			final int lag = lagValue.intValue();
+			return IntStream.range(lag, timeseriesValues.size())
+					.mapToObj(
+							n -> (timeseriesValues.get(n).doubleValue() - timeseriesValues.get(n - lag).doubleValue()))
+					.collect(Collectors.toList());
+		} else if (values[0] instanceof Matrix) {
 
-      Matrix matrix = (Matrix)values[0];
-      double[][] data = matrix.getData();
-      double[][] diffedData = new double[data.length][];
-      Number lagValue = 1;
+			// Diff each row of the matrix
 
-      if (2 == values.length) {
-        lagValue = (Number) values[1];
-        if (!(lagValue instanceof Number)) {
-          throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - found type %s for the second value, expecting a Number", toExpression(constructingFactory), values[1].getClass().getSimpleName()));
-        }
-      }
+			Matrix matrix = (Matrix) values[0];
+			double[][] data = matrix.getData();
+			double[][] diffedData = new double[data.length][];
+			Number lagValue = 1;
 
-      int lag = lagValue.intValue();
+			if (2 == values.length) {
+				lagValue = (Number) values[1];
+				if (!(lagValue instanceof Number)) {
+					throw new IOException(String.format(Locale.ROOT,
+							"Invalid expression %s - found type %s for the second value, expecting a Number",
+							toExpression(constructingFactory), values[1].getClass().getSimpleName()));
+				}
+			}
 
-      for(int i=0; i<data.length; i++) {
-        double[] row = data[i];
-        List<Double> timeseriesValues = new ArrayList<>(row.length);
-        for(double d : row) {
-          timeseriesValues.add(d);
-        }
+			int lag = lagValue.intValue();
 
-        List<Number> diffedList = IntStream.range(lag, timeseriesValues.size())
-            .mapToObj(n -> (timeseriesValues.get(n).doubleValue() - timeseriesValues.get(n - lag).doubleValue()))
-            .collect(Collectors.toList());
-        double[] diffedRow = new double[diffedList.size()];
-        for(int r=0; r<diffedList.size(); r++) {
-          diffedRow[r] = diffedList.get(r).doubleValue();
-        }
-        diffedData[i] = diffedRow;
-      }
+			for (int i = 0; i < data.length; i++) {
+				double[] row = data[i];
+				List<Double> timeseriesValues = new ArrayList<>(row.length);
+				for (double d : row) {
+					timeseriesValues.add(d);
+				}
 
-      Matrix diffedMatrix = new Matrix(diffedData);
-      diffedMatrix.setRowLabels(matrix.getRowLabels());
-      List<String> columns = matrix.getColumnLabels();
-      if(columns != null) {
-        List<String> newColumns = new ArrayList<>(columns.size() - lag);
+				List<Number> diffedList = IntStream.range(lag, timeseriesValues.size()).mapToObj(
+						n -> (timeseriesValues.get(n).doubleValue() - timeseriesValues.get(n - lag).doubleValue()))
+						.collect(Collectors.toList());
+				double[] diffedRow = new double[diffedList.size()];
+				for (int r = 0; r < diffedList.size(); r++) {
+					diffedRow[r] = diffedList.get(r).doubleValue();
+				}
+				diffedData[i] = diffedRow;
+			}
 
-        for (int i = lag; i < columns.size(); i++) {
-          newColumns.add(columns.get(i));
-        }
+			Matrix diffedMatrix = new Matrix(diffedData);
+			diffedMatrix.setRowLabels(matrix.getRowLabels());
+			List<String> columns = matrix.getColumnLabels();
+			if (columns != null) {
+				List<String> newColumns = new ArrayList<>(columns.size() - lag);
 
-        diffedMatrix.setColumnLabels(newColumns);
-      }
-      return diffedMatrix;
+				for (int i = lag; i < columns.size(); i++) {
+					newColumns.add(columns.get(i));
+				}
 
-    } else {
-      throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - first parameter must be list of matrix", toExpression(constructingFactory)));
-    }
-  }
+				diffedMatrix.setColumnLabels(newColumns);
+			}
+			return diffedMatrix;
+
+		} else {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - first parameter must be list of matrix",
+							toExpression(constructingFactory)));
+		}
+	}
 }

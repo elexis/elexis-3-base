@@ -20,6 +20,6 @@ import java.io.IOException;
 
 public interface ValueWorker {
 
-  Object doWork(Object ... values) throws IOException;
-  
+	Object doWork(Object... values) throws IOException;
+
 }

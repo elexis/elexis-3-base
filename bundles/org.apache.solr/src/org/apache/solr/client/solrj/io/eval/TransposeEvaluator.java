@@ -24,32 +24,34 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class TransposeEvaluator extends RecursiveObjectEvaluator implements OneValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public TransposeEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public TransposeEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(1 != containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting exactly 1 value but found %d",expression,containedEvaluators.size()));
-    }
-  }
+		if (1 != containedEvaluators.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "Invalid expression %s - expecting exactly 1 value but found %d",
+							expression, containedEvaluators.size()));
+		}
+	}
 
-  @Override
-  public Object doWork(Object value) throws IOException{
-    if(null == value){
-      return null;
-    } else if(value instanceof Matrix) {
-      Matrix matrix = (Matrix) value;
-      double[][] data = matrix.getData();
-      Array2DRowRealMatrix amatrix = new Array2DRowRealMatrix(data, false);
-      Array2DRowRealMatrix tmatrix = (Array2DRowRealMatrix)amatrix.transpose();
-      Matrix newMatrix = new Matrix(tmatrix.getDataRef());
-      //Switch the row and column labels
-      newMatrix.setColumnLabels(matrix.getRowLabels());
-      newMatrix.setRowLabels(matrix.getColumnLabels());
-      return newMatrix;
-    } else {
-      throw new IOException("matrix parameter expected for transpose function");
-    }
-  }
+	@Override
+	public Object doWork(Object value) throws IOException {
+		if (null == value) {
+			return null;
+		} else if (value instanceof Matrix) {
+			Matrix matrix = (Matrix) value;
+			double[][] data = matrix.getData();
+			Array2DRowRealMatrix amatrix = new Array2DRowRealMatrix(data, false);
+			Array2DRowRealMatrix tmatrix = (Array2DRowRealMatrix) amatrix.transpose();
+			Matrix newMatrix = new Matrix(tmatrix.getDataRef());
+			// Switch the row and column labels
+			newMatrix.setColumnLabels(matrix.getRowLabels());
+			newMatrix.setRowLabels(matrix.getColumnLabels());
+			return newMatrix;
+		} else {
+			throw new IOException("matrix parameter expected for transpose function");
+		}
+	}
 }

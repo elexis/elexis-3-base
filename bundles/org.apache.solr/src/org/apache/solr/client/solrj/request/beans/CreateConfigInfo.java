@@ -22,11 +22,11 @@ import org.apache.solr.common.annotation.JsonProperty;
 import org.apache.solr.common.util.ReflectMapWriter;
 
 public class CreateConfigInfo implements ReflectMapWriter {
-  @JsonProperty(required = true)
-  public String name;
-  @JsonProperty
-  public String baseConfigSet;
-  @JsonProperty
-  public Map<String,Object> properties;
+	@JsonProperty(required = true)
+	public String name;
+	@JsonProperty
+	public String baseConfigSet;
+	@JsonProperty
+	public Map<String, Object> properties;
 
 }

@@ -23,76 +23,76 @@ import org.apache.http.config.Lookup;
 import org.apache.http.cookie.CookieSpecProvider;
 
 public class SolrHttpClientContextBuilder {
-  public static SolrHttpClientContextBuilder create() {
-    return new SolrHttpClientContextBuilder();
-  }
-  
-  public static abstract class CredentialsProviderProvider {
-    public abstract CredentialsProvider getCredentialsProvider();
-  }
-  
-  public static abstract class AuthSchemeRegistryProvider {
-    public abstract Lookup<AuthSchemeProvider> getAuthSchemeRegistry();
-  }
-  
-  public static abstract class CookieSpecRegistryProvider {
-    public abstract Lookup<CookieSpecProvider> getCookieSpecRegistry();
-  }
-  
-  private CookieSpecRegistryProvider cookieSpecRegistryProvider;
-  private AuthSchemeRegistryProvider authSchemeRegistryProvider;
-  private CredentialsProviderProvider credentialsProviderProvider;
+	public static SolrHttpClientContextBuilder create() {
+		return new SolrHttpClientContextBuilder();
+	}
 
-  public SolrHttpClientContextBuilder() {
-    super();
-  }
+	public static abstract class CredentialsProviderProvider {
+		public abstract CredentialsProvider getCredentialsProvider();
+	}
 
-  public final SolrHttpClientContextBuilder setCookieSpecRegistryProvider(
-      final CookieSpecRegistryProvider cookieSpecRegistryProvider) {
-    this.cookieSpecRegistryProvider = cookieSpecRegistryProvider;
-    return this;
-  }
-  
-  public final SolrHttpClientContextBuilder setDefaultCredentialsProvider(
-      final CredentialsProviderProvider credentialsProviderProvider) {
-    this.credentialsProviderProvider = credentialsProviderProvider;
-    return this;
-  }
-  
-  public final SolrHttpClientContextBuilder setAuthSchemeRegistryProvider(
-      final AuthSchemeRegistryProvider authSchemeRegistryProvider) {
-    this.authSchemeRegistryProvider = authSchemeRegistryProvider;
-    return this;
-  }
+	public static abstract class AuthSchemeRegistryProvider {
+		public abstract Lookup<AuthSchemeProvider> getAuthSchemeRegistry();
+	}
 
-  public AuthSchemeRegistryProvider getAuthSchemeRegistryProvider() {
-    return authSchemeRegistryProvider;
-  }
+	public static abstract class CookieSpecRegistryProvider {
+		public abstract Lookup<CookieSpecProvider> getCookieSpecRegistry();
+	}
 
-  public CookieSpecRegistryProvider getCookieSpecRegistryProvider() {
-    return cookieSpecRegistryProvider;
-  }
+	private CookieSpecRegistryProvider cookieSpecRegistryProvider;
+	private AuthSchemeRegistryProvider authSchemeRegistryProvider;
+	private CredentialsProviderProvider credentialsProviderProvider;
 
-  public CredentialsProviderProvider getCredentialsProviderProvider() {
-    return credentialsProviderProvider;
-  }
+	public SolrHttpClientContextBuilder() {
+		super();
+	}
 
-  public HttpClientContext createContext(Object userToken) {
-    HttpClientContext context = new HttpClientContext();
-    if (getCredentialsProviderProvider() != null) {
-      context.setCredentialsProvider(getCredentialsProviderProvider().getCredentialsProvider());
-    }
-    if (getAuthSchemeRegistryProvider() != null) {
-      context.setAuthSchemeRegistry( getAuthSchemeRegistryProvider().getAuthSchemeRegistry());
-    }
-    
-    if (getCookieSpecRegistryProvider() != null) {
-      context.setCookieSpecRegistry(getCookieSpecRegistryProvider().getCookieSpecRegistry());
-    }
+	public final SolrHttpClientContextBuilder setCookieSpecRegistryProvider(
+			final CookieSpecRegistryProvider cookieSpecRegistryProvider) {
+		this.cookieSpecRegistryProvider = cookieSpecRegistryProvider;
+		return this;
+	}
 
-    context.setUserToken(userToken);
-    
-    return context;
-  }
+	public final SolrHttpClientContextBuilder setDefaultCredentialsProvider(
+			final CredentialsProviderProvider credentialsProviderProvider) {
+		this.credentialsProviderProvider = credentialsProviderProvider;
+		return this;
+	}
+
+	public final SolrHttpClientContextBuilder setAuthSchemeRegistryProvider(
+			final AuthSchemeRegistryProvider authSchemeRegistryProvider) {
+		this.authSchemeRegistryProvider = authSchemeRegistryProvider;
+		return this;
+	}
+
+	public AuthSchemeRegistryProvider getAuthSchemeRegistryProvider() {
+		return authSchemeRegistryProvider;
+	}
+
+	public CookieSpecRegistryProvider getCookieSpecRegistryProvider() {
+		return cookieSpecRegistryProvider;
+	}
+
+	public CredentialsProviderProvider getCredentialsProviderProvider() {
+		return credentialsProviderProvider;
+	}
+
+	public HttpClientContext createContext(Object userToken) {
+		HttpClientContext context = new HttpClientContext();
+		if (getCredentialsProviderProvider() != null) {
+			context.setCredentialsProvider(getCredentialsProviderProvider().getCredentialsProvider());
+		}
+		if (getAuthSchemeRegistryProvider() != null) {
+			context.setAuthSchemeRegistry(getAuthSchemeRegistryProvider().getAuthSchemeRegistry());
+		}
+
+		if (getCookieSpecRegistryProvider() != null) {
+			context.setCookieSpecRegistry(getCookieSpecRegistryProvider().getCookieSpecRegistry());
+		}
+
+		context.setUserToken(userToken);
+
+		return context;
+	}
 
 }

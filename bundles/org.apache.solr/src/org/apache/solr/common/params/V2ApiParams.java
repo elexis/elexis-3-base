@@ -21,14 +21,15 @@ package org.apache.solr.common.params;
  * String constants used in sending and receiving V2 API requests.
  */
 public class V2ApiParams {
-  private V2ApiParams() { /* Private ctor prevents instantiation */ }
+	private V2ApiParams() {
+		/* Private ctor prevents instantiation */ }
 
-  public static final String COLLECTIONS_API_PATH = "/collections";
-  public static final String C_API_PATH = "/c";
+	public static final String COLLECTIONS_API_PATH = "/collections";
+	public static final String C_API_PATH = "/c";
 
-  public static final String BACKUPS_API_PATH = COLLECTIONS_API_PATH + "/backups";
-  public static final String BACKUPS_API_SHORT_PATH = C_API_PATH + "/backups";
+	public static final String BACKUPS_API_PATH = COLLECTIONS_API_PATH + "/backups";
+	public static final String BACKUPS_API_SHORT_PATH = C_API_PATH + "/backups";
 
-  public static final String LIST_BACKUPS_CMD = "list-backups";
-  public static final String DELETE_BACKUPS_CMD = "delete-backups";
+	public static final String LIST_BACKUPS_CMD = "list-backups";
+	public static final String DELETE_BACKUPS_CMD = "delete-backups";
 }

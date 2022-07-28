@@ -22,51 +22,49 @@ import org.apache.solr.common.util.ReflectMapWriter;
 
 public class ClusterPropInfo implements ReflectMapWriter {
 
-  @JsonProperty
-  public String urlScheme;
+	@JsonProperty
+	public String urlScheme;
 
-  @JsonProperty
-  public Integer maxCoresPerNode;
-  @JsonProperty
-  public String location;
+	@JsonProperty
+	public Integer maxCoresPerNode;
+	@JsonProperty
+	public String location;
 
-  @JsonProperty
-  public DefaultsInfo defaults;
+	@JsonProperty
+	public DefaultsInfo defaults;
 
-  @JsonProperty
-  public CollectionDefaults collectionDefaults;
+	@JsonProperty
+	public CollectionDefaults collectionDefaults;
 
-  public static class CollectionDefaults implements ReflectMapWriter {
-    @JsonProperty
-    public Integer numShards;
-    @JsonProperty
-    public Integer tlogReplicas;
-    @JsonProperty
-    public Integer pullReplicas;
-    @JsonProperty
-    public Integer nrtReplicas;
+	public static class CollectionDefaults implements ReflectMapWriter {
+		@JsonProperty
+		public Integer numShards;
+		@JsonProperty
+		public Integer tlogReplicas;
+		@JsonProperty
+		public Integer pullReplicas;
+		@JsonProperty
+		public Integer nrtReplicas;
 
-  }
+	}
 
-  public static class DefaultsInfo implements ReflectMapWriter {
+	public static class DefaultsInfo implements ReflectMapWriter {
 
-    @JsonProperty
-    public CollectionDefaults collection;
+		@JsonProperty
+		public CollectionDefaults collection;
 
-    @JsonProperty
-    public ClusterInfo cluster;
+		@JsonProperty
+		public ClusterInfo cluster;
 
-  }
+	}
 
-  public static class ClusterInfo implements ReflectMapWriter {
-    @JsonProperty
-    public Boolean useLegacyReplicaAssignment;
+	public static class ClusterInfo implements ReflectMapWriter {
+		@JsonProperty
+		public Boolean useLegacyReplicaAssignment;
 
+		@JsonProperty
+		public CollectionDefaults collection;
 
-    @JsonProperty
-    public CollectionDefaults collection;
-
-  }
-
+	}
 
 }

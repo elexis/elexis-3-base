@@ -30,45 +30,45 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultConnectionStrategy extends ZkClientConnectionStrategy {
 
-  private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  
-  @Override
-  public void connect(String serverAddress, int timeout, Watcher watcher, ZkUpdate updater) throws IOException, InterruptedException, TimeoutException {
-    SolrZooKeeper zk = createSolrZooKeeper(serverAddress, timeout, watcher);
-    boolean success = false;
-    try {
-      updater.update(zk);
-      success = true;
-    } finally {
-      if (!success) {
-        zk.close();
-      }
-    }
-  }
+	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  @Override
-  public void reconnect(final String serverAddress, final int zkClientTimeout,
-      final Watcher watcher, final ZkUpdate updater) throws IOException, InterruptedException, TimeoutException {
-    log.warn("Connection expired - starting a new one...");
-    SolrZooKeeper zk = createSolrZooKeeper(serverAddress, zkClientTimeout, watcher);
-    boolean success = false;
-    try {
-      updater
-          .update(zk);
-      success = true;
-      log.info("Reconnected to ZooKeeper");
-    } catch (AlreadyClosedException e) {
+	@Override
+	public void connect(String serverAddress, int timeout, Watcher watcher, ZkUpdate updater)
+			throws IOException, InterruptedException, TimeoutException {
+		SolrZooKeeper zk = createSolrZooKeeper(serverAddress, timeout, watcher);
+		boolean success = false;
+		try {
+			updater.update(zk);
+			success = true;
+		} finally {
+			if (!success) {
+				zk.close();
+			}
+		}
+	}
 
-    } finally {
-      if (!success) {
-        try {
-          zk.close();
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-        }
-      }
-    }
-    
-  }
+	@Override
+	public void reconnect(final String serverAddress, final int zkClientTimeout, final Watcher watcher,
+			final ZkUpdate updater) throws IOException, InterruptedException, TimeoutException {
+		log.warn("Connection expired - starting a new one...");
+		SolrZooKeeper zk = createSolrZooKeeper(serverAddress, zkClientTimeout, watcher);
+		boolean success = false;
+		try {
+			updater.update(zk);
+			success = true;
+			log.info("Reconnected to ZooKeeper");
+		} catch (AlreadyClosedException e) {
+
+		} finally {
+			if (!success) {
+				try {
+					zk.close();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+			}
+		}
+
+	}
 
 }

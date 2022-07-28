@@ -61,457 +61,469 @@ import org.apache.solr.common.util.ExecutorUtil;
 import org.apache.solr.common.util.SolrNamedThreadFactory;
 
 /**
- * Connects to Zookeeper to pick replicas from a specific collection to send the query to.
- * Under the covers the SolrStream instances send the query to the replicas.
- * SolrStreams are opened using a thread pool, but a single thread is used
- * to iterate and merge Tuples from each SolrStream.
+ * Connects to Zookeeper to pick replicas from a specific collection to send the
+ * query to. Under the covers the SolrStream instances send the query to the
+ * replicas. SolrStreams are opened using a thread pool, but a single thread is
+ * used to iterate and merge Tuples from each SolrStream.
+ *
  * @since 5.1.0
  **/
 
 public class CloudSolrStream extends TupleStream implements Expressible {
 
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  protected String zkHost;
-  protected String collection;
-  protected ModifiableSolrParams params;
-  protected Map<String, String> fieldMappings;
-  protected StreamComparator comp;
-  private boolean trace;
-  protected transient Map<String, Tuple> eofTuples;
-  protected transient CloudSolrClient cloudSolrClient;
-  protected transient List<TupleStream> solrStreams;
-  protected transient TreeSet<TupleWrapper> tuples;
-  protected transient StreamContext streamContext;
+	protected String zkHost;
+	protected String collection;
+	protected ModifiableSolrParams params;
+	protected Map<String, String> fieldMappings;
+	protected StreamComparator comp;
+	private boolean trace;
+	protected transient Map<String, Tuple> eofTuples;
+	protected transient CloudSolrClient cloudSolrClient;
+	protected transient List<TupleStream> solrStreams;
+	protected transient TreeSet<TupleWrapper> tuples;
+	protected transient StreamContext streamContext;
 
-  // Used by parallel stream
-  protected CloudSolrStream(){
-    
-  }
+	// Used by parallel stream
+	protected CloudSolrStream() {
 
-  /**
-   * @param zkHost         Zookeeper ensemble connection string
-   * @param collectionName Name of the collection to operate on
-   * @param params         Map&lt;String, String[]&gt; of parameter/value pairs
-   * @throws IOException Something went wrong
-   */
-  public CloudSolrStream(String zkHost, String collectionName, SolrParams params) throws IOException {
-    init(collectionName, zkHost, params);
-  }
+	}
 
-  public CloudSolrStream(StreamExpression expression, StreamFactory factory) throws IOException{   
-    // grab all parameters out
-    String collectionName = factory.getValueOperand(expression, 0);
-    List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
-    StreamExpressionNamedParameter aliasExpression = factory.getNamedOperand(expression, "aliases");
-    StreamExpressionNamedParameter zkHostExpression = factory.getNamedOperand(expression, "zkHost");
+	/**
+	 * @param zkHost         Zookeeper ensemble connection string
+	 * @param collectionName Name of the collection to operate on
+	 * @param params         Map&lt;String, String[]&gt; of parameter/value pairs
+	 * @throws IOException Something went wrong
+	 */
+	public CloudSolrStream(String zkHost, String collectionName, SolrParams params) throws IOException {
+		init(collectionName, zkHost, params);
+	}
 
-    // Collection Name
-    if(null == collectionName){
-      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - collectionName expected as first operand",expression));
-    }
+	public CloudSolrStream(StreamExpression expression, StreamFactory factory) throws IOException {
+		// grab all parameters out
+		String collectionName = factory.getValueOperand(expression, 0);
+		List<StreamExpressionNamedParameter> namedParams = factory.getNamedOperands(expression);
+		StreamExpressionNamedParameter aliasExpression = factory.getNamedOperand(expression, "aliases");
+		StreamExpressionNamedParameter zkHostExpression = factory.getNamedOperand(expression, "zkHost");
 
-    // Validate there are no unknown parameters - zkHost and alias are namedParameter so we don't need to count it twice
-    if(expression.getParameters().size() != 1 + namedParams.size()){
-      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - unknown operands found",expression));
-    }
-    
-    // Named parameters - passed directly to solr as solrparams
-    if(0 == namedParams.size()){
-      throw new IOException(String.format(Locale.ROOT,"invalid expression %s - at least one named parameter expected. eg. 'q=*:*'",expression));
-    }
-    
-    ModifiableSolrParams mParams = new ModifiableSolrParams();
-    for(StreamExpressionNamedParameter namedParam : namedParams){
-      if(!namedParam.getName().equals("zkHost") && !namedParam.getName().equals("aliases")){
-        mParams.add(namedParam.getName(), namedParam.getParameter().toString().trim());
-      }
-    }
+		// Collection Name
+		if (null == collectionName) {
+			throw new IOException(String.format(Locale.ROOT,
+					"invalid expression %s - collectionName expected as first operand", expression));
+		}
 
-    // Aliases, optional, if provided then need to split
-    if(null != aliasExpression && aliasExpression.getParameter() instanceof StreamExpressionValue){
-      fieldMappings = new HashMap<>();
-      for(String mapping : ((StreamExpressionValue)aliasExpression.getParameter()).getValue().split(",")){
-        String[] parts = mapping.trim().split("=");
-        if(2 == parts.length){
-          fieldMappings.put(parts[0], parts[1]);
-        }
-        else{
-          throw new IOException(String.format(Locale.ROOT,"invalid expression %s - alias expected of the format origName=newName",expression));
-        }
-      }
-    }
+		// Validate there are no unknown parameters - zkHost and alias are
+		// namedParameter so we don't need to count it twice
+		if (expression.getParameters().size() != 1 + namedParams.size()) {
+			throw new IOException(
+					String.format(Locale.ROOT, "invalid expression %s - unknown operands found", expression));
+		}
 
-    // zkHost, optional - if not provided then will look into factory list to get
-    String zkHost = null;
-    if(null == zkHostExpression){
-      zkHost = factory.getCollectionZkHost(collectionName);
-      if(zkHost == null) {
-        zkHost = factory.getDefaultZkHost();
-      }
-    }
-    else if(zkHostExpression.getParameter() instanceof StreamExpressionValue){
-      zkHost = ((StreamExpressionValue)zkHostExpression.getParameter()).getValue();
-    }
-    // We've got all the required items
-    init(collectionName, zkHost, mParams);
-  }
-  
-  @Override
-  public StreamExpression toExpression(StreamFactory factory) throws IOException {
-    // functionName(collectionName, param1, param2, ..., paramN, sort="comp", [aliases="field=alias,..."])
-    
-    // function name
-    StreamExpression expression = new StreamExpression("search");
-    
-    // collection
-    if(collection.indexOf(',') > -1) {
-      expression.addParameter("\""+collection+"\"");
-    } else {
-      expression.addParameter(collection);
-    }
-    
-    for (Entry<String, String[]> param : params.getMap().entrySet()) {
-      for (String val : param.getValue()) {
-        // SOLR-8409: Escaping the " is a special case.
-        // Do note that in any other BASE streams with parameters where a " might come into play
-        // that this same replacement needs to take place.
-        expression.addParameter(new StreamExpressionNamedParameter(param.getKey(),
-            val.replace("\"", "\\\"")));
-      }
-    }
-    
-    // zkHost
-    expression.addParameter(new StreamExpressionNamedParameter("zkHost", zkHost));
-    
-    // aliases
-    if(null != fieldMappings && 0 != fieldMappings.size()){
-      StringBuilder sb = new StringBuilder();
-      for(Entry<String,String> mapping : fieldMappings.entrySet()){
-        if(sb.length() > 0){ sb.append(","); }
-        sb.append(mapping.getKey());
-        sb.append("=");
-        sb.append(mapping.getValue());
-      }
-      
-      expression.addParameter(new StreamExpressionNamedParameter("aliases", sb.toString()));
-    }
-        
-    return expression;   
-  }
-  
-  @Override
-  public Explanation toExplanation(StreamFactory factory) throws IOException {
+		// Named parameters - passed directly to solr as solrparams
+		if (0 == namedParams.size()) {
+			throw new IOException(String.format(Locale.ROOT,
+					"invalid expression %s - at least one named parameter expected. eg. 'q=*:*'", expression));
+		}
 
-    StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
-    
-    explanation.setFunctionName("search");
-    explanation.setImplementingClass(this.getClass().getName());
-    explanation.setExpressionType(ExpressionType.STREAM_SOURCE);
-    explanation.setExpression(toExpression(factory).toString());
-    
-    // child is a datastore so add it at this point
-    StreamExplanation child = new StreamExplanation(getStreamNodeId() + "-datastore");
-    child.setFunctionName(String.format(Locale.ROOT, "solr (%s)", collection));
-    child.setImplementingClass("Solr/Lucene");
-    child.setExpressionType(ExpressionType.DATASTORE);
-    
-    if(null != params){
-      ModifiableSolrParams mParams = new ModifiableSolrParams(params);
-      child.setExpression(mParams.getMap().entrySet().stream().map(e -> String.format(Locale.ROOT, "%s=%s", e.getKey(), e.getValue())).collect(Collectors.joining(",")));
-    }
-    explanation.addChild(child);
-    
-    return explanation;
-  }
+		ModifiableSolrParams mParams = new ModifiableSolrParams();
+		for (StreamExpressionNamedParameter namedParam : namedParams) {
+			if (!namedParam.getName().equals("zkHost") && !namedParam.getName().equals("aliases")) {
+				mParams.add(namedParam.getName(), namedParam.getParameter().toString().trim());
+			}
+		}
 
-  void init(String collectionName, String zkHost, SolrParams params) throws IOException {
-    this.zkHost = zkHost;
-    this.collection = collectionName;
-    this.params = new ModifiableSolrParams(params);
+		// Aliases, optional, if provided then need to split
+		if (null != aliasExpression && aliasExpression.getParameter() instanceof StreamExpressionValue) {
+			fieldMappings = new HashMap<>();
+			for (String mapping : ((StreamExpressionValue) aliasExpression.getParameter()).getValue().split(",")) {
+				String[] parts = mapping.trim().split("=");
+				if (2 == parts.length) {
+					fieldMappings.put(parts[0], parts[1]);
+				} else {
+					throw new IOException(String.format(Locale.ROOT,
+							"invalid expression %s - alias expected of the format origName=newName", expression));
+				}
+			}
+		}
 
-    // If the comparator is null then it was not explicitly set so we will create one using the sort parameter
-    // of the query. While doing this we will also take into account any aliases such that if we are sorting on
-    // fieldA but fieldA is aliased to alias.fieldA then the comparator will be against alias.fieldA.
+		// zkHost, optional - if not provided then will look into factory list to get
+		String zkHost = null;
+		if (null == zkHostExpression) {
+			zkHost = factory.getCollectionZkHost(collectionName);
+			if (zkHost == null) {
+				zkHost = factory.getDefaultZkHost();
+			}
+		} else if (zkHostExpression.getParameter() instanceof StreamExpressionValue) {
+			zkHost = ((StreamExpressionValue) zkHostExpression.getParameter()).getValue();
+		}
+		// We've got all the required items
+		init(collectionName, zkHost, mParams);
+	}
 
-    if (params.get("q") == null) {
-      throw new IOException("q param expected for search function");
-    }
+	@Override
+	public StreamExpression toExpression(StreamFactory factory) throws IOException {
+		// functionName(collectionName, param1, param2, ..., paramN, sort="comp",
+		// [aliases="field=alias,..."])
 
-    if (params.getParams("fl") == null) {
-      throw new IOException("fl param expected for search function");
-    }
-    String fls = String.join(",", params.getParams("fl"));
+		// function name
+		StreamExpression expression = new StreamExpression("search");
 
-    if (params.getParams(SORT) == null) {
-      throw new IOException("sort param expected for search function");
-    }
-    String sorts = String.join(",", params.getParams(SORT));
-    this.comp = parseComp(sorts, fls);
-  }
-  
-  public void setFieldMappings(Map<String, String> fieldMappings) {
-    this.fieldMappings = fieldMappings;
-  }
+		// collection
+		if (collection.indexOf(',') > -1) {
+			expression.addParameter("\"" + collection + "\"");
+		} else {
+			expression.addParameter(collection);
+		}
 
-  public void setTrace(boolean trace) {
-    this.trace = trace;
-  }
+		for (Entry<String, String[]> param : params.getMap().entrySet()) {
+			for (String val : param.getValue()) {
+				// SOLR-8409: Escaping the " is a special case.
+				// Do note that in any other BASE streams with parameters where a " might come
+				// into play
+				// that this same replacement needs to take place.
+				expression.addParameter(new StreamExpressionNamedParameter(param.getKey(), val.replace("\"", "\\\"")));
+			}
+		}
 
-  public void setStreamContext(StreamContext context) {
-    this.streamContext = context;
-  }
+		// zkHost
+		expression.addParameter(new StreamExpressionNamedParameter("zkHost", zkHost));
 
-  /**
-  * Opens the CloudSolrStream
-  *
-  ***/
-  public void open() throws IOException {
-    this.tuples = new TreeSet<>();
-    this.solrStreams = new ArrayList<>();
-    this.eofTuples = Collections.synchronizedMap(new HashMap<>());
-    constructStreams();
-    openStreams();
-  }
+		// aliases
+		if (null != fieldMappings && 0 != fieldMappings.size()) {
+			StringBuilder sb = new StringBuilder();
+			for (Entry<String, String> mapping : fieldMappings.entrySet()) {
+				if (sb.length() > 0) {
+					sb.append(",");
+				}
+				sb.append(mapping.getKey());
+				sb.append("=");
+				sb.append(mapping.getValue());
+			}
 
+			expression.addParameter(new StreamExpressionNamedParameter("aliases", sb.toString()));
+		}
 
-  public Map<String, Tuple> getEofTuples() {
-    return this.eofTuples;
-  }
+		return expression;
+	}
 
-  public List<TupleStream> children() {
-    return solrStreams;
-  }
+	@Override
+	public Explanation toExplanation(StreamFactory factory) throws IOException {
 
-  @SuppressWarnings({"unchecked"})
-  private StreamComparator parseComp(String sort, String fl) throws IOException {
+		StreamExplanation explanation = new StreamExplanation(getStreamNodeId().toString());
 
-    String[] fls = fl.split(",");
-    @SuppressWarnings({"rawtypes"})
-    HashSet fieldSet = new HashSet();
-    for(String f : fls) {
-      fieldSet.add(f.trim()); //Handle spaces in the field list.
-    }
+		explanation.setFunctionName("search");
+		explanation.setImplementingClass(this.getClass().getName());
+		explanation.setExpressionType(ExpressionType.STREAM_SOURCE);
+		explanation.setExpression(toExpression(factory).toString());
 
-    String[] sorts = sort.split(",");
-    StreamComparator[] comps = new StreamComparator[sorts.length];
-    for(int i=0; i<sorts.length; i++) {
-      String s = sorts[i];
+		// child is a datastore so add it at this point
+		StreamExplanation child = new StreamExplanation(getStreamNodeId() + "-datastore");
+		child.setFunctionName(String.format(Locale.ROOT, "solr (%s)", collection));
+		child.setImplementingClass("Solr/Lucene");
+		child.setExpressionType(ExpressionType.DATASTORE);
 
-      String[] spec = s.trim().split("\\s+"); //This should take into account spaces in the sort spec.
-      
-      if (spec.length != 2) {
-        throw new IOException("Invalid sort spec:" + s);
-      }
+		if (null != params) {
+			ModifiableSolrParams mParams = new ModifiableSolrParams(params);
+			child.setExpression(mParams.getMap().entrySet().stream()
+					.map(e -> String.format(Locale.ROOT, "%s=%s", e.getKey(), e.getValue()))
+					.collect(Collectors.joining(",")));
+		}
+		explanation.addChild(child);
 
-      String fieldName = spec[0].trim();
-      String order = spec[1].trim();
-      
-      if(!fieldSet.contains(spec[0])) {
-        throw new IOException("Fields in the sort spec must be included in the field list:"+spec[0]);
-      }
-      
-      // if there's an alias for the field then use the alias
-      if(null != fieldMappings && fieldMappings.containsKey(fieldName)){
-        fieldName = fieldMappings.get(fieldName);
-      }
-      
-      comps[i] = new FieldComparator(fieldName, order.equalsIgnoreCase("asc") ? ComparatorOrder.ASCENDING : ComparatorOrder.DESCENDING);
-    }
+		return explanation;
+	}
 
-    if(comps.length > 1) {
-      return new MultipleFieldComparator(comps);
-    } else {
-      return comps[0];
-    }
-  }
+	void init(String collectionName, String zkHost, SolrParams params) throws IOException {
+		this.zkHost = zkHost;
+		this.collection = collectionName;
+		this.params = new ModifiableSolrParams(params);
 
-  public static Slice[] getSlices(String collectionName, ZkStateReader zkStateReader, boolean checkAlias) throws IOException {
-    ClusterState clusterState = zkStateReader.getClusterState();
+		// If the comparator is null then it was not explicitly set so we will create
+		// one using the sort parameter
+		// of the query. While doing this we will also take into account any aliases
+		// such that if we are sorting on
+		// fieldA but fieldA is aliased to alias.fieldA then the comparator will be
+		// against alias.fieldA.
 
-    // check for alias or collection
+		if (params.get("q") == null) {
+			throw new IOException("q param expected for search function");
+		}
 
-    List<String> allCollections = new ArrayList<>();
-    String[] collectionNames = collectionName.split(",");
-    Aliases aliases = checkAlias ? zkStateReader.getAliases() : null;
+		if (params.getParams("fl") == null) {
+			throw new IOException("fl param expected for search function");
+		}
+		String fls = String.join(",", params.getParams("fl"));
 
-    for(String col : collectionNames) {
-      List<String> collections = (aliases != null)
-          ? aliases.resolveAliases(col)  // if not an alias, returns collectionName
-          : Collections.singletonList(collectionName);
-      allCollections.addAll(collections);
-    }
+		if (params.getParams(SORT) == null) {
+			throw new IOException("sort param expected for search function");
+		}
+		String sorts = String.join(",", params.getParams(SORT));
+		this.comp = parseComp(sorts, fls);
+	}
 
-    // Lookup all actives slices for these collections
-    List<Slice> slices = allCollections.stream()
-        .map(c -> clusterState.getCollectionOrNull(c, true))
-        .filter(Objects::nonNull)
-        .flatMap(docCol -> Arrays.stream(docCol.getActiveSlicesArr()))
-        .collect(Collectors.toList());
-    if (!slices.isEmpty()) {
-      return slices.toArray(new Slice[0]);
-    }
+	public void setFieldMappings(Map<String, String> fieldMappings) {
+		this.fieldMappings = fieldMappings;
+	}
 
-    throw new IOException("Slices not found for " + collectionName);
-  }
+	public void setTrace(boolean trace) {
+		this.trace = trace;
+	}
 
-  protected void constructStreams() throws IOException {
-    final ModifiableSolrParams mParams = adjustParams(new ModifiableSolrParams(params));
-    mParams.set(DISTRIB, "false"); // We are the aggregator.
-    try {
-      final Stream<SolrStream> streamOfSolrStream;
-      if (streamContext != null && streamContext.get("shards") != null) {
-        // stream of shard url with core
-        streamOfSolrStream = getShards(this.zkHost, this.collection, this.streamContext, mParams).stream()
-            .map(s -> new SolrStream(s, mParams));
-      } else {
-        // stream of replicas to reuse the same SolrHttpClient per baseUrl
-        // avoids re-parsing data we already have in the replicas
-        streamOfSolrStream = getReplicas(this.zkHost, this.collection, this.streamContext, mParams).stream()
-            .map(r -> new SolrStream(r.getBaseUrl(), mParams, r.getCoreName()));
-      }
+	public void setStreamContext(StreamContext context) {
+		this.streamContext = context;
+	}
 
-      streamOfSolrStream.forEach(ss -> {
-        if(streamContext != null) {
-          ss.setStreamContext(streamContext);
-        }
-        ss.setFieldMappings(this.fieldMappings);
-        solrStreams.add(ss);
-      });
-    } catch (Exception e) {
-      throw new IOException(e);
-    }
-  }
+	/**
+	 * Opens the CloudSolrStream
+	 *
+	 ***/
+	public void open() throws IOException {
+		this.tuples = new TreeSet<>();
+		this.solrStreams = new ArrayList<>();
+		this.eofTuples = Collections.synchronizedMap(new HashMap<>());
+		constructStreams();
+		openStreams();
+	}
 
-  private void openStreams() throws IOException {
-    ExecutorService service = ExecutorUtil.newMDCAwareCachedThreadPool(new SolrNamedThreadFactory("CloudSolrStream"));
-    List<Future<TupleWrapper>> futures =
-        solrStreams.stream().map(ss -> service.submit(new StreamOpener((SolrStream)ss, comp))).collect(Collectors.toList());
-    try {
-      for (Future<TupleWrapper> f : futures) {
-        TupleWrapper w = f.get();
-        if (w != null) {
-          tuples.add(w);
-        }
-      }
-    } catch (Exception e) {
-      throw new IOException(e);
-    } finally {
-      service.shutdown();
-    }
-  }
+	public Map<String, Tuple> getEofTuples() {
+		return this.eofTuples;
+	}
 
-  /**
-   *  Closes the CloudSolrStream
-   **/
-  public void close() throws IOException {
-    if(solrStreams != null) {
-      for (TupleStream solrStream : solrStreams) {
-        solrStream.close();
-      }
-    }
-  }
-  
-  /** Return the stream sort - ie, the order in which records are returned */
-  public StreamComparator getStreamSort(){
-    return comp;
-  }
+	public List<TupleStream> children() {
+		return solrStreams;
+	}
 
-  public Tuple read() throws IOException {
-    return _read();
-  }
+	@SuppressWarnings({ "unchecked" })
+	private StreamComparator parseComp(String sort, String fl) throws IOException {
 
-  protected Tuple _read() throws IOException {
-    TupleWrapper tw = tuples.pollFirst();
-    if(tw != null) {
-      Tuple t = tw.getTuple();
+		String[] fls = fl.split(",");
+		@SuppressWarnings({ "rawtypes" })
+		HashSet fieldSet = new HashSet();
+		for (String f : fls) {
+			fieldSet.add(f.trim()); // Handle spaces in the field list.
+		}
 
-      if (trace) {
-        t.put("_COLLECTION_", this.collection);
-      }
+		String[] sorts = sort.split(",");
+		StreamComparator[] comps = new StreamComparator[sorts.length];
+		for (int i = 0; i < sorts.length; i++) {
+			String s = sorts[i];
 
-      if(tw.next()) {
-        tuples.add(tw);
-      }
-      return t;
-    } else {
-      Tuple tuple = Tuple.EOF();
-      if(trace) {
-        tuple.put("_COLLECTION_", this.collection);
-      }
-      return tuple;
-    }
-  }
+			String[] spec = s.trim().split("\\s+"); // This should take into account spaces in the sort spec.
 
-  protected class TupleWrapper implements Comparable<TupleWrapper> {
-    private Tuple tuple;
-    private final SolrStream stream;
-    private final StreamComparator comp;
+			if (spec.length != 2) {
+				throw new IOException("Invalid sort spec:" + s);
+			}
 
-    public TupleWrapper(SolrStream stream, StreamComparator comp) {
-      this.stream = stream;
-      this.comp = comp;
-    }
+			String fieldName = spec[0].trim();
+			String order = spec[1].trim();
 
-    public int compareTo(TupleWrapper w) {
-      if(this == w) {
-        return 0;
-      }
+			if (!fieldSet.contains(spec[0])) {
+				throw new IOException("Fields in the sort spec must be included in the field list:" + spec[0]);
+			}
 
-      int i = comp.compare(tuple, w.tuple);
-      if(i == 0) {
-        return 1;
-      } else {
-        return i;
-      }
-    }
+			// if there's an alias for the field then use the alias
+			if (null != fieldMappings && fieldMappings.containsKey(fieldName)) {
+				fieldName = fieldMappings.get(fieldName);
+			}
 
-    public boolean equals(Object o) {
-      return this == o;
-    }
+			comps[i] = new FieldComparator(fieldName,
+					order.equalsIgnoreCase("asc") ? ComparatorOrder.ASCENDING : ComparatorOrder.DESCENDING);
+		}
 
-    @Override
-    public int hashCode() {
-      return Objects.hash(tuple);
-    }
+		if (comps.length > 1) {
+			return new MultipleFieldComparator(comps);
+		} else {
+			return comps[0];
+		}
+	}
 
-    public Tuple getTuple() {
-      return tuple;
-    }
+	public static Slice[] getSlices(String collectionName, ZkStateReader zkStateReader, boolean checkAlias)
+			throws IOException {
+		ClusterState clusterState = zkStateReader.getClusterState();
 
-    public boolean next() throws IOException {
-      this.tuple = stream.read();
+		// check for alias or collection
 
-      if(tuple.EOF) {
-        eofTuples.put(stream.getBaseUrl(), tuple);
-      }
+		List<String> allCollections = new ArrayList<>();
+		String[] collectionNames = collectionName.split(",");
+		Aliases aliases = checkAlias ? zkStateReader.getAliases() : null;
 
-      return !tuple.EOF;
-    }
-  }
+		for (String col : collectionNames) {
+			List<String> collections = (aliases != null) ? aliases.resolveAliases(col) // if not an alias, returns
+																						// collectionName
+					: Collections.singletonList(collectionName);
+			allCollections.addAll(collections);
+		}
 
-  protected class StreamOpener implements Callable<TupleWrapper> {
+		// Lookup all actives slices for these collections
+		List<Slice> slices = allCollections.stream().map(c -> clusterState.getCollectionOrNull(c, true))
+				.filter(Objects::nonNull).flatMap(docCol -> Arrays.stream(docCol.getActiveSlicesArr()))
+				.collect(Collectors.toList());
+		if (!slices.isEmpty()) {
+			return slices.toArray(new Slice[0]);
+		}
 
-    private final SolrStream stream;
-    private final StreamComparator comp;
+		throw new IOException("Slices not found for " + collectionName);
+	}
 
-    public StreamOpener(SolrStream stream, StreamComparator comp) {
-      this.stream = stream;
-      this.comp = comp;
-    }
+	protected void constructStreams() throws IOException {
+		final ModifiableSolrParams mParams = adjustParams(new ModifiableSolrParams(params));
+		mParams.set(DISTRIB, "false"); // We are the aggregator.
+		try {
+			final Stream<SolrStream> streamOfSolrStream;
+			if (streamContext != null && streamContext.get("shards") != null) {
+				// stream of shard url with core
+				streamOfSolrStream = getShards(this.zkHost, this.collection, this.streamContext, mParams).stream()
+						.map(s -> new SolrStream(s, mParams));
+			} else {
+				// stream of replicas to reuse the same SolrHttpClient per baseUrl
+				// avoids re-parsing data we already have in the replicas
+				streamOfSolrStream = getReplicas(this.zkHost, this.collection, this.streamContext, mParams).stream()
+						.map(r -> new SolrStream(r.getBaseUrl(), mParams, r.getCoreName()));
+			}
 
-    public TupleWrapper call() throws Exception {
-      stream.open();
-      TupleWrapper wrapper = new TupleWrapper(stream, comp);
-      if(wrapper.next()) {
-        return wrapper;
-      } else {
-        return null;
-      }
-    }
-  }
+			streamOfSolrStream.forEach(ss -> {
+				if (streamContext != null) {
+					ss.setStreamContext(streamContext);
+				}
+				ss.setFieldMappings(this.fieldMappings);
+				solrStreams.add(ss);
+			});
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+	}
 
-  protected ModifiableSolrParams adjustParams(ModifiableSolrParams params) {
-    return params;
-  }
+	private void openStreams() throws IOException {
+		ExecutorService service = ExecutorUtil
+				.newMDCAwareCachedThreadPool(new SolrNamedThreadFactory("CloudSolrStream"));
+		List<Future<TupleWrapper>> futures = solrStreams.stream()
+				.map(ss -> service.submit(new StreamOpener((SolrStream) ss, comp))).collect(Collectors.toList());
+		try {
+			for (Future<TupleWrapper> f : futures) {
+				TupleWrapper w = f.get();
+				if (w != null) {
+					tuples.add(w);
+				}
+			}
+		} catch (Exception e) {
+			throw new IOException(e);
+		} finally {
+			service.shutdown();
+		}
+	}
+
+	/**
+	 * Closes the CloudSolrStream
+	 **/
+	public void close() throws IOException {
+		if (solrStreams != null) {
+			for (TupleStream solrStream : solrStreams) {
+				solrStream.close();
+			}
+		}
+	}
+
+	/** Return the stream sort - ie, the order in which records are returned */
+	public StreamComparator getStreamSort() {
+		return comp;
+	}
+
+	public Tuple read() throws IOException {
+		return _read();
+	}
+
+	protected Tuple _read() throws IOException {
+		TupleWrapper tw = tuples.pollFirst();
+		if (tw != null) {
+			Tuple t = tw.getTuple();
+
+			if (trace) {
+				t.put("_COLLECTION_", this.collection);
+			}
+
+			if (tw.next()) {
+				tuples.add(tw);
+			}
+			return t;
+		} else {
+			Tuple tuple = Tuple.EOF();
+			if (trace) {
+				tuple.put("_COLLECTION_", this.collection);
+			}
+			return tuple;
+		}
+	}
+
+	protected class TupleWrapper implements Comparable<TupleWrapper> {
+		private Tuple tuple;
+		private final SolrStream stream;
+		private final StreamComparator comp;
+
+		public TupleWrapper(SolrStream stream, StreamComparator comp) {
+			this.stream = stream;
+			this.comp = comp;
+		}
+
+		public int compareTo(TupleWrapper w) {
+			if (this == w) {
+				return 0;
+			}
+
+			int i = comp.compare(tuple, w.tuple);
+			if (i == 0) {
+				return 1;
+			} else {
+				return i;
+			}
+		}
+
+		public boolean equals(Object o) {
+			return this == o;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(tuple);
+		}
+
+		public Tuple getTuple() {
+			return tuple;
+		}
+
+		public boolean next() throws IOException {
+			this.tuple = stream.read();
+
+			if (tuple.EOF) {
+				eofTuples.put(stream.getBaseUrl(), tuple);
+			}
+
+			return !tuple.EOF;
+		}
+	}
+
+	protected class StreamOpener implements Callable<TupleWrapper> {
+
+		private final SolrStream stream;
+		private final StreamComparator comp;
+
+		public StreamOpener(SolrStream stream, StreamComparator comp) {
+			this.stream = stream;
+			this.comp = comp;
+		}
+
+		public TupleWrapper call() throws Exception {
+			stream.open();
+			TupleWrapper wrapper = new TupleWrapper(stream, comp);
+			if (wrapper.next()) {
+				return wrapper;
+			} else {
+				return null;
+			}
+		}
+	}
+
+	protected ModifiableSolrParams adjustParams(ModifiableSolrParams params) {
+		return params;
+	}
 }

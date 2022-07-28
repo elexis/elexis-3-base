@@ -24,9 +24,9 @@ import org.apache.solr.common.MapWriter;
 // An implementation of MapWriter which is annotated with Jackson annotations
 public interface ReflectMapWriter extends MapWriter {
 
-  @Override
-  default void writeMap(EntryWriter ew) throws IOException {
-    Utils.reflectWrite(ew, this);
-  }
+	@Override
+	default void writeMap(EntryWriter ew) throws IOException {
+		Utils.reflectWrite(ew, this);
+	}
 
 }

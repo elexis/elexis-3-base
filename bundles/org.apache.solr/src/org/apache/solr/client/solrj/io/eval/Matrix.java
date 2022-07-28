@@ -22,88 +22,88 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({ "rawtypes" })
 public class Matrix implements Iterable, Attributes {
 
-  private double[][] data;
-  private List<String> columnLabels;
-  private List<String> rowLabels;
+	private double[][] data;
+	private List<String> columnLabels;
+	private List<String> rowLabels;
 
-  private Map<String, Object> attributes = new HashMap<>();
+	private Map<String, Object> attributes = new HashMap<>();
 
-  public Matrix(double[][] data) {
-    this.data = data;
-  }
+	public Matrix(double[][] data) {
+		this.data = data;
+	}
 
-  @SuppressWarnings({"rawtypes"})
-  public Map getAttributes() {
-    return this.attributes;
-  }
+	@SuppressWarnings({ "rawtypes" })
+	public Map getAttributes() {
+		return this.attributes;
+	}
 
-  public void setAttribute(String key, Object value) {
-    this.attributes.put(key, value);
-  }
+	public void setAttribute(String key, Object value) {
+		this.attributes.put(key, value);
+	}
 
-  public Object getAttribute(String key) {
-    return this.attributes.get(key);
-  }
+	public Object getAttribute(String key) {
+		return this.attributes.get(key);
+	}
 
-  public List<String> getColumnLabels() {
-    return this.columnLabels;
-  }
+	public List<String> getColumnLabels() {
+		return this.columnLabels;
+	}
 
-  public void setColumnLabels(List<String> columnLabels) {
-    this.columnLabels = columnLabels;
-  }
+	public void setColumnLabels(List<String> columnLabels) {
+		this.columnLabels = columnLabels;
+	}
 
-  public List<String> getRowLabels() {
-    return rowLabels;
-  }
+	public List<String> getRowLabels() {
+		return rowLabels;
+	}
 
-  public void setRowLabels(List<String> rowLables) {
-    this.rowLabels = rowLables;
-  }
+	public void setRowLabels(List<String> rowLables) {
+		this.rowLabels = rowLables;
+	}
 
-  public double[][] getData() {
-    return this.data;
-  }
+	public double[][] getData() {
+		return this.data;
+	}
 
-  public int getRowCount() {
-    return data.length;
-  }
+	public int getRowCount() {
+		return data.length;
+	}
 
-  public int getColumnCount() {
-    return data[0].length;
-  }
+	public int getColumnCount() {
+		return data[0].length;
+	}
 
-  @SuppressWarnings({"rawtypes"})
-  public Iterator iterator() {
-    return new MatrixIterator(data);
-  }
+	@SuppressWarnings({ "rawtypes" })
+	public Iterator iterator() {
+		return new MatrixIterator(data);
+	}
 
-  @SuppressWarnings({"rawtypes"})
-  private static class MatrixIterator implements Iterator {
+	@SuppressWarnings({ "rawtypes" })
+	private static class MatrixIterator implements Iterator {
 
-    private double[][] d;
-    private int index;
+		private double[][] d;
+		private int index;
 
-    public MatrixIterator(double[][] data) {
-      d = data;
-    }
+		public MatrixIterator(double[][] data) {
+			d = data;
+		}
 
-    @SuppressWarnings({"unchecked"})
-    public Object next() {
-      double[] row = d[index++];
-      List list = new ArrayList();
-      for(double value : row) {
-        list.add(value);
-      }
+		@SuppressWarnings({ "unchecked" })
+		public Object next() {
+			double[] row = d[index++];
+			List list = new ArrayList();
+			for (double value : row) {
+				list.add(value);
+			}
 
-      return list;
-    }
+			return list;
+		}
 
-    public boolean hasNext() {
-      return index < d.length;
-    }
-  }
+		public boolean hasNext() {
+			return index < d.length;
+		}
+	}
 }

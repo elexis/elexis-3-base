@@ -26,74 +26,76 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class MarkovChainEvaluator extends RecursiveObjectEvaluator implements ManyValueWorker {
-  protected static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 
-  public MarkovChainEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
+	public MarkovChainEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
 
-    if(2 < containedEvaluators.size()){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - expecting no more then two parameters but found %d",expression,containedEvaluators.size()));
-    }
-  }
+		if (2 < containedEvaluators.size()) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - expecting no more then two parameters but found %d", expression,
+					containedEvaluators.size()));
+		}
+	}
 
-  @Override
-  public Object doWork(Object... values) throws IOException{
+	@Override
+	public Object doWork(Object... values) throws IOException {
 
-    int state = -1;
+		int state = -1;
 
-    if(values.length == 2) {
-      state = ((Number)values[1]).intValue();
-    }
+		if (values.length == 2) {
+			state = ((Number) values[1]).intValue();
+		}
 
-    if(values[0] instanceof Matrix) {
-      Matrix matrix = (Matrix) values[0];
-      return new MarkovChain(matrix, state);
-    } else {
-      throw new IOException("matrix parameter expected for markovChain function");
-    }
-  }
+		if (values[0] instanceof Matrix) {
+			Matrix matrix = (Matrix) values[0];
+			return new MarkovChain(matrix, state);
+		} else {
+			throw new IOException("matrix parameter expected for markovChain function");
+		}
+	}
 
-  public static class MarkovChain {
+	public static class MarkovChain {
 
-    private int state;
-    private EnumeratedIntegerDistribution[] distributions;
+		private int state;
+		private EnumeratedIntegerDistribution[] distributions;
 
-    public MarkovChain(Matrix matrix, int state) throws IOException {
-      double[][] data = matrix.getData();
+		public MarkovChain(Matrix matrix, int state) throws IOException {
+			double[][] data = matrix.getData();
 
-      if(data.length != data[0].length) {
-        throw new IOException("markovChain must be initialized with a square matrix.");
-      }
+			if (data.length != data[0].length) {
+				throw new IOException("markovChain must be initialized with a square matrix.");
+			}
 
-      this.distributions = new EnumeratedIntegerDistribution[data.length];
+			this.distributions = new EnumeratedIntegerDistribution[data.length];
 
-      if(state > -1) {
-        this.state = state;
-      } else {
-        this.state = new Random().nextInt(data.length);
-      }
+			if (state > -1) {
+				this.state = state;
+			} else {
+				this.state = new Random().nextInt(data.length);
+			}
 
-      for(int i=0; i<data.length; i++) {
-        double[] probabilities = data[i];
+			for (int i = 0; i < data.length; i++) {
+				double[] probabilities = data[i];
 
-        //Create the states array needed by the enumerated distribution
-        int[] states = MathArrays.sequence(data.length, 0, 1);
-        distributions[i] = new EnumeratedIntegerDistribution(states, probabilities);
-      }
-    }
+				// Create the states array needed by the enumerated distribution
+				int[] states = MathArrays.sequence(data.length, 0, 1);
+				distributions[i] = new EnumeratedIntegerDistribution(states, probabilities);
+			}
+		}
 
-    public Number sample() {
-      this.state = distributions[this.state].sample();
-      return this.state;
-    }
+		public Number sample() {
+			this.state = distributions[this.state].sample();
+			return this.state;
+		}
 
-    public int[] sample(int size) {
-      int[] sample = new int[size];
-      for(int i=0; i<size; i++) {
-        sample[i] = sample().intValue();
-      }
+		public int[] sample(int size) {
+			int[] sample = new int[size];
+			for (int i = 0; i < size; i++) {
+				sample[i] = sample().intValue();
+			}
 
-      return sample;
-    }
-  }
+			return sample;
+		}
+	}
 }

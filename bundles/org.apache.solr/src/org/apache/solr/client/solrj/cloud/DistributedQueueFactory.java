@@ -22,7 +22,7 @@ import java.io.IOException;
  *
  */
 public interface DistributedQueueFactory {
-  DistributedQueue makeQueue(String path) throws IOException;
+	DistributedQueue makeQueue(String path) throws IOException;
 
-  void removeQueue(String path) throws IOException;
+	void removeQueue(String path) throws IOException;
 }

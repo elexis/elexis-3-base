@@ -223,7 +223,8 @@ public final class Plannables {
 	 * @param mandant
 	 * @param date
 	 * @return
-	 * @deprecated is this equal to {@link IAppointmentService#updateBoundaries(String, java.time.LocalDate)}
+	 * @deprecated is this equal to
+	 *             {@link IAppointmentService#updateBoundaries(String, java.time.LocalDate)}
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<IPlannable> loadTermine(String bereich, TimeTool date) {

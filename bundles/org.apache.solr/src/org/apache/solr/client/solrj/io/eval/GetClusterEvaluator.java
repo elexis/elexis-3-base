@@ -27,39 +27,41 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class GetClusterEvaluator extends RecursiveObjectEvaluator implements TwoValueWorker {
-  private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-  public GetClusterEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
-    super(expression, factory);
-  }
+	public GetClusterEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-  @Override
-  public Object doWork(Object value1, Object value2) throws IOException {
-    if(!(value1 instanceof KmeansEvaluator.ClusterTuple)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for value, expecting a cluster result.",toExpression(constructingFactory), value1.getClass().getSimpleName()));
-    } else {
+	@Override
+	public Object doWork(Object value1, Object value2) throws IOException {
+		if (!(value1 instanceof KmeansEvaluator.ClusterTuple)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for value, expecting a cluster result.",
+					toExpression(constructingFactory), value1.getClass().getSimpleName()));
+		} else {
 
-      KmeansEvaluator.ClusterTuple clusterTuple = (KmeansEvaluator.ClusterTuple)value1;
-      List<CentroidCluster<KmeansEvaluator.ClusterPoint>> clusters = clusterTuple.getClusters();
+			KmeansEvaluator.ClusterTuple clusterTuple = (KmeansEvaluator.ClusterTuple) value1;
+			List<CentroidCluster<KmeansEvaluator.ClusterPoint>> clusters = clusterTuple.getClusters();
 
-      Number index = (Number)value2;
-      @SuppressWarnings({"rawtypes"})
-      CentroidCluster cluster = clusters.get(index.intValue());
-      @SuppressWarnings({"rawtypes"})
-      List points = cluster.getPoints();
-      List<String> rowLabels = new ArrayList<>();
-      double[][] data = new double[points.size()][];
+			Number index = (Number) value2;
+			@SuppressWarnings({ "rawtypes" })
+			CentroidCluster cluster = clusters.get(index.intValue());
+			@SuppressWarnings({ "rawtypes" })
+			List points = cluster.getPoints();
+			List<String> rowLabels = new ArrayList<>();
+			double[][] data = new double[points.size()][];
 
-      for(int i=0; i<points.size(); i++) {
-        KmeansEvaluator.ClusterPoint p = (KmeansEvaluator.ClusterPoint)points.get(i);
-        data[i] = p.getPoint();
-        rowLabels.add(p.getId());
-      }
+			for (int i = 0; i < points.size(); i++) {
+				KmeansEvaluator.ClusterPoint p = (KmeansEvaluator.ClusterPoint) points.get(i);
+				data[i] = p.getPoint();
+				rowLabels.add(p.getId());
+			}
 
-      Matrix matrix = new Matrix(data);
-      matrix.setRowLabels(rowLabels);
-      matrix.setColumnLabels(clusterTuple.getColumnLabels());
-      return matrix;
-    }
-  }
+			Matrix matrix = new Matrix(data);
+			matrix.setRowLabels(rowLabels);
+			matrix.setColumnLabels(clusterTuple.getColumnLabels());
+			return matrix;
+		}
+	}
 }

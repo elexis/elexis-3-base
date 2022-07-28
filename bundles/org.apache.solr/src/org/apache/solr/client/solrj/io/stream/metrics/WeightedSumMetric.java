@@ -28,108 +28,110 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class WeightedSumMetric extends Metric {
 
-  public static final String FUNC = "wsum";
-  private String valueCol;
-  private String countCol;
-  private List<Part> parts;
+	public static final String FUNC = "wsum";
+	private String valueCol;
+	private String countCol;
+	private List<Part> parts;
 
-  public WeightedSumMetric(String valueCol, String countCol) {
-    init(valueCol, countCol, false);
-  }
+	public WeightedSumMetric(String valueCol, String countCol) {
+		init(valueCol, countCol, false);
+	}
 
-  public WeightedSumMetric(String valueCol, String countCol, boolean outputLong) {
-    init(valueCol, countCol, outputLong);
-  }
+	public WeightedSumMetric(String valueCol, String countCol, boolean outputLong) {
+		init(valueCol, countCol, outputLong);
+	}
 
-  public WeightedSumMetric(StreamExpression expression, StreamFactory factory) throws IOException {
-    // grab all parameters out
-    String functionName = expression.getFunctionName();
-    if (!FUNC.equals(functionName)) {
-      throw new IOException("Expected '" + FUNC + "' function but found " + functionName);
-    }
-    String valueCol = factory.getValueOperand(expression, 0);
-    String countCol = factory.getValueOperand(expression, 1);
-    String outputLong = factory.getValueOperand(expression, 2);
+	public WeightedSumMetric(StreamExpression expression, StreamFactory factory) throws IOException {
+		// grab all parameters out
+		String functionName = expression.getFunctionName();
+		if (!FUNC.equals(functionName)) {
+			throw new IOException("Expected '" + FUNC + "' function but found " + functionName);
+		}
+		String valueCol = factory.getValueOperand(expression, 0);
+		String countCol = factory.getValueOperand(expression, 1);
+		String outputLong = factory.getValueOperand(expression, 2);
 
-    // validate expression contains only what we want.
-    if (null == valueCol) {
-      throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - expected %s(valueCol,countCol)", expression, FUNC));
-    }
+		// validate expression contains only what we want.
+		if (null == valueCol) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - expected %s(valueCol,countCol)",
+					expression, FUNC));
+		}
 
-    boolean ol = false;
-    if (outputLong != null) {
-      ol = Boolean.parseBoolean(outputLong);
-    }
+		boolean ol = false;
+		if (outputLong != null) {
+			ol = Boolean.parseBoolean(outputLong);
+		}
 
-    init(valueCol, countCol, ol);
-  }
+		init(valueCol, countCol, ol);
+	}
 
-  private void init(String valueCol, String countCol, boolean outputLong) {
-    this.valueCol = valueCol;
-    this.countCol = countCol != null ? countCol : "count(*)";
-    this.outputLong = outputLong;
-    setFunctionName(FUNC);
-    setIdentifier(FUNC, "(", valueCol, ", " + countCol + ", " + outputLong + ")");
-  }
+	private void init(String valueCol, String countCol, boolean outputLong) {
+		this.valueCol = valueCol;
+		this.countCol = countCol != null ? countCol : "count(*)";
+		this.outputLong = outputLong;
+		setFunctionName(FUNC);
+		setIdentifier(FUNC, "(", valueCol, ", " + countCol + ", " + outputLong + ")");
+	}
 
-  public void update(Tuple tuple) {
-    Object c = tuple.get(countCol);
-    Object o = tuple.get(valueCol);
-    if (c instanceof Number && o instanceof Number) {
-      if (parts == null) {
-        parts = new LinkedList<>();
-      }
-      Number count = (Number) c;
-      Number value = (Number) o;
-      parts.add(new Part(count.longValue(), value.doubleValue()));
-    }
-  }
+	public void update(Tuple tuple) {
+		Object c = tuple.get(countCol);
+		Object o = tuple.get(valueCol);
+		if (c instanceof Number && o instanceof Number) {
+			if (parts == null) {
+				parts = new LinkedList<>();
+			}
+			Number count = (Number) c;
+			Number value = (Number) o;
+			parts.add(new Part(count.longValue(), value.doubleValue()));
+		}
+	}
 
-  public Metric newInstance() {
-    return new WeightedSumMetric(valueCol, countCol, outputLong);
-  }
+	public Metric newInstance() {
+		return new WeightedSumMetric(valueCol, countCol, outputLong);
+	}
 
-  public String[] getColumns() {
-    return new String[]{valueCol, countCol};
-  }
+	public String[] getColumns() {
+		return new String[] { valueCol, countCol };
+	}
 
-  public Number getValue() {
-    long total = sumCounts();
-    double wavg = 0d;
-    if (total > 0L) {
-      for (Part next : parts) {
-        wavg += next.weighted(total);
-      }
-    }
-    return outputLong ? Math.round(wavg) : wavg;
-  }
+	public Number getValue() {
+		long total = sumCounts();
+		double wavg = 0d;
+		if (total > 0L) {
+			for (Part next : parts) {
+				wavg += next.weighted(total);
+			}
+		}
+		return outputLong ? Math.round(wavg) : wavg;
+	}
 
-  private long sumCounts() {
-    long total = 0L;
-    if (parts != null) {
-      for (Part next : parts) {
-        total += next.count;
-      }
-    }
-    return total;
-  }
+	private long sumCounts() {
+		long total = 0L;
+		if (parts != null) {
+			for (Part next : parts) {
+				total += next.count;
+			}
+		}
+		return total;
+	}
 
-  @Override
-  public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
-    return new StreamExpression(getFunctionName()).withParameter(valueCol).withParameter(countCol).withParameter(Boolean.toString(outputLong));
-  }
+	@Override
+	public StreamExpressionParameter toExpression(StreamFactory factory) throws IOException {
+		return new StreamExpression(getFunctionName()).withParameter(valueCol).withParameter(countCol)
+				.withParameter(Boolean.toString(outputLong));
+	}
 
-  private static final class Part {
-    private final double value;
-    private final long count;
+	private static final class Part {
+		private final double value;
+		private final long count;
 
-    Part(long count, double value) {
-      this.count = count;
-      this.value = value;
-    }
+		Part(long count, double value) {
+			this.count = count;
+			this.value = value;
+		}
 
-    private double weighted(final long total) {
-      return ((double) count / total) * value;
-    }
-  }
+		private double weighted(final long total) {
+			return ((double) count / total) * value;
+		}
+	}
 }

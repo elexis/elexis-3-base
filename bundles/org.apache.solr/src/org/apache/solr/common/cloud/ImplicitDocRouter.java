@@ -26,79 +26,87 @@ import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.SolrParams;
 
-/** This document router is for custom sharding
+/**
+ * This document router is for custom sharding
  */
 public class ImplicitDocRouter extends DocRouter {
 
-  public static final String NAME = "implicit";
+	public static final String NAME = "implicit";
 
-  @Override
-  public Slice getTargetSlice(String id, SolrInputDocument sdoc, String route, SolrParams params, DocCollection collection) {
-    String shard = null;
+	@Override
+	public Slice getTargetSlice(String id, SolrInputDocument sdoc, String route, SolrParams params,
+			DocCollection collection) {
+		String shard = null;
 
-    if (route != null) // if a route is already passed in, try to use it
-      shard = route;
-    else if (sdoc != null) {
-      String f = getRouteField(collection);
-      if(f !=null) {
-        Object o = sdoc.getFieldValue(f);
-        if (o != null) shard = o.toString();
-        else throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "No value for field "+f +" in " + sdoc);
-      }
-      if(shard == null) {
-        Object o = sdoc.getFieldValue(_ROUTE_);
-        if (o != null) {
-          shard = o.toString();
-        }
-      }
-    }
+		if (route != null) // if a route is already passed in, try to use it
+			shard = route;
+		else if (sdoc != null) {
+			String f = getRouteField(collection);
+			if (f != null) {
+				Object o = sdoc.getFieldValue(f);
+				if (o != null)
+					shard = o.toString();
+				else
+					throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+							"No value for field " + f + " in " + sdoc);
+			}
+			if (shard == null) {
+				Object o = sdoc.getFieldValue(_ROUTE_);
+				if (o != null) {
+					shard = o.toString();
+				}
+			}
+		}
 
-    if (shard == null) {
-      shard = params.get(_ROUTE_);
-    }
+		if (shard == null) {
+			shard = params.get(_ROUTE_);
+		}
 
-    if (shard != null) {
+		if (shard != null) {
 
-      Slice slice = collection.getSlice(shard);
-      if (slice == null) {
-        throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "No shard called =" + shard + " in " + collection);
-      }
-      return slice;
-    }
+			Slice slice = collection.getSlice(shard);
+			if (slice == null) {
+				throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+						"No shard called =" + shard + " in " + collection);
+			}
+			return slice;
+		}
 
-    return null;  // no shard specified... use default.
-  }
+		return null; // no shard specified... use default.
+	}
 
-  @Override
-  public boolean isTargetSlice(String id, SolrInputDocument sdoc, SolrParams params, String shardId, DocCollection collection) {
+	@Override
+	public boolean isTargetSlice(String id, SolrInputDocument sdoc, SolrParams params, String shardId,
+			DocCollection collection) {
 
-    // todo : how to handle this?
-    return false;
-  }
+		// todo : how to handle this?
+		return false;
+	}
 
-  @Override
-  public String getName() {
-    return NAME;
-  }
+	@Override
+	public String getName() {
+		return NAME;
+	}
 
-  @Override
-  public Collection<Slice> getSearchSlicesSingle(String shardKey, SolrParams params, DocCollection collection) {
+	@Override
+	public Collection<Slice> getSearchSlicesSingle(String shardKey, SolrParams params, DocCollection collection) {
 
-    if (shardKey == null) {
-      return collection.getActiveSlices();
-    }
+		if (shardKey == null) {
+			return collection.getActiveSlices();
+		}
 
-    // assume the shardKey is just a slice name
-    Slice slice = collection.getSlice(shardKey);
-    if (slice == null) {
-      throw new SolrException(SolrException.ErrorCode.BAD_REQUEST, "implicit router can't find shard " + shardKey + " in collection " + collection.getName());
-    }
+		// assume the shardKey is just a slice name
+		Slice slice = collection.getSlice(shardKey);
+		if (slice == null) {
+			throw new SolrException(SolrException.ErrorCode.BAD_REQUEST,
+					"implicit router can't find shard " + shardKey + " in collection " + collection.getName());
+		}
 
-    return Collections.singleton(slice);
-  }
+		return Collections.singleton(slice);
+	}
 
-  @Override
-  public List<Range> partitionRange(int partitions, Range range) {
-    return null;
-  }
+	@Override
+	public List<Range> partitionRange(int partitions, Range range) {
+		return null;
+	}
 }

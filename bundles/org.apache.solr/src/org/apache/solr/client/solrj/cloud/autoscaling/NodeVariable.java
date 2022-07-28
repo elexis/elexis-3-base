@@ -27,22 +27,24 @@ import org.apache.solr.common.util.Pair;
  * @deprecated to be removed in Solr 9.0 (see SOLR-14656)
  */
 public class NodeVariable extends VariableBase {
-  public NodeVariable(Type type) {
-    super(type);
-  }
+	public NodeVariable(Type type) {
+		super(type);
+	}
 
-  @Override
-  public void getSuggestions(Suggestion.Ctx ctx) {
-    if (ctx.violation == null || ctx.violation.replicaCountDelta == 0) return;
-    if (ctx.violation.replicaCountDelta > 0) {//there are more replicas than necessary
-      for (int i = 0; i < Math.abs(ctx.violation.replicaCountDelta); i++) {
-        Suggester suggester = ctx.session.getSuggester(MOVEREPLICA)
-            .forceOperation(true)
-            .hint(Suggester.Hint.SRC_NODE, ctx.violation.node)
-            .hint(ctx.violation.shard.equals(ANY) ? Suggester.Hint.COLL : Suggester.Hint.COLL_SHARD,
-                ctx.violation.shard.equals(ANY) ? ctx.violation.coll : new Pair<>(ctx.violation.coll, ctx.violation.shard));
-        if(ctx.addSuggestion(suggester) == null) break;
-      }
-    }
-  }
+	@Override
+	public void getSuggestions(Suggestion.Ctx ctx) {
+		if (ctx.violation == null || ctx.violation.replicaCountDelta == 0)
+			return;
+		if (ctx.violation.replicaCountDelta > 0) {// there are more replicas than necessary
+			for (int i = 0; i < Math.abs(ctx.violation.replicaCountDelta); i++) {
+				Suggester suggester = ctx.session.getSuggester(MOVEREPLICA).forceOperation(true)
+						.hint(Suggester.Hint.SRC_NODE, ctx.violation.node)
+						.hint(ctx.violation.shard.equals(ANY) ? Suggester.Hint.COLL : Suggester.Hint.COLL_SHARD,
+								ctx.violation.shard.equals(ANY) ? ctx.violation.coll
+										: new Pair<>(ctx.violation.coll, ctx.violation.shard));
+				if (ctx.addSuggestion(suggester) == null)
+					break;
+			}
+		}
+	}
 }

@@ -26,32 +26,37 @@ import org.apache.solr.client.solrj.io.stream.expr.StreamExpression;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
 
 public class EuclideanDistanceEvaluator extends RecursiveNumericEvaluator implements TwoValueWorker {
-  protected static final long serialVersionUID = 1L;
-  
-  public EuclideanDistanceEvaluator(StreamExpression expression, StreamFactory factory) throws IOException{
-    super(expression, factory);
-  }
+	protected static final long serialVersionUID = 1L;
 
-  @Override
-  @SuppressWarnings({"unchecked"})
-  public Object doWork(Object first, Object second) throws IOException{
-    if(null == first){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the first value",toExpression(constructingFactory)));
-    }
-    if(null == second){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - null found for the second value",toExpression(constructingFactory)));
-    }
-    if(!(first instanceof List<?>)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the first value, expecting a list of numbers",toExpression(constructingFactory), first.getClass().getSimpleName()));
-    }
-    if(!(second instanceof List<?>)){
-      throw new IOException(String.format(Locale.ROOT,"Invalid expression %s - found type %s for the second value, expecting a list of numbers",toExpression(constructingFactory), first.getClass().getSimpleName()));
-    }
+	public EuclideanDistanceEvaluator(StreamExpression expression, StreamFactory factory) throws IOException {
+		super(expression, factory);
+	}
 
-    EuclideanDistance distance = new EuclideanDistance();
-    return distance.compute(
-      ((List)first).stream().mapToDouble(value -> ((BigDecimal)value).doubleValue()).toArray(),
-      ((List)second).stream().mapToDouble(value -> ((BigDecimal)value).doubleValue()).toArray()
-    );
-  }
+	@Override
+	@SuppressWarnings({ "unchecked" })
+	public Object doWork(Object first, Object second) throws IOException {
+		if (null == first) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the first value",
+					toExpression(constructingFactory)));
+		}
+		if (null == second) {
+			throw new IOException(String.format(Locale.ROOT, "Invalid expression %s - null found for the second value",
+					toExpression(constructingFactory)));
+		}
+		if (!(first instanceof List<?>)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for the first value, expecting a list of numbers",
+					toExpression(constructingFactory), first.getClass().getSimpleName()));
+		}
+		if (!(second instanceof List<?>)) {
+			throw new IOException(String.format(Locale.ROOT,
+					"Invalid expression %s - found type %s for the second value, expecting a list of numbers",
+					toExpression(constructingFactory), first.getClass().getSimpleName()));
+		}
+
+		EuclideanDistance distance = new EuclideanDistance();
+		return distance.compute(
+				((List) first).stream().mapToDouble(value -> ((BigDecimal) value).doubleValue()).toArray(),
+				((List) second).stream().mapToDouble(value -> ((BigDecimal) value).doubleValue()).toArray());
+	}
 }

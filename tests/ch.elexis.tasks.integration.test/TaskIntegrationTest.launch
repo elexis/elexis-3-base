@@ -145,13 +145,12 @@
         <setEntry value="ch.elexis.core.model@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
-        <setEntry value="ch.elexis.core.test.context@default:default"/>
+        <setEntry value="ch.elexis.core.test.context@default:false"/>
         <setEntry value="ch.elexis.core.test.logging@default:false"/>
         <setEntry value="ch.elexis.core.test@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
         <setEntry value="ch.elexis.tasks.integration.test@default:default"/>
         <setEntry value="ch.rgw.utility@default:default"/>
-        <setEntry value="info.elexis.server.core.logging@default:false"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <stringAttribute key="templateConfig" value="${target_home}/configuration/config.ini"/>

@@ -1,6 +1,5 @@
 package at.medevit.elexis.loinc.model.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ public class LoincCodeService implements ILoincCodeService {
 		qbe.add(LoincCode.FLD_CODE, "=", code); //$NON-NLS-1$
 		List<LoincCode> res = qbe.execute();
 		if (res.isEmpty()) {
-			logger.debug("Code [" + code + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
+			logger.trace("Code [" + code + "] not found"); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		} else {
 			return res.get(0);
@@ -64,7 +64,7 @@ public class LoincCodeService implements ILoincCodeService {
 				if (existing != null) {
 					merge(existing, parts);
 				} else {
-					logger.debug("Creating object [" + parts[codeMapping] + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+					logger.trace("Creating object [" + parts[codeMapping] + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 					create(parts);
 				}
 			} else {

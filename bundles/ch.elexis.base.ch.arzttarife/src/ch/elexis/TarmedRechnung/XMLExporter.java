@@ -58,14 +58,14 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.Namespace;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-import org.jdom.transform.JDOMSource;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+import org.jdom2.transform.JDOMSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -636,9 +636,9 @@ public class XMLExporter implements IRnOutputter {
 		if (tiersGarant != null && existingInvoice.getCoverage().getPatient() != null) {
 			Element patientUpdate = buildPatient(existingInvoice.getCoverage());
 			if (patientUpdate != null) {
-				List<Object> tiersChildren = tiersGarant.getChildren();
+				List<Element> tiersChildren = tiersGarant.getChildren();
 				// remove existing patient children
-				ListIterator<Object> iterator = tiersChildren.listIterator();
+				ListIterator<Element> iterator = tiersChildren.listIterator();
 				while (iterator.hasNext()) {
 					Object obj = (Object) iterator.next();
 					if (obj instanceof Element && "patient".equals(((Element) obj).getName())) {
@@ -656,9 +656,9 @@ public class XMLExporter implements IRnOutputter {
 			if (guarantorContact != null) {
 				Element guarantorUpdate = buildGuarantor(guarantorContact, existingInvoice.getCoverage().getPatient());
 				if (guarantorUpdate != null) {
-					List<Object> tiersChildren = tiersGarant.getChildren();
+					List<Element> tiersChildren = tiersGarant.getChildren();
 					// remove existing guarantor children
-					ListIterator<Object> iterator = tiersChildren.listIterator();
+					ListIterator<Element> iterator = tiersChildren.listIterator();
 					while (iterator.hasNext()) {
 						Object obj = (Object) iterator.next();
 						if (obj instanceof Element && "guarantor".equals(((Element) obj).getName())) {
@@ -699,7 +699,7 @@ public class XMLExporter implements IRnOutputter {
 		}
 	}
 
-	private int getGuarantorIndex(List<Object> tiersChildren) {
+	private int getGuarantorIndex(List<Element> tiersChildren) {
 		int index = 0;
 		for (Object object : tiersChildren) {
 			if (object instanceof Element) {
@@ -713,7 +713,7 @@ public class XMLExporter implements IRnOutputter {
 		return index;
 	}
 
-	private int getPatientIndex(List<Object> tiersChildren) {
+	private int getPatientIndex(List<Element> tiersChildren) {
 		int index = 0;
 		for (Object object : tiersChildren) {
 			if (object instanceof Element) {

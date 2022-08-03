@@ -6,7 +6,7 @@ stages:
 build:
   stage: build
   tags:
-  - java11
+  - java17
   - maven
   script:
   - xvfb-run mvn clean verify -Dgit.core.branch=$CI_COMMIT_REF_NAME

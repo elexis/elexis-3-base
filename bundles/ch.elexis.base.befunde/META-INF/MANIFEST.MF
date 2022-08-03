@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Befunde Plugin
 Bundle-SymbolicName: ch.elexis.base.befunde;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.10.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Export-Package: ch.elexis.base.befunde,
@@ -11,13 +11,13 @@ Export-Package: ch.elexis.base.befunde,
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Created-By: Buildr
 Bundle-ActivationPolicy: lazy
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+Require-Bundle: ch.elexis.core.data;bundle-version="3.10.0",
  ch.elexis.core.findings;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.10.0",
  ch.elexis.core.findings.util;bundle-version="3.9.0",
  ch.elexis.core.findings.templates;bundle-version="3.9.0",
  ch.elexis.core.jpa.entities;bundle-version="3.9.0"
 Service-Component: OSGI-INF/ch.elexis.base.befunde.findings.migrator.MesswertMigrator.xml,
  OSGI-INF/ch.elexis.base.befunde.findings.migrator.preferences.FindingsServiceComponent.xml,
  OSGI-INF/ch.elexis.base.befunde.model.BefundeStoreToStringContribution.xml
-Import-Package: org.jdom;version="1.1.1"
+Import-Package: org.jdom2;version="2.0.6"

@@ -7,7 +7,7 @@ import java.util.Base64;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

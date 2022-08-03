@@ -2,7 +2,7 @@ package ch.elexis.tarmed.printer;
 
 import java.util.Comparator;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.rgw.tools.TimeTool;

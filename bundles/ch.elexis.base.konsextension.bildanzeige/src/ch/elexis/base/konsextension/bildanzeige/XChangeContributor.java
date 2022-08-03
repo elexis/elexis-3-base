@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.exchange.IExchangeContributor;

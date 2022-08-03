@@ -15,9 +15,9 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -34,6 +34,9 @@ public class AutomaticImportService {
 	@Reference
 	IVirtualFilesystemService vfsService;
 
+	@Reference
+	IConfigService configService;
+
 	@Activate
 	public void activate() {
 		timer.schedule(new AutomaticImportTask(), 5000, 5000);
@@ -44,8 +47,8 @@ public class AutomaticImportService {
 
 		@Override
 		public void run() {
-			if (CoreHub.localCfg.get(Preferences.CFG_DIRECTORY_AUTOIMPORT, false)) {
-				File dir = new File(CoreHub.localCfg.get(Preferences.CFG_DIRECTORY, File.separator));
+			if (configService.getLocal(Preferences.CFG_DIRECTORY_AUTOIMPORT, false)) {
+				File dir = new File(configService.getLocal(Preferences.CFG_DIRECTORY, File.separator));
 				if ((dir.exists()) && (dir.isDirectory()) && isElexisRunning()) {
 					if (shouldImport(dir)) {
 						if (running.tryLock()) {

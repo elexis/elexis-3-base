@@ -4,15 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.elexis.base</groupId>
 	<artifactId>elexis-3-base</artifactId>
-	<version>3.9.0-SNAPSHOT</version>
+	<version>3.10.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Elexis-Base</name>
 
 	<properties>
-		<elexis.target>2021-09-java11</elexis.target>
+		<elexis.target>2022-06-java17</elexis.target>
 		<git.core.branch>master</git.core.branch>
 		<formatterConfigFile>https://raw.githubusercontent.com/elexis/elexis-3-core/master/Elexis_formatter_2022_03.xml</formatterConfigFile>
-		<tycho.version>2.7.0</tycho.version>
+		<tycho.version>2.7.4</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
 		<!-- vvv required empty vvv -->
@@ -84,7 +84,7 @@
 				<!--https://books.sonatype.com/mcookbook/reference/ch02s03.html#ex-groovy-script-ex -->
 				<groupId>org.codehaus.gmavenplus</groupId>
 				<artifactId>gmavenplus-plugin</artifactId>
-				<version>1.5</version>
+				<version>1.13.1</version>
 				<executions>
 					<execution>
 						<phase>compile</phase>
@@ -142,7 +142,7 @@ if ( System.getProperty("git_branch") == null ) {
 						<groupId>org.codehaus.groovy</groupId>
 						<artifactId>groovy-all</artifactId>
 						<!-- any version of Groovy \>= 1.5.0 should work here -->
-						<version>2.4.4</version>
+						<version>2.4.21</version>
 						<scope>runtime</scope>
 					</dependency>
 				</dependencies>
@@ -247,9 +247,9 @@ if ( System.getProperty("git_branch") == null ) {
 				<plugin>
 					<!-- Use compiler plugin with tycho as the adapter to the JDT compiler. -->
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8</version>
+					<version>3.10.1</version>
 					<configuration>
-						<release>11</release>
+						<release>17</release>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -276,7 +276,7 @@ if ( System.getProperty("git_branch") == null ) {
 					<artifactId>target-platform-configuration</artifactId>
 					<version>${tycho.version}</version>
 					<configuration>
-						<executionEnvironment>JavaSE-11</executionEnvironment>
+						<executionEnvironment>JavaSE-17</executionEnvironment>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -337,15 +337,6 @@ if ( System.getProperty("git_branch") == null ) {
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-p2-plugin</artifactId>
 					<version>${tycho.version}</version>
-					<configuration>
-						<baselineMode>warn</baselineMode>
-						<baselineReplace>none</baselineReplace>
-						<baselineRepositories>
-							<repository>
-								<url>https://download.eclipse.org/eclipse/updates/3.8</url>
-							</repository>
-						</baselineRepositories>
-					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>

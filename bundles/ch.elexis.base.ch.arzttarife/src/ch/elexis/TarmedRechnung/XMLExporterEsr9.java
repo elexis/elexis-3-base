@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.model.IInvoice;

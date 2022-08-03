@@ -1,6 +1,5 @@
 package ch.elexis.tarmed.printer;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_S1;
 import static ch.elexis.tarmed.printer.TarmedTemplateRequirement.TT_TARMED_S2;
 
@@ -10,11 +9,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

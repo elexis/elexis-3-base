@@ -1,14 +1,14 @@
-<project
-	xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd'
-	xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+<project xsi:schemaLocation='http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd' xmlns='http://maven.apache.org/POM/4.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>ch.elexis.base</groupId>
-    <artifactId>ch.elexis.base.tests</artifactId>
-		<version>3.9.0-SNAPSHOT</version>
+		<artifactId>ch.elexis.base.tests</artifactId>
+		<version>3.10.0-SNAPSHOT</version>
 	</parent>
+
 	<artifactId>ch.elexis.externe_dokumente.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
+	<version>3.0.0-SNAPSHOT</version>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -18,7 +18,7 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
 					<useUIHarness>true</useUIHarness>
-                    <skipTests>true</skipTests> <!-- Warum löuft das mit 3.3 nicht mehr? TODO: -->
+					<skipTests>true</skipTests> <!-- Warum löuft das mit 3.3 nicht mehr? TODO: -->
 					<showEclipseLog>${show.eclipse.log}</showEclipseLog>
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<argLine>${elexis.ui.test.vmargs}</argLine>
@@ -26,5 +26,5 @@
 			</plugin>
 		</plugins>
 	</build>
-<version>3.0.0-SNAPSHOT</version>
+
 </project>

@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.pdfBills.feature"
       label="PDF Rechnungsdrucker mit QR-Code"
-      version="3.9.0.qualifier"
+      version="3.10.0.qualifier"
       provider-name="medelexis.ch">
 
    <description url="http://www.medelexis.ch">
@@ -20,13 +20,6 @@ Mehr Info unter https://wikijs.medelexis.ch/de/KonfigurationQR-Rechnungen
 
    <plugin
          id="ch.elexis.pdfBills"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.jdom"
          download-size="0"
          install-size="0"
          version="0.0.0"

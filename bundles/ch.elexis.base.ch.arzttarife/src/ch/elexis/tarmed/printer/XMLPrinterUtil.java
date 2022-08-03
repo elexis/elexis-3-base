@@ -1,12 +1,12 @@
 package ch.elexis.tarmed.printer;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.arzttarife_schweiz.Messages;

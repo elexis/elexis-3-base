@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="ch.netzkonzept.elexis.medidata.config.MedidataPreferencePage"
+            id="ch.netzkonzept.medidata_main.prefs"
+            name="Medidata® Plugin (Public License)">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.RechnungsManager">
+      <Rechnung
+            name="MedidataNet"
+            outputter="ch.netzkonzept.elexis.medidata.output.Outputter">
+      </Rechnung>
+   </extension>
+   <extension point="org.eclipse.ui.views">
+        <view id="ch.netzkonzept.elexis.medidata.receive.MedidataStatusView"
+             name="MediData® Status"
+             category="ch.elexis.abrechnungKategorie"
+          class="ch.netzkonzept.elexis.medidata.receive.MedidataStatusView"
+          icon="icons/status.gif"/>
+</extension>
+
+</plugin>

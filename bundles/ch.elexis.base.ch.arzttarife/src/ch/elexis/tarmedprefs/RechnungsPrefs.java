@@ -64,6 +64,8 @@ import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -75,7 +77,6 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.Query;
-import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
 
 public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferencePage {
@@ -103,8 +104,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	Combo cbESROCRFontWeight;
 	Button bPost;
 	Button bBank;
-	Mandant actMandant;
-	Kontakt actBank;
+	IMandator actMandant;
+	IContact actBank;
 	Button bUseTC;
 	Combo cbTC;
 	Button bBillsElec;
@@ -149,7 +150,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 				if (i == -1) {
 					return;
 				}
-				setMandant((Mandant) hMandanten.get(cbMands.getItem(i)));
+				Mandant selectedMandant = (Mandant) hMandanten.get(cbMands.getItem(i));
+				setMandant(NoPoUtil.loadAsIdentifiable(selectedMandant, IMandator.class).get());
 
 			}
 
@@ -222,14 +224,13 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		bBillsElec.setText("Bills electronically");
 		if (actMandant != null) {
 			bBillsElec.setSelection(
-					CoreHub.getUserSetting(actMandant).get(PreferenceConstants.BILL_ELECTRONICALLY, false));
+					ConfigServiceHolder.get().get(actMandant, PreferenceConstants.BILL_ELECTRONICALLY, false));
 		}
 		bBillsElec.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Settings settings = CoreHub.getUserSetting(actMandant);
-				settings.set(PreferenceConstants.BILL_ELECTRONICALLY, bBillsElec.getSelection());
-				settings.flush();
+				ConfigServiceHolder.get().set(actMandant, PreferenceConstants.BILL_ELECTRONICALLY,
+						bBillsElec.getSelection());
 			}
 		});
 
@@ -256,20 +257,21 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			public void widgetSelected(SelectionEvent e) {
 				if (bPost.getSelection()) {
 					// check if Bank has been chosen
-					if (actBank != null && actBank.isValid()) {
+					if (actBank != null) {
 						// clear all bank data
 						actBank = null;
-						actMandant.setExtInfoStoredObjectByKey(ta.RNBANK, StringUtils.EMPTY);
+						actMandant.setExtInfo(ta.RNBANK, StringUtils.EMPTY);
 						// clear data set with BankLister dialog
-						actMandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, StringUtils.EMPTY);
-						actMandant.setExtInfoStoredObjectByKey(ta.ESRSUB, Messages.RechnungsPrefs_13); // $NON-NLS-1$
-						actMandant.setExtInfoStoredObjectByKey(Messages.RechnungsPrefs_department, StringUtils.EMPTY);
-						actMandant.setExtInfoStoredObjectByKey(Messages.RechnungsPrefs_POBox, StringUtils.EMPTY);
-						actMandant.setExtInfoStoredObjectByKey("IBAN", StringUtils.EMPTY);
+						actMandant.setExtInfo(ta.ESRNUMBER, StringUtils.EMPTY);
+						actMandant.setExtInfo(ta.ESRSUB, Messages.RechnungsPrefs_13); // $NON-NLS-1$
+						actMandant.setExtInfo(Messages.RechnungsPrefs_department, StringUtils.EMPTY);
+						actMandant.setExtInfo(Messages.RechnungsPrefs_POBox, StringUtils.EMPTY);
+						actMandant.setExtInfo("IBAN", StringUtils.EMPTY);
+						CoreModelServiceHolder.get().save(actMandant);
 					}
 
 					// check if Post account is already available
-					if (StringTool.isNothing(actMandant.getExtInfoStoredObjectByKey(ta.ESRNUMBER))) {
+					if (StringTool.isNothing(actMandant.getExtInfo(ta.ESRNUMBER))) {
 						new PostDialog(getShell()).open();
 					}
 
@@ -310,7 +312,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 				if (bBank.getSelection()) {
 					if (actBank == null) {
 						// invalidate available post data
-						actMandant.setExtInfoStoredObjectByKey(ta.ESRNUMBER, StringUtils.EMPTY);
+						actMandant.setExtInfo(ta.ESRNUMBER, StringUtils.EMPTY);
+						CoreModelServiceHolder.get().save(actMandant);
 						new BankLister(getShell()).open();
 					}
 				}
@@ -461,7 +464,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		}
 
 		cbMands.select(0);
-		setMandant((Mandant) hMandanten.get(cbMands.getItem(0)));
+		Mandant selectedMandant = (Mandant) hMandanten.get(cbMands.getItem(0));
+		setMandant(NoPoUtil.loadAsIdentifiable(selectedMandant, IMandator.class).get());
 		return ret;
 	}
 
@@ -550,7 +554,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		public void focusLost(FocusEvent e) {
 			Text t = (Text) e.getSource();
 			String fld = (String) t.getData();
-			actMandant.setInfoElement(fld, t.getText());
+			actMandant.setExtInfo(fld, t.getText());
+			CoreModelServiceHolder.get().save(actMandant);
 		}
 
 	}
@@ -597,8 +602,10 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 							new String[] { Organisation.FLD_NAME1, Organisation.FLD_NAME2 }); // $NON-NLS-1$
 																								// //$NON-NLS-2$
 					if (ksl.open() == Dialog.OK) {
-						actBank = (Kontakt) ksl.getSelection();
-						actMandant.setExtInfoStoredObjectByKey(ta.RNBANK, actBank.getId());
+						actBank = NoPoUtil.loadAsIdentifiable((Kontakt) ksl.getSelection(), IContact.class)
+								.orElse(null);
+						actMandant.setExtInfo(ta.RNBANK, actBank.getId());
+						CoreModelServiceHolder.get().save(actMandant);
 					}
 					updateMandantContactHyper(hlBank, ta.RNBANK);
 				}
@@ -616,9 +623,11 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 							new String[] { Kontakt.FLD_NAME1, Kontakt.FLD_NAME2 }); // $NON-NLS-1$ //$NON-NLS-2$
 					if (ksl.open() == Dialog.OK) {
 						Kontakt accountOwner = (Kontakt) ksl.getSelection();
-						actMandant.setExtInfoStoredObjectByKey(ta.RNACCOUNTOWNER, accountOwner.getId());
+						actMandant.setExtInfo(ta.RNACCOUNTOWNER, accountOwner.getId());
+						CoreModelServiceHolder.get().save(actMandant);
 					} else {
-						actMandant.setExtInfoStoredObjectByKey(ta.RNACCOUNTOWNER, null);
+						actMandant.setExtInfo(ta.RNACCOUNTOWNER, null);
+						CoreModelServiceHolder.get().save(actMandant);
 					}
 					updateMandantContactHyper(hlOwner, ta.RNACCOUNTOWNER);
 				}
@@ -635,8 +644,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			tInvoiceInfo.setLayoutData(gd);
 			tInvoiceInfo.setToolTipText("Rechnungsinformationen (Optional, max. 140 Zeichen)");
 			tInvoiceInfo.setTextLimit(140);
-			if (actMandant.getExtInfoStoredObjectByKey(ta.RNINFORMATION) != null) {
-				tInvoiceInfo.setText((String) actMandant.getExtInfoStoredObjectByKey(ta.RNINFORMATION));
+			if (actMandant.getExtInfo(ta.RNINFORMATION) != null) {
+				tInvoiceInfo.setText((String) actMandant.getExtInfo(ta.RNINFORMATION));
 			}
 
 			exTable = new KontaktExtDialog.ExtInfoTable(parent, flds);
@@ -647,9 +656,10 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 
 		private void updateMandantContactHyper(Hyperlink hb, String objectKey) {
 			String[] parts = hb.getText().split(" - ");
-			if (actMandant != null && actMandant.getExtInfoStoredObjectByKey(objectKey) != null) {
-				Kontakt contact = Kontakt.load((String) actMandant.getExtInfoStoredObjectByKey(objectKey));
-				if (contact.isAvailable()) {
+			if (actMandant != null && actMandant.getExtInfo(objectKey) != null) {
+				IContact contact = CoreModelServiceHolder.get()
+						.load((String) actMandant.getExtInfo(objectKey), IContact.class).orElse(null);
+				if (contact != null) {
 					if (parts.length == 1 || parts.length == 2) {
 						hb.setText(parts[0] + " - " + contact.getLabel());
 					}
@@ -672,17 +682,20 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			exTable.okPressed(actMandant);
 			setMandant(actMandant);
 			// transfer IBAN information
-			if (actMandant.getExtInfoStoredObjectByKey(ta.RNACCOUNTOWNER) != null) {
-				Kontakt accountOwner = Kontakt.load((String) actMandant.getExtInfoStoredObjectByKey(ta.RNACCOUNTOWNER));
-				if (accountOwner.isAvailable()) {
-					accountOwner.setExtInfoStoredObjectByKey("IBAN", actMandant.getExtInfoStoredObjectByKey("IBAN"));
+			if (actMandant.getExtInfo(ta.RNACCOUNTOWNER) != null) {
+				IContact accountOwner = CoreModelServiceHolder.get()
+						.load((String) actMandant.getExtInfo(ta.RNACCOUNTOWNER), IContact.class).orElse(null);
+				if (accountOwner != null) {
+					accountOwner.setExtInfo("IBAN", actMandant.getExtInfo("IBAN"));
+					CoreModelServiceHolder.get().save(accountOwner);
 				}
 			}
 			if (StringUtils.isNotBlank(tInvoiceInfo.getText())) {
-				actMandant.setExtInfoStoredObjectByKey(ta.RNINFORMATION, tInvoiceInfo.getText());
+				actMandant.setExtInfo(ta.RNINFORMATION, tInvoiceInfo.getText());
 			} else {
-				actMandant.setExtInfoStoredObjectByKey(ta.RNINFORMATION, null);
+				actMandant.setExtInfo(ta.RNINFORMATION, null);
 			}
+			CoreModelServiceHolder.get().save(actMandant);
 			super.okPressed();
 		}
 
@@ -723,19 +736,19 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		}
 	}
 
-	void setMandant(Mandant m) {
+	void setMandant(IMandator m) {
 		actMandant = m;
 
 		tTreat.setText(actMandant.getLabel());
-		cvMandantType.setSelection(new StructuredSelection(ArzttarifeUtil
-				.getMandantType(CoreModelServiceHolder.get().load(actMandant.getId(), IMandator.class).get())));
+		cvMandantType.setSelection(new StructuredSelection(ArzttarifeUtil.getMandantType(actMandant)));
 
-		actBank = Kontakt.load(actMandant.getInfoString(ta.RNBANK));
-		if (actBank != null && actBank.isValid()) {
+		actBank = CoreModelServiceHolder.get().load((String) actMandant.getExtInfo(ta.RNBANK), IContact.class)
+				.orElse(null);
+		if (actBank != null) {
 			tPost.setText(StringUtils.EMPTY);
 			tBank.setText(actBank.getLabel());
 		} else {
-			tPost.setText(actMandant.getInfoString(ta.ESRNUMBER));
+			tPost.setText(StringUtils.defaultString((String) actMandant.getExtInfo(ta.ESRNUMBER)));
 			tBank.setText(StringUtils.EMPTY);
 
 			actBank = null;
@@ -758,9 +771,10 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			cbTC.setText(StringUtils.EMPTY);
 		}
 
-		bBillsElec.setSelection(CoreHub.getUserSetting(actMandant).get(PreferenceConstants.BILL_ELECTRONICALLY, false));
+		bBillsElec.setSelection(
+				ConfigServiceHolder.get().get(actMandant, PreferenceConstants.BILL_ELECTRONICALLY, false));
 
-		responsible.setMandant(m);
+		responsible.setMandant(Mandant.load(m.getId()));
 	}
 
 	/**

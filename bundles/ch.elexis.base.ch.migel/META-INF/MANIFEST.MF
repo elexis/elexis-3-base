@@ -9,5 +9,7 @@ Bundle-ActivationPolicy: lazy
 Import-Package: com.opencsv;version="3.10.0",
  javax.inject;version="1.0.0"
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0"
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.core.importer.div,
+ ch.elexis.core.services
 Service-Component: OSGI-INF/ch.elexis.artikel_ch.data.service.MiGelCodeElementService.xml

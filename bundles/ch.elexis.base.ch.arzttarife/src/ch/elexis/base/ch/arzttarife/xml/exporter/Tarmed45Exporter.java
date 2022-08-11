@@ -1176,9 +1176,6 @@ public class Tarmed45Exporter {
 			vnummer = CoverageServiceHolder.get().getRequiredString(invoice.getCoverage(),
 					TarmedRequirements.CASE_NUMBER);
 		}
-		if (StringTool.isNothing(vnummer)) {
-			vnummer = invoice.getCoverage().getPatient().getId();
-		}
 		return StringUtils.isNotBlank(vnummer) ? vnummer : null;
 	}
 

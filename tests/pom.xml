@@ -16,6 +16,7 @@
     <trimStackTrace>false</trimStackTrace>
   </properties>
   <modules>
+    <module>ch.elexis.base.ch.migel.test</module>
     <module>ch.elexis.ebanking.qr.test</module>
     <module>at.medevit.ch.artikelstamm.model.test</module>
     <module>at.medevit.elexis.tarmed.model.tests</module>

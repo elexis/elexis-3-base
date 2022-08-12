@@ -1505,6 +1505,12 @@ public class Tarmed45Exporter {
 					if (((BalanceTGType) updateBalance).getAmountPrepaid() != balance.getAmountPrepaid()) {
 						request.getPayload().getBody().getTiersGarant().setBalance((BalanceTGType) updateBalance);
 					}
+				} else if (request.getPayload().getBody().getTiersPayant() != null
+						&& updateBalance instanceof BalanceTPType) {
+					BalanceTPType balance = request.getPayload().getBody().getTiersPayant().getBalance();
+					if (((BalanceTPType) updateBalance).getAmountDue() != balance.getAmountDue()) {
+						request.getPayload().getBody().getTiersPayant().setBalance((BalanceTPType) updateBalance);
+					}
 				}
 
 				// always update copy information

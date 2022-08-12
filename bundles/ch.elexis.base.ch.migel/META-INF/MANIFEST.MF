@@ -11,5 +11,11 @@ Import-Package: com.opencsv;version="3.10.0",
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.core.importer.div,
- ch.elexis.core.services
-Service-Component: OSGI-INF/ch.elexis.artikel_ch.data.service.MiGelCodeElementService.xml
+ ch.elexis.core.services,
+ ch.elexis.core
+Service-Component: OSGI-INF/ch.elexis.artikel_ch.data.service.MiGelCodeElementService.xml,
+ OSGI-INF/ch.elexis.base.ch.migel.MigelCsvDataImporter.xml,
+ OSGI-INF/ch.elexis.base.ch.migel.MigelXlsxDataImporter.xml
+Export-Package: ch.elexis.artikel_ch.data.service,
+ ch.elexis.base.ch.migel,
+ ch.elexis.base.ch.migel.ui

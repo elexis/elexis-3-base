@@ -57,6 +57,7 @@ import ch.elexis.core.jpa.entities.ArtikelstammItem;
 import ch.elexis.core.jpa.model.util.JpaModelUtil;
 import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=artikelstamm_v5")
@@ -190,7 +191,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 		subMonitor.worked(5);
 		long endTime = System.currentTimeMillis();
-		if (ContextServiceHolder.get() != null) {
+		if (!CoreUtil.isTestMode() && ContextServiceHolder.get() != null) {
 			ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IArtikelstammItem.class);
 		}
 
@@ -201,7 +202,9 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 		ATCCodeCacheService atcCodeCacheService = OsgiServiceUtil.getService(ATCCodeCacheService.class).orElse(null);
 		if (atcCodeCacheService != null) {
-			atcCodeCacheService.rebuildCache(SubMonitor.convert(subMonitor, 1));
+			if (!CoreUtil.isTestMode()) {
+				atcCodeCacheService.rebuildCache(SubMonitor.convert(subMonitor, 1));
+			}
 		} else {
 			log.error("atcCodeService not available, not rebuilding cache!");
 		}

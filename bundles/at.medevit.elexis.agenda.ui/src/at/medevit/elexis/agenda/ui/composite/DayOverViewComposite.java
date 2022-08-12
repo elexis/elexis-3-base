@@ -367,7 +367,8 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 			if (!iAppointment.getId().equals(appointment.getId())) {
 				if (isOverlapping(appointment.getStartTime(), appointment.getEndTime(), iAppointment.getStartTime(),
 						iAppointment.getEndTime())) {
-					System.out.println("Collide " + appointment.getLabel() + " with " + iAppointment.getLabel()); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println(
+							String.format("Collide %s with %s", appointment.getLabel(), iAppointment.getLabel())); //$NON-NLS-1$
 					return true;
 				}
 			}
@@ -414,13 +415,13 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	}
 
 	private void updateMessage(final boolean collision) {
-		msg = "Termin(e) bearbeiten bzw. neu einsetzen";
+		msg = Messages.AgendaUI_DayOverView_create_or_change;
 
 		slider.setBackground(getColor(SWT.COLOR_GRAY)); // $NON-NLS-1$ //TODO LIGHTGREY
 
 		if (collision) {
 			slider.setBackground(getColor(SWT.COLOR_DARK_GRAY)); // $NON-NLS-1$
-			msg += "\t" + " - Terminkollision!"; //$NON-NLS-1$
+			msg += Messages.AgendaUI_DayOverView_date_collision;
 		}
 
 		getShell().getDisplay().asyncExec(new Runnable() {
@@ -455,11 +456,6 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	/** Die einem Plannable-Typ zugeordnete Farbe holen */
 	private Color getTypColor(IAppointment p) {
-
-		// @REF String coldesc =
-		// ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX +
-		// p.getType(), "FFFFFF"); //$NON-NLS-1$
-		// return UiDesk.getColorFromRGB(coldesc);
 
 		String cfgName = "agenda/farben/typ/"; //$NON-NLS-1$
 		String coldesc = ConfigServiceHolder.get().getActiveUserContact(cfgName + p.getType(), "FFFFFF"); //$NON-NLS-1$

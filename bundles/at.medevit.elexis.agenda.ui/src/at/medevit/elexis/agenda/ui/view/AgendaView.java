@@ -99,7 +99,6 @@ public class AgendaView {
 		CoreUiUtil.injectServicesWithContext(parallelComposite);
 		parallelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		parallelSideBar.setAgendaComposite(parallelComposite);
-
 		setTopControl("parallel"); //$NON-NLS-1$
 	}
 

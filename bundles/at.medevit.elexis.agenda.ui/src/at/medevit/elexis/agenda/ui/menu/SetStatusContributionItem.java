@@ -54,7 +54,8 @@ public class SetStatusContributionItem {
 	@Execute
 	private void setStatus(MDirectMenuItem menuItem) {
 		HashMap<String, Object> parameters = new HashMap<>();
-		parameters.put("at.medevit.elexis.agenda.ui.command.parameter.statusId", menuItem.getLabel()); //$NON-NLS-1$
+		parameters.put("at.medevit.elexis.agenda.ui.command.parameter.statusId", //$NON-NLS-1$
+				menuItem.getLabel());
 		ParameterizedCommand command = commandService.createCommand("at.medevit.elexis.agenda.ui.command.setStatus", //$NON-NLS-1$
 				parameters);
 		if (command != null) {

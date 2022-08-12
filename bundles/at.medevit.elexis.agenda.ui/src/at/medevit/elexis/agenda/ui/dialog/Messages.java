@@ -5,8 +5,14 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	public static final String BUNDLE_NAME = "at.medevit.elexis.agenda.ui.dialog.messages"; //$NON-NLS-1$
 
+	public static String AgendaUI_WeeklySeries_week_year;
+
 	public static String SerienTerminDialog;
 	public static String MonthlySeriesComposite_lblAtThe_text;
+	public static String RecurringAppointmentDialog_no_contact_selected;
+
+	public static String RecurringAppointmentDialog_search_contact_by_fiels;
+
 	public static String SerienTerminDialog_beginOfSeries_text;
 	public static String SerienTerminDialog_btnEndsAfter_text;
 	public static String SerienTerminDialog_btnEndsOn_text;

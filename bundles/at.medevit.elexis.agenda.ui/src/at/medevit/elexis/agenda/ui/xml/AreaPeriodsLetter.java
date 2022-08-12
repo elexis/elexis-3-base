@@ -29,8 +29,8 @@ public class AreaPeriodsLetter {
 			if (fromLocalDate.equals(toLocalDate)) {
 				ret.areaPeriod = fromLocalDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")); //$NON-NLS-1$
 			} else {
-				ret.areaPeriod = fromLocalDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " - " //$NON-NLS-1$ //$NON-NLS-2$
-						+ toLocalDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")); //$NON-NLS-1$
+				ret.areaPeriod = fromLocalDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) //$NON-NLS-1$
+						+ " - " + toLocalDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return ret;

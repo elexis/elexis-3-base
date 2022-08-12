@@ -23,7 +23,7 @@
     <setAttribute key="name.schedenig.eclipse.grepconsole.StatisticsEnabledIds"/>
     <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-        <listEntry value="/at.medevit.ch.artikelstamm.model.test/src/at/medevit/ch/artikelstamm/model/importer/ArtikelstammImporterTest.java"/>
+        <listEntry value="/at.medevit.ch.artikelstamm.model.test/src/at/medevit/ch/artikelstamm/model/test/ArtikelstammTest.java"/>
     </listAttribute>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="1"/>
@@ -36,7 +36,7 @@
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
     <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17"/>
-    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="at.medevit.ch.artikelstamm.model.importer.ArtikelstammImporterTest"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="at.medevit.ch.artikelstamm.model.test.ArtikelstammTest"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="at.medevit.ch.artikelstamm.model.test"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
@@ -245,7 +245,7 @@
         <setEntry value="ch.elexis.core.model@default:true"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
-        <setEntry value="ch.elexis.core.test.context@default:false"/>
+        <setEntry value="ch.elexis.core.test.context@default:default"/>
         <setEntry value="ch.elexis.core.test@default:default"/>
         <setEntry value="ch.elexis.core.ui.dbcheck@default:default"/>
         <setEntry value="ch.elexis.core.ui.e4@default:default"/>

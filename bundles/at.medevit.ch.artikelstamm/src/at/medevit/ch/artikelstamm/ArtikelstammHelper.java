@@ -125,6 +125,7 @@ public class ArtikelstammHelper {
 	}
 
 	public static ARTIKELSTAMM unmarshallInputStream(InputStream xmlFileIs) throws JAXBException, SAXException {
+		System.out.println(schemaLocationUrl);
 		Unmarshaller u = JAXBContext.newInstance(ARTIKELSTAMM.class).createUnmarshaller();
 		Schema schema = schemaFactory.newSchema(schemaLocationUrl);
 		u.setSchema(schema);

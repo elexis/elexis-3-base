@@ -20,12 +20,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.services.ICodeElementService;
 import ch.elexis.core.services.ICodeElementService.CodeElementTyp;
 import ch.elexis.core.services.ICodeElementServiceContribution;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Money;
 
@@ -72,13 +74,47 @@ public class ArtikelstammImporterTest {
 	// At the moment I can only activate one of the two tests or I will get errors
 	// about the incompatilibity between medindex and oddb2xml
 	@Test
-	public void testImportOddb2xml() throws IOException, ParseException {
+	public void testImportOddb2xml() {
 		isMedindex = false;
 		runImport("/rsc/artikelstamm");
 	}
 
-	private void runImport(String baseName) throws ParseException {
+	// At the moment I can only activate one of the two tests or I will get errors
+	// about the incompatilibity between medindex and oddb2xml
+	@Test
+	public void testImportOddb2xmlFrench() {
+		isMedindex = false;
+		String filename = "/rsc/artikelstamm_second_v5.xml";
+		String lang = "f";
+		ConfigServiceHolder.get().setLocal(Preferences.ABL_LANGUAGE, lang);
+		IStatus success = importer.performImport(new NullProgressMonitor(),
+				ArtikelstammImporterTest.class.getResourceAsStream(filename), true, false, null);
+		if (!success.isOK()) {
+			String msg = String.format("Import of %s lang %s failed", filename, lang);
+			fail(msg);
+		}
+		Optional<ICodeElement> priorix = artikelstammCodeElements.loadFromCode(gtinPriorix, Collections.emptyMap());
+		log.info(priorix.get().toString());
+	}
+
+	private static void testArticlesInBoth() {
+		// I would have loved to add a test that priorix has only one product
+		// But it was too complicated
+		if (isMedindex) {
+			return;
+		}
+		Optional<ICodeElement> priorix = artikelstammCodeElements.loadFromCode(gtinPriorix, Collections.emptyMap());
+		assertTrue(priorix.isPresent());
+		assertEquals(10590, ((IArtikelstammItem) priorix.get()).getSellingPrice().getCents());
+
+		Optional<ICodeElement> nonPharma = artikelstammCodeElements.loadFromCode(gtinNonPharma);
+		nonPharma = artikelstammCodeElements.loadFromCode(gtinNonPharma);
+		assertFalse(nonPharma.isPresent());
+	}
+
+	private void runImport(String baseName) {
 		// Import only Pharma-Artikel
+		ConfigServiceHolder.get().setLocal(Preferences.ABL_LANGUAGE, "d");
 		Optional<ICodeElement> nonPharma = artikelstammCodeElements.loadFromCode(gtinNonPharma);
 
 		assertFalse(nonPharma.isPresent());
@@ -127,14 +163,17 @@ public class ArtikelstammImporterTest {
 			assertEquals(gtinNonPharma, ((IArtikelstammItem) nonPharma.get()).getGtin());
 			assertEquals(17820, ((IArtikelstammItem) nonPharma.get()).getSellingPrice().getCents());
 		}
+
 		Optional<ICodeElement> withUserPrice = artikelstammCodeElements.loadFromCode(gtinUserPrice);
 		assertTrue(withUserPrice.isPresent());
 		assertEquals(gtinUserPrice, ((IArtikelstammItem) withUserPrice.get()).getGtin());
 
 		// Now Override Price
 		Money oldPrice = ((IArtikelstammItem) withUserPrice.get()).getSellingPrice();
-		String newPrice = "120.05";
-		((IArtikelstammItem) withUserPrice.get()).setSellingPrice(new Money("120.05"));
+		try {
+			((IArtikelstammItem) withUserPrice.get()).setSellingPrice(new Money("120.05"));
+		} catch (ParseException e) {
+		}
 
 		// Check an article only present in first
 		assertTrue(artikelstammCodeElements.loadFromCode(gtinNonPharmaInactiveInSecond).isPresent());

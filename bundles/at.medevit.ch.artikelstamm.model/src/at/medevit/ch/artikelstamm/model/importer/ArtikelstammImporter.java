@@ -49,6 +49,7 @@ import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.SALECDType;
 import at.medevit.ch.artikelstamm.model.service.ModelServiceHolder;
 import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
@@ -56,6 +57,7 @@ import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.jpa.entities.ArtikelstammItem;
 import ch.elexis.core.jpa.model.util.JpaModelUtil;
 import ch.elexis.core.services.IElexisEntityManager;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.core.utils.OsgiServiceUtil;
@@ -191,9 +193,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 		subMonitor.worked(5);
 		long endTime = System.currentTimeMillis();
-		if (!CoreUtil.isTestMode() && ContextServiceHolder.get() != null) {
-			ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IArtikelstammItem.class);
-		}
+		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IArtikelstammItem.class);
 
 		log.info("[PI] Artikelstamm import took " + ((endTime - startTime) / 1000) //$NON-NLS-1$
 				+ "sec.Used {} {} version {}. . Importer-Version {}. Will rebuild ATCCodeCache", //$NON-NLS-1$
@@ -251,10 +251,16 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		List<Object> products = new ArrayList<>();
 		for (PRODUCT product : importProductList) {
 			String prodno = product.getPRODNO();
+			String trimmedDscr = trimDSCR(product.getDSCR(), product.getPRODNO());
 
 			ArtikelstammItem foundProduct = entityUtil.load(prodno, ArtikelstammItem.class);
 			if (foundProduct == null) {
-				String trimmedDscr = trimDSCR(product.getDSCR(), product.getPRODNO());
+				String lang = ConfigServiceHolder.get().getLocal(Preferences.ABL_LANGUAGE, "d");
+				if (lang.equalsIgnoreCase("f") && product.getDSCRF() != null) {
+					trimmedDscr = trimDSCR(product.getDSCRF(), product.getPRODNO());
+				} else if (lang.equalsIgnoreCase("i") && product.getDSCRI() != null) {
+					trimmedDscr = trimDSCR(product.getDSCRI(), product.getPRODNO());
+				}
 				foundProduct = new ArtikelstammItem();
 				foundProduct.setId(product.getPRODNO());
 				foundProduct.setCummVersion(Integer.toString(newVersion));
@@ -262,10 +268,9 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 				foundProduct.setDscr(trimmedDscr);
 				foundProduct.setBb(StringConstants.ZERO);
 				foundProduct.setAdddscr(StringConstants.EMPTY);
-
 				log.trace("[IP] Adding product " + foundProduct.getId() + " (" + foundProduct.getDscr() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
-			log.trace("[IP] Updating product " + foundProduct.getId() + " (" + product.getDSCR() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			log.trace("[IP] Updating product " + foundProduct.getId() + " (" + trimmedDscr + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			setValuesOnArtikelstammProdukt(foundProduct, product, newVersion);
 			products.add(foundProduct);
 
@@ -294,7 +299,14 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		ai.setBb(Integer.toString(BlackBoxReason.NOT_BLACKBOXED.getNumercialReason()));
 		ai.setCummVersion(cummulatedVersion + StringUtils.EMPTY);
 		ai.setAtc(product.getATC());
-		ai.setDscr(trimDSCR(product.getDSCR(), product.getPRODNO()));
+		String trimmedDscr = trimDSCR(product.getDSCR(), product.getPRODNO());
+		String lang = ConfigServiceHolder.get().getLocal(Preferences.ABL_LANGUAGE, "d");
+		if (lang.equalsIgnoreCase("f") && product.getDSCRF() != null) {
+			trimmedDscr = trimDSCR(product.getDSCRF(), product.getPRODNO());
+		} else if (lang.equalsIgnoreCase("i") && product.getDSCRI() != null) {
+			trimmedDscr = trimDSCR(product.getDSCRI(), product.getPRODNO());
+		}
+		ai.setDscr(trimmedDscr);
 	}
 
 	private void updateOrAddItems(int newVersion, ARTIKELSTAMM importStamm, boolean bPharma, boolean bNonPharma,
@@ -477,7 +489,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		} else {
 			if (item.getPPUB() != null) {
 				setExtInfo(ArtikelstammItem.EXTINFO_VAL_PPUB_OVERRIDE_STORE, item.getPPUB().toString(), ai);
-				log.info("[II] [{}] Updating ppub override store to [{}]", ai.getId(), item.getPPUB()); //$NON-NLS-1$
+				log.trace("[II] [{}] Updating ppub override store to [{}]", ai.getId(), item.getPPUB()); //$NON-NLS-1$
 			}
 		}
 
@@ -495,16 +507,16 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 						(pkgSize != null && pkgSize.length() > 6) ? pkgSize.substring(0, 6).toString() : pkgSize);
 				ai.setPkg_size(value);
 			} catch (NumberFormatException e) {
-				log.warn("[II] Non numeric pkg size for [{}] being [{}].", ai.getId(), pkgSize); //$NON-NLS-1$
+				log.debug("[II] Non numeric pkg size for [{}] being [{}].", ai.getId(), pkgSize); //$NON-NLS-1$
 			}
 			if (pkgSize != null && pkgSize.length() > 6) {
-				log.warn("[II] Delimited pkg size for [{}] being [{}] to 6 characters.", ai.getId(), //$NON-NLS-1$
+				log.debug("[II] Delimited pkg size for [{}] being [{}] to 6 characters.", ai.getId(), //$NON-NLS-1$
 						item.getPKGSIZE().toString());
 			}
 		} else {
 			if (item.getPKGSIZE() != null) {
 				setExtInfo(ArtikelstammItem.EXTINFO_VAL_PKG_SIZE_OVERRIDE_STORE, item.getPKGSIZE().toString(), ai);
-				log.info("[II] [{}] Updating PKG_SIZE override store to [{}] fld {}", ai.getId(), item.getPKGSIZE(), //$NON-NLS-1$
+				log.debug("[II] [{}] Updating PKG_SIZE override store to [{}] fld {}", ai.getId(), item.getPKGSIZE(), //$NON-NLS-1$
 						ai.getPkg_size());
 			}
 		}

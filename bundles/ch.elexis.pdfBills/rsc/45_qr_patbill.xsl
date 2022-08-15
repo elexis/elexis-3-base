@@ -15,7 +15,8 @@
 	<xsl:param name="billerLine" select="''" />
 	<xsl:param name="guarantorLine" select="''" />
 	<xsl:param name="insuranceLine" select="''" />
-	<xsl:param name="creditorLine" select="''" />	
+	<xsl:param name="creditorLine" select="''" />
+	<xsl:param name="amountPrepaid" select="''" />
 	<xsl:template match="invoice:*">
 		<xsl:variable name="pType" select="$printerType" />
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"

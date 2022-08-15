@@ -587,6 +587,20 @@
 						<fo:table-row>
 							<fo:table-cell>
 								<fo:block font-weight="bold">
+									Anzahlung
+								</fo:block>
+							</fo:table-cell>
+							<fo:table-cell>
+								<fo:block text-align="right" font-weight="bold">
+									<xsl:call-template name="FormatNumber">
+										<xsl:with-param name="Number" select="$amountPrepaid" />
+									</xsl:call-template>
+								</fo:block>
+							</fo:table-cell>
+						</fo:table-row>
+						<fo:table-row>
+							<fo:table-cell>
+								<fo:block font-weight="bold">
 									Rechnungs-Total
 								</fo:block>
 							</fo:table-cell>

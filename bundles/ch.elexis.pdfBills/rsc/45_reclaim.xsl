@@ -4,6 +4,7 @@
 	xmlns:invoice="http://www.forum-datenaustausch.ch/invoice">
 	<xsl:param name="eanList" select="''" />
 	<xsl:param name="vatList" select="''" />
+	<xsl:param name="amountPrepaid" select="''" />
 	<xsl:template match="invoice:*">
 		<fo:root>
 			<fo:layout-master-set>
@@ -2508,16 +2509,7 @@
 							white-space-treatment="preserve" font-family="tahoma,arial,helvetica,sans-serif">
 							<xsl:value-of select="' '" />
 							<xsl:value-of select="' '" />
-							<xsl:choose>
-								<xsl:when
-									test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount_prepaid) > 0">
-									<xsl:value-of
-										select="/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount_prepaid" />
-								</xsl:when>
-								<xsl:otherwise>
-									0.00
-								</xsl:otherwise>
-							</xsl:choose>
+							<xsl:value-of select="$amountPrepaid" />
 						</fo:block>
 					</fo:table-cell>
 					<fo:table-cell>

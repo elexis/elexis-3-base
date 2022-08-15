@@ -97,6 +97,7 @@ public class ElexisPDFGenerator {
 	private Money mReminders;
 	private Money mTotal;
 	private Money mDue;
+	private Money mPrepaid;
 	private InvoiceState invoiceState;
 
 	private List<File> printed;
@@ -133,10 +134,12 @@ public class ElexisPDFGenerator {
 			this.mReminders = rechnung.getRemindersBetrag();
 			this.mTotal = rechnung.getBetrag().addMoney(mReminders);
 			this.mDue = new Money(mTotal.doubleValue() - rechnung.getAnzahlung().doubleValue());
+			this.mPrepaid = rechnung.getAnzahlung();
 		} else {
 			this.mReminders = new Money();
 			this.mTotal = new Money();
 			this.mDue = new Money();
+			this.mPrepaid = new Money();
 		}
 	}
 
@@ -208,6 +211,7 @@ public class ElexisPDFGenerator {
 					parameters.put("vatList", vatList);
 					parameters.put("amountTotal", XMLTool.moneyToXmlDouble(mTotal));
 					parameters.put("amountDue", XMLTool.moneyToXmlDouble(mDue));
+					parameters.put("amountPrepaid", XMLTool.moneyToXmlDouble(mPrepaid)); //$NON-NLS-1$
 					if (withQr) {
 						parameters.put("qrJpeg", getEncodedQr(rechnung));
 					}

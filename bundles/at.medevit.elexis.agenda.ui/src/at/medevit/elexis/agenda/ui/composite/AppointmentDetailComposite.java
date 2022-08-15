@@ -140,7 +140,7 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	private void createContents(Composite parent) {
-		Objects.requireNonNull(appointment, Messages.AppointmentDetailComposite_cannot_be_null);
+		Objects.requireNonNull(appointment, "Appointment cannot be null"); //$NON-NLS-1$
 
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(4, false));

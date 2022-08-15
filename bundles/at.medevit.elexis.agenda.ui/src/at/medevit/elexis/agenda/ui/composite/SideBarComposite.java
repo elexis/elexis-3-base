@@ -136,7 +136,7 @@ public class SideBarComposite extends Composite {
 		FontDescriptor boldDescriptor = FontDescriptor.createFrom(label.getFont()).setStyle(SWT.BOLD);
 		Font boldFont = boldDescriptor.createFont(label.getDisplay());
 		label.setFont(boldFont);
-		label.setText("Bereiche");
+		label.setText(Messages.AgendaUI_SideBar_range);
 		ScrolledComposite areaScrolledComposite = new ScrolledComposite(this, SWT.V_SCROLL);
 		areaScrolledComposite.setLayout(new FillLayout());
 		areaScrolledComposite.setExpandVertical(true);
@@ -200,7 +200,7 @@ public class SideBarComposite extends Composite {
 
 		label = new Label(this, SWT.NONE);
 		label.setFont(boldFont);
-		label.setText("Zeitschritte");
+		label.setText(Messages.AgendaUI_SideBar_steps);
 		spanSizeCombo = new ComboViewer(this, SWT.BORDER);
 		spanSizeCombo.setContentProvider(ArrayContentProvider.getInstance());
 		spanSizeCombo.setLabelProvider(new LabelProvider() {
@@ -227,13 +227,14 @@ public class SideBarComposite extends Composite {
 
 		label = new Label(this, SWT.NONE);
 		label.setFont(boldFont);
-		label.setText("Auto. zu jetzt scrollen");
+		label.setText(Messages.AgendaUI_SideBar_auto_scroll_to_now);
 		scrollToNowCheck = new Button(this, SWT.CHECK);
 		scrollToNowCheck.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				agendaComposite.setScrollToNow(scrollToNowCheck.getSelection());
-				saveConfigurationString("scrollToNow", Boolean.toString(scrollToNowCheck.getSelection())); //$NON-NLS-1$
+				saveConfigurationString("scrollToNow", //$NON-NLS-1$
+						Boolean.toString(scrollToNowCheck.getSelection()));
 				super.widgetSelected(e);
 			}
 		});
@@ -242,7 +243,7 @@ public class SideBarComposite extends Composite {
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Button btn = new Button(this, SWT.NONE);
-		btn.setText("Neue Serie anlegen");
+		btn.setText(Messages.AgendaUI_SideBar_create_new_series);
 		btn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -257,7 +258,7 @@ public class SideBarComposite extends Composite {
 		if (includeMove) {
 			label = new Label(this, SWT.NONE);
 			label.setFont(boldFont);
-			label.setText("Termin verschieben");
+			label.setText(Messages.AgendaUI_SideBar_move_date);
 			label.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true));
 			moveTable = new TableViewer(this, SWT.MULTI);
 			moveTable.getTable().setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
@@ -275,7 +276,7 @@ public class SideBarComposite extends Composite {
 			menuManager.add(new Action() {
 				@Override
 				public String getText() {
-					return "verschieben abbrechen";
+					return Messages.AgendaUI_SideBar_abort_move_date;
 				}
 
 				@Override
@@ -419,7 +420,8 @@ public class SideBarComposite extends Composite {
 
 	private void saveConfigurationString(String configKey, String value) {
 		ConfigServiceHolder.get().setActiveUserContact(
-				"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, value); //$NON-NLS-1$ //$NON-NLS-2$
+				"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, //$NON-NLS-1$ //$NON-NLS-2$
+				value);
 	}
 
 	private String loadConfigurationString(String configKey) {

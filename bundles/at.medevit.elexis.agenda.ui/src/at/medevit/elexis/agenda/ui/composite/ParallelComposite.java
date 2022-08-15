@@ -101,12 +101,12 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		if (enableSwitch) {
 			new SwitchFunction(part, browser, "switchFunction"); //$NON-NLS-1$
 			String targetUrl = SingleSourceUtil.resolve("switchParallel.html"); //$NON-NLS-1$
-			logger.debug("Open url [" + targetUrl + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			logger.debug(String.format("Open url [%s]", targetUrl)); //$NON-NLS-1$
 			browser.setUrl(targetUrl);
 
 		} else {
 			String targetUrl = SingleSourceUtil.resolve("defaultParallel.html"); //$NON-NLS-1$
-			logger.debug("Open url [" + targetUrl + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			logger.debug(String.format("Open url [%s]", targetUrl)); //$NON-NLS-1$
 			browser.setUrl(targetUrl);
 
 		}

@@ -169,8 +169,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		this.scriptingHelper = scriptingHelper;
 
 		cache = CacheBuilder.newBuilder().maximumSize(7).build(new TimeSpanLoader());
-
-		timer = new Timer("Agenda check for updates", true);
+		timer = new Timer("Agenda check for updates", true); //$NON-NLS-1$
 		timer.schedule(new CheckForUpdatesTimerTask(this, uiSynchronize), 10000, 10000);
 	}
 
@@ -194,7 +193,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 						if (eventsJson.updateWith(changedPeriods, userContact)) {
 							logger.debug("Updated timespan " + timeSpan); //$NON-NLS-1$
 						} else {
-							logger.debug("No update to timespan " + timeSpan); //$NON-NLS-1$
+							logger.debug("No updated to timespan " + timeSpan); //$NON-NLS-1$
 						}
 					}
 					knownLastUpdate = currentLastUpdate;
@@ -296,7 +295,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 				query.andJoinGroups();
 				return (List<IPeriod>) (List<?>) query.execute();
 			}
-			logger.debug("Loading timespan " + timespan + " finished"); //$NON-NLS-1$ //$NON-NLS-2$
+			logger.debug("Loading timespan " + timespan + " finished"); //$NON-NLS-1$
 			return Collections.emptyList();
 		}
 	}

@@ -1,15 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Agenda Ui
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: at.medevit.elexis.agenda.ui;singleton:=true
 Bundle-Version: 3.9.0.qualifier
-Bundle-Vendor: medevit.at
+Bundle-Vendor: %Bundle-Vendor
 Export-Package: at.medevit.elexis.agenda.ui.function,
  at.medevit.elexis.agenda.ui.view,
  at.medevit.elexis.agenda.ui.xml
 Require-Bundle: ch.elexis.core.ui;bundle-version="3.9.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
+Bundle-Localization: plugin
 Import-Package: com.equo.chromium.swt,
  com.google.common.cache;version="15.0.0",
  com.google.gson,

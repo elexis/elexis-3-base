@@ -266,7 +266,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 
 		txtContactSearch = new Text(groupData, SWT.SEARCH | SWT.ICON_SEARCH);
 		txtContactSearch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		txtContactSearch.setMessage("Vorname, Nachname");
+		txtContactSearch.setMessage("Vorname, Nachname"); //$NON-NLS-1$
 		AsyncContentProposalProvider<IContact> aopp = new AsyncContentProposalProvider<IContact>("description1", //$NON-NLS-1$
 				"description2") { //$NON-NLS-1$
 			@Override
@@ -281,8 +281,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		};
 		txtContactSearch.setData(appointment.getContact());
 		ControlDecoration controlDecoration = new ControlDecoration(txtContactSearch, SWT.LEFT | SWT.TOP);
-		controlDecoration.setDescriptionText(
-				"Kontakt Suche nach Vorname, Nachname\noder Freitext Eingabe für Termine ohne Kontakt");
+		controlDecoration.setDescriptionText(Messages.RecurringAppointmentDialog_search_contact_by_fiels);
 		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
 				.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION);
 		controlDecoration.setImage(fieldDecoration.getImage());
@@ -311,7 +310,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		lblArea.setText(Messages.SerienTerminDialog_lblArea_text);
 
 		comboSchedule = new Combo(groupData, SWT.NONE);
-		comboSchedule.setItems(ConfigServiceHolder.get().get("agenda/bereiche", "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-3$
+		comboSchedule.setItems(ConfigServiceHolder.get().get("agenda/bereiche", "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		comboSchedule.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -366,7 +365,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		if (appointment.getContact() != null) {
 			setTitle(appointment.getContact().getLabel());
 		} else {
-			setTitle("Kein Kontakt ausgewählt.");
+			setTitle(Messages.RecurringAppointmentDialog_no_contact_selected);
 		}
 		if (appointment.getContact() != null) {
 			txtContactSearch.setText(appointment.getContact().getLabel());

@@ -1,6 +1,5 @@
 package at.medevit.elexis.agenda.ui.composite;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.fieldassist.ContentProposal;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.IContentProposal;
@@ -74,7 +74,6 @@ public abstract class AsyncContentProposalProvider<T extends Identifiable> imple
 					if (contents.hashCode() != lastQueriedContentHash) {
 						// content changed - query content
 						IQuery<T> query = createBaseQuery();
-
 						String[] searchParts = contents.toLowerCase().split(StringUtils.SPACE);
 						lastQueriedContentHash = contents.hashCode();
 						int i = 0;

@@ -1,6 +1,7 @@
 package at.medevit.elexis.agenda.ui.model;
 
 import org.apache.commons.lang3.StringUtils;
+
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPeriod;
@@ -20,7 +21,6 @@ import ch.elexis.core.types.AppointmentType;
  */
 public class Event {
 	private static final String DEFAULT_BG_COLOR = "ffffff"; //$NON-NLS-1$
-
 	private String id;
 	private String title;
 	private String icon;
@@ -153,8 +153,8 @@ public class Event {
 			if (ret.title.isEmpty()) {
 				ret.title = StringUtils.SPACE;
 			}
-			ret.description = termin.getReason().replaceAll(StringUtils.LF, "<br />") + "<br /><br />" //$NON-NLS-1$ //$NON-NLS-2$
-					+ termin.getStateHistoryFormatted("dd.MM.yyyy HH:mm:ss").replaceAll(StringUtils.LF, "<br />"); //$NON-NLS-1$ //$NON-NLS-2$
+			ret.description = termin.getReason().replaceAll(StringUtils.LF, "<br />") + "<br /><br />" + termin //$NON-NLS-1$ //$NON-NLS-2$
+					.getStateHistoryFormatted("dd.MM.yyyy HH:mm:ss").replaceAll(StringUtils.LF, "<br />"); //$NON-NLS-1$ //$NON-NLS-2$
 			ret.borderColor = getStateColor(userContact, iPeriod);
 			ret.backgroundColor = getTypColor(userContact, iPeriod);
 			ret.textColor = getTextColor(ret.backgroundColor.substring(1));
@@ -190,8 +190,8 @@ public class Event {
 	public static String getTypColor(IContact userContact, IPeriod iPeriod) {
 		if (iPeriod instanceof IAppointment) {
 			IAppointment termin = (IAppointment) iPeriod;
-			return "#" + ConfigServiceHolder.get().get(userContact, "agenda/farben/typ/" + termin.getType(), //$NON-NLS-1$//$NON-NLS-2$
-					DEFAULT_BG_COLOR);
+			return "#" + ConfigServiceHolder.get() //$NON-NLS-1$
+					.get(userContact, "agenda/farben/typ/" + termin.getType(), DEFAULT_BG_COLOR); //$NON-NLS-1$
 		}
 		return "#" + DEFAULT_BG_COLOR; //$NON-NLS-1$
 	}
@@ -207,8 +207,8 @@ public class Event {
 	public static String getStateColor(IContact userContact, IPeriod iPeriod) {
 		if (iPeriod instanceof IAppointment) {
 			IAppointment termin = (IAppointment) iPeriod;
-			return "#" + ConfigServiceHolder.get().get(userContact, "agenda/farben/status/" + termin.getState(), //$NON-NLS-1$ //$NON-NLS-2$
-					DEFAULT_BG_COLOR); // $NON-NLS-2$
+			return "#" + ConfigServiceHolder.get().get(userContact, //$NON-NLS-1$
+					"agenda/farben/status/" + termin.getState(), DEFAULT_BG_COLOR); //$NON-NLS-1$
 		}
 		return "#" + DEFAULT_BG_COLOR; //$NON-NLS-1$
 	}

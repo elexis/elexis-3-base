@@ -2,6 +2,7 @@ package at.medevit.elexis.agenda.ui.dialog;
 
 import java.util.Calendar;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -83,7 +84,7 @@ public class WeeklySeriesComposite extends Composite {
 	}
 
 	public void setWeekNumberLabel(int weekNumber, int year) {
-		lblWeekNumber.setText(weekNumber + "/" + year); //$NON-NLS-1$
+		lblWeekNumber.setText(NLS.bind(Messages.AgendaUI_WeeklySeries_week_year, weekNumber, year));
 		layout();
 	}
 }

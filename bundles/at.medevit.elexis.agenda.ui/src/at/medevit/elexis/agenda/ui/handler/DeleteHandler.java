@@ -12,6 +12,7 @@ import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +37,8 @@ public class DeleteHandler {
 		Optional<IPeriod> period = getSelectedPeriod();
 
 		period.ifPresent(p -> {
-			if (MessageDialog.openConfirm(shell, "Löschen",
-					"Wollen Sie " + period.get().getLabel() + " wirklich löschen?")) {
+			if (MessageDialog.openConfirm(shell, Messages.AgendaUI_Delete_delete,
+					NLS.bind(Messages.AgendaUI_Delete_ask_really_delete, period.get().getLabel()))) {
 				AcquireLockBlockingUi.aquireAndRun(p, new ILockHandler() {
 					@Override
 					public void lockFailed() {
@@ -48,7 +49,8 @@ public class DeleteHandler {
 					public void lockAcquired() {
 						IAppointment appointment = (IAppointment) p;
 						if (appointment.isRecurring()) {
-							if (MessageDialog.openQuestion(shell, "Löschen", "Wollen Sie die gesamte Serie löschen?")) {
+							if (MessageDialog.openQuestion(shell, Messages.AgendaUI_Delete__delete,
+									Messages.AgendaUI_Delete_ask_delete_whole_series)) {
 								appointmentService.delete(appointment, true);
 							} else {
 								appointmentService.delete(appointment, false);

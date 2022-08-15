@@ -12,7 +12,6 @@ public class Messages extends NLS {
 	public static String AgendaUI_SideBar_move_date;
 	public static String AgendaUI_SideBar_range;
 	public static String AgendaUI_SideBar_steps;
-	public static String AppointmentDetailComposite_cannot_be_null;
 	public static String AppointmentDetailComposite_date_type_or_status;
 	public static String AppointmentDetailComposite_delete;
 	public static String AppointmentDetailComposite_duration;

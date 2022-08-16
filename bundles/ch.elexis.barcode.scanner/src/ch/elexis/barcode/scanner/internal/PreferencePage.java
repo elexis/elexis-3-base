@@ -28,6 +28,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 	public static final String BarcodeScanner_AUTOSTART = "barcode/Symbol/autostart"; //$NON-NLS-1$
 	public static final String BarcodeScanner_SETTINGS = "barcode/Symbol/settings"; //$NON-NLS-1$
 	public static final String BarcodeScanner_WAITFORNEWLINE = "barcode/Symbol/waitfornewline"; //$NON-NLS-1$
+	public static final String BarcodeScanner_WRITEBUFFERDEBUGFILE = "barcode/Symbol/writedatabufferdebugfile"; //$NON-NLS-1$
 
 	public static final int NUMBER_OF_SCANNERS = 2;
 
@@ -78,6 +79,8 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 				addField(new BooleanFieldEditor(BarcodeScanner_WAITFORNEWLINE + postfix, "Daten in Zeilen empfangen",
 						SWT.None, c));
+				addField(new BooleanFieldEditor(BarcodeScanner_WRITEBUFFERDEBUGFILE + postfix,
+						"Datenbuffer Debug Datei schreiben", SWT.None, c));
 			}
 
 			addField(new BooleanFieldEditor(BarcodeScanner_AUTOSTART, "Bei Start automatisch verbinden", SWT.None,

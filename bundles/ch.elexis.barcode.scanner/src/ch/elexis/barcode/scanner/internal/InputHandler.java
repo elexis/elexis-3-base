@@ -48,9 +48,12 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 								"9600,8,n,1"); //$NON-NLS-1$
 						boolean waitForNewline = CoreHub.localCfg
 								.get(PreferencePage.BarcodeScanner_WAITFORNEWLINE + postfix, false);
+						boolean writeDataBufferDebugFile = CoreHub.localCfg
+								.get(PreferencePage.BarcodeScanner_WRITEBUFFERDEBUGFILE + postfix, false);
 						if (!comPort.isEmpty()) {
 							if (usedComPorts.add(comPort)) {
-								openConnection(i, postfix, comPort, comSettings, waitForNewline);
+								openConnection(i, postfix, comPort, comSettings, waitForNewline,
+										writeDataBufferDebugFile);
 							} else {
 								logger.debug("barcode scanner " + (i + 1) + " com port already in use: " + comPort); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -74,8 +77,10 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 
 	}
 
-	private void openConnection(int i, String postfix, String comPort, String comSettings, boolean waitForNewline) {
-		Connection barcodeScannerConn = new Connection("Barcode Scanner@" + comPort, comPort, comSettings, this);
+	private void openConnection(int i, String postfix, String comPort, String comSettings, boolean waitForNewline,
+			boolean writeDataBufferDebugFile) {
+		Connection barcodeScannerConn = new Connection("Barcode Scanner@" + comPort, comPort, comSettings, this)
+				.writeDataBufferDebugFile(writeDataBufferDebugFile);
 		if (waitForNewline) {
 			barcodeScannerConn.withEndOfChunk(new byte[] { 0x0A }).excludeDelimiters(true);
 		}

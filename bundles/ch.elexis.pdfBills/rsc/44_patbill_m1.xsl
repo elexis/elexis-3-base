@@ -13,6 +13,7 @@
 	<xsl:param name="headerLine2" select="''" />
 	<xsl:param name="guarantorPostal" select="''" />
 	<xsl:param name="couvertLeft" select="''" />
+	<xsl:param name="amountPrepaid" select="''" />	
 	<xsl:template match="invoice:*">
 		<xsl:variable name="pType" select="$printerType" />
 		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"

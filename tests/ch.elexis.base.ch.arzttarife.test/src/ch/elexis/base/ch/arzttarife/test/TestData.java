@@ -27,6 +27,7 @@ import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IArticle;
@@ -51,6 +52,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.BillingSystem;
@@ -422,6 +424,8 @@ public class TestData {
 
 			mandant.setExtInfoStoredObjectByKey("IBAN", "CH5800791123000889012");
 
+			XidServiceHolder.get().localRegisterXIDDomainIfNotExists(TarmedRequirements.DOMAIN_NIF, "NIF",
+					XidConstants.ASSIGNMENT_REGIONAL);
 			TarmedRequirements.setNIF(NoPoUtil.loadAsIdentifiable(mandant, IContact.class).get(), "12345");
 
 			mandanten.add(mandant);

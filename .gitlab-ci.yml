@@ -9,6 +9,7 @@ build:
   - java17
   - maven
   script:
+  - kill `ps aux | grep xvfb-run | grep -v grep | awk '{print $2}'` || true
   - xvfb-run mvn clean verify -Dgit.core.branch=$CI_COMMIT_REF_NAME
   - eval $(ssh-agent -s)
   - ssh-add <(echo "$SSH_PRIVATE_KEY_ED25519_BASE64" | base64 -d)

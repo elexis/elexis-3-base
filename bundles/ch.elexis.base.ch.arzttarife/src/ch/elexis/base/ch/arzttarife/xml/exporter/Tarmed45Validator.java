@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -11,6 +12,10 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -52,12 +57,36 @@ public class Tarmed45Validator {
 	}
 
 	private Validator initValidator() throws SAXException {
-		SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-		Schema schema = factory.newSchema();
-		schema = factory.newSchema(new Source[] {
-				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/xenc-schema.xsd")),
-				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/xmldsig-core-schema.xsd")),
-				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/generalInvoiceRequest_450.xsd")) });
+		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		factory.setResourceResolver(new LSResourceResolver() {
+
+			private DOMImplementationLS impl;
+
+			public DOMImplementationLS getDOMImpl() {
+				if (impl == null) {
+					try {
+						DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+						impl = (DOMImplementationLS) registry.getDOMImplementation("LS 3.0");
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+				return impl;
+			}
+
+			public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId,
+					String baseURI) {
+				LSInput lsInput = getDOMImpl().createLSInput();
+				InputStream is = getClass().getResourceAsStream("/rsc/" + systemId);
+				if (is == null)
+					return null;
+				lsInput.setByteStream(is);
+				return lsInput;
+			}
+		});
+
+		Schema schema = factory.newSchema(
+				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/generalInvoiceRequest_450.xsd")));
 		return schema.newValidator();
 	}
 

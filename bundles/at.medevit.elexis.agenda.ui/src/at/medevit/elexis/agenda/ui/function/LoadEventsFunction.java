@@ -184,7 +184,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 						new LoadEventTimeSpan(currentTimeSpan.startDate, currentTimeSpan.endDate));
 				long currentLastUpdate = CoreModelServiceHolder.get().getHighestLastUpdate(IAppointment.class);
 				if (knownLastUpdate == 0) {
-					knownLastUpdate = currentLastUpdate;
+					updateKnownLastUpdate(currentLastUpdate);
 				} else if (knownLastUpdate < currentLastUpdate) {
 					List<IPeriod> changedPeriods = getChangedPeriods();
 					ConcurrentMap<TimeSpan, EventsJsonValue> cacheAsMap = cache.asMap();
@@ -196,7 +196,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 							logger.debug("No updated to timespan " + timeSpan); //$NON-NLS-1$
 						}
 					}
-					knownLastUpdate = currentLastUpdate;
+					updateKnownLastUpdate(currentLastUpdate);
 				}
 				EventsJsonValue eventsJson = cache.get(currentTimeSpan);
 				Display.getDefault().asyncExec(new Runnable() {
@@ -215,6 +215,16 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 			}
 		} else {
 			throw new IllegalArgumentException("Unexpected arguments"); //$NON-NLS-1$
+		}
+	}
+
+	private void updateKnownLastUpdate(long currentLastUpdate) {
+		if (currentLastUpdate - System.currentTimeMillis() > 10000) {
+			logger.warn("Appointment highest lastupdate is in future ["
+					+ (currentLastUpdate - System.currentTimeMillis()) + "]");
+			knownLastUpdate = System.currentTimeMillis() - 10000;
+		} else {
+			knownLastUpdate = currentLastUpdate;
 		}
 	}
 

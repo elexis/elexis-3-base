@@ -47,19 +47,22 @@ import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
-import ch.elexis.core.data.service.CoreModelServiceHolder;
 import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.InvoiceConstants;
+import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.model.InvoiceState.REJECTCODE;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
@@ -134,15 +137,19 @@ public class RnOutputter implements IRnOutputter {
 					monitor.beginTask("Exportiere Rechnungen...", rnn.size() * 10);
 					int errors = 0;
 					for (Rechnung rn : rnn) {
+						IInvoice invoice = CoreModelServiceHolder.get().load(rn.getId(), IInvoice.class).orElseThrow(
+								() -> new IllegalStateException("Could not load invoice [" + rn.getId() + "]"));
+
 						XMLExporter ex = new XMLExporter();
 						ex.setEsrType(EsrType.esr9);
 						Document dRn = ex.doExport(rn, null, type, true);
 						monitor.worked(1);
-						if (rn.getStatus() == RnStatus.FEHLERHAFT) {
+						if (invoice.getState() == InvoiceState.DEFECTIVE) {
 							errors++;
 							continue;
 						}
-						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT) + File.separator + rn.getNr() + ".xml"; //$NON-NLS-1$
+						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT) + File.separator + invoice.getNumber()
+								+ ".xml"; //$NON-NLS-1$
 						try {
 							FileOutputStream fout = new FileOutputStream(fname);
 							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8"); //$NON-NLS-1$
@@ -151,17 +158,20 @@ public class RnOutputter implements IRnOutputter {
 							cout.close();
 							fout.close();
 							// create an new generator for the bill
-							ElexisPDFGenerator epdf = new ElexisPDFGenerator(fname, rn.getNr(), rn.getInvoiceState());
+							ElexisPDFGenerator epdf = new ElexisPDFGenerator(fname, invoice.getNumber(),
+									invoice.getState());
 							epdf.printBill(rsc);
 							if (modifyInvoiceState) {
-								int status_vorher = rn.getStatus();
-								if ((status_vorher == RnStatus.OFFEN) || (status_vorher == RnStatus.MAHNUNG_1)
-										|| (status_vorher == RnStatus.MAHNUNG_2)
-										|| (status_vorher == RnStatus.MAHNUNG_3)) {
-									rn.setStatus(status_vorher + 1);
+								int status_vorher = invoice.getState().numericValue();
+								if ((status_vorher == InvoiceState.OPEN.numericValue())
+										|| (status_vorher == InvoiceState.DEMAND_NOTE_1.numericValue())
+										|| (status_vorher == InvoiceState.DEMAND_NOTE_2.numericValue())
+										|| (status_vorher == InvoiceState.DEMAND_NOTE_3.numericValue())) {
+									invoice.setState(InvoiceState.fromState(status_vorher + 1));
 								}
-								rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
-										+ RnStatus.getStatusText(rn.getStatus()));
+								invoice.addTrace(InvoiceConstants.OUTPUT, getDescription() + ": " //$NON-NLS-1$
+										+ invoice.getState().getLocaleText());
+								CoreModelServiceHolder.get().save(invoice);
 							}
 							if (CoreHub.localCfg.get(CFG_ROOT + CFG_MAIL_CPY, false) && shouldSendCopyMail(rn)) {
 								Kontakt guarantor = getGuarantor(rn);
@@ -176,14 +186,15 @@ public class RnOutputter implements IRnOutputter {
 								} else if (guarantor != null) {
 									mailErrors.add("Keine mail Addresse für " + guarantor.getLabel(false));
 								} else {
-									mailErrors.add("Keine Garant für Rechnung " + rn.getNr());
+									mailErrors.add("Keine Garant für Rechnung " + invoice.getNumber());
 								}
 							}
 						} catch (Exception e1) {
 							ExHandler.handle(e1);
 							SWTHelper.showError("Fehler beim Rechnungsdruck",
 									"Konnte Datei " + fname + " nicht schreiben");
-							rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: " + fname); //$NON-NLS-1$
+							invoice.reject(REJECTCODE.INTERNAL_ERROR, "write error: " + fname); //$NON-NLS-1$
+							CoreModelServiceHolder.get().save(invoice);
 							continue;
 						}
 						monitor.worked(1);

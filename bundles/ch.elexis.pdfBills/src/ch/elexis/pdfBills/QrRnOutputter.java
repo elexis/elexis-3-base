@@ -53,6 +53,9 @@ import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.InvoiceConstants;
+import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.model.InvoiceState.REJECTCODE;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -61,7 +64,6 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 
@@ -134,14 +136,18 @@ public class QrRnOutputter implements IRnOutputter {
 					monitor.beginTask("Exportiere Rechnungen...", rnn.size() * 10);
 					int errors = 0;
 					for (Rechnung rn : rnn) {
+						IInvoice invoice = CoreModelServiceHolder.get().load(rn.getId(), IInvoice.class).orElseThrow(
+								() -> new IllegalStateException("Could not load invoice [" + rn.getId() + "]"));
+
 						XMLExporter ex = new XMLExporter();
 						Document dRn = ex.doExport(rn, null, type, true);
 						monitor.worked(1);
-						if (rn.getStatus() == RnStatus.FEHLERHAFT) {
+						if (invoice.getState() == InvoiceState.DEFECTIVE) {
 							errors++;
 							continue;
 						}
-						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT) + File.separator + rn.getNr() + ".xml";
+						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT) + File.separator + invoice.getNumber()
+							+ ".xml"; //$NON-NLS-1$
 						try {
 							FileOutputStream fout = new FileOutputStream(fname);
 							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8");
@@ -150,15 +156,15 @@ public class QrRnOutputter implements IRnOutputter {
 							cout.close();
 							fout.close();
 							// create an new generator for the bill
-							ElexisPDFGenerator epdf = new ElexisPDFGenerator(fname, rn.getNr(), rn.getInvoiceState());
+							ElexisPDFGenerator epdf = new ElexisPDFGenerator(fname, invoice.getNumber(),
+									invoice.getState());
 							if (pdfOnly) {
 								epdf.setPrint(false);
 							}
 							// consider fallback to non QR bill, always fall back for tarmed xml version
 							// lower 4.5
-							EsrType outputEsrType = ex.getEsrTypeOrFallback(
-									CoreModelServiceHolder.get().load(rn.getId(), IInvoice.class).get());
-							if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) {
+							EsrType outputEsrType = ex.getEsrTypeOrFallback(invoice);
+							if ("4.5".equals(epdf.getBillVersion()) && outputEsrType != EsrType.esr9) { //$NON-NLS-1$
 								epdf.printQrBill(rsc);
 							} else {
 								LoggerFactory.getLogger(getClass()).warn("Fallback to ESR9 for xml version ["
@@ -166,14 +172,16 @@ public class QrRnOutputter implements IRnOutputter {
 								epdf.printBill(rsc);
 							}
 							if (modifyInvoiceState) {
-								int status_vorher = rn.getStatus();
-								if ((status_vorher == RnStatus.OFFEN) || (status_vorher == RnStatus.MAHNUNG_1)
-										|| (status_vorher == RnStatus.MAHNUNG_2)
-										|| (status_vorher == RnStatus.MAHNUNG_3)) {
-									rn.setStatus(status_vorher + 1);
+								int status_vorher = invoice.getState().numericValue();
+								if ((status_vorher == InvoiceState.OPEN.numericValue())
+										|| (status_vorher == InvoiceState.DEMAND_NOTE_1.numericValue())
+										|| (status_vorher == InvoiceState.DEMAND_NOTE_2.numericValue())
+										|| (status_vorher == InvoiceState.DEMAND_NOTE_3.numericValue())) {
+									invoice.setState(InvoiceState.fromState(status_vorher + 1));
 								}
-								rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
-										+ RnStatus.getStatusText(rn.getStatus()));
+								invoice.addTrace(InvoiceConstants.OUTPUT, getDescription() + ": " //$NON-NLS-1$
+										+ invoice.getState().getLocaleText());
+								CoreModelServiceHolder.get().save(invoice);
 							}
 							if (CoreHub.localCfg.get(CFG_ROOT + CFG_MAIL_CPY, false) && shouldSendCopyMail(rn)) {
 								Kontakt guarantor = getGuarantor(rn);
@@ -195,13 +203,15 @@ public class QrRnOutputter implements IRnOutputter {
 							ExHandler.handle(e);
 							SWTHelper.showError("Fehler beim Rechnungsdruck",
 									"Bei der Ausgabe ist folgender Fehler aufgetreten.\n\n" + e.getMessage());
-							rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: " + fname);
+							invoice.reject(REJECTCODE.INTERNAL_ERROR, "write error: " + fname); //$NON-NLS-1$
+							CoreModelServiceHolder.get().save(invoice);
 							continue;
 						} catch (Exception e1) {
 							ExHandler.handle(e1);
 							SWTHelper.showError("Fehler beim Rechnungsdruck",
 									"Konnte Datei " + fname + " nicht schreiben");
-							rn.reject(RnStatus.REJECTCODE.INTERNAL_ERROR, "write error: " + fname);
+							invoice.reject(REJECTCODE.INTERNAL_ERROR, "write error: " + fname); //$NON-NLS-1$
+							CoreModelServiceHolder.get().save(invoice);
 							continue;
 						}
 						monitor.worked(1);

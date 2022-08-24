@@ -1403,109 +1403,112 @@ public class Tarmed45Exporter {
 
 			// update payload and balance
 			if (request.getPayload() != null && request.getPayload().getBody() != null) {
-				// update treatment
-				TreatmentType updateTreatment = getTreatment(invoice);
-				if (updateTreatment != null) {
-					request.getPayload().getBody().setTreatment(updateTreatment);
-				}
-				// update esr information
-				if (esrType == EsrType.esr9 && request.getPayload().getBody().getEsrQR() != null) {
-					request.getPayload().getBody().setEsrQR(null);
-					request.getPayload().getBody().setEsr9(getEsr9(invoice));
-				} else if (esrType == EsrType.esrQR && request.getPayload().getBody().getEsr9() != null) {
-					request.getPayload().getBody().setEsrQR(getEsrQR(invoice));
-					request.getPayload().getBody().setEsr9(null);
-				}
-				if (request.getPayload().getBody().getTiersGarant() != null
-						&& invoice.getCoverage().getPatient() != null) {
-					// TG contacts
-					// update patient information
-					PatientAddressType updatePatient = getPatient(invoice);
-					if (updatePatient != null) {
-						request.getPayload().getBody().getTiersGarant().setPatient(updatePatient);
+				// do not update esr, balance and contacts on storno
+				if (type != TYPE.STORNO) {
+					// update treatment
+					TreatmentType updateTreatment = getTreatment(invoice);
+					if (updateTreatment != null) {
+						request.getPayload().getBody().setTreatment(updateTreatment);
 					}
-					// update guarantor information
-					GuarantorAddressType updateGuarantor = getGuarantor(invoice);
-					if (updateGuarantor != null) {
-						request.getPayload().getBody().getTiersGarant().setGuarantor(updateGuarantor);
+					// update esr information
+					if (esrType == EsrType.esr9 && request.getPayload().getBody().getEsrQR() != null) {
+						request.getPayload().getBody().setEsrQR(null);
+						request.getPayload().getBody().setEsr9(getEsr9(invoice));
+					} else if (esrType == EsrType.esrQR && request.getPayload().getBody().getEsr9() != null) {
+						request.getPayload().getBody().setEsrQR(getEsrQR(invoice));
+						request.getPayload().getBody().setEsr9(null);
 					}
-					// update insurance information
-					InsuranceAddressType updateInsurance = getInsurance(invoice);
-					if (updateInsurance != null) {
-						request.getPayload().getBody().getTiersGarant().setInsurance(updateInsurance);
-					}
-					// update provider information
-					ProviderAddressType updateProvider = getProvider(invoice);
-					if (updateProvider != null) {
-						request.getPayload().getBody().getTiersGarant().setProvider(updateProvider);
-					}
-					// update biller information
-					BillerAddressType updateBiller = getBiller(invoice);
-					if (updateBiller != null) {
-						request.getPayload().getBody().getTiersGarant().setBiller(updateBiller);
-					}
-					// update creditor information
-					EsrAddressType creditor = getEsrCreditor(invoice);
-					if (creditor != null) {
-						if (request.getPayload().getBody().getEsrQR() != null) {
-							request.getPayload().getBody().getEsrQR().setCreditor(creditor);
-						} else if (request.getPayload().getBody().getEsr9() != null) {
-							request.getPayload().getBody().getEsr9().setCreditor(creditor);
+					if (request.getPayload().getBody().getTiersGarant() != null
+							&& invoice.getCoverage().getPatient() != null) {
+						// TG contacts
+						// update patient information
+						PatientAddressType updatePatient = getPatient(invoice);
+						if (updatePatient != null) {
+							request.getPayload().getBody().getTiersGarant().setPatient(updatePatient);
+						}
+						// update guarantor information
+						GuarantorAddressType updateGuarantor = getGuarantor(invoice);
+						if (updateGuarantor != null) {
+							request.getPayload().getBody().getTiersGarant().setGuarantor(updateGuarantor);
+						}
+						// update insurance information
+						InsuranceAddressType updateInsurance = getInsurance(invoice);
+						if (updateInsurance != null) {
+							request.getPayload().getBody().getTiersGarant().setInsurance(updateInsurance);
+						}
+						// update provider information
+						ProviderAddressType updateProvider = getProvider(invoice);
+						if (updateProvider != null) {
+							request.getPayload().getBody().getTiersGarant().setProvider(updateProvider);
+						}
+						// update biller information
+						BillerAddressType updateBiller = getBiller(invoice);
+						if (updateBiller != null) {
+							request.getPayload().getBody().getTiersGarant().setBiller(updateBiller);
+						}
+						// update creditor information
+						EsrAddressType creditor = getEsrCreditor(invoice);
+						if (creditor != null) {
+							if (request.getPayload().getBody().getEsrQR() != null) {
+								request.getPayload().getBody().getEsrQR().setCreditor(creditor);
+							} else if (request.getPayload().getBody().getEsr9() != null) {
+								request.getPayload().getBody().getEsr9().setCreditor(creditor);
+							}
+						}
+					} else if (request.getPayload().getBody().getTiersPayant() != null
+							&& invoice.getCoverage().getPatient() != null) {
+						// TP contacts
+						// update patient information
+						PatientAddressType updatePatient = getPatient(invoice);
+						if (updatePatient != null) {
+							request.getPayload().getBody().getTiersPayant().setPatient(updatePatient);
+						}
+						// update guarantor information
+						GuarantorAddressType updateGuarantor = getGuarantor(invoice);
+						if (updateGuarantor != null) {
+							request.getPayload().getBody().getTiersPayant().setGuarantor(updateGuarantor);
+						}
+						// update insurance information
+						InsuranceAddressType updateInsurance = getInsurance(invoice);
+						if (updateInsurance != null) {
+							request.getPayload().getBody().getTiersPayant().setInsurance(updateInsurance);
+						}
+						// update provider information
+						ProviderAddressType updateProvider = getProvider(invoice);
+						if (updateProvider != null) {
+							request.getPayload().getBody().getTiersPayant().setProvider(updateProvider);
+						}
+						// update biller information
+						BillerAddressType updateBiller = getBiller(invoice);
+						if (updateBiller != null) {
+							request.getPayload().getBody().getTiersPayant().setBiller(updateBiller);
+						}
+						// update creditor information
+						EsrAddressType creditor = getEsrCreditor(invoice);
+						if (creditor != null) {
+							if (request.getPayload().getBody().getEsrQR() != null) {
+								request.getPayload().getBody().getEsrQR().setCreditor(creditor);
+							} else if (request.getPayload().getBody().getEsr9() != null) {
+								request.getPayload().getBody().getEsr9().setCreditor(creditor);
+							}
 						}
 					}
-				} else if (request.getPayload().getBody().getTiersPayant() != null
-						&& invoice.getCoverage().getPatient() != null) {
-					// TP contacts
-					// update patient information
-					PatientAddressType updatePatient = getPatient(invoice);
-					if (updatePatient != null) {
-						request.getPayload().getBody().getTiersPayant().setPatient(updatePatient);
-					}
-					// update guarantor information
-					GuarantorAddressType updateGuarantor = getGuarantor(invoice);
-					if (updateGuarantor != null) {
-						request.getPayload().getBody().getTiersPayant().setGuarantor(updateGuarantor);
-					}
-					// update insurance information
-					InsuranceAddressType updateInsurance = getInsurance(invoice);
-					if (updateInsurance != null) {
-						request.getPayload().getBody().getTiersPayant().setInsurance(updateInsurance);
-					}
-					// update provider information
-					ProviderAddressType updateProvider = getProvider(invoice);
-					if (updateProvider != null) {
-						request.getPayload().getBody().getTiersPayant().setProvider(updateProvider);
-					}
-					// update biller information
-					BillerAddressType updateBiller = getBiller(invoice);
-					if (updateBiller != null) {
-						request.getPayload().getBody().getTiersPayant().setBiller(updateBiller);
-					}
-					// update creditor information
-					EsrAddressType creditor = getEsrCreditor(invoice);
-					if (creditor != null) {
-						if (request.getPayload().getBody().getEsrQR() != null) {
-							request.getPayload().getBody().getEsrQR().setCreditor(creditor);
-						} else if (request.getPayload().getBody().getEsr9() != null) {
-							request.getPayload().getBody().getEsr9().setCreditor(creditor);
+
+					Object updateBalance = getBalance(invoice);
+					if (request.getPayload().getBody().getTiersGarant() != null
+							&& updateBalance instanceof BalanceTGType) {
+						BalanceTGType balance = request.getPayload().getBody().getTiersGarant().getBalance();
+						if (((BalanceTGType) updateBalance).getAmountPrepaid() != balance.getAmountPrepaid()) {
+							request.getPayload().getBody().getTiersGarant().setBalance((BalanceTGType) updateBalance);
+						}
+					} else if (request.getPayload().getBody().getTiersPayant() != null
+							&& updateBalance instanceof BalanceTPType) {
+						BalanceTPType balance = request.getPayload().getBody().getTiersPayant().getBalance();
+						if (((BalanceTPType) updateBalance).getAmountDue() != balance.getAmountDue()) {
+							request.getPayload().getBody().getTiersPayant().setBalance((BalanceTPType) updateBalance);
 						}
 					}
 				}
-
-				Object updateBalance = getBalance(invoice);
-				if (request.getPayload().getBody().getTiersGarant() != null && updateBalance instanceof BalanceTGType) {
-					BalanceTGType balance = request.getPayload().getBody().getTiersGarant().getBalance();
-					if (((BalanceTGType) updateBalance).getAmountPrepaid() != balance.getAmountPrepaid()) {
-						request.getPayload().getBody().getTiersGarant().setBalance((BalanceTGType) updateBalance);
-					}
-				} else if (request.getPayload().getBody().getTiersPayant() != null
-						&& updateBalance instanceof BalanceTPType) {
-					BalanceTPType balance = request.getPayload().getBody().getTiersPayant().getBalance();
-					if (((BalanceTPType) updateBalance).getAmountDue() != balance.getAmountDue()) {
-						request.getPayload().getBody().getTiersPayant().setBalance((BalanceTPType) updateBalance);
-					}
-				}
-
 				// always update copy information
 				request.getPayload().setCopy(type.equals(IRnOutputter.TYPE.COPY));
 				// update balance for storno
@@ -1519,11 +1522,21 @@ public class Tarmed45Exporter {
 						balance.setAmountObligations(-Math.abs(balance.getAmountObligations()));
 						balance.setAmountDue(0.0);
 						balance.setAmountPrepaid(0.0);
+						balance.getVat().setVat(0.0);
+						balance.getVat().getVatRate().forEach(vr -> {
+							vr.setAmount(-Math.abs(vr.getAmount()));
+							vr.setVat(-Math.abs(vr.getVat()));
+						});
 					} else if (request.getPayload().getBody().getTiersPayant() != null) {
 						BalanceTPType balance = request.getPayload().getBody().getTiersPayant().getBalance();
 						balance.setAmount(-Math.abs(balance.getAmount()));
 						balance.setAmountObligations(-Math.abs(balance.getAmountObligations()));
 						balance.setAmountDue(0.0);
+						balance.getVat().setVat(0.0);
+						balance.getVat().getVatRate().forEach(vr -> {
+							vr.setAmount(-Math.abs(vr.getAmount()));
+							vr.setVat(-Math.abs(vr.getVat()));
+						});
 					}
 				}
 			}

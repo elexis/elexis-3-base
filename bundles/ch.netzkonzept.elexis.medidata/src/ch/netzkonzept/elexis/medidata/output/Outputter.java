@@ -24,11 +24,14 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.SWTHelper;
 
 import ch.elexis.data.Fall;
 import ch.elexis.data.Rechnung;
+import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.netzkonzept.elexis.medidata.config.MedidataPreferencePage;
 import ch.rgw.tools.Result;
 
@@ -108,6 +111,12 @@ public class Outputter extends XMLExporter {
 									.info(isTP ? "Bill " + rechnung.getNr() + "is of type Tiers Payant"
 											: "Bill " + rechnung.getNr() + "is of type Tiers Garant");
 							setPrintAtIntermediate(!isTP);
+							
+							IInvoice invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class)
+									.orElseThrow(() -> new IllegalStateException("Could not load invoice [" + rechnung.getId() + "]"));
+							invoice.getCoverage().setExtInfo(TarmedRequirements.INTERMEDIATE, preferenceStore.getString(getApplicationProperties().getProperty(EAN_IM_KEY)));
+							CoreModelServiceHolder.get().save(invoice.getCoverage());
+							
 							Document bill = doExport(rechnung, destinationPath, type, true);
 
 							LoggerFactory.getLogger(Outputter.class).info("Bill written to " + destinationPath);

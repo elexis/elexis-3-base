@@ -19,6 +19,7 @@ import java.util.Optional;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -982,7 +983,11 @@ public class Tarmed45Exporter {
 					byte[] encoded = Base64.getEncoder().encode(byteArray);
 
 					DocumentType document = new DocumentType();
-					document.setTitle(attachment.getTitle());
+					String title = attachment.getTitle();
+					if (title.length() > 35) {
+						title = (title.substring(0, 31) + "." + FilenameUtils.getExtension(attachment.getTitle()));
+					}
+					document.setTitle(title);
 					document.setFilename(attachment.getTitle());
 					document.setMimeType("application/pdf");
 					document.setBase64(encoded);

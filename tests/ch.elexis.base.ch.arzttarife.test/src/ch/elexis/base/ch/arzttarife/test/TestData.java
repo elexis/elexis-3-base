@@ -209,7 +209,7 @@ public class TestData {
 			IInvoice invoice = invoices.get(0);
 			IDocument document = CoreModelServiceHolder.get().create(IDocumentLetter.class);
 			document.setPatient(invoice.getCoverage().getPatient());
-			document.setTitle("testDocument");
+			document.setTitle("testDocument_longerThan_35Characters_Title.pdf");
 			document.setMimeType("application/pdf");
 
 			try (InputStream resourceAsStream = getClass().getClassLoader()

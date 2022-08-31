@@ -149,16 +149,6 @@ public class Outputter extends XMLExporter {
 		return result;
 	}
 
-	//@Override
-	//protected String getIntermediateEAN(final Fall fall) {
-	//	String retVal = preferenceStore.getString(getApplicationProperties().getProperty(EAN_IM_KEY));
-
-	//	if (retVal == null) {
-	//		retVal = super.getIntermediateEAN(fall);
-	//	}
-	//	return retVal;
-	//}
-
 	private void doJSONExport(final Rechnung rechnung, String toOrganisation, final String dest) {
 
 		StringBuffer jSONCOntent = new StringBuffer();

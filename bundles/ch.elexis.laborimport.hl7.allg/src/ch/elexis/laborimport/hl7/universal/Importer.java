@@ -19,7 +19,6 @@ import org.eclipse.jface.action.IAction;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.events.MessageEvent;
-import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.DefaultPersistenceHandler;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
@@ -70,15 +69,13 @@ public class Importer extends Action implements IAction {
 					File hl7file = new File(dir, fn);
 					r = mfParser.importFromFile(hl7file, new DefaultImportStrategyFactory().setMoveAfterImport(true)
 							.setLabContactResolver(new LinkLabContactResolver()), hlp, new DefaultPersistenceHandler());
+					if (r != null && !r.isOK()) {
+						err++;
+					}
 				}
 				if (err > 0) {
-					if (r != null) {
-						ResultAdapter.displayResult(r,
-								Integer.toString(err) + " von " + Integer.toString(files) + " Dateien hatten Fehler\n");
-					} else {
-						SWTHelper.showError("HL7 Import Fehler",
-								"Die Dateien aus dem Transferverzeichnis konnten nicht importiert werden.");
-					}
+					SWTHelper.showError("HL7 Import Fehler",
+							Integer.toString(err) + " von " + Integer.toString(files) + " Dateien hatten Fehler");
 				} else if (files == 0) {
 					SWTHelper.showInfo("Laborimport", "Es waren keine Dateien zum Import vorhanden");
 				} else {

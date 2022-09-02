@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -263,7 +264,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 						actMandant.setExtInfo(ta.RNBANK, StringUtils.EMPTY);
 						// clear data set with BankLister dialog
 						actMandant.setExtInfo(ta.ESRNUMBER, StringUtils.EMPTY);
-						actMandant.setExtInfo(ta.ESRSUB, Messages.RechnungsPrefs_13); // $NON-NLS-1$
+						actMandant.setExtInfo(ta.ESRSUB, StringUtils.EMPTY); // $NON-NLS-1$
 						actMandant.setExtInfo(Messages.RechnungsPrefs_department, StringUtils.EMPTY);
 						actMandant.setExtInfo(Messages.RechnungsPrefs_POBox, StringUtils.EMPTY);
 						actMandant.setExtInfo("IBAN", StringUtils.EMPTY);
@@ -679,6 +680,11 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 
 		@Override
 		protected void okPressed() {
+			if (StringUtils.isEmpty((String) actMandant.getExtInfo(ta.RNBANK))) {
+				MessageDialog.openWarning(getShell(), Messages.RechnungsPrefs_ChooseBank,
+						"Es wurde keine Finanzinstitut ausgewählt.");
+				return;
+			}
 			exTable.okPressed(actMandant);
 			setMandant(actMandant);
 			// transfer IBAN information

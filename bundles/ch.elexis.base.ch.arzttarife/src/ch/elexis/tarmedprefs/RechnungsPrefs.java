@@ -705,6 +705,11 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			super.okPressed();
 		}
 
+		@Override
+		protected void cancelPressed() {
+			setMandant(actMandant);
+			super.cancelPressed();
+		}
 	}
 
 	class PostDialog extends TitleAreaDialog {
@@ -740,6 +745,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			setMandant(actMandant);
 			super.okPressed();
 		}
+
+		@Override
+		protected void cancelPressed() {
+			setMandant(actMandant);
+			super.cancelPressed();
+		}
 	}
 
 	void setMandant(IMandator m) {
@@ -753,11 +764,15 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		if (actBank != null) {
 			tPost.setText(StringUtils.EMPTY);
 			tBank.setText(actBank.getLabel());
+
+			hBank.setEnabled(true);
+			hPost.setEnabled(false);
 		} else {
 			tPost.setText(StringUtils.defaultString((String) actMandant.getExtInfo(ta.ESRNUMBER)));
 			tBank.setText(StringUtils.EMPTY);
 
-			actBank = null;
+			hBank.setEnabled(false);
+			hPost.setEnabled(true);
 		}
 		bPost.setSelection(actBank == null);
 		bBank.setSelection(actBank != null);

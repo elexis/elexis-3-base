@@ -1588,6 +1588,18 @@ public class Tarmed45Exporter {
 		}
 	}
 
+	public void removeReminderEntry(RequestType request) {
+		if (request.getPayload() != null && request.getPayload().getReminder() != null) {
+			request.getPayload().setReminder(null);
+			request.getPayload().setType("invoice");
+		}
+	}
+
+	public boolean isReminder(RequestType request) {
+		return request.getPayload() != null && (request.getPayload().getReminder() != null
+				|| "reminder".equalsIgnoreCase(request.getPayload().getType()));
+	}
+
 	private void negate(ServicesType services) {
 		if (services != null) {
 			services.getServiceExOrService().forEach(s -> {

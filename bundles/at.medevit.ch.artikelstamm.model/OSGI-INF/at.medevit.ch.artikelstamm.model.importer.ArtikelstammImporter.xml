@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.ch.artikelstamm.model.importer.ArtikelstammImporter">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" activate="activate" name="at.medevit.ch.artikelstamm.model.importer.ArtikelstammImporter">
    <property name="referenceDataId" value="artikelstamm_v5"/>
    <service>
       <provide interface="ch.elexis.core.interfaces.IReferenceDataImporter"/>
    </service>
+   <reference cardinality="1..1" field="elexisEntityManager" interface="ch.elexis.core.services.IElexisEntityManager" name="elexisEntityManager"/>
    <implementation class="at.medevit.ch.artikelstamm.model.importer.ArtikelstammImporter"/>
 </scr:component>

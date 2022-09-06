@@ -8,12 +8,18 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 
-import at.medevit.ch.artikelstamm.model.service.EntityManagerHolder;
+import ch.elexis.core.services.IElexisEntityManager;
 
 public class EntityUtil {
 
-	public static void save(List<Object> saveObject) {
-		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
+	private IElexisEntityManager entityManager;
+
+	public EntityUtil(IElexisEntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+
+	public void save(List<Object> saveObject) {
+		EntityManager em = (EntityManager) entityManager.getEntityManager();
 		try {
 			em.getTransaction().begin();
 			for (Object object : saveObject) {
@@ -25,8 +31,8 @@ public class EntityUtil {
 		}
 	}
 
-	public static <T> T load(String id, Class<T> clazz) {
-		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
+	public <T> T load(String id, Class<T> clazz) {
+		EntityManager em = (EntityManager) entityManager.getEntityManager();
 		try {
 			return em.find(clazz, id);
 		} finally {
@@ -34,8 +40,8 @@ public class EntityUtil {
 		}
 	}
 
-	public static <T> List<T> loadAll(Class<T> clazz) {
-		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
+	public <T> List<T> loadAll(Class<T> clazz) {
+		EntityManager em = (EntityManager) entityManager.getEntityManager();
 		try {
 			CriteriaQuery<T> criteria = em.getCriteriaBuilder().createQuery(clazz);
 			criteria.select(criteria.from(clazz));
@@ -45,8 +51,8 @@ public class EntityUtil {
 		}
 	}
 
-	public static <T> List<T> loadByNamedQuery(Map<String, String> propertyMap, Class<T> clazz) {
-		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
+	public <T> List<T> loadByNamedQuery(Map<String, String> propertyMap, Class<T> clazz) {
+		EntityManager em = (EntityManager) entityManager.getEntityManager();
 		try {
 			StringBuilder queryName = new StringBuilder();
 			queryName.append(clazz.getSimpleName());
@@ -63,8 +69,8 @@ public class EntityUtil {
 		}
 	}
 
-	public static int executeUpdate(String string) {
-		EntityManager em = (EntityManager) EntityManagerHolder.get().getEntityManager();
+	public int executeUpdate(String string) {
+		EntityManager em = (EntityManager) entityManager.getEntityManager();
 		try {
 			em.getTransaction().begin();
 			Query query = em.createQuery(string);

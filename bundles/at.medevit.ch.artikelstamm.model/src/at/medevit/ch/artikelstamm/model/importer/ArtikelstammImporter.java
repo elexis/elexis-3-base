@@ -10,7 +10,6 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.model.importer;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -24,12 +23,15 @@ import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -38,13 +40,13 @@ import at.medevit.ch.artikelstamm.ARTIKELSTAMM;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.ITEMS.ITEM;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.LIMITATIONS.LIMITATION;
 import at.medevit.ch.artikelstamm.ARTIKELSTAMM.PRODUCTS.PRODUCT;
+import at.medevit.ch.artikelstamm.ATCCodeCacheService;
 import at.medevit.ch.artikelstamm.ArtikelstammConstants.TYPE;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
 import at.medevit.ch.artikelstamm.BlackBoxReason;
 import at.medevit.ch.artikelstamm.DATASOURCEType;
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.SALECDType;
-import at.medevit.ch.artikelstamm.model.service.ATCCodeCache;
 import at.medevit.ch.artikelstamm.model.service.ModelServiceHolder;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.StringConstants;
@@ -53,7 +55,9 @@ import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.jpa.entities.ArtikelstammItem;
 import ch.elexis.core.jpa.model.util.JpaModelUtil;
+import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.utils.OsgiServiceUtil;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=artikelstamm_v5")
 public class ArtikelstammImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
@@ -63,13 +67,23 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 	private static Map<String, LIMITATION> limitations = new HashMap<String, LIMITATION>();
 	private static boolean isOddb2xml = false;
 
+	@Reference
+	private IElexisEntityManager elexisEntityManager;
+
+	private VersionUtil versionUtil;
+
+	@Activate
+	public void activate() {
+		versionUtil = new VersionUtil(elexisEntityManager);
+	}
+
 	@Override
 	public boolean isEnabled() {
 		// Queried by RDUS: This importer is only enabled if the existing data-set is
 		// oddb2xml
 		// or if the data-set is empty
 		try {
-			DATASOURCEType datasourceType = VersionUtil.getDatasourceType();
+			DATASOURCEType datasourceType = versionUtil.getDatasourceType();
 			return Objects.equals(DATASOURCEType.ODDB_2_XML, datasourceType);
 		} catch (IllegalArgumentException iae) {
 			// empty data-set
@@ -101,6 +115,8 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 	public IStatus performImport(IProgressMonitor monitor, InputStream input, boolean bPharma, boolean bNonPharma,
 			@Nullable Integer newVersion) {
 
+		EntityUtil entityUtil = new EntityUtil(elexisEntityManager);
+
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		String bundleVersion = Platform.getBundle("at.medevit.ch.artikelstamm.model").getVersion().toString(); //$NON-NLS-1$
 
@@ -124,7 +140,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		}
 
 		try {
-			DATASOURCEType datasourceType = VersionUtil.getDatasourceType();
+			DATASOURCEType datasourceType = versionUtil.getDatasourceType();
 			String message = "Trying to import dataset sourced [" + importStamm.getDATASOURCE().value() //$NON-NLS-1$
 					+ "] while existent database is sourced [" + datasourceType.value() //$NON-NLS-1$
 					+ "]. Please contact support. Exiting."; //$NON-NLS-1$
@@ -133,10 +149,10 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 				return new Status(Status.ERROR, "at.medevit.ch.artikelstamm.model.importer", message); //$NON-NLS-1$
 			}
 		} catch (IllegalArgumentException iae) {
-			VersionUtil.setDataSourceType(importStamm.getDATASOURCE());
+			versionUtil.setDataSourceType(importStamm.getDATASOURCE());
 		}
 
-		int currentVersion = VersionUtil.getCurrentVersion();
+		int currentVersion = versionUtil.getCurrentVersion();
 
 		log.info("[PI] Aktualisiere{}{} {} vom {} von v{} auf v{}. Importer-Version {}", //$NON-NLS-1$
 				bPharma ? " Pharma" : StringUtils.EMPTY, bNonPharma ? " NonPharma" : StringUtils.EMPTY, //$NON-NLS-1$ //$NON-NLS-2$
@@ -164,13 +180,13 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		subMonitor.subTask("Importiere Artikel");
 		updateOrAddItems(newVersion, importStamm, bPharma, bNonPharma, subMonitor.split(50));
 
-		EntityUtil.executeUpdate("UPDATE ArtikelstammItem ai SET ai.ldscr=LOWER(ai.dscr)"); //$NON-NLS-1$
+		entityUtil.executeUpdate("UPDATE ArtikelstammItem ai SET ai.ldscr=LOWER(ai.dscr)"); //$NON-NLS-1$
 
 		// update the version number for type importStammType
 		subMonitor.setTaskName("Setze neue Versionsnummer");
 
-		VersionUtil.setCurrentVersion(newVersion);
-		VersionUtil.setImportSetCreationDate(importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime());
+		versionUtil.setCurrentVersion(newVersion);
+		versionUtil.setImportSetCreationDate(importStamm.getCREATIONDATETIME().toGregorianCalendar().getTime());
 
 		subMonitor.worked(5);
 		long endTime = System.currentTimeMillis();
@@ -180,10 +196,16 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 		log.info("[PI] Artikelstamm import took " + ((endTime - startTime) / 1000) //$NON-NLS-1$
 				+ "sec.Used {} {} version {}. . Importer-Version {}. Will rebuild ATCCodeCache", //$NON-NLS-1$
-				VersionUtil.getDatasourceType().toString(), VersionUtil.getImportSetCreationDate(), newVersion,
+				versionUtil.getDatasourceType().toString(), versionUtil.getImportSetCreationDate(), newVersion,
 				bundleVersion);
 
-		ATCCodeCache.rebuildCache(subMonitor.split(2));
+		ATCCodeCacheService atcCodeCacheService = OsgiServiceUtil.getService(ATCCodeCacheService.class).orElse(null);
+		if (atcCodeCacheService != null) {
+			atcCodeCacheService.rebuildCache(SubMonitor.convert(subMonitor, 1));
+		} else {
+			log.error("atcCodeService not available, not rebuilding cache!");
+		}
+
 		log.info("[PI] Artikelstamm finished rebuilding ATCCodeCache"); //$NON-NLS-1$
 
 		return Status.OK_STATUS;
@@ -214,8 +236,10 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 	 * @param importStamm
 	 * @param monitor
 	 */
-	private static void updateOrAddProducts(int newVersion, ARTIKELSTAMM importStamm, IProgressMonitor monitor) {
+	private void updateOrAddProducts(int newVersion, ARTIKELSTAMM importStamm, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
+
+		EntityUtil entityUtil = new EntityUtil(elexisEntityManager);
 
 		List<PRODUCT> importProductList = importStamm.getPRODUCTS().getPRODUCT();
 		subMonitor.beginTask("Importiere " + importProductList.size() + " Produkte", importProductList.size());
@@ -225,7 +249,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		for (PRODUCT product : importProductList) {
 			String prodno = product.getPRODNO();
 
-			ArtikelstammItem foundProduct = EntityUtil.load(prodno, ArtikelstammItem.class);
+			ArtikelstammItem foundProduct = entityUtil.load(prodno, ArtikelstammItem.class);
 			if (foundProduct == null) {
 				String trimmedDscr = trimDSCR(product.getDSCR(), product.getPRODNO());
 				foundProduct = new ArtikelstammItem();
@@ -244,13 +268,13 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 			// save in batches
 			if (products.size() == 50) {
-				EntityUtil.save(products);
+				entityUtil.save(products);
 				products.clear();
 			}
 
 			subMonitor.worked(1);
 		}
-		EntityUtil.save(products);
+		entityUtil.save(products);
 		subMonitor.done();
 	}
 
@@ -270,9 +294,11 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		ai.setDscr(trimDSCR(product.getDSCR(), product.getPRODNO()));
 	}
 
-	private static void updateOrAddItems(int newVersion, ARTIKELSTAMM importStamm, boolean bPharma, boolean bNonPharma,
+	private void updateOrAddItems(int newVersion, ARTIKELSTAMM importStamm, boolean bPharma, boolean bNonPharma,
 			IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
+
+		EntityUtil entityUtil = new EntityUtil(elexisEntityManager);
 
 		List<ITEM> importItemList = importStamm.getITEMS().getITEM();
 		subMonitor.beginTask("Importiere " + importItemList.size() + " items", importItemList.size());
@@ -281,7 +307,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 		List<Object> foundItems = new ArrayList<>();
 		for (ITEM item : importItemList) {
 			ArtikelstammItem foundItem = null;
-			List<ArtikelstammItem> result = EntityUtil
+			List<ArtikelstammItem> result = entityUtil
 					.loadByNamedQuery(Collections.singletonMap("gtin", item.getGTIN()), ArtikelstammItem.class); //$NON-NLS-1$
 			if (result.size() > 0) {
 				if (result.size() == 1) {
@@ -348,11 +374,11 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 			}
 			// save in batches
 			if (foundItems.size() == 100) {
-				EntityUtil.save(foundItems);
+				entityUtil.save(foundItems);
 				foundItems.clear();
 			}
 		}
-		EntityUtil.save(foundItems);
+		entityUtil.save(foundItems);
 		subMonitor.done();
 	}
 
@@ -483,7 +509,7 @@ public class ArtikelstammImporter extends AbstractReferenceDataImporter implemen
 
 	@Override
 	public int getCurrentVersion() {
-		return VersionUtil.getCurrentVersion();
+		return versionUtil.getCurrentVersion();
 	}
 
 	private static void setExtInfo(Object key, Object value, ArtikelstammItem item) {

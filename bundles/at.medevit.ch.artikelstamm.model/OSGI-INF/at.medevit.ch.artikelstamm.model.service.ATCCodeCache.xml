@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="at.medevit.ch.artikelstamm.model.service.ATCCodeCache">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="at.medevit.ch.artikelstamm.model.service.ATCCodeCache">
    <service>
       <provide interface="at.medevit.ch.artikelstamm.ATCCodeCacheService"/>
    </service>
+   <reference cardinality="1..1" field="atcCodeService" interface="at.medevit.atc_codes.ATCCodeService" name="atcCodeService"/>
+   <reference cardinality="1..1" field="elexisEntityManager" interface="ch.elexis.core.services.IElexisEntityManager" name="elexisEntityManager"/>
    <implementation class="at.medevit.ch.artikelstamm.model.service.ATCCodeCache"/>
 </scr:component>

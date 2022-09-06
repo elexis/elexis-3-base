@@ -13,9 +13,12 @@ package at.medevit.atc_codes;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.elexis.core.jdt.Nullable;
-import at.medevit.atc_codes.internal.ATCCodes;
+import org.osgi.service.component.annotations.Component;
 
+import at.medevit.atc_codes.internal.ATCCodes;
+import ch.elexis.core.jdt.Nullable;
+
+@Component
 public class ATCCodeServiceImpl implements ATCCodeService {
 
 	@Override

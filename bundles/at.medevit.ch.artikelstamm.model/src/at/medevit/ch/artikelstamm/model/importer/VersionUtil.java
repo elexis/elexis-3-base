@@ -8,31 +8,41 @@ import java.util.Date;
 
 import at.medevit.ch.artikelstamm.DATASOURCEType;
 import ch.elexis.core.jpa.entities.ArtikelstammItem;
+import ch.elexis.core.services.IElexisEntityManager;
 
 public class VersionUtil {
 	private static DateFormat df = new SimpleDateFormat("ddMMyy HH:mm"); //$NON-NLS-1$
 	private static final String VERSION_ENTRY_ID = "VERSION"; //$NON-NLS-1$
+	private IElexisEntityManager elexisEntityManager;
 
-	public static DATASOURCEType getDatasourceType() {
-		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
+	public VersionUtil(IElexisEntityManager elexisEntityManager) {
+		this.elexisEntityManager = elexisEntityManager;
+	}
+
+	public DATASOURCEType getDatasourceType() {
+
+		ArtikelstammItem versionEntry = new EntityUtil(elexisEntityManager).load(VERSION_ENTRY_ID,
+				ArtikelstammItem.class);
 		if (versionEntry != null) {
 			return DATASOURCEType.fromValue(versionEntry.getAdddscr());
 		}
 		throw new IllegalArgumentException("No Version entry"); //$NON-NLS-1$
 	}
 
-	public static void setDataSourceType(DATASOURCEType datasource) {
-		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
+	public void setDataSourceType(DATASOURCEType datasource) {
+		ArtikelstammItem versionEntry = new EntityUtil(elexisEntityManager).load(VERSION_ENTRY_ID,
+				ArtikelstammItem.class);
 		if (versionEntry != null) {
 			versionEntry.setAdddscr(datasource.value());
-			EntityUtil.save(Collections.singletonList(versionEntry));
+			new EntityUtil(elexisEntityManager).save(Collections.singletonList(versionEntry));
 			return;
 		}
 		throw new IllegalArgumentException("No Version entry"); //$NON-NLS-1$
 	}
 
-	public static int getCurrentVersion() {
-		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
+	public int getCurrentVersion() {
+		ArtikelstammItem versionEntry = new EntityUtil(elexisEntityManager).load(VERSION_ENTRY_ID,
+				ArtikelstammItem.class);
 		if (versionEntry != null) {
 			String ppub = versionEntry.getPpub();
 			try {
@@ -44,28 +54,31 @@ public class VersionUtil {
 		return 0;
 	}
 
-	public static void setCurrentVersion(int newVersion) {
-		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
+	public void setCurrentVersion(int newVersion) {
+		ArtikelstammItem versionEntry = new EntityUtil(elexisEntityManager).load(VERSION_ENTRY_ID,
+				ArtikelstammItem.class);
 		if (versionEntry != null) {
 			versionEntry.setPpub(Integer.toString(newVersion));
-			EntityUtil.save(Collections.singletonList(versionEntry));
+			new EntityUtil(elexisEntityManager).save(Collections.singletonList(versionEntry));
 			return;
 		}
 		throw new IllegalArgumentException("No Version entry"); //$NON-NLS-1$
 	}
 
-	public static void setImportSetCreationDate(Date time) {
-		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
+	public void setImportSetCreationDate(Date time) {
+		ArtikelstammItem versionEntry = new EntityUtil(elexisEntityManager).load(VERSION_ENTRY_ID,
+				ArtikelstammItem.class);
 		if (versionEntry != null) {
 			versionEntry.setDscr(df.format(time.getTime()));
-			EntityUtil.save(Collections.singletonList(versionEntry));
+			new EntityUtil(elexisEntityManager).save(Collections.singletonList(versionEntry));
 			return;
 		}
 		throw new IllegalArgumentException("No Version entry"); //$NON-NLS-1$
 	}
 
-	public static Date getImportSetCreationDate() {
-		ArtikelstammItem versionEntry = EntityUtil.load(VERSION_ENTRY_ID, ArtikelstammItem.class);
+	public Date getImportSetCreationDate() {
+		ArtikelstammItem versionEntry = new EntityUtil(elexisEntityManager).load(VERSION_ENTRY_ID,
+				ArtikelstammItem.class);
 		if (versionEntry != null) {
 			String value = versionEntry.getDscr();
 			try {

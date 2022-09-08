@@ -52,8 +52,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 	private TabFolder tabFolder;
 
-//	private ITaskDescriptor taskDescriptor;
-
 	private TabItem t40Settings;
 	private TabItem t44Settings;
 	private TabItem mailConfig;

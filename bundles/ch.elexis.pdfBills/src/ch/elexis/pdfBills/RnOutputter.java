@@ -112,11 +112,6 @@ public class RnOutputter implements IRnOutputter {
 	public static final String CFG_MSGTEXT_TG_M2 = CFG_ROOT + "pdf.txt.M2tg"; //$NON-NLS-1$
 	public static final String CFG_MSGTEXT_TG_M3 = CFG_ROOT + "pdf.txt.M3tg"; //$NON-NLS-1$
 
-	public static String TG_MESSAGE[] = { RnOutputter.CFG_MSGTEXT_TG_M0, RnOutputter.CFG_MSGTEXT_TG_M1,
-			RnOutputter.CFG_MSGTEXT_TG_M2, RnOutputter.CFG_MSGTEXT_TG_M3 };
-	public static String TP_MESSAGE[] = { RnOutputter.CFG_MSGTEXT_TP_M0, RnOutputter.CFG_MSGTEXT_TP_M1,
-			RnOutputter.CFG_MSGTEXT_TP_M2, RnOutputter.CFG_MSGTEXT_TP_M3 };
-
 	private Text tXml;
 	private Text tPdf;
 

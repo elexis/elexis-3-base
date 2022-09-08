@@ -153,8 +153,7 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 							continue;
 						}
 						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT_PRIVAT) + File.separator
-								+ invoice.getNumber()
-								+ ".xml"; //$NON-NLS-1$
+								+ invoice.getNumber() + ".xml"; //$NON-NLS-1$
 						try {
 							FileOutputStream fout = new FileOutputStream(fname);
 							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8"); //$NON-NLS-1$

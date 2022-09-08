@@ -12,6 +12,7 @@
 package ch.elexis.archie.wzw;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -218,7 +219,8 @@ public class PatientenHitlist extends BaseStats {
 
 		PatientStat(IPatient pat) {
 			PatientID = pat.getId();
-			birthDate = new TimeTool(pat.getDateOfBirth());
+			birthDate = pat.getDateOfBirth() != null ? new TimeTool(pat.getDateOfBirth())
+					: new TimeTool(LocalDateTime.of(1900, 1, 1, 0, 0));
 			sex = pat.getGender();
 			numCons = 0;
 			numVisits = 0;

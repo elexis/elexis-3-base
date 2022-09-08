@@ -9,6 +9,7 @@
 	<xsl:param name="eanList" select="''" />
 	<xsl:param name="headerLine1" select="''" />
 	<xsl:param name="headerLine2" select="''" />
+	<xsl:param name="messageText" select="''" />
 	<xsl:param name="qrJpeg" select="''" />
 	<xsl:param name="guarantorPostal" select="''" />
 	<xsl:param name="couvertLeft" select="''" />
@@ -182,11 +183,7 @@
 									<fo:table-row>
 										<fo:table-cell>
 											<fo:block>
-												Bitte senden Sie den beiliegenden
-												Rückerstattungs-Beleg an Ihre Krankenkasse und begleichen
-												Sie
-												diese Rechnung innert 30 Tagen mit untenstehendem
-												Einzahlungsschein.
+											<xsl:value-of select="$messageText" />
 											</fo:block>
 										</fo:table-cell>
 									</fo:table-row>

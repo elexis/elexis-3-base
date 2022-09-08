@@ -65,6 +65,7 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Rechnung;
 import ch.elexis.ebanking.qr.QRBillDataBuilder;
@@ -204,6 +205,8 @@ public class ElexisPDFGenerator {
 					parameters.put("besrMarginHorizontal", besrMarginHorizontal); //$NON-NLS-1$
 					parameters.put("headerLine1", getConfigValue(RnOutputter.CFG_ESR_HEADER_1, StringUtils.SPACE)); //$NON-NLS-1$
 					parameters.put("headerLine2", getConfigValue(RnOutputter.CFG_ESR_HEADER_2, StringUtils.SPACE)); //$NON-NLS-1$
+					parameters.put("messageText", //$NON-NLS-1$
+							getConfigValue(RnOutputter.CFG_MSGTEXT_TEMP, getMessagePDFText(invoiceState)));
 					parameters.put("eanList", eanList); //$NON-NLS-1$
 					parameters.put("vatList", vatList); //$NON-NLS-1$
 					parameters.put("amountTotal", XMLTool.moneyToXmlDouble(mTotal)); //$NON-NLS-1$
@@ -256,6 +259,87 @@ public class ElexisPDFGenerator {
 			LoggerFactory.getLogger(getClass()).error("Error outputting bill", e); //$NON-NLS-1$
 			throw new IllegalStateException("Error outputting bill", e); //$NON-NLS-1$
 		}
+	}
+
+	private String getMessagePDFText(final InvoiceState invoiceState) {
+		String billMsg = "";
+		String invStateTxt = rechnung.getInvoiceState().toString();
+		ch.elexis.data.Fall.Tiers tiers = rechnung.getFall().getTiersType();
+		
+		switch (invoiceState) {
+		case UNKNOWN:
+		case IN_EXECUTION:
+		case STOP_LEGAL_PROCEEDING:
+		case OWING:
+		case PARTIAL_LOSS:
+		case TOTAL_LOSS:
+		case NOT_BILLED:
+		case ONGOING:
+		case TO_PRINT:
+		case NOT_FROM_YOU:
+		case NOT_FROM_TODAY:
+		case FROM_TODAY:
+		case EXCESSIVE_PAYMENT:
+		case REJECTED:
+		case BILLED:
+		case PARTIAL_PAYMENT:
+		case PAID:
+		case OPEN_AND_PRINTED:
+		case OPEN:
+			if (tiers == Fall.Tiers.GARANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M0, invStateTxt);
+			} else if (tiers == Fall.Tiers.PAYANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M0, invStateTxt);
+			}
+			break;
+		case DEMAND_NOTE_1:
+			if (tiers == Fall.Tiers.GARANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M1, invStateTxt);
+			} else if (tiers == Fall.Tiers.PAYANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M1, invStateTxt);
+			}
+			break;
+		case DEMAND_NOTE_2:
+			if (tiers == Fall.Tiers.GARANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M2, invStateTxt);
+			} else if (tiers == Fall.Tiers.PAYANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M2, invStateTxt);
+			}
+			break;
+		case DEMAND_NOTE_3:
+			if (tiers == Fall.Tiers.GARANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M3, invStateTxt);
+			} else if (tiers == Fall.Tiers.PAYANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M3, invStateTxt);
+			}
+			break;
+		case DEMAND_NOTE_1_PRINTED:
+			if (tiers == Fall.Tiers.GARANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M1, invStateTxt);
+			} else if (tiers == Fall.Tiers.PAYANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M1, invStateTxt);
+			}
+			break;
+		case DEMAND_NOTE_2_PRINTED:
+			if (tiers == Fall.Tiers.GARANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M2, invStateTxt);
+			} else if (tiers == Fall.Tiers.PAYANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M2, invStateTxt);
+			}
+			break;
+		case DEMAND_NOTE_3_PRINTED:
+			if (tiers == Fall.Tiers.GARANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M3, invStateTxt);
+			} else if (tiers == Fall.Tiers.PAYANT) {
+				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M3, invStateTxt);
+			}
+			break;
+		default:
+			LoggerFactory.getLogger(getClass()).error("unknown state: " + invoiceState.toString());
+			break;
+		}
+
+		return billMsg;
 	}
 
 	private String getInsuranceLine(IInvoice invoice) {

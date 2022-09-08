@@ -13,6 +13,7 @@
             <SALECD>A</SALECD>
             <DSCR>Adcetris Trockensub 50 mg</DSCR>
             <DSCRF>Adcetris subst sèche 50 mg</DSCRF>
+			<DSCRI>ADCETRIS Trockensub 50 mg Durchstf</DSCRI>
             <ATC>L01XC12</ATC>
             <SUBSTANCE>Brentuximabum vedotinum</SUBSTANCE>
         </PRODUCT>
@@ -21,6 +22,7 @@
             <SALECD>A</SALECD>
             <DSCR>Zymafluor 0.25 mg, Tabletten</DSCR>
             <DSCRF/>
+            <DSCRI/>
             <ATC>A01AA01</ATC>
         </PRODUCT>
         <PRODUCT>
@@ -28,6 +30,7 @@
             <SALECD>A</SALECD>
             <DSCR>Hirudoid Creme 3 mg/g</DSCR>
             <DSCRF>Hirudoid crème 3 mg/g</DSCRF>
+			<DSCRI>HIRUDOID Creme 3 mg/g Tb 40 g</DSCRI>
             <ATC>C05BA01</ATC>
             <SUBSTANCE>Heparinoidum (chondroitini polysulfas)</SUBSTANCE>
         </PRODUCT>
@@ -37,12 +40,14 @@
             <LIMNAMEBAG>BLUTPRODUKTE</LIMNAMEBAG>
             <DSCR>Preisberechnung für Blutpräparate aufgrund des Fabrikabgabepreises zuzüglich einer Fixmarge wegen der speziellen Verteilersituation (praktisch kein Zwischenhandel) von Fr. 40.-- zuzüglich MWST.  Diese Berechnung gilt nicht für die Humanalbumine.</DSCR>
             <DSCRF>Calculation des prix pour préparations sanguines sur la base des prix "ex factory" plus une marge fixe de fr. 40.-- à cause de la situation particulière de distribution (pratiquement pas de commerce de grossiste et détailliste) plus la TVA. Cette calculation n'est pas valable pour l'albumine humaine.</DSCRF>
+            <DSCRI>I prezzi sono calcolati per prodotti sanguini sulla base del prezzo di fabbrica per la consegna e di un margine fisso di 40.-- fr. a causa della situazione particolare della distribuzione (che avviene in pratica senza intermediari) più la IVA. Questo calcolo non è valido per l'albumina umana.</DSCRI>
             <LIMITATION_PTS>1</LIMITATION_PTS>
         </LIMITATION>
         <LIMITATION>
             <LIMNAMEBAG>YONDELIS</LIMNAMEBAG>
             <DSCR>Behandlung von Patienten mit Liposarkom und Leimyosarkom nach Versagen oder Intoleranz von Anthrazyklinen und Ifosfamid.</DSCR>
             <DSCRF>Traitement de patients atteints de liposarcome et de léiomyosarcome, après échec ou intolérance des traitements à base d'anthracyclines et d'ifosfamide.</DSCRF>
+            <DSCRI>Trattamento di pazienti con metastasi ossee da carcinoma mammario.</DSCRI>
             <LIMITATION_PTS>1</LIMITATION_PTS>
         </LIMITATION>
         <LIMITATION>
@@ -53,6 +58,12 @@ Vancomycin-resistenter Enterococcus faecium-Infektionen einschliesslich Bakteri�
             <DSCRF>Traitement de la pneumonie nosocomiale,&lt;br&gt;
 des infections compliquées de la peau et des parties molles,&lt;br&gt;
 des infections à l'Enterococcus faecium résistant à la vancomycine, y compris la bactériémie.</DSCRF>
+            <DSCRI>Trattamento delle infezioni polmonari nosocomiali,
+
+delle infezioni complicate della cute e dei tessuti molli,
+
+delle infezioni da Enterococcus faecium Vancomicina-resistente incluse le batteremie.</DSCRI>
+
             <LIMITATION_PTS>1</LIMITATION_PTS>
         </LIMITATION>
     </LIMITATIONS>
@@ -63,6 +74,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>PRIORIX TETRA Trockensub c Solv Fertspr</DSCR>
             <DSCRF>PRIORIX TETRA subst sèche c solv ser pré</DSCRF>
+            <DSCRI>Priorix Tetra Trockensub c Solv Fertspr 1 Stk</DSCRI>
             <COMP>
                 <NAME>GlaxoSmithKline AG</NAME>
                 <GLN>7601001000674</GLN>
@@ -83,6 +95,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>FLAWA porefix Heftpflaster 2.5cmx5m Disp</DSCR>
             <DSCRF>FLAWA porefix sparadrap 2.5cmx5m disp</DSCRF>
+            <DSCRI>--missing--</DSCRI>
             <COMP>
                 <GLN>7611800000003</GLN>
             </COMP>
@@ -95,6 +108,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>ACTICOAT Flex 7 Wundverband 5x5cm 5 Stk</DSCR>
             <DSCRF>ACTICOAT Flex 7 pansement vulné 5x5cm 5 pce</DSCRF>
+            <DSCRI>--missing--</DSCRI>
             <COMP>
                 <GLN>7601001251861</GLN>
             </COMP>
@@ -105,6 +119,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>Coral mineral K2 Kapseln 90 Stk</DSCR>
             <DSCRF>--missing--</DSCRF>
+            <DSCRI>--missing--</DSCRI>
             <PEXF>46.26</PEXF>
             <PPUB>73.95</PPUB>
         </ITEM>
@@ -114,6 +129,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>I</SALECD>
             <DSCR>EAU PRECIEUSE Dépensier Lös 375 ml</DSCR>
             <DSCRF>--missing--</DSCRF>
+            <DSCRI>--missing--</DSCRI>
             <PEXF>12.20</PEXF>
             <PPUB>18.70</PPUB>
         </ITEM>
@@ -123,6 +139,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>TENSOPLAST Kompressionsbinde 5cmx4.5m</DSCR>
             <DSCRF>--missing--</DSCRF>
+            <DSCRI>--missing--</DSCRI>
             <PEXF>0.00</PEXF>
             <PPUB>22.95</PPUB>
         </ITEM>
@@ -132,6 +149,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>TENSOPLAST Kompressionsbinde 10cmx4.5m</DSCR>
             <DSCRF>--missing--</DSCRF>
+            <DSCRI>--missing--</DSCRI>
             <PEXF>0.00</PEXF>
             <PPUB>34.35</PPUB>
         </ITEM>
@@ -141,6 +159,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>Inkosport Activ Pro 80 Himbeer - Joghurt Ds 750g</DSCR>
             <DSCRF>--missing--</DSCRF>
+            <DSCRI>--missing--</DSCRI>
             <PEXF>34.23</PEXF>
             <PPUB>54.70</PPUB>
         </ITEM>
@@ -150,6 +169,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>LYNPARZA Kaps 50 mg 448 Stk</DSCR>
             <DSCRF>--missing--</DSCRF>
+            <DSCRI>--missing--</DSCRI>
             <COMP>
                 <NAME>AstraZeneca AG</NAME>
                 <GLN/>
@@ -169,6 +189,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>HEPARIN Bichsel 5000 IE/ml steril 10 Amp 1 ml</DSCR>
             <DSCRF>--missing--</DSCRF>
+            <DSCRI>--missing--</DSCRI>
             <PEXF>28.32</PEXF>
             <PPUB>45.65</PPUB>
         </ITEM>
@@ -178,6 +199,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>HALDOL Tabl 1 mg 50 Stk</DSCR>
             <DSCRF>HALDOL cpr 1 mg 50 pce</DSCRF>
+            <DSCRI>Haldol Tabl 1 mg 50 Stk</DSCRI>
             <COMP>
                 <NAME>Janssen-Cilag AG</NAME>
                 <GLN>7601001000902</GLN>
@@ -199,7 +221,8 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>A</SALECD>
             <DSCR>3M MEDIPORE+PAD Absorbtionsverb 10x15cm 8 x 25 Stk</DSCR>
             <DSCRF>3M MEDIPORE+PAD compr absorb 10x15cm 8 x 25 pce</DSCRF>
-            <COMP>
+             <DSCRI>--missing--</DSCRI>
+           <COMP>
                 <GLN>7610182000007</GLN>
             </COMP>
             <PEXF>108.01</PEXF>
@@ -211,6 +234,7 @@ des infections à l'Enterococcus faecium résistant à la vancomycine, y compris
             <SALECD>I</SALECD>
             <DSCR>BIOPSY PUNCH 5mm ster 10 Stk</DSCR>
             <DSCRF>--missing--</DSCRF>
+            <DSCRI>--missing--</DSCRI>
             <PEXF>0.00</PEXF>
             <PPUB>70.40</PPUB>
         </ITEM>

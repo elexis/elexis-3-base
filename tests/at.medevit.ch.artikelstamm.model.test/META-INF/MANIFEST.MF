@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Artikelstamm Model Test
 Bundle-SymbolicName: at.medevit.ch.artikelstamm.model.test
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.10.0.qualifier
 Bundle-Vendor: medevit.at
-Fragment-Host: at.medevit.ch.artikelstamm.model;bundle-version="3.9.0"
+Fragment-Host: at.medevit.ch.artikelstamm.model;bundle-version="3.10.0"
 Automatic-Module-Name: at.medevit.ch.artikelstamm.model.test
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit,

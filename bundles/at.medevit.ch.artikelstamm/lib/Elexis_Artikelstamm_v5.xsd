@@ -9,7 +9,7 @@
 	Contributors: MEDEVIT <office@medevit.at> - initial API and implementation -->
 <xs:schema targetNamespace="http://elexis.ch/Elexis_Artikelstamm_v5"
 	elementFormDefault="qualified" attributeFormDefault="unqualified"
-	version="4" id="Elexis_Artikelstamm_v003" xmlns="http://elexis.ch/Elexis_Artikelstamm_v5" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	version="5" id="Elexis_Artikelstamm_v003" xmlns="http://elexis.ch/Elexis_Artikelstamm_v5" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:element name="ARTIKELSTAMM">
 		<xs:annotation>
 			<xs:documentation xml:lang="EN">Information on
@@ -35,7 +35,10 @@
 											type="DSCRType" minOccurs="1" maxOccurs="1">
 										</xs:element>
 										<xs:element name="DSCRF"
-											type="DSCRType" minOccurs="1" maxOccurs="1">
+											type="DSCRType" minOccurs="0" maxOccurs="1">
+										</xs:element>
+										<xs:element name="DSCRI"
+											type="DSCRType" minOccurs="0" maxOccurs="1">
 										</xs:element>
                                         <xs:element name="ATC"
 											nillable="false" maxOccurs="1" minOccurs="0">
@@ -93,7 +96,10 @@
 											type="DSCRType" minOccurs="1" maxOccurs="1">
 										</xs:element>
 										<xs:element name="DSCRF"
-											type="DSCRType" minOccurs="1" maxOccurs="1">
+											type="DSCRType" minOccurs="0" maxOccurs="1">
+										</xs:element>
+										<xs:element name="DSCRI"
+											type="DSCRType" minOccurs="0" maxOccurs="1">
 										</xs:element>
 										<xs:element
 											name="LIMITATION_PTS" type="xs:int" maxOccurs="1"
@@ -181,7 +187,10 @@
 											</xs:annotation>
 										</xs:element>
 										<xs:element name="DSCRF"
-											type="xs:string" minOccurs="1" maxOccurs="1">
+											type="xs:string" minOccurs="0" maxOccurs="1">
+										</xs:element>
+										<xs:element name="DSCRI"
+											type="xs:string" minOccurs="0" maxOccurs="1">
 										</xs:element>
 										<xs:element name="COMP"
 											minOccurs="0">
@@ -278,6 +287,12 @@
                                             <xs:annotation>
                                             	<xs:documentation>Die Darreichungsform dieses Items. zB Tablette(n) oder Spritze(n) in französicher Sprache
 										</xs:documentation>
+                                            </xs:annotation>
+										</xs:element>
+                                        <xs:element name="DOSAGE_FORMI" type="xs:string" minOccurs="0" maxOccurs="1">
+                                            <xs:annotation>
+											<xs:documentation>Die Darreichungsform dieses Items. zB Tablette(n) oder Spritze(n) in italienischer Sprache
+											</xs:documentation>
                                             </xs:annotation>
 										</xs:element>
                                         <xs:element name="SL_ENTRY"
@@ -430,9 +445,6 @@
 													Artikels
 												</xs:documentation>
 											</xs:annotation>
-										</xs:element>
-										<xs:element name="Chapter70_HACK"
-											type="xs:string" minOccurs="0" maxOccurs="1">
 										</xs:element>
 									</xs:sequence>
 

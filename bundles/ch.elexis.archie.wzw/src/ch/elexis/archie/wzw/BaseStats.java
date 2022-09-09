@@ -1,6 +1,7 @@
 package ch.elexis.archie.wzw;
 
 import java.lang.reflect.Proxy;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -97,7 +98,8 @@ public abstract class BaseStats extends AbstractTimeSeries {
 					HUGE_NUMBER--;
 
 					IInvoice rn = k.getInvoice();
-					TimeTool rndate = new TimeTool(rn.getDate());
+					TimeTool rndate = new TimeTool(
+							rn.getDate() != null ? new TimeTool(rn.getDate()) : new TimeTool(LocalDate.of(1900, 1, 1)));
 					return rndate.isAfterOrEqual(from) && rndate.isBeforeOrEqual(to);
 				}
 			});

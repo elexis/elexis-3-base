@@ -2,6 +2,16 @@
 <ARTIKELSTAMM xmlns="http://elexis.ch/Elexis_Artikelstamm_v5" CREATION_DATETIME="2017-12-25T00:00:00.000+01:00" BUILD_DATETIME="2017-12-25T00:00:00.000+01:00" DATA_SOURCE="oddb2xml">
     <PRODUCTS>
         <PRODUCT>
+            <PRODNO>5815801</PRODNO>
+            <SALECD>A</SALECD>
+            <DSCR>Priorix Tetra Trockensub c Solv</DSCR>
+            <DSCRF>Priorix Tetra subst sèche c solv</DSCRF>
+            <DSCRI>Priorix Tetra Trockensub c Solv</DSCRI>
+            <ATC>J07BD53</ATC>
+            <LIMNAMEBAG>0808</LIMNAMEBAG>
+            <SUBSTANCE>Verschiedene Kombinationen</SUBSTANCE>
+        </PRODUCT>
+        <PRODUCT>
             <PRODNO>2848601</PRODNO>
             <SALECD>A</SALECD>
             <DSCR>Ancopir Inj Lös</DSCR>

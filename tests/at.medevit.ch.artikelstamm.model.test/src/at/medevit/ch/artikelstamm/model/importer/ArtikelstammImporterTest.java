@@ -44,6 +44,8 @@ public class ArtikelstammImporterTest {
 	private static final String gtinUserPrice = "7680273040281";
 	private static final String gtin14chars = "68711428066649";
 	private static final String gtinPriorix = "7680581580011";
+	private static final String atcPriorixFirst = "J07BD53";
+	private static final String atcPriorixSecond = "J07BD54";
 	private static final String gtinNonPharma = "68711428066649";
 	private static final String[] slEntries = new String[] { "7680273040281", "7680651600014" };
 	private static final int OLD_PKG_SIZE = 448;
@@ -189,6 +191,12 @@ public class ArtikelstammImporterTest {
 		assertEquals(gtinWithPriceOverridden, ((IArtikelstammItem) item7digitPhar.get()).getGtin());
 		assertEquals(pharWithPriceOverridden, ((IArtikelstammItem) item7digitPhar.get()).getPHAR());
 
+		// Test ATC-Code from first import
+		Optional<ICodeElement> priorix = artikelstammCodeElements.loadFromCode(gtinPriorix, Collections.emptyMap());
+		log.debug(String.format("priorix gtin first  import %s atc %s", ((IArtikelstammItem) priorix.get()).getGtin(),
+				((IArtikelstammItem) priorix.get()).getAtcCode()));
+		assertEquals(atcPriorixFirst, ((IArtikelstammItem) priorix.get()).getAtcCode());
+
 		setPkgOverride(gtinWithPkgSizeOverride);
 		setPkgOverride(gtinWithPkgSizeOverrideNull);
 
@@ -200,6 +208,12 @@ public class ArtikelstammImporterTest {
 			fail(msg);
 		}
 		log.debug("testImportAlreadyOkay second done");
+
+		// Test ATC-Code from first import
+		priorix = artikelstammCodeElements.loadFromCode(gtinPriorix, Collections.emptyMap());
+		log.debug(String.format("priorix gtin second import %s atc %s", ((IArtikelstammItem) priorix.get()).getGtin(),
+				((IArtikelstammItem) priorix.get()).getAtcCode()));
+		assertEquals(atcPriorixSecond, ((IArtikelstammItem) priorix.get()).getAtcCode());
 
 		// Check a new article not present in first
 		assertTrue(artikelstammCodeElements.loadFromCode(gtinOnlyInSecond).isPresent());

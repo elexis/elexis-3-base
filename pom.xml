@@ -10,7 +10,7 @@
 
 	<properties>
 		<elexis.target>2022-06-java17</elexis.target>
-		<git.core.branch>master</git.core.branch>
+		<git.core.branch>f24552</git.core.branch>
 		<formatterConfigFile>https://raw.githubusercontent.com/elexis/elexis-3-core/master/Elexis_formatter_2022_03.xml</formatterConfigFile>
 		<tycho.version>2.7.4</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

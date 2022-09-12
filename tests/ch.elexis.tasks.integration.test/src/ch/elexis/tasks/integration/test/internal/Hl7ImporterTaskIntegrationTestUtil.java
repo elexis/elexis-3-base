@@ -60,7 +60,7 @@ public class Hl7ImporterTaskIntegrationTestUtil {
 	}
 
 	public void configureLabAndLabItemBilling() {
-		laboratory = new IContactBuilder.LaboratoryBuilder(CoreModelServiceHolder.get(), "myLab").buildAndSave();
+		laboratory = new IContactBuilder.LaboratoryBuilder(CoreModelServiceHolder.get(), "Eigenlabor").buildAndSave();
 		laboratory.addXid(XidConstants.XID_KONTAKT_LAB_SENDING_FACILITY, "ABXMicrosEmi", true);
 
 		// bill mapping WBC

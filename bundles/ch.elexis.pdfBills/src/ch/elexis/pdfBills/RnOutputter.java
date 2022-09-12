@@ -102,7 +102,6 @@ public class RnOutputter implements IRnOutputter {
 
 	public static final String CFG_PRINT_USEGUARANTORPOSTAL = CFG_ROOT + "guarantor.postaladdress"; //$NON-NLS-1$
 
-	public static final String CFG_MSGTEXT_TEMP = CFG_ROOT + "pdf.txt.temp"; //$NON-NLS-1$
 	public static final String CFG_MSGTEXT_TP_M0 = CFG_ROOT + "pdf.txt.tp"; //$NON-NLS-1$
 	public static final String CFG_MSGTEXT_TG_M0 = CFG_ROOT + "pdf.txt.tg"; //$NON-NLS-1$
 	public static final String CFG_MSGTEXT_TP_M1 = CFG_ROOT + "pdf.txt.M1tp"; //$NON-NLS-1$

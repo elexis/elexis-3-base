@@ -548,51 +548,51 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 		Label label = new Label(composite, SWT.NONE);
 		Label label2 = new Label(composite, SWT.NONE);
-		label.setText("Rechnungstext Nachricht anpassen (maximal 3 zeilen lang)");
+		label.setText(Messages.Billing_Cfg_MsgTXT);
 		label2.setText("TP = Tiers Payant  TG = Tiers Garant");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("Rechnungstext TP:");
+		label.setText(Messages.Billing_Cfg_Msg + " TP:");
 
 		pdfRnTextTP = createMessageTextBox(composite, Messages.BillingDefaultMsg);
 		pdfRnTextTP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M0, Messages.BillingDefaultMsg));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("Rechnungstext TG:");
+		label.setText(Messages.Billing_Cfg_Msg + " TG:");
 		pdfRnTextTG = createMessageTextBox(composite, Messages.BillingDefaultMsg);
 		pdfRnTextTG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M0, Messages.BillingDefaultMsg));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("Rechnungstext Mahnung 1 TP:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder1 + " TP:");// Messages.Billing_Cfg_Msg_Invoicelvl
 		pdfRnTextM1TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M1);
 		pdfRnTextM1TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M1, Messages.BillingDefaultMsg_M1));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("Rechnungstext Mahnung 2 TP:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder2 + " TP:");
 
 		pdfRnTextM2TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M2);
 		pdfRnTextM2TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M2, Messages.BillingDefaultMsg_M2));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("Rechnungstext Mahnung 3 TP:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder3 + " TP:");
 		pdfRnTextM3TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M3);
 		pdfRnTextM3TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M3, Messages.BillingDefaultMsg_M3));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("Rechnungstext Mahnung 1 TG:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder1 + " TG:");
 		pdfRnTextM1TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M1);
 		pdfRnTextM1TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M1, Messages.BillingDefaultMsg_M1));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("Rechnungstext Mahnung 2 TG:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder2 + " TG:");
 		pdfRnTextM2TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M2);
 		pdfRnTextM2TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M2, Messages.BillingDefaultMsg_M2));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText("Rechnungstext Mahnung 3 TG:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder3 + " TG:");
 		pdfRnTextM3TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M3);
 		pdfRnTextM3TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M3, Messages.BillingDefaultMsg_M3));
 

@@ -206,7 +206,7 @@ public class ElexisPDFGenerator {
 					parameters.put("headerLine1", getConfigValue(RnOutputter.CFG_ESR_HEADER_1, StringUtils.SPACE)); //$NON-NLS-1$
 					parameters.put("headerLine2", getConfigValue(RnOutputter.CFG_ESR_HEADER_2, StringUtils.SPACE)); //$NON-NLS-1$
 					parameters.put("messageText", //$NON-NLS-1$
-							getConfigValue(RnOutputter.CFG_MSGTEXT_TEMP, getMessagePDFText(invoiceState)));
+							getConfigValue(RnOutputter.CFG_MSGTEXT_TG_M0, getMessagePDFText(invoiceState)));
 					parameters.put("eanList", eanList); //$NON-NLS-1$
 					parameters.put("vatList", vatList); //$NON-NLS-1$
 					parameters.put("amountTotal", XMLTool.moneyToXmlDouble(mTotal)); //$NON-NLS-1$
@@ -286,54 +286,20 @@ public class ElexisPDFGenerator {
 		case PAID:
 		case OPEN_AND_PRINTED:
 		case OPEN:
-			if (tiers == Fall.Tiers.GARANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M0, invStateTxt);
-			} else if (tiers == Fall.Tiers.PAYANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M0, invStateTxt);
-			}
-			break;
-		case DEMAND_NOTE_1:
-			if (tiers == Fall.Tiers.GARANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M1, invStateTxt);
-			} else if (tiers == Fall.Tiers.PAYANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M1, invStateTxt);
-			}
-			break;
-		case DEMAND_NOTE_2:
-			if (tiers == Fall.Tiers.GARANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M2, invStateTxt);
-			} else if (tiers == Fall.Tiers.PAYANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M2, invStateTxt);
-			}
-			break;
-		case DEMAND_NOTE_3:
-			if (tiers == Fall.Tiers.GARANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M3, invStateTxt);
-			} else if (tiers == Fall.Tiers.PAYANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M3, invStateTxt);
-			}
-			break;
+			String key = (Fall.Tiers.GARANT == tiers) ? RnOutputter.CFG_MSGTEXT_TG_M0 : RnOutputter.CFG_MSGTEXT_TP_M0;
+			return CoreHub.globalCfg.get(key, invStateTxt);
 		case DEMAND_NOTE_1_PRINTED:
-			if (tiers == Fall.Tiers.GARANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M1, invStateTxt);
-			} else if (tiers == Fall.Tiers.PAYANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M1, invStateTxt);
-			}
-			break;
+		case DEMAND_NOTE_1:
+			String key1 = (Fall.Tiers.GARANT == tiers) ? RnOutputter.CFG_MSGTEXT_TG_M1 : RnOutputter.CFG_MSGTEXT_TP_M1;
+			return CoreHub.globalCfg.get(key1, invStateTxt);
 		case DEMAND_NOTE_2_PRINTED:
-			if (tiers == Fall.Tiers.GARANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M2, invStateTxt);
-			} else if (tiers == Fall.Tiers.PAYANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M2, invStateTxt);
-			}
-			break;
+		case DEMAND_NOTE_2:
+			String key2 = (Fall.Tiers.GARANT == tiers) ? RnOutputter.CFG_MSGTEXT_TG_M2 : RnOutputter.CFG_MSGTEXT_TP_M2;
+			return CoreHub.globalCfg.get(key2, invStateTxt);
 		case DEMAND_NOTE_3_PRINTED:
-			if (tiers == Fall.Tiers.GARANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M3, invStateTxt);
-			} else if (tiers == Fall.Tiers.PAYANT) {
-				billMsg = CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M3, invStateTxt);
-			}
-			break;
+		case DEMAND_NOTE_3:
+			String key3 = (Fall.Tiers.GARANT == tiers) ? RnOutputter.CFG_MSGTEXT_TG_M3 : RnOutputter.CFG_MSGTEXT_TP_M3;
+			return CoreHub.globalCfg.get(key3, invStateTxt);
 		default:
 			LoggerFactory.getLogger(getClass()).error("unknown state: " + invoiceState.toString());
 			break;

@@ -181,7 +181,7 @@
 
 	<xsl:template name="patbill_services_overview">
 		<fo:table table-layout="auto" width="8cm"
-			border-collapse="collapse" font-size="10px"
+			border-collapse="collapse" font-size="8px"
 			font-family="tahoma,arial,helvetica,sans-serif">
 			<fo:table-column width="80%" />
 			<fo:table-column width="20%" />

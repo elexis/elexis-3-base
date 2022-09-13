@@ -3,9 +3,6 @@
    <feature url="features/ch.elexis.base.ch.feature_0.0.0.jar" id="ch.elexis.base.ch.feature" version="0.0.0">
       <category name="basepackages"/>
    </feature>
-   <feature url="features/ch.elexis.base.textplugin.feature_0.0.0.jar" id="ch.elexis.base.textplugin.feature" version="0.0.0">
-      <category name="documentmanagement"/>
-   </feature>
    <feature url="features/ch.elexis.connect.reflotron.v2.feature_0.0.0.jar" id="ch.elexis.connect.reflotron.v2.feature" version="0.0.0">
       <category name="labinterfaces"/>
    </feature>
@@ -24,15 +21,6 @@
    <feature url="features/ch.elexis.pdfBills.feature_0.0.0.jar" id="ch.elexis.pdfBills.feature" version="0.0.0">
       <category name="finances"/>
    </feature>
-   <feature url="features/ch.medelexis.openoffice.feature_0.0.0.jar" id="ch.medelexis.openoffice.feature" version="0.0.0">
-      <category name="documentmanagement"/>
-   </feature>
-   <feature url="features/at.medevit.medelexis.text.msword.feature_0.0.0.jar" id="at.medevit.medelexis.text.msword.feature" version="0.0.0">
-      <category name="documentmanagement"/>
-   </feature>
-   <feature url="features/ch.medelexis.text.templator.feature_0.0.0.jar" id="ch.medelexis.text.templator.feature" version="0.0.0">
-      <category name="documentmanagement"/>
-   </feature>
    <feature url="features/ch.medshare.mediport.feature_0.0.0.jar" id="ch.medshare.mediport.feature" version="0.0.0">
       <category name="finances"/>
    </feature>
@@ -41,9 +29,6 @@
    </feature>
    <feature url="features/ch.pharmed.phmprescriber.feature_0.0.0.jar" id="ch.pharmed.phmprescriber.feature" version="0.0.0">
       <category name="dataexchange"/>
-   </feature>
-   <feature url="features/com.hilotec.elexis.opendocument.feature_0.0.0.jar" id="com.hilotec.elexis.opendocument.feature" version="0.0.0">
-      <category name="documentmanagement"/>
    </feature>
    <feature url="features/at.medevit.elexis.text.docx.feature_0.0.0.jar" id="at.medevit.elexis.text.docx.feature" version="0.0.0">
       <category name="documentmanagement"/>
@@ -144,9 +129,6 @@
    <feature id="com.hilotec.elexis.stickerprefix.feature">
       <category name="divers"/>
    </feature>
-   <feature url="features/com.hilotec.elexis.opendocument2omnivore.feature_0.0.0.jar" id="com.hilotec.elexis.opendocument2omnivore.feature" version="0.0.0">
-      <category name="documentmanagement"/>
-   </feature>
    <feature id="ch.elexis.laborimport_lg1.feature">
       <category name="laborexchanges"/>
    </feature>
@@ -173,10 +155,7 @@
    </feature>
    <feature id="ch.elexis.icpc.fire.feature">
       <category name="statistics"/>
-   </feature>
-   <feature url="features/ch.weirich.templator.pages.feature_0.0.0.jar" id="ch.weirich.templator.pages.feature" version="0.0.0">
-      <category name="documentmanagement"/>
-   </feature>
+   </feature> 
    <feature url="features/ch.elexis.buchhaltung.basis.feature_0.0.0.jar" id="ch.elexis.buchhaltung.basis.feature" version="0.0.0">
       <category name="finances"/>
    </feature>
@@ -276,7 +255,7 @@
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>
-         Elexis bietet verschiedene Plug-Ins zur Anbindung an eine Textverarbeitung an. Hinweise zur Auswahl finden Sie unter http://wiki.elexis.info/Auswahl.Text_Plugins.
+         Elexis bietet nur noch das docx Plug-Ins zur Anbindung an eine Textverarbeitung an.
       </description>
    </category-def>
    <category-def name="dataexchange" label="Datenaustausch"/>

@@ -87,7 +87,6 @@
     <module>ch.elexis.base.konsextension.bildanzeige</module>
     <module>ch.elexis.base.konsextension.privatnotizen</module>
     <module>ch.elexis.base.messages</module>
-    <module>ch.elexis.base.textplugin</module>
     <module>ch.elexis.buchhaltung.basis</module>
     <module>ch.elexis.covid.cert</module>
     <module>ch.elexis.connect.afinion</module>
@@ -132,9 +131,6 @@
     <module>ch.elexis.support.dbshaker</module>
     <module>ch.gpb.elexis.cst</module>
     <module>at.medevit.elexis.text.docx</module>
-    <module>at.medevit.medelexis.text.msword</module>
-    <module>ch.medelexis.openoffice</module>
-    <module>ch.medelexis.text.templator</module>
     <module>ch.medshare.commons</module>
     <module>ch.medshare.connect.abacusjunior</module>
     <module>ch.medshare.elexis_directories</module>
@@ -143,11 +139,8 @@
     <module>ch.novcom.elexis.mednet.plugin</module>
     <module>ch.pharmed.phmprescriber</module>
     <module>ch.unibe.iam.scg.archie</module>
-    <module>ch.weirich.templator.pages</module>
     <module>com.hilotec.elexis.kgview</module>
     <module>com.hilotec.elexis.messwerte.v2</module>
-    <module>com.hilotec.elexis.opendocument</module>
-    <module>com.hilotec.elexis.opendocument2omnivore</module>
     <module>com.hilotec.elexis.pluginstatistiken</module>
     <module>com.hilotec.elexis.stickerprefix</module>
     <module>net.medshare.connector.aerztekasse</module>

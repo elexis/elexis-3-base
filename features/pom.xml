@@ -37,7 +37,6 @@
     <module>ch.elexis.base.konsextension.privatnotizen.feature</module>
     <module>ch.elexis.base.messages.feature</module>
     <module>ch.elexis.base.solr.feature</module>
-    <module>ch.elexis.base.textplugin.feature</module>
     <module>ch.elexis.buchhaltung.basis.feature</module>
     <module>ch.elexis.connect.afinion.feature</module>
     <module>ch.elexis.connect.mythic.feature</module>
@@ -75,18 +74,14 @@
     <module>ch.elexis.support.dbshaker.feature</module>
     <module>ch.gpb.elexis.cst.feature</module>
     <module>ch.itmed.lmz.risch.laborder.feature</module>
-    <module>ch.medelexis.text.templator.feature</module>
     <module>ch.medshare.connect.abacusjunior.feature</module>
     <module>ch.medshare.elexis_directories.feature</module>
     <module>ch.medshare.mediport.feature</module>
     <module>ch.novcom.elexis.mednet.plugin.feature</module>
     <module>ch.pharmed.phmprescriber.feature</module>
     <module>ch.unibe.iam.scg.archie.feature</module>
-    <module>ch.weirich.templator.pages.feature</module>
     <module>com.hilotec.elexis.kgview.feature</module>
     <module>com.hilotec.elexis.messwerte.v2.feature</module>
-    <module>com.hilotec.elexis.opendocument.feature</module>
-    <module>com.hilotec.elexis.opendocument2omnivore.feature</module>
     <module>com.hilotec.elexis.pluginstatistiken.feature</module>
     <module>com.hilotec.elexis.stickerprefix.feature</module>
     <module>net.medshare.connector.aerztekasse.feature</module>
@@ -97,8 +92,6 @@
     <module>ch.itmed.fop.printing.feature</module>
     <module>at.medevit.elexis.bluemedication.feature</module>
     <module>at.medevit.elexis.text.docx.feature</module>
-    <module>ch.medelexis.openoffice.feature</module>
-    <module>at.medevit.medelexis.text.msword.feature</module>
     <module>at.medevit.elexis.documents.converter.feature</module>
   </modules>
 </project>

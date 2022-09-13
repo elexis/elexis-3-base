@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Templator Add-On for Apple iWork Pages
-Bundle-SymbolicName: ch.weirich.templator.pages;singleton:=true
-Bundle-Version: 3.0.0.qualifier
-Bundle-Vendor: weirich@elexis.ch
-Fragment-Host: ch.medelexis.text.templator;bundle-version="1.0.1"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -87,8 +87,8 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 			mKat.addMoney(betrag);
 			table[i][0] = kb.get("BelegNr");
 			table[i][1] = kb.getDate();
-			table[i][2] = betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : "";
-			table[i][3] = betrag.isNegative() ? "" : betrag.getAmountAsString();
+			table[i][2] = betrag.isNegative() ? "" : betrag.getAmountAsString();
+			table[i][3] = betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : "";
 			table[i][4] = kb.getSaldo().getAmountAsString();
 			table[i][5] = kb.getText();
 		}

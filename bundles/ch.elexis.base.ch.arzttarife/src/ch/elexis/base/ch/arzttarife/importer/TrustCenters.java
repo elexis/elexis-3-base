@@ -89,8 +89,6 @@ public class TrustCenters {
 		tcEAN.put(ZUERIDOC, "7601001370456"); //$NON-NLS-1$
 		tc.put("trustmed", TRUSTMED); //$NON-NLS-1$
 		tcEAN.put(TRUSTMED, "7601001370227"); //$NON-NLS-1$
-		tc.put("CdC Vaudois", VD_CDC); //$NON-NLS-1$
-		tcEAN.put(VD_CDC, "7609999036705"); //$NON-NLS-1$
 		tc.put("TC test", TC_TEST); //$NON-NLS-1$
 		tcEAN.put(TC_TEST, "7601001370128"); //$NON-NLS-1$
 	}

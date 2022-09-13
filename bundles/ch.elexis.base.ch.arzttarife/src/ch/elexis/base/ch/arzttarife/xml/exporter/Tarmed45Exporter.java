@@ -1377,7 +1377,9 @@ public class Tarmed45Exporter {
 
 		// insert demand if TG and TC contract
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-		if (Tiers.GARANT == tiersType && (TarmedRequirements.hasTCContract(invoice.getMandator()))) {
+		if (Tiers.GARANT == tiersType && TarmedRequirements.hasTCContract(invoice.getMandator())) {
+			processingType.setPrintAtIntermediate(true);
+
 			String tcCode = TarmedRequirements.getTCCode(invoice.getMandator());
 			Demand demand = new ProcessingType.Demand();
 			demand.setTcDemandId(0);

@@ -12,13 +12,13 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.buchhaltung.kassenbuch.KassenbuchTextTemplateRequirement.TT_LIST;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.SortedSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -88,8 +88,8 @@ public class KassenbuchDruckDialog extends Dialog implements ICallback {
 			mKat.addMoney(betrag);
 			table[i][0] = kb.get("BelegNr"); //$NON-NLS-1$
 			table[i][1] = kb.getDate();
-			table[i][2] = betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : StringUtils.EMPTY;
-			table[i][3] = betrag.isNegative() ? StringUtils.EMPTY : betrag.getAmountAsString();
+			table[i][2] = betrag.isNegative() ? StringUtils.EMPTY : betrag.getAmountAsString();
+			table[i][3] = betrag.isNegative() ? new Money(betrag).negate().getAmountAsString() : StringUtils.EMPTY;
 			table[i][4] = kb.getSaldo().getAmountAsString();
 			table[i][5] = kb.getText();
 		}

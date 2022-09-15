@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="ch.elexis.base.solr.task.SolrIndexerIdentifiedRunnableFactory">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" activate="activate" deactivate="deactivate" immediate="true" name="ch.elexis.base.solr.task.SolrIndexerIdentifiedRunnableFactory">
    <service>
       <provide interface="ch.elexis.core.model.tasks.IIdentifiedRunnableFactory"/>
    </service>
    <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
    <reference cardinality="1..1" field="coreModelService" interface="ch.elexis.core.services.IModelService" name="coreModelService" target="(service.model.name=ch.elexis.core.model)"/>
    <reference cardinality="1..1" field="omnivoreModelService" interface="ch.elexis.core.services.IModelService" name="omnivoreModelService" target="(service.model.name=ch.elexis.omnivore.data.model)"/>
+   <reference cardinality="1..1" field="taskService" interface="ch.elexis.core.tasks.model.ITaskService" name="taskService"/>
    <implementation class="ch.elexis.base.solr.task.SolrIndexerIdentifiedRunnableFactory"/>
 </scr:component>

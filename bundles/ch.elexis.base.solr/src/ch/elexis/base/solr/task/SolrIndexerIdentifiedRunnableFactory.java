@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.osgi.service.component.ComponentException;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +17,11 @@ import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.tasks.model.ITaskService;
 
-@Component
+@Component(immediate = true)
 public class SolrIndexerIdentifiedRunnableFactory implements IIdentifiedRunnableFactory {
+
+	@Reference
+	private ITaskService taskService;
 
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
 	private IModelService coreModelService;
@@ -36,9 +41,10 @@ public class SolrIndexerIdentifiedRunnableFactory implements IIdentifiedRunnable
 		return ret;
 	}
 
-	@Override
-	public void initialize(Object taskService) {
+	@Activate
+	public void activate() {
 		try {
+			// FIXME switch to assert
 			SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForEncounter((ITaskService) taskService);
 			SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForLetter((ITaskService) taskService);
 			SolrIndexerIdentifiedRunnableTaskDescriptor.getOrCreateForDocument((ITaskService) taskService);
@@ -46,6 +52,12 @@ public class SolrIndexerIdentifiedRunnableFactory implements IIdentifiedRunnable
 			LoggerFactory.getLogger(getClass()).error("initialize", e); //$NON-NLS-1$
 			throw new ComponentException(e);
 		}
+		taskService.bindIIdentifiedRunnableFactory(this);
+	}
+
+	@Deactivate
+	public void deactivate() {
+		taskService.unbindIIdentifiedRunnableFactory(this);
 	}
 
 }

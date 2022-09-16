@@ -191,7 +191,7 @@ public class Event {
 		if (iPeriod instanceof IAppointment) {
 			IAppointment termin = (IAppointment) iPeriod;
 			return "#" + ConfigServiceHolder.get() //$NON-NLS-1$
-					.get(userContact, "agenda/farben/typ/" + termin.getType(), DEFAULT_BG_COLOR); //$NON-NLS-1$
+					.get(userContact, "agenda/farben/typ/" + termin.getType(), DEFAULT_BG_COLOR, false); //$NON-NLS-1$
 		}
 		return "#" + DEFAULT_BG_COLOR; //$NON-NLS-1$
 	}
@@ -208,7 +208,7 @@ public class Event {
 		if (iPeriod instanceof IAppointment) {
 			IAppointment termin = (IAppointment) iPeriod;
 			return "#" + ConfigServiceHolder.get().get(userContact, //$NON-NLS-1$
-					"agenda/farben/status/" + termin.getState(), DEFAULT_BG_COLOR); //$NON-NLS-1$
+					"agenda/farben/status/" + termin.getState(), DEFAULT_BG_COLOR, false); //$NON-NLS-1$
 		}
 		return "#" + DEFAULT_BG_COLOR; //$NON-NLS-1$
 	}

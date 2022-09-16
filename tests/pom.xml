@@ -23,13 +23,13 @@
     <module>ch.elexis.tasks.integration.test</module>
     <module>ch.elexis.base.ch.arzttarife.test</module>
     <module>ch.elexis.base.ch.arzttarife.model.test</module>
+    <module>at.medevit.elexis.text.docx.test</module>
 
 <!--
 	Requires fix
     <module>at.medevit.atc_codes.test</module>
 -->
 <!--
-    <module>at.medevit.elexis.text.docx.test</module>
     <module>ch.elexis.pdfBills.test</module>
     <module>at.medevit.elexis.cobasmira.tests</module>
     <module>at.medevit.elexis.ehc.core.test</module>

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -76,6 +77,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 
 	private Text txtContactSearch;
 	private Combo comboSchedule;
+	private Combo comboStatus;
 
 	private IAppointmentSeries appointment;
 
@@ -305,9 +307,9 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 			}
 		});
 
-		Label lblArea = new Label(groupData, SWT.NONE);
-		lblArea.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-		lblArea.setText(Messages.SerienTerminDialog_lblArea_text);
+		Label lbl = new Label(groupData, SWT.NONE);
+		lbl.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+		lbl.setText(Messages.SerienTerminDialog_lblArea_text);
 
 		comboSchedule = new Combo(groupData, SWT.NONE);
 		comboSchedule.setItems(ConfigServiceHolder.get().get("agenda/bereiche", "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -316,6 +318,22 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				if (!comboSchedule.getText().equals(appointment.getSchedule())) {
 					appointment.setSchedule(comboSchedule.getText());
+				}
+			}
+		});
+
+		lbl = new Label(groupData, SWT.NONE);
+		lbl.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+		lbl.setText(Messages.SerienTerminDialog_lblStatus_text);
+
+		comboStatus = new Combo(groupData, SWT.DROP_DOWN);
+		List<String> states = AppointmentServiceHolder.get().getStates();
+		comboStatus.setItems(states.toArray(new String[states.size()]));
+		comboStatus.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!comboStatus.getText().equals(appointment.getState())) {
+					appointment.setState(comboStatus.getText());
 				}
 			}
 		});
@@ -373,6 +391,7 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 			txtContactSearch.setText(appointment.getSubjectOrPatient());
 		}
 		comboSchedule.setText(appointment.getSchedule());
+		comboStatus.setText(appointment.getState());
 		//
 		switch (appointment.getSeriesType()) {
 		case DAILY:

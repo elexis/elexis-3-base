@@ -1,6 +1,5 @@
 package ch.elexis.agenda.series;
 
-import org.apache.commons.lang3.StringUtils;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -10,6 +9,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +71,7 @@ public class SerienTermin {
 	private Kontakt contact;
 	private String freeText; // if contact == null may contain freetext
 	private String reason;
+	private String status;
 
 	// persistence information
 	private String groupId;
@@ -120,6 +121,7 @@ public class SerienTermin {
 		if (contact == null)
 			setFreeText(rootTermin.get(Termin.FLD_PATIENT));
 		reason = rootTermin.getGrund();
+		status = rootTermin.getStatus();
 		parseSerienTerminConfigurationString(rootTermin.get(Termin.FLD_EXTENSION));
 	}
 
@@ -179,8 +181,9 @@ public class SerienTermin {
 	 * {@link Termin} entries according to the pattern
 	 */
 	public void persist() {
-		if (groupId != null)
+		if (groupId != null) {
 			delete(false);
+		}
 		createRootDate();
 		createSubSequentDates();
 	}
@@ -287,6 +290,9 @@ public class SerienTermin {
 		TimeSpan ts = new TimeSpan(dateIncrementer, endTime);
 		Termin t = new Termin(Activator.getDefault().getActResource(), ts, "series");
 		t.set(Termin.FLD_LINKGROUP, groupId);
+		if (StringUtils.isNotBlank(status)) {
+			t.setStatus(status);
+		}
 
 		System.out.println("writing subsequent date entry " + endTime.dump());
 	}
@@ -313,11 +319,13 @@ public class SerienTermin {
 		} else {
 			rootTermin.set(Termin.FLD_PATIENT, getFreeText());
 		}
+		if (StringUtils.isNotBlank(status)) {
+			rootTermin.setStatus(status);
+		}
 
 		rootTermin.setGrund(reason);
 		rootTermin.set(Termin.FLD_CREATOR, ContextServiceHolder.get().getActiveUser().get().getLabel());
 		rootTermin.set(Termin.FLD_EXTENSION, this.toString());
-
 	}
 
 	private TimeTool getRootTerminStartTime(Calendar cal) {
@@ -651,5 +659,13 @@ public class SerienTermin {
 
 	public void setFreeText(String freeText) {
 		this.freeText = freeText;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getStatus() {
+		return status;
 	}
 }

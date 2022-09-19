@@ -1,10 +1,10 @@
 package ch.elexis.agenda.series.ui;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.agenda.series.SerienTermin.decimalFormat;
 
 import java.util.Calendar;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -76,6 +76,7 @@ public class SerienTerminDialog extends TitleAreaDialog {
 	private DateTime dateEndsOn;
 
 	private Combo comboArea;
+	private Combo comboStatus;
 
 	private Spinner durationSpinner;
 
@@ -308,9 +309,9 @@ public class SerienTerminDialog extends TitleAreaDialog {
 			}
 		});
 
-		Label lblArea = new Label(groupData, SWT.NONE);
-		lblArea.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
-		lblArea.setText(Messages.SerienTerminDialog_lblArea_text);
+		Label lbl = new Label(groupData, SWT.NONE);
+		lbl.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		lbl.setText(Messages.SerienTerminDialog_lblArea_text);
 
 		comboArea = new Combo(groupData, SWT.NONE);
 		comboArea.setItems(Activator.getDefault().getResources());
@@ -321,6 +322,20 @@ public class SerienTerminDialog extends TitleAreaDialog {
 				Activator.getDefault().setActResource(comboArea.getText());
 			}
 		});
+
+		lbl = new Label(groupData, SWT.NONE);
+		lbl.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 3, 1));
+		lbl.setText(Messages.SerienTerminDialog_lblStatus_text);
+
+		comboStatus = new Combo(groupData, SWT.NONE);
+		comboStatus.setItems(Termin.TerminStatus);
+		comboStatus.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				serienTermin.setStatus(comboStatus.getText());
+			}
+		});
+
 
 		txtContact = new Text(groupData, SWT.BORDER);
 		txtContact.setMessage(Messages.SerienTerminDialog_txtContact_message);
@@ -359,6 +374,9 @@ public class SerienTerminDialog extends TitleAreaDialog {
 		} else {
 			setTitle("Kein Kontakt ausgewählt.");
 			txtContact.setText(serienTermin.getFreeText());
+		}
+		if (StringUtils.isNotBlank(serienTermin.getStatus())) {
+			comboStatus.setText(serienTermin.getStatus());
 		}
 		//
 		switch (serienTermin.getSeriesType()) {

@@ -15,6 +15,7 @@ public class Messages extends NLS {
 	public static String SerienTerminDialog_grpSerienmuster_text;
 	public static String SerienTerminDialog_grpTermin_text;
 	public static String SerienTerminDialog_lblArea_text;
+	public static String SerienTerminDialog_lblStatus_text;
 	public static String SerienTerminDialog_lblBeginn_text;
 	public static String SerienTerminDialog_lblDauer_text;
 	public static String SerienTerminDialog_lblEnde_text;

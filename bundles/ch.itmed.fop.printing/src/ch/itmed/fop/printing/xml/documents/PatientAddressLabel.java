@@ -34,7 +34,7 @@ public class PatientAddressLabel {
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.PATIENT_ADDRESS_LABEL);
 		PageProperties.setCurrentDate(page);
 		doc.appendChild(page);
-		Element patient = PatientElement.create(doc, false);
+		Element patient = PatientElement.create(doc, false, true);
 		page.appendChild(patient);
 		Element c = CaseElement.create(doc);
 		page.appendChild(c);

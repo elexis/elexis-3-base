@@ -74,7 +74,7 @@
           <useUIHarness>false</useUIHarness>
           <testClass>ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite</testClass>
           <showEclipseLog>true</showEclipseLog>
-          <argLine>-Delexis.test.mode=true -Dorg.eclipse.gemini.refreshBundles=false</argLine>
+          <argLine>-Delexis.test.mode=true -Dorg.eclipse.gemini.refreshBundles=false -Delexis.skip.ds.activation=true</argLine>
           <dependencies>
             <dependency>
               <type>eclipse-plugin</type>

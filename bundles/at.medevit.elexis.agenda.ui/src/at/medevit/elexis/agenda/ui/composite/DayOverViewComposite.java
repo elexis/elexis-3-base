@@ -42,6 +42,7 @@ import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -456,9 +457,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	/** Die einem Plannable-Typ zugeordnete Farbe holen */
 	private Color getTypColor(IAppointment p) {
-
-		String cfgName = "agenda/farben/typ/"; //$NON-NLS-1$
-		String coldesc = ConfigServiceHolder.get().getActiveUserContact(cfgName + p.getType(), "FFFFFF"); //$NON-NLS-1$
+		String coldesc = AppointmentServiceHolder.get().getContactConfiguredTypeColor(null, p.getType());
 		ColorRegistry cr = JFaceResources.getColorRegistry();
 		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
 

@@ -24,12 +24,6 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            category="ch.elexis.abrechnungKategorie"
-            class="ch.elexis.views.RnPrintView2"
-            id="ch.elexis.arzttarife_ch.printview2"
-            name="Rechnung Drucken">
-      </view>
-      <view
             allowMultiple="false"
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.RFEView"
@@ -102,21 +96,10 @@
    <extension
          point="ch.elexis.core.data.RechnungsManager">
       <Rechnung
-            name="Tarmed-Drucker"
-            localizedName="%TarmedRechnung.RechnungsDrucker"
-            outputter="ch.elexis.TarmedRechnung.RechnungsDrucker">
-      </Rechnung>
-      <Rechnung
             name="Tarmed-XML-Export"
             localizedName="%TarmedRechnung.XMLExporter"
             outputter="ch.elexis.TarmedRechnung.XMLExporter">
       </Rechnung>
-   </extension>
-   <extension
-         point="ch.elexis.core.ui.TextTemplateRequirement">
-      <TextTemplateRequirement
-            element="ch.elexis.tarmed.printer.TarmedTemplateRequirement">
-      </TextTemplateRequirement>
    </extension>
    <extension
          point="org.eclipse.ui.menus">

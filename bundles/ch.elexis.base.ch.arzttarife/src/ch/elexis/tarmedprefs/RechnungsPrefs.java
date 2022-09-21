@@ -61,10 +61,8 @@ import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.tarmed.MandantType;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
-import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.constants.XidConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
@@ -82,10 +80,6 @@ import ch.rgw.tools.StringTool;
 
 public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferencePage {
 
-	// indices for cbESROCRFontWeight
-	private static final int FONT_MIN_INDEX = 0;
-	private static final int FONT_NORMAL_INDEX = 1;
-	private static final int FONT_BOLD_INDEX = 2;
 	public static final String PREF_ADDCHILDREN = "tarmed/addchildrentp";
 
 	Combo cbMands;
@@ -94,15 +88,6 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	IHyperlinkListener hDetailListener;
 	FocusListener focusListener;
 	Text tTreat, tPost, tBank;
-	Text tESRNormalFontName;
-	Text tESRNormalFontSize;
-	Text tESROCRFontName;
-	Text tESROCRFontSize;
-	Text tESRPrinterCorrectionX;
-	Text tESRPrinterCorrectionY;
-	Text tESRPrintCorrectionBaseX;
-	Text tESRPrintCorrectionBaseY;
-	Combo cbESROCRFontWeight;
 	Button bPost;
 	Button bBank;
 	IMandator actMandant;
@@ -408,10 +393,6 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		 * });
 		 */
 
-		// OCR font
-
-		addFontsGroup(ret);
-
 		Group gAuto = new Group(ret, SWT.NONE);
 		gAuto.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		gAuto.setLayout(new FillLayout());
@@ -468,80 +449,6 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		Mandant selectedMandant = (Mandant) hMandanten.get(cbMands.getItem(0));
 		setMandant(NoPoUtil.loadAsIdentifiable(selectedMandant, IMandator.class).get());
 		return ret;
-	}
-
-	private void addFontsGroup(Composite ret) {
-		Group fonts = new Group(ret, SWT.NONE);
-		fonts.setText(Messages.RechnungsPrefs_FontSlip); // $NON-NLS-1$
-		fonts.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		fonts.setLayout(new GridLayout(2, false));
-
-		FontsTextListener fontsTextListener = new FontsTextListener();
-
-		String warning = Messages.RechnungsPrefs_FontWarning // $NON-NLS-1$
-				+ Messages.RechnungsPrefs_FontWarning2 // $NON-NLS-1$
-				+ Messages.RechnungsPrefs_FontWarning3; // $NON-NLS-1$
-		Label lWarning = new Label(fonts, SWT.NONE);
-		lWarning.setText(warning);
-		lWarning.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-
-		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_Font); // $NON-NLS-1$
-		tESRNormalFontName = new Text(fonts, SWT.BORDER | SWT.SINGLE);
-		tESRNormalFontName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tESRNormalFontName.addFocusListener(fontsTextListener);
-
-		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_Size); // $NON-NLS-1$
-		tESRNormalFontSize = new Text(fonts, SWT.BORDER | SWT.SINGLE);
-		tESRNormalFontSize.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tESRNormalFontSize.addFocusListener(fontsTextListener);
-
-		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_fontCodingLine); // $NON-NLS-1$
-		tESROCRFontName = new Text(fonts, SWT.BORDER | SWT.SINGLE);
-		tESROCRFontName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tESROCRFontName.addFocusListener(fontsTextListener);
-
-		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_SizeCondingLine); // $NON-NLS-1$
-		tESROCRFontSize = new Text(fonts, SWT.BORDER | SWT.SINGLE);
-		tESROCRFontSize.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tESROCRFontSize.addFocusListener(fontsTextListener);
-
-		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_Weight); // $NON-NLS-1$
-		cbESROCRFontWeight = new Combo(fonts, SWT.READ_ONLY);
-		cbESROCRFontWeight.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
-
-		cbESROCRFontWeight.add(Messages.RechnungsPrefs_light); // FONT_MIN_INDEX //$NON-NLS-1$
-		cbESROCRFontWeight.add(Messages.RechnungsPrefs_normal); // FONT_NORMAL_INDEX //$NON-NLS-1$
-		cbESROCRFontWeight.add(Messages.RechnungsPrefs_bold); // FONT_BOLD_INDEX //$NON-NLS-1$
-
-		cbESROCRFontWeight.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				storeFontsTextValues();
-			}
-		});
-
-		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_horzCorrCodingLine); // $NON-NLS-1$
-		tESRPrinterCorrectionX = new Text(fonts, SWT.BORDER | SWT.SINGLE);
-		tESRPrinterCorrectionX.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tESRPrinterCorrectionX.addFocusListener(fontsTextListener);
-
-		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_vertCorrCodingLine); // $NON-NLS-1$
-		tESRPrinterCorrectionY = new Text(fonts, SWT.BORDER | SWT.SINGLE);
-		tESRPrinterCorrectionY.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tESRPrinterCorrectionY.addFocusListener(fontsTextListener);
-
-		new Label(fonts, SWT.NONE).setText(Messages.RechnungsPrefs_horrzBaseOffset); // $NON-NLS-1$
-		tESRPrintCorrectionBaseX = new Text(fonts, SWT.BORDER | SWT.SINGLE);
-		tESRPrintCorrectionBaseX.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tESRPrintCorrectionBaseX.addFocusListener(fontsTextListener);
-
-		new Label(fonts, SWT.NONE).setText(Messages.RechnungenPrefs_vertBaseOffset); // $NON-NLS-1$
-		tESRPrintCorrectionBaseY = new Text(fonts, SWT.BORDER | SWT.SINGLE);
-		tESRPrintCorrectionBaseY.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tESRPrintCorrectionBaseY.addFocusListener(fontsTextListener);
-
-		// set the initial font values
-		setFontsTextValues();
 	}
 
 	public void init(IWorkbench workbench) {
@@ -796,147 +703,5 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 				ConfigServiceHolder.get().get(actMandant, PreferenceConstants.BILL_ELECTRONICALLY, false));
 
 		responsible.setMandant(Mandant.load(m.getId()));
-	}
-
-	/**
-	 * set fonts text values from configuration
-	 */
-	private void setFontsTextValues() {
-		String normalFontName = CoreHub.localCfg.get(ESR.ESR_NORMAL_FONT_NAME, ESR.ESR_NORMAL_FONT_NAME_DEFAULT);
-		int normalFontSize = CoreHub.localCfg.get(ESR.ESR_NORMAL_FONT_SIZE, ESR.ESR_NORMAL_FONT_SIZE_DEFAULT);
-		String ocrFontName = CoreHub.localCfg.get(ESR.ESR_OCR_FONT_NAME, ESR.ESR_OCR_FONT_NAME_DEFAULT);
-		int ocrFontSize = CoreHub.localCfg.get(ESR.ESR_OCR_FONT_SIZE, ESR.ESR_OCR_FONT_SIZE_DEFAULT);
-
-		tESRNormalFontName.setText(normalFontName);
-		tESRNormalFontSize.setText(new Integer(normalFontSize).toString());
-		tESROCRFontName.setText(ocrFontName);
-		tESROCRFontSize.setText(new Integer(ocrFontSize).toString());
-
-		int ocrFontWeight = CoreHub.localCfg.get(ESR.ESR_OCR_FONT_WEIGHT, ESR.ESR_OCR_FONT_WEIGHT_DEFAULT);
-		int index;
-		switch (ocrFontWeight) {
-		case SWT.MIN:
-			index = FONT_MIN_INDEX;
-			break;
-		case SWT.NORMAL:
-			index = FONT_NORMAL_INDEX;
-			break;
-		case SWT.BOLD:
-			index = FONT_BOLD_INDEX;
-			break;
-		default:
-			index = FONT_NORMAL_INDEX;
-		}
-		cbESROCRFontWeight.select(index);
-
-		int printerCorrectionX = CoreHub.localCfg.get(ESR.ESR_PRINTER_CORRECTION_X,
-				ESR.ESR_PRINTER_CORRECTION_X_DEFAULT);
-		int printerCorrectionY = CoreHub.localCfg.get(ESR.ESR_PRINTER_CORRECTION_Y,
-				ESR.ESR_PRINTER_CORRECTION_Y_DEFAULT);
-		int printerBaseCorrectionX = CoreHub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_X,
-				ESR.ESR_PRINTER_BASE_OFFSET_X_DEFAULT);
-		int printerBaseCorrectionY = CoreHub.localCfg.get(ESR.ESR_PRINTER_BASE_OFFSET_Y,
-				ESR.ESR_PRINTER_BASE_OFFSET_Y_DEFAULT);
-
-		tESRPrinterCorrectionX.setText(new Integer(printerCorrectionX).toString());
-		tESRPrinterCorrectionY.setText(new Integer(printerCorrectionY).toString());
-		tESRPrintCorrectionBaseX.setText(Integer.toString(printerBaseCorrectionX));
-		tESRPrintCorrectionBaseY.setText(new Integer(printerBaseCorrectionY).toString());
-	}
-
-	/**
-	 * store fonts text values to configuration
-	 */
-	void storeFontsTextValues() {
-		String normalFontName;
-		int normalFontSize;
-		String ocrFontName;
-		int ocrFontSize;
-		int ocrFontWeight;
-
-		int printerCorrectionX;
-		int printerCorrectionY;
-		int printerBaseCorrectionX;
-		int printerBaseCorrectionY;
-
-		normalFontName = tESRNormalFontName.getText().trim();
-		if (StringTool.isNothing(normalFontName)) {
-			normalFontName = ESR.ESR_NORMAL_FONT_NAME_DEFAULT;
-		}
-		// parse entered font size
-		try {
-			normalFontSize = Integer.parseInt(tESRNormalFontSize.getText().trim());
-		} catch (NumberFormatException ex) {
-			normalFontSize = ESR.ESR_NORMAL_FONT_SIZE_DEFAULT;
-		}
-
-		ocrFontName = tESROCRFontName.getText().trim();
-		if (StringTool.isNothing(ocrFontName)) {
-			ocrFontName = ESR.ESR_OCR_FONT_NAME_DEFAULT;
-		}
-		// parse entered font size
-		try {
-			ocrFontSize = Integer.parseInt(tESROCRFontSize.getText().trim());
-		} catch (NumberFormatException ex) {
-			ocrFontSize = ESR.ESR_OCR_FONT_SIZE_DEFAULT;
-		}
-
-		// get font weight selection
-		int index = cbESROCRFontWeight.getSelectionIndex();
-		switch (index) {
-		case FONT_MIN_INDEX:
-			ocrFontWeight = SWT.MIN;
-			break;
-		case FONT_NORMAL_INDEX:
-			ocrFontWeight = SWT.NORMAL;
-			break;
-		case FONT_BOLD_INDEX:
-			ocrFontWeight = SWT.BOLD;
-			break;
-		default:
-			ocrFontWeight = SWT.NORMAL;
-		}
-
-		// parse entered corrections
-		try {
-			printerCorrectionX = Integer.parseInt(tESRPrinterCorrectionX.getText().trim());
-		} catch (NumberFormatException ex) {
-			printerCorrectionX = ESR.ESR_PRINTER_CORRECTION_X_DEFAULT;
-		}
-		try {
-			printerCorrectionY = Integer.parseInt(tESRPrinterCorrectionY.getText().trim());
-		} catch (NumberFormatException ex) {
-			printerCorrectionY = ESR.ESR_PRINTER_CORRECTION_Y_DEFAULT;
-		}
-		try {
-			printerBaseCorrectionX = Integer.parseInt(tESRPrintCorrectionBaseX.getText().trim());
-		} catch (NumberFormatException ex) {
-			printerBaseCorrectionX = ESR.ESR_PRINTER_BASE_OFFSET_X_DEFAULT;
-		}
-		try {
-			printerBaseCorrectionY = Integer.parseInt(tESRPrintCorrectionBaseY.getText().trim());
-		} catch (NumberFormatException ex) {
-			printerBaseCorrectionY = ESR.ESR_PRINTER_BASE_OFFSET_Y_DEFAULT;
-		}
-		CoreHub.localCfg.set(ESR.ESR_NORMAL_FONT_NAME, normalFontName);
-		CoreHub.localCfg.set(ESR.ESR_NORMAL_FONT_SIZE, normalFontSize);
-		CoreHub.localCfg.set(ESR.ESR_OCR_FONT_NAME, ocrFontName);
-		CoreHub.localCfg.set(ESR.ESR_OCR_FONT_SIZE, ocrFontSize);
-		CoreHub.localCfg.set(ESR.ESR_OCR_FONT_WEIGHT, ocrFontWeight);
-		CoreHub.localCfg.set(ESR.ESR_PRINTER_CORRECTION_X, printerCorrectionX);
-		CoreHub.localCfg.set(ESR.ESR_PRINTER_CORRECTION_Y, printerCorrectionY);
-		CoreHub.localCfg.set(ESR.ESR_PRINTER_BASE_OFFSET_X, printerBaseCorrectionX);
-		CoreHub.localCfg.set(ESR.ESR_PRINTER_BASE_OFFSET_Y, printerBaseCorrectionY);
-	}
-
-	/*
-	 * Store the values from the font text fields
-	 */
-	class FontsTextListener extends FocusAdapter {
-		@Override
-		public void focusLost(FocusEvent e) {
-			storeFontsTextValues();
-		}
-
 	}
 }

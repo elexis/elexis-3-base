@@ -336,7 +336,6 @@ public class SerienTerminDialog extends TitleAreaDialog {
 			}
 		});
 
-
 		txtContact = new Text(groupData, SWT.BORDER);
 		txtContact.setMessage(Messages.SerienTerminDialog_txtContact_message);
 		txtContact.setEditable(false);

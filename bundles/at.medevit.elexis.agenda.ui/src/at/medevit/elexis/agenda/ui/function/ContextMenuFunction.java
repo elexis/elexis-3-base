@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.slf4j.LoggerFactory;
 
 import com.equo.chromium.swt.Browser;
 
@@ -45,6 +46,7 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 			if (selectionTimestamp > 0 && (System.currentTimeMillis() - selectionTimestamp > 1000)) {
 				if (selectionProvider != null) {
 					selectionProvider.setSelection(StructuredSelection.EMPTY);
+					LoggerFactory.getLogger(getClass()).info("Clear selection resource click");
 				}
 			}
 
@@ -85,6 +87,7 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 				selectionProvider.setSelection(selection);
 				// set selection of right click
 				selectionTimestamp = System.currentTimeMillis();
+				LoggerFactory.getLogger(getClass()).info("Set selection [" + selection + "]");
 			}
 
 			Display.getDefault().timerExec(100, () -> {
@@ -98,6 +101,7 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 		} else if (arguments.length == 0) {
 			if (selectionProvider != null) {
 				selectionProvider.setSelection(StructuredSelection.EMPTY);
+				LoggerFactory.getLogger(getClass()).info("Clear selection no arguments");
 			}
 		}
 		return null;

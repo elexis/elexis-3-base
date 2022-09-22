@@ -223,7 +223,8 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		if (currentLastUpdate - System.currentTimeMillis() > 10000) {
 			logger.warn("Appointment highest lastupdate is in future ["
 					+ (currentLastUpdate - System.currentTimeMillis()) + "]");
-			knownLastUpdate = System.currentTimeMillis() - 10000;
+			knownLastUpdate = System.currentTimeMillis();
+			cache.invalidate(currentTimeSpan);
 		} else {
 			knownLastUpdate = currentLastUpdate;
 		}

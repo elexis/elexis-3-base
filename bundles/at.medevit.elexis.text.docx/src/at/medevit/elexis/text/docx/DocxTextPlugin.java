@@ -1,6 +1,5 @@
 package at.medevit.elexis.text.docx;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -10,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.docx4j.Docx4J;
 import org.docx4j.TraversalUtil;
 import org.docx4j.model.datastorage.migration.VariablePrepare;
@@ -54,6 +55,7 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.text.ReplaceCallback;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.commands.StartEditLocalDocumentHandler;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.MimeTypeUtil;
 import ch.elexis.core.ui.views.textsystem.TextTemplatePrintSettings;
@@ -357,8 +359,14 @@ public class DocxTextPlugin implements ITextPlugin {
 		if (currentDocument != null) {
 			Optional<File> tempFile = getCurrentDocumentTempFile();
 			tempFile.ifPresent(f -> {
-				LoggerFactory.getLogger(getClass()).debug("Open temporary document from [" + f.getAbsolutePath() + "]");
-				Program.launch(f.getAbsolutePath());
+				String extension = FilenameUtils.getExtension(f.getAbsolutePath());
+				if (StartEditLocalDocumentHandler.isConvertDocx2Pdf(extension)) {
+					StartEditLocalDocumentHandler.convertDocx2Pdf(tempFile);
+				} else {
+					LoggerFactory.getLogger(getClass())
+							.debug("Open temporary document from [" + f.getAbsolutePath() + "]");
+					Program.launch(f.getAbsolutePath());
+				}
 			});
 		}
 	}

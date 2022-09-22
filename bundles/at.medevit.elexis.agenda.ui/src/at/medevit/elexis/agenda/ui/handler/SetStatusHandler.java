@@ -49,6 +49,7 @@ public class SetStatusHandler {
 	private Optional<IPeriod> getSelectedPeriod() {
 		try {
 			ISelection activeSelection = (ISelection) selectionService.getSelection();
+			LoggerFactory.getLogger(getClass()).info("Set status [" + activeSelection + "]");
 			if (activeSelection instanceof StructuredSelection && !((StructuredSelection) activeSelection).isEmpty()) {
 				Object element = ((StructuredSelection) activeSelection).getFirstElement();
 				if (element instanceof IPeriod) {

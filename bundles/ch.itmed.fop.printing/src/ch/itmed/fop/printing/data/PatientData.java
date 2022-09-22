@@ -101,19 +101,35 @@ public class PatientData {
 	}
 
 	public String getFirstName() {
-		return patient.getVorname();
+		if (legalGuardian.istPerson()) {
+			return legalGuardian.get(Person.FIRSTNAME);
+		} else {
+			return patient.getVorname();
+		}
 	}
 
 	public String getLastName() {
-		return patient.getName();
+		if (legalGuardian.istPerson()) {
+			return legalGuardian.get(Person.NAME);
+		} else {
+			return patient.getName();
+		}
 	}
 
 	public String getBirthdate() {
-		return patient.getGeburtsdatum();
+		if (legalGuardian.istPerson()) {
+			return legalGuardian.get(Person.BIRTHDATE);
+		} else {
+			return patient.getGeburtsdatum();
+		}
 	}
 
 	public String getSex() {
-		return patient.getGeschlecht();
+		if (legalGuardian.istPerson()) {
+			return legalGuardian.get(Person.SEX);
+		} else {
+			return patient.getGeschlecht();
+		}
 	}
 
 	public String getPid() {
@@ -122,10 +138,18 @@ public class PatientData {
 
 	public String getSalutation() {
 		String salutation;
-		if (patient.getGeschlecht().equals(Person.MALE)) {
-			salutation = Messages.Contact_SalutationM;
+		if (legalGuardian.istPerson()) {
+			if (legalGuardian.get(Person.SEX).equals(Person.MALE)) {
+				salutation = Messages.Contact_SalutationM;
+			} else {
+				salutation = Messages.Contact_SalutationF;
+			}
 		} else {
-			salutation = Messages.Contact_SalutationF;
+			if (patient.getGeschlecht().equals(Person.MALE)) {
+				salutation = Messages.Contact_SalutationM;
+			} else {
+				salutation = Messages.Contact_SalutationF;
+			}
 		}
 		return salutation;
 	}
@@ -167,15 +191,27 @@ public class PatientData {
 	}
 
 	public String getPhone1() {
-		return PersistentObject.checkNull(patient.get("Telefon1")); //$NON-NLS-1$
+		if (legalGuardian != null) {
+			return PersistentObject.checkNull(legalGuardian.get("Telefon1")); //$NON-NLS-1$
+		} else {
+			return PersistentObject.checkNull(patient.get("Telefon1")); //$NON-NLS-1$
+		}
 	}
 
 	public String getPhone2() {
-		return PersistentObject.checkNull(patient.get("Telefon2")); //$NON-NLS-1$
+		if (legalGuardian != null) {
+			return PersistentObject.checkNull(legalGuardian.get("Telefon2")); //$NON-NLS-1$
+		} else {
+			return PersistentObject.checkNull(patient.get("Telefon2")); //$NON-NLS-1$
+		}
 	}
 
 	public String getMobilePhone() {
-		return PersistentObject.checkNull(patient.get("NatelNr")); //$NON-NLS-1$
+		if (legalGuardian != null) {
+			return PersistentObject.checkNull(legalGuardian.get("NatelNr")); //$NON-NLS-1$
+		} else {
+			return PersistentObject.checkNull(patient.get("NatelNr")); //$NON-NLS-1$
+		}
 	}
 
 	public String getCompleteAddress() {
@@ -191,6 +227,10 @@ public class PatientData {
 	}
 
 	public String getEmail() {
-		return patient.getMailAddress();
+		if (legalGuardian != null) {
+			return legalGuardian.getMailAddress();
+		} else {
+			return patient.getMailAddress();
+		}
 	}
 }

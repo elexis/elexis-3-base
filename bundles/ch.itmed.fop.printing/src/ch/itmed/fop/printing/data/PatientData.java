@@ -101,7 +101,7 @@ public class PatientData {
 	}
 
 	public String getFirstName() {
-		if (legalGuardian.istPerson()) {
+		if (legalGuardian != null && legalGuardian.istPerson()) {
 			return legalGuardian.get(Person.FIRSTNAME);
 		} else {
 			return patient.getVorname();
@@ -109,7 +109,7 @@ public class PatientData {
 	}
 
 	public String getLastName() {
-		if (legalGuardian.istPerson()) {
+		if (legalGuardian != null && legalGuardian.istPerson()) {
 			return legalGuardian.get(Person.NAME);
 		} else {
 			return patient.getName();
@@ -117,7 +117,7 @@ public class PatientData {
 	}
 
 	public String getBirthdate() {
-		if (legalGuardian.istPerson()) {
+		if (legalGuardian != null && legalGuardian.istPerson()) {
 			return legalGuardian.get(Person.BIRTHDATE);
 		} else {
 			return patient.getGeburtsdatum();
@@ -125,7 +125,7 @@ public class PatientData {
 	}
 
 	public String getSex() {
-		if (legalGuardian.istPerson()) {
+		if (legalGuardian != null && legalGuardian.istPerson()) {
 			return legalGuardian.get(Person.SEX);
 		} else {
 			return patient.getGeschlecht();
@@ -138,7 +138,7 @@ public class PatientData {
 
 	public String getSalutation() {
 		String salutation;
-		if (legalGuardian.istPerson()) {
+		if (legalGuardian != null && legalGuardian.istPerson()) {
 			if (legalGuardian.get(Person.SEX).equals(Person.MALE)) {
 				salutation = Messages.Contact_SalutationM;
 			} else {

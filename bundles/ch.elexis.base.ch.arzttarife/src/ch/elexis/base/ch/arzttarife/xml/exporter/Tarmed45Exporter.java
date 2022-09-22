@@ -1404,6 +1404,11 @@ public class Tarmed45Exporter {
 						via.get(0).setVia(iEAN);
 					}
 				}
+				// if TG and TC contract make sure print at intermediate is true
+				Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
+				if (Tiers.GARANT == tiersType && TarmedRequirements.hasTCContract(invoice.getMandator())) {
+					request.getProcessing().setPrintAtIntermediate(true);
+				}
 				request.getProcessing()
 						.setPrintCopyToGuarantor(CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
 			}

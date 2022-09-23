@@ -11,7 +11,6 @@
  *******************************************************************************/
 package ch.medshare.mediport;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -21,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -255,9 +255,12 @@ public class MediportClientSetsPrefPage extends MediPortAbstractPrefPage {
 
 		fillMKey(clientNum);
 
-		String mandantEan = TarmedRequirements
-				.getEAN(CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).orElse(null));
+		String mandantEan = null;
 		String senderEan = client.getEan();
+		if (mandant != null) {
+			mandantEan = TarmedRequirements
+					.getEAN(CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).orElse(null));
+		}
 		if (senderEan == null && mandantEan != null) {
 			senderEan = mandantEan;
 		}

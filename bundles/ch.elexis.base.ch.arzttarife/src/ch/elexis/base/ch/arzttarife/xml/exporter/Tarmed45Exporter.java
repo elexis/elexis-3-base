@@ -1368,22 +1368,25 @@ public class Tarmed45Exporter {
 		transportType.getVia().add(via);
 
 		// insert demand if TG and TC contract
-		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-		if (Tiers.GARANT == tiersType && TarmedRequirements.hasTCContract(invoice.getMandator())) {
+		if (TarmedRequirements.hasTCContract(invoice.getMandator())) {
+			// set print at intermediate for TG and TP
 			processingType.setPrintAtIntermediate(true);
 
-			String tcCode = TarmedRequirements.getTCCode(invoice.getMandator());
-			Demand demand = new ProcessingType.Demand();
-			demand.setTcDemandId(0);
+			Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
+			if (Tiers.GARANT == tiersType) {
 
-			String tcToken = getBesr(invoice).createCodeline(
-					XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", //$NON-NLS-1$
-							""), //$NON-NLS-1$
-					tcCode);
-			demand.setTcToken(tcToken);
-			demand.setInsuranceDemandDate(XMLExporterUtil.makeXMLDate(invoice.getDate()));
+				String tcCode = TarmedRequirements.getTCCode(invoice.getMandator());
+				Demand demand = new ProcessingType.Demand();
+				demand.setTcDemandId(0);
 
-			processingType.setDemand(demand);
+				String tcToken = getBesr(invoice)
+						.createCodeline(XMLTool.moneyToXmlDouble(invoice.getOpenAmount()).replaceFirst("[.,]", //$NON-NLS-1$
+								StringUtils.EMPTY), tcCode);
+				demand.setTcToken(tcToken);
+				demand.setInsuranceDemandDate(XMLExporterUtil.makeXMLDate(invoice.getDate()));
+
+				processingType.setDemand(demand);
+			}
 		}
 		processingType.setTransport(transportType);
 
@@ -1404,9 +1407,8 @@ public class Tarmed45Exporter {
 						via.get(0).setVia(iEAN);
 					}
 				}
-				// if TG and TC contract make sure print at intermediate is true
-				Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
-				if (Tiers.GARANT == tiersType && TarmedRequirements.hasTCContract(invoice.getMandator())) {
+				// if TC contract make sure print at intermediate is true
+				if (TarmedRequirements.hasTCContract(invoice.getMandator())) {
 					request.getProcessing().setPrintAtIntermediate(true);
 				}
 				// no copy for patient for reminders

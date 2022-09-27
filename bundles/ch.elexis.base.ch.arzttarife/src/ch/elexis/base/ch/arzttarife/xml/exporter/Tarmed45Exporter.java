@@ -1419,8 +1419,13 @@ public class Tarmed45Exporter {
 				if (TarmedRequirements.hasTCContract(invoice.getMandator())) {
 					request.getProcessing().setPrintAtIntermediate(true);
 				}
-				request.getProcessing()
-						.setPrintCopyToGuarantor(CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
+				// no copy for patient for reminders
+				if (request.getPayload().getReminder() != null) {
+					request.getProcessing().setPrintCopyToGuarantor(false);
+				} else {
+					request.getProcessing().setPrintCopyToGuarantor(
+							CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
+				}
 			}
 
 			// update payload and balance
@@ -1570,6 +1575,10 @@ public class Tarmed45Exporter {
 	public void addReminderEntry(RequestType request, IInvoice invoice, String reminderLevel) {
 		if (request.getPayload() != null) {
 			try {
+				// no copy for patient for reminders
+				if (request.getProcessing() != null) {
+					request.getProcessing().setPrintCopyToGuarantor(false);
+				}
 				GregorianCalendar now = new GregorianCalendar();
 
 				ReminderType reminderType = request.getPayload().getReminder();
@@ -1605,10 +1614,13 @@ public class Tarmed45Exporter {
 		}
 	}
 
-	public void removeReminderEntry(RequestType request) {
+	public void removeReminderEntry(RequestType request, IInvoice invoice) {
 		if (request.getPayload() != null && request.getPayload().getReminder() != null) {
 			request.getPayload().setReminder(null);
 			request.getPayload().setType("invoice");
+			// reset copy for patient
+			request.getProcessing()
+					.setPrintCopyToGuarantor(CoverageServiceHolder.get().getCopyForPatient(invoice.getCoverage()));
 		}
 	}
 

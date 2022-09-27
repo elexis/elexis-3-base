@@ -469,7 +469,8 @@ public class XMLExporter implements IRnOutputter {
 								"3");
 					} else if (state.getState() < InvoiceState.DEMAND_NOTE_1.getState()
 							&& exporter.isReminder((ch.fd.invoice450.request.RequestType) invoiceRequest.get())) {
-						exporter.removeReminderEntry((ch.fd.invoice450.request.RequestType) invoiceRequest.get());
+						exporter.removeReminderEntry((ch.fd.invoice450.request.RequestType) invoiceRequest.get(),
+								invoice);
 					}
 					ret = getAsJdomDocument((ch.fd.invoice450.request.RequestType) invoiceRequest.get()).orElse(null);
 				}

@@ -43,7 +43,7 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 	@Override
 	public Object function(Object[] arguments) {
 		if (arguments.length == 4) {
-			if (selectionTimestamp > 0 && (System.currentTimeMillis() - selectionTimestamp > 1000)) {
+			if (selectionTimestamp > 0 && (System.currentTimeMillis() - selectionTimestamp > 1500)) {
 				if (selectionProvider != null) {
 					selectionProvider.setSelection(StructuredSelection.EMPTY);
 					LoggerFactory.getLogger(getClass()).info("Clear selection resource click");

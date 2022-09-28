@@ -10,10 +10,10 @@
  *******************************************************************************/
 package ch.elexis.agenda.views;
 
-import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.util.Arrays;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -224,11 +224,7 @@ public class AgendaGross extends BaseAgendaView {
 
 	protected void updateDate() {
 		setDayMessage();
-		/*
-		 * if (pinger != null) { pinger.doSync(); }
-		 */
 		tv.refresh();
-		tv.getTable().getColumn(0).pack();
 	}
 
 	private void saveColumnSizes() {
@@ -340,9 +336,6 @@ public class AgendaGross extends BaseAgendaView {
 			Button source = (Button) ev.getSource();
 			String bereich = source.getText();
 			setBereich(bereich);
-			/*
-			 * if (pinger != null) { pinger.doSync(); }
-			 */
 			tv.refresh();
 		}
 

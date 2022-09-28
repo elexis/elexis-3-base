@@ -334,23 +334,23 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		label.setText("ESR 1ste Zeile");
 		headerLine1Text = new Text(composite, SWT.BORDER);
 		headerLine1Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		headerLine1Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_HEADER_1, StringUtils.EMPTY));
+		headerLine1Text.setText(getConfigTransferGlobal(RnOutputter.CFG_ESR_HEADER_1, StringUtils.EMPTY));
 		label = new Label(composite, SWT.NONE);
 		label.setText("ESR 2te Zeile");
 		headerLine2Text = new Text(composite, SWT.BORDER);
 		headerLine2Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		headerLine2Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_HEADER_2, StringUtils.EMPTY));
+		headerLine2Text.setText(getConfigTransferGlobal(RnOutputter.CFG_ESR_HEADER_2, StringUtils.EMPTY));
 
 		label = new Label(composite, SWT.NONE);
 		label.setText("Mahnung 2 Tage");
 		reminderDays2Text = new Text(composite, SWT.BORDER);
 		reminderDays2Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		reminderDays2Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_REMINDERDAYS_M2, "14"));
+		reminderDays2Text.setText(getConfigTransferGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2, "14")); //$NON-NLS-1$
 		label = new Label(composite, SWT.NONE);
 		label.setText("Mahnung 3 Tage");
 		reminderDays3Text = new Text(composite, SWT.BORDER);
 		reminderDays3Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		reminderDays3Text.setText(CoreHub.localCfg.get(RnOutputter.CFG_ESR_REMINDERDAYS_M3, "14"));
+		reminderDays3Text.setText(getConfigTransferGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3, "14")); //$NON-NLS-1$
 
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
@@ -453,6 +453,18 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		});
 
 		item.setControl(composite);
+	}
+
+	public static String getConfigTransferGlobal(String key, String defaultValue) {
+		String globalValue = ConfigServiceHolder.get().get(key, null);
+		if (globalValue == null) {
+			String localValue = CoreHub.localCfg.get(key, defaultValue);
+			if (StringUtils.isNotBlank(localValue)) {
+				ConfigServiceHolder.get().set(key, localValue);
+				globalValue = localValue;
+			}
+		}
+		return globalValue != null ? globalValue : defaultValue;
 	}
 
 	private void createMailConfig(TabItem item) {
@@ -571,11 +583,11 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				}
 			}
 		}
-		CoreHub.localCfg.set(RnOutputter.CFG_ESR_HEADER_1, headerLine1Text.getText());
-		CoreHub.localCfg.set(RnOutputter.CFG_ESR_HEADER_2, headerLine2Text.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_1, headerLine1Text.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_2, headerLine2Text.getText());
 
-		CoreHub.localCfg.set(RnOutputter.CFG_ESR_REMINDERDAYS_M2, reminderDays2Text.getText());
-		CoreHub.localCfg.set(RnOutputter.CFG_ESR_REMINDERDAYS_M3, reminderDays3Text.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2, reminderDays2Text.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3, reminderDays3Text.getText());
 
 		CoreHub.localCfg.set(RnOutputter.CFG_PRINT_COMMAND, printCommandText.getText());
 		CoreHub.localCfg.flush();

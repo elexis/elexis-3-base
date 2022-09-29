@@ -575,7 +575,7 @@ public class Tarmed45Exporter {
 	protected OnlineAddressType getOnline(IContact contact) {
 		OnlineAddressType onlineAddressType = new OnlineAddressType();
 
-		if (!contact.isMandator() && StringUtils.isNotBlank(contact.getEmail())) {
+		if (StringUtils.isNotBlank(contact.getEmail())) {
 			String email = XMLExporterUtil.getValidXMLString(StringUtils.left(contact.getEmail(), 70));
 			if (!email.matches(".+@.+")) { //$NON-NLS-1$
 				email = "mail@invalid.invalid"; //$NON-NLS-1$

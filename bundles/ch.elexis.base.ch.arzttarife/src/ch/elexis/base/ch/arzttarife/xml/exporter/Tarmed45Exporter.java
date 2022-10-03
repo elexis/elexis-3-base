@@ -1403,6 +1403,7 @@ public class Tarmed45Exporter {
 
 	public void updateExistingXml(RequestType request, TYPE type, IInvoice invoice, XMLExporter xmlExporter) {
 		try {
+			besr = null;
 			// update processing, print_at_intermediate and transport via EAN
 			if (request.getProcessing() != null) {
 				if (request.getProcessing().isPrintAtIntermediate() != isPrintAtIntermediate()) {

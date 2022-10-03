@@ -98,9 +98,12 @@ public abstract class BaseStats extends AbstractTimeSeries {
 					HUGE_NUMBER--;
 
 					IInvoice rn = k.getInvoice();
-					TimeTool rndate = new TimeTool(
-							rn.getDate() != null ? new TimeTool(rn.getDate()) : new TimeTool(LocalDate.of(1900, 1, 1)));
-					return rndate.isAfterOrEqual(from) && rndate.isBeforeOrEqual(to);
+					if (rn != null) {
+						TimeTool rndate = new TimeTool(rn.getDate() != null ? new TimeTool(rn.getDate())
+								: new TimeTool(LocalDate.of(1900, 1, 1)));
+						return rndate.isAfterOrEqual(from) && rndate.isBeforeOrEqual(to);
+					}
+					return false;
 				}
 			});
 		} else if (getDateType().equals("Zahlungsdatum")) { //$NON-NLS-1$
@@ -114,9 +117,11 @@ public abstract class BaseStats extends AbstractTimeSeries {
 					HUGE_NUMBER--;
 
 					IInvoice rn = k.getInvoice();
-					if (rn.getState() == InvoiceState.PAID || rn.getState() == InvoiceState.EXCESSIVE_PAYMENT) {
-						TimeTool rndate = new TimeTool(rn.getDate());
-						return rndate.isAfterOrEqual(from) && rndate.isBeforeOrEqual(to);
+					if (rn != null) {
+						if (rn.getState() == InvoiceState.PAID || rn.getState() == InvoiceState.EXCESSIVE_PAYMENT) {
+							TimeTool rndate = new TimeTool(rn.getDate());
+							return rndate.isAfterOrEqual(from) && rndate.isBeforeOrEqual(to);
+						}
 					}
 					return false;
 				}
@@ -131,21 +136,23 @@ public abstract class BaseStats extends AbstractTimeSeries {
 		try (IQueryCursor<IEncounter> cursor = query.executeAsCursor()) {
 			while (cursor.hasNext()) {
 				IEncounter encounter = cursor.next();
-				boolean add = true;
-				if (!filters.isEmpty()) {
-					for (IFilter filter : filters) {
-						if (!filter.select(encounter)) {
-							add = false;
-							break;
+				if (encounter != null) {
+					boolean add = true;
+					if (!filters.isEmpty()) {
+						for (IFilter filter : filters) {
+							if (!filter.select(encounter)) {
+								add = false;
+								break;
+							}
 						}
 					}
-				}
-				if (add) {
-					// use ModelAdapterProxyHandler, encounter and loaded sub data can be garbage
-					// collected
-					Object proxy = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { IEncounter.class },
-							new ModelAdapterProxyHandler(encounter));
-					ret.add((IEncounter) proxy);
+					if (add) {
+						// use ModelAdapterProxyHandler, encounter and loaded sub data can be garbage
+						// collected
+						Object proxy = Proxy.newProxyInstance(getClass().getClassLoader(),
+								new Class[] { IEncounter.class }, new ModelAdapterProxyHandler(encounter));
+						ret.add((IEncounter) proxy);
+					}
 				}
 				cursor.clear();
 			}

@@ -136,23 +136,21 @@ public abstract class BaseStats extends AbstractTimeSeries {
 		try (IQueryCursor<IEncounter> cursor = query.executeAsCursor()) {
 			while (cursor.hasNext()) {
 				IEncounter encounter = cursor.next();
-				if (encounter != null) {
-					boolean add = true;
-					if (!filters.isEmpty()) {
-						for (IFilter filter : filters) {
-							if (!filter.select(encounter)) {
-								add = false;
-								break;
-							}
+				boolean add = true;
+				if (!filters.isEmpty()) {
+					for (IFilter filter : filters) {
+						if (!filter.select(encounter)) {
+							add = false;
+							break;
 						}
 					}
-					if (add) {
-						// use ModelAdapterProxyHandler, encounter and loaded sub data can be garbage
-						// collected
-						Object proxy = Proxy.newProxyInstance(getClass().getClassLoader(),
-								new Class[] { IEncounter.class }, new ModelAdapterProxyHandler(encounter));
-						ret.add((IEncounter) proxy);
-					}
+				}
+				if (add) {
+					// use ModelAdapterProxyHandler, encounter and loaded sub data can be garbage
+					// collected
+					Object proxy = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { IEncounter.class },
+							new ModelAdapterProxyHandler(encounter));
+					ret.add((IEncounter) proxy);
 				}
 				cursor.clear();
 			}

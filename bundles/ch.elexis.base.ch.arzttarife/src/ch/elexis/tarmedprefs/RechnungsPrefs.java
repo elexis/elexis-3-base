@@ -144,16 +144,18 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		});
 		Query<Mandant> qbe = new Query<Mandant>(Mandant.class);
 		List<Mandant> list = qbe.execute();
+
+		Collections.sort((List<Mandant>) list, new Comparator<Mandant>() {
+			@Override
+			public int compare(Mandant o1, Mandant o2) {
+				return ((Mandant) o1).getLabel(true).compareToIgnoreCase(o2.getLabel(true));
+			}
+
+		});
+
 		for (Mandant m : list) {
 			cbMands.add(m.getLabel());
 			hMandanten.put(m.getLabel(), m);
-			Collections.sort((List<Mandant>) list, new Comparator<Mandant>() {
-				@Override
-				public int compare(Mandant o1, Mandant o2) {
-					return ((Mandant) o1).getLabel(true).compareToIgnoreCase(o2.getLabel(true));
-				}
-
-			});
 		}
 		Group adrs = new Group(ret, SWT.NONE);
 		adrs.setLayout(new GridLayout(2, false));

@@ -3,10 +3,14 @@ package ch.elexis.global_inbox;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.global_inbox.ui.Messages;
 
@@ -18,6 +22,12 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	public static final String PREF_INFO_IN_INBOX = PREFERENCE_BRANCH + "infoToInbox"; //$NON-NLS-1$
 	public static final String PREF_DIR_DEFAULT = "";
 	public static final String PREF_TITLE_COMPLETION = PREFERENCE_BRANCH + "titleCompletions"; //$NON-NLS-1$
+	public static final String STOREFSGLOBAL = PREFERENCE_BRANCH + "store_in_fs_global"; //$NON-NLS-1$
+
+	private IPreferenceStore fsSettingsStore;
+
+	private BooleanFieldEditor bStoreFSGlobal;
+	private DirectoryFieldEditor dirFieldEditor;
 
 	public Preferences() {
 		super(GRID);
@@ -26,7 +36,18 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 
 	@Override
 	protected void createFieldEditors() {
-		DirectoryFieldEditor dirFieldEditor = new DirectoryFieldEditor(PREF_DIR, Messages.Preferences_directory,
+		bStoreFSGlobal = new BooleanFieldEditor(STOREFSGLOBAL, "Dateisystem Einstellungen global speichern",
+				getFieldEditorParent()) {
+			@Override
+			protected void fireValueChanged(String property, Object oldValue, Object newValue) {
+				super.fireValueChanged(property, oldValue, newValue);
+				ConfigServiceHolder.get().set(STOREFSGLOBAL, (Boolean) newValue);
+				updateFSSettingsStore();
+			}
+		};
+		addField(bStoreFSGlobal);
+
+		dirFieldEditor = new DirectoryFieldEditor(PREF_DIR, Messages.Preferences_directory,
 				getFieldEditorParent());
 
 		BooleanFieldEditor bAutomaticBilling = new BooleanFieldEditor(PREF_AUTOBILLING,
@@ -39,10 +60,27 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 
 		dirFieldEditor.getTextControl(getFieldEditorParent()).setEditable(false);
 		addField(dirFieldEditor);
+
+		updateFSSettingsStore();
+	}
+
+	private void updateFSSettingsStore() {
+		boolean isGlobal = ConfigServiceHolder.getGlobal(STOREFSGLOBAL, false);
+		if (isGlobal) {
+			fsSettingsStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
+			dirFieldEditor.getTextControl(getFieldEditorParent()).setEditable(true);
+		} else {
+			fsSettingsStore = getPreferenceStore();
+			dirFieldEditor.getTextControl(getFieldEditorParent()).setEditable(false);
+		}
+		bStoreFSGlobal.setPreferenceStore(fsSettingsStore);
+		bStoreFSGlobal.load();
+		dirFieldEditor.setPreferenceStore(fsSettingsStore);
+		dirFieldEditor.load();
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
+
 	}
 }

@@ -26,6 +26,7 @@ import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IStoreToStringService;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.GlobalInboxUtil;
@@ -42,12 +43,12 @@ public class GlobalInboxEntryFactory {
 
 	@Activate
 	public void activate() {
-		String giDirSetting = configService.getLocal(Preferences.PREF_DIR, "NOTSET");
-		if ("NOTSET".equals(giDirSetting)) {
-			File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox");
+		String giDirSetting = GlobalInboxUtil.getDirectory("NOTSET"); //$NON-NLS-1$
+		if ("NOTSET".equals(giDirSetting)) { //$NON-NLS-1$
+			File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox"); //$NON-NLS-1$
 			boolean created = giDir.mkdir();
 			if (created) {
-				CoreHub.localCfg.set(Preferences.PREF_DIR, giDir.getAbsolutePath());
+				ConfigServiceHolder.get().setLocal(Preferences.PREF_DIR, giDir.getAbsolutePath());
 			}
 		}
 	}

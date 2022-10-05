@@ -122,13 +122,22 @@ public interface TarmedallowancePackage extends EPackage {
 	int ITARMED_ALLOWANCE__CHAPTER = ModelPackage.IBILLABLE_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>TP</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITARMED_ALLOWANCE__TP = ModelPackage.IBILLABLE_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>ITarmed Allowance</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITARMED_ALLOWANCE_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 3;
+	int ITARMED_ALLOWANCE_FEATURE_COUNT = ModelPackage.IBILLABLE_FEATURE_COUNT + 4;
 
 
 	/**
@@ -173,6 +182,17 @@ public interface TarmedallowancePackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getITarmedAllowance_Chapter();
+
+	/**
+	 * Returns the meta object for the attribute '{@link ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance#getTP <em>TP</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>TP</em>'.
+	 * @see ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance#getTP()
+	 * @see #getITarmedAllowance()
+	 * @generated
+	 */
+	EAttribute getITarmedAllowance_TP();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -229,6 +249,14 @@ public interface TarmedallowancePackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ITARMED_ALLOWANCE__CHAPTER = eINSTANCE.getITarmedAllowance_Chapter();
+
+		/**
+		 * The meta object literal for the '<em><b>TP</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ITARMED_ALLOWANCE__TP = eINSTANCE.getITarmedAllowance_TP();
 
 	}
 

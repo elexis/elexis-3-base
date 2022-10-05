@@ -190,6 +190,16 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 	 * @generated
 	 */
 	@Override
+	public EAttribute getITarmedAllowance_TP() {
+		return (EAttribute)iTarmedAllowanceEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public TarmedallowanceFactory getTarmedallowanceFactory() {
 		return (TarmedallowanceFactory)getEFactoryInstance();
 	}
@@ -217,6 +227,7 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__VALID_FROM);
 		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__VALID_TO);
 		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__CHAPTER);
+		createEAttribute(iTarmedAllowanceEClass, ITARMED_ALLOWANCE__TP);
 	}
 
 	/**
@@ -258,6 +269,7 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		initEAttribute(getITarmedAllowance_ValidFrom(), theTypesPackage.getLocalDate(), "validFrom", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getITarmedAllowance_ValidTo(), theTypesPackage.getLocalDate(), "validTo", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getITarmedAllowance_Chapter(), ecorePackage.getEString(), "chapter", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getITarmedAllowance_TP(), ecorePackage.getEString(), "TP", null, 0, 1, ITarmedAllowance.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

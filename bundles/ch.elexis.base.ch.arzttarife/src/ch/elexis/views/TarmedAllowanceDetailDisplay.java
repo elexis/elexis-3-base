@@ -22,6 +22,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
+import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.LabeledInputField;
@@ -33,12 +34,8 @@ public class TarmedAllowanceDetailDisplay implements IDetailDisplay {
 	FormToolkit tk = UiDesk.getToolkit();
 	LabeledInputField.AutoForm tblLab;
 
-	// InputData[] data = new InputData[] {
-	// new InputData("Taxpunkte", "taxpoints", InputData.Typ.STRING, null),
-	// //$NON-NLS-1$
-	// new InputData("Preis in Rappen", "cents", InputData.Typ.STRING, null),
-	// //$NON-NLS-1$
-	// };
+	InputData[] data = new InputData[] { new InputData("Taxpunkte / Preis in Rappen", "TP", InputData.Typ.STRING, null), //$NON-NLS-1$ //$NON-NLS-2$
+	};
 
 	@Inject
 	public void selection(
@@ -53,7 +50,8 @@ public class TarmedAllowanceDetailDisplay implements IDetailDisplay {
 		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
 
-		tblLab = new LabeledInputField.AutoForm(form.getBody(), new InputData[0]);
+		tblLab = new LabeledInputField.AutoForm(form.getBody(), data);
+		tblLab.setModelService(ArzttarifeModelServiceHolder.get());
 
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;

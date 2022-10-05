@@ -2,6 +2,9 @@ package ch.elexis.base.ch.arzttarife.tarmedallowance.model;
 
 import java.time.LocalDate;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
@@ -48,6 +51,15 @@ public class TarmedAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.core
 	}
 
 	protected Money getPrice(IEncounter iEncounter) {
+		if (StringUtils.isNotBlank(getEntity().getTp())) {
+			try {
+				int cents = Integer.parseInt(getEntity().getTp());
+				return new Money(cents);
+			} catch (NumberFormatException e) {
+				LoggerFactory.getLogger(getClass())
+						.warn("Ignoring non integer tp value [" + getEntity().getTp() + "] of [" + this + "]");
+			}
+		}
 		return new Money();
 	}
 
@@ -133,4 +145,13 @@ public class TarmedAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.core
 		return "(" + getCode() + ") " + getChapter() + " - " + getText();
 	}
 
+	@Override
+	public String getTP() {
+		return getEntity().getTp();
+	}
+
+	@Override
+	public void setTP(String value) {
+		getEntityMarkDirty().setTp(value);
+	}
 }

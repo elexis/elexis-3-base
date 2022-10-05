@@ -1,6 +1,5 @@
 package ch.elexis.global_inbox.ui;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -10,6 +9,7 @@ import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +18,7 @@ import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.jdt.Nullable;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
@@ -97,8 +98,16 @@ public class GlobalInboxUtil {
 		return true;
 	}
 
+	public static String getDirectory(String defaultValue) {
+		boolean isGlobal = ConfigServiceHolder.getGlobal(Preferences.STOREFSGLOBAL, false);
+		if (isGlobal) {
+			return ConfigServiceHolder.get().get(Preferences.PREF_DIR, defaultValue);
+		}
+		return ConfigServiceHolder.get().getLocal(Preferences.PREF_DIR, defaultValue);
+	}
+
 	public static String getCategory(File file) {
-		String dir = CoreHub.localCfg.get(Preferences.PREF_DIR, Preferences.PREF_DIR_DEFAULT); // $NON-NLS-1$
+		String dir = getDirectory(Preferences.PREF_DIR_DEFAULT);
 		File parent = file.getParentFile();
 		if (parent == null) {
 			return Messages.Activator_noInbox;

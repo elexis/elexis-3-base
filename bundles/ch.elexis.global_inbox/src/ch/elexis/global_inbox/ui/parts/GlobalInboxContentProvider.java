@@ -17,11 +17,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.data.util.LocalLock;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.viewers.CommonContentProviderAdapter;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.internal.service.GlobalInboxEntryFactory;
@@ -77,11 +77,11 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 		protected IStatus run(IProgressMonitor monitor) {
 			LocalLock lock = new LocalLock(LOCAL_LOCK_INBOXIMPORT);
 			if (lock.tryLock()) {
-				String filepath = CoreHub.localCfg.get(Preferences.PREF_DIR, null);
+				String filepath = GlobalInboxUtil.getDirectory(null);
 				File dir = null;
 				if (filepath == null) {
 					filepath = Preferences.PREF_DIR_DEFAULT;
-					CoreHub.localCfg.set(Preferences.PREF_DIR, Preferences.PREF_DIR_DEFAULT);
+					ConfigServiceHolder.get().setLocal(Preferences.PREF_DIR, Preferences.PREF_DIR_DEFAULT);
 				}
 				dir = new File(filepath);
 				if (!dir.isDirectory()) {

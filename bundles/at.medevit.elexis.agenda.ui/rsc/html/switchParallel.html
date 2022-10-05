@@ -50,7 +50,7 @@
 						text: 'Pdf',
 						click: function () {
 							pdfFunction();
-						}						
+						}
 					},
 					switch: {
 						text: 'Woche',
@@ -97,9 +97,14 @@
 			callback(events);
 		}
 
+		var lastRightClickTimeStamp;
+
 		function rightClickCallback(date, jsEvent, view) {
-			if (typeof jsEvent.resource !== 'undefined') {
-				contextMenuFunction(jsEvent.pageX, jsEvent.pageY, date.format(), jsEvent.resource);
+			if (jsEvent.timeStamp != lastRightClickTimeStamp) {
+				if (typeof jsEvent.resource !== 'undefined') {
+					contextMenuFunction(jsEvent.pageX, jsEvent.pageY, date.format(), jsEvent.resource);
+				}
+				lastRightClickTimeStamp = jsEvent.timeStamp;
 			}
 		}
 

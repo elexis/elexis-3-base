@@ -19,6 +19,7 @@ import ch.elexis.core.model.IBillable;
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance#getValidFrom <em>Valid From</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance#getValidTo <em>Valid To</em>}</li>
  *   <li>{@link ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance#getChapter <em>Chapter</em>}</li>
+ *   <li>{@link ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance#getTP <em>TP</em>}</li>
  * </ul>
  *
  * @see ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage#getITarmedAllowance()
@@ -91,5 +92,27 @@ public interface ITarmedAllowance extends IBillable {
 	 * @generated
 	 */
 	void setChapter(String value);
+
+	/**
+	 * Returns the value of the '<em><b>TP</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>TP</em>' attribute.
+	 * @see #setTP(String)
+	 * @see ch.elexis.base.ch.arzttarife.tarmedallowance.TarmedallowancePackage#getITarmedAllowance_TP()
+	 * @model
+	 * @generated
+	 */
+	String getTP();
+
+	/**
+	 * Sets the value of the '{@link ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance#getTP <em>TP</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>TP</em>' attribute.
+	 * @see #getTP()
+	 * @generated
+	 */
+	void setTP(String value);
 
 } // ITarmedAllowance

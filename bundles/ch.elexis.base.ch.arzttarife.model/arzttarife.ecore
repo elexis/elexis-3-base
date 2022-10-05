@@ -178,6 +178,7 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="validFrom" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="validTo" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="chapter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="TP" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
   </eSubpackages>
   <eSubpackages name="nutrition" nsURI="http://ch.elexis.base/model/arzttarife/nutrition"

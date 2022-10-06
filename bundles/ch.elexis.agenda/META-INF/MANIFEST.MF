@@ -25,7 +25,7 @@ Export-Package: ch.elexis.agenda.data,
  ch.elexis.dialogs
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Import-Package: com.google.common.cache;version="15.0.0",
- com.ibm.icu.util;version="67.1.0",
+ com.ibm.icu.util,
  javax.inject;version="1.0.0",
  org.eclipse.e4.ui.di,
  org.eclipse.e4.ui.model.application.ui.basic

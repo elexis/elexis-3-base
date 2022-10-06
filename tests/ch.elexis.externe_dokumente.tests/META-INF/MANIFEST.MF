@@ -7,7 +7,7 @@ Bundle-Vendor: elexis.ch
 Fragment-Host: ch.elexis.externe_dokumente;bundle-version="3.9.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.junit;bundle-version="4.8.0",
- org.apache.commons.io;bundle-version="2.4.0",
  ch.elexis.core.application;bundle-version="3.1.0"
-Import-Package: ch.elexis.data
+Import-Package: ch.elexis.data,
+ org.apache.commons.io
 Bundle-ClassPath: .

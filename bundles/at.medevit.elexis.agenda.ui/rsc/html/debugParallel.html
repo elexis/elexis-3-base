@@ -29,11 +29,11 @@
 				slotDuration: "00:15:00",
 				displayEventTime: false,
 				views: {
-					agendaParallel: {
-						titleFormat: 'dd, (D.) MMMM YYYY'
-						// other view-specific options here
-					}
-				},
+			        agendaParallel: { 
+			            titleFormat:   'dd, (D.) MMMM YYYY' 
+			            // other view-specific options here
+			        }
+			    },
 				events: [
 					{
 						title: 'right click?',
@@ -55,38 +55,31 @@
 		var dayClickPosX;
 		var dayClickPosY;
 
-		function dayClickCallback(date, jsEvent, view) {
-			if (dayClickSlotDate) {
-				dayClickFunction(date.format());
-				dayClickSlotDate = null;
-			} else {
+   		function dayClickCallback(date, jsEvent, view) {
+   		    if (dayClickSlotDate) {
+   		        dayClickFunction(date.format());
+   		        dayClickSlotDate = null;
+   		    } else {
 				singleClickFunction();
-				dayClickSlotDate = date;
+		        dayClickSlotDate = date;
 				dayClickPosX = jsEvent.pageX;
 				dayClickPosY = jsEvent.pageY;
-				$("#calendar").mousemove(function (jqEvent) {
-					if (dayClickSlotDate) {
-						if (dayClickPosX != jqEvent.pageX || dayClickPosY != jqEvent.pageY) {
+   		        $("#calendar").mousemove(function (jqEvent) {
+					if(dayClickSlotDate) {
+						if(dayClickPosX != jqEvent.pageX || dayClickPosY != jqEvent.pageY) {
 							dayClickSlotDate = null;
 						}
 					}
 				});
-			}
-		}
-
-		var lastRightClickTimeStamp;
+   		    }
+   		}
 
 		function rightClickCallback(date, jsEvent, view) {
-			if (jsEvent.timeStamp != lastRightClickTimeStamp) {
-				if (typeof jsEvent.resource !== 'undefined') {
-					contextMenuFunction(jsEvent.pageX, jsEvent.pageY, date.format(), jsEvent.resource);
-				}
-				lastRightClickTimeStamp = jsEvent.timeStamp;
+			if (typeof jsEvent.resource !== 'undefined') {
+				contextMenuFunction(date.format(), jsEvent.resource);
+			} else {
+				contextMenuFunction(date.format());
 			}
-		}
-
-		function contextMenuFunction(date, resource) {
-			console.trace();
 		}
 
 		function eventRenderCallback(event, element) {
@@ -120,20 +113,22 @@
 					});
 				}
 			}
-			if (event.description) {
+			if(event.description) {
 				var firstpart = event.description.split('<br /><br />');
-				if (firstpart.length > 0) {
+				if(firstpart.length > 0) {
 					element.find(".fc-title").append("<br/>" + firstpart[0]);
 				} else {
 					element.find(".fc-title").append("<br/>" + event.description);
 				}
 			}
-			if (event.borderColor) {
+			if (event.borderColor)
+			{
 				element.find("div.fc-content").wrapAll("<div class='event-status-block'></div>");
 				element.find("div.event-status-block").css("border-color", event.borderColor);
 			}
-			if (event.icon) {
-				element.find("div.fc-content").prepend("<i class='ui-icon ui-calendar-icon " + event.icon + "'></i>");
+			if (event.icon)
+			{
+				element.find("div.fc-content").prepend("<i class='ui-icon ui-calendar-icon " +event.icon+"'></i>");
 			}
 		}
 	</script>
@@ -144,7 +139,7 @@
 			font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
 			font-size: 14px;
 		}
-
+		
 		#calendar {
 			margin: 0 auto;
 			width: 100%;
@@ -155,10 +150,10 @@
 <body oncontextmenu="return false;">
 	<!--[if lt IE 9 ]>
 		<p style="background-color: #fffa00">You are using an outdated version of Internet Explorer.  For security reasons you should upgrade your browser. Please go to Windows Updates and install the latest version.</p>
-	<![endif]-->
+	<![endif]--> 	
 	<div id='calendar'></div>
-	<input type="button" value="Update resources"
-		onclick="$('#calendar').fullCalendar('getView').setResourceIds(['Anton','Berta','Caesar']);" />
+	<input type="button" value="Update resources" onclick="$('#calendar').fullCalendar('getView').setResourceIds(['Anton','Berta','Caesar']);"
+	/>
 </body>
 
 </html>

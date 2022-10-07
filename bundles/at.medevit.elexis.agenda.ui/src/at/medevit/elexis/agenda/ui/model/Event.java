@@ -1,5 +1,7 @@
 package at.medevit.elexis.agenda.ui.model;
 
+import org.slf4j.LoggerFactory;
+
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPeriod;
@@ -217,10 +219,19 @@ public class Event {
 	 * @return
 	 */
 	public static String getTextColor(String bgColor) {
-		int brightness = getPerceivedBrightness(Integer.parseInt(bgColor.substring(0, 2), 16),
-				Integer.parseInt(bgColor.substring(2, 4), 16), Integer.parseInt(bgColor.substring(4, 6), 16));
+		try {
+			if (bgColor.startsWith("#")) {
+				bgColor = bgColor.substring(1);
+			}
+			int brightness = getPerceivedBrightness(Integer.parseInt(bgColor.substring(0, 2), 16),
+					Integer.parseInt(bgColor.substring(2, 4), 16), Integer.parseInt(bgColor.substring(4, 6), 16));
 
-		return brightness > 130 ? "#000000" : "#ffffff";
+			return brightness > 130 ? "#000000" : "#ffffff"; //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (NumberFormatException e) {
+			LoggerFactory.getLogger(Event.class)
+					.warn("Backgound color of event [" + bgColor + "] is no valid color number");
+			return "#ffffff"; //$NON-NLS-1$
+		}
 	}
 
 	private static int getPerceivedBrightness(int red, int green, int blue) {

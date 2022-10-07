@@ -268,10 +268,15 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 	private class TimeSpanLoader extends CacheLoader<TimeSpan, EventsJsonValue> {
 
 		@Override
-		public EventsJsonValue load(TimeSpan key) throws Exception {
-			List<IPeriod> periods = getPeriods(key);
-			return new EventsJsonValue(key,
-					periods.parallelStream().map(p -> Event.of(p, key.userContact)).collect(Collectors.toList()));
+		public EventsJsonValue load(TimeSpan key) {
+			try {
+				List<IPeriod> periods = getPeriods(key);
+				return new EventsJsonValue(key,
+						periods.parallelStream().map(p -> Event.of(p, key.userContact)).collect(Collectors.toList()));
+			} catch (Exception e) {
+				LoggerFactory.getLogger(getClass()).error("Error loading json events", e);
+				return new EventsJsonValue(key, Collections.emptyList());
+			}
 		}
 
 		@SuppressWarnings("unchecked")

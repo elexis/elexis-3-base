@@ -1451,6 +1451,11 @@ public class Tarmed45Exporter {
 						if (updateGuarantor != null) {
 							request.getPayload().getBody().getTiersGarant().setGuarantor(updateGuarantor);
 						}
+						// update debitor information
+						DebitorAddressType updateDebitor = getDebitor(invoice);
+						if (updateDebitor != null) {
+							request.getPayload().getBody().getTiersGarant().setDebitor(updateDebitor);
+						}
 						// update insurance information
 						InsuranceAddressType updateInsurance = getInsurance(invoice);
 						if (updateInsurance != null) {
@@ -1487,6 +1492,11 @@ public class Tarmed45Exporter {
 						GuarantorAddressType updateGuarantor = getGuarantor(invoice);
 						if (updateGuarantor != null) {
 							request.getPayload().getBody().getTiersPayant().setGuarantor(updateGuarantor);
+						}
+						// update debitor information
+						DebitorAddressType updateDebitor = getDebitor(invoice);
+						if (updateDebitor != null) {
+							request.getPayload().getBody().getTiersPayant().setDebitor(updateDebitor);
 						}
 						// update insurance information
 						InsuranceAddressType updateInsurance = getInsurance(invoice);

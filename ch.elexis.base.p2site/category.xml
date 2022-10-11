@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
 <site>
    <feature url="features/ch.elexis.base.ch.feature_0.0.0.jar" id="ch.elexis.base.ch.feature" version="0.0.0">
       <category name="basepackages"/>
@@ -29,9 +29,6 @@
    </feature>
    <feature url="features/ch.pharmed.phmprescriber.feature_0.0.0.jar" id="ch.pharmed.phmprescriber.feature" version="0.0.0">
       <category name="dataexchange"/>
-   </feature>
-   <feature url="features/at.medevit.elexis.text.docx.feature_0.0.0.jar" id="at.medevit.elexis.text.docx.feature" version="0.0.0">
-      <category name="documentmanagement"/>
    </feature>
    <feature url="features/org.iatrix.messwerte.feature_0.0.0.jar" id="org.iatrix.messwerte.feature" version="0.0.0">
       <category name="clinicrecordkeeping"/>

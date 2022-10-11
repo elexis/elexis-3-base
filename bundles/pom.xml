@@ -130,7 +130,6 @@
     <module>ch.elexis.stickynotes</module>
     <module>ch.elexis.support.dbshaker</module>
     <module>ch.gpb.elexis.cst</module>
-    <module>at.medevit.elexis.text.docx</module>
     <module>ch.medshare.commons</module>
     <module>ch.medshare.connect.abacusjunior</module>
     <module>ch.medshare.elexis_directories</module>

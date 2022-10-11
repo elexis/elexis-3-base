@@ -892,6 +892,10 @@ public class Tarmed45Exporter {
 		if ("317".equals(tariffTyp)) {
 			return true;
 		}
+		// pandemie
+		if ("351".equals(tariffTyp)) {
+			return true;
+		}
 		return false;
 	}
 

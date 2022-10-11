@@ -10,10 +10,10 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.ui;
 
-import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoProperties;
@@ -49,6 +49,7 @@ import at.medevit.ch.artikelstamm.ui.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.ui.internal.DatabindingTextResizeConverter;
 import at.medevit.ch.artikelstamm.ui.internal.IntToStringConverterSelbstbehalt;
 import at.medevit.ch.artikelstamm.ui.internal.ModelServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.databinding.SavingUpdateValueStrategy;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.controls.ArticleDefaultSignatureComposite;
@@ -200,6 +201,7 @@ public class DetailComposite extends ScrolledComposite {
 				item.getValue().setUserDefinedPrice(btnUserDefinedPrice.getSelection());
 				m_bindingContext.updateTargets();
 				txtPUBLICPRICE.setFocus();
+				CoreModelServiceHolder.get().save(item.getValue());
 			}
 		});
 

@@ -97,14 +97,9 @@
 			callback(events);
 		}
 
-		var lastRightClickTimeStamp;
-
 		function rightClickCallback(date, jsEvent, view) {
-			if (jsEvent.timeStamp != lastRightClickTimeStamp) {
-				if (typeof jsEvent.resource !== 'undefined') {
-					contextMenuFunction(jsEvent.pageX, jsEvent.pageY, date.format(), jsEvent.resource);
-				}
-				lastRightClickTimeStamp = jsEvent.timeStamp;
+			if (typeof jsEvent.resource !== 'undefined') {
+				contextMenuFunction(jsEvent.pageX, jsEvent.pageY, date.format(), jsEvent.resource);
 			}
 		}
 

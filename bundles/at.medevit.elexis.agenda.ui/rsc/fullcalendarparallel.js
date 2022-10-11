@@ -2,6 +2,8 @@ var FC = $.fullCalendar; // a reference to FullCalendar's root namespace
 var View = FC.View;      // the class that all views must inherit from
 var ParallelView;
 
+var lastRightClickEvent;
+
 /* FullCalendar-specific DOM Utilities
 ----------------------------------------------------------------------------------------------------------------------*/
 
@@ -567,19 +569,25 @@ ParallelView = View.extend({
 	},
 
 	triggerRightClick: function (span, dayEl, ev) {
-		if (dayEl.length > 0) {
-			for (var i = 0, atts = dayEl[0].attributes; i < atts.length; i++) {
-				if (atts[i].nodeName === 'data-resource') {
-					ev.resource = atts[i].nodeValue;
+		// is always triggered twice, we only want the second event
+		if(lastRightClickEvent != null) {
+			if (dayEl.length > 0) {
+				for (var i = 0, atts = dayEl[0].attributes; i < atts.length; i++) {
+					if (atts[i].nodeName === 'data-resource') {
+						ev.resource = atts[i].nodeValue;
+					}
 				}
 			}
+			this.publiclyTrigger(
+				'rightClick',
+				dayEl,
+				this.calendar.applyTimezone(span.start), // convert to calendar's timezone for external API
+				ev
+			);
+			lastRightClickEvent = null;	
+		} else {
+			lastRightClickEvent = ev;
 		}
-		this.publiclyTrigger(
-			'rightClick',
-			dayEl,
-			this.calendar.applyTimezone(span.start), // convert to calendar's timezone for external API
-			ev
-		);
 	}
 });
 

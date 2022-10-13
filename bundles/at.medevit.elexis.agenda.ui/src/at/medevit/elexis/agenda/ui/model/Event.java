@@ -37,7 +37,7 @@ public class Event {
 	private String resource;
 
 	// https://fullcalendar.io/docs/event-object
-	private String allDay;
+	private boolean allDay = false;
 
 	public String getId() {
 		return id;
@@ -119,6 +119,14 @@ public class Event {
 		this.resource = resource;
 	}
 
+	public boolean isAllDay() {
+		return allDay;
+	}
+
+	public void setAllDay(boolean allDay) {
+		this.allDay = allDay;
+	}
+
 	public void setIcon(String icon) {
 		this.icon = icon;
 	}
@@ -137,7 +145,7 @@ public class Event {
 		Event ret = new Event();
 		ret.id = iPeriod.getId();
 		ret.start = iPeriod.getStartTime().toString();
-		ret.end = iPeriod.getEndTime().toString();
+		ret.end = (iPeriod.getEndTime()) != null ? iPeriod.getEndTime().toString() : null;
 		if (iPeriod instanceof IAppointment) {
 			IAppointment termin = (IAppointment) iPeriod;
 			ret.resource = termin.getSchedule();
@@ -160,6 +168,9 @@ public class Event {
 			ret.backgroundColor = AppointmentServiceHolder.get().getContactConfiguredTypeColor(userContact,
 					termin.getType());
 			ret.textColor = getTextColor(ret.backgroundColor.substring(1));
+			if (ret.end == null) {
+				ret.allDay = true;
+			}
 		}
 		return ret;
 	}

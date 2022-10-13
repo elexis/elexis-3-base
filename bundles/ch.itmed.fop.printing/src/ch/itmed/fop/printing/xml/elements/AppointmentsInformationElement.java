@@ -18,8 +18,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -90,9 +88,6 @@ public class AppointmentsInformationElement {
 				}
 				p.appendChild(c);
 			}
-		} else {
-			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Keine Termin Serie", //$NON-NLS-1$
-					"Keine Termin Serie zum selektierten Patienten gefunden"); //$NON-NLS-1$
 		}
 
 		return p;

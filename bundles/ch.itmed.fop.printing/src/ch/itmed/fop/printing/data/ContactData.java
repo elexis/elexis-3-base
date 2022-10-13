@@ -11,22 +11,17 @@
 
 package ch.itmed.fop.printing.data;
 
-import static ch.elexis.core.model.PatientConstants.FLD_EXTINFO_LEGAL_GUARDIAN;
-
 import org.apache.commons.lang3.StringUtils;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Kontakt;
-import ch.itmed.fop.printing.resources.Messages;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class ContactData {
-	private Kontakt kontakt;
+	private IContact kontakt;
 
 	public void load() throws NullPointerException {
-		kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Kontakt.class);
+		kontakt = ContextServiceHolder.get().getTyped(IContact.class).orElse(null);
 		if (kontakt == null) {
-			SWTHelper.showInfo(Messages.Info_NoContact_Title, Messages.Info_NoContact_Message);
 			throw new NullPointerException("No contact selected"); //$NON-NLS-1$
 		}
 	}
@@ -37,38 +32,27 @@ public class ContactData {
 
 	public String getAddress(boolean useLegalGuardian) {
 		if (kontakt != null) {
-			if (hasLegalGuardian()) {
-				return getLegalGuardian().getPostAnschrift(true);
+			IContact legalGuardian = getLegalGuardian();
+			if (legalGuardian != null) {
+				return legalGuardian.getPostalAddress();
 			}
-			return kontakt.getPostAnschrift(true);
+			return kontakt.getPostalAddress();
 		} else {
 			return StringUtils.EMPTY;
 		}
 
 	}
 
-	private boolean hasLegalGuardian() {
-		if (kontakt.istPerson()) {
-			String guardianId = (String) kontakt.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
-			return StringUtils.isNotBlank(guardianId);
-		}
-		return false;
-	}
-
-	private Kontakt getLegalGuardian() {
-		String guardianId = (String) kontakt.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
-		if (StringUtils.isNotBlank(guardianId)) {
-			Kontakt guardian = Kontakt.load((String) guardianId);
-			if (guardian.exists()) {
-				return guardian;
-			}
+	private IContact getLegalGuardian() {
+		if (kontakt.isPerson()) {
+			return kontakt.asIPerson().getLegalGuardian();
 		}
 		return null;
 	}
 
 	public String getSalutaton() {
 		if (kontakt != null) {
-			return kontakt.getSalutation();
+			return Salutation.getSalutation(kontakt);
 		} else {
 			return StringUtils.EMPTY;
 		}

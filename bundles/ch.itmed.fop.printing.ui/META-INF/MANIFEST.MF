@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IT-Med Medi-Print Plugin User Interface
+Bundle-SymbolicName: ch.itmed.fop.printing.ui;singleton:=true
+Bundle-Vendor: IT-Med AG
+Bundle-Version: 3.10.0.qualifier
+Require-Bundle: ch.elexis.core.data;bundle-version="3.10.0",
+ ch.elexis.core.ui;bundle-version="3.10.0",
+ ch.itmed.fop.printing;bundle-version="3.10.0",
+ ch.elexis.core.ui.medication;bundle-version="3.10.0",
+ ch.elexis.fop_wrapper;bundle-version="3.9.0"
+Automatic-Module-Name: ch.itmed.fop.printing.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Service-Component: OSGI-INF/ch.itmed.fop.printing.startup.StartupHandler.xml
+Bundle-ActivationPolicy: lazy

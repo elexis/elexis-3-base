@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<paperSizes>
+    <paperSize id="SLP-ENTL(57x89mm)">
+        <pageWidth>57</pageWidth>
+        <pageHeight>89</pageHeight>
+        <marginTop>6</marginTop>
+        <marginBottom>6</marginBottom>
+        <marginLeft>6</marginLeft>
+        <marginRight>6</marginRight>
+    </paperSize>
+
+    <paperSize id="NTC517 54x82Z">
+        <pageWidth>54</pageWidth>
+        <pageHeight>82</pageHeight>
+        <marginTop>3</marginTop>
+        <marginBottom>3</marginBottom>
+        <marginLeft>2</marginLeft>
+        <marginRight>2</marginRight>
+    </paperSize>
+
+    <paperSize id="SLP-2RL">
+        <pageWidth>28</pageWidth>
+        <pageHeight>89</pageHeight>
+        <marginTop>4</marginTop>
+        <marginBottom>4</marginBottom>
+        <marginLeft>2</marginLeft>
+        <marginRight>2</marginRight>
+    </paperSize>
+
+    <paperSize id="SLP-2RLE">
+        <pageWidth>36</pageWidth>
+        <pageHeight>89</pageHeight>
+        <marginTop>4</marginTop>
+        <marginBottom>4</marginBottom>
+        <marginLeft>2</marginLeft>
+        <marginRight>2</marginRight>
+    </paperSize>
+
+    <paperSize id="SLP-MRLB">
+        <pageWidth>28</pageWidth>
+        <pageHeight>51</pageHeight>
+        <marginTop>4</marginTop>
+        <marginBottom>4</marginBottom>
+        <marginLeft>2</marginLeft>
+        <marginRight>2</marginRight>
+    </paperSize>
+
+    <paperSize id="DK-22205">
+        <pageWidth>62</pageWidth>
+        <pageHeight>90</pageHeight>
+        <marginTop>3</marginTop>
+        <marginBottom>3</marginBottom>
+        <marginLeft>3</marginLeft>
+        <marginRight>3</marginRight>
+    </paperSize>
+</paperSizes>

@@ -29,6 +29,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
@@ -41,7 +43,7 @@ import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.preferences.SettingsProvider;
 
 public class ResourceProvider {
-	private static final String PLUGIN_ID = "ch.itmed.fop.printing"; //$NON-NLS-1$
+	private static final String PLUGIN_ID = "ch.itmed.fop.printing.ui"; //$NON-NLS-1$
 	private static final String xslResourcePath = "/res/xsl/"; //$NON-NLS-1$
 	private static final String xmlResourcePath = "/res/xml/PaperSizes.xml"; //$NON-NLS-1$
 	public static final String IMAGE_ELLIPSIS_V_PATH = "/res/icons/vertical.png"; //$NON-NLS-1$
@@ -74,10 +76,16 @@ public class ResourceProvider {
 	}
 
 	public static Image loadImage(String path) {
-		Bundle bundle = Platform.getBundle(PLUGIN_ID);
-		URL url = FileLocator.find(bundle, new Path(path), null);
-		ImageDescriptor imageDesc = ImageDescriptor.createFromURL(url);
-		return imageDesc.createImage();
+		ImageRegistry imageRegistry = JFaceResources.getImageRegistry();
+		Image image = imageRegistry.get(PLUGIN_ID + path);
+		if (image == null) {
+			Bundle bundle = Platform.getBundle(PLUGIN_ID);
+			URL url = FileLocator.find(bundle, new Path(path), null);
+			ImageDescriptor imageDesc = ImageDescriptor.createFromURL(url);
+			image = imageDesc.createImage();
+			imageRegistry.put(PLUGIN_ID + path, image);
+		}
+		return image;
 	}
 
 	/**

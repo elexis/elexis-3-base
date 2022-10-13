@@ -2,17 +2,22 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IT-Med Medi-Print Plugin
 Bundle-SymbolicName: ch.itmed.fop.printing;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.10.0.qualifier
 Bundle-Vendor: IT-Med AG
 Automatic-Module-Name: ch.itmed.fop.printing
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0",
+Require-Bundle: ch.elexis.core.l10n;bundle-version="3.10.0",
+ ch.elexis.core;bundle-version="3.10.0",
+ ch.elexis.core.services;bundle-version="3.10.0",
  ch.elexis.agenda;bundle-version="3.9.0",
- ch.elexis.fop_wrapper;bundle-version="3.2.0"
+ ch.elexis.fop_wrapper;bundle-version="3.9.0",
+ ch.rgw.utility
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/ch.itmed.fop.printing.startup.StartupHandler.xml
-Import-Package: ch.elexis.core.ui.medication.views,
- javax.inject;version="1.0.0",
+Import-Package: javax.inject;version="1.0.0",
  org.apache.commons.io;version="2.8.0",
- org.apache.commons.lang3;version="3.12.0"
+ org.apache.commons.lang3;version="3.12.0",
+ org.eclipse.jface.preference
+Export-Package: ch.itmed.fop.printing.preferences,
+ ch.itmed.fop.printing.print,
+ ch.itmed.fop.printing.resources,
+ ch.itmed.fop.printing.xml.documents

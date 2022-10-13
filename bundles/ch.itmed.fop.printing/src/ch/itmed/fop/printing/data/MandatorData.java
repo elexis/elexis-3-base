@@ -11,27 +11,25 @@
 
 package ch.itmed.fop.printing.data;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Mandant;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public final class MandatorData {
-	private Mandant mandator;
+	private IMandator mandator;
 
 	public boolean canLoad() {
-		return ElexisEventDispatcher.getSelected(Mandant.class) != null;
+		return ContextServiceHolder.get().getActiveMandator().orElse(null) != null;
 	}
 
 	public void load() throws NullPointerException {
-		mandator = (Mandant) ElexisEventDispatcher.getSelected(Mandant.class);
+		mandator = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		if (mandator == null) {
-			SWTHelper.showInfo("Kein Mandant ausgewählt", "Bitte wählen Sie vor dem Drucken einen Mandanten!");
 			throw new NullPointerException("No mandator selected"); //$NON-NLS-1$
 		}
 	}
 
 	public String getEmail() {
-		return mandator.getMailAddress();
+		return mandator.getEmail();
 	}
 
 	public String getId() {
@@ -39,18 +37,21 @@ public final class MandatorData {
 	}
 
 	public String getFirstName() {
-		return mandator.getVorname();
+		return mandator.getDescription2();
 	}
 
 	public String getLastName() {
-		return mandator.getName();
+		return mandator.getDescription1();
 	}
 
 	public String getPhone() {
-		return mandator.get("Telefon1"); //$NON-NLS-1$
+		return mandator.getPhone1();
 	}
 
 	public String getTitle() {
-		return mandator.get("Titel"); //$NON-NLS-1$
+		if (mandator.isPerson()) {
+			return mandator.asIPerson().getTitel();
+		}
+		return "";
 	}
 }

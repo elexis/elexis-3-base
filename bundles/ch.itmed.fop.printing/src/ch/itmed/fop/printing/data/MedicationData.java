@@ -16,16 +16,13 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.MedicationServiceHolder;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Prescription;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
-import ch.itmed.fop.printing.preferences.SettingsProvider;
+import ch.itmed.fop.printing.preferences.Setting;
 import ch.itmed.fop.printing.resources.Messages;
 
 public final class MedicationData {
@@ -38,7 +35,6 @@ public final class MedicationData {
 	public void load() throws NullPointerException {
 		prescription = ContextServiceHolder.get().getTyped(IPrescription.class).orElse(null);
 		if (prescription == null) {
-			SWTHelper.showInfo("Keine Medikation ausgewählt", "Bitte wählen Sie vor dem Drucken eine Medikation.");
 			throw new NullPointerException("No prescription selected"); //$NON-NLS-1$
 		}
 	}
@@ -63,7 +59,7 @@ public final class MedicationData {
 	}
 
 	public String[] getDoseArray() {
-		return Prescription.getSignatureAsStringArray(getDose());
+		return MedicationServiceHolder.get().getSignatureAsStringArray(prescription.getDosageInstruction());
 	}
 
 	public String getDosageInstructions() {
@@ -82,8 +78,7 @@ public final class MedicationData {
 
 	public String getResponsiblePharmacist() {
 		String docName = PreferenceConstants.MEDICATION_LABEL;
-		IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
-		return settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 13));
+		return Setting.getString(docName, PreferenceConstants.getDocPreferenceConstant(docName, 13));
 	}
 
 	public String getMedicationType() {

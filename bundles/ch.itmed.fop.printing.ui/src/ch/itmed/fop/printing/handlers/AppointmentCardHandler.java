@@ -46,13 +46,6 @@ public final class AppointmentCardHandler extends AbstractHandler {
 			logger.info("Printing document AppointmentCard on printer: " + printerName); //$NON-NLS-1$
 			PrintProvider.print(fo, printerName);
 		} catch (Exception e) {
-			String msg = e.getMessage();
-			if (msg != null) {
-				if (msg.equals("No appointment selected")) { //$NON-NLS-1$
-					// Make sure we don't show 2 error messages.
-					return null;
-				}
-			}
 			SWTHelper.showError(Messages.DefaultError_Title, Messages.DefaultError_Message);
 			logger.error(e.getLocalizedMessage(), e);
 		}

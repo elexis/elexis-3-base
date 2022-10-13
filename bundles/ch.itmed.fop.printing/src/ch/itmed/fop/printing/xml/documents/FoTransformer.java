@@ -29,8 +29,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.ui.util.SWTHelper;
-
 public class FoTransformer {
 	private static Logger logger = LoggerFactory.getLogger(FoTransformer.class);
 
@@ -46,9 +44,8 @@ public class FoTransformer {
 
 		if (xslFile.exists() == false) {
 			logger.error("XSL template " + xslFile.getAbsolutePath() + " not found"); //$NON-NLS-1$ //$NON-NLS-2$
-			SWTHelper.showError("Druck fehlgeschlagen",
-					"Die Vorlage " + xslFile.toString() + " konnte nicht gefunden werden.");
-			return null;
+			throw new IllegalStateException(
+					"Druck fehlgeschlagen. Die Vorlage " + xslFile.toString() + " konnte nicht gefunden werden.");
 		}
 
 		if (xmlInputStream == null) {

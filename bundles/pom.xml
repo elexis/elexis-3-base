@@ -152,6 +152,7 @@
     <module>waelti.statistics</module>
     <module>ch.itmed.lmz.risch.laborder</module>
     <module>ch.itmed.fop.printing</module>
+    <module>ch.itmed.fop.printing.ui</module>
     <module>at.medevit.elexis.documents.converter</module>
     <module>at.medevit.elexis.documents.converter.ui</module>
   </modules>

@@ -11,40 +11,36 @@
 
 package ch.itmed.fop.printing.data;
 
-import static ch.elexis.core.model.PatientConstants.FLD_EXTINFO_LEGAL_GUARDIAN;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ContextServiceHolder;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Messages;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Person;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.types.Gender;
+import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 public class PatientData {
-	private Patient patient;
+	private IPatient patient;
 
 	private boolean useLegalGuardian;
 
-	private Kontakt legalGuardian;
+	private IContact legalGuardian;
 
 	public PatientData(boolean useLegalGuardian) {
 		this.useLegalGuardian = useLegalGuardian;
 	}
 
 	public void load() throws NullPointerException {
-		patient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+		patient = ContextServiceHolder.get().getActivePatient().orElse(null);
 		if (patient == null) {
-			SWTHelper.showInfo(ch.itmed.fop.printing.resources.Messages.Info_NoPatient_Title,
-					ch.itmed.fop.printing.resources.Messages.Info_NoPatient_Message);
 			throw new NullPointerException("No patient selected"); //$NON-NLS-1$
 		}
 		if (useLegalGuardian) {
@@ -53,22 +49,15 @@ public class PatientData {
 	}
 
 	public void loadFromAgenda() throws NullPointerException {
-		Termin t = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
-		if (t == null) {
-			Optional<IAppointment> iAppointment = ContextServiceHolder.get().getTyped(IAppointment.class);
-			if (iAppointment.isPresent()) {
-				PersistentObject po = NoPoUtil.loadAsPersistentObject(iAppointment.get());
-				if (po instanceof Termin) {
-					t = (Termin) po;
-				}
-			}
-			if (t == null) {
-				throw new NullPointerException("No appointment selected"); //$NON-NLS-1$
-			}
+		Optional<IAppointment> iAppointment = ContextServiceHolder.get().getTyped(IAppointment.class);
+		if (!iAppointment.isPresent()) {
+			throw new NullPointerException("No appointment selected"); //$NON-NLS-1$
 		}
 
-		String pid = t.getKontakt().getId();
-		patient = Patient.load(pid);
+		IContact contact = iAppointment.get().getContact();
+		if (contact != null && contact.isPatient()) {
+			patient = CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get();
+		}
 
 		if (useLegalGuardian) {
 			initLegalGuardian();
@@ -76,76 +65,63 @@ public class PatientData {
 	}
 
 	private void initLegalGuardian() {
-		if (patient != null && patient.exists() && hasLegalGuardian()) {
-			legalGuardian = getLegalGuardian();
+		if (patient != null && !patient.isDeleted()) {
+			legalGuardian = patient.getLegalGuardian();
 		}
-	}
-
-	private boolean hasLegalGuardian() {
-		if (patient.istPerson()) {
-			String guardianId = (String) patient.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
-			return StringUtils.isNotBlank(guardianId);
-		}
-		return false;
-	}
-
-	private Kontakt getLegalGuardian() {
-		String guardianId = (String) patient.getExtInfoStoredObjectByKey(FLD_EXTINFO_LEGAL_GUARDIAN);
-		if (StringUtils.isNotBlank(guardianId)) {
-			Kontakt guardian = Kontakt.load((String) guardianId);
-			if (guardian.exists()) {
-				return guardian;
-			}
-		}
-		return null;
 	}
 
 	public String getFirstName() {
-		if (legalGuardian != null && legalGuardian.istPerson()) {
-			return legalGuardian.get(Person.FIRSTNAME);
+		if (legalGuardian != null && legalGuardian.isPerson()) {
+			return legalGuardian.getDescription2();
 		} else {
-			return patient.getVorname();
+			return patient.getFirstName();
 		}
 	}
 
 	public String getLastName() {
-		if (legalGuardian != null && legalGuardian.istPerson()) {
-			return legalGuardian.get(Person.NAME);
+		if (legalGuardian != null && legalGuardian.isPerson()) {
+			return legalGuardian.getDescription1();
 		} else {
-			return patient.getName();
+			return patient.getLastName();
 		}
 	}
 
 	public String getBirthdate() {
-		if (legalGuardian != null && legalGuardian.istPerson()) {
-			return legalGuardian.get(Person.BIRTHDATE);
+		LocalDateTime date;
+		if (legalGuardian != null && legalGuardian.isPerson()) {
+			date = legalGuardian.asIPerson().getDateOfBirth();
 		} else {
-			return patient.getGeburtsdatum();
+			date = patient.getDateOfBirth();
 		}
+		if (date != null) {
+			return date.toLocalDate().format(DateTimeFormatter.BASIC_ISO_DATE);
+		}
+		return "";
 	}
 
 	public String getSex() {
-		if (legalGuardian != null && legalGuardian.istPerson()) {
-			return legalGuardian.get(Person.SEX);
+		if (legalGuardian != null && legalGuardian.isPerson()) {
+			return legalGuardian.asIPerson().getGender().getLocaleText();
 		} else {
-			return patient.getGeschlecht();
+			return patient.asIPerson().getGender().getLocaleText();
 		}
 	}
 
 	public String getPid() {
-		return PersistentObject.checkNull(patient.get(Patient.FLD_PATID));
+		return StringUtils.defaultString(patient.getCode());
 	}
 
 	public String getSalutation() {
 		String salutation;
-		if (legalGuardian != null && legalGuardian.istPerson()) {
-			if (legalGuardian.get(Person.SEX).equals(Person.MALE)) {
+		if (legalGuardian != null && legalGuardian.isPerson()) {
+			Gender gender = legalGuardian.asIPerson().getGender();
+			if (Gender.MALE == gender) {
 				salutation = Messages.Contact_SalutationM;
 			} else {
 				salutation = Messages.Contact_SalutationF;
 			}
 		} else {
-			if (patient.getGeschlecht().equals(Person.MALE)) {
+			if (patient.getGender().equals(Gender.MALE)) {
 				salutation = Messages.Contact_SalutationM;
 			} else {
 				salutation = Messages.Contact_SalutationF;
@@ -155,82 +131,93 @@ public class PatientData {
 	}
 
 	public String getTitle() {
-		return PersistentObject.checkNull(patient.get("Titel")); //$NON-NLS-1$
+		return patient.getTitel();
 	}
 
 	public String getPostalCode() {
 		if (legalGuardian != null) {
-			return PersistentObject.checkNull(legalGuardian.get(Patient.FLD_ZIP));
+			return StringUtils.defaultString(legalGuardian.getZip());
 		} else {
-			return PersistentObject.checkNull(patient.get(Patient.FLD_ZIP));
+			return StringUtils.defaultString(patient.getZip());
 		}
 	}
 
 	public String getCity() {
 		if (legalGuardian != null) {
-			return PersistentObject.checkNull(legalGuardian.get(Patient.FLD_PLACE));
+			return StringUtils.defaultString(legalGuardian.getCity());
 		} else {
-			return PersistentObject.checkNull(patient.get(Patient.FLD_PLACE));
+			return StringUtils.defaultString(patient.getCity());
 		}
 	}
 
 	public String getCountry() {
 		if (legalGuardian != null) {
-			return PersistentObject.checkNull(legalGuardian.get("Land")); //$NON-NLS-1$
+			return StringUtils.defaultString(legalGuardian.getCountry().name());
 		} else {
-			return PersistentObject.checkNull(patient.get("Land")); //$NON-NLS-1$
+			return StringUtils.defaultString(patient.getCountry().name());
 		}
 	}
 
 	public String getStreet() {
 		if (legalGuardian != null) {
-			return PersistentObject.checkNull(legalGuardian.get(Patient.FLD_STREET));
+			return StringUtils.defaultString(legalGuardian.getStreet());
 		} else {
-			return PersistentObject.checkNull(patient.get(Patient.FLD_STREET));
+			return StringUtils.defaultString(patient.getStreet());
 		}
 	}
 
 	public String getPhone1() {
 		if (legalGuardian != null) {
-			return PersistentObject.checkNull(legalGuardian.get("Telefon1")); //$NON-NLS-1$
+			return StringUtils.defaultString(legalGuardian.getPhone1());
 		} else {
-			return PersistentObject.checkNull(patient.get("Telefon1")); //$NON-NLS-1$
+			return StringUtils.defaultString(patient.getPhone1());
 		}
 	}
 
 	public String getPhone2() {
 		if (legalGuardian != null) {
-			return PersistentObject.checkNull(legalGuardian.get("Telefon2")); //$NON-NLS-1$
+			return StringUtils.defaultString(legalGuardian.getPhone2());
 		} else {
-			return PersistentObject.checkNull(patient.get("Telefon2")); //$NON-NLS-1$
+			return StringUtils.defaultString(patient.getPhone2());
 		}
 	}
 
 	public String getMobilePhone() {
 		if (legalGuardian != null) {
-			return PersistentObject.checkNull(legalGuardian.get("NatelNr")); //$NON-NLS-1$
+			return StringUtils.defaultString(legalGuardian.getMobile());
 		} else {
-			return PersistentObject.checkNull(patient.get("NatelNr")); //$NON-NLS-1$
+			return StringUtils.defaultString(patient.getMobile());
 		}
 	}
 
 	public String getCompleteAddress() {
 		if (legalGuardian != null) {
-			return legalGuardian.getPostAnschrift(true);
+			return legalGuardian.getPostalAddress();
 		} else {
-			return patient.getPostAnschrift(true);
+			return patient.getPostalAddress();
 		}
 	}
 
 	public String getOrderNumber() {
-		return patient.getAuftragsnummer();
+		return getAuftragsnummer(patient.getCode());
 	}
 
 	public String getEmail() {
 		if (legalGuardian != null) {
-			return legalGuardian.getMailAddress();
+			return legalGuardian.getEmail();
 		} else {
-			return patient.getMailAddress();
+			return patient.getEmail();
 		}
+	}
+
+	/**
+	 * extracted from ch.elexis.data.Patient#getAuftragsnummer
+	 * 
+	 * @return
+	 */
+	private String getAuftragsnummer(String patCode) {
+		String pid = StringTool.addModulo10(patCode) + "-" //$NON-NLS-1$
+				+ new TimeTool().toString(TimeTool.TIME_COMPACT);
+		return pid;
 	}
 }

@@ -12,37 +12,33 @@
 package ch.itmed.fop.printing.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Konsultation;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Prescription;
-import ch.itmed.fop.printing.resources.Messages;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public final class ConsultationData {
-	private Konsultation consultation;
+	private IEncounter encounter;
 	private static List<IBillable> verrechenbar;
 
 	public List<ArticleData> load() throws NullPointerException {
-		consultation = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-		if (consultation == null) {
-			SWTHelper.showInfo(Messages.Info_NoConsultation_Title, Messages.Info_NoConsultation_Message);
+		encounter = ContextServiceHolder.get().getTyped(IEncounter.class).orElse(null);
+		if (encounter == null) {
 			throw new NullPointerException("No consultation selected");
 		}
 		return getArticles();
 	}
 
 	private List<ArticleData> getArticles() {
-		List<IBilled> verrechnet = NoPoUtil.loadAsIdentifiable(consultation, IEncounter.class).get().getBilled();
+		List<IBilled> verrechnet = encounter.getBilled();
 
 		verrechenbar = new ArrayList<>();
 		verrechnet.stream().forEach(new VerrechnetConsumer());
@@ -64,9 +60,10 @@ public final class ConsultationData {
 		}
 	}
 
-	public List<Prescription> getMedication() {
-		Patient patient = consultation.getFall().getPatient();
-		return patient.getMedication(new EntryType[] { EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION,
-				EntryType.SYMPTOMATIC_MEDICATION });
+	public List<IPrescription> getMedication() {
+		IPatient patient = encounter.getCoverage().getPatient();
+		List<EntryType> filterList = Arrays.asList(new EntryType[] { EntryType.FIXED_MEDICATION,
+				EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION });
+		return patient.getMedication(filterList);
 	}
 }

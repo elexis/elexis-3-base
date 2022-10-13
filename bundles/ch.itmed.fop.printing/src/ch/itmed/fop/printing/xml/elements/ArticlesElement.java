@@ -19,7 +19,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ch.elexis.core.model.IArticle;
-import ch.elexis.data.Prescription;
+import ch.elexis.core.model.IPrescription;
 import ch.itmed.fop.printing.data.ArticleData;
 import ch.itmed.fop.printing.data.ConsultationData;
 
@@ -83,10 +83,10 @@ public final class ArticlesElement {
 	}
 
 	private static boolean isMedication(ArticleData ad, ConsultationData cd) {
-		List<Prescription> medication = cd.getMedication();
+		List<IPrescription> medication = cd.getMedication();
 		if (!medication.isEmpty()) {
-			Optional<Prescription> found = medication.stream()
-					.filter(m -> ad.getArticle().getId().equals(m.getArtikel().getId())).findFirst();
+			Optional<IPrescription> found = medication.stream()
+					.filter(m -> ad.getArticle().getId().equals(m.getArticle().getId())).findFirst();
 			if (found.isPresent()) {
 				return true;
 			}

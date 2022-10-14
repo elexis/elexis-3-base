@@ -35,6 +35,8 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 	 */
 	private long selectionTimestamp;
 
+	private long lastResourceClick;
+
 	public ContextMenuFunction(MPart part, Browser browser, String name) {
 		super(browser, name);
 		this.part = part;
@@ -43,6 +45,13 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 	@Override
 	public Object function(Object[] arguments) {
 		if (arguments.length == 4) {
+			if (lastResourceClick > 0 && (System.currentTimeMillis() - lastResourceClick < 100)) {
+				lastResourceClick = System.currentTimeMillis();
+				LoggerFactory.getLogger(getClass()).info("Ignoring selection resource click");
+				return null;
+			}
+			lastResourceClick = System.currentTimeMillis();
+
 			if (selectionTimestamp > 0 && (System.currentTimeMillis() - selectionTimestamp > 1000)) {
 				if (selectionProvider != null) {
 					selectionProvider.setSelection(StructuredSelection.EMPTY);

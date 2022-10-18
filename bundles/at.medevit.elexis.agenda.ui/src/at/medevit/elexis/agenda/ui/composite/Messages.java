@@ -19,6 +19,7 @@ public class Messages extends NLS {
 	public static String AppointmentDetailComposite_expand_hover;
 	public static String AppointmentDetailComposite_freetext;
 	public static String AppointmentDetailComposite_insert;
+	public static String AppointmentDetailComposite_isAllDay;
 	public static String AppointmentDetailComposite_name_birthday_patNr_or_free;
 	public static String AppointmentDetailComposite_no_patient_selected;
 	public static String AppointmentDetailComposite_planned_dates;

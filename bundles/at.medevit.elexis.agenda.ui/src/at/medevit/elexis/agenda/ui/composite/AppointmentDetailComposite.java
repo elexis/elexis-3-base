@@ -66,7 +66,6 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
 
-@SuppressWarnings("restriction")
 public class AppointmentDetailComposite extends Composite {
 
 	private IAppointment appointment;
@@ -86,6 +85,7 @@ public class AppointmentDetailComposite extends Composite {
 	private CDateTime txtDateFrom;
 	private CDateTime txtDateFromDrop;
 	private CDateTime txtDateFromNoDrop;
+	private Button btnIsAllDay;
 
 	private CDateTime txtTimeFrom;
 	private Spinner txtDuration;
@@ -509,7 +509,7 @@ public class AppointmentDetailComposite extends Composite {
 		});
 
 		Composite compTime = new Composite(compDateTime, SWT.NONE);
-		GridLayout gl = new GridLayout(7, false);
+		GridLayout gl = new GridLayout(8, false);
 		compTime.setLayout(gl);
 		compTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
@@ -528,6 +528,21 @@ public class AppointmentDetailComposite extends Composite {
 		lblTimeTo.setText(Messages.AppointmentDetailComposite_until);
 		txtTimeTo = new CDateTime(compTime, CDT.BORDER | CDT.TIME_SHORT | CDT.SPINNER);
 		txtTimeTo.addSelectionListener(dateTimeSelectionAdapter);
+
+		btnIsAllDay = new Button(compTime, SWT.CHECK);
+		GridData btnIsAllDayGridData = new GridData();
+		btnIsAllDayGridData.grabExcessHorizontalSpace = true;
+		btnIsAllDayGridData.horizontalAlignment = SWT.LEFT;
+		btnIsAllDay.setLayoutData(btnIsAllDayGridData);
+		btnIsAllDay.setText(Messages.AppointmentDetailComposite_isAllDay);
+		btnIsAllDay.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				txtTimeFrom.setEnabled(!btnIsAllDay.getSelection());
+				txtDuration.setEnabled(!btnIsAllDay.getSelection());
+				txtTimeTo.setEnabled(!btnIsAllDay.getSelection());
+			}
+		});
 
 		Composite compArea = new Composite(compTime, SWT.NONE);
 		gl = new GridLayout(2, false);
@@ -554,14 +569,20 @@ public class AppointmentDetailComposite extends Composite {
 	private void loadCompTimeFromModel() {
 		Date appointmentStartDate = Date
 				.from(ZonedDateTime.of(appointment.getStartTime(), ZoneId.systemDefault()).toInstant());
-		Date appointmentEndDate = Date
-				.from(ZonedDateTime.of(appointment.getEndTime(), ZoneId.systemDefault()).toInstant());
 
 		txtDateFrom.setSelection(appointmentStartDate);
 		pickerContext.setSelection(appointmentStartDate);
 		txtTimeFrom.setSelection(appointmentStartDate);
-		txtTimeTo.setSelection(appointmentEndDate);
-		txtDuration.setSelection(appointment.getDurationMinutes());
+		btnIsAllDay.setSelection(appointment.isAllDay());
+		txtTimeFrom.setEnabled(!appointment.isAllDay());
+		txtDuration.setEnabled(!appointment.isAllDay());
+		txtTimeTo.setEnabled(!appointment.isAllDay());
+		if (!appointment.isAllDay()) {
+			Date appointmentEndDate = Date
+					.from(ZonedDateTime.of(appointment.getEndTime(), ZoneId.systemDefault()).toInstant());
+			txtTimeTo.setSelection(appointmentEndDate);
+			txtDuration.setSelection(appointment.getDurationMinutes());
+		}
 	}
 
 	private void loadFromModel() {
@@ -578,13 +599,19 @@ public class AppointmentDetailComposite extends Composite {
 	private void setCompTimeToModel() {
 		Date dateFrom = txtDateFrom.getSelection();
 		Date timeFrom = txtTimeFrom.getSelection();
-		Date timeTo = txtTimeTo.getSelection();
 		LocalDateTime dateTimeFrom = LocalDateTime.of(dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
 				timeFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
-		LocalDateTime dateTimeTo = LocalDateTime.of(dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-				timeTo.toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
-		appointment.setStartTime(dateTimeFrom);
-		appointment.setEndTime(dateTimeTo);
+		if (btnIsAllDay.getSelection()) {
+			appointment.setStartTime(dateTimeFrom.toLocalDate().atStartOfDay());
+			appointment.setEndTime(null);
+		} else {
+			Date timeTo = txtTimeTo.getSelection();
+			LocalDateTime dateTimeTo = LocalDateTime.of(
+					dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+					timeTo.toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+			appointment.setStartTime(dateTimeFrom);
+			appointment.setEndTime(dateTimeTo);
+		}
 	}
 
 	public IAppointment setToModel() {

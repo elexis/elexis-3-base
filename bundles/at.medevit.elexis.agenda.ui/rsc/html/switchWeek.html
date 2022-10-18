@@ -27,7 +27,7 @@
 				maxTime: "23:00:00",
 				slotDuration: "00:05:00",
 				displayEventTime: false,				
-				allDaySlot: false,
+				allDaySlot: true,
 				events: loadEventsCallback,
 				dayClick: dayClickCallback,
 				eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
@@ -82,7 +82,7 @@
 					borderColor: event.borderColor,
 					backgroundColor: event.backgroundColor,
 					textColor: event.textColor,
-
+					allDay: event.allDay,
 					resource: event.resource
 				});
 			});

@@ -158,6 +158,11 @@ public class AppointmentDetailComposite extends Composite {
 			}
 
 			@Override
+			protected boolean isPatientQuery() {
+				return true;
+			}
+
+			@Override
 			public Text getWidget() {
 				return txtPatSearch;
 			}

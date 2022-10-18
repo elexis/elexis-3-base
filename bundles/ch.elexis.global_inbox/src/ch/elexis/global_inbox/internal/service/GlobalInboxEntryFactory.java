@@ -43,7 +43,7 @@ public class GlobalInboxEntryFactory {
 
 	@Activate
 	public void activate() {
-		String giDirSetting = GlobalInboxUtil.getDirectory("NOTSET"); //$NON-NLS-1$
+		String giDirSetting = GlobalInboxUtil.getDirectory("NOTSET", configService); //$NON-NLS-1$
 		if ("NOTSET".equals(giDirSetting)) { //$NON-NLS-1$
 			File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox"); //$NON-NLS-1$
 			boolean created = giDir.mkdir();

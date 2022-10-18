@@ -642,7 +642,6 @@ public class Tarmed45Exporter {
 	protected ServicesType getServices(IInvoice invoice) {
 		ServicesType servicesType = new ServicesType();
 		List<IEncounter> encounters = invoice.getEncounters();
-		int recordNumber = 1;
 		LocalDate lastEncounterDate = null;
 		int session = 1;
 		for (IEncounter encounter : encounters) {
@@ -734,7 +733,6 @@ public class Tarmed45Exporter {
 						serviceExType.setTariffType(billable.getCodeSystemCode());
 						serviceExType.setCode(billable.getCode());
 						serviceExType.setQuantity(billed.getAmount());
-						serviceExType.setRecordId(recordNumber++);
 						serviceExType.setSession(session);
 						serviceExType.setName(billed.getText());
 						serviceExType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));
@@ -762,7 +760,6 @@ public class Tarmed45Exporter {
 						}
 						serviceType.setCode(billable.getCode());
 						serviceType.setQuantity(billed.getAmount());
-						serviceType.setRecordId(recordNumber++);
 						serviceType.setSession(session);
 						serviceType.setName(billed.getText());
 						if (billable instanceof IArticle) {
@@ -810,6 +807,15 @@ public class Tarmed45Exporter {
 				}
 				return ret;
 			});
+		}
+		// set record_id of sorted services starting with 1
+		List<Object> list = servicesType.getServiceExOrService();
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i) instanceof ServiceExType) {
+				((ServiceExType) list.get(i)).setRecordId(i + 1);
+			} else if (list.get(i) instanceof ServiceType) {
+				((ServiceType) list.get(i)).setRecordId(i + 1);
+			}
 		}
 
 		return servicesType;

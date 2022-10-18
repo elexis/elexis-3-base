@@ -77,7 +77,7 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 		protected IStatus run(IProgressMonitor monitor) {
 			LocalLock lock = new LocalLock(LOCAL_LOCK_INBOXIMPORT);
 			if (lock.tryLock()) {
-				String filepath = GlobalInboxUtil.getDirectory(null);
+				String filepath = GlobalInboxUtil.getDirectory(null, null);
 				File dir = null;
 				if (filepath == null) {
 					filepath = Preferences.PREF_DIR_DEFAULT;

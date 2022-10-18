@@ -18,7 +18,7 @@ import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.services.IDocumentManager;
 import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.jdt.Nullable;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.ui.text.GenericDocument;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
@@ -29,6 +29,8 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 public class GlobalInboxUtil {
+
+	private static IConfigService configService;
 
 	private Logger logger;
 
@@ -98,16 +100,19 @@ public class GlobalInboxUtil {
 		return true;
 	}
 
-	public static String getDirectory(String defaultValue) {
-		boolean isGlobal = ConfigServiceHolder.getGlobal(Preferences.STOREFSGLOBAL, false);
-		if (isGlobal) {
-			return ConfigServiceHolder.get().get(Preferences.PREF_DIR, defaultValue);
+	public static String getDirectory(String defaultValue, IConfigService configService) {
+		if (GlobalInboxUtil.configService == null) {
+			GlobalInboxUtil.configService = configService;
 		}
-		return ConfigServiceHolder.get().getLocal(Preferences.PREF_DIR, defaultValue);
+		boolean isGlobal = GlobalInboxUtil.configService.get(Preferences.STOREFSGLOBAL, false);
+		if (isGlobal) {
+			return GlobalInboxUtil.configService.get(Preferences.PREF_DIR, defaultValue);
+		}
+		return GlobalInboxUtil.configService.getLocal(Preferences.PREF_DIR, defaultValue);
 	}
 
 	public static String getCategory(File file) {
-		String dir = getDirectory(Preferences.PREF_DIR_DEFAULT);
+		String dir = getDirectory(Preferences.PREF_DIR_DEFAULT, null);
 		File parent = file.getParentFile();
 		if (parent == null) {
 			return Messages.Activator_noInbox;

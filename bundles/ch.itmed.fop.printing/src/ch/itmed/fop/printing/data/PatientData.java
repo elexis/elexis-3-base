@@ -38,13 +38,17 @@ public class PatientData {
 		this.useLegalGuardian = useLegalGuardian;
 	}
 
-	public void load() throws NullPointerException {
-		patient = ContextServiceHolder.get().getActivePatient().orElse(null);
-		if (patient == null) {
-			throw new NullPointerException("No patient selected"); //$NON-NLS-1$
-		}
-		if (useLegalGuardian) {
-			initLegalGuardian();
+	public void load(IPatient _patient) throws NullPointerException {
+		if (_patient != null) {
+			patient = _patient;
+		} else {
+			patient = ContextServiceHolder.get().getActivePatient().orElse(null);
+			if (patient == null) {
+				throw new NullPointerException("No patient selected"); //$NON-NLS-1$
+			}
+			if (useLegalGuardian) {
+				initLegalGuardian();
+			}
 		}
 	}
 

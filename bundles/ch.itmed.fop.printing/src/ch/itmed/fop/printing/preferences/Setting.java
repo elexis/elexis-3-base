@@ -18,4 +18,16 @@ public class Setting {
 		return ConfigServiceHolder.getLocal(key, defValue);
 	}
 
+	public static boolean getBoolean(String docName, String key) {
+		String value;
+		if (isGlobalSetting(docName)) {
+			String defValue = ConfigServiceHolder.getGlobal(key + Preferences.SETTINGS_PREFERENCE_STORE_DEFAULT, "");
+			value = ConfigServiceHolder.getGlobal(key, defValue);
+		} else {
+			String defValue = ConfigServiceHolder.getLocal(key + Preferences.SETTINGS_PREFERENCE_STORE_DEFAULT, "");
+			value = ConfigServiceHolder.getLocal(key, defValue);
+		}
+		return ("1".equals(value) || "true".equalsIgnoreCase(value));
+	}
+
 }

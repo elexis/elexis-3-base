@@ -34,7 +34,7 @@ public final class MedicationLabel {
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
 
-		Element mandator = MandatorElement.create(doc);
+		Element mandator = MandatorElement.create(doc, null);
 		if (mandator != null) {
 			page.appendChild(mandator);
 		}
@@ -53,7 +53,7 @@ public final class MedicationLabel {
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
 
-		Element mandator = MandatorElement.create(doc);
+		Element mandator = MandatorElement.create(doc, null);
 		if (mandator != null) {
 			page.appendChild(mandator);
 		}

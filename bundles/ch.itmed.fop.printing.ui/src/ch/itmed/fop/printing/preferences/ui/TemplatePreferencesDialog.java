@@ -11,10 +11,10 @@
 
 package ch.itmed.fop.printing.preferences.ui;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -43,6 +43,7 @@ import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.resources.Messages;
 import ch.itmed.fop.printing.resources.PrinterProvider;
 import ch.itmed.fop.printing.resources.ResourceProvider;
+import ch.itmed.fop.printing.ui.resources.UiResourceProvider;
 
 class TemplatePreferencesDialog extends TitleAreaDialog {
 	private String docName, textOrientation;
@@ -114,7 +115,7 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 
 		buttonHorizontal = new Button(orientationGroup, SWT.RADIO);
 		buttonHorizontal.setText(Messages.TemplatePreferences_TextOrientation_Horizontal);
-		buttonHorizontal.setImage(ResourceProvider.loadImage(ResourceProvider.IMAGE_ELLIPSIS_H_PATH));
+		buttonHorizontal.setImage(UiResourceProvider.loadImage(ResourceProvider.IMAGE_ELLIPSIS_H_PATH));
 		buttonHorizontal.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
@@ -130,7 +131,7 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 
 		buttonVertical = new Button(orientationGroup, SWT.RADIO);
 		buttonVertical.setText(Messages.TemplatePreferences_TextOrientation_Vertical);
-		buttonVertical.setImage(ResourceProvider.loadImage(ResourceProvider.IMAGE_ELLIPSIS_V_PATH));
+		buttonVertical.setImage(UiResourceProvider.loadImage(ResourceProvider.IMAGE_ELLIPSIS_V_PATH));
 		buttonVertical.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event e) {

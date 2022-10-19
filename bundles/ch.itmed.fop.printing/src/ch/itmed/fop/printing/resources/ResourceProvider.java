@@ -25,13 +25,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +34,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
-import ch.itmed.fop.printing.preferences.SettingsProvider;
+import ch.itmed.fop.printing.preferences.Setting;
 
 public class ResourceProvider {
-	private static final String PLUGIN_ID = "ch.itmed.fop.printing.ui"; //$NON-NLS-1$
+	private static final String PLUGIN_ID = "ch.itmed.fop.printing"; //$NON-NLS-1$
 	private static final String xslResourcePath = "/res/xsl/"; //$NON-NLS-1$
 	private static final String xmlResourcePath = "/res/xml/PaperSizes.xml"; //$NON-NLS-1$
 	public static final String IMAGE_ELLIPSIS_V_PATH = "/res/icons/vertical.png"; //$NON-NLS-1$
@@ -53,10 +47,11 @@ public class ResourceProvider {
 
 	public static File getXslTemplateFile(int docId) {
 		String docName = PreferenceConstants.getDocumentName(docId);
-		IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
-		if (settingsStore.getBoolean(PreferenceConstants.getDocPreferenceConstant(docName, 2))) {
-			String xslPath = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 1));
+		Setting.getBoolean(docName, PreferenceConstants.getDocPreferenceConstant(docName, 2));
+
+		if (Setting.getBoolean(docName, PreferenceConstants.getDocPreferenceConstant(docName, 2))) {
+			String xslPath = Setting.getString(docName, PreferenceConstants.getDocPreferenceConstant(docName, 1));
 			return new File(xslPath);
 		}
 
@@ -73,19 +68,6 @@ public class ResourceProvider {
 		}
 		String bundleLocation = url.getPath();
 		return new File(bundleLocation);
-	}
-
-	public static Image loadImage(String path) {
-		ImageRegistry imageRegistry = JFaceResources.getImageRegistry();
-		Image image = imageRegistry.get(PLUGIN_ID + path);
-		if (image == null) {
-			Bundle bundle = Platform.getBundle(PLUGIN_ID);
-			URL url = FileLocator.find(bundle, new Path(path), null);
-			ImageDescriptor imageDesc = ImageDescriptor.createFromURL(url);
-			image = imageDesc.createImage();
-			imageRegistry.put(PLUGIN_ID + path, image);
-		}
-		return image;
 	}
 
 	/**

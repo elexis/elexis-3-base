@@ -11,6 +11,8 @@
 
 package ch.itmed.fop.printing.data;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.agenda.preferences.PreferenceConstants;
@@ -25,10 +27,14 @@ import ch.rgw.tools.TimeTool;
 public final class AppointmentData {
 	private IAppointment appointment;
 
-	public void load() throws NullPointerException {
-		appointment = ContextServiceHolder.get().getTyped(IAppointment.class).orElse(null);
-		if (appointment == null) {
-			throw new NullPointerException("No appointment selected"); //$NON-NLS-1$
+	public void load(List<IAppointment> appointments) throws NullPointerException {
+		if (!appointments.isEmpty()) {
+			appointment = appointments.get(0);
+		} else {
+			appointment = ContextServiceHolder.get().getTyped(IAppointment.class).orElse(null);
+			if (appointment == null) {
+				throw new NullPointerException("No appointment selected"); //$NON-NLS-1$
+			}
 		}
 	}
 

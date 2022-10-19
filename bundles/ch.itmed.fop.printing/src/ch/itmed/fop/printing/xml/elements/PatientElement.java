@@ -14,21 +14,33 @@ package ch.itmed.fop.printing.xml.elements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import ch.elexis.core.model.IPatient;
 import ch.itmed.fop.printing.data.PatientData;
 
 public class PatientElement {
 
 	public static Element create(Document doc, boolean loadFromAgenda) throws Exception {
-		return create(doc, loadFromAgenda, false);
+		return create(doc, loadFromAgenda, false, null);
 	}
 
-	public static Element create(Document doc, boolean loadFromAgenda, boolean useLegalGuardian) throws Exception {
+	/**
+	 * 
+	 * @param doc
+	 * @param loadFromAgenda
+	 * @param useLegalGuardian
+	 * @param patient          use the given patient, instead of loading from
+	 *                         context (only considered if loadFromAgenda is false)
+	 * @return
+	 * @throws Exception
+	 */
+	public static Element create(Document doc, boolean loadFromAgenda, boolean useLegalGuardian, IPatient patient)
+			throws Exception {
 		PatientData pd = new PatientData(useLegalGuardian);
 
 		if (loadFromAgenda) {
 			pd.loadFromAgenda();
 		} else {
-			pd.load();
+			pd.load(patient);
 		}
 
 		Element p = doc.createElement("Patient"); //$NON-NLS-1$

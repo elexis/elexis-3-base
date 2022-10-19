@@ -12,6 +12,7 @@
 package ch.itmed.fop.printing.xml.elements;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -21,22 +22,28 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import ch.elexis.core.model.IAppointment;
 import ch.itmed.fop.printing.data.AppointmentData;
 import ch.itmed.fop.printing.data.AppointmentsData;
 
 public class AppointmentsInformationElement {
 
 	public static Element create(Document doc, final boolean singleAppoinment) throws Exception {
-		ArrayList<AppointmentData> al; // AppointmentsList
+		return create(doc, singleAppoinment, Collections.emptyList());
+	}
+
+	public static Element create(Document doc, final boolean singleAppoinment, List<IAppointment> appointments)
+			throws Exception {
+		List<AppointmentData> al; // AppointmentsList
 
 		if (singleAppoinment) {
 			AppointmentData ad = new AppointmentData();
-			ad.load();
+			ad.load(appointments);
 			al = new ArrayList<>();
 			al.add(ad);
 		} else {
 			AppointmentsData ad = new AppointmentsData();
-			al = ad.load();
+			al = ad.load(appointments);
 		}
 
 		Element p = doc.createElement("AppointmentsInformation"); //$NON-NLS-1$

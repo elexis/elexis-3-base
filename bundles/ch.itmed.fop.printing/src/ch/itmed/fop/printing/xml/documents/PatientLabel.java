@@ -34,12 +34,12 @@ public class PatientLabel {
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.PATIENT_LABEL);
 		PageProperties.setCurrentDate(page);
 		doc.appendChild(page);
-		Element patient = PatientElement.create(doc, false, false);
+		Element patient = PatientElement.create(doc, false, false, null);
 		page.appendChild(patient);
 		Element c = CaseElement.create(doc);
 		page.appendChild(c);
 
-		Element mandator = MandatorElement.create(doc);
+		Element mandator = MandatorElement.create(doc, null);
 		if (mandator != null) {
 			page.appendChild(mandator);
 		}

@@ -42,7 +42,7 @@ public class ArticleLabel {
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
 
-		Element mandator = MandatorElement.create(doc);
+		Element mandator = MandatorElement.create(doc, null);
 		if (mandator != null) {
 			page.appendChild(mandator);
 		}
@@ -62,7 +62,7 @@ public class ArticleLabel {
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
 
-		Element mandator = MandatorElement.create(doc);
+		Element mandator = MandatorElement.create(doc, null);
 		if (mandator != null) {
 			page.appendChild(mandator);
 		}

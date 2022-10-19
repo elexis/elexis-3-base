@@ -3,13 +3,14 @@ package ch.itmed.fop.printing.xml.elements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import ch.elexis.core.model.IMandator;
 import ch.itmed.fop.printing.data.MandatorData;
 
 public class MandatorElement {
-	public static Element create(Document doc) throws Exception {
+	public static Element create(Document doc, IMandator mandator) throws Exception {
 		MandatorData pd = new MandatorData();
-		if (pd.canLoad()) {
-			pd.load();
+		if (mandator != null || pd.canLoad()) {
+			pd.load(mandator);
 
 			Element p = doc.createElement("Mandator"); //$NON-NLS-1$
 

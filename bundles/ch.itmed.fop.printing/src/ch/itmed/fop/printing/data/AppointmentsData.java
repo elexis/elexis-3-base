@@ -14,6 +14,7 @@ package ch.itmed.fop.printing.data;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
@@ -26,15 +27,20 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public final class AppointmentsData {
 	private IContact kontakt;
-	private ArrayList<AppointmentData> appointmentsData;
+	private List<AppointmentData> appointmentsData;
 
-	public ArrayList<AppointmentData> load() throws NullPointerException {
-		kontakt = ContextServiceHolder.get().getTyped(IPatient.class).orElse(null);
-		if (kontakt == null) {
-			throw new NullPointerException("No patient selected"); //$NON-NLS-1$
+	public List<AppointmentData> load(List<IAppointment> appointments) throws NullPointerException {
+		if (!appointments.isEmpty()) {
+			appointmentsData = appointments.stream().map(a -> new AppointmentData(a)).collect(Collectors.toList());
+		} else {
+			kontakt = ContextServiceHolder.get().getTyped(IPatient.class).orElse(null);
+			if (kontakt == null) {
+				throw new NullPointerException("No patient selected"); //$NON-NLS-1$
+			}
+
+			appointmentsData = new ArrayList<>();
+			querryAppointments(kontakt.getId());
 		}
-		appointmentsData = new ArrayList<>();
-		querryAppointments(kontakt.getId());
 		return appointmentsData;
 	}
 

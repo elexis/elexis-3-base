@@ -33,7 +33,7 @@ public final class RecurringAppointmentsCard {
 		page.appendChild(appointment);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);
-		Element mandator = MandatorElement.create(doc);
+		Element mandator = MandatorElement.create(doc, null);
 		if (mandator != null) {
 			page.appendChild(mandator);
 		}

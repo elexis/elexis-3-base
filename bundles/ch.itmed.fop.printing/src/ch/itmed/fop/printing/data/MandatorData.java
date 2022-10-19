@@ -21,11 +21,16 @@ public final class MandatorData {
 		return ContextServiceHolder.get().getActiveMandator().orElse(null) != null;
 	}
 
-	public void load() throws NullPointerException {
-		mandator = ContextServiceHolder.get().getActiveMandator().orElse(null);
-		if (mandator == null) {
-			throw new NullPointerException("No mandator selected"); //$NON-NLS-1$
+	public void load(IMandator _mandator) throws NullPointerException {
+		if (_mandator != null) {
+			mandator = _mandator;
+		} else {
+			mandator = ContextServiceHolder.get().getActiveMandator().orElse(null);
+			if (mandator == null) {
+				throw new NullPointerException("No mandator selected"); //$NON-NLS-1$
+			}
 		}
+
 	}
 
 	public String getEmail() {

@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.agenda.AreaType;
@@ -93,9 +93,8 @@ public final class AppointmentData {
 	public String getAgendaArea() {
 		IContact contact = null;
 		String agendaSection = appointment.getSchedule();
-		String type = ConfigServiceHolder.getGlobal(
-				PreferenceConstants.AG_BEREICH_PREFIX + agendaSection + PreferenceConstants.AG_BEREICH_TYPE_POSTFIX,
-				null);
+		String type = ConfigServiceHolder
+				.getGlobal(Preferences.AG_BEREICH_PREFIX + agendaSection + Preferences.AG_BEREICH_TYPE_POSTFIX, null);
 		if (type != null) {
 			if (type.startsWith(AreaType.CONTACT.name())) {
 				contact = CoreModelServiceHolder.get()

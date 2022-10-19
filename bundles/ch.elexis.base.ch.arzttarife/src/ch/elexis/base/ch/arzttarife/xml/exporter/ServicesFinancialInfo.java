@@ -22,13 +22,16 @@ public class ServicesFinancialInfo {
 		for (Object obj : services.getServiceExOrService()) {
 			if (obj instanceof ServiceExType) {
 				ret.addTariffAmount(((ServiceExType) obj).getTariffType(), ((ServiceExType) obj).getAmount());
+				ret.addVatAmount(((ServiceExType) obj).getVatRate(), ((ServiceExType) obj).getAmount());
 				if (((ServiceExType) obj).isObligation()) {
 					ret.addObligationAmount(((ServiceExType) obj).getAmount());
 				}
-				ret.addVatAmount(((ServiceExType) obj).getVatRate(), ((ServiceExType) obj).getAmount());
 			} else if (obj instanceof ServiceType) {
 				ret.addTariffAmount(((ServiceType) obj).getTariffType(), ((ServiceType) obj).getAmount());
 				ret.addVatAmount(((ServiceType) obj).getVatRate(), ((ServiceType) obj).getAmount());
+				if (((ServiceType) obj).isObligation()) {
+					ret.addObligationAmount(((ServiceType) obj).getAmount());
+				}
 			}
 		}
 

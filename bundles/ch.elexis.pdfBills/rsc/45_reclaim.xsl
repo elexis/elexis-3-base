@@ -3189,7 +3189,7 @@
 						<xsl:when
 							test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:balance/invoice:vat/invoice:vat_rate[@vat_rate=$Rate]) = 0">
 							<xsl:variable name="formattedRate">
-								<xsl:value-of select="format-number($Rate,'##0.00')" />
+								<xsl:value-of select="format-number($Rate,'##0.0')" />
 							</xsl:variable>
 							<xsl:choose>
 								<xsl:when
@@ -3217,7 +3217,7 @@
 						<xsl:when
 							test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/invoice:vat/invoice:vat_rate[@vat_rate=$Rate]) = 0">
 							<xsl:variable name="formattedRate">
-								<xsl:value-of select="format-number($Rate,'##0.00')" />
+								<xsl:value-of select="format-number($Rate,'##0.0')" />
 							</xsl:variable>
 							<xsl:choose>
 								<xsl:when
@@ -3252,7 +3252,7 @@
 						<xsl:when
 							test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:balance/invoice:vat/invoice:vat_rate[@vat_rate=$Rate]) = 0">
 							<xsl:variable name="formattedRate">
-								<xsl:value-of select="format-number($Rate,'##0.00')" />
+								<xsl:value-of select="format-number($Rate,'##0.0')" />
 							</xsl:variable>
 							<xsl:choose>
 								<xsl:when
@@ -3280,7 +3280,7 @@
 						<xsl:when
 							test="count(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/invoice:vat/invoice:vat_rate[@vat_rate=$Rate]) = 0">
 							<xsl:variable name="formattedRate">
-								<xsl:value-of select="format-number($Rate,'##0.00')" />
+								<xsl:value-of select="format-number($Rate,'##0.0')" />
 							</xsl:variable>
 							<xsl:choose>
 								<xsl:when

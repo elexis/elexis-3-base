@@ -90,6 +90,7 @@
     <module>org.iatrix.messwerte.feature</module>
     <module>waelti.statistics.feature</module>
     <module>ch.itmed.fop.printing.feature</module>
+    <module>ch.itmed.fop.printing.es.feature</module>
     <module>at.medevit.elexis.bluemedication.feature</module>
     <module>at.medevit.elexis.documents.converter.feature</module>
   </modules>

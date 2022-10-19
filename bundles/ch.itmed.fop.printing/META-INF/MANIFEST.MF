@@ -21,3 +21,4 @@ Export-Package: ch.itmed.fop.printing.preferences,
  ch.itmed.fop.printing.print,
  ch.itmed.fop.printing.resources,
  ch.itmed.fop.printing.xml.documents
+Service-Component: OSGI-INF/ch.itmed.fop.printing.console.ConsoleCommandProvider.xml

@@ -11,6 +11,7 @@
 	<xsl:param name="eanList" select="''" />
 	<xsl:param name="headerLine1" select="''" />
 	<xsl:param name="headerLine2" select="''" />
+	<xsl:param name="messageText" select="''" />
 	<xsl:param name="guarantorPostal" select="''" />
 	<xsl:param name="couvertLeft" select="''" />
 	<xsl:param name="amountPrepaid" select="''" />
@@ -42,7 +43,7 @@
 									border-collapse="collapse" margin-top="10mm">
 							<fo:table-body font-family="tahoma,arial,helvetica,sans-serif">
 								<fo:table-row background-color="#dddddd">
-									<fo:table-cell>
+										<fo:table-cell>
 										<fo:block font-size="18px" font-weight="bold" text-align="center">
 											<xsl:value-of select="$headerLine1" />
 										</fo:block>
@@ -178,7 +179,7 @@
 									<fo:table-row>
 										<fo:table-cell>
 											<fo:block>
-Bei der Durchsicht unserer Buchhaltung haben wir festgestellt, dass oben genannte Rechnung noch nicht bezahlt ist. Wir bitten Sie höflich, den Betrag baldmöglichst zu überweisen. Sollte sich die Zahlung mit dieser Zahlungserinnerung kreuzen, betrachten Sie dieses Schreiben als gegenstandslos.
+											<xsl:value-of select="$messageText" />
 											</fo:block>
 										</fo:table-cell>
 									</fo:table-row>

@@ -11,6 +11,7 @@
 	<xsl:param name="eanList" select="''" />
 	<xsl:param name="headerLine1" select="''" />
 	<xsl:param name="headerLine2" select="''" />
+	<xsl:param name="messageText" select="''" />
 	<xsl:param name="reminderDays" select="''" />
 	<xsl:param name="guarantorPostal" select="''" />
 	<xsl:param name="couvertLeft" select="''" />
@@ -181,7 +182,7 @@
 									<fo:table-row>
 										<fo:table-cell>
 											<fo:block>
-Bei der Durchsicht unserer Buchhaltung haben wir festgestellt, dass oben genannte Rechnung noch nicht bezahlt ist. Dies ist die letzte Zahlungserinnerung ohne zusätzliche Kostenfolge. Wir bitten Sie höflich, den Betrag innert <xsl:value-of select="$reminderDays" /> Tagen zu überweisen. Sollte sich die Zahlung mit dieser Zahlungserinnerung kreuzen, betrachten Sie dieses Schreiben als gegenstandslos.
+											<xsl:value-of select="$messageText" />
 											</fo:block>
 										</fo:table-cell>
 									</fo:table-row>

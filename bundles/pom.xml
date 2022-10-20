@@ -134,6 +134,7 @@
     <module>ch.medshare.connect.abacusjunior</module>
     <module>ch.medshare.elexis_directories</module>
     <module>ch.medshare.mediport</module>
+	<module>ch.netzkonzept.elexis.medidata</module>
     <module>ch.ngiger.utilities.comm</module>
     <module>ch.novcom.elexis.mednet.plugin</module>
     <module>ch.pharmed.phmprescriber</module>

@@ -1,5 +1,14 @@
 package ch.elexis.pdfBills;
 
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TG_M0;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TG_M1;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TG_M2;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TG_M3;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TP_M0;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TP_M1;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TP_M2;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TP_M3;
+
 import java.io.BufferedOutputStream;
 
 /**
@@ -262,7 +271,7 @@ public class ElexisPDFGenerator {
 	}
 
 	private String getMessagePDFText(final InvoiceState invoiceState) {
-		String billMsg = "";
+		String key = "";
 		String invStateTxt = rechnung.getInvoiceState().toString();
 		ch.elexis.data.Fall.Tiers tiers = rechnung.getFall().getTiersType();
 		
@@ -286,28 +295,29 @@ public class ElexisPDFGenerator {
 		case PAID:
 		case OPEN_AND_PRINTED:
 		case OPEN:
-			String key = (Fall.Tiers.GARANT == tiers) ? RnOutputter.CFG_MSGTEXT_TG_M0 : RnOutputter.CFG_MSGTEXT_TP_M0;
-			return CoreHub.globalCfg.get(key, invStateTxt);
+			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M0 : CFG_MSGTEXT_TP_M0;
+			break;
 		case DEMAND_NOTE_1_PRINTED:
 		case DEMAND_NOTE_1:
-			String key1 = (Fall.Tiers.GARANT == tiers) ? RnOutputter.CFG_MSGTEXT_TG_M1 : RnOutputter.CFG_MSGTEXT_TP_M1;
-			return CoreHub.globalCfg.get(key1, invStateTxt);
+			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M1 : CFG_MSGTEXT_TP_M1;
+			break;
 		case DEMAND_NOTE_2_PRINTED:
 		case DEMAND_NOTE_2:
-			String key2 = (Fall.Tiers.GARANT == tiers) ? RnOutputter.CFG_MSGTEXT_TG_M2 : RnOutputter.CFG_MSGTEXT_TP_M2;
-			return CoreHub.globalCfg.get(key2, invStateTxt);
+			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M2 : CFG_MSGTEXT_TP_M2;
+			break;
 		case DEMAND_NOTE_3_PRINTED:
 		case DEMAND_NOTE_3:
-			String key3 = (Fall.Tiers.GARANT == tiers) ? RnOutputter.CFG_MSGTEXT_TG_M3 : RnOutputter.CFG_MSGTEXT_TP_M3;
-			return CoreHub.globalCfg.get(key3, invStateTxt);
+			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M3 : CFG_MSGTEXT_TP_M3;
+			break;
 		default:
 			LoggerFactory.getLogger(getClass()).error("unknown state: " + invoiceState.toString());
 			break;
 		}
 
-		return billMsg;
-	}
+	return CoreHub.globalCfg.get(key, invStateTxt);
 
+	}
+	
 	private String getInsuranceLine(IInvoice invoice) {
 		IContact costBearer = invoice.getCoverage().getCostBearer();
 		if (costBearer == null) {

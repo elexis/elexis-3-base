@@ -542,15 +542,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 
 	private void createMessageConfig(TabItem item) {
-
 		Composite composite = new Composite(tabFolder, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
 
 		Label label = new Label(composite, SWT.NONE);
-		Label label2 = new Label(composite, SWT.NONE);
-		label.setText(Messages.Billing_Cfg_MsgTXT);
-		label2.setText("TP = Tiers Payant  TG = Tiers Garant");
+		label.setText(Messages.Billing_Cfg_MsgTXT + "\nTP = Tiers Payant  TG = Tiers Garant");
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
 		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 

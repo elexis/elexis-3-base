@@ -36,6 +36,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.mail.MailAccount;
 import ch.elexis.core.mail.MailAccount.TYPE;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -56,6 +57,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	private TabItem mailConfig;
 	private TabItem headerConfig;
 	private TabItem outputConfig;
+	private TabItem messageConfig;
 
 	private Text headerLine1Text;
 	private Text headerLine2Text;
@@ -68,6 +70,15 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	private Text mandantReminderDays2Text;
 	private Text mandantReminderDays3Text;
 
+	private Text pdfRnTextTP;
+	private Text pdfRnTextTG;
+	private Text pdfRnTextM1TG;
+	private Text pdfRnTextM2TG;
+	private Text pdfRnTextM3TG;
+	private Text pdfRnTextM1TP;
+	private Text pdfRnTextM2TP;
+	private Text pdfRnTextM3TP;
+
 	private Text printCommandText;
 
 	private Label printerConfigLabel;
@@ -76,6 +87,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	private Button openDialogBtn;
 
 	private Button openEsrDialogBtn;
+	
 
 	@Override
 	public void init(IWorkbench workbench) {
@@ -112,6 +124,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		outputConfig = new TabItem(tabFolder, SWT.NONE);
 		outputConfig.setText("Ausgabe");
 		createOutputConfig(outputConfig);
+
+		messageConfig = new TabItem(tabFolder, SWT.NONE);
+		messageConfig.setText("Rechnungstexte");
+		createMessageConfig(messageConfig);
 
 		final Composite printerConfigComposite = new Composite(ret, SWT.NONE);
 		printerConfigComposite.setLayout(new GridLayout(2, false));
@@ -528,6 +544,71 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		return ret;
 	}
 
+	public Text createMessageTextBox(Composite composite, String msgText) {
+		Text textBox = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		textBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.END));
+		textBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		textBox.setText(msgText);
+		return textBox;
+	}
+
+
+	private void createMessageConfig(TabItem item) {
+		Composite composite = new Composite(tabFolder, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(Messages.Billing_Cfg_MsgTXT + "\nTP = Tiers Payant  TG = Tiers Garant");
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+		label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.Billing_Cfg_Msg + " TP:");
+
+		pdfRnTextTP = createMessageTextBox(composite, Messages.BillingDefaultMsg);
+		pdfRnTextTP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M0, Messages.BillingDefaultMsg));
+
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.Billing_Cfg_Msg + " TG:");
+		pdfRnTextTG = createMessageTextBox(composite, Messages.BillingDefaultMsg);
+		pdfRnTextTG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M0, Messages.BillingDefaultMsg));
+
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder1 + " TP:");// Messages.Billing_Cfg_Msg_Invoicelvl
+		pdfRnTextM1TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M1);
+		pdfRnTextM1TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M1, Messages.BillingDefaultMsg_M1));
+
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder2 + " TP:");
+
+		pdfRnTextM2TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M2);
+		pdfRnTextM2TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M2, Messages.BillingDefaultMsg_M2));
+
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder3 + " TP:");
+		pdfRnTextM3TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M3);
+		pdfRnTextM3TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M3, Messages.BillingDefaultMsg_M3));
+
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder1 + " TG:");
+		pdfRnTextM1TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M1);
+		pdfRnTextM1TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M1, Messages.BillingDefaultMsg_M1));
+
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder2 + " TG:");
+		pdfRnTextM2TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M2);
+		pdfRnTextM2TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M2, Messages.BillingDefaultMsg_M2));
+
+		label = new Label(composite, SWT.NONE);
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder3 + " TG:");
+		pdfRnTextM3TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M3);
+		pdfRnTextM3TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M3, Messages.BillingDefaultMsg_M3));
+
+		item.setControl(composite);
+	}
+
 	private void updatePrintDirect() {
 		openDialogBtn.setEnabled(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_DIRECT, false));
 		openEsrDialogBtn.setEnabled(CoreHub.localCfg.get(RnOutputter.CFG_PRINT_DIRECT, false));
@@ -568,6 +649,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	public boolean performOk() {
 		saveSettings(t40Settings);
 		saveSettings(t44Settings);
+		saveSettings(messageConfig);
 		return super.performOk();
 	}
 
@@ -590,6 +672,16 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3, reminderDays3Text.getText());
 
 		CoreHub.localCfg.set(RnOutputter.CFG_PRINT_COMMAND, printCommandText.getText());
+
+		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TG_M0, pdfRnTextTG.getText());
+		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TP_M0, pdfRnTextTP.getText());
+		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TG_M1, pdfRnTextM1TG.getText());
+		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TG_M2, pdfRnTextM2TG.getText());
+		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TG_M3, pdfRnTextM3TG.getText());
+		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TP_M1, pdfRnTextM1TP.getText());
+		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TP_M2, pdfRnTextM2TP.getText());
+		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TP_M3, pdfRnTextM3TP.getText());
+
 		CoreHub.localCfg.flush();
 	}
 

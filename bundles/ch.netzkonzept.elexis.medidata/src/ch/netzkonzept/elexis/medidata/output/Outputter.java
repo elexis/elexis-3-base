@@ -30,7 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.jdom.Document;
+import org.jdom2.Document;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.TarmedRechnung.XMLExporter;

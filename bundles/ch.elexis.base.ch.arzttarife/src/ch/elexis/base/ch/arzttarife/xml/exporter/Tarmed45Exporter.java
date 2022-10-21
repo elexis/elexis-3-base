@@ -1548,12 +1548,18 @@ public class Tarmed45Exporter {
 						BalanceTGType balance = request.getPayload().getBody().getTiersGarant().getBalance();
 						if (((BalanceTGType) updateBalance).getAmountPrepaid() != balance.getAmountPrepaid()) {
 							request.getPayload().getBody().getTiersGarant().setBalance((BalanceTGType) updateBalance);
+						} else if (((BalanceTGType) updateBalance).getAmountObligations() != balance
+								.getAmountObligations()) {
+							balance.setAmountObligations(((BalanceTGType) updateBalance).getAmountObligations());
 						}
 					} else if (request.getPayload().getBody().getTiersPayant() != null
 							&& updateBalance instanceof BalanceTPType) {
 						BalanceTPType balance = request.getPayload().getBody().getTiersPayant().getBalance();
 						if (((BalanceTPType) updateBalance).getAmountDue() != balance.getAmountDue()) {
 							request.getPayload().getBody().getTiersPayant().setBalance((BalanceTPType) updateBalance);
+						} else if (((BalanceTPType) updateBalance).getAmountObligations() != balance
+								.getAmountObligations()) {
+							balance.setAmountObligations(((BalanceTPType) updateBalance).getAmountObligations());
 						}
 					}
 				}

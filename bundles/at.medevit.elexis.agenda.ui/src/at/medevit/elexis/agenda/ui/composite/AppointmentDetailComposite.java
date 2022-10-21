@@ -365,6 +365,9 @@ public class AppointmentDetailComposite extends Composite {
 
 		comboStatus = new Combo(compTypeReason, SWT.DROP_DOWN);
 		comboStatus.setItems(appointmentService.getStates().toArray(new String[appointmentService.getStates().size()]));
+		gd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd.widthHint = 80;
+		comboStatus.setLayoutData(gd);
 
 		toggleVisiblityComposite(txtDateFromDrop);
 		toggleVisiblityComposite(compContext);

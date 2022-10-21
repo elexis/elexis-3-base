@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.itmed.fop.printing.fhir.PrintAppointmentCardFunction">
+   <property name="service.name" value="ch.itmed.fop.printing.fhir.PrintAppointmentCardFunction"/>
+   <service>
+      <provide interface="java.util.function.Function"/>
+   </service>
+   <implementation class="ch.itmed.fop.printing.fhir.PrintAppointmentCardFunction"/>
+</scr:component>

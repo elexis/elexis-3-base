@@ -30,10 +30,18 @@ public final class AppointmentsData {
 	private List<AppointmentData> appointmentsData;
 
 	public List<AppointmentData> load(List<IAppointment> appointments) throws NullPointerException {
-		if (!appointments.isEmpty()) {
+		return load(appointments, null);
+	}
+
+	public List<AppointmentData> load(List<IAppointment> appointments, IPatient patient) throws NullPointerException {
+		if (appointments != null && !appointments.isEmpty()) {
 			appointmentsData = appointments.stream().map(a -> new AppointmentData(a)).collect(Collectors.toList());
 		} else {
-			kontakt = ContextServiceHolder.get().getTyped(IPatient.class).orElse(null);
+			if (patient != null) {
+				kontakt = patient;
+			} else {
+				kontakt = ContextServiceHolder.get().getTyped(IPatient.class).orElse(null);
+			}
 			if (kontakt == null) {
 				throw new NullPointerException("No patient selected"); //$NON-NLS-1$
 			}

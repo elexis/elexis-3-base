@@ -23,17 +23,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPatient;
 import ch.itmed.fop.printing.data.AppointmentData;
 import ch.itmed.fop.printing.data.AppointmentsData;
 
 public class AppointmentsInformationElement {
 
 	public static Element create(Document doc, final boolean singleAppoinment) throws Exception {
-		return create(doc, singleAppoinment, Collections.emptyList());
+		return create(doc, singleAppoinment, Collections.emptyList(), null);
 	}
 
-	public static Element create(Document doc, final boolean singleAppoinment, List<IAppointment> appointments)
-			throws Exception {
+	public static Element create(Document doc, final boolean singleAppoinment, List<IAppointment> appointments,
+			IPatient patient) throws Exception {
 		List<AppointmentData> al; // AppointmentsList
 
 		if (singleAppoinment) {
@@ -43,7 +44,7 @@ public class AppointmentsInformationElement {
 			al.add(ad);
 		} else {
 			AppointmentsData ad = new AppointmentsData();
-			al = ad.load(appointments);
+			al = ad.load(appointments, patient);
 		}
 
 		Element p = doc.createElement("AppointmentsInformation"); //$NON-NLS-1$

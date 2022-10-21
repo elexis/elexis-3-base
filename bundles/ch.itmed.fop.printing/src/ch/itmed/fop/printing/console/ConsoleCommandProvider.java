@@ -1,7 +1,6 @@
 package ch.itmed.fop.printing.console;
 
 import java.io.InputStream;
-import java.util.Collections;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
@@ -38,6 +37,7 @@ public class ConsoleCommandProvider extends AbstractConsoleCommandProvider {
 		executeCommand("itmed", ci);
 	}
 
+	@CmdAdvisor(description = "print an appointment sticker")
 	public void __itmed_print(String appointmentId, String patientId, String mandatorId) {
 
 		IAppointment appointment = coreModelService.load(appointmentId, IAppointment.class)
@@ -48,7 +48,7 @@ public class ConsoleCommandProvider extends AbstractConsoleCommandProvider {
 				.orElseThrow(() -> new IllegalArgumentException());
 
 		try {
-			InputStream xmlDoc = AppointmentCard.create(Collections.singletonList(appointment), patient, mandator);
+			InputStream xmlDoc = AppointmentCard.create(appointment, patient, mandator);
 			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.APPOINTMENT_CARD_ID));
 

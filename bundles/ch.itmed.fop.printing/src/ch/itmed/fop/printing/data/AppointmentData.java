@@ -59,11 +59,14 @@ public final class AppointmentData {
 
 		// start time of the appointment
 		appointmentDate.append(startTime.toString(TimeTool.TIME_SMALL));
-		appointmentDate.append(" - "); //$NON-NLS-1$
 
-		// end time of the appointment
-		TimeTool endTime = new TimeTool(appointment.getEndTime());
-		appointmentDate.append(endTime.toString(TimeTool.TIME_SMALL));
+		if (!appointment.isAllDay()) {
+			appointmentDate.append(" - "); //$NON-NLS-1$
+
+			// end time of the appointment
+			TimeTool endTime = new TimeTool(appointment.getEndTime());
+			appointmentDate.append(endTime.toString(TimeTool.TIME_SMALL));
+		}
 
 		return appointmentDate.toString();
 	}

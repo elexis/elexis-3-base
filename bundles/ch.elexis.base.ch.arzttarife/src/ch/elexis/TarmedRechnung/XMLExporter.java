@@ -74,6 +74,7 @@ import ch.elexis.base.ch.arzttarife.importer.TrustCenters;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Validator;
+import ch.elexis.base.ch.arzttarife.xml.update.XmlVersionUpdate44to45;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
@@ -92,6 +93,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Rechnung;
@@ -420,6 +422,15 @@ public class XMLExporter implements IRnOutputter {
 		try {
 			Document ret = getExistingXml(invoice).get();
 			Element root = ret.getRootElement();
+			// update existing xml from 4.4 to 4.5 for esr qr
+			if (getXmlVersion(root).equals("4.4") && !CoreUtil.isTestMode()) {
+				XmlVersionUpdate44to45 versionUpdate = new XmlVersionUpdate44to45(invoice);
+				versionUpdate.update();
+				// reload updated xml 4.5
+				ret = getExistingXml(invoice).get();
+				root = ret.getRootElement();
+			}
+
 			if (getXmlVersion(root).equals("4.0")) {
 				updateExisting4Xml(root, type, invoice);
 			} else if (getXmlVersion(root).equals("4.4")) {

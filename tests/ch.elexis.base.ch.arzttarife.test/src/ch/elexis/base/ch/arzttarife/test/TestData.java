@@ -33,6 +33,7 @@ import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBlob;
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
@@ -616,5 +617,21 @@ public class TestData {
 				blob.delete();
 			}
 		}
+	}
+
+	public static IBlob createTestInvoiceBlobWithXml(String invoiceNumber, String resource) throws IOException {
+		InputStream xmlIn = TestSzenario.class.getResourceAsStream(resource);
+		StringWriter stringWriter = new StringWriter();
+		IOUtils.copy(xmlIn, stringWriter, "UTF-8");
+
+		IBlob blob = CoreModelServiceHolder.get().load(XMLExporter.PREFIX + invoiceNumber, IBlob.class)
+				.orElseGet(() -> {
+					IBlob newBlob = CoreModelServiceHolder.get().create(IBlob.class);
+					newBlob.setId(XMLExporter.PREFIX + invoiceNumber);
+					return newBlob;
+				});
+		blob.setStringContent(stringWriter.toString());
+		CoreModelServiceHolder.get().save(blob);
+		return blob;
 	}
 }

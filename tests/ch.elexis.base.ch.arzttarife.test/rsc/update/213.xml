@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<invoice:request xmlns:invoice="http://www.forum-datenaustausch.ch/invoice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:nsxenc="http://www.w3.org/2001/04/xmlenc#" xsi:schemaLocation="http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_440.xsd" modus="production" language="de">
+  <invoice:processing print_at_intermediate="1">
+    <invoice:transport from="2033567123477" to="7601003002775">
+      <invoice:via via="7601001370128" sequence_id="1" />
+    </invoice:transport>
+    <invoice:demand tc_demand_id="0" tc_token="6900000190059&gt;654321000000000000010002134+ 010082449&gt;" insurance_demand_date="2022-10-24T00:00:00" />
+  </invoice:processing>
+  <invoice:payload type="invoice" copy="0" storno="0">
+    <invoice:invoice request_timestamp="1666599714" request_id="000001000213" request_date="2022-10-24T10:21:54" />
+    <invoice:body role="physician" place="practice">
+      <invoice:prolog>
+        <invoice:package version="370" name="Elexis" />
+        <invoice:generator name="JDOM" version="100">
+          <invoice:depends_on name="Elexis TarmedVerifier" version="370" />
+        </invoice:generator>
+      </invoice:prolog>
+      <invoice:balance currency="CHF" amount_prepaid="0.00" amount="190.03" amount_due="190.05" amount_obligations="190.03">
+        <invoice:vat vat="0.46">
+          <invoice:vat_rate vat_rate="0.00" amount="171.28" vat="0.00" />
+          <invoice:vat_rate vat_rate="2.50" amount="18.75" vat="0.46" />
+        </invoice:vat>
+      </invoice:balance>
+      <invoice:esr9 participant_number="01-8244-9" type="16or27" reference_number="65 43210 00000 00000 00100 02134" coding_line="0100000190050&gt;654321000000000000010002134+ 010082449&gt;">
+        <invoice:bank>
+          <invoice:company>
+            <invoice:companyname>Raiffeisenbank</invoice:companyname>
+            <invoice:postal>
+              <invoice:zip>8141</invoice:zip>
+              <invoice:city>Männedorf</invoice:city>
+            </invoice:postal>
+          </invoice:company>
+        </invoice:bank>
+      </invoice:esr9>
+      <invoice:tiers_garant payment_period="P30D">
+        <invoice:biller ean_party="2033567123477" zsr="X999999" specialty="Allgemeine Innere Medizin FMH">
+          <invoice:person salutation="Herr" title="Dr. med.">
+            <invoice:familyname>Muster</invoice:familyname>
+            <invoice:givenname>Max</invoice:givenname>
+            <invoice:postal>
+              <invoice:street>Täfernstrasse 16</invoice:street>
+              <invoice:zip>5405</invoice:zip>
+              <invoice:city>Dättwil</invoice:city>
+            </invoice:postal>
+            <invoice:telecom>
+              <invoice:phone>056 483 03 33</invoice:phone>
+              <invoice:fax>056 483 03 30</invoice:fax>
+            </invoice:telecom>
+            <invoice:online>
+              <invoice:email>info@medelexis.ch</invoice:email>
+              <invoice:url>www.medelexis.ch</invoice:url>
+            </invoice:online>
+          </invoice:person>
+        </invoice:biller>
+        <invoice:provider ean_party="2033567123477" zsr="X999999" specialty="Allgemeine Innere Medizin FMH">
+          <invoice:person salutation="Herr" title="Dr. med.">
+            <invoice:familyname>Muster</invoice:familyname>
+            <invoice:givenname>Max</invoice:givenname>
+            <invoice:postal>
+              <invoice:street>Täfernstrasse 16</invoice:street>
+              <invoice:zip>5405</invoice:zip>
+              <invoice:city>Dättwil</invoice:city>
+            </invoice:postal>
+            <invoice:telecom>
+              <invoice:phone>056 483 03 33</invoice:phone>
+              <invoice:fax>056 483 03 30</invoice:fax>
+            </invoice:telecom>
+            <invoice:online>
+              <invoice:email>info@medelexis.ch</invoice:email>
+              <invoice:url>www.medelexis.ch</invoice:url>
+            </invoice:online>
+          </invoice:person>
+        </invoice:provider>
+        <invoice:insurance ean_party="7601003002775">
+          <invoice:company>
+            <invoice:companyname>Helsana Versicherungen AG (inkl. Av</invoice:companyname>
+            <invoice:postal>
+              <invoice:street>Postfach</invoice:street>
+              <invoice:zip>8081</invoice:zip>
+              <invoice:city>Zürich</invoice:city>
+            </invoice:postal>
+            <invoice:online>
+              <invoice:email>eda.privatkunden@helsana.ch</invoice:email>
+              <invoice:url>www.helsana.ch/de/leistungserbringer/themen/elektronischer-datenaustausch</invoice:url>
+            </invoice:online>
+          </invoice:company>
+        </invoice:insurance>
+        <invoice:patient gender="female" birthdate="1990-05-10T00:00:00">
+          <invoice:person salutation="Frau">
+            <invoice:familyname>Testperson</invoice:familyname>
+            <invoice:givenname>Armeswesen</invoice:givenname>
+            <invoice:postal>
+              <invoice:street>Grossmattweg 11</invoice:street>
+              <invoice:zip>5507</invoice:zip>
+              <invoice:city>Mellingen</invoice:city>
+            </invoice:postal>
+            <invoice:telecom>
+              <invoice:phone>056 483 50 60</invoice:phone>
+            </invoice:telecom>
+            <invoice:online>
+              <invoice:email>info@medelexis.ch</invoice:email>
+            </invoice:online>
+          </invoice:person>
+        </invoice:patient>
+        <invoice:guarantor>
+          <invoice:person salutation="Frau">
+            <invoice:familyname>Testperson</invoice:familyname>
+            <invoice:givenname>Armeswesen</invoice:givenname>
+            <invoice:postal>
+              <invoice:street>Grossmattweg 11</invoice:street>
+              <invoice:zip>5507</invoice:zip>
+              <invoice:city>Mellingen</invoice:city>
+            </invoice:postal>
+            <invoice:telecom>
+              <invoice:phone>056 483 50 60</invoice:phone>
+            </invoice:telecom>
+            <invoice:online>
+              <invoice:email>info@medelexis.ch</invoice:email>
+            </invoice:online>
+          </invoice:person>
+        </invoice:guarantor>
+      </invoice:tiers_garant>
+      <invoice:kvg insured_id="12345678" case_date="2022-10-04T00:00:00" />
+      <invoice:treatment date_begin="2022-10-04T00:00:00" date_end="2022-10-05T00:00:00" canton="AG" reason="disease">
+        <invoice:diagnosis type="by_contract" code="A9" />
+        <invoice:diagnosis type="by_contract" code="D9" />
+        <invoice:diagnosis type="by_contract" code="C1" />
+        <invoice:diagnosis type="by_contract" code="T1" />
+        <invoice:diagnosis type="by_contract" code="D9" />
+      </invoice:treatment>
+      <invoice:services>
+        <invoice:record_drug unit="16.40" quantity="1.0" amount="16.40" unit_factor="1.00" tariff_type="402" code="7680481641034" vat_rate="2.5" obligation="true" validate="true" provider_id="2033567123477" responsible_id="2033567123477" session="1" record_id="1" date_begin="2022-10-04T00:00:00" name="Ibuprofen Sandoz Filmtabl 400 mg 100 Stk (100 Stk)" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" provider_id="2033567123477" responsible_id="2033567123477" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="10.42" unit_factor_mt="0.89" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="9.27" unit_tt="8.19" unit_factor_tt="0.89" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="7.29" amount="16.56" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="2" date_begin="2022-10-04T00:00:00" name="Konsultation, erste 5 Min. (Grundkonsultation)" quantity="1.0" code="00.0010" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ref_code="00.0010" provider_id="2033567123477" responsible_id="2033567123477" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="10.88" unit_factor_mt="0.89" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="9.68" unit_tt="0.00" unit_factor_tt="0.89" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="0.00" amount="9.68" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="3" date_begin="2022-10-04T00:00:00" name="+ Zuschlag für hausärztliche Leistungen in der Arztpraxis" quantity="1.0" code="00.0015" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ref_code="00.0010" provider_id="2033567123477" responsible_id="2033567123477" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="10.42" unit_factor_mt="0.89" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="9.27" unit_tt="8.19" unit_factor_tt="0.89" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="7.29" amount="16.56" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="4" date_begin="2022-10-04T00:00:00" name="+ Konsultation bei Personen über 6 Jahren und unter 75 Jahren, jede weiteren 5 Min. (Konsultationszuschlag)" quantity="1.0" code="00.0020" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ref_code="00.0010" provider_id="2033567123477" responsible_id="2033567123477" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="5.21" unit_factor_mt="0.89" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="4.64" unit_tt="4.10" unit_factor_tt="0.89" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="3.65" amount="8.29" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="5" date_begin="2022-10-04T00:00:00" name="+ Konsultation, letzte 5 Min. (Konsultationszuschlag)" quantity="1.0" code="00.0030" />
+        <invoice:record_drug unit="2.35" quantity="1.0" amount="2.35" unit_factor="1.00" tariff_type="402" code="7680475050385" vat_rate="2.5" obligation="true" validate="true" provider_id="2033567123477" responsible_id="2033567123477" session="1" record_id="6" date_begin="2022-10-05T00:00:00" name="Dafalgan 150 Supp 150 mg 10 Stk (10 Stk)" />
+        <invoice:record_other tariff_type="351" unit="0.00" quantity="1.0" unit_factor="1.0" amount="0.00" vat_rate="0.0" validate="true" obligation="true" external_factor="1.0" provider_id="2033567123477" responsible_id="2033567123477" session="1" record_id="7" date_begin="2022-10-05T00:00:00" name="Selbstzahler - Pauschale umfassend die Probenentnahme, Abstrich und / oder Blutentnahme (oder Abnahme einer anderen validierten Probe), Schutzmaterial, Patienten-Gespräch" code="01.99.1000" />
+        <invoice:record_other tariff_type="351" unit="0.00" quantity="1.0" unit_factor="1.0" amount="0.00" vat_rate="0.0" validate="true" obligation="true" external_factor="1.0" provider_id="2033567123477" responsible_id="2033567123477" session="1" record_id="8" date_begin="2022-10-05T00:00:00" name="Selbstzahler - Ärztliche Pauschale für ausführliches Arzt-Patienten-Gespräch " code="01.99.1050" />
+        <invoice:record_other tariff_type="351" unit="0.00" quantity="1.0" unit_factor="1.0" amount="0.00" vat_rate="0.0" validate="true" obligation="true" external_factor="1.0" provider_id="2033567123477" responsible_id="2033567123477" session="1" record_id="9" date_begin="2022-10-05T00:00:00" name="Analyse auf Sars-CoV-2 ohne Erfüllung der Beprobungskriterien: Selbstzahler - Übermittlung des Testergebnisses an getestete Person (inkl. Ausstellung des Covid-19-Testzertifikats)" code="01.99.1100" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" provider_id="2033567123477" responsible_id="2033567123477" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="10.42" unit_factor_mt="0.89" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="9.27" unit_tt="8.19" unit_factor_tt="0.89" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="7.29" amount="16.56" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="10" date_begin="2022-10-05T00:00:00" name="Konsultation, erste 5 Min. (Grundkonsultation)" quantity="1.0" code="00.0010" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ref_code="00.0010" provider_id="2033567123477" responsible_id="2033567123477" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="10.88" unit_factor_mt="0.89" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="9.68" unit_tt="0.00" unit_factor_tt="0.89" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="0.00" amount="9.68" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="11" date_begin="2022-10-05T00:00:00" name="+ Zuschlag für hausärztliche Leistungen in der Arztpraxis" quantity="1.0" code="00.0015" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" ref_code="00.0010" provider_id="2033567123477" responsible_id="2033567123477" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="5.21" unit_factor_mt="0.89" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="4.64" unit_tt="4.10" unit_factor_tt="0.89" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="3.65" amount="8.29" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="12" date_begin="2022-10-05T00:00:00" name="+ Konsultation, letzte 5 Min. (Konsultationszuschlag)" quantity="1.0" code="00.0030" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" provider_id="2033567123477" responsible_id="2033567123477" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="2.08" unit_factor_mt="0.89" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="1.85" unit_tt="1.64" unit_factor_tt="0.89" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="1.46" amount="3.31" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="13" date_begin="2022-10-05T00:00:00" name="Aktenstudium in Abwesenheit des Patienten bei Personen über 6 Jahren und unter 75 Jahren, pro 1 Min." quantity="1.0" code="00.0141" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" provider_id="2033567123477" responsible_id="2033567123477" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="22.90" unit_factor_mt="0.89" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="20.38" unit_tt="20.54" unit_factor_tt="0.89" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="18.28" amount="38.66" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="14" date_begin="2022-10-05T00:00:00" name="Gynäkologische präventive Untersuchung, als alleinige gynäkologische Leistung" quantity="1.0" code="22.0020" />
+        <invoice:record_tarmed treatment="ambulatory" tariff_type="001" provider_id="2033567123477" responsible_id="2033567123477" billing_role="both" medical_role="self_employed" body_location="none" unit_mt="10.42" unit_factor_mt="0.89" scale_factor_mt="1.0" external_factor_mt="1.0" amount_mt="9.27" unit_tt="9.34" unit_factor_tt="0.89" scale_factor_tt="1.0" external_factor_tt="1.0" amount_tt="8.31" amount="17.59" vat_rate="0.0" validate="true" obligation="true" session="1" record_id="15" date_begin="2022-10-05T00:00:00" name="Untersuchung der Mammae" quantity="1.0" code="23.0010" />
+        <invoice:record_lab tariff_type="317" provider_id="2033567123477" responsible_id="2033567123477" unit="26.10" unit_factor="1.00" amount="26.10" vat_rate="0.0" obligation="true" validate="true" session="1" record_id="16" date_begin="2022-10-05T00:00:00" name="Spezielle Mikroskopie" quantity="1.0" code="3358.00" />
+      </invoice:services>
+    </invoice:body>
+  </invoice:payload>
+</invoice:request>
+

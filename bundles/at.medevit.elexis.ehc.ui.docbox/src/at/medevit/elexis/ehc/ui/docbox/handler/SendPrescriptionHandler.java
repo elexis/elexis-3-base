@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -22,8 +23,10 @@ import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.docbox.service.DocboxService;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IOutputter;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IRecipe;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.OutputLog;
 import ch.elexis.data.Rezept;
 
@@ -34,7 +37,7 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		prescription = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);
+		prescription = getSelectedRezept();
 		if (prescription != null) {
 			AbstractCdaChV1<?> cdaPrescription = null;
 			ByteArrayOutputStream pdfPrescription = null;
@@ -82,6 +85,11 @@ public class SendPrescriptionHandler extends AbstractHandler implements IHandler
 		MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 				"Das Rezept konnte nicht gesendet werden.");
 		return null;
+	}
+
+	private Rezept getSelectedRezept() {
+		return ContextServiceHolder.get().getTyped(IRecipe.class)
+				.map(ir -> ((Rezept) NoPoUtil.loadAsPersistentObject(ir))).orElse(null);
 	}
 
 	private String writeTempPdf(ByteArrayOutputStream pdf) throws FileNotFoundException, IOException {

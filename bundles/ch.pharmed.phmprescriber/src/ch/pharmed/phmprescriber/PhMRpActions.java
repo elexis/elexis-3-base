@@ -17,12 +17,13 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
-
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.osgi.framework.Bundle;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IOutputter;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IRecipe;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.Rezept;
 
 public class PhMRpActions implements IAction, IOutputter {
@@ -196,13 +197,16 @@ public class PhMRpActions implements IAction, IOutputter {
 
 	@Override
 	public void runWithEvent(Event event) {
-
-		// TODO Auto-generated method stub
-		Rezept rp = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);
+		Rezept rp = getSelectedRezept();
 		Physician ph = new Physician();
 		Sender sender = new Sender(rp, ph);
 		sender.sendnprint();
 
+	}
+
+	private Rezept getSelectedRezept() {
+		return ContextServiceHolder.get().getTyped(IRecipe.class)
+				.map(ir -> ((Rezept) NoPoUtil.loadAsPersistentObject(ir))).orElse(null);
 	}
 
 	@Override

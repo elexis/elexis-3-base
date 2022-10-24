@@ -13,9 +13,9 @@
 
 package ch.elexis.privatnotizen;
 
+import ch.elexis.core.model.util.ElexisIdGenerator;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
-import ch.rgw.tools.StringTool;
 
 /**
  * Die Datenklasse für Privatnotizen. Eine Privatnotiz besteht aus einer ID und
@@ -50,7 +50,7 @@ public class Privatnotiz extends PersistentObject {
 	}
 
 	public Privatnotiz(Mandant mandant) {
-		String id = mandant.getId() + ":" + StringTool.unique("pnotes"); //$NON-NLS-1$ //$NON-NLS-2$
+		String id = mandant.getId() + ":" + ElexisIdGenerator.generateId(); //$NON-NLS-1$
 		create(id);
 	}
 

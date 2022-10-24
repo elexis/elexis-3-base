@@ -13,42 +13,49 @@
 
 package ch.elexis.extdoc.dialogs;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.util.ElexisIdGenerator;
 import ch.elexis.core.ui.actions.BackgroundJob;
-import ch.elexis.core.ui.actions.JobPool;
 import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
+import ch.elexis.core.ui.actions.JobPool;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
-import ch.elexis.extdoc.util.ListFiles;
 import ch.elexis.extdoc.util.MatchPatientToPath;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.rgw.tools.StringTool;
-import ch.elexis.extdoc.util.*;
 
 public class VerifierDialog extends TitleAreaDialog {
 	private Patient actPatient;
@@ -91,7 +98,7 @@ public class VerifierDialog extends TitleAreaDialog {
 		public VerifierContentProvider() {
 			// TODO remove job from JobPool when it has finished.
 			// for now, we just use unique names.
-			String jobName = BASE_JOBNAME + StringUtils.SPACE + StringTool.unique(BASE_JOBNAME);
+			String jobName = BASE_JOBNAME + StringUtils.SPACE + ElexisIdGenerator.generateId();
 			job = new DataLoader(jobName);
 			globalJob = job;
 			if (JobPool.getJobPool().getJob(job.getJobname()) == null) {

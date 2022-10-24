@@ -37,12 +37,12 @@ import com.tiff.common.ui.datepicker.DatePickerCombo;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.util.ElexisIdGenerator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.CalendarOutputter;
@@ -221,7 +221,7 @@ public class ICalTransfer {
 							}
 							Termin termin = null;
 							Uid uid = event.getUid();
-							String uuid = StringTool.unique("agendaimport"); //$NON-NLS-1$
+							String uuid = ElexisIdGenerator.generateId();
 							if (uid != null) {
 								uuid = uid.getValue();
 								termin = Termin.load(uuid);
@@ -230,7 +230,7 @@ public class ICalTransfer {
 								for (String ber : b) {
 									termin = new Termin(uuid, ber, ttFrom.toString(TimeTool.DATE_COMPACT),
 											Termin.TimeInMinutes(ttFrom), Termin.TimeInMinutes(ttUntil), typ, status);
-									uuid = StringTool.unique("agendaimport"); //$NON-NLS-1$
+									uuid = ElexisIdGenerator.generateId();
 								}
 							} else {
 								termin.set(

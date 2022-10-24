@@ -55,6 +55,7 @@ import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.util.ElexisIdGenerator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -371,8 +372,7 @@ public class AgendaGross extends BaseAgendaView {
 			@Override
 			public void run() {
 				try {
-					getViewSite().getPage().showView(ID, StringTool.unique("Agenda"), //$NON-NLS-1$
-							IWorkbenchPage.VIEW_VISIBLE);
+					getViewSite().getPage().showView(ID, ElexisIdGenerator.generateId(), IWorkbenchPage.VIEW_VISIBLE);
 				} catch (PartInitException e) {
 					ExHandler.handle(e);
 				}

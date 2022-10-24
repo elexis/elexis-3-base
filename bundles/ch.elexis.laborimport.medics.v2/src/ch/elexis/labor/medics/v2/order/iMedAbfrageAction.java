@@ -8,7 +8,6 @@
 
 package ch.elexis.labor.medics.v2.order;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
 import java.io.File;
@@ -19,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.ch.BillingLaw;
+import ch.elexis.core.model.util.ElexisIdGenerator;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Fall;
@@ -41,7 +42,6 @@ import ch.elexis.labor.medics.v2.MedicsPreferencePage;
 import ch.elexis.labor.medics.v2.Messages;
 import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.io.FileTool;
-import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -240,8 +240,8 @@ public class iMedAbfrageAction extends Action {
 	private String writeHL7File(final Patient patient, final Kontakt rechnungsempfaenger, final Kontakt kostentraeger,
 			final String plan, final Date beginDate, final String vnr) {
 
-		String uniqueMessageControlID = StringTool.unique("MessageControlID"); //$NON-NLS-1$
-		String uniqueProcessingID = StringTool.unique("ProcessingID"); //$NON-NLS-1$
+		String uniqueMessageControlID = ElexisIdGenerator.generateId();
+		String uniqueProcessingID = ElexisIdGenerator.generateId();
 
 		HL7Mandant mandant = new HL7Mandant();
 		mandant.setLabel(CoreHub.actMandant.get(Anwender.FLD_LABEL));

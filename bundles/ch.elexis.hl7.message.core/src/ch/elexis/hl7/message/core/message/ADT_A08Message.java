@@ -1,12 +1,14 @@
 package ch.elexis.hl7.message.core.message;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.model.util.ElexisIdGenerator;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -15,7 +17,6 @@ import ch.elexis.hl7.data.HL7Mandant;
 import ch.elexis.hl7.data.HL7Patient;
 import ch.elexis.hl7.message.core.IHL7MessageService;
 import ch.elexis.hl7.v231.HL7_ADT_A08;
-import ch.rgw.tools.StringTool;
 
 public class ADT_A08Message implements IHL7Message {
 
@@ -36,8 +37,8 @@ public class ADT_A08Message implements IHL7Message {
 	@Override
 	public String getMessage(Map<String, Object> context) throws ElexisException {
 		if (context != null && !context.isEmpty()) {
-			String uniqueMessageControlID = StringTool.unique("MessageControlID"); //$NON-NLS-1$
-			String uniqueProcessingID = StringTool.unique("ProcessingID"); //$NON-NLS-1$
+			String uniqueMessageControlID = ElexisIdGenerator.generateId();
+			String uniqueProcessingID = ElexisIdGenerator.generateId();
 
 			String receivingApplication = (String) context.get(IHL7MessageService.CONTEXT_RECEIVINGAPPLICATION);
 			String receivingFacility = (String) context.get(IHL7MessageService.CONTEXT_RECEIVINGFACILITY);

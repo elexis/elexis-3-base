@@ -42,6 +42,7 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.model.util.ElexisIdGenerator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.DateSelectorDialog;
@@ -255,8 +256,7 @@ public class TagesView extends BaseAgendaView {
 			@Override
 			public void run() {
 				try {
-					getViewSite().getPage().showView(ID, StringTool.unique("Agenda"), //$NON-NLS-1$
-							IWorkbenchPage.VIEW_VISIBLE);
+					getViewSite().getPage().showView(ID, ElexisIdGenerator.generateId(), IWorkbenchPage.VIEW_VISIBLE);
 				} catch (PartInitException e) {
 					ExHandler.handle(e);
 				}

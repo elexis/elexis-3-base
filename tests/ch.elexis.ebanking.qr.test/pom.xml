@@ -7,11 +7,8 @@
     <artifactId>ch.elexis.base.tests</artifactId>
     <version>3.10.0-SNAPSHOT</version>
   </parent>
-  
   <artifactId>ch.elexis.ebanking.qr.test</artifactId>
   <packaging>eclipse-test-plugin</packaging>
-  <version>3.9.0-SNAPSHOT</version>
-  
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -29,17 +26,22 @@
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
-                <id>ch.elexis.core.logging.default_configuration</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
                 <id>ch.elexis.ebanking.qr.test</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
                 <id>ch.elexis.core.logback.rocketchat</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>ch.elexis.core.test.context</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>ch.elexis.core.logging.default_configuration</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
               <requirement>

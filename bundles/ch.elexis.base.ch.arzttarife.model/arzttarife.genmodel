@@ -142,5 +142,15 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//nutrition/INutritionLeistung/description"/>
       </genClasses>
     </nestedGenPackages>
+    <nestedGenPackages prefix="Psycho" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//psycho">
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//psycho/IPsychoLeistung">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//psycho/IPsychoLeistung/validFrom"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//psycho/IPsychoLeistung/validTo"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//psycho/IPsychoLeistung/TP"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//psycho/IPsychoLeistung/description"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//psycho/IPsychoLeistung/limitations"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//psycho/IPsychoLeistung/exclusions"/>
+      </genClasses>
+    </nestedGenPackages>
   </genPackages>
 </genmodel:GenModel>

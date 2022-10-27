@@ -21,6 +21,8 @@ import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
 import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
 import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
+import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
+import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
 import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
 import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
@@ -173,6 +175,8 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(NutritionPackage.eNS_URI);
 		NutritionPackageImpl theNutritionPackage = (NutritionPackageImpl)(registeredPackage instanceof NutritionPackageImpl ? registeredPackage : NutritionPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PsychoPackage.eNS_URI);
+		PsychoPackageImpl thePsychoPackage = (PsychoPackageImpl)(registeredPackage instanceof PsychoPackageImpl ? registeredPackage : PsychoPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theTarmedPackage.createPackageContents();
@@ -182,6 +186,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		thePandemiePackage.createPackageContents();
 		theTarmedallowancePackage.createPackageContents();
 		theNutritionPackage.createPackageContents();
+		thePsychoPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theTarmedPackage.initializePackageContents();
@@ -191,6 +196,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		thePandemiePackage.initializePackageContents();
 		theTarmedallowancePackage.initializePackageContents();
 		theNutritionPackage.initializePackageContents();
+		thePsychoPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theTarmedPackage.freeze();

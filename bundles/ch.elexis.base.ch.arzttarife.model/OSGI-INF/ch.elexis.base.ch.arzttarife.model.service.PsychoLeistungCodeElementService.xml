@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="ch.elexis.base.ch.arzttarife.model.service.PsychoLeistungCodeElementService">
+   <service>
+      <provide interface="ch.elexis.core.services.ICodeElementServiceContribution"/>
+      <provide interface="ch.elexis.core.services.IStoreToStringContribution"/>
+   </service>
+   <reference cardinality="1..1" field="entityManager" interface="ch.elexis.core.services.IElexisEntityManager" name="entityManager" target="(id=default)"/>
+   <implementation class="ch.elexis.base.ch.arzttarife.model.service.PsychoLeistungCodeElementService"/>
+</scr:component>

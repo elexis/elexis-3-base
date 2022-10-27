@@ -19,6 +19,8 @@ import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
 
 import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
 
+import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
+import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
 import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
 
 import ch.elexis.base.ch.arzttarife.rfe.impl.RfePackageImpl;
@@ -119,6 +121,8 @@ public class NutritionPackageImpl extends EPackageImpl implements NutritionPacka
 		PandemiePackageImpl thePandemiePackage = (PandemiePackageImpl)(registeredPackage instanceof PandemiePackageImpl ? registeredPackage : PandemiePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(TarmedallowancePackage.eNS_URI);
 		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PsychoPackage.eNS_URI);
+		PsychoPackageImpl thePsychoPackage = (PsychoPackageImpl)(registeredPackage instanceof PsychoPackageImpl ? registeredPackage : PsychoPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theNutritionPackage.createPackageContents();
@@ -128,6 +132,7 @@ public class NutritionPackageImpl extends EPackageImpl implements NutritionPacka
 		theRfePackage.createPackageContents();
 		thePandemiePackage.createPackageContents();
 		theTarmedallowancePackage.createPackageContents();
+		thePsychoPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theNutritionPackage.initializePackageContents();
@@ -137,6 +142,7 @@ public class NutritionPackageImpl extends EPackageImpl implements NutritionPacka
 		theRfePackage.initializePackageContents();
 		thePandemiePackage.initializePackageContents();
 		theTarmedallowancePackage.initializePackageContents();
+		thePsychoPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theNutritionPackage.freeze();

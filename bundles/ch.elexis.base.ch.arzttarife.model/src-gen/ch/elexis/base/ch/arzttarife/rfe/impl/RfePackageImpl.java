@@ -17,6 +17,8 @@ import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
 import ch.elexis.base.ch.arzttarife.physio.PhysioPackage;
 import ch.elexis.base.ch.arzttarife.physio.impl.PhysioPackageImpl;
+import ch.elexis.base.ch.arzttarife.psycho.PsychoPackage;
+import ch.elexis.base.ch.arzttarife.psycho.impl.PsychoPackageImpl;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
 import ch.elexis.base.ch.arzttarife.rfe.RfeFactory;
 import ch.elexis.base.ch.arzttarife.rfe.RfePackage;
@@ -104,6 +106,8 @@ public class RfePackageImpl extends EPackageImpl implements RfePackage {
 		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(NutritionPackage.eNS_URI);
 		NutritionPackageImpl theNutritionPackage = (NutritionPackageImpl)(registeredPackage instanceof NutritionPackageImpl ? registeredPackage : NutritionPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PsychoPackage.eNS_URI);
+		PsychoPackageImpl thePsychoPackage = (PsychoPackageImpl)(registeredPackage instanceof PsychoPackageImpl ? registeredPackage : PsychoPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theRfePackage.createPackageContents();
@@ -113,6 +117,7 @@ public class RfePackageImpl extends EPackageImpl implements RfePackage {
 		thePandemiePackage.createPackageContents();
 		theTarmedallowancePackage.createPackageContents();
 		theNutritionPackage.createPackageContents();
+		thePsychoPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theRfePackage.initializePackageContents();
@@ -122,6 +127,7 @@ public class RfePackageImpl extends EPackageImpl implements RfePackage {
 		thePandemiePackage.initializePackageContents();
 		theTarmedallowancePackage.initializePackageContents();
 		theNutritionPackage.initializePackageContents();
+		thePsychoPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theRfePackage.freeze();

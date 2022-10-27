@@ -4,6 +4,7 @@ import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.base.ch.arzttarife.nutrition.INutritionLeistung;
 import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
+import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
 import ch.elexis.base.ch.arzttarife.rfe.IReasonForEncounter;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
@@ -14,6 +15,7 @@ import ch.elexis.core.jpa.entities.ComplementaryLeistung;
 import ch.elexis.core.jpa.entities.NutritionLeistung;
 import ch.elexis.core.jpa.entities.PandemieLeistung;
 import ch.elexis.core.jpa.entities.PhysioLeistung;
+import ch.elexis.core.jpa.entities.PsychoLeistung;
 import ch.elexis.core.jpa.entities.RFE;
 import ch.elexis.core.jpa.entities.TarmedExtension;
 import ch.elexis.core.jpa.entities.TarmedGroup;
@@ -51,6 +53,8 @@ public class ArzttarifeModelAdapterFactory extends AbstractModelAdapterFactory {
 				ch.elexis.base.ch.arzttarife.tarmedallowance.model.TarmedAllowance.class, TarmedPauschalen.class));
 		addMapping(new MappingEntry(INutritionLeistung.class,
 				ch.elexis.base.ch.arzttarife.nutrition.model.NutritionLeistung.class, NutritionLeistung.class));
+		addMapping(new MappingEntry(IPsychoLeistung.class,
+				ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung.class, PsychoLeistung.class));
 
 		addMapping(new MappingEntry(ITarmedLeistung.class,
 				ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung.class, TarmedLeistung.class));

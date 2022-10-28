@@ -748,6 +748,9 @@ public class Tarmed45Exporter {
 						serviceType.setVatRate(getVatRate(billed));
 
 						serviceType.setUnit(billed.getPrice().doubleValue());
+						if ("581".equals(billable.getCodeSystemCode())) {
+							serviceType.setUnit(billed.getPoints() / 100);
+						}
 						serviceType.setUnitFactor(billed.getFactor());
 
 						serviceType.setTariffType(billable.getCodeSystemCode());
@@ -892,6 +895,10 @@ public class Tarmed45Exporter {
 		}
 		// pandemie
 		if ("351".equals(tariffTyp)) {
+			return true;
+		}
+		// psycho
+		if ("581".equals(tariffTyp)) {
 			return true;
 		}
 		return false;

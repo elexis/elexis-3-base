@@ -92,6 +92,15 @@
             name="Ernährungsberatung"
             system="Ernährungsberatung">
       </Leistung>
+      <Leistung
+            CodeDetailDisplay="ch.elexis.views.PsychoDetailDisplay"
+            CodeSelectorFactory="ch.elexis.views.PsychoLeistungCodeSelectorFactory"
+            ImporterClass="ch.elexis.base.ch.arzttarife.importer.PsychoImporter"
+            elexisClassName="ch.elexis.data.PsychoLeistung"
+            localizedName="Psychotherapie (KVG)"
+            name="Psychotherapie"
+            system="Psychotherapie">
+      </Leistung>
    </extension>
    <extension
          point="ch.elexis.core.data.RechnungsManager">

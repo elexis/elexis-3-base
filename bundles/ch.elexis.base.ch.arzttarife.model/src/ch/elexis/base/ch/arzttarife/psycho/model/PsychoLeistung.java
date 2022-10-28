@@ -1,22 +1,31 @@
 package ch.elexis.base.ch.arzttarife.psycho.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.VatInfo;
+import ch.rgw.tools.Result;
 
 public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.PsychoLeistung>
 		implements Identifiable, IPsychoLeistung {
@@ -38,17 +47,103 @@ public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 					ContextServiceHolder.get()) {
 
 				@Override
+				public Result<IBilled> remove(IBilled billed, IEncounter encounter) {
+					Result<IBilled> ret = super.remove(billed, encounter);
+					if (!isPercent((PsychoLeistung) billed.getBillable())) {
+						updatePercent(billed);
+					}
+					return ret;
+				}
+
+				@Override
+				protected void setAmount(IBilled billed, double amount) {
+					super.setAmount(billed, amount);
+					updatePercent(billed);
+				}
+
+				@Override
 				protected void setPrice(PsychoLeistung billable, IBilled billed) {
-					billed.setFactor(1.0);
+					Optional<IBillingSystemFactor> billingFactor = BillingServiceHolder.get().getBillingSystemFactor(
+							billed.getEncounter().getCoverage().getBillingSystem().getName(),
+							billed.getEncounter().getDate());
+					if (billingFactor.isPresent()) {
+						billed.setFactor(billingFactor.get().getFactor());
+					} else {
+						billed.setFactor(1.0);
+					}
 					int points = 0;
 					if (billable.getTP() != null) {
-						try {
-							points = Integer.valueOf(billable.getTP());
-						} catch (NumberFormatException ne) {
-							// ignore ...
+						if (!isPercent(billable)) {
+							try {
+								points = getPoints(billable);
+							} catch (NumberFormatException ne) {
+								// ignore ...
+							}
 						}
 					}
 					billed.setPoints(points);
+				}
+
+				private int getPoints(PsychoLeistung billable) {
+					return Integer.valueOf(billable.getTP()) * 100;
+				}
+
+				private void updatePercent(IBilled billed) {
+					List<IBilled> allPsycho = getAllPsycho(billed);
+					for (IBilled psychoBilled : allPsycho) {
+						if (isPercent((PsychoLeistung) psychoBilled.getBillable())) {
+							setPercent(psychoBilled, allPsycho);
+						}
+					}
+				}
+
+				/**
+				 * Get all {@link IBilled} of the encounter, including the provided
+				 * {@link IBilled} instead of an possible old version from the encounter.
+				 * 
+				 * @param billed
+				 * @return
+				 */
+				private List<IBilled> getAllPsycho(IBilled billed) {
+					List<IBilled> ret = new ArrayList<>();
+					List<IBilled> encounterPsycho = new ArrayList<>(getPsycho(billed.getEncounter().getBilled()));
+					for (IBilled encounterBilled : encounterPsycho) {
+						if (!encounterBilled.getId().equals(billed.getId())) {
+							ret.add(encounterBilled);
+						}
+					}
+					if (!billed.isDeleted()) {
+						ret.add(billed);
+					}
+					return ret;
+				}
+
+				private boolean isPercent(PsychoLeistung billable) {
+					return billable.getTP().startsWith("%");
+				}
+
+				private void setPercent(IBilled billed, List<IBilled> allPsycho) {
+					int sumTP = 0;
+					for (IBilled psychoBilled : allPsycho) {
+						if (!isPercent((PsychoLeistung) psychoBilled.getBillable())) {
+							sumTP += getPoints((PsychoLeistung) psychoBilled.getBillable()) * psychoBilled.getAmount();
+						}
+					}
+					int percent = getPercent((PsychoLeistung) billed.getBillable());
+					billed.setPoints(sumTP);
+					billed.setPrimaryScale(percent);
+					System.out.println("Set percent [" + ((PsychoLeistung) billed.getBillable()).getCode() + "] tp ["
+							+ sumTP + "] scale [" + percent + "]");
+					CoreModelServiceHolder.get().save(billed);
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, billed);
+				}
+				
+				private List<IBilled> getPsycho(List<IBilled> billed) {
+					return billed.stream().filter(b -> b.getBillable() instanceof PsychoLeistung).collect(Collectors.toList());
+				}
+				
+				private int getPercent(PsychoLeistung billedPsycho) {
+					return Integer.parseInt(billedPsycho.getTP().substring(1)); 
 				}
 			};
 		}

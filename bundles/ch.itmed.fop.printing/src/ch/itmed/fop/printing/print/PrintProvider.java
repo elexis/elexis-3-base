@@ -69,6 +69,9 @@ public final class PrintProvider {
 
 		FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI()); //$NON-NLS-1$
 		DocPrintJob printJob = createDocPrintJob(printerName);
+		if (printJob == null) {
+			throw new PrintException("Could not find print service for printer [" + printerName + "]");
+		}
 		FOUserAgent userAgent = fopFactory.newFOUserAgent();
 		PageableRenderer renderer = new PageableRenderer(userAgent);
 

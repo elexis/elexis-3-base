@@ -217,8 +217,7 @@ public class ElexisPDFGenerator {
 					parameters.put("besrMarginHorizontal", besrMarginHorizontal); //$NON-NLS-1$
 					parameters.put("headerLine1", getConfigValue(RnOutputter.CFG_ESR_HEADER_1, StringUtils.SPACE)); //$NON-NLS-1$
 					parameters.put("headerLine2", getConfigValue(RnOutputter.CFG_ESR_HEADER_2, StringUtils.SPACE)); //$NON-NLS-1$
-					parameters.put("messageText", //$NON-NLS-1$
-							getConfigValue(RnOutputter.CFG_MSGTEXT_TG_M0, getMessagePDFText(invoiceState)));
+					parameters.put("messageText", getMessagePDFText(invoiceState));// $NON-NLS-1$
 					parameters.put("eanList", eanList); //$NON-NLS-1$
 					parameters.put("vatList", vatList); //$NON-NLS-1$
 					parameters.put("amountTotal", XMLTool.moneyToXmlDouble(mTotal)); //$NON-NLS-1$

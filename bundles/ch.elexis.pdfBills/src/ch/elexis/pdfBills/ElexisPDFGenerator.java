@@ -115,9 +115,6 @@ public class ElexisPDFGenerator {
 
 	private boolean print;
 
-	String[] mahnStufen = { CFG_MSGTEXT_TG_M0, CFG_MSGTEXT_TP_M0, CFG_MSGTEXT_TG_M1, CFG_MSGTEXT_TG_M2,
-			CFG_MSGTEXT_TG_M3, CFG_MSGTEXT_TP_M1, CFG_MSGTEXT_TP_M2, CFG_MSGTEXT_TP_M3 };
-
 	private enum XsltType {
 		RECLAIM, PATBILL, PATBILL_M1, PATBILL_M2, PATBILL_M3
 	}
@@ -220,8 +217,7 @@ public class ElexisPDFGenerator {
 					parameters.put("besrMarginHorizontal", besrMarginHorizontal); //$NON-NLS-1$
 					parameters.put("headerLine1", getConfigValue(RnOutputter.CFG_ESR_HEADER_1, StringUtils.SPACE)); //$NON-NLS-1$
 					parameters.put("headerLine2", getConfigValue(RnOutputter.CFG_ESR_HEADER_2, StringUtils.SPACE)); //$NON-NLS-1$
-					parameters.put("messageText",
-							getConfigValue(mahnStufen.toString(), getMessagePDFText(invoiceState)));// $NON-NLS-1$
+					parameters.put("messageText", getMessagePDFText(invoiceState));// $NON-NLS-1$
 					parameters.put("eanList", eanList); //$NON-NLS-1$
 					parameters.put("vatList", vatList); //$NON-NLS-1$
 					parameters.put("amountTotal", XMLTool.moneyToXmlDouble(mTotal)); //$NON-NLS-1$

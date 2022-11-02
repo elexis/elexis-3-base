@@ -32,4 +32,10 @@ Mehr Info unter https://wikijs.medelexis.ch/de/KonfigurationQR-Rechnungen
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="ch.elexis.fop.service"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
 </feature>

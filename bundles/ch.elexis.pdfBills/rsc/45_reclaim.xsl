@@ -1153,6 +1153,13 @@
 															select="/invoice:request/invoice:payload/invoice:body/invoice:vvg/@case_date" />
 													</xsl:call-template>
 												</xsl:when>
+												<xsl:when
+													test="count(/invoice:request/invoice:payload/invoice:body/invoice:org) > 0">
+													<xsl:call-template name="FormatDate">
+														<xsl:with-param name="DateTime"
+															select="/invoice:request/invoice:payload/invoice:body/invoice:org/@case_date" />
+													</xsl:call-template>
+												</xsl:when>
 												<xsl:otherwise>
 													<xsl:call-template name="FormatDate">
 														<xsl:with-param name="DateTime"
@@ -1376,6 +1383,11 @@
 													<xsl:value-of
 														select="/invoice:request/invoice:payload/invoice:body/invoice:vvg/@insured_id" />
 												</xsl:when>
+												<xsl:when
+													test="count(/invoice:request/invoice:payload/invoice:body/invoice:org) > 0">
+													<xsl:value-of
+														select="/invoice:request/invoice:payload/invoice:body/invoice:org/@insured_id" />
+												</xsl:when>
 												<xsl:otherwise>
 													<xsl:value-of
 														select="/invoice:request/invoice:payload/invoice:body/invoice:uvg/@insured_id" />
@@ -1576,6 +1588,10 @@
 												<xsl:when
 													test="count(/invoice:request/invoice:payload/invoice:body/invoice:vvg) > 0">
 													<xsl:value-of select="'VVG'" />
+												</xsl:when>
+												<xsl:when
+													test="count(/invoice:request/invoice:payload/invoice:body/invoice:org) > 0">
+													<xsl:value-of select="'ORG'" />
 												</xsl:when>
 												<xsl:when
 													test="count(/invoice:request/invoice:payload/invoice:body/invoice:uvg) > 0">

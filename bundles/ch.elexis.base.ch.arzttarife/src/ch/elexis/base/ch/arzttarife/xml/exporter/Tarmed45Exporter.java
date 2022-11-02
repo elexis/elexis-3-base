@@ -91,6 +91,7 @@ import ch.fd.invoice450.request.IvgLawType;
 import ch.fd.invoice450.request.KvgLawType;
 import ch.fd.invoice450.request.MvgLawType;
 import ch.fd.invoice450.request.OnlineAddressType;
+import ch.fd.invoice450.request.OrgLawType;
 import ch.fd.invoice450.request.PatientAddressType;
 import ch.fd.invoice450.request.PatientAddressType.Card;
 import ch.fd.invoice450.request.PayantType;
@@ -980,6 +981,8 @@ public class Tarmed45Exporter {
 			bodyType.setMvg((MvgLawType) lawType);
 		} else if (lawType instanceof VvgLawType) {
 			bodyType.setVvg((VvgLawType) lawType);
+		} else if (lawType instanceof OrgLawType) {
+			bodyType.setOrg((OrgLawType) lawType);
 		}
 
 		bodyType.setTreatment(getTreatment(invoice));
@@ -1181,6 +1184,14 @@ public class Tarmed45Exporter {
 			vvgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
 
 			return vvgLawType;
+		} else if (law == BillingLaw.ORG) {
+			OrgLawType orgLawType = new OrgLawType();
+
+			orgLawType.setInsuredId(getInsuredId(invoice));
+			orgLawType.setCaseId(getCaseNumber(invoice));
+			orgLawType.setCaseDate(XMLExporterUtil.makeXMLDate(caseDate));
+
+			return orgLawType;
 		} else {
 			throw new UnsupportedOperationException("Billing law [" + law + "] not implemented");
 		}

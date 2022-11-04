@@ -44,78 +44,91 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		FileDialog fld = new FileDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), SWT.OPEN);
+		FileDialog fld = new FileDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), SWT.OPEN | SWT.MULTI);
 		fld.setText(Messages.ESRView_selectESR);
 		fld.setFilterExtensions(new String[] { "*.xml;*.zip" });
-		final String filename = fld.open();
-		if (filename != null) {
-			final File file = new File(filename);
-			try {
-				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
-
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						File tmpDir = null;
-						List<File> esrFiles = new ArrayList<>();
+		if (fld.open() != null) {
+			String filepath = fld.getFilterPath();
+			String[] filenames = fld.getFileNames();
+			for (String filename : filenames) {
+				if (filename != null) {
+					final File file = new File(filepath + File.separator + filename);
+					if (file.isFile() && file.exists() && file.canRead()) {
 						try {
-							String extension = FilenameUtils.getExtension(file.getName());
-							if ("zip".equalsIgnoreCase(extension)) {
-								tmpDir = new File(CoreUtil.getTempDir(), "esr_zip_" + System.currentTimeMillis());
-								if (tmpDir.mkdirs()) {
+							PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+
+								public void run(IProgressMonitor monitor)
+										throws InvocationTargetException, InterruptedException {
+									File tmpDir = null;
+									List<File> esrFiles = new ArrayList<>();
 									try {
-										FileTool.unzip(file, tmpDir);
-										esrFiles.addAll(Arrays.asList(tmpDir.listFiles(new FilenameFilter() {
-											@Override
-											public boolean accept(File dir, String name) {
-												if (file.isFile()) {
-													String extension = FilenameUtils.getExtension(name);
-													return "xml".equalsIgnoreCase(extension);
+										String extension = FilenameUtils.getExtension(file.getName());
+										if ("zip".equalsIgnoreCase(extension)) {
+											tmpDir = new File(CoreUtil.getTempDir(),
+													"esr_zip_" + System.currentTimeMillis());
+											if (tmpDir.mkdirs()) {
+												try {
+													FileTool.unzip(file, tmpDir);
+													esrFiles.addAll(
+															Arrays.asList(tmpDir.listFiles(new FilenameFilter() {
+																@Override
+																public boolean accept(File dir, String name) {
+																	if (file.isFile()) {
+																		String extension = FilenameUtils
+																				.getExtension(name);
+																		return "xml".equalsIgnoreCase(extension);
+																	}
+																	return false;
+																}
+															})));
+												} catch (IOException e) {
+													ExHandler.handle(e);
 												}
-												return false;
 											}
-										})));
-									} catch (IOException e) {
-										ExHandler.handle(e);
+										} else if ("xml".equalsIgnoreCase(extension)) {
+											esrFiles.add(file);
+										}
+										for (File esrFile : esrFiles) {
+											monitor.beginTask(Messages.ESRView_reading_ESR + " " + esrFile.getName(), //$NON-NLS-1$
+													(int) (esrFile.length() / 25));
+											ESRFile esrf = new ESRFile();
+											Result<List<ESRRecord>> result = esrf.read(esrFile, monitor);
+											if (result.isOK()) {
+												CompletableFuture
+														.runAsync(new ESRRecordsRunnable(monitor, result.get()))
+														.thenRunAsync(() -> updateEsrView(event));
+												if (monitor.isCanceled()) {
+													break;
+												}
+											} else {
+												ResultAdapter.displayResult(result, Messages.ESRView_errorESR);
+											}
+										}
+									} finally {
+										if (tmpDir != null) {
+											for (File file : tmpDir.listFiles()) {
+												file.delete();
+											}
+											tmpDir.delete();
+										}
 									}
 								}
-							} else if ("xml".equalsIgnoreCase(extension)) {
-								esrFiles.add(file);
-							}
-							for (File esrFile : esrFiles) {
-								monitor.beginTask(Messages.ESRView_reading_ESR + " " + esrFile.getName(), //$NON-NLS-1$
-										(int) (esrFile.length() / 25));
-								ESRFile esrf = new ESRFile();
-								Result<List<ESRRecord>> result = esrf.read(esrFile, monitor);
-								if (result.isOK()) {
-									CompletableFuture.runAsync(new ESRRecordsRunnable(monitor, result.get()))
-											.thenRunAsync(() -> updateEsrView(event));
-									if (monitor.isCanceled()) {
-										break;
-									}
-								} else {
-									ResultAdapter.displayResult(result, Messages.ESRView_errorESR);
-								}
-							}
-						} finally {
-							if (tmpDir != null) {
-								for (File file : tmpDir.listFiles()) {
-									file.delete();
-								}
-								tmpDir.delete();
-							}
+							});
+						} catch (InvocationTargetException e) {
+							ExHandler.handle(e);
+							SWTHelper.showError(Messages.ESRView_errorESR2, Messages.ESRView_errrorESR2,
+									Messages.ESRView_couldnotread + e.getMessage() + e.getCause().getMessage());
+						} catch (InterruptedException e) {
+							ExHandler.handle(e);
+							SWTHelper.showError("ESR interrupted", Messages.ESRView_interrupted, e //$NON-NLS-1$
+									.getMessage());
 						}
+					} else {
+						SWTHelper.showInfo(Messages.ESRView_errrorESR2, Messages.ESRView_couldnotread + filename);
 					}
-				});
-			} catch (InvocationTargetException e) {
-				ExHandler.handle(e);
-				SWTHelper.showError(Messages.ESRView_errorESR2, Messages.ESRView_errrorESR2,
-						Messages.ESRView_couldnotread + e.getMessage() + e.getCause().getMessage());
-			} catch (InterruptedException e) {
-				ExHandler.handle(e);
-				SWTHelper.showError("ESR interrupted", Messages.ESRView_interrupted, e //$NON-NLS-1$
-						.getMessage());
+				}
 			}
 		}
-
 		return null;
 	}
 

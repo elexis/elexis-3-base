@@ -12,8 +12,6 @@
  *******************************************************************************/
 package ch.netzkonzept.elexis.medidata.output;
 
-
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,27 +27,28 @@ public class ApplicationDirectoryStructure {
 	private static final String SEND_DONE_DIR_VALUE = "value.medidata.send.done.dir";
 	private static final String RECEIVE_DIR_VALUE = "value.medidata.receive.dir";
 	private static final String TEMP_DIR_VALUE = "value.medidata.temp.dir";
-	
+
 	private Path baseDir;
 	private Path sendDir;
 	private Path sendProcessingDir;
 	private Path sendErrorDir;
 	private Path sendDoneDir;
 	private Path receiveDir;
-	
+
 	private Properties properties;
-	
+
 	public ApplicationDirectoryStructure(String baseDir, Properties properties) {
 		setProperties(properties);
 		setBaseDir(Paths.get(baseDir));
 		setSendDir(Paths.get(MessageFormat.format(properties.getProperty(SEND_DIR_VALUE), baseDir)));
-		setSendProcessingDir(Paths.get(MessageFormat.format(properties.getProperty(SEND_PROCESSING_DIR_VALUE), baseDir)));
+		setSendProcessingDir(
+				Paths.get(MessageFormat.format(properties.getProperty(SEND_PROCESSING_DIR_VALUE), baseDir)));
 		setSendErrorDir(Paths.get(MessageFormat.format(properties.getProperty(SEND_ERROR_DIR_VALUE), baseDir)));
 		setSendDoneDir(Paths.get(MessageFormat.format(properties.getProperty(SEND_DONE_DIR_VALUE), baseDir)));
 		setReceiveDir(Paths.get(MessageFormat.format(properties.getProperty(RECEIVE_DIR_VALUE), baseDir)));
 	}
-	
-	public void create() {		
+
+	public void create() {
 		try {
 			Files.createDirectories(getBaseDir());
 			Files.createDirectories(getSendDir());
@@ -59,7 +58,7 @@ public class ApplicationDirectoryStructure {
 			Files.createDirectories(getReceiveDir());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
 
 	public Path getBaseDir() {

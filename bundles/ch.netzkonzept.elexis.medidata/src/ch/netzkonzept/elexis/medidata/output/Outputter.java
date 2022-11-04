@@ -123,12 +123,14 @@ public class Outputter extends XMLExporter {
 									.info(isTP ? "Bill " + rechnung.getNr() + "is of type Tiers Payant"
 											: "Bill " + rechnung.getNr() + "is of type Tiers Garant");
 							setPrintAtIntermediate(!isTP);
-							
+
 							IInvoice invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class)
-									.orElseThrow(() -> new IllegalStateException("Could not load invoice [" + rechnung.getId() + "]"));
-							invoice.getCoverage().setExtInfo(TarmedRequirements.INTERMEDIATE, preferenceStore.getString(getApplicationProperties().getProperty(EAN_IM_KEY)));
+									.orElseThrow(() -> new IllegalStateException(
+											"Could not load invoice [" + rechnung.getId() + "]"));
+							invoice.getCoverage().setExtInfo(TarmedRequirements.INTERMEDIATE,
+									preferenceStore.getString(getApplicationProperties().getProperty(EAN_IM_KEY)));
 							CoreModelServiceHolder.get().save(invoice.getCoverage());
-							
+
 							Document bill = doExport(rechnung, destinationPath, type, true);
 
 							LoggerFactory.getLogger(Outputter.class).info("Bill written to " + destinationPath);

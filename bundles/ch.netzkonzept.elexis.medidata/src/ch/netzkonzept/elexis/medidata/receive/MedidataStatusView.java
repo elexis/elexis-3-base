@@ -50,10 +50,10 @@ public class MedidataStatusView extends ViewPart implements IRefreshable {
 			String separator = FileSystems.getDefault().getSeparator();
 			getApplicationProperties().load(MedidataStatusView.class.getClassLoader()
 					.getResourceAsStream(separator + "resources" + separator + "application.properties"));
-			//.getResourceAsStream("/resources/application.properties"));
+			// .getResourceAsStream("/resources/application.properties"));
 			getMessagesProperties().load(MedidataStatusView.class.getClassLoader()
 					.getResourceAsStream(separator + "resources" + separator + "messages_de.properties"));
-			//.getResourceAsStream("/resources/messages_de.properties"));
+			// .getResourceAsStream("/resources/messages_de.properties"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

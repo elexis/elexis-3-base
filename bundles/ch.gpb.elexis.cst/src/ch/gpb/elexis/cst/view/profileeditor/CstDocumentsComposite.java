@@ -248,7 +248,7 @@ public class CstDocumentsComposite extends CstComposite {
 				 * CommonViewer cv = new CommonViewer();
 				 *
 				 * if (brief != null) { if (tv.openDocument(brief) == false) {
-				 * SWTHelper.alert("Messages.BriefAuswahlErrorHeading", //$NON-NLS-1$
+				 * SWTHelper.alert("Messages.Core_Error", //$NON-NLS-1$
 				 * "Messages.BriefAuswahlCouldNotLoadText"); //$NON-NLS-1$ } } else {
 				 * tv.createDocument(null, null); } cv.notify(CommonViewer.Message.update);
 				 *

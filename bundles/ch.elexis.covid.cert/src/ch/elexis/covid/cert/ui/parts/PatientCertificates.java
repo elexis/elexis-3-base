@@ -61,7 +61,7 @@ import ch.elexis.core.services.ILocalDocumentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.commands.Messages;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.ui.dialogs.base.InputDialog;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.CoreUiUtil;
@@ -425,8 +425,8 @@ public class PatientCertificates {
 				Program.launch(file.get().getAbsolutePath());
 			} else {
 				MessageDialog.openError(Display.getDefault().getActiveShell(),
-						Messages.StartEditLocalDocumentHandler_errortitle,
-						Messages.StartEditLocalDocumentHandler_errormessage);
+						Messages.Core_Error,
+						Messages.Core_Document_Not_Opened_Locally);
 			}
 		}
 	}

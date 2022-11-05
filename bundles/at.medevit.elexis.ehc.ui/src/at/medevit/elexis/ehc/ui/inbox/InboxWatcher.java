@@ -44,7 +44,7 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.core.ui.util.Messages;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.data.Mandant;
 
 public class InboxWatcher {

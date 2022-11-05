@@ -19,7 +19,7 @@ public class Messages extends NLS {
 	public static String LaborleistungImporter_pleseEnterFilename;
 	public static String MultiplikatorEditor_14;
 	public static String MultiplikatorEditor_5;
-	public static String MultiplikatorEditor_BegiNDate;
+	public static String Core_Date_Startdate;
 	public static String MultiplikatorEditor_NewMultipilcator;
 	public static String MultiplikatorEditor_PleaseEnterBeginDate;
 	public static String MultiplikatorEditor_add;

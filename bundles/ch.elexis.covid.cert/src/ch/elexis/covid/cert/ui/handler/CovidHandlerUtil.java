@@ -39,7 +39,7 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.ui.commands.Messages;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.covid.cert.service.CertificateInfo;
 import ch.elexis.covid.cert.service.CertificateInfo.Type;
 import ch.elexis.covid.cert.service.CertificatesService;
@@ -140,8 +140,8 @@ public class CovidHandlerUtil {
 				Program.launch(file.get().getAbsolutePath());
 			} else {
 				MessageDialog.openError(Display.getDefault().getActiveShell(),
-						Messages.StartEditLocalDocumentHandler_errortitle,
-						Messages.StartEditLocalDocumentHandler_errormessage);
+						Messages.Core_Error,
+						Messages.Core_Document_Not_Opened_Locally);
 			}
 		}
 	}
@@ -153,8 +153,8 @@ public class CovidHandlerUtil {
 				Program.launch(file.get().getAbsolutePath());
 			} else {
 				MessageDialog.openError(Display.getDefault().getActiveShell(),
-						Messages.StartEditLocalDocumentHandler_errortitle,
-						Messages.StartEditLocalDocumentHandler_errormessage);
+						Messages.Core_Error,
+						Messages.Core_Document_Not_Opened_Locally);
 			}
 		}
 	}

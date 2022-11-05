@@ -201,7 +201,7 @@ public class GlobalInboxEntryDetailPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				KontaktSelektor kontaktSelektor = new KontaktSelektor(linkPatient.getShell(), Kontakt.class,
-						Messages.KontaktSelectionComposite_title, Messages.KontaktSelectionComposite_message,
+						Messages.Core_Select_Contact, Messages.KontaktSelectionComposite_message,
 						Patient.DEFAULT_SORT);
 				if (kontaktSelektor.open() == KontaktSelektor.OK) {
 					Kontakt contact = (Kontakt) kontaktSelektor.getSelection();

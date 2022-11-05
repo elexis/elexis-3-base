@@ -40,7 +40,7 @@ import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.data.status.ElexisStatus;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.Messages;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
@@ -385,7 +385,7 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 		private int typ;
 
 		public NeueKonsAct(int typ) {
-			super(Messages.GlobalActions_NewKons);
+			super(Messages.Core_New_Consultation);
 			setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 
 			if (typ == KonsData.KONSTYP_TELEFON) {

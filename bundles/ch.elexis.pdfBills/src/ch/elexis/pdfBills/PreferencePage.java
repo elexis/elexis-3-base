@@ -581,13 +581,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		pdfRnTextM1TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M1, Messages.BillingDefaultMsg_M1));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder2 + " TP:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_2 + " TP:");
 
 		pdfRnTextM2TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M2);
 		pdfRnTextM2TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M2, Messages.BillingDefaultMsg_M2));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder3 + " TP:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_3 + " TP:");
 		pdfRnTextM3TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M3);
 		pdfRnTextM3TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M3, Messages.BillingDefaultMsg_M3));
 
@@ -597,12 +597,12 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		pdfRnTextM1TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M1, Messages.BillingDefaultMsg_M1));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder2 + " TG:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_2 + " TG:");
 		pdfRnTextM2TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M2);
 		pdfRnTextM2TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M2, Messages.BillingDefaultMsg_M2));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder3 + " TG:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_3 + " TG:");
 		pdfRnTextM3TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M3);
 		pdfRnTextM3TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M3, Messages.BillingDefaultMsg_M3));
 

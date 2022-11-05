@@ -4,7 +4,7 @@ import ch.elexis.core.importer.div.importers.ILabContactResolver;
 import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
 import ch.elexis.core.model.ILaboratory;
 import ch.elexis.core.ui.importer.div.importers.DefaultLinkLabContactResolver;
-import ch.elexis.core.ui.importer.div.importers.Messages;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class LinkLabContactResolver implements ILabContactResolver {

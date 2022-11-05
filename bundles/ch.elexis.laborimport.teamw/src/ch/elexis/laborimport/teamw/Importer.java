@@ -403,7 +403,7 @@ public class Importer extends ImporterPage {
 
 					FileDialog fdl = new FileDialog(parent.getShell(), SWT.OPEN);
 					fdl.setFilterExtensions(new String[] { "*" }); //$NON-NLS-1$
-					fdl.setFilterNames(new String[] { Messages.ImporterPage_allFiles }); // $NON-NLS-1$
+					fdl.setFilterNames(new String[] { Messages.Core_All_Files }); // $NON-NLS-1$
 					String filename = fdl.open();
 					if (filename == null) {
 						filename = StringUtils.EMPTY;

@@ -33,7 +33,7 @@ public class Messages extends NLS {
 	public static String Importer_question_allreadyImported_continue;
 	public static String Importer_semaphore_error;
 	public static String Importer_title_description;
-	public static String ImporterPage_allFiles;
+	public static String Core_All_Files;
 	public static String ImporterPage_browse;
 	public static String ImporterPage_file;
 	public static String PreferencePage_batchdatei_label;

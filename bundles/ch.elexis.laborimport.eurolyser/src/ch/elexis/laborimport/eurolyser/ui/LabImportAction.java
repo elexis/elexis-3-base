@@ -6,7 +6,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import ch.elexis.core.ui.views.codesystems.Messages;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.laborimport.eurolyser.ui.dialog.LabImportDialog;
 
 public class LabImportAction extends Action {

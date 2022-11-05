@@ -31,7 +31,7 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.dialogs.ResultDialog;
 import ch.elexis.core.ui.services.EncounterServiceHolder;
-import ch.elexis.core.ui.views.Messages;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.omnivore.PreferenceConstants;
 import ch.rgw.tools.Result;
 

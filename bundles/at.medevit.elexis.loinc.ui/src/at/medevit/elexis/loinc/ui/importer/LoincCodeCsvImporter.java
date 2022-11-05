@@ -25,7 +25,7 @@ import at.medevit.elexis.loinc.ui.LoincServiceComponent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.status.ElexisStatus;
 import ch.elexis.core.ui.util.ImporterPage;
-import ch.elexis.core.ui.util.Messages;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class LoincCodeCsvImporter extends ImporterPage {
@@ -110,7 +110,7 @@ public class LoincCodeCsvImporter extends ImporterPage {
 
 		public Text tFname;
 		private String[] filterExts = { "*.csv" }; //$NON-NLS-1$
-		private String[] filterNames = { Messages.ImporterPage_allFiles };
+		private String[] filterNames = { Messages.Core_All_Files };
 
 		public LoincFileBasedImporter(final Composite parent, final ImporterPage home, final String message,
 				final int resultIdx) {

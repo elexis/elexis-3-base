@@ -117,7 +117,7 @@ public class TitleCompletionPreferencePage extends PreferencePage implements IWo
 				tableViewer.remove(selection);
 			}
 		});
-		mntmDelete.setText(Messages.BriefAuswahlDeleteButtonText);
+		mntmDelete.setText(Messages.Core_Delete);
 		mntmDelete.setImage(Images.IMG_DELETE.getImage());
 
 		tableViewer.setInput(storedCompletions);

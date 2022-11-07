@@ -6,12 +6,11 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-import at.medevit.elexis.ehc.vacdoc.service.MeineImpfungenServiceTest;
 import at.medevit.elexis.ehc.vacdoc.service.VacdocServiceTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	VacdocServiceTest.class, MeineImpfungenServiceTest.class
+		VacdocServiceTest.class
 })
 public class AllTests {
 	public static BundleContext context =

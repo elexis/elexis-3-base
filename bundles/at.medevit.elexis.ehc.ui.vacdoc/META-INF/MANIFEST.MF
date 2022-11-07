@@ -22,6 +22,5 @@ Import-Package: at.medevit.elexis.outbox.model,
  org.eclipse.core.runtime;version="3.4.0",
  org.osgi.service.component.annotations;version="1.2.0"
 Service-Component: OSGI-INF/at.medevit.elexis.ehc.ui.vacdoc.service.EhcCoreServiceHolder.xml,
- OSGI-INF/at.medevit.elexis.ehc.ui.vacdoc.service.MeineImpfungenServiceHolder.xml,
  OSGI-INF/at.medevit.elexis.ehc.ui.vacdoc.service.OutboxElementServiceHolder.xml,
  OSGI-INF/at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent.xml

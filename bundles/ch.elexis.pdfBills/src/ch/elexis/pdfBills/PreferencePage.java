@@ -62,13 +62,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	private Text headerLine1Text;
 	private Text headerLine2Text;
 
-	private Text reminderDays2Text;
-	private Text reminderDays3Text;
-
 	private Text mandantHeaderLine1Text;
 	private Text mandantHeaderLine2Text;
-	private Text mandantReminderDays2Text;
-	private Text mandantReminderDays3Text;
 
 	private Text pdfRnTextTP;
 	private Text pdfRnTextTG;

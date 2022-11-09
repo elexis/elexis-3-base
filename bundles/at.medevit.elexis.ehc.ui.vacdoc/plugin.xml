@@ -113,15 +113,5 @@
          </enabledWhen>
       </handler>
    </extension>
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="at.medevit.elexis.ehc.ui.vacdoc.property.PropertyTester"
-            id="at.medevit.elexis.ehc.ui.vacdoc.propertyTester"
-            namespace="at.medevit.elexis.ehc.ui.vacdoc"
-            properties="enabled"
-            type="java.lang.Object">
-      </propertyTester>
-   </extension>
 
 </plugin>

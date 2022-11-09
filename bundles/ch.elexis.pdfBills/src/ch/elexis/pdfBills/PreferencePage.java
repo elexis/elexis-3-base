@@ -356,18 +356,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		headerLine2Text = new Text(composite, SWT.BORDER);
 		headerLine2Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		headerLine2Text.setText(getConfigTransferGlobal(RnOutputter.CFG_ESR_HEADER_2, StringUtils.EMPTY));
-
-		label = new Label(composite, SWT.NONE);
-		label.setText("Mahnung 2 Tage");
-		reminderDays2Text = new Text(composite, SWT.BORDER);
-		reminderDays2Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		reminderDays2Text.setText(getConfigTransferGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2, "14")); //$NON-NLS-1$
-		label = new Label(composite, SWT.NONE);
-		label.setText("Mahnung 3 Tage");
-		reminderDays3Text = new Text(composite, SWT.BORDER);
-		reminderDays3Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		reminderDays3Text.setText(getConfigTransferGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3, "14")); //$NON-NLS-1$
-
+		
 		label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		label = new Label(composite, SWT.NONE);
@@ -402,10 +391,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 						.getGlobal(RnOutputter.CFG_ESR_HEADER_1 + "/" + mandant.getId(), StringUtils.EMPTY)); //$NON-NLS-1$
 				mandantHeaderLine2Text.setText(ConfigServiceHolder
 						.getGlobal(RnOutputter.CFG_ESR_HEADER_2 + "/" + mandant.getId(), StringUtils.EMPTY)); //$NON-NLS-1$
-				mandantReminderDays2Text.setText(ConfigServiceHolder
-						.getGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2 + "/" + mandant.getId(), "14")); //$NON-NLS-1$ //$NON-NLS-2$
-				mandantReminderDays3Text.setText(ConfigServiceHolder
-						.getGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3 + "/" + mandant.getId(), "14")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 
@@ -434,36 +419,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				if (mandant != null) {
 					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_2 + "/" + mandant.getId(), //$NON-NLS-1$
 							mandantHeaderLine2Text.getText());
-				}
-			}
-		});
-
-		label = new Label(composite, SWT.NONE);
-		label.setText("Mahnung 2 Tage");
-		mandantReminderDays2Text = new Text(composite, SWT.BORDER);
-		mandantReminderDays2Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		mandantReminderDays2Text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				Mandant mandant = (Mandant) ((IStructuredSelection) mandantsCombo.getSelection()).getFirstElement();
-				if (mandant != null) {
-					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2 + "/" + mandant.getId(), //$NON-NLS-1$
-							mandantReminderDays2Text.getText());
-				}
-			}
-		});
-
-		label = new Label(composite, SWT.NONE);
-		label.setText("Mahnung 3 Tage");
-		mandantReminderDays3Text = new Text(composite, SWT.BORDER);
-		mandantReminderDays3Text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		mandantReminderDays3Text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				Mandant mandant = (Mandant) ((IStructuredSelection) mandantsCombo.getSelection()).getFirstElement();
-				if (mandant != null) {
-					ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3 + "/" + mandant.getId(), //$NON-NLS-1$
-							mandantReminderDays3Text.getText());
 				}
 			}
 		});
@@ -667,9 +622,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		}
 		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_1, headerLine1Text.getText());
 		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_HEADER_2, headerLine2Text.getText());
-
-		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M2, reminderDays2Text.getText());
-		ConfigServiceHolder.setGlobal(RnOutputter.CFG_ESR_REMINDERDAYS_M3, reminderDays3Text.getText());
 
 		CoreHub.localCfg.set(RnOutputter.CFG_PRINT_COMMAND, printCommandText.getText());
 

@@ -12,7 +12,7 @@
 	<xsl:param name="headerLine1" select="''" />
 	<xsl:param name="headerLine2" select="''" />
 	<xsl:param name="messageText" select="''" />
-	<xsl:param name="reminderDays" select="''" />
+	<!-- <xsl:param name="reminderDays" select="''" />-->
 	<xsl:param name="guarantorPostal" select="''" />
 	<xsl:param name="couvertLeft" select="''" />
 	<xsl:param name="amountPrepaid" select="''" />	

@@ -202,6 +202,9 @@ public class TarmedLimitation {
 		} else if (limitationUnit == LimitationUnit.COVERAGE) {
 			sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
 					+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perCoverage);
+		} else if (limitationUnit == LimitationUnit.PATIENT_SESSION) {
+			sb.append(ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_codemax + amount
+					+ ch.elexis.arzttarife_schweiz.Messages.TarmedOptifier_perPatient);
 		} else {
 			sb.append("amount " + amount + "x unit " + limitationAmount + "x" + limitationUnit);
 		}
@@ -212,7 +215,7 @@ public class TarmedLimitation {
 		return limitationUnit == LimitationUnit.SIDE || limitationUnit == LimitationUnit.SESSION
 				|| limitationUnit == LimitationUnit.DAY || limitationUnit == LimitationUnit.WEEK
 				|| limitationUnit == LimitationUnit.MONTH || limitationUnit == LimitationUnit.YEAR
-				|| limitationUnit == LimitationUnit.COVERAGE;
+				|| limitationUnit == LimitationUnit.COVERAGE || limitationUnit == LimitationUnit.PATIENT_SESSION;
 	}
 
 	public Result<IBilled> test(IEncounter kons, IBilled newVerrechnet) {
@@ -225,8 +228,30 @@ public class TarmedLimitation {
 			return testDuration(kons, newVerrechnet);
 		} else if (limitationUnit == LimitationUnit.COVERAGE) {
 			return testCoverage(kons, newVerrechnet);
+		} else if (limitationUnit == LimitationUnit.PATIENT_SESSION) {
+			return testPatientSession(kons, newVerrechnet);
 		}
 		return new Result<IBilled>(null);
+	}
+
+	private Result<IBilled> testPatientSession(IEncounter kons, IBilled newVerrechnet) {
+		Result<IBilled> ret = new Result<IBilled>(null);
+		if (shouldSkipTest()) {
+			return ret;
+		}
+		if (limitationAmount == 1 && operator.equals("<=")) {
+			IPatient patient = kons.getPatient();
+			List<IEncounter> encounters = patient.getCoverages().stream().flatMap(c -> c.getEncounters().stream())
+					.collect(Collectors.toList());
+			List<IBilled> alreadyBilled = encounters.stream()
+					.flatMap(e -> filterWithSameCode(newVerrechnet, e.getBilled()).stream())
+					.collect(Collectors.toList());
+			double alreadyBilledAmount = alreadyBilled.stream().mapToDouble(b -> b.getAmount()).sum();
+			if (alreadyBilledAmount > amount) {
+				ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null, false);
+			}
+		}
+		return ret;
 	}
 
 	private Result<IBilled> testCoverage(IEncounter kons, IBilled verrechnet) {

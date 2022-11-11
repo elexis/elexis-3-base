@@ -108,34 +108,37 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		UiDesk.getImageRegistry().put(IMG_ACTIVE_NAME, Activator.getImageDescriptor(IMG_ACTIVE_PATH));
-		UiDesk.getImageRegistry().put(IMG_PASSIVE_NAME, Activator.getImageDescriptor(IMG_PASSIVE_PATH));
-		UiDesk.getImageRegistry().put(IMG_ARROW_UP_NAME, Activator.getImageDescriptor(IMG_ARROW_UP_PATH));
-		UiDesk.getImageRegistry().put(IMG_ARROW_DOWN_NAME, Activator.getImageDescriptor(IMG_ARROW_DOWN_PATH));
-		UiDesk.getImageRegistry().put(IMG_PDF_NAME, Activator.getImageDescriptor(IMG_PDF_PATH));
-		UiDesk.getImageRegistry().put(IMG_PNG_NAME, Activator.getImageDescriptor(IMG_PNG_PATH));
-		UiDesk.getImageRegistry().put(IMG_LINE_NAME, Activator.getImageDescriptor(IMG_LINE_PATH));
-		UiDesk.getImageRegistry().put(IMG_POINTER_NAME, Activator.getImageDescriptor(IMG_POINTER_PATH));
-		UiDesk.getImageRegistry().put(IMG_REMINDER_ACTION_NAME, Activator.getImageDescriptor(IMG_REMINDER_ACTION_PATH));
-		UiDesk.getImageRegistry().put(IMG_REMINDER_DECISION_NAME,
-				Activator.getImageDescriptor(IMG_REMINDER_DECISION_PATH));
-		UiDesk.getImageRegistry().put(IMG_REMINDER_TRIGGER_NAME,
-				Activator.getImageDescriptor(IMG_REMINDER_TRIGGER_PATH));
-		UiDesk.getImageRegistry().put(IMG_REMINDER_REMINDER_NAME,
-				Activator.getImageDescriptor(IMG_REMINDER_REMINDER_PATH));
+		UiDesk.runIfWorkbenchRunning(() -> {
+			UiDesk.getImageRegistry().put(IMG_ACTIVE_NAME, Activator.getImageDescriptor(IMG_ACTIVE_PATH));
+			UiDesk.getImageRegistry().put(IMG_PASSIVE_NAME, Activator.getImageDescriptor(IMG_PASSIVE_PATH));
+			UiDesk.getImageRegistry().put(IMG_ARROW_UP_NAME, Activator.getImageDescriptor(IMG_ARROW_UP_PATH));
+			UiDesk.getImageRegistry().put(IMG_ARROW_DOWN_NAME, Activator.getImageDescriptor(IMG_ARROW_DOWN_PATH));
+			UiDesk.getImageRegistry().put(IMG_PDF_NAME, Activator.getImageDescriptor(IMG_PDF_PATH));
+			UiDesk.getImageRegistry().put(IMG_PNG_NAME, Activator.getImageDescriptor(IMG_PNG_PATH));
+			UiDesk.getImageRegistry().put(IMG_LINE_NAME, Activator.getImageDescriptor(IMG_LINE_PATH));
+			UiDesk.getImageRegistry().put(IMG_POINTER_NAME, Activator.getImageDescriptor(IMG_POINTER_PATH));
+			UiDesk.getImageRegistry().put(IMG_REMINDER_ACTION_NAME,
+					Activator.getImageDescriptor(IMG_REMINDER_ACTION_PATH));
+			UiDesk.getImageRegistry().put(IMG_REMINDER_DECISION_NAME,
+					Activator.getImageDescriptor(IMG_REMINDER_DECISION_PATH));
+			UiDesk.getImageRegistry().put(IMG_REMINDER_TRIGGER_NAME,
+					Activator.getImageDescriptor(IMG_REMINDER_TRIGGER_PATH));
+			UiDesk.getImageRegistry().put(IMG_REMINDER_REMINDER_NAME,
+					Activator.getImageDescriptor(IMG_REMINDER_REMINDER_PATH));
 
-		UiDesk.getImageRegistry().put(IMG_HEART_1_NAME, Activator.getImageDescriptor(IMG_HEART_1_PATH));
-		UiDesk.getImageRegistry().put(IMG_HEART_2_NAME, Activator.getImageDescriptor(IMG_HEART_2_PATH));
-		UiDesk.getImageRegistry().put(IMG_HEART_3_NAME, Activator.getImageDescriptor(IMG_HEART_3_PATH));
-		UiDesk.getImageRegistry().put(IMG_HEART_A_NAME, Activator.getImageDescriptor(IMG_HEART_A_PATH));
-		UiDesk.getImageRegistry().put(IMG_HEART_B_NAME, Activator.getImageDescriptor(IMG_HEART_B_PATH));
-		UiDesk.getImageRegistry().put(IMG_HEART_C_NAME, Activator.getImageDescriptor(IMG_HEART_C_PATH));
-		UiDesk.getImageRegistry().put(IMG_HEART_D_NAME, Activator.getImageDescriptor(IMG_HEART_D_PATH));
-		UiDesk.getImageRegistry().put(IMG_HEART_E_NAME, Activator.getImageDescriptor(IMG_HEART_E_PATH));
-		UiDesk.getImageRegistry().put(IMG_EXCLAM_NAME, Activator.getImageDescriptor(IMG_EXCLAM_PATH));
-		UiDesk.getImageRegistry().put(IMG_DISPLAYONCE_NAME, Activator.getImageDescriptor(IMG_DISPLAYONCE_PATH));
+			UiDesk.getImageRegistry().put(IMG_HEART_1_NAME, Activator.getImageDescriptor(IMG_HEART_1_PATH));
+			UiDesk.getImageRegistry().put(IMG_HEART_2_NAME, Activator.getImageDescriptor(IMG_HEART_2_PATH));
+			UiDesk.getImageRegistry().put(IMG_HEART_3_NAME, Activator.getImageDescriptor(IMG_HEART_3_PATH));
+			UiDesk.getImageRegistry().put(IMG_HEART_A_NAME, Activator.getImageDescriptor(IMG_HEART_A_PATH));
+			UiDesk.getImageRegistry().put(IMG_HEART_B_NAME, Activator.getImageDescriptor(IMG_HEART_B_PATH));
+			UiDesk.getImageRegistry().put(IMG_HEART_C_NAME, Activator.getImageDescriptor(IMG_HEART_C_PATH));
+			UiDesk.getImageRegistry().put(IMG_HEART_D_NAME, Activator.getImageDescriptor(IMG_HEART_D_PATH));
+			UiDesk.getImageRegistry().put(IMG_HEART_E_NAME, Activator.getImageDescriptor(IMG_HEART_E_PATH));
+			UiDesk.getImageRegistry().put(IMG_EXCLAM_NAME, Activator.getImageDescriptor(IMG_EXCLAM_PATH));
+			UiDesk.getImageRegistry().put(IMG_DISPLAYONCE_NAME, Activator.getImageDescriptor(IMG_DISPLAYONCE_PATH));
 
-		UiDesk.getImageRegistry().put(IMG_TEST_NAME, Activator.getImageDescriptor(IMG_TEST_PATH));
+			UiDesk.getImageRegistry().put(IMG_TEST_NAME, Activator.getImageDescriptor(IMG_TEST_PATH));
+		});
 	}
 
 	/*

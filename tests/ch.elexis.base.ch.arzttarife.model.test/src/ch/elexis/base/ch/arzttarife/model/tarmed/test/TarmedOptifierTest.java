@@ -584,6 +584,25 @@ public class TarmedOptifierTest {
 	}
 
 	/**
+	 * Test limit per patient.
+	 */
+	@Test
+	public void testPatientLimit() {
+		clearKons(konsOneYear);
+
+		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("03.0060", LocalDate.now(), LAW), konsOneYear,
+				1.0);
+		assertTrue(result.isOK());
+		assertEquals(1, getLeistungAmount("03.0060", konsOneYear));
+
+		result = optifier.add(TarmedLeistung.getFromCode("03.0060", LocalDate.now(), LAW), konsOneYear, 1.0);
+		assertFalse(result.isOK());
+		assertEquals(1, getLeistungAmount("03.0060", konsOneYear));
+
+		resetKons(konsOneYear);
+	}
+
+	/**
 	 * Test cleanup after kumulation warning.
 	 */
 	@Test

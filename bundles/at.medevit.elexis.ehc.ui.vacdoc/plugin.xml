@@ -83,34 +83,8 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="at.medevit.elexis.ehc.ui.vacdoc.handler.OpenMeineImpfungenHandler"
-            commandId="at.medevit.elexis.ehc.ui.vacdoc.OpenMeineImpfungen">
-         <enabledWhen>
-            <test
-                  property="at.medevit.elexis.ehc.ui.vacdoc.enabled">
-            </test></enabledWhen>
-      </handler>
-      <handler
-            class="at.medevit.elexis.ehc.ui.vacdoc.handler.UploadMeineImpfungenHandler"
-            commandId="at.medevit.elexis.ehc.ui.vacdoc.UploadMeineImpfungen">
-         <enabledWhen>
-            <test
-                  property="at.medevit.elexis.ehc.ui.vacdoc.enabled">
-            </test>
-         </enabledWhen>
-      </handler>
-      <handler
             class="at.medevit.elexis.ehc.ui.vacdoc.handler.CdaOutboxHandler"
             commandId="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler">
-      </handler>
-      <handler
-            class="at.medevit.elexis.ehc.ui.vacdoc.handler.DownloadMeineImpfungenHandler"
-            commandId="at.medevit.elexis.ehc.ui.vacdoc.DownloadMeineImpfungen">
-         <enabledWhen>
-            <test
-                  property="at.medevit.elexis.ehc.ui.vacdoc.enabled">
-            </test>
-         </enabledWhen>
       </handler>
    </extension>
 

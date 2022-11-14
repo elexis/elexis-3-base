@@ -11,7 +11,6 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.base.ch.ebanking.EBankingACLContributor.DISPLAY_ESR;
 
 import java.io.File;
@@ -19,12 +18,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -34,6 +35,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -134,10 +136,16 @@ public class ESRView extends ViewPart implements IActivationListener {
 		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
 	}
 
+	private boolean isOldShown = false;
+
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		if (!isOldShown) {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Ansicht veraltet",
+					"Die Ansicht " + getTitle()
+							+ " ist veraltet, und wird nicht mehr unterstützt. Bitte verwenden Sie die ESR Ansicht.");
+			isOldShown = true;
+		}
 	}
 
 	class ESRLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {

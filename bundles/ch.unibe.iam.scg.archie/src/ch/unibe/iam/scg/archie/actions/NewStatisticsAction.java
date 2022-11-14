@@ -11,11 +11,11 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.actions;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.action.Action;
@@ -32,11 +32,11 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.unibe.iam.scg.archie.ArchieActivator;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.controller.ChartModelManager;
 import ch.unibe.iam.scg.archie.controller.ProviderManager;
 import ch.unibe.iam.scg.archie.controller.TableFactory;
 import ch.unibe.iam.scg.archie.controller.TableManager;
-import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 import ch.unibe.iam.scg.archie.model.DataSet;
 import ch.unibe.iam.scg.archie.model.DatasetTableColumnSorter;
@@ -172,8 +172,8 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 	public void done(final IJobChangeEvent event) {
 		// allow other threads to update this UI thread
 		// @see http://www.eclipse.org/swt/faq.php#uithread
-		UiDesk.getDisplay().syncExec(new Runnable() {
-			public void run() {
+		UiDesk.getDisplaySafe().ifPresent(d -> {
+			d.syncExec(() -> {
 				final ResultPanel results = NewStatisticsAction.this.view.getResultPanel();
 				final AbstractDataProvider provider = ProviderManager.getInstance().getProvider();
 				final DataSet dataset = provider.getDataSet();
@@ -215,7 +215,7 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 					listener.propertyChange(new PropertyChangeEvent(NewStatisticsAction.this,
 							NewStatisticsAction.JOB_DONE, null, null));
 				}
-			}
+			});
 		});
 	}
 

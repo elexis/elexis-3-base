@@ -30,10 +30,10 @@ import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Anwender;
 import ch.unibe.iam.scg.archie.ArchieActivator;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.acl.ArchieACL;
 import ch.unibe.iam.scg.archie.actions.CreateChartsAction;
 import ch.unibe.iam.scg.archie.actions.RefreshChartsAction;
-import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.model.MutexRule;
 import ch.unibe.iam.scg.archie.ui.DashboardOverview;
 import ch.unibe.iam.scg.archie.ui.GraphicalMessage;
@@ -303,8 +303,8 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 		}
 		this.charts.clear();
 
-		UiDesk.getDisplay().syncExec(new Runnable() {
-			public void run() {
+		UiDesk.getDisplaySafe().ifPresent(d -> {
+			d.syncExec(() -> {
 				// Dispose any children if available
 				if (container != null) {
 					for (Control child : container.getChildren()) {
@@ -313,7 +313,7 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 				}
 
 				initialize(); // re-initialize
-			}
+			});
 		});
 
 		// reset action states
@@ -329,11 +329,11 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 	public void done(IJobChangeEvent event) {
 		// allow other threads to update this UI thread
 		// http://www.eclipse.org/swt/faq.php#uithread
-		UiDesk.getDisplay().syncExec(new Runnable() {
-			public void run() {
+		UiDesk.getDisplaySafe().ifPresent(d -> {
+			d.syncExec(() -> {
 				Dashboard.this.refreshChartsAction
 						.setEnabled(++Dashboard.this.jobCounter == Dashboard.this.charts.size());
-			}
+			});
 		});
 	}
 
@@ -343,10 +343,10 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 	public void scheduled(IJobChangeEvent event) {
 		// allow other threads to update this UI thread
 		// http://www.eclipse.org/swt/faq.php#uithread
-		UiDesk.getDisplay().syncExec(new Runnable() {
-			public void run() {
+		UiDesk.getDisplaySafe().ifPresent(d -> {
+			d.syncExec(() -> {
 				Dashboard.this.createChartsAction.setEnabled(false);
-			}
+			});
 		});
 	}
 

@@ -186,8 +186,8 @@ public abstract class AbstractChartComposite extends Composite implements IJobCh
 	public void done(IJobChangeEvent event) {
 		// allow other threads to update this UI thread
 		// http://www.eclipse.org/swt/faq.php#uithread
-		UiDesk.getDisplay().syncExec(new Runnable() {
-			public void run() {
+		UiDesk.getDisplaySafe().ifPresent(d -> {
+			d.syncExec(() -> {
 				AbstractChartComposite.this.clean();
 
 				// check if the creator has an empty dataset
@@ -201,7 +201,7 @@ public abstract class AbstractChartComposite extends Composite implements IJobCh
 				}
 
 				AbstractChartComposite.this.layout();
-			}
+			});
 		});
 	}
 

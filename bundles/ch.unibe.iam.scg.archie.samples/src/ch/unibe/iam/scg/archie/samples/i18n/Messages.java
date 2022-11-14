@@ -11,7 +11,6 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.samples.i18n;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -24,6 +23,7 @@ import org.eclipse.osgi.util.NLS;
  * @version $Rev: 700 $
  */
 public final class Messages extends NLS {
+	private static final String BUNDLE_NAME = "ch.unibe.iam.scg.archie.samples.i18n.messages"; //$NON-NLS-1$
 	public static String CALCULATING;
 	public static String USER_OVERVIEW_TITLE;
 	public static String USER_OVERVIEW_DESCRIPTION;
@@ -44,7 +44,7 @@ public final class Messages extends NLS {
 	public static String CONSULTATION_STATS_AVERAGE_COSTS;
 	public static String CONSULTATION_STATS_TOTAL_PROFITS;
 	public static String CONSULTATION_STATS_AVERAGE_PROFITS;
-	public static String CONSULTATION_STATS_REGEX_MESSAGE = StringUtils.EMPTY;
+	public static String CONSULTATION_STATS_REGEX_MESSAGE = "";
 	public static String CONSULTATION_STATS_COHORT_SIZE_EXCEPTION;
 	public static String CONSULTATION_TIME_STATS_TITLE;
 	public static String CONSULTATION_TIME_STATS_DESCRIPTION;
@@ -81,4 +81,8 @@ public final class Messages extends NLS {
 	public static String DIAGNOSES_HEADING_AGE_MAX;
 	public static String DIAGNOSES_HEADING_AGE_AVG;
 	public static String DIAGNOSES_HEADING_AGE_MED;
+
+	static { // load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+	}
 }

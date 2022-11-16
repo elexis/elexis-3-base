@@ -13,6 +13,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import at.medevit.elexis.tarmed.model.jaxb.DoubleToStringAdapter;
 
 
 /**
@@ -50,12 +53,16 @@ public class BalanceTPType {
     @XmlAttribute(name = "currency")
     protected String currency;
     @XmlAttribute(name = "amount", required = true)
-    protected double amount;
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
+	protected Double amount;
     @XmlAttribute(name = "amount_reminder")
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
     protected Double amountReminder;
-    @XmlAttribute(name = "amount_due", required = true)
-    protected double amountDue;
+	@XmlAttribute(name = "amount_due", required = true)
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
+	protected Double amountDue;
     @XmlAttribute(name = "amount_obligations")
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
     protected Double amountObligations;
 
     /**

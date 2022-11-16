@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import at.medevit.elexis.tarmed.model.jaxb.DoubleToStringAdapter;
 
 
 /**
@@ -47,9 +50,11 @@ public class VatRateType {
     @XmlAttribute(name = "vat_rate", required = true)
     protected double vatRate;
     @XmlAttribute(name = "amount", required = true)
-    protected double amount;
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
+	protected Double amount;
     @XmlAttribute(name = "vat", required = true)
-    protected double vat;
+	@XmlJavaTypeAdapter(DoubleToStringAdapter.class)
+	protected Double vat;
 
     /**
      * Ruft den Wert der vatRate-Eigenschaft ab.

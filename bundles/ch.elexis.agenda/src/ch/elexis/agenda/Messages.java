@@ -191,8 +191,6 @@ public final class Messages extends NLS {
 	public static String Tageseinteilung_lblEditValuesFor_text;
 	public static String Tageseinteilung_lblChangedValuesAre_text;
 	public static String Tageseinteilung_btnNewButton_text;
-	public static String AgendaDefinitionPreferencePage_mntmNewItem_text;
-	public static String AgendaDefinitionPreferencePage_lblAreaTypeLabel_text;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

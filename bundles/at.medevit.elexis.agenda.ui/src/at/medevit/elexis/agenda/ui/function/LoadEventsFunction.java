@@ -88,9 +88,13 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 					}
 					updated = true;
 				} else if (timespan.contains(iPeriod)) {
-					// new or moved into timespan
-					Event event = Event.of(iPeriod, userContact);
-					eventsMap.put(event.getId(), event);
+					if (iPeriod.isDeleted()) {
+						eventsMap.remove(iPeriod.getId());
+					} else {
+						// new or moved into timespan
+						Event event = Event.of(iPeriod, userContact);
+						eventsMap.put(event.getId(), event);
+					}
 					updated = true;
 				}
 			}

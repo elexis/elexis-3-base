@@ -83,7 +83,6 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 
 	private boolean noedit;
 
-	private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmm"); //$NON-NLS-1$
 	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("ddMMyyyy"); //$NON-NLS-1$
 	private DecimalFormat decimalFormat = new DecimalFormat("00"); //$NON-NLS-1$
 

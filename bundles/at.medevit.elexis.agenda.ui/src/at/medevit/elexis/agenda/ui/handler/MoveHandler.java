@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.view.AgendaView;
-import at.medevit.elexis.agenda.ui.view.ParallelView;
 import ch.elexis.core.model.IPeriod;
 
 public class MoveHandler {
@@ -30,9 +29,6 @@ public class MoveHandler {
 			if (part.getObject() instanceof AgendaView) {
 				AgendaView view = (AgendaView) part.getObject();
 				sideBar = view.getParallelSideBarComposite();
-			} else if (part.getObject() instanceof ParallelView) {
-				ParallelView view = (ParallelView) part.getObject();
-				sideBar = view.getSideBarComposite();
 			}
 			if (sideBar != null) {
 				sideBar.addMovePeriod(p);

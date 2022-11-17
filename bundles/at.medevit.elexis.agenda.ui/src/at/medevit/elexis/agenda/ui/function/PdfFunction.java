@@ -15,7 +15,6 @@ import com.equo.chromium.swt.BrowserFunction;
 
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
-@SuppressWarnings("restriction")
 public class PdfFunction extends BrowserFunction {
 
 	@Inject

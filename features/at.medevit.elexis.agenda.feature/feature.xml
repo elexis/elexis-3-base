@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.elexis.agenda.feature"
       label="Agenda (Web)"
-      version="3.9.0.qualifier">
+      version="3.10.0.qualifier">
 
    <description url="http://wiki.elexis.info/">
       Agenda Erweiterung von Medevit
@@ -27,7 +27,6 @@
          id="at.medevit.elexis.agenda.ui.rcp"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         fragment="true"/>
+         version="0.0.0"/>
 
 </feature>

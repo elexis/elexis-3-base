@@ -23,11 +23,9 @@ import ch.elexis.core.services.holder.AppointmentServiceHolder;
 
 public class SetStatusContributionItem {
 
-	@SuppressWarnings("restriction")
 	@Inject
 	private ECommandService commandService;
 
-	@SuppressWarnings("restriction")
 	@Inject
 	private EHandlerService handlerService;
 
@@ -50,7 +48,6 @@ public class SetStatusContributionItem {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	@Execute
 	private void setStatus(MDirectMenuItem menuItem) {
 		HashMap<String, Object> parameters = new HashMap<>();

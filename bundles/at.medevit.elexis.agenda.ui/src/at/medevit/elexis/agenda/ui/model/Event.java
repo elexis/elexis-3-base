@@ -20,7 +20,7 @@ import ch.elexis.core.types.AppointmentType;
  *
  */
 public class Event {
-	private static final String DEFAULT_BG_COLOR = "ffffff"; //$NON-NLS-1$
+
 	private String id;
 	private String title;
 	private String icon;

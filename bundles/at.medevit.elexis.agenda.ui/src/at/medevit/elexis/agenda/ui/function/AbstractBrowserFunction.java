@@ -12,7 +12,6 @@ import com.equo.chromium.swt.BrowserFunction;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
 import at.medevit.elexis.agenda.ui.view.AgendaView;
-import at.medevit.elexis.agenda.ui.view.ParallelView;
 
 public abstract class AbstractBrowserFunction extends BrowserFunction {
 
@@ -25,9 +24,6 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 		if (part.getObject() instanceof AgendaView) {
 			AgendaView view = (AgendaView) part.getObject();
 			sideBar = view.getParallelSideBarComposite();
-		} else if (part.getObject() instanceof ParallelView) {
-			ParallelView view = (ParallelView) part.getObject();
-			sideBar = view.getSideBarComposite();
 		}
 		return Optional.ofNullable(sideBar);
 	}

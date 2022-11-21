@@ -42,11 +42,13 @@ public class Activator extends AbstractUIPlugin {
 	 * Initialize ACLs for the first time, if not yet done.
 	 */
 	private void initACL() {
-		boolean isInitialized = ConfigServiceHolder.getGlobal(Constants.ACL_INITIALIZED, false);
-		if (!isInitialized) {
-			new ACLContributor().initializeDefaults(CoreHub.acl);
-			ConfigServiceHolder.setGlobal(Constants.ACL_INITIALIZED, true);
-		}
+		ConfigServiceHolder.runIfConfigServiceAvailable(() -> {
+			boolean isInitialized = ConfigServiceHolder.getGlobal(Constants.ACL_INITIALIZED, false);
+			if (!isInitialized) {
+				new ACLContributor().initializeDefaults(CoreHub.acl);
+				ConfigServiceHolder.setGlobal(Constants.ACL_INITIALIZED, true);
+			}
+		});
 	}
 
 	/*

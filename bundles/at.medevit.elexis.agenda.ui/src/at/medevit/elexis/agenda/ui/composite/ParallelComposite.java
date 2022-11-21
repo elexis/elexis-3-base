@@ -184,6 +184,7 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		dayClickFunction.setSelectedResources(selectedResources);
 
 		scriptingHelper.refetchResources();
+		scriptingHelper.refetchEvents();
 	}
 
 	@Override

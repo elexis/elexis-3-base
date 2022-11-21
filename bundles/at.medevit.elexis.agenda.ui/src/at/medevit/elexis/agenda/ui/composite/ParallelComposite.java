@@ -2,7 +2,10 @@ package at.medevit.elexis.agenda.ui.composite;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -35,6 +38,7 @@ import at.medevit.elexis.agenda.ui.function.DoubleClickFunction;
 import at.medevit.elexis.agenda.ui.function.EventDropFunction;
 import at.medevit.elexis.agenda.ui.function.EventResizeFunction;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
+import at.medevit.elexis.agenda.ui.function.LoadResourcesFunction;
 import at.medevit.elexis.agenda.ui.function.PdfFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
@@ -43,7 +47,7 @@ import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class ParallelComposite extends Composite implements ISelectionProvider, IAgendaComposite {
-	private List<String> selectedResources = new ArrayList<>();
+	private List<String> selectedResources = Collections.synchronizedList(new ArrayList<>());
 	private static Logger logger = LoggerFactory.getLogger(ParallelComposite.class);
 
 	private Browser browser;
@@ -81,6 +85,8 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		scriptingHelper = new ScriptingHelper(browser);
 
 		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper, uiSynchronize); //$NON-NLS-1$
+
+		new LoadResourcesFunction(browser, "loadResourcesFunction", this); // $NON-NLS-1
 
 		new SingleClickFunction(browser, "singleClickFunction").setSelectionProvider(this); //$NON-NLS-1$
 
@@ -129,7 +135,6 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 				uiSynchronize.asyncExec(() -> {
 					scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
 
-					initializeResources();
 					loadEventsFunction.setResources(selectedResources);
 					dayClickFunction.setSelectedResources(selectedResources);
 					if (currentSpanSize != null) {
@@ -142,11 +147,6 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 				});
 			}
 		});
-	}
-
-	private void initializeResources() {
-		scriptingHelper.initializeResources(selectedResources);
-
 	}
 
 	@Override
@@ -173,16 +173,22 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 	public void setSelectedSpanSize(AgendaSpanSize size) {
 		currentSpanSize = size;
 		scriptingHelper.setSelectedSpanSize(size);
-		scriptingHelper.initializeResources(selectedResources);
 	}
 
 	@Override
 	public void setSelectedResources(List<String> selectedResources) {
 		this.selectedResources.clear();
 		this.selectedResources.addAll(selectedResources);
-		initializeResources();
+
 		loadEventsFunction.setResources(selectedResources);
 		dayClickFunction.setSelectedResources(selectedResources);
+
+		scriptingHelper.refetchResources();
+	}
+
+	@Override
+	public Set<String> getSelectedResources() {
+		return new HashSet<String>(selectedResources);
 	}
 
 	@Override

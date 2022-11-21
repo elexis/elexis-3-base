@@ -1,190 +1,192 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta http-equiv="x-ua-compatible" content="IE=9" />
+    <meta charset="utf-8" />
 
-<head>
-	<meta http-equiv="x-ua-compatible" content="IE=9">
-	<meta charset='utf-8' />
-	<link href='../fullcalendar.min.css' rel='stylesheet' />
-	<link href='../fullcalendar.print.min.css' rel='stylesheet' media='print' />
-	<link href='../lib/qTip/jquery.qtip.min.css' rel='stylesheet' />
-	<link href='../lib/cupertino/jquery-ui.min.css' rel='stylesheet' />
-	<link href='../style.css' rel='stylesheet' />
-	<script src='../lib/moment.min.js'></script>
-	<script src='../lib/jquery.min.js'></script>
-	<script src='../lib/qTip/jquery.qtip.min.js'></script>
-	<script src='../fullcalendar.js'></script>
-	<script src='../locale-all.js'></script>
-	<script>
-		$(document).ready(function () {
+    <link href="../fullcalendar.min.css" rel="stylesheet" />
+    <link href="../fullcalendar.print.min.css" rel="stylesheet" media="print" />
+    <link href="../lib/qTip/jquery.qtip.min.css" rel="stylesheet" />
+    <link href="../lib/cupertino/jquery-ui.min.css" rel="stylesheet" />
+    <link href="../style.css" rel="stylesheet" />
+ 
+  	<script src="../lib/jquery.min.js"></script>
+ 	<script src="../lib/qTip/jquery.qtip.min.js"></script>
+    <script src="../lib/moment.min.js"></script>
+    <script src="../fullcalendar.js"></script>
+    <script src="../locale-all.js"></script>
 
-			$('#calendar').fullCalendar({
-				locale: 'de',
-				defaultView: 'agendaWeek',
-				editable: true,
-				eventLimit: true, // allow "more" link when too many events
-				nowIndicator: true,
-				minTime: "06:00:00",
-				maxTime: "23:00:00",
-				slotDuration: "00:05:00",
-				displayEventTime: false,				
-				allDaySlot: true,
-				events: loadEventsCallback,
-				dayClick: dayClickCallback,
-				eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
-					eventDropFunction(event.id, event.start.format(), event.end.format(), null, jsEvent.ctrlKey);
-				},
-				eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
-					eventResizeFunction(event.id, event.start.format(), event.end.format());
-				},
-				eventRender: eventRenderCallback,
-				eventDragStart: function (event, jsEvent, ui, view) {
-					event.qtip('destroy');
-				},
-				eventResizeStart: function (event, jsEvent, ui, view) {
-					event.qtip('destroy');
-				},
-				customButtons: {
-					switch: {
-						text: 'Tag',
-						click: function () {
-							switchFunction('parallel');
-						}
-					},
-					reload: {
-						text: '',
-						icon: 'refresh',
-						click: function () {
-							$('#calendar').fullCalendar( 'refetchEvents' );
-						}
-					}
-				},
-				header: {
-					left: 'title',
-					center: '',
-					right: 'switch reload,today prev,next'
-				},
-			});
-		});
+    <script>
+      $(document).ready(function () {
+        $('#calendar').fullCalendar({
+          locale: 'de',
+          defaultView: 'agendaWeek',
+          editable: true,
+          eventLimit: true, // allow "more" link when too many events
+          nowIndicator: true,
+          minTime: '06:00:00',
+          maxTime: '23:00:00',
+          slotDuration: '00:05:00',
+          displayEventTime: false,
+          allDaySlot: true,
+          events: loadEventsCallback,
+          dayClick: dayClickCallback,
+          eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
+            eventDropFunction(event.id, event.start.format(), event.end.format(), null, jsEvent.ctrlKey);
+          },
+          eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
+            eventResizeFunction(event.id, event.start.format(), event.end.format());
+          },
+          eventRender: eventRenderCallback,
+          eventDragStart: function (event, jsEvent, ui, view) {
+            event.qtip('destroy');
+          },
+          eventResizeStart: function (event, jsEvent, ui, view) {
+            event.qtip('destroy');
+          },
+          customButtons: {
+            switch: {
+              text: 'Tag',
+              click: function () {
+                switchFunction('parallel');
+              },
+            },
+            reload: {
+              text: '',
+              icon: 'refresh',
+              click: function () {
+                $('#calendar').fullCalendar('refetchEvents');
+              },
+            },
+          },
+          header: {
+            left: 'title',
+            center: '',
+            right: 'switch reload,today prev,next',
+          },
+        });
+      });
 
-		function loadEventsCallback(start, end, timezone, callback) {
-			var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
-			var jsonEvents = JSON.parse(eventsJson);
-			var events = [];
-			jsonEvents.forEach(function (event) {
-				events.push({
-					id: event.id,
-					title: event.title,
-					start: event.start,
-					end: event.end,
-					description: event.description,
-					icon: event.icon,
-					rendering: event.rendering,
-					borderColor: event.borderColor,
-					backgroundColor: event.backgroundColor,
-					textColor: event.textColor,
-					allDay: event.allDay,
-					resource: event.resource
-				});
-			});
-			callback(events);
-		}
+      function loadEventsCallback(start, end, timezone, callback) {
+        var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
+        var jsonEvents = JSON.parse(eventsJson);
 
-		var dayClickSlotDate;
-		var dayClickPosX;
-		var dayClickPosY;
+        var events = [];
+        jsonEvents.forEach(function (event) {
+          events.push({
+            id: event.id,
+            title: event.title,
+            start: event.start,
+            end: event.end,
+            description: event.description,
+            icon: event.icon,
+            rendering: event.rendering,
+            borderColor: event.borderColor,
+            backgroundColor: event.backgroundColor,
+            textColor: event.textColor,
+            allDay: event.allDay,
+            resourceId: event.resource,
+          });
+        });
+        callback(events);
+      }
 
-   		function dayClickCallback(date, jsEvent, view) {
-   		    if (dayClickSlotDate) {
-   		        dayClickFunction(date.format());
-   		        dayClickSlotDate = null;
-   		    } else {
-				singleClickFunction();
-		        dayClickSlotDate = date;
-				dayClickPosX = jsEvent.pageX;
-				dayClickPosY = jsEvent.pageY;
-   		        $("#calendar").mousemove(function (jqEvent) {
-					if(dayClickSlotDate) {
-						if(dayClickPosX != jqEvent.pageX || dayClickPosY != jqEvent.pageY) {
-							dayClickSlotDate = null;
-						}
-					}
-				});
-   		    }
-   		}
+      var dayClickSlotDate;
+      var dayClickPosX;
+      var dayClickPosY;
 
-		function eventRenderCallback(event, element) {
-			element.click(function () {
-				singleClickFunction(event.id);
-			});
-			element.dblclick(function () {
-				doubleClickFunction(event.id);
-			});
-			element.contextmenu(function () {
-				contextMenuFunction(event.id);
-			});
-			if (event.rendering === undefined) {
-				if (!element.hasClass('fc-helper')) {
-					element.qtip({
-						style: { classes: 'qtip-dark' },
-						show: {
-							delay: 250,
-							solo: true
-						},
-						hide: {
-							delay: 0
-						},
-						content: {
-							title: "[" + event.resource + "] " + event.title,
-							text: event.description
-						},
-						position: {
-							my: 'left top',
-							at: 'right top',
-							target: element,
-							viewport: $('#calendar')
-						}
-					});
-				}
-			}
-			if(event.description) {
-				var firstpart = event.description.split('<br /><br />');
-				if(firstpart.length > 0) {
-					element.find(".fc-title").append("<br/>" + firstpart[0]);
-				} else {
-					element.find(".fc-title").append("<br/>" + event.description);
-				}
-			}
-			if (event.borderColor)
-			{
-				element.find("div.fc-content").wrapAll("<div class='event-status-block'></div>");
-				element.find("div.event-status-block").css("border-color", event.borderColor);
-			}
-			if (event.icon)
-			{
-				element.find("div.fc-content").prepend("<i class='ui-icon ui-calendar-icon " +event.icon+"'></i>");
-			}
-		}
-	</script>
-	<style>
-		body {
-			margin: 10px 0 0 0;
-			padding: 0;
-			font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
-			font-size: 14px;
-		}
-		
-		#calendar {
-			margin: 0 auto;
-			width: 100%;
-		}
-	</style>
-</head>
+      function dayClickCallback(date, jsEvent, view) {
+        if (dayClickSlotDate) {
+          dayClickFunction(date.format());
+          dayClickSlotDate = null;
+        } else {
+          singleClickFunction();
+          dayClickSlotDate = date;
+          dayClickPosX = jsEvent.pageX;
+          dayClickPosY = jsEvent.pageY;
+          $('#calendar').mousemove(function (jqEvent) {
+            if (dayClickSlotDate) {
+              if (dayClickPosX != jqEvent.pageX || dayClickPosY != jqEvent.pageY) {
+                dayClickSlotDate = null;
+              }
+            }
+          });
+        }
+      }
 
-<body oncontextmenu="return false;">
-	<!--[if lt IE 9 ]>
-		<p style="background-color: #fffa00">You are using an outdated version of Internet Explorer.  For security reasons you should upgrade your browser. Please go to Windows Updates and install the latest version.</p>
-	<![endif]--> 
-	<div id='calendar'></div>
-</body>
+      function eventRenderCallback(event, element) {
+        element.click(function () {
+          singleClickFunction(event.id);
+        });
+        element.dblclick(function () {
+          doubleClickFunction(event.id);
+        });
+        element.contextmenu(function () {
+          contextMenuFunction(event.id);
+        });
+        if (event.rendering === undefined) {
+          if (!element.hasClass('fc-helper')) {
+            element.qtip({
+              style: {classes: 'qtip-dark'},
+              show: {
+                delay: 250,
+                solo: true,
+              },
+              hide: {
+                delay: 0,
+              },
+              content: {
+                title: '[' + event.resource + '] ' + event.title,
+                text: event.description,
+              },
+              position: {
+                my: 'left top',
+                at: 'right top',
+                target: element,
+                viewport: $('#calendar'),
+              },
+            });
+          }
+        }
+        if (event.description) {
+          var firstpart = event.description.split('<br /><br />');
+          if (firstpart.length > 0) {
+            element.find('.fc-title').append('<br/>' + firstpart[0]);
+          } else {
+            element.find('.fc-title').append('<br/>' + event.description);
+          }
+        }
+        if (event.borderColor) {
+          element.find('div.fc-content').wrapAll("<div class='event-status-block'></div>");
+          element.find('div.event-status-block').css('border-color', event.borderColor);
+        }
+        if (event.icon) {
+          element.find('div.fc-content').prepend("<i class='ui-icon ui-calendar-icon " + event.icon + "'></i>");
+        }
+      }
+    </script>
+    <style>
+      body {
+        margin: 10px 0 0 0;
+        padding: 0;
+        font-family: 'Lucida Grande', Helvetica, Arial, Verdana, sans-serif;
+        font-size: 14px;
+      }
 
+      #calendar {
+        margin: 0 auto;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body oncontextmenu="return false;">
+    <!--[if lt IE 9]>
+      <p style="background-color: #fffa00">
+        You are using an outdated version of Internet Explorer. For security reasons you should upgrade your browser. Please go to
+        Windows Updates and install the latest version.
+      </p>
+    <![endif]-->
+    <div id="calendar"></div>
+  </body>
 </html>

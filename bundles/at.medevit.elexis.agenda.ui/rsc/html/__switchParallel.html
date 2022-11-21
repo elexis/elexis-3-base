@@ -3,29 +3,24 @@
   <head>
     <meta http-equiv="x-ua-compatible" content="IE=9" />
     <meta charset="utf-8" />
-   
     <link href="../fullcalendar.min.css" rel="stylesheet" />
     <link href="../fullcalendar.print.min.css" rel="stylesheet" media="print" />
     <link href="../lib/qTip/jquery.qtip.min.css" rel="stylesheet" />
     <link href="../lib/cupertino/jquery-ui.min.css" rel="stylesheet" />
     <link href="../style.css" rel="stylesheet" />
-  
+    <script src="../lib/moment.min.js"></script>
     <script src="../lib/jquery.min.js"></script>
     <script src="../lib/qTip/jquery.qtip.min.js"></script>
-    <script src="../lib/moment.min.js"></script>
     <script src="../fullcalendar.js"></script>
+    <script src="../resourcegrid.js"></script>
+    <script src="../fullcalendarparallel.js"></script>
     <script src="../locale-all.js"></script>
-    <script src="../scheduler.min.js"></script>
-    <script src="../scheduler.min.css"></script>
-
+    
     <script>
       $(document).ready(function () {
-      
-      	let schedulerLicenseKey = [+[]]+[+!+[]]+[!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[+[]]+[+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+(+((+(+!+[]+[+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+[!+[]+!+[]]+[+[]])+[])[+!+[]]+[+[]+[+[]]+[+[]]+[+[]]+[+[]]+[+[]]+[+!+[]]])+[])[!+[]+!+[]]+(![]+[])[+[]]+([][(![]+[])[+[]]+(![]+[])[!+[]+!+[]]+(![]+[])[+!+[]]+(!![]+[])[+[]]]+[])[!+[]+!+[]+!+[]]+(![]+[])[!+[]+!+[]+!+[]]+(+((+(+!+[]+[+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+[!+[]+!+[]]+[+[]])+[])[+!+[]]+[+[]+[+[]]+[+[]]+[+[]]+[+[]]+[+[]]+[+!+[]]])+[])[!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]];
-      
         $('#calendar').fullCalendar({
           locale: 'de',
-          defaultView: 'agendaDay',
+          defaultView: 'agendaParallel',
           editable: true,
           nowIndicator: true,
           minTime: '06:00:00',
@@ -33,8 +28,6 @@
           slotDuration: '00:05:00',
           displayEventTime: false,
           allDaySlot: true,
-          defaultTimedEventDuration: '00:15:00',
-          schedulerLicenseKey,
           views: {
             agendaParallel: {
               titleFormat: 'dd, (D.) MMMM YYYY',
@@ -45,14 +38,10 @@
           dayClick: dayClickCallback,
           rightClick: rightClickCallback,
           eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
-          	if (event.end) {
-          		eventDropFunction(event.id, event.start.format(), event.end.format(), event.resourceId, jsEvent.ctrlKey);
-          	} else {
-          		eventDropFunction(event.id, event.start.format(), null, event.resourceId, jsEvent.ctrlKey);
-          	}
+            // eventDropFunction(event.id, event.start.format(), event.end.format(), event.resource, jsEvent.ctrlKey);
           },
           eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
-            eventResizeFunction(event.id, event.start.format(), event.end.format());
+            // eventResizeFunction(event.id, event.start.format(), event.end.format());
           },
           eventRender: eventRenderCallback,
           customButtons: {
@@ -81,22 +70,160 @@
             center: '',
             right: 'pdf switch reload,today prev,next',
           },
-          resources: loadResources,
-          resourceOrder: '-type1,type2',
         });
       });
-      
-      // https://fullcalendar.io/docs/v3/resourceOrder
-      
-      function loadResources(callback) {
-        var _resources = loadResourcesFunction();
-        var resources = JSON.parse(_resources);
-        callback(resources);
-      }      
 
       function loadEventsCallback(start, end, timezone, callback) {
-        var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
-        var jsonEvents = JSON.parse(eventsJson);
+        // var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
+        // var jsonEvents = JSON.parse(eventsJson);
+
+        //temporary events
+        const jsonEvents = [
+          {
+            id: '440a52a9f3df4a4388695c7d5',
+            title: ' ',
+            start: '2022-11-08T18:00',
+            end: '2022-11-08T23:59',
+            borderColor: '##ffffff',
+            backgroundColor: '##3a87ad',
+            textColor: '#ffffff',
+            description: '\u003cbr /\u003e\u003cbr /\u003e',
+            resource: 'Bauer',
+            allDay: false,
+          },
+          {
+            id: 'f4d64016c1744ac0a4ed847c4',
+            title: ' ',
+            start: '2022-11-08T18:00',
+            end: '2022-11-08T23:59',
+            borderColor: '##ffffff',
+            backgroundColor: '##3a87ad',
+            textColor: '#ffffff',
+            description: '\u003cbr /\u003e\u003cbr /\u003e',
+            resource: 'Dimitrova',
+            allDay: false,
+          },
+          {
+            id: 'cab99d05da554c7fb3e715cef',
+            title: ' ',
+            start: '2022-11-08T00:00',
+            end: '2022-11-08T08:00',
+            borderColor: '##ffffff',
+            backgroundColor: '##3a87ad',
+            textColor: '#ffffff',
+            description: '\u003cbr /\u003e\u003cbr /\u003e',
+            resource: 'Bauer',
+            allDay: false,
+          },
+          {
+            id: 'e633c7bea765439abbfcb055c',
+            title: ' ',
+            start: '2022-11-08T00:00',
+            end: '2022-11-08T08:00',
+            borderColor: '##ffffff',
+            backgroundColor: '##3a87ad',
+            textColor: '#ffffff',
+            description: '\u003cbr /\u003e\u003cbr /\u003e',
+            resource: 'Arifi (cs)',
+            allDay: false,
+          },
+          {
+            id: 'ec5417db53a44e86bba3861e6',
+            title: ' ',
+            start: '2022-11-08T00:00',
+            end: '2022-11-08T08:00',
+            borderColor: '##ffffff',
+            backgroundColor: '##3a87ad',
+            textColor: '#ffffff',
+            description: '\u003cbr /\u003e\u003cbr /\u003e',
+            resource: 'Apel',
+            allDay: false,
+          },
+          {
+            id: '2a9b44f118e94c9eb809beadf',
+            title: ' ',
+            start: '2022-11-08T00:00',
+            end: '2022-11-08T08:00',
+            borderColor: '##ffffff',
+            backgroundColor: '##3a87ad',
+            textColor: '#ffffff',
+            description: '\u003cbr /\u003e\u003cbr /\u003e',
+            resource: 'Dimitrova',
+            allDay: false,
+          },
+          {
+            id: 'ye1be1d6bcdec6e6f019',
+            title: 'Rotzlöffel Sergio (m), 14.02.1988',
+            start: '2022-11-08T11:00',
+            end: '2022-11-08T11:30',
+            borderColor: '#26ff18',
+            backgroundColor: '#9c9c9c',
+            textColor: '#000000',
+            description: 'ddadfasd\u003cbr /\u003e\u003cbr /\u003e11.10.2022 08:17:00: geplant\u003cbr /\u003e',
+            resource: 'Arifi (cs)',
+            allDay: false,
+          },
+          {
+            id: 'ye1be1d6bcdec6e6f019',
+            title: 'Rotzlöffel Sergio (m), 14.02.1988',
+            start: '2022-11-08T11:00',
+            end: '2022-11-08T11:30',
+            borderColor: '#26ff18',
+            backgroundColor: '#9c9c9c',
+            textColor: '#000000',
+            description: 'ddadfasd\u003cbr /\u003e\u003cbr /\u003e11.10.2022 08:17:00: geplant\u003cbr /\u003e',
+            resource: 'Arifi (cs)',
+            allDay: true,
+          },
+          {
+            id: '4db1f98f87b647e7b43085b21',
+            title: ' ',
+            start: '2022-11-08T18:00',
+            end: '2022-11-08T23:59',
+            borderColor: '##ffffff',
+            backgroundColor: '##3a87ad',
+            textColor: '#ffffff',
+            description: '\u003cbr /\u003e\u003cbr /\u003e',
+            resource: 'Apel',
+            allDay: false,
+          },
+          {
+            id: '44b5dcb8426e40738d69aabd7',
+            title: ' ',
+            start: '2022-11-08T00:00',
+            end: '2022-11-08T08:00',
+            borderColor: '##ffffff',
+            backgroundColor: '##3a87ad',
+            textColor: '#ffffff',
+            description: '\u003cbr /\u003e\u003cbr /\u003e',
+            resource: 'Iten-Suter (aw)',
+            allDay: false,
+          },
+          {
+            id: '2638cfbfb00c4735a36687882',
+            title: ' ',
+            start: '2022-11-08T18:00',
+            end: '2022-11-08T23:59',
+            borderColor: '##ffffff',
+            backgroundColor: '##3a87ad',
+            textColor: '#ffffff',
+            description: '\u003cbr /\u003e\u003cbr /\u003e',
+            resource: 'Arifi (cs)',
+            allDay: false,
+          },
+          {
+            id: '07f20f3e19cb41f39b331bbcc',
+            title: ' ',
+            start: '2022-11-08T18:00',
+            end: '2022-11-08T23:59',
+            borderColor: '##ffffff',
+            backgroundColor: '##3a87ad',
+            textColor: '#ffffff',
+            description: '\u003cbr /\u003e\u003cbr /\u003e',
+            resource: 'Iten-Suter (aw)',
+            allDay: false,
+          },
+        ];
 
         var events = [];
         jsonEvents.forEach(function (event) {
@@ -111,10 +238,11 @@
             borderColor: event.borderColor,
             backgroundColor: event.backgroundColor,
             textColor: event.textColor,
-            resourceId: event.resource,
+            resource: event.resource,
             allDay: event.allDay,
           });
         });
+        console.log(events);
         callback(events);
       }
 
@@ -128,10 +256,10 @@
       var dayClickPosX;
       var dayClickPosY;
 
-      function dayClickCallback(date, jsEvent, view, resourceObj) {
+      function dayClickCallback(date, jsEvent, view) {
         if (dayClickSlotDate) {
-          if (typeof resourceObj !== 'undefined') {
-            dayClickFunction(date.format(), resourceObj.id);
+          if (typeof jsEvent.resource !== 'undefined') {
+            dayClickFunction(date.format(), jsEvent.resource);
           } else {
             dayClickFunction(date.format());
           }

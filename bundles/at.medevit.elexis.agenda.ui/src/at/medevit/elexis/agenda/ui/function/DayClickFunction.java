@@ -37,6 +37,7 @@ public class DayClickFunction extends AbstractBrowserFunction {
 						date.plusMinutes(preferredDuration),
 						AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
 						AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
+				determineApplyIsAllDay(arguments[0].toString(), date, appointment);
 			} else {
 				MessageDialog.openInformation(getBrowser().getShell(), Messages.AgendaUI_DayClick_info,
 						Messages.AgendaUI_DayClick_no_resource_selected);
@@ -50,6 +51,7 @@ public class DayClickFunction extends AbstractBrowserFunction {
 					date.plusMinutes(preferredDuration),
 					AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
 					AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
+			determineApplyIsAllDay(arguments[0].toString(), date, appointment);
 		}
 		if (appointment != null) {
 			final IAppointment editAppointment = appointment;
@@ -59,6 +61,15 @@ public class DayClickFunction extends AbstractBrowserFunction {
 			dlg.open();
 		}
 		return null;
+	}
+
+	private void determineApplyIsAllDay(String dateTimeString, LocalDateTime date, IAppointment appointment) {
+		// is allDay (string is e.g. 2022-11-16)
+		if (dateTimeString.length() == 10) {
+			appointment.setStartTime(date.toLocalDate().atStartOfDay());
+			appointment.setEndTime(null);
+		}
+
 	}
 
 	private Integer getPreferredDuration(String areaName, String type) {

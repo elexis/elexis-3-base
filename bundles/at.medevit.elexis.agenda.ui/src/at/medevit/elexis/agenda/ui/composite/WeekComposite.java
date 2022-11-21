@@ -2,6 +2,7 @@ package at.medevit.elexis.agenda.ui.composite;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -170,6 +171,11 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		loadEventsFunction.setResources(selectedResources);
 		dayClickFunction.setSelectedResources(selectedResources);
 		refetchEvents();
+	}
+
+	@Override
+	public Set<String> getSelectedResources() {
+		return loadEventsFunction.getResources();
 	}
 
 	@Override

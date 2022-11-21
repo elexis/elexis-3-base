@@ -3,6 +3,7 @@ package at.medevit.elexis.agenda.ui.composite;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,13 @@ public interface IAgendaComposite {
 	 * @param selectedResources
 	 */
 	public void setSelectedResources(List<String> selectedResources);
+
+	/**
+	 * Get the list of selected resources (areas) to display.
+	 * 
+	 * @return
+	 */
+	public Set<String> getSelectedResources();
 
 	/**
 	 * Set the span size to display.

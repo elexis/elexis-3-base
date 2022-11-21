@@ -60,6 +60,10 @@ public abstract class AbstractBrowserFunction extends BrowserFunction {
 
 	protected LocalDate getDateArg(Object object) {
 		if (object instanceof String) {
+			if (((String) object).length() == 19) {
+				LocalDateTime parsed = LocalDateTime.parse((String) object);
+				return parsed.toLocalDate();
+			}
 			if (((String) object).length() == 10) {
 				return LocalDate.parse((String) object);
 			}

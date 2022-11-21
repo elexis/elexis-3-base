@@ -1,6 +1,7 @@
 package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import com.equo.chromium.swt.Browser;
 
@@ -51,10 +52,17 @@ public class EventDropFunction extends AbstractBrowserFunction {
 					}
 
 					// moving
+					boolean isAllDay = arguments[1].toString().length() == 10;
 					LocalDateTime startDate = getDateTimeArg(arguments[1]);
 					current.setStartTime(startDate);
-					LocalDateTime endDate = getDateTimeArg(arguments[2]);
-					current.setEndTime(endDate);
+					if (isAllDay) {
+						current.setEndTime(null);
+					} else {
+						LocalDateTime endTime = Objects.isNull(arguments[2]) ? startDate.plusMinutes(15)
+								: getDateTimeArg(arguments[2]);
+						current.setEndTime(endTime);
+					}
+
 					if (arguments.length >= 4 && arguments[3] != null) {
 						String bereich = (String) arguments[3];
 						if (!bereich.isEmpty()) {

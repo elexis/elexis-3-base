@@ -1,7 +1,6 @@
 package at.medevit.elexis.agenda.ui.composite;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -86,10 +85,9 @@ public class ScriptingHelper {
 		SingleSourceUtil.executeScript(browser, refetchEvents);
 	}
 
-	public void initializeResources(List<String> selectedResources) {
-		String updateResourceIds = "$('#calendar').fullCalendar('getView').setResourceIds(%s);"; //$NON-NLS-1$
-		String script = String.format(updateResourceIds, getResourceIdsString(selectedResources));
-		SingleSourceUtil.executeScript(browser, script);
+	public void refetchResources() {
+		String refetchResources = "$('#calendar').fullCalendar('refetchResources');";//$NON-NLS-1$
+		SingleSourceUtil.executeScript(browser, refetchResources);
 	}
 
 	public void scrollToNow() {
@@ -97,19 +95,6 @@ public class ScriptingHelper {
 			String script = "var now = $('#calendar').fullCalendar('getNow'); if (now >= $('#calendar').fullCalendar('getView').intervalStart && now < $('#calendar').fullCalendar('getView').intervalEnd){ setTimeout( function(){$('.fc-scroller').scrollTop($('.fc-now-indicator').position().top - ($('#calendar').height() / 2) );}  , 500 );}"; //$NON-NLS-1$
 			SingleSourceUtil.executeScript(browser, script);
 		}
-	}
-
-	private Object getResourceIdsString(List<String> selectedResources) {
-		StringBuilder ret = new StringBuilder();
-		ret.append("["); //$NON-NLS-1$
-		for (String calendar : selectedResources) {
-			if (ret.length() > 1) {
-				ret.append(","); //$NON-NLS-1$
-			}
-			ret.append("'").append(calendar).append("'"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		ret.append("]"); //$NON-NLS-1$
-		return ret;
 	}
 
 	public void setScrollToNow(boolean value) {

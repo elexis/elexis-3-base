@@ -17,7 +17,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -133,8 +135,13 @@ public class SideBarComposite extends Composite {
 		});
 
 		Label label = new Label(this, SWT.NONE);
-		FontDescriptor boldDescriptor = FontDescriptor.createFrom(label.getFont()).setStyle(SWT.BOLD);
-		Font boldFont = boldDescriptor.createFont(label.getDisplay());
+		String cfgName = "agenda-boldFont"; //$NON-NLS-1$
+		FontRegistry fr = JFaceResources.getFontRegistry();
+		if (!fr.hasValueFor(cfgName)) {
+			FontDescriptor boldDescriptor = FontDescriptor.createFrom(label.getFont()).setStyle(SWT.BOLD);
+			fr.put(cfgName, boldDescriptor.getFontData());
+		}
+		Font boldFont = fr.get(cfgName);
 		label.setFont(boldFont);
 		label.setText(Messages.AgendaUI_SideBar_range);
 		ScrolledComposite areaScrolledComposite = new ScrolledComposite(this, SWT.V_SCROLL);

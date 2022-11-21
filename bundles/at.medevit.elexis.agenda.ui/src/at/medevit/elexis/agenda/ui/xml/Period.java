@@ -36,7 +36,9 @@ public class Period implements Comparable<Period> {
 			ret.fromDateTime = termin.getStartTime();
 			ret.toDateTime = termin.getEndTime();
 			ret.from = formatter.format(ret.fromDateTime);
-			ret.to = formatter.format(ret.toDateTime);
+			if (ret.toDateTime != null) {
+				ret.to = formatter.format(ret.toDateTime);
+			}
 
 			ret.personalia = termin.getSubjectOrPatient();
 			ret.reason = termin.getReason();

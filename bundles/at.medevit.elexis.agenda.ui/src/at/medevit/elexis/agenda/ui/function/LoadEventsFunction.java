@@ -347,4 +347,8 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 		}
 		super.dispose(remove);
 	}
+
+	public Set<String> getResources() {
+		return resources;
+	}
 }

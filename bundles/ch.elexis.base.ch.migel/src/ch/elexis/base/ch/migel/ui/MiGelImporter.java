@@ -158,7 +158,7 @@ public class MiGelImporter extends ImporterPage {
 			log.info(ex.getStackTrace().toString());
 
 			log.error(msg);
-			SWTHelper.showError(ch.elexis.core.l10n.Messages.GenericImporter_ErrorImporting, msg);
+			SWTHelper.showError(ch.elexis.core.l10n.Messages.Core_Error_while_importing, msg);
 		}
 		return Status.CANCEL_STATUS;
 	}

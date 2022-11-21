@@ -103,7 +103,7 @@ public class TitleCompletionPreferencePage extends PreferencePage implements IWo
 				tableViewer.add(titleEntry);
 			}
 		});
-		mntmAdd.setText(Messages.Bezugskontakt_Add);
+		mntmAdd.setText(Messages.Core_Add);
 		mntmAdd.setImage(Images.IMG_ADD.getImage());
 
 		MenuItem mntmDelete = new MenuItem(popupMenu, SWT.NONE);

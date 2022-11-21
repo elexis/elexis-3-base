@@ -5,7 +5,8 @@ Bundle-SymbolicName: ch.elexis.laborimport.analytica;singleton:=true
 Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
-Require-Bundle: ch.rgw.utility,
+Require-Bundle: ch.elexis.core.l10n,
+ ch.rgw.utility,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.forms,

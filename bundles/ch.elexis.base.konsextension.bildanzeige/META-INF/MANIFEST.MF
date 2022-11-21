@@ -5,7 +5,8 @@ Bundle-SymbolicName: ch.elexis.base.konsextension.bildanzeige;singleton:=true
 Bundle-Version: 3.10.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: ch.elexis.core;bundle-version="3.0.0",
+Require-Bundle: ch.elexis.core.l10n,
+ ch.elexis.core;bundle-version="3.0.0",
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
  ch.elexis.core.ui.icons;bundle-version="3.0.0",

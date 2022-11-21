@@ -576,7 +576,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		pdfRnTextTG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M0, Messages.BillingDefaultMsg));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder1 + " TP:");// Messages.Billing_Cfg_Msg_Invoicelvl
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_1 + " TP:");// Messages.Billing_Cfg_Msg_Invoicelvl
 		pdfRnTextM1TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M1);
 		pdfRnTextM1TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M1, Messages.BillingDefaultMsg_M1));
 
@@ -592,7 +592,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		pdfRnTextM3TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M3, Messages.BillingDefaultMsg_M3));
 
 		label = new Label(composite, SWT.NONE);
-		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.RechnungsListeView_reminder1 + " TG:");
+		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_1 + " TG:");
 		pdfRnTextM1TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M1);
 		pdfRnTextM1TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M1, Messages.BillingDefaultMsg_M1));
 

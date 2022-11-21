@@ -6,7 +6,8 @@ Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medshare.ch und www.jisigle.com
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+Require-Bundle: ch.elexis.core.l10n,
+ ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.core.ui.contacts;bundle-version="3.3.0"
 Export-Package: ch.medshare.elexis.directories

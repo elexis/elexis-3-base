@@ -27,7 +27,7 @@
 		</repository>
 		<repository>
 			<id>elexis.3.core</id>
-			<url>file:///home/opt/rm/elexis-f24222/elexis-3-core/ch.elexis.core.p2site/target/repository</url>
+			<url>https://download.elexis.info/elexis/${git.core.branch}/p2/elexis-3-core</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>

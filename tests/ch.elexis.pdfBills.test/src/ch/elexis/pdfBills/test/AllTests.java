@@ -44,5 +44,11 @@ public class AllTests {
 	public static void setOutputDir(String string) {
 		CoreHub.localCfg.set(RnOutputter.CFG_ROOT + RnOutputter.PDFDIR,
 				fragmentRsc.getAbsolutePath() + File.separator + string);
+		String pdfDir = fragmentRsc.getAbsolutePath() + File.separator + string;
+		File patPath = new File(pdfDir);
+		if (!patPath.exists()) {
+			LoggerFactory.getLogger(AllTests.class).warn("Created directory {} ", pdfDir);
+			patPath.mkdirs();
+		}
 	}
 }

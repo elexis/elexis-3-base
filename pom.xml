@@ -10,8 +10,8 @@
 
 	<properties>
 		<elexis.target>2022-09-java17</elexis.target>
-		<git.core.branch>master</git.core.branch>
-		<formatterConfigFile>https://raw.githubusercontent.com/elexis/elexis-3-core/master/Elexis_formatter_2022_03.xml</formatterConfigFile>
+		<git.core.branch>3.10</git.core.branch>
+		<formatterConfigFile>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/Elexis_formatter_2022_03.xml</formatterConfigFile>
 		<tycho.version>2.7.5</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
@@ -156,9 +156,9 @@ if ( System.getProperty("git_branch") == null ) {
 					<encoding>UTF-8</encoding>
 					<consoleOutput>false</consoleOutput>
 					<failsOnError>false</failsOnError>
-					<headerLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/epl-v10.html</headerLocation>
-					<configLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle.xml</configLocation>
-					<suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
+					<headerLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/epl-v10.html</headerLocation>
+					<configLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/checkstyle.xml</configLocation>
+					<suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
 				</configuration>
 				<version>2.17</version>
 			</plugin>
@@ -354,9 +354,9 @@ if ( System.getProperty("git_branch") == null ) {
 					<encoding>UTF-8</encoding>
 					<consoleOutput>false</consoleOutput>
 					<failsOnError>false</failsOnError>
-					<headerLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/epl-v10.html</headerLocation>
-					<configLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle.xml</configLocation>
-					<suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
+					<headerLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/epl-v10.html</headerLocation>
+					<configLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/checkstyle.xml</configLocation>
+					<suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
 				</configuration>
 				<reportSets>
 					<reportSet>

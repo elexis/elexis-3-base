@@ -12,7 +12,6 @@
 
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
-import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.arzttarife_schweiz.Messages;
@@ -271,7 +271,10 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 			if (isInstance(v, code)) {
 				if (!tc.requiresSide()) {
 					newVerrechnet = v;
-					newVerrechnet.setAmount(newVerrechnet.getAmount() + 1);
+					if (!(",00.2530,00.2570,00.2550,00.2590,04.0620,04.1930,06.0430,06.0440,06.0730,06.0740,07.0300,24.0250,24.3250,28.0020,"
+							.contains("," + code.getCode()))) {
+						newVerrechnet.setAmount(newVerrechnet.getAmount() + 1);
+					}
 					saveBilled();
 					break;
 				}

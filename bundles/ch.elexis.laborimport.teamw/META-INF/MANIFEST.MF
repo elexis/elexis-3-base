@@ -7,7 +7,8 @@ Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: ch.elexis.core.ui;bundle-version="3.9.0",
+Require-Bundle: ch.elexis.core.l10n,
+ ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui.importer.div;bundle-version="3.9.0",
  ch.ngiger.utilities.comm;bundle-version="1.0.0"

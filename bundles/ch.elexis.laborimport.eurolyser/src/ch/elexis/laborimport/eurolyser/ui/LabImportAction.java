@@ -31,7 +31,7 @@ public class LabImportAction extends Action {
 	public void run() {
 		LabImportDialog dlg = new LabImportDialog(Display.getDefault().getActiveShell());
 		dlg.create();
-		dlg.getShell().setText(Messages.CodeDetailView_importerCaption); // $NON-NLS-1$
+		dlg.getShell().setText(Messages.Core_Import_Data); // $NON-NLS-1$
 		if (dlg.open() == Dialog.OK) {
 			dlg.run();
 		}

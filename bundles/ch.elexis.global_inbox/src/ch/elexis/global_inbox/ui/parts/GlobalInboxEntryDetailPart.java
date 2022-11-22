@@ -156,7 +156,7 @@ public class GlobalInboxEntryDetailPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				KontaktSelektor kontaktSelektor = new KontaktSelektor(linkPatient.getShell(), Patient.class,
-						Messages.HL7_SelectPatient, Messages.HL7_SelectPatient, Patient.DEFAULT_SORT);
+						Messages.Core_Select_Patient, Messages.Core_Select_Patient, Patient.DEFAULT_SORT);
 				if (kontaktSelektor.open() == KontaktSelektor.OK) {
 					Patient patient = (Patient) kontaktSelektor.getSelection();
 					IPatient iPatient = patient.toIPatient();

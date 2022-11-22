@@ -6,7 +6,8 @@ Bundle-Version: 3.0.0.qualifier
 Bundle-Activator: ch.elexis.base.konsextension.privatnotizen.Activator
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime,
+Require-Bundle: ch.elexis.core.l10n,
+ org.eclipse.core.runtime,
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
  ch.elexis.core.ui.icons;bundle-version="3.0.0",

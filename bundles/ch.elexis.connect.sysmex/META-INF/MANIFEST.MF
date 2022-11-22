@@ -6,7 +6,8 @@ Bundle-Version: 3.9.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: elexis.info
 Import-Package: org.apache.commons.lang3;version="3.12.0"
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+Require-Bundle: ch.elexis.core.l10n,
+ ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.serial;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.core.ui.importer.div;bundle-version="3.9.0"

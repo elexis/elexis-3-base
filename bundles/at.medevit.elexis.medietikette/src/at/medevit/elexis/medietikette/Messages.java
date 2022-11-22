@@ -12,19 +12,12 @@ package at.medevit.elexis.medietikette;
 
 import org.eclipse.osgi.util.NLS;
 
-public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "at.medevit.elexis.medietikette.messages"; //$NON-NLS-1$
-	public static String DataAccessor_Description;
-	public static String DataAccessor_Name;
-	public static String PrintMediEtiketteUi_DialogMessage;
-	public static String PrintMediEtiketteUi_DialogTitel;
-	public static String PrintMediEtiketteUi_PrintError;
-	public static String PrintMediEtiketteUi_TemplateName;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
+public class Messages{
+    public static String DataAccessor_Description = ch.elexis.core.l10n.Messages.DataAccessor_Description;
+    public static String DataAccessor_Name = ch.elexis.core.l10n.Messages.DataAccessor_Name;
+    public static String PrintMediEtiketteUi_DialogMessage = ch.elexis.core.l10n.Messages.PrintMediEtiketteUi_DialogMessage;
+    public static String PrintMediEtiketteUi_DialogTitel = ch.elexis.core.l10n.Messages.PrintMediEtiketteUi_DialogTitel;
+    public static String PrintMediEtiketteUi_PrintError = ch.elexis.core.l10n.Messages.Printing_Error_Check_Settings;
+    public static String PrintMediEtiketteUi_TemplateName = ch.elexis.core.l10n.Messages.PrintMediEtiketteUi_TemplateName;
 
-	private Messages() {
-	}
 }

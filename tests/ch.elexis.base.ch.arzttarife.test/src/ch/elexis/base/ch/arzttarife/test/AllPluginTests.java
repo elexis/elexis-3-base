@@ -24,7 +24,7 @@ import ch.elexis.tarmedprefs.TarmedRequirementsTest;
 		Tarmed45ExporterTest.class, XmlVersionUpdate44to45Test.class })
 public class AllPluginTests {
 
-	public static final String UVG_NAME = Messages.Fall_UVG_Name;
+	public static final String UVG_NAME = Messages.Case_UVG_Short;
 	public static final String UVG_REQUIREMENTS = Messages.Fall_UVGRequirements;
 	public static final String CONST_TARMED_DRUCKER = Messages.Fall_TarmedPrinter;
 	public static final String CONST_TARMED_LEISTUNG = Messages.Fall_TarmedLeistung;

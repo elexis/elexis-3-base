@@ -5,7 +5,8 @@ Bundle-SymbolicName: at.medevit.elexis.weblinks;singleton:=true
 Bundle-Version: 3.0.0.qualifier
 Bundle-Activator: at.medevit.elexis.weblinks.Activator
 Bundle-Vendor: medevit.at
-Require-Bundle: org.eclipse.ui,
+Require-Bundle: ch.elexis.core.l10n,
+ org.eclipse.ui,
  org.eclipse.core.runtime,
  ch.rgw.utility;bundle-version="2.0.9",
  ch.elexis.core.ui,

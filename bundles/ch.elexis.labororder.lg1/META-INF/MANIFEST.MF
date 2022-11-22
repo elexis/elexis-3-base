@@ -6,7 +6,8 @@ Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.labororder.lg1
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+Require-Bundle: ch.elexis.core.l10n,
+ ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.hl7.v2x;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.base.ch.arzttarife;bundle-version="3.9.0"

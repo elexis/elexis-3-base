@@ -2,8 +2,8 @@ package ch.elexis.omnivore.dialog;
 
 import org.eclipse.osgi.util.NLS;
 
-public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.omnivore.dialog.messages"; //$NON-NLS-1$
+public class Messages{
+
 	// public static String OmnivoreView_categoryColumn;
 	// public static String OmnivoreView_dataSources;
 	// public static String OmnivoreView_dateSavedColumn;
@@ -33,11 +33,5 @@ public class Messages extends NLS {
 	// public static String OmnivoreView_searchKeywordsLabel;
 	// public static String OmnivoreView_titleColumn;
 	// public static String FileImportDialog_dateLabel;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
-	}
 
-	private Messages() {
-	}
 }

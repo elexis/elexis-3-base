@@ -142,7 +142,6 @@ public class PsychoReferenceDataImporter extends AbstractReferenceDataImporter i
 		return -1;
 	}
 
-
 	public static void setCurrentVersion(int newVersion) {
 		PsychoLeistung versionEntry = EntityUtil.load("VERSION", PsychoLeistung.class);
 		if (versionEntry != null) {

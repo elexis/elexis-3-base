@@ -196,9 +196,9 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 	@Override
 	public void setFocus() {
 		if (!isOldShown) {
-			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Ansicht veraltet", "Die Ansicht "
-					+ getTitle()
-					+ " ist veraltet, und wird nicht mehr unterstützt. Bitte verwenden Sie die ESR Ansicht.");
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Ansicht veraltet",
+					"Die Ansicht " + getTitle()
+							+ " ist veraltet, und wird nicht mehr unterstützt. Bitte verwenden Sie die ESR Ansicht.");
 			isOldShown = true;
 		}
 	}

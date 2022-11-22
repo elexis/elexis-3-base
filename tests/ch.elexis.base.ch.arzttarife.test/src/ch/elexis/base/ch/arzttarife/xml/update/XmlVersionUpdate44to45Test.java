@@ -135,7 +135,7 @@ public class XmlVersionUpdate44to45Test {
 		invoice.setRemark("TEST");
 		coreModelService.setEntityProperty("number", "213", invoice);
 		coreModelService.save(invoice);
-		
+
 		XmlVersionUpdate44to45 update = new XmlVersionUpdate44to45(invoice);
 		update.update();
 

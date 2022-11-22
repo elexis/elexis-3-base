@@ -43,8 +43,7 @@ public class PsychoDetailDisplay implements IDetailDisplay {
 	private FormText description;
 
 	@Inject
-	public void selection(
-			@Optional @Named("ch.elexis.views.codeselector.psycho.selection") IPsychoLeistung psycho) {
+	public void selection(@Optional @Named("ch.elexis.views.codeselector.psycho.selection") IPsychoLeistung psycho) {
 		if (psycho != null && !form.isDisposed()) {
 			display(psycho);
 		}

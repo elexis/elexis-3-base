@@ -87,7 +87,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 	private Button openDialogBtn;
 
 	private Button openEsrDialogBtn;
-	
 
 	@Override
 	public void init(IWorkbench workbench) {
@@ -551,7 +550,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		textBox.setText(msgText);
 		return textBox;
 	}
-
 
 	private void createMessageConfig(TabItem item) {
 		Composite composite = new Composite(tabFolder, SWT.NONE);

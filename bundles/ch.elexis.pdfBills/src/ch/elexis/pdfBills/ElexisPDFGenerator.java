@@ -277,7 +277,7 @@ public class ElexisPDFGenerator {
 		String key = "";
 		String invStateTxt = rechnung.getInvoiceState().toString();
 		ch.elexis.data.Fall.Tiers tiers = rechnung.getFall().getTiersType();
-		
+
 		switch (invoiceState) {
 		case UNKNOWN:
 		case IN_EXECUTION:
@@ -317,10 +317,10 @@ public class ElexisPDFGenerator {
 			break;
 		}
 
-	return CoreHub.globalCfg.get(key, invStateTxt);
+		return CoreHub.globalCfg.get(key, invStateTxt);
 
 	}
-	
+
 	private String getInsuranceLine(IInvoice invoice) {
 		IContact costBearer = invoice.getCoverage().getCostBearer();
 		if (costBearer == null) {

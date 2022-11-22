@@ -48,8 +48,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		};
 		addField(bStoreFSGlobal);
 
-		dirFieldEditor = new DirectoryFieldEditor(PREF_DIR, Messages.Preferences_directory,
-				getFieldEditorParent());
+		dirFieldEditor = new DirectoryFieldEditor(PREF_DIR, Messages.Preferences_directory, getFieldEditorParent());
 
 		BooleanFieldEditor bAutomaticBilling = new BooleanFieldEditor(PREF_AUTOBILLING,
 				"Automatische Verrechnung bei import", getFieldEditorParent());

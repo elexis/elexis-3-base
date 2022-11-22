@@ -24,7 +24,7 @@ public class PatientElement {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param doc
 	 * @param loadFromAgenda
 	 * @param useLegalGuardian

@@ -139,8 +139,7 @@ public class CovidHandlerUtil {
 			if (file.isPresent()) {
 				Program.launch(file.get().getAbsolutePath());
 			} else {
-				MessageDialog.openError(Display.getDefault().getActiveShell(),
-						Messages.Core_Error,
+				MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Core_Error,
 						Messages.Core_Document_Not_Opened_Locally);
 			}
 		}
@@ -152,8 +151,7 @@ public class CovidHandlerUtil {
 			if (file.isPresent()) {
 				Program.launch(file.get().getAbsolutePath());
 			} else {
-				MessageDialog.openError(Display.getDefault().getActiveShell(),
-						Messages.Core_Error,
+				MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Core_Error,
 						Messages.Core_Document_Not_Opened_Locally);
 			}
 		}

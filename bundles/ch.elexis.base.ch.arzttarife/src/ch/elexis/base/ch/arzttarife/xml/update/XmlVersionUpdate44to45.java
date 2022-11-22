@@ -145,7 +145,7 @@ public class XmlVersionUpdate44to45 {
 				serviceExType.setScaleFactorMt(((RecordTarmedType) record).getScaleFactorMt());
 				serviceExType.setExternalFactorMt(((RecordTarmedType) record).getExternalFactorMt());
 				serviceExType.setAmountMt(((RecordTarmedType) record).getAmountMt());
-				
+
 				serviceExType.setUnitTt(((RecordTarmedType) record).getUnitTt());
 				serviceExType.setUnitFactorTt(((RecordTarmedType) record).getUnitFactorTt());
 				serviceExType.setScaleFactorTt(((RecordTarmedType) record).getScaleFactorTt());
@@ -273,10 +273,10 @@ public class XmlVersionUpdate44to45 {
 		xout.output(document, stringWriter);
 		IBlob blob = CoreModelServiceHolder.get().load(XMLExporter.PREFIX + invoice.getNumber(), IBlob.class)
 				.orElseGet(() -> {
-			IBlob newBlob = CoreModelServiceHolder.get().create(IBlob.class);
+					IBlob newBlob = CoreModelServiceHolder.get().create(IBlob.class);
 					newBlob.setId(XMLExporter.PREFIX + invoice.getNumber());
-			return newBlob;
-		});
+					return newBlob;
+				});
 		blob.setStringContent(stringWriter.toString());
 		CoreModelServiceHolder.get().save(blob);
 	}

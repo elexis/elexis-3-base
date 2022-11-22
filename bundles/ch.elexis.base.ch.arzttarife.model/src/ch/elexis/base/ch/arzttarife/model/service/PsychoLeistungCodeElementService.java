@@ -25,8 +25,7 @@ import ch.elexis.core.services.IElexisEntityManager;
 import ch.elexis.core.services.IStoreToStringContribution;
 
 @Component
-public class PsychoLeistungCodeElementService
-		implements ICodeElementServiceContribution, IStoreToStringContribution {
+public class PsychoLeistungCodeElementService implements ICodeElementServiceContribution, IStoreToStringContribution {
 
 	@Reference(target = "(id=default)")
 	private IElexisEntityManager entityManager;
@@ -66,9 +65,9 @@ public class PsychoLeistungCodeElementService
 	@Override
 	public Optional<String> storeToString(Identifiable identifiable) {
 		if (identifiable instanceof ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung) {
-			return Optional.of(ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung.STS_CLASS
-					+ StringConstants.DOUBLECOLON
-					+ ((ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung) identifiable).getId());
+			return Optional
+					.of(ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung.STS_CLASS + StringConstants.DOUBLECOLON
+							+ ((ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung) identifiable).getId());
 		}
 		return Optional.empty();
 	}
@@ -76,8 +75,7 @@ public class PsychoLeistungCodeElementService
 	@Override
 	public Optional<Identifiable> loadFromString(String storeToString) {
 		if (storeToString.startsWith(
-				ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung.STS_CLASS
-				+ StringConstants.DOUBLECOLON)) {
+				ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung.STS_CLASS + StringConstants.DOUBLECOLON)) {
 			String[] split = splitIntoTypeAndId(storeToString);
 			String id = split[1];
 			EntityManager em = (EntityManager) entityManager.getEntityManager();
@@ -91,8 +89,7 @@ public class PsychoLeistungCodeElementService
 	@Override
 	public List<Identifiable> loadFromStringWithIdPart(String partialStoreToString) {
 		if (!partialStoreToString.startsWith(
-				ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung.STS_CLASS
-				+ StringConstants.DOUBLECOLON)) {
+				ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung.STS_CLASS + StringConstants.DOUBLECOLON)) {
 			return Collections.emptyList();
 		}
 

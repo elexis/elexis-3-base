@@ -12,7 +12,7 @@ public class Salutation {
 
 	/**
 	 * extracted from ch.elexis.data.Kontakt#getSalutation
-	 * 
+	 *
 	 * @param contact
 	 * @return
 	 */

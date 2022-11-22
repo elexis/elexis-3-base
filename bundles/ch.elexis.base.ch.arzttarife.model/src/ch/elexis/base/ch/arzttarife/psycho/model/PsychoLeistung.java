@@ -43,8 +43,7 @@ public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 	@Override
 	public synchronized IBillableOptifier<PsychoLeistung> getOptifier() {
 		if (optifier == null) {
-			optifier = new AbstractOptifier<PsychoLeistung>(CoreModelServiceHolder.get(),
-					ContextServiceHolder.get()) {
+			optifier = new AbstractOptifier<PsychoLeistung>(CoreModelServiceHolder.get(), ContextServiceHolder.get()) {
 
 				@Override
 				public Result<IBilled> remove(IBilled billed, IEncounter encounter) {
@@ -100,7 +99,7 @@ public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 				/**
 				 * Get all {@link IBilled} of the encounter, including the provided
 				 * {@link IBilled} instead of an possible old version from the encounter.
-				 * 
+				 *
 				 * @param billed
 				 * @return
 				 */
@@ -137,13 +136,14 @@ public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 					CoreModelServiceHolder.get().save(billed);
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, billed);
 				}
-				
+
 				private List<IBilled> getPsycho(List<IBilled> billed) {
-					return billed.stream().filter(b -> b.getBillable() instanceof PsychoLeistung).collect(Collectors.toList());
+					return billed.stream().filter(b -> b.getBillable() instanceof PsychoLeistung)
+							.collect(Collectors.toList());
 				}
-				
+
 				private int getPercent(PsychoLeistung billedPsycho) {
-					return Integer.parseInt(billedPsycho.getTP().substring(1)); 
+					return Integer.parseInt(billedPsycho.getTP().substring(1));
 				}
 			};
 		}

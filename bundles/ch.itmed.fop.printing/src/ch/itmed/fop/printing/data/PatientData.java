@@ -216,7 +216,7 @@ public class PatientData {
 
 	/**
 	 * extracted from ch.elexis.data.Patient#getAuftragsnummer
-	 * 
+	 *
 	 * @return
 	 */
 	private String getAuftragsnummer(String patCode) {

@@ -82,7 +82,7 @@ public interface IAgendaComposite {
 
 	/**
 	 * Get the list of selected resources (areas) to display.
-	 * 
+	 *
 	 * @return
 	 */
 	public Set<String> getSelectedResources();

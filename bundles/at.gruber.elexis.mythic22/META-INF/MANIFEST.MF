@@ -5,7 +5,8 @@ Bundle-SymbolicName: at.gruber.elexis.mythic22;singleton:=true
 Bundle-Version: 3.9.0.qualifier
 Bundle-Activator: at.gruber.elexis.mythic22.Activator
 Bundle-Vendor: medevit.at
-Require-Bundle: org.eclipse.ui,
+Require-Bundle: ch.elexis.core.l10n,
+ org.eclipse.ui,
  org.eclipse.core.runtime,
  ch.rgw.utility,
  ch.elexis.core.data;bundle-version="3.9.0",

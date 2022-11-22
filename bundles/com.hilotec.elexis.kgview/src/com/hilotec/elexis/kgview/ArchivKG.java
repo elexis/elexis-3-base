@@ -398,7 +398,7 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 				setToolTipText("Neuen Hausbesuch anlegen");
 			} else {
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
-				setToolTipText(Messages.GlobalActions_NewKonsToolTip); // $NON-NLS-1$
+				setToolTipText(Messages.Core_Create_new_consultation);
 			}
 			this.typ = typ;
 		}

@@ -9,7 +9,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.labor.medics.v2.MedicsActivator
 Bundle-Vendor: medshare.net
 Import-Package: org.apache.commons.lang3;version="3.12.0"
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+Require-Bundle: ch.elexis.core.l10n,
+ ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.hl7.v2x;bundle-version="3.9.0",
  ch.elexis.core.importer.div;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",

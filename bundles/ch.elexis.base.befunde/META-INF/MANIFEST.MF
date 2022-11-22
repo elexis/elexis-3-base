@@ -11,7 +11,8 @@ Export-Package: ch.elexis.base.befunde,
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Created-By: Buildr
 Bundle-ActivationPolicy: lazy
-Require-Bundle: ch.elexis.core.data;bundle-version="3.10.0",
+Require-Bundle: ch.elexis.core.l10n,
+ ch.elexis.core.data;bundle-version="3.10.0",
  ch.elexis.core.findings;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.10.0",
  ch.elexis.core.findings.util;bundle-version="3.9.0",

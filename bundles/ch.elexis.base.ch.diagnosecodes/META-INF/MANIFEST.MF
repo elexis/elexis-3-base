@@ -6,7 +6,8 @@ Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
+Require-Bundle: ch.elexis.core.l10n,
+ ch.rgw.utility;bundle-version="3.9.100",
  ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.base.ch.ticode;bundle-version="3.9.0",

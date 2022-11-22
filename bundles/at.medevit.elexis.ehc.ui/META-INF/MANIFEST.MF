@@ -12,7 +12,8 @@ Export-Package: at.medevit.elexis.ehc.ui.extension,
  at.medevit.elexis.ehc.ui.views
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
-Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
+Require-Bundle: ch.elexis.core.l10n,
+ ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  at.medevit.elexis.inbox;bundle-version="3.9.0",
  at.medevit.elexis.inbox.ui;bundle-version="3.9.0",

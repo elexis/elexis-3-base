@@ -4,7 +4,8 @@ Bundle-Name: Elexis Nachrichten plugin
 Bundle-SymbolicName: ch.elexis.base.messages;singleton:=true
 Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.info
-Require-Bundle: org.eclipse.ui,
+Require-Bundle: ch.elexis.core.l10n,
+ org.eclipse.ui,
  org.eclipse.core.runtime,
  ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",

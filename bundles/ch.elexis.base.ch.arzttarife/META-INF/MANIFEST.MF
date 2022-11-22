@@ -5,7 +5,8 @@ Bundle-SymbolicName: ch.elexis.base.ch.arzttarife;singleton:=true
 Bundle-Version: 3.10.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: ch.rgw.utility;bundle-version="3.10.0",
+Require-Bundle: ch.elexis.core.l10n,
+ ch.rgw.utility;bundle-version="3.10.0",
  ch.elexis.core.data;bundle-version="3.10.0",
  ch.elexis.core.ui;bundle-version="3.10.0",
  ch.elexis.core.ui.importer.div;bundle-version="3.9.0",

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.netzkonzept.elexis.medidata.feature"
+      label="Abrechnungsplugin für medidata"
+      version="1.0.0.qualifier"
+      provider-name="ch.netzkonzept">
+
+   <description>
+      Abrechnungsplugin für Medidata
+      Mehr Info unter http://wiki.elexis.info/ch.netzkonzept.elexis.medidata.feature.feature.group
+   </description>
+
+   <copyright url="http://elexis.info/de_contributers.html">
+      2020-2022
+Fabian &lt;f.schmid@netzkonzept.ch&gt;
+Olivier Debenath &lt;olivier@debenath.ch&gt;
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+         id="ch.netzkonzept.elexis.medidata"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

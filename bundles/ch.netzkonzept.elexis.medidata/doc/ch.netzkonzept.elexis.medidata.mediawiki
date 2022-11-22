@@ -1,0 +1,53 @@
+<table style="width:100%; border: 1px solid; padding: 10px">
+	
+	<tr>
+		<td>Version:</td>
+		<td>1.0.1</td>
+	</tr>
+	<tr>
+		<td style="width:150px;">Kategorie:</td>
+		<td>Finanzen</td>
+	</tr>
+	<tr>
+		<td>Beschreibung:</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Author:</td>
+		<td>Fabian Schmid / Olivier Debenath</td>
+	</tr>
+	<tr>
+		<td>Letzte Bearbeitung:</td>
+		<td>04. November 2022</td>
+	</tr>
+	<tr>
+		<td>Voraussetzungen:</td>
+		<td>Elexis 3.9</td>
+	</tr>
+	<tr>
+		<td>Betriebssystem:</td>
+		<td>Windows, Mac, Linux</td>
+	</tr>
+	<tr>
+		<td>Lizenz:</td>
+		<td>[http://www.eclipse.org/legal/epl-v10.html Eclipse Public License (EPL)]</td>
+	</tr>
+</table>
+
+
+== Einführung ==
+
+Das Plugin erstellt eine Tarmed 4.5 konforme Rechnung und legt diese in einem definierten Ausgangsverzeichnis ab. Dort werden die Rechnungen zyklisch vom MedidataService an die Medidata Box versendet. Der MedidataServic ist nicht Bestandteil des Plugins und muss separat eingerichtet werden.
+
+== Installation ==
+
+Das Plugin benötigt für den Betrieb lediglich 4 Parameter:
+
+* Trust Center EAN: Die EAN des für die Praxis verantwortlichen Trustcenters. Die Rechnungen werden von Medidata jeweils an diese EAN Nummer weitergereicht.
+* Intermediäre EAN: Die EAN von Medidata
+* Tiers Garant EAN: Default EAN, die von Medidata vorgegeben ist, sofern die Rechnungn nicht an eine Krankenkasse, sondern an den Patienten versendet werden soll.
+* Basisverzeichnis: Ein für Elexis les- und schreibbares Verzeichnis. Das Plugin erstellt darunter die notwendigen Unterverzeichnisse automatisch (Knopf Erstelle Verzeichnisstruktur)
+
+== Verwendung ==
+
+Betreffende Rechnung(en) in Rechnungsliste markieren und ausgeben. Beim Ausgabeziel ist das Medidata Plugin auszuwählen.

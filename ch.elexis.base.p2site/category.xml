@@ -25,6 +25,9 @@
    <feature url="features/ch.medshare.mediport.feature_0.0.0.jar" id="ch.medshare.mediport.feature" version="0.0.0">
       <category name="finances"/>
    </feature>
+   <feature url="features/ch.netzkonzept.elexis.medidata.feature_0.0.0.jar" id="ch.netzkonzept.elexis.medidata.feature" version="0.0.0">
+      <category name="finances"/>
+   </feature>
    <feature url="features/ch.berchtold.privatrechnung.feature_0.0.0.jar" id="ch.berchtold.privatrechnung.feature" version="0.0.0">
       <category name="finances"/>
    </feature>

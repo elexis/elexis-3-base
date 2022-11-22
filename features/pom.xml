@@ -77,6 +77,7 @@
     <module>ch.medshare.connect.abacusjunior.feature</module>
     <module>ch.medshare.elexis_directories.feature</module>
     <module>ch.medshare.mediport.feature</module>
+    <module>ch.netzkonzept.elexis.medidata.feature</module>
     <module>ch.novcom.elexis.mednet.plugin.feature</module>
     <module>ch.pharmed.phmprescriber.feature</module>
     <module>ch.unibe.iam.scg.archie.feature</module>

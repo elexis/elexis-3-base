@@ -33,18 +33,15 @@ import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.ui.model.EhcDocument;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.core.l10n.Messages;
 import ch.elexis.data.Mandant;
 
 public class InboxWatcher {
@@ -53,6 +50,7 @@ public class InboxWatcher {
 	private MandantChangedListener mandantListener;
 
 	private ExecutorService executor;
+	private boolean stopping;
 
 	private WatchService watcher;
 	private HashMap<String, WatchKey> watchKeys;
@@ -74,6 +72,7 @@ public class InboxWatcher {
 
 	public void start() {
 		try {
+			stopping = false;
 			watcher = FileSystems.getDefault().newWatchService();
 
 			executor.execute(new DirectoryWatcher());
@@ -86,7 +85,8 @@ public class InboxWatcher {
 	public void stop() {
 		ElexisEventDispatcher.getInstance().removeListeners(mandantListener);
 		try {
-			executor.shutdown();
+			stopping = true;
+			executor.shutdownNow();
 			if (watcher != null) {
 				watcher.close();
 			}
@@ -161,7 +161,9 @@ public class InboxWatcher {
 					}
 				}
 			} catch (InterruptedException | MalformedURLException e) {
-				logger.error("Filesystem watching interrupted stopping", e); //$NON-NLS-1$
+				if (!stopping) {
+					logger.error("Filesystem watching interrupted stopping", e); //$NON-NLS-1$
+				}
 			}
 		}
 	}

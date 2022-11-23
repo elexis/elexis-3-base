@@ -13,8 +13,6 @@
 
 package com.hilotec.elexis.messwerte.v2.data;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String DataAccessor_DataDescription = ch.elexis.core.l10n.Messages.DataAccessor_DataDescription;
 	public static String DataAccessor_FilterAll = ch.elexis.core.l10n.Messages.DataAccessor_FilterAll;
@@ -37,10 +35,4 @@ public class Messages {
 	public static String MesswertBase_Failure1 = ch.elexis.core.l10n.Messages.MesswertBase_Failure1;
 	public static String MesswertBase_Failure2 = ch.elexis.core.l10n.Messages.MesswertBase_Failure2;
 	public static String MesswertBase_NoData = ch.elexis.core.l10n.Messages.MesswertBase_NoData;
-	static {
-		// initialize resource bundle
-		NLS.initializeMessages("com.hilotec.elexis.messwerte.v2.data.messages", //$NON-NLS-1$
-				Messages.class);
-	}
-
 }

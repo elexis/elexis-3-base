@@ -13,8 +13,6 @@
 
 package com.hilotec.elexis.messwerte.v2.views;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String ExportDialog_btnDateAll = ch.elexis.core.l10n.Messages.ExportDialog_btnDateAll;
 	public static String ExportDialog_btnDateFromTo = ch.elexis.core.l10n.Messages.ExportDialog_btnDateFromTo;
@@ -63,8 +61,4 @@ public class Messages {
 	public static String MessungenUebersichtV21_Initializing = ch.elexis.core.l10n.Messages.MessungenUebersichtV21_Initializing;
 	public static String DBError = ch.elexis.core.l10n.Messages.DBError;
 	public static String DBErrorTable = ch.elexis.core.l10n.Messages.DBErrorTable;
-	static { // load message values from bundle file
-		NLS.initializeMessages("com.hilotec.elexis.messwerte.v2.views.messages", //$NON-NLS-1$
-				Messages.class);
-	}
 }

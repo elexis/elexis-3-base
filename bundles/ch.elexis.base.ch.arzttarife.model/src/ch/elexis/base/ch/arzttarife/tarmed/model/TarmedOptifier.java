@@ -145,6 +145,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 					if (!intermediateResult.isOK()) {
 						result.addMessage(SEVERITY.WARNING, intermediateResult.toString(), result.get());
 						return result;
+					} else {
+						result = intermediateResult;
 					}
 				}
 				return result;

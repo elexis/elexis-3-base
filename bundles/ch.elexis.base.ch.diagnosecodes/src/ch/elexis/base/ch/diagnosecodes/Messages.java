@@ -11,13 +11,13 @@ package ch.elexis.base.ch.diagnosecodes;
 
 import org.eclipse.osgi.util.NLS;
 
-public class Messages{
-    public static String ICDCodeSelectorFactory_couldntCreate = ch.elexis.core.l10n.Messages.ICDCodeSelectorFactory_couldntCreate;
-    public static String ICDCodeSelectorFactory_errorLoading = ch.elexis.core.l10n.Messages.ICDCodeSelectorFactory_errorLoading;
-    public static String ICDImporter_createTable = ch.elexis.core.l10n.Messages.ICDImporter_createTable;
-    public static String ICDImporter_enterDirectory = ch.elexis.core.l10n.Messages.ICDImporter_enterDirectory;
-    public static String ICDImporter_icdImport = ch.elexis.core.l10n.Messages.ICDImporter_icdImport;
-    public static String ICDImporter_readCodes = ch.elexis.core.l10n.Messages.ICDImporter_readCodes;
-    public static String TICodeDetail_fulltext = ch.elexis.core.l10n.Messages.TICodeDetail_fulltext;
+public class Messages {
+	public static String ICDCodeSelectorFactory_couldntCreate = ch.elexis.core.l10n.Messages.ICDCodeSelectorFactory_couldntCreate;
+	public static String ICDCodeSelectorFactory_errorLoading = ch.elexis.core.l10n.Messages.ICDCodeSelectorFactory_errorLoading;
+	public static String ICDImporter_createTable = ch.elexis.core.l10n.Messages.ICDImporter_createTable;
+	public static String ICDImporter_enterDirectory = ch.elexis.core.l10n.Messages.ICDImporter_enterDirectory;
+	public static String ICDImporter_icdImport = ch.elexis.core.l10n.Messages.ICDImporter_icdImport;
+	public static String ICDImporter_readCodes = ch.elexis.core.l10n.Messages.ICDImporter_readCodes;
+	public static String TICodeDetail_fulltext = ch.elexis.core.l10n.Messages.TICodeDetail_fulltext;
 
 }

@@ -12,12 +12,12 @@ package at.medevit.elexis.medietikette;
 
 import org.eclipse.osgi.util.NLS;
 
-public class Messages{
-    public static String DataAccessor_Description = ch.elexis.core.l10n.Messages.DataAccessor_Description;
-    public static String DataAccessor_Name = ch.elexis.core.l10n.Messages.DataAccessor_Name;
-    public static String PrintMediEtiketteUi_DialogMessage = ch.elexis.core.l10n.Messages.PrintMediEtiketteUi_DialogMessage;
-    public static String PrintMediEtiketteUi_DialogTitel = ch.elexis.core.l10n.Messages.PrintMediEtiketteUi_DialogTitel;
-    public static String PrintMediEtiketteUi_PrintError = ch.elexis.core.l10n.Messages.Printing_Error_Check_Settings;
-    public static String PrintMediEtiketteUi_TemplateName = ch.elexis.core.l10n.Messages.PrintMediEtiketteUi_TemplateName;
+public class Messages {
+	public static String DataAccessor_Description = ch.elexis.core.l10n.Messages.DataAccessor_Description;
+	public static String DataAccessor_Name = ch.elexis.core.l10n.Messages.DataAccessor_Name;
+	public static String PrintMediEtiketteUi_DialogMessage = ch.elexis.core.l10n.Messages.PrintMediEtiketteUi_DialogMessage;
+	public static String PrintMediEtiketteUi_DialogTitel = ch.elexis.core.l10n.Messages.PrintMediEtiketteUi_DialogTitel;
+	public static String PrintMediEtiketteUi_PrintError = ch.elexis.core.l10n.Messages.Printing_Error_Check_Settings;
+	public static String PrintMediEtiketteUi_TemplateName = ch.elexis.core.l10n.Messages.PrintMediEtiketteUi_TemplateName;
 
 }

@@ -41,7 +41,7 @@ public class Messages{
     public static String ESRRecordDialog_stornoESR = ch.elexis.core.l10n.Messages.ESRRecordDialog_stornoESR;
     public static String ESRRecordDialog_vESRForBill = ch.elexis.core.l10n.Messages.Invoice_VESR_for_RP;
     public static String ESRRecordDialog_warningEditing = ch.elexis.core.l10n.Messages.ESRRecordDialog_warningEditing;
-    public static String ESRView2_accountedDate = ch.elexis.core.l10n.Messages.Invoice_billed;
+    public static String ESRView2_accountedDate = ch.elexis.core.l10n.Messages.InvoiceState_BILLED;
     public static String ESRView2_addedDate = ch.elexis.core.l10n.Messages.Invoice_date_paid;
     public static String ESRView2_amount = ch.elexis.core.l10n.Messages.ESRView2_amount;
     public static String ESRView2_billNumber = ch.elexis.core.l10n.Messages.ESRView2_billNumber;

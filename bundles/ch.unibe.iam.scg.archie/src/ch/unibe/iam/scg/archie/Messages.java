@@ -79,9 +79,9 @@ public class Messages{
     public static String MALE = ch.elexis.core.l10n.Messages.MALE;
     public static String NO_CHART_MODEL = ch.elexis.core.l10n.Messages.NO_CHART_MODEL;
     public static String NO_PLUGIN_SELECTED = ch.elexis.core.l10n.Messages.NO_PLUGIN_SELECTED;
-    public static String OPEN = ch.elexis.core.l10n.Messages.Core_Is_Open;
+    public static String OPEN = ch.elexis.core.l10n.Messages.InvoiceState_OPEN;
     public static String OTHER = ch.elexis.core.l10n.Messages.Core_Other;
-    public static String PAID = ch.elexis.core.l10n.Messages.Invoice_Paid;
+    public static String PAID = ch.elexis.core.l10n.Messages.InvoiceState_PAID;
     public static String PATIENTS = ch.elexis.core.l10n.Messages.Core_Patients;
     public static String PERSPECTIVE = ch.elexis.core.l10n.Messages.Core_Perspective;
     public static String PERSPECTIVE_OPEN = ch.elexis.core.l10n.Messages.PERSPECTIVE_OPEN;

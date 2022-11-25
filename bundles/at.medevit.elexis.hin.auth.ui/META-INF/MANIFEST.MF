@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: HIN Auth Ui
+Bundle-SymbolicName: at.medevit.elexis.hin.auth.ui
+Bundle-Version: 1.0.0.qualifier
+Import-Package: org.eclipse.swt.program
+Require-Bundle: at.medevit.elexis.hin.auth.core;bundle-version="1.0.0"
+Bundle-Vendor: medevit.at
+Automatic-Module-Name: at.medevit.elexis.hin.auth.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-17

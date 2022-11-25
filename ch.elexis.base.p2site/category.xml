@@ -259,6 +259,9 @@
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>
+   <bundle id="at.medevit.elexis.hin.auth.core">
+      <category name="libraries"/>
+   </bundle>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

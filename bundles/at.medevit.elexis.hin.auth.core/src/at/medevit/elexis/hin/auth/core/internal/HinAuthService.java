@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
@@ -31,14 +33,19 @@ public class HinAuthService implements IHinAuthService {
 	@Reference
 	private IConfigService configService;
 
+	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policyOption = ReferencePolicyOption.GREEDY)
+	private IHinAuthUi authUi;
+
+	private boolean useQueryParam = false;
+
 	@Override
-	public Optional<String> getToken(Map<String, Object> parameters) {
-		String tokenGroup = (String) parameters.get(Parameters.TOKEN_GROUP.name());
+	public Optional<String> getToken(Map<Parameters, Object> parameters) {
+		String tokenGroup = (String) parameters.get(Parameters.TOKEN_GROUP);
 		if (StringUtils.isNotBlank(tokenGroup)) {
 			Optional<String> existingToken = validateToken(
 					configService.getActiveMandator(IHinAuthService.PREF_TOKEN + tokenGroup, null), tokenGroup);
-			if (existingToken.isEmpty() && (parameters.get(Parameters.UI.name()) instanceof IHinAuthUi)) {
-				return getToken(tokenGroup, (IHinAuthUi) parameters.get(Parameters.UI.name()));
+			if (existingToken.isEmpty() && authUi != null) {
+				return getToken(tokenGroup, authUi);
 			} else if (existingToken.isPresent()) {
 				return existingToken;
 			}
@@ -64,7 +71,7 @@ public class HinAuthService implements IHinAuthService {
 	private Optional<String> getAccessToken(String tokenGroup, String authCode, String oauthRestUrl) {
 		Map<String, String> parameters = new HashMap<>();
 		parameters.put("grant_type", "authorization_code");
-		parameters.put("code", "authCode");
+		parameters.put("code", authCode);
 		parameters.put("redirect_uri", "");
 		parameters.put("client_id", getClientId());
 		parameters.put("client_secret", getClientSecret());
@@ -75,7 +82,7 @@ public class HinAuthService implements IHinAuthService {
 
 		HttpClient client = HttpClient.newHttpClient();
 
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(oauthRestUrl))
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(oauthRestUrl + "GetAccessToken"))
 				.headers("Content-Type", "application/x-www-form-urlencoded")
 				.POST(HttpRequest.BodyPublishers.ofString(form)).build();
 
@@ -86,13 +93,14 @@ public class HinAuthService implements IHinAuthService {
 				@SuppressWarnings("rawtypes")
 				Map map = gson.fromJson(response.body().toString(), Map.class);
 				String token = (String) map.get("access_token");
-				Integer expiresInSeconds = (Integer) map.get("expires_in");
+				Double expiresInSeconds = (Double) map.get("expires_in");
 				configService.setActiveMandator(IHinAuthService.PREF_TOKEN + tokenGroup, token);
-				Long expires = (Long) System.currentTimeMillis() + (expiresInSeconds * 1000);
+				Long expires = (Long) System.currentTimeMillis() + (expiresInSeconds.longValue() * 1000);
 				configService.setActiveMandator(IHinAuthService.PREF_TOKEN_EXPIRES + tokenGroup,
 						Long.toString(expires));
 				LoggerFactory.getLogger(getClass())
 						.info("Got access token for [" + tokenGroup + "] expires [" + Long.toString(expires) + "]");
+				return Optional.of(token);
 			} else {
 				LoggerFactory.getLogger(getClass()).error("Getting access token failed [" + response.statusCode() + " "
 						+ response.body().toString() + "]");
@@ -105,8 +113,22 @@ public class HinAuthService implements IHinAuthService {
 	}
 
 	private Optional<String> getAuthCode(String tokenGroup, IHinAuthUi iHinAuthUi) {
-		iHinAuthUi.openBrowser(getQueryParamUrl(tokenGroup));
+		if (useQueryParam) {
+			iHinAuthUi.openBrowser(getQueryParamUrl(tokenGroup));
+		} else {
+			iHinAuthUi.openBrowser(getWebappUrl(tokenGroup));
+			return iHinAuthUi.openInputDialog("HIN oAuth Token",
+					"Bitte geben Sie den oAuth Code von der HIN Webseite hier ein.");
+		}
 		return Optional.empty();
+	}
+
+	private String getWebappUrl(String tokenGroup) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(configService.get(PREF_WEBAPPBASEURL, "http://apps.hin.ch/#app=HinCredMgrOAuth;"));
+		sb.append("tokenGroup=");
+		sb.append(URLEncoder.encode(tokenGroup, StandardCharsets.UTF_8));
+		return sb.toString();
 	}
 
 	private String getQueryParamUrl(String tokenGroup) {
@@ -165,4 +187,15 @@ public class HinAuthService implements IHinAuthService {
 		return Optional.empty();
 	}
 
+	@Override
+	public Optional<String> handleException(Exception ex, Map<Parameters, Object> parameters) {
+		if (ex.getMessage().contains("HTTP response code: 401")) {
+			String tokenGroup = (String) parameters.get(Parameters.TOKEN_GROUP);
+			LoggerFactory.getLogger(getClass()).info("Got HTTP 401 invalidating token for [" + tokenGroup + "]");
+			configService.setActiveMandator(IHinAuthService.PREF_TOKEN + tokenGroup, null);
+			configService.setActiveMandator(IHinAuthService.PREF_TOKEN_EXPIRES + tokenGroup, null);
+			return Optional.of("HIN oAuth token für [" + tokenGroup + "] nicht mehr gültig.");
+		}
+		return Optional.empty();
+	}
 }

@@ -13,7 +13,7 @@ public interface IHinAuthService {
 	public static String PREF_TOKEN_EXPIRES = "hin/auth/tokenexpires/"; //$NON-NLS-1$
 
 	public enum Parameters {
-		TOKEN_GROUP, UI
+		TOKEN_GROUP
 	}
 
 	/**
@@ -24,6 +24,18 @@ public interface IHinAuthService {
 	 * @param parameters
 	 * @return
 	 */
-	public Optional<String> getToken(Map<String, Object> parameters);
+	public Optional<String> getToken(Map<Parameters, Object> parameters);
+
+	/**
+	 * Call this method to inform the {@link IHinAuthService} about a exception
+	 * occurred accessing a web service using a token from the
+	 * {@link IHinAuthService}.
+	 * 
+	 * @param ex
+	 * @param parameters
+	 * 
+	 * @return
+	 */
+	public Optional<String> handleException(Exception ex, Map<Parameters, Object> parameters);
 
 }

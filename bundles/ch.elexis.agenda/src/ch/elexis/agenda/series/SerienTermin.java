@@ -293,6 +293,9 @@ public class SerienTermin {
 		if (StringUtils.isNotBlank(status)) {
 			t.setStatus(status);
 		}
+		if (StringUtils.isNotBlank(rootTermin.getGrund())) {
+			t.setGrund(rootTermin.getGrund());
+		}
 
 		System.out.println("writing subsequent date entry " + endTime.dump());
 	}

@@ -1,12 +1,8 @@
 package at.medevit.elexis.agenda.ui.function;
 
-import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import com.equo.chromium.swt.Browser;
 import com.google.gson.Gson;
@@ -19,20 +15,21 @@ public class LoadResourcesFunction extends AbstractBrowserFunction {
 	private IAgendaComposite agendaComposite;
 	private Gson gson;
 
-	private Supplier<TreeSet<Resource>> supplier;
-
 	public LoadResourcesFunction(Browser browser, String name, IAgendaComposite agendaComposite) {
 		super(browser, name);
 		this.agendaComposite = agendaComposite;
 		gson = new GsonBuilder().create();
-		supplier = () -> new TreeSet<Resource>(Comparator.comparing(Resource::getTitle));
 	}
 
 	@Override
 	public Object function(Object[] arguments) {
 		Set<String> selectedResources = agendaComposite.getSelectedResources();
-		SortedSet<Resource> _selectedResources = selectedResources.stream().map(e -> new Resource(e, e))
-				.collect(Collectors.toCollection(supplier));
+		Set<Resource> _selectedResources = new LinkedHashSet<Resource>();
+		int order = 0;
+		for (String selectedResource : selectedResources) {
+			_selectedResources.add(new Resource(selectedResource, selectedResource, order));
+			order++;
+		}
 		String json = gson.toJson(_selectedResources);
 		return json;
 	}
@@ -41,14 +38,13 @@ public class LoadResourcesFunction extends AbstractBrowserFunction {
 
 		private String id;
 		private String title;
+		@SuppressWarnings("unused")
+		private int order;
 
-		public Resource(String id, String title) {
+		public Resource(String id, String title, int order) {
 			this.id = id;
 			this.title = title;
-		}
-
-		public String getTitle() {
-			return title;
+			this.order = order;
 		}
 
 		@Override

@@ -3,7 +3,7 @@ package at.medevit.elexis.agenda.ui.composite;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -189,7 +189,7 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 
 	@Override
 	public Set<String> getSelectedResources() {
-		return new HashSet<String>(selectedResources);
+		return new LinkedHashSet<String>(selectedResources);
 	}
 
 	@Override

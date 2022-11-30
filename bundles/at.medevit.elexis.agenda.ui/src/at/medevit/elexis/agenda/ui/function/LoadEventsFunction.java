@@ -2,7 +2,7 @@ package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +43,7 @@ public class LoadEventsFunction extends AbstractBrowserFunction {
 
 	private Gson gson;
 
-	private Set<String> resources = new HashSet<String>();
+	private Set<String> resources = new LinkedHashSet<>();
 
 	protected ScriptingHelper scriptingHelper;
 

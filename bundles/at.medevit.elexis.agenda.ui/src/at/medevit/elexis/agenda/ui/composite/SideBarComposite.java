@@ -167,7 +167,6 @@ public class SideBarComposite extends Composite {
 						} else {
 							selectedResources.remove(((Button) e.getSource()).getText());
 						}
-						agendaComposite.setSelectedResources(selectedResources);
 						saveSelectedResources();
 					}
 				}
@@ -400,6 +399,7 @@ public class SideBarComposite extends Composite {
 			}
 			sb.append(resource);
 		}
+		System.out.println(sb.toString());
 		saveConfigurationString("selectedResources", sb.toString()); //$NON-NLS-1$
 	}
 

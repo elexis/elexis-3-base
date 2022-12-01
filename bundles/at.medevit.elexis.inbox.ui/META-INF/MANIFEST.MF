@@ -13,3 +13,4 @@ Export-Package: at.medevit.elexis.inbox.ui.part.model,
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/at.medevit.elexis.inbox.ui.InboxModelServiceHolder.xml,
  OSGI-INF/at.medevit.elexis.inbox.ui.InboxServiceHolder.xml
+Import-Package: javax.inject

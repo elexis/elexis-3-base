@@ -3,10 +3,13 @@ package at.medevit.elexis.outbox.ui.part;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.Command;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -45,6 +48,7 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.util.CoreUiUtil;
 
 public class OutboxView extends ViewPart {
 
@@ -265,5 +269,12 @@ public class OutboxView extends ViewPart {
 
 	public TreeViewer getTreeViewer() {
 		return viewer;
+	}
+
+	@Optional
+	@Inject
+	public void setFixLayout(MPart part,
+			@Named(ch.elexis.core.constants.Preferences.USR_FIX_LAYOUT) boolean currentState) {
+		CoreUiUtil.updateFixLayout(part, currentState);
 	}
 }

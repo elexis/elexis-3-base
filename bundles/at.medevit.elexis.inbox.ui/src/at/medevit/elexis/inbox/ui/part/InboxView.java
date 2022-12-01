@@ -12,7 +12,13 @@ package at.medevit.elexis.inbox.ui.part;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.Command;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -67,6 +73,7 @@ import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
@@ -384,5 +391,12 @@ public class InboxView extends ViewPart {
 
 	public CheckboxTreeViewer getCheckboxTreeViewer() {
 		return viewer;
+	}
+
+	@Optional
+	@Inject
+	public void setFixLayout(MPart part,
+			@Named(ch.elexis.core.constants.Preferences.USR_FIX_LAYOUT) boolean currentState) {
+		CoreUiUtil.updateFixLayout(part, currentState);
 	}
 }

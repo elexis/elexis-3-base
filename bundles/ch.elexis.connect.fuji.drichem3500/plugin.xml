@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.connect.fuji.drichem3500.Preferences"
+            id="ch.elexis.connect.fuji-drichem-prefs"
+            name="Fuji Dri-Chem">
+      </page>
+   </extension>
+   <extension
+         point="ch.elexis.core.ui.LaborDatenImport">
+      <Importer
+            ToolbarAction="ch.elexis.connect.fuji.drichem3500.ConnectAction"
+            name="Fuji Dri-Chem 3500">
+      </Importer>
+   </extension>
+
+</plugin>

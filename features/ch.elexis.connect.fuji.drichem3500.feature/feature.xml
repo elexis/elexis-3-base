@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.elexis.connect.fuji.drichem3500.feature"
+      label="Elexis connector für Fuji Dri-Chem 3500 und 4000"
+      version="3.0.100.qualifier"
+      provider-name="medelexis.ch">
+
+   <description url="http://www.medelexis.ch">
+      Verbindung des Fuji Dri Chem 3500 Analyzers mit Elexis (Kompatibel mit Dri-Chem 4000).
+      Mehr Info unter http://wiki.elexis.info/ch.medelexis.application.feature.feature.group
+   </description>
+
+   <copyright>
+      Medelexis AG
+   </copyright>
+
+   <license>
+      Proprietär
+   </license>
+
+   <plugin
+         id="ch.elexis.connect.fuji.drichem3500"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

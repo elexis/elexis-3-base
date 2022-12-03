@@ -90,6 +90,7 @@
     <module>ch.elexis.buchhaltung.basis</module>
     <module>ch.elexis.covid.cert</module>
     <module>ch.elexis.connect.afinion</module>
+    <module>ch.elexis.connect.fuji.drichem3500</module>
     <module>ch.elexis.connect.mythic</module>
     <module>ch.elexis.connect.reflotron.v2</module>
     <module>ch.elexis.connect.sysmex</module>

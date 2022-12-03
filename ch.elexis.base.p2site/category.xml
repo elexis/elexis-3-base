@@ -4,6 +4,9 @@
    <feature url="features/ch.elexis.base.ch.feature_0.0.0.jar" id="ch.elexis.base.ch.feature" version="0.0.0">
       <category name="basepackages"/>
    </feature>
+   <feature url="features/ch.elexis.connect.fuji.drichem3500.feature_0.0.0.jar" id="ch.elexis.connect.fuji.drichem3500.feature" version="0.0.0">
+      <category name="labinterfaces"/>
+   </feature>
    <feature url="features/ch.elexis.connect.reflotron.v2.feature_0.0.0.jar" id="ch.elexis.connect.reflotron.v2.feature" version="0.0.0">
       <category name="labinterfaces"/>
    </feature>

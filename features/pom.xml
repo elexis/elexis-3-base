@@ -39,6 +39,7 @@
     <module>ch.elexis.base.solr.feature</module>
     <module>ch.elexis.buchhaltung.basis.feature</module>
     <module>ch.elexis.connect.afinion.feature</module>
+    <module>ch.elexis.connect.fuji.drichem3500.feature</module>
     <module>ch.elexis.connect.mythic.feature</module>
     <module>ch.elexis.connect.reflotron.v2.feature</module>
     <module>ch.elexis.connect.sysmex.feature</module>

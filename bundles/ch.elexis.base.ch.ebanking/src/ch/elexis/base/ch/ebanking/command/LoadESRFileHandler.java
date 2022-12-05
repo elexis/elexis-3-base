@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.commands.AbstractHandler;
@@ -94,9 +93,9 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 											ESRFile esrf = new ESRFile();
 											Result<List<ESRRecord>> result = esrf.read(esrFile, monitor);
 											if (result.isOK()) {
-												CompletableFuture
-														.runAsync(new ESRRecordsRunnable(monitor, result.get()))
-														.thenRunAsync(() -> updateEsrView(event));
+												ESRRecordsRunnable recordsRunnable = new ESRRecordsRunnable(monitor,
+														result.get());
+												recordsRunnable.run();
 												if (monitor.isCanceled()) {
 													break;
 												}
@@ -105,6 +104,7 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 											}
 										}
 									} finally {
+										updateEsrView(event);
 										if (tmpDir != null) {
 											for (File file : tmpDir.listFiles()) {
 												file.delete();

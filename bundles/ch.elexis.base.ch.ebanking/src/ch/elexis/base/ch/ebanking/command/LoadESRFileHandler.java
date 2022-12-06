@@ -45,7 +45,7 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		FileDialog fld = new FileDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell(), SWT.OPEN | SWT.MULTI);
 		fld.setText(Messages.ESRView_selectESR);
-		fld.setFilterExtensions(new String[] { "*.xml;*.zip" });
+		fld.setFilterExtensions(new String[] { "*.xml;*.zip;*.v11" });
 		if (fld.open() != null) {
 			String filepath = fld.getFilterPath();
 			String[] filenames = fld.getFileNames();
@@ -84,7 +84,8 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 													ExHandler.handle(e);
 												}
 											}
-										} else if ("xml".equalsIgnoreCase(extension)) {
+										} else if ("xml".equalsIgnoreCase(extension)
+												|| "v11".equalsIgnoreCase(extension)) {
 											esrFiles.add(file);
 										}
 										for (File esrFile : esrFiles) {

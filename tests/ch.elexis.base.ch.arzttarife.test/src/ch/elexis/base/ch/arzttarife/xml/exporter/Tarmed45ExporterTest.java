@@ -21,11 +21,14 @@ import ch.elexis.base.ch.arzttarife.test.TestData.TestSzenario;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.services.holder.InvoiceServiceHolder;
 import ch.elexis.data.Verrechnet;
+import ch.fd.invoice450.request.BalanceTGType;
 import ch.fd.invoice450.request.PatientAddressType;
 import ch.fd.invoice450.request.RequestType;
 import ch.fd.invoice450.request.VatRateType;
 import ch.fd.invoice450.request.VatType;
+import ch.rgw.tools.Money;
 
 public class Tarmed45ExporterTest {
 
@@ -109,5 +112,48 @@ public class Tarmed45ExporterTest {
 		PatientAddressType patient = invoiceRequest.getPayload().getBody().getTiersGarant().getPatient();
 		assertEquals(2, patient.getPerson().getTelecom().getPhone().size());
 		assertEquals("444-444 44 44", patient.getPerson().getTelecom().getPhone().get(0));
+	}
+
+	@Test
+	public void doExportAmountsTest() throws IOException {
+		TestSzenario szenario = TestData.getTestSzenarioInstance();
+		assertNotNull(szenario);
+		assertNotNull(szenario.getInvoices());
+		assertFalse(szenario.getInvoices().isEmpty());
+
+		List<IInvoice> invoices = szenario.getInvoices();
+		IInvoice invoice = invoices.get(0);
+
+		Money openAmount = invoice.getOpenAmount();
+		Money totalAmount = invoice.getTotalAmount();
+		Money demandAmount = invoice.getDemandAmount();
+		assertTrue(demandAmount.isZero());
+		Money payedAmount = invoice.getPayedAmount();
+		assertTrue(payedAmount.isZero());
+
+		InvoiceServiceHolder.get().addPayment(invoice, new Money(-2000), "test demand");
+		InvoiceServiceHolder.get().addPayment(invoice, new Money(-1000),
+				ch.elexis.core.l10n.Messages.Rechnung_Mahngebuehr1);
+		InvoiceServiceHolder.get().addPayment(invoice, new Money(500), "test payment");
+
+		assertEquals(2500, invoice.getOpenAmount().subtractMoney(openAmount).getCents());
+		assertEquals(500, invoice.getPayedAmount().getCents());
+		assertEquals(0, invoice.getTotalAmount().subtractMoney(totalAmount).getCents());
+		assertEquals(3000, invoice.getDemandAmount().getCents());
+
+		Tarmed45Exporter exporter = new Tarmed45Exporter();
+
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		assertTrue(exporter.doExport(invoice, output, IRnOutputter.TYPE.ORIG));
+
+		RequestType invoiceRequest = TarmedJaxbUtil
+				.unmarshalInvoiceRequest450(new ByteArrayInputStream(output.toByteArray()));
+		assertNotNull(invoiceRequest);
+		assertNotNull(invoiceRequest.getPayload().getBody().getTiersGarant().getBalance());
+		BalanceTGType balance = invoiceRequest.getPayload().getBody().getTiersGarant().getBalance();
+		assertEquals(invoice.getTotalAmount().doubleValue(), balance.getAmount(), 0.03);
+		assertEquals(invoice.getOpenAmount().doubleValue(), balance.getAmountDue(), 0.03);
+		assertEquals(invoice.getPayedAmount().doubleValue(), balance.getAmountPrepaid(), 0.03);
+		assertEquals(invoice.getDemandAmount().doubleValue(), balance.getAmountReminder(), 0.03);
 	}
 }

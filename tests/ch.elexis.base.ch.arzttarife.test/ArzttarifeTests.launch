@@ -47,6 +47,7 @@
         <setEntry value="ch.qos.logback.classic@default:default"/>
         <setEntry value="ch.qos.logback.core@default:default"/>
         <setEntry value="ch.qos.logback.slf4j@default:false"/>
+        <setEntry value="com.eclipsesource.jaxrs.consumer@default:default"/>
         <setEntry value="com.equo.chromium.cef.gtk.linux.x86_64@default:false"/>
         <setEntry value="com.equo.chromium@default:default"/>
         <setEntry value="com.google.gson@default:default"/>
@@ -63,6 +64,7 @@
         <setEntry value="info.elexis.target.jaxws.core@default:default"/>
         <setEntry value="jakarta.persistence@default:default"/>
         <setEntry value="jakarta.ws.rs-api@default:default"/>
+        <setEntry value="jakarta.xml.bind-api@default:default"/>
         <setEntry value="javax.activation@default:default"/>
         <setEntry value="javax.annotation@default:default"/>
         <setEntry value="javax.inject@default:default"/>
@@ -77,14 +79,16 @@
         <setEntry value="org.apache.commons.commons-beanutils@default:default"/>
         <setEntry value="org.apache.commons.commons-collections4@default:default"/>
         <setEntry value="org.apache.commons.commons-compress@default:default"/>
+        <setEntry value="org.apache.commons.commons-dbcp2@default:default"/>
         <setEntry value="org.apache.commons.commons-io@default:default"/>
         <setEntry value="org.apache.commons.commons-pool2@default:default"/>
         <setEntry value="org.apache.commons.jexl@default:default"/>
         <setEntry value="org.apache.commons.jxpath@default:default"/>
         <setEntry value="org.apache.commons.lang3@default:default"/>
-        <setEntry value="org.apache.commons.logging*1.2.0.v20180409-1502@default:default"/>
+        <setEntry value="org.apache.commons.logging*1.2.0@default:default"/>
         <setEntry value="org.apache.commons.math3@default:default"/>
         <setEntry value="org.apache.felix.scr@1:true"/>
+        <setEntry value="org.apache.geronimo.specs.geronimo-jta_1.1_spec@default:default"/>
         <setEntry value="org.apache.httpcomponents.httpclient@default:default"/>
         <setEntry value="org.apache.httpcomponents.httpcore@default:default"/>
         <setEntry value="org.apache.poi.ooxml.schemas@default:default"/>
@@ -169,7 +173,6 @@
         <setEntry value="org.eclipse.persistence.jpa.jpql@default:default"/>
         <setEntry value="org.eclipse.persistence.jpa@default:default"/>
         <setEntry value="org.eclipse.persistence.oracle@default:false"/>
-        <setEntry value="org.eclipse.swt.cocoa.macosx.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt.gtk.linux.x86_64@default:false"/>
         <setEntry value="org.eclipse.swt.nl_de@default:false"/>
         <setEntry value="org.eclipse.swt.nl_fr@default:false"/>
@@ -205,6 +208,7 @@
         <setEntry value="org.keycloak.keycloak-authz-client@default:default"/>
         <setEntry value="org.keycloak.keycloak-common@default:default"/>
         <setEntry value="org.keycloak.keycloak-core@default:default"/>
+        <setEntry value="org.osgi.framework.system.packages.extra@default:default"/>
         <setEntry value="org.osgi.service.cm@default:default"/>
         <setEntry value="org.osgi.service.component@default:default"/>
         <setEntry value="org.osgi.service.device@default:default"/>
@@ -232,8 +236,6 @@
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
         <setEntry value="at.medevit.elexis.tarmed.model@default:default"/>
-        <setEntry value="at.medevit.logback.mattermost@default:false"/>
-        <setEntry value="at.medevit.logback.pushnotification@default:false"/>
         <setEntry value="ch.elexis.base.ch.arzttarife.model@default:default"/>
         <setEntry value="ch.elexis.base.ch.arzttarife.test@default:false"/>
         <setEntry value="ch.elexis.base.ch.arzttarife@default:default"/>
@@ -261,7 +263,6 @@
         <setEntry value="ch.elexis.core.services.test.ws@default:default"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
-        <setEntry value="ch.elexis.core.test.logging@default:false"/>
         <setEntry value="ch.elexis.core.ui.contacts@default:default"/>
         <setEntry value="ch.elexis.core.ui.dbcheck@default:default"/>
         <setEntry value="ch.elexis.core.ui.e4@default:default"/>
@@ -276,12 +277,7 @@
         <setEntry value="ch.elexis.ebanking@default:default"/>
         <setEntry value="ch.medelexis.medication.ui@default:false"/>
         <setEntry value="ch.rgw.utility@default:default"/>
-        <setEntry value="com.eclipsesource.jaxrs.consumer@default:default"/>
-        <setEntry value="jakarta.xml.bind-api@default:false"/>
-        <setEntry value="org.apache.commons.commons-dbcp2@default:default"/>
-        <setEntry value="org.apache.geronimo.specs.geronimo-jta_1.1_spec@default:default"/>
         <setEntry value="org.iatrix.help.wiki@default:default"/>
-        <setEntry value="org.osgi.framework.system.packages.extra@default:false"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <stringAttribute key="testApplication" value="ch.elexis.core.application.ElexisApp"/>

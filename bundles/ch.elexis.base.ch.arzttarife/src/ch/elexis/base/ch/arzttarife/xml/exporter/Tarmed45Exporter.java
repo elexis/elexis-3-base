@@ -985,6 +985,10 @@ public class Tarmed45Exporter {
 			bodyType.setDocuments(getDocuments(invoice));
 		}
 
+		if (StringUtils.isNotBlank(invoice.getRemark())) {
+			bodyType.setRemark(invoice.getRemark());
+		}
+
 		return bodyType;
 	}
 

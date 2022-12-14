@@ -484,7 +484,7 @@
 						<fo:block text-align="left" font-size="7px" font-weight="bold"
 							font-family="tahoma,arial,helvetica,sans-serif">
 							<xsl:if test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_payant/invoice:balance/@amount_reminder) > 0">
-							Mahngebühr:
+							Gebühren:
 							</xsl:if>
 						</fo:block>
 					</fo:table-cell>
@@ -776,7 +776,7 @@
 						<fo:block text-align="left" font-size="7px" font-weight="bold"
 							font-family="tahoma,arial,helvetica,sans-serif">
 							<xsl:if test="string-length(/invoice:request/invoice:payload/invoice:body/invoice:tiers_garant/invoice:balance/@amount_reminder) > 0">
-							Mahngebühr:
+							Gebühren:
 							</xsl:if>
 						</fo:block>
 					</fo:table-cell>

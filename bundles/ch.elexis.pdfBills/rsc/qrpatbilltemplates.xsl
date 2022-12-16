@@ -498,14 +498,12 @@
 			</xsl:call-template>
 		</fo:block>
 		<fo:block>
-			Behandlungen von:
+			Behandlungszeitraum:
 			<xsl:call-template name="FormatDate">
 				<xsl:with-param name="DateTime"
 					select="/invoice:request/invoice:payload/invoice:body/invoice:treatment/@date_begin" />
 			</xsl:call-template>
-		</fo:block>
-		<fo:block>
-			Behandlungen bis:
+			-
 			<xsl:call-template name="FormatDate">
 				<xsl:with-param name="DateTime"
 					select="/invoice:request/invoice:payload/invoice:body/invoice:treatment/@date_end" />

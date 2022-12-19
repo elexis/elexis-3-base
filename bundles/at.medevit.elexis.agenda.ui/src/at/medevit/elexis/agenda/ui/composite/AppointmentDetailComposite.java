@@ -168,6 +168,7 @@ public class AppointmentDetailComposite extends Composite {
 			}
 		};
 		txtPatSearch.setData(reloadAsPatient(Optional.ofNullable(appointment.getContact())).orElse(null));
+		txtPatSearch.setTextLimit(80);
 		ControlDecoration controlDecoration = new ControlDecoration(txtPatSearch, SWT.LEFT | SWT.TOP);
 		controlDecoration.setDescriptionText(
 				"Kontakt Suche nach Vorname, Nachname, Geburtsdatum, PatientNr\noder Freitext Eingabe für Termine ohne Kontakt");

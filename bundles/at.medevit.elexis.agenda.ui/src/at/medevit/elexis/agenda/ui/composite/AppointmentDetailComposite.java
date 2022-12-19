@@ -168,6 +168,7 @@ public class AppointmentDetailComposite extends Composite {
 			}
 		};
 		txtPatSearch.setData(reloadAsPatient(Optional.ofNullable(appointment.getContact())).orElse(null));
+		txtPatSearch.setTextLimit(80);
 		ControlDecoration controlDecoration = new ControlDecoration(txtPatSearch, SWT.LEFT | SWT.TOP);
 		controlDecoration.setDescriptionText(Messages.AppointmentDetailComposite_search_contact_via_fields);
 		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()

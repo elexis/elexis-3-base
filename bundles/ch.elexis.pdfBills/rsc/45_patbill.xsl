@@ -87,8 +87,6 @@
 														</fo:block>
 														<xsl:call-template name="patbill_biller_address">
 														</xsl:call-template>
-														Patient: <xsl:call-template name="patbill_patient_info">
-														</xsl:call-template>
 													</fo:block>
 												</fo:table-cell>
 											</fo:table-row>
@@ -105,6 +103,8 @@
 															Rechnungsinformationen
 														</fo:block>
 														<xsl:call-template name="patbill_bill_info">
+														</xsl:call-template>
+														Patient: <xsl:call-template name="patbill_patient_info">
 														</xsl:call-template>
 													</fo:block>
 												</fo:table-cell>

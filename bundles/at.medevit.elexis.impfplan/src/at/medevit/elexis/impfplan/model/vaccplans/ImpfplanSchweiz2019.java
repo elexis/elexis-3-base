@@ -28,7 +28,7 @@ public class ImpfplanSchweiz2019 extends AbstractVaccinationPlan {
 			"780;J07AF/B,J07AM/B,J07BB,J07BK02/E" }; //$NON-NLS-1$
 
 	public ImpfplanSchweiz2019() {
-		super("VACC_CH_2019", "Schweizerischer Impfplan 2019"); //$NON-NLS-1$
+		super("VACC_CH_2019", "Schweizerischer Impfplan 2022"); //$NON-NLS-1$
 		// vaccPlan is needed for initialization only
 		vaccPlan = null;
 	}

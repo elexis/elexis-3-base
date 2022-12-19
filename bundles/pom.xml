@@ -133,10 +133,8 @@
     <module>ch.elexis.stickynotes</module>
     <module>ch.elexis.support.dbshaker</module>
     <module>ch.gpb.elexis.cst</module>
-    <module>ch.medshare.commons</module>
     <module>ch.medshare.connect.abacusjunior</module>
     <module>ch.medshare.elexis_directories</module>
-    <module>ch.medshare.mediport</module>
 	<module>ch.netzkonzept.elexis.medidata</module>
     <module>ch.ngiger.utilities.comm</module>
     <module>ch.novcom.elexis.mednet.plugin</module>

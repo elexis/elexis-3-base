@@ -25,9 +25,6 @@
    <feature url="features/ch.elexis.pdfBills.feature_0.0.0.jar" id="ch.elexis.pdfBills.feature" version="0.0.0">
       <category name="finances"/>
    </feature>
-   <feature url="features/ch.medshare.mediport.feature_0.0.0.jar" id="ch.medshare.mediport.feature" version="0.0.0">
-      <category name="finances"/>
-   </feature>
    <feature url="features/ch.netzkonzept.elexis.medidata.feature_0.0.0.jar" id="ch.netzkonzept.elexis.medidata.feature" version="0.0.0">
       <category name="finances"/>
    </feature>

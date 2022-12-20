@@ -21,7 +21,6 @@ import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.VersionInfo;
 
 /**
  * A Note is an arbitrary Text or BLOB with a name and optional keywords. A Note
@@ -40,29 +39,6 @@ public class Note extends PersistentObject {
 	public static final String FLD_TITLE = "Title"; //$NON-NLS-1$
 	private static final String FLD_PARENT = "Parent"; //$NON-NLS-1$
 	private static final String TABLENAME = "CH_ELEXIS_NOTES"; //$NON-NLS-1$
-	private static final String DBVERSION = "0.3.2"; //$NON-NLS-1$
-
-	/**
-	 * The String that defines the database. Will be used only once at first start
-	 * of this plugin
-	 */
-	private static final String create = "CREATE TABLE " + TABLENAME + " (" + "ID				VARCHAR(25)," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ "lastupdate BIGINT," //$NON-NLS-1$
-			+ "deleted 		CHAR(1) default '0'," + "Parent 		VARCHAR(25)," + "Title			VARCHAR(80)," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ "Date			CHAR(8)," + "Contents		BLOB," + "keywords       VARCHAR(255)," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ "mimetype		VARCHAR(80)," + "refs			TEXT);" + "INSERT INTO " + TABLENAME //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ " (ID,Title,Parent) VALUES('1','" + DBVERSION + "','xxx');"; //$NON-NLS-1$ //$NON-NLS-2$
-
-	/**
-	 * Update to Version 0.31
-	 */
-	private static final String upd031 = "ALTER TABLE " + TABLENAME + " ADD keywords VARCHAR(255);" + "ALTER TABLE " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ TABLENAME + " ADD mimetype VARCHAR(80);"; //$NON-NLS-1$
-
-	/**
-	 * Update to Version 0.32
-	 */
-	private static final String upd032 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * Initaialization: Create the table mappings (@see PersistentObject), check the
@@ -71,25 +47,6 @@ public class Note extends PersistentObject {
 	static {
 		addMapping(TABLENAME, FLD_PARENT, FLD_TITLE, FLD_CONTENTS, "Datum=S:D:Date", FLD_REFS, FLD_KEYWORDS, //$NON-NLS-1$
 				FLD_MIMETYPE);
-		Note start = load("1"); //$NON-NLS-1$
-		if (!start.exists()) {
-			createOrModifyTable(create);
-		} else {
-			VersionInfo vi = new VersionInfo(start.get(FLD_TITLE));
-			if (vi.isOlder(DBVERSION)) {
-				if (vi.isOlder("0.2.0")) { //$NON-NLS-1$
-					getConnection().exec("ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				if (vi.isOlder("0.3.1")) { //$NON-NLS-1$
-					createOrModifyTable(upd031);
-				}
-				if (vi.isOlder("0.3.2")) { //$NON-NLS-1$
-					createOrModifyTable(upd032);
-				}
-
-				start.set(FLD_TITLE, DBVERSION);
-			}
-		}
 	}
 
 	/**

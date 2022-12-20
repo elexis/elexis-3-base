@@ -26,17 +26,6 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 
-//import java.io.ByteArrayInputStream;
-//import java.util.Map;
-//
-//import org.eclipse.jface.dialogs.MessageDialog;
-//
-//import ch.elexis.base.befunde.Messages;
-//import ch.elexis.data.Patient;
-//import ch.elexis.data.PersistentObject;
-//import ch.rgw.tools.ExHandler;
-//import ch.rgw.tools.JdbcLink;
-
 /**
  * Here we define our own data type for our "measurements"-Plugin. The Type is
  * derived from ch.elexis.data.PersistentObject, and thereby the management of

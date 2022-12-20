@@ -6,7 +6,6 @@ import ch.elexis.core.data.interfaces.ICodeElement;
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.CodingSystem;
 import ch.elexis.data.PersistentObject;
-import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.VersionInfo;
 
 public class LoincCode extends PersistentObject implements ICodeElement, ICoding {
@@ -23,40 +22,8 @@ public class LoincCode extends PersistentObject implements ICodeElement, ICoding
 	public static final String FLD_CLASS = "class"; //$NON-NLS-1$
 	public static final String FLD_UNIT = "unit"; //$NON-NLS-1$
 
-	// @formatter:off
-	static final String create =
-			"CREATE TABLE " + TABLENAME + " (" + //$NON-NLS-1$ //$NON-NLS-2$
-			"ID VARCHAR(25) primary key, " + //$NON-NLS-1$
-			"lastupdate BIGINT," + //$NON-NLS-1$
-			"deleted CHAR(1) default '0'," + //$NON-NLS-1$
-
-			"code VARCHAR(128)," + //$NON-NLS-1$
-			"longname TEXT," + //$NON-NLS-1$
-			"shortname VARCHAR(255)," + //$NON-NLS-1$
-			"class VARCHAR(128)," + //$NON-NLS-1$
-			"unit VARCHAR(128)" + //$NON-NLS-1$
-
-			");" + //$NON-NLS-1$
-			"CREATE INDEX loinc1 ON " + TABLENAME + " (" + FLD_CODE + ");" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			"INSERT INTO " + TABLENAME + " (ID," + FLD_CODE + ") VALUES (" + JdbcLink.wrap(VERSIONID) + "," + JdbcLink.wrap(VERSION) + ");" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			"INSERT INTO " + TABLENAME + " (ID," + FLD_CODE + ") VALUES (" + JdbcLink.wrap(VERSIONTOPID) + "," + JdbcLink.wrap("0.0.0") + ");" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-			"INSERT INTO " + TABLENAME + " (ID," + FLD_CODE + ") VALUES (" + JdbcLink.wrap(VERSIONCLINICALID) + "," + JdbcLink.wrap("0.0.0") + ");"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-	// @formatter:on
-
 	static {
 		addMapping(TABLENAME, FLD_CODE, FLD_LONGNAME, FLD_SHORTNAME, FLD_CLASS, FLD_UNIT);
-
-		if (!tableExists(TABLENAME)) {
-			createOrModifyTable(create);
-		} else {
-			LoincCode version = load(VERSIONID);
-			VersionInfo vi = new VersionInfo(version.get(FLD_CODE));
-			if (vi.isOlder(VERSION)) {
-				// we should update eg. with createOrModifyTable(update.sql);
-				// And then set the new version
-				version.set(FLD_CODE, VERSION);
-			}
-		}
 	}
 
 	public LoincCode(String id) {

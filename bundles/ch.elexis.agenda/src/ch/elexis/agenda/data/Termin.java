@@ -12,14 +12,13 @@
 
 package ch.elexis.agenda.data;
 
-import org.apache.commons.lang3.StringUtils;
-import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -48,7 +47,6 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.VersionInfo;
 
 /**
  * Termin-Klasse für Agenda
@@ -83,47 +81,6 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	public static final Cache<String, Boolean> cachedAttributeKeys = CacheBuilder.newBuilder()
 			.expireAfterWrite(30, TimeUnit.SECONDS).build();
 
-	// static final String DEFTYPES="Frei,Reserviert,Normal,Extra,Besuch";
-	// static final String
-	// DEFSTATUS="- ,geplant,eingetroffen,fertig,verpasst,abgesagt";
-	//@formatter:off
-	public static final String createDB = "CREATE TABLE AGNTERMINE("
-		+ "ID              	VARCHAR(127) primary key,"
-		+ "lastupdate 		BIGINT,"
-		+ "PatID			VARCHAR(80),"  // we need that size to be able to import ics files
-		+ "Bereich			VARCHAR(25),"
-		+ "Tag             	CHAR(8),"
-		+ "Beginn          	CHAR(4),"
-		+ "Dauer           	CHAR(4),"
-		+ "Grund           	TEXT,"
-		+ "StatusHistory   	TEXT,"
-		+ "TerminTyp       	VARCHAR(50),"
-		+ "TerminStatus    	VARCHAR(50),"
-		+ "ErstelltVon     	VARCHAR(25),"
-		+ "Angelegt        	VARCHAR(10),"
-		+ "lastedit	    	VARCHAR(10),"
-		+ "PalmID        	INTEGER default 0,"
-		+ "flags           	VARCHAR(10),"
-		+ "deleted         	CHAR(2) default '0',"
-		+ FLD_EXTENSION  +"	TEXT,"
-		+ FLD_LINKGROUP	 +" VARCHAR(50)" + ");"
-		+ "CREATE INDEX it on AGNTERMINE (Tag,Beginn,Bereich);"
-		+ "CREATE INDEX pattern on AGNTERMINE (PatID);"
-		+ "CREATE INDEX agnbereich on AGNTERMINE (Bereich);"
-		+ "INSERT INTO AGNTERMINE (ID, PatId) VALUES (1, '1.2.6');";
-	//@formatter:on
-
-	private static final String upd122 = "ALTER TABLE AGNTERMINE MODIFY TerminTyp VARCHAR(50);" //$NON-NLS-1$
-			+ "ALTER TABLE " + TABLENAME + "+ MODIFY TerminStatus VARCHAR(50);"; //$NON-NLS-1$
-
-	private static final String upd124 = "ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;"; //$NON-NLS-1$
-	private static final String upd125 = "ALTER TABLE AGNTERMINE ADD StatusHistory TEXT;"; //$NON-NLS-1$
-	private static final String upd126 = "ALTER TABLE AGNTERMINE MODIFY linkgroup VARCHAR(50)"; //$NON-NLS-1$
-	private static final String upd127 = "ALTER TABLE AGNTERMINE ADD priority CHAR(1);" //$NON-NLS-1$
-			+ "ALTER TABLE AGNTERMINE ADD caseType CHAR(1);" //$NON-NLS-1$
-			+ "ALTER TABLE AGNTERMINE ADD insuranceType CHAR(1);" //$NON-NLS-1$
-			+ "ALTER TABLE AGNTERMINE ADD treatmentReason CHAR(1);"; //$NON-NLS-1$
-
 	static {
 		addMapping("AGNTERMINE", "BeiWem=Bereich", FLD_PATIENT + "=PatID", FLD_TAG, FLD_BEGINN, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				FLD_DAUER, FLD_GRUND, "Typ=TerminTyp", FLD_TERMINSTATUS + "=TerminStatus", FLD_CREATOR, //$NON-NLS-1$ //$NON-NLS-2$
@@ -142,50 +99,6 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 			TerminStatus = new String[] { "-", Messages.Termin_plannedAppointment //$NON-NLS-1$
 			};
 		}
-		Termin version = load("1"); //$NON-NLS-1$
-		if (version == null || !version.exists()) {
-			init();
-			version = load("1"); // initializes v1.2.6
-		}
-
-		VersionInfo vi = new VersionInfo(version.get(FLD_PATIENT));
-		if (vi.isOlder(VERSION)) {
-			if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
-				if (j.DBFlavor.equalsIgnoreCase("postgresql")) { //$NON-NLS-1$
-					j.exec("ALTER TABLE AGNTERMINE ALTER angelegt TYPE VARCHAR(10);"); //$NON-NLS-1$
-					j.exec("ALTER TABLE AGNTERMINE ALTER lastedit TYPE VARCHAR(10);"); //$NON-NLS-1$
-					j.exec("ALTER TABLE AGNTERMINE ALTER flags TYPE VARCHAR(10);"); //$NON-NLS-1$
-				} else if (j.DBFlavor.equalsIgnoreCase("mysql")) { //$NON-NLS-1$
-					j.exec("ALTER TABLE AGNTERMINE MODIFY angelegt VARCHAR(10);"); //$NON-NLS-1$
-					j.exec("ALTER TABLE AGNTERMINE MODIFY lastedit VARCHAR(10);"); //$NON-NLS-1$
-					j.exec("ALTER TABLE AGNTERMINE MODIFY flags VARCHAR(10);"); //$NON-NLS-1$
-				}
-			}
-			if (vi.isOlder("1.2.1")) { //$NON-NLS-1$
-				if (j.DBFlavor.equalsIgnoreCase("postgresql")) { //$NON-NLS-1$
-					j.exec("ALTER TABLE AGNTERMINE ALTER ID TYPE VARCHAR(127);"); //$NON-NLS-1$
-				} else if (j.DBFlavor.equalsIgnoreCase("mysql")) { //$NON-NLS-1$
-					j.exec("ALTER TABLE AGNTERMINE MODIFY ID VARCHAR(127);"); //$NON-NLS-1$
-				}
-			}
-			if (vi.isOlder("1.2.3")) { //$NON-NLS-1$
-				createOrModifyTable(upd122);
-			}
-			if (vi.isOlder("1.2.4")) { //$NON-NLS-1$
-				createOrModifyTable(upd124);
-			}
-			if (vi.isOlder("1.2.5")) { //$NON-NLS-1$
-				createOrModifyTable(upd125);
-			}
-			if (vi.isOlder("1.2.6")) { //$NON-NLS-1$
-				createOrModifyTable(upd126);
-			}
-			if (vi.isOlder("1.2.7")) { //$NON-NLS-1$
-				createOrModifyTable(upd127);
-			}
-			version.set(FLD_PATIENT, VERSION);
-		}
-
 	}
 
 	// Terminstatus fix
@@ -206,8 +119,6 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	 */
 	public static void init() {
 		try {
-			ByteArrayInputStream bais = new ByteArrayInputStream(createDB.getBytes("UTF-8")); //$NON-NLS-1$
-			j.execScript(bais, true, false);
 			ConfigServiceHolder.setUser(PreferenceConstants.AG_SHOWDELETED + "_default", "0"); //$NON-NLS-1$ //$NON-NLS-2$
 			ConfigServiceHolder.setGlobal(PreferenceConstants.AG_TERMINTYPEN + "_default", //$NON-NLS-1$
 					Messages.Termin_freeLockedNormalExtraVisit);

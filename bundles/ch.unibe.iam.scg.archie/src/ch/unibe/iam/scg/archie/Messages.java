@@ -93,6 +93,8 @@ public class Messages extends NLS {
 	public static String WORKING;
 	public static String CreateChart;
 	public static String RefreshChart;
+	public static String PatientenStamm_DatabaseQuery;
+	public static String PatientenStamm;
 
 	static { // load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

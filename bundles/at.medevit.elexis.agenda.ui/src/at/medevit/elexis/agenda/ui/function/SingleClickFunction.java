@@ -27,14 +27,14 @@ public class SingleClickFunction extends BrowserFunction {
 			IAppointment termin = CoreModelServiceHolder.get().load((String) arguments[0], IAppointment.class)
 					.orElse(null);
 			if (termin != null) {
-				ContextServiceHolder.get().getRootContext().setTyped(termin);
+				ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, termin);
 				if (selectionProvider != null) {
 					selectionProvider.setSelection(new StructuredSelection(termin));
 				}
 				IContact contact = termin.getContact();
 				if (contact != null && contact.isPatient()) {
-					ContextServiceHolder.get()
-							.setActivePatient(CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get());
+					ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
+							CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get());
 				}
 			} else {
 				// the event could not be loaded, trigger refetch

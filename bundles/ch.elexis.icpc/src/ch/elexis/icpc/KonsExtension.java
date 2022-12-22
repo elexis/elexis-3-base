@@ -19,9 +19,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 
 import ch.elexis.core.common.ElexisEventTopics;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
@@ -50,7 +50,7 @@ public class KonsExtension implements IKonsExtension {
 	public boolean doXRef(final String refProvider, final String refID) {
 		IcpcEncounter enc = IcpcModelServiceHolder.get().load(refID, IcpcEncounter.class).orElse(null);
 		if (enc != null) {
-			ContextServiceHolder.get().getRootContext().setTyped(enc);
+			ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, enc);
 		}
 		return true;
 	}

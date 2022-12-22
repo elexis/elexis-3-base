@@ -10,7 +10,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.outbox.ui.part.OutboxView;
 import at.medevit.elexis.outbox.ui.part.model.PatientOutboxElements;
-import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
 public class ActivatePatientCommand extends AbstractHandler implements IHandler {
 
@@ -25,7 +25,8 @@ public class ActivatePatientCommand extends AbstractHandler implements IHandler 
 
 			if (element instanceof PatientOutboxElements) {
 				PatientOutboxElements patElement = (PatientOutboxElements) element;
-				ContextServiceHolder.get().setActivePatient(patElement.getPatient());
+				ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
+						patElement.getPatient());
 			}
 		}
 		return null;

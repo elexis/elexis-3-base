@@ -258,7 +258,7 @@ public class AppointmentDetailComposite extends Composite {
 				Object sel = event.getStructuredSelection().getFirstElement();
 				if (dayBar != null && sel instanceof IAppointment && !sel.equals(appointment)) {
 					reloadAppointment((IAppointment) sel);
-					ContextServiceHolder.get().getRootContext().setTyped(sel);
+					ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, sel);
 				}
 			}
 		});

@@ -8,7 +8,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.text.IRichTextDisplay;
 import ch.elexis.core.ui.util.IKonsExtension;
@@ -41,7 +41,7 @@ public class KonsExtension implements IKonsExtension {
 		Optional<IDocumentHandle> handle = OmnivoreModelServiceHolder.get().load(refID, IDocumentHandle.class);
 		if (handle.isPresent()) {
 			UiUtils.open(handle.get());
-			ContextServiceHolder.get().getRootContext().setTyped(handle.get());
+			ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, handle.get());
 		}
 		return true;
 	}

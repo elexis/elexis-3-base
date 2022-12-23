@@ -16,7 +16,6 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.VersionInfo;
 
 public class Message extends PersistentObject {
 
@@ -26,35 +25,10 @@ public class Message extends PersistentObject {
 	public static final String FLD_TO = "to"; //$NON-NLS-1$
 
 	private static final String TABLENAME = "CH_ELEXIS_MESSAGES"; //$NON-NLS-1$
-	private static final String VERSION = "0.2.0"; //$NON-NLS-1$
-	private static final String createDB = "CREATE TABLE " + TABLENAME + " (" //$NON-NLS-1$//$NON-NLS-2$
-			+ "ID			VARCHAR(25) primary key," + "lastupdate BIGINT," //$NON-NLS-1$ //$NON-NLS-2$
-			+ "deleted		CHAR(1) default '0'," + "origin		VARCHAR(25)," //$NON-NLS-1$ //$NON-NLS-2$
-			+ "destination	VARCHAR(25)," //$NON-NLS-1$
-			+ "dateTime		CHAR(14)," // yyyymmddhhmmss //$NON-NLS-1$
-			+ "msg			TEXT);" + "INSERT INTO " + TABLENAME + " (ID,origin) VALUES ('VERSION','" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			+ VERSION + "');"; //$NON-NLS-1$
 
 	static {
 		addMapping(TABLENAME, FLD_FROM + "=origin", FLD_TO + "=destination", FLD_TIME + "=dateTime", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 				FLD_TEXT + "=msg"); //$NON-NLS-1$
-
-		Message ver = load("VERSION"); //$NON-NLS-1$
-		if (ver.state() < PersistentObject.DELETED) {
-			initialize();
-		} else {
-			VersionInfo vi = new VersionInfo(ver.get(FLD_FROM));
-			if (vi.isOlder(VERSION)) {
-				if (vi.isOlder("0.2.0")) { //$NON-NLS-1$
-					createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"); //$NON-NLS-1$ //$NON-NLS-2$
-					ver.set(FLD_FROM, VERSION);
-				}
-			}
-		}
-	}
-
-	static void initialize() {
-		createOrModifyTable(createDB);
 	}
 
 	public Message(final Anwender an, final String text) {

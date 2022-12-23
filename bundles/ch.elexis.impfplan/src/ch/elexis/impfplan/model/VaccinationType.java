@@ -25,7 +25,6 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.impfplan.controller.ImpfplanController;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.VersionInfo;
 
 public class VaccinationType extends PersistentObject {
 	public static final String RECOMMENDED_AGE = "recommendedAge"; //$NON-NLS-1$
@@ -39,48 +38,10 @@ public class VaccinationType extends PersistentObject {
 	public static final String VACC_AGAINST = "vaccAgainst"; //$NON-NLS-1$
 
 	private static final String TABLENAME = "CH_ELEXIS_IMPFPLAN_VACCINATION_TYPES"; //$NON-NLS-1$
-	private static final String VERSION = "0.2.0"; //$NON-NLS-1$
-	private static final String createDB = "CREATE TABLE " //$NON-NLS-1$
-			+ TABLENAME + " (" //$NON-NLS-1$
-			+ "ID	VARCHAR(25) primary key, deleted CHAR(1) default '0', lastupdate BIGINT," //$NON-NLS-1$
-			+ "name VARCHAR(80), " //$NON-NLS-1$
-			+ // Name of the Vaccination, e.g. FSME
-			"product VARCHAR(80), " //$NON-NLS-1$
-			+ // administered product, e.g. Encepur 0.5ml i.m.
-			"delay_1to2 VARCHAR(10), " //$NON-NLS-1$
-			+ // delay from 1st to 2nd shot in days, e.g. 14-48 or 0 if single
-				// shot
-			"delay_2to3 VARCHAR(10)," //$NON-NLS-1$
-			+ // delay from 2nd to 3rd shot in days or 0 if no 3rd required
-			"delay_3to4 VARCHAR(10), " //$NON-NLS-1$
-			+ // delay from 3rd to 4th or 0 if no 4th required
-			"delay_4to5 VARCHAR(10), " //$NON-NLS-1$
-			+ // delay from 4th to 5th or 0 if no 5th required
-			"delay_rep VARCHAR(10), " //$NON-NLS-1$
-			+ // delay until rappel ot 0 if no rappel required
-			"recommendedAge VARCHAR(10)," //$NON-NLS-1$
-			+ // recommended age in months for 1st, e.g. 8-12 or 48- or -24
-			"remarks TEXT," // general remarks, warnings, limitations etc. //$NON-NLS-1$
-			+ FLD_EXTINFO + " BLOB);" // extinfo //$NON-NLS-1$
-			+ "INSERT INTO " + TABLENAME + " (ID,name) VALUES('VERSION','" //$NON-NLS-1$ //$NON-NLS-2$
-			+ VERSION + "');"; //$NON-NLS-1$
-
-	public static final String upd020 = "ALTER TABLE " + TABLENAME //$NON-NLS-1$
-			+ " ADD " + FLD_EXTINFO + " longblob"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	static {
 		addMapping(TABLENAME, NAME, PRODUCT, DELAY1TO2, DELAY2TO3, DELAY3TO4, DELAY_REP, REMARKS, RECOMMENDED_AGE,
 				FLD_EXTINFO);
-		VaccinationType ver = load("VERSION"); //$NON-NLS-1$
-		if (!ver.exists()) {
-			createOrModifyTable(createDB);
-		} else {
-			VersionInfo vi = new VersionInfo(ver.get(NAME));
-			if (vi.isOlder(VERSION)) {
-				createOrModifyTable(upd020);
-				ver.set(NAME, VERSION);
-			}
-		}
 	}
 
 	public VaccinationType(String name, String subst) {

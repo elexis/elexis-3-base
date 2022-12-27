@@ -68,7 +68,6 @@ public class AppointmentsInformationElement {
 					appointmentNoEnd.setAttribute("area", ad.getAgendaArea()); //$NON-NLS-1$
 					appointmentNoEnd.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));
 					l.appendChild(appointmentNoEnd);
-					System.out.println(ad.getStartTime() + " -> " + ad.getAppointmentDetailedNoEnd());
 				}
 			}
 			p.appendChild(l);

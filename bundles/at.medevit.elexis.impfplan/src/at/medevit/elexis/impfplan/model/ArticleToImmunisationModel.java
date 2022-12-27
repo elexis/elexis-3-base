@@ -67,6 +67,8 @@ public class ArticleToImmunisationModel {
 		inl("J07CA02;J07AF,J07AM,J07AJ,J07BF"); //$NON-NLS-1$
 		inl("J07CA06;J07AF,J07AM,J07AJ,J07BF,J07AG"); //$NON-NLS-1$
 		inl("J07CA09;J07AF,J07AM,J07AJ,J07BF,J07AG,J07BC01"); //$NON-NLS-1$
+		inl("J07BX;J07BX03"); //$NON-NLS-1$
+		inl("J07BX03;J07BX03"); //$NON-NLS-1$
 
 		atim = Collections.unmodifiableMap(atim);
 	}

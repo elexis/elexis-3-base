@@ -56,6 +56,8 @@ public class DiseaseDefinitionModel {
 		diseases.add(new DiseaseDefinition("J07BG", "Tollwut", "Rabies")); //$NON-NLS-1$ //$NON-NLS-3$
 		diseases.add(new DiseaseDefinition("J07AN", "Tuberkulose")); //$NON-NLS-1$ //$NON-NLS-2$
 		diseases.add(new DiseaseDefinition("J07BK02", "Herpes Zoster")); //$NON-NLS-1$ //$NON-NLS-2$
+		diseases.add(new DiseaseDefinition("J07BX03", "COVID-19")); //$NON-NLS-1$ //$NON-NLS-2$
+		diseases.add(new DiseaseDefinition("J07BX", "COVID-19")); //$NON-NLS-1$ //$NON-NLS-2$
 
 		diseases = Collections.unmodifiableList(diseases);
 	}

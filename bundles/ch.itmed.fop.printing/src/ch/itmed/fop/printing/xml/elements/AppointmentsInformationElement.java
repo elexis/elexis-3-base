@@ -53,6 +53,12 @@ public class AppointmentsInformationElement {
 			Element l = doc.createElement("AppointmentsList"); //$NON-NLS-1$
 
 			if (!al.isEmpty()) {
+				Collections.sort(al, new Comparator<AppointmentData>() {
+					@Override
+					public int compare(AppointmentData o1, AppointmentData o2) {
+						return o1.getStartTime().compareTo(o2.getStartTime());
+					}
+				});
 				for (AppointmentData ad : al) {
 					Element appointment = doc.createElement("ListAppointment"); //$NON-NLS-1$
 					appointment.setAttribute("area", ad.getAgendaArea()); //$NON-NLS-1$
@@ -62,6 +68,7 @@ public class AppointmentsInformationElement {
 					appointmentNoEnd.setAttribute("area", ad.getAgendaArea()); //$NON-NLS-1$
 					appointmentNoEnd.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));
 					l.appendChild(appointmentNoEnd);
+					System.out.println(ad.getStartTime() + " -> " + ad.getAppointmentDetailedNoEnd());
 				}
 			}
 			p.appendChild(l);

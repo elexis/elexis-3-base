@@ -50,7 +50,7 @@ public final class AppointmentCard {
 		Element patientElement = PatientElement.create(doc, patient == null, false, patient);
 		page.appendChild(patientElement);
 		Element mandatorElement = MandatorElement.create(doc, mandator);
-		if (mandator != null) {
+		if (mandatorElement != null) {
 			page.appendChild(mandatorElement);
 		}
 		return DomDocument.toInputStream(doc);

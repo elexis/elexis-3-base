@@ -44,7 +44,7 @@ public final class AppointmentCard {
 					patient);
 		} else {
 			// load all future appointments - developer is too lazy to clean this up ...
-			_appointment = AppointmentsInformationElement.create(doc, false, null, patient);
+			_appointment = AppointmentsInformationElement.create(doc, true, null, patient);
 		}
 		page.appendChild(_appointment);
 		Element patientElement = PatientElement.create(doc, patient == null, false, patient);

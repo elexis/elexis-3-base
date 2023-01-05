@@ -52,6 +52,10 @@ public class ResourceProvider {
 
 		if (Setting.getBoolean(docName, PreferenceConstants.getDocPreferenceConstant(docName, 2))) {
 			String xslPath = Setting.getString(docName, PreferenceConstants.getDocPreferenceConstant(docName, 1));
+			// replace possible invalid path due to moving the xsl and xml files #24636
+			if (xslPath.contains("ch.itmed.fop.printing.ui")) { //$NON-NLS-1$
+				xslPath = xslPath.replaceAll("ch.itmed.fop.printing.ui", "ch.itmed.fop.printing"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return new File(xslPath);
 		}
 

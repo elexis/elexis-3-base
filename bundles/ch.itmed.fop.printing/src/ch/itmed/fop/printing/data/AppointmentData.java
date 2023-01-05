@@ -28,13 +28,13 @@ public final class AppointmentData {
 	private IAppointment appointment;
 
 	public void load(List<IAppointment> appointments) throws NullPointerException {
-		if (!appointments.isEmpty()) {
-			appointment = appointments.get(0);
-		} else {
+		if (appointments == null || appointments.isEmpty()) {
 			appointment = ContextServiceHolder.get().getTyped(IAppointment.class).orElse(null);
 			if (appointment == null) {
 				throw new NullPointerException("No appointment selected"); //$NON-NLS-1$
 			}
+		} else {
+			appointment = appointments.get(0);
 		}
 	}
 

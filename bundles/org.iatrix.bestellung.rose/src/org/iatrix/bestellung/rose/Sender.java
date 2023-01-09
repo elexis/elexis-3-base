@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.widgets.Display;
+
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
@@ -174,8 +177,7 @@ public class Sender implements IDataSender {
 			throw new XChangeException("Die Bestellung ist leer.");
 		}
 
-		String clientNrRose = ConfigServiceHolder
-				.getGlobal(Constants.CFG_ROSE_CLIENT_NUMBER, Constants.DEFAULT_ROSE_CLIENT_NUMBER).trim();
+		String clientNrRose = getClientNumber();
 
 		if (StringTool.isNothing(clientNrRose)) {
 			throw new XChangeException(
@@ -261,5 +263,22 @@ public class Sender implements IDataSender {
 
 		orderRequests.add(sb.toString());
 		return null;
+	}
+
+	private String getClientNumber() {
+		String number = ConfigServiceHolder
+				.getGlobal(Constants.CFG_ROSE_CLIENT_NUMBER, Constants.DEFAULT_ROSE_CLIENT_NUMBER).trim();
+
+		if (AdditionalClientNumber.isConfigured()) {
+			AdditionalClientNumberSelectorDialog dialog = new AdditionalClientNumberSelectorDialog(
+					Display.getDefault().getActiveShell());
+			if (dialog.open() == Dialog.OK) {
+				Object[] dialogResult = dialog.getResult();
+				if (dialogResult != null && dialogResult[0] instanceof AdditionalClientNumber) {
+					number = ((AdditionalClientNumber) dialogResult[0]).getClientNumber();
+				}
+			}
+		}
+		return number;
 	}
 }

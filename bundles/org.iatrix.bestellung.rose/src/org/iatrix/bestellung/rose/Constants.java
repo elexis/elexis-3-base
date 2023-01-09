@@ -11,6 +11,7 @@ public interface Constants {
 	public static final String CFG_BASE = "org.iatrix.bestellung.rose";
 
 	public static final String CFG_ROSE_CLIENT_NUMBER = CFG_BASE + "/global_client_number";
+	public static final String CFG_ROSE_ADDITIONAL_CLIENT_NUMBERS = CFG_BASE + "/additional_client_numbers";
 	public static final String CFG_ROSE_USERNAME = CFG_BASE + "/global_username";
 	public static final String CFG_ROSE_PASSWORD = CFG_BASE + "/global_password";
 	public static final String CFG_ASAS_PROXY_HOST = CFG_BASE + "/asas_host";

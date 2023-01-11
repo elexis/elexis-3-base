@@ -28,6 +28,9 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class PatientData {
+
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy"); //$NON-NLS-1$
+
 	private IPatient patient;
 
 	private boolean useLegalGuardian;
@@ -98,7 +101,7 @@ public class PatientData {
 			date = patient.getDateOfBirth();
 		}
 		if (date != null) {
-			return date.toLocalDate().format(DateTimeFormatter.BASIC_ISO_DATE);
+			return date.toLocalDate().format(dateFormat);
 		}
 		return "";
 	}

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +37,9 @@ public class HinAuthService implements IHinAuthService {
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policyOption = ReferencePolicyOption.GREEDY)
 	private IHinAuthUi authUi;
 
-	private boolean useQueryParam = false;
+	private boolean useQueryParam = true;
+
+	private String currentState;
 
 	@Override
 	public Optional<String> getToken(Map<Parameters, Object> parameters) {
@@ -72,7 +75,7 @@ public class HinAuthService implements IHinAuthService {
 		Map<String, String> parameters = new HashMap<>();
 		parameters.put("grant_type", "authorization_code");
 		parameters.put("code", authCode);
-		parameters.put("redirect_uri", "");
+		parameters.put("redirect_uri", getRedirectUri());
 		parameters.put("client_id", getClientId());
 		parameters.put("client_secret", getClientSecret());
 
@@ -93,8 +96,12 @@ public class HinAuthService implements IHinAuthService {
 				@SuppressWarnings("rawtypes")
 				Map map = gson.fromJson(response.body().toString(), Map.class);
 				String token = (String) map.get("access_token");
-				Double expiresInSeconds = (Double) map.get("expires_in");
 				configService.setActiveMandator(IHinAuthService.PREF_TOKEN + tokenGroup, token);
+				String refreshtoken = (String) map.get("refresh_token");
+				if (StringUtils.isNotBlank(refreshtoken)) {
+					configService.setActiveMandator(IHinAuthService.PREF_REFRESHTOKEN + tokenGroup, refreshtoken);
+				}
+				Double expiresInSeconds = (Double) map.get("expires_in");
 				Long expires = (Long) System.currentTimeMillis() + (expiresInSeconds.longValue() * 1000);
 				configService.setActiveMandator(IHinAuthService.PREF_TOKEN_EXPIRES + tokenGroup,
 						Long.toString(expires));
@@ -115,12 +122,18 @@ public class HinAuthService implements IHinAuthService {
 	private Optional<String> getAuthCode(String tokenGroup, IHinAuthUi iHinAuthUi) {
 		if (useQueryParam) {
 			iHinAuthUi.openBrowser(getQueryParamUrl(tokenGroup));
+			Object value =
+					iHinAuthUi.getWithCancelableProgress("HIN Berechtigung im Browser bestätigen.",
+							new GetAuthCodeWithStateSupplier(getCurrentState(false)));
+			if (value instanceof String) {
+				return Optional.of((String) value);
+			}
+			return Optional.empty();
 		} else {
 			iHinAuthUi.openBrowser(getWebappUrl(tokenGroup));
 			return iHinAuthUi.openInputDialog("HIN oAuth Token",
 					"Bitte geben Sie den oAuth Code von der HIN Webseite hier ein.");
 		}
-		return Optional.empty();
 	}
 
 	private String getWebappUrl(String tokenGroup) {
@@ -140,8 +153,24 @@ public class HinAuthService implements IHinAuthService {
 		sb.append("&client_id=");
 		sb.append(URLEncoder.encode(getClientId(), StandardCharsets.UTF_8));
 		sb.append("&redirect_uri=");
+		sb.append(URLEncoder.encode(getRedirectUri(), StandardCharsets.UTF_8));
 		sb.append("&state=");
+		sb.append(URLEncoder.encode(getCurrentState(true), StandardCharsets.UTF_8));
 		return sb.toString();
+	}
+
+	private String getRedirectUri() {
+		if (useQueryParam) {
+			return "https://tools.medelexis.ch/hin/ac";
+		}
+		return "";
+	}
+
+	private String getCurrentState(boolean refresh) {
+		if (refresh) {
+			currentState = UUID.randomUUID().toString();
+		}
+		return currentState;
 	}
 
 	private String getClientId() {

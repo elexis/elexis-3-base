@@ -10,6 +10,7 @@ public interface IHinAuthService {
 	public static String PREF_OAUTHRESTBASEURL = "hin/auth/oauthrest/baseurl"; //$NON-NLS-1$
 
 	public static String PREF_TOKEN = "hin/auth/token/"; //$NON-NLS-1$
+	public static String PREF_REFRESHTOKEN = "hin/auth/refreshtoken/"; //$NON-NLS-1$
 	public static String PREF_TOKEN_EXPIRES = "hin/auth/tokenexpires/"; //$NON-NLS-1$
 
 	public enum Parameters {

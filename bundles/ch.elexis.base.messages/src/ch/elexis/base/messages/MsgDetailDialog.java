@@ -12,9 +12,10 @@
 
 package ch.elexis.base.messages;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -35,7 +36,12 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IUser;
+import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.issue.Visibility;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Reminder;
@@ -48,7 +54,6 @@ public class MsgDetailDialog extends Dialog {
 	private ComboViewer cbTo;
 	private Text txtMessage;
 	private Message incomingMsg;
-	private List<Anwender> users = CoreHub.getUserList();
 	private Button bOK;
 	private Button bAnswer;
 
@@ -91,6 +96,7 @@ public class MsgDetailDialog extends Dialog {
 				return anw.getLabel();
 			}
 		});
+		List<Anwender> users = getUsers();
 		cbTo.setInput(users);
 		cbTo.setSelection(new StructuredSelection(users.get(0)));
 
@@ -135,6 +141,14 @@ public class MsgDetailDialog extends Dialog {
 		});
 
 		return ret;
+	}
+
+	private List<Anwender> getUsers() {
+		IQuery<IUser> userQuery = CoreModelServiceHolder.get().getQuery(IUser.class);
+		userQuery.and(ModelPackage.Literals.IUSER__ASSIGNED_CONTACT, COMPARATOR.NOT_EQUALS, null);
+		List<IUser> users = userQuery.execute();
+		return users.stream().filter(u -> u.isActive()).map(u -> Anwender.load(u.getAssignedContact().getId()))
+				.collect(Collectors.toList());
 	}
 
 	@Override

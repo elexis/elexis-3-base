@@ -2304,7 +2304,7 @@
 			<fo:table-cell>
 				<fo:block text-align="right" font-size="9px"
 					font-family="tahoma,arial,helvetica,sans-serif">
-					<xsl:if test="local-name() = 'record_tarmed'">
+					<xsl:if test="local-name() = 'service_ex'">
 						<xsl:choose>
 							<xsl:when test="@body_location = 'none'">
 

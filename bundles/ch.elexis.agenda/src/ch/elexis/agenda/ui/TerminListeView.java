@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
@@ -244,6 +245,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 	}
 
 	private void updateSelection(IPatient patient) {
+		LoggerFactory.getLogger(getClass()).info("Set patient [" + patient + "]");
 		if (patient == null) {
 			form.setText(Messages.TerminListView_noPatientSelected);
 		} else {

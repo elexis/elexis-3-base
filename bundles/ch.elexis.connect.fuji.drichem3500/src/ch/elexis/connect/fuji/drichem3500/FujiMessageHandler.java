@@ -17,7 +17,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.interfaces.events.MessageEvent;
+import ch.elexis.core.events.MessageEvent;
 import ch.elexis.core.importer.div.importers.TransientLabResult;
 import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
 import ch.elexis.core.model.ILabItem;

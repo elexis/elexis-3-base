@@ -11,10 +11,9 @@ import java.util.concurrent.Executors;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.events.MessageEvent;
-import ch.elexis.core.data.interfaces.events.MessageEvent.MessageType;
 import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.events.MessageEvent;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElement;
@@ -31,7 +30,6 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.dialogs.ResultDialog;
 import ch.elexis.core.ui.services.EncounterServiceHolder;
-import ch.elexis.core.l10n.Messages;
 import ch.elexis.omnivore.PreferenceConstants;
 import ch.rgw.tools.Result;
 
@@ -78,8 +76,8 @@ public class AutomaticBilling {
 							}
 						}
 					} catch (Exception e) {
-						ElexisEventDispatcher.getInstance().fireMessageEvent(new MessageEvent(MessageType.ERROR,
-								"Error", "Es ist ein Fehler bei der automatischen Verrechnung aufgetreten."));
+						MessageEvent.fireError("Error",
+								"Es ist ein Fehler bei der automatischen Verrechnung aufgetreten.");
 						LoggerFactory.getLogger(getClass()).error("Error billing block", e); //$NON-NLS-1$
 					}
 				}
@@ -103,8 +101,7 @@ public class AutomaticBilling {
 			}
 		}
 		if (!notOkResults.toString().isEmpty()) {
-			ElexisEventDispatcher.getInstance().fireMessageEvent(new MessageEvent(MessageType.WARN,
-					Messages.VerrechnungsDisplay_imvalidBilling, notOkResults.toString()));
+			MessageEvent.fireWarninig(Messages.VerrechnungsDisplay_imvalidBilling, notOkResults.toString());
 		}
 	}
 

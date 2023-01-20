@@ -52,7 +52,7 @@ import at.medevit.elexis.impfplan.ui.VaccinationView;
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.interfaces.events.MessageEvent;
+import ch.elexis.core.events.MessageEvent;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Mandant;

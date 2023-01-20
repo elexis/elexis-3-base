@@ -23,13 +23,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
-import ch.elexis.data.Anwender;
 import ch.gpb.elexis.cst.Messages;
 
 public class CstPreference extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -99,8 +96,7 @@ public class CstPreference extends FieldEditorPreferencePage implements IWorkben
 	public boolean performOk() {
 		boolean ret = super.performOk();
 
-		ElexisEventDispatcher.getInstance()
-				.fire(new ElexisEvent(CoreHub.getLoggedInContact(), Anwender.class, ElexisEvent.EVENT_USER_CHANGED));
+		ContextServiceHolder.get().getActiveUser().ifPresent(u -> ContextServiceHolder.get().setActiveUser(u));
 
 		return ret;
 	}

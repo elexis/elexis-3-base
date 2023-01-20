@@ -23,7 +23,7 @@ import at.medevit.elexis.loinc.model.LoincCode;
 import at.medevit.elexis.loinc.ui.Activator;
 import at.medevit.elexis.loinc.ui.LoincServiceComponent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.status.ElexisStatus;
+import ch.elexis.core.status.ElexisStatus;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.ui.util.SWTHelper;

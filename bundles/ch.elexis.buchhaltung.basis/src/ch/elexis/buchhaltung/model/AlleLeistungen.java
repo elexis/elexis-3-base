@@ -26,7 +26,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
-import ch.elexis.core.data.status.ElexisStatus;
+import ch.elexis.core.status.ElexisStatus;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IContact;

@@ -74,7 +74,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				String startOfDayTimeInMinutes = ConfigServiceHolder
-						.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+						.get().get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000", false);
 				int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 				int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 
@@ -167,15 +167,15 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		if (tlabels != null) {
 			ppm = BaseView.getPixelPerMinute();
 
-			String startOfDayTimeInMinutes = ConfigServiceHolder
-					.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+			String startOfDayTimeInMinutes = ConfigServiceHolder.get()
+					.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000", false);
 			int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 			int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 			int sodtM = (sodtHours * 60);
 			sodtM += sodtMinutes;
 
-			String endOfDayTimeInMinutes = ConfigServiceHolder
-					.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+			String endOfDayTimeInMinutes = ConfigServiceHolder.get()
+					.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359", false);
 			int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.substring(0, 2));
 			int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.substring(2));
 			int eodtM = (eodtHours * 60);
@@ -239,11 +239,12 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			int y = 0;
 			TimeTool runner = new TimeTool();
 
-			String dayStartsAt = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT,
-					"0000");
+			String dayStartsAt = ConfigServiceHolder.get().get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT,
+					"0000", false);
 			runner.set(dayStartsAt); // $NON-NLS-1$
 
-			String dayEndsAt = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+			String dayEndsAt = ConfigServiceHolder.get().get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359",
+					false);
 			TimeTool limit = new TimeTool(dayEndsAt); // $NON-NLS-1$
 			Point textSize = gc.textExtent("88:88"); //$NON-NLS-1$
 			int textwidth = textSize.x;

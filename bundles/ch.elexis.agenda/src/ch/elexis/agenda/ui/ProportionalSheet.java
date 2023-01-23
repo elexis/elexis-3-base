@@ -15,11 +15,11 @@
 
 package ch.elexis.agenda.ui;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -81,8 +81,8 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				break;
 			}
 		}
-		String startOfDayTimeInMinutes = ConfigServiceHolder
-				.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+		String startOfDayTimeInMinutes = ConfigServiceHolder.get()
+				.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000", false);
 		int dayStartHour = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 
 		int minute = (int) Math.round(y / ppm);
@@ -273,15 +273,15 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		if (tlabels != null) {
 			ppm = AgendaParallel.getPixelPerMinute();
 
-			String startOfDayTimeInMinutes = ConfigServiceHolder
-					.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+			String startOfDayTimeInMinutes = ConfigServiceHolder.get()
+					.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000", false);
 			int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 			int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 			int sodtM = (sodtHours * 60);
 			sodtM += sodtMinutes;
 
-			String endOfDayTimeInMinutes = ConfigServiceHolder
-					.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+			String endOfDayTimeInMinutes = ConfigServiceHolder.get()
+					.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359", false);
 			int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.substring(0, 2));
 			int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.substring(2));
 			int eodtM = (eodtHours * 60);
@@ -342,11 +342,12 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			gc.fillRectangle(e.x, e.y, e.width, e.height);
 			int y = 0;
 			TimeTool runner = new TimeTool();
-			String dayStartsAt = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT,
-					"0000");
+			String dayStartsAt = ConfigServiceHolder.get().get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT,
+					"0000", false);
 			runner.set(dayStartsAt); // $NON-NLS-1$
 
-			String dayEndsAt = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+			String dayEndsAt = ConfigServiceHolder.get().get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359",
+					false);
 			TimeTool limit = new TimeTool(dayEndsAt); // $NON-NLS-1$
 			Point textSize = gc.textExtent("88:88"); //$NON-NLS-1$
 			int textwidth = textSize.x;

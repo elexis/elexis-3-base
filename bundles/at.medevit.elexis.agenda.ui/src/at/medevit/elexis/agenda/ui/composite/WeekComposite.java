@@ -116,8 +116,9 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		browser.addProgressListener(new ProgressAdapter() {
 			@Override
 			public void completed(ProgressEvent event) {
-				String dayStartsAt = ConfigServiceHolder.get().get("agenda/beginnStundeTagesdarstellung", "0000"); //$NON-NLS-1$ //$NON-NLS-2$
-				String dayEndsAt = ConfigServiceHolder.get().get("agenda/endStundeTagesdarstellung", "2359"); //$NON-NLS-1$ //$NON-NLS-2$
+				String dayStartsAt = ConfigServiceHolder.get().get("agenda/beginnStundeTagesdarstellung", "0000", //$NON-NLS-1$ //$NON-NLS-2$
+						false);
+				String dayEndsAt = ConfigServiceHolder.get().get("agenda/endStundeTagesdarstellung", "2359", false); //$NON-NLS-1$ //$NON-NLS-2$
 				uiSynchronize.asyncExec(() -> {
 					scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
 

@@ -336,8 +336,8 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		map.put(Messages.Tageseinteilung_su, tSo.getText());
 		Plannables.setDayPrefFor(bereiche[actBereich], map);
 
-		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, sodt.getText());
-		ConfigServiceHolder.setGlobal(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, eodt.getText());
+		ConfigServiceHolder.get().set(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, sodt.getText());
+		ConfigServiceHolder.get().set(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, eodt.getText());
 	}
 
 	public void init(IWorkbench workbench) {

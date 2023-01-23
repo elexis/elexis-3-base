@@ -50,7 +50,7 @@ public class KonsExtension implements IKonsExtension {
 	public boolean doXRef(final String refProvider, final String refID) {
 		IcpcEncounter enc = IcpcModelServiceHolder.get().load(refID, IcpcEncounter.class).orElse(null);
 		if (enc != null) {
-			ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, enc);
+			ContextServiceHolder.get().getRootContext().setTyped(enc);
 		}
 		return true;
 	}

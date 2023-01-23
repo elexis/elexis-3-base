@@ -142,8 +142,7 @@ public class OutboxView extends ViewPart {
 				if (setAutoSelectPatient) {
 					Object selectedElement = ((StructuredSelection) selection).getFirstElement();
 					if (selectedElement instanceof IOutboxElement) {
-						ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
-								((IOutboxElement) selectedElement).getPatient());
+						ContextServiceHolder.get().setTyped(((IOutboxElement) selectedElement).getPatient());
 					} else if (selectedElement instanceof PatientOutboxElements) {
 						ContextServiceHolder.get()
 								.setActivePatient(((PatientOutboxElements) selectedElement).getPatient());

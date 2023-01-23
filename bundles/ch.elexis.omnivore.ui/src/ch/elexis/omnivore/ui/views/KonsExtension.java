@@ -41,7 +41,7 @@ public class KonsExtension implements IKonsExtension {
 		Optional<IDocumentHandle> handle = OmnivoreModelServiceHolder.get().load(refID, IDocumentHandle.class);
 		if (handle.isPresent()) {
 			UiUtils.open(handle.get());
-			ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, handle.get());
+			ContextServiceHolder.get().getRootContext().setTyped(handle.get());
 		}
 		return true;
 	}

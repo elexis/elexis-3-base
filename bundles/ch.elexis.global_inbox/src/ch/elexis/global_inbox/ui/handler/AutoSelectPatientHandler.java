@@ -14,7 +14,6 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IContextService;
-import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
 
 public class AutoSelectPatientHandler {
@@ -46,7 +45,7 @@ public class AutoSelectPatientHandler {
 		if (isActive) {
 			IPatient patient = globalInboxEntry.getPatient();
 			if (patient != null) {
-				contextService.getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, patient);
+				contextService.getRootContext().setTyped(patient);
 			}
 		}
 	}

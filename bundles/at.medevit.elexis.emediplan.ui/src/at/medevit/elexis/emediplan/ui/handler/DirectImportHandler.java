@@ -52,7 +52,7 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 
 			IPatient patient = CoreModelServiceHolder.get().load(patientid, IPatient.class).orElse(null);
 			if (patient != null) {
-				ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, patient);
+				ContextServiceHolder.get().getRootContext().setTyped(patient);
 
 				List<IPrescription> currentMedication = getPrescriptions(patient, medicationType);
 				LocalDateTime now = LocalDateTime.now();

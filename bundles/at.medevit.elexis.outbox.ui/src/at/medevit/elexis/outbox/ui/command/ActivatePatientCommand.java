@@ -25,8 +25,7 @@ public class ActivatePatientCommand extends AbstractHandler implements IHandler 
 
 			if (element instanceof PatientOutboxElements) {
 				PatientOutboxElements patElement = (PatientOutboxElements) element;
-				ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
-						patElement.getPatient());
+				ContextServiceHolder.get().getRootContext().setTyped(patElement.getPatient());
 			}
 		}
 		return null;

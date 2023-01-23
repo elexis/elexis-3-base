@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
@@ -221,8 +222,8 @@ public class TerminLabel extends Composite {
 
 		int lx = ial.getLeftOffset() + (int) Math.round(getColumn() * (ial.getWidthPerColumn() + ial.getPadding()));
 
-		String startOfDayTimeInMinutes = ConfigServiceHolder
-				.getGlobal(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+		String startOfDayTimeInMinutes = ConfigServiceHolder.get()
+				.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000", false);
 		int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 		int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 		int sodtM = (sodtHours * 60);

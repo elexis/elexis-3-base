@@ -1,6 +1,10 @@
 package at.medevit.elexis.loinc.ui.parts;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -121,6 +125,13 @@ public class LoincCodeDetailDisplay implements IDetailDisplay {
 		infoSection.setClient(info);
 
 		return form.getBody();
+	}
+
+	@Inject
+	public void selection(@Optional @Named("at.medevit.elexis.loinc.ui.parts.selection") LoincCode code) {
+		if (form != null && !form.isDisposed()) {
+			display(code);
+		}
 	}
 
 	@Override

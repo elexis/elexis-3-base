@@ -1,18 +1,21 @@
 package ch.elexis.barcode.scanner;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import org.osgi.service.event.EventHandler;
 
 /**
- * User the {@link BarcodeScannerMessage} with {@link ElexisEventDispatcher}
- * register it as follows: <code>elexisEventListenerImpl =
-			new ElexisEventListenerImpl(BarcodeScannerMessage.class, ElexisEvent.EVENT_UPDATE) {
-				public void run(ElexisEvent ev){
-					BarcodeScannerMessage b = (BarcodeScannerMessage) ev.getGenericObject();
-					BarcodeInputHandler.execute(b.getChunk());
-				}
-			};
-		ElexisEventDispatcher.getInstance().addListeners(elexisEventListenerImpl);</code>
- *
+ * Use the {@link BarcodeScannerMessage} with {@link EventHandler}.
+ * 
+ * <pre>
+&#64;Component(property = { EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.EVENT_UPDATE })
+public class BarcodeScannerMessageHandler implements EventHandler {
+
+	&#64;Override
+	public void handleEvent(Event event) {
+		if (event.getTopic().equals(ElexisEventTopics.EVENT_UPDATE)) {
+			if (event.getProperty("org.eclipse.e4.data") instanceof BarcodeScannerMessage) {
+				BarcodeScannerMessage b = (BarcodeScannerMessage) event.getProperty("org.eclipse.e4.data"); *
+ * </pre>
+ * 
  * @author med1
  *
  */

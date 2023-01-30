@@ -5,9 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
-import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.component.annotations.Component;
@@ -21,20 +21,17 @@ import at.medevit.elexis.emediplan.core.EMediplanServiceHolder;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
 import at.medevit.elexis.emediplan.ui.ImportEMediplanDialog;
 import ch.elexis.barcode.scanner.BarcodeScannerMessage;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
-import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.medication.views.MedicationView;
-import ch.elexis.data.Patient;
 
-@Component(property = EventConstants.EVENT_TOPIC + "=" + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
+@Component(property = { EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.EVENT_UPDATE })
 public class StartupHandler implements EventHandler {
 	private static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
-
-	ElexisEventListener elexisEventListenerImpl;
 
 	public static void openEMediplanImportDialog(String chunk, String selectedPatientId) {
 		Medication medication = EMediplanServiceHolder.getService().createModelFromChunk(chunk);
@@ -47,9 +44,10 @@ public class StartupHandler implements EventHandler {
 		EMediplanServiceHolder.getService().addExistingArticlesToMedication(medication);
 		if (medication != null) {
 			if (medication.Patient != null && medication.Patient.patientId != null) {
-				Patient patient = Patient.load(medication.Patient.patientId);
-				if (patient.exists()) {
-					ElexisEventDispatcher.fireSelectionEvent(patient);
+				Optional<IPatient> patient = CoreModelServiceHolder.get().load(medication.Patient.patientId,
+						IPatient.class);
+				if (patient.isPresent()) {
+					ContextServiceHolder.get().setActivePatient(patient.get());
 
 					UiDesk.getDisplay().asyncExec(new Runnable() {
 						public void run() {
@@ -96,15 +94,13 @@ public class StartupHandler implements EventHandler {
 
 	@Override
 	public void handleEvent(Event event) {
-		logger.info("APPLICATION STARTUP COMPLETE"); //$NON-NLS-1$
-		elexisEventListenerImpl = new ElexisEventListenerImpl(BarcodeScannerMessage.class, ElexisEvent.EVENT_UPDATE) {
-			public void run(ElexisEvent ev) {
-				BarcodeScannerMessage b = (BarcodeScannerMessage) ev.getGenericObject();
+		if (event.getTopic().equals(ElexisEventTopics.EVENT_UPDATE)) {
+			if (event.getProperty("org.eclipse.e4.data") instanceof BarcodeScannerMessage) {
+				BarcodeScannerMessage b = (BarcodeScannerMessage) event.getProperty("org.eclipse.e4.data");
 				if (hasMediplanHeader(b.getChunk())) {
 					openEMediplanImportDialog(b.getChunk(), null);
 				}
 			}
-		};
-		ElexisEventDispatcher.getInstance().addListeners(elexisEventListenerImpl);
+		}
 	}
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.elexis.emediplan.StartupHandler">
-   <property name="event.topics" value="org/eclipse/e4/ui/LifeCycle/appStartupComplete"/>
+   <property name="event.topics" value="info/elexis/model/update"/>
    <service>
       <provide interface="org.osgi.service.event.EventHandler"/>
    </service>

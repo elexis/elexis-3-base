@@ -17,11 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.barcode.scanner.BarcodeScannerMessage;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.serial.Connection;
 import ch.elexis.core.serial.Connection.ComPortListener;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 
@@ -120,9 +120,8 @@ public class InputHandler extends ToggleHandler implements ComPortListener {
 	@Override
 	public void gotChunk(Connection conn, String chunk) {
 		logger.debug(conn.getName() + ": gotChunk(): " + chunk); //$NON-NLS-1$
-		ElexisEventDispatcher.getInstance()
-				.fire(new ElexisEvent(new BarcodeScannerMessage(conn.getName(), conn.getMyPort(), chunk),
-						BarcodeScannerMessage.class, ElexisEvent.EVENT_UPDATE, ElexisEvent.PRIORITY_NORMAL));
+		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE,
+				new BarcodeScannerMessage(conn.getName(), conn.getMyPort(), chunk));
 	}
 
 	private void toggleButtonOff() {

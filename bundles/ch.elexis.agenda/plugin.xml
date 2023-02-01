@@ -9,18 +9,21 @@
             class="ch.elexis.agenda.views.TagesView"
             icon="icons/calendar.png"
             id="ch.elexis.agenda.tagesview"
+            inject="true"
             name="%Agenda"/>
       <view
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.views.AgendaGross"
             icon="icons/calendar.png"
             id="ch.elexis.agenda.largeview"
+            inject="true"
             name="%Agenda_gross"/>
       <view
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.ui.week.AgendaWeek"
             icon="icons/calendar.png"
             id="ch.elexis.agenda.week"
+            inject="true"
             name="%Wochenanzeige">
       </view>
       <category
@@ -33,6 +36,7 @@
             class="ch.elexis.agenda.ui.AgendaParallel"
             icon="icons/calendar.png"
             id="ch.elexis.agenda.parallelview"
+            inject="true"
             name="%Parallelanzeige"
             restorable="true">
       </view>
@@ -41,6 +45,7 @@
             class="ch.elexis.agenda.ui.TerminListeView"
             icon="icons/calendar.png"
             id="ch.elexis.agenda.Terminliste"
+            inject="true"
             name="%Terminliste"
             restorable="true">
       </view>

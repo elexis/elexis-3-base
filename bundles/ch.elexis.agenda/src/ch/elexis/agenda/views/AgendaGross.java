@@ -54,9 +54,12 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.util.ElexisIdGenerator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -361,9 +364,9 @@ public class AgendaGross extends BaseAgendaView {
 		sb.append(StringTool.unNull(t.get(Termin.FLD_CREATOR))).append("/")
 				.append(t.getCreateTime().toString(TimeTool.FULL_GER));
 		lbDetails.setText(sb.toString());
-		ElexisEventDispatcher.fireSelectionEvent(t);
+		ContextServiceHolder.get().setTyped(NoPoUtil.loadAsIdentifiable(t, IAppointment.class).orElse(null));
 		if (pat != null) {
-			ElexisEventDispatcher.fireSelectionEvent(pat);
+			ContextServiceHolder.get().setActivePatient(NoPoUtil.loadAsIdentifiable(pat, IPatient.class).orElse(null));
 		}
 	}
 

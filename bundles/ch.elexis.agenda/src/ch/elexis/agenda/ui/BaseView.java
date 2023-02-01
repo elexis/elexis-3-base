@@ -25,6 +25,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -32,6 +33,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
@@ -46,23 +48,22 @@ import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.utils.OsgiServiceUtil;
-import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TerminDialog;
@@ -88,21 +89,39 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	MenuManager menu = new MenuManager();
 	protected Activator agenda = Activator.getDefault();
 
-	private final ElexisEventListener eeli_termin = new ElexisUiEventListenerImpl(Termin.class,
-			ElexisEvent.EVENT_RELOAD) {
-		public void runInUi(ElexisEvent ev) {
-			internalRefresh();
+	@Optional
+	@Inject
+	void reloadAppointment(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Class<?> clazz) {
+		if (IAppointment.class.equals(clazz)) {
+			Display.getDefault().asyncExec(() -> {
+				internalRefresh();
+			});
 		}
-	};
+	}
 
-	private final ElexisEventListener eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
-			ElexisEvent.EVENT_USER_CHANGED) {
-		public void runInUi(ElexisEvent ev) {
-			updateActions();
-			agenda.setActResource(ConfigServiceHolder.getUser(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
+	@Optional
+	@Inject
+	void activeUser(IUser user) {
+		Display.getDefault().asyncExec(() -> {
+			if (user != null) {
+				userChanged();
+			}
+		});
+	}
 
+	@Optional
+	@Inject
+	void changedUser(@UIEventTopic(ElexisEventTopics.EVENT_USER_CHANGED) IUser user) {
+		if (user != null) {
+			userChanged();
 		}
-	};
+	}
+
+
+	private void userChanged() {
+		updateActions();
+		agenda.setActResource(ConfigServiceHolder.getUser(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -165,13 +184,9 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	public void visible(boolean mode) {
 		if (mode) {
 			CoreHub.heart.addListener(this);
-			ElexisEventDispatcher.getInstance().addListeners(eeli_termin, eeli_user);
 		} else {
 			CoreHub.heart.removeListener(this);
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_termin, eeli_user);
-
 		}
-
 	}
 
 	/**

@@ -21,9 +21,13 @@ import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.scripting.Interpreter;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Kontakt;
 import ch.rgw.tools.TimeTool;
@@ -159,9 +163,15 @@ public class Activator extends AbstractUIPlugin {
 		} else {
 			contact = termin.getKontakt();
 		}
-		ElexisEventDispatcher.fireSelectionEvent(termin);
+		ContextServiceHolder.get().setTyped(NoPoUtil.loadAsIdentifiable(termin, IAppointment.class).orElse(null));
 		if (contact != null) {
-			ElexisEventDispatcher.fireSelectionEvent(contact);
+			if (contact.istPatient()) {
+				ContextServiceHolder.get()
+						.setActivePatient(NoPoUtil.loadAsIdentifiable(contact, IPatient.class).orElse(null));
+			} else {
+				ContextServiceHolder.get().setTyped(NoPoUtil.loadAsIdentifiable(contact, IContact.class).orElse(null));
+			}
+
 		}
 	}
 }

@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -31,6 +32,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -49,20 +51,21 @@ import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.agenda.ui.BereichMenuCreator;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.data.interfaces.IPersistentObject;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
@@ -72,7 +75,6 @@ import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.core.utils.OsgiServiceUtil;
-import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -99,27 +101,42 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	protected Log log = Log.get("Agenda"); //$NON-NLS-1$
 	Activator agenda = Activator.getDefault();
 
-	private final ElexisEventListener eeli_termin = new ElexisUiEventListenerImpl(Termin.class,
-			ElexisEvent.EVENT_RELOAD) {
-		public void runInUi(ElexisEvent ev) {
-			if (tv != null && isActiveControl(tv.getControl())) {
-				if (!tv.getControl().isDisposed()) {
-					tv.refresh(true);
-				}
-			}
+	@Optional
+	@Inject
+	void reloadAppointment(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Class<?> clazz) {
+		if (IAppointment.class.equals(clazz)) {
+			CoreUiUtil.runAsyncIfActive(() -> {
+				tv.refresh(true);
+			}, tv);
 		}
-	};
+	}
 
-	private final ElexisEventListener eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
-			ElexisEvent.EVENT_USER_CHANGED) {
-		public void runInUi(ElexisEvent ev) {
-			updateActions();
-			if (tv != null && isActiveControl(tv.getControl())) {
-				tv.getControl().setFont(UiDesk.getFont(Preferences.USR_DEFAULTFONT));
+	@Optional
+	@Inject
+	void activeUser(IUser user) {
+		Display.getDefault().asyncExec(() -> {
+			if (user != null) {
+				userChanged();
 			}
-			setBereich(ConfigServiceHolder.getUser(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
+		});
+	}
+
+	@Optional
+	@Inject
+	void changedUser(@UIEventTopic(ElexisEventTopics.EVENT_USER_CHANGED) IUser user) {
+		if (user != null) {
+			userChanged();
 		}
-	};
+	}
+
+	private void userChanged() {
+		updateActions();
+		CoreUiUtil.runAsyncIfActive(() -> {
+			tv.getControl().setFont(UiDesk.getFont(Preferences.USR_DEFAULTFONT));
+		}, tv);
+		setBereich(ConfigServiceHolder.getUser(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
+	}
+
 	private IMenuManager mgr;
 	private IAction bereichMenu;
 
@@ -171,7 +188,9 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 		menu.setRemoveAllWhenShown(true);
 		menu.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				if (ElexisEventDispatcher.getSelected(Termin.class) == null) {
+				java.util.Optional<IAppointment> selectedAppointment = ContextServiceHolder.get()
+						.getTyped(IAppointment.class);
+				if (selectedAppointment.isEmpty()) {
 					manager.add(newTerminAction);
 					manager.add(blockAction);
 				} else {
@@ -190,7 +209,6 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 		tv.getControl().setMenu(cMenu);
 
 		CoreHub.heart.addListener(this);
-		ElexisEventDispatcher.getInstance().addListeners(eeli_termin, eeli_user);
 		getSite().getPage().addPartListener(udpateOnVisible);
 
 		tv.setInput(getViewSite());
@@ -212,7 +230,6 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	public void dispose() {
 		CoreHub.heart.removeListener(this);
 		getSite().getPage().removePartListener(udpateOnVisible);
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_termin, eeli_user);
 		super.dispose();
 	}
 
@@ -233,7 +250,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	@Override
 	public void refresh() {
 		updateActions();
-		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class, ElexisEvent.EVENT_RELOAD));
+		reloadAppointment(IAppointment.class);
 	}
 
 	public void setBereich(String b) {
@@ -272,13 +289,13 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 		public void selectionChanged(SelectionChangedEvent event) {
 			IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 			if ((sel == null) || sel.isEmpty()) {
-				ElexisEventDispatcher.clearSelection(Termin.class);
+				ContextServiceHolder.get().removeTyped(IAppointment.class);
 			} else {
 				Object o = sel.getFirstElement();
 				if (o instanceof Termin) {
 					setTermin((Termin) o);
 				} else if (o instanceof Termin.Free) {
-					ElexisEventDispatcher.clearSelection(Termin.class);
+					ContextServiceHolder.get().removeTyped(IAppointment.class);
 				}
 			}
 		}
@@ -524,8 +541,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	@Override
 	public void bereichSelectionEvent(String bereich) {
 		setPartName("Agenda " + bereich);
-		ElexisEventDispatcher.reload(Termin.class);
-		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class, ElexisEvent.EVENT_RELOAD));
+		reloadAppointment(IAppointment.class);
 	}
 
 	@Optional

@@ -12,6 +12,7 @@ import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
@@ -78,9 +79,7 @@ public class Leistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.en
 
 				@Override
 				protected void setPrice(IPrivatLeistung billable, IBilled billed) {
-					Optional<IBillingSystemFactor> billingFactor = BillingServiceHolder.get().getBillingSystemFactor(
-							billed.getEncounter().getCoverage().getBillingSystem().getName(),
-							billed.getEncounter().getDate());
+					Optional<IBillingSystemFactor> billingFactor = getFactor(billed.getEncounter());
 					if (billingFactor.isPresent()) {
 						billed.setFactor(billingFactor.get().getFactor());
 					} else {
@@ -90,6 +89,11 @@ public class Leistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.en
 					billed.setPoints(billable.getPrice().getCents());
 				}
 
+				@Override
+				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+					return BillingServiceHolder.get().getBillingSystemFactor(
+							encounter.getCoverage().getBillingSystem().getName(), encounter.getDate());
+				}
 			};
 		}
 		return optifier;

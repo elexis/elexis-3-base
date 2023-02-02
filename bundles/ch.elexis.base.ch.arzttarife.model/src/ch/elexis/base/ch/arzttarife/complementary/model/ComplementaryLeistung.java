@@ -14,6 +14,8 @@ import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
@@ -69,6 +71,11 @@ public class ComplementaryLeistung
 					LoggerFactory.getLogger(getClass())
 							.warn("Could not get active mandator, billing without hourly wage");
 					return 0;
+				}
+
+				@Override
+				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+					return Optional.empty();
 				}
 			};
 		}

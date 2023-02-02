@@ -1,6 +1,7 @@
 package ch.elexis.base.ch.arzttarife.pandemie.model;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import ch.elexis.base.ch.arzttarife.model.service.ContextServiceHolder;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
@@ -9,6 +10,8 @@ import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
@@ -47,6 +50,11 @@ public class PandemieLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 						points = billable.getTaxpoints();
 					}
 					billed.setPoints(points);
+				}
+
+				@Override
+				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+					return Optional.empty();
 				}
 			};
 		}

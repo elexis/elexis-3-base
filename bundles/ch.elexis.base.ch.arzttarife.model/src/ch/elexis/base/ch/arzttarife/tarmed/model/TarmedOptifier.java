@@ -544,8 +544,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		IContact biller = ContextServiceHolder.get().getActiveUserContact().get();
 		IBilled ret = new IBilledBuilder(CoreModelServiceHolder.get(), code, kons, biller).build();
 		ret.setPoints(code.getAL(kons.getMandator()) + code.getTL());
-		Optional<IBillingSystemFactor> systemFactor = BillingServiceHolder.get()
-				.getBillingSystemFactor(kons.getCoverage().getBillingSystem().getName(), kons.getDate());
+		Optional<IBillingSystemFactor> systemFactor = getFactor(kons);
 		if (systemFactor.isPresent()) {
 			ret.setFactor(systemFactor.get().getFactor());
 		} else {
@@ -555,6 +554,12 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 			CoreModelServiceHolder.get().save(ret);
 		}
 		return ret;
+	}
+
+	@Override
+	public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+		return BillingServiceHolder.get().getBillingSystemFactor(encounter.getCoverage().getBillingSystem().getName(),
+				encounter.getDate());
 	}
 
 	private void saveBilled() {

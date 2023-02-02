@@ -3,6 +3,7 @@ package at.medevit.ch.artikelstamm.model;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,8 @@ import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractNoObligationOptifier;
@@ -76,6 +79,11 @@ public class ArtikelstammItem extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 				@Override
 				protected boolean isNoObligation(ArtikelstammItem billable) {
 					return !billable.isInSLList();
+				}
+
+				@Override
+				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+					return Optional.empty();
 				}
 			};
 		}

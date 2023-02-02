@@ -1,6 +1,7 @@
 package ch.elexis.base.ch.arzttarife.tarmedallowance.model;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
@@ -44,6 +46,11 @@ public class TarmedAllowance extends AbstractIdDeleteModelAdapter<ch.elexis.core
 				protected void setPrice(TarmedAllowance billable, IBilled billed) {
 					billed.setFactor(1.0);
 					billed.setPoints(billable.getPrice(billed.getEncounter()).getCents());
+				}
+
+				@Override
+				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+					return Optional.empty();
 				}
 			};
 		}

@@ -3,6 +3,8 @@ package ch.elexis.base.ch.arzttarife.physio.model;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
@@ -10,6 +12,7 @@ import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
@@ -38,9 +41,7 @@ public class PhysioLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 				@Override
 				protected void setPrice(PhysioLeistung billable, IBilled billed) {
-					Optional<IBillingSystemFactor> billingFactor = BillingServiceHolder.get().getBillingSystemFactor(
-							billed.getEncounter().getCoverage().getBillingSystem().getName(),
-							billed.getEncounter().getDate());
+					Optional<IBillingSystemFactor> billingFactor = getFactor(billed.getEncounter());
 					if (billingFactor.isPresent()) {
 						billed.setFactor(billingFactor.get().getFactor());
 					} else {
@@ -55,6 +56,12 @@ public class PhysioLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 						}
 					}
 					billed.setPoints(points);
+				}
+
+				@Override
+				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+					return BillingServiceHolder.get().getBillingSystemFactor(
+							encounter.getCoverage().getBillingSystem().getName(), encounter.getDate());
 				}
 			};
 		}

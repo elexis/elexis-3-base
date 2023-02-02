@@ -63,9 +63,7 @@ public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 				@Override
 				protected void setPrice(PsychoLeistung billable, IBilled billed) {
-					Optional<IBillingSystemFactor> billingFactor = BillingServiceHolder.get().getBillingSystemFactor(
-							billed.getEncounter().getCoverage().getBillingSystem().getName(),
-							billed.getEncounter().getDate());
+					Optional<IBillingSystemFactor> billingFactor = getFactor(billed.getEncounter());
 					if (billingFactor.isPresent()) {
 						billed.setFactor(billingFactor.get().getFactor());
 					} else {
@@ -144,6 +142,12 @@ public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 				
 				private int getPercent(PsychoLeistung billedPsycho) {
 					return Integer.parseInt(billedPsycho.getTP().substring(1)); 
+				}
+
+				@Override
+				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+					return BillingServiceHolder.get().getBillingSystemFactor(
+							encounter.getCoverage().getBillingSystem().getName(), encounter.getDate());
 				}
 			};
 		}

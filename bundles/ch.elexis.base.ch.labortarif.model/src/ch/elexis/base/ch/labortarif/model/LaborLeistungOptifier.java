@@ -1,6 +1,5 @@
 package ch.elexis.base.ch.labortarif.model;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -201,7 +200,12 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 
 	@Override
 	protected void setPrice(ILaborLeistung billable, IBilled billed) {
-		billed.setFactor(getFactor(billed.getEncounter().getDate()));
+		Optional<IBillingSystemFactor> factor = getFactor(billed.getEncounter());
+		if (factor.isPresent()) {
+			billed.setFactor(factor.get().getFactor());
+		} else {
+			billed.setFactor(1.0);
+		}
 		billed.setPoints(billable.getPoints());
 	}
 
@@ -235,12 +239,9 @@ public class LaborLeistungOptifier extends AbstractOptifier<ILaborLeistung> {
 		return false;
 	}
 
-	private double getFactor(LocalDate date) {
-		Optional<IBillingSystemFactor> systemFactor = BillingServiceHolder.get()
-				.getBillingSystemFactor(LaborTarifConstants.MULTIPLICATOR_NAME, date);
-		if (systemFactor.isPresent()) {
-			return systemFactor.get().getFactor();
-		}
-		return 1.0;
+	@Override
+	public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+		return BillingServiceHolder.get().getBillingSystemFactor(LaborTarifConstants.MULTIPLICATOR_NAME,
+				encounter.getDate());
 	}
 }

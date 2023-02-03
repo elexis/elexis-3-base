@@ -159,10 +159,10 @@ public class MsgDetailDialog extends Dialog {
 		if (!user.isActive()) {
 			return false;
 		}
-		if (user.getAssignedContact().isMandator()) {
+		if (user.getAssignedContact() != null && user.getAssignedContact().isMandator()) {
 			IMandator mandator = CoreModelServiceHolder.get().load(user.getAssignedContact().getId(), IMandator.class)
 					.orElse(null);
-			if (!mandator.isActive()) {
+			if (mandator != null && !mandator.isActive()) {
 				return false;
 			}
 		}

@@ -1,6 +1,7 @@
 package ch.elexis.privatrechnung.model.internal;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -10,9 +11,12 @@ import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
@@ -75,11 +79,21 @@ public class Leistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.en
 
 				@Override
 				protected void setPrice(IPrivatLeistung billable, IBilled billed) {
-					billed.setFactor(1.0);
+					Optional<IBillingSystemFactor> billingFactor = getFactor(billed.getEncounter());
+					if (billingFactor.isPresent()) {
+						billed.setFactor(billingFactor.get().getFactor());
+					} else {
+						billed.setFactor(1.0);
+					}
 					billed.setNetPrice(billable.getNetPrice());
 					billed.setPoints(billable.getPrice().getCents());
 				}
 
+				@Override
+				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+					return BillingServiceHolder.get().getBillingSystemFactor(
+							encounter.getCoverage().getBillingSystem().getName(), encounter.getDate());
+				}
 			};
 		}
 		return optifier;

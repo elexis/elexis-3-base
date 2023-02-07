@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.issue.Visibility;
@@ -147,8 +148,25 @@ public class MsgDetailDialog extends Dialog {
 		IQuery<IUser> userQuery = CoreModelServiceHolder.get().getQuery(IUser.class);
 		userQuery.and(ModelPackage.Literals.IUSER__ASSIGNED_CONTACT, COMPARATOR.NOT_EQUALS, null);
 		List<IUser> users = userQuery.execute();
-		return users.stream().filter(u -> u.isActive()).map(u -> Anwender.load(u.getAssignedContact().getId()))
+		return users.stream().filter(u -> isActive(u)).map(u -> Anwender.load(u.getAssignedContact().getId()))
 				.collect(Collectors.toList());
+	}
+
+	private boolean isActive(IUser user) {
+		if (user == null || user.getAssignedContact() == null) {
+			return false;
+		}
+		if (!user.isActive()) {
+			return false;
+		}
+		if (user.getAssignedContact() != null && user.getAssignedContact().isMandator()) {
+			IMandator mandator = CoreModelServiceHolder.get().load(user.getAssignedContact().getId(), IMandator.class)
+					.orElse(null);
+			if (mandator != null && !mandator.isActive()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

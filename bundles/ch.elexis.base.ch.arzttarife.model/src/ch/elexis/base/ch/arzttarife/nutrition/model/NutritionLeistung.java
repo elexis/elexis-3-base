@@ -1,7 +1,9 @@
 package ch.elexis.base.ch.arzttarife.nutrition.model;
 
-import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.nutrition.INutritionLeistung;
@@ -9,6 +11,8 @@ import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IBillingSystemFactor;
+import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
@@ -48,6 +52,11 @@ public class NutritionLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.co
 						}
 					}
 					billed.setPoints(points);
+				}
+
+				@Override
+				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
+					return Optional.empty();
 				}
 			};
 		}

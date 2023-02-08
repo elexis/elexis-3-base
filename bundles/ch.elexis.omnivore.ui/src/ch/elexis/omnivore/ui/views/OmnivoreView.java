@@ -90,8 +90,8 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.data.service.StoreToStringServiceHolder;
-import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -179,7 +179,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	}
 
 	@Inject
-	void changedMandator(@Optional @UIEventTopic(ElexisEventTopics.EVENT_USER_CHANGED) IContact mandator) {
+	void activeUser(@Optional IUser user) {
 		if (isActiveControl(table)) {
 			viewer.refresh();
 			importAction.reflectRight();

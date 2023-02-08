@@ -99,24 +99,14 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		}
 	}
 
-	@Optional
 	@Inject
-	void activeUser(IUser user) {
+	void activeUser(@Optional IUser user) {
 		Display.getDefault().asyncExec(() -> {
 			if (user != null) {
 				userChanged();
 			}
 		});
 	}
-
-	@Optional
-	@Inject
-	void changedUser(@UIEventTopic(ElexisEventTopics.EVENT_USER_CHANGED) IUser user) {
-		if (user != null) {
-			userChanged();
-		}
-	}
-
 
 	private void userChanged() {
 		updateActions();

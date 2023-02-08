@@ -111,22 +111,13 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 		}
 	}
 
-	@Optional
 	@Inject
-	void activeUser(IUser user) {
+	void activeUser(@Optional IUser user) {
 		Display.getDefault().asyncExec(() -> {
 			if (user != null) {
 				userChanged();
 			}
 		});
-	}
-
-	@Optional
-	@Inject
-	void changedUser(@UIEventTopic(ElexisEventTopics.EVENT_USER_CHANGED) IUser user) {
-		if (user != null) {
-			userChanged();
-		}
 	}
 
 	private void userChanged() {

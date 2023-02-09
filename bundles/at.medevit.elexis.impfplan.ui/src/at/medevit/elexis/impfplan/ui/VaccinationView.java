@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
@@ -41,20 +42,22 @@ import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.impfplan.model.vaccplans.ImpfplanSchweiz2019;
 import at.medevit.elexis.impfplan.ui.dialogs.EditVaccinationDialog;
 import at.medevit.elexis.impfplan.ui.preferences.PreferencePage;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 
-public class VaccinationView extends ViewPart {
+public class VaccinationView extends ViewPart implements IRefreshable {
 
 	public static final String PART_ID = "at.medevit.elexis.impfplan.ui.ImpfplanViewPart"; //$NON-NLS-1$
 
@@ -70,18 +73,20 @@ public class VaccinationView extends ViewPart {
 	 */
 	private boolean sortByVaccinationName = false;
 
-	private ElexisEventListener eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
-		public void runInUi(ElexisEvent ev) {
-			setPatient(ElexisEventDispatcher.getSelectedPatient());
-		}
-	};
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
-	private ElexisEventListener eeli_vacc = new ElexisUiEventListenerImpl(Vaccination.class,
-			ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE) {
-		public void runInUi(ElexisEvent ev) {
-			updateUi(true);
-		};
-	};
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			setPatient((Patient) NoPoUtil.loadAsPersistentObject(patient));
+		}, vaccinationComposite);
+	}
+
+	@Optional
+	@Inject
+	void crudVaccination(@UIEventTopic(ElexisEventTopics.BASE_MODEL + "*") Vaccination vaccination) {
+		updateUi(true);
+	}
 
 	private ScrolledComposite scrolledComposite;
 
@@ -89,7 +94,6 @@ public class VaccinationView extends ViewPart {
 		ImpfplanSchweiz2019 is = new ImpfplanSchweiz2019();
 		vaccinationHeaderDefinition = new VaccinationPlanHeaderDefinition(is.id, is.name, is.getOrderedBaseDiseases(),
 				is.getOrderedExtendedDiseases());
-		ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_vacc);
 	}
 
 	/**
@@ -156,9 +160,8 @@ public class VaccinationView extends ViewPart {
 		vaccinationComposite.setMenu(menuManager.createContextMenu(vaccinationComposite));
 		getSite().registerContextMenu(PART_ID + ".contextMenu", menuManager, vaccinationComposite); //$NON-NLS-1$
 		getSite().setSelectionProvider(vaccinationComposite);
-		if (ElexisEventDispatcher.getSelectedPatient() != null) {
-			setPatient(ElexisEventDispatcher.getSelectedPatient());
-		}
+
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	private void editVaccination(Vaccination selVaccination) {
@@ -244,7 +247,7 @@ public class VaccinationView extends ViewPart {
 
 	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_vacc);
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
 	}
 
@@ -252,6 +255,11 @@ public class VaccinationView extends ViewPart {
 	@Inject
 	public void setFixLayout(MPart part, @Named(Preferences.USR_FIX_LAYOUT) boolean currentState) {
 		CoreUiUtil.updateFixLayout(part, currentState);
+	}
+
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 
 	public static void setVaccinationHeaderDefinition(VaccinationPlanHeaderDefinition vacccinationHeaderDefinition) {

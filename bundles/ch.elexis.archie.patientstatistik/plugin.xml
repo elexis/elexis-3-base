@@ -6,6 +6,7 @@
     <view
           class="ch.elexis.archie.patientstatistik.VerrechnungsStatistikView"
           id="ch.elexis.archie.patientstatistik.view1"
+          inject="true"
           name="Verrechnungsstatistik"
           restorable="true">
     </view>

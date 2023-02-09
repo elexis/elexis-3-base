@@ -9,13 +9,14 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -48,6 +49,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -57,20 +59,22 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.docbox.cdach.CdaChXPath;
 import ch.docbox.model.CdaMessage;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IUser;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.exchange.KontaktMatcher;
 import ch.elexis.core.ui.exchange.KontaktMatcher.CreateMode;
 import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.Log;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
@@ -81,7 +85,7 @@ import ch.elexis.data.Query;
 /**
  * Displays the documents downloaded from docbox (doctrans)
  */
-public class DocboxDocumentsView extends ViewPart implements IActivationListener, HeartListener {
+public class DocboxDocumentsView extends ViewPart implements IRefreshable, HeartListener {
 
 	public static final String ID = "chdocbox.elexis.DocboxDocumentsView";
 
@@ -94,54 +98,54 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 
 	public CdaMessage selectedCdaMessage;
 
-	private final ElexisEventListenerImpl reloadListener = new ElexisUiEventListenerImpl(CdaMessage.class,
-			ElexisEvent.EVENT_RELOAD) {
-		public void runInUi(ElexisEvent ev) {
-			if (!tableViewer.getControl().isDisposed()) {
-				log.log("reloadListener refresh", Log.DEBUGMSG);
-				tableViewer.refresh(true);
-			}
-		}
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this) {
+
+		public void partVisible(org.eclipse.ui.IWorkbenchPartReference partRef) {
+			CoreHub.heart.addListener(DocboxDocumentsView.this);
+			heartbeat();
+			super.partVisible(partRef);
+		};
+
+		public void partHidden(org.eclipse.ui.IWorkbenchPartReference partRef) {
+			CoreHub.heart.removeListener(DocboxDocumentsView.this);
+		};
 	};
 
-	private final ElexisEventListenerImpl updateListener = new ElexisUiEventListenerImpl(CdaMessage.class,
-			ElexisEvent.EVENT_UPDATE) {
-		public void runInUi(ElexisEvent ev) {
-			if (!tableViewer.getControl().isDisposed()) {
-				log.log("updateListener refresh", Log.DEBUGMSG);
-				tableViewer.refresh(true);
-			}
+	@Optional
+	@Inject
+	void crudVaccination(@UIEventTopic(ElexisEventTopics.BASE_MODEL + "*") CdaMessage message) {
+		if (!tableViewer.getControl().isDisposed()) {
+			log.log("updateListener refresh", Log.DEBUGMSG);
+			tableViewer.refresh(true);
 		}
-	};
+	}
 
-	private final ElexisUiEventListenerImpl patientSelectionListener = new ElexisUiEventListenerImpl(Patient.class,
-			ElexisEvent.EVENT_SELECTED) {
-
-		@Override
-		public void runInUi(ElexisEvent ev) {
-
+	@Optional
+	@Inject
+	void activePatient(IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
 			ISelection selection = tableViewer.getSelection();
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj != null) {
 				CdaMessage cdaMessage = (CdaMessage) obj;
-				if (!cdaMessage.isEqualsPatient((Patient) ev.getObject())) {
+				if (!cdaMessage.isEqualsPatient((Patient) NoPoUtil.loadAsPersistentObject(patient))) {
 					tableViewer.setSelection(null);
 				} else {
 
 				}
 
 			}
+		}, tableViewer);
+	}
 
-		}
-
-	};
-
-	ElexisEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
-
-		public void runInUi(ElexisEvent ev) {
-			userChanged();
-		}
-	};
+	@Inject
+	void activeUser(@Optional IUser user) {
+		Display.getDefault().asyncExec(() -> {
+			if (user != null) {
+				userChanged();
+			}
+		});
+	}
 
 	private Action actionOpenAttachments;
 	private Action actionDeleteDocument;
@@ -516,8 +520,7 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 
 		});
 
-		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
-
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	void userChanged() {
@@ -540,22 +543,6 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 		}
 	}
 
-	public void activation(boolean mode) {
-	}
-
-	public void visible(boolean mode) {
-		if (mode == true) {
-			CoreHub.heart.addListener(this);
-			ElexisEventDispatcher.getInstance().addListeners(reloadListener, updateListener, patientSelectionListener);
-			heartbeat();
-		} else {
-			CoreHub.heart.removeListener(this);
-			ElexisEventDispatcher.getInstance().removeListeners(reloadListener, updateListener,
-					patientSelectionListener);
-		}
-
-	};
-
 	public void clearEvent(Class<? extends PersistentObject> template) {
 	}
 
@@ -569,12 +556,8 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 
 	@Override
 	public void dispose() {
-		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
-	}
-
-	public void refresh() {
-		tableViewer.refresh();
 	}
 
 	public void objectChanged(PersistentObject obj) {
@@ -595,9 +578,15 @@ public class DocboxDocumentsView extends ViewPart implements IActivationListener
 		}
 	}
 
-	public void heartbeat() {
-		reloadListener.catchElexisEvent(new ElexisEvent(null, CdaMessage.class, ElexisEvent.EVENT_RELOAD));
-		updateListener.catchElexisEvent(new ElexisEvent(null, CdaMessage.class, ElexisEvent.EVENT_UPDATE));
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
+		tableViewer.refresh();
 	}
 
+	public void heartbeat() {
+		Display.getDefault().asyncExec(() -> {
+			crudVaccination(null);
+		});
+	}
 }

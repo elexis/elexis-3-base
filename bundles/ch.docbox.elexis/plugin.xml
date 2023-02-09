@@ -8,6 +8,7 @@
             class="ch.docbox.elexis.DocboxView"
             icon="icons/docbox16.png"
             id="ch.docbox.elexis.DocboxView"
+            inject="true"
             name="%docbox.view.name">
       </view>
       <view
@@ -15,6 +16,7 @@
             class="ch.docbox.elexis.DocboxDocumentsView"
             icon="icons/docbox16.png"
             id="ch.docbox.elexis.DocboxDocumentsView"
+            inject="true"
             name="%docbox.documentsview.name">
       </view>
    </extension>

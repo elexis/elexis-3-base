@@ -6,6 +6,7 @@
       <view
             class="ch.elexis.extdoc.views.ExterneDokumente"
             id="ch.elexis.views.ExterneDokumente"
+            inject="true"
             name="Externe Dokumente"/>
             name="Externe Dokumente1"/>
    </extension>

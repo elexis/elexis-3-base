@@ -31,23 +31,23 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.ehc.ui.model.EhcDocument;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.data.Mandant;
+import ch.elexis.core.ui.util.CoreUiUtil;
 
 public class InboxWatcher {
 	private static Logger logger = LoggerFactory.getLogger(InboxWatcher.class);
-
-	private MandantChangedListener mandantListener;
 
 	private ExecutorService executor;
 	private boolean stopping;
@@ -62,12 +62,11 @@ public class InboxWatcher {
 	public InboxWatcher() {
 		executor = Executors.newFixedThreadPool(2);
 
-		mandantListener = new MandantChangedListener();
 		watchKeys = new HashMap<String, WatchKey>();
 
 		listeners = new ArrayList<InboxListener>();
 
-		ElexisEventDispatcher.getInstance().addListeners(mandantListener);
+		CoreUiUtil.injectServicesWithContext(this);
 	}
 
 	public void start() {
@@ -83,7 +82,6 @@ public class InboxWatcher {
 	}
 
 	public void stop() {
-		ElexisEventDispatcher.getInstance().removeListeners(mandantListener);
 		try {
 			stopping = true;
 			executor.shutdownNow();
@@ -198,13 +196,11 @@ public class InboxWatcher {
 		}
 	}
 
-	private class MandantChangedListener extends ElexisUiEventListenerImpl {
-		public MandantChangedListener() {
-			super(Mandant.class, ElexisEvent.EVENT_MANDATOR_CHANGED);
-		}
+	@Optional
+	@Inject
+	public void activeMandator(IMandator mandator) {
+		Display.getDefault().asyncExec(() -> {
 
-		@Override
-		public void runInUi(ElexisEvent ev) {
 			activeInboxString = ConfigServiceHolder.getUser(PreferencePage.EHC_INPUTDIR,
 					PreferencePage.getDefaultInputDir());
 			executor.execute(new DirectoryInitializer());
@@ -230,6 +226,6 @@ public class InboxWatcher {
 					logger.error("Error creating filesystem key", e); //$NON-NLS-1$
 				}
 			}
-		}
+		});
 	}
 }

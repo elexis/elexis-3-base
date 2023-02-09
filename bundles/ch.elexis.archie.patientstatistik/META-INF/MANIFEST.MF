@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Patientenstatistik für Archie
 Bundle-SymbolicName: ch.elexis.archie.patientstatistik;singleton:=true
 Bundle-Version: 3.9.0.qualifier
+Import-Package: javax.inject
 Bundle-Vendor: elexis.info
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: ch.elexis.core.l10n,

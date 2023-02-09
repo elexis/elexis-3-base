@@ -15,6 +15,7 @@
             class="ch.elexis.molemax.views.Overview"
             icon="icons/camera.png"
             id="molemax.overview"
+            inject="true"
             name="Molemax">
       </view>
    </extension>

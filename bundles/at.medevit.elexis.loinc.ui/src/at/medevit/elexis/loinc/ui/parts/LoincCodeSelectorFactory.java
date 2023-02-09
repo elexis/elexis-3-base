@@ -1,5 +1,9 @@
 package at.medevit.elexis.loinc.ui.parts;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -13,10 +17,8 @@ import at.medevit.elexis.loinc.ui.dialogs.LoincSelektor;
 import at.medevit.elexis.loinc.ui.providers.LoincCodeControlFieldProvider;
 import at.medevit.elexis.loinc.ui.providers.LoincLabelProvider;
 import at.medevit.elexis.loinc.ui.providers.LoincTableContentProvider;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
@@ -64,9 +66,6 @@ public class LoincCodeSelectorFactory extends CodeSelectorFactory {
 		cv.setNamedSelection("at.medevit.elexis.loinc.ui.parts.selection");
 		cv.setSelectionChangedListener(selChangeListener);
 
-		ElexisEventDispatcher.getInstance()
-				.addListeners(new UpdateEventListener(cv, LoincCode.class, ElexisEvent.EVENT_RELOAD));
-
 		return vc;
 	}
 
@@ -85,19 +84,12 @@ public class LoincCodeSelectorFactory extends CodeSelectorFactory {
 		return "LOINC"; //$NON-NLS-1$
 	}
 
-	private class UpdateEventListener extends ElexisUiEventListenerImpl {
-
-		CommonViewer viewer;
-
-		UpdateEventListener(CommonViewer viewer, final Class<?> clazz, int mode) {
-			super(clazz, mode);
-			this.viewer = viewer;
-		}
-
-		@Override
-		public void runInUi(ElexisEvent ev) {
+	@Optional
+	@Inject
+	void reloadLoinc(@UIEventTopic(ElexisEventTopics.EVENT_RELOAD) Class<?> clazz) {
+		if (LoincCode.class.equals(clazz)) {
 			contentProvider.changed(null);
-			viewer.notify(CommonViewer.Message.update);
+			cv.notify(CommonViewer.Message.update);
 		}
 	}
 }

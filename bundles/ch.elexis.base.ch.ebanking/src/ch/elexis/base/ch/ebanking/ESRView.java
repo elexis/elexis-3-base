@@ -1,6 +1,5 @@
 package ch.elexis.base.ch.ebanking;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.base.ch.ebanking.EBankingACLContributor.DISPLAY_ESR;
 
 import java.text.DateFormat;
@@ -11,8 +10,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnPixelData;
@@ -53,10 +56,8 @@ import ch.elexis.base.ch.ebanking.esr.ESRRecordDialog;
 import ch.elexis.base.ch.ebanking.esr.Messages;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.data.Anwender;
+import ch.elexis.core.model.IUser;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -79,13 +80,13 @@ public class ESRView extends ViewPart {
 
 	protected final SimpleDateFormat sdf = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
 
-	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
-			ElexisEvent.EVENT_USER_CHANGED) {
-
-		public void runInUi(ElexisEvent ev) {
+	@Optional
+	@Inject
+	void activeUser(IUser user) {
+		Display.getDefault().asyncExec(() -> {
 			updateView();
-		};
-	};
+		});
+	}
 
 	private enum SELECTION_TYPE {
 		NOTPOSTED, LASTMONTH, THISMONTH, LASTWEEK, THISWEEK, PERIOD
@@ -425,8 +426,6 @@ public class ESRView extends ViewPart {
 		});
 
 		updateView();
-
-		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
 	}
 
 	public void updateView() {
@@ -511,12 +510,6 @@ public class ESRView extends ViewPart {
 		btnThisMonth.setSelection(btnThisMonth.getData() == selectionType);
 		btnLastWeek.setSelection(btnLastWeek.getData() == selectionType);
 		btnThisWeek.setSelection(btnThisWeek.getData() == selectionType);
-	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_user);
 	}
 
 	@Override

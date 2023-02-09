@@ -15,6 +15,9 @@ package ch.elexis.impfplan.view;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
@@ -30,14 +33,17 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.elexis.impfplan.controller.ImpfplanController;
 import ch.elexis.impfplan.controller.VaccinationSorter;
@@ -45,7 +51,7 @@ import ch.elexis.impfplan.model.Vaccination;
 import ch.elexis.impfplan.model.VaccinationType;
 import ch.rgw.tools.TimeTool;
 
-public class ImpfplanView extends ViewPart {
+public class ImpfplanView extends ViewPart implements IRefreshable {
 	private IAction addVacination, printVaccinations, removeVaccination;
 	TableViewer tvVaccsDone;
 	TableViewer tvVaccsRecommended;
@@ -54,19 +60,19 @@ public class ImpfplanView extends ViewPart {
 	ScrolledForm form;
 	VaccinationSorter sorter = new VaccinationSorter();
 
-	ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
-		@Override
-		public void runInUi(ElexisEvent ev) {
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
 			tvVaccsDone.refresh();
 			tvVaccsRecommended.refresh();
-			if (ElexisEventDispatcher.getSelectedPatient() != null) {
+			if (patient != null) {
 				addVacination.setEnabled(true);
 				printVaccinations.setEnabled(true);
 			}
-		}
-
-	};
+		}, tvVaccsDone);
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -149,12 +155,12 @@ public class ImpfplanView extends ViewPart {
 		boolean enable = ElexisEventDispatcher.getSelectedPatient() != null;
 		addVacination.setEnabled(enable);
 		printVaccinations.setEnabled(enable);
-		ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
+		getSite().getPage().removePartListener(udpateOnVisible);
 	}
 
 	@Override
@@ -215,5 +221,10 @@ public class ImpfplanView extends ViewPart {
 
 			}
 		};
+	}
+
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 }

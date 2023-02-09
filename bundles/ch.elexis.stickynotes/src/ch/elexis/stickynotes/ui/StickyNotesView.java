@@ -13,60 +13,86 @@
 
 package ch.elexis.stickynotes.ui;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListenerImpl;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IUser;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.text.EnhancedTextField;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Anwender;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.elexis.stickynotes.Messages;
 import ch.elexis.stickynotes.data.StickyNote;
 
-public class StickyNotesView extends ViewPart implements IActivationListener, HeartListener {
+public class StickyNotesView extends ViewPart implements IRefreshable, HeartListener {
 	private ScrolledForm form;
 	EnhancedTextField etf;
 	Patient actPatient;
 	StickyNote actNote;
 	ConfigServicePreferenceStore prefs;
 
-	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-				doSelect((Patient) ev.getObject());
-			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this) {
+
+		public void partDeactivated(IWorkbenchPartReference partRef) {
+			if (actPatient != null) {
+				if (actNote == null) {
+					actNote = StickyNote.load(actPatient);
+				}
+				actNote.setText(etf.getContentsAsXML());
+			}
+		};
+
+		public void partVisible(org.eclipse.ui.IWorkbenchPartReference partRef) {
+			CoreHub.heart.addListener(StickyNotesView.this);
+			super.partVisible(partRef);
+		};
+
+		public void partHidden(org.eclipse.ui.IWorkbenchPartReference partRef) {
+			CoreHub.heart.removeListener(StickyNotesView.this);
+		};
+	};
+
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			if (patient != null) {
+				doSelect((Patient) NoPoUtil.loadAsPersistentObject(patient));
+			} else {
 				deselect();
 			}
-		}
-	};
+		}, form);
+	}
 
-	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
-			ElexisEvent.EVENT_USER_CHANGED) {
-
-		@Override
-		public void catchElexisEvent(ElexisEvent ev) {
-			prefs = new ConfigServicePreferenceStore(Scope.USER);
-		}
-
-	};
+	@Inject
+	void activeUser(@Optional IUser user) {
+		Display.getDefault().asyncExec(() -> {
+			if (user != null) {
+				prefs = new ConfigServicePreferenceStore(Scope.USER);
+			}
+		});
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -78,13 +104,12 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 		etf = new EnhancedTextField(body);
 		etf.connectGlobalActions(getViewSite());
 		etf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		GlobalEventDispatcher.addActivationListener(this, this);
-
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	@Override
 	public void dispose() {
-		GlobalEventDispatcher.removeActivationListener(this, this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
 	}
 
@@ -93,29 +118,9 @@ public class StickyNotesView extends ViewPart implements IActivationListener, He
 		etf.setFocus();
 	}
 
-	public void activation(boolean mode) {
-		if ((mode == false) && etf.isDirty()) {
-			if (actPatient != null) {
-				if (actNote == null) {
-					actNote = StickyNote.load(actPatient);
-				}
-				actNote.setText(etf.getContentsAsXML());
-			}
-		}
-
-	}
-
-	public void visible(boolean mode) {
-		if (mode) {
-			eeli_pat.catchElexisEvent(ElexisEvent.createPatientEvent());
-			eeli_user.catchElexisEvent(ElexisEvent.createUserEvent());
-			ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_user);
-			CoreHub.heart.addListener(this);
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_user);
-			CoreHub.heart.removeListener(this);
-		}
-
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 
 	private void deselect() {

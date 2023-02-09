@@ -86,6 +86,7 @@
             class="at.medevit.elexis.gdt.ui.GDTProtokollView"
             icon="rsc/icons/edit-find-and-replace-2.png"
             id="at.medevit.elexis.gdt.ui.GDTProtokollView"
+            inject="true"
             name="GDT Protokoll"
             restorable="true">
       </view>

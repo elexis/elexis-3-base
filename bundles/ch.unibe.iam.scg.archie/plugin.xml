@@ -14,6 +14,7 @@
             class="ch.unibe.iam.scg.archie.ui.views.StatisticsView"
             icon="icons/table.png"
             id="ch.unibe.iam.scg.archie.ui.views.StatisticsView"
+            inject="true"
             name="%VIEW_MAIN"
             restorable="true">
       </view>
@@ -22,6 +23,7 @@
             class="ch.unibe.iam.scg.archie.ui.views.SidebarView"
             icon="icons/wand_pencil.png"
             id="ch.unibe.iam.scg.archie.ui.views.StatisticsSidebarView"
+            inject="true"
             name="%VIEW_SIDEBAR"
             restorable="true">
       </view>

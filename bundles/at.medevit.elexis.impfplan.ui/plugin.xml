@@ -8,6 +8,7 @@
             class="at.medevit.elexis.impfplan.ui.VaccinationView"
             icon="icon://IMG_SYRINGE/icon.png"
             id="at.medevit.elexis.impfplan.ui.ImpfplanViewPart"
+            inject="true"
             name="%vaccPlanViewPartName"
             restorable="true">
       </view>

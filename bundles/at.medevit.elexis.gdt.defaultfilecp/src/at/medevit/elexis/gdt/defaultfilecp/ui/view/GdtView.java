@@ -1,12 +1,15 @@
 package at.medevit.elexis.gdt.defaultfilecp.ui.view;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.common.CommandException;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -25,28 +28,31 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.gdt.constants.GDTConstants;
 import at.medevit.elexis.gdt.data.GDTProtokoll;
 import at.medevit.elexis.gdt.defaultfilecp.FileCommPartner;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 
-public class GdtView extends ViewPart {
+public class GdtView extends ViewPart implements IRefreshable {
 
 	private Map<String, Button> mapExaminations = new HashMap<String, Button>();
 	private Composite composite;
 
-	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
-			ElexisEvent.EVENT_SELECTED) {
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
-		@Override
-		public void runInUi(ElexisEvent ev) {
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
 			refreshLastExaminations();
-		}
-	};
-
+		}, composite);
+	}
+	
 	public GdtView() {
 
 	}
@@ -201,7 +207,7 @@ public class GdtView extends ViewPart {
 			if (id != null) {
 				mapExaminations.put(id, btnShowLastExamination);
 			}
-			ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
+			getSite().getPage().addPartListener(udpateOnVisible);
 		}
 	}
 
@@ -237,7 +243,7 @@ public class GdtView extends ViewPart {
 	@Override
 	public void dispose() {
 		super.dispose();
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
+		getSite().getPage().removePartListener(udpateOnVisible);
 	}
 
 	private void refreshLastExaminations() {
@@ -255,5 +261,10 @@ public class GdtView extends ViewPart {
 				composite.layout(true);
 			}
 		}
+	}
+
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 }

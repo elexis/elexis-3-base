@@ -15,6 +15,7 @@
             class="ch.elexis.stickynotes.ui.StickyNotesView"
             icon="icons/stickynote16.png"
             id="ch.elexis.stickynotes.view"
+            inject="true"
             name="Sticky Notes"
             restorable="true">
       </view>

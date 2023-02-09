@@ -67,15 +67,13 @@ import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementLabelProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementUiExtension;
 import at.medevit.elexis.inbox.ui.preferences.Preferences;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.util.CoreUiUtil;
-import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 
 public class InboxView extends ViewPart {
@@ -87,15 +85,16 @@ public class InboxView extends ViewPart {
 
 	private InboxElementViewerFilter filter = new InboxElementViewerFilter();
 
-	private ElexisUiEventListenerImpl mandantChanged = new ElexisUiEventListenerImpl(Mandant.class,
-			ElexisEvent.EVENT_MANDATOR_CHANGED) {
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			reload();
-		}
-	};
 	private InboxElementContentProvider contentProvider;
 	private boolean setAutoSelectPatient;
+
+	@Optional
+	@Inject
+	public void activeMandator(IMandator mandator) {
+		Display.getDefault().asyncExec(() -> {
+			reload();
+		});
+	}
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -270,7 +269,6 @@ public class InboxView extends ViewPart {
 		viewer.getTree().setMenu(menu);
 		getSite().registerContextMenu(ctxtMenuManager, viewer);
 
-		ElexisEventDispatcher.getInstance().addListeners(mandantChanged);
 		getSite().setSelectionProvider(viewer);
 
 		setAutoSelectPatientState(ConfigServiceHolder.getUser(Preferences.INBOX_PATIENT_AUTOSELECT, false));
@@ -386,12 +384,6 @@ public class InboxView extends ViewPart {
 		viewer.setInput(getOpenInboxElements());
 		reloadPending = false;
 		viewer.refresh();
-	}
-
-	@Override
-	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(mandantChanged);
-		super.dispose();
 	}
 
 	public CheckboxTreeViewer getCheckboxTreeViewer() {

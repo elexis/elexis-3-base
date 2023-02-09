@@ -19,6 +19,7 @@
             class="ch.elexis.base.ch.ebanking.ESRView"
             icon="rsc/postfinance.ico"
             id="ch.elexis.ebanking_ch.ESRView"
+            inject="true"
             name="ESR"
             restorable="true">
       </view>

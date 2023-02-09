@@ -9,4 +9,5 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.ui;bundle-version="3.9.0"
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-11
+Import-Package: javax.inject
 

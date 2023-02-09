@@ -9,28 +9,26 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
 import com.equo.chromium.swt.Browser;
 
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.model.IUser;
 import ch.elexis.core.ui.util.CoreUiUtil;
-import ch.elexis.data.Anwender;
 
 /**
  * Creates a browser view which will sso into docbox and if a hospital
@@ -41,14 +39,14 @@ public class DocboxView extends ViewPart {
 	public static final String ID = "ch.docbox.elexis.DocboxView";
 	private Browser browser;
 
-	ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
-			ElexisEvent.EVENT_USER_CHANGED) {
-
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			userChanged();
-		}
-	};
+	@Inject
+	void activeUser(@Optional IUser user) {
+		Display.getDefault().asyncExec(() -> {
+			if (user != null) {
+				userChanged();
+			}
+		});
+	}
 
 	private String getDoboxLoginUrl() {
 		return UserDocboxPreferences.getDocboxBrowserUrl();
@@ -56,15 +54,8 @@ public class DocboxView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
 		browser = new Browser(parent, SWT.NATIVE);
 		setHome();
-	}
-
-	@Override
-	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_user);
-		super.dispose();
 	}
 
 	void userChanged() {

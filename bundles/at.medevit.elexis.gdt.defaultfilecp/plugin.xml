@@ -34,6 +34,7 @@
       <view
             class="at.medevit.elexis.gdt.defaultfilecp.ui.view.GdtView"
             id="at.medevit.elexis.gdt.defaultfilecp.gdtview"
+            inject="true"
             name="GDTView"
             restorable="true">
       </view>

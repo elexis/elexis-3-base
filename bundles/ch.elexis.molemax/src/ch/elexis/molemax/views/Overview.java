@@ -13,6 +13,9 @@ package ch.elexis.molemax.views;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -29,19 +32,20 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.ui.events.RefreshingPartListener;
+import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.core.ui.util.ViewMenus;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -78,7 +82,7 @@ import ch.rgw.tools.TimeTool;
  * @author Gerry
  *
  */
-public class Overview extends ViewPart implements IActivationListener {
+public class Overview extends ViewPart implements IRefreshable {
 	public static final String ID = "molemax.overview";
 	Form form;
 	FormToolkit tk;
@@ -97,23 +101,15 @@ public class Overview extends ViewPart implements IActivationListener {
 		tk = UiDesk.getToolkit();
 	}
 
-	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
-			ElexisEvent.EVENT_SELECTED) {
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			setPatient((Patient) ev.getObject(), null);
-		}
-
-	};
-
-	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
-			ElexisEvent.EVENT_USER_CHANGED) {
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			// TODO change user - adapt rights
-		}
-	};
+	@Optional
+	@Inject
+	void activePatient(IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			setPatient((Patient) NoPoUtil.loadAsPersistentObject(patient), null);
+		}, form);
+	}
 
 	@Override
 	public void createPartControl(final Composite parent) {
@@ -136,14 +132,13 @@ public class Overview extends ViewPart implements IActivationListener {
 		menu.createMenu(restoreAction);
 		menu.createToolbar(selectDateAction);
 		setTopControl(dispAll);
-		GlobalEventDispatcher.getInstance().addActivationListener(this, this);
-		eeli_pat.catchElexisEvent(ElexisEvent.createPatientEvent());
 
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	@Override
 	public void dispose() {
-		GlobalEventDispatcher.getInstance().removeActivationListener(this, this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 		for (int i = 0; i < 12; i++) {
 			if (trackers[i] != null)
 				Tracker.dispose(trackers[i]);
@@ -205,17 +200,9 @@ public class Overview extends ViewPart implements IActivationListener {
 
 	}
 
-	public void activation(final boolean mode) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void visible(final boolean mode) {
-		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_user);
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_user);
-		}
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 
 	public void clearEvent(final Class<? extends PersistentObject> template) {

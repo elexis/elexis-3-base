@@ -10,7 +10,6 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,8 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -81,18 +84,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.events.RefreshingPartListener;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.gpb.elexis.cst.Activator;
+import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.data.CstGastroColo;
 import ch.gpb.elexis.cst.data.CstGroup;
 import ch.gpb.elexis.cst.data.CstProfile;
@@ -101,7 +106,6 @@ import ch.gpb.elexis.cst.dialog.CstCopyProfileDialog;
 import ch.gpb.elexis.cst.dialog.CstGroupSelectionDialog;
 import ch.gpb.elexis.cst.dialog.CstNewProfileDialog;
 import ch.gpb.elexis.cst.dialog.ProfileDetailDialog;
-import ch.gpb.elexis.cst.Messages;
 import ch.gpb.elexis.cst.service.CstService;
 import ch.gpb.elexis.cst.view.profileeditor.AnzeigeOptionsComposite;
 import ch.gpb.elexis.cst.view.profileeditor.BefundSelectionComposite;
@@ -123,7 +127,7 @@ import ch.gpb.elexis.cst.view.profileeditor.TherapieVorschlagComposite;
  *         GUI class for administration of CST Profiles
  *
  */
-public class CstProfileEditor extends ViewPart implements IActivationListener {
+public class CstProfileEditor extends ViewPart implements IRefreshable {
 
 	/**
 	 * The ID of the view as specified by the extension.
@@ -173,6 +177,8 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 	private Logger log = LoggerFactory.getLogger(CstProfileEditor.class.getName());
 	private boolean isRepeatedDialog;
 
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
+
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
@@ -181,34 +187,34 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 	@Override
 	public void dispose() {
 		super.dispose();
-		GlobalEventDispatcher.removeActivationListener(this, this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 	}
 
 	public enum GroupTokens {
 		GASTRO_MAKRO, GASTRO_HISTO, COLO_MAKRO, COLO_HISTO
 	};
+	
+	@Optional
+	@Inject
+	void activePatient(IPatient pat) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			if ((patient == null)
+					|| (!patient.getId().equals(((Patient) NoPoUtil.loadAsPersistentObject(pat)).getId()))) {
+				patient = (Patient) NoPoUtil.loadAsPersistentObject(pat);
 
-	private ElexisEventListener eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
+				if (patient != null) {
+					log.debug("Cst receives event with patient:" + patient.getName());
+					labelLeft.setText(Messages.Cst_Text_Profile_fuer + StringUtils.SPACE + patient.getName()
+							+ StringUtils.SPACE + patient.getVorname());
+					labelLeft.redraw();
 
-		public void runInUi(final ElexisEvent ev) {
-			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-				if ((patient == null) || (!patient.getId().equals(((Patient) ev.getObject()).getId()))) {
-					patient = (Patient) ev.getObject();
-
-					if (patient != null) {
-						log.debug("Cst receives event with patient:" + patient.getName());
-						labelLeft.setText(Messages.Cst_Text_Profile_fuer + StringUtils.SPACE + patient.getName()
-								+ StringUtils.SPACE + patient.getVorname());
-						labelLeft.redraw();
-
-						loadProfileData();
-						selectFirstRow();
-						tableProfile.setFocus();
-					}
+					loadProfileData();
+					selectFirstRow();
+					tableProfile.setFocus();
 				}
 			}
-		}
-	};
+		}, tableProfile);
+	}
 
 	/**
 	 * The constructor.
@@ -555,7 +561,7 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 		hookContextMenuLabItem();
 		hookDoubleClickAction();
 		contributeToActionBars();
-		GlobalEventDispatcher.addActivationListener(this, this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 
 	}
 
@@ -1710,31 +1716,7 @@ public class CstProfileEditor extends ViewPart implements IActivationListener {
 	}
 
 	@Override
-	public void activation(boolean mode) {
-		// TODO Auto-generated method stub
-
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
-
-	@Override
-	public void visible(boolean mode) {
-		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
-			eeli_pat.catchElexisEvent(
-					new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(), null, ElexisEvent.EVENT_SELECTED));
-
-			// stateComposite.add
-			// CoreHub.heart.addListener(stateComposite);
-			// System.out.println("Hearbeat Listener added");
-			// stateComposite.heartbeat();
-
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
-
-			// CoreHub.heart.removeListener(stateComposite);
-			// System.out.println("Hearbeat Listener removed");
-
-		}
-
-	}
-
 }

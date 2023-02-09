@@ -8,6 +8,7 @@
             class="at.medevit.elexis.inbox.ui.part.InboxView"
             icon="rsc/img/inbox_into.png"
             id="at.medevit.elexis.inbox.ui.view"
+            inject="true"
             name="%view.name"
             restorable="true">
       </view>

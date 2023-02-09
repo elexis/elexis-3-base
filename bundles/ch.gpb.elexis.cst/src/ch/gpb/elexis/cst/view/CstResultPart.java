@@ -10,7 +10,6 @@
  *******************************************************************************/
 package ch.gpb.elexis.cst.view;
 
-import org.apache.commons.lang3.StringUtils;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -27,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -73,14 +73,10 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfWriter;
 
 import ch.elexis.befunde.Messwert;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.LabItem;
@@ -208,27 +204,6 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 		 */
 		super.dispose();
 	}
-
-	// TODO: do we need this listener yet?
-	private ElexisEventListener eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
-
-		public void runInUi(final ElexisEvent ev) {
-			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-
-				if ((patient == null) || (!patient.getId().equals(((Patient) ev.getObject()).getId()))) {
-					patient = (Patient) ev.getObject();
-
-					if (patient != null) {
-						// CstProfile.get
-						// layoutDisplay();
-					} else {
-					}
-				}
-			} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-
-			}
-		}
-	};
 
 	/**
 	 * As the Elexis User changes, he or she has propably different righs to see and
@@ -1381,22 +1356,7 @@ public abstract class CstResultPart extends ViewPart implements IActivationListe
 	 */
 	@Override
 	public void visible(boolean mode) {
-		/*
-		 * if (mode) { ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
-		 * eeli_pat.catchElexisEvent(new
-		 * ElexisEvent(ElexisEventDispatcher.getSelectedPatient(), null,
-		 * ElexisEvent.EVENT_SELECTED));
-		 *
-		 * } else { ElexisEventDispatcher.getInstance().removeListeners(eeli_pat); }
-		 *
-		 * if (profile == null) { System.out.println("Profile is null");
-		 *
-		 * } else { System.out.println("Profile is: " + profile.getName());
-		 *
-		 * layoutDisplay(profile);
-		 *
-		 * }
-		 */
+
 
 	}
 

@@ -20,6 +20,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -32,17 +35,19 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
@@ -55,7 +60,7 @@ import ch.rgw.tools.StringTool;
  * @author gerry
  *
  */
-public class VerrechnungsStatistikView extends ViewPart implements IActivationListener, Counter.IJobFinishedListener {
+public class VerrechnungsStatistikView extends ViewPart implements IRefreshable, Counter.IJobFinishedListener {
 	private Action recalcAction, exportCSVAction;
 	Form form;
 	Table table;
@@ -65,25 +70,25 @@ public class VerrechnungsStatistikView extends ViewPart implements IActivationLi
 			Messages.VerrechnungsStatistikView_AMOUNT };
 	int[] columnWidths = new int[] { 130, 60, 160, 40, 50 };
 
-	private ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
-
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			if (form != null && !form.isDisposed()) {
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					Patient pat = (Patient) ev.getObject();
-					if (pat != null) {
-						form.setText(pat.getLabel());
-					} else {
-						form.setText(Messages.VerrechnungsStatistikView_NoPatientSelected);
-					}
-					recalc();
-				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
+	
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			if (patient != null) {
+				Patient pat = (Patient) NoPoUtil.loadAsPersistentObject(patient);
+				if (pat != null) {
+					form.setText(pat.getLabel());
+				} else {
 					form.setText(Messages.VerrechnungsStatistikView_NoPatientSelected);
 				}
+				recalc();
+			} else {
+				form.setText(Messages.VerrechnungsStatistikView_NoPatientSelected);
 			}
-		}
-	};
+		}, form);
+	}
+	
 
 	/**
 	 * The Eclipse View is created: We use a Form with an SWT Table to display the
@@ -109,7 +114,7 @@ public class VerrechnungsStatistikView extends ViewPart implements IActivationLi
 		ViewMenus menu = new ViewMenus(getViewSite());
 		menu.createToolbar(exportCSVAction, recalcAction);
 		menu.createMenu(exportCSVAction);
-		GlobalEventDispatcher.addActivationListener(this, this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	/**
@@ -117,36 +122,13 @@ public class VerrechnungsStatistikView extends ViewPart implements IActivationLi
 	 */
 	@Override
 	public void dispose() {
-		GlobalEventDispatcher.removeActivationListener(this, this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
 	}
 
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * Method from ActivationListener - We are not interested
-	 */
-	public void activation(boolean mode) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * Method from ActivationListener. If we get visible, we attach ourselves as
-	 * SelectionListener to Elexis' Event scheduler to be informed as the user
-	 * selects a patient. When we become invisible, we detach the listener again.
-	 */
-	public void visible(boolean mode) {
-		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
-			eeli_pat.catchElexisEvent(ElexisEvent.createPatientEvent());
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
-		}
 
 	}
 
@@ -228,6 +210,11 @@ public class VerrechnungsStatistikView extends ViewPart implements IActivationLi
 		TableItem ti = new TableItem(table, SWT.BOLD);
 		ti.setText(0, Messages.VerrechnungsStatistikView_SUMTOTAL);
 		ti.setText(4, sumAll.getAmountAsString());
+	}
+
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 
 	private void makeActions() {

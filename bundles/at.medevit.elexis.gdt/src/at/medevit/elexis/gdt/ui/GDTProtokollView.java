@@ -12,7 +12,10 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.ui;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -32,29 +35,29 @@ import at.medevit.elexis.gdt.ui.table.util.ColumnBuilder.ICellFormatter;
 import at.medevit.elexis.gdt.ui.table.util.IValue;
 import at.medevit.elexis.gdt.ui.table.util.IValueFormatter;
 import at.medevit.elexis.gdt.ui.table.util.SortColumnComparator;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListenerImpl;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.events.RefreshingPartListener;
+import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.TimeTool;
 
-public class GDTProtokollView extends ViewPart {
+public class GDTProtokollView extends ViewPart implements IRefreshable {
 
 	public static final String ID = "at.medevit.elexis.gdt.ui.GDTProtokollView"; //$NON-NLS-1$
 
 	private TableViewer tableViewer;
 	private Table table;
-	private ElexisEventListenerImpl eeli_pat;
 
-	public GDTProtokollView() {
-		eeli_pat = new ElexisUiEventListenerImpl(Patient.class) {
-			@Override
-			public void runInUi(ElexisEvent ev) {
-				reload();
-			}
-		};
-		ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
+
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			reload();
+		}, tableViewer);
 	}
 
 	public void reload() {
@@ -155,6 +158,8 @@ public class GDTProtokollView extends ViewPart {
 		table.setMenu(menuManager.createContextMenu(table));
 		getSite().registerContextMenu(menuManager, tableViewer);
 		getSite().setSelectionProvider(tableViewer);
+
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	private void initTableViewer(Composite parent) {
@@ -214,8 +219,13 @@ public class GDTProtokollView extends ViewPart {
 	}
 
 	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
+	}
+
+	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
 	}
 

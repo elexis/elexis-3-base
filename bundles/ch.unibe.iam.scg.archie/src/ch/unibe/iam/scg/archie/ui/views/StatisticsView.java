@@ -12,21 +12,22 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.ui.views;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.data.Anwender;
+import ch.elexis.core.model.IUser;
 import ch.unibe.iam.scg.archie.ArchieActivator;
+import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.acl.ArchieACL;
 import ch.unibe.iam.scg.archie.actions.ChartWizardAction;
 import ch.unibe.iam.scg.archie.actions.ExportAction;
-import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.ui.GraphicalMessage;
 import ch.unibe.iam.scg.archie.ui.ResultPanel;
 
@@ -59,16 +60,15 @@ public class StatisticsView extends ViewPart {
 
 	private ChartWizardAction chartWizardAction;
 
-	private ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
-			ElexisEvent.EVENT_USER_CHANGED) {
-
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			clean();
-			initialize();
-		}
-
-	};
+	@Inject
+	void activeUser(@Optional IUser user) {
+		Display.getDefault().asyncExec(() -> {
+			if (user != null) {
+				clean();
+				initialize();
+			}
+		});
+	}
 
 	/**
 	 * Public constructor.
@@ -88,12 +88,10 @@ public class StatisticsView extends ViewPart {
 
 		// initialize view contents
 		this.initialize();
-		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
 	}
 
 	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_user);
 		super.dispose();
 	}
 

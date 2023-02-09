@@ -14,7 +14,6 @@
 
 package ch.elexis.extdoc.views;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,10 +25,14 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -72,17 +75,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.actions.BackgroundJob;
 import ch.elexis.core.ui.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.core.ui.actions.GlobalActions;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.JobPool;
-import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -103,7 +108,7 @@ import ch.rgw.tools.TimeTool;;
  * bestimmten Schema nach diesem Patienten gefiltert.
  */
 
-public class ExterneDokumente extends ViewPart implements IActivationListener {
+public class ExterneDokumente extends ViewPart implements IRefreshable {
 	// private static final String NONE = "Keine Dokumente";
 
 	// Erwartete Anzahl Dokumente falls noch nicht bekannt
@@ -143,16 +148,18 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 
 	private static Logger logger = null;
 
-	private final ElexisUiEventListenerImpl eeli_pat = new ElexisUiEventListenerImpl(Patient.class,
-			ElexisEvent.EVENT_SELECTED) {
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			actPatient = (Patient) ev.getObject();
-			actMandant = CoreHub.actMandant;
-			refresh();
-		}
-	};
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
+	@Optional
+	@Inject
+	void activePatient(IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			actPatient = (Patient) NoPoUtil.loadAsPersistentObject(patient);
+			actMandant = CoreHub.actMandant;
+			refreshInternal();
+		}, viewer);
+	}
+	
 	class DataLoader extends BackgroundJob {
 		public DataLoader(String jobName) {
 			super(jobName);
@@ -404,7 +411,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 
 		SelectionAdapter checkBoxListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				refresh();
+				refreshInternal();
 			}
 		};
 
@@ -499,7 +506,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 
 		// Welcher Patient ist im aktuellen WorkbenchWindow selektiert?
 		actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
-		GlobalEventDispatcher.addActivationListener(this, this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	private void hookContextMenu() {
@@ -651,7 +658,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 								Messages.ExterneDokumente_shold_doc_be_delted + file.getName())) {
 							logger.info("Datei Löschen: " + file.getAbsolutePath()); //$NON-NLS-1$
 							file.delete();
-							refresh();
+							refreshInternal();
 						}
 					}
 				}
@@ -682,7 +689,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			public void run() {
 				new VerifierDialog(getViewSite().getShell(), actPatient).open();
 				// files may have been renamed
-				refresh();
+				refreshInternal();
 			}
 		};
 		verifyAction.setText(Messages.ExterneDokumente_verify_files);
@@ -700,7 +707,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		});
 	}
 
-	private void refresh() {
+	private void refreshInternal() {
 		PreferenceConstants.PathElement[] prefs = PreferenceConstants.getPrefenceElements();
 		for (int j = 0; j < prefs.length; j++) {
 			if (pathCheckBoxes[j] != null && pathCheckBoxes[j].getSelection()) {
@@ -724,7 +731,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	private void openFileEditorDialog(File file) {
 		FileEditDialog fed = new FileEditDialog(getViewSite().getShell(), file);
 		fed.open();
-		refresh();
+		refreshInternal();
 	}
 
 	/**
@@ -741,7 +748,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	 */
 	@Override
 	public void dispose() {
-		GlobalEventDispatcher.removeActivationListener(this, this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 	}
 
 	// Die Methode des SelectionListeners
@@ -750,34 +757,8 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		}
 	}
 
-	// Die beiden Methoden des ActivationListeners
-	/**
-	 * Die View wird aktiviert (z.B angeklickt oder mit Tab)
-	 */
-	public void activation(boolean mode) {
-		/* Interessiert uns nicht */
-	}
-
-	/**
-	 * Die View wird sichtbar (mode=true). Immer dann hängen wir unseren
-	 * SelectionListener ein. (Benutzeraktionen interessieren uns ja nur dann, wenn
-	 * wir etwas damit machen müssen, also sichtbar sind. Im unsichtbaren Zustand
-	 * würde das Abfangen von SelectionEvents nur unnötig Ressourcen verbrauchen.
-	 * Aber weil es ja sein könnte, dass der Anwender, während wir im Hintergrund
-	 * waren, etliche Aktionen durchgefürt hat, über die wir jetzt nicht informiert
-	 * sind, "simulieren" wir beim Sichtbar-Werden gleich einen selectionEvent, um
-	 * uns zu infomieren, welcher Patient jetzt gerade selektiert ist.
-	 *
-	 * Oder die View wird unsichtbar (mode=false). Dann hängen wir unseren
-	 * SelectionListener aus und faulenzen ein wenig.
-	 */
-	public void visible(boolean mode) {
-		if (mode == true) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
-			eeli_pat.catchElexisEvent(new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(), Patient.class,
-					ElexisEvent.EVENT_SELECTED));
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
-		}
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 }

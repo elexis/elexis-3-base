@@ -22,6 +22,7 @@
             class="ch.gpb.elexis.cst.view.CstProfileEditor"
             icon="icons/icon-cat-2-16.png"
             id="ch.gpb.elexis.cst.views.cstprofileeditor"
+            inject="true"
             name="CST Profile Editor"
             restorable="true">
       </view>
@@ -31,6 +32,7 @@
             class="ch.gpb.elexis.cst.view.CstResultEffektiv"
             icon="icons/icon-cat-3-16.png"
             id="ch.gpb.elexis.cst.cstresulteffektiv"
+            inject="true"
             name="CST Auswertung Effektiv"
             restorable="true">
       </view>
@@ -40,6 +42,7 @@
             class="ch.gpb.elexis.cst.view.CstResultMiniMax"
             icon="icons/icon-cat-3-16.png"
             id="ch.gpb.elexis.cst.cstresultminimax"
+            inject="true"
             name="CST Auswertung Minimal / Maximal"
             restorable="true">
       </view>

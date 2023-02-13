@@ -18,6 +18,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -39,16 +42,18 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.befunde.Messwert;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -62,7 +67,7 @@ import ch.rgw.tools.TimeTool;
  * @author gerry
  *
  */
-public class FindingsView extends ViewPart implements IActivationListener, ElexisEventListener {
+public class FindingsView extends ViewPart implements IRefreshable {
 	private static Log log = Log.get(FindingsView.class.getName());
 
 	public static final String ID = "elexis-befunde.findingsView"; //$NON-NLS-1$
@@ -70,6 +75,8 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 	private ScrolledForm form;
 	private Map hash;
 	private Action newValueAction, editValueAction, deleteValueAction, printValuesAction;
+
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	public FindingsView() {
 		// TODO Auto-generated constructor stub
@@ -111,7 +118,7 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 
 		});
 
-		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
+		getSite().getPage().addPartListener(udpateOnVisible);
 		if (ctabs.getItemCount() > 0) {
 			ctabs.setSelection(0);
 			((FindingsPage) (ctabs.getItem(0)).getControl()).setPatient(ElexisEventDispatcher.getSelectedPatient());
@@ -121,26 +128,13 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 
 	@Override
 	public void dispose() {
-		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
+		getSite().getPage().removePartListener(udpateOnVisible);
 	}
 
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
-	}
-
-	public void activation(final boolean mode) {
-
-	}
-
-	public void visible(final boolean mode) {
-		if (mode) {
-			catchElexisEvent(ElexisEvent.createPatientEvent());
-			ElexisEventDispatcher.getInstance().addListeners(this);
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(this);
-		}
 	}
 
 	private void setPatient(final Patient p) {
@@ -402,23 +396,15 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 		};
 	}
 
-	public void catchElexisEvent(final ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-			public void run() {
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					setPatient((Patient) ev.getObject());
-				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-					setPatient(null);
-				}
-			}
-		});
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			setPatient((Patient) NoPoUtil.loadAsPersistentObject(patient));
+		}, form);
 	}
 
-	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class,
-			ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_SELECTED);
-
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
-
 }

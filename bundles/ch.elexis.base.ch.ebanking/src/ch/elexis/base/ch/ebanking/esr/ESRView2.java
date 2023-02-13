@@ -15,10 +15,13 @@ package ch.elexis.base.ch.ebanking.esr;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ITableColorProvider;
@@ -39,25 +42,29 @@ import org.eclipse.ui.part.ViewPart;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.AbstractDataLoaderJob;
 import ch.elexis.core.ui.actions.FlatDataLoader;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.PersistentObjectLoader.QueryFilter;
+import ch.elexis.core.ui.events.RefreshingPartListener;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.CommonViewer.PoDoubleClickListener;
 import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-public class ESRView2 extends ViewPart implements IActivationListener {
+public class ESRView2 extends ViewPart implements IRefreshable {
 	public static final String ID = "ch.elexis.banking.ESRView2"; //$NON-NLS-1$
 
 	private static final String JOB_NAME = "ESR-Loader2"; //$NON-NLS-1$
@@ -93,6 +100,8 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 			80, // DATEI_INDEX
 	};
 
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
+
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	// ESRLoader esrloader;
@@ -101,7 +110,24 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 	Query<ESRRecord> qbe;
 	// private Action loadESRFile;
 	private ViewMenus menus;
-	private ESRSelectionListener esrl;
+
+	@Optional
+	@Inject
+	public void activeESRRecord(ESRRecord record) {
+		if (record != null) {
+			CoreUiUtil.runAsyncIfActive(() -> {
+				Rechnung rn = record.getRechnung();
+				if (rn != null) {
+					ContextServiceHolder.get().setTyped(NoPoUtil.loadAsIdentifiable(rn, IInvoice.class).orElse(null));
+				}
+			}, cv);
+		}
+	}
+
+	@Override
+	public void refresh() {
+		activeESRRecord(ContextServiceHolder.get().getTyped(ESRRecord.class).orElse(null));
+	}
 
 	public ESRView2() {
 
@@ -111,7 +137,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 	@Override
 	public void dispose() {
 		// Hub.acl.revokeFromSelf(DISPLAY_ESR);
-		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
+		getSite().getPage().removePartListener(udpateOnVisible);
 	}
 
 	@Override
@@ -158,7 +184,6 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		menus = new ViewMenus(getViewSite());
 		menus.createToolbar(/* loadESRFile */);
 		menus.createMenu(/* loadESRFile */);
-		esrl = new ESRSelectionListener();
 		cv.addDoubleClickListener(new PoDoubleClickListener() {
 			public void doubleClicked(PersistentObject obj, CommonViewer cv) {
 				ESRRecordDialog erd = new ESRRecordDialog(getViewSite().getShell(), (ESRRecord) obj);
@@ -168,7 +193,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 			}
 
 		});
-		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
+		getSite().getPage().addPartListener(udpateOnVisible);
 
 	}
 
@@ -373,15 +398,6 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		 * JobPool.getJobPool().activate(JOB_NAME, Job.SHORT);
 		 * //cv.notify(CommonViewer.Message.update); } };
 		 */
-	}
-
-	public void activation(boolean mode) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void visible(boolean mode) {
-		esrl.activate(mode);
 	}
 
 }

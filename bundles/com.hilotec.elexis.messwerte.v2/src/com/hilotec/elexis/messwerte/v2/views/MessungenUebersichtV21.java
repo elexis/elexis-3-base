@@ -13,7 +13,6 @@
 
 package com.hilotec.elexis.messwerte.v2.views;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -21,7 +20,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -51,16 +54,6 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.core.ui.util.ViewMenus;
-import ch.elexis.data.Patient;
-import ch.rgw.tools.TimeTool;
-
 import com.hilotec.elexis.messwerte.v2.data.ExportData;
 import com.hilotec.elexis.messwerte.v2.data.Messung;
 import com.hilotec.elexis.messwerte.v2.data.MessungKonfiguration;
@@ -68,7 +61,21 @@ import com.hilotec.elexis.messwerte.v2.data.MessungTyp;
 import com.hilotec.elexis.messwerte.v2.data.Messwert;
 import com.hilotec.elexis.messwerte.v2.data.typen.IMesswertTyp;
 
-public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListener {
+import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.events.RefreshingPartListener;
+import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.IRefreshable;
+import ch.elexis.data.Patient;
+import ch.rgw.tools.TimeTool;
+
+public class MessungenUebersichtV21 extends ViewPart implements IRefreshable {
 
 	private static int DEFAULT_COL_WIDTH = 80;
 	private static String DATA_PATIENT = "patient"; //$NON-NLS-1$
@@ -86,6 +93,8 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 	private Action loeschenAktion;
 	private Action exportAktion;
 	private Action reloadXMLAction;
+
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	public MessungenUebersichtV21() {
 		config = MessungKonfiguration.getInstance();
@@ -123,24 +132,16 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 		}
 	}
 
-	public void catchElexisEvent(final ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-			public void run() {
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					setCurPatient((Patient) ev.getObject());
-				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-					setCurPatient(null);
-
-				}
-			}
-		});
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			setCurPatient((Patient) NoPoUtil.loadAsPersistentObject(patient));
+		}, form);
 	}
 
-	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class,
-			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 
 	@Override
@@ -155,6 +156,14 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 		initializeContent();
 		if (form.getCursor() != null)
 			form.setCursor(null);
+
+		getSite().getPage().addPartListener(udpateOnVisible);
+	}
+
+	@Override
+	public void dispose() {
+		getSite().getPage().removePartListener(udpateOnVisible);
+		super.dispose();
 	}
 
 	@Override
@@ -203,8 +212,6 @@ public class MessungenUebersichtV21 extends ViewPart implements ElexisEventListe
 				// Auto-generated method stub, but not needed
 			}
 		});
-
-		ElexisEventDispatcher.getInstance().addListeners(this);
 	}
 
 	private void initializeContent() {

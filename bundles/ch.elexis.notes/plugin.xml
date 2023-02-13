@@ -16,6 +16,7 @@
             class="ch.elexis.notes.NotesView"
             icon="icons/notebook.gif"
             id="ch.elexis.notes.view"
+            inject="true"
             name="%notes"/>
    </extension>
    <extension

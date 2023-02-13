@@ -10,6 +10,7 @@
             class="org.iatrix.messwerte.views.MesswerteView"
             icon="rsc/reagenzglas.ico"
             id="org.iatrix.messwerte.views.MesswerteView"
+            inject="true"
             name="Messwerte Iatrix">
       </view>
    </extension>

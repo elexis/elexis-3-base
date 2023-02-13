@@ -4,7 +4,6 @@
  */
 package org.iatrix.messwerte.views;
 
-import org.apache.commons.lang3.StringUtils;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +16,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.Action;
@@ -71,23 +71,22 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.LabResultConstants;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.types.PathologicDescription;
 import ch.elexis.core.types.PathologicDescription.Description;
-import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.dialogs.DateSelectorDialog;
 import ch.elexis.core.ui.dialogs.DisplayTextDialog;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.LabGroup;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
@@ -104,7 +103,7 @@ import ch.rgw.tools.TimeTool;
  * TODO: implement HeartListener (register listeners)
  */
 
-public class MesswerteView extends ViewPart implements IActivationListener, HeartListener, ElexisEventListener {
+public class MesswerteView extends ViewPart implements IRefreshable, HeartListener {
 
 	public static final String ID = "org.iatrix.messwerte.views.MesswerteView";
 
@@ -194,6 +193,8 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 	 */
 
 	private static final String LABORWRTE_TABLENAME = "LABORWERTE";
+
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	/**
 	 * Get all dates having lab results for the given patient. The dates are sorted
@@ -636,7 +637,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 			}
 		});
 
-		GlobalEventDispatcher.addActivationListener(this, this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	/**
@@ -671,7 +672,7 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 	}
 
 	public void dispose() {
-		GlobalEventDispatcher.removeActivationListener(this, this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 
 		super.dispose();
 	}
@@ -1280,25 +1281,6 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 	}
 
 	/*
-	 * ActivationListener
-	 */
-
-	public void activation(boolean mode) {
-		// nothing to do
-	}
-
-	public void visible(boolean mode) {
-		if (mode == true) {
-			ElexisEventDispatcher.getInstance().addListeners(this);
-			Patient patient = ElexisEventDispatcher.getSelectedPatient();
-			setPatient(patient);
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(this);
-			setPatient(null);
-		}
-	}
-
-	/*
 	 * HeartListener
 	 */
 
@@ -1646,24 +1628,15 @@ public class MesswerteView extends ViewPart implements IActivationListener, Hear
 		}
 	}
 
-	public void catchElexisEvent(final ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-
-			public void run() {
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					setPatient((Patient) ev.getObject());
-				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-					setPatient(null);
-				}
-			}
-		});
-
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			setPatient((Patient) NoPoUtil.loadAsPersistentObject(patient));
+		}, viewer);
 	}
 
-	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class,
-			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 }

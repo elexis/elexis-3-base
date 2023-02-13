@@ -33,6 +33,7 @@
             class="ch.elexis.base.befunde.FindingsView"
             icon="icons/chart_curve.png"
             id="elexis-befunde.findingsView"
+            inject="true"
             name="%Befunde"/>
    </extension>
    <extension

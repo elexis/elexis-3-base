@@ -14,21 +14,22 @@ package ch.unibe.iam.scg.archie.ui.views;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.model.IUser;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.data.Anwender;
 import ch.unibe.iam.scg.archie.ArchieActivator;
 import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.acl.ArchieACL;
@@ -57,7 +58,7 @@ import ch.unibe.iam.scg.archie.ui.charts.PatientsConsHistChart;
  * @author Dennis Schenk
  * @version $Rev: 774 $
  */
-public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEventListener {
+public class Dashboard extends ViewPart implements IJobChangeListener {
 
 	/**
 	 * ID of this view.
@@ -110,8 +111,6 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 	public Dashboard() {
 		this.charts = new ArrayList<AbstractChartComposite>(4);
 		this.jobCounter = 0;
-
-		ElexisEventDispatcher.getInstance().addListeners(this);
 	}
 
 	// ////////////////////////////////////////////////////////////////////////////
@@ -390,19 +389,10 @@ public class Dashboard extends ViewPart implements IJobChangeListener, ElexisEve
 		// Nothing here...
 	}
 
-	/**
-	 * @{inheritDoc
-	 */
-	public void catchElexisEvent(ElexisEvent ev) {
-		userChanged();
-	}
-
-	/**
-	 * @{inheritDoc
-	 */
-	private final ElexisEvent eetmpl = new ElexisEvent(null, Anwender.class, ElexisEvent.EVENT_USER_CHANGED);
-
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
+	@Inject
+	void activeUser(@Optional IUser user) {
+		Display.getDefault().asyncExec(() -> {
+			userChanged();
+		});
 	}
 }

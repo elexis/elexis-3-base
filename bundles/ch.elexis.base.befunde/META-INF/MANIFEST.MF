@@ -18,7 +18,8 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.findings.util;bundle-version="3.9.0",
  ch.elexis.core.findings.templates;bundle-version="3.9.0",
  ch.elexis.core.jpa.entities;bundle-version="3.9.0"
+Import-Package: javax.inject;version="1.0.0",
+ org.jdom2;version="2.0.6"
 Service-Component: OSGI-INF/ch.elexis.base.befunde.findings.migrator.MesswertMigrator.xml,
  OSGI-INF/ch.elexis.base.befunde.findings.migrator.preferences.FindingsServiceComponent.xml,
  OSGI-INF/ch.elexis.base.befunde.model.BefundeStoreToStringContribution.xml
-Import-Package: org.jdom2;version="2.0.6"

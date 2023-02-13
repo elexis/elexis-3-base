@@ -15,7 +15,10 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
@@ -34,18 +37,18 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.services.GlobalServiceDescriptors;
 import ch.elexis.core.data.util.Extensions;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.text.model.Samdas;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.text.ExternalLink;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
@@ -57,7 +60,7 @@ import ch.rgw.tools.Result;
  * @author gerry
  *
  */
-public class NotesView extends ViewPart implements IActivationListener, ElexisEventListener {
+public class NotesView extends ViewPart implements IRefreshable {
 	static final String ID = "ch.elexis.notes.view"; //$NON-NLS-1$
 	ScrolledForm fMaster;
 	NotesList master;
@@ -65,6 +68,8 @@ public class NotesView extends ViewPart implements IActivationListener, ElexisEv
 	boolean hasScanner = false;
 	private IAction newCategoryAction, newNoteAction, delNoteAction, scanAction;
 	FormToolkit tk = UiDesk.getToolkit();
+
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -88,32 +93,21 @@ public class NotesView extends ViewPart implements IActivationListener, ElexisEv
 		fMaster.getToolBarManager().add(new Separator());
 		newNoteAction.setEnabled(false);
 		detail.setEnabled(false);
-		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
 		fMaster.updateToolBar();
 		sash.setWeights(new int[] { 3, 7 });
 		// fDetail.updateToolBar();
 		// fDetail.reflow(true);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	public void dispose() {
-		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
+		getSite().getPage().removePartListener(udpateOnVisible);
 	}
 
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
-	}
-
-	public void activation(boolean mode) {
-	}
-
-	public void visible(boolean mode) {
-		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(this);
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(this);
-		}
 	}
 
 	private void makeActions() {
@@ -238,26 +232,25 @@ public class NotesView extends ViewPart implements IActivationListener, ElexisEv
 
 	}
 
-	public void catchElexisEvent(final ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-			public void run() {
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					Note note = (Note) ev.getObject();
-					detail.setEnabled(true);
-					detail.setNote(note);
-					newNoteAction.setEnabled(true);
+	@Override
+	public void refresh() {
+		activeNote(ContextServiceHolder.get().getTyped(Note.class).orElse(null));
+	}
 
-				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+	@Inject
+	void activeNote(@Optional Note note) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			if (note != null) {
+				detail.setEnabled(true);
+				detail.setNote(note);
+				if (newNoteAction != null) {
+					newNoteAction.setEnabled(true);
+				}
+			} else {
+				if (newNoteAction != null) {
 					newNoteAction.setEnabled(false);
 				}
 			}
-		});
-	}
-
-	private final ElexisEvent eetmpl = new ElexisEvent(null, Note.class,
-			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
+		}, fMaster);
 	}
 }

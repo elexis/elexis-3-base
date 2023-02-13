@@ -11,6 +11,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.medikarte.MedikarteView"
             id="com.hilotec.elexis.kgview.MedikarteView"
+            inject="true"
             name="Medikation"
             restorable="true">
       </view>
@@ -18,6 +19,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.ArchivKG"
             id="com.hilotec.elexis.kgview.ArchivKG"
+            inject="true"
             name="Archiv-KG"
             restorable="true">
       </view>
@@ -25,6 +27,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.ArchivKGPrintView"
             id="com.hilotec.elexis.kgview.ArvchivKGPrintView"
+            inject="true"
             name="Archiv-KG Drucken"
             restorable="true">
       </view>
@@ -32,6 +35,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.diagnoseliste.DiagnoselisteView"
             id="com.hilotec.elexis.kgview.DiagnoselisteView"
+            inject="true"
             name="Diagnoseliste"
             restorable="true">
       </view>
@@ -39,6 +43,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.diagnoseliste.DLPersAnamnese"
             id="com.hilotec.elexis.kgview.DLPersAnamnese"
+            inject="true"
             name="DL Persönliche Anamnese"
             restorable="true">
       </view>
@@ -46,6 +51,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.diagnoseliste.DLSysAnamnese"
             id="com.hilotec.elexis.kgview.DLSysAnamnese"
+            inject="true"
             name="DL Systemanamnese"
             restorable="true">
       </view>
@@ -53,6 +59,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.KonsTimeView"
             id="com.hilotec.elexis.kgview.KonsTimeView"
+            inject="true"
             name="Konsultationszeit"
             restorable="true">
       </view>
@@ -60,6 +67,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.KonsTimerView"
             id="com.hilotec.elexis.kgview.KonsTimerView"
+            inject="true"
             name="Konsultationstimer"
             restorable="true">
       </view>
@@ -67,6 +75,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.medikarte.FavMedikamentListe"
             id="com.hilotec.elexis.kgview.medikarte.FavMedikamentListe"
+            inject="true"
             name="Favoriten-Medikamentenliste"
             restorable="true">
       </view>
@@ -74,6 +83,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.Problemliste"
             id="com.hilotec.elexis.kgview.Problemliste"
+            inject="true"
             name="Problemliste"
             restorable="true">
       </view>
@@ -81,6 +91,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.Konsliste"
             id="com.hilotec.elexis.kgview.Konsliste"
+            inject="true"
             name="Konsliste"
             restorable="true">
       </view>
@@ -92,6 +103,7 @@
             category="com.hilotec.elexis.kgview.category.patientenfelder"
             class="com.hilotec.elexis.kgview.patientenfelder.SysAnamneseView"
             id="com.hilotec.elexis.kgview.SysAnamneseView"
+            inject="true"
             name="Systemanamnese"
             restorable="true">
       </view>
@@ -99,6 +111,7 @@
             category="com.hilotec.elexis.kgview.category.patientenfelder"
             class="com.hilotec.elexis.kgview.patientenfelder.SozAnamneseView"
             id="com.hilotec.elexis.kgview.SozAnamneseView"
+            inject="true"
             name="Sozialanamnese"
             restorable="true">
       </view>
@@ -106,6 +119,7 @@
             category="com.hilotec.elexis.kgview.category.patientenfelder"
             class="com.hilotec.elexis.kgview.patientenfelder.FamAnamneseView"
             id="com.hilotec.elexis.kgview.FamAnamneseView"
+            inject="true"
             name="Familienanamnese"
             restorable="true">
       </view>
@@ -113,6 +127,7 @@
             category="com.hilotec.elexis.kgview.category.patientenfelder"
             class="com.hilotec.elexis.kgview.patientenfelder.PersAnamneseView"
             id="com.hilotec.elexis.kgview.PersAnamneseView"
+            inject="true"
             name="Persönliche Anamnese"
             restorable="true">
       </view>
@@ -120,6 +135,7 @@
             category="com.hilotec.elexis.kgview.category.patientenfelder"
             class="com.hilotec.elexis.kgview.patientenfelder.RisikoFView"
             id="com.hilotec.elexis.kgview.RisikoFView"
+            inject="true"
             name="Risikofaktoren"
             restorable="true">
       </view>
@@ -131,6 +147,7 @@
             category="com.hilotec.elexis.kgview.category.konsfelder"
             class="com.hilotec.elexis.kgview.konsultationsfeld.AllgemeinStView"
             id="com.hilotec.elexis.kgview.AllgemeinStView"
+            inject="true"
             name="Allgemeinstatus"
             restorable="true">
       </view>
@@ -138,6 +155,7 @@
             category="com.hilotec.elexis.kgview.category.konsfelder"
             class="com.hilotec.elexis.kgview.konsultationsfeld.LokalStView"
             id="com.hilotec.elexis.kgview.LokalStView"
+            inject="true"
             name="Status"
             restorable="true">
       </view>
@@ -145,6 +163,7 @@
             category="com.hilotec.elexis.kgview.category.konsfelder"
             class="com.hilotec.elexis.kgview.konsultationsfeld.DiagnoseView"
             id="com.hilotec.elexis.kgview.DiagnoseView"
+            inject="true"
             name="Diagnose"
             restorable="true">
       </view>
@@ -152,6 +171,7 @@
             category="com.hilotec.elexis.kgview.category.konsfelder"
             class="com.hilotec.elexis.kgview.konsultationsfeld.JetzLeidenView"
             id="com.hilotec.elexis.kgview.JetzLeidenView"
+            inject="true"
             name="Jetziges Leiden"
             restorable="true">
       </view>
@@ -159,6 +179,7 @@
             category="com.hilotec.elexis.kgview.category.konsfelder"
             class="com.hilotec.elexis.kgview.konsultationsfeld.ProzedereView"
             id="com.hilotec.elexis.kgview.ProzedereView"
+            inject="true"
             name="Prozedere"
             restorable="true">
       </view>
@@ -166,6 +187,7 @@
             category="com.hilotec.elexis.kgview.category.konsfelder"
             class="com.hilotec.elexis.kgview.konsultationsfeld.TherapieView"
             id="com.hilotec.elexis.kgview.TherapieView"
+            inject="true"
             name="Therapie"
             restorable="true">
       </view>
@@ -173,6 +195,7 @@
             category="com.hilotec.elexis.kgview.category.konsfelder"
             class="com.hilotec.elexis.kgview.konsultationsfeld.VerlaufView"
             id="com.hilotec.elexis.kgview.VerlaufView"
+            inject="true"
             name="Verlauf"
             restorable="true">
       </view>
@@ -180,6 +203,7 @@
             category="com.hilotec.elexis.kgview.category.konsfelder"
             class="com.hilotec.elexis.kgview.konsultationsfeld.RoentgenView"
             id="com.hilotec.elexis.kgview.RoentgenView"
+            inject="true"
             name="Röntgen"
             restorable="true">
       </view>
@@ -187,6 +211,7 @@
             category="com.hilotec.elexis.kgview.category.konsfelder"
             class="com.hilotec.elexis.kgview.konsultationsfeld.EKGView"
             id="com.hilotec.elexis.kgview.EKGView"
+            inject="true"
             name="EKG"
             restorable="true">
       </view>
@@ -194,6 +219,7 @@
             category="com.hilotec.elexis.kgview.category"
             class="com.hilotec.elexis.kgview.Therapieliste"
             id="com.hilotec.elexis.kgview.Therapieliste"
+            inject="true"
             name="Therapieliste"
             restorable="true">
       </view>

@@ -1,9 +1,13 @@
 package com.hilotec.elexis.kgview.medikarte;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -26,14 +30,14 @@ import org.eclipse.ui.part.ViewPart;
 import com.hilotec.elexis.kgview.Preferences;
 import com.hilotec.elexis.kgview.data.FavMedikament;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
-import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.ui.events.RefreshingPartListener;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.PersistentObjectDragSource;
 import ch.elexis.core.ui.util.PersistentObjectDropTarget;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -45,7 +49,7 @@ import ch.elexis.data.Query;
  *
  * @author Antoine Kaufmann
  */
-public class FavMedikamentListe extends ViewPart implements ElexisEventListener {
+public class FavMedikamentListe extends ViewPart implements IRefreshable {
 	public static final String ID = "com.hilotec.elexis.kgview.medikarte.FavMedikamentListe";
 
 	private Text suche;
@@ -54,6 +58,8 @@ public class FavMedikamentListe extends ViewPart implements ElexisEventListener 
 	private Action actEdit;
 	private Action actDelete;
 	private Action actCheckList;
+
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -175,7 +181,7 @@ public class FavMedikamentListe extends ViewPart implements ElexisEventListener 
 		menus.createMenu(actCheckList);
 		menus.createControlContextMenu(table, actEdit, actDelete);
 		refresh();
-		ElexisEventDispatcher.getInstance().addListeners(this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	/** Formatiere Volltext (mit \n) fuer Darstellung in Tabelle. */
@@ -186,7 +192,8 @@ public class FavMedikamentListe extends ViewPart implements ElexisEventListener 
 	/**
 	 * Liste neu laden.
 	 */
-	private void refresh() {
+	@Override
+	public void refresh() {
 		Query<FavMedikament> qMeds = new Query<FavMedikament>(FavMedikament.class);
 		// XXX: Irgendwie unschoen
 		qMeds.add("ID", Query.NOT_EQUAL, "VERSION");
@@ -308,25 +315,15 @@ public class FavMedikamentListe extends ViewPart implements ElexisEventListener 
 
 	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
 	}
 
-	@Override
-	public void catchElexisEvent(ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-			public void run() {
-				refresh();
-			}
-		});
+	@Optional
+	@Inject
+	void crudFinding(@UIEventTopic(ElexisEventTopics.BASE_MODEL + "*") FavMedikament favMedikament) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			refresh();
+		}, table);
 	}
-
-	private final ElexisEvent eetmpl = new ElexisEvent(null, FavMedikament.class,
-			ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE | ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_RELOAD);
-
-	@Override
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
-	}
-
 }

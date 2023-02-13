@@ -3,6 +3,10 @@ package com.hilotec.elexis.kgview;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -21,18 +25,24 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.hilotec.elexis.kgview.data.KonsData;
 
-import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
-import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.events.RefreshingPartListener;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.PersistentObjectDragSource;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
 
-public class Therapieliste extends ViewPart implements ElexisEventListener {
+public class Therapieliste extends ViewPart implements IRefreshable {
 	final public static String ID = "com.hilotec.elexis.kgview.Therapieliste";
 	private TableViewer tv;
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -120,46 +130,36 @@ public class Therapieliste extends ViewPart implements ElexisEventListener {
 		new PersistentObjectDragSource(tv);
 
 		tv.setInput(ElexisEventDispatcher.getSelectedPatient());
-		new SelListener().init();
-		ElexisEventDispatcher.getInstance().addListeners(this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
 	}
 
 	public void setFocus() {
 	}
 
-	/** Selection Listener um bei Patientenwechsel zu aktualisieren */
-	private class SelListener extends POSelectionListener<Patient> {
-		protected void deselected(Patient p) {
-			if (tv.getControl() != null && !tv.getControl().isDisposed()) {
-				tv.setInput(null);
-			}
-		}
-
-		protected void selected(Patient p) {
-			if (tv.getControl() != null && !tv.getControl().isDisposed()) {
-				tv.setInput(p);
-			}
-		}
+	@Optional
+	@Inject
+	void crudEncounter(@UIEventTopic(ElexisEventTopics.BASE_MODEL + "*") IEncounter encounter) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			tv.refresh();
+		}, tv);
 	}
 
-	public void catchElexisEvent(ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-			public void run() {
-				tv.refresh();
-			}
-		});
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			Patient p = (Patient) NoPoUtil.loadAsPersistentObject(patient);
+			tv.setInput(p);
+		}, tv);
 	}
 
-	private ElexisEvent eetmpl = new ElexisEvent(null, Konsultation.class,
-			ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_DELETE);
-
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 }

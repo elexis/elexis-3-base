@@ -2,6 +2,9 @@ package com.hilotec.elexis.kgview;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.events.KeyEvent;
@@ -16,20 +19,27 @@ import org.eclipse.swt.widgets.MenuItem;
 import com.hilotec.elexis.kgview.data.IcpcModelServiceHolder;
 import com.hilotec.elexis.kgview.data.KonsData;
 
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.events.RefreshingPartListener;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.GenericObjectDropTarget;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Konsultation;
 import ch.elexis.icpc.model.icpc.IcpcCode;
 import ch.rgw.tools.StringTool;
 
-public abstract class KonsDataFView extends SimpleTextFView {
+public abstract class KonsDataFView extends SimpleTextFView implements IRefreshable {
 	protected final String dbfield;
 	protected final String icpcfield;
 
 	private KonsData data;
-	private MyKonsListener listener;
 
 	private List icpc_list;
 	private ArrayList<IcpcCode> code_list;
+
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	protected KonsDataFView(String field) {
 		dbfield = field;
@@ -152,7 +162,8 @@ public abstract class KonsDataFView extends SimpleTextFView {
 		}
 
 		data = null;
-		listener = new MyKonsListener();
+
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	@Override
@@ -179,7 +190,7 @@ public abstract class KonsDataFView extends SimpleTextFView {
 	}
 
 	/** Konsultation wurde deselektiert */
-	private void konsDeselected(Konsultation kons) {
+	private void konsDeselected() {
 		setEnabled(false);
 		data = null;
 	}
@@ -197,27 +208,24 @@ public abstract class KonsDataFView extends SimpleTextFView {
 
 	@Override
 	public void dispose() {
-		listener.destroy();
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
 	}
 
-	/**
-	 * Helper Klasse um auf dem Laufenden zu bleiben bezüglich der aktiven
-	 * Konsultation.
-	 */
-	class MyKonsListener extends POSelectionListener<Konsultation> {
-		public MyKonsListener() {
-			init();
-		}
+	@Inject
+	void activeEncounter(@Optional IEncounter encounter) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			Konsultation k = (Konsultation) NoPoUtil.loadAsPersistentObject(encounter);
+			if (k != null) {
+				konsSelected(k);
+			} else {
+				konsDeselected();
+			}
+		}, icpc_list);
+	}
 
-		@Override
-		protected void deselected(Konsultation kons) {
-			konsDeselected(kons);
-		}
-
-		@Override
-		protected void selected(Konsultation kons) {
-			konsSelected(kons);
-		}
+	@Override
+	public void refresh() {
+		activeEncounter(ContextServiceHolder.get().getTyped(IEncounter.class).orElse(null));
 	}
 }

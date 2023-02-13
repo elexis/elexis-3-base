@@ -1,6 +1,10 @@
 package com.hilotec.elexis.kgview;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -24,15 +28,21 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import com.hilotec.elexis.kgview.data.KonsData;
 
-import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalActions;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -41,9 +51,9 @@ import ch.elexis.data.Patient;
  * Einfache Konsultationsliste die aber auch auf Konsultationszeiten Ruecksicht
  * nimmt beim Sortieren.
  */
-public class Konsliste extends ViewPart implements ElexisEventListener {
+public class Konsliste extends ViewPart implements IRefreshable {
 	protected TableViewer tv;
-	protected SelListener sl;
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	/**
 	 * Wrapper um globale delKonsAction da diese keine Bestaetigung verlangt.
@@ -166,45 +176,37 @@ public class Konsliste extends ViewPart implements ElexisEventListener {
 				new KonsLoeschenAct());
 
 		tv.setInput(ElexisEventDispatcher.getSelectedPatient());
-		sl = new SelListener();
-		sl.init();
-		ElexisEventDispatcher.getInstance().addListeners(this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(this);
-		sl.destroy();
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
-	}
-
-	/** Selection Listener um bei Patientenwechsel zu aktualisieren */
-	private class SelListener extends POSelectionListener<Patient> {
-		protected void deselected(Patient p) {
-			tv.setInput(null);
-		}
-
-		protected void selected(Patient p) {
-			tv.setInput(p);
-		}
 	}
 
 	@Override
 	public void setFocus() {
 	}
 
-	public void catchElexisEvent(ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-			public void run() {
-				tv.refresh();
-			}
-		});
+	@Optional
+	@Inject
+	void crudEncounter(@UIEventTopic(ElexisEventTopics.BASE_MODEL + "*") IEncounter encounter) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			tv.refresh();
+		}, tv);
 	}
 
-	private ElexisEvent eetmpl = new ElexisEvent(null, Konsultation.class,
-			ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_DELETE);
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			Patient p = (Patient) NoPoUtil.loadAsPersistentObject(patient);
+			tv.setInput(p);
+		}, tv);
+	}
 
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 }

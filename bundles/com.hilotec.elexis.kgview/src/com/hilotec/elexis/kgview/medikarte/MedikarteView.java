@@ -1,11 +1,15 @@
 package com.hilotec.elexis.kgview.medikarte;
 
-import org.apache.commons.lang3.StringUtils;
 import static com.hilotec.elexis.kgview.text.KGTextTemplateRequirement.TT_MEDICARD;
 
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -25,14 +29,19 @@ import org.eclipse.ui.part.ViewPart;
 import com.hilotec.elexis.kgview.data.FavMedikament;
 import com.hilotec.elexis.kgview.medikarte.MedikarteEintragComparator.Sortierung;
 
-import ch.elexis.core.data.events.ElexisEvent;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
-import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPrescription;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.PersistentObjectDropTarget;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.core.ui.views.TextView;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Brief;
@@ -41,7 +50,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 
-public class MedikarteView extends ViewPart implements ElexisEventListener {
+public class MedikarteView extends ViewPart implements IRefreshable {
 	public static final String ID = "com.hilotec.elexis.kgview.MedikarteView";
 
 	private Table table;
@@ -60,6 +69,8 @@ public class MedikarteView extends ViewPart implements ElexisEventListener {
 	private Action actShowDel;
 	private Action actDrucken;
 	private Action actSortAlph;
+
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -129,9 +140,10 @@ public class MedikarteView extends ViewPart implements ElexisEventListener {
 		// Contextmenu fuer Tabelle
 		menus.createControlContextMenu(table, actEdit, actStop, actDelete);
 
-		ElexisEventDispatcher.getInstance().addListeners(this);
 		patient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 		refresh();
+
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	private void makeActions() {
@@ -272,7 +284,9 @@ public class MedikarteView extends ViewPart implements ElexisEventListener {
 		return text.replaceAll("[\\n\\r]+", ", ");
 	}
 
-	private void refresh() {
+	@Override
+	public void refresh() {
+		patient = (Patient) NoPoUtil.loadAsPersistentObject(ContextServiceHolder.get().getActivePatient().orElse(null));
 		table.removeAll();
 		if (patient == null)
 			return;
@@ -324,31 +338,23 @@ public class MedikarteView extends ViewPart implements ElexisEventListener {
 
 	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
 	}
 
-	public void catchElexisEvent(final ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-			public void run() {
-				if (ev.getObjectClass().equals(Patient.class)) {
-					Patient p = (Patient) ev.getObject();
-					if (ev.getType() == ElexisEvent.EVENT_SELECTED)
-						patient = p;
-					else if (ev.getType() == ElexisEvent.EVENT_DESELECTED)
-						patient = null;
-					refresh();
-				} else if (ev.getObjectClass().equals(Prescription.class)) {
-					refresh();
-				}
-			}
-		});
+	@Inject
+	void activePatient(@Optional IPatient pat) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			patient = (Patient) NoPoUtil.loadAsPersistentObject(pat);
+			refresh();
+		}, table);
 	}
 
-	private final ElexisEvent eetmpl = new ElexisEvent(null, null, ElexisEvent.EVENT_SELECTED
-			| ElexisEvent.EVENT_DESELECTED | ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE);
-
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
+	@Optional
+	@Inject
+	void crudPrescription(@UIEventTopic(ElexisEventTopics.BASE_MODEL + "*") IPrescription prescription) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			refresh();
+		}, table);
 	}
 }

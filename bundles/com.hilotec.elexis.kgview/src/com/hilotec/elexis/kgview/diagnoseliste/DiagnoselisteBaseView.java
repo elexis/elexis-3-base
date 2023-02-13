@@ -1,14 +1,16 @@
 package com.hilotec.elexis.kgview.diagnoseliste;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -40,15 +42,19 @@ import org.w3c.dom.Text;
 
 import com.hilotec.elexis.kgview.data.KonsData;
 
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.PersistentObjectDragSource;
 import ch.elexis.core.ui.util.PersistentObjectDropTarget;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.model.icpc.IcpcCode;
@@ -409,7 +415,7 @@ class DLParser {
 	}
 }
 
-public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEventListener {
+public abstract class DiagnoselisteBaseView extends ViewPart implements IRefreshable {
 	/** Typ der anzuzeigenden items */
 	protected final int typ;
 
@@ -447,6 +453,8 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 	Action actImportSA;
 	Action actImportDL;
 	Action actImportCB;
+
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	/**
 	 * Diagnoseliste Anzeige fuer Items eines bestimmten Typs initialisieren.
@@ -709,7 +717,7 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 			m.add(actDelICPC);
 		menus.createControlContextMenu(tree, m.toArray(a));
 
-		ElexisEventDispatcher.getInstance().addListeners(this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 		updateTree();
 	}
 
@@ -961,26 +969,21 @@ public abstract class DiagnoselisteBaseView extends ViewPart implements ElexisEv
 	}
 
 	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
+	}
+
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			Patient p = (Patient) NoPoUtil.loadAsPersistentObject(patient);
+			updateTree(p);
+		}, tree);
+	}
+
+	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
 	}
-
-	public void catchElexisEvent(final ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-			public void run() {
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					updateTree((Patient) ev.getObject());
-				}
-			}
-		});
-
-	}
-
-	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class, ElexisEvent.EVENT_SELECTED);
-
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
-	}
-
 }

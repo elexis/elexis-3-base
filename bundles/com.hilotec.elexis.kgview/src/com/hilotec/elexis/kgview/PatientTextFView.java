@@ -1,14 +1,25 @@
 package com.hilotec.elexis.kgview;
 
-import ch.elexis.core.data.events.ElexisEvent;
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
-import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.events.RefreshingPartListener;
+import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Patient;
 import ch.rgw.tools.StringTool;
 
-public abstract class PatientTextFView extends SimpleTextFView implements ElexisEventListener {
+public abstract class PatientTextFView extends SimpleTextFView implements IRefreshable {
 	protected final String dbfield;
+
+	private Patient actPatient;
+
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	protected PatientTextFView(String field) {
 		dbfield = field;
@@ -21,7 +32,7 @@ public abstract class PatientTextFView extends SimpleTextFView implements Elexis
 			patientChanged(p);
 		}
 
-		ElexisEventDispatcher.getInstance().addListeners(this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	@Override
@@ -36,30 +47,30 @@ public abstract class PatientTextFView extends SimpleTextFView implements Elexis
 		setText(StringTool.unNull(p.get(dbfield)));
 	}
 
-	public void catchElexisEvent(final ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-			public void run() {
-				Patient p = (Patient) ev.getObject();
-				if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-					p.set(dbfield, getText());
-					setEnabled(false);
-				} else if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					patientChanged(p);
-				}
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			Patient p = (Patient) NoPoUtil.loadAsPersistentObject(patient);
+			if (actPatient != null) {
+				actPatient.set(dbfield, getText());
 			}
-		});
-	}
-
-	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class,
-			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
+			if (p != null) {
+				patientChanged(p);
+			} else {
+				setEnabled(false);
+			}
+			actPatient = p;
+		}, area);
 	}
 
 	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(this);
+		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
+	}
+
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 }

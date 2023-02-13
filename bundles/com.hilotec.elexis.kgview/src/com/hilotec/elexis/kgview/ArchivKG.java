@@ -1,12 +1,15 @@
 package com.hilotec.elexis.kgview;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -33,17 +36,22 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import com.hilotec.elexis.kgview.data.KonsData;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.l10n.Messages;
+import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.status.ElexisStatus;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.l10n.Messages;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -177,7 +185,7 @@ class ScrollHelper implements KeyListener, DisposeListener, FocusListener {
 	}
 }
 
-public class ArchivKG extends ViewPart implements ElexisEventListener, HeartListener {
+public class ArchivKG extends ViewPart implements IRefreshable, HeartListener {
 	public static final String ID = "com.hilotec.elexis.kgview.ArchivKG";
 
 	ScrolledFormText text;
@@ -189,6 +197,8 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 	private Action actSortierungUmk;
 	private Action actDrucken;
 	private boolean sortRev;
+
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -208,7 +218,7 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 				String href = (String) e.getHref();
 				if (href.startsWith("kons:")) {
 					Konsultation kons = Konsultation.load(href.substring(5));
-					ElexisEventDispatcher.fireSelectionEvent(kons);
+					ContextServiceHolder.get().setTyped(NoPoUtil.loadAsIdentifiable(kons, IEncounter.class));
 				}
 			}
 		});
@@ -226,10 +236,11 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 				actSortierungUmk, null, actDrucken);
 
 		// Aktuell ausgewaehlten Patienten laden
-		Patient pat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+		Patient pat = (Patient) NoPoUtil
+				.loadAsPersistentObject(ContextServiceHolder.get().getActivePatient().orElse(null));
 		loadPatient(pat);
 
-		ElexisEventDispatcher.getInstance().addListeners(this);
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	/**
@@ -289,8 +300,9 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 	/**
 	 * Neu laden
 	 */
-	private void refresh() {
-		loadPatient(ElexisEventDispatcher.getSelectedPatient());
+	@Override
+	public void refresh() {
+		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
 
 	/**
@@ -357,27 +369,14 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 		return text.replace(">", "&gt;").replace("<", "&lt;").replace(StringUtils.LF, "<br/>");
 	}
 
-	public void catchElexisEvent(final ElexisEvent ev) {
-		UiDesk.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				Patient p = (Patient) ev.getObject();
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					loadPatient(p);
-				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-					loadPatient(null);
-				}
-			}
-		});
+	@Inject
+	void activePatient(@Optional IPatient patient) {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			Patient p = (Patient) NoPoUtil.loadAsPersistentObject(patient);
+			loadPatient(p);
+		}, text);
 	}
-
-	private final ElexisEvent eetmpl = new ElexisEvent(null, Patient.class,
-			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-
-	public ElexisEvent getElexisEventFilter() {
-		return eetmpl;
-	}
-
+	
 	public void setFocus() {
 	}
 
@@ -504,9 +503,9 @@ public class ArchivKG extends ViewPart implements ElexisEventListener, HeartList
 
 	@Override
 	public void dispose() {
+		getSite().getPage().removePartListener(udpateOnVisible);
 		if (actAutoAkt.isChecked())
 			CoreHub.heart.removeListener(this);
-		ElexisEventDispatcher.getInstance().removeListeners(this);
 		super.dispose();
 	}
 

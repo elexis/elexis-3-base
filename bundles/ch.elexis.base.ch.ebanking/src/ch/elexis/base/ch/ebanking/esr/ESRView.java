@@ -18,11 +18,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -44,16 +47,17 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListenerImpl;
+import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IUser;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.AbstractDataLoaderJob;
-import ch.elexis.core.ui.actions.GlobalEventDispatcher;
-import ch.elexis.core.ui.actions.IActivationListener;
 import ch.elexis.core.ui.actions.JobPool;
+import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.util.ViewMenus;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
@@ -62,8 +66,8 @@ import ch.elexis.core.ui.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.core.ui.util.viewers.LazyContentProvider;
 import ch.elexis.core.ui.util.viewers.SimpleWidgetProvider;
 import ch.elexis.core.ui.util.viewers.ViewerConfigurer;
+import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.AccountTransaction;
-import ch.elexis.data.Anwender;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
@@ -75,7 +79,7 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-public class ESRView extends ViewPart implements IActivationListener {
+public class ESRView extends ViewPart implements IRefreshable {
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	ESRLoader esrloader;
@@ -83,23 +87,33 @@ public class ESRView extends ViewPart implements IActivationListener {
 	Query<ESRRecord> qbe;
 	private Action loadESRFile;
 	private ViewMenus menus;
-	private ESRSelectionListener esrl;
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 	private TimeTool ttBooking = new TimeTool();
 
-	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
-			ElexisEvent.EVENT_USER_CHANGED) {
+	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
-		@Override
-		public void catchElexisEvent(ElexisEvent ev) {
-			JobPool.getJobPool().activate("ESR-Loader", Job.SHORT); //$NON-NLS-1$
+	@Optional
+	@Inject
+	public void activeUser(IUser user) {
+		JobPool.getJobPool().activate("ESR-Loader", Job.SHORT);
+	}
+
+	@Optional
+	@Inject
+	public void activeESRRecord(ESRRecord record) {
+		if (record != null) {
+			CoreUiUtil.runAsyncIfActive(() -> {
+				Rechnung rn = record.getRechnung();
+				if (rn != null) {
+					ContextServiceHolder.get().setTyped(NoPoUtil.loadAsIdentifiable(rn, IInvoice.class).orElse(null));
+				}
+			}, cv);
 		}
-
-	};
+	}
 
 	@Override
 	public void dispose() {
-		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
+		getSite().getPage().removePartListener(udpateOnVisible);
 	}
 
 	@Override
@@ -123,7 +137,6 @@ public class ESRView extends ViewPart implements IActivationListener {
 		menus = new ViewMenus(getViewSite());
 		menus.createToolbar(loadESRFile);
 		menus.createMenu(loadESRFile);
-		esrl = new ESRSelectionListener();
 		cv.addDoubleClickListener(new PoDoubleClickListener() {
 			public void doubleClicked(PersistentObject obj, CommonViewer cv) {
 				ESRRecordDialog erd = new ESRRecordDialog(getViewSite().getShell(), (ESRRecord) obj);
@@ -133,7 +146,7 @@ public class ESRView extends ViewPart implements IActivationListener {
 			}
 
 		});
-		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
+		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
 	private boolean isOldShown = false;
@@ -146,6 +159,14 @@ public class ESRView extends ViewPart implements IActivationListener {
 							+ " ist veraltet, und wird nicht mehr unterstützt. Bitte verwenden Sie die ESR Ansicht.");
 			isOldShown = true;
 		}
+	}
+
+	@Override
+	public void refresh() {
+		CoreUiUtil.runAsyncIfActive(() -> {
+			activeESRRecord(ContextServiceHolder.get().getTyped(ESRRecord.class).orElse(null));
+			cv.notify(CommonViewer.Message.update);
+		}, cv);
 	}
 
 	class ESRLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
@@ -352,19 +373,4 @@ public class ESRView extends ViewPart implements IActivationListener {
 			}
 		};
 	}
-
-	public void activation(boolean mode) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void visible(boolean mode) {
-		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_user, esrl);
-		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_user, esrl);
-		}
-		esrl.activate(mode);
-	}
-
 }

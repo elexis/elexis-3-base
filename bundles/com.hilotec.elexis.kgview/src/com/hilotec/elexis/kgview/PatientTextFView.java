@@ -52,7 +52,10 @@ public abstract class PatientTextFView extends SimpleTextFView implements IRefre
 		CoreUiUtil.runAsyncIfActive(() -> {
 			Patient p = (Patient) NoPoUtil.loadAsPersistentObject(patient);
 			if (actPatient != null) {
-				actPatient.set(dbfield, getText());
+				// save on deselect or patient change
+				if (p == null || !actPatient.getId().equals(p.getId())) {
+					actPatient.set(dbfield, getText());
+				}
 			}
 			if (p != null) {
 				patientChanged(p);

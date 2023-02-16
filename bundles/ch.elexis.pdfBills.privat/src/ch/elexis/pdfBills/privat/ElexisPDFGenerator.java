@@ -71,7 +71,6 @@ import ch.elexis.ebanking.qr.QRBillDataBuilder;
 import ch.elexis.ebanking.qr.QRBillDataException;
 import ch.elexis.ebanking.qr.QRBillDataException.SourceType;
 import ch.elexis.ebanking.qr.QRBillImage;
-import ch.elexis.pdfBills.BundleURIResolver;
 import ch.elexis.pdfBills.OutputterUtil;
 import ch.elexis.pdfBills.PreferencePage;
 import ch.elexis.pdfBills.QrRnOutputter;

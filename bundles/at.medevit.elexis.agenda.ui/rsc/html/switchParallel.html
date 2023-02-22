@@ -43,8 +43,8 @@
             },
           },
           events: loadEventsCallback,
+          dayRightClick: rightClickCallback,
           dayClick: dayClickCallback,
-          rightClick: rightClickCallback,
           eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
           	if (event.end) {
           		eventDropFunction(event.id, event.start.format(), event.end.format(), event.resourceId, jsEvent.ctrlKey);
@@ -87,6 +87,59 @@
         });
       });
       
+      function monkeyPatchViewClass(View) {
+        View = View.class || View;
+        var renderFn = "render" in View.prototype ? "render" : "renderDates";
+        var originalRender = View.prototype[renderFn];
+        View.prototype[renderFn] = function () {
+          originalRender.call(this);
+          if (!this.el.data("fullcalendar-rightclick")) {
+            this.registerRightclickListener();
+            this.el.data("fullcalendar-rightclick", true);
+          }
+        };
+        View.prototype.registerRightclickListener = function () {
+          var that = this;
+          var grid = this;
+          if (that.timeGrid) {
+            grid = that.timeGrid;
+          } else if (that.dayGrid) {
+            grid = that.dayGrid;
+          }
+          var trigger = typeof that.publiclyTrigger === "function" ? "publiclyTrigger" : "trigger";
+          this.el.on("contextmenu", function (ev) {
+            ev.preventDefault();
+            var eventElt = $(ev.target).closest(".fc-event, .fc-list-item");
+            if (eventElt.length) {
+              var seg = eventElt.data("fc-seg");
+              return that[trigger]("eventRightClick", { args: [seg.footprint.getEventLegacy(), ev, that.calendar.getView()] });
+            } else {
+              var fcContainer = $(ev.target).closest(
+                ".fc-bg, .fc-slats, .fc-content-skeleton, " +
+                ".fc-bgevent-skeleton, .fc-highlight-skeleton"
+              );
+              if (fcContainer.length) {
+                grid.prepareHits();
+                let hit = grid.queryHit(ev.pageX, ev.pageY);
+                if (hit) {
+                  let cell = grid.getSafeHitFootprint(hit);
+                  if (cell) {
+                    var dateProfile = that.calendar.footprintToDateProfile(cell);
+                    cell.start = dateProfile.start;
+                    cell.end = dateProfile.end;
+                    return that[trigger]("dayRightClick", { args: [dateProfile.start, dateProfile.end, cell.resourceId] });
+                  }
+                }
+              }
+            }
+          });
+        };
+      }
+
+      var fc = $.fullCalendar;
+      monkeyPatchViewClass(fc.views.agenda);
+      monkeyPatchViewClass(fc.views.basic);
+
       // https://fullcalendar.io/docs/v3/resourceOrder
       
       function loadResources(callback) {
@@ -119,10 +172,8 @@
         callback(events);
       }
 
-      function rightClickCallback(date, jsEvent, view) {
-        if (typeof jsEvent.resource !== 'undefined') {
-          contextMenuFunction(jsEvent.pageX, jsEvent.pageY, date.format(), jsEvent.resource);
-        }
+      function rightClickCallback(start, end, resourceId) {
+        contextMenuFunction(start, resourceId);
       }
 
       var dayClickSlotDate;

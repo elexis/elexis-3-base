@@ -31,6 +31,7 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,9 +266,10 @@ public class Utils {
 																			// Patientennummer.
 		tmp.append(getFileElement("fn", dh.getPatient().getLastName()));
 		tmp.append(getFileElement("gn", dh.getPatient().getFirstName()));
-		tmp.append(getFileElement("dob",
-				dh.getPatient().getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
-
+		if (dh.getPatient().getDateOfBirth() != null) {
+			tmp.append(getFileElement("dob", //$NON-NLS-1$
+					dh.getPatient().getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))); //$NON-NLS-1$
+		}
 		tmp.append(getFileElement("dt", dh.getTitle())); // not more than 80 characters, laut javadoc
 		tmp.append(getFileElement("dk", dh.getKeywords()));
 		// Da könnten auch noch Felder wie die Document Create Time etc. rein - siehe

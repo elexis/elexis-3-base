@@ -47,7 +47,6 @@ import at.medevit.elexis.bluemedication.core.BlueMedicationService;
 import at.medevit.elexis.bluemedication.core.UploadResult;
 import at.medevit.elexis.emediplan.core.EMediplanService;
 import at.medevit.elexis.hin.auth.core.IHinAuthService;
-import at.medevit.elexis.hin.auth.core.IHinAuthService.Parameters;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IArticle;
@@ -98,7 +97,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		if(hinAuthService == null) {
 			hinAuthService = OsgiServiceUtil.getService(IHinAuthService.class);
 		}
-		if (hinAuthService.isEmpty()) {
+		if (!hinAuthService.isPresent()) {
 			if (!proxyActive) {
 				// get proxy settings and store old values
 				Properties systemSettings = System.getProperties();
@@ -212,7 +211,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 	private void configureApiClient(ApiClient client) {
 		client.setBasePath(getAppBasePath());
 		if(hinAuthService.isPresent()) {
-			Optional<String> authToken = hinAuthService.get().getToken(Collections.singletonMap(Parameters.TOKEN_GROUP, "BlueMedication"));
+			Optional<String> authToken = hinAuthService.get()
+					.getToken(Collections.singletonMap(IHinAuthService.TOKEN_GROUP, "BlueMedication"));
 			if (authToken.isPresent()) {
 				client.addDefaultHeader("Authorization" , "Bearer " + authToken.get());
 			}

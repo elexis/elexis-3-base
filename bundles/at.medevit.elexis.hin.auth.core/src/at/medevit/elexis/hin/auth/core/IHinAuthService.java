@@ -13,9 +13,7 @@ public interface IHinAuthService {
 	public static String PREF_REFRESHTOKEN = "hin/auth/refreshtoken/"; //$NON-NLS-1$
 	public static String PREF_TOKEN_EXPIRES = "hin/auth/tokenexpires/"; //$NON-NLS-1$
 
-	public enum Parameters {
-		TOKEN_GROUP
-	}
+	public static String TOKEN_GROUP = "token_group";
 
 	/**
 	 * Get the bearer token for the provided parameters. Existing tokens are
@@ -25,7 +23,7 @@ public interface IHinAuthService {
 	 * @param parameters
 	 * @return
 	 */
-	public Optional<String> getToken(Map<Parameters, Object> parameters);
+	public Optional<String> getToken(Map<String, Object> parameters);
 
 	/**
 	 * Call this method to inform the {@link IHinAuthService} about a exception
@@ -37,6 +35,6 @@ public interface IHinAuthService {
 	 * 
 	 * @return
 	 */
-	public Optional<String> handleException(Exception ex, Map<Parameters, Object> parameters);
+	public Optional<String> handleException(Exception ex, Map<String, Object> parameters);
 
 }

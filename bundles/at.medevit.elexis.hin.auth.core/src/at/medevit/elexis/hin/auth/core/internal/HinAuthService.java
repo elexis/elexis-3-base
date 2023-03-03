@@ -42,8 +42,8 @@ public class HinAuthService implements IHinAuthService {
 	private String currentState;
 
 	@Override
-	public Optional<String> getToken(Map<Parameters, Object> parameters) {
-		String tokenGroup = (String) parameters.get(Parameters.TOKEN_GROUP);
+	public Optional<String> getToken(Map<String, Object> parameters) {
+		String tokenGroup = (String) parameters.get(IHinAuthService.TOKEN_GROUP);
 		if (StringUtils.isNotBlank(tokenGroup)) {
 			Optional<String> existingToken = validateToken(
 					configService.getActiveMandator(IHinAuthService.PREF_TOKEN + tokenGroup, null), tokenGroup);
@@ -217,9 +217,9 @@ public class HinAuthService implements IHinAuthService {
 	}
 
 	@Override
-	public Optional<String> handleException(Exception ex, Map<Parameters, Object> parameters) {
+	public Optional<String> handleException(Exception ex, Map<String, Object> parameters) {
 		if (ex.getMessage().contains("HTTP response code: 401")) {
-			String tokenGroup = (String) parameters.get(Parameters.TOKEN_GROUP);
+			String tokenGroup = (String) parameters.get(IHinAuthService.TOKEN_GROUP);
 			LoggerFactory.getLogger(getClass()).info("Got HTTP 401 invalidating token for [" + tokenGroup + "]");
 			configService.setActiveMandator(IHinAuthService.PREF_TOKEN + tokenGroup, null);
 			configService.setActiveMandator(IHinAuthService.PREF_TOKEN_EXPIRES + tokenGroup, null);

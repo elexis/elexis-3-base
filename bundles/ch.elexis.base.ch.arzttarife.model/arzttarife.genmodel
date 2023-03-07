@@ -52,6 +52,7 @@
         <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedLeistung/getHierarchy">
           <genParameters ecoreParameter="arzttarife.ecore#//tarmed/ITarmedLeistung/getHierarchy/date"/>
         </genOperations>
+        <genOperations ecoreOperation="arzttarife.ecore#//tarmed/ITarmedLeistung/isZuschlagsleistung"/>
       </genClasses>
       <genClasses image="false" ecoreClass="arzttarife.ecore#//tarmed/ITarmedExtension">
         <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//tarmed/ITarmedExtension/limits"/>

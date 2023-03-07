@@ -787,6 +787,8 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		g1.getETypeArguments().add(g2);
 		initEOperation(op, g1);
 
+		addEOperation(iTarmedLeistungEClass, ecorePackage.getEBoolean(), "isZuschlagsleistung", 0, 1, IS_UNIQUE, IS_ORDERED);
+
 		initEClass(iTarmedExtensionEClass, ITarmedExtension.class, "ITarmedExtension", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		g1 = createEGenericType(ecorePackage.getEMap());
 		g2 = createEGenericType(ecorePackage.getEString());

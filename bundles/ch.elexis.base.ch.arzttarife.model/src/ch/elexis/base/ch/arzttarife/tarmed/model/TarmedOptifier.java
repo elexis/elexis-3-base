@@ -337,7 +337,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		}
 
 		// set bezug of zuschlagsleistung and referenzleistung
-		if (isReferenceInfoAvailable() && shouldDetermineReference(tc)) {
+		if (isReferenceInfoAvailable() && tc.isZuschlagsleistung()) {
 			// lookup available masters
 			List<IBilled> masters = getPossibleMasters(newVerrechnet, lst);
 			if (masters.isEmpty()) {
@@ -723,16 +723,6 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 			result = cfgs.get(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE, false);
 		}
 		return result;
-	}
-
-	private boolean shouldDetermineReference(TarmedLeistung tc) {
-		String typ = tc.getServiceTyp();
-		boolean becauseOfType = typ != null && typ.equals("Z");
-		if (becauseOfType) {
-			String text = tc.getText();
-			return text.startsWith("+") || text.startsWith("-");
-		}
-		return false;
 	}
 
 	private List<IBilled> getAvailableMasters(TarmedLeistung slave, List<IBilled> lst) {

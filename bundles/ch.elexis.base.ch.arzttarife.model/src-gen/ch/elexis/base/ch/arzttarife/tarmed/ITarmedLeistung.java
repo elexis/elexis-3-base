@@ -315,4 +315,12 @@ public interface ITarmedLeistung extends IService {
 	 */
 	List<String> getHierarchy(LocalDate date);
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	boolean isZuschlagsleistung();
+
 } // ITarmedLeistung

@@ -33,7 +33,6 @@ import ch.elexis.core.ui.exchange.elements.XChangeElement;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.BestellView;
-import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -41,7 +40,7 @@ import ch.rgw.tools.StringTool;
 public class Sender implements IDataSender {
 	private static final String XML_NEWLINE = "\r\n";
 
-	private static final String ORDER_URL_OAUTH = "https://oauth2.xml.estudio.zur-rose.hin.ch";
+	private static final String ORDER_URL_OAUTH = "https://oauth2.xml.estudio.zur-rose.hin.ch/orderXML/";
 	
 	private static final String ORDER_URL = "http://xml.estudio.zur-rose.hin.ch/orderXML/";
 	private static final String ENCODING = "UTF-8";
@@ -54,8 +53,6 @@ public class Sender implements IDataSender {
 	private final List<String> orderRequests = new ArrayList<String>();
 
 	private int counter;
-
-	private Optional<IHinAuthService> hinAuthService;
 	
 	@Override
 	public boolean canHandle(Class<? extends PersistentObject> clazz) {
@@ -76,9 +73,7 @@ public class Sender implements IDataSender {
 		String oldProxyPort = null;
 		Properties systemSettings = null;
 		
-		if(hinAuthService == null) {
-			hinAuthService = OsgiServiceUtil.getService(IHinAuthService.class);
-		}
+		Optional<IHinAuthService> hinAuthService = HinAuthServiceHolder.get();
 		if(!hinAuthService.isPresent()) {
 			// get proxy settings and store old values
 			systemSettings = System.getProperties();

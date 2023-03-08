@@ -7,6 +7,7 @@ package org.iatrix.bestellung.rose;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -21,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import at.medevit.elexis.hin.auth.core.IHinAuthService;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
@@ -39,8 +41,12 @@ public class RosePreferences extends FieldEditorPreferencePage implements IWorkb
 	protected void createFieldEditors() {
 		addField(new StringFieldEditor(Constants.CFG_ROSE_CLIENT_NUMBER, "Kundennummer", getFieldEditorParent()));
 
-		addField(new StringFieldEditor(Constants.CFG_ASAS_PROXY_HOST, "HIN-Client Adresse", getFieldEditorParent()));
-		addField(new StringFieldEditor(Constants.CFG_ASAS_PROXY_PORT, "HIN-Client Port", getFieldEditorParent()));
+		Optional<IHinAuthService> hinAuthService = HinAuthServiceHolder.get();
+		if (!hinAuthService.isPresent()) {
+			addField(
+					new StringFieldEditor(Constants.CFG_ASAS_PROXY_HOST, "HIN-Client Adresse", getFieldEditorParent()));
+			addField(new StringFieldEditor(Constants.CFG_ASAS_PROXY_PORT, "HIN-Client Port", getFieldEditorParent()));
+		}
 		addField(new KontaktFieldEditor(new ConfigServicePreferenceStore(Scope.GLOBAL), Constants.CFG_ROSE_SUPPLIER,
 				"Lieferant", getFieldEditorParent()));
 	}

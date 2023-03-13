@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.EMenuService;
@@ -38,6 +39,8 @@ import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
@@ -64,6 +67,14 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		}
 	}
 
+	@Optional
+	@Inject
+	void invalidateCache(@EventTopic(ElexisEventTopics.EVENT_INVALIDATE_CACHE) Class<?> clazz) {
+		if (clazz == IAppointment.class && loadEventsFunction != null) {
+			loadEventsFunction.invalidateCache();
+		}
+	}
+	
 	public WeekComposite(MPart part, ESelectionService selectionService, EMenuService menuService, Composite parent,
 			int style, UISynchronize uiSynchronize) {
 		this(part, selectionService, menuService, parent, style, false, uiSynchronize);

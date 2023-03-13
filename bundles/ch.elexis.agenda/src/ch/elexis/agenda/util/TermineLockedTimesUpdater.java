@@ -23,7 +23,10 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.TimeTool.DAYS;
@@ -84,6 +87,8 @@ public class TermineLockedTimesUpdater implements IRunnableWithProgress {
 			monitor.worked(1);
 		}
 		monitor.done();
+
+		ContextServiceHolder.get().sendEvent(ElexisEventTopics.EVENT_INVALIDATE_CACHE, IAppointment.class);
 	}
 
 	/**

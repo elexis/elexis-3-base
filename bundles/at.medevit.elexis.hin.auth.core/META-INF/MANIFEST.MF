@@ -14,4 +14,4 @@ Service-Component: OSGI-INF/at.medevit.elexis.hin.auth.core.internal.HinAuthServ
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.elexis.hin.auth.core
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-11

@@ -9,6 +9,6 @@ Require-Bundle: at.medevit.elexis.hin.auth.core;bundle-version="1.0.0",
  org.eclipse.jface
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.elexis.hin.auth.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Service-Component: OSGI-INF/at.medevit.elexis.hin.auth.ui.HinAuthUi.xml
 Bundle-ActivationPolicy: lazy

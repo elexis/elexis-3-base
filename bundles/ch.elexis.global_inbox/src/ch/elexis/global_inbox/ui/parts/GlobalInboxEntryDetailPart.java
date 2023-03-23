@@ -1,7 +1,6 @@
 
 package ch.elexis.global_inbox.ui.parts;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -9,12 +8,14 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -31,31 +32,29 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 
 import ch.elexis.core.data.service.CoreModelServiceHolder;
-import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.holder.EncounterServiceHolder;
 import ch.elexis.core.time.TimeUtil;
-import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.documents.composites.CategorySelectionEditComposite;
+import ch.elexis.core.ui.e4.fieldassist.AsyncContentProposalProvider;
+import ch.elexis.core.ui.e4.fieldassist.IdentifiableContentProposal;
 import ch.elexis.core.ui.e4.providers.IdentifiableLabelProvider;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.parts.contentproposal.TitleContentProposalProvider;
 import ch.elexis.global_inbox.ui.parts.contentproposal.TitleControlContentAdapter;
 import ch.elexis.global_inbox.ui.parts.contentproposal.TitleEntryContentProposal;
 
-@SuppressWarnings("restriction")
 public class GlobalInboxEntryDetailPart {
 
 	@Inject
@@ -74,6 +73,9 @@ public class GlobalInboxEntryDetailPart {
 	private Text txtKeywords;
 	private Button btnInfoTo;
 	private ComboViewer cvInfoToReceiver;
+
+	private static final String NO_CANDIDATES = "Keine Zuordnung gefunden. Eingeben um zu Suchen ...";
+	private static final String MULT_CANDIDATES = "Keine eindeutige Zuordnung - %s Vorschläge. Bitte Auswählen oder Eingeben.";
 
 	@SuppressWarnings("unchecked")
 	@Inject
@@ -150,29 +152,32 @@ public class GlobalInboxEntryDetailPart {
 		gdlblHintPatientCandiateInfo.exclude = true;
 		lblHintPatientCandiateInfo.setLayoutData(gdlblHintPatientCandiateInfo);
 
-		Link linkPatient = new Link(parent, SWT.None);
-		linkPatient.setText("<a>Patient</a>");
-		linkPatient.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				KontaktSelektor kontaktSelektor = new KontaktSelektor(linkPatient.getShell(), Patient.class,
-						Messages.Core_Select_Patient, Messages.Core_Select_Patient, Patient.DEFAULT_SORT);
-				if (kontaktSelektor.open() == KontaktSelektor.OK) {
-					Patient patient = (Patient) kontaktSelektor.getSelection();
-					IPatient iPatient = patient.toIPatient();
-					cvPatient.add(iPatient);
-					cvPatient.setSelection(new StructuredSelection(iPatient));
-					if (globalInboxEntry != null) {
-						globalInboxEntry.getPatientCandidates().add(iPatient);
-						globalInboxEntry.setPatient(iPatient);
-					}
-				}
-			}
-		});
+		//
+		// PATIENT
+		Label lblPatient = new Label(parent, SWT.None);
+		lblPatient.setText("Patient");
 
 		cvPatient = new ComboViewer(parent, SWT.NONE);
+		Combo comboPatient = cvPatient.getCombo();
 		cvPatient.setContentProvider(ArrayContentProvider.getInstance());
 		cvPatient.setLabelProvider(new IdentifiableLabelProvider());
+		AsyncContentProposalProvider<IPatient> cvpatacpp = new AsyncContentProposalProvider<IPatient>("description1", //$NON-NLS-1$
+				"description2", "dob", "code") { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			@Override
+			public IQuery<IPatient> createBaseQuery() {
+				return CoreModelServiceHolder.get().getQuery(IPatient.class);
+			}
+
+			@Override
+			protected boolean isPatientQuery() {
+				return true;
+			}
+
+			@Override
+			public Widget getWidget() {
+				return comboPatient;
+			}
+		};
 		cvPatient.addSelectionChangedListener(sc -> {
 			IPatient patient = (IPatient) sc.getStructuredSelection().getFirstElement();
 			if (globalInboxEntry != null) {
@@ -192,37 +197,69 @@ public class GlobalInboxEntryDetailPart {
 				}
 			}
 		});
-		Combo ccvPatient = cvPatient.getCombo();
-		ccvPatient.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		Link linkSender = new Link(parent, SWT.None);
-		linkSender.setText("<a>Absender</a>");
-		linkSender.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				KontaktSelektor kontaktSelektor = new KontaktSelektor(linkPatient.getShell(), Kontakt.class,
-						Messages.Core_Select_Contact, Messages.Core_Please_Select_Contact, Patient.DEFAULT_SORT);
-				if (kontaktSelektor.open() == KontaktSelektor.OK) {
-					Kontakt contact = (Kontakt) kontaktSelektor.getSelection();
-					IContact iContact = contact.toIContact();
-					cvSender.add(iContact);
-					cvSender.setSelection(new StructuredSelection(iContact));
-					if (globalInboxEntry != null) {
-						globalInboxEntry.setSender(iContact);
-					}
-				}
+		comboPatient.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboPatient.addListener(SWT.MouseDown, e->{
+			comboPatient.setText("");
+			comboPatient.clearSelection();
+		});
+		ContentProposalAdapter cvpatcpa = new ContentProposalAdapter(comboPatient, new ComboContentAdapter(), cvpatacpp,
+				null, null);
+		cvpatacpp.configureContentProposalAdapter(cvpatcpa);
+		cvpatcpa.addContentProposalListener(proposal -> {
+			IdentifiableContentProposal<IPatient> prop = (IdentifiableContentProposal<IPatient>) proposal;
+			IPatient iPatient = prop.getIdentifiable();
+			cvPatient.add(iPatient);
+			cvPatient.setSelection(new StructuredSelection(iPatient));
+			if (globalInboxEntry != null) {
+				globalInboxEntry.getPatientCandidates().add(iPatient);
+				globalInboxEntry.setPatient(iPatient);
 			}
 		});
 
+		//
+		// SENDER
+		Label lblSender = new Label(parent, SWT.None);
+		lblSender.setText("Absender");
+
 		cvSender = new ComboViewer(parent, SWT.NONE);
+		Combo comboSender = cvSender.getCombo();
 		cvSender.setContentProvider(ArrayContentProvider.getInstance());
 		cvSender.setLabelProvider(new IdentifiableLabelProvider());
-		Combo ccvSender = cvSender.getCombo();
-		ccvSender.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		AsyncContentProposalProvider<IContact> cvsenderacpp = new AsyncContentProposalProvider<IContact>("description1", //$NON-NLS-1$
+				"description2", "description3", "code") { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			@Override
+			public IQuery<IContact> createBaseQuery() {
+				return CoreModelServiceHolder.get().getQuery(IContact.class);
+			}
+
+			@Override
+			public Widget getWidget() {
+				return comboSender;
+			}
+		};
+
+		comboSender.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		cvSender.addSelectionChangedListener(sc -> {
 			IContact sender = (IContact) cvSender.getStructuredSelection().getFirstElement();
 			if (globalInboxEntry != null) {
 				globalInboxEntry.setSender(sender);
+			}
+		});
+		comboSender.addListener(SWT.MouseDown, e->{
+			comboSender.setText("");
+			comboSender.clearSelection();
+		});
+		ContentProposalAdapter cvsendercpa = new ContentProposalAdapter(comboSender, new ComboContentAdapter(),
+				cvsenderacpp, null, null);
+		cvsenderacpp.configureContentProposalAdapter(cvsendercpa);
+		cvsendercpa.addContentProposalListener(proposal -> {
+			IdentifiableContentProposal<IContact> contact = (IdentifiableContentProposal<IContact>) proposal;
+			IContact iContact = contact.getIdentifiable();
+			cvSender.add(iContact);
+			cvSender.setSelection(new StructuredSelection(iContact));
+			if (globalInboxEntry != null) {
+				globalInboxEntry.setSender(iContact);
 			}
 		});
 
@@ -345,8 +382,16 @@ public class GlobalInboxEntryDetailPart {
 		IPatient selectedPatient = globalInboxEntry.getPatient();
 		List<IPatient> patientCandidates = globalInboxEntry.getPatientCandidates();
 		cvPatient.setInput(patientCandidates);
-		if (selectedPatient == null && !patientCandidates.isEmpty()) {
-			cvPatient.setSelection(new StructuredSelection(patientCandidates.get(0)));
+
+		if (selectedPatient == null) {
+			if (patientCandidates.isEmpty()) {
+				cvPatient.getCombo().setText(NO_CANDIDATES);
+			} else if (patientCandidates.size() == 1) {
+				cvPatient.getCombo().setText("");
+				cvPatient.setSelection(new StructuredSelection(patientCandidates.get(0)));
+			} else {
+				cvPatient.getCombo().setText(String.format(MULT_CANDIDATES, patientCandidates.size()));
+			}
 		} else {
 			ISelection selection = (selectedPatient != null) ? new StructuredSelection(selectedPatient) : null;
 			cvPatient.setSelection(selection);
@@ -358,11 +403,20 @@ public class GlobalInboxEntryDetailPart {
 			senderCandidates.add(selectedSender);
 		}
 		cvSender.setInput(senderCandidates);
-		if (selectedSender == null && !senderCandidates.isEmpty()) {
-			cvSender.setSelection(new StructuredSelection(senderCandidates.get(0)));
+		if (selectedSender == null) {
+			if (senderCandidates.isEmpty()) {
+				cvSender.getCombo().setText(NO_CANDIDATES);
+			} else if (senderCandidates.size() == 1) {
+				cvSender.getCombo().setText("");
+				cvSender.setSelection(new StructuredSelection(senderCandidates.get(0)));
+			} else {
+				cvSender.getCombo().setText(String.format(MULT_CANDIDATES, patientCandidates.size()));
+			}
+
 		} else {
 			ISelection selection = (selectedSender != null) ? new StructuredSelection(selectedSender) : null;
 			cvSender.setSelection(selection);
+
 		}
 	}
 

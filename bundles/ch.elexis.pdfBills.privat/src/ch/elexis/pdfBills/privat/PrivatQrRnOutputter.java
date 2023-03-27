@@ -86,9 +86,6 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 	public static final String CFG_ESR_HEADER_1 = CFG_ROOT + "esr.header.line1";
 	public static final String CFG_ESR_HEADER_2 = CFG_ROOT + "esr.header.line2";
 
-	public static final String CFG_ESR_REMINDERDAYS_M2 = CFG_ROOT + "esr.reminderdays.m2";
-	public static final String CFG_ESR_REMINDERDAYS_M3 = CFG_ROOT + "esr.reminderdays.m3";
-
 	public static final String CFG_PRINT_DIRECT = CFG_ROOT + "print.direct";
 
 	public static final String CFG_PRINT_PRINTER = CFG_ROOT + "print.printer";

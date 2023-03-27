@@ -102,6 +102,15 @@ public class QrRnOutputter implements IRnOutputter {
 	protected static final String CFG_MAIL_CPY = "mail.copy";
 	protected static final String CFG_MAIL_MANDANT_ACCOUNT = "mail.mandant.account";
 
+	public static final String CFG_MSGTEXT_TP_M0 = CFG_ROOT + "pdf.txt.tp"; //$NON-NLS-1$
+	public static final String CFG_MSGTEXT_TG_M0 = CFG_ROOT + "pdf.txt.tg"; //$NON-NLS-1$
+	public static final String CFG_MSGTEXT_TP_M1 = CFG_ROOT + "pdf.txt.M1tp"; //$NON-NLS-1$
+	public static final String CFG_MSGTEXT_TP_M2 = CFG_ROOT + "pdf.txt.M2tp"; //$NON-NLS-1$
+	public static final String CFG_MSGTEXT_TP_M3 = CFG_ROOT + "pdf.txt.M3tp"; //$NON-NLS-1$
+	public static final String CFG_MSGTEXT_TG_M1 = CFG_ROOT + "pdf.txt.M1tg"; //$NON-NLS-1$
+	public static final String CFG_MSGTEXT_TG_M2 = CFG_ROOT + "pdf.txt.M2tg"; //$NON-NLS-1$
+	public static final String CFG_MSGTEXT_TG_M3 = CFG_ROOT + "pdf.txt.M3tg"; //$NON-NLS-1$
+
 	private Text tXml;
 	private Text tPdf;
 

@@ -1,5 +1,14 @@
 package ch.elexis.pdfBills.privat;
 
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TG_M0;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TG_M1;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TG_M2;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TG_M3;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TP_M0;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TP_M1;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TP_M2;
+import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TP_M3;
+
 import java.io.BufferedOutputStream;
 
 /**
@@ -65,6 +74,7 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Rechnung;
 import ch.elexis.ebanking.qr.QRBillDataBuilder;
@@ -208,6 +218,7 @@ public class ElexisPDFGenerator {
 					parameters.put("besrMarginHorizontal", besrMarginHorizontal); //$NON-NLS-1$
 					parameters.put("headerLine1", getConfigValue(RnOutputter.CFG_ESR_HEADER_1, StringUtils.SPACE)); //$NON-NLS-1$
 					parameters.put("headerLine2", getConfigValue(RnOutputter.CFG_ESR_HEADER_2, StringUtils.SPACE)); //$NON-NLS-1$
+					parameters.put("messageText", getMessagePDFText(invoiceState));// $NON-NLS-1$
 					parameters.put("eanList", eanList); //$NON-NLS-1$
 					parameters.put("vatList", vatList); //$NON-NLS-1$
 					parameters.put("amountTotal", XMLTool.moneyToXmlDouble(mTotal)); //$NON-NLS-1$
@@ -237,13 +248,6 @@ public class ElexisPDFGenerator {
 						parameters.put("creditorLine", StringUtils.EMPTY); //$NON-NLS-1$
 						parameters.put("insuranceLine", StringUtils.EMPTY); //$NON-NLS-1$
 					}
-					if (invoiceState == InvoiceState.DEMAND_NOTE_2
-							|| invoiceState == InvoiceState.DEMAND_NOTE_2_PRINTED) {
-						parameters.put("reminderDays", getConfigValue(RnOutputter.CFG_ESR_REMINDERDAYS_M2, "14")); //$NON-NLS-1$ //$NON-NLS-2$
-					} else if (invoiceState == InvoiceState.DEMAND_NOTE_3
-							|| invoiceState == InvoiceState.DEMAND_NOTE_3_PRINTED) {
-						parameters.put("reminderDays", getConfigValue(RnOutputter.CFG_ESR_REMINDERDAYS_M3, "14")); //$NON-NLS-1$ //$NON-NLS-2$
-					}
 					if (mReminders != null && !mReminders.isZero()) {
 						parameters.put("amountReminders", XMLTool.moneyToXmlDouble(mReminders)); //$NON-NLS-1$
 					}
@@ -260,6 +264,54 @@ public class ElexisPDFGenerator {
 			LoggerFactory.getLogger(getClass()).error("Error outputting bill", e); //$NON-NLS-1$
 			throw new IllegalStateException("Error outputting bill", e); //$NON-NLS-1$
 		}
+	}
+
+	private String getMessagePDFText(final InvoiceState invoiceState) {
+		String key = "";
+		String invStateTxt = rechnung.getInvoiceState().toString();
+		ch.elexis.data.Fall.Tiers tiers = rechnung.getFall().getTiersType();
+
+		switch (invoiceState) {
+		case UNKNOWN:
+		case IN_EXECUTION:
+		case STOP_LEGAL_PROCEEDING:
+		case OWING:
+		case PARTIAL_LOSS:
+		case TOTAL_LOSS:
+		case NOT_BILLED:
+		case ONGOING:
+		case TO_PRINT:
+		case NOT_FROM_YOU:
+		case NOT_FROM_TODAY:
+		case FROM_TODAY:
+		case EXCESSIVE_PAYMENT:
+		case REJECTED:
+		case BILLED:
+		case PARTIAL_PAYMENT:
+		case PAID:
+		case OPEN_AND_PRINTED:
+		case OPEN:
+			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M0 : CFG_MSGTEXT_TP_M0;
+			break;
+		case DEMAND_NOTE_1_PRINTED:
+		case DEMAND_NOTE_1:
+			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M1 : CFG_MSGTEXT_TP_M1;
+			break;
+		case DEMAND_NOTE_2_PRINTED:
+		case DEMAND_NOTE_2:
+			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M2 : CFG_MSGTEXT_TP_M2;
+			break;
+		case DEMAND_NOTE_3_PRINTED:
+		case DEMAND_NOTE_3:
+			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M3 : CFG_MSGTEXT_TP_M3;
+			break;
+		default:
+			LoggerFactory.getLogger(getClass()).error("unknown state: " + invoiceState.toString());
+			break;
+		}
+
+		return CoreHub.globalCfg.get(key, invStateTxt);
+
 	}
 
 	private String getInsuranceLine(IInvoice invoice) {

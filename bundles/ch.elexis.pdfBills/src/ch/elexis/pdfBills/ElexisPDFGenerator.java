@@ -249,13 +249,6 @@ public class ElexisPDFGenerator {
 						parameters.put("creditorLine", StringUtils.EMPTY); //$NON-NLS-1$
 						parameters.put("insuranceLine", StringUtils.EMPTY); //$NON-NLS-1$
 					}
-					if (invoiceState == InvoiceState.DEMAND_NOTE_2
-							|| invoiceState == InvoiceState.DEMAND_NOTE_2_PRINTED) {
-						parameters.put("reminderDays", getConfigValue(RnOutputter.CFG_ESR_REMINDERDAYS_M2, "14")); //$NON-NLS-1$ //$NON-NLS-2$
-					} else if (invoiceState == InvoiceState.DEMAND_NOTE_3
-							|| invoiceState == InvoiceState.DEMAND_NOTE_3_PRINTED) {
-						parameters.put("reminderDays", getConfigValue(RnOutputter.CFG_ESR_REMINDERDAYS_M3, "14")); //$NON-NLS-1$ //$NON-NLS-2$
-					}
 					if (mReminders != null && !mReminders.isZero()) {
 						parameters.put("amountReminders", XMLTool.moneyToXmlDouble(mReminders)); //$NON-NLS-1$
 					}

@@ -81,9 +81,6 @@ public class RnOutputter implements IRnOutputter {
 	public static final String CFG_ESR_HEADER_1 = CFG_ROOT + "esr.header.line1"; //$NON-NLS-1$
 	public static final String CFG_ESR_HEADER_2 = CFG_ROOT + "esr.header.line2"; //$NON-NLS-1$
 
-	public static final String CFG_ESR_REMINDERDAYS_M2 = CFG_ROOT + "esr.reminderdays.m2"; //$NON-NLS-1$
-	public static final String CFG_ESR_REMINDERDAYS_M3 = CFG_ROOT + "esr.reminderdays.m3"; //$NON-NLS-1$
-
 	public static final String CFG_ESR_COUVERT_LEFT = CFG_ROOT + "esr.couvert.left"; //$NON-NLS-1$
 
 	public static final String CFG_PRINT_DIRECT = CFG_ROOT + "print.direct"; //$NON-NLS-1$

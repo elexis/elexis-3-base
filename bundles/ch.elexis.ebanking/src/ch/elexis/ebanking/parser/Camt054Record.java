@@ -46,11 +46,6 @@ public class Camt054Record {
 			throw new Camet054Exception("amount not valid", e); //$NON-NLS-1$
 		}
 
-		// sammelbuchungen hat keine eigene esr laut testfiles
-		if (!"999".equals(mode) && (reference == null || reference.length() != 27)) { //$NON-NLS-1$
-			throw new Camet054Exception("reference is not valid: " + reference); //$NON-NLS-1$
-		}
-
 		if (bookingDate != null && bookingDate.before(new Date(0))) {
 			throw new Camet054Exception("booking date is not valid: " + bookingDate); //$NON-NLS-1$
 		}

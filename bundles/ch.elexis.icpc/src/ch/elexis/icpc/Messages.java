@@ -11,8 +11,6 @@
  *******************************************************************************/
 package ch.elexis.icpc;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String IcpcCode_class_A = ch.elexis.core.l10n.Messages.IcpcCode_class_A;
 	public static String IcpcCode_class_B = ch.elexis.core.l10n.Messages.IcpcCode_class_B;

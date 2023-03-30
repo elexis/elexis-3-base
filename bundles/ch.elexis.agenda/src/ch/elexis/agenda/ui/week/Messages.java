@@ -12,8 +12,6 @@
 
 package ch.elexis.agenda.ui.week;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String AgendaWeek_selectWeek = ch.elexis.core.l10n.Messages.AgendaWeek_selectWeek;
 	public static String AgendaWeek_setZoomFactor = ch.elexis.core.l10n.Messages.Core_Select_Zoom_Factor;

@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.findings.codes.IValueSetService;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.covid.cert.service.rest.model.RecoveryModel;
 
 public class RecoveryModelDialog extends Dialog {

@@ -16,7 +16,6 @@ import ch.elexis.admin.ACE;
 import ch.elexis.admin.AbstractAccessControl;
 import ch.elexis.admin.IACLContributor;
 import ch.elexis.core.model.RoleConstants;
-import ch.elexis.data.Role;
 
 /**
  * Define access rights needed for the various actions with the agenda

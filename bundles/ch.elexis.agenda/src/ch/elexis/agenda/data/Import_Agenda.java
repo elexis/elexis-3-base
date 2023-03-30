@@ -11,12 +11,12 @@
  *******************************************************************************/
 package ch.elexis.agenda.data;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.actions.Synchronizer;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.ImporterPage;

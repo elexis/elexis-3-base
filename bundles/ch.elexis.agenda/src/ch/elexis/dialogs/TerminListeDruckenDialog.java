@@ -11,9 +11,9 @@
  *******************************************************************************/
 package ch.elexis.dialogs;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.agenda.text.AgendaTextTemplateRequirement.TT_AGENDA_LIST;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;

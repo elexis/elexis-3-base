@@ -17,7 +17,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.services.IDocumentConverter;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class DocumentOpenAsPdf extends AbstractHandler implements IHandler {
 

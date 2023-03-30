@@ -8,9 +8,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.agenda.series.ui.Messages;
-
 import com.ibm.icu.util.Calendar;
+
+import ch.elexis.agenda.series.ui.Messages;
 
 public class WeeklySeriesComposite extends Composite {
 	private Text txtWeekDistance;

@@ -11,8 +11,6 @@
  *******************************************************************************/
 package ch.elexis.base.ch.diagnosecodes_schweiz;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String ICDImporter_createTable = ch.elexis.core.l10n.Messages.ICDImporter_createTable;
 	public static String ICDImporter_enterDirectory = ch.elexis.core.l10n.Messages.ICDImporter_enterDirectory;

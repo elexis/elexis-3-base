@@ -11,10 +11,10 @@
  *******************************************************************************/
 package ch.elexis.views;
 
-import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;

@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.elexis.base.ch.diagnosecodes;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String ICDCodeSelectorFactory_couldntCreate = ch.elexis.core.l10n.Messages.ICDCodeSelectorFactory_couldntCreate;
 	public static String ICDCodeSelectorFactory_errorLoading = ch.elexis.core.l10n.Messages.ICDCodeSelectorFactory_errorLoading;

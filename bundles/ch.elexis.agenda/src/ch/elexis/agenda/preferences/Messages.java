@@ -12,8 +12,6 @@
 
 package ch.elexis.agenda.preferences;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String AgendaDruck_printDirectly = ch.elexis.core.l10n.Messages.AgendaDruck_printDirectly;
 	public static String AgendaDruck_printerForCards = ch.elexis.core.l10n.Messages.AgendaDruck_printerForCards;

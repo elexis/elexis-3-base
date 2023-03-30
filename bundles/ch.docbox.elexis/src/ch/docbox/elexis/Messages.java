@@ -9,8 +9,6 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 
 	public static String DocboxBackgroundJob_AppointmentsUpdated = ch.elexis.core.l10n.Messages.DocboxBackgroundJob_AppointmentsUpdated;

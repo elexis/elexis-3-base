@@ -1,7 +1,5 @@
 package ch.elexis.agenda.acl;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String ACLContributor_acl_administer = ch.elexis.core.l10n.Messages.Core_Administration;
 	public static String ACLContributor_acl_changeAppointments = ch.elexis.core.l10n.Messages.ACLContributor_acl_changeAppointments;

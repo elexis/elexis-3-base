@@ -1,7 +1,5 @@
 package ch.elexis.agenda.series.ui;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static final String BUNDLE_NAME = "ch.elexis.agenda.series.ui.messages";
 	public static String SerienTerminDialog = ch.elexis.core.l10n.Messages.SerienTerminDialog;

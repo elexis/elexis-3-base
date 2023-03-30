@@ -9,10 +9,11 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.docbox.ws.cdachservices.AppointmentType;
 import ch.elexis.agenda.data.Termin;

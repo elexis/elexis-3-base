@@ -1,7 +1,7 @@
 package ch.docbox.ws.cdachservices;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.List;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Holder;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.v3.CE;
 import org.hl7.v3.ClinicalDocumentType;
 import org.hl7.v3.POCDMT000040IntendedRecipient;

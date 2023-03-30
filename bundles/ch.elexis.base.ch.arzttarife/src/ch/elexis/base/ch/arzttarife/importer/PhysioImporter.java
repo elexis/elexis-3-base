@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.services.IReferenceDataImporterService;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;

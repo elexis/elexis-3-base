@@ -11,8 +11,6 @@
  *******************************************************************************/
 package ch.elexis.agenda.ui;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String AgendaParallel_dayBack = ch.elexis.core.l10n.Messages.Agenda_Previous_Day;
 	public static String AgendaParallel_dayForward = ch.elexis.core.l10n.Messages.Agenda_Next_Day;

@@ -10,9 +10,9 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.elexis.common.ui.cv;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;

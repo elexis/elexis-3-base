@@ -10,7 +10,6 @@
  ******************************************************************************/
 package at.medevit.ch.artikelstamm.elexis.common.importer;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +21,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -45,7 +45,7 @@ import ch.elexis.core.services.IConfigService.ILocalLock;
 import ch.elexis.core.services.IReferenceDataImporterService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;

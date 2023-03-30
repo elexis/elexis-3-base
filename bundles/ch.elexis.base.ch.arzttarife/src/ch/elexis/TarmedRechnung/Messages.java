@@ -11,8 +11,6 @@
  *******************************************************************************/
 package ch.elexis.TarmedRechnung;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String RechnungsDrucker_AllFinishedNoErrors = ch.elexis.core.l10n.Messages.RechnungsDrucker_AllFinishedNoErrors;
 	public static String RechnungsDrucker_AskSaveForTrustCenter = ch.elexis.core.l10n.Messages.RechnungsDrucker_AskSaveForTrustCenter;

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui.model;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.ehealth_connector.cda.ch.AbstractCdaChV1;
 import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
 import org.openhealthtools.mdht.uml.cda.util.CDAUtil;

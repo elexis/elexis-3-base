@@ -10,8 +10,6 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui;
 
-import org.eclipse.osgi.util.NLS;
-
 public final class Messages {
 	public static String Btn_Display = ch.elexis.core.l10n.Messages.Core_DisplayIt;
 	public static String Dlg_ResolveError = ch.elexis.core.l10n.Messages.Dlg_ResolveError;

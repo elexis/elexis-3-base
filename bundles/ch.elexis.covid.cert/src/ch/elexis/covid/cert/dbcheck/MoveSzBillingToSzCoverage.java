@@ -1,9 +1,9 @@
 package ch.elexis.covid.cert.dbcheck;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import ch.elexis.core.model.IBilled;

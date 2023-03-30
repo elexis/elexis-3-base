@@ -11,8 +11,6 @@
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static final String BUNDLE_NAME = "ch.elexis.tarmedprefs.messages"; //$NON-NLS-1$
 

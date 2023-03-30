@@ -12,8 +12,6 @@
  *******************************************************************************/
 package ch.elexis.base.ch.migel;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String MiGelImporter_ClearAllData = ch.elexis.core.l10n.Messages.MiGelImporter_ClearAllData;
 	public static String MiGelImporter_ModeCreateNew = ch.elexis.core.l10n.Messages.MiGelImporter_ModeCreateNew;

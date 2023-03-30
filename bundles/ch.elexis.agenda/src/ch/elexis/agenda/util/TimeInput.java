@@ -12,7 +12,6 @@
 
 package ch.elexis.agenda.util;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;

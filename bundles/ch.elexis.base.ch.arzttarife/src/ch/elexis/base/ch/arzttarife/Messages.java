@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.elexis.base.ch.arzttarife;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 
 	public static String LaborleistungDetailDisplay_analyse = ch.elexis.core.l10n.Messages.LaborleistungDetailDisplay_analyse;

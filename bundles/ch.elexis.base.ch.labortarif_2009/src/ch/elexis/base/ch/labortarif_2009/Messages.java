@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.elexis.base.ch.labortarif_2009;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String DetailDisplay_chapter = ch.elexis.core.l10n.Messages.Core_Chapter;
 	public static String DetailDisplay_code = ch.elexis.core.l10n.Messages.Core_Code;

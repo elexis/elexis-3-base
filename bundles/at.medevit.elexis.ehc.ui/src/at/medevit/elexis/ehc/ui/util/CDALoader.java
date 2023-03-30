@@ -10,7 +10,6 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui.util;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +30,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

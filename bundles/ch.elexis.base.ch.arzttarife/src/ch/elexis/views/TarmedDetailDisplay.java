@@ -12,7 +12,6 @@
 
 package ch.elexis.views;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -20,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;

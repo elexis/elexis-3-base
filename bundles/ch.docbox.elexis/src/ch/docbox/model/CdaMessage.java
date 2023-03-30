@@ -9,7 +9,6 @@
  *******************************************************************************/
 package ch.docbox.model;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,6 +18,7 @@ import java.util.GregorianCalendar;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.program.Program;
 import org.slf4j.Logger;

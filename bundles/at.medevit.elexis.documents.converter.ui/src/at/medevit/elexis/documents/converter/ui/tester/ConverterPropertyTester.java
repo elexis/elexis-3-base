@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.eclipse.core.expressions.PropertyTester;
 
 import ch.elexis.core.services.IDocumentConverter;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class ConverterPropertyTester extends PropertyTester {
 

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.ui.views;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,6 +20,7 @@ import java.net.URL;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -46,7 +46,7 @@ import at.medevit.elexis.ehc.ui.Messages;
 import at.medevit.elexis.ehc.ui.util.CDALoader;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class EHealthConnectorView extends ViewPart {
 	public final static String ID = "at.medevit.elexis.eHealthConnectorView"; //$NON-NLS-1$

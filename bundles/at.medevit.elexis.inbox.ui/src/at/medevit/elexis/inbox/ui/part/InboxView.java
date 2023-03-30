@@ -73,8 +73,8 @@ import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.events.ElexisUiEventListenerImpl;
-import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 

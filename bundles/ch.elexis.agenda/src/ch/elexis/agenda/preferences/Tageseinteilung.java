@@ -220,6 +220,7 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		btnApplyEdit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				save();
 				// Apply the selected edits starting from the selected date
 				int day = dateTimeStartingFrom.getDay(); // Calendar.DAY_OF_MONTH
 				int month = dateTimeStartingFrom.getMonth(); // Calendar.MONTH

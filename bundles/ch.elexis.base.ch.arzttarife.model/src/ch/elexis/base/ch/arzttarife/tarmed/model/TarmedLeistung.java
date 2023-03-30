@@ -435,6 +435,17 @@ public class TarmedLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 		return StringUtils.defaultString(TarmedDefinitionenUtil.getTextForSparte(getSparte()));
 	}
 
+	@Override
+	public boolean isZuschlagsleistung() {
+		String typ = getServiceTyp();
+		boolean becauseOfType = typ != null && typ.equals("Z");
+		if (becauseOfType) {
+			String text = getText();
+			return text.startsWith("+") || text.startsWith("-");
+		}
+		return false;
+	}
+
 	/**
 	 * Get the {@link MandantType} of the {@link IMandator}. If not found the
 	 * default value is {@link MandantType#SPECIALIST}.

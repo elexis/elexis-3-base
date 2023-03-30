@@ -12,12 +12,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
 
+import at.medevit.elexis.hin.auth.core.IHinAuthService;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IOrder;
@@ -37,6 +40,8 @@ import ch.rgw.tools.StringTool;
 public class Sender implements IDataSender {
 	private static final String XML_NEWLINE = "\r\n";
 
+	private static final String ORDER_URL_OAUTH = "https://oauth2.xml.estudio.zur-rose.hin.ch/orderXML/";
+	
 	private static final String ORDER_URL = "http://xml.estudio.zur-rose.hin.ch/orderXML/";
 	private static final String ENCODING = "UTF-8";
 
@@ -48,7 +53,7 @@ public class Sender implements IDataSender {
 	private final List<String> orderRequests = new ArrayList<String>();
 
 	private int counter;
-
+	
 	@Override
 	public boolean canHandle(Class<? extends PersistentObject> clazz) {
 		if (clazz.equals(ch.elexis.data.Bestellung.class)) {
@@ -64,19 +69,25 @@ public class Sender implements IDataSender {
 			log.log("Order contains no articles to order from Rose supplier", Log.INFOS);
 			return;
 		}
+		String oldProxyHost = null;
+		String oldProxyPort = null;
+		Properties systemSettings = null;
+		
+		Optional<IHinAuthService> hinAuthService = HinAuthServiceHolder.get();
+		if(!hinAuthService.isPresent()) {
+			// get proxy settings and store old values
+			systemSettings = System.getProperties();
+			oldProxyHost = systemSettings.getProperty("http.proxyHost");
+			oldProxyPort = systemSettings.getProperty("http.proxyPort");
 
-		// get proxy settings and store old values
-		Properties systemSettings = System.getProperties();
-		String oldProxyHost = systemSettings.getProperty("http.proxyHost");
-		String oldProxyPort = systemSettings.getProperty("http.proxyPort");
-
-		// set new values
-		systemSettings.put("http.proxyHost",
-				ConfigServiceHolder.getGlobal(Constants.CFG_ASAS_PROXY_HOST, DEFAULT_ASAS_PROXY_HOST));
-		systemSettings.put("http.proxyPort",
-				ConfigServiceHolder.getGlobal(Constants.CFG_ASAS_PROXY_PORT, DEFAULT_ASAS_PROXY_PORT));
-		System.setProperties(systemSettings);
-
+			// set new values
+			systemSettings.put("http.proxyHost",
+					ConfigServiceHolder.getGlobal(Constants.CFG_ASAS_PROXY_HOST, DEFAULT_ASAS_PROXY_HOST));
+			systemSettings.put("http.proxyPort",
+					ConfigServiceHolder.getGlobal(Constants.CFG_ASAS_PROXY_PORT, DEFAULT_ASAS_PROXY_PORT));
+			System.setProperties(systemSettings);			
+		}
+		
 		try {
 			for (String orderRequest : orderRequests) {
 				System.out.println(orderRequest);
@@ -84,13 +95,21 @@ public class Sender implements IDataSender {
 				try {
 					String postString = "order=" + URLEncoder.encode(orderRequest, ENCODING);
 
-					URL serverURL = new URL(ORDER_URL);
+					URL serverURL = new URL(hinAuthService.isPresent() ? ORDER_URL_OAUTH : ORDER_URL);
 					HttpURLConnection httpConnection = (HttpURLConnection) serverURL.openConnection();
 					httpConnection.setRequestMethod("POST");
 					HttpURLConnection.setFollowRedirects(true);
 					httpConnection.setDoInput(true);
 					httpConnection.setDoOutput(true);
 					httpConnection.setUseCaches(false);
+					if (hinAuthService.isPresent()) {
+						Optional<String> authToken = hinAuthService.get()
+								.getToken(Collections.singletonMap(IHinAuthService.TOKEN_GROUP, "ZurRose_Estudio"));
+						if (authToken.isPresent()) {
+							httpConnection.setRequestProperty("Authorization", "Bearer " + authToken.get());
+						}
+					}
+					
 					PrintWriter out = new PrintWriter(httpConnection.getOutputStream());
 					out.println(postString);
 					out.close();
@@ -124,13 +143,15 @@ public class Sender implements IDataSender {
 			// restore old proxy settings
 			if (oldProxyHost != null || oldProxyPort != null) {
 				systemSettings = System.getProperties();
-				if (oldProxyHost != null) {
-					systemSettings.put("http.proxyHost", oldProxyHost);
+				if(systemSettings != null) {
+					if (oldProxyHost != null) {
+						systemSettings.put("http.proxyHost", oldProxyHost);
+					}
+					if (oldProxyPort != null) {
+						systemSettings.put("http.proxyPort", oldProxyPort);
+					}
+					System.setProperties(systemSettings);					
 				}
-				if (oldProxyPort != null) {
-					systemSettings.put("http.proxyPort", oldProxyPort);
-				}
-				System.setProperties(systemSettings);
 			}
 		}
 

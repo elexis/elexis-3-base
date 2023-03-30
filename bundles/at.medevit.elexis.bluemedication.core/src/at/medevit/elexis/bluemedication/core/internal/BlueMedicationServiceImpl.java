@@ -46,6 +46,7 @@ import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
 import at.medevit.elexis.bluemedication.core.BlueMedicationService;
 import at.medevit.elexis.bluemedication.core.UploadResult;
 import at.medevit.elexis.emediplan.core.EMediplanService;
+import at.medevit.elexis.hin.auth.core.IHinAuthService;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IArticle;
@@ -55,6 +56,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
 import io.swagger.client.ApiClient;
@@ -80,6 +82,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 	@Reference
 	private EMediplanService eMediplanService;
 
+	private Optional<IHinAuthService> hinAuthService;
+	
 	@Activate
 	public void activate() {
 		pendingUploadResults = new HashMap<>();
@@ -89,20 +93,25 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 	/**
 	 * Set the HIN proxy as system property. <b>Remember to call deInitProxy</b>
 	 */
-	private void initProxy() {
-		if (!proxyActive) {
-			// get proxy settings and store old values
-			Properties systemSettings = System.getProperties();
-			oldProxyHost = systemSettings.getProperty("http.proxyHost"); //$NON-NLS-1$
-			oldProxyPort = systemSettings.getProperty("http.proxyPort"); //$NON-NLS-1$
+	private void initProxyOrOauth() {
+		if(hinAuthService == null) {
+			hinAuthService = OsgiServiceUtil.getService(IHinAuthService.class);
+		}
+		if (!hinAuthService.isPresent()) {
+			if (!proxyActive) {
+				// get proxy settings and store old values
+				Properties systemSettings = System.getProperties();
+				oldProxyHost = systemSettings.getProperty("http.proxyHost"); //$NON-NLS-1$
+				oldProxyPort = systemSettings.getProperty("http.proxyPort"); //$NON-NLS-1$
 
-			// set new values
-			systemSettings.put("http.proxyHost", ConfigServiceHolder.get().getLocal( //$NON-NLS-1$
-					BlueMedicationConstants.CFG_HIN_PROXY_HOST, BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST));
-			systemSettings.put("http.proxyPort", ConfigServiceHolder.get().getLocal( //$NON-NLS-1$
-					BlueMedicationConstants.CFG_HIN_PROXY_PORT, BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT));
-			System.setProperties(systemSettings);
-			proxyActive = true;
+				// set new values
+				systemSettings.put("http.proxyHost", ConfigServiceHolder.get().getLocal( //$NON-NLS-1$
+						BlueMedicationConstants.CFG_HIN_PROXY_HOST, BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST));
+				systemSettings.put("http.proxyPort", ConfigServiceHolder.get().getLocal( //$NON-NLS-1$
+						BlueMedicationConstants.CFG_HIN_PROXY_PORT, BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT));
+				System.setProperties(systemSettings);
+				proxyActive = true;
+			}			
 		}
 	}
 
@@ -125,11 +134,12 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 
 	@Override
 	public Result<UploadResult> uploadDocument(IPatient patient, File document, String resulttyp) {
-		initProxy();
+		initProxyOrOauth();
 		workaroundGet();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
-			apiInstance.getApiClient().setBasePath(getAppBasePath());
+			configureApiClient(apiInstance.getApiClient());
+			
 			File externalData = document;
 			String patientFirstName = patient.getFirstName();
 			String patientLastName = patient.getLastName();
@@ -198,6 +208,17 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		}
 	}
 
+	private void configureApiClient(ApiClient client) {
+		client.setBasePath(getAppBasePath());
+		if(hinAuthService.isPresent()) {
+			Optional<String> authToken = hinAuthService.get()
+					.getToken(Collections.singletonMap(IHinAuthService.TOKEN_GROUP, "BlueMedication"));
+			if (authToken.isPresent()) {
+				client.addDefaultHeader("Authorization" , "Bearer " + authToken.get());
+			}
+		}
+	}
+	
 	private class CheckApiClient extends ApiClient {
 
 		private String redirectUrl;
@@ -238,13 +259,13 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 
 	@Override
 	public Result<UploadResult> uploadCheck(IPatient patient) {
-		initProxy();
+		initProxyOrOauth();
 		workaroundGet();
 		try {
 			CheckApiClient client = new CheckApiClient();
-
+			configureApiClient(client);
 			MediCheckApi apiInstance = new MediCheckApi(client);
-			apiInstance.getApiClient().setBasePath(getAppBasePath());
+			
 			IMandator mandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 			if (mandant != null) {
 				try {
@@ -289,11 +310,11 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 
 	@Override
 	public Result<String> emediplanNotification(IPatient patient) {
-		initProxy();
+		initProxyOrOauth();
 		workaroundGet();
 		try {
 			EMediplanGenerationApi apiInstance = new EMediplanGenerationApi();
-			apiInstance.getApiClient().setBasePath(getAppBasePath());
+			configureApiClient(apiInstance.getApiClient());
 
 			LocalDateTime patBirthDay = patient.getDateOfBirth();
 			LocalDate birthDate = (patBirthDay != null
@@ -333,6 +354,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			apiInstance.getApiClient().setBasePath(getAppBasePath());
+			configureApiClient(apiInstance.getApiClient());
 
 			logger.warn("Performing workaround GET request");
 			apiInstance.downloadIdComparisonChmedGet("workaround", false);
@@ -352,10 +374,18 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 	}
 
 	private String getBasePath() {
-		if (ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_URL_STAGING, false)) {
-			return "http://staging.bluemedication.hin.ch";
+		if (hinAuthService.isPresent()) {
+			if (ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_URL_STAGING, false)) {
+				return "https://oauth2.staging.bluemedication.hin.ch";
+			} else {
+				return "https://oauth2.bluemedication.hin.ch";
+			}
 		} else {
-			return "http://bluemedication.hin.ch";
+			if (ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_URL_STAGING, false)) {
+				return "http://staging.bluemedication.hin.ch";
+			} else {
+				return "http://bluemedication.hin.ch";
+			}
 		}
 	}
 
@@ -365,11 +395,10 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 
 	@Override
 	public Result<String> downloadEMediplan(UploadResult uploadResult) {
-		initProxy();
+		initProxyOrOauth();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
-			apiInstance.getApiClient().setBasePath(getAppBasePath());
-
+			configureApiClient(apiInstance.getApiClient());
 			if (uploadResult.isUploadedMediplan()) {
 				ApiResponse<String> response = apiInstance
 						.downloadIdComparisonChmedGetWithHttpInfo(uploadResult.getId(), true);
@@ -401,11 +430,10 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 
 	@Override
 	public Result<String> downloadPdf(UploadResult uploadResult) {
-		initProxy();
+		initProxyOrOauth();
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
-			apiInstance.getApiClient().setBasePath(getAppBasePath());
-
+			configureApiClient(apiInstance.getApiClient());
 			ApiResponse<File> response = apiInstance
 					.downloadIdExtractionExtendedpdfGetWithHttpInfo(uploadResult.getId(), true);
 			if (response.getStatusCode() >= 300) {

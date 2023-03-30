@@ -12,6 +12,7 @@
 package ch.elexis.base.ch.ebanking.esr;
 
 import org.apache.commons.lang3.StringUtils;
+
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -49,7 +50,7 @@ public class ESRRecord extends PersistentObject {
 	};
 
 	public static enum REJECT {
-		OK, ESRREJECT, MASSENREJECT, BETRAG, MANDANT, RN_NUMMER, PAT_NUMMER, DUPLIKAT, ANDERE, PAT_FALSCH
+		OK, ESRREJECT, MASSENREJECT, BETRAG, MANDANT, RN_NUMMER, PAT_NUMMER, DUPLIKAT, ANDERE, PAT_FALSCH, REFERNECE
 	};
 
 	private static final String createDB = "DROP TABLE " + TABLENAME + ";" + //$NON-NLS-1$ //$NON-NLS-2$
@@ -296,60 +297,69 @@ public class ESRRecord extends PersistentObject {
 		if (mode.equals(MODE.Summenrecord)) {
 			// nothing to do
 		} else {
-			// Von der RechnungsNummer führende Nullen wegbringen
-			int rnnr = Integer.parseInt(camt054Record.getReference().substring(POSITION_RN_NR, 26));
-			Query<Rechnung> qbe_r = new Query<Rechnung>(Rechnung.class);
-			String rnid = qbe_r.findSingle("RnNummer", "=", Integer.toString(rnnr)); //$NON-NLS-1$ //$NON-NLS-2$
-			if (rnid == null) {
-				rejectCode = REJECT.RN_NUMMER;
-				vals[6] = StringUtils.EMPTY;
-				mandantID = StringUtils.EMPTY;
-			} else {
-				vals[6] = rnid;
-				rn = Rechnung.load(rnid);
-				if (rn == null) {
+			String reference = camt054Record.getReference();
+			if (isValidReference(reference)) {
+				// Von der RechnungsNummer führende Nullen wegbringen
+				int rnnr = Integer.parseInt(reference.substring(POSITION_RN_NR, 26));
+				Query<Rechnung> qbe_r = new Query<Rechnung>(Rechnung.class);
+				String rnid = qbe_r.findSingle("RnNummer", "=", Integer.toString(rnnr)); //$NON-NLS-1$ //$NON-NLS-2$
+				if (rnid == null) {
 					rejectCode = REJECT.RN_NUMMER;
 					vals[6] = StringUtils.EMPTY;
 					mandantID = StringUtils.EMPTY;
 				} else {
-					m = rn.getMandant();
-					if (m == null) {
-						rejectCode = REJECT.MANDANT;
+					vals[6] = rnid;
+					rn = Rechnung.load(rnid);
+					if (rn == null) {
+						rejectCode = REJECT.RN_NUMMER;
 						vals[6] = StringUtils.EMPTY;
 						mandantID = StringUtils.EMPTY;
 					} else {
-						mandantID = m.getId();
+						m = rn.getMandant();
+						if (m == null) {
+							rejectCode = REJECT.MANDANT;
+							vals[6] = StringUtils.EMPTY;
+							mandantID = StringUtils.EMPTY;
+						} else {
+							mandantID = m.getId();
+						}
 					}
-				}
 
-			}
-			String PatNr = camt054Record.getReference().substring(POSITION_PAT_NR, POSITION_RN_NR);
-			long patnr = Long.parseLong(PatNr); // führende Nullen wegbringen
-			String PatID = new Query<Patient>(Patient.class).findSingle("PatientNr", "=", //$NON-NLS-1$//$NON-NLS-2$
-					Long.toString(patnr));
-			if (PatID == null) {
-				if (rejectCode == REJECT.OK) {
-					rejectCode = REJECT.PAT_NUMMER;
 				}
-				vals[7] = StringUtils.EMPTY;
-			} else if ((rn != null) && (!rn.getFall().getPatient().getId().equals(PatID))) {
-				if (rejectCode == REJECT.OK) {
-					rejectCode = REJECT.PAT_FALSCH;
+				String PatNr = reference.substring(POSITION_PAT_NR, POSITION_RN_NR);
+				long patnr = Long.parseLong(PatNr); // führende Nullen wegbringen
+				String PatID = new Query<Patient>(Patient.class).findSingle("PatientNr", "=", //$NON-NLS-1$//$NON-NLS-2$
+						Long.toString(patnr));
+				if (PatID == null) {
+					if (rejectCode == REJECT.OK) {
+						rejectCode = REJECT.PAT_NUMMER;
+					}
+					vals[7] = StringUtils.EMPTY;
+				} else if ((rn != null) && (!rn.getFall().getPatient().getId().equals(PatID))) {
+					if (rejectCode == REJECT.OK) {
+						rejectCode = REJECT.PAT_FALSCH;
+					}
+					vals[7] = StringUtils.EMPTY;
+				} else {
+					vals[7] = PatID;
 				}
-				vals[7] = StringUtils.EMPTY;
+				vals[8] = mandantID;
 			} else {
-
-				vals[7] = PatID;
-
+				rejectCode = REJECT.REFERNECE;
+				vals[6] = StringUtils.EMPTY;
+				vals[7] = StringUtils.EMPTY;
+				vals[8] = StringUtils.EMPTY;
 			}
-			vals[8] = mandantID;
 		}
 		vals[9] = Integer.toString(rejectCode.ordinal());
 		set(new String[] { FLD_DATE, "Eingelesen", "Verarbeitet", "Gutgeschrieben", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-																					// //$NON-NLS-4$
 				"BetragInRp", CODE, RECHNUNGS_ID, PATIENT_ID, MANDANT_ID, FLD_REJECT_CODE, "File" //$NON-NLS-1$//$NON-NLS-2$
 		}, vals);
 
+	}
+
+	private boolean isValidReference(String reference) {
+		return StringUtils.isNotBlank(reference) && reference.length() == 27;
 	}
 
 	@Override

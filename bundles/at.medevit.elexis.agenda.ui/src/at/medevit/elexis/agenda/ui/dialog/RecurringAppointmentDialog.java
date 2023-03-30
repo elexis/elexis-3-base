@@ -41,8 +41,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import at.medevit.elexis.agenda.ui.composite.AsyncContentProposalProvider;
-import at.medevit.elexis.agenda.ui.composite.IdentifiableContentProposal;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IAppointmentSeries;
@@ -54,6 +52,8 @@ import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.ui.e4.fieldassist.AsyncContentProposalProvider;
+import ch.elexis.core.ui.e4.fieldassist.IdentifiableContentProposal;
 
 public class RecurringAppointmentDialog extends TitleAreaDialog {
 

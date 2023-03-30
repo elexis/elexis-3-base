@@ -13,7 +13,6 @@
 
 package ch.elexis.omnivore.data;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.omnivore.PreferenceConstants.PREFBASE;
 
 import java.io.File;
@@ -32,6 +31,7 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -274,8 +274,10 @@ public class Utils {
 																			// Patientennummer.
 		tmp.append(getFileElement("fn", dh.getPatient().getLastName())); //$NON-NLS-1$
 		tmp.append(getFileElement("gn", dh.getPatient().getFirstName())); //$NON-NLS-1$
-		tmp.append(getFileElement("dob", //$NON-NLS-1$
-				dh.getPatient().getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))); //$NON-NLS-1$
+		if (dh.getPatient().getDateOfBirth() != null) {
+			tmp.append(getFileElement("dob", //$NON-NLS-1$
+					dh.getPatient().getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))); //$NON-NLS-1$
+		}
 
 		tmp.append(getFileElement("dt", dh.getTitle())); // not more than 80 characters, laut javadoc //$NON-NLS-1$
 		tmp.append(getFileElement("dk", dh.getKeywords())); //$NON-NLS-1$

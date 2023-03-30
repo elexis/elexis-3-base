@@ -88,6 +88,39 @@ public class ContextMenuFunction extends AbstractBrowserFunction {
 					}
 				});
 			});
+		} else if (arguments.length == 2) {
+			if (lastResourceClick > 0 && (System.currentTimeMillis() - lastResourceClick < 100)) {
+				lastResourceClick = System.currentTimeMillis();
+				LoggerFactory.getLogger(getClass()).info("Ignoring selection resource click");
+				return null;
+			}
+			lastResourceClick = System.currentTimeMillis();
+
+			if (selectionTimestamp > 0 && (System.currentTimeMillis() - selectionTimestamp > 1000)) {
+				if (selectionProvider != null) {
+					selectionProvider.setSelection(StructuredSelection.EMPTY);
+					LoggerFactory.getLogger(getClass()).info("Clear selection resource click");
+				}
+			}
+			
+			LocalDateTime date = getDateTimeArg(arguments[0]);
+			String resource = (String) arguments[1];
+			
+			LoggerFactory.getLogger(getClass()).info("Resource selection [" + resource + "@" + date + "]");
+			
+			Optional<SideBarComposite> activeSideBar = getActiveSideBar(part);
+			activeSideBar.ifPresent(sideBar -> {
+				sideBar.setMoveInformation(date, resource);
+
+				Display.getDefault().timerExec(100, () -> {
+					if (!getBrowser().getMenu().isVisible()) {
+						if (CoreUtil.isMac()) {
+							getBrowser().setFocus();
+						}
+						getBrowser().getMenu().setVisible(true);
+					}
+				});
+			});
 		} else if (arguments.length == 1) {
 			IAppointment termin = CoreModelServiceHolder.get().load((String) arguments[0], IAppointment.class)
 					.orElse(null);

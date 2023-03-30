@@ -27,6 +27,7 @@
         </eGenericType>
         <eParameters name="date" eType="ecore:EDataType ../ch.elexis.core/model/types.ecore#//LocalDate"/>
       </eOperations>
+      <eOperations name="isZuschlagsleistung" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="AL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
           changeable="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="TL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"

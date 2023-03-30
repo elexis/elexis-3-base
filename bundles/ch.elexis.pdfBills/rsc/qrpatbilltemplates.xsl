@@ -1423,11 +1423,19 @@
 		<xsl:choose>
 			<xsl:when test="$Person/@salutation">
 				<xsl:choose>
-					<xsl:when test="$Person/@salutation!='Herr'">
-						Sehr geehrte Frau
+					<xsl:when test="$Person/@salutation='Herr'">
+						Sehr geehrter Herr
 					</xsl:when>
 					<xsl:otherwise>
-						Sehr geehrter Herr
+						<xsl:choose>
+							<xsl:when test="$Person/@salutation='Frau'">
+								Sehr geehrte Frau
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$Person/@salutation" />
+								<xsl:value-of select="' '" />
+							</xsl:otherwise>
+						</xsl:choose>						
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:when>

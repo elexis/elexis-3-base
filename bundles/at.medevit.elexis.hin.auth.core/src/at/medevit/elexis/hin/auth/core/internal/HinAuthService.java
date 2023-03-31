@@ -71,6 +71,52 @@ public class HinAuthService implements IHinAuthService {
 		return configService.get(PREF_RESTBASEURL, "https://oauth2.hin.ch/REST/v1/OAuth/");
 	}
 
+	private Optional<String> getAccessTokenWithRefresh(String tokenGroup, String refreshToken, String oauthRestUrl) {
+		Map<String, String> parameters = new HashMap<>();
+		parameters.put("grant_type", "refresh_token");
+		parameters.put("refresh_token", refreshToken);
+		parameters.put("client_id", getClientId());
+		parameters.put("client_secret", getClientSecret());
+
+		String form = parameters.entrySet().stream()
+				.map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+				.collect(Collectors.joining("&"));
+
+		HttpClient client = HttpClient.newHttpClient();
+
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(oauthRestUrl + "GetAccessToken"))
+				.headers("Content-Type", "application/x-www-form-urlencoded")
+				.POST(HttpRequest.BodyPublishers.ofString(form)).build();
+
+		try {
+			HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			if (response.statusCode() >= 200 && response.statusCode() < 300) {
+				Gson gson = new Gson();
+				@SuppressWarnings("rawtypes")
+				Map map = gson.fromJson(response.body().toString(), Map.class);
+				String token = (String) map.get("access_token");
+				configService.setActiveMandator(IHinAuthService.PREF_TOKEN + tokenGroup, token);
+				String refreshtoken = (String) map.get("refresh_token");
+				if (StringUtils.isNotBlank(refreshtoken)) {
+					configService.setActiveMandator(IHinAuthService.PREF_REFRESHTOKEN + tokenGroup, refreshtoken);
+				}
+				Double expiresInSeconds = (Double) map.get("expires_in");
+				Long expires = (Long) System.currentTimeMillis() + (expiresInSeconds.longValue() * 1000);
+				configService.setActiveMandator(IHinAuthService.PREF_TOKEN_EXPIRES + tokenGroup,
+						Long.toString(expires));
+				LoggerFactory.getLogger(getClass()).info(
+						"Got refreshed access token for [" + tokenGroup + "] expires [" + Long.toString(expires) + "]");
+				return Optional.of(token);
+			} else {
+				LoggerFactory.getLogger(getClass()).error("Getting refreshed access token failed ["
+						+ response.statusCode() + " " + response.body().toString() + "]");
+			}
+		} catch (IOException | InterruptedException e) {
+			LoggerFactory.getLogger(getClass()).error("Error getting refreshed access token", e);
+		}
+		return Optional.empty();
+	}
+
 	private Optional<String> getAccessToken(String tokenGroup, String authCode, String oauthRestUrl) {
 		Map<String, String> parameters = new HashMap<>();
 		parameters.put("grant_type", "authorization_code");
@@ -206,6 +252,17 @@ public class HinAuthService implements IHinAuthService {
 			if (StringUtils.isNotBlank(tokenExpires)) {
 				Long expires = Long.parseLong(tokenExpires);
 				if (System.currentTimeMillis() > expires) {
+					String refreshToken = configService
+							.getActiveMandator(IHinAuthService.PREF_REFRESHTOKEN + tokenGroup, null);
+					if (StringUtils.isNotBlank(refreshToken)) {
+						Optional<String> refreshedToken = getAccessTokenWithRefresh(tokenGroup, refreshToken,
+								getOauthRestUrl());
+						if (refreshedToken.isPresent()) {
+							return refreshedToken;
+						} else {
+							configService.setActiveMandator(IHinAuthService.PREF_REFRESHTOKEN + tokenGroup, null);
+						}
+					}
 					configService.setActiveMandator(IHinAuthService.PREF_TOKEN + tokenGroup, null);
 					configService.setActiveMandator(IHinAuthService.PREF_TOKEN_EXPIRES + tokenGroup, null);
 				} else {

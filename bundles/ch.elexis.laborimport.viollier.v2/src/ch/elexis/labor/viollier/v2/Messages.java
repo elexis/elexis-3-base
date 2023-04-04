@@ -12,8 +12,6 @@
  *******************************************************************************/
 package ch.elexis.labor.viollier.v2;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String LabOrderImport_AllFiles = ch.elexis.core.l10n.Messages.LabOrderImport_AllFiles;
 	public static String LabOrderImport_AutomaticMedTransfer = ch.elexis.core.l10n.Messages.LabOrderImport_AutomaticMedTransfer;
@@ -86,7 +84,7 @@ public class Messages {
 	public static String Preferences_JMedTransferJar = ch.elexis.core.l10n.Messages.Preferences_JMedTransferJar;
 	public static String Preferences_JMedTransferParam = ch.elexis.core.l10n.Messages.Preferences_JMedTransferParam;
 	public static String Preferences_DirDownload = ch.elexis.core.l10n.Messages.Core_Download_Directory;
-	public static String Preferences_DirArchive = ch.elexis.core.l10n.Messages.Core_Perspective;
+	public static String Preferences_DirArchive = ch.elexis.core.l10n.Messages.Core_ArchiveDir;
 	public static String Preferences_DirError = ch.elexis.core.l10n.Messages.Core_Error_Directory;
 	public static String Preferences_ArchivePurgeInterval = ch.elexis.core.l10n.Messages.Preferences_ArchivePurgeInterval;
 	public static String Preferences_DocumentCategory = ch.elexis.core.l10n.Messages.Core_Document_Category;

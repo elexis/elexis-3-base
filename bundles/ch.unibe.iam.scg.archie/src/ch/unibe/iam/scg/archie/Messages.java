@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.unibe.iam.scg.archie;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String ACL_ACCESS = ch.elexis.core.l10n.Messages.Core_ACL_Access;
 	public static String ACL_ACCESS_DENIED = ch.elexis.core.l10n.Messages.ACL_ACCESS_DENIED;
@@ -83,7 +81,7 @@ public class Messages {
 	public static String OTHER = ch.elexis.core.l10n.Messages.Core_Other;
 	public static String PAID = ch.elexis.core.l10n.Messages.InvoiceState_PAID;
 	public static String PATIENTS = ch.elexis.core.l10n.Messages.Core_Patients;
-	public static String PERSPECTIVE = ch.elexis.core.l10n.Messages.Core_Perspective;
+	public static String PERSPECTIVE = ch.elexis.core.l10n.Messages.Core_ArchiePerspective;
 	public static String PERSPECTIVE_OPEN = ch.elexis.core.l10n.Messages.PERSPECTIVE_OPEN;
 	public static String RESULT_EMPTY = ch.elexis.core.l10n.Messages.RESULT_EMPTY;
 	public static String STATISTICS_LIST_TITLE = ch.elexis.core.l10n.Messages.STATISTICS_LIST_TITLE;

@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -85,5 +89,36 @@ public class XMLFileUtil {
 			LoggerFactory.getLogger(XMLFileUtil.class).error("Error creating string from invoice", e);
 		}
 		return null;
+	}
+
+	/**
+	 * Move the filte to the archiveDir. Add timestamp to the filename if file with
+	 * same name exists in archiveDir. Returns the moved file.
+	 * 
+	 * @param file
+	 * @param archiveDir
+	 * @return
+	 */
+	public static File moveToArchive(File file, File archiveDir) {
+		File destFile = new File(archiveDir, file.getName());
+		if (destFile.exists()) {
+			destFile = new File(archiveDir, addTimestamp(file.getName()));
+		}
+
+		Path src = file.toPath();
+		Path dest = destFile.toPath();
+		try {
+			Files.move(src, dest, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			LoggerFactory.getLogger(XMLFileUtil.class).error(
+					"Error moving [" + file.getAbsolutePath() + "] to archive [" + archiveDir.getAbsolutePath() + "]");
+		}
+
+		return destFile;
+	}
+
+	private static String addTimestamp(String filename) {
+		return FilenameUtils.getBaseName(filename) + "_" + Long.toString(System.currentTimeMillis()) + "."
+				+ FilenameUtils.getExtension(filename);
 	}
 }

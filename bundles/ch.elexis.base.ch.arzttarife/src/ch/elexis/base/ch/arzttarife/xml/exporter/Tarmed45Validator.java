@@ -76,15 +76,21 @@ public class Tarmed45Validator {
 
 			public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId,
 					String baseURI) {
-				LSInput lsInput = getDOMImpl().createLSInput();
+				LoggerFactory.getLogger(getClass()).info(
+						"Resolve resource ns[" + namespaceURI + "] pubid[" + systemId + "] sysid[" + systemId + "]");
 				InputStream is = getClass().getResourceAsStream("/rsc/" + systemId);
-				if (is == null)
+				if (is == null) {
+					LoggerFactory.getLogger(getClass()).warn("Could not resolve resource using impl [" + impl + "]");
 					return null;
+				}
+				LSInput lsInput = getDOMImpl().createLSInput();
 				lsInput.setByteStream(is);
 				return lsInput;
 			}
 		});
 
+		LoggerFactory.getLogger(getClass())
+				.warn("Loading generalInvoiceRequest_450.xsd using factory [" + factory + "]");
 		Schema schema = factory.newSchema(
 				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/generalInvoiceRequest_450.xsd")));
 		return schema.newValidator();

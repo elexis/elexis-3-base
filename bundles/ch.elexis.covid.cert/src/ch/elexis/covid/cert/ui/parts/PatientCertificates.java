@@ -107,7 +107,10 @@ public class PatientCertificates {
 	@Inject
 	void updatePatient(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IPatient patient) {
 		if (composite != null && !composite.isDisposed()) {
-			setPatient(patient);
+			// only update with info of selected patient
+			if (patient != null && patient.equals(ContextServiceHolder.get().getActivePatient().orElse(null))) {
+				setPatient(patient);
+			}
 		}
 	}
 

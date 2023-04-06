@@ -793,6 +793,16 @@ public class Tarmed45Exporter {
 								serviceType.setName(serviceType.getName() + " [" + getServiceCode(billed) + "]");
 							}
 						}
+						// custom article with 590 will have code 1310
+						if ("590".equals(billable.getCodeSystemCode()) && (billable instanceof IArticle
+								&& ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL)) {
+							serviceType.setCode("1310");
+						}
+						// all 410 will have code 1000
+						if ("410".equals(billable.getCodeSystemCode()) && (billable instanceof IArticle
+								&& ((IArticle) billable).getTyp() == ArticleTyp.EIGENARTIKEL)) {
+							serviceType.setCode("1000");
+						}
 
 						servicesType.getServiceExOrService().add(serviceType);
 					}

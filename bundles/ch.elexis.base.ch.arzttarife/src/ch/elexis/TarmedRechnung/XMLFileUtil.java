@@ -7,7 +7,15 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,20 +50,8 @@ public class XMLFileUtil {
 
 	private static Optional<String> getFileName(String timestamp, IInvoice invoice, String outputDir) {
 		StringBuilder fname = new StringBuilder(outputDir + (outputDir.endsWith(File.separator) ? "" : File.separator)); //$NON-NLS-1$ ;
-		if (invoice.getState() == InvoiceState.DEMAND_NOTE_1
-				|| invoice.getState() == InvoiceState.DEMAND_NOTE_1_PRINTED) {
-			fname.append(invoice.getNumber() + "_m1");
-		} else if (invoice.getState() == InvoiceState.DEMAND_NOTE_2
-				|| invoice.getState() == InvoiceState.DEMAND_NOTE_2_PRINTED) {
-			fname.append(invoice.getNumber() + "_m2");
-		} else if (invoice.getState() == InvoiceState.DEMAND_NOTE_3
-				|| invoice.getState() == InvoiceState.DEMAND_NOTE_3_PRINTED) {
-			fname.append(invoice.getNumber() + "_m3");
-		} else if (invoice.getState() == InvoiceState.CANCELLED) {
-			fname.append(invoice.getNumber() + "_storno");
-		} else {
-			fname.append(invoice.getNumber());
-		}
+		fname.append(invoice.getNumber());
+		fname.append(getFilenameAppendix(invoice.getState()));
 		if (StringUtils.isNotBlank(timestamp)) {
 			fname.append("_" + timestamp);
 		}
@@ -65,6 +61,19 @@ public class XMLFileUtil {
 			return getFileName(Long.toString(System.currentTimeMillis()), invoice, outputDir);
 		}
 		return Optional.of(fname.toString());
+	}
+
+	private static String getFilenameAppendix(InvoiceState state) {
+		if (state == InvoiceState.DEMAND_NOTE_1 || state == InvoiceState.DEMAND_NOTE_1_PRINTED) {
+			return "_m1";
+		} else if (state == InvoiceState.DEMAND_NOTE_2 || state == InvoiceState.DEMAND_NOTE_2_PRINTED) {
+			return "_m2";
+		} else if (state == InvoiceState.DEMAND_NOTE_3 || state == InvoiceState.DEMAND_NOTE_3_PRINTED) {
+			return "_m3";
+		} else if (state == InvoiceState.CANCELLED) {
+			return "_storno";
+		}
+		return "";
 	}
 
 	public static void writeToFile(String filename, Document document) {
@@ -120,5 +129,51 @@ public class XMLFileUtil {
 	private static String addTimestamp(String filename) {
 		return FilenameUtils.getBaseName(filename) + "_" + Long.toString(System.currentTimeMillis()) + "."
 				+ FilenameUtils.getExtension(filename);
+	}
+
+	/**
+	 * Lookup an xml file matching the provided information in the outputDir.
+	 * 
+	 * @param outputDir
+	 * @param invoice
+	 * @param timestamp
+	 * @param invoiceState
+	 * @return
+	 */
+	public static Optional<File> lookupFile(String outputDir, IInvoice invoice, LocalDateTime timestamp,
+			InvoiceState invoiceState) {
+		if (StringUtils.isNotBlank(outputDir)) {
+			File directory = new File(outputDir);
+			if (directory.exists() && directory.isDirectory()) {
+				List<File> invoiceFiles = Arrays.asList(directory.listFiles()).stream()
+						.filter(f -> f.getName().toLowerCase().startsWith(invoice.getNumber() + "_")
+								|| f.getName().toLowerCase().startsWith(invoice.getNumber() + "."))
+						.collect(Collectors.toList());
+				if (!invoiceFiles.isEmpty()) {
+					if (invoiceFiles.size() > 1) {
+						List<File> filteredInvoiceFiles = new ArrayList<>(invoiceFiles);
+						if (invoiceState != null && StringUtils.isNotBlank(getFilenameAppendix(invoiceState))) {
+							filteredInvoiceFiles = filteredInvoiceFiles.stream()
+									.filter(f -> f.getName().toLowerCase().contains("_" + getFilenameAppendix(invoiceState)))
+									.collect(Collectors.toList());
+						}
+						if (filteredInvoiceFiles.size() > 1) {
+							if (timestamp != null) {
+								filteredInvoiceFiles = filteredInvoiceFiles.stream()
+										.filter(f -> Math.abs(ChronoUnit.SECONDS
+												.between(LocalDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()),
+														TimeZone.getDefault().toZoneId()), timestamp)) < 5)
+										.collect(Collectors.toList());
+							}
+						}
+						if (filteredInvoiceFiles.size() == 1) {
+							return Optional.of(filteredInvoiceFiles.get(0));
+						}
+					}
+				}
+				return Optional.of(invoiceFiles.get(0));
+			}
+		}
+		return Optional.empty();
 	}
 }

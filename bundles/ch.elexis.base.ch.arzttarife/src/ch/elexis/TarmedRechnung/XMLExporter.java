@@ -51,6 +51,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -1119,5 +1120,18 @@ public class XMLExporter implements IRnOutputter {
 
 	public void setEsrType(EsrType esrType) {
 		this.esrType = esrType;
+	}
+
+	@Override
+	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
+		String outputDir = CoreHub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR,
+				CorePreferenceInitializer.getDefaultDBPath());
+		XMLFileUtil.lookupFile(outputDir, invoice, timestamp, invoiceState).ifPresent(xmlFile -> {
+			if (xmlFile.exists()) {
+				Program.launch(xmlFile.getAbsolutePath());
+			} else {
+				LoggerFactory.getLogger(getClass()).info("File [" + xmlFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
+			}
+		});
 	}
 }

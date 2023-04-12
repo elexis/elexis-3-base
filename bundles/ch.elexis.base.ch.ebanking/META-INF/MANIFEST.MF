@@ -14,6 +14,11 @@ Export-Package: ch.elexis.base.ch.ebanking.esr
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.base.ch.ebanking.Activator
-Import-Package: com.ibm.icu.util,
+Import-Package: ch.elexis.core.jpa.entities,
+ ch.elexis.core.jpa.model.adapter,
+ com.ibm.icu.util,
+ javax.persistence;version="2.2.3",
+ javax.persistence.criteria;version="2.2.3",
  org.apache.commons.io,
  org.apache.commons.lang3;version="3.12.0"
+Service-Component: OSGI-INF/ch.elexis.base.ch.ebanking.model.service.EsrModelService.xml

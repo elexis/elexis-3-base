@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -467,5 +468,23 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + PDFDIR, tPdf.getText());
 		}
 		CoreHub.localCfg.flush();
+	}
+
+	@Override
+	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
+		File esrFile = new File(OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator
+				+ invoice.getNumber() + "_esr.pdf");
+		File rfFile = new File(OutputterUtil.getPdfOutputDir(PrivatQrRnOutputter.CFG_ROOT_PRIVAT) + File.separator
+				+ invoice.getNumber() + "_rf.pdf");
+		if (esrFile.exists()) {
+			Program.launch(esrFile.getAbsolutePath());
+		} else {
+			LoggerFactory.getLogger(getClass()).info("File [" + esrFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
+		}
+		if (rfFile.exists()) {
+			Program.launch(rfFile.getAbsolutePath());
+		} else {
+			LoggerFactory.getLogger(getClass()).info("File [" + rfFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
+		}
 	}
 }

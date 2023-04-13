@@ -9,16 +9,19 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.rgw.utility;bundle-version="3.9.100",
  ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
- ch.elexis.ebanking;bundle-version="3.9.0"
+ ch.elexis.ebanking;bundle-version="3.9.0",
+ ch.elexis.core.jpa;bundle-version="3.11.0",
+ ch.elexis.core.jpa.entities;bundle-version="3.11.0",
+ ch.elexis.core
 Export-Package: ch.elexis.base.ch.ebanking.esr
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.base.ch.ebanking.Activator
-Import-Package: ch.elexis.core.jpa.entities,
- ch.elexis.core.jpa.model.adapter,
- com.ibm.icu.util,
+Import-Package: com.ibm.icu.util,
+ javax.inject;version="1.0.0",
  javax.persistence;version="2.2.3",
  javax.persistence.criteria;version="2.2.3",
  org.apache.commons.io,
  org.apache.commons.lang3;version="3.12.0"
-Service-Component: OSGI-INF/ch.elexis.base.ch.ebanking.model.service.EsrModelService.xml
+Service-Component: OSGI-INF/ch.elexis.base.ch.ebanking.model.service.EsrModelService.xml,
+ OSGI-INF/ch.elexis.base.ch.ebanking.model.service.holder.ModelServiceHolder.xml

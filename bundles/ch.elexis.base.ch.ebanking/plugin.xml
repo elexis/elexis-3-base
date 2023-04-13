@@ -5,17 +5,6 @@
          point="org.eclipse.ui.views">
       <view
             category="ch.elexis.abrechnungKategorie"
-            class="ch.elexis.base.ch.ebanking.esr.ESRView"
-            id="elexis-ebanking-schweiz.ESRView"
-            name="ESR (old)"/>
-      <view
-            category="ch.elexis.abrechnungKategorie"
-            class="ch.elexis.base.ch.ebanking.esr.ESRView2"
-            id="ch.elexis.banking.ESRView2"
-            name="ESR Tabelle (old)">
-      </view>
-      <view
-            category="ch.elexis.abrechnungKategorie"
             class="ch.elexis.base.ch.ebanking.ESRView"
             icon="rsc/postfinance.ico"
             id="ch.elexis.ebanking_ch.ESRView"

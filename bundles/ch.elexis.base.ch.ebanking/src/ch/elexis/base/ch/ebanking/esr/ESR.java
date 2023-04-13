@@ -11,15 +11,17 @@
  *******************************************************************************/
 package ch.elexis.base.ch.ebanking.esr;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IAccount;
+import ch.elexis.core.services.holder.AccountServiceHolder;
 import ch.elexis.core.ui.text.ITextPlugin;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -341,7 +343,7 @@ public class ESR {
 			{ 7, 1, 3, 5, 0, 9, 4, 6, 8, 2, 4 }, { 1, 3, 5, 0, 9, 4, 6, 8, 2, 7, 3 },
 			{ 3, 5, 0, 9, 4, 6, 8, 2, 7, 1, 2 }, { 5, 0, 9, 4, 6, 8, 2, 7, 1, 3, 1 } };
 
-	private static Account esrAccount;
+	private static IAccount esrAccount;
 
 	/**
 	 * Get an {@link Account} that should be used for {@link AccountTransaction}
@@ -349,11 +351,11 @@ public class ESR {
 	 *
 	 * @return
 	 */
-	public static Account getAccount() {
+	public static IAccount getAccount() {
 		if (esrAccount == null) {
-			HashMap<Integer, Account> accountsMap = Account.getAccounts();
-			Collection<Account> accounts = accountsMap.values();
-			for (Account account : accounts) {
+			HashMap<Integer, IAccount> accountsMap = AccountServiceHolder.get().getAccounts();
+			Collection<IAccount> accounts = accountsMap.values();
+			for (IAccount account : accounts) {
 				if (account.getName().contains("ESR")) { //$NON-NLS-1$
 					esrAccount = account;
 					break;

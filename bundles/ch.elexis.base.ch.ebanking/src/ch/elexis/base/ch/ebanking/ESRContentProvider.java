@@ -1,21 +1,21 @@
 package ch.elexis.base.ch.ebanking;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.admin.ACE;
-import ch.elexis.base.ch.ebanking.esr.ESRRecord;
+import ch.elexis.base.ch.ebanking.model.IEsrRecord;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
+import ch.elexis.core.model.esr.ESRCode;
 import ch.rgw.tools.Money;
 
 public class ESRContentProvider extends ArrayContentProvider {
@@ -23,7 +23,7 @@ public class ESRContentProvider extends ArrayContentProvider {
 	private Label _lblSUMME;
 	private ACE _rights;
 	private Money sum;
-	private ESRRecord sumRecord;
+	private IEsrRecord sumRecord;
 
 	private List<Object> retList;
 
@@ -58,13 +58,13 @@ public class ESRContentProvider extends ArrayContentProvider {
 		});
 
 		for (Iterator<Object> iterator = retList.iterator(); iterator.hasNext();) {
-			ESRRecord rec = (ESRRecord) iterator.next();
-			if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
+			IEsrRecord rec = (IEsrRecord) iterator.next();
+			if (rec.getCode() == ESRCode.Summenrecord) {
 				sumRecord = rec;
 				iterator.remove();
 				continue;
 			} else {
-				sum.addMoney(rec.getBetrag());
+				sum.addMoney(rec.getAmount());
 			}
 		}
 

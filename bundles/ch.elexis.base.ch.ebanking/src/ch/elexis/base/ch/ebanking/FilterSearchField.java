@@ -1,18 +1,21 @@
 package ch.elexis.base.ch.ebanking;
 
-import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
+import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import ch.elexis.base.ch.ebanking.esr.ESRRecord;
-import ch.elexis.data.Rechnung;
+import ch.elexis.base.ch.ebanking.model.IEsrRecord;
+import ch.elexis.core.model.IInvoice;
 import ch.rgw.tools.Money;
 
 public class FilterSearchField extends ViewerFilter {
 
 	private static FilterSearchField instance;
+
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy"); // $NON-NLS-1$
 
 	private FilterSearchField() {
 	}
@@ -30,7 +33,7 @@ public class FilterSearchField extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (searchString == null || searchString.length() < 2)
 			return true;
-		ESRRecord e = (ESRRecord) element;
+		IEsrRecord e = (IEsrRecord) element;
 
 		char c = searchString.charAt(0);
 		String useSearchString = searchString.substring(1);
@@ -38,15 +41,15 @@ public class FilterSearchField extends ViewerFilter {
 			return false;
 		switch (c) {
 		case '#':
-			Rechnung rn = e.getRechnung();
+			IInvoice rn = e.getInvoice();
 			if (rn != null) {
-				String rgNr = rn.getNr();
+				String rgNr = rn.getNumber();
 				if (rgNr.matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 					return true;
 			}
 			return false;
 		case '$':
-			Money betrag = e.getBetrag();
+			Money betrag = e.getAmount();
 			char d = useSearchString.charAt(0);
 			Money moreThan;
 			switch (d) {
@@ -74,12 +77,12 @@ public class FilterSearchField extends ViewerFilter {
 			}
 			return false;
 		default:
-			String patLabel = e.getPatient().getLabel().toLowerCase();
+			String patLabel = (e.getPatient() != null ? e.getPatient().getLabel() : StringUtils.EMPTY).toLowerCase();
 			if (patLabel.matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
-			if (e.getEinlesedatatum().matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (formatter.format(e.getImportDate()).matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
-			if (e.getVerarbeitungsdatum().matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (formatter.format(e.getProcessingDate()).matches(".*" + useSearchString + ".*")) //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
 			return false;
 		}

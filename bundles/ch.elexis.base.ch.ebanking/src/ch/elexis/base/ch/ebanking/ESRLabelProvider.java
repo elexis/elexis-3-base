@@ -1,7 +1,6 @@
 package ch.elexis.base.ch.ebanking;
 
 import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,11 +53,10 @@ public class ESRLabelProvider extends LabelProvider implements ITableLabelProvid
 			text = rec.getPatient() != null ? rec.getPatient().getLabel() : StringUtils.EMPTY;
 			break;
 		case ESRView.BUCHUNG_INDEX:
-			LocalDate bookedDate = rec.getBookedDate();
-			if (bookedDate.equals(LocalDate.EPOCH)) {
+			if (!rec.hasBookedDate()) {
 				text = Messages.ESRView2_notbooked;
 			} else {
-				text = formatter.format(bookedDate);
+				text = formatter.format(rec.getBookedDate());
 			}
 			break;
 		case ESRView.DATEI_INDEX:
@@ -77,8 +75,7 @@ public class ESRLabelProvider extends LabelProvider implements ITableLabelProvid
 		IEsrRecord rec = (IEsrRecord) element;
 
 		if (rec.getRejectCode() == ESRRejectCode.OK) {
-			LocalDate bookedDate = rec.getBookedDate();
-			if (bookedDate.equals(LocalDate.EPOCH)) {
+			if (!rec.hasBookedDate()) {
 				return UiDesk.getColor(UiDesk.COL_GREY);
 			}
 			return UiDesk.getColor(UiDesk.COL_WHITE);

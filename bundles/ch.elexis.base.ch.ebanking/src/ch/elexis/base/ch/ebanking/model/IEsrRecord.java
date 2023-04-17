@@ -15,17 +15,23 @@ public interface IEsrRecord extends Identifiable, Deleteable {
 
 	public LocalDate getDate();
 
+	public String getDateString();
+
 	public LocalDate getImportDate();
 
 	public LocalDate getProcessingDate();
 
 	public LocalDate getBookedDate();
 
+	public boolean hasBookedDate();
+
 	public void setBookedDate(LocalDate value);
 
 	public Money getAmount();
 
 	public LocalDate getValutaDate();
+
+	public String getValutaDateString();
 
 	public String getFile();
 

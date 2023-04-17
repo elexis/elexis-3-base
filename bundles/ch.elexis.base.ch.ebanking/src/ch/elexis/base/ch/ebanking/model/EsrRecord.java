@@ -97,7 +97,12 @@ public class EsrRecord extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.e
 
 	@Override
 	public LocalDate getBookedDate() {
-		return getEntity().getGebucht() != null ? getEntity().getGebucht() : LocalDate.EPOCH;
+		return hasBookedDate() ? getEntity().getGebucht() : LocalDate.EPOCH;
+	}
+
+	@Override
+	public boolean hasBookedDate() {
+		return getEntity().getGebucht() != null;
 	}
 
 	@Override

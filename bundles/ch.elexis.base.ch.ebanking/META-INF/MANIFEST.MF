@@ -21,6 +21,7 @@ Import-Package: com.ibm.icu.util,
  javax.inject;version="1.0.0",
  javax.persistence;version="2.2.3",
  javax.persistence.criteria;version="2.2.3",
+ javax.xml.bind.annotation;version="2.3.0",
  org.apache.commons.io,
  org.apache.commons.lang3;version="3.12.0"
 Service-Component: OSGI-INF/ch.elexis.base.ch.ebanking.model.service.EsrModelService.xml,

@@ -5,6 +5,7 @@ import static ch.elexis.base.ch.ebanking.EBankingACLContributor.DISPLAY_ESR;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -82,8 +83,6 @@ public class ESRView extends ViewPart {
 	private TimeTool startDate;
 	private TimeTool endDate;
 
-	private TimeTool compTT1, compTT2; // for comparison only
-
 	protected final SimpleDateFormat sdf = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
 
 	private final ElexisUiEventListenerImpl eeli_user = new ElexisUiEventListenerImpl(Anwender.class,
@@ -139,9 +138,6 @@ public class ESRView extends ViewPart {
 		endDate = new TimeTool();
 		startDate = new TimeTool();
 		startDate.add(Calendar.MONTH, -3);
-
-		compTT1 = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-		compTT2 = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 	}
 
 	/**
@@ -469,7 +465,10 @@ public class ESRView extends ViewPart {
 				}
 
 				if (SELECTION_TYPE.NOTPOSTED == selectionType) {
+					esrQuery.startGroup();
 					esrQuery.and("gebucht", COMPARATOR.EQUALS, null);
+					esrQuery.or("gebucht", COMPARATOR.EQUALS, LocalDate.MIN);
+					esrQuery.andJoinGroups();
 				} else {
 					esrQuery.and("Datum", COMPARATOR.GREATER_OR_EQUAL, startDate.toLocalDate());
 					esrQuery.and("Datum", COMPARATOR.LESS_OR_EQUAL, endDate.toLocalDate());

@@ -13,8 +13,8 @@ import ch.elexis.base.ch.ebanking.print.ESRLetter;
 
 public class OpenESRFileJournalHandler extends AbstractHandler {
 
-	private static String esrFileJournalSelect = "SELECT DATUM, EINGELESEN, count(*) as ANZAHL, sum(BETRAGINRP) as BETRAG, FILE FROM ESRRECORDS"
-			+ " WHERE FILE is not null AND ID != '1' AND CODE != '6' GROUP BY FILE ORDER BY DATUM DESC LIMIT 140";
+	private static String esrFileJournalSelect = "SELECT DATUM, count(*) as ANZAHL, sum(BETRAGINRP) as BETRAG, FILE FROM ESRRECORDS"
+			+ " WHERE FILE is not null AND ID != '1' AND CODE != '6' GROUP BY DATUM, FILE ORDER BY DATUM DESC LIMIT 140";
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

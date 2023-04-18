@@ -32,6 +32,10 @@
                optional="false">
          </commandParameter>
       </command>
+      <command
+            id="ch.elexis.ebanking_ch.command.openFileJournal"
+            name="open ESR file journal">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -41,6 +45,11 @@
          <command
                commandId="ch.elexis.ebanking_ch.command.loadESRFile"
                label=" "
+               style="push">
+         </command>
+         <command
+               commandId="ch.elexis.ebanking_ch.command.openFileJournal"
+               icon="icon://IMG_DOCUMENT_PDF"
                style="push">
          </command>
       </menuContribution>
@@ -54,6 +63,10 @@
       <handler
             class="ch.elexis.base.ch.ebanking.command.OpenESRWithinvoiceIdHandler"
             commandId="ch.elexis.ebanking_ch.command.openESRWithInvoiceId">
+      </handler>
+      <handler
+            class="ch.elexis.base.ch.ebanking.command.OpenESRFileJournalHandler"
+            commandId="ch.elexis.ebanking_ch.command.openFileJournal">
       </handler>
    </extension>
    <extension

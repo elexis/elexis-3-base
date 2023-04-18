@@ -20,6 +20,22 @@ import ch.elexis.core.services.IFormattedOutputFactory.OutputType;
 
 public class ESRLetter {
 
+	public static void print(ESRFileJournalLetter letter) {
+		BundleContext bundleContext = FrameworkUtil.getBundle(ESRLetter.class).getBundleContext();
+		ServiceReference<IFormattedOutputFactory> serviceRef = bundleContext
+				.getServiceReference(IFormattedOutputFactory.class);
+		if (serviceRef != null) {
+			IFormattedOutputFactory service = bundleContext.getService(serviceRef);
+			IFormattedOutput outputter = service.getFormattedOutputImplementation(ObjectType.JAXB, OutputType.PDF);
+			ByteArrayOutputStream pdf = new ByteArrayOutputStream();
+
+			outputter.transform(letter, ESRLetter.class.getResourceAsStream("/rsc/xslt/esrfilejournal.xslt"), //$NON-NLS-1$
+					pdf, null);
+			bundleContext.ungetService(serviceRef);
+			saveAndOpen("EsrFileJournal", pdf);
+		}
+	}
+
 	public static void print(ESRJournalLetter letter) {
 		BundleContext bundleContext = FrameworkUtil.getBundle(ESRLetter.class).getBundleContext();
 		ServiceReference<IFormattedOutputFactory> serviceRef = bundleContext

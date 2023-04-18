@@ -15,8 +15,6 @@ public class ESRFileJournalRecord {
 	@XmlElement
 	private String date;
 	@XmlElement
-	private String importDate;
-	@XmlElement
 	private String entries;
 	@XmlElement
 	private String amount;
@@ -30,9 +28,8 @@ public class ESRFileJournalRecord {
 	public ESRFileJournalRecord(List<?> valuesList) {
 		TimeTool dateTool = new TimeTool((String) valuesList.get(0));
 		date = dateTool.toLocalDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-		importDate = (String) valuesList.get(1);
-		entries = Long.toString((Long) valuesList.get(2));
-		amount = new Money(((Double) valuesList.get(3)).intValue()).getAmountAsString();
-		file = (String) valuesList.get(4);
+		entries = Long.toString((Long) valuesList.get(1));
+		amount = new Money(((Double) valuesList.get(2)).intValue()).getAmountAsString();
+		file = (String) valuesList.get(3);
 	}
 }

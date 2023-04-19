@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -1014,7 +1013,6 @@ public class Tarmed45Exporter {
 				InputStream content = attachment.getContent();
 				if (content != null) {
 					byte[] byteArray = IOUtils.toByteArray(attachment.getContent());
-					byte[] encoded = Base64.getEncoder().encode(byteArray);
 
 					DocumentType document = new DocumentType();
 					String title = attachment.getTitle();
@@ -1024,7 +1022,7 @@ public class Tarmed45Exporter {
 					document.setTitle(title);
 					document.setFilename(attachment.getTitle());
 					document.setMimeType("application/pdf");
-					document.setBase64(encoded);
+					document.setBase64(byteArray);
 					documentsType.getDocument().add(document);
 				} else {
 					logger.warn("Cannot add attachment [{}], content is null", attachment.getId());

@@ -59,6 +59,7 @@ import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IOrganization;
@@ -292,18 +293,22 @@ public class ElexisPDFGenerator {
 		case OPEN_AND_PRINTED:
 		case OPEN:
 			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M0 : CFG_MSGTEXT_TP_M0;
+			invStateTxt = Messages.BillingDefaultMsg;
 			break;
 		case DEMAND_NOTE_1_PRINTED:
 		case DEMAND_NOTE_1:
 			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M1 : CFG_MSGTEXT_TP_M1;
+			invStateTxt = Messages.BillingDefaultMsg_M1;
 			break;
 		case DEMAND_NOTE_2_PRINTED:
 		case DEMAND_NOTE_2:
 			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M2 : CFG_MSGTEXT_TP_M2;
+			invStateTxt = Messages.BillingDefaultMsg_M2;
 			break;
 		case DEMAND_NOTE_3_PRINTED:
 		case DEMAND_NOTE_3:
 			key = (Fall.Tiers.GARANT == tiers) ? CFG_MSGTEXT_TG_M3 : CFG_MSGTEXT_TP_M3;
+			invStateTxt = Messages.BillingDefaultMsg_M3;
 			break;
 		default:
 			LoggerFactory.getLogger(getClass()).error("unknown state: " + invoiceState.toString());

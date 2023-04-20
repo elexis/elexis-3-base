@@ -31,8 +31,8 @@ import com.hilotec.elexis.kgview.Preferences;
 import com.hilotec.elexis.kgview.data.FavMedikament;
 
 import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.events.RefreshingPartListener;
-import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.PersistentObjectDragSource;
 import ch.elexis.core.ui.util.PersistentObjectDropTarget;
 import ch.elexis.core.ui.util.SWTHelper;

@@ -44,7 +44,7 @@ import at.medevit.elexis.ehc.ui.model.EhcDocument;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class InboxWatcher {
 	private static Logger logger = LoggerFactory.getLogger(InboxWatcher.class);

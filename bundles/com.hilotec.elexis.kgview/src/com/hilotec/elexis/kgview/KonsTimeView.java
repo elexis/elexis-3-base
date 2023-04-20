@@ -14,8 +14,8 @@ import com.hilotec.elexis.kgview.data.KonsData;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.events.RefreshingPartListener;
-import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Konsultation;
 

@@ -9,7 +9,6 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,6 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.ws.BindingProvider;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.DirectoryFieldEditor;

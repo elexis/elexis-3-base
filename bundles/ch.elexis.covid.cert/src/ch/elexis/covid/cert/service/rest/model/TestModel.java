@@ -1,11 +1,12 @@
 package ch.elexis.covid.cert.service.rest.model;
 
-import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;

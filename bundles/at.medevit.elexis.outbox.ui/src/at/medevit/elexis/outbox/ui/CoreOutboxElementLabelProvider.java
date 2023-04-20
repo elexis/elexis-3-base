@@ -35,8 +35,8 @@ import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.tasks.model.ITask;
 import ch.elexis.core.tasks.model.ITaskDescriptor;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.util.CoreUiUtil;
 
 public class CoreOutboxElementLabelProvider implements IOutboxElementUiProvider {
 

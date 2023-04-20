@@ -55,7 +55,7 @@ import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.builder.IPrescriptionBuilder;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.utils.CoreUtil;
 import ch.rgw.tools.TimeTool;
 

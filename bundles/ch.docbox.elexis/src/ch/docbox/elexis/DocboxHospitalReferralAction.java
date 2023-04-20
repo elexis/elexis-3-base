@@ -9,10 +9,10 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;

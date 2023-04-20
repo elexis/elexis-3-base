@@ -11,8 +11,6 @@
  *******************************************************************************/
 package ch.elexis.agenda.util;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String Plannables_databaseError = ch.elexis.core.l10n.Messages.Plannables_databaseError;
 	public static String Plannables_errorInAppointmentText = ch.elexis.core.l10n.Messages.Plannables_errorInAppointmentText;

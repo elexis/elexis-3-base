@@ -11,7 +11,6 @@
  *******************************************************************************/
 package ch.elexis.privatrechnung.rechnung;
 
-import org.apache.commons.lang3.StringUtils;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;

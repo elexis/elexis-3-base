@@ -49,6 +49,7 @@
         <setEntry value="ch.qos.logback.classic@default:default"/>
         <setEntry value="ch.qos.logback.core@default:default"/>
         <setEntry value="ch.qos.logback.slf4j@default:false"/>
+        <setEntry value="com.eclipsesource.jaxrs.consumer@default:default"/>
         <setEntry value="com.google.gson@default:default"/>
         <setEntry value="com.google.guava@default:default"/>
         <setEntry value="com.h2database@default:default"/>
@@ -67,12 +68,18 @@
         <setEntry value="org.apache.commons.commons-beanutils@default:default"/>
         <setEntry value="org.apache.commons.commons-collections4@default:default"/>
         <setEntry value="org.apache.commons.commons-compress@default:default"/>
+        <setEntry value="org.apache.commons.commons-dbcp2@default:default"/>
         <setEntry value="org.apache.commons.commons-io@default:default"/>
         <setEntry value="org.apache.commons.commons-pool2@default:default"/>
+        <setEntry value="org.apache.commons.commons-text@default:default"/>
         <setEntry value="org.apache.commons.lang3@default:default"/>
         <setEntry value="org.apache.commons.logging*1.2.0@default:default"/>
         <setEntry value="org.apache.commons.math3@default:default"/>
+        <setEntry value="org.apache.felix.gogo.command@default:default"/>
+        <setEntry value="org.apache.felix.gogo.runtime@default:default"/>
+        <setEntry value="org.apache.felix.gogo.shell@default:default"/>
         <setEntry value="org.apache.felix.scr@1:true"/>
+        <setEntry value="org.apache.geronimo.specs.geronimo-jta_1.1_spec@default:default"/>
         <setEntry value="org.apache.httpcomponents.httpclient@default:default"/>
         <setEntry value="org.apache.httpcomponents.httpcore@default:default"/>
         <setEntry value="org.apache.poi.ooxml.schemas@default:default"/>
@@ -87,6 +94,7 @@
         <setEntry value="org.eclipse.emf.ecore@default:default"/>
         <setEntry value="org.eclipse.equinox.app@default:default"/>
         <setEntry value="org.eclipse.equinox.common@2:true"/>
+        <setEntry value="org.eclipse.equinox.console@default:default"/>
         <setEntry value="org.eclipse.equinox.event@2:true"/>
         <setEntry value="org.eclipse.equinox.preferences@default:default"/>
         <setEntry value="org.eclipse.equinox.registry@default:default"/>
@@ -136,8 +144,6 @@
         <setEntry value="org.slf4j.apis.jcl@default:default"/>
     </setAttribute>
     <setAttribute key="selected_workspace_bundles">
-        <setEntry value="at.medevit.logback.mattermost@default:false"/>
-        <setEntry value="at.medevit.logback.pushnotification@default:false"/>
         <setEntry value="ch.elexis.base.ch.labortarif.model@default:default"/>
         <setEntry value="ch.elexis.core.hl7.v2x@default:default"/>
         <setEntry value="ch.elexis.core.importer.div@default:default"/>
@@ -155,14 +161,10 @@
         <setEntry value="ch.elexis.core.test.context@default:false"/>
         <setEntry value="ch.elexis.core.test.logging@default:false"/>
         <setEntry value="ch.elexis.core.test@default:default"/>
+        <setEntry value="ch.elexis.core.webdav@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
         <setEntry value="ch.elexis.tasks.integration.test@default:default"/>
         <setEntry value="ch.rgw.utility@default:default"/>
-        <setEntry value="com.eclipsesource.jaxrs.consumer@default:default"/>
-        <setEntry value="jakarta.xml.bind-api@default:false"/>
-        <setEntry value="org.apache.commons.commons-dbcp2@default:default"/>
-        <setEntry value="org.apache.geronimo.specs.geronimo-jta_1.1_spec@default:default"/>
-        <setEntry value="org.osgi.framework.system.packages.extra@default:false"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <stringAttribute key="templateConfig" value="${target_home}/configuration/config.ini"/>

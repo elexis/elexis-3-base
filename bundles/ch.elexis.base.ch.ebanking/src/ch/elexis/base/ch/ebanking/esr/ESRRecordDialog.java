@@ -12,6 +12,7 @@
 package ch.elexis.base.ch.ebanking.esr;
 
 import java.text.MessageFormat;
+import java.time.LocalDate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
@@ -27,22 +28,24 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
+import ch.elexis.base.ch.ebanking.model.IEsrRecord;
+import ch.elexis.base.ch.ebanking.model.service.holder.ModelServiceHolder;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IPayment;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.InvoiceServiceHolder;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.ImageSize;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.LabeledInputField;
 import ch.elexis.core.ui.util.LabeledInputField.InputData;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.Zahlung;
 import ch.rgw.tools.Money;
-import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
 
 /**
  * Change an ESR record manually
@@ -51,27 +54,26 @@ import ch.rgw.tools.TimeTool;
  *
  */
 public class ESRRecordDialog extends TitleAreaDialog {
-	private ESRRecord rec;
+	private IEsrRecord rec;
 	private boolean bBooked;
 	private Button bKeep, bBook, bUnbook, bDelete;
 	private Label lFile;
 	private LabeledInputField.AutoForm af;
-	private TimeTool ttBooking = new TimeTool();
 
 	private InputData[] fields = {
-			new InputData(Messages.ESRRecordDialog_readInDate, "Eingelesen", InputData.Typ.DATE, null), //$NON-NLS-1$
-			new InputData(Messages.ESRRecordDialog_esrType, "ESRCode", InputData.Typ.STRING, null), //$NON-NLS-1$
-			new InputData(Messages.ESRRecordDialog_bookedDate, "Verarbeitet", InputData.Typ.DATE, null), //$NON-NLS-1$
-			new InputData(Messages.ESRRecordDialog_addedDate, "Gutgeschrieben", InputData.Typ.DATE, null), //$NON-NLS-1$
-			new InputData(Messages.ESRRecordDialog_receivedDate, "Datum", InputData.Typ.DATE, null), //$NON-NLS-1$
-			new InputData(Messages.ESRRecordDialog_amount, "BetragInRp", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
-			new InputData(Messages.ESRRecordDialog_billNr, "RechnungsID", new LabeledInputField.IContentProvider() { //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_readInDate, "importDateString", InputData.Typ.DATE, null), //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_esrType, "code", InputData.Typ.STRING, null), //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_bookedDate, "processingDateString", InputData.Typ.DATE, null), //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_addedDate, "valutaDateString", InputData.Typ.DATE, null), //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_receivedDate, "dateString", InputData.Typ.DATE, null), //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_amount, "amount", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_billNr, "invoice", new LabeledInputField.IContentProvider() { //$NON-NLS-1$
 				public void displayContent(Object po, InputData ltf) {
-					Rechnung rn = rec.getRechnung();
+					IInvoice rn = rec.getInvoice();
 					if (rn == null) {
 						ltf.setText("??"); //$NON-NLS-1$
 					} else {
-						ltf.setText(rn.getNr());
+						ltf.setText(rn.getNumber());
 					}
 				}
 
@@ -90,12 +92,13 @@ public class ESRRecordDialog extends TitleAreaDialog {
 									Patient pat = fall.getPatient();
 									Mandant mn = r.getMandant();
 									if (pat.isAvailable()) {
-										rec.set("RechnungsID", r.getId()); //$NON-NLS-1$
+										rec.setInvoice(r.toIInvoice()); // $NON-NLS-1$
 										// ltf.setText(r.getNr());
-										rec.set("PatientID", pat.getId()); //$NON-NLS-1$
+										rec.setPatient(pat.toIPatient()); // $NON-NLS-1$
 										if (mn != null && mn.isValid()) {
-											rec.set("MandantID", mn.getId()); //$NON-NLS-1$
+											rec.setMandator(mn.toIContact()); // $NON-NLS-1$
 										}
+										CoreModelServiceHolder.get().save(rec);
 										af.reload(rec);
 									} else {
 										err = 4;
@@ -118,10 +121,10 @@ public class ESRRecordDialog extends TitleAreaDialog {
 					}
 				}
 
-			}), new InputData(Messages.ESRRecordDialog_patient, "PatientID", new LabeledInputField.IContentProvider() { //$NON-NLS-1$
+			}), new InputData(Messages.ESRRecordDialog_patient, "patient", new LabeledInputField.IContentProvider() { //$NON-NLS-1$
 
 				public void displayContent(Object po, InputData ltf) {
-					ltf.setText(rec.getPatient().getLabel());
+					ltf.setText(rec.getPatient() != null ? rec.getPatient().getLabel() : StringUtils.EMPTY);
 				}
 
 				public void reloadContent(Object po, InputData ltf) {
@@ -130,7 +133,8 @@ public class ESRRecordDialog extends TitleAreaDialog {
 							Patient.DEFAULT_SORT);
 					if (ksl.open() == Dialog.OK) {
 						Patient actPatient = (Patient) ksl.getSelection();
-						rec.set("PatientID", actPatient.getId()); //$NON-NLS-1$
+						rec.setPatient(actPatient.toIPatient());
+						CoreModelServiceHolder.get().save(rec);
 						ltf.setText(actPatient.getLabel());
 					}
 				}
@@ -138,9 +142,9 @@ public class ESRRecordDialog extends TitleAreaDialog {
 
 	};
 
-	public ESRRecordDialog(Shell shell, ESRRecord record) {
+	public ESRRecordDialog(Shell shell, IEsrRecord element) {
 		super(shell);
-		rec = record;
+		rec = element;
 	}
 
 	@Override
@@ -150,6 +154,7 @@ public class ESRRecordDialog extends TitleAreaDialog {
 		TableWrapLayout twl = new TableWrapLayout();
 		ret.setLayout(twl);
 		af = new LabeledInputField.AutoForm(ret, fields);
+		af.setModelService(ModelServiceHolder.get());
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		af.setLayoutData(twd);
@@ -173,7 +178,7 @@ public class ESRRecordDialog extends TitleAreaDialog {
 		bUnbook.setText(Messages.ESRRecordDialog_dontBookRecord);
 		bDelete = new Button(cChoices, SWT.RADIO);
 		bDelete.setText(Messages.ESRRecordDialog_deleteRecord);
-		bBooked = !StringTool.isNothing(rec.getGebucht());
+		bBooked = !LocalDate.EPOCH.equals(rec.getBookedDate());
 		bKeep.setSelection(true);
 
 		af.reload(rec);
@@ -195,33 +200,40 @@ public class ESRRecordDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		if (bBook.getSelection()) {
 			if (!bBooked) {
-				Money zahlung = rec.getBetrag();
-				Rechnung rn = rec.getRechnung();
-				ttBooking.set(rec.getValuta());
-				Zahlung zahlungsObj = rn.addZahlung(zahlung, Messages.ESRRecordDialog_vESRForBill + rn.getNr() + " / " //$NON-NLS-1$
-						+ rec.getPatient().getPatCode(), ttBooking);
+				Money zahlung = rec.getAmount();
+				IInvoice rn = rec.getInvoice();
+				IPayment zahlungsObj = InvoiceServiceHolder.get().addPayment(rn, zahlung,
+						Messages.ESRRecordDialog_vESRForBill + rn.getNumber() + " / " //$NON-NLS-1$
+						+ rec.getPatient().getCode());
+				zahlungsObj.setDate(rec.getValutaDate());
+				CoreModelServiceHolder.get().save(zahlungsObj);
 				if (zahlungsObj != null && ESR.getAccount() != null) {
-					AccountTransaction transaction = zahlungsObj.getTransaction();
-					transaction.setAccount(ESR.getAccount());
+					InvoiceServiceHolder.get().getAccountTransaction(zahlungsObj).ifPresent(transaction -> {
+						transaction.setAccount(ESR.getAccount());
+						CoreModelServiceHolder.get().save(transaction);
+					});
 				}
-				rec.setGebucht(ttBooking);
+				rec.setBookedDate(rec.getValutaDate());
+				ModelServiceHolder.get().save(rec);
 			}
 		} else if (bUnbook.getSelection()) {
 			if (bBooked) {
-				Money zahlung = rec.getBetrag();
-				Rechnung rn = rec.getRechnung();
-				Zahlung zahlungsObj = rn.addZahlung(zahlung.negate(),
-						Messages.ESRRecordDialog_stornoESR + rn.getNr() + " / " //$NON-NLS-1$
-								+ rec.getPatient().getPatCode(),
-						null);
+				Money zahlung = rec.getAmount();
+				IInvoice rn = rec.getInvoice();
+				IPayment zahlungsObj = InvoiceServiceHolder.get().addPayment(rn, zahlung.negate(),
+						Messages.ESRRecordDialog_stornoESR + rn.getNumber() + " / " //$NON-NLS-1$
+								+ rec.getPatient().getCode());
 				if (zahlungsObj != null && ESR.getAccount() != null) {
-					AccountTransaction transaction = zahlungsObj.getTransaction();
-					transaction.setAccount(ESR.getAccount());
+					InvoiceServiceHolder.get().getAccountTransaction(zahlungsObj).ifPresent(transaction -> {
+						transaction.setAccount(ESR.getAccount());
+						CoreModelServiceHolder.get().save(transaction);
+					});
 				}
-				rec.set(Messages.ESRRecordDialog_booked, StringUtils.EMPTY);
+				rec.setBookedDate(null);
+				ModelServiceHolder.get().save(rec);
 			}
 		} else if (bDelete.getSelection()) {
-			rec.delete();
+			ModelServiceHolder.get().delete(rec);
 		}
 		super.okPressed();
 	}

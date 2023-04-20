@@ -12,15 +12,17 @@
 
 package ch.berchtold.emanuel.privatrechnung.data;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
+
+import com.opencsv.CSVReader;
 
 import ch.berchtold.emanuel.privatrechnung.model.IPrivatLeistung;
 import ch.berchtold.emanuel.privatrechnung.model.PrivatModelServiceHolder;
@@ -34,7 +36,6 @@ import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
-import com.opencsv.CSVReader;
 
 /**
  * A class to import codes from an external source to this code system. the

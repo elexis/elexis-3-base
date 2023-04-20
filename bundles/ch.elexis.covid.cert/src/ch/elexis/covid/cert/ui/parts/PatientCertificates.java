@@ -51,6 +51,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
@@ -61,10 +62,9 @@ import ch.elexis.core.services.ILocalDocumentService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.ui.dialogs.base.InputDialog;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
-import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.covid.cert.service.CertificateInfo;
 import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.rest.model.RecoveryModel;
@@ -107,7 +107,10 @@ public class PatientCertificates {
 	@Inject
 	void updatePatient(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IPatient patient) {
 		if (composite != null && !composite.isDisposed()) {
-			setPatient(patient);
+			// only update with info of selected patient
+			if (patient != null && patient.equals(ContextServiceHolder.get().getActivePatient().orElse(null))) {
+				setPatient(patient);
+			}
 		}
 	}
 

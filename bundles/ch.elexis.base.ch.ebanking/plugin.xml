@@ -5,17 +5,6 @@
          point="org.eclipse.ui.views">
       <view
             category="ch.elexis.abrechnungKategorie"
-            class="ch.elexis.base.ch.ebanking.esr.ESRView"
-            id="elexis-ebanking-schweiz.ESRView"
-            name="ESR (old)"/>
-      <view
-            category="ch.elexis.abrechnungKategorie"
-            class="ch.elexis.base.ch.ebanking.esr.ESRView2"
-            id="ch.elexis.banking.ESRView2"
-            name="ESR Tabelle (old)">
-      </view>
-      <view
-            category="ch.elexis.abrechnungKategorie"
             class="ch.elexis.base.ch.ebanking.ESRView"
             icon="rsc/postfinance.ico"
             id="ch.elexis.ebanking_ch.ESRView"
@@ -44,6 +33,10 @@
                optional="false">
          </commandParameter>
       </command>
+      <command
+            id="ch.elexis.ebanking_ch.command.openFileJournal"
+            name="open ESR file journal">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -53,6 +46,11 @@
          <command
                commandId="ch.elexis.ebanking_ch.command.loadESRFile"
                label=" "
+               style="push">
+         </command>
+         <command
+               commandId="ch.elexis.ebanking_ch.command.openFileJournal"
+               icon="icon://IMG_DOCUMENT_PDF"
                style="push">
          </command>
       </menuContribution>
@@ -66,6 +64,10 @@
       <handler
             class="ch.elexis.base.ch.ebanking.command.OpenESRWithinvoiceIdHandler"
             commandId="ch.elexis.ebanking_ch.command.openESRWithInvoiceId">
+      </handler>
+      <handler
+            class="ch.elexis.base.ch.ebanking.command.OpenESRFileJournalHandler"
+            commandId="ch.elexis.ebanking_ch.command.openFileJournal">
       </handler>
    </extension>
    <extension

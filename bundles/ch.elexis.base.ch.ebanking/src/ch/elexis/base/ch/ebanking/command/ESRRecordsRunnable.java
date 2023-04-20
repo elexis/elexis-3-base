@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.base.ch.ebanking.esr.ESR;
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.base.ch.ebanking.esr.Messages;
+import ch.elexis.core.model.IAccountTransaction;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Rechnung;
@@ -51,8 +53,9 @@ public class ESRRecordsRunnable implements Runnable {
 					Zahlung zahlungsObj = rn.addZahlung(zahlung, Messages.ESRView_storno_for + rn.getNr() + " / " //$NON-NLS-1$
 							+ rec.getPatient().getPatCode(), new TimeTool(rec.getValuta()));
 					if (zahlungsObj != null && ESR.getAccount() != null) {
-						AccountTransaction transaction = zahlungsObj.getTransaction();
+						IAccountTransaction transaction = zahlungsObj.getTransaction().toIAccountTransaction();
 						transaction.setAccount(ESR.getAccount());
+						CoreModelServiceHolder.get().save(transaction);
 					}
 					rec.setGebucht(null);
 				} else {
@@ -96,17 +99,20 @@ public class ESRRecordsRunnable implements Runnable {
 					Zahlung zahlungsObj = rn.addZahlung(zahlung, Messages.ESRView_vesrfor + rn.getNr() + " / " //$NON-NLS-1$
 							+ rec.getPatient().getPatCode(), new TimeTool(rec.getValuta()));
 					if (zahlungsObj != null && ESR.getAccount() != null) {
-						AccountTransaction transaction = zahlungsObj.getTransaction();
+						IAccountTransaction transaction = zahlungsObj.getTransaction().toIAccountTransaction();
 						transaction.setAccount(ESR.getAccount());
+						CoreModelServiceHolder.get().save(transaction);
 					}
 					rec.setGebucht(null);
 				}
 			} else if (rec.getRejectCode().equals(ESRRecord.REJECT.RN_NUMMER)) {
 				TimeTool valutaDate = new TimeTool(rec.getValuta());
-				AccountTransaction transaction = new AccountTransaction(rec.getPatient(), null, rec.getBetrag(),
-						valutaDate.toString(TimeTool.DATE_GER), Messages.LoadESRFileHandler_notAssignable);
+				IAccountTransaction transaction = new AccountTransaction(rec.getPatient(), null, rec.getBetrag(),
+						valutaDate.toString(TimeTool.DATE_GER), Messages.LoadESRFileHandler_notAssignable)
+						.toIAccountTransaction();
 				if (ESR.getAccount() != null) {
 					transaction.setAccount(ESR.getAccount());
+					CoreModelServiceHolder.get().save(transaction);
 				}
 			}
 		}

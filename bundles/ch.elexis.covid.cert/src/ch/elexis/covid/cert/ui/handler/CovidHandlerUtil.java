@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.IValueSetService;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.ICodeElementBlock;
@@ -39,7 +40,6 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.l10n.Messages;
 import ch.elexis.covid.cert.service.CertificateInfo;
 import ch.elexis.covid.cert.service.CertificateInfo.Type;
 import ch.elexis.covid.cert.service.CertificatesService;

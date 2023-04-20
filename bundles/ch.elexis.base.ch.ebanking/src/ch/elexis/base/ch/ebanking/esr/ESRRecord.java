@@ -13,6 +13,8 @@ package ch.elexis.base.ch.ebanking.esr;
 
 import org.apache.commons.lang3.StringUtils;
 
+import ch.elexis.base.ch.ebanking.model.IEsrRecord;
+import ch.elexis.base.ch.ebanking.model.service.holder.ModelServiceHolder;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -409,5 +411,9 @@ public class ESRRecord extends PersistentObject {
 
 	public String getESRCode() {
 		return MODE.values()[checkZero(get(CODE))].toString();
+	}
+
+	public IEsrRecord toIEsrRecord() {
+		return ModelServiceHolder.get().load(getId(), IEsrRecord.class).get();
 	}
 }

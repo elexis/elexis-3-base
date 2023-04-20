@@ -5,6 +5,7 @@ import static ch.elexis.base.ch.ebanking.EBankingACLContributor.DISPLAY_ESR;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Service;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnPixelData;
@@ -51,18 +53,19 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.wb.swt.TableViewerColumnSorter;
 
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.base.ch.ebanking.esr.ESRRecordDialog;
 import ch.elexis.base.ch.ebanking.esr.Messages;
+import ch.elexis.base.ch.ebanking.model.IEsrRecord;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IInvoice;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
-import ch.elexis.data.Mandant;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
-import ch.elexis.data.Rechnung;
+import ch.elexis.core.model.esr.ESRRejectCode;
+import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -75,8 +78,6 @@ public class ESRView extends ViewPart {
 
 	private TimeTool startDate;
 	private TimeTool endDate;
-
-	private TimeTool compTT1, compTT2; // for comparison only
 
 	protected final SimpleDateFormat sdf = (SimpleDateFormat) DateFormat.getDateInstance(DateFormat.MEDIUM);
 
@@ -122,13 +123,17 @@ public class ESRView extends ViewPart {
 	private Button btnThisWeek;
 	private Button btnLastWeek;
 
+	@Inject
+	@Service(filterExpression = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.ebanking.model)")
+	private IModelService esrModelService;
+
+	@Inject
+	private IContextService contextService;
+
 	public ESRView() {
 		endDate = new TimeTool();
 		startDate = new TimeTool();
 		startDate.add(Calendar.MONTH, -3);
-
-		compTT1 = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-		compTT2 = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 	}
 
 	/**
@@ -227,13 +232,9 @@ public class ESRView extends ViewPart {
 		new TableViewerColumnSorter(tableViewerColumnDate) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				ESRRecord esr1 = (ESRRecord) e1;
-				ESRRecord esr2 = (ESRRecord) e2;
-				if (!compTT1.set(esr1.get(ESRRecord.FLD_DATE)))
-					compTT1.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				if (!compTT2.set(esr2.get(ESRRecord.FLD_DATE)))
-					compTT2.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				return compTT1.compareTo(compTT2);
+				IEsrRecord esr1 = (IEsrRecord) e1;
+				IEsrRecord esr2 = (IEsrRecord) e2;
+				return esr1.getDate().compareTo(esr2.getDate());
 			}
 		};
 
@@ -245,10 +246,10 @@ public class ESRView extends ViewPart {
 		new TableViewerColumnSorter(tableViewerColumnBillNumber) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				Rechnung r1 = ((ESRRecord) e1).getRechnung();
-				Rechnung r2 = ((ESRRecord) e2).getRechnung();
-				String rNr1 = (r1 != null) ? r1.getNr() : StringUtils.EMPTY;
-				String rNr2 = (r2 != null) ? r2.getNr() : StringUtils.EMPTY;
+				IInvoice r1 = ((IEsrRecord) e1).getInvoice();
+				IInvoice r2 = ((IEsrRecord) e2).getInvoice();
+				String rNr1 = (r1 != null) ? r1.getNumber() : StringUtils.EMPTY;
+				String rNr2 = (r2 != null) ? r2.getNumber() : StringUtils.EMPTY;
 				return StringTool.compareNumericStrings(rNr1, rNr2);
 			}
 		};
@@ -261,9 +262,9 @@ public class ESRView extends ViewPart {
 		new TableViewerColumnSorter(tableViewerColumnAmount) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				ESRRecord esr1 = (ESRRecord) e1;
-				ESRRecord esr2 = (ESRRecord) e2;
-				return esr1.getBetrag().compareTo(esr2.getBetrag());
+				IEsrRecord esr1 = (IEsrRecord) e1;
+				IEsrRecord esr2 = (IEsrRecord) e2;
+				return esr1.getAmount().compareTo(esr2.getAmount());
 			}
 		};
 
@@ -275,13 +276,9 @@ public class ESRView extends ViewPart {
 		new TableViewerColumnSorter(tableViewerColumnEingelesen) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				ESRRecord esr1 = (ESRRecord) e1;
-				ESRRecord esr2 = (ESRRecord) e2;
-				if (!compTT1.set(esr1.getEinlesedatatum()))
-					compTT1.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				if (!compTT2.set(esr2.getEinlesedatatum()))
-					compTT2.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				return compTT1.compareTo(compTT2);
+				IEsrRecord esr1 = (IEsrRecord) e1;
+				IEsrRecord esr2 = (IEsrRecord) e2;
+				return esr1.getImportDate().compareTo(esr2.getImportDate());
 			}
 		};
 
@@ -293,13 +290,9 @@ public class ESRView extends ViewPart {
 		new TableViewerColumnSorter(tableViewerColumnVerrechnet) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				ESRRecord esr1 = (ESRRecord) e1;
-				ESRRecord esr2 = (ESRRecord) e2;
-				if (!compTT1.set(esr1.getVerarbeitungsdatum()))
-					compTT1.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				if (!compTT2.set(esr2.getVerarbeitungsdatum()))
-					compTT2.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				return compTT1.compareTo(compTT2);
+				IEsrRecord esr1 = (IEsrRecord) e1;
+				IEsrRecord esr2 = (IEsrRecord) e2;
+				return esr1.getProcessingDate().compareTo(esr2.getProcessingDate());
 			}
 		};
 
@@ -311,13 +304,9 @@ public class ESRView extends ViewPart {
 		new TableViewerColumnSorter(tableViewerColumnGutgeschrieben) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				ESRRecord esr1 = (ESRRecord) e1;
-				ESRRecord esr2 = (ESRRecord) e2;
-				if (!compTT1.set(esr1.getValuta()))
-					compTT1.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				if (!compTT2.set(esr2.getValuta()))
-					compTT2.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				return compTT1.compareTo(compTT2);
+				IEsrRecord esr1 = (IEsrRecord) e1;
+				IEsrRecord esr2 = (IEsrRecord) e2;
+				return esr1.getValutaDate().compareTo(esr2.getValutaDate());
 			}
 		};
 
@@ -330,8 +319,8 @@ public class ESRView extends ViewPart {
 		new TableViewerColumnSorter(tableViewerColumnPatient) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				Patient pat1 = ((ESRRecord) e1).getPatient();
-				Patient pat2 = ((ESRRecord) e2).getPatient();
+				IPatient pat1 = ((IEsrRecord) e1).getPatient();
+				IPatient pat2 = ((IEsrRecord) e2).getPatient();
 				String patLab1 = (pat1 != null) ? pat1.getLabel() : StringUtils.EMPTY;
 				String patLab2 = (pat2 != null) ? pat2.getLabel() : StringUtils.EMPTY;
 				return patLab1.compareTo(patLab2);
@@ -347,13 +336,9 @@ public class ESRView extends ViewPart {
 		new TableViewerColumnSorter(tableViewerColumnBooking) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				ESRRecord esr1 = (ESRRecord) e1;
-				ESRRecord esr2 = (ESRRecord) e2;
-				if (!compTT1.set(esr1.getGebucht()))
-					compTT1.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				if (!compTT2.set(esr2.getGebucht()))
-					compTT2.set(TimeTool.BEGINNING_OF_UNIX_EPOCH);
-				return compTT1.compareTo(compTT2);
+				IEsrRecord esr1 = (IEsrRecord) e1;
+				IEsrRecord esr2 = (IEsrRecord) e2;
+				return esr1.getBookedDate().compareTo(esr2.getBookedDate());
 			}
 		};
 
@@ -381,8 +366,7 @@ public class ESRView extends ViewPart {
 				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				if ((sel != null) && (!sel.isEmpty())) {
 					Object element = sel.getFirstElement();
-					PersistentObject po = (PersistentObject) element;
-					ESRRecordDialog erd = new ESRRecordDialog(getViewSite().getShell(), (ESRRecord) po);
+					ESRRecordDialog erd = new ESRRecordDialog(getViewSite().getShell(), (IEsrRecord) element);
 					erd.open();
 					updateView();
 				}
@@ -399,16 +383,15 @@ public class ESRView extends ViewPart {
 				StructuredSelection ss = (StructuredSelection) tableViewer.getSelection();
 				Object firstElement = ss.getFirstElement();
 				if (firstElement != null) {
-					ESRRecord selRecord = (ESRRecord) firstElement;
-					ElexisEventDispatcher.fireSelectionEvent(selRecord);
-					Rechnung rn = selRecord.getRechnung();
+					IEsrRecord selRecord = (IEsrRecord) firstElement;
+					contextService.getRootContext().setTyped(selRecord);
+					IInvoice rn = selRecord.getInvoice();
 					if (rn != null) {
-						ElexisEventDispatcher.fireSelectionEvent(rn);
+						contextService.getRootContext().setTyped(rn);
 					}
 				} else {
-					ElexisEventDispatcher.clearSelection(ESRRecord.class);
+					contextService.getRootContext().removeTyped(IEsrRecord.class);
 				}
-
 			}
 		});
 
@@ -457,42 +440,34 @@ public class ESRView extends ViewPart {
 
 		if (CoreHub.acl.request(DISPLAY_ESR) == true) {
 			Job job = Job.create("ESR loading ...", (ICoreRunnable) monitor -> {
-				Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class, ESRRecord.TABLENAME, false,
-						new String[] { ESRRecord.FLD_DATE, ESRRecord.FLD_BOOKING_DATE, ESRRecord.RECHNUNGS_ID,
-								"Eingelesen", "Verarbeitet", "BetragInRp", "File" });
-				qbe.add(ESRRecord.FLD_ID, Query.NOT_EQUAL, StringConstants.ONE);
+				IQuery<IEsrRecord> esrQuery = esrModelService.getQuery(IEsrRecord.class);
+				esrQuery.and("id", COMPARATOR.NOT_EQUALS, StringConstants.ONE);
 
 				if (CoreHub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
-					Mandant mandator = ElexisEventDispatcher.getSelectedMandator();
-					if (mandator != null) {
-						qbe.startGroup();
-						qbe.add(ESRRecord.MANDANT_ID, Query.EQUALS, mandator.getId());
-						qbe.or();
-						qbe.add(ESRRecord.MANDANT_ID, StringConstants.EMPTY, null);
-						qbe.add(ESRRecord.FLD_REJECT_CODE, Query.NOT_EQUAL, StringConstants.ZERO);
-						qbe.endGroup();
-						qbe.and();
-					} else {
-						qbe.insertFalse();
-					}
+					contextService.getActiveMandator().ifPresent(m -> {
+						esrQuery.startGroup();
+						esrQuery.and("mandant", COMPARATOR.EQUALS, m);
+						esrQuery.startGroup();
+						esrQuery.and("mandant", COMPARATOR.EQUALS, null);
+						esrQuery.and("rejectcode", COMPARATOR.NOT_EQUALS, ESRRejectCode.OK);
+						esrQuery.orJoinGroups();
+						esrQuery.andJoinGroups();
+					});
 				}
 
 				if (SELECTION_TYPE.NOTPOSTED == selectionType) {
-					// we select by state
-					qbe.startGroup();
-					qbe.add(ESRRecord.FLD_BOOKING_DATE, Query.EQUALS, null);
-					qbe.or();
-					qbe.addToken(ESRRecord.FLD_BOOKING_DATE + " IS NULL"); //$NON-NLS-1$
-					qbe.endGroup();
+					esrQuery.startGroup();
+					esrQuery.and("gebucht", COMPARATOR.EQUALS, null);
+					esrQuery.or("gebucht", COMPARATOR.EQUALS, LocalDate.MIN);
+					esrQuery.andJoinGroups();
 				} else {
-					// we select by date
-					qbe.add(ESRRecord.FLD_DATE, Query.GREATER_OR_EQUAL, startDate.toDBString(true));
-					qbe.add(ESRRecord.FLD_DATE, Query.LESS_OR_EQUAL, endDate.toDBString(true));
+					esrQuery.and("Datum", COMPARATOR.GREATER_OR_EQUAL, startDate.toLocalDate());
+					esrQuery.and("Datum", COMPARATOR.LESS_OR_EQUAL, endDate.toLocalDate());
 				}
-				List<ESRRecord> res = qbe.execute();
+				List<IEsrRecord> esrQueryResult = esrQuery.execute();
 
 				Display.getDefault().asyncExec(() -> {
-					tableViewer.setInput(res);
+					tableViewer.setInput(esrQueryResult);
 				});
 			});
 

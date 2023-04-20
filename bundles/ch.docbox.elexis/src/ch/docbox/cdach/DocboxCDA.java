@@ -9,7 +9,6 @@
  *******************************************************************************/
 package ch.docbox.cdach;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -25,6 +24,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.v3.AD;
 import org.hl7.v3.AdxpCity;
 import org.hl7.v3.AdxpPostalCode;

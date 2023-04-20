@@ -1,7 +1,5 @@
 package ch.elexis.labor.medics.v2;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String KontaktOrderManagement_messageErrorCreateDB = ch.elexis.core.l10n.Messages.KontaktOrderManagement_messageErrorCreateDB;
 	public static String KontaktOrderManagement_titleErrorCreateDB = ch.elexis.core.l10n.Messages.KontaktOrderManagement_titleErrorCreateDB;
@@ -26,7 +24,7 @@ public class Messages {
 	public static String MedicsBrowserView_errorOpeningBrowserURL = ch.elexis.core.l10n.Messages.Medics_Page_Cannot_be_displayed;
 	public static String MedicsPreferencePage_defaultMedicsUrl = ch.elexis.core.l10n.Messages.MedicsPreferencePage_defaultMedicsUrl;
 	public static String MedicsPreferencePage_documentCategoryName = ch.elexis.core.l10n.Messages.MedicsPreferencePage_documentCategoryName;
-	public static String MedicsPreferencePage_labelArchivDir = ch.elexis.core.l10n.Messages.Core_Perspective;
+	public static String MedicsPreferencePage_labelArchivDir = ch.elexis.core.l10n.Messages.Core_ArchiveDir;
 	public static String MedicsPreferencePage_labelDocumentCategory = ch.elexis.core.l10n.Messages.Core_Document_Category;
 	public static String MedicsPreferencePage_labelDownloadDir = ch.elexis.core.l10n.Messages.Core_Download_Directory;
 	public static String MedicsPreferencePage_labelUploadDir = ch.elexis.core.l10n.Messages.Core_Upload_Directory;

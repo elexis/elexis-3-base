@@ -15,11 +15,11 @@
 // 8.12.07 G.Weirich avoid duplicate imports
 package ch.elexis.base.ch.arzttarife.importer;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.FileInputStream;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -41,7 +41,7 @@ import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.core.importer.div.importers.AccessWrapper;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.services.IReferenceDataImporterService;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.JdbcLink;

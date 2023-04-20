@@ -10,13 +10,13 @@
  *******************************************************************************/
 package at.medevit.elexis.impfplan.ui;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;

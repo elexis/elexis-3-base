@@ -10,7 +10,6 @@
 
 package ch.swissmedicalsuite;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
@@ -22,9 +21,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import ch.elexis.core.ui.util.Log;
+import org.apache.commons.lang3.StringUtils;
 
 import com.sun.jna.ptr.PointerByReference;
+
+import ch.elexis.core.ui.util.Log;
 
 public class HCardBrowser {
 

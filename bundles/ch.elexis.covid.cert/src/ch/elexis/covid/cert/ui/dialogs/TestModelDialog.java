@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.findings.ICoding;
 import ch.elexis.core.findings.codes.IValueSetService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.rest.model.TestInfo;
 import ch.elexis.covid.cert.service.rest.model.TestModel;

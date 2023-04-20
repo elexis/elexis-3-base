@@ -51,17 +51,7 @@
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
-                <id>jakarta.xml.bind-api</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
                 <id>ch.qos.logback.slf4j</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
-                <id>org.osgi.framework.system.packages.extra</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
               <requirement>
@@ -95,6 +85,11 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.metatype</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.eclipse.emf.ecore</artifactId>
               <version>0.0.0</version>
             </dependency>
@@ -121,6 +116,11 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.eclipse.equinox.registry</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.wireadmin</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -160,12 +160,22 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>org.apache.felix.gogo.command</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.osgi.service.jdbc</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.glassfish.hk2.osgi-resource-locator</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.felix.gogo.shell</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -185,7 +195,17 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>org.apache.felix.gogo.runtime</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.apache.geronimo.specs.geronimo-jta_1.1_spec</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.eclipse.equinox.console</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -221,6 +241,11 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.apache.commons.commons-collections4</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.device</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -310,6 +335,11 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>org.bouncycastle.bcprov</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.eclipse.core.jobs</artifactId>
               <version>0.0.0</version>
             </dependency>
@@ -336,6 +366,11 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.glassfish.jersey.core.jersey-common</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.useradmin</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -395,6 +430,11 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.upnp</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.jaxen</artifactId>
               <version>0.0.0</version>
             </dependency>
@@ -415,7 +455,17 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.event</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.postgresql.jdbc</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.apache.commons.commons-text</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -445,12 +495,27 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.cm</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.component</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
               <artifactId>org.apache.commons.commons-compress</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.apache-extras.beanshell.bsh</artifactId>
+              <version>0.0.0</version>
+            </dependency>
+            <dependency>
+              <type>eclipse-plugin</type>
+              <artifactId>org.osgi.service.provisioning</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>

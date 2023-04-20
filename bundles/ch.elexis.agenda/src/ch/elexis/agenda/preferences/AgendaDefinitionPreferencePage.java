@@ -1,8 +1,8 @@
 package ch.elexis.agenda.preferences;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;

@@ -48,7 +48,7 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class OutboxView extends ViewPart {
 

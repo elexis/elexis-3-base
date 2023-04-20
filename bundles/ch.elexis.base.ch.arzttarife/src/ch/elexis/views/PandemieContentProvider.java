@@ -1,7 +1,8 @@
 package ch.elexis.views;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
 import ch.elexis.base.ch.arzttarife.service.ArzttarifeModelServiceHolder;

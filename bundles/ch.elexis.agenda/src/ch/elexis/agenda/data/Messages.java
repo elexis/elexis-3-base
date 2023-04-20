@@ -11,8 +11,6 @@
  *******************************************************************************/
 package ch.elexis.agenda.data;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String Import_Agenda_cancelled = ch.elexis.core.l10n.Messages.Import_Agenda_cancelled;
 	public static String Import_Agenda_creatingTables = ch.elexis.core.l10n.Messages.Import_Agenda_creatingTables;

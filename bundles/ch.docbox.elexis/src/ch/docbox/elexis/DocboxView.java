@@ -28,8 +28,7 @@ import com.equo.chromium.swt.Browser;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IUser;
-import ch.elexis.core.ui.util.CoreUiUtil;
-
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 /**
  * Creates a browser view which will sso into docbox and if a hospital
  * application is select patient info from elexis will be filled in

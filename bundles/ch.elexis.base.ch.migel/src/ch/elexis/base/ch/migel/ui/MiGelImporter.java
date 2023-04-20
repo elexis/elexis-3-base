@@ -40,7 +40,7 @@ import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IReferenceDataImporterService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.ArticleTyp;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.Money;

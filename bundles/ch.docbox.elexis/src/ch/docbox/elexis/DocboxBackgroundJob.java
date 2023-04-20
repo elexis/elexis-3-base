@@ -9,7 +9,6 @@
  *******************************************************************************/
 package ch.docbox.elexis;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
 import java.io.Serializable;
@@ -19,6 +18,7 @@ import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.ws.Holder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

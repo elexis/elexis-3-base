@@ -73,7 +73,7 @@ import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.data.Patient;
 
 public class InboxView extends ViewPart {

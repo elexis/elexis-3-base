@@ -10,9 +10,9 @@
  ******************************************************************************/
 package ch.elexis.views;
 
-import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -24,9 +24,9 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.selectors.FieldDescriptor;
 import ch.elexis.core.ui.selectors.FieldDescriptor.Typ;
-import ch.elexis.core.ui.util.CoreUiUtil;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
 import ch.elexis.core.ui.util.viewers.SelectorPanelProvider;
 

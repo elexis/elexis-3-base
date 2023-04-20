@@ -11,7 +11,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.model.IBilled;
-import ch.elexis.core.ui.util.CoreUiUtil;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.views.TarmedRefcodesDialog;
 
 public class TarmedRefcodesHandler extends AbstractHandler {

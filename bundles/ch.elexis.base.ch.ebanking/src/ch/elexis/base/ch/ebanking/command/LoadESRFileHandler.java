@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.commands.AbstractHandler;
@@ -28,6 +29,9 @@ import ch.elexis.base.ch.ebanking.ESRView;
 import ch.elexis.base.ch.ebanking.esr.ESRFile;
 import ch.elexis.base.ch.ebanking.esr.ESRRecord;
 import ch.elexis.base.ch.ebanking.esr.Messages;
+import ch.elexis.base.ch.ebanking.model.IEsrRecord;
+import ch.elexis.base.ch.ebanking.print.ESRJournalLetter;
+import ch.elexis.base.ch.ebanking.print.ESRLetter;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
@@ -97,6 +101,7 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 												ESRRecordsRunnable recordsRunnable = new ESRRecordsRunnable(monitor,
 														result.get());
 												recordsRunnable.run();
+												openESRJournalPdf(esrFile, result.get());
 												if (monitor.isCanceled()) {
 													break;
 												}
@@ -131,6 +136,11 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 			}
 		}
 		return null;
+	}
+
+	private void openESRJournalPdf(File esrFile, List<ESRRecord> readRecords) {
+		List<IEsrRecord> records = readRecords.stream().map(r -> r.toIEsrRecord()).collect(Collectors.toList());
+		ESRLetter.print(new ESRJournalLetter(esrFile, records));
 	}
 
 	@Override

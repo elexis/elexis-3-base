@@ -1,12 +1,12 @@
 package ch.elexis.covid.cert.service;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.Base64;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

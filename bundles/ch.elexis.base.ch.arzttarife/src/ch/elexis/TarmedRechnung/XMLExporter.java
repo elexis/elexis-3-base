@@ -492,7 +492,7 @@ public class XMLExporter implements IRnOutputter {
 			checkXML(ret, dest, invoice, doVerify);
 
 			if (dest != null) {
-				if (type.equals(TYPE.STORNO)) {
+				if (type.equals(TYPE.STORNO) && !dest.toLowerCase().endsWith("_storno.xml")) { //$NON-NLS-1$
 					writeFile(ret, dest.toLowerCase().replaceFirst("\\.xml$", "_storno.xml")); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					writeFile(ret, dest);

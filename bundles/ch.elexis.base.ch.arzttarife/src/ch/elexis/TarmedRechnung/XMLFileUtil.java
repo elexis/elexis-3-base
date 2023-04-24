@@ -170,8 +170,8 @@ public class XMLFileUtil {
 							return Optional.of(filteredInvoiceFiles.get(0));
 						}
 					}
+					return Optional.of(invoiceFiles.get(0));
 				}
-				return Optional.of(invoiceFiles.get(0));
 			}
 		}
 		return Optional.empty();

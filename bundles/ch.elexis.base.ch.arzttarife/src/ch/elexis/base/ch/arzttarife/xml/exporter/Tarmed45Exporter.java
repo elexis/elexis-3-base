@@ -1052,6 +1052,14 @@ public class Tarmed45Exporter {
 		treatmentType.setCanton((String) invoice.getMandator().getExtInfo(TarmedACL.getInstance().KANTON));
 		treatmentType.setReason(getTreatmentReason(invoice.getCoverage()));
 
+		if (FallConstants.TYPE_MATERNITY.equals(invoice.getCoverage().getReason())) {
+			String gestationWeekString = (String) invoice.getCoverage()
+					.getExtInfo(FallConstants.FLD_EXT_GESTATIONWEEK13);
+			if (StringUtils.isNotBlank(gestationWeekString)) {
+				treatmentType.setGestationWeek13(XMLExporterUtil.makeXMLDate(new TimeTool(gestationWeekString)));
+			}
+		}
+
 		for (IDiagnosisReference invoiceDiagnosis : getInvoiceDiagnosis(invoice)) {
 			DiagnosisType diagnosisType = new DiagnosisType();
 			String type = getTreatmentDiagnosisType(invoiceDiagnosis);

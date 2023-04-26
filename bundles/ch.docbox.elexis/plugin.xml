@@ -93,5 +93,11 @@
             Class="ch.docbox.model.CdaMessageFactory"
             name="ch.docbox.elexis"/>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
+      <ExternalMaintenance
+            MaintenanceCode="ch.docbox.elexis.ui.dbcheck.FixDocboxTerminIds">
+      </ExternalMaintenance>
+   </extension>
 
 </plugin>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: ch.docbox.elexis;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.10.0.qualifier
 Bundle-Vendor: %Bundle-Vendor.0
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
@@ -21,7 +21,8 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.services;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.agenda;bundle-version="3.9.0",
- ch.elexis.docbox.ws.client;bundle-version="3.9.0"
+ ch.elexis.docbox.ws.client;bundle-version="3.9.0",
+ ch.elexis.core.ui.dbcheck;bundle-version="3.11.0"
 Import-Package: com.equo.chromium.swt,
  com.sun.jna;version="4.5.1",
  com.sun.jna.ptr;version="4.5.1",

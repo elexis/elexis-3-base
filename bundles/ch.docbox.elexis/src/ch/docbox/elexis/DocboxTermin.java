@@ -30,6 +30,10 @@ public class DocboxTermin {
 
 	protected static Log log = Log.get("DocboxTermin"); //$NON-NLS-1$
 
+	static {
+
+	}
+
 	@Override
 	// NOTE: used for list search contains, based only on first id of object
 	// hashcode
@@ -55,21 +59,37 @@ public class DocboxTermin {
 
 	}
 
-	public boolean loadTermin(String id) {
-		elexisTermin = Termin.load(id);
+	private boolean loadTerminByDocboxUniqueId(String id) {
+		elexisTermin = performDocboxIdLoad(id);
 		if (!elexisTermin.exists()) {
 			elexisTermin = null;
 		}
 		if (elexisTermin != null && elexisTermin.isDeleted()) {
 			elexisTermin.undelete();
 		}
-		elexisTerminDayAfter = Termin.load(id + "2");
+		elexisTerminDayAfter = performDocboxIdLoad(id + "2");
 		if (!elexisTerminDayAfter.exists()) {
 			elexisTerminDayAfter = null;
 		}
 		if (elexisTerminDayAfter != null && elexisTerminDayAfter.isDeleted()) {
 			elexisTerminDayAfter.undelete();
 		}
+		return elexisTermin != null;
+	}
+
+	private Termin performDocboxIdLoad(String id) {
+		Query<Termin> terminQuery = new Query<Termin>(Termin.class);
+		terminQuery.add(Termin.FLD_EXTENSION, Query.EQUALS, id);
+		List<Termin> execute = terminQuery.execute();
+		if (!execute.isEmpty()) {
+			return execute.get(0);
+		}
+		return null;
+	}
+
+	private boolean loadTermin(Termin termin) {
+		elexisTermin = termin;
+		elexisTerminDayAfter = performDocboxIdLoad(termin.get(Termin.FLD_EXTENSION) + "2");
 		return elexisTermin != null;
 	}
 
@@ -84,7 +104,7 @@ public class DocboxTermin {
 
 	public static String getDocboxTerminId(Termin termin) {
 		if (termin != null) {
-			String id = termin.getId();
+			String id = termin.get(Termin.FLD_EXTENSION);
 			int pos = id.indexOf("[-");
 			if (pos > 0) {
 				return id.substring(0, pos);
@@ -97,7 +117,8 @@ public class DocboxTermin {
 
 		try {
 
-			loadTermin(getTerminUniqueId(appointment.getId(), bereich, true));
+			// is it already in the database?
+			loadTerminByDocboxUniqueId(getTerminUniqueId(appointment.getId(), bereich, true));
 
 			Calendar cal = Calendar.getInstance();
 
@@ -131,13 +152,14 @@ public class DocboxTermin {
 			Integer bis = TimeInMinutes(ttUntil); // dummy for constructor below
 
 			if (elexisTermin == null) {
-				elexisTermin = new Termin(getTerminUniqueId(appointment.getId(), bereich, true), bereich, tag, von, bis,
-						terminType, terminStatus);
+				elexisTermin = new Termin(bereich, tag, von, bis, terminType, terminStatus);
+				elexisTermin.set(Termin.FLD_EXTENSION, getTerminUniqueId(appointment.getId(), bereich, true));
 			}
 			if (twoday) {
 				if (elexisTerminDayAfter == null) {
-					elexisTerminDayAfter = new Termin(getTerminUniqueId(appointment.getId(), bereich, false), bereich,
-							tag, von, bis, terminType, terminStatus);
+					elexisTerminDayAfter = new Termin(bereich, tag, von, bis, terminType, terminStatus);
+					elexisTerminDayAfter.set(Termin.FLD_EXTENSION,
+							getTerminUniqueId(appointment.getId(), bereich, false));
 				}
 			}
 			setLocked(false);
@@ -268,10 +290,11 @@ public class DocboxTermin {
 		terminQuery.add("BeiWem", "=", UserDocboxPreferences.getAppointmentsBereich());
 		List<Termin> termine = terminQuery.execute();
 		log.log("Termine bestehend " + termine.size(), Log.DEBUGMSG);
+
 		ArrayList<DocboxTermin> docboxTermine = new ArrayList<DocboxTermin>();
 		for (Termin termin : termine) {
 			DocboxTermin docboxTermin = new DocboxTermin();
-			docboxTermin.loadTermin(termin.getId());
+			docboxTermin.loadTermin(termin);
 			log.log("Terminid " + termin.getId() + StringUtils.SPACE + termin.getText() + StringUtils.SPACE
 					+ termin.getGrund(), Log.DEBUGMSG);
 			docboxTermine.add(docboxTermin);

@@ -1,6 +1,5 @@
 package ch.elexis.omnivore.ui.util;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +10,7 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Date;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.program.Program;
 import org.slf4j.LoggerFactory;
@@ -97,11 +97,7 @@ public class UiUtils {
 		IDocumentHandle docHandle = null;
 		if (fid.open() == Dialog.OK) {
 			try (InputStream bis = file.openInputStream(); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-
-				int in;
-				while ((in = bis.read()) != -1) {
-					baos.write(in);
-				}
+				IOUtils.copy(bis, baos);
 
 				String fileName = file.getName();
 				if (fileName.length() > 255) {
@@ -153,10 +149,7 @@ public class UiUtils {
 		if (fid.open() == Dialog.OK) {
 			try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();) {
-				int in;
-				while ((in = bis.read()) != -1) {
-					baos.write(in);
-				}
+				IOUtils.copy(bis, baos);
 				String nam = file.getName();
 				if (nam.length() > 255) {
 					SWTHelper.showError(Messages.DocHandle_readErrorCaption3, Messages.DocHandle_fileNameTooLong);

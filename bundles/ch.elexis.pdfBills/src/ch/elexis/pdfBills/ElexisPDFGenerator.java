@@ -315,8 +315,12 @@ public class ElexisPDFGenerator {
 			break;
 		}
 
-		return CoreHub.globalCfg.get(key, invStateTxt);
+		return getValueOrDefault(ConfigServiceHolder.getGlobal(key, invStateTxt), invStateTxt);
 
+	}
+
+	private String getValueOrDefault(String value, String defaultValue) {
+		return StringUtils.isEmpty(value) ? defaultValue : value;
 	}
 
 	private String getInsuranceLine(IInvoice invoice) {

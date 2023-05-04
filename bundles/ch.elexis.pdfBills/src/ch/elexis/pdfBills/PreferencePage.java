@@ -521,45 +521,66 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		label.setText(Messages.Billing_Cfg_Msg + " TP:");
 
 		pdfRnTextTP = createMessageTextBox(composite, Messages.BillingDefaultMsg);
-		pdfRnTextTP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M0, Messages.BillingDefaultMsg));
+		pdfRnTextTP.setText(getValueOrDefault(
+				ConfigServiceHolder.getGlobal(RnOutputter.CFG_MSGTEXT_TP_M0, Messages.BillingDefaultMsg),
+				Messages.BillingDefaultMsg));
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.Billing_Cfg_Msg + " TG:");
 		pdfRnTextTG = createMessageTextBox(composite, Messages.BillingDefaultMsg);
-		pdfRnTextTG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M0, Messages.BillingDefaultMsg));
+		pdfRnTextTG.setText(getValueOrDefault(
+				ConfigServiceHolder.getGlobal(RnOutputter.CFG_MSGTEXT_TG_M0, Messages.BillingDefaultMsg),
+				Messages.BillingDefaultMsg));
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_1 + " TP:");// Messages.Billing_Cfg_Msg_Invoicelvl
+		
 		pdfRnTextM1TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M1);
-		pdfRnTextM1TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M1, Messages.BillingDefaultMsg_M1));
+		pdfRnTextM1TP.setText(getValueOrDefault(
+						ConfigServiceHolder.getGlobal(RnOutputter.CFG_MSGTEXT_TP_M1, Messages.BillingDefaultMsg_M1),
+						Messages.BillingDefaultMsg_M1));
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_2 + " TP:");
 
 		pdfRnTextM2TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M2);
-		pdfRnTextM2TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M2, Messages.BillingDefaultMsg_M2));
+		pdfRnTextM2TP.setText(getValueOrDefault(
+						ConfigServiceHolder.getGlobal(RnOutputter.CFG_MSGTEXT_TP_M2, Messages.BillingDefaultMsg_M2),
+						Messages.BillingDefaultMsg_M2));
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_3 + " TP:");
 		pdfRnTextM3TP = createMessageTextBox(composite, Messages.BillingDefaultMsg_M3);
-		pdfRnTextM3TP.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TP_M3, Messages.BillingDefaultMsg_M3));
+		pdfRnTextM3TP.setText(getValueOrDefault(
+				ConfigServiceHolder.getGlobal(RnOutputter.CFG_MSGTEXT_TP_M3, Messages.BillingDefaultMsg_M3),
+				Messages.BillingDefaultMsg_M3));
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_1 + " TG:");
 		pdfRnTextM1TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M1);
-		pdfRnTextM1TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M1, Messages.BillingDefaultMsg_M1));
+		pdfRnTextM1TG.setText(getValueOrDefault(
+						ConfigServiceHolder.getGlobal(RnOutputter.CFG_MSGTEXT_TG_M1, Messages.BillingDefaultMsg_M1),
+						Messages.BillingDefaultMsg_M1));
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_2 + " TG:");
 		pdfRnTextM2TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M2);
-		pdfRnTextM2TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M2, Messages.BillingDefaultMsg_M2));
+		pdfRnTextM2TG.setText(getValueOrDefault(
+						ConfigServiceHolder.getGlobal(RnOutputter.CFG_MSGTEXT_TG_M2, Messages.BillingDefaultMsg_M2),
+						Messages.BillingDefaultMsg_M2));
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.Billing_Cfg_Msg + " " + Messages.Core_Invoice_Reminder_3 + " TG:");
 		pdfRnTextM3TG = createMessageTextBox(composite, Messages.BillingDefaultMsg_M3);
-		pdfRnTextM3TG.setText(CoreHub.globalCfg.get(RnOutputter.CFG_MSGTEXT_TG_M3, Messages.BillingDefaultMsg_M3));
+		pdfRnTextM3TG.setText(getValueOrDefault(
+						ConfigServiceHolder.getGlobal(RnOutputter.CFG_MSGTEXT_TG_M3, Messages.BillingDefaultMsg_M3),
+						Messages.BillingDefaultMsg_M3));
 
 		item.setControl(composite);
+	}
+
+	private String getValueOrDefault(String value, String defaultValue) {
+		return StringUtils.isEmpty(value) ? defaultValue : value;
 	}
 
 	private void updatePrintDirect() {
@@ -623,14 +644,14 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 
 		CoreHub.localCfg.set(RnOutputter.CFG_PRINT_COMMAND, printCommandText.getText());
 
-		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TG_M0, pdfRnTextTG.getText());
-		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TP_M0, pdfRnTextTP.getText());
-		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TG_M1, pdfRnTextM1TG.getText());
-		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TG_M2, pdfRnTextM2TG.getText());
-		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TG_M3, pdfRnTextM3TG.getText());
-		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TP_M1, pdfRnTextM1TP.getText());
-		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TP_M2, pdfRnTextM2TP.getText());
-		CoreHub.globalCfg.set(RnOutputter.CFG_MSGTEXT_TP_M3, pdfRnTextM3TP.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TG_M0, pdfRnTextTG.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TP_M0, pdfRnTextTP.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TG_M1, pdfRnTextM1TG.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TG_M2, pdfRnTextM2TG.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TG_M3, pdfRnTextM3TG.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TP_M1, pdfRnTextM1TP.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TP_M2, pdfRnTextM2TP.getText());
+		ConfigServiceHolder.setGlobal(RnOutputter.CFG_MSGTEXT_TP_M3, pdfRnTextM3TP.getText());
 
 		CoreHub.localCfg.flush();
 	}

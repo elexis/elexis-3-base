@@ -1,5 +1,7 @@
 package at.medevit.elexis.emediplan.inbox;
 
+import java.time.LocalDate;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -10,6 +12,7 @@ import at.medevit.elexis.emediplan.StartupHandler;
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import ch.elexis.data.NamedBlob;
+import ch.rgw.tools.TimeTool;
 
 public class EMediplanUiProvider implements IInboxElementUiProvider {
 	private EMediplanLabelProvider labelProvider;
@@ -39,6 +42,12 @@ public class EMediplanUiProvider implements IInboxElementUiProvider {
 	public IColorProvider getColorProvider() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public LocalDate getObjectDate(IInboxElement element) {
+		NamedBlob document = (NamedBlob) ((IInboxElement) element).getObject();
+		return new TimeTool(document.getLastUpdate()).toLocalDate();
 	}
 
 	@Override

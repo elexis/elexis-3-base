@@ -10,6 +10,8 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.ui.part.provider;
 
+import java.time.LocalDate;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -72,6 +74,13 @@ public interface IInboxElementUiProvider {
 	public default boolean isVisible(IInboxElement element) {
 		return true;
 	}
+
+	/**
+	 * Get the {@link LocalDate} for the element.
+	 * 
+	 * @return
+	 */
+	public LocalDate getObjectDate(IInboxElement element);
 
 	/**
 	 * Test if the {@link IInboxElementUiProvider} supports grouping of

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.ui.part.provider;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,6 +125,14 @@ public class InboxElementUiExtension {
 		IInboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.isGrouped()) {
 			return provider.getGrouped(patientInboxElements, element);
+		}
+		return null;
+	}
+
+	public LocalDate getObjectDate(IInboxElement element) {
+		IInboxElementUiProvider provider = getProvider(element);
+		if (provider != null) {
+			return provider.getObjectDate(element);
 		}
 		return null;
 	}

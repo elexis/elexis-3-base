@@ -23,7 +23,7 @@ public class DocHandleLabelProvider extends LabelProvider {
 	@Override
 	public String getText(Object element) {
 		IDocumentHandle document = (IDocumentHandle) ((IInboxElement) element).getObject();
-		return document.getTitle() + " vom " + document.getCreated();
+		return document.getTitle();
 	}
 
 	@Override

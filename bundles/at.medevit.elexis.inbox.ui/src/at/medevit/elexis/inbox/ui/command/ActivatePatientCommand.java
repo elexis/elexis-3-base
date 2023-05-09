@@ -22,7 +22,7 @@ public class ActivatePatientCommand extends AbstractHandler implements IHandler 
 
 		if (part instanceof InboxView) {
 			InboxView view = (InboxView) part;
-			IStructuredSelection sel = (IStructuredSelection) view.getCheckboxTreeViewer().getSelection();
+			IStructuredSelection sel = (IStructuredSelection) view.getViewer().getSelection();
 			Object element = sel.getFirstElement();
 
 			if (element instanceof PatientInboxElements) {

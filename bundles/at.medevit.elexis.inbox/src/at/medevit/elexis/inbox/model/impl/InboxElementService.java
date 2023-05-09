@@ -35,6 +35,7 @@ import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQuery.ORDER;
 import ch.elexis.core.services.IStoreToStringService;
 import ch.elexis.data.PersistentObject;
 
@@ -101,6 +102,7 @@ public class InboxElementService implements IInboxElementService {
 		if (state != null) {
 			query.and("state", COMPARATOR.EQUALS, Integer.toString(state.ordinal())); //$NON-NLS-1$
 		}
+		query.orderBy("lastupdate", ORDER.DESC);
 		return query.execute();
 	}
 

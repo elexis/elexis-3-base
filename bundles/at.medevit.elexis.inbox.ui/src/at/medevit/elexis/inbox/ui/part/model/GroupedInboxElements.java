@@ -96,7 +96,10 @@ public abstract class GroupedInboxElements implements IInboxElement {
 
 	@Override
 	public Long getLastupdate() {
-		throw new UnsupportedOperationException();
+		if (getFirstElement() != null) {
+			return getFirstElement().getLastupdate();
+		}
+		return Long.MAX_VALUE;
 	}
 
 	@Override

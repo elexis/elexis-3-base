@@ -20,11 +20,6 @@
             name="%command.name.0">
       </command>
       <command
-            defaultHandler="at.medevit.elexis.inbox.ui.command.ExpandAllCommand"
-            id="at.medevit.elexis.inbox.ui.command.expandAll"
-            name="%command.name.1">
-      </command>
-      <command
             defaultHandler="at.medevit.elexis.inbox.ui.command.IgnoreCommand"
             id="at.medevit.elexis.inbox.ui.command.ignore"
             name="%command.name.2">
@@ -58,12 +53,6 @@
                commandId="at.medevit.elexis.inbox.ui.command.reload"
                icon="rsc/img/refresh.gif"
                label="%command.label.1"
-               style="push">
-         </command>
-         <command
-               commandId="at.medevit.elexis.inbox.ui.command.expandAll"
-               icon="icon://IMG_ARROWDOWN"
-               label="%command.label.2"
                style="push">
          </command>
          <command

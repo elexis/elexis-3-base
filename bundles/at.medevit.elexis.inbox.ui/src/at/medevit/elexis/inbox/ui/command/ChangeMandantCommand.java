@@ -7,8 +7,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -16,7 +16,6 @@ import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.InboxModelServiceHolder;
 import at.medevit.elexis.inbox.ui.dialog.MandantSelectorDialog;
 import at.medevit.elexis.inbox.ui.part.InboxView;
-import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IMandator;
@@ -34,7 +33,7 @@ public class ChangeMandantCommand extends AbstractHandler implements IHandler {
 			IWorkbenchPart part = HandlerUtil.getActivePart(event);
 			if (part instanceof InboxView) {
 				InboxView view = (InboxView) part;
-				CheckboxTreeViewer viewer = view.getCheckboxTreeViewer();
+				StructuredViewer viewer = view.getViewer();
 				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 
 				if (selection != null && !selection.isEmpty()) {
@@ -45,13 +44,6 @@ public class ChangeMandantCommand extends AbstractHandler implements IHandler {
 							inboxElement.setMandator(mandant);
 							InboxModelServiceHolder.get().save(inboxElement);
 							refreshView(viewer, inboxElement);
-						} else if (selObj instanceof PatientInboxElements) {
-							PatientInboxElements patInboxElements = (PatientInboxElements) selObj;
-							for (IInboxElement inboxElement : patInboxElements.getElements()) {
-								inboxElement.setMandator(mandant);
-								InboxModelServiceHolder.get().save(inboxElement);
-							}
-							refreshView(viewer, patInboxElements);
 						}
 					}
 				}
@@ -60,13 +52,7 @@ public class ChangeMandantCommand extends AbstractHandler implements IHandler {
 		return null;
 	}
 
-	private void refreshView(CheckboxTreeViewer viewer, PatientInboxElements patInboxElements) {
-		InboxElementContentProvider contentProvider = (InboxElementContentProvider) viewer.getContentProvider();
-		contentProvider.refreshElement(patInboxElements);
-		viewer.refresh(false);
-	}
-
-	private void refreshView(CheckboxTreeViewer viewer, IInboxElement inboxElement) {
+	private void refreshView(StructuredViewer viewer, IInboxElement inboxElement) {
 		InboxElementContentProvider contentProvider = (InboxElementContentProvider) viewer.getContentProvider();
 		contentProvider.refreshElement(inboxElement);
 		viewer.refresh(false);

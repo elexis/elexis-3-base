@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.core.ui;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -87,6 +88,20 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public LocalDate getObjectDate(IInboxElement element) {
+		if (element instanceof GroupedInboxElements) {
+			IInboxElement firstElement = ((GroupedInboxElements) element).getFirstElement();
+			if (firstElement.getObject() instanceof ILabResult
+					&& ((ILabResult) firstElement.getObject()).getObservationTime() != null) {
+				return ((ILabResult) firstElement.getObject()).getObservationTime().toLocalDate();
+			}
+		} else if (element.getObject() instanceof ILabResult) {
+			return ((ILabResult) element.getObject()).getObservationTime().toLocalDate();
+		}
+		return null;
 	}
 
 	// private static void initializeImages(){

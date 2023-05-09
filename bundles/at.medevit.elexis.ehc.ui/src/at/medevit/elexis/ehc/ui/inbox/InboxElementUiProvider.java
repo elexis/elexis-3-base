@@ -11,6 +11,7 @@
 package at.medevit.elexis.ehc.ui.inbox;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -25,6 +26,7 @@ import at.medevit.elexis.ehc.ui.model.EhcDocument;
 import at.medevit.elexis.ehc.ui.views.EHealthConnectorView;
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
+import ch.rgw.tools.TimeTool;
 
 public class InboxElementUiProvider implements IInboxElementUiProvider {
 	private static Logger logger = LoggerFactory.getLogger(InboxElementUiProvider.class);
@@ -59,6 +61,12 @@ public class InboxElementUiProvider implements IInboxElementUiProvider {
 	public IColorProvider getColorProvider() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public LocalDate getObjectDate(IInboxElement element) {
+		EhcDocument document = (EhcDocument) ((IInboxElement) element).getObject();
+		return new TimeTool(document.get(EhcDocument.FLD_TIMESTAMP)).toLocalDate();
 	}
 
 	@Override

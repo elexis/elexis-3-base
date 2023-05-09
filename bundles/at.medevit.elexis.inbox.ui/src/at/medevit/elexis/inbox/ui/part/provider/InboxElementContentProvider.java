@@ -10,52 +10,64 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.ui.part.provider;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
+import at.medevit.elexis.inbox.ui.part.InboxView;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
-import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 
-public class InboxElementContentProvider implements ITreeContentProvider {
+public class InboxElementContentProvider implements IStructuredContentProvider {
 
-	HashMap<IPatient, PatientInboxElements> map;
-	private List<PatientInboxElements> items;
+	private static final int PAGING_FETCHSIZE = 100;
+
+	private int page = 1;
+
+	private List<IInboxElement> items;
+
+	private InboxView inboxView;
+
+	private InboxElementUiExtension extension = new InboxElementUiExtension();
+
+	private String searchText;
+	private List<IInboxElement> filteredItems;
+
+	public InboxElementContentProvider(InboxView inboxView) {
+		this.inboxView = inboxView;
+	}
 
 	public Object[] getElements(Object inputElement) {
-		if (items != null) {
-			return items.toArray();
+		page = inboxView.getPagingComposite().getCurrentPage();
+		List<IInboxElement> list = filteredItems != null ? filteredItems : items;
+		if (list != null) {
+			if (page > 0) {
+				if (list.size() >= page * PAGING_FETCHSIZE) {
+					return list.subList((page - 1) * PAGING_FETCHSIZE, page * PAGING_FETCHSIZE).toArray();
+				} else {
+					return list.subList((page - 1) * PAGING_FETCHSIZE, list.size() - 1).toArray();
+				}
+			} else {
+				return list.toArray();
+			}
 		}
 		return Collections.emptyList().toArray();
-	}
-
-	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof PatientInboxElements) {
-			return ((PatientInboxElements) parentElement).getElements().toArray();
-		} else {
-			return null;
-		}
-	}
-
-	public boolean hasChildren(Object element) {
-		return (element instanceof PatientInboxElements);
-	}
-
-	public Object[] getParent(Object element) {
-		return null;
 	}
 
 	public void dispose() {
@@ -67,7 +79,7 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 		if (newInput instanceof List<?>) {
 			List<IInboxElement> input = (List<IInboxElement>) newInput;
 			// refresh map and list
-			map = new HashMap<IPatient, PatientInboxElements>();
+			Map<IPatient, PatientInboxElements> map = new HashMap<>();
 			items = null;
 			Display.getDefault().asyncExec(() -> {
 				viewer.refresh();
@@ -86,9 +98,20 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 						patientInbox.addElement(inboxElement);
 						monitor.worked(1);
 					}
-					items = new ArrayList<PatientInboxElements>(map.values());
+					items = map.values().stream().flatMap(pie -> pie.getElements().stream()).filter(ie -> ie != null)
+							.collect(Collectors.toList());
+					items.sort((l, r) -> {
+						LocalDate t1 = extension.getObjectDate(l);
+						LocalDate t2 = extension.getObjectDate(r);
+						t1 = (t1 == null ? LocalDate.EPOCH : t1);
+						t2 = (t2 == null ? LocalDate.EPOCH : t2);
+						return t2.compareTo(t1);
+					});
 					Display.getDefault().asyncExec(() -> {
-						viewer.refresh();
+						page = 1;
+						inboxView.getPagingComposite().setup(page, items.size(), PAGING_FETCHSIZE);
+
+						inboxView.getViewer().refresh();
 					});
 					return Status.OK_STATUS;
 				}
@@ -98,54 +121,45 @@ public class InboxElementContentProvider implements ITreeContentProvider {
 		}
 	}
 
-	public void refreshElement(IInboxElement inboxElement) {
-		IPatient patient = inboxElement.getPatient();
-		PatientInboxElements patientInboxElement = map.get(patient);
-		// remove seen and add unseen
-		if (patientInboxElement != null) {
-			boolean wasEmpty = patientInboxElement.getElements().isEmpty();
-			if (inboxElement.getState() == State.SEEN) {
-				patientInboxElement.removeElement(inboxElement);
+	public void refreshElement(IInboxElement element) {
+		if (items != null) {
+			if (element.getState() == State.SEEN) {
+				items.remove(element);
 			} else {
 				IMandator activeMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
-				if (inboxElement.getMandator().equals(activeMandant)) {
-					patientInboxElement.addElement(inboxElement);
-				} else {
-					patientInboxElement.removeElement(inboxElement);
+				IMandator inboxMandant = element.getMandator();
+				if (!inboxMandant.equals(activeMandant)) {
+					items.remove(element);
 				}
 			}
-			if (wasEmpty && !patientInboxElement.getElements().isEmpty()) {
-				addItem(patientInboxElement);
+		}
+	}
+
+	public void setSearchText(String search) {
+		this.searchText = search;
+		CompletableFuture.runAsync(() -> {
+			if (searchText != null && searchText.length() > 2) {
+				filteredItems = items.stream().filter(i -> filterPatient(i)).collect(Collectors.toList());
+				Display.getDefault().asyncExec(() -> {
+					page = 1;
+					inboxView.getPagingComposite().setup(page, filteredItems.size(), PAGING_FETCHSIZE);
+					inboxView.getViewer().refresh();
+				});
+			} else {
+				filteredItems = null;
+				Display.getDefault().asyncExec(() -> {
+					page = 1;
+					inboxView.getPagingComposite().setup(page, items.size(), PAGING_FETCHSIZE);
+					inboxView.getViewer().refresh();
+				});
 			}
-		} else if (inboxElement.getState() == State.NEW) {
-			patientInboxElement = new PatientInboxElements(patient);
-			patientInboxElement.addElement(inboxElement);
-			addItem(patientInboxElement);
-		}
+		});
 	}
 
-	private void addItem(PatientInboxElements patientInboxElement) {
-		if (items == null) {
-			items = new ArrayList<>();
+	private boolean filterPatient(IInboxElement i) {
+		if (i.getPatient() != null) {
+			return i.getPatient().getLabel().toLowerCase().contains(searchText.toLowerCase());
 		}
-		items.add(patientInboxElement);
-	}
-
-	private void removeItem(PatientInboxElements patientInboxElement) {
-		if (items != null) {
-			items.remove(patientInboxElement);
-		}
-	}
-
-	public void refreshElement(PatientInboxElements patientInbox) {
-		if (patientInbox.getElements().isEmpty()) {
-			removeItem(patientInbox);
-		} else {
-			IMandator activeMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
-			IMandator inboxMandant = patientInbox.getElements().get(0).getMandator();
-			if (!inboxMandant.equals(activeMandant)) {
-				removeItem(patientInbox);
-			}
-		}
+		return false;
 	}
 }

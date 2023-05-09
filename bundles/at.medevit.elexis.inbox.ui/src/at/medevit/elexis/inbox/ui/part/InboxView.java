@@ -10,6 +10,7 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.ui.part;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,21 +18,29 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CheckboxCellEditor;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -39,17 +48,20 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
@@ -64,26 +76,23 @@ import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import at.medevit.elexis.inbox.ui.part.provider.IInboxElementUiProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
-import at.medevit.elexis.inbox.ui.part.provider.InboxElementLabelProvider;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementUiExtension;
 import at.medevit.elexis.inbox.ui.preferences.Preferences;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
-import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
-import ch.elexis.data.Patient;
+import ch.elexis.core.ui.views.controls.PagingComposite;
 
 public class InboxView extends ViewPart {
 
+	private PagingComposite pagingComposite;
+
 	private Text filterText;
-	private CheckboxTreeViewer viewer;
+	private TableViewer viewer;
 
 	private boolean reloadPending;
-
-	private InboxElementViewerFilter filter = new InboxElementViewerFilter();
 
 	private InboxElementContentProvider contentProvider;
 	private boolean setAutoSelectPatient;
@@ -101,6 +110,13 @@ public class InboxView extends ViewPart {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
 
+		pagingComposite = new PagingComposite(composite, SWT.NONE) {
+			@Override
+			public void runPaging() {
+				viewer.refresh();
+			}
+		};
+
 		Composite filterComposite = new Composite(composite, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		filterComposite.setLayoutData(data);
@@ -110,57 +126,142 @@ public class InboxView extends ViewPart {
 		filterText.setMessage("Patienten Filter");
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		filterText.setLayoutData(data);
-		filterText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (filterText.getText().length() > 1) {
-					filter.setSearchText(filterText.getText());
-					viewer.refresh();
-				} else {
-					filter.setSearchText(StringUtils.EMPTY);
-					viewer.refresh();
-				}
-			}
-		});
+		WidgetProperties.text(SWT.Modify).observeDelayed(500, filterText)
+				.addValueChangeListener(new IValueChangeListener<String>() {
+					@Override
+					public void handleValueChange(ValueChangeEvent<? extends String> event) {
+						contentProvider.setSearchText(event.diff.getNewValue());
+						viewer.refresh();
+					}
+				});
 
 		ToolBarManager menuManager = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
 		menuManager.createControl(filterComposite);
 
-		viewer = new CheckboxTreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.VIRTUAL);
+		viewer = new TableViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.VIRTUAL);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		viewer.getControl().setLayoutData(gd);
 
-		ViewerFilter[] filters = new ViewerFilter[1];
-		filters[0] = filter;
-		viewer.setFilters(filters);
-
-		contentProvider = new InboxElementContentProvider();
+		contentProvider = new InboxElementContentProvider(this);
 		viewer.setContentProvider(contentProvider);
 
-		viewer.setLabelProvider(new InboxElementLabelProvider());
+		viewer.getTable().setHeaderVisible(true);
+		comparator = new InboxElementComparator();
+		viewer.setComparator(comparator);
 
-		viewer.addCheckStateListener(new ICheckStateListener() {
+		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(60);
+		column.getColumn().setText("Kategorie");
+		column.setLabelProvider(new ColumnLabelProvider() {
 
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getElement() instanceof PatientInboxElements) {
-					PatientInboxElements patientInbox = (PatientInboxElements) event.getElement();
-					for (IInboxElement inboxElement : patientInbox.getElements()) {
-						State newState = toggleInboxElementState(inboxElement);
-						if (newState == State.NEW) {
-							viewer.setChecked(inboxElement, false);
-						} else {
-							viewer.setChecked(inboxElement, true);
-						}
-						contentProvider.refreshElement(inboxElement);
-					}
-					contentProvider.refreshElement(patientInbox);
-				} else if (event.getElement() instanceof IInboxElement) {
-					IInboxElement inboxElement = (IInboxElement) event.getElement();
-					toggleInboxElementState(inboxElement);
-					contentProvider.refreshElement(inboxElement);
+			private InboxElementUiExtension extension = new InboxElementUiExtension();
+
+			@Override
+			public Image getImage(Object element) {
+				if (element instanceof IInboxElement) {
+					return extension.getImage((IInboxElement) element);
 				}
-				viewer.refresh(false);
+				return super.getImage(element);
+			}
+
+			@Override
+			public String getText(Object element) {
+				return null;
 			}
 		});
+
+		column = new TableViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(250);
+		column.getColumn().setText("Patient");
+		column.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof IInboxElement) {
+					return ((IInboxElement) element).getPatient() != null
+							? ((IInboxElement) element).getPatient().getLabel()
+							: "?";
+				}
+				return super.getText(element);
+			}
+		});
+		column.getColumn().addSelectionListener(getSelectionAdapter(column.getColumn(), 1));
+
+		column = new TableViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(80);
+		column.getColumn().setText("Datum");
+		column.setLabelProvider(new ColumnLabelProvider() {
+
+			private InboxElementUiExtension extension = new InboxElementUiExtension();
+
+			@Override
+			public String getText(Object element) {
+				if (element instanceof IInboxElement) {
+					LocalDate objectDate = extension.getObjectDate((IInboxElement) element);
+					if (objectDate != null) {
+						return objectDate.toString();
+					}
+					return "?";
+				}
+				return super.getText(element);
+			}
+		});
+		column.getColumn().addSelectionListener(getSelectionAdapter(column.getColumn(), 2));
+
+		column = new TableViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(250);
+		column.getColumn().setText("Beschreibung");
+		column.setLabelProvider(new ColumnLabelProvider() {
+
+			private InboxElementUiExtension extension = new InboxElementUiExtension();
+
+			@Override
+			public String getText(Object element) {
+				if (element instanceof IInboxElement) {
+					return extension.getText((IInboxElement) element);
+				}
+				return super.getText(element);
+			}
+		});
+
+		column = new TableViewerColumn(viewer, SWT.NONE);
+		column.setLabelProvider(new EmulatedCheckBoxLabelProvider() {
+			@Override
+			protected boolean isChecked(Object element) {
+				if (element instanceof IInboxElement) {
+					return ((IInboxElement) element).getState() == State.SEEN;
+				}
+				return false;
+			}
+		});
+		column.setEditingSupport(new CheckBoxColumnEditingSupport(viewer));
+		column.getColumn().setText("Visiert");
+		column.getColumn().setWidth(25);
+
+//		viewer.setLabelProvider(new InboxElementLabelProvider());
+
+//		viewer.addCheckStateListener(new ICheckStateListener() {
+//
+//			public void checkStateChanged(CheckStateChangedEvent event) {
+//				if (event.getElement() instanceof PatientInboxElements) {
+//					PatientInboxElements patientInbox = (PatientInboxElements) event.getElement();
+//					for (IInboxElement inboxElement : patientInbox.getElements()) {
+//						State newState = toggleInboxElementState(inboxElement);
+//						if (newState == State.NEW) {
+//							viewer.setChecked(inboxElement, false);
+//						} else {
+//							viewer.setChecked(inboxElement, true);
+//						}
+//						contentProvider.refreshElement(inboxElement);
+//					}
+//					contentProvider.refreshElement(patientInbox);
+//				} else if (event.getElement() instanceof IInboxElement) {
+//					IInboxElement inboxElement = (IInboxElement) event.getElement();
+//					toggleInboxElementState(inboxElement);
+//					contentProvider.refreshElement(inboxElement);
+//				}
+//				viewer.refresh(false);
+//			}
+//		});
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
@@ -184,13 +285,10 @@ public class InboxView extends ViewPart {
 					if (setAutoSelectPatient) {
 						Object selectedElement = ((StructuredSelection) selection).getFirstElement();
 						if (selectedElement instanceof IInboxElement) {
-							Patient patient = (Patient) NoPoUtil
-									.loadAsPersistentObject(((IInboxElement) selectedElement).getPatient());
-							ElexisEventDispatcher.fireSelectionEvent(patient);
+							ContextServiceHolder.get().setActivePatient(((IInboxElement) selectedElement).getPatient());
 						} else if (selectedElement instanceof PatientInboxElements) {
-							Patient patient = (Patient) NoPoUtil
-									.loadAsPersistentObject(((PatientInboxElements) selectedElement).getPatient());
-							ElexisEventDispatcher.fireSelectionEvent(patient);
+							ContextServiceHolder.get()
+									.setActivePatient(((PatientInboxElements) selectedElement).getPatient());
 						}
 					}
 				}
@@ -255,7 +353,7 @@ public class InboxView extends ViewPart {
 					Display.getDefault().asyncExec(new Runnable() {
 						public void run() {
 							contentProvider.refreshElement(element);
-							viewer.refresh();
+							viewer.refresh(false);
 						}
 					});
 				}
@@ -265,13 +363,28 @@ public class InboxView extends ViewPart {
 		reload();
 
 		MenuManager ctxtMenuManager = new MenuManager();
-		Menu menu = ctxtMenuManager.createContextMenu(viewer.getTree());
-		viewer.getTree().setMenu(menu);
+		Menu menu = ctxtMenuManager.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(ctxtMenuManager, viewer);
 
 		getSite().setSelectionProvider(viewer);
 
 		setAutoSelectPatientState(ConfigServiceHolder.getUser(Preferences.INBOX_PATIENT_AUTOSELECT, false));
+	}
+
+	private InboxElementComparator comparator;
+
+	private SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
+		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				comparator.setColumn(index);
+				viewer.getTable().setSortDirection(comparator.getDirection());
+				viewer.getTable().setSortColumn(column);
+				viewer.refresh();
+			}
+		};
+		return selectionAdapter;
 	}
 
 	public void setAutoSelectPatientState(boolean value) {
@@ -296,23 +409,6 @@ public class InboxView extends ViewPart {
 		menuManager.update(true);
 	}
 
-	private State toggleInboxElementState(IInboxElement inboxElement) {
-		if (inboxElement.getState() == State.NEW) {
-			inboxElement.setState(State.SEEN);
-			if (!(inboxElement instanceof GroupedInboxElements)) {
-				InboxModelServiceHolder.get().save(inboxElement);
-			}
-			return State.SEEN;
-		} else if (inboxElement.getState() == State.SEEN) {
-			inboxElement.setState(State.NEW);
-			if (!(inboxElement instanceof GroupedInboxElements)) {
-				InboxModelServiceHolder.get().save(inboxElement);
-			}
-			return State.NEW;
-		}
-		return State.NEW;
-	}
-
 	@Override
 	public void setFocus() {
 		filterText.setFocus();
@@ -328,66 +424,78 @@ public class InboxView extends ViewPart {
 		return openElements;
 	}
 
-	private class InboxElementViewerFilter extends ViewerFilter {
-		protected String searchString;
-		protected InboxElementLabelProvider labelProvider = new InboxElementLabelProvider();
-
-		public void setSearchText(String s) {
-			// Search must be a substring of the existing value
-			this.searchString = s != null ? s.toLowerCase() : s;
-		}
-
-		public boolean isActive() {
-			if (searchString == null || searchString.isEmpty()) {
-				return false;
-			}
-			return true;
-		}
-
-		private boolean isSelect(Object leaf) {
-			String label = labelProvider.getText(leaf);
-			if (label != null && label.toLowerCase().contains(searchString)) {
-				return true;
-			}
-			return false;
-		}
-
-		private boolean isVisible(Object element) {
-			if (element instanceof IInboxElement) {
-				return labelProvider.isVisible((IInboxElement) element);
-			}
-			return true;
-		}
-
-		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof IInboxElement && !isVisible(element)) {
-				return false;
-			}
-			if (searchString == null || searchString.length() == 0) {
-				return true;
-			}
-			if (element instanceof PatientInboxElements) {
-				return isSelect(element);
-			} else {
-				return true;
-			}
-		}
+	public PagingComposite getPagingComposite() {
+		return pagingComposite;
 	}
 
 	public void reload() {
-		if (!viewer.getControl().isVisible()) {
-			reloadPending = true;
-			return;
-		}
-
-		viewer.setInput(getOpenInboxElements());
-		reloadPending = false;
+		List<IInboxElement> input = getOpenInboxElements();
+		viewer.setInput(input);
 		viewer.refresh();
 	}
 
-	public CheckboxTreeViewer getCheckboxTreeViewer() {
+	public StructuredViewer getViewer() {
 		return viewer;
+	}
+
+	private class InboxElementComparator extends ViewerComparator {
+		private int propertyIndex;
+		private static final int DESCENDING = 1;
+		private int direction = DESCENDING;
+
+		private InboxElementUiExtension extension = new InboxElementUiExtension();
+
+		public InboxElementComparator() {
+			this.propertyIndex = 0;
+			direction = DESCENDING;
+		}
+
+		public int getDirection() {
+			return direction == 1 ? SWT.DOWN : SWT.UP;
+		}
+
+		public void setColumn(int column) {
+			if (column == this.propertyIndex) {
+				// Same column as last sort; toggle the direction
+				direction = 1 - direction;
+			} else {
+				// New column; do an ascending sort
+				this.propertyIndex = column;
+				direction = DESCENDING;
+			}
+		}
+
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			IInboxElement i1 = (IInboxElement) e1;
+			IInboxElement i2 = (IInboxElement) e2;
+			int rc = 0;
+			switch (propertyIndex) {
+			case 0:
+			case 1:
+				IPatient p1 = i1.getPatient();
+				IPatient p2 = i2.getPatient();
+				String txt1 = p1 != null ? p1.getLabel() : StringUtils.EMPTY;
+				String txt2 = p2 != null ? p2.getLabel() : StringUtils.EMPTY;
+				rc = txt1.toLowerCase().compareTo(txt2.toLowerCase());
+				break;
+			case 2:
+				LocalDate t1 = extension.getObjectDate(i1);
+				LocalDate t2 = extension.getObjectDate(i2);
+				t1 = (t1 == null ? LocalDate.EPOCH : t1);
+				t2 = (t2 == null ? LocalDate.EPOCH : t2);
+				rc = t1.compareTo(t2);
+				break;
+			default:
+				rc = 0;
+			}
+			// If descending order, flip the direction
+			if (direction == DESCENDING) {
+				rc = -rc;
+			}
+			return rc;
+		}
+
 	}
 
 	@Optional
@@ -395,5 +503,73 @@ public class InboxView extends ViewPart {
 	public void setFixLayout(MPart part,
 			@Named(ch.elexis.core.constants.Preferences.USR_FIX_LAYOUT) boolean currentState) {
 		CoreUiUtil.updateFixLayout(part, currentState);
+	}
+
+	private abstract static class EmulatedCheckBoxLabelProvider extends ColumnLabelProvider {
+
+		private static Image CHECKED = AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.inbox.ui", //$NON-NLS-1$
+				"rsc/img/checked_checkbox.png").createImage(); //$NON-NLS-1$
+
+		private static Image UNCHECKED = AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.inbox.ui", //$NON-NLS-1$
+				"rsc/img/unchecked_checkbox.png").createImage(); //$NON-NLS-1$
+
+		@Override
+		public String getText(Object element) {
+			return null;
+		}
+
+		@Override
+		public Image getImage(Object element) {
+			return isChecked(element) ? CHECKED : UNCHECKED;
+		}
+
+		protected abstract boolean isChecked(Object element);
+	}
+
+	private class CheckBoxColumnEditingSupport extends EditingSupport {
+
+		private final TableViewer tableViewer;
+
+		public CheckBoxColumnEditingSupport(TableViewer viewer) {
+			super(viewer);
+			this.tableViewer = viewer;
+		}
+
+		@Override
+		protected CellEditor getCellEditor(Object o) {
+			return new CheckboxCellEditor(null, SWT.CHECK);
+		}
+
+		@Override
+		protected boolean canEdit(Object o) {
+			return true;
+		}
+
+		@Override
+		protected Object getValue(Object o) {
+			IInboxElement element = (IInboxElement) o;
+			return element.getState() == State.SEEN;
+		}
+
+		@Override
+		protected void setValue(Object o, Object value) {
+			IInboxElement element = (IInboxElement) o;
+			if (Boolean.TRUE.equals(value)) {
+				element.setState(State.SEEN);
+				if (!(element instanceof GroupedInboxElements)) {
+					InboxModelServiceHolder.get().save(element);
+				}
+			} else {
+				element.setState(State.NEW);
+				if (!(element instanceof GroupedInboxElements)) {
+					InboxModelServiceHolder.get().save(element);
+				}
+			}
+			tableViewer.refresh();
+			Display.getDefault().timerExec(2500, () -> {
+				contentProvider.refreshElement(element);
+				tableViewer.refresh();
+			});
+		}
 	}
 }

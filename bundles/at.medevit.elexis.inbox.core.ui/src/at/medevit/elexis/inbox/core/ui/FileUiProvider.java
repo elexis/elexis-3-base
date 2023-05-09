@@ -11,6 +11,7 @@
 package at.medevit.elexis.inbox.core.ui;
 
 import java.nio.file.Path;
+import java.time.LocalDate;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -36,6 +37,11 @@ public class FileUiProvider implements IInboxElementUiProvider {
 
 	@Override
 	public ViewerFilter getFilter() {
+		return null;
+	}
+
+	@Override
+	public LocalDate getObjectDate(IInboxElement element) {
 		return null;
 	}
 

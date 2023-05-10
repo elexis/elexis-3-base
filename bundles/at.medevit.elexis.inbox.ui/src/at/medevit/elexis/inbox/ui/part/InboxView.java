@@ -11,6 +11,7 @@
 package at.medevit.elexis.inbox.ui.part;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -125,7 +126,7 @@ public class InboxView extends ViewPart {
 		filterComposite.setLayout(new GridLayout(2, false));
 
 		filterText = new Text(filterComposite, SWT.SEARCH);
-		filterText.setMessage("Patienten Filter");
+		filterText.setMessage("Patienten Suche nach Nachname, Vorname, Geburtsdatum oder #PatientenNr");
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		filterText.setLayoutData(data);
 		WidgetProperties.text(SWT.Modify).observeDelayed(500, filterText)
@@ -140,7 +141,8 @@ public class InboxView extends ViewPart {
 		ToolBarManager menuManager = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
 		menuManager.createControl(filterComposite);
 
-		viewer = new TableViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.VIRTUAL);
+		viewer = new TableViewer(composite,
+				SWT.FULL_SELECTION | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.VIRTUAL);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		viewer.getControl().setLayoutData(gd);
 
@@ -152,7 +154,7 @@ public class InboxView extends ViewPart {
 		viewer.setComparator(comparator);
 
 		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-		column.getColumn().setWidth(60);
+		column.getColumn().setWidth(50);
 		column.getColumn().setText("Kategorie");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
@@ -195,12 +197,14 @@ public class InboxView extends ViewPart {
 
 			private InboxElementUiExtension extension = new InboxElementUiExtension();
 
+			private DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IInboxElement) {
 					LocalDate objectDate = extension.getObjectDate((IInboxElement) element);
 					if (objectDate != null) {
-						return objectDate.toString();
+						return dateFormat.format(objectDate);
 					}
 					return "?";
 				}
@@ -237,33 +241,7 @@ public class InboxView extends ViewPart {
 		});
 		column.setEditingSupport(new CheckBoxColumnEditingSupport(viewer));
 		column.getColumn().setText("Visiert");
-		column.getColumn().setWidth(25);
-
-//		viewer.setLabelProvider(new InboxElementLabelProvider());
-
-//		viewer.addCheckStateListener(new ICheckStateListener() {
-//
-//			public void checkStateChanged(CheckStateChangedEvent event) {
-//				if (event.getElement() instanceof PatientInboxElements) {
-//					PatientInboxElements patientInbox = (PatientInboxElements) event.getElement();
-//					for (IInboxElement inboxElement : patientInbox.getElements()) {
-//						State newState = toggleInboxElementState(inboxElement);
-//						if (newState == State.NEW) {
-//							viewer.setChecked(inboxElement, false);
-//						} else {
-//							viewer.setChecked(inboxElement, true);
-//						}
-//						contentProvider.refreshElement(inboxElement);
-//					}
-//					contentProvider.refreshElement(patientInbox);
-//				} else if (event.getElement() instanceof IInboxElement) {
-//					IInboxElement inboxElement = (IInboxElement) event.getElement();
-//					toggleInboxElementState(inboxElement);
-//					contentProvider.refreshElement(inboxElement);
-//				}
-//				viewer.refresh(false);
-//			}
-//		});
+		column.getColumn().setWidth(30);
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override

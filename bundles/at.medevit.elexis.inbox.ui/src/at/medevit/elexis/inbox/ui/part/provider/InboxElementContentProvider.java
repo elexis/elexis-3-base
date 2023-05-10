@@ -10,7 +10,6 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.ui.part.provider;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -33,6 +33,7 @@ import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.e4.fieldassist.PatientSearchToken;
 
 public class InboxElementContentProvider implements IStructuredContentProvider {
 
@@ -43,8 +44,6 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 	private List<IInboxElement> items;
 
 	private InboxView inboxView;
-
-	private InboxElementUiExtension extension = new InboxElementUiExtension();
 
 	private String searchText;
 	private List<IInboxElement> filteredItems;
@@ -101,11 +100,7 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 					items = map.values().stream().flatMap(pie -> pie.getElements().stream()).filter(ie -> ie != null)
 							.collect(Collectors.toList());
 					items.sort((l, r) -> {
-						LocalDate t1 = extension.getObjectDate(l);
-						LocalDate t2 = extension.getObjectDate(r);
-						t1 = (t1 == null ? LocalDate.EPOCH : t1);
-						t2 = (t2 == null ? LocalDate.EPOCH : t2);
-						return t2.compareTo(t1);
+						return r.getLastupdate().compareTo(l.getLastupdate());
 					});
 					Display.getDefault().asyncExec(() -> {
 						page = 1;
@@ -138,8 +133,10 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 	public void setSearchText(String search) {
 		this.searchText = search;
 		CompletableFuture.runAsync(() -> {
-			if (searchText != null && searchText.length() > 2) {
-				filteredItems = items.stream().filter(i -> filterPatient(i)).collect(Collectors.toList());
+			if (searchText != null && searchText.length() > 1) {
+				List<PatientSearchToken> searchParts = PatientSearchToken
+						.getPatientSearchTokens(searchText.toLowerCase().split(StringUtils.SPACE));
+				filteredItems = items.stream().filter(i -> filterPatient(searchParts, i)).collect(Collectors.toList());
 				Display.getDefault().asyncExec(() -> {
 					page = 1;
 					inboxView.getPagingComposite().setup(page, filteredItems.size(), PAGING_FETCHSIZE);
@@ -156,9 +153,9 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 		});
 	}
 
-	private boolean filterPatient(IInboxElement i) {
+	private boolean filterPatient(List<PatientSearchToken> searchParts, IInboxElement i) {
 		if (i.getPatient() != null) {
-			return i.getPatient().getLabel().toLowerCase().contains(searchText.toLowerCase());
+			return searchParts.parallelStream().allMatch(st -> st.test(i.getPatient()));
 		}
 		return false;
 	}

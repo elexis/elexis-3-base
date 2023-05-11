@@ -56,7 +56,7 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 		page = inboxView.getPagingComposite().getCurrentPage();
 		List<IInboxElement> list = filteredItems != null ? filteredItems : items;
 		if (list != null) {
-			if (page > 0) {
+			if (page > 0 && list.size() > 0) {
 				if (list.size() >= page * PAGING_FETCHSIZE) {
 					return list.subList((page - 1) * PAGING_FETCHSIZE, page * PAGING_FETCHSIZE).toArray();
 				} else {

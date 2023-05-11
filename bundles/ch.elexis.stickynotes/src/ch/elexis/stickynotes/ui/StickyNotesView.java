@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridLayout;
@@ -142,8 +143,8 @@ public class StickyNotesView extends ViewPart implements IRefreshable, HeartList
 			RGB rgbBackground = PreferenceConverter.getColor(prefs, Preferences.COLBACKGROUND);
 			RGB rgbForeground = PreferenceConverter.getColor(prefs, Preferences.COLFOREGROUND);
 			if (rgbBackground.equals(rgbForeground)) {
-				rgbBackground = new RGB(255, 255, 0);
-				rgbForeground = new RGB(0, 0, 0);
+				rgbBackground = Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW).getRGB();
+				rgbForeground = Display.getCurrent().getSystemColor(SWT.COLOR_BLACK).getRGB();
 			}
 			UiDesk.getColorRegistry().put(Preferences.COLBACKGROUND, rgbBackground);
 			Color back = UiDesk.getColorRegistry().get(Preferences.COLBACKGROUND);

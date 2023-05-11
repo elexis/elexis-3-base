@@ -25,7 +25,7 @@ public class ChangeMandantCommand extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		MandantSelectorDialog msDialog = new MandantSelectorDialog(UiDesk.getTopShell());
+		MandantSelectorDialog msDialog = new MandantSelectorDialog(UiDesk.getTopShell(), false);
 		if (msDialog.open() == TitleAreaDialog.OK) {
 			IMandator mandant = NoPoUtil.loadAsIdentifiable(msDialog.getSelectedMandant(), IMandator.class)
 					.orElse(null);

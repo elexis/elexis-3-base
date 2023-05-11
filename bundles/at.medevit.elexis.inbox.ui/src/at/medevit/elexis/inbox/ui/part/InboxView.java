@@ -12,6 +12,7 @@ package at.medevit.elexis.inbox.ui.part;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -81,6 +82,7 @@ import at.medevit.elexis.inbox.ui.part.provider.InboxElementUiExtension;
 import at.medevit.elexis.inbox.ui.preferences.Preferences;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -102,11 +104,15 @@ public class InboxView extends ViewPart {
 			ElexisEvent.EVENT_MANDATOR_CHANGED) {
 		@Override
 		public void runInUi(ElexisEvent ev) {
-			reload();
+			if (selectedMandators == null || selectedMandators.isEmpty()) {
+				reload();
+			}
 		}
 	};
 	private InboxElementContentProvider contentProvider;
 	private boolean setAutoSelectPatient;
+
+	private TableViewerColumn mandatorColumn;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -173,6 +179,22 @@ public class InboxView extends ViewPart {
 				return null;
 			}
 		});
+
+		mandatorColumn = new TableViewerColumn(viewer, SWT.NONE);
+		mandatorColumn.getColumn().setWidth(0);
+		mandatorColumn.getColumn().setText("Mandant");
+		mandatorColumn.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof IInboxElement) {
+					return ((IInboxElement) element).getMandator() != null
+							? ((IInboxElement) element).getMandator().getLabel()
+							: "?";
+				}
+				return super.getText(element);
+			}
+		});
+		mandatorColumn.getColumn().addSelectionListener(getSelectionAdapter(mandatorColumn.getColumn(), 0));
 
 		column = new TableViewerColumn(viewer, SWT.NONE);
 		column.getColumn().setWidth(250);
@@ -357,6 +379,8 @@ public class InboxView extends ViewPart {
 
 	private InboxElementComparator comparator;
 
+	private List<IMandator> selectedMandators;
+
 	private SelectionAdapter getSelectionAdapter(final TableColumn column, final int index) {
 		SelectionAdapter selectionAdapter = new SelectionAdapter() {
 			@Override
@@ -401,10 +425,20 @@ public class InboxView extends ViewPart {
 		}
 	}
 
-	private List<IInboxElement> getOpenInboxElements() {
-		List<IInboxElement> openElements = InboxServiceHolder.get().getInboxElements(
-				ContextServiceHolder.get().getActiveMandator().orElse(null), null, IInboxElementService.State.NEW);
-		return openElements;
+	public List<IInboxElement> getOpenInboxElements() {
+		if (selectedMandators == null || selectedMandators.isEmpty()) {
+			mandatorColumn.getColumn().setWidth(0);
+			return InboxServiceHolder.get().getInboxElements(
+					ContextServiceHolder.get().getActiveMandator().orElse(null), null, IInboxElementService.State.NEW);
+		} else {
+			mandatorColumn.getColumn().setWidth(75);
+			List<IInboxElement> mandatorsElements = new ArrayList<>();
+			for (IMandator mandator : selectedMandators) {
+				mandatorsElements.addAll(
+						InboxServiceHolder.get().getInboxElements(mandator, null, IInboxElementService.State.NEW));
+			}
+			return mandatorsElements;
+		}
 	}
 
 	public PagingComposite getPagingComposite() {
@@ -461,12 +495,18 @@ public class InboxView extends ViewPart {
 			int rc = 0;
 			switch (propertyIndex) {
 			case 0:
+				IMandator m1 = i1.getMandator();
+				IMandator m2 = i2.getMandator();
+				String mtxt1 = m1 != null ? m1.getLabel() : StringUtils.EMPTY;
+				String mtxt2 = m2 != null ? m2.getLabel() : StringUtils.EMPTY;
+				rc = mtxt1.toLowerCase().compareTo(mtxt2.toLowerCase());
+				break;
 			case 1:
 				IPatient p1 = i1.getPatient();
 				IPatient p2 = i2.getPatient();
-				String txt1 = p1 != null ? p1.getLabel() : StringUtils.EMPTY;
-				String txt2 = p2 != null ? p2.getLabel() : StringUtils.EMPTY;
-				rc = txt1.toLowerCase().compareTo(txt2.toLowerCase());
+				String ptxt1 = p1 != null ? p1.getLabel() : StringUtils.EMPTY;
+				String ptxt2 = p2 != null ? p2.getLabel() : StringUtils.EMPTY;
+				rc = ptxt1.toLowerCase().compareTo(ptxt2.toLowerCase());
 				break;
 			case 2:
 				LocalDate t1 = extension.getObjectDate(i1);
@@ -560,5 +600,10 @@ public class InboxView extends ViewPart {
 				tableViewer.refresh();
 			});
 		}
+	}
+
+	public void setSelectedMandators(List<IMandator> mandators) {
+		this.selectedMandators = mandators;
+		reload();
 	}
 }

@@ -1,5 +1,6 @@
 package at.medevit.elexis.inbox.ui.dialog;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,21 +24,30 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
 
 public class MandantSelectorDialog extends TitleAreaDialog {
-	List<Mandant> lMandant;
-	org.eclipse.swt.widgets.List lbMandant;
-	Mandant selMandant;
+	private List<Mandant> lMandant;
+	private org.eclipse.swt.widgets.List lbMandant;
+	private Mandant selMandant;
 
-	public MandantSelectorDialog(Shell parentShell) {
+	private List<Mandant> selMandants;
+	private boolean multi;
+
+	public MandantSelectorDialog(Shell parentShell, boolean multi) {
 		super(parentShell);
+		this.multi = multi;
 		selMandant = ElexisEventDispatcher.getSelectedMandator();
 	}
 
 	@Override
 	public Control createDialogArea(final Composite parent) {
-		setTitle("Mandant ändern");
-		setMessage("Bitte wählen Sie einen Mandanten");
-
-		lbMandant = new org.eclipse.swt.widgets.List(parent, SWT.BORDER | SWT.SINGLE);
+		if (multi) {
+			setTitle("Mandanten Auswahl");
+			setMessage("Bitte wählen Sie die Mandanten aus.\nKeine Auswahl selektiert den aktiven Mandanten");
+			lbMandant = new org.eclipse.swt.widgets.List(parent, SWT.BORDER | SWT.MULTI);
+		} else {
+			setTitle("Mandant ändern");
+			setMessage("Bitte wählen Sie einen Mandanten");
+			lbMandant = new org.eclipse.swt.widgets.List(parent, SWT.BORDER | SWT.SINGLE);
+		}
 		lbMandant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		lMandant = getMandantors();
 		for (PersistentObject m : lMandant) {
@@ -53,6 +63,15 @@ public class MandantSelectorDialog extends TitleAreaDialog {
 		if (idx > -1) {
 			selMandant = lMandant.get(idx);
 		}
+
+		int[] idxs = lbMandant.getSelectionIndices();
+		selMandants = new ArrayList<Mandant>();
+		if (idxs != null && idxs.length > 0) {
+			for (int i : idxs) {
+				selMandants.add(lMandant.get(i));
+			}
+		}
+
 		super.okPressed();
 	}
 
@@ -60,6 +79,10 @@ public class MandantSelectorDialog extends TitleAreaDialog {
 		return selMandant;
 	}
 	
+	public List<Mandant> getSelectedMandants() {
+		return selMandants;
+	}
+
 	private List<Mandant> getMandantors() {
 		IQuery<IUser> userQuery = CoreModelServiceHolder.get().getQuery(IUser.class);
 		userQuery.and(ModelPackage.Literals.IUSER__ASSIGNED_CONTACT, COMPARATOR.NOT_EQUALS, null);

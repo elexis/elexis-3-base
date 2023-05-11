@@ -79,5 +79,11 @@
          </command>
       </menuContribution>
    </extension>
+   <extension
+         point="ch.elexis.core.ui.dbcheck.ExternalMaintenance">
+      <ExternalMaintenance
+            MaintenanceCode="at.medevit.elexis.inbox.ui.dbcheck.RemoveInvalidInboxEntries">
+      </ExternalMaintenance>
+   </extension>
 
 </plugin>

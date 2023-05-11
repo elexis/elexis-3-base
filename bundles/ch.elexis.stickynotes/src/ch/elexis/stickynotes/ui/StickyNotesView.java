@@ -139,23 +139,20 @@ public class StickyNotesView extends ViewPart implements IRefreshable, HeartList
 			actNote = StickyNote.load(actPatient);
 			etf.setText(actNote.getText());
 			setPartName(Messages.StickyNotesView_StickyNotesNameDash + actPatient.getLabel());
-
 			RGB rgbBackground = PreferenceConverter.getColor(prefs, Preferences.COLBACKGROUND);
 			RGB rgbForeground = PreferenceConverter.getColor(prefs, Preferences.COLFOREGROUND);
 			if (rgbBackground.equals(rgbForeground)) {
 				rgbBackground = new RGB(255, 255, 0);
+				rgbForeground = new RGB(0, 0, 0);
 			}
-
 			UiDesk.getColorRegistry().put(Preferences.COLBACKGROUND, rgbBackground);
 			Color back = UiDesk.getColorRegistry().get(Preferences.COLBACKGROUND);
 			UiDesk.getColorRegistry().put(Preferences.COLFOREGROUND, rgbForeground);
 			Color fore = UiDesk.getColorRegistry().get(Preferences.COLFOREGROUND);
-
 			etf.getControl().setBackground(back);
 			etf.getControl().setForeground(fore);
 		}
 	}
-
 
 	public void heartbeat() {
 		if (actPatient == null) {
@@ -171,5 +168,4 @@ public class StickyNotesView extends ViewPart implements IRefreshable, HeartList
 			}
 		}
 	}
-
 }

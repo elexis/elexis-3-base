@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
+import at.medevit.elexis.inbox.model.IInboxElementService.State;
 import at.medevit.elexis.inbox.ui.InboxServiceHolder;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
@@ -36,10 +37,14 @@ public class RemoveInvalidInboxEntries extends ExternalMaintenance {
 					InboxServiceHolder.getModelService().remove(element);
 					removedOld++;
 					pm.worked(1);
+					if (pm.isCanceled()) {
+						return getReturnMessage(removedOld, removedInvalid);
+					}
 				}
 			}
 		}
-		IQuery<IInboxElement> inboxQuery = InboxServiceHolder.getModelService().getQuery(IInboxElement.class, true);
+		IQuery<IInboxElement> inboxQuery = InboxServiceHolder.getModelService().getQuery(IInboxElement.class);
+		inboxQuery.and("state", COMPARATOR.NOT_EQUALS, Integer.toString(State.SEEN.ordinal()));
 		try (IQueryCursor<IInboxElement> entries = inboxQuery.executeAsCursor()) {
 			LoggerFactory.getLogger(getClass()).warn("Checking " + entries.size() + " inbox elements");
 			pm.beginTask("Bitte warten, Inbox Einträge werden überprüft", entries.size());
@@ -50,8 +55,15 @@ public class RemoveInvalidInboxEntries extends ExternalMaintenance {
 					removedInvalid++;
 					pm.worked(1);
 				}
+				if (pm.isCanceled()) {
+					return getReturnMessage(removedOld, removedInvalid);
+				}
 			}
 		}
+		return getReturnMessage(removedOld, removedInvalid);
+	}
+
+	private String getReturnMessage(int removedOld, int removedInvalid) {
 		return "Es wurden [" + removedOld + "] alte Inbox Einträge gelöscht, und [" + removedInvalid
 				+ "] nicht mehr valide Inbox Einträge gelöscht";
 	}

@@ -209,7 +209,9 @@ public class InboxView extends ViewPart {
 				return super.getText(element);
 			}
 		});
-		column.getColumn().addSelectionListener(getSelectionAdapter(column.getColumn(), 2));
+		SelectionAdapter selectionAdapter = getSelectionAdapter(column.getColumn(), 2);
+		selectionAdapter.widgetSelected(null);
+		column.getColumn().addSelectionListener(selectionAdapter);
 
 		column = new TableViewerColumn(viewer, SWT.NONE);
 		column.getColumn().setWidth(250);

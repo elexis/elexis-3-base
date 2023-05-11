@@ -94,9 +94,12 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 	public LocalDate getObjectDate(IInboxElement element) {
 		if (element instanceof GroupedInboxElements) {
 			IInboxElement firstElement = ((GroupedInboxElements) element).getFirstElement();
-			if (firstElement.getObject() instanceof ILabResult
-					&& ((ILabResult) firstElement.getObject()).getObservationTime() != null) {
-				return ((ILabResult) firstElement.getObject()).getObservationTime().toLocalDate();
+			if (firstElement.getObject() instanceof ILabResult) {
+				if (((ILabResult) firstElement.getObject()).getObservationTime() != null) {
+					return ((ILabResult) firstElement.getObject()).getObservationTime().toLocalDate();
+				} else if (((ILabResult) firstElement.getObject()).getDate() != null) {
+					return ((ILabResult) firstElement.getObject()).getDate();
+				}
 			}
 		} else if (element.getObject() instanceof ILabResult) {
 			return ((ILabResult) element.getObject()).getObservationTime().toLocalDate();

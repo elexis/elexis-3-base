@@ -33,10 +33,14 @@ public class LabGroupedInboxElements extends GroupedInboxElements {
 	}
 
 	public boolean isMatching(ILabResult labResult) {
-		if (!isEmpty() && (((ILabResult) getFirstElement().getObject()).getObservationTime() != null
-				&& labResult.getObservationTime() != null)) {
-			return ((ILabResult) getFirstElement().getObject()).getObservationTime().toLocalDate()
-					.equals(labResult.getObservationTime().toLocalDate());
+		if (!isEmpty()) {
+			if (((ILabResult) getFirstElement().getObject()).getObservationTime() != null
+					&& labResult.getObservationTime() != null) {
+				return ((ILabResult) getFirstElement().getObject()).getObservationTime().toLocalDate()
+						.equals(labResult.getObservationTime().toLocalDate());
+			} else if (((ILabResult) getFirstElement().getObject()).getDate() != null && labResult.getDate() != null) {
+				return ((ILabResult) getFirstElement().getObject()).getDate().equals(labResult.getDate());
+			}
 		}
 		// if empty match any
 		return isEmpty();

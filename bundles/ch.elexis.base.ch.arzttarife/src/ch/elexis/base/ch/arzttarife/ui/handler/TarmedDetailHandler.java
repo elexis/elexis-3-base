@@ -1,17 +1,16 @@
 package ch.elexis.base.ch.arzttarife.ui.handler;
 
+import java.util.Optional;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IBilled;
-import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.views.TarmedDetailDialog;
 
 public class TarmedDetailHandler extends AbstractHandler {
@@ -22,12 +21,10 @@ public class TarmedDetailHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell shell = HandlerUtil.getActiveShell(event);
 		if (shell != null) {
-			IEclipseContext iEclipseContext = PlatformUI.getWorkbench().getService(IEclipseContext.class);
-			StructuredSelection selection = CoreUiUtil.getCommandSelection(iEclipseContext, CMDID);
-			if (!selection.isEmpty() && selection.getFirstElement() instanceof IBilled) {
-				IBilled billed = (IBilled) selection.getFirstElement();
-				if (billed.getBillable() instanceof ITarmedLeistung) {
-					new TarmedDetailDialog(shell, billed).open();
+			Optional<IBilled> billed = ContextServiceHolder.get().getTyped(IBilled.class);
+			if (billed.isPresent()) {
+				if (billed.get().getBillable() instanceof ITarmedLeistung) {
+					new TarmedDetailDialog(shell, billed.get()).open();
 				}
 			}
 		}
@@ -36,11 +33,9 @@ public class TarmedDetailHandler extends AbstractHandler {
 
 	@Override
 	public boolean isEnabled() {
-		IEclipseContext iEclipseContext = PlatformUI.getWorkbench().getService(IEclipseContext.class);
-		StructuredSelection selection = CoreUiUtil.getCommandSelection(iEclipseContext, CMDID, false);
-		if (selection != null && !selection.isEmpty() && selection.getFirstElement() instanceof IBilled) {
-			IBilled billed = (IBilled) selection.getFirstElement();
-			return billed.getBillable() instanceof ITarmedLeistung;
+		Optional<IBilled> billed = ContextServiceHolder.get().getTyped(IBilled.class);
+		if (billed.isPresent()) {
+			return billed.get().getBillable() instanceof ITarmedLeistung;
 		}
 		return false;
 	}

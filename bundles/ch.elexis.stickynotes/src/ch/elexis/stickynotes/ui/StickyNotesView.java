@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridLayout;
@@ -134,19 +135,20 @@ public class StickyNotesView extends ViewPart implements IRefreshable, HeartList
 	private void doSelect(Patient pat) {
 		if (pat == null) {
 			deselect();
-
 		} else {
-
 			actPatient = pat;
 			actNote = StickyNote.load(actPatient);
 			etf.setText(actNote.getText());
-			// form.setText(actPatient.getLabel());
 			setPartName(Messages.StickyNotesView_StickyNotesNameDash + actPatient.getLabel());
-			RGB rgb = PreferenceConverter.getColor(prefs, Preferences.COLBACKGROUND);
-			UiDesk.getColorRegistry().put(Preferences.COLBACKGROUND, rgb);
+			RGB rgbBackground = PreferenceConverter.getColor(prefs, Preferences.COLBACKGROUND);
+			RGB rgbForeground = PreferenceConverter.getColor(prefs, Preferences.COLFOREGROUND);
+			if (rgbBackground.equals(rgbForeground)) {
+				rgbBackground = Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW).getRGB();
+				rgbForeground = Display.getCurrent().getSystemColor(SWT.COLOR_BLACK).getRGB();
+			}
+			UiDesk.getColorRegistry().put(Preferences.COLBACKGROUND, rgbBackground);
 			Color back = UiDesk.getColorRegistry().get(Preferences.COLBACKGROUND);
-			rgb = PreferenceConverter.getColor(prefs, Preferences.COLFOREGROUND);
-			UiDesk.getColorRegistry().put(Preferences.COLFOREGROUND, rgb);
+			UiDesk.getColorRegistry().put(Preferences.COLFOREGROUND, rgbForeground);
 			Color fore = UiDesk.getColorRegistry().get(Preferences.COLFOREGROUND);
 			etf.getControl().setBackground(back);
 			etf.getControl().setForeground(fore);
@@ -167,5 +169,4 @@ public class StickyNotesView extends ViewPart implements IRefreshable, HeartList
 			}
 		}
 	}
-
 }

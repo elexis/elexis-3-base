@@ -118,7 +118,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:ch.elexis.VerrechnungsDisplay">
+            locationURI="popup:ch.elexis.Konsdetail.VerrechnungsDisplay">
          <command
                commandId="ch.elexis.base.ch.arzttarife.tarmed.detail"
                label="Tarmed Detail"

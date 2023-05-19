@@ -76,11 +76,12 @@ public class Tarmed45Validator {
 
 			public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId,
 					String baseURI) {
-				LoggerFactory.getLogger(getClass()).info(
+				LoggerFactory.getLogger(Tarmed45Validator.class).info(
 						"Resolve resource ns[" + namespaceURI + "] pubid[" + systemId + "] sysid[" + systemId + "]");
-				InputStream is = getClass().getResourceAsStream("/rsc/" + systemId);
+				InputStream is = Tarmed45Validator.class.getResourceAsStream("/rsc/" + systemId);
 				if (is == null) {
-					LoggerFactory.getLogger(getClass()).warn("Could not resolve resource using impl [" + impl + "]");
+					LoggerFactory.getLogger(Tarmed45Validator.class)
+							.warn("Could not resolve resource using impl [" + impl + "]");
 					return null;
 				}
 				LSInput lsInput = getDOMImpl().createLSInput();
@@ -89,7 +90,7 @@ public class Tarmed45Validator {
 			}
 		});
 
-		LoggerFactory.getLogger(getClass())
+		LoggerFactory.getLogger(Tarmed45Validator.class)
 				.warn("Loading generalInvoiceRequest_450.xsd using factory [" + factory + "]");
 		Schema schema = factory.newSchema(
 				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/generalInvoiceRequest_450.xsd")));

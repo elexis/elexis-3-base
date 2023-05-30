@@ -211,7 +211,7 @@ public class Messwert extends PersistentObject {
 				names.put("VERSION", Integer.toString(VERSION)); //$NON-NLS-1$
 				setup.setMap(FLD_BEFUNDE, names);
 
-				new ACLContributor().initializeDefaults(CoreHub.acl);
+				new ACLContributor().initializeDefaults(AccessControlServiceHolder.get());
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 			}

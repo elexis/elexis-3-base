@@ -27,9 +27,9 @@ import org.eclipse.swt.widgets.MenuItem;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IPersistentObject;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
@@ -53,7 +53,7 @@ public class AgendaActions {
 	 * Reflect the user's rights on the agenda actions
 	 */
 	public static void updateActions() {
-		getTerminStatusAction().setEnabled(CoreHub.acl.request(ACLContributor.USE_AGENDA));
+		getTerminStatusAction().setEnabled(AccessControlServiceHolder.get().request(ACLContributor.USE_AGENDA));
 		((RestrictedAction) getDelTerminAction()).reflectRight();
 	}
 

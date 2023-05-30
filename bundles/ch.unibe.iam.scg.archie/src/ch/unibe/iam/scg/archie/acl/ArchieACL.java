@@ -56,7 +56,7 @@ public class ArchieACL implements IACLContributor {
 	 * @return boolean True if the current user can access archie, false else.
 	 */
 	public static boolean userHasAccess() {
-		return CoreHub.acl.request(USE_ARCHIE);
+		return AccessControlServiceHolder.get().request(USE_ARCHIE);
 	}
 
 	/**

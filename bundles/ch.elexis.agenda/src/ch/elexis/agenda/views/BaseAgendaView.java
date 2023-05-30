@@ -253,7 +253,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	class AgendaContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
-			if (CoreHub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)) {
+			if (AccessControlServiceHolder.get().request(ACLContributor.DISPLAY_APPOINTMENTS)) {
 				String resource = agenda.getActResource();
 				TimeTool date = agenda.getActDate();
 				OsgiServiceUtil.getService(IAppointmentService.class).get().assertBlockTimes(date.toLocalDate(),
@@ -293,7 +293,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	}
 
 	protected void updateActions() {
-		dayLimitsAction.setEnabled(CoreHub.acl.request(ACLContributor.CHANGE_DAYSETTINGS));
+		dayLimitsAction.setEnabled(AccessControlServiceHolder.get().request(ACLContributor.CHANGE_DAYSETTINGS));
 		newTerminAction.reflectRight();
 		terminKuerzenAction.reflectRight();
 		terminVerlaengernAction.reflectRight();

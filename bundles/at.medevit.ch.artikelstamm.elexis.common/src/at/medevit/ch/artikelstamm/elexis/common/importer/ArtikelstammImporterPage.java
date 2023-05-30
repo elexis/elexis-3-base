@@ -121,6 +121,11 @@ public class ArtikelstammImporterPage extends ImporterPage {
 	}
 
 	@Override
+	public String getObjectClass() {
+		return ch.elexis.core.model.IArticle.class.getName();
+	}
+	
+	@Override
 	public Composite createPage(Composite parent) {
 		Composite versionInfo = new Composite(parent, SWT.None);
 		versionInfo.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));

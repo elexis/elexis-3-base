@@ -152,7 +152,7 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 			}
 		});
 		bRemove.setText(Messages.BefundePrefs_deleteText); // $NON-NLS-1$
-		if (!CoreHub.acl.request(ACLContributor.DELETE_PARAM)) {
+		if (!AccessControlServiceHolder.get().request(ACLContributor.DELETE_PARAM)) {
 			bRemove.setEnabled(false);
 		}
 

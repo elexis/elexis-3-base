@@ -181,7 +181,7 @@ public class TerminLabel extends Composite {
 	}
 
 	public void updateActions() {
-		boolean canChangeAppointments = CoreHub.acl.request(ACLContributor.CHANGE_APPOINTMENTS);
+		boolean canChangeAppointments = AccessControlServiceHolder.get().request(ACLContributor.CHANGE_APPOINTMENTS);
 		terminKuerzenAction.setEnabled(canChangeAppointments);
 		terminVerlaengernAction.setEnabled(canChangeAppointments);
 		terminAendernAction.setEnabled(canChangeAppointments);

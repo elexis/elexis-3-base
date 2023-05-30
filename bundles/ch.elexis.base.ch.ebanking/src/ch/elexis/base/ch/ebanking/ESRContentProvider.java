@@ -35,7 +35,7 @@ public class ESRContentProvider extends ArrayContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement) {
 		// Insufficient rights, return with empty list, and show status
-		if (CoreHub.acl.request(_rights) == false) {
+		if (AccessControlServiceHolder.get().request(_rights) == false) {
 			Display.getCurrent().asyncExec(new Runnable() {
 				@Override
 				public void run() {

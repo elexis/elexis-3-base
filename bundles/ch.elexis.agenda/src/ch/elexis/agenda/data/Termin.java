@@ -34,6 +34,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IPeriod;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -133,7 +134,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 					"icons/blaulicht.ico"); // $NON-NLS-2$
 			ConfigServiceHolder.setUser(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_visit,
 					"icons/ambulanz.ico"); // $NON-NLS-2$
-			new ACLContributor().initializeDefaults(CoreHub.acl);
+			new ACLContributor().initializeDefaults(AccessControlServiceHolder.get());
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}

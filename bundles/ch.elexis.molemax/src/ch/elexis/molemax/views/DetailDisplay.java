@@ -103,7 +103,7 @@ public class DetailDisplay extends Composite {
 
 			public void paintControl(final PaintEvent e) {
 				GC gc = e.gc;
-				if (CoreHub.acl.request(MolemaxACL.SEE_IMAGES)) {
+				if (AccessControlServiceHolder.get().request(MolemaxACL.SEE_IMAGES)) {
 					Tracker[] myTracker = home.trackers[actSlot];
 					if (myTracker != null) {
 						for (int i = 0; i < myTracker.length; i++) {
@@ -142,7 +142,7 @@ public class DetailDisplay extends Composite {
 
 			@Override
 			public void drop(final DropTargetEvent event) {
-				if (!CoreHub.acl.request(MolemaxACL.CHANGE_IMAGES)) {
+				if (!AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES)) {
 					SWTHelper.alert(ImageSlot.CAPTION_NOOP, ImageSlot.TEXT_NOOP);
 					return;
 				}
@@ -219,7 +219,7 @@ public class DetailDisplay extends Composite {
 	}
 
 	public void setUser() {
-		mDelete.setEnabled(CoreHub.acl.request(MolemaxACL.CHANGE_IMAGES));
+		mDelete.setEnabled(AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES));
 	}
 
 	void setslot(final int slot) {

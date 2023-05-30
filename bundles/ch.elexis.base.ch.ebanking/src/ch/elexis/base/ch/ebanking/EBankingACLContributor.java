@@ -2,9 +2,9 @@ package ch.elexis.base.ch.ebanking;
 
 import ch.elexis.admin.ACE;
 import ch.elexis.admin.AbstractAccessControl;
-import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.admin.IACLContributor;
 import ch.elexis.base.ch.ebanking.esr.Messages;
+import ch.elexis.core.ac.AccessControlDefaults;
 import ch.elexis.core.model.RoleConstants;
 
 public class EBankingACLContributor implements IACLContributor {

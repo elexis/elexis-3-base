@@ -640,7 +640,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			@Override
 			public void doRun(IDocumentHandle dh) {
 				if (dh.isCategory()) {
-					if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
+					if (AccessControlServiceHolder.get().request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
 						ListDialog ld = new ListDialog(getViewSite().getShell());
 
 						IQuery<IDocumentHandle> qbe = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
@@ -693,7 +693,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			@Override
 			public void doRun(IDocumentHandle dh) {
 				if (dh.isCategory()) {
-					if (CoreHub.acl.request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
+					if (AccessControlServiceHolder.get().request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
 
 						InputDialog id = new InputDialog(getViewSite().getShell(),
 								MessageFormat.format("Kategorie {0} umbenennen.", dh.getLabel()),

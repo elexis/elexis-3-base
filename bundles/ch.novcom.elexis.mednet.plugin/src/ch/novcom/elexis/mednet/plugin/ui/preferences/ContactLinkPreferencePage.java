@@ -268,7 +268,7 @@ public class ContactLinkPreferencePage extends PreferencePage implements IWorkbe
 				}
 			}
 		});
-		if (CoreHub.acl.request(AccessControlDefaults.DELETE_LABITEMS) == false) {
+		if (AccessControlServiceHolder.get().request(AccessControlDefaults.DELETE_LABITEMS) == false) {
 			bDelAllItems.setEnabled(false);
 		}
 	}

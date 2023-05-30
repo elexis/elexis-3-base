@@ -84,7 +84,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 				double scale = 1.0;
 				if ((myTracker.length > 0) && (myTracker[0] != null)) {
 					Point pt = getSize();
-					if (CoreHub.acl.request(MolemaxACL.SEE_IMAGES)) {
+					if (AccessControlServiceHolder.get().request(MolemaxACL.SEE_IMAGES)) {
 						Image img = myTracker[0].createImage();
 						if (img != null) {
 							ImageData idata = img.getImageData();
@@ -139,7 +139,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 	}
 
 	public void setUser() {
-		mDelete.setEnabled(CoreHub.acl.request(MolemaxACL.CHANGE_IMAGES));
+		mDelete.setEnabled(AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES));
 	}
 
 	public void dragEnter(final DropTargetEvent event) {
@@ -162,7 +162,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 	}
 
 	public void drop(final DropTargetEvent event) {
-		if (CoreHub.acl.request(MolemaxACL.CHANGE_IMAGES)) {
+		if (AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES)) {
 			String[] files = (String[]) event.data;
 			TimeTool today = new TimeTool();
 			TimeTool seq = new TimeTool(home.date);
@@ -198,7 +198,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 	}
 
 	public void setImage(final File file) {
-		if (CoreHub.acl.request(MolemaxACL.CHANGE_IMAGES)) {
+		if (AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES)) {
 			if (file.getName().startsWith("base")) {
 				if (myTracker.length != 0) {
 					if (SWTHelper.askYesNo(Messages.ImageSlot_replace, Messages.ImageSlot_deleteall)) {

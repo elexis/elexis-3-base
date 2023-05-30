@@ -75,7 +75,7 @@ public class Tracker extends PersistentObject {
 				createOrModifyTable("DROP TABLE " + TABLENAME);
 			}
 			createOrModifyTable(createDB);
-			new MolemaxACL().initializeDefaults(CoreHub.acl);
+			new MolemaxACL().initializeDefaults(AccessControlServiceHolder.get());
 		}
 
 		VersionInfo vi = new VersionInfo(version.get("koord"));

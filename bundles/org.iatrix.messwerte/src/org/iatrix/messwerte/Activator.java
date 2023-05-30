@@ -45,7 +45,7 @@ public class Activator extends AbstractUIPlugin {
 		ConfigServiceHolder.runIfConfigServiceAvailable(() -> {
 			boolean isInitialized = ConfigServiceHolder.getGlobal(Constants.ACL_INITIALIZED, false);
 			if (!isInitialized) {
-				new ACLContributor().initializeDefaults(CoreHub.acl);
+				new ACLContributor().initializeDefaults(AccessControlServiceHolder.get());
 				ConfigServiceHolder.setGlobal(Constants.ACL_INITIALIZED, true);
 			}
 		});

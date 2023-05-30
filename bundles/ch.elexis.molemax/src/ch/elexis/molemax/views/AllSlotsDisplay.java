@@ -100,7 +100,7 @@ public class AllSlotsDisplay extends Composite {
 	}
 
 	public void addImage(final String date, final int slot, final File file) {
-		if (CoreHub.acl.request(MolemaxACL.CHANGE_IMAGES)) {
+		if (AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES)) {
 			TimeTool ttDate = new TimeTool(date);
 			parent.setPatient(parent.pat, ttDate.toString(TimeTool.DATE_GER));
 			slots[slot].setImage(file);

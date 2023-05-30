@@ -67,7 +67,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
-		if (!CoreHub.acl.request(DBShakerACL.EXEC_DBSHAKER)) {
+		if (!AccessControlServiceHolder.get().request(DBShakerACL.EXEC_DBSHAKER)) {
 			MessageDialog.openInformation(UiDesk.getTopShell(), "Insufficient rights",
 					"Insufficient rights to execute.");
 			return;

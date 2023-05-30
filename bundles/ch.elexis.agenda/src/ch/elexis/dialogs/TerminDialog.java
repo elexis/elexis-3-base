@@ -291,7 +291,7 @@ public class TerminDialog extends TitleAreaDialog {
 				setEnablement();
 			}
 		});
-		if (CoreHub.acl.request(ACLContributor.CHANGE_APPLOCK) == false) {
+		if (AccessControlServiceHolder.get().request(ACLContributor.CHANGE_APPLOCK) == false) {
 			bLocked.setEnabled(false);
 		}
 		bSerie = new Button(topRight, SWT.CHECK);

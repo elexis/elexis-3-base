@@ -134,7 +134,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	abstract protected IPlannable getSelection();
 
 	private void internalRefresh() {
-		if (CoreHub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)) {
+		if (AccessControlServiceHolder.get().request(ACLContributor.DISPLAY_APPOINTMENTS)) {
 			UiDesk.getDisplay().asyncExec(new Runnable() {
 
 				@Override
@@ -156,8 +156,8 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	}
 
 	protected void updateActions() {
-		dayLimitsAction.setEnabled(CoreHub.acl.request(ACLContributor.CHANGE_DAYSETTINGS));
-		boolean canChangeAppointments = CoreHub.acl.request(ACLContributor.CHANGE_APPOINTMENTS);
+		dayLimitsAction.setEnabled(AccessControlServiceHolder.get().request(ACLContributor.CHANGE_DAYSETTINGS));
+		boolean canChangeAppointments = AccessControlServiceHolder.get().request(ACLContributor.CHANGE_APPOINTMENTS);
 		newTerminAction.setEnabled(canChangeAppointments);
 		AgendaActions.updateActions();
 		internalRefresh();

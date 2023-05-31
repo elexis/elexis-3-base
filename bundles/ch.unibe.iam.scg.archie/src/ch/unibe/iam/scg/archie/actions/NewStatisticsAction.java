@@ -173,45 +173,48 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 		UiDesk.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				final ResultPanel results = NewStatisticsAction.this.view.getResultPanel();
-				final AbstractDataProvider provider = ProviderManager.getInstance().getProvider();
-				final DataSet dataset = provider.getDataSet();
+				if (results != null && !results.isDisposed()) {
+					final AbstractDataProvider provider = ProviderManager.getInstance().getProvider();
+					final DataSet dataset = provider.getDataSet();
 
-				results.removeLoadingMessage();
-				if (dataset.isEmpty()) {
-					results.showEmptyMessage();
-				} else {
-					// create result table
-					TableFactory tableFactory = TableFactory.getInstance();
-					TableViewer viewer = tableFactory.createTableFromData(results, dataset, provider.getLabelProvider(),
-							provider.getContentProvider());
+					results.removeLoadingMessage();
+					if (dataset.isEmpty()) {
+						results.showEmptyMessage();
+					} else {
+						// create result table
+						TableFactory tableFactory = TableFactory.getInstance();
+						TableViewer viewer = tableFactory.createTableFromData(results, dataset,
+								provider.getLabelProvider(), provider.getContentProvider());
 
-					// add column dataset sorter and add table to the manager
-					new DatasetTableColumnSorter(viewer.getTable(), dataset);
-					TableManager.getInstance().setTable(viewer.getTable());
+						// add column dataset sorter and add table to the
+						// manager
+						new DatasetTableColumnSorter(viewer.getTable(), dataset);
+						TableManager.getInstance().setTable(viewer.getTable());
 
-					// add selection menu
-					MenuManager menuManager = new MenuManager();
-					Menu menu = menuManager.createContextMenu(viewer.getTable());
-					viewer.getTable().setMenu(menu);
+						// add selection menu
+						MenuManager menuManager = new MenuManager();
+						Menu menu = menuManager.createContextMenu(viewer.getTable());
+						viewer.getTable().setMenu(menu);
 
-					NewStatisticsAction.this.view.getSite().registerContextMenu(menuManager, viewer);
-					NewStatisticsAction.this.view.getSite().setSelectionProvider(viewer);
-				}
+						NewStatisticsAction.this.view.getSite().registerContextMenu(menuManager, viewer);
+						NewStatisticsAction.this.view.getSite().setSelectionProvider(viewer);
+					}
 
-				// remove old chart models
-				ChartModelManager.getInstance().clean();
+					// remove old chart models
+					ChartModelManager.getInstance().clean();
 
-				// layout results at last
-				results.layout();
+					// layout results at last
+					results.layout();
 
-				// enable all actions back again
-				NewStatisticsAction.this.view.setActionsEnabled(true);
-				NewStatisticsAction.this.setEnabled(true);
+					// enable all actions back again
+					NewStatisticsAction.this.view.setActionsEnabled(true);
+					NewStatisticsAction.this.setEnabled(true);
 
-				// delegate property change event
-				for (IPropertyChangeListener listener : NewStatisticsAction.this.listeners) {
-					listener.propertyChange(new PropertyChangeEvent(NewStatisticsAction.this,
-							NewStatisticsAction.JOB_DONE, null, null));
+					// delegate property change event
+					for (IPropertyChangeListener listener : NewStatisticsAction.this.listeners) {
+						listener.propertyChange(new PropertyChangeEvent(NewStatisticsAction.this,
+								NewStatisticsAction.JOB_DONE, null, null));
+					}
 				}
 			}
 		});

@@ -11,11 +11,12 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 
-import org.apache.commons.lang3.StringUtils;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,7 +27,6 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
-import ch.elexis.core.status.ElexisStatus;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IContact;
@@ -38,6 +38,7 @@ import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.status.ElexisStatus;
 import ch.elexis.data.Verrechnet;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -149,7 +150,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					row[index++] = patient.getLastName();
 					row[index++] = patient.getFirstName();
 					row[index++] = pif.format(patient.getPatientNr());
-					row[index++] = patient.getDateOfBirth().toLocalDate().format(dateFormat);
+					row[index++] = getGeburtsDatum(patient);
 					row[index++] = patient.getGender();
 					row[index++] = patient.getZip();
 					row[index++] = patient.getCity();
@@ -241,5 +242,10 @@ public class AlleLeistungen extends AbstractTimeSeries {
 				return 1;
 		}
 		return 0;
+	}
+
+	private String getGeburtsDatum(IPatient patient) {
+		LocalDateTime dob = patient.getDateOfBirth();
+		return dob != null ? dob.format(dateFormat) : "";
 	}
 }

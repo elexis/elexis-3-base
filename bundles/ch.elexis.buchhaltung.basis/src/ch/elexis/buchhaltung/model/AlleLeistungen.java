@@ -11,6 +11,8 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.model;
 
+
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,7 +150,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					row[index++] = patient.getLastName();
 					row[index++] = patient.getFirstName();
 					row[index++] = pif.format(patient.getPatientNr());
-					row[index++] = patient.getDateOfBirth().toLocalDate().format(dateFormat);
+					row[index++] = getGeburtsDatum(patient);
 					row[index++] = patient.getGender();
 					row[index++] = patient.getZip();
 					row[index++] = patient.getCity();
@@ -240,5 +242,10 @@ public class AlleLeistungen extends AbstractTimeSeries {
 				return 1;
 		}
 		return 0;
+	}
+
+	private String getGeburtsDatum(IPatient patient) {
+		LocalDateTime dob = patient.getDateOfBirth();
+		return dob != null ? dob.format(dateFormat) : "";
 	}
 }

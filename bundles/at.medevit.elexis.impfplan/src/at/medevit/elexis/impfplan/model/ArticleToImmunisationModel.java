@@ -59,6 +59,7 @@ public class ArticleToImmunisationModel {
 		inl("J07BG01;J07BG"); //$NON-NLS-1$
 		inl("J07BH01;J07BH"); //$NON-NLS-1$
 		inl("J07BK01;J07BK01"); //$NON-NLS-1$
+		inl("J07BK03;J07BK02"); //$NON-NLS-1$
 		inl("J07BL01;J07BL"); //$NON-NLS-1$
 		inl("J07BM01;J07BM"); //$NON-NLS-1$
 		inl("J07BM02;J07BM"); //$NON-NLS-1$

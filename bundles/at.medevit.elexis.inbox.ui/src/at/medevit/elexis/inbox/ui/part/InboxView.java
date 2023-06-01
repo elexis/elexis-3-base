@@ -265,7 +265,7 @@ public class InboxView extends ViewPart {
 		});
 		column.setEditingSupport(new CheckBoxColumnEditingSupport(viewer));
 		column.getColumn().setText("Visiert");
-		column.getColumn().setWidth(30);
+		column.getColumn().setWidth(35);
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override

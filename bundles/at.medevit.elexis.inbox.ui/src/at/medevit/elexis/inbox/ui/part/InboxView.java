@@ -295,6 +295,11 @@ public class InboxView extends ViewPart {
 									.setActivePatient(((PatientInboxElements) selectedElement).getPatient());
 						}
 					}
+					if (((StructuredSelection) selection).getFirstElement() instanceof IInboxElement) {
+						InboxElementUiExtension extension = new InboxElementUiExtension();
+						extension
+								.fireSingleClicked((IInboxElement) ((StructuredSelection) selection).getFirstElement());
+					}
 				}
 			}
 		});

@@ -105,4 +105,12 @@ public interface IInboxElementUiProvider {
 	public default GroupedInboxElements getGrouped(PatientInboxElements patientInboxElements, IInboxElement element) {
 		return null;
 	}
+
+	/**
+	 * Method called when element is single clicked.
+	 *
+	 * @param element
+	 */
+	public default void singleClicked(IInboxElement element) {
+	}
 }

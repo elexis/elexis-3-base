@@ -113,6 +113,13 @@ public class InboxElementUiExtension {
 		}
 	}
 
+	public void fireSingleClicked(IInboxElement element) {
+		IInboxElementUiProvider provider = getProvider(element);
+		if (provider != null) {
+			provider.singleClicked(element);
+		}
+	}
+
 	public boolean isVisible(IInboxElement element) {
 		IInboxElementUiProvider provider = getProvider(element);
 		if (provider != null) {

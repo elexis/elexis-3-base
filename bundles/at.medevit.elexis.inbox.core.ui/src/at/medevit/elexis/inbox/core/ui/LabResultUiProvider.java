@@ -24,6 +24,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.inbox.core.ui.filter.LabInboxFilter;
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
@@ -32,17 +33,17 @@ import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.LabServiceHolder;
 import ch.elexis.core.types.LabItemTyp;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.LabResult;
 import ch.rgw.tools.Result;
 
 public class LabResultUiProvider implements IInboxElementUiProvider {
-	// private static DecorationOverlayIcon pathologicLabImage;
 
 	private IViewDescriptor rocheView;
 	private IViewDescriptor labView;
 
 	private LabResultLabelProvider labelProvider;
-	// private PathologicInboxFilter filter;
+	private LabInboxFilter filter;
 
 	public LabResultUiProvider() {
 		labelProvider = new LabResultLabelProvider();
@@ -50,20 +51,15 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 
 	@Override
 	public ImageDescriptor getFilterImage() {
-		// if (pathologicLabImage == null) {
-		// initializeImages();
-		// }
-		// return pathologicLabImage;
-		return null;
+		return Images.IMG_VIEW_LABORATORY.getImageDescriptor();
 	}
 
 	@Override
 	public ViewerFilter getFilter() {
-		// if (filter == null) {
-		// filter = new PathologicInboxFilter();
-		// }
-		// return filter;
-		return null;
+		if (filter == null) {
+			filter = new LabInboxFilter();
+		}
+		return filter;
 	}
 
 	@Override
@@ -106,17 +102,6 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 		}
 		return null;
 	}
-
-	// private static void initializeImages(){
-	// ImageDescriptor[] overlays = new ImageDescriptor[1];
-	// overlays[0] =
-	// AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.inbox.ui",
-	// //$NON-NLS-1$
-	// "/rsc/img/achtung_overlay.png"); //$NON-NLS-1$
-	//
-	// pathologicLabImage =
-	// new DecorationOverlayIcon(Images.IMG_VIEW_LABORATORY.getImage(), overlays);
-	// }
 
 	@Override
 	public void doubleClicked(IInboxElement element) {

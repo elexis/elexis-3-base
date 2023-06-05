@@ -10,6 +10,7 @@ import java.util.TimerTask;
 import java.util.zip.GZIPInputStream;
 
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.component.annotations.Component;
@@ -67,7 +68,7 @@ public class StartupHandler implements EventHandler {
 							}
 							logger.debug("Opening ImportEMediplanDialog"); //$NON-NLS-1$
 							ImportEMediplanDialog dlg = new ImportEMediplanDialog(UiDesk.getTopShell(), medication,
-									selectedPatientId != null);
+									StringUtils.isNotBlank(medication.Patient.patientId));
 							dlg.open();
 						}
 					});

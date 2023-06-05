@@ -15,14 +15,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.wb.swt.ResourceManager;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
-import ch.elexis.data.NamedBlob;
+import ch.elexis.core.model.IBlob;
 import ch.rgw.tools.TimeTool;
 
 public class EMediplanLabelProvider extends LabelProvider {
 	@Override
 	public String getText(Object element) {
-		NamedBlob document = (NamedBlob) ((IInboxElement) element).getObject();
-		return "EMediplan von " + new TimeTool(document.getLastUpdate()).toString(TimeTool.FULL_GER);
+		IBlob document = (IBlob) ((IInboxElement) element).getObject();
+		return "EMediplan von " + new TimeTool(document.getLastupdate()).toString(TimeTool.FULL_GER);
 	}
 
 	@Override

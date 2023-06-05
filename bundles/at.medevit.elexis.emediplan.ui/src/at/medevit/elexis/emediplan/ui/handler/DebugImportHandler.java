@@ -16,22 +16,37 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.emediplan.StartupHandler;
+import ch.elexis.barcode.scanner.BarcodeScannerMessage;
+import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.jdt.NonNull;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.dialogs.base.InputDialog;
 
 public class DebugImportHandler extends AbstractHandler implements IHandler {
 
+	private static boolean useJsonInput = true;
+	private static boolean useBarcodeMessage = false;
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		InputDialog inputDialog = new InputDialog(Display.getDefault().getActiveShell(), "eMediplan JSON",
-				"Bitte geben Sie das eMediplan JSON ein das importiert werden soll", StringUtils.EMPTY, null,
-				SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
-		if (inputDialog.open() == MessageDialog.OK) {
-			String importJson = inputDialog.getValue();
+		if (useJsonInput) {
+			InputDialog inputDialog = new InputDialog(Display.getDefault().getActiveShell(), "eMediplan JSON",
+					"Bitte geben Sie das eMediplan JSON ein das importiert werden soll", StringUtils.EMPTY, null,
+					SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+			if (inputDialog.open() == MessageDialog.OK) {
+				String importJson = inputDialog.getValue();
 
-			StartupHandler.openEMediplanImportDialog(getEncodedJson(importJson), null);
+				StartupHandler.openEMediplanImportDialog(getEncodedJson(importJson), null);
+			}
 		}
+
+		if (useBarcodeMessage) {
+			ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, new BarcodeScannerMessage("debug",
+					"debug",
+					"PUT CHMED16A... HERE"));
+		}
+
 		return null;
 	}
 

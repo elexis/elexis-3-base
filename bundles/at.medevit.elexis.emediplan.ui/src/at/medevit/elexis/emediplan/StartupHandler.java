@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.component.annotations.Component;
@@ -59,7 +60,7 @@ public class StartupHandler implements EventHandler {
 							}
 							logger.debug("Opening ImportEMediplanDialog"); //$NON-NLS-1$
 							ImportEMediplanDialog dlg = new ImportEMediplanDialog(UiDesk.getTopShell(), medication,
-									selectedPatientId != null);
+									StringUtils.isNotBlank(medication.Patient.patientId));
 							dlg.open();
 						}
 					});

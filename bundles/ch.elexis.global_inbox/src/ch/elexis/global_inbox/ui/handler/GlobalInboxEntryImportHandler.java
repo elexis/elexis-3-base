@@ -10,6 +10,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -96,7 +97,9 @@ public class GlobalInboxEntryImportHandler {
 		new GlobalInboxUtil().removeFiles(globalInboxEntry);
 
 		// update document preview with imported document
-		eventBroker.send(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, document);
+		if (StringUtils.containsIgnoreCase(document.getMimeType(), "pdf")) { //$NON-NLS-1$
+			eventBroker.send(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, document);
+		}
 
 		boolean automaticBilling = configService.getLocal(Preferences.PREF_AUTOBILLING, false);
 		if (automaticBilling && AutomaticBilling.isEnabled()) {

@@ -99,6 +99,9 @@ public class GlobalInboxEntryImportHandler {
 
 		new GlobalInboxUtil().removeFiles(globalInboxEntry);
 
+		// update document preview with imported document
+		eventBroker.send(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, document);
+
 		boolean automaticBilling = configService.getLocal(Preferences.PREF_AUTOBILLING, false);
 		if (automaticBilling && AutomaticBilling.isEnabled()) {
 			AutomaticBilling billing = new AutomaticBilling(document);

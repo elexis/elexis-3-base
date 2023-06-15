@@ -1,11 +1,11 @@
 package ch.elexis.base.befunde.findings.migrator.strategy;
 
-import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,8 @@ import ch.elexis.befunde.Messwert;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.findings.IObservation;
 import ch.elexis.core.findings.templates.model.InputDataNumeric;
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class NumericMigration extends AbstractMigrationStrategy implements IMigrationStrategy {
 
@@ -31,8 +32,9 @@ public class NumericMigration extends AbstractMigrationStrategy implements IMigr
 	@Override
 	public Optional<IObservation> migrate() {
 		try {
-			IObservation observation = (IObservation) templateService
-					.createFinding(Patient.load(messwert.get(Messwert.FLD_PATIENT_ID)), template);
+			IObservation observation = (IObservation) templateService.createFinding(
+					CoreModelServiceHolder.get().load(messwert.get(Messwert.FLD_PATIENT_ID), IPatient.class).get(),
+					template);
 
 			String result = messwert.getResult(mapping.getLocalBefundField());
 			observation.setNumericValue(getValue(result), ((InputDataNumeric) template.getInputData()).getUnit());

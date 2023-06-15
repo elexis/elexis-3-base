@@ -15,7 +15,8 @@ import ch.elexis.core.findings.IObservation.ObservationType;
 import ch.elexis.core.findings.ObservationComponent;
 import ch.elexis.core.findings.codes.CodingSystem;
 import ch.elexis.core.findings.util.ModelUtil;
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class ComponentMigration extends AbstractMigrationStrategy implements IMigrationStrategy {
 
@@ -160,7 +161,8 @@ public class ComponentMigration extends AbstractMigrationStrategy implements IMi
 			}
 		}
 		try {
-			return (IObservation) templateService.createFinding(Patient.load(messwert.get(Messwert.FLD_PATIENT_ID)),
+			return (IObservation) templateService.createFinding(
+					CoreModelServiceHolder.get().load(messwert.get(Messwert.FLD_PATIENT_ID), IPatient.class).get(),
 					template);
 		} catch (ElexisException e) {
 			logger.error("Error creating observation", e); //$NON-NLS-1$

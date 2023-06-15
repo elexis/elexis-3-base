@@ -9,7 +9,8 @@ import ch.elexis.base.befunde.findings.migrator.messwert.MesswertFieldMapping;
 import ch.elexis.befunde.Messwert;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.findings.IObservation;
-import ch.elexis.data.Patient;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class TextMigration extends AbstractMigrationStrategy implements IMigrationStrategy {
 
@@ -26,8 +27,9 @@ public class TextMigration extends AbstractMigrationStrategy implements IMigrati
 	@Override
 	public Optional<IObservation> migrate() {
 		try {
-			IObservation observation = (IObservation) templateService
-					.createFinding(Patient.load(messwert.get(Messwert.FLD_PATIENT_ID)), template);
+			IObservation observation = (IObservation) templateService.createFinding(
+					CoreModelServiceHolder.get().load(messwert.get(Messwert.FLD_PATIENT_ID), IPatient.class).get(),
+					template);
 
 			observation.setStringValue(getValue(messwert.getResult(mapping.getLocalBefundField())));
 

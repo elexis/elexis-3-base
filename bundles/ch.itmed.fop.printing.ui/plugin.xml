@@ -51,6 +51,21 @@
                 </with>
             </activeWhen>
         </handler>
+        <handler
+              class="ch.itmed.fop.printing.handlers.PatientBarCodeLabelHandler"
+              commandId="ch.itmed.fop.printing.handlers.PatientBarCodeLabelHandler">
+           <activeWhen>
+              <with
+                    variable="activeContexts">
+                 <iterate
+                       operator="or">
+                    <equals
+                          value="ch.elexis.context.itmed.fop.printing">
+                    </equals>
+                 </iterate>
+              </with>
+           </activeWhen>
+        </handler>
     </extension>
     <extension point="org.eclipse.ui.commands">
         <command defaultHandler="ch.itmed.fop.printing.handlers.MedicationLabelHandler" id="ch.itmed.fop.printing.command.MedicationLabelPrint" name="Medi-Etikette drucken">
@@ -65,6 +80,11 @@
               defaultHandler="ch.itmed.fop.printing.handlers.SelectedAppointmentCardHandler"
               id="ch.itmed.fop.printing.command.SelectedAppointmentCardPrint"
               name="Selektierten Termin drucken">
+        </command>
+        <command
+              defaultHandler="ch.itmed.fop.printing.handlers.PatientBarCodeLabelHandler"
+              id="ch.itmed.fop.printing.handlers.PatientBarCodeLabelHandler"
+              name="Patienten Barcode drucken">
         </command>
     </extension>
     <extension point="org.eclipse.ui.menus">
@@ -161,6 +181,20 @@
                  label="Terminserie drucken"
                  style="push">
            </command>
+        </menuContribution>
+        <menuContribution
+              allPopups="false"
+              locationURI="toolbar:org.eclipse.ui.main.toolbar">
+           <toolbar
+                 id="ch.itmed.fop.printing.ui.barcod.toolbar"
+                 label="Barcode drucken">
+              <command
+                    commandId="ch.itmed.fop.printing.handlers.PatientBarCodeLabelHandler"
+                    icon="res/icons/barcode.png"
+                    label="Barcode drucken"
+                    style="push">
+              </command>
+           </toolbar>
         </menuContribution>
 
     </extension>

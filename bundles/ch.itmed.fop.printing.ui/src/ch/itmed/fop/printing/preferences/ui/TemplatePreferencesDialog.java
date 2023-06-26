@@ -46,14 +46,18 @@ import ch.itmed.fop.printing.resources.ResourceProvider;
 import ch.itmed.fop.printing.ui.resources.UiResourceProvider;
 
 class TemplatePreferencesDialog extends TitleAreaDialog {
-	private String docName, textOrientation;
+
+	private String docName, textOrientation, textBarcodeFormat;
 	private int selectionIndex;
 	private IPreferenceStore settingsStore;
 	private Composite templateArea, pageCustomArea;
 	private Text xslTemplate, pageWidth, pageHeight, pageMarginTop, pageMarginBottom, pageMarginLeft, pageMarginRight,
 			responsiblePharmacist;
 	private Combo settingsStoreCombo, printerName, pageTemplateName;
-	private Button buttonHorizontal, buttonVertical, xslCustomFlag, xslCustomFileDialog, pageCustomCheckBox;
+	private Button buttonHorizontal, buttonVertical, btnElexis, btnLaborbarcode, xslCustomFlag, xslCustomFileDialog,
+			pageCustomCheckBox;
+
+	private Group orientationGroup;
 
 	public TemplatePreferencesDialog(Shell parentShell, int selectionIndex) {
 		super(parentShell);
@@ -101,13 +105,16 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 
 		new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR)
 				.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
+		if (!docName.equals("BarCodeLabel")) {
+			new Label(composite, SWT.NONE).setText("Drucker");
+		} else {
+		}
 
-		new Label(composite, SWT.NONE).setText("Drucker");
 		printerName = new Combo(composite, SWT.READ_ONLY);
 		printerName.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		printerName.setItems(PrinterProvider.getAvailablePrinters());
 
-		Group orientationGroup = new Group(composite, SWT.NONE);
+		orientationGroup = new Group(composite, SWT.NONE);
 		orientationGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
 		orientationGroup.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
 
@@ -143,6 +150,46 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 			}
 		});
 
+		if (docName.equals("BarCodeLabel")) {
+
+			Group grpBarcodeformate = new Group(composite, SWT.NONE);
+			RowLayout rowLayout = new RowLayout(SWT.HORIZONTAL);
+			rowLayout.spacing = 90;
+			grpBarcodeformate.setLayout(rowLayout);
+			grpBarcodeformate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
+			grpBarcodeformate.setText(Messages.TemplatePreferences_TextBarCodeFormate);
+
+			btnElexis = new Button(grpBarcodeformate, SWT.RADIO);
+			btnElexis.setText(Messages.TemplatePreferences_TextOrientation_BarcodeElexis);
+			btnElexis.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event e) {
+					switch (e.type) {
+					case SWT.Selection:
+						textBarcodeFormat = "0"; //$NON-NLS-1$
+
+						break;
+					}
+				}
+			});
+
+			btnLaborbarcode = new Button(grpBarcodeformate, SWT.RADIO);
+			btnLaborbarcode.setText(Messages.TemplatePreferences_TextOrientation_BarcodePat);
+			btnLaborbarcode.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event e) {
+					switch (e.type) {
+					case SWT.Selection:
+						textBarcodeFormat = "14"; //$NON-NLS-1$
+
+						break;
+					}
+				}
+			});
+			new Label(composite, SWT.NONE);
+			new Label(composite, SWT.NONE);
+
+		}
 		xslCustomFlag = new Button(composite, SWT.CHECK);
 		xslCustomFlag.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		xslCustomFlag.setText(Messages.TemplatePreferences_XslSetting);
@@ -250,7 +297,6 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 			responsiblePharmacist = new Text(composite, SWT.BORDER);
 			responsiblePharmacist.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		}
-
 		initializeValues();
 
 		return composite;
@@ -293,6 +339,9 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 			settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 13),
 					responsiblePharmacist.getText());
 		}
+		if (docName.equals(PreferenceConstants.BAR_CODE_LABEL)) {
+			settingsStore.setValue(PreferenceConstants.getDocPreferenceConstant(docName, 14), textBarcodeFormat);
+		}
 
 		super.okPressed();
 	}
@@ -324,10 +373,27 @@ class TemplatePreferencesDialog extends TitleAreaDialog {
 
 		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7)).equals("90")) { //$NON-NLS-1$
 			buttonVertical.setSelection(true);
+			textOrientation = "90";
+			buttonHorizontal.setSelection(false);
 		} else {
 			buttonHorizontal.setSelection(true);
+			textOrientation = "0";
+			buttonVertical.setSelection(false);
 		}
+		if (docName.equals("BarCodeLabel")) {
 
+			if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 14)).equals("14")) { //$NON-NLS-1$
+
+				btnLaborbarcode.setSelection(true);
+				textBarcodeFormat = "14";
+				btnElexis.setSelection(false);
+			} else {
+				btnElexis.setSelection(true);
+				textBarcodeFormat = "0";
+				btnLaborbarcode.setSelection(false);
+			}
+
+		}
 		if (docName.equals(PreferenceConstants.MEDICATION_LABEL)) {
 			responsiblePharmacist
 					.setText(settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 13)));

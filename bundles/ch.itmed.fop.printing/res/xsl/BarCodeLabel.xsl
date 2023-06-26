@@ -63,13 +63,8 @@
 						</fo:block>
 						<fo:block>
 							<xsl:value-of select="Etikette/@CostBearer"/>
-						</fo:block>
-						<fo:block>
+							&#160;
 							<xsl:value-of select="Etikette/@InsurancePolicyNumber"/>
-						</fo:block>
-						<fo:block>
-							Datum: &#160;<xsl:value-of select="Etikette/@currentDate"/>
-							Zeit: &#160;<xsl:value-of select="Etikette/@currentTime"/>
 						</fo:block>
 					</fo:block-container>
 				</fo:flow>

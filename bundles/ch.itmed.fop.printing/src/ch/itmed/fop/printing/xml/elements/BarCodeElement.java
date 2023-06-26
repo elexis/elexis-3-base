@@ -70,9 +70,13 @@ public class BarCodeElement {
 		etikette.setAttribute("label", pat.getLabel());
 		if (pat2.getCostBearer() != null) {
 			etikette.setAttribute("CostBearer", pat2.getCostBearer());
-			etikette.setAttribute("InsurancePolicyNumber", "Ver-Nr: " + pat2.getInsurancePolicyNumber());
 
 		}
+		if (pat2.getInsurancePolicyNumber() != null && !pat2.getInsurancePolicyNumber().isEmpty()) {
+
+			etikette.setAttribute("InsurancePolicyNumber", "Ver-Nr: " + pat2.getInsurancePolicyNumber());
+		}
+
 		etikette.setAttribute("FirstName", pat.getFirstName());
 		etikette.setAttribute("LastName", pat.getLastName());
 		etikette.setAttribute("Birthdate", pat3.getBirthdate());

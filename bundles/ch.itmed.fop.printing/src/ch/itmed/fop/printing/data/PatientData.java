@@ -227,4 +227,8 @@ public class PatientData {
 				+ new TimeTool().toString(TimeTool.TIME_COMPACT);
 		return pid;
 	}
+
+	public IPatient getPatient() {
+		return patient;
+	}
 }

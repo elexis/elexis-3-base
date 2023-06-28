@@ -11,6 +11,7 @@
 
 package ch.itmed.fop.printing.print;
 
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +36,11 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.render.print.PageableRenderer;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.printing.PDFPageable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +53,16 @@ public final class PrintProvider {
 		for (PrintService printer : services) {
 			if (printer.getName().equals(printerName)) {
 				return printer.createPrintJob();
+			}
+		}
+		return null;
+	}
+
+	private static PrintService getPrintServiceByName(String printerName) {
+		PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+		for (PrintService service : services) {
+			if (service.getName().equals(printerName)) {
+				return service;
 			}
 		}
 		return null;
@@ -96,5 +112,35 @@ public final class PrintProvider {
 		Doc doc = new SimpleDoc(renderer, DocFlavor.SERVICE_FORMATTED.PAGEABLE, null);
 		printJob.print(doc, null);
 		logger.info("Print job sent to printer: " + printerName); //$NON-NLS-1$
+	}
+
+	public static void printPdf(InputStream pdf, String printerName) {
+		Job printJob = new Job("Print pdf on " + printerName) {
+			@Override
+			protected IStatus run(org.eclipse.core.runtime.IProgressMonitor monitor) {
+				try {
+					// create print job
+					PrinterJob job = PrinterJob.getPrinterJob();
+					PrintService printer = getPrintServiceByName(printerName);
+					if (printer != null) {
+						job.setPrintService(printer);
+						logger.info("Print job sent to printer: " + printerName);
+					} else {
+						logger.warn("Printer not found: " + printerName);
+					}
+					job.setPageable(new PDFPageable(PDDocument.load(pdf)));
+
+					// send print job
+					job.print();
+					return Status.OK_STATUS;
+				} catch (Exception e) {
+					logger.error("Error printing pdf ", e);
+					e.printStackTrace();
+					return new Status(IStatus.ERROR, "ch.itmed.fop.printing.print", "Error printing pdf", e);
+				}
+			}
+		};
+		// run job
+		printJob.schedule();
 	}
 }

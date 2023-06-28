@@ -256,11 +256,16 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 		}
 
 		private void sort(int i, int j) {
-			String[] values = { items[i].getText(0), items[i].getText(1), items[i].getText(2) };
-			items[i].dispose();
-			TableItem item = new TableItem(table, SWT.NONE, j);
-			item.setText(values);
-			items = table.getItems();
+			if (flds != null) {
+				String[] values = new String[flds.length];
+				for (int fldIdx = 0; fldIdx < flds.length; fldIdx++) {
+					values[fldIdx] = items[i].getText(fldIdx);
+				}
+				items[i].dispose();
+				TableItem item = new TableItem(table, SWT.NONE, j);
+				item.setText(values);
+				items = table.getItems();
+			}
 		}
 
 		public String[][] getFields() {

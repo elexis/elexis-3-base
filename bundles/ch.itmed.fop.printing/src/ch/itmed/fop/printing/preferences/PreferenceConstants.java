@@ -32,6 +32,7 @@ public class PreferenceConstants {
 	public static final String VERSIONED_LABEL = "VersionedLabel"; //$NON-NLS-1$
 	public static final String PATIENT_ADDRESS_LABEL = "PatientAddressLabel"; //$NON-NLS-1$
 	public static final String CONTACT_ADDRESS_LABEL = "ContactAddressLabel"; //$NON-NLS-1$
+	public static final String BAR_CODE_LABEL = "BarCodeLabel"; //$NON-NLS-1$
 
 	public static final int APPOINTMENT_CARD_ID = 0;
 	public static final int RECURRING_APPOINTMENTS_CARD_ID = 1;
@@ -41,6 +42,7 @@ public class PreferenceConstants {
 	public static final int VERSIONED_LABEL_ID = 5;
 	public static final int PATIENT_ADDRESSLABEL_ID = 6;
 	public static final int CONTACT_ADDRESS_LABEL_ID = 7;
+	public static final int BAR_CODE_LABEL_ID = 8;
 
 	private static final String PRINTER_NAME = "/printer/name"; // 0 //$NON-NLS-1$
 	private static final String XSL_TEMPLATE_PATH = "/xsl/templatePath"; // 1 //$NON-NLS-1$
@@ -56,6 +58,7 @@ public class PreferenceConstants {
 	private static final String PAGE_MARGIN_RIGHT = "/page/marginRight"; // 11 //$NON-NLS-1$
 	private static final String SETTING_SCOPE = "/settingScope"; // 12 //$NON-NLS-1$
 	private static final String MEDICATION_RESPONSIBLE_PHARMACIST = "medication/responsiblePharmacist"; // 13 //$NON-NLS-1$
+	private static final String PAGE_TEXT_TEXTBARCODEFORMAT = "/page/textBarcodeFormat"; // 14 //$NON-NLS-1$
 
 	/**
 	 * @param docName
@@ -103,6 +106,7 @@ public class PreferenceConstants {
 		docNames.add(VERSIONED_LABEL);
 		docNames.add(PATIENT_ADDRESS_LABEL);
 		docNames.add(CONTACT_ADDRESS_LABEL);
+		docNames.add(BAR_CODE_LABEL);
 	}
 
 	private static void initPreferenceConstants() {
@@ -123,7 +127,11 @@ public class PreferenceConstants {
 			constants.add(SETTINGS_BASE_PATH + docName + PAGE_MARGIN_LEFT);
 			constants.add(SETTINGS_BASE_PATH + docName + PAGE_MARGIN_RIGHT);
 			constants.add(SETTINGS_BASE_PATH + docName + SETTING_SCOPE);
+			constants.add(SETTINGS_BASE_PATH + docName + PAGE_TEXT_TEXTBARCODEFORMAT);
 
+			if (docName.equals(BAR_CODE_LABEL)) {
+				constants.add(SETTINGS_BASE_PATH + docName + PAGE_TEXT_TEXTBARCODEFORMAT);
+			}
 			if (docName.equals(MEDICATION_LABEL)) {
 				constants.add(SETTINGS_BASE_PATH + docName + MEDICATION_RESPONSIBLE_PHARMACIST);
 			}

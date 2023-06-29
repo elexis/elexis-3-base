@@ -29,8 +29,8 @@ import ch.itmed.fop.printing.preferences.SettingsProvider;
 import ch.itmed.fop.printing.print.PrintProvider;
 import ch.itmed.fop.printing.resources.Messages;
 import ch.itmed.fop.printing.resources.ResourceProvider;
-import ch.itmed.fop.printing.xml.documents.FoTransformer;
 import ch.itmed.fop.printing.xml.documents.MedicationLabel;
+import ch.itmed.fop.printing.xml.documents.PdfTransformer;
 
 public final class MedicationLabelHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(MedicationLabelHandler.class);
@@ -46,7 +46,7 @@ public final class MedicationLabelHandler extends AbstractHandler {
 					if (obj instanceof MedicationTableViewerItem) {
 						InputStream xmlDoc = MedicationLabel
 								.create(((MedicationTableViewerItem) obj).getPrescription());
-						InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+						InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
 								ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
 
 						String docName = PreferenceConstants.MEDICATION_LABEL;
@@ -55,13 +55,13 @@ public final class MedicationLabelHandler extends AbstractHandler {
 						String printerName = settingsStore
 								.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 						logger.info("Printing document MedicationLabel on printer: " + printerName); //$NON-NLS-1$
-						PrintProvider.print(fo, printerName);
+						PrintProvider.printPdf(pdf, printerName);
 					}
 				}
 			} else {
 				// print selection from context service
 				InputStream xmlDoc = MedicationLabel.create();
-				InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+				InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
 						ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
 
 				String docName = PreferenceConstants.MEDICATION_LABEL;
@@ -69,7 +69,7 @@ public final class MedicationLabelHandler extends AbstractHandler {
 
 				String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 				logger.info("Printing document MedicationLabel on printer: " + printerName); //$NON-NLS-1$
-				PrintProvider.print(fo, printerName);
+				PrintProvider.printPdf(pdf, printerName);
 			}
 		} catch (Exception e) {
 			String msg = e.getMessage();

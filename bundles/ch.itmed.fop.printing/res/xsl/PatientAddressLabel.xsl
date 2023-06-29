@@ -8,7 +8,7 @@
 	</xsl:variable>
 	<xsl:variable name="pageHeight">
 		<xsl:value-of select="Page/@pageHeight" />
-		</xsl:variable>
+	</xsl:variable>
 	<xsl:variable name="marginTop">
 		<xsl:value-of select="Page/@marginTop" />
 	</xsl:variable>
@@ -36,9 +36,10 @@
 					<fo:region-after />
 				</fo:simple-page-master>
 			</fo:layout-master-set>
-			<fo:page-sequence master-reference="PatientAddressLabel">
+			<fo:page-sequence
+				master-reference="PatientAddressLabel">
 				<fo:flow flow-name="xsl-region-body"
-				reference-orientation="{$textOrientation}">
+					reference-orientation="{$textOrientation}">
 					<fo:block-container font="12pt Helvetica"
 						font-weight="normal">
 						<xsl:apply-templates />
@@ -64,5 +65,5 @@
 			&#160;
 			<xsl:value-of select="City" />
 		</fo:block>
-	</xsl:template>
+			</xsl:template>
 </xsl:stylesheet>

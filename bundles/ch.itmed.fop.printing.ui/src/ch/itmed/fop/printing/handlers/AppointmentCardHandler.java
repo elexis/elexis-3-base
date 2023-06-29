@@ -27,7 +27,7 @@ import ch.itmed.fop.printing.print.PrintProvider;
 import ch.itmed.fop.printing.resources.Messages;
 import ch.itmed.fop.printing.resources.ResourceProvider;
 import ch.itmed.fop.printing.xml.documents.AppointmentCard;
-import ch.itmed.fop.printing.xml.documents.FoTransformer;
+import ch.itmed.fop.printing.xml.documents.PdfTransformer;
 
 public final class AppointmentCardHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(AppointmentCardHandler.class);
@@ -36,7 +36,7 @@ public final class AppointmentCardHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			InputStream xmlDoc = AppointmentCard.create();
-			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+			InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.APPOINTMENT_CARD_ID));
 
 			String docName = PreferenceConstants.APPOINTMENT_CARD;
@@ -44,7 +44,7 @@ public final class AppointmentCardHandler extends AbstractHandler {
 
 			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document AppointmentCard on printer: " + printerName); //$NON-NLS-1$
-			PrintProvider.print(fo, printerName);
+			PrintProvider.printPdf(pdf, printerName);
 		} catch (Exception e) {
 			SWTHelper.showError(Messages.DefaultError_Title, Messages.DefaultError_Message);
 			logger.error(e.getLocalizedMessage(), e);

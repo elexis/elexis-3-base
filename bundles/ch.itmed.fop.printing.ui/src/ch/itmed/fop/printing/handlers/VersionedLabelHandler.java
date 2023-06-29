@@ -26,7 +26,7 @@ import ch.itmed.fop.printing.preferences.SettingsProvider;
 import ch.itmed.fop.printing.print.PrintProvider;
 import ch.itmed.fop.printing.resources.Messages;
 import ch.itmed.fop.printing.resources.ResourceProvider;
-import ch.itmed.fop.printing.xml.documents.FoTransformer;
+import ch.itmed.fop.printing.xml.documents.PdfTransformer;
 import ch.itmed.fop.printing.xml.documents.VersionedLabel;
 
 public final class VersionedLabelHandler extends AbstractHandler {
@@ -36,7 +36,7 @@ public final class VersionedLabelHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			InputStream xmlDoc = VersionedLabel.create();
-			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+			InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.VERSIONED_LABEL_ID));
 
 			String docName = PreferenceConstants.VERSIONED_LABEL;
@@ -44,7 +44,7 @@ public final class VersionedLabelHandler extends AbstractHandler {
 
 			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document VersionedLabel on printer: " + printerName); //$NON-NLS-1$
-			PrintProvider.print(fo, printerName);
+			PrintProvider.printPdf(pdf, printerName);
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			if (msg != null) {

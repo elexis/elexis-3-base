@@ -25,8 +25,8 @@ import ch.itmed.fop.printing.print.PrintProvider;
 import ch.itmed.fop.printing.resources.Messages;
 import ch.itmed.fop.printing.resources.ResourceProvider;
 import ch.itmed.fop.printing.xml.documents.ArticleLabel;
-import ch.itmed.fop.printing.xml.documents.FoTransformer;
 import ch.itmed.fop.printing.xml.documents.MedicationLabel;
+import ch.itmed.fop.printing.xml.documents.PdfTransformer;
 
 public class ArticleMedicationLabelsHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(ArticleMedicationLabelsHandler.class);
@@ -50,31 +50,29 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 							// create medication labels for articles with medication
 							for (int i = 0; i < iBilled.getAmount(); i++) {
 								InputStream xmlDoc = MedicationLabel.create(prescription.get());
-								InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+								InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
 										ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
-
 								String docName = PreferenceConstants.MEDICATION_LABEL;
 								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
 								String printerName = settingsStore
 										.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 								logger.info("Printing document MedicationLabel on printer: " + printerName); //$NON-NLS-1$
-								PrintProvider.print(fo, printerName);
+								PrintProvider.printPdf(pdf, printerName);
 							}
 						} else {
 							// create article labels without medication
 							for (int i = 0; i < iBilled.getAmount(); i++) {
 								InputStream xmlDoc = ArticleLabel.create(article);
-								InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+								InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
 										ResourceProvider.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID));
-
 								String docName = PreferenceConstants.ARTICLE_LABEL;
 								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
 								String printerName = settingsStore
 										.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 								logger.info("Printing document ArticleLabel on printer: " + printerName); //$NON-NLS-1$
-								PrintProvider.print(fo, printerName);
+								PrintProvider.printPdf(pdf, printerName);
 							}
 						}
 					}

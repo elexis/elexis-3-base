@@ -27,7 +27,7 @@ import ch.itmed.fop.printing.print.PrintProvider;
 import ch.itmed.fop.printing.resources.Messages;
 import ch.itmed.fop.printing.resources.ResourceProvider;
 import ch.itmed.fop.printing.xml.documents.ContactAddressLabel;
-import ch.itmed.fop.printing.xml.documents.FoTransformer;
+import ch.itmed.fop.printing.xml.documents.PdfTransformer;
 
 public final class ContactAddressLabelHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(ContactAddressLabelHandler.class);
@@ -36,15 +36,14 @@ public final class ContactAddressLabelHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			InputStream xmlDoc = ContactAddressLabel.create();
-			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+			InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.CONTACT_ADDRESS_LABEL_ID));
-
 			String docName = PreferenceConstants.CONTACT_ADDRESS_LABEL;
 			IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
 
 			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document ContactAddressLabel on printer: " + printerName); //$NON-NLS-1$
-			PrintProvider.print(fo, printerName);
+			PrintProvider.printPdf(pdf, printerName);
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			if (msg != null) {

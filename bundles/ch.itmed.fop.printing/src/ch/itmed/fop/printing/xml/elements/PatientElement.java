@@ -15,6 +15,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ch.elexis.core.model.IPatient;
+import ch.itmed.fop.printing.barcode.BarcodeCreator;
 import ch.itmed.fop.printing.data.PatientData;
 
 public class PatientElement {
@@ -119,6 +120,8 @@ public class PatientElement {
 		c.appendChild(doc.createTextNode(pd.getOrderNumber()));
 		p.appendChild(c);
 
+		p.setAttribute("barcodeKennung", BarcodeCreator.createInternalCode128fromKontakt(pd.getPatient()));
+		p.setAttribute("barcodeKennungPatNr", BarcodeCreator.createInternalCode128FromKontaktPatNr(pd.getPatient()));
 		return p;
 	}
 }

@@ -41,7 +41,8 @@ import ch.itmed.fop.printing.resources.Messages;
 public final class GeneralPreferences extends PreferencePage implements IWorkbenchPreferencePage {
 	private String[] tableCols = { Messages.GeneralPreferences_Document, Messages.GeneralPreferences_Printer,
 			Messages.GeneralPreferences_PaperFormat, Messages.GeneralPreferences_XslTemplate,
-			Messages.GeneralPreferences_TextOrientation, Messages.GeneralPreferences_SettingScope };
+			Messages.GeneralPreferences_TextOrientation, Messages.GeneralPreferences_SettingScope,
+			Messages.GeneralPreferences_BarcodScope };
 
 	private static Table table;
 
@@ -71,6 +72,7 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 
 		for (int i = 0; i < tableCols.length; i++) {
 			table.getColumn(i).pack();
+
 		}
 
 		table.addMouseListener(new MouseAdapter() {
@@ -120,11 +122,19 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 
 		if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 7)).equals("90")) { //$NON-NLS-1$
 			item.setText(4, Messages.GeneralPreferences_OrientationPortrait);
+
 		} else {
 			item.setText(4, Messages.GeneralPreferences_OrientationLandscape);
+
 		}
 
-		// TODO: Resize the cell on updates
+		if (docName.equals("BarCodeLabel")) {
+			if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 14)).equals("14")) { //$NON-NLS-1$
+				item.setText(6, Messages.TemplatePreferences_TextOrientation_BarcodePat);
+			} else {
+				item.setText(6, Messages.TemplatePreferences_TextOrientation_BarcodeElexis);
+			}
+		}
 	}
 
 	private void createTableContent() {
@@ -136,6 +146,7 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 		@Override
 		public void accept(String s) {
 			TableItem item = new TableItem(table, SWT.NONE);
+
 			IPreferenceStore settingsStore;
 			if (CoreHub.localCfg.get(PreferenceConstants.getDocPreferenceConstant(s, 12), true)) {
 				settingsStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
@@ -164,6 +175,13 @@ public final class GeneralPreferences extends PreferencePage implements IWorkben
 				item.setText(4, Messages.GeneralPreferences_OrientationLandscape);
 			}
 
+			if (s.equals("BarCodeLabel")) {
+				if (settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(s, 14)).equals("14")) { //$NON-NLS-1$
+					item.setText(6, Messages.TemplatePreferences_TextOrientation_BarcodePat);
+				} else {
+					item.setText(6, Messages.TemplatePreferences_TextOrientation_BarcodeElexis);
+				}
+			}
 			TableEditor editor = new TableEditor(table);
 			Button button = new Button(table, SWT.CHECK);
 			button.setSelection(CoreHub.localCfg.get(PreferenceConstants.getDocPreferenceConstant(s, 12), true));

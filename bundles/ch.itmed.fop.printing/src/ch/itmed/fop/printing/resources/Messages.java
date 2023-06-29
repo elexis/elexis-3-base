@@ -13,8 +13,6 @@ package ch.itmed.fop.printing.resources;
 
 import java.util.ArrayList;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	private static ArrayList<String> docNames;
 	public static final String BUNDLE_NAME = "ch.itmed.fop.printing.resources.messages"; //$NON-NLS-1$
@@ -26,6 +24,7 @@ public class Messages {
 	public static String GeneralPreferences_OrientationPortrait = ch.elexis.core.l10n.Messages.Core_Vertical;
 	public static String GeneralPreferences_OrientationLandscape = ch.elexis.core.l10n.Messages.Core_Horizontal;
 	public static String GeneralPreferences_SettingScope = ch.elexis.core.l10n.Messages.Core_Use_global_settings;
+	public static String GeneralPreferences_BarcodScope = ch.elexis.core.l10n.Messages.Core_Barcode_global_settings;
 	public static String GeneralPreferences_Default = ch.elexis.core.l10n.Messages.GeneralPreferences_Default;
 	public static String GeneralPreferences_Custom = ch.elexis.core.l10n.Messages.GeneralPreferences_Custom;
 	public static String TemplatePreferences_Description = ch.elexis.core.l10n.Messages.TemplatePreferences_Description;
@@ -34,8 +33,11 @@ public class Messages {
 	public static String TemplatePreferences_SettingsStore_Global = ch.elexis.core.l10n.Messages.TemplatePreferences_SettingsStore_Global;
 	public static String TemplatePreferences_SettingsStore_Local = ch.elexis.core.l10n.Messages.TemplatePreferences_SettingsStore_Local;
 	public static String TemplatePreferences_TextOrientation = ch.elexis.core.l10n.Messages.TemplatePreferences_TextOrientation;
+	public static String TemplatePreferences_TextBarCodeFormate = ch.elexis.core.l10n.Messages.TemplatePreferences_TextBarCodeFormate;
 	public static String TemplatePreferences_TextOrientation_Horizontal = ch.elexis.core.l10n.Messages.Core_Horizontal;
 	public static String TemplatePreferences_TextOrientation_Vertical = ch.elexis.core.l10n.Messages.Core_Vertical;
+	public static String TemplatePreferences_TextOrientation_BarcodeElexis = ch.elexis.core.l10n.Messages.Core_BarcodeElexis;
+	public static String TemplatePreferences_TextOrientation_BarcodePat = ch.elexis.core.l10n.Messages.Core_BarcodePat;
 	public static String TemplatePreferences_XslSetting = ch.elexis.core.l10n.Messages.TemplatePreferences_XslSetting;
 	public static String TemplatePreferences_XslFileChooser = ch.elexis.core.l10n.Messages.TemplatePreferences_XslFileChooser;
 	public static String TemplatePreferences_XslFileChooser_XslFilter = ch.elexis.core.l10n.Messages.TemplatePreferences_XslFileChooser_XslFilter;
@@ -78,6 +80,7 @@ public class Messages {
 	public static String VersionedLabel_Name = ch.elexis.core.l10n.Messages.VersionedLabel_Name;
 	public static String PatientAddressLabel_Name = ch.elexis.core.l10n.Messages.PatientAddressLabel_Name;
 	public static String ContactAddressLabel_Name = ch.elexis.core.l10n.Messages.ContactAddressLabel_Name;
+	public static String BarCodeLabel_Name = ch.elexis.core.l10n.Messages.BarCodeLabel_Name;
 
 	public static String getDocumentName(int i) {
 		if (docNames == null) {
@@ -91,6 +94,7 @@ public class Messages {
 			docNames.add(VersionedLabel_Name);
 			docNames.add(PatientAddressLabel_Name);
 			docNames.add(ContactAddressLabel_Name);
+			docNames.add(BarCodeLabel_Name);
 		}
 
 		return docNames.get(i);

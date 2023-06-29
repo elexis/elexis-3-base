@@ -26,8 +26,8 @@ import ch.itmed.fop.printing.preferences.SettingsProvider;
 import ch.itmed.fop.printing.print.PrintProvider;
 import ch.itmed.fop.printing.resources.Messages;
 import ch.itmed.fop.printing.resources.ResourceProvider;
-import ch.itmed.fop.printing.xml.documents.FoTransformer;
 import ch.itmed.fop.printing.xml.documents.PatientAddressLabel;
+import ch.itmed.fop.printing.xml.documents.PdfTransformer;
 
 public final class PatientAddressLabelHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(PatientAddressLabelHandler.class);
@@ -36,7 +36,7 @@ public final class PatientAddressLabelHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
 			InputStream xmlDoc = PatientAddressLabel.create();
-			InputStream fo = FoTransformer.transformXmlToFo(xmlDoc,
+			InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
 					ResourceProvider.getXslTemplateFile(PreferenceConstants.PATIENT_ADDRESSLABEL_ID));
 
 			String docName = PreferenceConstants.PATIENT_ADDRESS_LABEL;
@@ -44,7 +44,7 @@ public final class PatientAddressLabelHandler extends AbstractHandler {
 
 			String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 			logger.info("Printing document PatientAddressLabel on printer: " + printerName); //$NON-NLS-1$
-			PrintProvider.print(fo, printerName);
+			PrintProvider.printPdf(pdf, printerName);
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			if (msg != null) {

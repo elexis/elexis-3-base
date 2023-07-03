@@ -32,10 +32,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
 import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
@@ -44,11 +46,14 @@ import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.holder.EncounterServiceHolder;
 import ch.elexis.core.time.TimeUtil;
+import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.documents.composites.CategorySelectionEditComposite;
 import ch.elexis.core.ui.e4.fieldassist.AsyncContentProposalProvider;
 import ch.elexis.core.ui.e4.fieldassist.IdentifiableContentProposal;
 import ch.elexis.core.ui.e4.providers.IdentifiableLabelProvider;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.data.Kontakt;
+import ch.elexis.data.Patient;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.parts.contentproposal.TitleContentProposalProvider;
@@ -154,8 +159,26 @@ public class GlobalInboxEntryDetailPart {
 
 		//
 		// PATIENT
-		Label lblPatient = new Label(parent, SWT.None);
-		lblPatient.setText("Patient");
+		Link linkPatient = new Link(parent, SWT.None);
+		linkPatient.setText("<a>Patient</a>");
+		linkPatient.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				KontaktSelektor kontaktSelektor = new KontaktSelektor(linkPatient.getShell(), Patient.class,
+						Messages.Core_Select_Patient, Messages.Core_Select_Patient, Patient.DEFAULT_SORT);
+				if (kontaktSelektor.open() == KontaktSelektor.OK) {
+					Patient patient = (Patient) kontaktSelektor.getSelection();
+					IPatient iPatient = patient.toIPatient();
+					cvPatient.add(iPatient);
+					cvPatient.setSelection(new StructuredSelection(iPatient));
+					if (globalInboxEntry != null) {
+						globalInboxEntry.getPatientCandidates().add(iPatient);
+						globalInboxEntry.setPatient(iPatient);
+
+					}
+				}
+			}
+		});
 
 		cvPatient = new ComboViewer(parent, SWT.NONE);
 		Combo comboPatient = cvPatient.getCombo();
@@ -199,7 +222,7 @@ public class GlobalInboxEntryDetailPart {
 		});
 
 		comboPatient.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		comboPatient.addListener(SWT.MouseDown, e->{
+		comboPatient.addListener(SWT.MouseDown, e -> {
 			comboPatient.setText("");
 			comboPatient.clearSelection();
 		});
@@ -219,8 +242,24 @@ public class GlobalInboxEntryDetailPart {
 
 		//
 		// SENDER
-		Label lblSender = new Label(parent, SWT.None);
-		lblSender.setText("Absender");
+		Link linkSender = new Link(parent, SWT.None);
+		linkSender.setText("<a>Absender</a>");
+		linkSender.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				KontaktSelektor kontaktSelektor = new KontaktSelektor(linkPatient.getShell(), Kontakt.class,
+						Messages.Core_Select_Contact, Messages.Core_Please_Select_Contact, Patient.DEFAULT_SORT);
+				if (kontaktSelektor.open() == KontaktSelektor.OK) {
+					Kontakt contact = (Kontakt) kontaktSelektor.getSelection();
+					IContact iContact = contact.toIContact();
+					cvSender.add(iContact);
+					cvSender.setSelection(new StructuredSelection(iContact));
+					if (globalInboxEntry != null) {
+						globalInboxEntry.setSender(iContact);
+					}
+				}
+			}
+		});
 
 		cvSender = new ComboViewer(parent, SWT.NONE);
 		Combo comboSender = cvSender.getCombo();
@@ -246,7 +285,7 @@ public class GlobalInboxEntryDetailPart {
 				globalInboxEntry.setSender(sender);
 			}
 		});
-		comboSender.addListener(SWT.MouseDown, e->{
+		comboSender.addListener(SWT.MouseDown, e -> {
 			comboSender.setText("");
 			comboSender.clearSelection();
 		});

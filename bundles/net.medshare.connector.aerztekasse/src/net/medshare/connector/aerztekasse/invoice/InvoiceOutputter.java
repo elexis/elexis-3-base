@@ -12,7 +12,6 @@
  *******************************************************************************/
 package net.medshare.connector.aerztekasse.invoice;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +27,7 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
@@ -227,6 +228,8 @@ public class InvoiceOutputter extends XMLExporter {
 							Iterator<Rechnung> ir = rnn.iterator();
 							Rechnung r = ir.next();
 							ret.add(Result.SEVERITY.ERROR, 1, Messages.InvoiceOutputter_ErrorHttpPost, r, true);
+							r.setStatus(InvoiceState.DEFECTIVE);
+
 						}
 
 					}

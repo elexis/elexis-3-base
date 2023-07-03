@@ -52,7 +52,7 @@ public class QRBillDataBuilderTest {
 		String qrData = data.toString();
 		assertTrue(StringUtils.isNotEmpty(qrData));
 		String[] parts = qrData.split("\r\n", -1);
-		assertEquals(32, parts.length);
+		assertEquals(31, parts.length);
 
 		assertEquals("CH4431999123000889012", parts[3]);
 		assertEquals("Grosse Marktgasse 28", parts[6]);

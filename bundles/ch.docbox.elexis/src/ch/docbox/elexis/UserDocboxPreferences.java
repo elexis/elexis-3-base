@@ -83,7 +83,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	private Button buttonGetAppointmentsEmergencyService;
 	private Button buttonGetAppointmentsPharmaVisits;
 	private Button buttonGetAppointmentsTerminvereinbarung;
-	private Button buttonConfigureCert;
 
 	private Button buttonUseHCard;
 
@@ -211,20 +210,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			secretkeyFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
 
 			addField(secretkeyFieldEditor);
-		}
-
-		buttonConfigureCert = new Button(getFieldEditorParent(), SWT.PUSH);
-		buttonConfigureCert.setText("Zertifikat konfigurieren");
-		buttonConfigureCert.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
-		buttonConfigureCert.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				CertificateConfigDialog dlg = new CertificateConfigDialog(getShell());
-				dlg.open();
-			}
-		});
-		if (WsClientUtil.isMedelexisCertAvailable()) {
-			buttonConfigureCert.setEnabled(false);
 		}
 
 		buttonUseHCard = new Button(getFieldEditorParent(), SWT.CHECK);
@@ -706,9 +691,8 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		if (UserDocboxPreferences.useHCard()) {
 			new HCardBrowser(UserDocboxPreferences.getDocboxLoginID(false), null).setProxyPort();
 		}
-		WsClientUtil.addWsSecurityAndHttpConfigWithClientCert(serviceClient,
-				WsClientConfig.getSecretkey() + WsClientConfig.getUsername(), WsClientConfig.getPassword(),
-				WsClientConfig.getP12Path(), null, WsClientConfig.getP12Password(), null);
+		WsClientUtil.addWsSecurityAndHttpConfigWithClientCert(serviceClient, WsClientConfig.getUsername(),
+				WsClientConfig.getPassword());
 
 		CDACHServices port = serviceClient.getCDACHServices();
 		((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,

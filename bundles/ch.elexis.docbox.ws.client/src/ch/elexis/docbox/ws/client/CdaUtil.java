@@ -25,31 +25,42 @@ public class CdaUtil {
 
 	public static synchronized Unmarshaller getCdaUnmarshaller() {
 		if (CdaUtil.unmarshaller == null) {
+			ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
 			try {
+				Thread.currentThread().setContextClassLoader(CdaUtil.class.getClassLoader());
 				JAXBContext jaxbContext = JAXBContext.newInstance("org.hl7.v3");
 				unmarshaller = jaxbContext.createUnmarshaller();
 			} catch (Exception e) {
+				LoggerFactory.getLogger(CdaUtil.class).error("Failure in JAXBContext.newInstance", e);
 				e.printStackTrace(System.out);
-				return null;
+				marshaller = null;
 			}
+
+			Thread.currentThread().setContextClassLoader(tccl);
 		}
 		return unmarshaller;
 	}
 
 	public static synchronized Marshaller getMarshaller() {
-		if (CdaUtil.marshaller == null) {
-			try {
-				JAXBContext jaxbContext = JAXBContext.newInstance("org.hl7.v3");
-				marshaller = jaxbContext.createMarshaller();
-				marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, new Boolean(true));
-				marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "urn:hl7-org:v3 CDA.xsd");
-				// omit the xml declaration
-				marshaller.setProperty(Marshaller.JAXB_FRAGMENT, new Boolean(true));
-			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+
+		try {
+			Thread.currentThread().setContextClassLoader(CdaUtil.class.getClassLoader());
+			JAXBContext jaxbContext = JAXBContext.newInstance("org.hl7.v3");
+			marshaller = jaxbContext.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "urn:hl7-org:v3 CDA.xsd");
+			// omit the xml declaration
+			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+		} catch (Exception e) {
+			LoggerFactory.getLogger(CdaUtil.class).error("Failure in JAXBContext.newInstance", e);
+			e.printStackTrace(System.out);
+			marshaller = null;
 		}
+
+		Thread.currentThread().setContextClassLoader(tccl);
+
 		return marshaller;
 	}
 

@@ -3,12 +3,19 @@ package ch.elexis.docbox.ws.client;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.JAXBException;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
 
+import org.apache.commons.codec.binary.Base64;
 import org.hl7.v3.ClinicalDocumentType;
 import org.hl7.v3.POCDMT000040ClinicalDocument;
 import org.slf4j.Logger;
@@ -31,19 +38,43 @@ public class SendClinicalDocumentClient {
 	public SendClinicalDocumentClient() {
 		service = new CDACHServicesV2_Service();
 
-		WsClientUtil.addWsSecurityAndHttpConfigWithClientCert(service,
-				WsClientConfig.getSecretkey() + WsClientConfig.getUsername(), WsClientConfig.getPassword(),
-				WsClientConfig.getP12Path(), null, WsClientConfig.getP12Password(), null);
+		WsClientUtil.addWsSecurityAndHttpConfigWithClientCert(service, WsClientConfig.getUsername(),
+				WsClientConfig.getPassword());
 	}
 
 	public boolean hasAccess() {
 		if (port == null) {
-			port = service.getCDACHServicesV2();
-			((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-					WsClientConfig.getDocboxServiceUrl());
+			initPort();
 		}
 		return WsClientUtil.checkAccess(port);
+	}
 
+	private synchronized void initPort() {
+		if (port == null) {
+			final Thread thread = Thread.currentThread();
+			final ClassLoader oldLoader = thread.getContextClassLoader();
+			try {
+				// mitigate "unable to unmarshall metro config file
+				// from location [ bundleresource://xxx/META-INF/jaxws-tubes-default.xml ]"
+				// MetroConfigLoader will now run within the info.elexis.target.jaxws.core
+				// bundle
+				thread.setContextClassLoader(SOAPBinding.class.getClassLoader());
+				port = service.getCDACHServicesV2();
+				((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+						WsClientConfig.getDocboxServiceUrl());
+
+				String httpAuthString = WsClientConfig.getDocboxBasicAuthUser() + ":" //$NON-NLS-1$
+						+ WsClientConfig.getDocboxBasicAuthPass();
+
+				String base64httpAuthString = new String(Base64.encodeBase64(httpAuthString.getBytes()));
+
+				Map<String, List<String>> headers = new HashMap<String, List<String>>();
+				headers.put("Authorization", Collections.singletonList("Basic " + base64httpAuthString));
+				((BindingProvider) port).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
+			} finally {
+				thread.setContextClassLoader(oldLoader);
+			}
+		}
 	}
 
 	public boolean sendClinicalDocument(InputStream xmlFile, InputStream pdfFile) {
@@ -52,9 +83,7 @@ public class SendClinicalDocumentClient {
 		}
 
 		if (port == null) {
-			port = service.getCDACHServicesV2();
-			((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-					WsClientConfig.getDocboxServiceUrl());
+			initPort();
 		}
 
 		POCDMT000040ClinicalDocument clinicalDocument = null;

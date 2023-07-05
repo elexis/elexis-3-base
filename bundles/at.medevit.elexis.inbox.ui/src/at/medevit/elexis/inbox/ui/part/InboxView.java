@@ -289,10 +289,11 @@ public class InboxView extends ViewPart {
 					if (setAutoSelectPatient) {
 						Object selectedElement = ((StructuredSelection) selection).getFirstElement();
 						if (selectedElement instanceof IInboxElement) {
-							ContextServiceHolder.get().setActivePatient(((IInboxElement) selectedElement).getPatient());
+							ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
+									((IInboxElement) selectedElement).getPatient());
 						} else if (selectedElement instanceof PatientInboxElements) {
-							ContextServiceHolder.get()
-									.setActivePatient(((PatientInboxElements) selectedElement).getPatient());
+							ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
+									((PatientInboxElements) selectedElement).getPatient());
 						}
 					}
 					if (((StructuredSelection) selection).getFirstElement() instanceof IInboxElement) {

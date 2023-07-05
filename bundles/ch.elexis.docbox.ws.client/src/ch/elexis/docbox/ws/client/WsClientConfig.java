@@ -17,8 +17,6 @@ public class WsClientConfig {
 	public static final String USR_DEFDOCBOXPASSWORD = "docbox/password"; //$NON-NLS-1$
 
 	public static final String USR_SECRETKEY = "docbox/secretkey"; //$NON-NLS-1$
-	public static final String USR_DEFDOCBOXP12PATH = "docbox/p12path"; //$NON-NLS-1$
-	public static final String USR_DEFDOCBOXP12PASSWORD = "docbox/p12password"; //$NON-NLS-1$
 
 	private static Properties basicAuthProperties;
 
@@ -68,7 +66,11 @@ public class WsClientConfig {
 		return sha1Password;
 	}
 
-	public static String getDocboxBasicAuthUser() {
+	public static String getDocboxBasicAuth() {
+		return getBasicAuthProperties().getProperty("auth");
+	}
+
+	public static String getDocboxBasicUser() {
 		return getBasicAuthProperties().getProperty("user");
 	}
 
@@ -82,9 +84,5 @@ public class WsClientConfig {
 			}
 		}
 		return basicAuthProperties;
-	}
-
-	public static String getDocboxBasicAuthPass() {
-		return getBasicAuthProperties().getProperty("pass");
 	}
 }

@@ -91,7 +91,7 @@ public class WsClientUtil {
 	public static boolean isMedelexisBasicAuthAvailable() {
 		InputStream basicAuthInputStream = null;
 		try {
-			basicAuthInputStream = WsClientUtil.class.getResourceAsStream("/cert/basicauth.properties");
+			basicAuthInputStream = WsClientUtil.class.getResourceAsStream("/cert/product.auth");
 			return basicAuthInputStream != null;
 		} finally {
 			if (basicAuthInputStream != null) {
@@ -105,8 +105,8 @@ public class WsClientUtil {
 	}
 
 	public static InputStream getBasicAuthInputStream() {
-		// look for cert from fragment
-		InputStream certInputStream = WsClientUtil.class.getResourceAsStream("/cert/basicauth.properties");
+		// look for basic auth from fragment
+		InputStream certInputStream = WsClientUtil.class.getResourceAsStream("/cert/product.auth");
 		if (certInputStream != null) {
 			logger.info("Using fragment basic auth.");
 			return certInputStream;

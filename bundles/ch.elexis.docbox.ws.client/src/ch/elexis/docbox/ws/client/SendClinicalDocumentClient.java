@@ -15,7 +15,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 
-import org.apache.commons.codec.binary.Base64;
 import org.hl7.v3.ClinicalDocumentType;
 import org.hl7.v3.POCDMT000040ClinicalDocument;
 import org.slf4j.Logger;
@@ -63,13 +62,8 @@ public class SendClinicalDocumentClient {
 				((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
 						WsClientConfig.getDocboxServiceUrl());
 
-				String httpAuthString = WsClientConfig.getDocboxBasicAuthUser() + ":" //$NON-NLS-1$
-						+ WsClientConfig.getDocboxBasicAuthPass();
-
-				String base64httpAuthString = new String(Base64.encodeBase64(httpAuthString.getBytes()));
-
 				Map<String, List<String>> headers = new HashMap<String, List<String>>();
-				headers.put("Authorization", Collections.singletonList("Basic " + base64httpAuthString));
+				headers.put("Authorization", Collections.singletonList("Basic " + WsClientConfig.getDocboxBasicAuth()));
 				((BindingProvider) port).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
 			} finally {
 				thread.setContextClassLoader(oldLoader);

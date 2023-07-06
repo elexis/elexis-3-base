@@ -228,7 +228,7 @@ public class InvoiceOutputter extends XMLExporter {
 							Iterator<Rechnung> ir = rnn.iterator();
 							Rechnung r = ir.next();
 							ret.add(Result.SEVERITY.ERROR, 1, Messages.InvoiceOutputter_ErrorHttpPost, r, true);
-							r.setStatus(InvoiceState.DEFECTIVE);
+							r.setStatus(InvoiceState.DEFECTIVE.getState());
 
 						}
 

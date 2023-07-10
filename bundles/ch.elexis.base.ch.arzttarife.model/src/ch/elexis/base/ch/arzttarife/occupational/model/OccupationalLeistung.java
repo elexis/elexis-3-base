@@ -20,6 +20,7 @@ import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.VatInfo;
+import ch.rgw.tools.Result;
 
 public class OccupationalLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.jpa.entities.OccupationalLeistung>
 		implements Identifiable, IOccupationalLeistung {
@@ -57,6 +58,19 @@ public class OccupationalLeistung extends AbstractIdDeleteModelAdapter<ch.elexis
 				@Override
 				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
 					return Optional.empty();
+				}
+
+				@Override
+				public Result<IBilled> add(OccupationalLeistung billable, IEncounter encounter, double amount,
+						boolean save) {
+					String law = encounter.getCoverage().getBillingSystem().getLaw().name();
+
+					if (!"UVG".equalsIgnoreCase(law)) {
+						return new Result<IBilled>(Result.SEVERITY.WARNING, 0,
+								"Arbeitsmedizinische Vorsorgeuntersuchungen können nur bei Fall UVG verrechnet werden. Bitte einen separaten Fall mit Gesetz UVG anlegen.",
+								null, false);
+					}
+					return super.add(billable, encounter, amount, save);
 				}
 			};
 		}

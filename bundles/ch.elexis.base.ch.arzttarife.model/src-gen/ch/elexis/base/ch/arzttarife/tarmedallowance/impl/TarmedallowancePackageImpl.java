@@ -9,6 +9,8 @@ import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
 
 import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
 import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
+import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
+import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
@@ -121,6 +123,8 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		NutritionPackageImpl theNutritionPackage = (NutritionPackageImpl)(registeredPackage instanceof NutritionPackageImpl ? registeredPackage : NutritionPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PsychoPackage.eNS_URI);
 		PsychoPackageImpl thePsychoPackage = (PsychoPackageImpl)(registeredPackage instanceof PsychoPackageImpl ? registeredPackage : PsychoPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(OccupationalPackage.eNS_URI);
+		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theTarmedallowancePackage.createPackageContents();
@@ -131,6 +135,7 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		thePandemiePackage.createPackageContents();
 		theNutritionPackage.createPackageContents();
 		thePsychoPackage.createPackageContents();
+		theOccupationalPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theTarmedallowancePackage.initializePackageContents();
@@ -141,6 +146,7 @@ public class TarmedallowancePackageImpl extends EPackageImpl implements Tarmedal
 		thePandemiePackage.initializePackageContents();
 		theNutritionPackage.initializePackageContents();
 		thePsychoPackage.initializePackageContents();
+		theOccupationalPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theTarmedallowancePackage.freeze();

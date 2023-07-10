@@ -50,7 +50,6 @@
         <setEntry value="com.mysql.cj@default:default"/>
         <setEntry value="com.opencsv@default:default"/>
         <setEntry value="com.sun.xml.bind.jaxb-osgi@default:default"/>
-        <setEntry value="info.elexis.target.jaxws.core@default:default"/>
         <setEntry value="jakarta.persistence@default:default"/>
         <setEntry value="jakarta.ws.rs-api@default:default"/>
         <setEntry value="jakarta.xml.bind-api@default:false"/>
@@ -66,9 +65,13 @@
         <setEntry value="org.apache.commons.commons-dbcp2@default:default"/>
         <setEntry value="org.apache.commons.commons-io@default:default"/>
         <setEntry value="org.apache.commons.commons-pool2@default:default"/>
+        <setEntry value="org.apache.commons.commons-text@default:default"/>
         <setEntry value="org.apache.commons.lang3@default:default"/>
         <setEntry value="org.apache.commons.logging*1.2.0@default:default"/>
         <setEntry value="org.apache.commons.math3@default:default"/>
+        <setEntry value="org.apache.felix.gogo.command@default:default"/>
+        <setEntry value="org.apache.felix.gogo.runtime@default:default"/>
+        <setEntry value="org.apache.felix.gogo.shell@default:default"/>
         <setEntry value="org.apache.felix.scr@1:true"/>
         <setEntry value="org.apache.geronimo.specs.geronimo-jta_1.1_spec@default:default"/>
         <setEntry value="org.apache.httpcomponents.httpclient@default:default"/>
@@ -85,7 +88,7 @@
         <setEntry value="org.eclipse.emf.ecore@default:default"/>
         <setEntry value="org.eclipse.equinox.app@default:default"/>
         <setEntry value="org.eclipse.equinox.common@2:true"/>
-        <setEntry value="org.eclipse.equinox.event@default:default"/>
+        <setEntry value="org.eclipse.equinox.console@default:default"/>
         <setEntry value="org.eclipse.equinox.preferences@default:default"/>
         <setEntry value="org.eclipse.equinox.registry@default:default"/>
         <setEntry value="org.eclipse.gemini.jpa@3:true"/>
@@ -94,8 +97,7 @@
         <setEntry value="org.eclipse.jetty.osgi.alpn.fragment@default:false"/>
         <setEntry value="org.eclipse.osgi.compatibility.state@default:false"/>
         <setEntry value="org.eclipse.osgi.services@default:default"/>
-        <setEntry value="org.eclipse.osgi.util@default:default"/>
-        <setEntry value="org.eclipse.osgi@-1:true"/>
+        <setEntry value="org.eclipse.osgi@1:true"/>
         <setEntry value="org.eclipse.pde.junit.runtime@default:default"/>
         <setEntry value="org.eclipse.persistence.antlr@default:default"/>
         <setEntry value="org.eclipse.persistence.asm@default:default"/>
@@ -130,10 +132,7 @@
         <setEntry value="org.osgi.service.useradmin@default:default"/>
         <setEntry value="org.osgi.service.wireadmin@default:default"/>
         <setEntry value="org.osgi.util.function@default:default"/>
-        <setEntry value="org.osgi.util.measurement@default:default"/>
-        <setEntry value="org.osgi.util.position@default:default"/>
         <setEntry value="org.osgi.util.promise@default:default"/>
-        <setEntry value="org.osgi.util.xml@default:default"/>
         <setEntry value="org.postgresql.jdbc@default:default"/>
         <setEntry value="org.slf4j.api@default:default"/>
         <setEntry value="org.slf4j.apis.jcl@default:default"/>
@@ -142,32 +141,26 @@
         <setEntry value="ch.elexis.base.ch.arzttarife.model.test@default:false"/>
         <setEntry value="ch.elexis.base.ch.arzttarife.model@default:default"/>
         <setEntry value="ch.elexis.base.ch.ticode@default:default"/>
-        <setEntry value="ch.elexis.core.hl7.v2x.tests@default:false"/>
         <setEntry value="ch.elexis.core.hl7.v2x@default:default"/>
         <setEntry value="ch.elexis.core.importer.div@default:default"/>
-        <setEntry value="ch.elexis.core.jcifs.test@default:false"/>
         <setEntry value="ch.elexis.core.jcifs@default:default"/>
         <setEntry value="ch.elexis.core.jpa.datasource@3:true"/>
-        <setEntry value="ch.elexis.core.jpa.entities.test@default:false"/>
         <setEntry value="ch.elexis.core.jpa.entities@3:true"/>
         <setEntry value="ch.elexis.core.jpa.logging.slf4j@default:false"/>
-        <setEntry value="ch.elexis.core.jpa.test@default:false"/>
         <setEntry value="ch.elexis.core.jpa@default:default"/>
         <setEntry value="ch.elexis.core.l10n@default:default"/>
         <setEntry value="ch.elexis.core.logback.rocketchat@default:false"/>
         <setEntry value="ch.elexis.core.logging.default_configuration@default:false"/>
-        <setEntry value="ch.elexis.core.model.test@default:false"/>
         <setEntry value="ch.elexis.core.model@default:default"/>
-        <setEntry value="ch.elexis.core.services.test.ws-bind@default:false"/>
-        <setEntry value="ch.elexis.core.services.test.ws@default:default"/>
-        <setEntry value="ch.elexis.core.services.test@default:false"/>
         <setEntry value="ch.elexis.core.services@default:default"/>
         <setEntry value="ch.elexis.core.tasks@default:default"/>
         <setEntry value="ch.elexis.core.test.context@default:false"/>
+        <setEntry value="ch.elexis.core.test.logging@default:false"/>
         <setEntry value="ch.elexis.core.test@default:default"/>
+        <setEntry value="ch.elexis.core.webdav@default:default"/>
         <setEntry value="ch.elexis.core@default:default"/>
-        <setEntry value="ch.rgw.utility.tests@default:false"/>
         <setEntry value="ch.rgw.utility@default:default"/>
+        <setEntry value="info.elexis.server.core.logging@default:false"/>
     </setAttribute>
     <booleanAttribute key="show_selected_only" value="false"/>
     <booleanAttribute key="tracing" value="false"/>

@@ -32,7 +32,7 @@ public class PsychoImporterTest {
 
 		ICodeElementService codeElementService = OsgiServiceUtil.getService(ICodeElementService.class).get();
 
-		ICodeElement diagnostic = codeElementService.loadFromString("Pyschotherapie", "PA010", null).get();
+		ICodeElement diagnostic = codeElementService.loadFromString("Psychotherapie", "PA010", null).get();
 		assertNotNull(diagnostic);
 		assertNotNull(diagnostic.getText());
 		assertTrue(diagnostic.getText().startsWith("Diagnostik und Therapie mit einem Patienten"));
@@ -40,7 +40,7 @@ public class PsychoImporterTest {
 		assertTrue(StringUtils.isNumeric(((IPsychoLeistung) diagnostic).getTP()));
 		assertEquals(LocalDate.of(2022, 7, 1), ((IPsychoLeistung) diagnostic).getValidFrom());
 
-		ICodeElement percent = codeElementService.loadFromString("Pyschotherapie", "PN020", null).get();
+		ICodeElement percent = codeElementService.loadFromString("Psychotherapie", "PN020", null).get();
 		assertNotNull(percent);
 		assertNotNull(percent.getText());
 		assertFalse(diagnostic.getText().contains("\n"));

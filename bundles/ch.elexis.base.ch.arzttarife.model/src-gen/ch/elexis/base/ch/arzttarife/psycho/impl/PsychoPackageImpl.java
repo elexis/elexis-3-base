@@ -11,6 +11,8 @@ import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
 
 import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
 
+import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
+import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
@@ -124,6 +126,8 @@ public class PsychoPackageImpl extends EPackageImpl implements PsychoPackage {
 		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(NutritionPackage.eNS_URI);
 		NutritionPackageImpl theNutritionPackage = (NutritionPackageImpl)(registeredPackage instanceof NutritionPackageImpl ? registeredPackage : NutritionPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(OccupationalPackage.eNS_URI);
+		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		thePsychoPackage.createPackageContents();
@@ -134,6 +138,7 @@ public class PsychoPackageImpl extends EPackageImpl implements PsychoPackage {
 		thePandemiePackage.createPackageContents();
 		theTarmedallowancePackage.createPackageContents();
 		theNutritionPackage.createPackageContents();
+		theOccupationalPackage.createPackageContents();
 
 		// Initialize created meta-data
 		thePsychoPackage.initializePackageContents();
@@ -144,6 +149,7 @@ public class PsychoPackageImpl extends EPackageImpl implements PsychoPackage {
 		thePandemiePackage.initializePackageContents();
 		theTarmedallowancePackage.initializePackageContents();
 		theNutritionPackage.initializePackageContents();
+		theOccupationalPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		thePsychoPackage.freeze();

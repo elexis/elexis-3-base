@@ -2,6 +2,7 @@ package ch.elexis.base.ch.arzttarife.model.service;
 
 import ch.elexis.base.ch.arzttarife.complementary.IComplementaryLeistung;
 import ch.elexis.base.ch.arzttarife.nutrition.INutritionLeistung;
+import ch.elexis.base.ch.arzttarife.occupational.IOccupationalLeistung;
 import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
 import ch.elexis.base.ch.arzttarife.physio.IPhysioLeistung;
 import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
@@ -13,6 +14,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
 import ch.elexis.core.jpa.entities.ComplementaryLeistung;
 import ch.elexis.core.jpa.entities.NutritionLeistung;
+import ch.elexis.core.jpa.entities.OccupationalLeistung;
 import ch.elexis.core.jpa.entities.PandemieLeistung;
 import ch.elexis.core.jpa.entities.PhysioLeistung;
 import ch.elexis.core.jpa.entities.PsychoLeistung;
@@ -55,6 +57,9 @@ public class ArzttarifeModelAdapterFactory extends AbstractModelAdapterFactory {
 				ch.elexis.base.ch.arzttarife.nutrition.model.NutritionLeistung.class, NutritionLeistung.class));
 		addMapping(new MappingEntry(IPsychoLeistung.class,
 				ch.elexis.base.ch.arzttarife.psycho.model.PsychoLeistung.class, PsychoLeistung.class));
+		addMapping(new MappingEntry(IOccupationalLeistung.class,
+				ch.elexis.base.ch.arzttarife.occupational.model.OccupationalLeistung.class,
+				OccupationalLeistung.class));
 
 		addMapping(new MappingEntry(ITarmedLeistung.class,
 				ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung.class, TarmedLeistung.class));

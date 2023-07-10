@@ -7,13 +7,16 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: ch.elexis.base.ch.arzttarife.model
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: ch.elexis.base.ch.arzttarife.complementary,
  ch.elexis.base.ch.arzttarife.complementary.impl,
  ch.elexis.base.ch.arzttarife.complementary.util,
  ch.elexis.base.ch.arzttarife.nutrition,
  ch.elexis.base.ch.arzttarife.nutrition.impl,
  ch.elexis.base.ch.arzttarife.nutrition.util,
+ ch.elexis.base.ch.arzttarife.occupational,
+ ch.elexis.base.ch.arzttarife.occupational.impl,
+ ch.elexis.base.ch.arzttarife.occupational.util,
  ch.elexis.base.ch.arzttarife.pandemie,
  ch.elexis.base.ch.arzttarife.pandemie.impl,
  ch.elexis.base.ch.arzttarife.pandemie.util,
@@ -59,12 +62,14 @@ Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.complementary.model.imp
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.EntityManagerHolder.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.NutritionLeistungCodeElementService.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.OccupationalLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.PandemieLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.PhysioLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.PsychoLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.TarmedLeistungCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.model.service.TarmedPauschalenCodeElementService.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.nutrition.model.importer.NutritionReferenceDataImporter.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.occupational.model.importer.OccupationalReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.pandemie.model.importer.PandemieReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.physio.model.importer.PhysioReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.psycho.model.importer.PsychoReferenceDataImporter.xml,

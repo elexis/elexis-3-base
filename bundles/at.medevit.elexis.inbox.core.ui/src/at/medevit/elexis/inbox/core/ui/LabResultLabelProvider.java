@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -33,7 +34,7 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.LabResult;
 import ch.rgw.tools.TimeTool;
 
-public class LabResultLabelProvider extends LabelProvider implements IColorProvider {
+public class LabResultLabelProvider extends LabelProvider implements IColorProvider, IToolTipProvider {
 
 	private static Image pathologicLabImage;
 
@@ -211,5 +212,21 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 	@Override
 	public Color getBackground(Object element) {
 		return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+	}
+
+	@Override
+	public String getToolTipText(Object element) {
+		if (element instanceof LabGroupedInboxElements) {
+			List<ILabResult> pathologicResults = ((LabGroupedInboxElements) element).getPathologicResults();
+			if (!pathologicResults.isEmpty()) {
+				StringBuilder sb = new StringBuilder("Pathologische Resultate:\n");
+				for (ILabResult labResult : pathologicResults) {
+					sb.append(labResult.getItem().getCode() + ", " + labResult.getItem().getName() + ", "
+							+ labResult.getResult()).append("\n");
+				}
+				return sb.toString();
+			}
+		}
+		return null;
 	}
 }

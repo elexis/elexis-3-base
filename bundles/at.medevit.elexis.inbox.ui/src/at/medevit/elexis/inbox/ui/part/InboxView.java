@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -159,6 +160,7 @@ public class InboxView extends ViewPart {
 		comparator = new InboxElementComparator();
 		viewer.setComparator(comparator);
 
+		ColumnViewerToolTipSupport.enableFor(viewer);
 		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 		column.getColumn().setWidth(50);
 		column.getColumn().setText("Kategorie");
@@ -248,6 +250,14 @@ public class InboxView extends ViewPart {
 			public String getText(Object element) {
 				if (element instanceof IInboxElement) {
 					return extension.getText((IInboxElement) element);
+				}
+				return super.getText(element);
+			}
+
+			@Override
+			public String getToolTipText(Object element) {
+				if (element instanceof IInboxElement) {
+					return extension.getTooltipText((IInboxElement) element);
 				}
 				return super.getText(element);
 			}
@@ -412,10 +422,10 @@ public class InboxView extends ViewPart {
 		InboxElementUiExtension extension = new InboxElementUiExtension();
 		List<IInboxElementUiProvider> providers = extension.getProviders();
 		for (IInboxElementUiProvider iInboxElementUiProvider : providers) {
-			ViewerFilter extensionFilter = iInboxElementUiProvider.getFilter();
-			if (extensionFilter != null) {
+			List<ViewerFilter> extensionFilters = iInboxElementUiProvider.getFilters();
+			for (ViewerFilter extensionFilter : extensionFilters) {
 				InboxFilterAction action = new InboxFilterAction(viewer, extensionFilter,
-						iInboxElementUiProvider.getFilterImage());
+						iInboxElementUiProvider.getFilterImage(extensionFilter));
 				menuManager.add(action);
 			}
 		}

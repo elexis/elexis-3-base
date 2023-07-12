@@ -1,10 +1,13 @@
 package ch.elexis.omnivore.ui.inbox;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -27,13 +30,13 @@ public class DocHandleUiProvider implements IInboxElementUiProvider {
 	}
 
 	@Override
-	public ImageDescriptor getFilterImage() {
+	public ImageDescriptor getFilterImage(ViewerFilter filter) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.omnivore.ui", "icons/fressen.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
-	public ViewerFilter getFilter() {
-		return filter;
+	public List<ViewerFilter> getFilters() {
+		return Collections.singletonList(filter);
 	}
 
 	@Override
@@ -43,6 +46,11 @@ public class DocHandleUiProvider implements IInboxElementUiProvider {
 
 	@Override
 	public IColorProvider getColorProvider() {
+		return null;
+	}
+
+	@Override
+	public IToolTipProvider getToolTipProvider() {
 		return null;
 	}
 

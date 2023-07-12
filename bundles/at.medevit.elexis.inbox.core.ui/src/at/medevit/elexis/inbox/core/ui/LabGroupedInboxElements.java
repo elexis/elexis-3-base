@@ -1,6 +1,8 @@
 package at.medevit.elexis.inbox.core.ui;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import ch.elexis.core.model.ILabResult;
@@ -53,5 +55,10 @@ public class LabGroupedInboxElements extends GroupedInboxElements {
 
 	public boolean isPathologic() {
 		return getElements().stream().map(ie -> (ILabResult) ie.getObject()).anyMatch(lr -> lr.isPathologic());
+	}
+
+	public List<ILabResult> getPathologicResults() {
+		return getElements().stream().map(ie -> (ILabResult) ie.getObject()).filter(lr -> lr.isPathologic())
+				.collect(Collectors.toList());
 	}
 }

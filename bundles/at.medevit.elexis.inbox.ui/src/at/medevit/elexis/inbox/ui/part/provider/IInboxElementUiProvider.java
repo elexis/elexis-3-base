@@ -11,9 +11,11 @@
 package at.medevit.elexis.inbox.ui.part.provider;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -22,19 +24,21 @@ import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 
 public interface IInboxElementUiProvider {
+
 	/**
 	 * Image that will be placed on the filter action.
-	 *
-	 * @return ImageDescriptor or null
+	 * 
+	 * @param filter
+	 * @return
 	 */
-	public ImageDescriptor getFilterImage();
+	public ImageDescriptor getFilterImage(ViewerFilter filter);
 
 	/**
 	 * Filter that will be applied with the filter action.
 	 *
-	 * @return ViewerFilter or null
+	 * @return List of ViewerFilters never null
 	 */
-	public ViewerFilter getFilter();
+	public List<ViewerFilter> getFilters();
 
 	/**
 	 * LabelProvider used by the inbox viewer.
@@ -49,6 +53,13 @@ public interface IInboxElementUiProvider {
 	 * @return IColorProvider or null
 	 */
 	public IColorProvider getColorProvider();
+
+	/**
+	 * ToolTipProvider used by the inbox viewer.
+	 * 
+	 * @return IColorProvider or null
+	 */
+	public IToolTipProvider getToolTipProvider();
 
 	/**
 	 * Test if this provider shall be used for the element.

@@ -54,7 +54,7 @@ public class OccupationalReferenceDataImporter extends AbstractReferenceDataImpo
 					continue;
 				}
 
-				LocalDate validFrom = LocalDate.of(2022, 7, 1);
+				LocalDate validFrom = LocalDate.of(2018, 1, 1);
 				List<String> codes = parseCode(line.get(0));
 				for (String code : codes) {
 //					LocalDate validTo = null;

@@ -84,7 +84,7 @@ public class OccupationalLeistung extends AbstractIdDeleteModelAdapter<ch.elexis
 
 	@Override
 	public VatInfo getVatInfo() {
-		return VatInfo.VAT_CH_ISTREATMENT;
+		return VatInfo.VAT_CH_NOTTREATMENT;
 	}
 
 	@Override

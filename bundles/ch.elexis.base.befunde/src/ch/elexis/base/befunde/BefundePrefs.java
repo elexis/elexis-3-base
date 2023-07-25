@@ -31,7 +31,11 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.befunde.Messwert;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
@@ -152,7 +156,7 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 			}
 		});
 		bRemove.setText(Messages.BefundePrefs_deleteText); // $NON-NLS-1$
-		if (!AccessControlServiceHolder.get().request(ACLContributor.DELETE_PARAM)) {
+		if (!AccessControlServiceHolder.get().evaluate(EvACE.of(Messwert.class, Right.DELETE))) {
 			bRemove.setEnabled(false);
 		}
 

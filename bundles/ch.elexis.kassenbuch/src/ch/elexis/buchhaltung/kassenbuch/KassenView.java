@@ -43,6 +43,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.ui.UiDesk;
@@ -232,7 +234,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 	}
 
 	private void makeActions() {
-		addAction = new RestrictedAction(ACLContributor.BOOKING, "Einnahme") {
+		addAction = new RestrictedAction(EvACE.of(KassenbuchEintrag.class, Right.CREATE), "Einnahme") {
 			{
 				setImageDescriptor(Images.IMG_ADD.getImageDescriptor());
 				setToolTipText("Einnahme verbuchen");
@@ -243,7 +245,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 				tv.refresh();
 			}
 		};
-		subtractAction = new RestrictedAction(ACLContributor.BOOKING, "Ausgabe") {
+		subtractAction = new RestrictedAction(EvACE.of(KassenbuchEintrag.class, Right.CREATE), "Ausgabe") {
 			{
 				setImageDescriptor(Images.IMG_REMOVEITEM.getImageDescriptor());
 				setToolTipText("Ausgabe verbuchen");
@@ -254,7 +256,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 				tv.refresh();
 			}
 		};
-		stornoAction = new RestrictedAction(ACLContributor.STORNO, "Storno") {
+		stornoAction = new RestrictedAction(EvACE.of(KassenbuchEintrag.class, Right.UPDATE), "Storno") {
 			{
 				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());
 				setToolTipText("Buchung stornieren");
@@ -271,7 +273,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 
 			}
 		};
-		saldoAction = new RestrictedAction(ACLContributor.BOOKING, "Saldo") {
+		saldoAction = new RestrictedAction(EvACE.of(KassenbuchEintrag.class, Right.CREATE), "Saldo") {
 			{
 				setImageDescriptor(getPluginImageDescriptor("icons/sigma.ico")); //$NON-NLS-1$
 				setToolTipText("Zwischenbilanz erstellen");
@@ -300,7 +302,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 			}
 		};
 
-		dateAction = new RestrictedAction(ACLContributor.VIEW, "Zeitraum") {
+		dateAction = new RestrictedAction(EvACE.of(KassenbuchEintrag.class, Right.VIEW), "Zeitraum") {
 			{
 				setImageDescriptor(getPluginImageDescriptor("icons/calendar.png")); //$NON-NLS-1$
 				setToolTipText("Anzeigezeitraum einstellen");
@@ -320,7 +322,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 				tv.refresh();
 			}
 		};
-		printAction = new RestrictedAction(ACLContributor.VIEW, "Drucken") {
+		printAction = new RestrictedAction(EvACE.of(KassenbuchEintrag.class, Right.VIEW), "Drucken") {
 			{
 				setImageDescriptor(Images.IMG_PRINTER.getImageDescriptor());
 				setTitleToolTip("Angezeigte Buchungen ausdrucken");
@@ -331,7 +333,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 				kbd.open();
 			}
 		};
-		editCatAction = new RestrictedAction(ACLContributor.BOOKING, "Kategorien...") {
+		editCatAction = new RestrictedAction(EvACE.of(KassenbuchEintrag.class, Right.CREATE), "Kategorien...") {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 				setTitleToolTip("Kategorien editieren");
@@ -341,7 +343,7 @@ public class KassenView extends ViewPart implements IActivationListener, HeartLi
 				new EditCatsDialog(getSite().getShell()).open();
 			}
 		};
-		editPaymentAction = new RestrictedAction(ACLContributor.BOOKING, "Zahlungsart...") {
+		editPaymentAction = new RestrictedAction(EvACE.of(KassenbuchEintrag.class, Right.CREATE), "Zahlungsart...") {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
 				setTitleToolTip("Zahlungsart editieren");

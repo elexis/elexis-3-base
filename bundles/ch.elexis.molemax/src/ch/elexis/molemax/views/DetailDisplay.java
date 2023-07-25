@@ -36,9 +36,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.molemax.Messages;
-import ch.elexis.molemax.data.MolemaxACL;
 import ch.elexis.molemax.data.Tracker;
 import ch.elexis.core.ui.util.SWTHelper;
 
@@ -103,7 +105,7 @@ public class DetailDisplay extends Composite {
 
 			public void paintControl(final PaintEvent e) {
 				GC gc = e.gc;
-				if (AccessControlServiceHolder.get().request(MolemaxACL.SEE_IMAGES)) {
+				if (AccessControlServiceHolder.get().evaluate(EvACE.of(Tracker.class, Right.VIEW))) {
 					Tracker[] myTracker = home.trackers[actSlot];
 					if (myTracker != null) {
 						for (int i = 0; i < myTracker.length; i++) {
@@ -142,7 +144,7 @@ public class DetailDisplay extends Composite {
 
 			@Override
 			public void drop(final DropTargetEvent event) {
-				if (!AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES)) {
+				if (!AccessControlServiceHolder.get().evaluate(EvACE.of(Tracker.class, Right.UPDATE))) {
 					SWTHelper.alert(ImageSlot.CAPTION_NOOP, ImageSlot.TEXT_NOOP);
 					return;
 				}
@@ -219,7 +221,7 @@ public class DetailDisplay extends Composite {
 	}
 
 	public void setUser() {
-		mDelete.setEnabled(AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES));
+		mDelete.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(Tracker.class, Right.UPDATE)));
 	}
 
 	void setslot(final int slot) {

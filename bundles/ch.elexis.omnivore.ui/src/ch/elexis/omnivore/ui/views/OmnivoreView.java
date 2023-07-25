@@ -83,7 +83,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
@@ -94,6 +95,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.e4.events.ElexisUiEventTopics;
@@ -605,7 +607,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	}
 
 	private void makeActions() {
-		importAction = new RestrictedAction(AccessControlDefaults.DOCUMENT_CREATE,
+		importAction = new RestrictedAction(EvACE.of(IDocumentHandle.class, Right.CREATE),
 				Messages.OmnivoreView_importActionCaption) {
 			{
 				setToolTipText(Messages.OmnivoreView_importActionToolTip);
@@ -624,7 +626,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			}
 		};
 
-		deleteAction = new LockRequestingRestrictedAction<IDocumentHandle>(AccessControlDefaults.DOCUMENT_DELETE,
+		deleteAction = new LockRequestingRestrictedAction<IDocumentHandle>(EvACE.of(IDocumentHandle.class, Right.DELETE),
 				Messages.OmnivoreView_deleteActionCaption) {
 			{
 				setToolTipText(Messages.OmnivoreView_deleteActionToolTip);
@@ -640,7 +642,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			@Override
 			public void doRun(IDocumentHandle dh) {
 				if (dh.isCategory()) {
-					if (AccessControlServiceHolder.get().request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
+					if (AccessControlServiceHolder.get().evaluate(EvACE.of(IDocumentHandle.class, Right.DELETE).and(Right.EXECUTE))) {
 						ListDialog ld = new ListDialog(getViewSite().getShell());
 
 						IQuery<IDocumentHandle> qbe = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
@@ -677,7 +679,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			};
 		};
 
-		editAction = new LockRequestingRestrictedAction<IDocumentHandle>(AccessControlDefaults.DOCUMENT_DELETE,
+		editAction = new LockRequestingRestrictedAction<IDocumentHandle>(EvACE.of(IDocumentHandle.class, Right.UPDATE),
 				Messages.OmnivoreView_editActionCaption) {
 			{
 				setToolTipText(Messages.OmnivoreView_editActionTooltip);
@@ -693,7 +695,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			@Override
 			public void doRun(IDocumentHandle dh) {
 				if (dh.isCategory()) {
-					if (AccessControlServiceHolder.get().request(AccessControlDefaults.DOCUMENT_CATDELETE)) {
+					if (AccessControlServiceHolder.get().evaluate(EvACE.of(IDocumentHandle.class, Right.UPDATE).and(Right.EXECUTE))) {
 
 						InputDialog id = new InputDialog(getViewSite().getShell(),
 								MessageFormat.format("Kategorie {0} umbenennen.", dh.getLabel()),

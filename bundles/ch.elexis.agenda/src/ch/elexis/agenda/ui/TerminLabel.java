@@ -40,14 +40,17 @@ import org.eclipse.swt.widgets.Label;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
@@ -181,7 +184,7 @@ public class TerminLabel extends Composite {
 	}
 
 	public void updateActions() {
-		boolean canChangeAppointments = AccessControlServiceHolder.get().request(ACLContributor.CHANGE_APPOINTMENTS);
+		boolean canChangeAppointments = AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.UPDATE));
 		terminKuerzenAction.setEnabled(canChangeAppointments);
 		terminVerlaengernAction.setEnabled(canChangeAppointments);
 		terminAendernAction.setEnabled(canChangeAppointments);

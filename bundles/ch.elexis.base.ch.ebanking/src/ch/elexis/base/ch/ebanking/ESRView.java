@@ -1,7 +1,5 @@
 package ch.elexis.base.ch.ebanking;
 
-import static ch.elexis.base.ch.ebanking.EBankingACLContributor.DISPLAY_ESR;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -374,7 +372,7 @@ public class ESRView extends ViewPart {
 		});
 
 		tableViewer.setLabelProvider(new ESRLabelProvider());
-		tableViewer.setContentProvider(new ESRContentProvider(lblSUMME, DISPLAY_ESR));
+		tableViewer.setContentProvider(new ESRContentProvider(lblSUMME));
 
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 

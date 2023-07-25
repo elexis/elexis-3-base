@@ -45,8 +45,11 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 
-import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Query;
@@ -268,7 +271,7 @@ public class ContactLinkPreferencePage extends PreferencePage implements IWorkbe
 				}
 			}
 		});
-		if (AccessControlServiceHolder.get().request(AccessControlDefaults.DELETE_LABITEMS) == false) {
+		if (AccessControlServiceHolder.get().evaluate(EvACE.of(ILabItem.class, Right.DELETE)) == false) {
 			bDelAllItems.setEnabled(false);
 		}
 	}

@@ -2,11 +2,7 @@ package org.iatrix.messwerte;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.iatrix.messwerte.acl.ACLContributor;
 import org.osgi.framework.BundleContext;
-
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -34,21 +30,6 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-
-		initACL();
-	}
-
-	/**
-	 * Initialize ACLs for the first time, if not yet done.
-	 */
-	private void initACL() {
-		ConfigServiceHolder.runIfConfigServiceAvailable(() -> {
-			boolean isInitialized = ConfigServiceHolder.getGlobal(Constants.ACL_INITIALIZED, false);
-			if (!isInitialized) {
-				new ACLContributor().initializeDefaults(AccessControlServiceHolder.get());
-				ConfigServiceHolder.setGlobal(Constants.ACL_INITIALIZED, true);
-			}
-		});
 	}
 
 	/*

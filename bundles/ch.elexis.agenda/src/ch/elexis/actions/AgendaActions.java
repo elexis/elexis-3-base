@@ -25,10 +25,12 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IPersistentObject;
+import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.icons.Images;
@@ -53,7 +55,7 @@ public class AgendaActions {
 	 * Reflect the user's rights on the agenda actions
 	 */
 	public static void updateActions() {
-		getTerminStatusAction().setEnabled(AccessControlServiceHolder.get().request(ACLContributor.USE_AGENDA));
+		getTerminStatusAction().setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.VIEW).and(Right.UPDATE)));
 		((RestrictedAction) getDelTerminAction()).reflectRight();
 	}
 
@@ -73,7 +75,7 @@ public class AgendaActions {
 
 	private static void makeActions() {
 
-		delTerminAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.DELETE_APPOINTMENTS,
+		delTerminAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.DELETE),
 				Messages.AgendaActions_deleteDate) {
 			{
 				setImageDescriptor(Images.IMG_DELETE.getImageDescriptor());

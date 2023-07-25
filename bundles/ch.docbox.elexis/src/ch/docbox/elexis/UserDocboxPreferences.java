@@ -47,10 +47,13 @@ import ch.docbox.model.DocboxContact;
 import ch.docbox.ws.cdachservices.CDACHServices;
 import ch.docbox.ws.cdachservices.CDACHServices_Service;
 import ch.elexis.agenda.data.Termin;
-import ch.elexis.core.ac.AccessControlDefaults;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.EvaluatableACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -192,7 +195,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 		oldSecretKey = getSha1DocboxSecretKey();
 
-		boolean enableForMandant = AccessControlServiceHolder.get().request(AccessControlDefaults.ACL_USERS);
+		boolean enableForMandant = AccessControlServiceHolder.get().evaluate(EvACE.of(IUser.class, Right.UPDATE));
 
 		loginIdFieldEditor = new StringFieldEditor(WsClientConfig.USR_DEFDOCBXLOGINID,
 				Messages.UserDocboxPreferences_LoginId, getFieldEditorParent());

@@ -35,9 +35,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.molemax.Messages;
-import ch.elexis.molemax.data.MolemaxACL;
 import ch.elexis.molemax.data.Tracker;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
@@ -84,7 +86,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 				double scale = 1.0;
 				if ((myTracker.length > 0) && (myTracker[0] != null)) {
 					Point pt = getSize();
-					if (AccessControlServiceHolder.get().request(MolemaxACL.SEE_IMAGES)) {
+					if (AccessControlServiceHolder.get().evaluate(EvACE.of(Tracker.class, Right.VIEW))) {
 						Image img = myTracker[0].createImage();
 						if (img != null) {
 							ImageData idata = img.getImageData();
@@ -139,7 +141,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 	}
 
 	public void setUser() {
-		mDelete.setEnabled(AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES));
+		mDelete.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(Tracker.class, Right.DELETE)));
 	}
 
 	public void dragEnter(final DropTargetEvent event) {
@@ -162,7 +164,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 	}
 
 	public void drop(final DropTargetEvent event) {
-		if (AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES)) {
+		if (AccessControlServiceHolder.get().evaluate(EvACE.of(Tracker.class, Right.UPDATE))) {
 			String[] files = (String[]) event.data;
 			TimeTool today = new TimeTool();
 			TimeTool seq = new TimeTool(home.date);
@@ -198,7 +200,7 @@ public class ImageSlot extends Composite implements DropTargetListener {
 	}
 
 	public void setImage(final File file) {
-		if (AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES)) {
+		if (AccessControlServiceHolder.get().evaluate(EvACE.of(Tracker.class, Right.UPDATE))) {
 			if (file.getName().startsWith("base")) {
 				if (myTracker.length != 0) {
 					if (SWTHelper.askYesNo(Messages.ImageSlot_replace, Messages.ImageSlot_deleteall)) {

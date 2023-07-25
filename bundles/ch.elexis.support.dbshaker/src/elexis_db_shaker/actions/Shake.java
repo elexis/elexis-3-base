@@ -29,7 +29,9 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
+import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Konsultation;
@@ -67,7 +69,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
-		if (!AccessControlServiceHolder.get().request(DBShakerACL.EXEC_DBSHAKER)) {
+		if (!AccessControlServiceHolder.get().evaluate(EvACE.of("EXEC_DBSHAKER"))) {
 			MessageDialog.openInformation(UiDesk.getTopShell(), "Insufficient rights",
 					"Insufficient rights to execute.");
 			return;

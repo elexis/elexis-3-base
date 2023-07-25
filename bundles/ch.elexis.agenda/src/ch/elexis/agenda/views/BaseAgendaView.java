@@ -42,7 +42,6 @@ import ch.elexis.actions.AgendaActions;
 import ch.elexis.actions.IBereichSelectionEvent;
 import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
@@ -51,6 +50,8 @@ import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.agenda.ui.BereichMenuCreator;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
@@ -61,6 +62,7 @@ import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IAppointmentService;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -253,7 +255,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	class AgendaContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
-			if (AccessControlServiceHolder.get().request(ACLContributor.DISPLAY_APPOINTMENTS)) {
+			if (AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.VIEW))) {
 				String resource = agenda.getActResource();
 				TimeTool date = agenda.getActDate();
 				OsgiServiceUtil.getService(IAppointmentService.class).get().assertBlockTimes(date.toLocalDate(),
@@ -293,7 +295,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	}
 
 	protected void updateActions() {
-		dayLimitsAction.setEnabled(AccessControlServiceHolder.get().request(ACLContributor.CHANGE_DAYSETTINGS));
+		dayLimitsAction.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.UPDATE).and(Right.EXECUTE)));
 		newTerminAction.reflectRight();
 		terminKuerzenAction.reflectRight();
 		terminVerlaengernAction.reflectRight();
@@ -328,7 +330,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 			}
 		};
-		terminAendernAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.CHANGE_APPOINTMENTS,
+		terminAendernAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.UPDATE),
 				Messages.TagesView_changeTermin) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
@@ -361,7 +363,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 				}
 			}
 		};
-		terminKuerzenAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.CHANGE_APPOINTMENTS,
+		terminKuerzenAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.UPDATE),
 				Messages.TagesView_shortenTermin) {
 			@Override
 			public Termin getTargetedObject() {
@@ -374,7 +376,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 				ElexisEventDispatcher.reload(Termin.class);
 			}
 		};
-		terminVerlaengernAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.CHANGE_APPOINTMENTS,
+		terminVerlaengernAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.UPDATE),
 				Messages.TagesView_enlargeTermin) {
 			@Override
 			public Termin getTargetedObject() {
@@ -393,7 +395,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 			}
 		};
-		newTerminAction = new RestrictedAction(ACLContributor.CHANGE_DAYSETTINGS, Messages.TagesView_newTermin) {
+		newTerminAction = new RestrictedAction(EvACE.of(IAppointment.class, Right.CREATE), Messages.TagesView_newTermin) {
 			{
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
 				setToolTipText(Messages.TagesView_createNewTermin);

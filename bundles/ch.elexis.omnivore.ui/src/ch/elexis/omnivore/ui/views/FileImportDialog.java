@@ -32,11 +32,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tracker;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
-import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -198,9 +201,9 @@ public class FileImportDialog extends TitleAreaDialog {
 			tKeywords.setText(dh.getKeywords());
 			cbCategories.setText(dh.getCategory().getName());
 		}
-		bEditCat.setEnabled(AccessControlServiceHolder.get().request(AccessControlDefaults.DOCUMENT_CATDELETE));
-		bDeleteCat.setEnabled(AccessControlServiceHolder.get().request(AccessControlDefaults.DOCUMENT_CATDELETE));
-		bNewCat.setEnabled(AccessControlServiceHolder.get().request(AccessControlDefaults.DOCUMENT_CATCREATE));
+		bEditCat.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IDocumentHandle.class, Right.UPDATE).and(Right.EXECUTE)));
+		bDeleteCat.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IDocumentHandle.class, Right.DELETE).and(Right.EXECUTE)));
+		bNewCat.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IDocumentHandle.class, Right.CREATE).and(Right.EXECUTE)));
 
 		return ret;
 	}

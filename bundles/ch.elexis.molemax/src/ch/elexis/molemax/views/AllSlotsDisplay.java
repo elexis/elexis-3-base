@@ -16,15 +16,18 @@ import java.io.File;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tracker;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.molemax.Messages;
-import ch.elexis.molemax.data.MolemaxACL;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
@@ -100,7 +103,7 @@ public class AllSlotsDisplay extends Composite {
 	}
 
 	public void addImage(final String date, final int slot, final File file) {
-		if (AccessControlServiceHolder.get().request(MolemaxACL.CHANGE_IMAGES)) {
+		if (AccessControlServiceHolder.get().evaluate(EvACE.of(Tracker.class, Right.UPDATE))) {
 			TimeTool ttDate = new TimeTool(date);
 			parent.setPatient(parent.pat, ttDate.toString(TimeTool.DATE_GER));
 			slots[slot].setImage(file);

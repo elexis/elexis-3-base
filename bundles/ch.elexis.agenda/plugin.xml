@@ -240,13 +240,6 @@
          </DataAccess>
       </extension>
       <extension
-            point="ch.elexis.core.data.ACLContribution">
-         <ACLContribution
-               ACLContributor="ch.elexis.agenda.acl.ACLContributor"
-               name="elexis-agenda.ACLContribution">
-         </ACLContribution>
-      </extension>
-      <extension
             point="ch.elexis.core.ui.TextTemplateRequirement">
          <TextTemplateRequirement
                element="ch.elexis.agenda.text.AgendaTextTemplateRequirement">

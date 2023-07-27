@@ -34,12 +34,5 @@
             name="Molemax-Tracker">
       </Factory>
    </extension>
-   <extension
-         point="ch.elexis.core.data.ACLContribution">
-      <ACLContribution
-            ACLContributor="ch.elexis.molemax.data.MolemaxACL"
-            name="molemax.ACLContribution1">
-      </ACLContribution>
-   </extension>
 
 </plugin>

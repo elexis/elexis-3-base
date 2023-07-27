@@ -70,12 +70,5 @@
             commandId="ch.elexis.ebanking_ch.command.openFileJournal">
       </handler>
    </extension>
-   <extension
-         point="ch.elexis.core.data.ACLContribution">
-      <ACLContribution
-            ACLContributor="ch.elexis.base.ch.ebanking.EBankingACLContributor"
-            name="ch.elexis.base.ch.ebanking.ACLContribution">
-      </ACLContribution>
-   </extension>
 
 </plugin>

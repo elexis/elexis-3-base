@@ -22,12 +22,5 @@
                tooltip="Datenbank anonymisieren"/>
       </actionSet>
    </extension>
-   <extension
-         point="ch.elexis.core.data.ACLContribution">
-      <ACLContribution
-            ACLContributor="elexis_db_shaker.actions.DBShakerACL"
-            name="ch.elexis.support.dbshaker.ACLContribution">
-      </ACLContribution>
-   </extension>
 
 </plugin>

@@ -13,7 +13,6 @@ public class JodRestConverterPage extends FieldEditorPreferencePage implements I
 	public JodRestConverterPage() {
 		super(GRID);
 		setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
-		getPreferenceStore().setDefault("jodrestconverter/basepath", "https://office.medelexis.ch/jodconverter/");
 	}
 
 	@Override

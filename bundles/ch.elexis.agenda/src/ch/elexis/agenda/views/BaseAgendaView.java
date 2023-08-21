@@ -122,7 +122,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 		});
 	}
 
-	private void userChanged() {
+	protected void userChanged() {
 		updateActions();
 		CoreUiUtil.runAsyncIfActive(() -> {
 			tv.getControl().setFont(UiDesk.getFont(Preferences.USR_DEFAULTFONT));

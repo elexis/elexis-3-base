@@ -88,8 +88,7 @@ public class MythicAction extends Action implements ComPortListener {
 
 	@Override
 	public void gotChunk(final Connection connection, String chunk) {
-		chunk = chunk.replaceAll("(\\r)", StringUtils.EMPTY);
-		String[] lines = chunk.split(StringUtils.LF);
+		String[] lines = chunk.split(StringUtils.CR);
 		logger.debug("Got chunk with " + lines.length + " lines.");
 
 		for (String data : lines) {

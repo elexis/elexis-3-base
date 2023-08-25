@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -40,6 +41,8 @@ public class TarmedReferenceDataImporterTest {
 	private String codeEchokardiografieIncompatible = "17.0230";
 	private String codeEchokardiografieExpired1 = "17.0280";
 	private String codeEchokardiografieExpired2 = "17.0290";
+
+	private String codeGynaekologie = "22.0035";
 
 	private String codeHierarchySlave = "39.5010";
 	private String codeHierarchyMaster = "39.5060";
@@ -80,6 +83,20 @@ public class TarmedReferenceDataImporterTest {
 		TarmedReferenceDataImporter importer = new KVGTarmedReferenceDataImporter();
 		Status retStatus = (Status) importer.performImport(new NullProgressMonitor(), tarmedInStream, null);
 		assertEquals(IStatus.OK, retStatus.getCode());
+
+		// gynaekologie
+		TarmedLeistung gynaekologie = TarmedLeistung.getFromCode(codeGynaekologie, LocalDate.now(), null);
+		assertNotNull(gynaekologie);
+		assertEquals(codeGynaekologie, gynaekologie.getCode());
+		assertNotNull(gynaekologie.getText());
+		assertTrue(StringUtils.isNotBlank(gynaekologie.getText()));
+		String ageLimit = gynaekologie.getExtension().getLimits()
+				.get(ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_SERVICE_AGE);
+		assertNotNull(ageLimit);
+		List<TarmedLeistungAge> tarmedAgeLimits = TarmedLeistungAge.of(ageLimit,
+				LocalDateTime.of(2000, 12, 31, 13, 13));
+		assertFalse(tarmedAgeLimits.isEmpty());
+		assertTrue(tarmedAgeLimits.get(0).getFromDays() < tarmedAgeLimits.get(0).getToDays());
 
 		// exclusion
 		TarmedLeistung echoKardiografie = TarmedLeistung.getFromCode(codeEchokardiografie, LocalDate.now(), null);

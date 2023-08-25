@@ -1,9 +1,12 @@
 package at.medevit.elexis.emediplan.inbox;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.wb.swt.ResourceManager;
@@ -24,13 +27,13 @@ public class EMediplanUiProvider implements IInboxElementUiProvider {
 	}
 
 	@Override
-	public ImageDescriptor getFilterImage() {
+	public ImageDescriptor getFilterImage(ViewerFilter filter) {
 		return ResourceManager.getPluginImageDescriptor("at.medevit.elexis.emediplan.ui", "rsc/logo.png"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
-	public ViewerFilter getFilter() {
-		return filter;
+	public List<ViewerFilter> getFilters() {
+		return Collections.singletonList(filter);
 	}
 
 	@Override
@@ -40,6 +43,12 @@ public class EMediplanUiProvider implements IInboxElementUiProvider {
 
 	@Override
 	public IColorProvider getColorProvider() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IToolTipProvider getToolTipProvider() {
 		// TODO Auto-generated method stub
 		return null;
 	}

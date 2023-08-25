@@ -153,5 +153,13 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//psycho/IPsychoLeistung/exclusions"/>
       </genClasses>
     </nestedGenPackages>
+    <nestedGenPackages prefix="Occupational" disposableProviderFactory="true" ecorePackage="arzttarife.ecore#//occupational">
+      <genClasses image="false" ecoreClass="arzttarife.ecore#//occupational/IOccupationalLeistung">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//occupational/IOccupationalLeistung/validFrom"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//occupational/IOccupationalLeistung/validTo"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//occupational/IOccupationalLeistung/TP"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute arzttarife.ecore#//occupational/IOccupationalLeistung/description"/>
+      </genClasses>
+    </nestedGenPackages>
   </genPackages>
 </genmodel:GenModel>

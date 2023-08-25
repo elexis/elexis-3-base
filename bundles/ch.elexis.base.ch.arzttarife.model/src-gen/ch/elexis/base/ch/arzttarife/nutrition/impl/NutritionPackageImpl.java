@@ -11,6 +11,8 @@ import ch.elexis.base.ch.arzttarife.nutrition.INutritionLeistung;
 import ch.elexis.base.ch.arzttarife.nutrition.NutritionFactory;
 import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
 
+import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
+import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
 
 import ch.elexis.base.ch.arzttarife.pandemie.impl.PandemiePackageImpl;
@@ -123,6 +125,8 @@ public class NutritionPackageImpl extends EPackageImpl implements NutritionPacka
 		TarmedallowancePackageImpl theTarmedallowancePackage = (TarmedallowancePackageImpl)(registeredPackage instanceof TarmedallowancePackageImpl ? registeredPackage : TarmedallowancePackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PsychoPackage.eNS_URI);
 		PsychoPackageImpl thePsychoPackage = (PsychoPackageImpl)(registeredPackage instanceof PsychoPackageImpl ? registeredPackage : PsychoPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(OccupationalPackage.eNS_URI);
+		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theNutritionPackage.createPackageContents();
@@ -133,6 +137,7 @@ public class NutritionPackageImpl extends EPackageImpl implements NutritionPacka
 		thePandemiePackage.createPackageContents();
 		theTarmedallowancePackage.createPackageContents();
 		thePsychoPackage.createPackageContents();
+		theOccupationalPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theNutritionPackage.initializePackageContents();
@@ -143,6 +148,7 @@ public class NutritionPackageImpl extends EPackageImpl implements NutritionPacka
 		thePandemiePackage.initializePackageContents();
 		theTarmedallowancePackage.initializePackageContents();
 		thePsychoPackage.initializePackageContents();
+		theOccupationalPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theNutritionPackage.freeze();

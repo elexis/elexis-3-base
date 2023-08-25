@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
+import at.medevit.elexis.inbox.core.ui.LabGroupedInboxElements;
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
 import ch.elexis.core.model.ILabResult;
@@ -23,7 +24,9 @@ public class PathologicInboxFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (element instanceof IInboxElement) {
+		if (element instanceof LabGroupedInboxElements) {
+			return ((LabGroupedInboxElements) element).isPathologic();
+		} else if (element instanceof IInboxElement) {
 			if (((IInboxElement) element).getObject() instanceof ILabResult) {
 				ILabResult labResult = (ILabResult) ((IInboxElement) element).getObject();
 				return labResult.isPathologic();

@@ -16,11 +16,16 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.InvalidKeyException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -88,7 +93,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	private Button buttonGetAppointmentsEmergencyService;
 	private Button buttonGetAppointmentsPharmaVisits;
 	private Button buttonGetAppointmentsTerminvereinbarung;
-	private Button buttonConfigureCert;
 
 	private Button buttonUseHCard;
 
@@ -216,20 +220,6 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			secretkeyFieldEditor.setEnabled(enableForMandant, getFieldEditorParent());
 
 			addField(secretkeyFieldEditor);
-		}
-
-		buttonConfigureCert = new Button(getFieldEditorParent(), SWT.PUSH);
-		buttonConfigureCert.setText("Zertifikat konfigurieren");
-		buttonConfigureCert.setLayoutData(SWTHelper.getFillGridData(3, false, 1, false));
-		buttonConfigureCert.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				CertificateConfigDialog dlg = new CertificateConfigDialog(getShell());
-				dlg.open();
-			}
-		});
-		if (WsClientUtil.isMedelexisCertAvailable()) {
-			buttonConfigureCert.setEnabled(false);
 		}
 
 		buttonUseHCard = new Button(getFieldEditorParent(), SWT.CHECK);
@@ -476,6 +466,16 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		return value;
 	}
 
+	private static String getBrowserHost() {
+		String host = StringUtils.EMPTY;
+		if (isDocboxTest()) {
+			host = "www.test.docbox.ch"; //$NON-NLS-1$
+		} else {
+			host = "www.docbox.ch"; //$NON-NLS-1$
+		}
+		return host;
+	}
+
 	private static String getHost() {
 		String host = StringUtils.EMPTY;
 		if (useHCard()) {
@@ -486,9 +486,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 			}
 		} else {
 			if (isDocboxTest()) {
-				host = "www.test.docbox.ch"; //$NON-NLS-1$
+				host = "soap.test.docbox.swiss"; //$NON-NLS-1$
 			} else {
-				host = "www.docbox.ch"; //$NON-NLS-1$ //$NON-NLS-2$
+				host = "soap.docbox.swiss"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return host;
@@ -500,16 +500,14 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 
 	public static String getDocboxBrowserUrl() {
 		String test = isDocboxTest() ? "test" : StringUtils.EMPTY; //$NON-NLS-1$
-		String host = getHost(); // $NON-NLS-1$
+		String host = getBrowserHost(); // $NON-NLS-1$
 		String cgibin = "cgi-bin"; //$NON-NLS-1$
 		return "https://" + host + "/" + cgibin + "/WebObjects/docbox" + test + ".woa/wa/default"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public static String getDocboxServiceUrl() {
-		String test = isDocboxTest() ? "test" : StringUtils.EMPTY; //$NON-NLS-1$
 		String host = getHost();
-		String cgibin = "cgi-bin"; //$NON-NLS-1$
-		return "https://" + host + "/" + cgibin + "/WebObjects/docboxservice" + test + ".woa/ws/CDACHServices"; //$NON-NLS-1$//$NON-NLS-2$
+		return "https://" + host + "/CDACHServices"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	private void setAgendaSettingsPerUser(boolean value) {
@@ -712,13 +710,16 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 		if (UserDocboxPreferences.useHCard()) {
 			new HCardBrowser(UserDocboxPreferences.getDocboxLoginID(false), null).setProxyPort();
 		}
-		WsClientUtil.addWsSecurityAndHttpConfigWithClientCert(serviceClient,
-				WsClientConfig.getSecretkey() + WsClientConfig.getUsername(), WsClientConfig.getPassword(),
-				WsClientConfig.getP12Path(), null, WsClientConfig.getP12Password(), null);
+		WsClientUtil.addWsSecurityAndHttpConfigWithClientCert(serviceClient, WsClientConfig.getUsername(),
+				WsClientConfig.getPassword());
 
 		CDACHServices port = serviceClient.getCDACHServices();
 		((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
 				getDocboxServiceUrl());
+
+		Map<String, List<String>> headers = new HashMap<String, List<String>>();
+		headers.put("Authorization", Collections.singletonList("Basic " + WsClientConfig.getDocboxBasicAuth()));
+		((BindingProvider) port).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, headers);
 
 		return port;
 	}

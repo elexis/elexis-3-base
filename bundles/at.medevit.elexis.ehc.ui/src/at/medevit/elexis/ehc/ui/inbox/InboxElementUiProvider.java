@@ -12,9 +12,12 @@ package at.medevit.elexis.ehc.ui.inbox;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.PartInitException;
@@ -40,16 +43,15 @@ public class InboxElementUiProvider implements IInboxElementUiProvider {
 	}
 
 	@Override
-	public ImageDescriptor getFilterImage() {
+	public ImageDescriptor getFilterImage(ViewerFilter filter) {
 		// return ResourceManager
 		// .getPluginImageDescriptor("at.medevit.elexis.ehc.ui", "icons/ehc.jpg");
 		return null;
 	}
 
 	@Override
-	public ViewerFilter getFilter() {
-		// return filter;
-		return null;
+	public List<ViewerFilter> getFilters() {
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -59,6 +61,12 @@ public class InboxElementUiProvider implements IInboxElementUiProvider {
 
 	@Override
 	public IColorProvider getColorProvider() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IToolTipProvider getToolTipProvider() {
 		// TODO Auto-generated method stub
 		return null;
 	}

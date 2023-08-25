@@ -5,14 +5,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -20,12 +23,17 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.message.BasicHeader;
+import org.openapitools.client.ApiClient;
+import org.openapitools.client.ApiException;
+import org.openapitools.client.ApiResponse;
+import org.openapitools.client.api.EMediplanGenerationApi;
+import org.openapitools.client.api.ExtractionAndConsolidationApi;
+import org.openapitools.client.api.MediCheckApi;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -34,12 +42,8 @@ import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.threeten.bp.LocalDate;
 
 import com.google.gson.Gson;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.bluemedication.core.BlueMedicationConstants;
@@ -59,12 +63,8 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
-import io.swagger.client.ApiClient;
-import io.swagger.client.ApiException;
-import io.swagger.client.ApiResponse;
-import io.swagger.client.api.EMediplanGenerationApi;
-import io.swagger.client.api.ExtractionAndConsolidationApi;
-import io.swagger.client.api.MediCheckApi;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 @Component(property = EventConstants.EVENT_TOPIC + "=" + ElexisEventTopics.BASE + "emediplan/ui/create")
 public class BlueMedicationServiceImpl implements BlueMedicationService, EventHandler {
@@ -97,46 +97,12 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		if(hinAuthService == null) {
 			hinAuthService = OsgiServiceUtil.getService(IHinAuthService.class);
 		}
-		if (!hinAuthService.isPresent()) {
-			if (!proxyActive) {
-				// get proxy settings and store old values
-				Properties systemSettings = System.getProperties();
-				oldProxyHost = systemSettings.getProperty("http.proxyHost"); //$NON-NLS-1$
-				oldProxyPort = systemSettings.getProperty("http.proxyPort"); //$NON-NLS-1$
-
-				// set new values
-				systemSettings.put("http.proxyHost", ConfigServiceHolder.get().getLocal( //$NON-NLS-1$
-						BlueMedicationConstants.CFG_HIN_PROXY_HOST, BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST));
-				systemSettings.put("http.proxyPort", ConfigServiceHolder.get().getLocal( //$NON-NLS-1$
-						BlueMedicationConstants.CFG_HIN_PROXY_PORT, BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT));
-				System.setProperties(systemSettings);
-				proxyActive = true;
-			}			
-		}
-	}
-
-	/**
-	 * Reset the proxy values in the system properties.
-	 */
-	private void deInitProxy() {
-		if (proxyActive) {
-			Properties systemSettings = System.getProperties();
-			if (oldProxyHost != null) {
-				systemSettings.put("http.proxyHost", oldProxyHost); //$NON-NLS-1$
-			}
-			if (oldProxyPort != null) {
-				systemSettings.put("http.proxyPort", oldProxyPort); //$NON-NLS-1$
-			}
-			System.setProperties(systemSettings);
-			proxyActive = false;
-		}
 	}
 
 	@Override
 	public Result<UploadResult> uploadDocument(IPatient patient, File document, String resulttyp) {
 		initProxyOrOauth();
 		workaroundGet();
-		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			configureApiClient(apiInstance.getApiClient());
 			
@@ -168,8 +134,9 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 						}
 					}
 				}
-				ApiResponse<?> response = apiInstance.dispatchPostWithHttpInfo(internalData, externalData,
-						patientFirstName, patientLastName, patientSex, patientBirthdate, StringUtils.EMPTY,
+				ApiResponse<?> response = apiInstance.dispatchPostWithHttpInfo(externalData, internalData,
+						patientFirstName, patientLastName, patientSex,
+						DateTimeFormatter.ofPattern("dd.MM.yyyy").format(patientBirthdate), StringUtils.EMPTY,
 						StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
 				if (response.getStatusCode() >= 300) {
 					return new Result<UploadResult>(SEVERITY.ERROR, 0,
@@ -180,7 +147,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				}
 				// successful upload
 				@SuppressWarnings("unchecked")
-				io.swagger.client.model.UploadResult data = ((ApiResponse<io.swagger.client.model.UploadResult>) response)
+				org.openapitools.client.model.UploadResult data = ((ApiResponse<org.openapitools.client.model.UploadResult>) response)
 						.getData();
 				return new Result<UploadResult>(
 						new UploadResult(appendPath(getBasePath(), data.getUrl() + "&mode=embed"), data.getId(),
@@ -190,8 +157,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 					// error result code should be evaluated
 					try {
 						Gson gson = new Gson();
-						io.swagger.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
-								io.swagger.client.model.ErrorResult[].class);
+						org.openapitools.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
+								org.openapitools.client.model.ErrorResult[].class);
 						if (mcArray != null && mcArray.length > 0) {
 							return new Result<UploadResult>(SEVERITY.ERROR, 0,
 									"Error result code [" + mcArray[0].getCode() + "]", null, false);
@@ -203,19 +170,24 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				logger.error("Error uploading Document", e);
 				return new Result<UploadResult>(SEVERITY.ERROR, 0, e.getMessage(), null, false);
 			}
-		} finally {
-			deInitProxy();
-		}
 	}
 
 	private void configureApiClient(ApiClient client) {
 		client.setBasePath(getAppBasePath());
 		if(hinAuthService.isPresent()) {
 			Optional<String> authToken = hinAuthService.get()
-					.getToken(Collections.singletonMap(IHinAuthService.TOKEN_GROUP, "BlueMedication"));
+					.getToken(Collections.singletonMap(IHinAuthService.TOKEN_GROUP, getTokenGroup()));
 			if (authToken.isPresent()) {
 				client.addDefaultHeader("Authorization" , "Bearer " + authToken.get());
 			}
+		}
+	}
+	
+	private String getTokenGroup() {
+		if (ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_URL_STAGING, false)) {
+			return "BlueMedicationStaging";
+		} else {
+			return "BlueMedication";
 		}
 	}
 	
@@ -224,24 +196,12 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		private String redirectUrl;
 
 		public CheckApiClient() {
-			super();
-			// do not follow redirects
-			getHttpClient().setFollowRedirects(false);
-			getHttpClient().setFollowSslRedirects(false);
+			super(new OkHttpClient.Builder().followRedirects(false).followSslRedirects(false).build());
 		}
 
 		public String selectHeaderContentType(String[] contentTypes) {
 			return "application/x-chmed16a";
 		};
-
-		@Override
-		public RequestBody serialize(Object obj, String contentType) throws ApiException {
-			if (obj instanceof String) {
-				return RequestBody.create(MediaType.parse(contentType), (String) obj);
-			} else {
-				throw new ApiException("Content type \"" + contentType + "\" is not supported");
-			}
-		}
 
 		@Override
 		public <T> T handleResponse(Response response, Type returnType) throws ApiException {
@@ -269,10 +229,12 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			IMandator mandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 			if (mandant != null) {
 				try {
-					ByteArrayOutputStream jsonOutput = new ByteArrayOutputStream();
-					eMediplanService.exportEMediplanChmed(mandant, patient, getPrescriptions(patient, "all"), true,
-							jsonOutput);
-					apiInstance.checkPostWithHttpInfo(new String(jsonOutput.toByteArray(), "UTF-8"));
+					File tmpFile = File.createTempFile("bluemedication" + System.currentTimeMillis(), ".tmp");
+					try (FileOutputStream fout = new FileOutputStream(tmpFile)) {
+						eMediplanService.exportEMediplanChmed(mandant, patient, getPrescriptions(patient, "all"), true,
+								fout);
+					}
+					apiInstance.checkPostWithHttpInfo(tmpFile);
 					if (client.getRedirectUrl() != null) {
 						return new Result<UploadResult>(
 								new UploadResult(client.getRedirectUrl(), StringUtils.EMPTY, "check", true));
@@ -291,8 +253,8 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				// error result code should be evaluated
 				try {
 					Gson gson = new Gson();
-					io.swagger.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
-							io.swagger.client.model.ErrorResult[].class);
+					org.openapitools.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
+							org.openapitools.client.model.ErrorResult[].class);
 					if (mcArray != null && mcArray.length > 0) {
 						return new Result<UploadResult>(SEVERITY.ERROR, 0,
 								"Error result code [" + mcArray[0].getCode() + "]", null, false);
@@ -303,8 +265,6 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			}
 			logger.error("Error uploading Document", e);
 			return new Result<UploadResult>(SEVERITY.ERROR, 0, e.getMessage(), null, false);
-		} finally {
-			deInitProxy();
 		}
 	}
 
@@ -322,15 +282,16 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 					: null);
 
 			ApiResponse<?> response = apiInstance.notificationEmediplanPostWithHttpInfo(patient.getFirstName(),
-					patient.getLastName(), patient.getGender().name(), birthDate);
+					patient.getLastName(), patient.getGender().name(),
+					DateTimeFormatter.ofPattern("dd.MM.yyyy").format(birthDate));
 			return Result.OK(response.toString());
 		} catch (ApiException e) {
 			if (e.getCode() == 400 || e.getCode() == 422) {
 				// error result code should be evaluated
 				try {
 					Gson gson = new Gson();
-					io.swagger.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
-							io.swagger.client.model.ErrorResult[].class);
+					org.openapitools.client.model.ErrorResult[] mcArray = gson.fromJson(e.getResponseBody(),
+							org.openapitools.client.model.ErrorResult[].class);
 					if (mcArray != null && mcArray.length > 0) {
 						return new Result<String>(SEVERITY.ERROR, 0, "Error result code [" + mcArray[0].getCode() + "]",
 								null, false);
@@ -341,8 +302,6 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			}
 			logger.error("Error performing notification", e);
 			return new Result<String>(SEVERITY.ERROR, 0, e.getMessage(), null, false);
-		} finally {
-			deInitProxy();
 		}
 	}
 
@@ -423,8 +382,6 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		} catch (ApiException e) {
 			logger.error("Error downloading Document", e);
 			return Result.ERROR(e.getMessage());
-		} finally {
-			deInitProxy();
 		}
 	}
 
@@ -434,8 +391,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		try {
 			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
 			configureApiClient(apiInstance.getApiClient());
-			ApiResponse<File> response = apiInstance
-					.downloadIdExtractionExtendedpdfGetWithHttpInfo(uploadResult.getId(), true);
+			ApiResponse<File> response = apiInstance.downloadIdExtractionGetWithHttpInfo(uploadResult.getId(), true);
 			if (response.getStatusCode() >= 300) {
 				return Result.ERROR("Response status code was [" + response.getStatusCode() + "]");
 			}
@@ -446,8 +402,6 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		} catch (ApiException e) {
 			logger.error("Error downloading Document Pdf", e);
 			return Result.ERROR(e.getMessage());
-		} finally {
-			deInitProxy();
 		}
 	}
 
@@ -525,14 +479,22 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			}
 			logger.info("Start polling for [" + uploadResult.getId() + "]");
 			// configure HIN proxy for apache http client
-			HttpHost proxy = new HttpHost(
-					ConfigServiceHolder.get().getLocal(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
-							BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST),
-					Integer.parseInt(ConfigServiceHolder.get().getLocal(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
-							BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT)),
-					"http");
-			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
-			HttpClient httpclient = HttpClients.custom().setRoutePlanner(routePlanner).build();
+//			HttpHost proxy = new HttpHost(
+//					ConfigServiceHolder.get().getLocal(BlueMedicationConstants.CFG_HIN_PROXY_HOST,
+//							BlueMedicationConstants.DEFAULT_HIN_PROXY_HOST),
+//					Integer.parseInt(ConfigServiceHolder.get().getLocal(BlueMedicationConstants.CFG_HIN_PROXY_PORT,
+//							BlueMedicationConstants.DEFAULT_HIN_PROXY_PORT)),
+//					"http");
+//			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+			Collection<BasicHeader> headers = new ArrayList<>();
+			if (hinAuthService.isPresent()) {
+				Optional<String> authToken = hinAuthService.get()
+						.getToken(Collections.singletonMap(IHinAuthService.TOKEN_GROUP, "BlueMedication"));
+				if (authToken.isPresent()) {
+					headers.add(new BasicHeader("Authorization", "Bearer " + authToken.get()));
+				}
+			}
+			HttpClient httpclient = HttpClients.custom().setDefaultHeaders(headers).build();
 
 			HttpGet httpget = new HttpGet(getAppBasePath() + "/status/" + uploadResult.getId());
 			int maxRetry = 30; // default timeout 30 sec -> 15 min.

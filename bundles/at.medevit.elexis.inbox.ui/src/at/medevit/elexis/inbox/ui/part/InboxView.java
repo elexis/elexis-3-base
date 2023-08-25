@@ -31,11 +31,13 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -50,6 +52,8 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -156,6 +160,7 @@ public class InboxView extends ViewPart {
 		comparator = new InboxElementComparator();
 		viewer.setComparator(comparator);
 
+		ColumnViewerToolTipSupport.enableFor(viewer);
 		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 		column.getColumn().setWidth(50);
 		column.getColumn().setText("Kategorie");
@@ -248,6 +253,14 @@ public class InboxView extends ViewPart {
 				}
 				return super.getText(element);
 			}
+
+			@Override
+			public String getToolTipText(Object element) {
+				if (element instanceof IInboxElement) {
+					return extension.getTooltipText((IInboxElement) element);
+				}
+				return super.getText(element);
+			}
 		});
 
 		column = new TableViewerColumn(viewer, SWT.NONE);
@@ -273,6 +286,20 @@ public class InboxView extends ViewPart {
 					if (selectedObj instanceof IInboxElement) {
 						InboxElementUiExtension extension = new InboxElementUiExtension();
 						extension.fireDoubleClicked((IInboxElement) selectedObj);
+					}
+				}
+			}
+		});
+
+		viewer.getControl().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.keyCode == SWT.SPACE) {
+					IStructuredSelection currentSelection = viewer.getStructuredSelection();
+					if (currentSelection != null && !currentSelection.isEmpty()
+							&& currentSelection.getFirstElement() instanceof IInboxElement) {
+						IInboxElement element = (IInboxElement) currentSelection.getFirstElement();
+						setInboxElementState(element, element.getState() != State.SEEN);
 					}
 				}
 			}
@@ -407,10 +434,10 @@ public class InboxView extends ViewPart {
 		InboxElementUiExtension extension = new InboxElementUiExtension();
 		List<IInboxElementUiProvider> providers = extension.getProviders();
 		for (IInboxElementUiProvider iInboxElementUiProvider : providers) {
-			ViewerFilter extensionFilter = iInboxElementUiProvider.getFilter();
-			if (extensionFilter != null) {
+			List<ViewerFilter> extensionFilters = iInboxElementUiProvider.getFilters();
+			for (ViewerFilter extensionFilter : extensionFilters) {
 				InboxFilterAction action = new InboxFilterAction(viewer, extensionFilter,
-						iInboxElementUiProvider.getFilterImage());
+						iInboxElementUiProvider.getFilterImage(extensionFilter));
 				menuManager.add(action);
 			}
 		}
@@ -577,24 +604,29 @@ public class InboxView extends ViewPart {
 
 		@Override
 		protected void setValue(Object o, Object value) {
-			IInboxElement element = (IInboxElement) o;
-			if (Boolean.TRUE.equals(value)) {
-				element.setState(State.SEEN);
-				if (!(element instanceof GroupedInboxElements)) {
-					InboxModelServiceHolder.get().save(element);
-				}
-			} else {
-				element.setState(State.NEW);
-				if (!(element instanceof GroupedInboxElements)) {
-					InboxModelServiceHolder.get().save(element);
-				}
-			}
-			tableViewer.refresh();
-			Display.getDefault().timerExec(2500, () -> {
-				contentProvider.refreshElement(element);
-				tableViewer.refresh();
-			});
+			setInboxElementState((IInboxElement) o, (Boolean) value);
 		}
+	}
+
+	private void setInboxElementState(IInboxElement element, Boolean value) {
+		if (Boolean.TRUE.equals(value)) {
+			element.setState(State.SEEN);
+			if (!(element instanceof GroupedInboxElements)) {
+				InboxModelServiceHolder.get().save(element);
+			}
+		} else {
+			element.setState(State.NEW);
+			if (!(element instanceof GroupedInboxElements)) {
+				InboxModelServiceHolder.get().save(element);
+			}
+		}
+		viewer.refresh();
+		Display.getDefault().timerExec(2500, () -> {
+			if (viewer.getControl() != null && !viewer.getControl().isDisposed()) {
+				contentProvider.refreshElement(element);
+				viewer.refresh();
+			}
+		});
 	}
 
 	public void setSelectedMandators(List<IMandator> mandators) {

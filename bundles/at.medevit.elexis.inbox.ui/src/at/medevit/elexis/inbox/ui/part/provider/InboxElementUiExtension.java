@@ -82,6 +82,14 @@ public class InboxElementUiExtension {
 		return null;
 	}
 
+	public String getTooltipText(IInboxElement element) {
+		IInboxElementUiProvider provider = getProvider(element);
+		if (provider != null && provider.getToolTipProvider() != null) {
+			return provider.getToolTipProvider().getToolTipText(element);
+		}
+		return null;
+	}
+
 	public Image getImage(IInboxElement element) {
 		IInboxElementUiProvider provider = getProvider(element);
 		if (provider != null && provider.getLabelProvider() != null) {

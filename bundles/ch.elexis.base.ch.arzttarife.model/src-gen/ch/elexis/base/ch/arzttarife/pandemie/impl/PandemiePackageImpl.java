@@ -9,6 +9,8 @@ import ch.elexis.base.ch.arzttarife.complementary.impl.ComplementaryPackageImpl;
 
 import ch.elexis.base.ch.arzttarife.nutrition.NutritionPackage;
 import ch.elexis.base.ch.arzttarife.nutrition.impl.NutritionPackageImpl;
+import ch.elexis.base.ch.arzttarife.occupational.OccupationalPackage;
+import ch.elexis.base.ch.arzttarife.occupational.impl.OccupationalPackageImpl;
 import ch.elexis.base.ch.arzttarife.pandemie.IPandemieLeistung;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemieFactory;
 import ch.elexis.base.ch.arzttarife.pandemie.PandemiePackage;
@@ -119,6 +121,8 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		NutritionPackageImpl theNutritionPackage = (NutritionPackageImpl)(registeredPackage instanceof NutritionPackageImpl ? registeredPackage : NutritionPackage.eINSTANCE);
 		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(PsychoPackage.eNS_URI);
 		PsychoPackageImpl thePsychoPackage = (PsychoPackageImpl)(registeredPackage instanceof PsychoPackageImpl ? registeredPackage : PsychoPackage.eINSTANCE);
+		registeredPackage = EPackage.Registry.INSTANCE.getEPackage(OccupationalPackage.eNS_URI);
+		OccupationalPackageImpl theOccupationalPackage = (OccupationalPackageImpl)(registeredPackage instanceof OccupationalPackageImpl ? registeredPackage : OccupationalPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		thePandemiePackage.createPackageContents();
@@ -129,6 +133,7 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		theTarmedallowancePackage.createPackageContents();
 		theNutritionPackage.createPackageContents();
 		thePsychoPackage.createPackageContents();
+		theOccupationalPackage.createPackageContents();
 
 		// Initialize created meta-data
 		thePandemiePackage.initializePackageContents();
@@ -139,6 +144,7 @@ public class PandemiePackageImpl extends EPackageImpl implements PandemiePackage
 		theTarmedallowancePackage.initializePackageContents();
 		theNutritionPackage.initializePackageContents();
 		thePsychoPackage.initializePackageContents();
+		theOccupationalPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		thePandemiePackage.freeze();

@@ -11,20 +11,26 @@
 package at.medevit.elexis.inbox.core.ui;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.core.ui.filter.LabInboxFilter;
+import at.medevit.elexis.inbox.core.ui.filter.PathologicInboxFilter;
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.model.PatientInboxElements;
@@ -38,28 +44,44 @@ import ch.elexis.data.LabResult;
 import ch.rgw.tools.Result;
 
 public class LabResultUiProvider implements IInboxElementUiProvider {
+	private static DecorationOverlayIcon pathologicLabImage;
 
 	private IViewDescriptor rocheView;
 	private IViewDescriptor labView;
 
 	private LabResultLabelProvider labelProvider;
 	private LabInboxFilter filter;
+	private PathologicInboxFilter pathologicfilter;
+
+	private List<ViewerFilter> filters;
 
 	public LabResultUiProvider() {
 		labelProvider = new LabResultLabelProvider();
 	}
 
 	@Override
-	public ImageDescriptor getFilterImage() {
-		return Images.IMG_VIEW_LABORATORY.getImageDescriptor();
+	public ImageDescriptor getFilterImage(ViewerFilter filter) {
+		if (filter == this.filter) {
+			return Images.IMG_VIEW_LABORATORY.getImageDescriptor();
+		} else if (filter == this.pathologicfilter) {
+			if (pathologicLabImage == null) {
+				initializeImages();
+			}
+			return pathologicLabImage;
+		}
+		return null;
 	}
 
 	@Override
-	public ViewerFilter getFilter() {
-		if (filter == null) {
+	public List<ViewerFilter> getFilters() {
+		if (filters == null) {
+			filters = new ArrayList<ViewerFilter>();
 			filter = new LabInboxFilter();
+			filters.add(filter);
+			pathologicfilter = new PathologicInboxFilter();
+			filters.add(pathologicfilter);
 		}
-		return filter;
+		return filters;
 	}
 
 	@Override
@@ -69,6 +91,11 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 
 	@Override
 	public IColorProvider getColorProvider() {
+		return labelProvider;
+	}
+
+	@Override
+	public IToolTipProvider getToolTipProvider() {
 		return labelProvider;
 	}
 
@@ -101,6 +128,14 @@ public class LabResultUiProvider implements IInboxElementUiProvider {
 			return ((ILabResult) element.getObject()).getObservationTime().toLocalDate();
 		}
 		return null;
+	}
+
+	private static void initializeImages() {
+		ImageDescriptor[] overlays = new ImageDescriptor[1];
+		overlays[0] = AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.inbox.ui", //$NON-NLS-1$
+				"/rsc/img/achtung_overlay.png"); //$NON-NLS-1$
+
+		pathologicLabImage = new DecorationOverlayIcon(Images.IMG_VIEW_LABORATORY.getImage(), overlays);
 	}
 
 	@Override

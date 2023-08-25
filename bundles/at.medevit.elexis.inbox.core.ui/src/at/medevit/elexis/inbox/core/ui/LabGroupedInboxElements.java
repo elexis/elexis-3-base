@@ -1,6 +1,8 @@
 package at.medevit.elexis.inbox.core.ui;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import ch.elexis.core.model.ILabResult;
@@ -21,13 +23,13 @@ public class LabGroupedInboxElements extends GroupedInboxElements {
 	@Override
 	public String getLabel() {
 		if (!isEmpty()) {
-			if (getFirstElement().getObject() instanceof ILabResult
-					&& ((ILabResult) getFirstElement().getObject()).getObservationTime() != null) {
-				return getElements().size() + " Laborresultate am " + ((ILabResult) getFirstElement().getObject())
-						.getObservationTime().toLocalDate().format(defaultDateFormatter);
-			} else {
-				return getElements().size() + " Laborresultate";
+			StringBuilder sb = new StringBuilder();
+			sb.append(getElements().size() + " Laborresultate");
+			int pathologicCount = getPathologicCount();
+			if (pathologicCount > 0) {
+				sb.append(" davon " + pathologicCount + " pathologisch");
 			}
+			return sb.toString();
 		}
 		return "Keine Laborresultate";
 	}
@@ -44,5 +46,19 @@ public class LabGroupedInboxElements extends GroupedInboxElements {
 		}
 		// if empty match any
 		return isEmpty();
+	}
+
+	private int getPathologicCount() {
+		return (int) getElements().stream().map(ie -> (ILabResult) ie.getObject()).filter(lr -> lr.isPathologic())
+				.count();
+	}
+
+	public boolean isPathologic() {
+		return getElements().stream().map(ie -> (ILabResult) ie.getObject()).anyMatch(lr -> lr.isPathologic());
+	}
+
+	public List<ILabResult> getPathologicResults() {
+		return getElements().stream().map(ie -> (ILabResult) ie.getObject()).filter(lr -> lr.isPathologic())
+				.collect(Collectors.toList());
 	}
 }

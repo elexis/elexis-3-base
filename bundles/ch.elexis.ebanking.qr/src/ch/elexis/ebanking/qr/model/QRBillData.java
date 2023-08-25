@@ -544,7 +544,10 @@ public class QRBillData {
 		sj.add(StringUtils.defaultString(rmtInfRef));
 		sj.add(StringUtils.defaultString(rmtInfUstrd));
 		sj.add(StringUtils.defaultString(rmtInfTrailer));
-		sj.add(StringUtils.defaultString(rmtInfStrdBkgInf));
+		// if there is a line after this, an empty line would be needed #25388
+		if (StringUtils.isNotEmpty(rmtInfStrdBkgInf)) {
+			sj.add(StringUtils.defaultString(rmtInfStrdBkgInf));
+		}
 
 		return sj.toString();
 	}

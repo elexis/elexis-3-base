@@ -12,9 +12,12 @@ package at.medevit.elexis.inbox.core.ui;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.program.Program;
@@ -31,13 +34,13 @@ public class FileUiProvider implements IInboxElementUiProvider {
 	}
 
 	@Override
-	public ImageDescriptor getFilterImage() {
+	public ImageDescriptor getFilterImage(ViewerFilter filter) {
 		return null;
 	}
 
 	@Override
-	public ViewerFilter getFilter() {
-		return null;
+	public List<ViewerFilter> getFilters() {
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -53,6 +56,11 @@ public class FileUiProvider implements IInboxElementUiProvider {
 	@Override
 	public IColorProvider getColorProvider() {
 		return fileLabelProvider;
+	}
+
+	@Override
+	public IToolTipProvider getToolTipProvider() {
+		return null;
 	}
 
 	@Override

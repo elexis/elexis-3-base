@@ -10,17 +10,21 @@
  *******************************************************************************/
 package at.medevit.elexis.inbox.core.ui;
 
-import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import at.medevit.elexis.inbox.core.ui.preferences.InboxPreferences;
 import at.medevit.elexis.inbox.model.IInboxElement;
@@ -30,7 +34,9 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.data.LabResult;
 import ch.rgw.tools.TimeTool;
 
-public class LabResultLabelProvider extends LabelProvider implements IColorProvider {
+public class LabResultLabelProvider extends LabelProvider implements IColorProvider, IToolTipProvider {
+
+	private static Image pathologicLabImage;
 
 	public enum LabelFields {
 		LAB_VALUE_SHORT("Kürzel"), LAB_VALUE_NAME("Name"), REF_RANGE("Referenzbereich"), LAB_RESULT("Resultat"),
@@ -116,7 +122,34 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 
 	@Override
 	public Image getImage(Object element) {
+		if (element instanceof LabGroupedInboxElements) {
+			if (((LabGroupedInboxElements) element).isPathologic()) {
+				return getPathologicLabImage();
+			}
+		} else {
+			Object object = ((IInboxElement) element).getObject();
+			if (object instanceof ILabResult) {
+				if (((ILabResult) object).isPathologic()) {
+					return getPathologicLabImage();
+				}
+			}
+		}
 		return Images.IMG_VIEW_LABORATORY.getImage();
+	}
+
+	private Image getPathologicLabImage() {
+		if (pathologicLabImage == null) {
+			initializeImages();
+		}
+		return pathologicLabImage;
+	}
+
+	private static void initializeImages() {
+		ImageDescriptor[] overlays = new ImageDescriptor[1];
+		overlays[0] = AbstractUIPlugin.imageDescriptorFromPlugin("at.medevit.elexis.inbox.ui", //$NON-NLS-1$
+				"/rsc/img/achtung_overlay.png"); //$NON-NLS-1$
+
+		pathologicLabImage = new DecorationOverlayIcon(Images.IMG_VIEW_LABORATORY.getImage(), overlays).createImage();
 	}
 
 	@Override
@@ -179,5 +212,21 @@ public class LabResultLabelProvider extends LabelProvider implements IColorProvi
 	@Override
 	public Color getBackground(Object element) {
 		return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+	}
+
+	@Override
+	public String getToolTipText(Object element) {
+		if (element instanceof LabGroupedInboxElements) {
+			List<ILabResult> pathologicResults = ((LabGroupedInboxElements) element).getPathologicResults();
+			if (!pathologicResults.isEmpty()) {
+				StringBuilder sb = new StringBuilder("Pathologische Resultate:\n");
+				for (ILabResult labResult : pathologicResults) {
+					sb.append(labResult.getItem().getCode() + ", " + labResult.getItem().getName() + ", "
+							+ labResult.getResult()).append("\n");
+				}
+				return sb.toString();
+			}
+		}
+		return null;
 	}
 }

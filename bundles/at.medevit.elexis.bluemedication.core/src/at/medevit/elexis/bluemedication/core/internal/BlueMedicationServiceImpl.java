@@ -176,10 +176,18 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 		client.setBasePath(getAppBasePath());
 		if(hinAuthService.isPresent()) {
 			Optional<String> authToken = hinAuthService.get()
-					.getToken(Collections.singletonMap(IHinAuthService.TOKEN_GROUP, "BlueMedication"));
+					.getToken(Collections.singletonMap(IHinAuthService.TOKEN_GROUP, getTokenGroup()));
 			if (authToken.isPresent()) {
 				client.addDefaultHeader("Authorization" , "Bearer " + authToken.get());
 			}
+		}
+	}
+	
+	private String getTokenGroup() {
+		if (ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_URL_STAGING, false)) {
+			return "BlueMedicationStaging";
+		} else {
+			return "BlueMedication";
 		}
 	}
 	

@@ -49,10 +49,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.wb.swt.TableViewerColumnSorter;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.base.ch.ebanking.esr.ESRRecordDialog;
 import ch.elexis.base.ch.ebanking.esr.Messages;
 import ch.elexis.base.ch.ebanking.model.IEsrRecord;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IPatient;
@@ -436,7 +439,8 @@ public class ESRView extends ViewPart {
 					.setText("Zeitraum: " + sdf.format(startDate.getTime()) + " - " + sdf.format(endDate.getTime())); //$NON-NLS-2$
 		}
 
-		if (AccessControlServiceHolder.get().evaluate(EvACEs.DISPLAY_ESR) == true) {
+		if (AccessControlServiceHolder.get()
+				.evaluate(EvACE.of(IEsrRecord.class, Right.READ).and(Right.VIEW))) {
 			Job job = Job.create("ESR loading ...", (ICoreRunnable) monitor -> {
 				IQuery<IEsrRecord> esrQuery = esrModelService.getQuery(IEsrRecord.class);
 				esrQuery.and("id", COMPARATOR.NOT_EQUALS, StringConstants.ONE);
@@ -473,6 +477,8 @@ public class ESRView extends ViewPart {
 			job.schedule();
 		} else {
 			tableViewer.setInput(null);
+			LoggerFactory.getLogger(getClass())
+					.info("User has no right for class [" + IEsrRecord.class.getSimpleName() + "]");
 		}
 	}
 

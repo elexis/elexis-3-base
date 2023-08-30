@@ -146,7 +146,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 	@Override
 	public void createPartControl(Composite parent) {
-		setBereich(agenda.getActResource());
+		setBereich(ConfigServiceHolder.getUser(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
 		create(parent);
 		makeActions();
 		tv.setContentProvider(new AgendaContentProvider());

@@ -212,12 +212,12 @@ public class TarmedRequirements {
 	public static String getAHV(final IPerson p) {
 		IXid ahv = p.getXid(DOMAIN_AHV);
 		String ret = ahv != null ? ahv.getDomainId() : StringUtils.EMPTY;
-		if (ret.length() == 0) {
+		if (StringUtils.isBlank(ret)) {
 			ret = StringUtils.defaultString((String) p.getExtInfo(SSN));
-			if (ret.length() == 0) {
+			if (StringUtils.isBlank(ret)) {
 				ret = StringUtils.defaultString((String) p.getExtInfo(INSURANCE_NUMBER));
 			}
-			if (ret.length() > 0) {
+			if (StringUtils.isNotBlank(ret)) {
 				setAHV(p, ret);
 			}
 		}

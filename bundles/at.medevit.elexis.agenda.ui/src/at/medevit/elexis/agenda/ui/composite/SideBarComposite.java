@@ -180,7 +180,6 @@ public class SideBarComposite extends Composite {
 		label.setText("Tagesnachricht");
 		dayMessage = SWTHelper.createText(this, 4, SWT.V_SCROLL);
 		// set text field's maximum width to the width of the calendar
-
 		GridData gd = (GridData) dayMessage.getLayoutData();
 		gd.widthHint = calendar.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 

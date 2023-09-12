@@ -143,7 +143,7 @@ public class SideBarComposite extends Composite {
 		}
 		Font boldFont = fr.get(cfgName);
 		label.setFont(boldFont);
-		label.setText(Messages.AgendaUI_SideBar_range);
+		label.setText("Bereiche");
 		ScrolledComposite areaScrolledComposite = new ScrolledComposite(this, SWT.V_SCROLL);
 		areaScrolledComposite.setLayout(new FillLayout());
 		areaScrolledComposite.setExpandVertical(true);
@@ -179,8 +179,8 @@ public class SideBarComposite extends Composite {
 		label.setFont(boldFont);
 		label.setText("Tagesnachricht");
 		dayMessage = SWTHelper.createText(this, 4, SWT.V_SCROLL);
-
 		// set text field's maximum width to the width of the calendar
+
 		GridData gd = (GridData) dayMessage.getLayoutData();
 		gd.widthHint = calendar.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 
@@ -240,7 +240,7 @@ public class SideBarComposite extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				agendaComposite.setScrollToNow(scrollToNowCheck.getSelection());
 				saveConfigurationString("scrollToNow", //$NON-NLS-1$
-						Boolean.toString(scrollToNowCheck.getSelection()));
+						Boolean.toString(scrollToNowCheck.getSelection()));				
 				super.widgetSelected(e);
 			}
 		});
@@ -347,6 +347,7 @@ public class SideBarComposite extends Composite {
 		for (Control control : controls) {
 			if (control instanceof ToolBar) {
 				// never hide the toolbar
+
 				continue;
 			}
 			GridData gridData = (GridData) control.getLayoutData();
@@ -411,6 +412,7 @@ public class SideBarComposite extends Composite {
 			selectedResources.addAll(Arrays.asList(parts));
 			List<String> selections = new ArrayList<>();
 			// update button selection
+
 			for (Control child : areaComposite.getChildren()) {
 				if (child instanceof Button) {
 					if (selectedResources.contains(((Button) child).getText())) {
@@ -428,8 +430,8 @@ public class SideBarComposite extends Composite {
 	private void saveConfigurationString(String configKey, String value) {
 		ConfigServiceHolder.get().setActiveUserContact(
 				"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, //$NON-NLS-1$ //$NON-NLS-2$
-				value);
-	}
+				value);	
+		}
 
 	private String loadConfigurationString(String configKey) {
 		return ConfigServiceHolder.get().getActiveUserContact(

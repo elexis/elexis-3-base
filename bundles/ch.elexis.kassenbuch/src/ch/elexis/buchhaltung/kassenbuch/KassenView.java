@@ -423,7 +423,13 @@ class KassenbuchViewerComparator extends ViewerComparator {
 			int rc = 0;
 			switch (propertyIndex) {
 			case 0:
-				rc = kb1.getBelegNr().compareTo(kb2.getBelegNr());
+				try {
+					int belegNr1 = Integer.parseInt(kb1.getBelegNr());
+					int belegNr2 = Integer.parseInt(kb2.getBelegNr());
+					rc = Integer.compare(belegNr1, belegNr2);
+				} catch (NumberFormatException e) {
+					rc = kb1.getBelegNr().compareTo(kb2.getBelegNr());
+				}
 				break;
 			case 1:
 				rc = kb1.getDate().compareTo(kb2.getDate());

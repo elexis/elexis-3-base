@@ -56,7 +56,7 @@ public class Patient {
 		ret.Zip = elexisPatient.getZip();
 		ret.City = elexisPatient.getCity();
 		ret.Lng = "de";
-		ret.Phone = elexisPatient.getPhone1();
+		ret.Phone = elexisPatient.getMobile();
 		return ret;
 	}
 }

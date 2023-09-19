@@ -155,7 +155,7 @@ public class SideBarComposite extends Composite {
 		}
 		Font boldFont = fr.get(cfgName);
 		label.setFont(boldFont);
-		label.setText("Bereiche");
+		label.setText(Messages.AgendaUI_SideBar_Bereiche_Title);
 		ScrolledComposite areaScrolledComposite = new ScrolledComposite(this, SWT.V_SCROLL);
 		areaScrolledComposite.setLayout(new FillLayout());
 		areaScrolledComposite.setExpandVertical(true);

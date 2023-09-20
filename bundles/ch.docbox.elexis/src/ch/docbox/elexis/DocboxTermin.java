@@ -14,13 +14,13 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 import ch.docbox.ws.cdachservices.AppointmentType;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.data.Query;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 public class DocboxTermin {
@@ -235,8 +235,7 @@ public class DocboxTermin {
 					+ elexisTermin.getGrund() + " - " + elexisTermin.getDay(), Log.DEBUGMSG);
 
 		} catch (Exception exception) {
-			log.log(exception, "Termin konnte nicht gespeichert werden", Log.ERRORS);
-			ExHandler.handle(exception);
+			LoggerFactory.getLogger(getClass()).error("Termin konnte nicht gespeichert werden", exception);
 			return false;
 		}
 

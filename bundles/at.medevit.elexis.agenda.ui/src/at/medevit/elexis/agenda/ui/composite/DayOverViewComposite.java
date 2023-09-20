@@ -170,7 +170,7 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 
 	@Override
 	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
-		return new Point(getParent().getSize().x, 40);
+		return new Point(getParent().getSize().x, 60);
 	}
 
 	/**

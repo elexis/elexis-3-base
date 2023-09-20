@@ -150,7 +150,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				org.openapitools.client.model.UploadResult data = ((ApiResponse<org.openapitools.client.model.UploadResult>) response)
 						.getData();
 				return new Result<UploadResult>(
-						new UploadResult(appendPath(getBasePath(), data.getUrl() + "&mode=embed"), data.getId(),
+						new UploadResult(appendPath(getBrowserBasePath(), data.getUrl() + "&mode=embed"), data.getId(),
 								resulttyp, uploadedMediplan));
 			} catch (ApiException e) {
 				if (e.getCode() == 400 || e.getCode() == 422) {
@@ -185,9 +185,9 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 	
 	private String getTokenGroup() {
 		if (ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_URL_STAGING, false)) {
-			return "BlueMedicationStaging";
+			return "bluecare_bluemedication_staging";
 		} else {
-			return "BlueMedication";
+			return "bluecare_bluemedication";
 		}
 	}
 	
@@ -345,6 +345,14 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			} else {
 				return "http://bluemedication.hin.ch";
 			}
+		}
+	}
+
+	private String getBrowserBasePath() {
+		if (ConfigServiceHolder.getGlobal(BlueMedicationConstants.CFG_URL_STAGING, false)) {
+			return "http://staging.bluemedication.hin.ch";
+		} else {
+			return "http://bluemedication.hin.ch";
 		}
 	}
 

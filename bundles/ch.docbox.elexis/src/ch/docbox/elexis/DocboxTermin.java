@@ -61,7 +61,7 @@ public class DocboxTermin {
 
 	private boolean loadTerminByDocboxUniqueId(String id) {
 		elexisTermin = performDocboxIdLoad(id);
-		if (!elexisTermin.exists()) {
+		if (elexisTermin != null && !elexisTermin.exists()) {
 			elexisTermin = null;
 		}
 		if (elexisTermin != null && elexisTermin.isDeleted()) {

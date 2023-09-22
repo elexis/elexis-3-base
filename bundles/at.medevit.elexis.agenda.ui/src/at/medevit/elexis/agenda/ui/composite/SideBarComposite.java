@@ -375,7 +375,6 @@ public class SideBarComposite extends Composite {
 		for (Control control : controls) {
 			if (control instanceof ToolBar) {
 				// never hide the toolbar
-
 				continue;
 			}
 			GridData gridData = (GridData) control.getLayoutData();
@@ -439,7 +438,6 @@ public class SideBarComposite extends Composite {
 			selectedResources.addAll(Arrays.asList(parts));
 			List<String> selections = new ArrayList<>();
 			// update button selection
-
 			for (Control child : areaComposite.getChildren()) {
 				if (child instanceof Button) {
 					if (selectedResources.contains(((Button) child).getText())) {

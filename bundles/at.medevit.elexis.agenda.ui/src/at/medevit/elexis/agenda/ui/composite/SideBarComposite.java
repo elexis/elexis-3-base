@@ -155,7 +155,7 @@ public class SideBarComposite extends Composite {
 		}
 		Font boldFont = fr.get(cfgName);
 		label.setFont(boldFont);
-		label.setText(Messages.AgendaUI_SideBar_Bereiche_Title);		
+		label.setText(Messages.AgendaUI_SideBar_Bereiche_Title);
 		ScrolledComposite areaScrolledComposite = new ScrolledComposite(this, SWT.V_SCROLL);
 		areaScrolledComposite.setLayout(new FillLayout());
 		areaScrolledComposite.setExpandVertical(true);
@@ -375,7 +375,6 @@ public class SideBarComposite extends Composite {
 		for (Control control : controls) {
 			if (control instanceof ToolBar) {
 				// never hide the toolbar
-
 				continue;
 			}
 			GridData gridData = (GridData) control.getLayoutData();
@@ -439,7 +438,6 @@ public class SideBarComposite extends Composite {
 			selectedResources.addAll(Arrays.asList(parts));
 			List<String> selections = new ArrayList<>();
 			// update button selection
-
 			for (Control child : areaComposite.getChildren()) {
 				if (child instanceof Button) {
 					if (selectedResources.contains(((Button) child).getText())) {
@@ -457,7 +455,7 @@ public class SideBarComposite extends Composite {
 	private void saveConfigurationString(String configKey, String value) {
 		ConfigServiceHolder.get().setActiveUserContact(
 				"at.medevit.elexis.agenda.ui/" + agendaComposite.getConfigId() + "/" + configKey, //$NON-NLS-1$ //$NON-NLS-2$
-				value);	
+				value);
 		}
 
 	private String loadConfigurationString(String configKey) {

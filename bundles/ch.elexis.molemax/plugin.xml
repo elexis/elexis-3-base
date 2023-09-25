@@ -35,7 +35,7 @@
             name="MoleMax">
       </page>
       <page
-            class="ch.elexis.molemax.views2.MolemaxPrefs"
+            class="ch.elexis.molemax.views2.MolemaxImagePrefs"
             id="molemax.pref3"
             name="MoleMaxImageViewer">
       </page>

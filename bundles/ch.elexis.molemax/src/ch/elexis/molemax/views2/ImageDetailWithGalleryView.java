@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.molemax.Messages;
@@ -155,7 +156,6 @@ public class ImageDetailWithGalleryView {
 		fullImageLabel.addListener(SWT.MouseDoubleClick, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				disposeCreatedImages();
 				showMaximizedImage();
 			}
 		});
@@ -277,6 +277,8 @@ public class ImageDetailWithGalleryView {
 								} catch (IOException e) {
 									System.out.println("Error while copying file: " + e.getMessage());
 									e.printStackTrace();
+									LoggerFactory.getLogger(getClass()).warn("Error while copying file: ", e,
+											e.getMessage());
 								}
 
 								updateGalleryForSelectedGroup(targetDirectory.getAbsolutePath());
@@ -560,6 +562,7 @@ public class ImageDetailWithGalleryView {
 			return scaledImage;
 
 		} catch (Exception e) {
+			LoggerFactory.getLogger(getClass()).warn("Image ready to dispos ", e);
 			e.printStackTrace();
 			return null;
 		}

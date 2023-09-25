@@ -11,32 +11,35 @@
  ******************************************************************************/
 package ch.elexis.molemax.data;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
-import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.util.Log;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.molemax.views.MolemaxPrefs;
-import ch.elexis.core.ui.util.Log;
-import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.molemax.views2.MolemaxImagePrefs;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -386,6 +389,7 @@ public class Tracker extends PersistentObject {
 		List<Tracker> list = qbe.execute();
 		Collections.sort(list, new Comparator<Tracker>() {
 
+			@Override
 			public int compare(final Tracker arg0, final Tracker arg1) {
 				if ((arg0 != null) && (arg1 != null)) {
 					TimeTool tt0 = new TimeTool(arg0.get("Datum"));
@@ -557,6 +561,70 @@ public class Tracker extends PersistentObject {
 		return sb.toString();
 	}
 
+	public static String makeDescriptorImage(final Patient p) {
+		String input = CoreHub.localCfg.get(MolemaxImagePrefs.CUSTOM_BASEDIR, StringUtils.EMPTY);
+
+		StringBuilder ret = new StringBuilder();
+		ret.append(CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, StringUtils.EMPTY)).append(File.separator);
+
+		// Teilen Sie den Eingabestring in Pfadsegmente
+		String[] pathSegments = input.split("/");
+
+		Pattern pattern = Pattern.compile("(Name|Vorname|PatNum|Datum(-[yMd.]+)?|Uhrzeit(-[Hhmsa:]+)?|Slot)(-\\d+)?");
+
+		for (int i = 0; i < pathSegments.length; i++) {
+			String segment = pathSegments[i];
+			Matcher matcher = pattern.matcher(segment);
+
+			while (matcher.find()) {
+				String match = matcher.group();
+				String keyword = match.split("-")[0];
+				int length = -1; // -1 bedeutet, dass der gesamte Name/Vorname genommen wird
+
+				if (match.contains("-") && !keyword.equals("Datum") && !keyword.equals("Uhrzeit")) {
+					length = Integer.parseInt(match.split("-")[1]);
+				}
+
+				if (keyword.equals("PatNum")) {
+					String patCode = p.getPatCode();
+					ret.append(patCode);
+				} else if (keyword.equals("Name")) {
+					String namCode = p.getName();
+					if (length != -1 && namCode.length() > length) {
+						namCode = namCode.substring(0, length);
+					}
+					ret.append(namCode);
+				} else if (keyword.equals("Vorname")) {
+					String vorCode = p.getVorname();
+					if (length != -1 && vorCode.length() > length) {
+						vorCode = vorCode.substring(0, length);
+					}
+					ret.append(vorCode);
+				} else if (keyword.equals("Datum")) {
+					String dateFormat = match.split("-")[1];
+					SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+					String formattedDate = sdf.format(new Date());
+
+					ret.append(formattedDate);
+
+				} else if (keyword.equals("Uhrzeit")) {
+					String timeFormat = match.split("-")[1];
+					SimpleDateFormat sdf = new SimpleDateFormat(timeFormat);
+					String formattedTime = sdf.format(new Date());
+					ret.append(formattedTime);
+				}
+			}
+
+			// Nur ein Trennzeichen hinzufügen, wenn es nicht das letzte Segment ist
+			if (i < pathSegments.length - 1) {
+				ret.append(File.separator);
+			}
+		}
+
+//		System.out.println("Test 2 " + ret.toString());
+		return ret.toString();
+	}
+
 	private static String makeFilename(final Rectangle rec, final String ext) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Integer.toString(rec.x)).append("-").append(Integer.toString(rec.y)).append("-")
@@ -627,6 +695,6 @@ public class Tracker extends PersistentObject {
 
 	public String getInfoString(final String name) {
 		Map extinfo = getMap("ExtInfo");
-		return checkNull((String) extinfo.get(name));
+		return checkNull(extinfo.get(name));
 	}
 }

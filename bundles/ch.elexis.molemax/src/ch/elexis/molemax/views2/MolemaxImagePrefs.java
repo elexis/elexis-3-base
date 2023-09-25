@@ -23,7 +23,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.molemax.Messages;
 
-public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	private List<Control> controlledWidgets = new ArrayList<>();
 
 	public static final String CUSTOM_BASEDIR = "molemax/custom_imagebase";
@@ -48,7 +48,7 @@ public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenc
 	Button slotButton;
 	Button dateButton;
 
-	public MolemaxPrefs() {
+	public MolemaxImagePrefs() {
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}

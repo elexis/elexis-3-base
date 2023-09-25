@@ -40,7 +40,7 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 	Form form;
 	FormToolkit tk;
 	protected Tracker[][] trackers;
-	protected ImageTracker[][] trackers2;
+//	protected ImageTracker[][] trackers2;
 	private StackLayout stack;
 	private Composite fullImageView, galleryComposite;
 	private Label fullImageLabel;

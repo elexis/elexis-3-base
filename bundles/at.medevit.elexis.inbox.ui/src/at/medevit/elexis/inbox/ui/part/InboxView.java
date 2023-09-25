@@ -164,8 +164,23 @@ public class InboxView extends ViewPart {
 		viewer.setComparator(comparator);
 
 		ColumnViewerToolTipSupport.enableFor(viewer);
+
 		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+
+		column.setLabelProvider(new EmulatedCheckBoxLabelProvider() {
+			@Override
+			protected boolean isChecked(Object element) {
+				if (element instanceof IInboxElement) {
+					return ((IInboxElement) element).getState() == State.SEEN;
+				}
+				return false;
+			}
+		});
+		column.setEditingSupport(new CheckBoxColumnEditingSupport(viewer));
+		column.getColumn().setText("Visiert");
 		column.getColumn().setWidth(50);
+		column = new TableViewerColumn(viewer, SWT.NONE);
+		column.getColumn().setWidth(75);
 		column.getColumn().setText("Kategorie");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
@@ -265,20 +280,6 @@ public class InboxView extends ViewPart {
 				return super.getText(element);
 			}
 		});
-
-		column = new TableViewerColumn(viewer, SWT.NONE);
-		column.setLabelProvider(new EmulatedCheckBoxLabelProvider() {
-			@Override
-			protected boolean isChecked(Object element) {
-				if (element instanceof IInboxElement) {
-					return ((IInboxElement) element).getState() == State.SEEN;
-				}
-				return false;
-			}
-		});
-		column.setEditingSupport(new CheckBoxColumnEditingSupport(viewer));
-		column.getColumn().setText("Visiert");
-		column.getColumn().setWidth(35);
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
@@ -632,7 +633,7 @@ public class InboxView extends ViewPart {
 			}
 		}
 		viewer.refresh();
-		Display.getDefault().timerExec(2500, () -> {
+		Display.getDefault().timerExec(50, () -> {
 			if (viewer.getControl() != null && !viewer.getControl().isDisposed()) {
 				contentProvider.refreshElement(element);
 				viewer.refresh();

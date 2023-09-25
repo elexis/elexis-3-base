@@ -29,12 +29,4 @@
             name="Laborgruppen (Laborblätter)">
       </page>
    </extension>
-   <extension
-         point="ch.elexis.core.data.ACLContribution">
-      <ACLContribution
-            ACLContributor="org.iatrix.messwerte.acl.ACLContributor"
-            name="org.iatrix.messwerte.acl.ACLContributor">
-      </ACLContribution>
-   </extension>
-
 </plugin>

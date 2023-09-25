@@ -14,12 +14,6 @@
             name="Buchhaltung"/>
    </extension>
    <extension
-         point="ch.elexis.core.data.ACLContribution">
-      <ACLContribution
-            ACLContributor="ch.elexis.buchhaltung.kassenbuch.ACLContributor"
-            name="ch.elexis.Kassenbuch.ACLContribution"/>
-   </extension>
-   <extension
          point="ch.elexis.core.data.PersistentReference">
       <Factory
             Class="ch.elexis.buchhaltung.kassenbuch.KassenbuchEintragFactory"

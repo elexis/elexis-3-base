@@ -6,11 +6,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.action.Action;
@@ -56,6 +56,7 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IDayMessage;
 import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.agenda.Area;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -94,6 +95,17 @@ public class SideBarComposite extends Composite {
 	private DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd"); //$NON-NLS-1$
 	private Text dayMessage;
 
+	@Inject
+	void user(@Optional IUser user) {
+		if (user != null) {
+			Display.getDefault().asyncExec(() -> {
+				if (areaComposite != null && !areaComposite.isDisposed()) {
+					updateAreaComposite();
+				}
+			});
+		}
+	}
+	
 	public SideBarComposite(Composite parent, int style) {
 		this(parent, false, style);
 	}
@@ -154,25 +166,7 @@ public class SideBarComposite extends Composite {
 
 		areaComposite = new Composite(areaScrolledComposite, SWT.NONE);
 		areaComposite.setLayout(new GridLayout());
-		List<Area> areas = AppointmentServiceHolder.get().getAreas();
-		for (Area area : areas) {
-			Button btn = new Button(areaComposite, SWT.CHECK);
-			btn.setText(area.getName());
-			btn.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (e.getSource() instanceof Button) {
-						if (((Button) e.getSource()).getSelection()) {
-							selectedResources.add(((Button) e.getSource()).getText());
-						} else {
-							selectedResources.remove(((Button) e.getSource()).getText());
-						}
-						saveSelectedResources();
-					}
-				}
-			});
-		}
-		areaComposite.pack();
+		updateAreaComposite();
 		areaScrolledComposite.setContent(areaComposite);
 
 		label = new Label(this, SWT.NONE);
@@ -190,7 +184,7 @@ public class SideBarComposite extends Composite {
 			public void modifyText(ModifyEvent e) {
 				String tx = dayMessage.getText();
 				LocalDate date = LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
-				Optional<IDayMessage> message = CoreModelServiceHolder.get().load(date.format(yyyyMMdd),
+				java.util.Optional<IDayMessage> message = CoreModelServiceHolder.get().load(date.format(yyyyMMdd),
 						IDayMessage.class);
 				if (message.isPresent()) {
 					message.get().setMessage(tx);
@@ -314,9 +308,43 @@ public class SideBarComposite extends Composite {
 		hideContent();
 	}
 
+	private void updateAreaComposite() {
+		for (Control control : areaComposite.getChildren()) {
+			if (control instanceof Button && !control.isDisposed()) {
+				control.setVisible(false);
+				control.dispose();
+			}
+		}
+		List<Area> areas = AppointmentServiceHolder.get().getAoboAreas();
+		for (Area area : areas) {
+			Button btn = new Button(areaComposite, SWT.CHECK);
+			btn.setText(area.getName());
+			btn.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (e.getSource() instanceof Button) {
+						if (((Button) e.getSource()).getSelection()) {
+							selectedResources.add(((Button) e.getSource()).getText());
+						} else {
+							selectedResources.remove(((Button) e.getSource()).getText());
+						}
+						saveSelectedResources();
+					}
+				}
+			});
+		}
+		areaComposite.layout();
+		areaComposite.pack();
+		if (agendaComposite != null) {
+			loadSelectedResources();
+			agendaComposite.setSelectedResources(selectedResources);
+		}
+	}
+
 	private void updateDayMessage() {
 		LocalDate date = LocalDate.of(calendar.getYear(), calendar.getMonth() + 1, calendar.getDay());
-		Optional<IDayMessage> message = CoreModelServiceHolder.get().load(date.format(yyyyMMdd), IDayMessage.class);
+		java.util.Optional<IDayMessage> message = CoreModelServiceHolder.get().load(date.format(yyyyMMdd),
+				IDayMessage.class);
 		if (message.isPresent()) {
 			dayMessage.setText(message.get().getMessage());
 		} else {
@@ -399,7 +427,6 @@ public class SideBarComposite extends Composite {
 			}
 			sb.append(resource);
 		}
-		System.out.println(sb.toString());
 		saveConfigurationString("selectedResources", sb.toString()); //$NON-NLS-1$
 	}
 
@@ -452,11 +479,11 @@ public class SideBarComposite extends Composite {
 		}
 	}
 
-	public Optional<MoveInformation> getMoveInformation() {
+	public java.util.Optional<MoveInformation> getMoveInformation() {
 		if (currentMoveInformation != null) {
 			currentMoveInformation.setMoveablePeriods(movePeriods);
 		}
-		return Optional.ofNullable(currentMoveInformation);
+		return java.util.Optional.ofNullable(currentMoveInformation);
 	}
 
 	public void setMoveInformation(LocalDateTime date, String resource) {

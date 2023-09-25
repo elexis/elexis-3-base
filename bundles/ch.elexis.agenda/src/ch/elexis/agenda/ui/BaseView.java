@@ -42,12 +42,13 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
@@ -56,6 +57,7 @@ import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IAppointmentService;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
@@ -134,7 +136,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	abstract protected IPlannable getSelection();
 
 	private void internalRefresh() {
-		if (CoreHub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)) {
+		if (AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.VIEW))) {
 			UiDesk.getDisplay().asyncExec(new Runnable() {
 
 				@Override
@@ -156,8 +158,8 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	}
 
 	protected void updateActions() {
-		dayLimitsAction.setEnabled(CoreHub.acl.request(ACLContributor.CHANGE_DAYSETTINGS));
-		boolean canChangeAppointments = CoreHub.acl.request(ACLContributor.CHANGE_APPOINTMENTS);
+		dayLimitsAction.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.UPDATE).and(Right.EXECUTE)));
+		boolean canChangeAppointments = AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.UPDATE));
 		newTerminAction.setEnabled(canChangeAppointments);
 		AgendaActions.updateActions();
 		internalRefresh();

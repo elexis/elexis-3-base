@@ -12,14 +12,8 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.acl;
 
-import org.apache.commons.lang3.StringUtils;
-import ch.elexis.admin.ACE;
-import ch.elexis.admin.AbstractAccessControl;
-import ch.elexis.admin.IACLContributor;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.model.RoleConstants;
-import ch.unibe.iam.scg.archie.ArchieActivator;
-import ch.unibe.iam.scg.archie.Messages;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 
 /**
  * <p>
@@ -32,22 +26,7 @@ import ch.unibe.iam.scg.archie.Messages;
  * @author Dennis Schenk
  * @version $Rev: 747 $
  */
-public class ArchieACL implements IACLContributor {
-
-	/**
-	 * Access control string that will be displayed in the ACL.
-	 */
-	public static final ACE USE_ARCHIE = new ACE(ACE.ACE_ROOT, "archie", //$NON-NLS-1$
-			ArchieActivator.PLUGIN_NAME + StringUtils.SPACE + Messages.ACL_ACCESS);
-
-	/**
-	 * Returns the ACL for this plugin.
-	 *
-	 * @return String[]
-	 */
-	public ACE[] getACL() {
-		return new ACE[] { ArchieACL.USE_ARCHIE };
-	}
+public class ArchieACL {
 
 	/**
 	 * Static function to check whether the currently active user has access to
@@ -56,15 +35,7 @@ public class ArchieACL implements IACLContributor {
 	 * @return boolean True if the current user can access archie, false else.
 	 */
 	public static boolean userHasAccess() {
-		return CoreHub.acl.request(USE_ARCHIE);
-	}
-
-	/**
-	 * @{inheritDoc}
-	 */
-	@Override
-	public void initializeDefaults(AbstractAccessControl ac) {
-		ac.grant(RoleConstants.SYSTEMROLE_LITERAL_DOCTOR, USE_ARCHIE);
+		return AccessControlServiceHolder.get().evaluate(EvACE.of("USE_ARCHIE"));
 	}
 
 }

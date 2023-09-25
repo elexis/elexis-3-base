@@ -102,6 +102,10 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 					items.sort((l, r) -> {
 						return r.getLastupdate().compareTo(l.getLastupdate());
 					});
+					// refresh filtered list
+					if (StringUtils.isNotBlank(searchText)) {
+						setSearchText(searchText);
+					}
 					Display.getDefault().asyncExec(() -> {
 						page = 1;
 						inboxView.getPagingComposite().setup(page, items.size(), PAGING_FETCHSIZE);
@@ -120,11 +124,17 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 		if (items != null) {
 			if (element.getState() == State.SEEN) {
 				items.remove(element);
+				if (filteredItems != null) {
+					filteredItems.remove(element);
+				}
 			} else {
 				IMandator activeMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 				IMandator inboxMandant = element.getMandator();
 				if (!inboxMandant.equals(activeMandant)) {
 					items.remove(element);
+					if (filteredItems != null) {
+						filteredItems.remove(element);
+					}
 				}
 			}
 		}

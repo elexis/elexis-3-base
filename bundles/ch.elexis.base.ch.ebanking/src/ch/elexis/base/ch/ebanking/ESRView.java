@@ -1,7 +1,5 @@
 package ch.elexis.base.ch.ebanking;
 
-import static ch.elexis.base.ch.ebanking.EBankingACLContributor.DISPLAY_ESR;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -51,21 +49,24 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.wb.swt.TableViewerColumnSorter;
+import org.slf4j.LoggerFactory;
 
-import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.base.ch.ebanking.esr.ESRRecordDialog;
 import ch.elexis.base.ch.ebanking.esr.Messages;
 import ch.elexis.base.ch.ebanking.model.IEsrRecord;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.model.ac.EvACEs;
 import ch.elexis.core.model.esr.ESRRejectCode;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -374,7 +375,7 @@ public class ESRView extends ViewPart {
 		});
 
 		tableViewer.setLabelProvider(new ESRLabelProvider());
-		tableViewer.setContentProvider(new ESRContentProvider(lblSUMME, DISPLAY_ESR));
+		tableViewer.setContentProvider(new ESRContentProvider(lblSUMME));
 
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -438,12 +439,13 @@ public class ESRView extends ViewPart {
 					.setText("Zeitraum: " + sdf.format(startDate.getTime()) + " - " + sdf.format(endDate.getTime())); //$NON-NLS-2$
 		}
 
-		if (CoreHub.acl.request(DISPLAY_ESR) == true) {
+		if (AccessControlServiceHolder.get()
+				.evaluate(EvACE.of(IEsrRecord.class, Right.READ).and(Right.VIEW))) {
 			Job job = Job.create("ESR loading ...", (ICoreRunnable) monitor -> {
 				IQuery<IEsrRecord> esrQuery = esrModelService.getQuery(IEsrRecord.class);
 				esrQuery.and("id", COMPARATOR.NOT_EQUALS, StringConstants.ONE);
 
-				if (CoreHub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
+				if (AccessControlServiceHolder.get().evaluate(EvACEs.ACCOUNTING_GLOBAL) == false) {
 					contextService.getActiveMandator().ifPresent(m -> {
 						esrQuery.startGroup();
 						esrQuery.and("mandant", COMPARATOR.EQUALS, m);
@@ -475,6 +477,8 @@ public class ESRView extends ViewPart {
 			job.schedule();
 		} else {
 			tableViewer.setInput(null);
+			LoggerFactory.getLogger(getClass())
+					.info("User has no right for class [" + IEsrRecord.class.getSimpleName() + "]");
 		}
 	}
 

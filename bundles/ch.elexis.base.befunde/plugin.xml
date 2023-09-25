@@ -56,12 +56,6 @@
             name="MesswertFactory"/>
    </extension>
    <extension
-         point="ch.elexis.core.data.ACLContribution">
-      <ACLContribution
-            ACLContributor="ch.elexis.base.befunde.ACLContributor"
-            name="Befunde-ACLs"/>
-   </extension>
-   <extension
          point="ch.elexis.core.data.DataAccess">
       <DataAccess
             class="ch.elexis.base.befunde.DataAccessor"

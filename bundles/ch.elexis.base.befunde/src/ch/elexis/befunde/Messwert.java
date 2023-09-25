@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 
-import ch.elexis.base.befunde.ACLContributor;
 import ch.elexis.base.befunde.Messages;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.data.Patient;
@@ -211,7 +210,6 @@ public class Messwert extends PersistentObject {
 				names.put("VERSION", Integer.toString(VERSION)); //$NON-NLS-1$
 				setup.setMap(FLD_BEFUNDE, names);
 
-				new ACLContributor().initializeDefaults(CoreHub.acl);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 			}

@@ -12,6 +12,7 @@ package ch.elexis.agenda.views;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
@@ -58,6 +59,7 @@ import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.util.ElexisIdGenerator;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -109,18 +111,7 @@ public class AgendaGross extends BaseAgendaView {
 		sash.setLayout(new GridLayout());
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
-		String[] bereiche = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14)
-				.split(","); //$NON-NLS-1$
-		ChangeBereichAdapter chb = new ChangeBereichAdapter();
-		bChange = new Button[bereiche.length];
-		for (int i = 0; i < bereiche.length; i++) {
-			bChange[i] = new Button(cButtons, SWT.RADIO);
-			bChange[i].setText(bereiche[i]);
-			bChange[i].addSelectionListener(chb);
-			if (bereiche[i].equals(agenda.getActResource())) {
-				bChange[i].setSelection(true);
-			}
-		}
+		updateAreasButtons();
 
 		Composite ret = new Composite(sash, SWT.NONE);
 		Composite right = new Composite(sash, SWT.BORDER);
@@ -209,6 +200,30 @@ public class AgendaGross extends BaseAgendaView {
 		initialize();
 	}
 
+	private void updateAreasButtons() {
+		if(bChange != null && bChange.length > 0) {
+			for (Button button : bChange) {
+				if(!button.isDisposed()) {
+					button.setVisible(false);
+					button.dispose();
+				}
+			}
+		}
+		String[] bereiche = AppointmentServiceHolder.get().getAoboAreas().stream().map(a -> a.getName())
+				.collect(Collectors.toList()).toArray(new String[0]);
+		ChangeBereichAdapter chb = new ChangeBereichAdapter();
+		bChange = new Button[bereiche.length];
+		for (int i = 0; i < bereiche.length; i++) {
+			bChange[i] = new Button(cButtons, SWT.RADIO);
+			bChange[i].setText(bereiche[i]);
+			bChange[i].addSelectionListener(chb);
+			if (bereiche[i].equals(agenda.getActResource())) {
+				bChange[i].setSelection(true);
+			}
+		}
+		cButtons.layout();
+	}
+
 	/*
 	 * Intialize dayMessage field
 	 */
@@ -229,6 +244,13 @@ public class AgendaGross extends BaseAgendaView {
 	protected void updateDate() {
 		setDayMessage();
 		tv.refresh();
+	}
+
+	@Override
+	protected void userChanged() {
+		super.userChanged();
+
+		updateAreasButtons();
 	}
 
 	private void saveColumnSizes() {

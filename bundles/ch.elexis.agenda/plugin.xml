@@ -18,28 +18,10 @@
             id="ch.elexis.agenda.largeview"
             inject="true"
             name="%Agenda_gross"/>
-      <view
-            category="ch.elexis.agenda.Views"
-            class="ch.elexis.agenda.ui.week.AgendaWeek"
-            icon="icons/calendar.png"
-            id="ch.elexis.agenda.week"
-            inject="true"
-            name="%Wochenanzeige">
-      </view>
       <category
             id="ch.elexis.agenda.Views"
             name="%Agenda">
       </category>
-      <view
-            allowMultiple="false"
-            category="ch.elexis.agenda.Views"
-            class="ch.elexis.agenda.ui.AgendaParallel"
-            icon="icons/calendar.png"
-            id="ch.elexis.agenda.parallelview"
-            inject="true"
-            name="%Parallelanzeige"
-            restorable="true">
-      </view>
       <view
             category="ch.elexis.agenda.Views"
             class="ch.elexis.agenda.ui.TerminListeView"
@@ -238,13 +220,6 @@
                class="ch.elexis.agenda.data.DataAccessor"
                name="Termin">
          </DataAccess>
-      </extension>
-      <extension
-            point="ch.elexis.core.data.ACLContribution">
-         <ACLContribution
-               ACLContributor="ch.elexis.agenda.acl.ACLContributor"
-               name="elexis-agenda.ACLContribution">
-         </ACLContribution>
       </extension>
       <extension
             point="ch.elexis.core.ui.TextTemplateRequirement">

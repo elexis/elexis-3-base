@@ -183,4 +183,9 @@ public class TarmedImporter extends ImporterPage {
 		});
 		return fis;
 	}
+
+	@Override
+	public String getObjectClass() {
+		return ch.elexis.core.model.IBillable.class.getName();
+	}
 }

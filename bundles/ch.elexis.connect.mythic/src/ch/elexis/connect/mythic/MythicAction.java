@@ -17,6 +17,8 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -26,12 +28,12 @@ import ch.elexis.core.importer.div.service.holder.LabImportUtilHolder;
 import ch.elexis.core.model.ILabItem;
 import ch.elexis.core.model.ILaboratory;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.serial.Connection;
+import ch.elexis.core.serial.Connection.ComPortListener;
 import ch.elexis.core.types.LabItemTyp;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
-import ch.elexis.core.ui.importer.div.rs232.Connection;
-import ch.elexis.core.ui.importer.div.rs232.Connection.ComPortListener;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Patient;
@@ -39,15 +41,12 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class MythicAction extends Action implements ComPortListener {
+	private static final Logger logger = LoggerFactory.getLogger(MythicAction.class);
 
-	private static final int MODE_AWAIT_START = 0;
-	private static final int MODE_AWAIT_LINES = 1;
-	private final int mode = 0;
-
-	Connection ctrl = new Connection("Elexis-Mythic", CoreHub.localCfg.get(Preferences.PORT, "COM1"),
-			CoreHub.localCfg.get(Preferences.PARAMS, "9600,8,n,1"), this);
 	ILaboratory myLab;
 	Patient actPatient;
+
+	private Connection ctrl;
 
 	public MythicAction() {
 		super("Mythic", AS_CHECK_BOX);
@@ -60,6 +59,10 @@ public class MythicAction extends Action implements ComPortListener {
 
 	@Override
 	public void run() {
+		ctrl = new Connection("Elexis-Mythic", CoreHub.localCfg.get(Preferences.PORT, "COM1"),
+				CoreHub.localCfg.get(Preferences.PARAMS, "9600,8,n,1"), this).withStartOfChunk("MYTHIC".getBytes())
+				.withEndOfChunk("END_RESULT".getBytes()).excludeDelimiters(false);
+
 		if (isChecked()) {
 			KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(), Patient.class, "Patient auswählen",
 					"Wem soll der Mythic-Befund zugeordnet werden?", Patient.DEFAULT_SORT);
@@ -68,7 +71,6 @@ public class MythicAction extends Action implements ComPortListener {
 			if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
 				actPatient = (Patient) ksl.getSelection();
 				if (ctrl.connect()) {
-					ctrl.readLine((byte) 13, 600);
 					return;
 				} else {
 					SWTHelper.showError("Fehler mit Port", "Konnte seriellen Port nicht öffnen");
@@ -84,28 +86,26 @@ public class MythicAction extends Action implements ComPortListener {
 		setChecked(false);
 	}
 
-	public void gotBreak(final Connection connection) {
-		actPatient = null;
-		connection.close();
-		SWTHelper.showError("Mythic", "Datenübertragung wurde unterbrochen");
+	@Override
+	public void gotChunk(final Connection connection, String chunk) {
+		String[] lines = chunk.split(StringUtils.CR);
+		logger.debug("Got chunk with " + lines.length + " lines.");
 
-	}
-
-	public void gotChunk(final Connection connection, final String data) {
-
-		// System.out.println(data+StringUtils.LF);
-		if (actPatient != null) {
-			if (data.startsWith("END_RESULT")) {
-				actPatient = null;
-				ctrl.close(); // That's it!
-				setChecked(false); // Pop out Mythic-Button
-				ElexisEventDispatcher.reload(LabItem.class); // and tell everybody, we're finished
-			} else {
-				fetchResult(data);
+		for (String data : lines) {
+			// System.out.println(data+StringUtils.LF);
+			if (actPatient != null) {
+				if (data.startsWith("END_RESULT")) {
+					actPatient = null;
+					ctrl.close(); // That's it!
+					setChecked(false); // Pop out Mythic-Button
+					ElexisEventDispatcher.reload(LabItem.class); // and tell everybody, we're finished
+				} else if (data.startsWith("MYTHIC")) {
+					continue;
+				} else {
+					fetchResult(data);
+				}
 			}
-
 		}
-
 	}
 
 	private void fetchResult(final String data) {
@@ -142,9 +142,8 @@ public class MythicAction extends Action implements ComPortListener {
 		}
 	}
 
-	public void timeout() {
-		ctrl.close();
-		SWTHelper.showError("Mythic", "Das Gerät antwortet nicht");
+	@Override
+	public void closed() {
 		setChecked(false);
 	}
 

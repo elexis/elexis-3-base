@@ -16,6 +16,7 @@ import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.InboxModelServiceHolder;
 import at.medevit.elexis.inbox.ui.dialog.MandantSelectorDialog;
 import at.medevit.elexis.inbox.ui.part.InboxView;
+import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IMandator;
@@ -42,7 +43,9 @@ public class ChangeMandantCommand extends AbstractHandler implements IHandler {
 						if (selObj instanceof IInboxElement) {
 							IInboxElement inboxElement = (IInboxElement) selObj;
 							inboxElement.setMandator(mandant);
-							InboxModelServiceHolder.get().save(inboxElement);
+							if (!(inboxElement instanceof GroupedInboxElements)) {
+								InboxModelServiceHolder.get().save(inboxElement);
+							}
 							refreshView(viewer, inboxElement);
 						}
 					}

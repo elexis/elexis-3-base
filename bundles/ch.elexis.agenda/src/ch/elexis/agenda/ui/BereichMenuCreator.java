@@ -11,6 +11,8 @@
  *******************************************************************************/
 package ch.elexis.agenda.ui;
 
+import java.util.stream.Collectors;
+
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -22,73 +24,71 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import ch.elexis.actions.Activator;
-import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.IAppointmentService;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 
 public class BereichMenuCreator implements IMenuCreator {
 
 	Menu mine;
 	Activator agenda = Activator.getDefault();
-	String[] sMandanten;
-	MenuItem[] menuItems;
 
 	@Override
 	public void dispose() {
 	}
 
 	public BereichMenuCreator() {
-		sMandanten = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_BEREICHE, Messages.TagesView_praxis)
-				.split(","); //$NON-NLS-1$
-		menuItems = new MenuItem[sMandanten.length];
+
 	}
 
 	@Override
 	public Menu getMenu(Control parent) {
 		mine = new Menu(parent);
-		fillMenu();
+		addAboutToShow();
 		return mine;
 	}
 
 	@Override
 	public Menu getMenu(Menu parent) {
 		mine = new Menu(parent);
-		fillMenu();
+		addAboutToShow();
 		return mine;
 	}
 
-	private void fillMenu() {
+	/**
+	 * Add custom about to show listener for dynamic area menu items based on
+	 * {@link IAppointmentService#getAoboAreas()}.
+	 * 
+	 */
+	private void addAboutToShow() {
 		mine.addListener(SWT.Show, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
-				MenuItem[] menuItems = mine.getItems();
-				for (int i = 0; i < menuItems.length; i++) {
-					if (menuItems[i].getText().equalsIgnoreCase(agenda.getActResource())) {
-						menuItems[i].setSelection(true);
-					} else {
-						menuItems[i].setSelection(false);
+				for (MenuItem item : mine.getItems()) {
+					if (item != null && !item.isDisposed()) {
+						item.dispose();
 					}
+				}
+				
+				String[] sMandanten = AppointmentServiceHolder.get().getAoboAreas().stream().map(a -> a.getName())
+						.collect(Collectors.toList()).toArray(new String[0]);
+				for (String m : sMandanten) {
+					MenuItem it = new MenuItem(mine, SWT.RADIO);
+					it.setText(m);
+					if (agenda.getActResource().equalsIgnoreCase(m)) {
+						it.setSelection(true);
+					} else {
+						it.setSelection(false);
+					}
+					it.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							MenuItem mi = (MenuItem) e.getSource();
+							agenda.setActResource(mi.getText());
+						}
+					});
 				}
 			}
 		});
-
-		for (String m : sMandanten) {
-			MenuItem it = new MenuItem(mine, SWT.RADIO);
-			it.setText(m);
-			if (agenda.getActResource().equalsIgnoreCase(m)) {
-				it.setSelection(true);
-			} else {
-				it.setSelection(false);
-			}
-			it.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					MenuItem mi = (MenuItem) e.getSource();
-					agenda.setActResource(mi.getText());
-				}
-
-			});
-		}
 	}
 }

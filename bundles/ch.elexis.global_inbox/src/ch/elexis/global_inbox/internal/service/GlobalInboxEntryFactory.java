@@ -26,6 +26,7 @@ import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IStoreToStringService;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
@@ -43,14 +44,16 @@ public class GlobalInboxEntryFactory {
 
 	@Activate
 	public void activate() {
-		String giDirSetting = GlobalInboxUtil.getDirectory("NOTSET", configService); //$NON-NLS-1$
-		if ("NOTSET".equals(giDirSetting)) { //$NON-NLS-1$
-			File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox"); //$NON-NLS-1$
-			boolean created = giDir.mkdir();
-			if (created) {
-				ConfigServiceHolder.get().setLocal(Preferences.PREF_DIR, giDir.getAbsolutePath());
+		AccessControlServiceHolder.get().doPrivileged(() -> {
+			String giDirSetting = GlobalInboxUtil.getDirectory("NOTSET", configService); //$NON-NLS-1$
+			if ("NOTSET".equals(giDirSetting)) { //$NON-NLS-1$
+				File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox"); //$NON-NLS-1$
+				boolean created = giDir.mkdir();
+				if (created) {
+					ConfigServiceHolder.get().setLocal(Preferences.PREF_DIR, giDir.getAbsolutePath());
+				}
 			}
-		}
+		});
 	}
 
 	@Reference

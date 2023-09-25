@@ -35,8 +35,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
@@ -87,7 +88,7 @@ public class TerminListeView extends ViewPart implements IRefreshable {
 	}
 
 	public TerminListeView() {
-		terminAendernAction = new LockRequestingRestrictedAction<Termin>(ACLContributor.CHANGE_APPOINTMENTS,
+		terminAendernAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.UPDATE),
 				ch.elexis.agenda.Messages.TagesView_changeTermin) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());

@@ -24,7 +24,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.befunde.Messwert;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
+import ch.elexis.core.findings.IFinding;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 //import ch.elexis.core.ui.UiDesk;
 //import ch.elexis.core.ui.scripting.ScriptEditor;
@@ -119,7 +122,7 @@ public class PrefsPage extends Composite {
 	}
 
 	boolean remove() {
-		if (CoreHub.acl.request(ACLContributor.DELETE_PARAM)
+		if (AccessControlServiceHolder.get().evaluate(EvACE.of(IFinding.class, Right.DELETE))
 				&& SWTHelper.askYesNo(Messages.PrefsPage_warningNotUndoableCaption, // $NON-NLS-1$
 						Messages.PrefsPage_warningConfirmMessage)) { // $NON-NLS-1$
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);

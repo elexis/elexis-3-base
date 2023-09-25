@@ -17,13 +17,16 @@ Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
  org.apache.httpcomponents.httpclient;bundle-version="4.5.10",
  org.apache.httpcomponents.httpcore;bundle-version="4.4.12",
  com.google.gson;bundle-version="2.8.6"
-Bundle-ClassPath: lib/gson-fire-1.8.3.jar,
- lib/okhttp-2.7.5.jar,
- lib/okio-1.6.0.jar,
- lib/swagger-java-client-1.0.0.jar,
- lib/threetenbp-1.3.5.jar,
- .
+Bundle-ClassPath: .,
+ lib/openapi-java-client-1.7.0.jar,
+ lib/gson-2.9.1.jar,
+ lib/gson-fire-1.8.3.jar,
+ lib/okhttp-4.10.0.jar,
+ lib/okio-jvm-3.0.0.jar,
+ lib/kotlin-stdlib-1.6.20.jar,
+ lib/kotlin-stdlib-common-1.5.31.jar,
+ lib/kotlin-stdlib-jdk8-1.6.10.jar
 Export-Package: at.medevit.elexis.bluemedication.core
-Service-Component: OSGI-INF/at.medevit.elexis.bluemedication.core.internal.BlueMedicationServiceImpl.xml,
- OSGI-INF/at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder.xml
 Bundle-Vendor: medevit.at
+Service-Component: OSGI-INF/at.medevit.elexis.bluemedication.core.BlueMedicationServiceHolder.xml,
+ OSGI-INF/at.medevit.elexis.bluemedication.core.internal.BlueMedicationServiceImpl.xml

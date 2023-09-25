@@ -12,30 +12,29 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-import ch.elexis.admin.ACE;
 import ch.elexis.base.ch.ebanking.model.IEsrRecord;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.ac.EvACE;
+import ch.elexis.core.ac.Right;
 import ch.elexis.core.model.esr.ESRCode;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.rgw.tools.Money;
 
 public class ESRContentProvider extends ArrayContentProvider {
 
 	private Label _lblSUMME;
-	private ACE _rights;
 	private Money sum;
 	private IEsrRecord sumRecord;
 
 	private List<Object> retList;
 
-	public ESRContentProvider(Label lblSUMME, ACE rights) {
+	public ESRContentProvider(Label lblSUMME) {
 		_lblSUMME = lblSUMME;
-		_rights = rights;
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
 		// Insufficient rights, return with empty list, and show status
-		if (CoreHub.acl.request(_rights) == false) {
+		if (AccessControlServiceHolder.get().evaluate(EvACE.of(IEsrRecord.class, Right.VIEW)) == false) {
 			Display.getCurrent().asyncExec(new Runnable() {
 				@Override
 				public void run() {

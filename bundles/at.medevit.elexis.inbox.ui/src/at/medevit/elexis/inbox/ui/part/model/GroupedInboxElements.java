@@ -10,6 +10,7 @@ import at.medevit.elexis.inbox.ui.InboxModelServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IXid;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public abstract class GroupedInboxElements implements IInboxElement {
 
@@ -76,7 +77,10 @@ public abstract class GroupedInboxElements implements IInboxElement {
 
 	@Override
 	public void setMandator(IMandator mandator) {
-		getElements().forEach(iie -> iie.setMandator(mandator));
+		getElements().forEach(iie -> {
+			iie.setMandator(mandator);
+			CoreModelServiceHolder.get().save(iie);
+		});
 	}
 
 	@Override

@@ -65,13 +65,6 @@
             name="%PERSPECTIVE"/>
    </extension>
    <extension
-         point="ch.elexis.core.data.ACLContribution">
-      <ACLContribution
-            ACLContributor="ch.unibe.iam.scg.archie.acl.ArchieACL"
-            name="ch.unibe.iam.scg.archie.acl.ArchieACL">
-      </ACLContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             class="ch.unibe.iam.scg.archie.preferences.ArchiePreferencePage"

@@ -9,6 +9,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.preferences.SettingsProvider;
@@ -31,6 +33,7 @@ import ch.itmed.fop.printing.xml.documents.PdfTransformer;
 public class ArticleMedicationLabelsHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(ArticleMedicationLabelsHandler.class);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
@@ -39,6 +42,11 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 				List<IBilled> verrechnet = consultation.get().getBilled();
 				List<IPrescription> medication = consultation.get().getPatient().getMedication(Arrays.asList(
 						EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
+
+				StructuredSelection selection = CoreUiUtil.getCommandSelection("ch.elexis.VerrechnungsDisplay", false);
+				if (selection != null && !selection.isEmpty() && selection.getFirstElement() instanceof IBilled) {
+					verrechnet = (List<IBilled>) selection.toList();
+				}
 
 				for (IBilled iBilled : verrechnet) {
 					if (iBilled.getBillable() instanceof IArticle) {

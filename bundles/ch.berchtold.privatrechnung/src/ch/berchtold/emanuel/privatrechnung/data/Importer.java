@@ -198,4 +198,9 @@ public class Importer extends ImporterPage {
 			PrivatModelServiceHolder.get().save(lst);
 		}
 	}
+
+	@Override
+	public String getObjectClass() {
+		return ch.elexis.core.model.IBillable.class.getName();
+	}
 }

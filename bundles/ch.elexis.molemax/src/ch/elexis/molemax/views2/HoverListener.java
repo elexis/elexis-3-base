@@ -53,8 +53,11 @@ public class HoverListener implements MouseMoveListener, MouseTrackListener, Mou
 		}
 
 		public void setColor(Color c) {
-			item.setBackground(c);
+			if (!item.isDisposed()) {
+				item.setBackground(c);
+			}
 		}
+
 	}
 
 	public HoverListener(Gallery gallery, Color background, Color hover, int durationIn, int durationOut) {
@@ -115,7 +118,9 @@ public class HoverListener implements MouseMoveListener, MouseTrackListener, Mou
 	}
 
 	private void animateBackgroundColor(final GalleryItem item, Color color, int duration) {
-
+		if (item == null || item.isDisposed()) {
+			return;
+		}
 		if (item != null) {
 
 			Object o = item.getData(ANIMATION_DATA);

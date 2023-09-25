@@ -33,8 +33,8 @@ public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenc
 	private Text dateFormatText;
 	private Text timeFormatText;
 
-	private String selectedSeparator = "_"; // Default separator
-	private String selectedDateFormat = "yyyyMMdd"; // Default date format
+	private String selectedSeparator = "_";
+	private String selectedDateFormat = "yyyyMMdd";
 	private String selectedTimeFormat = "hhmmss";
 	private Spinner nameSpinner;
 	private Spinner firstNameSpinner;
@@ -62,7 +62,6 @@ public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenc
 				getFieldEditorParent());
 		addField(customBaseDirEditor);
 
-		// Fügen Sie den generierten Pfad hier ein
 		customBaseDirEditor.setStringValue(generateCustomBaseDir());
 
 		Composite separatorButtonContainer = new Composite(getFieldEditorParent(), SWT.NONE);
@@ -137,8 +136,8 @@ public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenc
 		});
 
 		firstNameSpinner = new Spinner(firstNameComposite, SWT.BORDER);
-		firstNameSpinner.setMinimum(0); // 0 means use the full name
-		firstNameSpinner.setMaximum(10); // Assume a reasonable maximum value
+		firstNameSpinner.setMinimum(0);
+		firstNameSpinner.setMaximum(10);
 		firstNameSpinner.setSelection(0);
 		timeButton = new Button(buttonContainer, SWT.PUSH);
 		timeButton.setText("Uhrzeit");
@@ -180,7 +179,7 @@ public class MolemaxPrefs extends FieldEditorPreferencePage implements IWorkbenc
 	}
 
 	private void appendToGeneratedStructure(String component) {
-		appendToGeneratedStructure(component, 0); // Default behavior is to use the full string
+		appendToGeneratedStructure(component, 0);
 	}
 
 	private void appendToGeneratedStructure(String component, int charCount) {

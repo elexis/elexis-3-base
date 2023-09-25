@@ -81,7 +81,6 @@ public class ImageDetailWithGalleryView {
 			}
 		});
 
-		// Schriftart für das Label setzen
 		FontData[] fontData = label.getFont().getFontData();
 		for (int i = 0; i < fontData.length; i++) {
 			fontData[i].setHeight(14);
@@ -512,7 +511,7 @@ public class ImageDetailWithGalleryView {
 		scrolledComp.setExpandVertical(true);
 
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		scrolledComp.setLayoutData(gridData); // Set layout data for the ScrolledComposite
+		scrolledComp.setLayoutData(gridData);
 
 		Composite container = new Composite(scrolledComp, SWT.NONE);
 		container.setLayout(new GridLayout());
@@ -520,11 +519,11 @@ public class ImageDetailWithGalleryView {
 
 		dialog.setText("Bild in voller Größe");
 
-		Label imageLabel = new Label(container, SWT.CENTER); // Set the label alignment to CENTER
+		Label imageLabel = new Label(container, SWT.CENTER);
 		imageLabel.setImage(originalImage);
 
 		gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true);
-		imageLabel.setLayoutData(gridData); // Set layout data for the imageLabel to center it
+		imageLabel.setLayoutData(gridData);
 
 		scrolledComp.setMinSize(container.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
@@ -557,7 +556,7 @@ public class ImageDetailWithGalleryView {
 			graphics2D.dispose();
 
 			Image scaledImage = new Image(Display.getDefault(), convertToSWT(scaledBufferedImage));
-			createdImages.add(scaledImage); // Das Bild wird zur Liste hinzugefügt
+			createdImages.add(scaledImage);
 			return scaledImage;
 
 		} catch (Exception e) {

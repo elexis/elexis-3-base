@@ -11,6 +11,10 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.nebula.animation.AnimationRunner;
+import org.eclipse.nebula.animation.effects.MoveScrollBarEffect;
+import org.eclipse.nebula.animation.movement.IMovement;
+import org.eclipse.nebula.animation.movement.LinearInOut;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryGroupRenderer;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
@@ -39,6 +43,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.data.Patient;
@@ -48,8 +53,9 @@ public class ImageViewAll {
 	private ImageOverview overviewInstance;
 	private List<Image> createdImages = new ArrayList<>();
 	private Patient aktuellerPatient;
-	private static final int TOP_SCROLL_THRESHOLD = 20;
-	private static final int BOTTOM_SCROLL_THRESHOLD = 20;
+
+	private static final int AUTO_SCROLL_MARGIN = 40;
+	private static final int AUTO_SCROLL_SPEED = 75;
 
 	public void setOverviewInstance(ImageOverview overview) {
 		this.overviewInstance = overview;
@@ -71,10 +77,8 @@ public class ImageViewAll {
 		gr.setItemWidth(250);
 		gr.setAutoMargin(true);
 		gr.setAnimation(true);
-//		gr.setAnimationLength(120);
 		gallery.setGroupRenderer(gr);
 		DefaultGalleryItemRenderer ir = new DefaultGalleryItemRenderer();
-		// Adding hover effect to the Gallery
 
 		gallery.setItemRenderer(ir);
 
@@ -82,29 +86,26 @@ public class ImageViewAll {
 		source.setTransfer(new Transfer[] { FileTransfer.getInstance() });
 		source.addDragListener(new DragSourceListener() {
 			public void dragStart(DragSourceEvent event) {
-				Display.getCurrent().timerExec(100, scroller);
 
-				// Überprüfen, ob sich ein Bild unter den aktuellen Mauskoordinaten befindet.
 				Point mouseCoords = Display.getCurrent().getCursorLocation();
-				mouseCoords = gallery.toControl(mouseCoords); // Konvertiert die globalen Koordinaten in lokale
-																// Koordinaten der Galerie
+				mouseCoords = gallery.toControl(mouseCoords);
+
 				GalleryItem itemUnderMouse = gallery.getItem(mouseCoords);
 				if (itemUnderMouse == null) {
-					event.doit = false; // Abbrechen des Drag-Vorgangs, da sich kein Bild unter dem Mauszeiger befindet.
+					event.doit = false;
 					return;
 				}
 
-				// Überprüfen, ob Bilder in der Galerie vorhanden sind.
 				GalleryItem[] allItems = gallery.getItems();
 				if (allItems == null || allItems.length == 0) {
-					event.doit = false; // Abbrechen des Drag-Vorgangs, da keine Bilder vorhanden sind.
+					event.doit = false;
 					return;
 				}
 
 				GalleryItem[] selection = gallery.getSelection();
 				if (selection.length > 0) {
 					File imgFile = new File((String) selection[0].getData(), selection[0].getText());
-					event.data = new String[] { imgFile.getAbsolutePath() }; // Setze den Pfad des Bildes als Daten
+					event.data = new String[] { imgFile.getAbsolutePath() };
 				}
 			}
 
@@ -114,13 +115,12 @@ public class ImageViewAll {
 				if (selection.length > 0) {
 					File imgFile = new File((String) selection[0].getData(), selection[0].getText());
 					event.data = new String[] { imgFile.getAbsolutePath() };
-					// setze den Pfad des Bildes als Daten
+
 				}
 			}
 
 			public void dragFinished(DragSourceEvent event) {
 
-				Display.getCurrent().timerExec(-1, scroller);
 				if (event.detail == DND.DROP_MOVE) {
 					GalleryItem[] selection = gallery.getSelection();
 					if (selection.length > 0) {
@@ -133,29 +133,6 @@ public class ImageViewAll {
 					}
 				}
 			}
-
-			private Runnable scroller = new Runnable() {
-				@Override
-				public void run() {
-					Point cursorLocation = Display.getCurrent().getCursorLocation();
-					Point galleryLocation = gallery.toDisplay(0, 0);
-					int yOffset = cursorLocation.y - galleryLocation.y;
-
-					// Wenn sich das gezogene Element nahe dem oberen Rand befindet
-					if (yOffset < TOP_SCROLL_THRESHOLD) {
-						gallery.getVerticalBar().setSelection(gallery.getVerticalBar().getSelection() - 10);
-					}
-					// Wenn sich das gezogene Element nahe dem unteren Rand befindet
-					else if (yOffset > gallery.getBounds().height - BOTTOM_SCROLL_THRESHOLD) {
-						gallery.getVerticalBar().setSelection(gallery.getVerticalBar().getSelection() + 10);
-					}
-					gallery.redraw();
-					gallery.update();
-
-					// Timer erneut planen, um weiter zu prüfen
-					Display.getCurrent().timerExec(100, this);
-				}
-			};
 
 		});
 
@@ -176,7 +153,7 @@ public class ImageViewAll {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) { // Reagiert auf die Enter-Taste
+				if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
 					if (overviewInstance != null) {
 						GalleryItem[] selection = gallery.getSelection();
 						if (selection.length > 0) {
@@ -187,7 +164,7 @@ public class ImageViewAll {
 							overviewInstance.showFullImage(selectedImage, folderPath, absoluteImagePath);
 						}
 					}
-				} else if (e.keyCode == SWT.ESC) { // Reagiert auf die ESC-Taste
+				} else if (e.keyCode == SWT.ESC) {
 					if (ImageViewAll.this.aktuellerPatient != null) {
 						updateGalleryForPatient(ImageViewAll.this.aktuellerPatient);
 					}
@@ -196,13 +173,11 @@ public class ImageViewAll {
 					GalleryItem[] allItems = gallery.getItems();
 					GalleryItem[] selection = gallery.getSelection();
 
-					// Überprüfen, ob aktuell ein Element ausgewählt ist
 					if (selection == null || selection.length == 0) {
-						// Wenn nicht, das erste Bild auswählen
+
 						if (allItems != null && allItems.length > 0) {
 							gallery.setSelection(new GalleryItem[] { allItems[0] });
-							return; // Brechen Sie den weiteren Codeablauf ab, da Sie bereits eine Auswahl getroffen
-									// haben
+							return;
 						}
 					}
 
@@ -239,7 +214,7 @@ public class ImageViewAll {
 			public void widgetSelected(SelectionEvent e) {
 				GalleryItem[] selection = gallery.getSelection();
 				if (selection.length > 0) {
-					// Bestätigungsnachricht anzeigen
+
 					boolean confirm = MessageDialog.openConfirm(gallery.getShell(), Messages.ImageSlot_imageDel,
 							selection.length > 1
 									? Messages.ImageSlot_these + selection.length + " "
@@ -258,7 +233,7 @@ public class ImageViewAll {
 		gallery.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.DEL) { // Entf-Taste
+				if (e.keyCode == SWT.DEL) {
 					GalleryItem[] selection = gallery.getSelection();
 					if (selection.length > 0) {
 
@@ -303,7 +278,17 @@ public class ImageViewAll {
 			}
 
 			public void dragOver(DropTargetEvent event) {
-
+				Point mouseCoords = Display.getCurrent().getCursorLocation();
+				mouseCoords = gallery.toControl(mouseCoords);
+				ScrollBar verticalScrollBar = gallery.getVerticalBar();
+				int scrollPosition = verticalScrollBar.getSelection();
+				if (mouseCoords.y < AUTO_SCROLL_MARGIN) {
+					int newScrollPosition = scrollPosition - AUTO_SCROLL_SPEED;
+					animateScrollBar(verticalScrollBar, scrollPosition, newScrollPosition);
+				} else if (mouseCoords.y > gallery.getBounds().height - AUTO_SCROLL_MARGIN) {
+					int newScrollPosition = scrollPosition + AUTO_SCROLL_SPEED;
+					animateScrollBar(verticalScrollBar, scrollPosition, newScrollPosition);
+				}
 			}
 
 			public void dropAccept(DropTargetEvent event) {
@@ -360,13 +345,13 @@ public class ImageViewAll {
 								}
 
 								File targetFile = new File(targetPath, new File(file).getName());
-								// Überprüfen, ob die Datei bereits existiert
+
 								if (targetFile.exists()) {
 									CustomFileDialog dialog = new CustomFileDialog(gallery.getShell());
 									int result = dialog.open();
 									switch (result) {
 									case CustomFileDialog.OVERWRITE_ID:
-										// Direkt überschreiben
+
 										try {
 											copyFile(new File(file), targetFile);
 										} catch (IOException e) {
@@ -374,7 +359,7 @@ public class ImageViewAll {
 										}
 										break;
 									case CustomFileDialog.RENAME_ID:
-										// Code, um die Datei umzubenennen
+
 										InputDialog renameDialog = new InputDialog(gallery.getShell(),
 												"Neuen Dateinamen eingeben",
 												"Bitte geben Sie den neuen Dateinamen ein:", targetFile.getName(),
@@ -393,7 +378,7 @@ public class ImageViewAll {
 										break;
 
 									case CustomFileDialog.CANCEL_ID:
-										// Code, um die Aktion abzubrechen
+
 										continue;
 									}
 								} else {
@@ -427,12 +412,11 @@ public class ImageViewAll {
 
 						updateGalleryForPatient(aktuellerPatient);
 						for (GalleryItem group : gallery.getItems()) {
-							// Überprüfen Sie, ob diese Gruppe die Zielgruppe ist
 							if (group.getText().equals(groupName)) {
-								// Diese Gruppe sollte erweitert werden
+
 								group.setExpanded(true);
 							} else {
-								// Alle anderen Gruppen sollten minimiert werden
+
 								group.setExpanded(false);
 							}
 						}
@@ -446,11 +430,11 @@ public class ImageViewAll {
 
 				} else {
 
-					String sourcePath = (String) event.data; // Das könnte zu einem Fehler führen, da event.data
-																// möglicherweise nicht ein String ist.
+					String sourcePath = (String) event.data;
+
 					GalleryItem targetGroup = gallery.getItem(new Point(event.x, event.y));
 					if (targetGroup != null) {
-						// ... [Hier könnte weiterer Code eingefügt werden, wenn nötig] ...
+
 					}
 				}
 			}
@@ -465,12 +449,10 @@ public class ImageViewAll {
 			createdImages.remove(selectedItem.getImage());
 			selectedItem.getParentItem().remove(selectedItem);
 
-			// Überprüfen, ob der übergeordnete Ordner jetzt leer ist und ihn ggf. löschen
 			File parentDir = fileToDelete.getParentFile();
 			if (isEmptyDirectory(parentDir)) {
 				parentDir.delete();
 
-				// Galerie aktualisieren, um die Änderungen zu reflektieren
 				updateGalleryForPatient(aktuellerPatient);
 			}
 		}
@@ -511,10 +493,8 @@ public class ImageViewAll {
 					group.setText(groupDir.getName());
 					group.setData(groupDir.getAbsolutePath());
 
-					// Zuerst Bilder aus dem Gruppenverzeichnis hinzufügen
 					addImagesToGalleryFromDirectory(groupDir, group);
 
-					// Dann Bilder aus den Unterordnern des Gruppenverzeichnisses hinzufügen
 					File[] imageDirectories = groupDir.listFiles(File::isDirectory);
 					if (imageDirectories != null && imageDirectories.length > 0) {
 
@@ -600,4 +580,13 @@ public class ImageViewAll {
 			return super.open();
 		}
 	}
+
+	private void animateScrollBar(ScrollBar scrollBar, int start, int end) {
+		AnimationRunner runner = new AnimationRunner();
+		IMovement movement = new LinearInOut();
+		int duration = 100;
+		MoveScrollBarEffect effect = new MoveScrollBarEffect(scrollBar, start, end, duration, movement, null, null);
+		runner.runEffect(effect);
+	}
+
 }

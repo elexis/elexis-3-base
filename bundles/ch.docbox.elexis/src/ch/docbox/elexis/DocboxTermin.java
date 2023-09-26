@@ -68,7 +68,7 @@ public class DocboxTermin {
 			elexisTermin.undelete();
 		}
 		elexisTerminDayAfter = performDocboxIdLoad(id + "2");
-		if (!elexisTerminDayAfter.exists()) {
+		if (elexisTerminDayAfter != null && !elexisTerminDayAfter.exists()) {
 			elexisTerminDayAfter = null;
 		}
 		if (elexisTerminDayAfter != null && elexisTerminDayAfter.isDeleted()) {

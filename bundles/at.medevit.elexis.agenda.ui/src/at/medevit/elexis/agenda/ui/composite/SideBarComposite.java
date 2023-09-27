@@ -105,7 +105,7 @@ public class SideBarComposite extends Composite {
 			});
 		}
 	}
-	
+
 	public SideBarComposite(Composite parent, int style) {
 		this(parent, false, style);
 	}
@@ -155,7 +155,7 @@ public class SideBarComposite extends Composite {
 		}
 		Font boldFont = fr.get(cfgName);
 		label.setFont(boldFont);
-		label.setText(Messages.AgendaUI_SideBar_range);
+		label.setText(Messages.AgendaUI_SideBar_Bereiche_Title);
 		ScrolledComposite areaScrolledComposite = new ScrolledComposite(this, SWT.V_SCROLL);
 		areaScrolledComposite.setLayout(new FillLayout());
 		areaScrolledComposite.setExpandVertical(true);

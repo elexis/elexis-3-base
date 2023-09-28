@@ -92,6 +92,7 @@ public class Tarmed45Validator {
 
 		LoggerFactory.getLogger(Tarmed45Validator.class)
 				.warn("Loading generalInvoiceRequest_450.xsd using factory [" + factory + "]");
+		factory.setFeature("http://apache.org/xml/features/honour-all-schemaLocations", false);
 		Schema schema = factory.newSchema(
 				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/generalInvoiceRequest_450.xsd")));
 		return schema.newValidator();

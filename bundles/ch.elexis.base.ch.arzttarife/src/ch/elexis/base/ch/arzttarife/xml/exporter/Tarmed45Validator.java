@@ -11,6 +11,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -78,6 +79,9 @@ public class Tarmed45Validator {
 					String baseURI) {
 				LoggerFactory.getLogger(Tarmed45Validator.class).info(
 						"Resolve resource ns[" + namespaceURI + "] pubid[" + systemId + "] sysid[" + systemId + "]");
+				if (StringUtils.isNotBlank(systemId) && systemId.contains("://")) {
+					systemId = systemId.substring(systemId.lastIndexOf('/') + 1);
+				}
 				InputStream is = Tarmed45Validator.class.getResourceAsStream("/rsc/" + systemId);
 				if (is == null) {
 					LoggerFactory.getLogger(Tarmed45Validator.class)
@@ -92,6 +96,7 @@ public class Tarmed45Validator {
 
 		LoggerFactory.getLogger(Tarmed45Validator.class)
 				.warn("Loading generalInvoiceRequest_450.xsd using factory [" + factory + "]");
+		factory.setFeature("http://apache.org/xml/features/honour-all-schemaLocations", false);
 		Schema schema = factory.newSchema(
 				new StreamSource(Tarmed45Validator.class.getResourceAsStream("/rsc/generalInvoiceRequest_450.xsd")));
 		return schema.newValidator();

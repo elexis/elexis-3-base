@@ -24,6 +24,7 @@ import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.builder.IArticleBuilder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.types.ArticleTyp;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -32,6 +33,9 @@ import ch.rgw.tools.StringTool;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=migel_xlsx")
 public class MigelXlsxDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
+
+	private static final String REFERENCEDATA_MIGEL_VERSION = "referencedata/migel/version";
+
 	private static Logger log = LoggerFactory.getLogger(MiGelImporter.class);
 
 	private void readExcelLines(ExcelWrapper xl, final IProgressMonitor monitor) {
@@ -163,13 +167,12 @@ public class MigelXlsxDataImporter extends AbstractReferenceDataImporter impleme
 					String.class, String.class, String.class });
 			readExcelLines(xl, monitor);
 		}
+		ConfigServiceHolder.get().set(REFERENCEDATA_MIGEL_VERSION, newVersion);
 		return Status.OK_STATUS;
 	}
 
 	@Override
 	public int getCurrentVersion() {
-		// TODO Auto-generated method stub
-		return 0;
+		return ConfigServiceHolder.get().get(REFERENCEDATA_MIGEL_VERSION, 0);
 	}
-
 }

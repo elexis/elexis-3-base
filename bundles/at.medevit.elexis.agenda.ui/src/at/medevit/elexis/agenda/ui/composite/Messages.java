@@ -1,7 +1,5 @@
 package at.medevit.elexis.agenda.ui.composite;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String AgendaUI_DayOverView_create_or_change = ch.elexis.core.l10n.Messages.Agenda_Edit_or_Replace_Appointment;
 	public static String AgendaUI_DayOverView_date_collision = ch.elexis.core.l10n.Messages.AgendaUI_DayOverView_date_collision;
@@ -10,6 +8,7 @@ public class Messages {
 	public static String AgendaUI_SideBar_create_new_series = ch.elexis.core.l10n.Messages.AgendaUI_SideBar_create_new_series;
 	public static String AgendaUI_SideBar_move_date = ch.elexis.core.l10n.Messages.AgendaUI_SideBar_move_date;
 	public static String AgendaUI_SideBar_range = ch.elexis.core.l10n.Messages.Core_Areas;
+	public static String AgendaUI_SideBar_Bereiche_Title = ch.elexis.core.l10n.Messages.Core_Area_Bereiche;
 	public static String AgendaUI_SideBar_steps = ch.elexis.core.l10n.Messages.AgendaUI_SideBar_steps;
 	public static String AppointmentDetailComposite_date_type_or_status = ch.elexis.core.l10n.Messages.Agenda_Appointment_type_and_state;
 	public static String AppointmentDetailComposite_delete = ch.elexis.core.l10n.Messages.AppointmentDetailComposite_delete;

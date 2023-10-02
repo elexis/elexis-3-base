@@ -70,6 +70,7 @@ public class BillLabResultOnCreationIdentifiedRunnableTest {
 	public void billOnNonEditableEncounter() throws TaskException {
 
 		IEncounter encounter = EncounterServiceHolder.get().getLatestEncounter(AllTests.getPatient()).get();
+		CoreModelServiceHolder.get().refresh(encounter, true);
 		assertEquals(0, encounter.getBilled().size());
 
 		// close coverage, not mitigatable
@@ -108,6 +109,7 @@ public class BillLabResultOnCreationIdentifiedRunnableTest {
 	public void billOnMitigatableNonEditableEncounter() throws TaskException {
 
 		IEncounter encounter = EncounterServiceHolder.get().getLatestEncounter(AllTests.getPatient()).get();
+		CoreModelServiceHolder.get().refresh(encounter, true);
 		String closedEncounterId = encounter.getId();
 		assertEquals(0, encounter.getBilled().size());
 

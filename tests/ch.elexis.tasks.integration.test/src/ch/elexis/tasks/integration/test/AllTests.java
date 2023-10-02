@@ -11,8 +11,12 @@ import ch.elexis.core.model.ILaboratory;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.services.IXidService;
+import ch.elexis.core.services.holder.XidServiceHolder;
+import ch.elexis.core.tasks.model.ITaskService;
 import ch.elexis.tasks.integration.test.hl7import.Hl7ImporterTaskIntegrationTest;
 import ch.elexis.tasks.integration.test.internal.Hl7ImporterTaskIntegrationTestUtil;
+import ch.elexis.tasks.integration.test.internal.TaskServiceHolder;
 import ch.elexis.tasks.integration.test.runnable.AllRunnableTests;
 
 @RunWith(Suite.class)
@@ -23,6 +27,26 @@ public class AllTests {
 
 	@BeforeClass
 	public static void beforeClass() {
+
+		IXidService xidService = null;
+		while (xidService == null) {
+			try {
+				Thread.sleep(100);
+				xidService = XidServiceHolder.get();
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+
+		ITaskService taskService = null;
+		while (taskService == null) {
+			try {
+				Thread.sleep(100);
+				taskService = TaskServiceHolder.get();
+			} catch (Exception e) {
+				// ignore
+			}
+		}
 
 		util = new Hl7ImporterTaskIntegrationTestUtil();
 

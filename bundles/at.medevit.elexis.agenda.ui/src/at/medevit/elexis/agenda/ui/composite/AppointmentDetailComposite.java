@@ -1,14 +1,17 @@
 package at.medevit.elexis.agenda.ui.composite;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,9 +21,11 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -29,7 +34,9 @@ import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalListener;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -43,30 +50,48 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.handlers.IHandlerService;
 
+import ch.elexis.core.mail.MailTextTemplate;
+import ch.elexis.core.mail.PreferenceConstants;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.ITextTemplate;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.fieldassist.AsyncContentProposalProvider;
 import ch.elexis.core.ui.e4.fieldassist.IdentifiableContentProposal;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
+import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.utils.OsgiServiceUtil;
+import ch.medelexis.pea.PeaService;
 
 public class AppointmentDetailComposite extends Composite {
 
@@ -87,16 +112,16 @@ public class AppointmentDetailComposite extends Composite {
 	private CDateTime txtDateFrom;
 	private CDateTime txtDateFromDrop;
 	private CDateTime txtDateFromNoDrop;
-	private Button btnIsAllDay;
-
+	private Button btnIsAllDay, chkEmail, chkEmailDialog;
+	private boolean isEmailConfigured, isPatientSelected, hasEmail;
 	private CDateTime txtTimeFrom;
 	private Spinner txtDuration;
 	private CDateTime txtTimeTo;
-
+	private Label emailTemplatesLabel;
 	private Composite compContext;
 	private Text txtContact;
 	private CDateTime pickerContext;
-
+	private ComboViewer emailTemplatesViewer;
 	private Combo comboArea;
 	private Combo comboType;
 	private Combo comboStatus;
@@ -104,7 +129,14 @@ public class AppointmentDetailComposite extends Composite {
 	private Text txtPatSearch;
 	private DayOverViewComposite dayBar;
 	private TableViewer appointmentsViewer;
-
+	private ITextTemplate previousSelection = null;
+	private static final String INVALID_PEA_URL = "https://pea.myelexis.ch?sid=null";
+	private Label emailHyperlink;
+	private IContact selectedContact;
+	private String peaUrl;
+	private Date appointmentStartDate;
+	private Date combinedDateTime;
+	Color blue = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
 	SelectionAdapter dateTimeSelectionAdapter = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
@@ -142,8 +174,16 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	private void createContents(Composite parent) {
-		Objects.requireNonNull(appointment, "Appointment cannot be null"); //$NON-NLS-1$
 
+		Objects.requireNonNull(appointment, "Appointment cannot be null"); //$NON-NLS-1$
+		Optional<PeaService> peaService = OsgiServiceUtil.getService(PeaService.class);
+
+		peaUrl = INVALID_PEA_URL;
+
+		if (peaService.isPresent()) {
+//			peaService.get().initializeService(new NullProgressMonitor());
+			peaUrl = peaService.get().getPeaUrl();
+		}
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(4, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -199,15 +239,40 @@ public class AppointmentDetailComposite extends Composite {
 				txtPatSearch.setData(prop.getIdentifiable());
 				appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
 				refreshPatientModel();
+				updateEmailControlsStatus();
 			}
 		});
 		txtPatSearch.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				reloadContactLabel();
+				if (!txtDataIsMatchingContact() || StringUtils.isBlank(txtPatSearch.getText())) {
+					txtPatSearch.setData(null);
+				}
 				if (!txtDataIsMatchingContact()) {
 					appointmentsViewer.setInput(Collections.emptyList());
 				}
+				updateEmailControlsStatus();
+				Object data = txtPatSearch.getData();
+				if (data instanceof IPatient) {
+					IPatient selectedPatient = (IPatient) data;
+					if (selectedPatient != null) {
+						ContextServiceHolder.get().setActivePatient(selectedPatient);
+					}
+				}
+			}
+		});
+
+		cppa.addContentProposalListener(new IContentProposalListener() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public void proposalAccepted(IContentProposal proposal) {
+				IdentifiableContentProposal<IPatient> prop = (IdentifiableContentProposal<IPatient>) proposal;
+				txtPatSearch.setText(prop.getLabel());
+				txtPatSearch.setData(prop.getIdentifiable());
+				appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
+				refreshPatientModel();
+				updateEmailControlsStatus();
 			}
 		});
 
@@ -233,10 +298,13 @@ public class AppointmentDetailComposite extends Composite {
 		pickerContext.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+
 				txtDateFrom.setSelection(pickerContext.getSelection());
 				setCompTimeToModel();
 				loadCompTimeFromModel();
 				dayBar.refresh();
+
+				updateCombinedDateTime();
 			}
 		});
 
@@ -350,6 +418,7 @@ public class AppointmentDetailComposite extends Composite {
 		comboType = new Combo(compTypeReason, SWT.DROP_DOWN);
 		comboType.setItems(appointmentService.getTypes().toArray(new String[appointmentService.getTypes().size()]));
 		comboType.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Map<String, Integer> preferredDurations = AppointmentServiceHolder.get()
 						.getPreferredDurations(comboArea.getText());
@@ -373,7 +442,102 @@ public class AppointmentDetailComposite extends Composite {
 		gd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd.widthHint = 80;
 		comboStatus.setLayoutData(gd);
+		Composite compCheckbox = new Composite(container, SWT.NONE);
+		GridData gdCheckbox = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		compCheckbox.setLayoutData(gdCheckbox);
+		compCheckbox.setLayout(new GridLayout(5, false));
 
+		chkEmail = new Button(compCheckbox, SWT.CHECK);
+		chkEmail.setText("Terminbestätigung per Mail senden: ");
+		chkEmail.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		chkEmail.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				boolean selected = chkEmail.getSelection();
+				emailTemplatesViewer.getControl().setEnabled(selected);
+				emailTemplatesLabel.setEnabled(selected);
+				emailHyperlink.setEnabled(selected);
+			}
+		});
+
+		// Ein leeres Label als Abstandshalter
+		new Label(compCheckbox, SWT.NONE).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		// Erstellen Sie ein neues Label neben dem ComboViewer
+		emailTemplatesLabel = new Label(compCheckbox, SWT.NONE);
+		emailTemplatesLabel.setText("E-Mail Vorlagen: ");
+		emailTemplatesLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		// Ihr bereits vorhandener Code für den ComboViewer
+		emailTemplatesViewer = new ComboViewer(compCheckbox, SWT.DROP_DOWN | SWT.READ_ONLY);
+		emailTemplatesViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		emailTemplatesViewer.setContentProvider(new ArrayContentProvider());
+		emailTemplatesViewer.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ITextTemplate) {
+					return ((ITextTemplate) element).getName() + (((ITextTemplate) element).getMandator() != null
+							? " (" + ((ITextTemplate) element).getMandator().getLabel() + ")"
+							: StringUtils.EMPTY);
+				}
+				return super.getText(element);
+			}
+		});
+
+		emailTemplatesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				Object selectedElement = selection.getFirstElement();
+
+				if (selectedElement instanceof ITextTemplate) {
+					ITextTemplate template = (ITextTemplate) selectedElement;
+
+					if ("Terminbestätigung inkl. Anmeldeformular".equals(template.getName())
+							&& INVALID_PEA_URL.equals(peaUrl)) {
+						Shell shell = emailTemplatesViewer.getControl().getShell();
+
+						MessageDialog dialog = new MessageDialog(shell, "Warnung", null,
+								"Die Vorlage \"Terminbestätigung inkl. Anmeldeformular\" ist nur in Kombination mit der Online Patientenerfassung möglich.",
+								MessageDialog.WARNING, new String[] { "OK" }, 0) {
+							@Override
+							protected Control createCustomArea(Composite parent) {
+								Link link = new Link(parent, SWT.NONE);
+								link.setText(
+										"<a href=\"https://medelexis.ch/pea/\">Weiter Informationen finden Sie hier.</a>");
+								link.addSelectionListener(new SelectionAdapter() {
+									@Override
+									public void widgetSelected(SelectionEvent e) {
+										Program.launch("https://medelexis.ch/pea/");
+									}
+								});
+								return link;
+							}
+						};
+
+						dialog.open();
+
+						// Setze die Auswahl immer zurück auf die vorherige Auswahl
+						if (previousSelection != null) {
+							emailTemplatesViewer.setSelection(new StructuredSelection(previousSelection), true);
+						}
+					} else {
+						previousSelection = template;
+					}
+				}
+			}
+		});
+
+		emailHyperlink = SWTHelper.createHyperlink(compCheckbox, "E-Mail bearbeiten", new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(final HyperlinkEvent e) {
+				sendEmail(false);
+			}
+		});
+
+		emailHyperlink.setForeground(blue);
+
+		updateTemplatesCombo();
 		toggleVisiblityComposite(txtDateFromDrop);
 		toggleVisiblityComposite(compContext);
 		toggleVisiblityComposite(compContentMiddle);
@@ -481,6 +645,7 @@ public class AppointmentDetailComposite extends Composite {
 				txtDateFromNoDrop.setSelection(txtDateFromDrop.getSelection());
 				pickerContext.setSelection(txtDateFromNoDrop.getSelection());
 				txtDateFrom = txtDateFromNoDrop;
+
 			} else {
 				toggleVisiblityComposite(txtDateFromNoDrop);
 				toggleVisiblityComposite(txtDateFromDrop);
@@ -501,19 +666,23 @@ public class AppointmentDetailComposite extends Composite {
 		txtDateFromDrop.setPattern("EEE, dd.MM.yyyy "); //$NON-NLS-1$
 		txtDateFromDrop.setLayoutData(new GridData());
 		txtDateFromDrop.addSelectionListener(dateTimeSelectionAdapter);
+
+		txtDateFromNoDrop = new CDateTime(compDateTime, CDT.BORDER | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
+		txtDateFromNoDrop.setPattern("EEE, dd.MM.yyyy "); //$NON-NLS-1$
+		txtDateFromNoDrop.setLayoutData(new GridData());
+
 		txtDateFromDrop.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				updateCombinedDateTime();
 				setCompTimeToModel();
 				dayBar.refresh();
 			}
 		});
-		txtDateFromNoDrop = new CDateTime(compDateTime, CDT.BORDER | CDT.DATE_MEDIUM | CDT.TEXT_TRAIL);
-		txtDateFromNoDrop.setPattern("EEE, dd.MM.yyyy "); //$NON-NLS-1$
-		txtDateFromNoDrop.setLayoutData(new GridData());
 		txtDateFromNoDrop.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				updateCombinedDateTime();
 				setCompTimeToModel();
 				dayBar.refresh();
 			}
@@ -539,6 +708,14 @@ public class AppointmentDetailComposite extends Composite {
 		lblTimeTo.setText(Messages.AppointmentDetailComposite_until);
 		txtTimeTo = new CDateTime(compTime, CDT.BORDER | CDT.TIME_SHORT | CDT.SPINNER);
 		txtTimeTo.addSelectionListener(dateTimeSelectionAdapter);
+		txtTimeFrom.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateCombinedDateTime();
+				setCompTimeToModel();
+
+			}
+		});
 
 		btnIsAllDay = new Button(compTime, SWT.CHECK);
 		GridData btnIsAllDayGridData = new GridData();
@@ -564,6 +741,7 @@ public class AppointmentDetailComposite extends Composite {
 		lblArea.setText(Messages.AppointmentDetailComposite_range);
 		comboArea = new Combo(compArea, SWT.DROP_DOWN);
 		comboArea.setItems(configService.get("agenda/bereiche", "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
 		comboArea.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -578,7 +756,7 @@ public class AppointmentDetailComposite extends Composite {
 	}
 
 	private void loadCompTimeFromModel() {
-		Date appointmentStartDate = Date
+		appointmentStartDate = Date
 				.from(ZonedDateTime.of(appointment.getStartTime(), ZoneId.systemDefault()).toInstant());
 
 		txtDateFrom.setSelection(appointmentStartDate);
@@ -594,6 +772,7 @@ public class AppointmentDetailComposite extends Composite {
 			txtTimeTo.setSelection(appointmentEndDate);
 			txtDuration.setSelection(appointment.getDurationMinutes());
 		}
+
 	}
 
 	private void loadFromModel() {
@@ -607,8 +786,14 @@ public class AppointmentDetailComposite extends Composite {
 		loadCompTimeFromModel();
 	}
 
-	private void setCompTimeToModel() {
-		Date dateFrom = txtDateFrom.getSelection();
+	public void setCompTimeToModel() {
+		Date dateFrom;
+		if (txtDateFromDrop.isVisible()) {
+			dateFrom = txtDateFromDrop.getSelection();
+		} else {
+			dateFrom = txtDateFrom.getSelection();
+		}
+
 		Date timeFrom = txtTimeFrom.getSelection();
 		LocalDateTime dateTimeFrom = LocalDateTime.of(dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
 				timeFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
@@ -632,11 +817,13 @@ public class AppointmentDetailComposite extends Composite {
 		appointment.setSchedule(comboArea.getText());
 
 		appointment.setReason(txtReason.getText());
+
 		if (txtDataIsMatchingContact()) {
 			appointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());
 		} else if (StringUtils.isNotBlank(txtPatSearch.getText())) {
 			appointment.setSubjectOrPatient(txtPatSearch.getText());
 		}
+
 		return appointment;
 	}
 
@@ -652,5 +839,131 @@ public class AppointmentDetailComposite extends Composite {
 		appointment = newAppointment;
 		setToModel();
 		reloadAppointment(appointment);
+	}
+
+	private void updateTemplatesCombo() {
+
+		emailTemplatesViewer.setInput(MailTextTemplate.load());
+		emailTemplatesViewer.refresh();
+
+	}
+
+	private void updateEmailControlsStatus() {
+
+		isEmailConfigured = ConfigServiceHolder.get().get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT,
+				null) != null;
+
+		if (!isEmailConfigured) {
+			isEmailConfigured = ConfigServiceHolder.get().get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT,
+					null) != null;
+		}
+
+		// Überprüfen, ob ein Patient im txtPatSearch-Steuerungselement ausgewählt ist
+		IContact selectedContact = (IContact) txtPatSearch.getData();
+
+		// Wenn kein Patient im txtPatSearch-Steuerungselement ausgewählt ist,
+		// überprüfen Sie den aktuell gesetzten Patienten
+		if (selectedContact == null) {
+			Optional<IPatient> activePatientOptional = ContextServiceHolder.get().getActivePatient();
+			if (activePatientOptional.isPresent()) {
+				IPatient activePatient = activePatientOptional.get();
+				if (activePatient instanceof IContact) {
+					selectedContact = activePatient;
+				}
+			}
+
+		}
+
+		isPatientSelected = selectedContact != null;
+
+		hasEmail = false;
+		if (selectedContact != null) {
+			String email = selectedContact.getEmail();
+			hasEmail = email != null && !email.trim().isEmpty();
+		}
+
+		chkEmail.setEnabled(isEmailConfigured && isPatientSelected && hasEmail);
+		emailTemplatesViewer.getControl()
+				.setEnabled(chkEmail.getSelection() && isEmailConfigured && isPatientSelected && hasEmail);
+		emailTemplatesLabel.setEnabled(chkEmail.getSelection() && isEmailConfigured && isPatientSelected && hasEmail);
+		selectSavedEmailTemplate();
+		emailHyperlink.setEnabled(chkEmail.getSelection() && isEmailConfigured && isPatientSelected && hasEmail);
+
+	}
+
+	private void selectSavedEmailTemplate() {
+		String savedTemplate = ConfigServiceHolder.get()
+				.get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT_TEMPLATE, null);
+		if (savedTemplate != null) {
+			for (ITextTemplate template : (List<ITextTemplate>) emailTemplatesViewer.getInput()) {
+				if (savedTemplate.equals(template.getName())) {
+					emailTemplatesViewer.setSelection(new StructuredSelection(template));
+					break;
+				}
+			}
+		}
+	}
+
+	public void sendEmail(boolean autoSend) {
+
+		isPatientSelected = txtPatSearch.getData() != null;
+		if (isPatientSelected) {
+			IContact selectedContact1 = (IContact) txtPatSearch.getData();
+			String email = selectedContact1.getEmail();
+			ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
+			try {
+				Command sendMailCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMail");
+				HashMap<String, String> params = new HashMap<>();
+				params.put("ch.elexis.core.mail.ui.sendMail.to", email);
+				params.put("ch.elexis.core.mail.ui.sendMail.subject", "Terminbestätigung");
+				ITextTemplate selectedTemplate = (ITextTemplate) getSelectedTemplate();
+				String selectedTemplateText = (selectedTemplate != null) ? selectedTemplate.getName() : "";
+				params.put("ch.elexis.core.mail.ui.sendMail.emailTemplate", selectedTemplateText);
+				params.put("ch.elexis.core.mail.ui.sendMail.hideLabel", "true");
+				String defaultMailAccountAppointment = ConfigServiceHolder.get()
+						.get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT, "");
+				if (defaultMailAccountAppointment.isEmpty()) {
+					defaultMailAccountAppointment = ConfigServiceHolder.get()
+							.get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT, "");
+				}
+				params.put("ch.elexis.core.mail.ui.sendMail.account", defaultMailAccountAppointment);
+
+				if (autoSend) {
+					params.put("ch.elexis.core.mail.ui.sendMail.autoSend", "true");
+				}
+				updateCombinedDateTime();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+				params.put("ch.elexis.core.mail.ui.sendMail.time", sdf.format(combinedDateTime));
+				params.put("ch.elexis.core.mail.ui.sendMail.bereich", appointment.getSchedule());
+				ParameterizedCommand parametrizedCommmand = ParameterizedCommand.generateCommand(sendMailCommand,
+						params);
+				PlatformUI.getWorkbench().getService(IHandlerService.class).executeCommand(parametrizedCommmand, null);
+			} catch (Exception ex) {
+				throw new RuntimeException("ch.elexis.core.mail.ui.sendMail not found", ex);
+			}
+		}
+	}
+
+	public Object getSelectedTemplate() {
+		return (emailTemplatesViewer != null && emailTemplatesViewer.getStructuredSelection() != null)
+				? emailTemplatesViewer.getStructuredSelection().getFirstElement()
+				: null;
+	}
+
+	public boolean isEmailCheckboxSelected() {
+		return chkEmail != null && chkEmail.getSelection();
+	}
+
+	private void updateCombinedDateTime() {
+		Date selectedDateFromDrop = txtDateFromDrop.isVisible() ? txtDateFromDrop.getSelection()
+				: txtDateFrom.getSelection();
+		Date selectedTimeFrom = txtTimeFrom.getSelection();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(selectedDateFromDrop);
+		Calendar timeCalendar = Calendar.getInstance();
+		timeCalendar.setTime(selectedTimeFrom);
+		calendar.set(Calendar.HOUR_OF_DAY, timeCalendar.get(Calendar.HOUR_OF_DAY));
+		calendar.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE));
+		combinedDateTime = calendar.getTime();
 	}
 }

@@ -10,8 +10,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 
 import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
+import at.medevit.elexis.agenda.ui.composite.EmailState;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -47,9 +49,34 @@ public class AppointmentDialog extends Dialog {
 		if (appointment != null) {
 			// save appointment
 			CoreModelServiceHolder.get().save(detailComposite.setToModel());
+
 		}
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+		if (detailComposite.isEmailCheckboxSelected()) {
+			if (!EmailState.getInstance().isEmailSent() && detailComposite.isEmailCheckboxSelected()) {
+				detailComposite.sendEmail(true);
+
+			}
+		}
+		EmailState.getInstance().setEmailSent(false);
 		super.okPressed();
+	}
+
+	@Override
+	protected void cancelPressed() {
+		if (EmailState.getInstance().isEmailSent()) {
+			// Zeige Warnung, dass die E-Mail bereits gesendet wurde.
+			MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_WARNING | SWT.YES | SWT.NO);
+			messageBox.setText("Warnung");
+			messageBox.setMessage("Die E-Mail wurde bereits gesendet. Möchten Sie trotzdem abbrechen?");
+			int response = messageBox.open();
+			if (response == SWT.YES) {
+				EmailState.getInstance().setEmailSent(false);
+				super.cancelPressed();
+			}
+		} else {
+			super.cancelPressed();
+		}
 	}
 
 	@Override

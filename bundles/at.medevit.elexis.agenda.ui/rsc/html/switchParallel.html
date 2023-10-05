@@ -167,6 +167,8 @@
             textColor: event.textColor,
             resourceId: event.resource,
             allDay: event.allDay,
+            tel: event.tel,
+            mail: event.mail
           });
         });
         callback(events);
@@ -225,7 +227,7 @@
                 delay: 0,
               },
               content: {
-                title: event.title,
+                title: event.title + (event.end === undefined ? '' : '<br/>Von/Bis: ' + event.start.format('HH:mm') + '-' + event.end.format('HH:mm')) + (event.tel === undefined ? '' : '<br/>Tel: ' + event.tel) + (event.mail === undefined ? '' : '<br/>Mail: ' + event.mail),
                 text: event.description,
               },
               position: {

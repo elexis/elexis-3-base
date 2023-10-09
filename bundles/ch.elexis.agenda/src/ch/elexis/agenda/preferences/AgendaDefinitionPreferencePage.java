@@ -10,11 +10,9 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -300,41 +298,28 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 		new Label(emailConfirmationsGroup, SWT.NONE).setText(Messages.AgendaStandard_E_Mail);
 		accountsViewer = new ComboViewer(emailConfirmationsGroup);
 		accountsViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		accountsViewer.setContentProvider(new ArrayContentProvider());
+		accountsViewer.setContentProvider(ArrayContentProvider.getInstance());
 		accountsViewer.setLabelProvider(new LabelProvider());
-		accountsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-			}
-		});
 		Label emailTemplatesLabel = new Label(emailConfirmationsGroup, SWT.NONE);
 		emailTemplatesLabel.setText(Messages.AgendaStandard_E_Mail_Template);
 		emailTemplatesLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		LabelProvider templateLabelProvider = new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof ITextTemplate) {
-					return ((ITextTemplate) element).getName() + (((ITextTemplate) element).getMandator() != null
-							? " (" + ((ITextTemplate) element).getMandator().getLabel() + ")"
-							: StringUtils.EMPTY);
-				}
-				return super.getText(element);
+				return getTemplateText(element);
 			}
 		};
 		appointmentTemplatesViewer = new ComboViewer(emailConfirmationsGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 		appointmentTemplatesViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		appointmentTemplatesViewer.setContentProvider(new ArrayContentProvider());
+		appointmentTemplatesViewer.setContentProvider(ArrayContentProvider.getInstance());
 		appointmentTemplatesViewer.setLabelProvider(templateLabelProvider);
-		appointmentTemplatesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				if (selection != null && !selection.isEmpty()) {
-					Object element = selection.getFirstElement();
+		appointmentTemplatesViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			if (selection != null && !selection.isEmpty()) {
+				Object element = selection.getFirstElement();
 					templateLabelProvider.getText(element);
 					selectedTemplateName = templateLabelProvider.getText(element);
 				}
-			}
 		});
 		loadCombos();
 	}
@@ -397,9 +382,21 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 			}
 		}
 	}
+
+	private String getTemplateText(Object element) {
+		if (element instanceof ITextTemplate) {
+			ITextTemplate template = (ITextTemplate) element;
+			String mandatorLabel = (template.getMandator() != null) ? " (" + template.getMandator().getLabel() + ")"
+					: StringUtils.EMPTY;
+			return template.getName() + mandatorLabel;
+		}
+		return "";
+	}
+
 	/**
 	 * Initialize the preference page.
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		// Initialize the preference page
 	}

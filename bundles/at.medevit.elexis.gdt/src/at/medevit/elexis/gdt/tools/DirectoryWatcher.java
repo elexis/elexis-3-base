@@ -77,11 +77,11 @@ public class DirectoryWatcher implements FileAlterationListener {
 
 		// Need to iterate through all registered directories
 		for (File directory : directories) {
-			LinkedList<File> files = (LinkedList<File>) FileUtils.listFiles(directory, null, false);
+			List<File> files = (List<File>) FileUtils.listFiles(directory, null, false);
 			Collections.sort(files, new DateTimeAscending());
 
 			for (Iterator<File> iterator = files.iterator(); iterator.hasNext();) {
-				File file = (File) iterator.next();
+				File file = iterator.next();
 				processFile(file);
 			}
 		}

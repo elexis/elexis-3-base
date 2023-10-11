@@ -35,7 +35,6 @@ import at.medevit.elexis.gdt.ui.table.util.ColumnBuilder.ICellFormatter;
 import at.medevit.elexis.gdt.ui.table.util.IValue;
 import at.medevit.elexis.gdt.ui.table.util.IValueFormatter;
 import at.medevit.elexis.gdt.ui.table.util.SortColumnComparator;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -63,9 +62,9 @@ public class GDTProtokollView extends ViewPart implements IRefreshable {
 	public void reload() {
 		if (!table.isVisible())
 			return;
-		Patient pat = ElexisEventDispatcher.getSelectedPatient();
-		if (pat != null)
-			tableViewer.setInput(GDTProtokoll.getEntriesForPatient(pat));
+		String patientId = ContextServiceHolder.get().getActivePatient().map(IPatient::getId).orElse(null);
+		if (patientId != null)
+			tableViewer.setInput(GDTProtokoll.getEntriesForPatient(patientId, null, null));
 	}
 
 	@Override
@@ -201,11 +200,13 @@ public class GDTProtokollView extends ViewPart implements IRefreshable {
 	 */
 	public abstract class BaseValue<T> implements IValue {
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public final Object getValue(Object element) {
 			return get((T) element);
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public void setValue(Object element, Object value) {
 			set((T) element, value);

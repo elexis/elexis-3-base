@@ -93,6 +93,9 @@ public final class Messages {
 	public static String AgendaImages_cannotCopy = ch.elexis.core.l10n.Messages.AgendaImages_cannotCopy;
 	public static String AgendaImages_6 = ch.elexis.core.l10n.Messages.AgendaImages_6;
 	public static String AgendaImages_7 = ch.elexis.core.l10n.Messages.AgendaImages_7;
+	public static String AgendaStandard_E_Mail = ch.elexis.core.l10n.Messages.Core_Standard_E_Mail;
+	public static String AgendaStandard_E_Mail_Template = ch.elexis.core.l10n.Messages.Core_Standard_E_Mail_Template;
+	public static String AgendaStandard_E_Mail_Title = ch.elexis.core.l10n.Messages.Core_Standard_E_Mail_Title;
 	public static String Tageseinteilung_dayPlanning = ch.elexis.core.l10n.Messages.Tageseinteilung_dayPlanning;
 	public static String Tageseinteilung_praxis = ch.elexis.core.l10n.Messages.Core_Practice;
 	public static String Tageseinteilung_enterPeriods = ch.elexis.core.l10n.Messages.Tageseinteilung_enterPeriods;

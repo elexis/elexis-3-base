@@ -1,6 +1,7 @@
 package ch.elexis.agenda.preferences;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.MenuManager;
@@ -9,6 +10,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -21,6 +23,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
@@ -30,6 +33,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.mail.MailAccount.TYPE;
+import ch.elexis.core.mail.MailTextTemplate;
+import ch.elexis.core.mail.ui.client.MailClientComponent;
+import ch.elexis.core.model.ITextTemplate;
 import ch.elexis.core.model.agenda.AreaType;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -57,8 +64,15 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 	private java.util.List<String> areas;
 	private java.util.List<String> appointmentTypes;
 	private java.util.List<String> appointmentStatus;
+	private java.util.List<String> ret;
+	private java.util.List<String> accounts;
+	private java.util.List<String> accountsInput;
+	private java.util.List<Object> combined;
+	private java.util.List<ITextTemplate> templates;
 	private Button btnAvoidDoubleBooking;
 	private ComboViewer comboViewerAreaType;
+	private ComboViewer appointmentTemplatesViewer, accountsViewer;
+	private String selectedTemplateName;
 
 	/**
 	 * Create the preference page.
@@ -251,7 +265,9 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 		btnAvoidDoubleBooking.setText(Messages.AgendaDefinitionen_AvoidPatientDoubleBooking);
 		btnAvoidDoubleBooking.setSelection(CoreHub.localCfg.get(PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING,
 				PreferenceConstants.AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT));
-
+		Label spacing = new Label(container, SWT.NONE);
+		emailConfirmationsGroup(container);
+		loadCombos();
 		refresh();
 
 		return container;
@@ -274,9 +290,113 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 		super.performApply();
 	}
 
+	private void emailConfirmationsGroup(Composite parentComposite) {
+		Group emailConfirmationsGroup = new Group(parentComposite, SWT.NONE);
+		emailConfirmationsGroup.setText(Messages.AgendaStandard_E_Mail_Title);
+		emailConfirmationsGroup.setLayout(new GridLayout(2, false));
+		emailConfirmationsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		new Label(emailConfirmationsGroup, SWT.NONE).setText(Messages.AgendaStandard_E_Mail);
+		accountsViewer = new ComboViewer(emailConfirmationsGroup);
+		accountsViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		accountsViewer.setContentProvider(ArrayContentProvider.getInstance());
+		accountsViewer.setLabelProvider(new LabelProvider());
+		Label emailTemplatesLabel = new Label(emailConfirmationsGroup, SWT.NONE);
+		emailTemplatesLabel.setText(Messages.AgendaStandard_E_Mail_Template);
+		emailTemplatesLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		LabelProvider templateLabelProvider = new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return getTemplateText(element);
+			}
+		};
+		appointmentTemplatesViewer = new ComboViewer(emailConfirmationsGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+		appointmentTemplatesViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		appointmentTemplatesViewer.setContentProvider(ArrayContentProvider.getInstance());
+		appointmentTemplatesViewer.setLabelProvider(templateLabelProvider);
+		appointmentTemplatesViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			if (selection != null && !selection.isEmpty()) {
+				Object element = selection.getFirstElement();
+					templateLabelProvider.getText(element);
+					selectedTemplateName = templateLabelProvider.getText(element);
+				}
+		});
+		loadCombos();
+	}
+
+	private void loadCombos() {
+		accountsInput = getSendMailAccounts();
+		accountsInput.add(0, "");
+		accountsViewer.setInput(accountsInput);
+		combined = new ArrayList<>();
+		combined.add("");
+		combined.addAll(MailTextTemplate.load());
+		appointmentTemplatesViewer.setInput(combined);
+		appointmentTemplatesViewer.refresh();
+		loadSavedPreferences();
+	}
+
+	private java.util.List<String> getSendMailAccounts() {
+		ret = new ArrayList<String>();
+		accounts = MailClientComponent.getMailClient().getAccountsLocal();
+		ret.addAll(accounts.stream().filter(aid -> MailClientComponent.getMailClient().getAccount(aid).isPresent())
+				.filter(aid -> MailClientComponent.getMailClient().getAccount(aid).get().getType() == TYPE.SMTP)
+				.collect(Collectors.toList()));
+		accounts = MailClientComponent.getMailClient().getAccounts();
+		ret.addAll(accounts.stream().filter(aid -> MailClientComponent.getMailClient().getAccount(aid).isPresent())
+				.filter(aid -> MailClientComponent.getMailClient().getAccount(aid).get().getType() == TYPE.SMTP)
+				.collect(Collectors.toList()));
+		return ret;
+	}
+
+	@Override
+	public boolean performOk() {
+		IStructuredSelection selectedAccount = accountsViewer.getStructuredSelection();
+		String selectedTemplate = selectedTemplateName;
+		if (selectedAccount != null) {
+			ConfigServiceHolder.get().set(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT,
+					(String) selectedAccount.getFirstElement());
+		}
+		if (selectedTemplate != null) {
+			String template = selectedTemplateName;
+			ConfigServiceHolder.get().set(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT_TEMPLATE, template);
+		}
+		return super.performOk();
+	}
+
+	private void loadSavedPreferences() {
+		String savedAccount = ConfigServiceHolder.get().get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT,
+				null);
+		if (savedAccount != null) {
+			accountsViewer.setSelection(new StructuredSelection(savedAccount));
+		}
+		String savedTemplate = ConfigServiceHolder.get()
+				.get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT_TEMPLATE, null);
+		if (savedTemplate != null) {
+			templates = MailTextTemplate.load();
+			for (ITextTemplate template : templates) {
+				if (savedTemplate.equals(template.getName())) {
+					appointmentTemplatesViewer.setSelection(new StructuredSelection(template));
+					break;
+				}
+			}
+		}
+	}
+
+	private String getTemplateText(Object element) {
+		if (element instanceof ITextTemplate) {
+			ITextTemplate template = (ITextTemplate) element;
+			String mandatorLabel = (template.getMandator() != null) ? " (" + template.getMandator().getLabel() + ")"
+					: StringUtils.EMPTY;
+			return template.getName() + mandatorLabel;
+		}
+		return "";
+	}
+
 	/**
 	 * Initialize the preference page.
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		// Initialize the preference page
 	}

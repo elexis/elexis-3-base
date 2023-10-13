@@ -12,43 +12,53 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
+import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite.EmailDetails;
+import at.medevit.elexis.agenda.ui.handler.EmailSender;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.IMessageService;
+import ch.elexis.core.services.ITextReplacementService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class AppointmentDialog extends Dialog {
 
-	private AppointmentDetailComposite detailComposite;
-
 	private IAppointment appointment;
 
 	@Inject
+	IContextService contextService;
+
+	@Inject
+	IMessageService messageService;
+
+	@Inject
 	private IEventBroker eventBroker;
+
+	@Inject
+	private ITextReplacementService textReplacementService;
+
+	private AppointmentDetailComposite detailComposite;
+	private EmailSender emailSender;
 
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
 		CoreUiUtil.injectServicesWithContext(this);
 		this.appointment = appointment;
+		this.emailSender = new EmailSender(textReplacementService, contextService);
 	}
 
 	@Override
 	protected Control createContents(Composite parent) {
-		if (appointment == null) {
-			appointment = CoreModelServiceHolder.get().create(IAppointment.class);
-			appointment.setStartTime(LocalDateTime.now());
-		}
+		initializeAppointmentIfNecessary();
 		detailComposite = new AppointmentDetailComposite(parent, SWT.NONE, appointment);
 		return super.createContents(parent);
 	}
 
 	@Override
 	protected void okPressed() {
-		if (appointment != null) {
-			// save appointment
-			CoreModelServiceHolder.get().save(detailComposite.setToModel());
-		}
-		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+		saveAndReloadAppointment();
+		sendEmailIfConfirmationChecked();
 		super.okPressed();
 	}
 
@@ -57,4 +67,25 @@ public class AppointmentDialog extends Dialog {
 		return true;
 	}
 
+	private void initializeAppointmentIfNecessary() {
+		if (appointment == null) {
+			appointment = CoreModelServiceHolder.get().create(IAppointment.class);
+			appointment.setStartTime(LocalDateTime.now());
+		}
+	}
+
+	private void saveAndReloadAppointment() {
+		if (appointment != null) {
+			// save appointment
+			CoreModelServiceHolder.get().save(detailComposite.setToModel());
+		}
+		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+	}
+
+	private void sendEmailIfConfirmationChecked() {
+		if (detailComposite.isEmailConfirmationChecked()) {
+			EmailDetails emailDetails = detailComposite.extractEmailDetails();
+			emailSender.sendEmail(emailDetails, appointment);
+		}
+	}
 }

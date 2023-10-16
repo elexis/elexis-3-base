@@ -12,6 +12,8 @@
  *******************************************************************************/
 package at.medevit.elexis.gdt.dynamic;
 
+import java.util.List;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -53,7 +55,7 @@ public class UntersuchungAnzeigenMenu extends ContributionItem {
 		Patient pat = getAsPatient(strucSelection);
 
 		if (pat != null) {
-			GDTProtokoll[] prot = GDTProtokoll.getEntriesForPatient(pat);
+			List<GDTProtokoll> prot = GDTProtokoll.getEntriesForPatient(pat.getId(), null, null);
 			int counter = 0;
 			for (GDTProtokoll gdtProtokoll : prot) {
 				if (Integer.parseInt(
@@ -66,9 +68,9 @@ public class UntersuchungAnzeigenMenu extends ContributionItem {
 						@Override
 						public void handleEvent(Event event) {
 							// Lets call our command
-							IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench()
+							IHandlerService handlerService = PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getService(IHandlerService.class);
-							ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
+							ICommandService commandService = PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getService(ICommandService.class);
 							try {
 								Command cmd = commandService.getCommand(DatenEinerUntersuchungAnzeigen.ID);

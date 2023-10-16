@@ -1,6 +1,7 @@
 package at.medevit.elexis.gdt.defaultfilecp.ui.view;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -37,7 +38,6 @@ import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IRefreshable;
-import ch.elexis.data.Patient;
 
 public class GdtView extends ViewPart implements IRefreshable {
 
@@ -49,10 +49,10 @@ public class GdtView extends ViewPart implements IRefreshable {
 	@Inject
 	void activePatient(@Optional IPatient patient) {
 		CoreUiUtil.runAsyncIfActive(() -> {
-			refreshLastExaminations();
+			refreshLastExaminations(patient);
 		}, composite);
 	}
-	
+
 	public GdtView() {
 
 	}
@@ -108,8 +108,7 @@ public class GdtView extends ViewPart implements IRefreshable {
 					if (ElexisEventDispatcher.getSelectedPatient() == null) {
 						openPatientNotSelectedDialog();
 					} else {
-						ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-								.getService(ICommandService.class);
+						ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 						Command command = commandService
 								.getCommand("at.medevit.elexis.gdt.command.NeueUntersuchungAnfordern"); //$NON-NLS-1$
 						if (command != null) {
@@ -143,8 +142,7 @@ public class GdtView extends ViewPart implements IRefreshable {
 					if (ElexisEventDispatcher.getSelectedPatient() == null) {
 						openPatientNotSelectedDialog();
 					} else {
-						ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-								.getService(ICommandService.class);
+						ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 						Command command = commandService
 								.getCommand("at.medevit.elexis.gdt.command.StammdatenUebermitteln"); //$NON-NLS-1$
 						if (command != null) {
@@ -183,8 +181,7 @@ public class GdtView extends ViewPart implements IRefreshable {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
 
-					ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
-							.getService(ICommandService.class);
+					ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 					Command command = commandService
 							.getCommand("at.medevit.elexis.gdt.command.DatenEinerUntersuchungAnzeigen"); //$NON-NLS-1$
 					if (command != null) {
@@ -225,16 +222,22 @@ public class GdtView extends ViewPart implements IRefreshable {
 	}
 
 	public String getLastExaminationId(FileCommPartner fileCommPartner) {
-		Patient pat = ElexisEventDispatcher.getSelectedPatient();
-		if (pat != null) {
+		String patientId = ContextServiceHolder.get().getActivePatient().map(IPatient::getId).orElse(null);
+		if (patientId != null) {
 			String label = getLabel(fileCommPartner);
-			GDTProtokoll[] prot = GDTProtokoll.getEntriesForPatient(pat);
-			for (GDTProtokoll gdtProtokoll : prot) {
-				if (Integer.parseInt(
-						gdtProtokoll.getMessageType()) == GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_UEBERMITTELN
-						&& label.equals(gdtProtokoll.getGegenstelle())) {
-					return gdtProtokoll.getId();
-				}
+			List<GDTProtokoll> prot = GDTProtokoll.getEntriesForPatient(patientId, label,
+					Integer.toString(GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_UEBERMITTELN));
+			if (!prot.isEmpty()) {
+				return prot.get(0).getId();
+			}
+		}
+		return null;
+	}
+
+	private String getLastExaminationId(List<GDTProtokoll> gdtProtokoll, String remoteName) {
+		for (GDTProtokoll prot : gdtProtokoll) {
+			if (remoteName.equals(prot.getGegenstelle())) {
+				return prot.getId();
 			}
 		}
 		return null;
@@ -246,12 +249,14 @@ public class GdtView extends ViewPart implements IRefreshable {
 		getSite().getPage().removePartListener(udpateOnVisible);
 	}
 
-	private void refreshLastExaminations() {
-		if (mapExaminations != null) {
+	private void refreshLastExaminations(IPatient patient) {
+		if (mapExaminations != null && patient != null) {
+			List<GDTProtokoll> prot = GDTProtokoll.getEntriesForPatient(patient.getId(), null,
+					Integer.toString(GDTConstants.SATZART_DATEN_EINER_UNTERSUCHUNG_UEBERMITTELN));
 			for (String id : mapExaminations.keySet()) {
 				Button btn = mapExaminations.get(id);
 				if (btn != null) {
-					String exId = getLastExaminationId(new FileCommPartner(id));
+					String exId = getLastExaminationId(prot, getLabel(new FileCommPartner(id)));
 					btn.setData(exId);
 					btn.setEnabled(exId != null);
 				}

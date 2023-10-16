@@ -61,7 +61,7 @@ public final class AppointmentsData {
 	private void querryAppointments(String contactId) {
 		IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class);
 		query.and(ModelPackage.Literals.IAPPOINTMENT__SUBJECT_OR_PATIENT, COMPARATOR.EQUALS, contactId);
-		query.and("tag", COMPARATOR.GREATER_OR_EQUAL, LocalDate.now());
+		query.and("tag", COMPARATOR.GREATER, LocalDate.now());
 		List<IAppointment> appointments = query.execute();
 		for (IAppointment appointment : appointments) {
 			appointmentsData.add(new AppointmentData(appointment));

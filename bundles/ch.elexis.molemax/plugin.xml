@@ -15,7 +15,15 @@
             class="ch.elexis.molemax.views.Overview"
             icon="icons/camera.png"
             id="molemax.overview"
-            name="Molemax">
+            name="Molemax"
+            restorable="true">
+      </view>
+      <view
+            class="ch.elexis.molemax.views2.ImageOverview"
+            icon="icons/ImageIcon.png"
+            id="ch.elexis.molemax.view2"
+            inject="true"
+            name="Molemax Image Viewer">
       </view>
    </extension>
    <extension
@@ -24,6 +32,11 @@
             class="ch.elexis.molemax.views.MolemaxPrefs"
             id="molemax.pref2"
             name="MoleMax">
+      </page>
+      <page
+            class="ch.elexis.molemax.views2.MolemaxImagePrefs"
+            id="molemax.pref3"
+            name="MoleMaxImageViewer">
       </page>
    </extension>
    <extension

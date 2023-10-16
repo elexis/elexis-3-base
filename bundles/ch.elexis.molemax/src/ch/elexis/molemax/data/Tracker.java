@@ -313,8 +313,6 @@ public class Tracker extends PersistentObject {
 		}
 		return null;
 	}
-
-	@Override
 	public String getLabel() {
 		TimeTool tt = new TimeTool(get("Datum"));
 		return tt.toString(TimeTool.DATE_GER);
@@ -330,8 +328,6 @@ public class Tracker extends PersistentObject {
 
 	protected Tracker() {
 	}
-
-	@Override
 	protected String getTableName() {
 		return TABLENAME;
 	}
@@ -388,8 +384,6 @@ public class Tracker extends PersistentObject {
 		qbe.add("ParentID", "=", parent.getId());
 		List<Tracker> list = qbe.execute();
 		Collections.sort(list, new Comparator<Tracker>() {
-
-			@Override
 			public int compare(final Tracker arg0, final Tracker arg1) {
 				if ((arg0 != null) && (arg1 != null)) {
 					TimeTool tt0 = new TimeTool(arg0.get("Datum"));
@@ -566,25 +560,18 @@ public class Tracker extends PersistentObject {
 
 		StringBuilder ret = new StringBuilder();
 		ret.append(CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, StringUtils.EMPTY)).append(File.separator);
-
-		// Teilen Sie den Eingabestring in Pfadsegmente
 		String[] pathSegments = input.split("/");
-
 		Pattern pattern = Pattern.compile("(Name|Vorname|PatNum|Datum(-[yMd.]+)?|Uhrzeit(-[Hhmsa:]+)?|Slot)(-\\d+)?");
-
 		for (int i = 0; i < pathSegments.length; i++) {
 			String segment = pathSegments[i];
 			Matcher matcher = pattern.matcher(segment);
-
 			while (matcher.find()) {
 				String match = matcher.group();
 				String keyword = match.split("-")[0];
-				int length = -1; // -1 bedeutet, dass der gesamte Name/Vorname genommen wird
-
+				int length = -1;
 				if (match.contains("-") && !keyword.equals("Datum") && !keyword.equals("Uhrzeit")) {
 					length = Integer.parseInt(match.split("-")[1]);
 				}
-
 				if (keyword.equals("PatNum")) {
 					String patCode = p.getPatCode();
 					ret.append(patCode);
@@ -604,9 +591,7 @@ public class Tracker extends PersistentObject {
 					String dateFormat = match.split("-")[1];
 					SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 					String formattedDate = sdf.format(new Date());
-
 					ret.append(formattedDate);
-
 				} else if (keyword.equals("Uhrzeit")) {
 					String timeFormat = match.split("-")[1];
 					SimpleDateFormat sdf = new SimpleDateFormat(timeFormat);
@@ -614,14 +599,10 @@ public class Tracker extends PersistentObject {
 					ret.append(formattedTime);
 				}
 			}
-
-			// Nur ein Trennzeichen hinzufügen, wenn es nicht das letzte Segment ist
 			if (i < pathSegments.length - 1) {
 				ret.append(File.separator);
 			}
 		}
-
-//		System.out.println("Test 2 " + ret.toString());
 		return ret.toString();
 	}
 
@@ -662,7 +643,6 @@ public class Tracker extends PersistentObject {
 	 *
 	 * @see ch.elexis.data.PersistentObject#delete()
 	 */
-	@Override
 	public boolean delete() {
 		if (image != null) {
 			image.dispose();
@@ -677,8 +657,6 @@ public class Tracker extends PersistentObject {
 		}
 		return super.delete();
 	}
-
-	@Override
 	public boolean isValid() {
 		if (getPatient().isValid()) {
 			return super.isValid();

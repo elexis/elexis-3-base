@@ -25,53 +25,34 @@ import ch.elexis.molemax.Messages;
 
 public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	private List<Control> controlledWidgets = new ArrayList<>();
-
 	public static final String CUSTOM_BASEDIR = "molemax/custom_imagebase";
 	public static final String BASEDIR = "molemax/imagebase";
-
 	private StringFieldEditor customBaseDirEditor;
 	private Text dateFormatText;
 	private Text timeFormatText;
-
 	private String selectedSeparator = "_";
 	private String selectedDateFormat = "yyyyMMdd";
 	private String selectedTimeFormat = "hhmmss";
-	private Spinner nameSpinner;
-	private Spinner firstNameSpinner;
-	Button slashButton;
-	Button underLineButton;
-	Button clearButton;
-	Button patNumButton;
-	Button nameButton;
-	Button firstNameButton;
-	Button timeButton;
-	Button slotButton;
-	Button dateButton;
+	private Spinner nameSpinner, firstNameSpinner;
+	private Button slashButton, underLineButton, clearButton, patNumButton, nameButton, firstNameButton, timeButton,
+			slotButton, dateButton;
 
 	public MolemaxImagePrefs() {
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}
-
-	@Override
 	protected void createFieldEditors() {
-
 		addField(new DirectoryFieldEditor(BASEDIR, Messages.MolemaxPrefs_basedir, getFieldEditorParent()));
-
 		customBaseDirEditor = new StringFieldEditor(CUSTOM_BASEDIR, "Patienten Ordner Struktur",
 				getFieldEditorParent());
 		addField(customBaseDirEditor);
-
 		customBaseDirEditor.setStringValue(generateCustomBaseDir());
-
 		Composite separatorButtonContainer = new Composite(getFieldEditorParent(), SWT.NONE);
 		separatorButtonContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		separatorButtonContainer.setLayout(new GridLayout(3, false));
-
 		slashButton = new Button(separatorButtonContainer, SWT.PUSH);
 		slashButton.setText("/");
 		slashButton.addSelectionListener(new SelectionAdapter() {
-			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectedSeparator = "/";
 			}
@@ -79,7 +60,6 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		underLineButton = new Button(separatorButtonContainer, SWT.PUSH);
 		underLineButton.setText("_");
 		underLineButton.addSelectionListener(new SelectionAdapter() {
-			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectedSeparator = "_";
 			}
@@ -88,7 +68,6 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		clearButton = new Button(separatorButtonContainer, SWT.PUSH);
 		clearButton.setText("Clear");
 		clearButton.addSelectionListener(new SelectionAdapter() {
-			@Override
 			public void widgetSelected(SelectionEvent e) {
 				customBaseDirEditor.setStringValue("");
 			}
@@ -96,11 +75,9 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		Composite buttonContainer = new Composite(getFieldEditorParent(), SWT.NONE);
 		buttonContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		buttonContainer.setLayout(new GridLayout(8, false));
-
 		patNumButton = new Button(buttonContainer, SWT.PUSH);
 		patNumButton.setText("Patienten Num.");
 		patNumButton.addSelectionListener(new SelectionAdapter() {
-			@Override
 			public void widgetSelected(SelectionEvent e) {
 				appendToGeneratedStructure("PatNum");
 			}
@@ -108,11 +85,9 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 
 		Composite nameComposite = new Composite(buttonContainer, SWT.NONE);
 		nameComposite.setLayout(new GridLayout(2, false));
-
 		nameButton = new Button(nameComposite, SWT.PUSH);
 		nameButton.setText("Name");
 		nameButton.addSelectionListener(new SelectionAdapter() {
-			@Override
 			public void widgetSelected(SelectionEvent e) {
 				appendToGeneratedStructure("Name", nameSpinner.getSelection());
 			}
@@ -122,14 +97,11 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		nameSpinner.setMinimum(0);
 		nameSpinner.setMaximum(10);
 		nameSpinner.setSelection(0);
-
 		Composite firstNameComposite = new Composite(buttonContainer, SWT.NONE);
 		firstNameComposite.setLayout(new GridLayout(2, false));
-
 		firstNameButton = new Button(firstNameComposite, SWT.PUSH);
 		firstNameButton.setText("Vorname");
 		firstNameButton.addSelectionListener(new SelectionAdapter() {
-			@Override
 			public void widgetSelected(SelectionEvent e) {
 				appendToGeneratedStructure("Vorname", firstNameSpinner.getSelection());
 			}
@@ -143,7 +115,6 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		timeButton.setText("Uhrzeit");
 		controlledWidgets.add(timeButton);
 		timeButton.addSelectionListener(new SelectionAdapter() {
-			@Override
 			public void widgetSelected(SelectionEvent e) {
 				appendToGeneratedStructure("Uhrzeit-" + selectedTimeFormat);
 			}
@@ -153,11 +124,9 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		timeFormatText.setText(selectedDateFormat);
 		timeFormatText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		timeFormatText.addModifyListener(e -> selectedTimeFormat = timeFormatText.getText());
-
 		dateButton = new Button(buttonContainer, SWT.PUSH);
 		dateButton.setText("Datum");
 		dateButton.addSelectionListener(new SelectionAdapter() {
-			@Override
 			public void widgetSelected(SelectionEvent e) {
 				appendToGeneratedStructure("Datum-" + selectedDateFormat);
 			}
@@ -170,12 +139,10 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 		slotButton = new Button(buttonContainer, SWT.PUSH);
 		slotButton.setText("Slot");
 		slotButton.addSelectionListener(new SelectionAdapter() {
-			@Override
 			public void widgetSelected(SelectionEvent e) {
 				appendToGeneratedStructure("Slot");
 			}
 		});
-
 	}
 
 	private void appendToGeneratedStructure(String component) {
@@ -195,11 +162,8 @@ public class MolemaxImagePrefs extends FieldEditorPreferencePage implements IWor
 
 	private String generateCustomBaseDir() {
 		String customPath = getPreferenceStore().getString(CUSTOM_BASEDIR);
-
 		return customPath;
 	}
-
-	@Override
 	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
 

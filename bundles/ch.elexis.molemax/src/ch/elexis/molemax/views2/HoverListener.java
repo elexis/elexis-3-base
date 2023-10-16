@@ -16,7 +16,6 @@ import org.eclipse.swt.graphics.Point;
 public class HoverListener implements MouseMoveListener, MouseTrackListener, MouseWheelListener {
 
 	private static final String ANIMATION_DATA = "hoverAnimation";
-	private Object itemOrGroup;
 	private Color backgroundColor = null;
 	private Color hoverColor = null;
 	GalleryItem current = null;
@@ -26,13 +25,10 @@ public class HoverListener implements MouseMoveListener, MouseTrackListener, Mou
 	GalleryItem galleryItem;
 
 	public class AnimationDataCleaner implements Runnable {
-
 		private GalleryItem item;
-
 		public AnimationDataCleaner(GalleryItem item) {
 			this.item = item;
 		}
-
 		public void run() {
 			item.setData(ANIMATION_DATA, null);
 		}
@@ -40,24 +36,20 @@ public class HoverListener implements MouseMoveListener, MouseTrackListener, Mou
 
 	public class GalleryItemBackgroundColorAdapter implements IColoredObject {
 		GalleryItem item;
-
 		public GalleryItemBackgroundColorAdapter(GalleryItem item) {
 			this.item = item;
 		}
-
 		public Color getColor() {
 			if (!item.isDisposed()) {
 				return item.getBackground();
 			}
 			return null;
 		}
-
 		public void setColor(Color c) {
 			if (!item.isDisposed()) {
 				item.setBackground(c);
 			}
 		}
-
 	}
 
 	public HoverListener(Gallery gallery, Color background, Color hover, int durationIn, int durationOut) {
@@ -96,25 +88,19 @@ public class HoverListener implements MouseMoveListener, MouseTrackListener, Mou
 	public void setHoverColor(Color hoverColor) {
 		this.hoverColor = hoverColor;
 	}
-
 	public void mouseMove(MouseEvent e) {
 		updateHover(e);
 	}
-
 	public void mouseEnter(MouseEvent e) {
 		updateHover(e);
 	}
-
 	public void mouseExit(MouseEvent e) {
 		if (current != null && !current.isDisposed()) {
 			animateBackgroundColor(current, backgroundColor, durationOut);
 		}
 		current = null;
-
 	}
-
 	public void mouseHover(MouseEvent e) {
-
 	}
 
 	private void animateBackgroundColor(final GalleryItem item, Color color, int duration) {
@@ -122,16 +108,13 @@ public class HoverListener implements MouseMoveListener, MouseTrackListener, Mou
 			return;
 		}
 		if (item != null) {
-
 			Object o = item.getData(ANIMATION_DATA);
 			if (o != null && o instanceof AnimationRunner) {
 				((AnimationRunner) o).cancel();
 			}
-
 			Color bg = item.getBackground();
 			if (bg == null)
 				bg = backgroundColor;
-
 			AnimationRunner animation = new AnimationRunner();
 			item.setData(ANIMATION_DATA, animation);
 			animation.runEffect(new SetColorEffect(new GalleryItemBackgroundColorAdapter(item), bg, color, duration,
@@ -147,9 +130,7 @@ public class HoverListener implements MouseMoveListener, MouseTrackListener, Mou
 			current = item;
 		}
 	}
-
 	public void mouseScrolled(MouseEvent e) {
 		updateHover(e);
 	}
-
 }

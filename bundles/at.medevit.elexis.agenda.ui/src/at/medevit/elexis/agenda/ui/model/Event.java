@@ -39,9 +39,6 @@ public class Event {
 	// https://fullcalendar.io/docs/event-object
 	private boolean allDay = false;
 
-	private String tel;
-	private String mail;
-
 	public String getId() {
 		return id;
 	}
@@ -138,14 +135,6 @@ public class Event {
 		return icon;
 	}
 
-	public String getMail() {
-		return mail;
-	}
-
-	public String getTel() {
-		return tel;
-	}
-
 	/**
 	 * Factory method to create a Event from an {@link IPeriod}.
 	 *
@@ -167,21 +156,6 @@ public class Event {
 				ret.title = rootTermin.getSubjectOrPatient();
 			} else {
 				ret.title = termin.getSubjectOrPatient();
-			}
-			IContact contact = termin.getContact();
-			if (contact != null) {
-				if (StringUtils.isNotBlank(contact.getEmail())) {
-					ret.mail = contact.getEmail();
-				}
-				if (ret.mail == null && StringUtils.isNotBlank(contact.getEmail2())) {
-					ret.mail = contact.getEmail2();
-				}
-				if (StringUtils.isNotBlank(contact.getMobile())) {
-					ret.tel = contact.getMobile();
-				}
-				if (ret.tel == null && StringUtils.isNotBlank(contact.getPhone1())) {
-					ret.tel = contact.getPhone1();
-				}
 			}
 			// fullcalendar will no create title html div if no title is blank, add space
 			if (ret.title.isEmpty()) {

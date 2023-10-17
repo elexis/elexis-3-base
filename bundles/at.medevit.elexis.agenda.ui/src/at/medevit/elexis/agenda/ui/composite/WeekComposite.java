@@ -35,6 +35,7 @@ import at.medevit.elexis.agenda.ui.function.DayClickFunction;
 import at.medevit.elexis.agenda.ui.function.DoubleClickFunction;
 import at.medevit.elexis.agenda.ui.function.EventDropFunction;
 import at.medevit.elexis.agenda.ui.function.EventResizeFunction;
+import at.medevit.elexis.agenda.ui.function.LoadContactInfoFunction;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
@@ -89,6 +90,8 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 		scriptingHelper = new ScriptingHelper(browser);
 
 		loadEventsFunction = new LoadEventsFunction(browser, "loadEventsFunction", scriptingHelper, uiSynchronize); //$NON-NLS-1$
+
+		new LoadContactInfoFunction(browser, "loadContactInfoFunction"); // $NON-NLS-1
 
 		new SingleClickFunction(browser, "singleClickFunction").setSelectionProvider(this); //$NON-NLS-1$
 

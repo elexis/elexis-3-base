@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
-import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite.EmailDetails;
+import at.medevit.elexis.agenda.ui.composite.EmailComposit.EmailDetails;
 import at.medevit.elexis.agenda.ui.handler.EmailSender;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
@@ -40,50 +40,42 @@ public class AppointmentDialog extends Dialog {
 
 	private AppointmentDetailComposite detailComposite;
 	private EmailSender emailSender;
-
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
 		CoreUiUtil.injectServicesWithContext(this);
 		this.appointment = appointment;
 		this.emailSender = new EmailSender(textReplacementService, contextService);
 	}
-
 	@Override
 	protected Control createContents(Composite parent) {
 		initializeAppointmentIfNecessary();
 		detailComposite = new AppointmentDetailComposite(parent, SWT.NONE, appointment);
 		return super.createContents(parent);
 	}
-
 	@Override
 	protected void okPressed() {
 		saveAndReloadAppointment();
 		sendEmailIfConfirmationChecked();
 		super.okPressed();
 	}
-
 	@Override
 	protected boolean isResizable() {
 		return true;
 	}
-
 	private void initializeAppointmentIfNecessary() {
 		if (appointment == null) {
 			appointment = CoreModelServiceHolder.get().create(IAppointment.class);
 			appointment.setStartTime(LocalDateTime.now());
 		}
 	}
-
 	private void saveAndReloadAppointment() {
 		if (appointment != null) {
-			// save appointment
 			CoreModelServiceHolder.get().save(detailComposite.setToModel());
 		}
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 	}
-
 	private void sendEmailIfConfirmationChecked() {
-		if (detailComposite.isEmailConfirmationChecked()) {
+		if (detailComposite.isCheckboxChecked()) {
 			EmailDetails emailDetails = detailComposite.extractEmailDetails();
 			emailSender.sendEmail(emailDetails, appointment);
 		}

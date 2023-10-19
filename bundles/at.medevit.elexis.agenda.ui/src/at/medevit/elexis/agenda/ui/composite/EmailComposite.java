@@ -1,6 +1,8 @@
 package at.medevit.elexis.agenda.ui.composite;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -25,7 +27,10 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.core.mail.MailAccount.TYPE;
 import ch.elexis.core.mail.MailTextTemplate;
+import ch.elexis.core.mail.ui.client.MailClientComponent;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ITextTemplate;
 import ch.elexis.core.services.ITextReplacementService;
@@ -33,7 +38,13 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
-public class EmailComposit extends Composite {
+public class EmailComposite extends Composite {
+
+	private static final String TEMPLATE_TEXT = "[Pea.SiteUrl]";
+	private static final String TEMPLATE = "Terminbestätigung inkl. Anmeldeformular";
+	private static final String URL = "https://medelexis.ch/pea/";
+	private static final String HYPERLINK = "<a href=\"https://medelexis.ch/pea/\">Weitere Informationen finden Sie hier.</a>";
+	private static final String QUERY_SYMBOL = "?";
 
 	@Inject
 	private ITextReplacementService textReplacement;
@@ -41,15 +52,16 @@ public class EmailComposit extends Composite {
 	private Button chkEmail;
 	private Label emailTemplatesLabel;
 	private ComboViewer emailTemplatesViewer;
-	private final String templateText = "[Pea.SiteUrl]";
-	private final String template = "Terminbestätigung inkl. Anmeldeformular";
-	private final String url = "https://medelexis.ch/pea/";
-	private final String hyperlink = "<a href=\"https://medelexis.ch/pea/\">Weitere Informationen finden Sie hier.</a>";
-	private final String QUERY_SYMBOL = "?";
 	private ITextTemplate previousTemplate = null;
+	private boolean isEmailConfigured;
+	private boolean isPatientSelected;
+	private boolean hasEmail;
+	private Object pat;
 
-	public EmailComposit(Composite parent, int style, Object pat) {
+
+	public EmailComposite(Composite parent, int style, IContact selectedContact) {
 		super(parent, style);
+		this.pat = selectedContact;
 		setLayout(new GridLayout(3, false));
 		chkEmail = new Button(this, SWT.CHECK);
 		chkEmail.setText(Messages.Appointment_Confirmation);
@@ -101,8 +113,6 @@ public class EmailComposit extends Composite {
 	}
 	private void updateTemplatesCombo() {
 		emailTemplatesViewer.setInput(MailTextTemplate.load());
-		emailTemplatesViewer.refresh();
-
 	}
 	public boolean isCheckboxChecked() {
 		return chkEmail.getSelection();
@@ -138,12 +148,12 @@ public class EmailComposit extends Composite {
 				: null;
 	}
 	private boolean shouldNotExecute(String savedTemplate, String test) {
-		return template.equals(savedTemplate) && QUERY_SYMBOL.equals(test);
+		return TEMPLATE.equals(savedTemplate) && QUERY_SYMBOL.equals(test);
 	}
 	private String calculateTestValue() {
 		textReplacement = OsgiServiceUtil.getService(ITextReplacementService.class)
 				.orElseThrow(() -> new IllegalStateException());
-			return textReplacement.performReplacement(ContextServiceHolder.get().getRootContext(), templateText);
+		return textReplacement.performReplacement(ContextServiceHolder.get().getRootContext(), TEMPLATE_TEXT);
 	}
 	private MessageDialog createMessageDialog(Shell shell) {
 		return new MessageDialog(shell, Messages.Warnung, null, Messages.Warning_Kein_Pea, MessageDialog.WARNING,
@@ -151,17 +161,76 @@ public class EmailComposit extends Composite {
 			@Override
 			protected Control createCustomArea(Composite parent) {
 				Link link = new Link(parent, SWT.NONE);
-				link.setText(hyperlink);
+				link.setText(HYPERLINK);
 				link.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						Program.launch(url);
+						Program.launch(URL);
 					}
 				});
 				return link;
 			}
 		};
 	}
+
+	public ITextTemplate getSelectedEmailTemplateViewerDetails() {
+		IStructuredSelection selection = (IStructuredSelection) emailTemplatesViewer.getSelection();
+		Object selectedElement = selection.getFirstElement();
+		if (selectedElement instanceof ITextTemplate) {
+			return (ITextTemplate) selectedElement;
+		}
+		return null;
+	}
+	public void updateStatus(boolean isEmailConfigured, boolean isPatientSelected, boolean hasEmail) {
+	    chkEmail.setEnabled(isEmailConfigured && isPatientSelected && hasEmail);
+	    boolean isEmailControlEnabled = chkEmail.getSelection() && isEmailConfigured && isPatientSelected && hasEmail;
+	    emailTemplatesViewer.getControl().setEnabled(isEmailControlEnabled);
+	    emailTemplatesLabel.setEnabled(isEmailControlEnabled);
+		selectSavedEmailTemplate();
+	}
+
+	void updateEmailControlsStatus(IContact iContact) {
+		List<String> validAccounts = getSendMailAccounts();
+		String defaultMailAccountAppointment = ConfigServiceHolder.get()
+				.get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT, null);
+		String defaultMailAccount = ConfigServiceHolder.get().get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT, null);
+		isEmailConfigured = isValidEmailConfiguration(validAccounts, defaultMailAccountAppointment, defaultMailAccount);
+		isPatientSelected = iContact instanceof IPatient;
+		hasEmail = hasValidEmail(iContact);
+		updateStatus(isEmailConfigured, isPatientSelected, hasEmail);
+		this.pat = iContact;
+	}
+
+	private List<String> getSendMailAccounts() {
+		List<String> ret = new ArrayList<>();
+		ret.addAll(filterAccounts(MailClientComponent.getMailClient().getAccountsLocal()));
+		ret.addAll(filterAccounts(MailClientComponent.getMailClient().getAccounts()));
+		return ret;
+	}
+
+	private List<String> filterAccounts(List<String> accounts) {
+		return accounts.stream().filter(aid -> MailClientComponent.getMailClient().getAccount(aid).isPresent())
+				.filter(aid -> MailClientComponent.getMailClient().getAccount(aid).get().getType() == TYPE.SMTP)
+				.collect(Collectors.toList());
+	}
+
+	private boolean isValidEmailConfiguration(List<String> validAccounts, String defaultMailAccountAppointment,
+			String defaultMailAccount) {
+		return validAccounts.contains(defaultMailAccountAppointment) || validAccounts.contains(defaultMailAccount);
+	}
+
+	private boolean hasValidEmail(IContact selectedContact) {
+		return selectedContact != null && StringUtils.isNotBlank(selectedContact.getEmail());
+	}
+
+
+	public IPatient getSelectedPatient() {
+		if (pat instanceof IPatient) {
+			return (IPatient) pat;
+		}
+		return null;
+	}
+
 	public static class EmailDetails {
 		private IPatient patient;
 		private ITextTemplate template;
@@ -183,20 +252,15 @@ public class EmailComposit extends Composite {
 			return patient.asIPatient();
 		}
 	}
-	public ITextTemplate getSelectedEmailTemplateViewerDetails() {
-		IStructuredSelection selection = (IStructuredSelection) emailTemplatesViewer.getSelection();
-		Object selectedElement = selection.getFirstElement();
-		if (selectedElement instanceof ITextTemplate) {
-			return (ITextTemplate) selectedElement;
+	public EmailDetails extractEmailDetails() {
+		ITextTemplate selectedTemplateViewerDetails = getSelectedEmailTemplateViewerDetails();
+		if (selectedTemplateViewerDetails != null) {
+			IPatient selectedPatient = getSelectedPatient();
+			if (selectedPatient != null) {
+				return new EmailDetails(selectedTemplateViewerDetails, selectedPatient);
+			}
 		}
 		return null;
-	}
-	public void updateStatus(boolean isEmailConfigured, boolean isPatientSelected, boolean hasEmail) {
-	    chkEmail.setEnabled(isEmailConfigured && isPatientSelected && hasEmail);
-	    boolean isEmailControlEnabled = chkEmail.getSelection() && isEmailConfigured && isPatientSelected && hasEmail;
-	    emailTemplatesViewer.getControl().setEnabled(isEmailControlEnabled);
-	    emailTemplatesLabel.setEnabled(isEmailControlEnabled);
-		selectSavedEmailTemplate();
 	}
 }
 

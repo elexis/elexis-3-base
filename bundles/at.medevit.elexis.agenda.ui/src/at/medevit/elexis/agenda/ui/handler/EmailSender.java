@@ -9,7 +9,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 
-import at.medevit.elexis.agenda.ui.composite.EmailComposit.EmailDetails;
+import at.medevit.elexis.agenda.ui.composite.EmailComposite.EmailDetails;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.IContext;

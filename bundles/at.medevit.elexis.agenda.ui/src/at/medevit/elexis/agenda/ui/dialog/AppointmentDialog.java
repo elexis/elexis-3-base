@@ -12,12 +12,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
-import at.medevit.elexis.agenda.ui.composite.EmailComposit.EmailDetails;
+import at.medevit.elexis.agenda.ui.composite.EmailComposite.EmailDetails;
 import at.medevit.elexis.agenda.ui.handler.EmailSender;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.IContextService;
-import ch.elexis.core.services.IMessageService;
 import ch.elexis.core.services.ITextReplacementService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -30,9 +29,6 @@ public class AppointmentDialog extends Dialog {
 	IContextService contextService;
 
 	@Inject
-	IMessageService messageService;
-
-	@Inject
 	private IEventBroker eventBroker;
 
 	@Inject
@@ -40,6 +36,7 @@ public class AppointmentDialog extends Dialog {
 
 	private AppointmentDetailComposite detailComposite;
 	private EmailSender emailSender;
+
 	public AppointmentDialog(IAppointment appointment) {
 		super(Display.getDefault().getActiveShell());
 		CoreUiUtil.injectServicesWithContext(this);
@@ -75,8 +72,8 @@ public class AppointmentDialog extends Dialog {
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 	}
 	private void sendEmailIfConfirmationChecked() {
-		if (detailComposite.isCheckboxChecked()) {
-			EmailDetails emailDetails = detailComposite.extractEmailDetails();
+		if (detailComposite.getEmailCheckboxStatus()) {
+			EmailDetails emailDetails = detailComposite.getEmailDeteils();
 			emailSender.sendEmail(emailDetails, appointment);
 		}
 	}

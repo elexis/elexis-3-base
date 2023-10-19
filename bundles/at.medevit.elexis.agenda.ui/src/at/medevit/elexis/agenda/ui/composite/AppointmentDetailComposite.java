@@ -6,7 +6,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -52,20 +51,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import at.medevit.elexis.agenda.ui.composite.EmailComposit.EmailDetails;
-import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.core.mail.MailAccount.TYPE;
-import ch.elexis.core.mail.ui.client.MailClientComponent;
+import at.medevit.elexis.agenda.ui.composite.EmailComposite.EmailDetails;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.model.ITextTemplate;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.fieldassist.AsyncContentProposalProvider;
@@ -93,9 +87,6 @@ public class AppointmentDetailComposite extends Composite {
 	private CDateTime txtDateFromDrop;
 	private CDateTime txtDateFromNoDrop;
 	private Button btnIsAllDay;
-	private boolean isEmailConfigured;
-	private boolean isPatientSelected;
-	private boolean hasEmail;
 	private CDateTime txtTimeFrom;
 	private Spinner txtDuration;
 	private CDateTime txtTimeTo;
@@ -110,7 +101,7 @@ public class AppointmentDetailComposite extends Composite {
 	private DayOverViewComposite dayBar;
 	private TableViewer appointmentsViewer;
 	private Composite container;
-	private EmailComposit emailComposite;
+	private EmailComposite emailComposite;
 	SelectionAdapter dateTimeSelectionAdapter = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
@@ -205,19 +196,17 @@ public class AppointmentDetailComposite extends Composite {
 				txtPatSearch.setData(prop.getIdentifiable());
 				appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
 				refreshPatientModel();
-				updateEmailControlsStatus();
 			}
 		});
 		txtPatSearch.addModifyListener(e -> {
 		    reloadContactLabel();
 		    if (!txtDataIsMatchingContact() || StringUtils.isBlank(txtPatSearch.getText())) {
 		        txtPatSearch.setData(null);
-				ContextServiceHolder.get().setActivePatient(null);
 		    }
 			if (!txtDataIsMatchingContact()) {
 				appointmentsViewer.setInput(Collections.emptyList());
 			}
-		    updateEmailControlsStatus();
+			emailComposite.updateEmailControlsStatus(getSelectedContact());
 		});
 		cppa.addContentProposalListener(proposal -> {
 		    IdentifiableContentProposal<IPatient> prop = (IdentifiableContentProposal<IPatient>) proposal;
@@ -225,7 +214,6 @@ public class AppointmentDetailComposite extends Composite {
 		    txtPatSearch.setData(prop.getIdentifiable());
 		    appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
 		    refreshPatientModel();
-		    updateEmailControlsStatus();
 		});
 
 		Button btnExpand = new Button(container, SWT.TOGGLE);
@@ -392,11 +380,16 @@ public class AppointmentDetailComposite extends Composite {
 		gd.widthHint = 80;
 		comboStatus.setLayoutData(gd);
 
+		if (emailComposite == null) {
+			IContact selectedContact = getSelectedContact();
+			emailComposite = new EmailComposite(container, SWT.NONE, selectedContact);
+			GridData gd2 = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+			emailComposite.setLayoutData(gd2);
+		}
 		toggleVisiblityComposite(txtDateFromDrop);
 		toggleVisiblityComposite(compContext);
 		toggleVisiblityComposite(compContentMiddle);
 		toggleVisiblityComposite(compTimeSelektor);
-		
 		loadFromModel();
 		refreshPatientModel();
 	}
@@ -667,76 +660,19 @@ public class AppointmentDetailComposite extends Composite {
 		reloadAppointment(appointment);
 	}
 
-	private void updateEmailControlsStatus() {
-		List<String> validAccounts = getSendMailAccounts();
-	    String defaultMailAccountAppointment = ConfigServiceHolder.get()
-	            .get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT, null);
-	    String defaultMailAccount = ConfigServiceHolder.get()
-	            .get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT, null);
-	    isEmailConfigured = isValidEmailConfiguration(validAccounts, defaultMailAccountAppointment, defaultMailAccount);
-	    IContact selectedContact = determineSelectedContact();
-	    isPatientSelected = selectedContact != null;
-	    hasEmail = hasValidEmail(selectedContact);
-		if (emailComposite == null) {
-			emailComposite = new EmailComposit(container, SWT.NONE, txtPatSearch.getData());
-			GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
-			emailComposite.setLayoutData(gd);
+	public IContact getSelectedContact() {
+		Object data = txtPatSearch.getData();
+		if (data instanceof IContact) {
+			return (IContact) data;
 		}
-		emailComposite.updateStatus(isEmailConfigured, isPatientSelected, hasEmail);
+		return null;
 	}
-	private List<String> getSendMailAccounts() {
-		List<String> ret = new ArrayList<>();
-		ret.addAll(filterAccounts(MailClientComponent.getMailClient().getAccountsLocal()));
-		ret.addAll(filterAccounts(MailClientComponent.getMailClient().getAccounts()));
-		return ret;
-	}
-	private List<String> filterAccounts(List<String> accounts) {
-		return accounts.stream().filter(aid -> MailClientComponent.getMailClient().getAccount(aid).isPresent())
-				.filter(aid -> MailClientComponent.getMailClient().getAccount(aid).get().getType() == TYPE.SMTP)
-				.collect(Collectors.toList());
-	}
-	private boolean isValidEmailConfiguration(List<String> validAccounts, String defaultMailAccountAppointment,
-			String defaultMailAccount) {
-		return validAccounts.contains(defaultMailAccountAppointment) || validAccounts.contains(defaultMailAccount);
-	}
-	private IContact determineSelectedContact() {
-	    IContact selectedContact = (IContact) txtPatSearch.getData();
-	    if (selectedContact == null) {
-	        Optional<IPatient> activePatientOptional = ContextServiceHolder.get().getActivePatient();
-	        if (activePatientOptional.isPresent()) {
-	            IPatient activePatient = activePatientOptional.get();
-	            if (activePatient instanceof IContact) {
-	                selectedContact = activePatient;
-	            }
-	        }
-	    }
-	    return selectedContact;
-	}
-	private boolean hasValidEmail(IContact contact) {
-		if (contact != null) {
-			String email = contact.getEmail();
-			return email != null && !email.trim().isEmpty();
-		}
-		return false;
-	}
-	public boolean isCheckboxChecked() {
+
+	public boolean getEmailCheckboxStatus() {
 		return emailComposite.isCheckboxChecked();
 	}
-	public IPatient getSelectedPatient() {
-		Object data = txtPatSearch.getData();
-		if (data instanceof IPatient) {
-			return (IPatient) data;
-		}
-		return null;
-	}
-	public EmailDetails extractEmailDetails() {
-		ITextTemplate selectedTemplateViewerDetails = emailComposite.getSelectedEmailTemplateViewerDetails();
-		if (selectedTemplateViewerDetails != null) {
-			IPatient selectedPatient = getSelectedPatient();
-			if (selectedPatient != null) {
-				return new EmailDetails(selectedTemplateViewerDetails, selectedPatient);
-			}
-		}
-		return null;
+
+	public EmailDetails getEmailDeteils() {
+		return emailComposite.extractEmailDetails();
 	}
 }

@@ -382,7 +382,7 @@ public class AppointmentDetailComposite extends Composite {
 
 		if (emailComposite == null) {
 			IContact selectedContact = getSelectedContact();
-			emailComposite = new EmailComposite(container, SWT.NONE, selectedContact);
+			emailComposite = new EmailComposite(container, SWT.NONE, selectedContact, appointment);
 			GridData gd2 = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 			emailComposite.setLayoutData(gd2);
 		}

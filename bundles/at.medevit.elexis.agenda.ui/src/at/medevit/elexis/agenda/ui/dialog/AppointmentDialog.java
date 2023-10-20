@@ -1,6 +1,7 @@
 package at.medevit.elexis.agenda.ui.dialog;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -15,6 +16,7 @@ import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
 import at.medevit.elexis.agenda.ui.composite.EmailComposite.EmailDetails;
 import at.medevit.elexis.agenda.ui.handler.EmailSender;
 import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.mail.ui.handlers.SendMailHandler;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.ITextReplacementService;
@@ -56,6 +58,12 @@ public class AppointmentDialog extends Dialog {
 		super.okPressed();
 	}
 	@Override
+	protected void cancelPressed() {
+		SendMailHandler.taskDescriptor = Optional.empty();
+		super.cancelPressed();
+	}
+
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
@@ -76,5 +84,6 @@ public class AppointmentDialog extends Dialog {
 			EmailDetails emailDetails = detailComposite.getEmailDeteils();
 			emailSender.sendEmail(emailDetails, appointment);
 		}
+		SendMailHandler.taskDescriptor = Optional.empty();
 	}
 }

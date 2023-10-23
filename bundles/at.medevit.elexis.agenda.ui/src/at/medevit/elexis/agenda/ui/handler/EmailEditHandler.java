@@ -21,7 +21,7 @@ public class EmailEditHandler {
 	private static final String MAIL_TEXT_PARAM = "ch.elexis.core.mail.ui.sendMail.text";
 	private static final String MAIL_SUBJECT_PARAM = "ch.elexis.core.mail.ui.sendMail.subject";
 	private static final String MAIL_OK_LABEL_PARAM = "ch.elexis.core.mail.ui.sendMail.okLabel";
-	private static final String TRUE_VALUE = "true";
+
 
 	public void openSendMailDialogWithContent(IAppointment appointment, Object pat, String preparedMessageText,
 			String subject) {
@@ -39,7 +39,7 @@ public class EmailEditHandler {
 		if (subject != null) {
 			params.put(MAIL_SUBJECT_PARAM, subject);
 		}
-		params.put(MAIL_OK_LABEL_PARAM, TRUE_VALUE);
+		params.put(MAIL_OK_LABEL_PARAM, Boolean.TRUE.toString());
 		String savedAccount = ConfigServiceHolder.get().get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT,
 				null);
 		if (StringUtils.isEmpty(savedAccount)) {

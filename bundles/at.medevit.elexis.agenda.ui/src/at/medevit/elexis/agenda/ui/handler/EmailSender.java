@@ -15,15 +15,13 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.agenda.ui.composite.EmailComposite.EmailDetails;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.mail.TaskUtil;
-import ch.elexis.core.mail.ui.handlers.EncounterUtil;
-import ch.elexis.core.mail.ui.handlers.OutboxUtil;
-import ch.elexis.core.mail.ui.handlers.SendMailHandler;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.services.IContext;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.ITextReplacementService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.tasks.model.ITask;
 import ch.elexis.core.tasks.model.ITaskDescriptor;
 
@@ -40,10 +38,9 @@ public class EmailSender {
 	}
 
 	public void sendEmail(EmailDetails emailDetails, IAppointment appointment) {
-		Optional<ITaskDescriptor> descriptor = SendMailHandler.taskDescriptor;
-
+		Optional<?> descriptor = ContextServiceHolder.get().getNamed("sendMailDialog.taskDescriptor");
 		if (descriptor != null && descriptor.isPresent()) {
-			processExistingDescriptor(descriptor.get());
+			processExistingDescriptor((ITaskDescriptor) descriptor.get());
 		} else {
 			sendEmailUsingCommand(emailDetails, appointment);
 		}
@@ -53,13 +50,23 @@ public class EmailSender {
 		try {
 			ITask task = TaskUtil.executeTaskSync(descriptor, new NullProgressMonitor());
 			if (task.isSucceeded()) {
-				OutboxUtil.getOrCreateElement(descriptor, true);
-				EncounterUtil.addMailToEncounter(descriptor);
+				ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
+				Command sendMailCommand = commandService.getCommand(SEND_MAIL_COMMAND_NOUI);
+				HashMap<String, String> params = new HashMap<>();
+				params.put(SEND_MAIL_COMMAND_NOUI + ".doSend", Boolean.TRUE.toString());
+				try {
+					ParameterizedCommand parametrizedCommmand = ParameterizedCommand.generateCommand(sendMailCommand,
+							params);
+					PlatformUI.getWorkbench().getService(IHandlerService.class).executeCommand(parametrizedCommmand,
+							null);
+				} catch (Exception ex) {
+					throw new RuntimeException(SEND_MAIL_COMMAND_NOUI + " nicht gefunden", ex);
+				}
 			}
 		} catch (TaskException e) {
-			LoggerFactory.getLogger(TaskUtil.class).error("Error executing mail task", e);
+			LoggerFactory.getLogger(TaskUtil.class).error("Fehler bei der Ausführung der Mail-Aufgabe", e);
 		} finally {
-			SendMailHandler.taskDescriptor = Optional.empty();
+
 		}
 	}
 

@@ -39,8 +39,6 @@ import org.eclipse.nebula.widgets.cdatetime.CDateTime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -53,6 +51,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import at.medevit.elexis.agenda.ui.composite.EmailComposite.EmailDetails;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
@@ -88,15 +87,12 @@ public class AppointmentDetailComposite extends Composite {
 	private CDateTime txtDateFromDrop;
 	private CDateTime txtDateFromNoDrop;
 	private Button btnIsAllDay;
-
 	private CDateTime txtTimeFrom;
 	private Spinner txtDuration;
 	private CDateTime txtTimeTo;
-
 	private Composite compContext;
 	private Text txtContact;
 	private CDateTime pickerContext;
-
 	private Combo comboArea;
 	private Combo comboType;
 	private Combo comboStatus;
@@ -104,7 +100,8 @@ public class AppointmentDetailComposite extends Composite {
 	private Text txtPatSearch;
 	private DayOverViewComposite dayBar;
 	private TableViewer appointmentsViewer;
-
+	private Composite container;
+	private EmailComposite emailComposite;
 	SelectionAdapter dateTimeSelectionAdapter = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
@@ -144,7 +141,7 @@ public class AppointmentDetailComposite extends Composite {
 	private void createContents(Composite parent) {
 		Objects.requireNonNull(appointment, "Appointment cannot be null"); //$NON-NLS-1$
 
-		Composite container = new Composite(parent, SWT.NONE);
+		container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(4, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -201,14 +198,22 @@ public class AppointmentDetailComposite extends Composite {
 				refreshPatientModel();
 			}
 		});
-		txtPatSearch.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				reloadContactLabel();
-				if (!txtDataIsMatchingContact()) {
-					appointmentsViewer.setInput(Collections.emptyList());
-				}
+		txtPatSearch.addModifyListener(e -> {
+			reloadContactLabel();
+			if (!txtDataIsMatchingContact() || StringUtils.isBlank(txtPatSearch.getText())) {
+				txtPatSearch.setData(null);
 			}
+			if (!txtDataIsMatchingContact()) {
+				appointmentsViewer.setInput(Collections.emptyList());
+			}
+			emailComposite.updateEmailControlsStatus(getSelectedContact());
+		});
+		cppa.addContentProposalListener(proposal -> {
+			IdentifiableContentProposal<IPatient> prop = (IdentifiableContentProposal<IPatient>) proposal;
+			txtPatSearch.setText(prop.getLabel());
+			txtPatSearch.setData(prop.getIdentifiable());
+			appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
+			refreshPatientModel();
 		});
 
 		Button btnExpand = new Button(container, SWT.TOGGLE);
@@ -217,7 +222,7 @@ public class AppointmentDetailComposite extends Composite {
 		btnExpand.setText(Messages.AppointmentDetailComposite_expand);
 		compContext = new Composite(container, SWT.NONE);
 		compContext.setLayout(new GridLayout(1, false));
-		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
+		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1);
 		compContext.setLayoutData(gd);
 
 		txtContact = new Text(compContext, SWT.BORDER | SWT.MULTI);
@@ -240,13 +245,13 @@ public class AppointmentDetailComposite extends Composite {
 			}
 		});
 
-		gd = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 3);
 		gd.verticalIndent = 15;
 		Composite compDateArea = createUIDateAreaContents(gd, container);
 
 		Group compContentMiddle = new Group(compDateArea, SWT.BORDER);
 		compContentMiddle.setLayout(new GridLayout(4, false));
-		compContentMiddle.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+		compContentMiddle.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 2));
 		compContentMiddle.setText(Messages.AppointmentDetailComposite_planned_dates);
 
 		appointmentsViewer = new TableViewer(compContentMiddle, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -350,6 +355,7 @@ public class AppointmentDetailComposite extends Composite {
 		comboType = new Combo(compTypeReason, SWT.DROP_DOWN);
 		comboType.setItems(appointmentService.getTypes().toArray(new String[appointmentService.getTypes().size()]));
 		comboType.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Map<String, Integer> preferredDurations = AppointmentServiceHolder.get()
 						.getPreferredDurations(comboArea.getText());
@@ -374,11 +380,16 @@ public class AppointmentDetailComposite extends Composite {
 		gd.widthHint = 80;
 		comboStatus.setLayoutData(gd);
 
+		if (emailComposite == null) {
+			IContact selectedContact = getSelectedContact();
+			emailComposite = new EmailComposite(container, SWT.NONE, selectedContact, appointment);
+			GridData gd2 = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+			emailComposite.setLayoutData(gd2);
+		}
 		toggleVisiblityComposite(txtDateFromDrop);
 		toggleVisiblityComposite(compContext);
 		toggleVisiblityComposite(compContentMiddle);
 		toggleVisiblityComposite(compTimeSelektor);
-
 		loadFromModel();
 		refreshPatientModel();
 	}
@@ -473,7 +484,6 @@ public class AppointmentDetailComposite extends Composite {
 		GridData data = (GridData) c.getLayoutData();
 		data.exclude = !data.exclude;
 		c.setVisible(!data.exclude);
-
 		if (c == compContext) {
 			if (compContext.isVisible()) {
 				toggleVisiblityComposite(txtDateFromNoDrop);
@@ -559,7 +569,6 @@ public class AppointmentDetailComposite extends Composite {
 		gl = new GridLayout(2, false);
 		gl.marginLeft = 20;
 		compArea.setLayout(gl);
-
 		Label lblArea = new Label(compArea, SWT.NULL);
 		lblArea.setText(Messages.AppointmentDetailComposite_range);
 		comboArea = new Combo(compArea, SWT.DROP_DOWN);
@@ -580,7 +589,6 @@ public class AppointmentDetailComposite extends Composite {
 	private void loadCompTimeFromModel() {
 		Date appointmentStartDate = Date
 				.from(ZonedDateTime.of(appointment.getStartTime(), ZoneId.systemDefault()).toInstant());
-
 		txtDateFrom.setSelection(appointmentStartDate);
 		pickerContext.setSelection(appointmentStartDate);
 		txtTimeFrom.setSelection(appointmentStartDate);
@@ -600,10 +608,8 @@ public class AppointmentDetailComposite extends Composite {
 		comboStatus.setText(appointment.getState());
 		comboType.setText(appointment.getType());
 		comboArea.setText(appointment.getSchedule());
-
 		txtReason.setText(appointment.getReason());
 		txtPatSearch.setText(appointment.getSubjectOrPatient());
-
 		loadCompTimeFromModel();
 	}
 
@@ -652,5 +658,21 @@ public class AppointmentDetailComposite extends Composite {
 		appointment = newAppointment;
 		setToModel();
 		reloadAppointment(appointment);
+	}
+
+	public IContact getSelectedContact() {
+		Object data = txtPatSearch.getData();
+		if (data instanceof IContact) {
+			return (IContact) data;
+		}
+		return null;
+	}
+
+	public boolean getEmailCheckboxStatus() {
+		return emailComposite.isCheckboxChecked();
+	}
+
+	public EmailDetails getEmailDeteils() {
+		return emailComposite.extractEmailDetails();
 	}
 }

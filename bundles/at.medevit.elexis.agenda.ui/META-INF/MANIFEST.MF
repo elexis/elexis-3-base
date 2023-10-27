@@ -13,7 +13,11 @@ Require-Bundle: ch.elexis.core.l10n,
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
-Import-Package: com.equo.chromium.swt,
+Import-Package: ch.elexis.agenda.preferences,
+ ch.elexis.core.mail,
+ ch.elexis.core.mail.ui.client,
+ ch.elexis.core.tasks.model,
+ com.equo.chromium.swt,
  com.google.common.cache;version="15.0.0",
  com.google.gson,
  com.sun.xml.bind.annotation;version="2.3.3",

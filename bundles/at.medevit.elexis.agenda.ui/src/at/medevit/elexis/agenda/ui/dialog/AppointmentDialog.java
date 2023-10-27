@@ -56,7 +56,6 @@ public class AppointmentDialog extends Dialog {
 		sendEmailIfConfirmationChecked();
 		super.okPressed();
 	}
-
 	@Override
 	protected void cancelPressed() {
 		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
@@ -68,21 +67,21 @@ public class AppointmentDialog extends Dialog {
 		return true;
 	}
 
-	private void initializeAppointmentIfNecessary() {
+  private void initializeAppointmentIfNecessary() {
 		if (appointment == null) {
 			appointment = CoreModelServiceHolder.get().create(IAppointment.class);
 			appointment.setStartTime(LocalDateTime.now());
 		}
 	}
 
-	private void saveAndReloadAppointment() {
+  private void saveAndReloadAppointment() {
 		if (appointment != null) {
 			CoreModelServiceHolder.get().save(detailComposite.setToModel());
 		}
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 	}
 
-	private void sendEmailIfConfirmationChecked() {
+  private void sendEmailIfConfirmationChecked() {
 		if (detailComposite.getEmailCheckboxStatus()) {
 			EmailDetails emailDetails = detailComposite.getEmailDeteils();
 			emailSender.sendEmail(emailDetails, appointment);

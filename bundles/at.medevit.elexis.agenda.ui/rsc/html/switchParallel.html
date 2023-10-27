@@ -166,9 +166,7 @@
             backgroundColor: event.backgroundColor,
             textColor: event.textColor,
             resourceId: event.resource,
-            allDay: event.allDay,
-            tel: event.tel,
-            mail: event.mail
+            allDay: event.allDay
           });
         });
         callback(events);
@@ -227,7 +225,7 @@
                 delay: 0,
               },
               content: {
-                title: event.title + (event.end === undefined ? '' : '<br/>Von/Bis: ' + event.start.format('HH:mm') + '-' + event.end.format('HH:mm')) + (event.tel === undefined ? '' : '<br/>Tel: ' + event.tel) + (event.mail === undefined ? '' : '<br/>Mail: ' + event.mail),
+                title: event.title + ((event.end === undefined || event.end == null || event.start === undefined || event.start == null) ? '' : '<br/>Von/Bis: ' + event.start.format('HH:mm') + '-' + event.end.format('HH:mm')),
                 text: event.description,
               },
               position: {
@@ -236,6 +234,20 @@
                 target: element,
                 viewport: $('#calendar'),
               },
+              events: {
+                show: function(showEvent, api) { 
+                  var contactInfoJson = loadContactInfoFunction(event.id);
+                  if(contactInfoJson !== null) {
+                    var contactInfo = JSON.parse(contactInfoJson);
+                    // Now we set the content manually (required!)
+                    api.set('content.title', 
+                      event.title + 
+                      ((event.end === undefined || event.end == null || event.start === undefined || event.start == null) ? '' : '<br/>Von/Bis: ' + event.start.format('HH:mm') + '-' + event.end.format('HH:mm')) + 
+                      ((contactInfo.tel === undefined || contactInfo.tel == null) ? '' : '<br/>Tel: ' + contactInfo.tel) + 
+                      ((contactInfo.mail === undefined || contactInfo.mail == null) ? '' : '<br/>Mail: ' + contactInfo.mail));
+                  }
+                 }
+              }
             });
           }
         }

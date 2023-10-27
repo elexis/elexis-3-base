@@ -199,21 +199,21 @@ public class AppointmentDetailComposite extends Composite {
 			}
 		});
 		txtPatSearch.addModifyListener(e -> {
-		    reloadContactLabel();
-		    if (!txtDataIsMatchingContact() || StringUtils.isBlank(txtPatSearch.getText())) {
-		        txtPatSearch.setData(null);
-		    }
+			reloadContactLabel();
+			if (!txtDataIsMatchingContact() || StringUtils.isBlank(txtPatSearch.getText())) {
+				txtPatSearch.setData(null);
+			}
 			if (!txtDataIsMatchingContact()) {
 				appointmentsViewer.setInput(Collections.emptyList());
 			}
 			emailComposite.updateEmailControlsStatus(getSelectedContact());
 		});
 		cppa.addContentProposalListener(proposal -> {
-		    IdentifiableContentProposal<IPatient> prop = (IdentifiableContentProposal<IPatient>) proposal;
-		    txtPatSearch.setText(prop.getLabel());
-		    txtPatSearch.setData(prop.getIdentifiable());
-		    appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
-		    refreshPatientModel();
+			IdentifiableContentProposal<IPatient> prop = (IdentifiableContentProposal<IPatient>) proposal;
+			txtPatSearch.setText(prop.getLabel());
+			txtPatSearch.setData(prop.getIdentifiable());
+			appointment.setSubjectOrPatient(prop.getIdentifiable().getId());
+			refreshPatientModel();
 		});
 
 		Button btnExpand = new Button(container, SWT.TOGGLE);
@@ -382,7 +382,7 @@ public class AppointmentDetailComposite extends Composite {
 
 		if (emailComposite == null) {
 			IContact selectedContact = getSelectedContact();
-			emailComposite = new EmailComposite(container, SWT.NONE, selectedContact);
+			emailComposite = new EmailComposite(container, SWT.NONE, selectedContact, appointment);
 			GridData gd2 = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 			emailComposite.setLayoutData(gd2);
 		}
@@ -483,7 +483,7 @@ public class AppointmentDetailComposite extends Composite {
 	private void toggleVisiblityComposite(Composite c) {
 		GridData data = (GridData) c.getLayoutData();
 		data.exclude = !data.exclude;
-		c.setVisible(!data.exclude);	
+		c.setVisible(!data.exclude);
 		if (c == compContext) {
 			if (compContext.isVisible()) {
 				toggleVisiblityComposite(txtDateFromNoDrop);

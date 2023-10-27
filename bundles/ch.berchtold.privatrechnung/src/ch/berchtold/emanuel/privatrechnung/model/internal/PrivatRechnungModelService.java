@@ -21,6 +21,7 @@ import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IStoreToStringContribution;
 import ch.elexis.core.services.IXidService;
+import ch.elexis.core.services.holder.AccessControlServiceHolder;
 
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.berchtold.emanuel.privatrechnung.model")
 public class PrivatRechnungModelService extends AbstractModelService
@@ -41,7 +42,9 @@ public class PrivatRechnungModelService extends AbstractModelService
 	public void activate() {
 		adapterFactory = PrivatRechnungModelAdapterFactory.getInstance();
 
-		xidService.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Privatleistung", XidConstants.ASSIGNMENT_LOCAL);
+		AccessControlServiceHolder.get().doPrivileged(() -> {
+			xidService.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Privatleistung", XidConstants.ASSIGNMENT_LOCAL);
+		});
 	}
 
 	@Override

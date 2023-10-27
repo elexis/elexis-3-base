@@ -18,6 +18,7 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.ITextReplacementService;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
@@ -56,22 +57,31 @@ public class AppointmentDialog extends Dialog {
 		super.okPressed();
 	}
 	@Override
+	protected void cancelPressed() {
+		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
+		super.cancelPressed();
+	}
+
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
-	private void initializeAppointmentIfNecessary() {
+
+  private void initializeAppointmentIfNecessary() {
 		if (appointment == null) {
 			appointment = CoreModelServiceHolder.get().create(IAppointment.class);
 			appointment.setStartTime(LocalDateTime.now());
 		}
 	}
-	private void saveAndReloadAppointment() {
+
+  private void saveAndReloadAppointment() {
 		if (appointment != null) {
 			CoreModelServiceHolder.get().save(detailComposite.setToModel());
 		}
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 	}
-	private void sendEmailIfConfirmationChecked() {
+
+  private void sendEmailIfConfirmationChecked() {
 		if (detailComposite.getEmailCheckboxStatus()) {
 			EmailDetails emailDetails = detailComposite.getEmailDeteils();
 			emailSender.sendEmail(emailDetails, appointment);

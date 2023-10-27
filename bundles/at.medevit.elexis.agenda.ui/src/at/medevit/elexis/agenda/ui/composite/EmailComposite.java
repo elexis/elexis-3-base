@@ -16,26 +16,36 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 
+import at.medevit.elexis.agenda.ui.handler.EmailEditHandler;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.mail.MailAccount.TYPE;
 import ch.elexis.core.mail.MailTextTemplate;
 import ch.elexis.core.mail.ui.client.MailClientComponent;
+import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ITextTemplate;
+import ch.elexis.core.services.IContext;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.ITextReplacementService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class EmailComposite extends Composite {
@@ -45,10 +55,13 @@ public class EmailComposite extends Composite {
 	private static final String URL = "https://medelexis.ch/pea/";
 	private static final String HYPERLINK = "<a href=\"https://medelexis.ch/pea/\">Weitere Informationen finden Sie hier.</a>";
 	private static final String QUERY_SYMBOL = "?";
-
+	private String preparedMessageText;
 	@Inject
 	private ITextReplacementService textReplacement;
+	@Inject
+	private IContextService contextService;
 
+	private EmailEditHandler emailEdith;
 	private Button chkEmail;
 	private Label emailTemplatesLabel;
 	private ComboViewer emailTemplatesViewer;
@@ -57,12 +70,16 @@ public class EmailComposite extends Composite {
 	private boolean isPatientSelected;
 	private boolean hasEmail;
 	private Object pat;
+	private Color blue = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
+	private IAppointment appointment;
+	private Label emailHyperlink;
 
-
-	public EmailComposite(Composite parent, int style, IContact selectedContact) {
+	public EmailComposite(Composite parent, int style, IContact selectedContact, IAppointment appointment) {
 		super(parent, style);
+		CoreUiUtil.injectServicesWithContext(this);
 		this.pat = selectedContact;
-		setLayout(new GridLayout(3, false));
+		this.appointment = appointment;
+		setLayout(new GridLayout(4, false));
 		chkEmail = new Button(this, SWT.CHECK);
 		chkEmail.setText(Messages.Appointment_Confirmation);
 		chkEmail.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false)); // Updated GridData
@@ -72,6 +89,7 @@ public class EmailComposite extends Composite {
 				boolean selected = chkEmail.getSelection();
 				emailTemplatesViewer.getControl().setEnabled(selected);
 				emailTemplatesLabel.setEnabled(selected);
+				emailHyperlink.setEnabled(selected);
 			}
 		});
 		emailTemplatesLabel = new Label(this, SWT.NONE);
@@ -109,14 +127,36 @@ public class EmailComposite extends Composite {
 				}
 			}
 		});
+		emailHyperlink = SWTHelper.createHyperlink(this, "E-Mail bearbeiten", new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(final HyperlinkEvent e) {
+				String emailTemplate = getSelectedEmailTemplateViewerDetails().getTemplate();
+				if (emailTemplate != null) {
+					IContext context = contextService.createNamedContext("appointment_reminder_context");
+					context.setTyped(appointment);
+					context.setTyped(pat);
+					preparedMessageText = textReplacement.performReplacement(context, emailTemplate);
+				}
+				if (emailEdith == null) {
+					emailEdith = new EmailEditHandler();
+				}
+				String subject = getSelectedEmailTemplateViewerDetails().getName();
+				emailEdith.openSendMailDialogWithContent(appointment, pat, preparedMessageText, subject);
+			}
+		});
+		emailHyperlink.setForeground(blue);
+		emailHyperlink.setEnabled(false);
 		updateTemplatesCombo();
 	}
+
 	private void updateTemplatesCombo() {
 		emailTemplatesViewer.setInput(MailTextTemplate.load());
 	}
+
 	public boolean isCheckboxChecked() {
 		return chkEmail.getSelection();
 	}
+
 	private void selectSavedEmailTemplate() {
 		String savedTemplate = ConfigServiceHolder.get()
 				.get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT_TEMPLATE, null);
@@ -131,7 +171,8 @@ public class EmailComposite extends Composite {
 		}
 		findAndSelectTemplate(savedTemplate, templates);
 	}
-	private void findAndSelectTemplate(String savedTemplate, List<ITextTemplate> templates) {
+	
+  private void findAndSelectTemplate(String savedTemplate, List<ITextTemplate> templates) {
 		if (savedTemplate != null && !savedTemplate.trim().isEmpty()) {
 			for (ITextTemplate template : templates) {
 				if (savedTemplate.equals(template.getName())) {
@@ -142,20 +183,24 @@ public class EmailComposite extends Composite {
 		}
 		emailTemplatesViewer.setSelection(new StructuredSelection(templates.get(0)));
 	}
-	public Object getSelectedTemplate() {
+	
+  public Object getSelectedTemplate() {
 		return (emailTemplatesViewer != null && emailTemplatesViewer.getStructuredSelection() != null)
 				? emailTemplatesViewer.getStructuredSelection().getFirstElement()
 				: null;
 	}
+
 	private boolean shouldNotExecute(String savedTemplate, String test) {
 		return TEMPLATE.equals(savedTemplate) && QUERY_SYMBOL.equals(test);
 	}
+
 	private String calculateTestValue() {
 		textReplacement = OsgiServiceUtil.getService(ITextReplacementService.class)
 				.orElseThrow(() -> new IllegalStateException());
 		return textReplacement.performReplacement(ContextServiceHolder.get().getRootContext(), TEMPLATE_TEXT);
 	}
-	private MessageDialog createMessageDialog(Shell shell) {
+
+  private MessageDialog createMessageDialog(Shell shell) {
 		return new MessageDialog(shell, Messages.Warnung, null, Messages.Warning_Kein_Pea, MessageDialog.WARNING,
 				new String[] { Messages.Core_Ok }, 0) {
 			@Override
@@ -181,11 +226,12 @@ public class EmailComposite extends Composite {
 		}
 		return null;
 	}
+
 	public void updateStatus(boolean isEmailConfigured, boolean isPatientSelected, boolean hasEmail) {
-	    chkEmail.setEnabled(isEmailConfigured && isPatientSelected && hasEmail);
-	    boolean isEmailControlEnabled = chkEmail.getSelection() && isEmailConfigured && isPatientSelected && hasEmail;
-	    emailTemplatesViewer.getControl().setEnabled(isEmailControlEnabled);
-	    emailTemplatesLabel.setEnabled(isEmailControlEnabled);
+		chkEmail.setEnabled(isEmailConfigured && isPatientSelected && hasEmail);
+		boolean isEmailControlEnabled = chkEmail.getSelection() && isEmailConfigured && isPatientSelected && hasEmail;
+		emailTemplatesViewer.getControl().setEnabled(isEmailControlEnabled);
+		emailTemplatesLabel.setEnabled(isEmailControlEnabled);
 		selectSavedEmailTemplate();
 	}
 
@@ -223,7 +269,6 @@ public class EmailComposite extends Composite {
 		return selectedContact != null && StringUtils.isNotBlank(selectedContact.getEmail());
 	}
 
-
 	public IPatient getSelectedPatient() {
 		if (pat instanceof IPatient) {
 			return (IPatient) pat;
@@ -252,7 +297,8 @@ public class EmailComposite extends Composite {
 			return patient.asIPatient();
 		}
 	}
-	public EmailDetails extractEmailDetails() {
+
+  public EmailDetails extractEmailDetails() {
 		ITextTemplate selectedTemplateViewerDetails = getSelectedEmailTemplateViewerDetails();
 		if (selectedTemplateViewerDetails != null) {
 			IPatient selectedPatient = getSelectedPatient();
@@ -263,4 +309,3 @@ public class EmailComposite extends Composite {
 		return null;
 	}
 }
-

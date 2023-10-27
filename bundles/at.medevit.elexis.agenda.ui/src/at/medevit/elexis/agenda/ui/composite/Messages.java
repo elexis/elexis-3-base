@@ -30,5 +30,12 @@ public class Messages {
 	public static String AppointmentDetailComposite_starting_from = ch.elexis.core.l10n.Messages.Core_Since;
 	public static String AppointmentDetailComposite_tag = ch.elexis.core.l10n.Messages.AppointmentDetailComposite_tag;
 	public static String AppointmentDetailComposite_until = ch.elexis.core.l10n.Messages.AppointmentDetailComposite_until;
+	public static String Appointment_Confirmation = ch.elexis.core.l10n.Messages.Appointment_Confirmation;
+	public static String Core_Ok = ch.elexis.core.l10n.Messages.Core_Ok;
+	public static String Core_E_Mail = ch.elexis.core.l10n.Messages.Core_E_Mail;
+	public static String Core_Temlate = ch.elexis.core.l10n.Messages.Core_Temlate;
+	public static String Warnung = ch.elexis.core.l10n.Messages.Warning;
+	public static String Warning_Kein_Pea = ch.elexis.core.l10n.Messages.Warning_No_Pea;
+
 
 }

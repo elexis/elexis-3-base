@@ -58,4 +58,7 @@ public class PreferenceConstants {
 
 	public static final String AG_AVOID_PATIENT_DOUBLE_BOOKING = "agenda/patient/doppelteTerminvergabeVermeiden";
 	public static final boolean AG_AVOID_PATIENT_DOUBLE_BOOKING_DEFAULT = false;
+	public static final String PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT = "agenda/appointment";
+	public static final String PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT_TEMPLATE = "agenda/appointmenttemplate";
+	public static final String PREF_DEFAULT_MAIL_ACCOUNT = "account";
 }

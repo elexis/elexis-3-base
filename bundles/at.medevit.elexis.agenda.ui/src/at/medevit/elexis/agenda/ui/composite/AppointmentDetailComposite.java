@@ -181,11 +181,11 @@ public class AppointmentDetailComposite extends Composite {
 				controlDecoration.showHoverText(Messages.AppointmentDetailComposite_search_contact_via_fields_hover);
 			}
 		});
-
+		
 		ContentProposalAdapter cppa = new ContentProposalAdapter(txtPatSearch, new TextContentAdapter(), aopp, null,
 				null);
 		aopp.configureContentProposalAdapter(cppa);
-
+		
 		cppa.addContentProposalListener(new IContentProposalListener() {
 
 			@SuppressWarnings("unchecked")
@@ -369,11 +369,11 @@ public class AppointmentDetailComposite extends Composite {
 		gd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd.widthHint = 80;
 		comboType.setLayoutData(gd);
-
+		
 		txtReason = new Text(compTypeReason, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2);
 		txtReason.setLayoutData(gd);
-
+		
 		comboStatus = new Combo(compTypeReason, SWT.DROP_DOWN);
 		comboStatus.setItems(appointmentService.getStates().toArray(new String[appointmentService.getStates().size()]));
 		gd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
@@ -429,7 +429,7 @@ public class AppointmentDetailComposite extends Composite {
 			b.append(StringUtils.SPACE);
 			b.append(Optional.ofNullable(c.get().getDescription3()).orElse(StringUtils.EMPTY));
 			if (c.get().isPatient()) {
-
+				
 				IPatient p = CoreModelServiceHolder.get().load(c.get().getId(), IPatient.class).get();
 				if (p.getDateOfBirth() != null) {
 					b.append(StringUtils.LF);
@@ -636,7 +636,7 @@ public class AppointmentDetailComposite extends Composite {
 		appointment.setState(comboStatus.getText());
 		appointment.setType(comboType.getText());
 		appointment.setSchedule(comboArea.getText());
-
+		
 		appointment.setReason(txtReason.getText());
 		if (txtDataIsMatchingContact()) {
 			appointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());

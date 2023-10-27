@@ -171,8 +171,8 @@ public class EmailComposite extends Composite {
 		}
 		findAndSelectTemplate(savedTemplate, templates);
 	}
-
-	private void findAndSelectTemplate(String savedTemplate, List<ITextTemplate> templates) {
+	
+  private void findAndSelectTemplate(String savedTemplate, List<ITextTemplate> templates) {
 		if (savedTemplate != null && !savedTemplate.trim().isEmpty()) {
 			for (ITextTemplate template : templates) {
 				if (savedTemplate.equals(template.getName())) {
@@ -183,8 +183,8 @@ public class EmailComposite extends Composite {
 		}
 		emailTemplatesViewer.setSelection(new StructuredSelection(templates.get(0)));
 	}
-
-	public Object getSelectedTemplate() {
+	
+  public Object getSelectedTemplate() {
 		return (emailTemplatesViewer != null && emailTemplatesViewer.getStructuredSelection() != null)
 				? emailTemplatesViewer.getStructuredSelection().getFirstElement()
 				: null;
@@ -200,7 +200,7 @@ public class EmailComposite extends Composite {
 		return textReplacement.performReplacement(ContextServiceHolder.get().getRootContext(), TEMPLATE_TEXT);
 	}
 
-	private MessageDialog createMessageDialog(Shell shell) {
+  private MessageDialog createMessageDialog(Shell shell) {
 		return new MessageDialog(shell, Messages.Warnung, null, Messages.Warning_Kein_Pea, MessageDialog.WARNING,
 				new String[] { Messages.Core_Ok }, 0) {
 			@Override
@@ -298,7 +298,7 @@ public class EmailComposite extends Composite {
 		}
 	}
 
-	public EmailDetails extractEmailDetails() {
+  public EmailDetails extractEmailDetails() {
 		ITextTemplate selectedTemplateViewerDetails = getSelectedEmailTemplateViewerDetails();
 		if (selectedTemplateViewerDetails != null) {
 			IPatient selectedPatient = getSelectedPatient();

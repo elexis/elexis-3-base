@@ -31,9 +31,9 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IPeriod;
+import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.model.IAppointment;
-import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -444,7 +444,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	}
 
 	private String statusline(final String stat) {
-		return createTimeStamp() + ";" + stat;
+		String activeUser = ContextServiceHolder.get().getActiveUser().get().getLabel();
+		return createTimeStamp() + ";" + stat + " [" + activeUser + "]";
 	}
 
 	public void setStatus(final String stat) {

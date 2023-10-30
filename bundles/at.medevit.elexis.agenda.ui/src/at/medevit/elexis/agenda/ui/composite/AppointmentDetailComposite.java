@@ -66,6 +66,7 @@ import ch.elexis.core.ui.e4.fieldassist.AsyncContentProposalProvider;
 import ch.elexis.core.ui.e4.fieldassist.IdentifiableContentProposal;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
+import ch.rgw.tools.TimeTool;
 
 public class AppointmentDetailComposite extends Composite {
 
@@ -636,7 +637,11 @@ public class AppointmentDetailComposite extends Composite {
 		appointment.setState(comboStatus.getText());
 		appointment.setType(comboType.getText());
 		appointment.setSchedule(comboArea.getText());
-		
+		appointment.setCreatedBy(ContextServiceHolder.get().getActiveUser().get().getLabel());
+		if (appointment.getCreated() == null || appointment.getCreated().isEmpty()) {
+			appointment.setCreated(createTimeStamp());
+		}
+		appointment.setLastEdit(createTimeStamp());
 		appointment.setReason(txtReason.getText());
 		if (txtDataIsMatchingContact()) {
 			appointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());
@@ -674,5 +679,9 @@ public class AppointmentDetailComposite extends Composite {
 
 	public EmailDetails getEmailDeteils() {
 		return emailComposite.extractEmailDetails();
+	}
+
+	public static String createTimeStamp() {
+		return Integer.toString(TimeTool.getTimeInSeconds() / 60);
 	}
 }

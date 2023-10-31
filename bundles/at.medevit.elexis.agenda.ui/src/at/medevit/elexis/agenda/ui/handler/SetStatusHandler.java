@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
@@ -37,10 +38,13 @@ public class SetStatusHandler {
 
 				@Override
 				public void lockAcquired() {
-					((IAppointment) p).setState(statusId);
-					CoreModelServiceHolder.get().save((IAppointment) p);
+					IAppointment appointment = (IAppointment) p;
+					appointment.setState(statusId);
+					appointment.setLastEdit(AppointmentDetailComposite.createTimeStamp()); // Zeitstempel aktualisieren
+					CoreModelServiceHolder.get().save(appointment);
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 				}
+
 			});
 		});
 		return null;

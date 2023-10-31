@@ -40,7 +40,7 @@ public class SetStatusHandler {
 				public void lockAcquired() {
 					IAppointment appointment = (IAppointment) p;
 					appointment.setState(statusId);
-					appointment.setLastEdit(AppointmentDetailComposite.createTimeStamp()); // Zeitstempel aktualisieren
+					appointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 					CoreModelServiceHolder.get().save(appointment);
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 				}

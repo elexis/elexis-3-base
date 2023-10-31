@@ -48,6 +48,7 @@ public class AppointmentDialog extends Dialog {
 	protected Control createContents(Composite parent) {
 		initializeAppointmentIfNecessary();
 		detailComposite = new AppointmentDetailComposite(parent, SWT.NONE, appointment);
+		ContextServiceHolder.get().getRootContext().setNamed("sendMailDialog.taskDescriptor", null);
 		return super.createContents(parent);
 	}
 	@Override

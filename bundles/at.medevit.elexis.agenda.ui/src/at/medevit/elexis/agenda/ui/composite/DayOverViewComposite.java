@@ -467,6 +467,9 @@ public class DayOverViewComposite extends Canvas implements PaintListener {
 	/** Die einem Plannable-Typ zugeordnete Farbe holen */
 	private Color getTypColor(IAppointment p) {
 		String coldesc = appointmentService.getContactConfiguredTypeColor(null, p.getType());
+		if (coldesc.startsWith("#")) {
+			coldesc = coldesc.substring(1);
+		}
 		ColorRegistry cr = JFaceResources.getColorRegistry();
 		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
 

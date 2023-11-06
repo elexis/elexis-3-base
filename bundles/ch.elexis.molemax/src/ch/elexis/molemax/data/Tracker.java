@@ -328,6 +328,7 @@ public class Tracker extends PersistentObject {
 
 	protected Tracker() {
 	}
+
 	protected String getTableName() {
 		return TABLENAME;
 	}
@@ -422,8 +423,6 @@ public class Tracker extends PersistentObject {
 				TimeTool cmp = new TimeTool();
 				for (Tracker tracker : list) {
 					cmp.set(tracker.get("Datum"));
-					// System.out.println(cmp.dump());
-					// System.out.println(lastDate.dump());
 					if (cmp.isAfter(lastDate)) {
 						lastDate.set(cmp);
 						ret = tracker;
@@ -556,11 +555,15 @@ public class Tracker extends PersistentObject {
 	}
 
 	public static String makeDescriptorImage(final Patient p) {
-		String input = CoreHub.localCfg.get(MolemaxImagePrefs.CUSTOM_BASEDIR, StringUtils.EMPTY);
-
+		String basePath = CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, StringUtils.EMPTY);
+		String customPath = CoreHub.localCfg.get(MolemaxImagePrefs.CUSTOM_BASEDIR, StringUtils.EMPTY);
+		if (StringUtils.isBlank(basePath) || StringUtils.isBlank(customPath)) {
+			log.log("Fehler: Basispfad oder benutzerdefinierter Pfad ist nicht gesetzt.", Log.WARNINGS);
+			return StringUtils.EMPTY;
+		}
 		StringBuilder ret = new StringBuilder();
-		ret.append(CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, StringUtils.EMPTY)).append(File.separator);
-		String[] pathSegments = input.split("/");
+		ret.append(basePath).append(File.separator);
+		String[] pathSegments = customPath.split("/");
 		Pattern pattern = Pattern.compile("(Name|Vorname|PatNum|Datum(-[yMd.]+)?|Uhrzeit(-[Hhmsa:]+)?|Slot)(-\\d+)?");
 		for (int i = 0; i < pathSegments.length; i++) {
 			String segment = pathSegments[i];

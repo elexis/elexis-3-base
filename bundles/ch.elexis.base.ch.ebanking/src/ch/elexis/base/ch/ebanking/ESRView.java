@@ -347,20 +347,20 @@ public class ESRView extends ViewPart {
 		};
 		
 		// Datei
-				TableViewerColumn tableViewerColumnFile = new TableViewerColumn(tableViewer, SWT.NONE);
-				TableColumn tblclmnDatei = tableViewerColumnFile.getColumn();
-				tcl_tableViewerComposite.setColumnData(tblclmnDatei,
-						new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
-				tblclmnDatei.setText(COLUMN_TEXTS[8]);
+		TableViewerColumn tableViewerColumnFile = new TableViewerColumn(tableViewer, SWT.NONE);
+		TableColumn tblclmnDatei = tableViewerColumnFile.getColumn();
+		tcl_tableViewerComposite.setColumnData(tblclmnDatei,
+				new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
 
-				new TableViewerColumnSorter(tableViewerColumnFile) {
-					@Override
-					protected int doCompare(Viewer viewer, Object e1, Object e2) {
-						IEsrRecord esr1 = (IEsrRecord) e1;
-						IEsrRecord esr2 = (IEsrRecord) e2;
-						return esr1.getProcessingDate().compareTo(esr2.getProcessingDate());
-					}
-				};
+		tblclmnDatei.setText(COLUMN_TEXTS[8]);
+		new TableViewerColumnSorter(tableViewerColumnFile) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				IEsrRecord esr1 = (IEsrRecord) e1;
+				IEsrRecord esr2 = (IEsrRecord) e2;
+				return esr1.getProcessingDate().compareTo(esr2.getProcessingDate());
+			}
+		};
 
 		// Create a Text control for filtering
 		Text filterText = new Text(tblclmnDatei.getParent(), SWT.BORDER);

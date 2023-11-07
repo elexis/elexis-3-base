@@ -351,7 +351,6 @@ public class ESRView extends ViewPart {
 		TableColumn tblclmnDatei = tableViewerColumnFile.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnDatei,
 				new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
-
 		tblclmnDatei.setText(COLUMN_TEXTS[8]);
 		new TableViewerColumnSorter(tableViewerColumnFile) {
 			@Override

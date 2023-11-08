@@ -1,3 +1,22 @@
+<!-- 
+	Maven/Tycho configuration to pass through different/distinctive build cycles: 
+	- test: 			  mvn -V clean test 
+	- build: 			  mvn -V clean process-classes
+	- product-build: 	  mvn -V clean verify -Dtycho.localArtifacts=ignore -DskipTests 
+	- product-build-sign: mvn -V clean install -Dtycho.localArtifacts=ignore -DskipTests
+	- format-enforce: 	  mvn -V formatter:format
+
+	To get buildplans execute one of the following commands:
+	- mvn buildplan:list
+    - mvn buildplan:list-phase -Dbuildplan.tasks=clean,test
+    - mvn buildplan:list-phase -Dbuildplan.showLifecycles
+    - mvn buildplan:list-phase
+    - mvn buildplan:list-plugin
+    - mvn buildplan:list-plugin -Dbuildplan.plugin=maven-compiler-plugin
+    - mvn buildplan:list-plugin -Dbuildplan.outputFile=buildplan_output.txt
+    
+	2023/Olivier Debenath
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -181,10 +200,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-
-
-
-
 		<pluginManagement>
 			<plugins>
                                 <plugin>

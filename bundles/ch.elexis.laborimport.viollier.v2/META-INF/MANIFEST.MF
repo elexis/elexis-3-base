@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: ch.elexis.laborimport.viollier.v2;singleton:=true
 Bundle-Version: 3.9.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.data;bundle-version="3.9.0",

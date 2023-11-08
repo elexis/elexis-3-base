@@ -6,7 +6,7 @@ Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
 Fragment-Host: ch.elexis.ebanking.qr;bundle-version="3.9.0"
 Automatic-Module-Name: ch.elexis.ebanking.qr.test
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit,
  ch.elexis.core.model;bundle-version="3.9.0",
  ch.elexis.core.services;bundle-version="3.9.0"

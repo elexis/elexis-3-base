@@ -5,7 +5,7 @@ Bundle-SymbolicName: ch.itmed.fop.printing;singleton:=true
 Bundle-Version: 3.10.0.qualifier
 Bundle-Vendor: IT-Med AG
 Automatic-Module-Name: ch.itmed.fop.printing
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.l10n;bundle-version="3.10.0",
  ch.elexis.core;bundle-version="3.10.0",
  ch.elexis.core.services;bundle-version="3.10.0",

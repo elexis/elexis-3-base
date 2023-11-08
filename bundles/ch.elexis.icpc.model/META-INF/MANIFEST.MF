@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: ch.elexis.icpc.model
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: ch.elexis.icpc.model.icpc,
  ch.elexis.icpc.model.icpc.impl,
  ch.elexis.icpc.model.icpc.util

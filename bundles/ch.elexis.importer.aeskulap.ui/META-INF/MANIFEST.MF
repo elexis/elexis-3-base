@@ -5,7 +5,7 @@ Bundle-SymbolicName: ch.elexis.importer.aeskulap.ui;singleton:=true
 Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.importer.aeskulap.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.importer.aeskulap.core;bundle-version="3.9.0"
 Import-Package: org.apache.commons.lang3;version="3.12.0"

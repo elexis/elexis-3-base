@@ -11,6 +11,6 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.ui;bundle-version="3.9.0",
  at.medevit.ch.artikelstamm;bundle-version="3.9.0",
  ch.elexis.base.ch.diagnosecodes;bundle-version="3.9.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.lang3;version="3.12.0"

@@ -17,5 +17,5 @@ Require-Bundle: ch.elexis.core.l10n,
  org.slf4j.api
 Bundle-ClassPath: .
 Export-Package: ch.elexis.laborimport.analytica
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: ch.elexis.core.services.holder

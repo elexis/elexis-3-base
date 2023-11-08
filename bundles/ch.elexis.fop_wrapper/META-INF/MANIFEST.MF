@@ -25,7 +25,7 @@ Bundle-ClassPath: lib/avalon-framework-api-4.3.1.jar,
  lib/batik-dom-1.8.jar,
  lib/xalan-2.7.0.jar,
  .
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.apache.avalon.framework.configuration,
  org.apache.fop,
  org.apache.fop.apps,

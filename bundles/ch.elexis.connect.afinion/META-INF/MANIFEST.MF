@@ -9,7 +9,7 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.serial;bundle-version="3.9.0"
 Bundle-Vendor: elexis.info
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.importer.div.importers,
  ch.elexis.core.importer.div.service.holder,

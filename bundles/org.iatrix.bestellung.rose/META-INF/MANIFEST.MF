@@ -6,5 +6,5 @@ Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: org.iatrix
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: at.medevit.elexis.hin.auth.core

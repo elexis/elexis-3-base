@@ -6,7 +6,7 @@ Bundle-Version: 3.9.0.qualifier
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.unibe.iam.scg.archie.ArchieActivator
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: ch.unibe.iam.scg.archie.annotations,
  ch.unibe.iam.scg.archie.export,
  ch.unibe.iam.scg.archie.model,

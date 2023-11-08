@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: ch.elexis.base.ch.labortarif.model
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: ch.elexis.base.ch.labortarif,
  ch.elexis.base.ch.labortarif.impl,
  ch.elexis.base.ch.labortarif.util

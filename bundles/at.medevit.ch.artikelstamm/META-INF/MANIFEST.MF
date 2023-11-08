@@ -5,7 +5,7 @@ Bundle-SymbolicName: at.medevit.ch.artikelstamm
 Bundle-Version: 3.9.0.qualifier
 Export-Package: at.medevit.ch.artikelstamm,
  at.medevit.ch.artikelstamm.marge
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: medevit.at
 Bundle-ClassPath: lib/,
  .

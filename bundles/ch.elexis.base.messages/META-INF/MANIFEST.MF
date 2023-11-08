@@ -15,7 +15,7 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core;bundle-version="3.1.0"
 Eclipse-LazyStart: true
 Created-By: Buildr
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: ch.elexis.base.messages,
  ch.elexis.messages
 Import-Package: ch.elexis.core.services.holder,

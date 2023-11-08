@@ -10,5 +10,5 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.ui.importer.div;bundle-version="3.9.0"
 Bundle-Vendor: elexis.info
 Created-By: Buildr
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 

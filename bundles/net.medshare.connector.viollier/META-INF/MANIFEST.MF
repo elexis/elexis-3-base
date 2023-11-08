@@ -9,7 +9,7 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.laborimport.viollier.v2
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: medshare.net
 Import-Package: org.apache.commons.lang3;version="3.12.0",
  org.apache.http;version="4.4.12",

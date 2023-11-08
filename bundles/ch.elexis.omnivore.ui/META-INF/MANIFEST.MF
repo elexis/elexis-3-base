@@ -4,7 +4,7 @@ Bundle-Name: Omnivore User Interface
 Bundle-SymbolicName: ch.elexis.omnivore.ui;singleton:=true
 Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.ch
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.services;bundle-version="3.9.0",

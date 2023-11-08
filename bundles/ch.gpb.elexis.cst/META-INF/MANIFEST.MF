@@ -11,7 +11,7 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.base.befunde;bundle-version="3.9.0",
  ch.elexis.omnivore.data;bundle-version="3.9.0",
  ch.elexis.omnivore.model;bundle-version="3.9.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Export-Package: ch.gpb.elexis.cst.preferences
 Service-Component: OSGI-INF/ch.gpb.elexis.cst.service.DocumentStoreHolder.xml

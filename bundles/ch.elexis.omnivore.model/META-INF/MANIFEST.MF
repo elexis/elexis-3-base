@@ -4,7 +4,7 @@ Bundle-Name: Elexis Omnivore Model
 Bundle-SymbolicName: ch.elexis.omnivore.model
 Bundle-Version: 3.9.0.qualifier
 Automatic-Module-Name: ch.elexis.omnivore.model
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.l10n,
  ch.rgw.utility;bundle-version="3.9.100",
  ch.elexis.core;bundle-version="3.9.0",

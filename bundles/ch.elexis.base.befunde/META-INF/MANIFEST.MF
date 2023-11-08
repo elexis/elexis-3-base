@@ -8,7 +8,7 @@ Bundle-Localization: plugin
 Export-Package: ch.elexis.base.befunde,
  ch.elexis.base.befunde.xchange,
  ch.elexis.befunde
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Created-By: Buildr
 Bundle-ActivationPolicy: lazy
 Require-Bundle: ch.elexis.core.l10n,

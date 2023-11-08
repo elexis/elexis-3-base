@@ -11,7 +11,7 @@ Bundle-Vendor: iatrix.org
 Export-Package: ch.elexis.extdoc.util
 Import-Package: javax.inject
 Created-By: Buildr
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/ch.elexis.extdoc.omnivore.DocumentStoreHolder.xml
 Bundle-ActivationPolicy: lazy
 

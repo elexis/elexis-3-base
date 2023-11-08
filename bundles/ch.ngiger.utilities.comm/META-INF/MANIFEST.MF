@@ -4,7 +4,7 @@ Bundle-Name: Communication utilities for elexis
 Bundle-SymbolicName: ch.ngiger.utilities.comm;singleton:=true
 Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: Niklaus Giger
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0"
 Bundle-ClassPath: lib/commons-net-1.4.1.jar,
  .

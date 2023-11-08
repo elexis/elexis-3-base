@@ -4,7 +4,7 @@ Bundle-Name: PDF Rechnungsdrucker
 Bundle-SymbolicName: ch.elexis.pdfBills;singleton:=true
 Bundle-Version: 3.10.0.qualifier
 Bundle-Vendor: medelexis.ch
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.base.ch.arzttarife;bundle-version="3.9.0",

@@ -14,6 +14,6 @@ Require-Bundle: ch.elexis.core.l10n,
  org.eclipse.jface,
  ch.rgw.utility
 Created-By: Buildr
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: org.jdom2;version="2.0.6"
 

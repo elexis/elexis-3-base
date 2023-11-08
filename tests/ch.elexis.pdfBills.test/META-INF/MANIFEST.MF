@@ -4,7 +4,7 @@ Bundle-Name: Test
 Bundle-SymbolicName: ch.elexis.pdfBills.test
 Bundle-Version: 3.10.0.qualifier
 Fragment-Host: ch.elexis.pdfBills;bundle-version="3.10.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit;bundle-version="4.10.0",
  ch.elexis.fop.service;bundle-version="3.2.0",
  ch.elexis.fop_wrapper;bundle-version="3.2.0"

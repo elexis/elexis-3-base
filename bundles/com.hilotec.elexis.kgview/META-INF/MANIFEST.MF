@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Hilotec_KG
 Bundle-SymbolicName: com.hilotec.elexis.kgview;singleton:=true
 Bundle-Version: 3.9.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.icpc;bundle-version="3.2.0",

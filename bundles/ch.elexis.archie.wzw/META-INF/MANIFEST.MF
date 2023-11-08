@@ -4,7 +4,7 @@ Bundle-Name: WZW-Statistiken
 Bundle-SymbolicName: ch.elexis.archie.wzw;singleton:=true
 Bundle-Version: 3.9.0.qualifier
 Bundle-Vendor: elexis.info
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.jpa;bundle-version="3.9.0",
  ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",

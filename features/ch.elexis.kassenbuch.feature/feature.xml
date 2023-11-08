@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.kassenbuch.feature"
       label="Kassenbuch Plugin für Elexis"
-      version="3.9.0.qualifier"
+      version="3.12.0.qualifier"
       provider-name="elexis.info">
 
    <description url="http://www.medelexis.ch">

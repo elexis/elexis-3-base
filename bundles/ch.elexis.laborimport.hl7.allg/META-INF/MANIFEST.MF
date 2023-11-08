@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Universal HL7-Import
 Bundle-SymbolicName: ch.elexis.laborimport.hl7.allg;singleton:=true
-Bundle-Version: 3.10.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.l10n,

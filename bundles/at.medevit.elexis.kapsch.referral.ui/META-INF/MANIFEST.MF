@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Kapsch Referral Ui
 Bundle-SymbolicName: at.medevit.elexis.kapsch.referral.ui;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: medbits.at
 Automatic-Module-Name: at.medevit.elexis.kapsch.referral.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-17

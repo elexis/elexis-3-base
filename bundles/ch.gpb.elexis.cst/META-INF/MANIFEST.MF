@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Cst
 Bundle-SymbolicName: ch.gpb.elexis.cst;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Activator: ch.gpb.elexis.cst.Activator
 Bundle-Vendor: LUDIN
 Require-Bundle: ch.elexis.core.l10n,

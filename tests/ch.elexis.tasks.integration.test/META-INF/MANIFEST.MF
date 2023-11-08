@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Task Service Integration Tests
 Bundle-SymbolicName: ch.elexis.tasks.integration.test
-Bundle-Version: 3.10.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: elexis.ch
 Automatic-Module-Name: ch.elexis.tasks.integration.test
 Bundle-RequiredExecutionEnvironment: JavaSE-17

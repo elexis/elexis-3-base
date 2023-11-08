@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>ch.elexis.base</groupId>
 		<artifactId>ch.elexis.base.tests</artifactId>
-		<version>3.10.0-SNAPSHOT</version>
+		<version>3.12.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>net.medshare.connector.aerztekasse_test</artifactId>

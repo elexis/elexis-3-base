@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis - Aerztekasse Connector Plug-In
 Bundle-SymbolicName: net.medshare.connector.aerztekasse;singleton:=true
-Bundle-Version: 3.10.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Activator: net.medshare.connector.aerztekasse.Activator
 Bundle-Vendor: medshare.net
 Bundle-Localization: plugin

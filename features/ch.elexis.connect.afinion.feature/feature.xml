@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.connect.afinion.feature"
       label="Afinion AS100 Laborgerätanbindung"
-      version="3.9.0.qualifier"
+      version="3.12.0.qualifier"
       provider-name="elexis.info">
 
    <description>

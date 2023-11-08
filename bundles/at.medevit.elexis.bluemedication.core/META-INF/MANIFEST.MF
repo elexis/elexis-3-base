@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Bluemedication Core
 Bundle-SymbolicName: at.medevit.elexis.bluemedication.core
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Automatic-Module-Name: at.medevit.elexis.bluemedication.core
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: at.medevit.elexis.hin.auth.core,

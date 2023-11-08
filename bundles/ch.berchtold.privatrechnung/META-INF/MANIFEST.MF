@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Privatrechnung E. Berchtold
 Bundle-SymbolicName: ch.berchtold.privatrechnung;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-17

@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.importer.aeskulap.feature"
       label="Aeskulap Importer"
-      version="3.9.0.qualifier">
+      version="3.12.0.qualifier">
 
    <description url="https://wiki.elexis.info/Ch.elexis.importer.aeskulap.feature.feature.group">
       Mit dem Aeskulap Importer können Daten welche aus Aeskulap exportiert wurden, in eine Elexis Datenbank importiert werden.

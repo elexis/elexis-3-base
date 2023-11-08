@@ -167,7 +167,9 @@ public class MigelXlsxDataImporter extends AbstractReferenceDataImporter impleme
 					String.class, String.class, String.class });
 			readExcelLines(xl, monitor);
 		}
-		ConfigServiceHolder.get().set(REFERENCEDATA_MIGEL_VERSION, newVersion);
+		if (newVersion != null) {
+			ConfigServiceHolder.get().set(REFERENCEDATA_MIGEL_VERSION, newVersion);
+		}
 		return Status.OK_STATUS;
 	}
 

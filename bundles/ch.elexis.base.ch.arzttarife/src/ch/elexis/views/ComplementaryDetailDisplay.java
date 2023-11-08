@@ -12,6 +12,8 @@
 
 package ch.elexis.views;
 
+import java.time.format.DateTimeFormatter;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -181,6 +183,16 @@ public class ComplementaryDetailDisplay implements IDetailDisplay {
 
 			codeChapter.setText(complementary.getChapter());
 			codeCode.setText(complementary.getCode());
+			if (complementary.getValidFrom() != null && complementary.getValidTo() != null) {
+				DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+				StringBuilder sb = new StringBuilder();
+				sb.append(complementary.getCode()).append(", gültig ab ")
+						.append(dateFormat.format(complementary.getValidFrom()));
+				if (complementary.getValidTo().getYear() < 3000) {
+					sb.append(" bis ").append(dateFormat.format(complementary.getValidTo()));
+				}
+				codeCode.setText(sb.toString());
+			}
 			codeText.setText(complementary.getText());
 			codeDescription.setText(complementary.getDescription());
 			if (complementary.isFixedValueSet()) {

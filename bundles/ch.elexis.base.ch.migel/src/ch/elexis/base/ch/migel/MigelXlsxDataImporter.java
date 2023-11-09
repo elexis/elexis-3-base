@@ -73,7 +73,7 @@ public class MigelXlsxDataImporter extends AbstractReferenceDataImporter impleme
 			if (row == null) {
 				break;
 			}
-			String code = row.get(7);
+			String code = row.get(7).trim();
 			String name = row.get(9);
 			if (code.isBlank()) {
 				int howMany = name.indexOf(StringUtils.LF);

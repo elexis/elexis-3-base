@@ -15,8 +15,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -50,11 +48,6 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 	private void createFullImageView(final Composite parent) {
 		fullImageView = new Composite(parent, SWT.NONE);
 		fullImageView.setLayout(new GridLayout());
-		SWTHelper.createHyperlink(fullImageView, "Zurück zur Galerie", new HyperlinkAdapter() {
-			public void linkActivated(final HyperlinkEvent e) {
-				switchToGalleryView(parent);
-			}
-		});
 		fullImageLabel = new Label(fullImageView, SWT.NONE);
 		fullImageLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	}

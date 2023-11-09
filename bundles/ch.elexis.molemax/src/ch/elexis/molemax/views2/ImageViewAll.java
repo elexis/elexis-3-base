@@ -135,7 +135,7 @@ public class ImageViewAll {
 						overviewInstance.showFullImage(originalImage, folderPath, originalImageFile.getAbsolutePath(),
 								thumbnailImagePath);
 					} else {
-						LoggerFactory.getLogger(getClass()).warn("Erwarteter Pfad zum Originalbild nicht gefunden: "
+						LoggerFactory.getLogger(getClass()).warn("Expected path to original image not found: "
 								+ originalImageFile.getAbsolutePath());
 					}
 				}
@@ -159,14 +159,14 @@ public class ImageViewAll {
 											originalImageFile.getAbsolutePath(), thumbnailImagePath);
 								} catch (SWTException swtEx) {
 									LoggerFactory.getLogger(getClass())
-											.warn("Fehler beim Laden des Bildes: " + swtEx.getMessage());
+											.warn("Error loading the image: " + swtEx.getMessage());
 									if (originalImage != null && !originalImage.isDisposed()) {
 										originalImage.dispose();
 									}
 								}
 							} else {
 								LoggerFactory.getLogger(getClass())
-										.warn("Erwarteter Pfad zum Originalbild nicht gefunden: "
+										.warn("Expected path to original image not found: "
 												+ originalImageFile.getAbsolutePath());
 							}
 						}
@@ -307,7 +307,6 @@ public class ImageViewAll {
 											updateThumbnailInUI(thumbnailFile);
 										} catch (IOException e) {
 											LoggerFactory.getLogger(getClass()).warn("File no copy ", e);
-											e.printStackTrace();
 										}
 										break;
 									case CustomFileDialog.RENAME_ID:
@@ -323,7 +322,6 @@ public class ImageViewAll {
 													copyFile(new File(file), targetFile);
 												} catch (IOException e) {
 													LoggerFactory.getLogger(getClass()).warn("File no copy ", e);
-													e.printStackTrace();
 												}
 											}
 										}
@@ -336,7 +334,6 @@ public class ImageViewAll {
 										copyFile(new File(file), targetFile);
 									} catch (IOException e) {
 										LoggerFactory.getLogger(getClass()).warn("File no copy ", e);
-										e.printStackTrace();
 									}
 								}
 								GalleryItem parentGroup = gallery.getItem(new Point(event.x, event.y));
@@ -507,7 +504,7 @@ public class ImageViewAll {
 				monitor.done();
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
-			LoggerFactory.getLogger(getClass()).warn("Fehler beim Erstellen der Thumbnails", e);
+			LoggerFactory.getLogger(getClass()).warn("Error when creating thumbnails", e);
 		}
 	}
 
@@ -527,7 +524,7 @@ public class ImageViewAll {
 					}
 					finalThumbnailFile = ThumbnailHandler.createThumbnail(originalImage);
 				} catch (IOException e) {
-					LoggerFactory.getLogger(getClass()).warn("Thumbnail konnte nicht erstellt werden", e);
+					LoggerFactory.getLogger(getClass()).warn("Thumbnail could not be created", e);
 				}
 			}
 

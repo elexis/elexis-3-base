@@ -1,6 +1,7 @@
 package ch.elexis.molemax.views2;
 
-import java.awt.Desktop;
+
+
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -48,6 +49,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -74,11 +76,12 @@ public class ImageDetailWithGalleryView {
 	private Menu contextMenu;
 	private Color blue = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
 	private Image originalImage = null;
+	private Label label;
 	public ImageDetailWithGalleryView(ImageOverview overview, Composite parent, String folderPath) {
 		this.overviewInstance = overview;
 		mainComposite = new Composite(parent, SWT.NONE);
 		mainComposite.setLayout(new GridLayout(2, false));
-		Label label = SWTHelper.createHyperlink(mainComposite, "Zurück zur Galerie", new HyperlinkAdapter() {
+		label = SWTHelper.createHyperlink(mainComposite, "Zurück zur Galerie", new HyperlinkAdapter() {
 			public void linkActivated(final HyperlinkEvent e) {
 				overviewInstance.switchToGalleryView(parent);
 			}
@@ -151,12 +154,11 @@ public class ImageDetailWithGalleryView {
 							});
 						} catch (Exception e) {
 							LoggerFactory.getLogger(getClass())
-									.warn("Fehler beim Laden des Originalbildes: " + e.getMessage());
-							e.printStackTrace();
+									.warn("Error loading the original image: " + e.getMessage());
 						}
 					} else {
 						LoggerFactory.getLogger(getClass()).warn(
-								"Originalbild nicht gefunden oder ist kein Datei: " + originalFile.getAbsolutePath());
+								"Original image not found or is not a file: " + originalFile.getAbsolutePath());
 					}
 				}
 			}
@@ -198,7 +200,7 @@ public class ImageDetailWithGalleryView {
 									}
 								} else {
 									LoggerFactory.getLogger(getClass())
-											.warn("Originalbild nicht gefunden oder ist keine Datei: "
+											.warn("Original image not found or is not a file: "
 											+ originalFile.getAbsolutePath());
 								}
 							}
@@ -276,7 +278,6 @@ public class ImageDetailWithGalleryView {
 									Files.copy(new File(file).toPath(), destinationFile.toPath(),
 											StandardCopyOption.REPLACE_EXISTING);
 								} catch (IOException e) {
-									e.printStackTrace();
 									LoggerFactory.getLogger(getClass()).warn("Error while copying file: ", e,
 											e.getMessage());
 								}
@@ -470,22 +471,12 @@ public class ImageDetailWithGalleryView {
 		}
 	}
 	private void showMaximizedImage() {
-	    Display display = mainComposite.getDisplay();
-	    display.asyncExec(() -> {
-	        String imagePath = (String) fullImageLabel.getData("originalImage");
-	        File imageFile = new File(imagePath);
-	        if (imageFile.exists()) {
-	            try {
-	                Desktop.getDesktop().open(imageFile);
-	            } catch (IOException e) {
-	                e.printStackTrace();
-					LoggerFactory.getLogger(getClass())
-							.warn("Fehler beim Öffnen des Bildes mit dem Standard-Bildbetrachter.", e);
-	            }
-	        } else {
-				LoggerFactory.getLogger(getClass()).warn("Bilddatei existiert nicht: " + imagePath);
-	        }
-	    });
+	    String imagePath = (String) fullImageLabel.getData("originalImage");
+	    if (imagePath != null && !imagePath.isEmpty()) {
+	        Program.launch(imagePath);
+	    } else {
+	        LoggerFactory.getLogger(getClass()).warn("Image file does not exist or is empty.");
+	    }
 	}
 
 	private Image getScaledImageForLabel(Image original) {
@@ -511,7 +502,6 @@ public class ImageDetailWithGalleryView {
 			return scaledImage;
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).warn("Image ready to dispos ", e);
-			e.printStackTrace();
 			original.dispose();
 			return null;
 		}

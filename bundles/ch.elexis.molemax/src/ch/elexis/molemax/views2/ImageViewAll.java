@@ -128,7 +128,7 @@ public class ImageViewAll {
 				GalleryItem[] selection = gallery.getSelection();
 				if (selection.length > 0) {
 					String folderPath = (String) selection[0].getData();
-					String thumbnailImagePath = folderPath + "\\" + selection[0].getText();
+					String thumbnailImagePath = folderPath + File.separator + selection[0].getText();
 					File originalImageFile = new File(thumbnailImagePath);
 					if (originalImageFile.exists()) {
 						Image originalImage = new Image(Display.getDefault(), originalImageFile.getAbsolutePath());
@@ -148,7 +148,7 @@ public class ImageViewAll {
 						GalleryItem[] selection = gallery.getSelection();
 						if (selection != null && selection.length > 0) {
 							String folderPath = (String) selection[0].getData();
-							String thumbnailImagePath = folderPath + "\\" + selection[0].getText();
+							String thumbnailImagePath = folderPath + File.separator + selection[0].getText();
 							File originalImageFile = new File(thumbnailImagePath);
 							if (originalImageFile.exists()) {
 								Image originalImage = null;
@@ -285,7 +285,7 @@ public class ImageViewAll {
 									groupName = java.time.LocalDate.now()
 											.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
 								}
-								targetPath = Tracker.makeDescriptorImage(aktuellerPatient) + "\\" + groupName;
+								targetPath = Tracker.makeDescriptorImage(aktuellerPatient) + File.separator + groupName;
 								File targetDir = new File(targetPath);
 								if (!targetDir.exists()) {
 									targetDir.mkdirs();
@@ -380,7 +380,7 @@ public class ImageViewAll {
 	}
 
 	private void deleteSelectedItem(GalleryItem selectedItem) {
-		String filePath = (String) selectedItem.getData() + "\\" + selectedItem.getText();
+		String filePath = (String) selectedItem.getData() + File.separator + selectedItem.getText();
 		File fileToDelete = new File(filePath);
 		File thumbnailToDelete = new File(fileToDelete.getParentFile(), "thumbnails/" + fileToDelete.getName());
 		if (fileToDelete.exists() && fileToDelete.delete()) {

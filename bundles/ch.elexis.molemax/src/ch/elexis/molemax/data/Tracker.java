@@ -558,12 +558,13 @@ public class Tracker extends PersistentObject {
 		String basePath = CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, StringUtils.EMPTY);
 		String customPath = CoreHub.localCfg.get(MolemaxImagePrefs.CUSTOM_BASEDIR, StringUtils.EMPTY);
 		if (StringUtils.isBlank(basePath) || StringUtils.isBlank(customPath)) {
-			log.log("Fehler: Basispfad oder benutzerdefinierter Pfad ist nicht gesetzt.", Log.WARNINGS);
+			log.log("Error: Base path or user-defined path is not set.", Log.WARNINGS);
 			return StringUtils.EMPTY;
 		}
 		StringBuilder ret = new StringBuilder();
 		ret.append(basePath).append(File.separator);
-		String[] pathSegments = customPath.split("/");
+		String separator = getRegexSafeSeparator();
+		String[] pathSegments = customPath.split(separator);
 		Pattern pattern = Pattern.compile("(Name|Vorname|PatNum|Datum(-[yMd.]+)?|Uhrzeit(-[Hhmsa:]+)?|Slot)(-\\d+)?");
 		for (int i = 0; i < pathSegments.length; i++) {
 			String segment = pathSegments[i];
@@ -677,5 +678,9 @@ public class Tracker extends PersistentObject {
 	public String getInfoString(final String name) {
 		Map extinfo = getMap("ExtInfo");
 		return checkNull(extinfo.get(name));
+	}
+
+	private static String getRegexSafeSeparator() {
+		return Pattern.quote(File.separator);
 	}
 }

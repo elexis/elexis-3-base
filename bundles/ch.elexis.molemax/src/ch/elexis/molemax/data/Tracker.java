@@ -328,6 +328,7 @@ public class Tracker extends PersistentObject {
 
 	protected Tracker() {
 	}
+
 	protected String getTableName() {
 		return TABLENAME;
 	}
@@ -422,8 +423,6 @@ public class Tracker extends PersistentObject {
 				TimeTool cmp = new TimeTool();
 				for (Tracker tracker : list) {
 					cmp.set(tracker.get("Datum"));
-					// System.out.println(cmp.dump());
-					// System.out.println(lastDate.dump());
 					if (cmp.isAfter(lastDate)) {
 						lastDate.set(cmp);
 						ret = tracker;
@@ -556,11 +555,16 @@ public class Tracker extends PersistentObject {
 	}
 
 	public static String makeDescriptorImage(final Patient p) {
-		String input = CoreHub.localCfg.get(MolemaxImagePrefs.CUSTOM_BASEDIR, StringUtils.EMPTY);
-
+		String basePath = CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, StringUtils.EMPTY);
+		String customPath = CoreHub.localCfg.get(MolemaxImagePrefs.CUSTOM_BASEDIR, StringUtils.EMPTY);
+		if (StringUtils.isBlank(basePath) || StringUtils.isBlank(customPath)) {
+			log.log("Error: Base path or user-defined path is not set.", Log.WARNINGS);
+			return StringUtils.EMPTY;
+		}
 		StringBuilder ret = new StringBuilder();
-		ret.append(CoreHub.localCfg.get(MolemaxPrefs.BASEDIR, StringUtils.EMPTY)).append(File.separator);
-		String[] pathSegments = input.split("/");
+		ret.append(basePath).append(File.separator);
+		String separator = getRegexSafeSeparator();
+		String[] pathSegments = customPath.split(separator);
 		Pattern pattern = Pattern.compile("(Name|Vorname|PatNum|Datum(-[yMd.]+)?|Uhrzeit(-[Hhmsa:]+)?|Slot)(-\\d+)?");
 		for (int i = 0; i < pathSegments.length; i++) {
 			String segment = pathSegments[i];
@@ -674,5 +678,9 @@ public class Tracker extends PersistentObject {
 	public String getInfoString(final String name) {
 		Map extinfo = getMap("ExtInfo");
 		return checkNull(extinfo.get(name));
+	}
+
+	private static String getRegexSafeSeparator() {
+		return Pattern.quote(File.separator);
 	}
 }

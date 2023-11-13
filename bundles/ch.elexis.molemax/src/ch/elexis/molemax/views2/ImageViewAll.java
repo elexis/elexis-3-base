@@ -3,6 +3,7 @@ package ch.elexis.molemax.views2;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.nebula.animation.AnimationRunner;
 import org.eclipse.nebula.animation.effects.MoveScrollBarEffect;
 import org.eclipse.nebula.animation.movement.IMovement;
@@ -20,6 +22,7 @@ import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
 import org.eclipse.nebula.widgets.gallery.GalleryItem;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -50,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.data.Patient;
 import ch.elexis.molemax.Messages;
 import ch.elexis.molemax.data.Tracker;
+import ch.elexis.molemax.handler.ThumbnailHandler;
 
 public class ImageViewAll {
 	private ImageOverview overviewInstance;
@@ -110,7 +114,6 @@ public class ImageViewAll {
 				if (event.detail == DND.DROP_MOVE) {
 					GalleryItem[] selection = gallery.getSelection();
 					if (selection.length > 0) {
-						selection[0].dispose();
 						Image img = selection[0].getImage();
 						if (img != null && !img.isDisposed()) {
 							img.dispose();
@@ -124,11 +127,17 @@ public class ImageViewAll {
 			if (overviewInstance != null) {
 				GalleryItem[] selection = gallery.getSelection();
 				if (selection.length > 0) {
-					Image selectedImage = selection[0].getImage();
 					String folderPath = (String) selection[0].getData();
-					String absoluteImagePath = (String) selection[0].getData() + "\\" + selection[0].getText();
-					folderPath = remove_slot_from_path(folderPath);
-					overviewInstance.showFullImage(selectedImage, folderPath, absoluteImagePath);
+					String thumbnailImagePath = folderPath + File.separator + selection[0].getText();
+					File originalImageFile = new File(thumbnailImagePath);
+					if (originalImageFile.exists()) {
+						Image originalImage = new Image(Display.getDefault(), originalImageFile.getAbsolutePath());
+						overviewInstance.showFullImage(originalImage, folderPath, originalImageFile.getAbsolutePath(),
+								thumbnailImagePath);
+					} else {
+						LoggerFactory.getLogger(getClass()).warn("Expected path to original image not found: "
+								+ originalImageFile.getAbsolutePath());
+					}
 				}
 			}
 		});
@@ -137,50 +146,37 @@ public class ImageViewAll {
 				if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
 					if (overviewInstance != null) {
 						GalleryItem[] selection = gallery.getSelection();
-						if (selection == null || selection.length == 0) {
-							return;
-						}
-						if (selection.length > 0) {
-							Image selectedImage = selection[0].getImage();
+						if (selection != null && selection.length > 0) {
 							String folderPath = (String) selection[0].getData();
-							String absoluteImagePath = (String) selection[0].getData() + "\\" + selection[0].getText();
-							folderPath = remove_slot_from_path(folderPath);
-							overviewInstance.showFullImage(selectedImage, folderPath, absoluteImagePath);
+							String thumbnailImagePath = folderPath + File.separator + selection[0].getText();
+							File originalImageFile = new File(thumbnailImagePath);
+							if (originalImageFile.exists()) {
+								Image originalImage = null;
+								try {
+									originalImage = new Image(Display.getDefault(),
+											originalImageFile.getAbsolutePath());
+									overviewInstance.showFullImage(originalImage, folderPath,
+											originalImageFile.getAbsolutePath(), thumbnailImagePath);
+								} catch (SWTException swtEx) {
+									LoggerFactory.getLogger(getClass())
+											.warn("Error loading the image: " + swtEx.getMessage());
+									if (originalImage != null && !originalImage.isDisposed()) {
+										originalImage.dispose();
+									}
+								}
+							} else {
+								LoggerFactory.getLogger(getClass())
+										.warn("Expected path to original image not found: "
+												+ originalImageFile.getAbsolutePath());
+							}
 						}
 					}
 				} else if (e.keyCode == SWT.ESC) {
 					if (ImageViewAll.this.aktuellerPatient != null) {
 						updateGalleryForPatient(ImageViewAll.this.aktuellerPatient);
 					}
-				} else if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_UP) {
-					GalleryItem[] allItems = gallery.getItems();
-					GalleryItem[] selection = gallery.getSelection();
-					if (selection == null || selection.length == 0) {
-						if (allItems != null && allItems.length > 0) {
-							gallery.setSelection(new GalleryItem[] { allItems[0] });
-							return;
-						}
-					}
-					if (!gallery.isDisposed() && selection != null && selection.length > 0) {
-						GalleryItem selectedItem = selection[0];
-						if (selectedItem.getData() != null && !selectedItem.getData().toString().isEmpty()) {
-							int selectedIndex = -1;
-							for (int i = 0; allItems != null && i < allItems.length; i++) {
-								if (allItems[i] == selectedItem) {
-									selectedIndex = i;
-									break;
-								}
-							}
-							if (selectedIndex != -1) {
-								int nextIndex = (e.keyCode == SWT.ARROW_DOWN) ? selectedIndex + 1 : selectedIndex - 1;
-								if (allItems != null && nextIndex >= 0 && nextIndex < allItems.length) {
-									gallery.setSelection(new GalleryItem[] { allItems[nextIndex] });
-									return;
-								}
-							}
-						}
-					}
-				} else if (e.keyCode == SWT.DEL) {
+				} 
+				else if (e.keyCode == SWT.DEL) {
 					GalleryItem[] selection = gallery.getSelection();
 					if (selection == null || selection.length == 0) {
 						return;
@@ -200,6 +196,7 @@ public class ImageViewAll {
 				}
 			}
 		});
+
 		Menu contextMenu = new Menu(gallery);
 		MenuItem deleteItem = new MenuItem(contextMenu, SWT.NONE);
 		deleteItem.setText(Messages.ImageSlot_delete);
@@ -288,7 +285,7 @@ public class ImageViewAll {
 									groupName = java.time.LocalDate.now()
 											.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
 								}
-								targetPath = Tracker.makeDescriptorImage(aktuellerPatient) + "\\" + groupName;
+								targetPath = Tracker.makeDescriptorImage(aktuellerPatient) + File.separator + groupName;
 								File targetDir = new File(targetPath);
 								if (!targetDir.exists()) {
 									targetDir.mkdirs();
@@ -301,9 +298,15 @@ public class ImageViewAll {
 									case CustomFileDialog.OVERWRITE_ID:
 										try {
 											copyFile(new File(file), targetFile);
+											File thumbnailDirectory = new File(targetFile.getParent(), "thumbnails");
+											if (!thumbnailDirectory.exists()) {
+												thumbnailDirectory.mkdirs();
+											}
+											File thumbnailFile = new File(thumbnailDirectory, targetFile.getName());
+											createOrUpdateThumbnail(targetFile, thumbnailFile);
+											updateThumbnailInUI(thumbnailFile);
 										} catch (IOException e) {
 											LoggerFactory.getLogger(getClass()).warn("File no copy ", e);
-											e.printStackTrace();
 										}
 										break;
 									case CustomFileDialog.RENAME_ID:
@@ -319,7 +322,6 @@ public class ImageViewAll {
 													copyFile(new File(file), targetFile);
 												} catch (IOException e) {
 													LoggerFactory.getLogger(getClass()).warn("File no copy ", e);
-													e.printStackTrace();
 												}
 											}
 										}
@@ -332,7 +334,6 @@ public class ImageViewAll {
 										copyFile(new File(file), targetFile);
 									} catch (IOException e) {
 										LoggerFactory.getLogger(getClass()).warn("File no copy ", e);
-										e.printStackTrace();
 									}
 								}
 								GalleryItem parentGroup = gallery.getItem(new Point(event.x, event.y));
@@ -379,10 +380,18 @@ public class ImageViewAll {
 	}
 
 	private void deleteSelectedItem(GalleryItem selectedItem) {
-		File fileToDelete = new File((String) selectedItem.getData() + "\\" + selectedItem.getText());
+		String filePath = (String) selectedItem.getData() + File.separator + selectedItem.getText();
+		File fileToDelete = new File(filePath);
+		File thumbnailToDelete = new File(fileToDelete.getParentFile(), "thumbnails/" + fileToDelete.getName());
 		if (fileToDelete.exists() && fileToDelete.delete()) {
-			selectedItem.getImage().dispose();
-			createdImages.remove(selectedItem.getImage());
+			if (thumbnailToDelete.exists()) {
+				thumbnailToDelete.delete();
+			}
+			Image img = selectedItem.getImage();
+			if (img != null && !img.isDisposed()) {
+				img.dispose();
+				createdImages.remove(img);
+			}
 			selectedItem.getParentItem().remove(selectedItem);
 			File parentDir = fileToDelete.getParentFile();
 			if (isEmptyDirectory(parentDir)) {
@@ -392,20 +401,19 @@ public class ImageViewAll {
 		}
 	}
 
-	private String remove_slot_from_path(String path) {
-		String[] parts = path.split("\\\\");
-		if (parts[parts.length - 1].matches("[0-9]+") && Integer.parseInt(parts[parts.length - 1]) >= 0
-				&& Integer.parseInt(parts[parts.length - 1]) <= 11) {
-			return String.join("\\\\", Arrays.copyOf(parts, parts.length - 1));
-		} else {
-			return path;
-		}
-	}
-
 	public void updateGalleryForPatient(Patient aktuellerPatient) {
 		this.aktuellerPatient = aktuellerPatient;
+		initializeGallery();
+		processDirectories();
+		updateUI();
+	}
+
+	private void initializeGallery() {
 		disposeAllImages();
 		gallery.removeAll();
+	}
+
+	private void processDirectories() {
 		String mainDirectoryPath = Tracker.makeDescriptorImage(aktuellerPatient);
 		File mainDirectory = new File(mainDirectoryPath);
 		if (mainDirectory.exists() && mainDirectory.isDirectory()) {
@@ -413,37 +421,122 @@ public class ImageViewAll {
 			if (groupDirectories != null) {
 				Arrays.sort(groupDirectories, (file1, file2) -> file2.getName().compareTo(file1.getName()));
 				for (File groupDir : groupDirectories) {
-					GalleryItem group = new GalleryItem(gallery, SWT.NONE);
-					new HoverListener(group, Display.getCurrent().getSystemColor(SWT.COLOR_WHITE),
-							Display.getCurrent().getSystemColor(SWT.COLOR_GRAY), 500, 500);
-					group.setText(groupDir.getName());
-					group.setData(groupDir.getAbsolutePath());
-					addImagesToGalleryFromDirectory(groupDir, group);
-					File[] imageDirectories = groupDir.listFiles(File::isDirectory);
-					if (imageDirectories != null && imageDirectories.length > 0) {
-						for (File imgDir : imageDirectories) {
-							addImagesToGalleryFromDirectory(imgDir, group);
-						}
-					}
+					processGroupDirectory(groupDir);
 				}
 			}
 		}
+	}
+
+	private void processGroupDirectory(File groupDir) {
+		GalleryItem group = new GalleryItem(gallery, SWT.NONE);
+		group.setText(groupDir.getName());
+		group.setData(groupDir.getAbsolutePath());
+		addImagesToGalleryFromDirectory(groupDir, group);
+		File[] imageDirectories = groupDir.listFiles(File::isDirectory);
+		if (imageDirectories != null && imageDirectories.length > 0) {
+			for (File imgDir : imageDirectories) {
+				addImagesToGalleryFromDirectory(imgDir, group);
+			}
+		}
+		new HoverListener(group, Display.getCurrent().getSystemColor(SWT.COLOR_WHITE),
+				Display.getCurrent().getSystemColor(SWT.COLOR_GRAY), 500, 500);
+	}
+
+	private void updateUI() {
+		Display.getDefault().asyncExec(() -> {
+			if (gallery.getItemCount() > 0) {
+				GalleryItem firstGroup = gallery.getItem(0);
+				firstGroup.setExpanded(true);
+				if (firstGroup.getItemCount() > 0) {
+					gallery.setSelection(new GalleryItem[] { firstGroup.getItem(0) });
+				}
+			}
+		});
+
 		gallery.redraw();
 	}
 
 	private void addImagesToGalleryFromDirectory(File dir, GalleryItem parentGroup) {
-		File[] imageFiles = dir.listFiles(
-				file -> file.isFile() && (file.getName().endsWith(".png") || file.getName().endsWith(".jpg")));
-		if (imageFiles != null) {
-			for (File imgFile : imageFiles) {
-				GalleryItem item = new GalleryItem(parentGroup, SWT.NONE);
-				Image image = new Image(Display.getDefault(), imgFile.getAbsolutePath());
-				createdImages.add(image);
-				item.setImage(image);
-				item.setText(imgFile.getName());
-				item.setData(dir.getAbsolutePath() != null ? dir.getAbsolutePath() : "");
+		File[] imageFiles = getImageFiles(dir);
+		if (imageFiles == null || imageFiles.length == 0)
+			return;
+		List<File> imagesToProcess = processImageFiles(imageFiles, parentGroup);
+		createThumbnails(imagesToProcess, parentGroup);
+	}
+
+	private File[] getImageFiles(File dir) {
+		return dir.listFiles(file -> file.isFile()
+				&& (file.getName().toLowerCase().endsWith(".png") || file.getName().toLowerCase().endsWith(".jpg")));
+	}
+
+	private List<File> processImageFiles(File[] imageFiles, GalleryItem parentGroup) {
+		List<File> imagesToProcess = new ArrayList<>();
+		for (File imgFile : imageFiles) {
+			File parentDir = imgFile.getParentFile();
+			if ("thumbnails".equals(parentDir.getName()))
+				continue;
+
+			File thumbnailDirectory = new File(parentDir, "thumbnails");
+			File thumbnailFile = new File(thumbnailDirectory, imgFile.getName());
+			if (!thumbnailFile.exists()) {
+				imagesToProcess.add(imgFile);
+			} else {
+				addImageToGallery(imgFile, parentGroup, thumbnailFile);
 			}
 		}
+		return imagesToProcess;
+	}
+
+	private void createThumbnails(List<File> imagesToProcess, GalleryItem parentGroup) {
+		if (imagesToProcess.isEmpty())
+			return;
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(gallery.getShell());
+		try {
+			dialog.run(true, true, monitor -> {
+				monitor.beginTask("Thumbnails erstellen", imagesToProcess.size());
+				for (File imgFile : imagesToProcess) {
+					if (monitor.isCanceled())
+						return;
+					monitor.subTask("Erstelle Thumbnail für " + imgFile.getName());
+					addImageToGallery(imgFile, parentGroup, null);
+					monitor.worked(1);
+				}
+				monitor.done();
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			LoggerFactory.getLogger(getClass()).warn("Error when creating thumbnails", e);
+		}
+	}
+
+	private void addImageToGallery(File imgFile, GalleryItem parentGroup, File thumbnailFile) {
+		Display.getDefault().asyncExec(() -> {
+			GalleryItem item = new GalleryItem(parentGroup, SWT.NONE);
+			item.setText(imgFile.getName());
+			item.setData(imgFile.getParentFile().getAbsolutePath());
+
+			File finalThumbnailFile = thumbnailFile;
+			if (finalThumbnailFile == null) {
+				try {
+					File originalImage = imgFile.getCanonicalFile();
+					File thumbnailDirectory = new File(originalImage.getParentFile(), "thumbnails");
+					if (!thumbnailDirectory.exists() && !thumbnailDirectory.mkdirs()) {
+						return;
+					}
+					finalThumbnailFile = ThumbnailHandler.createThumbnail(originalImage);
+				} catch (IOException e) {
+					LoggerFactory.getLogger(getClass()).warn("Thumbnail could not be created", e);
+				}
+			}
+
+			if (finalThumbnailFile != null) {
+				Image thumbnailImage = new Image(Display.getDefault(), finalThumbnailFile.getAbsolutePath());
+				item.setImage(thumbnailImage);
+				createdImages.add(thumbnailImage);
+			}
+
+			gallery.redraw();
+		});
+
 	}
 
 	public void removeAll() {
@@ -493,9 +586,26 @@ public class ImageViewAll {
 	private void animateScrollBar(ScrollBar scrollBar, int start, int end) {
 		AnimationRunner runner = new AnimationRunner();
 		IMovement movement = new LinearInOut();
-		int duration = 100;
+		int duration = 500;
 		MoveScrollBarEffect effect = new MoveScrollBarEffect(scrollBar, start, end, duration, movement, null, null);
 		runner.runEffect(effect);
 	}
 
+	public void createOrUpdateThumbnail(File originalImageFile, File thumbnailFile) throws IOException {
+		ThumbnailHandler.createThumbnail(originalImageFile);
+	}
+
+	public void updateThumbnailInUI(File thumbnailFile) {
+		Display.getDefault().asyncExec(() -> {
+			for (GalleryItem item : gallery.getItems()) {
+				if (item.getData().equals(thumbnailFile.getParent())
+						&& item.getText().equals(thumbnailFile.getName())) {
+					Image newThumbnailImage = new Image(Display.getDefault(), thumbnailFile.getAbsolutePath());
+					item.setImage(newThumbnailImage);
+					gallery.redraw();
+					break;
+				}
+			}
+		});
+	}
 }

@@ -7,14 +7,14 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -48,11 +48,6 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 	private void createFullImageView(final Composite parent) {
 		fullImageView = new Composite(parent, SWT.NONE);
 		fullImageView.setLayout(new GridLayout());
-		SWTHelper.createHyperlink(fullImageView, "Zurück zur Galerie", new HyperlinkAdapter() {
-			public void linkActivated(final HyperlinkEvent e) {
-				switchToGalleryView(parent);
-			}
-		});
 		fullImageLabel = new Label(fullImageView, SWT.NONE);
 		fullImageLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	}
@@ -63,7 +58,7 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 	Composite outer;
 	String pat2;
 	ImageViewAll imageViewAll;
-
+	
 	public ImageOverview() {
 		tk = UiDesk.getToolkit();
 		trackers = new Tracker[12][];
@@ -97,19 +92,15 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 		createFullImageView(stackComposite);
 		stack.topControl = galleryComposite;
 		getSite().getPage().addPartListener(udpateOnVisible);
-
-	}
-	public void dispose() {
-		getSite().getPage().removePartListener(udpateOnVisible);
-		if (trackers != null) {
-			for (int i = 0; i < 12; i++) {
-				if (trackers[i] != null)
-					Tracker.dispose(trackers[i]);
+		parent.getShell().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ESC) {
+					parent.getShell().close();
+				}
 			}
-		}
-		super.dispose();
+		});
 	}
-
 	void setTopControl(final Control imageViewAll) {
 		stack.topControl = imageViewAll;
 	}
@@ -149,20 +140,20 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 	public void refresh() {
 		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
-
+	
 	public void clearEvent(final Class<? extends PersistentObject> template) {
 		if (template.equals(Patient.class)) {
 			setPatient(null, null);
 		}
 	}
-
+	
 	public void switchToGalleryView(final Composite parent) {
 		stack.topControl = galleryComposite;
 		imageViewAll.getGallery().redraw();
 		stackComposite.layout();
 		stackComposite.redraw();
 	}
-
+	
 	public void selectionEvent(final PersistentObject obj) {
 		if (obj instanceof Anwender) {
 		}
@@ -170,16 +161,15 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 			setPatient((Patient) obj, null);
 		}
 	}
-
-	public void showFullImage(Image image, String folderPath, String absoluteImagePath) {
+	
+	public void showFullImage(Image image, String folderPath, String absoluteImagePath, String thumbnailImagePath) {
 		if (imageDetailWithGalleryView != null) {
-			imageDetailWithGalleryView.dispose();
 			imageDetailWithGalleryView = null;
 		}
 		imageDetailWithGalleryView = new ImageDetailWithGalleryView(this, stackComposite, folderPath);
 		imageDetailWithGalleryView.updateGalleryForSelectedGroup(folderPath);
 		imageDetailWithGalleryView.setSelectedImage(image, absoluteImagePath);
-		imageDetailWithGalleryView.selectGalleryItemByImagePath(absoluteImagePath);
+		imageDetailWithGalleryView.selectGalleryItemByImagePath(thumbnailImagePath);
 		stack.topControl = imageDetailWithGalleryView.getControl();
 		stackComposite.layout();
 	}

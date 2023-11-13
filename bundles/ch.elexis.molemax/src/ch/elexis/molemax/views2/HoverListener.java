@@ -30,7 +30,9 @@ public class HoverListener implements MouseMoveListener, MouseTrackListener, Mou
 			this.item = item;
 		}
 		public void run() {
-			item.setData(ANIMATION_DATA, null);
+			if (!item.isDisposed()) {
+				item.setData(ANIMATION_DATA, null);
+			}
 		}
 	}
 

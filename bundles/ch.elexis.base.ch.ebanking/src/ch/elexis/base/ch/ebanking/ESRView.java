@@ -132,7 +132,6 @@ public class ESRView extends ViewPart {
 
 	@Inject
 	private IContextService contextService;
-	private TableColumn tblclmnDatei;
 
 	public ESRView() {
 		endDate = new TimeTool();

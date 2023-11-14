@@ -31,6 +31,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -342,12 +344,33 @@ public class ESRView extends ViewPart {
 				return esr1.getBookedDate().compareTo(esr2.getBookedDate());
 			}
 		};
-
+		
+		// Datei
 		TableViewerColumn tableViewerColumnFile = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnDatei = tableViewerColumnFile.getColumn();
 		tcl_tableViewerComposite.setColumnData(tblclmnDatei,
 				new ColumnWeightData(1, ColumnWeightData.MINIMUM_WIDTH, true));
 		tblclmnDatei.setText(COLUMN_TEXTS[8]);
+		new TableViewerColumnSorter(tableViewerColumnFile) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				IEsrRecord esr1 = (IEsrRecord) e1;
+				IEsrRecord esr2 = (IEsrRecord) e2;
+				return esr1.getProcessingDate().compareTo(esr2.getProcessingDate());
+			}
+		};
+
+		// Create a Text control for filtering
+		Text filterText = new Text(tblclmnDatei.getParent(), SWT.BORDER);
+		filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		// Add a listener to the filter text
+		filterText.addModifyListener(new ModifyListener() {
+		    @Override
+		    public void modifyText(ModifyEvent e) {
+		        String filter = filterText.getText();
+		    }
+		});
 
 		Composite footerComposite = new Composite(parent, SWT.NONE);
 		footerComposite.setLayout(new GridLayout(2, false));

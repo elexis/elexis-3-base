@@ -364,7 +364,6 @@ public class ESRView extends ViewPart {
 		// Create a Text control for filtering
 		Text filterText = new Text(tblclmnDatei.getParent(), SWT.BORDER);
 		filterText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		filterText.setMessage("Filter...");
 
 		// Add a listener to the filter text
 		filterText.addModifyListener(new ModifyListener() {

@@ -33,6 +33,7 @@ import org.eclipse.ui.progress.IProgressService;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Fall;
@@ -48,6 +49,7 @@ public class RechnungsDrucker implements IRnOutputter {
 	/**
 	 * We'll take all sorts of bills
 	 */
+	@Override
 	public boolean canBill(final Fall fall) {
 		return true;
 	}
@@ -55,6 +57,7 @@ public class RechnungsDrucker implements IRnOutputter {
 	/**
 	 * We never storno
 	 */
+	@Override
 	public boolean canStorno(final Rechnung rn) {
 		return false;
 	}
@@ -102,6 +105,7 @@ public class RechnungsDrucker implements IRnOutputter {
 	/**
 	 * Print the bill(s)
 	 */
+	@Override
 	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn, Properties props) {
 		IWorkbenchPage rnPage;
 		final Result<Rechnung> result = new Result<Rechnung>(); // =new
@@ -114,6 +118,7 @@ public class RechnungsDrucker implements IRnOutputter {
 		try {
 			final RnPrintView rnp = (RnPrintView) rnPage.showView(RnPrintView.ID);
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(), new IRunnableWithProgress() {
+				@Override
 				public void run(final IProgressMonitor monitor) {
 					monitor.beginTask("Drucke Rechnungen", rnn.size() * 10);
 					int errors = 0;
@@ -129,10 +134,11 @@ public class RechnungsDrucker implements IRnOutputter {
 								errors++;
 								continue;
 							}
-							int status_vorher = rn.getStatus();
-							if ((status_vorher == RnStatus.OFFEN) || (status_vorher == RnStatus.MAHNUNG_1)
-									|| (status_vorher == RnStatus.MAHNUNG_2) || (status_vorher == RnStatus.MAHNUNG_3)) {
-								rn.setStatus(status_vorher + 1);
+							InvoiceState status_vorher = rn.getInvoiceState();
+							if ((status_vorher == InvoiceState.OPEN) || (status_vorher == InvoiceState.DEMAND_NOTE_1)
+									|| (status_vorher == InvoiceState.DEMAND_NOTE_2)
+									|| (status_vorher == InvoiceState.DEMAND_NOTE_3)) {
+								rn.setStatus(InvoiceState.fromState(status_vorher.getState() + 1));
 							}
 							rn.addTrace(Rechnung.OUTPUT,
 									getDescription() + ": " + RnStatus.getStatusText(rn.getStatus()));
@@ -164,10 +170,12 @@ public class RechnungsDrucker implements IRnOutputter {
 		return result;
 	}
 
+	@Override
 	public String getDescription() {
 		return "Privatrechnung auf Drucker";
 	}
 
+	@Override
 	public void saveComposite() {
 		// Nothing
 	}

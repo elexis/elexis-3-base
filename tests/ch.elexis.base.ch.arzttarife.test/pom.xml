@@ -24,7 +24,7 @@
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<appArgLine>-nl ${NL}</appArgLine>
 					<trimStackTrace>false</trimStackTrace>
-					<argLine>${os-jvm-flags} -Delexis-run-mode=RunFromScratch -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis.test.mode=true</argLine>
+					<argLine>-Delexis-run-mode=RunFromScratch -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis.test.mode=true</argLine>
 					<bundleStartLevel>
 						<bundle>
 							<id>org.eclipse.gemini.jpa</id>

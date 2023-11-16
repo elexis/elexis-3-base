@@ -1,5 +1,7 @@
 package ch.elexis.molemax.views2;
 
+
+
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -10,10 +12,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.nebula.animation.AnimationRunner;
+import org.eclipse.nebula.animation.effects.MoveScrollBarEffect;
+import org.eclipse.nebula.animation.movement.ExpoOut;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryGroupRenderer;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
 import org.eclipse.nebula.widgets.gallery.Gallery;
@@ -34,6 +38,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -44,6 +49,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -52,7 +58,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.slf4j.LoggerFactory;
@@ -68,18 +74,19 @@ public class ImageDetailWithGalleryView {
 	private List<Image> createdImages = new ArrayList<>();
 	private ScrolledComposite scrolledComposite;
 	private Menu contextMenu;
-
+	private Color blue = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
+	private Image originalImage = null;
+	private Label label;
 	public ImageDetailWithGalleryView(ImageOverview overview, Composite parent, String folderPath) {
 		this.overviewInstance = overview;
 		mainComposite = new Composite(parent, SWT.NONE);
 		mainComposite.setLayout(new GridLayout(2, false));
-		Label label = SWTHelper.createHyperlink(mainComposite, "Zurück zur Galerie", new HyperlinkAdapter() {
+		label = SWTHelper.createHyperlink(mainComposite, "Zurück zur Galerie", new HyperlinkAdapter() {
 			public void linkActivated(final HyperlinkEvent e) {
 				overviewInstance.switchToGalleryView(parent);
-				overviewInstance.reloadGallery();
 			}
 		});
-
+		label.setForeground(blue);
 		FontData[] fontData = label.getFont().getFontData();
 		for (int i = 0; i < fontData.length; i++) {
 			fontData[i].setHeight(14);
@@ -92,7 +99,6 @@ public class ImageDetailWithGalleryView {
 				newFont.dispose();
 			}
 		});
-
 		Label placeholder = new Label(mainComposite, SWT.NONE);
 		gallery = new Gallery(mainComposite, SWT.V_SCROLL | SWT.MULTI | SWT.VIRTUAL);
 		GridData galleryGridData = new GridData();
@@ -128,19 +134,31 @@ public class ImageDetailWithGalleryView {
 			public void handleEvent(Event event) {
 				GalleryItem[] selection = gallery.getSelection();
 				if (selection.length > 0) {
-					Image selectedImage = selection[0].getImage();
-					String selectedImagePath = (String) selection[0].getData();
-					if (selectedImage != null) {
-						fullImageLabel.setImage(getScaledImageForLabel(selectedImage));
-						fullImageLabel.setData("originalImage", selectedImagePath);
-						Display.getCurrent().asyncExec(() -> {
-							if (!contentComposite.isDisposed() && !scrolledComposite.isDisposed()
-									&& !mainComposite.isDisposed()) {
-								contentComposite.layout(true, true);
-								scrolledComposite.setMinSize(contentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-								mainComposite.layout(true, true);
-							}
-						});
+					String selectedThumbnailPath = (String) selection[0].getData();
+					File thumbnailFile = new File(selectedThumbnailPath);
+					File originalFile = new File(thumbnailFile.getParentFile().getParent(), thumbnailFile.getName());
+					if (originalFile.exists() && originalFile.isFile()) {
+						try {
+							Image originalImage = new Image(Display.getDefault(), originalFile.getAbsolutePath());
+							createdImages.add(originalImage);
+							fullImageLabel.setImage(getScaledImageForLabel(originalImage));
+							fullImageLabel.setData("originalImage", originalFile.getAbsolutePath());
+							Display.getCurrent().asyncExec(() -> {
+								if (!contentComposite.isDisposed() && !scrolledComposite.isDisposed()
+										&& !mainComposite.isDisposed()) {
+									contentComposite.layout(true, true);
+									scrolledComposite
+											.setMinSize(contentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+									mainComposite.layout(true, true);
+								}
+							});
+						} catch (Exception e) {
+							LoggerFactory.getLogger(getClass())
+									.warn("Error loading the original image: " + e.getMessage());
+						}
+					} else {
+						LoggerFactory.getLogger(getClass()).warn(
+								"Original image not found or is not a file: " + originalFile.getAbsolutePath());
 					}
 				}
 			}
@@ -150,29 +168,46 @@ public class ImageDetailWithGalleryView {
 				showMaximizedImage();
 			}
 		});
-
+		gallery.addListener(SWT.MouseDoubleClick, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				showMaximizedImage();
+			}
+		});
 		gallery.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN) {
-					Display.getCurrent().asyncExec(() -> {
-						GalleryItem[] selection = gallery.getSelection();
-						if (selection.length > 0) {
-							Image selectedImage = selection[0].getImage();
-							String selectedImagePath = (String) selection[0].getData();
-							if (selectedImage != null) {
-								fullImageLabel.setImage(getScaledImageForLabel(selectedImage));
-								fullImageLabel.setData("originalImage", selectedImagePath);
-								contentComposite.layout(true, true);
-								scrolledComposite.setMinSize(contentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-								mainComposite.layout(true, true);
+					Display.getCurrent().syncExec(() -> {
+						if (!gallery.isDisposed()) {
+							GalleryItem[] selection = gallery.getSelection();
+							if (selection.length > 0 && !selection[0].isDisposed()) {
+								String selectedThumbnailPath = (String) selection[0].getData();
+								File thumbnailFile = new File(selectedThumbnailPath);
+								File originalFile = new File(thumbnailFile.getParentFile().getParent(),
+										thumbnailFile.getName());
+								if (originalFile.exists() && originalFile.isFile()) {
+									if (originalImage != null && !originalImage.isDisposed()) {
+										originalImage.dispose();
+									}
+									originalImage = new Image(Display.getDefault(), originalFile.getAbsolutePath());
+									if (!fullImageLabel.isDisposed()) {
+										fullImageLabel.setImage(getScaledImageForLabel(originalImage));
+										fullImageLabel.setData("originalImage", originalFile.getAbsolutePath());
+										contentComposite.layout(true, true);
+										scrolledComposite
+												.setMinSize(contentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+										mainComposite.layout(true, true);
+									}
+								} else {
+									LoggerFactory.getLogger(getClass())
+											.warn("Original image not found or is not a file: "
+											+ originalFile.getAbsolutePath());
+								}
 							}
 						}
 					});
 				} else if (e.keyCode == SWT.ESC) {
-					disposeCreatedImages();
 					overviewInstance.switchToGalleryView(mainComposite.getParent());
-					overviewInstance.reloadGallery();
-					gallery.dispose();
 				} else if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
 					showMaximizedImage();
 				} else if (e.keyCode == SWT.DEL) {
@@ -180,7 +215,6 @@ public class ImageDetailWithGalleryView {
 				}
 			}
 		});
-
 		Menu galleryContextMenu = createContextMenu(gallery);
 		Menu fullImageLabelContextMenu = createContextMenu(fullImageLabel);
 		gallery.addMouseListener(new MouseAdapter() {
@@ -191,7 +225,6 @@ public class ImageDetailWithGalleryView {
 				}
 			}
 		});
-
 		fullImageLabel.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
 				if (e.button == 3) {
@@ -199,7 +232,6 @@ public class ImageDetailWithGalleryView {
 				}
 			}
 		});
-
 		gallery.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
 				if (e.button == 3) {
@@ -212,7 +244,6 @@ public class ImageDetailWithGalleryView {
 				}
 			}
 		});
-
 		DropTarget target = new DropTarget(gallery, DND.DROP_COPY | DND.DROP_MOVE);
 		target.setTransfer(new Transfer[] { FileTransfer.getInstance() });
 		target.addDropListener(new DropTargetListener() {
@@ -247,8 +278,6 @@ public class ImageDetailWithGalleryView {
 									Files.copy(new File(file).toPath(), destinationFile.toPath(),
 											StandardCopyOption.REPLACE_EXISTING);
 								} catch (IOException e) {
-									System.out.println("Error while copying file: " + e.getMessage());
-									e.printStackTrace();
 									LoggerFactory.getLogger(getClass()).warn("Error while copying file: ", e,
 											e.getMessage());
 								}
@@ -268,10 +297,7 @@ public class ImageDetailWithGalleryView {
 	}
 
 	public void updateGalleryForSelectedGroup(String folderPath) {
-		for (GalleryItem item : gallery.getItems()) {
-			item.dispose();
-		}
-
+		gallery.removeAll();
 		File directory = new File(folderPath);
 		if (directory.exists() && directory.isDirectory()) {
 			GalleryItem group = new GalleryItem(gallery, SWT.NONE);
@@ -296,44 +322,48 @@ public class ImageDetailWithGalleryView {
 	}
 
 	private void addImagesToGalleryFromDirectory(File dir, GalleryItem parentGroup) {
-		File[] imageFiles = dir.listFiles(
-				file -> file.isFile() && (file.getName().endsWith(".png") || file.getName().endsWith(".jpg")));
-		if (imageFiles != null) {
-			for (File imgFile : imageFiles) {
-				GalleryItem item = new GalleryItem(parentGroup, SWT.NONE);
-				Image image = new Image(Display.getDefault(), imgFile.getAbsolutePath());
-				createdImages.add(image);
-				item.setImage(image);
-				item.setText(imgFile.getName());
-				item.setData(imgFile.getAbsolutePath());
-			}
-		}
-	}
-
-	public void selectImageInGallery(String absoluteImagePath) {
-		if (gallery == null || gallery.isDisposed()) {
-			return;
-		}
-
-		for (GalleryItem group : gallery.getItems()) {
-			for (GalleryItem item : group.getItems()) {
-				String itemPath = (String) item.getData();
-				if (itemPath != null && itemPath.equals(absoluteImagePath)) {
-					gallery.setSelection(new GalleryItem[] { item });
-					return;
+		File thumbnailDirectory = new File(dir, "thumbnails");
+		if (thumbnailDirectory.exists() && thumbnailDirectory.isDirectory()) {
+			File[] imageFiles = thumbnailDirectory.listFiles(
+					file -> file.isFile() && (file.getName().endsWith(".png") || file.getName().endsWith(".jpg")));
+			if (imageFiles != null) {
+				for (File imgFile : imageFiles) {
+					GalleryItem item = new GalleryItem(parentGroup, SWT.NONE);
+					Image image = new Image(Display.getDefault(), imgFile.getAbsolutePath());
+					createdImages.add(image);
+					item.setImage(image);
+					item.setText(imgFile.getName());
+					item.setData(imgFile.getAbsolutePath());
 				}
 			}
 		}
 	}
 
+	public void selectImageInGallery(String imagePath) {
+	    GalleryItem[] items = gallery.getItems();
+	    for (GalleryItem item : items) {
+	        String itemPath = (String) item.getData();
+	        if (itemPath != null && itemPath.equals(imagePath)) {
+	            gallery.setSelection(new GalleryItem[] {item});
+	            break;
+	        }
+	    }
+	}
+
 	private void deleteSelectedItem(GalleryItem selectedItem) {
-		File fileToDelete = new File((String) selectedItem.getData());
+		String selectedItemPath = (String) selectedItem.getData();
+		File fileToDelete = new File(selectedItemPath);
 		if (fileToDelete.exists() && fileToDelete.delete()) {
+			File originalFile = new File(fileToDelete.getParentFile().getParent(), fileToDelete.getName());
+			if (originalFile.exists()) {
+				originalFile.delete();
+			}
 			selectedItem.getImage().dispose();
 			createdImages.remove(selectedItem.getImage());
 			selectedItem.getParentItem().remove(selectedItem);
 			fullImageLabel.redraw();
 		}
+		overviewInstance.reloadGallery();
 	}
 
 	private Menu createContextMenu(Control control) {
@@ -384,46 +414,40 @@ public class ImageDetailWithGalleryView {
 	}
 
 	public void setSelectedImage(Image image, String absoluteImagePath) {
+		if (image == null || image.isDisposed()) {
+			return;
+		}
+		Image previousScaledImage = (Image) fullImageLabel.getData("scaledImage");
+		if (previousScaledImage != null && !previousScaledImage.isDisposed()) {
+			previousScaledImage.dispose();
+		}
 		Image scaledImage = getScaledImageForLabel(image);
-		GridData gd;
-		if (scaledImage != null) {
-			if (scaledImage.getBounds().width <= scrolledComposite.getBounds().width
-					&& scaledImage.getBounds().height <= scrolledComposite.getBounds().height) {
-				gd = new GridData(SWT.CENTER, SWT.CENTER, true, true);
-			} else {
-				gd = new GridData(SWT.CENTER, SWT.CENTER, true, true);
-			}
+		GridData gd = new GridData(SWT.CENTER, SWT.CENTER, true, true);
+		if (scaledImage != null && !scaledImage.isDisposed()) {
 			fullImageLabel.setImage(scaledImage);
+			fullImageLabel.setData("scaledImage", scaledImage); // Store reference to dispose later
 		} else {
-			gd = new GridData(SWT.CENTER, SWT.CENTER, true, true);
 			fullImageLabel.setImage(image);
+			fullImageLabel.setData("scaledImage", null);
 		}
 		fullImageLabel.setLayoutData(gd);
 		Display.getCurrent().asyncExec(() -> {
 			if (!contentComposite.isDisposed() && !scrolledComposite.isDisposed() && !mainComposite.isDisposed()) {
-				contentComposite.layout(true, true);
 				scrolledComposite.setMinSize(contentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				contentComposite.layout(true, true);
 				mainComposite.layout(true, true);
 			}
 		});
-		fullImageLabel.setData("originalImage", absoluteImagePath);
-	}
-
-	public void selectAndCenterGalleryItemBasedOnPath(String imagePath) {
-		for (GalleryItem group : gallery.getItems()) {
-			for (GalleryItem item : group.getItems()) {
-				String itemPath = (String) item.getData();
-				if (imagePath.equals(itemPath)) {
-					gallery.setSelection(new GalleryItem[] { item });
-					return;
-				}
-			}
+		if (!fullImageLabel.isDisposed()) {
+			fullImageLabel.setData("originalImage", absoluteImagePath);
 		}
 	}
 
-	public void selectGalleryItemByImagePath(String imagePath) {
-		int itemHeight = 300;
-		int headerHeight = 20;
+	public void selectGalleryItemByImagePath(String originalImagePath) {
+		int itemHeight = 290;
+		int headerHeight = 10;
+		AnimationRunner runner = new AnimationRunner();
+		String imagePath = convertToThumbnailPath(originalImagePath);
 		for (GalleryItem group : gallery.getItems()) {
 			for (GalleryItem item : group.getItems()) {
 				String itemPath = (String) item.getData();
@@ -433,44 +457,26 @@ public class ImageDetailWithGalleryView {
 					int itemIndex = group.indexOf(item);
 					int totalHeightAbove = (group.getItemCount() * itemHeight + headerHeight) * groupIndex;
 					int itemPosition = totalHeightAbove + itemHeight * itemIndex;
-					int offsetY = itemPosition - (gallery.getBounds().height / 3) + itemHeight / 3;
-					if (offsetY < 0) {
-						offsetY = 0;
-					}
-					int maxScroll = gallery.getVerticalBar().getMaximum() - gallery.getVerticalBar().getThumb();
-					if (offsetY > maxScroll) {
-						offsetY = maxScroll;
-					}
-					gallery.getVerticalBar().setSelection(offsetY);
+					int centerYPosition = itemPosition + (itemHeight / 5) - (gallery.getClientArea().height / 7);
+					ScrollBar vBar = gallery.getVerticalBar();
+					int currentSelection = vBar.getSelection();
+					MoveScrollBarEffect effect = new MoveScrollBarEffect(vBar, currentSelection, centerYPosition, 500,
+							new ExpoOut(),
+							null, null
+					);
+					runner.runEffect(effect);
 					return;
 				}
 			}
 		}
 	}
-
 	private void showMaximizedImage() {
-		Shell dialog = new Shell(mainComposite.getShell(),
-				SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.V_SCROLL | SWT.H_SCROLL);
-		dialog.setLayout(new GridLayout());
-		String imagePath = (String) fullImageLabel.getData("originalImage");
-		Image originalImage = new Image(mainComposite.getDisplay(), imagePath);
-		createdImages.add(originalImage);
-		ScrolledComposite scrolledComp = new ScrolledComposite(dialog, SWT.V_SCROLL | SWT.H_SCROLL);
-		scrolledComp.setExpandHorizontal(true);
-		scrolledComp.setExpandVertical(true);
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		scrolledComp.setLayoutData(gridData);
-		Composite container = new Composite(scrolledComp, SWT.NONE);
-		container.setLayout(new GridLayout());
-		scrolledComp.setContent(container);
-		dialog.setText("Bild in voller Größe");
-		Label imageLabel = new Label(container, SWT.CENTER);
-		imageLabel.setImage(originalImage);
-		gridData = new GridData(SWT.CENTER, SWT.CENTER, true, true);
-		imageLabel.setLayoutData(gridData);
-		scrolledComp.setMinSize(container.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		dialog.setMaximized(true);
-		dialog.open();
+	    String imagePath = (String) fullImageLabel.getData("originalImage");
+	    if (imagePath != null && !imagePath.isEmpty()) {
+	        Program.launch(imagePath);
+	    } else {
+	        LoggerFactory.getLogger(getClass()).warn("Image file does not exist or is empty.");
+	    }
 	}
 
 	private Image getScaledImageForLabel(Image original) {
@@ -490,13 +496,13 @@ public class ImageDetailWithGalleryView {
 			Graphics2D graphics2D = scaledBufferedImage.createGraphics();
 			graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			graphics2D.drawImage(bufferedImage, 0, 0, newWidth, newHeight, null);
-			graphics2D.dispose();
 			Image scaledImage = new Image(Display.getDefault(), convertToSWT(scaledBufferedImage));
 			createdImages.add(scaledImage);
+			original.dispose();
 			return scaledImage;
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).warn("Image ready to dispos ", e);
-			e.printStackTrace();
+			original.dispose();
 			return null;
 		}
 	}
@@ -536,19 +542,10 @@ public class ImageDetailWithGalleryView {
 		}
 	}
 
-	public boolean isDisposed() {
-		return mainComposite.isDisposed();
-	}
-
-	private void disposeCreatedImages() {
-		Image currentImage = fullImageLabel.getImage();
-		Iterator<Image> iterator = createdImages.iterator();
-		while (iterator.hasNext()) {
-			Image img = iterator.next();
-			if (img != null && !img.isDisposed() && img != currentImage) {
-				img.dispose();
-				iterator.remove();
-			}
-		}
+	private String convertToThumbnailPath(String originalImagePath) {
+		File originalFile = new File(originalImagePath);
+		File thumbnailDirectory = new File(originalFile.getParentFile(), "thumbnails");
+		File thumbnailFile = new File(thumbnailDirectory, originalFile.getName());
+		return thumbnailFile.getAbsolutePath();
 	}
 }

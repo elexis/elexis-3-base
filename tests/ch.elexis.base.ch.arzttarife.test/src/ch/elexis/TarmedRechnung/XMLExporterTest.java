@@ -37,7 +37,6 @@ import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
 import ch.fd.invoice450.request.BalanceTGType;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
@@ -121,9 +120,9 @@ public class XMLExporterTest {
 				Element next = (Element) iter.next();
 				assertEquals("documents", next.getName());
 				assertEquals("1", next.getAttribute("number").getValue());
-				next = (Element) next.getChildren().get(0);
+				next = next.getChildren().get(0);
 				assertEquals("document", next.getName());
-				next = (Element) next.getChildren().get(0);
+				next = next.getChildren().get(0);
 				assertEquals("base64", next.getName());
 				Object base64Content = next.getContent().get(0);
 				assertNotNull(base64Content);
@@ -327,7 +326,7 @@ public class XMLExporterTest {
 		XMLExporter exporter = new XMLExporter();
 		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -338,7 +337,7 @@ public class XMLExporterTest {
 
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.STORNO, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -357,7 +356,7 @@ public class XMLExporterTest {
 		XMLExporter exporter = new XMLExporter();
 		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -372,7 +371,7 @@ public class XMLExporterTest {
 
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -394,7 +393,7 @@ public class XMLExporterTest {
 		XMLExporter exporter = new XMLExporter();
 		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -407,7 +406,7 @@ public class XMLExporterTest {
 
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.STORNO, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -425,7 +424,7 @@ public class XMLExporterTest {
 		XMLExporter exporter = new XMLExporter();
 		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -441,7 +440,7 @@ public class XMLExporterTest {
 
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -463,7 +462,7 @@ public class XMLExporterTest {
 		XMLExporter exporter = new XMLExporter();
 		Document result = exporter.doExport(erroneous, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 		assertNotNull(result);
-		if (erroneous.getStatus() == RnStatus.FEHLERHAFT) {
+		if (erroneous.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -480,7 +479,7 @@ public class XMLExporterTest {
 		erroneous.addZahlung(new Money(10.0), "test", new TimeTool());
 		result = exporter.doExport(erroneous, getTempDestination(), IRnOutputter.TYPE.ORIG, true);
 		assertNotNull(result);
-		if (erroneous.getStatus() == RnStatus.FEHLERHAFT) {
+		if (erroneous.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -518,12 +517,12 @@ public class XMLExporterTest {
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_4_3_RNR);
 		// set reminder booking and state
 		existing.addZahlung(new Money(10.0).multiply(-1.0), ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
-		existing.setStatus(InvoiceState.DEMAND_NOTE_1.numericValue());
+		existing.setStatus(InvoiceState.DEMAND_NOTE_1);
 		// output the bill
 		XMLExporter exporter = new XMLExporter();
 		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -539,7 +538,7 @@ public class XMLExporterTest {
 		existing.addZahlung(new Money(27.75), "", null);
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -560,12 +559,12 @@ public class XMLExporterTest {
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_44_3_RNR);
 		// set reminder booking and state
 		existing.addZahlung(new Money(10.0).multiply(-1.0), ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
-		existing.setStatus(InvoiceState.DEMAND_NOTE_1.numericValue());
+		existing.setStatus(InvoiceState.DEMAND_NOTE_1);
 		// output the bill
 		XMLExporter exporter = new XMLExporter();
 		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -582,12 +581,12 @@ public class XMLExporterTest {
 		assertEquals("10.00", reminder);
 		// set reminder booking and state
 		existing.addZahlung(new Money(10.0).multiply(-1.0), ch.elexis.data.Messages.Rechnung_Mahngebuehr2, null);
-		existing.setStatus(InvoiceState.DEMAND_NOTE_2.numericValue());
+		existing.setStatus(InvoiceState.DEMAND_NOTE_2);
 		// output the bill
 		exporter = new XMLExporter();
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -606,7 +605,7 @@ public class XMLExporterTest {
 		existing.addZahlung(new Money(5217.76), "", null);
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
 		assertNotNull(result);
-		if (existing.getStatus() == RnStatus.FEHLERHAFT) {
+		if (existing.getInvoiceState() == InvoiceState.DEFECTIVE) {
 			printFaildDocument(result);
 			fail();
 		}
@@ -629,7 +628,7 @@ public class XMLExporterTest {
 		Rechnung existing = szenario.getExistingRechnung(TestData.EXISTING_45_3_RNR);
 		// set reminder booking and state
 		existing.addZahlung(new Money(10.0).multiply(-1.0), ch.elexis.data.Messages.Rechnung_Mahngebuehr1, null);
-		existing.setStatus(InvoiceState.DEMAND_NOTE_1.numericValue());
+		existing.setStatus(InvoiceState.DEMAND_NOTE_1);
 		// output the bill
 		XMLExporter exporter = new XMLExporter();
 		Document result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);
@@ -650,7 +649,7 @@ public class XMLExporterTest {
 		assertEquals(10.0, balance.getAmountReminder(), 0.0001);
 		// set reminder booking and state
 		existing.addZahlung(new Money(10.0).multiply(-1.0), ch.elexis.data.Messages.Rechnung_Mahngebuehr2, null);
-		existing.setStatus(InvoiceState.DEMAND_NOTE_2.numericValue());
+		existing.setStatus(InvoiceState.DEMAND_NOTE_2);
 		// output the bill
 		exporter = new XMLExporter();
 		result = exporter.doExport(existing, getTempDestination(), IRnOutputter.TYPE.COPY, true);

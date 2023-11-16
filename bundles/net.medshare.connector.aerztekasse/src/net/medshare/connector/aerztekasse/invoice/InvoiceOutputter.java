@@ -193,7 +193,7 @@ public class InvoiceOutputter extends XMLExporter {
 							if (transferState) {
 								for (Rechnung rn : rnn) {
 									if (type == TYPE.ORIG) {
-										rn.setStatus(RnStatus.BEZAHLT);
+										rn.setStatus(InvoiceState.PAID);
 									}
 									transmittedInvoicesCount++;
 									transmittedInvoices += Messages.InvoiceOutputter_SuccessInvoiceNr + rn.getNr()
@@ -209,7 +209,7 @@ public class InvoiceOutputter extends XMLExporter {
 							} else {
 								// Übermittlung an Ärztekasse fehlgeschlagen
 								for (Rechnung rn : rnn) {
-									rn.reject(RnStatus.REJECTCODE.REJECTED_BY_PEER,
+									rn.reject(InvoiceState.REJECTCODE.REJECTED_BY_PEER,
 											Messages.InvoiceOutputter_TransmissionFailed + StringUtils.SPACE
 													+ responseState + "/" //$NON-NLS-1$
 													+ responseError);
@@ -228,7 +228,7 @@ public class InvoiceOutputter extends XMLExporter {
 							Iterator<Rechnung> ir = rnn.iterator();
 							Rechnung r = ir.next();
 							ret.add(Result.SEVERITY.ERROR, 1, Messages.InvoiceOutputter_ErrorHttpPost, r, true);
-							r.setStatus(InvoiceState.DEFECTIVE.getState());
+							r.setStatus(InvoiceState.DEFECTIVE);
 
 						}
 

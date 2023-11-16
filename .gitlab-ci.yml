@@ -13,7 +13,6 @@ build:
   - maven
   - docker-host
   script:
-  - kill `ps aux | grep xvfb-run | grep -v grep | awk '{print $2}'` || true
   - docker pull ${DOCKER_BUILD_IMAGE}
   - docker run --rm --init -v "$(pwd)":/usr/src/mymaven -v "/home/maven/m2-$CI_COMMIT_REF_NAME":/root/.m2 -w /usr/src/mymaven ${DOCKER_BUILD_IMAGE} xvfb-run mvn -V clean install
   - eval $(ssh-agent -s)

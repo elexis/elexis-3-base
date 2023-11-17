@@ -2,7 +2,7 @@
 <feature
       id="ch.itmed.lmz.risch.laborder.feature"
       label="Labor Risch LabOrder"
-      version="3.7.0.qualifier"
+      version="3.12.0.qualifier"
       provider-name="IT-Med AG">
 
    <description url="http://www.it-med-ag.ch/">

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>ch.elexis.base</groupId>
+    <artifactId>ch.elexis.base.features</artifactId>
+    <version>3.12.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>ch.elexis.connect.reflotron.v2.feature</artifactId>
+  <version>3.12.0-SNAPSHOT</version>
+  <packaging>eclipse-feature</packaging>
+  <name>[feature] Roche Reflotron Laborgeräteanbindung V2</name>
+  <organization>
+    <name>elexis.info</name>
+  </organization>
+</project>

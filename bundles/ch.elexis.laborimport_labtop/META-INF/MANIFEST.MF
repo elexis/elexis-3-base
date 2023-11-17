@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Laborimport labtop HL7
 Bundle-SymbolicName: ch.elexis.laborimport_labtop;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.l10n,
  org.eclipse.core.runtime,
  org.eclipse.ui,

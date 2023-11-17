@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.fop_wrapper.feature"
       label="FOP Wrapper"
-      version="3.0.100.qualifier"
+      version="3.12.0.qualifier"
       provider-name="elexis.info">
 
    <description>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Medidata® Plugin (Public License);
 Bundle-SymbolicName: ch.netzkonzept.elexis.medidata;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: netzkonzept.ch
 Automatic-Module-Name: ch.netzkonzept.elexis.medidata
 Bundle-RequiredExecutionEnvironment: JavaSE-17

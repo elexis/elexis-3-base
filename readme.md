@@ -9,6 +9,7 @@ If you want to install Elexis Base as precompile package you can get it from:
 
 # Elexis Base from source 
 If you want to follow the ongoing commits:
+
 <a href="https://gitlab.medelexis.ch/elexis/elexis-3-base/commits/master"><img alt="build status" src="https://gitlab.medelexis.ch/elexis/elexis-3-base/badges/master/pipeline.svg" /></a>
 
 ## Build

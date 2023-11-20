@@ -4,8 +4,7 @@ If you want to install Elexis Base as precompile package you can get it from:
 - [Apple OS X](http://download.elexis.info/elexis/3.10/products/Elexis3-macosx.cocoa.x86_64.zip)
 - [Linux](http://download.elexis.info/elexis/3.10/products/Elexis3-linux.gtk.x86_64.zip)
 
-> Note: If the compiling process interrupts due to a false repository, edit the file file:///home/debenath/Entwicklung/Elexis/Repositories/elexis-3-base/pom.xml and adjust the snippet:
-{.is-warning}
+ [!NOTE] As Elexis Base is part of the Elexis package you can not download it partially 
 
 # Buildng from source
 <a href="https://gitlab.medelexis.ch/elexis/elexis-3-base/commits/master"><img alt="build status" src="https://gitlab.medelexis.ch/elexis/elexis-3-base/badges/master/pipeline.svg" /></a>

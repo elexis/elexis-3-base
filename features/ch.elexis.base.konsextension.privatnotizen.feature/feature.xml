@@ -2,16 +2,16 @@
 <feature
       id="ch.elexis.base.konsextension.privatnotizen.feature"
       label="Privatnotizen für Konsultation"
-      version="3.0.100.qualifier"
+      version="3.12.0.qualifier"
       provider-name="elexis.ch">
 
-  <description>
+   <description>
       This plugin allows to integrate hidden notes into a consultation text. Mehr Info unter http://wiki.elexis.info/ch.elexis.base.konsextension.privatnotizen.feature.feature.group
       Mehr Info unter http://wiki.elexis.info/at.medevit.elexis.medietikette.feature.feature.group
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">
-     Gerry Weirich, 2007-2013 und viele andere
+      Gerry Weirich, 2007-2013 und viele andere
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

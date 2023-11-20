@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Messwerte Iatrix
 Bundle-SymbolicName: org.iatrix.messwerte;singleton:=true
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Activator: org.iatrix.messwerte.Activator
 Bundle-Vendor: org.iatrix
 Require-Bundle: org.eclipse.ui,
@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core.ui,
  ch.elexis.core.ui.icons
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: ch.elexis.core.services.holder,
  javax.inject;version="1.0.0",
  org.eclipse.e4.core.di.annotations;version="1.6.0",

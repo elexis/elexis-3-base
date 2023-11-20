@@ -91,19 +91,19 @@
    <feature id="ch.elexis.archie.patientstatistik.feature">
       <category name="statistics"/>
    </feature>
-   <feature url="features/ch.elexis.notes.feature_3.0.100.qualifier.jar" id="ch.elexis.notes.feature" version="3.0.100.qualifier">
+   <feature url="features/ch.elexis.notes.feature_3.0.100.qualifier.jar" id="ch.elexis.notes.feature" version="0.0.0">
       <category name="organisation"/>
    </feature>
    <feature url="features/ch.elexis.archie.wzw.feature_0.0.0.jar" id="ch.elexis.archie.wzw.feature" version="0.0.0">
       <category name="statistics"/>
    </feature>
-   <feature url="features/at.medevit.elexis.medietikette.feature_3.0.100.qualifier.jar" id="at.medevit.elexis.medietikette.feature" version="3.0.100.qualifier">
+   <feature url="features/at.medevit.elexis.medietikette.feature_3.0.100.qualifier.jar" id="at.medevit.elexis.medietikette.feature" version="0.0.0">
       <category name="organisation"/>
    </feature>
    <feature url="features/ch.elexis.laborimport.hl7.allg.feature_0.0.0.jar" id="ch.elexis.laborimport.hl7.allg.feature" version="0.0.0">
       <category name="laborexchanges"/>
    </feature>
-   <feature url="features/waelti.statistics.feature_3.0.100.qualifier.jar" id="waelti.statistics.feature" version="3.0.100.qualifier">
+   <feature url="features/waelti.statistics.feature_3.0.100.qualifier.jar" id="waelti.statistics.feature" version="0.0.0">
       <category name="statistics"/>
    </feature>
    <feature url="features/ch.elexis.laborimport_viollier.feature_0.0.0.jar" id="ch.elexis.laborimport_viollier.feature" version="0.0.0">
@@ -115,7 +115,7 @@
    <feature url="features/ch.elexis.molemax.feature_0.0.0.jar" id="ch.elexis.molemax.feature" version="0.0.0">
       <category name="clinicrecordkeeping"/>
    </feature>
-   <feature url="features/ch.elexis.laborimport_labtop.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport_labtop.feature" version="3.0.100.qualifier">
+   <feature url="features/ch.elexis.laborimport_labtop.feature_3.0.100.qualifier.jar" id="ch.elexis.laborimport_labtop.feature" version="0.0.0">
       <category name="laborexchanges"/>
    </feature>
    <feature url="features/com.hilotec.elexis.kgview.feature_0.0.0.jar" id="com.hilotec.elexis.kgview.feature" version="0.0.0">
@@ -148,7 +148,7 @@
    <feature url="features/ch.medshare.elexis_directories.feature_0.0.0.jar" id="ch.medshare.elexis_directories.feature" version="0.0.0">
       <category name="dataexchange"/>
    </feature>
-   <feature url="features/ch.elexis.stickynotes.feature_3.0.100.qualifier.jar" id="ch.elexis.stickynotes.feature" version="3.0.100.qualifier">
+   <feature url="features/ch.elexis.stickynotes.feature_3.0.100.qualifier.jar" id="ch.elexis.stickynotes.feature" version="0.0.0">
       <category name="organisation"/>
    </feature>
    <feature id="ch.elexis.support.dbshaker.feature">

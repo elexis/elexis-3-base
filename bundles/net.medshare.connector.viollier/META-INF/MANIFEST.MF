@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Viollier Portal Connector
 Bundle-SymbolicName: net.medshare.connector.viollier;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Activator: net.medshare.connector.viollier.ViollierConnectorActivator
 Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.laborimport.viollier.v2
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: medshare.net
 Import-Package: org.apache.commons.lang3;version="3.12.0",
  org.apache.http;version="4.4.12",

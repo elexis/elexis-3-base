@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Private Abrechnung
 Bundle-SymbolicName: ch.elexis.privatrechnung;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
@@ -12,7 +12,7 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.jpa;bundle-version="3.9.0",
  ch.elexis.core.jpa.entities;bundle-version="3.9.0"
 Created-By: Buildr
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/ch.elexis.privatrechnung.model.internal.PrivatRechnungModelService.xml,
  OSGI-INF/ch.elexis.privatrechnung.model.internal.PrivatRechnungCodeElementServiceContribution.xml,
  OSGI-INF/ch.elexis.privatrechnung.model.PrivatModelServiceHolder.xml

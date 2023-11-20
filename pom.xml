@@ -1,24 +1,53 @@
+<!-- 
+	Maven/Tycho configuration to pass through different/distinctive build cycles: 
+	- test: 			  mvn -V clean test 
+	- build: 			  mvn -V clean process-classes
+	- product-build: 	  mvn -V clean verify -Dtycho.localArtifacts=ignore -DskipTests 
+	- product-build-sign: mvn -V clean install -Dtycho.localArtifacts=ignore -DskipTests
+	- format-enforce: 	  mvn -V formatter:format
+
+	To get buildplans execute one of the following commands:
+	- mvn buildplan:list
+    - mvn buildplan:list-phase -Dbuildplan.tasks=clean,test
+    - mvn buildplan:list-phase -Dbuildplan.showLifecycles
+    - mvn buildplan:list-phase
+    - mvn buildplan:list-plugin
+    - mvn buildplan:list-plugin -Dbuildplan.plugin=maven-compiler-plugin
+    - mvn buildplan:list-plugin -Dbuildplan.outputFile=buildplan_output.txt
+    
+	2023/Olivier Debenath
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.elexis.base</groupId>
 	<artifactId>elexis-3-base</artifactId>
-	<version>3.10.0-SNAPSHOT</version>
+	<version>3.12.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Elexis-Base</name>
-
+        <description>Elexis Base</description>
+        <licenses>
+                <license>
+                        <name>Eclipse Public License</name>
+                        <url>https://www.eclipse.org/legal/epl-v10.html</url>
+                </license>
+        </licenses>
+        <organization>
+                <name>elexis.info</name>
+                <url>https://www.elexis.info</url>
+        </organization>
 	<properties>
 		<elexis.target>2022-09-java17</elexis.target>
 		<git.core.branch>master</git.core.branch>
 		<formatterConfigFile>https://raw.githubusercontent.com/elexis/elexis-3-core/master/Elexis_formatter_2022_03.xml</formatterConfigFile>
-		<tycho.version>2.7.5</tycho.version>
+		<tycho.version>3.0.5</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
-		<!-- vvv required empty vvv -->
-		<os-jvm-flags />
+                <buildplan.plugin.version>1.5</buildplan.plugin.version>
+		<formatter.plugin.version>2.18.0</formatter.plugin.version>
+		<clean.plugin.version>2.5</clean.plugin.version>	
 	</properties>
-
 	<repositories>
 		<repository>
 			<id>elexis.3.target</id>
@@ -31,137 +60,52 @@
 			<layout>p2</layout>
 		</repository>
 	</repositories>
-
-	<organization>
-		<name>elexis.info</name>
-		<url>https://www.elexis.info</url>
-	</organization>
-
-	<scm>
-		<connection>scm:git:https://github.com/elexis/elexis-3-base.git</connection>
-		<developerConnection>scm:git:https://github.com/elexis/elexis-3-base.git</developerConnection>
-		<url>https://github.com/elexis/elexis-3-base</url>
-	</scm>
-
-	<licenses>
-		<license>
-			<name>Eclipse Public License</name>
-			<url>https://www.eclipse.org/legal/epl-v10.html</url>
-		</license>
-	</licenses>
-
-	<issueManagement>
-		<url>https://github.com/elexis/elexis-3-base/issues</url>
-		<system>Github</system>
-	</issueManagement>
-
-	<description>Elexis Base</description>
-
 	<modules>
 		<module>bundles</module>
 		<module>features</module>
 		<module>ch.elexis.base.p2site</module>
 		<module>tests</module>
 	</modules>
-
-	<profiles>
+        <profiles>
 		<profile>
-			<id>macosx-jvm-flags</id>
+			<id>windows-x86_64</id>
+			<activation>
+				<os>
+					<family>windows</family>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<properties>
+				<classifier>win32/win32/x86_64</classifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>linux-x86_64</id>
+			<activation>
+				<os>
+					<name>Linux</name>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<properties>
+				<classifier>linux/gtk/x86_64</classifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>macosx</id>
 			<activation>
 				<os>
 					<family>mac</family>
 				</os>
 			</activation>
 			<properties>
+				<classifier>macosx/cocoa/x86_64</classifier>
 				<os-jvm-flags>-XstartOnFirstThread</os-jvm-flags>
 			</properties>
 		</profile>
 	</profiles>
-
 	<build>
 		<plugins>
-			<plugin>
-				<!--https://books.sonatype.com/mcookbook/reference/ch02s03.html#ex-groovy-script-ex -->
-				<groupId>org.codehaus.gmavenplus</groupId>
-				<artifactId>gmavenplus-plugin</artifactId>
-				<version>1.13.1</version>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<!-- <goal>execute</goal> -->
-						</goals>
-						<configuration>
-							<scripts>
-								<script><![CDATA[
-  import java.text.SimpleDateFormat;
-  HINT_GENERATED    = "# Generated from pom.xml groovy shell using gmavenplus-plugin\n"
-  // Returns the current branchName
-  public String getBranchVersion() {
-      branch="git rev-parse --abbrev-ref HEAD".execute().text.replaceAll("\n", '')
-      elexis_version = "${project.version}".replace("-SNAPSHOT", ".") + new SimpleDateFormat("yyyyMMdd-HHmm").format(Calendar.getInstance().getTime())
-      tags =  "git tag --contains ".execute().text.split("\n")
-      for ( i in tags ) {
-          if (i ==~/release\/(.*)/ ) {
-              elexis_version = (i=~ /release\//).replaceFirst("")
-              break
-          }
-      }
-      // Set property git_branch, but this property cannot be used in maven/pom.xml
-      // But it is used to invoke the modification only once per run
-      System.setProperty("git_branch",  branch)
-      System.setProperty("elexis_version",  elexis_version)
-      return branch;
-  }
-
-  // Write a repo.properties file
-  public void createRepoProperties(String repo_properties_name, String branch) {
-    // Now we are have the info to crate teh repo.properties
-    repo_version_file = new File(repo_properties_name)
-    repo_version_file.write(HINT_GENERATED)
-    repo_version_file.append("repoVariant=${branch}\n")
-    repo_version_file.append("project.id=${project.id}\n")
-    repo_version_file.append("project.name=${project.name}\n")
-    repo_version_file.append("project.version=${project.version}\n")
-    repo_version_file.append("projectVersion=${elexis_version}\n")
-    println("Created ${repo_properties_name}")
-  }
-
-if ( System.getProperty("git_branch") == null ) {
-  branch = getBranchVersion()
-  createRepoProperties('ch.elexis.base.p2site/repo.properties', branch)
-}
-]]>
-								</script>
-							</scripts>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.groovy</groupId>
-						<artifactId>groovy-all</artifactId>
-						<!-- any version of Groovy \>= 1.5.0 should work here -->
-						<version>2.4.21</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<includeTestResources>false</includeTestResources>
-					<linkXRef>true</linkXRef>
-					<encoding>UTF-8</encoding>
-					<consoleOutput>false</consoleOutput>
-					<failsOnError>false</failsOnError>
-					<headerLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/epl-v10.html</headerLocation>
-					<configLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle.xml</configLocation>
-					<suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
-				</configuration>
-				<version>2.17</version>
-			</plugin>
 			<plugin>
 				<groupId>net.revelc.code.formatter</groupId>
 				<artifactId>formatter-maven-plugin</artifactId>
@@ -177,6 +121,51 @@ if ( System.getProperty("git_branch") == null ) {
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
+
+                        <plugin>
+                                <groupId>org.eclipse.tycho</groupId>
+                                <artifactId>target-platform-configuration</artifactId>
+                                <configuration>
+                                        <dependency-resolution>
+                                                <!-- do not resolve optional bundles/packages during build -->
+                                                <optionalDependencies>ignore</optionalDependencies>
+                                                <extraRequirements>
+                                                        <requirement>
+                                                                <type>eclipse-plugin</type>
+                                                                <id>javax.servlet</id>
+                                                                <versionRange>0.0.0</versionRange>
+                                                        </requirement>
+                                                        <requirement>
+                                                                <type>eclipse-plugin</type>
+                                                                <id>javax.xml</id>
+                                                                <versionRange>0.0.0</versionRange>
+                                                        </requirement>
+                                                </extraRequirements>
+                                        </dependency-resolution>
+                                        <environments>
+                                                <environment>
+                                                        <os>linux</os>
+                                                        <ws>gtk</ws>
+                                                        <arch>x86_64</arch>
+                                                </environment>
+                                                <environment>
+                                                        <os>win32</os>
+                                                        <ws>win32</ws>
+                                                        <arch>x86_64</arch>
+                                                </environment>
+                                                <environment>
+                                                        <os>macosx</os>
+                                                        <ws>cocoa</ws>
+                                                        <arch>x86_64</arch>
+                                                </environment>
+                                        </environments>
+                                        <dependency-resolution>
+                                <profileProperties>
+                                 <org.eclipse.justj.buildtime>true</org.eclipse.justj.buildtime>
+                                </profileProperties>
+                        </dependency-resolution>
+                                </configuration>
+                        </plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-plugin</artifactId>
@@ -197,74 +186,31 @@ if ( System.getProperty("git_branch") == null ) {
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 			</plugin>
-			<plugin>
+                        <!-- taken from elexis core -->
+                        <plugin>
 				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<configuration>
-					<dependency-resolution>
-						<!-- do not resolve optional bundles/packages during build -->
-						<optionalDependencies>ignore</optionalDependencies>
-						<extraRequirements>
-							<requirement>
-								<type>eclipse-plugin</type>
-								<id>javax.servlet</id>
-								<versionRange>0.0.0</versionRange>
-							</requirement>
-							<requirement>
-								<type>eclipse-plugin</type>
-								<id>javax.xml</id>
-								<versionRange>0.0.0</versionRange>
-							</requirement>
-						</extraRequirements>
-					</dependency-resolution>
-					<environments>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>macosx</os>
-							<ws>cocoa</ws>
-							<arch>x86_64</arch>
-						</environment>
-					</environments>
-					<dependency-resolution>
-                   		<profileProperties>
-                    		 <org.eclipse.justj.buildtime>true</org.eclipse.justj.buildtime>
-                   		</profileProperties>
-                 	</dependency-resolution>
-				</configuration>
+				<artifactId>tycho-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<!-- Use compiler plugin with tycho as the adapter to the JDT compiler. -->
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.10.1</version>
-					<configuration>
-						<release>17</release>
-					</configuration>
+                                <plugin>
+					<groupId>fr.jcgay.maven.plugins</groupId>
+					<artifactId>buildplan-maven-plugin</artifactId>
+					<version>${buildplan.plugin.version}</version>
 				</plugin>
 				<plugin>
-					<!-- we want to ensure that the bin directory created by the Eclipse 
-						gets cleaned, too. Without it Maven would put two versions of each class 
-						file into the jars -->
-					<artifactId>maven-clean-plugin </artifactId>
-					<version>2.5</version>
-					<configuration>
-						<filesets>
-							<fileset>
-								<directory>bin</directory>
-							</fileset>
-						</filesets>
-					</configuration>
+					<groupId>net.revelc.code.formatter</groupId>
+					<artifactId>formatter-maven-plugin</artifactId>
+					<version>${formatter.plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
@@ -277,6 +223,17 @@ if ( System.getProperty("git_branch") == null ) {
 					<version>${tycho.version}</version>
 					<configuration>
 						<executionEnvironment>JavaSE-17</executionEnvironment>
+					</configuration>
+				</plugin>
+                                <plugin>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>${clean.plugin.version}</version>
+					<configuration>
+						<filesets>
+							<fileset>
+								<directory>bin</directory>
+							</fileset>
+						</filesets>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -297,7 +254,7 @@ if ( System.getProperty("git_branch") == null ) {
 					<version>${tycho.version}</version>
 					<dependencies>
 						<dependency>
-							<groupId>org.eclipse.tycho.extras</groupId>
+							<groupId>org.eclipse.tycho</groupId>
 							<artifactId>tycho-buildtimestamp-jgit</artifactId>
 							<version>${tycho.version}</version>
 						</dependency>
@@ -318,66 +275,43 @@ if ( System.getProperty("git_branch") == null ) {
 					<artifactId>tycho-surefire-plugin</artifactId>
 					<version>${tycho.version}</version>
 				</plugin>
+                                <!-- taken from core -->
+                                <plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-source-plugin</artifactId>
+					<version>${tycho.version}</version>
+					<configuration>
+						<strictSrcIncludes>false</strictSrcIncludes>
+					</configuration>
+				</plugin> 
+                                <!-- -->
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-p2-director-plugin</artifactId>
 					<version>${tycho.version}</version>
 				</plugin>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-p2-repository-plugin</artifactId>
-					<version>${tycho.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.eclipse.tycho.extras</groupId>
-					<artifactId>tycho-custom-bundle-plugin</artifactId>
-					<version>${tycho.version}</version>
-				</plugin>
+                                <plugin>
+                                        <groupId>org.eclipse.tycho</groupId>
+                                        <artifactId>tycho-p2-repository-plugin</artifactId>
+                                        <version>${tycho.version}</version>
+                                        <!-- taken from core -->
+                                        <configuration>
+  						<createArtifactRepository>true</createArtifactRepository>
+ 					</configuration>
+                                </plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-p2-plugin</artifactId>
 					<version>${tycho.version}</version>
 				</plugin>
+
+                                <!-- Only in base -->
+                                <plugin>
+                                        <groupId>org.eclipse.tycho.extras</groupId>
+                                        <artifactId>tycho-custom-bundle-plugin</artifactId>
+                                        <version>${tycho.version}</version>
+                                </plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.17</version>
-				<configuration>
-					<includeTestResources>false</includeTestResources>
-					<linkXRef>true</linkXRef>
-					<encoding>UTF-8</encoding>
-					<consoleOutput>false</consoleOutput>
-					<failsOnError>false</failsOnError>
-					<headerLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/epl-v10.html</headerLocation>
-					<configLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle.xml</configLocation>
-					<suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/master/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
-				</configuration>
-				<reportSets>
-					<reportSet>
-						<inherited>false</inherited>
-						<reports>
-							<report>checkstyle-aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-			<plugin>        <!-- maven-jxr-plugin is needed for linkXRef -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
-		</plugins>
-	</reporting>
-	<distributionManagement>
-		<site>
-			<id>www.elexis.info</id>
-			<url>https://www.elexis.info</url>
-		</site>
-	</distributionManagement>
 </project>

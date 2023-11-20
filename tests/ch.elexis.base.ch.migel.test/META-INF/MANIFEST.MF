@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Migel Importer Tests
 Bundle-SymbolicName: ch.elexis.base.ch.migel.test
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: elexis.info
 Fragment-Host: ch.elexis.base.ch.migel;bundle-version="3.9.0.qualifier"
 Automatic-Module-Name: ch.elexis.base.ch.migel.test

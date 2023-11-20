@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tessiner Code
 Bundle-SymbolicName: ch.elexis.base.ch.ticode
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: elexis.info
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core;bundle-version="3.9.0"
 Bundle-ActivationPolicy: lazy

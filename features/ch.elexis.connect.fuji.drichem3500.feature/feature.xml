@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.connect.fuji.drichem3500.feature"
       label="Elexis connector für Fuji Dri-Chem 3500 und 4000"
-      version="3.10.0.qualifier"
+      version="3.12.0.qualifier"
       provider-name="medelexis.ch">
 
    <description url="http://www.medelexis.ch">

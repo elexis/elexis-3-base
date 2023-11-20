@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Private PDF bills
 Bundle-SymbolicName: ch.elexis.pdfBills.privat;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.pdfBills.private
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.pdfBills;bundle-version="3.9.0",
  ch.elexis.core;bundle-version="3.10.0",
  ch.elexis.core.services;bundle-version="3.10.0",

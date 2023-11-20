@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sysmex Laborgeräteanbindung
 Bundle-SymbolicName: ch.elexis.connect.sysmex;singleton:=true
-Bundle-Version: 3.9.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-Version: 3.12.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: elexis.info
 Import-Package: org.apache.commons.lang3;version="3.12.0"
 Require-Bundle: ch.elexis.core.l10n,

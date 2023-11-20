@@ -80,8 +80,8 @@
                     </invoice:person>
                 </invoice:guarantor>
                 <invoice:balance currency="CHF" amount="30.35" amount_due="30.35" amount_obligations="30.35">
-                    <invoice:vat vat="0.0">
-                        <invoice:vat_rate vat_rate="0.0" amount="30.35" vat="0.0"/>
+                    <invoice:vat vat="0.00">
+                        <invoice:vat_rate vat_rate="0.0" amount="30.35" vat="0.00"/>
                     </invoice:vat>
                 </invoice:balance>
             </invoice:tiers_payant>
@@ -100,12 +100,12 @@
                     </invoice:company>
                 </invoice:bank>
             </invoice:esr9>
-            <invoice:kvg insured_id="6564564" case_date="2015-02-21T13:30:17.525+01:00"/>
-            <invoice:treatment date_begin="2015-02-21T13:30:17.525+01:00" date_end="2015-02-21T13:30:17.525+01:00" canton="AG" reason="disease">
+            <invoice:kvg insured_id="6564564" case_date="2015-02-21T13:30:52.592+01:00"/>
+            <invoice:treatment date_begin="2015-02-21T13:30:52.592+01:00" date_end="2015-02-21T13:30:52.592+01:00" canton="AG" reason="disease">
                 <invoice:diagnosis type="ICD" code="H00.0"/>
             </invoice:treatment>
             <invoice:services>
-                <invoice:service record_id="4" tariff_type="400" code="4768637" name="MUCEDOKEHL Tropfen D 5 AR 11649 10 ml ()" quantity="1.0" date_begin="2015-02-21T13:30:17.525+01:00" provider_id="7601002145411" responsible_id="7601002145411" unit="17.5" unit_factor="1.0" amount="17.5" vat_rate="0.0" obligation="false"/>
+                <invoice:service record_id="4" tariff_type="400" code="4768637" name="MUCEDOKEHL Tropfen D 5 AR 11649 10 ml ()" quantity="1.0" date_begin="2015-02-21T13:30:52.592+01:00" provider_id="7601002145411" responsible_id="7601002145411" unit="17.5" unit_factor="1.0" amount="17.5" vat_rate="0.0" obligation="false"/>
             </invoice:services>
         </invoice:body>
     </invoice:payload>

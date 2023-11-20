@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Artikelstamm Service
 Bundle-SymbolicName: at.medevit.ch.artikelstamm.model
-Bundle-Version: 3.10.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.ch.artikelstamm.service
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.rgw.utility;bundle-version="3.8.0",
  ch.elexis.core;bundle-version="3.9.0",
  ch.elexis.core.services;bundle-version="3.9.0",

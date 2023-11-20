@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Befunde Plugin
 Bundle-SymbolicName: ch.elexis.base.befunde;singleton:=true
-Bundle-Version: 3.10.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Export-Package: ch.elexis.base.befunde,
  ch.elexis.base.befunde.xchange,
  ch.elexis.befunde
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Created-By: Buildr
 Bundle-ActivationPolicy: lazy
 Require-Bundle: ch.elexis.core.l10n,

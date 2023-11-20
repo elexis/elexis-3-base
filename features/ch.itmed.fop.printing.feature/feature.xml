@@ -2,7 +2,7 @@
 <feature
       id="ch.itmed.fop.printing.feature"
       label="Medi-Print"
-      version="3.10.0.qualifier"
+      version="3.12.0.qualifier"
       provider-name="IT-Med AG">
 
    <description>

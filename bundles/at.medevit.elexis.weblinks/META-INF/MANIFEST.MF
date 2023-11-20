@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Weblinks
 Bundle-SymbolicName: at.medevit.elexis.weblinks;singleton:=true
-Bundle-Version: 3.0.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Activator: at.medevit.elexis.weblinks.Activator
 Bundle-Vendor: medevit.at
 Require-Bundle: ch.elexis.core.l10n,
@@ -12,6 +12,6 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.ui,
  ch.elexis.core.data,
  ch.elexis.core;bundle-version="3.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Import-Package: ch.elexis.core.services.holder

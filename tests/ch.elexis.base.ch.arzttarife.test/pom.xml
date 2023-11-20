@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>ch.elexis.base</groupId>
 		<artifactId>ch.elexis.base.tests</artifactId>
-		<version>3.10.0-SNAPSHOT</version>
+		<version>3.12.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ch.elexis.base.ch.arzttarife.test</artifactId>
@@ -24,7 +24,7 @@
 					<application>ch.elexis.core.application.ElexisApp</application>
 					<appArgLine>-nl ${NL}</appArgLine>
 					<trimStackTrace>false</trimStackTrace>
-					<argLine>${os-jvm-flags} -Delexis-run-mode=RunFromScratch -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis.test.mode=true</argLine>
+					<argLine>-Delexis-run-mode=RunFromScratch -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis.test.mode=true</argLine>
 					<bundleStartLevel>
 						<bundle>
 							<id>org.eclipse.gemini.jpa</id>

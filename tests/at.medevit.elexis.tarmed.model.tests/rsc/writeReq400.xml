@@ -12,7 +12,7 @@
         </generator>
         <validator focus="tarmed" version_software="300" version_db="401" id="1">Elexis TarmedVerifier</validator>
     </prolog>
-    <invoice invoice_timestamp="1426759765" invoice_id="001026000562" invoice_date="2015-04-19T10:30:17.018+02:00" resend="false" case_id="ka933bacc6535fecf017">
+    <invoice invoice_timestamp="1426759765" invoice_id="001026000562" invoice_date="2015-04-19T10:30:51.960+02:00" resend="false" case_id="ka933bacc6535fecf017">
         <balance currency="CHF" amount="110.19" amount_prepaid="0.0" amount_due="110.2" amount_tarmed="54.59" unit_tarmed.mt="26.43" amount_tarmed.mt="30.61" unit_tarmed.tt="28.73" amount_tarmed.tt="28.16" amount_cantonal="0.0" amount_unclassified="0.0" amount_lab="0.0" amount_migel="0.0" amount_physio="0.0" amount_drug="55.6" amount_obligations="110.19">
             <vat vat="3.11">
                 <vat_rate vat_rate="0.0" amount="54.59" vat="0.0"/>
@@ -69,7 +69,7 @@
                     </postal>
                 </company>
             </insurance>
-            <patient gender="male" birthdate="1966-08-20T10:30:17.020+01:00">
+            <patient gender="male" birthdate="1966-08-20T10:30:51.963+01:00">
                 <person>
                     <familyname>Adlerauge</familyname>
                     <givenname>Albertino</givenname>
@@ -92,18 +92,18 @@
                 </person>
             </guarantor>
         </tiers_payant>
-        <detail date_begin="2015-04-19T10:30:17.018+02:00" date_end="2015-04-19T10:30:17.018+02:00" canton="AG" service_locality="practice">
+        <detail date_begin="2015-04-19T10:30:51.960+02:00" date_end="2015-04-19T10:30:51.960+02:00" canton="AG" service_locality="practice">
             <diagnosis type="ICD10" code="V17"/>
             <diagnosis type="by_contract" code="R4"/>
             <diagnosis type="by_contract" code="R5"/>
-            <uvg reason="accident" case_id="97651" case_date="2015-04-19T10:30:17.018+02:00"/>
+            <uvg reason="accident" case_id="97651" case_date="2015-04-19T10:30:51.960+02:00"/>
             <services>
-                <record_drug record_id="1" number="1" tariff_type="400" code="2321636" quantity="1.0" date_begin="2015-04-19T10:30:17.018+02:00" unit="3.9" unit_factor="1.0" amount="3.9" vat_rate="8.0" validate="true" obligation="false">HANSAPLAST Wundreinigungstücher 8 Stk ()</record_drug>
-                <record_drug record_id="2" number="1" tariff_type="400" code="2180791" quantity="1.0" date_begin="2015-04-19T10:30:17.018+02:00" unit="25.45" unit_factor="1.0" amount="24.45" vat_rate="8.0" validate="true" obligation="false">HANSAPLAST Knie Bandage (1 Stk)</record_drug>
-                <record_drug record_id="3" number="1" tariff_type="400" code="2321599" quantity="1.0" date_begin="2015-04-19T10:30:17.018+02:00" unit="3.0" unit_factor="1.0" amount="3.0" vat_rate="8.0" validate="true" obligation="false">HANSAPLAST UNIVERSAL Schnellverb Strips ass 20 Stk ()</record_drug>
-                <record_drug record_id="4" number="1" tariff_type="400" code="2648343" quantity="1.0" date_begin="2015-04-19T10:30:17.018+02:00" unit="24.25" unit_factor="1.0" amount="24.45" vat_rate="24.45" validate="true" obligation="false">VOLTAREN DOLO Emulgel (Tube 120 g)</record_drug>
-                <record_tarmed record_id="5" number="1" treatment="ambulatory" tariff_type="001" code="00.0010" quantity="1.0" date_begin="2015-04-19T10:30:17.018+02:00" ean_provider="2099988872462" ean_responsible="2099988872462" billing_role="both" medical_role="self_employed" body_location="none" unit.mt="9.57" unit_factor.mt="0.92" scale_factor.mt="1.0" external_factor.mt="1.0" amount.mt="8.8" unit.tt="8.19" unit_factor.tt="0.92" scale_factor.tt="1.0" external_factor.tt="1.0" amount.tt="7.53" amount="16.34" vat_rate="0.0" validate="true" obligation="true">Konsultation, erste 5 Min. (Grundkonsultation)</record_tarmed>
-                <record_tarmed record_id="6" number="1" treatment="ambulatory" tariff_type="001" code="01.0110" quantity="1.0" date_begin="2015-04-19T10:30:17.018+02:00" ean_provider="2099988872462" ean_responsible="2099988872462" billing_role="both" medical_role="self_employed" body_location="none" unit.mt="21.04" unit_factor.mt="0.92" scale_factor.mt="1.0" external_factor.mt="1.0" amount.mt="19.36" unit.tt="20.54" unit_factor.tt="0.92" scale_factor.tt="1.0" external_factor.tt="1.0" amount.tt="18.9" amount="38.25" vat_rate="0.0" validate="true" obligation="true">Taping, Kategorie I</record_tarmed>
+                <record_drug record_id="1" number="1" tariff_type="400" code="2321636" quantity="1.0" date_begin="2015-04-19T10:30:51.960+02:00" unit="3.9" unit_factor="1.0" amount="3.9" vat_rate="8.0" validate="true" obligation="false">HANSAPLAST Wundreinigungstücher 8 Stk ()</record_drug>
+                <record_drug record_id="2" number="1" tariff_type="400" code="2180791" quantity="1.0" date_begin="2015-04-19T10:30:51.960+02:00" unit="25.45" unit_factor="1.0" amount="24.45" vat_rate="8.0" validate="true" obligation="false">HANSAPLAST Knie Bandage (1 Stk)</record_drug>
+                <record_drug record_id="3" number="1" tariff_type="400" code="2321599" quantity="1.0" date_begin="2015-04-19T10:30:51.960+02:00" unit="3.0" unit_factor="1.0" amount="3.0" vat_rate="8.0" validate="true" obligation="false">HANSAPLAST UNIVERSAL Schnellverb Strips ass 20 Stk ()</record_drug>
+                <record_drug record_id="4" number="1" tariff_type="400" code="2648343" quantity="1.0" date_begin="2015-04-19T10:30:51.960+02:00" unit="24.25" unit_factor="1.0" amount="24.45" vat_rate="24.45" validate="true" obligation="false">VOLTAREN DOLO Emulgel (Tube 120 g)</record_drug>
+                <record_tarmed record_id="5" number="1" treatment="ambulatory" tariff_type="001" code="00.0010" quantity="1.0" date_begin="2015-04-19T10:30:51.960+02:00" ean_provider="2099988872462" ean_responsible="2099988872462" billing_role="both" medical_role="self_employed" body_location="none" unit.mt="9.57" unit_factor.mt="0.92" scale_factor.mt="1.0" external_factor.mt="1.0" amount.mt="8.8" unit.tt="8.19" unit_factor.tt="0.92" scale_factor.tt="1.0" external_factor.tt="1.0" amount.tt="7.53" amount="16.34" vat_rate="0.0" validate="true" obligation="true">Konsultation, erste 5 Min. (Grundkonsultation)</record_tarmed>
+                <record_tarmed record_id="6" number="1" treatment="ambulatory" tariff_type="001" code="01.0110" quantity="1.0" date_begin="2015-04-19T10:30:51.960+02:00" ean_provider="2099988872462" ean_responsible="2099988872462" billing_role="both" medical_role="self_employed" body_location="none" unit.mt="21.04" unit_factor.mt="0.92" scale_factor.mt="1.0" external_factor.mt="1.0" amount.mt="19.36" unit.tt="20.54" unit_factor.tt="0.92" scale_factor.tt="1.0" external_factor.tt="1.0" amount.tt="18.9" amount="38.25" vat_rate="0.0" validate="true" obligation="true">Taping, Kategorie I</record_tarmed>
             </services>
         </detail>
     </invoice>

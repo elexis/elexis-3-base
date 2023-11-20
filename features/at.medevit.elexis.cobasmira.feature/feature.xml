@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.elexis.cobasmira.feature"
       label="Cobas Mira Anbindung"
-      version="3.9.0.qualifier"
+      version="3.12.0.qualifier"
       provider-name="medevit.at"
       plugin="at.medevit.elexis.cobasmira">
 

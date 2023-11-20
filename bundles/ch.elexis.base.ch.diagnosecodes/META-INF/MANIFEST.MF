@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Diagnosecodes Schweiz
 Bundle-SymbolicName: ch.elexis.base.ch.diagnosecodes;singleton:=true
-Bundle-Version: 3.9.0.qualifier
+Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.l10n,
  ch.rgw.utility;bundle-version="3.9.100",
  ch.elexis.core.data;bundle-version="3.9.0",

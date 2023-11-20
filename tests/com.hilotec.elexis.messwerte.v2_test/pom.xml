@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>ch.elexis.base</groupId>
 		<artifactId>ch.elexis.base.tests</artifactId>
-		<version>3.10.0-SNAPSHOT</version>
+		<version>3.12.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>com.hilotec.elexis.messwerte.v2_test</artifactId>
@@ -19,7 +19,7 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<application>ch.elexis.core.application.ElexisApp</application>
-					<argLine>${os-jvm-flags} -Dcom.hilotec.unitests=1 -debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
+					<argLine>-Dcom.hilotec.unitests=1 -debug -DjdbcLink=org.h2.Driver:mem:mem_test;AUTO_SERVER=TRUE -Dch.elexis.username=007 -Dch.elexis.password=topsecret -Delexis-run-mode=RunFromScratch</argLine>
 					<useUIThread>true</useUIThread>
 					<useUIHarness>true</useUIHarness>
 					<showEclipseLog>${show.eclipse.log}</showEclipseLog>

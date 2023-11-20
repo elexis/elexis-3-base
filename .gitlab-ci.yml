@@ -9,8 +9,6 @@ stages:
 build:
   stage: build
   tags:
-  - java17
-  - maven
   - docker-host
   script:
   - docker pull ${DOCKER_BUILD_IMAGE}

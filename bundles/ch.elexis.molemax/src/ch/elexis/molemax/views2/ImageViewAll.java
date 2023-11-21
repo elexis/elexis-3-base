@@ -262,35 +262,35 @@ public class ImageViewAll {
 			public void dragLeave(DropTargetEvent event) {
 			}
 			public void drop(DropTargetEvent event) {
-				DropTarget dropTarget = (DropTarget) event.widget;
-				Control control = dropTarget.getControl();
-				Point coords = control.toControl(new Point(event.x, event.y));
-				groupName = null;
-				for (GalleryItem group : gallery.getItems()) {
-					if (group.getBounds().contains(coords)) {
-						groupName = group.getText();
-						break;
-					}
-				}
-				if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
-					if (event.data instanceof String[]) {
-						String[] files = (String[]) event.data;
-						GalleryItem lastAddedItem = null;
-						for (String file : files) {
-							Image image = null;
-							try {
-								image = new Image(Display.getDefault(), file);
-								String targetPath;
-								if (groupName == null) {
-									groupName = java.time.LocalDate.now()
-											.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
-								}
-								targetPath = Tracker.makeDescriptorImage(aktuellerPatient) + File.separator + groupName;
-								File targetDir = new File(targetPath);
-								if (!targetDir.exists()) {
-									targetDir.mkdirs();
-								}
-								File targetFile = new File(targetPath, new File(file).getName());
+		    DropTarget dropTarget = (DropTarget) event.widget;
+		    Control control = dropTarget.getControl();
+		    Point coords = control.toControl(new Point(event.x, event.y));
+		    groupName = null;
+		    for (GalleryItem group : gallery.getItems()) {
+		        if (group.getBounds().contains(coords)) {
+		            groupName = group.getText();
+		            break;
+		        }
+		    }
+		    if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+		        if (event.data instanceof String[]) {
+		            String[] files = (String[]) event.data;
+		            GalleryItem lastAddedItem = null;
+		            for (String file : files) {
+		                Image image = null;
+		                try {
+		                    image = new Image(Display.getDefault(), file);
+		                    String targetPath;
+		                    if (groupName == null) {
+		                        groupName = java.time.LocalDate.now()
+		                                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+		                    }
+		                    targetPath = Tracker.makeDescriptorImage(aktuellerPatient) + File.separator + groupName;
+		                    File targetDir = new File(targetPath);
+		                    if (!targetDir.exists()) {
+		                        targetDir.mkdirs();
+		                    }
+		                    File targetFile = new File(targetPath, new File(file).getName());
 								if (targetFile.exists()) {
 									CustomFileDialog dialog = new CustomFileDialog(gallery.getShell());
 									int result = dialog.open();
@@ -336,45 +336,38 @@ public class ImageViewAll {
 										LoggerFactory.getLogger(getClass()).warn("File no copy ", e);
 									}
 								}
-								GalleryItem parentGroup = gallery.getItem(new Point(event.x, event.y));
-								if (parentGroup != null && parentGroup.getParentItem() == null) {
-									GalleryItem newItem = new GalleryItem(parentGroup, SWT.NONE);
-									newItem.setImage(image);
-									newItem.setData(targetPath);
-									createdImages.add(image);
-									lastAddedItem = newItem;
-								} else {
-									GalleryItem newItem = new GalleryItem(gallery, SWT.NONE);
-									newItem.setImage(image);
-									newItem.setData(targetPath);
-									createdImages.add(image);
-									lastAddedItem = newItem;
-								}
-							} finally {
-								if (image != null && !image.isDisposed()) {
-									image.dispose();
-								}
-							}
-						}
-						updateGalleryForPatient(aktuellerPatient);
-						for (GalleryItem group : gallery.getItems()) {
-							if (group.getText().equals(groupName)) {
-								group.setExpanded(true);
-							} else {
-								group.setExpanded(false);
-							}
-						}
-						if (lastAddedItem != null && Arrays.asList(gallery.getItems()).contains(lastAddedItem)) {
-							gallery.setSelection(new GalleryItem[] { lastAddedItem });
-						}
-					} else {
-					}
-				} else {
-					String sourcePath = (String) event.data;
-					GalleryItem targetGroup = gallery.getItem(new Point(event.x, event.y));
-					if (targetGroup != null) {
-					}
+		                    GalleryItem parentGroup = gallery.getItem(new Point(event.x, event.y));
+		                    GalleryItem newItem;
+		                    if (parentGroup != null && parentGroup.getParentItem() == null) {
+		                        newItem = new GalleryItem(parentGroup, SWT.NONE);
+		                    } else {
+		                        newItem = new GalleryItem(gallery, SWT.NONE);
+		                    }
+		                    newItem.setImage(image);
+		                    newItem.setData(targetPath);
+		                    createdImages.add(image);
+		                    lastAddedItem = newItem;
+		                } catch (Exception e) {
+		                    LoggerFactory.getLogger(getClass()).warn("Error processing image file", e);
+		                    if (image != null && !image.isDisposed()) {
+		                        image.dispose();
+		                    }
+		                }
+		            }
+		            updateGalleryForPatient(aktuellerPatient);
+		            for (GalleryItem group : gallery.getItems()) {
+		                group.setExpanded(group.getText().equals(groupName));
+		            }
+		            if (lastAddedItem != null && Arrays.asList(gallery.getItems()).contains(lastAddedItem)) {
+		                gallery.setSelection(new GalleryItem[] { lastAddedItem });
+		            }
+		        }
+		    } else {
+		    	String sourcePath = (String) event.data;
+				GalleryItem targetGroup = gallery.getItem(new Point(event.x, event.y));
+				if (targetGroup != null) {
 				}
+		    }
 			}
 		});
 	}

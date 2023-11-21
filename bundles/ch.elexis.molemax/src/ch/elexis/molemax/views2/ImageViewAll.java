@@ -337,20 +337,18 @@ public class ImageViewAll {
 									}
 								}
 								GalleryItem parentGroup = gallery.getItem(new Point(event.x, event.y));
+								GalleryItem newItem;
 								if (parentGroup != null && parentGroup.getParentItem() == null) {
-									GalleryItem newItem = new GalleryItem(parentGroup, SWT.NONE);
-									newItem.setImage(image);
-									newItem.setData(targetPath);
-									createdImages.add(image);
-									lastAddedItem = newItem;
+									newItem = new GalleryItem(parentGroup, SWT.NONE);
 								} else {
-									GalleryItem newItem = new GalleryItem(gallery, SWT.NONE);
-									newItem.setImage(image);
-									newItem.setData(targetPath);
-									createdImages.add(image);
-									lastAddedItem = newItem;
+									newItem = new GalleryItem(gallery, SWT.NONE);
 								}
-							} finally {
+								newItem.setImage(image);
+								newItem.setData(targetPath);
+								createdImages.add(image);
+								lastAddedItem = newItem;
+							} catch (Exception e) {
+								LoggerFactory.getLogger(getClass()).warn("Error processing image file", e);
 								if (image != null && !image.isDisposed()) {
 									image.dispose();
 								}
@@ -358,22 +356,17 @@ public class ImageViewAll {
 						}
 						updateGalleryForPatient(aktuellerPatient);
 						for (GalleryItem group : gallery.getItems()) {
-							if (group.getText().equals(groupName)) {
-								group.setExpanded(true);
-							} else {
-								group.setExpanded(false);
-							}
+							group.setExpanded(group.getText().equals(groupName));
 						}
 						if (lastAddedItem != null && Arrays.asList(gallery.getItems()).contains(lastAddedItem)) {
 							gallery.setSelection(new GalleryItem[] { lastAddedItem });
 						}
-					} else {
 					}
 				} else {
 					String sourcePath = (String) event.data;
 					GalleryItem targetGroup = gallery.getItem(new Point(event.x, event.y));
 					if (targetGroup != null) {
-					}
+				}
 				}
 			}
 		});

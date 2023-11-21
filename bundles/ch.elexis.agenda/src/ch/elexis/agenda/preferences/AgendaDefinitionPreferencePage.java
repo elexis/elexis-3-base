@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,6 +53,7 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
+import ch.elexis.dialogs.FarbenSelektor;
 
 public class AgendaDefinitionPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -188,6 +191,17 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 				}
 			}
 		};
+		Link farbenSelektorLink = new Link(compAreas, SWT.NONE);
+		farbenSelektorLink.setText("<a>" + Messages.AgendaFarben_Link + "</a>");
+		farbenSelektorLink.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FarbenSelektor farbenSelektor = new FarbenSelektor(UiDesk.getTopShell());
+				if (farbenSelektor.open() == Dialog.OK) {
+					listViewerArea.refresh();
+				}
+			}
+		});
 
 		linkAreaTypeValue = new Link(compositeAreaType, SWT.NONE);
 		linkAreaTypeValue.addMouseListener(contactSelectorMouseListener);

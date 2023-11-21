@@ -1,6 +1,8 @@
 package at.medevit.elexis.agenda.ui.function;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -9,6 +11,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite;
+import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.UiDesk;
 
 public class LoadResourcesFunction extends AbstractBrowserFunction {
 
@@ -23,28 +28,39 @@ public class LoadResourcesFunction extends AbstractBrowserFunction {
 
 	@Override
 	public Object function(Object[] arguments) {
-		Set<String> selectedResources = agendaComposite.getSelectedResources();
-		Set<Resource> _selectedResources = new LinkedHashSet<Resource>();
-		int order = 0;
-		for (String selectedResource : selectedResources) {
-			_selectedResources.add(new Resource(selectedResource, selectedResource, order));
-			order++;
-		}
-		String json = gson.toJson(_selectedResources);
-		return json;
+	    Set<String> selectedResources = agendaComposite.getSelectedResources();
+		String colorPrefs = ConfigServiceHolder.get().get(PreferenceConstants.AG_BEREICH_FARBEN, null);
+	    Map<String, String> resourceColors = new HashMap<>();
+	    String[] colorAssignments = colorPrefs.split(";");
+	    for (String assignment : colorAssignments) {
+	        String[] parts = assignment.split(":");
+	        if (parts.length == 2) {
+				resourceColors.put(parts[0], parts[1]);
+	        }
+	    }
+	    Set<Resource> _selectedResources = new LinkedHashSet<Resource>();
+	    int order = 0;
+	    for (String selectedResource : selectedResources) {
+			String color = resourceColors.getOrDefault(selectedResource, UiDesk.COL_WHITE);
+			_selectedResources.add(new Resource(selectedResource, selectedResource, order, color));
+	        order++;
+	    }
+	    String json = gson.toJson(_selectedResources);
+	    return json;
 	}
-
 	private class Resource {
 
 		private String id;
 		private String title;
 		@SuppressWarnings("unused")
 		private int order;
+		private String color;
 
-		public Resource(String id, String title, int order) {
+		public Resource(String id, String title, int order, String color) {
 			this.id = id;
 			this.title = title;
 			this.order = order;
+			this.color = color;
 		}
 
 		@Override

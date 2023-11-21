@@ -79,6 +79,7 @@ public final class Messages {
 	public static String TerminDialog_Mandator = ch.elexis.core.l10n.Messages.TerminDialog_Mandator;
 	public static String TerminDialog_past = ch.elexis.core.l10n.Messages.TerminDialog_past;
 	public static String TerminDialog_print = ch.elexis.core.l10n.Messages.Core_Print;
+	public static String Agenda_Bereiche_Title = ch.elexis.core.l10n.Messages.Core_Area_Bereiche;
 	public static String AgendaFarben_appstateTypes = ch.elexis.core.l10n.Messages.AgendaFarben_appstateTypes;
 	public static String AgendaFarben_appTypes = ch.elexis.core.l10n.Messages.AgendaFarben_appTypes;
 	public static String AgendaFarben_colorSettings = ch.elexis.core.l10n.Messages.AgendaFarben_colorSettings;
@@ -112,6 +113,7 @@ public final class Messages {
 	public static String Zeitvorgaben_terminTypes = ch.elexis.core.l10n.Messages.Zeitvorgaben_terminTypes;
 	public static String AgendaDefinitionen_shortCutsForBer = ch.elexis.core.l10n.Messages.AgendaDefinitionen_shortCutsForBer;
 	public static String AgendaDefinitionen_shortCutsForBerToUser = ch.elexis.core.l10n.Messages.AgendaDefinitionen_shortCutsForBerToUser;
+	public static String AgendaFarben_Title = ch.elexis.core.l10n.Messages.LeistungenView_defineColor;
 	public static String Tageseinteilung_no_past_Date = ch.elexis.core.l10n.Messages.Tageseinteilung_no_past_Date;
 	public static String AgendaAnzeige_options = ch.elexis.core.l10n.Messages.AgendaAnzeige_options;
 	public static String AgendaAnzeige_showReason = ch.elexis.core.l10n.Messages.AgendaAnzeige_showReason;
@@ -181,4 +183,8 @@ public final class Messages {
 	public static String Tageseinteilung_lblEditValuesFor_text = ch.elexis.core.l10n.Messages.Tageseinteilung_lblEditValuesFor_text;
 	public static String Tageseinteilung_lblChangedValuesAre_text = ch.elexis.core.l10n.Messages.Tageseinteilung_lblChangedValuesAre_text;
 	public static String Tageseinteilung_btnNewButton_text = ch.elexis.core.l10n.Messages.Tageseinteilung_btnNewButton_text;
+	public static String AgendaFarben_Bereich_Description = ch.elexis.core.l10n.Messages.AgendaFarben_Bereich_Description;
+	public static String AgendaFarben_Titel = ch.elexis.core.l10n.Messages.AgendaFarben_Titel;
+	public static String AgendaFarben_Link = ch.elexis.core.l10n.Messages.AgendaFarben_Link;
+
 }

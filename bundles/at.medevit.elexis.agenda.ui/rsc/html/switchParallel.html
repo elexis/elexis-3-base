@@ -156,44 +156,45 @@
         var color = colorMapping[resourceId] || 'rgba(255, 255, 255, 0.2)';
         return color;
       }
-
       function loadEventsCallback(start, end, timezone, callback) {
         var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
         var jsonEvents = JSON.parse(eventsJson);
         var events = [];
+        var processedResources = new Set();
           jsonEvents.forEach(function (event) {
-        var resourceId = event.resource || event.resourceId;
-        var color = getColorForResource(resourceId);
-        var autoStartDate = new Date();
-          autoStartDate.setFullYear(autoStartDate.getFullYear() - 1);
-        var autoEndDate = new Date();
-          autoEndDate.setFullYear(autoEndDate.getFullYear() + 3);
-        var formattedStart = autoStartDate.toISOString().split('T')[0] + "T00:00";
-        var formattedEnd = autoEndDate.toISOString().split('T')[0] + "T23:59";
-
-       	  events.push({
-            resourceId: resourceId,
-            start: formattedStart, 
-            end: formattedEnd, 
-            rendering: 'background',
-            color: color
+            var resourceId = event.resource || event.resourceId;
+              if (!processedResources.has(resourceId)) {
+                  var color = getColorForResource(resourceId);
+                  var autoStartDate = new Date();
+                  var autoEndDate = new Date();
+                      autoStartDate.setFullYear(autoStartDate.getFullYear() - 1);
+                    autoEndDate.setFullYear(autoEndDate.getFullYear() + 3);
+                  var formattedStart = autoStartDate.toISOString().split('T')[0] + "T00:00";
+                  var formattedEnd = autoEndDate.toISOString().split('T')[0] + "T23:59";
+                    events.push({
+                      resourceId: resourceId,
+                      start: formattedStart, 
+                      end: formattedEnd, 
+                      rendering: 'background',
+                      color: color
+                    });
+                  processedResources.add(resourceId); 
+                }
+              events.push({
+                id: event.id,
+                title: event.title,
+                start: event.start,
+                end: event.end,
+                description: event.description,
+                icon: event.icon,
+                rendering: event.rendering,
+                borderColor: event.borderColor,
+                backgroundColor: event.backgroundColor,
+                textColor: event.textColor,
+                resourceId: event.resource,
+                allDay: event.allDay
+              });
           });
-        
-          events.push({
-            id: event.id,
-            title: event.title,
-            start: event.start,
-            end: event.end,
-            description: event.description,
-            icon: event.icon,
-            rendering: event.rendering,
-            borderColor: event.borderColor,
-            backgroundColor: event.backgroundColor,
-            textColor: event.textColor,
-            resourceId: event.resource,
-            allDay: event.allDay
-          });
-        });
         callback(events);
       }
 

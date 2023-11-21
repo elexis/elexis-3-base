@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
@@ -42,6 +43,7 @@ import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.issue.Visibility;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
@@ -97,9 +99,20 @@ public class MsgDetailDialog extends Dialog {
 				return anw.getLabel();
 			}
 		});
-		List<Anwender> users = getUsers();
-		cbTo.setInput(users);
-		cbTo.setSelection(new StructuredSelection(users.get(0)));
+	    List<Anwender> users = getUsers();
+	    cbTo.setInput(users);
+		String preferenceKey = getPreferenceKeyForUser();
+	    String savedRecipientId = ConfigServiceHolder.getUser(preferenceKey, null);
+	    if (savedRecipientId != null && !savedRecipientId.isEmpty()) {
+	        for (Anwender user : users) {
+	            if (user.getId().equals(savedRecipientId)) {
+	                cbTo.setSelection(new StructuredSelection(user));
+	                break;
+	            }
+	        }
+	    } else {
+			cbTo.setSelection(new StructuredSelection(users.get(0)));
+	    }
 
 		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
 
@@ -237,5 +250,10 @@ public class MsgDetailDialog extends Dialog {
 			incomingMsg.delete();
 		}
 		super.okPressed();
+	}
+
+	private String getPreferenceKeyForUser() {
+		String userId = CoreHub.getLoggedInContact().getId();
+		return Preferences.USR_DEFAULT_MESSAGE_RECIPIENT + "_" + userId;
 	}
 }

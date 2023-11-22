@@ -1,6 +1,13 @@
 package ch.elexis.base.messages;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -17,14 +24,22 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IUser;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.data.Anwender;
 
 public class MessagePreferences extends PreferencePage implements IWorkbenchPreferencePage {
 	public static final String DEF_SOUND_PATH = "/sounds/notify_sound.wav"; //$NON-NLS-1$
 
 	private Text txtSoundFilePath;
 	private Button btnBrowse, btnSoundOn, btnAnswerAutoclear;
-
+	private ComboViewer comboDefaultRecipient;
 	private boolean soundOn, answerAutoclear;
 	String soundFilePath;
 
@@ -89,6 +104,38 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		btnAnswerAutoclear.setText(Messages.Prefs_btnAnswerAutoclear);
 		btnAnswerAutoclear.setSelection(answerAutoclear);
 
+		Group grpDefaultRecipient = new Group(ret, SWT.NONE);
+		grpDefaultRecipient.setLayout(new GridLayout(2, false));
+		grpDefaultRecipient.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		grpDefaultRecipient.setText(Messages.Prefs_DefaultMessageRecipient);
+
+		Label lblActiveUser = new Label(grpDefaultRecipient, SWT.NONE);
+		lblActiveUser.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblActiveUser.setText(Messages.Benutzer + ": " + CoreHub.getLoggedInContact().getLabel() + " ");
+		comboDefaultRecipient = new ComboViewer(grpDefaultRecipient, SWT.READ_ONLY);
+		comboDefaultRecipient.setContentProvider(ArrayContentProvider.getInstance());
+		comboDefaultRecipient.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				if (element instanceof Anwender) {
+					Anwender anwender = (Anwender) element;
+					return anwender.getLabel();
+				}
+				return super.getText(element);
+			}
+		});
+		comboDefaultRecipient.setInput(getUsers());
+		String preferenceKey = getPreferenceKeyForUser();
+		String savedRecipientId = ConfigServiceHolder.getUser(preferenceKey, null);
+		if (savedRecipientId != null && !savedRecipientId.isEmpty()) {
+			List<Anwender> users = getUsers();
+			for (Anwender user : users) {
+				if (user.getId().equals(savedRecipientId)) {
+					comboDefaultRecipient.setSelection(new StructuredSelection(user));
+					break;
+				}
+			}
+		}
 		return ret;
 	}
 
@@ -113,9 +160,45 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 
 	@Override
 	public boolean performOk() {
+		StructuredSelection selection = (StructuredSelection) comboDefaultRecipient.getSelection();
+		Anwender selectedUser = (Anwender) selection.getFirstElement();
+		String selectedUserId = selectedUser.getId();
+		String preferenceKey = getPreferenceKeyForUser();
+		ConfigServiceHolder.setUser(preferenceKey, selectedUserId);
 		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_ON, btnSoundOn.getSelection());
 		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_SOUND_PATH, txtSoundFilePath.getText());
 		ConfigServiceHolder.setUser(Preferences.USR_MESSAGES_ANSWER_AUTOCLEAR, btnAnswerAutoclear.getSelection());
 		return super.performOk();
 	}
+
+	private List<Anwender> getUsers() {
+		IQuery<IUser> userQuery = CoreModelServiceHolder.get().getQuery(IUser.class);
+		userQuery.and(ModelPackage.Literals.IUSER__ASSIGNED_CONTACT, COMPARATOR.NOT_EQUALS, null);
+		List<IUser> users = userQuery.execute();
+		return users.stream().filter(u -> isActive(u)).map(u -> Anwender.load(u.getAssignedContact().getId()))
+				.collect(Collectors.toList());
+	}
+
+	private boolean isActive(IUser user) {
+		if (user == null || user.getAssignedContact() == null) {
+			return false;
+		}
+		if (!user.isActive()) {
+			return false;
+		}
+		if (user.getAssignedContact() != null && user.getAssignedContact().isMandator()) {
+			IMandator mandator = CoreModelServiceHolder.get().load(user.getAssignedContact().getId(), IMandator.class)
+					.orElse(null);
+			if (mandator != null && !mandator.isActive()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private String getPreferenceKeyForUser() {
+		String userId = CoreHub.getLoggedInContact().getId();
+		return Preferences.USR_DEFAULT_MESSAGE_RECIPIENT + "_" + userId;
+	}
+
 }

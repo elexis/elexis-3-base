@@ -107,8 +107,8 @@ public class MsgDetailDialog extends Dialog {
 	        for (Anwender user : users) {
 	            if (user.getId().equals(savedRecipientId)) {
 	                cbTo.setSelection(new StructuredSelection(user));
-	                break;
-	            }
+					break;
+				}
 	        }
 	    } else {
 			cbTo.setSelection(new StructuredSelection(users.get(0)));

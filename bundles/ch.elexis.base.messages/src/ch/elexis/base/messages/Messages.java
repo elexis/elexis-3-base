@@ -22,5 +22,7 @@ public class Messages {
 	public static String Prefs_FS_Open = ch.elexis.core.l10n.Messages.Core_DoSearch;
 	public static String Prefs_DialogSettings = ch.elexis.core.l10n.Messages.Prefs_DialogSettings;
 	public static String Prefs_btnAnswerAutoclear = ch.elexis.core.l10n.Messages.Prefs_btnAnswerAutoclear;
+	public static String Benutzer = ch.elexis.core.l10n.Messages.Benutzer;
+	public static String Prefs_DefaultMessageRecipient = ch.elexis.core.l10n.Messages.Prefs_DefaultMessageRecipient;
 
 }

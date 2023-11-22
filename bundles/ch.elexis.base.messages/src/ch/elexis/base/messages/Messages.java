@@ -25,5 +25,4 @@ public class Messages {
 	public static String Benutzer = ch.elexis.core.l10n.Messages.Benutzer;
 	public static String Prefs_DefaultMessageRecipient = ch.elexis.core.l10n.Messages.Prefs_DefaultMessageRecipient;
 	public static String MsgDetailDialog_Copy = ch.elexis.core.l10n.Messages.Core_Copy;
-
 }

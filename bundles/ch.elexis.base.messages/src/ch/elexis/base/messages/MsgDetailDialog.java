@@ -25,10 +25,15 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -130,20 +135,31 @@ public class MsgDetailDialog extends Dialog {
 			if (sender != null) {
 				cbTo.setSelection(new StructuredSelection(sender));
 			}
-
 			cbTo.getCombo().setEnabled(false);
-
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
-			Label lblIncomingMsg = new Label(ret, SWT.None);
-			lblIncomingMsg.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
-			lblIncomingMsg.setText(incomingMsg.get(Message.FLD_TEXT));
-
+			Text txtIncomingMsg = new Text(ret, SWT.READ_ONLY | SWT.BORDER);
+			GridData gd_txtIncomingMsg = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+			txtIncomingMsg.setLayoutData(gd_txtIncomingMsg);
+			txtIncomingMsg.setText(incomingMsg.get(Message.FLD_TEXT));
+			Button copyButton = new Button(ret, SWT.PUSH);
+			copyButton.setText(Messages.MsgDetailDialog_Copy);
+			GridData gd_copyButton = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+			copyButton.setLayoutData(gd_copyButton);
+			copyButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					Clipboard clipboard = new Clipboard(Display.getCurrent());
+					String textToCopy = txtIncomingMsg.getText();
+					clipboard.setContents(new Object[] { textToCopy },
+							new org.eclipse.swt.dnd.Transfer[] { org.eclipse.swt.dnd.TextTransfer.getInstance() });
+					clipboard.dispose();
+				}
+			});
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_answer);
 		} else {
 			lblFrom.setText(CoreHub.getLoggedInContact().getLabel());
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
 		}
-
 		txtMessage = SWTHelper.createText(ret, 1, SWT.BORDER);
 		txtMessage.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
 		txtMessage.addModifyListener(e -> {
@@ -153,7 +169,6 @@ public class MsgDetailDialog extends Dialog {
 				getShell().setDefaultButton(bOK);
 			}
 		});
-
 		return ret;
 	}
 

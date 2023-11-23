@@ -13,7 +13,6 @@ import com.google.gson.GsonBuilder;
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.ui.UiDesk;
 
 public class LoadResourcesFunction extends AbstractBrowserFunction {
 
@@ -41,7 +40,7 @@ public class LoadResourcesFunction extends AbstractBrowserFunction {
 	    Set<Resource> _selectedResources = new LinkedHashSet<Resource>();
 	    int order = 0;
 	    for (String selectedResource : selectedResources) {
-			String color = resourceColors.getOrDefault(selectedResource, UiDesk.COL_WHITE);
+			String color = resourceColors.getOrDefault(selectedResource, null);
 			_selectedResources.add(new Resource(selectedResource, selectedResource, order, color));
 	        order++;
 	    }

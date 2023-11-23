@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 
@@ -33,7 +34,6 @@ public class FarbenSelektor extends TitleAreaDialog {
 	private java.util.List<String> areas;
 	private Map<String, Color> areaColors;
 	private Map<String, Color> tempAreaColors;
-	private static final RGB DEFAULT_RGB = new RGB(0, 0, 0);
 	private ConfigServicePreferenceStore prefs = new ConfigServicePreferenceStore(Scope.GLOBAL);
 	private static final Logger logger = LoggerFactory.getLogger(FarbenSelektor.class);
 	public FarbenSelektor(Shell parentShell) {
@@ -68,13 +68,33 @@ public class FarbenSelektor extends TitleAreaDialog {
 		}
 
 		private void createAreaColorSelector(Group groupAreas, Group groupColors, String area) {
-			Label areaLabel = new Label(groupAreas, SWT.NONE);
+			Composite areaComposite = new Composite(groupAreas, SWT.NONE);
+			areaComposite.setLayout(new GridLayout(1, false));
+			areaComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+			Label areaLabel = new Label(areaComposite, SWT.NONE);
 			areaLabel.setText(area);
 			areaLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-			Label colorLabel = new Label(groupColors, SWT.NONE);
+			Composite colorComposite = new Composite(groupColors, SWT.NONE);
+			colorComposite.setLayout(new GridLayout(2, false)); // 2 Spalten: für die Farbe und das Bild
+			colorComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+			Label colorLabel = new Label(colorComposite, SWT.NONE);
 			colorLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			colorLabel.setBackground(areaColors.get(area));
 			colorLabel.setData(area);
+			Label deleteImageLabel = new Label(colorComposite, SWT.NONE);
+			deleteImageLabel.setImage(Images.IMG_DELETE.getImage());
+			GridData imageLabelGridData = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
+			imageLabelGridData.heightHint = 16;
+			imageLabelGridData.verticalIndent = -2;
+			deleteImageLabel.setLayoutData(imageLabelGridData);
+			deleteImageLabel.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseDown(MouseEvent e) {
+					tempAreaColors.put(area, null);
+					colorLabel.setBackground(null);
+					saveColorPreferences();
+				}
+			});
 			colorLabel.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseDown(MouseEvent e) {
@@ -91,18 +111,19 @@ public class FarbenSelektor extends TitleAreaDialog {
 			});
 		}
 
-	private void saveColorPreferences() {
-		StringBuilder sb = new StringBuilder();
-		for (String area : areas) {
-			Color color = areaColors.get(area);
-			if (color != null) {
-				RGB rgb = color.getRGB();
-				sb.append(area).append(":").append(rgb.red).append(",").append(rgb.green).append(",").append(rgb.blue)
-						.append(";");
+		private void saveColorPreferences() {
+			StringBuilder sb = new StringBuilder();
+			for (String area : areas) {
+				Color color = areaColors.get(area);
+				if (color != null) {
+					RGB rgb = color.getRGB();
+					sb.append(area).append(":").append(rgb.red).append(",").append(rgb.green).append(",")
+							.append(rgb.blue).append(";");
+				} else {
+				}
 			}
+			prefs.setValue(PreferenceConstants.AG_BEREICH_FARBEN, sb.toString());
 		}
-		prefs.setValue(PreferenceConstants.AG_BEREICH_FARBEN, sb.toString());
-	}
 
 	private void loadColorPreferences() {
 		areaColors.clear();
@@ -129,12 +150,14 @@ public class FarbenSelektor extends TitleAreaDialog {
 				}
 			}
 		}
-		for (String area : areas) {
-			RGB rgb = loadedColors.getOrDefault(area, DEFAULT_RGB);
-			areaColors.put(area, new Color(Display.getCurrent(), rgb));
+	    for (String area : areas) {
+	        RGB rgb = loadedColors.getOrDefault(area, null);
+	        if (rgb != null) {
+	            areaColors.put(area, new Color(Display.getCurrent(), rgb));
+			} else {
+			}
 		}
 	}
-
 
 	@Override
 	public void create() {

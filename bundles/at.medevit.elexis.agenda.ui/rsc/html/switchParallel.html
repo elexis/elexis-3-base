@@ -164,20 +164,22 @@
           jsonEvents.forEach(function (event) {
             var resourceId = event.resource || event.resourceId;
               if (!processedResources.has(resourceId)) {
-                  var color = getColorForResource(resourceId);
-                  var autoStartDate = new Date();
-                  var autoEndDate = new Date();
+                var color = getColorForResource(resourceId);
+                  if (color && !color.includes("undefined")) {
+                    var autoStartDate = new Date();
+                    var autoEndDate = new Date();
                       autoStartDate.setFullYear(autoStartDate.getFullYear() - 1);
-                    autoEndDate.setFullYear(autoEndDate.getFullYear() + 3);
-                  var formattedStart = autoStartDate.toISOString().split('T')[0] + "T00:00";
-                  var formattedEnd = autoEndDate.toISOString().split('T')[0] + "T23:59";
-                    events.push({
-                      resourceId: resourceId,
-                      start: formattedStart, 
-                      end: formattedEnd, 
-                      rendering: 'background',
-                      color: color
-                    });
+                      autoEndDate.setFullYear(autoEndDate.getFullYear() + 3);
+                    var formattedStart = autoStartDate.toISOString().split('T')[0] + "T00:00";
+                    var formattedEnd = autoEndDate.toISOString().split('T')[0] + "T23:59";
+                      events.push({
+                        resourceId: resourceId,
+                        start: formattedStart, 
+                        end: formattedEnd, 
+                        rendering: 'background',
+                        color: color
+                      });
+                    }   
                   processedResources.add(resourceId); 
                 }
               events.push({

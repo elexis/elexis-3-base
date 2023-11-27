@@ -18,12 +18,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -322,8 +322,9 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 
 	protected void initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
-		IObservableMap gdt6301ValuesObserveMap = PojoObservables.observeMap(gdt6301, "values", Integer.class, //$NON-NLS-1$
-				String.class);
+		IObservableMap gdt6301ValuesObserveMap = PojoProperties.map("values", Integer.class, String.class)
+				.observe(gdt6301);
+		PojoProperties.value("values", Integer.class).observe(gdt6301);
 
 		Text[] control = { txtPatientenKennung, txtPatientNachname, txtPatientVorname, txtIDReceiver, txtIDSender,
 				txtGewicht, txtGroesse, txtMuttersprache, txtOrt, txtStrasse, txtTitel, txtVersichertenNr };
@@ -360,7 +361,7 @@ public class StammdatenUebermittelnDialog extends TitleAreaDialog {
 
 	private void bindMapValue(Text text, int feldkennung, DataBindingContext bindingContext,
 			IObservableMap gdt6302ValuesObserveMap) {
-		IObservableValue textObserveWidget = SWTObservables.observeText(text, SWT.Modify);
+		IObservableValue<String> textObserveWidget = WidgetProperties.text(SWT.Modify).observe(text);
 		IObservableValue observableMapValue = Observables.observeMapEntry(gdt6302ValuesObserveMap, feldkennung,
 				String.class);
 		bindingContext.bindValue(textObserveWidget, observableMapValue);

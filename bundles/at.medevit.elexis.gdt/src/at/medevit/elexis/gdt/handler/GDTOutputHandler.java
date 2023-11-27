@@ -14,9 +14,6 @@ package at.medevit.elexis.gdt.handler;
 
 import java.io.IOException;
 
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
@@ -79,20 +76,14 @@ public class GDTOutputHandler {
 			}
 			logger.info("Handler program of [" + cp.getLabel() + "] [" + handlerProgram + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (handlerProgram != null) {
-				CommandLine cmdLine = CommandLine.parse(handlerProgram);
+				Runtime runtime = Runtime.getRuntime();
 				logger.info("Command line [" + handlerProgram + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
-					DefaultExecutor executor = new DefaultExecutor();
-					executor.setExitValues(null); // Ignore the exit value
-					int exitValue = executor.execute(cmdLine);
-					logger.debug("Return value of " + cmdLine + ": " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch (ExecuteException e) {
-					String message = "Fehler beim Ausführen von " + cmdLine;
-					Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message, e);
-					StatusManager.getManager().handle(status, StatusManager.SHOW);
-					logger.error(message, e);
+					Process exec = runtime.exec(handlerProgram);
+					int exitValue = exec.exitValue();
+					logger.debug("Return value of " + handlerProgram + ": " + exitValue); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (IOException e) {
-					String message = "Fehler beim Ausführen von " + cmdLine;
+					String message = "Fehler beim Ausführen von " + handlerProgram;
 					Status status = new Status(IStatus.WARNING, Activator.PLUGIN_ID, message, e);
 					StatusManager.getManager().handle(status, StatusManager.SHOW);
 					logger.error(message, e);

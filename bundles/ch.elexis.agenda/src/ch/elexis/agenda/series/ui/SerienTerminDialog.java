@@ -3,12 +3,14 @@ package ch.elexis.agenda.series.ui;
 import static ch.elexis.agenda.series.SerienTermin.decimalFormat;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -528,33 +530,36 @@ public class SerienTerminDialog extends TitleAreaDialog {
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
-		IObservableValue observeSelectionDateTimeBeginObserveWidget = WidgetProperties.selection()
+		IObservableValue<Date> observeSelectionDateTimeBeginObserveWidget = WidgetProperties.dateTimeSelection()
 				.observe(dateTimeBegin);
 		IObservableValue beginTimeSerienTerminObserveValue = PojoProperties.value("beginTime").observe(serienTermin);
 		bindingContext.bindValue(observeSelectionDateTimeBeginObserveWidget, beginTimeSerienTerminObserveValue, null,
 				null);
 		//
-		IObservableValue observeSelectionDateTimeEndObserveWidget = WidgetProperties.selection().observe(dateTimeEnd);
+		IObservableValue<Date> observeSelectionDateTimeEndObserveWidget = WidgetProperties.dateTimeSelection()
+				.observe(dateTimeEnd);
 		IObservableValue endTimeSerienTerminObserveValue = PojoProperties.value("endTime").observe(serienTermin);
 		bindingContext.bindValue(observeSelectionDateTimeEndObserveWidget, endTimeSerienTerminObserveValue, null, null);
 		//
-		IObservableValue observeSelectionDateTimeBeginOfSeriesObserveWidget = WidgetProperties.selection()
+		IObservableValue<Date> observeSelectionDateTimeBeginOfSeriesObserveWidget = WidgetProperties.dateTimeSelection()
 				.observe(dateTimeBeginOfSeries);
 		IObservableValue seriesStartDateSerienTerminObserveValue = PojoProperties.value("seriesStartDate")
 				.observe(serienTermin);
 		bindingContext.bindValue(observeSelectionDateTimeBeginOfSeriesObserveWidget,
 				seriesStartDateSerienTerminObserveValue, null, null);
 		//
-		IObservableValue observeTextTxtReasonObserveWidget = WidgetProperties.text(SWT.Modify).observe(txtReason);
+		IObservableValue<String> observeTextTxtReasonObserveWidget = WidgetProperties.text(SWT.Modify)
+				.observe(txtReason);
 		IObservableValue reasonSerienTerminObserveValue = PojoProperties.value("reason").observe(serienTermin);
 		bindingContext.bindValue(observeTextTxtReasonObserveWidget, reasonSerienTerminObserveValue, null, null);
 		//
-		IObservableValue observeSelectionDateEndsOnObserveWidget = WidgetProperties.selection().observe(dateEndsOn);
+		ISWTObservableValue<Date> observeSelectionDateEndsOnObserveWidget = WidgetProperties.dateTimeSelection()
+				.observe(dateEndsOn);
 		IObservableValue endsOnDateSerienTerminObserveValue = PojoProperties.value("endsOnDate").observe(serienTermin);
 		bindingContext.bindValue(observeSelectionDateEndsOnObserveWidget, endsOnDateSerienTerminObserveValue, null,
 				null);
 		//
-		IObservableValue observeTextTxtEndsAfterNOccurencesObserveWidget = WidgetProperties.text(SWT.Modify)
+		IObservableValue<String> observeTextTxtEndsAfterNOccurencesObserveWidget = WidgetProperties.text(SWT.Modify)
 				.observe(txtEndsAfterNOccurences);
 		IObservableValue endsAfterNDatesSerienTerminObserveValue = PojoProperties.value("endsAfterNDates")
 				.observe(serienTermin);

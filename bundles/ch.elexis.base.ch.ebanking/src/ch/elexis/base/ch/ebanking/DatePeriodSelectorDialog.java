@@ -1,5 +1,7 @@
 package ch.elexis.base.ch.ebanking;
 
+import java.util.Calendar;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -10,8 +12,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Shell;
-
-import com.ibm.icu.util.Calendar;
 
 import ch.rgw.tools.TimeTool;
 

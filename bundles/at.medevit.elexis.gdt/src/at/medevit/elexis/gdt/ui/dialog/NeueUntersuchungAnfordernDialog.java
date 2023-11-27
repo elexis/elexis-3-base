@@ -18,12 +18,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
@@ -366,8 +367,8 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 
 	protected void initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
-		IObservableMap gdt6302ValuesObserveMap = PojoObservables.observeMap(gdt6302, "values", Integer.class, //$NON-NLS-1$
-				String.class);
+		IObservableMap gdt6302ValuesObserveMap = BeanProperties.map("values", Integer.class, String.class)
+				.observe(gdt6302);
 
 		Text[] control = { txtPatientenKennung, txtPatientNachname, txtPatientVorname, txtIDReceiver, txtIDSender,
 				txtGewicht, txtGroesse, txtGuVK, txtMuttersprache, txtOrt, txtStrasse, txtTitel, txtVersichertenNr,
@@ -385,8 +386,9 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 			bindMapValue(control[i], property[i], bindingContext, gdt6302ValuesObserveMap);
 		}
 
-		IObservableValue widgetValueGeschlecht = ViewerProperties.singleSelection().observe(comboViewerGeschlecht);
-		IObservableValue observableMapValueGeschlecht = Observables.observeMapEntry(gdt6302ValuesObserveMap,
+		IViewerObservableValue<Object> widgetValueGeschlecht = ViewerProperties.singleSelection()
+				.observe(comboViewerGeschlecht);
+		IObservableValue<String> observableMapValueGeschlecht = Observables.observeMapEntry(gdt6302ValuesObserveMap,
 				GDTConstants.FELDKENNUNG_PATIENT_GESCHLECHT, String.class);
 		bindingContext.bindValue(widgetValueGeschlecht, observableMapValueGeschlecht);
 
@@ -407,7 +409,7 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 
 	private void bindMapValue(Text text, int feldkennung, DataBindingContext bindingContext,
 			IObservableMap gdt6302ValuesObserveMap) {
-		IObservableValue textObserveWidget = SWTObservables.observeText(text, SWT.Modify);
+		IObservableValue<String> textObserveWidget = WidgetProperties.text(SWT.Modify).observe(text);
 		IObservableValue observableMapValue = Observables.observeMapEntry(gdt6302ValuesObserveMap, feldkennung,
 				String.class);
 		bindingContext.bindValue(textObserveWidget, observableMapValue);

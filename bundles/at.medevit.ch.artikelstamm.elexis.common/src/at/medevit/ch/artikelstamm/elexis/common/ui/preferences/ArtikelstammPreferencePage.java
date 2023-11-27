@@ -1,9 +1,9 @@
 package at.medevit.ch.artikelstamm.elexis.common.ui.preferences;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -29,8 +29,6 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class ArtikelstammPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	public Marge margeA, margeB, margeC;
-
-	private DataBindingContext m_bindingContext;
 
 	private Text textMargeAstartIntervall;
 	private Text textMargeAendIntervall;
@@ -194,7 +192,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 			btnRadioEnglish.setSelection(true);
 		}
 
-		m_bindingContext = initDataBindings();
+		initDataBindings();
 
 		return container;
 	}
@@ -212,6 +210,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 	/**
 	 * Initialize the preference page.
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		// Initialize the preference page
 	}
@@ -219,53 +218,53 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
-		IObservableValue observeTextTextMargeAstartIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
+		IObservableValue<String> observeTextTextMargeAstartIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
 				.observe(textMargeAstartIntervall);
 		IObservableValue startIntervalMargeAObserveValue = PojoProperties.value("startInterval").observe(margeA); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextTextMargeAstartIntervallObserveWidget, startIntervalMargeAObserveValue,
 				null, null);
 		//
-		IObservableValue observeTextTextMargeAendIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
+		IObservableValue<String> observeTextTextMargeAendIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
 				.observe(textMargeAendIntervall);
 		IObservableValue endIntervalMargeAObserveValue = PojoProperties.value("endInterval").observe(margeA); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextTextMargeAendIntervallObserveWidget, endIntervalMargeAObserveValue, null,
 				null);
 		//
-		IObservableValue observeTextTextMargeAAdditionObserveWidget = WidgetProperties.text(SWT.Modify)
+		IObservableValue<String> observeTextTextMargeAAdditionObserveWidget = WidgetProperties.text(SWT.Modify)
 				.observe(textMargeAAddition);
 		IObservableValue additionMargeAObserveValue = PojoProperties.value("addition").observe(margeA); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextTextMargeAAdditionObserveWidget, additionMargeAObserveValue, null, null);
 		//
-		IObservableValue observeTextTextMargeBstartIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
+		IObservableValue<String> observeTextTextMargeBstartIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
 				.observe(textMargeBstartIntervall);
 		IObservableValue startIntervalMargeBObserveValue = PojoProperties.value("startInterval").observe(margeB); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextTextMargeBstartIntervallObserveWidget, startIntervalMargeBObserveValue,
 				null, null);
 		//
-		IObservableValue observeTextTextMargeBendIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
+		IObservableValue<String> observeTextTextMargeBendIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
 				.observe(textMargeBendIntervall);
 		IObservableValue endIntervalMargeBObserveValue = PojoProperties.value("endInterval").observe(margeB); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextTextMargeBendIntervallObserveWidget, endIntervalMargeBObserveValue, null,
 				null);
 		//
-		IObservableValue observeTextTextMargeBAdditionObserveWidget = WidgetProperties.text(SWT.Modify)
+		IObservableValue<String> observeTextTextMargeBAdditionObserveWidget = WidgetProperties.text(SWT.Modify)
 				.observe(textMargeBAddition);
 		IObservableValue additionMargeBObserveValue = PojoProperties.value("addition").observe(margeB); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextTextMargeBAdditionObserveWidget, additionMargeBObserveValue, null, null);
 		//
-		IObservableValue observeTextTextMargeCstartIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
+		IObservableValue<String> observeTextTextMargeCstartIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
 				.observe(textMargeCstartIntervall);
 		IObservableValue startIntervalMargeCObserveValue = PojoProperties.value("startInterval").observe(margeC); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextTextMargeCstartIntervallObserveWidget, startIntervalMargeCObserveValue,
 				null, null);
 		//
-		IObservableValue observeTextTextMargeCendIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
+		IObservableValue<String> observeTextTextMargeCendIntervallObserveWidget = WidgetProperties.text(SWT.Modify)
 				.observe(textMargeCendIntervall);
 		IObservableValue endIntervalMargeCObserveValue = PojoProperties.value("endInterval").observe(margeC); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextTextMargeCendIntervallObserveWidget, endIntervalMargeCObserveValue, null,
 				null);
 		//
-		IObservableValue observeTextTextMargeCAdditionObserveWidget = WidgetProperties.text(SWT.Modify)
+		IObservableValue<String> observeTextTextMargeCAdditionObserveWidget = WidgetProperties.text(SWT.Modify)
 				.observe(textMargeCAddition);
 		IObservableValue additionMargeCObserveValue = PojoProperties.value("addition").observe(margeC); //$NON-NLS-1$
 		bindingContext.bindValue(observeTextTextMargeCAdditionObserveWidget, additionMargeCObserveValue, null, null);

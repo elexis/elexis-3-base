@@ -147,13 +147,13 @@
         var _resources = loadResourcesFunction();
         var resources = JSON.parse(_resources);
           resources.forEach(function(resource) {
-            colorMapping[resource.id] = 'rgba(' + resource.color + ', 0.2)';
+            colorMapping[resource.id] = 'rgba(' + resource.color + ', 0.4)';
           });
         callback(resources);
       }
 
       function getColorForResource(resourceId) {
-        var color = colorMapping[resourceId] || 'rgba(255, 255, 255, 0.2)';
+        var color = colorMapping[resourceId] || 'rgba(255, 255, 255, 0.4)';
         return color;
       }
       function loadEventsCallback(start, end, timezone, callback) {

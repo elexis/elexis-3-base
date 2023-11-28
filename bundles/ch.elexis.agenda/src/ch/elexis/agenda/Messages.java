@@ -186,5 +186,6 @@ public final class Messages {
 	public static String AgendaFarben_Bereich_Description = ch.elexis.core.l10n.Messages.AgendaFarben_Bereich_Description;
 	public static String AgendaFarben_Titel = ch.elexis.core.l10n.Messages.AgendaFarben_Titel;
 	public static String AgendaFarben_Link = ch.elexis.core.l10n.Messages.AgendaFarben_Link;
+	public static String Agenda_Mandator = ch.elexis.core.l10n.Messages.Agenda_Mandator;
 
 }

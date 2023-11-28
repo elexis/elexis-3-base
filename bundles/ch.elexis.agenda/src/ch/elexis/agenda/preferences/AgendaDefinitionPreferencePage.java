@@ -166,11 +166,15 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 		comboViewerAreaType.setInput(AreaType.values());
 		comboViewerAreaType.setSelection(new StructuredSelection(AreaType.GENERIC));
 		comboViewerAreaType.addSelectionChangedListener(sc -> {
-			if (AreaType.CONTACT.equals(comboViewerAreaType.getStructuredSelection().getFirstElement())) {
-				if (linkAreaTypeValue.getText().length() == 0) {
+			AreaType selectedType = (AreaType) ((IStructuredSelection) sc.getSelection()).getFirstElement();
+			String area = (String) listViewerArea.getStructuredSelection().getFirstElement();
+
+			if (selectedType.equals(AreaType.CONTACT)) {
+				if (linkAreaTypeValue.getText().isEmpty()) {
 					linkAreaTypeValue.setText("<a>select</a>");
 				}
-			} else {
+			} else if (selectedType.equals(AreaType.GENERIC)) {
+				AppointmentServiceHolder.get().setAreaType(area, AreaType.GENERIC, null);
 				linkAreaTypeValue.setText(StringUtils.EMPTY);
 			}
 		});
@@ -191,6 +195,7 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 				}
 			}
 		};
+
 		Link farbenSelektorLink = new Link(compAreas, SWT.NONE);
 		farbenSelektorLink.setText("<a>" + Messages.AgendaFarben_Link + "</a>");
 		farbenSelektorLink.addSelectionListener(new SelectionAdapter() {

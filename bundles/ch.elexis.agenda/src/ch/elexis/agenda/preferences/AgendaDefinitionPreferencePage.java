@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -51,6 +53,7 @@ import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
+import ch.elexis.dialogs.FarbenSelektor;
 
 public class AgendaDefinitionPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -163,11 +166,15 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 		comboViewerAreaType.setInput(AreaType.values());
 		comboViewerAreaType.setSelection(new StructuredSelection(AreaType.GENERIC));
 		comboViewerAreaType.addSelectionChangedListener(sc -> {
-			if (AreaType.CONTACT.equals(comboViewerAreaType.getStructuredSelection().getFirstElement())) {
-				if (linkAreaTypeValue.getText().length() == 0) {
+			AreaType selectedType = (AreaType) ((IStructuredSelection) sc.getSelection()).getFirstElement();
+			String area = (String) listViewerArea.getStructuredSelection().getFirstElement();
+
+			if (selectedType.equals(AreaType.CONTACT)) {
+				if (linkAreaTypeValue.getText().isEmpty()) {
 					linkAreaTypeValue.setText("<a>select</a>");
 				}
-			} else {
+			} else if (selectedType.equals(AreaType.GENERIC)) {
+				AppointmentServiceHolder.get().setAreaType(area, AreaType.GENERIC, null);
 				linkAreaTypeValue.setText(StringUtils.EMPTY);
 			}
 		});
@@ -188,6 +195,18 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 				}
 			}
 		};
+
+		Link farbenSelektorLink = new Link(compAreas, SWT.NONE);
+		farbenSelektorLink.setText("<a>" + Messages.AgendaFarben_Link + "</a>");
+		farbenSelektorLink.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FarbenSelektor farbenSelektor = new FarbenSelektor(UiDesk.getTopShell());
+				if (farbenSelektor.open() == Dialog.OK) {
+					listViewerArea.refresh();
+				}
+			}
+		});
 
 		linkAreaTypeValue = new Link(compositeAreaType, SWT.NONE);
 		linkAreaTypeValue.addMouseListener(contactSelectorMouseListener);

@@ -31,6 +31,7 @@ public class PreferenceConstants {
 	public static final String AG_DAYPREFERENCES = Preferences.AG_DAYPREFERENCES;
 	public static final String AG_SHOW_REASON = "agenda/show_reason"; //$NON-NLS-1$
 	public static final String AG_BEREICH = "agenda/bereich"; //$NON-NLS-1$
+	public static final String AG_BEREICH_FARBEN = "agenda/bereich/farben"; //$NON-NLS-1$
 	public static final String AG_BIG_SAVE_COLUMNWIDTH = "agenda/big/savecolumnwidth";
 	public static final String AG_BIG_COLUMNWIDTH = "agenda/big/columnwidth";
 
@@ -61,4 +62,6 @@ public class PreferenceConstants {
 	public static final String PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT = "agenda/appointment";
 	public static final String PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT_TEMPLATE = "agenda/appointmenttemplate";
 	public static final String PREF_DEFAULT_MAIL_ACCOUNT = "account";
+	public static final String AG_USE_MANDATOR_COLORS = "USE_MANDATOR_COLORS"; // $NON-NLS-1$
+
 }

@@ -343,7 +343,7 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.bouncycastle.bcprov</artifactId>
+              <artifactId>bcprov</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -439,11 +439,6 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.postgresql.jdbc</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>com.eclipsesource.jaxrs.consumer</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>

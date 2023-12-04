@@ -121,7 +121,7 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.apache.commons.commons-dbcp2</artifactId>
+              <artifactId>org.apache.commons.commons-dcom.eclipsesource.jaxrs.consumer2</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -346,7 +346,7 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.bouncycastle.bcprov</artifactId>
+              <artifactId>bcprov</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>
@@ -442,11 +442,6 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.postgresql.jdbc</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>com.eclipsesource.jaxrs.consumer</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>

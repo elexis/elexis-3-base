@@ -33,7 +33,7 @@ import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
 
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=tarmed_34")
-public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter {
+public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
 
 	private final Logger logger = LoggerFactory.getLogger(TarmedReferenceDataImporter.class);
 

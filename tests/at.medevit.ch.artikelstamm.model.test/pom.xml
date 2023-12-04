@@ -61,22 +61,12 @@
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
-                <id>jakarta.xml.bind-api</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
                 <id>org.eclipse.swt.nl_de</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
                 <id>ch.qos.logback.slf4j</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
-                <id>org.osgi.framework.system.packages.extra</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
               <requirement>
@@ -696,11 +686,6 @@
             <dependency>
               <type>eclipse-plugin</type>
               <artifactId>org.jvnet.mimepull</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>org.apache.lucene.core</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>

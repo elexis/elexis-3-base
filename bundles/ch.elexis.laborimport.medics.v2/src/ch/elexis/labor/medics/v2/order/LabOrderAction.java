@@ -13,13 +13,12 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.model.util.ElexisIdGenerator;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Anwender;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
@@ -264,8 +263,8 @@ public class LabOrderAction extends Action {
 		String uniqueProcessingID = ElexisIdGenerator.generateId();
 
 		HL7Mandant mandant = new HL7Mandant();
-		mandant.setLabel(CoreHub.actMandant.get(Anwender.FLD_LABEL));
-		mandant.setEan(CoreHub.actMandant.getXid(DOMAIN_EAN));
+		mandant.setLabel(ContextServiceHolder.getActiveMandatorOrNull().getLabel());
+		mandant.setEan(ContextServiceHolder.getActiveMandatorOrNull().getXid(DOMAIN_EAN).getDomainId());
 
 		HL7_OML_O21 omlO21 = new HL7_OML_O21("CHELEXIS", "PATDATA", Messages.LabOrderAction_receivingApplication,
 				StringUtils.EMPTY, Messages.LabOrderAction_receivingFacility, uniqueMessageControlID,

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Status;
 
 import ch.elexis.buchhaltung.util.DateTool;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -103,7 +103,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		monitor.subTask(ANALYSIERE_RECHNUNGEN);
 		ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
 		PatientIdFormatter pif = new PatientIdFormatter(8);
-		String actMnId = CoreHub.actMandant.getId();
+		String actMnId = ContextServiceHolder.getActiveMandatorOrNull().getId();
 		for (Rechnung rn : rnn) {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;

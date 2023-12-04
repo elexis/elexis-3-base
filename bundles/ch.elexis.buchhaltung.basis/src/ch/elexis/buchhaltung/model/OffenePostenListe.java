@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -117,7 +117,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 		qbe.add("RnDatum", "<=", getStichtag().toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
 		qbe.add("RnDatum", ">=", getStartTag().toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
 		if (bOnlyActiveMandator) {
-			qbe.add("MandantID", "=", CoreHub.actMandant.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+			qbe.add("MandantID", "=", ContextServiceHolder.getActiveMandatorOrNull().getId()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);

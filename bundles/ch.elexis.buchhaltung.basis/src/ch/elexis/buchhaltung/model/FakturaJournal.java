@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.buchhaltung.util.DateTool;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -83,7 +83,7 @@ public class FakturaJournal extends AbstractTimeSeries {
 		int step = total / sum;
 		monitor.worked(20 * step);
 		PatientIdFormatter pif = new PatientIdFormatter(8);
-		String actMnId = CoreHub.actMandant.getId();
+		String actMnId = ContextServiceHolder.getActiveMandatorOrNull().getId();
 		long time = System.currentTimeMillis();
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();

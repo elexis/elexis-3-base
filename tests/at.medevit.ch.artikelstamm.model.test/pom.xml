@@ -495,7 +495,7 @@
             </dependency>
             <dependency>
               <type>eclipse-plugin</type>
-              <artifactId>org.apache.commons.commons-text</artifactId>
+              <artifactId>org.apache.commons.text</artifactId>
               <version>0.0.0</version>
             </dependency>
             <dependency>

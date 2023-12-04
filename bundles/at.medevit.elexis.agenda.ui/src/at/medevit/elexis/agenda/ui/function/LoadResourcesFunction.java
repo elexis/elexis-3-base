@@ -27,28 +27,32 @@ public class LoadResourcesFunction extends AbstractBrowserFunction {
 
 	@Override
 	public Object function(Object[] arguments) {
-	    Set<String> selectedResources = agendaComposite.getSelectedResources();
+		Set<String> selectedResources = agendaComposite.getSelectedResources();
 		String colorPrefs = ConfigServiceHolder.get().get(PreferenceConstants.AG_BEREICH_FARBEN, null);
-	    Map<String, String> resourceColors = new HashMap<>();
-	    String[] colorAssignments = colorPrefs.split(";");
-	    for (String assignment : colorAssignments) {
-	        String[] parts = assignment.split(":");
-	        if (parts.length == 2) {
-				resourceColors.put(parts[0], parts[1]);
-	        }
-	    }
-	    Set<Resource> _selectedResources = new LinkedHashSet<Resource>();
-	    int order = 0;
-	    for (String selectedResource : selectedResources) {
-			String color = resourceColors.getOrDefault(selectedResource, null);
-			_selectedResources.add(new Resource(selectedResource, selectedResource, order, color));
-	        order++;
-	    }
-	    String json = gson.toJson(_selectedResources);
-	    return json;
+		Map<String, String> resourceColors = parseColorPreferences(colorPrefs);
+		Set<Resource> _selectedResources = new LinkedHashSet<>();
+		int order = 0;
+		for (String selectedResource : selectedResources) {
+			String color = resourceColors.get(selectedResource);
+			_selectedResources.add(new Resource(selectedResource, selectedResource, order++, color));
+		}
+		return gson.toJson(_selectedResources);
 	}
-	private class Resource {
 
+	private Map<String, String> parseColorPreferences(String colorPrefs) {
+		Map<String, String> resourceColors = new HashMap<>();
+		if (colorPrefs != null) {
+			for (String assignment : colorPrefs.split(";")) {
+				String[] parts = assignment.split(":");
+				if (parts.length == 2) {
+					resourceColors.put(parts[0], parts[1]);
+				}
+			}
+		}
+		return resourceColors;
+	}
+
+	private class Resource {
 		private String id;
 		private String title;
 		@SuppressWarnings("unused")

@@ -19,6 +19,7 @@ import java.util.Properties;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.hin.auth.core.IHinAuthService;
 import ch.elexis.core.model.IArticle;
@@ -34,7 +35,6 @@ import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.BestellView;
 import ch.elexis.data.PersistentObject;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 public class Sender implements IDataSender {
@@ -126,9 +126,20 @@ public class Sender implements IDataSender {
 
 					// TODO parse message for errors
 				} catch (Exception ex) {
-					ExHandler.handle(ex);
-					SWTHelper.alert("Fehler bei Übermittlung",
-							"Die Bestellung konnte nicht gesendet werden. Bitte überprüfen Sie den Zustand in eStudio.");
+					LoggerFactory.getLogger(getClass()).error("Error sending rose recipe", ex); //// $NON-NLS-1$
+					boolean showError = true;
+					if (hinAuthService.isPresent()) {
+						Optional<String> message = hinAuthService.get().handleException(ex,
+								Collections.singletonMap(IHinAuthService.TOKEN_GROUP, "ZurRose_Estudio"));
+						if (message.isPresent()) {
+							SWTHelper.showError("Die Bestellung konnte nicht gesendet werden", message.get());
+							showError = false;
+						}
+					}
+					if (showError) {
+						SWTHelper.alert("Fehler bei Übermittlung",
+								"Die Bestellung konnte nicht gesendet werden. Bitte überprüfen Sie den Zustand in eStudio.");
+					}
 					throw new XChangeException(
 							"Die Bestellung konnte nicht gesendet werden. Bitte überprüfen Sie den Zustand in eStudio.");
 				}

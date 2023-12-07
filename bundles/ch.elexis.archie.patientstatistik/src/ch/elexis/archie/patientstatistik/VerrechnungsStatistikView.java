@@ -15,6 +15,7 @@ package ch.elexis.archie.patientstatistik;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,6 +26,8 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
@@ -64,6 +67,7 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 	private Action recalcAction, exportCSVAction;
 	Form form;
 	Table table;
+	private TableColumn textColumn;
 
 	String[] tableHeaders = { Messages.VerrechnungsStatistikView_CODESYSTEM, Messages.VerrechnungsStatistikView_CODE,
 			Messages.VerrechnungsStatistikView_TEXT, Messages.VerrechnungsStatistikView_NUMBER,
@@ -107,6 +111,20 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 			TableColumn tc = new TableColumn(table, SWT.NONE);
 			tc.setText(tableHeaders[i]);
 			tc.setWidth(columnWidths[i]);
+
+			if (tableHeaders[i].equals(Messages.VerrechnungsStatistikView_CODESYSTEM)
+					|| tableHeaders[i].equals(Messages.VerrechnungsStatistikView_TEXT)) {
+
+				final int columnIndex = i;
+
+				textColumn = tc;
+				tc.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						sortTable(columnIndex, tc);
+					}
+				});
+			}
 		}
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
@@ -117,6 +135,41 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		getSite().getPage().addPartListener(udpateOnVisible);
 	}
 
+	private void sortTable(final int columnIndex, TableColumn column) {
+		table.setSortColumn(column);
+		final int sortDirection = (table.getSortDirection() == SWT.UP) ? SWT.DOWN : SWT.UP;
+		table.setSortDirection(sortDirection);
+
+		TableItem[] items = table.getItems();
+		List<TableItem> itemList = Arrays.asList(items);
+
+		Collections.sort(itemList, new Comparator<TableItem>() {
+			@Override
+			public int compare(TableItem item1, TableItem item2) {
+				String text1 = item1.getText(columnIndex);
+				String text2 = item2.getText(columnIndex);
+
+				int compareResult = text1.compareTo(text2);
+				return (sortDirection == SWT.UP) ? compareResult : -compareResult;
+			}
+		});
+
+		String[][] data = new String[items.length][table.getColumnCount()];
+		for (int i = 0; i < items.length; i++) {
+			for (int j = 0; j < table.getColumnCount(); j++) {
+				data[i][j] = items[i].getText(j);
+			}
+		}
+
+		table.setRedraw(false);
+		table.removeAll();
+		for (String[] rowData : data) {
+			TableItem newItem = new TableItem(table, SWT.NONE);
+			newItem.setText(rowData);
+		}
+		table.setRedraw(true);
+	}
+	
 	/**
 	 * Important: On disposal of the View, the ActivationListener MUST be removed.
 	 */

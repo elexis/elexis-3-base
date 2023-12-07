@@ -74,7 +74,7 @@ public class FakturaJournalDetail extends AbstractTimeSeries {
 		}
 		int step = total / sum;
 		monitor.worked(20 * step);
-		String actMnId = ContextServiceHolder.getActiveMandatorOrNull().getId();
+		String actMnId = ContextServiceHolder.getActiveMandatorOrThrow().getId();
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();
 			Rechnung rn = at.getRechnung();

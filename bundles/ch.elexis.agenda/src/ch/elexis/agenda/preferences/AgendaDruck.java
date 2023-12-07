@@ -163,7 +163,7 @@ public class AgendaDruck extends PreferencePage implements IWorkbenchPreferenceP
 		qbe.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE);
 		qbe.add(Brief.FLD_KONSULTATION_ID, Query.EQUALS, "SYS");
 		qbe.startGroup();
-		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, ContextServiceHolder.getActiveMandatorOrNull().getId());
+		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, ContextServiceHolder.getActiveMandatorOrThrow().getId());
 		qbe.or();
 		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, StringConstants.EMPTY);
 		qbe.endGroup();

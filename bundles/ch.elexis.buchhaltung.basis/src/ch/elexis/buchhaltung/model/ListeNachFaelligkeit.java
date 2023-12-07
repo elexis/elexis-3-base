@@ -103,7 +103,7 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		monitor.subTask(ANALYSIERE_RECHNUNGEN);
 		ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
 		PatientIdFormatter pif = new PatientIdFormatter(8);
-		String actMnId = ContextServiceHolder.getActiveMandatorOrNull().getId();
+		String actMnId = ContextServiceHolder.getActiveMandatorOrThrow().getId();
 		for (Rechnung rn : rnn) {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;

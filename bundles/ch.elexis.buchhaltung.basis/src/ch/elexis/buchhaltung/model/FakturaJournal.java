@@ -83,7 +83,7 @@ public class FakturaJournal extends AbstractTimeSeries {
 		int step = total / sum;
 		monitor.worked(20 * step);
 		PatientIdFormatter pif = new PatientIdFormatter(8);
-		String actMnId = ContextServiceHolder.getActiveMandatorOrNull().getId();
+		String actMnId = ContextServiceHolder.getActiveMandatorOrThrow().getId();
 		long time = System.currentTimeMillis();
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();

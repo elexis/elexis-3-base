@@ -243,8 +243,8 @@ public class iMedAbfrageAction extends Action {
 		String uniqueProcessingID = ElexisIdGenerator.generateId();
 
 		HL7Mandant mandant = new HL7Mandant();
-		mandant.setLabel(ContextServiceHolder.getActiveMandatorOrNull().getLabel());
-		mandant.setEan(ContextServiceHolder.getActiveMandatorOrNull().getXid(DOMAIN_EAN).getDomainId());
+		mandant.setLabel(ContextServiceHolder.getActiveMandatorOrThrow().getLabel());
+		mandant.setEan(ContextServiceHolder.getActiveMandatorOrThrow().getXid(DOMAIN_EAN).getDomainId());
 
 		HL7_OML_O21 omlO21 = new HL7_OML_O21("CHELEXIS", "PATDATA", Messages.LabOrderAction_receivingApplication,
 				StringUtils.EMPTY, Messages.LabOrderAction_receivingFacility, uniqueMessageControlID,

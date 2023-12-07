@@ -73,7 +73,7 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 		monitor.worked(20 * step);
 
 		PatientIdFormatter pif = new PatientIdFormatter(8);
-		String actMnId = ContextServiceHolder.getActiveMandatorOrNull().getId();
+		String actMnId = ContextServiceHolder.getActiveMandatorOrThrow().getId();
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();
 			Money amount = at.getAmount();

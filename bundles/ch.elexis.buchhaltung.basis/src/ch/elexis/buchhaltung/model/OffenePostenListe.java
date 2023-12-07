@@ -117,7 +117,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 		qbe.add("RnDatum", "<=", getStichtag().toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
 		qbe.add("RnDatum", ">=", getStartTag().toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
 		if (bOnlyActiveMandator) {
-			qbe.add("MandantID", "=", ContextServiceHolder.getActiveMandatorOrNull().getId()); //$NON-NLS-1$ //$NON-NLS-2$
+			qbe.add("MandantID", "=", ContextServiceHolder.getActiveMandatorOrThrow().getId()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);

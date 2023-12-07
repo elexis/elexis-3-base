@@ -153,6 +153,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 						new UploadResult(appendPath(getBrowserBasePath(), data.getUrl() + "&mode=embed"), data.getId(),
 								resulttyp, uploadedMediplan));
 			} catch (ApiException e) {
+				hinAuthHandleException(e);
 				if (e.getCode() == 400 || e.getCode() == 422) {
 					// error result code should be evaluated
 					try {
@@ -170,6 +171,16 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				logger.error("Error uploading Document", e);
 				return new Result<UploadResult>(SEVERITY.ERROR, 0, e.getMessage(), null, false);
 			}
+	}
+
+	private void hinAuthHandleException(ApiException e) {
+		if (hinAuthService.isPresent()) {
+			Optional<String> message = hinAuthService.get().handleException(e,
+					Collections.singletonMap(IHinAuthService.TOKEN_GROUP, getTokenGroup()));
+			if (message.isPresent()) {
+				logger.warn("HIN Auth message", message.get());
+			}
+		}
 	}
 
 	private void configureApiClient(ApiClient client) {
@@ -249,6 +260,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				return new Result<UploadResult>(SEVERITY.ERROR, 0, "No active mandator", null, false);
 			}
 		} catch (ApiException e) {
+			hinAuthHandleException(e);
 			if (e.getCode() == 400 || e.getCode() == 422) {
 				// error result code should be evaluated
 				try {
@@ -286,6 +298,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 					DateTimeFormatter.ofPattern("dd.MM.yyyy").format(birthDate));
 			return Result.OK(response.toString());
 		} catch (ApiException e) {
+			hinAuthHandleException(e);
 			if (e.getCode() == 400 || e.getCode() == 422) {
 				// error result code should be evaluated
 				try {
@@ -388,6 +401,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 				return Result.OK(response.getData());
 			}
 		} catch (ApiException e) {
+			hinAuthHandleException(e);
 			logger.error("Error downloading Document", e);
 			return Result.ERROR(e.getMessage());
 		}
@@ -408,6 +422,7 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 			}
 			return Result.OK(response.getData().getAbsolutePath());
 		} catch (ApiException e) {
+			hinAuthHandleException(e);
 			logger.error("Error downloading Document Pdf", e);
 			return Result.ERROR(e.getMessage());
 		}

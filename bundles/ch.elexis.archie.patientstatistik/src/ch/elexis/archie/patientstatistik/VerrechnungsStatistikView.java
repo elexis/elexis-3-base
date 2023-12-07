@@ -112,7 +112,9 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 			tc.setText(tableHeaders[i]);
 			tc.setWidth(columnWidths[i]);
 
-			if (i == 0 || i == 2) {
+			if (tableHeaders[i].equals(Messages.VerrechnungsStatistikView_CODESYSTEM)
+					|| tableHeaders[i].equals(Messages.VerrechnungsStatistikView_TEXT)) {
+
 				final int columnIndex = i;
 
 				textColumn = tc;

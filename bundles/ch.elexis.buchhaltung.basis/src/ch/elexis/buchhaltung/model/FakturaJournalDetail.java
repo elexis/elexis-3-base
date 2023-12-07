@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import ch.elexis.buchhaltung.util.DateTool;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
@@ -74,7 +74,7 @@ public class FakturaJournalDetail extends AbstractTimeSeries {
 		}
 		int step = total / sum;
 		monitor.worked(20 * step);
-		String actMnId = CoreHub.actMandant.getId();
+		String actMnId = ContextServiceHolder.getActiveMandatorOrThrow().getId();
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();
 			Rechnung rn = at.getRechnung();

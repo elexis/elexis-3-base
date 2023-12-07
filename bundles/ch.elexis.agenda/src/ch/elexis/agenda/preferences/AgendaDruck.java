@@ -34,6 +34,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Query;
@@ -162,7 +163,7 @@ public class AgendaDruck extends PreferencePage implements IWorkbenchPreferenceP
 		qbe.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE);
 		qbe.add(Brief.FLD_KONSULTATION_ID, Query.EQUALS, "SYS");
 		qbe.startGroup();
-		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, CoreHub.actMandant.getId());
+		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, ContextServiceHolder.getActiveMandatorOrThrow().getId());
 		qbe.or();
 		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, StringConstants.EMPTY);
 		qbe.endGroup();

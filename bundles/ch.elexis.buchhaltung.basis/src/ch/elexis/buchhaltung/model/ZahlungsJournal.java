@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Status;
 
 import ch.elexis.buchhaltung.util.DateTool;
 import ch.elexis.buchhaltung.util.PatientIdFormatter;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.data.AccountTransaction;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -73,7 +73,7 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 		monitor.worked(20 * step);
 
 		PatientIdFormatter pif = new PatientIdFormatter(8);
-		String actMnId = CoreHub.actMandant.getId();
+		String actMnId = ContextServiceHolder.getActiveMandatorOrThrow().getId();
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();
 			Money amount = at.getAmount();

@@ -40,6 +40,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -62,7 +63,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
@@ -135,6 +138,7 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 	/*
 	 * private String actPath = null;
 	 */
+	private boolean isFirstTime = true;
 
 	private TimestampComparator timeComparator;
 	private FilenameComparator nameComparator;
@@ -180,6 +184,20 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 		}
 	}
 
+	@Override
+	public void setFocus() {
+		if (isFirstTime) {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Ansicht veraltet", "Die Ansicht "
+					+ getTitle()
+					+ " ist veraltet und wird nicht mehr unterstützt. Bitte verwenden Sie die Dokumente Ansicht.");
+			isFirstTime = false;
+		}
+	}
+
+	private void showInformationDialog(Shell shell, String title, String message) {
+		// ... (keine Änderungen in dieser Methode)
+	}
+
 	class ViewContentProvider implements IStructuredContentProvider, BackgroundJobListener {
 		BackgroundJob job;
 
@@ -217,8 +235,8 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 		}
 
 		public void jobFinished(BackgroundJob j) {
-			// int size=((Object[])j.getData()).length;
-			viewer.refresh(true);
+				// int size=((Object[])j.getData()).length;
+				viewer.refresh(true);
 		}
 	}
 
@@ -737,9 +755,7 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
-	public void setFocus() {
-		viewer.getControl().setFocus();
-	}
+
 
 	/**
 	 * Wichtig! Alle Listeners, die eine View einhängt, müssen in dispose() wieder
@@ -761,4 +777,5 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 	public void refresh() {
 		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
+
 }

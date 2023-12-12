@@ -1,5 +1,6 @@
 package ch.elexis.base.ch.arzttarife.xml.exporter;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,8 +17,8 @@ public class ServicesFinancialInfo {
 
 	private VatRateSum vatRateSum;
 
-	public static ServicesFinancialInfo of(ServicesType services) {
-		ServicesFinancialInfo ret = new ServicesFinancialInfo();
+	public static ServicesFinancialInfo of(ServicesType services, LocalDate localDate) {
+		ServicesFinancialInfo ret = new ServicesFinancialInfo(localDate);
 
 		for (Object obj : services.getServiceExOrService()) {
 			if (obj instanceof ServiceExType) {
@@ -38,9 +39,9 @@ public class ServicesFinancialInfo {
 		return ret;
 	}
 
-	public ServicesFinancialInfo() {
+	public ServicesFinancialInfo(LocalDate localDate) {
 		tariffSum = new HashMap<>();
-		vatRateSum = new VatRateSum();
+		vatRateSum = new VatRateSum(localDate);
 		obligationSum = 0.0;
 	}
 

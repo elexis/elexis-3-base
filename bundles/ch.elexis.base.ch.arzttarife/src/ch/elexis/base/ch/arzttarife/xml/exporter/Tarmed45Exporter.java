@@ -213,7 +213,7 @@ public class Tarmed45Exporter {
 	protected Object getBalance(IInvoice invoice) {
 		Tiers tiersType = CoverageServiceHolder.get().getTiersType(invoice.getCoverage());
 
-		ServicesFinancialInfo financialInfo = ServicesFinancialInfo.of(getServices(invoice));
+		ServicesFinancialInfo financialInfo = ServicesFinancialInfo.of(getServices(invoice), invoice.getDateFrom());
 
 		if (tiersType == Tiers.GARANT) {
 			BalanceTGType balanceTGType = new BalanceTGType();

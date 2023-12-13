@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Listener;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.actions.CodeSelectorHandler;
+import ch.elexis.core.ui.actions.ICodeSelectorTarget;
 import ch.elexis.core.ui.actions.ToggleVerrechenbarFavoriteAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.viewers.CommonViewer;
@@ -40,6 +42,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	CommonViewer cv;
 	int eventType = SWT.KeyDown;
 
+	private NoLawCheckBillingAction noLawCeckBillingAction = new NoLawCheckBillingAction();
 	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
 	private ISelectionChangedListener selChangeListener = new ISelectionChangedListener() {
 
@@ -83,6 +86,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 
 		MenuManager menu = new MenuManager();
 		menu.add(tvfa);
+		menu.add(noLawCeckBillingAction);
 		cv.setContextMenu(menu);
 
 		ViewerConfigurer vc = new ViewerConfigurer(new TarmedCodeSelectorContentProvider(cv),
@@ -104,6 +108,35 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	@Override
 	public String getCodeSystemName() {
 		return "Tarmed"; //$NON-NLS-1$
+	}
+
+	private class NoLawCheckBillingAction extends Action {
+
+		@Override
+		public ImageDescriptor getImageDescriptor() {
+			return Images.IMG_ACHTUNG.getImageDescriptor();
+		}
+
+		@Override
+		public String getText() {
+			return "Verrechnen ohne Gesetz-Prüfung";
+		}
+
+		@Override
+		public void run() {
+			Object[] selection = cv.getSelection();
+			if (selection != null && selection.length > 0) {
+				for (Object object : selection) {
+					if (object instanceof ITarmedLeistung) {
+						ContextServiceHolder.get().getRootContext().setNamed("tarmed.nolawcheck", Boolean.TRUE);
+						ICodeSelectorTarget target = CodeSelectorHandler.getInstance().getCodeSelectorTarget();
+						if (target != null) {
+							target.codeSelected(object);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private class ToggleFiltersAction extends Action {

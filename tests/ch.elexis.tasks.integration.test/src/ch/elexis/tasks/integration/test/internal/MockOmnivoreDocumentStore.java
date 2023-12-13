@@ -12,6 +12,7 @@ import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.IDocumentTemplate;
 import ch.elexis.core.model.IHistory;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ITag;
@@ -337,4 +338,8 @@ public class MockOmnivoreDocumentStore implements IDocumentStore {
 		return null;
 	}
 
+	@Override
+	public List<IDocumentTemplate> getDocumentTemplates(boolean includeSystem) {
+		return Collections.emptyList();
+	}
 }

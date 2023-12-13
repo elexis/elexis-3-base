@@ -14,6 +14,7 @@ import ch.elexis.core.exceptions.PersistenceException;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.IDocumentTemplate;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ITag;
 import ch.elexis.core.model.ModelPackage;
@@ -171,5 +172,10 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	@Override
 	public void renameCategory(ICategory category, String newCategory) throws IllegalStateException {
 		CategoryUtil.renameCategory(category.getName(), newCategory);
+	}
+
+	@Override
+	public List<IDocumentTemplate> getDocumentTemplates(boolean includeSystem) {
+		return Collections.emptyList();
 	}
 }

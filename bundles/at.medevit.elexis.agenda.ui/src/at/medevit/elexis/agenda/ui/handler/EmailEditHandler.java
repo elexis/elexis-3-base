@@ -39,7 +39,7 @@ public class EmailEditHandler {
 		if (subject != null) {
 			params.put(MAIL_SUBJECT_PARAM, subject);
 		}
-		params.put(MAIL_DO_SEND_PARAM, Boolean.TRUE.toString());
+		params.put(MAIL_DO_SEND_PARAM, Boolean.FALSE.toString());
 		String savedAccount = ConfigServiceHolder.get().get(PreferenceConstants.PREF_DEFAULT_MAIL_ACCOUNT_APPOINTMENT,
 				null);
 		if (StringUtils.isEmpty(savedAccount)) {

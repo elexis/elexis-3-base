@@ -246,6 +246,7 @@ public class XMLExporter implements IRnOutputter {
 				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					monitor.beginTask(Messages.RechnungsDrucker_PrintingBills, rnn.size());
+					exporter.setUpdateElectronicDelivery(true);
 					for (Rechnung rn : rnn) {
 						if (doExport(rn, outputDir + File.separator + rn.getNr() + ".xml", type, //$NON-NLS-1$
 								false) == null) {
@@ -256,6 +257,7 @@ public class XMLExporter implements IRnOutputter {
 							break;
 						}
 					}
+					exporter.setUpdateElectronicDelivery(false);
 					monitor.done();
 				}
 			});

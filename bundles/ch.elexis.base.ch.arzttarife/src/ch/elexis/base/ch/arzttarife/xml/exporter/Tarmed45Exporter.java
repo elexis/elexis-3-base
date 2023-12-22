@@ -138,6 +138,8 @@ public class Tarmed45Exporter {
 
 	private EsrType esrType = EsrType.esrQR;
 
+	private boolean updateElectronicDelivery = false;
+
 	/**
 	 * Create a tarmed invoice request model for the {@link IInvoice}, and marshall
 	 * it into the provided {@link OutputStream}.
@@ -158,6 +160,10 @@ public class Tarmed45Exporter {
 
 			requestType.setProcessing(getProcessing(invoice));
 			requestType.setPayload(getPayload(invoice, type));
+
+			if (updateElectronicDelivery) {
+				updateElectronicDelivery(invoice, requestType);
+			}
 
 			if (getBalanceAmount(requestType) != null) {
 				if (invoice.adjustAmount(getBalanceAmount(requestType).roundTo5()) == false) {
@@ -218,6 +224,7 @@ public class Tarmed45Exporter {
 		if (tiersType == Tiers.GARANT) {
 			BalanceTGType balanceTGType = new BalanceTGType();
 
+			// TODO Auto-generated method stub
 			balanceTGType.setCurrency(getCurrency(invoice));
 			balanceTGType.setAmountPrepaid(invoice.getPayedAmount().doubleValue());
 			if (!invoice.getDemandAmount().isZero()) {
@@ -1708,5 +1715,113 @@ public class Tarmed45Exporter {
 				}
 			});
 		}
+	}
+
+	/**
+	 * If set to true, and {@link BillingLaw} is KVG and is copy to patient and is
+	 * no electronic delivery, the telcom and online information of patient debitor
+	 * and guarantor is removed. This leads to no electronic delivery.
+	 * 
+	 * @param value
+	 */
+	public void setUpdateElectronicDelivery(boolean value) {
+		this.updateElectronicDelivery = value;
+	}
+
+	private void updateElectronicDelivery(IInvoice invoice, RequestType invoiceRequest) {
+		BillingLaw law = invoice.getCoverage().getBillingSystem().getLaw();
+		if (law == BillingLaw.KVG && isCopyToPatient(invoiceRequest) && isNoElectronicDelivery(invoice)) {
+			// remove telcom and email if no electronic delivery should be performed
+			if (invoiceRequest.getPayload().getBody().getTiersGarant() != null) {
+				if (invoiceRequest.getPayload().getBody().getTiersGarant().getDebitor() != null) {
+					DebitorAddressType debitor = invoiceRequest.getPayload().getBody().getTiersGarant().getDebitor();
+					setTelcomNull(debitor);
+					setOnlineNull(debitor);
+				}
+				if (invoiceRequest.getPayload().getBody().getTiersGarant().getPatient() != null) {
+					PatientAddressType patient = invoiceRequest.getPayload().getBody().getTiersGarant().getPatient();
+					setTelcomNull(patient);
+					setOnlineNull(patient);
+				}
+				if (invoiceRequest.getPayload().getBody().getTiersGarant().getGuarantor() != null) {
+					GuarantorAddressType guarantor = invoiceRequest.getPayload().getBody().getTiersGarant()
+							.getGuarantor();
+					setTelcomNull(guarantor);
+					setOnlineNull(guarantor);
+				}
+			} else if (invoiceRequest.getPayload().getBody().getTiersPayant() != null) {
+				if (invoiceRequest.getPayload().getBody().getTiersPayant().getDebitor() != null) {
+					DebitorAddressType debitor = invoiceRequest.getPayload().getBody().getTiersPayant().getDebitor();
+					setTelcomNull(debitor);
+					setOnlineNull(debitor);
+				}
+				if (invoiceRequest.getPayload().getBody().getTiersPayant().getPatient() != null) {
+					PatientAddressType patient = invoiceRequest.getPayload().getBody().getTiersPayant().getPatient();
+					setTelcomNull(patient);
+					setOnlineNull(patient);
+				}
+				if (invoiceRequest.getPayload().getBody().getTiersPayant().getGuarantor() != null) {
+					GuarantorAddressType guarantor = invoiceRequest.getPayload().getBody().getTiersPayant()
+							.getGuarantor();
+					setTelcomNull(guarantor);
+					setOnlineNull(guarantor);
+				}
+			}
+		}
+	}
+
+	private void setOnlineNull(GuarantorAddressType guarantor) {
+		if (guarantor.getPerson() != null) {
+			guarantor.getPerson().setOnline(null);
+		}
+	}
+
+	private void setTelcomNull(GuarantorAddressType guarantor) {
+		if (guarantor.getPerson() != null) {
+			guarantor.getPerson().setTelecom(null);
+		}
+	}
+
+	private void setOnlineNull(DebitorAddressType debitor) {
+		if (debitor.getCompany() != null) {
+			debitor.getCompany().setOnline(null);
+		} else if (debitor.getPerson() != null) {
+			debitor.getPerson().setOnline(null);
+		}
+	}
+
+	private void setTelcomNull(DebitorAddressType debitor) {
+		if (debitor.getCompany() != null) {
+			debitor.getCompany().setTelecom(null);
+		} else if (debitor.getPerson() != null) {
+			debitor.getPerson().setTelecom(null);
+		}
+	}
+
+	private void setOnlineNull(PatientAddressType patient) {
+		if (patient.getPerson() != null) {
+			patient.getPerson().setOnline(null);
+		}
+	}
+
+	private void setTelcomNull(PatientAddressType patient) {
+		if (patient.getPerson() != null) {
+			patient.getPerson().setTelecom(null);
+		}
+	}
+
+	private boolean isCopyToPatient(ch.fd.invoice450.request.RequestType invoiceRequest) {
+		if (invoiceRequest.getProcessing() != null) {
+			return invoiceRequest.getProcessing().isPrintCopyToGuarantor();
+		}
+		return false;
+	}
+
+	private boolean isNoElectronicDelivery(IInvoice invoice) {
+		if (invoice.getCoverage() != null) {
+			return StringConstants.ONE
+					.equals(invoice.getCoverage().getExtInfo(FallConstants.FLD_EXT_NO_ELECTRONIC_DELIVERY));
+		}
+		return false;
 	}
 }

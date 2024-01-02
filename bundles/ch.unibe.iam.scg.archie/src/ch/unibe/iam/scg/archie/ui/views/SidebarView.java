@@ -179,8 +179,10 @@ public class SidebarView extends ViewPart implements IPropertyChangeListener {
 	 * @param enabled True if children should be enabled, false else.
 	 */
 	public void setEnabled(boolean enabled) {
-		this.list.setEnabled(enabled);
-		this.details.setEnabled(enabled);
+		if (this.list != null && this.details != null) {
+			this.list.setEnabled(enabled);
+			this.details.setEnabled(enabled);
+		}
 	}
 
 	/**

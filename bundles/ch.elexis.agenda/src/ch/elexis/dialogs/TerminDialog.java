@@ -76,11 +76,12 @@ import ch.elexis.core.ac.Right;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
@@ -265,6 +266,8 @@ public class TerminDialog extends TitleAreaDialog {
 				if ((idx > -1) && (idx < lTermine.size())) {
 					actPlannable = lTermine.get(idx);
 					setAll();
+					NoPoUtil.loadAsIdentifiable((Termin) actPlannable, IAppointment.class)
+							.ifPresent(a -> ContextServiceHolder.get().setTyped(a));
 				}
 			}
 
@@ -307,6 +310,8 @@ public class TerminDialog extends TitleAreaDialog {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				createTermin(true);
+				NoPoUtil.loadAsIdentifiable((Termin) actPlannable, IAppointment.class)
+						.ifPresent(a -> ContextServiceHolder.get().setTyped(a));
 			}
 		});
 		Point s = bSave.computeSize(SWT.DEFAULT, SWT.DEFAULT);

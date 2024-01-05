@@ -289,6 +289,7 @@ public class AppointmentDetailComposite extends Composite {
 				if (appointment.getSubjectOrPatient() == null || appointment.getSubjectOrPatient().isEmpty()) {
 					loadAppointmentsForPatient();
 				}
+				ContextServiceHolder.get().getRootContext().setTyped(appointment);
 			}
 		});
 		Button btnDelete = new Button(compContentMiddle, SWT.NULL);

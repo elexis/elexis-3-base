@@ -28,13 +28,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.model.IMessage;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.data.Query;
-import ch.elexis.messages.Message;
 
 public class MsgHeartListener implements HeartListener {
 	static Logger log = LoggerFactory.getLogger(MsgHeartListener.class);
@@ -42,10 +44,10 @@ public class MsgHeartListener implements HeartListener {
 
 	public void heartbeat() {
 		if (!bSkip) {
-			if (CoreHub.getLoggedInContact() != null) {
-				Query<Message> qbe = new Query<Message>(Message.class);
-				qbe.add("to", Query.EQUALS, CoreHub.getLoggedInContact().getId()); //$NON-NLS-1$
-				final List<Message> res = qbe.execute();
+			ContextServiceHolder.get().getActiveUserContact().ifPresent(uc -> {
+				IQuery<IMessage> query = CoreModelServiceHolder.get().getQuery(IMessage.class);
+				query.and("destination", COMPARATOR.EQUALS, uc.getId()); //$NON-NLS-1$
+				final List<IMessage> res = query.execute();
 				if (res.size() > 0) {
 					UiDesk.getDisplay().asyncExec(new Runnable() {
 						public void run() {
@@ -60,7 +62,7 @@ public class MsgHeartListener implements HeartListener {
 						}
 					});
 				}
-			}
+			});
 		}
 	}
 

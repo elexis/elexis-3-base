@@ -3,6 +3,7 @@ package ch.elexis.base.messages;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -24,15 +25,16 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.format.UserFormatUtil;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.data.Anwender;
 
 public class MessagePreferences extends PreferencePage implements IWorkbenchPreferencePage {
 	public static final String DEF_SOUND_PATH = "/sounds/notify_sound.wav"; //$NON-NLS-1$
@@ -111,15 +113,17 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 
 		Label lblActiveUser = new Label(grpDefaultRecipient, SWT.NONE);
 		lblActiveUser.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblActiveUser.setText(Messages.Benutzer + ": " + CoreHub.getLoggedInContact().getLabel() + " ");
+		lblActiveUser.setText(Messages.Benutzer + ": " //$NON-NLS-1$
+				+ UserFormatUtil.getUserLabel(ContextServiceHolder.get().getActiveUserContact().get())
+				+ StringUtils.SPACE); // $NON-NLS-1$
 		comboDefaultRecipient = new ComboViewer(grpDefaultRecipient, SWT.READ_ONLY);
 		comboDefaultRecipient.setContentProvider(ArrayContentProvider.getInstance());
 		comboDefaultRecipient.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof Anwender) {
-					Anwender anwender = (Anwender) element;
-					return anwender.getLabel();
+				if (element instanceof IContact) {
+					IContact anwender = (IContact) element;
+					return UserFormatUtil.getUserLabel(anwender);
 				}
 				return super.getText(element);
 			}
@@ -128,8 +132,8 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		String preferenceKey = getPreferenceKeyForUser();
 		String savedRecipientId = ConfigServiceHolder.getUser(preferenceKey, null);
 		if (savedRecipientId != null && !savedRecipientId.isEmpty()) {
-			List<Anwender> users = getUsers();
-			for (Anwender user : users) {
+			List<IContact> users = getUsers();
+			for (IContact user : users) {
 				if (user.getId().equals(savedRecipientId)) {
 					comboDefaultRecipient.setSelection(new StructuredSelection(user));
 					break;
@@ -161,7 +165,7 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 	@Override
 	public boolean performOk() {
 		StructuredSelection selection = (StructuredSelection) comboDefaultRecipient.getSelection();
-		Anwender selectedUser = (Anwender) selection.getFirstElement();
+		IContact selectedUser = (IContact) selection.getFirstElement();
 		String selectedUserId = selectedUser.getId();
 		String preferenceKey = getPreferenceKeyForUser();
 		ConfigServiceHolder.setUser(preferenceKey, selectedUserId);
@@ -171,11 +175,11 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 		return super.performOk();
 	}
 
-	private List<Anwender> getUsers() {
+	private List<IContact> getUsers() {
 		IQuery<IUser> userQuery = CoreModelServiceHolder.get().getQuery(IUser.class);
 		userQuery.and(ModelPackage.Literals.IUSER__ASSIGNED_CONTACT, COMPARATOR.NOT_EQUALS, null);
 		List<IUser> users = userQuery.execute();
-		return users.stream().filter(u -> isActive(u)).map(u -> Anwender.load(u.getAssignedContact().getId()))
+		return users.stream().filter(u -> isActive(u)).map(u -> u.getAssignedContact())
 				.collect(Collectors.toList());
 	}
 
@@ -197,7 +201,7 @@ public class MessagePreferences extends PreferencePage implements IWorkbenchPref
 	}
 
 	private String getPreferenceKeyForUser() {
-		String userId = CoreHub.getLoggedInContact().getId();
+		String userId = ContextServiceHolder.get().getActiveUserContact().get().getId();
 		return Preferences.USR_DEFAULT_MESSAGE_RECIPIENT + "_" + userId;
 	}
 

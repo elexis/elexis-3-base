@@ -7,7 +7,6 @@ Bundle-Vendor: elexis.info
 Require-Bundle: ch.elexis.core.l10n,
  org.eclipse.ui,
  org.eclipse.core.runtime,
- ch.elexis.core.data;bundle-version="3.0.0",
  ch.elexis.core.ui;bundle-version="3.0.0",
  ch.elexis.core.ui.icons;bundle-version="3.0.0",
  ch.rgw.utility,
@@ -16,9 +15,10 @@ Require-Bundle: ch.elexis.core.l10n,
 Eclipse-LazyStart: true
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Export-Package: ch.elexis.base.messages,
- ch.elexis.messages
-Import-Package: ch.elexis.core.services.holder,
+Export-Package: ch.elexis.base.messages
+Import-Package: ch.elexis.core.data.activator,
+ ch.elexis.core.data.events,
+ ch.elexis.core.services.holder,
  org.eclipse.e4.ui.workbench,
  org.slf4j
 Bundle-ActivationPolicy: lazy

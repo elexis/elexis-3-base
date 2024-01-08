@@ -12,7 +12,9 @@
 
 package ch.elexis.base.messages;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,21 +41,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IMessage;
+import ch.elexis.core.model.IReminder;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.builder.IMessageBuilder;
+import ch.elexis.core.model.format.UserFormatUtil;
 import ch.elexis.core.model.issue.Visibility;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Anwender;
-import ch.elexis.data.Reminder;
-import ch.elexis.messages.Message;
 import ch.rgw.tools.TimeTool;
 
 public class MsgDetailDialog extends Dialog {
@@ -61,11 +63,11 @@ public class MsgDetailDialog extends Dialog {
 	private Label lblFrom;
 	private ComboViewer cbTo;
 	private Text txtMessage;
-	private Message incomingMsg;
+	private IMessage incomingMsg;
 	private Button bOK;
 	private Button bAnswer;
 
-	MsgDetailDialog(final Shell shell, final Message msg) {
+	MsgDetailDialog(final Shell shell, final IMessage msg) {
 		super(shell);
 		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE);
 		this.incomingMsg = msg;
@@ -80,7 +82,7 @@ public class MsgDetailDialog extends Dialog {
 		Label lblMessageInfo = new Label(ret, SWT.NONE);
 		lblMessageInfo.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
 		String msgLabel = (incomingMsg == null) ? new TimeTool().toString(TimeTool.FULL_GER)
-				: new TimeTool(incomingMsg.get(Message.FLD_TIME)).toString(TimeTool.FULL_GER);
+				: new TimeTool(incomingMsg.getCreateDateTime()).toString(TimeTool.FULL_GER);
 		lblMessageInfo.setText(Messages.MsgDetailDialog_messageDated + msgLabel);
 
 		new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_from);
@@ -92,24 +94,25 @@ public class MsgDetailDialog extends Dialog {
 		cbTo.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				Anwender anw1 = (Anwender) e1;
-				Anwender anw2 = (Anwender) e2;
-				return String.CASE_INSENSITIVE_ORDER.compare(anw1.getLabel(), anw2.getLabel());
+				IContact anw1 = (IContact) e1;
+				IContact anw2 = (IContact) e2;
+				return String.CASE_INSENSITIVE_ORDER.compare(UserFormatUtil.getUserLabel(anw1),
+						UserFormatUtil.getUserLabel(anw2));
 			}
 		});
 		cbTo.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				Anwender anw = (Anwender) element;
-				return anw.getLabel();
+				IContact anw = (IContact) element;
+				return UserFormatUtil.getUserLabel(anw);
 			}
 		});
-	    List<Anwender> users = getUsers();
+		List<IContact> users = getUsers();
 	    cbTo.setInput(users);
 		String preferenceKey = getPreferenceKeyForUser();
 	    String savedRecipientId = ConfigServiceHolder.getUser(preferenceKey, null);
 	    if (savedRecipientId != null && !savedRecipientId.isEmpty()) {
-	        for (Anwender user : users) {
+			for (IContact user : users) {
 	            if (user.getId().equals(savedRecipientId)) {
 	                cbTo.setSelection(new StructuredSelection(user));
 					break;
@@ -122,25 +125,30 @@ public class MsgDetailDialog extends Dialog {
 		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
 
 		if (incomingMsg != null) {
-			String senderString = (incomingMsg.getSender() != null) ? incomingMsg.getSender().getLabel()
-					: incomingMsg.getSenderString();
+			String senderString = incomingMsg.getSender();
+			Optional<IContact> sender = getSender(incomingMsg);
+			if (sender.isPresent()) {
+				senderString = UserFormatUtil.getUserLabel(sender.get());
+			}
 			lblFrom.setText(senderString);
-			Anwender sender = null;
-			for (Anwender anwender : users) {
-				if (incomingMsg.getDest().getId().equals(anwender.getId())) {
-					sender = anwender;
-					break;
+			Optional<IContact> destination = getDestination(incomingMsg);
+			if (destination.isPresent() && sender.isPresent()) {
+				for (IContact anwender : users) {
+					if (destination.get().getId().equals(anwender.getId())) {
+						sender = Optional.of(anwender);
+						break;
+					}
 				}
 			}
-			if (sender != null) {
-				cbTo.setSelection(new StructuredSelection(sender));
+			if (sender.isPresent()) {
+				cbTo.setSelection(new StructuredSelection(sender.get()));
 			}
 			cbTo.getCombo().setEnabled(false);
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
 			Text txtIncomingMsg = new Text(ret, SWT.READ_ONLY | SWT.BORDER);
 			GridData gd_txtIncomingMsg = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
 			txtIncomingMsg.setLayoutData(gd_txtIncomingMsg);
-			txtIncomingMsg.setText(incomingMsg.get(Message.FLD_TEXT));
+			txtIncomingMsg.setText(incomingMsg.getMessageText());
 			Button copyButton = new Button(ret, SWT.PUSH);
 			copyButton.setText(Messages.MsgDetailDialog_Copy);
 			GridData gd_copyButton = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
@@ -157,7 +165,7 @@ public class MsgDetailDialog extends Dialog {
 			});
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_answer);
 		} else {
-			lblFrom.setText(CoreHub.getLoggedInContact().getLabel());
+			lblFrom.setText(UserFormatUtil.getUserLabel(ContextServiceHolder.get().getActiveUserContact().get()));
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
 		}
 		txtMessage = SWTHelper.createText(ret, 1, SWT.BORDER);
@@ -172,11 +180,25 @@ public class MsgDetailDialog extends Dialog {
 		return ret;
 	}
 
-	private List<Anwender> getUsers() {
+	private Optional<IContact> getSender(IMessage message) {
+		if (StringUtils.isNotBlank(message.getSender())) {
+			return CoreModelServiceHolder.get().load(message.getSender(), IContact.class, true);
+		}
+		return Optional.empty();
+	}
+
+	private Optional<IContact> getDestination(IMessage message) {
+		if (message.getReceiver() != null && !message.getReceiver().isEmpty()) {
+			return CoreModelServiceHolder.get().load(message.getReceiver().get(0), IContact.class, true);
+		}
+		return Optional.empty();
+	}
+
+	private List<IContact> getUsers() {
 		IQuery<IUser> userQuery = CoreModelServiceHolder.get().getQuery(IUser.class);
 		userQuery.and(ModelPackage.Literals.IUSER__ASSIGNED_CONTACT, COMPARATOR.NOT_EQUALS, null);
 		List<IUser> users = userQuery.execute();
-		return users.stream().filter(u -> isActive(u)).map(u -> Anwender.load(u.getAssignedContact().getId()))
+		return users.stream().filter(u -> isActive(u)).map(u -> u.getAssignedContact())
 				.collect(Collectors.toList());
 	}
 
@@ -233,19 +255,26 @@ public class MsgDetailDialog extends Dialog {
 			return;
 		case IDialogConstants.CLIENT_ID + 1:
 			if (incomingMsg != null) {
-				Anwender an = incomingMsg.getSender();
-				new Message(an, txtMessage.getText());
+				ContextServiceHolder.get().getActiveUserContact().ifPresent(uc -> {
+					getSender(incomingMsg).ifPresent(sc -> {
+						IMessage message = new IMessageBuilder(CoreModelServiceHolder.get(), uc, sc).build();
+						message.setMessageText(txtMessage.getText());
+						CoreModelServiceHolder.get().save(message);
+					});
+				});
 			}
 			okPressed();
 		case IDialogConstants.CLIENT_ID + 2:
 			StructuredSelection ss = ((StructuredSelection) cbTo.getSelection());
 			if (!ss.isEmpty()) {
-				Anwender anw = (Anwender) ss.getFirstElement();
-				Reminder rem = new Reminder(null, new TimeTool().toString(TimeTool.DATE_GER), Visibility.ALWAYS,
-						StringUtils.EMPTY, incomingMsg.get(Message.FLD_TEXT));
-				ElexisEventDispatcher.getInstance()
-						.fire(new ElexisEvent(rem, Reminder.class, ElexisEvent.EVENT_CREATE));
-				rem.addResponsible(anw);
+				IContact destination = (IContact) ss.getFirstElement();
+				IReminder reminder = CoreModelServiceHolder.get().create(IReminder.class);
+				reminder.setDue(LocalDate.now());
+				reminder.setVisibility(Visibility.ALWAYS);
+				reminder.setMessage(incomingMsg.getMessageText());
+				reminder.addResponsible(destination);
+
+				CoreModelServiceHolder.get().save(reminder);
 			}
 			okPressed();
 		default:
@@ -259,16 +288,22 @@ public class MsgDetailDialog extends Dialog {
 		if (incomingMsg == null) {
 			StructuredSelection ss = ((StructuredSelection) cbTo.getSelection());
 			if (!ss.isEmpty()) {
-				incomingMsg = new Message((Anwender) ss.getFirstElement(), txtMessage.getText());
+				ContextServiceHolder.get().getActiveUserContact().ifPresent(uc -> {
+					IMessage message = new IMessageBuilder(CoreModelServiceHolder.get(), uc,
+							(IContact) ss.getFirstElement())
+							.build();
+					message.setMessageText(txtMessage.getText());
+					CoreModelServiceHolder.get().save(message);
+				});
 			}
 		} else {
-			incomingMsg.delete();
+			CoreModelServiceHolder.get().delete(incomingMsg);
 		}
 		super.okPressed();
 	}
 
 	private String getPreferenceKeyForUser() {
-		String userId = CoreHub.getLoggedInContact().getId();
+		String userId = ContextServiceHolder.get().getActiveUserContact().get().getId();
 		return Preferences.USR_DEFAULT_MESSAGE_RECIPIENT + "_" + userId;
 	}
 }

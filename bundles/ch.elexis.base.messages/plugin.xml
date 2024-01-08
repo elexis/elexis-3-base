@@ -10,13 +10,6 @@
             name="Nachrichten">
       </page>
    </extension>
-   <extension
-         point="ch.elexis.core.data.PersistentReference">
-      <Factory
-            Class="ch.elexis.messages.MessageFactory"
-            name="Messages">
-      </Factory>
-   </extension>
 	<extension
          point="org.eclipse.ui.actionSets">
       <actionSet

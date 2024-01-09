@@ -21,6 +21,10 @@ public class VatUtil {
 
 	public static final String VAT_VALUE_WITH_DATE = "at.medevit.medelexis.vat_ch/ValueWithDate";
 
+	private static String[] defaultRatesStart = { "0", "2.5", "8.0" };
+	private static String[] defaultRates2018 = { "0", "2.5", "7.7" };
+	private static String[] defaultRates2024 = { "0", "2.6", "8.1" };
+
 	public static boolean isVatAvailable() {
 		return !readDateableConfigValue(ConfigServiceHolder.get()).isEmpty();
 	}
@@ -133,5 +137,22 @@ public class VatUtil {
 				return 1;
 		}
 		return 0;
+	}
+
+	/**
+	 * String array containing [no, reduced, normal] vat rates as string for the
+	 * provided date.
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static String[] getDefaultVatRateArray(LocalDate date) {
+		if (date.isBefore(LocalDate.of(2018, 1, 1))) {
+			return defaultRatesStart;
+		} else if (date.isBefore(LocalDate.of(2024, 1, 1))) {
+			return defaultRates2018;
+		} else {
+			return defaultRates2024;
+		}
 	}
 }

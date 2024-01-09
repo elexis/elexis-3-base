@@ -56,6 +56,29 @@ public class VatRateSum {
 					}
 				}
 			}
+		} else {
+			if (isNormalRateMissing()) {
+				String[] defaultVatRates = VatUtil.getDefaultVatRateArray(invoiceStartDate);
+				if (defaultVatRates != null) {
+					try {
+						Double scale = Double.valueOf(defaultVatRates[2]);
+						rates.put(scale, new VatRateElement(scale));
+					} catch (Exception e) {
+						// ignore
+					}
+				}
+			}
+			if (isReducedRateMissing()) {
+				String[] defaultVatRates = VatUtil.getDefaultVatRateArray(invoiceStartDate);
+				if (defaultVatRates != null) {
+					try {
+						Double scale = Double.valueOf(defaultVatRates[1]);
+						rates.put(scale, new VatRateElement(scale));
+					} catch (Exception e) {
+						// ignore
+					}
+				}
+			}
 		}
 		return rates;
 	}

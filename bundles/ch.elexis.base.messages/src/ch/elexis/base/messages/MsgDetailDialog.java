@@ -46,6 +46,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IMessage;
 import ch.elexis.core.model.IReminder;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.model.IUserGroup;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.builder.IMessageBuilder;
 import ch.elexis.core.model.format.UserFormatUtil;
@@ -62,6 +63,7 @@ public class MsgDetailDialog extends Dialog {
 
 	private Label lblFrom;
 	private ComboViewer cbTo;
+	private Button groupBtn;
 	private Text txtMessage;
 	private IMessage incomingMsg;
 	private Button bOK;
@@ -77,10 +79,10 @@ public class MsgDetailDialog extends Dialog {
 	protected Control createDialogArea(final Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		ret.setLayout(new GridLayout(4, false));
+		ret.setLayout(new GridLayout(5, false));
 
 		Label lblMessageInfo = new Label(ret, SWT.NONE);
-		lblMessageInfo.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
+		lblMessageInfo.setLayoutData(SWTHelper.getFillGridData(5, true, 1, false));
 		String msgLabel = (incomingMsg == null) ? new TimeTool().toString(TimeTool.FULL_GER)
 				: new TimeTool(incomingMsg.getCreateDateTime()).toString(TimeTool.FULL_GER);
 		lblMessageInfo.setText(Messages.MsgDetailDialog_messageDated + msgLabel);
@@ -94,35 +96,47 @@ public class MsgDetailDialog extends Dialog {
 		cbTo.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				IContact anw1 = (IContact) e1;
-				IContact anw2 = (IContact) e2;
-				return String.CASE_INSENSITIVE_ORDER.compare(UserFormatUtil.getUserLabel(anw1),
-						UserFormatUtil.getUserLabel(anw2));
+				if (e1 instanceof IContact && e2 instanceof IContact) {
+					IContact anw1 = (IContact) e1;
+					IContact anw2 = (IContact) e2;
+					return String.CASE_INSENSITIVE_ORDER.compare(UserFormatUtil.getUserLabel(anw1),
+							UserFormatUtil.getUserLabel(anw2));
+				} else if (e1 instanceof IUserGroup && e2 instanceof IUserGroup) {
+					IUserGroup ug1 = (IUserGroup) e1;
+					IUserGroup ug2 = (IUserGroup) e2;
+					return String.CASE_INSENSITIVE_ORDER.compare(ug1.getGroupname(), ug2.getGroupname());
+				}
+				return 0;
 			}
 		});
 		cbTo.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				IContact anw = (IContact) element;
-				return UserFormatUtil.getUserLabel(anw);
+				if (element instanceof IContact) {
+					IContact anw = (IContact) element;
+					return UserFormatUtil.getUserLabel(anw);
+				} else if (element instanceof IUserGroup) {
+					return ((IUserGroup) element).getGroupname();
+				}
+				return super.getText(element);
 			}
 		});
-		List<IContact> users = getUsers();
-	    cbTo.setInput(users);
-		String preferenceKey = getPreferenceKeyForUser();
-	    String savedRecipientId = ConfigServiceHolder.getUser(preferenceKey, null);
-	    if (savedRecipientId != null && !savedRecipientId.isEmpty()) {
-			for (IContact user : users) {
-	            if (user.getId().equals(savedRecipientId)) {
-	                cbTo.setSelection(new StructuredSelection(user));
-					break;
-				}
-	        }
-	    } else {
-			cbTo.setSelection(new StructuredSelection(users.get(0)));
-	    }
+		List<IContact> users = setComboUserInput();
 
-		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
+		groupBtn = new Button(ret, SWT.CHECK);
+		groupBtn.setText(" Gruppe");
+		groupBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (groupBtn.getSelection()) {
+					setComboGroupInput();
+				} else {
+					setComboUserInput();
+				}
+			}
+		});
+
+		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(5, true, 1, false));
 
 		if (incomingMsg != null) {
 			String senderString = incomingMsg.getSender();
@@ -144,9 +158,10 @@ public class MsgDetailDialog extends Dialog {
 				cbTo.setSelection(new StructuredSelection(sender.get()));
 			}
 			cbTo.getCombo().setEnabled(false);
+			groupBtn.setEnabled(false);
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
 			Text txtIncomingMsg = new Text(ret, SWT.READ_ONLY | SWT.BORDER);
-			GridData gd_txtIncomingMsg = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+			GridData gd_txtIncomingMsg = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
 			txtIncomingMsg.setLayoutData(gd_txtIncomingMsg);
 			txtIncomingMsg.setText(incomingMsg.getMessageText());
 			Button copyButton = new Button(ret, SWT.PUSH);
@@ -169,7 +184,7 @@ public class MsgDetailDialog extends Dialog {
 			new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
 		}
 		txtMessage = SWTHelper.createText(ret, 1, SWT.BORDER);
-		txtMessage.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
+		txtMessage.setLayoutData(SWTHelper.getFillGridData(4, true, 1, true));
 		txtMessage.addModifyListener(e -> {
 			if (txtMessage.getText() != null && txtMessage.getText().length() > 0) {
 				getShell().setDefaultButton(bAnswer);
@@ -178,6 +193,37 @@ public class MsgDetailDialog extends Dialog {
 			}
 		});
 		return ret;
+	}
+
+	private void setComboGroupInput() {
+		List<IUserGroup> groups = getUserGroups();
+		cbTo.setInput(groups);
+		cbTo.refresh();
+	}
+
+	private List<IUserGroup> getUserGroups() {
+		List<IUserGroup> userGroups = CoreModelServiceHolder.get().getQuery(IUserGroup.class).execute();
+		userGroups.sort((u1, u2) -> u1.getLabel().compareTo(u2.getLabel()));
+		return userGroups;
+	}
+
+	private List<IContact> setComboUserInput() {
+		List<IContact> users = getUsers();
+		cbTo.setInput(users);
+
+		String preferenceKey = getPreferenceKeyForUser();
+		String savedRecipientId = ConfigServiceHolder.getUser(preferenceKey, null);
+		if (savedRecipientId != null && !savedRecipientId.isEmpty()) {
+			for (IContact user : users) {
+				if (user.getId().equals(savedRecipientId)) {
+					cbTo.setSelection(new StructuredSelection(user));
+					break;
+				}
+			}
+		} else {
+			cbTo.setSelection(new StructuredSelection(users.get(0)));
+		}
+		return users;
 	}
 
 	private Optional<IContact> getSender(IMessage message) {
@@ -243,7 +289,11 @@ public class MsgDetailDialog extends Dialog {
 		if (incomingMsg == null) {
 			bAnswer.setEnabled(false);
 		}
-		createButton(parent, IDialogConstants.CLIENT_ID + 2, Messages.MsgDetailDialog_asReminder, false);
+		Button bReminder = createButton(parent, IDialogConstants.CLIENT_ID + 2, Messages.MsgDetailDialog_asReminder,
+				false);
+		if (incomingMsg == null) {
+			bReminder.setEnabled(false);
+		}
 		createButton(parent, IDialogConstants.CANCEL_ID, Messages.MsgDetailDialog_cancel, false);
 	}
 
@@ -289,17 +339,28 @@ public class MsgDetailDialog extends Dialog {
 			StructuredSelection ss = ((StructuredSelection) cbTo.getSelection());
 			if (!ss.isEmpty()) {
 				ContextServiceHolder.get().getActiveUserContact().ifPresent(uc -> {
-					IMessage message = new IMessageBuilder(CoreModelServiceHolder.get(), uc,
-							(IContact) ss.getFirstElement())
-							.build();
-					message.setMessageText(txtMessage.getText());
-					CoreModelServiceHolder.get().save(message);
+					if (ss.getFirstElement() instanceof IContact) {
+						createMessage(uc, (IContact) ss.getFirstElement());
+					} else if (ss.getFirstElement() instanceof IUserGroup) {
+						IUserGroup userGoup = (IUserGroup) ss.getFirstElement();
+						for (IUser user : userGoup.getUsers()) {
+							if (user.getAssignedContact() != null) {
+								createMessage(uc, user.getAssignedContact());
+							}
+						}
+					}
 				});
 			}
 		} else {
 			CoreModelServiceHolder.get().delete(incomingMsg);
 		}
 		super.okPressed();
+	}
+
+	private void createMessage(IContact sender, IContact receiver) {
+		IMessage message = new IMessageBuilder(CoreModelServiceHolder.get(), sender, receiver).build();
+		message.setMessageText(txtMessage.getText());
+		CoreModelServiceHolder.get().save(message);
 	}
 
 	private String getPreferenceKeyForUser() {

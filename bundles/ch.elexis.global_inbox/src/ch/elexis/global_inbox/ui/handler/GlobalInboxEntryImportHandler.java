@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -72,6 +73,8 @@ public class GlobalInboxEntryImportHandler {
 		document.setKeywords(globalInboxEntry.getKeywords());
 		if (globalInboxEntry.getCreationDate() != null) {
 			document.setCreated(globalInboxEntry.getCreationDate());
+		} else {
+			document.setCreated(new Date());
 		}
 		try (InputStream fin = new FileInputStream(mainFile)) {
 			document = documentStore.saveDocument(document, fin);

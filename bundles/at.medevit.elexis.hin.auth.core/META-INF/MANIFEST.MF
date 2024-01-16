@@ -10,8 +10,8 @@ Import-Package: ch.elexis.core.services,
  org.apache.commons.lang3;version="3.12.0",
  org.osgi.service.component.annotations,
  org.slf4j;version="1.7.30"
-Service-Component: OSGI-INF/at.medevit.elexis.hin.auth.core.internal.HinAuthService.xml
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.elexis.hin.auth.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
+Service-Component: OSGI-INF/at.medevit.elexis.hin.auth.core.internal.HinAuthService.xml

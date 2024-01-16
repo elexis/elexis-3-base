@@ -11,5 +11,5 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.10.0",
  ch.elexis.fop_wrapper;bundle-version="3.9.0"
 Automatic-Module-Name: ch.itmed.fop.printing.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Service-Component: OSGI-INF/ch.itmed.fop.printing.startup.StartupHandler.xml
 Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/ch.itmed.fop.printing.startup.StartupHandler.xml

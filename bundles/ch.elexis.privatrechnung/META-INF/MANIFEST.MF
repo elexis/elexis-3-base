@@ -13,13 +13,13 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.jpa.entities;bundle-version="3.9.0"
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Service-Component: OSGI-INF/ch.elexis.privatrechnung.model.internal.PrivatRechnungModelService.xml,
- OSGI-INF/ch.elexis.privatrechnung.model.internal.PrivatRechnungCodeElementServiceContribution.xml,
- OSGI-INF/ch.elexis.privatrechnung.model.PrivatModelServiceHolder.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: com.opencsv;version="3.10.0",
  javax.inject;version="1.0.0",
  javax.persistence,
  javax.persistence.criteria;version="2.2.3",
  org.apache.commons.lang3;version="3.12.0"
+Service-Component: OSGI-INF/ch.elexis.privatrechnung.model.PrivatModelServiceHolder.xml,
+ OSGI-INF/ch.elexis.privatrechnung.model.internal.PrivatRechnungCodeElementServiceContribution.xml,
+ OSGI-INF/ch.elexis.privatrechnung.model.internal.PrivatRechnungModelService.xml
 

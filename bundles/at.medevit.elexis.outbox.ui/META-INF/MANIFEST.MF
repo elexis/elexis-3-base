@@ -15,5 +15,5 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.mail
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: medevit.at
-Service-Component: OSGI-INF/at.medevit.elexis.outbox.ui.TaskServiceComponent.xml,
- OSGI-INF/at.medevit.elexis.outbox.ui.OutboxServiceComponent.xml
+Service-Component: OSGI-INF/at.medevit.elexis.outbox.ui.OutboxServiceComponent.xml,
+ OSGI-INF/at.medevit.elexis.outbox.ui.TaskServiceComponent.xml

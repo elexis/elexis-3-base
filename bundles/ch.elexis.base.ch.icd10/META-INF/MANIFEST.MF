@@ -15,8 +15,8 @@ Bundle-ActivationPolicy: lazy
 Import-Package: javax.persistence;version="2.2.3",
  javax.persistence.criteria;version="2.2.3",
  org.apache.commons.io;version="2.5.0"
-Service-Component: OSGI-INF/ch.elexis.base.ch.icd10.importer.Icd10ReferenceDataImporter.xml,
+Service-Component: OSGI-INF/ch.elexis.base.ch.icd10.CodeElementContribution.xml,
+ OSGI-INF/ch.elexis.base.ch.icd10.Icd10ModelService.xml,
  OSGI-INF/ch.elexis.base.ch.icd10.ModelUtil.xml,
  OSGI-INF/ch.elexis.base.ch.icd10.importer.EntityManagerHolder.xml,
- OSGI-INF/ch.elexis.base.ch.icd10.Icd10ModelService.xml,
- OSGI-INF/ch.elexis.base.ch.icd10.CodeElementContribution.xml
+ OSGI-INF/ch.elexis.base.ch.icd10.importer.Icd10ReferenceDataImporter.xml

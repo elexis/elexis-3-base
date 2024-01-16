@@ -17,7 +17,7 @@ Import-Package: javax.persistence;version="2.2.3",
 Export-Package: at.medevit.elexis.outbox.model
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: medevit.at
-Service-Component: OSGI-INF/at.medevit.elexis.outbox.model.impl.OutboxModelService.xml,
- OSGI-INF/at.medevit.elexis.outbox.model.impl.DocumentStoreServiceHolder.xml,
+Service-Component: OSGI-INF/at.medevit.elexis.outbox.model.impl.DocumentStoreServiceHolder.xml,
  OSGI-INF/at.medevit.elexis.outbox.model.impl.ModelUtil.xml,
- OSGI-INF/at.medevit.elexis.outbox.model.impl.OutboxElementService.xml
+ OSGI-INF/at.medevit.elexis.outbox.model.impl.OutboxElementService.xml,
+ OSGI-INF/at.medevit.elexis.outbox.model.impl.OutboxModelService.xml

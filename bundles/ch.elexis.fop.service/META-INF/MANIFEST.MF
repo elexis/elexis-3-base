@@ -9,6 +9,6 @@ Eclipse-BundleShape: dir
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.fop_wrapper;bundle-version="3.9.0"
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/ch.elexis.fop.service.FormattedOutputFactory.xml
 Import-Package: javax.xml.bind,
  javax.xml.bind.annotation
+Service-Component: OSGI-INF/ch.elexis.fop.service.FormattedOutputFactory.xml

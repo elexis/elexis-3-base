@@ -22,7 +22,7 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.findings.util;bundle-version="3.9.0",
  ch.elexis.core.ui.medication;bundle-version="3.9.0",
  ch.elexis.core.ui.laboratory;bundle-version="3.9.0"
-Service-Component: OSGI-INF/ch.elexis.icpc.service.CodeElementServiceHolder.xml,
- OSGI-INF/ch.elexis.icpc.coding.DatabaseICPCCodingContribution.xml,
+Service-Component: OSGI-INF/ch.elexis.icpc.coding.DatabaseICPCCodingContribution.xml,
+ OSGI-INF/ch.elexis.icpc.service.CodeElementServiceHolder.xml,
  OSGI-INF/ch.elexis.icpc.service.IcpcModelServiceHolder.xml
 

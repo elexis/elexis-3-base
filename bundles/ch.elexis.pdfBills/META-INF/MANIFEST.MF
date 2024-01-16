@@ -19,6 +19,6 @@ Import-Package: at.medevit.elexis.tarmed.model,
  org.jdom2;version="2.0.6",
  org.jdom2.input;version="2.0.6",
  org.jdom2.output;version="2.0.6"
-Service-Component: OSGI-INF/ch.elexis.pdfBills.MailClientHolder.xml
 Export-Package: ch.elexis.pdfBills,
  ch.elexis.pdfBills.print
+Service-Component: OSGI-INF/ch.elexis.pdfBills.MailClientHolder.xml

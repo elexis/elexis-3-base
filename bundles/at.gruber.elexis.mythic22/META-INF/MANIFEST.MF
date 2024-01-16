@@ -15,5 +15,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: org.eclipse.e4.ui.workbench,
  org.osgi.service.event;version="1.2.0",
  org.slf4j
-Service-Component: OSGI-INF/at.medevit.elexis.mythic22.StartupHandler.xml
 Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/at.medevit.elexis.mythic22.StartupHandler.xml

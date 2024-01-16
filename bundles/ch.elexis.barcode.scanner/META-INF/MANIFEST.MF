@@ -10,5 +10,5 @@ Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
  ch.elexis.core.serial;bundle-version="3.9.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: ch.elexis.barcode.scanner
-Service-Component: OSGI-INF/ch.elexis.barcode.scanner.internal.StartupHandler.xml
 Bundle-Vendor: elexis.ch
+Service-Component: OSGI-INF/ch.elexis.barcode.scanner.internal.StartupHandler.xml

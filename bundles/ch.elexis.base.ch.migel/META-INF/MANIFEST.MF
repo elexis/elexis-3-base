@@ -14,9 +14,9 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.importer.div,
  ch.elexis.core.services,
  ch.elexis.core
-Service-Component: OSGI-INF/ch.elexis.artikel_ch.data.service.MiGelCodeElementService.xml,
- OSGI-INF/ch.elexis.base.ch.migel.MigelCsvDataImporter.xml,
- OSGI-INF/ch.elexis.base.ch.migel.MigelXlsxDataImporter.xml
 Export-Package: ch.elexis.artikel_ch.data.service,
  ch.elexis.base.ch.migel,
  ch.elexis.base.ch.migel.ui
+Service-Component: OSGI-INF/ch.elexis.artikel_ch.data.service.MiGelCodeElementService.xml,
+ OSGI-INF/ch.elexis.base.ch.migel.MigelCsvDataImporter.xml,
+ OSGI-INF/ch.elexis.base.ch.migel.MigelXlsxDataImporter.xml

@@ -21,8 +21,8 @@ Bundle-ActivationPolicy: lazy
 Import-Package: javax.persistence;version="2.2.0",
  javax.persistence.criteria;version="2.2.0",
  org.apache.commons.lang3;version="3.7.0"
-Service-Component: OSGI-INF/ch.elexis.base.ch.labortarif.model.service.LaborTarifModelService.xml,
- OSGI-INF/ch.elexis.base.ch.labortarif.model.service.LaborTarifCodeElementServiceContribution.xml,
- OSGI-INF/ch.elexis.base.ch.labortarif.model.CodeElementServiceHolder.xml,
+Service-Component: OSGI-INF/ch.elexis.base.ch.labortarif.model.CodeElementServiceHolder.xml,
+ OSGI-INF/ch.elexis.base.ch.labortarif.model.ModelServiceHolder.xml,
  OSGI-INF/ch.elexis.base.ch.labortarif.model.importer.LaborTarifReferenceDataImporter.xml,
- OSGI-INF/ch.elexis.base.ch.labortarif.model.ModelServiceHolder.xml
+ OSGI-INF/ch.elexis.base.ch.labortarif.model.service.LaborTarifCodeElementServiceContribution.xml,
+ OSGI-INF/ch.elexis.base.ch.labortarif.model.service.LaborTarifModelService.xml

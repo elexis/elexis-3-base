@@ -9,5 +9,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.hl7.v2x;bundle-version="3.9.0"
-Service-Component: OSGI-INF/ch.elexis.hl7.message.core.service.HL7MessageService.xml
 Export-Package: ch.elexis.hl7.message.core
+Service-Component: OSGI-INF/ch.elexis.hl7.message.core.service.HL7MessageService.xml

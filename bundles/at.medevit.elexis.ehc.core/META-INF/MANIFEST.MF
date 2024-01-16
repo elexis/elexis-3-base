@@ -11,5 +11,5 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Export-Package: at.medevit.elexis.ehc.core
-Service-Component: OSGI-INF/at.medevit.elexis.ehc.core.internal.EhcCoreServiceImpl.xml
 Import-Package: org.apache.commons.io;version="2.6.0"
+Service-Component: OSGI-INF/at.medevit.elexis.ehc.core.internal.EhcCoreServiceImpl.xml

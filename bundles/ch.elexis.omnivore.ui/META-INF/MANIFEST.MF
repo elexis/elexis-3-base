@@ -18,9 +18,9 @@ Require-Bundle: ch.elexis.core.l10n,
 Export-Package: ch.elexis.omnivore.ui.jobs,
  ch.elexis.omnivore.ui.util,
  ch.elexis.omnivore.ui.views
-Service-Component: OSGI-INF/ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder.xml,
- OSGI-INF/ch.elexis.omnivore.ui.inbox.DocHandleInboxService.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.inject,
  org.apache.commons.io;version="2.5.0",
  org.apache.commons.lang3;version="2.6.0"
+Service-Component: OSGI-INF/ch.elexis.omnivore.ui.inbox.DocHandleInboxService.xml,
+ OSGI-INF/ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder.xml

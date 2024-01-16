@@ -12,6 +12,6 @@ Require-Bundle: org.eclipse.osgi.services,
  ch.elexis.core.services;bundle-version="1.0.0",
  ch.elexis.core.spotlight;bundle-version="1.0.0",
  ch.elexis.core.spotlight.ui;bundle-version="1.0.0"
-Service-Component: OSGI-INF/ch.elexis.base.solr.ui.spotlight.ui.EncounterSpotlightResultEntryDetailCompositeContributor.xml,
- OSGI-INF/ch.elexis.base.solr.ui.spotlight.ui.DocumentSpotlightResultEntryDetailCompositeContributor.xml
 Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/ch.elexis.base.solr.ui.spotlight.ui.DocumentSpotlightResultEntryDetailCompositeContributor.xml,
+ OSGI-INF/ch.elexis.base.solr.ui.spotlight.ui.EncounterSpotlightResultEntryDetailCompositeContributor.xml

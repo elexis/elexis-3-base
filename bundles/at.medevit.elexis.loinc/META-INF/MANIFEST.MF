@@ -9,6 +9,6 @@ Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
  ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.findings;bundle-version="3.9.0"
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/loincService.xml,
- OSGI-INF/at.medevit.elexis.loinc.model.impl.LoincCodingContribution.xml
+Service-Component: OSGI-INF/at.medevit.elexis.loinc.model.impl.LoincCodingContribution.xml,
+ OSGI-INF/loincService.xml
 Export-Package: at.medevit.elexis.loinc.model

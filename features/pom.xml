@@ -94,5 +94,6 @@
     <module>ch.itmed.fop.printing.es.feature</module>
     <module>at.medevit.elexis.bluemedication.feature</module>
     <module>at.medevit.elexis.documents.converter.feature</module>
+    <modukle>ch.framsteg.elexis.finance.analytics.feature</module>
   </modules>
 </project>

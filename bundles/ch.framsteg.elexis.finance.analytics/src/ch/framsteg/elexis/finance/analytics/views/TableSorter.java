@@ -218,7 +218,7 @@ public class TableSorter {
 		int index = columnNumber;
 		for (int i = 1; i < items.length; i++) {
 			String value1 = items[i].getText(index);
-			Date date1=null;
+			Date date1 = new Date();
 			try {
 				date1 = sourceFormat.parse(value1);
 			} catch (ParseException e) {
@@ -262,7 +262,7 @@ public class TableSorter {
 		int index = columnNumber;
 		for (int i = 1; i < items.length; i++) {
 			String value1 = items[i].getText(index);
-			Date date1=null;
+			Date date1 = new Date();
 			try {
 				date1 = sourceFormat.parse(value1);
 			} catch (ParseException e) {

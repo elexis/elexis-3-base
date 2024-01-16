@@ -144,23 +144,32 @@ public class TabbedController {
 			if (from == null && to == null) {
 				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_ALL),
 						mandantId);
-			} else if (from == null && !to.isEmpty()) {
-				dateTo = datePickerFormat.parse(to);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_BEFORE),
-						mandantId, dateToString);
-			} else if (!from.isEmpty() && to == null) {
-				dateFrom = datePickerFormat.parse(from);
-				dateFromString = databaseFormat.format(dateFrom);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_AFTER),
-						mandantId, dateFromString);
-			} else if (!from.isEmpty() && !to.isEmpty()) {
-				dateFrom = datePickerFormat.parse(from);
-				dateTo = datePickerFormat.parse(to);
-				dateFromString = databaseFormat.format(dateFrom);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_BETWEEN),
-						mandantId, dateToString, dateFromString);
+				// } else if (from == null && !to.isEmpty()) {
+			} else if (from == null && to != null) {
+				if (!to.isEmpty()) {
+					dateTo = datePickerFormat.parse(to);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_BEFORE),
+							mandantId, dateToString);
+				}
+				// } else if (!from.isEmpty() && to == null) {
+			} else if (from != null && to == null) {
+				if (!from.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateFromString = databaseFormat.format(dateFrom);
+					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_AFTER),
+							mandantId, dateFromString);
+				}
+				// } else if (!from.isEmpty() && !to.isEmpty()) {
+			} else if (from != null && to != null) {
+				if (!from.isEmpty() && !to.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateTo = datePickerFormat.parse(to);
+					dateFromString = databaseFormat.format(dateFrom);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_BETWEEN),
+							mandantId, dateToString, dateFromString);
+				}
 			}
 			JdbcLink jdbcLink = PersistentObject.getConnection();
 			Connection connection = jdbcLink.getKeepAliveConnection();
@@ -202,23 +211,32 @@ public class TabbedController {
 			if (from == null && to == null) {
 				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_ALL),
 						mandantId);
-			} else if (from == null && !to.isEmpty()) {
-				dateTo = datePickerFormat.parse(to);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_BEFORE),
-						mandantId, dateToString);
-			} else if (!from.isEmpty() && to == null) {
-				dateFrom = datePickerFormat.parse(from);
-				dateFromString = databaseFormat.format(dateFrom);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_AFTER),
-						mandantId, dateFromString);
-			} else if (!from.isEmpty() && !to.isEmpty()) {
-				dateFrom = datePickerFormat.parse(from);
-				dateTo = datePickerFormat.parse(to);
-				dateFromString = databaseFormat.format(dateFrom);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_BETWEEN),
-						mandantId, dateToString, dateFromString);
+			} else if (from == null && to != null) {
+				if (!to.isEmpty()) {
+					dateTo = datePickerFormat.parse(to);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_BEFORE), mandantId,
+							dateToString);
+				}
+			} else if (from != null && to == null) {
+				if (!from.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateFromString = databaseFormat.format(dateFrom);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_AFTER), mandantId,
+							dateFromString);
+				}
+			} else if (from != null && to != null) {
+				if (!from.isEmpty() && !to.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateTo = datePickerFormat.parse(to);
+					dateFromString = databaseFormat.format(dateFrom);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_BETWEEN), mandantId,
+							dateToString, dateFromString);
+				}
 			}
 			JdbcLink jdbcLink = PersistentObject.getConnection();
 			Connection connection = jdbcLink.getKeepAliveConnection();
@@ -260,26 +278,32 @@ public class TabbedController {
 			if (from == null && to == null) {
 				queryString = MessageFormat
 						.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_MONTH_ALL), mandantId);
-			} else if (from == null && !to.isEmpty()) {
-				dateTo = datePickerFormat.parse(to);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(
-						getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_MONTH_BEFORE), mandantId,
-						dateToString);
-			} else if (!from.isEmpty() && to == null) {
-				dateFrom = datePickerFormat.parse(from);
-				dateFromString = databaseFormat.format(dateFrom);
-				queryString = MessageFormat.format(
-						getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_MONTH_AFTER), mandantId,
-						dateFromString);
-			} else if (!from.isEmpty() && !to.isEmpty()) {
-				dateFrom = datePickerFormat.parse(from);
-				dateTo = datePickerFormat.parse(to);
-				dateFromString = databaseFormat.format(dateFrom);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(
-						getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_MONTH_BETWEEN), mandantId,
-						dateToString, dateFromString);
+			} else if (from == null && to != null) {
+				if (!to.isEmpty()) {
+					dateTo = datePickerFormat.parse(to);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_MONTH_BEFORE), mandantId,
+							dateToString);
+				}
+			} else if (from != null && to == null) {
+				if (!from.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateFromString = databaseFormat.format(dateFrom);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_MONTH_AFTER), mandantId,
+							dateFromString);
+				}
+			} else if (from != null && to != null) {
+				if (!from.isEmpty() && !to.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateTo = datePickerFormat.parse(to);
+					dateFromString = databaseFormat.format(dateFrom);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_MONTH_BETWEEN), mandantId,
+							dateToString, dateFromString);
+				}
 			}
 			JdbcLink jdbcLink = PersistentObject.getConnection();
 			Connection connection = jdbcLink.getKeepAliveConnection();
@@ -320,23 +344,29 @@ public class TabbedController {
 			String dateToString = null;
 			if (from == null && to == null) {
 				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_ALL), mandantId);
-			} else if (from == null && !to.isEmpty()) {
-				dateTo = datePickerFormat.parse(to);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_BEFORE),
-						mandantId, dateToString);
-			} else if (!from.isEmpty() && to == null) {
-				dateFrom = datePickerFormat.parse(from);
-				dateFromString = databaseFormat.format(dateFrom);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_AFTER),
-						mandantId, dateFromString);
-			} else if (!from.isEmpty() && !to.isEmpty()) {
-				dateFrom = datePickerFormat.parse(from);
-				dateTo = datePickerFormat.parse(to);
-				dateFromString = databaseFormat.format(dateFrom);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_BETWEEN),
-						mandantId, dateToString, dateFromString);
+			} else if (from == null && to != null) {
+				if (!to.isEmpty()) {
+					dateTo = datePickerFormat.parse(to);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_BEFORE),
+							mandantId, dateToString);
+				}
+			} else if (from != null && to == null) {
+				if (!from.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateFromString = databaseFormat.format(dateFrom);
+					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_AFTER),
+							mandantId, dateFromString);
+				}
+			} else if (from != null && to != null) {
+				if (!from.isEmpty() && !to.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateTo = datePickerFormat.parse(to);
+					dateFromString = databaseFormat.format(dateFrom);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_BETWEEN),
+							mandantId, dateToString, dateFromString);
+				}
 			}
 			JdbcLink jdbcLink = PersistentObject.getConnection();
 			Connection connection = jdbcLink.getKeepAliveConnection();
@@ -377,23 +407,30 @@ public class TabbedController {
 			if (from == null && to == null) {
 				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_MONTH_ALL),
 						mandantId);
-			} else if (from == null && !to.isEmpty()) {
-				dateTo = datePickerFormat.parse(to);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_MONTH_BEFORE),
-						mandantId, dateToString);
-			} else if (!from.isEmpty() && to == null) {
-				dateFrom = datePickerFormat.parse(from);
-				dateFromString = databaseFormat.format(dateFrom);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_MONTH_AFTER),
-						mandantId, dateFromString);
-			} else if (!from.isEmpty() && !to.isEmpty()) {
-				dateFrom = datePickerFormat.parse(from);
-				dateTo = datePickerFormat.parse(to);
-				dateFromString = databaseFormat.format(dateFrom);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_MONTH_BETWEEN),
-						mandantId, dateToString, dateFromString);
+			} else if (from == null && to != null) {
+				if (!to.isEmpty()) {
+					dateTo = datePickerFormat.parse(to);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_MONTH_BEFORE), mandantId, dateToString);
+				}
+			} else if (from != null && to == null) {
+				if (!from.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateFromString = databaseFormat.format(dateFrom);
+					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_MONTH_AFTER),
+							mandantId, dateFromString);
+				}
+			} else if (from != null && to != null) {
+				if (!from.isEmpty() && !to.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateTo = datePickerFormat.parse(to);
+					dateFromString = databaseFormat.format(dateFrom);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_SALES_PER_YEAR_MONTH_BETWEEN), mandantId, dateToString,
+							dateFromString);
+				}
 			}
 			JdbcLink jdbcLink = PersistentObject.getConnection();
 			Connection connection = jdbcLink.getKeepAliveConnection();
@@ -434,23 +471,32 @@ public class TabbedController {
 			if (from == null && to == null) {
 				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_TARMED_PER_YEAR_MONTH_ALL),
 						mandantId, "Tarmed");
-			} else if (from == null && !to.isEmpty()) {
-				dateTo = datePickerFormat.parse(to);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_TARMED_PER_YEAR_MONTH_BEFORE),
-						mandantId, dateToString, "Tarmed");
-			} else if (!from.isEmpty() && to == null) {
-				dateFrom = datePickerFormat.parse(from);
-				dateFromString = databaseFormat.format(dateFrom);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_TARMED_PER_YEAR_MONTH_AFTER),
-						mandantId, dateFromString, "Tarmed");
-			} else if (!from.isEmpty() && !to.isEmpty()) {
-				dateFrom = datePickerFormat.parse(from);
-				dateTo = datePickerFormat.parse(to);
-				dateFromString = databaseFormat.format(dateFrom);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_TARMED_PER_YEAR_MONTH_BETWEEN),
-						mandantId, dateToString, dateFromString, "Tarmed");
+			} else if (from == null && to != null) {
+				if (!to.isEmpty()) {
+					dateTo = datePickerFormat.parse(to);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_TARMED_PER_YEAR_MONTH_BEFORE), mandantId, dateToString,
+							"Tarmed");
+				}
+			} else if (from != null && to == null) {
+				if (!from.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateFromString = databaseFormat.format(dateFrom);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_TARMED_PER_YEAR_MONTH_AFTER), mandantId,
+							dateFromString, "Tarmed");
+				}
+			} else if (from != null && to != null) {
+				if (!from.isEmpty() && !to.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateTo = datePickerFormat.parse(to);
+					dateFromString = databaseFormat.format(dateFrom);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_TARMED_PER_YEAR_MONTH_BETWEEN), mandantId,
+							dateToString, dateFromString, "Tarmed");
+				}
 			}
 			JdbcLink jdbcLink = PersistentObject.getConnection();
 			Connection connection = jdbcLink.getKeepAliveConnection();
@@ -491,23 +537,32 @@ public class TabbedController {
 			if (from == null && to == null) {
 				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_MEDICAL_PER_YEAR_MONTH_ALL),
 						mandantId, "Medikamente");
-			} else if (from == null && !to.isEmpty()) {
-				dateTo = datePickerFormat.parse(to);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_MEDICAL_PER_YEAR_MONTH_BEFORE),
-						mandantId, dateToString, "Medikamente");
-			} else if (!from.isEmpty() && to == null) {
-				dateFrom = datePickerFormat.parse(from);
-				dateFromString = databaseFormat.format(dateFrom);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_MEDICAL_PER_YEAR_MONTH_AFTER),
-						mandantId, dateFromString, "Medikamente");
-			} else if (!from.isEmpty() && !to.isEmpty()) {
-				dateFrom = datePickerFormat.parse(from);
-				dateTo = datePickerFormat.parse(to);
-				dateFromString = databaseFormat.format(dateFrom);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_MEDICAL_PER_YEAR_MONTH_BETWEEN),
-						mandantId, dateToString, dateFromString, "Medikamente");
+			} else if (from == null && to != null) {
+				if (!to.isEmpty()) {
+					dateTo = datePickerFormat.parse(to);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_MEDICAL_PER_YEAR_MONTH_BEFORE), mandantId,
+							dateToString, "Medikamente");
+				}
+			} else if (from != null && to == null) {
+				if (!from.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateFromString = databaseFormat.format(dateFrom);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_MEDICAL_PER_YEAR_MONTH_AFTER), mandantId,
+							dateFromString, "Medikamente");
+				}
+			} else if (from != null && to != null) {
+				if (!from.isEmpty() && !to.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateTo = datePickerFormat.parse(to);
+					dateFromString = databaseFormat.format(dateFrom);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(
+							getSqlProperties().getProperty(QUERY_MEDICAL_PER_YEAR_MONTH_BETWEEN), mandantId,
+							dateToString, dateFromString, "Medikamente");
+				}
 			}
 			JdbcLink jdbcLink = PersistentObject.getConnection();
 			Connection connection = jdbcLink.getKeepAliveConnection();
@@ -548,23 +603,29 @@ public class TabbedController {
 			String dateToString = null;
 			if (from == null && to == null) {
 				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_DAILY_REPORT_ALL), mandantId);
-			} else if (from == null && !to.isEmpty()) {
-				dateTo = datePickerFormat.parse(to);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_DAILY_REPORT_BEFORE), mandantId,
-						dateToString);
-			} else if (!from.isEmpty() && to == null) {
-				dateFrom = datePickerFormat.parse(from);
-				dateFromString = databaseFormat.format(dateFrom);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_DAILY_REPORT_AFTER), mandantId,
-						dateFromString);
-			} else if (!from.isEmpty() && !to.isEmpty()) {
-				dateFrom = datePickerFormat.parse(from);
-				dateTo = datePickerFormat.parse(to);
-				dateFromString = databaseFormat.format(dateFrom);
-				dateToString = databaseFormat.format(dateTo);
-				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_DAILY_REPORT_BETWEEN),
-						mandantId, dateToString, dateFromString);
+			} else if (from == null && to != null) {
+				if (!to.isEmpty()) {
+					dateTo = datePickerFormat.parse(to);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_DAILY_REPORT_BEFORE),
+							mandantId, dateToString);
+				}
+			} else if (from != null && to == null) {
+				if (!from.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateFromString = databaseFormat.format(dateFrom);
+					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_DAILY_REPORT_AFTER),
+							mandantId, dateFromString);
+				}
+			} else if (from != null && to != null) {
+				if (!from.isEmpty() && !to.isEmpty()) {
+					dateFrom = datePickerFormat.parse(from);
+					dateTo = datePickerFormat.parse(to);
+					dateFromString = databaseFormat.format(dateFrom);
+					dateToString = databaseFormat.format(dateTo);
+					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_DAILY_REPORT_BETWEEN),
+							mandantId, dateToString, dateFromString);
+				}
 			}
 			JdbcLink jdbcLink = PersistentObject.getConnection();
 			Connection connection = jdbcLink.getKeepAliveConnection();

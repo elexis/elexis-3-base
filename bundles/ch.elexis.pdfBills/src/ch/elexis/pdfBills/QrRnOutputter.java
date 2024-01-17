@@ -148,6 +148,7 @@ public class QrRnOutputter implements IRnOutputter {
 
 						XMLExporter ex = new XMLExporter();
 						Document dRn = ex.doExport(rn, null, type, true);
+						dRn = TarmedXmlUtil.setPrintAtIntermediate(dRn, false);
 						monitor.worked(1);
 						if (invoice.getState() == InvoiceState.DEFECTIVE) {
 							errors++;

@@ -2,7 +2,7 @@
 	
 	<tr>
 		<td>Version:</td>
-		<td>1.0.1</td>
+		<td>3.12.0</td>
 	</tr>
 	<tr>
 		<td style="width:150px;">Kategorie:</td>
@@ -18,11 +18,11 @@
 	</tr>
 	<tr>
 		<td>Letzte Bearbeitung:</td>
-		<td>04. November 2022</td>
+		<td>17. Januar 2024</td>
 	</tr>
 	<tr>
 		<td>Voraussetzungen:</td>
-		<td>Elexis 3.9</td>
+		<td>Elexis 3.11</td>
 	</tr>
 	<tr>
 		<td>Betriebssystem:</td>

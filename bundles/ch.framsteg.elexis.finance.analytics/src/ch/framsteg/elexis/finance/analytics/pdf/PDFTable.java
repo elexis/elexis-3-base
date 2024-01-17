@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
-public class Table {
+public class PDFTable {
 
     // Table attributes
     private float margin;
@@ -20,11 +20,11 @@ public class Table {
 
     // Content attributes
     private Integer numberOfRows;
-    private List<Column> columns;
+    private List<PDFColumn> columns;
     private String[][] content;
     private float cellMargin;
 
-    public Table() {
+    public PDFTable() {
     }
 
     public Integer getNumberOfColumns() {
@@ -33,7 +33,7 @@ public class Table {
 
     public float getWidth() {
         float tableWidth = 0f;
-        for (Column column : columns) {
+        for (PDFColumn column : columns) {
             tableWidth += column.getWidth();
         }
         return tableWidth;
@@ -79,11 +79,11 @@ public class Table {
         return columnNames;
     }
 
-    public List<Column> getColumns() {
+    public List<PDFColumn> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<Column> columns) {
+    public void setColumns(List<PDFColumn> columns) {
         this.columns = columns;
     }
 

@@ -1,11 +1,11 @@
 package ch.framsteg.elexis.finance.analytics.pdf;
 
-public class Column {
+public class PDFColumn {
 
     private String name;
     private float width;
 
-    public Column(String name, float width) {
+    public PDFColumn(String name, float width) {
         this.name = name;
         this.width = width;
     }

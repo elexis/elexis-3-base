@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.core.ui.views.IRefreshable;
+import ch.elexis.data.PersistentObject;
 
 public class ReportingView extends ViewPart implements IRefreshable {
 
@@ -44,8 +45,15 @@ public class ReportingView extends ViewPart implements IRefreshable {
 					.getResourceAsStream(separator + "resources" + separator + "application.properties"));
 			getMessagesProperties().load(ReportingView.class.getClassLoader()
 					.getResourceAsStream(separator + "resources" + separator + "messages.properties"));
-			getSqlProperties().load(ReportingView.class.getClassLoader()
-					.getResourceAsStream(separator + "resources" + separator + "sql.properties"));
+
+			if (PersistentObject.getDefaultConnection().getDBFlavor().equalsIgnoreCase("postgresql")) {
+				getSqlProperties().load(ReportingView.class.getClassLoader()
+						.getResourceAsStream(separator + "resources" + separator + "postgresql.properties"));
+			} else if (PersistentObject.getDefaultConnection().getDBFlavor().equalsIgnoreCase("mysql")) {
+				getSqlProperties().load(ReportingView.class.getClassLoader()
+						.getResourceAsStream(separator + "resources" + separator + "mysql.properties"));
+			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -5,66 +5,66 @@ import java.util.List;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
-public class TableBuilder {
+public class PDFTableBuilder {
 
-    private Table table = new Table();
+    private PDFTable table = new PDFTable();
 
-    public TableBuilder setHeight(float height) {
+    public PDFTableBuilder setHeight(float height) {
         table.setHeight(height);
         return this;
     }
 
-    public TableBuilder setNumberOfRows(Integer numberOfRows) {
+    public PDFTableBuilder setNumberOfRows(Integer numberOfRows) {
         table.setNumberOfRows(numberOfRows);
         return this;
     }
 
-    public TableBuilder setRowHeight(float rowHeight) {
+    public PDFTableBuilder setRowHeight(float rowHeight) {
         table.setRowHeight(rowHeight);
         return this;
     }
 
-    public TableBuilder setContent(String[][] content) {
+    public PDFTableBuilder setContent(String[][] content) {
         table.setContent(content);
         return this;
     }
 
-    public TableBuilder setColumns(List<Column> columns) {
+    public PDFTableBuilder setColumns(List<PDFColumn> columns) {
         table.setColumns(columns);
         return this;
     }
 
-    public TableBuilder setCellMargin(float cellMargin) {
+    public PDFTableBuilder setCellMargin(float cellMargin) {
         table.setCellMargin(cellMargin);
         return this;
     }
 
-    public TableBuilder setMargin(float margin) {
+    public PDFTableBuilder setMargin(float margin) {
         table.setMargin(margin);
         return this;
     }
 
-    public TableBuilder setPageSize(PDRectangle pageSize) {
+    public PDFTableBuilder setPageSize(PDRectangle pageSize) {
         table.setPageSize(pageSize);
         return this;
     }
 
-    public TableBuilder setLandscape(boolean landscape) {
+    public PDFTableBuilder setLandscape(boolean landscape) {
         table.setLandscape(landscape);
         return this;
     }
 
-    public TableBuilder setTextFont(PDFont textFont) {
+    public PDFTableBuilder setTextFont(PDFont textFont) {
         table.setTextFont(textFont);
         return this;
     }
 
-    public TableBuilder setFontSize(float fontSize) {
+    public PDFTableBuilder setFontSize(float fontSize) {
         table.setFontSize(fontSize);
         return this;
     }
 
-    public Table build() {
+    public PDFTable build() {
         return table;
     }
 }

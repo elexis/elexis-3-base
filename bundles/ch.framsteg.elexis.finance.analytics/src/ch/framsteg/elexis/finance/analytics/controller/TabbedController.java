@@ -1,10 +1,7 @@
 package ch.framsteg.elexis.finance.analytics.controller;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,20 +9,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.Mandant;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.data.PersistentObject;
-import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLink.Stm;
 
 public class TabbedController {
 
 	private final static String DATE_DATE_PICKER_FORMAT = "tabbed.controller.date.date.picker.format";
 	private final static String DATE_DATABASE_FORMAT = "tabbed.controller.date.database.format";
-	private final static String MATERIALIZED_VIEW_RM = "tabbed.controller.materialized.view.0.rm";
+
 	private final static String MATERIALIZED_VIEW_0_CREATE = "tabbed.controller.materialized.view.0.create";
 	private final static String MATERIALIZED_VIEW_0_DETECT = "tabbed.controller.materialized.view.0.count";
 	private final static String MATERIALIZED_VIEW_0_REFRESH = "tabbed.controller.materialized.view.0.refresh";
 	private final static String MATERIALIZED_VIEW_0_GRANT = "tabbed.controller.materialized.view.0.grant";
+
 	private final static String QUERY_SALES_PER_SERVICE_ALL = "tabbed.controller.sales.per.service.query.0";
 	private final static String QUERY_SALES_PER_SERVICE_BEFORE = "tabbed.controller.sales.per.service.query.1";
 	private final static String QUERY_SALES_PER_SERVICE_AFTER = "tabbed.controller.sales.per.service.query.2";
@@ -46,14 +44,17 @@ public class TabbedController {
 	private final static String QUERY_SALES_PER_YEAR_MONTH_BEFORE = "tabbed.controller.sales.per.year.month.query.1";
 	private final static String QUERY_SALES_PER_YEAR_MONTH_AFTER = "tabbed.controller.sales.per.year.month.query.2";
 	private final static String QUERY_SALES_PER_YEAR_MONTH_BETWEEN = "tabbed.controller.sales.per.year.month.query.3";
+
 	private final static String QUERY_TARMED_PER_YEAR_MONTH_ALL = "tabbed.controller.tarmed.per.year.month.query.0";
 	private final static String QUERY_TARMED_PER_YEAR_MONTH_BEFORE = "tabbed.controller.tarmed.per.year.month.query.1";
 	private final static String QUERY_TARMED_PER_YEAR_MONTH_AFTER = "tabbed.controller.tarmed.per.year.month.query.2";
 	private final static String QUERY_TARMED_PER_YEAR_MONTH_BETWEEN = "tabbed.controller.tarmed.per.year.month.query.3";
+
 	private final static String QUERY_MEDICAL_PER_YEAR_MONTH_ALL = "tabbed.controller.medical.per.year.month.query.0";
 	private final static String QUERY_MEDICAL_PER_YEAR_MONTH_BEFORE = "tabbed.controller.medical.per.year.month.query.1";
 	private final static String QUERY_MEDICAL_PER_YEAR_MONTH_AFTER = "tabbed.controller.medical.per.year.month.query.2";
 	private final static String QUERY_MEDICAL_PER_YEAR_MONTH_BETWEEN = "tabbed.controller.medical.per.year.month.query.3";
+
 	private final static String QUERY_DAILY_REPORT_ALL = "tabbed.controller.daily.report.query.0";
 	private final static String QUERY_DAILY_REPORT_BEFORE = "tabbed.controller.daily.report.query.1";
 	private final static String QUERY_DAILY_REPORT_AFTER = "tabbed.controller.daily.report.query.2";
@@ -62,43 +63,25 @@ public class TabbedController {
 	private Properties applicationProperties;
 	private Properties sqlProperties;
 
-	private JdbcLink jdbcLink;
-	private Connection connection;
-	private Statement statement;
-
 	public TabbedController(Properties applicationProperties, Properties sqlProperties) {
 		setApplicationProperties(applicationProperties);
 		setSqlProperties(sqlProperties);
 	}
 
 	public boolean isDatabaseSupported() {
-		boolean valid = false;
-		jdbcLink = PersistentObject.getConnection();
-		connection = jdbcLink.getKeepAliveConnection();
-		try {
-			DatabaseMetaData metaData = connection.getMetaData();
-			String product_name = metaData.getDatabaseProductName();
-			if (product_name.equalsIgnoreCase("postgresql")) {
-				valid = true;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return valid;
+		return PersistentObject.getDefaultConnection().getDBFlavor().equalsIgnoreCase("postgresql");
 	}
 
 	private void checkMaterializedViews() {
-		jdbcLink = PersistentObject.getConnection();
-		connection = jdbcLink.getKeepAliveConnection();
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		try {
 			String queryString = new String();
 			queryString = MessageFormat.format(getSqlProperties().getProperty(MATERIALIZED_VIEW_0_DETECT),
 					mandantId.toLowerCase());
-			statement = connection.createStatement();
+			Stm statement = PersistentObject.getDefaultConnection().getStatement();
 			ResultSet resultSet = null;
-			resultSet = statement.executeQuery(queryString);
+			resultSet = statement.query(queryString);
 			if (resultSet.next()) {
 				int count = resultSet.getInt(1);
 				// Create Materialized View if not existing
@@ -107,17 +90,17 @@ public class TabbedController {
 							mandantId, mandantId);
 					String grantSql = MessageFormat.format(getSqlProperties().getProperty(MATERIALIZED_VIEW_0_GRANT),
 							mandantId);
-					statement.executeUpdate(createSql);
-					statement.executeUpdate(grantSql);
+					statement.exec(createSql);
+					statement.exec(grantSql);
 					// Refresh Materialized View if existing
 				} else {
 					String refreshSql = MessageFormat
 							.format(getSqlProperties().getProperty(MATERIALIZED_VIEW_0_REFRESH), mandantId);
-					statement.executeUpdate(refreshSql);
+					statement.exec(refreshSql);
 				}
 			}
 			resultSet.close();
-			statement.close();
+			PersistentObject.getDefaultConnection().releaseStatement(statement);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -128,7 +111,7 @@ public class TabbedController {
 		from = from.isEmpty() ? null : from;
 		to = to.isEmpty() ? null : to;
 		String queryString = new String();
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		SimpleDateFormat datePickerFormat = new SimpleDateFormat(
 				getApplicationProperties().getProperty(DATE_DATE_PICKER_FORMAT));
@@ -171,19 +154,15 @@ public class TabbedController {
 							mandantId, dateToString, dateFromString);
 				}
 			}
-			JdbcLink jdbcLink = PersistentObject.getConnection();
-			Connection connection = jdbcLink.getKeepAliveConnection();
+			Stm statement = PersistentObject.getDefaultConnection().getStatement();
+			resultSet = statement.query(queryString);
 
-			Statement statement = connection.createStatement();
-			resultSet = statement.executeQuery(queryString);
-
-			String[] headerLine = new String[] {};
 			while (resultSet.next()) {
 				String[] line = new String[] { resultSet.getString(1), resultSet.getString(2) };
 				lines.add(line);
 			}
 			resultSet.close();
-			statement.close();
+			PersistentObject.getDefaultConnection().releaseStatement(statement);
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}
@@ -195,7 +174,7 @@ public class TabbedController {
 		from = from.isEmpty() || from == null ? null : from;
 		to = to.isEmpty() || from == null ? null : to;
 		String queryString = new String();
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		SimpleDateFormat datePickerFormat = new SimpleDateFormat(
 				getApplicationProperties().getProperty(DATE_DATE_PICKER_FORMAT));
@@ -238,19 +217,15 @@ public class TabbedController {
 							dateToString, dateFromString);
 				}
 			}
-			JdbcLink jdbcLink = PersistentObject.getConnection();
-			Connection connection = jdbcLink.getKeepAliveConnection();
+			Stm statement = PersistentObject.getDefaultConnection().getStatement();
+			resultSet = statement.query(queryString);
 
-			Statement statement = connection.createStatement();
-			resultSet = statement.executeQuery(queryString);
-
-			String[] headerLine = new String[] {};
 			while (resultSet.next()) {
 				String[] line = new String[] { resultSet.getString(2), resultSet.getString(1), resultSet.getString(3) };
 				lines.add(line);
 			}
 			resultSet.close();
-			statement.close();
+			PersistentObject.getDefaultConnection().releaseStatement(statement);
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}
@@ -261,7 +236,7 @@ public class TabbedController {
 		checkMaterializedViews();
 		from = from.isEmpty() ? null : from;
 		to = to.isEmpty() ? null : to;
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		ArrayList<String[]> lines = new ArrayList<String[]>();
 		String queryString = new String();
@@ -305,19 +280,15 @@ public class TabbedController {
 							dateToString, dateFromString);
 				}
 			}
-			JdbcLink jdbcLink = PersistentObject.getConnection();
-			Connection connection = jdbcLink.getKeepAliveConnection();
-
-			Statement statement = connection.createStatement();
-			resultSet = statement.executeQuery(queryString);
-
+			Stm statement = PersistentObject.getDefaultConnection().getStatement();
+			resultSet = statement.query(queryString);
 			while (resultSet.next()) {
 				String[] line = new String[] { resultSet.getString(2), resultSet.getString(3), resultSet.getString(1),
 						resultSet.getString(4) };
 				lines.add(line);
 			}
 			resultSet.close();
-			statement.close();
+			PersistentObject.getDefaultConnection().releaseStatement(statement);
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}
@@ -328,7 +299,7 @@ public class TabbedController {
 		checkMaterializedViews();
 		from = from.isEmpty() ? null : from;
 		to = to.isEmpty() ? null : to;
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		ArrayList<String[]> lines = new ArrayList<String[]>();
 		String queryString = new String();
@@ -368,18 +339,14 @@ public class TabbedController {
 							mandantId, dateToString, dateFromString);
 				}
 			}
-			JdbcLink jdbcLink = PersistentObject.getConnection();
-			Connection connection = jdbcLink.getKeepAliveConnection();
-
-			Statement statement = connection.createStatement();
-			resultSet = statement.executeQuery(queryString);
-
+			Stm statement = PersistentObject.getDefaultConnection().getStatement();
+			resultSet = statement.query(queryString);
 			while (resultSet.next()) {
 				String[] line = new String[] { resultSet.getString(1), resultSet.getString(2) };
 				lines.add(line);
 			}
 			resultSet.close();
-			statement.close();
+			PersistentObject.getDefaultConnection().releaseStatement(statement);
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}
@@ -390,7 +357,7 @@ public class TabbedController {
 		checkMaterializedViews();
 		from = from.isEmpty() ? null : from;
 		to = to.isEmpty() ? null : to;
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		ArrayList<String[]> lines = new ArrayList<String[]>();
 		String queryString = new String();
@@ -432,18 +399,14 @@ public class TabbedController {
 							dateFromString);
 				}
 			}
-			JdbcLink jdbcLink = PersistentObject.getConnection();
-			Connection connection = jdbcLink.getKeepAliveConnection();
-
-			Statement statement = connection.createStatement();
-			resultSet = statement.executeQuery(queryString);
-
+			Stm statement = PersistentObject.getDefaultConnection().getStatement();
+			resultSet = statement.query(queryString);
 			while (resultSet.next()) {
 				String[] line = new String[] { resultSet.getString(1), resultSet.getString(2), resultSet.getString(3) };
 				lines.add(line);
 			}
 			resultSet.close();
-			statement.close();
+			PersistentObject.getDefaultConnection().releaseStatement(statement);
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}
@@ -454,7 +417,7 @@ public class TabbedController {
 		checkMaterializedViews();
 		from = from.isEmpty() ? null : from;
 		to = to.isEmpty() ? null : to;
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		ArrayList<String[]> lines = new ArrayList<String[]>();
 		String queryString = new String();
@@ -498,18 +461,14 @@ public class TabbedController {
 							dateToString, dateFromString, "Tarmed");
 				}
 			}
-			JdbcLink jdbcLink = PersistentObject.getConnection();
-			Connection connection = jdbcLink.getKeepAliveConnection();
-
-			Statement statement = connection.createStatement();
-			resultSet = statement.executeQuery(queryString);
-
+			Stm statement = PersistentObject.getDefaultConnection().getStatement();
+			resultSet = statement.query(queryString);
 			while (resultSet.next()) {
 				String[] line = new String[] { resultSet.getString(1), resultSet.getString(2), resultSet.getString(3) };
 				lines.add(line);
 			}
 			resultSet.close();
-			statement.close();
+			PersistentObject.getDefaultConnection().releaseStatement(statement);
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}
@@ -520,7 +479,7 @@ public class TabbedController {
 		checkMaterializedViews();
 		from = from.isEmpty() ? null : from;
 		to = to.isEmpty() ? null : to;
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		ArrayList<String[]> lines = new ArrayList<String[]>();
 		String queryString = new String();
@@ -564,18 +523,14 @@ public class TabbedController {
 							dateToString, dateFromString, "Medikamente");
 				}
 			}
-			JdbcLink jdbcLink = PersistentObject.getConnection();
-			Connection connection = jdbcLink.getKeepAliveConnection();
-
-			Statement statement = connection.createStatement();
-			resultSet = statement.executeQuery(queryString);
-
+			Stm statement = PersistentObject.getDefaultConnection().getStatement();
+			resultSet = statement.query(queryString);
 			while (resultSet.next()) {
 				String[] line = new String[] { resultSet.getString(1), resultSet.getString(2), resultSet.getString(3) };
 				lines.add(line);
 			}
 			resultSet.close();
-			statement.close();
+			PersistentObject.getDefaultConnection().releaseStatement(statement);
 			// connection.close();
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
@@ -587,7 +542,7 @@ public class TabbedController {
 		checkMaterializedViews();
 		from = from.isEmpty() ? null : from;
 		to = to.isEmpty() ? null : to;
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		ArrayList<String[]> lines = new ArrayList<String[]>();
 		String queryString = new String();
@@ -627,12 +582,8 @@ public class TabbedController {
 							mandantId, dateToString, dateFromString);
 				}
 			}
-			JdbcLink jdbcLink = PersistentObject.getConnection();
-			Connection connection = jdbcLink.getKeepAliveConnection();
-
-			Statement statement = connection.createStatement();
-			resultSet = statement.executeQuery(queryString);
-
+			Stm statement = PersistentObject.getDefaultConnection().getStatement();
+			resultSet = statement.query(queryString);
 			while (resultSet.next()) {
 				String[] line = new String[] { resultSet.getString(1), resultSet.getString(2), resultSet.getString(3),
 						resultSet.getString(4), resultSet.getString(5), resultSet.getString(6), resultSet.getString(7),
@@ -643,8 +594,7 @@ public class TabbedController {
 				lines.add(line);
 			}
 			resultSet.close();
-			statement.close();
-			// connection.close();
+			PersistentObject.getDefaultConnection().releaseStatement(statement);
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}

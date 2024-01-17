@@ -28,7 +28,7 @@ import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 import ch.framsteg.elexis.finance.analytics.controller.TabbedController;
 import ch.framsteg.elexis.finance.analytics.export.CsvExporter;
-import ch.framsteg.elexis.finance.analytics.export.PdfExporter;
+import ch.framsteg.elexis.finance.analytics.export.PDFExporter;
 
 public class TabbedView {
 
@@ -119,7 +119,6 @@ public class TabbedView {
 	private final static String TAB8_TABLE_HEADER17 = "reporting.view.tab.8.table.header.17";
 	private final static String TAB8_TABLE_HEADER18 = "reporting.view.tab.8.table.header.18";
 	private final static String TAB8_TABLE_HEADER19 = "reporting.view.tab.8.table.header.19";
-	private final static String TAB8_COLUMN_WIDTHS = "reporting.view.tab.8.pdf.column.widths";
 
 	private final static String FILE_EXPORT_SALES_SERVICE_NAME = "reporting-file-export.sales.service";
 	private final static String FILE_EXPORT_SALES_SERVICE_YEAR_NAME = "reporting-file.export.sales.service.year";
@@ -305,9 +304,9 @@ public class TabbedView {
 		btnClear.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dpcFrom.setText("");
+				dpcFrom.setDate(null);
 				dateFrom1 = "";
-				dpcTo.setText("");
+				dpcTo.setDate(null);
 				dateTo1 = "";
 			}
 		});
@@ -330,7 +329,7 @@ public class TabbedView {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// MSG_EMPTY_TABLE
-				PdfExporter pdfExporter = new PdfExporter(getApplicationProperties(), getMessagesProperties());
+				PDFExporter pdfExporter = new PDFExporter(getApplicationProperties(), getMessagesProperties());
 				ArrayList<String[]> modifiedLines = new ArrayList<String[]>();
 				ArrayList<String[]> lines = getSalesTotalPerService();
 				if (lines.size() > 0) {
@@ -381,10 +380,6 @@ public class TabbedView {
 		});
 
 		return rootComposite;
-	}
-
-	private String addDateLimits(String title, String from, String to) {
-		return "";
 	}
 
 	Listener salesTotalPerServiceCol1Listener = new Listener() {
@@ -499,9 +494,9 @@ public class TabbedView {
 		btnClear.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dpcFrom.setText("");
+				dpcFrom.setDate(null);
 				dateFrom2 = "";
-				dpcTo.setText("");
+				dpcTo.setDate(null);
 				dateTo2 = "";
 			}
 		});
@@ -523,7 +518,7 @@ public class TabbedView {
 		btnExportPdf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PdfExporter pdfExporter = new PdfExporter(getApplicationProperties(), getMessagesProperties());
+				PDFExporter pdfExporter = new PDFExporter(getApplicationProperties(), getMessagesProperties());
 				ArrayList<String[]> modifiedLines = new ArrayList<String[]>();
 				ArrayList<String[]> lines = getSalesTotalPerServiceYear();
 				if (lines.size() > 0) {
@@ -706,9 +701,9 @@ public class TabbedView {
 		btnClear.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dpcFrom.setText("");
+				dpcFrom.setDate(null);
 				dateFrom3 = "";
-				dpcTo.setText("");
+				dpcTo.setDate(null);
 				dateTo3 = "";
 			}
 		});
@@ -730,7 +725,7 @@ public class TabbedView {
 		btnExportPdf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PdfExporter pdfExporter = new PdfExporter(getApplicationProperties(), getMessagesProperties());
+				PDFExporter pdfExporter = new PDFExporter(getApplicationProperties(), getMessagesProperties());
 				ArrayList<String[]> modifiedLines = new ArrayList<String[]>();
 				ArrayList<String[]> lines = getSalesTotalPerServiceYearMonth();
 				if (lines.size() > 0) {
@@ -923,9 +918,9 @@ public class TabbedView {
 		btnClear.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dpcFrom.setText("");
+				dpcFrom.setDate(null);
 				dateFrom4 = "";
-				dpcTo.setText("");
+				dpcTo.setDate(null);
 				dateTo4 = "";
 			}
 		});
@@ -947,7 +942,7 @@ public class TabbedView {
 		btnExportPdf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PdfExporter pdfExporter = new PdfExporter(getApplicationProperties(), getMessagesProperties());
+				PDFExporter pdfExporter = new PDFExporter(getApplicationProperties(), getMessagesProperties());
 				ArrayList<String[]> modifiedLines = new ArrayList<String[]>();
 				ArrayList<String[]> lines = getSalesTotalPerYear();
 				if (lines.size() > 0) {
@@ -1110,9 +1105,9 @@ public class TabbedView {
 		btnClear.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dpcFrom.setText("");
+				dpcFrom.setDate(null);
 				dateFrom5 = "";
-				dpcTo.setText("");
+				dpcTo.setDate(null);
 				dateTo5 = "";
 			}
 		});
@@ -1134,7 +1129,7 @@ public class TabbedView {
 		btnExportPdf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PdfExporter pdfExporter = new PdfExporter(getApplicationProperties(), getMessagesProperties());
+				PDFExporter pdfExporter = new PDFExporter(getApplicationProperties(), getMessagesProperties());
 				ArrayList<String[]> modifiedLines = new ArrayList<String[]>();
 				ArrayList<String[]> lines = getSalesTotalPerYearMonth();
 				if (lines.size() > 0) {
@@ -1314,9 +1309,9 @@ public class TabbedView {
 		btnClear.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dpcFrom.setText("");
+				dpcFrom.setDate(null);
 				dateFrom6 = "";
-				dpcTo.setText("");
+				dpcTo.setDate(null);
 				dateTo6 = "";
 			}
 		});
@@ -1338,7 +1333,7 @@ public class TabbedView {
 		btnExportPdf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PdfExporter pdfExporter = new PdfExporter(getApplicationProperties(), getMessagesProperties());
+				PDFExporter pdfExporter = new PDFExporter(getApplicationProperties(), getMessagesProperties());
 				ArrayList<String[]> modifiedLines = new ArrayList<String[]>();
 				ArrayList<String[]> lines = getTarmedPerYearMonth();
 				if (lines.size() > 0) {
@@ -1517,9 +1512,9 @@ public class TabbedView {
 		btnClear.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dpcFrom.setText("");
+				dpcFrom.setDate(null);
 				dateFrom7 = "";
-				dpcTo.setText("");
+				dpcTo.setDate(null);
 				dateTo7 = "";
 			}
 		});
@@ -1541,7 +1536,7 @@ public class TabbedView {
 		btnExportPdf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PdfExporter pdfExporter = new PdfExporter(getApplicationProperties(), getMessagesProperties());
+				PDFExporter pdfExporter = new PDFExporter(getApplicationProperties(), getMessagesProperties());
 				ArrayList<String[]> modifiedLines = new ArrayList<String[]>();
 				ArrayList<String[]> lines = getMedicalPerYearMonth();
 				if (lines.size() > 0) {
@@ -1752,9 +1747,9 @@ public class TabbedView {
 		btnClear.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				dpcFrom.setText("");
+				dpcFrom.setDate(null);
 				dateFrom8 = "";
-				dpcTo.setText("");
+				dpcTo.setDate(null);
 				dateTo8 = "";
 			}
 		});
@@ -1776,7 +1771,7 @@ public class TabbedView {
 		btnExportPdf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PdfExporter pdfExporter = new PdfExporter(getApplicationProperties(), getMessagesProperties());
+				PDFExporter pdfExporter = new PDFExporter(getApplicationProperties(), getMessagesProperties());
 				ArrayList<String[]> modifiedLines = new ArrayList<String[]>();
 				ArrayList<String[]> lines = getDailyReport();
 				if (lines.size() > 0) {

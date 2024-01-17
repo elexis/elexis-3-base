@@ -23,13 +23,13 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.data.Mandant;
 import ch.framsteg.elexis.finance.analytics.beans.Day;
 import ch.framsteg.elexis.finance.analytics.beans.TreeBuilder;
-import ch.framsteg.elexis.finance.analytics.pdf.Column;
+import ch.framsteg.elexis.finance.analytics.pdf.PDFColumn;
 import ch.framsteg.elexis.finance.analytics.pdf.PDFPageGenerator;
 import ch.framsteg.elexis.finance.analytics.pdf.PDFTableGenerator;
-import ch.framsteg.elexis.finance.analytics.pdf.Table;
-import ch.framsteg.elexis.finance.analytics.pdf.TableBuilder;
+import ch.framsteg.elexis.finance.analytics.pdf.PDFTable;
+import ch.framsteg.elexis.finance.analytics.pdf.PDFTableBuilder;
 
-public class PdfExporter {
+public class PDFExporter {
 
 	private Properties applicationProperties;
 	private Properties messagesProperties;
@@ -46,7 +46,7 @@ public class PdfExporter {
 	
 	private final static String DASH="-";
 	
-	public PdfExporter(Properties applicationProperties, Properties messagesProperties) {
+	public PDFExporter(Properties applicationProperties, Properties messagesProperties) {
 		setApplicationProperties(applicationProperties);
 		setMessagesProperties(messagesProperties);
 	}
@@ -74,10 +74,10 @@ public class PdfExporter {
 		float ROW_HEIGHT = 15;
 		float CELL_MARGIN = 2;
 
-		List<Column> columns = new ArrayList<Column>();
+		List<PDFColumn> columns = new ArrayList<PDFColumn>();
 		String[] line = lines.get(0);
 		for (int a = 0; a < line.length; a++) {
-			columns.add(new Column(line[a], columnWidths[a]));
+			columns.add(new PDFColumn(line[a], columnWidths[a]));
 			if (a == line.length - 1) {
 				columnWidth = columnWidths[a];
 			}
@@ -95,7 +95,7 @@ public class PdfExporter {
 
 		tableHeight = tableHeight - 80;
 
-		Table table = new TableBuilder().setCellMargin(CELL_MARGIN).setColumns(columns).setContent(content)
+		PDFTable table = new PDFTableBuilder().setCellMargin(CELL_MARGIN).setColumns(columns).setContent(content)
 				.setHeight(tableHeight).setNumberOfRows(content.length).setRowHeight(ROW_HEIGHT).setMargin(MARGIN)
 				.setPageSize(PAGE_SIZE).setLandscape(IS_LANDSCAPE).setTextFont(TEXT_FONT).setFontSize(FONT_SIZE)
 				.build();

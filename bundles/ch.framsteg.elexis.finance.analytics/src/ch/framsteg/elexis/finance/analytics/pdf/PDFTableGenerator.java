@@ -1,9 +1,21 @@
+/*******************************************************************************
+ * Copyright 2024 Framsteg GmbH / olivier.debenath@framsteg.ch
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package ch.framsteg.elexis.finance.analytics.pdf;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.regex.Pattern;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -49,7 +61,6 @@ public class PDFTableGenerator {
 		Integer rowsPerPage = Double.valueOf(Math.floor(table.getHeight() / table.getRowHeight())).intValue() - 1; // subtract
 		Integer numberOfPages = Double.valueOf(Math.ceil(table.getNumberOfRows().floatValue() / rowsPerPage))
 				.intValue();
-
 		// Generate each page, get the content and draw it
 		for (int pageCount = 0; pageCount < numberOfPages; pageCount++) {
 			PDPage page = generatePage(doc, table);
@@ -70,11 +81,9 @@ public class PDFTableGenerator {
 			contentStream.showText(getReportingDateTime());
 			contentStream.endText();
 			contentStream.setFont(PDType1Font.HELVETICA, 10);
-			// contentStream.moveTo(100, 100);
 
 			String[][] currentPageContent = getContentForCurrentPage(table, rowsPerPage, pageCount);
 			drawCurrentPage(table, currentPageContent, contentStream);
-
 		}
 	}
 
@@ -185,12 +194,8 @@ public class PDFTableGenerator {
 	}
 
 	private PDPageContentStream generateContentStream(PDDocument doc, PDPage page, PDFTable table) throws IOException {
-		// PDPageContentStream contentStream = new PDPageContentStream(doc, page, false,
-		// false);
 		PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND,
 				false);
-		// User transformation matrix to change the reference when drawing.
-		// This is necessary for the landscape position to draw correctly
 		if (table.isLandscape()) {
 			contentStream.transform(new Matrix(0, 1, -1, 0, table.getPageSize().getWidth(), 0));
 		}

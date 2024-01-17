@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright 2024 Framsteg GmbH / olivier.debenath@framsteg.ch
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package ch.framsteg.elexis.finance.analytics.export;
 
 import java.io.IOException;
@@ -19,8 +33,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.data.Mandant;
+import ch.elexis.core.data.service.ContextServiceHolder;
+import ch.elexis.core.model.IMandator;
 import ch.framsteg.elexis.finance.analytics.beans.Day;
 import ch.framsteg.elexis.finance.analytics.beans.TreeBuilder;
 import ch.framsteg.elexis.finance.analytics.pdf.PDFColumn;
@@ -54,8 +68,8 @@ public class PDFExporter {
 	public void exportTable(Shell shell, ArrayList<String[]> lines, String filenamePart, String documentTitle,
 			int[] columnWidths) {
 
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
-		String postAnschrift = currentMandant.getPostAnschrift();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
+		String postAnschrift = currentMandant.getPostalAddress().replaceAll("\n", " ");
 
 		Display display = shell.getDisplay();
 
@@ -152,8 +166,8 @@ public class PDFExporter {
 		treeBuilder.buildHierarchy(lines);
 		TreeMap<String, Day> days = treeBuilder.getHierarchy();
 
-		Mandant currentMandant = ElexisEventDispatcher.getSelectedMandator();
-		String postAnschrift = currentMandant.getPostAnschrift();
+		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
+		String postAnschrift = currentMandant.getPostalAddress();
 
 		SimpleDateFormat formatter = new SimpleDateFormat(getApplicationProperties().getProperty(DATE_TIME_FORMAT_DOT));
 		Date date = new Date();
@@ -206,5 +220,4 @@ public class PDFExporter {
 	public void setMessagesProperties(Properties messagesProperties) {
 		this.messagesProperties = messagesProperties;
 	}
-
 }

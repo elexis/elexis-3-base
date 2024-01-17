@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright 2024 Framsteg GmbH / olivier.debenath@framsteg.ch
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package ch.framsteg.elexis.finance.analytics.controller;
 
 import java.sql.ResultSet;
@@ -130,7 +144,6 @@ public class TabbedController {
 			if (from == null && to == null) {
 				queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_ALL),
 						mandantId);
-				// } else if (from == null && !to.isEmpty()) {
 			} else if (from == null && to != null) {
 				if (!to.isEmpty()) {
 					dateTo = datePickerFormat.parse(to);
@@ -138,7 +151,6 @@ public class TabbedController {
 					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_BEFORE),
 							mandantId, dateToString);
 				}
-				// } else if (!from.isEmpty() && to == null) {
 			} else if (from != null && to == null) {
 				if (!from.isEmpty()) {
 					dateFrom = datePickerFormat.parse(from);
@@ -146,7 +158,6 @@ public class TabbedController {
 					queryString = MessageFormat.format(getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_AFTER),
 							mandantId, dateFromString);
 				}
-				// } else if (!from.isEmpty() && !to.isEmpty()) {
 			} else if (from != null && to != null) {
 				if (!from.isEmpty() && !to.isEmpty()) {
 					dateFrom = datePickerFormat.parse(from);
@@ -215,7 +226,7 @@ public class TabbedController {
 					dateTo = datePickerFormat.parse(to);
 					dateFromString = databaseFormat.format(dateFrom);
 					dateToString = databaseFormat.format(dateTo);
-					queryString = MessageFormat.format(
+					queryString = MessageFormat.format(// connection.close();
 							getSqlProperties().getProperty(QUERY_SALES_PER_SERVICE_YEAR_BETWEEN), mandantId,
 							dateToString, dateFromString);
 				}
@@ -534,7 +545,6 @@ public class TabbedController {
 			}
 			resultSet.close();
 			PersistentObject.getDefaultConnection().releaseStatement(statement);
-			// connection.close();
 		} catch (SQLException | ParseException e) {
 			e.printStackTrace();
 		}

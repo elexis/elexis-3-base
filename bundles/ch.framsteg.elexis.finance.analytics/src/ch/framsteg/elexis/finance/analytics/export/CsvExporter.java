@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright 2024 Framsteg GmbH / olivier.debenath@framsteg.ch
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package ch.framsteg.elexis.finance.analytics.export;
 
 import java.io.BufferedWriter;
@@ -42,6 +56,7 @@ public class CsvExporter {
 	public void export(Shell shell, ArrayList<String[]> lines, String filenamePart) {
 
 		StringBuilder filteredTableContent = new StringBuilder();
+
 		for (String[] s : lines) {
 			for (int a = 0; a < s.length; a++) {
 				filteredTableContent.append(s[a]);
@@ -49,7 +64,6 @@ public class CsvExporter {
 					filteredTableContent.append(getApplicationProperties().getProperty(DELIMITER));
 				}
 			}
-
 			filteredTableContent.append(getApplicationProperties().getProperty(NEW_LINE));
 		}
 		
@@ -71,11 +85,9 @@ public class CsvExporter {
 					Charset.forName(getApplicationProperties().getProperty(CHARSET)));
 			writer.write(filteredTableContent.toString());
 			writer.close();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public Properties getApplicationProperties() {
@@ -93,5 +105,4 @@ public class CsvExporter {
 	public void setMessagesProperties(Properties messagesProperties) {
 		this.messagesProperties = messagesProperties;
 	}
-
 }

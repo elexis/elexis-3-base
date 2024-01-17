@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
+import ch.elexis.core.constants.ElexisSystemPropertyConstants;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.data.PersistentObject;
@@ -73,6 +74,7 @@ public class TabbedController {
 	}
 
 	private void checkMaterializedViews() {
+
 		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		try {
@@ -88,8 +90,9 @@ public class TabbedController {
 				if (count == 0) {
 					String createSql = MessageFormat.format(getSqlProperties().getProperty(MATERIALIZED_VIEW_0_CREATE),
 							mandantId, mandantId);
+					String dbuser = System.getProperty(ElexisSystemPropertyConstants.CONN_DB_USERNAME);
 					String grantSql = MessageFormat.format(getSqlProperties().getProperty(MATERIALIZED_VIEW_0_GRANT),
-							mandantId);
+							mandantId, dbuser);
 					statement.exec(createSql);
 					statement.exec(grantSql);
 					// Refresh Materialized View if existing

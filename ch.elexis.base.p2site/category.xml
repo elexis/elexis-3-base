@@ -253,9 +253,6 @@
    <feature id="ch.itmed.fop.printing.es.feature">
       <category name="libraries"/>
    </feature>
-   <feature url="features/ch.framsteg.elexis.finance.analytics.feature_0.0.0.jar" id="ch.framsteg.elexis.finance.analytics.feature" version="0.0.0" os="linux,macosx,win32" ws="gtk" nl="de_CH" arch="x86_64">
-      <category name="finances"/>
-   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>

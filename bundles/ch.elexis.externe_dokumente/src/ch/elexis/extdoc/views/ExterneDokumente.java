@@ -195,7 +195,6 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 	}
 
 	private void showInformationDialog(Shell shell, String title, String message) {
-		// ... (keine Änderungen in dieser Methode)
 	}
 
 	class ViewContentProvider implements IStructuredContentProvider, BackgroundJobListener {
@@ -753,11 +752,6 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 	}
 
 	/**
-	 * Passing the focus request to the viewer's control.
-	 */
-
-
-	/**
 	 * Wichtig! Alle Listeners, die eine View einhängt, müssen in dispose() wieder
 	 * ausgehängt werden. Sonst kommt es zu Exceptions, wenn der Anwender eine View
 	 * schliesst und später ein Objekt selektiert.
@@ -777,5 +771,4 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 	public void refresh() {
 		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}
-
 }

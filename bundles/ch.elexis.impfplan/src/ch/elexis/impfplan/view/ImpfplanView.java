@@ -169,6 +169,7 @@ public class ImpfplanView extends ViewPart implements IRefreshable {
 
 	@Override
 	public void setFocus() {
+		// TODO Auto-generated method stub
 		if (isFirstTime) {
 			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Ansicht veraltet", "Die Ansicht "
 					+ getTitle()

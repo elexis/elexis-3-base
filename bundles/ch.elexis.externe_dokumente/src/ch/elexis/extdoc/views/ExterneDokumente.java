@@ -234,8 +234,8 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 		}
 
 		public void jobFinished(BackgroundJob j) {
-				// int size=((Object[])j.getData()).length;
-				viewer.refresh(true);
+			// int size=((Object[])j.getData()).length;
+			viewer.refresh(true);
 		}
 	}
 

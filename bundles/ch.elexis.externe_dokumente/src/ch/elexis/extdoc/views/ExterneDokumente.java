@@ -65,7 +65,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
@@ -192,9 +191,7 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 					+ " ist veraltet und wird nicht mehr unterstützt. Bitte verwenden Sie die Dokumente Ansicht.");
 			isFirstTime = false;
 		}
-	}
-
-	private void showInformationDialog(Shell shell, String title, String message) {
+		viewer.getControl().setFocus();
 	}
 
 	class ViewContentProvider implements IStructuredContentProvider, BackgroundJobListener {

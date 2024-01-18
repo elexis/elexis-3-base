@@ -65,6 +65,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.molemax.Messages;
+import ch.elexis.molemax.handler.ThumbnailHandler;
 
 public class ImageDetailWithGalleryView {
 	private ImageOverview overviewInstance;
@@ -81,8 +82,7 @@ public class ImageDetailWithGalleryView {
 		this.overviewInstance = overview;
 		mainComposite = new Composite(parent, SWT.NONE);
 		mainComposite.setLayout(new GridLayout(2, false));
-		label = SWTHelper.createHyperlink(mainComposite, "Zurück zur Galerie", new HyperlinkAdapter() {
-			public void linkActivated(final HyperlinkEvent e) {
+		label = SWTHelper.createHyperlink(mainComposite, "Zurück zur Galerie", new HyperlinkAdapter() {			public void linkActivated(final HyperlinkEvent e) {
 				overviewInstance.switchToGalleryView(parent);
 			}
 		});
@@ -281,16 +281,15 @@ public class ImageDetailWithGalleryView {
 									LoggerFactory.getLogger(getClass()).warn("Error while copying file: ", e,
 											e.getMessage());
 								}
+								if (overviewInstance != null) {
+									overviewInstance.reloadGallery();
+								}
 								updateGalleryForSelectedGroup(targetDirectory.getAbsolutePath());
-							} else {
+								gallery.redraw();
+								gallery.update();
 							}
-						} else {
 						}
 					}
-				} else {
-				}
-				if (overviewInstance != null) {
-					overviewInstance.reloadGallery();
 				}
 			}
 		});
@@ -324,8 +323,8 @@ public class ImageDetailWithGalleryView {
 	private void addImagesToGalleryFromDirectory(File dir, GalleryItem parentGroup) {
 		File thumbnailDirectory = new File(dir, "thumbnails");
 		if (thumbnailDirectory.exists() && thumbnailDirectory.isDirectory()) {
-			File[] imageFiles = thumbnailDirectory.listFiles(
-					file -> file.isFile() && (file.getName().endsWith(".png") || file.getName().endsWith(".jpg")));
+			File[] imageFiles = thumbnailDirectory
+					.listFiles(file -> file.isFile() && ThumbnailHandler.isSupportedImageFormat(file.getName()));
 			if (imageFiles != null) {
 				for (File imgFile : imageFiles) {
 					GalleryItem item = new GalleryItem(parentGroup, SWT.NONE);
@@ -545,7 +544,11 @@ public class ImageDetailWithGalleryView {
 	private String convertToThumbnailPath(String originalImagePath) {
 		File originalFile = new File(originalImagePath);
 		File thumbnailDirectory = new File(originalFile.getParentFile(), "thumbnails");
-		File thumbnailFile = new File(thumbnailDirectory, originalFile.getName());
+		String fileName = originalFile.getName();
+		if (fileName.toLowerCase().endsWith(".jpeg")) {
+			fileName = fileName.substring(0, fileName.length() - 5) + ".jpg";
+		}
+		File thumbnailFile = new File(thumbnailDirectory, fileName);
 		return thumbnailFile.getAbsolutePath();
 	}
 }

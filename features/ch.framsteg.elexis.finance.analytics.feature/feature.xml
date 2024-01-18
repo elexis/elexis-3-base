@@ -3,7 +3,11 @@
       id="ch.framsteg.elexis.finance.analytics.feature"
       label="Financial Analytics"
       version="3.12.0.qualifier"
-      provider-name="ch.framsteg">
+      provider-name="ch.framsteg"
+      os="linux,macosx,win32"
+      ws="gtk"
+      nl="de_CH"
+      arch="x86_64">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -32,7 +36,7 @@
          id="ch.framsteg.elexis.finance.analytics"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="3.12.0"
          unpack="false"/>
 
 </feature>

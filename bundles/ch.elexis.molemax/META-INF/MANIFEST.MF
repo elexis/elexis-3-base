@@ -1,8 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-ClassPath: .,
- lib/org.eclipse.nebula.widgets.gallery_1.0.0.202303072132.jar,
- lib/org.apache.commons.io.jar
+ lib/org.eclipse.nebula.widgets.gallery_1.0.0.202303072132.jar
 Bundle-Name: Molemax Plug-in für Elexis
 Bundle-SymbolicName: ch.elexis.molemax;singleton:=true
 Bundle-Version: 3.10.0.qualifier
@@ -12,5 +11,6 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.core.ui;bundle-version="3.9.0"
 Created-By: Buildr
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Import-Package: javax.inject
+Import-Package: javax.inject,
+ org.apache.commons.io
 

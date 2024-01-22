@@ -458,8 +458,7 @@ public class ImageViewAll {
 	}
 
 	private File[] getImageFiles(File dir) {
-		return dir.listFiles(file -> file.isFile()
-				&& (file.getName().toLowerCase().endsWith(".png") || file.getName().toLowerCase().endsWith(".jpg")));
+		return dir.listFiles(file -> ThumbnailHandler.isSupportedImageFormat(file.getName()));
 	}
 
 	private List<File> processImageFiles(File[] imageFiles, GalleryItem parentGroup) {
@@ -526,7 +525,6 @@ public class ImageViewAll {
 				item.setImage(thumbnailImage);
 				createdImages.add(thumbnailImage);
 			}
-
 			gallery.redraw();
 		});
 

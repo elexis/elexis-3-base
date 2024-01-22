@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,12 +60,7 @@ public class ThumbnailHandler {
 	}
 
 	private static String getFileExtension(String fileName) {
-		int i = fileName.lastIndexOf('.');
-		if (i > 0) {
-			return fileName.substring(i + 1).toLowerCase();
-		} else {
-			return "jpg";
-		}
+		return FilenameUtils.getExtension(fileName).toLowerCase();
 	}
 
 	public static boolean isSupportedImageFormat(String fileName) {

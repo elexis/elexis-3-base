@@ -106,9 +106,6 @@
    <feature url="features/waelti.statistics.feature_3.0.100.qualifier.jar" id="waelti.statistics.feature" version="0.0.0">
       <category name="statistics"/>
    </feature>
-   <feature url="features/ch.framsteg.elexis.finance.analytics.feature_0.0.0.qualifier.jar" id="ch.framsteg.elexis.finance.analytics.feature" version="0.0.0">
-      <category name="statistics"/>
-   </feature>
    <feature url="features/ch.elexis.laborimport_viollier.feature_0.0.0.jar" id="ch.elexis.laborimport_viollier.feature" version="0.0.0">
       <category name="laborexchanges"/>
    </feature>

@@ -30,7 +30,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -176,9 +175,6 @@ public class ImpfplanView extends ViewPart implements IRefreshable {
 					+ " ist veraltet und wird nicht mehr unterstützt. Bitte verwenden Sie die Impfliste Ansicht.");
 			isFirstTime = false;
 		}
-	}
-
-	private void showInformationDialog(Shell shell, String title, String message) {
 	}
 
 	private void makeActions() {

@@ -22,12 +22,15 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -59,6 +62,7 @@ public class ImpfplanView extends ViewPart implements IRefreshable {
 	String[] columnTitles = new String[] { Messages.ImpfplanView_vaccinationColumn, Messages.ImpfplanView_dateColumn };
 	ScrolledForm form;
 	VaccinationSorter sorter = new VaccinationSorter();
+	private boolean isFirstTime = true;
 
 	private RefreshingPartListener udpateOnVisible = new RefreshingPartListener(this);
 
@@ -166,7 +170,15 @@ public class ImpfplanView extends ViewPart implements IRefreshable {
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
+		if (isFirstTime) {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Ansicht veraltet", "Die Ansicht "
+					+ getTitle()
+					+ " ist veraltet und wird nicht mehr unterstützt. Bitte verwenden Sie die Impfliste Ansicht.");
+			isFirstTime = false;
+		}
+	}
 
+	private void showInformationDialog(Shell shell, String title, String message) {
 	}
 
 	private void makeActions() {

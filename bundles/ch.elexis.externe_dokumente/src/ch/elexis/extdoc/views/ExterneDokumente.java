@@ -40,6 +40,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -62,6 +63,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -135,6 +137,7 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 	/*
 	 * private String actPath = null;
 	 */
+	private boolean isFirstTime = true;
 
 	private TimestampComparator timeComparator;
 	private FilenameComparator nameComparator;
@@ -178,6 +181,17 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 		public int getSize() {
 			return lastSize;
 		}
+	}
+
+	@Override
+	public void setFocus() {
+		if (isFirstTime) {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Ansicht veraltet", "Die Ansicht "
+					+ getTitle()
+					+ " ist veraltet und wird nicht mehr unterstützt. Bitte verwenden Sie die Dokumente Ansicht.");
+			isFirstTime = false;
+		}
+		viewer.getControl().setFocus();
 	}
 
 	class ViewContentProvider implements IStructuredContentProvider, BackgroundJobListener {
@@ -732,13 +746,6 @@ public class ExterneDokumente extends ViewPart implements IRefreshable {
 		FileEditDialog fed = new FileEditDialog(getViewSite().getShell(), file);
 		fed.open();
 		refreshInternal();
-	}
-
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
-	public void setFocus() {
-		viewer.getControl().setFocus();
 	}
 
 	/**

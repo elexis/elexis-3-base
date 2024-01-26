@@ -16,6 +16,7 @@ package ch.framsteg.elexis.finance.analytics.export;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +26,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -38,15 +44,15 @@ public class CsvExporter {
 	private final static String NEW_LINE = "app.newline";
 	private final static String CHARSET = "app.charset";
 	private final static String DATE_TIME_FORMAT = "date.format";
-	
-	private final static String EXTENSION_ALL="file.save.dialog.extension.all";
-	private final static String EXTENSION_CSV="file.save.dialog.extension.csv";
-	private final static String EXTENSION_CSV_SHORT="file.save.dialog.extension.csv.short";
-	
-	private final static String FILTER_ALL="file.save.dialog.filter.all";
-	private final static String FILTER_CSV="file.save.dialog.filter.csv";
-	
-	private final static String DASH="-";
+
+	private final static String EXTENSION_ALL = "file.save.dialog.extension.all";
+	private final static String EXTENSION_CSV = "file.save.dialog.extension.csv";
+	private final static String EXTENSION_CSV_SHORT = "file.save.dialog.extension.csv.short";
+
+	private final static String FILTER_ALL = "file.save.dialog.filter.all";
+	private final static String FILTER_CSV = "file.save.dialog.filter.csv";
+
+	private final static String DASH = "-";
 
 	public CsvExporter(Properties applicationProperties, Properties messagesProperties) {
 		setApplicationProperties(applicationProperties);
@@ -66,18 +72,21 @@ public class CsvExporter {
 			}
 			filteredTableContent.append(getApplicationProperties().getProperty(NEW_LINE));
 		}
-		
+
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter
 				.ofPattern(getApplicationProperties().getProperty(DATE_TIME_FORMAT));
 		LocalDateTime now = LocalDateTime.now();
 		String datePart = dateTimeFormatter.format(now);
 
 		FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-		dialog.setFilterNames(new String[] { getApplicationProperties().getProperty(FILTER_CSV), getApplicationProperties().getProperty(FILTER_ALL) });
-		dialog.setFilterExtensions(new String[] { getApplicationProperties().getProperty(EXTENSION_CSV), getApplicationProperties().getProperty(EXTENSION_ALL) });
+		dialog.setFilterNames(new String[] { getApplicationProperties().getProperty(FILTER_CSV),
+				getApplicationProperties().getProperty(FILTER_ALL) });
+		dialog.setFilterExtensions(new String[] { getApplicationProperties().getProperty(EXTENSION_CSV),
+				getApplicationProperties().getProperty(EXTENSION_ALL) });
 
 		dialog.setFilterPath(System.getProperty("user.home"));
-		dialog.setFileName(datePart + DASH + filenamePart + getApplicationProperties().getProperty(EXTENSION_CSV_SHORT));
+		dialog.setFileName(
+				datePart + DASH + filenamePart + getApplicationProperties().getProperty(EXTENSION_CSV_SHORT));
 		dialog.open();
 		Path p = Paths.get(dialog.getFilterPath() + System.getProperty("file.separator") + dialog.getFileName());
 		try {

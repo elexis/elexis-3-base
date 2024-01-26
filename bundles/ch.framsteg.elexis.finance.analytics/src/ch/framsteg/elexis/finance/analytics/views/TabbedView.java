@@ -14,13 +14,17 @@
  *******************************************************************************/
 package ch.framsteg.elexis.finance.analytics.views;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -34,9 +38,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PlatformUI;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
@@ -1733,13 +1739,13 @@ public class TabbedView {
 		btnQuery.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
+				table7.clearAll();
+				table7.removeAll();
 				TabbedController tabbedController = new TabbedController(getApplicationProperties(),
 						getSqlProperties());
 				if (tabbedController.isDatabaseSupported()) {
+
 					setDailyReport(tabbedController.getDailyReport(dateFrom8, dateTo8));
-					table7.clearAll();
-					table7.removeAll();
 
 					for (String[] line : getDailyReport()) {
 						TableItem item = new TableItem(table7, SWT.HOME);
@@ -1748,8 +1754,8 @@ public class TabbedView {
 
 					for (TableColumn tableColumn : table7.getColumns()) {
 						tableColumn.pack();
+						table7.redraw();
 					}
-					table7.redraw();
 				} else {
 					MessageDialog.openInformation(Display.getDefault().getActiveShell(),
 							getMessagesProperties().getProperty(MSG_UNSUPPORTED_DATABASE_TITLE),
@@ -1806,13 +1812,14 @@ public class TabbedView {
 					for (String[] string : lines) {
 						modifiedLines.add(string);
 					}
-					pdfExporter.exportReport(rootComposite.getShell(),lines,
+					pdfExporter.exportReport(rootComposite.getShell(), lines,
 							MessageFormat.format(getMessagesProperties().getProperty(PDF_DOCUMENT_TITLE_8),
 									dateFrom8.isEmpty() ? getApplicationProperties().getProperty(DATE_FIRST)
 											: dateFrom8,
 									dateTo8.isEmpty() ? today : dateTo8),
 							dateFrom8.isEmpty() ? getApplicationProperties().getProperty(DATE_FIRST) : dateFrom8,
-							dateTo8.isEmpty() ? today : dateTo8,getMessagesProperties().getProperty(FILE_EXPORT_DAILY_REPORT_NAME));
+							dateTo8.isEmpty() ? today : dateTo8,
+							getMessagesProperties().getProperty(FILE_EXPORT_DAILY_REPORT_NAME));
 				} else {
 					MessageDialog.openInformation(Display.getDefault().getActiveShell(),
 							getMessagesProperties().getProperty(MSG_EMPTY_TABLE_TITLE),

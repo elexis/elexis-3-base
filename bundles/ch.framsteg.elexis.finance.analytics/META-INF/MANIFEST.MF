@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Analytics Plugin (Public License)
+Bundle-Name: Analytics
 Bundle-SymbolicName: ch.framsteg.elexis.finance.analytics;singleton:=true
 Bundle-Version: 3.12.0.qualifier
-Bundle-Vendor: Framsteg GmbH
+Bundle-Vendor: framsteg.ch
 Automatic-Module-Name: ch.framsteg.elexis.finance.analytics
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core;bundle-version="3.9.0",

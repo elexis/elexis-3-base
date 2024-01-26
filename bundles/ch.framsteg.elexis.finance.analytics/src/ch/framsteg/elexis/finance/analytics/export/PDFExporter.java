@@ -167,7 +167,7 @@ public class PDFExporter {
 		TreeMap<String, Day> days = treeBuilder.getHierarchy();
 
 		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
-		String postAnschrift = currentMandant.getPostalAddress();
+		String postAnschrift = currentMandant.getPostalAddress().replaceAll("\n", "");
 
 		SimpleDateFormat formatter = new SimpleDateFormat(getApplicationProperties().getProperty(DATE_TIME_FORMAT_DOT));
 		Date date = new Date();

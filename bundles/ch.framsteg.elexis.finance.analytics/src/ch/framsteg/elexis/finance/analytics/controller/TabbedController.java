@@ -14,6 +14,7 @@
  *******************************************************************************/
 package ch.framsteg.elexis.finance.analytics.controller;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -22,6 +23,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.core.constants.ElexisSystemPropertyConstants;
 import ch.elexis.core.data.service.ContextServiceHolder;
@@ -552,18 +559,22 @@ public class TabbedController {
 	}
 
 	public ArrayList<String[]> getDailyReport(String from, String to) {
+
+		ProgressMonitorDialog monitorDialog = new ProgressMonitorDialog(Display.getDefault().getActiveShell());
+		monitorDialog.open();
 		checkMaterializedViews();
 		from = from.isEmpty() ? null : from;
 		to = to.isEmpty() ? null : to;
 		IMandator currentMandant = ContextServiceHolder.get().getActiveMandator().orElse(null);
 		String mandantId = currentMandant.getId();
 		ArrayList<String[]> lines = new ArrayList<String[]>();
+
 		String queryString = new String();
 		SimpleDateFormat datePickerFormat = new SimpleDateFormat(
 				getApplicationProperties().getProperty(DATE_DATE_PICKER_FORMAT));
 		SimpleDateFormat databaseFormat = new SimpleDateFormat(
 				getApplicationProperties().getProperty(DATE_DATABASE_FORMAT));
-		ResultSet resultSet = null;
+
 		try {
 			Date dateFrom = null;
 			Date dateTo = null;
@@ -595,20 +606,47 @@ public class TabbedController {
 							mandantId, dateToString, dateFromString);
 				}
 			}
-			Stm statement = PersistentObject.getDefaultConnection().getStatement();
-			resultSet = statement.query(queryString);
-			while (resultSet.next()) {
-				String[] line = new String[] { resultSet.getString(1), resultSet.getString(2), resultSet.getString(3),
-						resultSet.getString(4), resultSet.getString(5), resultSet.getString(6), resultSet.getString(7),
-						resultSet.getString(8), resultSet.getString(9), resultSet.getString(10),
-						resultSet.getString(11), Float.toString(resultSet.getFloat(12)), resultSet.getString(13),
-						resultSet.getString(14), resultSet.getString(15), resultSet.getString(16),
-						resultSet.getString(17), resultSet.getString(18), resultSet.getString(19) };
-				lines.add(line);
+			final String assembledQuery = queryString;
+			try {
+				monitorDialog.run(true, false, new IRunnableWithProgress() {
+					@Override
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						try {
+							SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+
+							Stm statement = PersistentObject.getDefaultConnection().getStatement();
+							SubMonitor child1 = subMonitor.split(10);
+							ResultSet resultSet = null;
+							SubMonitor child2 = subMonitor.split(20);
+							child2.setTaskName("Daten abfragen");
+							resultSet = statement.query(assembledQuery);
+							SubMonitor child3 = subMonitor.split(30);
+							while (resultSet.next()) {
+								String[] line = new String[] { resultSet.getString(1), resultSet.getString(2),
+										resultSet.getString(3), resultSet.getString(4), resultSet.getString(5),
+										resultSet.getString(6), resultSet.getString(7), resultSet.getString(8),
+										resultSet.getString(9), resultSet.getString(10), resultSet.getString(11),
+										Float.toString(resultSet.getFloat(12)), resultSet.getString(13),
+										resultSet.getString(14), resultSet.getString(15), resultSet.getString(16),
+										resultSet.getString(17), resultSet.getString(18), resultSet.getString(19) };
+								lines.add(line);
+							}
+							SubMonitor child4 = subMonitor.split(40);
+							child4.setTaskName("Tabelle befüllen...");
+							resultSet.close();
+							PersistentObject.getDefaultConnection().releaseStatement(statement);
+
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			resultSet.close();
-			PersistentObject.getDefaultConnection().releaseStatement(statement);
-		} catch (SQLException | ParseException e) {
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return lines;

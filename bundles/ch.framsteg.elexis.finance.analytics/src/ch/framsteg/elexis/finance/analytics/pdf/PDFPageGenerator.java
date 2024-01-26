@@ -15,6 +15,7 @@
 package ch.framsteg.elexis.finance.analytics.pdf;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -28,6 +29,11 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 
 import ch.framsteg.elexis.finance.analytics.beans.Day;
 import ch.framsteg.elexis.finance.analytics.beans.Delivery;
@@ -93,6 +99,8 @@ public class PDFPageGenerator {
 
 	private int pageCount;
 
+	private PDDocument renderedDocument;
+
 	public PDFPageGenerator(String mandantInfo, String reportTitle, String reportingDateTime,
 			Properties applicationProperties, Properties messagesProperties) {
 		setMandantInfo(mandantInfo);
@@ -106,130 +114,71 @@ public class PDFPageGenerator {
 	public PDDocument generateDailyReport(TreeMap<String, Day> input, String mandantInfo, String reportTitle,
 			String reportingDateTime, int numberOfLines, String from, String to) {
 
-		int numberOfTreatments = 0;
-		int numberOfTreatmentsPerDay = 0;
+		ProgressMonitorDialog monitorDialog = new ProgressMonitorDialog(Display.getDefault().getActiveShell());
+		monitorDialog.open();
 
-		int numberOfPatients = 0;
-		int numberOfPatientsPerDay = 0;
-
-		float sumOfTarmed = 0;
-		float sumOfTarmedPerDay = 0;
-
-		float sumOfMedical = 0;
-		float sumOfMedicalPerDay = 0;
-
-		float sumOfLaboratory = 0;
-		float sumOfLaboratoryPerDay = 0;
-
-		float sumOfInternalServices = 0;
-		float sumOfInternalServicesPerDay = 0;
-
-		float sumOfPandemic = 0;
-		float sumOfPandemicPerDay = 0;
-
-		float sumOfInternalAssets = 0;
-		float sumOfInternalAssetsPerDay = 0;
-
-		float sumOfMigel = 0;
-		float sumOfMigelPerDay = 0;
-
-		PDDocument doc = new PDDocument();
-		PDPage page = new PDPage();
-		pageCount++;
-		doc.addPage(page);
-
-		float sum = 0;
-
-		int treatmentCount = 1;
-		int treatmentNumber = 1;
-
-		PDPageContentStream contentStream;
 		try {
-			int countLines = 0;
+			monitorDialog.run(true, false, new IRunnableWithProgress() {
 
-			contentStream = new PDPageContentStream(doc, page);
-			contentStream = addDocumentInformation(contentStream);
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
-			contentStream.beginText();
-			contentStream.newLineAtOffset(60, 700);
-			for (Map.Entry<String, Day> days_entry : input.entrySet()) {
-				if (countLines == Integer.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE))) {
-					contentStream.endText();
-					contentStream.close();
-					countLines = 0;
-					contentStream = returnNewPageContent(doc);
-					contentStream.beginText();
-					contentStream.newLineAtOffset(
-							Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_LEFT_1)),
-							Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_Y_TOP)));
-				}
+					int numberOfTreatments = 0;
+					int numberOfTreatmentsPerDay = 0;
 
-				String actualDate = generateHumanReadableDate(days_entry.getValue().getDate());
+					int numberOfPatients = 0;
+					int numberOfPatientsPerDay = 0;
 
-				contentStream.setFont(PDType1Font.HELVETICA_BOLD,
-						Float.valueOf(getMessagesProperties().getProperty(TITLE_FONT_SIZE)));
-				contentStream.showText(actualDate);
-				contentStream.setFont(PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-				contentStream.newLine();
-				countLines += 1;
-				for (Patient patient : days_entry.getValue().getPatients()) {
-					if (countLines + patient.getTreatments().size() > Integer
-							.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE))
-							- Float.valueOf(getMessagesProperties().getProperty(NUMEBR_OF_BLOCKED_LINES_TREATMENT))) {
-						contentStream.endText();
-						contentStream.close();
-						countLines = 0;
-						contentStream = returnNewPageContent(doc);
+					float sumOfTarmed = 0;
+					float sumOfTarmedPerDay = 0;
+
+					float sumOfMedical = 0;
+					float sumOfMedicalPerDay = 0;
+
+					float sumOfLaboratory = 0;
+					float sumOfLaboratoryPerDay = 0;
+
+					float sumOfInternalServices = 0;
+					float sumOfInternalServicesPerDay = 0;
+
+					float sumOfPandemic = 0;
+					float sumOfPandemicPerDay = 0;
+
+					float sumOfInternalAssets = 0;
+					float sumOfInternalAssetsPerDay = 0;
+
+					float sumOfMigel = 0;
+					float sumOfMigelPerDay = 0;
+
+					PDDocument doc = new PDDocument();
+					PDPage page = new PDPage();
+					pageCount++;
+					doc.addPage(page);
+
+					float sum = 0;
+
+					int treatmentCount = 1;
+					int treatmentNumber = 1;
+
+					PDPageContentStream contentStream;
+
+					int countLines = 0;
+
+					try {
+						contentStream = new PDPageContentStream(doc, page);
+						contentStream = addDocumentInformation(contentStream);
+
 						contentStream.beginText();
-						contentStream.newLineAtOffset(
-								Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_LEFT_1)),
-								Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_Y_TOP)));
-					}
+						contentStream.newLineAtOffset(60, 700);
 
-					contentStream.setFont(PDType1Font.HELVETICA_BOLD,
-							Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-					writeLine(doc, contentStream,
-							MessageFormat.format(getMessagesProperties().getProperty(PDF_LABEL_PATIENT),
-									patient.getId(), patient.getName(), patient.getFirstname(), patient.getSex(),
-									generateHumanReadableDate(patient.getBirthday())));
-					contentStream.setFont(PDType1Font.HELVETICA,
-							Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-					numberOfPatients++;
-					numberOfPatientsPerDay++;
-					countLines += 1;
-					treatmentCount = 1;
-					treatmentNumber = 1;
-					for (Treatment treatment : patient.getTreatments()) {
-						if (countLines + treatment.getDeliveries().size() > Integer
-								.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE))
-								- Float.valueOf(
-										getMessagesProperties().getProperty(NUMEBR_OF_BLOCKED_LINES_TREATMENT))) {
-							contentStream.endText();
-							contentStream.close();
-							countLines = 0;
-							contentStream = returnNewPageContent(doc);
-							contentStream.beginText();
-							contentStream.newLineAtOffset(
-									Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_LEFT_1)),
-									Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_Y_TOP)));
-						}
-						writeLine(doc, contentStream,
-								MessageFormat.format(getMessagesProperties().getProperty(PDF_LABEL_TREATMENT_BILL),
-										treatmentNumber, treatmentCount, treatment.getBillingNumber(),
-										String.format("%.2f", Float.valueOf(treatment.getBillingAmount()))));
-						countLines += 1;
-						numberOfTreatments++;
-						numberOfTreatmentsPerDay++;
-						ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
-						for (Delivery delivery : treatment.getDeliveries()) {
-							deliveries.add(delivery);
-						}
-						Collections.reverse(deliveries);
-						sum = 0;
-						DecimalFormat df = new DecimalFormat("0.00");
-						sum = Float.valueOf(df.format(sum));
-						for (Delivery delivery : deliveries) {
+						int i = input.entrySet().size();
+						int remaining = i;
+
+						SubMonitor subMonitor = SubMonitor.convert(monitor, i);
+
+						for (Map.Entry<String, Day> days_entry : input.entrySet()) {
+							subMonitor.setWorkRemaining(remaining--);
+							SubMonitor iterationMonitor = subMonitor.split(1);
 							if (countLines == Integer.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE))) {
 								contentStream.endText();
 								contentStream.close();
@@ -240,281 +189,391 @@ public class PDFPageGenerator {
 										Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_LEFT_1)),
 										Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_Y_TOP)));
 							}
-							sum = sum + delivery.getClearingPrice().floatValue();
-							sum = Float.valueOf(df.format(sum));
-							String tempString = delivery.getDeliveryDescription().length() > Integer
-									.valueOf(getMessagesProperties().getProperty(TEXT_LENGTH))
-											? delivery.getDeliveryDescription().substring(0,
-													Integer.valueOf(getMessagesProperties().getProperty(TEXT_LENGTH)))
-											: delivery.getDeliveryDescription();
-							contentStream.showText(delivery.getDeliveryCode());
-							contentStream.newLineAtOffset(
-									Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_RIGHT_3)),
-									Float.valueOf(getMessagesProperties().getProperty(NO_MOVE)));
-							contentStream.showText(tempString);
-							contentStream.newLineAtOffset(
-									Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_RIGHT_4)),
-									Float.valueOf(getMessagesProperties().getProperty(NO_MOVE)));
-							contentStream.showText(String.valueOf(delivery.getClearingFactor()));
 
-							float wordLength = getTextWidth(PDType1Font.HELVETICA, 10,
-									delivery.getClearingPrice().toString());
-							float nextTextX = Float.valueOf(getMessagesProperties().getProperty(LONG_INDENT))
-									- wordLength - 400;
+							String actualDate = generateHumanReadableDate(days_entry.getValue().getDate());
 
-							contentStream.newLineAtOffset(nextTextX,
-									Float.valueOf(getMessagesProperties().getProperty(NO_MOVE)));
-
-							contentStream.showText(String.valueOf(delivery.getClearingPrice()));
-							contentStream.newLineAtOffset(
-									-1 * (Float.valueOf(getMessagesProperties().getProperty(LONG_INDENT))) + wordLength,
-									Float.valueOf(getMessagesProperties().getProperty(NO_MOVE)));
+							contentStream.setFont(PDType1Font.HELVETICA_BOLD,
+									Float.valueOf(getMessagesProperties().getProperty(TITLE_FONT_SIZE)));
+							contentStream.showText(actualDate);
+							contentStream.setFont(PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
 							contentStream.newLine();
-
 							countLines += 1;
+							for (Patient patient : days_entry.getValue().getPatients()) {
+								if (countLines + patient.getTreatments().size() > Integer
+										.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE))
+										- Float.valueOf(getMessagesProperties()
+												.getProperty(NUMEBR_OF_BLOCKED_LINES_TREATMENT))) {
+									contentStream.endText();
+									contentStream.close();
+									countLines = 0;
+									contentStream = returnNewPageContent(doc);
+									contentStream.beginText();
+									contentStream.newLineAtOffset(
+											Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_LEFT_1)),
+											Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_Y_TOP)));
+								}
 
-							if (delivery.getDeliveryClass()
-									.equalsIgnoreCase(getMessagesProperties().getProperty(DELIVERY_CLASS_TARMED))) {
-								sumOfTarmed = sumOfTarmed + delivery.getClearingPrice().floatValue();
-								sumOfTarmedPerDay = sumOfTarmedPerDay + delivery.getClearingPrice().floatValue();
+								contentStream.setFont(PDType1Font.HELVETICA_BOLD,
+										Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
+								writeLine(doc, contentStream,
+										MessageFormat.format(getMessagesProperties().getProperty(PDF_LABEL_PATIENT),
+												patient.getId(), patient.getName(), patient.getFirstname(),
+												patient.getSex(), generateHumanReadableDate(patient.getBirthday())));
+								contentStream.setFont(PDType1Font.HELVETICA,
+										Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
+								numberOfPatients++;
+								numberOfPatientsPerDay++;
+								countLines += 1;
+								treatmentCount = 1;
+								treatmentNumber = 1;
+								for (Treatment treatment : patient.getTreatments()) {
+									if (countLines + treatment.getDeliveries().size() > Integer
+											.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE))
+											- Float.valueOf(getMessagesProperties()
+													.getProperty(NUMEBR_OF_BLOCKED_LINES_TREATMENT))) {
+										contentStream.endText();
+										contentStream.close();
+										countLines = 0;
+										contentStream = returnNewPageContent(doc);
+										contentStream.beginText();
+										contentStream.newLineAtOffset(
+												Float.valueOf(
+														getMessagesProperties().getProperty(DEFAULT_OFFSET_X_LEFT_1)),
+												Float.valueOf(
+														getMessagesProperties().getProperty(DEFAULT_OFFSET_Y_TOP)));
+									}
+									writeLine(doc, contentStream, MessageFormat.format(
+											getMessagesProperties().getProperty(PDF_LABEL_TREATMENT_BILL),
+											treatmentNumber, treatmentCount, treatment.getBillingNumber(),
+											String.format("%.2f", Float.valueOf(treatment.getBillingAmount()))));
+									countLines += 1;
+									numberOfTreatments++;
+									numberOfTreatmentsPerDay++;
+									ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
+									for (Delivery delivery : treatment.getDeliveries()) {
+										deliveries.add(delivery);
+									}
+									Collections.reverse(deliveries);
+									sum = 0;
+									DecimalFormat df = new DecimalFormat("0.00");
+									sum = Float.valueOf(df.format(sum));
+									for (Delivery delivery : deliveries) {
+										if (countLines == Integer
+												.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE))) {
+											contentStream.endText();
+											contentStream.close();
+											countLines = 0;
+											contentStream = returnNewPageContent(doc);
+											contentStream.beginText();
+											contentStream.newLineAtOffset(
+													Float.valueOf(getMessagesProperties()
+															.getProperty(DEFAULT_OFFSET_X_LEFT_1)),
+													Float.valueOf(
+															getMessagesProperties().getProperty(DEFAULT_OFFSET_Y_TOP)));
+										}
+										sum = sum + delivery.getClearingPrice().floatValue();
+										sum = Float.valueOf(df.format(sum));
+										String tempString = delivery.getDeliveryDescription().length() > Integer
+												.valueOf(getMessagesProperties().getProperty(TEXT_LENGTH))
+														? delivery.getDeliveryDescription().substring(0,
+																Integer.valueOf(getMessagesProperties()
+																		.getProperty(TEXT_LENGTH)))
+														: delivery.getDeliveryDescription();
+										contentStream.showText(delivery.getDeliveryCode());
+										contentStream.newLineAtOffset(
+												Float.valueOf(
+														getMessagesProperties().getProperty(DEFAULT_OFFSET_X_RIGHT_3)),
+												Float.valueOf(getMessagesProperties().getProperty(NO_MOVE)));
+										contentStream.showText(tempString);
+										contentStream.newLineAtOffset(
+												Float.valueOf(
+														getMessagesProperties().getProperty(DEFAULT_OFFSET_X_RIGHT_4)),
+												Float.valueOf(getMessagesProperties().getProperty(NO_MOVE)));
+										contentStream.showText(String.valueOf(delivery.getClearingFactor()));
 
+										float wordLength = getTextWidth(PDType1Font.HELVETICA, 10,
+												delivery.getClearingPrice().toString());
+										float nextTextX = Float.valueOf(
+												getMessagesProperties().getProperty(LONG_INDENT)) - wordLength - 400;
+
+										contentStream.newLineAtOffset(nextTextX,
+												Float.valueOf(getMessagesProperties().getProperty(NO_MOVE)));
+
+										contentStream.showText(String.valueOf(delivery.getClearingPrice()));
+										contentStream.newLineAtOffset(
+												-1 * (Float.valueOf(getMessagesProperties().getProperty(LONG_INDENT)))
+														+ wordLength,
+												Float.valueOf(getMessagesProperties().getProperty(NO_MOVE)));
+										contentStream.newLine();
+
+										countLines += 1;
+
+										if (delivery.getDeliveryClass().equalsIgnoreCase(
+												getMessagesProperties().getProperty(DELIVERY_CLASS_TARMED))) {
+											sumOfTarmed = sumOfTarmed + delivery.getClearingPrice().floatValue();
+											sumOfTarmedPerDay = sumOfTarmedPerDay
+													+ delivery.getClearingPrice().floatValue();
+
+										}
+										if (delivery.getDeliveryClass().equalsIgnoreCase(
+												getMessagesProperties().getProperty(DELIVERY_CLASS_MEDICAL))) {
+											sumOfMedical = sumOfMedical + delivery.getClearingPrice().floatValue();
+											sumOfMedicalPerDay = sumOfMedicalPerDay
+													+ delivery.getClearingPrice().floatValue();
+
+										}
+										if (delivery.getDeliveryClass().equalsIgnoreCase(
+												getMessagesProperties().getProperty(DELIVERY_CLASS_LABOR))) {
+											sumOfLaboratory = sumOfLaboratory
+													+ delivery.getClearingPrice().floatValue();
+											sumOfLaboratoryPerDay = sumOfLaboratoryPerDay
+													+ delivery.getClearingPrice().floatValue();
+
+										}
+										if (delivery.getDeliveryClass().equalsIgnoreCase(
+												getMessagesProperties().getProperty(DELIVERY_CLASS_INTERNAL_SERVICE))) {
+											sumOfInternalServices = sumOfInternalServices
+													+ delivery.getClearingPrice().floatValue();
+											sumOfInternalServicesPerDay = sumOfInternalServicesPerDay
+													+ delivery.getClearingPrice().floatValue();
+
+										}
+										if (delivery.getDeliveryClass().equalsIgnoreCase(
+												getMessagesProperties().getProperty(DELIVERY_CLASS_PANDEMIC))) {
+											sumOfPandemic = sumOfPandemic + delivery.getClearingPrice().floatValue();
+											sumOfPandemicPerDay = sumOfPandemicPerDay
+													+ delivery.getClearingPrice().floatValue();
+
+										}
+										if (delivery.getDeliveryClass().equalsIgnoreCase(
+												getMessagesProperties().getProperty(DELIVERY_CLASS_INTERNAL_ASSETS))) {
+											sumOfInternalAssets = sumOfInternalAssets
+													+ delivery.getClearingPrice().floatValue();
+											sumOfInternalAssetsPerDay = sumOfInternalAssetsPerDay
+													+ delivery.getClearingPrice().floatValue();
+
+										}
+										if (delivery.getDeliveryClass().equalsIgnoreCase(
+												getMessagesProperties().getProperty(DELIVERY_CLASS_MIGEL))) {
+											sumOfMigel = sumOfMigel + delivery.getClearingPrice().floatValue();
+											sumOfMigelPerDay = sumOfMigelPerDay
+													+ delivery.getClearingPrice().floatValue();
+
+										}
+									}
+									contentStream.setFont(PDType1Font.HELVETICA_BOLD,
+											Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
+									contentStream = insertValueFlushRight(contentStream,
+											getMessagesProperties().getProperty(PDF_LABEL_SUM), String.valueOf(sum),
+											PDType1Font.HELVETICA,
+											Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+											Integer.valueOf(getMessagesProperties().getProperty(LONG_INDENT)));
+									contentStream.setFont(PDType1Font.HELVETICA,
+											Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
+									treatmentCount++;
+								}
 							}
-							if (delivery.getDeliveryClass()
-									.equalsIgnoreCase(getMessagesProperties().getProperty(DELIVERY_CLASS_MEDICAL))) {
-								sumOfMedical = sumOfMedical + delivery.getClearingPrice().floatValue();
-								sumOfMedicalPerDay = sumOfMedicalPerDay + delivery.getClearingPrice().floatValue();
 
+							if (Integer.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE))
+									- countLines < Float.valueOf(
+											getMessagesProperties().getProperty(NUMBER_OF_BLOCKED_LINES_SUMMARY))) {
+								contentStream.endText();
+								contentStream.close();
+								countLines = 0;
+								contentStream = returnNewPageContent(doc);
+								contentStream.beginText();
+								contentStream.newLineAtOffset(
+										Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_LEFT_1)),
+										Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_Y_TOP)));
 							}
-							if (delivery.getDeliveryClass()
-									.equalsIgnoreCase(getMessagesProperties().getProperty(DELIVERY_CLASS_LABOR))) {
-								sumOfLaboratory = sumOfLaboratory + delivery.getClearingPrice().floatValue();
-								sumOfLaboratoryPerDay = sumOfLaboratoryPerDay
-										+ delivery.getClearingPrice().floatValue();
+							contentStream.setFont(PDType1Font.HELVETICA_BOLD,
+									Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
+							contentStream.showText(MessageFormat
+									.format(getMessagesProperties().getProperty(PDF_LABEL_SUMMARY_DAILY), actualDate));
+							contentStream.setFont(PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
+							contentStream.newLine();
+							countLines += 1;
+							contentStream = insertValueFlushRight(contentStream,
+									getMessagesProperties().getProperty(PDF_LABEL_NUMBER_OF_PATIENTS),
+									String.valueOf(numberOfPatientsPerDay), PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+									Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+							countLines += 1;
+							contentStream = insertValueFlushRight(contentStream,
+									getMessagesProperties().getProperty(PDF_LABEL_NUMBER_OF_TREATMENTS),
+									String.valueOf(numberOfTreatmentsPerDay), PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+									Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+							countLines += 1;
+							contentStream = insertValueFlushRight(contentStream,
+									getMessagesProperties().getProperty(PDF_LABEL_TARMED),
+									String.valueOf(String.format("%.2f", sumOfTarmedPerDay)), PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+									Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+							countLines += 1;
+							contentStream = insertValueFlushRight(contentStream,
+									getMessagesProperties().getProperty(PDF_LABEL_MEDICAL),
+									String.valueOf(String.format("%.2f", sumOfMedicalPerDay)), PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+									Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+							countLines += 1;
+							contentStream = insertValueFlushRight(contentStream,
+									getMessagesProperties().getProperty(PDF_LABEL_LABOR),
+									String.valueOf(String.format("%.2f", sumOfLaboratoryPerDay)), PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+									Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+							countLines += 1;
+							contentStream = insertValueFlushRight(contentStream,
+									getMessagesProperties().getProperty(PDF_LABEL_INTERNAL_SERVICE),
+									String.valueOf(String.format("%.2f", sumOfInternalServicesPerDay)),
+									PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+									Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+							countLines += 1;
+							contentStream = insertValueFlushRight(contentStream,
+									getMessagesProperties().getProperty(PDF_LABEL_PANDEMIC),
+									String.valueOf(String.format("%.2f", sumOfPandemicPerDay)), PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+									Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+							countLines += 1;
+							contentStream = insertValueFlushRight(contentStream,
+									getMessagesProperties().getProperty(PDF_LABEL_INTERNAL_ASSETS),
+									String.valueOf(String.format("%.2f", sumOfInternalAssetsPerDay)),
+									PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+									Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+							countLines += 1;
+							contentStream = insertValueFlushRight(contentStream,
+									getMessagesProperties().getProperty(PDF_LABEL_MIGEL),
+									String.valueOf(String.format("%.2f", sumOfMigelPerDay)), PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+									Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)
+											+ String.valueOf(String.format("%.2f", sumOfMigelPerDay)).length()));
+							countLines += 1;
+							contentStream.setFont(PDType1Font.HELVETICA_BOLD,
+									Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
+							contentStream = insertValueFlushRight(contentStream,
+									getMessagesProperties().getProperty(PDF_LABEL_TOTAL),
+									String.valueOf(String.format("%.2f",
+											sumOfTarmedPerDay + sumOfMedicalPerDay + sumOfLaboratoryPerDay
+													+ sumOfInternalServicesPerDay + sumOfPandemicPerDay
+													+ sumOfInternalAssetsPerDay + sumOfMigelPerDay)),
+									PDType1Font.HELVETICA,
+									Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+									Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+							countLines = Integer.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE));
 
-							}
-							if (delivery.getDeliveryClass().equalsIgnoreCase(
-									getMessagesProperties().getProperty(DELIVERY_CLASS_INTERNAL_SERVICE))) {
-								sumOfInternalServices = sumOfInternalServices
-										+ delivery.getClearingPrice().floatValue();
-								sumOfInternalServicesPerDay = sumOfInternalServicesPerDay
-										+ delivery.getClearingPrice().floatValue();
+							numberOfPatientsPerDay = 0;
+							numberOfTreatmentsPerDay = 0;
+							sumOfTarmedPerDay = 0;
+							sumOfMedicalPerDay = 0;
+							sumOfLaboratoryPerDay = 0;
+							sumOfInternalServicesPerDay = 0;
+							sumOfPandemicPerDay = 0;
+							sumOfInternalAssetsPerDay = 0;
+							sumOfMigelPerDay = 0;
 
-							}
-							if (delivery.getDeliveryClass()
-									.equalsIgnoreCase(getMessagesProperties().getProperty(DELIVERY_CLASS_PANDEMIC))) {
-								sumOfPandemic = sumOfPandemic + delivery.getClearingPrice().floatValue();
-								sumOfPandemicPerDay = sumOfPandemicPerDay + delivery.getClearingPrice().floatValue();
-
-							}
-							if (delivery.getDeliveryClass().equalsIgnoreCase(
-									getMessagesProperties().getProperty(DELIVERY_CLASS_INTERNAL_ASSETS))) {
-								sumOfInternalAssets = sumOfInternalAssets + delivery.getClearingPrice().floatValue();
-								sumOfInternalAssetsPerDay = sumOfInternalAssetsPerDay
-										+ delivery.getClearingPrice().floatValue();
-
-							}
-							if (delivery.getDeliveryClass()
-									.equalsIgnoreCase(getMessagesProperties().getProperty(DELIVERY_CLASS_MIGEL))) {
-								sumOfMigel = sumOfMigel + delivery.getClearingPrice().floatValue();
-								sumOfMigelPerDay = sumOfMigelPerDay + delivery.getClearingPrice().floatValue();
-
-							}
+						}
+						if (Integer.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE)) - countLines < Float
+								.valueOf(getMessagesProperties().getProperty(NUMBER_OF_BLOCKED_LINES_SUMMARY))) {
+							contentStream.endText();
+							contentStream.close();
+							countLines = 0;
+							contentStream = returnNewPageContent(doc);
+							contentStream.beginText();
+							contentStream.newLineAtOffset(
+									Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_LEFT_1)), 700);
 						}
 						contentStream.setFont(PDType1Font.HELVETICA_BOLD,
 								Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-						contentStream = insertValueFlushRight(contentStream,
-								getMessagesProperties().getProperty(PDF_LABEL_SUM), String.valueOf(sum),
-								PDType1Font.HELVETICA,
-								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-								Integer.valueOf(getMessagesProperties().getProperty(LONG_INDENT)));
+						contentStream.showText(
+								MessageFormat.format(getMessagesProperties().getProperty(PDF_LABEL_SUMMARY), from, to));
 						contentStream.setFont(PDType1Font.HELVETICA,
 								Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-						treatmentCount++;
+						contentStream.newLine();
+						countLines += 1;
+						contentStream = insertValueFlushRight(contentStream,
+								getMessagesProperties().getProperty(PDF_LABEL_NUMBER_OF_PATIENTS),
+								String.valueOf(numberOfPatients), PDType1Font.HELVETICA,
+								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+								Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+						countLines += 1;
+						contentStream = insertValueFlushRight(contentStream,
+								getMessagesProperties().getProperty(PDF_LABEL_NUMBER_OF_TREATMENTS),
+								String.valueOf(numberOfTreatments), PDType1Font.HELVETICA,
+								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+								Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+						countLines += 1;
+						contentStream = insertValueFlushRight(contentStream,
+								getMessagesProperties().getProperty(PDF_LABEL_TARMED),
+								String.valueOf(String.format("%.2f", sumOfTarmed)), PDType1Font.HELVETICA,
+								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+								Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+						countLines += 1;
+						contentStream = insertValueFlushRight(contentStream,
+								getMessagesProperties().getProperty(PDF_LABEL_MEDICAL),
+								String.valueOf(String.format("%.2f", sumOfMedical)), PDType1Font.HELVETICA,
+								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+								Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+						countLines += 1;
+						contentStream = insertValueFlushRight(contentStream,
+								getMessagesProperties().getProperty(PDF_LABEL_LABOR),
+								String.valueOf(String.format("%.2f", sumOfLaboratory)), PDType1Font.HELVETICA,
+								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+								Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+						countLines += 1;
+						contentStream = insertValueFlushRight(contentStream,
+								getMessagesProperties().getProperty(PDF_LABEL_INTERNAL_SERVICE),
+								String.valueOf(String.format("%.2f", sumOfInternalServices)), PDType1Font.HELVETICA,
+								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+								Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+						countLines += 1;
+						contentStream = insertValueFlushRight(contentStream,
+								getMessagesProperties().getProperty(PDF_LABEL_PANDEMIC),
+								String.valueOf(String.format("%.2f", sumOfPandemic)), PDType1Font.HELVETICA,
+								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+								Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+						countLines += 1;
+						contentStream = insertValueFlushRight(contentStream,
+								getMessagesProperties().getProperty(PDF_LABEL_INTERNAL_ASSETS),
+								String.valueOf(String.format("%.2f", sumOfInternalAssets)), PDType1Font.HELVETICA,
+								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+								Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+						countLines += 1;
+						contentStream = insertValueFlushRight(contentStream,
+								getMessagesProperties().getProperty(PDF_LABEL_MIGEL),
+								String.valueOf(String.format("%.2f", sumOfMigel)), PDType1Font.HELVETICA,
+								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+								Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+						countLines += 1;
+						contentStream.setFont(PDType1Font.HELVETICA_BOLD,
+								Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
+						contentStream = insertValueFlushRight(contentStream,
+								getMessagesProperties().getProperty(PDF_LABEL_TOTAL),
+								String.valueOf(String.format("%.2f",
+										sumOfTarmed + sumOfMedical + sumOfLaboratory + sumOfInternalServices
+												+ sumOfPandemic + sumOfInternalAssets + sumOfMigel)),
+								PDType1Font.HELVETICA,
+								Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
+								Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
+						countLines += 1;
+						contentStream.newLine();
+						countLines = Integer.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE));
+						contentStream.endText();
+						contentStream.close();
+
+						setRenderedDocument(doc);
+					} catch (IOException ioe) {
+						ioe.printStackTrace();
 					}
 				}
-
-				if (Integer.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE)) - countLines < Float
-						.valueOf(getMessagesProperties().getProperty(NUMBER_OF_BLOCKED_LINES_SUMMARY))) {
-					contentStream.endText();
-					contentStream.close();
-					countLines = 0;
-					contentStream = returnNewPageContent(doc);
-					contentStream.beginText();
-					contentStream.newLineAtOffset(
-							Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_LEFT_1)),
-							Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_Y_TOP)));
-				}
-				contentStream.setFont(PDType1Font.HELVETICA_BOLD,
-						Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-				contentStream.showText(
-						MessageFormat.format(getMessagesProperties().getProperty(PDF_LABEL_SUMMARY_DAILY), actualDate));
-				contentStream.setFont(PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-				contentStream.newLine();
-				countLines += 1;
-				contentStream = insertValueFlushRight(contentStream,
-						getMessagesProperties().getProperty(PDF_LABEL_NUMBER_OF_PATIENTS),
-						String.valueOf(numberOfPatientsPerDay), PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-						Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-				countLines += 1;
-				contentStream = insertValueFlushRight(contentStream,
-						getMessagesProperties().getProperty(PDF_LABEL_NUMBER_OF_TREATMENTS),
-						String.valueOf(numberOfTreatmentsPerDay), PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-						Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-				countLines += 1;
-				contentStream = insertValueFlushRight(contentStream,
-						getMessagesProperties().getProperty(PDF_LABEL_TARMED),
-						String.valueOf(String.format("%.2f", sumOfTarmedPerDay)), PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-						Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-				countLines += 1;
-				contentStream = insertValueFlushRight(contentStream,
-						getMessagesProperties().getProperty(PDF_LABEL_MEDICAL),
-						String.valueOf(String.format("%.2f", sumOfMedicalPerDay)), PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-						Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-				countLines += 1;
-				contentStream = insertValueFlushRight(contentStream,
-						getMessagesProperties().getProperty(PDF_LABEL_LABOR),
-						String.valueOf(String.format("%.2f", sumOfLaboratoryPerDay)), PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-						Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-				countLines += 1;
-				contentStream = insertValueFlushRight(contentStream,
-						getMessagesProperties().getProperty(PDF_LABEL_INTERNAL_SERVICE),
-						String.valueOf(String.format("%.2f", sumOfInternalServicesPerDay)), PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-						Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-				countLines += 1;
-				contentStream = insertValueFlushRight(contentStream,
-						getMessagesProperties().getProperty(PDF_LABEL_PANDEMIC),
-						String.valueOf(String.format("%.2f", sumOfPandemicPerDay)), PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-						Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-				countLines += 1;
-				contentStream = insertValueFlushRight(contentStream,
-						getMessagesProperties().getProperty(PDF_LABEL_INTERNAL_ASSETS),
-						String.valueOf(String.format("%.2f", sumOfInternalAssetsPerDay)), PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-						Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-				countLines += 1;
-				contentStream = insertValueFlushRight(contentStream,
-						getMessagesProperties().getProperty(PDF_LABEL_MIGEL),
-						String.valueOf(String.format("%.2f", sumOfMigelPerDay)), PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-						Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)
-								+ String.valueOf(String.format("%.2f", sumOfMigelPerDay)).length()));
-				countLines += 1;
-				contentStream.setFont(PDType1Font.HELVETICA_BOLD,
-						Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-				contentStream = insertValueFlushRight(contentStream,
-						getMessagesProperties().getProperty(PDF_LABEL_TOTAL),
-						String.valueOf(String.format("%.2f",
-								sumOfTarmedPerDay + sumOfMedicalPerDay + sumOfLaboratoryPerDay
-										+ sumOfInternalServicesPerDay + sumOfPandemicPerDay + sumOfInternalAssetsPerDay
-										+ sumOfMigelPerDay)),
-						PDType1Font.HELVETICA,
-						Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-						Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-				countLines = Integer.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE));
-
-				numberOfPatientsPerDay = 0;
-				numberOfTreatmentsPerDay = 0;
-				sumOfTarmedPerDay = 0;
-				sumOfMedicalPerDay = 0;
-				sumOfLaboratoryPerDay = 0;
-				sumOfInternalServicesPerDay = 0;
-				sumOfPandemicPerDay = 0;
-				sumOfInternalAssetsPerDay = 0;
-				sumOfMigelPerDay = 0;
-
-			}
-			if (Integer.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE)) - countLines < Float
-					.valueOf(getMessagesProperties().getProperty(NUMBER_OF_BLOCKED_LINES_SUMMARY))) {
-				contentStream.endText();
-				contentStream.close();
-				countLines = 0;
-				contentStream = returnNewPageContent(doc);
-				contentStream.beginText();
-				contentStream.newLineAtOffset(
-						Float.valueOf(getMessagesProperties().getProperty(DEFAULT_OFFSET_X_LEFT_1)), 700);
-			}
-			contentStream.setFont(PDType1Font.HELVETICA_BOLD,
-					Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-			contentStream
-					.showText(MessageFormat.format(getMessagesProperties().getProperty(PDF_LABEL_SUMMARY), from, to));
-			contentStream.setFont(PDType1Font.HELVETICA,
-					Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-			contentStream.newLine();
-			countLines += 1;
-			contentStream = insertValueFlushRight(contentStream,
-					getMessagesProperties().getProperty(PDF_LABEL_NUMBER_OF_PATIENTS), String.valueOf(numberOfPatients),
-					PDType1Font.HELVETICA, Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-					Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-			countLines += 1;
-			contentStream = insertValueFlushRight(contentStream,
-					getMessagesProperties().getProperty(PDF_LABEL_NUMBER_OF_TREATMENTS),
-					String.valueOf(numberOfTreatments), PDType1Font.HELVETICA,
-					Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-					Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-			countLines += 1;
-			contentStream = insertValueFlushRight(contentStream, getMessagesProperties().getProperty(PDF_LABEL_TARMED),
-					String.valueOf(String.format("%.2f", sumOfTarmed)), PDType1Font.HELVETICA,
-					Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-					Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-			countLines += 1;
-			contentStream = insertValueFlushRight(contentStream, getMessagesProperties().getProperty(PDF_LABEL_MEDICAL),
-					String.valueOf(String.format("%.2f", sumOfMedical)), PDType1Font.HELVETICA,
-					Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-					Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-			countLines += 1;
-			contentStream = insertValueFlushRight(contentStream, getMessagesProperties().getProperty(PDF_LABEL_LABOR),
-					String.valueOf(String.format("%.2f", sumOfLaboratory)), PDType1Font.HELVETICA,
-					Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-					Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-			countLines += 1;
-			contentStream = insertValueFlushRight(contentStream,
-					getMessagesProperties().getProperty(PDF_LABEL_INTERNAL_SERVICE),
-					String.valueOf(String.format("%.2f", sumOfInternalServices)), PDType1Font.HELVETICA,
-					Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-					Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-			countLines += 1;
-			contentStream = insertValueFlushRight(contentStream,
-					getMessagesProperties().getProperty(PDF_LABEL_PANDEMIC),
-					String.valueOf(String.format("%.2f", sumOfPandemic)), PDType1Font.HELVETICA,
-					Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-					Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-			countLines += 1;
-			contentStream = insertValueFlushRight(contentStream,
-					getMessagesProperties().getProperty(PDF_LABEL_INTERNAL_ASSETS),
-					String.valueOf(String.format("%.2f", sumOfInternalAssets)), PDType1Font.HELVETICA,
-					Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-					Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-			countLines += 1;
-			contentStream = insertValueFlushRight(contentStream, getMessagesProperties().getProperty(PDF_LABEL_MIGEL),
-					String.valueOf(String.format("%.2f", sumOfMigel)), PDType1Font.HELVETICA,
-					Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-					Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-			countLines += 1;
-			contentStream.setFont(PDType1Font.HELVETICA_BOLD,
-					Float.valueOf(getMessagesProperties().getProperty(DEFAULT_FONT_SIZE)));
-			contentStream = insertValueFlushRight(contentStream, getMessagesProperties().getProperty(PDF_LABEL_TOTAL),
-					String.valueOf(String.format("%.2f",
-							sumOfTarmed + sumOfMedical + sumOfLaboratory + sumOfInternalServices + sumOfPandemic
-									+ sumOfInternalAssets + sumOfMigel)),
-					PDType1Font.HELVETICA, Float.valueOf(getMessagesProperties().getProperty(INTERMEDIATE_FONT_SIZE)),
-					Integer.valueOf(getMessagesProperties().getProperty(SHORT_INDENT)));
-			countLines += 1;
-			contentStream.newLine();
-			countLines = Integer.valueOf(getMessagesProperties().getProperty(LINES_PER_PAGE));
-			contentStream.endText();
-			contentStream.close();
-		} catch (IOException e) {
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
 			e.printStackTrace();
 		}
-		return doc;
+		return getRenderedDocument();
 	}
 
 	private PDPageContentStream insertValueFlushRight(PDPageContentStream contentStream, String label, String value,
@@ -639,5 +698,13 @@ public class PDFPageGenerator {
 
 	public void setMessagesProperties(Properties messagesProperties) {
 		this.messagesProperties = messagesProperties;
+	}
+
+	public PDDocument getRenderedDocument() {
+		return renderedDocument;
+	}
+
+	public void setRenderedDocument(PDDocument renderedDocument) {
+		this.renderedDocument = renderedDocument;
 	}
 }

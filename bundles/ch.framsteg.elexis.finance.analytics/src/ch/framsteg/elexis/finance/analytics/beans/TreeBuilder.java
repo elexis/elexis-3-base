@@ -14,10 +14,17 @@
  *******************************************************************************/
 package ch.framsteg.elexis.finance.analytics.beans;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 
 public class TreeBuilder {
 
@@ -63,10 +70,97 @@ public class TreeBuilder {
 	}
 
 	public void buildHierarchy(ArrayList<String[]> lines) {
+		ProgressMonitorDialog monitorDialog = new ProgressMonitorDialog(Display.getDefault().getActiveShell());
+		monitorDialog.open();
+		try {
+			monitorDialog.run(true, false, new IRunnableWithProgress() {
+
+				@Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+
+					int i = lines.size();
+					int remaining = i;
+
+					SubMonitor subMonitor = SubMonitor.convert(monitor, i);
+
+					for (String[] line : lines) {
+						subMonitor.setWorkRemaining(remaining--);
+						SubMonitor iterationMonitor = subMonitor.split(1);
+						boolean treatmentExists = false;
+						boolean patientExists = false;
+						boolean dayExists = false;
+						Delivery delivery = new Delivery(line);
+						delivery.setDeliveryCode(line[DELIVERY_CODE]);
+						delivery.setDeliveryClass(line[DELIVERY_CLASS]);
+						delivery.setDeliveryDescription(line[DELIVERY_DESCRIPTION]);
+						delivery.setDeliveryPoints(Integer.valueOf(line[DELIVERY_POINTS]));
+						delivery.setClearingFactor(Float.valueOf(line[CLEARING_FACTOR]));
+						delivery.setClearingScale(Float.valueOf(line[CLEARING_SCALE]));
+						delivery.setClearingPrice(new BigDecimal(line[CLEARING_PRICE]));
+						deliveries.put(delivery.getId(), delivery);
+						for (Map.Entry<String, Treatment> treatments_entry : treatments.entrySet()) {
+							if (treatments_entry.getKey().equalsIgnoreCase(delivery.getParentId())) {
+								treatments_entry.getValue().getDeliveries().add(delivery);
+								delivery.setTreatment(treatments_entry.getValue());
+								treatmentExists = true;
+								break;
+							}
+						}
+						if (!treatmentExists) {
+							Treatment treatment = new Treatment(delivery.getParentId());
+							treatment.setPatientId(line[PATIENT_NUMBER]);
+							treatment.setBillingNumber(line[BILLING_NUMBER]);
+							treatment.setBillingAmount(line[BILLING_AMOOUNT]);
+							treatment.setBillingId(line[BILLING_ID]);
+							treatment.setCaseId(line[CASE_ID]);
+							treatment.getDeliveries().add(delivery);
+							treatments.put(treatment.getId(), treatment);
+							for (Map.Entry<String, Patient> patients_entry : patients.entrySet()) {
+								if (patients_entry.getKey().equalsIgnoreCase(treatment.getParentId())) {
+									patients_entry.getValue().getTreatments().add(treatment);
+									treatment.setPatient(patients_entry.getValue());
+									patientExists = true;
+									break;
+								}
+							}
+							if (!patientExists) {
+								Patient patient = new Patient(treatment.getParentId());
+								patient.setDate(line[DATE]);
+								patient.setName(line[PATIENT_NAME]);
+								patient.setFirstname(line[PATIENT_FIRSTNAME]);
+								patient.setSex(line[PATIENT_SEX]);
+								patient.setBirthday(line[PATIENT_BIRTHDAY]);
+								patient.getTreatments().add(treatment);
+								patients.put(patient.getId(), patient);
+								for (Map.Entry<String, Day> days_entry : days.entrySet()) {
+									if (days_entry.getKey().equalsIgnoreCase(patient.getDate())) {
+										days_entry.getValue().getPatients().add(patient);
+										patient.setDay(days_entry.getValue());
+
+										dayExists = true;
+										break;
+									}
+								}
+								if (!dayExists) {
+									Day day = new Day(line[DATE]);
+									day.getPatients().add(patient);
+									days.put(line[DATE], day);
+								}
+							}
+						}
+					}
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void buildHierarchy(ArrayList<String[]> lines, Boolean dummy) {
 		for (String[] line : lines) {
 			boolean treatmentExists = false;
 			boolean patientExists = false;
-			boolean dayExists=false;
+			boolean dayExists = false;
 			Delivery delivery = new Delivery(line);
 			delivery.setDeliveryCode(line[DELIVERY_CODE]);
 			delivery.setDeliveryClass(line[DELIVERY_CLASS]);
@@ -97,7 +191,7 @@ public class TreeBuilder {
 					if (patients_entry.getKey().equalsIgnoreCase(treatment.getParentId())) {
 						patients_entry.getValue().getTreatments().add(treatment);
 						treatment.setPatient(patients_entry.getValue());
-						patientExists=true;
+						patientExists = true;
 						break;
 					}
 				}
@@ -114,8 +208,8 @@ public class TreeBuilder {
 						if (days_entry.getKey().equalsIgnoreCase(patient.getDate())) {
 							days_entry.getValue().getPatients().add(patient);
 							patient.setDay(days_entry.getValue());
-							
-							dayExists=true;
+
+							dayExists = true;
 							break;
 						}
 					}

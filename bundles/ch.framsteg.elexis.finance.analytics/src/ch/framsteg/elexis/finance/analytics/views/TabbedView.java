@@ -312,7 +312,7 @@ public class TabbedView {
 					}
 					table0.redraw();
 				} else {
-					MessageDialog.openInformation(Display.getDefault().getActiveShell(),
+					MessageDialog.openError(Display.getDefault().getActiveShell(),
 							getMessagesProperties().getProperty(MSG_UNSUPPORTED_DATABASE_TITLE),
 							getMessagesProperties().getProperty(MSG_UNSUPPORTED_DATABASE));
 				}
@@ -1707,19 +1707,19 @@ public class TabbedView {
 		tableColumn5.setText(getMessagesProperties().getProperty(TAB8_TABLE_HEADER6));
 		tableColumn5.setAlignment(SWT.LEFT);
 		tableColumn6.setText(getMessagesProperties().getProperty(TAB8_TABLE_HEADER7));
-		tableColumn6.setAlignment(SWT.LEFT);
+		tableColumn6.setAlignment(SWT.RIGHT);
 		tableColumn7.setText(getMessagesProperties().getProperty(TAB8_TABLE_HEADER8));
 		tableColumn7.setAlignment(SWT.LEFT);
 		tableColumn8.setText(getMessagesProperties().getProperty(TAB8_TABLE_HEADER9));
 		tableColumn8.setAlignment(SWT.LEFT);
 		tableColumn9.setText(getMessagesProperties().getProperty(TAB8_TABLE_HEADER10));
-		tableColumn9.setAlignment(SWT.LEFT);
+		tableColumn9.setAlignment(SWT.RIGHT);
 		tableColumn10.setText(getMessagesProperties().getProperty(TAB8_TABLE_HEADER11));
-		tableColumn10.setAlignment(SWT.LEFT);
+		tableColumn10.setAlignment(SWT.RIGHT);
 		tableColumn11.setText(getMessagesProperties().getProperty(TAB8_TABLE_HEADER12));
-		tableColumn11.setAlignment(SWT.LEFT);
+		tableColumn11.setAlignment(SWT.RIGHT);
 		tableColumn12.setText(getMessagesProperties().getProperty(TAB8_TABLE_HEADER13));
-		tableColumn12.setAlignment(SWT.LEFT);
+		tableColumn12.setAlignment(SWT.RIGHT);
 		tableColumn13.setText(getMessagesProperties().getProperty(TAB8_TABLE_HEADER14));
 		tableColumn13.setAlignment(SWT.LEFT);
 

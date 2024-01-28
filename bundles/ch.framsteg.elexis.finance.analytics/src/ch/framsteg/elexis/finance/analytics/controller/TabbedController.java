@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
@@ -615,24 +616,30 @@ public class TabbedController {
 							SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 
 							Stm statement = PersistentObject.getDefaultConnection().getStatement();
-							SubMonitor child1 = subMonitor.split(10);
+							SubMonitor subMonitor1 = subMonitor.split(10);
 							ResultSet resultSet = null;
-							SubMonitor child2 = subMonitor.split(20);
-							child2.setTaskName("Daten abfragen");
+							SubMonitor submsubMonitor2 = subMonitor.split(20);
+							submsubMonitor2.setTaskName("Daten abfragen");
 							resultSet = statement.query(assembledQuery);
-							SubMonitor child3 = subMonitor.split(30);
+							SubMonitor subMonitor3 = subMonitor.split(30);
+
 							while (resultSet.next()) {
+
+								// String test = trimNumericString(resultSet.getString(7));
+
 								String[] line = new String[] { resultSet.getString(1), resultSet.getString(2),
 										resultSet.getString(3), resultSet.getString(4), resultSet.getString(5),
-										resultSet.getString(6), resultSet.getString(7), resultSet.getString(8),
-										resultSet.getString(9), resultSet.getString(10), resultSet.getString(11),
+										resultSet.getString(6), roundToTwoPlaces(resultSet.getString(7)),
+										resultSet.getString(8),
+										resultSet.getString(9), resultSet.getString(10),
+										toInteger(resultSet.getString(11)),
 										Float.toString(resultSet.getFloat(12)), resultSet.getString(13),
 										resultSet.getString(14), resultSet.getString(15), resultSet.getString(16),
 										resultSet.getString(17), resultSet.getString(18), resultSet.getString(19) };
 								lines.add(line);
 							}
-							SubMonitor child4 = subMonitor.split(40);
-							child4.setTaskName("Tabelle befüllen...");
+							SubMonitor subMonitor4 = subMonitor.split(40);
+							subMonitor4.setTaskName("Tabelle befüllen...");
 							resultSet.close();
 							PersistentObject.getDefaultConnection().releaseStatement(statement);
 
@@ -650,6 +657,30 @@ public class TabbedController {
 			e.printStackTrace();
 		}
 		return lines;
+	}
+
+	private String roundToTwoPlaces(String inputString) {
+		String result = new String();
+		Pattern pattern = Pattern.compile("^[-+]?[0-9]+\\.[0-9]+$");
+		if (pattern.matcher(inputString).matches()) {
+			float f = Float.parseFloat(inputString);
+			result = String.format("%.2f", f);
+		} else {
+			result = inputString;
+		}
+		return result;
+	}
+
+	private String toInteger(String inputString) {
+		String result = new String();
+		Pattern pattern = Pattern.compile("^[-+]?[0-9]+\\.[0-9]+$");
+		if (pattern.matcher(inputString).matches()) {
+			result = inputString.substring(0, inputString.lastIndexOf("."));
+
+		} else {
+			result = inputString;
+		}
+		return result;
 	}
 
 	public Properties getApplicationProperties() {

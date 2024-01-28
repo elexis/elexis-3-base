@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.framsteg.elexis.finance.analytics.feature"
-      label="Reporting"
+      label="Analytics/Reporting Plugin for Elexis"
       version="3.12.0.qualifier"
       provider-name="ch.framsteg">
 

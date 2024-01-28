@@ -624,9 +624,6 @@ public class TabbedController {
 							SubMonitor subMonitor3 = subMonitor.split(30);
 
 							while (resultSet.next()) {
-
-								// String test = trimNumericString(resultSet.getString(7));
-
 								String[] line = new String[] { resultSet.getString(1), resultSet.getString(2),
 										resultSet.getString(3), resultSet.getString(4), resultSet.getString(5),
 										resultSet.getString(6), roundToTwoPlaces(resultSet.getString(7)),

@@ -80,6 +80,7 @@ public class AppointmentDialog extends Dialog {
 			CoreModelServiceHolder.get().save(detailComposite.setToModel());
 		}
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+		eventBroker.post(ElexisEventTopics.EVENT_UPDATE, appointment);
 	}
 
   private void sendEmailIfConfirmationChecked() {

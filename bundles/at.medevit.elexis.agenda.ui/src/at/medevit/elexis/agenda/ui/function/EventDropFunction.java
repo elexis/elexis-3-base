@@ -82,6 +82,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 					CoreModelServiceHolder.get().save(current);
 					CoreModelServiceHolder.get().save(termin);
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, termin);
 					redraw();
 				}
 			});

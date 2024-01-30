@@ -1,11 +1,15 @@
-
 package ch.elexis.molemax.views2;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,7 +67,7 @@ public class ImageViewAll {
 	private static final int AUTO_SCROLL_SPEED = 75;
 	private String groupName = null;
 	private Gallery gallery;
-
+	private GalleryItem lastClickedGroupItem = null;
 	public void setOverviewInstance(ImageOverview overview) {
 		this.overviewInstance = overview;
 	}
@@ -217,20 +221,54 @@ public class ImageViewAll {
 				}
 			}
 		});
-		gallery.setMenu(contextMenu);
 		gallery.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
 				if (e.button == 3) {
-					GalleryItem item = gallery.getItem(new Point(e.x, e.y));
-					if (item != null) {
-						gallery.setMenu(contextMenu);
+					GalleryItem clickedGroupItem = null;
+					for (GalleryItem item : gallery.getItems()) {
+						if (item.getBounds().contains(new Point(e.x, e.y))) {
+							clickedGroupItem = item;
 
+							break;
+						}
+					}
+					if (clickedGroupItem != null && clickedGroupItem.getParentItem() == null) {
+						lastClickedGroupItem = clickedGroupItem;
+						gallery.setMenu(contextMenu);
 					} else {
 						gallery.setMenu(null);
 					}
 				}
 			}
 		});
+
+		MenuItem renameItem = new MenuItem(contextMenu, SWT.NONE);
+		renameItem.setText(Messages.BriefAuswahlRenameButtonText);
+		renameItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (lastClickedGroupItem != null) {
+					String currentName = lastClickedGroupItem.getText();
+					InputDialog renameDialog = new InputDialog(gallery.getShell(), Messages.BefundePrefs_enterRenameCaption,
+							Messages.Rename_Group_Text, currentName, null);
+					if (renameDialog.open() == InputDialog.OK) {
+						String newName = renameDialog.getValue();
+						if (newName != null && !newName.trim().isEmpty() && !newName.equals(currentName)) {
+							boolean success = renameGroupDirectory(currentName, newName);
+							if (success) {
+								lastClickedGroupItem.setText(newName);
+								updateGalleryForPatient(aktuellerPatient);
+							} else {
+								MessageDialog.openError(gallery.getShell(), Messages.Core_Error,
+										Messages.Rename_Folder_Error);
+							}
+						}
+					}
+				}
+			}
+		});
+		gallery.setMenu(contextMenu);
+
 		DropTarget target = new DropTarget(gallery, DND.DROP_COPY | DND.DROP_MOVE);
 		target.setTransfer(new Transfer[] { FileTransfer.getInstance() });
 		target.addDropListener(new DropTargetListener() {
@@ -281,10 +319,19 @@ public class ImageViewAll {
 							try {
 								image = new Image(Display.getDefault(), file);
 								String targetPath;
-								if (groupName == null) {
-									groupName = java.time.LocalDate.now()
-											.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
-								}
+								
+			                    Path filePath = Paths.get(file);
+			                    BasicFileAttributes attrs = Files.readAttributes(filePath, BasicFileAttributes.class);
+			                    LocalDate fileModifiedDate = LocalDate.ofInstant(attrs.lastModifiedTime().toInstant(), ZoneId.systemDefault());
+			                    LocalDate today = LocalDate.now();
+			                    
+			                    if (groupName == null) {
+			                        if (fileModifiedDate.equals(today)) {
+			                            groupName = today.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+			                        } else {
+			                            groupName = fileModifiedDate.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+			                        }
+			                    }
 								targetPath = Tracker.makeDescriptorImage(aktuellerPatient) + File.separator + groupName;
 								File targetDir = new File(targetPath);
 								if (!targetDir.exists()) {
@@ -598,5 +645,17 @@ public class ImageViewAll {
 				}
 			}
 		});
+	}
+
+	private boolean renameGroupDirectory(String oldName, String newName) {
+		String basePath = Tracker.makeDescriptorImage(aktuellerPatient);
+		File oldDir = new File(basePath, oldName);
+		File newDir = new File(basePath, newName);
+
+		if (!oldDir.exists() || newDir.exists()) {
+			return false;
+		}
+
+		return oldDir.renameTo(newDir);
 	}
 }

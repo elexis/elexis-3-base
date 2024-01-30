@@ -71,10 +71,12 @@ public class ImageOverview extends ViewPart implements IRefreshable {
 	void activePatient(IPatient patient) {
 		CoreUiUtil.runAsyncIfActive(() -> {
 			Patient newPatient = (Patient) NoPoUtil.loadAsPersistentObject(patient);
-			if (!newPatient.equals(getSelectedPatient())) {
-				switchToGalleryView(form.getBody());
+			if (newPatient != null) {
+				if (!newPatient.equals(getSelectedPatient())) {
+					switchToGalleryView(form.getBody());
+				}
+				setPatient(newPatient, null);
 			}
-			setPatient(newPatient, null);
 		}, form);
 	}
 	public void createPartControl(final Composite parent) {

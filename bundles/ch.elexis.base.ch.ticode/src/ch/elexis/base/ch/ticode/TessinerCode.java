@@ -91,7 +91,7 @@ public class TessinerCode implements IDiagnosisTree {
 				try {
 					subch = Integer.parseInt(code.substring(1));
 				} catch (NumberFormatException nfe) {
-					LoggerFactory.getLogger(TessinerCode.class).warn("Invalid numeric code [] returning empty",
+					LoggerFactory.getLogger(TessinerCode.class).warn("Invalid numeric code [{}] returning empty",
 							code.substring(1));
 					return Optional.empty();
 				}

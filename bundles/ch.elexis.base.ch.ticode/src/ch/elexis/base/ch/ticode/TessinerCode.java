@@ -12,12 +12,14 @@
 
 package ch.elexis.base.ch.ticode;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IDiagnosis;
@@ -34,8 +36,10 @@ import ch.elexis.core.model.IXid;
  * @since 3.8.0 implements {@link IDiagnosis}
  */
 public class TessinerCode implements IDiagnosisTree {
+
 	public static final String CODESYSTEM_NAME = "TI-Code"; //$NON-NLS-1$
-	private static Hashtable<String, TessinerCode> hash = new Hashtable<String, TessinerCode>();
+
+	private static Hashtable<String, TessinerCode> hash = new Hashtable<>();
 	private String text;
 	private String code;
 
@@ -84,7 +88,13 @@ public class TessinerCode implements IDiagnosisTree {
 			String chapter = code.substring(0, 1);
 			int subch = 0;
 			if (code.length() == 2) {
-				subch = Integer.parseInt(code.substring(1));
+				try {
+					subch = Integer.parseInt(code.substring(1));
+				} catch (NumberFormatException nfe) {
+					LoggerFactory.getLogger(TessinerCode.class).warn("Invalid numeric code [] returning empty",
+							code.substring(1));
+					return Optional.empty();
+				}
 			}
 			for (int i = 0; i < ticode.length; i++) {
 				if (ticode[i][0].startsWith(chapter)) {
@@ -272,7 +282,7 @@ public class TessinerCode implements IDiagnosisTree {
 
 	public static List<ICodeElement> getLeafNodes() {
 		if (allLeafNodes == null) {
-			allLeafNodes = new ArrayList<ICodeElement>();
+			allLeafNodes = new ArrayList<>();
 			for (TessinerCode rootNode : getRootNodes()) {
 				allLeafNodes.addAll(rootNode.getChildren());
 			}

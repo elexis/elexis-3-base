@@ -12,12 +12,14 @@
 
 package ch.elexis.base.ch.ticode;
 
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.ICodeElement;
 import ch.elexis.core.model.IDiagnosis;
@@ -84,7 +86,13 @@ public class TessinerCode implements IDiagnosisTree {
 			String chapter = code.substring(0, 1);
 			int subch = 0;
 			if (code.length() == 2) {
-				subch = Integer.parseInt(code.substring(1));
+				try {
+					subch = Integer.parseInt(code.substring(1));
+				} catch (NumberFormatException nfe) {
+					LoggerFactory.getLogger(TessinerCode.class).warn("Invalid numeric code [{}] returning empty",
+							code.substring(1));
+					return Optional.empty();
+				}
 			}
 			for (int i = 0; i < ticode.length; i++) {
 				if (ticode[i][0].startsWith(chapter)) {

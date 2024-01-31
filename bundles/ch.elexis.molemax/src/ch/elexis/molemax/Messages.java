@@ -45,5 +45,10 @@ public class Messages {
 	public static String RowDisplay_overview = ch.elexis.core.l10n.Messages.RowDisplay_overview;
 	public static String TimeMachineDisplay_back = ch.elexis.core.l10n.Messages.TimeMachineDisplay_back;
 	public static String TimeMachineDisplay_date = ch.elexis.core.l10n.Messages.TimeMachineDisplay_date;
+	public static String Core_Error = ch.elexis.core.l10n.Messages.Core_Error;
+	public static String Rename_Folder_Error = ch.elexis.core.l10n.Messages.Rename_Folder_Error;
+	public static String BefundePrefs_enterRenameCaption = ch.elexis.core.l10n.Messages.BefundePrefs_enterRenameCaption;
+	public static String Rename_Group_Text = ch.elexis.core.l10n.Messages.Rename_Group_Text;
+	public static String BriefAuswahlRenameButtonText = ch.elexis.core.l10n.Messages.BriefAuswahlRenameButtonText;
 
 }

@@ -96,6 +96,7 @@ public class AgendaParallel extends BaseView {
 					+ " ist veraltet und wird nicht mehr unterstützt. Bitte verwenden Sie die Agenda Web Ansicht.");
 			isFirstTime = false;
 		}
+
 		sheet.setFocus();
 	}
 

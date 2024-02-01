@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:ch.elexis.VerrechnungsDisplay">
+         <command
+               commandId="at.medevit.ch.artikelstamm.ui.originalNoSubstitute"
+               label="Substitution nicht möglich"
+               style="toggle">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.ch.artikelstamm.ui.OriginalNoSubstituteHandler"
+            id="at.medevit.ch.artikelstamm.ui.originalNoSubstitute"
+            name="Substitution nicht möglich">
+         <state
+               class="at.medevit.ch.artikelstamm.ui.OriginalNoSubstituteState"
+               id="at.medevit.ch.artikelstamm.ui.originalNoSubstitute.state">
+         </state>
+      </command>
+   </extension>
 
 </plugin>

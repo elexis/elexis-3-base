@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.elexis.emediplan.core.internal.EMediplanServiceImpl">
-   <service>
-      <provide interface="at.medevit.elexis.emediplan.core.EMediplanService"/>
-   </service>
-   <reference bind="setService" interface="at.medevit.elexis.inbox.model.IInboxElementService" name="Service"/>
-   <implementation class="at.medevit.elexis.emediplan.core.internal.EMediplanServiceImpl"/>
-</scr:component>

@@ -49,6 +49,7 @@ import at.medevit.ch.artikelstamm.ui.internal.ATCCodeServiceConsumer;
 import at.medevit.ch.artikelstamm.ui.internal.DatabindingTextResizeConverter;
 import at.medevit.ch.artikelstamm.ui.internal.IntToStringConverterSelbstbehalt;
 import at.medevit.ch.artikelstamm.ui.internal.ModelServiceHolder;
+import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.databinding.SavingUpdateValueStrategy;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -77,6 +78,7 @@ public class DetailComposite extends ScrolledComposite {
 	private Button btnCheckIsNarcotic;
 	private Button btnLPPVEntry;
 	private Button btnK70Entry;
+	private Button btnOriginalNoSubstitute;
 	private Button btnlLimitation;
 	private Label lblLimitationspunkte;
 	private Text txtLIMITATIONPOINTS;
@@ -219,7 +221,7 @@ public class DetailComposite extends ScrolledComposite {
 		Group grpMarker = new Group(mainComposite, SWT.None);
 		grpMarker.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpMarker.setText("Marker");
-		grpMarker.setLayout(new GridLayout(3, false));
+		grpMarker.setLayout(new GridLayout(4, false));
 
 		btnCheckIsNarcotic = new Button(grpMarker, SWT.CHECK);
 		btnCheckIsNarcotic.setText("Betäubungsmittel");
@@ -232,6 +234,29 @@ public class DetailComposite extends ScrolledComposite {
 		btnK70Entry = new Button(grpMarker, SWT.CHECK);
 		btnK70Entry.setToolTipText("Artikel wird in Kapitel 70 der Spezialitätenliste geführt");
 		btnK70Entry.setText("Kapitel 70 Eintrag");
+
+		btnOriginalNoSubstitute = new Button(grpMarker, SWT.CHECK);
+		btnOriginalNoSubstitute.setToolTipText("Substitution nicht möglich automatisch setzen");
+		btnOriginalNoSubstitute.setText("Substitution nicht möglich automatisch setzen");
+		GridData gd = new GridData();
+		gd.exclude = true;
+		btnOriginalNoSubstitute.setVisible(false);
+		btnOriginalNoSubstitute.setLayoutData(gd);
+		btnOriginalNoSubstitute.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (item.getValue() != null) {
+					IArtikelstammItem value = item.getValue();
+					if (btnOriginalNoSubstitute.getSelection()) {
+						value.setExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE, "true");
+						CoreModelServiceHolder.get().save(value);
+					} else {
+						value.setExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE, "false");
+						CoreModelServiceHolder.get().save(value);
+					}
+				}
+			}
+		});
 
 		Group grpLimitations = new Group(mainComposite, SWT.None);
 		grpLimitations.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -253,7 +278,7 @@ public class DetailComposite extends ScrolledComposite {
 		lblLimitationstext.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 		lblLimitationstext.setText("Limitationstext");
 
-		GridData gd = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		gd.widthHint = 450;
 		gd.minimumWidth = 450;
 		txtLIMITATIONTEXT = new Text(grpLimitations, SWT.WRAP | SWT.MULTI);
@@ -306,6 +331,19 @@ public class DetailComposite extends ScrolledComposite {
 
 		String atcCode = obj.getAtcCode();
 		adsc.setArticleToBind(obj);
+
+		if (obj != null && "O".equals(obj.getGenericType())) {
+			GridData layoutData = (GridData) btnOriginalNoSubstitute.getLayoutData();
+			layoutData.exclude = false;
+			btnOriginalNoSubstitute.setVisible(true);
+			String value = (String)obj.getExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE);
+			btnOriginalNoSubstitute.setSelection("true".equals(value));
+		} else {
+			GridData layoutData = (GridData) btnOriginalNoSubstitute.getLayoutData();
+			layoutData.exclude = true;
+			btnOriginalNoSubstitute.setVisible(false);
+			btnOriginalNoSubstitute.setSelection(false);
+		}
 
 		if (obj.isCalculatedPrice()) {
 			controlDecoIsCalculatedPPUB.show();

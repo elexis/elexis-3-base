@@ -26,18 +26,27 @@ public class GenericTypeOriginalAdjuster implements IBilledAdjuster {
 	public void adjust(IBilled billed) {
 		if (ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES, false)) {
 			IBillable billable = billed.getBillable();
-			if (billable instanceof IArtikelstammItem && "O".equals(((IArtikelstammItem) billable).getGenericType())) {
-				int answer = MessageDialog.open(MessageDialog.WARNING, Display.getDefault().getActiveShell(),
-						"Orginalpräparat",
-						billable.getLabel() + " ist ein Orginalpräparat mit "
-								+ ((IArtikelstammItem) billable).getDeductible()
-								+ "% Selbstbehalt. Soll dieses Präparat verrechnet werden?",
-						SWT.NONE, "Ja", "Ja, mit Substitution nicht möglich", "Nein");
-				if (answer == 1) {
+			if (billable instanceof IArtikelstammItem) {
+				String autoAddValue = (String) ((IArtikelstammItem) billable)
+						.getExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE);
+				if ("true".equals(autoAddValue)) { //$NON-NLS-1$
 					billed.setExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE, "true"); //$NON-NLS-1$
 					CoreModelServiceHolder.get().save(billed);
-				} else if (answer == 2) {
-					billingService.removeBilled(billed, billed.getEncounter());
+				} else {
+					if ("O".equals(((IArtikelstammItem) billable).getGenericType())) { //$NON-NLS-1$
+						int answer = MessageDialog.open(MessageDialog.WARNING, Display.getDefault().getActiveShell(),
+								"Orginalpräparat",
+								billable.getLabel() + " ist ein Orginalpräparat mit "
+										+ ((IArtikelstammItem) billable).getDeductible()
+										+ "% Selbstbehalt. Soll dieses Präparat verrechnet werden?",
+								SWT.NONE, "Ja", "Ja, mit Substitution nicht möglich", "Nein");
+						if (answer == 1) {
+							billed.setExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE, "true"); //$NON-NLS-1$
+							CoreModelServiceHolder.get().save(billed);
+						} else if (answer == 2) {
+							billingService.removeBilled(billed, billed.getEncounter());
+						}
+					}
 				}
 			}
 		}

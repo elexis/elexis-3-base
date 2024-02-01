@@ -112,7 +112,6 @@ public class AgendaWeek extends BaseView {
 							+ (Messages.OUTDATED_USE_OTHER_VIEW));
 			isFirstTime = false;
 		}
-
 		refresh();
 	}
 

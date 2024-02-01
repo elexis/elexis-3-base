@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.elexis.emediplan.core.EMediplanServiceHolder">
-   <reference bind="setReference" interface="at.medevit.elexis.emediplan.core.EMediplanService" name="Reference" unbind="unsetReference"/>
-   <implementation class="at.medevit.elexis.emediplan.core.EMediplanServiceHolder"/>
-</scr:component>

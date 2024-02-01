@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.elexis.outbox.model.impl.DocumentStoreServiceHolder">
-   <reference bind="bind" interface="ch.elexis.core.documents.DocumentStore"/>
-   <implementation class="at.medevit.elexis.outbox.model.impl.DocumentStoreServiceHolder"/>
-</scr:component>

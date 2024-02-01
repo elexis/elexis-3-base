@@ -779,6 +779,9 @@ public class Tarmed45Exporter {
 								serviceType.setName(serviceType.getName() + " (medizinisch indiziert: 207)");
 								drugType.setIndicated(true);
 							}
+							if ("true".equals((String) billed.getExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE))) {
+								serviceType.setName(serviceType.getName() + " (Substitution nicht möglich)");
+							}
 							serviceType.setXtraDrug(drugType);
 						}
 						serviceType.setDateBegin(XMLExporterUtil.makeXMLDate(encounterDate));

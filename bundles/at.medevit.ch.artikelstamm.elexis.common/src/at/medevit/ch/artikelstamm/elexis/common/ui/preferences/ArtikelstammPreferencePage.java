@@ -48,6 +48,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 	private Button btnRadioEnglish;
 	private Button btnShowArticlePrice;
 	private Button btnShowEmptyATCCodeGroups;
+	private Button btnShowGenericWarning;
 
 	/**
 	 * Create the preference page.
@@ -183,6 +184,18 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 			public void widgetSelected(SelectionEvent e) {
 				ConfigServiceHolder.get().set(PreferenceConstants.PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES,
 						btnShowEmptyATCCodeGroups.getSelection());
+			}
+		});
+
+		btnShowGenericWarning = new Button(container, SWT.CHECK);
+		btnShowGenericWarning.setText("Warnung bei Abgabe von Orginalpräparaten anzeigen");
+		btnShowGenericWarning.setSelection(
+				ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES, false));
+		btnShowGenericWarning.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ConfigServiceHolder.get().set(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES,
+						btnShowGenericWarning.getSelection());
 			}
 		});
 

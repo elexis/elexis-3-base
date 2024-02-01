@@ -194,19 +194,16 @@ public class AgendaParallel extends BaseView {
 				setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png")); //$NON-NLS-1$
 				setMenuCreator(new IMenuCreator() {
 
-					@Override
 					public void dispose() {
 						mine.dispose();
 					}
 
-					@Override
 					public Menu getMenu(Control parent) {
 						mine = new Menu(parent);
 						fillMenu();
 						return mine;
 					}
 
-					@Override
 					public Menu getMenu(Menu parent) {
 						mine = new Menu(parent);
 						fillMenu();

@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,6 +29,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -53,6 +55,7 @@ public class AgendaParallel extends BaseView {
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
 	private Composite wrapper;
+	private boolean isFirstTime = true;
 
 	public AgendaParallel() {
 
@@ -87,6 +90,12 @@ public class AgendaParallel extends BaseView {
 
 	@Override
 	public void setFocus() {
+		if (isFirstTime) {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Ansicht veraltet", "Die Ansicht "
+					+ getTitle()
+					+ " ist veraltet und wird nicht mehr unterstützt. Bitte verwenden Sie die Agenda Web Ansicht.");
+			isFirstTime = false;
+		}
 		sheet.setFocus();
 	}
 
@@ -185,16 +194,19 @@ public class AgendaParallel extends BaseView {
 				setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png")); //$NON-NLS-1$
 				setMenuCreator(new IMenuCreator() {
 
+					@Override
 					public void dispose() {
 						mine.dispose();
 					}
 
+					@Override
 					public Menu getMenu(Control parent) {
 						mine = new Menu(parent);
 						fillMenu();
 						return mine;
 					}
 
+					@Override
 					public Menu getMenu(Menu parent) {
 						mine = new Menu(parent);
 						fillMenu();

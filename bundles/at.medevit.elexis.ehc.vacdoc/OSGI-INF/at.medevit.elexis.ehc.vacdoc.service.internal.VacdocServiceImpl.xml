@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.elexis.ehc.vacdoc.service.internal.VacdocServiceImpl">
-   <service>
-      <provide interface="at.medevit.elexis.ehc.vacdoc.service.VacdocService"/>
-   </service>
-   <reference bind="setEhcCoreService" interface="at.medevit.elexis.ehc.core.EhcCoreService" name="EhcCoreService" unbind="unsetEhcCoreService"/>
-   <implementation class="at.medevit.elexis.ehc.vacdoc.service.internal.VacdocServiceImpl"/>
-</scr:component>

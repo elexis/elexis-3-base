@@ -157,5 +157,6 @@
     <module>ch.itmed.fop.printing.ui</module>
     <module>at.medevit.elexis.documents.converter</module>
     <module>at.medevit.elexis.documents.converter.ui</module>
+    <module>ch.framsteg.elexis.finance.analytics</module>
   </modules>
 </project>

@@ -1,9 +1,9 @@
 package ch.elexis.pdfBills;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,6 +59,7 @@ import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.model.InvoiceState.REJECTCODE;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
 import ch.elexis.data.Fall;
@@ -157,7 +158,7 @@ public class QrRnOutputter implements IRnOutputter {
 						String fname = OutputterUtil.getXmlOutputDir(CFG_ROOT) + File.separator + invoice.getNumber()
 								+ ".xml"; //$NON-NLS-1$
 						try {
-							FileOutputStream fout = new FileOutputStream(fname);
+							OutputStream fout = VirtualFilesystemServiceHolder.get().of(fname).openOutputStream();
 							OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8"); //$NON-NLS-1$
 							XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
 							xout.output(dRn, cout);
@@ -471,19 +472,23 @@ public class QrRnOutputter implements IRnOutputter {
 
 	@Override
 	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
-		File esrFile = new File(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
-				+ invoice.getNumber() + "_esr.pdf");
-		File rfFile = new File(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator
-				+ invoice.getNumber() + "_rf.pdf");
-		if (esrFile.exists()) {
-			Program.launch(esrFile.getAbsolutePath());
-		} else {
-			LoggerFactory.getLogger(getClass()).info("File [" + esrFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
-		}
-		if (rfFile.exists()) {
-			Program.launch(rfFile.getAbsolutePath());
-		} else {
-			LoggerFactory.getLogger(getClass()).info("File [" + rfFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
+		try {
+			File esrFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
+					+ File.separator + invoice.getNumber() + "_esr.pdf").toFile().orElse(null);
+			File rfFile = VirtualFilesystemServiceHolder.get().of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT)
+					+ File.separator + invoice.getNumber() + "_rf.pdf").toFile().orElse(null);
+			if (esrFile.exists()) {
+				Program.launch(esrFile.getAbsolutePath());
+			} else {
+				LoggerFactory.getLogger(getClass()).info("File [" + esrFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
+			}
+			if (rfFile.exists()) {
+				Program.launch(rfFile.getAbsolutePath());
+			} else {
+				LoggerFactory.getLogger(getClass()).info("File [" + rfFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
+			}
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error opening output", e);
 		}
 	}
 }

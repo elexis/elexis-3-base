@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,6 +75,7 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.services.holder.InvoiceServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Mandant;
@@ -183,7 +185,8 @@ public class ElexisPDFGenerator {
 	private org.w3c.dom.Document readDom() {
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			return dbf.newDocumentBuilder().parse(new File(billXmlFile));
+			return dbf.newDocumentBuilder()
+					.parse(VirtualFilesystemServiceHolder.get().of(billXmlFile).openInputStream());
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			LoggerFactory.getLogger(getClass()).error("Error parsing XML", e); //$NON-NLS-1$
 		}
@@ -196,7 +199,7 @@ public class ElexisPDFGenerator {
 
 	private void generatePdf(File styleSheet, File output, boolean withQr) {
 		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(output));
-				FileInputStream inputStream = new FileInputStream(billXmlFile);
+				InputStream inputStream = VirtualFilesystemServiceHolder.get().of(billXmlFile).openInputStream();
 				FileInputStream xsltStream = new FileInputStream(styleSheet)) {
 			BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
 			ServiceReference<IFormattedOutputFactory> fopFactoryRef = bundleContext
@@ -497,37 +500,50 @@ public class ElexisPDFGenerator {
 
 	public void printBill(File rsc) {
 		printed = new ArrayList<>();
-		if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_BESR, true)) {
-			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_esr.pdf"); //$NON-NLS-1$
-			generatePatBill(rsc, pdf);
-			printPdf(pdf, true);
-			printed.add(pdf);
-		}
-		if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_RF, true)) {
-			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf"); //$NON-NLS-1$
-			generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
-			printPdf(pdf, false);
-			printed.add(pdf);
+		try {
+			if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_BESR, true)) {
+				File pdf = VirtualFilesystemServiceHolder.get()
+						.of(OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_esr.pdf") //$NON-NLS-1$
+						.toFile().orElse(null);
+				generatePatBill(rsc, pdf);
+				printPdf(pdf, true);
+				printed.add(pdf);
+			}
+			if (CoreHub.localCfg.get(RnOutputter.CFG_ROOT + RnOutputter.CFG_PRINT_RF, true)) {
+				File pdf = VirtualFilesystemServiceHolder.get()
+						.of(OutputterUtil.getPdfOutputDir(RnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf") //$NON-NLS-1$
+						.toFile().orElse(null);
+				generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
+				printPdf(pdf, false);
+				printed.add(pdf);
+			}
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error printing bill", e);
 		}
 	}
 
 	public void printQrBill(File rsc) {
 		printed = new ArrayList<>();
-		if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_BESR, true)) {
-			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_esr.pdf"); //$NON-NLS-1$
-			generateQrPatBill(rsc, pdf);
-			printPdf(pdf, false);
-			printed.add(pdf);
-		}
-		if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_RF, true)) {
-			File pdf = new File(
-					OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf"); //$NON-NLS-1$
-			generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
-			printPdf(pdf, false);
-			printed.add(pdf);
+		try {
+			if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_BESR, true)) {
+				File pdf = VirtualFilesystemServiceHolder.get()
+						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr
+								+ "_esr.pdf") //$NON-NLS-1$
+						.toFile().orElse(null);
+				generateQrPatBill(rsc, pdf);
+				printPdf(pdf, false);
+				printed.add(pdf);
+			}
+			if (CoreHub.localCfg.get(QrRnOutputter.CFG_ROOT + QrRnOutputter.CFG_PRINT_RF, true)) {
+				File pdf = VirtualFilesystemServiceHolder.get()
+						.of(OutputterUtil.getPdfOutputDir(QrRnOutputter.CFG_ROOT) + File.separator + billNr + "_rf.pdf") //$NON-NLS-1$
+						.toFile().orElse(null);
+				generatePdf(getXsltForBill(rsc, XsltType.RECLAIM), pdf);
+				printPdf(pdf, false);
+				printed.add(pdf);
+			}
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error printing QR bill", e);
 		}
 	}
 

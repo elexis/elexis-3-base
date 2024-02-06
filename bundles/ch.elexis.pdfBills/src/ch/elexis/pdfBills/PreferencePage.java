@@ -1,5 +1,8 @@
 package ch.elexis.pdfBills;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,6 +12,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -26,7 +30,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
@@ -39,7 +42,11 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.mail.MailAccount;
 import ch.elexis.core.mail.MailAccount.TYPE;
+import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
+import ch.elexis.core.ui.e4.dialog.VirtualFilesystemUriEditorDialog;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.data.Mandant;
@@ -280,10 +287,20 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		bXML.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dd = new DirectoryDialog(getShell());
-				String dir = dd.open();
-				if (dir != null) {
-					tXml.setText(dir);
+				IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
+				URI inputUri = null;
+				try {
+					String stringValue = tXml.getText();
+					if (StringUtils.isNotBlank(stringValue)) {
+						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue);
+						inputUri = fileHandle.toURL().toURI();
+					}
+				} catch (URISyntaxException | IOException ex) {
+				}
+				VirtualFilesystemUriEditorDialog dialog = new VirtualFilesystemUriEditorDialog(getShell(),
+						virtualFilesystemService, inputUri);
+				if (IDialogConstants.OK_ID == dialog.open()) {
+					tXml.setText(dialog.getValue().toString());
 				}
 			}
 
@@ -291,10 +308,20 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		bPDF.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dd = new DirectoryDialog(getShell());
-				String dir = dd.open();
-				if (dir != null) {
-					tPdf.setText(dir);
+				IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
+				URI inputUri = null;
+				try {
+					String stringValue = tPdf.getText();
+					if (StringUtils.isNotBlank(stringValue)) {
+						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue);
+						inputUri = fileHandle.toURL().toURI();
+					}
+				} catch (URISyntaxException | IOException ex) {
+				}
+				VirtualFilesystemUriEditorDialog dialog = new VirtualFilesystemUriEditorDialog(getShell(),
+						virtualFilesystemService, inputUri);
+				if (IDialogConstants.OK_ID == dialog.open()) {
+					tPdf.setText(dialog.getValue().toString());
 				}
 			}
 		});

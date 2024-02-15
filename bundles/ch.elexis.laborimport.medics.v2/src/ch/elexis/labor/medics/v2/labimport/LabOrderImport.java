@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -82,7 +83,8 @@ public class LabOrderImport extends ImporterPage {
 		if (downloadDir.isDirectory()) {
 			result = mfParser.importFromDirectory(
 					downloadDir, new DefaultImportStrategyFactory()
-							.setPDFImportCategory(MedicsPreferencePage.getDokumentKategorie()).setMoveAfterImport(true),
+							.setPDFImportCategory(MedicsPreferencePage.getDokumentKategorie())
+							.setMoveAfterImport(true),
 					hl7parser, new DefaultPersistenceHandler());
 		}
 

@@ -186,7 +186,7 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 		});
 
 		btnShowGenericWarning = new Button(container, SWT.CHECK);
-		btnShowGenericWarning.setText("Warnung bei Abgabe von Orginalpräparaten anzeigen");
+		btnShowGenericWarning.setText("Warnung bei Abgabe von Originalpräparaten anzeigen");
 		btnShowGenericWarning.setSelection(
 				ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES, false));
 		btnShowGenericWarning.addSelectionListener(new SelectionAdapter() {

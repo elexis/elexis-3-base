@@ -35,8 +35,7 @@ public class GenericTypeOriginalAdjuster implements IBilledAdjuster {
 				} else {
 					if ("O".equals(((IArtikelstammItem) billable).getGenericType())) { //$NON-NLS-1$
 						int answer = MessageDialog.open(MessageDialog.WARNING, Display.getDefault().getActiveShell(),
-								"Orginalpräparat",
-								billable.getLabel() + " ist ein Orginalpräparat mit "
+								"Originalpräparat", billable.getLabel() + " ist ein Originalpräparat mit "
 										+ ((IArtikelstammItem) billable).getDeductible()
 										+ "% Selbstbehalt. Soll dieses Präparat verrechnet werden?",
 								SWT.NONE, "Ja", "Ja, mit Substitution nicht möglich", "Nein");

@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -30,6 +31,7 @@ import ch.elexis.labor.medics.v2.order.WebAis;
 public class MedicsPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public static final String DOWNLOAD_DIR = "medics/download"; //$NON-NLS-1$
+	public static final String UPLOAD_DIR = "medics/upload"; //$NON-NLS-1$
 	public static final String IMED_DIR = "medics/uploadimed"; //$NON-NLS-1$
 	public static final String ARCHIV_DIR = "medics/archiv"; //$NON-NLS-1$
 	public static final String ERROR_DIR = "medics/error"; //$NON-NLS-1$
@@ -37,17 +39,22 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 	public static final String DELETE_ARCHIV_DAYS = "medics/del_archiv/days"; //$NON-NLS-1$
 
 	private static final String DEFAULT_DOWNLOAD = StringUtils.EMPTY;
+	private static final String DEFAULT_UPLOAD = StringUtils.EMPTY;
 	private static final String DEFAULT_IMED = StringUtils.EMPTY;
 	private static final String DEFAULT_ARCHIV = StringUtils.EMPTY;
 	private static final String DEFAULT_DOKUMENT_CATEGORY = Messages.MedicsPreferencePage_documentCategoryName;
 	private static final int DEFAULT_DELETE_ARCHIV_DAYS = 30;
 
+	public static final String CFG_MEDICS_ORDER_API = "medics/order_api"; //$NON-NLS-1$
+
 	private List<WebAisMandatorComposite> webaisMandators;
+	private Composite mandatorsContainer;
 
 	public MedicsPreferencePage() {
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 		getPreferenceStore().setDefault(DOWNLOAD_DIR, DEFAULT_DOWNLOAD);
+		getPreferenceStore().setDefault(UPLOAD_DIR, DEFAULT_UPLOAD);
 		getPreferenceStore().setDefault(IMED_DIR, DEFAULT_IMED);
 		getPreferenceStore().setDefault(ARCHIV_DIR, DEFAULT_ARCHIV);
 		getPreferenceStore().setDefault(DOKUMENT_CATEGORY, DEFAULT_DOKUMENT_CATEGORY);
@@ -68,12 +75,34 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 		super.createContents(fieldEditorContainer);
 		getFieldEditorParent().setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		Label separator = new Label(container, SWT.HORIZONTAL | SWT.SEPARATOR);
-		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		Button btnChangeApi = new Button(container, SWT.PUSH);
+		btnChangeApi.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (StringUtils.isEmpty(ConfigServiceHolder.get().get(CFG_MEDICS_ORDER_API, ""))) {
+					ConfigServiceHolder.get().set(CFG_MEDICS_ORDER_API, "web");
+					btnChangeApi.setText("Wechsel auf HL7 API");
 
-		Composite mandatorsContainer = new Composite(container, SWT.NONE);
+					mandatorsContainer.setVisible(true);
+					((GridData) mandatorsContainer.getLayoutData()).exclude = false;
+				} else {
+					ConfigServiceHolder.get().set(CFG_MEDICS_ORDER_API, "");
+					btnChangeApi.setText("Wechsel auf Web API (neu)");
+
+					mandatorsContainer.setVisible(false);
+					((GridData) mandatorsContainer.getLayoutData()).exclude = true;
+				}
+				layoutParentShell(container);
+			}
+		});
+		btnChangeApi.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+
+		mandatorsContainer = new Composite(container, SWT.NONE);
 		mandatorsContainer.setLayout(new GridLayout());
 		mandatorsContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		Label separator = new Label(mandatorsContainer, SWT.HORIZONTAL | SWT.SEPARATOR);
+		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		if (ContextServiceHolder.get().getActiveUser().isPresent()
 				&& ContextServiceHolder.get().getActiveUser().get().isAdministrator()) {
@@ -101,6 +130,16 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 			webaisMandators.add(composite);
 		}
 
+		if (StringUtils.isEmpty(ConfigServiceHolder.get().get(CFG_MEDICS_ORDER_API, ""))) {
+			btnChangeApi.setText("Wechsel auf Web API (neu)");
+			mandatorsContainer.setVisible(false);
+			((GridData) mandatorsContainer.getLayoutData()).exclude = true;
+		} else {
+			btnChangeApi.setText("Wechsel auf HL7 API");
+			mandatorsContainer.setVisible(true);
+			((GridData) mandatorsContainer.getLayoutData()).exclude = false;
+		}
+
 		return container;
 	}
 
@@ -111,6 +150,8 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 	@Override
 	protected void createFieldEditors() {
 		addField(new DirectoryFieldEditor(DOWNLOAD_DIR, Messages.MedicsPreferencePage_labelDownloadDir,
+				getFieldEditorParent()));
+		addField(new DirectoryFieldEditor(UPLOAD_DIR, Messages.MedicsPreferencePage_labelUploadDir,
 				getFieldEditorParent()));
 		addField(new DirectoryFieldEditor(IMED_DIR, Messages.MedicsPreferencePage_labelUploadDirimed,
 				getFieldEditorParent()));
@@ -139,7 +180,21 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements I
 		return CoreHub.localCfg.get(IMED_DIR, DEFAULT_IMED);
 	}
 
+	public static String getUploadDir() {
+		return CoreHub.localCfg.get(UPLOAD_DIR, DEFAULT_UPLOAD);
+	}
+
 	@Override
 	public void init(IWorkbench workbench) {
+	}
+
+	public static void layoutParentShell(Composite composite) {
+		Composite parent = composite.getParent();
+		while (parent != null && !(parent instanceof Shell)) {
+			parent = parent.getParent();
+		}
+		if (parent instanceof Shell) {
+			parent.layout(true, true);
+		}
 	}
 }

@@ -1613,6 +1613,12 @@ public class Tarmed45Exporter {
 				}
 				// always update copy information
 				request.getPayload().setCopy(type.equals(IRnOutputter.TYPE.COPY));
+				// always update remark
+				if (StringUtils.isNotBlank(invoice.getRemark())) {
+					request.getPayload().getBody().setRemark(invoice.getRemark());
+				} else {
+					request.getPayload().getBody().setRemark(null);
+				}
 				// update balance for storno
 				if (type.equals(TYPE.STORNO)) {
 					request.getPayload().setStorno(true);

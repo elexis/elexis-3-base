@@ -34,17 +34,20 @@ public class GenericTypeOriginalAdjuster implements IBilledAdjuster {
 					CoreModelServiceHolder.get().save(billed);
 				} else {
 					if ("O".equals(((IArtikelstammItem) billable).getGenericType())) { //$NON-NLS-1$
-						int answer = MessageDialog.open(MessageDialog.WARNING, Display.getDefault().getActiveShell(),
-								"Originalpräparat", billable.getLabel() + " ist ein Originalpräparat mit "
-										+ ((IArtikelstammItem) billable).getDeductible()
-										+ "% Selbstbehalt. Soll dieses Präparat verrechnet werden?",
-								SWT.NONE, "Ja", "Ja, mit Substitution nicht möglich", "Nein");
-						if (answer == 1) {
-							billed.setExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE, "true"); //$NON-NLS-1$
-							CoreModelServiceHolder.get().save(billed);
-						} else if (answer == 2) {
-							billingService.removeBilled(billed, billed.getEncounter());
-						}
+						Display.getDefault().syncExec(() -> {
+							int answer = MessageDialog.open(MessageDialog.WARNING,
+									Display.getDefault().getActiveShell(), "Originalpräparat",
+									billable.getLabel() + " ist ein Originalpräparat mit "
+											+ ((IArtikelstammItem) billable).getDeductible()
+											+ "% Selbstbehalt. Soll dieses Präparat verrechnet werden?",
+									SWT.NONE, "Ja", "Ja, mit Substitution nicht möglich", "Nein");
+							if (answer == 1) {
+								billed.setExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE, "true"); //$NON-NLS-1$
+								CoreModelServiceHolder.get().save(billed);
+							} else if (answer == 2) {
+								billingService.removeBilled(billed, billed.getEncounter());
+							}
+						});
 					}
 				}
 			}

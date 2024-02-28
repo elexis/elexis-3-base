@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="at.medevit.ch.artikelstamm.ui.internal.GenericTypeOriginalAdjuster">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.ch.artikelstamm.ui.internal.GenericTypeOriginalAdjuster">
    <service>
       <provide interface="ch.elexis.core.services.IBilledAdjuster"/>
    </service>
-   <reference cardinality="1..1" field="billingService" interface="ch.elexis.core.services.IBillingService" name="billingService"/>
    <implementation class="at.medevit.ch.artikelstamm.ui.internal.GenericTypeOriginalAdjuster"/>
 </scr:component>

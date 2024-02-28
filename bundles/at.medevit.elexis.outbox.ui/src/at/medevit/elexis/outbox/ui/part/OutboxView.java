@@ -46,6 +46,7 @@ import at.medevit.elexis.outbox.ui.part.provider.OutboxViewerComparator;
 import at.medevit.elexis.outbox.ui.preferences.Preferences;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -142,7 +143,7 @@ public class OutboxView extends ViewPart {
 				if (setAutoSelectPatient) {
 					Object selectedElement = ((StructuredSelection) selection).getFirstElement();
 					if (selectedElement instanceof IOutboxElement) {
-						ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
+						ContextServiceHolder.get().getRootContext().setNamed(IContextService.SELECTIONFALLBACK,
 								((IOutboxElement) selectedElement).getPatient());
 					} else if (selectedElement instanceof PatientOutboxElements) {
 						ContextServiceHolder.get()

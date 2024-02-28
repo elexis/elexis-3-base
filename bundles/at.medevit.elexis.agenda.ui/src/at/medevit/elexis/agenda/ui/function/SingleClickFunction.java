@@ -10,6 +10,7 @@ import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
@@ -27,13 +28,13 @@ public class SingleClickFunction extends BrowserFunction {
 			IAppointment termin = CoreModelServiceHolder.get().load((String) arguments[0], IAppointment.class)
 					.orElse(null);
 			if (termin != null) {
-				ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, termin);
+				ContextServiceHolder.get().getRootContext().setNamed(IContextService.SELECTIONFALLBACK, termin);
 				if (selectionProvider != null) {
 					selectionProvider.setSelection(new StructuredSelection(termin));
 				}
 				IContact contact = termin.getContact();
 				if (contact != null && contact.isPatient()) {
-					ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
+					ContextServiceHolder.get().getRootContext().setNamed(IContextService.SELECTIONFALLBACK,
 							CoreModelServiceHolder.get().load(contact.getId(), IPatient.class).get());
 				}
 			} else {

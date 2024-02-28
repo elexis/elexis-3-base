@@ -24,6 +24,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.builder.IPrescriptionBuilder;
 import ch.elexis.core.model.prescription.EntryType;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.MedicationServiceHolder;
@@ -52,7 +53,7 @@ public class DirectImportHandler extends AbstractHandler implements IHandler {
 
 			IPatient patient = CoreModelServiceHolder.get().load(patientid, IPatient.class).orElse(null);
 			if (patient != null) {
-				ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, patient);
+				ContextServiceHolder.get().getRootContext().setNamed(IContextService.SELECTIONFALLBACK, patient);
 
 				List<IPrescription> currentMedication = getPrescriptions(patient, medicationType);
 				LocalDateTime now = LocalDateTime.now();

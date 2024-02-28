@@ -388,11 +388,11 @@ public class ESRView extends ViewPart {
 				Object firstElement = ss.getFirstElement();
 				if (firstElement != null) {
 					IEsrRecord selRecord = (IEsrRecord) firstElement;
-					contextService.getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
+					contextService.getRootContext().setNamed(IContextService.SELECTIONFALLBACK,
 							selRecord);
 					IInvoice rn = selRecord.getInvoice();
 					if (rn != null) {
-						contextService.getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, rn);
+						contextService.getRootContext().setNamed(IContextService.SELECTIONFALLBACK, rn);
 					}
 				} else {
 					ElexisEventDispatcher.clearSelection(ESRRecord.class);

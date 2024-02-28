@@ -57,6 +57,7 @@ import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
@@ -265,7 +266,7 @@ public class AppointmentDetailComposite extends Composite {
 				Object sel = event.getStructuredSelection().getFirstElement();
 				if (dayBar != null && sel instanceof IAppointment && !sel.equals(appointment)) {
 					reloadAppointment((IAppointment) sel);
-					ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, sel);
+					ContextServiceHolder.get().getRootContext().setNamed(IContextService.SELECTIONFALLBACK, sel);
 				}
 			}
 		});

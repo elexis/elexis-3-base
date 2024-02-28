@@ -46,7 +46,7 @@ public class AutoSelectPatientHandler {
 		if (isActive) {
 			IPatient patient = globalInboxEntry.getPatient();
 			if (patient != null) {
-				contextService.getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, patient);
+				contextService.getRootContext().setNamed(IContextService.SELECTIONFALLBACK, patient);
 			}
 		}
 	}

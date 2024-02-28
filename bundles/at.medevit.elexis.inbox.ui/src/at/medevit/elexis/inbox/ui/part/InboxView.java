@@ -88,6 +88,7 @@ import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -317,10 +318,10 @@ public class InboxView extends ViewPart {
 					if (setAutoSelectPatient) {
 						Object selectedElement = ((StructuredSelection) selection).getFirstElement();
 						if (selectedElement instanceof IInboxElement) {
-							ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
+							ContextServiceHolder.get().getRootContext().setNamed(IContextService.SELECTIONFALLBACK,
 									((IInboxElement) selectedElement).getPatient());
 						} else if (selectedElement instanceof PatientInboxElements) {
-							ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK,
+							ContextServiceHolder.get().getRootContext().setNamed(IContextService.SELECTIONFALLBACK,
 									((PatientInboxElements) selectedElement).getPatient());
 						}
 					}

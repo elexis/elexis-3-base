@@ -21,6 +21,7 @@ import org.eclipse.swt.custom.StyleRange;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IDiagnosis;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.text.model.Samdas;
@@ -50,7 +51,7 @@ public class KonsExtension implements IKonsExtension {
 	public boolean doXRef(final String refProvider, final String refID) {
 		IcpcEncounter enc = IcpcModelServiceHolder.get().load(refID, IcpcEncounter.class).orElse(null);
 		if (enc != null) {
-			ContextServiceHolder.get().getRootContext().setNamed(ContextServiceHolder.SELECTIONFALLBACK, enc);
+			ContextServiceHolder.get().getRootContext().setNamed(IContextService.SELECTIONFALLBACK, enc);
 		}
 		return true;
 	}

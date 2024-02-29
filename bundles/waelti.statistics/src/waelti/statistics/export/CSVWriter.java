@@ -1,11 +1,13 @@
 package waelti.statistics.export;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.List;
+import java.util.Locale;
 
+import ch.rgw.tools.Money;
 import waelti.statistics.queries.AbstractQuery;
 import waelti.statistics.queries.ResultMatrix;
 
@@ -30,32 +32,48 @@ public class CSVWriter {
 
 	public static File writer(ResultMatrix matrix, File file) throws IOException {
 
-		FileWriter writer = new FileWriter(file);
+		FileOutputStream fos = new FileOutputStream(file);
+		OutputStreamWriter osw = new OutputStreamWriter(fos, "ISO-8859-1");
 
-		CSVWriter.writeHeading(writer, matrix.getHeadings());
+		try {
+			CSVWriter.writeHeading(osw, matrix.getHeadings());
 
-		for (Object[] objects : matrix) {
-			CSVWriter.writeRow(writer, objects);
+			for (Object[] objects : matrix) {
+				CSVWriter.writeRow(osw, objects);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			osw.close();
 		}
 
-		writer.close();
 		return file;
 	}
 
-	private static void writeHeading(FileWriter writer, List<String> headings) throws IOException {
+	private static void writeHeading(OutputStreamWriter writer, List<String> headings) throws IOException {
 		Object[] objects = headings.toArray();
 		CSVWriter.writeRow(writer, objects);
 	}
 
-	private static void writeRow(FileWriter writer, Object[] objects) throws IOException {
-		StringBuffer buf = new StringBuffer();
+	private static void writeRow(OutputStreamWriter writer, Object[] objects) throws IOException {
+		StringBuilder buf = new StringBuilder();
 		for (Object obj : objects) {
-			buf.append(obj.toString());
+			// Überprüfung, ob der Wert eine Zahl ist
+			if (obj instanceof Number) {
+				if (obj instanceof Money) {
+					buf.append(obj.toString()); // Kommas durch Punkte ersetzen
+
+				} else {
+					buf.append(String.format(Locale.US, "%.2f", obj)); // Dezimalzahlen mit Punkt statt Komma
+				}
+			} else {
+				buf.append(obj.toString()); // Kommas durch Punkte ersetzen
+			}
 			buf.append(CSVWriter.delimiter);
 		}
-		buf.deleteCharAt(buf.length() - 1); // last delimiter not needed
-		buf.append(StringUtils.LF);
+
+		buf.deleteCharAt(buf.length() - 1); // letztes Trennzeichen nicht benötigt
+		buf.append(System.lineSeparator());
 		writer.write(buf.toString());
 	}
-
 }

@@ -11,15 +11,16 @@
  *******************************************************************************/
 package ch.unibe.iam.scg.archie.export;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 import ch.unibe.iam.scg.archie.model.DataSet;
 import ch.unibe.iam.scg.archie.ui.widgets.DateWidget;
@@ -52,7 +53,8 @@ public class CSVWriter {
 	 */
 	public static File writeFile(final AbstractDataProvider provider, final String fileName) throws IOException {
 		File file = new File(fileName);
-		FileWriter writer = new FileWriter(file);
+		FileOutputStream fos = new FileOutputStream(file);
+		OutputStreamWriter writer = new OutputStreamWriter(fos, "ISO-8859-1");
 
 		// retrieve DataSet
 		DataSet data = provider.getDataSet();
@@ -79,7 +81,7 @@ public class CSVWriter {
 	 * @param headings List of column headings to write.
 	 * @throws IOException
 	 */
-	private static void writeColumnHeadings(FileWriter writer, List<String> headings) throws IOException {
+	private static void writeColumnHeadings(OutputStreamWriter writer, List<String> headings) throws IOException {
 		// write column headings
 		Object[] objects = headings.toArray();
 		CSVWriter.writeRow(writer, objects);
@@ -94,25 +96,20 @@ public class CSVWriter {
 	 * @param provider A data provider.
 	 * @throws IOException
 	 */
-	private static void writeProviderInformation(FileWriter writer, final AbstractDataProvider provider)
+	private static void writeProviderInformation(OutputStreamWriter writer, final AbstractDataProvider provider)
 			throws IOException {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(DateWidget.VALID_DATE_FORMAT);
 
 		// provider title
-		writer.write(provider.getName());
-		writer.write(StringUtils.LF);
-		writer.write(dateFormat.format(Calendar.getInstance().getTime()));
-		writer.write(StringUtils.LF);
-		writer.write(StringUtils.LF);
+		writer.write(provider.getName() + StringUtils.LF);
+		writer.write(dateFormat.format(Calendar.getInstance().getTime()) + StringUtils.LF + StringUtils.LF);
 
 		// write parameters
 		Map<String, Object> getters = ProviderHelper.getGetterMap(provider, true);
 		for (Object name : getters.keySet().toArray()) {
-			writer.write(name + " = " + getters.get(name)); //$NON-NLS-1$
-			writer.write(StringUtils.LF);
+			writer.write(name + " = " + getters.get(name) + StringUtils.LF); //$NON-NLS-1$
 		}
-		writer.write(StringUtils.LF);
-		writer.write(StringUtils.LF);
+		writer.write(StringUtils.LF + StringUtils.LF);
 	}
 
 	/**
@@ -122,7 +119,7 @@ public class CSVWriter {
 	 * @param objects An array of objects containing the data to write.
 	 * @throws IOException
 	 */
-	private static void writeRow(FileWriter writer, Object[] objects) throws IOException {
+	private static void writeRow(OutputStreamWriter writer, Object[] objects) throws IOException {
 		StringBuffer buf = new StringBuffer();
 		for (Object obj : objects) {
 			buf.append(obj != null ? obj.toString() : StringUtils.EMPTY);

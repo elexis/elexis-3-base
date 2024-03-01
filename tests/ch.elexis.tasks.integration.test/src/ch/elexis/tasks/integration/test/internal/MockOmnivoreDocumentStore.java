@@ -327,6 +327,12 @@ public class MockOmnivoreDocumentStore implements IDocumentStore {
 	}
 
 	@Override
+	public void removeCategory(ICategory category, ICategory newCategory) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public void renameCategory(ICategory category, String newCategory) {
 		// TODO Auto-generated method stub
 

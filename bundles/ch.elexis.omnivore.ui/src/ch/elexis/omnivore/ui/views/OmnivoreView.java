@@ -224,7 +224,9 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			qbe.and("title", COMPARATOR.LIKE, "%" + searchTitle + "%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			// Add every keyword
 			for (String kw : searchKW.split(StringUtils.SPACE)) {
-				qbe.and("keywords", COMPARATOR.LIKE, "%" + kw + "%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if(StringUtils.isNotBlank(kw)) {
+					qbe.and("keywords", COMPARATOR.LIKE, "%" + kw + "%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
 			}
 		}
 

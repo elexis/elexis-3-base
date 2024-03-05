@@ -20,6 +20,12 @@
             id="ch.elexis.arzttarife_ch.complementary"
             name="Komplementärmedizin">
       </page>
+      <page
+            category="ch.elexis.Leistungscodes"
+            class="ch.elexis.tarmedprefs.NutritionPrefs"
+            id="ch.elexis.arzttarife_ch.nutrition"
+            name="Ernährungsberatung">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.views">

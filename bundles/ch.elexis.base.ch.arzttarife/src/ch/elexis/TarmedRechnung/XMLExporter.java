@@ -81,7 +81,6 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
-import ch.elexis.core.data.preferences.CorePreferenceInitializer;
 import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.model.IBlob;
 import ch.elexis.core.model.IContact;
@@ -90,6 +89,7 @@ import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.InvoiceState;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
@@ -658,7 +658,7 @@ public class XMLExporter implements IRnOutputter {
 				// remove existing patient children
 				ListIterator<Element> iterator = tiersChildren.listIterator();
 				while (iterator.hasNext()) {
-					Object obj = (Object) iterator.next();
+					Object obj = iterator.next();
 					if (obj instanceof Element && "patient".equals(((Element) obj).getName())) {
 						iterator.remove();
 					}
@@ -678,7 +678,7 @@ public class XMLExporter implements IRnOutputter {
 					// remove existing guarantor children
 					ListIterator<Element> iterator = tiersChildren.listIterator();
 					while (iterator.hasNext()) {
-						Object obj = (Object) iterator.next();
+						Object obj = iterator.next();
 						if (obj instanceof Element && "guarantor".equals(((Element) obj).getName())) {
 							iterator.remove();
 						}
@@ -974,13 +974,13 @@ public class XMLExporter implements IRnOutputter {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				outputDir = new DirectoryDialog(parentInc.getShell(), SWT.OPEN).open();
-				CoreHub.localCfg.set(PreferenceConstants.RNN_EXPORTDIR, outputDir);
+				LocalConfigService.set(PreferenceConstants.RNN_EXPORTDIR, outputDir);
 				text.setText(outputDir);
 			}
 		});
 		b.setText(Messages.XMLExporter_Change);
-		outputDir = CoreHub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR,
-				CorePreferenceInitializer.getDefaultDBPath());
+		outputDir = LocalConfigService.get(PreferenceConstants.RNN_EXPORTDIR,
+				CoreUtil.getDefaultDBPath());
 		text.setText(outputDir);
 		return ret;
 	}
@@ -1105,7 +1105,7 @@ public class XMLExporter implements IRnOutputter {
 			VatRateElement element = rates.get(Double.valueOf(scale));
 			if (element == null) {
 				element = new VatRateElement(scale);
-				rates.put(new Double(scale), element);
+				rates.put(Double.valueOf(scale), element);
 			}
 			element.add(amount);
 			sumvat += (amount / (100.0 + scale)) * scale;
@@ -1126,8 +1126,7 @@ public class XMLExporter implements IRnOutputter {
 
 	@Override
 	public void openOutput(IInvoice invoice, LocalDateTime timestamp, InvoiceState invoiceState) {
-		String outputDir = CoreHub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR,
-				CorePreferenceInitializer.getDefaultDBPath());
+		String outputDir = LocalConfigService.get(PreferenceConstants.RNN_EXPORTDIR, CoreUtil.getDefaultDBPath());
 		XMLFileUtil.lookupFile(outputDir, invoice, timestamp, invoiceState).ifPresent(xmlFile -> {
 			if (xmlFile.exists()) {
 				Program.launch(xmlFile.getAbsolutePath());

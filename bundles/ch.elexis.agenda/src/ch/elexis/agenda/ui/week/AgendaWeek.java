@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -26,6 +27,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -45,7 +47,7 @@ public class AgendaWeek extends BaseView {
 
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
-
+	private boolean isFirstTime = true;
 	public AgendaWeek() {
 
 	}
@@ -98,11 +100,18 @@ public class AgendaWeek extends BaseView {
 
 		showCalendarAction.setText(sb.toString());
 		sheet.refresh();
-
+		
 	}
 
 	@Override
 	public void setFocus() {
+		if (isFirstTime) {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), (Messages.OUTDATED_VIEW),
+					(Messages.THE_VIEW)
+							+ getTitle() + " "
+							+ (Messages.OUTDATED_USE_OTHER_VIEW));
+			isFirstTime = false;
+		}
 		refresh();
 	}
 

@@ -24,106 +24,109 @@ import ch.elexis.core.model.IContact;
 import org.apache.http.client.utils.URIBuilder;
 
 public class Patient {
-	String id = StringUtils.EMPTY;
-    String dateofbirth = StringUtils.EMPTY;
-    String gender = StringUtils.EMPTY;
-    String title = StringUtils.EMPTY;
-    String lastname = StringUtils.EMPTY;
-    String firstname = StringUtils.EMPTY;
-    String street = StringUtils.EMPTY;
-    String zip = StringUtils.EMPTY;
-    String city = StringUtils.EMPTY;
-    String country = StringUtils.EMPTY;
-    String insurancenumber = StringUtils.EMPTY;
-    String insurancename = StringUtils.EMPTY;
-    String insurancegln = StringUtils.EMPTY;
-    String billing = StringUtils.EMPTY;
-    String socialSecurityNumber = StringUtils.EMPTY;
-    String physicianId = StringUtils.EMPTY;
-    String laboratoryCustomerId = StringUtils.EMPTY;
+        String id = StringUtils.EMPTY;
+        String dateofbirth = StringUtils.EMPTY;
+        String gender = StringUtils.EMPTY;
+        String title = StringUtils.EMPTY;
+        String lastname = StringUtils.EMPTY;
+        String firstname = StringUtils.EMPTY;
+        String street = StringUtils.EMPTY;
+        String zip = StringUtils.EMPTY;
+        String city = StringUtils.EMPTY;
+        String country = StringUtils.EMPTY;
+        String insurancenumber = StringUtils.EMPTY;
+        String insurancename = StringUtils.EMPTY;
+        String insurancegln = StringUtils.EMPTY;
+        String billing = StringUtils.EMPTY;
+        String socialSecurityNumber = StringUtils.EMPTY;
+        String physicianId = StringUtils.EMPTY;
+        String laboratoryCustomerId = StringUtils.EMPTY;
 
-	public static Patient of(ch.elexis.data.Patient patient){
-	    IContact activeUser = ContextServiceHolder.get().getActiveUserContact().get();
-		Patient ret = new Patient();
+        public static Patient of(ch.elexis.data.Patient patient){
+                IContact activeUser = ContextServiceHolder.get().getActiveUserContact().get();
+                Patient ret = new Patient();
 
-		ret.id = patient.getPatCode();
-		ret.dateofbirth = new TimeTool(patient.getGeburtsdatum()).toString(TimeTool.DATE_ISO);
-		ret.gender = patient.getGender() == Gender.FEMALE ? "female" : "male";
-		ret.title = patient.get(ch.elexis.data.Patient.TITLE);
-		ret.lastname = patient.getName();
-		ret.firstname = patient.getVorname();
-		ret.street = patient.getAnschrift().getStrasse();
-		ret.zip = patient.getAnschrift().getPlz();
-		ret.city = patient.getAnschrift().getOrt();
-		ret.country = patient.getAnschrift().getLand();
-		Fall fall = getFall(patient);
-		if (fall == null) {
-			MessageDialog.openError(Display.getDefault().getActiveShell(),
-				Messages.LabOrderAction_errorTitleNoFallSelected,
-				Messages.LabOrderAction_errorMessageNoFallSelected);
-		}
-		ret.insurancenumber = getInsuranceOrCaseNumber(fall);
-		ret.insurancename = getInsuranceName(fall);
-		ret.insurancegln = getInsuranceGln(fall);
-		ret.billing = getBilling(fall);
-		ret.socialSecurityNumber = patient.getXid().getDomainId();
-		ret.physicianId = activeUser.getXid("www.xid.ch/id/ean").getDomainId();
-		ret.laboratoryCustomerId = activeUser.getXid("www.xid.ch/id/kknum").getDomainId();
+                ret.id = patient.getPatCode();
+                ret.dateofbirth = new TimeTool(patient.getGeburtsdatum()).toString(TimeTool.DATE_ISO);
+                ret.gender = patient.getGender() == Gender.FEMALE ? "female" : "male";
+                ret.title = patient.get(ch.elexis.data.Patient.TITLE);
+                ret.lastname = patient.getName();
+                ret.firstname = patient.getVorname();
+                ret.street = patient.getAnschrift().getStrasse();
+                ret.zip = patient.getAnschrift().getPlz();
+                ret.city = patient.getAnschrift().getOrt();
+                ret.country = patient.getAnschrift().getLand();
 
-		return ret;
-	}
+                Fall fall = getFall(patient);
 
-	public void toMedicalvaluesOrderCreationAPIQueryParams(URIBuilder builder) throws IllegalArgumentException {
-	    setRequiredParameterOrThrow(builder, "laboratoryCustomerId", "BSV-Nummer des Einsenders", this.laboratoryCustomerId);
-        setRequiredParameterOrThrow(builder, "physicianId", "GLN-Nummer (EAN) des Arztes", this.physicianId);
+                if (fall == null) {
+                        MessageDialog.openError(Display.getDefault().getActiveShell(),
+                                Messages.LabOrderAction_errorTitleNoFallSelected,
+                                Messages.LabOrderAction_errorMessageNoFallSelected);
+                }
 
-        setRequiredParameterOrThrow(builder, "patientIdentifier", "Patienten ID", this.id);
-        setRequiredParameterOrThrow(builder, "patient_name_given", "Vorname", this.firstname);
-        setRequiredParameterOrThrow(builder, "patient_name_family", "Nachname", this.lastname);
-        setRequiredParameterOrThrow(builder, "patient_birthDate", "Geburtsdatum", this.dateofbirth);
-        setRequiredParameterOrThrow(builder, "patient_gender", "Geschlecht",this.gender);
-        setRequiredParameterOrThrow(builder, "coverage_type", "Abrechnungsart", this.billing);
+                ret.insurancenumber = getInsuranceOrCaseNumber(fall);
+                ret.insurancename = getInsuranceName(fall);
+                ret.insurancegln = getInsuranceGln(fall);
+                ret.billing = getBilling(fall);
+                ret.socialSecurityNumber = patient.getXid().getDomainId();
+                ret.physicianId = activeUser.getXid("www.xid.ch/id/ean").getDomainId();
+                ret.laboratoryCustomerId = activeUser.getXid("www.xid.ch/id/kknum").getDomainId();
 
-        setOptionalParameter(builder, "patient_name_title", this.title);
-        setOptionalParameter(builder, "patient_address_street", this.street);
-        setOptionalParameter(builder, "patient_address_postalCode", this.zip);
-        setOptionalParameter(builder, "patient_address_city", this.city);
-        setOptionalParameter(builder, "patient_address_country", this.country);
-        setOptionalParameter(builder, "patient_socialSecurityNumber", this.socialSecurityNumber);
-    }
-
-    private void setRequiredParameterOrThrow(URIBuilder builder, String key, String readableKey, String value) throws IllegalArgumentException {
-        if (value == null || value.isEmpty()) {
-            throw new IllegalArgumentException(readableKey);
+                return ret;
         }
 
-        builder.setParameter(key, value);
-    }
+        public void toMedicalvaluesOrderCreationAPIQueryParams(URIBuilder builder) throws IllegalArgumentException {
+                setRequiredParameterOrThrow(builder, "laboratoryCustomerId", "BSV-Nummer des Einsenders", this.laboratoryCustomerId);
+                setRequiredParameterOrThrow(builder, "physicianId", "GLN-Nummer (EAN) des Arztes", this.physicianId);
 
-   	private void setOptionalParameter(URIBuilder builder, String key, String value) {
-   		if (value != null && !value.isEmpty()) {
-   			builder.setParameter(key, value);
-   		}
-   	}
+                setRequiredParameterOrThrow(builder, "patientIdentifier", "Patienten ID", this.id);
+                setRequiredParameterOrThrow(builder, "patient_name_given", "Vorname", this.firstname);
+                setRequiredParameterOrThrow(builder, "patient_name_family", "Nachname", this.lastname);
+                setRequiredParameterOrThrow(builder, "patient_birthDate", "Geburtsdatum", this.dateofbirth);
+                setRequiredParameterOrThrow(builder, "patient_gender", "Geschlecht",this.gender);
+                setRequiredParameterOrThrow(builder, "coverage_type", "Abrechnungsart", this.billing);
 
-	private static String getBilling(Fall fall){
-		Kontakt costBearer = fall.getCostBearer();
-		Kontakt guarantor = fall.getGarant();
+                setOptionalParameter(builder, "patient_name_title", this.title);
+                setOptionalParameter(builder, "patient_address_street", this.street);
+                setOptionalParameter(builder, "patient_address_postalCode", this.zip);
+                setOptionalParameter(builder, "patient_address_city", this.city);
+                setOptionalParameter(builder, "patient_address_country", this.country);
+                setOptionalParameter(builder, "patient_socialSecurityNumber", this.socialSecurityNumber);
+        }
 
-		if (costBearer == null) {
-			costBearer = fall.getGarant();
-		}
+        private void setRequiredParameterOrThrow(URIBuilder builder, String key, String readableKey, String value) throws IllegalArgumentException {
+                if (value == null || value.isEmpty()) {
+                        throw new IllegalArgumentException(readableKey);
+                }
 
-		if (costBearer != null && costBearer.istOrganisation()) {
-			if (guarantor.equals(costBearer)) {
-				return "SEL";
-			}
+                builder.setParameter(key, value);
+        }
 
-			return "SwissIns";
-		}
+        private void setOptionalParameter(URIBuilder builder, String key, String value) {
+                if (value != null && !value.isEmpty()) {
+                        builder.setParameter(key, value);
+                }
+        }
 
-		return "SwissIns";
-	}
+        private static String getBilling(Fall fall){
+                Kontakt costBearer = fall.getCostBearer();
+                Kontakt guarantor = fall.getGarant();
+
+                if (costBearer == null) {
+                        costBearer = fall.getGarant();
+                }
+
+                if (costBearer != null && costBearer.istOrganisation()) {
+                    if (guarantor.equals(costBearer)) {
+                        return "SEL";
+                    }
+
+                    return "SwissIns";
+                }
+
+                return "SwissIns";
+        }
 
 	private static String getInsuranceName(Fall fall){
 		Kontakt costBearer = fall.getCostBearer();

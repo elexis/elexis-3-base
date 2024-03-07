@@ -29,7 +29,7 @@ import ch.elexis.labororder.lg1_medicalvalues.messages.Messages;
 public class LabOrderAction extends Action {
 
 	public LabOrderAction() {
-		setId("ch.elexis.laborder.lg1_medicalvalues.laborder"); //$NON-NLS-1$
+        setId("ch.elexis.laborder.lg1_medicalvalues.laborder"); //$NON-NLS-1$
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.labororder.lg1_medicalvalues", //$NON-NLS-1$
 				"rsc/lg1_logo.png"));
 		setText(Messages.LabOrderAction_nameAction);

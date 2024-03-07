@@ -6,6 +6,8 @@ import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -31,9 +33,12 @@ public class Patient {
         String lastname = StringUtils.EMPTY;
         String firstname = StringUtils.EMPTY;
         String street = StringUtils.EMPTY;
+        String houseNumber = StringUtils.EMPTY;
         String zip = StringUtils.EMPTY;
         String city = StringUtils.EMPTY;
         String country = StringUtils.EMPTY;
+        String telephoneNumberHome = StringUtils.EMPTY;
+        String mobilePhoneNumber = StringUtils.EMPTY;
         String insurancenumber = StringUtils.EMPTY;
         String insurancename = StringUtils.EMPTY;
         String insurancegln = StringUtils.EMPTY;
@@ -52,10 +57,26 @@ public class Patient {
                 ret.title = patient.get(ch.elexis.data.Patient.TITLE);
                 ret.lastname = patient.getName();
                 ret.firstname = patient.getVorname();
-                ret.street = patient.getAnschrift().getStrasse();
+
+                Pattern pattern = Pattern.compile("^([A-Za-z-ß\\s]+)(\\d+)$");
+                String street = patient.getAnschrift().getStrasse().trim();
+
+                try {
+                        Matcher matcher = pattern.matcher(street);
+                        matcher.find();
+                        ret.street = matcher.group(1).trim();
+                        ret.houseNumber = matcher.group(2).trim();
+                } catch (Exception e) {
+                        ret.street = street;
+                        ret.houseNumber = StringUtils.EMPTY;
+                }
+
                 ret.zip = patient.getAnschrift().getPlz();
                 ret.city = patient.getAnschrift().getOrt();
                 ret.country = patient.getAnschrift().getLand();
+
+                ret.telephoneNumberHome = patient.get(ch.elexis.data.Patient.FLD_PHONE1);
+                ret.mobilePhoneNumber = patient.get(ch.elexis.data.Patient.FLD_MOBILEPHONE);
 
                 Fall fall = getFall(patient);
 
@@ -88,11 +109,16 @@ public class Patient {
                 setRequiredParameterOrThrow(builder, "coverage_type", "Abrechnungsart", this.billing);
 
                 setOptionalParameter(builder, "patient_name_title", this.title);
+                setOptionalParameter(builder, "patient_socialSecurityNumber", this.socialSecurityNumber);
                 setOptionalParameter(builder, "patient_address_street", this.street);
+                setOptionalParameter(builder, "patient_address_housenumber", this.houseNumber);
                 setOptionalParameter(builder, "patient_address_postalCode", this.zip);
                 setOptionalParameter(builder, "patient_address_city", this.city);
                 setOptionalParameter(builder, "patient_address_country", this.country);
-                setOptionalParameter(builder, "patient_socialSecurityNumber", this.socialSecurityNumber);
+                setOptionalParameter(builder, "patient_telecom_home", this.telephoneNumberHome);
+                setOptionalParameter(builder, "patient_telecom_mobile", this.mobilePhoneNumber);
+                setOptionalParameter(builder, "coverage_payor_display", this.insurancename);
+                setOptionalParameter(builder, "coverage_payor_identifier", this.insurancegln);
         }
 
         private void setRequiredParameterOrThrow(URIBuilder builder, String key, String readableKey, String value) throws IllegalArgumentException {
@@ -125,7 +151,7 @@ public class Patient {
                     return "SwissIns";
                 }
 
-                return "SwissIns";
+                return "SEL";
         }
 
 	private static String getInsuranceName(Fall fall){

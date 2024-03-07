@@ -1,11 +1,11 @@
 package waelti.statistics.export;
 
+import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import waelti.statistics.queries.AbstractQuery;
 import waelti.statistics.queries.ResultMatrix;
 

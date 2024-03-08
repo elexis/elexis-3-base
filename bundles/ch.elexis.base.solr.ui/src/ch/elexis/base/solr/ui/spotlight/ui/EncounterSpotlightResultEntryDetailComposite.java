@@ -25,8 +25,9 @@ public class EncounterSpotlightResultEntryDetailComposite extends Composite
 		setLayout(new GridLayout(1, false));
 
 		txtEncounter = new StyledText(this,
-				SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
+				SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 		txtEncounter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		txtEncounter.setBackground(getBackground());
 	}
 
 	@Override
@@ -44,12 +45,8 @@ public class EncounterSpotlightResultEntryDetailComposite extends Composite
 			IEncounter encounter = CoreModelServiceHolder.get().load(encounterId, IEncounter.class).orElse(null);
 			if (encounter != null) {
 				txtEncounter.setText(encounter.getHeadVersionInPlaintext());
-
-				// Hole den aktuellen Suchtext aus der Shell
 				SpotlightShell shell = (SpotlightShell) getShell();
 				String currentSearchText = shell.getSearchText().toLowerCase();
-
-				// Überprüfe, ob der Suchtext nicht leer ist
 				if (!currentSearchText.isEmpty()) {
 					SpotlightSearchHelper.highlightSearchText(txtEncounter, currentSearchText);
 				}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="ch.elexis.base.solr.task.SolarSpotlightTest">
+   <reference bind="setEncounterService" interface="ch.elexis.core.services.IEncounterService" name="EncounterService"/>
+   <reference bind="setOmnivoreModelService" interface="ch.elexis.core.services.IModelService" name="OmnivoreModelService" target="(service.model.name=ch.elexis.omnivore.data.model)"/>
+   <implementation class="ch.elexis.base.solr.task.SolarSpotlightTest"/>
+</scr:component>

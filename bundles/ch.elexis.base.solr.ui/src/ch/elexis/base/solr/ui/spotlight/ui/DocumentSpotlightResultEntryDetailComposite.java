@@ -23,8 +23,9 @@ public class DocumentSpotlightResultEntryDetailComposite extends Composite
 		setLayout(new GridLayout(1, false));
 
 		txtDocument = new StyledText(this,
-				SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
+				SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
 		txtDocument.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		txtDocument.setBackground(getBackground());
 	}
 
 	@Override
@@ -42,11 +43,8 @@ public class DocumentSpotlightResultEntryDetailComposite extends Composite
 			txtDocument.setText(text.trim());
 		}
 		if (resultEntry != null) {
-			// Hole den aktuellen Suchtext aus der Shell
 			SpotlightShell shell = (SpotlightShell) getShell();
 			String currentSearchText = shell.getSearchText().toLowerCase();
-
-			// Überprüfe, ob der Suchtext nicht leer ist
 			if (!currentSearchText.isEmpty()) {
 				SpotlightSearchHelper.highlightSearchText(txtDocument, currentSearchText);
 			}

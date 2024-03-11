@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +17,8 @@ import org.junit.Test;
 import ch.elexis.base.ch.arzttarife.model.test.AllTestsSuite;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
+import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.jpa.entities.TarmedLeistung.MandantType;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.ICoverage;
@@ -30,6 +33,7 @@ import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IBillingService;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.test.matchers.IBillingMatch;
 import ch.elexis.core.types.Gender;
@@ -161,4 +165,243 @@ public class TarmedBillingTest {
 		IBillingMatch.assertMatch(encounter, matches);
 	}
 
+	@Test
+	public void testAlPercentAdditionSpecialist() {
+
+		assertEquals(MandantType.SPECIALIST, TarmedLeistung.getMandantType(mandator));
+
+		status = billingService.bill(code_000010, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		billed = status.get();
+		// unit_mt
+		assertEquals(10.42, ArzttarifeUtil.getAL(billed) / 100, 0.00001);
+		// scale_factor_mt
+		double primaryScale = billed.getPrimaryScaleFactor();
+		double scaleFactorMt = primaryScale;
+		Optional<Double> scalingFactor = getALScalingFactor(billed);
+		assertFalse(scalingFactor.isPresent());
+		assertEquals(1.00, scaleFactorMt, 0.00001);
+		assertEquals(100.0, code_000010.getALScaling(mandator), 0.0001);
+		assertEquals(10.42, ArzttarifeUtil.getALMoney(billed).doubleValue(), 0.00001);
+		
+		status = billingService.bill(code_000015, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		status = billingService.bill(TarmedLeistung.getFromCode("00.0020", "KVG"), encounter, 2);
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(TarmedLeistung.getFromCode("00.2520", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		IBilled additionalBilled1 = status.get();
+		status = billingService.bill(TarmedLeistung.getFromCode("00.2530", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		IBilled additionalBilled2 = status.get();
+		billed = status.get();
+
+		// unit_mt
+		assertEquals(42.14, ArzttarifeUtil.getAL(billed) / 100, 0.00001);
+		// scale_factor_mt
+		primaryScale = billed.getPrimaryScaleFactor();
+		scaleFactorMt = primaryScale;
+		scalingFactor = getALScalingFactor(billed);
+		assertFalse(scalingFactor.isPresent());
+		assertEquals(0.25, scaleFactorMt, 0.00001);
+
+		// remove incompatible first
+		billingService.removeBilled(additionalBilled1, encounter);
+		billingService.removeBilled(additionalBilled2, encounter);
+
+		status = billingService.bill(TarmedLeistung.getFromCode("00.2540", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		additionalBilled1 = status.get();
+		status = billingService.bill(TarmedLeistung.getFromCode("00.2550", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		additionalBilled2 = status.get();
+		billed = status.get();
+
+		// unit_mt
+		assertEquals(42.14, ArzttarifeUtil.getAL(billed) / 100, 0.00001);
+		// scale_factor_mt
+		primaryScale = billed.getPrimaryScaleFactor();
+		scaleFactorMt = primaryScale;
+		scalingFactor = getALScalingFactor(billed);
+		assertFalse(scalingFactor.isPresent());
+		assertEquals(0.50, scaleFactorMt, 0.00001);
+
+	}
+
+	@Test
+	public void testAlPercentAdditionPractitioner() {
+
+		mandator.setExtInfo(ch.elexis.core.jpa.entities.TarmedLeistung.MANDANT_TYPE_EXTINFO_KEY,
+				MandantType.PRACTITIONER.name());
+		CoreModelServiceHolder.get().save(mandator);
+		assertEquals(MandantType.PRACTITIONER, TarmedLeistung.getMandantType(mandator));
+		assertEquals(mandator.getId(), encounter.getMandator().getId());
+		CoreModelServiceHolder.get().refresh(encounter, true);
+		assertEquals(MandantType.PRACTITIONER, TarmedLeistung.getMandantType(encounter.getMandator()));
+
+		status = billingService.bill(code_000010, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		billed = status.get();
+		// unit_mt
+		assertTrue(getALNotScaled(billed).isPresent());
+		assertEquals(10.42, getALNotScaled(billed).get() / 100, 0.00001);
+		// scale_factor_mt
+		double primaryScale = billed.getPrimaryScaleFactor();
+		double scaleFactorMt = primaryScale;
+		Optional<Double> scalingFactor = getALScalingFactor(billed);
+		assertTrue(scalingFactor.isPresent());
+		scaleFactorMt = scalingFactor.get() * primaryScale;
+		assertEquals(0.93, scaleFactorMt, 0.00001);
+		assertEquals(93.0, code_000010.getALScaling(mandator), 0.0001);
+		assertEquals(10.42 * 0.93, ArzttarifeUtil.getALMoney(billed).doubleValue(), 0.005);
+
+		status = billingService.bill(code_000015, encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		status = billingService.bill(TarmedLeistung.getFromCode("00.0020", "KVG"), encounter, 2);
+		assertTrue(status.getMessages().toString(), status.isOK());
+
+		status = billingService.bill(TarmedLeistung.getFromCode("00.2520", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		IBilled additionalBilled1 = status.get();
+		status = billingService.bill(TarmedLeistung.getFromCode("00.2530", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		IBilled additionalBilled2 = status.get();
+		billed = status.get();
+
+		// unit_mt
+		assertTrue(getALNotScaled(billed).isPresent());
+		assertEquals(42.14, getALNotScaled(billed).get() / 100, 0.00001);
+		// scale_factor_mt
+		primaryScale = billed.getPrimaryScaleFactor();
+		scaleFactorMt = primaryScale;
+		scalingFactor = getALScalingFactor(billed);
+		assertTrue(scalingFactor.isPresent());
+		scaleFactorMt = scalingFactor.get() * primaryScale;
+		assertEquals(0.25 * 0.93, scaleFactorMt, 0.00001);
+
+		// remove incompatible first
+		billingService.removeBilled(additionalBilled1, encounter);
+		billingService.removeBilled(additionalBilled2, encounter);
+
+		status = billingService.bill(TarmedLeistung.getFromCode("00.2540", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		additionalBilled1 = status.get();
+		status = billingService.bill(TarmedLeistung.getFromCode("00.2550", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		additionalBilled2 = status.get();
+		billed = status.get();
+
+		// unit_mt
+		assertTrue(getALNotScaled(billed).isPresent());
+		assertEquals(42.14, getALNotScaled(billed).get() / 100, 0.00001);
+		// scale_factor_mt
+		primaryScale = billed.getPrimaryScaleFactor();
+		scaleFactorMt = primaryScale;
+		scalingFactor = getALScalingFactor(billed);
+		assertTrue(scalingFactor.isPresent());
+		scaleFactorMt = scalingFactor.get() * primaryScale;
+		assertEquals(0.50 * 0.93, scaleFactorMt, 0.00001);
+
+		// remove incompatible first
+		billingService.removeBilled(additionalBilled1, encounter);
+		billingService.removeBilled(additionalBilled2, encounter);
+
+		status = billingService.bill(TarmedLeistung.getFromCode("04.0630", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		additionalBilled1 = status.get();
+		status = billingService.bill(TarmedLeistung.getFromCode("04.0620", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		additionalBilled2 = status.get();
+		billed = status.get();
+
+		// unit_mt
+		assertTrue(getALNotScaled(billed).isPresent());
+		assertEquals(99.76, getALNotScaled(billed).get() / 100, 0.00001);
+		// scale_factor_mt
+		primaryScale = billed.getPrimaryScaleFactor();
+		scaleFactorMt = primaryScale;
+		scalingFactor = getALScalingFactor(billed);
+		assertTrue(scalingFactor.isPresent());
+		scaleFactorMt = scalingFactor.get() * primaryScale;
+		assertEquals(0.70 * 0.93, scaleFactorMt, 0.00001);
+		// external_factor_mt (1.0) * quantity (1.0) * TP(mt) (99.76) * TPV(mt) (1.0) *
+		// scale_factor_mt (0.651)
+		assertEquals(ArzttarifeUtil.getALMoney(billed).doubleValue(), billed.getSecondaryScaleFactor()
+				* billed.getAmount() * getALNotScaled(billed).get() / 100 * billed.getFactor() * scaleFactorMt, 0.05);
+
+		// remove incompatible first
+		billingService.removeBilled(additionalBilled1, encounter);
+		billingService.removeBilled(additionalBilled2, encounter);
+
+		status = billingService.bill(TarmedLeistung.getFromCode("04.1910", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		additionalBilled1 = status.get();
+		status = billingService.bill(TarmedLeistung.getFromCode("04.1930", "KVG"), encounter, 1);
+		assertTrue(status.getMessages().toString(), status.isOK());
+		additionalBilled2 = status.get();
+		billed = status.get();
+
+		// unit_mt
+		assertTrue(getALNotScaled(billed).isPresent());
+		assertEquals(162.51, getALNotScaled(billed).get() / 100, 0.00001);
+		// scale_factor_mt
+		primaryScale = billed.getPrimaryScaleFactor();
+		scaleFactorMt = primaryScale;
+		scalingFactor = getALScalingFactor(billed);
+		assertTrue(scalingFactor.isPresent());
+		scaleFactorMt = scalingFactor.get() * primaryScale;
+		assertEquals(0.50 * 0.93, scaleFactorMt, 0.00001);
+		// external_factor_mt (1.0) * quantity (1.0) * TP(mt) (162.51) * TPV(mt) (1.0) *
+		// scale_factor_mt (0.465)
+		assertEquals(ArzttarifeUtil.getALMoney(billed).doubleValue(), billed.getSecondaryScaleFactor()
+				* billed.getAmount() * getALNotScaled(billed).get() / 100 * billed.getFactor() * scaleFactorMt, 0.05);
+
+		// remove incompatible first
+		billingService.removeBilled(additionalBilled1, encounter);
+		billingService.removeBilled(additionalBilled2, encounter);
+
+//		status = billingService.bill(TarmedLeistung.getFromCode("29.2010", "KVG"), encounter, 1);
+//		assertTrue(status.getMessages().toString(), status.isOK());
+//		additionalBilled1 = status.get();
+//		status = billingService.bill(TarmedLeistung.getFromCode("29.2090", "KVG"), encounter, 1);
+//		assertTrue(status.getMessages().toString(), status.isOK());
+//		additionalBilled2 = status.get();
+//		billed = status.get();
+//
+//		// unit_mt
+//		assertTrue(getALNotScaled(billed).isPresent());
+//		assertEquals(70.80, getALNotScaled(billed).get() / 100, 0.00001);
+//		// scale_factor_mt
+//		primaryScale = billed.getPrimaryScaleFactor();
+//		scaleFactorMt = primaryScale;
+//		scalingFactor = getALScalingFactor(billed);
+//		assertTrue(scalingFactor.isPresent());
+//		scaleFactorMt = scalingFactor.get() * primaryScale;
+//		assertEquals(0.50 * 0.93, scaleFactorMt, 0.00001);
+	}
+
+	public static Optional<Double> getALScalingFactor(IBilled billed) {
+		String scalingFactor = (String) billed.getExtInfo("AL_SCALINGFACTOR");
+		if (scalingFactor != null && !scalingFactor.isEmpty()) {
+			try {
+				return Optional.of(Double.parseDouble(scalingFactor));
+			} catch (NumberFormatException ne) {
+				// return empty if not parseable
+			}
+		}
+		return Optional.empty();
+	}
+
+	public static Optional<Double> getALNotScaled(IBilled billed) {
+		String notScaled = (String) billed.getExtInfo("AL_NOTSCALED");
+		if (notScaled != null && !notScaled.isEmpty()) {
+			try {
+				return Optional.of(Double.parseDouble(notScaled));
+			} catch (NumberFormatException ne) {
+				// return empty if not parseable
+			}
+		}
+		return Optional.empty();
+	}
 }

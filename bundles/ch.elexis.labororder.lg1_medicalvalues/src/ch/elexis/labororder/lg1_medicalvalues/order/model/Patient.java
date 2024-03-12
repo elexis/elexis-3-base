@@ -9,12 +9,15 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import java.time.format.DateTimeFormatter;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.types.Gender;
+import ch.elexis.core.constants.XidConstants;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.labororder.lg1_medicalvalues.messages.Messages;
@@ -22,6 +25,8 @@ import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.TimeTool;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.ICoverage;
 
 import org.apache.http.client.utils.URIBuilder;
 
@@ -47,19 +52,20 @@ public class Patient {
         String physicianId = StringUtils.EMPTY;
         String laboratoryCustomerId = StringUtils.EMPTY;
 
-        public static Patient of(ch.elexis.data.Patient patient){
+        private static Pattern pattern = Pattern.compile("^([A-Za-z-ß\\s]+)(\\d+)$");
+
+        public static Patient of(IPatient patient){
                 IContact activeUser = ContextServiceHolder.get().getActiveUserContact().get();
                 Patient ret = new Patient();
 
-                ret.id = patient.getPatCode();
-                ret.dateofbirth = new TimeTool(patient.getGeburtsdatum()).toString(TimeTool.DATE_ISO);
+                ret.id = patient.getId();
+                ret.dateofbirth = patient.getDateOfBirth().format(DateTimeFormatter.ISO_LOCAL_DATE);
                 ret.gender = patient.getGender() == Gender.FEMALE ? "female" : "male";
-                ret.title = patient.get(ch.elexis.data.Patient.TITLE);
-                ret.lastname = patient.getName();
-                ret.firstname = patient.getVorname();
+                ret.title = patient.getTitel();
+                ret.lastname = patient.getLastName();
+                ret.firstname = patient.getFirstName();
 
-                Pattern pattern = Pattern.compile("^([A-Za-z-ß\\s]+)(\\d+)$");
-                String street = patient.getAnschrift().getStrasse().trim();
+                String street = patient.getStreet().trim();
 
                 try {
                         Matcher matcher = pattern.matcher(street);
@@ -71,28 +77,31 @@ public class Patient {
                         ret.houseNumber = StringUtils.EMPTY;
                 }
 
-                ret.zip = patient.getAnschrift().getPlz();
-                ret.city = patient.getAnschrift().getOrt();
-                ret.country = patient.getAnschrift().getLand();
+                ret.zip = patient.getZip();
+                ret.city = patient.getCity();
+                ret.country = patient.getCountry().value();
 
-                ret.telephoneNumberHome = patient.get(ch.elexis.data.Patient.FLD_PHONE1);
-                ret.mobilePhoneNumber = patient.get(ch.elexis.data.Patient.FLD_MOBILEPHONE);
+                ret.telephoneNumberHome = patient.getPhone1();
+                ret.mobilePhoneNumber = patient.getMobile();
 
-                Fall fall = getFall(patient);
+                ICoverage coverage = ContextServiceHolder.get().getActiveCoverage().get();
 
-                if (fall == null) {
+                if (coverage == null) {
                         MessageDialog.openError(Display.getDefault().getActiveShell(),
                                 Messages.LabOrderAction_errorTitleNoFallSelected,
                                 Messages.LabOrderAction_errorMessageNoFallSelected);
                 }
 
-                ret.insurancenumber = getInsuranceOrCaseNumber(fall);
-                ret.insurancename = getInsuranceName(fall);
-                ret.insurancegln = getInsuranceGln(fall);
-                ret.billing = getBilling(fall);
-                ret.socialSecurityNumber = patient.getXid().getDomainId();
-                ret.physicianId = activeUser.getXid("www.xid.ch/id/ean").getDomainId();
-                ret.laboratoryCustomerId = activeUser.getXid("www.xid.ch/id/kknum").getDomainId();
+                ret.insurancenumber = coverage.getInsuranceNumber();
+
+                IContact costBearer = coverage.getCostBearer();
+                ret.insurancename = costBearer.getDescription1();
+                ret.insurancegln = costBearer.getXid(XidConstants.EAN).getDomainId();
+
+                ret.billing = getBilling(coverage);
+                ret.socialSecurityNumber = patient.getXid(XidConstants.CH_AHV).getDomainId();
+                ret.physicianId = activeUser.getXid(XidConstants.EAN).getDomainId();
+                ret.laboratoryCustomerId = activeUser.getXid(XidConstants.DOMAIN_BSVNUM).getDomainId();
 
                 return ret;
         }
@@ -135,86 +144,25 @@ public class Patient {
                 }
         }
 
-        private static String getBilling(Fall fall){
-                Kontakt costBearer = fall.getCostBearer();
-                Kontakt guarantor = fall.getGarant();
+        private static String getBilling(ICoverage coverage){
+                IContact costBearer = coverage.getCostBearer();
+                IContact guarantor = coverage.getGuarantor();
 
                 if (costBearer == null) {
-                        costBearer = fall.getGarant();
+                        costBearer = coverage.getGuarantor();
                 }
 
-                if (costBearer != null && costBearer.istOrganisation()) {
-                    if (guarantor.equals(costBearer)) {
-                        return "SEL";
+                if (costBearer != null ) {
+                    if (costBearer.isOrganization()) {
+                        return "SwissIns";
                     }
 
-                    return "SwissIns";
+                    if (costBearer.isPerson()) {
+                        return "SEL";
+                    }
                 }
 
+                // default
                 return "SEL";
         }
-
-	private static String getInsuranceName(Fall fall){
-		Kontakt costBearer = fall.getCostBearer();
-		if (costBearer == null) {
-			costBearer = fall.getGarant();
-		}
-		return costBearer.getLabel(true);
-	}
-
-	private static String getInsuranceGln(Fall fall){
-		Kontakt costBearer = fall.getCostBearer();
-		if (costBearer == null) {
-			costBearer = fall.getGarant();
-		}
-		return costBearer.getXid(DOMAIN_EAN);
-	}
-
-	private static Fall getFall(ch.elexis.data.Patient patient){
-		Fall fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
-		if (fall != null && fall.getPatient() != null && !patient.getId().equals(fall.getPatient().getId())) {
-			fall = null;
-		}
-		if (fall == null) {
-			List<Fall> offeneFaelleList = new ArrayList<>();
-			for (Fall tmpFall : patient.getFaelle()) {
-				if (tmpFall.isOpen()) {
-					offeneFaelleList.add(tmpFall);
-				}
-			}
-			if (offeneFaelleList.size() == 1) {
-				fall = offeneFaelleList.get(0);
-			}
-		}
-		return fall;
-	}
-
-	private static String getInsuranceOrCaseNumber(final Fall fall){
-		String nummer = null;
-		BillingLaw gesetz = BillingLaw.KVG;
-		try {
-			gesetz = fall.getConfiguredBillingSystemLaw();
-		} catch (IllegalArgumentException e) {
-			// unknown billing system, lets try with KVG
-		}
-		if (gesetz != null) {
-			if (gesetz == BillingLaw.IV) {
-				nummer = fall.getRequiredString(TarmedRequirements.CASE_NUMBER);
-			} else if (gesetz == BillingLaw.UVG) {
-				nummer = fall.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);
-			} else {
-				nummer = fall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
-			}
-		}
-		if (nummer == null) {
-			nummer = fall.getInfoString(TarmedRequirements.CASE_NUMBER);
-			if (StringUtils.EMPTY.equals(nummer)) {
-                nummer = fall.getInfoString(TarmedRequirements.ACCIDENT_NUMBER);
-            }
-            if (StringUtils.EMPTY.equals(nummer)) {
-                nummer = fall.getInfoString(TarmedRequirements.INSURANCE_NUMBER);
-            }
-		}
-		return nummer;
-	}
 }

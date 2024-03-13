@@ -61,6 +61,7 @@
     <module>ch.elexis.laborimport_labtop.feature</module>
     <module>ch.elexis.laborimport_lg1.feature</module>
     <module>ch.elexis.labororder.lg1.feature</module>
+    <module>ch.elexis.labororder.lg1_medicalvalues.feature</module>
     <module>ch.elexis.laborimport_rischbern.feature</module>
     <module>ch.elexis.laborimport_rothen.feature</module>
     <module>ch.elexis.laborimport_viollier.feature</module>
@@ -69,7 +70,7 @@
     <module>ch.elexis.notes.feature</module>
     <module>ch.elexis.omnivore.feature</module>
     <module>ch.elexis.pdfBills.feature</module>
-    <module>ch.elexis.pdfBills.privat.feature</module>    
+    <module>ch.elexis.pdfBills.privat.feature</module>
     <module>ch.elexis.privatrechnung.feature</module>
     <module>ch.elexis.stickynotes.feature</module>
     <module>ch.elexis.support.dbshaker.feature</module>

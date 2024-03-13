@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ch.elexis.core.ui.LaborOrder">
+      <Importer
+            ToolbarAction="ch.elexis.labororder.lg1_medicalvalues.order.LabOrderAction"
+            name="LG1 LabOrder">
+      </Importer>
+   </extension>
+
+</plugin>

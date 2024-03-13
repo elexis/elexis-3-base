@@ -121,6 +121,7 @@
     <module>ch.elexis.laborimport_rothen</module>
     <module>ch.elexis.laborimport_viollier</module>
     <module>ch.elexis.labororder.lg1</module>
+    <module>ch.elexis.labororder.lg1_medicalvalues</module>
     <module>ch.elexis.molemax</module>
     <module>ch.elexis.notes</module>
     <module>ch.elexis.omnivore</module>

@@ -220,6 +220,9 @@
    <feature id="ch.elexis.labororder.lg1.feature">
       <category name="laborexchanges"/>
    </feature>
+   <feature id="ch.elexis.labororder.lg1_medicalvalues.feature">
+      <category name="laborexchanges"/>
+   </feature>
    <feature id="ch.itmed.fop.printing.feature">
       <category name="divers"/>
    </feature>

@@ -106,6 +106,8 @@ public class GlobalInboxEntryImportHandler {
 		// update document preview with imported document
 		if (StringUtils.containsIgnoreCase(document.getMimeType(), "pdf")) { //$NON-NLS-1$
 			eventBroker.send(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, document);
+		} else if (StringUtils.containsIgnoreCase(document.getMimeType(), "docx")) {
+			eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, document);
 		}
 
 		boolean automaticBilling = configService.getLocal(Preferences.PREF_AUTOBILLING, false);

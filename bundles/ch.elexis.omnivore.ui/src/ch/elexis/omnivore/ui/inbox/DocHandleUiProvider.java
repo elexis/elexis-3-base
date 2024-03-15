@@ -89,6 +89,9 @@ public class DocHandleUiProvider implements IInboxElementUiProvider {
 				if (StringUtils.containsIgnoreCase(document.getMimeType(), "pdf")) { //$NON-NLS-1$
 					ContextServiceHolder.get().postEvent(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, document);
 				}
+				else if (StringUtils.containsIgnoreCase(document.getMimeType(), "docx")) { //$NON-NLS-1$
+					ContextServiceHolder.get().postEvent(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, document);
+				}
 			}
 		}
 	}

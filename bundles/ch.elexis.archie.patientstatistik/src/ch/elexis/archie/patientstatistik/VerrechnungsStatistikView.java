@@ -206,7 +206,6 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		}
 	}
 
-	@Override
 	public void jobFinished(final Counter counter) {
 		HashMap<IBillable, List<IBilled>> cnt = counter.getValues();
 		HashMap<String, Money> totals = new HashMap<String, Money>();
@@ -216,7 +215,6 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		ArrayList<IBillable> set = new ArrayList<IBillable>(cnt.keySet());
 		Collections.sort(set, new Comparator<IBillable>() {
 
-			@Override
 			public int compare(IBillable o1, IBillable o2) {
 				if (o1 != null && o2 != null) {
 					String csname1 = o1.getCodeSystemName();

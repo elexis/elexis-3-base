@@ -81,8 +81,12 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 		ret.append(iDocument.getPatient().getFirstName()).append("_");
 		String title = iDocument.getTitle();
 		if (iDocument.getExtension() != null && title.endsWith(iDocument.getExtension())) {
-			title = title.substring(0, title.lastIndexOf('.'));
+			int lastDotIndex = title.lastIndexOf('.');
+			if (lastDotIndex != -1) {
+				title = title.substring(0, lastDotIndex);
+			}
 		}
+
 		ret.append(title).append("_");
 		ret.append(new SimpleDateFormat("ddMMyyyy_HHmmss").format(iDocument.getLastchanged()));
 

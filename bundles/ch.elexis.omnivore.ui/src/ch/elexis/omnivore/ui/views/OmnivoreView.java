@@ -404,6 +404,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			if (docHandle != null && !docHandle.isCategory()) {
 				if (StringUtils.containsIgnoreCase(docHandle.getMimeType(), "pdf")) { //$NON-NLS-1$
 					eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, docHandle);
+				} else if (StringUtils.containsIgnoreCase(docHandle.getMimeType(), "docx")) { //$NON-NLS-1$
+					eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, docHandle);
 				}
 			}
 		});

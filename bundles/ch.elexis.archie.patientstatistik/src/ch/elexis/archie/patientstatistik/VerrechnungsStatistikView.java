@@ -206,6 +206,7 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		}
 	}
 
+	@Override
 	public void jobFinished(final Counter counter) {
 		HashMap<IBillable, List<IBilled>> cnt = counter.getValues();
 		HashMap<String, Money> totals = new HashMap<String, Money>();
@@ -215,6 +216,7 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		ArrayList<IBillable> set = new ArrayList<IBillable>(cnt.keySet());
 		Collections.sort(set, new Comparator<IBillable>() {
 
+			@Override
 			public int compare(IBillable o1, IBillable o2) {
 				if (o1 != null && o2 != null) {
 					String csname1 = o1.getCodeSystemName();
@@ -286,9 +288,9 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		    @Override
 		    public void run() {
 		        FileDialog fd = new FileDialog(getViewSite().getShell(), SWT.SAVE);
-				fd.setFilterExtensions(new String[] { "*.csv", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
-				fd.setFilterNames(new String[] { "CSV", Messages.VerrechnungsStatistikView_AllFiles }); //$NON-NLS-1$
-				fd.setFileName("elexis-verr.csv"); //$NON-NLS-1$
+				fd.setFilterExtensions(new String[] { "*.csv", "*.*" });
+				fd.setFilterNames(new String[] { "CSV", Messages.VerrechnungsStatistikView_AllFiles });
+				fd.setFileName("elexis-verr.csv");
 		        String fname = fd.open();
 		        if (fname != null) {
 					try (OutputStream fos = new FileOutputStream(fname);
@@ -298,7 +300,10 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		                for (TableItem it : table.getItems()) {
 							List<String> row = new ArrayList<>();
 							for (int i = 0; i < table.getColumnCount(); i++) {
-								String cellText = it.getText(i).replace("’", "'");
+								String cellText = it.getText(i);
+								if (i == 4) {
+									cellText = cellText.replace("’", "").replace("'", "");
+								}
 								row.add(cellText);
 							}
 							String line = String.join(StringConstants.SEMICOLON, row) + StringConstants.CRLF;
@@ -310,6 +315,7 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		        }
 		    }
 		};
+
 
 
 

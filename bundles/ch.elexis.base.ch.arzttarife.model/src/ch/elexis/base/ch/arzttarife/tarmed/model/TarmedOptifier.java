@@ -37,6 +37,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedLeistungAge;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.RechnungsPrefs;
 import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.jpa.entities.TarmedLeistung.MandantType;
 import ch.elexis.core.jpa.entities.Verrechnet;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableOptifier;
@@ -382,6 +383,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 			return limitResult;
 		}
 
+		Optional<PercentScalingInfo> percentScalingInfo = Optional.empty();
 		String tcid = code.getCode();
 
 		// check if it's an X-RAY service and add default tax if so
@@ -437,6 +439,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 
 		// Zuschläge für Insellappen 50% auf AL und TL bei 1910,20,40,50
 		else if (tcid.equals("04.1930")) { //$NON-NLS-1$
+			percentScalingInfo = PercentScalingInfo.ifNeeded(kons.getMandator());
 			double sumAL = 0.0;
 			double sumTL = 0.0;
 			for (IBilled v : lst) {
@@ -448,6 +451,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 							|| tlc.equals("04.1950")) { //$NON-NLS-1$
 						sumAL += tl.getAL(kons.getMandator()) * z;
 						sumTL += tl.getTL() * z;
+
+						percentScalingInfo.ifPresent(scalingInfo -> scalingInfo.addAL(v));
 						// double al = (tl.getAL() * 15) / 10.0;
 						// double tel = (tl.getTL() * 15) / 10.0;
 						// sum += al * z;
@@ -465,6 +470,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		// Zuschläge für 04.0620 sollte sich diese mit 70% auf die Positionen 04.0630 &
 		// 04.0640 beziehen
 		else if (tcid.equals("04.0620")) {
+			percentScalingInfo = PercentScalingInfo.ifNeeded(kons.getMandator());
 			double sumAL = 0.0;
 			double sumTL = 0.0;
 			for (IBilled v : lst) {
@@ -475,6 +481,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 					if (tlc.equals("04.0610") || tlc.equals("04.0630") || tlc.equals("04.0640")) {
 						sumAL += tl.getAL(kons.getMandator()) * z;
 						sumTL += tl.getTL() * z;
+
+						percentScalingInfo.ifPresent(scalingInfo -> scalingInfo.addAL(v));
 					}
 				}
 			}
@@ -486,6 +494,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 
 		// Notfall-Zuschläge
 		if (tcid.startsWith("00.25")) { //$NON-NLS-1$
+			percentScalingInfo = PercentScalingInfo.ifNeeded(kons.getMandator());
 			double sum = 0.0;
 			int subcode = Integer.parseInt(tcid.substring(5));
 			switch (subcode) {
@@ -502,6 +511,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 							continue;
 						}
 						sum += (tl.getAL(kons.getMandator()) * v.getAmount());
+						percentScalingInfo.ifPresent(scalingInfo -> scalingInfo.addAL(v));
 						// int summand = tl.getAL() >> 2; // TODO ev. float?
 						// -> Rundung?
 						// ((sum.addCent(summand * v.getZahl());
@@ -525,6 +535,7 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 						// int summand = tl.getAL() >> 1;
 						// sum.addCent(summand * v.getZahl());
 						sum += (tl.getAL(kons.getMandator()) * v.getAmount());
+						percentScalingInfo.ifPresent(scalingInfo -> scalingInfo.addAL(v));
 					}
 				}
 				// check.setPreis(sum.multiply(factor));
@@ -540,6 +551,8 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 
 			}
 		}
+
+		percentScalingInfo.ifPresent(scalingInfo -> setALScalingInfo(scalingInfo));
 
 		saveBilled();
 
@@ -624,6 +637,19 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		if (scaling != 100) {
 			newVerrechnet.setExtInfo(AL_NOTSCALED, Integer.toString(tarmed.getAL()));
 			newVerrechnet.setExtInfo(AL_SCALINGFACTOR, Double.toString(scaling / 100));
+		}
+	}
+
+	/**
+	 * If the {@link PercentScalingInfo} has a scaling factor > 0 the info is
+	 * applied to the current newVerrechnet.
+	 * 
+	 * @param scalingInfo
+	 */
+	private void setALScalingInfo(PercentScalingInfo scalingInfo) {
+		if (scalingInfo != null && scalingInfo.getScalingFactor() > 0.001) {
+			newVerrechnet.setExtInfo(AL_NOTSCALED, Double.toString(scalingInfo.getNotScaled()));
+			newVerrechnet.setExtInfo(AL_SCALINGFACTOR, Double.toString(scalingInfo.getScalingFactor()));
 		}
 	}
 
@@ -1134,4 +1160,69 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		return new Result<IBilled>(code);
 	}
 
+	private static class PercentScalingInfo {
+
+		private double notScaledSum = 0.0;
+		private double scalingFactor = 0.0;
+
+		/**
+		 * Create a {@link PercentScalingInfo} if needed. Currently it is only needed
+		 * for {@link MandantType#PRACTITIONER}. As others have no scaling.
+		 * 
+		 * @param mandator
+		 * @return
+		 */
+		public static Optional<PercentScalingInfo> ifNeeded(IMandator mandator) {
+			if (TarmedLeistung.getMandantType(mandator) == MandantType.PRACTITIONER) {
+				return Optional.of(new PercentScalingInfo());
+			}
+			return Optional.empty();
+		}
+		
+		public static Optional<PercentScalingInfo> ifNeeded(IMandator mandator, double scalingFactor) {
+			if (TarmedLeistung.getMandantType(mandator) == MandantType.PRACTITIONER) {
+				return Optional.of(new PercentScalingInfo().withScalingFactor(scalingFactor));
+			}
+			return Optional.empty();
+		}
+
+		public PercentScalingInfo withScalingFactor(double scalingFactor) {
+			this.scalingFactor = scalingFactor;
+			return this;
+		}
+		
+		public double getNotScaled() {
+			return notScaledSum;
+		}
+
+		public double getScalingFactor() {
+			return scalingFactor;
+		}
+
+		/**
+		 * Add information form the {@link IBilled} to the {@link PercentScalingInfo}.
+		 * 
+		 * @param v
+		 */
+		public void addAL(IBilled v) {
+			TarmedLeistung tl = (TarmedLeistung) v.getBillable();
+
+			notScaledSum += (tl.getAL() * v.getAmount());
+			if (scalingFactor == 0.0) {
+				scalingFactor = getALScalingFactor(v);
+			}
+		}
+
+		private double getALScalingFactor(IBilled billed) {
+			String scalingFactor = (String) billed.getExtInfo(AL_SCALINGFACTOR);
+			if (scalingFactor != null && !scalingFactor.isEmpty()) {
+				try {
+					return Double.parseDouble(scalingFactor);
+				} catch (NumberFormatException ne) {
+					// return empty if not parseable
+				}
+			}
+			return 0.0;
+		}
+	}
 }

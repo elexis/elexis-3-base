@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
+import ch.elexis.base.ch.arzttarife.ArzttarifeConstants;
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.nutrition.INutritionLeistung;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
@@ -17,6 +18,7 @@ import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
 import ch.elexis.core.model.billable.DefaultVerifier;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.VatInfo;
@@ -42,7 +44,12 @@ public class NutritionLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.co
 
 				@Override
 				protected void setPrice(NutritionLeistung billable, IBilled billed) {
-					billed.setFactor(1.0);
+					Optional<IBillingSystemFactor> factor = getFactor(billed.getEncounter());
+					if (factor.isPresent()) {
+						billed.setFactor(factor.get().getFactor());
+					} else {
+						billed.setFactor(1.0);
+					}
 					int points = 0;
 					if (billable.getTP() != null) {
 						try {
@@ -56,7 +63,8 @@ public class NutritionLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.co
 
 				@Override
 				public Optional<IBillingSystemFactor> getFactor(IEncounter encounter) {
-					return Optional.empty();
+					return BillingServiceHolder.get().getBillingSystemFactor(
+							ArzttarifeConstants.NUTRITION_MULTIPLICATOR_NAME, encounter.getDate());
 				}
 			};
 		}

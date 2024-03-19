@@ -26,8 +26,8 @@ import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.preferences.CorePreferenceInitializer;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -64,7 +64,7 @@ public class Synchronizer {
 	public Synchronizer() {
 
 		if (ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_ENABLED, false) == true) {
-			String base = CorePreferenceInitializer.getDefaultDBPath();
+			String base = CoreUtil.getDefaultDBPath();
 			String typ = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_TYPE, "hsqldb"); //$NON-NLS-1$
 			String connect = ConfigServiceHolder.getGlobal(PreferenceConstants.AG_SYNC_CONNECTOR,
 					"jdbc:hsqldb:" + base + "/db"); //$NON-NLS-1$ //$NON-NLS-2$

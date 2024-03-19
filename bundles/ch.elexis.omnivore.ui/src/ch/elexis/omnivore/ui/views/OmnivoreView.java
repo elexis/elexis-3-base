@@ -224,7 +224,9 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			qbe.and("title", COMPARATOR.LIKE, "%" + searchTitle + "%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			// Add every keyword
 			for (String kw : searchKW.split(StringUtils.SPACE)) {
-				qbe.and("keywords", COMPARATOR.LIKE, "%" + kw + "%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if(StringUtils.isNotBlank(kw)) {
+					qbe.and("keywords", COMPARATOR.LIKE, "%" + kw + "%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
 			}
 		}
 
@@ -401,6 +403,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			IDocumentHandle docHandle = (IDocumentHandle) ev.getStructuredSelection().getFirstElement();
 			if (docHandle != null && !docHandle.isCategory()) {
 				if (StringUtils.containsIgnoreCase(docHandle.getMimeType(), "pdf")) { //$NON-NLS-1$
+					eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, docHandle);
+				} else if (StringUtils.containsIgnoreCase(docHandle.getMimeType(), "docx")) { //$NON-NLS-1$
 					eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, docHandle);
 				}
 			}

@@ -77,7 +77,7 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 	@Override
 	public List<ICategory> getCategories() {
 		List<String> categoriesNames = CategoryUtil.getCategoriesNames();
-		return categoriesNames.stream().map(o -> new TransientCategory((String) o)).collect(Collectors.toList());
+		return categoriesNames.stream().map(o -> new TransientCategory(o)).collect(Collectors.toList());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -167,6 +167,12 @@ public class OmnivoreDocumentStore implements IDocumentStore {
 						"at least one document to category reference exists with id: " + existing.get(0).getId()); //$NON-NLS-1$
 			}
 		}
+	}
+
+	@Override
+	public void removeCategory(ICategory category, ICategory newCategory) {
+		final ICategory targetCategory = newCategory != null ? newCategory : getCategoryDefault();
+		CategoryUtil.removeCategory(category.getName(), targetCategory.getName());
 	}
 
 	@Override

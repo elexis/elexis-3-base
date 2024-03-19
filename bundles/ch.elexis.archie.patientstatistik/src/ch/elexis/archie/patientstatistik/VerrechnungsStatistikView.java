@@ -12,8 +12,11 @@
 
 package ch.elexis.archie.patientstatistik;
 
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -279,37 +282,37 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 
 		};
 		exportCSVAction = new Action(Messages.VerrechnungsStatistikView_ExportToCSV,
-				Images.IMG_EXPORT.getImageDescriptor()) {
-			@Override
-			public void run() {
-				FileDialog fd = new FileDialog(getViewSite().getShell(), SWT.SAVE);
+		        Images.IMG_EXPORT.getImageDescriptor()) {
+		    @Override
+		    public void run() {
+		        FileDialog fd = new FileDialog(getViewSite().getShell(), SWT.SAVE);
 				fd.setFilterExtensions(new String[] { "*.csv", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
 				fd.setFilterNames(new String[] { "CSV", Messages.VerrechnungsStatistikView_AllFiles }); //$NON-NLS-1$
 				fd.setFileName("elexis-verr.csv"); //$NON-NLS-1$
-				String fname = fd.open();
-				if (fd != null) {
-					try {
-						FileWriter fw = new FileWriter(fname);
-						fw.write(StringTool.join(tableHeaders, StringConstants.SEMICOLON) + StringConstants.CRLF);
-						for (TableItem it : table.getItems()) {
-							StringBuilder sb = new StringBuilder();
-							sb.append(it.getText(0)).append(StringConstants.SEMICOLON).append(it.getText(1))
-									.append(StringConstants.SEMICOLON).append(it.getText(2))
-									.append(StringConstants.SEMICOLON).append(it.getText(3))
-									.append(StringConstants.SEMICOLON).append(it.getText(4))
-									.append(StringConstants.CRLF);
-							fw.write(sb.toString());
-						}
-						fw.close();
-					} catch (IOException e) {
-						ExHandler.handle(e);
+		        String fname = fd.open();
+		        if (fname != null) {
+					try (OutputStream fos = new FileOutputStream(fname);
+							Writer writer = new OutputStreamWriter(fos, "ISO-8859-1")) {
+						String headers = String.join(StringConstants.SEMICOLON, tableHeaders) + StringConstants.CRLF;
+						writer.write(headers);
+		                for (TableItem it : table.getItems()) {
+							List<String> row = new ArrayList<>();
+							for (int i = 0; i < table.getColumnCount(); i++) {
+								String cellText = it.getText(i).replace("’", "'");
+								row.add(cellText);
+							}
+							String line = String.join(StringConstants.SEMICOLON, row) + StringConstants.CRLF;
+							writer.write(line);
+		                }
+		            } catch (IOException e) {
+		                ExHandler.handle(e);
+		            }
+		        }
+		    }
+		};
 
-					}
 
-				}
 
-			}
 
 		};
 	}
-}

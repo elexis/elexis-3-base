@@ -8,5 +8,8 @@ public class PreferenceConstants {
 	public static final String PREF_SHOW_PRICE_IN_OVERVIEW = PREF_COMMON_BASE + "showPriceInOverview"; //$NON-NLS-1$
 	public static final String PREF_SHOW_ATC_GROUPS_WITHOUT_ARTICLES = PREF_COMMON_BASE + "showAtcGropsWoArticles"; //$NON-NLS-1$
 	public static final String PREF_SHOW_WARN_ORIGINAL_ARTICLES = PREF_COMMON_BASE + "showWarnOriginalArticles"; //$NON-NLS-1$
-
+	public static final String PREF_SHOW_WARN_ORIGINAL_ARTICLES_MEDILIST = PREF_COMMON_BASE
+			+ "showWarnOriginalArticlesMediList"; //$NON-NLS-1$
+	public static final String PREF_SHOW_WARN_ORIGINAL_ARTICLES_RECIPE = PREF_COMMON_BASE
+			+ "showWarnOriginalArticlesMediRecipe"; //$NON-NLS-1$
 }

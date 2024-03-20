@@ -50,6 +50,9 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 	private Button btnShowEmptyATCCodeGroups;
 	private Button btnShowGenericWarning;
 
+	private Button btnShowGenericWarningMediList;
+	private Button btnShowGenericWarningRecipe;
+
 	/**
 	 * Create the preference page.
 	 */
@@ -196,6 +199,32 @@ public class ArtikelstammPreferencePage extends PreferencePage implements IWorkb
 			public void widgetSelected(SelectionEvent e) {
 				ConfigServiceHolder.get().set(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES,
 						btnShowGenericWarning.getSelection());
+			}
+		});
+
+		btnShowGenericWarningMediList = new Button(container, SWT.CHECK);
+		btnShowGenericWarningMediList
+				.setText("Warnung beim Hinzufügen von Originalpräparaten auf Medikationsliste / Fixmedikation");
+		btnShowGenericWarningMediList.setSelection(
+				ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES_MEDILIST, false));
+		btnShowGenericWarningMediList.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ConfigServiceHolder.get().set(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES_MEDILIST,
+						btnShowGenericWarningMediList.getSelection());
+			}
+		});
+
+		btnShowGenericWarningRecipe = new Button(container, SWT.CHECK);
+		btnShowGenericWarningRecipe
+				.setText("Warnung bei der Verwendung von Originalpräparaten vor der Rezepterstellung");
+		btnShowGenericWarningRecipe.setSelection(
+				ConfigServiceHolder.get().get(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES_RECIPE, false));
+		btnShowGenericWarningRecipe.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ConfigServiceHolder.get().set(PreferenceConstants.PREF_SHOW_WARN_ORIGINAL_ARTICLES_RECIPE,
+						btnShowGenericWarningRecipe.getSelection());
 			}
 		});
 

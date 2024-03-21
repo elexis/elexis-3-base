@@ -44,8 +44,10 @@ public class DocumentSpotlightResultEntryDetailComposite extends Composite
 		if (resultEntry != null) {
 			SpotlightShell shell = (SpotlightShell) getShell();
 			String currentSearchText = shell.getSearchText().toLowerCase();
+
 			if (!currentSearchText.isEmpty()) {
-				SpotlightSearchHelper.highlightSearchText(txtDocument, currentSearchText);
+				int count = SpotlightSearchHelper.highlightSearchText(txtDocument, currentSearchText);
+				shell.setlableText(count);
 			}
 		}
 	}

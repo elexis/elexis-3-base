@@ -47,7 +47,8 @@ public class EncounterSpotlightResultEntryDetailComposite extends Composite
 				SpotlightShell shell = (SpotlightShell) getShell();
 				String currentSearchText = shell.getSearchText().toLowerCase();
 				if (!currentSearchText.isEmpty()) {
-					SpotlightSearchHelper.highlightSearchText(txtEncounter, currentSearchText);
+					int count = SpotlightSearchHelper.highlightSearchText(txtEncounter, currentSearchText);
+					shell.setlableText(count);
 				}
 			}
 		}

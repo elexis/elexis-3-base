@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.model.IMessage;
-import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -42,23 +41,21 @@ public class MsgHeartListener implements HeartListener {
 	static Logger log = LoggerFactory.getLogger(MsgHeartListener.class);
 	boolean bSkip;
 
+	@Override
 	public void heartbeat() {
 		if (!bSkip) {
 			ContextServiceHolder.get().getActiveUserContact().ifPresent(uc -> {
-				IQuery<IMessage> query = CoreModelServiceHolder.get().getQuery(IMessage.class);
-				query.and("destination", COMPARATOR.EQUALS, uc.getId()); //$NON-NLS-1$
-				final List<IMessage> res = query.execute();
-				if (res.size() > 0) {
-					UiDesk.getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							if (!isModalShellOpen()) {
-								bSkip = true;
-								if (ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_ON, true)) {
-									playSound();
-								}
-								new MsgDetailDialog(Hub.getActiveShell(), res.get(0)).open();
-								bSkip = false;
+				List<IMessage> res = CoreModelServiceHolder.get().getQuery(IMessage.class)
+						.and("destination", COMPARATOR.EQUALS, uc.getId()).execute();
+				if (!res.isEmpty()) {
+					UiDesk.getDisplay().asyncExec(() -> {
+						if (!isModalShellOpen()) {
+							bSkip = true;
+							if (ConfigServiceHolder.getUser(Preferences.USR_MESSAGES_SOUND_ON, true)) {
+								playSound();
 							}
+							new MsgDetailDialog(Hub.getActiveShell(), res.get(0)).open();
+							bSkip = false;
 						}
 					});
 				}

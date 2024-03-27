@@ -113,11 +113,12 @@ public class Patient {
                 setOptionalParameter(builder, "laboratoryCustomerId", this.laboratoryCustomerId);
                 setOptionalParameter(builder, "physicianGlnNumber", this.physicianGlnNumber);
 
-                setOptionalParameter(builder, "patientId", this.id);
-                setOptionalParameter(builder, "patientIdentifier", this.aisIdentifier);
+                setOptionalParameter(builder, "sourceSystemName", "Elexis");
+                setOptionalParameter(builder, "sourceSystemPatientId", this.aisIdentifier);
+                setOptionalParameter(builder, "patientIdentifier", this.id);
 
                 if (!this.aisIdentifier.isEmpty()) {
-                        setOptionalParameter(builder, "patientIdentifierSystem", "http://medicalvalues.de/identifier/third-party");
+                        setOptionalParameter(builder, "patientIdentifierSystem", "http://medicalvalues.de/identifier/third-party/elexis");
                 }
 
                 setRequiredParameterOrThrow(builder, "patient_name_given", "Vorname", this.firstname);

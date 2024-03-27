@@ -69,7 +69,7 @@ public class LabOrderAction extends Action {
 	}
 
 	private URL buildOrderCreationUrl(IPatient patient) throws URISyntaxException, MalformedURLException {
-		URIBuilder builder = new URIBuilder("https://oe.lg1.lan/mdi/diagnostic-intelligence/orders/importPatientAndCreateOrder");
+		URIBuilder builder = new URIBuilder("https://oe.lg1.ch/diagnostic-intelligence/orders/importPatientAndCreateOrder");
 
                 Patient lg1Patient = Patient.of(patient);
                 lg1Patient.toMedicalvaluesOrderCreationAPIQueryParams(builder);

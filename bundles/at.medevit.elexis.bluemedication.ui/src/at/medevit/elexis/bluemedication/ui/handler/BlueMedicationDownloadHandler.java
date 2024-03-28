@@ -64,7 +64,7 @@ public class BlueMedicationDownloadHandler extends AbstractHandler implements IH
 	}
 
 	private void downloadAndImportPdf(IDocumentHandle docHandle, UploadResult uploadResult) {
-		Result<String> pdf = BlueMedicationServiceHolder.getService().downloadPdf(uploadResult);
+		Result<String> pdf = BlueMedicationServiceHolder.getService().downloadExtendedPdf(uploadResult);
 		if (pdf.isOK()) {
 			DocumentStore documentsService = DocumentStoreServiceHolder.getService();
 			// debug code, save to new document

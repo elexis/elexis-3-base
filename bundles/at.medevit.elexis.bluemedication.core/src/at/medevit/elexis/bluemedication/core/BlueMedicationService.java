@@ -71,6 +71,15 @@ public interface BlueMedicationService {
 	public Result<String> downloadPdf(UploadResult uploadResult);
 
 	/**
+	 * Download the results of upload and user interaction on the browser. The
+	 * result is the original pdf extended with the extracted emediplan.
+	 * 
+	 * @param uploadResult
+	 * @return
+	 */
+	public Result<String> downloadExtendedPdf(UploadResult uploadResult);
+
+	/**
 	 * Add a pending {@link UploadResult} to the map of pending results. One object
 	 * can only have one {@link UploadResult}.
 	 *
@@ -104,4 +113,5 @@ public interface BlueMedicationService {
 	 * @param onSuccess
 	 */
 	public void startPollForResult(Object object, UploadResult uploadResult, Consumer<Object> onSuccess);
+
 }

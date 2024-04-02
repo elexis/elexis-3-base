@@ -30,6 +30,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 
 import ch.elexis.labororder.lg1_medicalvalues.order.model.Patient;
+import ch.elexis.labororder.lg1_medicalvalues.order.model.exceptions.NoEncounterSelectedException;
 import ch.elexis.labororder.lg1_medicalvalues.messages.Messages;
 
 public class LabOrderAction extends Action {
@@ -47,7 +48,12 @@ public class LabOrderAction extends Action {
 		if (patient != null) {
 			try {
 				URL url = buildOrderCreationUrl(patient);
+
 				PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(url);
+			} catch (NoEncounterSelectedException e) {
+			        MessageDialog.openError(Display.getDefault().getActiveShell(),
+                                        Messages.LabOrderAction_errorTitleNoFallSelected,
+                                        Messages.LabOrderAction_errorMessageNoFallSelected);
 			} catch (URISyntaxException | MalformedURLException e) {
                                 LoggerFactory.getLogger(getClass()).error("Error building medicalvalues order creation API URL", e);
                                 MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
@@ -65,10 +71,13 @@ public class LabOrderAction extends Action {
 				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
 				        "Es fehlen zur Auftragserstellung benötigte Patientendaten.\n\n" + e.getLocalizedMessage());
 			}
+		} else {
+		        MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Fehler",
+                                "Es ist kein Patient ausgewählt.");
 		}
 	}
 
-	private URL buildOrderCreationUrl(IPatient patient) throws URISyntaxException, MalformedURLException {
+	private URL buildOrderCreationUrl(IPatient patient) throws URISyntaxException, MalformedURLException, NoEncounterSelectedException {
 		URIBuilder builder = new URIBuilder("https://oe.lg1.ch/de/diagnostic-intelligence/orders/importPatientAndCreateOrder");
 
                 Patient lg1Patient = Patient.of(patient);

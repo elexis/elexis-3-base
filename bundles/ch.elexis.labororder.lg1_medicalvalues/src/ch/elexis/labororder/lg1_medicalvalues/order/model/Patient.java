@@ -29,6 +29,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ICoverage;
 
 import org.apache.http.client.utils.URIBuilder;
+import ch.elexis.labororder.lg1_medicalvalues.order.model.exceptions.NoEncounterSelectedException;
 
 public class Patient {
         String id = StringUtils.EMPTY;
@@ -55,7 +56,7 @@ public class Patient {
 
         private static Pattern pattern = Pattern.compile("^([A-Za-z-ß\\s]+)(\\d+)$");
 
-        public static Patient of(IPatient patient){
+        public static Patient of(IPatient patient) throws NoEncounterSelectedException {
                 IContact activeUser = ContextServiceHolder.get().getActiveUserContact().get();
                 Patient ret = new Patient();
 
@@ -89,9 +90,7 @@ public class Patient {
                 ICoverage coverage = ContextServiceHolder.get().getActiveCoverage().get();
 
                 if (coverage == null) {
-                        MessageDialog.openError(Display.getDefault().getActiveShell(),
-                                Messages.LabOrderAction_errorTitleNoFallSelected,
-                                Messages.LabOrderAction_errorMessageNoFallSelected);
+                        throw new NoEncounterSelectedException();
                 }
 
                 ret.insurancenumber = coverage.getInsuranceNumber();

@@ -29,9 +29,11 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ICoverage;
 
 import org.apache.http.client.utils.URIBuilder;
+import ch.elexis.labororder.lg1_medicalvalues.order.model.exceptions.NoEncounterSelectedException;
 
 public class Patient {
         String id = StringUtils.EMPTY;
+        String aisIdentifier = StringUtils.EMPTY;
         String dateofbirth = StringUtils.EMPTY;
         String gender = StringUtils.EMPTY;
         String title = StringUtils.EMPTY;
@@ -49,16 +51,17 @@ public class Patient {
         String insurancegln = StringUtils.EMPTY;
         String billing = StringUtils.EMPTY;
         String socialSecurityNumber = StringUtils.EMPTY;
-        String physicianId = StringUtils.EMPTY;
+        String physicianGlnNumber = StringUtils.EMPTY;
         String laboratoryCustomerId = StringUtils.EMPTY;
 
         private static Pattern pattern = Pattern.compile("^([A-Za-z-ß\\s]+)(\\d+)$");
 
-        public static Patient of(IPatient patient){
+        public static Patient of(IPatient patient) throws NoEncounterSelectedException {
                 IContact activeUser = ContextServiceHolder.get().getActiveUserContact().get();
                 Patient ret = new Patient();
 
                 ret.id = patient.getId();
+                ret.aisIdentifier = patient.getPatientNr();
                 ret.dateofbirth = patient.getDateOfBirth().format(DateTimeFormatter.ISO_LOCAL_DATE);
                 ret.gender = patient.getGender() == Gender.FEMALE ? "female" : "male";
                 ret.title = patient.getTitel();
@@ -87,9 +90,7 @@ public class Patient {
                 ICoverage coverage = ContextServiceHolder.get().getActiveCoverage().get();
 
                 if (coverage == null) {
-                        MessageDialog.openError(Display.getDefault().getActiveShell(),
-                                Messages.LabOrderAction_errorTitleNoFallSelected,
-                                Messages.LabOrderAction_errorMessageNoFallSelected);
+                        throw new NoEncounterSelectedException();
                 }
 
                 ret.insurancenumber = coverage.getInsuranceNumber();
@@ -100,17 +101,25 @@ public class Patient {
 
                 ret.billing = getBilling(coverage);
                 ret.socialSecurityNumber = patient.getXid(XidConstants.CH_AHV).getDomainId();
-                ret.physicianId = activeUser.getXid(XidConstants.EAN).getDomainId();
+                ret.physicianGlnNumber = activeUser.getXid(XidConstants.EAN).getDomainId();
                 ret.laboratoryCustomerId = activeUser.getXid(XidConstants.DOMAIN_BSVNUM).getDomainId();
 
                 return ret;
         }
 
         public void toMedicalvaluesOrderCreationAPIQueryParams(URIBuilder builder) throws IllegalArgumentException {
-                setRequiredParameterOrThrow(builder, "laboratoryCustomerId", "BSV-Nummer des Einsenders", this.laboratoryCustomerId);
-                setRequiredParameterOrThrow(builder, "physicianId", "GLN-Nummer (EAN) des Arztes", this.physicianId);
+                // BSV-Nummer des Einsenders
+                setOptionalParameter(builder, "laboratoryCustomerId", this.laboratoryCustomerId);
+                setOptionalParameter(builder, "physicianGlnNumber", this.physicianGlnNumber);
 
-                setRequiredParameterOrThrow(builder, "patientIdentifier", "Patienten ID", this.id);
+                setOptionalParameter(builder, "sourceSystemName", "Elexis");
+                setOptionalParameter(builder, "sourceSystemPatientId", this.aisIdentifier);
+                setOptionalParameter(builder, "patientIdentifier", this.id);
+
+                if (!this.aisIdentifier.isEmpty()) {
+                        setOptionalParameter(builder, "patientIdentifierSystem", "http://medicalvalues.de/identifier/third-party/elexis");
+                }
+
                 setRequiredParameterOrThrow(builder, "patient_name_given", "Vorname", this.firstname);
                 setRequiredParameterOrThrow(builder, "patient_name_family", "Nachname", this.lastname);
                 setRequiredParameterOrThrow(builder, "patient_birthDate", "Geburtsdatum", this.dateofbirth);

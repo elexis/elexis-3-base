@@ -26,11 +26,21 @@ public interface IAeskulapImportFile {
 	 */
 	public enum Type {
 
-		ADDRESSES(1, Kontakt.class), MANDATOR(2, Mandant.class), PATIENT(100, Patient.class),
-		LABORCONTACT(200, Kontakt.class), LABORITEM(210, LabItem.class), LABORRESULT(250, LabResult.class),
-		DIAGDIRECTORY(300, File.class), LETTER(1001, IOpaqueDocument.class), LETTERDIRECTORY(1000, File.class),
-		DOCUMENT(1101, IOpaqueDocument.class), DOCUMENTDIRECTORY(1100, File.class), FILE(1201, IOpaqueDocument.class),
+		//@formatter:off
+		ADDRESSES(1, Kontakt.class),
+		MANDATOR(2, Mandant.class),
+		PATIENT(100, Patient.class),
+		LABORCONTACT(200, Kontakt.class), 
+		LABORITEM(210, LabItem.class), 
+		LABORRESULT(250, LabResult.class),
+		DIAGDIRECTORY(300, File.class),
+		LETTER(1001, IOpaqueDocument.class), 
+		LETTERDIRECTORY(1000, File.class),
+		DOCUMENT(1101, IOpaqueDocument.class), 
+		DOCUMENTDIRECTORY(1100, File.class), 
+		FILE(1201, IOpaqueDocument.class),
 		FILEDIRECTORY(1200, File.class);
+		//@formatter:on
 
 		private int sequence;
 		private Class<?> elexisClass;

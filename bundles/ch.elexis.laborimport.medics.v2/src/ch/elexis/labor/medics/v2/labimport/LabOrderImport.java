@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,6 +24,7 @@ import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.DefaultPersistenceHandler;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.multifile.MultiFileParser;
+import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabContactResolver;
 import ch.elexis.core.ui.importer.div.importers.DefaultLabImportUiHandler;
@@ -141,6 +143,11 @@ public class LabOrderImport extends ImporterPage {
 	@Override
 	public String getDescription() {
 		return Messages.LabOrderImport_descriptionImport;
+	}
+
+	@Override
+	public List<java.lang.String> getObjectClass() {
+		return Arrays.asList(ILabResult.class.getName(), "ch.elexis.omnivore.model.IDocumentHandle");
 	}
 
 	@Override

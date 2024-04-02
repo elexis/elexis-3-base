@@ -13,6 +13,8 @@
 package ch.elexis.icpc;
 
 import java.io.FileInputStream;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -21,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.core.interfaces.IReferenceDataImporter;
+import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.services.IReferenceDataImporterService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
@@ -48,6 +51,11 @@ public class IcpcImporter extends ImporterPage {
 		IReferenceDataImporter importer = importerService.getImporter("icpc") //$NON-NLS-1$
 				.orElseThrow(() -> new IllegalStateException("No IReferenceDataImporter available.")); //$NON-NLS-1$
 		return importer.performImport(monitor, new FileInputStream(results[0]), null);
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		return Collections.singletonList(IDiagnosisTree.class.getName());
 	}
 
 	@Override

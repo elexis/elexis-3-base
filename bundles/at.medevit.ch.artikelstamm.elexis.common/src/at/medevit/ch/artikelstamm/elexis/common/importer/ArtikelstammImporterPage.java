@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013-2017 MEDEVIT.
+ * Copyright (c) 2013-2024 MEDEVIT.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package at.medevit.ch.artikelstamm.elexis.common.importer;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.ch.artikelstamm.ArtikelstammConstants;
 import at.medevit.ch.artikelstamm.ArtikelstammHelper;
+import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.elexis.common.service.VersionUtil;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.ICodeElement;
@@ -59,6 +61,11 @@ public class ArtikelstammImporterPage extends ImporterPage {
 
 	public ArtikelstammImporterPage() {
 		CoreUiUtil.injectServices(this);
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		return Collections.singletonList(IArtikelstammItem.class.getName());
 	}
 
 	@Override
@@ -120,11 +127,6 @@ public class ArtikelstammImporterPage extends ImporterPage {
 		return "Importiere Artikelstamm";
 	}
 
-	@Override
-	public String getObjectClass() {
-		return ch.elexis.core.model.IArticle.class.getName();
-	}
-	
 	@Override
 	public Composite createPage(Composite parent) {
 		Composite versionInfo = new Composite(parent, SWT.None);

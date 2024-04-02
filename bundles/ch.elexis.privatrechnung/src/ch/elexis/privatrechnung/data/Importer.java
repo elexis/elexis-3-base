@@ -14,6 +14,7 @@ package ch.elexis.privatrechnung.data;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -132,6 +133,11 @@ public class Importer extends ImporterPage {
 	@Override
 	public String getTitle() {
 		return "Privatleistungen";
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		return Collections.singletonList(IPrivatLeistung.class.getName());
 	}
 
 	private Result<String> importExcel(final String file, final IProgressMonitor mon) {

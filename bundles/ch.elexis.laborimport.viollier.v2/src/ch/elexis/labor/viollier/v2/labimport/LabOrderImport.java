@@ -12,18 +12,19 @@
  *******************************************************************************/
 package ch.elexis.labor.viollier.v2.labimport;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -45,6 +46,7 @@ import ch.elexis.core.data.interfaces.ILabOrder;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.ILabItemResolver;
+import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.importer.div.importers.TestHL7Parser;
@@ -779,6 +781,11 @@ public class LabOrderImport extends ImporterPage {
 		return Messages.LabOrderImport_descriptionImport;
 	}
 
+	@Override
+	public List<java.lang.String> getObjectClass() {
+		return Arrays.asList(ILabResult.class.getName(), "ch.elexis.omnivore.model.IDocumentHandle");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -1077,7 +1084,7 @@ public class LabOrderImport extends ImporterPage {
 		if (patienten.isEmpty()) {
 			return StringUtils.EMPTY;
 		} else {
-			return ((Xid) patienten.get(0)).getDomainId();
+			return patienten.get(0).getDomainId();
 		}
 
 	}

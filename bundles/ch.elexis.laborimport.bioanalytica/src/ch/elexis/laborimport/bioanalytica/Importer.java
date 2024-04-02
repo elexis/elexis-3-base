@@ -15,14 +15,16 @@
 
 package ch.elexis.laborimport.bioanalytica;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -39,9 +41,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.l10n.Messages;
+import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -133,7 +136,7 @@ public class Importer extends ImporterPage {
 						new Object[] { new String[] { "--download", downloadDirPath, "--logPath", downloadDirPath,
 								"--ini", iniPath, "--verbose", "INF", "-#OpenMedicalKey#", "-allInOne" } });
 				if (omResult instanceof Integer) {
-					res = ((Integer) omResult).intValue();
+					res = ((Integer) omResult);
 					System.out.println(res + " files downoladed");
 					if (res < 1) {
 						SWTHelper.showInfo("Verbindung mit Labor " + MY_LAB + " erfolgreich",
@@ -154,6 +157,7 @@ public class Importer extends ImporterPage {
 
 			String[] files = downloadDir.list(new FilenameFilter() {
 
+				@Override
 				public boolean accept(File path, String name) {
 					if (name.toLowerCase().endsWith(".hl7")) {
 						return true;
@@ -212,6 +216,11 @@ public class Importer extends ImporterPage {
 	@Override
 	public String getTitle() {
 		return "Labor " + MY_LAB;
+	}
+
+	@Override
+	public List<java.lang.String> getObjectClass() {
+		return Arrays.asList(ILabResult.class.getName(), "ch.elexis.omnivore.model.IDocumentHandle");
 	}
 
 	String getBasePath() {
@@ -298,6 +307,7 @@ public class Importer extends ImporterPage {
 			}
 
 			SelectionAdapter sa = new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					Button button = (Button) e.getSource();
 

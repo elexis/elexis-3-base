@@ -1,6 +1,8 @@
 package ch.elexis.base.ch.arzttarife.importer;
 
 import java.io.FileInputStream;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -16,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 
+import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.services.IReferenceDataImporterService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -63,10 +66,12 @@ public class PsychoImporter extends ImporterPage {
 		validDate.setLayoutData(fd);
 
 		validDate.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setValidFromDate();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				setValidFromDate();
 			}
@@ -108,6 +113,11 @@ public class PsychoImporter extends ImporterPage {
 	@Override
 	public String getTitle() {
 		return "Psychotherapie";
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		return Collections.singletonList(IPsychoLeistung.class.getName());
 	}
 
 }

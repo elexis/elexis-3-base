@@ -13,6 +13,7 @@
 package ch.elexis.base.ch.diagnosecodes.importer;
 
 import java.io.FileInputStream;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -50,6 +51,12 @@ public class ICDImporter extends ImporterPage {
 	@Override
 	public String getDescription() {
 		return "Import einer ICD-10 zip Datei";
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

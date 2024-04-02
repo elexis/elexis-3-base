@@ -13,6 +13,8 @@ package ch.elexis.base.ch.arzttarife.importer;
 
 import java.io.FileInputStream;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 
+import ch.elexis.base.ch.arzttarife.occupational.IOccupationalLeistung;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.services.IReferenceDataImporterService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -77,10 +80,12 @@ public class OccupationalImporter extends ImporterPage {
 		validDate.setLayoutData(fd);
 
 		validDate.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setValidFromDate();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				setValidFromDate();
 			}
@@ -122,6 +127,11 @@ public class OccupationalImporter extends ImporterPage {
 	@Override
 	public String getTitle() {
 		return "Arbeitsmed. Vorsorge";
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		return Collections.singletonList(IOccupationalLeistung.class.getName());
 	}
 
 }

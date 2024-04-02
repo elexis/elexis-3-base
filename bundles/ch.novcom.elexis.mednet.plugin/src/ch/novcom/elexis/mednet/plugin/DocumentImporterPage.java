@@ -10,7 +10,6 @@
  *******************************************************************************/
 package ch.novcom.elexis.mednet.plugin;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -19,6 +18,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -35,6 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.data.Kontakt;
@@ -552,6 +554,11 @@ public class DocumentImporterPage extends ImporterPage {
 	}
 
 	@Override
+	public List<String> getObjectClass() {
+		return Arrays.asList(ILabResult.class.getName(), "ch.elexis.omnivore.model.IDocumentHandle");
+	}
+
+	@Override
 	public Composite createPage(Composite parent) {
 		// We don't need to create any Page
 		return null;
@@ -565,6 +572,7 @@ public class DocumentImporterPage extends ImporterPage {
 		Path pdf = null;
 		FileTime fileTime = null;
 
+		@Override
 		public String toString() {
 			List<String> files = new ArrayList<String>();
 			if (hl7 != null) {

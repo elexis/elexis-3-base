@@ -16,6 +16,7 @@ package ch.elexis.base.ch.migel.ui;
 import java.io.File;
 import java.io.FileInputStream;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -128,6 +129,11 @@ public class MiGelImporter extends ImporterPage {
 	@Override
 	public String getDescription() {
 		return Messages.MiGelImporter_PleaseSelectFile;
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		return Collections.singletonList(IArticle.class.getName());
 	}
 
 	@Override

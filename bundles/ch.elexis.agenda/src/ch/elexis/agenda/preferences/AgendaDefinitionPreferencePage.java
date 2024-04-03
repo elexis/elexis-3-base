@@ -83,11 +83,11 @@ public class AgendaDefinitionPreferencePage extends PreferencePage implements IW
 	public AgendaDefinitionPreferencePage() {
 		setPreferenceStore(prefs);
 		setDescription(Messages.AgendaDefinitionen_defForAgenda);
-		areas = new ArrayList<String>(ConfigServiceHolder.getGlobalAsList(PreferenceConstants.AG_BEREICHE));
+		areas = new ArrayList<String>(ConfigServiceHolder.get().getAsList(PreferenceConstants.AG_BEREICHE));
 		appointmentTypes = new ArrayList<String>(
-				ConfigServiceHolder.getGlobalAsList(PreferenceConstants.AG_TERMINTYPEN));
+				ConfigServiceHolder.get().getAsList(PreferenceConstants.AG_TERMINTYPEN));
 		appointmentStatus = new ArrayList<String>(
-				ConfigServiceHolder.getGlobalAsList(PreferenceConstants.AG_TERMINSTATUS));
+				ConfigServiceHolder.get().getAsList(PreferenceConstants.AG_TERMINSTATUS));
 	}
 
 	/**

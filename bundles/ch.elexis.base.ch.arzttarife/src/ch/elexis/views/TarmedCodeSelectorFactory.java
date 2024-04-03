@@ -21,10 +21,14 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.actions.CodeSelectorHandler;
 import ch.elexis.core.ui.actions.ICodeSelectorTarget;
@@ -43,6 +47,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	int eventType = SWT.KeyDown;
 
 	private NoLawCheckBillingAction noLawCeckBillingAction = new NoLawCheckBillingAction();
+	private ShowDetailsAction showDetailsAction = new ShowDetailsAction();
 	private ToggleVerrechenbarFavoriteAction tvfa = new ToggleVerrechenbarFavoriteAction();
 	private ISelectionChangedListener selChangeListener = new ISelectionChangedListener() {
 
@@ -87,6 +92,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 		MenuManager menu = new MenuManager();
 		menu.add(tvfa);
 		menu.add(noLawCeckBillingAction);
+		menu.add(showDetailsAction);
 		cv.setContextMenu(menu);
 
 		ViewerConfigurer vc = new ViewerConfigurer(new TarmedCodeSelectorContentProvider(cv),
@@ -159,7 +165,40 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 
 		@Override
 		public void run() {
-			((TarmedSelectorPanelProvider) slp).toggleFilters();
+			slp.toggleFilters();
+		}
+	}
+
+	private class ShowDetailsAction extends Action {
+		@Override
+		public String getText() {
+			return Messages.TarmedCodeSelectorFactoryDetailsButton;
+		}
+
+		@Override
+		public ImageDescriptor getImageDescriptor() {
+			return Images.IMG_CLIPBOARD.getImageDescriptor();
+		}
+
+		@Override
+		public void run() {
+			Object[] selection = cv.getSelection();
+			if (selection != null && selection.length > 0) {
+				if (selection[0] instanceof ITarmedLeistung) {
+					showDetailsFor((ITarmedLeistung) selection[0]);
+				}
+			}
+		}
+
+		private void showDetailsFor(ITarmedLeistung selectedObject) {
+			Shell detailShell = new Shell(Display.getCurrent().getActiveShell(), SWT.SHELL_TRIM | SWT.MODELESS);
+			detailShell.setLayout(new FillLayout());
+			TarmedDetailDisplay detailDisplay = new TarmedDetailDisplay();
+			detailDisplay.createDisplayFromDeteils(detailShell, null);
+			detailDisplay.display(selectedObject);
+			detailShell.setSize(400, 400);
+			detailShell.setText(Messages.TarmedCodeSelectorFactoryDetailsTitel);
+			detailShell.open();
 		}
 	}
 }

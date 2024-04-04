@@ -201,13 +201,6 @@
          </menuContribution>
       </extension>
       <extension
-            point="ch.elexis.core.ui.FremdDatenImport">
-         <importer
-               Class="ch.elexis.agenda.data.Import_Agenda"
-               name="JavaAgenda - Importer">
-         </importer>
-      </extension>
-      <extension
             point="ch.elexis.core.data.PersistentReference">
          <Factory
                Class="ch.elexis.agenda.data.TerminFactory"

@@ -13,6 +13,7 @@
 package ch.elexis.base.ch.diagnosecodes.importer;
 
 import java.io.FileInputStream;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.core.interfaces.IReferenceDataImporter;
+import ch.elexis.core.model.IDiagnosisTree;
 import ch.elexis.core.services.IReferenceDataImporterService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.ImporterPage;
@@ -55,8 +57,7 @@ public class ICDImporter extends ImporterPage {
 
 	@Override
 	public List<String> getObjectClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.singletonList(IDiagnosisTree.class.getName());
 	}
 
 	@Override

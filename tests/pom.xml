@@ -30,7 +30,6 @@
 -->
 <!--
     <module>ch.elexis.pdfBills.test</module>
-    <module>at.medevit.elexis.cobasmira.tests</module>
     <module>at.medevit.elexis.ehc.core.test</module>
     <module>at.medevit.elexis.ehc.vacdoc.test</module>
     <module>at.medevit.elexis.emediplan.core.test</module>

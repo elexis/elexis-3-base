@@ -37,7 +37,6 @@
     <module>at.medevit.elexis.agenda.ui.rcp</module>
     <module>at.medevit.elexis.bluemedication.core</module>
     <module>at.medevit.elexis.bluemedication.ui</module>
-    <module>at.medevit.elexis.cobasmira</module>
     <module>at.medevit.elexis.ehc.core</module>
     <module>at.medevit.elexis.ehc.docbox</module>
     <module>at.medevit.elexis.ehc.ui.docbox</module>

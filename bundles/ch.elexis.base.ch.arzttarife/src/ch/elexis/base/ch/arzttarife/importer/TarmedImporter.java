@@ -16,6 +16,8 @@
 package ch.elexis.base.ch.arzttarife.importer;
 
 import java.io.FileInputStream;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -38,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.arzttarife_schweiz.Messages;
+import ch.elexis.base.ch.arzttarife.tarmed.ITarmedLeistung;
 import ch.elexis.core.importer.div.importers.AccessWrapper;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.services.IReferenceDataImporterService;
@@ -172,6 +175,7 @@ public class TarmedImporter extends ImporterPage {
 		updateIDsBtn.setLayoutData(fd);
 
 		updateIDsBtn.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateIDs = updateIDsBtn.getSelection();
 			}
@@ -185,7 +189,7 @@ public class TarmedImporter extends ImporterPage {
 	}
 
 	@Override
-	public String getObjectClass() {
-		return ch.elexis.core.model.IBillable.class.getName();
+	public List<String> getObjectClass() {
+		return Collections.singletonList(ITarmedLeistung.class.getName());
 	}
 }

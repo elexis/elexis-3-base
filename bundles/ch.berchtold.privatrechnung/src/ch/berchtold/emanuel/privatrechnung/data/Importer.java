@@ -14,6 +14,7 @@ package ch.berchtold.emanuel.privatrechnung.data;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -200,7 +201,7 @@ public class Importer extends ImporterPage {
 	}
 
 	@Override
-	public String getObjectClass() {
-		return ch.elexis.core.model.IBillable.class.getName();
+	public List<String> getObjectClass() {
+		return Arrays.asList(IPrivatLeistung.class.getName());
 	}
 }

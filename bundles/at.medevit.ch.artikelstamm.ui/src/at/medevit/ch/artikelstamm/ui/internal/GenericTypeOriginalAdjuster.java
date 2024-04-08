@@ -4,7 +4,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.ch.artikelstamm.model.common.preference.PreferenceConstants;
@@ -12,15 +11,12 @@ import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.IBilledAdjuster;
-import ch.elexis.core.services.IBillingService;
+import ch.elexis.core.services.holder.BillingServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 @Component
 public class GenericTypeOriginalAdjuster implements IBilledAdjuster {
-
-	@Reference
-	private IBillingService billingService;
 
 	@Override
 	public void adjust(IBilled billed) {
@@ -45,7 +41,7 @@ public class GenericTypeOriginalAdjuster implements IBilledAdjuster {
 								billed.setExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE, "true"); //$NON-NLS-1$
 								CoreModelServiceHolder.get().save(billed);
 							} else if (answer == 2) {
-								billingService.removeBilled(billed, billed.getEncounter());
+								BillingServiceHolder.get().removeBilled(billed, billed.getEncounter());
 							}
 						});
 					}

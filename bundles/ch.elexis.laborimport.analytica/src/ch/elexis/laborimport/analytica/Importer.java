@@ -23,14 +23,15 @@
 
 package ch.elexis.laborimport.analytica;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -53,6 +54,7 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.util.FileUtility;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.importer.div.importers.HL7Parser;
+import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.util.ImporterPage;
@@ -215,6 +217,11 @@ public class Importer extends ImporterPage {
 	@Override
 	public String getTitle() {
 		return ch.elexis.laborimport.analytica.Messages.Importer_lab + MY_LAB; // $NON-NLS-1$
+	}
+
+	@Override
+	public List<java.lang.String> getObjectClass() {
+		return Arrays.asList(ILabResult.class.getName(), "ch.elexis.omnivore.model.IDocumentHandle");
 	}
 
 	String getBasePath() {

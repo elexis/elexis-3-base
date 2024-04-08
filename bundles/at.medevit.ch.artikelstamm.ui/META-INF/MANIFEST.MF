@@ -15,4 +15,6 @@ Import-Package: at.medevit.ch.artikelstamm.model.common.preference
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: at.medevit.ch.artikelstamm.ui.internal.Activator
 Service-Component: OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.GenericTypeOriginalAdjuster.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.GenericTypeOriginalArticleValidator.xml,
+ OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.GenericTypeOriginalRecipeValidator.xml,
  OSGI-INF/at.medevit.ch.artikelstamm.ui.internal.ModelServiceHolder.xml

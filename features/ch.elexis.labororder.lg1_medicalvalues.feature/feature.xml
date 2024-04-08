@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+        id="ch.elexis.labororder.lg1_medicalvalues.feature"
+        label="LG1 Laborauftrag"
+        version="3.12.0.qualifier"
+        provider-name="medicalvalues.de">
+
+   <description>
+      Import von Laborresultaten vom LG1 Labor
+      Mehr Info unter http://wiki.elexis.info/ch.elexis.labororder.lg1.feature.feature.group
+   </description>
+
+   <copyright url="http://elexis.info/de_contributers.html">
+      Gerry Weirich, 2007-2013 und viele andere
+      Patrick Kaufmann patrick@famkaufmann.info
+      Lucia Ammann amann@medevit.at
+      Thomas Huster huster@medevit.at
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License v1.0
+   </license>
+
+   <plugin
+           id="ch.elexis.labororder.lg1_medicalvalues"
+           download-size="0"
+           install-size="0"
+           version="0.0.0"
+           unpack="false"/>
+
+</feature>

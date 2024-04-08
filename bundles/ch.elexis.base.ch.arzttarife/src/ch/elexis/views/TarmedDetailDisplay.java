@@ -121,6 +121,30 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		return form.getBody();
 	}
 
+	public Composite createDisplayFromDeteils(Composite parent, IViewSite notUsed) {
+		tk = UiDesk.getToolkit();
+		form = tk.createScrolledForm(parent);
+		TableWrapLayout twl = new TableWrapLayout();
+		form.getBody().setLayout(twl /* new GridLayout(6,true) */);
+		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
+		twd.grabHorizontal = true;
+		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_MedInter);
+		medinter = tk.createFormText(form.getBody(), false);
+		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_TecInter);
+		techinter = tk.createFormText(form.getBody(), false);
+		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_DontCombine);
+		exclusion = tk.createFormText(form.getBody(), false);
+		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_DoCombine);
+		inclusion = tk.createFormText(form.getBody(), false);
+		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_PossibleAdd);
+		hirarchy = tk.createFormText(form.getBody(), false);
+		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_Limits);
+		limits = tk.createFormText(form.getBody(), false);
+		tk.createLabel(form.getBody(), Messages.TarmedDetailDisplay_Validity);
+		validity = tk.createFormText(form.getBody(), false);
+		return form.getBody();
+	}
+
 	public Class getElementClass() {
 		return ITarmedLeistung.class;
 	}
@@ -129,19 +153,21 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 		if (obj instanceof ITarmedLeistung) {
 			actCode = (ITarmedLeistung) obj;
 			form.setText(actCode.getLabel());
-			inputs[0].setText(actCode.getDigniQuanti());
-			inputs[1].setText(actCode.getDigniQuali());
-			inputs[2].setText(actCode.getSparte());
-			inputs[3].setText(TarmedDefinitionenUtil
-					.getTextForRisikoKlasse((String) actCode.getExtension().getExtInfo("ANAESTHESIE"))); //$NON-NLS-1$
-			for (int i = 4; i < fields.length - 1; i++) {
-				String val = (String) actCode.getExtension().getExtInfo(retrieve[i]);
-				if (val == null) {
-					val = StringUtils.EMPTY;
+			if (inputs[0] != null) {
+				inputs[0].setText(actCode.getDigniQuanti());
+				inputs[1].setText(actCode.getDigniQuali());
+				inputs[2].setText(actCode.getSparte());
+				inputs[3].setText(TarmedDefinitionenUtil
+						.getTextForRisikoKlasse((String) actCode.getExtension().getExtInfo("ANAESTHESIE"))); //$NON-NLS-1$
+				for (int i = 4; i < fields.length - 1; i++) {
+					String val = (String) actCode.getExtension().getExtInfo(retrieve[i]);
+					if (val == null) {
+						val = StringUtils.EMPTY;
+					}
+					inputs[i].setText(val);
 				}
-				inputs[i].setText(val);
+				inputs[fields.length - 1].setText(actCode.getNickname()); // $NON-NLS-1$
 			}
-			inputs[fields.length - 1].setText(actCode.getNickname()); // $NON-NLS-1$
 			medinter.setText(actCode.getExtension().getMedInterpretation(), false, false);
 			techinter.setText(actCode.getExtension().getTechInterpretation(), false, false);
 			List<ITarmedKumulation> kumulations = actCode.getKumulations(TarmedKumulationArt.SERVICE);

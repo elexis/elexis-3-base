@@ -2,7 +2,9 @@ package at.medevit.elexis.loinc.ui.importer;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,9 +25,9 @@ import at.medevit.elexis.loinc.model.LoincCode;
 import at.medevit.elexis.loinc.ui.Activator;
 import at.medevit.elexis.loinc.ui.LoincServiceComponent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.status.ElexisStatus;
 import ch.elexis.core.ui.util.ImporterPage;
-import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.ui.util.SWTHelper;
 
 public class LoincCodeCsvImporter extends ImporterPage {
@@ -82,6 +84,11 @@ public class LoincCodeCsvImporter extends ImporterPage {
 	@Override
 	public String getDescription() {
 		return "LOIN Code Import aus einer CSV Datei. Format CODE,LONGNAME,SHORTNAME,CLASS,UNIT";
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		return Collections.singletonList(LoincCode.class.getName());
 	}
 
 	@Override

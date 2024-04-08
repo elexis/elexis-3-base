@@ -13,6 +13,8 @@ package ch.elexis.labortarif2009.data;
 
 import java.io.FileInputStream;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 
+import ch.elexis.base.ch.labortarif.ILaborLeistung;
 import ch.elexis.base.ch.labortarif_2009.Messages;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.services.IReferenceDataImporterService;
@@ -76,10 +79,12 @@ public class Importer extends ImporterPage {
 		validDate.setLayoutData(fd);
 
 		validDate.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setValidFromDate();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				setValidFromDate();
 			}
@@ -116,6 +121,11 @@ public class Importer extends ImporterPage {
 	@Override
 	public String getDescription() {
 		return Messages.Importer_selectFile;
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		return Collections.singletonList(ILaborLeistung.class.getName());
 	}
 
 	@Override

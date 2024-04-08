@@ -286,9 +286,9 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		    @Override
 		    public void run() {
 		        FileDialog fd = new FileDialog(getViewSite().getShell(), SWT.SAVE);
-				fd.setFilterExtensions(new String[] { "*.csv", "*.*" });
-				fd.setFilterNames(new String[] { "CSV", Messages.VerrechnungsStatistikView_AllFiles });
-				fd.setFileName("elexis-verr.csv");
+				fd.setFilterExtensions(new String[] { "*.csv", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+				fd.setFilterNames(new String[] { "CSV", Messages.VerrechnungsStatistikView_AllFiles }); //$NON-NLS-1$
+				fd.setFileName("elexis-verr.csv"); //$NON-NLS-1$
 		        String fname = fd.open();
 		        if (fname != null) {
 					try (OutputStream fos = new FileOutputStream(fname);
@@ -313,7 +313,6 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		        }
 		    }
 		};
-
 
 
 

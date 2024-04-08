@@ -1,6 +1,7 @@
 package ch.elexis.importer.aeskulap.ui;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +17,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IDocumentLetter;
+import ch.elexis.core.model.ILabItem;
+import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
@@ -29,6 +35,12 @@ public class AeskulapImporter extends ImporterPage {
 	@Override
 	public String getTitle() {
 		return "Aeskulap";
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		return Arrays.asList(IPatient.class.getName(), ILabResult.class.getName(), ILabItem.class.getName(),
+				IContact.class.getName(), IDocumentLetter.class.getName());
 	}
 
 	@Override

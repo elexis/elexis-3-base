@@ -184,9 +184,6 @@
    <feature url="features/at.gruber.elexis.mythic22.feature_0.0.0.jar" id="at.gruber.elexis.mythic22.feature" version="0.0.0">
       <category name="labinterfaces"/>
    </feature>
-   <feature url="features/at.medevit.elexis.cobasmira.feature_0.0.0.jar" id="at.medevit.elexis.cobasmira.feature" version="0.0.0">
-      <category name="labinterfaces"/>
-   </feature>
    <feature id="ch.elexis.laborimport.eurolyser.feature">
       <category name="laborexchanges"/>
    </feature>
@@ -218,6 +215,9 @@
       <category name="laborexchanges"/>
    </feature>
    <feature id="ch.elexis.labororder.lg1.feature">
+      <category name="laborexchanges"/>
+   </feature>
+   <feature id="ch.elexis.labororder.lg1_medicalvalues.feature">
       <category name="laborexchanges"/>
    </feature>
    <feature id="ch.itmed.fop.printing.feature">

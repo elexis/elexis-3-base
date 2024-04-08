@@ -8,7 +8,8 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Automatic-Module-Name: ch.elexis.base.ch.arzttarife.model
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Export-Package: ch.elexis.base.ch.arzttarife.complementary,
+Export-Package: ch.elexis.base.ch.arzttarife,
+ ch.elexis.base.ch.arzttarife.complementary,
  ch.elexis.base.ch.arzttarife.complementary.impl,
  ch.elexis.base.ch.arzttarife.complementary.util,
  ch.elexis.base.ch.arzttarife.nutrition,

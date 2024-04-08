@@ -76,5 +76,6 @@ public class Messages {
 	public static String TarmedRequirements_Law = ch.elexis.core.l10n.Messages.Core_Law_Name;
 	public static String TarmedRequirements_NifName = ch.elexis.core.l10n.Messages.Core_NIF;
 	public static String TarmedRequirements_SSNName = ch.elexis.core.l10n.Messages.TarmedRequirements_SSNName;
+	public static String Preferences_pleaseEnterMultiplier = ch.elexis.core.l10n.Messages.Preferences_pleaseEnterMultiplier;
 
 }

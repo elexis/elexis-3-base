@@ -55,6 +55,7 @@ public class CSVWriter {
 		File file = new File(fileName);
 		FileOutputStream fos = new FileOutputStream(file);
 		OutputStreamWriter writer = new OutputStreamWriter(fos, "ISO-8859-1");
+
 		// retrieve DataSet
 		DataSet data = provider.getDataSet();
 
@@ -100,20 +101,15 @@ public class CSVWriter {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(DateWidget.VALID_DATE_FORMAT);
 
 		// provider title
-		writer.write(provider.getName());
-		writer.write(StringUtils.LF);
-		writer.write(dateFormat.format(Calendar.getInstance().getTime()));
-		writer.write(StringUtils.LF);
-		writer.write(StringUtils.LF);
+		writer.write(provider.getName() + StringUtils.LF);
+		writer.write(dateFormat.format(Calendar.getInstance().getTime()) + StringUtils.LF + StringUtils.LF);
 
 		// write parameters
 		Map<String, Object> getters = ProviderHelper.getGetterMap(provider, true);
 		for (Object name : getters.keySet().toArray()) {
-			writer.write(name + " = " + getters.get(name)); //$NON-NLS-1$
-			writer.write(StringUtils.LF);
+			writer.write(name + " = " + getters.get(name) + StringUtils.LF); //$NON-NLS-1$
 		}
-		writer.write(StringUtils.LF);
-		writer.write(StringUtils.LF);
+		writer.write(StringUtils.LF + StringUtils.LF);
 	}
 
 	/**

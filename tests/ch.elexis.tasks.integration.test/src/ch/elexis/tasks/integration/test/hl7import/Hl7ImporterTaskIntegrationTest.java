@@ -5,11 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -32,12 +30,12 @@ import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.LabServiceHolder;
-import ch.elexis.core.tasks.IdentifiedRunnableIdConstants;
 import ch.elexis.core.tasks.model.ITask;
 import ch.elexis.core.tasks.model.ITaskDescriptor;
 import ch.elexis.core.tasks.model.OwnerTaskNotification;
 import ch.elexis.core.tasks.model.TaskState;
 import ch.elexis.core.tasks.model.TaskTriggerType;
+import ch.elexis.core.tasks.model.TaskTriggerTypeParameter;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.tasks.integration.test.AllTests;
@@ -105,11 +103,10 @@ public class Hl7ImporterTaskIntegrationTest {
 	private void performLocalFilesystemImport(IUser owner, String urlString, Callable<Void> pushFiles)
 			throws Exception {
 
-		ITaskDescriptor watcherTaskDescriptor = initDirectoryWatcherTask(owner, urlString);
-		ITaskDescriptor hl7ImporterTaskDescriptor = initHl7ImporterTask(owner);
+		ITaskDescriptor hl7ImporterTaskDescriptor = initHl7ImporterTask(owner, urlString);
 		ITaskDescriptor billLabResultsTaskDescriptor = initBillLabResultTask(owner);
 
-		ITask hl7ImporterTask = pushFilesAndWait(pushFiles, watcherTaskDescriptor, hl7ImporterTaskDescriptor);
+		ITask hl7ImporterTask = pushFilesAndWait(pushFiles, hl7ImporterTaskDescriptor);
 		String resultData = hl7ImporterTask.getResultEntryTyped(ReturnParameter.RESULT_DATA, String.class);
 		assertEquals("Result (OK) msgs: OK/0 , OK/0", resultData);
 		String url = hl7ImporterTask.getResultEntryTyped(ReturnParameter.STRING_URL, String.class);
@@ -139,7 +136,7 @@ public class Hl7ImporterTaskIntegrationTest {
 		assertTrue(
 				OsgiServiceUtil.getService(IElexisEntityManager.class).get().executeSQLScript("clearAll", sqlScript));
 
-		pushFilesAndWait(pushFiles, watcherTaskDescriptor, hl7ImporterTaskDescriptor);
+		pushFilesAndWait(pushFiles, hl7ImporterTaskDescriptor);
 
 		billedList = CoreModelServiceHolder.get().getQuery(IBilled.class).execute();
 		assertEquals(1, billedList.size());
@@ -166,7 +163,6 @@ public class Hl7ImporterTaskIntegrationTest {
 		// TODO test fail message
 		// TODO partial result?
 
-		TaskServiceHolder.get().removeTaskDescriptor(watcherTaskDescriptor);
 		TaskServiceHolder.get().removeTaskDescriptor(billLabResultsTaskDescriptor);
 		TaskServiceHolder.get().removeTaskDescriptor(hl7ImporterTaskDescriptor);
 	}
@@ -179,8 +175,8 @@ public class Hl7ImporterTaskIntegrationTest {
 	 * @return the latest execution of the hl7importer task
 	 * @throws Exception
 	 */
-	private ITask pushFilesAndWait(Callable<Void> pushFiles, ITaskDescriptor watcherTaskDescriptor,
-			ITaskDescriptor hl7ImporterTaskDescriptor) throws Exception {
+	private ITask pushFilesAndWait(Callable<Void> pushFiles, ITaskDescriptor hl7ImporterTaskDescriptor)
+			throws Exception {
 
 		// cleanup previous entry for multiple runs
 		TaskServiceHolder.get().findLatestExecution(hl7ImporterTaskDescriptor)
@@ -189,12 +185,6 @@ public class Hl7ImporterTaskIntegrationTest {
 		pushFiles.call();
 
 		// add a hl7 file with accompanying pdf to the directory
-
-		Awaitility.await().atMost(10, TimeUnit.SECONDS)
-				.until(() -> TaskServiceHolder.get().findLatestExecution(watcherTaskDescriptor).isPresent());
-		Awaitility.await().atMost(10, TimeUnit.SECONDS)
-				.until(() -> TaskServiceHolder.get().findLatestExecution(watcherTaskDescriptor).get().isFinished());
-
 		Awaitility.await().atMost(10, TimeUnit.SECONDS)
 				.until(() -> TaskServiceHolder.get().findLatestExecution(hl7ImporterTaskDescriptor).isPresent());
 		Awaitility.await().atMost(10, TimeUnit.SECONDS)
@@ -221,7 +211,7 @@ public class Hl7ImporterTaskIntegrationTest {
 		return taskDescriptor;
 	}
 
-	private ITaskDescriptor initHl7ImporterTask(IUser activeUser) throws TaskException {
+	private ITaskDescriptor initHl7ImporterTask(IUser activeUser, String url) throws TaskException {
 		// create hl7importer taskdescriptor
 		IIdentifiedRunnable hl7ImporterRunnable = TaskServiceHolder.get().instantiateRunnableById("hl7importer");
 		assertNotNull(hl7ImporterRunnable);
@@ -229,32 +219,14 @@ public class Hl7ImporterTaskIntegrationTest {
 		ITaskDescriptor hl7ImporterTaskDescriptor = TaskServiceHolder.get().createTaskDescriptor(hl7ImporterRunnable);
 		hl7ImporterTaskDescriptor.setOwner(activeUser);
 		hl7ImporterTaskDescriptor.setSingleton(true);
-		hl7ImporterTaskDescriptor.setTriggerType(TaskTriggerType.OTHER_TASK);
+		hl7ImporterTaskDescriptor.setTriggerType(TaskTriggerType.FILESYSTEM_CHANGE);
+		hl7ImporterTaskDescriptor.setTriggerParameter(RunContextParameter.STRING_URL, url);
+		hl7ImporterTaskDescriptor.setTriggerParameter(TaskTriggerTypeParameter.FILESYSTEM_CHANGE.FILE_EXTENSION_FILTER,
+				"hl7");
 		hl7ImporterTaskDescriptor.setReferenceId("hl7Importer_a");
 		hl7ImporterTaskDescriptor.setOwnerNotification(OwnerTaskNotification.WHEN_FINISHED_FAILED);
 		TaskServiceHolder.get().setActive(hl7ImporterTaskDescriptor, true);
 		return hl7ImporterTaskDescriptor;
 	}
 
-	private ITaskDescriptor initDirectoryWatcherTask(IUser activeUser, String url) throws TaskException {
-		// create watcher taskdescriptor
-		IIdentifiedRunnable watcherRunnable = TaskServiceHolder.get()
-				.instantiateRunnableById(IdentifiedRunnableIdConstants.TRIGGER_TASK_FOR_EVERY_FILE);
-		assertNotNull(watcherRunnable);
-		Map<String, Serializable> watcherRunContext = watcherRunnable.getDefaultRunContext();
-		watcherRunContext.put(RunContextParameter.STRING_URL, url);
-		watcherRunContext.put(RunContextParameter.TASK_DESCRIPTOR_REFID, "hl7Importer_a");
-		watcherRunContext.put("fileExtensionFilter", "hl7");
-
-		ITaskDescriptor watcherTaskDescriptor = TaskServiceHolder.get().createTaskDescriptor(watcherRunnable);
-		watcherTaskDescriptor.setOwner(activeUser);
-		watcherTaskDescriptor.setTriggerType(TaskTriggerType.CRON);
-		watcherTaskDescriptor.setReferenceId("watch_hl7_files");
-		watcherTaskDescriptor.setSingleton(true);
-		watcherTaskDescriptor.setTriggerParameter("cron", "0/5 * * * * ?");
-		watcherTaskDescriptor.setRunContext(watcherRunContext);
-		TaskServiceHolder.get().setActive(watcherTaskDescriptor, true);
-
-		return watcherTaskDescriptor;
-	}
 }

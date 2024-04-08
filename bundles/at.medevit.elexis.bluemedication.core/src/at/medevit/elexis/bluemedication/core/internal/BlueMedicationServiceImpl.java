@@ -429,6 +429,28 @@ public class BlueMedicationServiceImpl implements BlueMedicationService, EventHa
 	}
 
 	@Override
+	public Result<String> downloadExtendedPdf(UploadResult uploadResult) {
+		initProxyOrOauth();
+		try {
+			ExtractionAndConsolidationApi apiInstance = new ExtractionAndConsolidationApi();
+			configureApiClient(apiInstance.getApiClient());
+			ApiResponse<File> response = apiInstance
+					.downloadIdExtractionExtendedpdfGetWithHttpInfo(uploadResult.getId(), true);
+			if (response.getStatusCode() >= 300) {
+				return Result.ERROR("Response status code was [" + response.getStatusCode() + "]");
+			}
+			if (response.getData() == null) {
+				return Result.ERROR("Response has no data");
+			}
+			return Result.OK(response.getData().getAbsolutePath());
+		} catch (ApiException e) {
+			hinAuthHandleException(e);
+			logger.error("Error downloading Document Pdf", e);
+			return Result.ERROR(e.getMessage());
+		}
+	}
+
+	@Override
 	public void addPendingUploadResult(Object object, UploadResult uploadResult) {
 		pendingUploadResults.put(object, uploadResult);
 	}

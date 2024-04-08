@@ -51,7 +51,7 @@ public class FarbenSelektor extends TitleAreaDialog {
 		areaColors = new HashMap<>();
 		loadCheckboxPreferences();
 		tempAreaColors = new HashMap<>();
-		areas = new ArrayList<>(ConfigServiceHolder.getGlobalAsList(PreferenceConstants.AG_BEREICHE));
+		areas = new ArrayList<>(ConfigServiceHolder.get().getAsList(PreferenceConstants.AG_BEREICHE));
 		loadColorPreferences();
 		checkAreaTypes();
 	}

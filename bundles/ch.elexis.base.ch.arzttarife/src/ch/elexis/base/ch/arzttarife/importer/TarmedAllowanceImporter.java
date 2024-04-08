@@ -12,6 +12,8 @@
 package ch.elexis.base.ch.arzttarife.importer;
 
 import java.io.FileInputStream;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -19,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.base.ch.arzttarife.tarmedallowance.ITarmedAllowance;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.services.IReferenceDataImporterService;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
@@ -53,5 +56,10 @@ public class TarmedAllowanceImporter extends ImporterPage {
 	@Override
 	public String getTitle() {
 		return "Tarmedpauschalen";
+	}
+
+	@Override
+	public List<String> getObjectClass() {
+		return Collections.singletonList(ITarmedAllowance.class.getName());
 	}
 }

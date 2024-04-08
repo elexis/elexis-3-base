@@ -298,7 +298,10 @@ public class VerrechnungsStatistikView extends ViewPart implements IRefreshable,
 		                for (TableItem it : table.getItems()) {
 							List<String> row = new ArrayList<>();
 							for (int i = 0; i < table.getColumnCount(); i++) {
-								String cellText = it.getText(i).replace("’", "'");
+								String cellText = it.getText(i);
+								if (i == 4) {
+									cellText = cellText.replace("’", "").replace("'", "");
+								}
 								row.add(cellText);
 							}
 							String line = String.join(StringConstants.SEMICOLON, row) + StringConstants.CRLF;

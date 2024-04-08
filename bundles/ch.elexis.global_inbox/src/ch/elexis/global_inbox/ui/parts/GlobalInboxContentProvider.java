@@ -148,7 +148,21 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 		private void addFilesInDirRecursive(File dir) {
 			List<String> allFilesInDirRecursive = new ArrayList<>();
 
-			for (File file : dir.listFiles()) {
+			File[] files = dir.listFiles();
+			if (files == null)
+				return;
+
+			for (File file : files) {
+				if (file.isHidden() || file.getName().startsWith(".")) {
+					continue;
+				}
+
+				if (file.isDirectory()) {
+					addFilesInDirRecursive(file);
+				} else {
+
+					allFilesInDirRecursive.add(file.getAbsolutePath());
+				}
 				if (file.isDirectory()) {
 					addFilesInDirRecursive(file);
 				} else {

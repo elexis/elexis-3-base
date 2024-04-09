@@ -39,7 +39,7 @@
         </organization>
 	<properties>
 		<elexis.target>2023-09-java17</elexis.target>
-		<git.core.branch>master</git.core.branch>
+		<git.core.branch>3.12</git.core.branch>
 		<formatterConfigFile>https://raw.githubusercontent.com/elexis/elexis-3-core/master/Elexis_formatter_2022_03.xml</formatterConfigFile>
 		<tycho.version>3.0.5</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

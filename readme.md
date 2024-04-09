@@ -1,4 +1,4 @@
-<a href="https://gitlab.medelexis.ch/elexis/elexis-3-base/commits/master"><img alt="build status" src="https://gitlab.medelexis.ch/elexis/elexis-3-base/badges/master/pipeline.svg" /></a>
+<a href="https://gitlab.medelexis.ch/elexis/elexis-3-base/commits/3.12"><img alt="build status" src="https://gitlab.medelexis.ch/elexis/elexis-3-base/badges/3.12/pipeline.svg" /></a>
 
 Elexis Base contains bundles that can be installed using the <a href="https://gitlab.medelexis.ch/elexis/elexis-3-core">Elexis</a> application.
 Using these bundles directly might not be what you want.

@@ -756,7 +756,7 @@ public class Tarmed45Exporter {
 
 						serviceType.setUnit(billed.getPrice().doubleValue());
 						if ("581".equals(billable.getCodeSystemCode())) {
-							serviceType.setUnit(billed.getPoints() / 100);
+							serviceType.setUnit((double) billed.getPoints() / 100);
 						}
 						serviceType.setUnitFactor(billed.getFactor());
 
@@ -775,11 +775,11 @@ public class Tarmed45Exporter {
 						if (billable instanceof IArticle) {
 							XtraDrugType drugType = new XtraDrugType();
 							drugType.setIndicated(false);
-							if ("true".equals((String) billed.getExtInfo(Constants.FLD_EXT_INDICATED))) {
+							if ("true".equals(billed.getExtInfo(Constants.FLD_EXT_INDICATED))) {
 								serviceType.setName(serviceType.getName() + " (medizinisch indiziert: 207)");
 								drugType.setIndicated(true);
 							}
-							if ("true".equals((String) billed.getExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE))) {
+							if ("true".equals(billed.getExtInfo(Constants.FLD_EXT_ORIGINALNOSUBSTITUTE))) {
 								serviceType.setName(serviceType.getName() + " (Substitution nicht möglich)");
 							}
 							serviceType.setXtraDrug(drugType);

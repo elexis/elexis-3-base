@@ -10,13 +10,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.psycho.IPsychoLeistung;
+import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.jpa.entities.TarmedLeistung.MandantType;
 import ch.elexis.core.jpa.model.adapter.AbstractIdDeleteModelAdapter;
 import ch.elexis.core.model.IBillableOptifier;
 import ch.elexis.core.model.IBillableVerifier;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.IEncounter;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
 import ch.elexis.core.model.billable.AbstractOptifier;
@@ -72,7 +75,7 @@ public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 					if (billable.getTP() != null) {
 						if (!isPercent(billable)) {
 							try {
-								points = getPoints(billable);
+								points = getPoints(billable, billed.getEncounter().getMandator());
 							} catch (NumberFormatException ne) {
 								// ignore ...
 							}
@@ -81,8 +84,13 @@ public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 					billed.setPoints(points);
 				}
 
-				private int getPoints(PsychoLeistung billable) {
-					return Integer.valueOf(billable.getTP()) * 100;
+				private int getPoints(PsychoLeistung billable, IMandator mandator) {
+					MandantType type = TarmedLeistung.getMandantType(mandator);
+					if (type == MandantType.PRACTITIONER) {
+						return Integer.valueOf(billable.getTP()) * 90;
+					} else {
+						return Integer.valueOf(billable.getTP()) * 100;
+					}
 				}
 
 				private void updatePercent(IBilled billed) {
@@ -123,7 +131,8 @@ public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 					int sumTP = 0;
 					for (IBilled psychoBilled : allPsycho) {
 						if (!isPercent((PsychoLeistung) psychoBilled.getBillable())) {
-							sumTP += getPoints((PsychoLeistung) psychoBilled.getBillable()) * psychoBilled.getAmount();
+							sumTP += getPoints((PsychoLeistung) psychoBilled.getBillable(),
+									psychoBilled.getEncounter().getMandator()) * psychoBilled.getAmount();
 						}
 					}
 					int percent = getPercent((PsychoLeistung) billed.getBillable());

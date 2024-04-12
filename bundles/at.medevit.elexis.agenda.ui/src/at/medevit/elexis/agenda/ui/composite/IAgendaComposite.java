@@ -103,6 +103,13 @@ public interface IAgendaComposite {
 	public void setScrollToNow(boolean value);
 
 	/**
+	 * Set if the agenda should show weekends if possible. Default is false.
+	 * 
+	 * @param value
+	 */
+	public void setShowWeekends(boolean value);
+
+	/**
 	 * Set the font-size of the displayed web agenda.
 	 *
 	 * @param sizePx

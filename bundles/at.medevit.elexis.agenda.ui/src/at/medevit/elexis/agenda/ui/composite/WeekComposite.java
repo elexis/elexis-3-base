@@ -61,6 +61,8 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 
 	private ESelectionService selectionService;
 
+	private Boolean showWeekends;
+
 	@Inject
 	void user(@Optional IUser user) {
 		if (loadEventsFunction != null) {
@@ -138,6 +140,10 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 
 					if (currentSpanSize != null) {
 						setSelectedSpanSize(currentSpanSize);
+					}
+
+					if (showWeekends != null) {
+						scriptingHelper.setShowWeekends(showWeekends);
 					}
 
 					getConfiguredFontSize().ifPresent(size -> {
@@ -228,6 +234,12 @@ public class WeekComposite extends Composite implements ISelectionProvider, IAge
 	@Override
 	public void setScrollToNow(boolean value) {
 		scriptingHelper.setScrollToNow(value);
+	}
+
+	@Override
+	public void setShowWeekends(boolean value) {
+		this.showWeekends = Boolean.valueOf(value);
+		scriptingHelper.setShowWeekends(value);
 	}
 
 	public LoadEventsFunction getLoadEventsFunction() {

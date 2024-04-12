@@ -86,7 +86,7 @@ public class PsychoLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 				private int getPoints(PsychoLeistung billable, IMandator mandator) {
 					MandantType type = TarmedLeistung.getMandantType(mandator);
-					if (type == MandantType.PRACTITIONER) {
+					if (type == MandantType.TARPSYAPPRENTICE) {
 						return Integer.valueOf(billable.getTP()) * 90;
 					} else {
 						return Integer.valueOf(billable.getTP()) * 100;

@@ -123,6 +123,7 @@
     <eClassifiers xsi:type="ecore:EEnum" name="MandantType">
       <eLiterals name="SPECIALIST"/>
       <eLiterals name="PRACTITIONER" value="1"/>
+      <eLiterals name="TARPSYAPPRENTICE" value="2"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EDataType" name="TarmedKumulationArt" instanceClassName="ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt"/>
     <eClassifiers xsi:type="ecore:EDataType" name="TarmedKumulationTyp" instanceClassName="ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationTyp"/>

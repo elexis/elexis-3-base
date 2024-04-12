@@ -136,7 +136,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 				if (i == -1) {
 					return;
 				}
-				Mandant selectedMandant = (Mandant) hMandanten.get(cbMands.getItem(i));
+				Mandant selectedMandant = hMandanten.get(cbMands.getItem(i));
 				setMandant(NoPoUtil.loadAsIdentifiable(selectedMandant, IMandator.class).get());
 
 			}
@@ -145,10 +145,10 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		Query<Mandant> qbe = new Query<Mandant>(Mandant.class);
 		List<Mandant> list = qbe.execute();
 
-		Collections.sort((List<Mandant>) list, new Comparator<Mandant>() {
+		Collections.sort(list, new Comparator<Mandant>() {
 			@Override
 			public int compare(Mandant o1, Mandant o2) {
-				return ((Mandant) o1).getLabel(true).compareToIgnoreCase(o2.getLabel(true));
+				return o1.getLabel(true).compareToIgnoreCase(o2.getLabel(true));
 			}
 
 		});
@@ -175,6 +175,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		cvMandantType = new ComboViewer(adrs);
 		cvMandantType.setContentProvider(new ArrayContentProvider());
 		cvMandantType.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				if (element instanceof MandantType) {
 					if (element == MandantType.SPECIALIST) {
@@ -182,6 +183,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 					}
 					if (element == MandantType.PRACTITIONER) {
 						return Messages.RechnungsPrefs_MandantType_PRACTITIONER;
+					}
+					if (element == MandantType.TARPSYAPPRENTICE) {
+						return Messages.RechnungsPrefs_MandantType_TARPSYAPPRENTICE;
 					}
 				}
 				return element.toString();
@@ -242,6 +246,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		bPost.setText(Messages.RechnungsPrefs_post); // $NON-NLS-1$
 
 		bPost.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (bPost.getSelection()) {
 					// check if Bank has been chosen
@@ -296,6 +301,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		bBank.setLayoutData(gd);
 		bBank.setText(Messages.RechnungsPrefs_bank); // $NON-NLS-1$
 		bBank.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (bBank.getSelection()) {
 					if (actBank == null) {
@@ -448,11 +454,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		}
 
 		cbMands.select(0);
-		Mandant selectedMandant = (Mandant) hMandanten.get(cbMands.getItem(0));
+		Mandant selectedMandant = hMandanten.get(cbMands.getItem(0));
 		setMandant(NoPoUtil.loadAsIdentifiable(selectedMandant, IMandator.class).get());
 		return ret;
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 		// TODO Automatisch erstellter Methoden-Stub
 

@@ -37,7 +37,15 @@ public enum MandantType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	PRACTITIONER(1, "PRACTITIONER", "PRACTITIONER");
+	PRACTITIONER(1, "PRACTITIONER", "PRACTITIONER"), /**
+	 * The '<em><b>TARPSYAPPRENTICE</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #TARPSYAPPRENTICE_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	TARPSYAPPRENTICE(2, "TARPSYAPPRENTICE", "TARPSYAPPRENTICE");
 
 	/**
 	 * The '<em><b>SPECIALIST</b></em>' literal value.
@@ -70,6 +78,17 @@ public enum MandantType implements Enumerator {
 	public static final int PRACTITIONER_VALUE = 1;
 
 	/**
+	 * The '<em><b>TARPSYAPPRENTICE</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #TARPSYAPPRENTICE
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TARPSYAPPRENTICE_VALUE = 2;
+
+	/**
 	 * An array of all the '<em><b>Mandant Type</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -79,6 +98,7 @@ public enum MandantType implements Enumerator {
 		new MandantType[] {
 			SPECIALIST,
 			PRACTITIONER,
+			TARPSYAPPRENTICE,
 		};
 
 	/**
@@ -137,6 +157,7 @@ public enum MandantType implements Enumerator {
 		switch (value) {
 			case SPECIALIST_VALUE: return SPECIALIST;
 			case PRACTITIONER_VALUE: return PRACTITIONER;
+			case TARPSYAPPRENTICE_VALUE: return TARPSYAPPRENTICE;
 		}
 		return null;
 	}

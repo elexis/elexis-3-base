@@ -78,6 +78,8 @@ public class SideBarComposite extends Composite {
 	private ToolBarManager menuManager;
 
 	private Button scrollToNowCheck;
+	private Button showWeekends;
+	private Label showWeekendsLabel;
 
 	private TableViewer moveTable;
 	private List<IPeriod> movePeriods;
@@ -245,6 +247,20 @@ public class SideBarComposite extends Composite {
 			}
 		});
 
+		showWeekendsLabel = new Label(this, SWT.NONE);
+		showWeekendsLabel.setFont(boldFont);
+		showWeekendsLabel.setText("Wochenenden anzeigen");
+		showWeekends = new Button(this, SWT.CHECK);
+		showWeekends.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				agendaComposite.setShowWeekends(showWeekends.getSelection());
+				saveConfigurationString("showWeekends", //$NON-NLS-1$
+						Boolean.toString(showWeekends.getSelection()));
+				super.widgetSelected(e);
+			}
+		});
+
 		Label separator = new Label(this, SWT.HORIZONTAL | SWT.SEPARATOR);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -371,6 +387,12 @@ public class SideBarComposite extends Composite {
 			control.setVisible(true);
 			gridData.exclude = false;
 		}
+		if (!(agendaComposite instanceof WeekComposite)) {
+			showWeekendsLabel.setVisible(false);
+			((GridData) showWeekendsLabel.getLayoutData()).exclude = true;
+			showWeekends.setVisible(false);
+			((GridData) showWeekends.getLayoutData()).exclude = true;
+		}
 		getParent().layout();
 		updateDayMessage();
 	}
@@ -387,6 +409,13 @@ public class SideBarComposite extends Composite {
 		if (value != null && value.equalsIgnoreCase("true")) { //$NON-NLS-1$
 			scrollToNowCheck.setSelection(true);
 			agendaComposite.setScrollToNow(true);
+		}
+		if (agendaComposite instanceof WeekComposite) {
+			value = loadConfigurationString("showWeekends"); //$NON-NLS-1$
+			if (value != null && value.equalsIgnoreCase("true")) { //$NON-NLS-1$
+				showWeekends.setSelection(true);
+				agendaComposite.setShowWeekends(true);
+			}
 		}
 	}
 

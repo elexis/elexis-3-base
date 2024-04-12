@@ -101,4 +101,10 @@ public class ScriptingHelper {
 		this.doScroll = value;
 		scrollToNow();
 	}
+
+	public void setShowWeekends(boolean value) {
+		String script = "$('#calendar').fullCalendar('option', 'weekends', %s)"; //$NON-NLS-1$
+		script = String.format(script, Boolean.valueOf(value));
+		SingleSourceUtil.executeScript(browser, script);
+	}
 }

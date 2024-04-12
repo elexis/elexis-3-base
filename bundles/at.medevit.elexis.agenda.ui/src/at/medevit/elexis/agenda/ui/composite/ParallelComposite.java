@@ -247,6 +247,11 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		scriptingHelper.setScrollToNow(value);
 	}
 
+	@Override
+	public void setShowWeekends(boolean value) {
+		scriptingHelper.setShowWeekends(value);
+	}
+
 	public LoadEventsFunction getLoadEventsFunction() {
 		return loadEventsFunction;
 	}

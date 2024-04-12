@@ -842,6 +842,7 @@ public class TarmedPackageImpl extends EPackageImpl implements TarmedPackage {
 		initEEnum(mandantTypeEEnum, MandantType.class, "MandantType");
 		addEEnumLiteral(mandantTypeEEnum, MandantType.SPECIALIST);
 		addEEnumLiteral(mandantTypeEEnum, MandantType.PRACTITIONER);
+		addEEnumLiteral(mandantTypeEEnum, MandantType.TARPSYAPPRENTICE);
 
 		// Initialize data types
 		initEDataType(tarmedLimitationEDataType, TarmedLimitation.class, "TarmedLimitation", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

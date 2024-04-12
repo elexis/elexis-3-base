@@ -56,6 +56,7 @@ public class Messages {
 	public static String RechnungsPrefs_MandantType = ch.elexis.core.l10n.Messages.RechnungsPrefs_MandantType;
 	public static String RechnungsPrefs_MandantType_SPECIALIST = ch.elexis.core.l10n.Messages.Core_Doctor_Specialist;
 	public static String RechnungsPrefs_MandantType_PRACTITIONER = ch.elexis.core.l10n.Messages.RechnungsPrefs_MandantType_PRACTITIONER;
+	public static String RechnungsPrefs_MandantType_TARPSYAPPRENTICE = ch.elexis.core.l10n.Messages.RechnungsPrefs_MandantType_TARPSYAPPRENTICE;
 	public static String MultiplikatorEditor_from = ch.elexis.core.l10n.Messages.MultiplikatorEditor_from;
 	public static String MultiplikatorEditor_5 = ch.elexis.core.l10n.Messages.Literal_Colon;
 	public static String MultiplikatorEditor_add = ch.elexis.core.l10n.Messages.Core_Add_ellipsis;

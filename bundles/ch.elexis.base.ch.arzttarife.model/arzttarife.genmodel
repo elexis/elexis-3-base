@@ -14,6 +14,7 @@
       <genEnums typeSafeEnumCompatible="false" ecoreEnum="arzttarife.ecore#//tarmed/MandantType">
         <genEnumLiterals ecoreEnumLiteral="arzttarife.ecore#//tarmed/MandantType/SPECIALIST"/>
         <genEnumLiterals ecoreEnumLiteral="arzttarife.ecore#//tarmed/MandantType/PRACTITIONER"/>
+        <genEnumLiterals ecoreEnumLiteral="arzttarife.ecore#//tarmed/MandantType/TARPSYAPPRENTICE"/>
       </genEnums>
       <genDataTypes ecoreDataType="arzttarife.ecore#//tarmed/TarmedLimitation"/>
       <genDataTypes ecoreDataType="arzttarife.ecore#//tarmed/TarmedExclusion"/>

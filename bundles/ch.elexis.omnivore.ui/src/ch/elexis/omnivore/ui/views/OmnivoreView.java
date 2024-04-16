@@ -58,10 +58,13 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -71,8 +74,10 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -83,11 +88,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.inbox.model.IInboxElement;
+import at.medevit.elexis.inbox.model.IInboxElementService.State;
+import at.medevit.elexis.inbox.ui.InboxServiceHolder;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.data.service.StoreToStringServiceHolder;
@@ -95,6 +102,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQueryCursor;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
@@ -410,6 +418,42 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			}
 		});
 		makeActions();
+
+		viewer.getTree().addMouseTrackListener(new MouseTrackAdapter() {
+			@Override
+			public void mouseHover(MouseEvent e) {
+				TreeItem item = viewer.getTree().getItem(new Point(e.x, e.y));
+				if (item != null && item.getData() instanceof IDocumentHandle) {
+					IDocumentHandle docHandle = (IDocumentHandle) item.getData();
+					if (!docHandle.isCategory()) {
+						String docId = docHandle.getId();
+						String objectToSearch = "ch.elexis.omnivore.data.DocHandle::" + docId;
+						IQuery<IInboxElement> inboxQuery = InboxServiceHolder.getModelService()
+								.getQuery(IInboxElement.class);
+						inboxQuery.and("object", COMPARATOR.EQUALS, objectToSearch);
+						try (IQueryCursor<IInboxElement> cursor = inboxQuery.executeAsCursor()) {
+							while (cursor.hasNext()) {
+								IInboxElement inboxElement = cursor.next();
+								String inboxElementObjectString = inboxElement.getObject().toString();
+								if (inboxElementObjectString.contains(docId)) {
+									State state = inboxElement.getState();
+									String stateText = state.toString().equals("SEEN") ? "Gesehen" : "Nicht gesehen";
+									ToolTip tooltip = new ToolTip(viewer.getControl().getShell(), SWT.NONE);
+									tooltip.setText(stateText);
+									tooltip.setAutoHide(true);
+									tooltip.setLocation(Display.getCurrent().getCursorLocation().x + 15,
+											Display.getCurrent().getCursorLocation().y);
+									tooltip.setVisible(true);
+									break;
+								}
+							}
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+				}
+			}
+		});
 
 		ovComparator = new OmnivoreViewerComparator();
 		viewer.setComparator(ovComparator);

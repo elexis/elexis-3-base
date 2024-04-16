@@ -292,7 +292,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				try {
 					String stringValue = tXml.getText();
 					if (StringUtils.isNotBlank(stringValue)) {
-						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue);
+						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue, false);
 						inputUri = fileHandle.toURL().toURI();
 					}
 				} catch (URISyntaxException | IOException ex) {
@@ -313,7 +313,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				try {
 					String stringValue = tPdf.getText();
 					if (StringUtils.isNotBlank(stringValue)) {
-						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue);
+						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue, false);
 						inputUri = fileHandle.toURL().toURI();
 					}
 				} catch (URISyntaxException | IOException ex) {

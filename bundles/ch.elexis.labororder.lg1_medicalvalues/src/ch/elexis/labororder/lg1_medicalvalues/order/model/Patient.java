@@ -102,13 +102,13 @@ public class Patient {
                 ret.billing = getBilling(coverage);
                 ret.socialSecurityNumber = patient.getXid(XidConstants.CH_AHV).getDomainId();
                 ret.physicianGlnNumber = activeUser.getXid(XidConstants.EAN).getDomainId();
-                ret.laboratoryCustomerId = activeUser.getXid(XidConstants.DOMAIN_BSVNUM).getDomainId();
+                ret.laboratoryCustomerId = activeUser.getXid(XidConstants.DOMAIN_KSK).getDomainId();
 
                 return ret;
         }
 
         public void toMedicalvaluesOrderCreationAPIQueryParams(URIBuilder builder) throws IllegalArgumentException {
-                // BSV-Nummer des Einsenders
+                // ZSR/KSK-Nummer des Einsenders
                 setOptionalParameter(builder, "laboratoryCustomerId", this.laboratoryCustomerId);
                 setOptionalParameter(builder, "physicianGlnNumber", this.physicianGlnNumber);
 

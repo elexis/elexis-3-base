@@ -91,9 +91,9 @@ public class AgendaParallel extends BaseView {
 	@Override
 	public void setFocus() {
 		if (isFirstTime) {
-			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Ansicht veraltet", "Die Ansicht "
-					+ getTitle()
-					+ " ist veraltet und wird nicht mehr unterstützt. Bitte verwenden Sie die Agenda Web Ansicht.");
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(),
+					(ch.elexis.core.l10n.Messages.OUTDATED_VIEW), (ch.elexis.core.l10n.Messages.THE_VIEW) + getTitle()
+							+ " " + (ch.elexis.core.l10n.Messages.OUTDATED_USE_OTHER_VIEW));
 			isFirstTime = false;
 		}
 		sheet.setFocus();

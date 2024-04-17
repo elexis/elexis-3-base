@@ -106,10 +106,10 @@ public class AgendaWeek extends BaseView {
 	@Override
 	public void setFocus() {
 		if (isFirstTime) {
-			MessageDialog.openInformation(Display.getDefault().getActiveShell(), (Messages.OUTDATED_VIEW),
-					(Messages.THE_VIEW)
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(),
+					(ch.elexis.core.l10n.Messages.OUTDATED_VIEW), (ch.elexis.core.l10n.Messages.THE_VIEW)
 							+ getTitle() + " "
-							+ (Messages.OUTDATED_USE_OTHER_VIEW));
+							+ (ch.elexis.core.l10n.Messages.OUTDATED_USE_OTHER_VIEW));
 			isFirstTime = false;
 		}
 		refresh();

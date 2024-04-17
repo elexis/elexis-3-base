@@ -123,4 +123,9 @@ public class IcpcModelService extends AbstractModelService implements IModelServ
 		}
 		return null;
 	}
+
+	@Override
+	protected IModelService getCoreModelService() {
+		return null;
+	}
 }

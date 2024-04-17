@@ -13,7 +13,26 @@ The plugin can be used in Elexis on the Laboratory view if a patient and a corre
 The button simply shows the LG1 logo.
 ![img.png](docs/docsPluginLocation.png)
 
-To trigger the order creation via the button, a patient and an encounter must be selected.
+To trigger the order creation via the button, a patient and an encounter must be selected and the following data must be
+present:
+
+- User
+  - EAN number
+  - KSK/ZSR number
+- Patient
+  - First name
+  - last name
+  - birthdate
+  - gender
+  - social security number (AHV)
+- Encounter (Fall)
+  - Invoice Recipient
+  - Cost Bearer
+    - EAN number
+    - Name
+    - Street and number
+    - ZIP Code
+    - City
 
 After clicking the button, the systems standard browser will open a new tab with the LG1 order entry system (maybe login
 is required first). If logged in, an empty order will be created with the transmitted patient, coverage and encounter data.

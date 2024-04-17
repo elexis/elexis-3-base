@@ -131,4 +131,9 @@ public class OmnivoreModelService extends AbstractModelService implements IModel
 		}
 		return null;
 	}
+
+	@Override
+	protected IModelService getCoreModelService() {
+		return null;
+	}
 }

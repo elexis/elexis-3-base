@@ -26,6 +26,9 @@ import ch.elexis.core.services.IStoreToStringContribution;
 @Component(property = IModelService.SERVICEMODELNAME + "=ch.elexis.base.ch.ebanking.model")
 public class EsrModelService extends AbstractModelService implements IModelService, IStoreToStringContribution {
 
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
+	private IModelService coreModelService;
+
 	@Reference(cardinality = ReferenceCardinality.MANDATORY, target = "(id=default)")
 	private IElexisEntityManager entityManager;
 
@@ -132,5 +135,10 @@ public class EsrModelService extends AbstractModelService implements IModelServi
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected IModelService getCoreModelService() {
+		return coreModelService;
 	}
 }

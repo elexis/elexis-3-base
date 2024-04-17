@@ -232,4 +232,9 @@ public class ArtikelstammModelService extends AbstractModelService
 		}
 		return null;
 	}
+
+	@Override
+	protected IModelService getCoreModelService() {
+		return null;
+	}
 }

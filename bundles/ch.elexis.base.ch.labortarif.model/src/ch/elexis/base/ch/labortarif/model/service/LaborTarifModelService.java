@@ -116,4 +116,9 @@ public class LaborTarifModelService extends AbstractModelService implements IMod
 		}
 		return null;
 	}
+
+	@Override
+	protected IModelService getCoreModelService() {
+		return null;
+	}
 }

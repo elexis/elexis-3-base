@@ -26,6 +26,9 @@ import ch.elexis.core.services.IStoreToStringContribution;
 @Component(property = IModelService.SERVICEMODELNAME + "=at.medevit.elexis.inbox.model")
 public class InboxModelService extends AbstractModelService implements IModelService, IStoreToStringContribution {
 
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
+	private IModelService coreModelService;
+
 	@Reference(cardinality = ReferenceCardinality.MANDATORY, target = "(id=default)")
 	private IElexisEntityManager entityManager;
 
@@ -129,5 +132,10 @@ public class InboxModelService extends AbstractModelService implements IModelSer
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected IModelService getCoreModelService() {
+		return coreModelService;
 	}
 }

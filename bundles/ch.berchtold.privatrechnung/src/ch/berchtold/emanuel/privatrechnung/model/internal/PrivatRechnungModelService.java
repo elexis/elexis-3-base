@@ -128,4 +128,9 @@ public class PrivatRechnungModelService extends AbstractModelService
 		}
 		return null;
 	}
+
+	@Override
+	protected IModelService getCoreModelService() {
+		return null;
+	}
 }

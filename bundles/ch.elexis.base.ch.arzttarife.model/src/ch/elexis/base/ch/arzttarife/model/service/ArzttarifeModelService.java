@@ -59,4 +59,9 @@ public class ArzttarifeModelService extends AbstractModelService implements IMod
 	public void clearCache() {
 		entityManager.clearCache();
 	}
+
+	@Override
+	protected IModelService getCoreModelService() {
+		return null;
+	}
 }

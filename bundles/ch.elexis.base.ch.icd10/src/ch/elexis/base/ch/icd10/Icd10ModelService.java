@@ -142,4 +142,9 @@ public class Icd10ModelService extends AbstractModelService implements IModelSer
 		}
 		return null;
 	}
+
+	@Override
+	protected IModelService getCoreModelService() {
+		return null;
+	}
 }

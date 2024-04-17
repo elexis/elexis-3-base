@@ -253,6 +253,9 @@
    <feature id="ch.itmed.fop.printing.es.feature">
       <category name="libraries"/>
    </feature>
+   <feature id="ch.framsteg.elexis.finance.analytics.feature">
+      <category name="statistics"/>
+   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>

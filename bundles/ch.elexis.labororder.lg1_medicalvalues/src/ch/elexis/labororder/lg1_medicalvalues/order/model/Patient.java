@@ -25,14 +25,15 @@ import ch.elexis.tarmedprefs.TarmedRequirements;
 import ch.rgw.tools.TimeTool;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IXid;
 
 import org.apache.http.client.utils.URIBuilder;
 import ch.elexis.labororder.lg1_medicalvalues.order.model.exceptions.NoEncounterSelectedException;
 
 public class Patient {
-        String id = StringUtils.EMPTY;
         String aisIdentifier = StringUtils.EMPTY;
         String dateofbirth = StringUtils.EMPTY;
         String gender = StringUtils.EMPTY;
@@ -52,15 +53,19 @@ public class Patient {
         String billing = StringUtils.EMPTY;
         String socialSecurityNumber = StringUtils.EMPTY;
         String physicianGlnNumber = StringUtils.EMPTY;
-        String laboratoryCustomerId = StringUtils.EMPTY;
 
         private static Pattern pattern = Pattern.compile("^([A-Za-z-ß\\s]+)(\\d+)$");
 
         public static Patient of(IPatient patient) throws NoEncounterSelectedException {
-                IContact activeUser = ContextServiceHolder.get().getActiveUserContact().get();
+                Optional<IMandator> mandator = ContextServiceHolder.get().getActiveMandator();
+                IMandator activeMandator = null;
+
+                if (mandator.isPresent()) {
+                        activeMandator = mandator.get();
+                }
+
                 Patient ret = new Patient();
 
-                ret.id = patient.getId();
                 ret.aisIdentifier = patient.getPatientNr();
                 ret.dateofbirth = patient.getDateOfBirth().format(DateTimeFormatter.ISO_LOCAL_DATE);
                 ret.gender = patient.getGender() == Gender.FEMALE ? "female" : "male";
@@ -97,28 +102,34 @@ public class Patient {
 
                 IContact costBearer = coverage.getCostBearer();
                 ret.insurancename = costBearer.getDescription1();
-                ret.insurancegln = costBearer.getXid(XidConstants.EAN).getDomainId();
+
+                IXid costBearerEAN = costBearer.getXid(XidConstants.EAN);
+                if (costBearerEAN != null) {
+                        ret.insurancegln = costBearerEAN.getDomainId();
+                }
 
                 ret.billing = getBilling(coverage);
-                ret.socialSecurityNumber = patient.getXid(XidConstants.CH_AHV).getDomainId();
-                ret.physicianGlnNumber = activeUser.getXid(XidConstants.EAN).getDomainId();
-                ret.laboratoryCustomerId = activeUser.getXid(XidConstants.DOMAIN_KSK).getDomainId();
+
+                IXid patientAHV = patient.getXid(XidConstants.CH_AHV);
+                if (patientAHV != null) {
+                        ret.socialSecurityNumber = patientAHV.getDomainId();
+                }
+
+                if (activeMandator != null) {
+                        IXid physicianEAN = activeMandator.getXid(XidConstants.EAN);
+                        if (physicianEAN != null) {
+                                ret.physicianGlnNumber = physicianEAN.getDomainId();
+                        }
+                }
 
                 return ret;
         }
 
         public void toMedicalvaluesOrderCreationAPIQueryParams(URIBuilder builder) throws IllegalArgumentException {
-                // ZSR/KSK-Nummer des Einsenders
-                setOptionalParameter(builder, "laboratoryCustomerId", this.laboratoryCustomerId);
-                setOptionalParameter(builder, "physicianGlnNumber", this.physicianGlnNumber);
+                setOptionalParameter(builder, "physicianId", this.physicianGlnNumber);
 
-                setOptionalParameter(builder, "sourceSystemName", "Elexis");
-                setOptionalParameter(builder, "sourceSystemPatientId", this.aisIdentifier);
-                setOptionalParameter(builder, "patientIdentifier", this.id);
-
-                if (!this.aisIdentifier.isEmpty()) {
-                        setOptionalParameter(builder, "patientIdentifierSystem", "http://medicalvalues.de/identifier/third-party/elexis");
-                }
+                setOptionalParameter(builder, "source_system_name", "Elexis");
+                setOptionalParameter(builder, "source_system_patient_id", this.aisIdentifier);
 
                 setRequiredParameterOrThrow(builder, "patient_name_given", "Vorname", this.firstname);
                 setRequiredParameterOrThrow(builder, "patient_name_family", "Nachname", this.lastname);
@@ -127,16 +138,17 @@ public class Patient {
                 setRequiredParameterOrThrow(builder, "coverage_type", "Abrechnungsart", this.billing);
 
                 setOptionalParameter(builder, "patient_name_title", this.title);
-                setOptionalParameter(builder, "patient_socialSecurityNumber", this.socialSecurityNumber);
+                setOptionalParameter(builder, "patient_social_security_number", this.socialSecurityNumber);
                 setOptionalParameter(builder, "patient_address_street", this.street);
-                setOptionalParameter(builder, "patient_address_housenumber", this.houseNumber);
-                setOptionalParameter(builder, "patient_address_postalCode", this.zip);
+                setOptionalParameter(builder, "patient_address_house_number", this.houseNumber);
+                setOptionalParameter(builder, "patient_address_postal_code", this.zip);
                 setOptionalParameter(builder, "patient_address_city", this.city);
                 setOptionalParameter(builder, "patient_address_country", this.country);
                 setOptionalParameter(builder, "patient_telecom_home", this.telephoneNumberHome);
                 setOptionalParameter(builder, "patient_telecom_mobile", this.mobilePhoneNumber);
                 setOptionalParameter(builder, "coverage_payor_display", this.insurancename);
                 setOptionalParameter(builder, "coverage_payor_identifier", this.insurancegln);
+                setOptionalParameter(builder, "coverage_identifier", this.insurancenumber);
         }
 
         private void setRequiredParameterOrThrow(URIBuilder builder, String key, String readableKey, String value) throws IllegalArgumentException {
@@ -154,24 +166,20 @@ public class Patient {
         }
 
         private static String getBilling(ICoverage coverage){
-                IContact costBearer = coverage.getCostBearer();
-                IContact guarantor = coverage.getGuarantor();
-
-                if (costBearer == null) {
-                        costBearer = coverage.getGuarantor();
-                }
-
-                if (costBearer != null ) {
-                    if (costBearer.isOrganization()) {
+                BillingLaw billingLaw = coverage.getBillingSystem().getLaw();
+                if (billingLaw == BillingLaw.VVG ||
+                    billingLaw == BillingLaw.MV ||
+                    billingLaw == BillingLaw.IV ||
+                    billingLaw == BillingLaw.KVG) {
                         return "SwissIns";
-                    }
-
-                    if (costBearer.isPerson()) {
+                }
+                if (billingLaw == BillingLaw.UVG) {
+                        return "SwissAccidentInsurance";
+                }
+                if (billingLaw == BillingLaw.privat) {
                         return "SEL";
-                    }
                 }
 
-                // default
                 return "SEL";
         }
 }

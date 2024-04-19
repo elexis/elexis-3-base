@@ -16,19 +16,14 @@ The button simply shows the LG1 logo.
 To trigger the order creation via the button, a patient and an encounter must be selected and the following data must be
 present:
 
-- User
-  - EAN number
-  - KSK/ZSR number
 - Patient
   - First name
   - last name
   - birthdate
   - gender
-  - social security number (AHV)
 - Encounter (Fall)
   - Invoice Recipient
   - Cost Bearer
-    - EAN number
     - Name
     - Street and number
     - ZIP Code

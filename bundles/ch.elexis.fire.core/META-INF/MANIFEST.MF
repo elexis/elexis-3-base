@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: FIRE Core
+Bundle-SymbolicName: ch.elexis.fire.core
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: medevit.at
+Automatic-Module-Name: ch.elexis.fire.core
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Bundle: info.elexis.target.hapi.fhir,
+ ch.elexis.core.services,
+ ch.elexis.core
+Service-Component: OSGI-INF/ch.elexis.fire.core.internal.FIREService.xml
+Import-Package: ch.elexis.core.findings,
+ ch.elexis.core.findings.util,
+ ch.elexis.core.findings.util.fhir,
+ org.apache.commons.codec.binary;version="[1.14.0,2.0.0]",
+ org.osgi.service.component.annotations;version="[1.3.0,2.0.0]"

@@ -3,6 +3,8 @@ package ch.elexis.pdfBills;
 import org.apache.commons.lang3.StringUtils;
 
 import ch.elexis.core.data.activator.CoreHub;
+import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class OutputterUtil {
 
@@ -23,13 +25,15 @@ public class OutputterUtil {
 	}
 
 	private static boolean hasGlobalDirectories() {
-		return StringUtils.isNotBlank(CoreHub.globalCfg.get(CFG_PRINT_GLOBALPDFDIR, null))
-				&& StringUtils.isNotBlank(CoreHub.globalCfg.get(CFG_PRINT_GLOBALXMLDIR, null));
+		return StringUtils
+				.isNotBlank(PreferencesUtil.getOsSpecificPreference(CFG_PRINT_GLOBALPDFDIR, ConfigServiceHolder.get()))
+				&& StringUtils.isNotBlank(
+						PreferencesUtil.getOsSpecificPreference(CFG_PRINT_GLOBALXMLDIR, ConfigServiceHolder.get()));
 	}
 
 	public static String getXmlOutputDir(String configRoot) {
 		if (useGlobalOutputDirs()) {
-			return CoreHub.globalCfg.get(CFG_PRINT_GLOBALXMLDIR, StringUtils.EMPTY);
+			return PreferencesUtil.getOsSpecificPreference(CFG_PRINT_GLOBALXMLDIR, ConfigServiceHolder.get());
 		} else {
 			return CoreHub.localCfg.get(configRoot + RnOutputter.XMLDIR, StringUtils.EMPTY);
 		}
@@ -37,7 +41,7 @@ public class OutputterUtil {
 
 	public static String getPdfOutputDir(String configRoot) {
 		if (useGlobalOutputDirs()) {
-			return CoreHub.globalCfg.get(CFG_PRINT_GLOBALPDFDIR, StringUtils.EMPTY);
+			return PreferencesUtil.getOsSpecificPreference(CFG_PRINT_GLOBALPDFDIR, ConfigServiceHolder.get());
 		} else {
 			return CoreHub.localCfg.get(configRoot + RnOutputter.PDFDIR, StringUtils.EMPTY);
 		}

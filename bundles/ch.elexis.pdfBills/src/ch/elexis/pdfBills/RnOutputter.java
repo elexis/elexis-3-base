@@ -29,7 +29,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -57,6 +56,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.InvoiceConstants;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.model.InvoiceState.REJECTCODE;
+import ch.elexis.core.preferences.PreferencesUtil;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
@@ -141,6 +141,7 @@ public class RnOutputter implements IRnOutputter {
 		final StringJoiner mailErrors = new StringJoiner("\n- ", "- ", StringUtils.EMPTY); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(), new IRunnableWithProgress() {
+				@Override
 				public void run(final IProgressMonitor monitor) {
 					monitor.beginTask("Exportiere Rechnungen...", rnn.size() * 10);
 					int errors = 0;
@@ -300,7 +301,7 @@ public class RnOutputter implements IRnOutputter {
 	}
 
 	private String sendAsMail(Kontakt receiver, Rechnung rechnung, List<File> printed) {
-		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 		try {
 			String attachmentsString = getAttachmentsString(printed);
 			Command sendMailCommand = commandService.getCommand("ch.elexis.core.mail.ui.sendMailNoUi"); //$NON-NLS-1$
@@ -383,10 +384,12 @@ public class RnOutputter implements IRnOutputter {
 
 		if (OutputterUtil.useGlobalOutputDirs()) {
 			Label lXML = new Label(ret, SWT.NONE);
-			lXML.setText("XML Verzeichnis: " + CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, null));
+			lXML.setText("XML Verzeichnis: " + PreferencesUtil
+					.getOsSpecificPreference(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, ConfigServiceHolder.get()));
 			lXML.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 			Label lPDF = new Label(ret, SWT.NONE);
-			lPDF.setText("PDF Verzeichnis: " + CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, null));
+			lPDF.setText("PDF Verzeichnis: " + PreferencesUtil
+					.getOsSpecificPreference(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, ConfigServiceHolder.get()));
 			lPDF.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		} else {
 			Button bXML = new Button(ret, SWT.PUSH);
@@ -424,7 +427,7 @@ public class RnOutputter implements IRnOutputter {
 			tPdf.setText(CoreHub.localCfg.get(CFG_ROOT + PDFDIR, StringUtils.EMPTY));
 		}
 
-		return (Control) ret;
+		return ret;
 	}
 
 	@Override

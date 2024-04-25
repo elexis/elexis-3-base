@@ -1,8 +1,5 @@
 package ch.elexis.pdfBills;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,7 +9,6 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -42,11 +38,10 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.mail.MailAccount;
 import ch.elexis.core.mail.MailAccount.TYPE;
-import ch.elexis.core.services.IVirtualFilesystemService;
-import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
-import ch.elexis.core.ui.e4.dialog.VirtualFilesystemUriEditorDialog;
+import ch.elexis.core.ui.e4.jface.preference.URIFieldEditorComposite;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.data.Mandant;
@@ -275,86 +270,96 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 		useGlobalConfig.setText("Globale Ausgabe Verzeichnisse");
 		useGlobalConfig.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
-		Button bXML = new Button(composite, SWT.PUSH);
-		bXML.setText("XML Verzeichnis");
-		Text tXml = new Text(composite, SWT.BORDER);
-		tXml.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		Button bPDF = new Button(composite, SWT.PUSH);
-		bPDF.setText("PDF Verzeichnis");
-		Text tPdf = new Text(composite, SWT.BORDER);
-		tPdf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		Label lbl = new Label(composite, SWT.NONE);
+		lbl.setText("XML Verzeichnis");
+		URIFieldEditorComposite globalXmlDir = new URIFieldEditorComposite(OutputterUtil.CFG_PRINT_GLOBALXMLDIR,
+				composite, SWT.NONE);
+		globalXmlDir.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
+		globalXmlDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
-		bXML.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
-				URI inputUri = null;
-				try {
-					String stringValue = tXml.getText();
-					if (StringUtils.isNotBlank(stringValue)) {
-						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue);
-						inputUri = fileHandle.toURL().toURI();
-					}
-				} catch (URISyntaxException | IOException ex) {
-				}
-				VirtualFilesystemUriEditorDialog dialog = new VirtualFilesystemUriEditorDialog(getShell(),
-						virtualFilesystemService, inputUri);
-				if (IDialogConstants.OK_ID == dialog.open()) {
-					tXml.setText(dialog.getValue().toString());
-				}
-			}
+		lbl = new Label(composite, SWT.NONE);
+		lbl.setText("PDF Verzeichnis");
+		URIFieldEditorComposite globalPdfDir = new URIFieldEditorComposite(OutputterUtil.CFG_PRINT_GLOBALPDFDIR,
+				composite, SWT.NONE);
+		globalPdfDir.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
+		globalPdfDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
-		});
-		bPDF.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
-				URI inputUri = null;
-				try {
-					String stringValue = tPdf.getText();
-					if (StringUtils.isNotBlank(stringValue)) {
-						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue);
-						inputUri = fileHandle.toURL().toURI();
-					}
-				} catch (URISyntaxException | IOException ex) {
-				}
-				VirtualFilesystemUriEditorDialog dialog = new VirtualFilesystemUriEditorDialog(getShell(),
-						virtualFilesystemService, inputUri);
-				if (IDialogConstants.OK_ID == dialog.open()) {
-					tPdf.setText(dialog.getValue().toString());
-				}
-			}
-		});
-		tXml.setText(CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, StringUtils.EMPTY));
-		tPdf.setText(CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, StringUtils.EMPTY));
-
-		tXml.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				CoreHub.globalCfg.set(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, tXml.getText());
-			}
-		});
-		tPdf.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				CoreHub.globalCfg.set(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, tPdf.getText());
-			}
-		});
+//		Button bXML = new Button(composite, SWT.PUSH);
+//		bXML.setText("XML Verzeichnis");
+//		Text tXml = new Text(composite, SWT.BORDER);
+//		tXml.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+//		Button bPDF = new Button(composite, SWT.PUSH);
+//		bPDF.setText("PDF Verzeichnis");
+//		Text tPdf = new Text(composite, SWT.BORDER);
+//		tPdf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+//
+//		bXML.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
+//				URI inputUri = null;
+//				try {
+//					String stringValue = tXml.getText();
+//					if (StringUtils.isNotBlank(stringValue)) {
+//						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue, false);
+//						inputUri = fileHandle.toURL().toURI();
+//					}
+//				} catch (URISyntaxException | IOException ex) {
+//				}
+//				VirtualFilesystemUriEditorDialog dialog = new VirtualFilesystemUriEditorDialog(getShell(),
+//						virtualFilesystemService, inputUri);
+//				if (IDialogConstants.OK_ID == dialog.open()) {
+//					tXml.setText(dialog.getValue().toString());
+//				}
+//			}
+//
+//		});
+//		bPDF.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
+//				URI inputUri = null;
+//				try {
+//					String stringValue = tPdf.getText();
+//					if (StringUtils.isNotBlank(stringValue)) {
+//						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue, false);
+//						inputUri = fileHandle.toURL().toURI();
+//					}
+//				} catch (URISyntaxException | IOException ex) {
+//				}
+//				VirtualFilesystemUriEditorDialog dialog = new VirtualFilesystemUriEditorDialog(getShell(),
+//						virtualFilesystemService, inputUri);
+//				if (IDialogConstants.OK_ID == dialog.open()) {
+//					tPdf.setText(dialog.getValue().toString());
+//				}
+//			}
+//		});
+//		tXml.setText(CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, StringUtils.EMPTY));
+//		tPdf.setText(CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, StringUtils.EMPTY));
+//
+//		tXml.addModifyListener(new ModifyListener() {
+//			@Override
+//			public void modifyText(ModifyEvent e) {
+//				CoreHub.globalCfg.set(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, tXml.getText());
+//			}
+//		});
+//		tPdf.addModifyListener(new ModifyListener() {
+//			@Override
+//			public void modifyText(ModifyEvent e) {
+//				CoreHub.globalCfg.set(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, tPdf.getText());
+//			}
+//		});
 
 		useGlobalConfig.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				CoreHub.localCfg.set(OutputterUtil.CFG_PRINT_GLOBALOUTPUTDIRS, useGlobalConfig.getSelection());
 				if (useGlobalConfig.getSelection()) {
-					bPDF.setEnabled(true);
-					bXML.setEnabled(true);
-					tPdf.setEnabled(true);
-					tXml.setEnabled(true);
+					globalXmlDir.setEnabled(true);
+					globalPdfDir.setEnabled(true);
 				} else {
-					bPDF.setEnabled(false);
-					bXML.setEnabled(false);
-					tPdf.setEnabled(false);
-					tXml.setEnabled(false);
+					globalXmlDir.setEnabled(false);
+					globalPdfDir.setEnabled(false);
 				}
 			}
 		});

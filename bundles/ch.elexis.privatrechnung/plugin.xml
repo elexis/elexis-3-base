@@ -23,11 +23,6 @@
    </extension>
    <extension
          point="ch.elexis.core.data.RechnungsManager">
-      <Rechnung
-            localizedName="%Privatrechnung.Elexis"
-            name="Privatrechnung"
-            outputter="ch.elexis.privatrechnung.rechnung.RechnungsDrucker">
-      </Rechnung>
    </extension>
    <extension
          point="org.eclipse.ui.views">

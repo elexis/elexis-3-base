@@ -707,6 +707,25 @@ public class ElexisPDFGenerator {
 						}
 					}
 				}
+				expr = xPath.compile("/request/payload/body/tiers_garant/biller"); //$NON-NLS-1$
+				result = expr.evaluate(domDocument, XPathConstants.NODESET);
+				NodeList billerElements = (NodeList) result;
+				for (int i = 0; i < billerElements.getLength(); i++) {
+					Node billerElement = billerElements.item(i);
+					if (billerElement instanceof Element) {
+						eanSet.add(((Element) billerElement).getAttribute("ean_party")); //$NON-NLS-1$
+					}
+				}
+				expr = xPath.compile("/request/payload/body/tiers_payant/biller"); //$NON-NLS-1$
+				result = expr.evaluate(domDocument, XPathConstants.NODESET);
+				billerElements = (NodeList) result;
+				for (int i = 0; i < billerElements.getLength(); i++) {
+					Node billerElement = billerElements.item(i);
+					if (billerElement instanceof Element) {
+						eanSet.add(((Element) billerElement).getAttribute("ean_party")); //$NON-NLS-1$
+					}
+				}
+
 				StringBuilder eanList = new StringBuilder();
 				String[] eanArray = eanSet.toArray(new String[eanSet.size()]);
 				for (int i = 0; i < eanArray.length; i++) {

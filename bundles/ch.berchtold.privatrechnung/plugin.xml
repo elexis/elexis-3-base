@@ -15,11 +15,6 @@
    </extension>
    <extension
          point="ch.elexis.core.data.RechnungsManager">
-      <Rechnung
-            localizedName="%Privatrechnung.Berchtold"
-            name="Privatrechnung Berchtold"
-            outputter="ch.berchtold.emanuel.privatrechnung.rechnung.RechnungsDrucker">
-      </Rechnung>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

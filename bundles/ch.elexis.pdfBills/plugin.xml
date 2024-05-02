@@ -4,11 +4,6 @@
    <extension
          point="ch.elexis.core.data.RechnungsManager">
       <Rechnung
-            localizedName="PDF Output"
-            name="PDF-Rechnungsdrucker.Rechnung1"
-            outputter="ch.elexis.pdfBills.RnOutputter">
-      </Rechnung>
-      <Rechnung
             localizedName="Rechnung ausdrucken"
             name="QR-PDF-Rechnungsdrucker.Rechnung1"
             outputter="ch.elexis.pdfBills.QrRnOutputter">

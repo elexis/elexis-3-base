@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -32,12 +31,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.ui.Hub;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.data.Preferences;
@@ -46,6 +45,7 @@ import ch.elexis.omnivore.model.TransientCategory;
 import ch.elexis.omnivore.model.util.CategoryUtil;
 import ch.elexis.omnivore.ui.Messages;
 import ch.elexis.omnivore.ui.service.OmnivoreModelServiceHolder;
+import ch.elexis.omnivore.ui.util.CategorySelectDialog;
 import ch.rgw.tools.TimeTool;
 
 public class FileImportDialog extends TitleAreaDialog {
@@ -65,7 +65,7 @@ public class FileImportDialog extends TitleAreaDialog {
 	private String preSelectedCategory;
 
 	public FileImportDialog(IDocumentHandle dh) {
-		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
+		super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		this.dh = dh;
 		file = dh.getTitle();
 	}
@@ -74,12 +74,12 @@ public class FileImportDialog extends TitleAreaDialog {
 	 * @wbp.parser.constructor
 	 */
 	public FileImportDialog(String name) {
-		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
+		super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		file = name;
 	}
 
 	public FileImportDialog(String name, String preSelectedCategory) {
-		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
+		super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		file = name;
 		this.preSelectedCategory = preSelectedCategory;
 	}
@@ -135,13 +135,14 @@ public class FileImportDialog extends TitleAreaDialog {
 		});
 		Button bEditCat = new Button(cCats, SWT.PUSH);
 		bEditCat.setImage(Images.IMG_EDIT.getImage());
-		bEditCat.setToolTipText("Kategorie umbenennen");
+		bEditCat.setToolTipText(Messages.DocumentMetaDataDialog_renameCategory);
 		bEditCat.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String old = cbCategories.getText();
-				InputDialog id = new InputDialog(getShell(), MessageFormat.format("Kategorie '{0}' umbenennen.", old),
-						"Geben Sie bitte einen neuen Namen für die Kategorie ein", old, null);
+				InputDialog id = new InputDialog(getShell(),
+						MessageFormat.format(Messages.DocumentMetaDataDialog_renameCategoryConfirm, old),
+						Messages.DocumentMetaDataDialog_renameCategoryText, old, null);
 				if (id.open() == Dialog.OK) {
 					String nn = id.getValue();
 					CategoryUtil.renameCategory(old, nn);
@@ -154,22 +155,22 @@ public class FileImportDialog extends TitleAreaDialog {
 
 		Button bDeleteCat = new Button(cCats, SWT.PUSH);
 		bDeleteCat.setImage(Images.IMG_DELETE.getImage());
-		bDeleteCat.setToolTipText("Kategorie löschen");
+		bDeleteCat.setToolTipText(Messages.Core_Delete_Document_Category);
 		bDeleteCat.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent ev) {
 				String old = cbCategories.getText();
-				InputDialog id = new InputDialog(getShell(), MessageFormat.format("Kategorie {0}löschen", old),
-						"Geben Sie bitte an, in welche andere Kategorie die Dokumente dieser Kategorie verschoben werden sollen",
-						StringUtils.EMPTY, null);
-				if (id.open() == Dialog.OK) {
-					CategoryUtil.removeCategory(old, id.getValue());
+				CategorySelectDialog catSelectDialog = new CategorySelectDialog(getShell(),
+						MessageFormat.format(Messages.DocumentMetaDataDialog_deleteCategoryConfirm, old),
+						Messages.DocumentMetaDataDialog_deleteCategoryConfirmText,
+						CategoryUtil.getCategoriesNames());
+
+				if (catSelectDialog.open() == Dialog.OK) {
+					String newCategory = catSelectDialog.getSelectedCategory();
+					CategoryUtil.removeCategory(old, newCategory);
 					cbCategories.remove(old);
-					for (int i = 0; i < cbCategories.getItems().length; i++) {
-						if (cbCategories.getItems()[i].equals(id.getValue())) {
-							cbCategories.select(i);
-						}
-					}
+					cbCategories.add(newCategory);
+					cbCategories.setText(newCategory);
 				}
 			}
 		});

@@ -9,8 +9,6 @@
  **********************************************************************/
 package ch.elexis.omnivore.ui;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
 	public static String DocHandle_cantReadCaption = ch.elexis.core.l10n.Messages.Core_Unable_to_read_file;
 	public static String DocHandle_configErrorCaption = ch.elexis.core.l10n.Messages.DocHandle_configErrorCaption;
@@ -83,5 +81,14 @@ public class Messages {
 	public static String Preferences_pathForDocs = ch.elexis.core.l10n.Messages.Preferences_pathForDocs;
 	public static String Preferences_storeInFS = ch.elexis.core.l10n.Messages.Preferences_storeInFS;
 	public static String DocHandle_runErrorHeading = ch.elexis.core.l10n.Messages.Core_Unable_to_start_file;
+	public static String DocumentMetaDataDialog_deleteCategoryConfirm = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_deleteCategoryConfirm;
+	public static String Core_Delete = ch.elexis.core.l10n.Messages.Core_Delete;
+	public static String DocumentMetaDataDialog_renameCategoryConfirm = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_renameCategoryConfirm;
+	public static String DocumentMetaDataDialog_renameCategoryText = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_renameCategoryText;
+	public static String DocumentMetaDataDialog_deleteCategoryConfirmText = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_deleteCategoryConfirmText;
+	public static String DocumentMetaDataDialog_deleteCategoryComboConfirmText = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_deleteCategoryComboConfirmText;
+	public static String DocumentMetaDataDialog_deleteCategoryComboConfirm = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_deleteCategoryComboConfirm;
+	public static String DocumentMetaDataDialog_renameCategory = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_renameCategory;
+	public static String Core_Delete_Document_Category = ch.elexis.core.l10n.Messages.Core_Delete_Document_Category;
 
 }

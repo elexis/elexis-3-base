@@ -20,8 +20,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
-import com.itextpdf.text.DocumentException;
-
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.unibe.iam.scg.archie.ArchieActivator;
@@ -67,7 +65,7 @@ public class ExportPdfAction extends Action {
 		if (fileName != null) {
 			try {
 				PDFWriter.saveFile(fileName, ProviderManager.getInstance().getProvider());
-			} catch (DocumentException | IOException e) {
+			} catch (IOException e) {
 				ArchieActivator.LOG.log("Could not save the PDF file." + StringUtils.LF + e.getLocalizedMessage(),
 						Log.ERRORS);
 				SWTHelper.showError("Fehler beim Schreiben von PDF",

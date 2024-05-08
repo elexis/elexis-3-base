@@ -1,177 +1,143 @@
 package ch.unibe.iam.scg.archie.export;
 
-import java.io.FileNotFoundException;
+import java.awt.Color;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.ExceptionConverter;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
-import com.itextpdf.text.pdf.PdfTemplate;
-import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+import be.quodlibet.boxable.BaseTable;
+import be.quodlibet.boxable.Cell;
+import be.quodlibet.boxable.HorizontalAlignment;
+import be.quodlibet.boxable.Row;
 import ch.unibe.iam.scg.archie.model.AbstractDataProvider;
 import ch.unibe.iam.scg.archie.model.DataSet;
 import ch.unibe.iam.scg.archie.utils.ProviderHelper;
 
 public class PDFWriter {
-	public static void saveFile(String fileName, AbstractDataProvider provider)
-			throws DocumentException, FileNotFoundException {
-		Document document = new Document(PageSize.A4.rotate());
-		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileName));
-		FooterEvent footerEvent = new FooterEvent();
-		writer.setPageEvent(footerEvent);
-		document.open();
-		Font font = FontFactory.getFont(FontFactory.HELVETICA, 10);
-		writeProviderInformation(document, provider, font);
-		DataSet data = provider.getDataSet();
-		PdfPTable table = createDataTable(data, font);
-		document.add(table);
-		document.close();
+	public static void saveFile(String fileName, AbstractDataProvider provider) throws IOException {
+		try (PDDocument document = new PDDocument()) {
+			PDPage page = new PDPage(new PDRectangle(PDRectangle.A4.getHeight(), PDRectangle.A4.getWidth()));
+			document.addPage(page);
+			PDPageContentStream contentStream = new PDPageContentStream(document, page);
+			float yPosDescriptionEnd = writeProviderInformation(contentStream, provider, page);
+			contentStream.close();
+			createDataTable(document, page, provider.getDataSet(), yPosDescriptionEnd);
+			addPageNumbers(document);
+			document.save(new FileOutputStream(fileName));
+		}
 	}
 
-	private static PdfPTable createDataTable(DataSet data, Font font) throws DocumentException {
-		PdfPTable table = new PdfPTable(data.getHeadings().size());
-		table.setHeaderRows(1);
-		table.setWidthPercentage(100);
-		Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
-		for (String heading : data.getHeadings()) {
-			PdfPCell cell = new PdfPCell(new Paragraph(heading, boldFont));
-			cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-			table.addCell(cell);
-		}
-		for (Object[] row : data) {
-			for (int i = 0; i < row.length; i++) {
-				String contentText = row[i] != null ? row[i].toString() : "";
-				PdfPCell cell;
-				if (data.getHeadings().get(i).equals("Betrag") || data.getHeadings().get(i).equals("Betr. Leistungen")
-						|| data.getHeadings().get(i).equals("Tag-Gesamt")
-						|| data.getHeadings().get(i).equals("Gesamt")) {
-					PdfPTable innerTable = new PdfPTable(2);
-					innerTable.setWidths(new float[] { 0.5f, 1f });
-					PdfPCell currencyCell = new PdfPCell(new Phrase("CHF", boldFont));
-					currencyCell.setBorder(PdfPCell.NO_BORDER);
-					currencyCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-					innerTable.addCell(currencyCell);
-					PdfPCell amountCell = new PdfPCell(new Phrase(contentText, boldFont));
-					amountCell.setBorder(PdfPCell.NO_BORDER);
-					amountCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-					innerTable.addCell(amountCell);
-					cell = new PdfPCell(innerTable);
-					cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-				} else {
-					cell = new PdfPCell(new Paragraph(contentText, font));
-					if (i > 0) {
-						cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-					}
+	private static void createDataTable(PDDocument doc, PDPage page, DataSet data, float startY) throws IOException {
+		try (PDPageContentStream contentStream = new PDPageContentStream(doc, page,
+				PDPageContentStream.AppendMode.APPEND, true)) {
+			float margin = 50;
+			float tableWidth = page.getMediaBox().getWidth() - (2 * margin);
+			BaseTable table = new BaseTable(startY, startY, margin, tableWidth, margin, doc, page, true, true);
+			Color darkGray = new Color(200, 200, 200);
+			Color lightGray = new Color(230, 230, 230);
+			Color white = new Color(255, 255, 255);
+			Row<PDPage> headerRow = table.createRow(15f);
+			for (String heading : data.getHeadings()) {
+				Cell<PDPage> cell = headerRow.createCell((100.0f / data.getHeadings().size()), heading);
+				cell.setFont(PDType1Font.HELVETICA_BOLD);
+				cell.setFillColor(darkGray);
+				cell.setAlign(HorizontalAlignment.CENTER);
+			}
+			table.addHeaderRow(headerRow);
+			boolean toggleColor = false;
+			for (Object[] row : data) {
+				Row<PDPage> dataRow = table.createRow(10f);
+				for (Object obj : row) {
+					String text = obj.toString();
+					String cleanText = cleanText(text);
+					Cell<PDPage> cell = dataRow.createCell((100.0f / row.length), cleanText);
+					cell.setFont(PDType1Font.HELVETICA);
+					cell.setFillColor(toggleColor ? lightGray : white);
+					cell.setAlign(HorizontalAlignment.RIGHT);
 				}
-				table.addCell(cell);
+				toggleColor = !toggleColor;
 			}
+			table.draw();
 		}
-		float[] columnWidths = calculateColumnWidths(data);
-		table.setWidths(columnWidths);
-		return table;
 	}
 
-	private static float[] calculateColumnWidths(DataSet data) {
-		float[] columnWidths = new float[data.getHeadings().size()];
-		for (int i = 0; i < data.getHeadings().size(); i++) {
-			String heading = data.getHeadings().get(i);
-			if (heading.equals("Pat-Nr") || heading.equals("Pat-ort") || heading.equals("Rg-Empf. Ort")) {
-				columnWidths[i] = 40;
-			} else if (heading.contains("Betrag") || heading.contains("Betr. Leistungen")
-					|| heading.contains("Tag-Gesamt") || heading.contains("Gesamt")) {
-				columnWidths[i] = 80;
-			} else if (heading.contains("Typ")) {
-				columnWidths[i] = 30;
-			} else {
-				columnWidths[i] = 60;
-			}
-		}
-		return columnWidths;
-	}
-
-	private static void writeProviderInformation(Document document, AbstractDataProvider provider, Font font)
-			throws DocumentException {
+	private static float writeProviderInformation(PDPageContentStream contentStream, AbstractDataProvider provider,
+			PDPage page) throws IOException {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		Paragraph providerInfo = new Paragraph(
-				provider.getName() + "\n" + dateFormat.format(Calendar.getInstance().getTime()), font);
-		providerInfo.setSpacingAfter(12);
-		document.add(providerInfo);
+		contentStream.beginText();
+		contentStream.setFont(PDType1Font.HELVETICA, 12);
+		float yPos = page.getMediaBox().getHeight() - 50;
+		contentStream.newLineAtOffset(50, yPos);
+		contentStream.showText(provider.getName() + " " + dateFormat.format(Calendar.getInstance().getTime()));
+		contentStream.endText();
 		Map<String, Object> getters = ProviderHelper.getGetterMap(provider, true);
+		contentStream.beginText();
+		contentStream.setFont(PDType1Font.HELVETICA, 10);
+		contentStream.newLineAtOffset(50, yPos - 15);
+		int totalLines = 0;
+		float maxWidth = page.getMediaBox().getWidth() - 100;
 		for (String key : getters.keySet()) {
-			String info = key + " = " + getters.get(key).toString();
-			Paragraph paramInfo = new Paragraph(info, font);
-			paramInfo.setSpacingAfter(6);
-			document.add(paramInfo);
+			List<String> wrappedText = wrapText(key + ": " + getters.get(key).toString(), maxWidth, contentStream, 10);
+			for (String line : wrappedText) {
+				String cleanLine = cleanText(line);
+				contentStream.showText(cleanLine);
+				contentStream.newLineAtOffset(0, -15);
+			}
+			totalLines += wrappedText.size();
 		}
-		document.add(new Paragraph("\n"));
+		contentStream.endText();
+		return yPos - 15 - 15 * totalLines;
 	}
 
-	public static class FooterEvent extends PdfPageEventHelper {
-		protected PdfTemplate total;
-		protected BaseFont helv;
-		protected Font footerFont = FontFactory.getFont(FontFactory.HELVETICA, 8, Font.NORMAL);
-
-		public void onOpenDocument(PdfWriter writer, Document document) {
-			total = writer.getDirectContent().createTemplate(50, 16);
-			try {
-				helv = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
-			} catch (Exception e) {
-				throw new ExceptionConverter(e);
+	private static List<String> wrapText(String text, float maxWidth, PDPageContentStream contentStream, float fontSize)
+			throws IOException {
+		List<String> lines = new ArrayList<>();
+		String[] words = text.split(" ");
+		StringBuilder currentLine = new StringBuilder();
+		float currentWidth = 0;
+		for (String word : words) {
+			float wordWidth = fontSize * PDType1Font.HELVETICA.getStringWidth(word + " ") / 1000;
+			if (currentWidth + wordWidth < maxWidth) {
+				currentLine.append(word).append(" ");
+				currentWidth += wordWidth;
+			} else {
+				lines.add(currentLine.toString().trim());
+				currentLine = new StringBuilder(word + " ");
+				currentWidth = wordWidth;
 			}
 		}
-
-		@Override
-		public void onEndPage(PdfWriter writer, Document document) {
-			PdfPTable footer = new PdfPTable(2);
-			try {
-				footer.setWidths(new int[] { 10, 1 });
-				footer.setTotalWidth(
-						document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin());
-				footer.getDefaultCell().setFixedHeight(20);
-				footer.getDefaultCell().setBorder(Rectangle.TOP);
-				footer.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
-				PdfPCell textCell = new PdfPCell(new Phrase("Seite " + writer.getPageNumber() + " von ", footerFont));
-				textCell.setBorder(Rectangle.TOP);
-				textCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				textCell.setPaddingRight(-17);
-				footer.addCell(textCell);
-				PdfPCell cell = new PdfPCell(Image.getInstance(total), false);
-				cell.setBorder(Rectangle.TOP);
-				cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				cell.setPaddingTop((float) -7.5);
-				footer.addCell(cell);
-
-				footer.writeSelectedRows(0, -1, document.leftMargin(), 30, writer.getDirectContent());
-			} catch (DocumentException de) {
-				throw new ExceptionConverter(de);
-			}
+		if (currentLine.length() > 0) {
+			lines.add(currentLine.toString().trim());
 		}
+		return lines;
+	}
 
-		@Override
-		public void onCloseDocument(PdfWriter writer, Document document) {
-			total.beginText();
-			total.setFontAndSize(helv, 8);
-			total.setTextMatrix(0, 0);
-			total.showText(String.valueOf(writer.getPageNumber()));
-			total.endText();
+	private static void addPageNumbers(PDDocument document) throws IOException {
+		int totalPages = document.getNumberOfPages();
+		for (int i = 0; i < totalPages; i++) {
+			PDPage page = document.getPage(i);
+			PDPageContentStream footerContentStream = new PDPageContentStream(document, page,
+					PDPageContentStream.AppendMode.APPEND, true);
+			footerContentStream.beginText();
+			footerContentStream.setFont(PDType1Font.HELVETICA, 10);
+			footerContentStream.newLineAtOffset(page.getMediaBox().getWidth() - 100, 30);
+			footerContentStream.showText("Seite " + (i + 1) + " von " + totalPages);
+			footerContentStream.endText();
+			footerContentStream.close();
 		}
+	}
+
+	private static String cleanText(String text) {
+		return text.replace("\r", "").replace("\n", "");
 	}
 }

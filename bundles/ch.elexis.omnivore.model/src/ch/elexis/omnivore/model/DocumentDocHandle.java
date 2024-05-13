@@ -338,12 +338,14 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			return true;
 		}
 		IVirtualFilesystemHandle vfsHandle = getStorageFile(true);
-		try (OutputStream out = vfsHandle.openOutputStream()) {
-			out.write(doc);
-			getEntity().setDoc(null);
-		} catch (IOException ios) {
-			LoggerFactory.getLogger(getClass()).error("Exporting dochandle [" + getId() + "] to filesystem fails."); //$NON-NLS-1$ //$NON-NLS-2$
-			return false;
+		if (vfsHandle != null) {
+			try (OutputStream out = vfsHandle.openOutputStream()) {
+				out.write(doc);
+				getEntity().setDoc(null);
+			} catch (IOException ios) {
+				LoggerFactory.getLogger(getClass()).error("Exporting dochandle [" + getId() + "] to filesystem fails."); //$NON-NLS-1$ //$NON-NLS-2$
+				return false;
+			}
 		}
 		return true;
 	}

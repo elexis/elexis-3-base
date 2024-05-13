@@ -39,6 +39,8 @@ public class OutsourceUiJob {
 							if (!docHandle.exportToFileSystem()) {
 								SWTHelper.showError(Messages.DocHandle_writeErrorCaption2,
 										Messages.DocHandle_writeErrorCaption2, "Fehlerdetails siehe Logdatei");
+							} else {
+								OmnivoreModelServiceHolder.get().save(docHandle);
 							}
 							monitor.worked(1);
 						}

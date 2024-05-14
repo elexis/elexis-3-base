@@ -1,10 +1,13 @@
 package ch.elexis.omnivore.ui.jobs;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.persistence.config.HintValues;
+import org.eclipse.persistence.config.QueryHints;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.core.services.IQuery;
@@ -27,7 +30,8 @@ public class OutsourceUiJob {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					IQuery<IDocumentHandle> qDoc = OmnivoreModelServiceHolder.get().getQuery(IDocumentHandle.class);
 
-					try (IQueryCursor<IDocumentHandle> docs = qDoc.executeAsCursor()) {
+					try (IQueryCursor<IDocumentHandle> docs = qDoc
+							.executeAsCursor(Collections.singletonMap(QueryHints.MAINTAIN_CACHE, HintValues.TRUE))) {
 						monitor.beginTask("Dateien werden ausgelagert...", docs.size());
 
 						while (docs.hasNext()) {
@@ -39,8 +43,6 @@ public class OutsourceUiJob {
 							if (!docHandle.exportToFileSystem()) {
 								SWTHelper.showError(Messages.DocHandle_writeErrorCaption2,
 										Messages.DocHandle_writeErrorCaption2, "Fehlerdetails siehe Logdatei");
-							} else {
-								OmnivoreModelServiceHolder.get().save(docHandle);
 							}
 							monitor.worked(1);
 						}

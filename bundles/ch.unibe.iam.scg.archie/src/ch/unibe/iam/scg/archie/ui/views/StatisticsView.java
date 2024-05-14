@@ -28,6 +28,7 @@ import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.acl.ArchieACL;
 import ch.unibe.iam.scg.archie.actions.ChartWizardAction;
 import ch.unibe.iam.scg.archie.actions.ExportAction;
+import ch.unibe.iam.scg.archie.actions.ExportPdfAction;
 import ch.unibe.iam.scg.archie.ui.GraphicalMessage;
 import ch.unibe.iam.scg.archie.ui.ResultPanel;
 
@@ -57,6 +58,8 @@ public class StatisticsView extends ViewPart {
 	private GraphicalMessage message;
 
 	private ExportAction exportAction;
+
+	private ExportPdfAction exportPdfAction;
 
 	private ChartWizardAction chartWizardAction;
 
@@ -128,10 +131,12 @@ public class StatisticsView extends ViewPart {
 	 */
 	private void addActions() {
 		this.exportAction = new ExportAction(this);
+		this.exportPdfAction = new ExportPdfAction(this);
 		this.chartWizardAction = new ChartWizardAction();
 
 		IToolBarManager manager = this.getViewSite().getActionBars().getToolBarManager();
 		manager.add(this.exportAction);
+		manager.add(this.exportPdfAction);
 		manager.add(this.chartWizardAction);
 	}
 
@@ -199,6 +204,7 @@ public class StatisticsView extends ViewPart {
 	 */
 	public void setActionsEnabled(boolean enabled) {
 		this.exportAction.setEnabled(enabled);
+		this.exportPdfAction.setEnabled(enabled);
 		this.chartWizardAction.setEnabled(enabled);
 	}
 

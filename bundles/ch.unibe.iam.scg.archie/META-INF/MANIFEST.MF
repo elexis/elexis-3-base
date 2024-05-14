@@ -22,5 +22,7 @@ Require-Bundle: ch.elexis.core.l10n,
  org.jfree.chart;bundle-version="1.0.19",
  org.jfree.chart-swt;bundle-version="1.0.0",
  org.jfree.jcommon;bundle-version="1.0.24",
- org.jfree.swtgraphics2d;bundle-version="1.1.0"
-Bundle-ClassPath: .
+ org.jfree.swtgraphics2d;bundle-version="1.1.0",
+ ch.elexis.core.pdfbox;bundle-version="2.0.24"
+Bundle-ClassPath: .,
+ lib/boxable-1.7.0.jar

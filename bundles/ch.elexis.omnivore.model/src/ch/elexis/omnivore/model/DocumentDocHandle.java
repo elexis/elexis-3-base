@@ -38,6 +38,7 @@ import ch.elexis.core.types.DocumentStatusMapper;
 import ch.elexis.omnivore.Constants;
 import ch.elexis.omnivore.model.internal.ModelUtil;
 import ch.elexis.omnivore.model.internal.Preferences;
+import ch.elexis.omnivore.model.service.OmnivoreModelServiceHolder;
 
 public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 		implements Identifiable, IDocumentHandle {
@@ -342,6 +343,7 @@ public class DocumentDocHandle extends AbstractIdDeleteModelAdapter<DocHandle>
 			try (OutputStream out = vfsHandle.openOutputStream()) {
 				out.write(doc);
 				getEntity().setDoc(null);
+				OmnivoreModelServiceHolder.get().save(this);
 			} catch (IOException ios) {
 				LoggerFactory.getLogger(getClass()).error("Exporting dochandle [" + getId() + "] to filesystem fails."); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;

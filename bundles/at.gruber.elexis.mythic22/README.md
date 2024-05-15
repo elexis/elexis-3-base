@@ -1,5 +1,6 @@
 # Mythic 22 Geräteanbindung 
 ## Description
+This plugin connects a Mythic 22 Hematology Analyzer (Orphée) with Elexis using the Ethernet NIC.
 
 ## Technical note
 
@@ -35,7 +36,9 @@ MYTHIC 1;;RESULTDATE;16/05/2011TIME;09:44:03MODE;NORMALUNIT;1SEQ;6;0SID;00904PID
 ```
 
 ## How to install
-The plugin is implicitly installed by installing the superordinated [feature](https://github.com/elexis/elexis-3-base/tree/master/features/at.gruber.elexis.mythic22.feature).
+The plugin is implicitly installed by installing the superordinated [feature](https://github.com/elexis/elexis-3-base/tree/master/features/at.gruber.elexis.mythic22.feature). Elexis 2.1.5 or newer is required
 
 ## License
+Copyright (c) 2011, Christian Gruber and MEDEVIT OG
+All rights reserved.
 

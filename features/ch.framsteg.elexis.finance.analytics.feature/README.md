@@ -5,7 +5,7 @@
 * Category: _Statistics_
 
 ## Subordinated Plugini(s)
-* [ch.framsteg.elexis.finance.analytics[(https://github.com/elexis/elexis-3-base/tree/master/bundles/ch.framsteg.elexis.finance.analytics)
+* [ch.framsteg.elexis.finance.analytics](https://github.com/elexis/elexis-3-base/tree/master/bundles/ch.framsteg.elexis.finance.analytics)
 ## Description
 The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) answers question like *How much money have I earned within a certain period?* or *Which was the most successful year/month?* and *How does the daily report of specific day look like?* and so forth. The information is retrieved by eight different queries:
 

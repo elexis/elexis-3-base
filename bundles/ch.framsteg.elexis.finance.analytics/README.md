@@ -2,16 +2,6 @@
 ## Description
 The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) answers question like *How much money have I earned within a certain period?* or *Which was the most successful year/month?* and *How does the daily report of specific day look like?* and so forth. The information is retrieved by eight different queries:
 
-* Sales per clearable medical services and devices, pharmaceuticals and laboratory analysis **(Umsatz/Leistung)**
-* Sales per clearable medical services and devices, pharmaceuticals and laboratory analysis per year **(Umsatz/Leistung/Jahr)**
-* Sales per clearable medical services and devices, pharmaceuticals and laboratory analysis per year/month **(Umsatz/Leistung/Jahr/Monat)**
-* Sales per year **(Umsatz/Jahr)**
-* Sales per year/month **(Umsatz/Jahr/Monat)**
-* Sales Tarmed per year/month **(Umsatz Tarmed/Jahr/Monat)**
-* Sales Pharmaceuticals per year/month **(Umsatz Medikamente/Jahr/Monat)**
-* Daily Report **(Tagesrapport)**
-
-All queries can optionally be constrained by upper and lower time limits (from/to). Without limits the queries deliver key data over the whole time periode of a medical practice. The resulting data refers to the mandant the logged on user belongs to and can be exported as either PDF or CSV.
 ## Technical note
 The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) acts as a lightweight frontend to inspect denormalized data. Due to performance considerations and due to structure of the data being requested the plugin makes heavily use of SQL specific functions and materialized views. Therefore the queries evade the Elexis O/R mapping being implemented as native SQL queries. Nevertheless the plugin consumes the JDBC connection which is provied by Elexis.
 
@@ -20,10 +10,6 @@ The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) acts as a 
 
 ## How to install
 The plugin is implicitly installed by installing the superordinated [feature](https://github.com/elexis/elexis-3-base/tree/master/features/ch.framsteg.elexis.finance.analytics.feature).
-## How to use
-1. Choose query
-2. Choose lower/upper time limit (optional)
-3. Export as PDF/CSV
 
 ## License
 Copyright 2024 Framsteg GmbH / olivier.debenath@framsteg.ch

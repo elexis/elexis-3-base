@@ -9,9 +9,8 @@
  **********************************************************************/
 package net.medshare.connector.aerztekasse;
 
-import org.eclipse.osgi.util.NLS;
-
 public class Messages {
+	public static String Core_DoSend = ch.elexis.core.l10n.Messages.Core_DoSend;
 	public static String InvoiceOutputter_ChangeDir = ch.elexis.core.l10n.Messages.Core_DoChange;
 	public static String InvoiceOutputter_DoExport = ch.elexis.core.l10n.Messages.Invoices_export;
 	public static String InvoiceOutputter_Error = ch.elexis.core.l10n.Messages.InvoiceOutputter_Error;

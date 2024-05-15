@@ -12,6 +12,7 @@
 package ch.elexis.TarmedRechnung;
 
 public class Messages {
+	public static String Core_DoSend = ch.elexis.core.l10n.Messages.Core_DoSend;
 	public static String RechnungsDrucker_AllFinishedNoErrors = ch.elexis.core.l10n.Messages.RechnungsDrucker_AllFinishedNoErrors;
 	public static String RechnungsDrucker_AskSaveForTrustCenter = ch.elexis.core.l10n.Messages.RechnungsDrucker_AskSaveForTrustCenter;
 	public static String RechnungsDrucker_Couldntbeprintef = ch.elexis.core.l10n.Messages.RechnungsDrucker_Couldntbeprintef;

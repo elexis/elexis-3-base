@@ -45,9 +45,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
-import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.data.util.ResultAdapter;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
@@ -57,10 +55,12 @@ import ch.elexis.core.model.InvoiceConstants;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.model.InvoiceState.REJECTCODE;
 import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
@@ -183,7 +183,7 @@ public class RnOutputter implements IRnOutputter {
 										+ invoice.getState().getLocaleText());
 								CoreModelServiceHolder.get().save(invoice);
 							}
-							if (CoreHub.localCfg.get(CFG_ROOT + CFG_MAIL_CPY, false) && shouldSendCopyMail(rn)) {
+							if (LocalConfigService.get(CFG_ROOT + CFG_MAIL_CPY, false) && shouldSendCopyMail(rn)) {
 								Kontakt guarantor = getGuarantor(rn);
 								if (guarantor != null && StringUtils.isNotBlank(guarantor.getMailAddress())) {
 									List<File> printed = epdf.getPrintedBill();
@@ -264,15 +264,15 @@ public class RnOutputter implements IRnOutputter {
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_ESR) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_ESR);
-			CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_BESR, Boolean.parseBoolean(value));
+			LocalConfigService.set(CFG_ROOT + CFG_PRINT_BESR, Boolean.parseBoolean(value));
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM);
-			CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_RF, Boolean.parseBoolean(value));
+			LocalConfigService.set(CFG_ROOT + CFG_PRINT_RF, Boolean.parseBoolean(value));
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_MAIL) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_MAIL);
-			CoreHub.localCfg.set(CFG_ROOT + CFG_MAIL_CPY, Boolean.parseBoolean(value));
+			LocalConfigService.set(CFG_ROOT + CFG_MAIL_CPY, Boolean.parseBoolean(value));
 		}
 	}
 
@@ -359,28 +359,28 @@ public class RnOutputter implements IRnOutputter {
 		ret.setLayoutData(SWTHelper.getFillGridData());
 		ret.setLayout(new GridLayout(2, false));
 		bWithEsr = new Button(ret, SWT.CHECK);
-		bWithEsr.setText("Mit ESR");
-		bWithEsr.setSelection(CoreHub.localCfg.get(CFG_ROOT + CFG_PRINT_BESR, true));
+		bWithEsr.setText("Mit Einzahlungsschein");
+		bWithEsr.setSelection(LocalConfigService.get(CFG_ROOT + CFG_PRINT_BESR, true));
 		bWithEsr.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_BESR, bWithEsr.getSelection());
+				LocalConfigService.set(CFG_ROOT + CFG_PRINT_BESR, bWithEsr.getSelection());
 			}
 		});
 		bWithEsr.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 
 		bWithRf = new Button(ret, SWT.CHECK);
 		bWithRf.setText("Mit Rechnungsformular");
-		bWithRf.setSelection(CoreHub.localCfg.get(CFG_ROOT + CFG_PRINT_RF, true));
+		bWithRf.setSelection(LocalConfigService.get(CFG_ROOT + CFG_PRINT_RF, true));
 		bWithRf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_RF, bWithRf.getSelection());
+				LocalConfigService.set(CFG_ROOT + CFG_PRINT_RF, bWithRf.getSelection());
 			}
 		});
 		bWithRf.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 
-		CoreHub.localCfg.set(CFG_ROOT + CFG_MAIL_CPY, false);
+		LocalConfigService.set(CFG_ROOT + CFG_MAIL_CPY, false);
 
 		if (OutputterUtil.useGlobalOutputDirs()) {
 			Label lXML = new Label(ret, SWT.NONE);
@@ -423,8 +423,8 @@ public class RnOutputter implements IRnOutputter {
 				}
 
 			});
-			tXml.setText(CoreHub.localCfg.get(CFG_ROOT + XMLDIR, StringUtils.EMPTY));
-			tPdf.setText(CoreHub.localCfg.get(CFG_ROOT + PDFDIR, StringUtils.EMPTY));
+			tXml.setText(LocalConfigService.get(CFG_ROOT + XMLDIR, StringUtils.EMPTY));
+			tPdf.setText(LocalConfigService.get(CFG_ROOT + PDFDIR, StringUtils.EMPTY));
 		}
 
 		return ret;
@@ -432,13 +432,13 @@ public class RnOutputter implements IRnOutputter {
 
 	@Override
 	public void saveComposite() {
-		CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_BESR, bWithEsr.getSelection());
-		CoreHub.localCfg.set(CFG_ROOT + CFG_PRINT_RF, bWithRf.getSelection());
+		LocalConfigService.set(CFG_ROOT + CFG_PRINT_BESR, bWithEsr.getSelection());
+		LocalConfigService.set(CFG_ROOT + CFG_PRINT_RF, bWithRf.getSelection());
 		if (!OutputterUtil.useGlobalOutputDirs()) {
-			CoreHub.localCfg.set(CFG_ROOT + XMLDIR, tXml.getText());
-			CoreHub.localCfg.set(CFG_ROOT + PDFDIR, tPdf.getText());
+			LocalConfigService.set(CFG_ROOT + XMLDIR, tXml.getText());
+			LocalConfigService.set(CFG_ROOT + PDFDIR, tPdf.getText());
 		}
-		CoreHub.localCfg.flush();
+		LocalConfigService.flush();
 	}
 
 	@Override

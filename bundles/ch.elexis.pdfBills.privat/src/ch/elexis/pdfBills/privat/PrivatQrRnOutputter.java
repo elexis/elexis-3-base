@@ -1,5 +1,6 @@
 package ch.elexis.pdfBills.privat;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,12 +27,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -45,10 +47,9 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.TarmedRechnung.XMLExporterUtil;
 import ch.elexis.base.ch.arzttarife.xml.exporter.Tarmed45Exporter.EsrType;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
-import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.data.util.ResultAdapter;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IInvoice;
@@ -57,11 +58,13 @@ import ch.elexis.core.model.InvoiceConstants;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.model.InvoiceState.REJECTCODE;
 import ch.elexis.core.preferences.PreferencesUtil;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
+import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Person;
@@ -116,6 +119,8 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 	private boolean modifyInvoiceState;
 
 	private boolean pdfOnly;
+	private RnOutputDialog rnOutputDialog;
+	private Button buttonOpen;
 
 	@Override
 	public String getDescription() {
@@ -189,10 +194,29 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 										+ invoice.getState().getLocaleText());
 								CoreModelServiceHolder.get().save(invoice);
 							}
-							if (CoreHub.localCfg.get(CFG_ROOT + CFG_MAIL_CPY, false) && shouldSendCopyMail(rn)) {
+							List<File> printed = epdf.getPrintedBill();
+							for (File pdfFile : printed) {
+								if (pdfFile.exists()) {
+									try {
+										Desktop.getDesktop().open(pdfFile);
+									} catch (IOException e) {
+										LoggerFactory.getLogger(getClass()).error("Error opening PDF file", e);
+									}
+								}
+							}
+							if (LocalConfigService.get(CFG_ROOT + CFG_MAIL_CPY, false) && shouldSendCopyMail(rn)) {
 								Kontakt guarantor = getGuarantor(rn);
 								if (guarantor != null && StringUtils.isNotBlank(guarantor.getMailAddress())) {
-									List<File> printed = epdf.getPrintedBill();
+
+									for (File pdfFile : printed) {
+										if (pdfFile.exists()) {
+											try {
+												Desktop.getDesktop().open(pdfFile);
+											} catch (IOException e) {
+												LoggerFactory.getLogger(getClass()).error("Error opening PDF file", e);
+											}
+										}
+									}
 									if (!printed.isEmpty()) {
 										String resultString = sendAsMail(guarantor, rn, printed);
 										if (StringUtils.isNoneBlank(resultString)) {
@@ -274,15 +298,15 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_ESR) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_ESR);
-			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, Boolean.parseBoolean(value));
+			LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, Boolean.parseBoolean(value));
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_RECLAIM);
-			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, Boolean.parseBoolean(value));
+			LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, Boolean.parseBoolean(value));
 		}
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_MAIL) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_MAIL);
-			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_MAIL_CPY, Boolean.parseBoolean(value));
+			LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_MAIL_CPY, Boolean.parseBoolean(value));
 		}
 	}
 
@@ -368,23 +392,25 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 		ret.setLayoutData(SWTHelper.getFillGridData());
 		ret.setLayout(new GridLayout(2, false));
 		bWithEsr = new Button(ret, SWT.CHECK);
-		bWithEsr.setText("Mit ESR");
-		bWithEsr.setSelection(CoreHub.localCfg.get(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, true));
+		bWithEsr.setText("Mit Einzahlungsschein");
+		bWithEsr.setSelection(LocalConfigService.get(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, true));
 		bWithEsr.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, bWithEsr.getSelection());
+				LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, bWithEsr.getSelection());
+				updateButtonStates(rnOutputDialog);
 			}
 		});
 		bWithEsr.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 
 		bWithRf = new Button(ret, SWT.CHECK);
 		bWithRf.setText("Mit Rechnungsformular");
-		bWithRf.setSelection(CoreHub.localCfg.get(CFG_ROOT_PRIVAT + CFG_PRINT_RF, true));
+		bWithRf.setSelection(LocalConfigService.get(CFG_ROOT_PRIVAT + CFG_PRINT_RF, true));
 		bWithRf.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, bWithRf.getSelection());
+				LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, bWithRf.getSelection());
+				updateButtonStates(rnOutputDialog);
 			}
 		});
 		bWithRf.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
@@ -393,33 +419,26 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 		bCopyMail.setText("Kopie als mail");
 		bCopyMail.setSelection(false);
 		bCopyMail.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		bCopyMail.setSelection(CoreHub.localCfg.get(CFG_ROOT_PRIVAT + CFG_MAIL_CPY, false));
+		bCopyMail.setSelection(LocalConfigService.get(CFG_ROOT_PRIVAT + CFG_MAIL_CPY, false));
 		bCopyMail.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_MAIL_CPY, bCopyMail.getSelection());
+				LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_MAIL_CPY, bCopyMail.getSelection());
 			}
 		});
 
-		if (OutputterUtil.useGlobalOutputDirs()) {
-			Label lXML = new Label(ret, SWT.NONE);
-			lXML.setText("XML Verzeichnis: " + PreferencesUtil
-					.getOsSpecificPreference(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, ConfigServiceHolder.get()));
-			lXML.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-			Label lPDF = new Label(ret, SWT.NONE);
-			lPDF.setText("PDF Verzeichnis: " + PreferencesUtil
-					.getOsSpecificPreference(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, ConfigServiceHolder.get()));
-			lPDF.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		} else {
 			Button bXML = new Button(ret, SWT.PUSH);
 			bXML.setText("XML Verzeichnis");
 			tXml = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
 			tXml.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			tXml.setText(PreferencesUtil.getOsSpecificPreference(OutputterUtil.CFG_PRINT_GLOBALXMLDIR,
+					ConfigServiceHolder.get()));
 			Button bPDF = new Button(ret, SWT.PUSH);
 			bPDF.setText("PDF Verzeichnis");
 			tPdf = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
 			tPdf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+			tPdf.setText(PreferencesUtil.getOsSpecificPreference(OutputterUtil.CFG_PRINT_GLOBALPDFDIR,
+					ConfigServiceHolder.get()));
 			bXML.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -440,38 +459,49 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 						tPdf.setText(dir);
 					}
 				}
-
 			});
-			tXml.setText(CoreHub.localCfg.get(CFG_ROOT_PRIVAT + XMLDIR, StringUtils.EMPTY));
-			tPdf.setText(CoreHub.localCfg.get(CFG_ROOT_PRIVAT + PDFDIR, StringUtils.EMPTY));
-		}
+			boolean useGlobalOutputDirs = OutputterUtil.useGlobalOutputDirs();
+			setWidgetsVisible(!useGlobalOutputDirs, bXML, bPDF, tXml, tPdf);
+
 		return ret;
 	}
 
 	@Override
-	public void customizeDialog(Object rnOutputDialog) {
-		if (rnOutputDialog instanceof RnOutputDialog) {
-			((RnOutputDialog) rnOutputDialog).setOkButtonText("Ausdrucken");
-			Button button = ((RnOutputDialog) rnOutputDialog).addCustomButton("nur PDF");
-			button.addSelectionListener(new SelectionAdapter() {
+	public void customizeDialog(Object dialog) {
+		if (dialog instanceof RnOutputDialog) {
+			rnOutputDialog = (RnOutputDialog) dialog;
+			rnOutputDialog.setOkButtonText(Messages.Core_Print);
+			buttonOpen = rnOutputDialog.addCustomButton(Messages.Core_Open);
+			RowData rowData = new RowData();
+			rowData.width = 120;
+			buttonOpen.setLayoutData(rowData);
+			buttonOpen.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					pdfOnly = true;
-					((RnOutputDialog) rnOutputDialog).customButtonPressed(IDialogConstants.OK_ID);
+					rnOutputDialog.customButtonPressed(IDialogConstants.OK_ID);
 				}
 			});
+			updateButtonStates(rnOutputDialog);
+			rnOutputDialog.updateSize();
 		}
+	}
+
+	private void updateButtonStates(RnOutputDialog rnOutputDialog) {
+		boolean isEnabled = bWithEsr.getSelection() || bWithRf.getSelection();
+		rnOutputDialog.setOkButtonEnabled(bWithEsr.getSelection() || bWithRf.getSelection());
+		rnOutputDialog.setButtonEnabled(Messages.Core_Open, isEnabled);
 	}
 
 	@Override
 	public void saveComposite() {
-		CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, bWithEsr.getSelection());
-		CoreHub.localCfg.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, bWithRf.getSelection());
+		LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_BESR, bWithEsr.getSelection());
+		LocalConfigService.set(CFG_ROOT_PRIVAT + CFG_PRINT_RF, bWithRf.getSelection());
 		if (!OutputterUtil.useGlobalOutputDirs()) {
-			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + XMLDIR, tXml.getText());
-			CoreHub.localCfg.set(CFG_ROOT_PRIVAT + PDFDIR, tPdf.getText());
+			LocalConfigService.set(CFG_ROOT_PRIVAT + XMLDIR, tXml.getText());
+			LocalConfigService.set(CFG_ROOT_PRIVAT + PDFDIR, tPdf.getText());
 		}
-		CoreHub.localCfg.flush();
+		LocalConfigService.flush();
 	}
 
 	@Override
@@ -497,6 +527,12 @@ public class PrivatQrRnOutputter implements IRnOutputter {
 			}
 		} catch (IOException e) {
 			// TODO: handle exception
+		}
+	}
+
+	private void setWidgetsVisible(boolean visible, Control... widgets) {
+		for (Control widget : widgets) {
+			widget.setVisible(visible);
 		}
 	}
 }

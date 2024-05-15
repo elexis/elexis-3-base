@@ -3,6 +3,10 @@
 <plugin>
    <extension
          point="ch.elexis.core.data.RechnungsManager">
+      <Rechnung
+            localizedName="Privatrechnung drucken"
+            name="ch.elexis.pdfBills.privat.Rechnung1"
+            outputter="ch.elexis.pdfBills.privat.PrivatQrRnOutputter">
+      </Rechnung>
    </extension>
-
 </plugin>

@@ -19,11 +19,6 @@ The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) answers qu
 * Daily Report _(Tagesrapport)_
 
 All queries can optionally be constrained by upper and lower time limits (from/to). Without limits the queries deliver key data over the whole time periode of a medical practice. The resulting data refers to the mandant the logged on user belongs to and can be exported as either PDF or CSV.
-## Technical note
-The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) acts as a lightweight frontend to inspect denormalized data. Due to performance considerations and due to structure of the data being requested the plugin makes heavily use of SQL specific functions and materialized views. Therefore the queries evade the Elexis O/R mapping being implemented as native SQL queries. Nevertheless the plugin consumes the JDBC connection which is provied by Elexis.
-
-**NOTE:**
-**The plugin runs only against PostgreSQL**
 
 ## How to install
 The plugin can easily be installed via *Help/Install New Software*. The feature _Analytics/Reporting_ is listed within the _Statistik_ category. During start it checks if the required database system (PostgreSQL exclusively) is used. If so the necessary materialized view is created automatically. The plugin is ready to use.

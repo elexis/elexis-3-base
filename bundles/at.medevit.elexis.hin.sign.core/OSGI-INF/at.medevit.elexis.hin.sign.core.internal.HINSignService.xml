@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="at.medevit.elexis.hin.sign.core.internal.HINSignService">
+   <service>
+      <provide interface="at.medevit.elexis.hin.sign.core.IHinSignService"/>
+   </service>
+   <reference cardinality="1..1" field="gson" interface="com.google.gson.Gson" name="gson"/>
+   <reference cardinality="1..1" field="hinAuthService" interface="at.medevit.elexis.hin.auth.core.IHinAuthService" name="hinAuthService"/>
+   <implementation class="at.medevit.elexis.hin.sign.core.internal.HINSignService"/>
+</scr:component>

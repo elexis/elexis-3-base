@@ -21,7 +21,7 @@ The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) answers qu
 All queries can optionally be constrained by upper and lower time limits _from_ resp. _to_. Without limits the queries deliver key data over the whole time periode of a medical practice. The resulting data refers to the mandant the logged on user belongs to and can be exported as either PDF or CSV.
 
 ## How to install
-The plugin can easily be installed via *Help/Install New Software*. The feature _Analytics/Reporting_ is listed within the _Statistik_ category. During start it checks if the required database system (PostgreSQL exclusively) is used. If so the necessary materialized view is created automatically. The plugin is ready to use.
+The plugin can easily be installed via _Help/Install New Software_. The feature _Analytics/Reporting_ is listed within the _Statistik_ category. During start it checks if the required database system (PostgreSQL exclusively) is used. If so the necessary materialized view is created automatically. The plugin is ready to use.
 ## How to use
 1. Choose query
 2. Choose lower/upper time limit (optional)

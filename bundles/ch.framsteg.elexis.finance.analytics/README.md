@@ -1,9 +1,9 @@
 # Analytics/Reporting Plugin
 ## Description
-The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) answers question like *How much money have I earned within a certain period?* or *Which was the most successful year/month?* and *How does the daily report of specific day look like?* and so forth. The information is retrieved by eight different queries:
+The _Analytics/Reporting_ Plugin (ch.framsteg.elexis.finance.analytics) answers question like *How much money have I earned within a certain period?* or *Which was the most successful year/month?* and *How does the daily report of specific day look like?* and so forth. The information is retrieved by eight different queries:
 
 ## Technical note
-The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) acts as a lightweight frontend to inspect denormalized data. Due to performance considerations and due to structure of the data being requested the plugin makes heavily use of SQL specific functions and materialized views. Therefore the queries evade the Elexis O/R mapping being implemented as native SQL queries. Nevertheless the plugin consumes the JDBC connection which is provied by Elexis.
+The _Analytics/Reporting_ Plugin (ch.framsteg.elexis.finance.analytics) acts as a lightweight frontend to inspect denormalized data. Due to performance considerations and due to structure of the data being requested the plugin makes heavily use of SQL specific functions and materialized views. Therefore the queries evade the Elexis O/R mapping being implemented as native SQL queries. Nevertheless the plugin consumes the JDBC connection which is provied by Elexis.
 
 **NOTE:**
 **The plugin runs only against PostgreSQL**

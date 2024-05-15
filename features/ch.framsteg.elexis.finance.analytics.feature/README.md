@@ -4,19 +4,19 @@
 * id: _ch.framsteg.elexis.finance.analytics.feature_
 * Category: _Statistics_
 
-## Subordinated Plugini(s)
+## Subordinated Plugin(s)
 * [ch.framsteg.elexis.finance.analytics](https://github.com/elexis/elexis-3-base/tree/master/bundles/ch.framsteg.elexis.finance.analytics)
 ## Description
 The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) answers question like *How much money have I earned within a certain period?* or *Which was the most successful year/month?* and *How does the daily report of specific day look like?* and so forth. The information is retrieved by eight different queries:
 
-* Sales per clearable medical services and devices, pharmaceuticals and laboratory analysis **(Umsatz/Leistung)**
-* Sales per clearable medical services and devices, pharmaceuticals and laboratory analysis per year **(Umsatz/Leistung/Jahr)**
-* Sales per clearable medical services and devices, pharmaceuticals and laboratory analysis per year/month **(Umsatz/Leistung/Jahr/Monat)**
-* Sales per year **(Umsatz/Jahr)**
-* Sales per year/month **(Umsatz/Jahr/Monat)**
-* Sales Tarmed per year/month **(Umsatz Tarmed/Jahr/Monat)**
-* Sales Pharmaceuticals per year/month **(Umsatz Medikamente/Jahr/Monat)**
-* Daily Report **(Tagesrapport)**
+* Sales per clearable medical services and devices, pharmaceuticals and laboratory analysis _(Umsatz/Leistung)_
+* Sales per clearable medical services and devices, pharmaceuticals and laboratory analysis per year _(Umsatz/Leistung/Jahr)_
+* Sales per clearable medical services and devices, pharmaceuticals and laboratory analysis per year/month _(Umsatz/Leistung/Jahr/Monat)_
+* Sales per year _(Umsatz/Jahr)_
+* Sales per year/month _(Umsatz/Jahr/Monat)_
+* Sales Tarmed per year/month _(Umsatz Tarmed/Jahr/Monat)_
+* Sales Pharmaceuticals per year/month _(Umsatz Medikamente/Jahr/Monat)_
+* Daily Report _(Tagesrapport)_
 
 All queries can optionally be constrained by upper and lower time limits (from/to). Without limits the queries deliver key data over the whole time periode of a medical practice. The resulting data refers to the mandant the logged on user belongs to and can be exported as either PDF or CSV.
 ## Technical note

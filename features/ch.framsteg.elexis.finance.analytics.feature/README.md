@@ -1,9 +1,11 @@
 # Analytics/Reporting Feature
 ## Name
-* Label: Analytics/Reporting Plugin for Elexis
-* id: ch.framsteg.elexis.finance.analytics.feature
-* Category: Statistics
+* Label: _Analytics/Reporting Plugin for Elexis_
+* id: _ch.framsteg.elexis.finance.analytics.feature_
+* Category: _Statistics_
 
+## Subordinated Plugini(s)
+* [ch.framsteg.elexis.finance.analytics[(https://github.com/elexis/elexis-3-base/tree/master/bundles/ch.framsteg.elexis.finance.analytics)
 ## Description
 The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) answers question like *How much money have I earned within a certain period?* or *Which was the most successful year/month?* and *How does the daily report of specific day look like?* and so forth. The information is retrieved by eight different queries:
 
@@ -24,7 +26,7 @@ The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) acts as a 
 **The plugin runs only against PostgreSQL**
 
 ## How to install
-The plugin can easily be installed via *Help/Install New Software*. During start it checks if the required database system (PostgreSQL exclusively) is used. If so the necessary materialized view is created automatically. The plugin is ready to use.
+The plugin can easily be installed via *Help/Install New Software*. The feature _Analytics/Reporting_ is listed within the _Statistik_ category. During start it checks if the required database system (PostgreSQL exclusively) is used. If so the necessary materialized view is created automatically. The plugin is ready to use.
 ## How to use
 1. Choose query
 2. Choose lower/upper time limit (optional)

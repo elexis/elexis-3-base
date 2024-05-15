@@ -19,7 +19,7 @@ The Analytics/Reporting Plugin (ch.framsteg.elexis.finance.analytics) acts as a 
 **The plugin runs only against PostgreSQL**
 
 ## How to install
-The plugin can easily be installed via *Help/Install New Software*. During start it checks if the required database system (PostgreSQL exclusively) is used. If so the necessary materialized view is created automatically. The plugin is ready to use.
+The plugin is implicitly installed by installing the superordinated [feature](https://github.com/elexis/elexis-3-base/tree/master/features/ch.framsteg.elexis.finance.analytics.feature).
 ## How to use
 1. Choose query
 2. Choose lower/upper time limit (optional)

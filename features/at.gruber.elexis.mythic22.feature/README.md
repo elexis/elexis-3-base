@@ -4,6 +4,9 @@
 * id: _at.gruber.elexis.mythic22.feature_
 * Category: _Geräteanbindung_
 
+## Picture/Icon
+[Mythic22.jpg](mythic22.jpg)
+
 ## Subordinated Plugin(s)
 * [at.gruber.elexis.mythic22](https://github.com/elexis/elexis-3-base/tree/master/bundles/at.gruber.elexis.mythic22)
 ## Description

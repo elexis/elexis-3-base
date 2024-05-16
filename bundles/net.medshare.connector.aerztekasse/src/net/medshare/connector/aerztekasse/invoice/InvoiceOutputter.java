@@ -34,6 +34,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -50,8 +51,8 @@ import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
 import ch.elexis.core.model.InvoiceState;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
 import ch.elexis.data.Rechnung;
-import ch.elexis.data.RnStatus;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
 import net.medshare.connector.aerztekasse.Messages;
@@ -62,7 +63,7 @@ public class InvoiceOutputter extends XMLExporter {
 	// public only because of net.medshare.connector.aerztekasse_test
 	public AerztekasseSettings settings;
 	public boolean transferState = false;
-
+	private Text text;
 	private String responseState;
 	private String responseError;
 	private String outputDir;
@@ -199,7 +200,7 @@ public class InvoiceOutputter extends XMLExporter {
 									transmittedInvoices += Messages.InvoiceOutputter_SuccessInvoiceNr + rn.getNr()
 											+ " : " //$NON-NLS-1$
 											+ Messages.InvoiceOutputter_NewState + " : " //$NON-NLS-1$
-											+ RnStatus.getStatusText(rn.getStatus());
+											+ rn.getInvoiceState().getLocaleText();
 
 									monitor.worked(1);
 									if (monitor.isCanceled()) {
@@ -288,9 +289,13 @@ public class InvoiceOutputter extends XMLExporter {
 		Label l = new Label(ret, SWT.NONE);
 		l.setText(Messages.InvoiceOutputter_InvoiceOutputDir);
 		l.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		final Text text = new Text(ret, SWT.READ_ONLY | SWT.BORDER);
-		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Button b = new Button(ret, SWT.PUSH);
+		GridData buttonData = new GridData();
+		buttonData.widthHint = 75;
+		b.setLayoutData(buttonData);
+		b.setText(Messages.InvoiceOutputter_ChangeDir);
+		final Text text = new Text(ret, SWT.BORDER | SWT.READ_ONLY);
+		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -424,5 +429,13 @@ public class InvoiceOutputter extends XMLExporter {
 	private void deleteFileOnExit(String filename) {
 		File f = new File(filename);
 		f.deleteOnExit();
+	}
+
+	@Override
+	public void customizeDialog(Object rnOutputDialog) {
+		if (rnOutputDialog instanceof RnOutputDialog) {
+			((RnOutputDialog) rnOutputDialog).setOkButtonText(Messages.Core_DoSend);
+
+		}
 	}
 }

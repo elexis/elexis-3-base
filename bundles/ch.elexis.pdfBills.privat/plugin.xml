@@ -9,5 +9,4 @@
             outputter="ch.elexis.pdfBills.privat.PrivatQrRnOutputter">
       </Rechnung>
    </extension>
-
 </plugin>

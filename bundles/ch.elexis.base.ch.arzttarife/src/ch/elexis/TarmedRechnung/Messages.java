@@ -96,5 +96,6 @@ public class Messages {
 	public static String XMLExporter_TarmedForTrustCenter = ch.elexis.core.l10n.Messages.XMLExporter_TarmedForTrustCenter;
 	public static String XMLExporter_unknown = ch.elexis.core.l10n.Messages.XMLExporter_unknown;
 	public static String XMLExporter_Unknown = ch.elexis.core.l10n.Messages.XMLExporter_Unknown;
+	public static String Core_DoSend = ch.elexis.core.l10n.Messages.Core_DoSend;
 
 }

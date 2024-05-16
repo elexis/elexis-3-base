@@ -26,7 +26,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -36,15 +35,13 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
+import ch.elexis.core.l10n.Messages;
 import ch.elexis.core.model.IInvoice;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
-import ch.elexis.core.ui.util.SWTHelper;
-
-import ch.elexis.data.Fall;
+import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
 import ch.elexis.data.Rechnung;
 import ch.elexis.tarmedprefs.TarmedRequirements;
-import ch.netzkonzept.elexis.medidata.config.MedidataPreferencePage;
 import ch.rgw.tools.Result;
 
 public class Outputter extends XMLExporter {
@@ -262,5 +259,12 @@ public class Outputter extends XMLExporter {
 
 	public void setApplicationProperties(Properties applicationProperties) {
 		this.applicationProperties = applicationProperties;
+	}
+
+	@Override
+	public void customizeDialog(Object rnOutputDialog) {
+		if (rnOutputDialog instanceof RnOutputDialog) {
+			((RnOutputDialog) rnOutputDialog).setOkButtonText(Messages.Core_DoSend);
+		}
 	}
 }

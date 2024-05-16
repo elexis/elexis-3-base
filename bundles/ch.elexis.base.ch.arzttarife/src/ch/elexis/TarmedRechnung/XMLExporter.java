@@ -50,6 +50,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
@@ -81,7 +82,6 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.IRnOutputter;
-import ch.elexis.core.data.util.PlatformHelper;
 import ch.elexis.core.model.IBlob;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
@@ -94,7 +94,9 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.util.SWTHelper;
+import ch.elexis.core.ui.views.rechnung.RnOutputDialog;
 import ch.elexis.core.utils.CoreUtil;
+import ch.elexis.core.utils.PlatformHelper;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Rechnung;
@@ -193,7 +195,6 @@ public class XMLExporter implements IRnOutputter {
 	String tiers;
 
 	IInvoice invoice;
-
 	private ESR besr;
 	static TarmedACL ta;
 	private String outputDir;
@@ -967,9 +968,14 @@ public class XMLExporter implements IRnOutputter {
 		Label l = new Label(ret, SWT.NONE);
 		l.setText(Messages.XMLExporter_PleaseEnterOutputDirectoryForBills);
 		l.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		final Text text = new Text(ret, SWT.READ_ONLY | SWT.BORDER);
-		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+
 		Button b = new Button(ret, SWT.PUSH);
+		b.setText(Messages.XMLExporter_Change);
+		GridData buttonData = new GridData();
+		buttonData.widthHint = 75;
+		b.setLayoutData(buttonData);
+		final Text text = new Text(ret, SWT.READ_ONLY | SWT.BORDER);
+		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -978,9 +984,7 @@ public class XMLExporter implements IRnOutputter {
 				text.setText(outputDir);
 			}
 		});
-		b.setText(Messages.XMLExporter_Change);
-		outputDir = LocalConfigService.get(PreferenceConstants.RNN_EXPORTDIR,
-				CoreUtil.getDefaultDBPath());
+		outputDir = LocalConfigService.get(PreferenceConstants.RNN_EXPORTDIR, CoreUtil.getDefaultDBPath());
 		text.setText(outputDir);
 		return ret;
 	}
@@ -1134,5 +1138,12 @@ public class XMLExporter implements IRnOutputter {
 				LoggerFactory.getLogger(getClass()).info("File [" + xmlFile.getAbsolutePath() + "] does not exist"); //$NON-NLS-1$
 			}
 		});
+	}
+
+	@Override
+	public void customizeDialog(Object rnOutputDialog) {
+		if (rnOutputDialog instanceof RnOutputDialog) {
+			((RnOutputDialog) rnOutputDialog).setOkButtonText(Messages.Core_DoSend);
+		}
 	}
 }

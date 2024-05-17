@@ -707,6 +707,7 @@ public class ElexisPDFGenerator {
 						}
 					}
 				}
+				List<String> billerEans = new ArrayList<String>();
 				expr = xPath.compile("/request/payload/body/tiers_garant/biller"); //$NON-NLS-1$
 				result = expr.evaluate(domDocument, XPathConstants.NODESET);
 				NodeList billerElements = (NodeList) result;
@@ -714,6 +715,7 @@ public class ElexisPDFGenerator {
 					Node billerElement = billerElements.item(i);
 					if (billerElement instanceof Element) {
 						eanSet.add(((Element) billerElement).getAttribute("ean_party")); //$NON-NLS-1$
+						billerEans.add(((Element) billerElement).getAttribute("ean_party"));
 					}
 				}
 				expr = xPath.compile("/request/payload/body/tiers_payant/biller"); //$NON-NLS-1$
@@ -723,16 +725,25 @@ public class ElexisPDFGenerator {
 					Node billerElement = billerElements.item(i);
 					if (billerElement instanceof Element) {
 						eanSet.add(((Element) billerElement).getAttribute("ean_party")); //$NON-NLS-1$
+						billerEans.add(((Element) billerElement).getAttribute("ean_party"));
 					}
 				}
 
 				StringBuilder eanList = new StringBuilder();
-				String[] eanArray = eanSet.toArray(new String[eanSet.size()]);
-				for (int i = 0; i < eanArray.length; i++) {
+				List<String> eanStringList = new ArrayList<>(eanSet);
+				if (!billerEans.isEmpty()) {
+					eanStringList.sort((s1, s2) -> {
+						if (billerEans.contains(s1)) {
+							return 1;
+						}
+						return -1;
+					});
+				}
+				for (int i = 0; i < eanStringList.size(); i++) {
 					if (i > 0) {
 						eanList.append(StringUtils.SPACE);
 					}
-					eanList.append(i + 1).append("/").append(eanArray[i]); //$NON-NLS-1$
+					eanList.append(i + 1).append("/").append(eanStringList.get(i)); //$NON-NLS-1$
 				}
 				return eanList.toString();
 			} catch (XPathExpressionException e) {

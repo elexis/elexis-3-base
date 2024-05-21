@@ -5,6 +5,9 @@ import java.util.Optional;
 
 public interface IHinAuthService {
 
+	public static String PREF_EPDAUTHHANDLE = "epd/auth/handle/"; //$NON-NLS-1$
+	public static String PREF_EPDAUTHHANDLE_EXPIRES = "epd/auth/handleexpires/"; //$NON-NLS-1$
+	
 	public static String PREF_WEBAPPBASEURL = "hin/auth/wabapp/baseurl"; //$NON-NLS-1$
 	public static String PREF_RESTBASEURL = "hin/auth/rest/baseurl"; //$NON-NLS-1$
 	public static String PREF_OAUTHRESTBASEURL = "hin/auth/oauthrest/baseurl"; //$NON-NLS-1$

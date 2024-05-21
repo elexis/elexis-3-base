@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
+import at.medevit.elexis.hin.auth.core.GetAuthCodeWithStateSupplier;
 import at.medevit.elexis.hin.auth.core.IHinAuthService;
 import at.medevit.elexis.hin.auth.core.IHinAuthUi;
 import ch.elexis.core.services.IConfigService;

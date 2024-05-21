@@ -1,5 +1,6 @@
 package at.medevit.elexis.hin.sign.core.internal;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import at.medevit.elexis.hin.sign.core.IHinSignService;
+import at.medevit.elexis.hin.sign.core.IHinSignService.Mode;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
 public class HinSignServiceTest {
@@ -18,6 +20,7 @@ public class HinSignServiceTest {
 	@BeforeClass
 	public static void before() throws IOException {
 		service = (HINSignService) OsgiServiceUtil.getService(IHinSignService.class).get();
+		service.setMode(Mode.TEST);
 	}
 
 	@Test
@@ -32,5 +35,8 @@ public class HinSignServiceTest {
 		assertTrue(token.isPresent());
 		Optional<String> handle = service.getEPDAuthHandle(token.get());
 		assertTrue(handle.isPresent());
+		String firstHandle = handle.get();
+		handle = service.getEPDAuthHandle(token.get());
+		assertEquals(firstHandle, handle.get());
 	}
 }

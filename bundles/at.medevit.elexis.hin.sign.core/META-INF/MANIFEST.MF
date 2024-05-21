@@ -8,7 +8,9 @@ Automatic-Module-Name: at.medevit.elexis.hin.erezept.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: at.medevit.elexis.hin.auth.core,
+ ch.elexis.core.services,
  ch.elexis.core.status,
+ ch.elexis.core.utils,
  com.google.gson;version="[2.9.0,3.0.0]",
  org.apache.commons.io;version="[2.15.0,3.0.0]",
  org.apache.commons.lang3;version="[3.14.0,4.0.0]",

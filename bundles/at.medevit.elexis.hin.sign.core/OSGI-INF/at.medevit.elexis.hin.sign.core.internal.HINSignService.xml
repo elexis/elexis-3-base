@@ -3,6 +3,8 @@
    <service>
       <provide interface="at.medevit.elexis.hin.sign.core.IHinSignService"/>
    </service>
+   <reference cardinality="0..1" field="authUi" interface="at.medevit.elexis.hin.auth.core.IHinAuthUi" name="authUi" policy-option="greedy"/>
+   <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
    <reference cardinality="1..1" field="gson" interface="com.google.gson.Gson" name="gson"/>
    <reference cardinality="1..1" field="hinAuthService" interface="at.medevit.elexis.hin.auth.core.IHinAuthService" name="hinAuthService"/>
    <implementation class="at.medevit.elexis.hin.sign.core.internal.HINSignService"/>

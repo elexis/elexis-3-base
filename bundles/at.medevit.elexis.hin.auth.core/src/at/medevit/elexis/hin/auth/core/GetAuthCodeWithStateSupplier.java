@@ -1,4 +1,4 @@
-package at.medevit.elexis.hin.auth.core.internal;
+package at.medevit.elexis.hin.auth.core;
 
 import java.io.IOException;
 import java.io.InputStream;

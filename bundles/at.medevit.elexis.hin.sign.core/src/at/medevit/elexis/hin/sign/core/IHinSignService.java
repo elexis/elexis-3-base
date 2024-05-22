@@ -1,7 +1,5 @@
 package at.medevit.elexis.hin.sign.core;
 
-import java.io.InputStream;
-
 import ch.elexis.core.status.ObjectStatus;
 
 public interface IHinSignService {
@@ -15,16 +13,25 @@ public interface IHinSignService {
 	/**
 	 * Create a signed ePrescription QR Code.
 	 * 
-	 * @param data
+	 * @param chmed
 	 * @return
 	 */
-	public ObjectStatus<?> createPrescription(InputStream data);
+	public ObjectStatus<?> createPrescription(String chmed);
+
+	/**
+	 * Verifying an e-prescription QR Code.
+	 * 
+	 * @param chmed
+	 * @return
+	 */
+	public ObjectStatus<?> verifyPrescription(String chmed);
 
 	/**
 	 * Mark a signed ePrescription QR Code as revoked
 	 * 
-	 * @param data
+	 * @param signedchmed
 	 * @return
 	 */
-	public ObjectStatus<?> revokePrescription(InputStream data);
+	public ObjectStatus<?> revokePrescription(String chmed);
+
 }

@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,6 +13,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +32,6 @@ import at.medevit.elexis.hin.auth.core.IHinAuthUi;
 import at.medevit.elexis.hin.sign.core.IHinSignService;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.status.ObjectStatus;
-import ch.elexis.core.utils.OsgiServiceUtil;
 
 @Component
 public class HINSignService implements IHinSignService {
@@ -63,21 +60,87 @@ public class HINSignService implements IHinSignService {
 	}
 
 	@Override
-	public ObjectStatus<?> createPrescription(InputStream data) {
+	public ObjectStatus<?> createPrescription(String chmed) {
 		Optional<String> adSwissAuthToken = getADSwissAuthToken();
 		if (adSwissAuthToken.isPresent()) {
 			Optional<String> authHandle = getEPDAuthHandle(adSwissAuthToken.get());
+			if(authHandle.isPresent()) {
+				CliProcess cliProcess = CliProcess.createPrescription(authHandle.get(), chmed, mode);
+				if (cliProcess.execute()) {
+					logger.info("Executing cli\n[" + cliProcess.getOutput().stream().collect(Collectors.joining("\n"))
+							+ "]");
+					Map<?, ?> map = cliProcess.getOutputAsMap();
+					if (map != null) {
+						return ObjectStatus.OK(map);
+					}
+				} else {
+					logger.error("Error executing cli\n["
+							+ cliProcess.getOutput().stream().collect(Collectors.joining("\n")) + "]");
+					Map<?, ?> map = cliProcess.getOutputAsMap();
+					if (map != null) {
+						return ObjectStatus.ERROR(map);
+					}
+					return ObjectStatus.ERROR("Authentication failed");
+				}
+			}
 		}
-		return null;
+		return ObjectStatus.ERROR("Authentication failed");
 	}
 
 	@Override
-	public ObjectStatus<?> revokePrescription(InputStream data) {
+	public ObjectStatus<?> verifyPrescription(String chmed) {
 		Optional<String> adSwissAuthToken = getADSwissAuthToken();
 		if (adSwissAuthToken.isPresent()) {
 			Optional<String> authHandle = getEPDAuthHandle(adSwissAuthToken.get());
+			if (authHandle.isPresent()) {
+				CliProcess cliProcess = CliProcess.verifyPrescription(authHandle.get(), chmed, mode);
+				if (cliProcess.execute()) {
+					logger.info("Executing cli\n[" + cliProcess.getOutput().stream().collect(Collectors.joining("\n"))
+							+ "]");
+					Map<?, ?> map = cliProcess.getOutputAsMap();
+					if (map != null) {
+						return ObjectStatus.OK(map);
+					}
+				} else {
+					logger.error("Error executing cli\n["
+							+ cliProcess.getOutput().stream().collect(Collectors.joining("\n")) + "]");
+					Map<?, ?> map = cliProcess.getOutputAsMap();
+					if (map != null) {
+						return ObjectStatus.ERROR(map);
+					}
+					return ObjectStatus.ERROR("Authentication failed");
+				}
+			}
 		}
-		return null;
+		return ObjectStatus.ERROR("Authentication failed");
+	}
+
+	@Override
+	public ObjectStatus<?> revokePrescription(String chmed) {
+		Optional<String> adSwissAuthToken = getADSwissAuthToken();
+		if (adSwissAuthToken.isPresent()) {
+			Optional<String> authHandle = getEPDAuthHandle(adSwissAuthToken.get());
+			if (authHandle.isPresent()) {
+				CliProcess cliProcess = CliProcess.revokePrescription(authHandle.get(), chmed, mode);
+				if (cliProcess.execute()) {
+					logger.info("Executing cli\n[" + cliProcess.getOutput().stream().collect(Collectors.joining("\n"))
+							+ "]");
+					Map<?, ?> map = cliProcess.getOutputAsMap();
+					if (map != null) {
+						return ObjectStatus.OK(map);
+					}
+				} else {
+					logger.error("Error executing cli\n["
+							+ cliProcess.getOutput().stream().collect(Collectors.joining("\n")) + "]");
+					Map<?, ?> map = cliProcess.getOutputAsMap();
+					if (map != null) {
+						return ObjectStatus.ERROR(map);
+					}
+					return ObjectStatus.ERROR("Authentication failed");
+				}
+			}
+		}
+		return ObjectStatus.ERROR("Authentication failed");
 	}
 
 	protected Optional<String> getADSwissAuthToken() {

@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,7 +32,10 @@ import at.medevit.elexis.hin.auth.core.GetAuthCodeWithStateSupplier;
 import at.medevit.elexis.hin.auth.core.IHinAuthService;
 import at.medevit.elexis.hin.auth.core.IHinAuthUi;
 import at.medevit.elexis.hin.sign.core.IHinSignService;
+import ch.elexis.core.model.IBlob;
+import ch.elexis.core.model.IRecipe;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.status.ObjectStatus;
 
 @Component
@@ -314,5 +318,40 @@ public class HINSignService implements IHinSignService {
 					&& statusMap.get("error_code").equals("prescription_already_exists");
 		}
 		return false;
+	}
+
+	@Override
+	public void setPrescriptionUrl(IRecipe iRecipe, String url) {
+		IBlob blob = getOrCreateBlob(iRecipe);
+		Map<Object, Object> map = blob.getMapContent();
+		if (map.isEmpty()) {
+			map = new HashMap<>();
+		}
+		map.put("url", url);
+		blob.setMapContent(map);
+		CoreModelServiceHolder.get().save(blob);
+	}
+
+	@Override
+	public Optional<String> getPrescriptionUrl(IRecipe iRecipe, String url) {
+		IBlob blob = getBlob(iRecipe);
+		if(blob != null) {
+			return Optional.ofNullable((String) blob.getMapContent().get("url"));
+		}
+		return Optional.empty();
+	}
+
+	private IBlob getBlob(IRecipe iRecipe) {
+		return CoreModelServiceHolder.get().load(iRecipe.getId(), IBlob.class).orElse(null);
+	}
+
+	private IBlob getOrCreateBlob(IRecipe iRecipe) {
+		IBlob blob = CoreModelServiceHolder.get().load(iRecipe.getId(), IBlob.class).orElse(null);
+		if (blob == null) {
+			blob = CoreModelServiceHolder.get().create(IBlob.class);
+			blob.setId(iRecipe.getId());
+		}
+		CoreModelServiceHolder.get().save(blob);
+		return blob;
 	}
 }

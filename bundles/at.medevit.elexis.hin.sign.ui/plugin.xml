@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="at.medevit.elexis.hin.sign.ui.handler.CreateAndOpenEPrescription"
+            id="at.medevit.elexis.hin.sign.ui.eprescription.createAndOpen"
+            name="eRezept">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:ch.elexis.Rezepte">
+         <command
+               commandId="at.medevit.elexis.hin.sign.ui.eprescription.createAndOpen"
+               icon="icon://IMG_VIEW_RECIPES"
+               label="eRezept erstellen"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

@@ -1,5 +1,8 @@
 package at.medevit.elexis.hin.sign.core;
 
+import java.util.Optional;
+
+import ch.elexis.core.model.IRecipe;
 import ch.elexis.core.status.ObjectStatus;
 
 public interface IHinSignService {
@@ -33,5 +36,22 @@ public interface IHinSignService {
 	 * @return
 	 */
 	public ObjectStatus<?> revokePrescription(String chmed);
+
+	/**
+	 * Attach the prescription url to the {@link IRecipe}.
+	 * 
+	 * @param iRecipe
+	 * @param url
+	 */
+	public void setPrescriptionUrl(IRecipe iRecipe, String url);
+
+	/**
+	 * Get the attached prescription url for the {@link IRecipe}.
+	 * 
+	 * @param iRecipe
+	 * @param url
+	 * @return
+	 */
+	public Optional<String> getPrescriptionUrl(IRecipe iRecipe, String url);
 
 }

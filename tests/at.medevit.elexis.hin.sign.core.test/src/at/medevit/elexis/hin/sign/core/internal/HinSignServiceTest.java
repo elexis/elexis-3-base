@@ -1,10 +1,10 @@
 package at.medevit.elexis.hin.sign.core.internal;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import at.medevit.elexis.hin.sign.core.IHinSignService;
 import at.medevit.elexis.hin.sign.core.IHinSignService.Mode;
+import at.medevit.elexis.hin.sign.core.test.AllPluginTests;
 import ch.elexis.core.status.ObjectStatus;
 import ch.elexis.core.utils.OsgiServiceUtil;
 
@@ -44,26 +45,31 @@ public class HinSignServiceTest {
 	}
 
 	@Test
-	public void verifyPrescription() throws IOException {
-		ObjectStatus<?> status = service
-				.verifyPrescription(IOUtils.toString(getClass().getResourceAsStream("/rsc/chmed1.txt"), "UTF-8"));
-		assertNotNull(status);
-		assertTrue(status.isOK());
+	public void createAndVerifyPrescription() throws IOException {
+		String chmed = IOUtils.toString(getClass().getResourceAsStream("/rsc/chmed2.txt"), "UTF-8");
+		Map<String, String> chmedWithId = AllPluginTests.getChmedWithNewId(chmed);
+		ObjectStatus<?> status = service.createPrescription(chmedWithId.get("chmed"));
+		assertTrue(status.get() instanceof String);
+		ObjectStatus<?> verifyStatus = service.verifyPrescription((String) status.get());
+		assertTrue(verifyStatus.isOK());
 	}
 
 	@Test
-	public void createPrescription() throws IOException {
-		ObjectStatus<?> status = service
-				.createPrescription(IOUtils.toString(getClass().getResourceAsStream("/rsc/chmed1.txt"), "UTF-8"));
-		assertNotNull(status);
-		assertTrue(status.isOK());
-	}
+	public void revokePrescription() throws IOException, InterruptedException {
+		String chmed = IOUtils.toString(getClass().getResourceAsStream("/rsc/chmed2.txt"), "UTF-8");
+		Map<String, String> chmedWithId = AllPluginTests.getChmedWithNewId(chmed);
+		ObjectStatus<?> status = service.createPrescription(chmedWithId.get("chmed"));
+		assertTrue(status.get() instanceof String);
 
-	@Test
-	public void revokePrescription() throws IOException {
-		ObjectStatus<?> status = service
-				.revokePrescription(IOUtils.toString(getClass().getResourceAsStream("/rsc/chmed1.txt"), "UTF-8"));
-		assertNotNull(status);
-		assertTrue(status.isOK());
+		ObjectStatus<?> verifyStatus = service.verifyPrescription((String) status.get());
+		assertTrue(verifyStatus.isOK());
+		assertEquals(Boolean.FALSE, ((Map) verifyStatus.get()).get("revoked"));
+
+		ObjectStatus<?> revokeStatus = service.revokePrescription(service.getChmedId(chmedWithId.get("chmed")).get());
+		assertTrue(revokeStatus.isOK());
+
+		verifyStatus = service.verifyPrescription((String) status.get());
+		assertTrue(verifyStatus.isOK());
+		assertEquals(Boolean.TRUE, ((Map) verifyStatus.get()).get("revoked"));
 	}
 }

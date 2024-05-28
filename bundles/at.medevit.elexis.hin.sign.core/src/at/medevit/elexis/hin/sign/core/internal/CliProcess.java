@@ -36,6 +36,8 @@ public class CliProcess {
 
 	private List<String> output;
 
+	private List<String> errorOutput;
+
 	private Mode mode;
 
 	private CliProcess() {
@@ -52,6 +54,7 @@ public class CliProcess {
 
 			if (process.waitFor( 30, TimeUnit.SECONDS)) {
 				output = readOutput(process.getInputStream());
+				errorOutput = readOutput(process.getErrorStream());
 				return process.exitValue() == 0;
 			} else {
 				logger.error("Error executing print command [" + command + "] process terminated.");
@@ -66,6 +69,10 @@ public class CliProcess {
 
 	public List<String> getOutput() {
 		return output;
+	}
+
+	public List<String> getErrorOutput() {
+		return errorOutput;
 	}
 
 	public Map<?, ?> getOutputAsMap() {
@@ -154,7 +161,7 @@ public class CliProcess {
 				ret.command.add("--token");
 				ret.command.add(epdHandle);
 				ret.command.add("-o");
-				ret.command.add("'-'");
+				ret.command.add("-");
 				ret.command.add("-f");
 				ret.command.add("data");
 				ret.command.add(getFilePath(tmpFile.toFile()));
@@ -168,54 +175,59 @@ public class CliProcess {
 		throw new IllegalStateException("No CLI available");
 	}
 
-	public static CliProcess verifyPrescription(String epdHandle, String chmed, Mode mode) {
+	public static CliProcess verifyPrescription(String epdHandle, String chmedUrl, Mode mode) {
 		if (isCliAvailable()) {
-			try {
-				Path tmpFile = Files.createTempFile("eprescription", ".tmp");
-				Files.writeString(tmpFile, chmed);
-				CliProcess ret = new CliProcess();
-				ret.command.add(getExecutableName());
-				ret.command.add("eprescription");
-				ret.command.add("verify");
-				ret.command.add("--api");
-				ret.command.add(ret.getApiParamter());
-				ret.command.add("--hin-api");
-				ret.command.add(ret.getHinApiParamter());
-				ret.command.add("--token");
-				ret.command.add(epdHandle);
-				ret.command.add(getFilePath(tmpFile.toFile()));
-				ret.setMode(mode);
-				return ret;
-			} catch (Exception e) {
-				logger.error("Error creating chmed temp file", e);
-				throw new IllegalStateException("Error creating chmed temp file");
-			}
+			CliProcess ret = new CliProcess();
+			ret.command.add(getExecutableName());
+			ret.command.add("eprescription");
+			ret.command.add("verify");
+			ret.command.add("--api");
+			ret.command.add(ret.getApiParamter());
+			ret.command.add("--hin-api");
+			ret.command.add(ret.getHinApiParamter());
+			ret.command.add(chmedUrl);
+			ret.setMode(mode);
+			return ret;
 		}
 		throw new IllegalStateException("No CLI available");
 	}
 
-	public static CliProcess revokePrescription(String epdHandle, String chmed, Mode mode) {
+	public static CliProcess revokePrescription(String epdHandle, String chmedId, Mode mode) {
 		if (isCliAvailable()) {
-			try {
-				Path tmpFile = Files.createTempFile("eprescription", ".tmp");
-				Files.writeString(tmpFile, chmed);
-				CliProcess ret = new CliProcess();
-				ret.command.add(getExecutableName());
-				ret.command.add("eprescription");
-				ret.command.add("revoke");
-				ret.command.add("--api");
-				ret.command.add(ret.getApiParamter());
-				ret.command.add("--hin-api");
-				ret.command.add(ret.getHinApiParamter());
-				ret.command.add("--token");
-				ret.command.add(epdHandle);
-				ret.command.add(getFilePath(tmpFile.toFile()));
-				ret.setMode(mode);
-				return ret;
-			} catch (Exception e) {
-				logger.error("Error creating chmed temp file", e);
-				throw new IllegalStateException("Error creating chmed temp file");
-			}
+			CliProcess ret = new CliProcess();
+			ret.command.add(getExecutableName());
+			ret.command.add("eprescription");
+			ret.command.add("revoke");
+			ret.command.add("--api");
+			ret.command.add(ret.getApiParamter());
+			ret.command.add("--hin-api");
+			ret.command.add(ret.getHinApiParamter());
+			ret.command.add("--token");
+			ret.command.add(epdHandle);
+			ret.command.add("--epdg");
+			ret.command.add(chmedId);
+			ret.setMode(mode);
+			return ret;
+		}
+		throw new IllegalStateException("No CLI available");
+	}
+
+	public static CliProcess cancelPrescription(String epdHandle, String chmedId, Mode mode) {
+		if (isCliAvailable()) {
+			CliProcess ret = new CliProcess();
+			ret.command.add(getExecutableName());
+			ret.command.add("eprescription");
+			ret.command.add("cancel");
+			ret.command.add("--api");
+			ret.command.add(ret.getApiParamter());
+			ret.command.add("--hin-api");
+			ret.command.add(ret.getHinApiParamter());
+			ret.command.add("--token");
+			ret.command.add(epdHandle);
+			ret.command.add("--epdg");
+			ret.command.add(chmedId);
+			ret.setMode(mode);
+			return ret;
 		}
 		throw new IllegalStateException("No CLI available");
 	}

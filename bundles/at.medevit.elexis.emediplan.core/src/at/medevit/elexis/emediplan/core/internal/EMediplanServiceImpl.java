@@ -10,13 +10,9 @@
  *******************************************************************************/
 package at.medevit.elexis.emediplan.core.internal;
 
-import org.apache.commons.lang3.StringUtils;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
@@ -27,10 +23,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -60,6 +55,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.emediplan.core.EMediplanService;
+import at.medevit.elexis.emediplan.core.EMediplanUtil;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament.State;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medication;
@@ -139,7 +135,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 			Optional<String> jsonString = getJsonString(author, patient, prescriptions, addDesc);
 			if (jsonString.isPresent()) {
 				try (PrintWriter writer = new PrintWriter(output)) {
-					writer.write(getEncodedJson(jsonString.get()));
+					writer.write(EMediplanUtil.getEncodedJson(jsonString.get()));
 				}
 			}
 		}
@@ -192,7 +188,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 	}
 
 	protected Optional<Image> getQrCode(@NonNull String json) {
-		String encodedJson = getEncodedJson(json);
+		String encodedJson = EMediplanUtil.getEncodedJson(json);
 
 		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
 		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
@@ -216,56 +212,6 @@ public class EMediplanServiceImpl implements EMediplanService {
 		}
 	}
 
-	/**
-	 * Get the encoded (Header with zipped and Base64 encoded content) String. The
-	 * header of the current CHMED Version is added to the resulting String.
-	 *
-	 * @param json
-	 * @return
-	 */
-	protected String getEncodedJson(@NonNull String json) {
-		StringBuilder sb = new StringBuilder();
-		// header for compresses json
-		sb.append("CHMED16A1"); //$NON-NLS-1$
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		try (GZIPOutputStream gzip = new GZIPOutputStream(out)) {
-			gzip.write(json.getBytes());
-		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error encoding json", e); //$NON-NLS-1$
-			throw new IllegalStateException("Error encoding json", e); //$NON-NLS-1$
-		}
-		sb.append(Base64.getEncoder().encodeToString(out.toByteArray()));
-		return sb.toString();
-	}
-
-	/**
-	 * Get the decoded String, from the zipped and Base64 encoded String. The first
-	 * 9 characters (CHMED header) are ignored.
-	 *
-	 * @param encodedJson
-	 * @return
-	 */
-	protected String getDecodedJsonString(@NonNull String encodedJson) {
-		String content = encodedJson.substring(9);
-		byte[] zipped = Base64.getMimeDecoder().decode(content);
-		StringBuilder sb = new StringBuilder();
-		try {
-			GZIPInputStream gzip = new GZIPInputStream(new ByteArrayInputStream(zipped));
-			InputStreamReader reader = new InputStreamReader(gzip);
-			BufferedReader in = new BufferedReader(reader);
-			// Probably only single json line, but just to be sure ...
-			String read;
-			while ((read = in.readLine()) != null) {
-				sb.append(read);
-			}
-		} catch (IOException e) {
-			LoggerFactory.getLogger(getClass()).error("Error decoding json", e); //$NON-NLS-1$
-			throw new IllegalStateException("Error decoding json", e); //$NON-NLS-1$
-		}
-		return sb.toString();
-	}
-
 	protected Optional<at.medevit.elexis.emediplan.core.model.print.Medication> getJaxbModel(IMandator author,
 			IPatient patient, List<IPrescription> prescriptions) {
 		at.medevit.elexis.emediplan.core.model.print.Medication medication = at.medevit.elexis.emediplan.core.model.print.Medication
@@ -285,7 +231,7 @@ public class EMediplanServiceImpl implements EMediplanService {
 
 	@Override
 	public Medication createModelFromChunk(String chunk) {
-		String json = getDecodedJsonString(chunk);
+		String json = EMediplanUtil.getDecodedJsonString(chunk);
 		if (chunk.length() > 8) {
 			logger.debug("json version: " + chunk.substring(5, 8)); //$NON-NLS-1$
 			Medication ret = createModelFromJsonString(json);

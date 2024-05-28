@@ -7,7 +7,8 @@ Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.elexis.hin.erezept.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Import-Package: at.medevit.elexis.hin.auth.core,
+Import-Package: at.medevit.elexis.emediplan.core,
+ at.medevit.elexis.hin.auth.core,
  ch.elexis.core.services,
  ch.elexis.core.status,
  ch.elexis.core.utils,

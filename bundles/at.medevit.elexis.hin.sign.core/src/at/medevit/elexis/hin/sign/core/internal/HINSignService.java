@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
+import at.medevit.elexis.emediplan.core.EMediplanUtil;
 import at.medevit.elexis.hin.auth.core.GetAuthCodeWithStateSupplier;
 import at.medevit.elexis.hin.auth.core.IHinAuthService;
 import at.medevit.elexis.hin.auth.core.IHinAuthUi;
@@ -69,9 +70,9 @@ public class HINSignService implements IHinSignService {
 				if (cliProcess.execute()) {
 					logger.info("Executing cli\n[" + cliProcess.getOutput().stream().collect(Collectors.joining("\n"))
 							+ "]");
-					Map<?, ?> map = cliProcess.getOutputAsMap();
-					if (map != null) {
-						return ObjectStatus.OK(map);
+					if (cliProcess.getOutput() != null && !cliProcess.getOutput().isEmpty()
+							&& cliProcess.getOutput().get(0).startsWith("https://eprescription.hin.ch")) {
+						return ObjectStatus.OK(cliProcess.getOutput().get(0));
 					}
 				} else {
 					logger.error("Error executing cli\n["
@@ -116,19 +117,17 @@ public class HINSignService implements IHinSignService {
 	}
 
 	@Override
-	public ObjectStatus<?> revokePrescription(String chmed) {
+	public ObjectStatus<?> revokePrescription(String chmedId) {
 		Optional<String> adSwissAuthToken = getADSwissAuthToken();
 		if (adSwissAuthToken.isPresent()) {
 			Optional<String> authHandle = getEPDAuthHandle(adSwissAuthToken.get());
 			if (authHandle.isPresent()) {
-				CliProcess cliProcess = CliProcess.revokePrescription(authHandle.get(), chmed, mode);
+				CliProcess cliProcess = CliProcess.revokePrescription(authHandle.get(), chmedId, mode);
 				if (cliProcess.execute()) {
 					logger.info("Executing cli\n[" + cliProcess.getOutput().stream().collect(Collectors.joining("\n"))
 							+ "]");
 					Map<?, ?> map = cliProcess.getOutputAsMap();
-					if (map != null) {
-						return ObjectStatus.OK(map);
-					}
+					return ObjectStatus.OK(map);
 				} else {
 					logger.error("Error executing cli\n["
 							+ cliProcess.getOutput().stream().collect(Collectors.joining("\n")) + "]");
@@ -295,5 +294,25 @@ public class HINSignService implements IHinSignService {
 	
 	private String getRedirectUri() {
 		return "https://tools.medelexis.ch/hin/ac";
+	}
+
+	public Optional<String> getChmedId(String encodedChmed) {
+		if (StringUtils.isNotBlank(encodedChmed)) {
+			String decodedChmed = EMediplanUtil.getDecodedJsonString(encodedChmed);
+			Map<?, ?> chmedMap = gson.fromJson(decodedChmed, Map.class);
+			if (chmedMap != null) {
+				return Optional.ofNullable((String) chmedMap.get("Id"));
+			}
+		}
+		return Optional.empty();
+	}
+
+	public boolean isPrescriptionExists(ObjectStatus<?> status) {
+		if (status.get() instanceof Map) {
+			Map<?, ?> statusMap = (Map<?, ?>) status.get();
+			return statusMap.get("error_code") != null
+					&& statusMap.get("error_code").equals("prescription_already_exists");
+		}
+		return false;
 	}
 }

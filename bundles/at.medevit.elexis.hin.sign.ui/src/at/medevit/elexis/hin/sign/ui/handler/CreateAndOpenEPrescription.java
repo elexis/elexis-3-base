@@ -11,8 +11,10 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.emediplan.core.EMediplanService;
+import at.medevit.elexis.emediplan.core.EMediplanUtil;
 import at.medevit.elexis.hin.sign.core.IHinSignService;
 import ch.elexis.core.model.IRecipe;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -33,7 +35,8 @@ public class CreateAndOpenEPrescription extends AbstractHandler implements IHand
 				ByteArrayOutputStream output = new ByteArrayOutputStream();
 				eMediplanService.exportEMediplanJson(ContextServiceHolder.getActiveMandatorOrThrow(),
 						selectedRecipe.get().getPatient(), selectedRecipe.get().getPrescriptions(), output);
-				String chmed = IOUtils.toString(new ByteArrayInputStream(output.toByteArray()), "UTF-8");
+				String chmedJson = IOUtils.toString(new ByteArrayInputStream(output.toByteArray()), "UTF-8");
+				String chmed = EMediplanUtil.getEncodedJson(chmedJson);
 				if (StringUtils.isNotBlank(chmed)) {
 					ObjectStatus<?> status = hinSignService.createPrescription(chmed);
 					if (status.isOK() && status.get() instanceof String) {
@@ -42,8 +45,7 @@ public class CreateAndOpenEPrescription extends AbstractHandler implements IHand
 					}
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LoggerFactory.getLogger(getClass()).error("Error creating eprescription", e);
 			}
 		}
 		return null;

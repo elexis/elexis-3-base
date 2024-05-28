@@ -10,7 +10,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -58,6 +59,11 @@ public class HINSignService implements IHinSignService {
 	private Gson gson;
 
 	private String currentState;
+
+	@Activate
+	public void activate() {
+		setMode(Mode.TEST);
+	}
 
 	@Override
 	public void setMode(Mode mode) {
@@ -325,7 +331,7 @@ public class HINSignService implements IHinSignService {
 		IBlob blob = getOrCreateBlob(iRecipe);
 		Map<Object, Object> map = blob.getMapContent();
 		if (map.isEmpty()) {
-			map = new HashMap<>();
+			map = new Hashtable<>();
 		}
 		map.put("url", url);
 		blob.setMapContent(map);

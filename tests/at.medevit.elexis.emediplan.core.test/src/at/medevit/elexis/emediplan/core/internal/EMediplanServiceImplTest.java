@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.junit.Test;
 
+import at.medevit.elexis.emediplan.core.EMediplanUtil;
 import at.medevit.elexis.emediplan.core.model.chmed16a.Medicament;
 import at.medevit.elexis.emediplan.core.model.print.Medication;
 import at.medevit.elexis.emediplan.core.test.AllTests;
@@ -67,7 +68,7 @@ public class EMediplanServiceImplTest {
 		Optional<String> jsonString =
 			impl.getJsonString(TestData.getTestSzenarioInstance().getMandator(), patients.get(0),
 				getPatientMedication(patients.get(0)), true);
-		String encodedString = impl.getEncodedJson(jsonString.get());
+		String encodedString = EMediplanUtil.getEncodedJson(jsonString.get());
 		// reload model
 		at.medevit.elexis.emediplan.core.model.chmed16a.Medication model =
 			impl.createModelFromChunk(encodedString);
@@ -90,7 +91,7 @@ public class EMediplanServiceImplTest {
 				getPatientMedication(patients.get(0)), false);
 		assertTrue(jsonString.isPresent());
 		assertFalse(jsonString.get().isEmpty());
-		String encodedString = impl.getEncodedJson(jsonString.get());
+		String encodedString = EMediplanUtil.getEncodedJson(jsonString.get());
 		assertNotNull(encodedString);
 		assertFalse(encodedString.isEmpty());
 		assertTrue(encodedString.startsWith("CHMED16A1"));
@@ -106,7 +107,7 @@ public class EMediplanServiceImplTest {
 				getPatientMedication(patients.get(0)), false);
 		assertTrue(jsonString.isPresent());
 		assertFalse(jsonString.get().isEmpty());
-		String encodedString = impl.getEncodedJson(jsonString.get());
+		String encodedString = EMediplanUtil.getEncodedJson(jsonString.get());
 		assertNotNull(encodedString);
 		assertFalse(encodedString.isEmpty());
 		Optional<Image> qr = impl.getQrCode(encodedString);
@@ -122,10 +123,10 @@ public class EMediplanServiceImplTest {
 				getPatientMedication(patients.get(0)), false);
 		assertTrue(jsonString.isPresent());
 		assertFalse(jsonString.get().isEmpty());
-		String encodedString = impl.getEncodedJson(jsonString.get());
+		String encodedString = EMediplanUtil.getEncodedJson(jsonString.get());
 		assertNotNull(encodedString);
 		assertFalse(encodedString.isEmpty());
-		String decodedString = impl.getDecodedJsonString(encodedString);
+		String decodedString = EMediplanUtil.getDecodedJsonString(encodedString);
 		assertNotNull(decodedString);
 		assertFalse(decodedString.isEmpty());
 		assertEquals(jsonString.get(), decodedString);

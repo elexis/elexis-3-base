@@ -8,10 +8,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -109,6 +112,8 @@ public class CliProcess {
 		Bundle fragment = null;
 		if (CoreUtil.getOperatingSystemType() == OS.WINDOWS) {
 			fragment = Platform.getBundle("at.medevit.elexis.hin.sign.cli.win");
+		} else if (CoreUtil.getOperatingSystemType() == OS.LINUX) {
+			fragment = Platform.getBundle("at.medevit.elexis.hin.sign.cli.linux");
 		}
 		if (fragment != null) {
 			Optional<File> bundleLocation = FileLocator.getBundleFileLocation(fragment);
@@ -137,6 +142,15 @@ public class CliProcess {
 		String path = file.getAbsolutePath();
 		if (CoreUtil.isWindows()) {
 			path = path.replace("\\", "\\\\");
+		} else if (CoreUtil.isLinux()) {
+			Set<PosixFilePermission> perms = new HashSet<>();
+			perms.add(PosixFilePermission.OWNER_READ);
+			perms.add(PosixFilePermission.OWNER_EXECUTE);
+			try {
+				Files.setPosixFilePermissions(file.toPath(), perms);
+			} catch (IOException e) {
+				LoggerFactory.getLogger(CliProcess.class).error("Error setting executable file permissions", e);
+			}
 		}
 		return path;
 	}

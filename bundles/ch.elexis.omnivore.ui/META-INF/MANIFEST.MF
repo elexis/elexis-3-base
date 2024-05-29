@@ -14,7 +14,8 @@ Require-Bundle: ch.elexis.core.l10n,
  ch.elexis.omnivore.data;bundle-version="3.9.0",
  at.medevit.elexis.inbox;bundle-version="3.9.0",
  at.medevit.elexis.inbox.ui;bundle-version="3.9.0",
- ch.elexis.core.ui.dbcheck;bundle-version="3.9.0"
+ ch.elexis.core.ui.dbcheck;bundle-version="3.9.0",
+ org.eclipse.jface
 Export-Package: ch.elexis.omnivore.ui.jobs,
  ch.elexis.omnivore.ui.util,
  ch.elexis.omnivore.ui.views

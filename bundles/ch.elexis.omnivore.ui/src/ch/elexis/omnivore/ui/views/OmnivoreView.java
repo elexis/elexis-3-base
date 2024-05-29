@@ -38,15 +38,18 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.IToolTipProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
@@ -83,11 +86,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.inbox.model.IInboxElement;
+import at.medevit.elexis.inbox.model.IInboxElementService.State;
+import at.medevit.elexis.inbox.ui.InboxServiceHolder;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.data.service.StoreToStringServiceHolder;
@@ -95,6 +100,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQueryCursor;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
@@ -307,30 +313,46 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			return false;
 		}
 	}
-
-	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
+	
+	class ViewLabelProvider extends ColumnLabelProvider implements IToolTipProvider {
 
 		private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 
-		public String getColumnText(Object obj, int index) {
-			IDocumentHandle dh = (IDocumentHandle) obj;
-			switch (index) {
+		@Override
+		public void update(ViewerCell cell) {
+			Object element = cell.getElement();
+			int columnIndex = cell.getColumnIndex();
+			if (!(element instanceof IDocumentHandle)) {
+				cell.setText(StringUtils.EMPTY);
+				return;
+			}
+			IDocumentHandle dh = (IDocumentHandle) element;
+			if (dh.isCategory()) {
+				cell.setText(columnIndex == 1 ? dh.getCategory().getName() : StringUtils.EMPTY);
+				return;
+			}
+			switch (columnIndex) {
 			case 0:
-				return StringUtils.EMPTY;
+				cell.setText(StringUtils.EMPTY);
+				break;
 			case 1:
-				if (bFlat)
-					return dh.getCategory().getName();
-				return dh.isCategory() ? dh.getTitle() : StringUtils.EMPTY;
+				cell.setText(bFlat ? dh.getCategory().getName() : StringUtils.EMPTY);
+				break;
 			case 2:
-				return dh.isCategory() ? StringUtils.EMPTY : dateFormat.format(dh.getLastchanged());
+				cell.setText(dateFormat.format(dh.getLastchanged()));
+				break;
 			case 3:
-				return dh.isCategory() ? StringUtils.EMPTY : dateFormat.format(dh.getCreated());
+				cell.setText(dateFormat.format(dh.getCreated()));
+				break;
 			case 4:
-				return dh.isCategory() ? StringUtils.EMPTY : dh.getTitle();
+				cell.setText(dh.getTitle());
+				break;
 			case 5:
-				return dh.isCategory() ? StringUtils.EMPTY : dh.getKeywords();
+				cell.setText(dh.getKeywords());
+				break;
 			default:
-				return "?"; //$NON-NLS-1$
+				cell.setText(StringUtils.EMPTY);
+				break;
 			}
 		}
 
@@ -340,6 +362,32 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 
 		public Image getImage(Object obj) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
+		}
+		@Override
+		public String getToolTipText(Object element) {
+			if (element instanceof IDocumentHandle) {
+				IDocumentHandle docHandle = (IDocumentHandle) element;
+				if (!docHandle.isCategory()) {
+					String docId = docHandle.getId();
+					String objectToSearch = "ch.elexis.omnivore.data.DocHandle::" + docId;
+					IQuery<IInboxElement> inboxQuery = InboxServiceHolder.getModelService()
+							.getQuery(IInboxElement.class);
+					inboxQuery.and("object", COMPARATOR.EQUALS, objectToSearch);
+					try (IQueryCursor<IInboxElement> cursor = inboxQuery.executeAsCursor()) {
+						while (cursor.hasNext()) {
+							IInboxElement inboxElement = cursor.next();
+							String inboxElementObjectString = inboxElement.getObject().toString();
+							if (inboxElementObjectString.contains(docId)) {
+								State state = inboxElement.getState();
+								return state.toString().equals("SEEN") ? "Gesehen" : "Nicht gesehen";
+							}
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
+			return null;
 		}
 	}
 
@@ -399,6 +447,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
 		viewer.setUseHashlookup(true);
+		ColumnViewerToolTipSupport.enableFor(viewer, ToolTip.NO_RECREATE);
 		viewer.addSelectionChangedListener(ev -> {
 			IDocumentHandle docHandle = (IDocumentHandle) ev.getStructuredSelection().getFirstElement();
 			if (docHandle != null && !docHandle.isCategory()) {

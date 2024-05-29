@@ -8,7 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  at.medevit.elexis.inbox;bundle-version="1.0.0"
-Export-Package: at.medevit.elexis.inbox.ui.part.model,
+Export-Package: at.medevit.elexis.inbox.ui,
+ at.medevit.elexis.inbox.ui.part.model,
  at.medevit.elexis.inbox.ui.part.provider
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/at.medevit.elexis.inbox.ui.InboxModelServiceHolder.xml,

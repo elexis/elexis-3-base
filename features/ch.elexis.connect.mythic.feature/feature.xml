@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.connect.mythic.feature"
       label="Elexis Connector für Mythic 18 Analyzer"
-      version="3.12.0.qualifier"
+      version="3.13.0.qualifier"
       provider-name="elexis.info">
 
    <description>

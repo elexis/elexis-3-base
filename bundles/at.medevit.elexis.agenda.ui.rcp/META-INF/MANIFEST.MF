@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Agenda Ui Rcp contribution
 Bundle-SymbolicName: at.medevit.elexis.agenda.ui.rcp;singleton:=true
-Bundle-Version: 3.12.0.qualifier
+Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.elexis.agenda.ui.rcp
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="2.1.100",
  ch.elexis.core;bundle-version="3.9.0",
  at.medevit.elexis.agenda.ui;bundle-version="3.9.0"

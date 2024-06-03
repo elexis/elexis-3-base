@@ -692,6 +692,20 @@ public class TarmedOptifierTest {
 		clearKons(konsPeriodStart);
 		clearKons(konsPeriodMiddle);
 		clearKons(konsPeriodEnd);
+
+		// middle and end is 1 month limit is 6 times 3 month
+		for (int i = 0; i < 6; i++) {
+			result = optifier.add(TarmedLeistung.getFromCode("00.0510", LocalDate.now(), LAW), konsPeriodMiddle, 1.0);
+			assertTrue(result.isOK());
+		}
+		result = optifier.add(TarmedLeistung.getFromCode("00.0510", LocalDate.now(), LAW), konsPeriodMiddle, 1.0);
+		assertFalse(result.isOK());
+		result = optifier.add(TarmedLeistung.getFromCode("00.0510", LocalDate.now(), LAW), konsPeriodEnd, 1.0);
+		assertFalse(result.isOK());
+
+		clearKons(konsPeriodStart);
+		clearKons(konsPeriodMiddle);
+		clearKons(konsPeriodEnd);
 	}
 
 	@Test

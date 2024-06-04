@@ -120,10 +120,12 @@ public class QrRnOutputter implements IRnOutputter {
 	private Button bWithRf;
 
 	private boolean modifyInvoiceState;
+	private boolean noUi;
 
 	private boolean pdfOnly;
 	private RnOutputDialog rnOutputDialog;
 	private Button buttonOpen;
+
 	@Override
 	public String getDescription() {
 		return "Rechnung ausdrucken";
@@ -198,12 +200,14 @@ public class QrRnOutputter implements IRnOutputter {
 								CoreModelServiceHolder.get().save(invoice);
 							}
 							List<File> printed = epdf.getPrintedBill();
-							for (File pdfFile : printed) {
-								if (pdfFile.exists()) {
-									try {
-										Desktop.getDesktop().open(pdfFile);
-									} catch (IOException e) {
-										LoggerFactory.getLogger(getClass()).error("Error opening PDF file", e);
+							if (!noUi) {
+								for (File pdfFile : printed) {
+									if (pdfFile.exists()) {
+										try {
+											Desktop.getDesktop().open(pdfFile);
+										} catch (IOException e) {
+											LoggerFactory.getLogger(getClass()).error("Error opening PDF file", e);
+										}
 									}
 								}
 							}
@@ -243,11 +247,13 @@ public class QrRnOutputter implements IRnOutputter {
 					}
 					pdfOnly = false;
 					monitor.done();
-					if (errors > 0) {
-						SWTHelper.alert("Fehler bei der Übermittlung", Integer.toString(errors)
-								+ " Rechnungen waren fehlerhaft. Sie können diese unter Rechnungen mit dem Status fehlerhaft aufsuchen und korrigieren");
-					} else {
-						SWTHelper.showInfo("Übermittlung beendet", "Es sind keine Fehler aufgetreten");
+					if (!noUi) {
+						if (errors > 0) {
+							SWTHelper.alert("Fehler bei der Übermittlung", Integer.toString(errors)
+									+ " Rechnungen waren fehlerhaft. Sie können diese unter Rechnungen mit dem Status fehlerhaft aufsuchen und korrigieren");
+						} else {
+							SWTHelper.showInfo("Übermittlung beendet", "Es sind keine Fehler aufgetreten");
+						}
 					}
 				}
 			}, null);
@@ -307,6 +313,10 @@ public class QrRnOutputter implements IRnOutputter {
 		if (props.get(IRnOutputter.PROP_OUTPUT_WITH_MAIL) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_WITH_MAIL);
 			LocalConfigService.set(CFG_ROOT + CFG_MAIL_CPY, Boolean.parseBoolean(value));
+		}
+		if (props.get(IRnOutputter.PROP_OUTPUT_NOUI) instanceof String) {
+			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_NOUI);
+			noUi = Boolean.parseBoolean(value);
 		}
 	}
 

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import java.time.format.DateTimeFormatter;
 
@@ -47,10 +49,12 @@ public class Patient {
         String country = StringUtils.EMPTY;
         String telephoneNumberHome = StringUtils.EMPTY;
         String mobilePhoneNumber = StringUtils.EMPTY;
+        String email = StringUtils.EMPTY;
         String insurancenumber = StringUtils.EMPTY;
         String insurancename = StringUtils.EMPTY;
         String insurancegln = StringUtils.EMPTY;
         String billing = StringUtils.EMPTY;
+        String reason = StringUtils.EMPTY;
         String socialSecurityNumber = StringUtils.EMPTY;
         String physicianGlnNumber = StringUtils.EMPTY;
 
@@ -91,8 +95,15 @@ public class Patient {
 
                 ret.telephoneNumberHome = patient.getPhone1();
                 ret.mobilePhoneNumber = patient.getMobile();
+                ret.email = patient.getEmail();
 
-                ICoverage coverage = ContextServiceHolder.get().getActiveCoverage().get();
+                ICoverage coverage = null;
+
+                try {
+                        coverage = ContextServiceHolder.get().getActiveCoverage().get();
+                } catch (NoSuchElementException e) {
+                        throw new NoEncounterSelectedException();
+                }
 
                 if (coverage == null) {
                         throw new NoEncounterSelectedException();
@@ -109,6 +120,7 @@ public class Patient {
                 }
 
                 ret.billing = getBilling(coverage);
+                ret.reason = getReason(coverage);
 
                 IXid patientAHV = patient.getXid(XidConstants.CH_AHV);
                 if (patientAHV != null) {
@@ -126,7 +138,7 @@ public class Patient {
         }
 
         public void toMedicalvaluesOrderCreationAPIQueryParams(URIBuilder builder) throws IllegalArgumentException {
-                setOptionalParameter(builder, "physicianId", this.physicianGlnNumber);
+                setOptionalParameter(builder, "physician_gln_number", this.physicianGlnNumber);
 
                 setOptionalParameter(builder, "source_system_name", "Elexis");
                 setOptionalParameter(builder, "source_system_patient_id", this.aisIdentifier);
@@ -134,7 +146,7 @@ public class Patient {
                 setRequiredParameterOrThrow(builder, "patient_name_given", "Vorname", this.firstname);
                 setRequiredParameterOrThrow(builder, "patient_name_family", "Nachname", this.lastname);
                 setRequiredParameterOrThrow(builder, "patient_birthDate", "Geburtsdatum", this.dateofbirth);
-                setRequiredParameterOrThrow(builder, "patient_gender", "Geschlecht",this.gender);
+                setRequiredParameterOrThrow(builder, "patient_gender", "Geschlecht", this.gender);
                 setRequiredParameterOrThrow(builder, "coverage_type", "Abrechnungsart", this.billing);
 
                 setOptionalParameter(builder, "patient_name_title", this.title);
@@ -146,12 +158,15 @@ public class Patient {
                 setOptionalParameter(builder, "patient_address_country", this.country);
                 setOptionalParameter(builder, "patient_telecom_home", this.telephoneNumberHome);
                 setOptionalParameter(builder, "patient_telecom_mobile", this.mobilePhoneNumber);
+                setOptionalParameter(builder, "patient_email", this.email);
                 setOptionalParameter(builder, "coverage_payor_display", this.insurancename);
                 setOptionalParameter(builder, "coverage_payor_identifier", this.insurancegln);
                 setOptionalParameter(builder, "coverage_identifier", this.insurancenumber);
+                setOptionalParameter(builder, "order_treatment_type", this.reason);
         }
 
-        private void setRequiredParameterOrThrow(URIBuilder builder, String key, String readableKey, String value) throws IllegalArgumentException {
+        private void setRequiredParameterOrThrow(URIBuilder builder, String key, String readableKey, String value)
+                        throws IllegalArgumentException {
                 if (value == null || value.isEmpty()) {
                         throw new IllegalArgumentException(readableKey);
                 }
@@ -165,12 +180,12 @@ public class Patient {
                 }
         }
 
-        private static String getBilling(ICoverage coverage){
+        private static String getBilling(ICoverage coverage) {
                 BillingLaw billingLaw = coverage.getBillingSystem().getLaw();
                 if (billingLaw == BillingLaw.VVG ||
-                    billingLaw == BillingLaw.MV ||
-                    billingLaw == BillingLaw.IV ||
-                    billingLaw == BillingLaw.KVG) {
+                                billingLaw == BillingLaw.MV ||
+                                billingLaw == BillingLaw.IV ||
+                                billingLaw == BillingLaw.KVG) {
                         return "SwissIns";
                 }
                 if (billingLaw == BillingLaw.UVG) {
@@ -181,5 +196,24 @@ public class Patient {
                 }
 
                 return "SEL";
+        }
+
+        private static String getReason(ICoverage coverage) {
+                String reason = coverage.getReason();
+
+                if (Objects.equals(reason, "Krankheit")) {
+                        return "1";
+                }
+                if (Objects.equals(reason, "Mutterschaft")) {
+                        return "2";
+                }
+                if (Objects.equals(reason, "Unfall")) {
+                        return "3";
+                }
+                if (Objects.equals(reason, "Prävention")) {
+                        return "4";
+                }
+
+                return StringUtils.EMPTY;
         }
 }

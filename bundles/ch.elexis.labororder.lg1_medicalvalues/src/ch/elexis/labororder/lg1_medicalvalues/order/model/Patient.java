@@ -138,7 +138,7 @@ public class Patient {
         }
 
         public void toMedicalvaluesOrderCreationAPIQueryParams(URIBuilder builder) throws IllegalArgumentException {
-                setOptionalParameter(builder, "physician_gln_number", this.physicianGlnNumber);
+                setOptionalParameter(builder, "physicianId", this.physicianGlnNumber);
 
                 setOptionalParameter(builder, "source_system_name", "Elexis");
                 setOptionalParameter(builder, "source_system_patient_id", this.aisIdentifier);

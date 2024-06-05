@@ -265,6 +265,18 @@
    <bundle id="at.medevit.elexis.hin.auth.ui">
       <category name="libraries"/>
    </bundle>
+   <bundle id="at.medevit.elexis.hin.sign.cli.linux">
+      <category name="libraries"/>
+   </bundle>
+   <bundle id="at.medevit.elexis.hin.sign.cli.win">
+      <category name="libraries"/>
+   </bundle>
+   <bundle id="at.medevit.elexis.hin.sign.core">
+      <category name="libraries"/>
+   </bundle>
+   <bundle id="at.medevit.elexis.hin.sign.ui">
+      <category name="libraries"/>
+   </bundle>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

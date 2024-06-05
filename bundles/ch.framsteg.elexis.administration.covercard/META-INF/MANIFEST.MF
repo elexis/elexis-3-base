@@ -10,4 +10,5 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  org.apache.httpcomponents.httpcore;bundle-version="4.4.14",
  org.apache.httpcomponents.httpclient;bundle-version="4.5.13",
- org.jdom2;bundle-version="2.0.6"
+ org.jdom2;bundle-version="2.0.6",
+ ch.elexis.core.ui.medication;bundle-version="3.12.0"

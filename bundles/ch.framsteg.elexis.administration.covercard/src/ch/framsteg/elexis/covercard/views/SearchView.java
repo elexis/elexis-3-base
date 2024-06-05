@@ -7,28 +7,29 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.Collator;
 import java.text.MessageFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.jface.wizard.WizardDialog;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -51,11 +52,10 @@ import org.jdom2.JDOMException;
 import org.osgi.service.component.annotations.Reference;
 import org.xml.sax.SAXException;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
-import ch.elexis.core.ui.events.ElexisUiSyncEventListenerImpl;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
@@ -69,6 +69,7 @@ import ch.framsteg.elexis.covercard.dao.PatientInfoData;
 import ch.framsteg.elexis.covercard.exceptions.BlockedCardException;
 import ch.framsteg.elexis.covercard.exceptions.InvalidCardException;
 import ch.framsteg.elexis.covercard.exceptions.UnsupportedCardException;
+import ch.framsteg.elexis.covercard.utilities.TableSorter;
 import ch.framsteg.elexis.covercard.views.dialogs.CardInfoDialog;
 import ch.framsteg.elexis.covercard.views.wizard.RegisterWizard;
 
@@ -233,8 +234,6 @@ public class SearchView extends ViewPart implements IRefreshable {
 		covercardNrAsc = true;
 		idCardNrAsc = true;
 		loadProperties();
-		ElexisEventDispatcher.getInstance().addListeners(eeli_case_update);
-		ElexisEventDispatcher.getInstance().addListeners(eeli_pat_sync);
 	}
 
 	private void loadProperties() {
@@ -797,7 +796,7 @@ public class SearchView extends ViewPart implements IRefreshable {
 					filteredTableContent = new StringBuilder();
 
 					defaultAsc = true;
-					defaultAsc = sortTable(table, 1, defaultAsc);
+					defaultAsc = TableSorter.sort(table, 1, defaultAsc);
 
 					TableItem[] items = table.getItems();
 					for (int i = 1; i < items.length; i++) {
@@ -876,8 +875,7 @@ public class SearchView extends ViewPart implements IRefreshable {
 						String patientID = item.getText(0);
 						String patID = new Query<Patient>(Patient.class).findSingle(Patient.FLD_PATID, Query.EQUALS,
 								patientID);
-						Patient patient = Patient.load(patID);
-						ElexisEventDispatcher.fireSelectionEvent(patient);
+						ContextServiceHolder.get().setActivePatient(Patient.load(patID).toIPatient());
 					}
 				}
 				btnShowDetail.setEnabled(true);
@@ -1001,243 +999,178 @@ public class SearchView extends ViewPart implements IRefreshable {
 		}
 		table.getShell().layout(new Control[] { table });
 		defaultAsc = true;
-		defaultAsc = sortTable(table, 1, defaultAsc);
+		defaultAsc = TableSorter.sort(table, 1, defaultAsc);
 		btnExport.setEnabled(true);
 		MessageDialog.openInformation(Display.getDefault().getActiveShell(),
 				getMessagesProperties().getProperty("Finito"), "Alle Patienten geladen");
 	}
 
-	private boolean sortTable(Table table, int columnNumber, boolean asc) {
-		TableItem[] items = table.getItems();
-		Collator collator = Collator.getInstance(Locale.getDefault());
-		// Sets the column1 as default sorted
-		TableColumn column = table.getColumn(columnNumber);
-		int index = columnNumber;
-		if (asc) {
-			asc = false;
-			for (int i = 1; i < items.length; i++) {
-				String value1 = items[i].getText(index);
-				for (int j = 0; j < i; j++) {
-					String value2 = items[j].getText(index);
-					if (collator.compare(value1, value2) < 0) {
-						String[] values = { items[i].getText(0), items[i].getText(1), items[i].getText(2),
-								items[i].getText(3), items[i].getText(4), items[i].getText(5), items[i].getText(6),
-								items[i].getText(7), items[i].getText(8), items[i].getText(9), items[i].getText(10),
-								items[i].getText(11), items[i].getText(12), items[i].getText(13), items[i].getText(14),
-								items[i].getText(15), items[i].getText(16), items[i].getText(16) };
-						items[i].dispose();
-						TableItem item = new TableItem(table, SWT.NONE, j);
-						item.setText(values);
-						item.setBackground(8, new Color(248, 248, 248));
-						item.setBackground(10, new Color(248, 248, 248));
-						item.setBackground(11, new Color(248, 248, 248));
-						item.setBackground(12, new Color(248, 248, 248));
-						item.setBackground(16, new Color(248, 248, 248));
-						items = table.getItems();
-						break;
-					}
-				}
-			}
-		} else {
-			asc = true;
-			for (int i = 1; i < items.length; i++) {
-				String value1 = items[i].getText(index);
-				for (int j = 0; j < i; j++) {
-
-					String value2 = items[j].getText(index);
-					if (collator.compare(value1, value2) > 0) {
-						String[] values = { items[i].getText(0), items[i].getText(1), items[i].getText(2),
-								items[i].getText(3), items[i].getText(4), items[i].getText(5), items[i].getText(6),
-								items[i].getText(7), items[i].getText(8), items[i].getText(9), items[i].getText(10),
-								items[i].getText(11), items[i].getText(12), items[i].getText(13), items[i].getText(14),
-								items[i].getText(15), items[i].getText(16), items[i].getText(16) };
-						items[i].dispose();
-						TableItem item = new TableItem(table, SWT.NONE, j);
-						item.setText(values);
-						item.setBackground(8, new Color(248, 248, 248));
-						item.setBackground(10, new Color(248, 248, 248));
-						item.setBackground(11, new Color(248, 248, 248));
-						item.setBackground(12, new Color(248, 248, 248));
-						item.setBackground(16, new Color(248, 248, 248));
-						items = table.getItems();
-						break;
-					}
-				}
-			}
-		}
-		table.setSortColumn(column);
-		table.deselectAll();
-		table.setTopIndex(0);
-		table.setLinesVisible(true);
-		return asc;
-	}
-
-	/* Listeners */
-	private final ElexisEventListener eeli_pat_sync = new ElexisUiSyncEventListenerImpl(Patient.class,
-			ElexisEvent.EVENT_UPDATE) {
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			Patient pat = (Patient) ev.getObject();
-			String patId = pat.getPatCode();
+	@Optional
+	@Inject
+	void udpateEncounter(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IPatient patient) {
+		if (patient != null) {
 			TableItem[] items = table.getItems();
 			TableItem item;
+			String patId = patient.getPatientNr();
 			for (int i = 0; i < items.length; i++) {
 				if (patId.equalsIgnoreCase(items[i].getText(0))) {
 					item = items[i];
-					item.setText(0, pat.getPatCode());
-					item.setText(1, pat.getName());
-					item.setText(2, pat.getVorname());
-					item.setText(3, pat.getGeburtsdatum());
-					item.setText(4, pat.getGeschlecht());
-					item.setText(5, pat.getAnschrift().getStrasse());
-					item.setText(6, pat.getAnschrift().getPlz());
-					item.setText(7, pat.getAnschrift().getOrt());
-					item.setText(8, pat.getAnschrift().getLand());
-					item.setText(9, pat.getXid(applicationProperties.getProperty(DOMAIN_COVERCARD_AHV)));
-					item.setText(10, pat.getNatel());
-					item.setText(11, pat.get(Patient.FLD_PHONE1));
-					item.setText(12, pat.getMailAddress());
-					item.setText(13, pat.getXid(applicationProperties.getProperty(DOMAIN_INSURED_NUMBER)));
-					item.setText(14, pat.getXid(applicationProperties.getProperty(DOMAIN_CARDD_NUMBER)));
-					item.setText(15, pat.getXid(applicationProperties.getProperty(DOMAIN_INSURED_PERSON_NUMBER)));
-					item.setText(16, pat.getBemerkung());
+					item.setText(0, patient.getPatientNr());
+					item.setText(1, patient.getLastName());
+					item.setText(2, patient.getFirstName());
+					item.setText(3, DateTimeFormatter.ofPattern("dd.MM.yyyy").format(patient.getDateOfBirth()));
+					item.setText(4, patient.getGender().getLocaleText());
+					item.setText(5, patient.getStreet());
+					item.setText(6, patient.getZip());
+					item.setText(7, patient.getCity());
+					item.setText(8, patient.getCountry().name());
+					item.setText(9,
+							patient.getXid(applicationProperties.getProperty(DOMAIN_COVERCARD_AHV)).getDomainId());
+					item.setText(10, patient.getMobile());
+					item.setText(11, patient.getPhone1());
+					item.setText(12, patient.getEmail());
+					item.setText(13,
+							patient.getXid(applicationProperties.getProperty(DOMAIN_INSURED_NUMBER)).getDomainId());
+					item.setText(14,
+							patient.getXid(applicationProperties.getProperty(DOMAIN_CARDD_NUMBER)).getDomainId());
+					item.setText(15,
+							patient.getXid(applicationProperties.getProperty(DOMAIN_INSURED_PERSON_NUMBER))
+									.getDomainId());
+					item.setText(16, patient.getComment());
 					break;
 				}
 			}
 		}
-	};
+	}
 
-	private final ElexisEventListener eeli_case_update = new ElexisUiSyncEventListenerImpl(Fall.class,
-			ElexisEvent.EVENT_UPDATE) {
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			Fall fall = (Fall) ev.getObject();
-			Patient patient = fall.getPatient();
-			String insuranceNumber = patient.getXid("www.xid.ch/framsteg/covercard/insured-number");
-			if (fall.getAbrechnungsSystem().equalsIgnoreCase("KVG")) {
-				if (fall.getInfoString("Versicherungsnummer").isEmpty()) {
-					fall.setInfoString("Versicherungsnummer", insuranceNumber);
-				}
+	@Optional
+	@Inject
+	void udpateEncounter(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) Fall fall) {
+		Patient patient = fall.getPatient();
+		String insuranceNumber = patient.getXid("www.xid.ch/framsteg/covercard/insured-number");
+		if (fall.getAbrechnungsSystem().equalsIgnoreCase("KVG")) {
+			if (fall.getInfoString("Versicherungsnummer").isEmpty()) {
+				fall.setInfoString("Versicherungsnummer", insuranceNumber);
 			}
 		}
-	};
+	}
 
 	Listener idSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			idAsc = sortTable(table, 0, idAsc);
+			idAsc = TableSorter.sort(table, 0, idAsc);
 		}
 	};
 
 	Listener nameSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			nameAsc = sortTable(table, 1, nameAsc);
+			nameAsc = TableSorter.sort(table, 1, nameAsc);
 		}
 	};
 
 	Listener prenameSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			prenameAsc = sortTable(table, 2, prenameAsc);
+			prenameAsc = TableSorter.sort(table, 2, prenameAsc);
 		}
 	};
 
 	Listener birthdaySortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			birthdayAsc = sortTable(table, 3, birthdayAsc);
+			birthdayAsc = TableSorter.sort(table, 3, birthdayAsc);
 		}
 	};
 
 	Listener sexSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			sexAsc = sortTable(table, 4, sexAsc);
+			sexAsc = TableSorter.sort(table, 4, sexAsc);
 		}
 	};
 
 	Listener addressSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			addressAsc = sortTable(table, 5, addressAsc);
+			addressAsc = TableSorter.sort(table, 5, addressAsc);
 		}
 	};
 
 	Listener zipSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			zipAsc = sortTable(table, 6, zipAsc);
+			zipAsc = TableSorter.sort(table, 6, zipAsc);
 		}
 	};
 
 	Listener locationSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			locationAsc = sortTable(table, 7, locationAsc);
+			locationAsc = TableSorter.sort(table, 7, locationAsc);
 		}
 	};
 
 	Listener countrySortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			countryAsc = sortTable(table, 8, countryAsc);
+			countryAsc = TableSorter.sort(table, 8, countryAsc);
 		}
 	};
 
 	Listener ahvSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			ahvAsc = sortTable(table, 9, ahvAsc);
+			ahvAsc = TableSorter.sort(table, 9, ahvAsc);
 		}
 	};
 
 	Listener mobileSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			mobileAsc = sortTable(table, 10, mobileAsc);
+			mobileAsc = TableSorter.sort(table, 10, mobileAsc);
 		}
 	};
 
 	Listener phoneSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			phoneAsc = sortTable(table, 11, phoneAsc);
+			phoneAsc = TableSorter.sort(table, 11, phoneAsc);
 		}
 	};
 
 	Listener emailSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			emailAsc = sortTable(table, 12, emailAsc);
+			emailAsc = TableSorter.sort(table, 12, emailAsc);
 		}
 	};
 
 	Listener insurantNrSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			insurantNrAsc = sortTable(table, 13, insurantNrAsc);
+			insurantNrAsc = TableSorter.sort(table, 13, insurantNrAsc);
 		}
 	};
 
 	Listener covercardNrSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			covercardNrAsc = sortTable(table, 14, covercardNrAsc);
+			covercardNrAsc = TableSorter.sort(table, 14, covercardNrAsc);
 		}
 	};
 
 	Listener idCardNrSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			idCardNrAsc = sortTable(table, 15, idCardNrAsc);
+			idCardNrAsc = TableSorter.sort(table, 15, idCardNrAsc);
 		}
 	};
 
 	Listener descriptionSortListener = new Listener() {
 		@Override
 		public void handleEvent(Event e) {
-			descriptionAsc = sortTable(table, 16, descriptionAsc);
+			descriptionAsc = TableSorter.sort(table, 16, descriptionAsc);
 		}
 	};
 
@@ -1267,8 +1200,6 @@ public class SearchView extends ViewPart implements IRefreshable {
 
 	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat_sync);
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_case_update);
 		super.dispose();
 	}
 }

@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: HIN Sign Ui
 Bundle-SymbolicName: at.medevit.elexis.hin.sign.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: ch.elexis.core.ui;bundle-version="3.12.0"
+Require-Bundle: ch.elexis.core.ui;bundle-version="3.12.0",
+ ch.elexis.core.data;bundle-version="3.12.0"
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.elexis.hin.sign.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-17

@@ -6,9 +6,10 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.elexis.hin.erezept.core
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: lib/zxing_core-3.3.0.jar,
+ .
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Import-Package: at.medevit.elexis.emediplan.core,
- at.medevit.elexis.hin.auth.core,
+Import-Package: at.medevit.elexis.hin.auth.core,
  ch.elexis.core.model,
  ch.elexis.core.services,
  ch.elexis.core.services.holder,
@@ -18,8 +19,12 @@ Import-Package: at.medevit.elexis.emediplan.core,
  org.apache.commons.io;version="[2.15.0,3.0.0]",
  org.apache.commons.lang3;version="[3.14.0,4.0.0]",
  org.eclipse.core.runtime;version="[3.7.0,4.0.0]",
+ org.eclipse.swt,
+ org.eclipse.swt.graphics,
+ org.eclipse.swt.widgets,
  org.osgi.framework;version="1.10.0",
  org.osgi.service.component.annotations;version="[1.3.0,2.0.0]",
  org.slf4j;version="[1.7.0,2.0.0]"
+Require-Bundle: at.medevit.elexis.emediplan.core;bundle-version="3.12.0"
 Service-Component: OSGI-INF/at.medevit.elexis.hin.sign.core.internal.HINSignService.xml
 Export-Package: at.medevit.elexis.hin.sign.core

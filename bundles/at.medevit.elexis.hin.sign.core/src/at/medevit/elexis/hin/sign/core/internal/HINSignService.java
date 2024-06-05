@@ -1,15 +1,20 @@
 package at.medevit.elexis.hin.sign.core.internal;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +23,15 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.widgets.Display;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -27,8 +41,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import at.medevit.elexis.emediplan.core.EMediplanUtil;
+import at.medevit.elexis.emediplan.core.model.print.Medication;
 import at.medevit.elexis.hin.auth.core.GetAuthCodeWithStateSupplier;
 import at.medevit.elexis.hin.auth.core.IHinAuthService;
 import at.medevit.elexis.hin.auth.core.IHinAuthUi;
@@ -36,6 +57,10 @@ import at.medevit.elexis.hin.sign.core.IHinSignService;
 import ch.elexis.core.model.IBlob;
 import ch.elexis.core.model.IRecipe;
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IFormattedOutput;
+import ch.elexis.core.services.IFormattedOutputFactory;
+import ch.elexis.core.services.IFormattedOutputFactory.ObjectType;
+import ch.elexis.core.services.IFormattedOutputFactory.OutputType;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.status.ObjectStatus;
 
@@ -78,8 +103,6 @@ public class HINSignService implements IHinSignService {
 			if(authHandle.isPresent()) {
 				CliProcess cliProcess = CliProcess.createPrescription(authHandle.get(), chmed, mode);
 				if (cliProcess.execute()) {
-					logger.info("Executing cli\n[" + cliProcess.getOutput().stream().collect(Collectors.joining("\n"))
-							+ "]");
 					if (cliProcess.getOutput() != null && !cliProcess.getOutput().isEmpty()
 							&& cliProcess.getOutput().get(0).startsWith("https://eprescription.hin.ch")) {
 						return ObjectStatus.OK(cliProcess.getOutput().get(0));
@@ -99,31 +122,22 @@ public class HINSignService implements IHinSignService {
 	}
 
 	@Override
-	public ObjectStatus<?> verifyPrescription(String chmed) {
-		Optional<String> adSwissAuthToken = getADSwissAuthToken();
-		if (adSwissAuthToken.isPresent()) {
-			Optional<String> authHandle = getEPDAuthHandle(adSwissAuthToken.get());
-			if (authHandle.isPresent()) {
-				CliProcess cliProcess = CliProcess.verifyPrescription(authHandle.get(), chmed, mode);
-				if (cliProcess.execute()) {
-					logger.info("Executing cli\n[" + cliProcess.getOutput().stream().collect(Collectors.joining("\n"))
-							+ "]");
-					Map<?, ?> map = cliProcess.getOutputAsMap();
-					if (map != null) {
-						return ObjectStatus.OK(map);
-					}
-				} else {
-					logger.error("Error executing cli\n["
-							+ cliProcess.getOutput().stream().collect(Collectors.joining("\n")) + "]");
-					Map<?, ?> map = cliProcess.getOutputAsMap();
-					if (map != null) {
-						return ObjectStatus.ERROR(map);
-					}
-					return ObjectStatus.ERROR("Authentication failed");
-				}
+	public ObjectStatus<?> verifyPrescription(String chmedUrl) {
+		CliProcess cliProcess = CliProcess.verifyPrescription(chmedUrl, mode);
+		if (cliProcess.execute()) {
+			Map<?, ?> map = cliProcess.getOutputAsMap();
+			if (map != null) {
+				return ObjectStatus.OK(map);
+			}
+		} else {
+			logger.error(
+					"Error executing cli\n[" + cliProcess.getOutput().stream().collect(Collectors.joining("\n")) + "]");
+			Map<?, ?> map = cliProcess.getOutputAsMap();
+			if (map != null) {
+				return ObjectStatus.ERROR(map);
 			}
 		}
-		return ObjectStatus.ERROR("Authentication failed");
+		return ObjectStatus.ERROR("Verification failed");
 	}
 
 	@Override
@@ -134,8 +148,6 @@ public class HINSignService implements IHinSignService {
 			if (authHandle.isPresent()) {
 				CliProcess cliProcess = CliProcess.revokePrescription(authHandle.get(), chmedId, mode);
 				if (cliProcess.execute()) {
-					logger.info("Executing cli\n[" + cliProcess.getOutput().stream().collect(Collectors.joining("\n"))
-							+ "]");
 					Map<?, ?> map = cliProcess.getOutputAsMap();
 					return ObjectStatus.OK(map);
 				} else {
@@ -339,7 +351,7 @@ public class HINSignService implements IHinSignService {
 	}
 
 	@Override
-	public Optional<String> getPrescriptionUrl(IRecipe iRecipe, String url) {
+	public Optional<String> getPrescriptionUrl(IRecipe iRecipe) {
 		IBlob blob = getBlob(iRecipe);
 		if(blob != null) {
 			return Optional.ofNullable((String) blob.getMapContent().get("url"));
@@ -359,5 +371,79 @@ public class HINSignService implements IHinSignService {
 		}
 		CoreModelServiceHolder.get().save(blob);
 		return blob;
+	}
+
+	@Override
+	public ObjectStatus<?> exportPrescriptionPdf(IRecipe iRecipe, OutputStream output) {
+		Optional<String> url = getPrescriptionUrl(iRecipe);
+		if(url.isPresent()) {
+			Optional<Image> qrCode = getQrCode(url.get());
+			
+			at.medevit.elexis.emediplan.core.model.print.Medication medication = at.medevit.elexis.emediplan.core.model.print.Medication
+					.fromPrescriptions(iRecipe.getMandator(), iRecipe.getPatient(), iRecipe.getPrescriptions());
+			try {
+				createPdf(qrCode, medication, output);
+			} catch (Exception e) {
+				LoggerFactory.getLogger(getClass()).error("Failed to create eprescription pdf", e);
+				return ObjectStatus.ERROR("Failed to create eprescription pdf");
+			}
+			return ObjectStatus.OK("Created eprescription to output", url.get());
+		}
+		return ObjectStatus.ERROR("No eprescription url set");
+	}
+
+	private void createPdf(Optional<Image> qrCode, Medication medication, OutputStream output) {
+		BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		ServiceReference<IFormattedOutputFactory> fopFactoryRef = bundleContext
+				.getServiceReference(IFormattedOutputFactory.class);
+		if (fopFactoryRef != null) {
+			IFormattedOutputFactory fopFactory = bundleContext.getService(fopFactoryRef);
+			IFormattedOutput foOutput = fopFactory.getFormattedOutputImplementation(ObjectType.JAXB, OutputType.PDF);
+			HashMap<String, String> parameters = new HashMap<>();
+			qrCode.ifPresent(qr -> {
+				parameters.put("qrJpeg", getEncodedQr(qr)); //$NON-NLS-1$
+			});
+			foOutput.transform(medication, HINSignService.class.getResourceAsStream("/rsc/xslt/eprescription.xslt"), //$NON-NLS-1$
+					output, parameters);
+			bundleContext.ungetService(fopFactoryRef);
+		} else {
+			throw new IllegalStateException("No IFormattedOutputFactory available"); //$NON-NLS-1$
+		}
+	}
+
+	private String getEncodedQr(Image qr) {
+		try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+			ImageLoader imageLoader = new ImageLoader();
+			imageLoader.data = new ImageData[] { qr.getImageData() };
+			imageLoader.compression = 100;
+			imageLoader.save(output, SWT.IMAGE_JPEG);
+			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error encoding QR", e); //$NON-NLS-1$
+		}
+		return StringUtils.EMPTY;
+	}
+
+	protected Optional<Image> getQrCode(String prescriptionUrl) {
+		Hashtable<EncodeHintType, Object> hintMap = new Hashtable<>();
+		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+
+		QRCodeWriter qrCodeWriter = new QRCodeWriter();
+		try {
+			BitMatrix bitMatrix = qrCodeWriter.encode(prescriptionUrl, BarcodeFormat.QR_CODE, 470, 470, hintMap);
+			int width = bitMatrix.getWidth();
+			int height = bitMatrix.getHeight();
+
+			ImageData data = new ImageData(width, height, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					data.setPixel(x, y, bitMatrix.get(x, y) ? 0x000000 : 0xFFFFFF);
+				}
+			}
+			return Optional.of(new Image(Display.getDefault(), data));
+		} catch (WriterException e) {
+			LoggerFactory.getLogger(getClass()).error("Error creating QR", e); //$NON-NLS-1$
+			return Optional.empty();
+		}
 	}
 }

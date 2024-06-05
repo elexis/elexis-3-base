@@ -1,5 +1,6 @@
 package at.medevit.elexis.hin.sign.core;
 
+import java.io.OutputStream;
 import java.util.Optional;
 
 import ch.elexis.core.model.IRecipe;
@@ -24,10 +25,10 @@ public interface IHinSignService {
 	/**
 	 * Verifying an e-prescription QR Code.
 	 * 
-	 * @param chmed
+	 * @param chmedUrl
 	 * @return
 	 */
-	public ObjectStatus<?> verifyPrescription(String chmed);
+	public ObjectStatus<?> verifyPrescription(String chmedUrl);
 
 	/**
 	 * Mark a signed ePrescription QR Code as revoked
@@ -52,6 +53,13 @@ public interface IHinSignService {
 	 * @param url
 	 * @return
 	 */
-	public Optional<String> getPrescriptionUrl(IRecipe iRecipe, String url);
+	public Optional<String> getPrescriptionUrl(IRecipe iRecipe);
 
+	/**
+	 * Generate a pdf with the eprescription signed url as QR code.
+	 * 
+	 * @param iRecipe
+	 * @return
+	 */
+	public ObjectStatus<?> exportPrescriptionPdf(IRecipe iRecipe, OutputStream output);
 }

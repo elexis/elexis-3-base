@@ -60,7 +60,7 @@ public class Medication {
 
 		for (IPrescription prescription : prescriptions) {
 			EntryType type = prescription.getEntryType();
-			if (type == EntryType.FIXED_MEDICATION) {
+			if (type == EntryType.FIXED_MEDICATION || type == EntryType.RECIPE) {
 				if (ret.fixMedication == null) {
 					ret.fixMedication = new ArrayList<>();
 				}

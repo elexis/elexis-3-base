@@ -189,7 +189,7 @@ public class CliProcess {
 		throw new IllegalStateException("No CLI available");
 	}
 
-	public static CliProcess verifyPrescription(String epdHandle, String chmedUrl, Mode mode) {
+	public static CliProcess verifyPrescription(String chmedUrl, Mode mode) {
 		if (isCliAvailable()) {
 			CliProcess ret = new CliProcess();
 			ret.command.add(getExecutableName());

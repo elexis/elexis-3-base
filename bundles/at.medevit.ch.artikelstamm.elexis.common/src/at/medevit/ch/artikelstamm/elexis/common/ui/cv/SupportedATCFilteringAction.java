@@ -35,7 +35,7 @@ public class SupportedATCFilteringAction extends Action {
 
 	@Override
 	public String getToolTipText() {
-		return "ATC basierten Filter de-/aktivieren";
+		return "Nach ATC-Code sortieren";
 	}
 
 	@Override

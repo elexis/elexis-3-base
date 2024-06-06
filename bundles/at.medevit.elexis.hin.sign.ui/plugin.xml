@@ -6,7 +6,7 @@
       <command
             defaultHandler="at.medevit.elexis.hin.sign.ui.handler.CreateAndOpenEPrescription"
             id="at.medevit.elexis.hin.sign.ui.eprescription.createAndOpen"
-            name="eRezept">
+            name="HIN eRezept erstellen">
       </command>
    </extension>
    <extension
@@ -16,11 +16,18 @@
             locationURI="toolbar:ch.elexis.Rezepte">
          <command
                commandId="at.medevit.elexis.hin.sign.ui.eprescription.createAndOpen"
-               icon="icon://IMG_VIEW_RECIPES"
-               label="eRezept erstellen"
+               icon="rsc/hin_erezept_16x16.png"
+               label="HIN eRezept erstellen"
                style="push">
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="ch.elexis.core.data.OutputLogDescriptor">
+      <OutputLogDescriptor
+            Outputter="at.medevit.elexis.hin.sign.ui.outputter.EPrescriptionOutputter"
+            id="at.medevit.elexis.hin.sign.ui.eprescription.outputter">
+      </OutputLogDescriptor>
    </extension>
 
 </plugin>

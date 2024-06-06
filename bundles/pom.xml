@@ -51,6 +51,10 @@
     <module>at.medevit.elexis.gdt</module>
     <module>at.medevit.elexis.hin.auth.core</module>
     <module>at.medevit.elexis.hin.auth.ui</module>
+    <module>at.medevit.elexis.hin.sign.core</module>
+    <module>at.medevit.elexis.hin.sign.ui</module>
+    <module>at.medevit.elexis.hin.sign.cli.win</module>
+    <module>at.medevit.elexis.hin.sign.cli.linux</module>
     <module>at.medevit.elexis.impfplan.ui</module>
     <module>at.medevit.elexis.impfplan</module>
     <module>at.medevit.elexis.inbox.core.elements</module>

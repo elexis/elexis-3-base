@@ -21,6 +21,7 @@ Require-Bundle: ch.rgw.utility;bundle-version="3.9.100",
 Bundle-ClassPath: lib/zxing_core-3.3.0.jar,
  .
 Export-Package: at.medevit.elexis.emediplan.core,
- at.medevit.elexis.emediplan.core.model.chmed16a
+ at.medevit.elexis.emediplan.core.model.chmed16a,
+ at.medevit.elexis.emediplan.core.model.print
 Service-Component: OSGI-INF/at.medevit.elexis.emediplan.core.EMediplanServiceHolder.xml,
  OSGI-INF/at.medevit.elexis.emediplan.core.internal.EMediplanServiceImpl.xml

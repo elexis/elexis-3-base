@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="at.medevit.elexis.hin.sign.ui.event.DeleteRecipeEventHandler">
+   <property name="event.topics">info/elexis/po/compatibility/delete
+info/elexis/model/delete
+   </property>
+   <service>
+      <provide interface="org.osgi.service.event.EventHandler"/>
+   </service>
+   <reference cardinality="1..1" field="hinSignService" interface="at.medevit.elexis.hin.sign.core.IHinSignService" name="hinSignService"/>
+   <implementation class="at.medevit.elexis.hin.sign.ui.event.DeleteRecipeEventHandler"/>
+</scr:component>

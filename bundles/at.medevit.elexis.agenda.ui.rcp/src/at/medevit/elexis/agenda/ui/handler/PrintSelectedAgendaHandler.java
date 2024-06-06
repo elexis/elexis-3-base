@@ -54,6 +54,7 @@ public class PrintSelectedAgendaHandler {
                             continue;
                         }
                         Map<String, String> appointmentData = new HashMap<>();
+						appointmentData.put("Datum", appointment.getStartTime().toLocalDate().toString());
                         appointmentData.put("Area", letter.getArea());
                         appointmentData.put("ID", appointment.getId());
                         appointmentData.put("Von", appointment.getStartTime().toLocalTime().toString());
@@ -64,7 +65,6 @@ public class PrintSelectedAgendaHandler {
 						colors.put(appointment.getId(), typeColor != null ? typeColor : "FFFFFFFF");
                     }
                 }
-				System.out.println("test 99 " + appointments.size());
                 FileOutputStream fout = null;
                 File file = null;
                 try {

@@ -3,9 +3,11 @@ package at.medevit.elexis.agenda.ui.utils;
 import java.awt.Color;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +78,7 @@ public class PdfUtils {
 			PDPage tablePage = doc.getPage(i);
 			PDPageContentStream tableContentStream = new PDPageContentStream(doc, tablePage,
 					PDPageContentStream.AppendMode.APPEND, true);
+
 			writeHeader(tableContentStream, tablePage, appointments);
 			tableContentStream.close();
 		}
@@ -135,14 +138,25 @@ public class PdfUtils {
 
 	private static float writeHeader(PDPageContentStream contentStream, PDPage page,
 			List<Map<String, String>> appointments) throws IOException {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy"); // Gewünschtes Ausgabeformat
+		SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Format des Eingabedatums
 		contentStream.beginText();
 		contentStream.setFont(PDType1Font.HELVETICA, 8);
 		String area = appointments.isEmpty() ? "Unbekannt" : appointments.get(0).get("Area");
 		float yPos = page.getMediaBox().getHeight() - 50;
 		contentStream.newLineAtOffset(page.getMediaBox().getWidth() - 255, yPos);
-		contentStream.showText("Agenda Bereich " + area + ", " + dateFormat.format(Calendar.getInstance().getTime())
-				+ " erstellt am " + dateFormat.format(Calendar.getInstance().getTime()));
+		String datumStr = appointments.get(0).get("Datum");
+
+		Date datum = null;
+		try {
+			datum = inputDateFormat.parse(datumStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		contentStream
+				.showText("Agenda Bereich " + area + ", " + (datum != null ? dateFormat.format(datum) : "Unbekannt")
+						+ " erstellt am " + dateFormat.format(Calendar.getInstance().getTime()));
 		contentStream.endText();
 		contentStream.setStrokingColor(Color.BLACK);
 		contentStream.setLineWidth((float) 0.5);

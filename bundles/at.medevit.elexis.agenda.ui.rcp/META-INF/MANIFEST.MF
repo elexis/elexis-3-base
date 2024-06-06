@@ -8,8 +8,12 @@ Automatic-Module-Name: at.medevit.elexis.agenda.ui.rcp
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="2.1.100",
  ch.elexis.core;bundle-version="3.9.0",
- at.medevit.elexis.agenda.ui;bundle-version="3.9.0"
-Import-Package: javax.inject;version="1.0.0",
+ at.medevit.elexis.agenda.ui;bundle-version="3.9.0",
+ ch.elexis.core.pdfbox;bundle-version="2.0.24"
+Import-Package: be.quodlibet.boxable,
+ ch.elexis.agenda.preferences,
+ ch.elexis.core.services.holder,
+ javax.inject;version="1.0.0",
  org.eclipse.e4.core.di.annotations;version="1.6.0",
  org.eclipse.e4.ui.services,
  org.eclipse.jface.dialogs,

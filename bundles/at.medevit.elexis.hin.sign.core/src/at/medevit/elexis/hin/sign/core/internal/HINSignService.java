@@ -87,7 +87,11 @@ public class HINSignService implements IHinSignService {
 
 	@Activate
 	public void activate() {
-		setMode(Mode.TEST);
+		if (StringUtils.isNotBlank(System.getProperty("hinsign.test"))) {
+			setMode(Mode.TEST);
+		} else {
+			setMode(Mode.PROD);
+		}
 	}
 
 	@Override
@@ -284,19 +288,24 @@ public class HINSignService implements IHinSignService {
 
 	private URL getEPDAuthServiceAuthCodeUrl() throws MalformedURLException {
 		StringBuilder sb = new StringBuilder();
-		sb.append("https://oauth2.ci-prep.adswiss.hin.ch/authService/EPDAuth");
+		sb.append(getADSwissAuthServiceBaseUrl() + "EPDAuth");
 		sb.append("?targetUrl=");
 		sb.append(URLEncoder.encode(getRedirectUri() + "/" + getCurrentState(true), StandardCharsets.UTF_8));
 		sb.append("&style=redirect");
-		return new URL( sb.toString());
+		return new URL(sb.toString());
 	}
 
 	private URL getEPDAuthServiceAuthHandleUrl() throws MalformedURLException {
 		StringBuilder sb = new StringBuilder();
-		sb.append("https://oauth2.ci-prep.adswiss.hin.ch/authService/EPDAuth/auth_handle");
-		return new URL( sb.toString());
+		sb.append(getADSwissAuthServiceBaseUrl() + "EPDAuth/auth_handle");
+		return new URL(sb.toString());
 	}
-	
+
+	private String getADSwissAuthServiceBaseUrl() {
+		return mode == Mode.TEST ? "https://oauth2.ci-prep.adswiss.hin.ch/authService/"
+				: "https://oauth2.ci.adswiss.hin.ch/authService/";
+	}
+
 	private Optional<String> getEpdAuthCode(String epdAuthUrl, IHinAuthUi iHinAuthUi) {
 		iHinAuthUi.openBrowser(epdAuthUrl);
 		Object value = iHinAuthUi.getWithCancelableProgress("HIN Berechtigung im Browser bestätigen.",

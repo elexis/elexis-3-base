@@ -65,33 +65,35 @@ public class PrintSelectedAgendaHandler {
 						colors.put(appointment.getId(), typeColor != null ? typeColor : "FFFFFFFF");
                     }
                 }
-                FileOutputStream fout = null;
-                File file = null;
-                try {
-					file = File.createTempFile(letter.getArea().replaceAll("\\s+", "_") + "_", ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
-                    fout = new FileOutputStream(file);
-					PdfUtils.saveFile(fout, appointments, colors);
-                } catch (IOException e) {
-                    Display.getDefault().syncExec(() -> {
-                        MessageDialog.openError(shell, "Fehler", "Fehler beim PDF anlegen.\n" + e.getMessage());
-                    });
-                    LoggerFactory.getLogger(getClass()).error("Error creating PDF", e); //$NON-NLS-1$
-                } finally {
-                    if (fout != null) {
-                        try {
-                            fout.close();
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-                }
-                if (file != null) {
-                    Program.launch(file.getAbsolutePath());
-                }
+				if (!appointments.isEmpty()) {
+					FileOutputStream fout = null;
+					File file = null;
+					try {
+						file = File.createTempFile(letter.getArea().replaceAll("\\s+", "_") + "_", ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
+						fout = new FileOutputStream(file);
+						PdfUtils.saveFile(fout, appointments, colors);
+					} catch (IOException e) {
+						Display.getDefault().syncExec(() -> {
+							MessageDialog.openError(shell, "Fehler", "Fehler beim PDF anlegen.\n" + e.getMessage());
+						});
+						LoggerFactory.getLogger(getClass()).error("Error creating PDF", e); //$NON-NLS-1$
+					} finally {
+						if (fout != null) {
+							try {
+								fout.close();
+							} catch (IOException e) {
+								// ignore
+							}
+						}
+					}
+					if (file != null) {
+						Program.launch(file.getAbsolutePath());
+					}
+				}
 			}
-        }
+		}
 		return null;
-    }
+	}
 
 	private String getColorForType(String type) {
 		String colorDesc = ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + type, "FFFFFFFF");

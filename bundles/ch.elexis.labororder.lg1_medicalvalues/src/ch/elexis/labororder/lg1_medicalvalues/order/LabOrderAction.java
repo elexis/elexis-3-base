@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.PartInitException;
@@ -36,52 +37,54 @@ import ch.elexis.labororder.lg1_medicalvalues.messages.Messages;
 public class LabOrderAction extends Action {
 
 	public LabOrderAction() {
-        setId("ch.elexis.laborder.lg1_medicalvalues.laborder"); //$NON-NLS-1$
+		setId("ch.elexis.laborder.lg1_medicalvalues.laborder"); //$NON-NLS-1$
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.labororder.lg1_medicalvalues", //$NON-NLS-1$
-		        "rsc/lg1_logo.png"));
+				"rsc/lg1_logo.png"));
 		setText(Messages.LabOrderAction_nameAction);
 	}
 
 	@Override
 	public void run() {
-		IPatient patient = ContextServiceHolder.get().getActivePatient().get();
-		if (patient != null) {
-			try {
-				URL url = buildOrderCreationUrl(patient);
+		try {
+			IPatient patient = ContextServiceHolder.get().getActivePatient().get();
+			URL url = buildOrderCreationUrl(patient);
 
-				PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(url);
-			} catch (NoEncounterSelectedException e) {
-			        MessageDialog.openError(Display.getDefault().getActiveShell(),
-                                        Messages.LabOrderAction_errorTitleNoFallSelected,
-                                        Messages.LabOrderAction_errorMessageNoFallSelected);
-			} catch (URISyntaxException | MalformedURLException e) {
-                                LoggerFactory.getLogger(getClass()).error("Error building medicalvalues order creation API URL", e);
-                                MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-                                        "Es ist ein Fehler beim Erstellen der URL für die Auftragserstellung aufgetreten.\n\n" + e.getLocalizedMessage());
-                        } catch (IOException e) {
-				LoggerFactory.getLogger(getClass()).error("Error contacting LG1 web service", e);
-				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-				        "Es ist ein Fehler beim LG1 Aufruf aufgetreten.\n\n" + e.getLocalizedMessage());
-			} catch (PartInitException e) {
-                                LoggerFactory.getLogger(getClass()).error("Error opening browser with medicalvalues order creation API URL", e);
-                                MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-                                        "Es ist ein Fehler beim Öffnen des Browsers aufgetreten.\n\n" + e.getLocalizedMessage());
-                        } catch (IllegalArgumentException e) {
-				LoggerFactory.getLogger(getClass()).error("Error calling medicalvalues order creation API", e);
-				MessageDialog.openError(Display.getDefault().getActiveShell(), "Fehler",
-				        "Es fehlen zur Auftragserstellung benötigte Patientendaten.\n\n" + e.getLocalizedMessage());
-			}
-		} else {
-		        MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Fehler",
-                                "Es ist kein Patient ausgewählt.");
+			PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(url);
+		} catch (NoSuchElementException e) {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Fehler",
+					"Es ist kein Patient ausgewählt.");
+		} catch (NoEncounterSelectedException e) {
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(),
+					Messages.LabOrderAction_errorTitleNoFallSelected,
+					Messages.LabOrderAction_errorMessageNoFallSelected);
+		} catch (URISyntaxException | MalformedURLException e) {
+			LoggerFactory.getLogger(getClass()).error("Error building medicalvalues order creation API URL", e);
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Fehler",
+					"Es ist ein Fehler beim Erstellen der URL für die Auftragserstellung aufgetreten.\n\n"
+							+ e.getLocalizedMessage());
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error contacting LG1 web service", e);
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Fehler",
+					"Es ist ein Fehler beim LG1 Aufruf aufgetreten.\n\n" + e.getLocalizedMessage());
+		} catch (PartInitException e) {
+			LoggerFactory.getLogger(getClass())
+					.error("Error opening browser with medicalvalues order creation API URL", e);
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Fehler",
+					"Es ist ein Fehler beim Öffnen des Browsers aufgetreten.\n\n" + e.getLocalizedMessage());
+		} catch (IllegalArgumentException e) {
+			LoggerFactory.getLogger(getClass()).error("Error calling medicalvalues order creation API", e);
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Fehler",
+					"Es fehlen zur Auftragserstellung benötigte Patientendaten.\n\n" + e.getLocalizedMessage());
 		}
 	}
 
-	private URL buildOrderCreationUrl(IPatient patient) throws URISyntaxException, MalformedURLException, NoEncounterSelectedException {
-		URIBuilder builder = new URIBuilder("https://oe.lg1.ch/de/diagnostic-intelligence/orders/importPatientAndCreateOrder");
+	private URL buildOrderCreationUrl(IPatient patient)
+			throws URISyntaxException, MalformedURLException, NoEncounterSelectedException {
+		URIBuilder builder = new URIBuilder(
+				"https://oe.lg1.ch/de/diagnostic-intelligence/orders/importPatientAndCreateOrder");
 
-                Patient lg1Patient = Patient.of(patient);
-                lg1Patient.toMedicalvaluesOrderCreationAPIQueryParams(builder);
+		Patient lg1Patient = Patient.of(patient);
+		lg1Patient.toMedicalvaluesOrderCreationAPIQueryParams(builder);
 
 		return builder.build().toURL();
 	}

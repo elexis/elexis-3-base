@@ -97,21 +97,18 @@ public class Patient {
                 ret.mobilePhoneNumber = patient.getMobile();
                 ret.email = patient.getEmail();
 
-                ICoverage coverage = null;
+                Optional<ICoverage> coverage = ContextServiceHolder.get().getActiveCoverage();
+                ICoverage activeCoverage = null;
 
-                try {
-                        coverage = ContextServiceHolder.get().getActiveCoverage().get();
-                } catch (NoSuchElementException e) {
+                if (coverage.isPresent()) {
+                        activeCoverage = coverage.get();
+                } else {
                         throw new NoEncounterSelectedException();
                 }
 
-                if (coverage == null) {
-                        throw new NoEncounterSelectedException();
-                }
+                ret.insurancenumber = activeCoverage.getInsuranceNumber();
 
-                ret.insurancenumber = coverage.getInsuranceNumber();
-
-                IContact costBearer = coverage.getCostBearer();
+                IContact costBearer = activeCoverage.getCostBearer();
                 ret.insurancename = costBearer.getDescription1();
 
                 IXid costBearerEAN = costBearer.getXid(XidConstants.EAN);
@@ -119,8 +116,8 @@ public class Patient {
                         ret.insurancegln = costBearerEAN.getDomainId();
                 }
 
-                ret.billing = getBilling(coverage);
-                ret.reason = getReason(coverage);
+                ret.billing = getBilling(activeCoverage);
+                ret.reason = getReason(activeCoverage);
 
                 IXid patientAHV = patient.getXid(XidConstants.CH_AHV);
                 if (patientAHV != null) {

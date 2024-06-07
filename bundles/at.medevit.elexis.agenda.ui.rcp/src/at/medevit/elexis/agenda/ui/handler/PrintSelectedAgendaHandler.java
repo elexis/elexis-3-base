@@ -32,66 +32,69 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 public class PrintSelectedAgendaHandler {
 
-    @Execute
-    public Object execute(MPart part, @Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
-        if (part.getObject() instanceof AgendaView) {
-            AgendaView agendaView = (AgendaView) part.getObject();
-            LoadEventsFunction loadEventsFunction = agendaView.getLoadEventsFunction();
+	@Execute
+	public Object execute(MPart part, @Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
+		if (part.getObject() instanceof AgendaView) {
+			AgendaView agendaView = (AgendaView) part.getObject();
+			LoadEventsFunction loadEventsFunction = agendaView.getLoadEventsFunction();
 
-            List<IPeriod> periods = loadEventsFunction.getCurrentPeriods();
-            Map<String, List<IPeriod>> areaPeriodMap = getAreaPeriodMap(periods);
+			List<IPeriod> periods = loadEventsFunction.getCurrentPeriods();
+			Map<String, List<IPeriod>> areaPeriodMap = getAreaPeriodMap(periods);
 
-            for (String area : areaPeriodMap.keySet()) {
-                AreaPeriodsLetter letter = AreaPeriodsLetter.of(area, areaPeriodMap.get(area));
-                List<Map<String, String>> appointments = new ArrayList<>();
-                Map<String, String> colors = new HashMap<>();
-                for (IPeriod period : areaPeriodMap.get(area)) {
-                    if (period instanceof IAppointment) {
-                        IAppointment appointment = (IAppointment) period;
-                        String type = appointment.getType();
-                        String typeColor = getColorForType(type);
-                        if ("gesperrt".equals(type)) {
-                            continue;
-                        }
-                        Map<String, String> appointmentData = new HashMap<>();
+			for (String area : areaPeriodMap.keySet()) {
+				AreaPeriodsLetter letter = AreaPeriodsLetter.of(area, areaPeriodMap.get(area));
+				List<Map<String, String>> appointments = new ArrayList<>();
+				Map<String, String> colors = new HashMap<>();
+				for (IPeriod period : areaPeriodMap.get(area)) {
+					if (period instanceof IAppointment) {
+						IAppointment appointment = (IAppointment) period;
+						String type = appointment.getType();
+						String typeColor = getColorForType(type);
+						if ("gesperrt".equals(type)) {
+							continue;
+						}
+						Map<String, String> appointmentData = new HashMap<>();
 						appointmentData.put("Datum", appointment.getStartTime().toLocalDate().toString());
-                        appointmentData.put("Area", letter.getArea());
-                        appointmentData.put("ID", appointment.getId());
-                        appointmentData.put("Von", appointment.getStartTime().toLocalTime().toString());
-                        appointmentData.put("Bis", appointment.getEndTime().toLocalTime().toString());
-                        appointmentData.put("Personalien", appointment.getSubjectOrPatient());
-                        appointmentData.put("Grund", appointment.getReason());
-                        appointments.add(appointmentData);
+						appointmentData.put("Area", letter.getArea());
+						appointmentData.put("ID", appointment.getId());
+						appointmentData.put("Von", appointment.getStartTime().toLocalTime().toString());
+						appointmentData.put("Bis", appointment.getEndTime().toLocalTime().toString());
+						appointmentData.put("Personalien", appointment.getSubjectOrPatient());
+						appointmentData.put("Grund", appointment.getReason());
+						appointments.add(appointmentData);
 						colors.put(appointment.getId(), typeColor != null ? typeColor : "FFFFFFFF");
-                    }
-                }
-                FileOutputStream fout = null;
-                File file = null;
-                try {
-					file = File.createTempFile(letter.getArea().replaceAll("\\s+", "_") + "_", ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
-                    fout = new FileOutputStream(file);
-					PdfUtils.saveFile(fout, appointments, colors);
-                } catch (IOException e) {
-                    Display.getDefault().syncExec(() -> {
-                        MessageDialog.openError(shell, "Fehler", "Fehler beim PDF anlegen.\n" + e.getMessage());
-                    });
-                    LoggerFactory.getLogger(getClass()).error("Error creating PDF", e); //$NON-NLS-1$
-                } finally {
-                    if (fout != null) {
-                        try {
-                            fout.close();
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-                }
-                if (file != null) {
-                    Program.launch(file.getAbsolutePath());
-                }
+					}
+				}
+				if (!appointments.isEmpty()) {
+					FileOutputStream fout = null;
+					File file = null;
+					try {
+						file = File.createTempFile(letter.getArea().replaceAll("\\s+", "_") + "_", ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
+						fout = new FileOutputStream(file);
+						PdfUtils.saveFile(fout, appointments, colors);
+					} catch (IOException e) {
+						Display.getDefault().syncExec(() -> {
+							MessageDialog.openError(shell, "Fehler", "Fehler beim PDF anlegen.\n" + e.getMessage());
+						});
+						LoggerFactory.getLogger(getClass()).error("Error creating PDF", e); //$NON-NLS-1$
+					} finally {
+						if (fout != null) {
+							try {
+								fout.close();
+							} catch (IOException e) {
+								// ignore
+							}
+						}
+					}
+					if (file != null) {
+						Program.launch(file.getAbsolutePath());
+					}
+				}
 			}
-        }
+		}
 		return null;
-    }
+	}
+
 
 	private String getColorForType(String type) {
 		String colorDesc = ConfigServiceHolder.getUser(PreferenceConstants.AG_TYPCOLOR_PREFIX + type, "FFFFFFFF");

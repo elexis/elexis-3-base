@@ -200,6 +200,11 @@ public class QrRnOutputter implements IRnOutputter {
 								CoreModelServiceHolder.get().save(invoice);
 							}
 							List<File> printed = epdf.getPrintedBill();
+							if (epdf.isCopy()) {
+								for (File pdfFile : printed) {
+									PdfUtil.addCopyWatermark(pdfFile);
+								}
+							}
 							if (!noUi) {
 								for (File pdfFile : printed) {
 									if (pdfFile.exists()) {

@@ -10,6 +10,7 @@ import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TP_M2;
 import static ch.elexis.pdfBills.RnOutputter.CFG_MSGTEXT_TP_M3;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  *
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +42,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -103,6 +106,7 @@ public class ElexisPDFGenerator {
 	private Document domDocument;
 	private String billNr;
 	private String billVersion;
+	private boolean isCopy;
 
 	private String eanList;
 	private String vatList;
@@ -133,6 +137,7 @@ public class ElexisPDFGenerator {
 		this.invoiceState = invoiceState;
 		domDocument = readDom();
 		this.billVersion = getXmlVersion();
+		this.isCopy = getXmlCopy();
 		this.eanList = getEanList();
 		this.vatList = getVatList();
 		initializeMarginSettings();
@@ -403,6 +408,17 @@ public class ElexisPDFGenerator {
 		return StringUtils.EMPTY;
 	}
 
+	private String getEncodedCopy() {
+		try (InputStream input = getClass().getResourceAsStream("/rsc/kopie.jpeg"); //$NON-NLS-1$
+				ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+			IOUtils.copy(input, output);
+			return "data:image/jpg;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error encoding logo", e); //$NON-NLS-1$
+		}
+		return StringUtils.EMPTY;
+	}
+
 	private String getEncodedQr(Rechnung rechnung) {
 		if (rechnung != null) {
 			Optional<IInvoice> invoice = CoreModelServiceHolder.get().load(rechnung.getId(), IInvoice.class);
@@ -656,6 +672,21 @@ public class ElexisPDFGenerator {
 		return ret;
 	}
 
+	private boolean getXmlCopy() {
+		try {
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			XPathExpression expr = xPath.compile("/request/payload"); //$NON-NLS-1$
+			Object result = expr.evaluate(domDocument, XPathConstants.NODE);
+			if (result instanceof Element) {
+				Element element = (Element) result;
+				return Boolean.valueOf(element.getAttribute("copy"));
+			}
+		} catch (XPathExpressionException e) {
+			LoggerFactory.getLogger(getClass()).error("Error getting copy", e); //$NON-NLS-1$
+		}
+		return false;
+	}
+
 	private String getEanList() {
 		if ("4.4".equals(billVersion)) { //$NON-NLS-1$
 			HashSet<String> eanSet = new HashSet<>();
@@ -906,5 +937,9 @@ public class ElexisPDFGenerator {
 
 	public void setPrint(boolean value) {
 		this.print = value;
+	}
+	
+	public boolean isCopy() {
+		return isCopy;
 	}
 }

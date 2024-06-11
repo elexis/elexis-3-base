@@ -11,8 +11,8 @@ public class RegisterWizard extends Wizard {
 	private Properties applicationProperties;
 	private Properties messagesProperties;
 
-	private WizardPage1 first;
-	private WizardPage2 second;
+	private WizardPageOne first;
+	private WizardPageTwo second;
 	private CardInfoData cardInfoData;
 	private PatientInfoData patientInfoData;
 
@@ -50,9 +50,9 @@ public class RegisterWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		first = new WizardPage1(messagesProperties.getProperty(WIZARD_PAGE_1_TITLE), applicationProperties,
+		first = new WizardPageOne(messagesProperties.getProperty(WIZARD_PAGE_1_TITLE), applicationProperties,
 				messagesProperties, cardInfoData, patientInfoData);
-		second = new WizardPage2(messagesProperties.getProperty(WIZARD_PAGE_2_TITLE), patientInfoData,
+		second = new WizardPageTwo(messagesProperties.getProperty(WIZARD_PAGE_2_TITLE), patientInfoData,
 				applicationProperties, messagesProperties);
 		addPage(first);
 		addPage(second);

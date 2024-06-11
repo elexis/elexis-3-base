@@ -74,7 +74,5 @@ public class TableSorter {
 		table.setTopIndex(0);
 		table.setLinesVisible(true);
 		return asc;
-
 	}
-
 }

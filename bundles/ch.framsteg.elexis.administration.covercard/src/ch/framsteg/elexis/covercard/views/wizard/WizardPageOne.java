@@ -19,7 +19,7 @@ import ch.framsteg.elexis.covercard.dao.CardInfoData;
 import ch.framsteg.elexis.covercard.dao.PatientInfoData;
 import ch.framsteg.elexis.covercard.views.dialogs.CardInfoDialog;
 
-public class WizardPage1 extends WizardPage {
+public class WizardPageOne extends WizardPage {
 
 	private static final String PATIENT_GROUP_TITLE = "wizard.page1.patient.group.title";
 	private static final String PRENAME = "wizard.page1.prename";
@@ -41,7 +41,7 @@ public class WizardPage1 extends WizardPage {
 
 	private Composite container;
 
-	protected WizardPage1(String pageName, Properties applicationProperties, Properties messagesProperties,
+	protected WizardPageOne(String pageName, Properties applicationProperties, Properties messagesProperties,
 			CardInfoData cardInfoData, PatientInfoData patientInfoData) {
 		super(pageName);
 		setTitle(pageName);

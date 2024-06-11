@@ -26,7 +26,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.framsteg.elexis.covercard.dao.PatientInfoData;
 
-public class WizardPage2 extends WizardPage {
+public class WizardPageTwo extends WizardPage {
 
 	private Composite container;
 	private Table table;
@@ -72,7 +72,7 @@ public class WizardPage2 extends WizardPage {
 	private final static String ONE_CANDIDATE_MSG = "wizard.page2.msg.one.candidate";
 	private final static String MULTIBLE_CANDIDATES_MSG = "wizard.page2.msg.multible.candidate";
 
-	protected WizardPage2(String pageName, PatientInfoData patientInfoData, Properties applicationProperties,
+	protected WizardPageTwo(String pageName, PatientInfoData patientInfoData, Properties applicationProperties,
 			Properties messagesProperties) {
 		super(pageName);
 		setTitle(pageName);

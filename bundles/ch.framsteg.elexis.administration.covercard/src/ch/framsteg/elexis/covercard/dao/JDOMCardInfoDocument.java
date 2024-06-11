@@ -78,7 +78,7 @@ public class JDOMCardInfoDocument extends Document {
 			if (!rootElement.getChildText("validCard", namespace).equalsIgnoreCase("67")) {
 				cardInfoData.setValidCard(rootElement.getChildText("validCard", namespace));
 			} else {
-				throw new BlockedCardException();
+				throw new BlockedCardException("The used card is blocked");
 			}
 		}
 		if (rootElement.getChildText("codProv", namespace) != null) {
@@ -237,7 +237,7 @@ public class JDOMCardInfoDocument extends Document {
 						Element KVGBaseElem = KVGInformationElem.getChild("KVGBase", namespace);
 						kvgInformation.setKVGBase(KVGBaseElem.getValue() != null ? KVGBaseElem.getValue() : "");
 					} else {
-						throw new UnsupportedCardException();
+						throw new UnsupportedCardException("The used card is not supported");
 					}
 					if (KVGInformationElem.getChild("KVGModel", namespace) != null) {
 						/* CH-Baseinformation/nationalExtension/KVGInformation/KVGModel */
@@ -1004,7 +1004,7 @@ public class JDOMCardInfoDocument extends Document {
 
 			}
 		} else {
-			throw new InvalidCardException();
+			throw new InvalidCardException("The used card is invalid");
 		}
 
 		nationalExtension.setVvgInformation(vvgInformation);

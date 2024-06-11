@@ -1248,5 +1248,4 @@ public class PatientsInfoDialog extends Dialog {
 		    if (monitor.isCanceled())
 		        throw new InterruptedException("The long running operation was cancelled");
 		  }}
-
 }

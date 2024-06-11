@@ -56,6 +56,7 @@ import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Patient;
@@ -218,6 +219,7 @@ public class SearchView extends ViewPart implements IRefreshable {
 	private IConfigService configService;
 
 	public SearchView() {
+
 		defaultAsc = true;
 		nameAsc = true;
 		prenameAsc = true;
@@ -234,6 +236,7 @@ public class SearchView extends ViewPart implements IRefreshable {
 		covercardNrAsc = true;
 		idCardNrAsc = true;
 		loadProperties();
+		CoreUiUtil.injectServices(this);
 	}
 
 	private void loadProperties() {

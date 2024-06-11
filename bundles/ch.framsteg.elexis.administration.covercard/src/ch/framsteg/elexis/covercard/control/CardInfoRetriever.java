@@ -3,6 +3,7 @@ package ch.framsteg.elexis.covercard.control;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -19,10 +20,10 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import org.osgi.service.component.annotations.Reference;
 import org.xml.sax.SAXException;
 
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.framsteg.elexis.covercard.dao.CardInfoData;
 import ch.framsteg.elexis.covercard.dao.JDOMCardInfoDocument;
 import ch.framsteg.elexis.covercard.exceptions.BlockedCardException;
@@ -43,14 +44,16 @@ public class CardInfoRetriever {
 
 	private Properties applicationProperties;
 
-	@Reference
+	@Inject
 	private IConfigService configService;
 
 	public CardInfoRetriever(Properties applicationProperties, Properties messagesProperties) {
 		this.applicationProperties = applicationProperties;
+		CoreUiUtil.injectServices(this);
 	}
 
 	public CardInfoRetriever(String id) {
+		CoreUiUtil.injectServices(this);
 	}
 
 	public CardInfoData getCardInfo(String id)

@@ -3,6 +3,8 @@ package ch.framsteg.elexis.covercard.config;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.inject.Inject;
+
 import org.eclipse.jface.preference.PreferencePage;
 
 import org.eclipse.swt.SWT;
@@ -18,9 +20,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.osgi.service.component.annotations.Reference;
-
 import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.data.Xid;
 
 public class CovercardPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -47,11 +48,11 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 	private static final String HIN_PROXY_PORT = "hin.proxy.port";
 	private static final String REGEX_PATTERN = "cardreader.regex.pattern";
 	private static final String KEY_REGEX_PATTERN = "key.cardreader.regex.pattern";
-	
+
 	private Properties applicationProperties;
 	private Properties messagesProperties;
 
-	@Reference
+	@Inject
 	private IConfigService configService;
 
 	private Text txtUrl;
@@ -64,18 +65,21 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 	private Text txtRegex;
 	private Button btnMagnet;
 	private Button btnChip;
-	
+
 	public CovercardPreferencePage() {
 		super(PLUGIN_TITLE);
 		setTitle(PLUGIN_DESCRIPTION);
 		loadProperties();
+		CoreUiUtil.injectServices(this);
 	}
 
 	@Override
 	public void init(IWorkbench arg0) {
+
 	}
 
 	private void loadProperties() {
+
 		try {
 			setApplicationProperties(new Properties());
 			setMessagesProperties(new Properties());
@@ -94,16 +98,16 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
-		
+
 		GridLayout cardGroupLayout = new GridLayout();
-		cardGroupLayout.numColumns=1;
-		
+		cardGroupLayout.numColumns = 1;
+
 		GridData cardGroupGridData = new GridData();
 		cardGroupGridData.grabExcessHorizontalSpace = true;
 		cardGroupGridData.horizontalAlignment = SWT.FILL;
 		cardGroupGridData.verticalAlignment = SWT.FILL;
 		cardGroupGridData.grabExcessVerticalSpace = true;
-			
+
 		Group cardTypeGroup = new Group(composite, SWT.BORDER);
 		cardTypeGroup.setText("Kartenleser Typ");
 		cardTypeGroup.setLayout(cardGroupLayout);
@@ -117,44 +121,44 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 		btnChip = new Button(cardTypeGroup, SWT.RADIO);
 		btnChip.setText("Chipkartenleser");
 		btnChip.setEnabled(false);
-		
+
 		GridLayout cardConfigGroupLayout = new GridLayout();
-		cardConfigGroupLayout.numColumns=2;
-		
+		cardConfigGroupLayout.numColumns = 2;
+
 		GridData cardConfigGroupGridData = new GridData();
 		cardConfigGroupGridData.grabExcessHorizontalSpace = true;
 		cardConfigGroupGridData.horizontalAlignment = SWT.FILL;
 		cardConfigGroupGridData.verticalAlignment = SWT.FILL;
 		cardConfigGroupGridData.grabExcessVerticalSpace = true;
-		
+
 		Group cardConfigGroup = new Group(composite, SWT.BORDER);
 		cardConfigGroup.setText("Kartenleser Input Korrektur");
 		cardConfigGroup.setLayout(cardConfigGroupLayout);
 		cardConfigGroup.setLayoutData(cardConfigGroupGridData);
-				
+
 		Label lblRegex = new Label(cardConfigGroup, SWT.NONE);
 		lblRegex.setText("Regex Pattern:");
-		
-		txtRegex = new Text(cardConfigGroup,SWT.BORDER);
+
+		txtRegex = new Text(cardConfigGroup, SWT.BORDER);
 
 		if (!configService.get(getApplicationProperties().getProperty(KEY_REGEX_PATTERN), "").isEmpty()) {
-			getApplicationProperties().getProperty(KEY_REGEX_PATTERN);
+			txtRegex.setText(configService.get(getApplicationProperties().getProperty(KEY_REGEX_PATTERN), ""));
 		} else {
 			txtRegex.setText(getApplicationProperties().getProperty(REGEX_PATTERN));
 		}
 
 		txtRegex.setEnabled(true);
 		txtRegex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				
+
 		GridLayout hinGroupLayout = new GridLayout();
-		hinGroupLayout.numColumns=2;
-		
+		hinGroupLayout.numColumns = 2;
+
 		GridData hinGroupGridData = new GridData();
 		hinGroupGridData.grabExcessHorizontalSpace = true;
 		hinGroupGridData.horizontalAlignment = SWT.FILL;
 		hinGroupGridData.verticalAlignment = SWT.FILL;
 		hinGroupGridData.grabExcessVerticalSpace = true;
-		
+
 		Group hinGroup = new Group(composite, SWT.BORDER);
 		hinGroup.setText("HIN® Einstellungen");
 		hinGroup.setLayout(hinGroupLayout);
@@ -170,7 +174,7 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 		} else {
 			txtUrl.setText(getApplicationProperties().getProperty(HIN_URL));
 		}
-		
+
 		txtUrl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Label lblMrParameter = new Label(hinGroup, SWT.NONE);
 		lblMrParameter.setText("XML Parameter (XXX):");
@@ -208,10 +212,10 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 			txtProxyPort.setText(getApplicationProperties().getProperty(HIN_PROXY_PORT));
 		}
 		txtProxyPort.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		GridLayout metadataGroupLayout = new GridLayout();
-		metadataGroupLayout.numColumns=2;
-		
+		metadataGroupLayout.numColumns = 2;
+
 		GridData metadataGroupGridData = new GridData();
 		metadataGroupGridData.grabExcessHorizontalSpace = true;
 		metadataGroupGridData.horizontalAlignment = SWT.FILL;
@@ -253,12 +257,12 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 		metadataButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Xid.localRegisterXIDDomainIfNotExists("www.xid.ch/framsteg/covercard/insured-number", "Versicherten Nr.",
-						Xid.ASSIGNMENT_LOCAL);
+				Xid.localRegisterXIDDomainIfNotExists("www.xid.ch/framsteg/covercard/insured-number",
+						"Versicherten Nr.", Xid.ASSIGNMENT_LOCAL);
 				Xid.localRegisterXIDDomainIfNotExists("www.xid.ch/framsteg/covercard/card-number", "Covercard Nr.",
 						Xid.ASSIGNMENT_LOCAL);
-				Xid.localRegisterXIDDomainIfNotExists("www.xid.ch/framsteg/covercard/insured-person-number", "ID-Karten Nr.",
-						Xid.ASSIGNMENT_GLOBAL);
+				Xid.localRegisterXIDDomainIfNotExists("www.xid.ch/framsteg/covercard/insured-person-number",
+						"ID-Karten Nr.", Xid.ASSIGNMENT_GLOBAL);
 			}
 		});
 
@@ -266,12 +270,12 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 	}
 
 	public boolean performOk() {
+
 		configService.set(getApplicationProperties().getProperty(KEY_URL), txtUrl.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_XML_PARAMETER), txtMrParameter.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_PROXY_SERVER), txtProxyServer.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_PROXY_PORT), txtProxyPort.getText());
-		configService.set(getApplicationProperties().getProperty(KEY_INSURED_NUMBER),
-				txtInsuredNumber.getText());
+		configService.set(getApplicationProperties().getProperty(KEY_INSURED_NUMBER), txtInsuredNumber.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_CARD_NUMBER), txtCardNumber.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_INSURED_PERSON_NUMBER),
 				txtInsuredPersonNumber.getText());

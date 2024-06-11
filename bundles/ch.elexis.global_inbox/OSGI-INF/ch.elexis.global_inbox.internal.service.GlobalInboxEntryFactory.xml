@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.2.0" activate="activate" immediate="true" name="ch.elexis.global_inbox.internal.service.GlobalInboxEntryFactory">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.2.0" immediate="true" name="ch.elexis.global_inbox.internal.service.GlobalInboxEntryFactory">
    <reference bind="setConfigService" interface="ch.elexis.core.services.IConfigService" name="ConfigService"/>
    <reference bind="setExtensionFileHandler" cardinality="0..n" interface="java.util.function.Function" name="ExtensionFileHandler" policy="dynamic" policy-option="greedy" target="(service.name=ch.elexis.global_inbox.extensionfilehandler)" unbind="unsetExtensionFileHandler"/>
    <reference bind="setModelService" interface="ch.elexis.core.services.IModelService" name="ModelService" target="(service.model.name=ch.elexis.core.model)"/>

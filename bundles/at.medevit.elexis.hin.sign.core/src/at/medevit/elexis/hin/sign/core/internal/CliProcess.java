@@ -101,11 +101,11 @@ public class CliProcess {
 	}
 
 	private String getApiParamter() {
-		return "https://api.testnet.certifaction.io";
+		return mode == Mode.TEST ? "https://api.testnet.certifaction.io" : "https://api.certifaction.io";
 	}
 
 	private String getHinApiParamter() {
-		return "https://oauth2.sign-test.hin.ch/api";
+		return mode == Mode.TEST ? "https://oauth2.sign-test.hin.ch/api" : "https://oauth2.sign.hin.ch/api";
 	}
 
 	private static Optional<File> getCliLocation() {
@@ -114,6 +114,8 @@ public class CliProcess {
 			fragment = Platform.getBundle("at.medevit.elexis.hin.sign.cli.win");
 		} else if (CoreUtil.getOperatingSystemType() == OS.LINUX) {
 			fragment = Platform.getBundle("at.medevit.elexis.hin.sign.cli.linux");
+		} else if (CoreUtil.getOperatingSystemType() == OS.MAC) {
+			fragment = Platform.getBundle("at.medevit.elexis.hin.sign.cli.mac");
 		}
 		if (fragment != null) {
 			Optional<File> bundleLocation = FileLocator.getBundleFileLocation(fragment);

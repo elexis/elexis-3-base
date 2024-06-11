@@ -8,7 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.base.ch.arzttarife;bundle-version="3.9.0",
- ch.elexis.ebanking.qr;bundle-version="1.0.0"
+ ch.elexis.ebanking.qr;bundle-version="1.0.0",
+ ch.elexis.core.pdfbox;bundle-version="2.0.24"
 Bundle-ActivationPolicy: lazy
 Import-Package: at.medevit.elexis.tarmed.model,
  ch.elexis.base.ch.ebanking.esr,

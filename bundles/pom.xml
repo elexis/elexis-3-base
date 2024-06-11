@@ -54,6 +54,7 @@
     <module>at.medevit.elexis.hin.sign.core</module>
     <module>at.medevit.elexis.hin.sign.ui</module>
     <module>at.medevit.elexis.hin.sign.cli.win</module>
+    <module>at.medevit.elexis.hin.sign.cli.mac</module>
     <module>at.medevit.elexis.hin.sign.cli.linux</module>
     <module>at.medevit.elexis.impfplan.ui</module>
     <module>at.medevit.elexis.impfplan</module>

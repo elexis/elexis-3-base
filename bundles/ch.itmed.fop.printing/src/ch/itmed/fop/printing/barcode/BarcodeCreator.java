@@ -2,7 +2,6 @@ package ch.itmed.fop.printing.barcode;
 
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 
 public class BarcodeCreator {
@@ -18,7 +17,7 @@ public class BarcodeCreator {
 	}
 
 	public static String createInternalCode128FromKontaktPatNr(IContact pat) {
-		return createInternalCode128FromKontaktPatNrString(StoreToStringServiceHolder.getStoreToString(pat));
+		return createInternalCode128FromKontaktPatNrString(pat);
 	}
 
 	public static String createInternalCode128FromKontaktString(String storeToString) {
@@ -32,11 +31,11 @@ public class BarcodeCreator {
 		return output;
 	}
 
-	public static String createInternalCode128FromKontaktPatNrString(String storeToString) {
-		java.util.Optional<IPatient> patient = ContextServiceHolder.get().getActivePatient();
+	public static String createInternalCode128FromKontaktPatNrString(IContact pat) {
 		String output = null;
-		if (storeToString != null) {
-			output = patient.get().getPatientNr();
+		if (pat != null && pat.isPatient()) {
+			IPatient patient = pat.asIPatient();
+			output = patient.getPatientNr();
 		}
 		return output;
 	}

@@ -203,7 +203,7 @@ public class AgendaGross extends BaseAgendaView {
 	private void updateAreasButtons() {
 		if(bChange != null && bChange.length > 0) {
 			for (Button button : bChange) {
-				if(!button.isDisposed()) {
+				if (button != null && !button.isDisposed()) {
 					button.setVisible(false);
 					button.dispose();
 				}

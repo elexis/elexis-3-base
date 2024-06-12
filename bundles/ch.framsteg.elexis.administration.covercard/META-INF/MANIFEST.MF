@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Covercard® Plugin (Public License)
 Bundle-SymbolicName: ch.framsteg.elexis.administration.covercard;singleton:=true
 Bundle-Version: 3.12.0.qualifier
-Import-Package: javax.inject;version="1.0.0"
 Bundle-Vendor: framsteg.ch
 Automatic-Module-Name: ch.framsteg.elexis.covercard
 Bundle-RequiredExecutionEnvironment: JavaSE-17

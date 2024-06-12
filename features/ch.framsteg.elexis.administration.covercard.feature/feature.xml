@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.framsteg.elexis.administration.covercard.feature"
-      label="Covercard Feature"
+      label="Covercard® Feature (Public License)"
       version="3.12.0.qualifier"
       provider-name="ch.framsteg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="https://framsteg.ch">
+      Feature to query patient information from covercard.hin.ch. The according insurance number, social security number and the card number are being stored within Elexis DB
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -19,9 +19,6 @@
 
    <plugin
          id="ch.framsteg.elexis.administration.covercard"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
 </feature>

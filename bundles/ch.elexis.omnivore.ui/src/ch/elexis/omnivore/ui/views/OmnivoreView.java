@@ -17,6 +17,7 @@ import static ch.elexis.omnivore.Constants.CATEGORY_MIMETYPE;
 import java.io.File;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -379,7 +380,14 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 							String inboxElementObjectString = inboxElement.getObject().toString();
 							if (inboxElementObjectString.contains(docId)) {
 								State state = inboxElement.getState();
-								return state.toString().equals("SEEN") ? "Gesehen" : "Nicht gesehen";
+								if (state.toString().equals("SEEN")) {
+									String mandatorCode = inboxElement.getMandator().getCode();
+									String lastUpdateFormatted = formatLastUpdate(inboxElement.getLastupdate(),
+											mandatorCode);
+									return "Gesehen " + lastUpdateFormatted;
+								} else {
+									return "Nicht gesehen";
+								}
 							}
 						}
 					} catch (Exception ex) {
@@ -388,6 +396,12 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				}
 			}
 			return null;
+		}
+
+		private String formatLastUpdate(Long timestamp, String mandatorCode) {
+			Date date = new Date(timestamp);
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+			return sdf.format(date) + " " + mandatorCode;
 		}
 	}
 

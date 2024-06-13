@@ -463,7 +463,8 @@ public class QrRnOutputter implements IRnOutputter {
 			rnOutputDialog.setOkButtonText(Messages.Core_Print);
 			buttonOpen = rnOutputDialog.addCustomButton(Messages.Core_Open);
 			RowData rowData = new RowData();
-			rowData.width = 120;
+			rowData.width = 91;
+			rowData.height = 26;
 			buttonOpen.setLayoutData(rowData);
 			buttonOpen.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -473,6 +474,7 @@ public class QrRnOutputter implements IRnOutputter {
 				}
 			});
 			updateButtonStates(rnOutputDialog);
+			rnOutputDialog.redrawLayout();
 		}
 	}
 

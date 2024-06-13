@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension
+         point="org.eclipse.ui.views">
+         <view id="ch.framsteg.elexis.labor.teamw.views.LabordersView"
+             name="Labor TeamW"
+             category="ch.elexis.messungenKategorie"
+          class="ch.framsteg.elexis.labor.teamw.views.LabordersView"
+          icon="icons/teamw.gif"/>
+   </extension>
+</plugin>

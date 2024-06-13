@@ -380,7 +380,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 							String inboxElementObjectString = inboxElement.getObject().toString();
 							if (inboxElementObjectString.contains(docId)) {
 								State state = inboxElement.getState();
-								if (state.toString().equals("SEEN")) {
+								if (state == State.SEEN) {
 									String mandatorCode = inboxElement.getMandator().getCode();
 									String lastUpdateFormatted = formatLastUpdate(inboxElement.getLastupdate(),
 											mandatorCode);

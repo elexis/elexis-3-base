@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.externe_dokumente.feature"
       label="Einbindung eines beliebigen Dokumentenverzeichnisses "
-      version="3.12.0.qualifier"
+      version="3.13.0.qualifier"
       provider-name="ch.elexis">
 
    <description>

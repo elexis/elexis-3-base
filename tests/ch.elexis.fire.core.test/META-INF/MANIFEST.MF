@@ -12,7 +12,7 @@ Require-Bundle: org.junit;bundle-version="4.13.2",
  ch.elexis.core.findings.fhir.model,
  ch.elexis.core.findings.util
 Automatic-Module-Name: ch.elexis.fire.core.test
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: ch.elexis.core.test.initializer,
  ch.elexis.data,
  ch.rgw.io

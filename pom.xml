@@ -23,7 +23,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.elexis.base</groupId>
 	<artifactId>elexis-3-base</artifactId>
-	<version>3.12.0-SNAPSHOT</version>
+	<version>3.13.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Elexis-Base</name>
         <description>Elexis Base</description>
@@ -38,10 +38,10 @@
                 <url>https://www.elexis.info</url>
         </organization>
 	<properties>
-		<elexis.target>2023-09-java17</elexis.target>
+		<elexis.target>2023-09-java21</elexis.target>
 		<git.core.branch>master</git.core.branch>
 		<formatterConfigFile>https://raw.githubusercontent.com/elexis/elexis-3-core/master/Elexis_formatter_2022_03.xml</formatterConfigFile>
-		<tycho.version>3.0.5</tycho.version>
+		<tycho.version>4.0.8</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
                 <buildplan.plugin.version>1.5</buildplan.plugin.version>

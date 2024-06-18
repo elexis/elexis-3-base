@@ -2,7 +2,7 @@
 <feature
       id="at.medevit.elexis.loinc.feature"
       label="LOINC Codesystem"
-      version="3.12.0.qualifier"
+      version="3.13.0.qualifier"
       provider-name="medevit.at">
 
    <description>

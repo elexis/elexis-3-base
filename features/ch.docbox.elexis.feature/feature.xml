@@ -2,7 +2,7 @@
 <feature
       id="ch.docbox.elexis.feature"
       label="Zugriff auf docbox"
-      version="3.12.0.qualifier"
+      version="3.13.0.qualifier"
       provider-name="visionary on behalf of argomed">
 
    <description>

@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: ch.docbox.elexis;singleton:=true
-Bundle-Version: 3.12.0.qualifier
+Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: %Bundle-Vendor.0
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  rsc/
 Bundle-Localization: plugin
 Bundle-Activator: ch.docbox.elexis.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: ch.docbox.cdach,
  ch.docbox.elexis,
  ch.docbox.ws.cdachservices,

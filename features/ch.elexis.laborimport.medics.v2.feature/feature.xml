@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.laborimport.medics.v2.feature"
       label="Laborschnittstelle Medics V2"
-      version="3.12.0.qualifier"
+      version="3.13.0.qualifier"
       provider-name="medshare.net">
 
    <description>

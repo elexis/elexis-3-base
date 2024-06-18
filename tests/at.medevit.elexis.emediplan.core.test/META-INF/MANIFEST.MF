@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test
 Bundle-SymbolicName: at.medevit.elexis.emediplan.core.test
-Bundle-Version: 3.12.0.qualifier
+Bundle-Version: 3.13.0.qualifier
 Fragment-Host: at.medevit.elexis.emediplan.core;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.junit;bundle-version="4.10.0",
  at.medevit.ch.artikelstamm;bundle-version="3.2.0",
  at.medevit.ch.artikelstamm.elexis.common,

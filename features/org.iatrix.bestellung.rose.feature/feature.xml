@@ -2,7 +2,7 @@
 <feature
       id="org.iatrix.bestellung.rose.feature"
       label="Bestellung &quot;zur Rose&quot;"
-      version="3.12.0.qualifier"
+      version="3.13.0.qualifier"
       provider-name="org.iatrix">
 
    <description>

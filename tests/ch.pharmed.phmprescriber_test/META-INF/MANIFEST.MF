@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ch.pharmed.phmprescriber_test
 Bundle-SymbolicName: ch.pharmed.phmprescriber_test
-Bundle-Version: 3.12.0.qualifier
+Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: info@elexis.ch
 Fragment-Host: ch.pharmed.phmprescriber;bundle-version="3.9.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.junit
 Import-Package: ch.elexis.data

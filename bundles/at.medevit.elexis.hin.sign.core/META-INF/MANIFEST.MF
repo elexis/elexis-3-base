@@ -8,7 +8,7 @@ Automatic-Module-Name: at.medevit.elexis.hin.erezept.core
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/zxing_core-3.3.0.jar,
  .
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: at.medevit.elexis.hin.auth.core,
  ch.elexis.core.model,
  ch.elexis.core.services,

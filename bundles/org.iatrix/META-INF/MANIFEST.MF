@@ -32,5 +32,5 @@ Bundle-ClassPath: .,
  rsc/
 Bundle-Activator: org.iatrix.IatrixActivator
 Created-By: Buildr
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 

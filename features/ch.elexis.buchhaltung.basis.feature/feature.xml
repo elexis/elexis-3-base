@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.buchhaltung.basis.feature"
       label="Elexis Basis-Buchhaltung"
-      version="3.12.0.qualifier"
+      version="3.13.0.qualifier"
       provider-name="elexis.info">
 
    <description>

@@ -7,5 +7,5 @@ Bundle-Vendor: medevit.at
 Fragment-Host: at.medevit.elexis.hin.sign.core;bundle-version="1.0.0"
 Require-Bundle: org.junit
 Automatic-Module-Name: at.medbits.elexis.hin.sign.core.test
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: ch.elexis.core.utils

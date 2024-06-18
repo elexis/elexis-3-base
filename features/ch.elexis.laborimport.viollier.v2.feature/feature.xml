@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.laborimport.viollier.v2.feature"
       label="Viollier labor Importer V2"
-      version="3.12.0.qualifier"
+      version="3.13.0.qualifier"
       provider-name="medshare.net">
 
    <description>

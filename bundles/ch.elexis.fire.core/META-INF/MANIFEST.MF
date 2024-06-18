@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: ch.elexis.fire.core
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: info.elexis.target.hapi.fhir,
  ch.elexis.core.services,
  ch.elexis.core

@@ -2,7 +2,7 @@
 <feature
       id="ch.elexis.hl7.message.feature"
       label="HL7 Message"
-      version="3.12.0.qualifier"
+      version="3.13.0.qualifier"
       provider-name="medevit.at">
 
    <description url="https://wiki.elexis.info/Ch.elexis.laborimport.hl7.allg.feature.feature.group">

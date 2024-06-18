@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Labor Risch LabOrder Plugin
 Bundle-SymbolicName: ch.itmed.lmz.risch.laborder;singleton:=true
-Bundle-Version: 3.12.0.qualifier
+Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: IT-Med AG
 Automatic-Module-Name: ch.itmed.lmz.risch.laborder
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: ch.elexis.core.data;bundle-version="3.6.0",
  ch.rgw.utility,
  ch.elexis.core.ui;bundle-version="3.2.0",

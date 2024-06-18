@@ -8,4 +8,4 @@ Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86_64))
 Bundle-Vendor: medevit.at
 Fragment-Host: at.medevit.elexis.hin.sign.core;bundle-version="1.0.0"
 Automatic-Module-Name: at.medevit.elexis.hin.erezept.cli.win
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21

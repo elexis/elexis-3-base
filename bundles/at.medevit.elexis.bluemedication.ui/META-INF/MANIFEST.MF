@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: BlueMedication Ui
 Bundle-SymbolicName: at.medevit.elexis.bluemedication.ui;singleton:=true
-Bundle-Version: 3.12.0.qualifier
+Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: medevit.at
 Automatic-Module-Name: at.medevit.elexis.bluemedication.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: ch.elexis.core.ui;bundle-version="3.9.0",
  ch.elexis.core.services;bundle-version="3.9.0",
  ch.elexis.core.documents;bundle-version="3.9.0",

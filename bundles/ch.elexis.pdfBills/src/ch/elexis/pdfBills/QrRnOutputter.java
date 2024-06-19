@@ -1,6 +1,5 @@
 package ch.elexis.pdfBills;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -206,11 +205,7 @@ public class QrRnOutputter implements IRnOutputter {
 							if (!noUi) {
 								for (File pdfFile : printed) {
 									if (pdfFile.exists()) {
-										try {
-											Desktop.getDesktop().open(pdfFile);
-										} catch (IOException e) {
-											LoggerFactory.getLogger(getClass()).error("Error opening PDF file", e);
-										}
+										Program.launch(pdfFile.getAbsolutePath());
 									}
 								}
 							}

@@ -276,6 +276,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				composite, SWT.NONE);
 		globalXmlDir.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		globalXmlDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		globalXmlDir.setFixedScheme("file");
 
 		lbl = new Label(composite, SWT.NONE);
 		lbl.setText("PDF Verzeichnis");
@@ -283,72 +284,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage 
 				composite, SWT.NONE);
 		globalPdfDir.setPreferenceStore(new ConfigServicePreferenceStore(Scope.GLOBAL));
 		globalPdfDir.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
-//		Button bXML = new Button(composite, SWT.PUSH);
-//		bXML.setText("XML Verzeichnis");
-//		Text tXml = new Text(composite, SWT.BORDER);
-//		tXml.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-//		Button bPDF = new Button(composite, SWT.PUSH);
-//		bPDF.setText("PDF Verzeichnis");
-//		Text tPdf = new Text(composite, SWT.BORDER);
-//		tPdf.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-//
-//		bXML.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
-//				URI inputUri = null;
-//				try {
-//					String stringValue = tXml.getText();
-//					if (StringUtils.isNotBlank(stringValue)) {
-//						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue, false);
-//						inputUri = fileHandle.toURL().toURI();
-//					}
-//				} catch (URISyntaxException | IOException ex) {
-//				}
-//				VirtualFilesystemUriEditorDialog dialog = new VirtualFilesystemUriEditorDialog(getShell(),
-//						virtualFilesystemService, inputUri);
-//				if (IDialogConstants.OK_ID == dialog.open()) {
-//					tXml.setText(dialog.getValue().toString());
-//				}
-//			}
-//
-//		});
-//		bPDF.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
-//				URI inputUri = null;
-//				try {
-//					String stringValue = tPdf.getText();
-//					if (StringUtils.isNotBlank(stringValue)) {
-//						IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(stringValue, false);
-//						inputUri = fileHandle.toURL().toURI();
-//					}
-//				} catch (URISyntaxException | IOException ex) {
-//				}
-//				VirtualFilesystemUriEditorDialog dialog = new VirtualFilesystemUriEditorDialog(getShell(),
-//						virtualFilesystemService, inputUri);
-//				if (IDialogConstants.OK_ID == dialog.open()) {
-//					tPdf.setText(dialog.getValue().toString());
-//				}
-//			}
-//		});
-//		tXml.setText(CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, StringUtils.EMPTY));
-//		tPdf.setText(CoreHub.globalCfg.get(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, StringUtils.EMPTY));
-//
-//		tXml.addModifyListener(new ModifyListener() {
-//			@Override
-//			public void modifyText(ModifyEvent e) {
-//				CoreHub.globalCfg.set(OutputterUtil.CFG_PRINT_GLOBALXMLDIR, tXml.getText());
-//			}
-//		});
-//		tPdf.addModifyListener(new ModifyListener() {
-//			@Override
-//			public void modifyText(ModifyEvent e) {
-//				CoreHub.globalCfg.set(OutputterUtil.CFG_PRINT_GLOBALPDFDIR, tPdf.getText());
-//			}
-//		});
+		globalPdfDir.setFixedScheme("file");
 
 		useGlobalConfig.addSelectionListener(new SelectionAdapter() {
 			@Override

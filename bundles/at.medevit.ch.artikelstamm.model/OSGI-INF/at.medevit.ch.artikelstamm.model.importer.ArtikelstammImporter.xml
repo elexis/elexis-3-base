@@ -7,3 +7,4 @@
    <reference cardinality="1..1" field="elexisEntityManager" interface="ch.elexis.core.services.IElexisEntityManager" name="elexisEntityManager"/>
    <implementation class="at.medevit.ch.artikelstamm.model.importer.ArtikelstammImporter"/>
 </scr:component>
+

@@ -203,7 +203,7 @@ public class AgendaGross extends BaseAgendaView {
 	private void updateAreasButtons() {
 		if(bChange != null && bChange.length > 0) {
 			for (Button button : bChange) {
-				if(!button.isDisposed()) {
+				if (button != null && !button.isDisposed()) {
 					button.setVisible(false);
 					button.dispose();
 				}
@@ -285,6 +285,7 @@ public class AgendaGross extends BaseAgendaView {
 
 	private class AgendaLabelProvider extends LabelProvider implements ITableColorProvider, ITableLabelProvider {
 
+		@Override
 		public Color getBackground(Object element, int columnIndex) {
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
@@ -297,6 +298,7 @@ public class AgendaGross extends BaseAgendaView {
 			return null;
 		}
 
+		@Override
 		public Color getForeground(Object element, int columnIndex) {
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
@@ -309,6 +311,7 @@ public class AgendaGross extends BaseAgendaView {
 			return null;
 		}
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex != 4)
 				return null;
@@ -320,6 +323,7 @@ public class AgendaGross extends BaseAgendaView {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof IPlannable) {
 				IPlannable ip = (IPlannable) element;
@@ -409,7 +413,7 @@ public class AgendaGross extends BaseAgendaView {
 	public void bereichSelectionEvent(String bereich) {
 		super.bereichSelectionEvent(bereich);
 		for (Button b : bChange) {
-			if (!b.isDisposed()) {
+			if (b != null && !b.isDisposed()) {
 				if (b.getText().equalsIgnoreCase(bereich)) {
 					b.setSelection(true);
 				} else {

@@ -120,6 +120,7 @@ public class QrRnOutputter implements IRnOutputter {
 
 	private boolean modifyInvoiceState;
 	private boolean noUi;
+	private boolean noPrint;
 
 	private boolean pdfOnly;
 	private RnOutputDialog rnOutputDialog;
@@ -137,6 +138,8 @@ public class QrRnOutputter implements IRnOutputter {
 			initSelectedFromProperties(props);
 		} else {
 			modifyInvoiceState = true;
+			noPrint = false;
+			noUi = false;
 		}
 
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
@@ -173,7 +176,7 @@ public class QrRnOutputter implements IRnOutputter {
 							// create an new generator for the bill
 							ElexisPDFGenerator epdf = new ElexisPDFGenerator(fname, invoice.getNumber(),
 									invoice.getState());
-							if (pdfOnly) {
+							if (pdfOnly || noPrint) {
 								epdf.setPrint(false);
 							}
 							// consider fallback to non QR bill, always fall back for tarmed xml version
@@ -317,6 +320,10 @@ public class QrRnOutputter implements IRnOutputter {
 		if (props.get(IRnOutputter.PROP_OUTPUT_NOUI) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_NOUI);
 			noUi = Boolean.parseBoolean(value);
+		}
+		if (props.get(IRnOutputter.PROP_OUTPUT_NOPRINT) instanceof String) {
+			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_NOPRINT);
+			noPrint = Boolean.parseBoolean(value);
 		}
 	}
 

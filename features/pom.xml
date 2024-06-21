@@ -95,5 +95,6 @@
     <module>at.medevit.elexis.bluemedication.feature</module>
     <module>at.medevit.elexis.documents.converter.feature</module>
     <module>ch.framsteg.elexis.finance.analytics.feature</module>
+    <module>ch.framsteg.elexis.administration.covercard.feature</module>
   </modules>
 </project>

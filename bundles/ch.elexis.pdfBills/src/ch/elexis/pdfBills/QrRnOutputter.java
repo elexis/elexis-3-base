@@ -1,6 +1,5 @@
 package ch.elexis.pdfBills;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -121,6 +120,7 @@ public class QrRnOutputter implements IRnOutputter {
 
 	private boolean modifyInvoiceState;
 	private boolean noUi;
+	private boolean noPrint;
 
 	private boolean pdfOnly;
 	private RnOutputDialog rnOutputDialog;
@@ -138,6 +138,8 @@ public class QrRnOutputter implements IRnOutputter {
 			initSelectedFromProperties(props);
 		} else {
 			modifyInvoiceState = true;
+			noPrint = false;
+			noUi = false;
 		}
 
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
@@ -174,7 +176,7 @@ public class QrRnOutputter implements IRnOutputter {
 							// create an new generator for the bill
 							ElexisPDFGenerator epdf = new ElexisPDFGenerator(fname, invoice.getNumber(),
 									invoice.getState());
-							if (pdfOnly) {
+							if (pdfOnly || noPrint) {
 								epdf.setPrint(false);
 							}
 							// consider fallback to non QR bill, always fall back for tarmed xml version
@@ -208,11 +210,7 @@ public class QrRnOutputter implements IRnOutputter {
 							if (!noUi) {
 								for (File pdfFile : printed) {
 									if (pdfFile.exists()) {
-										try {
-											Desktop.getDesktop().open(pdfFile);
-										} catch (IOException e) {
-											LoggerFactory.getLogger(getClass()).error("Error opening PDF file", e);
-										}
+										Program.launch(pdfFile.getAbsolutePath());
 									}
 								}
 							}
@@ -322,6 +320,10 @@ public class QrRnOutputter implements IRnOutputter {
 		if (props.get(IRnOutputter.PROP_OUTPUT_NOUI) instanceof String) {
 			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_NOUI);
 			noUi = Boolean.parseBoolean(value);
+		}
+		if (props.get(IRnOutputter.PROP_OUTPUT_NOPRINT) instanceof String) {
+			String value = (String) props.get(IRnOutputter.PROP_OUTPUT_NOPRINT);
+			noPrint = Boolean.parseBoolean(value);
 		}
 	}
 
@@ -478,7 +480,8 @@ public class QrRnOutputter implements IRnOutputter {
 			rnOutputDialog.setOkButtonText(Messages.Core_Print);
 			buttonOpen = rnOutputDialog.addCustomButton(Messages.Core_Open);
 			RowData rowData = new RowData();
-			rowData.width = 120;
+			rowData.width = 91;
+			rowData.height = 26;
 			buttonOpen.setLayoutData(rowData);
 			buttonOpen.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -488,6 +491,7 @@ public class QrRnOutputter implements IRnOutputter {
 				}
 			});
 			updateButtonStates(rnOutputDialog);
+			rnOutputDialog.redrawLayout();
 		}
 	}
 

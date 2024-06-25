@@ -23,7 +23,6 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
@@ -68,8 +67,9 @@ public class RechnungsDrucker implements IRnOutputter {
 	 * fact we need two templates: a template for the page with summary and giro and
 	 * a template for the other pages
 	 */
-	public Control createSettingsControl(final Composite parent) {
-		Composite ret = new Composite(parent, SWT.NONE);
+	@Override
+	public Object createSettingsControl(Object parent) {
+		Composite ret = new Composite((Composite) parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		new Label(ret, SWT.NONE).setText("Formatvorlage für Rechnung (ESR-Seite)");
 		final Text tVorlageESR = new Text(ret, SWT.BORDER);
@@ -179,11 +179,4 @@ public class RechnungsDrucker implements IRnOutputter {
 	public void saveComposite() {
 		// Nothing
 	}
-
-	@Override
-	public Object createSettingsControl(Object parent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

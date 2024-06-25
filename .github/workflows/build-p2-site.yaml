@@ -23,5 +23,5 @@ jobs:
       run: |
         eval $(ssh-agent -s)
         ssh-add <(echo "${{ env.DEPLOY_SECRET }}" | base64 -d)
-        rsync -aiv --delete --mkpath -e ssh ch.elexis.core.p2site/target/repository/ deploy@download.medelexis.ch:download.elexis.info/elexis/${{ env.BRANCH_NAME }}/p2/elexis-3-base/
+        rsync -aiv --delete --mkpath -e ssh ch.elexis.base.p2site/target/repository/ deploy@download.medelexis.ch:download.elexis.info/elexis/${{ env.BRANCH_NAME }}/p2/elexis-3-base/
         eval $(ssh-agent -k)

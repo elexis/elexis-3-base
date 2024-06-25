@@ -256,6 +256,9 @@
    <feature id="ch.framsteg.elexis.finance.analytics.feature">
       <category name="statistics"/>
    </feature>
+   <feature id="ch.framsteg.elexis.labor.teamw.feature">
+      <category name="dataexchange"/>
+   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>

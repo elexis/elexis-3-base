@@ -603,7 +603,8 @@ public class FastJavaBinDecoder implements DataEntry.FastDecoder {
 			}
 		},
 		// types that combine tag + length (or other info) in a single byte
-		_TAG_AND_LEN(TAG_AND_LEN, UPPER_3_BITS, null), _STR(STR, UPPER_3_BITS, DataEntry.Type.STR) {
+		_TAG_AND_LEN(TAG_AND_LEN, UPPER_3_BITS, null),
+		_STR(org.apache.solr.common.util.JavaBinCodec.STR, UPPER_3_BITS, DataEntry.Type.STR) {
 			@Override
 			public void lazyRead(EntryImpl entry, StreamCodec codec) throws IOException {
 				entry.size = readObjSz(codec, this);

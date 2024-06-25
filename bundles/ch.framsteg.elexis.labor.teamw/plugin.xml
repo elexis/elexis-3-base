@@ -2,6 +2,15 @@
 <?eclipse version="3.4"?>
 <plugin>
 <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.framsteg.elexis.labor.teamw.config.TeamwPreferencePage"
+            id="ch.framsteg.elexis.labor.teamw_main.prefs"
+            name="Teamw Auftrag">
+      </page>
+   </extension>
+<extension
          point="org.eclipse.ui.views">
          <view id="ch.framsteg.elexis.labor.teamw.views.LabordersView"
              name="Labor TeamW"

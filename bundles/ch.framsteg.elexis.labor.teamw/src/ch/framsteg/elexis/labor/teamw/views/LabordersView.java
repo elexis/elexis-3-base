@@ -1,19 +1,36 @@
+/*******************************************************************************
+ * Copyright 2024 Framsteg GmbH / olivier.debenath@framsteg.ch
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package ch.framsteg.elexis.labor.teamw.views;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Properties;
 
+import javax.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.http.client.ClientProtocolException;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -33,13 +50,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import ch.elexis.core.data.events.ElexisEvent;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.ElexisEventListener;
-import ch.elexis.core.ui.events.ElexisUiSyncEventListenerImpl;
+import ch.elexis.core.common.ElexisEventTopics;
+import ch.elexis.core.model.ICoverage;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.views.IRefreshable;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Patient;
 import ch.framsteg.elexis.labor.teamw.beans.LabOrder;
 import ch.framsteg.elexis.labor.teamw.workers.MessageBuilder;
 import ch.framsteg.elexis.labor.teamw.workers.Transmitter;
@@ -86,8 +102,6 @@ public class LabordersView extends ViewPart implements IRefreshable {
 	final static private String APP_CFG_XID_INSURED_PERDON_NUMBER = "props.app.xid.insured.person.number";
 	final static private String APP_CFG_XID_INSURED_NUMBER = "props.app.xid.insured.number";
 
-	final static private String CFG_TEAMW_PATH = "props.app.teamw.config.path";
-
 	final static private String SOFTWARE = "props.teamw.gdt.value.software";
 
 	final static private String DEFAULT_GUARANTOR_TYPE = "props.teamw.gdt.default.guarantor.type";
@@ -107,6 +121,8 @@ public class LabordersView extends ViewPart implements IRefreshable {
 	final static private String ERR_NO_SUCH_ALGORITHM_EXCEPTION = "props.app.err.no.such.algorithm.exception";
 	final static private String ERR_INVALID_KEY_SPEC_EXCEPTION = "props.app.err.invalid.key.spec.exception";
 	final static private String ERR_SIGNATURE_EXCEPTION = "props.app.err.signature.exception";
+
+	final static private String EMPTY = "";
 
 	private Properties applicationProperties;
 	private Properties messagesProperties;
@@ -163,15 +179,17 @@ public class LabordersView extends ViewPart implements IRefreshable {
 
 	Logger logger = LoggerFactory.getLogger(LabordersView.class);
 
+	@Inject
+	private IConfigService configService;
+
 	public LabordersView() {
 		loadProperties();
-		ElexisEventDispatcher.getInstance().addListeners(eeli_case_selected);
-		ElexisEventDispatcher.getInstance().addListeners(eeli_case_updated);
 		Display display = Display.getCurrent();
 		Color markedBackgroundColor = new Color(display, new RGB(250, 150, 150));
 		Color defaultBackgroundColor = new Color(display, new RGB(255, 255, 255));
 		setMarkedBackgroundColor(markedBackgroundColor);
 		setDefaultBackgroundColor(defaultBackgroundColor);
+		CoreUiUtil.injectServices(this);
 	}
 
 	private void loadProperties() {
@@ -184,190 +202,30 @@ public class LabordersView extends ViewPart implements IRefreshable {
 					LabordersView.class.getClassLoader().getResourceAsStream("/resources/application.properties"));
 			getMessagesProperties()
 					.load(LabordersView.class.getClassLoader().getResourceAsStream("/resources/messages.properties"));
-			getTeamwProperties().load((new FileInputStream(getApplicationProperties().getProperty(CFG_TEAMW_PATH))));
+			getTeamwProperties()
+					.load((LabordersView.class.getClassLoader().getResourceAsStream("/resources/teamw.properties")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private final ElexisEventListener eeli_case_updated = new ElexisUiSyncEventListenerImpl(Fall.class,
-			ElexisEvent.EVENT_UPDATE) {
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			updateControls(ev);
-		}
-	};
+	private void updateControls(ICoverage coverage) {
 
-	private final ElexisEventListener eeli_case_selected = new ElexisUiSyncEventListenerImpl(Fall.class,
-			ElexisEvent.EVENT_SELECTED) {
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			updateControls(ev);
-		}
-	};
+		IPatient patient = coverage.getPatient();
+		updateControls(patient);
 
-	private void clearFields() {
-		txtPatPID.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatPID.setBackground(getDefaultBackgroundColor());
-		txtPatTitle.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatTitle.setBackground(getDefaultBackgroundColor());
-		txtPatName.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatPID.setBackground(getDefaultBackgroundColor());
-		txtPatPrename.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatPrename.setBackground(getDefaultBackgroundColor());
-		txtPatBirthday.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatBirthday.setBackground(getDefaultBackgroundColor());
-		txtPatSex.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatSex.setBackground(getDefaultBackgroundColor());
-		txtPatStreet.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatStreet.setBackground(getDefaultBackgroundColor());
-		txtPatZip.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatZip.setBackground(getDefaultBackgroundColor());
-		txtPatCity.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatCity.setBackground(getDefaultBackgroundColor());
-		txtPatCountry.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatCountry.setBackground(getDefaultBackgroundColor());
-		txtPatAHV.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatAHV.setBackground(getDefaultBackgroundColor());
-		txtPatCardNumber.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatCardNumber.setBackground(getDefaultBackgroundColor());
-		txtPatMobile.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatMobile.setBackground(getDefaultBackgroundColor());
-		txtPatEmail.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatEmail.setBackground(getDefaultBackgroundColor());
-		txtCaseInsuranceNumber.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtCaseInsuranceNumber.setBackground(getDefaultBackgroundColor());
-		txtCaseInsurance.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtCaseInsurance.setBackground(getDefaultBackgroundColor());
-		txtCaseInsuranceEAN.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtCaseInsuranceEAN.setBackground(getDefaultBackgroundColor());
-		txtCaseTitle.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtCaseTitle.setBackground(getDefaultBackgroundColor());
-		txtCaseReason.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtCaseReason.setBackground(getDefaultBackgroundColor());
-		txtCaseInsuranceType.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtCaseInsuranceType.setBackground(getDefaultBackgroundColor());
-		txtPatCardNumber.setText(getMessagesProperties().getProperty(UNSELECTED));
-		txtPatCardNumber.setBackground(getDefaultBackgroundColor());
-		btnSend.setEnabled(false);
-	}
-
-	private void updateControls(ElexisEvent ev) {
-
-		Fall fall = (Fall) ev.getObject();
-		Patient patient = fall.getPatient();
-		txtPatPID.setText(patient.getPatCode());
-		if (txtPatPID.getText().isEmpty()) {
-			txtPatPID.setBackground(getMarkedBackgroundColor());
-		} else {
-			txtPatPID.setBackground(getDefaultBackgroundColor());
-		}
-
-		txtPatTitle.setText(patient.getGeschlecht().equalsIgnoreCase(getMessagesProperties().getProperty(TXT_MALE_ABBR))
-				? getMessagesProperties().getProperty(TXT_MALE_TEXT)
-				: getMessagesProperties().getProperty(TXT_FEMALE_TEXT));
-		if (txtPatTitle.getText().isEmpty()) {
-			txtPatTitle.setBackground(getMarkedBackgroundColor());
-			txtPatTitle.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatTitle.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatName.setText(patient.getName());
-		if (txtPatName.getText().isEmpty()) {
-			txtPatName.setBackground(getMarkedBackgroundColor());
-			txtPatName.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatName.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatPrename.setText(patient.getVorname());
-		if (txtPatPrename.getText().isEmpty()) {
-			txtPatPrename.setBackground(getMarkedBackgroundColor());
-			txtPatPrename.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatPrename.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatBirthday.setText(patient.getGeburtsdatum());
-		if (txtPatBirthday.getText().isEmpty()) {
-			txtPatBirthday.setBackground(getMarkedBackgroundColor());
-			txtPatBirthday.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatBirthday.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatSex.setText(patient.getGeschlecht());
-		if (txtPatSex.getText().isEmpty()) {
-			txtPatSex.setBackground(getMarkedBackgroundColor());
-			txtPatSex.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatSex.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatStreet.setText(patient.getAnschrift().getStrasse());
-		if (txtPatStreet.getText().isEmpty()) {
-			txtPatStreet.setBackground(getMarkedBackgroundColor());
-			txtPatStreet.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatStreet.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatZip.setText(patient.getAnschrift().getPlz());
-		if (txtPatZip.getText().isEmpty()) {
-			txtPatZip.setBackground(getMarkedBackgroundColor());
-			txtPatZip.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatZip.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatCity.setText(patient.getAnschrift().getOrt());
-		if (txtPatCity.getText().isEmpty()) {
-			txtPatCity.setBackground(getMarkedBackgroundColor());
-			txtPatCity.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatCity.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatCountry.setText(patient.getAnschrift().getLand());
-		System.out.println(patient.getAnschrift().getLand());
-		if (txtPatCountry.getText().isEmpty() || txtPatCountry.getText().isBlank()) {
-			txtPatCountry.setBackground(getMarkedBackgroundColor());
-			txtPatCountry.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatCountry.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatAHV.setText(patient.getXid(getApplicationProperties().getProperty(APP_CFG_XID_AHV)));
-		if (txtPatAHV.getText().isEmpty()) {
-			txtPatAHV.setBackground(getMarkedBackgroundColor());
-			txtPatAHV.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatAHV.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatCardNumber
-				.setText(patient.getXid(getApplicationProperties().getProperty(APP_CFG_XID_INSURED_PERDON_NUMBER)));
-		if (txtPatCardNumber.getText().isEmpty()) {
-			txtPatCardNumber.setBackground(getMarkedBackgroundColor());
-			txtPatCardNumber.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatCardNumber.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatMobile.setText(patient.getNatel());
-		if (txtPatMobile.getText().isEmpty()) {
-			txtPatMobile.setBackground(getMarkedBackgroundColor());
-			txtPatMobile.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatMobile.setBackground(getDefaultBackgroundColor());
-		}
-		txtPatEmail.setText(patient.getMailAddress());
-		if (txtPatEmail.getText().isEmpty()) {
-			txtPatEmail.setBackground(getMarkedBackgroundColor());
-			txtPatEmail.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
-		} else {
-			txtPatEmail.setBackground(getDefaultBackgroundColor());
-		}
-		txtCaseInsuranceNumber
-				.setText(patient.getXid(getApplicationProperties().getProperty(APP_CFG_XID_INSURED_NUMBER)));
+		txtCaseInsuranceNumber.setText(
+				patient.getXid(getApplicationProperties().getProperty(APP_CFG_XID_INSURED_NUMBER)) != null ? patient
+						.getXid(getApplicationProperties().getProperty(APP_CFG_XID_INSURED_NUMBER)).getDomainId() : "");
 		if (txtCaseInsuranceNumber.getText().isEmpty()) {
 			txtCaseInsuranceNumber.setBackground(getMarkedBackgroundColor());
 			txtCaseInsuranceNumber.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
 		} else {
 			txtCaseInsuranceNumber.setBackground(getDefaultBackgroundColor());
 		}
-		if (fall.getCostBearer() != null) {
-			txtCaseInsurance.setText(fall.getCostBearer().getLabel(true));
+
+		if (coverage.getCostBearer() != null) {
+			txtCaseInsurance.setText(coverage.getCostBearer().getDescription1());
 		}
 		if (txtCaseInsurance.getText().isEmpty()) {
 			txtCaseInsurance.setBackground(getMarkedBackgroundColor());
@@ -375,9 +233,10 @@ public class LabordersView extends ViewPart implements IRefreshable {
 		} else {
 			txtCaseInsurance.setBackground(getDefaultBackgroundColor());
 		}
-		if (fall.getCostBearer() != null) {
-			txtCaseInsuranceEAN
-					.setText(fall.getCostBearer().getXid(getApplicationProperties().getProperty(APP_CFG_XID_EAN)));
+
+		if (coverage.getCostBearer() != null) {
+			txtCaseInsuranceEAN.setText(coverage.getCostBearer()
+					.getXid(getApplicationProperties().getProperty(APP_CFG_XID_EAN)).getDomainId());
 		}
 		if (txtCaseInsuranceEAN.getText().isEmpty()) {
 			txtCaseInsuranceEAN.setBackground(getMarkedBackgroundColor());
@@ -385,21 +244,25 @@ public class LabordersView extends ViewPart implements IRefreshable {
 		} else {
 			txtCaseInsuranceEAN.setBackground(getDefaultBackgroundColor());
 		}
-		txtCaseTitle.setText(fall.getLabel());
+
+		txtCaseTitle.setText(coverage.getDescription() != null ? coverage.getDescription() : EMPTY);
 		if (txtCaseTitle.getText().isEmpty()) {
 			txtCaseTitle.setBackground(getMarkedBackgroundColor());
 			txtCaseTitle.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
 		} else {
 			txtCaseTitle.setBackground(getDefaultBackgroundColor());
 		}
-		txtCaseReason.setText(fall.getGrund());
+
+		txtCaseReason.setText(coverage.getReason() != null ? coverage.getReason() : EMPTY);
 		if (txtCaseReason.getText().isEmpty()) {
 			txtCaseReason.setBackground(getMarkedBackgroundColor());
 			txtCaseReason.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
 		} else {
 			txtCaseReason.setBackground(getDefaultBackgroundColor());
 		}
-		txtCaseInsuranceType.setText(fall.getAbrechnungsSystem());
+
+		txtCaseInsuranceType
+				.setText(coverage.getBillingSystem() != null ? coverage.getBillingSystem().getName() : EMPTY);
 		if (txtCaseInsuranceType.getText().isEmpty()) {
 			txtCaseInsuranceType.setBackground(getMarkedBackgroundColor());
 			txtCaseInsuranceType.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
@@ -408,6 +271,140 @@ public class LabordersView extends ViewPart implements IRefreshable {
 		}
 		btnSend.setEnabled(true);
 		btnClear.setEnabled(true);
+	}
+
+	private void updateControls(IPatient patient) {
+		txtPatPID.setText(patient.getPatientNr() != null ? patient.getPatientNr() : EMPTY);
+		if (txtPatPID.getText().isEmpty()) {
+			txtPatPID.setBackground(getMarkedBackgroundColor());
+		} else {
+			txtPatPID.setBackground(getDefaultBackgroundColor());
+		}
+
+		if (patient.getGender() != null) {
+			txtPatTitle.setText(
+					patient.getGender().value().equalsIgnoreCase(getMessagesProperties().getProperty(TXT_MALE_ABBR))
+							? getMessagesProperties().getProperty(TXT_MALE_TEXT)
+							: getMessagesProperties().getProperty(TXT_FEMALE_TEXT));
+		} else {
+			txtPatTitle.setText(EMPTY);
+		}
+		if (txtPatTitle.getText().isEmpty()) {
+			txtPatTitle.setBackground(getMarkedBackgroundColor());
+			txtPatTitle.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatTitle.setBackground(getDefaultBackgroundColor());
+		}
+
+		txtPatName.setText(patient.getLastName() != null ? patient.getLastName() : EMPTY);
+		if (txtPatName.getText().isEmpty()) {
+			txtPatName.setBackground(getMarkedBackgroundColor());
+			txtPatName.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatName.setBackground(getDefaultBackgroundColor());
+		}
+
+		txtPatPrename.setText(patient.getFirstName() != null ? patient.getFirstName() : EMPTY);
+		if (txtPatPrename.getText().isEmpty()) {
+			txtPatPrename.setBackground(getMarkedBackgroundColor());
+			txtPatPrename.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatPrename.setBackground(getDefaultBackgroundColor());
+		}
+
+		if (patient.getDateOfBirth() != null) {
+			txtPatBirthday.setText(patient.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+		} else {
+			txtPatBirthday.setText(EMPTY);
+		}
+		if (txtPatBirthday.getText().isEmpty()) {
+			txtPatBirthday.setBackground(getMarkedBackgroundColor());
+			txtPatBirthday.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatBirthday.setBackground(getDefaultBackgroundColor());
+		}
+
+		if (patient.getGender() != null) {
+			txtPatSex.setText(patient.getGender().value().equalsIgnoreCase("f") ? "w" : "m");
+		} else {
+			txtPatSex.setText(EMPTY);
+		}
+		if (txtPatSex.getText().isEmpty()) {
+			txtPatSex.setBackground(getMarkedBackgroundColor());
+			txtPatSex.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatSex.setBackground(getDefaultBackgroundColor());
+		}
+
+		txtPatStreet.setText(patient.getStreet() != null ? patient.getStreet() : EMPTY);
+		if (txtPatStreet.getText().isEmpty()) {
+			txtPatStreet.setBackground(getMarkedBackgroundColor());
+			txtPatStreet.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatStreet.setBackground(getDefaultBackgroundColor());
+		}
+
+		txtPatZip.setText(patient.getZip() != null ? patient.getZip() : EMPTY);
+		if (txtPatZip.getText().isEmpty()) {
+			txtPatZip.setBackground(getMarkedBackgroundColor());
+			txtPatZip.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatZip.setBackground(getDefaultBackgroundColor());
+		}
+
+		txtPatCity.setText(patient.getCity() != null ? patient.getCity() : EMPTY);
+		if (txtPatCity.getText().isEmpty()) {
+			txtPatCity.setBackground(getMarkedBackgroundColor());
+			txtPatCity.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatCity.setBackground(getDefaultBackgroundColor());
+		}
+
+		txtPatCountry.setText(patient.getCountry() != null ? patient.getCountry().toString() : EMPTY);
+		if (txtPatCountry.getText().isEmpty() || txtPatCountry.getText().isBlank()) {
+			txtPatCountry.setBackground(getMarkedBackgroundColor());
+			txtPatCountry.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatCountry.setBackground(getDefaultBackgroundColor());
+		}
+
+		txtPatAHV.setText(patient.getXid(getApplicationProperties().getProperty(APP_CFG_XID_AHV)) != null
+				? patient.getXid(getApplicationProperties().getProperty(APP_CFG_XID_AHV)).getDomainId()
+				: EMPTY);
+		if (txtPatAHV.getText().isEmpty()) {
+			txtPatAHV.setBackground(getMarkedBackgroundColor());
+			txtPatAHV.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatAHV.setBackground(getDefaultBackgroundColor());
+		}
+
+		txtPatCardNumber.setText(
+				patient.getXid(getApplicationProperties().getProperty(APP_CFG_XID_INSURED_PERDON_NUMBER)) != null
+						? patient.getXid(getApplicationProperties().getProperty(APP_CFG_XID_INSURED_PERDON_NUMBER))
+								.getDomainId()
+						: EMPTY);
+		if (txtPatCardNumber.getText().isEmpty()) {
+			txtPatCardNumber.setBackground(getMarkedBackgroundColor());
+			txtPatCardNumber.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatCardNumber.setBackground(getDefaultBackgroundColor());
+		}
+
+		txtPatMobile.setText(patient.getMobile() != null ? patient.getMobile() : EMPTY);
+		if (txtPatMobile.getText().isEmpty()) {
+			txtPatMobile.setBackground(getMarkedBackgroundColor());
+			txtPatMobile.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatMobile.setBackground(getDefaultBackgroundColor());
+		}
+
+		txtPatEmail.setText(patient.getEmail() != null ? patient.getEmail() : EMPTY);
+		if (txtPatEmail.getText().isEmpty()) {
+			txtPatEmail.setBackground(getMarkedBackgroundColor());
+			txtPatEmail.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));
+		} else {
+			txtPatEmail.setBackground(getDefaultBackgroundColor());
+		}
 	}
 
 	@Override
@@ -740,10 +737,69 @@ public class LabordersView extends ViewPart implements IRefreshable {
 	public void setFocus() {
 	}
 
+	@Inject
+	void activeCoverage(@Optional ICoverage coverage) {
+		if (coverage != null) {
+			updateControls(coverage);
+		}
+	}
+
+	@Optional
+	@Inject
+	void reloadPatient(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IPatient patient) {
+		if (patient != null) {
+			updateControls(patient);
+		}
+	}
+
+	private void clearFields() {
+		txtPatPID.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatPID.setBackground(getDefaultBackgroundColor());
+		txtPatTitle.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatTitle.setBackground(getDefaultBackgroundColor());
+		txtPatName.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatPID.setBackground(getDefaultBackgroundColor());
+		txtPatPrename.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatPrename.setBackground(getDefaultBackgroundColor());
+		txtPatBirthday.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatBirthday.setBackground(getDefaultBackgroundColor());
+		txtPatSex.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatSex.setBackground(getDefaultBackgroundColor());
+		txtPatStreet.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatStreet.setBackground(getDefaultBackgroundColor());
+		txtPatZip.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatZip.setBackground(getDefaultBackgroundColor());
+		txtPatCity.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatCity.setBackground(getDefaultBackgroundColor());
+		txtPatCountry.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatCountry.setBackground(getDefaultBackgroundColor());
+		txtPatAHV.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatAHV.setBackground(getDefaultBackgroundColor());
+		txtPatCardNumber.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatCardNumber.setBackground(getDefaultBackgroundColor());
+		txtPatMobile.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatMobile.setBackground(getDefaultBackgroundColor());
+		txtPatEmail.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatEmail.setBackground(getDefaultBackgroundColor());
+		txtCaseInsuranceNumber.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtCaseInsuranceNumber.setBackground(getDefaultBackgroundColor());
+		txtCaseInsurance.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtCaseInsurance.setBackground(getDefaultBackgroundColor());
+		txtCaseInsuranceEAN.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtCaseInsuranceEAN.setBackground(getDefaultBackgroundColor());
+		txtCaseTitle.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtCaseTitle.setBackground(getDefaultBackgroundColor());
+		txtCaseReason.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtCaseReason.setBackground(getDefaultBackgroundColor());
+		txtCaseInsuranceType.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtCaseInsuranceType.setBackground(getDefaultBackgroundColor());
+		txtPatCardNumber.setText(getMessagesProperties().getProperty(UNSELECTED));
+		txtPatCardNumber.setBackground(getDefaultBackgroundColor());
+		btnSend.setEnabled(false);
+	}
+
 	@Override
 	public void dispose() {
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_case_selected);
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_case_updated);
 		super.dispose();
 	}
 

@@ -29,11 +29,6 @@
               </requirement>
               <requirement>
                 <type>eclipse-plugin</type>
-                <id>ch.elexis.core.logback.rocketchat</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
                 <id>ch.elexis.core.test.context</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
@@ -45,11 +40,6 @@
               <requirement>
                 <type>eclipse-plugin</type>
                 <id>ch.elexis.base.ch.arzttarife.model.test</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
-                <id>org.eclipse.persistence.oracle</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
               <requirement>

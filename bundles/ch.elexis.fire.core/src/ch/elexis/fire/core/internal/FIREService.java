@@ -38,11 +38,11 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.ISickCertificate;
 import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQueryCursor;
-import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.fire.core.IFIREService;
 
 @Component
@@ -51,11 +51,17 @@ public class FIREService implements IFIREService {
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
 	private IModelService coreModelService;
 
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.findings.model)")
+	private IModelService findingsModelService;
+
 	@Reference
 	private IFhirTransformerRegistry transformerRegistry;
 
 	@Reference
 	private IFindingsService findingsService;
+
+	@Reference
+	private IConfigService configService;
 
 	private MessageDigest sha256Digest;
 
@@ -84,7 +90,18 @@ public class FIREService implements IFIREService {
 	}
 	
 	@Override
+	public Long getInitialTimestamp() {
+		return Long.valueOf(configService.get("fire.intialExport", "-1"));
+	}
+
+	@Override
+	public Long getIncrementalTimestamp() {
+		return Long.valueOf(configService.get("fire.incrementalExport", "-1"));
+	}
+
+	@Override
 	public Bundle initialExport() {
+		long timestamp = System.currentTimeMillis();
 		Bundle ret = getBundle();
 		ret.getMeta().addTag(new Coding("fire.export.type", "initial", null));
 
@@ -97,14 +114,19 @@ public class FIREService implements IFIREService {
 			}
 		}
 		
+		configService.set("fire.intialExport", Long.toString(timestamp));
 		return ret;
 	}
 
 	private Bundle exportPatient(IPatient patient, Patient fhirPatient, Bundle ret) {
+		String firePatientId = getFIREPatientId(patient.getId());
+
 		fhirPatient = toFIRE(fhirPatient);
+		fhirPatient.addIdentifier(
+				new Identifier().setSystem("fire.export.patID").setValue(firePatientId));
+
 		Bundle patientBundle = new Bundle();
-		patientBundle.setId(fhirPatient.getIdentifier().stream().filter(i -> "fire.export.patID".equals(i.getSystem()))
-				.findFirst().get().getValue());
+		patientBundle.setId(firePatientId);
 		patientBundle.setType(BundleType.COLLECTION);
 		patientBundle.addEntry().setResource(fhirPatient);
 
@@ -204,13 +226,10 @@ public class FIREService implements IFIREService {
 		fhirPatient.setIdentifier(new ArrayList<Identifier>(
 				fhirPatient.getIdentifier().stream().filter(i -> i.getSystem().startsWith("www.elexis")).toList()));
 
-		fhirPatient.addIdentifier(
-				new Identifier().setSystem("fire.export.patID").setValue(getFIREPatientId(fhirPatient.getId())));
-
 		return fhirPatient;
 	}
 
-	private String getFIREPatientId(String id) {
+	protected String getFIREPatientId(String id) {
 		String originalString = getPracticeIdentifier() + "." + id;
 		byte[] encodedhash = sha256Digest.digest(
 		  originalString.getBytes(StandardCharsets.UTF_8));
@@ -218,11 +237,80 @@ public class FIREService implements IFIREService {
 	}
 
 	@Override
-	public Bundle incrementalExport() {
+	public Bundle incrementalExport(Long lastExportTimestamp) {
+		long timestamp = System.currentTimeMillis();
 		Bundle ret = getBundle();
 		ret.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
 
+		List<IPatient> changedPatients = getChanged(lastExportTimestamp, IPatient.class);
+		addIncrementalPatients(changedPatients, ret);
+		List<IEncounter> changedEncounters = getChanged(lastExportTimestamp, IEncounter.class);
+		addIncrementalEncounters(changedEncounters, ret);
+		List<ICondition> changedConditions = getChangedFindings(lastExportTimestamp, ICondition.class);
+		List<IPrescription> changedPrescriptions = getChanged(lastExportTimestamp, IPrescription.class);
+
+		configService.set("fire.incrementalExport", Long.toString(timestamp));
 		return ret;
+	}
+
+	private void addIncrementalEncounters(List<IEncounter> changedEncounters, Bundle ret) {
+		for (IEncounter iEncounter : changedEncounters) {
+			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(iEncounter.getPatient().getId()), ret);
+			encounterTransformer.getFhirObject(iEncounter).ifPresent(fhirEncounter -> {
+				addMandatorToBundle(iEncounter.getMandator(), ret);
+				if (iEncounter.getMandator().getBiller().isPerson() && iEncounter.getMandator().getBiller().isMandator()
+						&& !iEncounter.getMandator().equals(iEncounter.getMandator().getBiller())) {
+					addMandatorToBundle((IMandator) iEncounter.getMandator().getBiller(), ret);
+				}
+				toFIRE(fhirEncounter);
+				patientBundle.addEntry().setResource(fhirEncounter);
+			});
+		}
+
+	}
+
+	protected Bundle getPatientBundle(String firePatientId, Bundle exportBundle) {
+		for (BundleEntryComponent entry : exportBundle.getEntry()) {
+			if (entry.getResource() != null && firePatientId.equals(entry.getResource().getId())) {
+				return (Bundle) entry.getResource();
+			}
+		}
+		return null;
+	}
+
+	protected Bundle getOrCreatePatientBundle(String firePatientId, Bundle exportBundle) {
+		Bundle ret = getPatientBundle(firePatientId, exportBundle);
+		if (ret == null) {
+			ret = new Bundle();
+			ret.setId(firePatientId);
+			ret.setType(BundleType.COLLECTION);
+			exportBundle.addEntry().setResource(ret);
+		}
+		return ret;
+	}
+
+	private void addIncrementalPatients(List<IPatient> changedPatients, Bundle ret) {
+		for (IPatient iPatient : changedPatients) {
+			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(iPatient.getId()), ret);
+			patientTransformer.getFhirObject(iPatient).ifPresent(fhirPatient -> {
+				toFIRE(fhirPatient);
+				patientBundle.addEntry().setResource(fhirPatient);
+			});
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> List<T> getChanged(Long lastExportTimestamp, Class<T> clazz) {
+		IQuery<T> query = coreModelService.getQuery(clazz);
+		query.and("lastupdate", COMPARATOR.GREATER, Long.valueOf(lastExportTimestamp)); //$NON-NLS-1$
+		return (List<T>) (List<?>) query.execute();
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> List<T> getChangedFindings(Long lastExportTimestamp, Class<T> clazz) {
+		IQuery<T> query = findingsModelService.getQuery(clazz);
+		query.and("lastupdate", COMPARATOR.GREATER, Long.valueOf(lastExportTimestamp)); //$NON-NLS-1$
+		return (List<T>) (List<?>) query.execute();
 	}
 
 	private Bundle getBundle() {
@@ -245,18 +333,18 @@ public class FIREService implements IFIREService {
 	}
 
 	private String getElexisInstallationId() {
-		return ConfigServiceHolder.get().get(ch.elexis.core.constants.Preferences.INSTALLATION_TIMESTAMP,
+		return configService.get(ch.elexis.core.constants.Preferences.INSTALLATION_TIMESTAMP,
 				"defaultElexisInstallationId");
 	}
 
 	private boolean isOidMedelexisProjectAvailable() {
-		return ConfigServiceHolder.get().getLocal(ch.elexis.core.constants.Preferences.SOFTWARE_OID, null) != null
-				&& ConfigServiceHolder.get().getLocal("medelexis/projectid", null) != null;
+		return configService.getLocal(ch.elexis.core.constants.Preferences.SOFTWARE_OID, null) != null
+				&& configService.getLocal("medelexis/projectid", null) != null;
 	}
 
 	private String getOidMedelexisProject() {
-		String oid = ConfigServiceHolder.get().getLocal(ch.elexis.core.constants.Preferences.SOFTWARE_OID, null);
-		String projectId = ConfigServiceHolder.get().getLocal("medelexis/projectid", null);
+		String oid = configService.getLocal(ch.elexis.core.constants.Preferences.SOFTWARE_OID, null);
+		String projectId = configService.getLocal("medelexis/projectid", null);
 		return oid + "." + ch.elexis.core.constants.Preferences.OID_SUBDOMAIN_PATIENTMASTERDATA + "." + projectId;
 	}
 }

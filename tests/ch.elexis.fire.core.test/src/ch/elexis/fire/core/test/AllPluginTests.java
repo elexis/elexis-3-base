@@ -24,7 +24,7 @@ import ch.elexis.core.services.IModelService;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.fire.core.FIREServiceTest;
+import ch.elexis.fire.core.internal.FIREServiceTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ FIREServiceTest.class })

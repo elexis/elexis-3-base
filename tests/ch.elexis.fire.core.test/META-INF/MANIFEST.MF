@@ -16,4 +16,5 @@ Automatic-Module-Name: ch.elexis.fire.core.test
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: ch.elexis.core.test.initializer,
  ch.elexis.data,
- ch.rgw.io
+ ch.rgw.io,
+ org.hl7.fhir.r4.model;version="[5.4.0,6.0.0]"

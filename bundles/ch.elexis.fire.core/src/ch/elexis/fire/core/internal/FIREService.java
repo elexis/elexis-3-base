@@ -3,13 +3,18 @@ package ch.elexis.fire.core.internal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
@@ -25,6 +30,7 @@ import org.hl7.fhir.r4.model.Practitioner;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.findings.ICondition;
 import ch.elexis.core.findings.IFindingsService;
@@ -247,26 +253,55 @@ public class FIREService implements IFIREService {
 		List<IEncounter> changedEncounters = getChanged(lastExportTimestamp, IEncounter.class);
 		addIncrementalEncounters(changedEncounters, ret);
 		List<ICondition> changedConditions = getChangedFindings(lastExportTimestamp, ICondition.class);
+		addIncrementalConditions(changedConditions, ret);
 		List<IPrescription> changedPrescriptions = getChanged(lastExportTimestamp, IPrescription.class);
+		addIncrementalPrescriptions(changedPrescriptions, ret);
+		List<ILabResult> changedLabResults = getChanged(lastExportTimestamp, ILabResult.class);
+		addIncrementalLabResult(changedLabResults, ret);
 
 		configService.set("fire.incrementalExport", Long.toString(timestamp));
 		return ret;
 	}
 
 	private void addIncrementalEncounters(List<IEncounter> changedEncounters, Bundle ret) {
-		for (IEncounter iEncounter : changedEncounters) {
-			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(iEncounter.getPatient().getId()), ret);
-			encounterTransformer.getFhirObject(iEncounter).ifPresent(fhirEncounter -> {
-				addMandatorToBundle(iEncounter.getMandator(), ret);
-				if (iEncounter.getMandator().getBiller().isPerson() && iEncounter.getMandator().getBiller().isMandator()
-						&& !iEncounter.getMandator().equals(iEncounter.getMandator().getBiller())) {
-					addMandatorToBundle((IMandator) iEncounter.getMandator().getBiller(), ret);
+		changedEncounters.forEach(en -> {
+			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(en.getPatient().getId()), ret);
+			encounterTransformer.getFhirObject(en).ifPresent(fhirEncounter -> {
+				addMandatorToBundle(en.getMandator(), ret);
+				if (en.getMandator().getBiller().isPerson() && en.getMandator().getBiller().isMandator()
+						&& !en.getMandator().equals(en.getMandator().getBiller())) {
+					addMandatorToBundle((IMandator) en.getMandator().getBiller(), ret);
 				}
 				toFIRE(fhirEncounter);
 				patientBundle.addEntry().setResource(fhirEncounter);
 			});
-		}
+		});
+	}
 
+	private void addIncrementalConditions(List<ICondition> changedConditions, Bundle ret) {
+		changedConditions.forEach(co -> {
+			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(co.getPatientId()), ret);
+			Condition fhirCondition = (Condition) ModelUtil.getAsResource(co.getRawContent());
+			patientBundle.addEntry().setResource(fhirCondition);
+		});
+	}
+
+	private void addIncrementalPrescriptions(List<IPrescription> changedPrescriptions, Bundle ret) {
+		changedPrescriptions.forEach(pr -> {
+			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(pr.getPatient().getId()), ret);
+			prescriptionTransformer.getFhirObject(pr).ifPresent(mr -> {
+				patientBundle.addEntry().setResource(mr);
+			});
+		});
+	}
+
+	private void addIncrementalLabResult(List<ILabResult> changedLabResults, Bundle ret) {
+		changedLabResults.forEach(lr -> {
+			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(lr.getPatient().getId()), ret);
+			labTransformer.getFhirObject(lr).ifPresent(ob -> {
+				patientBundle.addEntry().setResource(ob);
+			});
+		});
 	}
 
 	protected Bundle getPatientBundle(String firePatientId, Bundle exportBundle) {
@@ -346,5 +381,35 @@ public class FIREService implements IFIREService {
 		String oid = configService.getLocal(ch.elexis.core.constants.Preferences.SOFTWARE_OID, null);
 		String projectId = configService.getLocal("medelexis/projectid", null);
 		return oid + "." + ch.elexis.core.constants.Preferences.OID_SUBDOMAIN_PATIENTMASTERDATA + "." + projectId;
+	}
+
+	@Override
+	public boolean uploadBundle(Bundle bundle) {
+		try {
+			FIREUploadBundle upload = new FIREUploadBundle(getBundleName(), bundle);
+			Boolean ret = CompletableFuture.supplyAsync(upload).get();
+			if (ret) {
+				increaseBundleCount();
+			}
+			return ret;
+		} catch (InterruptedException | ExecutionException e) {
+			LoggerFactory.getLogger(getClass()).error("Exception uploading bundle", e);
+		}
+		return Boolean.FALSE;
+	}
+
+	private void increaseBundleCount() {
+		int value = configService.get("fire.export.bundle.count", 1);
+		configService.set("fire.export.bundle.count", value + 1);
+	}
+
+	private int getBundleCount() {
+		return configService.get("fire.export.bundle.count", 1);
+	}
+
+	private String getBundleName() {
+		return "elexis_00" + getPracticeIdentifier() + "_"
+				+ StringUtils.leftPad(Integer.toString(getBundleCount()), 6, "0")
+				+ "_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 	}
 }

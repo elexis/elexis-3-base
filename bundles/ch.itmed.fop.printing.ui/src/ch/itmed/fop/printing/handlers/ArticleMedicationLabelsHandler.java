@@ -14,11 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IArticleDefaultSignature;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.prescription.EntryType;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.MedicationServiceHolder;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
@@ -45,7 +47,7 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 
 				StructuredSelection selection = CoreUiUtil.getCommandSelection("ch.elexis.VerrechnungsDisplay", false);
 				if (selection != null && !selection.isEmpty() && selection.getFirstElement() instanceof IBilled) {
-					verrechnet = (List<IBilled>) selection.toList();
+					verrechnet = selection.toList();
 				}
 
 				for (IBilled iBilled : verrechnet) {
@@ -72,11 +74,19 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 							// create article labels without medication
 							for (int i = 0; i < iBilled.getAmount(); i++) {
 								InputStream xmlDoc = ArticleLabel.create(article);
-								InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
-										ResourceProvider.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID));
-								String docName = PreferenceConstants.ARTICLE_LABEL;
+								Optional<String> dosageInstructions = getDosageInstructions(article);
+								InputStream pdf;
+								String docName;
+								if (dosageInstructions.isPresent()) {
+									pdf = PdfTransformer.transformXmlToPdf(xmlDoc, ResourceProvider
+											.getXslTemplateFile(PreferenceConstants.ARTICLE_MEDIC_LABEL_ID));
+									docName = PreferenceConstants.ARTICLE_MEDIC_LABEL;
+								} else {
+									pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
+											ResourceProvider.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID));
+									docName = PreferenceConstants.ARTICLE_LABEL;
+								}
 								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
-
 								String printerName = settingsStore
 										.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 								logger.info("Printing document ArticleLabel on printer: " + printerName); //$NON-NLS-1$
@@ -99,4 +109,13 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 		}
 		return null;
 	}
+
+	private static Optional<String> getDosageInstructions(IArticle article) {
+        Optional<IArticleDefaultSignature> signatureOpt = MedicationServiceHolder.get().getDefaultSignature(article);
+        if (signatureOpt.isPresent()) {
+            IArticleDefaultSignature signature = signatureOpt.get();
+			return Optional.of(signature.getComment());
+        }
+		return Optional.empty();
+    }
 }

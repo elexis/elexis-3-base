@@ -74,7 +74,7 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 							// create article labels without medication
 							for (int i = 0; i < iBilled.getAmount(); i++) {
 								InputStream xmlDoc = ArticleLabel.create(article);
-								String dosageInstructions = getDosageInstructions(article);
+								Optional<String> dosageInstructions = getDosageInstructions(article);
 								InputStream pdf;
 								String docName;
 								if (!dosageInstructions.isEmpty()) {
@@ -109,12 +109,13 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 		}
 		return null;
 	}
-    private static String getDosageInstructions(IArticle article) {
+
+	private static Optional<String> getDosageInstructions(IArticle article) {
         Optional<IArticleDefaultSignature> signatureOpt = MedicationServiceHolder.get().getDefaultSignature(article);
         if (signatureOpt.isPresent()) {
             IArticleDefaultSignature signature = signatureOpt.get();
-            return signature.getComment();
+			return Optional.of(signature.getComment());
         }
-        return "";
+		return Optional.empty();
     }
 }

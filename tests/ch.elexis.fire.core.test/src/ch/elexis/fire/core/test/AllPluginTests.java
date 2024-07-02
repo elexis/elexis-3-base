@@ -4,10 +4,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -73,5 +77,15 @@ public class AllPluginTests {
 						new TransientLocalCoding(CodingSystem.ICD_DE_CODESYSTEM.getSystem(), "J06.9",
 								"Akute Infektion der oberen Atemwege, nicht näher bezeichnet")));
 		findingsService.saveFinding(codedCondition);
+	}
+
+	public static <T> List<T> getResourcesFromBundle(Bundle bundle, Class<T> clazz) {
+		List<T> ret = new ArrayList<T>();
+		for (BundleEntryComponent entry : bundle.getEntry()) {
+			if (entry.getResource() != null && clazz.isInstance(entry.getResource())) {
+				ret.add(clazz.cast(entry.getResource()));
+			}
+		}
+		return ret;
 	}
 }

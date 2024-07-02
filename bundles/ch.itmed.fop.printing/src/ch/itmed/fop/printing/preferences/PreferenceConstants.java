@@ -33,6 +33,7 @@ public class PreferenceConstants {
 	public static final String PATIENT_ADDRESS_LABEL = "PatientAddressLabel"; //$NON-NLS-1$
 	public static final String CONTACT_ADDRESS_LABEL = "ContactAddressLabel"; //$NON-NLS-1$
 	public static final String BAR_CODE_LABEL = "BarCodeLabel"; //$NON-NLS-1$
+	public static final String ARTICLE_MEDIC_LABEL = "ArticleMedicLabel"; //$NON-NLS-1$
 
 	public static final int APPOINTMENT_CARD_ID = 0;
 	public static final int RECURRING_APPOINTMENTS_CARD_ID = 1;
@@ -43,6 +44,7 @@ public class PreferenceConstants {
 	public static final int PATIENT_ADDRESSLABEL_ID = 6;
 	public static final int CONTACT_ADDRESS_LABEL_ID = 7;
 	public static final int BAR_CODE_LABEL_ID = 8;
+	public static final int ARTICLE_MEDIC_LABEL_ID = 9;
 
 	private static final String PRINTER_NAME = "/printer/name"; // 0 //$NON-NLS-1$
 	private static final String XSL_TEMPLATE_PATH = "/xsl/templatePath"; // 1 //$NON-NLS-1$
@@ -107,6 +109,7 @@ public class PreferenceConstants {
 		docNames.add(PATIENT_ADDRESS_LABEL);
 		docNames.add(CONTACT_ADDRESS_LABEL);
 		docNames.add(BAR_CODE_LABEL);
+		docNames.add(ARTICLE_MEDIC_LABEL);
 	}
 
 	private static void initPreferenceConstants() {

@@ -47,7 +47,7 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 
 				StructuredSelection selection = CoreUiUtil.getCommandSelection("ch.elexis.VerrechnungsDisplay", false);
 				if (selection != null && !selection.isEmpty() && selection.getFirstElement() instanceof IBilled) {
-					verrechnet = (List<IBilled>) selection.toList();
+					verrechnet = selection.toList();
 				}
 
 				for (IBilled iBilled : verrechnet) {
@@ -77,7 +77,7 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 								Optional<String> dosageInstructions = getDosageInstructions(article);
 								InputStream pdf;
 								String docName;
-								if (!dosageInstructions.isEmpty()) {
+								if (dosageInstructions.isPresent()) {
 									pdf = PdfTransformer.transformXmlToPdf(xmlDoc, ResourceProvider
 											.getXslTemplateFile(PreferenceConstants.ARTICLE_MEDIC_LABEL_ID));
 									docName = PreferenceConstants.ARTICLE_MEDIC_LABEL;

@@ -41,4 +41,12 @@ public interface IFIREService {
 	 * @return
 	 */
 	public Long getIncrementalTimestamp();
+
+	/**
+	 * Upload the bundle to the fire server.
+	 * 
+	 * @param bundle
+	 * @return
+	 */
+	public boolean uploadBundle(Bundle bundle);
 }

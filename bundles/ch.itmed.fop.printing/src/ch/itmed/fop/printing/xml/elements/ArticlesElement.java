@@ -61,7 +61,7 @@ public final class ArticlesElement {
 		if (signatureOpt.isPresent()) {
 			IArticleDefaultSignature signature = signatureOpt.get();
 			String dosageInstructions = signature.getComment();
-			if (!dosageInstructions.isEmpty()) {
+			if (dosageInstructions != null && !dosageInstructions.isEmpty()) {
 				appendChildWithText(doc, articleElement, "DosageInstructions", dosageInstructions); //$NON-NLS-1$
 				appendDoseTable(doc, articleElement, signature);
 			}

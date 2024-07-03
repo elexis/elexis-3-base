@@ -81,6 +81,7 @@ public class Messages {
 	public static String PatientAddressLabel_Name = ch.elexis.core.l10n.Messages.PatientAddressLabel_Name;
 	public static String ContactAddressLabel_Name = ch.elexis.core.l10n.Messages.ContactAddressLabel_Name;
 	public static String BarCodeLabel_Name = ch.elexis.core.l10n.Messages.BarCodeLabel_Name;
+	public static String Article_Medic_Label = ch.elexis.core.l10n.Messages.Article_Medic_Label;;
 
 	public static String getDocumentName(int i) {
 		if (docNames == null) {
@@ -95,6 +96,7 @@ public class Messages {
 			docNames.add(PatientAddressLabel_Name);
 			docNames.add(ContactAddressLabel_Name);
 			docNames.add(BarCodeLabel_Name);
+			docNames.add(Article_Medic_Label);
 		}
 
 		return docNames.get(i);

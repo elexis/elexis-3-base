@@ -2,12 +2,15 @@ package ch.elexis.fire.core.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -53,17 +56,14 @@ public class FIREUploadBundle implements Supplier<Boolean> {
 			HttpClient httpclient = HttpClients.createDefault();
 			HttpPost httppost = new HttpPost(UPLOAD_URL + "/fire/index.php");
 
-			final String auth = "elexis:" + getPass();
-			final byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-			final String authHeader = "Basic " + new String(encodedAuth);
-			httppost.setHeader(HttpHeaders.AUTHORIZATION, authHeader);
+			httppost.setHeader(HttpHeaders.AUTHORIZATION, getAuth());
 
 			tempBundleFile = getBundleFile();
 			FileBody bundleBody = new FileBody(tempBundleFile, ContentType.APPLICATION_JSON);
 
 			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 			builder.setCharset(StandardCharsets.UTF_8);
-			builder.addPart("files", bundleBody);
+			builder.addPart("files[]", bundleBody);
 
 			HttpEntity uploadEntity = builder.build();
 
@@ -73,6 +73,8 @@ public class FIREUploadBundle implements Supplier<Boolean> {
 			LoggerFactory.getLogger(getClass()).info("Got response code [" + response.getStatusLine().getStatusCode()
 					+ "] from [" + httppost.getURI().toString() + "]");
 			if (response.getStatusLine().getStatusCode() == 200) {
+				LoggerFactory.getLogger(getClass())
+						.info("Bundle [" + tempBundleFile.getName() + "] uploaded successful");
 				return Boolean.TRUE;
 			} else {
 				LoggerFactory.getLogger(getClass()).warn("Uploading bundle [" + tempBundleFile.getName() + "] failed");
@@ -87,7 +89,21 @@ public class FIREUploadBundle implements Supplier<Boolean> {
 		return Boolean.FALSE;
 	}
 
-	private String getPass() {
-		return "";
+	private String getAuth() {
+		InputStream rsc = getClass().getResourceAsStream("/rsc/upload");
+		if (rsc != null) {
+			try {
+				String upload = IOUtils.toString(rsc, "UTF-8");
+				String[] parts = upload.split(",");
+				if (parts.length == 2) {
+					String credentials = parts[0] + ":" + parts[1];
+					return "Basic " + new String(Base64.encodeBase64(credentials.getBytes()));
+				}
+			} catch (IOException e) {
+				LoggerFactory.getLogger(getClass()).error("Exception reading upload", e);
+			}
+		}
+		LoggerFactory.getLogger(getClass()).warn("No auth found");
+		return StringUtils.EMPTY;
 	}
 }

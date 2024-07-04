@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -64,7 +65,6 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 										ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
 								String docName = PreferenceConstants.MEDICATION_LABEL;
 								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
-
 								String printerName = settingsStore
 										.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 								logger.info("Printing document MedicationLabel on printer: " + printerName); //$NON-NLS-1$
@@ -77,7 +77,11 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 								Optional<String> dosageInstructions = getDosageInstructions(article);
 								InputStream pdf;
 								String docName;
-								if (dosageInstructions.isPresent()) {
+								IPreferenceStore settingsStoreCheck = SettingsProvider
+										.getStore(PreferenceConstants.ARTICLE_MEDIC_LABEL);
+								String printerNameCheck = settingsStoreCheck.getString(PreferenceConstants
+										.getDocPreferenceConstant(PreferenceConstants.ARTICLE_MEDIC_LABEL, 0));
+								if (dosageInstructions.isPresent() && StringUtils.isNotBlank(printerNameCheck)) {
 									pdf = PdfTransformer.transformXmlToPdf(xmlDoc, ResourceProvider
 											.getXslTemplateFile(PreferenceConstants.ARTICLE_MEDIC_LABEL_ID));
 									docName = PreferenceConstants.ARTICLE_MEDIC_LABEL;
@@ -111,11 +115,11 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 	}
 
 	private static Optional<String> getDosageInstructions(IArticle article) {
-        Optional<IArticleDefaultSignature> signatureOpt = MedicationServiceHolder.get().getDefaultSignature(article);
-        if (signatureOpt.isPresent()) {
-            IArticleDefaultSignature signature = signatureOpt.get();
-			return Optional.of(signature.getComment());
-        }
+		Optional<IArticleDefaultSignature> signatureOpt = MedicationServiceHolder.get().getDefaultSignature(article);
+		if (signatureOpt.isPresent()) {
+			IArticleDefaultSignature signature = signatureOpt.get();
+			return Optional.ofNullable(signature.getComment());
+		}
 		return Optional.empty();
-    }
+	}
 }

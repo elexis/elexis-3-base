@@ -10,7 +10,10 @@ Require-Bundle: ch.elexis.core.l10n;bundle-version="3.10.0",
  ch.elexis.core;bundle-version="3.10.0",
  ch.elexis.core.services;bundle-version="3.10.0",
  ch.elexis.fop_wrapper;bundle-version="3.9.0",
- ch.rgw.utility
+ ch.rgw.utility,
+ org.eclipse.jface,
+ ch.elexis.core.ui,
+ ch.elexis.core.data
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.inject;version="1.0.0",
  org.apache.commons.io;version="2.8.0",

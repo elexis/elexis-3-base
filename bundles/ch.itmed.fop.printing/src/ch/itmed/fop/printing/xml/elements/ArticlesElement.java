@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -22,8 +23,11 @@ import ch.elexis.core.model.IArticle;
 import ch.elexis.core.model.IArticleDefaultSignature;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.services.holder.MedicationServiceHolder;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
+import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore.Scope;
 import ch.itmed.fop.printing.data.ArticleData;
 import ch.itmed.fop.printing.data.ConsultationData;
+import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.resources.Messages;
 
 public final class ArticlesElement {
@@ -58,7 +62,10 @@ public final class ArticlesElement {
 		appendChildWithText(doc, articleElement, "Price", articleData.getPrice()); //$NON-NLS-1$
 		appendChildWithText(doc, articleElement, "DeliveryDate", articleData.getDeliveryDate()); //$NON-NLS-1$
 		Optional<IArticleDefaultSignature> signatureOpt = MedicationServiceHolder.get().getDefaultSignature(article);
-		if (signatureOpt.isPresent()) {
+		String preferenceKey = PreferenceConstants
+				.getDocPreferenceConstant(PreferenceConstants.ARTICLE_MEDIC_LABEL.toString(), 0);
+		String printerNameCheck = getPrinterNameFromScopes(preferenceKey);
+		if (signatureOpt.isPresent() && printerNameCheck != null && !printerNameCheck.isEmpty()) {
 			IArticleDefaultSignature signature = signatureOpt.get();
 			String dosageInstructions = signature.getComment();
 			if (dosageInstructions != null && !dosageInstructions.isEmpty()) {
@@ -96,5 +103,15 @@ public final class ArticlesElement {
 			return medication.stream().anyMatch(m -> ad.getArticle().getId().equals(m.getArticle().getId()));
 		}
 		return false;
+	}
+
+	private static String getPrinterNameFromScopes(String preferenceKey) {
+		IPreferenceStore globalSettingsStore = new ConfigServicePreferenceStore(Scope.GLOBAL);
+		String printerName = globalSettingsStore.getString(preferenceKey);
+		if (printerName == null || printerName.isEmpty()) {
+			IPreferenceStore localSettingsStore = new ConfigServicePreferenceStore(Scope.LOCAL);
+			printerName = localSettingsStore.getString(preferenceKey);
+		}
+		return printerName;
 	}
 }

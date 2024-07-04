@@ -64,7 +64,6 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 										ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
 								String docName = PreferenceConstants.MEDICATION_LABEL;
 								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
-
 								String printerName = settingsStore
 										.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
 								logger.info("Printing document MedicationLabel on printer: " + printerName); //$NON-NLS-1$
@@ -77,7 +76,12 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 								Optional<String> dosageInstructions = getDosageInstructions(article);
 								InputStream pdf;
 								String docName;
-								if (dosageInstructions.isPresent()) {
+								IPreferenceStore settingsStoreCheck = SettingsProvider
+										.getStore(PreferenceConstants.ARTICLE_MEDIC_LABEL);
+								String printerNameCheck = settingsStoreCheck.getString(PreferenceConstants
+										.getDocPreferenceConstant(PreferenceConstants.ARTICLE_MEDIC_LABEL, 0));
+								if (dosageInstructions.isPresent() && printerNameCheck != null
+										&& !printerNameCheck.isEmpty()) {
 									pdf = PdfTransformer.transformXmlToPdf(xmlDoc, ResourceProvider
 											.getXslTemplateFile(PreferenceConstants.ARTICLE_MEDIC_LABEL_ID));
 									docName = PreferenceConstants.ARTICLE_MEDIC_LABEL;

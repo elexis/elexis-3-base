@@ -115,11 +115,11 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 	}
 
 	private static Optional<String> getDosageInstructions(IArticle article) {
-        Optional<IArticleDefaultSignature> signatureOpt = MedicationServiceHolder.get().getDefaultSignature(article);
-        if (signatureOpt.isPresent()) {
-            IArticleDefaultSignature signature = signatureOpt.get();
-			return Optional.of(signature.getComment());
-        }
+		Optional<IArticleDefaultSignature> signatureOpt = MedicationServiceHolder.get().getDefaultSignature(article);
+		if (signatureOpt.isPresent()) {
+			IArticleDefaultSignature signature = signatureOpt.get();
+			return Optional.ofNullable(signature.getComment());
+		}
 		return Optional.empty();
-    }
+	}
 }

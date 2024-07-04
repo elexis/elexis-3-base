@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -65,7 +66,7 @@ public final class ArticlesElement {
 		String preferenceKey = PreferenceConstants
 				.getDocPreferenceConstant(PreferenceConstants.ARTICLE_MEDIC_LABEL.toString(), 0);
 		String printerNameCheck = getPrinterNameFromScopes(preferenceKey);
-		if (signatureOpt.isPresent() && printerNameCheck != null && !printerNameCheck.isEmpty()) {
+		if (signatureOpt.isPresent() && StringUtils.isNotBlank(printerNameCheck)) {
 			IArticleDefaultSignature signature = signatureOpt.get();
 			String dosageInstructions = signature.getComment();
 			if (dosageInstructions != null && !dosageInstructions.isEmpty()) {

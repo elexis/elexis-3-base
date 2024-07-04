@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -80,8 +81,7 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 										.getStore(PreferenceConstants.ARTICLE_MEDIC_LABEL);
 								String printerNameCheck = settingsStoreCheck.getString(PreferenceConstants
 										.getDocPreferenceConstant(PreferenceConstants.ARTICLE_MEDIC_LABEL, 0));
-								if (dosageInstructions.isPresent() && printerNameCheck != null
-										&& !printerNameCheck.isEmpty()) {
+								if (dosageInstructions.isPresent() && StringUtils.isNotBlank(printerNameCheck)) {
 									pdf = PdfTransformer.transformXmlToPdf(xmlDoc, ResourceProvider
 											.getXslTemplateFile(PreferenceConstants.ARTICLE_MEDIC_LABEL_ID));
 									docName = PreferenceConstants.ARTICLE_MEDIC_LABEL;

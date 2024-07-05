@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -57,11 +58,11 @@ public final class ArticlesElement {
 		appendChildWithText(doc, articleElement, "Name", articleData.getName()); //$NON-NLS-1$
 		appendChildWithText(doc, articleElement, "Price", articleData.getPrice()); //$NON-NLS-1$
 		appendChildWithText(doc, articleElement, "DeliveryDate", articleData.getDeliveryDate()); //$NON-NLS-1$
-		Optional<IArticleDefaultSignature> signatureOpt = MedicationServiceHolder.get().getDefaultSignature(article);
+		Optional<IArticleDefaultSignature> signatureOpt = getDefaultSignature(article);
 		if (signatureOpt.isPresent()) {
 			IArticleDefaultSignature signature = signatureOpt.get();
 			String dosageInstructions = signature.getComment();
-			if (dosageInstructions != null && !dosageInstructions.isEmpty()) {
+			if (StringUtils.isNotBlank(dosageInstructions)) {
 				appendChildWithText(doc, articleElement, "DosageInstructions", dosageInstructions); //$NON-NLS-1$
 				appendDoseTable(doc, articleElement, signature);
 			}
@@ -96,5 +97,9 @@ public final class ArticlesElement {
 			return medication.stream().anyMatch(m -> ad.getArticle().getId().equals(m.getArticle().getId()));
 		}
 		return false;
+	}
+
+	public static Optional<IArticleDefaultSignature> getDefaultSignature(IArticle article) {
+		return MedicationServiceHolder.get().getDefaultSignature(article);
 	}
 }

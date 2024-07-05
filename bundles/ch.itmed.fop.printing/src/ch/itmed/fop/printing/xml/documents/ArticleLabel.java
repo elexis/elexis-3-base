@@ -12,11 +12,14 @@
 package ch.itmed.fop.printing.xml.documents;
 
 import java.io.InputStream;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IArticleDefaultSignature;
 import ch.itmed.fop.printing.preferences.PreferenceConstants;
 import ch.itmed.fop.printing.xml.elements.ArticlesElement;
 import ch.itmed.fop.printing.xml.elements.MandatorElement;
@@ -55,9 +58,16 @@ public class ArticleLabel {
 
 	public static InputStream create(IArticle article) throws Exception {
 		Document doc = DomDocument.newDocument();
-
+		Optional<IArticleDefaultSignature> signatureOpt = ArticlesElement.getDefaultSignature(article);
 		Element page = PageProperties.setProperties(doc, PreferenceConstants.ARTICLE_LABEL);
-		PageProperties.setCurrentDate(page);
+		if (signatureOpt.isPresent()) {
+			IArticleDefaultSignature signature = signatureOpt.get();
+			String dosageInstructions = signature.getComment();
+			if (StringUtils.isNotBlank(dosageInstructions)) {
+				page = PageProperties.setProperties(doc, PreferenceConstants.ARTICLE_MEDIC_LABEL);
+				PageProperties.setCurrentDate(page);
+			}
+		}
 		doc.appendChild(page);
 		Element patient = PatientElement.create(doc, false);
 		page.appendChild(patient);

@@ -179,10 +179,8 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	void activePatient(@Optional IPatient patient) {
 		Display.getDefault().asyncExec(() -> {
 			if (isActiveControl(table)) {
-				if (actPatient != patient) {
-					viewer.refresh();
-					actPatient = patient;
-				}
+				viewer.refresh();
+				actPatient = patient;
 			}
 		});
 	}
@@ -220,9 +218,11 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	}
 
 	class ViewContentProvider implements ITreeContentProvider {
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public void dispose() {
 		}
 
@@ -260,6 +260,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			return result;
 		}
 
+		@Override
 		public Object[] getElements(Object parent) {
 			List<IDocumentHandle> ret = new LinkedList<IDocumentHandle>();
 			IPatient pat = ContextServiceHolder.get().getActivePatient().orElse(null);
@@ -288,6 +289,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			return ret.toArray();
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			IPatient pat = ContextServiceHolder.get().getActivePatient().orElse(null);
 			if (!bFlat && pat != null && (parentElement instanceof IDocumentHandle)) {
@@ -298,6 +300,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			}
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			if (!bFlat && element instanceof IDocumentHandle) {
 				IDocumentHandle dh = (IDocumentHandle) element;
@@ -306,6 +309,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof IDocumentHandle) {
 				IDocumentHandle dh = (IDocumentHandle) element;
@@ -361,6 +365,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 			return null; // getImage(obj);
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
@@ -415,6 +420,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout(4, false));
 
@@ -434,6 +440,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 
 		// Add search listener
 		ModifyListener searchListener = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				searchKW = tSearchKW.getText();
 				searchTitle = tSearchTitle.getText();
@@ -637,6 +644,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				OmnivoreView.this.fillContextMenu(manager);
 			}
@@ -681,6 +689,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				setImageDescriptor(Images.IMG_IMPORT.getImageDescriptor());
 			}
 
+			@Override
 			public void doRun() {
 				if (ElexisEventDispatcher.getSelectedPatient() == null)
 					return;
@@ -792,6 +801,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 		};
 
 		doubleClickAction = new Action() {
+			@Override
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
@@ -814,6 +824,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				setToolTipText(Messages.OmnivoreView_exportActionTooltip);
 			}
 
+			@Override
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
@@ -839,6 +850,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				setToolTipText(Messages.OmnivoreView_flatActionTooltip);
 			}
 
+			@Override
 			public void run() {
 				bFlat = isChecked();
 				viewer.refresh();
@@ -848,6 +860,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				doubleClickAction.run();
 			}
@@ -857,6 +870,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 		refresh();
@@ -880,6 +894,7 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 				propertyIdx + "," + direction + "," + catDirection + "," + bFlat); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	@Override
 	public void refresh() {
 		activePatient(ContextServiceHolder.get().getActivePatient().orElse(null));
 	}

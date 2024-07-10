@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -41,6 +42,8 @@ public class FIREServiceTest {
 
 	private static IFIREService fireService;
 	
+	private static File initialExportFile;
+
 	private static Bundle initialExport;
 
 	private static Bundle incrementalExport;
@@ -52,7 +55,11 @@ public class FIREServiceTest {
 
 	@Test
 	public void a_initialExport() {
-		initialExport = fireService.initialExport();
+		List<File> files = fireService.initialExport();
+		assertNotNull(files);
+
+		initialExportFile = files.get(0);
+		initialExport = fireService.readBundle(files.get(0));
 
 		assertNotNull(initialExport);
 		
@@ -107,7 +114,9 @@ public class FIREServiceTest {
 		TestDatabaseInitializer.getBehandlung().setVersionedEntry(vr);
 		CoreModelServiceHolder.get().save(TestDatabaseInitializer.getBehandlung());
 		
-		incrementalExport = fireService.incrementalExport(fireService.getInitialTimestamp());
+		List<File> files = fireService.incrementalExport(fireService.getInitialTimestamp());
+
+		incrementalExport = fireService.readBundle(files.get(0));
 
 		assertNotNull(incrementalExport);
 

@@ -1,11 +1,17 @@
 package ch.elexis.fire.core.internal;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +20,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
@@ -49,6 +57,7 @@ import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.IQueryCursor;
+import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.fire.core.IFIREService;
 
 @Component
@@ -106,20 +115,39 @@ public class FIREService implements IFIREService {
 	}
 
 	@Override
-	public Bundle initialExport() {
+	public List<File> initialExport() {
 		long timestamp = System.currentTimeMillis();
-		Bundle ret = getBundle();
-		ret.getMeta().addTag(new Coding("fire.export.type", "initial", null));
+		List<File> ret = new ArrayList<>();
 
-		try (IQueryCursor<IPatient> cursor = coreModelService.getQuery(IPatient.class).executeAsCursor()) {
-			while (cursor.hasNext()) {
-				IPatient patient = cursor.next();
-				patientTransformer.getFhirObject(patient).ifPresent(fhirPatient -> {
-					ret.addEntry().setResource(exportPatient(patient, fhirPatient, ret));
-				});
+		File currentFile = getExportFile();
+		Bundle currentBundle = getBundle();
+		currentBundle.getMeta().addTag(new Coding("fire.export.type", "initial", null));
+
+		try {
+			try (IQueryCursor<IPatient> cursor = coreModelService.getQuery(IPatient.class).executeAsCursor()) {
+				while (cursor.hasNext()) {
+					IPatient patient = cursor.next();
+					Optional<Patient> fhirPatient = patientTransformer.getFhirObject(patient);
+					if (fhirPatient.isPresent()) {
+						currentBundle.addEntry().setResource(exportPatient(patient, fhirPatient.get(), currentBundle));
+					}
+					if (startNextBundle(currentBundle)) {
+						writeBundle(currentBundle, currentFile);
+						ret.add(currentFile);
+
+						currentFile = getExportFile();
+						currentBundle = getBundle();
+						currentBundle.getMeta().addTag(new Coding("fire.export.type", "initial", null));
+					}
+				}
 			}
+			writeBundle(currentBundle, currentFile);
+			ret.add(currentFile);
+		} catch (Exception e) {
+			LoggerFactory.getLogger(getClass()).error("Exception on initial export", e);
+			return Collections.emptyList();
 		}
-		
+
 		configService.set("fire.intialExport", Long.toString(timestamp));
 		return ret;
 	}
@@ -243,21 +271,78 @@ public class FIREService implements IFIREService {
 	}
 
 	@Override
-	public Bundle incrementalExport(Long lastExportTimestamp) {
+	public List<File> incrementalExport(Long lastExportTimestamp) {
 		long timestamp = System.currentTimeMillis();
-		Bundle ret = getBundle();
-		ret.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
 
-		List<IPatient> changedPatients = getChanged(lastExportTimestamp, IPatient.class);
-		addIncrementalPatients(changedPatients, ret);
-		List<IEncounter> changedEncounters = getChanged(lastExportTimestamp, IEncounter.class);
-		addIncrementalEncounters(changedEncounters, ret);
-		List<ICondition> changedConditions = getChangedFindings(lastExportTimestamp, ICondition.class);
-		addIncrementalConditions(changedConditions, ret);
-		List<IPrescription> changedPrescriptions = getChanged(lastExportTimestamp, IPrescription.class);
-		addIncrementalPrescriptions(changedPrescriptions, ret);
-		List<ILabResult> changedLabResults = getChanged(lastExportTimestamp, ILabResult.class);
-		addIncrementalLabResult(changedLabResults, ret);
+		List<File> ret = new ArrayList<>();
+
+		File currentFile = getExportFile();
+
+		Bundle currentBundle = getBundle();
+		currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+
+		try {
+			List<IPatient> changedPatients = getChanged(lastExportTimestamp, IPatient.class);
+			addIncrementalPatients(changedPatients, currentBundle);
+			if (startNextBundle(currentBundle)) {
+				writeBundle(currentBundle, currentFile);
+				ret.add(currentFile);
+
+				currentFile = getExportFile();
+				currentBundle = getBundle();
+				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+			}
+
+			List<IEncounter> changedEncounters = getChanged(lastExportTimestamp, IEncounter.class);
+			addIncrementalEncounters(changedEncounters, currentBundle);
+			if (startNextBundle(currentBundle)) {
+				writeBundle(currentBundle, currentFile);
+				ret.add(currentFile);
+
+				currentFile = getExportFile();
+				currentBundle = getBundle();
+				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+			}
+
+			List<ICondition> changedConditions = getChangedFindings(lastExportTimestamp, ICondition.class);
+			addIncrementalConditions(changedConditions, currentBundle);
+			if (startNextBundle(currentBundle)) {
+				writeBundle(currentBundle, currentFile);
+				ret.add(currentFile);
+
+				currentFile = getExportFile();
+				currentBundle = getBundle();
+				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+			}
+
+			List<IPrescription> changedPrescriptions = getChanged(lastExportTimestamp, IPrescription.class);
+			addIncrementalPrescriptions(changedPrescriptions, currentBundle);
+			if (startNextBundle(currentBundle)) {
+				writeBundle(currentBundle, currentFile);
+				ret.add(currentFile);
+
+				currentFile = getExportFile();
+				currentBundle = getBundle();
+				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+			}
+
+			List<ILabResult> changedLabResults = getChanged(lastExportTimestamp, ILabResult.class);
+			addIncrementalLabResult(changedLabResults, currentBundle);
+			if (startNextBundle(currentBundle)) {
+				writeBundle(currentBundle, currentFile);
+				ret.add(currentFile);
+
+				currentFile = getExportFile();
+				currentBundle = getBundle();
+				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+			}
+
+			writeBundle(currentBundle, currentFile);
+			ret.add(currentFile);
+		} catch (Exception e) {
+			LoggerFactory.getLogger(getClass()).error("Exception on initial export", e);
+			return Collections.emptyList();
+		}
 
 		configService.set("fire.incrementalExport", Long.toString(timestamp));
 		return ret;
@@ -384,9 +469,9 @@ public class FIREService implements IFIREService {
 	}
 
 	@Override
-	public boolean uploadBundle(Bundle bundle) {
+	public boolean uploadBundle(File file) {
 		try {
-			FIREUploadBundle upload = new FIREUploadBundle(getBundleName(), bundle);
+			FIREUploadBundle upload = new FIREUploadBundle(file);
 			Boolean ret = CompletableFuture.supplyAsync(upload).get();
 			if (ret) {
 				increaseBundleCount();
@@ -407,9 +492,45 @@ public class FIREService implements IFIREService {
 		return configService.get("fire.export.bundle.count", 1);
 	}
 
+	private File getExportFile() {
+		File exportDirectory = new File(CoreUtil.getWritableUserDir(), "fireexport");
+		if (!exportDirectory.exists()) {
+			exportDirectory.mkdir();
+		}
+		return new File(exportDirectory, getBundleName() + ".json");
+	}
+
+	private String getBundleText(Bundle bundle) {
+		return ModelUtil.getFhirJson(bundle);
+	}
+
+	private void writeBundle(Bundle bundle, File currentFile) throws IOException {
+		FileUtils.writeStringToFile(currentFile, getBundleText(bundle), Charset.forName("UTF-8"));
+		increaseBundleCount();
+	}
+
+	private boolean startNextBundle(Bundle currentBundle) throws UnsupportedEncodingException {
+		return getBundleText(currentBundle).getBytes("UTF-8").length > (40 * 1024 * 1024);
+	}
+
 	private String getBundleName() {
 		return "elexis_00" + getPracticeIdentifier() + "_"
 				+ StringUtils.leftPad(Integer.toString(getBundleCount()), 6, "0")
 				+ "_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+	}
+
+	@Override
+	public Bundle readBundle(File file) {
+		try {
+			IBaseResource resource = ModelUtil.getAsResource(Files.readString(file.toPath()));
+			if (resource instanceof Bundle) {
+				return (Bundle) resource;
+			} else {
+				LoggerFactory.getLogger(getClass()).error("File contains [" + resource + "] is not an bundle");
+			}
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Exception reading bundle file", e);
+		}
+		return null;
 	}
 }

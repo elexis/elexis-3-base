@@ -3,12 +3,10 @@ package ch.elexis.fire.core.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -20,33 +18,16 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClients;
-import org.hl7.fhir.r4.model.Bundle;
 import org.slf4j.LoggerFactory;
-
-import ch.elexis.core.findings.util.ModelUtil;
-import ch.elexis.core.utils.CoreUtil;
 
 public class FIREUploadBundle implements Supplier<Boolean> {
 
 	private static final String UPLOAD_URL = "https://fire.ihamz.uzh.ch";
 
-	private Bundle bundle;
+	private File file;
 
-	private String bundleName;
-
-	public FIREUploadBundle(String bundleName, Bundle bundle) {
-		this.bundle = bundle;
-		this.bundleName = bundleName;
-	}
-
-	private String getBundleText() {
-		return ModelUtil.getFhirJson(bundle);
-	}
-
-	private File getBundleFile() throws IOException {
-		File ret = new File(CoreUtil.getTempDir(), bundleName + ".json");
-		FileUtils.writeStringToFile(ret, getBundleText(), Charset.forName("UTF-8"));
-		return ret;
+	public FIREUploadBundle(File file) {
+		this.file = file;
 	}
 
 	@Override
@@ -58,8 +39,7 @@ public class FIREUploadBundle implements Supplier<Boolean> {
 
 			httppost.setHeader(HttpHeaders.AUTHORIZATION, getAuth());
 
-			tempBundleFile = getBundleFile();
-			FileBody bundleBody = new FileBody(tempBundleFile, ContentType.APPLICATION_JSON);
+			FileBody bundleBody = new FileBody(file, ContentType.APPLICATION_JSON);
 
 			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 			builder.setCharset(StandardCharsets.UTF_8);
@@ -74,10 +54,10 @@ public class FIREUploadBundle implements Supplier<Boolean> {
 					+ "] from [" + httppost.getURI().toString() + "]");
 			if (response.getStatusLine().getStatusCode() == 200) {
 				LoggerFactory.getLogger(getClass())
-						.info("Bundle [" + tempBundleFile.getName() + "] uploaded successful");
+						.info("Bundle [" + file.getName() + "] uploaded successful");
 				return Boolean.TRUE;
 			} else {
-				LoggerFactory.getLogger(getClass()).warn("Uploading bundle [" + tempBundleFile.getName() + "] failed");
+				LoggerFactory.getLogger(getClass()).warn("Uploading bundle [" + file.getName() + "] failed");
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Exception uploading bundle", e);

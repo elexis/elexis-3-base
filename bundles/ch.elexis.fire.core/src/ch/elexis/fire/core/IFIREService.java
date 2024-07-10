@@ -1,5 +1,8 @@
 package ch.elexis.fire.core;
 
+import java.io.File;
+import java.util.List;
+
 import org.hl7.fhir.r4.model.Bundle;
 
 import ch.elexis.core.model.IConfig;
@@ -12,9 +15,9 @@ public interface IFIREService {
 	 * practice. A timestamp fo the exporting instance is written to {@link IConfig}
 	 * initialExport.
 	 * 
-	 * @return
+	 * @return json files containing FHIR bundles
 	 */
-	public Bundle initialExport();
+	public List<File> initialExport();
 
 	/**
 	 * Get the timestamp of the initial export. Returns -1 if no initial export
@@ -30,9 +33,9 @@ public interface IFIREService {
 	 * written to {@link IConfig} incrementalExport.
 	 * 
 	 * @param timestamp of last export to determine changes since then
-	 * @return
+	 * @return json files containing FHIR bundles
 	 */
-	public Bundle incrementalExport(Long timestamp);
+	public List<File> incrementalExport(Long timestamp);
 
 	/**
 	 * Get the timestamp of the last incremental export. Returns -1 if no
@@ -43,10 +46,18 @@ public interface IFIREService {
 	public Long getIncrementalTimestamp();
 
 	/**
-	 * Upload the bundle to the fire server.
+	 * Upload the file containing json FHIR bundle to the fire server.
 	 * 
 	 * @param bundle
 	 * @return
 	 */
-	public boolean uploadBundle(Bundle bundle);
+	public boolean uploadBundle(File file);
+
+	/**
+	 * Read the FHIR bundle from the file.
+	 * 
+	 * @param file
+	 * @return
+	 */
+	public Bundle readBundle(File file);
 }

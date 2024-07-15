@@ -294,7 +294,8 @@ public class TarmedLimitation {
 				List<IBilled> verrechnetByMandant = getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons,
 						verrechnet.getBillable().getCode());
 				if (getVerrechnetCount(verrechnetByMandant) > amount) {
-					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null,
+					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(),
+							verrechnet,
 							false);
 				}
 			} else {
@@ -304,7 +305,8 @@ public class TarmedLimitation {
 					allVerrechnetOfGroup.addAll(getVerrechnetByRechnungsstellerAndCodeDuringPeriod(kons, code));
 				}
 				if (getVerrechnetCount(allVerrechnetOfGroup) > amount) {
-					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(), null,
+					ret = new Result<IBilled>(Result.SEVERITY.WARNING, TarmedOptifier.KUMULATION, toString(),
+							verrechnet,
 							false);
 				}
 			}

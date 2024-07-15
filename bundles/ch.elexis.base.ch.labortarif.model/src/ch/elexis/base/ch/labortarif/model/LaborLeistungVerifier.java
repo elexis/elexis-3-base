@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import ch.elexis.base.ch.labortarif.ILaborLeistung;
 import ch.elexis.core.model.IBillable;
 import ch.elexis.core.model.IBillableVerifier;
+import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IEncounter;
 import ch.rgw.tools.Result;
 
@@ -30,5 +31,10 @@ public class LaborLeistungVerifier implements IBillableVerifier {
 		}
 		return new Result<IBillable>(Result.SEVERITY.ERROR, 2,
 				"Verrechneter code [" + billable + "] ist keine Laborleistung", billable, true);
+	}
+
+	@Override
+	public Result<IBilled> verify(IEncounter encounter) {
+		return Result.OK();
 	}
 }

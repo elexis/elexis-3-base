@@ -26,6 +26,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedExtension;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLeistung;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedOptifier;
+import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedVerifier;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
@@ -62,6 +63,7 @@ public class TarmedOptifierTest {
 	private static IModelService coreModelService;
 	private static IMandator mandator;
 	private static TarmedOptifier optifier;
+	private static TarmedVerifier verifier;
 
 	private static IPatient patGrissemann, patStermann, patOneYear, patBelow75;
 	private static IEncounter konsGriss, konsSter, konsOneYear, konsBelow75;
@@ -74,6 +76,8 @@ public class TarmedOptifierTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		optifier = new TarmedOptifier();
+		verifier = new TarmedVerifier();
+
 		coreModelService = AllTestsSuite.getCoreModelService();
 		LocalDate now = LocalDate.now();
 		IPerson person = new IContactBuilder.PersonBuilder(coreModelService, "mandator1 " + now.toString(),
@@ -703,6 +707,62 @@ public class TarmedOptifierTest {
 		result = optifier.add(TarmedLeistung.getFromCode("00.0510", LocalDate.now(), LAW), konsPeriodEnd, 1.0);
 		assertFalse(result.isOK());
 
+		clearKons(konsPeriodStart);
+		clearKons(konsPeriodMiddle);
+		clearKons(konsPeriodEnd);
+	}
+
+	@Test
+	public void testMoveLimitationPeriod() {
+		clearKons(konsPeriodStart);
+		clearKons(konsPeriodMiddle);
+		clearKons(konsPeriodEnd);
+		Result<IBilled> result = null;
+		LocalDate konsPeriodStartDate = konsPeriodStart.getDate();
+		LocalDate konsPeriodMiddleDate = konsPeriodMiddle.getDate();
+		LocalDate konsPeriodEndDate = konsPeriodEnd.getDate();
+
+		// limitation from group LG-04, <=30mal pro3Monate
+		konsPeriodStart.setDate(LocalDate.of(2023, 1, 1));
+		CoreModelServiceHolder.get().save(konsPeriodStart);
+		for (int i = 0; i < 30; i++) {
+			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW), konsPeriodStart, 1.0);
+			assertTrue(result.isOK());
+		}
+		// not in conflic outside of limitation durations
+		konsPeriodMiddle.setDate(LocalDate.of(2023, 5, 1));
+		CoreModelServiceHolder.get().save(konsPeriodMiddle);
+		for (int i = 0; i < 30; i++) {
+			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW), konsPeriodMiddle, 1.0);
+			assertTrue(result.isOK());
+		}
+		// not in conflic outside of limitation durations
+		konsPeriodEnd.setDate(LocalDate.of(2023, 8, 2));
+		CoreModelServiceHolder.get().save(konsPeriodEnd);
+		for (int i = 0; i < 30; i++) {
+			result = optifier.add(TarmedLeistung.getFromCode("00.0141", LocalDate.now(), LAW), konsPeriodEnd, 1.0);
+			assertTrue(result.isOK());
+		}
+		// re check without billing
+		Result<IBilled> checkResult = verifier.verify(konsPeriodEnd);
+		assertTrue(checkResult.isOK());
+		// move to a date in conflict
+		konsPeriodEnd.setDate(LocalDate.of(2023, 1, 2));
+		CoreModelServiceHolder.get().save(konsPeriodEnd);
+		checkResult = verifier.verify(konsPeriodEnd);
+		assertFalse(checkResult.isOK());
+		// move to another date in conflict
+		konsPeriodEnd.setDate(LocalDate.of(2023, 4, 2));
+		CoreModelServiceHolder.get().save(konsPeriodEnd);
+		checkResult = verifier.verify(konsPeriodEnd);
+		assertFalse(checkResult.isOK());
+
+		konsPeriodStart.setDate(konsPeriodStartDate);
+		CoreModelServiceHolder.get().save(konsPeriodStart);
+		konsPeriodMiddle.setDate(konsPeriodMiddleDate);
+		CoreModelServiceHolder.get().save(konsPeriodMiddle);
+		konsPeriodEnd.setDate(konsPeriodEndDate);
+		CoreModelServiceHolder.get().save(konsPeriodEnd);
 		clearKons(konsPeriodStart);
 		clearKons(konsPeriodMiddle);
 		clearKons(konsPeriodEnd);

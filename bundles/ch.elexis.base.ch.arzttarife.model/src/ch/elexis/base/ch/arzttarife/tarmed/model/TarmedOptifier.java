@@ -15,8 +15,6 @@ package ch.elexis.base.ch.arzttarife.tarmed.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,7 +31,6 @@ import ch.elexis.base.ch.arzttarife.model.service.CoreModelServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.ITarmedGroup;
 import ch.elexis.base.ch.arzttarife.tarmed.TarmedKumulationArt;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedLimitation.LimitationUnit;
-import ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedLeistungAge;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.RechnungsPrefs;
 import ch.elexis.core.constants.Preferences;
@@ -95,6 +92,12 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 
 	private Map<String, Object> contextMap;
 
+	private TarmedVerifier verifier;
+
+	public TarmedOptifier() {
+		verifier = new TarmedVerifier();
+	}
+
 	@Override
 	public synchronized void putContext(String key, Object value) {
 		if (contextMap == null) {
@@ -108,25 +111,6 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		if (contextMap != null) {
 			contextMap.clear();
 		}
-	}
-
-	/**
-	 * Hier kann eine Konsultation als Ganzes nochmal überprüft werden
-	 */
-	public Result<Object> optify(IEncounter kons) {
-		LinkedList<TarmedLeistung> postponed = new LinkedList<TarmedLeistung>();
-		for (IBilled vv : kons.getBilled()) {
-			IBillable iv = vv.getBillable();
-			if (iv instanceof TarmedLeistung) {
-				TarmedLeistung tl = (TarmedLeistung) iv;
-				String tcid = tl.getCode();
-				if ((tcid.equals("35.0020")) || (tcid.equals("04.1930")) //$NON-NLS-1$ //$NON-NLS-2$
-						|| tcid.startsWith("00.25")) { //$NON-NLS-1$
-					postponed.add(tl);
-				}
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -208,12 +192,9 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 							code.getCode() + Messages.TarmedOptifier_NoMoreValid, null, false);
 				}
 			}
-			String ageLimits = ext.get(ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_SERVICE_AGE);
-			if (ageLimits != null && !ageLimits.isEmpty()) {
-				String errorMessage = checkAge(ageLimits, kons);
-				if (errorMessage != null) {
-					return new Result<IBilled>(Result.SEVERITY.WARNING, PATIENTAGE, errorMessage, null, false);
-				}
+			Result<IBilled> checkAgeResult = verifier.checkAge(kons, tc, null);
+			if (!checkAgeResult.isOK()) {
+				return checkAgeResult;
 			}
 		}
 
@@ -377,10 +358,12 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 			}
 		}
 
-		Result<IBilled> limitResult = checkLimitations(kons, tc, newVerrechnet);
-		if (!limitResult.isOK()) {
-			decrementOrDelete(newVerrechnet);
-			return limitResult;
+		if (bOptify) {
+			Result<IBilled> limitResult = verifier.checkLimitations(kons, tc, newVerrechnet);
+			if (!limitResult.isOK()) {
+				decrementOrDelete(newVerrechnet);
+				return limitResult;
+			}
 		}
 
 		Optional<PercentScalingInfo> percentScalingInfo = Optional.empty();
@@ -667,77 +650,6 @@ public class TarmedOptifier implements IBillableOptifier<TarmedLeistung> {
 		} else {
 			return 1;
 		}
-	}
-
-	private Result<IBilled> checkLimitations(IEncounter kons, TarmedLeistung tarmedLeistung, IBilled newVerrechnet) {
-		if (bOptify) {
-			// service limitations
-			List<TarmedLimitation> limitations = tarmedLeistung.getLimitations();
-			for (TarmedLimitation tarmedLimitation : limitations) {
-				if (tarmedLimitation.isTestable()) {
-					Result<IBilled> result = tarmedLimitation.test(kons, newVerrechnet);
-					if (!result.isOK()) {
-						return result;
-					}
-				}
-			}
-			// group limitations
-			List<String> groups = tarmedLeistung.getServiceGroups(kons.getDate());
-			for (String groupName : groups) {
-				Optional<ITarmedGroup> group = TarmedGroup.find(groupName, tarmedLeistung.getLaw(), kons.getDate());
-				if (group.isPresent()) {
-					limitations = group.get().getLimitations();
-					for (TarmedLimitation tarmedLimitation : limitations) {
-						if (tarmedLimitation.isTestable()) {
-							Result<IBilled> result = tarmedLimitation.test(kons, newVerrechnet);
-							if (!result.isOK()) {
-								return result;
-							}
-						}
-					}
-				}
-			}
-		}
-		return new Result<IBilled>(null);
-	}
-
-	private String checkAge(String limitsString, IEncounter kons) {
-		LocalDateTime consDate = new TimeTool(kons.getDate()).toLocalDateTime();
-		IPatient patient = kons.getCoverage().getPatient();
-		LocalDateTime geburtsdatum = patient.getDateOfBirth();
-		if (geburtsdatum == null) {
-			return "Patienten Alter nicht ok, kein Geburtsdatum angegeben";
-		}
-		long patientAgeDays = patient.getAgeAtIn(consDate, ChronoUnit.DAYS);
-
-		List<TarmedLeistungAge> ageLimits = TarmedLeistungAge.of(limitsString, consDate);
-		for (TarmedLeistungAge tarmedLeistungAge : ageLimits) {
-			if (tarmedLeistungAge.isValidOn(consDate.toLocalDate())) {
-				// if only one of the limits is set, check only that limit
-				if (tarmedLeistungAge.getFromDays() >= 0 && !(tarmedLeistungAge.getToDays() >= 0)) {
-					if (patientAgeDays < tarmedLeistungAge.getFromDays()) {
-						return "Patient ist zu jung, verrechenbar ab " + tarmedLeistungAge.getFromText();
-					}
-				} else if (tarmedLeistungAge.getToDays() >= 0 && !(tarmedLeistungAge.getFromDays() >= 0)) {
-					if (patientAgeDays > tarmedLeistungAge.getToDays()) {
-						return "Patient ist zu alt, verrechenbar bis " + tarmedLeistungAge.getToText();
-					}
-				} else if (tarmedLeistungAge.getToDays() >= 0 && tarmedLeistungAge.getFromDays() >= 0) {
-					if (tarmedLeistungAge.getToDays() < tarmedLeistungAge.getFromDays()) {
-						if (patientAgeDays > tarmedLeistungAge.getToDays()
-								&& patientAgeDays < tarmedLeistungAge.getFromDays()) {
-							return "Patienten Alter nicht ok, verrechenbar " + tarmedLeistungAge.getText();
-						}
-					} else {
-						if (patientAgeDays > tarmedLeistungAge.getToDays()
-								|| patientAgeDays < tarmedLeistungAge.getFromDays()) {
-							return "Patienten Alter nicht ok, verrechenbar " + tarmedLeistungAge.getText();
-						}
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	private TarmedLeistung getKonsVerrechenbar(String code, IEncounter kons) {

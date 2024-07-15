@@ -30,7 +30,6 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.Identifiable;
-import ch.elexis.core.model.billable.DefaultVerifier;
 import ch.elexis.core.model.verrechnet.Constants;
 import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.IQuery;
@@ -54,7 +53,7 @@ public class TarmedLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 
 	public TarmedLeistung(ch.elexis.core.jpa.entities.TarmedLeistung entity) {
 		super(entity);
-		verifier = new DefaultVerifier();
+		verifier = new TarmedVerifier();
 	}
 
 	@Override
@@ -87,6 +86,7 @@ public class TarmedLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 	 * @return
 	 * @since 3.4
 	 */
+	@Override
 	public int getAL(IMandator mandant) {
 		String tp_al = getExtension().getLimits().get(ch.elexis.core.jpa.entities.TarmedLeistung.EXT_FLD_TP_AL);
 		return (int) Math.round(NumberUtils.toDouble(tp_al) * getALScaling(mandant));
@@ -255,7 +255,7 @@ public class TarmedLeistung extends AbstractIdDeleteModelAdapter<ch.elexis.core.
 	}
 
 	public List<TarmedLimitation> getLimitations() {
-		String lim = (String) getExtension().getLimits().get("limits"); //$NON-NLS-1$
+		String lim = getExtension().getLimits().get("limits"); //$NON-NLS-1$
 		if (lim != null && !lim.isEmpty()) {
 			List<TarmedLimitation> ret = new ArrayList<>();
 			String[] lines = lim.split("#"); //$NON-NLS-1$

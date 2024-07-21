@@ -256,7 +256,11 @@
    <feature id="ch.framsteg.elexis.finance.analytics.feature">
       <category name="statistics"/>
    </feature>
+<<<<<<< HEAD
    <feature id="ch.framsteg.elexis.labor.teamw.feature">
+=======
+   <feature id="ch.framsteg.elexis.administration.covercard.feature">
+>>>>>>> 87f57466e (Covercard again (#347))
       <category name="dataexchange"/>
    </feature>
    <bundle id="ch.elexis.covid.cert">

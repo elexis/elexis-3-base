@@ -95,6 +95,10 @@
     <module>at.medevit.elexis.bluemedication.feature</module>
     <module>at.medevit.elexis.documents.converter.feature</module>
     <module>ch.framsteg.elexis.finance.analytics.feature</module>
+<<<<<<< HEAD
     <module>ch.framsteg.elexis.labor.teamw.feature</module>
+=======
+    <module>ch.framsteg.elexis.administration.covercard.feature</module>
+>>>>>>> 87f57466e (Covercard again (#347))
   </modules>
 </project>

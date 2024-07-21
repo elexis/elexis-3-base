@@ -163,6 +163,10 @@
     <module>at.medevit.elexis.documents.converter</module>
     <module>at.medevit.elexis.documents.converter.ui</module>
     <module>ch.framsteg.elexis.finance.analytics</module>
+<<<<<<< HEAD
     <module>ch.framsteg.elexis.labor.teamw</module>
+=======
+    <module>ch.framsteg.elexis.administration.covercard</module>
+>>>>>>> 87f57466e (Covercard again (#347))
   </modules>
 </project>

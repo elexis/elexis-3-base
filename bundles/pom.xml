@@ -165,9 +165,16 @@
     <module>at.medevit.elexis.documents.converter.ui</module>
     <module>ch.framsteg.elexis.finance.analytics</module>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <module>ch.framsteg.elexis.labor.teamw</module>
 =======
     <module>ch.framsteg.elexis.administration.covercard</module>
 >>>>>>> 87f57466e (Covercard again (#347))
+=======
+    <module>ch.framsteg.elexis.administration.covercard</module>
+=======
+    <module>ch.framsteg.elexis.labor.teamw</module>
+>>>>>>> f6c781e08 (Registered Labor TeamW feature/plugin)
+>>>>>>> 6c7ac5147 (Added feature/plugin specific settings to pom and feature.xml)
   </modules>
 </project>

@@ -257,10 +257,17 @@
       <category name="statistics"/>
    </feature>
 <<<<<<< HEAD
+<<<<<<< HEAD
    <feature id="ch.framsteg.elexis.labor.teamw.feature">
 =======
    <feature id="ch.framsteg.elexis.administration.covercard.feature">
 >>>>>>> 87f57466e (Covercard again (#347))
+=======
+   <feature id="ch.framsteg.elexis.administration.covercard.feature">
+=======
+   <feature id="ch.framsteg.elexis.labor.teamw.feature">
+>>>>>>> f6c781e08 (Registered Labor TeamW feature/plugin)
+>>>>>>> 6c7ac5147 (Added feature/plugin specific settings to pom and feature.xml)
       <category name="dataexchange"/>
    </feature>
    <bundle id="ch.elexis.covid.cert">

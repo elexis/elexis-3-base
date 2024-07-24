@@ -10,7 +10,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -46,33 +48,30 @@ public class PdfUtils {
 		float margin = 50;
 		float tableWidth = page.getMediaBox().getWidth() - (2 * margin);
 		float yPosition = startY;
-		BaseTable table = new BaseTable(yPosition, startY, margin, tableWidth, margin, doc, page, true, true);
+
+		List<Map<String, String>> allDayAppointments = appointments.stream().filter(m -> m.get("Bis") == null)
+				.collect(Collectors.toList());
+		BaseTable allDayTable = new BaseTable(yPosition, startY, margin, tableWidth, margin, doc, page, true, true);
+		addAllDayTableHeader(allDayTable);
+		for (Map<String, String> appointment : allDayAppointments) {
+			float rowHeight = addAllDayAppointmentRow(appointment, allDayTable, tableWidth, colors);
+			yPosition -= rowHeight;
+		}
+		allDayTable.draw();
+
+		yPosition -= 30;
+
+		List<Map<String, String>> dayAppointments = appointments.stream().filter(m -> m.get("Bis") != null)
+				.collect(Collectors.toList());
+
+		BaseTable table = new BaseTable(yPosition, yPosition, margin, tableWidth, margin, doc, page, true, true);
 		addTableHeader(table);
-		for (Map<String, String> appointment : appointments) {
-			float rowHeight = calculateRowHeight(appointment, tableWidth);
-			Row<PDPage> dataRow = table.createRow(rowHeight);
-			for (String key : new String[] { "Von", "Bis", "Personalien", "Grund" }) {
-				String text = appointment.get(key);
-				if (text != null) {
-					text = text.replaceAll("[\\r\\n]", " ");
-				}
-				Cell<PDPage> cell = dataRow.createCell(columnWidth(key), text != null ? text : "");
-				cell.setFont(PDType1Font.HELVETICA);
-				cell.setFontSize(10);
-				String id = appointment.get("ID");
-				if (id != null && colors.containsKey(id)) {
-					cell.setFillColor(getColorWithAlpha(colors.get(id)));
-				} else {
-					cell.setFillColor(Color.WHITE);
-				}
-				cell.setAlign(HorizontalAlignment.LEFT);
-				cell.setBorderStyle(new LineStyle(Color.WHITE, 0));
-				cell.setTopPadding(2f);
-				cell.setBottomPadding(2f);
-			}
+		for (Map<String, String> appointment : dayAppointments) {
+			float rowHeight = addAppointmentRow(appointment, table, tableWidth, colors);
 			yPosition -= rowHeight;
 		}
 		table.draw();
+
 		int pageCount = doc.getNumberOfPages();
 		for (int i = 0; i < pageCount; i++) {
 			PDPage tablePage = doc.getPage(i);
@@ -84,17 +83,60 @@ public class PdfUtils {
 		}
 	}
 
-	private static float calculateRowHeight(Map<String, String> appointment, float tableWidth) {
-		float defaultRowHeight = 10f;
-		float estimatedHeight = defaultRowHeight;
-		for (String key : appointment.keySet()) {
+	private static float addAllDayAppointmentRow(Map<String, String> appointment, BaseTable table, float tableWidth,
+			Map<String, String> colors) {
+		float rowHeight = 15f; // calculateRowHeight(appointment, tableWidth);
+		Row<PDPage> dataRow = table.createRow(rowHeight);
+		for (String key : new String[] { "Ganzer Tag", "Personalien", "Grund" }) {
 			String text = appointment.get(key);
 			if (text != null) {
-				int lines = text.split("\n").length;
-				estimatedHeight = Math.max(estimatedHeight, defaultRowHeight * lines);
+				text = text.replaceAll("[\\r\\n]", " ");
+			} else {
+				text = StringUtils.EMPTY;
 			}
+			Cell<PDPage> cell = dataRow.createCell(columnWidth(key), text != null ? text : "");
+			cell.setFont(PDType1Font.HELVETICA);
+			cell.setFontSize(10);
+			String id = appointment.get("ID");
+			if (id != null && colors.containsKey(id)) {
+				cell.setFillColor(getColorWithAlpha(colors.get(id)));
+			} else {
+				cell.setFillColor(Color.WHITE);
+			}
+			cell.setAlign(HorizontalAlignment.LEFT);
+			cell.setBorderStyle(new LineStyle(Color.WHITE, 0));
+			cell.setTopPadding(2f);
+			cell.setBottomPadding(2f);
+			rowHeight = cell.getHeight();
 		}
-		return estimatedHeight;
+		return rowHeight;
+	}
+
+	private static float addAppointmentRow(Map<String, String> appointment, BaseTable table, float tableWidth,
+			Map<String, String> colors) {
+		float rowHeight = 15f; // calculateRowHeight(appointment, tableWidth);
+		Row<PDPage> dataRow = table.createRow(rowHeight);
+		for (String key : new String[] { "Von", "Bis", "Personalien", "Grund" }) {
+			String text = appointment.get(key);
+			if (text != null) {
+				text = text.replaceAll("[\\r\\n]", " ");
+			}
+			Cell<PDPage> cell = dataRow.createCell(columnWidth(key), text != null ? text : "");
+			cell.setFont(PDType1Font.HELVETICA);
+			cell.setFontSize(10);
+			String id = appointment.get("ID");
+			if (id != null && colors.containsKey(id)) {
+				cell.setFillColor(getColorWithAlpha(colors.get(id)));
+			} else {
+				cell.setFillColor(Color.WHITE);
+			}
+			cell.setAlign(HorizontalAlignment.LEFT);
+			cell.setBorderStyle(new LineStyle(Color.WHITE, 0));
+			cell.setTopPadding(2f);
+			cell.setBottomPadding(2f);
+			rowHeight = cell.getHeight();
+		}
+		return rowHeight;
 	}
 
 	private static float columnWidth(String columnName) {
@@ -106,9 +148,25 @@ public class PdfUtils {
 			return 30f;
 		case "Grund":
 			return 60f;
+		case "Ganzer Tag":
+			return 10f;
 		default:
 			return 10f;
 		}
+	}
+
+	private static void addAllDayTableHeader(BaseTable table) throws IOException {
+		Row<PDPage> headerRow = table.createRow(15f);
+		for (String header : new String[] { "Ganzer Tag", "Personalien", "Grund" }) {
+			Cell<PDPage> cell = headerRow.createCell(columnWidth(header), header);
+			cell.setFont(PDType1Font.HELVETICA_BOLD);
+			cell.setFontSize(10);
+			cell.setAlign(HorizontalAlignment.LEFT);
+			cell.setBorderStyle(new LineStyle(Color.WHITE, 0));
+			cell.setTopPadding(2f);
+			cell.setBottomPadding(2f);
+		}
+		table.addHeaderRow(headerRow);
 	}
 
 	private static void addTableHeader(BaseTable table) throws IOException {

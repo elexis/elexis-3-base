@@ -58,7 +58,11 @@ public class PrintSelectedAgendaHandler {
                         appointmentData.put("Area", letter.getArea());
                         appointmentData.put("ID", appointment.getId());
                         appointmentData.put("Von", appointment.getStartTime().toLocalTime().toString());
-                        appointmentData.put("Bis", appointment.getEndTime().toLocalTime().toString());
+						if (appointment.getEndTime() != null) {
+							appointmentData.put("Bis", appointment.getEndTime().toLocalTime().toString());
+						} else {
+							appointmentData.put("Bis", null);
+						}
                         appointmentData.put("Personalien", appointment.getSubjectOrPatient());
                         appointmentData.put("Grund", appointment.getReason());
                         appointments.add(appointmentData);

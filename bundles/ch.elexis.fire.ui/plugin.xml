@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.elexis.fire.ui.FirePreferencePage"
+            id="ch.elexis.fire.preference"
+            name="FIRE Projekt (USZ)">
+      </page>
+   </extension>
+
+</plugin>

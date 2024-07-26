@@ -3,6 +3,7 @@ package ch.elexis.fire.core;
 import java.io.File;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.hl7.fhir.r4.model.Bundle;
 
 import ch.elexis.core.model.IConfig;
@@ -15,9 +16,11 @@ public interface IFIREService {
 	 * practice. A timestamp fo the exporting instance is written to {@link IConfig}
 	 * initialExport.
 	 * 
+	 * @param progressMonitor
+	 * 
 	 * @return json files containing FHIR bundles
 	 */
-	public List<File> initialExport();
+	public List<File> initialExport(IProgressMonitor progressMonitor);
 
 	/**
 	 * Get the timestamp of the initial export. Returns -1 if no initial export
@@ -35,7 +38,7 @@ public interface IFIREService {
 	 * @param timestamp of last export to determine changes since then
 	 * @return json files containing FHIR bundles
 	 */
-	public List<File> incrementalExport(Long timestamp);
+	public List<File> incrementalExport(Long timestamp, IProgressMonitor progressMonitor);
 
 	/**
 	 * Get the timestamp of the last incremental export. Returns -1 if no

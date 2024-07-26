@@ -104,6 +104,7 @@
     <module>ch.elexis.ebanking</module>
     <module>ch.elexis.externe_dokumente</module>
     <module>ch.elexis.fire.core</module>
+    <module>ch.elexis.fire.ui</module>
     <module>ch.elexis.fop.service</module>
     <module>ch.elexis.fop_wrapper</module>
     <module>ch.elexis.global_inbox</module>

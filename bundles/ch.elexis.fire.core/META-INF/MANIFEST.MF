@@ -10,7 +10,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: info.elexis.target.hapi.fhir,
  ch.elexis.core.services,
  ch.elexis.core
-Service-Component: OSGI-INF/ch.elexis.fire.core.internal.FIREService.xml
+Service-Component: OSGI-INF/ch.elexis.fire.core.internal.FIREService.xml,
+ OSGI-INF/ch.elexis.fire.core.task.FIREExportIdentifiedRunnableFactory.xml
 Import-Package: ch.elexis.core.findings,
  ch.elexis.core.findings.util,
  ch.elexis.core.findings.util.fhir,

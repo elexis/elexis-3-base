@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Encounter;
 import org.hl7.fhir.r4.model.Observation;
@@ -55,7 +56,7 @@ public class FIREServiceTest {
 
 	@Test
 	public void a_initialExport() {
-		List<File> files = fireService.initialExport();
+		List<File> files = fireService.initialExport(new NullProgressMonitor());
 		assertNotNull(files);
 
 		initialExportFile = files.get(0);
@@ -114,7 +115,7 @@ public class FIREServiceTest {
 		TestDatabaseInitializer.getBehandlung().setVersionedEntry(vr);
 		CoreModelServiceHolder.get().save(TestDatabaseInitializer.getBehandlung());
 		
-		List<File> files = fireService.incrementalExport(fireService.getInitialTimestamp());
+		List<File> files = fireService.incrementalExport(fireService.getInitialTimestamp(), new NullProgressMonitor());
 
 		incrementalExport = fireService.readBundle(files.get(0));
 

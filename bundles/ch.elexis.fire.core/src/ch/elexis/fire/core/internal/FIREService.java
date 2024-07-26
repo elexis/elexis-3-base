@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
@@ -35,6 +36,7 @@ import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
+import org.hl7.fhir.r4.model.Resource;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -45,6 +47,7 @@ import ch.elexis.core.findings.IFindingsService;
 import ch.elexis.core.findings.util.ModelUtil;
 import ch.elexis.core.findings.util.fhir.IFhirTransformer;
 import ch.elexis.core.findings.util.fhir.IFhirTransformerRegistry;
+import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.IMandator;
@@ -115,29 +118,38 @@ public class FIREService implements IFIREService {
 	}
 
 	@Override
-	public List<File> initialExport() {
+	public List<File> initialExport(IProgressMonitor progressMonitor) {
 		long timestamp = System.currentTimeMillis();
 		List<File> ret = new ArrayList<>();
+
+		progressMonitor.beginTask("FIRE initial export", IProgressMonitor.UNKNOWN);
 
 		File currentFile = getExportFile();
 		Bundle currentBundle = getBundle();
 		currentBundle.getMeta().addTag(new Coding("fire.export.type", "initial", null));
-
+		int currentBundleSize = 0;
 		try {
 			try (IQueryCursor<IPatient> cursor = coreModelService.getQuery(IPatient.class).executeAsCursor()) {
 				while (cursor.hasNext()) {
 					IPatient patient = cursor.next();
 					Optional<Patient> fhirPatient = patientTransformer.getFhirObject(patient);
 					if (fhirPatient.isPresent()) {
-						currentBundle.addEntry().setResource(exportPatient(patient, fhirPatient.get(), currentBundle));
+						Bundle patientBundle = exportPatient(patient, fhirPatient.get(), currentBundle);
+						currentBundleSize += getBundleSize(patientBundle);
+						currentBundle.addEntry().setResource(patientBundle);
 					}
-					if (startNextBundle(currentBundle)) {
+					if (startNextBundle(currentBundleSize)) {
 						writeBundle(currentBundle, currentFile);
 						ret.add(currentFile);
 
 						currentFile = getExportFile();
 						currentBundle = getBundle();
 						currentBundle.getMeta().addTag(new Coding("fire.export.type", "initial", null));
+						currentBundleSize = 0;
+					}
+					if (progressMonitor.isCanceled()) {
+						LoggerFactory.getLogger(getClass()).warn("Cancelled initial export");
+						return Collections.emptyList();
 					}
 				}
 			}
@@ -172,7 +184,8 @@ public class FIREService implements IFIREService {
 				addMandatorToBundle(ie.getMandator(), ret);
 				if (ie.getMandator().getBiller().isPerson() && ie.getMandator().getBiller().isMandator()
 						&& !ie.getMandator().equals(ie.getMandator().getBiller())) {
-					addMandatorToBundle((IMandator) ie.getMandator().getBiller(), ret);
+					IContact biller = ie.getMandator().getBiller();
+					addMandatorToBundle(coreModelService.load(biller.getId(), IMandator.class).get(), ret);
 				}
 				toFIRE(fhirEncounter);
 				patientBundle.addEntry().setResource(fhirEncounter);
@@ -271,7 +284,7 @@ public class FIREService implements IFIREService {
 	}
 
 	@Override
-	public List<File> incrementalExport(Long lastExportTimestamp) {
+	public List<File> incrementalExport(Long lastExportTimestamp, IProgressMonitor progressMonitor) {
 		long timestamp = System.currentTimeMillis();
 
 		List<File> ret = new ArrayList<>();
@@ -280,67 +293,92 @@ public class FIREService implements IFIREService {
 
 		Bundle currentBundle = getBundle();
 		currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
-
+		int currentBundleSize = 0;
 		try {
 			List<IPatient> changedPatients = getChanged(lastExportTimestamp, IPatient.class);
-			addIncrementalPatients(changedPatients, currentBundle);
-			if (startNextBundle(currentBundle)) {
+			currentBundleSize += addIncrementalPatients(changedPatients, currentBundle);
+			if (startNextBundle(currentBundleSize)) {
 				writeBundle(currentBundle, currentFile);
 				ret.add(currentFile);
 
 				currentFile = getExportFile();
 				currentBundle = getBundle();
 				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+				currentBundleSize = 0;
+				if (progressMonitor.isCanceled()) {
+					LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
+					return Collections.emptyList();
+				}
 			}
 
 			List<IEncounter> changedEncounters = getChanged(lastExportTimestamp, IEncounter.class);
-			addIncrementalEncounters(changedEncounters, currentBundle);
-			if (startNextBundle(currentBundle)) {
+			currentBundleSize += addIncrementalEncounters(changedEncounters, currentBundle);
+			if (startNextBundle(currentBundleSize)) {
 				writeBundle(currentBundle, currentFile);
 				ret.add(currentFile);
 
 				currentFile = getExportFile();
 				currentBundle = getBundle();
 				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+				currentBundleSize = 0;
+				if (progressMonitor.isCanceled()) {
+					LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
+					return Collections.emptyList();
+				}
 			}
 
 			List<ICondition> changedConditions = getChangedFindings(lastExportTimestamp, ICondition.class);
-			addIncrementalConditions(changedConditions, currentBundle);
-			if (startNextBundle(currentBundle)) {
+			currentBundleSize += addIncrementalConditions(changedConditions, currentBundle);
+			if (startNextBundle(currentBundleSize)) {
 				writeBundle(currentBundle, currentFile);
 				ret.add(currentFile);
 
 				currentFile = getExportFile();
 				currentBundle = getBundle();
 				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+				currentBundleSize = 0;
+				if (progressMonitor.isCanceled()) {
+					LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
+					return Collections.emptyList();
+				}
 			}
 
 			List<IPrescription> changedPrescriptions = getChanged(lastExportTimestamp, IPrescription.class);
-			addIncrementalPrescriptions(changedPrescriptions, currentBundle);
-			if (startNextBundle(currentBundle)) {
+			currentBundleSize += addIncrementalPrescriptions(changedPrescriptions, currentBundle);
+			if (startNextBundle(currentBundleSize)) {
 				writeBundle(currentBundle, currentFile);
 				ret.add(currentFile);
 
 				currentFile = getExportFile();
 				currentBundle = getBundle();
 				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+				currentBundleSize = 0;
+				if (progressMonitor.isCanceled()) {
+					LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
+					return Collections.emptyList();
+				}
 			}
 
 			List<ILabResult> changedLabResults = getChanged(lastExportTimestamp, ILabResult.class);
-			addIncrementalLabResult(changedLabResults, currentBundle);
-			if (startNextBundle(currentBundle)) {
+			currentBundleSize += addIncrementalLabResult(changedLabResults, currentBundle);
+			if (startNextBundle(currentBundleSize)) {
 				writeBundle(currentBundle, currentFile);
 				ret.add(currentFile);
 
 				currentFile = getExportFile();
 				currentBundle = getBundle();
 				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+				currentBundleSize = 0;
+				if (progressMonitor.isCanceled()) {
+					LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
+					return Collections.emptyList();
+				}
 			}
 
 			writeBundle(currentBundle, currentFile);
 			ret.add(currentFile);
 		} catch (Exception e) {
-			LoggerFactory.getLogger(getClass()).error("Exception on initial export", e);
+			LoggerFactory.getLogger(getClass()).error("Exception on incremental export", e);
 			return Collections.emptyList();
 		}
 
@@ -348,45 +386,64 @@ public class FIREService implements IFIREService {
 		return ret;
 	}
 
-	private void addIncrementalEncounters(List<IEncounter> changedEncounters, Bundle ret) {
-		changedEncounters.forEach(en -> {
+	private int addIncrementalEncounters(List<IEncounter> changedEncounters, Bundle ret)
+			throws UnsupportedEncodingException {
+		int size = 0;
+		for (IEncounter en : changedEncounters) {
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(en.getPatient().getId()), ret);
-			encounterTransformer.getFhirObject(en).ifPresent(fhirEncounter -> {
+			Optional<Encounter> fhirEncounter = encounterTransformer.getFhirObject(en);
+			if(fhirEncounter.isPresent()) {
 				addMandatorToBundle(en.getMandator(), ret);
 				if (en.getMandator().getBiller().isPerson() && en.getMandator().getBiller().isMandator()
 						&& !en.getMandator().equals(en.getMandator().getBiller())) {
 					addMandatorToBundle((IMandator) en.getMandator().getBiller(), ret);
 				}
-				toFIRE(fhirEncounter);
-				patientBundle.addEntry().setResource(fhirEncounter);
-			});
-		});
+				toFIRE(fhirEncounter.get());
+				size += getResourceSize(fhirEncounter.get());
+				patientBundle.addEntry().setResource(fhirEncounter.get());
+			};
+		}
+		return size;
 	}
 
-	private void addIncrementalConditions(List<ICondition> changedConditions, Bundle ret) {
-		changedConditions.forEach(co -> {
+	private int addIncrementalConditions(List<ICondition> changedConditions, Bundle ret)
+			throws UnsupportedEncodingException {
+		int size = 0;
+		for (ICondition co : changedConditions) {
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(co.getPatientId()), ret);
 			Condition fhirCondition = (Condition) ModelUtil.getAsResource(co.getRawContent());
+			size += getResourceSize(fhirCondition);
 			patientBundle.addEntry().setResource(fhirCondition);
-		});
+		}
+		return size;
 	}
 
-	private void addIncrementalPrescriptions(List<IPrescription> changedPrescriptions, Bundle ret) {
-		changedPrescriptions.forEach(pr -> {
+	private int addIncrementalPrescriptions(List<IPrescription> changedPrescriptions, Bundle ret)
+			throws UnsupportedEncodingException {
+		int size = 0;
+		for (IPrescription pr : changedPrescriptions) {
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(pr.getPatient().getId()), ret);
-			prescriptionTransformer.getFhirObject(pr).ifPresent(mr -> {
-				patientBundle.addEntry().setResource(mr);
-			});
-		});
+			Optional<MedicationRequest> mr = prescriptionTransformer.getFhirObject(pr);
+			if (mr.isPresent()) {
+				size += getResourceSize(mr.get());
+				patientBundle.addEntry().setResource(mr.get());
+			}
+		}
+		return size;
 	}
 
-	private void addIncrementalLabResult(List<ILabResult> changedLabResults, Bundle ret) {
-		changedLabResults.forEach(lr -> {
+	private int addIncrementalLabResult(List<ILabResult> changedLabResults, Bundle ret)
+			throws UnsupportedEncodingException {
+		int size = 0;
+		for (ILabResult lr : changedLabResults) {
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(lr.getPatient().getId()), ret);
-			labTransformer.getFhirObject(lr).ifPresent(ob -> {
-				patientBundle.addEntry().setResource(ob);
-			});
-		});
+			Optional<Observation> ob = labTransformer.getFhirObject(lr);
+			if (ob.isPresent()) {
+				size += getResourceSize(ob.get());
+				patientBundle.addEntry().setResource(ob.get());
+			}
+		}
+		return size;
 	}
 
 	protected Bundle getPatientBundle(String firePatientId, Bundle exportBundle) {
@@ -409,14 +466,18 @@ public class FIREService implements IFIREService {
 		return ret;
 	}
 
-	private void addIncrementalPatients(List<IPatient> changedPatients, Bundle ret) {
+	private int addIncrementalPatients(List<IPatient> changedPatients, Bundle ret) throws UnsupportedEncodingException {
+		int size = 0;
 		for (IPatient iPatient : changedPatients) {
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(iPatient.getId()), ret);
-			patientTransformer.getFhirObject(iPatient).ifPresent(fhirPatient -> {
-				toFIRE(fhirPatient);
-				patientBundle.addEntry().setResource(fhirPatient);
-			});
+			Optional<Patient> fhirPatient = patientTransformer.getFhirObject(iPatient);
+			if (fhirPatient.isPresent()) {
+				toFIRE(fhirPatient.get());
+				size += getResourceSize(fhirPatient.get());
+				patientBundle.addEntry().setResource(fhirPatient.get());
+			}
 		}
+		return size;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -504,13 +565,25 @@ public class FIREService implements IFIREService {
 		return ModelUtil.getFhirJson(bundle);
 	}
 
+	private String getResourceText(Resource resource) {
+		return ModelUtil.getFhirJson(resource);
+	}
+
 	private void writeBundle(Bundle bundle, File currentFile) throws IOException {
 		FileUtils.writeStringToFile(currentFile, getBundleText(bundle), Charset.forName("UTF-8"));
 		increaseBundleCount();
 	}
 
-	private boolean startNextBundle(Bundle currentBundle) throws UnsupportedEncodingException {
-		return getBundleText(currentBundle).getBytes("UTF-8").length > (40 * 1024 * 1024);
+	private boolean startNextBundle(int currentBundleSize) throws UnsupportedEncodingException {
+		return currentBundleSize > (20 * 1024 * 1024);
+	}
+
+	private int getBundleSize(Bundle bundle) throws UnsupportedEncodingException {
+		return getBundleText(bundle).getBytes("UTF-8").length;
+	}
+
+	private int getResourceSize(Resource resource) throws UnsupportedEncodingException {
+		return getResourceText(resource).getBytes("UTF-8").length;
 	}
 
 	private String getBundleName() {

@@ -20,7 +20,7 @@ public class Messages {
         public static String LabOrderAction_errorTitleNoPatientSelected = ch.elexis.core.l10n.Messages.Core_No_patient_selected_exlamation;
         public static String LabOrderAction_infoMessageLabOrderFinshed = ch.elexis.core.l10n.Messages.LabOrderAction_infoMessageLabOrderFinshed;
         public static String LabOrderAction_infoTitleLabOrderFinshed = ch.elexis.core.l10n.Messages.LabOrderAction_infoTitleLabOrderFinshed;
-        public static String LabOrderAction_nameAction = ch.elexis.core.l10n.Messages.LabOrderAction_nameAction;
+		public static String LaborOrderAction_LG1NameAction = ch.elexis.core.l10n.Messages.LaborOrderAction_LG1NameAction;
         public static String LabOrderAction_receivingApplication = ch.elexis.core.l10n.Messages.LabOrderAction_receivingApplication;
         public static String LabOrderAction_receivingFacility = ch.elexis.core.l10n.Messages.LabOrderAction_receivingFacility;
         public static String Lg1PreferencePage_labelUploadDir = ch.elexis.core.l10n.Messages.Core_Upload_Directory;

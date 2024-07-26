@@ -40,7 +40,7 @@ public class LabOrderAction extends Action {
 		setId("ch.elexis.laborder.lg1_medicalvalues.laborder"); //$NON-NLS-1$
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.labororder.lg1_medicalvalues", //$NON-NLS-1$
 				"rsc/lg1_logo.png"));
-		setText(Messages.LabOrderAction_nameAction);
+		setText(Messages.LaborOrderAction_LG1NameAction);
 	}
 
 	@Override

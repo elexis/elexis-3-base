@@ -82,6 +82,7 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.icons.Images;
@@ -106,7 +107,7 @@ import ch.rgw.tools.TimeTool;
 public class TerminDialog extends TitleAreaDialog {
 
 	private static final Logger logger = LoggerFactory.getLogger(TerminDialog.class);
-	private static ICommandService cmdService = (ICommandService) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+	private static ICommandService cmdService = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 			.getService(ICommandService.class);
 	private static Category cmdCategory = cmdService.getCategory("ch.elexis.agenda.commands");
 
@@ -231,6 +232,7 @@ public class TerminDialog extends TitleAreaDialog {
 		tiVon = new TimeInput(topCenter, Messages.TerminDialog_startTime);
 		tiVon.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 		tiVon.addListener(new TimeInputListener() {
+			@Override
 			public void changed() {
 				slider.set();
 			}
@@ -248,6 +250,7 @@ public class TerminDialog extends TitleAreaDialog {
 		tiBis = new TimeInput(topCenter, Messages.TerminDialog_endTime);
 		tiBis.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 		tiBis.addListener(new TimeInputListener() {
+			@Override
 			public void changed() {
 				int mVon = tiVon.getTimeAsMinutes();
 				int mBis = tiBis.getTimeAsMinutes();
@@ -817,6 +820,7 @@ public class TerminDialog extends TitleAreaDialog {
 		/**
 		 * Tagesbalken zeichnen
 		 */
+		@Override
 		public void paintControl(final PaintEvent pe) {
 			GC g = pe.gc;
 			Color def = g.getBackground();
@@ -883,13 +887,16 @@ public class TerminDialog extends TitleAreaDialog {
 			setEnablement();
 		}
 
+		@Override
 		public void mouseDoubleClick(final MouseEvent e) {
 		}
 
+		@Override
 		public void mouseDown(final MouseEvent e) {
 			isDragging = true;
 		}
 
+		@Override
 		public void mouseUp(final MouseEvent e) {
 			if (isDragging) {
 				isDragging = false;
@@ -897,6 +904,7 @@ public class TerminDialog extends TitleAreaDialog {
 			}
 		}
 
+		@Override
 		public void mouseMove(final MouseEvent e) {
 			if (isDragging) {
 				Point loc = getLocation();
@@ -988,12 +996,16 @@ public class TerminDialog extends TitleAreaDialog {
 			actTermin.setFlag(Termin.SW_LOCKED);
 		}
 
-		ElexisEventDispatcher.reload(Termin.class);
-
 		dayBar.recalc();
 		dayBar.redraw();
 		actPlannable = actTermin;
 		setEnablement();
+
+		NoPoUtil.loadAsIdentifiable((Termin) actPlannable, IAppointment.class)
+				.ifPresent(a -> {
+					CoreModelServiceHolder.get().refresh(a, true);
+					ContextServiceHolder.get().setTyped(a);
+				});
 	}
 
 	/**

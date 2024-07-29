@@ -74,11 +74,17 @@ public class TermineLockedTimesUpdater implements IRunnableWithProgress {
 		monitor.beginTask(Messages.TermineLockedTimesUpdater_0, 2 * appointments.size());
 		List<String> skipUpdate = checkAppointmentCollision(appointments, monitor);
 
+		TimeTool day = new TimeTool();
 		// delete existing boundaries if we should not keep them on that day
 		for (Termin t : appointments) {
-			if (skipUpdate.contains(t.getDay()))
+			if (skipUpdate.contains(t.getDay())) {
 				continue;
-			TimeTool day = new TimeTool(t.getDay());
+			}
+			day.set(t.getDay());
+			if (day.get(Calendar.DAY_OF_WEEK) != _applyForDay.numericDayValue) {
+				continue;
+			}
+
 			if (_startDate.isBeforeOrEqual(day)) {
 				if (t.getType().equals(Termin.typReserviert())) {
 					t.delete();

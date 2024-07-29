@@ -19,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import ch.docbox.ws.cdachservices.AppointmentType;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.core.data.util.NoPoUtil;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.util.Log;
 import ch.elexis.data.Query;
 import ch.rgw.tools.TimeTool;
@@ -231,6 +234,11 @@ public class DocboxTermin {
 			setText(text);
 			setGrund(grund);
 			setLocked(true);
+			NoPoUtil.loadAsIdentifiable(elexisTermin, IAppointment.class)
+					.ifPresent(a -> {
+						CoreModelServiceHolder.get().refresh(a, true);
+					});
+
 			log.log("Termin " + elexisTermin.getId() + StringUtils.SPACE + elexisTermin.getText() + StringUtils.SPACE
 					+ elexisTermin.getGrund() + " - " + elexisTermin.getDay(), Log.DEBUGMSG);
 

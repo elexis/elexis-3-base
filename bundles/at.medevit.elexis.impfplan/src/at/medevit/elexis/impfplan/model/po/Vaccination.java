@@ -18,7 +18,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 import at.medevit.elexis.impfplan.model.ArticleToImmunisationModel;
-import ch.elexis.core.constants.StringConstants;
 import ch.elexis.core.data.service.StoreToStringServiceHolder;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.model.Identifiable;
@@ -27,7 +26,6 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
-import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 
 public class Vaccination extends PersistentObject {
@@ -48,29 +46,6 @@ public class Vaccination extends PersistentObject {
 	/** Impfung gegen */public static final String FLD_VACC_AGAINST = "vaccAgainst"; //$NON-NLS-1$
 	/** side where vaccination was applied (optional)*/
 						public static final String SIDE = "Side"; //$NON-NLS-1$
-
-	/** Definition of the database table */
-	static final String createDB =
-		"CREATE TABLE " + TABLENAME //$NON-NLS-1$
-			+ "(" //$NON-NLS-1$
-			+ "ID VARCHAR(25) primary key," // has to be of type varchar else version.exists fails //$NON-NLS-1$
-			+ "lastupdate BIGINT," //$NON-NLS-1$
-			+ "deleted CHAR(1) default '0'," // will never be set to 1 //$NON-NLS-1$
-			+ FLD_PATIENT_ID +" VARCHAR(25)," //$NON-NLS-1$
-			+ FLD_ARTIKEL_REF +" VARCHAR(255)," //$NON-NLS-1$
-			+ FLD_BUSS_NAME +" VARCHAR(255)," //$NON-NLS-1$
-			+ FLD_EAN +" VARCHAR(13)," //$NON-NLS-1$
-			+ FLD_ATCCODE +" VARCHAR(20)," //$NON-NLS-1$
-			+ FLD_LOT_NO +" VARCHAR(255)," //$NON-NLS-1$
-			+ FLD_DOA +" CHAR(8)," //$NON-NLS-1$
-			+ FLD_ADMINISTRATOR +" VARCHAR(255)," //$NON-NLS-1$
-			+ FLD_VACC_AGAINST +" VARCHAR(255)," //$NON-NLS-1$
-			+ PersistentObject.FLD_EXTINFO + " BLOB" //$NON-NLS-1$
-			+ "); " //$NON-NLS-1$
-
-			+ "INSERT INTO " + TABLENAME + " (ID,"+FLD_PATIENT_ID+","+FLD_DOA+") VALUES ('"+StringConstants.VERSION_LITERAL+"'," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			+ JdbcLink.wrap(VERSION) +","+new TimeTool().toString(TimeTool.DATE_COMPACT)+");"; //$NON-NLS-1$ //$NON-NLS-2$
-	//@formatter:on
 
 	static {
 		addMapping(TABLENAME, FLD_PATIENT_ID, FLD_ARTIKEL_REF, FLD_BUSS_NAME, FLD_EAN, FLD_ATCCODE, FLD_LOT_NO, FLD_DOA,
@@ -117,17 +92,6 @@ public class Vaccination extends PersistentObject {
 		String[] vals = new String[] { patientId, articleStoreToString, articleLabel, articleEAN, articleATCCode, lotNo,
 				doa, mandantId, vaccAgainst };
 		set(fields, vals);
-	}
-
-	static {
-		addMapping(TABLENAME, FLD_PATIENT_ID, FLD_ARTIKEL_REF, FLD_BUSS_NAME, FLD_EAN, FLD_ATCCODE, FLD_LOT_NO, FLD_DOA,
-				FLD_ADMINISTRATOR, FLD_VACC_AGAINST, PersistentObject.FLD_EXTINFO);
-		Vaccination version = load(StringConstants.VERSION_LITERAL); // $NON-NLS-1$
-		if (!version.exists()) {
-			createOrModifyTable(createDB);
-		} else {
-			// update code
-		}
 	}
 
 	@Override

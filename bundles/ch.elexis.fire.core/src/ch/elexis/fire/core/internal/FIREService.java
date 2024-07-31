@@ -31,6 +31,7 @@ import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Condition;
 import org.hl7.fhir.r4.model.Encounter;
 import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Observation;
@@ -54,6 +55,7 @@ import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.ISickCertificate;
+import ch.elexis.core.model.IVaccination;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IModelService;
@@ -95,6 +97,8 @@ public class FIREService implements IFIREService {
 
 	private IFhirTransformer<Condition, ISickCertificate> sickCertificateTransformer;
 
+	private IFhirTransformer<Immunization, IVaccination> vaccinationTransformer;
+
 	@Activate
 	public void activate() throws NoSuchAlgorithmException {
 		sha256Digest = MessageDigest.getInstance("SHA-256");
@@ -105,6 +109,7 @@ public class FIREService implements IFIREService {
 		labTransformer = transformerRegistry.getTransformerFor(Observation.class, ILabResult.class);
 		prescriptionTransformer = transformerRegistry.getTransformerFor(MedicationRequest.class, IPrescription.class);
 		sickCertificateTransformer = transformerRegistry.getTransformerFor(Condition.class, ISickCertificate.class);
+		vaccinationTransformer = transformerRegistry.getTransformerFor(Immunization.class, IVaccination.class);
 	}
 	
 	@Override
@@ -216,13 +221,23 @@ public class FIREService implements IFIREService {
 			}
 		});
 
-		IQuery<ISickCertificate> query = coreModelService.getQuery(ISickCertificate.class);
-		query.and(ModelPackage.Literals.ISICK_CERTIFICATE__PATIENT, COMPARATOR.EQUALS, patient);
-		List<ISickCertificate> sickCertificates = query.execute();
+		IQuery<ISickCertificate> sickQuery = coreModelService.getQuery(ISickCertificate.class);
+		sickQuery.and(ModelPackage.Literals.ISICK_CERTIFICATE__PATIENT, COMPARATOR.EQUALS, patient);
+		List<ISickCertificate> sickCertificates = sickQuery.execute();
 		sickCertificates.forEach(sc -> {
 			Condition condition = sickCertificateTransformer.getFhirObject(sc).orElse(null);
 			if (condition != null) {
 				patientBundle.addEntry().setResource(condition);
+			}
+		});
+
+		IQuery<IVaccination> vaccQuery = coreModelService.getQuery(IVaccination.class);
+		vaccQuery.and(ModelPackage.Literals.IVACCINATION__PATIENT, COMPARATOR.EQUALS, patient);
+		List<IVaccination> vaccinations = vaccQuery.execute();
+		vaccinations.forEach(va -> {
+			Immunization immunization = vaccinationTransformer.getFhirObject(va).orElse(null);
+			if (immunization != null) {
+				patientBundle.addEntry().setResource(immunization);
 			}
 		});
 
@@ -375,6 +390,22 @@ public class FIREService implements IFIREService {
 				}
 			}
 
+			List<IVaccination> changedVaccinations = getChanged(lastExportTimestamp, IVaccination.class);
+			currentBundleSize += addIncrementalVaccination(changedVaccinations, currentBundle);
+			if (startNextBundle(currentBundleSize)) {
+				writeBundle(currentBundle, currentFile);
+				ret.add(currentFile);
+
+				currentFile = getExportFile();
+				currentBundle = getBundle();
+				currentBundle.getMeta().addTag(new Coding("fire.export.type", "incremental", null));
+				currentBundleSize = 0;
+				if (progressMonitor.isCanceled()) {
+					LoggerFactory.getLogger(getClass()).warn("Cancelled incremental export");
+					return Collections.emptyList();
+				}
+			}
+
 			writeBundle(currentBundle, currentFile);
 			ret.add(currentFile);
 		} catch (Exception e) {
@@ -441,6 +472,20 @@ public class FIREService implements IFIREService {
 			if (ob.isPresent()) {
 				size += getResourceSize(ob.get());
 				patientBundle.addEntry().setResource(ob.get());
+			}
+		}
+		return size;
+	}
+
+	private int addIncrementalVaccination(List<IVaccination> changedVaccinations, Bundle ret)
+			throws UnsupportedEncodingException {
+		int size = 0;
+		for (IVaccination va : changedVaccinations) {
+			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(va.getPatient().getId()), ret);
+			Optional<Immunization> im = vaccinationTransformer.getFhirObject(va);
+			if (im.isPresent()) {
+				size += getResourceSize(im.get());
+				patientBundle.addEntry().setResource(im.get());
 			}
 		}
 		return size;

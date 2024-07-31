@@ -13,7 +13,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Encounter;
+import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.junit.BeforeClass;
@@ -28,8 +30,10 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.ILabResultBuilder;
+import ch.elexis.core.model.builder.IVaccinationBuilder;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.test.initializer.TestDatabaseInitializer;
 import ch.elexis.core.types.Gender;
@@ -49,13 +53,21 @@ public class FIREServiceTest {
 
 	private static Bundle incrementalExport;
 
+	private static TestDatabaseInitializer initializer;
+
 	@BeforeClass
 	public static void beforeClass() {
 		fireService = OsgiServiceUtil.getService(IFIREService.class).get();
+
+		initializer = new TestDatabaseInitializer();
 	}
 
 	@Test
 	public void a_initialExport() {
+		// add vaccination
+		new IVaccinationBuilder(CoreModelServiceHolder.get(), ContextServiceHolder.get(),
+				"test vaccine name", "0123456789012", "J07BK03", TestDatabaseInitializer.getPatient()).buildAndSave();
+
 		List<File> files = fireService.initialExport(new NullProgressMonitor());
 		assertNotNull(files);
 
@@ -67,6 +79,20 @@ public class FIREServiceTest {
 		String bundleJson = ModelUtil.getFhirJson(initialExport);
 		assertNotNull(bundleJson);
 		System.out.println(bundleJson);
+
+		boolean immunizationFound = false;
+		String firePatientId = ((FIREService) fireService)
+				.getFIREPatientId(TestDatabaseInitializer.getPatient().getId());
+		Bundle patientBundle = ((FIREService) fireService).getPatientBundle(firePatientId, initialExport);
+		assertNotNull(patientBundle);
+		for (BundleEntryComponent entry : patientBundle.getEntry()) {
+			if (entry.hasResource()) {
+				if (entry.getResource() instanceof Immunization) {
+					immunizationFound = true;
+				}
+			}
+		}
+		assertTrue(immunizationFound);
 
 		assertTrue(fireService.getInitialTimestamp() > 0);
 	}

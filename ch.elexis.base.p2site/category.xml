@@ -277,6 +277,9 @@
    <bundle id="ch.elexis.fire.core">
       <category name="libraries"/>
    </bundle>
+   <bundle id="ch.elexis.fire.ui">
+      <category name="libraries"/>
+   </bundle>
    <category-def name="basepackages" label="Basispakete"/>
    <category-def name="documentmanagement" label="Dokumentenverwaltung">
       <description>

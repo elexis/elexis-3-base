@@ -18,6 +18,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -30,6 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.model.tasks.IIdentifiedRunnable.ReturnParameter;
 import ch.elexis.core.model.tasks.TaskException;
+import ch.elexis.core.services.IConfigService;
+import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.tasks.model.ITask;
 import ch.elexis.core.tasks.model.ITaskDescriptor;
@@ -39,6 +42,7 @@ import ch.elexis.core.tasks.model.TaskTriggerType;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.fire.core.IFIREService;
 import ch.elexis.fire.core.task.FIREExportTaskDescriptor;
+import ch.elexis.fire.ui.export.internal.AutomaticExportTask;
 
 public class FirePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -47,6 +51,12 @@ public class FirePreferencePage extends PreferencePage implements IWorkbenchPref
 
 	@Inject
 	private ITaskService taskService;
+
+	@Inject
+	private IConfigService configService;
+
+	@Inject
+	private IContextService contextService;
 
 	private ITaskDescriptor taskDescriptor;
 
@@ -83,7 +93,7 @@ public class FirePreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 		sb.append("\n");
 		if (fireService.getIncrementalTimestamp() != -1) {
-			Instant instant = Instant.ofEpochMilli(fireService.getInitialTimestamp());
+			Instant instant = Instant.ofEpochMilli(fireService.getIncrementalTimestamp());
 			LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
 			sb.append("Der letzte inkrementelle Export war am "
 					+ DateTimeFormatter.ofPattern("dd.MM.yyyy").format(localDateTime) + " um "
@@ -93,6 +103,31 @@ public class FirePreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 		synchInfo = new Label(area, SWT.NONE);
 		synchInfo.setText(sb.toString());
+
+		Label separator = new Label(area, SWT.HORIZONTAL);
+		GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.verticalIndent = 10;
+		separator.setLayoutData(gd);
+
+		Button automaticExport = new Button(area, SWT.CHECK);
+		automaticExport.setText("Auf dieser Station automatisch an FIRE übermitteln.");
+		automaticExport.setSelection(contextService.getStationIdentifier()
+				.equals(configService.get(AutomaticExportTask.SCHEDULED_STATION, null)));
+		automaticExport.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (automaticExport.getSelection()) {
+					configService.set(AutomaticExportTask.SCHEDULED_STATION, contextService.getStationIdentifier());
+				} else {
+					configService.set(AutomaticExportTask.SCHEDULED_STATION, null);
+				}
+			}
+		});
+
+		separator = new Label(area, SWT.HORIZONTAL);
+		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.verticalIndent = 10;
+		separator.setLayoutData(gd);
 
 		Button triggerExport = new Button(area, SWT.PUSH);
 		if (initialExportDone) {

@@ -5,10 +5,12 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.slf4j.Logger;
 
@@ -83,16 +85,20 @@ public class FIREExportIdentifiedRunnable implements IIdentifiedRunnable {
 		}
 		cancelled = progressMonitor.isCanceled();
 		if (exported != null && !exported.isEmpty()) {
-			logger.info("Got [" + exported.size() + "] files for upload in ["
+			logger.info("Exported [" + exported.size() + "] files");
+			Collection<File> foundUploadFiles = FileUtils.listFiles(exported.get(0).getParentFile(),
+					new String[] { "json" }, false);
+			logger.info("Found [" + foundUploadFiles.size() + "] files for upload in ["
 					+ exported.get(0).getParentFile().getPath() + "]");
-			exported.forEach(f -> {
-//				if (fireService.uploadBundle(f)) {
-//					uploaded++;
-//					logger.info("Upload [" + f.getAbsolutePath() + "] successful");
-//				} else {
-//					uploadFailed++;
-//					logger.warn("Upload [" + f.getAbsolutePath() + "] failed");
-//				}
+			foundUploadFiles.forEach(f -> {
+				if (fireService.uploadBundle(f)) {
+					uploaded++;
+					logger.info("Upload [" + f.getAbsolutePath() + "] successful");
+					f.delete();
+				} else {
+					uploadFailed++;
+					logger.warn("Upload [" + f.getAbsolutePath() + "] failed");
+				}
 			});
 		} else {
 			logger.warn("No exported files");

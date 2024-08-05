@@ -22,11 +22,16 @@ public class ResponseAnalyzer {
 		NodeList urlNode = doc.getElementsByTagName("url");
 		NodeList errorNode = doc.getElementsByTagName("error");
 
-		logger.info("URL length: " + urlNode.item(0).getTextContent().length());
-		logger.info("Error length: " + errorNode.item(0).getTextContent().length());
-		valid = urlNode.item(0).getTextContent().length() > 0 && errorNode.item(0).getTextContent().length() == 0 ? true
-				: false;
-		setResponseValid(valid);
+		if (urlNode.item(0) != null) {
+			logger.info("URL length: " + urlNode.item(0).getTextContent().length());
+		}
+		if (errorNode.item(0) != null) {
+			logger.info("Error length: " + errorNode.item(0).getTextContent().length());
+			valid = urlNode.item(0).getTextContent().length() > 0 && errorNode.item(0).getTextContent().length() == 0
+					? true
+					: false;
+			setResponseValid(valid);
+		}
 	}
 
 	public String getResult() {
@@ -56,6 +61,5 @@ public class ResponseAnalyzer {
 	public void setResponseValid(boolean responseValid) {
 		this.responseValid = responseValid;
 	}
-
 
 }

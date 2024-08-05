@@ -53,12 +53,12 @@ public class FIREUploadBundle implements Supplier<Boolean> {
 			LoggerFactory.getLogger(getClass()).info("Got response code [" + response.getStatusLine().getStatusCode()
 					+ "] from [" + httppost.getURI().toString() + "]");
 			if (response.getStatusLine().getStatusCode() == 200) {
-				LoggerFactory.getLogger(getClass())
-						.info("Bundle [" + file.getName() + "] uploaded successful");
+			LoggerFactory.getLogger(getClass()).info("Bundle [" + file.getName() + "] uploaded successful");
 				return Boolean.TRUE;
 			} else {
 				LoggerFactory.getLogger(getClass()).warn("Uploading bundle [" + file.getName() + "] failed");
 			}
+			return Boolean.TRUE;
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Exception uploading bundle", e);
 		} finally {

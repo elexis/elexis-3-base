@@ -49,6 +49,7 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 	private static final String USERNAME_KEY = "key.teamw.username";
 	private static final String PASSWORD_KEY = "key.teamw.password";
 	private static final String PATH_KEY = "key.teamw.path";
+	private static final String TXT_HOUR_TO_UTC_KEY = "key.time.shift";
 
 	private static final String TXT_PRACTICE_IDENTIFICATION = "props.msg.grp.practice.identification";
 	private static final String TXT_APPLICATION_IDENTIFICATION = "props.msg.grp.application.identification";
@@ -58,6 +59,9 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	private static final String TXT_USERNAME = "props.msg.lbl.user.username";
 	private static final String TXT_PASSWORD = "props.msg.lbl.user.password";
+
+	private static final String TXT_TIME_SHIFT = "props.msg.grp.time.shift";
+	private static final String TXT_HOUR_TO_UTC = "props.msg.lbl.time.shift";
 
 	private static final String ERR_TITLE = "props.msg.title.error";
 	private static final String ERR_MSG = "props.msg.missing.properties";
@@ -80,6 +84,7 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 	private Text txtChecksumExpected;
 	private Text txtChecksumCalculated;
 	private Text txtPath;
+	private Text txtTimeShift;
 
 	private String path = System.getProperty("user.home");
 
@@ -221,6 +226,14 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 				}
 			}
 		});
+
+		Group timeShiftGroup = CompositeBuilder.createGroup(composite, 2,
+				getMessagesProperties().getProperty(TXT_TIME_SHIFT));
+
+		CompositeBuilder.createActivatedLine(timeShiftGroup, getMessagesProperties().getProperty(TXT_HOUR_TO_UTC));
+		txtTimeShift = (((Text) timeShiftGroup.getChildren()[timeShiftGroup.getChildren().length - 1]));
+		txtTimeShift.setText(configService.get(TXT_HOUR_TO_UTC_KEY, txtTimeShift.getText(), true));
+
 		dispose();
 		return parent;
 	}
@@ -263,6 +276,10 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 			keyIsValid = false;
 		} else {
 			txtChecksumCalculated.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		}
+
+		if (!txtTimeShift.getText().isEmpty()) {
+			configService.set(TXT_HOUR_TO_UTC_KEY, txtTimeShift.getText(), false);
 		}
 
 		if (!usernameIsNotEmpty || !passwordIsNotEmpty || !keyIsValid) {

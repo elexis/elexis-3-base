@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -680,6 +681,9 @@ public class LabordersView extends ViewPart implements IRefreshable {
 						e1.printStackTrace();
 					} catch (SignatureException e1) {
 						logger.error(getApplicationProperties().getProperty(ERR_SIGNATURE_EXCEPTION));
+						e1.printStackTrace();
+					} catch (PartInitException e1) {
+						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				} else {

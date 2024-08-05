@@ -76,6 +76,7 @@ public class MessageBuilder {
 
 		// Step 2 Create/set timestamp
 		TimeStampCreator timeStampCreator = new TimeStampCreator(getApplicationProperties());
+		// timeStampCreator.test();
 		String timeStamp = timeStampCreator.getUTCTimeStamp();
 
 		// Step 3 Create Client Hash (login+clientIP)
@@ -109,7 +110,7 @@ public class MessageBuilder {
 				getTeamwProperties().getProperty(CLIENT_IP), clientHash, signatureSigned, language, patientInfoFormat,
 				gdt);
 
-		printer.print(message);
+		// printer.print(message);
 		return message;
 	}
 

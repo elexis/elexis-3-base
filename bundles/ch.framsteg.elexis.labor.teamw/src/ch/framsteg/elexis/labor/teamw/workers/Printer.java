@@ -60,4 +60,22 @@ public class Printer {
 
 		logger.info(out.toString());
 	}
+
+	public void print(Document node) throws TransformerException {
+		/**
+		 * DOMSource domSource = new DOMSource(doc); StringWriter stringWriter = new
+		 * StringWriter(); StreamResult streamResult = new StreamResult(stringWriter);
+		 * TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		 * Transformer transformer; transformer = transformerFactory.newTransformer();
+		 * transformer.transform(domSource, streamResult);
+		 * logger.info(stringWriter.toString());
+		 */
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer = tf.newTransformer();
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+		StringWriter writer = new StringWriter();
+		transformer.transform(new DOMSource(node), new StreamResult(writer));
+		logger.info(writer.toString());
+	}
 }

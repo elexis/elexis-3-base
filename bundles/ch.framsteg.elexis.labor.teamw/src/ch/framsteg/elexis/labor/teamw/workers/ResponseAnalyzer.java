@@ -24,13 +24,11 @@ public class ResponseAnalyzer {
 
 		if (urlNode.item(0) != null) {
 			logger.info("URL length: " + urlNode.item(0).getTextContent().length());
+			valid = urlNode.item(0).getTextContent().length() > 0 ? true : false;
+			setResponseValid(valid);
 		}
 		if (errorNode.item(0) != null) {
 			logger.info("Error length: " + errorNode.item(0).getTextContent().length());
-			valid = urlNode.item(0).getTextContent().length() > 0 && errorNode.item(0).getTextContent().length() == 0
-					? true
-					: false;
-			setResponseValid(valid);
 		}
 	}
 

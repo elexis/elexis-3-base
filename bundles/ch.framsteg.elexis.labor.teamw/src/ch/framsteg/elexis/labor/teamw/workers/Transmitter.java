@@ -83,8 +83,10 @@ public class Transmitter {
 		logger.info("==============================================================");
 		logger.info("SENDING REQUEST");
 
+		Anonymizer anonymizer = new Anonymizer();
+		String anonymizedMessage = anonymizer.anonymize(message);
 		Printer printer = new Printer();
-		printer.print(message);
+		printer.print(anonymizedMessage);
 
 		HttpClient httpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
 		StringEntity strEntity = new StringEntity(message, ContentType.APPLICATION_SOAP_XML);

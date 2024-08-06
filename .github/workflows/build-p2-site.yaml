@@ -9,6 +9,8 @@ on:
   push:
      branches:
         - 3.13
+  repository_dispatch:
+    types: [trigger-build]
 
 jobs:
   build:

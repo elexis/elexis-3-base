@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -27,6 +29,7 @@ import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedOptifier;
 import ch.elexis.base.ch.arzttarife.tarmed.model.TarmedVerifier;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.base.ch.arzttarife.util.ArzttarifeUtil;
+import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.model.IBilled;
 import ch.elexis.core.model.IBillingSystemFactor;
 import ch.elexis.core.model.ICoverage;
@@ -149,6 +152,12 @@ public class TarmedOptifierTest {
 		konsPeriodEnd = new IEncounterBuilder(coreModelService, fallBelow75, mandator)
 				.date(new TimeTool("02.04.2018").toLocalDateTime()).buildAndSave();
 		resetKons(konsPeriodEnd);
+
+		// add custom exclusions
+		IReferenceDataImporter customExclusionsImporter = OsgiServiceUtil.getService(IReferenceDataImporter.class,
+				"(" + IReferenceDataImporter.REFERENCEDATAID + "=tarmedcustomexclusions)").get();
+		customExclusionsImporter.performImport(new NullProgressMonitor(),
+				IOUtils.toInputStream("00.0010,00.1345,E\n17.0090,00.0015,E", "UTF-8"), 0);
 
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveUser(TestDatabaseInitializer.getUser());
 		OsgiServiceUtil.getService(IContextService.class).get().setActiveMandator(mandator);
@@ -771,6 +780,27 @@ public class TarmedOptifierTest {
 		// additional service, not in block LB-05, billing is allowed anyway
 		result = optifier.add(TarmedLeistung.getFromCode("17.0750", LocalDate.now(), LAW), konsGriss, 1.0);
 		assertTrue(result.isOK());
+
+		clearKons(konsGriss);
+	}
+
+	@Test
+	public void testCustomExclusion() {
+		clearKons(konsGriss);
+
+		Result<IBilled> result = optifier.add(TarmedLeistung.getFromCode("00.0010", LocalDate.now(), LAW), konsGriss,
+				1.0);
+		assertTrue(result.isOK());
+		result = optifier.add(TarmedLeistung.getFromCode("00.0015", LocalDate.now(), LAW), konsGriss, 1.0);
+		assertTrue(result.isOK());
+		// not allowed due to custom exclusion
+		result = optifier.add(TarmedLeistung.getFromCode("17.0090", LocalDate.now(), LAW), konsGriss, 1.0);
+		assertFalse(result.isOK());
+		assertEquals("17.0090 nicht kombinierbar mit Leistung 00.0015", result.getMessages().get(0).getText());
+
+		// not allowed due to custom exclusion
+		result = optifier.add(TarmedLeistung.getFromCode("00.1345", LocalDate.now(), LAW), konsGriss, 1.0);
+		assertFalse(result.isOK());
 
 		clearKons(konsGriss);
 	}

@@ -39,6 +39,7 @@ public class MessageBuilder {
 
 	private final static String RAW_MESSAGE = "props.app.message.parametrizeable";
 	private final static String CLIENT_IP = "props.teamw.message.property.client.ip";
+	private static final String IP_KEY = "key.teamw.ip";
 	private final static String CLIENT_TYPE = "props.teamw.message.property.client.type";
 	private final static String SERIAL_NUME = "props.teamw.message.property.serial.num";
 	private final static String LOG_UNSIGNED_HASHED_SIGNATURE = "props.app.log.unsigned.hashed.signature";
@@ -81,7 +82,8 @@ public class MessageBuilder {
 
 		// Step 3 Create Client Hash (login+clientIP)
 		String login = configService.get(USERNAME_KEY, "");
-		String clientIP = getTeamwProperties().getProperty(CLIENT_IP);
+		String clientIP = configService.get(IP_KEY, "");
+		// String clientIP = getTeamwProperties().getProperty(CLIENT_IP);
 		String clientHashRaw = login + clientIP;
 		String clientHash = DigestUtils.sha1Hex(clientHashRaw);
 
@@ -107,7 +109,7 @@ public class MessageBuilder {
 		message = MessageFormat.format(rawMessage, timeStamp, getTeamwProperties().getProperty(CLIENT_TYPE),
 				getTeamwProperties().getProperty(SERIAL_NUME), configService.get(USERNAME_KEY, ""),
 				configService.get(PASSWORD_KEY, ""),
-				getTeamwProperties().getProperty(CLIENT_IP), clientHash, signatureSigned, language, patientInfoFormat,
+				configService.get(IP_KEY, ""), clientHash, signatureSigned, language, patientInfoFormat,
 				gdt);
 
 		// printer.print(message);

@@ -46,33 +46,47 @@ import ch.framsteg.elexis.labor.teamw.views.LabordersView;
 
 public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private static final String USERNAME_KEY = "key.teamw.username";
-	private static final String PASSWORD_KEY = "key.teamw.password";
-	private static final String PATH_KEY = "key.teamw.path";
-	private static final String TXT_HOUR_TO_UTC_KEY = "key.time.shift";
+	// Preference keys
+	private static final String KEY_USERNAME = "key.teamw.username";
+	private static final String KEY_PASSWORD = "key.teamw.password";
+	private static final String KEY_IP = "key.teamw.ip";
+	private static final String KEY_PATH = "key.teamw.path";
+	private static final String KEY_HOUR_TO_UTC = "key.time.shift";
 
-	private static final String TXT_PRACTICE_IDENTIFICATION = "props.msg.grp.practice.identification";
-	private static final String TXT_APPLICATION_IDENTIFICATION = "props.msg.grp.application.identification";
-	private static final String TXT_EXPECTED_CHECKSUM = "props.msg.lbl.key.expected.checksum";
-	private static final String TXT_CALCULATED_CHECKSUM = "props.msg.lbl.key.calculated.checksum";
-	private static final String TXT_PATH_TO_KEY = "props.msg.lbl.key.path.to.key";
+	// Groups
+	private static final String GRP_PRACTICE_IDENTIFICATION = "props.msg.grp.practice.identification";
+	private static final String GRP_APPLICATION_IDENTIFICATION = "props.msg.grp.application.identification";
+	private static final String GRP_APPLICATION_ENDPOINT = "props.msg.grp.application.endpoint";
+	private static final String GRP_TIME_SHIFT = "props.msg.grp.time.shift";
 
-	private static final String TXT_USERNAME = "props.msg.lbl.user.username";
-	private static final String TXT_PASSWORD = "props.msg.lbl.user.password";
+	// Labels
+	private static final String LBL_APPLICATION_SERIAL_NUM = "props.msg.lbl.application.serial.number";
+	private static final String LBL_APPLICATION_CLIENT_TYPE = "props.msg.lbl.application.client.type";
+	private static final String LBL_APPLICATION_ENDPOINT = "props.msg.lbl.application.endpoint";
+	private static final String LBL_EXPECTED_CHECKSUM = "props.msg.lbl.key.expected.checksum";
+	private static final String LBL_CALCULATED_CHECKSUM = "props.msg.lbl.key.calculated.checksum";
+	private static final String LBL_PATH_TO_KEY = "props.msg.lbl.key.path.to.key";
+	private static final String LBL_USERNAME = "props.msg.lbl.user.username";
+	private static final String LBL_PASSWORD = "props.msg.lbl.user.password";
+	private static final String LBL_IP = "props.msq.lbl.ip";
+	private static final String LBL_HOUR_TO_UTC = "props.msg.lbl.time.shift";
 
-	private static final String TXT_TIME_SHIFT = "props.msg.grp.time.shift";
-	private static final String TXT_HOUR_TO_UTC = "props.msg.lbl.time.shift";
+	// Text
+	private static final String TXT_APPLICATION_SERIAL_NUM = "props.teamw.message.property.serial.num";
+	private static final String TXT_APPLICATION_CLIENT_TYPE = "props.teamw.message.property.client.type";
+	private static final String TXT_APPLICATION_ENDPOINT = "props.teamw.message.property.endpoint";
+	private static final String TXT_EXPECTED_CHECKSUM = "props.teamw.teamw.key.checksum";
 
+	// File dialog
+	private static final String PEM_FILE = "props.msg.pem.file";
+	private static final String ALL_FILES = "props.msg.all.files";
+	private static final String PEM_FILE_EXTENSION = "props.msg.pem.file.ext";
+	private static final String ALL_FILES_EXTENSION = "props.msg.all.files.ext";
+
+	// Error messages
 	private static final String ERR_TITLE = "props.msg.title.error";
 	private static final String ERR_MSG = "props.msg.missing.properties";
 
-	private static final String PEM_FILE = "props.msg.pem.file";
-	private static final String ALL_FILES = "props.msg.all.files";
-
-	private static final String PEM_FILE_EXT = "props.msg.pem.file.ext";
-	private static final String ALL_FILES_EXT = "props.msg.all.files.ext";
-
-	private static final String EXPECTED_CHECKSUM = "props.teamw.teamw.key.checksum";
 
 	private Properties applicationProperties;
 	private Properties messagesProperties;
@@ -80,10 +94,14 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 
 	private Text txtUsername;
 	private Text txtPassword;
+	private Text txtIP;
 
+	private Text txtSerialNumber;
+	private Text txtClientType;
 	private Text txtChecksumExpected;
 	private Text txtChecksumCalculated;
 	private Text txtPath;
+	private Text txtEndPoint;
 	private Text txtTimeShift;
 
 	private String path = System.getProperty("user.home");
@@ -126,26 +144,26 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		Composite composite = CompositeBuilder.createStandardComposite(parent);
 		Group practiceIdentificationGroup = CompositeBuilder.createGroup(composite, 2,
-				getMessagesProperties().getProperty(TXT_PRACTICE_IDENTIFICATION));
+				getMessagesProperties().getProperty(GRP_PRACTICE_IDENTIFICATION));
 
 		CompositeBuilder.createActivatedLine(practiceIdentificationGroup,
-				getMessagesProperties().getProperty(TXT_USERNAME));
+				getMessagesProperties().getProperty(LBL_USERNAME));
 		txtUsername = (((Text) practiceIdentificationGroup
 				.getChildren()[practiceIdentificationGroup.getChildren().length - 1]));
-		txtUsername.setText(configService.get(USERNAME_KEY, txtUsername.getText(), true));
+		txtUsername.setText(configService.get(KEY_USERNAME, txtUsername.getText(), true));
 
 		txtUsername.addModifyListener(new ModifyListener() {
-
 			@Override
 			public void modifyText(ModifyEvent e) {
 				txtUsername.setBackground(parent.getShell().getDisplay().getSystemColor(SWT.COLOR_WHITE));
 			}
 		});
 
-		CompositeBuilder.createPasswordLine(practiceIdentificationGroup, getMessagesProperties().getProperty(TXT_PASSWORD));
+		CompositeBuilder.createPasswordLine(practiceIdentificationGroup,
+				getMessagesProperties().getProperty(LBL_PASSWORD));
 		txtPassword = (((Text) practiceIdentificationGroup
 				.getChildren()[practiceIdentificationGroup.getChildren().length - 1]));
-		txtPassword.setText(configService.get(PASSWORD_KEY, txtUsername.getText(), true));
+		txtPassword.setText(configService.get(KEY_PASSWORD, txtPassword.getText(), true));
 		txtPassword.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -165,25 +183,42 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 		});
 
+		CompositeBuilder.createActivatedLine(practiceIdentificationGroup, getMessagesProperties().getProperty(LBL_IP));
+		txtIP = (((Text) practiceIdentificationGroup.getChildren()[practiceIdentificationGroup.getChildren().length
+				- 1]));
+		txtIP.setText(configService.get(KEY_IP, txtIP.getText(), true));
+
 		Group applicationIdentificationGroup = CompositeBuilder.createGroup(composite, 2,
-				getMessagesProperties().getProperty(TXT_APPLICATION_IDENTIFICATION));
+				getMessagesProperties().getProperty(GRP_APPLICATION_IDENTIFICATION));
 
 		CompositeBuilder.createDeactivatedLine(applicationIdentificationGroup,
-				getMessagesProperties().getProperty(TXT_EXPECTED_CHECKSUM));
+				getMessagesProperties().getProperty(LBL_APPLICATION_SERIAL_NUM));
+		txtSerialNumber = (((Text) applicationIdentificationGroup
+				.getChildren()[applicationIdentificationGroup.getChildren().length - 1]));
+		txtSerialNumber.setText(getTeamwProperties().getProperty(TXT_APPLICATION_SERIAL_NUM));
+
+		CompositeBuilder.createDeactivatedLine(applicationIdentificationGroup,
+				getMessagesProperties().getProperty(LBL_APPLICATION_CLIENT_TYPE));
+		txtClientType = (((Text) applicationIdentificationGroup
+				.getChildren()[applicationIdentificationGroup.getChildren().length - 1]));
+		txtClientType.setText(getTeamwProperties().getProperty(TXT_APPLICATION_CLIENT_TYPE));
+
+		CompositeBuilder.createDeactivatedLine(applicationIdentificationGroup,
+				getMessagesProperties().getProperty(LBL_EXPECTED_CHECKSUM));
 		txtChecksumExpected = (((Text) applicationIdentificationGroup
 				.getChildren()[applicationIdentificationGroup.getChildren().length - 1]));
-		txtChecksumExpected.setText(getTeamwProperties().getProperty(EXPECTED_CHECKSUM));
+		txtChecksumExpected.setText(getTeamwProperties().getProperty(TXT_EXPECTED_CHECKSUM));
 
 		CompositeBuilder.createDeactivatedLine(applicationIdentificationGroup,
-				getMessagesProperties().getProperty(TXT_CALCULATED_CHECKSUM));
+				getMessagesProperties().getProperty(LBL_CALCULATED_CHECKSUM));
 		txtChecksumCalculated = (((Text) applicationIdentificationGroup
 				.getChildren()[applicationIdentificationGroup.getChildren().length - 1]));
 
 		CompositeBuilder.createActivatedLine(applicationIdentificationGroup,
-				getMessagesProperties().getProperty(TXT_PATH_TO_KEY));
+				getMessagesProperties().getProperty(LBL_PATH_TO_KEY));
 		txtPath = (((Text) applicationIdentificationGroup
 				.getChildren()[applicationIdentificationGroup.getChildren().length - 1]));
-		txtPath.setText(configService.get(PATH_KEY, txtPath.getText(), true));
+		txtPath.setText(configService.get(KEY_PATH, txtPath.getText(), true));
 
 		if (!txtPath.getText().isEmpty()) {
 			try {
@@ -227,12 +262,20 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 		});
 
-		Group timeShiftGroup = CompositeBuilder.createGroup(composite, 2,
-				getMessagesProperties().getProperty(TXT_TIME_SHIFT));
+		Group endPointGroup = CompositeBuilder.createGroup(composite, 2,
+				getMessagesProperties().getProperty(GRP_APPLICATION_ENDPOINT));
 
-		CompositeBuilder.createActivatedLine(timeShiftGroup, getMessagesProperties().getProperty(TXT_HOUR_TO_UTC));
+		CompositeBuilder.createDeactivatedLine(endPointGroup,
+				getMessagesProperties().getProperty(LBL_APPLICATION_ENDPOINT));
+		txtEndPoint = (((Text) endPointGroup.getChildren()[endPointGroup.getChildren().length - 1]));
+		txtEndPoint.setText(getTeamwProperties().getProperty(TXT_APPLICATION_ENDPOINT));
+
+		Group timeShiftGroup = CompositeBuilder.createGroup(composite, 2,
+				getMessagesProperties().getProperty(GRP_TIME_SHIFT));
+
+		CompositeBuilder.createActivatedLine(timeShiftGroup, getMessagesProperties().getProperty(LBL_HOUR_TO_UTC));
 		txtTimeShift = (((Text) timeShiftGroup.getChildren()[timeShiftGroup.getChildren().length - 1]));
-		txtTimeShift.setText(configService.get(TXT_HOUR_TO_UTC_KEY, txtTimeShift.getText(), true));
+		txtTimeShift.setText(configService.get(KEY_HOUR_TO_UTC, txtTimeShift.getText(), true));
 
 		dispose();
 		return parent;
@@ -243,6 +286,7 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		boolean usernameIsNotEmpty = false;
 		boolean passwordIsNotEmpty = false;
+		boolean ipNotEmpty = false;
 		boolean returnValue = false;
 
 		if (txtUsername.getText().isEmpty()) {
@@ -250,7 +294,7 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 			usernameIsNotEmpty = false;
 		} else {
 			txtUsername.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			configService.set(USERNAME_KEY, txtUsername.getText(), false);
+			configService.set(KEY_USERNAME, txtUsername.getText(), false);
 			usernameIsNotEmpty = true;
 		}
 
@@ -259,8 +303,17 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 			passwordIsNotEmpty = false;
 		} else {
 			txtPassword.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			configService.set(PASSWORD_KEY, txtPassword.getText(), false);
+			configService.set(KEY_PASSWORD, txtPassword.getText(), false);
 			passwordIsNotEmpty = true;
+		}
+
+		if (txtIP.getText().isEmpty()) {
+			txtIP.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
+			ipNotEmpty = false;
+		} else {
+			txtIP.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			configService.set(KEY_IP, txtIP.getText(), false);
+			ipNotEmpty = true;
 		}
 
 		if (txtPath.getText().isEmpty()) {
@@ -268,7 +321,7 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 			keyIsValid = false;
 		} else {
 			txtPath.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			configService.set(PATH_KEY, txtPath.getText(), false);
+			configService.set(KEY_PATH, txtPath.getText(), false);
 		}
 
 		if (txtChecksumCalculated.getText().isEmpty()) {
@@ -279,10 +332,10 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 
 		if (!txtTimeShift.getText().isEmpty()) {
-			configService.set(TXT_HOUR_TO_UTC_KEY, txtTimeShift.getText(), false);
+			configService.set(KEY_HOUR_TO_UTC, txtTimeShift.getText(), false);
 		}
 
-		if (!usernameIsNotEmpty || !passwordIsNotEmpty || !keyIsValid) {
+		if (!usernameIsNotEmpty || !passwordIsNotEmpty || !ipNotEmpty || !keyIsValid) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
 					getMessagesProperties().getProperty(ERR_TITLE), getMessagesProperties().getProperty(ERR_MSG));
 			returnValue = false;
@@ -299,8 +352,8 @@ public class TeamwPreferencePage extends PreferencePage implements IWorkbenchPre
 		dialog.setOverwrite(true);
 		dialog.setFilterNames(new String[] { getMessagesProperties().getProperty(PEM_FILE),
 				getMessagesProperties().getProperty(ALL_FILES) });
-		dialog.setFilterExtensions(new String[] { getMessagesProperties().getProperty(PEM_FILE_EXT),
-				getMessagesProperties().getProperty(ALL_FILES_EXT) });
+		dialog.setFilterExtensions(new String[] { getMessagesProperties().getProperty(PEM_FILE_EXTENSION),
+				getMessagesProperties().getProperty(ALL_FILES_EXTENSION) });
 		dialog.getFileName();
 
 		dialog.setFilterPath(System.getProperty("user.home"));

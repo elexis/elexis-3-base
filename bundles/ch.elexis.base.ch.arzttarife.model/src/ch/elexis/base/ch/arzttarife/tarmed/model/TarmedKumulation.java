@@ -1,6 +1,7 @@
 package ch.elexis.base.ch.arzttarife.tarmed.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -107,7 +108,12 @@ public class TarmedKumulation extends AbstractIdDeleteModelAdapter<ch.elexis.cor
 				"masterArt", masterType.getArt(), "typ", ch.elexis.core.jpa.entities.TarmedKumulation.TYP_EXCLUSION));
 
 		if (law != null && !law.isEmpty()) {
-			exclusions = exclusions.stream().filter(e -> law.equals(e.getLaw())).collect(Collectors.toList());
+			exclusions = new ArrayList<>(
+					exclusions.stream().filter(e -> law.equals(e.getLaw())).collect(Collectors.toList()));
+		}
+
+		if (masterType == TarmedKumulationArt.SERVICE) {
+			exclusions.addAll(CustomExclusions.of(mastercode));
 		}
 
 		if (exclusions == null || exclusions.isEmpty()) {

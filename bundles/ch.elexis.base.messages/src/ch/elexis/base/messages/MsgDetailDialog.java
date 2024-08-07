@@ -12,7 +12,6 @@
 
 package ch.elexis.base.messages;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,12 +43,13 @@ import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IMessage;
-import ch.elexis.core.model.IReminder;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.model.IUserGroup;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.builder.IMessageBuilder;
+import ch.elexis.core.model.builder.IReminderBuilder;
 import ch.elexis.core.model.format.UserFormatUtil;
+import ch.elexis.core.model.issue.ProcessStatus;
 import ch.elexis.core.model.issue.Visibility;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
@@ -318,13 +318,8 @@ public class MsgDetailDialog extends Dialog {
 			StructuredSelection ss = ((StructuredSelection) cbTo.getSelection());
 			if (!ss.isEmpty()) {
 				IContact destination = (IContact) ss.getFirstElement();
-				IReminder reminder = CoreModelServiceHolder.get().create(IReminder.class);
-				reminder.setDue(LocalDate.now());
-				reminder.setVisibility(Visibility.ALWAYS);
-				reminder.setMessage(incomingMsg.getMessageText());
-				reminder.addResponsible(destination);
-
-				CoreModelServiceHolder.get().save(reminder);
+				new IReminderBuilder(CoreModelServiceHolder.get(), ContextServiceHolder.get(), Visibility.ALWAYS,
+						ProcessStatus.OPEN, incomingMsg.getMessageText()).addResponsible(destination).buildAndSave();
 			}
 			okPressed();
 		default:

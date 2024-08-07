@@ -75,5 +75,6 @@ Service-Component: OSGI-INF/ch.elexis.base.ch.arzttarife.complementary.model.imp
  OSGI-INF/ch.elexis.base.ch.arzttarife.physio.model.importer.PhysioReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.psycho.model.importer.PsychoReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.tarmed.model.importer.KVGTarmedReferenceDataImporter.xml,
+ OSGI-INF/ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedCustomExlusionsReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedReferenceDataImporter.xml,
  OSGI-INF/ch.elexis.base.ch.arzttarife.tarmedallowance.model.importer.TarmedAllowanceReferenceDataImporter.xml

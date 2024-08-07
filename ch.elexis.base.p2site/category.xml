@@ -259,7 +259,7 @@
    <feature id="ch.framsteg.elexis.administration.covercard.feature">
       <category name="dataexchange"/>
    </feature>
-    <feature id="ch.framsteg.elexis.labor.teamw.feature">
+   <feature id="ch.framsteg.elexis.labor.teamw.feature">
       <category name="dataexchange"/>
    </feature>
    <bundle id="ch.elexis.covid.cert">
@@ -278,6 +278,9 @@
       <category name="libraries"/>
    </bundle>
    <bundle id="ch.elexis.fire.core">
+      <category name="libraries"/>
+   </bundle>
+   <bundle id="ch.elexis.fire.ui">
       <category name="libraries"/>
    </bundle>
    <category-def name="basepackages" label="Basispakete"/>

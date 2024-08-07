@@ -62,10 +62,11 @@ public class CompositeBuilder {
 
 		GridData labelData = new GridData();
 		labelData.grabExcessHorizontalSpace = true;
+		labelData.horizontalAlignment = SWT.FILL;
 		labelData.widthHint = 150;
 		labelData.minimumWidth = 100;
 
-		Label label = new Label(composite, SWT.FILL);
+		Label label = new Label(composite, SWT.NONE);
 		label.setLayoutData(labelData);
 		label.setText(labelText);
 		Text text = new Text(composite, SWT.BORDER);
@@ -83,10 +84,11 @@ public class CompositeBuilder {
 
 		GridData labelData = new GridData();
 		labelData.grabExcessHorizontalSpace = true;
+		labelData.horizontalAlignment = SWT.FILL;
 		labelData.widthHint = 150;
 		labelData.minimumWidth = 100;
 
-		Label label = new Label(composite, SWT.FILL);
+		Label label = new Label(composite, SWT.NONE);
 		label.setLayoutData(labelData);
 		label.setText(labelText);
 		Text text = new Text(composite, SWT.BORDER);
@@ -105,10 +107,11 @@ public class CompositeBuilder {
 
 		GridData labelData = new GridData();
 		labelData.grabExcessHorizontalSpace = true;
+		labelData.horizontalAlignment = SWT.FILL;
 		labelData.widthHint = 150;
 		labelData.minimumWidth = 100;
 
-		Label label = new Label(composite, SWT.FILL);
+		Label label = new Label(composite, SWT.NONE);
 		label.setLayoutData(labelData);
 		label.setText(labelText);
 		Text text = new Text(composite, SWT.BORDER | SWT.PASSWORD);

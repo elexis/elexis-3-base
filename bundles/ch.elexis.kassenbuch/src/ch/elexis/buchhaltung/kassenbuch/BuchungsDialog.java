@@ -12,6 +12,10 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
@@ -32,13 +36,13 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class BuchungsDialog extends TitleAreaDialog {
-
+	private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	boolean bType;
 	LabeledInputField liBeleg, liBetrag;
 	CDateTime liDate;
 	Label dDate;
 	Text text;
-	KassenbuchEintrag last, act;
+	KassenbuchEintrag last, act, lastNr;
 	Combo cbDate, cbCats, cbPayments;
 
 	BuchungsDialog(Shell shell, boolean mode) {
@@ -87,8 +91,16 @@ public class BuchungsDialog extends TitleAreaDialog {
 		text = new Text(ret, SWT.BORDER);
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		if (act == null) {
-			last = KassenbuchEintrag.recalc();
-			liBeleg.setText(KassenbuchEintrag.nextNr(last));
+			CompletableFuture<KassenbuchEintrag> future = CompletableFuture.supplyAsync(KassenbuchEintrag::recalc,
+					executor);
+            future.thenAccept(result -> {
+				last = result;
+            }).exceptionally(ex -> {
+                ex.printStackTrace();
+                return null;
+            });
+			lastNr = KassenbuchEintrag.lastNr();
+			liBeleg.setText(KassenbuchEintrag.nextNr(lastNr));
 		} else {
 			liBeleg.setText(act.getBelegNr());
 			liDate.setSelection(new TimeTool(act.getDate()).getTime());

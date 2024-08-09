@@ -3,6 +3,7 @@
    <service>
       <provide interface="ch.elexis.core.model.tasks.IIdentifiedRunnableFactory"/>
    </service>
+   <reference cardinality="1..1" field="accessControlService" interface="ch.elexis.core.services.IAccessControlService" name="accessControlService"/>
    <reference cardinality="1..1" field="fireService" interface="ch.elexis.fire.core.IFIREService" name="fireService"/>
    <reference cardinality="1..1" field="taskService" interface="ch.elexis.core.tasks.model.ITaskService" name="taskService"/>
    <implementation class="ch.elexis.fire.core.task.FIREExportIdentifiedRunnableFactory"/>

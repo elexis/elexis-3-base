@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.IIdentifiedRunnableFactory;
 import ch.elexis.core.model.tasks.TaskException;
+import ch.elexis.core.services.IAccessControlService;
 import ch.elexis.core.tasks.model.ITaskService;
 import ch.elexis.fire.core.IFIREService;
 
@@ -24,13 +25,18 @@ public class FIREExportIdentifiedRunnableFactory implements IIdentifiedRunnableF
 	@Reference
 	private IFIREService fireService;
 
+	@Reference
+	private IAccessControlService accessControlService;
+
 	@Activate
 	public void activate() {
-		try {
-			FIREExportTaskDescriptor.getOrCreate(taskService);
-		} catch (TaskException e) {
-			throw new ComponentException(e);
-		}
+		accessControlService.doPrivileged(() -> {
+			try {
+				FIREExportTaskDescriptor.getOrCreate(taskService);
+			} catch (TaskException e) {
+				throw new ComponentException(e);
+			}
+		});
 		taskService.bindIIdentifiedRunnableFactory(this);
 	}
 

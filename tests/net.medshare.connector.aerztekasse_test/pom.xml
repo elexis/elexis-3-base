@@ -8,7 +8,7 @@
 
 	<artifactId>net.medshare.connector.aerztekasse_test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.13.0-SNAPSHOT</version>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>

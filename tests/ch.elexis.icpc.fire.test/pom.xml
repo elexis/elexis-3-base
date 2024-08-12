@@ -10,7 +10,7 @@
 	
 	<artifactId>ch.elexis.icpc.fire.test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
-	<version>3.2.0-SNAPSHOT</version>
+	<version>3.13.0-SNAPSHOT</version>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>

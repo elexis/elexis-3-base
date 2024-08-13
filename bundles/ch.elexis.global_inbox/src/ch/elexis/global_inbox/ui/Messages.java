@@ -23,5 +23,11 @@ public class Messages {
 	public static String InboxView_view = ch.elexis.core.l10n.Messages.InboxView_view;
 	public static String InboxView_viewThisDocument = ch.elexis.core.l10n.Messages.InboxView_viewThisDocument;
 	public static String Preferences_directory = ch.elexis.core.l10n.Messages.Preferences_directory;
+	public static String PreferencesServer_directory_Dialog_renameCategory = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_renameCategory;
+	public static String PreferencesServer_directory_Dialog_renameCategoryConfirm = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_renameCategoryConfirm;
+	public static String PreferencesServer_directory_Dialog_renameCategoryText = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_renameCategoryText;
+	public static String PreferencesServer_directory_Dialog_Core_Delete_Document_Category = ch.elexis.core.l10n.Messages.Core_Delete_Document_Category;
+	public static String PreferencesServer_directory_Dialog_DocumentMetaDataDialog_deleteCategoryConfirm = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_deleteCategoryConfirm;
+	public static String PreferencesServer_directory_Dialog_DocumentMetaDataDialog_deleteCategoryConfirmText = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_deleteCategoryConfirmText;
 
 }

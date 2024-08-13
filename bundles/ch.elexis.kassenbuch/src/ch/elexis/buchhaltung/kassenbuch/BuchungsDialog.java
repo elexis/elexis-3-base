@@ -38,7 +38,7 @@ public class BuchungsDialog extends TitleAreaDialog {
 	CDateTime liDate;
 	Label dDate;
 	Text text;
-	KassenbuchEintrag last, act, lastNr;
+	KassenbuchEintrag act, lastNr;
 	Combo cbDate, cbCats, cbPayments;
 
 	BuchungsDialog(Shell shell, boolean mode) {

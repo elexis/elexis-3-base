@@ -32,6 +32,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.locks.AcquireLockBlockingUi;
@@ -89,6 +90,8 @@ public class AgendaActions {
 
 			@Override
 			public void doRun(Termin element) {
+				IAppointment appointment = (IAppointment) element.toIAppointment();
+				CoreModelServiceHolder.get().delete(appointment);
 				element.delete();
 				ElexisEventDispatcher.reload(Termin.class);
 			}

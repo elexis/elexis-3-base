@@ -33,3 +33,10 @@ jobs:
         -H "Authorization: token ${{ secrets.TRIGGER_WORKFLOW_TOKEN }}" \
         https://api.github.com/repos/elexis/elexis-3-server/actions/workflows/build-p2-site.yaml/dispatches \
         -d '{"ref":"${{ env.BRANCH_NAME }}"}'
+    - name: Trigger gitlab medelexis-3-application Workflow
+      run: |
+        curl -X POST \
+        --fail \
+        -F token=${{ secrets.GITLAB_MEDELEXIS_3_APPLICATION_PIPELINE_TRIGGER_TOKEN }} \
+        -F ref=${{ env.BRANCH_NAME }} \
+        https://gitlab.medelexis.ch/api/v4/projects/13/trigger/pipeline

@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>ch.elexis.base</groupId>
       <artifactId>ch.elexis.base.tests</artifactId>
-		<version>3.12.0-SNAPSHOT</version>
+		<version>3.13.0-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>at.medevit.elexis.loinc_test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.13.0-SNAPSHOT</version>
 	
 	<build>
 		<sourceDirectory>src</sourceDirectory>

@@ -262,6 +262,9 @@
    <feature id="ch.framsteg.elexis.labor.teamw.feature">
       <category name="dataexchange"/>
    </feature>
+   <feature id="at.medevit.elexis.hin.sign.core.feature">
+      <category name="libraries"/>
+   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>
@@ -269,9 +272,6 @@
       <category name="libraries"/>
    </bundle>
    <bundle id="at.medevit.elexis.hin.auth.ui">
-      <category name="libraries"/>
-   </bundle>
-   <bundle id="at.medevit.elexis.hin.sign.core">
       <category name="libraries"/>
    </bundle>
    <bundle id="at.medevit.elexis.hin.sign.ui">

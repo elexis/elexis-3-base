@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis Plugin für Import Laborwerte Analytica
 Bundle-SymbolicName: ch.elexis.laborimport.analytica;singleton:=true
-Bundle-Version: 3.12.0.qualifier
+Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: elexis.info
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis.core.l10n,
@@ -17,5 +17,5 @@ Require-Bundle: ch.elexis.core.l10n,
  org.slf4j.api
 Bundle-ClassPath: .
 Export-Package: ch.elexis.laborimport.analytica
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: ch.elexis.core.services.holder

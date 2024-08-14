@@ -5,7 +5,7 @@
   <parent>
     <groupId>ch.elexis.base</groupId>
     <artifactId>ch.elexis.base.tests</artifactId>
-    <version>3.12.0-SNAPSHOT</version>
+    <version>3.13.0-SNAPSHOT</version>
   </parent>
   <artifactId>ch.elexis.tasks.integration.test</artifactId>
   <packaging>eclipse-test-plugin</packaging>
@@ -42,11 +42,6 @@
               <requirement>
                 <type>eclipse-plugin</type>
                 <id>ch.elexis.core.test.logging</id>
-                <versionRange>0.0.0</versionRange>
-              </requirement>
-              <requirement>
-                <type>eclipse-plugin</type>
-                <id>org.eclipse.persistence.oracle</id>
                 <versionRange>0.0.0</versionRange>
               </requirement>
               <requirement>

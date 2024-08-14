@@ -13,43 +13,53 @@ import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.view.AgendaView;
-import ch.elexis.core.model.IPeriod;
+import ch.elexis.core.model.IAppointment;
 
-public class MoveHandler {
+public class CopyHandler {
 
 	@Inject
 	private ESelectionService selectionService;
 
+	private static Optional<IAppointment> copiedAppointment = Optional.empty();
+
 	@Execute
 	public Object execute(MPart part) {
-		Optional<IPeriod> period = getSelectedPeriod();
+		Optional<IAppointment> appointment = getSelectedAppointment();
 
-		period.ifPresent(p -> {
+		appointment.ifPresent(appt -> {
 			SideBarComposite sideBar = null;
 			if (part.getObject() instanceof AgendaView) {
 				AgendaView view = (AgendaView) part.getObject();
 				sideBar = view.getParallelSideBarComposite();
 			}
 			if (sideBar != null) {
-				CopyHandler.clearCopiedAppointment();
-				sideBar.addMovePeriod(p);
+				sideBar.addcopyAppointment(appt);
 			}
+			copiedAppointment = Optional.of(appt);
 		});
 		return null;
 	}
 
-	private Optional<IPeriod> getSelectedPeriod() {
+	private Optional<IAppointment> getSelectedAppointment() {
 		try {
 			ISelection activeSelection = (ISelection) selectionService.getSelection();
 			if (activeSelection instanceof StructuredSelection && !((StructuredSelection) activeSelection).isEmpty()) {
 				Object element = ((StructuredSelection) activeSelection).getFirstElement();
-				if (element instanceof IPeriod) {
-					return Optional.of((IPeriod) element);
+				if (element instanceof IAppointment) {
+					return Optional.of((IAppointment) element);
 				}
 			}
 		} catch (Exception e) {
-			LoggerFactory.getLogger(getClass()).error("Error setting status", e); //$NON-NLS-1$
+			LoggerFactory.getLogger(getClass()).error("Error copying appointment", e); //$NON-NLS-1$
 		}
 		return Optional.empty();
+	}
+
+	public static Optional<IAppointment> getCopiedAppointment() {
+		return copiedAppointment;
+	}
+
+	public static void clearCopiedAppointment() {
+		copiedAppointment = Optional.empty();
 	}
 }

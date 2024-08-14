@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import at.medevit.elexis.agenda.ui.composite.IAgendaComposite.AgendaSpanSize;
 import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
 import at.medevit.elexis.agenda.ui.function.LoadEventTimeSpan;
+import at.medevit.elexis.agenda.ui.handler.CopyHandler;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IDayMessage;
@@ -84,6 +85,7 @@ public class SideBarComposite extends Composite {
 
 	private TableViewer moveTable;
 	private List<IPeriod> movePeriods;
+	private List<IAppointment> copyAppontment;
 
 	private MoveInformation currentMoveInformation;
 
@@ -319,6 +321,7 @@ public class SideBarComposite extends Composite {
 			gd.widthHint = 150;
 			moveTable.getTable().setLayoutData(gd);
 			movePeriods = new ArrayList<>();
+			copyAppontment = new ArrayList<>();
 		}
 
 		hideContent();
@@ -501,10 +504,21 @@ public class SideBarComposite extends Composite {
 		}
 	}
 
+	public void addcopyAppointment(IAppointment appointment) {
+		if (moveTable != null && !moveTable.getTable().isDisposed()) {
+			copyAppontment.clear();
+			if (!copyAppontment.contains(appointment)) {
+				copyAppontment.add(appointment);
+			}
+			moveTable.setInput(copyAppontment);
+		}
+	}
+
 	public void removeMovePeriod(IPeriod period) {
 		if (moveTable != null && !moveTable.getTable().isDisposed()) {
-			movePeriods.remove(period);
+			movePeriods.clear();
 			moveTable.setInput(movePeriods);
+			copyAppontment.clear();
 		}
 	}
 
@@ -513,6 +527,13 @@ public class SideBarComposite extends Composite {
 			currentMoveInformation.setMoveablePeriods(movePeriods);
 		}
 		return java.util.Optional.ofNullable(currentMoveInformation);
+	}
+
+	public List<IAppointment> getCopyInformation() {
+		if (copyAppontment != null && !copyAppontment.isEmpty()) {
+			return copyAppontment;
+		}
+		return null;
 	}
 
 	public void setMoveInformation(LocalDateTime date, String resource) {
@@ -540,6 +561,13 @@ public class SideBarComposite extends Composite {
 			return moveablePeriods;
 		}
 
+		public LocalDateTime getDateTime() {
+			return dateTime;
+		}
+
+		public String getResource() {
+			return resource;
+		}
 		public void movePeriod(IPeriod iPeriod) {
 			AcquireLockBlockingUi.aquireAndRun(iPeriod, new ILockHandler() {
 				@Override

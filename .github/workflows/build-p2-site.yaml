@@ -7,8 +7,6 @@ env:
 
 on:
   push:
-     branches:
-        - 3.13
   workflow_dispatch:
 
 jobs:
@@ -29,6 +27,7 @@ jobs:
     - name: Trigger elexis-3-server Workflow
       run: |
         curl -X POST \
+        --fail \
         -H "Accept: application/vnd.github.v3+json" \
         -H "Authorization: token ${{ secrets.TRIGGER_WORKFLOW_TOKEN }}" \
         https://api.github.com/repos/elexis/elexis-3-server/actions/workflows/build-p2-site.yaml/dispatches \

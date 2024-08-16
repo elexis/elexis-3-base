@@ -16,6 +16,7 @@ Export-Package: ch.unibe.iam.scg.archie.annotations,
 Import-Package: javax.inject
 Bundle-Vendor: designchuchi.ch
 Require-Bundle: ch.elexis.core.l10n,
+ ch.elexis.core.ui.icons,
  ch.elexis.core.data;bundle-version="3.9.0",
  ch.elexis.core.ui;bundle-version="3.9.0",
  org.junit;bundle-version="4.13.0",

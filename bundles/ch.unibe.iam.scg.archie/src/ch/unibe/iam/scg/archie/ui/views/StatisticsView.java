@@ -15,7 +15,6 @@ package ch.unibe.iam.scg.archie.ui.views;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -26,9 +25,6 @@ import ch.elexis.core.model.IUser;
 import ch.unibe.iam.scg.archie.ArchieActivator;
 import ch.unibe.iam.scg.archie.Messages;
 import ch.unibe.iam.scg.archie.acl.ArchieACL;
-import ch.unibe.iam.scg.archie.actions.ChartWizardAction;
-import ch.unibe.iam.scg.archie.actions.ExportAction;
-import ch.unibe.iam.scg.archie.actions.ExportPdfAction;
 import ch.unibe.iam.scg.archie.ui.GraphicalMessage;
 import ch.unibe.iam.scg.archie.ui.ResultPanel;
 
@@ -57,12 +53,6 @@ public class StatisticsView extends ViewPart {
 
 	private GraphicalMessage message;
 
-	private ExportAction exportAction;
-
-	private ExportPdfAction exportPdfAction;
-
-	private ChartWizardAction chartWizardAction;
-
 	@Inject
 	void activeUser(@Optional IUser user) {
 		Display.getDefault().asyncExec(() -> {
@@ -85,9 +75,6 @@ public class StatisticsView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		this.container = parent;
-
-		// add and contribute actions for this view
-		this.addActions();
 
 		// initialize view contents
 		this.initialize();
@@ -119,25 +106,10 @@ public class StatisticsView extends ViewPart {
 		} else {
 			this.message = new GraphicalMessage(this.container, ArchieActivator.getImage(ArchieActivator.IMG_ERROR),
 					Messages.ACL_ACCESS_DENIED);
-			this.setActionsEnabled(false);
 		}
 
 		// layout container
 		this.container.layout();
-	}
-
-	/**
-	 * Add actions to this view.
-	 */
-	private void addActions() {
-		this.exportAction = new ExportAction(this);
-		this.exportPdfAction = new ExportPdfAction(this);
-		this.chartWizardAction = new ChartWizardAction();
-
-		IToolBarManager manager = this.getViewSite().getActionBars().getToolBarManager();
-		manager.add(this.exportAction);
-		manager.add(this.exportPdfAction);
-		manager.add(this.chartWizardAction);
 	}
 
 	/**
@@ -195,17 +167,4 @@ public class StatisticsView extends ViewPart {
 	public ResultPanel getResultPanel() {
 		return this.resultPanel;
 	}
-
-	/**
-	 * Sets the enabled state for actions in this view.
-	 *
-	 * @param enabled True if actions should be enabled, false for disabled.
-	 * @see String org.eclipse.jface.action.IAction.ENABLED
-	 */
-	public void setActionsEnabled(boolean enabled) {
-		this.exportAction.setEnabled(enabled);
-		this.exportPdfAction.setEnabled(enabled);
-		this.chartWizardAction.setEnabled(enabled);
-	}
-
 }

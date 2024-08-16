@@ -9,10 +9,10 @@ Import-Package: ch.elexis.core.tasks.model,
 Require-Bundle: javax.inject,
  ch.elexis.core,
  at.medevit.elexis.inbox,
- ch.elexis.core.ui;bundle-version="3.12.0",
+ ch.elexis.core.ui;bundle-version="3.13.0",
  ch.elexis.core.ui.tasks
 Service-Component: OSGI-INF/ch.elexis.global_inbox.core.handler.IdentifiedRunnableFactoryImpl.xml,
  OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover.xml
 Automatic-Module-Name: ch.elexis.global.inbox.core
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21

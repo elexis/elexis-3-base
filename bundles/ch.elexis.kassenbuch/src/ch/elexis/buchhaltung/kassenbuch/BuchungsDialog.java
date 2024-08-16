@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
@@ -32,13 +33,12 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 public class BuchungsDialog extends TitleAreaDialog {
-
 	boolean bType;
 	LabeledInputField liBeleg, liBetrag;
 	CDateTime liDate;
 	Label dDate;
 	Text text;
-	KassenbuchEintrag last, act;
+	KassenbuchEintrag act, lastNr;
 	Combo cbDate, cbCats, cbPayments;
 
 	BuchungsDialog(Shell shell, boolean mode) {
@@ -87,8 +87,8 @@ public class BuchungsDialog extends TitleAreaDialog {
 		text = new Text(ret, SWT.BORDER);
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		if (act == null) {
-			last = KassenbuchEintrag.recalc();
-			liBeleg.setText(KassenbuchEintrag.nextNr(last));
+			lastNr = KassenbuchEintrag.lastNr();
+			liBeleg.setText(KassenbuchEintrag.nextNr(lastNr));
 		} else {
 			liBeleg.setText(act.getBelegNr());
 			liDate.setSelection(new TimeTool(act.getDate()).getTime());
@@ -132,7 +132,7 @@ public class BuchungsDialog extends TitleAreaDialog {
 			if (!bType) {
 				money = money.negate();
 			}
-			act = new KassenbuchEintrag(liBeleg.getText(), tt.toString(TimeTool.DATE_GER), money, bt, last);
+			act = new KassenbuchEintrag(liBeleg.getText(), tt.toString(TimeTool.DATE_GER), money, bt, lastNr);
 		} else {
 			act.set(new String[] { "BelegNr", "Datum", "Betrag", "Text" }, liBeleg.getText(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					tt.toString(TimeTool.DATE_GER), money.getCentsAsString(), text.getText());

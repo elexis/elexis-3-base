@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Plugin zur Anzeige von Bildern in Konsultationen
 Bundle-SymbolicName: ch.elexis.base.konsextension.bildanzeige;singleton:=true
-Bundle-Version: 3.12.0.qualifier
+Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis.core.l10n,
@@ -14,6 +14,6 @@ Require-Bundle: ch.elexis.core.l10n,
  org.eclipse.jface,
  ch.rgw.utility
 Created-By: Buildr
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: org.jdom2;version="2.0.6"
 

@@ -12,6 +12,8 @@
 package ch.elexis.buchhaltung.kassenbuch;
 
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -190,6 +192,23 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 			ret = kb;
 		}
 		return ret;
+	}
+
+	public static KassenbuchEintrag lastNr() {
+		try {
+			Query<KassenbuchEintrag> qbe = new Query<>(KassenbuchEintrag.class);
+			qbe.add("BelegNr", "<>", "-"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			qbe.orderBy(true, "BelegNr");
+			List<KassenbuchEintrag> result = qbe.execute();
+			if (result.isEmpty()) {
+				return null;
+			} else {
+				return result.get(0); // the first result will be the one with the highest BelegNr
+			}
+		} catch (Throwable t) {
+			ExHandler.handle(t);
+			return null;
+		}
 	}
 
 	/**

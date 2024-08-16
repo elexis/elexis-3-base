@@ -13,9 +13,6 @@ import ch.elexis.core.model.tasks.IIdentifiedRunnableFactory;
 import ch.elexis.core.services.IAccessControlService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IVirtualFilesystemService;
-import ch.elexis.core.tasks.internal.runnables.DeleteFileIdentifiedRunnable;
-import ch.elexis.core.tasks.internal.runnables.LogResultContextIdentifiedRunnable;
-import ch.elexis.core.tasks.internal.runnables.RemoveTaskLogEntriesRunnable;
 import ch.elexis.core.tasks.model.ITaskService;
 import ch.elexis.global_inbox.core.handler.MoveFileIdentifiedRunnable;
 

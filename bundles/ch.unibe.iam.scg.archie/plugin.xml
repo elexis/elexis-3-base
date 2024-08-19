@@ -146,7 +146,7 @@
       </command>
       <command
             description="Export Menu"
-            id="ch.unibe.iam.scg.archie.exportMenuuuu"
+            id="ch.unibe.iam.scg.archie.exportMenu"
             name="Export Menu">
       </command>
       <command

@@ -14,6 +14,7 @@ public class Messages {
 	public static String ACL_ACCESS_DENIED = ch.elexis.core.l10n.Messages.ACL_ACCESS_DENIED;
 	public static String ACTION_EXPORT_DESCRIPTION = ch.elexis.core.l10n.Messages.ACTION_EXPORT_DESCRIPTION;
 	public static String ACTION_EXPORT_TITLE = ch.elexis.core.l10n.Messages.ACTION_EXPORT_TITLE;
+	public static String ACTION_EXPORT_SUCCESS = ch.elexis.core.l10n.Messages.ACTION_EXPORT_SUCCESS;
 	public static String ACTION_NEWSTAT_DESCRIPTION = ch.elexis.core.l10n.Messages.ACTION_NEWSTAT_DESCRIPTION;
 	public static String ACTION_NEWSTAT_ERROR_COULDNT_INIT_VIEW = ch.elexis.core.l10n.Messages.ACTION_NEWSTAT_ERROR_COULDNT_INIT_VIEW;
 	public static String ACTION_NEWSTAT_ERROR_COULDNT_UPDATE_PROVIDER = ch.elexis.core.l10n.Messages.ACTION_NEWSTAT_ERROR_COULDNT_UPDATE_PROVIDER;
@@ -59,8 +60,10 @@ public class Messages {
 	public static String ERROR_DATE_DIFFERENCE = ch.elexis.core.l10n.Messages.ERROR_DATE_DIFFERENCE;
 	public static String ERROR_DATE_FORMAT = ch.elexis.core.l10n.Messages.ERROR_DATE_FORMAT;
 	public static String ERROR_END_DATE_VALID = ch.elexis.core.l10n.Messages.ERROR_END_DATE_VALID;
+	public static String ERROR_EXPORT_DATA_NOT_EXIST = ch.elexis.core.l10n.Messages.ERROR_EXPORT_DATA_NOT_EXIST;
 	public static String ERROR_FIELDS_NOT_VALID = ch.elexis.core.l10n.Messages.ERROR_FIELDS_NOT_VALID;
 	public static String ERROR_FIELDS_NOT_VALID_TITLE = ch.elexis.core.l10n.Messages.ERROR_FIELDS_NOT_VALID_TITLE;
+	public static String ERROR_SELECT_DATA = ch.elexis.core.l10n.Messages.ERROR_SELECT_DATA;
 	public static String ERROR_SET_END_DATE = ch.elexis.core.l10n.Messages.ERROR_SET_END_DATE;
 	public static String ERROR_SET_START_DATE = ch.elexis.core.l10n.Messages.ERROR_SET_START_DATE;
 	public static String ERROR_START_DATE_VALID = ch.elexis.core.l10n.Messages.ERROR_START_DATE_VALID;

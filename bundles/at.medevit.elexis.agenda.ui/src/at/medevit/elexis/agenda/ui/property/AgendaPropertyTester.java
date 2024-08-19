@@ -1,5 +1,6 @@
 package at.medevit.elexis.agenda.ui.property;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -10,6 +11,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite.MoveInformation;
 import at.medevit.elexis.agenda.ui.function.AbstractBrowserFunction;
+import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 
 public class AgendaPropertyTester extends PropertyTester {
@@ -29,8 +31,12 @@ public class AgendaPropertyTester extends PropertyTester {
 						.getActiveSideBar(partService.getActivePart());
 				if (activeSideBar.isPresent()) {
 					Optional<MoveInformation> moveInformation = activeSideBar.get().getMoveInformation();
-					if (moveInformation.isPresent()) {
-						return !moveInformation.get().getMoveablePeriods().isEmpty();
+					List<IAppointment> copyInformation = activeSideBar.get().getCopyInformation();
+					if (moveInformation.isPresent() && !moveInformation.get().getMoveablePeriods().isEmpty()) {
+						return true;
+					}
+					if (!copyInformation.isEmpty()) {
+						return true;
 					}
 				}
 			} catch (IllegalStateException ise) {

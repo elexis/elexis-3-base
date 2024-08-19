@@ -131,7 +131,6 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 
 			// clean view
 			this.view.clean();
-			this.view.setActionsEnabled(false);
 			this.setEnabled(false);
 
 			// add provider information
@@ -209,7 +208,6 @@ public class NewStatisticsAction extends Action implements IJobChangeListener, O
 					results.layout();
 
 					// enable all actions back again
-					NewStatisticsAction.this.view.setActionsEnabled(true);
 					NewStatisticsAction.this.setEnabled(true);
 
 					// delegate property change event

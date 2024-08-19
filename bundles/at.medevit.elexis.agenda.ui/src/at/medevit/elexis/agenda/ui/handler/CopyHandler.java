@@ -20,7 +20,7 @@ public class CopyHandler {
 	@Inject
 	private ESelectionService selectionService;
 
-	private static Optional<IAppointment> copiedAppointment = Optional.empty();
+	private static Optional<IAppointment> copyAppontment = Optional.empty();
 
 	@Execute
 	public Object execute(MPart part) {
@@ -35,7 +35,7 @@ public class CopyHandler {
 			if (sideBar != null) {
 				sideBar.addcopyAppointment(appt);
 			}
-			copiedAppointment = Optional.of(appt);
+			copyAppontment = Optional.of(appt);
 		});
 		return null;
 	}
@@ -56,10 +56,10 @@ public class CopyHandler {
 	}
 
 	public static Optional<IAppointment> getCopiedAppointment() {
-		return copiedAppointment;
+		return copyAppontment;
 	}
 
 	public static void clearCopiedAppointment() {
-		copiedAppointment = Optional.empty();
+		copyAppontment = Optional.empty();
 	}
 }

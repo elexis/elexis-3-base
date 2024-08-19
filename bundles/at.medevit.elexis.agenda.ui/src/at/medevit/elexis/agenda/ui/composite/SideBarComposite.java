@@ -516,9 +516,9 @@ public class SideBarComposite extends Composite {
 
 	public void removeMovePeriod(IPeriod period) {
 		if (moveTable != null && !moveTable.getTable().isDisposed()) {
-			movePeriods.clear();
+			movePeriods.remove(period);
 			moveTable.setInput(movePeriods);
-			copyAppontment.clear();
+			copyAppontment.remove(period);
 		}
 	}
 

@@ -31,16 +31,16 @@ public class InsertHandler {
 	public Object execute(MPart part) {
 		Optional<SideBarComposite> activeSideBar = AbstractBrowserFunction.getActiveSideBar(part);
 		activeSideBar.ifPresent(sideBar -> {
-			Optional<IAppointment> copiedAppointment = CopyHandler.getCopiedAppointment();
-			if (copiedAppointment.isPresent()) {
+			Optional<IAppointment> copyAppointment = CopyHandler.getCopiedAppointment();
+			if (copyAppointment.isPresent()) {
 				Optional<SideBarComposite.MoveInformation> moveInfoOpt = sideBar.getMoveInformation();
 				if (moveInfoOpt.isPresent()) {
 					SideBarComposite.MoveInformation moveInfo = moveInfoOpt.get();
 					LocalDateTime targetTime = moveInfo.getDateTime();
 					String targetResource = moveInfo.getResource();
-					IAppointment newAppointment = cloneAndModifyAppointment(copiedAppointment.get(), targetTime,
+					cloneAndModifyAppointment(copyAppointment.get(), targetTime,
 							targetResource, sideBar);
-					sideBar.removeMovePeriod(newAppointment);
+					sideBar.removeMovePeriod(copyAppointment.get());
 					CopyHandler.clearCopiedAppointment();
 				} else {
 					LoggerFactory.getLogger(getClass()).info("Fehler: Keine MoveInformation vorhanden");

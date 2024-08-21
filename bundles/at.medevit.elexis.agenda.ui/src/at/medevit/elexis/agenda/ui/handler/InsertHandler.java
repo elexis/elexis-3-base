@@ -24,6 +24,7 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 public class InsertHandler {
@@ -84,6 +85,7 @@ public class InsertHandler {
 				}
 				newMainAppointmentWithLinks.setExtension(newMainExtension.toString());
 				CoreModelServiceHolder.get().save(newMainAppointmentWithLinks);
+
 				break;
 			case CANCEL:
 			default:
@@ -94,6 +96,7 @@ public class InsertHandler {
 		} else {
 			LoggerFactory.getLogger(getClass()).info("Fehler: Keine MoveInformation vorhanden");
 		}
+
 	}
 
 	private void handleMoveInformation(SideBarComposite.MoveInformation moveInformation) {
@@ -137,13 +140,16 @@ public class InsertHandler {
 			LocalDateTime oldLinkedTime = linkedAppointment.getStartTime();
 			LocalDateTime newLinkedTime = oldLinkedTime.plusMinutes(minutesDifference);
 			moveLinkedAppointment(linkedAppointment, newLinkedTime);
+			ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, linkedAppointment);
 		}
+		eventBroker.post(ElexisEventTopics.EVENT_UPDATE, linkedAppointments.get(0));
 	}
 
 	private void moveLinkedAppointment(IAppointment appointment, LocalDateTime newStartTime) {
 		appointment.setStartTime(newStartTime);
 		appointment.setEndTime(newStartTime.plusMinutes(appointment.getDurationMinutes()));
 		CoreModelServiceHolder.get().save(appointment);
+		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, appointment);
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 	}
 
@@ -163,8 +169,9 @@ public class InsertHandler {
 		clonedAppointment.setSchedule(newResource);
 		clonedAppointment.setReason(originalAppointment.getReason());
 		CoreModelServiceHolder.get().save(clonedAppointment);
+		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, clonedAppointment);
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
-		eventBroker.post(ElexisEventTopics.EVENT_UPDATE, clonedAppointment);
+
 		return clonedAppointment;
 	}
 }

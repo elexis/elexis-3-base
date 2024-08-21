@@ -56,6 +56,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 					if (!newResource.isEmpty()) {
 						termin.setSchedule(newResource);
 					}
+
 					if (isMainAppointment) {
 						List<IAppointment> linkedAppointments = AppointmentLoader.findLinkedAppointments(termin);
 						MoveActionType moveAction = AppointmentLinkOptionsDialog
@@ -66,20 +67,9 @@ public class EventDropFunction extends AbstractBrowserFunction {
 							break;
 						case MOVE_ALL:
 							long minutesDifference = java.time.Duration.between(oldMainTime, newMainTime).toMinutes();
-							StringBuilder newMainExtension = new StringBuilder("Main:" + termin.getId());
-							for (IAppointment linkedAppointment : linkedAppointments) {
-								LocalDateTime oldLinkedTime = linkedAppointment.getStartTime();
-								LocalDateTime newLinkedTime = oldLinkedTime.plusMinutes(minutesDifference);
-								linkedAppointment.setStartTime(newLinkedTime);
-								linkedAppointment
-										.setEndTime(newLinkedTime.plusMinutes(linkedAppointment.getDurationMinutes()));
-								linkedAppointment.setSchedule(linkedAppointment.getSchedule());
-								newMainExtension.append(",Kombi:").append(linkedAppointment.getId());
-								linkedAppointment.setExtension(newMainExtension.toString());
-								lockAndSaveAppointment(linkedAppointment);
-							}
-
-							termin.setExtension(newMainExtension.toString());
+							String newMainExtension = updateExtensionWithMainAndKombi(termin, linkedAppointments,
+									minutesDifference);
+							termin.setExtension(newMainExtension);
 							lockAndSaveAppointment(termin);
 							break;
 						case CANCEL:
@@ -89,6 +79,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 					} else {
 						lockAndSaveAppointment(termin);
 					}
+
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, termin);
 					redraw();
@@ -100,10 +91,39 @@ public class EventDropFunction extends AbstractBrowserFunction {
 		return null;
 	}
 
+	private String updateExtensionWithMainAndKombi(IAppointment termin, List<IAppointment> linkedAppointments,
+			long minutesDifference) {
+		StringBuilder extensionBuilder = new StringBuilder();
+		String currentExtension = termin.getExtension();
+		if (currentExtension != null) {
+
+			String[] parts = currentExtension.split("\\|\\|");
+			for (String part : parts) {
+				if (!part.startsWith("Main:") && !part.startsWith("Kombi:")) {
+					extensionBuilder.append(part).append("||");
+				}
+			}
+		}
+
+		extensionBuilder.append("Main:").append(termin.getId());
+		for (IAppointment linkedAppointment : linkedAppointments) {
+			LocalDateTime oldLinkedTime = linkedAppointment.getStartTime();
+			LocalDateTime newLinkedTime = oldLinkedTime.plusMinutes(minutesDifference);
+			linkedAppointment.setStartTime(newLinkedTime);
+			linkedAppointment.setEndTime(newLinkedTime.plusMinutes(linkedAppointment.getDurationMinutes()));
+			linkedAppointment.setSchedule(linkedAppointment.getSchedule());
+			extensionBuilder.append(",Kombi:").append(linkedAppointment.getId());
+			lockAndSaveAppointment(linkedAppointment);
+		}
+		return extensionBuilder.toString();
+	}
+
 	private void lockAndSaveAppointment(IAppointment appointment) {
 		if (LocalLockServiceHolder.get().acquireLock(appointment).isOk()) {
 			try {
 				CoreModelServiceHolder.get().save(appointment);
+				// Ensure that the update event is sent after saving the appointment
+				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, appointment);
 			} finally {
 				LocalLockServiceHolder.get().releaseLock(appointment);
 			}
@@ -111,5 +131,6 @@ public class EventDropFunction extends AbstractBrowserFunction {
 			LoggerFactory.getLogger(getClass()).warn("Failed to acquire lock for appointment: " + appointment.getId());
 		}
 	}
+
 }
 

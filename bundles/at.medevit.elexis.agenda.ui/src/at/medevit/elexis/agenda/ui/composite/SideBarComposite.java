@@ -516,9 +516,9 @@ public class SideBarComposite extends Composite {
 
 	public void removeMovePeriod(IPeriod period) {
 		if (moveTable != null && !moveTable.getTable().isDisposed()) {
-			movePeriods.remove(period);
+			movePeriods.clear();
 			moveTable.setInput(movePeriods);
-			copyAppontment.remove(period);
+			copyAppontment.clear();
 		}
 	}
 
@@ -568,6 +568,7 @@ public class SideBarComposite extends Composite {
 		public String getResource() {
 			return resource;
 		}
+
 		public void movePeriod(IPeriod iPeriod) {
 			AcquireLockBlockingUi.aquireAndRun(iPeriod, new ILockHandler() {
 				@Override

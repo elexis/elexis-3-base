@@ -69,6 +69,12 @@
             class="ch.elexis.agenda.preferences.AgendaAnzeige"
             id="ch.elexis.agenda.anzeige"
             name="%Ansicht"/>
+      <page
+            category="ch.elexis.Agendaprefs"
+            class="ch.elexis.agenda.preferences.CombinedAppointments"
+            id="ch.agendaprefs.kombi"
+            name="%Kombi">
+      </page>
       </extension>
       <extension
             point="org.eclipse.ui.commands">

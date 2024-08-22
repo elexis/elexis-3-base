@@ -20,6 +20,7 @@ import java.util.TreeSet;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
@@ -196,7 +197,8 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 
 	public static KassenbuchEintrag lastNr() {
 		try {
-			Query<KassenbuchEintrag> qbe = new Query<>(KassenbuchEintrag.class);
+			Query<KassenbuchEintrag> qbe = new Query<>(KassenbuchEintrag.class, null, null, KassenbuchEintrag.TABLENAME,
+					new String[] { "BelegNr" });
 			qbe.add("BelegNr", "<>", "-");
 			List<KassenbuchEintrag> result = qbe.execute();
 			if (result.isEmpty()) {
@@ -233,7 +235,8 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 	 */
 	public static SortedSet<KassenbuchEintrag> getBookings(TimeTool from, TimeTool until) {
 		try {
-			Query<KassenbuchEintrag> qbe = new Query<KassenbuchEintrag>(KassenbuchEintrag.class);
+			Query<KassenbuchEintrag> qbe = new Query<>(KassenbuchEintrag.class, null, null, KassenbuchEintrag.TABLENAME,
+					new String[] { "Betrag" });
 			qbe.add("BelegNr", "<>", "-"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (from != null) {
 				qbe.add("Datum", ">=", from.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$

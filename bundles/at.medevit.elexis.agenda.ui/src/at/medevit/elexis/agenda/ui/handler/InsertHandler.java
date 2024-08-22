@@ -167,11 +167,6 @@ public class InsertHandler {
 			String newResource, SideBarComposite sideBar) {
 		IAppointmentService appointmentService = AppointmentServiceHolder.get();
 		IAppointment clonedAppointment = appointmentService.clone(originalAppointment);
-		if (originalAppointment.getContact() != null && originalAppointment.getContact().getId() != null) {
-			clonedAppointment.setSubjectOrPatient(originalAppointment.getContact().getId());
-		} else {
-			clonedAppointment.setSubjectOrPatient(originalAppointment.getSubjectOrPatient());
-		}
 		clonedAppointment.setCreatedBy(originalAppointment.getCreatedBy());
 		clonedAppointment.setCreated(originalAppointment.getCreated());
 		clonedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());

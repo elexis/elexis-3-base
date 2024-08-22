@@ -197,18 +197,33 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 	public static KassenbuchEintrag lastNr() {
 		try {
 			Query<KassenbuchEintrag> qbe = new Query<>(KassenbuchEintrag.class);
-			qbe.add("BelegNr", "<>", "-"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			qbe.orderBy(true, "BelegNr");
+			qbe.add("BelegNr", "<>", "-");
 			List<KassenbuchEintrag> result = qbe.execute();
 			if (result.isEmpty()) {
 				return null;
 			} else {
-				return result.get(0); // the first result will be the one with the highest BelegNr
+				result.sort((a, b) -> compareBelegNr(a.getBelegNr(), b.getBelegNr()));
+				return result.get(0);
 			}
 		} catch (Throwable t) {
 			ExHandler.handle(t);
 			return null;
 		}
+	}
+
+	private static int compareBelegNr(String belegNr1, String belegNr2) {
+		String[] parts1 = belegNr1.split("\\D+", 2);
+		String[] parts2 = belegNr2.split("\\D+", 2);
+		int num1 = parts1.length > 0 && parts1[0].matches("\\d+") ? Integer.parseInt(parts1[0]) : 0;
+		int num2 = parts2.length > 0 && parts2[0].matches("\\d+") ? Integer.parseInt(parts2[0]) : 0;
+		int numComparison = Integer.compare(num2, num1);
+		if (numComparison != 0) {
+			return numComparison;
+		}
+		String textPart1 = belegNr1.replaceFirst("^\\d+", "");
+		String textPart2 = belegNr2.replaceFirst("^\\d+", "");
+
+		return textPart1.compareTo(textPart2);
 	}
 
 	/**

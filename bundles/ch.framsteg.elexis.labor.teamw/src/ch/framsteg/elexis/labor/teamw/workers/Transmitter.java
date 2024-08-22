@@ -26,6 +26,7 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -41,6 +42,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -63,6 +66,8 @@ public class Transmitter {
 	private String name;
 	private String prename;
 
+	Logger logger = LoggerFactory.getLogger(Transmitter.class);
+
 	public Transmitter(Properties applicationProperties, Properties teamwProperties, Properties messagesProperties,
 			String name, String prename) {
 		setApplicationProperties(applicationProperties);
@@ -73,7 +78,15 @@ public class Transmitter {
 	}
 
 	public int transmit(String message) throws ClientProtocolException, IOException, ParserConfigurationException,
-			UnsupportedOperationException, SAXException, URISyntaxException {
+			UnsupportedOperationException, SAXException, URISyntaxException, TransformerException, PartInitException {
+
+		logger.info("==============================================================");
+		logger.info("SENDING REQUEST");
+
+		Anonymizer anonymizer = new Anonymizer();
+		String anonymizedMessage = anonymizer.anonymize(message);
+		Printer printer = new Printer();
+		printer.print(anonymizedMessage);
 
 		HttpClient httpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
 		StringEntity strEntity = new StringEntity(message, ContentType.APPLICATION_SOAP_XML);
@@ -86,9 +99,7 @@ public class Transmitter {
 		int httpStatus = 0;
 
 		response = httpClient.execute(post);
-
 		httpStatus = response.getStatusLine().getStatusCode();
-
 		HttpEntity respEntity = response.getEntity();
 
 		if (respEntity != null) {
@@ -96,35 +107,54 @@ public class Transmitter {
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(respEntity.getContent());
-			NodeList nameNodesList = doc.getElementsByTagName("url");
-			ArrayList<String> nameValues = new ArrayList<String>();
-			for (int i = 0; i < nameNodesList.getLength(); i++) {
-				nameValues.add(nameNodesList.item(i).getTextContent());
-			}
-			if (getApplicationProperties().getProperty(INTERNAL_BROWSER).equalsIgnoreCase("false")) {
-				Desktop.getDesktop().browse(new URL(nameValues.get(0)).toURI());
-			} else if (getApplicationProperties().getProperty(INTERNAL_BROWSER).equalsIgnoreCase("true")) {
+
+			logger.info("==============================================================");
+			logger.info("RECEIVING RESPONSE");
+			printer.print(doc);
+
+			ResponseAnalyzer responseAnalyzer = new ResponseAnalyzer(doc);
+			if (responseAnalyzer.isResponseValid()) {
+				URL url = new URL(responseAnalyzer.getResult());
 				IWorkbenchBrowserSupport service = (IWorkbenchBrowserSupport) PlatformUI.getWorkbench()
 						.getBrowserSupport();
-				try {
-					URL url = new URL(nameValues.get(0));
-					service.createBrowser(IWorkbenchBrowserSupport.AS_VIEW, null,
-							MessageFormat.format(getMessagesProperties().getProperty(LAB_ORDER_PERSONALIZED),
-									getName() + ", " + getPrename()),
-							getMessagesProperties().getProperty(HINT)).openURL(url);
-				} catch (PartInitException e) {
-
-					e.printStackTrace();
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
+				service.createBrowser(IWorkbenchBrowserSupport.AS_VIEW, null,
+						MessageFormat.format(getMessagesProperties().getProperty(LAB_ORDER_PERSONALIZED),
+								getName() + ", " + getPrename()),
+						getMessagesProperties().getProperty(HINT)).openURL(url);
 			} else {
+				String error = responseAnalyzer.getResult();
 				MessageDialog.openInformation(Display.getDefault().getActiveShell(),
-						getMessagesProperties().getProperty(ERROR_TITLE),
-						MessageFormat.format(getMessagesProperties().getProperty(WRONG_BROWSER_CONFIGURATION),
-								getApplicationProperties().getProperty(INTERNAL_BROWSER)));
+						getMessagesProperties().getProperty(ERROR_TITLE), error);
+				httpStatus = 403;
 			}
 
+			/**
+			 * NodeList nameNodesList = doc.getElementsByTagName("url"); ArrayList<String>
+			 * nameValues = new ArrayList<String>(); for (int i = 0; i <
+			 * nameNodesList.getLength(); i++) {
+			 * nameValues.add(nameNodesList.item(i).getTextContent()); } if
+			 * (getApplicationProperties().getProperty(INTERNAL_BROWSER).equalsIgnoreCase("false"))
+			 * { Desktop.getDesktop().browse(new URL(nameValues.get(0)).toURI()); } else if
+			 * (getApplicationProperties().getProperty(INTERNAL_BROWSER).equalsIgnoreCase("true"))
+			 * { IWorkbenchBrowserSupport service = (IWorkbenchBrowserSupport)
+			 * PlatformUI.getWorkbench() .getBrowserSupport(); try { URL url = new
+			 * URL(nameValues.get(0));
+			 * service.createBrowser(IWorkbenchBrowserSupport.AS_VIEW, null,
+			 * MessageFormat.format(getMessagesProperties().getProperty(LAB_ORDER_PERSONALIZED),
+			 * getName() + ", " + getPrename()),
+			 * getMessagesProperties().getProperty(HINT)).openURL(url); } catch
+			 * (PartInitException e) {
+			 * 
+			 * e.printStackTrace(); } catch (MalformedURLException e) { e.printStackTrace();
+			 * } } else {
+			 * MessageDialog.openInformation(Display.getDefault().getActiveShell(),
+			 * getMessagesProperties().getProperty(ERROR_TITLE),
+			 * MessageFormat.format(getMessagesProperties().getProperty(WRONG_BROWSER_CONFIGURATION),
+			 * getApplicationProperties().getProperty(INTERNAL_BROWSER))); }
+			 */
+
+		} else {
+			httpStatus = 403;
 		}
 		return httpStatus;
 	}

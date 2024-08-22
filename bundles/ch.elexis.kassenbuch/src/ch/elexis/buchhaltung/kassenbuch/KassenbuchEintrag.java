@@ -20,6 +20,7 @@ import java.util.TreeSet;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
@@ -196,19 +197,35 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 
 	public static KassenbuchEintrag lastNr() {
 		try {
-			Query<KassenbuchEintrag> qbe = new Query<>(KassenbuchEintrag.class);
-			qbe.add("BelegNr", "<>", "-"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			qbe.orderBy(true, "BelegNr");
+			Query<KassenbuchEintrag> qbe = new Query<>(KassenbuchEintrag.class, null, null, KassenbuchEintrag.TABLENAME,
+					new String[] { "BelegNr" });
+			qbe.add("BelegNr", "<>", "-");
 			List<KassenbuchEintrag> result = qbe.execute();
 			if (result.isEmpty()) {
 				return null;
 			} else {
-				return result.get(0); // the first result will be the one with the highest BelegNr
+				result.sort((a, b) -> compareBelegNr(a.getBelegNr(), b.getBelegNr()));
+				return result.get(0);
 			}
 		} catch (Throwable t) {
 			ExHandler.handle(t);
 			return null;
 		}
+	}
+
+	private static int compareBelegNr(String belegNr1, String belegNr2) {
+		String[] parts1 = belegNr1.split("\\D+", 2);
+		String[] parts2 = belegNr2.split("\\D+", 2);
+		int num1 = parts1.length > 0 && parts1[0].matches("\\d+") ? Integer.parseInt(parts1[0]) : 0;
+		int num2 = parts2.length > 0 && parts2[0].matches("\\d+") ? Integer.parseInt(parts2[0]) : 0;
+		int numComparison = Integer.compare(num2, num1);
+		if (numComparison != 0) {
+			return numComparison;
+		}
+		String textPart1 = belegNr1.replaceFirst("^\\d+", "");
+		String textPart2 = belegNr2.replaceFirst("^\\d+", "");
+
+		return textPart1.compareTo(textPart2);
 	}
 
 	/**
@@ -218,7 +235,8 @@ public class KassenbuchEintrag extends PersistentObject implements Comparable<Ka
 	 */
 	public static SortedSet<KassenbuchEintrag> getBookings(TimeTool from, TimeTool until) {
 		try {
-			Query<KassenbuchEintrag> qbe = new Query<KassenbuchEintrag>(KassenbuchEintrag.class);
+			Query<KassenbuchEintrag> qbe = new Query<>(KassenbuchEintrag.class, null, null, KassenbuchEintrag.TABLENAME,
+					new String[] { "Betrag" });
 			qbe.add("BelegNr", "<>", "-"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (from != null) {
 				qbe.add("Datum", ">=", from.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$

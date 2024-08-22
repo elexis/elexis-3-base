@@ -13,6 +13,8 @@
 package ch.elexis.buchhaltung.kassenbuch;
 
 
+import java.util.concurrent.CompletableFuture;
+
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.nebula.widgets.cdatetime.CDT;
 import org.eclipse.nebula.widgets.cdatetime.CDateTime;
@@ -87,6 +89,9 @@ public class BuchungsDialog extends TitleAreaDialog {
 		text = new Text(ret, SWT.BORDER);
 		text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		if (act == null) {
+			CompletableFuture.runAsync(() -> {
+				KassenbuchEintrag.recalc();
+			});
 			lastNr = KassenbuchEintrag.lastNr();
 			liBeleg.setText(KassenbuchEintrag.nextNr(lastNr));
 		} else {

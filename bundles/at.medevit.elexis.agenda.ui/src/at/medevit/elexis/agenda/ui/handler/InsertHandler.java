@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.CopyActionType;
@@ -81,6 +82,7 @@ public class InsertHandler {
 							linkedAppointment.getSchedule(), sideBar);
 					newMainExtension.append(",Kombi:").append(newLinkedAppointment.getId());
 					newLinkedAppointment.setExtension(newMainExtension.toString());
+					newLinkedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 					CoreModelServiceHolder.get().save(newLinkedAppointment);
 				}
 				newMainAppointmentWithLinks.setExtension(newMainExtension.toString());
@@ -148,6 +150,7 @@ public class InsertHandler {
 	private void moveLinkedAppointment(IAppointment appointment, LocalDateTime newStartTime) {
 		appointment.setStartTime(newStartTime);
 		appointment.setEndTime(newStartTime.plusMinutes(appointment.getDurationMinutes()));
+		appointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 		CoreModelServiceHolder.get().save(appointment);
 		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, appointment);
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
@@ -164,6 +167,14 @@ public class InsertHandler {
 			String newResource, SideBarComposite sideBar) {
 		IAppointmentService appointmentService = AppointmentServiceHolder.get();
 		IAppointment clonedAppointment = appointmentService.clone(originalAppointment);
+		if (originalAppointment.getContact() != null && originalAppointment.getContact().getId() != null) {
+			clonedAppointment.setSubjectOrPatient(originalAppointment.getContact().getId());
+		} else {
+			clonedAppointment.setSubjectOrPatient(originalAppointment.getSubjectOrPatient());
+		}
+		clonedAppointment.setCreatedBy(originalAppointment.getCreatedBy());
+		clonedAppointment.setCreated(originalAppointment.getCreated());
+		clonedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 		clonedAppointment.setStartTime(newStartTime);
 		clonedAppointment.setEndTime(newStartTime.plusMinutes(originalAppointment.getDurationMinutes()));
 		clonedAppointment.setSchedule(newResource);

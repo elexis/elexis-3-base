@@ -16,6 +16,7 @@ import ch.elexis.core.ui.e4.locks.ILockHandler;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
 
@@ -112,6 +113,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 			linkedAppointment.setStartTime(newLinkedTime);
 			linkedAppointment.setEndTime(newLinkedTime.plusMinutes(linkedAppointment.getDurationMinutes()));
 			linkedAppointment.setSchedule(linkedAppointment.getSchedule());
+			linkedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 			extensionBuilder.append(",Kombi:").append(linkedAppointment.getId());
 			lockAndSaveAppointment(linkedAppointment);
 		}
@@ -121,8 +123,8 @@ public class EventDropFunction extends AbstractBrowserFunction {
 	private void lockAndSaveAppointment(IAppointment appointment) {
 		if (LocalLockServiceHolder.get().acquireLock(appointment).isOk()) {
 			try {
+				appointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 				CoreModelServiceHolder.get().save(appointment);
-				// Ensure that the update event is sent after saving the appointment
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, appointment);
 			} finally {
 				LocalLockServiceHolder.get().releaseLock(appointment);

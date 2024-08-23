@@ -92,7 +92,6 @@ public class AgendaActions {
 			public void doRun(Termin element) {
 				IAppointment appointment = (IAppointment) element.toIAppointment();
 				CoreModelServiceHolder.get().delete(appointment);
-				element.delete();
 				ElexisEventDispatcher.reload(Termin.class);
 			}
 		};

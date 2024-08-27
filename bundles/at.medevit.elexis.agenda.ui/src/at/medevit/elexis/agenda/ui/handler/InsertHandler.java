@@ -1,6 +1,7 @@
 package at.medevit.elexis.agenda.ui.handler;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,7 +10,6 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.CopyActionType;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
 import at.medevit.elexis.agenda.ui.function.AbstractBrowserFunction;
-import at.medevit.elexis.agenda.ui.function.AppointmentLoader;
+import at.medevit.elexis.agenda.ui.function.AppointmentExtensionHandler;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
@@ -52,8 +52,9 @@ public class InsertHandler {
 			SideBarComposite.MoveInformation moveInfo = moveInfoOpt.get();
 			LocalDateTime targetTime = moveInfo.getDateTime();
 			String targetResource = moveInfo.getResource();
-			List<IAppointment> linkedAppointments = AppointmentLoader.findLinkedAppointments(copiedAppointment);
-			if (linkedAppointments.isEmpty() || !AppointmentLoader.isMainAppointment(copiedAppointment)) {
+			List<IAppointment> linkedAppointments = AppointmentExtensionHandler
+					.getLinkedAppointments(copiedAppointment);
+			if (linkedAppointments.isEmpty() || !AppointmentExtensionHandler.isMainAppointment(copiedAppointment)) {
 				cloneAndModifyAppointment(copiedAppointment, targetTime, targetResource, sideBar);
 				sideBar.removeMovePeriod(copiedAppointment);
 				CopyHandler.clearCopiedAppointment();
@@ -65,8 +66,7 @@ public class InsertHandler {
 			case KEEP_MAIN_ONLY:
 				IAppointment newMainAppointment = cloneAndModifyAppointment(copiedAppointment, targetTime,
 						targetResource, sideBar);
-				String linkValueMainOnly = "Main:" + newMainAppointment.getId();
-				newMainAppointment.setExtension(linkValueMainOnly);
+				AppointmentExtensionHandler.setMainAppointmentId(newMainAppointment, newMainAppointment.getId());
 				CoreModelServiceHolder.get().save(newMainAppointment);
 				break;
 			case COPY_ALL:
@@ -74,20 +74,26 @@ public class InsertHandler {
 						targetResource, sideBar);
 				LocalDateTime oldMainTime = copiedAppointment.getStartTime();
 				long minutesDifference = java.time.Duration.between(oldMainTime, targetTime).toMinutes();
-				StringBuilder newMainExtension = new StringBuilder("Main:" + newMainAppointmentWithLinks.getId());
+				AppointmentExtensionHandler.setMainAppointmentId(newMainAppointmentWithLinks,
+						newMainAppointmentWithLinks.getId());
+				List<String> newLinkedAppointmentIds = new ArrayList<>();
 				for (IAppointment linkedAppointment : linkedAppointments) {
 					LocalDateTime oldLinkedTime = linkedAppointment.getStartTime();
 					LocalDateTime newLinkedTime = oldLinkedTime.plusMinutes(minutesDifference);
 					IAppointment newLinkedAppointment = cloneAndModifyAppointment(linkedAppointment, newLinkedTime,
 							linkedAppointment.getSchedule(), sideBar);
-					newMainExtension.append(",Kombi:").append(newLinkedAppointment.getId());
-					newLinkedAppointment.setExtension(newMainExtension.toString());
+					AppointmentExtensionHandler.setMainAppointmentId(newLinkedAppointment,
+							newMainAppointmentWithLinks.getId());
+					AppointmentExtensionHandler.addLinkedAppointmentId(newLinkedAppointment,
+							newLinkedAppointment.getId());
 					newLinkedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 					CoreModelServiceHolder.get().save(newLinkedAppointment);
+					newLinkedAppointmentIds.add(newLinkedAppointment.getId());
 				}
-				newMainAppointmentWithLinks.setExtension(newMainExtension.toString());
+				AppointmentExtensionHandler.addMultipleLinkedAppointments(newMainAppointmentWithLinks,
+						newLinkedAppointmentIds);
+				newMainAppointmentWithLinks.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 				CoreModelServiceHolder.get().save(newMainAppointmentWithLinks);
-
 				break;
 			case CANCEL:
 			default:
@@ -112,8 +118,8 @@ public class InsertHandler {
 			LoggerFactory.getLogger(getClass()).info("Fehler: Kein Haupt-Termin gefunden");
 			return;
 		}
-		List<IAppointment> linkedAppointments = AppointmentLoader.findLinkedAppointments(mainAppointment);
-		if (linkedAppointments.isEmpty() || !AppointmentLoader.isMainAppointment(mainAppointment)) {
+		List<IAppointment> linkedAppointments = AppointmentExtensionHandler.getLinkedAppointments(mainAppointment);
+		if (linkedAppointments.isEmpty() || !AppointmentExtensionHandler.isMainAppointment(mainAppointment)) {
 			moveInformation.movePeriod(mainAppointment);
 		} else {
 			MoveActionType moveAction = AppointmentLinkOptionsDialog

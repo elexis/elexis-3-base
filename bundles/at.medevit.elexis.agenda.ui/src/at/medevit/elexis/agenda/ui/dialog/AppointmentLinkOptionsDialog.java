@@ -1,6 +1,5 @@
 package at.medevit.elexis.agenda.ui.dialog;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -8,6 +7,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.time.TimeUtil;
 
 public class AppointmentLinkOptionsDialog {
 
@@ -22,9 +22,6 @@ public class AppointmentLinkOptionsDialog {
 	public enum DeleteActionType {
 		KEEP_LINKS, DELETE_ALL
 	}
-
-	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-	private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
 	public static MoveActionType showMoveDialog(Shell shell, List<IAppointment> linkedAppointments) {
 		StringBuilder message = new StringBuilder(Messages.AppointmentLinkOptionsDialogDescription);
@@ -67,8 +64,8 @@ public class AppointmentLinkOptionsDialog {
 
 	private static void appendAppointmentDetails(StringBuilder message, List<IAppointment> appointments) {
 		for (IAppointment appt : appointments) {
-			message.append(String.format("- %s, %s, %s, %s\n", appt.getStartTime().toLocalDate().format(DATE_FORMATTER),
-					appt.getStartTime().toLocalTime().format(TIME_FORMATTER), appt.getSchedule(), appt.getType()));
+			message.append(String.format("- %s, %s, %s\n", appt.getStartTime().format(TimeUtil.FULL_GER),
+					appt.getSchedule(), appt.getType()));
 		}
 	}
 

@@ -17,12 +17,13 @@ import org.eclipse.swt.widgets.Shell;
 
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.DeleteActionType;
-import at.medevit.elexis.agenda.ui.function.AppointmentLoader;
+import at.medevit.elexis.agenda.ui.function.AppointmentExtensionHandler;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
 
@@ -48,17 +49,15 @@ public class DeleteHandler {
 	}
 
 	private void handleAppointmentDeletion(IAppointment appointment, Shell shell) {
-		String extension = appointment.getExtension();
-
-		if (extension != null && AppointmentLoader.isMainAppointment(appointment)) {
-			handleMainAppointmentDeletion(appointment, shell, extension);
+		if (AppointmentExtensionHandler.isMainAppointment(appointment)) {
+			handleMainAppointmentDeletion(appointment, shell);
 		} else {
-			handleLinkedAppointmentDeletion(appointment, shell, extension);
+			handleLinkedAppointmentDeletion(appointment, shell);
 		}
 	}
 
-	private void handleMainAppointmentDeletion(IAppointment appointment, Shell shell, String extension) {
-		List<IAppointment> linkedAppointments = AppointmentLoader.findLinkedAppointments(appointment);
+	private void handleMainAppointmentDeletion(IAppointment appointment, Shell shell) {
+		List<IAppointment> linkedAppointments = AppointmentExtensionHandler.getLinkedAppointments(appointment);
 
 		if (!linkedAppointments.isEmpty()) {
 			DeleteActionType action = AppointmentLinkOptionsDialog.showDeleteDialog(shell, linkedAppointments);
@@ -71,10 +70,11 @@ public class DeleteHandler {
 		}
 	}
 
-	private void handleLinkedAppointmentDeletion(IAppointment appointment, Shell shell, String extension) {
-		if (extension != null && extension.contains("Main:")) {
-			String mainAppointmentId = AppointmentLoader.extractMainAppointmentId(extension);
-			Optional<IAppointment> mainAppointment = new AppointmentLoader().findAppointmentById(mainAppointmentId);
+	private void handleLinkedAppointmentDeletion(IAppointment appointment, Shell shell) {
+		String mainAppointmentId = AppointmentExtensionHandler.getMainAppointmentId(appointment);
+		if (mainAppointmentId != null) {
+			Optional<IAppointment> mainAppointment = CoreModelServiceHolder.get().load(mainAppointmentId,
+					IAppointment.class);
 			if (mainAppointment.isPresent()) {
 				boolean shouldProceed = showMainAppointmentWarning(shell, mainAppointment.get(), appointment);
 				if (!shouldProceed) {
@@ -133,8 +133,7 @@ public class DeleteHandler {
 	}
 
 	private boolean showMainAppointmentWarning(Shell shell, IAppointment mainAppointment, IPeriod period) {
-		String message = Messages.DeleteHandlerLinkedAppointmentWarning
-				+ mainAppointment.getLabel();
+		String message = Messages.DeleteHandlerLinkedAppointmentWarning + mainAppointment.getLabel();
 		return MessageDialog.openConfirm(shell, Messages.AgendaUI_Delete_delete,
 				NLS.bind(Messages.AgendaUI_Delete_ask_really_delete, period.getLabel()) + message);
 	}

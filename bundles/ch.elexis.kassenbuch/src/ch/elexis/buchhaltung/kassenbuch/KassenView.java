@@ -11,6 +11,7 @@
  *******************************************************************************/
 package ch.elexis.buchhaltung.kassenbuch;
 
+import java.time.LocalDate;
 import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +48,7 @@ import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
+import ch.elexis.core.time.TimeUtil;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
@@ -434,7 +436,9 @@ class KassenbuchViewerComparator extends ViewerComparator {
 				}
 				break;
 			case 1:
-				rc = kb1.getDate().compareTo(kb2.getDate());
+				LocalDate date1 = LocalDate.parse(kb1.getDate(), TimeUtil.DATE_GER);
+				LocalDate date2 = LocalDate.parse(kb2.getDate(), TimeUtil.DATE_GER);
+				rc = date1.compareTo(date2);
 				break;
 			case 2:
 			case 3:

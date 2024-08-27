@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +36,9 @@ import ch.elexis.core.ui.medication.views.MedicationView;
 public class StartupHandler implements EventHandler {
 	private static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
 
+	private StringBuffer buffer;
+	private boolean bufferStarted;
+
 	public static void openEMediplanImportDialog(String chunk, String selectedPatientId) {
 		Medication medication = EMediplanServiceHolder.getService().createModelFromChunk(chunk);
 
@@ -51,6 +56,7 @@ public class StartupHandler implements EventHandler {
 					ContextServiceHolder.get().setActivePatient(patient.get());
 
 					UiDesk.getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							try {
 								PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
@@ -99,9 +105,29 @@ public class StartupHandler implements EventHandler {
 			if (event.getProperty("org.eclipse.e4.data") instanceof BarcodeScannerMessage) {
 				BarcodeScannerMessage b = (BarcodeScannerMessage) event.getProperty("org.eclipse.e4.data");
 				if (hasMediplanHeader(b.getChunk())) {
-					openEMediplanImportDialog(b.getChunk(), null);
+					chunkBuffer(b);
+				} else if (bufferStarted) {
+					chunkBuffer(b);
 				}
 			}
 		}
+	}
+
+	private void chunkBuffer(BarcodeScannerMessage message) {
+		if (buffer == null) {
+			buffer = new StringBuffer();
+		}
+		if (!bufferStarted) {
+			bufferStarted = true;
+			new Timer().schedule(new TimerTask() {
+				@Override
+				public void run() {
+					openEMediplanImportDialog(buffer.toString(), null);
+					bufferStarted = false;
+					buffer = null;
+				}
+			}, 500);
+		}
+		buffer.append(message.getChunk());
 	}
 }

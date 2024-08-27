@@ -568,7 +568,6 @@ public class SideBarComposite extends Composite {
 		public String getResource() {
 			return resource;
 		}
-
 		public void movePeriod(IPeriod iPeriod) {
 			AcquireLockBlockingUi.aquireAndRun(iPeriod, new ILockHandler() {
 				@Override

@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -52,6 +53,7 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 import at.medevit.elexis.agenda.ui.composite.EmailComposite.EmailDetails;
+import at.medevit.elexis.agenda.ui.function.AppointmentExtensionHandler;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
@@ -690,7 +692,8 @@ public class AppointmentDetailComposite extends Composite {
 		if (kombiTermineList.isEmpty()) {
 			return;
 		}
-		StringBuilder mainExtension = new StringBuilder("Main:" + appointment.getId());
+		AppointmentExtensionHandler.setMainAppointmentId(appointment, appointment.getId());
+		List<String> kombiTerminIds = new ArrayList<>();
 		for (String kombiTermin : kombiTermineList) {
 			kombiTermin = kombiTermin.replaceAll("[{}]", "");
 			String[] elements = kombiTermin.split(";");
@@ -716,11 +719,12 @@ public class AppointmentDetailComposite extends Composite {
 			}
 			newAppointment.setStartTime(startTime);
 			newAppointment.setEndTime(startTime.plusMinutes(Integer.parseInt(elements[5])));
-			mainExtension.append(",Kombi:").append(newAppointment.getId());
-			newAppointment.setExtension("Main:" + appointment.getId() + ",Kombi:" + newAppointment.getId());
+			kombiTerminIds.add(newAppointment.getId());
+			AppointmentExtensionHandler.setMainAppointmentId(newAppointment, appointment.getId());
+			AppointmentExtensionHandler.addLinkedAppointmentId(newAppointment, newAppointment.getId());
 			CoreModelServiceHolder.get().save(newAppointment);
 		}
-		appointment.setExtension(mainExtension.toString());
+		AppointmentExtensionHandler.addMultipleLinkedAppointments(appointment, kombiTerminIds);
 		CoreModelServiceHolder.get().save(appointment);
 	}
 

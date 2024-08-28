@@ -1,6 +1,7 @@
 package at.medevit.elexis.agenda.ui.composite;
 
 public class Messages {
+
 	public static String AgendaUI_DayOverView_create_or_change = ch.elexis.core.l10n.Messages.Agenda_Edit_or_Replace_Appointment;
 	public static String AgendaUI_DayOverView_date_collision = ch.elexis.core.l10n.Messages.AgendaUI_DayOverView_date_collision;
 	public static String AgendaUI_SideBar_abort_move_date = ch.elexis.core.l10n.Messages.AgendaUI_SideBar_abort_move_date;
@@ -36,6 +37,7 @@ public class Messages {
 	public static String Core_Temlate = ch.elexis.core.l10n.Messages.Core_Temlate;
 	public static String Warnung = ch.elexis.core.l10n.Messages.Warning;
 	public static String Warning_Kein_Pea = ch.elexis.core.l10n.Messages.Warning_No_Pea;
-
+	public static String Appointment_TrminLinks = ch.elexis.core.l10n.Messages.Appointment_TrminLinks;
+	public static Object AddCombiTerminDialogBefore = ch.elexis.core.l10n.Messages.AddCombiTerminDialogBefore;
 
 }

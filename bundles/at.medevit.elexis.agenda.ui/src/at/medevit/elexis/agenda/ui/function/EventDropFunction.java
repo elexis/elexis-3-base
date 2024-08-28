@@ -1,6 +1,7 @@
 package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import com.equo.chromium.swt.Browser;
@@ -15,6 +16,12 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.LocalLockServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
+import org.eclipse.swt.widgets.Display;
+import org.slf4j.LoggerFactory;
+
+import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
+import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
+import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
 
 public class EventDropFunction extends AbstractBrowserFunction {
 
@@ -51,38 +58,57 @@ public class EventDropFunction extends AbstractBrowserFunction {
 						}
 					}
 
-					// moving
+					boolean isMainAppointment = AppointmentExtensionHandler.isMainAppointment(current);
+					LocalDateTime oldMainTime = current.getStartTime();
 					boolean isAllDay = arguments[1].toString().length() == 10;
-					LocalDateTime startDate = getDateTimeArg(arguments[1]);
-					current.setStartTime(startDate);
+					LocalDateTime newMainTime = getDateTimeArg(arguments[1]);
+					String newResource = arguments.length >= 4 && arguments[3] != null ? (String) arguments[3]
+							: current.getSchedule();
+					current.setStartTime(newMainTime);
 					if (isAllDay) {
 						current.setEndTime(null);
 					} else {
-						LocalDateTime endTime = Objects.isNull(arguments[2]) ? startDate.plusMinutes(15)
+						LocalDateTime endTime = Objects.isNull(arguments[2]) ? newMainTime.plusMinutes(15)
 								: getDateTimeArg(arguments[2]);
 						current.setEndTime(endTime);
 					}
-
-					if (arguments.length >= 4 && arguments[3] != null) {
-						String bereich = (String) arguments[3];
-						if (!bereich.isEmpty()) {
-							current.setSchedule(bereich);
-						}
+					if (!newResource.isEmpty()) {
+						current.setSchedule(newResource);
 					}
 
-					// checks if that termin is copied
-					if (!current.equals(termin)) {
-						if (LocalLockServiceHolder.get().acquireLock(current).isOk()) {
-							LocalLockServiceHolder.get().releaseLock(current);
-						} else {
-							// should not happened - no lock - delete the copied termin
-							CoreModelServiceHolder.get().delete(current);
+					if (isMainAppointment) {
+						List<IAppointment> linkedAppointments = AppointmentExtensionHandler
+								.getLinkedAppointments(current);
+						MoveActionType moveAction = AppointmentLinkOptionsDialog
+								.showMoveDialog(Display.getDefault().getActiveShell(), linkedAppointments);
+						switch (moveAction) {
+						case KEEP_MAIN_ONLY:
+							lockAndSaveAppointment(current);
+							break;
+						case MOVE_ALL:
+							long minutesDifference = java.time.Duration.between(oldMainTime, newMainTime).toMinutes();
+							for (IAppointment linkedAppointment : linkedAppointments) {
+								LocalDateTime oldLinkedTime = linkedAppointment.getStartTime();
+								LocalDateTime newLinkedTime = oldLinkedTime.plusMinutes(minutesDifference);
+								linkedAppointment.setStartTime(newLinkedTime);
+								linkedAppointment
+										.setEndTime(newLinkedTime.plusMinutes(linkedAppointment.getDurationMinutes()));
+								linkedAppointment.setSchedule(linkedAppointment.getSchedule());
+								linkedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
+								lockAndSaveAppointment(linkedAppointment);
+							}
+							lockAndSaveAppointment(current);
+							break;
+						case CANCEL:
+						default:
+							break;
 						}
+					} else {
+						lockAndSaveAppointment(current);
 					}
-					CoreModelServiceHolder.get().save(current);
-					CoreModelServiceHolder.get().save(termin);
+
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
-					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, termin);
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, current);
 					redraw();
 				}
 			});
@@ -92,4 +118,17 @@ public class EventDropFunction extends AbstractBrowserFunction {
 		return null;
 	}
 
+	private void lockAndSaveAppointment(IAppointment appointment) {
+		if (LocalLockServiceHolder.get().acquireLock(appointment).isOk()) {
+			try {
+				appointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
+				CoreModelServiceHolder.get().save(appointment);
+				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, appointment);
+			} finally {
+				LocalLockServiceHolder.get().releaseLock(appointment);
+			}
+		} else {
+			LoggerFactory.getLogger(getClass()).warn("Failed to acquire lock for appointment: " + appointment.getId());
+		}
+	}
 }

@@ -51,5 +51,14 @@ public class Messages {
 	public static String SerienTermin_thursday = ch.elexis.core.l10n.Messages.Core_Thursday;
 	public static String SerienTermin_tuesday = ch.elexis.core.l10n.Messages.Core_Tuesday;
 	public static String SerienTermin_wednesday = ch.elexis.core.l10n.Messages.Core_Wednesday;
-
+	public static String AppointmentLinkOptionsDialogDescription = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogDescription;
+	public static Object AppointmentLinkOptionsDialogTitel = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogTitel;
+	public static String AppointmentLinkOptionsDialogMove = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogMove;
+	public static String AppointmentLinkOptionsDialogCopy = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogCopy;
+	public static String AppointmentLinkOptionsDialogDelete = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogDelete;
+	public static String AppointmentLinkOptionsDialogDeleteButton = ch.elexis.core.l10n.Messages.ContactLinkPreferences_delete;
+	public static String AppointmentLinkOptionsDialogAbortButton = ch.elexis.core.l10n.Messages.SerienTerminDialog_other_text;
+	public static String AppointmentLinkOptionsDialogAllButton = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogAllButton;
+	public static String AppointmentLinkOptionsDialogMainAppointmentButton = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogMainAppointmentButton;
+	public static String AppointmentLinkOptionsDialogKeepButton = ch.elexis.core.l10n.Messages.AppointmentLinkOptionsDialogKeepButton;
 }

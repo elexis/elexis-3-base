@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -52,6 +53,8 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 import at.medevit.elexis.agenda.ui.composite.EmailComposite.EmailDetails;
+import at.medevit.elexis.agenda.ui.function.AppointmentExtensionHandler;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
@@ -60,6 +63,7 @@ import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.fieldassist.AsyncContentProposalProvider;
@@ -103,6 +107,7 @@ public class AppointmentDetailComposite extends Composite {
 	private TableViewer appointmentsViewer;
 	private Composite container;
 	private EmailComposite emailComposite;
+	private Button chkTerminLinks;
 	SelectionAdapter dateTimeSelectionAdapter = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
@@ -382,6 +387,18 @@ public class AppointmentDetailComposite extends Composite {
 		gd.widthHint = 80;
 		comboStatus.setLayoutData(gd);
 
+		chkTerminLinks = new Button(compTypeReason, SWT.CHECK);
+		chkTerminLinks.setText(Messages.Appointment_TrminLinks);
+		chkTerminLinks.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		chkTerminLinks.setEnabled(false);
+
+		comboType.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleComboTypeSelection();
+			}
+		});
+
 		if (emailComposite == null) {
 			IContact selectedContact = getSelectedContact();
 			emailComposite = new EmailComposite(container, SWT.NONE, selectedContact, appointment);
@@ -649,7 +666,66 @@ public class AppointmentDetailComposite extends Composite {
 		} else if (StringUtils.isNotBlank(txtPatSearch.getText())) {
 			appointment.setSubjectOrPatient(txtPatSearch.getText());
 		}
+		createKombiTermineIfApplicable();
 		return appointment;
+	}
+
+	private void handleComboTypeSelection() {
+		String selectedType = comboType.getText();
+		List<String> kombiTermineList = ConfigServiceHolder.get()
+				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType);
+		if (!StringUtils.isBlank(selectedType) && !kombiTermineList.isEmpty()) {
+			chkTerminLinks.setEnabled(true);
+		} else {
+			chkTerminLinks.setEnabled(false);
+			chkTerminLinks.setSelection(false);
+		}
+	}
+
+	private void createKombiTermineIfApplicable() {
+		if (chkTerminLinks.getSelection()) {
+			return;
+		}
+		String selectedType = comboType.getText();
+		List<String> kombiTermineList = ConfigServiceHolder.get()
+				.getAsList(PreferenceConstants.AG_KOMBITERMINE + "/" + selectedType);
+		if (kombiTermineList.isEmpty()) {
+			return;
+		}
+		AppointmentExtensionHandler.setMainAppointmentId(appointment, appointment.getId());
+		List<String> kombiTerminIds = new ArrayList<>();
+		for (String kombiTermin : kombiTermineList) {
+			kombiTermin = kombiTermin.replaceAll("[{}]", "");
+			String[] elements = kombiTermin.split(";");
+			IAppointment newAppointment = CoreModelServiceHolder.get().create(IAppointment.class);
+			newAppointment.setState(appointment.getState());
+			newAppointment.setType(elements[2]);
+			newAppointment.setSchedule(elements[1]);
+			newAppointment.setCreatedBy(appointment.getCreatedBy());
+			newAppointment.setCreated(createTimeStamp());
+			newAppointment.setLastEdit(createTimeStamp());
+			newAppointment.setReason(elements[0]);
+			if (txtDataIsMatchingContact()) {
+				newAppointment.setSubjectOrPatient(((IContact) txtPatSearch.getData()).getId());
+			} else if (StringUtils.isNotBlank(txtPatSearch.getText())) {
+				newAppointment.setSubjectOrPatient(txtPatSearch.getText());
+			}
+			LocalDateTime startTime = appointment.getStartTime();
+			int offset = Integer.parseInt(elements[4]);
+			if (((String) Messages.AddCombiTerminDialogBefore).equalsIgnoreCase(elements[3])) {
+				startTime = startTime.minusMinutes(offset);
+			} else {
+				startTime = startTime.plusMinutes(offset);
+			}
+			newAppointment.setStartTime(startTime);
+			newAppointment.setEndTime(startTime.plusMinutes(Integer.parseInt(elements[5])));
+			kombiTerminIds.add(newAppointment.getId());
+			AppointmentExtensionHandler.setMainAppointmentId(newAppointment, appointment.getId());
+			AppointmentExtensionHandler.addLinkedAppointmentId(newAppointment, newAppointment.getId());
+			CoreModelServiceHolder.get().save(newAppointment);
+		}
+		AppointmentExtensionHandler.addMultipleLinkedAppointments(appointment, kombiTerminIds);
+		CoreModelServiceHolder.get().save(appointment);
 	}
 
 	private boolean txtDataIsMatchingContact() {

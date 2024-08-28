@@ -1,9 +1,11 @@
 package ch.elexis.global_inbox;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,7 +37,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.l10n.Messages;
+import ch.elexis.global_inbox.ui.Messages;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -48,7 +54,6 @@ import ch.elexis.omnivore.model.TransientCategory;
 import ch.elexis.omnivore.model.util.CategoryUtil;
 import ch.elexis.omnivore.ui.util.CategorySelectDialog;
 
-
 public class PreferencesServer extends PreferencePage implements IWorkbenchPreferencePage {
 
     public static final String PREFERENCE_BRANCH = "plugins/global_inbox_server/"; //$NON-NLS-1$
@@ -60,16 +65,19 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
     public static final String PREF_SELECTED_DEVICE = PREFERENCE_BRANCH + "selectedDevice"; //$NON-NLS-1$
 	public static final String PREF_DEVICE_DIR_PREFIX = PREFERENCE_BRANCH + "device_dir_"; //$NON-NLS-1$
 	public static final String PREF_OMNIVORE_DIR_STRUCTURE = PREFERENCE_BRANCH + "omnivore_dir_structure"; //$NON-NLS-1$
+	public static final String PREF_LAST_SELECTED_CATEGORY = PREFERENCE_BRANCH + "last_selected_category"; //$NON-NLS-1$
+	public static final String PREF_CATEGORY_PREFIX = PREFERENCE_BRANCH + "categories_"; //$NON-NLS-1$
 
 	private Text newDeviceText;
 	private Text deviceDirText;
-	private Text omnivoreDirText;
 	private Text urlText;
 
 	private Combo deviceCombo;
 
 	private Map<String, String> deviceDirMap = new HashMap<>();
 	private Composite mainComposite;
+	private String lastSelectedCategory;
+	private ListViewer categoryListViewer;
 
 	@Reference
 	private ITaskService taskService;
@@ -83,6 +91,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		IVirtualFilesystemService virtualFilesystemService = OsgiServiceUtil.getService(IVirtualFilesystemService.class)
 				.orElse(null);
 		taskManagerHandler = new TaskManagerHandler(taskService, virtualFilesystemService);
+		lastSelectedCategory = getPreferenceStore().getString(PREF_LAST_SELECTED_CATEGORY);
 	}
 
     public PreferencesServer() {
@@ -99,7 +108,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		storeFSGlobalComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
 		Button storeFSGlobalButton = new Button(storeFSGlobalComposite, SWT.CHECK);
-		storeFSGlobalButton.setText("Dateisystem Einstellungen global speichern");
+		storeFSGlobalButton.setText(Messages.PreferencesServer_storeFSGlobal);
 		storeFSGlobalButton.setSelection(ConfigServiceHolder.getGlobal(STOREFSGLOBAL, false));
 		storeFSGlobalButton.addListener(SWT.Selection,
 				e -> ConfigServiceHolder.get().set(STOREFSGLOBAL, storeFSGlobalButton.getSelection()));
@@ -111,7 +120,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		int labelWidth = 150;
 
 		Label deviceLabel = new Label(contentComposite, SWT.NONE);
-		deviceLabel.setText("Neues Gerät hinzufügen:");
+		deviceLabel.setText(Messages.PreferencesServer_addNewDevice);
 		GridData deviceLabelGridData = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
 		deviceLabelGridData.widthHint = labelWidth;
 		deviceLabel.setLayoutData(deviceLabelGridData);
@@ -122,7 +131,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 
 		Button addButton = new Button(contentComposite, SWT.PUSH);
 		addButton.setImage(Images.IMG_NEW.getImage());
-		addButton.setText("Hinzufügen");
+		addButton.setText(Messages.Core_Add);
 		addButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		addButton.addListener(SWT.Selection, e -> {
 			addNewDevice(newDeviceText.getText(), contentComposite);
@@ -130,7 +139,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		});
 
 		Label comboLabel = new Label(contentComposite, SWT.NONE);
-		comboLabel.setText("Gerät auswählen:");
+		comboLabel.setText(Messages.PreferencesServer_selectDevice);
 		GridData comboLabelGridData = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
 		comboLabelGridData.widthHint = labelWidth;
 		comboLabel.setLayoutData(comboLabelGridData);
@@ -147,12 +156,12 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 
 		Button deleteButton = new Button(contentComposite, SWT.PUSH);
 		deleteButton.setImage(Images.IMG_DELETE.getImage());
-		deleteButton.setText("Löschen");
+		deleteButton.setText(Messages.PreferencesServer_deleteButton);
 		deleteButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		deleteButton.addListener(SWT.Selection, e -> deleteSelectedDevice(deviceCombo.getText(), contentComposite));
 
 		Label dirLabel = new Label(contentComposite, SWT.NONE);
-		dirLabel.setText("Export-Verzeichnis");
+		dirLabel.setText(Messages.PreferencesServer_exportDirectory);
 		GridData dirLabelGridData = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
 		dirLabelGridData.widthHint = labelWidth;
 		dirLabel.setLayoutData(dirLabelGridData);
@@ -163,7 +172,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		deviceDirText.setLayoutData(deviceDirTextGridData);
 
 		Button browseButton = new Button(contentComposite, SWT.PUSH);
-		browseButton.setText("Durchsuchen...");
+		browseButton.setText(Messages.PreferencesServer_browseButton);
 		browseButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		browseButton.addListener(SWT.Selection, e -> {
 			DirectoryDialog directoryDialog = new DirectoryDialog(getShell());
@@ -185,7 +194,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		urlText.setEnabled(false);
 
 		Button searchButton = new Button(contentComposite, SWT.PUSH);
-		searchButton.setText("Durchsuchen...");
+		searchButton.setText(Messages.PreferencesServer_browseButton);
 		searchButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		searchButton.addListener(SWT.Selection, e -> {
 			IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
@@ -213,93 +222,105 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		new Label(contentComposite, SWT.NONE);
 
 		Label omnivoreDirLabel = new Label(contentComposite, SWT.NONE);
-		omnivoreDirLabel.setText("Omnivore Ordner struktur:");
+		omnivoreDirLabel.setText(Messages.PreferencesServer_omnivoreDirStructure);
 		GridData omnivoreDirLabelGridData = new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1);
 		omnivoreDirLabel.setLayoutData(omnivoreDirLabelGridData);
 
-		omnivoreDirText = new Text(contentComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.READ_ONLY);
-		GridData omnivoreDirTextGridData = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 3);
-		omnivoreDirTextGridData.heightHint = 150;
-		omnivoreDirTextGridData.widthHint = 250;
-		omnivoreDirText.setLayoutData(omnivoreDirTextGridData);
-		Runnable updateCategoriesText = () -> {
-			List<String> categories = CategoryUtil.getCategoriesNames();
-			StringBuilder categoriesText = new StringBuilder();
-			for (String category : categories) {
-				categoriesText.append(category).append("\n");
+
+		Composite categoryComposite = new Composite(contentComposite, SWT.NONE);
+		GridLayout categoryLayout = new GridLayout(2, false);
+		categoryLayout.marginWidth = 0;
+		categoryLayout.marginHeight = 0;
+		categoryComposite.setLayout(categoryLayout);
+
+		GridData categoryCompositeGridData = new GridData(SWT.LEFT, SWT.TOP, false, false, 3, 1);
+		categoryCompositeGridData.widthHint = 250;
+		categoryComposite.setLayoutData(categoryCompositeGridData);
+
+		categoryListViewer = new ListViewer(categoryComposite, SWT.BORDER | SWT.V_SCROLL | SWT.SINGLE);
+		GridData listViewerGridData = new GridData(SWT.LEFT, SWT.TOP, false, false);
+		listViewerGridData.widthHint = 150;
+		listViewerGridData.heightHint = 200;
+		categoryListViewer.getList().setLayoutData(listViewerGridData);
+		categoryListViewer.setContentProvider(ArrayContentProvider.getInstance());
+		categoryListViewer.setLabelProvider(new LabelProvider());
+		categoryListViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection selection = categoryListViewer.getStructuredSelection();
+			String selectedCategory = (String) selection.getFirstElement();
+			if (selectedCategory != null) {
+				lastSelectedCategory = selectedCategory;
+				getPreferenceStore().setValue(PREF_LAST_SELECTED_CATEGORY, lastSelectedCategory);
 			}
-			omnivoreDirText.setText(categoriesText.toString());
-		};
+		});
 
-		updateCategoriesText.run();
+		Composite buttonComposite = new Composite(categoryComposite, SWT.NONE);
+		buttonComposite.setLayout(new GridLayout(1, true));
+		GridData buttonCompositeGridData = new GridData(SWT.LEFT, SWT.TOP, false, false);
+		buttonCompositeGridData.widthHint = 50;
+		buttonComposite.setLayoutData(buttonCompositeGridData);
 
-		Composite buttonComposite2 = new Composite(contentComposite, SWT.NONE);
-		buttonComposite2.setLayout(new GridLayout(1, false));
-		GridData buttonComposite2GridData = new GridData(SWT.FILL, SWT.TOP, false, false, 1, 3);
-		buttonComposite2.setLayoutData(buttonComposite2GridData);
-
-		Button bNewCat = new Button(buttonComposite2, SWT.PUSH);
+		Button bNewCat = new Button(buttonComposite, SWT.PUSH);
 		bNewCat.setImage(Images.IMG_NEW.getImage());
-		bNewCat.setToolTipText("Neues Verzeichnis hinzufügen");
+		bNewCat.setToolTipText(Messages.PreferencesServer_addNewDirectory);
+		bNewCat.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		bNewCat.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				InputDialog id = new InputDialog(getShell(), "Neues Verzeichnis", "Neues Verzeichnis hinzufügen:", null,
+				InputDialog id = new InputDialog(getShell(), Messages.PreferencesServer_newDirectory,
+						Messages.PreferencesServer_addNewDirectory, null,
 						null);
 				if (id.open() == Dialog.OK) {
 					CategoryUtil.addCategory(id.getValue());
-					updateCategoriesText.run();
+					addCategory(id.getValue());
+					mainComposite.layout();
 				}
 			}
 		});
 
-		Button bEditCat = new Button(buttonComposite2, SWT.PUSH);
+		Button bEditCat = new Button(buttonComposite, SWT.PUSH);
 		bEditCat.setImage(Images.IMG_EDIT.getImage());
-		bEditCat.setToolTipText("Verzeichnis umbenennen\nUm zu umbenennen, bitte markieren");
+		bEditCat.setToolTipText(Messages.PreferencesServer_renameDirectoryTooltip);
+		bEditCat.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		bEditCat.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String old = omnivoreDirText.getSelectionText().trim();
-				if (old.isEmpty()) {
+				String selectedCategory = lastSelectedCategory;
+				if (selectedCategory.isEmpty()) {
 					return;
 				}
-				InputDialog id = new InputDialog(getShell(), MessageFormat.format("Verzeichnis '{0}' umbenennen", old),
-						"Geben Sie den neuen Namen für das Verzeichnis ein:", old, null);
+				InputDialog id = new InputDialog(getShell(),
+						MessageFormat.format(Messages.PreferencesServer_renameDirectory, selectedCategory),
+						Messages.PreferencesServer_enterNewNameForDirectory, selectedCategory, null);
 				if (id.open() == Dialog.OK) {
-					String nn = id.getValue();
-					CategoryUtil.renameCategory(old, nn);
-					updateCategoriesText.run();
+					CategoryUtil.renameCategory(selectedCategory, id.getValue());
+					renameCategory(selectedCategory, id.getValue());
 				}
 			}
 		});
 
-		Button bDeleteCat = new Button(buttonComposite2, SWT.PUSH);
+		Button bDeleteCat = new Button(buttonComposite, SWT.PUSH);
 		bDeleteCat.setImage(Images.IMG_DELETE.getImage());
-		bDeleteCat.setToolTipText("Verzeichnis löschen");
+		bDeleteCat.setToolTipText(Messages.PreferencesServer_deleteDirectory);
+		bDeleteCat.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		bDeleteCat.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String old = omnivoreDirText.getSelectionText().trim();
-				if (old.isEmpty()) {
+				String selectedCategory = lastSelectedCategory;
+				if (selectedCategory.isEmpty()) {
 					return;
 				}
-				List<IDocumentHandle> documents = CategoryUtil.getDocumentsWithCategoryByName(old);
-				if (documents.isEmpty()) {
-					CategoryUtil.removeCategory(old, null);
-					updateCategoriesText.run();
-				} else {
-					CategorySelectDialog catSelectDialog = new CategorySelectDialog(getShell(),
-							MessageFormat.format("Kategorie " + old + " löschen", old),
-							"Es gibt Dokumente in dieser Kategorie. Bitte wählen Sie eine neue Kategorie für diese Dokumente.",
-							CategoryUtil.getCategoriesNames());
-					if (catSelectDialog.open() == Dialog.OK) {
-						String newCategory = catSelectDialog.getSelectedCategory();
-						for (IDocumentHandle document : documents) {
-							document.setCategory(new TransientCategory(newCategory));
-						}
-						CategoryUtil.removeCategory(old, newCategory);
-						updateCategoriesText.run();
+				List<IDocumentHandle> documents = CategoryUtil.getDocumentsWithCategoryByName(selectedCategory);
+				CategorySelectDialog catSelectDialog = new CategorySelectDialog(getShell(),
+						MessageFormat.format(Messages.PreferencesServer_deleteCategory, selectedCategory),
+						Messages.PreferencesServer_documentsInCategory,
+						CategoryUtil.getCategoriesNames());
+				if (catSelectDialog.open() == Dialog.OK) {
+					String newCategory = catSelectDialog.getSelectedCategory();
+					for (IDocumentHandle document : documents) {
+						document.setCategory(new TransientCategory(newCategory));
 					}
+					CategoryUtil.removeCategory(selectedCategory, newCategory);
+					removeCategory(selectedCategory, newCategory);
 				}
 			}
 		});
@@ -308,6 +329,60 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		updateDeviceCombo();
 		updateDeviceFields();
 		return mainComposite;
+	}
+
+	private void updateCategoriesListForDevice(String device) {
+		List<String> allCategories = CategoryUtil.getCategoriesNames();
+		categoryListViewer.setInput(allCategories);
+		categoryListViewer.refresh();
+		String selectedCategory = getPreferenceStore().getString(PREF_CATEGORY_PREFIX + device);
+		if (selectedCategory != null && !selectedCategory.isEmpty()) {
+			categoryListViewer.setSelection(new org.eclipse.jface.viewers.StructuredSelection(selectedCategory));
+			lastSelectedCategory = selectedCategory;
+		} else {
+			lastSelectedCategory = null;
+		}
+	}
+
+
+	private void addCategory(String categoryName) {
+		List<String> categories = getCategoriesForDevice(deviceCombo.getText());
+		if (!categories.contains(categoryName)) {
+			categories.add(categoryName);
+			saveCategoriesForDevice(deviceCombo.getText(), categories);
+
+		}
+		updateCategoriesListForDevice(deviceCombo.getText());
+	}
+
+	private void renameCategory(String oldCategoryName, String newCategoryName) {
+		List<String> categories = getCategoriesForDevice(deviceCombo.getText());
+		int index = categories.indexOf(oldCategoryName);
+		if (index != -1) {
+			categories.set(index, newCategoryName);
+			saveCategoriesForDevice(deviceCombo.getText(), categories);
+		}
+		lastSelectedCategory = newCategoryName;
+		getPreferenceStore().setValue(PREF_LAST_SELECTED_CATEGORY, newCategoryName);
+		updateCategoriesListForDevice(deviceCombo.getText());
+	}
+
+	private void removeCategory(String oldCategoryName, String newCategoryName) {
+		List<String> categories = getCategoriesForDevice(deviceCombo.getText());
+		categories.remove(oldCategoryName);
+		saveCategoriesForDevice(deviceCombo.getText(), categories);
+		updateCategoriesListForDevice(deviceCombo.getText());
+	}
+
+	private List<String> getCategoriesForDevice(String device) {
+		String categoriesString = getPreferenceStore().getString(PREF_CATEGORY_PREFIX + device);
+		return StringUtils.isNotBlank(categoriesString) ? new ArrayList<>(List.of(categoriesString.split(",")))
+				: new ArrayList<>();
+	}
+
+	private void saveCategoriesForDevice(String device, List<String> categories) {
+		String categoriesString = String.join(",", categories);
+		getPreferenceStore().setValue(PREF_CATEGORY_PREFIX + device, categoriesString);
 	}
 
 	private String[][] getDeviceEntries() {
@@ -340,10 +415,18 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 			getPreferenceStore().setValue(PREF_DEVICES, newDevices.toString());
 			getPreferenceStore().setToDefault(PREF_DEVICE_DIR_PREFIX + selectedDevice);
 			getPreferenceStore().setToDefault(PREF_SELECTED_DEVICE);
+			getPreferenceStore().setToDefault(PREF_CATEGORY_PREFIX + selectedDevice);
 			if (taskManagerHandler.getTaskDescriptorByReferenceId(selectedDevice) != null) {
+
 				taskManagerHandler.deleteTaskDescriptorByReferenceId(selectedDevice);
 			}
+
 			updateDeviceCombo();
+
+			if (selectedDevice.equals(lastSelectedCategory)) {
+				lastSelectedCategory = "";
+				getPreferenceStore().setToDefault(PREF_LAST_SELECTED_CATEGORY);
+			}
 		}
 	}
 
@@ -382,6 +465,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 							.get(TaskTriggerTypeParameter.FILESYSTEM_CHANGE.URL)
 					: StringUtils.EMPTY;
 			urlText.setText((url != null) ? url : StringUtils.EMPTY);
+			updateCategoriesListForDevice(selectedDevice);
 		} else {
 			deviceDirText.setText("");
 			urlText.setText("");
@@ -401,34 +485,44 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		}
 	}
 
+
 	@Override
 	public boolean performOk() {
-		String devices = getPreferenceStore().getString(PREF_DEVICES);
-		if (StringUtils.isNotBlank(devices)) {
-			String[] deviceArray = devices.split(",");
-			for (String device : deviceArray) {
-				String dir = getPreferenceStore().getString(PREF_DEVICE_DIR_PREFIX + device);
-				String url = (taskManagerHandler.getTaskDescriptorByReferenceId(device) != null)
-						? taskManagerHandler.getTaskDescriptorByReferenceId(device).getTriggerParameters().get(
-								TaskTriggerTypeParameter.FILESYSTEM_CHANGE.URL)
-						: StringUtils.EMPTY;
+		String selectedDevice = deviceCombo.getText();
+		if (StringUtils.isNotBlank(selectedDevice)) {
+			String destinationDir = deviceDirText.getText();
+			if (lastSelectedCategory == null) {
+				lastSelectedCategory = "";
+			}
 
-				if (StringUtils.isNotBlank(dir) && StringUtils.isNotBlank(url)) {
-					if (taskManagerHandler.getTaskDescriptorByReferenceId(device) == null) {
-						taskManagerHandler.createAndConfigureTask(device, url, dir);
-					}
-				} else {
-					continue;
-				}
+			if (!lastSelectedCategory.isEmpty()) {
+				destinationDir = destinationDir + File.separator + lastSelectedCategory;
+			}
+			getPreferenceStore().setValue(PREF_DEVICE_DIR_PREFIX + selectedDevice, deviceDirText.getText());
+			getPreferenceStore().setValue(PREF_SELECTED_DEVICE, selectedDevice);
+			getPreferenceStore().setValue(PREF_CATEGORY_PREFIX + selectedDevice, lastSelectedCategory);
+			String url = urlText.getText();
+			if (StringUtils.isNotBlank(url)) {
+				taskManagerHandler.createAndConfigureTask(selectedDevice, url, destinationDir);
 			}
 		}
 		return super.performOk();
 	}
 
+
 	@Override
 	protected void performDefaults() {
 		super.performDefaults();
-		loadDeviceData();
+		getPreferenceStore().setToDefault(PREF_SELECTED_DEVICE);
+		String devices = getPreferenceStore().getString(PREF_DEVICES);
+		if (StringUtils.isNotBlank(devices)) {
+			String[] deviceArray = devices.split(",");
+			for (String device : deviceArray) {
+				getPreferenceStore().setToDefault(PREF_DEVICE_DIR_PREFIX + device);
+				getPreferenceStore().setToDefault(PREF_CATEGORY_PREFIX + device);
+			}
+		}
 		updateDeviceCombo();
+		updateDeviceFields();
 	}
 }

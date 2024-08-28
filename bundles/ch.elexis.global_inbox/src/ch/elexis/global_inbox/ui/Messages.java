@@ -29,5 +29,20 @@ public class Messages {
 	public static String PreferencesServer_directory_Dialog_Core_Delete_Document_Category = ch.elexis.core.l10n.Messages.Core_Delete_Document_Category;
 	public static String PreferencesServer_directory_Dialog_DocumentMetaDataDialog_deleteCategoryConfirm = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_deleteCategoryConfirm;
 	public static String PreferencesServer_directory_Dialog_DocumentMetaDataDialog_deleteCategoryConfirmText = ch.elexis.core.l10n.Messages.DocumentMetaDataDialog_deleteCategoryConfirmText;
-
+	public static String Core_Add = ch.elexis.core.l10n.Messages.Core_Add;
+	public static String PreferencesServer_selectDevice = ch.elexis.core.l10n.Messages.PreferencesServer_selectDevice;
+	public static String PreferencesServer_deleteButton = ch.elexis.core.l10n.Messages.PreferencesServer_deleteButton;
+	public static String PreferencesServer_exportDirectory = ch.elexis.core.l10n.Messages.PreferencesServer_exportDirectory;
+	public static String PreferencesServer_browseButton = ch.elexis.core.l10n.Messages.PreferencesServer_browseButton;
+	public static String PreferencesServer_addNewDevice = ch.elexis.core.l10n.Messages.PreferencesServer_addNewDevice;
+	public static String PreferencesServer_storeFSGlobal = ch.elexis.core.l10n.Messages.PreferencesServer_storeFSGlobal;
+	public static String PreferencesServer_omnivoreDirStructure = ch.elexis.core.l10n.Messages.PreferencesServer_omnivoreDirStructure;
+	public static String PreferencesServer_addNewDirectory = ch.elexis.core.l10n.Messages.PreferencesServer_addNewDirectory;
+	public static String PreferencesServer_newDirectory = ch.elexis.core.l10n.Messages.PreferencesServer_newDirectory;
+	public static String PreferencesServer_renameDirectoryTooltip = ch.elexis.core.l10n.Messages.PreferencesServer_renameDirectoryTooltip;
+	public static String PreferencesServer_deleteDirectory = ch.elexis.core.l10n.Messages.PreferencesServer_deleteDirectory;
+	public static String PreferencesServer_documentsInCategory = ch.elexis.core.l10n.Messages.PreferencesServer_documentsInCategory;
+	public static String PreferencesServer_deleteCategory = ch.elexis.core.l10n.Messages.PreferencesServer_deleteCategory;
+	public static String PreferencesServer_enterNewNameForDirectory = ch.elexis.core.l10n.Messages.PreferencesServer_enterNewNameForDirectory;
+	public static String PreferencesServer_renameDirectory = ch.elexis.core.l10n.Messages.PreferencesServer_renameDirectory;
 }

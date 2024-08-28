@@ -2,7 +2,6 @@ package ch.elexis.global_inbox.core.service;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -14,6 +13,7 @@ import ch.elexis.core.services.IAccessControlService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.tasks.model.ITaskService;
+import ch.elexis.global_inbox.core.handler.JobManager;
 import ch.elexis.global_inbox.core.handler.MoveFileIdentifiedRunnable;
 
 
@@ -26,16 +26,12 @@ public class IdentifiedRunnableFactoryImplMover implements IIdentifiedRunnableFa
 	@Reference
 	private IVirtualFilesystemService virtualFilsystemService;
 
-	private IModelService taskModelService;
-
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.tasks.model)")
 	private void setModelService(IModelService modelService) {
-		taskModelService = modelService;
 	}
 
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.tasks.model)")
 	public void getModelService(IModelService modelService) {
-		taskModelService = modelService;
 	}
 
 	@Reference
@@ -48,6 +44,7 @@ public class IdentifiedRunnableFactoryImplMover implements IIdentifiedRunnableFa
 
 	@Deactivate
 	public void deactivate() {
+		JobManager.getInstance().shutdown();
 		taskService.unbindIIdentifiedRunnableFactory(this);
 	}
 
@@ -57,5 +54,4 @@ public class IdentifiedRunnableFactoryImplMover implements IIdentifiedRunnableFa
 		ret.add(new MoveFileIdentifiedRunnable(virtualFilsystemService));
 		return ret;
 	}
-
 }

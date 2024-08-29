@@ -353,7 +353,7 @@ public class AppointmentDetailComposite extends Composite {
 		Label lblReason = new Label(compTypeReason, SWT.NULL);
 		lblReason.setText(Messages.AppointmentDetailComposite_reason);
 
-		comboType = new Combo(compTypeReason, SWT.DROP_DOWN);
+		comboType = new Combo(compTypeReason, SWT.DROP_DOWN | SWT.READ_ONLY);
 		comboType.setItems(appointmentService.getTypes().toArray(new String[appointmentService.getTypes().size()]));
 		comboType.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -375,7 +375,7 @@ public class AppointmentDetailComposite extends Composite {
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2);
 		txtReason.setLayoutData(gd);
 		
-		comboStatus = new Combo(compTypeReason, SWT.DROP_DOWN);
+		comboStatus = new Combo(compTypeReason, SWT.DROP_DOWN | SWT.READ_ONLY);
 		comboStatus.setItems(appointmentService.getStates().toArray(new String[appointmentService.getStates().size()]));
 		gd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd.widthHint = 80;
@@ -572,7 +572,7 @@ public class AppointmentDetailComposite extends Composite {
 		compArea.setLayout(gl);
 		Label lblArea = new Label(compArea, SWT.NULL);
 		lblArea.setText(Messages.AppointmentDetailComposite_range);
-		comboArea = new Combo(compArea, SWT.DROP_DOWN);
+		comboArea = new Combo(compArea, SWT.DROP_DOWN | SWT.READ_ONLY);
 		comboArea.setItems(configService.get("agenda/bereiche", "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		comboArea.addSelectionListener(new SelectionAdapter() {
 			@Override

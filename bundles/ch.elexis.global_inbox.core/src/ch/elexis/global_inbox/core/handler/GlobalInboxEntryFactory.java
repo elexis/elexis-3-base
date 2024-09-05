@@ -18,7 +18,6 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.Identifiable;
@@ -27,7 +26,7 @@ import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IStoreToStringService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-
+import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.global_inbox.core.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.core.util.Constants;
 import ch.elexis.global_inbox.core.util.GlobalInboxUtil;
@@ -46,7 +45,7 @@ public class GlobalInboxEntryFactory {
 		AccessControlServiceHolder.get().doPrivileged(() -> {
 			String giDirSetting = GlobalInboxUtil.getDirectory("NOTSET"); //$NON-NLS-1$
 			if ("NOTSET".equals(giDirSetting)) { //$NON-NLS-1$
-				File giDir = new File(CoreHub.getWritableUserDir(), "GlobalInbox"); //$NON-NLS-1$
+				File giDir = new File(CoreUtil.getWritableUserDir(), "GlobalInbox"); //$NON-NLS-1$
 				boolean created = giDir.mkdir();
 				if (created) {
 					ConfigServiceHolder.get().setLocal(Constants.PREF_DIR, giDir.getAbsolutePath());

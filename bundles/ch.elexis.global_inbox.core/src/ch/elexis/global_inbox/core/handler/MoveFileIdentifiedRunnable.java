@@ -7,19 +7,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.slf4j.Logger;
-import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
-import ch.elexis.core.data.activator.CoreHub;
+
 import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.TaskException;
 import ch.elexis.core.services.IVirtualFilesystemService;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.global_inbox.core.util.Constants;
 
@@ -31,11 +28,9 @@ public class MoveFileIdentifiedRunnable implements IIdentifiedRunnable {
 	private String destinationDir;
 	private String deviceName;
 	private Map<String, String> lastContextState = new ConcurrentHashMap<>();
-	private JobManager jobManager;
 
 	public MoveFileIdentifiedRunnable(IVirtualFilesystemService virtualFilesystemService) {
 		this.virtualFilesystemService = virtualFilesystemService;
-		this.jobManager = JobManager.getInstance();
 	}
 
 	@Override
@@ -69,9 +64,25 @@ public class MoveFileIdentifiedRunnable implements IIdentifiedRunnable {
 			throw new TaskException(TaskException.EXECUTION_ERROR,
 					"Missing required run-context-parameter(s): [url, destinationDir, referenceId]");
 		}
+		String destinationDirPreference = LocalConfigService.get(Constants.PREF_LAST_SELECTED_CATEGORY, null);
+		if (destinationDirPreference != null && !destinationDirPreference.isEmpty()) {
+			int lastSlashIndex = destinationDir.lastIndexOf('\\');
+			if (lastSlashIndex != -1) {
+				destinationDir = destinationDir.substring(0, lastSlashIndex + 1) + destinationDirPreference;
+			}
+		}
+		moveFiles(progressMonitor, logger);
+		try {
+			IStatus status = new ImportOmnivore(deviceName).run(progressMonitor);
+			if (!status.isOK()) {
+				throw new TaskException(TaskException.EXECUTION_ERROR,
+						"Import failed with status: " + status.getMessage());
+			}
 
-		jobManager.manageJob(this, context, logger);
-
+		} catch (Exception ex) {
+			throw new TaskException(TaskException.EXECUTION_ERROR,
+					"An error occurred during the import process: " + ex.getMessage());
+		}
 		return null;
 	}
 
@@ -86,15 +97,15 @@ public class MoveFileIdentifiedRunnable implements IIdentifiedRunnable {
 		String referenceId = (String) context.get("referenceId");
 		String lastEventFilePath = lastContextState.get(referenceId + "_url");
 		String lastDestinationDir = lastContextState.get(referenceId + "_destinationDir");
-
 		return !newEventFilePath.equals(lastEventFilePath) || !newDestinationDir.equals(lastDestinationDir);
 	}
 
 	public void moveFiles(IProgressMonitor monitor, Logger logger) throws TaskException {
 		try {
-			IVirtualFilesystemHandle vfsHandle = virtualFilesystemService.of(eventFilePath);
-			Path sourcePath = Paths.get(vfsHandle.getURI());
-			Path targetDir = Paths.get(destinationDir);
+			IVirtualFilesystemHandle vfseventFilePathHandle = virtualFilesystemService.of(eventFilePath);
+			IVirtualFilesystemHandle vfsdestinationDirHandle = virtualFilesystemService.of(destinationDir);
+			Path sourcePath = Paths.get(vfseventFilePathHandle.getURI());
+			Path targetDir = Paths.get(vfsdestinationDirHandle.getURI());
 			if (!Files.exists(targetDir)) {
 				Files.createDirectories(targetDir);
 			} else if (!Files.isDirectory(targetDir)) {
@@ -111,8 +122,7 @@ public class MoveFileIdentifiedRunnable implements IIdentifiedRunnable {
 				moveSingleFile(sourcePath, targetDir, logger);
 			}
 		} catch (IOException e) {
-			throw new TaskException(TaskException.EXECUTION_ERROR, "Error moving files from [" + eventFilePath + "]",
-					e);
+			throw new TaskException(TaskException.EXECUTION_ERROR, "Error moving files from [" + eventFilePath + "]");
 		}
 	}
 
@@ -135,9 +145,5 @@ public class MoveFileIdentifiedRunnable implements IIdentifiedRunnable {
 		} else {
 			return fileName.substring(0, dotIndex) + "_copy" + fileName.substring(dotIndex);
 		}
-	}
-
-	public String getDeviceName() {
-		return this.deviceName;
 	}
 }

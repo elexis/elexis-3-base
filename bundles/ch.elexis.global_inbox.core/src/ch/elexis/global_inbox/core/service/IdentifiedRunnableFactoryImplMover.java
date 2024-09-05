@@ -13,7 +13,6 @@ import ch.elexis.core.services.IAccessControlService;
 import ch.elexis.core.services.IModelService;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.tasks.model.ITaskService;
-import ch.elexis.global_inbox.core.handler.JobManager;
 import ch.elexis.global_inbox.core.handler.MoveFileIdentifiedRunnable;
 
 
@@ -44,7 +43,6 @@ public class IdentifiedRunnableFactoryImplMover implements IIdentifiedRunnableFa
 
 	@Deactivate
 	public void deactivate() {
-		JobManager.getInstance().shutdown();
 		taskService.unbindIIdentifiedRunnableFactory(this);
 	}
 

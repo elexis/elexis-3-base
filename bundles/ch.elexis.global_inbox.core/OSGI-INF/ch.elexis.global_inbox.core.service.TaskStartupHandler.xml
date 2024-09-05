@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="ch.elexis.global_inbox.core.service.TaskStartupHandler">
-   <property name="event.topics" value="org/eclipse/e4/ui/LifeCycle/appStartupComplete"/>
-   <service>
-      <provide interface="org.osgi.service.event.EventHandler"/>
-   </service>
-   <reference cardinality="1..1" field="taskService" interface="ch.elexis.core.tasks.model.ITaskService" name="taskService"/>
-   <implementation class="ch.elexis.global_inbox.core.service.TaskStartupHandler"/>
-</scr:component>

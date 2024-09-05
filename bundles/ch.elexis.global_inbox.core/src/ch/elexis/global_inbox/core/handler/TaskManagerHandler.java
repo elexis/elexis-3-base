@@ -68,7 +68,6 @@ public class TaskManagerHandler {
 
 				taskService.saveTaskDescriptor(taskDescriptor);
 			}
-			taskService.trigger(taskDescriptor, null, TaskTriggerType.MANUAL, Collections.emptyMap());
 		} catch (TaskException e) {
 			e.printStackTrace();
 		}
@@ -100,7 +99,6 @@ public class TaskManagerHandler {
 				taskDescriptor.setDeleted(true);
 				taskService.setActive(taskDescriptor, false);
 				taskService.saveTaskDescriptor(taskDescriptor);
-				JobManager.getInstance().stopJobIfReferenceIdDeleted(referenceId);
 
 			} catch (AccessControlException e) {
 				LoggerFactory.getLogger(TaskManagerHandler.class).error("Berechtigungsfehler: " + e.getMessage());

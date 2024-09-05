@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -170,15 +169,29 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		GridData deviceDirTextGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		deviceDirTextGridData.widthHint = 300;
 		deviceDirText.setLayoutData(deviceDirTextGridData);
-
+		deviceDirText.setEnabled(false);
 		Button browseButton = new Button(contentComposite, SWT.PUSH);
 		browseButton.setText(Messages.PreferencesServer_browseButton);
 		browseButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		browseButton.addListener(SWT.Selection, e -> {
-			DirectoryDialog directoryDialog = new DirectoryDialog(getShell());
-			String dir = directoryDialog.open();
-			if (dir != null) {
-				deviceDirText.setText(dir);
+			IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
+			URI inputUri = null;
+			try {
+				String currentDir = deviceDirText.getText();
+				if (StringUtils.isNotBlank(currentDir)) {
+					IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(currentDir, false);
+					inputUri = fileHandle.toURL().toURI();
+				}
+			} catch (URISyntaxException | IOException ex) {
+				LoggerFactory.getLogger(PreferencesServer.class).error("Error converting URL to URI", ex);
+			}
+			VirtualFilesystemUriEditorDialog dialog = new VirtualFilesystemUriEditorDialog(getShell(),
+					virtualFilesystemService, inputUri);
+			int result = dialog.open();
+
+			if (IDialogConstants.OK_ID == result) {
+				String selectedUri = dialog.getValue().toString();
+				deviceDirText.setText(selectedUri);
 			}
 		});
 
@@ -212,10 +225,8 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 					virtualFilesystemService, inputUri);
 			int open = dialog.open();
 			if (IDialogConstants.OK_ID == open) {
-				String _url = dialog.getValue().toString();
-				String referenceId = deviceCombo.getText();
-				taskManagerHandler.createAndConfigureTask(referenceId, _url, deviceDirText.getText());
-				urlText.setText(_url);
+			String _url = dialog.getValue().toString();
+			urlText.setText(_url);
 			}
 		});
 
@@ -225,7 +236,6 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		omnivoreDirLabel.setText(Messages.PreferencesServer_omnivoreDirStructure);
 		GridData omnivoreDirLabelGridData = new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1);
 		omnivoreDirLabel.setLayoutData(omnivoreDirLabelGridData);
-
 
 		Composite categoryComposite = new Composite(contentComposite, SWT.NONE);
 		GridLayout categoryLayout = new GridLayout(2, false);

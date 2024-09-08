@@ -229,7 +229,7 @@ public class SearchView extends ViewPart implements IRefreshable {
 	private final static String NEWLINE_REPLACEMENT = "file.export.regex.newline.replacement";
 	private final static String EXTENSION = "file.export.extension";
 
-	@Reference
+	@Inject
 	private IConfigService configService;
 
 	public SearchView() {

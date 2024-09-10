@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Analytics
+Bundle-SymbolicName: ch.framsteg.elexis.finance.analytics;singleton:=true
+Bundle-Version: 3.12.0.qualifier
+Bundle-Vendor: framsteg.ch
+Automatic-Module-Name: ch.framsteg.elexis.finance.analytics
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Bundle: ch.elexis.core;bundle-version="3.9.0",
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ org.postgresql.jdbc;bundle-version="42.2.19",
+ ch.elexis.core.jpa;bundle-version="3.9.0",
+ ch.elexis.core.data;bundle-version="3.9.0",
+ ch.elexis.core.pdfbox;bundle-version="2.0.24"
+Import-Package: org.apache.pdfbox.contentstream,
+ org.apache.pdfbox.pdmodel.common,
+ org.apache.pdfbox.pdmodel.font

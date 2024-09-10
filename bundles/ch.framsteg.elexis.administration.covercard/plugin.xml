@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension
+         point="org.eclipse.ui.preferencePages">
+         <page
+            category="ch.elexis.preferences.transporters"
+            class="ch.framsteg.elexis.covercard.config.CovercardPreferencePage"
+            id="ch.framsteg.covercard_card.prefs"
+            name="Covercard® Plugin (Public License)">
+      </page>
+   </extension>
+ <extension
+         point="org.eclipse.ui.views">
+         <view id="ch.framsteg.elexis.covercard.views.SearchView"
+             name="Covercard©"
+             category="ch.elexis.datenKategorie"
+          class="ch.framsteg.elexis.covercard.views.SearchView"
+          icon="icons/covercard.gif"/>
+   </extension>
+</plugin>
+

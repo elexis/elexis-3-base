@@ -20,7 +20,7 @@ import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.global_inbox.core.util.Constants;
 
-public class MoveFileIdentifiedRunnable implements IIdentifiedRunnable {
+public class ImportOmnivoreIdentifiedRunnable implements IIdentifiedRunnable {
 	public static final String PREFERENCE_BRANCH = "plugins/global_inbox_server/"; //$NON-NLS-1$
 	public static final String PREF_DEVICES = PREFERENCE_BRANCH + "devices"; //$NON-NLS-1$
 	private IVirtualFilesystemService virtualFilesystemService;
@@ -29,7 +29,7 @@ public class MoveFileIdentifiedRunnable implements IIdentifiedRunnable {
 	private String deviceName;
 	private Map<String, String> lastContextState = new ConcurrentHashMap<>();
 
-	public MoveFileIdentifiedRunnable(IVirtualFilesystemService virtualFilesystemService) {
+	public ImportOmnivoreIdentifiedRunnable(IVirtualFilesystemService virtualFilesystemService) {
 		this.virtualFilesystemService = virtualFilesystemService;
 	}
 

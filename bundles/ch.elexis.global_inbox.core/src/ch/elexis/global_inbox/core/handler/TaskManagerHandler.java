@@ -39,7 +39,7 @@ public class TaskManagerHandler {
 			Optional<ITaskDescriptor> existingTaskDescriptorOpt = taskService
 					.findTaskDescriptorByIdOrReferenceId(referenceId);
 			ITaskDescriptor taskDescriptor;
-			MoveFileIdentifiedRunnable test = new MoveFileIdentifiedRunnable(virtualFilesystemService);
+			ImportOmnivoreIdentifiedRunnable test = new ImportOmnivoreIdentifiedRunnable(virtualFilesystemService);
 			IIdentifiedRunnable runnable = test;
 
 			if (existingTaskDescriptorOpt.isPresent()) {

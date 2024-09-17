@@ -20,20 +20,14 @@ import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.ModelPackage;
-import ch.elexis.core.services.IConfigService;
+
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.IQuery;
 
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
-import ch.elexis.global_inbox.core.model.GlobalInboxEntry;
-
-
-
-public class GlobalInboxUtil {
-
-	private static IConfigService configService = ConfigServiceHolder.get();
+public class ImportOmnivoreInboxUtil {
 
 	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
 	private IDocumentStore omnivoreDocumentStore = OmnivoreDocumentStoreServiceHolder.get();
@@ -42,7 +36,7 @@ public class GlobalInboxUtil {
 	public static final String PREF_DEVICE_DIR_PREFIX = PREFERENCE_BRANCH + "device_dir_"; //$NON-NLS-1$
 	private Logger logger;
 
-	public GlobalInboxUtil() {
+	public ImportOmnivoreInboxUtil() {
 		logger = LoggerFactory.getLogger(getClass());
 	}
 
@@ -64,7 +58,7 @@ public class GlobalInboxUtil {
 			IPatient pat = contact.asIPatient();
 			if (pat != null) {
 				if (!isFileOpened(file)) {
-					String cat = GlobalInboxUtil.getCategory(file);
+					String cat = ImportOmnivoreInboxUtil.getCategory(file);
 					if (cat.equals("-") || cat.equals("??")) {
 						cat = null;
 					}
@@ -110,14 +104,6 @@ public class GlobalInboxUtil {
 		return deviceDir != null ? deviceDir : defaultValue;
 	}
 
-	public static String getDirectory(String defaultValue) {
-		boolean isGlobal = configService.get(Constants.STOREFSGLOBAL, false);
-		if (isGlobal) {
-			return configService.get(Constants.PREF_DIR, defaultValue);
-		}
-		return configService.getLocal(Constants.PREF_DIR, defaultValue);
-	}
-
 	public static String getCategory(File file) {
 		String dir = getDirectory(Constants.PREF_DIR_DEFAULT, null);
 		File parent = file.getParentFile();
@@ -130,23 +116,6 @@ public class GlobalInboxUtil {
 				return parent.getName();
 			} else {
 				return "??"; //$NON-NLS-1$
-			}
-		}
-	}
-
-	public void removeFiles(GlobalInboxEntry globalInboxEntry) {
-		File mainFile = globalInboxEntry.getMainFile();
-		try {
-			Files.delete(mainFile.toPath());
-		} catch (IOException e) {
-			logger.warn("Could not delete " + mainFile, e); //$NON-NLS-1$
-		}
-		File[] extensionFiles = globalInboxEntry.getExtensionFiles();
-		for (File extensionFile : extensionFiles) {
-			try {
-				Files.delete(extensionFile.toPath());
-			} catch (IOException e) {
-				logger.warn("Could not delete " + extensionFile, e); //$NON-NLS-1$
 			}
 		}
 	}

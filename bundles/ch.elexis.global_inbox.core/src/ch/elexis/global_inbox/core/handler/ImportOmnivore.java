@@ -22,29 +22,24 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.services.IConfigService.ILocalLock;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.global_inbox.core.util.Constants;
-import ch.elexis.global_inbox.core.util.GlobalInboxUtil;
+import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;
 
 public class ImportOmnivore {
 
-
-
-	private static final String LOCAL_LOCK_INBOXIMPORT = "GlobalInboxImport"; //$NON-NLS-1$
 	private final Pattern PATIENT_MATCH_PATTERN = Pattern.compile("([0-9]+)_(.+)"); //$NON-NLS-1$
 
 	private Logger log;
-	private GlobalInboxUtil giutil;
+	private ImportOmnivoreInboxUtil giutil;
 	private String deviceName;
 
 	public ImportOmnivore(String deviceName) {
 		log = LoggerFactory.getLogger(getClass());
-		giutil = new GlobalInboxUtil();
+		giutil = new ImportOmnivoreInboxUtil();
 		this.deviceName = deviceName;
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
-		ILocalLock lock = ConfigServiceHolder.get().getLocalLock(LOCAL_LOCK_INBOXIMPORT);
-		if (lock.tryLock()) {
-			String filepath = GlobalInboxUtil.getDirectory(Constants.PREF_DIR_DEFAULT, deviceName);
+			String filepath = ImportOmnivoreInboxUtil.getDirectory(Constants.PREF_DIR_DEFAULT, deviceName);
 			File dir = null;
 			if (filepath == null) {
 				filepath = Constants.PREF_DIR_DEFAULT;
@@ -58,15 +53,7 @@ public class ImportOmnivore {
 				return Status.CANCEL_STATUS;
 			}
 			addFilesInDirRecursive(dir);
-		} else {
-			long lockMillis = lock.getLockCurrentMillis();
-			if (lockMillis == -1 || (System.currentTimeMillis() - lockMillis) > (120000L * 2L)) {
-				log.warn("Removing pending lock " + lock.getLockMessage() + "@" + lockMillis);
-				lock.unlock();
-			}
-		}
-		ConfigServiceHolder.get().getManagedLock(LOCAL_LOCK_INBOXIMPORT)
-				.ifPresent(localDocumentLock -> localDocumentLock.unlock());
+
 		return Status.OK_STATUS;
 	}
 

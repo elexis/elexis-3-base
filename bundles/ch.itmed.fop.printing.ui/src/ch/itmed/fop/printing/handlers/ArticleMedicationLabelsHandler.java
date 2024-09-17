@@ -1,5 +1,6 @@
 package ch.itmed.fop.printing.handlers;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -34,92 +35,117 @@ import ch.itmed.fop.printing.xml.documents.MedicationLabel;
 import ch.itmed.fop.printing.xml.documents.PdfTransformer;
 
 public class ArticleMedicationLabelsHandler extends AbstractHandler {
-	private static Logger logger = LoggerFactory.getLogger(ArticleMedicationLabelsHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ArticleMedicationLabelsHandler.class);
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
-			Optional<IEncounter> consultation = ContextServiceHolder.get().getTyped(IEncounter.class);
-			if (consultation.isPresent()) {
-				List<IBilled> verrechnet = consultation.get().getBilled();
-				List<IPrescription> medication = consultation.get().getPatient().getMedication(Arrays.asList(
-						EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION, EntryType.SYMPTOMATIC_MEDICATION));
-
-				StructuredSelection selection = CoreUiUtil.getCommandSelection("ch.elexis.VerrechnungsDisplay", false);
-				if (selection != null && !selection.isEmpty() && selection.getFirstElement() instanceof IBilled) {
-					verrechnet = selection.toList();
-				}
-
-				for (IBilled iBilled : verrechnet) {
-					if (iBilled.getBillable() instanceof IArticle) {
-						IArticle article = (IArticle) iBilled.getBillable();
-						// filter only medications which are billed on selected encounter
-						Optional<IPrescription> prescription = medication.stream()
-								.filter(m -> m.getArticle() != null && m.getArticle().equals(article)).findFirst();
-						if (prescription.isPresent()) {
-							// create medication labels for articles with medication
-							for (int i = 0; i < iBilled.getAmount(); i++) {
-								InputStream xmlDoc = MedicationLabel.create(prescription.get());
-								InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
-										ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID));
-								String docName = PreferenceConstants.MEDICATION_LABEL;
-								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
-								String printerName = settingsStore
-										.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
-								logger.info("Printing document MedicationLabel on printer: " + printerName); //$NON-NLS-1$
-								PrintProvider.printPdf(pdf, printerName);
-							}
-						} else {
-							// create article labels without medication
-							for (int i = 0; i < iBilled.getAmount(); i++) {
-								InputStream xmlDoc = ArticleLabel.create(article);
-								Optional<String> dosageInstructions = getDosageInstructions(article);
-								InputStream pdf;
-								String docName;
-								IPreferenceStore settingsStoreCheck = SettingsProvider
-										.getStore(PreferenceConstants.ARTICLE_MEDIC_LABEL);
-								String printerNameCheck = settingsStoreCheck.getString(PreferenceConstants
-										.getDocPreferenceConstant(PreferenceConstants.ARTICLE_MEDIC_LABEL, 0));
-								if (dosageInstructions.isPresent() && StringUtils.isNotBlank(printerNameCheck)) {
-									pdf = PdfTransformer.transformXmlToPdf(xmlDoc, ResourceProvider
-											.getXslTemplateFile(PreferenceConstants.ARTICLE_MEDIC_LABEL_ID));
-									docName = PreferenceConstants.ARTICLE_MEDIC_LABEL;
-								} else {
-									pdf = PdfTransformer.transformXmlToPdf(xmlDoc,
-											ResourceProvider.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID));
-									docName = PreferenceConstants.ARTICLE_LABEL;
-								}
-								IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
-								String printerName = settingsStore
-										.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
-								logger.info("Printing document ArticleLabel on printer: " + printerName); //$NON-NLS-1$
-								PrintProvider.printPdf(pdf, printerName);
-							}
-						}
-					}
-				}
+			Optional<IEncounter> consultationOpt = ContextServiceHolder.get().getTyped(IEncounter.class);
+			if (!consultationOpt.isPresent()) {
+				SWTHelper.showError(Messages.DefaultError_Title, Messages.DefaultError_Message);
+				return null;
 			}
+			IEncounter consultation = consultationOpt.get();
+			List<IBilled> billedItems = consultation.getBilled();
+			List<IPrescription> medications = consultation.getPatient()
+					.getMedication(Arrays.asList(EntryType.FIXED_MEDICATION, EntryType.RESERVE_MEDICATION,
+							EntryType.SYMPTOMATIC_MEDICATION, EntryType.SELF_DISPENSED));
+
+			StructuredSelection selection = CoreUiUtil.getCommandSelection("ch.elexis.VerrechnungsDisplay", false);
+			if (selection != null && !selection.isEmpty() && selection.getFirstElement() instanceof IBilled) {
+				billedItems = selection.toList();
+			}
+
+			billedItems.stream().filter(iBilled -> iBilled.getBillable() instanceof IArticle).forEach(iBilled -> {
+				try {
+					processBilledItem(iBilled, medications);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
+
 		} catch (Exception e) {
-			String msg = e.getMessage();
-			if (msg != null) {
-				if (msg.equals("No patient selected") || msg.equals("No consultation selected")) { //$NON-NLS-1$ //$NON-NLS-2$
-					// Make sure we don't show 2 error messages.
-					return null;
-				}
-			}
-			SWTHelper.showError(Messages.DefaultError_Title, Messages.DefaultError_Message);
-			logger.error(e.getLocalizedMessage(), e);
+			handleException(e);
 		}
 		return null;
 	}
 
-	private static Optional<String> getDosageInstructions(IArticle article) {
-		Optional<IArticleDefaultSignature> signatureOpt = MedicationServiceHolder.get().getDefaultSignature(article);
-		if (signatureOpt.isPresent()) {
-			IArticleDefaultSignature signature = signatureOpt.get();
-			return Optional.ofNullable(signature.getComment());
+	private void processBilledItem(IBilled iBilled, List<IPrescription> medications) throws Exception {
+		IArticle article = (IArticle) iBilled.getBillable();
+		Optional<IPrescription> prescriptionOpt = findPrescriptionByBilledId(iBilled.getId().toString(), medications);
+		int amount = (int) iBilled.getAmount();
+		if (prescriptionOpt.isPresent()) {
+			IPrescription prescription = prescriptionOpt.get();
+			String dosageInstruction = prescription.getDosageInstruction();
+			String remark = prescription.getRemark();
+			if (StringUtils.isNotBlank(dosageInstruction) || StringUtils.isNotBlank(remark)) {
+				printMedicationLabels(prescription, amount);
+			} else {
+				printArticleLabels(article, amount);
+			}
+		} else {
+			printArticleLabels(article, amount);
 		}
-		return Optional.empty();
+	}
+
+	private void printMedicationLabels(IPrescription prescription, int amount) throws Exception {
+		File xslTemplate = ResourceProvider.getXslTemplateFile(PreferenceConstants.MEDICATION_LABEL_ID);
+		String docName = PreferenceConstants.MEDICATION_LABEL;
+		IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
+		String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+		logger.info("Printing document MedicationLabel on printer: " + printerName);
+		for (int i = 0; i < amount; i++) {
+			InputStream xmlDoc = MedicationLabel.create(prescription);
+			InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc, xslTemplate);
+			PrintProvider.printPdf(pdf, printerName);
+		}
+	}
+
+	private void printArticleLabels(IArticle article, int amount) throws Exception {
+		InputStream xmlDoc = ArticleLabel.create(article);
+		Optional<String> dosageInstructions = getDosageInstructions(article);
+		String docName;
+		File xslTemplate;
+		IPreferenceStore settingsStore;
+		if (dosageInstructions.isPresent() && hasPrinterConfigured(PreferenceConstants.ARTICLE_MEDIC_LABEL)) {
+			xslTemplate = ResourceProvider.getXslTemplateFile(PreferenceConstants.ARTICLE_MEDIC_LABEL_ID);
+			docName = PreferenceConstants.ARTICLE_MEDIC_LABEL;
+		} else {
+			xslTemplate = ResourceProvider.getXslTemplateFile(PreferenceConstants.ARTICLE_LABEL_ID);
+			docName = PreferenceConstants.ARTICLE_LABEL;
+		}
+		settingsStore = SettingsProvider.getStore(docName);
+		String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+		logger.info("Printing document " + docName + " on printer: " + printerName);
+		for (int i = 0; i < amount; i++) {
+			InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc, xslTemplate);
+			PrintProvider.printPdf(pdf, printerName);
+		}
+	}
+
+	private boolean hasPrinterConfigured(String docName) {
+		IPreferenceStore settingsStore = SettingsProvider.getStore(docName);
+		String printerName = settingsStore.getString(PreferenceConstants.getDocPreferenceConstant(docName, 0));
+		return StringUtils.isNotBlank(printerName);
+	}
+
+	private void handleException(Exception e) {
+		String msg = e.getMessage();
+		if (msg != null && (msg.equals("No patient selected") || msg.equals("No consultation selected"))) {
+			return;
+		}
+		SWTHelper.showError(Messages.DefaultError_Title, Messages.DefaultError_Message);
+		logger.error(e.getLocalizedMessage(), e);
+	}
+
+	private static Optional<String> getDosageInstructions(IArticle article) {
+		return MedicationServiceHolder.get().getDefaultSignature(article).map(IArticleDefaultSignature::getComment);
+	}
+
+	private Optional<IPrescription> findPrescriptionByBilledId(String billedId, List<IPrescription> prescriptions) {
+		return prescriptions.stream().filter(
+				p -> billedId.equals(p.getExtInfo(ch.elexis.core.model.prescription.Constants.FLD_EXT_VERRECHNET_ID)))
+				.findFirst();
 	}
 }

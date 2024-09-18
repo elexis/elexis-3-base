@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ch.elexis.laborimport.synlab.feature"
-      label="Laborimport Synlab HL7"
+      label="Laborimport MEDISYN HL7"
       version="3.12.0.qualifier"
       provider-name="elexis.info">
 
    <description>
-      Laborimport Synlab
-      Mehr Info unter http://wiki.elexis.info/ch.elexis.laborimport.synlab.feature.feature.group
+      Laborimport MEDISYN
+Mehr Info unter http://wiki.elexis.info/ch.elexis.laborimport.synlab.feature.feature.group
    </description>
 
    <copyright url="http://elexis.info/de_contributers.html">

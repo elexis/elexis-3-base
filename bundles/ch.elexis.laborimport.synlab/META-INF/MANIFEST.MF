@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Labor Synlab importer
+Bundle-Name: Labor MEDISYN importer
 Bundle-SymbolicName: ch.elexis.laborimport.synlab;singleton:=true
 Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: elexis.info

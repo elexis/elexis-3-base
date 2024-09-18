@@ -12,6 +12,7 @@ import ch.elexis.core.tasks.model.TaskTriggerTypeParameter;
 import ch.elexis.core.services.IVirtualFilesystemService;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -37,30 +38,35 @@ public class TaskManagerHandler {
 		try {
 			Optional<ITaskDescriptor> existingTaskDescriptorOpt = taskService
 					.findTaskDescriptorByIdOrReferenceId(referenceId);
-			if (existingTaskDescriptorOpt.isPresent()) {
-				ITaskDescriptor existingTaskDescriptor = existingTaskDescriptorOpt.get();
-				ensureNotDeletedById(existingTaskDescriptor.getReferenceId());
-				existingTaskDescriptor.setTriggerParameter(TaskTriggerTypeParameter.FILESYSTEM_CHANGE.URL, url);
-				existingTaskDescriptor.setRunContextParameter(RunContextParameter.STRING_URL, url);
-				existingTaskDescriptor.setRunContextParameter("destinationDir", destinationDir);
-				existingTaskDescriptor.setActive(true);
-				existingTaskDescriptor.setRunner(IElexisEnvironmentService.ES_STATION_ID_DEFAULT);
-				taskService.saveTaskDescriptor(existingTaskDescriptor);
-			} else {
-				IIdentifiedRunnable runnable = new MoveFileIdentifiedRunnable(virtualFilesystemService);
-				ITaskDescriptor newTaskDescriptor = taskService.createTaskDescriptor(runnable);
-				newTaskDescriptor.setReferenceId(referenceId);
-				newTaskDescriptor.setTriggerType(TaskTriggerType.FILESYSTEM_CHANGE);
-				newTaskDescriptor.setTriggerParameter(TaskTriggerTypeParameter.FILESYSTEM_CHANGE.URL, url);
-				newTaskDescriptor.setActive(true);
-				newTaskDescriptor.setRunner(IElexisEnvironmentService.ES_STATION_ID_DEFAULT);
+			ITaskDescriptor taskDescriptor;
+			ImportOmnivoreIdentifiedRunnable test = new ImportOmnivoreIdentifiedRunnable(virtualFilesystemService);
+			IIdentifiedRunnable runnable = test;
 
+			if (existingTaskDescriptorOpt.isPresent()) {
+				taskDescriptor = existingTaskDescriptorOpt.get();
+				ensureNotDeletedById(taskDescriptor.getReferenceId());
+				taskDescriptor.setTriggerParameter(TaskTriggerTypeParameter.FILESYSTEM_CHANGE.URL, url);
+				taskDescriptor.setRunContextParameter(RunContextParameter.STRING_URL, url);
+				taskDescriptor.setRunContextParameter("destinationDir", destinationDir);
+				taskDescriptor.setRunContextParameter("referenceId", referenceId);
+				taskDescriptor.setActive(true);
+				taskDescriptor.setRunner(IElexisEnvironmentService.ES_STATION_ID_DEFAULT);
+				taskService.saveTaskDescriptor(taskDescriptor);
+				taskService.refresh(taskDescriptor);
+			} else {
+				taskDescriptor = taskService.createTaskDescriptor(runnable);
+				taskDescriptor.setReferenceId(referenceId);
+				taskDescriptor.setTriggerType(TaskTriggerType.FILESYSTEM_CHANGE);
+				taskDescriptor.setTriggerParameter(TaskTriggerTypeParameter.FILESYSTEM_CHANGE.URL, url);
+				taskDescriptor.setActive(true);
+				taskDescriptor.setRunner(IElexisEnvironmentService.ES_STATION_ID_DEFAULT);
 				Map<String, Serializable> runContext = new HashMap<>();
 				runContext.put(RunContextParameter.STRING_URL, url);
 				runContext.put("destinationDir", destinationDir);
-				newTaskDescriptor.setRunContext(runContext);
+				runContext.put("referenceId", referenceId);
+				taskDescriptor.setRunContext(runContext);
 
-				taskService.saveTaskDescriptor(newTaskDescriptor);
+				taskService.saveTaskDescriptor(taskDescriptor);
 			}
 		} catch (TaskException e) {
 			e.printStackTrace();
@@ -91,7 +97,9 @@ public class TaskManagerHandler {
 			try {
 				taskDescriptor.setActive(false);
 				taskDescriptor.setDeleted(true);
+				taskService.setActive(taskDescriptor, false);
 				taskService.saveTaskDescriptor(taskDescriptor);
+
 			} catch (AccessControlException e) {
 				LoggerFactory.getLogger(TaskManagerHandler.class).error("Berechtigungsfehler: " + e.getMessage());
 			} catch (TaskException e) {
@@ -99,7 +107,5 @@ public class TaskManagerHandler {
 			}
 		}
 	}
-
-
 
 }

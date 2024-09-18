@@ -3,16 +3,19 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Global Inbox Core
 Bundle-SymbolicName: ch.elexis.global_inbox.core
 Bundle-Version: 3.13.0.qualifier
-Export-Package: ch.elexis.global_inbox.core.handler
-Import-Package: ch.elexis.core.tasks.model,
- ch.elexis.data
+Export-Package: ch.elexis.global_inbox.core.handler,
+ ch.elexis.global_inbox.core.util
 Require-Bundle: javax.inject,
  ch.elexis.core,
  at.medevit.elexis.inbox,
- ch.elexis.core.ui;bundle-version="3.13.0",
- ch.elexis.core.ui.tasks
-Service-Component: OSGI-INF/ch.elexis.global_inbox.core.handler.IdentifiedRunnableFactoryImpl.xml,
- OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover.xml
+ ch.elexis.core.documents,
+ ch.elexis.core.findings,
+ org.apache.commons.commons-io,
+ ch.elexis.core.importer.div,
+ ch.elexis.omnivore.model,
+ ch.elexis.core.tasks,
+ ch.elexis.core.services
+Service-Component: OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover.xml
 Automatic-Module-Name: ch.elexis.global.inbox.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21

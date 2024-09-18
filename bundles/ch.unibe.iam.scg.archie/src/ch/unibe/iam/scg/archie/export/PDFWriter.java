@@ -186,7 +186,7 @@ public class PDFWriter {
 		try {
 			return PDType0Font.load(document, fontStream);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerFactory.getLogger(PDFWriter.class).error("could not load font into document", e);
 		}
 		return null;
 	}

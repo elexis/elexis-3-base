@@ -21,8 +21,7 @@ import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandl
 import ch.elexis.global_inbox.core.util.Constants;
 
 public class ImportOmnivoreIdentifiedRunnable implements IIdentifiedRunnable {
-	public static final String PREFERENCE_BRANCH = "plugins/global_inbox_server/"; //$NON-NLS-1$
-	public static final String PREF_DEVICES = PREFERENCE_BRANCH + "devices"; //$NON-NLS-1$
+	
 	private IVirtualFilesystemService virtualFilesystemService;
 	private String eventFilePath;
 	private String destinationDir;

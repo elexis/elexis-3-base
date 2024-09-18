@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Global Inbox Core
 Bundle-SymbolicName: ch.elexis.global_inbox.core
 Bundle-Version: 3.13.0.qualifier
-Export-Package: ch.elexis.global_inbox.core.handler
+Export-Package: ch.elexis.global_inbox.core.handler,
+ ch.elexis.global_inbox.core.util
 Require-Bundle: javax.inject,
  ch.elexis.core,
  at.medevit.elexis.inbox,

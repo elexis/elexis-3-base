@@ -31,9 +31,6 @@ public class ImportOmnivoreInboxUtil {
 
 	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
 	private IDocumentStore omnivoreDocumentStore = OmnivoreDocumentStoreServiceHolder.get();
-
-	public static final String PREFERENCE_BRANCH = "plugins/global_inbox_server/"; //$NON-NLS-1$
-	public static final String PREF_DEVICE_DIR_PREFIX = PREFERENCE_BRANCH + "device_dir_"; //$NON-NLS-1$
 	private Logger logger;
 
 	public ImportOmnivoreInboxUtil() {
@@ -100,7 +97,8 @@ public class ImportOmnivoreInboxUtil {
 	}
 
 	public static String getDirectory(String defaultValue, String deviceName) {
-		String deviceDir = ConfigServiceHolder.get().getLocal(PREF_DEVICE_DIR_PREFIX + deviceName, defaultValue);
+		String deviceDir = ConfigServiceHolder.get().getLocal(Constants.PREF_DEVICE_DIR_PREFIX + deviceName,
+				defaultValue);
 		return deviceDir != null ? deviceDir : defaultValue;
 	}
 

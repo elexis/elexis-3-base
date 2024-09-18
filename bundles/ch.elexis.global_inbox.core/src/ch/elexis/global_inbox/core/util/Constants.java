@@ -6,11 +6,16 @@ import ch.elexis.core.model.IDocument;
 
 public class Constants {
 
-	public static final String IMPORTFILETOOMNIVORE = "importFileToOmnivore";
-	public static final String PREFERENCE_BRANCH = "plugins/global_inbox/"; //$NON-NLS-1$
+	public static final String IMPORTFILETOOMNIVORE = "importFileToOmnivore"; //$NON-NLS-1$
 	public static final String PREFERENCE_BRANCH_SERVER = "plugins/global_inbox_server/"; //$NON-NLS-1$
-	public static final String PREF_DIR = PREFERENCE_BRANCH + "dir"; //$NON-NLS-1$
-	public static final String STOREFSGLOBAL = PREFERENCE_BRANCH + "store_in_fs_global"; //$NON-NLS-1$
-	public static final String PREF_DIR_DEFAULT = StringUtils.EMPTY;
+	public static final String PREF_DIR = PREFERENCE_BRANCH_SERVER + "dir"; //$NON-NLS-1$
+	public static final String STOREFSGLOBAL = PREFERENCE_BRANCH_SERVER + "store_in_fs_global"; //$NON-NLS-1$
+	public static final String PREF_DIR_DEFAULT = StringUtils.EMPTY; // $NON-NLS-1$
 	public static final String PREF_LAST_SELECTED_CATEGORY = PREFERENCE_BRANCH_SERVER + "last_selected_category"; //$NON-NLS-1$
+	public static final String PREF_DEVICE_DIR_PREFIX = PREFERENCE_BRANCH_SERVER + "device_dir_"; //$NON-NLS-1$
+	public static final String PREF_TITLE_COMPLETION = PREFERENCE_BRANCH_SERVER + "titleCompletions"; //$NON-NLS-1$
+	public static final String PREF_DEVICES = PREFERENCE_BRANCH_SERVER + "devices"; //$NON-NLS-1$
+	public static final String PREF_SELECTED_DEVICE = PREFERENCE_BRANCH_SERVER + "selectedDevice"; //$NON-NLS-1$
+	public static final String PREF_OMNIVORE_DIR_STRUCTURE = PREFERENCE_BRANCH_SERVER + "omnivore_dir_structure"; //$NON-NLS-1$
+	public static final String PREF_CATEGORY_PREFIX = PREFERENCE_BRANCH_SERVER + "categories_"; //$NON-NLS-1$
 }

@@ -10,7 +10,7 @@
          point="ch.elexis.core.ui.LaborDatenImport">
       <Importer
             Class="ch.elexis.laborimport.synlab.Importer"
-            name="Labor Synlab"/>
+            name="Labor MEDISYN"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -18,7 +18,7 @@
             category="ch.elexis.preferences.transporters"
             class="ch.elexis.laborimport.synlab.PreferencePage"
             id="ch.elexis.laborimport.synlab.prefs"
-            name="Labor Synlab"/>
+            name="Labor MEDISYN"/>
    </extension>
 
 </plugin>

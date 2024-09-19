@@ -96,6 +96,7 @@ public class CombinedAppointments extends PreferencePage implements IWorkbenchPr
 	private void populateAreaList() {
 		List<String> areas = ConfigServiceHolder.get().getAsList(PreferenceConstants.AG_TERMINTYPEN);
 		List<String> filteredAppointmentTypes = areas.stream().skip(2)
+				.filter(area -> !area.equals("Medicosearch") && !area.equals("Medicovideo"))
 				.collect(Collectors.toList());
 		areaListViewer.setInput(filteredAppointmentTypes);
 		areaListViewer.addSelectionChangedListener(event -> {

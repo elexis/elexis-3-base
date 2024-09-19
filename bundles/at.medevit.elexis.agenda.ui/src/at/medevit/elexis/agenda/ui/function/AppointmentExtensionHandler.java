@@ -64,6 +64,34 @@ public class AppointmentExtensionHandler {
 	}
 
 	/**
+	 * Retrieves all related appointment IDs, including linked (Kombi) appointments
+	 * and the main appointment itself.
+	 *
+	 * @param appointment the appointment (can be a main or linked appointment)
+	 * @return a list of all related appointment IDs (including the main and all
+	 *         linked appointments)
+	 */
+	public static List<IAppointment> getAllRelatedAppointments(IAppointment appointment) {
+		List<IAppointment> allRelatedAppointments = new ArrayList<>();
+		String mainAppointmentId = getMainAppointmentId(appointment);
+
+		if (mainAppointmentId != null && !mainAppointmentId.isEmpty()) {
+			Optional<IAppointment> mainAppointment = CoreModelServiceHolder.get().load(mainAppointmentId,
+					IAppointment.class);
+			if (mainAppointment.isPresent()) {
+				allRelatedAppointments.add(mainAppointment.get());
+				List<IAppointment> linkedAppointments = getLinkedAppointments(mainAppointment.get());
+				allRelatedAppointments.addAll(linkedAppointments);
+			}
+		} else {
+			allRelatedAppointments.add(appointment);
+			List<IAppointment> linkedAppointments = getLinkedAppointments(appointment);
+			allRelatedAppointments.addAll(linkedAppointments);
+		}
+		return allRelatedAppointments;
+	}
+
+	/**
 	 * Inserts a new main appointment ID into the extension.
 	 *
 	 * @param appointment the appointment

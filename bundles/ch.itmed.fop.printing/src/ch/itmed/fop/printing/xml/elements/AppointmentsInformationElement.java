@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import at.medevit.elexis.agenda.ui.function.AppointmentExtensionHandler;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPatient;
 import ch.itmed.fop.printing.data.AppointmentData;
@@ -93,8 +94,11 @@ public class AppointmentsInformationElement {
 
 				c = doc.createElement("Appointments"); //$NON-NLS-1$
 				for (AppointmentData ad : areaAppointments) {
+					List<IAppointment> allRelatedAppointments = AppointmentExtensionHandler
+							.getAllRelatedAppointments(ad.getAppointment());
+					String appointmentDetails = ad.getEarliestAndLatestAppointmentTimes(allRelatedAppointments);
 					Element appointment = doc.createElement("Appointment"); //$NON-NLS-1$
-					appointment.appendChild(doc.createTextNode(ad.getAppointmentDetailed()));
+					appointment.appendChild(doc.createTextNode(appointmentDetails));
 					c.appendChild(appointment);
 					Element appointmentNoEnd = doc.createElement("AppointmentNoEnd"); //$NON-NLS-1$
 					appointmentNoEnd.appendChild(doc.createTextNode(ad.getAppointmentDetailedNoEnd()));

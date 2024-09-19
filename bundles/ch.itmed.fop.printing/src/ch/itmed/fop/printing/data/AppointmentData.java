@@ -11,6 +11,7 @@
 
 package ch.itmed.fop.printing.data;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -89,8 +90,36 @@ public final class AppointmentData {
 		return appointmentDate.toString();
 	}
 
+	public TimeTool getEndTime() {
+		return new TimeTool(appointment.getEndTime());
+	}
+
 	public TimeTool getStartTime() {
 		return new TimeTool(appointment.getStartTime());
+	}
+
+	public String getEarliestAndLatestAppointmentTimes(List<IAppointment> allRelatedAppointments) {
+		if (allRelatedAppointments == null || allRelatedAppointments.isEmpty()) {
+			return getAppointmentDetailed();
+		}
+		IAppointment earliestAppointment = allRelatedAppointments.stream()
+				.min(Comparator.comparing(appointment -> new TimeTool(appointment.getStartTime()))).orElse(appointment);
+		IAppointment latestAppointment = allRelatedAppointments.stream()
+				.max(Comparator.comparing(appointment -> new TimeTool(appointment.getEndTime()))).orElse(appointment);
+		TimeTool earliestStartTime = new TimeTool(earliestAppointment.getStartTime());
+		TimeTool latestEndTime = new TimeTool(latestAppointment.getEndTime());
+		String formattedWeekday = earliestStartTime.toString(TimeTool.WEEKDAY);
+		String formattedEarliestDate = earliestStartTime.toString(TimeTool.DATE_GER);
+		String formattedEarliestTime = earliestStartTime.toString(TimeTool.TIME_SMALL);
+		String formattedLatestTime = latestEndTime.toString(TimeTool.TIME_SMALL);
+		if (earliestStartTime.isSameDay(latestEndTime)) {
+			return formattedWeekday + ", " + formattedEarliestDate + StringUtils.SPACE + formattedEarliestTime + " - "
+					+ formattedLatestTime;
+		} else {
+			String formattedLatestDate = latestEndTime.toString(TimeTool.DATE_GER);
+			return formattedWeekday + ", " + formattedEarliestDate + StringUtils.SPACE + formattedEarliestTime + " - "
+					+ formattedLatestDate + StringUtils.SPACE + formattedLatestTime;
+		}
 	}
 
 	public String getAgendaArea() {
@@ -110,6 +139,10 @@ public final class AppointmentData {
 		} else {
 			return agendaSection;
 		}
+	}
+
+	public IAppointment getAppointment() {
+		return appointment;
 	}
 
 }

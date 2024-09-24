@@ -16,6 +16,8 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.LocalLockServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
+import ch.itmed.fop.printing.handler.AppointmentExtensionHandler;
+
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 

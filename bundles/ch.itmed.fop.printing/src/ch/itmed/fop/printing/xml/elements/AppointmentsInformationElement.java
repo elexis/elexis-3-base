@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import at.medevit.elexis.agenda.ui.function.AppointmentExtensionHandler;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPatient;
 import ch.itmed.fop.printing.data.AppointmentData;
 import ch.itmed.fop.printing.data.AppointmentsData;
+import ch.itmed.fop.printing.handler.AppointmentExtensionHandler;
 
 public class AppointmentsInformationElement {
 

@@ -19,7 +19,7 @@ import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.CopyActionType;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
 import at.medevit.elexis.agenda.ui.function.AbstractBrowserFunction;
-import at.medevit.elexis.agenda.ui.function.AppointmentExtensionHandler;
+
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
@@ -27,6 +27,7 @@ import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.itmed.fop.printing.handler.AppointmentExtensionHandler;
 
 public class InsertHandler {
 	@Inject

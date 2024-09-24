@@ -196,7 +196,31 @@ public class Importer extends ImporterPage {
 			String filename = results[1];
 			return ResultAdapter.getResultAsStatus(hlp.importFile(filename, false));
 		} else {
-			return ResultAdapter.getResultAsStatus(importDirect());
+			if (openmedicalObject != null) {
+				return ResultAdapter.getResultAsStatus(importDirect());
+			} else {
+				File downloadPath = new File(CoreHub.localCfg.get(PreferencePage.DL_DIR, null));
+				File archiveDir = new File(downloadPath, "archive"); //$NON-NLS-1$
+				String[] files = downloadPath.list(new FilenameFilter() {
+					@Override
+					public boolean accept(File path, String name) {
+						if (name.toLowerCase().endsWith(".hl7")) { //$NON-NLS-1$
+							return true;
+						}
+						return false;
+					}
+				});
+				Result<?> rs = null;
+				for (String file : files) {
+					File f = new File(downloadPath, file);
+					try {
+						rs = hlp.importFile(f, archiveDir, false);
+					} catch (IOException e) {
+						SWTHelper.showError("Import error", e.getMessage()); //$NON-NLS-1$
+					}
+				}
+				return ResultAdapter.getResultAsStatus(rs);
+			}
 		}
 	}
 
@@ -290,10 +314,6 @@ public class Importer extends ImporterPage {
 
 				home.results[0] = new Integer(DIRECT).toString();
 				home.results[1] = StringUtils.EMPTY;
-			}
-
-			if (openmedicalObject == null) {
-				bDirect.setEnabled(false);
 			}
 
 			SelectionAdapter sa = new SelectionAdapter() {

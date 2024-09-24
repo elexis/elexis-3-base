@@ -3,6 +3,7 @@ package ch.unibe.iam.scg.archie.export;
 import java.awt.Color;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,7 +14,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.slf4j.LoggerFactory;
 
 import be.quodlibet.boxable.BaseTable;
 import be.quodlibet.boxable.Cell;
@@ -50,6 +54,9 @@ public class PDFWriter {
 			for (String heading : data.getHeadings()) {
 				Cell<PDPage> cell = headerRow.createCell((100.0f / data.getHeadings().size()), heading);
 				cell.setFont(PDType1Font.HELVETICA_BOLD);
+				if (!checkUnicodeSupport(cell.getFont(), heading)) {
+					cell.setFont(getUnicodeFont(doc));
+				}
 				cell.setFillColor(darkGray);
 				cell.setAlign(HorizontalAlignment.CENTER);
 			}
@@ -62,6 +69,9 @@ public class PDFWriter {
 					String cleanText = cleanText(text);
 					Cell<PDPage> cell = dataRow.createCell((100.0f / row.length), cleanText);
 					cell.setFont(PDType1Font.HELVETICA);
+					if (!checkUnicodeSupport(cell.getFont(), cleanText)) {
+						cell.setFont(getUnicodeFont(doc));
+					}
 					cell.setFillColor(toggleColor ? lightGray : white);
 					cell.setAlign(HorizontalAlignment.RIGHT);
 				}
@@ -139,5 +149,45 @@ public class PDFWriter {
 
 	private static String cleanText(String text) {
 		return text.replace("\r", "").replace("\n", "");
+	}
+
+	/**
+	 * Check if the given font can encode the string. If it can, return true. If
+	 * it catches an error then the String isn't supported by the font and
+	 * return false.
+	 * 
+	 * @param font
+	 * @param text
+	 * @return whether the font was able to encode the given String
+	 * @throws IOException
+	 */
+	private static boolean checkUnicodeSupport(PDFont font, String text) throws IOException {
+		try {
+			font.encode(text);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Returns a wide unicode character supporting font from the pdfbox
+	 * resources.
+	 * 
+	 * @param document
+	 * @return
+	 */
+	private static PDFont getUnicodeFont(PDDocument document) {
+		InputStream fontStream = PDFont.class
+				.getResourceAsStream("/org/apache/pdfbox/resources/ttf/LiberationSans-Regular.ttf");
+		if (fontStream == null) {
+			LoggerFactory.getLogger(PDFWriter.class).warn("path to resource is null");
+		}
+		try {
+			return PDType0Font.load(document, fontStream);
+		} catch (IOException e) {
+			LoggerFactory.getLogger(PDFWriter.class).error("could not load font into document", e);
+		}
+		return null;
 	}
 }

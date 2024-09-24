@@ -234,7 +234,7 @@ public class Importer extends ImporterPage {
 
 	@Override
 	public String getTitle() {
-		return "Labor " + MY_LAB;
+		return "Labor MEDISYN";
 	}
 
 	@Override

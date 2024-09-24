@@ -1,4 +1,5 @@
-package at.medevit.elexis.agenda.ui.function;
+package ch.itmed.fop.printing.handler;
+
 
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -136,7 +137,7 @@ public class AppointmentExtensionHandler {
 		return null;
 	}
 
-    /**
+	/**
 	 * Inserts multiple linked appointment IDs into the extension of a main
 	 * appointment.
 	 *
@@ -144,15 +145,15 @@ public class AppointmentExtensionHandler {
 	 *                             added.
 	 * @param linkedAppointmentIds The list of IDs of the linked appointments.
 	 */
-    public static void addMultipleLinkedAppointments(IAppointment mainAppointment, List<String> linkedAppointmentIds) {
+	public static void addMultipleLinkedAppointments(IAppointment mainAppointment, List<String> linkedAppointmentIds) {
 		StringBuilder extensionBuilder = new StringBuilder(
 				mainAppointment.getExtension() != null ? mainAppointment.getExtension() + "," : "");
-        for (String linkedId : linkedAppointmentIds) {
-            extensionBuilder.append(KOMBI_PREFIX).append(linkedId).append(",");
-        }
-        if (extensionBuilder.length() > 0 && extensionBuilder.charAt(extensionBuilder.length() - 1) == ',') {
-            extensionBuilder.setLength(extensionBuilder.length() - 1);
-        }
-        mainAppointment.setExtension(extensionBuilder.toString());
-    }
+		for (String linkedId : linkedAppointmentIds) {
+			extensionBuilder.append(KOMBI_PREFIX).append(linkedId).append(",");
+		}
+		if (extensionBuilder.length() > 0 && extensionBuilder.charAt(extensionBuilder.length() - 1) == ',') {
+			extensionBuilder.setLength(extensionBuilder.length() - 1);
+		}
+		mainAppointment.setExtension(extensionBuilder.toString());
+	}
 }

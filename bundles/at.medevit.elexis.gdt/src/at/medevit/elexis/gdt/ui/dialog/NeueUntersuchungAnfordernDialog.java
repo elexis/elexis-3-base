@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.typed.BeanProperties;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -367,7 +367,7 @@ public class NeueUntersuchungAnfordernDialog extends TitleAreaDialog {
 
 	protected void initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
-		IObservableMap gdt6302ValuesObserveMap = BeanProperties.map("values", Integer.class, String.class)
+		IObservableMap gdt6302ValuesObserveMap = PojoProperties.map("values", Integer.class, String.class)
 				.observe(gdt6302);
 
 		Text[] control = { txtPatientenKennung, txtPatientNachname, txtPatientVorname, txtIDReceiver, txtIDSender,

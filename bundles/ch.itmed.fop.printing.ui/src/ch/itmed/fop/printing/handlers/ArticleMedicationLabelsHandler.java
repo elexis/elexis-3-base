@@ -60,8 +60,7 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 				try {
 					processBilledItem(iBilled, medications);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Error processing billed item: {}", iBilled, e);
 				}
 			});
 

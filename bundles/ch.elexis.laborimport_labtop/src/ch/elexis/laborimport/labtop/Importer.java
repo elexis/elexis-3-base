@@ -113,16 +113,13 @@ public class Importer extends ImporterPage {
 	}
 
 	private Result<?> importDirect() {
-		if (openmedicalObject == null) {
-			return new Result<String>(SEVERITY.ERROR, 1, MY_LAB, "Fehlerhafte Konfiguration", true);
-		}
 		Result<String> result = new Result<String>("OK");
 
 		String downloadDirPath = CoreHub.localCfg.get(PreferencePage.DL_DIR, CoreHub.getTempDir().toString());
 		String iniPath = CoreHub.localCfg.get(PreferencePage.INI_PATH, null);
 
 		int res = -1;
-		if (iniPath != null) {
+		if (openmedicalObject != null && iniPath != null) {
 			try {
 				Object omResult = openmedicalDownloadMethod.invoke(openmedicalObject,
 						new Object[] { new String[] { "--download", downloadDirPath, "--logPath", downloadDirPath,
@@ -140,6 +137,7 @@ public class Importer extends ImporterPage {
 			}
 		}
 		// if (res > 0) {
+		res = 0;
 		File downloadDir = new File(downloadDirPath);
 		if (downloadDir.isDirectory()) {
 			File archiveDir = new File(downloadDir, "archive");
@@ -162,6 +160,9 @@ public class Importer extends ImporterPage {
 				Result<?> rs;
 				try {
 					rs = hlp.importFile(f, archiveDir, false);
+					if (openmedicalObject == null) {
+						res++;
+					}
 				} catch (IOException e) {
 					SWTHelper.showError("Import error", e.getMessage());
 				}
@@ -290,10 +291,6 @@ public class Importer extends ImporterPage {
 
 				home.results[0] = new Integer(DIRECT).toString();
 				home.results[1] = StringUtils.EMPTY;
-			}
-
-			if (openmedicalObject == null) {
-				bDirect.setEnabled(false);
 			}
 
 			SelectionAdapter sa = new SelectionAdapter() {

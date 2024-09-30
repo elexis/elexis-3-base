@@ -59,9 +59,6 @@
 					,&#160;
 					<xsl:value-of select="/Page/Patient/Birthdate" />
 				</fo:block>
-				<fo:block>
-					<fo:leader />
-				</fo:block>
 				<fo:block font-style="italic">
 					<xsl:value-of select="Name" />
 				</fo:block>

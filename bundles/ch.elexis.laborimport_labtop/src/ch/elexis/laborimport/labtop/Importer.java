@@ -114,7 +114,8 @@ public class Importer extends ImporterPage {
 
 	private Result<?> importDirect() {
 		if (openmedicalObject == null) {
-			return new Result<String>(SEVERITY.ERROR, 1, MY_LAB, "Fehlerhafte Konfiguration", true);
+			SWTHelper.showInfo("Laborimport",
+					"Fehlerhafte OpenMedical Konfiguration. Direktimport aus Downloadverzeichnis wird ausgeführt.");
 		}
 		Result<String> result = new Result<String>("OK");
 
@@ -122,7 +123,7 @@ public class Importer extends ImporterPage {
 		String iniPath = CoreHub.localCfg.get(PreferencePage.INI_PATH, null);
 
 		int res = -1;
-		if (iniPath != null) {
+		if (openmedicalObject != null && iniPath != null) {
 			try {
 				Object omResult = openmedicalDownloadMethod.invoke(openmedicalObject,
 						new Object[] { new String[] { "--download", downloadDirPath, "--logPath", downloadDirPath,
@@ -138,6 +139,8 @@ public class Importer extends ImporterPage {
 			} catch (Throwable e) {
 				// method call failed; do nothing
 			}
+		} else {
+			res = 0;
 		}
 		// if (res > 0) {
 		File downloadDir = new File(downloadDirPath);
@@ -162,6 +165,9 @@ public class Importer extends ImporterPage {
 				Result<?> rs;
 				try {
 					rs = hlp.importFile(f, archiveDir, false);
+					if (openmedicalObject == null) {
+						res += 1;
+					}
 				} catch (IOException e) {
 					SWTHelper.showError("Import error", e.getMessage());
 				}
@@ -196,31 +202,7 @@ public class Importer extends ImporterPage {
 			String filename = results[1];
 			return ResultAdapter.getResultAsStatus(hlp.importFile(filename, false));
 		} else {
-			if (openmedicalObject != null) {
-				return ResultAdapter.getResultAsStatus(importDirect());
-			} else {
-				File downloadPath = new File(CoreHub.localCfg.get(PreferencePage.DL_DIR, null));
-				File archiveDir = new File(downloadPath, "archive"); //$NON-NLS-1$
-				String[] files = downloadPath.list(new FilenameFilter() {
-					@Override
-					public boolean accept(File path, String name) {
-						if (name.toLowerCase().endsWith(".hl7")) { //$NON-NLS-1$
-							return true;
-						}
-						return false;
-					}
-				});
-				Result<?> rs = null;
-				for (String file : files) {
-					File f = new File(downloadPath, file);
-					try {
-						rs = hlp.importFile(f, archiveDir, false);
-					} catch (IOException e) {
-						SWTHelper.showError("Import error", e.getMessage()); //$NON-NLS-1$
-					}
-				}
-				return ResultAdapter.getResultAsStatus(rs);
-			}
+			return ResultAdapter.getResultAsStatus(importDirect());
 		}
 	}
 

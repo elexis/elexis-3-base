@@ -113,10 +113,6 @@ public class Importer extends ImporterPage {
 	}
 
 	private Result<?> importDirect() {
-		if (openmedicalObject == null) {
-			SWTHelper.showInfo("Laborimport",
-					"Fehlerhafte OpenMedical Konfiguration. Direktimport aus Downloadverzeichnis wird ausgeführt.");
-		}
 		Result<String> result = new Result<String>("OK");
 
 		String downloadDirPath = CoreHub.localCfg.get(PreferencePage.DL_DIR, CoreHub.getTempDir().toString());
@@ -139,10 +135,9 @@ public class Importer extends ImporterPage {
 			} catch (Throwable e) {
 				// method call failed; do nothing
 			}
-		} else {
-			res = 0;
 		}
 		// if (res > 0) {
+		res = 0;
 		File downloadDir = new File(downloadDirPath);
 		if (downloadDir.isDirectory()) {
 			File archiveDir = new File(downloadDir, "archive");
@@ -166,7 +161,7 @@ public class Importer extends ImporterPage {
 				try {
 					rs = hlp.importFile(f, archiveDir, false);
 					if (openmedicalObject == null) {
-						res += 1;
+						res++;
 					}
 				} catch (IOException e) {
 					SWTHelper.showError("Import error", e.getMessage());

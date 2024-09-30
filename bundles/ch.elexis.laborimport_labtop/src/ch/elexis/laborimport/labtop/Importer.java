@@ -160,7 +160,9 @@ public class Importer extends ImporterPage {
 				Result<?> rs;
 				try {
 					rs = hlp.importFile(f, archiveDir, false);
-					if (openmedicalObject == null) {
+					if (rs.getSeverity().equals(Result.SEVERITY.ERROR)) {
+						throw new IOException(rs.getMessages().toString());
+					} else {
 						res++;
 					}
 				} catch (IOException e) {

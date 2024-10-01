@@ -155,17 +155,24 @@ public class Importer extends ImporterPage {
 					return false;
 				}
 			});
+			Result<String> errors = new Result<String>();
 			for (String file : files) {
 				File f = new File(downloadDir, file);
 				Result<?> rs;
 				try {
 					rs = hlp.importFile(f, archiveDir, false);
-					if (openmedicalObject == null) {
+					if (rs.isOK()) {
 						res++;
+					} else {
+						errors.addMessage(rs.getSeverity(), f.getName()
+								+ ": " + rs.getCombinedMessages()); //$NON-NLS-1$
 					}
 				} catch (IOException e) {
 					SWTHelper.showError("Import error", e.getMessage());
 				}
+			}
+			if (!errors.isOK()) {
+				SWTHelper.showInfo("Fehler beim Import", errors.getCombinedMessages().replace(", ", "\r\n"));
 			}
 			SWTHelper.showInfo("Verbindung mit Labor " + MY_LAB + " erfolgreich",
 					"Es wurden " + Integer.toString(res) + " Dateien verarbeitet");

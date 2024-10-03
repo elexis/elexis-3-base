@@ -32,9 +32,19 @@ public class PreferencePage extends FieldEditorPreferencePage implements IWorkbe
 
 	@Override
 	protected void createFieldEditors() {
-		addField(new FileFieldEditor(JAR_PATH, Messages.PreferencePage_JMedTrasferJar, getFieldEditorParent()));
-		addField(new FileFieldEditor(INI_PATH, Messages.PreferencePage_JMedTrasferJni, getFieldEditorParent()));
-		addField(new DirectoryFieldEditor(DL_DIR, Messages.PreferencePage_DownloadDir, getFieldEditorParent()));
+		FileFieldEditor jarEditor = new FileFieldEditor(JAR_PATH, Messages.PreferencePage_JMedTrasferJar,
+				getFieldEditorParent());
+		FileFieldEditor iniEditor = new FileFieldEditor(INI_PATH, Messages.PreferencePage_JMedTrasferJni,
+				getFieldEditorParent());
+		DirectoryFieldEditor dirEditor = new DirectoryFieldEditor(DL_DIR, Messages.PreferencePage_DownloadDir,
+				getFieldEditorParent());
+
+		jarEditor.getTextControl(getFieldEditorParent()).setMessage("Optional");//$NON-NLS-1$
+		iniEditor.getTextControl(getFieldEditorParent()).setMessage("Optional");//$NON-NLS-1$
+
+		addField(jarEditor);
+		addField(iniEditor);
+		addField(dirEditor);
 	}
 
 	public void init(final IWorkbench workbench) {

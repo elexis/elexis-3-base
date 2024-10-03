@@ -75,7 +75,9 @@ public class LetterFile extends AbstractCsvImportFile<IDocument> implements IAes
 							setProperties(letter, line);
 							letter.setExtension(FilenameUtils.getExtension(file.getName()));
 							letter.setMimeType(FilenameUtils.getExtension(file.getName()));
-							DocumentStoreServiceHolder.get().saveDocument(letter, new FileInputStream(file));
+							try (FileInputStream fin = new FileInputStream(file)) {
+								DocumentStoreServiceHolder.get().saveDocument(letter, fin);
+							}
 							String xid = line[1];
 							Optional<Object> po = DocumentStoreServiceHolder.get().getPersistenceObject(letter);
 							if (po.isPresent()) {

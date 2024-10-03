@@ -75,7 +75,9 @@ public class FileFile extends AbstractCsvImportFile<IDocument> implements IAesku
 							setProperties(document, line);
 							document.setExtension(FilenameUtils.getExtension(file.getName()));
 							document.setMimeType(FilenameUtils.getExtension(file.getName()));
-							DocumentStoreServiceHolder.get().saveDocument(document, new FileInputStream(file));
+							try (FileInputStream fin = new FileInputStream(file)) {
+								DocumentStoreServiceHolder.get().saveDocument(document, fin);
+							}
 							String xid = line[1];
 							Optional<Object> po = DocumentStoreServiceHolder.get().getPersistenceObject(document);
 							if (po.isPresent()) {

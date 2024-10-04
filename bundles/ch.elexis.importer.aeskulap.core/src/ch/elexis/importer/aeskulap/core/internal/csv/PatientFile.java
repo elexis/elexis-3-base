@@ -45,6 +45,7 @@ public class PatientFile extends AbstractCsvImportFile<Patient> implements IAesk
 				&& FilenameUtils.getBaseName(file.getName()).equalsIgnoreCase("Patienten");
 	}
 
+	@Override
 	public boolean doImport(Map<Type, IAeskulapImportFile> transientFiles, boolean overwrite, SubMonitor monitor) {
 		monitor.beginTask("Aeskuplap Patienten Import", getLineCount());
 		try {
@@ -87,7 +88,9 @@ public class PatientFile extends AbstractCsvImportFile<Patient> implements IAesk
 		TimeTool tt = new TimeTool(line[12]);
 		String gender = line[13].equals("1") ? "m" : "w";
 		Patient patient = new Patient(line[2], line[3], tt.toString(TimeTool.DATE_GER), gender);
-		updatePatientNumber(patient, Integer.parseInt(line[0]));
+		if (Boolean.getBoolean(IAeskulapImporter.PROP_KEEPPATIENTNUMBER)) {
+			updatePatientNumber(patient, Integer.parseInt(line[0]));
+		}
 		return patient;
 	}
 

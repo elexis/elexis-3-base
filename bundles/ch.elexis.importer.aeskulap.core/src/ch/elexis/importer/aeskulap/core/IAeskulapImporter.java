@@ -18,6 +18,8 @@ public interface IAeskulapImporter {
 	final static String XID_IMPORT_DOCUMENT = XID_IMPORT + "/DocumentID";
 	final static String XID_IMPORT_FILE = XID_IMPORT + "/FileID";
 
+	static final String PROP_KEEPPATIENTNUMBER = "aeskulap.keepPatientNumber";
+
 	/**
 	 * Set the import directory to import data from. Returns a list of
 	 * {@link IAeskulapImportFile} with the found files that can be imported.

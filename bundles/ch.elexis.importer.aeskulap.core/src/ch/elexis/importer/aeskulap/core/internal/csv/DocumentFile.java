@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.runtime.SubMonitor;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.ICategory;
 import ch.elexis.core.model.IDocument;
@@ -79,13 +77,8 @@ public class DocumentFile extends AbstractCsvImportFile<IDocument> implements IA
 								DocumentStoreServiceHolder.get().saveDocument(document, fin);
 							}
 							String xid = line[1];
-							Optional<Object> po = DocumentStoreServiceHolder.get().getPersistenceObject(document);
-							if (po.isPresent()) {
-								if (po.get() instanceof IPersistentObject) {
-									((IPersistentObject) po.get()).addXid(getXidDomain(), xid, true);
-								} else if (po.get() instanceof Identifiable) {
-									((Identifiable) po.get()).addXid(getXidDomain(), xid, true);
-								}
+							if (document instanceof Identifiable) {
+								document.addXid(getXidDomain(), xid, true);
 							}
 						}
 					}

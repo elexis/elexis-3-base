@@ -26,11 +26,14 @@ import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
+import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 import ch.elexis.importer.aeskulap.ui.service.AeskulapImporterServiceHolder;
 
 public class AeskulapImporter extends ImporterPage {
 
-	private boolean overwrite;
+	private boolean overwrite = false;
+
+	private boolean keepPatientNumber = true;
 
 	@Override
 	public String getTitle() {
@@ -69,6 +72,7 @@ public class AeskulapImporter extends ImporterPage {
 		List<IAeskulapImportFile> files = AeskulapImporterServiceHolder.get().setImportDirectory(directory);
 		if (!files.isEmpty()) {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, files.size());
+			System.setProperty(IAeskulapImporter.PROP_KEEPPATIENTNUMBER, Boolean.toString(keepPatientNumber));
 			List<IAeskulapImportFile> problems = AeskulapImporterServiceHolder.get().importFiles(files, overwrite,
 					subMonitor);
 			if (problems.isEmpty()) {
@@ -103,7 +107,7 @@ public class AeskulapImporter extends ImporterPage {
 		DirectoryBasedImporter fbi = new DirectoryBasedImporter(parent, this);
 		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
-		Button overwriteBtn = new Button(parent, SWT.CHECK);
+		Button overwriteBtn = new Button(fbi, SWT.CHECK);
 		overwriteBtn.setText("Bereits importierte Daten überschreiben.");
 		overwriteBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -111,6 +115,18 @@ public class AeskulapImporter extends ImporterPage {
 				overwrite = overwriteBtn.getSelection();
 			}
 		});
+		overwriteBtn.setSelection(overwrite);
+
+		Button keepPatientNumberBtn = new Button(fbi, SWT.CHECK);
+		keepPatientNumberBtn.setText("Patientennummer aus csv übernehmen.");
+		keepPatientNumberBtn.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				keepPatientNumber = overwriteBtn.getSelection();
+			}
+		});
+		keepPatientNumberBtn.setSelection(keepPatientNumber);
 		return fbi;
 	}
 }

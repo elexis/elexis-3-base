@@ -37,8 +37,7 @@ import ch.elexis.data.Patient;
 public class StartupHandler implements EventHandler {
 	private static Logger logger = LoggerFactory.getLogger(StartupHandler.class);
 
-	private StringBuffer buffer;
-	private boolean bufferStarted;
+	private volatile StringBuffer buffer;
 	
 	ElexisEventListener elexisEventListenerImpl;
 
@@ -109,7 +108,7 @@ public class StartupHandler implements EventHandler {
 				BarcodeScannerMessage b = (BarcodeScannerMessage) ev.getGenericObject();
 				if (hasMediplanHeader(b.getChunk())) {
 					chunkBuffer(b);
-				} else if (bufferStarted) {
+				} else if (buffer != null) {
 					chunkBuffer(b);
 				}
 			}
@@ -117,21 +116,22 @@ public class StartupHandler implements EventHandler {
 		ElexisEventDispatcher.getInstance().addListeners(elexisEventListenerImpl);
 	}
 
-	private void chunkBuffer(BarcodeScannerMessage message) {
+	private synchronized void chunkBuffer(BarcodeScannerMessage message) {
 		if (buffer == null) {
+			LoggerFactory.getLogger(StartupHandler.class).info("Start emdiplan buffer"); //$NON-NLS-1$
 			buffer = new StringBuffer();
 		}
-		if (!bufferStarted) {
-			bufferStarted = true;
-			new Timer().schedule(new TimerTask() {
-				@Override
-				public void run() {
+		buffer.append(message.getChunk());
+		new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (buffer != null) {
+					LoggerFactory.getLogger(StartupHandler.class)
+							.info("Import emdiplan buffer [" + buffer.length() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 					openEMediplanImportDialog(buffer.toString(), null);
-					bufferStarted = false;
 					buffer = null;
 				}
-			}, 500);
-		}
-		buffer.append(message.getChunk());
+			}
+		}, 500);
 	}
 }

@@ -12,7 +12,7 @@ package ch.elexis.laborimport.LG1;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.labororder.lg1.messages.messages";
+	private static final String BUNDLE_NAME = "ch.elexis.laborimport.lg1.messages";
 	public static String PreferencePage_DownloadDir;
 	public static String PreferencePage_JMedTrasferJni;
 	public static String PreferencePage_JMedTrasferJar;

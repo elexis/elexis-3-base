@@ -24,6 +24,7 @@ import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.ILocalDocumentService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.core.ui.text.TextContainer;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Konsultation;
@@ -47,7 +48,8 @@ public class CovidAttestKk {
 		activePatient.ifPresent(patient -> {
 			Map<String, ICodeElementBlock> blocks = CovidHandlerUtil.getConfiguredBlocks();
 			if (!blocks.isEmpty()) {
-				Optional<ICoverage> kkCoverage = CovidHandlerUtil.getCoverageWithLaw(patient, CovidHandlerUtil.KK_LAWS);
+				Optional<ICoverage> kkCoverage = CoverageServiceHolder.get().getCoverageWithLaw(patient,
+						CovidHandlerUtil.KK_LAWS);
 				if (kkCoverage.isPresent()) {
 					List<IDocumentLetter> existingLetters = CovidHandlerUtil.getLettersAt(patient, LocalDate.now(),
 							new String[] { CovidHandlerUtil.ATTEST_POSITIV_LETTER_NAME,

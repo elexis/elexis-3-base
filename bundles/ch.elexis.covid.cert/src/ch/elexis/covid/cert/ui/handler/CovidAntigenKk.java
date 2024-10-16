@@ -22,10 +22,12 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.ICoverageService;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.ILocalDocumentService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.covid.cert.service.CertificateInfo;
 import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.rest.model.TestModel;
@@ -55,7 +57,8 @@ public class CovidAntigenKk {
 		activePatient.ifPresent(patient -> {
 			Map<String, ICodeElementBlock> blocks = CovidHandlerUtil.getConfiguredBlocks();
 			if (!blocks.isEmpty()) {
-				Optional<ICoverage> kkCoverage = CovidHandlerUtil.getCoverageWithLaw(patient, CovidHandlerUtil.KK_LAWS);
+				Optional<ICoverage> kkCoverage = CoverageServiceHolder.get().getCoverageWithLaw(patient,
+						CovidHandlerUtil.KK_LAWS);
 				Optional<CertificateInfo> todayCertificate = CovidHandlerUtil.getCertificateAtWithType(patient,
 						LocalDate.now(), CertificateInfo.Type.TEST);
 				if (kkCoverage.isPresent()) {

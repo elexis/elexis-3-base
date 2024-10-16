@@ -182,6 +182,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalJMedTransferJar = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tGlobalJMedTransferJar.setLayoutData(gridDataForInputs);
 		tGlobalJMedTransferJar.setText(undefined);
+		tGlobalJMedTransferJar.setMessage("Optional");//$NON-NLS-1$
 
 		// JMedTransfer Parameter
 		lbl = new Label(grp, SWT.NONE);
@@ -190,6 +191,7 @@ public class ViollierPreferencePage extends FieldEditorPreferencePage implements
 		tGlobalJMedTransferParam = new Text(grp, SWT.BORDER | SWT.SINGLE);
 		tGlobalJMedTransferParam.setLayoutData(gridDataForInputs);
 		tGlobalJMedTransferParam.setText(undefined);
+		tGlobalJMedTransferParam.setMessage("Optional");//$NON-NLS-1$
 
 		// Download Verzeichnis
 		lbl = new Label(grp, SWT.NONE);

@@ -22,7 +22,6 @@ import ch.elexis.core.model.IEncounter;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.services.IContextService;
-import ch.elexis.core.services.ICoverageService;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.ILocalDocumentService;
 import ch.elexis.core.services.holder.ContextServiceHolder;

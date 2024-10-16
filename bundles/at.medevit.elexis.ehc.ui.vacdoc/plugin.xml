@@ -72,15 +72,6 @@
       </command>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="at.medevit.elexis.ehc.ui.preference"
-            class="at.medevit.elexis.ehc.ui.vacdoc.preferences.MeineImpfungenPreferences"
-            id="at.medevit.elexis.ehc.ui.vacdoc.preferences.meineimpfungen"
-            name="meineimpfungen">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="at.medevit.elexis.ehc.ui.vacdoc.handler.CdaOutboxHandler"

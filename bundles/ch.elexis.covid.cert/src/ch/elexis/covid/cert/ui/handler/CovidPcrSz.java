@@ -19,6 +19,7 @@ import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.IContextService;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.CoverageServiceHolder;
 
 public class CovidPcrSz {
 
@@ -31,7 +32,8 @@ public class CovidPcrSz {
 		activePatient.ifPresent(patient -> {
 			Map<String, ICodeElementBlock> blocks = CovidHandlerUtil.getConfiguredBlocks();
 			if (!blocks.isEmpty()) {
-				Optional<ICoverage> szCoverage = CovidHandlerUtil.getCoverageWithLaw(patient, CovidHandlerUtil.SZ_LAWS);
+				Optional<ICoverage> szCoverage = CoverageServiceHolder.get().getCoverageWithLaw(patient,
+						CovidHandlerUtil.SZ_LAWS);
 				Optional<IEncounter> pcrEncounter = CovidHandlerUtil
 						.getEncountersAt(patient, LocalDate.now(), (BillingLaw[]) null).stream()
 						.filter(e -> CovidHandlerUtil.isPcrBilled(e)).findFirst();

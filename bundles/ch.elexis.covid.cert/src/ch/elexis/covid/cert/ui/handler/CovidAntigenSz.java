@@ -26,6 +26,7 @@ import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.ILocalDocumentService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.CoverageServiceHolder;
 import ch.elexis.covid.cert.service.CertificateInfo;
 import ch.elexis.covid.cert.service.CertificatesService;
 import ch.elexis.covid.cert.service.rest.model.TestModel;
@@ -55,7 +56,8 @@ public class CovidAntigenSz {
 		activePatient.ifPresent(patient -> {
 			Map<String, ICodeElementBlock> blocks = CovidHandlerUtil.getConfiguredBlocks();
 			if (!blocks.isEmpty()) {
-				Optional<ICoverage> szCoverage = CovidHandlerUtil.getCoverageWithLaw(patient, CovidHandlerUtil.SZ_LAWS);
+				Optional<ICoverage> szCoverage = CoverageServiceHolder.get().getCoverageWithLaw(patient,
+						CovidHandlerUtil.SZ_LAWS);
 				Optional<CertificateInfo> todayCertificate = CovidHandlerUtil.getCertificateAtWithType(patient,
 						LocalDate.now(), CertificateInfo.Type.TEST);
 				if (todayCertificate.isPresent()) {

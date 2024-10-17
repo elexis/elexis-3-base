@@ -19,6 +19,7 @@ import ch.elexis.core.model.builder.ICoverageBuilder;
 import ch.elexis.core.model.builder.IEncounterBuilder;
 import ch.elexis.core.model.ch.BillingLaw;
 import ch.elexis.core.services.IContextService;
+import ch.elexis.core.services.ICoverageService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
@@ -26,6 +27,9 @@ public class CovidTestBill {
 
 	@Inject
 	private IContextService contextService;
+	
+	@Inject 
+	private ICoverageService coverageService;
 
 	@Execute
 	public void execute() {
@@ -40,7 +44,7 @@ public class CovidTestBill {
 						ICoverage coverage = null;
 						if (block == blocks.get(CovidHandlerUtil.CFG_KK_BLOCKID)
 								|| block == blocks.get(CovidHandlerUtil.CFG_KK_PCR_BLOCKID)) {
-							coverage = CovidHandlerUtil.getCoverageWithLaw(patient, CovidHandlerUtil.KK_LAWS)
+							coverage = coverageService.getCoverageWithLaw(patient, CovidHandlerUtil.KK_LAWS)
 									.orElse(null);
 							if (coverage == null) {
 								Display.getDefault()
@@ -49,7 +53,7 @@ public class CovidTestBill {
 												"Es wurde noch kein Fall mit Gesetz KVG angelegt."));
 							}
 						} else {
-							coverage = CovidHandlerUtil.getCoverageWithLaw(patient, CovidHandlerUtil.SZ_LAWS)
+							coverage = coverageService.getCoverageWithLaw(patient, CovidHandlerUtil.SZ_LAWS)
 									.orElse(null);
 							if (coverage == null) {
 								coverage = createPrivateCoverage(patient);

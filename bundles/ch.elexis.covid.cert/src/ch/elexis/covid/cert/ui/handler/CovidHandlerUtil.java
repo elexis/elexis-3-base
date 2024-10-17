@@ -62,26 +62,6 @@ public class CovidHandlerUtil {
 	public static BillingLaw[] SZ_LAWS = { BillingLaw.privat, BillingLaw.VVG };
 
 	/**
-	 * Search for the first open {@link ICoverage} of the {@link IPatient} with a
-	 * matching law.
-	 *
-	 * @param patient
-	 * @param law
-	 * @return
-	 */
-	public static Optional<ICoverage> getCoverageWithLaw(IPatient patient, BillingLaw... laws) {
-		ICoverage bestMatch = null;
-		for (ICoverage coverage : patient.getCoverages()) {
-			if (coverage.isOpen()) {
-				if (Arrays.asList(laws).contains(coverage.getBillingSystem().getLaw())) {
-					bestMatch = coverage;
-				}
-			}
-		}
-		return Optional.ofNullable(bestMatch);
-	}
-
-	/**
 	 * Get all configured covid {@link ICodeElementBlock} instances as map with id
 	 * as key.
 	 *

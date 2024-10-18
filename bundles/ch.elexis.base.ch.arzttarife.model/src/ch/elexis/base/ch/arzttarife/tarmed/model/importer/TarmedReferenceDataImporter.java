@@ -15,11 +15,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.arzttarife_schweiz.Messages;
+import ch.elexis.base.ch.arzttarife.model.service.ConfigServiceHolder;
 import ch.elexis.base.ch.arzttarife.tarmed.model.VersionUtil;
 import ch.elexis.base.ch.arzttarife.tarmed.prefs.PreferenceConstants;
 import ch.elexis.core.constants.Preferences;
@@ -27,7 +27,6 @@ import ch.elexis.core.importer.div.importers.AccessWrapper;
 import ch.elexis.core.interfaces.AbstractReferenceDataImporter;
 import ch.elexis.core.interfaces.IReferenceDataImporter;
 import ch.elexis.core.jdt.Nullable;
-import ch.elexis.core.services.IConfigService;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeTool;
@@ -35,10 +34,7 @@ import ch.rgw.tools.TimeTool;
 @Component(property = IReferenceDataImporter.REFERENCEDATAID + "=tarmed_34")
 public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter implements IReferenceDataImporter {
 
-	private final Logger logger = LoggerFactory.getLogger(TarmedReferenceDataImporter.class);
-
-	@Reference
-	private IConfigService configService;
+	private static final Logger logger = LoggerFactory.getLogger(TarmedReferenceDataImporter.class);
 
 	public static final String ImportPrefix = "TARMED_IMPORT_";
 
@@ -75,7 +71,7 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter i
 
 		ipm.beginTask(Messages.TarmedImporter_importLstg, chapterCount + servicesCount);
 
-		lang = configService.getLocal(Preferences.ABL_LANGUAGE, "d").toUpperCase();//$NON-NLS-1$
+		lang = ConfigServiceHolder.get().get().getLocal(Preferences.ABL_LANGUAGE, "d").toUpperCase();//$NON-NLS-1$
 		ipm.subTask(Messages.TarmedImporter_connecting);
 
 		IStatus ret = Status.OK_STATUS;
@@ -106,7 +102,8 @@ public class TarmedReferenceDataImporter extends AbstractReferenceDataImporter i
 									} else {
 										VersionUtil.setCurrentVersion(version.toString(), getLaw());
 									}
-									configService.set(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE, true);
+									ConfigServiceHolder.get().get().set(PreferenceConstants.CFG_REFERENCEINFO_AVAILABLE,
+											true);
 									ipm.done();
 								}
 							}

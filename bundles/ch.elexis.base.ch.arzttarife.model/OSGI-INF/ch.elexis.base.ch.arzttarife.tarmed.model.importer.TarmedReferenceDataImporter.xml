@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedReferenceDataImporter">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedReferenceDataImporter">
    <property name="referenceDataId" value="tarmed_34"/>
    <service>
       <provide interface="ch.elexis.core.interfaces.IReferenceDataImporter"/>
    </service>
-   <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
    <implementation class="ch.elexis.base.ch.arzttarife.tarmed.model.importer.TarmedReferenceDataImporter"/>
 </scr:component>

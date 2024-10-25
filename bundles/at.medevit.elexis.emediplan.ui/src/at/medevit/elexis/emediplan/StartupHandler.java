@@ -116,22 +116,31 @@ public class StartupHandler implements EventHandler {
 		ElexisEventDispatcher.getInstance().addListeners(elexisEventListenerImpl);
 	}
 
-	private synchronized void chunkBuffer(BarcodeScannerMessage message) {
-		if (buffer == null) {
-			LoggerFactory.getLogger(StartupHandler.class).info("Start emdiplan buffer"); //$NON-NLS-1$
-			buffer = new StringBuffer();
-		}
-		buffer.append(message.getChunk());
-		new Timer().schedule(new TimerTask() {
-			@Override
-			public void run() {
-				if (buffer != null) {
-					LoggerFactory.getLogger(StartupHandler.class)
-							.info("Import emdiplan buffer [" + buffer.length() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-					openEMediplanImportDialog(buffer.toString(), null);
-					buffer = null;
-				}
+	private void chunkBuffer(BarcodeScannerMessage message) {
+		synchronized (StartupHandler.this) {
+			if (buffer == null) {
+				logger.info("Start emdiplan buffer"); //$NON-NLS-1$
+				buffer = new StringBuffer();
+				// create timer for buffer
+				new Timer().schedule(new TimerTask() {
+					@Override
+					public void run() {
+						synchronized (StartupHandler.this) {
+							if (buffer != null) {
+								try {
+									logger.info("Import emdiplan buffer [" + buffer.length() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+									openEMediplanImportDialog(buffer.toString(), null);
+								} finally {
+									buffer = null;
+								}
+							}
+						}
+					}
+				}, 500);
 			}
-		}, 500);
+			if (buffer != null) {
+				buffer.append(message.getChunk());
+			}
+		}
 	}
 }

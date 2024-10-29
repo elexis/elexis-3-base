@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
+import at.medevit.elexis.agenda.ui.handler.AppointmentHistoryManager;
 
 public class EventDropFunction extends AbstractBrowserFunction {
 
@@ -46,10 +47,15 @@ public class EventDropFunction extends AbstractBrowserFunction {
 				@Override
 				public void lockAcquired() {
 					IAppointment current = termin;
+					AppointmentHistoryManager historyManager = new AppointmentHistoryManager(current);
+					LocalDateTime oldMainTime = current.getStartTime();
+					String oldArea = current.getSchedule();
 
 					// do copy
 					if (arguments.length >= 5 && Boolean.TRUE.equals(arguments[4])) {
 						current = AppointmentServiceHolder.get().clone(termin);
+						historyManager = new AppointmentHistoryManager(current);
+						historyManager.logAppointmentCopyFromTo(termin.getId(), current.getId());
 						if (termin.isRecurring() && termin.getContact() == null) {
 							// take kontakt from root termin
 							IContact k = new RecurringAppointment(termin, CoreModelServiceHolder.get())
@@ -61,11 +67,11 @@ public class EventDropFunction extends AbstractBrowserFunction {
 					}
 
 					boolean isMainAppointment = AppointmentExtensionHandler.isMainAppointment(current);
-					LocalDateTime oldMainTime = current.getStartTime();
 					boolean isAllDay = arguments[1].toString().length() == 10;
 					LocalDateTime newMainTime = getDateTimeArg(arguments[1]);
 					String newResource = arguments.length >= 4 && arguments[3] != null ? (String) arguments[3]
 							: current.getSchedule();
+
 					current.setStartTime(newMainTime);
 					if (isAllDay) {
 						current.setEndTime(null);
@@ -78,6 +84,8 @@ public class EventDropFunction extends AbstractBrowserFunction {
 						current.setSchedule(newResource);
 					}
 
+					String newArea = current.getSchedule();
+
 					if (isMainAppointment) {
 						List<IAppointment> linkedAppointments = AppointmentExtensionHandler
 								.getLinkedAppointments(current);
@@ -86,6 +94,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 						switch (moveAction) {
 						case KEEP_MAIN_ONLY:
 							lockAndSaveAppointment(current);
+							historyManager.logAppointmentMove(oldMainTime, newMainTime, oldArea, newArea);
 							break;
 						case MOVE_ALL:
 							long minutesDifference = java.time.Duration.between(oldMainTime, newMainTime).toMinutes();
@@ -98,8 +107,13 @@ public class EventDropFunction extends AbstractBrowserFunction {
 								linkedAppointment.setSchedule(linkedAppointment.getSchedule());
 								linkedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 								lockAndSaveAppointment(linkedAppointment);
+								AppointmentHistoryManager linkedHistoryManager = new AppointmentHistoryManager(
+										linkedAppointment);
+								linkedHistoryManager.logAppointmentMove(oldLinkedTime, newLinkedTime, oldArea, newArea); // Bereich
+																															// loggen
 							}
 							lockAndSaveAppointment(current);
+							historyManager.logAppointmentMove(oldMainTime, newMainTime, oldArea, newArea);
 							break;
 						case CANCEL:
 						default:
@@ -107,12 +121,14 @@ public class EventDropFunction extends AbstractBrowserFunction {
 						}
 					} else {
 						lockAndSaveAppointment(current);
+						historyManager.logAppointmentMove(oldMainTime, newMainTime, oldArea, newArea);
 					}
 
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, current);
 					redraw();
 				}
+
 			});
 		} else {
 			throw new IllegalArgumentException("Unexpected arguments"); //$NON-NLS-1$

@@ -60,6 +60,7 @@ public class DeleteHandler {
 	private void handleMainAppointmentDeletion(IAppointment appointment, Shell shell) {
 		List<IAppointment> linkedAppointments = AppointmentExtensionHandler.getLinkedAppointments(appointment);
 
+
 		if (!linkedAppointments.isEmpty()) {
 			DeleteActionType action = AppointmentLinkOptionsDialog.showDeleteDialog(shell, linkedAppointments);
 			processDeleteAction(appointment, linkedAppointments, action);
@@ -116,12 +117,16 @@ public class DeleteHandler {
 			}
 			@Override
 			public void lockAcquired() {
+				AppointmentHistoryManager historyManager = new AppointmentHistoryManager(appointment);
+
 				if (appointment.isRecurring()) {
 					boolean deleteSeries = MessageDialog.openQuestion(shell, Messages.AgendaUI_Delete__delete,
 							Messages.AgendaUI_Delete_ask_delete_whole_series);
 					appointmentService.delete(appointment, deleteSeries);
+					historyManager.logAppointmentDeletion();
 				} else {
 					appointmentService.delete(appointment, false);
+					historyManager.logAppointmentDeletion();
 				}
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
@@ -149,6 +154,7 @@ public class DeleteHandler {
 	}
 
 	private void deleteMainAppointmentOnly(IAppointment appointment) {
+		AppointmentHistoryManager historyManager = new AppointmentHistoryManager(appointment);
 		AcquireLockBlockingUi.aquireAndRun(appointment, new ILockHandler() {
 			@Override
 			public void lockFailed() {
@@ -157,12 +163,14 @@ public class DeleteHandler {
 			@Override
 			public void lockAcquired() {
 				appointmentService.delete(appointment, false);
+				historyManager.logAppointmentDeletion();
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
 		});
 	}
 
 	private void deleteLinkedAppointments(IAppointment mainAppointment, List<IAppointment> linkedAppointments) {
+		AppointmentHistoryManager historyManager = new AppointmentHistoryManager(mainAppointment);
 		AcquireLockBlockingUi.aquireAndRun(mainAppointment, new ILockHandler() {
 			@Override
 			public void lockFailed() {
@@ -171,7 +179,12 @@ public class DeleteHandler {
 			@Override
 			public void lockAcquired() {
 				appointmentService.delete(mainAppointment, false);
-				linkedAppointments.forEach(appt -> appointmentService.delete(appt, false));
+				linkedAppointments.forEach(appt -> {
+					appointmentService.delete(appt, false);
+					AppointmentHistoryManager historyManager = new AppointmentHistoryManager(appt);
+					historyManager.logAppointmentDeletion();
+				});
+				historyManager.logAppointmentDeletion();
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
 		});

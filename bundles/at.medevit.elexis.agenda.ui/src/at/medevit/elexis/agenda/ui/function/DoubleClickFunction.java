@@ -6,6 +6,7 @@ import com.equo.chromium.swt.BrowserFunction;
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
+import at.medevit.elexis.agenda.ui.handler.AppointmentHistoryManager;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -30,6 +31,7 @@ public class DoubleClickFunction extends BrowserFunction {
 						// do nothing
 					}
 
+					AppointmentHistoryManager historyManager = new AppointmentHistoryManager(termin);
 					@Override
 					public void lockAcquired() {
 						// TerminDialog.setActResource(termin.getBereich());
@@ -37,9 +39,12 @@ public class DoubleClickFunction extends BrowserFunction {
 							RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(
 									AppointmentServiceHolder.get().getAppointmentSeries(termin).get());
 							dlg.open();
+							historyManager.logAppointmentEdit();
 						} else {
 							AppointmentDialog dlg = new AppointmentDialog(termin);
 							dlg.open();
+
+							historyManager.logAppointmentEdit();
 						}
 					}
 				});

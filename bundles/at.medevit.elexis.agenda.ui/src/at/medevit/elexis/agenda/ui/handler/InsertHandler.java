@@ -28,6 +28,7 @@ import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.itmed.fop.printing.handler.AppointmentExtensionHandler;
+import at.medevit.elexis.agenda.ui.handler.AppointmentHistoryManager;
 
 public class InsertHandler {
 	@Inject
@@ -48,6 +49,8 @@ public class InsertHandler {
 	}
 
 	private void handleCopiedAppointment(SideBarComposite sideBar, IAppointment copiedAppointment) {
+		AppointmentHistoryManager historyManager = new AppointmentHistoryManager(copiedAppointment);
+
 		Optional<SideBarComposite.MoveInformation> moveInfoOpt = sideBar.getMoveInformation();
 		if (moveInfoOpt.isPresent()) {
 			SideBarComposite.MoveInformation moveInfo = moveInfoOpt.get();
@@ -55,12 +58,16 @@ public class InsertHandler {
 			String targetResource = moveInfo.getResource();
 			List<IAppointment> linkedAppointments = AppointmentExtensionHandler
 					.getLinkedAppointments(copiedAppointment);
+
 			if (linkedAppointments.isEmpty() || !AppointmentExtensionHandler.isMainAppointment(copiedAppointment)) {
-				cloneAndModifyAppointment(copiedAppointment, targetTime, targetResource, sideBar);
+				IAppointment newAppointment = cloneAndModifyAppointment(copiedAppointment, targetTime, targetResource,
+						sideBar);
+				historyManager.logAppointmentCopyFromTo(copiedAppointment.getId(), newAppointment.getId()); // Kopieraktion
 				sideBar.removeMovePeriod(copiedAppointment);
 				CopyHandler.clearCopiedAppointment();
 				return;
 			}
+
 			CopyActionType copyAction = AppointmentLinkOptionsDialog
 					.showCopyDialog(Display.getDefault().getActiveShell(), linkedAppointments);
 			switch (copyAction) {
@@ -69,7 +76,9 @@ public class InsertHandler {
 						targetResource, sideBar);
 				AppointmentExtensionHandler.setMainAppointmentId(newMainAppointment, newMainAppointment.getId());
 				CoreModelServiceHolder.get().save(newMainAppointment);
+				historyManager.logAppointmentCopyFromTo(copiedAppointment.getId(), newMainAppointment.getId());
 				break;
+
 			case COPY_ALL:
 				IAppointment newMainAppointmentWithLinks = cloneAndModifyAppointment(copiedAppointment, targetTime,
 						targetResource, sideBar);
@@ -95,7 +104,10 @@ public class InsertHandler {
 						newLinkedAppointmentIds);
 				newMainAppointmentWithLinks.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 				CoreModelServiceHolder.get().save(newMainAppointmentWithLinks);
+				historyManager.logAppointmentCopyFromTo(copiedAppointment.getId(), newMainAppointmentWithLinks.getId()); // Kopieraktion
+				// loggen
 				break;
+
 			case CANCEL:
 			default:
 				break;
@@ -105,7 +117,6 @@ public class InsertHandler {
 		} else {
 			LoggerFactory.getLogger(getClass()).info("Fehler: Keine MoveInformation vorhanden");
 		}
-
 	}
 
 	private void handleMoveInformation(SideBarComposite.MoveInformation moveInformation) {
@@ -114,33 +125,50 @@ public class InsertHandler {
 			LoggerFactory.getLogger(getClass()).info("Fehler: Keine verschiebbaren Perioden vorhanden");
 			return;
 		}
+
 		IAppointment mainAppointment = extractMainAppointment(moveablePeriods.get(0));
+		AppointmentHistoryManager historyManager = new AppointmentHistoryManager(mainAppointment);
+
 		if (mainAppointment == null) {
 			LoggerFactory.getLogger(getClass()).info("Fehler: Kein Haupt-Termin gefunden");
 			return;
 		}
+		String oldArea = mainAppointment.getSchedule();
 		List<IAppointment> linkedAppointments = AppointmentExtensionHandler.getLinkedAppointments(mainAppointment);
 		if (linkedAppointments.isEmpty() || !AppointmentExtensionHandler.isMainAppointment(mainAppointment)) {
+			LocalDateTime oldTime = mainAppointment.getStartTime();
 			moveInformation.movePeriod(mainAppointment);
+			LocalDateTime newTime = moveInformation.getDateTime();
+			String newArea = mainAppointment.getSchedule();
+			historyManager.logAppointmentMove(oldTime, newTime, oldArea, newArea);
 		} else {
 			MoveActionType moveAction = AppointmentLinkOptionsDialog
 					.showMoveDialog(Display.getDefault().getActiveShell(), linkedAppointments);
 			switch (moveAction) {
 			case KEEP_MAIN_ONLY:
+				LocalDateTime oldTime = mainAppointment.getStartTime();
 				moveInformation.movePeriod(mainAppointment);
+				LocalDateTime newTime = moveInformation.getDateTime();
+				String newArea = mainAppointment.getSchedule();
+				historyManager.logAppointmentMove(oldTime, newTime, oldArea, newArea);
 				break;
+
 			case MOVE_ALL:
 				LocalDateTime oldMainTime = mainAppointment.getStartTime();
 				moveInformation.movePeriod(mainAppointment);
 				LocalDateTime newMainTime = moveInformation.getDateTime();
 				moveLinkedAppointments(linkedAppointments, oldMainTime, newMainTime);
+				String newMainArea = mainAppointment.getSchedule();
+				historyManager.logAppointmentMove(oldMainTime, newMainTime, oldArea, newMainArea);
 				break;
+
 			case CANCEL:
 			default:
 				break;
 			}
 		}
 	}
+
 
 	private void moveLinkedAppointments(List<IAppointment> linkedAppointments, LocalDateTime oldMainTime,
 			LocalDateTime newMainAppointmentTime) {
@@ -155,13 +183,19 @@ public class InsertHandler {
 	}
 
 	private void moveLinkedAppointment(IAppointment appointment, LocalDateTime newStartTime) {
+		LocalDateTime oldStartTime = appointment.getStartTime();
+		String oldArea = appointment.getSchedule();
+		AppointmentHistoryManager historyManager = new AppointmentHistoryManager(appointment);
 		appointment.setStartTime(newStartTime);
 		appointment.setEndTime(newStartTime.plusMinutes(appointment.getDurationMinutes()));
 		appointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 		CoreModelServiceHolder.get().save(appointment);
+		String newArea = appointment.getSchedule();
 		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, appointment);
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+		historyManager.logAppointmentMove(oldStartTime, newStartTime, oldArea, newArea);
 	}
+
 
 	private IAppointment extractMainAppointment(IPeriod period) {
 		if (period instanceof IAppointment) {
@@ -174,6 +208,9 @@ public class InsertHandler {
 			String newResource, SideBarComposite sideBar) {
 		IAppointmentService appointmentService = AppointmentServiceHolder.get();
 		IAppointment clonedAppointment = appointmentService.clone(originalAppointment);
+
+		AppointmentHistoryManager historyManager = new AppointmentHistoryManager(clonedAppointment);
+
 		clonedAppointment.setCreatedBy(originalAppointment.getCreatedBy());
 		clonedAppointment.setCreated(originalAppointment.getCreated());
 		clonedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
@@ -184,7 +221,9 @@ public class InsertHandler {
 		CoreModelServiceHolder.get().save(clonedAppointment);
 		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, clonedAppointment);
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+		historyManager.logAppointmentCopy(originalAppointment.getId());
 
 		return clonedAppointment;
 	}
+
 }

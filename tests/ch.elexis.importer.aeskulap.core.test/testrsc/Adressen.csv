@@ -1,0 +1,10 @@
+Adr_no,Vorname,Nachname,Abteilung,Strasse,,Plz,Ort,Land,,Pers_Anred,Adress_Gruppe,Bemerkung,,Tel_Natel,Tel_Praxis,Tel_Privat,Fax,EMail,Ean_no,KK_no
+2,Test,Arzt,Spezialarzt FMH Chirurgie,Teststrasse 27,,8910,Testdorf,,,,Chirurgie,,,,,,,,,
+2146,Test,Ärztin,Fachärztin für Psychiatrie,Teststrasse 37,,8708,Testdorf,,,,,"Dr. med. Test Ärztin
+Fachärztin für Psychiatrie und Psychotherapie FMH
+Teststrasse 37
+8708 Testdorf
+Telefon  077 111 11 11
+test.aerztin@hin.ch
+
+",,077 111 11 11,,,,test.aerztin@hin.ch,,

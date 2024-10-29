@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: ch.elexis.importer.aeskulap.core.test
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: medevit.at
+Fragment-Host: ch.elexis.importer.aeskulap.core;bundle-version="3.13.0"
+Automatic-Module-Name: ch.elexis.importer.aeskulap.core.test
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Bundle: org.junit,
+ ch.elexis.omnivore.model;bundle-version="3.13.0"

@@ -5,16 +5,10 @@ Bundle-SymbolicName: ch.elexis.global_inbox.core
 Bundle-Version: 3.13.0.qualifier
 Export-Package: ch.elexis.global_inbox.core.handler,
  ch.elexis.global_inbox.core.util
-Require-Bundle: javax.inject,
- ch.elexis.core,
- at.medevit.elexis.inbox,
- ch.elexis.core.documents,
- ch.elexis.core.findings,
- org.apache.commons.commons-io,
- ch.elexis.core.importer.div,
- ch.elexis.omnivore.model,
+Require-Bundle: ch.elexis.core.importer.div,
  ch.elexis.core.tasks,
- ch.elexis.core.services
+ ch.elexis.core.services,
+ ch.elexis.core.data
 Service-Component: OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover.xml
 Automatic-Module-Name: ch.elexis.global.inbox.core
 Bundle-ActivationPolicy: lazy

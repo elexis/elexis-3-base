@@ -60,7 +60,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 
 	private Text newDeviceText;
 	private Text deviceDirText;
-	private Text urlText;
+//	private Text urlText;
 
 	private Combo deviceCombo;
 
@@ -78,9 +78,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 		taskService = OsgiServiceUtil.getService(ITaskService.class).orElse(null);
-		IVirtualFilesystemService virtualFilesystemService = OsgiServiceUtil.getService(IVirtualFilesystemService.class)
-				.orElse(null);
-		taskManagerHandler = new TaskManagerHandler(taskService, virtualFilesystemService);
+		taskManagerHandler = new TaskManagerHandler(taskService);
 		lastSelectedCategory = getPreferenceStore().getString(Constants.PREF_LAST_SELECTED_CATEGORY);
 	}
 
@@ -151,7 +149,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		deleteButton.addListener(SWT.Selection, e -> deleteSelectedDevice(deviceCombo.getText(), contentComposite));
 
 		Label dirLabel = new Label(contentComposite, SWT.NONE);
-		dirLabel.setText(Messages.PreferencesServer_exportDirectory);
+		dirLabel.setText(Messages.InboxView_inbox);
 		GridData dirLabelGridData = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
 		dirLabelGridData.widthHint = labelWidth;
 		dirLabel.setLayoutData(dirLabelGridData);
@@ -183,41 +181,6 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 			if (IDialogConstants.OK_ID == result) {
 				String selectedUri = dialog.getValue().toString();
 				deviceDirText.setText(selectedUri);
-			}
-		});
-
-		Label urlLabel = new Label(contentComposite, SWT.NONE);
-		urlLabel.setText(Messages.InboxView_inbox);
-		GridData urlLabelGridData = new GridData(SWT.RIGHT, SWT.CENTER, false, false);
-		urlLabelGridData.widthHint = labelWidth;
-		urlLabel.setLayoutData(urlLabelGridData);
-
-		urlText = new Text(contentComposite, SWT.BORDER);
-		GridData urlTextGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		urlText.setLayoutData(urlTextGridData);
-		urlText.setEnabled(false);
-
-		Button searchButton = new Button(contentComposite, SWT.PUSH);
-		searchButton.setText(Messages.PreferencesServer_browseButton);
-		searchButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		searchButton.addListener(SWT.Selection, e -> {
-			IVirtualFilesystemService virtualFilesystemService = VirtualFilesystemServiceHolder.get();
-			URI inputUri = null;
-			try {
-				String _urlText = urlText.getText();
-				if (StringUtils.isNotBlank(_urlText)) {
-					IVirtualFilesystemHandle fileHandle = virtualFilesystemService.of(_urlText, false);
-					inputUri = fileHandle.toURL().toURI();
-				}
-			} catch (URISyntaxException | IOException ex) {
-				LoggerFactory.getLogger(PreferencesServer.class).error("Error converting URL to URI", ex);
-			}
-			VirtualFilesystemUriEditorDialog dialog = new VirtualFilesystemUriEditorDialog(getShell(),
-					virtualFilesystemService, inputUri);
-			int open = dialog.open();
-			if (IDialogConstants.OK_ID == open) {
-			String _url = dialog.getValue().toString();
-			urlText.setText(_url);
 			}
 		});
 
@@ -461,15 +424,10 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		if (StringUtils.isNotBlank(selectedDevice)) {
 			String dir = getPreferenceStore().getString(Constants.PREF_DEVICE_DIR_PREFIX + selectedDevice);
 			deviceDirText.setText(StringUtils.defaultString(dir));
-			String url = (taskManagerHandler.getTaskDescriptorByReferenceId(selectedDevice) != null)
-					? taskManagerHandler.getTaskDescriptorByReferenceId(selectedDevice).getTriggerParameters()
-							.get(TaskTriggerTypeParameter.FILESYSTEM_CHANGE.URL)
-					: StringUtils.EMPTY;
-			urlText.setText((url != null) ? url : StringUtils.EMPTY);
 			updateCategoriesListForDevice(selectedDevice);
 		} else {
 			deviceDirText.setText("");
-			urlText.setText("");
+
 		}
 	}
 
@@ -490,21 +448,19 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 	@Override
 	public boolean performOk() {
 		String selectedDevice = deviceCombo.getText();
+
 		if (StringUtils.isNotBlank(selectedDevice)) {
 			String destinationDir = deviceDirText.getText();
 			if (lastSelectedCategory == null) {
 				lastSelectedCategory = "";
 			}
 
-			if (!lastSelectedCategory.isEmpty()) {
-				destinationDir = destinationDir + File.separator + lastSelectedCategory;
-			}
 			getPreferenceStore().setValue(Constants.PREF_DEVICE_DIR_PREFIX + selectedDevice, deviceDirText.getText());
 			getPreferenceStore().setValue(Constants.PREF_SELECTED_DEVICE, selectedDevice);
 			getPreferenceStore().setValue(Constants.PREF_CATEGORY_PREFIX + selectedDevice, lastSelectedCategory);
-			String url = urlText.getText();
-			if (StringUtils.isNotBlank(url)) {
-				taskManagerHandler.createAndConfigureTask(selectedDevice, url, destinationDir);
+
+			if (StringUtils.isNotBlank(destinationDir)) {
+				taskManagerHandler.createAndConfigureTask(selectedDevice, destinationDir);
 			}
 		}
 		return super.performOk();

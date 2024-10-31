@@ -1,12 +1,22 @@
 package com.hilotec.elexis.kgview;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.preferences.ConfigServicePreferenceStore;
@@ -62,6 +72,29 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 				getFieldEditorParent()));
 		addField(new IntegerFieldEditor(CFG_AKG_SCROLLDIST_DOWN, "Archiv KG Scroll Distanz runter [px]",
 				getFieldEditorParent()));
+
+		Button migrationBtn = new Button(getFieldEditorParent().getParent(), SWT.PUSH);
+		migrationBtn.setText("Diagnosen Migration");
+		migrationBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent se) {
+				ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
+				try {
+					progressDialog.run(true, false, new IRunnableWithProgress() {
+						@Override
+						public void run(IProgressMonitor monitor)
+								throws InvocationTargetException, InterruptedException {
+							DiagnosisMigrator migrator = new DiagnosisMigrator();
+							migrator.migrate(monitor);
+						}
+					});
+				} catch (InvocationTargetException | InterruptedException e) {
+					MessageDialog.openError(getShell(), "Diagnosen konvertieren",
+							"Fehler beim erzeugen der strukturierten Diagnosen.");
+					LoggerFactory.getLogger(getClass()).error("Error creating structured diagnosis", e);
+				}
+			}
+		});
 	}
 
 	/**

@@ -13,9 +13,20 @@
 
 package com.hilotec.elexis.messwerte.v2.views;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
@@ -24,6 +35,7 @@ import ch.elexis.core.ui.preferences.inputs.InexistingFileOKFileFieldEditor;
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public static final String CONFIG_FILE = "findings/hilotec/configfile"; //$NON-NLS-1$
 
+	@Override
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 	}
@@ -33,6 +45,28 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 		addField(new InexistingFileOKFileFieldEditor(CONFIG_FILE, "Konfigurationsdatei", //$NON-NLS-1$
 				getFieldEditorParent()));
 
+		Button migrationBtn = new Button(getFieldEditorParent().getParent(), SWT.PUSH);
+		migrationBtn.setText("Messwerte Migration");
+		migrationBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent se) {
+				ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
+				try {
+					progressDialog.run(true, false, new IRunnableWithProgress() {
+						@Override
+						public void run(IProgressMonitor monitor)
+								throws InvocationTargetException, InterruptedException {
+							ObservationMigrator migrator = new ObservationMigrator();
+							migrator.migrate(monitor);
+						}
+					});
+				} catch (InvocationTargetException | InterruptedException e) {
+					MessageDialog.openError(getShell(), "Messwerte konvertieren",
+							"Fehler beim erzeugen der strukturierten Messwerte.");
+					LoggerFactory.getLogger(getClass()).error("Error creating structured diagnosis", e);
+				}
+			}
+		});
 	}
 
 	@Override

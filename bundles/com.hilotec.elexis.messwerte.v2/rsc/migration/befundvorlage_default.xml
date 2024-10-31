@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ASCII"?>
+<ch.elexis.core.findings.templates:FindingsTemplates xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ch.elexis.core.findings.templates="http://ch.elexis.core.findings.templates" id="Findings_Template_Standard_Vorlagen" title="Standard Vorlagen">
+  <findingsTemplates title="Vitaldaten">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataGroup" findingsTemplates="//@findingsTemplates.2 //@findingsTemplates.3 //@findingsTemplates.4 //@findingsTemplates.7 //@findingsTemplates.5 //@findingsTemplates.1 //@findingsTemplates.6 //@findingsTemplates.13 //@findingsTemplates.15 //@findingsTemplates.8"/>
+  </findingsTemplates>
+  <findingsTemplates title="Blutdruck">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataGroupComponent" textSeparator="/">
+      <findingsTemplates title="Systolisch">
+        <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="mmHg"/>
+        <codeElement code="8480-6" system="LOINC" display="Systolic blood pressure"/>
+      </findingsTemplates>
+      <findingsTemplates title="Diastolisch">
+        <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="mmHg"/>
+        <codeElement code="8462-4" system="LOINC" display="Diastolic blood pressure"/>
+      </findingsTemplates>
+    </inputData>
+    <codeElement code="85354-9" system="LOINC" display="Blood pressure panel with all children optional "/>
+  </findingsTemplates>
+  <findingsTemplates title="Gr&#xf6;sse">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="cm" decimalPlace="2"/>
+    <codeElement code="8302-2" system="LOINC" display="Body height"/>
+  </findingsTemplates>
+  <findingsTemplates title="Gewicht">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="kg" decimalPlace="2"/>
+    <codeElement code="3141-9" system="LOINC" display="Body weight Measured"/>
+  </findingsTemplates>
+  <findingsTemplates title="BMI">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" script="[Gewicht]/(([Gr&#xf6;sse]/100)*([Gr&#xf6;sse]/100))"/>
+  </findingsTemplates>
+  <findingsTemplates title="Puls">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="/min"/>
+    <codeElement code="8867-4" system="LOINC" display="Heart rate"/>
+  </findingsTemplates>
+  <findingsTemplates title="Sauerstoffs&#xe4;ttigung">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="%"/>
+    <codeElement code="2710-2" system="LOINC" display="Deprecated Oxygen saturation in Capillary blood by Oximetry"/>
+  </findingsTemplates>
+  <findingsTemplates title="Temperatur">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="&#xb0;C"/>
+    <codeElement code="8310-5" system="LOINC" display="Body temperature"/>
+  </findingsTemplates>
+  <findingsTemplates title="K&#xf6;rperoberfl&#xe4;che">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="m2" decimalPlace="2" script="import java.lang.Math;&#xD;&#xA;&#xD;&#xA;Math.sqrt(([Gr&#xf6;sse]*[Gewicht])/3600)"/>
+  </findingsTemplates>
+  <findingsTemplates title="H&#xfc;ftumfang">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="cm" decimalPlace="2"/>
+  </findingsTemplates>
+  <findingsTemplates title="Bauchumfang">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="cm" decimalPlace="2"/>
+  </findingsTemplates>
+  <findingsTemplates title="Taillenumfang">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="cm" decimalPlace="2"/>
+  </findingsTemplates>
+  <findingsTemplates title="Taille-H&#xfc;ft-Verh&#xe4;ltnis">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" decimalPlace="2" script="[Taillenumfang]/[H&#xfc;ftumfang]"/>
+  </findingsTemplates>
+  <findingsTemplates title="Kopfumfang">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="cm" decimalPlace="2"/>
+  </findingsTemplates>
+  <findingsTemplates title="Abmessungen">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataGroup" findingsTemplates="//@findingsTemplates.10 //@findingsTemplates.11 //@findingsTemplates.9 //@findingsTemplates.12"/>
+  </findingsTemplates>
+  <findingsTemplates title="Knochenalter">
+    <inputData xsi:type="ch.elexis.core.findings.templates:InputDataNumeric" unit="Jahre" decimalPlace="2"/>
+  </findingsTemplates>
+</ch.elexis.core.findings.templates:FindingsTemplates>

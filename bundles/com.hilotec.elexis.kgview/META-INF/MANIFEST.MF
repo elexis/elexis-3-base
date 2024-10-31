@@ -11,4 +11,6 @@ Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: hilotec.com
 Bundle-Activator: com.hilotec.elexis.kgview.Activator
-Import-Package: javax.inject
+Import-Package: ch.elexis.core.findings,
+ ch.elexis.core.findings.migration,
+ javax.inject

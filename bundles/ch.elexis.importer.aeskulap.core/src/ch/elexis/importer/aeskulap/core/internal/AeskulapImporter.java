@@ -8,16 +8,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.osgi.service.component.annotations.Component;
 
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.services.holder.XidServiceHolder;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.Xid;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
+import ch.elexis.omnivore.model.IDocumentHandle;
 
 @Component
 public class AeskulapImporter implements IAeskulapImporter {
@@ -228,4 +241,73 @@ public class AeskulapImporter implements IAeskulapImporter {
 		return ret;
 	}
 
+	private IModelService omnivoreModelService;
+
+	@Override
+	public void removePatientDuplicates(IProgressMonitor monitor) {
+		IQuery<IXid> xidQuery = CoreModelServiceHolder.get().getQuery(IXid.class);
+		xidQuery.and(ModelPackage.Literals.IXID__DOMAIN, COMPARATOR.EQUALS, XID_IMPORT_PATIENT);
+		List<IXid> importedXids = xidQuery.execute();
+		monitor.beginTask("Patienten Diplikate entfernen", importedXids.size());
+		for (IXid importedXid : importedXids) {
+			IPatient importedPatient = importedXid.getObject(IPatient.class);
+			if (importedPatient != null) {
+				IPatient existingPatient = findExistingPatient(importedPatient);
+				if (existingPatient != null) {
+					transferImportedData(importedPatient, existingPatient);
+					existingPatient.addXid(XID_IMPORT_PATIENT, importedXid.getDomainId(), true);
+					importedPatient.setDeleted(true);
+					CoreModelServiceHolder.get().save(importedPatient);
+				}
+			}
+			monitor.worked(1);
+		}
+	}
+
+	private void transferImportedData(IPatient importedPatient, IPatient existingPatient) {
+		// transfer omnivore
+		if (omnivoreModelService == null) {
+			omnivoreModelService = OsgiServiceUtil.getService(IModelService.class,
+					"(" + IModelService.SERVICEMODELNAME + "=ch.elexis.omnivore.data.model)").get();
+		}
+		IQuery<IDocumentHandle> documentQuery = omnivoreModelService.getQuery(IDocumentHandle.class);
+		documentQuery.and("kontakt", COMPARATOR.EQUALS, importedPatient);
+		List<IDocumentHandle> importedDocuments = documentQuery.execute();
+		for (IDocumentHandle importedDocument : importedDocuments) {
+			// no need to transfer categories, just the document
+			importedDocument.setPatient(existingPatient);
+		}
+		omnivoreModelService.save(importedDocuments);
+		// transfer Laboratory
+		IQuery<ILabResult> query = CoreModelServiceHolder.get().getQuery(ILabResult.class);
+		query.and(ModelPackage.Literals.ILAB_RESULT__PATIENT, COMPARATOR.EQUALS, importedPatient);
+		List<ILabResult> importedLaboratory = query.execute();
+		for (ILabResult importedResult : importedLaboratory) {
+			importedResult.setPatient(existingPatient);
+		}
+		CoreModelServiceHolder.get().save(importedLaboratory);
+	}
+
+	private IPatient findExistingPatient(IPatient importedPatient) {
+		IXid importedAhv = importedPatient.getXid(XidConstants.DOMAIN_AHV);
+		if (importedAhv != null && StringUtils.isNotEmpty(importedAhv.getDomainId())) {
+			List<IPatient> patientsWithAhv = XidServiceHolder.get().findObjects(XidConstants.DOMAIN_AHV,
+					importedAhv.getDomainId(), IPatient.class);
+			if (patientsWithAhv.size() > 1) {
+				return patientsWithAhv.stream().filter(p -> !p.getId().equals(importedPatient.getId())).findFirst()
+						.get();
+			}
+		}
+		IQuery<IPatient> query = CoreModelServiceHolder.get().getQuery(IPatient.class);
+		query.and(ModelPackage.Literals.IPERSON__FIRST_NAME, COMPARATOR.EQUALS, importedPatient.getFirstName());
+		query.and(ModelPackage.Literals.IPERSON__LAST_NAME, COMPARATOR.EQUALS, importedPatient.getLastName());
+		query.and(ModelPackage.Literals.IPERSON__DATE_OF_BIRTH, COMPARATOR.EQUALS,
+				importedPatient.getDateOfBirth().toLocalDate());
+		query.and(ModelPackage.Literals.IPERSON__GENDER, COMPARATOR.EQUALS, importedPatient.getGender());
+		List<IPatient> patientsMatching = query.execute();
+		if (patientsMatching.size() > 1) {
+			return patientsMatching.stream().filter(p -> !p.getId().equals(importedPatient.getId())).findFirst().get();
+		}
+		return null;
+	}
 }

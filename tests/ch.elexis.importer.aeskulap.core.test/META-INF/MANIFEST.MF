@@ -9,3 +9,4 @@ Automatic-Module-Name: ch.elexis.importer.aeskulap.core.test
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.junit,
  ch.elexis.omnivore.model;bundle-version="3.13.0"
+Import-Package: ch.elexis.core.services.holder

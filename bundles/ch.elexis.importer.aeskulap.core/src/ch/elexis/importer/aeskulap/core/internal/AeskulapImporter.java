@@ -1,7 +1,9 @@
 package ch.elexis.importer.aeskulap.core.internal;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.LoggerFactory;
+
+import com.opencsv.CSVWriter;
 
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.events.ElexisEvent;
@@ -25,6 +30,7 @@ import ch.elexis.core.services.IQuery;
 import ch.elexis.core.services.IQuery.COMPARATOR;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
+import ch.elexis.core.utils.CoreUtil;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.data.Xid;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
@@ -245,23 +251,45 @@ public class AeskulapImporter implements IAeskulapImporter {
 
 	@Override
 	public void removePatientDuplicates(IProgressMonitor monitor) {
-		IQuery<IXid> xidQuery = CoreModelServiceHolder.get().getQuery(IXid.class);
-		xidQuery.and(ModelPackage.Literals.IXID__DOMAIN, COMPARATOR.EQUALS, XID_IMPORT_PATIENT);
-		List<IXid> importedXids = xidQuery.execute();
-		monitor.beginTask("Patienten Diplikate entfernen", importedXids.size());
-		for (IXid importedXid : importedXids) {
-			IPatient importedPatient = importedXid.getObject(IPatient.class);
-			if (importedPatient != null) {
-				IPatient existingPatient = findExistingPatient(importedPatient);
-				if (existingPatient != null) {
-					transferImportedData(importedPatient, existingPatient);
-					existingPatient.addXid(XID_IMPORT_PATIENT, importedXid.getDomainId(), true);
-					importedPatient.setDeleted(true);
-					CoreModelServiceHolder.get().save(importedPatient);
+		try (CSVWriter csvWriter = initCsvWriter()) {
+			IQuery<IXid> xidQuery = CoreModelServiceHolder.get().getQuery(IXid.class);
+			xidQuery.and(ModelPackage.Literals.IXID__DOMAIN, COMPARATOR.EQUALS, XID_IMPORT_PATIENT);
+			List<IXid> importedXids = xidQuery.execute();
+			monitor.beginTask("Patienten Duplikate entfernen", importedXids.size());
+			for (IXid importedXid : importedXids) {
+				IPatient importedPatient = importedXid.getObject(IPatient.class);
+				if (importedPatient != null) {
+					IPatient existingPatient = findExistingPatient(importedPatient);
+					if (existingPatient != null) {
+						if (importedPatient.getCoverages().isEmpty()) {
+							transferImportedData(importedPatient, existingPatient);
+							existingPatient.addXid(XID_IMPORT_PATIENT, importedXid.getDomainId(), true);
+							importedPatient.setDeleted(true);
+							CoreModelServiceHolder.get().save(importedPatient);
+							csvWriter.writeNext(new String[] { importedPatient.getPatientNr(),
+									existingPatient.getPatientNr(), "OK" });
+						} else {
+							csvWriter.writeNext(new String[] { importedPatient.getPatientNr(),
+									existingPatient.getPatientNr(), "HASCOVERAGE" });
+						}
+					} else {
+						csvWriter.writeNext(new String[] { importedPatient.getPatientNr(), "", "NOEXISTING" });
+					}
 				}
+				monitor.worked(1);
 			}
-			monitor.worked(1);
+		} catch (IOException e) {
+			LoggerFactory.getLogger(getClass()).error("Error creating csv writer", e);
 		}
+	}
+
+	private CSVWriter initCsvWriter() throws IOException {
+		File file = new File(CoreUtil.getWritableUserDir(), "RemoveDuplicatePatients.csv");
+		FileWriter fw = new FileWriter(file);
+		CSVWriter csv = new CSVWriter(fw);
+		String[] header = new String[] { "ImportPatNr", "ExistingPatNr", "Action" };
+		csv.writeNext(header);
+		return csv;
 	}
 
 	private void transferImportedData(IPatient importedPatient, IPatient existingPatient) {

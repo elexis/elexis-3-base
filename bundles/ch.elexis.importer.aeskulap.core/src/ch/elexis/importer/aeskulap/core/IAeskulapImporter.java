@@ -3,6 +3,7 @@ package ch.elexis.importer.aeskulap.core;
 import java.io.File;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 
 public interface IAeskulapImporter {
@@ -40,5 +41,14 @@ public interface IAeskulapImporter {
 	 * @param monitor
 	 * @return
 	 */
-	List<IAeskulapImportFile> importFiles(List<IAeskulapImportFile> files, boolean overwrite, SubMonitor monitor);
+	public List<IAeskulapImportFile> importFiles(List<IAeskulapImportFile> files, boolean overwrite,
+			SubMonitor monitor);
+
+	/**
+	 * Search all imported patients for existing duplicates. Transfer imported data
+	 * including XID to the existing duplicate and set imported patient to deleted.
+	 * 
+	 * @param monitor
+	 */
+	public void removePatientDuplicates(IProgressMonitor monitor);
 }

@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,9 +21,11 @@ import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IOrganization;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.model.IXid;
 import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.builder.IContactBuilder;
 import ch.elexis.core.model.builder.IUserBuilder;
@@ -34,9 +37,11 @@ import ch.elexis.core.services.IXidService;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.XidServiceHolder;
+import ch.elexis.core.types.Country;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
+import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
 import ch.elexis.importer.aeskulap.core.test.AllTests;
 import ch.elexis.omnivore.model.IDocumentHandle;
@@ -59,6 +64,29 @@ public class AeskulapImporterTest {
 		IUser user = new IUserBuilder(CoreModelServiceHolder.get(), "user_at", mandatorPerson).buildAndSave();
 
 		ContextServiceHolder.get().setActiveUser(user);
+
+		Optional<IOrganization> existingGuarantor = XidServiceHolder.get().findObject(XidConstants.DOMAIN_EAN,
+				"7601003002775", IOrganization.class);
+		if (existingGuarantor.isEmpty()) {
+			IOrganization guarantor = new IContactBuilder.OrganizationBuilder(CoreModelServiceHolder.get(),
+					"Helsana Versicherungen AG (inkl. Avanex)").build();
+			guarantor.setCity("Zürich");
+			guarantor.setZip("8081");
+			guarantor.setCountry(Country.CH);
+			CoreModelServiceHolder.get().save(guarantor);
+			XidServiceHolder.get().addXid(guarantor, XidConstants.DOMAIN_EAN, "7601003002775", true);
+		}
+	}
+
+	@After
+	public void afterTest() {
+		for (IPatient existingPatient : CoreModelServiceHolder.get().getQuery(IPatient.class).execute()) {
+			IXid xid = existingPatient.getXid(IAeskulapImporter.XID_IMPORT_PATIENT);
+			if (xid != null) {
+				CoreModelServiceHolder.get().remove(xid);
+			}
+			CoreModelServiceHolder.get().remove(existingPatient);
+		}
 	}
 
 	@Test
@@ -86,6 +114,9 @@ public class AeskulapImporterTest {
 		List<IDocument> importedDocuments = omnivoreDocumentStore.getDocuments(importedPatient.getId(), null, null,
 				null);
 		assertFalse(importedDocuments.isEmpty());
+
+		assertFalse(patient.get().getCoverages().isEmpty());
+		assertNotNull(patient.get().getCoverages().get(0).getGuarantor());
 	}
 
 	@Test
@@ -104,6 +135,8 @@ public class AeskulapImporterTest {
 		// run import
 		List<IAeskulapImportFile> files = importer.setImportDirectory(AllTests.getTestDirectory());
 		assertFalse(files.isEmpty());
+		// do not import coverage, as patients with coverage are not removed
+		files = files.stream().filter(f -> f.getType() != Type.COVERAGE).toList();
 		SubMonitor subMonitor = SubMonitor.convert(new NullProgressMonitor(), files.size());
 		List<IAeskulapImportFile> imported = importer.importFiles(files, false, subMonitor);
 		assertTrue(imported.isEmpty());

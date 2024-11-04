@@ -18,6 +18,7 @@ public interface IAeskulapImporter {
 	final static String XID_IMPORT_LETTER = XID_IMPORT + "/LetterID";
 	final static String XID_IMPORT_DOCUMENT = XID_IMPORT + "/DocumentID";
 	final static String XID_IMPORT_FILE = XID_IMPORT + "/FileID";
+	static final String XID_IMPORT_COVERAGE = XID_IMPORT + "/CoverageID";
 
 	static final String PROP_KEEPPATIENTNUMBER = "aeskulap.keepPatientNumber";
 

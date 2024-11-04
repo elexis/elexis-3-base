@@ -9,6 +9,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.SubMonitor;
 
 import ch.elexis.core.data.interfaces.text.IOpaqueDocument;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
@@ -30,6 +31,7 @@ public interface IAeskulapImportFile {
 		ADDRESSES(1, Kontakt.class),
 		MANDATOR(2, Mandant.class),
 		PATIENT(100, Patient.class),
+		COVERAGE(101, Fall.class),
 		LABORCONTACT(200, Kontakt.class), 
 		LABORITEM(210, LabItem.class), 
 		LABORRESULT(250, LabResult.class),

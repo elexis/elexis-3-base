@@ -44,6 +44,12 @@ public class AppointmentDialog extends Dialog {
 		this.appointment = appointment;
 		this.emailSender = new EmailSender(textReplacementService, contextService);
 	}
+
+	public boolean openAndWaitForOk() {
+		int result = this.open();
+		return result == OK; 
+	}
+
 	@Override
 	protected Control createContents(Composite parent) {
 		initializeAppointmentIfNecessary();

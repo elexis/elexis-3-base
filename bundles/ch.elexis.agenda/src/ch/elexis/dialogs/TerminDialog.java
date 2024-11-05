@@ -57,6 +57,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,9 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.IAppointmentHistoryManagerService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -106,6 +109,7 @@ import ch.rgw.tools.TimeTool;
  */
 public class TerminDialog extends TitleAreaDialog {
 
+	private static IAppointmentHistoryManagerService appointmentHistoryManagerService;
 	private static final Logger logger = LoggerFactory.getLogger(TerminDialog.class);
 	private static ICommandService cmdService = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 			.getService(ICommandService.class);
@@ -113,6 +117,11 @@ public class TerminDialog extends TitleAreaDialog {
 
 	public enum CollisionErrorLevel {
 		ERROR, WARNING
+	}
+
+	public boolean openAndWaitForOk() {
+		int result = this.open();
+		return result == OK;
 	}
 
 	DatePicker dp;
@@ -146,6 +155,7 @@ public class TerminDialog extends TitleAreaDialog {
 	Text tGrund;
 	Activator agenda = Activator.getDefault();
 	boolean bModified;
+	boolean isModified = false;
 	private String msg;
 
 	private boolean useGlobalData = true;
@@ -200,6 +210,7 @@ public class TerminDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
+		appointmentHistoryManagerService = AppointmentHistoryServiceHolder.get();
 		ScrolledComposite sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		sc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite ret = new Composite(sc, SWT.NONE);
@@ -958,6 +969,7 @@ public class TerminDialog extends TitleAreaDialog {
 			Termin newTermin = new Termin(getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT), von,
 					bis, typ, status, priority);
 			actTermin = newTermin;
+			isModified = false;
 		} else {
 			actTermin = (Termin) actPlannable;
 			if (bMulti) {
@@ -980,6 +992,7 @@ public class TerminDialog extends TitleAreaDialog {
 			actTermin.set(new String[] { "BeiWem", "Tag", "Beginn", "Dauer", "Typ", "Status", Termin.FLD_PRIORITY },
 					new String[] { getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT),
 							Integer.toString(von), Integer.toString(bis - von), typ, status, priority });
+			isModified = true;
 		}
 		lTerminListe.add(actTermin.getLabel());
 		lTermine.add(actTermin);
@@ -1006,6 +1019,11 @@ public class TerminDialog extends TitleAreaDialog {
 					CoreModelServiceHolder.get().refresh(a, true);
 					ContextServiceHolder.get().setTyped(a);
 				});
+
+		if (isModified) {
+			appointmentHistoryManagerService.logAppointmentEdit(actTermin.toIAppointment());
+			isModified = false;
+		}
 	}
 
 	/**

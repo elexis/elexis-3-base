@@ -4,12 +4,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import com.equo.chromium.swt.Browser;
 
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.agenda.RecurringAppointment;
+import ch.elexis.core.services.IAppointmentHistoryManagerService;
+import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -24,12 +28,14 @@ import org.slf4j.LoggerFactory;
 import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
-import at.medevit.elexis.agenda.ui.handler.AppointmentHistoryManager;
+
 
 public class EventDropFunction extends AbstractBrowserFunction {
 
+	private IAppointmentHistoryManagerService appointmentHistoryManagerService;
 	public EventDropFunction(Browser browser, String name) {
 		super(browser, name);
+		appointmentHistoryManagerService = AppointmentHistoryServiceHolder.get();
 	}
 
 	@Override
@@ -47,15 +53,14 @@ public class EventDropFunction extends AbstractBrowserFunction {
 				@Override
 				public void lockAcquired() {
 					IAppointment current = termin;
-					AppointmentHistoryManager historyManager = new AppointmentHistoryManager(current);
 					LocalDateTime oldMainTime = current.getStartTime();
 					String oldArea = current.getSchedule();
 
 					// do copy
 					if (arguments.length >= 5 && Boolean.TRUE.equals(arguments[4])) {
 						current = AppointmentServiceHolder.get().clone(termin);
-						historyManager = new AppointmentHistoryManager(current);
-						historyManager.logAppointmentCopyFromTo(termin.getId(), current.getId());
+						appointmentHistoryManagerService.logAppointmentCopyFromTo(current, termin.getId(),
+								current.getId());
 						if (termin.isRecurring() && termin.getContact() == null) {
 							// take kontakt from root termin
 							IContact k = new RecurringAppointment(termin, CoreModelServiceHolder.get())
@@ -94,7 +99,8 @@ public class EventDropFunction extends AbstractBrowserFunction {
 						switch (moveAction) {
 						case KEEP_MAIN_ONLY:
 							lockAndSaveAppointment(current);
-							historyManager.logAppointmentMove(oldMainTime, newMainTime, oldArea, newArea);
+							appointmentHistoryManagerService.logAppointmentMove(current, oldMainTime, newMainTime,
+									oldArea, newArea);
 							break;
 						case MOVE_ALL:
 							long minutesDifference = java.time.Duration.between(oldMainTime, newMainTime).toMinutes();
@@ -107,13 +113,12 @@ public class EventDropFunction extends AbstractBrowserFunction {
 								linkedAppointment.setSchedule(linkedAppointment.getSchedule());
 								linkedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 								lockAndSaveAppointment(linkedAppointment);
-								AppointmentHistoryManager linkedHistoryManager = new AppointmentHistoryManager(
-										linkedAppointment);
-								linkedHistoryManager.logAppointmentMove(oldLinkedTime, newLinkedTime, oldArea, newArea); // Bereich
-																															// loggen
+								appointmentHistoryManagerService.logAppointmentMove(linkedAppointment, oldLinkedTime,
+										newLinkedTime, oldArea, newArea); // loggen
 							}
 							lockAndSaveAppointment(current);
-							historyManager.logAppointmentMove(oldMainTime, newMainTime, oldArea, newArea);
+							appointmentHistoryManagerService.logAppointmentMove(current, oldMainTime, newMainTime,
+									oldArea, newArea);
 							break;
 						case CANCEL:
 						default:
@@ -121,7 +126,8 @@ public class EventDropFunction extends AbstractBrowserFunction {
 						}
 					} else {
 						lockAndSaveAppointment(current);
-						historyManager.logAppointmentMove(oldMainTime, newMainTime, oldArea, newArea);
+						appointmentHistoryManagerService.logAppointmentMove(current, oldMainTime, newMainTime, oldArea,
+								newArea);
 					}
 
 					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);

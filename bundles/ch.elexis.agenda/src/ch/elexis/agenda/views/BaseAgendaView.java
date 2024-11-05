@@ -61,8 +61,10 @@ import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.services.IAppointmentHistoryManagerService;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -385,11 +387,17 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 			@Override
 			public void doRun(Termin t) {
+				TimeTool oldEndTime = t.getEndTime();
 				agenda.setActDate(t.getDay());
-				Termin n = Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(), t);
-				if (n != null) {
-					t.setEndTime(n.getStartTime());
-					// t.setDurationInMinutes(t.getDurationInMinutes()+15);
+				Termin nextTermin = Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(), t);
+				if (nextTermin != null) {
+					t.setEndTime(nextTermin.getStartTime());
+					TimeTool newEndTime = t.getEndTime();
+					IAppointmentHistoryManagerService historyService = AppointmentHistoryServiceHolder.get();
+					if (historyService != null) {
+						historyService.logAppointmentDurationChange(t.toIAppointment(), oldEndTime.toLocalDateTime(),
+								newEndTime.toLocalDateTime());
+					}
 					ElexisEventDispatcher.reload(Termin.class);
 				}
 

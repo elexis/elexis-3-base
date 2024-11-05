@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.osgi.service.component.annotations.Reference;
 
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
@@ -31,7 +32,9 @@ import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.IAppointmentHistoryManagerService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.icons.Images;
@@ -46,6 +49,8 @@ import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
  *
  */
 public class AgendaActions {
+
+	private static IAppointmentHistoryManagerService appointmentHistoryManagerService;
 
 	/** delete an appointment */
 	private static LockRequestingRestrictedAction<Termin> delTerminAction;
@@ -75,7 +80,7 @@ public class AgendaActions {
 	}
 
 	private static void makeActions() {
-
+		appointmentHistoryManagerService = AppointmentHistoryServiceHolder.get();
 		delTerminAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.DELETE),
 				Messages.AgendaActions_deleteDate) {
 			{
@@ -91,10 +96,12 @@ public class AgendaActions {
 			@Override
 			public void doRun(Termin element) {
 				IAppointment appointment = (IAppointment) element.toIAppointment();
+				appointmentHistoryManagerService.logAppointmentDeletion(appointment);
 				CoreModelServiceHolder.get().delete(appointment);
 				ElexisEventDispatcher.reload(Termin.class);
 			}
 		};
+
 		terminStatusAction = new Action(Messages.AgendaActions_state, Action.AS_DROP_DOWN_MENU) {
 			Menu mine = null;
 			Listener showListener = null;

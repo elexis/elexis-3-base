@@ -1,13 +1,18 @@
 package at.medevit.elexis.agenda.ui.function;
 
+import javax.inject.Inject;
+
+import org.osgi.service.component.annotations.Reference;
+
 import com.equo.chromium.swt.Browser;
 import com.equo.chromium.swt.BrowserFunction;
 
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
 import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
-import at.medevit.elexis.agenda.ui.handler.AppointmentHistoryManager;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.IAppointmentHistoryManagerService;
+import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
@@ -15,12 +20,15 @@ import ch.elexis.core.ui.e4.locks.ILockHandler;
 
 public class DoubleClickFunction extends BrowserFunction {
 
+	private IAppointmentHistoryManagerService appointmentHistoryManagerService;
+
 	public DoubleClickFunction(Browser browser, String name) {
 		super(browser, name);
 	}
 
 	@Override
 	public Object function(Object[] arguments) {
+		appointmentHistoryManagerService = AppointmentHistoryServiceHolder.get();
 		if (arguments.length == 1) {
 			IAppointment termin = CoreModelServiceHolder.get().load((String) arguments[0], IAppointment.class)
 					.orElse(null);
@@ -31,28 +39,28 @@ public class DoubleClickFunction extends BrowserFunction {
 						// do nothing
 					}
 
-					AppointmentHistoryManager historyManager = new AppointmentHistoryManager(termin);
 					@Override
 					public void lockAcquired() {
-						// TerminDialog.setActResource(termin.getBereich());
+						boolean isEditConfirmed = false;
 						if (termin.isRecurring()) {
 							RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(
 									AppointmentServiceHolder.get().getAppointmentSeries(termin).get());
-							dlg.open();
-							historyManager.logAppointmentEdit();
+							isEditConfirmed = dlg.openAndWaitForOk();
 						} else {
 							AppointmentDialog dlg = new AppointmentDialog(termin);
-							dlg.open();
+							isEditConfirmed = dlg.openAndWaitForOk();
+						}
 
-							historyManager.logAppointmentEdit();
+						if (isEditConfirmed) {
+							appointmentHistoryManagerService.logAppointmentEdit(termin);
 						}
 					}
 				});
 			} else {
-				// the event could not be loaded, trigger refetch
 				new ScriptingHelper(getBrowser()).refetchEvents();
 			}
 		}
 		return null;
 	}
+
 }

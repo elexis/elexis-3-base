@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -34,6 +35,8 @@ import ch.elexis.core.data.interfaces.IPeriod;
 import ch.elexis.core.data.service.ContextServiceHolder;
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.services.IAppointmentHistoryManagerService;
+import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -53,6 +56,8 @@ import ch.rgw.tools.TimeTool;
  */
 
 public class Termin extends PersistentObject implements Cloneable, Comparable<Termin>, IPlannable, IPeriod {
+
+	private IAppointmentHistoryManagerService appointmentHistoryManagerService;
 
 	public static final String FLD_BEREICH = "BeiWem"; //$NON-NLS-1$
 	public static final String FLD_TERMINTYP = "Typ"; //$NON-NLS-1$
@@ -77,6 +82,16 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	public static String[] TerminStatus;
 	public static String[] TerminBereiche;
 	private static final JdbcLink j = getConnection();
+
+	private void updateDuration(int newDuration) {
+		appointmentHistoryManagerService = AppointmentHistoryServiceHolder.get();
+		TimeTool oldEndTime = getEndTime();
+		setDurationInternal(newDuration);
+		TimeTool newEndTime = getEndTime();
+		IAppointment appointment = this.toIAppointment();
+		appointmentHistoryManagerService.logAppointmentDurationChange(appointment, oldEndTime.toLocalDateTime(),
+				newEndTime.toLocalDateTime());
+	}
 
 	public static final Cache<String, Boolean> cachedAttributeKeys = CacheBuilder.newBuilder()
 			.expireAfterWrite(30, TimeUnit.SECONDS).build();
@@ -881,10 +896,22 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		}
 	}
 
+	/**
+	 * Interne Methode zum Setzen der Dauer ohne Rekursion
+	 */
+	private void setDurationInternal(final int min) {
+		set(new String[] { FLD_DAUER, FLD_LASTEDIT }, Integer.toString(min), createTimeStamp());
+	}
+
 	@Override
 	public void setDurationInMinutes(final int min) {
 		if (!checkLock()) {
-			set(new String[] { FLD_DAUER, FLD_LASTEDIT }, Integer.toString(min), createTimeStamp());
+			int currentDuration = getDurationInMinutes();
+			if (min != currentDuration) {
+				updateDuration(min);
+			} else {
+				setDurationInternal(min);
+			}
 		}
 	}
 

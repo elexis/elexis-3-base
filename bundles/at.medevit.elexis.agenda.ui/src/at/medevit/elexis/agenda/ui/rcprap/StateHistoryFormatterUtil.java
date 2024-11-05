@@ -70,7 +70,7 @@ public class StateHistoryFormatterUtil {
 	}
 
 	private static String getLabelFromId(String id) {
-		Optional<IAppointment> appointment = CoreModelServiceHolder.get().load(id, IAppointment.class, false, false);
+		Optional<IAppointment> appointment = CoreModelServiceHolder.get().load(id, IAppointment.class, true, false);
 		if (appointment.isPresent()) {
 			String label = appointment.get().getLabel();
 			return label;

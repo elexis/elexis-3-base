@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.MimeType;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -70,7 +71,12 @@ public class ImportOmnivoreInboxUtil {
 					String extension = getFileExtension(file);
 					if (extension != null
 							&& (newDocument.getMimeType() == null || newDocument.getMimeType().isEmpty())) {
-						newDocument.setMimeType("." + extension);
+						MimeType mimetyp = MimeType.getByExtension(extension);
+						if (mimetyp != MimeType.undefined) {
+							newDocument.setMimeType(mimetyp.getContentType());
+						} else {
+							newDocument.setMimeType(file.getName());
+						}
 					}
 					try (InputStream contentStream = new FileInputStream(file)) {
 						omnivoreDocumentStore.saveDocument(newDocument, contentStream);

@@ -7,32 +7,29 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.List;
+import java.io.InputStream;
+import java.io.FileInputStream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.data.services.GlobalServiceDescriptors;
-import ch.elexis.core.data.services.IDocumentManager;
-import ch.elexis.core.data.util.Extensions;
-import ch.elexis.core.importer.div.service.holder.OmnivoreDocumentStoreServiceHolder;
 import ch.elexis.core.jdt.Nullable;
-
+import ch.elexis.core.model.IDocument;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-
+import ch.elexis.global_inbox.core.service.DocumentStoreHolder;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.TimeTool;
+
 
 public class ImportOmnivoreInboxUtil {
 
 	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
-	private IDocumentStore omnivoreDocumentStore = OmnivoreDocumentStoreServiceHolder.get();
+	private IDocumentStore omnivoreDocumentStore = DocumentStoreHolder.get();
 	private Logger logger;
 
 	public ImportOmnivoreInboxUtil() {
@@ -57,32 +54,39 @@ public class ImportOmnivoreInboxUtil {
 				if (cat.equals("-") || cat.equals("??")) { //$NON-NLS-1$ //$NON-NLS-2$
 					cat = null;
 				}
-				IDocumentManager dm = (IDocumentManager) Extensions
-						.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 				try {
-
 					long heapSize = Runtime.getRuntime().totalMemory();
 					long length = file.length();
 					if (length >= heapSize) {
 						logger.warn("Skipping " + file.getAbsolutePath() + " as bigger than heap size. (#3652)"); //$NON-NLS-1$ //$NON-NLS-2$
 						return null;
 					}
-
-					GenericDocument fd = new GenericDocument(pat, fileName, cat, file,
-							new TimeTool().toString(TimeTool.DATE_GER), StringUtils.EMPTY, null);
+					IDocument newDocument = omnivoreDocumentStore.createDocument(pat.getId(), fileName, cat);
+					String extension = getFileExtension(file);
+					if (extension != null
+							&& (newDocument.getMimeType() == null || newDocument.getMimeType().isEmpty())) {
+						newDocument.setMimeType("." + extension);
+					}
+					try (InputStream contentStream = new FileInputStream(file)) {
+						omnivoreDocumentStore.saveDocument(newDocument, contentStream);
+					}
 					file.delete();
-
-					return dm.addDocument(fd);
-
+					return newDocument.getStoreId();
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
-
 				}
 			}
 		}
-
 		return null;
+	}
 
+	private String getFileExtension(File file) {
+		String name = file.getName();
+		int lastIndexOf = name.lastIndexOf(".");
+		if (lastIndexOf == -1 || lastIndexOf == 0) {
+			return "";
+		}
+		return name.substring(lastIndexOf + 1);
 	}
 
 	private boolean isFileOpened(File file) {

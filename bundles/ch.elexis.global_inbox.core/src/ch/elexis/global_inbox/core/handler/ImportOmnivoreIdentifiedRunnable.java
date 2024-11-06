@@ -27,7 +27,7 @@ public class ImportOmnivoreIdentifiedRunnable implements IIdentifiedRunnable {
 
 	@Override
 	public String getLocalizedDescription() {
-		return "Move files from a directory to Omnivore directory and then import them";
+		return "Monitor a directory and import incoming files into the Omnivore directory";
 	}
 
 	@Override

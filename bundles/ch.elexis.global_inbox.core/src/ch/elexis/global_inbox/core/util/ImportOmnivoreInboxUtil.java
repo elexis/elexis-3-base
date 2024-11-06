@@ -36,11 +36,7 @@ public class ImportOmnivoreInboxUtil {
 		ImportOmnivoreInboxUtil.omnivoreDocumentStore = documentStore;
 	}
 
-	private Logger logger;
-
-	public ImportOmnivoreInboxUtil() {
-		logger = LoggerFactory.getLogger(getClass());
-	}
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * Try to import the file for the patient, will delete <code>file</code> if
@@ -82,9 +78,11 @@ public class ImportOmnivoreInboxUtil {
 						omnivoreDocumentStore.saveDocument(newDocument, contentStream);
 					}
 					file.delete();
-					return newDocument.getStoreId();
+
+					return newDocument.getId();
 				} catch (Exception ex) {
-					ExHandler.handle(ex);
+					logger.error("An error occurred while trying to import the document for patient with ID {}.",
+							patientNo, ex);
 				}
 			}
 		}

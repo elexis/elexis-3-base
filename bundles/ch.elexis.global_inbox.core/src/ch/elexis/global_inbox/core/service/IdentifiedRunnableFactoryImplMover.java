@@ -11,7 +11,6 @@ import ch.elexis.core.model.tasks.IIdentifiedRunnable;
 import ch.elexis.core.model.tasks.IIdentifiedRunnableFactory;
 import ch.elexis.core.services.IAccessControlService;
 import ch.elexis.core.services.IModelService;
-import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.tasks.model.ITaskService;
 import ch.elexis.global_inbox.core.handler.ImportOmnivoreIdentifiedRunnable;
 
@@ -21,9 +20,6 @@ public class IdentifiedRunnableFactoryImplMover implements IIdentifiedRunnableFa
 
 	@Reference
 	private ITaskService taskService;
-
-	@Reference
-	private IVirtualFilesystemService virtualFilsystemService;
 
 	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.tasks.model)")
 	private void setModelService(IModelService modelService) {
@@ -49,7 +45,7 @@ public class IdentifiedRunnableFactoryImplMover implements IIdentifiedRunnableFa
 	@Override
 	public List<IIdentifiedRunnable> getProvidedRunnables() {
 		List<IIdentifiedRunnable> ret = new ArrayList<>();
-		ret.add(new ImportOmnivoreIdentifiedRunnable(virtualFilsystemService));
+		ret.add(new ImportOmnivoreIdentifiedRunnable());
 		return ret;
 	}
 }

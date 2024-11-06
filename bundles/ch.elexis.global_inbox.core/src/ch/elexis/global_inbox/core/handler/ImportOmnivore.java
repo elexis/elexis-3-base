@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.elexis.core.services.IConfigService.ILocalLock;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.global_inbox.core.util.Constants;
 import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;

@@ -2,7 +2,6 @@ package ch.elexis.global_inbox.core.util;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.elexis.core.model.IDocument;
 
 public class Constants {
 
@@ -13,9 +12,7 @@ public class Constants {
 	public static final String PREF_DIR_DEFAULT = StringUtils.EMPTY; // $NON-NLS-1$
 	public static final String PREF_LAST_SELECTED_CATEGORY = PREFERENCE_BRANCH_SERVER + "last_selected_category"; //$NON-NLS-1$
 	public static final String PREF_DEVICE_DIR_PREFIX = PREFERENCE_BRANCH_SERVER + "device_dir_"; //$NON-NLS-1$
-	public static final String PREF_TITLE_COMPLETION = PREFERENCE_BRANCH_SERVER + "titleCompletions"; //$NON-NLS-1$
 	public static final String PREF_DEVICES = PREFERENCE_BRANCH_SERVER + "devices"; //$NON-NLS-1$
 	public static final String PREF_SELECTED_DEVICE = PREFERENCE_BRANCH_SERVER + "selectedDevice"; //$NON-NLS-1$
-	public static final String PREF_OMNIVORE_DIR_STRUCTURE = PREFERENCE_BRANCH_SERVER + "omnivore_dir_structure"; //$NON-NLS-1$
 	public static final String PREF_CATEGORY_PREFIX = PREFERENCE_BRANCH_SERVER + "categories_"; //$NON-NLS-1$
 }

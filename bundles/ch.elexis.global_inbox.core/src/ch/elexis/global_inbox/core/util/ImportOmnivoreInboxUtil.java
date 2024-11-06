@@ -10,6 +10,7 @@ import java.util.List;
 import java.io.InputStream;
 import java.io.FileInputStream;
 
+import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +23,18 @@ import ch.elexis.core.services.holder.ConfigServiceHolder;
 
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.global_inbox.core.service.DocumentStoreHolder;
 import ch.rgw.tools.ExHandler;
 
-
+@Component
 public class ImportOmnivoreInboxUtil {
 
+	private static IDocumentStore omnivoreDocumentStore;
+
 	@Reference(target = "(storeid=ch.elexis.data.store.omnivore)")
-	private IDocumentStore omnivoreDocumentStore = DocumentStoreHolder.get();
+	public void setDocumentStore(IDocumentStore documentStore) {
+		ImportOmnivoreInboxUtil.omnivoreDocumentStore = documentStore;
+	}
+
 	private Logger logger;
 
 	public ImportOmnivoreInboxUtil() {
@@ -111,7 +116,7 @@ public class ImportOmnivoreInboxUtil {
 	}
 
 	public static String getCategory(File file) {
-		String category = LocalConfigService.get(Constants.PREF_LAST_SELECTED_CATEGORY, "default");
+		String category = LocalConfigService.get(Constants.PREF_LAST_SELECTED_CATEGORY, "default");// $NON-NLS-1$
 		File parent = file.getParentFile();
 		if (parent == null) {
 			return "Error in inbox path";
@@ -124,5 +129,4 @@ public class ImportOmnivoreInboxUtil {
 			}
 		}
 	}
-
 }

@@ -8,8 +8,8 @@ Export-Package: ch.elexis.global_inbox.core.handler,
 Require-Bundle: ch.elexis.core.tasks,
  ch.elexis.core.services,
  ch.elexis.core.data
-Service-Component: OSGI-INF/ch.elexis.global_inbox.core.service.DocumentStoreHolder.xml,
- OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover.xml
+Service-Component: OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnableFactoryImplMover.xml,
+ OSGI-INF/ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil.xml
 Automatic-Module-Name: ch.elexis.global.inbox.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-21

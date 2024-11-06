@@ -15,6 +15,7 @@ package com.hilotec.elexis.messwerte.v2.views;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -24,6 +25,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.slf4j.LoggerFactory;
@@ -57,6 +60,19 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 						public void run(IProgressMonitor monitor)
 								throws InvocationTargetException, InterruptedException {
 							ObservationMigrator migrator = new ObservationMigrator();
+							Display.getDefault().syncExec(() -> {
+								// File standard dialog
+								FileDialog fileDialog = new FileDialog(progressDialog.getShell());
+								// Set the text
+								fileDialog.setText("Messwerte Migration Mapping");
+								// Set filter on .properties files
+								fileDialog.setFilterExtensions(new String[] { "*.properties" });
+								// Open Dialog and save result of selection
+								String selected = fileDialog.open();
+								if (StringUtils.isNotBlank(selected)) {
+									migrator.loadProperties(selected);
+								}
+							});
 							migrator.migrate(monitor);
 						}
 					});

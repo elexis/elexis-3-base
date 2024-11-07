@@ -1,6 +1,7 @@
 package ch.elexis.importer.aeskulap.ui;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,12 +10,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.ui.util.ImporterPage;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -115,6 +120,32 @@ public class AeskulapImporter extends ImporterPage {
 			}
 		});
 		keepPatientNumberBtn.setSelection(keepPatientNumber);
+
+		Button removeDuplicatesBtn = new Button(fbi, SWT.PUSH);
+		removeDuplicatesBtn.setText("Patienten Duplikate entfernen");
+		removeDuplicatesBtn.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent se) {
+				Shell parentShell = Display.getDefault().getActiveShell();
+				ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(parentShell);
+				try {
+					progressDialog.run(true, true, new IRunnableWithProgress() {
+						@Override
+						public void run(IProgressMonitor monitor)
+								throws InvocationTargetException, InterruptedException {
+
+							AeskulapImporterServiceHolder.get().removePatientDuplicates(monitor);
+						}
+					});
+				} catch (InvocationTargetException | InterruptedException e) {
+					MessageDialog.openError(parentShell, "Patienten Duplikate entfernen",
+							"Fehler beim erzeugen der strukturierten Diagnosen.");
+					LoggerFactory.getLogger(getClass()).error("Error removing duplicate patients", e);
+				}
+			}
+		});
+
 		return fbi;
 	}
 }

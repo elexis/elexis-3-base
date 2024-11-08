@@ -75,6 +75,15 @@ public class AeskulapImporterTest {
 			guarantor.setCountry(Country.CH);
 			CoreModelServiceHolder.get().save(guarantor);
 			XidServiceHolder.get().addXid(guarantor, XidConstants.DOMAIN_EAN, "7601003002775", true);
+
+			// test 2 contacts with same ean
+			guarantor = new IContactBuilder.OrganizationBuilder(CoreModelServiceHolder.get(), "Helsana Versicherungen")
+					.build();
+			guarantor.setCity("Zürich");
+			guarantor.setZip("8081");
+			guarantor.setCountry(Country.CH);
+			CoreModelServiceHolder.get().save(guarantor);
+			XidServiceHolder.get().addXid(guarantor, XidConstants.DOMAIN_EAN, "7601003002775", true);
 		}
 	}
 

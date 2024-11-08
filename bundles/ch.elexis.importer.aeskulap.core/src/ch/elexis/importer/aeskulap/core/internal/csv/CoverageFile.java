@@ -3,6 +3,7 @@ package ch.elexis.importer.aeskulap.core.internal.csv;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -100,19 +101,19 @@ public class CoverageFile extends AbstractCsvImportFile<Fall> implements IAeskul
 			// EDI_SUB_NO
 			String ean = guarantLine[17];
 			if (StringUtils.isNotBlank(ean)) {
-				Optional<IOrganization> found = XidServiceHolder.get().findObject(XidConstants.EAN, ean,
+				List<IOrganization> found = XidServiceHolder.get().findObjects(XidConstants.EAN, ean,
 						IOrganization.class);
-				if (found.isPresent()) {
-					return found;
+				if (found.size() > 0) {
+					return Optional.of(found.get(0));
 				}
 			}
 			// BSV
 			String bsv = guarantLine[20];
 			if (StringUtils.isNotBlank(bsv)) {
-				Optional<IOrganization> found = XidServiceHolder.get().findObject(XidConstants.DOMAIN_BSVNUM, bsv,
+				List<IOrganization> found = XidServiceHolder.get().findObjects(XidConstants.DOMAIN_BSVNUM, bsv,
 						IOrganization.class);
-				if (found.isPresent()) {
-					return found;
+				if (found.size() > 0) {
+					return Optional.of(found.get(0));
 				}
 			}
 		}

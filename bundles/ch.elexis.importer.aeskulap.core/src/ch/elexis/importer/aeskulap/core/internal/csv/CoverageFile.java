@@ -153,24 +153,26 @@ public class CoverageFile extends AbstractCsvImportFile<Fall> implements IAeskul
 
 	@Override
 	public void setProperties(Fall fall, String[] line) {
-		ICoverage coverage = CoreModelServiceHolder.get().load(fall.getId(), ICoverage.class)
-				.orElseThrow(() -> new IllegalStateException("Could not convert coverage [" + fall.getId() + "]"));
-		TimeTool insertedTime = new TimeTool(line[5]);
+		if (fall != null) {
+			ICoverage coverage = CoreModelServiceHolder.get().load(fall.getId(), ICoverage.class)
+					.orElseThrow(() -> new IllegalStateException("Could not convert coverage [" + fall.getId() + "]"));
+			TimeTool insertedTime = new TimeTool(line[5]);
 
-		getBillingSystem(line[4]).ifPresent(bs -> coverage.setBillingSystem(bs));
-		coverage.setInsuranceNumber(line[3]);
-		coverage.setDateFrom(insertedTime.toLocalDate());
+			getBillingSystem(line[4]).ifPresent(bs -> coverage.setBillingSystem(bs));
+			coverage.setInsuranceNumber(line[3]);
+			coverage.setDateFrom(insertedTime.toLocalDate());
 
-		// add veka / covercard nr 80xxxxxxxx
-		if (StringUtils.isNotBlank(line[9]) && line[9].startsWith("80")) {
-			updateBillingSystem(coverage.getBillingSystem());
-			coverage.setExtInfo("VEKANr", StringUtils.defaultIfBlank(line[9], ""));
-			coverage.setExtInfo("VEKAValid", StringUtils.defaultIfBlank(line[10], ""));
+			// add veka / covercard nr 80xxxxxxxx
+			if (StringUtils.isNotBlank(line[9]) && line[9].startsWith("80")) {
+				updateBillingSystem(coverage.getBillingSystem());
+				coverage.setExtInfo("VEKANr", StringUtils.defaultIfBlank(line[9], ""));
+				coverage.setExtInfo("VEKAValid", StringUtils.defaultIfBlank(line[10], ""));
+			}
+
+			// PAT_GAR_NO
+			fall.addXid(getXidDomain(), line[2], true);
+			CoreModelServiceHolder.get().save(coverage);
 		}
-
-		// PAT_GAR_NO
-		fall.addXid(getXidDomain(), line[2], true);
-		CoreModelServiceHolder.get().save(coverage);
 	}
 
 	@Override

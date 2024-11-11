@@ -13,7 +13,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.LoggerFactory;
 
@@ -49,24 +48,9 @@ public class AeskulapImporter implements IAeskulapImporter {
 	private FileDirectories fileDirectories;
 	private DiagDirectory diagDirectory;
 
-	@Activate
-	public void activate() {
-		// make sure Xids are available
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_ADDRESS, "Alte Adress-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABCONTACT, "Alte Labor Kontakt-ID",
-				XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABITEM, "Alte Labor Typ-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABRESULT, "Alte Labor Resultat-ID",
-				XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_PATIENT, "Alte KG-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_GARANT, "Alte Garant-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LETTER, "Alte Brief-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_DOCUMENT, "Alte Dokument-ID", XidConstants.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_FILE, "Alte Datei-ID", XidConstants.ASSIGNMENT_LOCAL);
-	}
-
 	@Override
 	public List<IAeskulapImportFile> setImportDirectory(File directory) {
+		registerXids();
 		List<IAeskulapImportFile> ret = new ArrayList<>();
 		if (directory != null && directory.exists() && directory.isDirectory()) {
 			File[] fileOrDirectory = directory.listFiles();
@@ -206,6 +190,21 @@ public class AeskulapImporter implements IAeskulapImporter {
 			}
 		}
 		return ret;
+	}
+
+	public void registerXids() {
+		// make sure Xids are available
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_ADDRESS, "Alte Adress-ID", XidConstants.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABCONTACT, "Alte Labor Kontakt-ID",
+				XidConstants.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABITEM, "Alte Labor Typ-ID", XidConstants.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LABRESULT, "Alte Labor Resultat-ID",
+				XidConstants.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_PATIENT, "Alte KG-ID", XidConstants.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_GARANT, "Alte Garant-ID", XidConstants.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_LETTER, "Alte Brief-ID", XidConstants.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_DOCUMENT, "Alte Dokument-ID", XidConstants.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_IMPORT_FILE, "Alte Datei-ID", XidConstants.ASSIGNMENT_LOCAL);
 	}
 
 	@Override

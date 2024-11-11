@@ -18,6 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.elexis.core.constants.XidConstants;
+import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.IMandator;
@@ -40,6 +41,8 @@ import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.types.Country;
 import ch.elexis.core.types.Gender;
 import ch.elexis.core.utils.OsgiServiceUtil;
+import ch.elexis.data.Patient;
+import ch.elexis.data.Xid;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
@@ -151,6 +154,9 @@ public class AeskulapImporterTest {
 		assertTrue(imported.isEmpty());
 		assertEquals(2, queryPatients("Vanessa", "Test", null, false).size());
 		assertEquals(2, queryPatients(null, null, "7561234567897", false).size());
+		IXid importXid = queryPatients(null, null, "7561234567897", false).stream()
+				.filter(p -> p.getXid(IAeskulapImporter.XID_IMPORT_PATIENT) != null).findAny()
+				.map(p -> p.getXid(IAeskulapImporter.XID_IMPORT_PATIENT)).get();
 		assertEquals(2, queryPatients("Nathalie", "Test", null, false).size());
 
 		IPatient importedWithData = queryPatients("Nathalie", "Test", null, false).stream()
@@ -164,6 +170,11 @@ public class AeskulapImporterTest {
 		assertEquals(1, queryPatients("Vanessa", "Test", null, false).size());
 		assertEquals(1, queryPatients(null, null, "7561234567897", false).size());
 		assertEquals(1, queryPatients("Nathalie", "Test", null, false).size());
+
+		Xid foundXid = Xid.findXID(IAeskulapImporter.XID_IMPORT_PATIENT, importXid.getDomainId());
+		assertNotNull(foundXid);
+		IPersistentObject foundPatient = foundXid.getObject();
+		assertTrue(foundPatient instanceof Patient);
 
 		assertEquals(documentsSize, getDocuments(existingMatchWithData).size());
 	}

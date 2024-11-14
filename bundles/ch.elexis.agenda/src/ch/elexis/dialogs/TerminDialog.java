@@ -57,7 +57,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +79,6 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.model.IAppointment;
-import ch.elexis.core.services.IAppointmentHistoryManagerService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -109,7 +107,6 @@ import ch.rgw.tools.TimeTool;
  */
 public class TerminDialog extends TitleAreaDialog {
 
-	private static IAppointmentHistoryManagerService appointmentHistoryManagerService;
 	private static final Logger logger = LoggerFactory.getLogger(TerminDialog.class);
 	private static ICommandService cmdService = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 			.getService(ICommandService.class);
@@ -210,7 +207,6 @@ public class TerminDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
-		appointmentHistoryManagerService = AppointmentHistoryServiceHolder.get();
 		ScrolledComposite sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		sc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite ret = new Composite(sc, SWT.NONE);
@@ -1021,7 +1017,7 @@ public class TerminDialog extends TitleAreaDialog {
 				});
 
 		if (isModified) {
-			appointmentHistoryManagerService.logAppointmentEdit(actTermin.toIAppointment());
+			AppointmentHistoryServiceHolder.get().logAppointmentEdit(actTermin.toIAppointment());
 			isModified = false;
 		}
 	}

@@ -32,10 +32,9 @@ import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActio
 
 public class EventDropFunction extends AbstractBrowserFunction {
 
-	private IAppointmentHistoryManagerService appointmentHistoryManagerService;
 	public EventDropFunction(Browser browser, String name) {
 		super(browser, name);
-		appointmentHistoryManagerService = AppointmentHistoryServiceHolder.get();
+
 	}
 
 	@Override
@@ -59,7 +58,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 					// do copy
 					if (arguments.length >= 5 && Boolean.TRUE.equals(arguments[4])) {
 						current = AppointmentServiceHolder.get().clone(termin);
-						appointmentHistoryManagerService.logAppointmentCopyFromTo(current, termin.getId(),
+						AppointmentHistoryServiceHolder.get().logAppointmentCopyFromTo(current, termin.getId(),
 								current.getId());
 						if (termin.isRecurring() && termin.getContact() == null) {
 							// take kontakt from root termin
@@ -99,7 +98,7 @@ public class EventDropFunction extends AbstractBrowserFunction {
 						switch (moveAction) {
 						case KEEP_MAIN_ONLY:
 							lockAndSaveAppointment(current);
-							appointmentHistoryManagerService.logAppointmentMove(current, oldMainTime, newMainTime,
+							AppointmentHistoryServiceHolder.get().logAppointmentMove(current, oldMainTime, newMainTime,
 									oldArea, newArea);
 							break;
 						case MOVE_ALL:
@@ -113,11 +112,12 @@ public class EventDropFunction extends AbstractBrowserFunction {
 								linkedAppointment.setSchedule(linkedAppointment.getSchedule());
 								linkedAppointment.setLastEdit(AppointmentDetailComposite.createTimeStamp());
 								lockAndSaveAppointment(linkedAppointment);
-								appointmentHistoryManagerService.logAppointmentMove(linkedAppointment, oldLinkedTime,
+								AppointmentHistoryServiceHolder.get().logAppointmentMove(linkedAppointment,
+										oldLinkedTime,
 										newLinkedTime, oldArea, newArea); // loggen
 							}
 							lockAndSaveAppointment(current);
-							appointmentHistoryManagerService.logAppointmentMove(current, oldMainTime, newMainTime,
+							AppointmentHistoryServiceHolder.get().logAppointmentMove(current, oldMainTime, newMainTime,
 									oldArea, newArea);
 							break;
 						case CANCEL:
@@ -126,7 +126,8 @@ public class EventDropFunction extends AbstractBrowserFunction {
 						}
 					} else {
 						lockAndSaveAppointment(current);
-						appointmentHistoryManagerService.logAppointmentMove(current, oldMainTime, newMainTime, oldArea,
+						AppointmentHistoryServiceHolder.get().logAppointmentMove(current, oldMainTime, newMainTime,
+								oldArea,
 								newArea);
 					}
 

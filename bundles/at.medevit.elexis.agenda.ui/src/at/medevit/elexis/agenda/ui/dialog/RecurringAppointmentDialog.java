@@ -93,6 +93,11 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 		this.noedit = appointment.isPersistent();
 	}
 
+	public boolean openAndWaitForOk() {
+		int result = this.open(); // Dialog wird geöffnet
+		return result == IDialogConstants.OK_ID; // Überprüft, ob "OK" gedrückt wurde
+	}
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite area = (Composite) super.createDialogArea(parent);

@@ -61,7 +61,6 @@ import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IUser;
-import ch.elexis.core.services.IAppointmentHistoryManagerService;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
@@ -393,9 +392,9 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 				if (nextTermin != null) {
 					t.setEndTime(nextTermin.getStartTime());
 					TimeTool newEndTime = t.getEndTime();
-					IAppointmentHistoryManagerService historyService = AppointmentHistoryServiceHolder.get();
-					if (historyService != null) {
-						historyService.logAppointmentDurationChange(t.toIAppointment(), oldEndTime.toLocalDateTime(),
+					if (AppointmentHistoryServiceHolder.get() != null) {
+						AppointmentHistoryServiceHolder.get().logAppointmentDurationChange(t.toIAppointment(),
+								oldEndTime.toLocalDateTime(),
 								newEndTime.toLocalDateTime());
 					}
 					ElexisEventDispatcher.reload(Termin.class);
@@ -403,6 +402,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 			}
 		};
+
 		newTerminAction = new RestrictedAction(EvACE.of(IAppointment.class, Right.CREATE), Messages.TagesView_newTermin) {
 			{
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());

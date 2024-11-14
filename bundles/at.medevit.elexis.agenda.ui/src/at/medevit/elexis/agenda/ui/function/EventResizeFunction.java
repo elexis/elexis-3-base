@@ -1,12 +1,10 @@
 package at.medevit.elexis.agenda.ui.function;
 
 import java.time.LocalDateTime;
-import javax.inject.Inject;
 import com.equo.chromium.swt.Browser;
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
-import ch.elexis.core.services.IAppointmentHistoryManagerService;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -15,12 +13,9 @@ import ch.elexis.core.ui.e4.locks.ILockHandler;
 
 public class EventResizeFunction extends AbstractBrowserFunction {
 
-	@Inject
-	private IAppointmentHistoryManagerService appointmentHistoryManagerService;
 
 	public EventResizeFunction(Browser browser, String name) {
 		super(browser, name);
-		appointmentHistoryManagerService = AppointmentHistoryServiceHolder.get();
 	}
 
 	@Override
@@ -44,14 +39,10 @@ public class EventResizeFunction extends AbstractBrowserFunction {
 
 					@Override
 					public void lockAcquired() {
-						if (appointmentHistoryManagerService == null) {
-							System.out.println("appointmentHistoryManagerService is null");
-							return;
-						}
 
 						termin.setStartTime(startDate);
 						termin.setEndTime(endDate);
-						appointmentHistoryManagerService.logAppointmentDurationChange(termin, oldEndDate, endDate);
+						AppointmentHistoryServiceHolder.get().logAppointmentDurationChange(termin, oldEndDate, endDate);
 						CoreModelServiceHolder.get().save(termin);
 						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, termin);

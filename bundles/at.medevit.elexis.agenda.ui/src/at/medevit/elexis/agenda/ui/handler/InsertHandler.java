@@ -32,12 +32,10 @@ import ch.itmed.fop.printing.handler.AppointmentExtensionHandler;
 public class InsertHandler {
 	@Inject
 	private IEventBroker eventBroker;
-	
-	private IAppointmentHistoryManagerService appointmentHistoryManagerService;
 
 	@Execute
 	public Object execute(MPart part) {
-		appointmentHistoryManagerService = AppointmentHistoryServiceHolder.get();
+
 		Optional<SideBarComposite> activeSideBar = AbstractBrowserFunction.getActiveSideBar(part);
 		activeSideBar.ifPresent(sideBar -> {
 			Optional<IAppointment> copiedAppointment = CopyHandler.getCopiedAppointment();
@@ -134,7 +132,8 @@ public class InsertHandler {
 			moveInformation.movePeriod(mainAppointment);
 			LocalDateTime newTime = moveInformation.getDateTime();
 			String newArea = mainAppointment.getSchedule();
-			appointmentHistoryManagerService.logAppointmentMove(mainAppointment, oldTime, newTime, oldArea, newArea);
+			AppointmentHistoryServiceHolder.get().logAppointmentMove(mainAppointment, oldTime, newTime, oldArea,
+					newArea);
 		} else {
 			MoveActionType moveAction = AppointmentLinkOptionsDialog
 					.showMoveDialog(Display.getDefault().getActiveShell(), linkedAppointments);
@@ -144,7 +143,7 @@ public class InsertHandler {
 				moveInformation.movePeriod(mainAppointment);
 				LocalDateTime newTime = moveInformation.getDateTime();
 				String newArea = mainAppointment.getSchedule();
-				appointmentHistoryManagerService.logAppointmentMove(mainAppointment, oldTime, newTime, oldArea,
+				AppointmentHistoryServiceHolder.get().logAppointmentMove(mainAppointment, oldTime, newTime, oldArea,
 						newArea);
 				break;
 
@@ -154,7 +153,8 @@ public class InsertHandler {
 				LocalDateTime newMainTime = moveInformation.getDateTime();
 				moveLinkedAppointments(linkedAppointments, oldMainTime, newMainTime);
 				String newMainArea = mainAppointment.getSchedule();
-				appointmentHistoryManagerService.logAppointmentMove(mainAppointment, oldMainTime, newMainTime, oldArea,
+				AppointmentHistoryServiceHolder.get().logAppointmentMove(mainAppointment, oldMainTime, newMainTime,
+						oldArea,
 						newMainArea);
 				break;
 
@@ -187,7 +187,8 @@ public class InsertHandler {
 		String newArea = appointment.getSchedule();
 		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, appointment);
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
-		appointmentHistoryManagerService.logAppointmentMove(appointment, oldStartTime, newStartTime, oldArea, newArea);
+		AppointmentHistoryServiceHolder.get().logAppointmentMove(appointment, oldStartTime, newStartTime, oldArea,
+				newArea);
 	}
 
 	private IAppointment extractMainAppointment(IPeriod period) {
@@ -211,7 +212,7 @@ public class InsertHandler {
 		CoreModelServiceHolder.get().save(clonedAppointment);
 		ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_UPDATE, clonedAppointment);
 		eventBroker.post(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
-		appointmentHistoryManagerService.logAppointmentCopy(originalAppointment, originalAppointment.getId());
+		AppointmentHistoryServiceHolder.get().logAppointmentCopy(originalAppointment, originalAppointment.getId());
 		return clonedAppointment;
 	}
 }

@@ -112,7 +112,7 @@ public class FIREServiceTest {
 	public void c_incrementalExport() {
 		// create patient
 		IPatient patient = new IContactBuilder.PatientBuilder(CoreModelServiceHolder.get(), "Test", "UpdatePatient",
-				LocalDate.of(1990, 1, 1), Gender.FEMALE).build();
+				LocalDate.of(1991, 11, 11), Gender.FEMALE).build();
 		patient.setPhone1("+01555124");
 		patient.setMobile("+01444124");
 		patient.setCity("City");

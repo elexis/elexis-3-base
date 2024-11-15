@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -269,6 +270,10 @@ public class FIREService implements IFIREService {
 
 	private Patient toFIRE(Patient fhirPatient) {
 
+		// set month and day to 1
+		LocalDate birthDate = LocalDate.ofInstant(fhirPatient.getBirthDate().toInstant(), ZoneId.systemDefault());
+		fhirPatient.setBirthDate(Date.from(
+				birthDate.withDayOfMonth(1).withMonth(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
 		fhirPatient.getName().clear();
 		fhirPatient.getTelecom().clear();
 		fhirPatient.getAddress().clear();

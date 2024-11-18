@@ -26,7 +26,6 @@ import ch.elexis.core.model.IPerson;
 import ch.elexis.core.model.IXid;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.CoverageServiceHolder;
-import ch.elexis.data.Xid;
 
 public class TarmedRequirements {
 
@@ -52,14 +51,6 @@ public class TarmedRequirements {
 
 	public static final String RESPONSIBLE_INFO_KEY = "ch.elexis.tarmedprefs.responsible";
 	private static Logger logger = LoggerFactory.getLogger(TarmedRequirements.class);
-
-	static {
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, Messages.TarmedRequirements_kskName, Xid.ASSIGNMENT_REGIONAL);
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF, Messages.TarmedRequirements_NifName, Xid.ASSIGNMENT_REGIONAL);
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_RECIPIENT_EAN, "rEAN", //$NON-NLS-1$
-				Xid.ASSIGNMENT_REGIONAL);
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_SUVA, "Suva-Nr", Xid.ASSIGNMENT_REGIONAL);
-	}
 
 	public static String getEAN(final IContact contact) {
 		if (contact == null) {

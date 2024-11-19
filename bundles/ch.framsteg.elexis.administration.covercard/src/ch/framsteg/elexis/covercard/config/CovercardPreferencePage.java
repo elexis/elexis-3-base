@@ -43,6 +43,18 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 	private static final String PLUGIN_TITLE = "HIN Card Plugin (Framsteg)";
 	private static final String PLUGIN_DESCRIPTION = "HIN Card Plugin (Public License)";
 
+	private static final String CARD_READER_TYPE = "label.covercard.prefs.cardreader.type.group";
+	private static final String MAGNET_READER = "label.covercard.prefs.cardreader.type.magnet";
+	private static final String CHIP_READER = "label.covercard.prefs.cardreader.type.chip";
+	private static final String CARD_READER_CORRECTION = "label.covercard.prefs.cardreader.input.group";
+	private static final String CARD_READER_REGEX = "label.covercard.prefs.cardreader.input.regex";
+	private static final String HIN_CONFIGURATION = "label.covercard.prefs.hin.group";
+	private static final String HIN_OAUTH_CLIENT_NAME = "label.covercard.prefs.hin.oauth.name";
+	private static final String HIN_OAUTH_CLIENT_ID = "label.covercard.prefs.hin.oauth.id";
+	private static final String HIN_OAUTH_TOKEN_GROUP = "label.covercard.prefs.hin.oauth.token.group";
+	private static final String OFAC_CONFIGURATION = "label.covercard.prefs.ofac.group";
+	private static final String OFAC_URL = "label.covercard.prefs.ofac.url";
+
 	private static final String INSURED_NUMBER = "domain.covercard.insured.number";
 	private static final String CARD_NUMBER = "domain.covercard.card.number";
 	private static final String INSURED_PERSON_NUMBER = "domain.covercard.insured.person.number";
@@ -51,6 +63,9 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 	private static final String LBL_INSURED_PERSON_NUMBER = "label.covercard.insured.person.number";
 	private static final String KEY_URL = "key.url";
 	private static final String KEY_XML_PARAMETER = "key.parameter.xml";
+	private static final String KEY_OAUTH_NAME = "key.proxy.oauth.client.name";
+	private static final String KEY_OAUTH_ID = "key.proxy.oauth.client.id";
+	private static final String KEY_TOKEN_GROUP = "key.proxy.oauth.client.token.group";
 	private static final String KEY_PROXY_SERVER = "key.proxy.server";
 	private static final String KEY_PROXY_PORT = "key.proxy.port";
 	private static final String KEY_INSURED_NUMBER = "key.covercard.insured.number";
@@ -71,8 +86,9 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 
 	private Text txtUrl;
 	private Text txtMrParameter;
-	private Text txtProxyServer;
-	private Text txtProxyPort;
+	private Text txtHinOauthName;
+	private Text txtHinOauthClientID;
+	private Text txtHinOauthTokenGroup;
 	private Text txtInsuredNumber;
 	private Text txtCardNumber;
 	private Text txtInsuredPersonNumber;
@@ -123,17 +139,17 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 		cardGroupGridData.grabExcessVerticalSpace = true;
 
 		Group cardTypeGroup = new Group(composite, SWT.BORDER);
-		cardTypeGroup.setText("Kartenleser Typ");
+		cardTypeGroup.setText(getMessagesProperties().getProperty(CARD_READER_TYPE));
 		cardTypeGroup.setLayout(cardGroupLayout);
 		cardTypeGroup.setLayoutData(cardGroupGridData);
 
 		btnMagnet = new Button(cardTypeGroup, SWT.RADIO);
-		btnMagnet.setText("Magnetstreifenleser");
+		btnMagnet.setText(getMessagesProperties().getProperty(MAGNET_READER));
 		btnMagnet.setSelection(true);
 		btnMagnet.setEnabled(false);
 
 		btnChip = new Button(cardTypeGroup, SWT.RADIO);
-		btnChip.setText("Chipkartenleser");
+		btnChip.setText(getMessagesProperties().getProperty(CHIP_READER));
 		btnChip.setEnabled(false);
 
 		GridLayout cardConfigGroupLayout = new GridLayout();
@@ -146,12 +162,12 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 		cardConfigGroupGridData.grabExcessVerticalSpace = true;
 
 		Group cardConfigGroup = new Group(composite, SWT.BORDER);
-		cardConfigGroup.setText("Kartenleser Input Korrektur");
+		cardConfigGroup.setText(getMessagesProperties().getProperty(CARD_READER_CORRECTION));
 		cardConfigGroup.setLayout(cardConfigGroupLayout);
 		cardConfigGroup.setLayoutData(cardConfigGroupGridData);
 
 		Label lblRegex = new Label(cardConfigGroup, SWT.NONE);
-		lblRegex.setText("Regex Pattern:");
+		lblRegex.setText(getMessagesProperties().getProperty(CARD_READER_REGEX));
 
 		txtRegex = new Text(cardConfigGroup, SWT.BORDER);
 
@@ -174,14 +190,65 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 		hinGroupGridData.grabExcessVerticalSpace = true;
 
 		Group hinGroup = new Group(composite, SWT.BORDER);
-		hinGroup.setText("HIN® Einstellungen");
+		hinGroup.setText(getMessagesProperties().getProperty(HIN_CONFIGURATION));
 		hinGroup.setLayout(hinGroupLayout);
 		hinGroup.setLayoutData(hinGroupGridData);
 
-		Label lblUrl = new Label(hinGroup, SWT.NONE);
-		lblUrl.setText("HIN URL:");
+		Label lblHinOauthName = new Label(hinGroup, SWT.NONE);
+		lblHinOauthName.setText(getMessagesProperties().getProperty(HIN_OAUTH_CLIENT_NAME));
 
-		txtUrl = new Text(hinGroup, SWT.BORDER);
+		txtHinOauthName = new Text(hinGroup, SWT.BORDER);
+		txtHinOauthName.setEnabled(false);
+		if (!configService.get(getApplicationProperties().getProperty(KEY_OAUTH_NAME), "").isEmpty()) {
+			txtHinOauthName.setText(configService.get(getApplicationProperties().getProperty(KEY_OAUTH_NAME), ""));
+		} else {
+			txtHinOauthName.setText(getApplicationProperties().getProperty(KEY_OAUTH_NAME));
+		}
+		txtHinOauthName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Label lblHinOauthId = new Label(hinGroup, SWT.NONE);
+		lblHinOauthId.setText(getMessagesProperties().getProperty(HIN_OAUTH_CLIENT_ID));
+
+		txtHinOauthClientID = new Text(hinGroup, SWT.BORDER);
+		txtHinOauthClientID.setEnabled(false);
+		if (!configService.get(getApplicationProperties().getProperty(KEY_OAUTH_ID), "").isEmpty()) {
+			txtHinOauthClientID.setText(configService.get(getApplicationProperties().getProperty(KEY_OAUTH_ID), ""));
+		} else {
+			txtHinOauthClientID.setText(getApplicationProperties().getProperty(KEY_OAUTH_ID));
+		}
+		txtHinOauthClientID.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Label lblHinTokenGroud = new Label(hinGroup, SWT.NONE);
+		lblHinTokenGroud.setText(getMessagesProperties().getProperty(HIN_OAUTH_TOKEN_GROUP));
+
+		txtHinOauthTokenGroup = new Text(hinGroup, SWT.BORDER);
+		txtHinOauthTokenGroup.setEnabled(false);
+		if (!configService.get(getApplicationProperties().getProperty(KEY_TOKEN_GROUP), "").isEmpty()) {
+			txtHinOauthTokenGroup
+					.setText(configService.get(getApplicationProperties().getProperty(KEY_TOKEN_GROUP), ""));
+		} else {
+			txtHinOauthTokenGroup.setText(getApplicationProperties().getProperty(KEY_TOKEN_GROUP));
+		}
+		txtHinOauthTokenGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		GridLayout ofacGroupLayout = new GridLayout();
+		ofacGroupLayout.numColumns = 2;
+
+		GridData ofacGroupGridData = new GridData();
+		ofacGroupGridData.grabExcessHorizontalSpace = true;
+		ofacGroupGridData.horizontalAlignment = SWT.FILL;
+		ofacGroupGridData.verticalAlignment = SWT.FILL;
+		ofacGroupGridData.grabExcessVerticalSpace = true;
+
+		Group ofacGroup = new Group(composite, SWT.BORDER);
+		ofacGroup.setText(getMessagesProperties().getProperty(OFAC_CONFIGURATION));
+		ofacGroup.setLayout(ofacGroupLayout);
+		ofacGroup.setLayoutData(ofacGroupGridData);
+
+		Label lblUrl = new Label(ofacGroup, SWT.NONE);
+		lblUrl.setText(getMessagesProperties().getProperty(OFAC_URL));
+
+		txtUrl = new Text(ofacGroup, SWT.BORDER);
 		txtUrl.setEnabled(true);
 		if (!configService.get(getApplicationProperties().getProperty(KEY_URL), "").isEmpty()) {
 			txtUrl.setText(configService.get(getApplicationProperties().getProperty(KEY_URL), ""));
@@ -190,10 +257,10 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 		}
 
 		txtUrl.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Label lblMrParameter = new Label(hinGroup, SWT.NONE);
+		Label lblMrParameter = new Label(ofacGroup, SWT.NONE);
 		lblMrParameter.setText("XML Parameter (XXX):");
 
-		txtMrParameter = new Text(hinGroup, SWT.BORDER);
+		txtMrParameter = new Text(ofacGroup, SWT.BORDER);
 		txtMrParameter.setEnabled(true);
 		if (!configService.get(getApplicationProperties().getProperty(KEY_XML_PARAMETER), "").isEmpty()) {
 			txtMrParameter.setText(configService.get(getApplicationProperties().getProperty(KEY_XML_PARAMETER), ""));
@@ -201,31 +268,6 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 			txtMrParameter.setText(getApplicationProperties().getProperty(HIN_XML_PARAMETER));
 		}
 		txtMrParameter.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Label lblProxyServer = new Label(hinGroup, SWT.NONE);
-		lblProxyServer.setText("HIN Proxy Server:");
-
-		txtProxyServer = new Text(hinGroup, SWT.BORDER);
-		txtProxyServer.setEnabled(true);
-		if (!configService.get(getApplicationProperties().getProperty(KEY_PROXY_SERVER), "").isEmpty()) {
-			txtProxyServer.setText(configService.get(getApplicationProperties().getProperty(KEY_PROXY_SERVER), ""));
-		} else {
-			txtProxyServer.setText(getApplicationProperties().getProperty(HIN_PROXY_SERVER));
-		}
-		txtProxyServer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Label lblProxyPort = new Label(hinGroup, SWT.NONE);
-		lblProxyPort.setText("HIN Proxy Port:");
-
-		txtProxyPort = new Text(hinGroup, SWT.BORDER);
-		txtProxyPort.setEnabled(true);
-		txtProxyPort.setToolTipText(getApplicationProperties().getProperty(HIN_PROXY_PORT));
-		if (!configService.get(getApplicationProperties().getProperty(KEY_PROXY_PORT), "").isEmpty()) {
-			txtProxyPort.setText(configService.get(getApplicationProperties().getProperty(KEY_PROXY_PORT), ""));
-		} else {
-			txtProxyPort.setText(getApplicationProperties().getProperty(HIN_PROXY_PORT));
-		}
-		txtProxyPort.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		GridLayout metadataGroupLayout = new GridLayout();
 		metadataGroupLayout.numColumns = 2;
@@ -287,8 +329,9 @@ public class CovercardPreferencePage extends PreferencePage implements IWorkbenc
 
 		configService.set(getApplicationProperties().getProperty(KEY_URL), txtUrl.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_XML_PARAMETER), txtMrParameter.getText());
-		configService.set(getApplicationProperties().getProperty(KEY_PROXY_SERVER), txtProxyServer.getText());
-		configService.set(getApplicationProperties().getProperty(KEY_PROXY_PORT), txtProxyPort.getText());
+		configService.set(getApplicationProperties().getProperty(KEY_OAUTH_NAME), txtHinOauthName.getText());
+		configService.set(getApplicationProperties().getProperty(KEY_OAUTH_ID), txtHinOauthClientID.getText());
+		configService.set(getApplicationProperties().getProperty(KEY_TOKEN_GROUP), txtHinOauthTokenGroup.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_INSURED_NUMBER), txtInsuredNumber.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_CARD_NUMBER), txtCardNumber.getText());
 		configService.set(getApplicationProperties().getProperty(KEY_INSURED_PERSON_NUMBER),

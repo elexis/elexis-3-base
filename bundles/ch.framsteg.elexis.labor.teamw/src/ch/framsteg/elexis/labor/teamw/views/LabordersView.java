@@ -232,9 +232,13 @@ public class LabordersView extends ViewPart implements IRefreshable {
 		}
 
 		if (coverage.getCostBearer() != null) {
-			txtCaseInsuranceEAN.setText(coverage.getCostBearer()
-					.getXid(getApplicationProperties().getProperty(APP_CFG_XID_EAN)).getDomainId());
+			txtCaseInsuranceEAN.setText(
+					coverage.getCostBearer().getXid(getApplicationProperties().getProperty(APP_CFG_XID_EAN)) != null
+							? coverage.getCostBearer().getXid(getApplicationProperties().getProperty(APP_CFG_XID_EAN))
+									.getDomainId()
+							: "");
 		}
+
 		if (txtCaseInsuranceEAN.getText().isEmpty()) {
 			txtCaseInsuranceEAN.setBackground(getMarkedBackgroundColor());
 			txtCaseInsuranceEAN.setText(getMessagesProperties().getProperty(MSG_EMPTY_FIELD));

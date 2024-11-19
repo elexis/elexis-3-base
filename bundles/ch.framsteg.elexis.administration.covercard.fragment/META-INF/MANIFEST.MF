@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Covercard Fragment
+Bundle-SymbolicName: ch.framsteg.elexis.administration.covercard.fragment
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: ch.framsteg
+Fragment-Host: at.medevit.elexis.hin.auth.core;bundle-version="3.13.0.qualifier"
+Automatic-Module-Name: ch.framsteg.elexis.administration.covercard.fragment
+Bundle-RequiredExecutionEnvironment: JavaSE-21

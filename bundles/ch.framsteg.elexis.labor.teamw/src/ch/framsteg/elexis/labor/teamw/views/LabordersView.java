@@ -212,6 +212,7 @@ public class LabordersView extends ViewPart implements IRefreshable {
 
 	private void updateControls(ICoverage coverage) {
 
+
 		IPatient patient = coverage.getPatient();
 		updateControls(patient);
 
@@ -747,7 +748,10 @@ public class LabordersView extends ViewPart implements IRefreshable {
 
 	@Inject
 	void activeCoverage(@Optional ICoverage coverage) {
-		if (coverage != null) {
+
+		// System.out.println(txtPatPID == null ? "null" : "nicht null");
+
+		if (coverage != null && txtPatPID != null) {
 			updateControls(coverage);
 		}
 	}
@@ -755,7 +759,7 @@ public class LabordersView extends ViewPart implements IRefreshable {
 	@Optional
 	@Inject
 	void reloadPatient(@UIEventTopic(ElexisEventTopics.EVENT_UPDATE) IPatient patient) {
-		if (patient != null) {
+		if (patient != null && txtPatPID != null) {
 			updateControls(patient);
 		}
 	}

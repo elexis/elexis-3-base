@@ -180,9 +180,6 @@ public class LabordersView extends ViewPart implements IRefreshable {
 
 	Logger logger = LoggerFactory.getLogger(LabordersView.class);
 
-	@Inject
-	private IConfigService configService;
-
 	public LabordersView() {
 		loadProperties();
 		Display display = Display.getCurrent();
@@ -190,7 +187,7 @@ public class LabordersView extends ViewPart implements IRefreshable {
 		Color defaultBackgroundColor = new Color(display, new RGB(255, 255, 255));
 		setMarkedBackgroundColor(markedBackgroundColor);
 		setDefaultBackgroundColor(defaultBackgroundColor);
-		CoreUiUtil.injectServices(this);
+		// CoreUiUtil.injectServices(this);
 	}
 
 	private void loadProperties() {
@@ -211,7 +208,6 @@ public class LabordersView extends ViewPart implements IRefreshable {
 	}
 
 	private void updateControls(ICoverage coverage) {
-
 
 		IPatient patient = coverage.getPatient();
 		updateControls(patient);

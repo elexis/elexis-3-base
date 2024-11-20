@@ -12,10 +12,12 @@
    </extension>
 <extension
          point="org.eclipse.ui.views">
-         <view id="ch.framsteg.elexis.labor.teamw.views.LabordersView"
-             name="Labor TeamW"
-             category="ch.elexis.messungenKategorie"
-          class="ch.framsteg.elexis.labor.teamw.views.LabordersView"
-          icon="icons/teamw.gif"/>
+         <view
+               category="ch.elexis.messungenKategorie"
+               class="ch.framsteg.elexis.labor.teamw.views.LabordersView"
+               icon="icons/teamw.gif"
+               id="ch.framsteg.elexis.labor.teamw.views.LabordersView"
+               inject="true"
+               name="Labor TeamW"/>
    </extension>
 </plugin>

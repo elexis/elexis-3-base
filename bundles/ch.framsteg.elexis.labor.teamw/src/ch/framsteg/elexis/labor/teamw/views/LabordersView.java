@@ -187,7 +187,6 @@ public class LabordersView extends ViewPart implements IRefreshable {
 		Color defaultBackgroundColor = new Color(display, new RGB(255, 255, 255));
 		setMarkedBackgroundColor(markedBackgroundColor);
 		setDefaultBackgroundColor(defaultBackgroundColor);
-		// CoreUiUtil.injectServices(this);
 	}
 
 	private void loadProperties() {
@@ -744,9 +743,6 @@ public class LabordersView extends ViewPart implements IRefreshable {
 
 	@Inject
 	void activeCoverage(@Optional ICoverage coverage) {
-
-		// System.out.println(txtPatPID == null ? "null" : "nicht null");
-
 		if (coverage != null && txtPatPID != null) {
 			updateControls(coverage);
 		}

@@ -4,6 +4,6 @@ Bundle-Name: Fragment
 Bundle-SymbolicName: ch.framsteg.elexis.hin.auth.fragment
 Bundle-Version: 3.12.0.qualifier
 Bundle-Vendor: ch.framsteg
-Fragment-Host: at.medevit.elexis.hin.auth.core;bundle-version="3.13.0"
+Fragment-Host: at.medevit.elexis.hin.auth.core;bundle-version="3.12.0"
 Automatic-Module-Name: ch.framsteg.elexis.hin.auth.fragment
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17

@@ -26,7 +26,7 @@
          version="0.0.0"/>
 
    <plugin
-         id="ch.framsteg.elexis.administration.covercard.fragment"
+         id="ch.framsteg.elexis.hin.auth.fragment"
          version="0.0.0"/>
 
 </feature>

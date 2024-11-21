@@ -259,6 +259,9 @@
    <feature id="ch.framsteg.elexis.labor.teamw.feature">
       <category name="dataexchange"/>
    </feature>
+   <feature id="ch.framsteg.elexis.hin.auth.feature">
+	   <category name="libraries"/>
+   </feature>
    <feature id="at.medevit.elexis.hin.sign.core.feature">
       <category name="libraries"/>
    </feature>

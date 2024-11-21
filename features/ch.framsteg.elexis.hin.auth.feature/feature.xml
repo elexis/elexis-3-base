@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.framsteg.elexis.hin.auth.feature"
+      label="OpenSource HIN Auth Feature"
+      version="3.12.0.qualifier"
+      provider-name="ch.framsteg">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="at.medevit.elexis.hin.auth.ui"
+         version="0.0.0"/>
+
+   <plugin
+         id="at.medevit.elexis.hin.auth.core"
+         version="0.0.0"/>
+
+   <plugin
+         id="ch.framsteg.elexis.hin.auth.fragment"
+         version="0.0.0"/>
+
+</feature>

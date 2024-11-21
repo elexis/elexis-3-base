@@ -154,9 +154,6 @@
    <feature id="ch.elexis.support.dbshaker.feature">
       <category name="support"/>
    </feature>
-   <feature id="ch.elexis.icpc.fire.feature">
-      <category name="statistics"/>
-   </feature>
    <feature url="features/ch.elexis.buchhaltung.basis.feature_0.0.0.jar" id="ch.elexis.buchhaltung.basis.feature" version="0.0.0">
       <category name="finances"/>
    </feature>

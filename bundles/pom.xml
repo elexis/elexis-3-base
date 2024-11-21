@@ -108,7 +108,6 @@
     <module>ch.elexis.fop.service</module>
     <module>ch.elexis.fop_wrapper</module>
     <module>ch.elexis.global_inbox</module>
-    <module>ch.elexis.icpc.fire</module>
     <module>ch.elexis.icpc</module>
     <module>ch.elexis.icpc.model</module>
     <module>ch.elexis.impfplan</module>

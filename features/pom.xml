@@ -47,7 +47,6 @@
     <module>ch.elexis.fop_wrapper.feature</module>
     <module>ch.elexis.global_inbox.feature</module>
     <module>ch.elexis.icpc.feature</module>
-    <module>ch.elexis.icpc.fire.feature</module>
     <module>ch.elexis.impfplan.feature</module>
     <module>ch.elexis.kassenbuch.feature</module>
     <module>ch.elexis.laborimport.analytica.feature</module>

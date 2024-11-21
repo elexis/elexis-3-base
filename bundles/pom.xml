@@ -166,7 +166,7 @@
     <module>at.medevit.elexis.documents.converter.ui</module>
     <module>ch.framsteg.elexis.finance.analytics</module>
     <module>ch.framsteg.elexis.administration.covercard</module>
-    <module>ch.framsteg.elexis.administration.hin.auth.fragment</module>
+    <module>ch.framsteg.elexis.hin.auth.fragment</module>
     <module>ch.framsteg.elexis.labor.teamw</module>
     <module>ch.elexis.global_inbox.core</module>
   </modules>

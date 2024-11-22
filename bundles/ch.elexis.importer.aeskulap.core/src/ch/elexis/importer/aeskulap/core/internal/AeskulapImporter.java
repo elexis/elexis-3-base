@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,6 +22,8 @@ import com.opencsv.CSVWriter;
 import ch.elexis.core.constants.XidConstants;
 import ch.elexis.core.data.events.ElexisEvent;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
+import ch.elexis.core.exceptions.ElexisException;
+import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.ILabResult;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IXid;
@@ -36,6 +39,7 @@ import ch.elexis.data.Xid;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile;
 import ch.elexis.importer.aeskulap.core.IAeskulapImportFile.Type;
 import ch.elexis.importer.aeskulap.core.IAeskulapImporter;
+import ch.elexis.importer.aeskulap.core.service.DocumentStoreServiceHolder;
 import ch.elexis.omnivore.model.IDocumentHandle;
 
 @Component
@@ -267,9 +271,8 @@ public class AeskulapImporter implements IAeskulapImporter {
 					if (existingPatient != null) {
 						if (importedPatient.getCoverages().isEmpty()) {
 							transferImportedData(importedPatient, existingPatient);
-							existingPatient.addXid(XID_IMPORT_PATIENT, importedXid.getDomainId(), true);
-							CoreModelServiceHolder.get().delete(existingPatient);
-							CoreModelServiceHolder.get().save(importedPatient);
+							existingPatient.addXid(importedXid.getDomain(), importedXid.getDomainId(), true);
+							CoreModelServiceHolder.get().delete(importedPatient);
 							csvWriter.writeNext(new String[] { importedPatient.getPatientNr(),
 									existingPatient.getPatientNr(), "OK" });
 						} else {
@@ -307,7 +310,20 @@ public class AeskulapImporter implements IAeskulapImporter {
 		List<IDocumentHandle> importedDocuments = documentQuery.execute();
 		for (IDocumentHandle importedDocument : importedDocuments) {
 			// no need to transfer categories, just the document
-			importedDocument.setPatient(existingPatient);
+			// create new docment for transfer of content
+			IDocument document = DocumentStoreServiceHolder.get().createDocument(existingPatient.getId(),
+					importedDocument.getTitle(), importedDocument.getCategory().getName());
+			document.setCreated(importedDocument.getCreated());
+			document.setLastchanged(importedDocument.getLastchanged());
+			document.setExtension(importedDocument.getExtension());
+			document.setMimeType(importedDocument.getMimeType());
+			try (InputStream fin = importedDocument.getContent()) {
+				DocumentStoreServiceHolder.get().saveDocument(document, fin);
+			} catch (IOException | ElexisException e) {
+				LoggerFactory.getLogger(getClass())
+						.error("Error transfer of document [" + importedDocument.getId() + "]", e);
+			}
+			importedDocument.setDeleted(true);
 		}
 		omnivoreModelService.save(importedDocuments);
 		// transfer Laboratory

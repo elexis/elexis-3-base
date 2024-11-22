@@ -133,6 +133,9 @@ public class AeskulapImporterTest {
 
 	@Test
 	public void removePatientDuplicates() {
+		// make sure xidservice knows patient domain
+		XidServiceHolder.get().localRegisterXIDDomainIfNotExists(IAeskulapImporter.XID_IMPORT_PATIENT, "Alte KG-ID",
+				XidConstants.ASSIGNMENT_LOCAL);
 		// create existing patients
 		IPatient existingMatchNoAhv = new IContactBuilder.PatientBuilder(CoreModelServiceHolder.get(), "Vanessa",
 				"Test", LocalDate.of(1976, 3, 7), Gender.FEMALE).buildAndSave();
@@ -175,6 +178,8 @@ public class AeskulapImporterTest {
 		assertNotNull(foundXid);
 		IPersistentObject foundPatient = foundXid.getObject();
 		assertTrue(foundPatient instanceof Patient);
+		// the existing patient is now marked with the import xid
+		assertEquals(existingMatchAhv.getId(), foundPatient.getId());
 
 		assertEquals(documentsSize, getDocuments(existingMatchWithData).size());
 	}

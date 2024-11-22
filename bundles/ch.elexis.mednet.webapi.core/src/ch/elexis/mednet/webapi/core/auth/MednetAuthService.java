@@ -307,23 +307,6 @@ public class MednetAuthService implements IMednetAuthService {
 		return currentState;
 	}
 
-//	private String getClientId() {
-//		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) {
-//			if (properties != null) {
-//				Properties idProps = new Properties();
-//				idProps.load(properties);
-//				String clientId = idProps.getProperty("client_id", "medelexis");
-//				LoggerFactory.getLogger(getClass()).info("Loaded client_id: {}", clientId);
-//				return clientId;
-//			} else {
-//
-//			}
-//		} catch (Exception e) {
-//
-//		}
-//		return "medelexis";
-//	}
-
 	private String getClientId() {
 		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) {
 			if (properties != null) {
@@ -336,19 +319,6 @@ public class MednetAuthService implements IMednetAuthService {
 		}
 		return StringUtils.EMPTY;
 	}
-
-//	private String getClientSecret() {
-//		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) {
-//			if (properties != null) {
-//				Properties idProps = new Properties();
-//				idProps.load(properties);
-//				return idProps.getProperty("client_secret", "*ZaY46Xep1V9v#r^FBzg9EM0f7Q962");
-//			}
-//		} catch (Exception e) {
-//
-//		}
-//		return "*ZaY46Xep1V9v#r^FBzg9EM0f7Q962";
-//	}
 
 	private String getClientSecret() {
 		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) {

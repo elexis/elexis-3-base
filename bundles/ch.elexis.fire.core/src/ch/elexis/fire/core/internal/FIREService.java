@@ -103,16 +103,57 @@ public class FIREService implements IFIREService {
 	@Activate
 	public void activate() throws NoSuchAlgorithmException {
 		sha256Digest = MessageDigest.getInstance("SHA-256");
-
-		patientTransformer = transformerRegistry.getTransformerFor(Patient.class, IPatient.class);
-		encounterTransformer = transformerRegistry.getTransformerFor(Encounter.class, IEncounter.class);
-		mandatorTransformer = transformerRegistry.getTransformerFor(Practitioner.class, IMandator.class);
-		labTransformer = transformerRegistry.getTransformerFor(Observation.class, ILabResult.class);
-		prescriptionTransformer = transformerRegistry.getTransformerFor(MedicationRequest.class, IPrescription.class);
-		sickCertificateTransformer = transformerRegistry.getTransformerFor(Condition.class, ISickCertificate.class);
-		vaccinationTransformer = transformerRegistry.getTransformerFor(Immunization.class, IVaccination.class);
 	}
 	
+	private IFhirTransformer<Patient, IPatient> getPatientTransformer() {
+		if (patientTransformer == null) {
+			patientTransformer = transformerRegistry.getTransformerFor(Patient.class, IPatient.class);
+		}
+		return patientTransformer;
+	}
+
+	private IFhirTransformer<Encounter, IEncounter> getEncounterTransformer() {
+		if(encounterTransformer == null) {
+			encounterTransformer = transformerRegistry.getTransformerFor(Encounter.class, IEncounter.class);
+		}
+		return encounterTransformer;
+	}
+
+	private IFhirTransformer<Practitioner, IMandator> getMandatorTransformer() {
+		if(mandatorTransformer == null) {
+			mandatorTransformer = transformerRegistry.getTransformerFor(Practitioner.class, IMandator.class);
+		}
+		return mandatorTransformer;
+	}
+
+	private IFhirTransformer<Observation, ILabResult> getLabTransformer() {
+		if(labTransformer == null) {
+			labTransformer = transformerRegistry.getTransformerFor(Observation.class, ILabResult.class);
+		}
+		return labTransformer;
+	}
+
+	private IFhirTransformer<MedicationRequest, IPrescription> getPrescriptionTransformer() {
+		if(prescriptionTransformer == null) {
+			prescriptionTransformer = transformerRegistry.getTransformerFor(MedicationRequest.class, IPrescription.class);
+		}
+		return prescriptionTransformer;
+	}
+
+	private IFhirTransformer<Condition, ISickCertificate> getSickCertificateTransformer() {
+		if(sickCertificateTransformer == null) {
+			sickCertificateTransformer = transformerRegistry.getTransformerFor(Condition.class, ISickCertificate.class);
+		}
+		return sickCertificateTransformer;
+	}
+
+	private IFhirTransformer<Immunization, IVaccination> getVaccinationTransformer() {
+		if(vaccinationTransformer == null) {
+			vaccinationTransformer = transformerRegistry.getTransformerFor(Immunization.class, IVaccination.class);
+		}
+		return vaccinationTransformer;
+	}
+
 	@Override
 	public Long getInitialTimestamp() {
 		return Long.valueOf(configService.get("fire.intialExport", "-1"));
@@ -136,15 +177,17 @@ public class FIREService implements IFIREService {
 			try (IQueryCursor<IPatient> cursor = coreModelService.getQuery(IPatient.class).executeAsCursor()) {
 				while (cursor.hasNext()) {
 					IPatient patient = cursor.next();
-					Optional<Patient> fhirPatient = patientTransformer.getFhirObject(patient);
-					if (fhirPatient.isPresent()) {
-						Bundle patientBundle = exportPatient(patient, fhirPatient.get(), currentBundle.getBundle());
-						currentBundle.addEntry(patientBundle);
-					}
-					currentBundle = currentBundle.writeIfNecessary(ret);
-					if (progressMonitor.isCanceled()) {
-						LoggerFactory.getLogger(getClass()).warn("Cancelled initial export");
-						return Collections.emptyList();
+					if (patient.getDateOfBirth() != null) {
+						Optional<Patient> fhirPatient = getPatientTransformer().getFhirObject(patient);
+						if (fhirPatient.isPresent()) {
+							Bundle patientBundle = exportPatient(patient, fhirPatient.get(), currentBundle.getBundle());
+							currentBundle.addEntry(patientBundle);
+						}
+						currentBundle = currentBundle.writeIfNecessary(ret);
+						if (progressMonitor.isCanceled()) {
+							LoggerFactory.getLogger(getClass()).warn("Cancelled initial export");
+							return Collections.emptyList();
+						}
 					}
 				}
 			}
@@ -174,7 +217,7 @@ public class FIREService implements IFIREService {
 		List<IEncounter> encounters = patient.getCoverages().stream().flatMap(c -> c.getEncounters().stream())
 				.collect(Collectors.toList());
 		encounters.stream().forEach(ie -> {
-			Encounter fhirEncounter = encounterTransformer.getFhirObject(ie).orElse(null);
+			Encounter fhirEncounter = getEncounterTransformer().getFhirObject(ie).orElse(null);
 			if (fhirEncounter != null) {
 				addMandatorToBundle(ie.getMandator(), ret);
 				if (ie.getMandator().getBiller().isPerson() && ie.getMandator().getBiller().isMandator()
@@ -197,7 +240,7 @@ public class FIREService implements IFIREService {
 		resultQuery.and(ModelPackage.Literals.ILAB_RESULT__PATIENT, COMPARATOR.EQUALS, patient);
 		List<ILabResult> labObservation = resultQuery.execute();
 		labObservation.forEach(lr -> {
-			Observation labResult = labTransformer.getFhirObject(lr).orElse(null);
+			Observation labResult = getLabTransformer().getFhirObject(lr).orElse(null);
 			if (labResult != null) {
 				patientBundle.addEntry().setResource(labResult);
 			}
@@ -205,7 +248,7 @@ public class FIREService implements IFIREService {
 
 		List<IPrescription> prescriptions = patient.getMedication(null);
 		prescriptions.forEach(lr -> {
-			MedicationRequest medicationRequest = prescriptionTransformer.getFhirObject(lr).orElse(null);
+			MedicationRequest medicationRequest = getPrescriptionTransformer().getFhirObject(lr).orElse(null);
 			if (medicationRequest != null) {
 				patientBundle.addEntry().setResource(medicationRequest);
 			}
@@ -215,7 +258,7 @@ public class FIREService implements IFIREService {
 		sickQuery.and(ModelPackage.Literals.ISICK_CERTIFICATE__PATIENT, COMPARATOR.EQUALS, patient);
 		List<ISickCertificate> sickCertificates = sickQuery.execute();
 		sickCertificates.forEach(sc -> {
-			Condition condition = sickCertificateTransformer.getFhirObject(sc).orElse(null);
+			Condition condition = getSickCertificateTransformer().getFhirObject(sc).orElse(null);
 			if (condition != null) {
 				patientBundle.addEntry().setResource(condition);
 			}
@@ -225,7 +268,7 @@ public class FIREService implements IFIREService {
 		vaccQuery.and(ModelPackage.Literals.IVACCINATION__PATIENT, COMPARATOR.EQUALS, patient);
 		List<IVaccination> vaccinations = vaccQuery.execute();
 		vaccinations.forEach(va -> {
-			Immunization immunization = vaccinationTransformer.getFhirObject(va).orElse(null);
+			Immunization immunization = getVaccinationTransformer().getFhirObject(va).orElse(null);
 			if (immunization != null) {
 				patientBundle.addEntry().setResource(immunization);
 			}
@@ -237,7 +280,7 @@ public class FIREService implements IFIREService {
 	private void addMandatorToBundle(IMandator mandator, Bundle ret) {
 		Optional<BundleEntryComponent> found = findBundleEntry(mandator.getId(), ret);
 		if (found.isEmpty()) {
-			Optional<Practitioner> fhirPractitioner = mandatorTransformer.getFhirObject(mandator);
+			Optional<Practitioner> fhirPractitioner = getMandatorTransformer().getFhirObject(mandator);
 			fhirPractitioner.ifPresent(p -> ret.addEntry().setResource(toFIRE(p)));
 		}
 	}
@@ -271,9 +314,11 @@ public class FIREService implements IFIREService {
 	private Patient toFIRE(Patient fhirPatient) {
 
 		// set month and day to 1
-		LocalDate birthDate = LocalDate.ofInstant(fhirPatient.getBirthDate().toInstant(), ZoneId.systemDefault());
-		fhirPatient.setBirthDate(Date.from(
-				birthDate.withDayOfMonth(1).withMonth(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+		if(fhirPatient.hasBirthDate()) {
+			LocalDate birthDate = LocalDate.ofInstant(fhirPatient.getBirthDate().toInstant(), ZoneId.systemDefault());
+			fhirPatient.setBirthDate(Date.from(birthDate.withDayOfMonth(1).withMonth(1).atStartOfDay()
+					.atZone(ZoneId.systemDefault()).toInstant()));
+		}
 		fhirPatient.getName().clear();
 		fhirPatient.getTelecom().clear();
 		fhirPatient.getAddress().clear();
@@ -358,14 +403,16 @@ public class FIREService implements IFIREService {
 	private BundleFile addIncrementalPatients(List<IPatient> changedPatients, BundleFile currentBundle, List<File> ret)
 			throws IOException {
 		for (IPatient iPatient : changedPatients) {
-			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(iPatient.getId()),
-					currentBundle.getBundle());
-			Optional<Patient> fhirPatient = patientTransformer.getFhirObject(iPatient);
-			if (fhirPatient.isPresent()) {
-				toFIRE(fhirPatient.get());
-				currentBundle.addResourceToBundle(patientBundle, fhirPatient.get());
+			if (iPatient.getDateOfBirth() != null) {
+				Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(iPatient.getId()),
+						currentBundle.getBundle());
+				Optional<Patient> fhirPatient = getPatientTransformer().getFhirObject(iPatient);
+				if (fhirPatient.isPresent()) {
+					toFIRE(fhirPatient.get());
+					currentBundle.addResourceToBundle(patientBundle, fhirPatient.get());
+				}
+				currentBundle = currentBundle.writeIfNecessary(ret);
 			}
-			currentBundle = currentBundle.writeIfNecessary(ret);
 		}
 		return currentBundle;
 	}
@@ -375,7 +422,7 @@ public class FIREService implements IFIREService {
 		for (IEncounter en : changedEncounters) {
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(en.getPatient().getId()),
 					currentBundle.getBundle());
-			Optional<Encounter> fhirEncounter = encounterTransformer.getFhirObject(en);
+			Optional<Encounter> fhirEncounter = getEncounterTransformer().getFhirObject(en);
 			if (fhirEncounter.isPresent()) {
 				addMandatorToBundle(en.getMandator(), currentBundle.getBundle());
 				if (en.getMandator().getBiller().isPerson() && en.getMandator().getBiller().isMandator()
@@ -407,7 +454,7 @@ public class FIREService implements IFIREService {
 		for (IPrescription pr : changedPrescriptions) {
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(pr.getPatient().getId()),
 					currentBundle.getBundle());
-			Optional<MedicationRequest> mr = prescriptionTransformer.getFhirObject(pr);
+			Optional<MedicationRequest> mr = getPrescriptionTransformer().getFhirObject(pr);
 			if (mr.isPresent()) {
 				currentBundle.addResourceToBundle(patientBundle, mr.get());
 				currentBundle = currentBundle.writeIfNecessary(ret);
@@ -421,7 +468,7 @@ public class FIREService implements IFIREService {
 		for (ILabResult lr : changedLabResults) {
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(lr.getPatient().getId()),
 					currentBundle.getBundle());
-			Optional<Observation> ob = labTransformer.getFhirObject(lr);
+			Optional<Observation> ob = getLabTransformer().getFhirObject(lr);
 			if (ob.isPresent()) {
 				currentBundle.addResourceToBundle(patientBundle, ob.get());
 				currentBundle = currentBundle.writeIfNecessary(ret);
@@ -435,7 +482,7 @@ public class FIREService implements IFIREService {
 		for (IVaccination va : changedVaccinations) {
 			Bundle patientBundle = getOrCreatePatientBundle(getFIREPatientId(va.getPatient().getId()),
 					currentBundle.getBundle());
-			Optional<Immunization> im = vaccinationTransformer.getFhirObject(va);
+			Optional<Immunization> im = getVaccinationTransformer().getFhirObject(va);
 			if (im.isPresent()) {
 				currentBundle.addResourceToBundle(patientBundle, im.get());
 				currentBundle = currentBundle.writeIfNecessary(ret);

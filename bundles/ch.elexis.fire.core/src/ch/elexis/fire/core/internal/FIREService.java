@@ -219,11 +219,13 @@ public class FIREService implements IFIREService {
 		encounters.stream().forEach(ie -> {
 			Encounter fhirEncounter = getEncounterTransformer().getFhirObject(ie).orElse(null);
 			if (fhirEncounter != null) {
-				addMandatorToBundle(ie.getMandator(), ret);
-				if (ie.getMandator().getBiller().isPerson() && ie.getMandator().getBiller().isMandator()
-						&& !ie.getMandator().equals(ie.getMandator().getBiller())) {
-					IContact biller = ie.getMandator().getBiller();
-					addMandatorToBundle(coreModelService.load(biller.getId(), IMandator.class).get(), ret);
+				if (ie.getMandator() != null) {
+					addMandatorToBundle(ie.getMandator(), ret);
+					if (ie.getMandator().getBiller().isPerson() && ie.getMandator().getBiller().isMandator()
+							&& !ie.getMandator().equals(ie.getMandator().getBiller())) {
+						IContact biller = ie.getMandator().getBiller();
+						addMandatorToBundle(coreModelService.load(biller.getId(), IMandator.class).get(), ret);
+					}
 				}
 				toFIRE(fhirEncounter);
 				patientBundle.addEntry().setResource(fhirEncounter);
@@ -424,10 +426,12 @@ public class FIREService implements IFIREService {
 					currentBundle.getBundle());
 			Optional<Encounter> fhirEncounter = getEncounterTransformer().getFhirObject(en);
 			if (fhirEncounter.isPresent()) {
-				addMandatorToBundle(en.getMandator(), currentBundle.getBundle());
-				if (en.getMandator().getBiller().isPerson() && en.getMandator().getBiller().isMandator()
-						&& !en.getMandator().equals(en.getMandator().getBiller())) {
-					addMandatorToBundle((IMandator) en.getMandator().getBiller(), currentBundle.getBundle());
+				if (en.getMandator() != null) {
+					addMandatorToBundle(en.getMandator(), currentBundle.getBundle());
+					if (en.getMandator().getBiller().isPerson() && en.getMandator().getBiller().isMandator()
+							&& !en.getMandator().equals(en.getMandator().getBiller())) {
+						addMandatorToBundle((IMandator) en.getMandator().getBiller(), currentBundle.getBundle());
+					}
 				}
 				toFIRE(fhirEncounter.get());
 				currentBundle.addResourceToBundle(patientBundle, fhirEncounter.get());

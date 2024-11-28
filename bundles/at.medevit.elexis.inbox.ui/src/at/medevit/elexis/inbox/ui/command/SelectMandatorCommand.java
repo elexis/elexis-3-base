@@ -11,11 +11,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.inbox.ui.part.InboxView;
-import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.e4.dialog.MandantSelectorDialog;
-import ch.elexis.data.Mandant;
 
 public class SelectMandatorCommand extends AbstractHandler implements IHandler {
 
@@ -26,8 +24,7 @@ public class SelectMandatorCommand extends AbstractHandler implements IHandler {
 			InboxView view = (InboxView) part;
 			MandantSelectorDialog msDialog = new MandantSelectorDialog(UiDesk.getTopShell(), true);
 			if (msDialog.open() == MandantSelectorDialog.OK) {
-				List<Mandant> selectedMandants = msDialog.getSelectedMandants();
-				List<IMandator> selectedMandators = NoPoUtil.loadAsIdentifiable(selectedMandants, IMandator.class);
+				List<IMandator> selectedMandators = msDialog.getSelectedMandators();
 				view.setSelectedMandators(selectedMandators);
 			} else {
 				view.setSelectedMandators(Collections.emptyList());

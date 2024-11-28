@@ -17,7 +17,6 @@ import at.medevit.elexis.inbox.ui.InboxModelServiceHolder;
 import at.medevit.elexis.inbox.ui.part.InboxView;
 import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
-import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.e4.dialog.MandantSelectorDialog;
@@ -28,8 +27,7 @@ public class ChangeMandantCommand extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		MandantSelectorDialog msDialog = new MandantSelectorDialog(UiDesk.getTopShell(), false);
 		if (msDialog.open() == TitleAreaDialog.OK) {
-			IMandator mandant = NoPoUtil.loadAsIdentifiable(msDialog.getSelectedMandant(), IMandator.class)
-					.orElse(null);
+			IMandator mandator = msDialog.getSelectedMandator();
 
 			IWorkbenchPart part = HandlerUtil.getActivePart(event);
 			if (part instanceof InboxView) {
@@ -42,7 +40,7 @@ public class ChangeMandantCommand extends AbstractHandler implements IHandler {
 					for (Object selObj : selectionList) {
 						if (selObj instanceof IInboxElement) {
 							IInboxElement inboxElement = (IInboxElement) selObj;
-							inboxElement.setMandator(mandant);
+							inboxElement.setMandator(mandator);
 							if (!(inboxElement instanceof GroupedInboxElements)) {
 								InboxModelServiceHolder.get().save(inboxElement);
 							}

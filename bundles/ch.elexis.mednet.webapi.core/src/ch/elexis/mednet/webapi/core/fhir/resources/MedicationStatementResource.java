@@ -1,50 +1,51 @@
 package ch.elexis.mednet.webapi.core.fhir.resources;
 
-import org.hl7.fhir.r4.model.*;
-
-import at.medevit.ch.artikelstamm.IArtikelstammItem;
-import ch.elexis.core.model.IArticle;
-import ch.elexis.core.model.IPrescription;
-import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.hl7.fhir.r4.model.Dosage;
+import org.hl7.fhir.r4.model.Medication;
+import org.hl7.fhir.r4.model.MedicationStatement;
+import org.hl7.fhir.r4.model.Reference;
+
+import ch.elexis.core.model.IArticle;
+import ch.elexis.core.model.IPrescription;
+import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
+import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
+
 public class MedicationStatementResource {
 
-	private final MedicationResource medicationResource;
-
-	public MedicationStatementResource() {
-		this.medicationResource = new MedicationResource();
-	}
-
 	public List<MedicationStatement> createMedicationStatementsFromPrescriptions(Reference patientReference,
-			List<IPrescription> prescriptions, List<Medication> medicationList) {
+			List<IPrescription> prescriptions, FhirResourceFactory resourceFactory) {
 		List<MedicationStatement> medicationStatements = new ArrayList<>();
 
 		for (IPrescription prescription : prescriptions) {
 			IArticle article = prescription.getArticle();
 			if (article != null) {
-				IArtikelstammItem test = (IArtikelstammItem) article;
-				String gtinCode = article.getGtin();
-				String pharmacode = test.getPHAR();
-				String productNumber = test.getProductId();
+				Medication medication = resourceFactory.getResource(article, IArticle.class, Medication.class);
+				if (medication == null) {
+					medication = new Medication();
+					medication.setId("unknown");
+				}
+				if (medication.getCode() != null
+						&& (medication.getCode().getText() == null || medication.getCode().getText().isEmpty())) {
+					String defaultText = article.getName() != null ? article.getName() : "Undefined Medication";
+					medication.getCode().setText(defaultText);
+				}
 
-				Medication medication = medicationResource.createMedication(gtinCode, pharmacode, productNumber,
-						article.getName());
-				medicationList.add(medication);
-
+				String medicationId = medication.getId();
+				if (medicationId != null && medicationId.startsWith("Medication/")) {
+					medicationId = medicationId.substring("Medication/".length());
+				}
 				MedicationStatement medicationStatement = new MedicationStatement();
 				medicationStatement.setId(UUID.nameUUIDFromBytes(article.getId().getBytes()).toString());
-
 				medicationStatement.getMeta().addProfile(FHIRConstants.PROFILE_MEDICATION_STATEMENT);
-
 				medicationStatement.setStatus(MedicationStatement.MedicationStatementStatus.ACTIVE);
-
-				Reference medicationReference = new Reference(FHIRConstants.UUID_PREFIX + medication.getId());
+				medication.setId(medicationStatement.getId());
+				medicationStatement.addContained(medication);
+				Reference medicationReference = new Reference(medication.getId());
 				medicationStatement.setMedication(medicationReference);
-
 				medicationStatement.setSubject(patientReference);
 				Dosage dosage = new Dosage();
 				String dosageInstruction = prescription.getDosageInstruction();
@@ -55,7 +56,6 @@ public class MedicationStatementResource {
 				medicationStatements.add(medicationStatement);
 			}
 		}
-
 		return medicationStatements;
 	}
 }

@@ -5,6 +5,7 @@ Bundle-SymbolicName: ch.elexis.mednet.webapi.ui;singleton:=true
 Bundle-Vendor: elexis.ch
 Bundle-Version: 1.0.0.qualifier
 Import-Package: ca.uhn.fhir;version="[5.4.0,6.0.0)",
+ ch.elexis.core.findings,
  ch.elexis.core.ui,
  ch.elexis.core.ui.documents.composites,
  ch.elexis.core.ui.icons,
@@ -21,7 +22,8 @@ Require-Bundle: org.eclipse.ui,
  ch.elexis.core.ui.e4;bundle-version="3.13.0",
  info.elexis.target.hapi.fhir;bundle-version="5.4.2",
  org.apache.httpcomponents.httpclient,
- ch.elexis.mednet.webapi.core
+ ch.elexis.mednet.webapi.core,
+ ch.elexis.core.findings.util;bundle-version="3.13.0"
 Automatic-Module-Name: ch.elexis.mednet.webapi.ui
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.mednet.webapi.ui.Activator

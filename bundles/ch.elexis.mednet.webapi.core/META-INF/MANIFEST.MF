@@ -16,25 +16,29 @@ Require-Bundle: org.apache.commons.commons-io,
  ch.elexis.core.services,
  info.elexis.target.hapi.fhir,
  com.google.gson,
- ch.elexis.core.data
+ ch.elexis.core,
+ ch.elexis.core.findings.util
 Automatic-Module-Name: ch.elexis.mednet.webapi.core
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Import-Package: at.medevit.ch.artikelstamm,
- ch.elexis.core.documents,
+Import-Package: ch.elexis.core.documents,
  ch.elexis.core.findings,
  ch.elexis.core.findings.migration,
  ch.elexis.core.findings.ui.services,
- ch.elexis.core.findings.util.fhir.transformer.mapper,
  ch.elexis.core.model,
  ch.elexis.core.services,
+ ch.elexis.core.utils,
  ch.elexis.omnivore.model,
  com.fasterxml.jackson.databind;version="[2.16.0,3.0.0)",
  com.fasterxml.jackson.databind.node;version="[2.16.0,3.0.0)",
  com.google.gson;version="[2.9.0,3.0.0)",
- org.apache.commons.lang3;version="[3.14.0,4.0.0)"
+ org.apache.commons.lang3;version="[3.14.0,4.0.0)",
+ org.osgi.framework;version="[1.10.0,2.0.0)",
+ org.slf4j;version="[1.7.0,2.0.0)"
 Service-Component: OSGI-INF/ch.elexis.mednet.webapi.core.auth.MednetAuthService.xml,
+ OSGI-INF/ch.elexis.mednet.webapi.core.fhir.resources.OrganizationResource.xml,
+ OSGI-INF/ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory.xml,
  OSGI-INF/ch.elexis.mednet.webapi.core.service.DocumentConverterServiceHolder.xml,
  OSGI-INF/ch.elexis.mednet.webapi.core.service.DocumentStoreServiceHolder.xml,
  OSGI-INF/ch.elexis.mednet.webapi.core.service.OmnivoreModelServiceHolder.xml

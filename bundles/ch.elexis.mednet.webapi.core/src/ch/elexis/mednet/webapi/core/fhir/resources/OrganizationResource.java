@@ -1,28 +1,24 @@
 package ch.elexis.mednet.webapi.core.fhir.resources;
 
 import org.hl7.fhir.r4.model.Organization;
+import org.osgi.service.component.annotations.Component;
 
-import ch.elexis.core.findings.util.fhir.transformer.mapper.IOrganizationOrganizationAttributeMapper;
 import ch.elexis.core.model.IContact;
-import ch.elexis.core.services.IModelService;
-import ch.elexis.core.services.IXidService;
-import ch.elexis.core.utils.OsgiServiceUtil;
-import ca.uhn.fhir.rest.api.SummaryEnum;
+import ch.elexis.core.model.IOrganization;
+import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
 
+@Component
 public class OrganizationResource {
-	@org.osgi.service.component.annotations.Reference
-	private static IXidService xidService = OsgiServiceUtil.getService(IXidService.class).get();
 
-	@org.osgi.service.component.annotations.Reference(target = "(" + IModelService.SERVICEMODELNAME
-			+ "=ch.elexis.core.model)")
-	private static IModelService coreModelService;
-	private static IOrganizationOrganizationAttributeMapper organizationMapper = new IOrganizationOrganizationAttributeMapper(
-			xidService);
+	public static Organization createOrganization(IContact coveragePayor, FhirResourceFactory resourceFactory) {
+		IOrganization localOrganization = coveragePayor.asIOrganization();
 
-	public static Organization createOrganization(IContact coveragePayor) {
-		Organization organization = new Organization();
+		if (localOrganization == null) {
+			throw new IllegalArgumentException("Provided contact is not an IOrganization.");
+		}
 
-		organizationMapper.elexisToFhir(coveragePayor.asIOrganization(), organization, SummaryEnum.DATA, null);
+		Organization organization = resourceFactory.getResource(localOrganization, IOrganization.class,
+				Organization.class);
 
 		return organization;
 	}

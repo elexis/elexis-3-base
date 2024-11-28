@@ -1,52 +1,64 @@
 package ch.elexis.mednet.webapi.core.fhir.resources;
 
-import java.util.Date;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.hl7.fhir.r4.model.AllergyIntolerance;
 import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Composition;
+import org.hl7.fhir.r4.model.Condition;
 import org.hl7.fhir.r4.model.Coverage;
 import org.hl7.fhir.r4.model.Device;
 import org.hl7.fhir.r4.model.DocumentReference;
 import org.hl7.fhir.r4.model.FamilyMemberHistory;
 import org.hl7.fhir.r4.model.Medication;
 import org.hl7.fhir.r4.model.MedicationStatement;
+import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.PractitionerRole;
 import org.hl7.fhir.r4.model.Procedure;
 import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.Condition;
-import org.hl7.fhir.r4.model.Observation;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.findings.ICondition;
+import ch.elexis.core.findings.IFindingsService;
+import ch.elexis.core.findings.migration.IMigratorService;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.ICoverage;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IPrescription;
 import ch.elexis.core.model.IRelatedContact;
+import ch.elexis.core.model.IUser;
+import ch.elexis.core.model.ModelPackage;
 import ch.elexis.core.model.prescription.EntryType;
-
+import ch.elexis.core.services.IModelService;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
+import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
 
 public class BundleResource {
 
 	private static final Logger logger = LoggerFactory.getLogger(BundleResource.class);
 
 	public static Bundle createPatientOverviewBundle(Patient patient, IPatient sourcePatient,
-			List<IDocument> selectedDocuments, boolean isEpdSelected) {
+			List<IDocument> selectedDocuments, boolean isEpdSelected, FhirResourceFactory resourceFactory,
+			IModelService coreModelService, IFindingsService findingsService) {
 		Bundle bundle = new Bundle();
 		bundle.setType(BundleType.DOCUMENT);
 		String bundleId = UUID.randomUUID().toString();
@@ -68,7 +80,7 @@ public class BundleResource {
 				String organizationId = UUID.nameUUIDFromBytes(otherContact.getId().getBytes()).toString();
 				String organizationFullUrl = FHIRConstants.UUID_PREFIX + organizationId;
 
-				Organization organization = OrganizationResource.createOrganization(otherContact);
+				Organization organization = OrganizationResource.createOrganization(otherContact, resourceFactory);
 				organization.setId(organizationId);
 
 				BundleEntryComponent organizationEntry = new BundleEntryComponent();
@@ -96,23 +108,37 @@ public class BundleResource {
 		patientEntry.setResource(patient);
 		bundleEntries.add(patientEntry);
 
-		PractitionerResource practitionerResource = new PractitionerResource();
-		Practitioner gpPractitioner = practitionerResource.createPractitioner(sourcePatient);
-		if (gpPractitioner != null) {
-			String gpPractitionerFullUrl = FHIRConstants.UUID_PREFIX + gpPractitioner.getId();
-			BundleEntryComponent practitionerEntry = new BundleEntryComponent();
-			practitionerEntry.setFullUrl(gpPractitionerFullUrl);
-			practitionerEntry.setResource(gpPractitioner);
-			bundleEntries.add(practitionerEntry);
+		String gpId = (String) sourcePatient.getExtInfo(FHIRConstants.FHIRKeys.PRACTITIONER_GP_ID);
+		if (gpId == null || gpId.isEmpty()) {
+			return null;
+		}
 
-			PractitionerRole gpPractitionerRole = PractitionerRoleResource.createPractitionerRole(gpPractitioner, null);
-			String gpPractitionerRoleFullUrl = FHIRConstants.UUID_PREFIX + gpPractitionerRole.getId();
-			BundleEntryComponent practitionerRoleEntry = new BundleEntryComponent();
-			practitionerRoleEntry.setFullUrl(gpPractitionerRoleFullUrl);
-			practitionerRoleEntry.setResource(gpPractitionerRole);
-			bundleEntries.add(practitionerRoleEntry);
+		Optional<IMandator> gpMandatorOptional = coreModelService.load(gpId, IMandator.class);
 
-			patient.addGeneralPractitioner(new Reference(gpPractitionerRoleFullUrl));
+		IMandator generalPractitionerMandator = gpMandatorOptional.orElse(null);
+		if (generalPractitionerMandator != null) {
+			Practitioner gpPractitioner = resourceFactory.getResource(generalPractitionerMandator, IMandator.class,
+					Practitioner.class);
+			if (gpPractitioner != null) {
+				gpPractitioner = PractitionerResource.adjustPractitioner(gpPractitioner);
+				String gpPractitionerFullUrl = FHIRConstants.UUID_PREFIX + gpPractitioner.getId();
+				BundleEntryComponent practitionerEntry = new BundleEntryComponent();
+				practitionerEntry.setFullUrl(gpPractitionerFullUrl);
+				practitionerEntry.setResource(gpPractitioner);
+				bundleEntries.add(practitionerEntry);
+				Optional<IUser> gpUserOptional = findMandatorUser(gpMandatorOptional);
+				if (gpUserOptional.isPresent()) {
+					IUser gpUser = gpUserOptional.get();
+					PractitionerRole gpPractitionerRole = new PractitionerRoleResource().createPractitionerRole(gpUser,
+							gpPractitioner, resourceFactory);
+					String gpPractitionerRoleFullUrl = FHIRConstants.UUID_PREFIX + gpPractitionerRole.getId();
+					BundleEntryComponent practitionerRoleEntry = new BundleEntryComponent();
+					practitionerRoleEntry.setFullUrl(gpPractitionerRoleFullUrl);
+					practitionerRoleEntry.setResource(gpPractitionerRole);
+					bundleEntries.add(practitionerRoleEntry);
+					patient.addGeneralPractitioner(new Reference(gpPractitionerRoleFullUrl));
+				}
+			}
 		}
 
 		Device device = DeviceResource.createDevice();
@@ -124,7 +150,8 @@ public class BundleResource {
 		composition.addAuthor(new Reference(deviceFullUrl));
 
 		// Allergies
-		List<AllergyIntolerance> allergies = AllergyIntoleranceResource.createAllergies(patient, sourcePatient);
+		List<AllergyIntolerance> allergies = AllergyIntoleranceResource.createAllergies(patient, sourcePatient,
+				resourceFactory);
 		List<Reference> allergyReferences = new ArrayList<>();
 		for (AllergyIntolerance allergy : allergies) {
 			String allergyFullUrl = FHIRConstants.UUID_PREFIX + allergy.getId();
@@ -150,7 +177,9 @@ public class BundleResource {
 			IContact coveragePayor = activeCoverage.getCostBearer();
 
 			if (coveragePayor != null && coveragePayor.isOrganization()) {
-				Coverage coverage = CoverageResource.createCoverage(activeCoverage, patientFullUrl);
+				Coverage coverage = resourceFactory.getResource(activeCoverage, ICoverage.class, Coverage.class);
+				CoverageResource.toMednet(coverage, patientFullUrl);
+
 				String coverageId = coverage.getIdElement().getIdPart();
 				String coverageUUID = UUID.nameUUIDFromBytes(coverageId.getBytes()).toString();
 				String coverageFullUrl = FHIRConstants.UUID_PREFIX + coverageUUID;
@@ -161,7 +190,7 @@ public class BundleResource {
 				coverageEntry.setResource(coverage);
 				bundleEntries.add(coverageEntry);
 
-				Organization organization = OrganizationResource.createOrganization(coveragePayor);
+				Organization organization = OrganizationResource.createOrganization(coveragePayor, resourceFactory);
 				String organizationId = UUID.nameUUIDFromBytes(coveragePayor.getId().getBytes()).toString();
 				String organizationFullUrl = FHIRConstants.UUID_PREFIX + organizationId;
 				organization.setId(organizationId);
@@ -186,16 +215,25 @@ public class BundleResource {
 		}
 
 		// Conditions
-		List<Condition> conditions = ConditionResource.createConditions(patient, sourcePatient);
-		List<Reference> conditionReferences = new ArrayList<>();
-		for (Condition condition : conditions) {
-			String conditionFullUrl = FHIRConstants.UUID_PREFIX + condition.getId();
-			BundleEntryComponent conditionEntry = new BundleEntryComponent();
-			conditionEntry.setFullUrl(conditionFullUrl);
-			conditionEntry.setResource(condition);
-			bundleEntries.add(conditionEntry);
+		boolean strukturDiagnose = ConfigServiceHolder.getGlobal(IMigratorService.DIAGNOSE_SETTINGS_USE_STRUCTURED,
+				false);
 
-			conditionReferences.add(new Reference(conditionFullUrl));
+		List<ICondition> localConditions = ConditionResource.getLocalConditions(sourcePatient);
+		List<Reference> conditionReferences = new ArrayList<>();
+
+		if (strukturDiagnose) {
+			for (ICondition localCondition : localConditions) {
+				Condition condition = resourceFactory.getResource(localCondition, ICondition.class, Condition.class);
+				if (condition == null || !condition.hasClinicalStatus() || !condition.hasCode()) {
+					condition = ConditionResource.createConditionFallback(localCondition, patient);
+				}
+				ConditionResource.addConditionToBundle(condition, bundleEntries, conditionReferences);
+			}
+		} else {
+			List<Condition> conditions = ConditionResource.createConditions(patient, sourcePatient);
+			for (Condition condition : conditions) {
+				ConditionResource.addConditionToBundle(condition, bundleEntries, conditionReferences);
+			}
 		}
 
 		Composition.SectionComponent conditionSection = new Composition.SectionComponent();
@@ -212,7 +250,8 @@ public class BundleResource {
 		MedicationStatementResource medicationStatementResource = new MedicationStatementResource();
 		List<Medication> medications = new ArrayList<>();
 		List<MedicationStatement> medicationStatements = medicationStatementResource
-				.createMedicationStatementsFromPrescriptions(new Reference(patientFullUrl), prescriptions, medications);
+				.createMedicationStatementsFromPrescriptions(new Reference(patientFullUrl), prescriptions,
+						resourceFactory);
 		List<Reference> medicationReferences = new ArrayList<>();
 		for (MedicationStatement medicationStatement : medicationStatements) {
 			String medicationStatementFullUrl = FHIRConstants.UUID_PREFIX + medicationStatement.getId();
@@ -240,7 +279,8 @@ public class BundleResource {
 		composition.addSection(medicationSection);
 
 		// Procedures
-		List<Procedure> procedures = ProcedureResource.createProcedures(new Reference(patientFullUrl), sourcePatient);
+		List<Procedure> procedures = ProcedureResource.createProcedures(new Reference(patientFullUrl), sourcePatient,
+				resourceFactory);
 		List<Reference> procedureReferences = new ArrayList<>();
 		for (Procedure procedure : procedures) {
 			String procedureFullUrl = FHIRConstants.UUID_PREFIX + procedure.getId();
@@ -260,7 +300,8 @@ public class BundleResource {
 		composition.addSection(procedureSection);
 
 		// Observations
-		List<Observation> observations = ObservationResource.createObservations(new Reference(patientFullUrl));
+		List<Observation> observations = ObservationResource.createObservations(new Reference(patientFullUrl),
+				resourceFactory, findingsService);
 		List<Reference> observationReferences = new ArrayList<>();
 		for (Observation observation : observations) {
 			String observationFullUrl = FHIRConstants.UUID_PREFIX + observation.getId();
@@ -281,7 +322,7 @@ public class BundleResource {
 
 		// Risk Factors (as Observations)
 		List<Observation> riskFactors = RiskFactorResource.createRiskFactors(new Reference(patientFullUrl),
-				sourcePatient);
+				sourcePatient, resourceFactory);
 		List<Reference> riskFactorReferences = new ArrayList<>();
 		for (Observation riskFactor : riskFactors) {
 			String riskFactorFullUrl = FHIRConstants.UUID_PREFIX + riskFactor.getId();
@@ -294,7 +335,8 @@ public class BundleResource {
 		}
 
 		List<FamilyMemberHistory> familyHistories = FamilyMemberHistoryResource
-				.createFamilyMemberHistories(new Reference(patientFullUrl), sourcePatient);
+				.createFamilyMemberHistories(new Reference(patientFullUrl), sourcePatient, findingsService,
+						resourceFactory);
 		List<Reference> familyHistoryReferences = new ArrayList<>();
 		for (FamilyMemberHistory familyHistory : familyHistories) {
 			String familyHistoryFullUrl = FHIRConstants.UUID_PREFIX + familyHistory.getId();
@@ -369,5 +411,16 @@ public class BundleResource {
 			}
 		}
 		return null;
+	}
+
+	private static Optional<IUser> findMandatorUser(Optional<IMandator> mandator) {
+		if (mandator.isEmpty()) {
+			return Optional.empty();
+		}
+		IQuery<IUser> userQuery = CoreModelServiceHolder.get().getQuery(IUser.class);
+		userQuery.and(ModelPackage.Literals.IUSER__ASSIGNED_CONTACT, COMPARATOR.NOT_EQUALS, null);
+		return userQuery.execute().stream().filter(
+				u -> u.getAssignedContact() != null && u.getAssignedContact().getId().equals(mandator.get().getId()))
+				.findFirst();
 	}
 }

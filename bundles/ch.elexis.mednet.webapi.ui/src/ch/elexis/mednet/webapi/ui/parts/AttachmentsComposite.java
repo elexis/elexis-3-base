@@ -7,11 +7,11 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.core.commands.Command;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -30,15 +30,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
-
 
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.Identifiable;
+import ch.elexis.core.services.holder.StoreToStringServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.mednet.webapi.core.fhir.resources.util.AttachmentsUtil;
 import ch.elexis.mednet.webapi.core.messages.Messages;
-
+import ch.elexis.mednet.webapi.ui.handler.DocumentRemovalListener;
 
 public class AttachmentsComposite extends Composite {
 
@@ -52,6 +51,12 @@ public class AttachmentsComposite extends Composite {
 		super(parent, style);
 		this.setData("org.eclipse.e4.ui.css.CssClassName", "CustomComposite"); //$NON-NLS-1$ //$NON-NLS-2$
 		createContent();
+	}
+
+	private DocumentRemovalListener removalListener;
+
+	public void setDocumentRemovalListener(DocumentRemovalListener listener) {
+		this.removalListener = listener;
 	}
 
 	private void createContent() {
@@ -189,12 +194,20 @@ public class AttachmentsComposite extends Composite {
 				remove.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseUp(MouseEvent e) {
+						String data = (String) remove.getData();
 						List<String> removeParts = Arrays
 								.asList(getDocuments().split(AttachmentsUtil.ATTACHMENT_DELIMITER));
-						String removedString = removeParts.stream().filter(part -> !part.equals(remove.getData()))
+						String removedString = removeParts.stream().filter(part -> !part.equals(data))
 								.collect(Collectors.joining(AttachmentsUtil.ATTACHMENT_DELIMITER));
 						setDocuments(removedString);
-					};
+						Optional<Identifiable> loaded = StoreToStringServiceHolder.get().loadFromString(data);
+						if (loaded.isPresent() && loaded.get() instanceof IDocument) {
+							IDocument removedDocument = (IDocument) loaded.get();
+							if (removalListener != null) {
+								removalListener.documentRemoved(removedDocument);
+							}
+						}
+					}
 				});
 				remove.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 			}

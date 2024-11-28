@@ -98,7 +98,7 @@ public class MednetAuthService implements IMednetAuthService {
 
 			} catch (Exception ex) {
 
-				LoggerFactory.getLogger(getClass()).error("Error when retrieving a new token", ex);
+				LoggerFactory.getLogger(getClass()).error("Error when removing token", ex);
 			} finally {
 				context.ungetService(serviceReference);
 			}
@@ -108,9 +108,8 @@ public class MednetAuthService implements IMednetAuthService {
 		return Optional.empty();
 	}
 
-
-	private Optional<String> getToken(String tokenGroup, IMednetAuthUi iHinAuthUi) {
-		Optional<String> authCode = getAuthCode(tokenGroup, iHinAuthUi);
+	private Optional<String> getToken(String tokenGroup, IMednetAuthUi iMednetAuthUi) {
+		Optional<String> authCode = getAuthCode(tokenGroup, iMednetAuthUi);
 		if (authCode.isPresent()) {
 			return getAccessToken(tokenGroup, authCode.get(), getOauthRestUrl());
 		} else {

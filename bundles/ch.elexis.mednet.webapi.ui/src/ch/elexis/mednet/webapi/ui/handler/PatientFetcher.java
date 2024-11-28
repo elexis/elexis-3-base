@@ -1,61 +1,60 @@
 package ch.elexis.mednet.webapi.ui.handler;
 
-import ca.uhn.fhir.context.FhirContext;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+
+import javax.inject.Inject;
+
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Patient;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+
+import ch.elexis.core.findings.IFindingsService;
+import ch.elexis.core.findings.util.ModelUtil;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.IModelService;
+import ch.elexis.core.ui.e4.util.CoreUiUtil;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.mednet.webapi.core.IMednetAuthUi;
 import ch.elexis.mednet.webapi.core.constants.ApiConstants;
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
 import ch.elexis.mednet.webapi.core.fhir.resources.BundleResource;
 import ch.elexis.mednet.webapi.core.fhir.resources.PatientResource;
 import ch.elexis.mednet.webapi.core.fhir.resources.util.AdjustBundleIdentifiers;
+import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
 import ch.elexis.mednet.webapi.core.fhir.resources.util.JsonManipulator;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Patient;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 public class PatientFetcher {
 
-	@org.osgi.service.component.annotations.Reference(cardinality = ReferenceCardinality.OPTIONAL, policyOption = ReferencePolicyOption.GREEDY)
+	@Inject
 	private IMednetAuthUi authUi;
 
+	@Inject
+	private FhirResourceFactory resourceFactory;
+	
+	@Inject
+	private IFindingsService findingsService;
+
+	private IModelService coreModelService;
+
 	private static final Logger logger = LoggerFactory.getLogger(PatientFetcher.class);
-	private FhirContext fhirContext;
 	private String token;
 	private static final Gson gson = new Gson();
 
-    @Activate
-    public void activate() {
-        this.fhirContext = FhirContext.forR4();
-        logger.info("PatientFetcher activated successfully.");
-    }
-
-    @Deactivate
-    public void deactivate() {
-        logger.info("PatientFetcher deactivated.");
-    }
 
 	public void setToken(String token) {
 		this.token = token;
@@ -63,10 +62,13 @@ public class PatientFetcher {
 
 	public PatientFetcher(String token) {
 		this.token = token;
-		fhirContext = FhirContext.forR4();
+
+		CoreUiUtil.injectServices(this);
 		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		ServiceReference<IMednetAuthUi> serviceReference = context.getServiceReference(IMednetAuthUi.class);
 		authUi = context.getService(serviceReference);
+		this.coreModelService = OsgiServiceUtil
+				.getService(IModelService.class, "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)").get();
 	}
 
 	public String fetchCustomerId() {
@@ -192,19 +194,21 @@ public class PatientFetcher {
 		return response;
 	}
 
-
-
 	public String fillPatientData(IPatient sourcePatient, JsonObject patientJson, List<IDocument> selectedDocuments,
 			boolean isEpdSelected) {
 		String apiUrl = ApiConstants.PATIENTS_URL;
 
 	    Bundle patientOverviewBundle = new Bundle();
-	    Patient fhirPatient = PatientResource.createFhirPatient(sourcePatient, patientOverviewBundle);
+		Patient fhirPatient = resourceFactory.getResource(sourcePatient, IPatient.class, Patient.class);
+		fhirPatient.setId(UUID.nameUUIDFromBytes(sourcePatient.getId().getBytes()).toString());
+		fhirPatient.getMeta().addProfile(FHIRConstants.PROFILE_PATIENT);
+
+		PatientResource.addContactInformation(sourcePatient, fhirPatient, patientOverviewBundle, resourceFactory);
 		patientOverviewBundle = BundleResource.createPatientOverviewBundle(fhirPatient, sourcePatient,
-				selectedDocuments, isEpdSelected);
+				selectedDocuments, isEpdSelected, resourceFactory, coreModelService, findingsService);
 	    AdjustBundleIdentifiers.adjustBundleIdentifiers(patientOverviewBundle);
 
-	    String jsonString = fhirContext.newJsonParser().encodeResourceToString(patientOverviewBundle);
+		String jsonString = ModelUtil.getFhirJson(patientOverviewBundle);
 	    String bundleJsonString = AdjustBundleIdentifiers.AdjustJsonString.adjustBundleJsonString(jsonString);
 
 	    JsonObject payload = new JsonObject();
@@ -222,7 +226,6 @@ public class PatientFetcher {
 	            patientJson.get(FHIRConstants.FHIRKeys.FORM_ID).getAsString());
 		urlConfig.addProperty(FHIRConstants.FHIRKeys.ONLY_ONE_TAB, false);
 	    payload.add("urlConfig", urlConfig);
-
 		String payloadJson = gson.toJson(payload);
 		JsonManipulator manipulator = new JsonManipulator();
 		try {
@@ -231,13 +234,11 @@ public class PatientFetcher {
 			logger.error("Error when customizing the JSON: ", e);
 			return null;
 		}
-		System.out.println("playloadstring " + payloadJson);
 		try {
 			String response = Request.Post(apiUrl).addHeader("Authorization", "Bearer " + token)
 					.bodyString(payloadJson, ContentType.APPLICATION_JSON)
 					.execute().returnContent().asString();
-
-			System.out.println("Response: " + response);
+			logger.info("Response: " + response);
 	        authUi.openBrowser(response);
 	        return response;
 	    } catch (IOException e) {
@@ -245,6 +246,4 @@ public class PatientFetcher {
 	        return null;
 	    }
 	}
-
 }
-

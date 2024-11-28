@@ -1,44 +1,33 @@
 package ch.elexis.mednet.webapi.core.fhir.resources;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.hl7.fhir.r4.model.Attachment;
-
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.DocumentReference;
 import org.hl7.fhir.r4.model.Enumerations.DocumentReferenceStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-
-import ch.elexis.core.findings.util.fhir.transformer.mapper.IDocumentAttributeMapper;
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
-import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
 import ch.elexis.omnivore.model.IDocumentHandle;
 
 public class DocumentResource {
 
 	private static final Logger logger = LoggerFactory.getLogger(DocumentResource.class);
-
-//    private static IDocumentAttributeMapper documentMapper = new IDocumentAttributeMapper(getDocumentStores());
 
 	public static List<DocumentReference> createDocuments(IPatient sourcePatient, String patientFullUrl,
 			List<IDocument> selectedDocuments, boolean isEpdSelected) {
@@ -70,7 +59,6 @@ public class DocumentResource {
                 snomedCoding.setDisplay("Report of clinical encounter (record artifact)");
                 category.addCoding(snomedCoding);
 
-				System.out.println("isEpdSelected " + isEpdSelected);
 				if (isEpdSelected) {
 					Coding esanitaCoding = new Coding();
 					esanitaCoding.setSystem(FHIRConstants.ESANITA_SYSTEM);

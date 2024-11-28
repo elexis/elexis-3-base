@@ -1,61 +1,37 @@
 package ch.elexis.mednet.webapi.core.fhir.resources;
 
-import ch.elexis.core.model.IPatient;
-import ch.elexis.core.model.IRelatedContact;
-import ch.elexis.core.model.IContact;
-import ch.elexis.core.model.IPerson;
-import ch.elexis.core.services.IModelService;
-import ch.elexis.core.services.IXidService;
-import ch.elexis.core.utils.OsgiServiceUtil;
-import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
-import ch.elexis.core.findings.util.fhir.transformer.mapper.IPatientPatientAttributeMapper;
-import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.elexis.core.types.Gender;
-import ch.elexis.core.types.LocalizeUtil;
-import ch.elexis.core.types.RelationshipType;
-
-
-import org.hl7.fhir.r4.model.ContactPoint;
-import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Organization;
-import org.hl7.fhir.r4.model.Address;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Patient.ContactComponent;
-import org.hl7.fhir.r4.model.Reference;
-
-import ca.uhn.fhir.rest.api.SummaryEnum;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Patient.ContactComponent;
+import org.hl7.fhir.r4.model.Reference;
+
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IPerson;
+import ch.elexis.core.model.IRelatedContact;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.types.Gender;
+import ch.elexis.core.types.LocalizeUtil;
+import ch.elexis.core.types.RelationshipType;
+import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
+import ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory;
+
 public class PatientResource {
-	@org.osgi.service.component.annotations.Reference(target = "(" + IModelService.SERVICEMODELNAME
-			+ "=ch.elexis.core.model)")
-	private static IModelService coreModelService;
 
-	@org.osgi.service.component.annotations.Reference
-	private static IXidService xidService = OsgiServiceUtil.getService(IXidService.class).get();
-
-	private static IPatientPatientAttributeMapper patientMapper = new IPatientPatientAttributeMapper(coreModelService,
-			xidService);
-
-	public static Patient createFhirPatient(IPatient sourcePatient, Bundle bundle) {
-	    Patient fhirPatient = new Patient();
-	    patientMapper.elexisToFhir(sourcePatient, fhirPatient, SummaryEnum.DATA, null);
-		fhirPatient.setId(UUID.nameUUIDFromBytes(sourcePatient.getId().getBytes()).toString());
-		fhirPatient.getMeta().addProfile(FHIRConstants.PROFILE_PATIENT);
-
-	    addContactInformation(sourcePatient, fhirPatient, bundle);
-	    return fhirPatient;
-	}
-
-	private static void addContactInformation(IPatient source, Patient target, Bundle bundle) {
+	public static void addContactInformation(IPatient source, Patient target, Bundle bundle,
+			FhirResourceFactory resourceFactory) {
 		List<ContactComponent> contacts = new ArrayList<>();
 		List<IRelatedContact> relatedContacts = source.getRelatedContacts();
 		for (IRelatedContact relatedContact : relatedContacts) {
@@ -71,7 +47,8 @@ public class PatientResource {
 					String organizationFullUrl = FHIRConstants.UUID_PREFIX
 							+ UUID.nameUUIDFromBytes(organizationId.getBytes()).toString();
 					if (bundle.getEntry().stream().noneMatch(entry -> organizationFullUrl.equals(entry.getFullUrl()))) {
-						Organization organization = OrganizationResource.createOrganization(otherContact);
+						Organization organization = OrganizationResource.createOrganization(otherContact,
+								resourceFactory);
 						bundle.addEntry().setFullUrl(organizationFullUrl).setResource(organization);
 					}
 

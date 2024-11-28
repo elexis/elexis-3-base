@@ -26,6 +26,7 @@ import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.documents.composites.DocumentsSelectionComposite;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.mednet.webapi.core.messages.Messages;
+import ch.elexis.mednet.webapi.ui.handler.DocumentRemovalListener;
 
 public class DocumentsSelectionDialog extends TitleAreaDialog {
 
@@ -106,13 +107,18 @@ public class DocumentsSelectionDialog extends TitleAreaDialog {
 		attachments.setAttachments(attachmentsString);
 		attachments.setDocuments(documentsString);
 		attachments.setPostfix(toString);
+		attachments.setDocumentRemovalListener(new DocumentRemovalListener() {
+			@Override
+			public void documentRemoved(IDocument document) {
+				selectedDocuments.removeIf(doc -> doc.getId().equals(document.getId()));
+			}
+		});
 
 		return area;
 	}
 
 	@Override
 	protected void okPressed() {
-		// Capture the state of the checkbox before the dialog is closed
 		isEpdSelected = epdCheckbox.getSelection();
 		super.okPressed();
 	}
@@ -122,7 +128,6 @@ public class DocumentsSelectionDialog extends TitleAreaDialog {
 	}
 
 	public boolean isEpdCheckboxSelected() {
-		// Return the stored state from okPressed
 		return isEpdSelected;
 	}
 }

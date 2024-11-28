@@ -14,13 +14,13 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.ui.InboxModelServiceHolder;
-import at.medevit.elexis.inbox.ui.dialog.MandantSelectorDialog;
 import at.medevit.elexis.inbox.ui.part.InboxView;
 import at.medevit.elexis.inbox.ui.part.model.GroupedInboxElements;
 import at.medevit.elexis.inbox.ui.part.provider.InboxElementContentProvider;
 import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.ui.UiDesk;
+import ch.elexis.core.ui.e4.dialog.MandantSelectorDialog;
 
 public class ChangeMandantCommand extends AbstractHandler implements IHandler {
 

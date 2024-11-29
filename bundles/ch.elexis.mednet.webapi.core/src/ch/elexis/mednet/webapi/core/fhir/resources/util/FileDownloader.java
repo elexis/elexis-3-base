@@ -1,14 +1,14 @@
 package ch.elexis.mednet.webapi.core.fhir.resources.util;
 
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.io.File;
-import java.lang.reflect.Type;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,23 +17,22 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.mednet.webapi.core.IMednetAuthService;
 import ch.elexis.mednet.webapi.core.constants.ApiConstants;
 import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
-
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class FileDownloader {
@@ -291,18 +290,30 @@ public class FileDownloader {
 
 	private String getDownloadStore() {
 		try {
-			String pluginId = PreferenceConstants.MEDNET_PLUGIN_STRING;
-			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(pluginId);
-			String downloadPath = node.get(PreferenceConstants.MEDNET_DOWNLOAD_PATH, "");
-			if (downloadPath == null || downloadPath.trim().isEmpty()) {
-				logger.warn("No download path found in the preferences. ");
-			} else {
-				logger.info("Download path retrieved: {}", downloadPath);
+			BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+			ServiceReference<IConfigService> serviceReference = context.getServiceReference(IConfigService.class);
+
+			if (serviceReference != null) {
+				IConfigService configService = context.getService(serviceReference);
+				if (configService != null) {
+					String downloadPath = configService.getActiveUserContact(PreferenceConstants.MEDNET_DOWNLOAD_PATH,
+							"");
+
+					if (downloadPath == null || downloadPath.trim().isEmpty()) {
+						logger.warn("No download path found in preferences.");
+					} else {
+						logger.info("Download path retrieved: {}", downloadPath);
+					}
+
+					return downloadPath;
+				}
 			}
-			return downloadPath;
+
 		} catch (Exception e) {
 			logger.error("Error when retrieving the download path from the preferences: {}", e.getMessage(), e);
 			return "";
 		}
+		return null;
 	}
+
 }

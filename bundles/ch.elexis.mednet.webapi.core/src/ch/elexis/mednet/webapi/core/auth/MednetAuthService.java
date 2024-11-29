@@ -20,9 +20,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -32,15 +29,15 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.mednet.webapi.core.IMednetAuthService;
 import ch.elexis.mednet.webapi.core.IMednetAuthUi;
 import ch.elexis.mednet.webapi.core.constants.ApiConstants;
 import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import ch.elexis.mednet.webapi.core.messages.Messages;
 
 @Component
 public class MednetAuthService implements IMednetAuthService {
@@ -194,7 +191,7 @@ public class MednetAuthService implements IMednetAuthService {
 
 		LoggerFactory.getLogger(getClass()).info("Browser opened with URL: {}", authUrl);
 
-		Object value = iMedNetAuthUi.getWithCancelableProgress("Mednet Berechtigung im Browser bestätigen.",
+		Object value = iMedNetAuthUi.getWithCancelableProgress(Messages.MednetAuthService_browserAuthorizationPrompt,
 				new GetAuthCodeWithStateSupplier(stateValue));
 
 		if (value instanceof String) {
@@ -230,9 +227,16 @@ public class MednetAuthService implements IMednetAuthService {
 	}
 
 	private String getLoginHint() {
-		IEclipsePreferences node = InstanceScope.INSTANCE
-				.getNode(String.valueOf(FrameworkUtil.getBundle(getClass()).getBundleId()));
-		return node.get(PreferenceConstants.MEDNET_USER_STRING, "");
+		if (configService == null) {
+			throw new IllegalStateException("IConfigService ist nicht initialisiert.");
+		}
+		String userName = configService.getActiveUserContact(PreferenceConstants.MEDNET_USER_STRING, "");
+		if (userName == null || userName.trim().isEmpty()) {
+			LoggerFactory.getLogger(getClass()).warn("Kein Login-Hinweis in den Einstellungen gefunden.");
+		} else {
+			LoggerFactory.getLogger(getClass()).info("Login-Hinweis abgerufen: {}", userName);
+	    }
+		return userName;
 	}
 
 	private Optional<String> getAccessToken(String tokenGroup, String authCode, String oauthRestUrl) {

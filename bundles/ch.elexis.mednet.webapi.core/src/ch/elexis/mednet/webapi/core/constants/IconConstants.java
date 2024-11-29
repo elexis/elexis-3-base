@@ -3,11 +3,10 @@ package ch.elexis.mednet.webapi.core.constants;
 
 public class IconConstants {
 
-	// Existing icons
 	public static final String ICON_LOGO_MEDNET_WHITE = "icons/logo_mednet_white.png";
 	public static final String ICON_HEARTBEAT = "icons/heartbeat.png";
-	public static final String ICON_OPENFORMVIEW_BLUE = "icons/icon_openformview_blue.png"; // For hover
-	public static final String ICON_OPENFORMVIEW_WHITE = "icons/icon_openformview_white.png"; // Default
+	public static final String ICON_OPENFORMVIEW_BLUE = "icons/icon_openformview_blue.png";
+	public static final String ICON_OPENFORMVIEW_WHITE = "icons/icon_openformview_white.png";
 	public static final String ICON_USERS_SOLID = "icons/users-solid.png";
 	public static final String ICON_BARS_PROGRESS_SOLID = "icons/bars-progress-solid.png";
 	public static final String ICON_HEARTBEAT_PINK = "icons/heartbeat_pink.png";
@@ -15,8 +14,6 @@ public class IconConstants {
 	public static final String ICON_ADDRESS_BOOK_REGULAR_WHITE = "icons/address_book_regular_white.png";
 	public static final String ICON_GET_RESULT = "icons/icon_getresult.png";
 	public static final String ICON_LOGO_MEDNET_FULLCOLOR = "icons/logo_mednet_fullcolor.png";
-
-	// New icons based on the folder image you provided
 	public static final String ICON_BARCODE_BLUE = "icons/barcode_blue.png";
 	public static final String ICON_BARCODE_WHITE = "icons/barcode_white.png";
 	public static final String ICON_BARS_BLUE = "icons/bars_blue.png";
@@ -32,4 +29,8 @@ public class IconConstants {
 	public static final String ICON_SETTINGS_WHITE = "icons/settings_white.png";
 	public static final String ICON_CONECT_BLUE = "icons/conect_blue.png";
 	public static final String ICON_CONECT_WHITE = "icons/conect_white.png";
+	public static final String ICON_TOGGEL_RED = "icons/toggel_red.png";
+	public static final String ICON_TOGGEL_GREEN = "icons/toggel_green.png";
+	public static final String ICON_WARNUNG_GELB = "icons/warnung_gelb.png";
+	public static final String ICON_WARNUNG_GRUEN = "icons/warnung_gruen.png";
 }

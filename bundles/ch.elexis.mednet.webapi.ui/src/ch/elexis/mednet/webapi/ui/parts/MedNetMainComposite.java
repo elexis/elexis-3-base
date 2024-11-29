@@ -7,25 +7,19 @@ import javax.annotation.PostConstruct;
 import org.eclipse.e4.ui.services.EMenuService;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.wb.swt.ResourceManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -33,6 +27,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.mednet.webapi.core.IMednetAuthUi;
 import ch.elexis.mednet.webapi.core.constants.IconConstants;
 import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
@@ -56,7 +51,7 @@ public class MedNetMainComposite {
 	private PatientFetcher patientFetcher;
 	private Color customBlue;
 	private boolean isConnected = false;
-	private Label statusLabel;
+
 
 	@PostConstruct
 	public void createControls(Composite parent, EMenuService menuService) {
@@ -89,6 +84,82 @@ public class MedNetMainComposite {
 		GridData logoGridData = new GridData(SWT.CENTER, SWT.CENTER, true, false);
 		logoLabel.setLayoutData(logoGridData);
 
+		Composite toggleComposite = new Composite(navigationComposite, SWT.NONE);
+		toggleComposite.setLayout(new GridLayout(2, false));
+		toggleComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		toggleComposite.setBackground(customBlue);
+
+		Image toggelRedImage = ResourceManager.getPluginImage(PreferenceConstants.MEDNET_PLUGIN_STRING,
+				IconConstants.ICON_TOGGEL_RED);
+		Image toggelGreenImage = ResourceManager.getPluginImage(PreferenceConstants.MEDNET_PLUGIN_STRING,
+				IconConstants.ICON_TOGGEL_GREEN);
+		Image warnungGelbImage = ResourceManager.getPluginImage(PreferenceConstants.MEDNET_PLUGIN_STRING,
+				IconConstants.ICON_WARNUNG_GELB);
+		Image warnungGruenImage = ResourceManager.getPluginImage(PreferenceConstants.MEDNET_PLUGIN_STRING,
+				IconConstants.ICON_WARNUNG_GRUEN);
+
+		Label toggleLabel = new Label(toggleComposite, SWT.NONE);
+		toggleLabel.setBackground(customBlue);
+		toggleLabel.setImage(toggelRedImage);
+
+		GridData toggleLabelGridData = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		toggleLabel.setLayoutData(toggleLabelGridData);
+
+		Label warningLabel = new Label(toggleComposite, SWT.NONE);
+		warningLabel.setBackground(customBlue);
+		warningLabel.setImage(warnungGelbImage);
+		warningLabel.setToolTipText("die gesendete Formulare werden in Omnivore NICHT importiert");
+		GridData warningLabelGridData = new GridData(SWT.RIGHT, SWT.CENTER, true, false);
+
+		warningLabel.setLayoutData(warningLabelGridData);
+		toggleLabel.addMouseListener(new MouseAdapter() {
+		    @Override
+		    public void mouseUp(MouseEvent e) {
+		        isConnected = !isConnected;
+
+		        if (isConnected) {
+		            // Überprüfen, ob ein Pfad hinterlegt ist
+		            String downloadPath = getDownloadStore();
+		            if (downloadPath == null || downloadPath.trim().isEmpty()) {
+		                // Setze auf Grün und zeige Warnung an
+		                toggleLabel.setImage(toggelGreenImage);
+		                warningLabel.setImage(warnungGelbImage);
+						warningLabel.setToolTipText(Messages.MedNetMainComposite_noPathConfigured);
+
+		                // Zeige Warnung und setze nach Bestätigung auf Rot
+		                MessageDialog.openWarning(
+		                        toggleLabel.getShell(),
+								Messages.MedNetMainComposite_noPathWarningTitle,
+								Messages.MedNetMainComposite_noPathWarningMessage
+		                );
+
+		                // Verbindung deaktivieren nach Warnung
+		                toggleLabel.setImage(toggelRedImage);
+		                warningLabel.setImage(warnungGelbImage);
+						warningLabel.setToolTipText(Messages.MedNetMainComposite_disconnectedTooltip);
+		                isConnected = false;
+		                return;
+		            }
+
+		            // Verbindung aktivieren
+		            toggleLabel.setImage(toggelGreenImage);
+		            warningLabel.setImage(warnungGruenImage);
+					warningLabel.setToolTipText(Messages.MedNetMainComposite_connectedTooltip);
+		            Activator.getInstance().startScheduler();
+		        } else {
+		            // Verbindung deaktivieren
+		            toggleLabel.setImage(toggelRedImage);
+		            warningLabel.setImage(warnungGelbImage);
+					warningLabel.setToolTipText(Messages.MedNetMainComposite_disconnectedTooltip);
+		            Activator.getInstance().stopScheduler();
+		        }
+		    }
+		});
+
+
+
+
+
 		createButtonComposite(navigationComposite,
 				IconConstants.ICON_BARCODE_WHITE, IconConstants.ICON_BARCODE_BLUE,
 				Messages.MedNetMainComposite_formWithPatientData, customBlue, this::connect
@@ -114,7 +185,7 @@ public class MedNetMainComposite {
 		GridData medNetViewerCompositeData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		medNetViewerComposite.setLayoutData(medNetViewerCompositeData);
 		medNetViewerComposite.setLayout(new GridLayout(1, false));
-		createTopBar();
+
 		showInitialLogo();
 		parent.addDisposeListener(e -> {
 			customBlue.dispose();
@@ -138,6 +209,33 @@ public class MedNetMainComposite {
 		}
 	}
 
+	private String getDownloadStore() {
+		String downloadPath = "";
+
+		try {
+			BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+
+			if (context != null) {
+				ServiceReference<IConfigService> serviceReference = context.getServiceReference(IConfigService.class);
+
+				if (serviceReference != null) {
+					IConfigService configService = context.getService(serviceReference);
+
+					if (configService != null) {
+						downloadPath = configService.getActiveUserContact(PreferenceConstants.MEDNET_DOWNLOAD_PATH, "");
+						return downloadPath;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return downloadPath;
+	}
+
+
+
 	private void showInitialLogo() {
 		Composite logoContainer = new Composite(medNetViewerComposite, SWT.NONE);
 		logoContainer.setLayout(new GridLayout(1, false));
@@ -153,71 +251,9 @@ public class MedNetMainComposite {
 		medNetViewerComposite.layout();
 	}
 
-	private void createTopBar() {
-		Composite topBar = new Composite(medNetViewerComposite, SWT.NONE);
-		GridData topBarData = new GridData(SWT.FILL, SWT.TOP, true, false);
-		topBarData.heightHint = 32;
-		topBar.setLayoutData(topBarData);
-		topBar.setLayout(new GridLayout(2, false));
-		topBar.setBackground(customBlue);
-		statusLabel = new Label(topBar, SWT.NONE | SWT.CENTER);
-		statusLabel.setText("Nicht mit MedNet verbunden");
-		statusLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-		statusLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		GridData statusLabelData = new GridData(SWT.FILL, SWT.TOP, true, true);
-		statusLabelData.heightHint = 24;
-		statusLabelData.widthHint = 450;
-		statusLabelData.verticalIndent = -1;
-		statusLabel.setLayoutData(statusLabelData);
-		updateStatusLabel();
-
-		createButtonCompositeConnect(topBar, IconConstants.ICON_CONECT_WHITE, IconConstants.ICON_CONECT_BLUE,
-				Messages.MedNetMainComposite_connect, customBlue, () -> {
-					isConnected = !isConnected;
-					if (isConnected) {
-						Activator.getInstance().startScheduler();
-					} else {
-						Activator.getInstance().stopScheduler();
-					}
-					updateStatusLabel();
-
-					medNetViewerComposite.layout();
-				});
-		FontData[] fontData = statusLabel.getFont().getFontData();
-		for (FontData fd : fontData) {
-			fd.setHeight(10);
-			fd.setStyle(SWT.BOLD);
-		}
-		Font boldFont = new Font(topBar.getDisplay(), fontData);
-		statusLabel.setFont(boldFont);
-		statusLabel.addDisposeListener(e -> boldFont.dispose());
-	}
-
-	private void updateStatusLabel() {
-		if (isConnected) {
-			statusLabel.setText("mednet Formulare werden automatisch im Omnivore importiert");
-			statusLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
-			statusLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
-			if (!submittedFormsComposite.isDisposed()) {
-				submittedFormsComposite.refreshTableData();
-			}
-		} else {
-			statusLabel.setText("mednet Formulare werden NICHT im Omnivore importiert");
-			statusLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-			statusLabel.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-		}
-		if (submittedFormsComposite != null) {
-			Display.getDefault().timerExec(500, () -> {
-				if (!submittedFormsComposite.isDisposed()) {
-					submittedFormsComposite.refreshTableData();
-				}
-			});
-		}
-	}
-
 	private void loadCustomers() {
 		clearPreviousData();
-		createTopBar();
+
 		customerComposite = new CustomerComposite(medNetViewerComposite, this::loadProviders);
 		customerComposite.show();
 		medNetViewerComposite.layout();
@@ -225,7 +261,7 @@ public class MedNetMainComposite {
 
 	private void showSubmittedForms() {
 		clearPreviousData();
-		createTopBar();
+
 		submittedFormsComposite = new SubmittedFormsComposite(medNetViewerComposite);
 		submittedFormsComposite.showSubmittedForms();
 		medNetViewerComposite.layout();
@@ -255,7 +291,7 @@ public class MedNetMainComposite {
 
 	private void loadProviders(Integer customerId) {
 		clearPreviousData();
-		createTopBar();
+
 		providerComposite = new ProviderComposite(medNetViewerComposite, this::loadForms, patientFetcher);
 		providerComposite.show(customerId);
 		medNetViewerComposite.layout();
@@ -267,7 +303,7 @@ public class MedNetMainComposite {
 			NavigationState previousState = navigationStack.peek();
 			if (previousState.customerId != null) {
 				clearPreviousData();
-				createTopBar();
+
 				formComposite = new FormComposite(medNetViewerComposite);
 				formComposite.show(previousState.customerId, providerId);
 				medNetViewerComposite.layout();
@@ -374,49 +410,6 @@ public class MedNetMainComposite {
 				hoverIcon.dispose();
 			}
 		});
-		return buttonComposite;
-	}
-
-	private Composite createButtonCompositeConnect(Composite parent, String iconPathDefault, String iconPathHover,
-			String buttonText, Color customBlue, Runnable onClickAction) {
-		Composite buttonComposite = new Composite(parent, SWT.NONE);
-		buttonComposite.setBackground(customBlue);
-		buttonComposite.setLayout(new GridLayout(2, false));
-		GridData gridData = new GridData(SWT.RIGHT, SWT.TOP, true, false);
-		gridData.heightHint = 32;
-		gridData.widthHint = 180;
-		gridData.verticalIndent = -3;
-		buttonComposite.setLayoutData(gridData);
-
-		Image defaultIcon = ResourceManager.getPluginImage(PreferenceConstants.MEDNET_PLUGIN_STRING, iconPathDefault);
-		Image hoverIcon = ResourceManager.getPluginImage(PreferenceConstants.MEDNET_PLUGIN_STRING, iconPathHover);
-
-		Label iconLabel = new Label(buttonComposite, SWT.NONE);
-		iconLabel.setImage(defaultIcon);
-		iconLabel.setBackground(customBlue);
-		GridData iconGridData = new GridData(SWT.LEFT, SWT.CENTER, false, true);
-		iconGridData.widthHint = 20;
-		iconGridData.heightHint = 20;
-		iconGridData.verticalIndent = -3;
-		iconLabel.setLayoutData(iconGridData);
-
-		Label textLabel = new Label(buttonComposite, SWT.LEFT | SWT.WRAP);
-		textLabel.setText(buttonText);
-		FontData[] fontData = textLabel.getFont().getFontData();
-		for (FontData fd : fontData) {
-			fd.setHeight(10);
-			fd.setStyle(SWT.BOLD);
-		}
-		Font boldFont = new Font(parent.getDisplay(), fontData);
-		textLabel.setFont(boldFont);
-		textLabel.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		textLabel.setBackground(customBlue);
-		textLabel.addDisposeListener(e -> boldFont.dispose());
-		GridData textGridData = new GridData(SWT.LEFT, SWT.TOP, true, true);
-		textGridData.verticalIndent = -2;
-		textLabel.setLayoutData(textGridData);
-		addHoverEffect(buttonComposite, iconLabel, textLabel, defaultIcon, hoverIcon, customBlue);
-		addPressReleaseEffect(buttonComposite, iconLabel, textLabel, hoverIcon, onClickAction, customBlue);
 		return buttonComposite;
 	}
 

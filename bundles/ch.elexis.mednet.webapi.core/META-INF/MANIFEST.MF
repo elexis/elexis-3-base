@@ -17,7 +17,8 @@ Require-Bundle: org.apache.commons.commons-io,
  info.elexis.target.hapi.fhir,
  com.google.gson,
  ch.elexis.core,
- ch.elexis.core.findings.util
+ ch.elexis.core.findings.util,
+ at.medevit.ch.artikelstamm
 Automatic-Module-Name: ch.elexis.mednet.webapi.core
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
@@ -39,6 +40,7 @@ Import-Package: ch.elexis.core.documents,
 Service-Component: OSGI-INF/ch.elexis.mednet.webapi.core.auth.MednetAuthService.xml,
  OSGI-INF/ch.elexis.mednet.webapi.core.fhir.resources.OrganizationResource.xml,
  OSGI-INF/ch.elexis.mednet.webapi.core.fhir.resources.util.FhirResourceFactory.xml,
+ OSGI-INF/ch.elexis.mednet.webapi.core.service.ArtikelstammModelServiceHolder.xml,
  OSGI-INF/ch.elexis.mednet.webapi.core.service.DocumentConverterServiceHolder.xml,
  OSGI-INF/ch.elexis.mednet.webapi.core.service.DocumentStoreServiceHolder.xml,
  OSGI-INF/ch.elexis.mednet.webapi.core.service.OmnivoreModelServiceHolder.xml

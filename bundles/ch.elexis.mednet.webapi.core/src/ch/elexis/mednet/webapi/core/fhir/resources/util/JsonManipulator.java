@@ -1,10 +1,11 @@
 package ch.elexis.mednet.webapi.core.fhir.resources.util;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.IOException;
 
 public class JsonManipulator {
 
@@ -25,22 +26,21 @@ public class JsonManipulator {
 	 */
 	public String adjustDocumentReference(String jsonString) throws IOException {
 		JsonNode rootNode = mapper.readTree(jsonString);
-		JsonNode contentNode = rootNode.path("content");
-		if (contentNode.has("resourceType") && "Bundle".equals(contentNode.get("resourceType").asText())) {
-			JsonNode entryArray = contentNode.path("entry");
+		if (rootNode.has("resourceType") && "Bundle".equals(rootNode.get("resourceType").asText())) {
+			JsonNode entryArray = rootNode.path("entry");
 			if (entryArray.isArray()) {
 				for (JsonNode entry : entryArray) {
 					processDocumentReference(entry);
 				}
-			}
+	        }
 		} else {
-
 			processDocumentReference(rootNode);
-		}
+	    }
 		String adjustedJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
 
 		return adjustedJson;
 	}
+
 	
 
 	private void processDocumentReference(JsonNode node) {

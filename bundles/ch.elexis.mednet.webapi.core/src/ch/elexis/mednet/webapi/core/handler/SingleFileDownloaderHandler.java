@@ -21,6 +21,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.services.IConfigService;
 import ch.elexis.mednet.webapi.core.IMednetAuthService;
 import ch.elexis.mednet.webapi.core.constants.ApiConstants;
 import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
@@ -111,11 +112,31 @@ public class SingleFileDownloaderHandler {
 	 */
 	private String getDownloadStore() {
 		try {
+			// Überprüfen, ob der IConfigService verfügbar ist
+			BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+			ServiceReference<IConfigService> serviceReference = context.getServiceReference(IConfigService.class);
 
+			if (serviceReference != null) {
+				IConfigService configService = context.getService(serviceReference);
+				if (configService != null) {
+					// Download-Pfad aus IConfigService abrufen
+					String downloadPath = configService.getActiveUserContact(PreferenceConstants.MEDNET_DOWNLOAD_PATH,
+							"");
+
+					if (downloadPath == null || downloadPath.trim().isEmpty()) {
+						logger.warn("No download path found in preferences.");
+					} else {
+						logger.info("Download path retrieved: {}", downloadPath);
+					}
+
+					return downloadPath;
+				}
+			}
+
+			// Fallback: Verwenden von IEclipsePreferences, falls IConfigService nicht
+			// verfügbar ist
 			String pluginId = PreferenceConstants.MEDNET_PLUGIN_STRING;
-
 			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(pluginId);
-
 			String downloadPath = node.get(PreferenceConstants.MEDNET_DOWNLOAD_PATH, "");
 
 			if (downloadPath == null || downloadPath.trim().isEmpty()) {
@@ -131,6 +152,7 @@ public class SingleFileDownloaderHandler {
 			return "";
 		}
 	}
+
 
 	private void acknowledgeDownloadSuccess(String packageId) {
 		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();

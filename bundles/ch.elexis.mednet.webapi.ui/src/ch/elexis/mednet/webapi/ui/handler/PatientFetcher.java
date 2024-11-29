@@ -208,15 +208,19 @@ public class PatientFetcher {
 				selectedDocuments, isEpdSelected, resourceFactory, coreModelService, findingsService);
 	    AdjustBundleIdentifiers.adjustBundleIdentifiers(patientOverviewBundle);
 
-		String jsonString = ModelUtil.getFhirJson(patientOverviewBundle);
-	    String bundleJsonString = AdjustBundleIdentifiers.AdjustJsonString.adjustBundleJsonString(jsonString);
+		String bundleJsonString = ModelUtil.getFhirJson(patientOverviewBundle);
 
+		JsonManipulator manipulator = new JsonManipulator();
+		try {
+			bundleJsonString = manipulator.adjustDocumentReference(bundleJsonString);
+		} catch (IOException e) {
+			logger.error("Error when customizing the JSON: ", e);
+			return null;
+		}
 	    JsonObject payload = new JsonObject();
 	    payload.addProperty("contentType", "FHIR");
-
 		JsonObject contentJson = JsonParser.parseString(bundleJsonString).getAsJsonObject();
 		payload.add("content", contentJson);
-
 	    JsonObject urlConfig = new JsonObject();
 	    urlConfig.addProperty(FHIRConstants.FHIRKeys.CUSTOMER_ID,
 	            patientJson.get(FHIRConstants.FHIRKeys.CUSTOMER_ID).getAsString());
@@ -226,18 +230,13 @@ public class PatientFetcher {
 	            patientJson.get(FHIRConstants.FHIRKeys.FORM_ID).getAsString());
 		urlConfig.addProperty(FHIRConstants.FHIRKeys.ONLY_ONE_TAB, false);
 	    payload.add("urlConfig", urlConfig);
+
 		String payloadJson = gson.toJson(payload);
-		JsonManipulator manipulator = new JsonManipulator();
+
 		try {
-			payloadJson = manipulator.adjustDocumentReference(payloadJson);
-		} catch (IOException e) {
-			logger.error("Error when customizing the JSON: ", e);
-			return null;
-		}
-		try {
+			System.out.println("payloadJson " + payloadJson);
 			String response = Request.Post(apiUrl).addHeader("Authorization", "Bearer " + token)
-					.bodyString(payloadJson, ContentType.APPLICATION_JSON)
-					.execute().returnContent().asString();
+					.bodyString(payloadJson, ContentType.APPLICATION_JSON).execute().returnContent().asString();
 			logger.info("Response: " + response);
 	        authUi.openBrowser(response);
 	        return response;

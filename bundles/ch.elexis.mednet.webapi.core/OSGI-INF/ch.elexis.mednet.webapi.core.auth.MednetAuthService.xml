@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="ch.elexis.mednet.webapi.core.auth.MednetAuthService">
+   <service>
+      <provide interface="ch.elexis.mednet.webapi.core.IMednetAuthService"/>
+   </service>
+   <reference cardinality="0..1" field="authUi" interface="ch.elexis.mednet.webapi.core.IMednetAuthUi" name="authUi" policy-option="greedy"/>
+   <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
+   <implementation class="ch.elexis.mednet.webapi.core.auth.MednetAuthService"/>
+</scr:component>

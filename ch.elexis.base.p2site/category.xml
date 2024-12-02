@@ -263,7 +263,7 @@
       <category name="dataexchange"/>
    </feature>
    <feature id="ch.framsteg.elexis.hin.auth.feature">
-	   <category name="libraries"/>
+      <category name="libraries"/>
    </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
@@ -278,6 +278,12 @@
       <category name="libraries"/>
    </bundle>
    <bundle id="ch.elexis.fire.ui">
+      <category name="libraries"/>
+   </bundle>
+   <bundle id="ch.elexis.mednet.webapi.core">
+      <category name="libraries"/>
+   </bundle>
+   <bundle id="ch.elexis.mednet.webapi.ui">
       <category name="libraries"/>
    </bundle>
    <category-def name="basepackages" label="Basispakete"/>

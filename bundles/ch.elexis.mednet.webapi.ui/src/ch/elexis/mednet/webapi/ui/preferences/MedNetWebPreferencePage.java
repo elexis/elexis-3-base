@@ -31,8 +31,7 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
     public MedNetWebPreferencePage() {
         super(GRID);
 		ScopedPreferenceStore preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE,
-				PreferenceConstants.MEDNET_PLUGIN_STRING
-		);
+				PreferenceConstants.MEDNET_PLUGIN_STRING);
 		setPreferenceStore(preferenceStore);
 
         setDescription(Messages.MedNetWebPreferencePage_configForMedNetWebAPI);
@@ -55,7 +54,7 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
     }
 
     @Override
-    public void init(IWorkbench workbench) {
+	public void init(IWorkbench workbench) {
 		if (configService == null) {
 
 			BundleContext context = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
@@ -74,32 +73,26 @@ public class MedNetWebPreferencePage extends FieldEditorPreferencePage implement
         getPreferenceStore().setValue(PreferenceConstants.MEDNET_USER_STRING, userName);
     }
 
-    @Override
-    public boolean performOk() {
+	@Override
+	public boolean performOk() {
+		boolean result = super.performOk();
 		applyChanges();
-		return super.performOk();
+		return result;
 	}
 
 	@Override
 	protected void performApply() {
-		applyChanges();
 		super.performApply();
+		applyChanges();
 	}
 
 	private void applyChanges() {
 		if (configService != null) {
-			configService.setActiveUserContact(
-                PreferenceConstants.MEDNET_DOWNLOAD_PATH,
-                getPreferenceStore().getString(PreferenceConstants.MEDNET_DOWNLOAD_PATH)
-			);
+			configService.setActiveUserContact(PreferenceConstants.MEDNET_DOWNLOAD_PATH,
+					getPreferenceStore().getString(PreferenceConstants.MEDNET_DOWNLOAD_PATH));
 
-			configService.setActiveUserContact(
-                PreferenceConstants.MEDNET_USER_STRING,
-                getPreferenceStore().getString(PreferenceConstants.MEDNET_USER_STRING)
-			);
-		} else {
-			System.err.println("ConfigService is null. Cannot apply changes.");
+			configService.setActiveUserContact(PreferenceConstants.MEDNET_USER_STRING,
+					getPreferenceStore().getString(PreferenceConstants.MEDNET_USER_STRING));
 		}
     }
-
 }

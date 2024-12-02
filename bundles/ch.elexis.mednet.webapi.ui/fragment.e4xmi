@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_vnhVYA98EeqCRvaXdJ-ZfQ">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_R3BSYHl2Ee-5NogrZgqE9Q" featurename="descriptors" parentElementId="xpath:/">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_ds1p0Hl2Ee-5NogrZgqE9Q" elementId="ch.elexis.mednet.webapi.ui.partdescriptor.mednetview" label="mednet" iconURI="platform:/plugin/ch.elexis.mednet.webapi.ui/icons/mednetPigeonIcon_Final.png" category="General" closeable="true" contributionURI="bundleclass://ch.elexis.mednet.webapi.ui/ch.elexis.mednet.webapi.ui.parts.MedNetMainComposite"/>
+  </fragments>
+</fragment:ModelFragments>

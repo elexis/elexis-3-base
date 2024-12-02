@@ -26,7 +26,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: ch.elexis.core.documents,
  ch.elexis.core.findings,
  ch.elexis.core.findings.migration,
- ch.elexis.core.findings.ui.services,
  ch.elexis.core.model,
  ch.elexis.core.services,
  ch.elexis.core.utils,

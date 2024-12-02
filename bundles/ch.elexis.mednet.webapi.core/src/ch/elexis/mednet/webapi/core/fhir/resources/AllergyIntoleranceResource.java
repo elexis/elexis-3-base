@@ -13,7 +13,7 @@ import org.hl7.fhir.r4.model.Reference;
 
 import ch.elexis.core.findings.IAllergyIntolerance;
 import ch.elexis.core.findings.migration.IMigratorService;
-import ch.elexis.core.findings.ui.services.FindingsServiceComponent;
+import ch.elexis.core.findings.util.FindingsServiceHolder;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
@@ -28,7 +28,7 @@ public class AllergyIntoleranceResource {
 		boolean strukturAllergy = ConfigServiceHolder
 				.getGlobal(IMigratorService.ALLERGYINTOLERANCE_SETTINGS_USE_STRUCTURED, false);
 		if (strukturAllergy) {
-		List<IAllergyIntolerance> structuredAllergies = FindingsServiceComponent.getService()
+			List<IAllergyIntolerance> structuredAllergies = FindingsServiceHolder.getiFindingsService()
 				.getPatientsFindings(sourcePatient.getId(), IAllergyIntolerance.class);
 		for (IAllergyIntolerance structuredAllergy : structuredAllergies) {
 			AllergyIntolerance allergy = resourceFactory.getResource(structuredAllergy, IAllergyIntolerance.class,
@@ -59,7 +59,7 @@ public class AllergyIntoleranceResource {
 		if (patientAllergies != null && !patientAllergies.isEmpty()) {
 			List<String> allergyList = Arrays.asList(patientAllergies.split(","));
 			for (String allergyText : allergyList) {
-				IAllergyIntolerance sourceAllergy = FindingsServiceComponent.getService()
+				IAllergyIntolerance sourceAllergy = FindingsServiceHolder.getiFindingsService()
 						.create(IAllergyIntolerance.class);
 				sourceAllergy.setPatientId(sourcePatient.getId());
 				sourceAllergy.setText(allergyText.trim());

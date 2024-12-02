@@ -17,7 +17,6 @@ Import-Package: ca.uhn.fhir;version="[5.4.0,6.0.0)",
  org.apache.http.entity;version="[4.4.0,5.0.0)",
  org.eclipse.wb.swt
 Require-Bundle: org.eclipse.ui,
- at.medevit.elexis.medforms.core,
  org.apache.commons.commons-io,
  com.google.gson,
  ch.elexis.core.ui.e4;bundle-version="3.13.0",

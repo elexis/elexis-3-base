@@ -11,7 +11,7 @@ import org.hl7.fhir.r4.model.Reference;
 
 import ch.elexis.core.findings.IObservation;
 import ch.elexis.core.findings.migration.IMigratorService;
-import ch.elexis.core.findings.ui.services.FindingsServiceComponent;
+import ch.elexis.core.findings.util.FindingsServiceHolder;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
@@ -25,7 +25,7 @@ public class RiskFactorResource {
 		boolean structuredRiskCheck = ConfigServiceHolder.getGlobal(IMigratorService.RISKFACTOR_SETTINGS_USE_STRUCTURED,
 				false);
 		if (structuredRiskCheck) {
-			List<IObservation> structuredRisks = FindingsServiceComponent.getService()
+			List<IObservation> structuredRisks = FindingsServiceHolder.getiFindingsService()
 					.getPatientsFindings(sourcePatient.getId(), IObservation.class);
 
 			for (IObservation structuredRisk : structuredRisks) {

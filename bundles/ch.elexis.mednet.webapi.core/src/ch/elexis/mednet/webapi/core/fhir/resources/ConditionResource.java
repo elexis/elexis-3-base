@@ -15,7 +15,7 @@ import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Reference;
 
 import ch.elexis.core.findings.ICondition;
-import ch.elexis.core.findings.ui.services.FindingsServiceComponent;
+import ch.elexis.core.findings.util.FindingsServiceHolder;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
 
@@ -42,8 +42,8 @@ public class ConditionResource {
 	}
 
 	static List<ICondition> getLocalConditions(IPatient sourcePatient) {
-		return FindingsServiceComponent.getService().getPatientsFindings(sourcePatient.getId(), ICondition.class)
-				.stream().filter(finding -> finding instanceof ICondition).map(finding -> (ICondition) finding)
+		return FindingsServiceHolder.getiFindingsService().getPatientsFindings(sourcePatient.getId(), ICondition.class)
+				.stream().filter(finding -> finding instanceof ICondition).map(finding -> finding)
 				.collect(Collectors.toList());
 	}
 

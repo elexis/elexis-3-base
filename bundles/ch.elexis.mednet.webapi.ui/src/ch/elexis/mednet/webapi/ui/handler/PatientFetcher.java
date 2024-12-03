@@ -234,7 +234,6 @@ public class PatientFetcher {
 		String payloadJson = gson.toJson(payload);
 
 		try {
-			System.out.println("payloadJson " + payloadJson);
 			String response = Request.Post(apiUrl).addHeader("Authorization", "Bearer " + token)
 					.bodyString(payloadJson, ContentType.APPLICATION_JSON).execute().returnContent().asString();
 			logger.info("Response: " + response);

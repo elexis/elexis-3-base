@@ -109,34 +109,32 @@ public class BundleResource {
 		bundleEntries.add(patientEntry);
 
 		String gpId = (String) sourcePatient.getExtInfo(FHIRConstants.FHIRKeys.PRACTITIONER_GP_ID);
-		if (gpId == null || gpId.isEmpty()) {
-			return null;
-		}
+		if (gpId != null && !gpId.isEmpty()) {
+			Optional<IMandator> gpMandatorOptional = coreModelService.load(gpId, IMandator.class);
 
-		Optional<IMandator> gpMandatorOptional = coreModelService.load(gpId, IMandator.class);
-
-		IMandator generalPractitionerMandator = gpMandatorOptional.orElse(null);
-		if (generalPractitionerMandator != null) {
-			Practitioner gpPractitioner = resourceFactory.getResource(generalPractitionerMandator, IMandator.class,
-					Practitioner.class);
-			if (gpPractitioner != null) {
-				gpPractitioner = PractitionerResource.adjustPractitioner(gpPractitioner);
-				String gpPractitionerFullUrl = FHIRConstants.UUID_PREFIX + gpPractitioner.getId();
-				BundleEntryComponent practitionerEntry = new BundleEntryComponent();
-				practitionerEntry.setFullUrl(gpPractitionerFullUrl);
-				practitionerEntry.setResource(gpPractitioner);
-				bundleEntries.add(practitionerEntry);
-				Optional<IUser> gpUserOptional = findMandatorUser(gpMandatorOptional);
-				if (gpUserOptional.isPresent()) {
-					IUser gpUser = gpUserOptional.get();
-					PractitionerRole gpPractitionerRole = new PractitionerRoleResource().createPractitionerRole(gpUser,
-							gpPractitioner, resourceFactory);
-					String gpPractitionerRoleFullUrl = FHIRConstants.UUID_PREFIX + gpPractitionerRole.getId();
-					BundleEntryComponent practitionerRoleEntry = new BundleEntryComponent();
-					practitionerRoleEntry.setFullUrl(gpPractitionerRoleFullUrl);
-					practitionerRoleEntry.setResource(gpPractitionerRole);
-					bundleEntries.add(practitionerRoleEntry);
-					patient.addGeneralPractitioner(new Reference(gpPractitionerRoleFullUrl));
+			IMandator generalPractitionerMandator = gpMandatorOptional.orElse(null);
+			if (generalPractitionerMandator != null) {
+				Practitioner gpPractitioner = resourceFactory.getResource(generalPractitionerMandator, IMandator.class,
+						Practitioner.class);
+				if (gpPractitioner != null) {
+					gpPractitioner = PractitionerResource.adjustPractitioner(gpPractitioner);
+					String gpPractitionerFullUrl = FHIRConstants.UUID_PREFIX + gpPractitioner.getId();
+					BundleEntryComponent practitionerEntry = new BundleEntryComponent();
+					practitionerEntry.setFullUrl(gpPractitionerFullUrl);
+					practitionerEntry.setResource(gpPractitioner);
+					bundleEntries.add(practitionerEntry);
+					Optional<IUser> gpUserOptional = findMandatorUser(gpMandatorOptional);
+					if (gpUserOptional.isPresent()) {
+						IUser gpUser = gpUserOptional.get();
+						PractitionerRole gpPractitionerRole = new PractitionerRoleResource()
+								.createPractitionerRole(gpUser, gpPractitioner, resourceFactory);
+						String gpPractitionerRoleFullUrl = FHIRConstants.UUID_PREFIX + gpPractitionerRole.getId();
+						BundleEntryComponent practitionerRoleEntry = new BundleEntryComponent();
+						practitionerRoleEntry.setFullUrl(gpPractitionerRoleFullUrl);
+						practitionerRoleEntry.setResource(gpPractitionerRole);
+						bundleEntries.add(practitionerRoleEntry);
+						patient.addGeneralPractitioner(new Reference(gpPractitionerRoleFullUrl));
+					}
 				}
 			}
 		}

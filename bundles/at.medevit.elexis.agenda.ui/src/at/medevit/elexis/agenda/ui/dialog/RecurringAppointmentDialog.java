@@ -94,8 +94,8 @@ public class RecurringAppointmentDialog extends TitleAreaDialog {
 	}
 
 	public boolean openAndWaitForOk() {
-		int result = this.open(); // Dialog wird geöffnet
-		return result == IDialogConstants.OK_ID; // Überprüft, ob "OK" gedrückt wurde
+		int result = this.open();
+		return result == IDialogConstants.OK_ID;
 	}
 
 	@Override

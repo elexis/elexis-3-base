@@ -44,6 +44,7 @@ public class AppointmentDialog extends Dialog {
 		this.appointment = appointment;
 		this.emailSender = new EmailSender(textReplacementService, contextService);
 	}
+
 	@Override
 	protected Control createContents(Composite parent) {
 		initializeAppointmentIfNecessary();

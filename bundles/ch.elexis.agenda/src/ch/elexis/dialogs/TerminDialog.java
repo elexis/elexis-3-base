@@ -80,6 +80,7 @@ import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.jdt.NonNull;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
@@ -115,6 +116,11 @@ public class TerminDialog extends TitleAreaDialog {
 		ERROR, WARNING
 	}
 
+	public boolean openAndWaitForOk() {
+		int result = this.open();
+		return result == OK;
+	}
+
 	DatePicker dp;
 	TimeInput tiVon;
 	TimeInput tiBis;
@@ -146,6 +152,7 @@ public class TerminDialog extends TitleAreaDialog {
 	Text tGrund;
 	Activator agenda = Activator.getDefault();
 	boolean bModified;
+	boolean isModified = false;
 	private String msg;
 
 	private boolean useGlobalData = true;
@@ -958,6 +965,7 @@ public class TerminDialog extends TitleAreaDialog {
 			Termin newTermin = new Termin(getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT), von,
 					bis, typ, status, priority);
 			actTermin = newTermin;
+			isModified = false;
 		} else {
 			actTermin = (Termin) actPlannable;
 			if (bMulti) {
@@ -980,6 +988,7 @@ public class TerminDialog extends TitleAreaDialog {
 			actTermin.set(new String[] { "BeiWem", "Tag", "Beginn", "Dauer", "Typ", "Status", Termin.FLD_PRIORITY },
 					new String[] { getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT),
 							Integer.toString(von), Integer.toString(bis - von), typ, status, priority });
+			isModified = true;
 		}
 		lTerminListe.add(actTermin.getLabel());
 		lTermine.add(actTermin);
@@ -1006,6 +1015,11 @@ public class TerminDialog extends TitleAreaDialog {
 					CoreModelServiceHolder.get().refresh(a, true);
 					ContextServiceHolder.get().setTyped(a);
 				});
+
+		if (isModified) {
+			AppointmentHistoryServiceHolder.get().logAppointmentEdit(actTermin.toIAppointment());
+			isModified = false;
+		}
 	}
 
 	/**

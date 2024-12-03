@@ -1,8 +1,13 @@
 package at.medevit.elexis.agenda.ui.model;
 
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
+import at.medevit.elexis.agenda.ui.rcprap.StateHistoryFormatterUtil;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.IPeriod;
@@ -146,10 +151,12 @@ public class Event {
 		ret.id = iPeriod.getId();
 		ret.start = iPeriod.getStartTime().toString();
 		ret.end = (iPeriod.getEndTime()) != null ? iPeriod.getEndTime().toString() : null;
+
 		if (iPeriod instanceof IAppointment) {
 			IAppointment termin = (IAppointment) iPeriod;
 			ret.resource = termin.getSchedule();
 			IAppointment rootTermin = null;
+
 			if (termin.isRecurring() && (rootTermin = new RecurringAppointment(termin, CoreModelServiceHolder.get())
 					.getRootAppoinemtent()) != null) {
 				ret.icon = "ui-icon-arrowrefresh-1-w"; //$NON-NLS-1$
@@ -157,12 +164,16 @@ public class Event {
 			} else {
 				ret.title = termin.getSubjectOrPatient();
 			}
-			// fullcalendar will no create title html div if no title is blank, add space
+
 			if (ret.title.isEmpty()) {
 				ret.title = StringUtils.SPACE;
 			}
-			ret.description = termin.getReason().replaceAll(StringUtils.LF, "<br />") + "<br /><br />" + termin //$NON-NLS-1$ //$NON-NLS-2$
-					.getStateHistoryFormatted("dd.MM.yyyy HH:mm:ss").replaceAll(StringUtils.LF, "<br />"); //$NON-NLS-1$ //$NON-NLS-2$
+			String stateHistory = termin.getStateHistoryFormatted("dd.MM.yyyy HH:mm:ss").replaceAll(StringUtils.LF,
+					"<br />");
+			stateHistory = StateHistoryFormatterUtil.replaceIdsWithLabels(stateHistory);
+			String formattedStateHistory = StateHistoryFormatterUtil.formatStateHistory(stateHistory);
+			ret.description = termin.getReason().replaceAll(StringUtils.LF, "<br />") + "<br /><br />"
+					+ formattedStateHistory;
 			ret.borderColor = AppointmentServiceHolder.get().getContactConfiguredStateColor(userContact,
 					termin.getState());
 			ret.backgroundColor = AppointmentServiceHolder.get().getContactConfiguredTypeColor(userContact,
@@ -172,6 +183,7 @@ public class Event {
 				ret.allDay = true;
 			}
 		}
+
 		return ret;
 	}
 

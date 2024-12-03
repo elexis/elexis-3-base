@@ -36,22 +36,17 @@ public class DoubleClickFunction extends BrowserFunction {
 
 					@Override
 					public void lockAcquired() {
-						boolean isEditConfirmed = false;
 						if (termin.isRecurring()) {
 							RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(
 									AppointmentServiceHolder.get().getAppointmentSeries(termin).get());
 							if (dlg.open() == Dialog.OK) {
-								isEditConfirmed = true;
+								AppointmentHistoryServiceHolder.get().logAppointmentEdit(termin);
 							}
 						} else {
 							AppointmentDialog dlg = new AppointmentDialog(termin);
 							if (dlg.open() == Dialog.OK) {
-								isEditConfirmed = true;
+								AppointmentHistoryServiceHolder.get().logAppointmentEdit(termin);
 							}
-						}
-
-						if (isEditConfirmed) {
-							AppointmentHistoryServiceHolder.get().logAppointmentEdit(termin);
 						}
 					}
 				});

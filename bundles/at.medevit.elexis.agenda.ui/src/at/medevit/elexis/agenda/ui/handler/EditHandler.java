@@ -38,13 +38,9 @@ public class EditHandler {
 
 				@Override
 				public void lockAcquired() {
-					boolean isEditConfirmed = false;
 					IAppointment appointment = (IAppointment) p;
 					AppointmentDialog dlg = new AppointmentDialog((IAppointment) p);
 					if (dlg.open() == Dialog.OK) {
-						isEditConfirmed = true;
-					}
-					if (isEditConfirmed) {
 						AppointmentHistoryServiceHolder.get().logAppointmentEdit(appointment);
 					}
 				}

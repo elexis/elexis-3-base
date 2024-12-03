@@ -1,5 +1,7 @@
 package at.medevit.elexis.agenda.ui.function;
 
+import org.eclipse.jface.dialogs.Dialog;
+
 import com.equo.chromium.swt.Browser;
 import com.equo.chromium.swt.BrowserFunction;
 
@@ -38,10 +40,14 @@ public class DoubleClickFunction extends BrowserFunction {
 						if (termin.isRecurring()) {
 							RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(
 									AppointmentServiceHolder.get().getAppointmentSeries(termin).get());
-							isEditConfirmed = dlg.openAndWaitForOk();
+							if (dlg.open() == Dialog.OK) {
+								isEditConfirmed = true;
+							}
 						} else {
 							AppointmentDialog dlg = new AppointmentDialog(termin);
-							isEditConfirmed = dlg.openAndWaitForOk();
+							if (dlg.open() == Dialog.OK) {
+								isEditConfirmed = true;
+							}
 						}
 
 						if (isEditConfirmed) {

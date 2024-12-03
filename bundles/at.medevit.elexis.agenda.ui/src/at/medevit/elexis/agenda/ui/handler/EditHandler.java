@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,9 @@ public class EditHandler {
 					boolean isEditConfirmed = false;
 					IAppointment appointment = (IAppointment) p;
 					AppointmentDialog dlg = new AppointmentDialog((IAppointment) p);
-					isEditConfirmed = dlg.openAndWaitForOk();
+					if (dlg.open() == Dialog.OK) {
+						isEditConfirmed = true;
+					}
 					if (isEditConfirmed) {
 						AppointmentHistoryServiceHolder.get().logAppointmentEdit(appointment);
 					}

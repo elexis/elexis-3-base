@@ -32,6 +32,7 @@ import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.actions.RestrictedAction;
 import ch.elexis.core.ui.icons.Images;
@@ -75,7 +76,6 @@ public class AgendaActions {
 	}
 
 	private static void makeActions() {
-
 		delTerminAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.DELETE),
 				Messages.AgendaActions_deleteDate) {
 			{
@@ -91,10 +91,12 @@ public class AgendaActions {
 			@Override
 			public void doRun(Termin element) {
 				IAppointment appointment = (IAppointment) element.toIAppointment();
+				AppointmentHistoryServiceHolder.get().logAppointmentDeletion(appointment);
 				CoreModelServiceHolder.get().delete(appointment);
 				ElexisEventDispatcher.reload(Termin.class);
 			}
 		};
+
 		terminStatusAction = new Action(Messages.AgendaActions_state, Action.AS_DROP_DOWN_MENU) {
 			Menu mine = null;
 			Listener showListener = null;

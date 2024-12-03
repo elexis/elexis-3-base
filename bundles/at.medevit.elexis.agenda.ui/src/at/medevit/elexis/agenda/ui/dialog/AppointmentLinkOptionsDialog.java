@@ -36,6 +36,7 @@ public class AppointmentLinkOptionsDialog {
 		return getMoveActionType(result);
 	}
 
+
 	public static CopyActionType showCopyDialog(Shell shell, List<IAppointment> linkedAppointments) {
 		StringBuilder message = new StringBuilder(Messages.AppointmentLinkOptionsDialogDescription);
 		message.append(Messages.AppointmentLinkOptionsDialogTitel);
@@ -70,10 +71,15 @@ public class AppointmentLinkOptionsDialog {
 	}
 
 	private static MoveActionType getMoveActionType(int result) {
-		if (result == SWT.DEFAULT) {
+		if (result == SWT.DEFAULT || result == 2) {
+			return MoveActionType.CANCEL;
+		} else if (result == 0) {
+			return MoveActionType.KEEP_MAIN_ONLY;
+		} else if (result == 1) {
+			return MoveActionType.MOVE_ALL;
+		} else {
 			return MoveActionType.CANCEL;
 		}
-		return result == 0 ? MoveActionType.KEEP_MAIN_ONLY : MoveActionType.MOVE_ALL;
 	}
 
 	private static CopyActionType getCopyActionType(int result) {

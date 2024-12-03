@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.DeleteActionType;
-
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
@@ -59,6 +58,7 @@ public class DeleteHandler {
 
 	private void handleMainAppointmentDeletion(IAppointment appointment, Shell shell) {
 		List<IAppointment> linkedAppointments = AppointmentExtensionHandler.getLinkedAppointments(appointment);
+
 
 		if (!linkedAppointments.isEmpty()) {
 			DeleteActionType action = AppointmentLinkOptionsDialog.showDeleteDialog(shell, linkedAppointments);
@@ -171,7 +171,9 @@ public class DeleteHandler {
 			@Override
 			public void lockAcquired() {
 				appointmentService.delete(mainAppointment, false);
-				linkedAppointments.forEach(appt -> appointmentService.delete(appt, false));
+				linkedAppointments.forEach(appt -> {
+					appointmentService.delete(appt, false);
+				});
 				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
 		});

@@ -63,6 +63,7 @@ import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IUser;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
@@ -385,16 +386,23 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 			@Override
 			public void doRun(Termin t) {
+				TimeTool oldEndTime = t.getEndTime();
 				agenda.setActDate(t.getDay());
-				Termin n = Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(), t);
-				if (n != null) {
-					t.setEndTime(n.getStartTime());
-					// t.setDurationInMinutes(t.getDurationInMinutes()+15);
+				Termin nextTermin = Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(), t);
+				if (nextTermin != null) {
+					t.setEndTime(nextTermin.getStartTime());
+					TimeTool newEndTime = t.getEndTime();
+					if (AppointmentHistoryServiceHolder.get() != null) {
+						AppointmentHistoryServiceHolder.get().logAppointmentDurationChange(t.toIAppointment(),
+								oldEndTime.toLocalDateTime(),
+								newEndTime.toLocalDateTime());
+					}
 					ElexisEventDispatcher.reload(Termin.class);
 				}
 
 			}
 		};
+
 		newTerminAction = new RestrictedAction(EvACE.of(IAppointment.class, Right.CREATE), Messages.TagesView_newTermin) {
 			{
 				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());

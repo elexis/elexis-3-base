@@ -23,6 +23,9 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_GXOA2merEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.delete" label="%delete" iconURI="icon://IMG_DELETE" command="_MBYn8GejEequPMul5sCwsQ">
           <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_GXOA22erEequPMul5sCwsQ" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
         </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_DwTJ4H8JEe-z5Jm-n8CDXg" elementId="at.medevit.elexis.agenda.ui.handledmenuitem.showhistory" label="%showhistory" iconURI="platform:/plugin/at.medevit.elexis.agenda.ui/rsc/information.png" command="_ZcyEcH8JEe-z5Jm-n8CDXg">
+          <visibleWhen xsi:type="ui:CoreExpression" xmi:id="_DwTJ4X8JEe-z5Jm-n8CDXg" coreExpressionId="at.medevit.elexis.agenda.ui.definition.selectionPeriodNotEmpty"/>
+        </children>
       </menus>
       <menus xsi:type="menu:PopupMenu" xmi:id="_G4BAwGerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.popupmenu.week">
         <children xsi:type="menu:Menu" xmi:id="_G4BAwWerEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.menu.status" label="%status">
@@ -45,6 +48,7 @@
     <elements xsi:type="commands:Command" xmi:id="_Si83gGejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.command.insert" commandName="Insert"/>
     <elements xsi:type="commands:Command" xmi:id="_U2kf8GejEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.PrintSelectedAgenda" commandName="Print selected Agenda"/>
     <elements xsi:type="commands:Command" xmi:id="_Urc98FluEe-tgp6s_ZOmwA" elementId="at.medevit.elexis.agenda.ui.command.copy" commandName="Copy"/>
+    <elements xsi:type="commands:Command" xmi:id="_ZcyEcH8JEe-z5Jm-n8CDXg" elementId="at.medevit.elexis.agenda.ui.command.showhistory" commandName="SchowHistory"/>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_M3bNMGelEequPMul5sCwsQ" featurename="handlers" parentElementId="xpath:/">
     <elements xsi:type="commands:Handler" xmi:id="_O23VYGelEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handler.setstatus" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.SetStatusHandler" command="_DekSUGejEequPMul5sCwsQ"/>
@@ -54,5 +58,6 @@
     <elements xsi:type="commands:Handler" xmi:id="_I7zPsGemEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handler.settopcontrol" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.SetTopControlHandler" command="_OFU1oGejEequPMul5sCwsQ"/>
     <elements xsi:type="commands:Handler" xmi:id="_NfgrcGemEequPMul5sCwsQ" elementId="at.medevit.elexis.agenda.ui.handler.insert" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.InsertHandler" command="_Si83gGejEequPMul5sCwsQ"/>
     <elements xsi:type="commands:Handler" xmi:id="_Yu92sFluEe-tgp6s_ZOmwA" elementId="at.medevit.elexis.agenda.ui.handler.copy" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.CopyHandler" command="_Urc98FluEe-tgp6s_ZOmwA"/>
+    <elements xsi:type="commands:Handler" xmi:id="_bBKBQH8JEe-z5Jm-n8CDXg" elementId="at.medevit.elexis.agenda.ui.handler.showhistory" contributionURI="bundleclass://at.medevit.elexis.agenda.ui/at.medevit.elexis.agenda.ui.handler.ShowHistoryHandler" command="_ZcyEcH8JEe-z5Jm-n8CDXg"/>
   </fragments>
 </fragment:ModelFragments>

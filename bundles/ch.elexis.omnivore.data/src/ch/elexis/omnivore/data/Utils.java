@@ -27,9 +27,7 @@ import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import javax.activation.MimeType;
-import javax.activation.MimeTypeParseException;
-
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -43,7 +41,6 @@ import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.omnivore.model.IDocumentHandle;
-import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.MimeTool;
 
@@ -337,31 +334,7 @@ public class Utils {
 	 */
 	public static File createTemporaryFile(IDocumentHandle documentHandle, String title) {
 
-		String fileExtension = null;
-		String mimeType = documentHandle.getMimeType();
-		// somewhen we might event feature correct mimetypes in the db ...
-		if ("pdf".equalsIgnoreCase(mimeType)) { //$NON-NLS-1$
-			mimeType = "application/pdf"; //$NON-NLS-1$
-		}
-		try {
-			MimeType docMimeType = new MimeType(mimeType);
-			fileExtension = MimeTool.getExtension(docMimeType.toString());
-		} catch (MimeTypeParseException mpe) {
-			fileExtension = FileTool.getExtension(mimeType);
-
-			if (fileExtension == null) {
-				fileExtension = FileTool.getExtension(documentHandle.getTitle());
-			}
-
-			if (fileExtension == null && mimeType != null && !mimeType.contains(".") && !mimeType.contains(".") //$NON-NLS-1$ //$NON-NLS-2$
-					&& !mimeType.contains("/")) { //$NON-NLS-1$
-				fileExtension = mimeType;
-			}
-		}
-
-		if (fileExtension == null) {
-			fileExtension = StringUtils.EMPTY;
-		}
+		String fileExtension = getFileEnding(documentHandle.getMimeType());
 
 		String config_temp_filename = Utils.createNiceFileName(documentHandle);
 		File temp = null;
@@ -405,6 +378,28 @@ public class Utils {
 		}
 
 		return temp;
+	}
+
+	private static String getFileEnding(String mime) {
+		if (mime != null) {
+			if (mime.length() < 5) {
+				return mime;
+			} else {
+				String ret = MimeTool.getExtension(mime);
+				if (ret.length() > 5) {
+					return getDefaultFileEnding();
+				} else if (ret.isEmpty()) {
+					return FilenameUtils.getExtension(mime);
+				} else {
+					return ret;
+				}
+			}
+		}
+		return getDefaultFileEnding();
+	}
+
+	private static String getDefaultFileEnding() {
+		return ".tmp";
 	}
 
 	public static boolean storeExternal(IDocumentHandle docHandle, String filename) {

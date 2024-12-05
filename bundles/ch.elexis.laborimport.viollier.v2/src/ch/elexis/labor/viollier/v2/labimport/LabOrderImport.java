@@ -43,10 +43,14 @@ import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.interfaces.ILabOrder;
+import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.importer.div.importers.HL7Parser;
 import ch.elexis.core.importer.div.importers.ILabItemResolver;
 import ch.elexis.core.model.ILabResult;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IXid;
+import ch.elexis.core.services.holder.XidServiceHolder;
 import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.importer.div.importers.DefaultHL7Parser;
 import ch.elexis.core.ui.importer.div.importers.TestHL7Parser;
@@ -57,7 +61,6 @@ import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Xid;
-import ch.elexis.data.Xid.XIDException;
 import ch.elexis.hl7.model.AbstractData;
 import ch.elexis.hl7.model.ObservationMessage;
 import ch.elexis.hl7.v22.HL7_ORU_R01;
@@ -569,23 +572,17 @@ public class LabOrderImport extends ImporterPage {
 	 */
 	private static SaveResult addVioNumber(String vioNumber, Patient patient) {
 		SaveResult retVal = SaveResult.ERROR;
-		try {
-			Xid.localRegisterXIDDomainIfNotExists(DOMAIN_VIONR, "vioNumber", Xid.ASSIGNMENT_LOCAL);
-			if (StringUtils.EMPTY.equals(getVioNr(patient))) {
-				new Xid(patient, DOMAIN_VIONR, vioNumber);
+		XidServiceHolder.get().localRegisterXIDDomainIfNotExists(DOMAIN_VIONR, "vioNumber", Xid.ASSIGNMENT_LOCAL);
+		if (StringUtils.EMPTY.equals(getVioNr(patient))) {
+			IPatient iPatient = NoPoUtil.loadAsIdentifiable(patient, IPatient.class).orElse(null);
+			if (iPatient != null) {
+				iPatient.addXid(DOMAIN_VIONR, vioNumber, true);
 				retVal = SaveResult.SUCCESS;
 				ViollierLogger.getLogger().println(MessageFormat.format(Messages.LabOrderImport_InfoSaveXid, vioNumber,
 						patient.getId(), patient.getLabel()));
 			}
-			return retVal;
-
-		} catch (XIDException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			ViollierLogger.getLogger().println(MessageFormat.format(Messages.LabOrderImport_ErrorSaveXid, vioNumber,
-					patient.getId(), patient.getLabel(), e.getMessage()));
-			return retVal;
 		}
+		return retVal;
 	}
 
 	/**
@@ -1076,17 +1073,11 @@ public class LabOrderImport extends ImporterPage {
 	 * @return VioNummer des Patienten, sofern eine erfasst ist. Sonst leerer String
 	 */
 	public static String getVioNr(Patient patient) {
-
-		Query<Xid> patientVioNrQuery = new Query<Xid>(Xid.class);
-		patientVioNrQuery.add(Xid.FLD_OBJECT, Query.EQUALS, patient.getId());
-		patientVioNrQuery.add(Xid.FLD_DOMAIN, Query.EQUALS, DOMAIN_VIONR);
-		List<Xid> patienten = patientVioNrQuery.execute();
-		if (patienten.isEmpty()) {
-			return StringUtils.EMPTY;
-		} else {
-			return patienten.get(0).getDomainId();
+		IXid found = XidServiceHolder.get().getXid(NoPoUtil.loadAsIdentifiable(patient, IPatient.class).orElse(null),
+				DOMAIN_VIONR);
+		if (found != null) {
+			return found.getDomainId();
 		}
-
+		return StringUtils.EMPTY;
 	}
-
 }

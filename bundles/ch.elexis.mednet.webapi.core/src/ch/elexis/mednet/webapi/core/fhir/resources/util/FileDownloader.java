@@ -44,7 +44,8 @@ public class FileDownloader {
 		this.authService = authService;
 	}
 
-	public void downloadForms() {
+	public boolean downloadForms() {
+		boolean success = false;
 		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		ServiceReference<IMednetAuthService> serviceReference = context.getServiceReference(IMednetAuthService.class);
 
@@ -54,12 +55,13 @@ public class FileDownloader {
 				Map<String, Object> parameters = new HashMap<>();
 				parameters.put(PreferenceConstants.TOKEN_GROUP, PreferenceConstants.TOKEN_GROUP_KEY);
 				Optional<String> authToken = authService.getToken(parameters);
+
 				if (authToken.isPresent()) {
 					String token = authToken.get();
 					List<Integer> customerIds = fetchCustomerIds(token);
 					if (!customerIds.isEmpty()) {
+						success = true;
 						for (Integer customerId : customerIds) {
-
 							fetchAndDownloadFormsForCustomer(token, customerId);
 						}
 					} else {
@@ -76,13 +78,13 @@ public class FileDownloader {
 		} else {
 			logger.error("ServiceReference for IMednetAuthService is null.");
 		}
+		return success;
 	}
 
 	private List<Integer> fetchCustomerIds(String token) {
 		List<Integer> customerIds = new ArrayList<>();
 		try {
-			String apiUrl = ApiConstants.CUSTOMERS_URL;
-			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl))
+			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(ApiConstants.CUSTOMERS_URL))
 					.header("Authorization", "Bearer " + token).GET().build();
 
 			HttpClient client = HttpClient.newHttpClient();

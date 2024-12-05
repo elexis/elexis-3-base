@@ -52,7 +52,6 @@ public class MednetAuthUi implements IMednetAuthUi {
 				RetrySupplierRunnableWithProgress runnable = new RetrySupplierRunnableWithProgress(name, supplier);
 				progressDialog.run(true, true, runnable);
 				supplierValue = runnable.getValue();
-				logger.info("Supplier completed with value: {}", supplierValue); //$NON-NLS-1$
 			} catch (InvocationTargetException | InterruptedException e) {
 				logger.error("Error while executing supplier: {}", e.getMessage(), e); //$NON-NLS-1$
 			}

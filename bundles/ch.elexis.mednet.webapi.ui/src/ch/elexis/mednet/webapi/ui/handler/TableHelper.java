@@ -1,19 +1,24 @@
 package ch.elexis.mednet.webapi.ui.handler;
 
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import ch.elexis.mednet.webapi.ui.fhir.util.UIStyleHelper;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+
+import ch.elexis.mednet.webapi.ui.util.UIStyleTableHelper;
+
 public class TableHelper {
 
+	private static boolean ascending = true;
 
 	public static void fillTableFromList(Table table, List<Map<String, Object>> list, Display display, String[] keys,
 			String[] defaultValues) {
@@ -80,9 +85,9 @@ public class TableHelper {
 				item.setData("packageId", packageId); // Speichere die packageId im TableItem
 			}
 
-			UIStyleHelper.styleTableRows(item, table.indexOf(item), display);
+			UIStyleTableHelper.styleTableRows(item, table.indexOf(item), display);
 		}
-		UIStyleHelper.addTableLines(table);
+		UIStyleTableHelper.addTableLines(table);
 	}
 
 	private static String convertToString(Object value) {
@@ -129,4 +134,76 @@ public class TableHelper {
 			return "Invalid Date"; //$NON-NLS-1$
 		}
 	}
+
+	/**
+	 * Sorts the table by the values in the specified column index.
+	 */
+	public static void sortTable(Table table, int columnIndex) {
+		if (table.isDisposed()) {
+			return;
+		}
+
+		List<String[]> tableData = new ArrayList<>();
+		for (TableItem item : table.getItems()) {
+			if (!item.isDisposed()) {
+				String[] rowData = new String[table.getColumnCount()];
+				for (int i = 0; i < table.getColumnCount(); i++) {
+					rowData[i] = item.getText(i);
+				}
+				tableData.add(rowData);
+			}
+		}
+
+		if (ascending) {
+			tableData.sort(Comparator.comparing(row -> row[columnIndex].toLowerCase()));
+		} else {
+			tableData.sort((row1, row2) -> row2[columnIndex].toLowerCase().compareTo(row1[columnIndex].toLowerCase()));
+		}
+		ascending = !ascending;
+
+		table.removeAll();
+		Display display = table.getDisplay();
+		int rowIndex = 0;
+		for (String[] rowData : tableData) {
+			TableItem newItem = new TableItem(table, SWT.NONE);
+			newItem.setText(rowData);
+			UIStyleTableHelper.styleTableRows(newItem, rowIndex, display);
+			rowIndex++;
+		}
+	}
+
+	/**
+	 * Filters the table items based on the search text.
+	 */
+	public static void filterTable(Table table, String searchText) {
+		if (table.getData("originalData") == null) {
+			List<String[]> originalData = new ArrayList<>();
+			for (TableItem item : table.getItems()) {
+				String[] rowData = new String[table.getColumnCount()];
+				for (int i = 0; i < table.getColumnCount(); i++) {
+					rowData[i] = item.getText(i);
+				}
+				originalData.add(rowData);
+			}
+			table.setData("originalData", originalData);
+		}
+
+		table.removeAll();
+		@SuppressWarnings("unchecked")
+		List<String[]> originalData = (List<String[]>) table.getData("originalData");
+
+		Display display = table.getDisplay();
+		int rowIndex = 0;
+		for (String[] rowData : originalData) {
+			String name = rowData[1].toLowerCase();
+			if (name.contains(searchText)) {
+				TableItem newItem = new TableItem(table, SWT.NONE);
+				newItem.setText(rowData);
+				newItem.setData("rowData", rowData);
+				UIStyleTableHelper.styleTableRows(newItem, rowIndex, display);
+				rowIndex++;
+			}
+		}
+	}
+
 }

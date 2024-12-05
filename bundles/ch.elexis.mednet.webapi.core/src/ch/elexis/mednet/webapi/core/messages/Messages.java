@@ -41,6 +41,10 @@ public class Messages extends NLS {
 	public static String MedNetMainComposite_noPathConfigured;
 	public static String MedNetMainComposite_noPathWarningTitle;
 	public static String MedNetMainComposite_noPathWarningMessage;
+	public static String MedNetMainComposite_schedulerErrorTitle;
+	public static String MedNetMainComposite_schedulerErrorMessage;
+	public static String MedNetMainComposite_restartRequiredTitle;
+	public static String MedNetMainComposite_restartRequiredMessage;
 	public static String MedNetMainComposite_tasks;
 	public static String MedNetMainComposite_therapy;
 	public static String MedNetMainComposite_titleMedNet;
@@ -51,8 +55,24 @@ public class Messages extends NLS {
 	public static String ProviderComposite_Anbieter_ID;
 	public static String ProviderComposite_Anbieter_Name;
 	public static String SubmittedFormsComposite_noErrorForms;
-
-
+	public static String ColumnHeaders_OrderNo;
+	public static String ColumnHeaders_Date;
+	public static String ColumnHeaders_PatientNo;
+	public static String ColumnHeaders_PatientName;
+	public static String ColumnHeaders_Birthdate;
+	public static String ColumnHeaders_Type;
+	public static String ColumnHeaders_ExportsAndAttachments;
+	public static String ColumnHeaders_Sender;
+	public static String ColumnHeaders_Receiver;
+	public static String Composite_searchBoxMessage;
+	public static String MedNetWebPreferencePage_operatingMode;
+	public static String MedNetWebPreferencePage_demoMode;
+	public static String MedNetWebPreferencePage_produktivMode;
+	public static String MedNetMainComposite_activateImport;
+	public static String BreadcrumbNavigation_customers;
+	public static String BreadcrumbNavigation_providers;
+	public static String BreadcrumbNavigation_forms;
+	public static String MedNetMainComposite_deactivateImport;
 
 	static {
 

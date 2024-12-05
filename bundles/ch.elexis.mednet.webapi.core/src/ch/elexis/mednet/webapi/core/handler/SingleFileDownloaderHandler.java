@@ -133,8 +133,6 @@ public class SingleFileDownloaderHandler {
 				}
 			}
 
-			// Fallback: Verwenden von IEclipsePreferences, falls IConfigService nicht
-			// verfügbar ist
 			String pluginId = PreferenceConstants.MEDNET_PLUGIN_STRING;
 			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(pluginId);
 			String downloadPath = node.get(PreferenceConstants.MEDNET_DOWNLOAD_PATH, "");

@@ -20,6 +20,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -48,8 +50,6 @@ public class MednetAuthService implements IMednetAuthService {
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL, policyOption = ReferencePolicyOption.GREEDY)
 	private IMednetAuthUi authUi;
 
-	private boolean useQueryParam = true;
-
 	private String currentState;
 	private String currentCodeVerifier;
 
@@ -77,21 +77,16 @@ public class MednetAuthService implements IMednetAuthService {
 	@Override
 	public Optional<String> delToken(Map<String, Object> parameters) {
 
-		String tokenGroup = "mednet";
 		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		ServiceReference<IMednetAuthService> serviceReference = context.getServiceReference(IMednetAuthService.class);
 
 		if (serviceReference != null) {
-			IMednetAuthService authService = context.getService(serviceReference);
+	
 			try {
-
-				if (configService == null) {
-
-				}
-
-				configService.setActiveMandator(PreferenceConstants.PREF_TOKEN + tokenGroup, null);
-				configService.setActiveMandator(PreferenceConstants.PREF_TOKEN_EXPIRES + tokenGroup, null);
-				configService.setActiveMandator(PreferenceConstants.PREF_REFRESHTOKEN + tokenGroup, null);
+				
+				configService.setActiveMandator(PreferenceConstants.PREF_TOKEN + PreferenceConstants.TOKEN_GROUP_KEY, null);
+				configService.setActiveMandator(PreferenceConstants.PREF_TOKEN_EXPIRES +PreferenceConstants.TOKEN_GROUP_KEY, null);
+				configService.setActiveMandator(PreferenceConstants.PREF_REFRESHTOKEN + PreferenceConstants.TOKEN_GROUP_KEY, null);
 
 			} catch (Exception ex) {
 
@@ -116,7 +111,6 @@ public class MednetAuthService implements IMednetAuthService {
 		return Optional.empty();
 	}
 
-
 	private String getOauthRestUrl() {
 		return configService.get(PreferenceConstants.PREF_RESTBASEURL, ApiConstants.BASE_URI);
 	}
@@ -127,7 +121,6 @@ public class MednetAuthService implements IMednetAuthService {
 		parameters.put("refresh_token", refreshToken);
 		parameters.put("client_id", getClientId());
 		parameters.put("client_secret", getClientSecret());
-
 		String form = parameters.entrySet().stream()
 				.map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
 				.collect(Collectors.joining("&"));
@@ -195,7 +188,6 @@ public class MednetAuthService implements IMednetAuthService {
 				new GetAuthCodeWithStateSupplier(stateValue));
 
 		if (value instanceof String) {
-			LoggerFactory.getLogger(getClass()).info("Authorization Code received: {}", value);
 			return Optional.of((String) value);
 		}
 		LoggerFactory.getLogger(getClass()).warn("No authorization code received.");
@@ -311,11 +303,16 @@ public class MednetAuthService implements IMednetAuthService {
 	}
 
 	private String getClientId() {
+		String mode = getMode(); 
 		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) {
 			if (properties != null) {
 				Properties idProps = new Properties();
 				idProps.load(properties);
-				return idProps.getProperty("client_id");
+				if ("PRODUKTIV".equals(mode)) {
+					return idProps.getProperty("client_id_prod");
+				} else {
+					return idProps.getProperty("client_id_demo");
+				}
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Error loading id properties", e);
@@ -324,16 +321,42 @@ public class MednetAuthService implements IMednetAuthService {
 	}
 
 	private String getClientSecret() {
+		String mode = getMode(); 
 		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) {
 			if (properties != null) {
 				Properties idProps = new Properties();
 				idProps.load(properties);
-				return idProps.getProperty("client_secret");
+				if ("PRODUKTIV".equals(mode)) {
+					return idProps.getProperty("client_secret_prod");
+				} else {
+					return idProps.getProperty("client_secret_demo");
+				}
 			}
 		} catch (Exception e) {
 			LoggerFactory.getLogger(getClass()).error("Error loading id properties", e);
 		}
 		return StringUtils.EMPTY;
+	}
+
+	private String getMode() {
+		try {
+			BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+			ServiceReference<IConfigService> serviceReference = context.getServiceReference(IConfigService.class);
+
+			if (serviceReference != null) {
+				IConfigService configService = context.getService(serviceReference);
+				if (configService != null) {
+					return configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
+				}
+			}
+
+			String pluginId = PreferenceConstants.MEDNET_PLUGIN_STRING;
+			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(pluginId);
+			return node.get(PreferenceConstants.MEDNET_MODE, "DEMO");
+		} catch (Exception e) {
+			LoggerFactory.getLogger(getClass()).error("Error retrieving the mode from preferences", e);
+			return "DEMO";
+		}
 	}
 
 	private Optional<String> validateToken(String existingToken, String tokenGroup) {

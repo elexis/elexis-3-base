@@ -17,7 +17,7 @@
     <script src="../fullcalendar.js"></script>
     <script src="../locale-all.js"></script>
     <script src="../scheduler.min.js"></script>
-
+	<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
     <script>
       $(document).ready(function () {
@@ -56,7 +56,13 @@
             eventResizeFunction(event.id, event.start.format(), event.end.format());
           },
           eventRender: eventRenderCallback,
-          customButtons: {
+		  customButtons: {
+		    print: {
+		      text: 'Screenshot',
+		      click: function () {
+		        captureScreenshotForPrint();
+		      },
+		    },
             pdf: {
               text: 'Pdf',
               click: function () {
@@ -80,13 +86,107 @@
           header: {
             left: 'title',
             center: '',
-            right: 'pdf switch reload,today prev,next',
+            right: 'print pdf switch reload,today prev,next',
           },
           resources: loadResources,
           resourceOrder: 'order'
         });
       });
-      
+	  
+	  function getMinAndMaxTimes(events) {
+	     const morningBlocks = events.filter(event => {
+	       const start = moment(event.start).format("HH:mm:ss");
+	       return start === "00:00:00";
+	     });
+	     const eveningBlocks = events.filter(event => {
+	       const end = moment(event.end).format("HH:mm:ss");
+	       return end === "23:59:00";
+	     });
+	     let minTime = "06:00:00";
+	     let maxTime = "20:00:00";
+	     if (morningBlocks.length > 0) {
+	       const endTimes = morningBlocks.map(e => moment(e.end));
+	       const maxEndTime = moment.min(endTimes);
+	       minTime = maxEndTime.format("HH:mm:ss");
+	     }
+
+	     if (eveningBlocks.length > 0) {
+	       const startTimes = eveningBlocks.map(e => moment(e.start));
+	       const maxStartTime = moment.max(startTimes);
+	       maxTime = maxStartTime.format("HH:mm:ss");
+	     }
+	     return { minTime, maxTime };
+	   }
+
+	   function captureScreenshotForPrint() {
+	     function getActiveScreenResolution() {
+	       const viewportWidth = window.innerWidth * window.devicePixelRatio;
+	       const viewportHeight = window.innerHeight * window.devicePixelRatio;
+	       const screenWidth = window.screen.availWidth * window.devicePixelRatio;
+	       const screenHeight = window.screen.availHeight * window.devicePixelRatio;
+	       return {
+	         viewportWidth,
+	         viewportHeight,
+	         screenWidth,
+	         screenHeight
+	       };
+	     }
+	     const {
+	       viewportWidth,
+	       viewportHeight,
+	       screenWidth,
+	       screenHeight
+	     } = getActiveScreenResolution();
+	     let slotDuration;
+	     if (screenWidth >= 3840 || screenHeight >= 2400 || (screenWidth >= 2560 && screenHeight >= 1440)) {
+	       slotDuration = '00:12:00';
+	     } else if (screenWidth >= 1920 || screenHeight >= 1200) {
+	       slotDuration = '00:20:00';
+	     } else {
+	       slotDuration = '00:20:00';
+	     }
+	     const { minTime, maxTime } = getMinAndMaxTimes(events);
+		 console.log("min time "+minTime +" max time "+maxTime )
+	     const originalSlotDuration = $('#calendar').fullCalendar('option', 'slotDuration');
+	     const originalMinTime = $('#calendar').fullCalendar('option', 'minTime');
+	     const originalMaxTime = $('#calendar').fullCalendar('option', 'maxTime');
+	     $('#calendar').fullCalendar('option', 'slotDuration', slotDuration);
+	     $('#calendar').fullCalendar('option', 'minTime', minTime);
+	     $('#calendar').fullCalendar('option', 'maxTime', maxTime);
+	     $('#calendar').fullCalendar('render');
+	     setTimeout(function () {
+	       const headerRight = document.querySelector('.fc-header-toolbar .fc-right');
+	       const centerButtons = document.querySelectorAll('.fc-header-toolbar .fc-center .fc-button');
+	       if (headerRight) headerRight.style.display = 'none';
+	       centerButtons.forEach(button => button.style.display = 'none');
+	       const calendarElement = document.getElementById('calendar');
+	       html2canvas(calendarElement, {
+	         useCORS: true,
+	         allowTaint: true,
+	         scale: 1
+	       }).then(function (canvas) {
+	         const dataUrl = canvas.toDataURL('image/png');
+	         if (window.screenshotFunction) {
+	           window.screenshotFunction(dataUrl);
+	         } 
+	         $('#calendar').fullCalendar('option', 'slotDuration', originalSlotDuration);
+	         $('#calendar').fullCalendar('option', 'minTime', originalMinTime);
+	         $('#calendar').fullCalendar('option', 'maxTime', originalMaxTime);
+	         $('#calendar').fullCalendar('render');
+	         if (headerRight) headerRight.style.display = '';
+	         centerButtons.forEach(button => button.style.display = '');
+	       }).catch(function (error) {
+	         console.error('Fehler beim Aufnehmen des Screenshots:', error);
+	         $('#calendar').fullCalendar('option', 'slotDuration', originalSlotDuration);
+	         $('#calendar').fullCalendar('option', 'minTime', originalMinTime);
+	         $('#calendar').fullCalendar('option', 'maxTime', originalMaxTime);
+	         $('#calendar').fullCalendar('render');
+	         if (headerRight) headerRight.style.display = '';
+	         centerButtons.forEach(button => button.style.display = '');
+	       });
+	     }, 100);
+	   }
+
       function monkeyPatchViewClass(View) {
         View = View.class || View;
         var renderFn = "render" in View.prototype ? "render" : "renderDates";
@@ -159,7 +259,7 @@
       function loadEventsCallback(start, end, timezone, callback) {
         var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
         var jsonEvents = JSON.parse(eventsJson);
-        var events = [];
+        events = [];
         var processedResources = new Set();
           jsonEvents.forEach(function (event) {
             var resourceId = event.resource || event.resourceId;

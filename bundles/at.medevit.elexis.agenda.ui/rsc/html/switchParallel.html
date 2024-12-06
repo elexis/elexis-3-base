@@ -1,439 +1,327 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta http-equiv="x-ua-compatible" content="IE=9" />
+    <meta charset="utf-8" />
+   
+    <link href="../fullcalendar.min.css" rel="stylesheet" />
+    <link href="../scheduler.min.css" rel="stylesheet"></script>
+    <link href="../fullcalendar.print.min.css" rel="stylesheet" media="print" />
+    <link href="../lib/qTip/jquery.qtip.min.css" rel="stylesheet" />
+    <link href="../lib/cupertino/jquery-ui.min.css" rel="stylesheet" />
+    <link href="../style.css" rel="stylesheet" />
+  
+    <script src="../lib/jquery.min.js"></script>
+    <script src="../lib/qTip/jquery.qtip.min.js"></script>
+    <script src="../lib/moment.min.js"></script>
+    <script src="../fullcalendar.js"></script>
+    <script src="../locale-all.js"></script>
+    <script src="../scheduler.min.js"></script>
 
-<head>
-  <meta http-equiv="x-ua-compatible" content="IE=9" />
-  <meta charset="utf-8" />
 
-  <link href="../fullcalendar.min.css" rel="stylesheet" />
-  <link href="../scheduler.min.css" rel="stylesheet">
-  </script>
-  <link href="../fullcalendar.print.min.css" rel="stylesheet" media="print" />
-  <link href="../lib/qTip/jquery.qtip.min.css" rel="stylesheet" />
-  <link href="../lib/cupertino/jquery-ui.min.css" rel="stylesheet" />
-  <link href="../style.css" rel="stylesheet" />
-
-  <script src="../lib/jquery.min.js"></script>
-  <script src="../lib/qTip/jquery.qtip.min.js"></script>
-  <script src="../lib/moment.min.js"></script>
-  <script src="../fullcalendar.js"></script>
-  <script src="../locale-all.js"></script>
-  <script src="../scheduler.min.js"></script>
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
-  <script>
-    $(document).ready(function () {
-
-      let schedulerLicenseKey = [+[]] + [+!+[]] + [!+[] + !+[]] + [!+[] + !+[] + !+[] + !+[] + !+[] + !+[]] + [!+[] + !+[] + !+[] + !+[] + !+[] + !+[]] + [+!+[]] + [!+[] + !+[] + !+[] + !+[] + !+[] + !+[] + !+[] + !+[]] + [+[]] + [+[]] + [!+[] + !+[] + !+[] + !+[] + !+[] + !+[] + !+[] + !+[] + !+[]] + (+((+(+!+[] + [+!+[]] + (!![] + [])[!+[] + !+[] + !+[]] + [!+[] + !+[]] + [+[]]) + [])[+!+[]] + [+[] + [+[]] + [+[]] + [+[]] + [+[]] + [+[]] + [+!+[]]]) + [])[!+[] + !+[]] + (![] + [])[+[]] + ([][(![] + [])[+[]] + (![] + [])[!+[] + !+[]] + (![] + [])[+!+[]] + (!![] + [])[+[]]] + [])[!+[] + !+[] + !+[]] + (![] + [])[!+[] + !+[] + !+[]] + (+((+(+!+[] + [+!+[]] + (!![] + [])[!+[] + !+[] + !+[]] + [!+[] + !+[]] + [+[]]) + [])[+!+[]] + [+[] + [+[]] + [+[]] + [+[]] + [+[]] + [+[]] + [+!+[]]]) + [])[!+[] + !+[]] + [+!+[]] + [!+[] + !+[] + !+[] + !+[] + !+[] + !+[]] + [!+[] + !+[] + !+[]] + [!+[] + !+[] + !+[] + !+[] + !+[]] + [!+[] + !+[] + !+[]] + [+!+[]] + [!+[] + !+[] + !+[] + !+[] + !+[]] + [!+[] + !+[] + !+[] + !+[]] + [!+[] + !+[] + !+[] + !+[]] + [!+[] + !+[] + !+[] + !+[]];
-
-      $('#calendar').fullCalendar({
-        locale: 'de',
-        defaultView: 'agendaDay',
-        editable: true,
-        nowIndicator: true,
-        minTime: '06:00:00',
-        maxTime: '23:00:00',
-        slotDuration: '00:05:00',
-        displayEventTime: false,
-        allDaySlot: true,
-        defaultTimedEventDuration: '00:15:00',
-        schedulerLicenseKey,
-        views: {
-          agendaDay: {
-            titleFormat: 'dd, (D.) MMMM YYYY',
-            // other view-specific options here
-          },
-        },
-        events: loadEventsCallback,
-        dayRightClick: rightClickCallback,
-        dayClick: dayClickCallback,
-        eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
-          if (event.end) {
-            eventDropFunction(event.id, event.start.format(), event.end.format(), event.resourceId, jsEvent.ctrlKey);
-          } else {
-            eventDropFunction(event.id, event.start.format(), null, event.resourceId, jsEvent.ctrlKey);
-          }
-        },
-        eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
-          eventResizeFunction(event.id, event.start.format(), event.end.format());
-        },
-        eventRender: eventRenderCallback,
-        customButtons: {
-          print: {
-            text: 'Screenshot',
-            click: function () {
-              captureScreenshotForPrint();
+    <script>
+      $(document).ready(function () {
+      
+      	let schedulerLicenseKey = [+[]]+[+!+[]]+[!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[+[]]+[+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+(+((+(+!+[]+[+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+[!+[]+!+[]]+[+[]])+[])[+!+[]]+[+[]+[+[]]+[+[]]+[+[]]+[+[]]+[+[]]+[+!+[]]])+[])[!+[]+!+[]]+(![]+[])[+[]]+([][(![]+[])[+[]]+(![]+[])[!+[]+!+[]]+(![]+[])[+!+[]]+(!![]+[])[+[]]]+[])[!+[]+!+[]+!+[]]+(![]+[])[!+[]+!+[]+!+[]]+(+((+(+!+[]+[+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+[!+[]+!+[]]+[+[]])+[])[+!+[]]+[+[]+[+[]]+[+[]]+[+[]]+[+[]]+[+[]]+[+!+[]]])+[])[!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]]+[+!+[]]+[!+[]+!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]]+[!+[]+!+[]+!+[]+!+[]];
+      
+        $('#calendar').fullCalendar({
+          locale: 'de',
+          defaultView: 'agendaDay',
+          editable: true,
+          nowIndicator: true,
+          minTime: '06:00:00',
+          maxTime: '23:00:00',
+          slotDuration: '00:05:00',
+          displayEventTime: false,
+          allDaySlot: true,
+          defaultTimedEventDuration: '00:15:00',
+          schedulerLicenseKey,
+          views: {
+            agendaDay: {
+              titleFormat: 'dd, (D.) MMMM YYYY',
+              // other view-specific options here
             },
           },
-          pdf: {
-            text: 'Pdf',
-            click: function () {
-              pdfFunction();
+          events: loadEventsCallback,
+          dayRightClick: rightClickCallback,
+          dayClick: dayClickCallback,
+          eventDrop: function (event, delta, revertFunc, jsEvent, ui, view) {
+          	if (event.end) {
+          		eventDropFunction(event.id, event.start.format(), event.end.format(), event.resourceId, jsEvent.ctrlKey);
+          	} else {
+          		eventDropFunction(event.id, event.start.format(), null, event.resourceId, jsEvent.ctrlKey);
+          	}
+          },
+          eventResize: function (event, delta, revertFunc, jsEvent, ui, view) {
+            eventResizeFunction(event.id, event.start.format(), event.end.format());
+          },
+          eventRender: eventRenderCallback,
+          customButtons: {
+            pdf: {
+              text: 'Pdf',
+              click: function () {
+                pdfFunction();
+              },
+            },
+            switch: {
+              text: 'Woche',
+              click: function () {
+                switchFunction('week');
+              },
+            },
+            reload: {
+              text: '',
+              icon: 'refresh',
+              click: function () {
+                $('#calendar').fullCalendar('refetchEvents');
+              },
             },
           },
-          switch: {
-            text: 'Woche',
-            click: function () {
-              switchFunction('week');
-            },
+          header: {
+            left: 'title',
+            center: '',
+            right: 'pdf switch reload,today prev,next',
           },
-          reload: {
-            text: '',
-            icon: 'refresh',
-            click: function () {
-              $('#calendar').fullCalendar('refetchEvents');
-            },
-          },
-        },
-        header: {
-          left: 'title',
-          center: '',
-          right: 'print pdf switch reload,today prev,next',
-        },
-        resources: loadResources,
-        resourceOrder: 'order'
-      });
-    });
-
-    function getMinAndMaxTimes(events) {
-      const morningBlocks = events.filter(event => {
-        const start = moment(event.start).format("HH:mm:ss");
-        return start === "00:00:00";
-      });
-      const eveningBlocks = events.filter(event => {
-        const end = moment(event.end).format("HH:mm:ss");
-        return end === "23:59:00";
-      });
-      let minTime = "06:00:00";
-      let maxTime = "20:00:00";
-      if (morningBlocks.length > 0) {
-        const endTimes = morningBlocks.map(e => moment(e.end));
-        const maxEndTime = moment.max(endTimes);
-        minTime = maxEndTime.format("HH:mm:ss");
-      }
-
-      if (eveningBlocks.length > 0) {
-        const startTimes = eveningBlocks.map(e => moment(e.start));
-        const maxStartTime = moment.max(startTimes);
-        maxTime = maxStartTime.format("HH:mm:ss");
-      }
-      return { minTime, maxTime };
-    }
-
-    function captureScreenshotForPrint() {
-      function getActiveScreenResolution() {
-        const viewportWidth = window.innerWidth * window.devicePixelRatio;
-        const viewportHeight = window.innerHeight * window.devicePixelRatio;
-        const screenWidth = window.screen.availWidth * window.devicePixelRatio;
-        const screenHeight = window.screen.availHeight * window.devicePixelRatio;
-        return {
-          viewportWidth,
-          viewportHeight,
-          screenWidth,
-          screenHeight
-        };
-      }
-      const {
-        viewportWidth,
-        viewportHeight,
-        screenWidth,
-        screenHeight
-      } = getActiveScreenResolution();
-      let slotDuration;
-      if (screenWidth >= 3840 || screenHeight >= 2400 || (screenWidth >= 2560 && screenHeight >= 1440)) {
-        slotDuration = '00:12:00';
-      } else if (screenWidth >= 1920 || screenHeight >= 1200) {
-        slotDuration = '00:20:00';
-      } else {
-        slotDuration = '00:20:00';
-      }
-      const { minTime, maxTime } = getMinAndMaxTimes(globalEvents);
-      const originalSlotDuration = $('#calendar').fullCalendar('option', 'slotDuration');
-      const originalMinTime = $('#calendar').fullCalendar('option', 'minTime');
-      const originalMaxTime = $('#calendar').fullCalendar('option', 'maxTime');
-      $('#calendar').fullCalendar('option', 'slotDuration', slotDuration);
-      $('#calendar').fullCalendar('option', 'minTime', minTime);
-      $('#calendar').fullCalendar('option', 'maxTime', maxTime);
-      $('#calendar').fullCalendar('render');
-      setTimeout(function () {
-        const headerRight = document.querySelector('.fc-header-toolbar .fc-right');
-        const centerButtons = document.querySelectorAll('.fc-header-toolbar .fc-center .fc-button');
-        if (headerRight) headerRight.style.display = 'none';
-        centerButtons.forEach(button => button.style.display = 'none');
-        const calendarElement = document.getElementById('calendar');
-        html2canvas(calendarElement, {
-          useCORS: true,
-          allowTaint: true,
-          scale: 1
-        }).then(function (canvas) {
-          const dataUrl = canvas.toDataURL('image/png');
-          if (window.screenshotFunction) {
-            window.screenshotFunction(dataUrl);
-          } 
-          $('#calendar').fullCalendar('option', 'slotDuration', originalSlotDuration);
-          $('#calendar').fullCalendar('option', 'minTime', originalMinTime);
-          $('#calendar').fullCalendar('option', 'maxTime', originalMaxTime);
-          $('#calendar').fullCalendar('render');
-          if (headerRight) headerRight.style.display = '';
-          centerButtons.forEach(button => button.style.display = '');
-        }).catch(function (error) {
-          console.error('Fehler beim Aufnehmen des Screenshots:', error);
-          $('#calendar').fullCalendar('option', 'slotDuration', originalSlotDuration);
-          $('#calendar').fullCalendar('option', 'minTime', originalMinTime);
-          $('#calendar').fullCalendar('option', 'maxTime', originalMaxTime);
-          $('#calendar').fullCalendar('render');
-          if (headerRight) headerRight.style.display = '';
-          centerButtons.forEach(button => button.style.display = '');
+          resources: loadResources,
+          resourceOrder: 'order'
         });
-      }, 100);
-    }
-
-    function monkeyPatchViewClass(View) {
-      View = View.class || View;
-      var renderFn = "render" in View.prototype ? "render" : "renderDates";
-      var originalRender = View.prototype[renderFn];
-      View.prototype[renderFn] = function () {
-        originalRender.call(this);
-        if (!this.el.data("fullcalendar-rightclick")) {
-          this.registerRightclickListener();
-          this.el.data("fullcalendar-rightclick", true);
-        }
-      };
-      View.prototype.registerRightclickListener = function () {
-        var that = this;
-        var grid = this;
-        if (that.timeGrid) {
-          grid = that.timeGrid;
-        } else if (that.dayGrid) {
-          grid = that.dayGrid;
-        }
-        var trigger = typeof that.publiclyTrigger === "function" ? "publiclyTrigger" : "trigger";
-        this.el.on("contextmenu", function (ev) {
-          ev.preventDefault();
-          var eventElt = $(ev.target).closest(".fc-event, .fc-list-item");
-          if (eventElt.length) {
-            var seg = eventElt.data("fc-seg");
-            return that[trigger]("eventRightClick", { args: [seg.footprint.getEventLegacy(), ev, that.calendar.getView()] });
-          } else {
-            var fcContainer = $(ev.target).closest(
-              ".fc-bg, .fc-slats, .fc-content-skeleton, " +
-              ".fc-bgevent-skeleton, .fc-highlight-skeleton"
-            );
-            if (fcContainer.length) {
-              grid.prepareHits();
-              let hit = grid.queryHit(ev.pageX, ev.pageY);
-              if (hit) {
-                let cell = grid.getSafeHitFootprint(hit);
-                if (cell) {
-                  var dateProfile = that.calendar.footprintToDateProfile(cell);
-                  cell.start = dateProfile.start;
-                  cell.end = dateProfile.end;
-                  return that[trigger]("dayRightClick", { args: [dateProfile.start, dateProfile.end, cell.resourceId] });
+      });
+      
+      function monkeyPatchViewClass(View) {
+        View = View.class || View;
+        var renderFn = "render" in View.prototype ? "render" : "renderDates";
+        var originalRender = View.prototype[renderFn];
+        View.prototype[renderFn] = function () {
+          originalRender.call(this);
+          if (!this.el.data("fullcalendar-rightclick")) {
+            this.registerRightclickListener();
+            this.el.data("fullcalendar-rightclick", true);
+          }
+        };
+        View.prototype.registerRightclickListener = function () {
+          var that = this;
+          var grid = this;
+          if (that.timeGrid) {
+            grid = that.timeGrid;
+          } else if (that.dayGrid) {
+            grid = that.dayGrid;
+          }
+          var trigger = typeof that.publiclyTrigger === "function" ? "publiclyTrigger" : "trigger";
+          this.el.on("contextmenu", function (ev) {
+            ev.preventDefault();
+            var eventElt = $(ev.target).closest(".fc-event, .fc-list-item");
+            if (eventElt.length) {
+              var seg = eventElt.data("fc-seg");
+              return that[trigger]("eventRightClick", { args: [seg.footprint.getEventLegacy(), ev, that.calendar.getView()] });
+            } else {
+              var fcContainer = $(ev.target).closest(
+                ".fc-bg, .fc-slats, .fc-content-skeleton, " +
+                ".fc-bgevent-skeleton, .fc-highlight-skeleton"
+              );
+              if (fcContainer.length) {
+                grid.prepareHits();
+                let hit = grid.queryHit(ev.pageX, ev.pageY);
+                if (hit) {
+                  let cell = grid.getSafeHitFootprint(hit);
+                  if (cell) {
+                    var dateProfile = that.calendar.footprintToDateProfile(cell);
+                    cell.start = dateProfile.start;
+                    cell.end = dateProfile.end;
+                    return that[trigger]("dayRightClick", { args: [dateProfile.start, dateProfile.end, cell.resourceId] });
+                  }
                 }
               }
             }
-          }
-        });
-      };
-    }
-
-    var fc = $.fullCalendar;
-    monkeyPatchViewClass(fc.views.agenda);
-    monkeyPatchViewClass(fc.views.basic);
-
-    // https://fullcalendar.io/docs/v3/resourceOrder
-
-    var colorMapping = {};
-    function loadResources(callback) {
-      var _resources = loadResourcesFunction();
-      var resources = JSON.parse(_resources);
-      resources.forEach(function (resource) {
-        colorMapping[resource.id] = 'rgba(' + resource.color + ', 0.4)';
-      });
-      callback(resources);
-    }
-
-    function getColorForResource(resourceId) {
-      var color = colorMapping[resourceId] || 'rgba(255, 255, 255, 0.4)';
-      return color;
-    }
-    function loadEventsCallback(start, end, timezone, callback) {
-      var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
-      var jsonEvents = JSON.parse(eventsJson || '[]');
-      var events = [];
-      var processedResources = new Set();
-
-      globalEvents = []; // Globales Array zurücksetzen
-
-      jsonEvents.forEach(function (event) {
-        var resourceId = event.resource || event.resourceId;
-
-        if (!processedResources.has(resourceId)) {
-          var color = getColorForResource(resourceId);
-          if (color && !color.includes("undefined")) {
-            var autoStartDate = new Date();
-            var autoEndDate = new Date();
-            autoStartDate.setFullYear(autoStartDate.getFullYear() - 1);
-            autoEndDate.setFullYear(autoEndDate.getFullYear() + 3);
-            var formattedStart = autoStartDate.toISOString().split('T')[0] + "T00:00";
-            var formattedEnd = autoEndDate.toISOString().split('T')[0] + "T23:59";
-
-            events.push({
-              resourceId: resourceId,
-              start: formattedStart,
-              end: formattedEnd,
-              rendering: 'background',
-              color: color
-            });
-          }
-          processedResources.add(resourceId);
-        }
-
-        var eventObj = {
-          id: event.id,
-          title: event.title,
-          start: event.start,
-          end: event.end,
-          description: event.description,
-          icon: event.icon,
-          rendering: event.rendering,
-          borderColor: event.borderColor,
-          backgroundColor: event.backgroundColor,
-          textColor: event.textColor,
-          resourceId: event.resource,
-          allDay: event.allDay
+          });
         };
-
-        events.push(eventObj);
-        globalEvents.push(eventObj);
-      });
-
-      callback(events);
-    }
-
-    function rightClickCallback(start, end, resourceId) {
-      contextMenuFunction(start, resourceId);
-    }
-
-    var dayClickSlotDate;
-    var dayClickPosX;
-    var dayClickPosY;
-
-    function dayClickCallback(date, jsEvent, view, resourceObj) {
-      if (dayClickSlotDate) {
-        if (typeof resourceObj !== 'undefined') {
-          dayClickFunction(date.format(), resourceObj.id);
-        } else {
-          dayClickFunction(date.format());
-        }
-        dayClickSlotDate = null;
-      } else {
-        singleClickFunction();
-        dayClickSlotDate = date;
-        dayClickPosX = jsEvent.pageX;
-        dayClickPosY = jsEvent.pageY;
-        $('#calendar').mousemove(function (jqEvent) {
-          if (dayClickSlotDate) {
-            if (dayClickPosX != jqEvent.pageX || dayClickPosY != jqEvent.pageY) {
-              dayClickSlotDate = null;
-            }
-          }
-        });
       }
-    }
 
-    function eventRenderCallback(event, element) {
-      element.click(function () {
-        singleClickFunction(event.id);
-      });
-      element.dblclick(function () {
-        doubleClickFunction(event.id);
-      });
-      element.contextmenu(function () {
-        contextMenuFunction(event.id);
-      });
-      if (event.rendering === undefined) {
-        if (!element.hasClass('fc-helper')) {
-          element.qtip({
-            style: { classes: 'qtip-dark' },
-            show: {
-              delay: 250,
-              solo: true,
-            },
-            hide: {
-              delay: 0,
-            },
-            content: {
-              title: event.title + ((event.end === undefined || event.end == null || event.start === undefined || event.start == null) ? '' : '<br/>Von/Bis: ' + event.start.format('HH:mm') + '-' + event.end.format('HH:mm')),
-              text: event.description,
-            },
-            position: {
-              my: 'bottom center',
-              at: 'top center',
-              target: element,
-              viewport: $('#calendar'),
-            },
-            events: {
-              show: function (showEvent, api) {
-                var contactInfoJson = loadContactInfoFunction(event.id);
-                if (contactInfoJson !== null) {
-                  var contactInfo = JSON.parse(contactInfoJson);
-                  // Now we set the content manually (required!)
-                  api.set('content.title',
-                    event.title +
-                    ((event.end === undefined || event.end == null || event.start === undefined || event.start == null) ? '' : '<br/>Von/Bis: ' + event.start.format('HH:mm') + '-' + event.end.format('HH:mm')) +
-                    ((contactInfo.tel === undefined || contactInfo.tel == null) ? '' : '<br/>Tel: ' + contactInfo.tel) +
-                    ((contactInfo.mail === undefined || contactInfo.mail == null) ? '' : '<br/>Mail: ' + contactInfo.mail));
+      var fc = $.fullCalendar;
+      monkeyPatchViewClass(fc.views.agenda);
+      monkeyPatchViewClass(fc.views.basic);
+
+      // https://fullcalendar.io/docs/v3/resourceOrder
+      
+      var colorMapping = {};
+      function loadResources(callback) {
+        var _resources = loadResourcesFunction();
+        var resources = JSON.parse(_resources);
+          resources.forEach(function(resource) {
+            colorMapping[resource.id] = 'rgba(' + resource.color + ', 0.4)';
+          });
+        callback(resources);
+      }
+
+      function getColorForResource(resourceId) {
+        var color = colorMapping[resourceId] || 'rgba(255, 255, 255, 0.4)';
+        return color;
+      }
+      function loadEventsCallback(start, end, timezone, callback) {
+        var eventsJson = loadEventsFunction(start.format(), end.format(), timezone);
+        var jsonEvents = JSON.parse(eventsJson);
+        var events = [];
+        var processedResources = new Set();
+          jsonEvents.forEach(function (event) {
+            var resourceId = event.resource || event.resourceId;
+              if (!processedResources.has(resourceId)) {
+                var color = getColorForResource(resourceId);
+                  if (color && !color.includes("undefined")) {
+                    var autoStartDate = new Date();
+                    var autoEndDate = new Date();
+                      autoStartDate.setFullYear(autoStartDate.getFullYear() - 1);
+                      autoEndDate.setFullYear(autoEndDate.getFullYear() + 3);
+                    var formattedStart = autoStartDate.toISOString().split('T')[0] + "T00:00";
+                    var formattedEnd = autoEndDate.toISOString().split('T')[0] + "T23:59";
+                      events.push({
+                        resourceId: resourceId,
+                        start: formattedStart, 
+                        end: formattedEnd, 
+                        rendering: 'background',
+                        color: color
+                      });
+                    }   
+                  processedResources.add(resourceId); 
                 }
+              events.push({
+                id: event.id,
+                title: event.title,
+                start: event.start,
+                end: event.end,
+                description: event.description,
+                icon: event.icon,
+                rendering: event.rendering,
+                borderColor: event.borderColor,
+                backgroundColor: event.backgroundColor,
+                textColor: event.textColor,
+                resourceId: event.resource,
+                allDay: event.allDay
+              });
+          });
+        callback(events);
+      }
+
+      function rightClickCallback(start, end, resourceId) {
+        contextMenuFunction(start, resourceId);
+      }
+
+      var dayClickSlotDate;
+      var dayClickPosX;
+      var dayClickPosY;
+
+      function dayClickCallback(date, jsEvent, view, resourceObj) {
+        if (dayClickSlotDate) {
+          if (typeof resourceObj !== 'undefined') {
+            dayClickFunction(date.format(), resourceObj.id);
+          } else {
+            dayClickFunction(date.format());
+          }
+          dayClickSlotDate = null;
+        } else {
+          singleClickFunction();
+          dayClickSlotDate = date;
+          dayClickPosX = jsEvent.pageX;
+          dayClickPosY = jsEvent.pageY;
+          $('#calendar').mousemove(function (jqEvent) {
+            if (dayClickSlotDate) {
+              if (dayClickPosX != jqEvent.pageX || dayClickPosY != jqEvent.pageY) {
+                dayClickSlotDate = null;
               }
             }
           });
         }
       }
-      if (event.description) {
-        var firstpart = event.description.split('<br /><br />');
-        if (firstpart.length > 0) {
-          if (!event.title.trim()) {
-            element.find('.fc-title').text(firstpart[0]);
-          } else {
-            element.find('.fc-title').append('<br/>' + firstpart[0]);
+
+      function eventRenderCallback(event, element) {
+        element.click(function () {
+          singleClickFunction(event.id);
+        });
+        element.dblclick(function () {
+          doubleClickFunction(event.id);
+        });
+        element.contextmenu(function () {
+          contextMenuFunction(event.id);
+        });
+        if (event.rendering === undefined) {
+          if (!element.hasClass('fc-helper')) {
+            element.qtip({
+              style: {classes: 'qtip-dark'},
+              show: {
+                delay: 250,
+                solo: true,
+              },
+              hide: {
+                delay: 0,
+              },
+              content: {
+                title: event.title + ((event.end === undefined || event.end == null || event.start === undefined || event.start == null) ? '' : '<br/>Von/Bis: ' + event.start.format('HH:mm') + '-' + event.end.format('HH:mm')),
+                text: event.description,
+              },
+              position: {
+                my: 'bottom center',
+                at: 'top center',
+                target: element,
+                viewport: $('#calendar'),
+              },
+              events: {
+                show: function(showEvent, api) { 
+                  var contactInfoJson = loadContactInfoFunction(event.id);
+                  if(contactInfoJson !== null) {
+                    var contactInfo = JSON.parse(contactInfoJson);
+                    // Now we set the content manually (required!)
+                    api.set('content.title', 
+                      event.title + 
+                      ((event.end === undefined || event.end == null || event.start === undefined || event.start == null) ? '' : '<br/>Von/Bis: ' + event.start.format('HH:mm') + '-' + event.end.format('HH:mm')) + 
+                      ((contactInfo.tel === undefined || contactInfo.tel == null) ? '' : '<br/>Tel: ' + contactInfo.tel) + 
+                      ((contactInfo.mail === undefined || contactInfo.mail == null) ? '' : '<br/>Mail: ' + contactInfo.mail));
+                  }
+                 }
+              }
+            });
           }
-        } else {
-          element.find('.fc-title').append('<br/>' + event.description);
+        }
+        if (event.description) {
+          var firstpart = event.description.split('<br /><br />');
+          if (firstpart.length > 0) {
+            if (!event.title.trim()) {
+              element.find('.fc-title').text(firstpart[0]);
+            } else {
+              element.find('.fc-title').append('<br/>' + firstpart[0]);
+            }
+          } else {
+            element.find('.fc-title').append('<br/>' + event.description);
+          }
+        }
+        if (event.borderColor) {
+          element.find('div.fc-content').wrapAll("<div class='event-status-block'></div>");
+          element.find('div.event-status-block').css('border-color', event.borderColor);
+        }
+        if (event.icon) {
+          element.find('div.fc-content').prepend("<i class='ui-icon ui-calendar-icon " + event.icon + "'></i>");
         }
       }
-      if (event.borderColor) {
-        element.find('div.fc-content').wrapAll("<div class='event-status-block'></div>");
-        element.find('div.event-status-block').css('border-color', event.borderColor);
+    </script>
+    <style>
+      body {
+        margin: 10px 0 0 0;
+        padding: 0;
+        font-family: 'Lucida Grande', Helvetica, Arial, Verdana, sans-serif;
+        font-size: 14px;
       }
-      if (event.icon) {
-        element.find('div.fc-content').prepend("<i class='ui-icon ui-calendar-icon " + event.icon + "'></i>");
+
+      #calendar {
+        margin: 0 auto;
+        width: 100%;
       }
-    }
-  </script>
-  <style>
-    body {
-      margin: 10px 0 0 0;
-      padding: 0;
-      font-family: 'Lucida Grande', Helvetica, Arial, Verdana, sans-serif;
-      font-size: 14px;
-    }
+    </style>
+  </head>
 
-    #calendar {
-      margin: 0 auto;
-      width: 100%;
-    }
-  </style>
-</head>
-
-<body oncontextmenu="return false;">
-  <!--[if lt IE 9]>
+  <body oncontextmenu="return false;">
+    <!--[if lt IE 9]>
       <p style="background-color: #fffa00">
         You are using an outdated version of Internet Explorer. For security reasons you should upgrade your browser. Please go to
         Windows Updates and install the latest version.
       </p>
     <![endif]-->
-  <div id="calendar"></div>
-</body>
-
+    <div id="calendar"></div>
+  </body>
 </html>

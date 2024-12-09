@@ -71,7 +71,12 @@ public class StartupHandler implements EventHandler {
 							dlg.open();
 						}
 					});
+				} else {
+					logger.warn(
+							"Patient with id [" + medication.Patient.patientId + "] could not be loaded for emediplan");//$NON-NLS-1$ //$NON-NLS-2$
 				}
+			} else {
+				logger.warn("No patientid for emediplan"); //$NON-NLS-1$
 			}
 		}
 	}

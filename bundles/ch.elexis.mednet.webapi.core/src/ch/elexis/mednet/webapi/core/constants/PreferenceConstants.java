@@ -22,4 +22,6 @@ public class PreferenceConstants {
 
 	public static final String TOKEN_GROUP = "token_group";
 	public static final String TOKEN_GROUP_KEY = "mednet";
+	public static final String MEDNET_MODE = "mednet_mode";
+
 }

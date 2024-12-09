@@ -29,8 +29,9 @@ public class IconConstants {
 	public static final String ICON_SETTINGS_WHITE = "icons/settings_white.png";
 	public static final String ICON_CONECT_BLUE = "icons/conect_blue.png";
 	public static final String ICON_CONECT_WHITE = "icons/conect_white.png";
-	public static final String ICON_TOGGEL_RED = "icons/toggel_red.png";
-	public static final String ICON_TOGGEL_GREEN = "icons/toggel_green.png";
-	public static final String ICON_WARNUNG_GELB = "icons/warnung_gelb.png";
-	public static final String ICON_WARNUNG_GRUEN = "icons/warnung_gruen.png";
+	public static final String ICON_TOGGEL_RED = "icons/on-off-button-rot.png";
+	public static final String ICON_TOGGEL_GREEN = "icons/on-off-button-gruen.png";
+	public static final String ICON_LEFT_ARROW = "icons/left-arrow.png";
+	public static final String ICON_LEFT_ARROW_WHITE = "icons/left-arrow_white.png";
+
 }

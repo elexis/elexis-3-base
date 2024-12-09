@@ -120,6 +120,7 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 		for (int i = 0; i < amount; i++) {
 			InputStream pdf = PdfTransformer.transformXmlToPdf(xmlDoc, xslTemplate);
 			PrintProvider.printPdf(pdf, printerName);
+			xmlDoc.reset();
 		}
 	}
 

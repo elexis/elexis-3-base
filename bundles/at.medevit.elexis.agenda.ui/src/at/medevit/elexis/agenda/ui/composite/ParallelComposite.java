@@ -42,6 +42,7 @@ import at.medevit.elexis.agenda.ui.function.LoadContactInfoFunction;
 import at.medevit.elexis.agenda.ui.function.LoadEventsFunction;
 import at.medevit.elexis.agenda.ui.function.LoadResourcesFunction;
 import at.medevit.elexis.agenda.ui.function.PdfFunction;
+import at.medevit.elexis.agenda.ui.function.ScreenshotFunction;
 import at.medevit.elexis.agenda.ui.function.SingleClickFunction;
 import at.medevit.elexis.agenda.ui.function.SwitchFunction;
 import at.medevit.elexis.agenda.ui.rcprap.SingleSourceUtil;
@@ -113,6 +114,8 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 		new EventResizeFunction(browser, "eventResizeFunction"); //$NON-NLS-1$
 
 		new PdfFunction(part, browser, "pdfFunction"); //$NON-NLS-1$
+
+		new ScreenshotFunction(browser, "screenshotFunction"); //$NON-NLS-1$
 
 		dayClickFunction = new DayClickFunction(browser, "dayClickFunction"); //$NON-NLS-1$
 

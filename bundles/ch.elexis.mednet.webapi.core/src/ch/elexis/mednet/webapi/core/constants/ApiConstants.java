@@ -24,7 +24,7 @@ public class ApiConstants {
 					String mode = configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
 
 					if ("PRODUKTIV".equals(mode)) {
-						return "https://prod.mednet.swiss/web/api/v1/external";
+						return "https://www.mednet.swiss/web/api/v1/external";
 					} else {
 						return "https://demo.mednet.swiss/web/api/v1/external";
 					}
@@ -34,7 +34,7 @@ public class ApiConstants {
 			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(pluginId);
 			String mode = node.get(PreferenceConstants.MEDNET_MODE, "DEMO");
 			if ("PRODUKTIV".equals(mode)) {
-				return "https://prod.mednet.swiss/web/api/v1/external";
+				return "https://www.mednet.swiss/web/api/v1/external";
 			} else {
 				return "https://demo.mednet.swiss/web/api/v1/external";
 			}
@@ -55,7 +55,7 @@ public class ApiConstants {
 					String mode = configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
 
 					if ("PRODUKTIV".equals(mode)) {
-						return "https://prod.mednetpatient.swiss/idsrv";
+						return "https://www.mednet.swiss/idsrv";
 					} else {
 						return "https://demo.mednetpatient.swiss/idsrv";
 					}
@@ -67,7 +67,7 @@ public class ApiConstants {
 			String mode = node.get(PreferenceConstants.MEDNET_MODE, "DEMO");
 
 			if ("PRODUKTIV".equals(mode)) {
-				return "https://prod.mednetpatient.swiss/idsrv";
+				return "https://www.mednet.swiss/idsrv";
 			} else {
 				return "https://demo.mednetpatient.swiss/idsrv";
 			}

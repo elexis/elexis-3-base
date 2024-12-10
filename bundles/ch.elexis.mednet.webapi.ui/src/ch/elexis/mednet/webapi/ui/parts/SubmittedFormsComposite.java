@@ -1,5 +1,9 @@
 package ch.elexis.mednet.webapi.ui.parts;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -18,13 +22,9 @@ import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.mednet.webapi.core.handler.SingleFileDownloaderHandler;
 import ch.elexis.mednet.webapi.core.messages.Messages;
-import ch.elexis.mednet.webapi.ui.fhir.util.UIStyleHelper;
 import ch.elexis.mednet.webapi.ui.handler.DataHandler;
 import ch.elexis.mednet.webapi.ui.handler.ImportOmnivore;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
+import ch.elexis.mednet.webapi.ui.util.UIStyleTableHelper;
 
 public class SubmittedFormsComposite {
     private static final Logger logger = LoggerFactory.getLogger(SubmittedFormsComposite.class);
@@ -57,14 +57,17 @@ public class SubmittedFormsComposite {
         refreshButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 		refreshButton.addListener(SWT.Selection, e -> refreshTableData());
 
-        customerCombo = UIStyleHelper.createStyledCCombo(parent);
+        customerCombo = UIStyleTableHelper.createStyledCCombo(parent);
 		DataHandler.loadCustomersFromApi(customerCombo);
 		customerCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-        submittedFormsTable = UIStyleHelper.createStyledTable(parent);
-        String[] columnHeaders = {"Order No.", "Date", "Patient No.", "Patient Name", "Birthdate", "Type", "Exports and Attachments", "Sender", "Receiver"};
+        submittedFormsTable = UIStyleTableHelper.createStyledTable(parent);
+		String[] columnHeaders = { Messages.ColumnHeaders_OrderNo, Messages.ColumnHeaders_Date,
+				Messages.ColumnHeaders_PatientNo, Messages.ColumnHeaders_PatientName, Messages.ColumnHeaders_Birthdate,
+				Messages.ColumnHeaders_Type, Messages.ColumnHeaders_ExportsAndAttachments,
+				Messages.ColumnHeaders_Sender, Messages.ColumnHeaders_Receiver };
         int[] columnWidths = {80, 120, 90, 120, 100, 50, 120, 100, 100};
-        UIStyleHelper.addTableColumns(submittedFormsTable, columnHeaders, columnWidths);
+        UIStyleTableHelper.addTableColumns(submittedFormsTable, columnHeaders, columnWidths);
 		submittedFormsTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		loadSubmittedFormsCombo();
         customerCombo.addListener(SWT.Selection, event -> {

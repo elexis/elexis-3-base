@@ -24,14 +24,9 @@ import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.MimeType;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IDocumentStore;
-import ch.elexis.core.services.IQuery;
-import ch.elexis.core.services.IQuery.COMPARATOR;
-import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.mednet.webapi.core.constants.PreferenceConstants;
-import ch.elexis.mednet.webapi.core.constants.TransientCategory;
-import ch.elexis.mednet.webapi.core.service.OmnivoreModelServiceHolder;
 
 
 @Component

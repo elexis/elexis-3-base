@@ -1,9 +1,10 @@
 package ch.elexis.mednet.webapi.ui.handler;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Display;
@@ -12,17 +13,17 @@ import org.eclipse.swt.widgets.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+
 import ch.elexis.core.model.IDocument;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.mednet.webapi.core.constants.FHIRConstants;
 import ch.elexis.mednet.webapi.core.messages.Messages;
 import ch.elexis.mednet.webapi.ui.parts.DocumentsSelectionDialog;
-
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class DataHandler {
 

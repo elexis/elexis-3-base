@@ -1,4 +1,4 @@
-package ch.elexis.mednet.webapi.ui.fhir.util;
+package ch.elexis.mednet.webapi.ui.util;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class UIStyleHelper {
+public class UIStyleTableHelper {
 
 	private static Font tableFont = null;
 

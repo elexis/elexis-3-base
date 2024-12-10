@@ -133,8 +133,6 @@ public class SingleFileDownloaderHandler {
 				}
 			}
 
-			// Fallback: Verwenden von IEclipsePreferences, falls IConfigService nicht
-			// verfügbar ist
 			String pluginId = PreferenceConstants.MEDNET_PLUGIN_STRING;
 			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(pluginId);
 			String downloadPath = node.get(PreferenceConstants.MEDNET_DOWNLOAD_PATH, "");
@@ -166,7 +164,7 @@ public class SingleFileDownloaderHandler {
 				if (authToken.isPresent()) {
 					token = authToken.get();
 					try {
-						String successUrl = ApiConstants.BASE_API_URL + "/" + packageId
+						String successUrl = ApiConstants.getBaseApiUrl() + "/" + packageId
 								+ "/download-success?objectType=Form";
 
 						HttpRequest request = HttpRequest.newBuilder().uri(URI.create(successUrl))

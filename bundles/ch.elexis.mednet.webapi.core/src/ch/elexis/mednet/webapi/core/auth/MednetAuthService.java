@@ -20,11 +20,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -53,7 +48,6 @@ public class MednetAuthService implements IMednetAuthService {
 	private String currentState;
 	private String currentCodeVerifier;
 
-
 	@Override
 	public Optional<String> getToken(Map<String, Object> parameters) {
 		if (configService == null) {
@@ -74,32 +68,6 @@ public class MednetAuthService implements IMednetAuthService {
 		return Optional.empty();
 	}
 
-	@Override
-	public Optional<String> delToken(Map<String, Object> parameters) {
-
-		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
-		ServiceReference<IMednetAuthService> serviceReference = context.getServiceReference(IMednetAuthService.class);
-
-		if (serviceReference != null) {
-	
-			try {
-				
-				configService.setActiveMandator(PreferenceConstants.PREF_TOKEN + PreferenceConstants.TOKEN_GROUP_KEY, null);
-				configService.setActiveMandator(PreferenceConstants.PREF_TOKEN_EXPIRES +PreferenceConstants.TOKEN_GROUP_KEY, null);
-				configService.setActiveMandator(PreferenceConstants.PREF_REFRESHTOKEN + PreferenceConstants.TOKEN_GROUP_KEY, null);
-
-			} catch (Exception ex) {
-
-				LoggerFactory.getLogger(getClass()).error("Error when removing token", ex);
-			} finally {
-				context.ungetService(serviceReference);
-			}
-		} else {
-
-		}
-		return Optional.empty();
-	}
-
 	private Optional<String> getToken(String tokenGroup, IMednetAuthUi iMednetAuthUi) {
 		Optional<String> authCode = getAuthCode(tokenGroup, iMednetAuthUi);
 		if (authCode.isPresent()) {
@@ -112,7 +80,7 @@ public class MednetAuthService implements IMednetAuthService {
 	}
 
 	private String getOauthRestUrl() {
-		return configService.get(PreferenceConstants.PREF_RESTBASEURL, ApiConstants.BASE_URI);
+		return configService.get(PreferenceConstants.PREF_RESTBASEURL, ApiConstants.getBaseUri());
 	}
 
 	private Optional<String> getAccessTokenWithRefresh(String tokenGroup, String refreshToken, String oauthRestUrl) {
@@ -158,9 +126,8 @@ public class MednetAuthService implements IMednetAuthService {
 
 					return Optional.of(token);
 				} catch (JsonSyntaxException ex) {
-					LoggerFactory.getLogger(getClass()).error(
-							"The answer is not a valid JSON: " + response.statusCode(),
-							ex);
+					LoggerFactory.getLogger(getClass())
+							.error("The answer is not a valid JSON: " + response.statusCode(), ex);
 				}
 			} else {
 				LoggerFactory.getLogger(getClass()).error("Getting refreshed access token failed ["
@@ -171,7 +138,6 @@ public class MednetAuthService implements IMednetAuthService {
 		}
 		return Optional.empty();
 	}
-
 
 	public Optional<String> getAuthCode(String tokenGroup, IMednetAuthUi iMedNetAuthUi) {
 		String codeVerifier = generateCodeVerifier();
@@ -227,7 +193,7 @@ public class MednetAuthService implements IMednetAuthService {
 			LoggerFactory.getLogger(getClass()).warn("Kein Login-Hinweis in den Einstellungen gefunden.");
 		} else {
 			LoggerFactory.getLogger(getClass()).info("Login-Hinweis abgerufen: {}", userName);
-	    }
+		}
 		return userName;
 	}
 
@@ -280,7 +246,6 @@ public class MednetAuthService implements IMednetAuthService {
 		return Base64.getUrlEncoder().withoutPadding().encodeToString(code).substring(0, 43);
 	}
 
-
 	private String generateCodeChallenge(String codeVerifier) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -303,7 +268,7 @@ public class MednetAuthService implements IMednetAuthService {
 	}
 
 	private String getClientId() {
-		String mode = getMode(); 
+		String mode = configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
 		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) {
 			if (properties != null) {
 				Properties idProps = new Properties();
@@ -321,7 +286,7 @@ public class MednetAuthService implements IMednetAuthService {
 	}
 
 	private String getClientSecret() {
-		String mode = getMode(); 
+		String mode = configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
 		try (InputStream properties = getClass().getResourceAsStream("/rsc/id.properties")) {
 			if (properties != null) {
 				Properties idProps = new Properties();
@@ -338,27 +303,6 @@ public class MednetAuthService implements IMednetAuthService {
 		return StringUtils.EMPTY;
 	}
 
-	private String getMode() {
-		try {
-			BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
-			ServiceReference<IConfigService> serviceReference = context.getServiceReference(IConfigService.class);
-
-			if (serviceReference != null) {
-				IConfigService configService = context.getService(serviceReference);
-				if (configService != null) {
-					return configService.getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
-				}
-			}
-
-			String pluginId = PreferenceConstants.MEDNET_PLUGIN_STRING;
-			IEclipsePreferences node = InstanceScope.INSTANCE.getNode(pluginId);
-			return node.get(PreferenceConstants.MEDNET_MODE, "DEMO");
-		} catch (Exception e) {
-			LoggerFactory.getLogger(getClass()).error("Error retrieving the mode from preferences", e);
-			return "DEMO";
-		}
-	}
-
 	private Optional<String> validateToken(String existingToken, String tokenGroup) {
 		if (StringUtils.isNotBlank(existingToken)) {
 			String tokenExpires = configService.getActiveMandator(PreferenceConstants.PREF_TOKEN_EXPIRES + tokenGroup,
@@ -373,8 +317,8 @@ public class MednetAuthService implements IMednetAuthService {
 								getOauthRestUrl());
 						if (refreshedToken.isPresent()) {
 							return refreshedToken;
-					} else {
-						configService.setActiveMandator(PreferenceConstants.PREF_REFRESHTOKEN + tokenGroup, null);
+						} else {
+							configService.setActiveMandator(PreferenceConstants.PREF_REFRESHTOKEN + tokenGroup, null);
 						}
 					}
 					configService.setActiveMandator(PreferenceConstants.PREF_TOKEN + tokenGroup, null);
@@ -399,6 +343,3 @@ public class MednetAuthService implements IMednetAuthService {
 		return Optional.empty();
 	}
 }
-
-
-

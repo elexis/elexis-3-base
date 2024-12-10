@@ -16,16 +16,6 @@ public interface IMednetAuthService {
 	public Optional<String> getToken(Map<String, Object> parameters);
 
 	/**
-	 * Get the bearer token for the provided parameters. Existing tokens are
-	 * returned without user interaction. If there is no existing token a
-	 * {@link IMednetAuthUi} implementation is needed for user interaction.
-	 * 
-	 * @param parameters
-	 * @return
-	 */
-	public Optional<String> delToken(Map<String, Object> parameters);
-
-	/**
 	 * Call this method to inform the {@link IMednetAuthService} about a exception
 	 * occurred accessing a web service using a token from the
 	 * {@link IMednetAuthService}.

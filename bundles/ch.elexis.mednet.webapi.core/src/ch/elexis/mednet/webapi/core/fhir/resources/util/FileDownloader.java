@@ -84,7 +84,8 @@ public class FileDownloader {
 	private List<Integer> fetchCustomerIds(String token) {
 		List<Integer> customerIds = new ArrayList<>();
 		try {
-			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(ApiConstants.CUSTOMERS_URL))
+			HttpRequest request = HttpRequest.newBuilder()
+					.uri(URI.create(ApiConstants.getBaseApiUrl() + ApiConstants.CUSTOMERS_URL))
 					.header("Authorization", "Bearer " + token).GET().build();
 
 			HttpClient client = HttpClient.newHttpClient();
@@ -112,7 +113,7 @@ public class FileDownloader {
 
 	private void fetchAndDownloadFormsForCustomer(String token, Integer customerId) {
 		try {
-			String apiUrl = String.format(ApiConstants.SUBMITTED_FORMS_URL, customerId);
+			String apiUrl = String.format(ApiConstants.getBaseApiUrl() + ApiConstants.SUBMITTED_FORMS_URL, customerId);
 			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl))
 					.header("Authorization", "Bearer " + token).GET().build();
 
@@ -247,7 +248,7 @@ public class FileDownloader {
 
 	private void acknowledgeDownloadSuccess(String packageId, String token) {
 		try {
-			String successUrl = ApiConstants.BASE_API_URL + "/" + packageId + "/download-success?objectType=Form";
+			String successUrl = ApiConstants.getBaseApiUrl() + "/" + packageId + "/download-success?objectType=Form";
 			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(successUrl))
 					.header("Authorization", "Bearer " + token).method("PATCH", HttpRequest.BodyPublishers.noBody())
 					.build();
@@ -266,7 +267,7 @@ public class FileDownloader {
 	
 	private void acknowledgeDownloadFailure(String packageId, String token, String errorMessage) {
 		try {
-			String failureUrl = ApiConstants.BASE_API_URL + "/" + packageId + "/download-failure?objectType=Form"; // Use
+			String failureUrl = ApiConstants.getBaseApiUrl() + "/" + packageId + "/download-failure?objectType=Form"; // Use
 																													// constant
 
 			String jsonBody = "{ \"errorMessage\": \"" + errorMessage.replace("\"", "\\\"") + "\" }";

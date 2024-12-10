@@ -33,7 +33,6 @@ import ch.elexis.mednet.webapi.ui.navigation.NavigationState;
 import ch.elexis.mednet.webapi.ui.util.ButtonFactory;
 import ch.elexis.mednet.webapi.ui.util.CompositeEffectHandler;
 
-
 public class MedNetMainComposite {
 
 	@org.osgi.service.component.annotations.Reference(cardinality = ReferenceCardinality.OPTIONAL, policyOption = ReferencePolicyOption.GREEDY)
@@ -101,24 +100,23 @@ public class MedNetMainComposite {
 		ButtonFactory.createToggleButtonComposite(navigationComposite, IconConstants.ICON_TOGGEL_RED,
 				IconConstants.ICON_TOGGEL_GREEN, Messages.MedNetMainComposite_activateImport, customBlue);
 		ButtonFactory.createButtonComposite(navigationComposite, IconConstants.ICON_BARCODE_WHITE,
-				IconConstants.ICON_BARCODE_BLUE,
-				Messages.MedNetMainComposite_formWithPatientData, customBlue, this::connect);
+				IconConstants.ICON_BARCODE_BLUE, Messages.MedNetMainComposite_formWithPatientData, customBlue,
+				this::connect);
 		ButtonFactory.createButtonComposite(navigationComposite, IconConstants.ICON_GROUP_WHITE,
-				IconConstants.ICON_GROUP_BLUE,
-				Messages.MedNetMainComposite_showPatients, customBlue,
-				() -> openMednetDocuments(URLConstants.URL_PATIENTS));
+				IconConstants.ICON_GROUP_BLUE, Messages.MedNetMainComposite_showPatients, customBlue,
+				() -> openMednetDocuments(URLConstants.getBaseApiUrl() + URLConstants.URL_PATIENTS));
 		ButtonFactory.createButtonComposite(navigationComposite, IconConstants.ICON_BARS_WHITE,
-				IconConstants.ICON_BARS_BLUE,
-				Messages.MedNetMainComposite_tasks, customBlue, () -> openMednetDocuments(URLConstants.URL_TASKS));
+				IconConstants.ICON_BARS_BLUE, Messages.MedNetMainComposite_tasks, customBlue,
+				() -> openMednetDocuments(URLConstants.getBaseApiUrl() + URLConstants.URL_TASKS));
 		ButtonFactory.createButtonComposite(navigationComposite, IconConstants.ICON_GOOGLE_DOCS_WHITE,
 				IconConstants.ICON_GOOGLE_DOCS_BLUE, Messages.MedNetMainComposite_documents, customBlue,
-				() -> openMednetDocuments(URLConstants.URL_DOCUMENTS));
+				() -> openMednetDocuments(URLConstants.getBaseApiUrl() + URLConstants.URL_DOCUMENTS));
 		ButtonFactory.createButtonComposite(navigationComposite, IconConstants.ICON_ADDRESS_BOOK_REGULAR_WHITE,
 				IconConstants.ICON_ADDRESS_BOOK_REGULAR_BLUE, Messages.MedNetMainComposite_therapy, customBlue,
-				() -> openMednetDocuments(URLConstants.URL_THERAPY));
+				() -> openMednetDocuments(URLConstants.getBaseApiUrl() + URLConstants.URL_THERAPY));
 		ButtonFactory.createButtonComposite(navigationComposite, IconConstants.ICON_IMPORT_WHITE,
-				IconConstants.ICON_IMPORT_BLUE,
-				Messages.MedNetMainComposite_forms, customBlue, this::showSubmittedForms);
+				IconConstants.ICON_IMPORT_BLUE, Messages.MedNetMainComposite_forms, customBlue,
+				this::showSubmittedForms);
 	}
 
 	private void openMednetDocuments(String link) {
@@ -199,16 +197,14 @@ public class MedNetMainComposite {
 						&& previousState.providerId.equals(providerId)) {
 				} else {
 					removeStatesAfter(StateConstants.CUSTOMER);
-					navigationStack.push(
-							new NavigationState(StateConstants.PROVIDER, previousState.customerId, providerId, null,
-							null, previousState.customerName, providerName));
+					navigationStack.push(new NavigationState(StateConstants.PROVIDER, previousState.customerId,
+							providerId, null, null, previousState.customerName, providerName));
 				}
 				formComposite = new FormComposite(medNetViewerComposite,
 						(customerId, providerId1, formId, formName) -> {
 							removeStatesAfter(StateConstants.PROVIDER);
-							navigationStack.push(
-									new NavigationState(StateConstants.FORM, customerId, providerId1, formId, formName,
-									previousState.customerName, providerName));
+							navigationStack.push(new NavigationState(StateConstants.FORM, customerId, providerId1,
+									formId, formName, previousState.customerName, providerName));
 							updateBreadcrumbNavigation();
 						});
 				formComposite.show(previousState.customerId, providerId);
@@ -254,8 +250,7 @@ public class MedNetMainComposite {
 			textLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
 
 			CompositeEffectHandler.addHoverEffectBreadcrumbNavigation(breadcrumbComposite, iconLabel, textLabel,
-					leftArrowIcon,
-					leftArrowIconWhite, customBlue);
+					leftArrowIcon, leftArrowIconWhite, customBlue);
 			CompositeEffectHandler.addPressReleaseEffect(breadcrumbComposite, iconLabel, textLabel, leftArrowIconWhite,
 					() -> navigateToState(stateIndex), breadcrumbComposite.getBackground());
 		}

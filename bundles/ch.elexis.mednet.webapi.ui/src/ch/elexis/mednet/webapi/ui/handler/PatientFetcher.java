@@ -74,7 +74,8 @@ public class PatientFetcher {
 	public String fetchCustomerId() {
 		String response = "";
 		try {
-			response = Request.Get(ApiConstants.CUSTOMERS_URL).addHeader("Authorization", "Bearer " + token).execute()
+			response = Request.Get(ApiConstants.getBaseApiUrl() + ApiConstants.CUSTOMERS_URL)
+					.addHeader("Authorization", "Bearer " + token).execute()
 					.returnContent()
 					.asString();
 		} catch (IOException e) {
@@ -84,7 +85,7 @@ public class PatientFetcher {
 	}
 
 	public String fetchProvidersId(int customerID) {
-		String apiUrl = String.format(ApiConstants.PROVIDERS_URL, customerID);
+		String apiUrl = String.format(ApiConstants.getBaseApiUrl() + ApiConstants.PROVIDERS_URL, customerID);
 		String response = "";
 		try {
 			response = Request.Get(apiUrl).addHeader("Authorization", "Bearer " + token).execute().returnContent()
@@ -96,7 +97,7 @@ public class PatientFetcher {
 	}
 
 	public String fetchFormsByProviderIdWithRetry(Integer customerId, Integer providerId) {
-		String apiUrl = String.format(ApiConstants.FORMS_URL, customerId, providerId);
+		String apiUrl = String.format(ApiConstants.getBaseApiUrl() + ApiConstants.FORMS_URL, customerId, providerId);
 		String response = "";
 		int retryCount = 0;
 		boolean success = false;
@@ -154,7 +155,7 @@ public class PatientFetcher {
 	}
 
 	public String fetchSubmitFormsId(int customerID) {
-		String apiUrl = String.format(ApiConstants.SUBMITTED_FORMS_URL, customerID);
+		String apiUrl = String.format(ApiConstants.getBaseApiUrl() + ApiConstants.SUBMITTED_FORMS_URL, customerID);
 		String response = "";
 
 		try {
@@ -196,7 +197,7 @@ public class PatientFetcher {
 
 	public String fillPatientData(IPatient sourcePatient, JsonObject patientJson, List<IDocument> selectedDocuments,
 			boolean isEpdSelected) {
-		String apiUrl = ApiConstants.PATIENTS_URL;
+		String apiUrl = ApiConstants.getBaseApiUrl() + ApiConstants.PATIENTS_URL;
 
 	    Bundle patientOverviewBundle = new Bundle();
 		Patient fhirPatient = resourceFactory.getResource(sourcePatient, IPatient.class, Patient.class);

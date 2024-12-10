@@ -164,7 +164,7 @@ public class SingleFileDownloaderHandler {
 				if (authToken.isPresent()) {
 					token = authToken.get();
 					try {
-						String successUrl = ApiConstants.BASE_API_URL + "/" + packageId
+						String successUrl = ApiConstants.getBaseApiUrl() + "/" + packageId
 								+ "/download-success?objectType=Form";
 
 						HttpRequest request = HttpRequest.newBuilder().uri(URI.create(successUrl))

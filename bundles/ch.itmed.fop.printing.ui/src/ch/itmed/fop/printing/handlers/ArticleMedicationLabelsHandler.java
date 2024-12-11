@@ -81,11 +81,30 @@ public class ArticleMedicationLabelsHandler extends AbstractHandler {
 			if (StringUtils.isNotBlank(dosageInstruction) || StringUtils.isNotBlank(remark)) {
 				printMedicationLabels(prescription, amount);
 			} else {
-				printArticleLabels(article, amount);
+				handleAlternativePrescriptionOrDefault(article, medications, amount);
 			}
+		} else {
+			handleAlternativePrescriptionOrDefault(article, medications, amount);
+		}
+	}
+
+	private void handleAlternativePrescriptionOrDefault(IArticle article, List<IPrescription> medications, int amount)
+			throws Exception {
+		Optional<IPrescription> alternativePrescription = findAlternativePrescription(article, medications);
+
+		if (alternativePrescription.isPresent()) {
+			printMedicationLabels(alternativePrescription.get(), amount);
 		} else {
 			printArticleLabels(article, amount);
 		}
+	}
+
+	private Optional<IPrescription> findAlternativePrescription(IArticle article, List<IPrescription> medications) {
+		return medications.stream()
+				.filter(p -> p.getEntryType() == EntryType.FIXED_MEDICATION
+						|| p.getEntryType() == EntryType.RESERVE_MEDICATION
+						|| p.getEntryType() == EntryType.SYMPTOMATIC_MEDICATION)
+				.filter(p -> p.getArticle() != null && p.getArticle().equals(article)).findFirst();
 	}
 
 	private void printMedicationLabels(IPrescription prescription, int amount) throws Exception {

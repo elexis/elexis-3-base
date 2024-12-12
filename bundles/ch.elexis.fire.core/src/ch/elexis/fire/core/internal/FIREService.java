@@ -430,7 +430,9 @@ public class FIREService implements IFIREService {
 					addMandatorToBundle(en.getMandator(), currentBundle.getBundle());
 					if (en.getMandator().getBiller().isPerson() && en.getMandator().getBiller().isMandator()
 							&& !en.getMandator().equals(en.getMandator().getBiller())) {
-						addMandatorToBundle((IMandator) en.getMandator().getBiller(), currentBundle.getBundle());
+						IContact biller = en.getMandator().getBiller();
+						addMandatorToBundle(coreModelService.load(biller.getId(), IMandator.class).get(),
+								currentBundle.getBundle());
 					}
 				}
 				toFIRE(fhirEncounter.get());

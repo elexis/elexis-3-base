@@ -27,6 +27,7 @@ import be.quodlibet.boxable.BaseTable;
 import be.quodlibet.boxable.Cell;
 import be.quodlibet.boxable.HorizontalAlignment;
 import be.quodlibet.boxable.Row;
+import be.quodlibet.boxable.VerticalAlignment;
 import be.quodlibet.boxable.line.LineStyle;
 
 public class PdfUtils {
@@ -306,6 +307,7 @@ public class PdfUtils {
 			} else {
 				cell.setFont(getUnicodeFont(doc));
 			}
+			cell.setValign(VerticalAlignment.BOTTOM);
 		} catch (IOException e) {
 			LoggerFactory.getLogger(PdfUtils.class).error(e.toString());
 		}

@@ -12,6 +12,9 @@
 
 package ch.elexis.agenda.views;
 
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
@@ -33,16 +36,18 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.data.IPlannable;
-import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.agenda.series.SerienTermin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.constants.Preferences;
+import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IAppointmentSeries;
+import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.model.util.ElexisIdGenerator;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.dialogs.DateSelectorDialog;
@@ -50,7 +55,6 @@ import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
 public class TagesView extends BaseAgendaView {
@@ -159,54 +163,55 @@ public class TagesView extends BaseAgendaView {
 
 	class AgendaLabelProvider extends LabelProvider implements ITableColorProvider, ITableLabelProvider {
 
+		@Override
 		public Color getBackground(Object element, int columnIndex) {
-			if (element instanceof IPlannable) {
-				IPlannable p = (IPlannable) element;
-				return Plannables.getStatusColor(p);
+			if (element instanceof IAppointment) {
+				IAppointment p = (IAppointment) element;
+				return getTypColor(p);
 			}
 			return null;
 		}
 
+		@Override
 		public Color getForeground(Object element, int columnIndex) {
-			if (element instanceof IPlannable) {
-				IPlannable p = (IPlannable) element;
-				return SWTHelper.getContrast(Plannables.getTypColor(p));
+			if (element instanceof IAppointment) {
+				IAppointment p = (IAppointment) element;
+				return SWTHelper.getContrast(getTypColor(p));
 			}
 			return null;
 		}
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (element instanceof IPlannable) {
-				IPlannable p = (IPlannable) element;
-				if (p.isRecurringDate())
+			if (element instanceof IAppointment) {
+				IAppointment p = (IAppointment) element;
+				if (p.isRecurring())
 					return UiDesk.getImage(Activator.IMG_RECURRING_DATE);
-				return Plannables.getTypImage(p);
+				return Plannables.getTypImage(p.getType());
 			}
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof IPlannable) {
-				IPlannable p = (IPlannable) element;
+			if (element instanceof IAppointment) {
+				IAppointment p = (IAppointment) element;
 				StringBuilder sb = new StringBuilder();
-				sb.append(Plannables.getStartTimeAsString(p)).append("-") //$NON-NLS-1$
-						.append(Plannables.getEndTimeAsString(p)).append(StringUtils.SPACE);
-
-				if (p.isRecurringDate()) {
-					sb.append(new SerienTermin(p).getRootTermin().getTitle());
-				} else {
-					sb.append(p.getTitle());
-				}
+				sb.append(DateTimeFormatter.ofPattern("HH:mm").format(p.getStartTime())).append("-") //$NON-NLS-1$
+						.append(DateTimeFormatter.ofPattern("HH:mm").format(p.getEndTime())).append(StringUtils.SPACE);
+				sb.append(
+						p.isRecurring()
+								? AppointmentServiceHolder.get().getAppointmentSeries(p).get().getRootAppointment()
+										.getSubjectOrPatient()
+								: p.getSubjectOrPatient());
 
 				// show reason if its configured
 				if (ConfigServiceHolder.getUser(PreferenceConstants.AG_SHOW_REASON, false)) {
-					if (p instanceof Termin) {
-						String grund = ((Termin) p).getGrund();
-						if (!StringTool.isNothing(grund)) {
-							String[] tokens = grund.split("[\n\r]+"); //$NON-NLS-1$
-							if (tokens.length > 0) {
-								sb.append(", " + tokens[0]); //$NON-NLS-1$
-							}
+					String grund = p.getReason();
+					if (!StringTool.isNothing(grund)) {
+						String[] tokens = grund.split("[\n\r]+"); //$NON-NLS-1$
+						if (tokens.length > 0) {
+							sb.append(", " + tokens[0]); //$NON-NLS-1$
 						}
 					}
 				}
@@ -228,27 +233,43 @@ public class TagesView extends BaseAgendaView {
 	}
 
 	@Override
-	public void setTermin(Termin tf) {
-		Termin t = tf;
+	public void setAppointment(IAppointment appointment) {
 		StringBuilder sb = new StringBuilder(200);
-		TimeSpan ts = t.getTimeSpan();
-		sb.append(ts.from.toString(TimeTool.TIME_SMALL)).append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
+		sb.append(DateTimeFormatter.ofPattern("HH:mm").format(appointment.getStartTime())).append("-") //$NON-NLS-1$ //$NON-NLS-2$
+				.append(DateTimeFormatter.ofPattern("HH:mm").format(appointment.getEndTime())) //$NON-NLS-1$
 				.append(StringUtils.SPACE);
-		if (t.isRecurringDate()) {
-			sb.append(new SerienTermin(t).getRootTermin().getPersonalia());
+		if (appointment.isRecurring()) {
+			Optional<IAppointmentSeries> series = AppointmentServiceHolder.get().getAppointmentSeries(appointment);
+			if (series.isPresent() && series.get().getContact() != null && series.get().getContact().isPerson()) {
+				sb.append(PersonFormatUtil.getPersonalia(series.get().getContact().asIPerson()));
+			}
 		} else {
-			sb.append(t.getPersonalia());
+			if (appointment.getContact() != null && appointment.getContact().isPerson()) {
+				sb.append(PersonFormatUtil.getPersonalia(appointment.getContact().asIPerson()));
+			}
 		}
 		sb.append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
-				.append(t.getType()).append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
-		sb.append("\n--------\n").append(t.getStatusHistoryDesc());
+				.append(appointment.getType()).append(",").append(appointment.getState()).append(")\n--------\n") //$NON-NLS-1$ //$NON-NLS-2$
+				.append(appointment.getReason());
+		sb.append("\n--------\n").append(appointment.getStateHistoryFormatted("dd.MM.yyyy HH:mm:ss"));
 		tDetail.setText(sb.toString());
 		sb.setLength(0);
-		sb.append(StringTool.unNull(t.get(Termin.FLD_CREATOR))).append("/").append( // $NON-NLS-2$
-				t.getCreateTime().toString(TimeTool.FULL_GER));
+		sb.append(StringTool.unNull(appointment.getCreatedBy())).append("/") //$NON-NLS-1$
+				.append(getCreateTime(appointment).toString(TimeTool.FULL_GER));
 		lCreator.setText(sb.toString());
-		agenda.dispatchTermin(t);
+		agenda.dispatchTermin(appointment);
 
+	}
+
+	public TimeTool getCreateTime(IAppointment appointment) {
+		int min = 0;
+		try {
+			min = Integer.parseInt(appointment.getCreated());
+		} catch (Exception e) {
+			LoggerFactory.getLogger(getClass())
+					.warn("Could not parse appointment create time [" + appointment.getCreated() + "]");
+		}
+		return new TimeTool(min, 60000);
 	}
 
 	private void makePrivateActions() {

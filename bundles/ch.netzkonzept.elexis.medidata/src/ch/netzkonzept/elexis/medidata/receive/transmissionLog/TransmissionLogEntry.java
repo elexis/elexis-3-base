@@ -10,7 +10,9 @@
  *    Olivier Debenath <olivier@debenath.ch>
  *
  *******************************************************************************/
-package ch.netzkonzept.elexis.medidata.receive;
+package ch.netzkonzept.elexis.medidata.receive.transmissionLog;
+
+import java.text.SimpleDateFormat;
 
 public class TransmissionLogEntry {
 
@@ -25,6 +27,31 @@ public class TransmissionLogEntry {
 	private String invoiceReference;
 	private String controlFile;
 
+	public String get(int columnNumber) {
+		String returnString = new String();
+		switch (columnNumber) {
+		case 0:
+			returnString = getTransmissionReference();
+			break;
+		case 1:
+			returnString = getCreated();
+			break;
+		case 2:
+			returnString = getModified();
+			break;
+		case 3:
+			returnString = getStatus();
+			break;
+		case 4:
+			returnString = getInvoiceReference();
+			break;
+		case 5:
+			returnString = getControlFile();
+			break;
+		}
+		return returnString;
+	}
+
 	public String getTransmissionReference() {
 		return transmissionReference;
 	}
@@ -34,7 +61,17 @@ public class TransmissionLogEntry {
 	}
 
 	public String getCreated() {
-		return created;
+		String returnValue = new String();
+		String inputPattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+		String outputPattern = "dd.MM.yyyy HH:mm:ss";
+		SimpleDateFormat inputFormatter = new SimpleDateFormat(inputPattern);
+		SimpleDateFormat outputFormatter = new SimpleDateFormat(outputPattern);
+		try {
+			returnValue = outputFormatter.format(inputFormatter.parse(created));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnValue;
 	}
 
 	public void setCreated(String created) {
@@ -42,7 +79,17 @@ public class TransmissionLogEntry {
 	}
 
 	public String getModified() {
-		return modified;
+		String returnValue = new String();
+		String inputPattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+		String outputPattern = "dd.MM.yyyy HH:mm:ss";
+		SimpleDateFormat inputFormatter = new SimpleDateFormat(inputPattern);
+		SimpleDateFormat outputFormatter = new SimpleDateFormat(outputPattern);
+		try {
+			returnValue = outputFormatter.format(inputFormatter.parse(modified));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnValue;
 	}
 
 	public void setModified(String modified) {

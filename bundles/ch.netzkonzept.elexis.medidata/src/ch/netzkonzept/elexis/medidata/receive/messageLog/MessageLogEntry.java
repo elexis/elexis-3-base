@@ -10,7 +10,13 @@
  *    Olivier Debenath <olivier@debenath.ch>
  *
  *******************************************************************************/
-package ch.netzkonzept.elexis.medidata.receive;
+package ch.netzkonzept.elexis.medidata.receive.messageLog;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class MessageLogEntry {
 
@@ -26,6 +32,45 @@ public class MessageLogEntry {
 	private LocalisedString potentialReasons;
 	private LocalisedString possibleSolutions;
 	private String technicalInformation;
+
+	public String get(int columnNumber) {
+		String returnString = new String();
+		switch (columnNumber) {
+		case 0:
+			returnString = getCreated();
+			break;
+		case 1:
+			returnString = getId();
+			break;
+		case 2:
+			returnString = getSubject() != null ? getSubject().getDe().toString() : "--";
+			break;
+		case 3:
+			returnString = getSeverity();
+			break;
+		case 4:
+			returnString = Boolean.valueOf(isRead()).toString();
+			break;
+		case 5:
+			returnString = getTemplate();
+			break;
+		case 6:
+			returnString = getMode();
+			break;
+		case 7:
+			returnString = getErrorCode();
+			break;
+		case 8:
+			returnString = getPotentialReasons() != null ? getPotentialReasons().getDe().toString() : "--";
+			break;
+		case 9:
+			returnString = getPossibleSolutions() != null ? getPossibleSolutions().getDe().toString() : "--";
+			break;
+		case 10:
+			returnString = getTechnicalInformation();
+		}
+		return returnString;
+	}
 
 	public String getId() {
 		return id;
@@ -68,7 +113,18 @@ public class MessageLogEntry {
 	}
 
 	public String getCreated() {
-		return created;
+		String returnValue = new String();
+		String inputPattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+		String outputPattern = "dd.MM.yyyy HH:mm:ss";
+		SimpleDateFormat inputFormatter = new SimpleDateFormat(inputPattern);
+		SimpleDateFormat outputFormatter = new SimpleDateFormat(outputPattern);
+
+		try {
+			returnValue = outputFormatter.format(inputFormatter.parse(created));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnValue;
 	}
 
 	public void setCreated(String created) {
@@ -121,37 +177,5 @@ public class MessageLogEntry {
 
 	public void setTechnicalInformation(String technicalInformation) {
 		this.technicalInformation = technicalInformation;
-	}
-
-}
-
-class LocalisedString {
-
-	private String de;
-	private String fr;
-	private String it;
-
-	public String getDe() {
-		return de;
-	}
-
-	public void setDe(String de) {
-		this.de = de;
-	}
-
-	public String getFr() {
-		return fr;
-	}
-
-	public void setFr(String fr) {
-		this.fr = fr;
-	}
-
-	public String getIt() {
-		return it;
-	}
-
-	public void setIt(String it) {
-		this.it = it;
 	}
 }

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package ch.elexis.actions;
 
+import java.util.Optional;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -19,17 +21,15 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.core.data.interfaces.scripting.Interpreter;
-import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IAppointmentSeries;
 import ch.elexis.core.model.IContact;
-import ch.elexis.core.model.IPatient;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
-import ch.elexis.data.Kontakt;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -66,6 +66,7 @@ public class Activator extends AbstractUIPlugin {
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		// log.log("activated", Log.DEBUGMSG);
@@ -149,29 +150,27 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	/**
-	 * propagate a termin selection through the system
+	 * propagate a {@link IAppointment} selection through the system
 	 *
-	 * @param termin
+	 * @param appointment
 	 */
-	public void dispatchTermin(final Termin termin) {
-		Kontakt contact = null;
-		if (termin.isRecurringDate()) {
-			Termin rootTermin = Termin.load(termin.get(Termin.FLD_LINKGROUP));
-			if (rootTermin != null && rootTermin.exists()) {
-				contact = rootTermin.getKontakt();
+	public void dispatchTermin(final IAppointment appointment) {
+		IContact contact = null;
+		if (appointment.isRecurring()) {
+			Optional<IAppointmentSeries> series = AppointmentServiceHolder.get().getAppointmentSeries(appointment);
+			if (series.isPresent()) {
+				contact = series.get().getContact();
 			}
 		} else {
-			contact = termin.getKontakt();
+			contact = appointment.getContact();
 		}
-		ContextServiceHolder.get().setTyped(NoPoUtil.loadAsIdentifiable(termin, IAppointment.class).orElse(null));
+		ContextServiceHolder.get().setTyped(appointment);
 		if (contact != null) {
-			if (contact.istPatient()) {
-				ContextServiceHolder.get()
-						.setActivePatient(NoPoUtil.loadAsIdentifiable(contact, IPatient.class).orElse(null));
+			if (contact.isPatient()) {
+				ContextServiceHolder.get().setActivePatient(contact.asIPatient());
 			} else {
-				ContextServiceHolder.get().setTyped(NoPoUtil.loadAsIdentifiable(contact, IContact.class).orElse(null));
+				ContextServiceHolder.get().setTyped(contact);
 			}
-
 		}
 	}
 }

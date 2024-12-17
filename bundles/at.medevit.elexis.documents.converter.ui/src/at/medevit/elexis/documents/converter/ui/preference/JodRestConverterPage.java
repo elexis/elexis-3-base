@@ -24,7 +24,7 @@ public class JodRestConverterPage extends FieldEditorPreferencePage implements I
 	protected void createFieldEditors() {
 		StringFieldEditor jodRestBasPath = new StringFieldEditor("jodrestconverter/basepath", "JODconverter REST URL",
 				getFieldEditorParent());
-		jodRestBasPath.getTextControl(getFieldEditorParent()).setMessage("https://office.medelexis.ch/jodconverter/");
+		jodRestBasPath.getTextControl(getFieldEditorParent()).setMessage("https://tools.medelexis.ch/jodconverter/");
 		addField(jodRestBasPath);
 	}
 }

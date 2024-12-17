@@ -94,7 +94,7 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 	}
 
 	private String getAppBasePath() {
-		return configService.get("jodrestconverter/basepath", "https://office.medelexis.ch/jodconverter/");
+		return configService.get("jodrestconverter/basepath", "https://tools.medelexis.ch/jodconverter/");
 	}
 
 	@Override

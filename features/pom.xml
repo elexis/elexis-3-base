@@ -46,6 +46,7 @@
     <module>ch.elexis.externe_dokumente.feature</module>
     <module>ch.elexis.fop_wrapper.feature</module>
     <module>ch.elexis.global_inbox.feature</module>
+    <module>ch.elexis.global_inbox.es.feature</module>
     <module>ch.elexis.icpc.feature</module>
     <module>ch.elexis.impfplan.feature</module>
     <module>ch.elexis.kassenbuch.feature</module>

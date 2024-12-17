@@ -265,6 +265,9 @@
    <feature id="at.medevit.elexis.hin.sign.core.feature">
       <category name="libraries"/>
    </feature>
+   <feature id="ch.elexis.global_inbox.es.feature">
+      <category name="libraries"/>
+   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>

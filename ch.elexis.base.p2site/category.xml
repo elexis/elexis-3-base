@@ -265,6 +265,9 @@
    <feature id="ch.framsteg.elexis.hin.auth.feature">
       <category name="libraries"/>
    </feature>
+   <feature id="ch.elexis.global_inbox.es.feature">
+      <category name="libraries"/>
+   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>

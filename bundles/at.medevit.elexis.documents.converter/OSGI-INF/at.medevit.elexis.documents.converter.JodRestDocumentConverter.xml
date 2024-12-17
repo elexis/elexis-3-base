@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="at.medevit.elexis.documents.converter.JodRestDocumentConverter">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" activate="activate" name="at.medevit.elexis.documents.converter.JodRestDocumentConverter">
    <service>
       <provide interface="ch.elexis.core.services.IDocumentConverter"/>
    </service>

@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,14 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 
 	@Reference
 	private IConfigService configService;
+
+	@Activate
+	public void activate() {
+		String appBasePath = getAppBasePath();
+		if (appBasePath.toLowerCase().contains("office.medelexis.ch")) {
+			configService.set("jodrestconverter/basepath", "https://tools.medelexis.ch/jodconverter/");
+		}
+	}
 
 	@Override
 	public Optional<File> convertToPdf(IDocument document) {

@@ -1,4 +1,4 @@
-package ch.itmed.fop.printing.handler;
+package ch.elexis.agenda.util;
 
 
 import ch.elexis.core.model.IAppointment;

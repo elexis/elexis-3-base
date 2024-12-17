@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.slf4j.LoggerFactory;
 
-import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
+import ch.elexis.agenda.composite.AppointmentDetailComposite;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;

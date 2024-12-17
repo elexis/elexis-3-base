@@ -1,14 +1,14 @@
 package ch.elexis.global_inbox.core.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
-import java.util.List;
-import java.io.InputStream;
-import java.io.FileInputStream;
+import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -17,14 +17,13 @@ import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.jdt.Nullable;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.MimeType;
 import ch.elexis.core.services.IDocumentStore;
+import ch.elexis.core.services.INamedQuery;
 import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
-
-import ch.elexis.data.Patient;
-import ch.elexis.data.Query;
-import ch.rgw.tools.ExHandler;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
 @Component
 public class ImportOmnivoreInboxUtil {
@@ -48,10 +47,12 @@ public class ImportOmnivoreInboxUtil {
 	 * @return the document id if import was successful, else <code>null</code>
 	 */
 	public @Nullable String tryImportForPatient(File file, String patientNo, String fileName) {
-		List<Patient> lPat = new Query(Patient.class, Patient.FLD_PATID, patientNo).execute();
-		if (lPat.size() == 1) {
+		INamedQuery<IPatient> namedQuery = CoreModelServiceHolder.get().getNamedQuery(IPatient.class, "code");
+		Optional<IPatient> loaded = namedQuery
+				.executeWithParametersSingleResult(namedQuery.getParameterMap("code", patientNo));
+		if (loaded.isPresent()) {
 			if (!isFileOpened(file)) {
-				Patient pat = lPat.get(0);
+				IPatient pat = loaded.get();
 				String cat = ImportOmnivoreInboxUtil.getCategory(file);
 				if (cat.equals("-") || cat.equals("??")) { //$NON-NLS-1$ //$NON-NLS-2$
 					cat = null;

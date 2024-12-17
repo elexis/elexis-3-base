@@ -4,15 +4,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-import javax.inject.Inject;
+import org.eclipse.swt.widgets.Display;
+import org.slf4j.LoggerFactory;
 
 import com.equo.chromium.swt.Browser;
 
+import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
+import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
+import ch.elexis.agenda.composite.AppointmentDetailComposite;
+import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IContact;
 import ch.elexis.core.model.agenda.RecurringAppointment;
-import ch.elexis.core.services.IAppointmentHistoryManagerService;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
@@ -20,14 +24,6 @@ import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.services.holder.LocalLockServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
-import ch.itmed.fop.printing.handler.AppointmentExtensionHandler;
-
-import org.eclipse.swt.widgets.Display;
-import org.slf4j.LoggerFactory;
-
-import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
-import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
-import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
 
 
 public class EventDropFunction extends AbstractBrowserFunction {

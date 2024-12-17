@@ -11,6 +11,7 @@
 package ch.elexis.agenda.views;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -325,23 +326,24 @@ public class AgendaGross extends BaseAgendaView {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof IPlannable) {
-				IPlannable ip = (IPlannable) element;
+			if (element instanceof IAppointment) {
+				IAppointment ip = (IAppointment) element;
 				switch (columnIndex) {
 				case 0:
-					return Plannables.getStartTimeAsString(ip);
+					return DateTimeFormatter.ofPattern("HH:mm").format(ip.getStartTime());
 				case 1:
-					return Plannables.getEndTimeAsString(ip);
+					return DateTimeFormatter.ofPattern("HH:mm").format(ip.getEndTime());
 				case 2:
 					return ip.getType();
 				case 3:
-					return ip.getStatus();
+					return ip.getState();
 				case 4:
-					return ip.isRecurringDate() ? new SerienTermin(ip).getRootTermin().getTitle() : ip.getTitle();
+					return ip.isRecurring()
+							? AppointmentServiceHolder.get().getAppointmentSeries(ip).get().getRootAppointment()
+									.getSubjectOrPatient()
+							: ip.getSubjectOrPatient();
 				case 5:
-					if (ip instanceof Termin) {
-						Termin termin = (Termin) ip;
-						String grund = termin.getGrund();
+					String grund = ip.getReason();
 						if (grund != null) {
 							String[] tokens = grund.split("[\r\n]+"); //$NON-NLS-1$
 							if (tokens.length > 0) {
@@ -349,9 +351,6 @@ public class AgendaGross extends BaseAgendaView {
 							}
 						}
 						return grund == null ? StringUtils.EMPTY : grund;
-					} else {
-						return StringUtils.EMPTY;
-					}
 				}
 			}
 			return "?"; //$NON-NLS-1$

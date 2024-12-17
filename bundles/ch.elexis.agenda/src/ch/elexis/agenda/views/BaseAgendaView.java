@@ -11,6 +11,12 @@
  *******************************************************************************/
 package ch.elexis.agenda.views;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -22,6 +28,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -46,29 +53,32 @@ import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.agenda.series.SerienTermin;
-import ch.elexis.agenda.series.ui.SerienTerminDialog;
 import ch.elexis.agenda.ui.BereichMenuCreator;
-import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
-import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
-import ch.elexis.core.data.events.Heartbeat.HeartListener;
-import ch.elexis.core.data.interfaces.IPersistentObject;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.builder.IAppointmentBuilder;
 import ch.elexis.core.services.IAppointmentService;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.types.AppointmentState;
+import ch.elexis.core.types.AppointmentType;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.RestrictedAction;
-import ch.elexis.core.ui.dialogs.KontaktSelektor;
 import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.events.RefreshingPartListener;
 import ch.elexis.core.ui.icons.Images;
@@ -78,31 +88,32 @@ import ch.elexis.core.ui.locks.LockRequestingRestrictedAction;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.ui.views.IRefreshable;
 import ch.elexis.core.utils.OsgiServiceUtil;
-import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
+import ch.elexis.dialogs.AppointmentDialog;
+import ch.elexis.dialogs.RecurringAppointmentDialog;
 import ch.elexis.dialogs.TagesgrenzenDialog;
-import ch.elexis.dialogs.TerminDialog;
-import ch.elexis.dialogs.TerminDialog.CollisionErrorLevel;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
 import ch.rgw.tools.Log;
 import ch.rgw.tools.TimeTool;
 
-public abstract class BaseAgendaView extends ViewPart implements HeartListener, IRefreshable, IBereichSelectionEvent {
+public abstract class BaseAgendaView extends ViewPart implements IRefreshable, IBereichSelectionEvent {
 	protected SelectionListener sListen = new SelectionListener();
 	TableViewer tv;
 	BaseAgendaView self;
-	protected LockRequestingRestrictedAction<Termin> terminAendernAction, terminKuerzenAction, terminVerlaengernAction;
+	protected LockRequestingRestrictedAction<IAppointment> terminAendernAction, terminKuerzenAction,
+			terminVerlaengernAction;
 	protected RestrictedAction newTerminAction;
 	protected IAction blockAction;
-	protected IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction, newTerminForAction;
+	protected IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
 	protected IAction printPatientAction;
 	private BereichMenuCreator bmc = new BereichMenuCreator();
 	MenuManager menu = new MenuManager();
 	protected Log log = Log.get("Agenda"); //$NON-NLS-1$
 	Activator agenda = Activator.getDefault();
+
+	private Timer timer;
+
+	private IAppointmentService appointmentService;
 
 	@Optional
 	@Inject
@@ -141,6 +152,8 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	protected BaseAgendaView() {
 		self = this;
 		BereichSelectionHandler.addBereichSelectionListener(this);
+
+		appointmentService = OsgiServiceUtil.getService(IAppointmentService.class).get();
 	}
 
 	abstract public void create(Composite parent);
@@ -153,34 +166,34 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 		tv.setContentProvider(new AgendaContentProvider());
 		tv.setUseHashlookup(true);
 		tv.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
-				IPlannable pl = getSelection();
+				IAppointment pl = getSelection();
 				if (pl == null) {
 					newTerminAction.run();
 				} else {
-					if (pl.isRecurringDate()) {
-						// TODO Locking
-						SerienTermin st = new SerienTermin(pl);
-						new SerienTerminDialog(UiDesk.getTopShell(), st).open();
-						tv.refresh(true);
+					if (pl.isRecurring()) {
+						AppointmentServiceHolder.get().getAppointmentSeries(pl).ifPresent(s -> {
+							RecurringAppointmentDialog dlg = new RecurringAppointmentDialog(s);
+							dlg.open();
+							tv.refresh(true);
+						});
 					} else {
-						if (pl instanceof Termin.Free) {
-							// locking of new Termin is handled by TerminDialog
-							TerminDialog dlg = new TerminDialog(pl);
+						if (appointmentService.getType(AppointmentType.FREE).equals(pl.getType())) {
+							AppointmentDialog dlg = new AppointmentDialog(pl);
 							dlg.open();
 						} else {
 							terminAendernAction.run();
 						}
 						tv.refresh(true);
 					}
-
 				}
 			}
-
 		});
 
 		menu.setRemoveAllWhenShown(true);
 		menu.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				java.util.Optional<IAppointment> selectedAppointment = ContextServiceHolder.get()
 						.getTyped(IAppointment.class);
@@ -202,7 +215,20 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 		Menu cMenu = menu.createContextMenu(tv.getControl());
 		tv.getControl().setMenu(cMenu);
 
-		CoreHub.heart.addListener(this);
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+				long lastUpdate = CoreModelServiceHolder.get().getHighestLastUpdate(IAppointment.class);
+				log.log("Agenda [" + lastUpdate + "]", Log.DEBUGMSG); //$NON-NLS-1$
+				if (lastUpdate > highestLastUpdate) {
+					highestLastUpdate = lastUpdate;
+					refresh();
+				}
+			}
+		}, 10000);
+
 		getSite().getPage().addPartListener(udpateOnVisible);
 
 		tv.setInput(getViewSite());
@@ -210,19 +236,19 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 		tv.addSelectionChangedListener(sListen);
 	}
 
-	public IPlannable getSelection() {
+	public IAppointment getSelection() {
 		IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 		if ((sel == null || (sel.isEmpty()))) {
 			return null;
 		} else {
-			IPlannable pl = (IPlannable) sel.getFirstElement();
+			IAppointment pl = (IAppointment) sel.getFirstElement();
 			return pl;
 		}
 	}
 
 	@Override
 	public void dispose() {
-		CoreHub.heart.removeListener(this);
+		timer.cancel();
 		getSite().getPage().removePartListener(udpateOnVisible);
 		super.dispose();
 	}
@@ -230,15 +256,6 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	@Override
 	public void setFocus() {
 		tv.getControl().setFocus();
-	}
-
-	public void heartbeat() {
-		long lastUpdate = Termin.getHighestLastUpdate(Termin.TABLENAME);
-		log.log("Heartbeat [" + lastUpdate + "]", Log.DEBUGMSG); //$NON-NLS-1$
-		if (lastUpdate > highestLastUpdate) {
-			highestLastUpdate = lastUpdate;
-			refresh();
-		}
 	}
 
 	@Override
@@ -255,22 +272,24 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 	class AgendaContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.VIEW))) {
 				String resource = agenda.getActResource();
 				TimeTool date = agenda.getActDate();
-				OsgiServiceUtil.getService(IAppointmentService.class).get().assertBlockTimes(date.toLocalDate(),
-						resource);
-				return Plannables.loadDay(resource, date);
+				appointmentService.assertBlockTimes(date.toLocalDate(), resource);
+				return appointmentService.getAppointments(resource, date.toLocalDate(), true).toArray();
 			} else {
 				return new Object[0];
 			}
 
 		}
 
+		@Override
 		public void dispose() { /* leer */
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {/* leer */
 		}
 
@@ -280,6 +299,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 		StructuredViewer sv;
 
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 			if ((sel == null) || sel.isEmpty()) {
@@ -331,7 +351,8 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 			}
 		};
-		terminAendernAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.UPDATE),
+		terminAendernAction = new LockRequestingRestrictedAction<IAppointment>(
+				EvACE.of(IAppointment.class, Right.UPDATE),
 				Messages.TagesView_changeTermin) {
 			{
 				setImageDescriptor(Images.IMG_EDIT.getImageDescriptor());
@@ -339,13 +360,13 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 			}
 
 			@Override
-			public Termin getTargetedObject() {
-				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+			public IAppointment getTargetedObject() {
+				return ContextServiceHolder.get().getTyped(IAppointment.class).orElse(null);
 			}
 
 			@Override
-			public void doRun(Termin element) {
-				AcquireLockBlockingUi.aquireAndRun((IPersistentObject) element, new ILockHandler() {
+			public void doRun(IAppointment element) {
+				AcquireLockBlockingUi.aquireAndRun(element, new ILockHandler() {
 
 					@Override
 					public void lockFailed() {
@@ -354,9 +375,10 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 					@Override
 					public void lockAcquired() {
-						TerminDialog dlg = new TerminDialog(element);
-						dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
-						dlg.open();
+						AppointmentDialog dlg = new AppointmentDialog(element);
+						if (dlg.open() == Dialog.OK) {
+							AppointmentHistoryServiceHolder.get().logAppointmentEdit(element);
+						}
 					}
 				});
 				if (tv != null) {
@@ -364,42 +386,42 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 				}
 			}
 		};
-		terminKuerzenAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.UPDATE),
+		terminKuerzenAction = new LockRequestingRestrictedAction<IAppointment>(
+				EvACE.of(IAppointment.class, Right.UPDATE),
 				Messages.TagesView_shortenTermin) {
 			@Override
-			public Termin getTargetedObject() {
-				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+			public IAppointment getTargetedObject() {
+				return ContextServiceHolder.get().getTyped(IAppointment.class).orElse(null);
 			}
 
 			@Override
-			public void doRun(Termin element) {
-				element.setDurationInMinutes(element.getDurationInMinutes() >> 1);
-				ElexisEventDispatcher.reload(Termin.class);
+			public void doRun(IAppointment element) {
+				element.setEndTime(element.getStartTime().plusMinutes(element.getDurationMinutes() >> 1));
+				ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 			}
 		};
-		terminVerlaengernAction = new LockRequestingRestrictedAction<Termin>(EvACE.of(IAppointment.class, Right.UPDATE),
+		terminVerlaengernAction = new LockRequestingRestrictedAction<IAppointment>(
+				EvACE.of(IAppointment.class, Right.UPDATE),
 				Messages.TagesView_enlargeTermin) {
 			@Override
-			public Termin getTargetedObject() {
-				return (Termin) ElexisEventDispatcher.getSelected(Termin.class);
+			public IAppointment getTargetedObject() {
+				return ContextServiceHolder.get().getTyped(IAppointment.class).orElse(null);
 			}
 
 			@Override
-			public void doRun(Termin t) {
-				TimeTool oldEndTime = t.getEndTime();
-				agenda.setActDate(t.getDay());
-				Termin nextTermin = Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(), t);
-				if (nextTermin != null) {
-					t.setEndTime(nextTermin.getStartTime());
-					TimeTool newEndTime = t.getEndTime();
+			public void doRun(IAppointment t) {
+				LocalDateTime oldEndTime = t.getEndTime();
+				agenda.setActDate(new TimeTool(t.getStartTime().toLocalDate()));
+				List<IAppointment> appointments = appointmentService.getAppointments(agenda.getActResource(),
+						agenda.getActDate().toLocalDate(), false);
+				appointments.stream().filter(a -> a.getStartTime().isAfter(t.getEndTime())).findFirst().ifPresent(a -> {
+					t.setEndTime(a.getStartTime());
 					if (AppointmentHistoryServiceHolder.get() != null) {
-						AppointmentHistoryServiceHolder.get().logAppointmentDurationChange(t.toIAppointment(),
-								oldEndTime.toLocalDateTime(),
-								newEndTime.toLocalDateTime());
+						AppointmentHistoryServiceHolder.get().logAppointmentDurationChange(t, oldEndTime,
+								t.getEndTime());
 					}
-					ElexisEventDispatcher.reload(Termin.class);
-				}
-
+					ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
+				});
 			}
 		};
 
@@ -411,33 +433,18 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 			@Override
 			public void doRun() {
-				TerminDialog dlg = new TerminDialog(null);
+				LocalDateTime start = agenda.getActDate().toLocalDateTime();
+				LocalDateTime end = start.plusMinutes(30);
+				IAppointment appointment = new IAppointmentBuilder(CoreModelServiceHolder.get(),
+						agenda.getActResource(), start, end,
+						AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
+						AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
+				AppointmentDialog dlg = new AppointmentDialog(appointment);
 				dlg.open();
 				if (tv != null) {
 					tv.refresh(true);
 				}
 			}
-		};
-
-		newTerminForAction = new Action("Neuer Termin für...") {
-			{
-				setImageDescriptor(Images.IMG_NEW.getImageDescriptor());
-				setToolTipText("Dialog zum Auswählen eines Kontakts für den Termin öffnen");
-			}
-
-			@Override
-			public void run() {
-				KontaktSelektor ksl = new KontaktSelektor(getSite().getShell(), Kontakt.class, "Terminvergabe",
-						"Bitte wählen Sie aus, wer einen Termin braucht", Kontakt.DEFAULT_SORT);
-				IPlannable sel = getSelection();
-				TerminDialog dlg = new TerminDialog(null);
-				dlg.setCollisionErrorLevel(CollisionErrorLevel.WARNING);
-				dlg.open();
-				if (tv != null) {
-					tv.refresh(true);
-				}
-			}
-
 		};
 		printAction = new Action(Messages.BaseAgendaView_printDayList) {
 			{
@@ -447,8 +454,9 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 			@Override
 			public void run() {
-				IPlannable[] liste = Plannables.loadDay(agenda.getActResource(), agenda.getActDate());
-				TerminListeDruckenDialog dlg = new TerminListeDruckenDialog(getViewSite().getShell(), liste);
+				List<IAppointment> appointments = appointmentService.getAppointments(agenda.getActResource(),
+						agenda.getActDate().toLocalDate(), true);
+				TerminListeDruckenDialog dlg = new TerminListeDruckenDialog(getViewSite().getShell(), appointments);
 				dlg.open();
 				if (tv != null) {
 					tv.refresh(true);
@@ -463,21 +471,21 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 
 			@Override
 			public void run() {
-				Patient patient = ElexisEventDispatcher.getSelectedPatient();
+				IPatient patient = ContextServiceHolder.get().getActivePatient().orElse(null);
 				if (patient != null) {
-					Query<Termin> qbe = new Query<Termin>(Termin.class);
-					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, patient.getId());
-					qbe.add(PersistentObject.FLD_DELETED, Query.NOT_EQUAL, StringConstants.ONE);
-					qbe.add(Termin.FLD_TAG, Query.GREATER_OR_EQUAL, new TimeTool().toString(TimeTool.DATE_COMPACT));
-					qbe.orderBy(false, Termin.FLD_TAG, Termin.FLD_BEGINN);
-					java.util.List<Termin> list = qbe.execute();
+					IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class);
+					query.and(ModelPackage.Literals.IAPPOINTMENT__SUBJECT_OR_PATIENT, COMPARATOR.EQUALS,
+							patient.getId());
+					query.and("tag", COMPARATOR.GREATER_OR_EQUAL, LocalDate.now());
+					query.orderBy("Tag", ORDER.ASC);
+					query.orderBy("Beginn", ORDER.ASC);
+					java.util.List<IAppointment> list = query.execute();
 					if (list != null) {
-						boolean directPrint = CoreHub.localCfg.get(
+						boolean directPrint = LocalConfigService.get(
 								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
 								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
 
-						TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(),
-								list.toArray(new Termin[0]));
+						TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(), list);
 						if (directPrint) {
 							dlg.setBlockOnOpen(false);
 							dlg.open();

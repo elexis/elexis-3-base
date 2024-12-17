@@ -1,4 +1,4 @@
-package ch.elexis.agenda.series.ui.composite;
+package ch.elexis.agenda.composite;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.agenda.series.ui.Messages;
+import ch.elexis.agenda.ui.Messages;
 
 public class MonthlySeriesComposite extends Composite {
 	private Text txtDay;
@@ -28,7 +28,7 @@ public class MonthlySeriesComposite extends Composite {
 		lblAtThe.setText(Messages.MonthlySeriesComposite_lblAtThe_text);
 		txtDay = new Text(this, SWT.BORDER);
 		txtDay.setTextLimit(2);
-		txtDay.setText("15");
+		txtDay.setText("15"); //$NON-NLS-1$
 		GridData gd_txtDay = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_txtDay.widthHint = 30;
 		txtDay.setLayoutData(gd_txtDay);

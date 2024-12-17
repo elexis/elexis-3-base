@@ -38,7 +38,7 @@ public class PdfUtils {
 			PDPage page = new PDPage(new PDRectangle(PDRectangle.A4.getHeight(), PDRectangle.A4.getWidth()));
 			document.addPage(page);
 			PDPageContentStream contentStream = new PDPageContentStream(document, page);
-			float yPosDescriptionEnd = writeHeader(contentStream, page, document, appointments);
+			float yPosDescriptionEnd = writeHeader(contentStream, page, appointments);
 			contentStream.close();
 			createDataTable(document, appointments, colors, yPosDescriptionEnd);
 			addPageNumbers(document);
@@ -53,12 +53,19 @@ public class PdfUtils {
 		float tableWidth = page.getMediaBox().getWidth() - (2 * margin);
 		float yPosition = startY;
 
+		PDFont font;
+		if (checkUnicodeSupport(PDType1Font.HELVETICA, appointments.toString())) {
+			font = PDType1Font.HELVETICA;
+		} else {
+			font = getUnicodeFont(doc);
+		}
+
 		List<Map<String, String>> allDayAppointments = appointments.stream().filter(m -> m.get("Bis") == null)
 				.collect(Collectors.toList());
 		BaseTable allDayTable = new BaseTable(yPosition, startY, margin, tableWidth, margin, doc, page, true, true);
-		addAllDayTableHeader(allDayTable, doc);
+		addAllDayTableHeader(allDayTable);
 		for (Map<String, String> appointment : allDayAppointments) {
-			float rowHeight = addAllDayAppointmentRow(appointment, allDayTable, doc, tableWidth, colors);
+			float rowHeight = addAllDayAppointmentRow(appointment, allDayTable, font, tableWidth, colors);
 			yPosition -= rowHeight;
 		}
 		allDayTable.draw();
@@ -69,9 +76,9 @@ public class PdfUtils {
 				.collect(Collectors.toList());
 
 		BaseTable table = new BaseTable(yPosition, yPosition, margin, tableWidth, margin, doc, page, true, true);
-		addTableHeader(table, doc);
+		addTableHeader(table);
 		for (Map<String, String> appointment : dayAppointments) {
-			float rowHeight = addAppointmentRow(appointment, table, doc, tableWidth, colors);
+			float rowHeight = addAppointmentRow(appointment, table, font, tableWidth, colors);
 			yPosition -= rowHeight;
 		}
 		table.draw();
@@ -82,14 +89,13 @@ public class PdfUtils {
 			PDPageContentStream tableContentStream = new PDPageContentStream(doc, tablePage,
 					PDPageContentStream.AppendMode.APPEND, true);
 
-			writeHeader(tableContentStream, tablePage, doc, appointments);
+			writeHeader(tableContentStream, tablePage, appointments);
 			tableContentStream.close();
 		}
 	}
 
-	private static float addAllDayAppointmentRow(Map<String, String> appointment, BaseTable table, PDDocument doc,
-			float tableWidth,
-			Map<String, String> colors) {
+	private static float addAllDayAppointmentRow(Map<String, String> appointment, BaseTable table, PDFont font,
+			float tableWidth, Map<String, String> colors) {
 		float rowHeight = 15f; // calculateRowHeight(appointment, tableWidth);
 		Row<PDPage> dataRow = table.createRow(rowHeight);
 		for (String key : new String[] { "Ganzer Tag", "Personalien", "Grund" }) {
@@ -100,7 +106,7 @@ public class PdfUtils {
 				text = StringUtils.EMPTY;
 			}
 			Cell<PDPage> cell = dataRow.createCell(columnWidth(key), text != null ? text : "");
-			setFontForCell(PDType1Font.HELVETICA, text, cell, doc);
+			cell.setFont(font);
 			cell.setFontSize(10);
 			String id = appointment.get("ID");
 			if (id != null && colors.containsKey(id)) {
@@ -117,9 +123,8 @@ public class PdfUtils {
 		return rowHeight;
 	}
 
-	private static float addAppointmentRow(Map<String, String> appointment, BaseTable table, PDDocument doc,
-			float tableWidth,
-			Map<String, String> colors) {
+	private static float addAppointmentRow(Map<String, String> appointment, BaseTable table, PDFont font,
+			float tableWidth, Map<String, String> colors) {
 		float rowHeight = 15f; // calculateRowHeight(appointment, tableWidth);
 		Row<PDPage> dataRow = table.createRow(rowHeight);
 		for (String key : new String[] { "Von", "Bis", "Personalien", "Grund" }) {
@@ -128,7 +133,7 @@ public class PdfUtils {
 				text = text.replaceAll("[\\r\\n]", " ");
 			}
 			Cell<PDPage> cell = dataRow.createCell(columnWidth(key), text != null ? text : "");
-			setFontForCell(PDType1Font.HELVETICA, text, cell, doc);
+			cell.setFont(font);
 			cell.setFontSize(10);
 			String id = appointment.get("ID");
 			if (id != null && colors.containsKey(id)) {
@@ -161,11 +166,11 @@ public class PdfUtils {
 		}
 	}
 
-	private static void addAllDayTableHeader(BaseTable table, PDDocument doc) throws IOException {
+	private static void addAllDayTableHeader(BaseTable table) throws IOException {
 		Row<PDPage> headerRow = table.createRow(15f);
 		for (String header : new String[] { "Ganzer Tag", "Personalien", "Grund" }) {
 			Cell<PDPage> cell = headerRow.createCell(columnWidth(header), header);
-			setFontForCell(PDType1Font.HELVETICA_BOLD, header, cell, doc);
+			cell.setFont(PDType1Font.HELVETICA_BOLD);
 			cell.setFontSize(10);
 			cell.setAlign(HorizontalAlignment.LEFT);
 			cell.setBorderStyle(new LineStyle(Color.WHITE, 0));
@@ -175,11 +180,11 @@ public class PdfUtils {
 		table.addHeaderRow(headerRow);
 	}
 
-	private static void addTableHeader(BaseTable table, PDDocument doc) throws IOException {
+	private static void addTableHeader(BaseTable table) throws IOException {
 		Row<PDPage> headerRow = table.createRow(15f);
 		for (String header : new String[] { "Von", "Bis", "Personalien", "Grund" }) {
 			Cell<PDPage> cell = headerRow.createCell(columnWidth(header), header);
-			setFontForCell(PDType1Font.HELVETICA_BOLD, header, cell, doc);
+			cell.setFont(PDType1Font.HELVETICA_BOLD);
 			cell.setFontSize(10);
 			cell.setAlign(HorizontalAlignment.LEFT);
 			cell.setBorderStyle(new LineStyle(Color.WHITE, 0));
@@ -200,12 +205,12 @@ public class PdfUtils {
 		return new Color(r, g, b);
 	}
 
-	private static float writeHeader(PDPageContentStream contentStream, PDPage page, PDDocument doc,
+	private static float writeHeader(PDPageContentStream contentStream, PDPage page,
 			List<Map<String, String>> appointments) throws IOException {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy"); // Gewünschtes Ausgabeformat
 		SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Format des Eingabedatums
 		contentStream.beginText();
-		setFontForContentStream(PDType1Font.HELVETICA, contentStream, doc, 8);
+		contentStream.setFont(PDType1Font.HELVETICA, 8);
 		String area = appointments.isEmpty() ? "Unbekannt" : appointments.get(0).get("Area");
 		float yPos = page.getMediaBox().getHeight() - 50;
 		contentStream.newLineAtOffset(page.getMediaBox().getWidth() - 255, yPos);
@@ -243,7 +248,7 @@ public class PdfUtils {
 			footerContentStream.lineTo(page.getMediaBox().getWidth() - 50, lineYPos);
 			footerContentStream.stroke();
 			footerContentStream.beginText();
-			setFontForContentStream(PDType1Font.HELVETICA, footerContentStream, document, 8);
+			footerContentStream.setFont(PDType1Font.HELVETICA, 8);
 			footerContentStream.newLineAtOffset(page.getMediaBox().getWidth() - 100, 30);
 			footerContentStream.showText("Seite " + (i + 1) + " von " + totalPages);
 			footerContentStream.endText();
@@ -288,48 +293,5 @@ public class PdfUtils {
 			LoggerFactory.getLogger(PdfUtils.class).error("could not load font into document", e);
 		}
 		return null;
-	}
-
-	/**
-	 * checks if the font can be used without encoding exceptions and sets the
-	 * appropriate font to use.
-	 * 
-	 * @param font the primary font to use
-	 * @param text the string to to check unicode support on
-	 * @param cell the content stream to set the font on
-	 * @param doc  the PDF document
-	 */
-	private static void setFontForCell(PDFont font, String text, Cell<PDPage> cell, PDDocument doc) {
-		try {
-			if (checkUnicodeSupport(font, text)) {
-				cell.setFont(font);
-			} else {
-				cell.setFont(getUnicodeFont(doc));
-			}
-		} catch (IOException e) {
-			LoggerFactory.getLogger(PdfUtils.class).error(e.toString());
-		}
-	}
-
-	/**
-	 * checks if the font can be used without encoding exceptions and sets the
-	 * appropriate font to use.
-	 * 
-	 * @param font          the primary font to use
-	 * @param contentStream the content stream to set the font on
-	 * @param doc           the PDF document
-	 * @param size          the font size
-	 */
-	private static void setFontForContentStream(PDFont font, PDPageContentStream contentStream, PDDocument doc,
-			int size) {
-		try {
-			if (checkUnicodeSupport(font, contentStream.toString())) {
-				contentStream.setFont(font, size);
-			} else {
-				contentStream.setFont(getUnicodeFont(doc), size);
-			}
-		} catch (IOException e) {
-			LoggerFactory.getLogger(PdfUtils.class).error(e.toString());
-		}
 	}
 }

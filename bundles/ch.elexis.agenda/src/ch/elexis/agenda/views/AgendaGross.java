@@ -13,6 +13,7 @@ package ch.elexis.agenda.views;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,30 +46,26 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
-import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.TagesNachricht;
-import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.agenda.series.SerienTermin;
-import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.constants.StringConstants;
-import ch.elexis.core.data.util.NoPoUtil;
 import ch.elexis.core.model.IAppointment;
-import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IAppointmentSeries;
+import ch.elexis.core.model.IContact;
+import ch.elexis.core.model.format.PersonFormatUtil;
 import ch.elexis.core.model.util.ElexisIdGenerator;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.util.SWTHelper;
-import ch.elexis.data.Kontakt;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -288,12 +285,12 @@ public class AgendaGross extends BaseAgendaView {
 
 		@Override
 		public Color getBackground(Object element, int columnIndex) {
-			if (element instanceof IPlannable) {
-				IPlannable p = (IPlannable) element;
+			if (element instanceof IAppointment) {
+				IAppointment p = (IAppointment) element;
 				if (columnIndex == 3) {
-					return Plannables.getStatusColor(p);
+					return getStateColor(p);
 				} else {
-					return Plannables.getTypColor(p);
+					return getTypColor(p);
 				}
 			}
 			return null;
@@ -301,12 +298,12 @@ public class AgendaGross extends BaseAgendaView {
 
 		@Override
 		public Color getForeground(Object element, int columnIndex) {
-			if (element instanceof IPlannable) {
-				IPlannable p = (IPlannable) element;
+			if (element instanceof IAppointment) {
+				IAppointment p = (IAppointment) element;
 				if (columnIndex == 3) {
-					return SWTHelper.getContrast(Plannables.getStatusColor(p));
+					return SWTHelper.getContrast(getStateColor(p));
 				} else {
-					return SWTHelper.getContrast(Plannables.getTypColor(p));
+					return SWTHelper.getContrast(getTypColor(p));
 				}
 			}
 			return null;
@@ -316,9 +313,9 @@ public class AgendaGross extends BaseAgendaView {
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex != 4)
 				return null;
-			if (element instanceof IPlannable) {
-				IPlannable ip = (IPlannable) element;
-				if (ip.isRecurringDate())
+			if (element instanceof IAppointment) {
+				IAppointment ip = (IAppointment) element;
+				if (ip.isRecurring())
 					return UiDesk.getImage(Activator.IMG_RECURRING_DATE);
 			}
 			return null;
@@ -371,28 +368,45 @@ public class AgendaGross extends BaseAgendaView {
 	}
 
 	@Override
-	public void setTermin(Termin t) {
-		Kontakt pat = t.getKontakt();
+	public void setAppointment(IAppointment appointment) {
+		IContact contact = appointment.getContact();
 		StringBuilder sb = new StringBuilder(200);
-		TimeSpan ts = t.getTimeSpan();
-		sb.append(ts.from.toString(TimeTool.TIME_SMALL)).append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
+		sb.append(DateTimeFormatter.ofPattern("HH:mm").format(appointment.getStartTime())).append("-") //$NON-NLS-1$ //$NON-NLS-2$
+				.append(DateTimeFormatter.ofPattern("HH:mm").format(appointment.getEndTime())) //$NON-NLS-1$
 				.append(StringUtils.SPACE);
-		if (t.isRecurringDate()) {
-			sb.append(new SerienTermin(t).getRootTermin().getPersonalia());
+		if (appointment.isRecurring()) {
+			Optional<IAppointmentSeries> series = AppointmentServiceHolder.get().getAppointmentSeries(appointment);
+			if (series.isPresent() && series.get().getContact() != null && series.get().getContact().isPerson()) {
+				sb.append(PersonFormatUtil.getPersonalia(series.get().getContact().asIPerson()));
+			}
 		} else {
-			sb.append(t.getPersonalia());
+			if (appointment.getContact() != null && appointment.getContact().isPerson()) {
+				sb.append(PersonFormatUtil.getPersonalia(appointment.getContact().asIPerson()));
+			}
 		}
 		sb.append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
-				.append(t.getType()).append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
+				.append(appointment.getType()).append(",").append(appointment.getState()).append(")\n--------\n") //$NON-NLS-1$ //$NON-NLS-2$
+				.append(appointment.getReason());
 		terminDetail.setText(sb.toString());
 		sb.setLength(0);
-		sb.append(StringTool.unNull(t.get(Termin.FLD_CREATOR))).append("/")
-				.append(t.getCreateTime().toString(TimeTool.FULL_GER));
+		sb.append(StringTool.unNull(appointment.getCreatedBy())).append("/") //$NON-NLS-1$
+				.append(getCreateTime(appointment).toString(TimeTool.FULL_GER));
 		lbDetails.setText(sb.toString());
-		ContextServiceHolder.get().setTyped(NoPoUtil.loadAsIdentifiable(t, IAppointment.class).orElse(null));
-		if (pat != null) {
-			ContextServiceHolder.get().setActivePatient(NoPoUtil.loadAsIdentifiable(pat, IPatient.class).orElse(null));
+		ContextServiceHolder.get().setTyped(appointment);
+		if (contact != null && contact.isPatient()) {
+			ContextServiceHolder.get().setActivePatient(contact.asIPatient());
 		}
+	}
+
+	public TimeTool getCreateTime(IAppointment appointment) {
+		int min = 0;
+		try {
+			min = Integer.parseInt(appointment.getCreated());
+		} catch (Exception e) {
+			LoggerFactory.getLogger(getClass())
+					.warn("Could not parse appointment create time [" + appointment.getCreated() + "]");
+		}
+		return new TimeTool(min, 60000);
 	}
 
 	private void makePrivateActions() {

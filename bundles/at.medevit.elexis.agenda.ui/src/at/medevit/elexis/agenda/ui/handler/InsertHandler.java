@@ -4,29 +4,30 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import javax.inject.Inject;
+
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.LoggerFactory;
 
-import at.medevit.elexis.agenda.ui.composite.AppointmentDetailComposite;
 import at.medevit.elexis.agenda.ui.composite.SideBarComposite;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.CopyActionType;
 import at.medevit.elexis.agenda.ui.dialog.AppointmentLinkOptionsDialog.MoveActionType;
 import at.medevit.elexis.agenda.ui.function.AbstractBrowserFunction;
+import ch.elexis.agenda.composite.AppointmentDetailComposite;
+import ch.elexis.agenda.util.AppointmentExtensionHandler;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.model.IPeriod;
-import ch.elexis.core.services.IAppointmentHistoryManagerService;
 import ch.elexis.core.services.IAppointmentService;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ContextServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
-import ch.itmed.fop.printing.handler.AppointmentExtensionHandler;
 
 
 public class InsertHandler {

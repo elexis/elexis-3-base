@@ -1,4 +1,4 @@
-package at.medevit.elexis.agenda.ui.dialog;
+package ch.elexis.agenda.composite;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
@@ -7,6 +7,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import ch.elexis.agenda.ui.Messages;
 
 public class YearlySeriesComposite extends Composite {
 	private Text txtDay;

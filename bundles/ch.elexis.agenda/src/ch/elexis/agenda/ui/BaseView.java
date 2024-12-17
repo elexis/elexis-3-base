@@ -15,7 +15,11 @@
 
 package ch.elexis.agenda.ui;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,27 +42,36 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.slf4j.LoggerFactory;
 
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.ICalTransfer;
-import ch.elexis.agenda.data.IPlannable;
-import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
-import ch.elexis.agenda.util.Plannables;
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.common.ElexisEventTopics;
 import ch.elexis.core.constants.Preferences;
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.events.Heartbeat.HeartListener;
 import ch.elexis.core.model.IAppointment;
+import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.IUser;
+import ch.elexis.core.model.ModelPackage;
+import ch.elexis.core.model.builder.IAppointmentBuilder;
 import ch.elexis.core.services.IAppointmentService;
+import ch.elexis.core.services.IQuery;
+import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.services.IQuery.ORDER;
+import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
+import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.ContextServiceHolder;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
+import ch.elexis.core.types.AppointmentState;
+import ch.elexis.core.types.AppointmentType;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.core.ui.actions.GlobalEventDispatcher;
 import ch.elexis.core.ui.actions.IActivationListener;
@@ -66,9 +79,7 @@ import ch.elexis.core.ui.e4.util.CoreUiUtil;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
 import ch.elexis.core.utils.OsgiServiceUtil;
-import ch.elexis.data.Patient;
-import ch.elexis.data.Query;
-import ch.elexis.dialogs.TerminDialog;
+import ch.elexis.dialogs.AppointmentDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
 import ch.rgw.tools.TimeTool;
@@ -81,6 +92,7 @@ import ch.rgw.tools.TimeTool;
  */
 public abstract class BaseView extends ViewPart implements HeartListener, IActivationListener {
 	public BaseView() {
+		appointmentService = OsgiServiceUtil.getService(IAppointmentService.class).get();
 	}
 
 	private static final String DEFAULT_PIXEL_PER_MINUTE = "1.0"; //$NON-NLS-1$
@@ -90,6 +102,10 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	public IAction printPatientAction, todayAction, refreshAction;
 	MenuManager menu = new MenuManager();
 	protected Activator agenda = Activator.getDefault();
+
+	private IAppointmentService appointmentService;
+
+	private Timer timer;
 
 	@Optional
 	@Inject
@@ -115,8 +131,25 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		agenda.setActResource(ConfigServiceHolder.getUser(PreferenceConstants.AG_BEREICH, agenda.getActResource()));
 	}
 
+	private long highestLastUpdate;
+
 	@Override
 	public void createPartControl(Composite parent) {
+
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+				long lastUpdate = CoreModelServiceHolder.get().getHighestLastUpdate(IAppointment.class);
+				LoggerFactory.getLogger(getClass()).debug("Agenda [" + lastUpdate + "]"); //$NON-NLS-1$
+				if (lastUpdate > highestLastUpdate) {
+					highestLastUpdate = lastUpdate;
+					refresh();
+				}
+			}
+		}, 10000);
+
 		makeActions();
 		create(parent);
 		GlobalEventDispatcher.addActivationListener(this, this);
@@ -125,6 +158,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 
 	@Override
 	public void dispose() {
+		timer.cancel();
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
@@ -133,7 +167,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 
 	abstract protected void refresh();
 
-	abstract protected IPlannable getSelection();
+	abstract protected IAppointment getSelection();
 
 	private void internalRefresh() {
 		if (AccessControlServiceHolder.get().evaluate(EvACE.of(IAppointment.class, Right.VIEW))) {
@@ -165,14 +199,17 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		internalRefresh();
 	}
 
+	@Override
 	public void heartbeat() {
 		internalRefresh();
 	}
 
+	@Override
 	public void activation(boolean mode) {
 
 	}
 
+	@Override
 	public void visible(boolean mode) {
 		if (mode) {
 			CoreHub.heart.addListener(this);
@@ -204,7 +241,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 				// new TagesgrenzenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				// .getShell(), agenda.getActDate().toString(TimeTool.DATE_COMPACT), agenda
 				// .getActResource()).open();
-				ICommandService commandService = (ICommandService) PlatformUI.getWorkbench()
+				ICommandService commandService = PlatformUI.getWorkbench()
 						.getService(ICommandService.class);
 
 				Command cmd = commandService.getCommand("org.eclipse.ui.window.preferences");
@@ -225,13 +262,14 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		blockAction = new Action(Messages.TagesView_lockPeriod) {
 			@Override
 			public void run() {
-				IPlannable p = getSelection();
+				IAppointment p = getSelection();
 				if (p != null) {
-					if (p instanceof Termin.Free) {
-						new Termin(agenda.getActResource(), agenda.getActDate().toString(TimeTool.DATE_COMPACT),
-								p.getStartMinute(), p.getDurationInMinutes() + p.getStartMinute(),
-								Termin.typReserviert(), Termin.statusLeer());
-						ElexisEventDispatcher.reload(Termin.class);
+					if (appointmentService.getType(AppointmentType.FREE).equals(p.getType())) {
+						p.setSchedule(agenda.getActResource());
+						p.setType(appointmentService.getType(AppointmentType.BOOKED));
+						p.setState(appointmentService.getState(AppointmentState.EMPTY));
+						CoreModelServiceHolder.get().save(p);
+						ContextServiceHolder.get().postEvent(ElexisEventTopics.EVENT_RELOAD, IAppointment.class);
 					}
 				}
 
@@ -245,7 +283,14 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 
 			@Override
 			public void run() {
-				new TerminDialog(null).open();
+				LocalDateTime start = agenda.getActDate().toLocalDateTime();
+				LocalDateTime end = start.plusMinutes(30);
+				IAppointment appointment = new IAppointmentBuilder(CoreModelServiceHolder.get(),
+						agenda.getActResource(), start, end,
+						AppointmentServiceHolder.get().getType(AppointmentType.DEFAULT),
+						AppointmentServiceHolder.get().getState(AppointmentState.DEFAULT)).build();
+				AppointmentDialog dlg = new AppointmentDialog(appointment);
+				dlg.open();
 				internalRefresh();
 			}
 		};
@@ -257,8 +302,8 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 
 			@Override
 			public void run() {
-				IPlannable[] liste = Plannables.loadDay(agenda.getActResource(), agenda.getActDate());
-				new TerminListeDruckenDialog(getViewSite().getShell(), liste).open();
+				new TerminListeDruckenDialog(getViewSite().getShell(), appointmentService
+						.getAppointments(agenda.getActResource(), agenda.getActDate().toLocalDate(), true)).open();
 				internalRefresh();
 			}
 		};
@@ -270,21 +315,21 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 
 			@Override
 			public void run() {
-				Patient patient = ElexisEventDispatcher.getSelectedPatient();
+				IPatient patient = ContextServiceHolder.get().getActivePatient().orElse(null);
 				if (patient != null) {
-					Query<Termin> qbe = new Query<Termin>(Termin.class);
-					qbe.add("Wer", "=", patient.getId());
-					qbe.add("deleted", "<>", "1");
-					qbe.add("Tag", ">=", new TimeTool().toString(TimeTool.DATE_COMPACT));
-					qbe.orderBy(false, "Tag", "Beginn");
-					java.util.List<Termin> list = qbe.execute();
+					IQuery<IAppointment> query = CoreModelServiceHolder.get().getQuery(IAppointment.class);
+					query.and(ModelPackage.Literals.IAPPOINTMENT__SUBJECT_OR_PATIENT, COMPARATOR.EQUALS,
+							patient.getId());
+					query.and("tag", COMPARATOR.GREATER_OR_EQUAL, LocalDate.now());
+					query.orderBy("Tag", ORDER.ASC);
+					query.orderBy("Beginn", ORDER.ASC);
+					java.util.List<IAppointment> list = query.execute();
 					if (list != null) {
-						boolean directPrint = CoreHub.localCfg.get(
+						boolean directPrint = LocalConfigService.get(
 								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
 								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
 
-						TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(),
-								list.toArray(new Termin[0]));
+						TermineDruckenDialog dlg = new TermineDruckenDialog(getViewSite().getShell(), list);
 						if (directPrint) {
 							dlg.setBlockOnOpen(false);
 							dlg.open();

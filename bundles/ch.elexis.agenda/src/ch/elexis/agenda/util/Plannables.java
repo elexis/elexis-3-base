@@ -226,6 +226,7 @@ public final class Plannables {
 	 * @deprecated is this equal to
 	 *             {@link IAppointmentService#updateBoundaries(String, java.time.LocalDate)}
 	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public static List<IPlannable> loadTermine(String bereich, TimeTool date) {
 		if (StringTool.isNothing(bereich)) {
@@ -274,14 +275,14 @@ public final class Plannables {
 	 * Terminen jeweils ein Plannable vom Typ Termin.Free einsetzen, so dass eine
 	 * lückenlose Liste von Plannables entsteht.
 	 */
-	public static IPlannable[] loadDay(String bereich, TimeTool date) {
+	public static IPlannable[] loadDays(String bereich, TimeTool date) {
 		ArrayList<IPlannable> e = new ArrayList<IPlannable>(50);
 		List<IPlannable> list = loadTermine(bereich, date);
 		IPlannable n = null;
 		IPlannable last = null;
 		String day = date.toString(TimeTool.DATE_COMPACT);
-		for (IPlannable o : (List<IPlannable>) list) {
-			n = (IPlannable) o;
+		for (IPlannable o : list) {
+			n = o;
 			if (n.getStartMinute() != 0) // Termin fängt nicht bei 0 Uhr an
 			{
 				if (last == null) { // Und es war auch noch keiner vorher
@@ -339,7 +340,7 @@ public final class Plannables {
 	 */
 	public static void paint(GC gc, IPlannable p, Rectangle r, int start, int end) {
 		double minutes = end - start;
-		double pixelPerMinute = (double) r.width / minutes;
+		double pixelPerMinute = r.width / minutes;
 		int x = (int) Math.round((p.getStartMinute() - start) * pixelPerMinute);
 		int w = (int) Math.round(p.getDurationInMinutes() * pixelPerMinute);
 		gc.setBackground(getTypColor(p));

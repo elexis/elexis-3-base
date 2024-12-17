@@ -17,16 +17,17 @@ Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/cache-api-1.1.1.jar,
  lib/ical4j-3.0.29.jar
-Export-Package: ch.elexis.agenda.data,
+Export-Package: ch.elexis.agenda.composite,
+ ch.elexis.agenda.data,
  ch.elexis.agenda.externalaccess,
  ch.elexis.agenda.preferences,
  ch.elexis.agenda.series,
- ch.elexis.agenda.series.ui,
  ch.elexis.agenda.util,
  ch.elexis.dialogs
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: ch.elexis.core.mail,
  ch.elexis.core.mail.ui.client,
+ ch.elexis.core.tasks.model,
  com.google.common.cache;version="15.0.0",
  javax.inject;version="1.0.0",
  org.eclipse.e4.ui.di,

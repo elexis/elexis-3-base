@@ -6,14 +6,14 @@ import com.equo.chromium.swt.Browser;
 import com.equo.chromium.swt.BrowserFunction;
 
 import at.medevit.elexis.agenda.ui.composite.ScriptingHelper;
-import at.medevit.elexis.agenda.ui.dialog.AppointmentDialog;
-import at.medevit.elexis.agenda.ui.dialog.RecurringAppointmentDialog;
 import ch.elexis.core.model.IAppointment;
 import ch.elexis.core.services.holder.AppointmentHistoryServiceHolder;
 import ch.elexis.core.services.holder.AppointmentServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.core.ui.e4.locks.AcquireLockBlockingUi;
 import ch.elexis.core.ui.e4.locks.ILockHandler;
+import ch.elexis.dialogs.AppointmentDialog;
+import ch.elexis.dialogs.RecurringAppointmentDialog;
 
 public class DoubleClickFunction extends BrowserFunction {
 

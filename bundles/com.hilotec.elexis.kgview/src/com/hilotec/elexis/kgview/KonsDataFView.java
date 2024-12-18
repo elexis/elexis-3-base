@@ -115,9 +115,11 @@ public abstract class KonsDataFView extends SimpleTextFView implements IRefresha
 			icpc_list = new List(area, SWT.V_SCROLL);
 			icpc_list.setLayoutData(gd);
 			icpc_list.addKeyListener(new KeyListener() {
+				@Override
 				public void keyReleased(KeyEvent e) {
 				}
 
+				@Override
 				public void keyPressed(KeyEvent e) {
 					if (e.keyCode != SWT.DEL)
 						return;
@@ -129,10 +131,12 @@ public abstract class KonsDataFView extends SimpleTextFView implements IRefresha
 			MenuItem mi = new MenuItem(m, 0);
 			mi.setText("Entfernen");
 			mi.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					removeIcpcCode();
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
@@ -221,7 +225,7 @@ public abstract class KonsDataFView extends SimpleTextFView implements IRefresha
 			} else {
 				konsDeselected();
 			}
-		}, icpc_list);
+		}, area);
 	}
 
 	@Override

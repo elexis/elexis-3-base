@@ -99,6 +99,7 @@ class ScrollHelper implements KeyListener, DisposeListener, FocusListener {
 			@Override
 			public void run() {
 				UiDesk.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						tickInGUI();
 					}
@@ -153,12 +154,14 @@ class ScrollHelper implements KeyListener, DisposeListener, FocusListener {
 		return (kc == SWT.ARROW_DOWN || kc == SWT.PAGE_DOWN);
 	}
 
+	@Override
 	public void keyReleased(KeyEvent e) {
 		if (isUp(e.keyCode) || isDown(e.keyCode)) {
 			stop();
 		}
 	}
 
+	@Override
 	public void keyPressed(KeyEvent e) {
 		if (isDown(e.keyCode)) {
 			dir = Direction.DOWN;
@@ -173,13 +176,16 @@ class ScrollHelper implements KeyListener, DisposeListener, FocusListener {
 	/*
 	 * Events to react to
 	 */
+	@Override
 	public void widgetDisposed(DisposeEvent e) {
 		stop();
 	}
 
+	@Override
 	public void focusGained(FocusEvent e) {
 	}
 
+	@Override
 	public void focusLost(FocusEvent e) {
 		stop();
 	}
@@ -206,19 +212,23 @@ public class ArchivKG extends ViewPart implements IRefreshable, HeartListener {
 
 		text = new ScrolledFormText(parent, true);
 		text.getFormText().addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				if (!(e.getHref() instanceof String))
 					return;
 				String href = (String) e.getHref();
 				if (href.startsWith("kons:")) {
 					Konsultation kons = Konsultation.load(href.substring(5));
-					ContextServiceHolder.get().setTyped(NoPoUtil.loadAsIdentifiable(kons, IEncounter.class));
+					ContextServiceHolder.get()
+							.setTyped(NoPoUtil.loadAsIdentifiable(kons, IEncounter.class).orElse(null));
 				}
 			}
 		});
@@ -257,6 +267,7 @@ public class ArchivKG extends ViewPart implements IRefreshable, HeartListener {
 
 		// Konsultationen sortieren
 		Comparator<Konsultation> comp = new Comparator<Konsultation>() {
+			@Override
 			public int compare(Konsultation k0, Konsultation k1) {
 				KonsData kd0 = KonsData.load(k0);
 				TimeTool tt0 = new TimeTool(k0.getDatum());
@@ -377,6 +388,7 @@ public class ArchivKG extends ViewPart implements IRefreshable, HeartListener {
 		}, text);
 	}
 	
+	@Override
 	public void setFocus() {
 	}
 

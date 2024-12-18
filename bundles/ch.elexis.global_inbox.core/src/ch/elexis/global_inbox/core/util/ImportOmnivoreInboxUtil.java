@@ -1,13 +1,6 @@
 package ch.elexis.global_inbox.core.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.nio.channels.OverlappingFileLockException;
 import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
@@ -21,6 +14,7 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.MimeType;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.INamedQuery;
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
@@ -45,12 +39,12 @@ public class ImportOmnivoreInboxUtil {
 	 * @param fileName
 	 * @return the document id if import was successful, else <code>null</code>
 	 */
-	public @Nullable String tryImportForPatient(File file, String patientNo, String fileName) {
+	public @Nullable String tryImportForPatient(IVirtualFilesystemHandle file, String patientNo, String fileName) {
 		INamedQuery<IPatient> namedQuery = CoreModelServiceHolder.get().getNamedQuery(IPatient.class, "code");
 		Optional<IPatient> loaded = namedQuery
 				.executeWithParametersSingleResult(namedQuery.getParameterMap("code", patientNo));
 		if (loaded.isPresent()) {
-			if (!isFileOpened(file)) {
+
 				IPatient pat = loaded.get();
 				String cat = ImportOmnivoreInboxUtil.getCategory(file);
 				if (cat.equals("-") || cat.equals("??")) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -58,7 +52,7 @@ public class ImportOmnivoreInboxUtil {
 				}
 				try {
 					long heapSize = Runtime.getRuntime().totalMemory();
-					long length = file.length();
+					long length = file.getContentLenght();
 					if (length >= heapSize) {
 						logger.warn("Skipping " + file.getAbsolutePath() + " as bigger than heap size. (#3652)"); //$NON-NLS-1$ //$NON-NLS-2$
 						return null;
@@ -74,43 +68,26 @@ public class ImportOmnivoreInboxUtil {
 							newDocument.setMimeType(file.getName());
 						}
 					}
-					try (InputStream contentStream = new FileInputStream(file)) {
+					try (InputStream contentStream = file.openInputStream()) {
 						omnivoreDocumentStore.saveDocument(newDocument, contentStream);
 					}
 					file.delete();
-
 					return newDocument.getId();
 				} catch (Exception ex) {
 					logger.error("An error occurred while trying to import the document for patient with ID {}.",
 							patientNo, ex);
 				}
-			}
 		}
 		return null;
 	}
 
-	private String getFileExtension(File file) {
+	private String getFileExtension(IVirtualFilesystemHandle file) {
 		String name = file.getName();
 		int lastIndexOf = name.lastIndexOf(".");
 		if (lastIndexOf == -1 || lastIndexOf == 0) {
 			return "";
 		}
 		return name.substring(lastIndexOf + 1);
-	}
-
-	private boolean isFileOpened(File file) {
-		try (FileChannel channel = new RandomAccessFile(file, "rw").getChannel();) { //$NON-NLS-1$
-			// Get an exclusive lock on the whole file
-			try (FileLock lock = channel.lock();) {
-				// we got a lock so this file is not opened
-				return false;
-			} catch (OverlappingFileLockException e) {
-				// default file is opened ...
-			}
-		} catch (IOException e) {
-			// default file is opened ...
-		}
-		return true;
 	}
 
 	public static String getDirectory(String defaultValue, String deviceName) {
@@ -127,10 +104,10 @@ public class ImportOmnivoreInboxUtil {
 		}
 	}
 
-	public static String getCategory(File file) {
+	public static String getCategory(IVirtualFilesystemHandle file) {
 		try {
 			String category = ConfigServiceHolder.getGlobal(Constants.PREF_LAST_SELECTED_CATEGORY, "default");
-			File parent = file.getParentFile();
+			IVirtualFilesystemHandle parent = file.getParent();
 			if (parent == null) {
 				logger.warn("Parent directory for file [{}] is null.", file.getAbsolutePath());
 				return "Error in inbox path";
@@ -147,4 +124,4 @@ public class ImportOmnivoreInboxUtil {
 			return "Error in category resolution";
 		}
 	}
-	}
+}

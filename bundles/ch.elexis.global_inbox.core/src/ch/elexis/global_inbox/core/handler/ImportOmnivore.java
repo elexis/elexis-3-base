@@ -1,25 +1,18 @@
 package ch.elexis.global_inbox.core.handler;
 
-import java.io.File;
-import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
+import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.global_inbox.core.util.Constants;
 import ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil;
 
@@ -39,38 +32,30 @@ public class ImportOmnivore {
 
 	protected IStatus run(IProgressMonitor monitor) {
 			String filepath = ImportOmnivoreInboxUtil.getDirectory(Constants.PREF_DIR_DEFAULT, deviceName);
-			File dir = null;
+			IVirtualFilesystemHandle dir = null;
 			if (filepath == null) {
 				filepath = Constants.PREF_DIR_DEFAULT;
 				ConfigServiceHolder.get().set(Constants.PREF_DIR, Constants.PREF_DIR_DEFAULT);
 			}
 			try {
-				URI uri = new URI(filepath);
-				Path path = Paths.get(uri);
-				dir = path.toFile();
+				dir = VirtualFilesystemServiceHolder.get().of(filepath);
+				addFilesInDirRecursive(dir);
 			} catch (Exception e) {
 				log.error("Failed to convert filepath to directory. Filepath: {}", filepath, e);
 				return Status.CANCEL_STATUS;
 			}
-			addFilesInDirRecursive(dir);
 
 		return Status.OK_STATUS;
 	}
 
-	private void addFilesInDirRecursive(File dir) {
-		List<String> allFilesInDirRecursive = new ArrayList<>();
-		File[] files = dir.listFiles();
+	private void addFilesInDirRecursive(IVirtualFilesystemHandle dir) throws IOException {
+		IVirtualFilesystemHandle[] files = dir.listHandles();
 		if (files == null) {
 			return;
 		}
-		for (File file : files) {
-			if (file.isHidden() || file.getName().startsWith(".")) {
+		for (IVirtualFilesystemHandle file : files) {
+			if (!file.exists() || file.getName().startsWith(".")) {
 				continue;
-			}
-			if (file.isDirectory()) {
-				addFilesInDirRecursive(file);
-			} else {
-				allFilesInDirRecursive.add(file.getAbsolutePath());
 			}
 			if (file.isDirectory()) {
 				addFilesInDirRecursive(file);
@@ -85,19 +70,7 @@ public class ImportOmnivore {
 						continue;
 					}
 				}
-				allFilesInDirRecursive.add(file.getAbsolutePath());
 			}
-		}
-		allFilesInDirRecursive.sort(Comparator.comparingInt(String::length));
-		List<File> extensionFiles = new ArrayList<>();
-		for (String string : allFilesInDirRecursive) {
-			File file = new File(string);
-			if (extensionFiles.contains(file)) {
-				continue;
-			}
-			File[] _extensionFiles = dir.listFiles(
-					(_dir, _name) -> _name.startsWith(file.getName()) && !Objects.equals(_name, file.getName()));
-			extensionFiles.addAll(Arrays.asList(_extensionFiles));
 		}
 	}
 }

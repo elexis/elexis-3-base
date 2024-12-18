@@ -137,7 +137,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	public void createPartControl(Composite parent) {
 
 		timer = new Timer();
-		timer.schedule(new TimerTask() {
+		timer.scheduleAtFixedRate(new TimerTask() {
 
 			@Override
 			public void run() {
@@ -148,7 +148,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 					refresh();
 				}
 			}
-		}, 10000);
+		}, 10000, 10000);
 
 		makeActions();
 		create(parent);

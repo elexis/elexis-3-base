@@ -42,13 +42,14 @@ public class ImportOmnivore {
 			File dir = null;
 			if (filepath == null) {
 				filepath = Constants.PREF_DIR_DEFAULT;
-				ConfigServiceHolder.get().setLocal(Constants.PREF_DIR, Constants.PREF_DIR_DEFAULT);
+				ConfigServiceHolder.get().set(Constants.PREF_DIR, Constants.PREF_DIR_DEFAULT);
 			}
 			try {
 				URI uri = new URI(filepath);
 				Path path = Paths.get(uri);
 				dir = path.toFile();
 			} catch (Exception e) {
+				log.error("Failed to convert filepath to directory. Filepath: {}", filepath, e);
 				return Status.CANCEL_STATUS;
 			}
 			addFilesInDirRecursive(dir);

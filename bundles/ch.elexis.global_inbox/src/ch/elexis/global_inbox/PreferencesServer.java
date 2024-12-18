@@ -1,6 +1,5 @@
 package ch.elexis.global_inbox;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,19 +35,18 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.activator.CoreHub;
-import ch.elexis.global_inbox.core.util.Constants;
-import ch.elexis.global_inbox.ui.Messages;
 import ch.elexis.core.services.IVirtualFilesystemService;
 import ch.elexis.core.services.IVirtualFilesystemService.IVirtualFilesystemHandle;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.VirtualFilesystemServiceHolder;
 import ch.elexis.core.tasks.model.ITaskService;
-import ch.elexis.core.tasks.model.TaskTriggerTypeParameter;
 import ch.elexis.core.ui.e4.dialog.VirtualFilesystemUriEditorDialog;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
 import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.global_inbox.core.handler.TaskManagerHandler;
+import ch.elexis.global_inbox.core.util.Constants;
+import ch.elexis.global_inbox.ui.Messages;
 import ch.elexis.omnivore.model.IDocumentHandle;
 import ch.elexis.omnivore.model.TransientCategory;
 import ch.elexis.omnivore.model.util.CategoryUtil;
@@ -79,7 +77,8 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		setPreferenceStore(new SettingsPreferenceStore(CoreHub.localCfg));
 		taskService = OsgiServiceUtil.getService(ITaskService.class).orElse(null);
 		taskManagerHandler = new TaskManagerHandler(taskService);
-		lastSelectedCategory = getPreferenceStore().getString(Constants.PREF_LAST_SELECTED_CATEGORY);
+		lastSelectedCategory = ConfigServiceHolder.getGlobal(Constants.PREF_LAST_SELECTED_CATEGORY, StringUtils.EMPTY);
+
 	}
 
     public PreferencesServer() {
@@ -123,7 +122,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		addButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		addButton.addListener(SWT.Selection, e -> {
 			addNewDevice(newDeviceText.getText(), contentComposite);
-			newDeviceText.setText("");
+			newDeviceText.setText(StringUtils.EMPTY);
 		});
 
 		Label comboLabel = new Label(contentComposite, SWT.NONE);
@@ -213,7 +212,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 			String selectedCategory = (String) selection.getFirstElement();
 			if (selectedCategory != null) {
 				lastSelectedCategory = selectedCategory;
-				getPreferenceStore().setValue(Constants.PREF_LAST_SELECTED_CATEGORY, lastSelectedCategory);
+				ConfigServiceHolder.get().set(Constants.PREF_LAST_SELECTED_CATEGORY, lastSelectedCategory);
 			}
 		});
 
@@ -299,7 +298,8 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		List<String> allCategories = CategoryUtil.getCategoriesNames();
 		categoryListViewer.setInput(allCategories);
 		categoryListViewer.refresh();
-		String selectedCategory = getPreferenceStore().getString(Constants.PREF_CATEGORY_PREFIX + device);
+		String selectedCategory = ConfigServiceHolder.getGlobal(Constants.PREF_CATEGORY_PREFIX + device,
+				StringUtils.EMPTY);
 		if (selectedCategory != null && !selectedCategory.isEmpty()) {
 			categoryListViewer.setSelection(new org.eclipse.jface.viewers.StructuredSelection(selectedCategory));
 			lastSelectedCategory = selectedCategory;
@@ -327,7 +327,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 			saveCategoriesForDevice(deviceCombo.getText(), categories);
 		}
 		lastSelectedCategory = newCategoryName;
-		getPreferenceStore().setValue(Constants.PREF_LAST_SELECTED_CATEGORY, newCategoryName);
+		ConfigServiceHolder.get().set(Constants.PREF_LAST_SELECTED_CATEGORY, newCategoryName);
 		updateCategoriesListForDevice(deviceCombo.getText());
 	}
 
@@ -339,18 +339,19 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 	}
 
 	private List<String> getCategoriesForDevice(String device) {
-		String categoriesString = getPreferenceStore().getString(Constants.PREF_CATEGORY_PREFIX + device);
+		String categoriesString = ConfigServiceHolder.getGlobal(Constants.PREF_CATEGORY_PREFIX + device,
+				StringUtils.EMPTY);
 		return StringUtils.isNotBlank(categoriesString) ? new ArrayList<>(List.of(categoriesString.split(",")))
 				: new ArrayList<>();
 	}
 
 	private void saveCategoriesForDevice(String device, List<String> categories) {
 		String categoriesString = String.join(",", categories);
-		getPreferenceStore().setValue(Constants.PREF_CATEGORY_PREFIX + device, categoriesString);
+		ConfigServiceHolder.get().set(Constants.PREF_CATEGORY_PREFIX + device, categoriesString);
 	}
 
 	private String[][] getDeviceEntries() {
-		String devices = getPreferenceStore().getString(Constants.PREF_DEVICES);
+		String devices = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICES, StringUtils.EMPTY);
         if (StringUtils.isNotBlank(devices)) {
             String[] deviceArray = devices.split(",");
             String[][] deviceEntries = new String[deviceArray.length][2];
@@ -365,7 +366,7 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 
 	private void deleteSelectedDevice(String selectedDevice, Composite mainComposite) {
 		if (StringUtils.isNotBlank(selectedDevice)) {
-			String devices = getPreferenceStore().getString(Constants.PREF_DEVICES);
+			String devices = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICES, StringUtils.EMPTY);
 			String[] deviceArray = devices.split(",");
 			StringBuilder newDevices = new StringBuilder();
 			for (String device : deviceArray) {
@@ -376,10 +377,10 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 					newDevices.append(device);
 				}
 			}
-			getPreferenceStore().setValue(Constants.PREF_DEVICES, newDevices.toString());
-			getPreferenceStore().setToDefault(Constants.PREF_DEVICE_DIR_PREFIX + selectedDevice);
-			getPreferenceStore().setToDefault(Constants.PREF_SELECTED_DEVICE);
-			getPreferenceStore().setToDefault(Constants.PREF_CATEGORY_PREFIX + selectedDevice);
+			ConfigServiceHolder.get().set(Constants.PREF_DEVICES, newDevices.toString());
+			ConfigServiceHolder.get().set(Constants.PREF_DEVICE_DIR_PREFIX + selectedDevice, StringUtils.EMPTY);
+			ConfigServiceHolder.get().set(Constants.PREF_SELECTED_DEVICE, StringUtils.EMPTY);
+			ConfigServiceHolder.get().set(Constants.PREF_CATEGORY_PREFIX + selectedDevice, StringUtils.EMPTY);
 			if (taskManagerHandler.getTaskDescriptorByReferenceId(selectedDevice) != null) {
 
 				taskManagerHandler.deleteTaskDescriptorByReferenceId(selectedDevice);
@@ -388,21 +389,21 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 			updateDeviceCombo();
 
 			if (selectedDevice.equals(lastSelectedCategory)) {
-				lastSelectedCategory = "";
-				getPreferenceStore().setToDefault(Constants.PREF_LAST_SELECTED_CATEGORY);
+				lastSelectedCategory = StringUtils.EMPTY;
+				ConfigServiceHolder.get().set(Constants.PREF_LAST_SELECTED_CATEGORY, StringUtils.EMPTY);
 			}
 		}
 	}
 
 	private void addNewDevice(String deviceName, Composite mainComposite) {
         if (StringUtils.isNotBlank(deviceName)) {
-			String devices = getPreferenceStore().getString(Constants.PREF_DEVICES);
+			String devices = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICES, StringUtils.EMPTY);
             if (StringUtils.isNotBlank(devices)) {
                 devices += "," + deviceName;
             } else {
                 devices = deviceName;
             }
-			getPreferenceStore().setValue(Constants.PREF_DEVICES, devices);
+			ConfigServiceHolder.get().set(Constants.PREF_DEVICES, devices);
 			updateDeviceCombo();
 		}
 	}
@@ -422,21 +423,23 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 	private void updateDeviceFields() {
 		String selectedDevice = deviceCombo.getText();
 		if (StringUtils.isNotBlank(selectedDevice)) {
-			String dir = getPreferenceStore().getString(Constants.PREF_DEVICE_DIR_PREFIX + selectedDevice);
+			String dir = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICE_DIR_PREFIX + selectedDevice,
+					StringUtils.EMPTY);
 			deviceDirText.setText(StringUtils.defaultString(dir));
 			updateCategoriesListForDevice(selectedDevice);
 		} else {
-			deviceDirText.setText("");
+			deviceDirText.setText(StringUtils.EMPTY);
 
 		}
 	}
 
 	private void loadDeviceData() {
-		String devices = getPreferenceStore().getString(Constants.PREF_DEVICES);
+		String devices = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICES, StringUtils.EMPTY);
 		if (StringUtils.isNotBlank(devices)) {
 			String[] deviceArray = devices.split(",");
 			for (String device : deviceArray) {
-				String dir = getPreferenceStore().getString(Constants.PREF_DEVICE_DIR_PREFIX + device);
+				String dir = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICE_DIR_PREFIX + device,
+						StringUtils.EMPTY);
 				if (StringUtils.isNotBlank(dir)) {
 					deviceDirMap.put(device, dir);
 				}
@@ -452,12 +455,12 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		if (StringUtils.isNotBlank(selectedDevice)) {
 			String destinationDir = deviceDirText.getText();
 			if (lastSelectedCategory == null) {
-				lastSelectedCategory = "";
+				lastSelectedCategory = StringUtils.EMPTY;
 			}
 
-			getPreferenceStore().setValue(Constants.PREF_DEVICE_DIR_PREFIX + selectedDevice, deviceDirText.getText());
-			getPreferenceStore().setValue(Constants.PREF_SELECTED_DEVICE, selectedDevice);
-			getPreferenceStore().setValue(Constants.PREF_CATEGORY_PREFIX + selectedDevice, lastSelectedCategory);
+			ConfigServiceHolder.get().set(Constants.PREF_DEVICE_DIR_PREFIX + selectedDevice, deviceDirText.getText());
+			ConfigServiceHolder.get().set(Constants.PREF_SELECTED_DEVICE, selectedDevice);
+			ConfigServiceHolder.get().set(Constants.PREF_CATEGORY_PREFIX + selectedDevice, lastSelectedCategory);
 
 			if (StringUtils.isNotBlank(destinationDir)) {
 				taskManagerHandler.createAndConfigureTask(selectedDevice, destinationDir);
@@ -466,17 +469,16 @@ public class PreferencesServer extends PreferencePage implements IWorkbenchPrefe
 		return super.performOk();
 	}
 
-
 	@Override
 	protected void performDefaults() {
 		super.performDefaults();
-		getPreferenceStore().setToDefault(Constants.PREF_SELECTED_DEVICE);
-		String devices = getPreferenceStore().getString(Constants.PREF_DEVICES);
+		ConfigServiceHolder.get().set(Constants.PREF_SELECTED_DEVICE, StringUtils.EMPTY);
+		String devices = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICES, StringUtils.EMPTY);
 		if (StringUtils.isNotBlank(devices)) {
 			String[] deviceArray = devices.split(",");
 			for (String device : deviceArray) {
-				getPreferenceStore().setToDefault(Constants.PREF_DEVICE_DIR_PREFIX + device);
-				getPreferenceStore().setToDefault(Constants.PREF_CATEGORY_PREFIX + device);
+				ConfigServiceHolder.get().set(Constants.PREF_DEVICE_DIR_PREFIX + device, StringUtils.EMPTY);
+				ConfigServiceHolder.get().set(Constants.PREF_CATEGORY_PREFIX + device, StringUtils.EMPTY);
 			}
 		}
 		updateDeviceCombo();

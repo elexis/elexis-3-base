@@ -34,7 +34,7 @@ public class ApiConstants {
 		if (configService.isPresent()) {
 			String mode = configService.get().getActiveUserContact(PreferenceConstants.MEDNET_MODE, "DEMO");
 			if ("PRODUKTIV".equals(mode)) {
-				return "https://www.mednet.swiss/idsrv";
+				return "https://www.mednetpatient.swiss/idsrv";
 			} else {
 				return "https://demo.mednetpatient.swiss/idsrv";
 			}

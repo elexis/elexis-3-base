@@ -167,7 +167,7 @@ public class TagesView extends BaseAgendaView {
 		public Color getBackground(Object element, int columnIndex) {
 			if (element instanceof IAppointment) {
 				IAppointment p = (IAppointment) element;
-				return getTypColor(p);
+				return getStateColor(p);
 			}
 			return null;
 		}

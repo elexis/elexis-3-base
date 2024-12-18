@@ -21,7 +21,6 @@ import ch.elexis.core.model.IPatient;
 import ch.elexis.core.model.MimeType;
 import ch.elexis.core.services.IDocumentStore;
 import ch.elexis.core.services.INamedQuery;
-import ch.elexis.core.services.LocalConfigService;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.services.holder.CoreModelServiceHolder;
 
@@ -35,7 +34,7 @@ public class ImportOmnivoreInboxUtil {
 		ImportOmnivoreInboxUtil.omnivoreDocumentStore = documentStore;
 	}
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	private static Logger logger = LoggerFactory.getLogger(ImportOmnivoreInboxUtil.class);
 
 	/**
 	 * Try to import the file for the patient, will delete <code>file</code> if
@@ -115,23 +114,37 @@ public class ImportOmnivoreInboxUtil {
 	}
 
 	public static String getDirectory(String defaultValue, String deviceName) {
-		String deviceDir = ConfigServiceHolder.get().getLocal(Constants.PREF_DEVICE_DIR_PREFIX + deviceName,
-				defaultValue);
-		return deviceDir != null ? deviceDir : defaultValue;
+		try {
+			String deviceDir = ConfigServiceHolder.getGlobal(Constants.PREF_DEVICE_DIR_PREFIX + deviceName,
+					defaultValue);
+			if (deviceDir == null) {
+				logger.warn("Directory for device [{}] is null. Using default value [{}].", deviceName, defaultValue);
+			}
+			return deviceDir != null ? deviceDir : defaultValue;
+		} catch (Exception ex) {
+			logger.error("Error while fetching directory for device [{}].", deviceName, ex);
+			return defaultValue;
+		}
 	}
 
 	public static String getCategory(File file) {
-		String category = LocalConfigService.get(Constants.PREF_LAST_SELECTED_CATEGORY, "default");// $NON-NLS-1$
-		File parent = file.getParentFile();
-		if (parent == null) {
-			return "Error in inbox path";
-		} else {
+		try {
+			String category = ConfigServiceHolder.getGlobal(Constants.PREF_LAST_SELECTED_CATEGORY, "default");
+			File parent = file.getParentFile();
+			if (parent == null) {
+				logger.warn("Parent directory for file [{}] is null.", file.getAbsolutePath());
+				return "Error in inbox path";
+			}
+
 			String fname = parent.getAbsolutePath();
 			if (fname.startsWith(category)) {
 				return parent.getName();
 			} else {
 				return category;
 			}
+		} catch (Exception ex) {
+			logger.error("Error while determining category for file [{}].", file.getAbsolutePath(), ex);
+			return "Error in category resolution";
 		}
 	}
-}
+	}

@@ -18,6 +18,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 
+import ch.netzkonzept.elexis.medidata.receive.messageLog.MessageLogEntry;
+import ch.netzkonzept.elexis.medidata.receive.transmissionLog.TransmissionLogEntry;
+
 public class TableColumnSorter extends ViewerComparator {
 	private int colIndex;
 	private static final int DESCENDING = 1;

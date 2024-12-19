@@ -20,6 +20,10 @@ public class BarcodeCreator {
 		return createInternalCode128FromKontaktPatNrString(pat);
 	}
 
+	public static String createInternalCode128FromArticleString(String article) {
+		return article;
+	}
+
 	public static String createInternalCode128FromKontaktString(String storeToString) {
 		String output = null;
 		if (storeToString != null) {

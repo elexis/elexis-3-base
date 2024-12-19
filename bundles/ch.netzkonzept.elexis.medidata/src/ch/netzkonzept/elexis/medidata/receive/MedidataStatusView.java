@@ -18,10 +18,13 @@ import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.ui.preferences.SettingsPreferenceStore;
@@ -76,18 +79,18 @@ public class MedidataStatusView extends ViewPart implements IRefreshable {
 		TabData tabData = new TabData(tabFolder, Paths.get(preferenceStore.getString("mdn_base_dir")));
 
 		try {
-			cti1.setControl(tabData.buildResponseDocsTable());
+			cti1.setControl(tabData.buildResponseDocTable(parent));
+			cti2.setControl(tabData.buildMessageTable(parent));
+			cti3.setControl(tabData.buildTransmissionTable(parent));
 
-			cti2.setControl(tabData.buildMessageLogsTable());
-			cti3.setControl(tabData.buildTransmissionLogsTable());
-
-		} catch (IOException | ParseException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	@Override
 
+
+	@Override
 	public void setFocus() {
 	}
 

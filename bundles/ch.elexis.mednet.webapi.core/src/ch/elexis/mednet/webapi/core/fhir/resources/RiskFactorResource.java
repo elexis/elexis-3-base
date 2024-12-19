@@ -3,13 +3,18 @@ package ch.elexis.mednet.webapi.core.fhir.resources;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Reference;
 
+import ch.elexis.core.findings.ICoding;
+import ch.elexis.core.findings.IFinding;
 import ch.elexis.core.findings.IObservation;
+import ch.elexis.core.findings.IObservation.ObservationCategory;
+import ch.elexis.core.findings.IObservation.ObservationCode;
 import ch.elexis.core.findings.migration.IMigratorService;
 import ch.elexis.core.findings.util.FindingsServiceHolder;
 import ch.elexis.core.model.IPatient;
@@ -27,8 +32,9 @@ public class RiskFactorResource {
 		if (structuredRiskCheck) {
 			List<IObservation> structuredRisks = FindingsServiceHolder.getiFindingsService()
 					.getPatientsFindings(sourcePatient.getId(), IObservation.class);
-
-			for (IObservation structuredRisk : structuredRisks) {
+			List<IObservation> filteredRisks = structuredRisks.stream().filter(RiskFactorResource::isRisk)
+					.collect(Collectors.toList());
+			for (IObservation structuredRisk : filteredRisks) {
 				Observation riskFactor = resourceFactory.getResource(structuredRisk, IObservation.class,
 						Observation.class);
 				if (riskFactor == null) {
@@ -75,5 +81,17 @@ public class RiskFactorResource {
 						.setCode(FHIRConstants.RISK_ASSESSMENT_CODE).setDisplay(FHIRConstants.RISK_ASSESSMENT_DISPLAY))
 				.setText(riskDisplay));
 		riskFactor.setSubject(patientReference);
+	}
+
+	private static boolean isRisk(IFinding iFinding) {
+		if (iFinding instanceof IObservation
+				&& ((IObservation) iFinding).getCategory() == ObservationCategory.SOCIALHISTORY) {
+			for (ICoding code : ((IObservation) iFinding).getCoding()) {
+				if (ObservationCode.ANAM_RISK.isSame(code)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

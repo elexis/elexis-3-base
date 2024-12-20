@@ -34,6 +34,7 @@ public class PreferenceConstants {
 	public static final String CONTACT_ADDRESS_LABEL = "ContactAddressLabel"; //$NON-NLS-1$
 	public static final String BAR_CODE_LABEL = "BarCodeLabel"; //$NON-NLS-1$
 	public static final String ARTICLE_MEDIC_LABEL = "ArticleMedicLabel"; //$NON-NLS-1$
+	public static final String ROWA_ARTICLE_MEDICATION_LABEL = "RowaArticleMedicationLabel";
 
 	public static final int APPOINTMENT_CARD_ID = 0;
 	public static final int RECURRING_APPOINTMENTS_CARD_ID = 1;
@@ -45,6 +46,7 @@ public class PreferenceConstants {
 	public static final int CONTACT_ADDRESS_LABEL_ID = 7;
 	public static final int BAR_CODE_LABEL_ID = 8;
 	public static final int ARTICLE_MEDIC_LABEL_ID = 9;
+	public static final int ROWA_ARTICLE_MEDICATION_LABEL_ID = 10;
 
 	private static final String PRINTER_NAME = "/printer/name"; // 0 //$NON-NLS-1$
 	private static final String XSL_TEMPLATE_PATH = "/xsl/templatePath"; // 1 //$NON-NLS-1$
@@ -110,6 +112,7 @@ public class PreferenceConstants {
 		docNames.add(CONTACT_ADDRESS_LABEL);
 		docNames.add(BAR_CODE_LABEL);
 		docNames.add(ARTICLE_MEDIC_LABEL);
+		docNames.add(ROWA_ARTICLE_MEDICATION_LABEL);
 	}
 
 	private static void initPreferenceConstants() {
@@ -136,6 +139,10 @@ public class PreferenceConstants {
 				constants.add(SETTINGS_BASE_PATH + docName + PAGE_TEXT_TEXTBARCODEFORMAT);
 			}
 			if (docName.equals(MEDICATION_LABEL)) {
+				constants.add(SETTINGS_BASE_PATH + docName + MEDICATION_RESPONSIBLE_PHARMACIST);
+			}
+			if (docName.equals(ROWA_ARTICLE_MEDICATION_LABEL)) {
+				constants.add(SETTINGS_BASE_PATH + docName + PAGE_TEXT_TEXTBARCODEFORMAT);
 				constants.add(SETTINGS_BASE_PATH + docName + MEDICATION_RESPONSIBLE_PHARMACIST);
 			}
 

@@ -51,6 +51,15 @@
                 </with>
             </activeWhen>
         </handler>
+            <handler class="ch.itmed.fop.printing.handlers.RowaArticleMedicationLabelHandler" commandId="ch.elexis.core.ui.commands.RowaArticleMedicationLabelHandler">
+            <activeWhen>
+                <with variable="activeContexts">
+                    <iterate operator="or">
+                        <equals value="ch.elexis.context.itmed.fop.printing" />
+                    </iterate>
+                </with>
+            </activeWhen>
+        </handler>
         <handler
               class="ch.itmed.fop.printing.handlers.PatientBarCodeLabelHandler"
               commandId="ch.itmed.fop.printing.handlers.PatientBarCodeLabelHandler">
@@ -74,12 +83,25 @@
         </command>
         <command defaultHandler="ch.itmed.fop.printing.handlers.AppointmentCardHandler" id="ch.itmed.fop.printing.command.AppointmentCardPrint" name="Termin drucken">
         </command>
+           <command defaultHandler="ch.itmed.fop.printing.handlers.RowaArticleMedicationLabelHandler" id="ch.itmed.fop.printing.command.RowaArticleMedicationLabelHandler" name="Rowa Etikette drucken">
+        <commandParameter
+            id="rowa_article_medication_label_patient"
+            name="Patient ID"/>
+      <commandParameter
+            id="rowa_article_medication_label_article"
+            name="Article ID"/>
+        </command>
         <command defaultHandler="ch.itmed.fop.printing.handlers.ArticleMedicationLabelsHandler" id="ch.itmed.fop.printing.command.ArticleLabelPrint" name="Artikel drucken">
         </command>
         <command
               defaultHandler="ch.itmed.fop.printing.handlers.SelectedAppointmentCardHandler"
               id="ch.itmed.fop.printing.command.SelectedAppointmentCardPrint"
               name="Selektierten Termin drucken">
+        </command>
+        <command
+              defaultHandler="ch.itmed.fop.printing.handlers.SelectedMediorderMedicationLabelHandler"
+              id="ch.itmed.fop.printing.command.SelectedMediorderMedicationLabelHandler"
+              name="Selektieren Artikel drucken">
         </command>
         <command
               defaultHandler="ch.itmed.fop.printing.handlers.PatientBarCodeLabelHandler"

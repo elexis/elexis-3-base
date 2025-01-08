@@ -75,9 +75,10 @@ public class ATCCodeCacheUtil {
 			cache.put(atcCode.atcCode, foundElements);
 			monitor.worked(1);
 		}
-		monitor.subTask("Persisting ATC Code product cache to database");
+		monitor.subTask("Persisting ATC Code product cache to database"); //$NON-NLS-1$
 		// clear old caches
 		IQuery<IBlobSecondary> query = CoreModelServiceHolder.get().getQuery(IBlobSecondary.class);
+		query.and("id", COMPARATOR.LIKE, NAMED_BLOB_PREFIX + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 		query.and(ModelPackage.Literals.IBLOB__DATE, COMPARATOR.LESS, LocalDate.now());
 		for (IBlobSecondary oldCache : query.execute()) {
 			CoreModelServiceHolder.get().remove(oldCache);
@@ -90,6 +91,7 @@ public class ATCCodeCacheUtil {
 			if (cacheStorage == null) {
 				cacheStorage = CoreModelServiceHolder.get().create(IBlobSecondary.class);
 				cacheStorage.setId(determineBlobId(elexisEntityManager));
+				cacheStorage.setDate(LocalDate.now());
 			}
 			ByteArrayOutputStream ba = new ByteArrayOutputStream();
 			ObjectOutputStream oba = new ObjectOutputStream(ba);

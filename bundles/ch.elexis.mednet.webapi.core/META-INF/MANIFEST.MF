@@ -22,7 +22,7 @@ Require-Bundle: org.apache.commons.commons-io,
 Automatic-Module-Name: ch.elexis.mednet.webapi.core
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: ch.elexis.core.documents,
  ch.elexis.core.findings,
  ch.elexis.core.findings.migration,

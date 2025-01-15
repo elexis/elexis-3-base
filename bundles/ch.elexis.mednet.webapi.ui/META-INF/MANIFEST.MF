@@ -19,17 +19,17 @@ Import-Package: ca.uhn.fhir;version="[5.4.0,6.0.0)",
 Require-Bundle: org.eclipse.ui,
  org.apache.commons.commons-io,
  com.google.gson,
- ch.elexis.core.ui.e4;bundle-version="3.13.0",
+ ch.elexis.core.ui.e4,
  info.elexis.target.hapi.fhir;bundle-version="5.4.2",
  org.apache.httpcomponents.httpclient,
  ch.elexis.mednet.webapi.core,
- ch.elexis.core.findings.util;bundle-version="3.13.0",
+ ch.elexis.core.findings.util,
  org.eclipse.osgi.services
 Automatic-Module-Name: ch.elexis.mednet.webapi.ui
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ch.elexis.mednet.webapi.ui.Activator
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Service-Component: OSGI-INF/ch.elexis.mednet.webapi.ui.MednetAuthUi.xml,
  OSGI-INF/ch.elexis.mednet.webapi.ui.handler.ImportOmnivoreUtil.xml,
  OSGI-INF/ch.elexis.mednet.webapi.ui.preferences.MedNetWebPreferencePage.xml

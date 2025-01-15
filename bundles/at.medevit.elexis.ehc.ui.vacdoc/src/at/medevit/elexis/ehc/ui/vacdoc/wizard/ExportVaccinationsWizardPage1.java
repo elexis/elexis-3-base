@@ -1,6 +1,5 @@
 package at.medevit.elexis.ehc.ui.vacdoc.wizard;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 
 import java.io.ByteArrayInputStream;
@@ -14,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,8 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
-import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
+import org.hl7.fhir.r4.model.Bundle;
 
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
 import at.medevit.elexis.ehc.ui.vacdoc.composite.VaccinationSelectionComposite;
@@ -37,6 +36,7 @@ import at.medevit.elexis.impfplan.model.po.Vaccination;
 import at.medevit.elexis.outbox.model.OutboxElementType;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.data.service.CoreModelServiceHolder;
+import ch.elexis.core.findings.util.ModelUtil;
 import ch.elexis.core.model.IMandator;
 import ch.elexis.core.model.IPatient;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
@@ -103,7 +103,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 
 	@Override
 	public boolean isPageComplete() {
-		IStructuredSelection contentSelection = (IStructuredSelection) composite.getSelection();
+		IStructuredSelection contentSelection = composite.getSelection();
 		String ahvNr = selectedPatient.getXid(DOMAIN_AHV);
 		if (!contentSelection.isEmpty() && ahvNr != null && !ahvNr.isEmpty()) {
 			return true;
@@ -113,7 +113,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 
 	@SuppressWarnings("unchecked")
 	private List<Vaccination> getSelectedVaccinations() {
-		IStructuredSelection contentSelection = (IStructuredSelection) composite.getSelection();
+		IStructuredSelection contentSelection = composite.getSelection();
 
 		if (!contentSelection.isEmpty()) {
 			return contentSelection.toList();
@@ -130,12 +130,12 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 					PreferencePage.getDefaultOutputDir());
 			VacdocService service = VacdocServiceComponent.getService();
 
-			CdaChVacd document = service.getVacdocDocument(elexisPatient, elexisMandant);
+			Bundle document = service.getVacdocDocument(elexisPatient, elexisMandant);
 
 			service.addVaccinations(document, getSelectedVaccinations());
 			switch (exportType) {
-			case CDA:
-				outputFile = writeAsCDA(elexisPatient, outputDir, service, document);
+			case FHIR:
+				outputFile = writeAsFHIR(elexisPatient, outputDir, service, document);
 				createOutboxElement(elexisPatient, elexisMandant, outputFile);
 				break;
 			case XDM:
@@ -160,7 +160,7 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 				OutboxElementType.FILE.getPrefix() + outputFile);
 	}
 
-	private String writeAsXDM(Patient elexisPatient, String outputDir, VacdocService service, CdaChVacd document)
+	private String writeAsXDM(Patient elexisPatient, String outputDir, VacdocService service, Bundle document)
 			throws Exception, FileNotFoundException, IOException {
 		// write a XDM document for exchange
 		InputStream xdmDocumentStream = service.getXdmAsStream(document);
@@ -172,17 +172,18 @@ public class ExportVaccinationsWizardPage1 extends WizardPage {
 		return outputFile;
 	}
 
-	private String writeAsCDA(Patient elexisPatient, String outputDir, VacdocService service, CdaChVacd document)
+	private String writeAsFHIR(Patient elexisPatient, String outputDir, VacdocService service, Bundle bundle)
 			throws Exception, FileNotFoundException, IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		CDAUtil.save(document.getMdht(), out);
+		String fhirJson = ModelUtil.getFhirJson(bundle);
+		out.write(fhirJson.getBytes());
 		InputStream in = new ByteArrayInputStream(out.toByteArray());
 		String outputFile = outputDir + File.separator + getVaccinationsFileName(elexisPatient) + "_" //$NON-NLS-1$
-				+ System.currentTimeMillis() + ".xml"; //$NON-NLS-1$
-		FileOutputStream outputStream = new FileOutputStream(outputFile);
-		IOUtils.copy(in, outputStream);
-		in.close();
-		outputStream.close();
+				+ System.currentTimeMillis() + ".json"; //$NON-NLS-1$
+		try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+			IOUtils.copy(in, outputStream);
+			in.close();
+		}
 		return outputFile;
 	}
 

@@ -17,7 +17,7 @@ public class ExportVaccinationsWizard extends Wizard {
 	}
 
 	public ExportVaccinationsWizard() {
-		this(ExportType.XDM);
+		this(ExportType.FHIR);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class ExportVaccinationsWizard extends Wizard {
 	}
 
 	public enum ExportType {
-		CDA, XDM
+		FHIR, XDM
 	}
 
 	protected boolean isResizable() {

@@ -14,8 +14,11 @@ Require-Bundle: at.medevit.elexis.impfplan;bundle-version="3.0.1",
  ch.elexis.core.data,
  ch.rgw.utility;bundle-version="3.1.0",
  ch.elexis.core,
- org.eclipse.core.jobs;bundle-version="3.5.200"
+ org.eclipse.core.jobs;bundle-version="3.5.200",
+ info.elexis.target.hapi.fhir;bundle-version="5.4.2"
 Import-Package: at.medevit.ch.artikelstamm,
+ ch.elexis.core.findings.util,
+ ch.elexis.core.findings.util.fhir,
  ch.elexis.core.services.holder,
  org.apache.commons.io,
  org.osgi.service.component.annotations;version="1.2.0"

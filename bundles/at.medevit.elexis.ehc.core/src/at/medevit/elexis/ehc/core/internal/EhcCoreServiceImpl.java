@@ -16,59 +16,70 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.ehealth_connector.cda.ch.AbstractCdaChV1;
-import org.ehealth_connector.communication.ConvenienceCommunication;
-import org.ehealth_connector.communication.DocumentMetadata;
-import org.ehealth_connector.communication.xd.xdm.DocumentContentAndMetadata;
-import org.ehealth_connector.communication.xd.xdm.XdmContents;
-import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
-import org.openhealthtools.ihe.xds.document.XDSDocument;
-import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
-import org.openhealthtools.mdht.uml.cda.RecordTarget;
-import org.openhealthtools.mdht.uml.cda.ch.ChFactory;
-import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Identifier;
+import org.openehealth.ipf.commons.ihe.xds.core.metadata.Document;
 import org.osgi.service.component.annotations.Component;
+import org.projecthusky.common.basetypes.NameBaseType;
+import org.projecthusky.common.communication.DocumentMetadata;
+import org.projecthusky.common.enums.CodeSystems;
+import org.projecthusky.common.enums.DocumentDescriptor;
+import org.projecthusky.common.hl7cdar2.POCDMT000040Author;
+import org.projecthusky.common.hl7cdar2.POCDMT000040ClinicalDocument;
+import org.projecthusky.common.hl7cdar2.POCDMT000040RecordTarget;
+import org.projecthusky.common.model.Identificator;
+import org.projecthusky.common.model.Name;
+import org.projecthusky.common.utils.xml.XmlMarshaller;
+import org.projecthusky.common.utils.xml.XmlUnmarshaller;
+import org.projecthusky.communication.ConvenienceCommunication;
+import org.projecthusky.communication.xd.xdm.DocumentContentAndMetadata;
+import org.projecthusky.communication.xd.xdm.XdmContents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
 
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import at.medevit.elexis.ehc.core.EhcCoreService;
-import at.medevit.elexis.ehc.core.internal.document.CdaChImpl;
+import ch.elexis.core.constants.XidConstants;
+import ch.elexis.core.findings.util.ModelUtil;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
+import jakarta.xml.bind.JAXBException;
 
 @Component
 public class EhcCoreServiceImpl implements EhcCoreService {
 
 	private static Logger logger = LoggerFactory.getLogger(EhcCoreServiceImpl.class);
 
-	public EhcCoreServiceImpl() {
-		// make sure CDACH is registered and initialized
-		ChFactory.eINSTANCE.createCdaChV1().init();
-	}
-
 	@Override
-	public AbstractCdaChV1<?> createCdaChDocument(Patient patient, Mandant mandant) {
-		CdaChImpl ret = new CdaChImpl(ChFactory.eINSTANCE.createCdaChV1().init());
+	public POCDMT000040ClinicalDocument createDocument(Patient patient, Mandant mandant) {
+		POCDMT000040ClinicalDocument ret = new POCDMT000040ClinicalDocument();
 
-		ret.setPatient(EhcCoreMapper.getEhcPatient(patient));
-		ret.addAuthor(EhcCoreMapper.getEhcAuthor(mandant));
+		POCDMT000040RecordTarget recordTarget = new POCDMT000040RecordTarget();
+		recordTarget.setPatientRole(EhcCoreMapper.getEhcPatient(patient).getMdhtPatientRole());
+		ret.getRecordTarget().add(recordTarget);
+
+		POCDMT000040Author author = new POCDMT000040Author();
+		author.setAssignedAuthor(EhcCoreMapper.getEhcAuthor(mandant).getAsAuthor());
+		ret.getAuthor().add(author);
 		return ret;
 	}
 
 	@Override
-	public ClinicalDocument loadDocument(InputStream document) {
+	public POCDMT000040ClinicalDocument loadDocument(InputStream document) {
 		try {
-			return CDAUtil.load(document);
+			return XmlUnmarshaller.unmarshallAsType(new InputSource(document), POCDMT000040ClinicalDocument.class);
 		} catch (Exception e) {
 			logger.warn("Error loading document.", e); //$NON-NLS-1$
 		}
@@ -76,82 +87,113 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	}
 
 	@Override
-	public AbstractCdaChV1<?> getAsCdaChDocument(ClinicalDocument clinicalDocument) {
-		if (clinicalDocument instanceof ClinicalDocument) {
-			return new CdaChImpl(clinicalDocument);
-		}
-		return null;
-	}
-
-	@Override
-	public Patient getOrCreatePatient(org.ehealth_connector.common.mdht.Patient ehcPatient) {
-		Patient patient = EhcCoreMapper.getElexisPatient(ehcPatient);
+	public Patient getOrCreatePatient(org.projecthusky.common.model.Patient ehcPatient) {
+		Patient patient = EhcCoreMapper.getElexisPatient(ehcPatient, true);
 		EhcCoreMapper.importEhcAddress(patient, ehcPatient.getAddress());
 		EhcCoreMapper.importEhcPhone(patient, ehcPatient.getTelecoms());
 		return patient;
 	}
 
 	@Override
-	public InputStream getXdmAsStream(ClinicalDocument document) throws Exception {
+	public InputStream getXdmAsStream(POCDMT000040ClinicalDocument document) throws Exception {
 		ConvenienceCommunication conCom = new ConvenienceCommunication();
-		ByteArrayOutputStream outputStream = null;
 		// write document and create an InputStream
-		outputStream = new ByteArrayOutputStream();
-		CDAUtil.save(document, outputStream);
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-		outputStream.reset();
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(XmlMarshaller.marshall(document).getBytes());
 		// write XDM and create an InputStream
 		DocumentMetadata metaData = conCom.addDocument(DocumentDescriptor.CDA_R2, inputStream);
 		metaData.setPatient(getPatient(document));
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		conCom.createXdmContents(outputStream);
 		return new ByteArrayInputStream(outputStream.toByteArray());
 	}
 
-	private org.ehealth_connector.common.mdht.Patient getPatient(ClinicalDocument document) {
-		EList<RecordTarget> targets = document.getRecordTargets();
+	@Override
+	public InputStream getXdmAsStream(Bundle document) throws Exception {
+		ConvenienceCommunication conCom = new ConvenienceCommunication();
+		// write document and create an InputStream
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(ModelUtil.getFhirJson(document).getBytes());
+		// write XDM and create an InputStream
+		DocumentMetadata metaData = conCom.addDocument(DocumentDescriptor.FHIR_JSON, inputStream);
+		metaData.setPatient(getPatient(document));
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		conCom.createXdmContents(outputStream);
+		return new ByteArrayInputStream(outputStream.toByteArray());
+	}
+
+	public org.projecthusky.common.model.Patient getPatient(Bundle document) {
+		Optional<org.hl7.fhir.r4.model.Patient> fhirPatient = document.getEntry().stream()
+				.filter(e -> e.getResource() instanceof org.hl7.fhir.r4.model.Patient)
+				.map(e -> (org.hl7.fhir.r4.model.Patient) e.getResource()).findFirst();
+		if(fhirPatient.isPresent()) {
+			Name name = new Name(NameBaseType.builder().withFamily(fhirPatient.get().getNameFirstRep().getFamily())
+					.withGiven(fhirPatient.get().getNameFirstRep().getGivenAsSingleString()).build());
+			org.projecthusky.common.enums.AdministrativeGender gender = org.projecthusky.common.enums.AdministrativeGender.valueOf(fhirPatient.get().getGender().name()) ;
+			Calendar birthDay = new GregorianCalendar();
+			birthDay.setTime(fhirPatient.get().getBirthDate());
+			
+			Identificator id = null;
+			Optional<Identifier> ssnIdentifier = fhirPatient.get().getIdentifier().stream()
+					.filter(i -> i.getSystem().equals(XidConstants.CH_AHV)
+							|| i.getSystem().equals(CodeSystems.SWISS_SSN.getCodeSystemId()))
+					.findFirst();
+			if (ssnIdentifier.isPresent()) {
+				id = new Identificator(CodeSystems.SWISS_SSN.getCodeSystemId(), ssnIdentifier.get().getValue());
+			}
+			
+			return new org.projecthusky.common.model.Patient(name, gender, birthDay, id);
+		}
+		return null;
+	}
+
+	@Override
+	public org.projecthusky.common.model.Patient getPatient(POCDMT000040ClinicalDocument document) {
+		List<POCDMT000040RecordTarget> targets = document.getRecordTarget();
 		if (targets != null && !targets.isEmpty()) {
 			if (targets.size() > 1) {
 				logger.warn("Document " + document.getTitle() + " has more than one record target"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			return new org.ehealth_connector.common.mdht.Patient(EcoreUtil.copy(targets.get(0)));
+			return new org.projecthusky.common.model.Patient(targets.get(0));
 		}
 		throw new IllegalStateException("Document " + document.getTitle() + " has no record target"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
-	public List<ClinicalDocument> getXdmDocuments(File file) {
-		List<ClinicalDocument> ret = null;
+	public List<DocumentContentAndMetadata> getXdmDocuments(File file) {
 		ConvenienceCommunication conCom = new ConvenienceCommunication();
 		XdmContents contents = conCom.getXdmContents(file.getAbsolutePath());
 		if (contents != null) {
-			ret = new ArrayList<ClinicalDocument>();
-			List<DocumentContentAndMetadata> dataList = contents.getDocumentAndMetadataList();
-			for (DocumentContentAndMetadata documentContentAndMetadata : dataList) {
-				XDSDocument xdsDocument = documentContentAndMetadata.getXdsDocument();
-				if (xdsDocument != null) {
-					ClinicalDocument clinicalDocument;
-					try {
-						clinicalDocument = CDAUtil.load(xdsDocument.getStream());
-						if (clinicalDocument != null) {
-							ret.add(clinicalDocument);
-						}
-					} catch (Exception e) {
-						logger.error("Could not load document " + xdsDocument.getNewDocumentUniqueId() + " from xdm " //$NON-NLS-1$ //$NON-NLS-2$
-								+ file.getAbsolutePath());
-					}
-				}
-			}
+			return contents.getDocumentAndMetadataList();
 		}
-		return ret;
+		return Collections.emptyList();
 	}
 
 	@Override
-	public List<org.ehealth_connector.common.mdht.Patient> getXdmPatients(File file) {
-		List<org.ehealth_connector.common.mdht.Patient> ret = null;
+	public POCDMT000040ClinicalDocument getDocument(DocumentContentAndMetadata metadata) {
+		Document xdsDocument = metadata.getXdsDocument();
+		if (xdsDocument != null) {
+			try {
+				POCDMT000040ClinicalDocument clinicalDocument = XmlUnmarshaller.unmarshallAsType(
+						new InputSource(xdsDocument.getDataHandler().getInputStream()),
+						POCDMT000040ClinicalDocument.class);
+				if (clinicalDocument != null) {
+					return clinicalDocument;
+				}
+			} catch (Exception e) {
+				logger.error("Could not load document " + xdsDocument.getDocumentEntry().getEntryUuid());
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public List<org.projecthusky.common.model.Patient> getXdmPatients(File file) {
+		List<org.projecthusky.common.model.Patient> ret = null;
 		ConvenienceCommunication conCom = new ConvenienceCommunication();
 		XdmContents contents = conCom.getXdmContents(file.getAbsolutePath());
 		if (contents != null) {
-			ret = new ArrayList<org.ehealth_connector.common.mdht.Patient>();
+			ret = new ArrayList<org.projecthusky.common.model.Patient>();
 			List<DocumentContentAndMetadata> dataList = contents.getDocumentAndMetadataList();
 			for (DocumentContentAndMetadata documentContentAndMetadata : dataList) {
 				ret.add(documentContentAndMetadata.getDocEntry().getPatient());
@@ -164,7 +206,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 	public String createXdmContainer(Patient patient, Mandant mandant, List<File> attachments, String xdmPath) {
 		if (patient != null && mandant != null && attachments != null && xdmPath != null) {
 			ConvenienceCommunication conCom = new ConvenienceCommunication();
-			org.ehealth_connector.common.mdht.Patient ehealthPatient = EhcCoreMapper.getEhcPatient(patient);
+			org.projecthusky.common.model.Patient ehealthPatient = EhcCoreMapper.getEhcPatient(patient);
 			System.out.println(ehealthPatient.getIds());
 			StringBuilder retInfo = new StringBuilder();
 			retInfo.append(xdmPath);
@@ -182,8 +224,7 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 						} else if (attachmentPath.toLowerCase().endsWith("pdf")) { //$NON-NLS-1$
 							dc = DocumentDescriptor.PDF;
 						} else {
-							dc = new DocumentDescriptor(FilenameUtils.getExtension(attachmentPath),
-									Files.probeContentType(f.toPath()));
+							dc = DocumentDescriptor.UNKNOWN;
 						}
 
 						FileInputStream in = FileUtils.openInputStream(f);
@@ -225,7 +266,8 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 		if (file != null) {
 			try {
 				FileInputStream in = FileUtils.openInputStream(file);
-				ClinicalDocument c = CDAUtil.load(in);
+				POCDMT000040ClinicalDocument c = XmlUnmarshaller.unmarshallAsType(new InputSource(in),
+						POCDMT000040ClinicalDocument.class);
 				IOUtils.closeQuietly(in);
 				return c != null;
 			} catch (Exception e) {
@@ -233,5 +275,18 @@ public class EhcCoreServiceImpl implements EhcCoreService {
 			}
 		}
 		return false;
+	}
+
+	public void saveToFile(POCDMT000040ClinicalDocument cda, String outFilePath) throws IOException, JAXBException {
+		FileUtils.writeStringToFile(new File(outFilePath), XmlMarshaller.marshall(cda), Charset.forName("UTF-8"));
+	}
+
+	@Override
+	public void saveDocument(POCDMT000040ClinicalDocument cdaDocument, OutputStream outputStream) {
+		try {
+			outputStream.write(XmlMarshaller.marshall(cdaDocument).getBytes());
+		} catch (Exception e) {
+			logger.warn("Error saving document.", e); //$NON-NLS-1$
+		}
 	}
 }

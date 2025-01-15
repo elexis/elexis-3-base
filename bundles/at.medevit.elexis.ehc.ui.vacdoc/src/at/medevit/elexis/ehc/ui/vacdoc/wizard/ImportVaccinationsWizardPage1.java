@@ -3,6 +3,7 @@ package at.medevit.elexis.ehc.ui.vacdoc.wizard;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -20,15 +21,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.ehealth_connector.cda.Consumable;
-import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
-import org.ehealth_connector.cda.ch.vacd.Immunization;
-import org.ehealth_connector.common.mdht.Code;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Immunization;
+import org.hl7.fhir.r4.model.Medication;
 
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import at.medevit.elexis.ehc.ui.vacdoc.service.VacdocServiceComponent;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
 import ch.elexis.core.constants.StringConstants;
+import ch.elexis.core.findings.util.fhir.MedicamentCoding;
 import ch.elexis.core.ui.UiDesk;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
@@ -36,16 +38,18 @@ import ch.rgw.tools.TimeTool;
 
 public class ImportVaccinationsWizardPage1 extends WizardPage {
 	private TableViewer contentViewer;
-	private CdaChVacd ehcDocument;
+	private Bundle ehcDocument;
 
 	private List<Vaccination> vaccinations;
 
-	protected ImportVaccinationsWizardPage1(String pageName, CdaChVacd ehcDocument) {
+	protected ImportVaccinationsWizardPage1(String pageName, Bundle ehcDocument) {
 		super(pageName);
 		setTitle(pageName);
 		this.ehcDocument = ehcDocument;
-		Patient elexisPatient = EhcCoreMapper.getElexisPatient(ehcDocument.getPatient());
-		vaccinations = getVaccinations(elexisPatient);
+		if (ehcDocument != null) {
+			Patient elexisPatient = EhcCoreMapper.getElexisPatient(ehcDocument, false);
+			vaccinations = getVaccinations(elexisPatient);
+		}
 	}
 
 	@Override
@@ -66,8 +70,9 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 			public String getText(Object element) {
 				if (element instanceof Immunization) {
 					Immunization immunization = (Immunization) element;
-					return "(" + immunization.getApplyDate() + ") " + immunization.getConsumable().getTradeName() //$NON-NLS-1$ //$NON-NLS-2$
-							+ " - " + immunization.getAuthor().getCompleteName(); //$NON-NLS-1$
+					return "(" + immunization.getOccurrenceDateTimeType() + ") " //$NON-NLS-1$ //$NON-NLS-2$
+							+ immunization.getVaccineCode().getCodingFirstRep().getDisplay()
+							+ " - " + immunization.getPerformerFirstRep(); //$NON-NLS-1$
 				}
 				return super.getText(element);
 			}
@@ -104,7 +109,7 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 		super.setVisible(visible);
 		if (visible) {
 			if (ehcDocument != null) {
-				List<Immunization> immunizations = ehcDocument.getImmunizations();
+				List<Immunization> immunizations = VacdocServiceComponent.getService().getImmunizations(ehcDocument);
 				contentViewer.setInput(immunizations);
 			}
 		}
@@ -120,13 +125,26 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 
 	private boolean isExisting(Immunization immunization, List<Vaccination> vaccinations) {
 		for (Vaccination vaccination : vaccinations) {
-			Date applyDate = immunization.getApplyDate();
+			Date occurenceDate = immunization.getOccurrenceDateTimeType().getValue();
 			TimeTool vaccDate = vaccination.getDateOfAdministration();
-			if (applyDate.equals(vaccDate.getTime())) {
-				Consumable consumable = immunization.getConsumable();
-				Code atcCode = consumable.getWhoAtcCode();
-				if (atcCode.getCode().equalsIgnoreCase(vaccination.getAtcCode())) {
-					return consumable.getLotNr().equalsIgnoreCase(vaccination.getLotNo());
+			if (occurenceDate.equals(vaccDate.getTime())) {
+				String gtin = vaccination.get(Vaccination.FLD_EAN);
+				Optional<Coding> gtinCoding = immunization.getVaccineCode().getCoding().stream()
+						.filter(c -> MedicamentCoding.GTIN.isCodeSystemOf(c)).findFirst();
+				if (gtinCoding.isPresent()) {
+					if (gtinCoding.isPresent() && gtinCoding.get().getCode().equals(gtin)) {
+						return immunization.getLotNumber().equalsIgnoreCase(vaccination.getLotNo());
+					}
+				} else {
+					// check if there is a medication reference
+					Optional<Medication> medication = VacdocServiceComponent.getService().getMedication(immunization);
+					if (medication.isPresent()) {
+						gtinCoding = medication.get().getCode().getCoding().stream()
+								.filter(c -> MedicamentCoding.GTIN.isCodeSystemOf(c)).findFirst();
+						if (gtinCoding.isPresent() && gtinCoding.get().getCode().equals(gtin)) {
+							return immunization.getLotNumber().equalsIgnoreCase(vaccination.getLotNo());
+						}
+					}
 				}
 			}
 		}
@@ -155,7 +173,7 @@ public class ImportVaccinationsWizardPage1 extends WizardPage {
 
 	public boolean finish() {
 		try {
-			Patient elexisPatient = EhcCoreMapper.getElexisPatient(ehcDocument.getPatient());
+			Patient elexisPatient = EhcCoreMapper.getElexisPatient(ehcDocument, false);
 
 			VacdocServiceComponent.getService().importImmunizations(elexisPatient, getSelectedImmunizations());
 		} catch (Exception e) {

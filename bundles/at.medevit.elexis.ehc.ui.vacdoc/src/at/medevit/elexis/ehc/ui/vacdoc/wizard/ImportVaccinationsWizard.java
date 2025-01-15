@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
-import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
+import org.hl7.fhir.r4.model.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ public class ImportVaccinationsWizard extends Wizard implements IImportWizard {
 	public static Logger logger = LoggerFactory.getLogger(ImportVaccinationsWizard.class);
 
 	private ImportVaccinationsWizardPage1 vaccinationsMainPage;
-	private CdaChVacd ehcDocument;
+	private Bundle ehcDocument;
 
 	public ImportVaccinationsWizard() {
 		setWindowTitle("Impfungen import");
@@ -38,7 +38,7 @@ public class ImportVaccinationsWizard extends Wizard implements IImportWizard {
 	public void setDocument(InputStream document) {
 		try {
 			document.reset();
-			Optional<CdaChVacd> ehcDocumentOpt = VacdocServiceComponent.getService().loadVacdocDocument(document);
+			Optional<Bundle> ehcDocumentOpt = VacdocServiceComponent.getService().loadVacdocDocument(document);
 			ehcDocumentOpt.ifPresent(d -> ehcDocument = d);
 		} catch (Exception e) {
 			logger.error("Could not open document", e); //$NON-NLS-1$

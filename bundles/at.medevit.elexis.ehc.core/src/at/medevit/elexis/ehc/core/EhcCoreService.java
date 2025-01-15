@@ -12,11 +12,13 @@ package at.medevit.elexis.ehc.core;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
-import org.ehealth_connector.cda.ch.AbstractCdaChV1;
-import org.openhealthtools.ihe.xds.document.DocumentDescriptor;
-import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
+import org.hl7.fhir.r4.model.Bundle;
+import org.projecthusky.common.enums.DocumentDescriptor;
+import org.projecthusky.common.hl7cdar2.POCDMT000040ClinicalDocument;
+import org.projecthusky.communication.xd.xdm.DocumentContentAndMetadata;
 
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
@@ -33,34 +35,33 @@ import ch.elexis.data.Patient;
 public interface EhcCoreService {
 
 	/**
-	 * Load a {@link ClinicalDocument} implementation from the provided
+	 * Load a {@link POCDMT000040ClinicalDocument} implementation from the provided
 	 * {@link InputStream}.
 	 *
 	 * @param documentStream
 	 * @return
 	 */
-	public ClinicalDocument loadDocument(InputStream documentStream);
+	public POCDMT000040ClinicalDocument loadDocument(InputStream documentStream);
 
 	/**
-	 * Wrap the {@link ClinicalDocument} in a {@link AbstractCdaCh} implementation.
-	 * This is useful for convenient access to basic fields like patient, author,
-	 * etc.
-	 *
-	 * @param document
-	 * @return
+	 * Save a {@link POCDMT000040ClinicalDocument} to the provided
+	 * {@link OutputStream}.
+	 * 
+	 * @param cdaDocument
+	 * @param outputStream
 	 */
-	public AbstractCdaChV1<?> getAsCdaChDocument(ClinicalDocument document);
+	public void saveDocument(POCDMT000040ClinicalDocument cdaDocument, OutputStream outputStream);
 
 	/**
 	 * Search for a matching Patient, or create a new Elexis {@link Patient} with
-	 * the data from the {@link org.ehealth_connector.common.mdht.Patient} provided.
+	 * the data from the {@link org.projecthusky.common.model.Patient} provided.
 	 *
 	 * @param selectedPatient
 	 */
-	public Patient getOrCreatePatient(org.ehealth_connector.common.mdht.Patient selectedPatient);
+	public Patient getOrCreatePatient(org.projecthusky.common.model.Patient selectedPatient);
 
 	/**
-	 * Create a {@link AbstractCdaCh} implementation, containing the provided
+	 * Create a {@link POCDMT000040ClinicalDocument}, containing the provided
 	 * {@link Patient} and {@link Mandant} as author. Only useful if no specific
 	 * Document is needed.
 	 *
@@ -68,16 +69,26 @@ public interface EhcCoreService {
 	 * @param mandant
 	 * @return
 	 */
-	public AbstractCdaChV1<?> createCdaChDocument(Patient patient, Mandant mandant);
+	public POCDMT000040ClinicalDocument createDocument(Patient patient, Mandant mandant);
 
 	/**
-	 * Create a XDM as stream, with the provided document as content.
+	 * Create a XDM as stream, with the provided
+	 * {@link POCDMT000040ClinicalDocument} as content.
 	 *
 	 * @param document
 	 * @return
 	 * @throws Exception
 	 */
-	public InputStream getXdmAsStream(ClinicalDocument document) throws Exception;
+	public InputStream getXdmAsStream(POCDMT000040ClinicalDocument document) throws Exception;
+
+	/**
+	 * Create a XDM as stream, with the provided {@link Bundle} as content.
+	 * 
+	 * @param document
+	 * @return
+	 * @throws Exception
+	 */
+	public InputStream getXdmAsStream(Bundle document) throws Exception;
 
 	/**
 	 * Get all {@link ClinicalDocument} instances from a XDM file.
@@ -85,16 +96,16 @@ public interface EhcCoreService {
 	 * @param file
 	 * @return
 	 */
-	public List<ClinicalDocument> getXdmDocuments(File file);
+	public List<DocumentContentAndMetadata> getXdmDocuments(File file);
 
 	/**
-	 * Get all {@link org.ehealth_connector.common.mdht.Patient} instances from a
-	 * XDM file.
+	 * Get all {@link org.projecthusky.common.model.Patient} instances from a XDM
+	 * file.
 	 *
 	 * @param file
 	 * @return
 	 */
-	public List<org.ehealth_connector.common.mdht.Patient> getXdmPatients(File file);
+	public List<org.projecthusky.common.model.Patient> getXdmPatients(File file);
 
 	/**
 	 * Creates a new xdm container with the files for a patient
@@ -120,4 +131,16 @@ public interface EhcCoreService {
 	 * @return
 	 */
 	public boolean isCdaDocument(File file);
+
+	/**
+	 * Get the {@link org.projecthusky.common.model.Patient} from the
+	 * {@link POCDMT000040ClinicalDocument}.
+	 * 
+	 * @param document
+	 * @return
+	 */
+	public org.projecthusky.common.model.Patient getPatient(POCDMT000040ClinicalDocument document);
+
+	public POCDMT000040ClinicalDocument getDocument(DocumentContentAndMetadata metadata);
+
 }

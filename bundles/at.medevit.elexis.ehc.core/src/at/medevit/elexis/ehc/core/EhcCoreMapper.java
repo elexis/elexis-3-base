@@ -10,27 +10,31 @@
  *******************************************************************************/
 package at.medevit.elexis.ehc.core;
 
-import org.apache.commons.lang3.StringUtils;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_AHV;
 import static ch.elexis.core.constants.XidConstants.DOMAIN_EAN;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.ehealth_connector.common.enums.CodeSystems;
-import org.ehealth_connector.common.enums.TelecomAddressUse;
-import org.ehealth_connector.common.mdht.Address;
-import org.ehealth_connector.common.mdht.Author;
-import org.ehealth_connector.common.mdht.Identificator;
-import org.ehealth_connector.common.mdht.Name;
-import org.ehealth_connector.common.mdht.Organization;
-import org.ehealth_connector.common.mdht.Patient;
-import org.ehealth_connector.common.mdht.Telecoms;
-import org.ehealth_connector.common.mdht.enums.AdministrativeGender;
+import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Identifier;
+import org.projecthusky.common.basetypes.NameBaseType;
+import org.projecthusky.common.basetypes.OrganizationBaseType;
+import org.projecthusky.common.enums.AdministrativeGender;
+import org.projecthusky.common.enums.CodeSystems;
+import org.projecthusky.common.enums.TelecomAddressUse;
+import org.projecthusky.common.model.Address;
+import org.projecthusky.common.model.Author;
+import org.projecthusky.common.model.Identificator;
+import org.projecthusky.common.model.Name;
+import org.projecthusky.common.model.Organization;
+import org.projecthusky.common.model.Patient;
+import org.projecthusky.common.model.Telecom;
 import org.slf4j.LoggerFactory;
 
 import ch.elexis.core.data.interfaces.IPersistentObject;
@@ -54,37 +58,41 @@ import ch.rgw.tools.TimeTool;
  */
 public class EhcCoreMapper {
 
-	private static TimeTool timeTool = new TimeTool();
-
 	private final static Pattern lastIntPattern = Pattern.compile("[^0-9]+([0-9]+)[a-z]?$"); //$NON-NLS-1$
 
 	public static Name getEhcName(String name) {
+		NameBaseType baseType = new NameBaseType();
+
 		String[] parts = name.split(StringUtils.SPACE);
 		if (parts.length == 1) {
-			return new Name(StringUtils.EMPTY, parts[0]);
+			baseType.setFamily(parts[0]);
 		} else if (parts.length == 2) {
-			return new Name(parts[0], parts[1]);
+			baseType.setGiven(parts[0]);
+			baseType.setFamily(parts[1]);
 		} else if (parts.length >= 3) {
-			return new Name(parts[0], parts[1], parts[2]);
+			baseType.setPrefix(parts[0]);
+			baseType.setGiven(parts[1]);
+			baseType.setFamily(parts[2]);
 		}
-		return new Name(StringUtils.EMPTY, StringUtils.EMPTY);
+		return new org.projecthusky.common.model.Name(baseType);
 	}
 
-	public static Patient getEhcPatient(ch.elexis.data.Patient elexisPatient) {
+	public static org.projecthusky.common.model.Patient getEhcPatient(ch.elexis.data.Patient elexisPatient) {
 		Patient ret = new Patient(getEhcPersonName(elexisPatient), getEhcGenderCode(elexisPatient),
-				getDate(elexisPatient.getGeburtsdatum()));
-
+				new TimeTool(elexisPatient.getGeburtsdatum()));
+		System.out.println();
 		// PHONE
-		Telecoms telecoms = new Telecoms();
 		String value = elexisPatient.get(Kontakt.FLD_PHONE1);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
-			telecoms.addPhone(value, TelecomAddressUse.PRIVATE);
+			ret.setTelecoms(Collections.singletonList(
+					new Telecom(Telecom.builder().withValue(value).withUsage(TelecomAddressUse.PRIVATE).build())));
 		}
 		value = elexisPatient.get(Kontakt.FLD_MOBILEPHONE);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
-			telecoms.addPhone(value, TelecomAddressUse.MOBILE);
+			ret.setTelecoms(Collections.singletonList(
+					new Telecom(Telecom.builder().withValue(value).withUsage(TelecomAddressUse.MOBILE).build())));
 		}
-		ret.setTelecoms(telecoms);
+
 		// ADDRESS
 		Anschrift elexisAddress = elexisPatient.getAnschrift();
 		if (elexisAddress != null) {
@@ -96,9 +104,9 @@ public class EhcCoreMapper {
 			socialSecurityNumber = socialSecurityNumber.trim();
 			socialSecurityNumber = socialSecurityNumber.replaceAll("\\.", StringUtils.EMPTY); //$NON-NLS-1$
 			if (socialSecurityNumber.length() == 11) {
-				ret.addId(new Identificator(CodeSystems.SwissSSNDeprecated.getCodeSystemId(), socialSecurityNumber));
+				ret.addId(new Identificator(CodeSystems.SWISS_SSN_DEPRECATED.getCodeSystemId(), socialSecurityNumber));
 			} else if (socialSecurityNumber.length() == 13) {
-				ret.addId(new Identificator(CodeSystems.SwissSSN.getCodeSystemId(), socialSecurityNumber));
+				ret.addId(new Identificator(CodeSystems.SWISS_SSN.getCodeSystemId(), socialSecurityNumber));
 			} else {
 				LoggerFactory.getLogger(EhcCoreMapper.class).warn("Ignoring SSN [" + socialSecurityNumber + "] length " //$NON-NLS-1$ //$NON-NLS-2$
 						+ socialSecurityNumber.length() + " not vaild."); //$NON-NLS-1$
@@ -118,9 +126,10 @@ public class EhcCoreMapper {
 			elexisStreet = elexisStreet.substring(0, matcher.start(1));
 		}
 
-		Address ehcAddress = new Address(elexisStreet.trim(), houseNumber, elexisAddress.getPlz(),
-				elexisAddress.getOrt());
-		ehcAddress.setAddressline1(elexisAddress.getStrasse());
+		Address ehcAddress = new Address(
+				Address.builder().withStreetAddressLine1(elexisAddress.getStrasse()).withStreetName(elexisStreet.trim())
+						.withBuildingNumber(houseNumber).withPostalCode(elexisAddress.getPlz())
+						.withCity(elexisAddress.getOrt()).build());
 		return ehcAddress;
 	}
 
@@ -132,16 +141,17 @@ public class EhcCoreMapper {
 			ret.addId(new Identificator("1.3.88", gln)); //$NON-NLS-1$
 		}
 		// PHONE
-		Telecoms telecoms = new Telecoms();
 		String value = elexisMandant.get(Kontakt.FLD_PHONE1);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
-			telecoms.addPhone(value, TelecomAddressUse.PRIVATE);
+			ret.setTelecoms(Collections.singletonList(
+					new Telecom(Telecom.builder().withValue(value).withUsage(TelecomAddressUse.PRIVATE).build())));
 		}
 		value = elexisMandant.get(Kontakt.FLD_MOBILEPHONE);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
-			telecoms.addPhone(value, TelecomAddressUse.MOBILE);
+			ret.setTelecoms(Collections.singletonList(
+					new Telecom(Telecom.builder().withValue(value).withUsage(TelecomAddressUse.MOBILE).build())));
 		}
-		ret.setTelecoms(telecoms);
+
 		// ADDRESS
 		Anschrift elexisAddress = elexisMandant.getAnschrift();
 		if (elexisAddress != null) {
@@ -154,19 +164,25 @@ public class EhcCoreMapper {
 	public static Organization getEhcOrganization(Mandant elexisMandant) {
 		Rechnungssteller rechnungssteller = elexisMandant.getRechnungssteller();
 		String gln = rechnungssteller.getXid(DOMAIN_EAN);
-		Organization ret = new Organization(rechnungssteller.getLabel(), gln);
+		Organization ret = new Organization(OrganizationBaseType.builder()
+				.withPrimaryName(NameBaseType.builder().withName(rechnungssteller.getLabel()).build()).build());
+
+		if (StringUtils.isNotBlank(gln)) {
+			ret.addIdentificator(
+					new Identificator(CodeSystems.GLN.getCodeSystemId(), gln));
+		}
 
 		// PHONE
-		Telecoms telecoms = new Telecoms();
-		String value = rechnungssteller.get(Kontakt.FLD_PHONE1);
+		String value = elexisMandant.get(Kontakt.FLD_PHONE1);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
-			telecoms.addPhone(value, TelecomAddressUse.PRIVATE);
+			ret.getTelecomList()
+					.add(new Telecom(Telecom.builder().withValue(value).withUsage(TelecomAddressUse.PRIVATE).build()));
 		}
-		value = rechnungssteller.get(Kontakt.FLD_MOBILEPHONE);
+		value = elexisMandant.get(Kontakt.FLD_MOBILEPHONE);
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("0")) { //$NON-NLS-1$
-			telecoms.addPhone(value, TelecomAddressUse.MOBILE);
+			ret.getTelecomList()
+					.add(new Telecom(Telecom.builder().withValue(value).withUsage(TelecomAddressUse.MOBILE).build()));
 		}
-		ret.setTelecoms(telecoms);
 		// ADDRESS
 		Anschrift elexisAddress = rechnungssteller.getAnschrift();
 		if (elexisAddress != null) {
@@ -176,9 +192,13 @@ public class EhcCoreMapper {
 		return ret;
 	}
 
-	public static Name getEhcPersonName(Person elexisPerson) {
-		Name ret = new Name(elexisPerson.getVorname(), elexisPerson.getName(), elexisPerson.get(Person.TITLE));
+	public static org.projecthusky.common.model.Name getEhcPersonName(Person elexisPerson) {
+		NameBaseType baseType = new NameBaseType();
+		baseType.setFamily(elexisPerson.getName());
+		baseType.setGiven(elexisPerson.getVorname());
+		baseType.setPrefix(elexisPerson.get(Person.TITLE));
 
+		org.projecthusky.common.model.Name ret = new org.projecthusky.common.model.Name(baseType);
 		return ret;
 	}
 
@@ -191,25 +211,19 @@ public class EhcCoreMapper {
 		return AdministrativeGender.UNDIFFERENTIATED;
 	}
 
-	public static Date getDate(String elexisDate) {
-		timeTool.set(elexisDate);
-		return timeTool.getTime();
-	}
-
-	public static ch.elexis.data.Patient getElexisPatient(Patient ehcPatient) {
+	public static ch.elexis.data.Patient getElexisPatient(Patient ehcPatient, boolean create) {
 		// try to look up via ids
 		List<Identificator> ids = ehcPatient.getIds();
 		for (Identificator identificator : ids) {
 			String idRoot = identificator.getRoot();
-			if (idRoot.equals(CodeSystems.SwissSSNDeprecated.getCodeSystemId())
-					|| idRoot.equals(CodeSystems.SwissSSN.getCodeSystemId())) {
+			if (idRoot.equals(CodeSystems.SWISS_SSN_DEPRECATED.getCodeSystemId())
+					|| idRoot.equals(CodeSystems.SWISS_SSN.getCodeSystemId())) {
 				IPersistentObject ret = Xid.findObject(DOMAIN_AHV, identificator.getExtension());
 				if (ret instanceof Kontakt) {
 					if (((Kontakt) ret).istPatient()) {
 						return ch.elexis.data.Patient.load(ret.getId());
 					}
 				}
-				System.out.println("foud ret " + ret); //$NON-NLS-1$
 				if (ret instanceof ch.elexis.data.Patient) {
 					return (ch.elexis.data.Patient) ret;
 				}
@@ -224,11 +238,11 @@ public class EhcCoreMapper {
 				: Person.MALE;
 		TimeTool ttBirthdate = new TimeTool();
 		// add data to query
-		if (ehcName.getFamilyName() != null && !ehcName.getFamilyName().isEmpty()) {
-			qpa.add(ch.elexis.data.Patient.FLD_NAME, Query.EQUALS, ehcName.getFamilyName());
+		if (ehcName.getFamily() != null && !ehcName.getFamily().isEmpty()) {
+			qpa.add(ch.elexis.data.Patient.FLD_NAME, Query.EQUALS, ehcName.getFamily());
 		}
-		if (ehcName.getGivenNames() != null && !ehcName.getGivenNames().isEmpty()) {
-			qpa.add(ch.elexis.data.Patient.FLD_FIRSTNAME, Query.EQUALS, ehcName.getGivenNames().get(0));
+		if (ehcName.getGiven() != null && !ehcName.getGiven().isEmpty()) {
+			qpa.add(ch.elexis.data.Patient.FLD_FIRSTNAME, Query.EQUALS, ehcName.getGiven());
 		}
 		if (ehcBirthdate != null) {
 			ttBirthdate.setTime(ehcBirthdate);
@@ -237,8 +251,8 @@ public class EhcCoreMapper {
 		List<ch.elexis.data.Patient> existing = qpa.execute();
 		// create or overwrite Patient
 		ch.elexis.data.Patient ret = null;
-		if (existing.isEmpty()) {
-			ret = new ch.elexis.data.Patient(ehcName.getFamilyName(), ehcName.getGivenNames().get(0),
+		if (existing.isEmpty() && create) {
+			ret = new ch.elexis.data.Patient(ehcName.getFamily(), ehcName.getGiven(),
 					ttBirthdate.toString(TimeTool.DATE_COMPACT), gender);
 		} else {
 			ret = existing.get(0);
@@ -247,27 +261,80 @@ public class EhcCoreMapper {
 		return ret;
 	}
 
-	public static void importEhcAddress(ch.elexis.data.Kontakt kontakt, Address address) {
-		Anschrift elexisAddress = kontakt.getAnschrift();
-		elexisAddress.setOrt(address.getCity());
-		elexisAddress.setPlz(address.getZip());
-		elexisAddress.setStrasse(address.getStreet() + StringUtils.SPACE + address.getHouseNumber());
-		kontakt.setAnschrift(elexisAddress);
-	}
+	public static ch.elexis.data.Patient getElexisPatient(Bundle bundle, boolean create) {
+		List<org.hl7.fhir.r4.model.Patient> fhirPatients = bundle.getEntry().stream()
+				.filter(e -> e.getResource() != null && e.getResource() instanceof org.hl7.fhir.r4.model.Patient)
+				.map(e -> (org.hl7.fhir.r4.model.Patient) e.getResource()).toList();
+		if (!fhirPatients.isEmpty()) {
+			for (org.hl7.fhir.r4.model.Patient fhirPatient : fhirPatients) {
+				// try to look up via ids
+				List<Identifier> ids = fhirPatient.getIdentifier();
+				for (Identifier identifier : ids) {
+					String idRoot = identifier.getSystem();
+					if (idRoot.equals(CodeSystems.SWISS_SSN_DEPRECATED.getCodeSystemId())
+							|| idRoot.equals(CodeSystems.SWISS_SSN.getCodeSystemId())) {
+						IPersistentObject ret = Xid.findObject(DOMAIN_AHV, identifier.getValue());
+						if (ret instanceof Kontakt) {
+							if (((Kontakt) ret).istPatient()) {
+								return ch.elexis.data.Patient.load(ret.getId());
+							}
+						}
+						if (ret instanceof ch.elexis.data.Patient) {
+							return (ch.elexis.data.Patient) ret;
+						}
+					}
+				}
 
-	public static void importEhcPhone(ch.elexis.data.Kontakt kontakt, Telecoms telecoms) {
-		Map<String, TelecomAddressUse> phones = telecoms.getPhones();
-		Set<String> keys = phones.keySet();
-		String existing = kontakt.get(Kontakt.FLD_PHONE1);
-
-		for (String key : keys) {
-			if (!key.equals(existing)) {
-				if (existing == null || existing.isEmpty()) {
-					kontakt.set(Kontakt.FLD_PHONE1, key);
+				Query<ch.elexis.data.Patient> qpa = new Query<ch.elexis.data.Patient>(ch.elexis.data.Patient.class);
+				// initialize data
+				HumanName fhirName = fhirPatient.getNameFirstRep();
+				Date fhirBirthdate = fhirPatient.getBirthDate();
+				String gender = fhirPatient
+						.getGender() == org.hl7.fhir.r4.model.Enumerations.AdministrativeGender.FEMALE ? Person.FEMALE
+								: Person.MALE;
+				TimeTool ttBirthdate = new TimeTool();
+				// add data to query
+				if (fhirName.getFamily() != null && !fhirName.getFamily().isEmpty()) {
+					qpa.add(ch.elexis.data.Patient.FLD_NAME, Query.EQUALS, fhirName.getFamily());
+				}
+				if (!fhirName.getGiven().isEmpty() && !fhirName.getGiven().get(0).isEmpty()) {
+					qpa.add(ch.elexis.data.Patient.FLD_FIRSTNAME, Query.EQUALS,
+							fhirName.getGiven().get(0).asStringValue());
+				}
+				if (fhirBirthdate != null) {
+					ttBirthdate.setTime(fhirBirthdate);
+					qpa.add(Person.BIRTHDATE, Query.EQUALS, ttBirthdate.toString(TimeTool.DATE_COMPACT));
+				}
+				List<ch.elexis.data.Patient> existing = qpa.execute();
+				// create or overwrite Patient
+				if (existing.isEmpty() && create) {
+					return new ch.elexis.data.Patient(fhirName.getFamily(), fhirName.getGiven().get(0).asStringValue(),
+							ttBirthdate.toString(TimeTool.DATE_COMPACT), gender);
 				} else {
-					kontakt.set(Kontakt.FLD_PHONE2, key);
+					return existing.get(0);
 				}
 			}
 		}
+		return null;
+	}
+
+	public static void importEhcAddress(ch.elexis.data.Kontakt kontakt, Address address) {
+		Anschrift elexisAddress = kontakt.getAnschrift();
+		elexisAddress.setOrt(address.getCity());
+		elexisAddress.setPlz(address.getPostalCode());
+		elexisAddress.setStrasse(address.getStreetName() + StringUtils.SPACE + address.getBuildingNumber());
+		kontakt.setAnschrift(elexisAddress);
+	}
+
+	public static void importEhcPhone(ch.elexis.data.Kontakt kontakt, List<Telecom> list) {
+		list.forEach(t -> {
+			if (StringUtils.isNotBlank(t.getValue())) {
+				if (t.getUsage() == TelecomAddressUse.MOBILE) {
+					kontakt.set(Kontakt.FLD_PHONE2, t.getValue());
+				} else {
+					kontakt.set(Kontakt.FLD_PHONE2, t.getValue());
+				}
+			}
+		});
 	}
 }

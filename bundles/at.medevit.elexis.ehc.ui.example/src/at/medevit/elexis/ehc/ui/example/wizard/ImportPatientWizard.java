@@ -15,8 +15,7 @@ import java.io.InputStream;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
-import org.ehealth_connector.cda.ch.AbstractCdaChV1;
-import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
+import org.projecthusky.common.hl7cdar2.POCDMT000040ClinicalDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,7 @@ public class ImportPatientWizard extends Wizard implements IImportWizard {
 
 	private ImportPatientWizardPage1 mainPage;
 
-	private AbstractCdaChV1<?> ehcDocument;
+	private POCDMT000040ClinicalDocument ehcDocument;
 
 	public ImportPatientWizard() {
 		setWindowTitle("Patientenstammdaten import.");
@@ -51,8 +50,7 @@ public class ImportPatientWizard extends Wizard implements IImportWizard {
 	public void setDocument(InputStream document) {
 		try {
 			document.reset();
-			ClinicalDocument clinicalDocument = ServiceComponent.getService().loadDocument(document);
-			ehcDocument = ServiceComponent.getService().getAsCdaChDocument(clinicalDocument);
+			POCDMT000040ClinicalDocument clinicalDocument = ServiceComponent.getService().loadDocument(document);
 			if (mainPage != null) {
 				mainPage.setDocument(ehcDocument);
 			}

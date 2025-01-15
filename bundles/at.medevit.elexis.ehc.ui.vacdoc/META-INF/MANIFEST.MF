@@ -14,9 +14,12 @@ Require-Bundle: at.medevit.elexis.ehc.vacdoc;bundle-version="1.0.0",
  at.medevit.elexis.ehc.core,
  org.eclipse.ui;bundle-version="3.8.2",
  ch.elexis.core.ui,
- org.eclipse.core.expressions;bundle-version="3.4.400"
+ org.eclipse.core.expressions;bundle-version="3.4.400",
+ info.elexis.target.hapi.fhir;bundle-version="5.4.2"
 Bundle-ActivationPolicy: lazy
 Import-Package: at.medevit.elexis.outbox.model,
+ ch.elexis.core.findings.util,
+ ch.elexis.core.findings.util.fhir,
  ch.elexis.core.services.holder,
  org.apache.commons.io,
  org.eclipse.core.runtime;version="3.4.0",

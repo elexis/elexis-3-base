@@ -11,6 +11,7 @@
 package at.medevit.elexis.ehc.ui.example.wizard;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,11 +25,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.ehealth_connector.cda.ch.AbstractCdaChV1;
+import org.projecthusky.common.hl7cdar2.POCDMT000040ClinicalDocument;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import at.medevit.elexis.ehc.ui.preference.PreferencePage;
-import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.data.events.ElexisEventDispatcher;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.icons.Images;
@@ -97,13 +97,16 @@ public class ExportPatientWizardPage1 extends WizardPage {
 
 		if (!contentSelection.isEmpty()) {
 			Patient selectedPatient = (Patient) contentSelection.getFirstElement();
-			AbstractCdaChV1<?> document = ServiceComponent.getService().createCdaChDocument(selectedPatient,
+			POCDMT000040ClinicalDocument document = ServiceComponent.getService().createDocument(selectedPatient,
 					(Mandant) ElexisEventDispatcher.getSelected(Mandant.class));
 			try {
 				String outputDir = ConfigServiceHolder.getUser(PreferencePage.EHC_OUTPUTDIR,
 						PreferencePage.getDefaultOutputDir());
-				document.saveToFile(
-						outputDir + File.separator + selectedPatient.get(Patient.FLD_PATID) + "_patientdata.xml"); //$NON-NLS-1$
+				File file = new File(
+						outputDir + File.separator + selectedPatient.get(Patient.FLD_PATID) + "_patientdata.xml"); // $NON-NLS-1$
+				try (FileOutputStream fo = new FileOutputStream(file)) {
+					ServiceComponent.getService().saveDocument(document, fo);
+				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

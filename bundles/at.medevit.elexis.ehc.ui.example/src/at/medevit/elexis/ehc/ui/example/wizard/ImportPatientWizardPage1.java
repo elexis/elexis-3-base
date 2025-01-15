@@ -24,8 +24,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.ehealth_connector.cda.ch.AbstractCdaChV1;
-import org.ehealth_connector.common.mdht.enums.AdministrativeGender;
+import org.projecthusky.common.enums.AdministrativeGender;
+import org.projecthusky.common.hl7cdar2.POCDMT000040ClinicalDocument;
 
 import at.medevit.elexis.ehc.ui.example.service.ServiceComponent;
 import ch.elexis.core.ui.exchange.KontaktMatcher;
@@ -38,9 +38,9 @@ import ch.rgw.tools.TimeTool;
 public class ImportPatientWizardPage1 extends WizardPage {
 
 	private TableViewer contentViewer;
-	private AbstractCdaChV1<?> ehcDocument;
+	private POCDMT000040ClinicalDocument ehcDocument;
 
-	protected ImportPatientWizardPage1(String pageName, AbstractCdaChV1<?> ehcDocument) {
+	protected ImportPatientWizardPage1(String pageName, POCDMT000040ClinicalDocument ehcDocument) {
 		super(pageName);
 		setTitle("Patienten für import auswählen.");
 		this.ehcDocument = ehcDocument;
@@ -62,17 +62,17 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		contentViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof org.ehealth_connector.common.mdht.Patient) {
-					org.ehealth_connector.common.mdht.Patient patient = ((org.ehealth_connector.common.mdht.Patient) element);
-					return patient.getName().getCompleteName() + " - " + patient.getBirthday().toString(); //$NON-NLS-1$
+				if (element instanceof org.projecthusky.common.model.Patient) {
+					org.projecthusky.common.model.Patient patient = ((org.projecthusky.common.model.Patient) element);
+					return patient.getName().getFullName() + " - " + patient.getBirthday().toString(); //$NON-NLS-1$
 				}
 				return super.getText(element);
 			}
 
 			@Override
 			public Image getImage(Object element) {
-				if (element instanceof org.ehealth_connector.common.mdht.Patient) {
-					if (((org.ehealth_connector.common.mdht.Patient) element)
+				if (element instanceof org.projecthusky.common.model.Patient) {
+					if (((org.projecthusky.common.model.Patient) element)
 							.getAdministrativeGenderCode() == AdministrativeGender.FEMALE) {
 						return Images.IMG_FRAU.getImage();
 					} else {
@@ -84,7 +84,7 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		});
 
 		if (ehcDocument != null) {
-			contentViewer.setInput(Collections.singletonList(ehcDocument.getPatient()));
+			contentViewer.setInput(Collections.singletonList(ServiceComponent.getService().getPatient(ehcDocument)));
 		}
 
 		setControl(composite);
@@ -94,12 +94,14 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		IStructuredSelection contentSelection = (IStructuredSelection) contentViewer.getSelection();
 
 		if (!contentSelection.isEmpty()) {
-			org.ehealth_connector.common.mdht.Patient selectedPatient = (org.ehealth_connector.common.mdht.Patient) contentSelection
+			org.projecthusky.common.model.Patient selectedPatient = (org.projecthusky.common.model.Patient) contentSelection
 					.getFirstElement();
-			String gender = selectedPatient.getAdministrativeGenderCode() == AdministrativeGender.FEMALE ? Person.FEMALE
-					: Person.MALE;
-			Patient existing = KontaktMatcher.findPatient(selectedPatient.getName().getFamilyName(),
-					selectedPatient.getName().getGivenNames().get(0),
+			String gender = selectedPatient
+					.getAdministrativeGenderCode() == org.projecthusky.common.enums.AdministrativeGender.FEMALE
+							? Person.FEMALE
+							: Person.MALE;
+			Patient existing = KontaktMatcher.findPatient(selectedPatient.getName().getFamily(),
+					selectedPatient.getName().getGiven(),
 					new TimeTool(selectedPatient.getBirthday()).toString(TimeTool.DATE_COMPACT), gender, null, null,
 					null, null, CreateMode.FAIL);
 			if (existing != null) {
@@ -115,10 +117,11 @@ public class ImportPatientWizardPage1 extends WizardPage {
 		return true;
 	}
 
-	public void setDocument(AbstractCdaChV1<?> ehcDocument) {
+	public void setDocument(POCDMT000040ClinicalDocument ehcDocument) {
 		this.ehcDocument = ehcDocument;
 		if (contentViewer != null && !contentViewer.getControl().isDisposed()) {
-			contentViewer.setInput(Collections.singletonList(ehcDocument.getPatient()));
+			org.projecthusky.common.model.Patient patient = ServiceComponent.getService().getPatient(ehcDocument);
+			contentViewer.setInput(Collections.singletonList(patient));
 			contentViewer.refresh();
 		}
 	}

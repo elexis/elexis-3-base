@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="at.medevit.elexis.ehc.vacdoc.service.internal.VacdocServiceImpl">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="at.medevit.elexis.ehc.vacdoc.service.internal.VacdocServiceImpl">
    <service>
       <provide interface="at.medevit.elexis.ehc.vacdoc.service.VacdocService"/>
    </service>
-   <reference bind="setEhcCoreService" interface="at.medevit.elexis.ehc.core.EhcCoreService" name="EhcCoreService" unbind="unsetEhcCoreService"/>
+   <reference cardinality="1..1" field="ehcCoreService" interface="at.medevit.elexis.ehc.core.EhcCoreService" name="ehcCoreService"/>
+   <reference cardinality="1..1" field="transformerRegistry" interface="ch.elexis.core.findings.util.fhir.IFhirTransformerRegistry" name="transformerRegistry"/>
    <implementation class="at.medevit.elexis.ehc.vacdoc.service.internal.VacdocServiceImpl"/>
 </scr:component>

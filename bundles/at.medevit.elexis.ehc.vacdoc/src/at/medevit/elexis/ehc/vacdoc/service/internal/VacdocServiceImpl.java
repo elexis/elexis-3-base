@@ -1,40 +1,49 @@
 package at.medevit.elexis.ehc.vacdoc.service.internal;
 
-import org.apache.commons.lang3.StringUtils;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
-import org.eclipse.emf.ecore.EClass;
-import org.ehealth_connector.cda.Consumable;
-import org.ehealth_connector.cda.ch.utils.CdaChLoader;
-import org.ehealth_connector.cda.ch.vacd.CdaChVacd;
-import org.ehealth_connector.cda.ch.vacd.Immunization;
-import org.ehealth_connector.common.enums.CodeSystems;
-import org.ehealth_connector.common.enums.LanguageCode;
-import org.ehealth_connector.common.mdht.Author;
-import org.ehealth_connector.common.mdht.Code;
-import org.ehealth_connector.common.mdht.Identificator;
-import org.ehealth_connector.common.utils.DateUtil;
-import org.openhealthtools.mdht.uml.cda.ch.CdaChVacdV1;
-import org.openhealthtools.mdht.uml.cda.ch.ChPackage;
+import org.apache.commons.io.IOUtils;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.Bundle.BundleType;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Composition;
+import org.hl7.fhir.r4.model.Composition.CompositionStatus;
+import org.hl7.fhir.r4.model.Composition.DocumentConfidentiality;
+import org.hl7.fhir.r4.model.Composition.SectionComponent;
+import org.hl7.fhir.r4.model.Extension;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Immunization;
+import org.hl7.fhir.r4.model.Medication;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.medevit.ch.artikelstamm.IArtikelstammItem;
 import at.medevit.elexis.ehc.core.EhcCoreMapper;
 import at.medevit.elexis.ehc.core.EhcCoreService;
 import at.medevit.elexis.ehc.vacdoc.service.VacdocService;
 import at.medevit.elexis.impfplan.model.po.Vaccination;
-import ch.elexis.core.data.service.StoreToStringServiceHolder;
-import ch.elexis.core.services.INamedQuery;
-import ch.elexis.core.services.IQuery;
-import ch.elexis.core.services.IQuery.COMPARATOR;
+import ch.elexis.core.findings.util.ModelUtil;
+import ch.elexis.core.findings.util.fhir.IFhirTransformer;
+import ch.elexis.core.findings.util.fhir.IFhirTransformerRegistry;
+import ch.elexis.core.model.IMandator;
+import ch.elexis.core.model.IOrganization;
+import ch.elexis.core.model.IPatient;
+import ch.elexis.core.model.IVaccination;
+import ch.elexis.core.services.holder.CoreModelServiceHolder;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.data.Query;
 
 @Component
@@ -42,39 +51,74 @@ public class VacdocServiceImpl implements VacdocService {
 
 	private static Logger logger = LoggerFactory.getLogger(VacdocServiceImpl.class);
 
+	@Reference
 	private EhcCoreService ehcCoreService;
 
-	public VacdocServiceImpl() {
-		EClass vacdClass = ChPackage.eINSTANCE.getCdaChVacdV1();
-		if (vacdClass == null) {
-			logger.warn("Could not load VACD class from ch package"); //$NON-NLS-1$
-		}
-	}
-
 	@Reference
-	public void setEhcCoreService(EhcCoreService ehcCoreService) {
-		this.ehcCoreService = ehcCoreService;
-	}
+	private IFhirTransformerRegistry transformerRegistry;
 
-	public void unsetEhcCoreService(EhcCoreService ehcCoreService) {
-		this.ehcCoreService = null;
+	@Override
+	public InputStream getXdmAsStream(Bundle document) throws Exception {
+		return ehcCoreService.getXdmAsStream(document);
 	}
 
 	@Override
-	public InputStream getXdmAsStream(CdaChVacd document) throws Exception {
-		return ehcCoreService.getXdmAsStream(document.getDoc());
-	}
-
-	@Override
-	public CdaChVacd getVacdocDocument(Patient patient, Mandant mandant) {
+	public Bundle getVacdocDocument(Patient patient, Mandant mandant) {
 		// Create eVACDOC (Header)
-		CdaChVacd doc = new CdaChVacd(LanguageCode.GERMAN, null, null);
-		doc.setPatient(EhcCoreMapper.getEhcPatient(patient));
-		doc.setCustodian(EhcCoreMapper.getEhcOrganization(mandant));
-		doc.addAuthor(EhcCoreMapper.getEhcAuthor(mandant));
-		doc.setLegalAuthenticator(EhcCoreMapper.getEhcAuthor(mandant));
+		Bundle bundle = new Bundle();
+		String bundleUuid = UUID.randomUUID().toString();
+		bundle.setId(bundleUuid);
+		bundle.getMeta().addProfile(
+				"http://fhir.ch/ig/ch-vacd/StructureDefinition/ch-vacd-document-immunization-administration");
+		bundle.setIdentifier(new Identifier().setSystem("urn:ietf:rfc:3986").setValue(bundleUuid));
+		bundle.setType(BundleType.DOCUMENT);
+		bundle.setTimestamp(new Date());
 
-		return doc;
+		IFhirTransformer<org.hl7.fhir.r4.model.Patient, IPatient> patientTransformer = transformerRegistry
+				.getTransformerFor(org.hl7.fhir.r4.model.Patient.class, IPatient.class);
+		org.hl7.fhir.r4.model.Patient fhirPatient = patientTransformer.getFhirObject(patient.toIPatient())
+				.orElseThrow(() -> new IllegalStateException("Coult not create FHIR patient"));
+		bundle.addEntry().setResource(fhirPatient);
+
+		IFhirTransformer<Practitioner, IMandator> practitionerTransformer = transformerRegistry
+				.getTransformerFor(Practitioner.class, IMandator.class);
+		Practitioner fhirPractitioner = practitionerTransformer
+				.getFhirObject(CoreModelServiceHolder.get().load(mandant.getId(), IMandator.class).get())
+				.orElseThrow(() -> new IllegalStateException("Coult not create FHIR practitioner"));
+		bundle.addEntry().setResource(fhirPractitioner);
+		
+		Organization fhirCustodian = null;
+		if(mandant.getRechnungssteller().istOrganisation()) {
+			IFhirTransformer<Organization, IOrganization> organizationTransformer = transformerRegistry.getTransformerFor(Organization.class, IOrganization.class);
+			fhirCustodian = organizationTransformer
+					.getFhirObject(CoreModelServiceHolder.get()
+							.load(mandant.getRechnungssteller().getId(), IOrganization.class).get())
+					.orElseThrow(() -> new IllegalStateException("Coult not create FHIR organization"));
+			bundle.addEntry().setResource(fhirCustodian);
+		}
+		
+		Composition composition = new Composition();
+		String compositionUuid = UUID.randomUUID().toString();
+		composition.setId(compositionUuid);
+		composition.getMeta().addProfile("http://fhir.ch/ig/ch-vacd/StructureDefinition/ch-vacd-composition-immunization-administration");
+		composition.setLanguage(Locale.getDefault().getLanguage());
+		composition.setIdentifier(new Identifier().setSystem("urn:ietf:rfc:3986").setValue(compositionUuid));
+		composition.setStatus(CompositionStatus.FINAL);
+		composition.setType(new CodeableConcept(new Coding("http://snomed.info/sct", "41000179103", "Immunization record")));
+		composition.setConfidentiality(DocumentConfidentiality.N);
+		
+		composition.setTitle("Immunization Administration");
+		composition.setDate(new Date());
+		composition.setSubject(new org.hl7.fhir.r4.model.Reference(fhirPatient));
+		composition.addAuthor(new org.hl7.fhir.r4.model.Reference(fhirPractitioner));
+		if (fhirCustodian != null) {
+			composition.setCustodian(new org.hl7.fhir.r4.model.Reference(fhirCustodian));
+		}
+		
+		BundleEntryComponent compositionEntry = bundle.addEntry();
+		compositionEntry.setResource(composition);
+
+		return bundle;
 	}
 
 	/**
@@ -84,91 +128,66 @@ public class VacdocServiceImpl implements VacdocService {
 	 * @param vaccinations
 	 */
 	@Override
-	public void addAllVaccinations(CdaChVacd doc) {
-		org.ehealth_connector.common.mdht.Patient ehcPatient = doc.getPatient();
-		Patient elexisPatient = EhcCoreMapper.getElexisPatient(ehcPatient);
-
-		Query<Vaccination> query = new Query<Vaccination>(Vaccination.class);
-		query.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, elexisPatient.getId());
-		List<Vaccination> vaccinations = query.execute();
-		addVaccinations(doc, vaccinations);
+	public void addAllVaccinations(Bundle bundle) {
+		Patient elexisPatient = EhcCoreMapper.getElexisPatient(bundle, false);
+		if (elexisPatient != null) {
+			Query<Vaccination> query = new Query<Vaccination>(Vaccination.class);
+			query.add(Vaccination.FLD_PATIENT_ID, Query.EQUALS, elexisPatient.getId());
+			List<Vaccination> vaccinations = query.execute();
+			addVaccinations(bundle, vaccinations);
+		}
 	}
 
 	/**
 	 * Add the vaccinations to the document.
 	 *
-	 * @param doc
+	 * @param bundle
 	 * @param vaccinations
 	 */
 	@Override
-	public void addVaccinations(CdaChVacd doc, List<Vaccination> vaccinations) {
+	public void addVaccinations(Bundle bundle, List<Vaccination> vaccinations) {
 		if (!vaccinations.isEmpty()) {
+			IFhirTransformer<Immunization, IVaccination> immunizationTransformer = transformerRegistry
+					.getTransformerFor(Immunization.class, IVaccination.class);
 			for (Vaccination vaccination : vaccinations) {
-				Consumable consumable = new Consumable(vaccination.getShortBusinessName());
-				consumable.setLotNr(vaccination.getLotNo());
-
-				String code = vaccination.getAtcCode();
-				if (code != null && !code.isEmpty()) {
-					Code atc = new Code(CodeSystems.WHOATCCode, code);
-					consumable.setWhoAtcCode(atc);
+				Optional<Immunization> fhirImmunization = immunizationTransformer.getFhirObject(
+						CoreModelServiceHolder.get().load(vaccination.getId(), IVaccination.class).get());
+				if (fhirImmunization.isPresent()) {
+					Optional<Composition> composition = bundle.getEntry().stream()
+							.filter(e -> e.getResource() instanceof Composition).map(e -> (Composition)e.getResource())
+							.findFirst();
+					if(composition.isPresent()) {
+						SectionComponent section = composition.get().getSectionFirstRep();
+						if (!section.hasId()) {
+							initImmunizationAdministrationSection(section);
+						}
+						BundleEntryComponent immunizationEntry = bundle.addEntry();
+						immunizationEntry.setResource(fhirImmunization.get());
+						section.addEntry(new org.hl7.fhir.r4.model.Reference(fhirImmunization.get()));
+					}
 				}
-
-				String identifier = vaccination.get(Vaccination.FLD_EAN);
-				if (identifier != null && !identifier.isEmpty()) {
-					Identificator ean = new Identificator("1.3.160", identifier); //$NON-NLS-1$
-					consumable.setManufacturedProductId(ean);
-				}
-
-				Author author = null;
-				if (isVaccinationMandantKnown(vaccination)) {
-					author = EhcCoreMapper.getEhcAuthor(getVaccinationMandant(vaccination));
-				} else {
-					String administratorName = getVaccinationAdministrator(vaccination);
-					author = new Author(EhcCoreMapper.getEhcName(administratorName));
-				}
-
-				Immunization immunization = new Immunization(consumable, author,
-						DateUtil.parseDate(vaccination.getDateOfAdministrationLabel()), null, null);
-				doc.addImmunization(immunization);
 			}
 		}
 	}
 
-	private boolean isVaccinationMandantKnown(Vaccination vaccination) {
-		String value = vaccination.get(Vaccination.FLD_ADMINISTRATOR);
-		if (value.startsWith(Mandant.class.getName())) {
-			Mandant mandant = (Mandant) new PersistentObjectFactory().createFromString(value);
-
-			if (mandant != null && mandant.exists()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private Mandant getVaccinationMandant(Vaccination vaccination) {
-		String value = vaccination.get(Vaccination.FLD_ADMINISTRATOR);
-		if (value.startsWith(Mandant.class.getName())) {
-			Mandant mandant = (Mandant) new PersistentObjectFactory().createFromString(value);
-
-			if (mandant != null && mandant.exists()) {
-				return mandant;
-			}
-		}
-		return null;
-	}
-
-	private String getVaccinationAdministrator(Vaccination vaccination) {
-		return vaccination.get(Vaccination.FLD_ADMINISTRATOR);
+	private void initImmunizationAdministrationSection(SectionComponent section) {
+		section.setId("administration");
+		section.setTitle("Immunization Administration");
+		section.setCode(new CodeableConcept(new Coding("http://loinc.org", "11369-6", "Hx of Immunization")));
 	}
 
 	@Override
-	public Optional<CdaChVacd> loadVacdocDocument(InputStream document) throws Exception {
+	public Optional<Bundle> loadVacdocDocument(InputStream document) throws Exception {
 		try {
-			final CdaChLoader<CdaChVacd> loader = new CdaChLoader<CdaChVacd>();
-			return Optional.of(loader.loadFromStream(document, CdaChVacd.class, CdaChVacdV1.class));
+			String jsonString = IOUtils.toString(document, "UTF-8");
+			IBaseResource bundleResource = ModelUtil.getAsResource(jsonString);
+			if (bundleResource != null && bundleResource instanceof Bundle) {
+				return Optional.of((Bundle) bundleResource);
+			} else {
+				logger.error("Provided json is not a bundle");
+			}
 		} catch (Exception e) {
-			logger.error("problem loading xml document", e); //$NON-NLS-1$
+			logger.error("problem loading json bundle", e); //$NON-NLS-1$
 		}
 		return Optional.empty();
 	}
@@ -176,53 +195,41 @@ public class VacdocServiceImpl implements VacdocService {
 	@Override
 	public void importImmunizations(Patient elexisPatient, List<Immunization> immunizations) {
 		for (Immunization immunization : immunizations) {
-			Consumable consumable = immunization.getConsumable();
+			IFhirTransformer<Immunization, Vaccination> immunizationTransformer = transformerRegistry
+					.getTransformerFor(Immunization.class, Vaccination.class);
 
-			Code atcCode = consumable.getWhoAtcCode();
-			Identificator gtin = consumable.getManufacturedProductId();
-			IArtikelstammItem article = resolveArticle(gtin, atcCode);
-			Optional<String> articleStoreToString = StoreToStringServiceHolder.get().storeToString(article);
-
-			Author author = immunization.getAuthor();
-
-			if (article != null && articleStoreToString.isPresent()) {
-				new Vaccination(elexisPatient.getId(), articleStoreToString.get(), article.getLabel(),
-						article.getGtin(), article.getAtcCode(), immunization.getApplyDate(), consumable.getLotNr(),
-						((author != null) ? author.getCompleteName() : StringUtils.EMPTY));
-			} else {
-				logger.warn("Article [" + consumable.getTradeName() + "] not found GTIN [" //$NON-NLS-1$ //$NON-NLS-2$
-						+ ((gtin != null) ? gtin.getExtension() : StringUtils.EMPTY) + "]"); //$NON-NLS-1$
-				new Vaccination(elexisPatient.getId(), StringUtils.EMPTY, consumable.getTradeName(),
-						((gtin != null) ? gtin.getExtension() : StringUtils.EMPTY),
-						((atcCode != null) ? atcCode.getCode() : StringUtils.EMPTY), immunization.getApplyDate(),
-						consumable.getLotNr(), ((author != null) ? author.getCompleteName() : StringUtils.EMPTY));
+			Optional<Vaccination> localObject = immunizationTransformer.createLocalObject(immunization);
+			if (localObject.isEmpty()) {
+				logger.error("Could not create local vaccintion object");
 			}
 		}
 	}
 
-	private IArtikelstammItem resolveArticle(Identificator gtin, Code atcCode) {
-		String gtinStr = (gtin != null) ? gtin.getExtension() : null;
-		String atcStr = (atcCode != null) ? atcCode.getCode() : null;
-		if (gtinStr != null) {
-			INamedQuery<IArtikelstammItem> query = ArtikelstammModelServiceHolder.get()
-					.getNamedQuery(IArtikelstammItem.class, "gtin"); //$NON-NLS-1$
-			return query.executeWithParametersSingleResult(query.getParameterMap("gtin", gtinStr)).orElse(null); //$NON-NLS-1$
-		} else if (atcStr != null && !atcStr.isEmpty()) {
-			IQuery<IArtikelstammItem> query = ArtikelstammModelServiceHolder.get().getQuery(IArtikelstammItem.class);
-			query.and("atc", COMPARATOR.EQUALS, atcStr); //$NON-NLS-1$
-			List<IArtikelstammItem> articles = query.execute();
-			if (articles != null && !articles.isEmpty()) {
-				String displayName = (atcCode != null) ? atcCode.getDisplayName().toLowerCase() : null;
-				if (displayName != null && !displayName.isEmpty()) {
-					for (IArtikelstammItem artikelstammItem : articles) {
-						if (artikelstammItem.getName().toLowerCase().contains(displayName)) {
-							return artikelstammItem;
-						}
-					}
+	@Override
+	public List<Immunization> getImmunizations(Bundle bundle) {
+		Optional<Composition> composition = bundle.getEntry().stream()
+				.filter(e -> e.getResource() instanceof Composition).map(e -> (Composition) e.getResource())
+				.findFirst();
+		if (composition.isPresent()) {
+			return bundle.getEntry().stream().filter(e -> e.getResource() instanceof Immunization)
+					.map(e -> (Immunization) e.getResource()).toList();
+		}
+		return Collections.emptyList();
+	}
+
+	@Override
+	public Optional<Medication> getMedication(Immunization immunization) {
+		if (immunization.hasExtension(
+				"http://fhir.ch/ig/ch-vacd/StructureDefinition/ch-vacd-ext-immunization-medication-reference")) {
+			Extension extension = immunization.getExtensionByUrl(
+					"http://fhir.ch/ig/ch-vacd/StructureDefinition/ch-vacd-ext-immunization-medication-reference");
+			if (extension.hasValue() && extension.getValue() instanceof org.hl7.fhir.r4.model.Reference) {
+				IBaseResource resource = ((org.hl7.fhir.r4.model.Reference) extension.getValue()).getResource();
+				if (resource instanceof Medication) {
+					return Optional.of((Medication) resource);
 				}
-				return articles.get(0);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 }

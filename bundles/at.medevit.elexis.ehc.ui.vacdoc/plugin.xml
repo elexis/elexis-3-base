@@ -28,28 +28,7 @@
       </wizard>
    </extension>
    <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:at.medevit.elexis.impfplan.ui.ImpfplanViewPart.contextMenu">
-         <separator
-               name="at.medevit.elexis.ehc.ui.vacdoc.separator1"
-               visible="true">
-         </separator>
-         <command
-               commandId="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler"
-               icon="rsc/outbox_into.png"
-               label="CDA in Outbox"
-               style="push">
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
-      <command
-            id="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler"
-            name="outbox cda handler">
-      </command>
       <command
             defaultHandler="at.medevit.elexis.ehc.ui.vacdoc.handler.CreateXdmHandler"
             id="at.medevit.elexis.ehc.ui.vacdoc.CreateXdmHandler"
@@ -70,13 +49,6 @@
                optional="true">
          </commandParameter>
       </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="at.medevit.elexis.ehc.ui.vacdoc.handler.CdaOutboxHandler"
-            commandId="at.medevit.elexis.ehc.ui.vacdoc.CdaOutboxHandler">
-      </handler>
    </extension>
 
 </plugin>

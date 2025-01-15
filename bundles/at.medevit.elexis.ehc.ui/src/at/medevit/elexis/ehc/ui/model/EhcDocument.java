@@ -21,9 +21,8 @@ import java.net.URL;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ehealth_connector.cda.ch.AbstractCdaChV1;
-import org.openhealthtools.mdht.uml.cda.ClinicalDocument;
-import org.openhealthtools.mdht.uml.cda.util.CDAUtil;
+import org.projecthusky.common.hl7cdar2.POCDMT000040ClinicalDocument;
+import org.projecthusky.communication.xd.xdm.DocumentContentAndMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,13 +119,13 @@ public class EhcDocument extends PersistentObject {
 		Patient ret = null;
 		try {
 			if (EhcDocument.isEhcXml(location)) {
-				ClinicalDocument clinicalDocument = ServiceComponent.getEhcService()
+				POCDMT000040ClinicalDocument clinicalDocument = ServiceComponent.getEhcService()
 						.loadDocument(location.openStream());
-				AbstractCdaChV1<?> cdaCh = ServiceComponent.getEhcService().getAsCdaChDocument(clinicalDocument);
-				if (cdaCh != null) {
-					org.ehealth_connector.common.mdht.Patient patient = cdaCh.getPatient();
+				if (clinicalDocument != null) {
+					org.projecthusky.common.model.Patient patient = ServiceComponent.getEhcService()
+							.getPatient(clinicalDocument);
 					if (patient != null) {
-						ret = EhcCoreMapper.getElexisPatient(patient);
+						ret = EhcCoreMapper.getElexisPatient(patient, false);
 					}
 				}
 			}
@@ -207,7 +206,7 @@ public class EhcDocument extends PersistentObject {
 			if (fileName != null && !fileName.isEmpty()) {
 				File file = new File(fileName);
 				if (file.exists()) {
-					List<org.ehealth_connector.common.mdht.Patient> patients = ServiceComponent.getEhcService()
+					List<org.projecthusky.common.model.Patient> patients = ServiceComponent.getEhcService()
 							.getXdmPatients(file);
 					return patients != null;
 				}
@@ -239,11 +238,13 @@ public class EhcDocument extends PersistentObject {
 	public static EhcDocument createFromXdm(URL fileUrl) {
 		File xdmFile = new File(fileUrl.getPath());
 		EhcDocument ret = new EhcDocument(xdmFile.getName() + " [" + EhcDocType.XDM + "]", fileUrl, new TimeTool()); //$NON-NLS-1$ //$NON-NLS-2$
-		List<ClinicalDocument> documents = ServiceComponent.getEhcService().getXdmDocuments(xdmFile);
-		for (ClinicalDocument clinicalDocument : documents) {
-			File documentFile = getXdmDocumentFile(clinicalDocument, xdmFile);
+		List<DocumentContentAndMetadata> documents = ServiceComponent.getEhcService().getXdmDocuments(xdmFile);
+		for (DocumentContentAndMetadata clinicalDocument : documents) {
+			File documentFile = getXdmDocumentFile(xdmFile);
 			try (FileOutputStream outputStream = new FileOutputStream(documentFile)) {
-				CDAUtil.save(clinicalDocument, outputStream);
+				POCDMT000040ClinicalDocument cdaDocument = ServiceComponent.getEhcService()
+						.getDocument(clinicalDocument);
+				ServiceComponent.getEhcService().saveDocument(cdaDocument, outputStream);
 			} catch (Exception e) {
 				logger.error("Could not create EhcDocument from xdm.", e); //$NON-NLS-1$
 			}
@@ -251,7 +252,7 @@ public class EhcDocument extends PersistentObject {
 		return ret;
 	}
 
-	private static File getXdmDocumentFile(ClinicalDocument clinicalDocument, File xdmFile) {
+	private static File getXdmDocumentFile(File xdmFile) {
 		String rootPath = xdmFile.getParent();
 		String rootName = xdmFile.getName();
 

@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.util.EnumSet;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import ch.elexis.core.documents.DocumentStore;
 import ch.elexis.core.exceptions.ElexisException;
 import ch.elexis.core.model.IDocument;
+import ch.elexis.core.model.MimeType;
 import ch.elexis.core.services.IConfigService;
 import ch.elexis.core.services.IDocumentConverter;
 import io.swagger.client.ApiException;
@@ -34,6 +36,11 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 
 	@Reference
 	private IConfigService configService;
+
+	private static final EnumSet<MimeType> SUPPORTED_MIME_TYPES = EnumSet.of(MimeType.doc, MimeType.docx, MimeType.xls,
+			MimeType.xlsx, MimeType.odt, MimeType.ods, MimeType.odp, MimeType.rtf,
+			MimeType.txt, MimeType.html, MimeType.csv, MimeType.jpg, MimeType.jpeg, MimeType.png, MimeType.bmp,
+			MimeType.gif, MimeType.tiff, MimeType.svg);
 
 	@Override
 	public Optional<File> convertToPdf(IDocument document) {
@@ -132,5 +139,15 @@ public class JodRestDocumentConverter implements IDocumentConverter {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isSupportedFile(IDocument document) {
+		if (document == null || StringUtils.isBlank(document.getExtension())) {
+			return false;
+		}
+		String extension = document.getExtension().toLowerCase();
+		MimeType mimeType = MimeType.getByExtension(extension);
+		return SUPPORTED_MIME_TYPES.contains(mimeType);
 	}
 }

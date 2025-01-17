@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IToolTipProvider;
@@ -86,12 +85,8 @@ public class DocHandleUiProvider implements IInboxElementUiProvider {
 		if (isProviderFor(element)) {
 			IDocumentHandle document = (IDocumentHandle) obj;
 			if (document != null && !document.isCategory()) {
-				if (StringUtils.containsIgnoreCase(document.getMimeType(), "pdf")) { //$NON-NLS-1$
 					ContextServiceHolder.get().postEvent(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, document);
-				}
-				else if (StringUtils.containsIgnoreCase(document.getMimeType(), "docx")) { //$NON-NLS-1$
-					ContextServiceHolder.get().postEvent(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, document);
-				}
+
 			}
 		}
 	}

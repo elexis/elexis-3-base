@@ -88,7 +88,6 @@ public class GlobalInboxPart {
 
 			if (globalInboxEntry != null) {
 				File mainFile = globalInboxEntry.getPdfPreviewFile();
-				if (globalInboxEntry.getMimetype().toLowerCase().contains("pdf")) { //$NON-NLS-1$
 					try {
 						IDocument mainFileDocument = FileDocument.of(mainFile);
 						eventBroker.post(ElexisUiEventTopics.EVENT_PREVIEW_MIMETYPE_PDF, mainFileDocument);
@@ -96,7 +95,6 @@ public class GlobalInboxPart {
 						LoggerFactory.getLogger(getClass()).warn("Exception", e); //$NON-NLS-1$
 					}
 				}
-			}
 		});
 		tv.addDoubleClickListener(new IDoubleClickListener() {
 

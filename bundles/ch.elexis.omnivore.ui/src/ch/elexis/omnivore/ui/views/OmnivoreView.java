@@ -187,12 +187,14 @@ public class OmnivoreView extends ViewPart implements IRefreshable {
 
 	@Inject
 	void activeUser(@Optional IUser user) {
-		if (isActiveControl(table)) {
-			viewer.refresh();
-			importAction.reflectRight();
-			editAction.reflectRight();
-			deleteAction.reflectRight();
-		}
+		Display.getDefault().asyncExec(() -> {
+			if (isActiveControl(table)) {
+				viewer.refresh();
+				importAction.reflectRight();
+				editAction.reflectRight();
+				deleteAction.reflectRight();
+			}
+		});
 	}
 
 	@Optional

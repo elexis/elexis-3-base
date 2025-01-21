@@ -11,4 +11,4 @@ Service-Component: OSGI-INF/ch.elexis.global_inbox.core.service.IdentifiedRunnab
  OSGI-INF/ch.elexis.global_inbox.core.util.ImportOmnivoreInboxUtil.xml
 Automatic-Module-Name: ch.elexis.global.inbox.core
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17

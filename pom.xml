@@ -7,7 +7,17 @@
 	<version>3.10.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Elexis-Base</name>
-
+        <description>Elexis Base</description>
+        <licenses>
+                <license>
+                        <name>Eclipse Public License</name>
+                        <url>https://www.eclipse.org/legal/epl-v10.html</url>
+                </license>
+        </licenses>
+        <organization>
+                <name>elexis.info</name>
+                <url>https://www.elexis.info</url>
+        </organization>
 	<properties>
 		<elexis.target>2022-09-java17</elexis.target>
 		<git.core.branch>3.10</git.core.branch>
@@ -18,7 +28,6 @@
 		<!-- vvv required empty vvv -->
 		<os-jvm-flags />
 	</properties>
-
 	<repositories>
 		<repository>
 			<id>elexis.3.target</id>
@@ -31,137 +40,52 @@
 			<layout>p2</layout>
 		</repository>
 	</repositories>
-
-	<organization>
-		<name>elexis.info</name>
-		<url>https://www.elexis.info</url>
-	</organization>
-
-	<scm>
-		<connection>scm:git:https://github.com/elexis/elexis-3-base.git</connection>
-		<developerConnection>scm:git:https://github.com/elexis/elexis-3-base.git</developerConnection>
-		<url>https://github.com/elexis/elexis-3-base</url>
-	</scm>
-
-	<licenses>
-		<license>
-			<name>Eclipse Public License</name>
-			<url>https://www.eclipse.org/legal/epl-v10.html</url>
-		</license>
-	</licenses>
-
-	<issueManagement>
-		<url>https://github.com/elexis/elexis-3-base/issues</url>
-		<system>Github</system>
-	</issueManagement>
-
-	<description>Elexis Base</description>
-
-	<modules>
+        <modules>
 		<module>bundles</module>
 		<module>features</module>
 		<module>ch.elexis.base.p2site</module>
 		<module>tests</module>
 	</modules>
-
-	<profiles>
+        <profiles>
 		<profile>
-			<id>macosx-jvm-flags</id>
+			<id>windows-x86_64</id>
+			<activation>
+				<os>
+					<family>windows</family>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<properties>
+				<classifier>win32/win32/x86_64</classifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>linux-x86_64</id>
+			<activation>
+				<os>
+					<name>Linux</name>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<properties>
+				<classifier>linux/gtk/x86_64</classifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>macosx</id>
 			<activation>
 				<os>
 					<family>mac</family>
 				</os>
 			</activation>
 			<properties>
+				<classifier>macosx/cocoa/x86_64</classifier>
 				<os-jvm-flags>-XstartOnFirstThread</os-jvm-flags>
 			</properties>
 		</profile>
 	</profiles>
-
 	<build>
 		<plugins>
-			<plugin>
-				<!--https://books.sonatype.com/mcookbook/reference/ch02s03.html#ex-groovy-script-ex -->
-				<groupId>org.codehaus.gmavenplus</groupId>
-				<artifactId>gmavenplus-plugin</artifactId>
-				<version>1.13.1</version>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<!-- <goal>execute</goal> -->
-						</goals>
-						<configuration>
-							<scripts>
-								<script><![CDATA[
-  import java.text.SimpleDateFormat;
-  HINT_GENERATED    = "# Generated from pom.xml groovy shell using gmavenplus-plugin\n"
-  // Returns the current branchName
-  public String getBranchVersion() {
-      branch="git rev-parse --abbrev-ref HEAD".execute().text.replaceAll("\n", '')
-      elexis_version = "${project.version}".replace("-SNAPSHOT", ".") + new SimpleDateFormat("yyyyMMdd-HHmm").format(Calendar.getInstance().getTime())
-      tags =  "git tag --contains ".execute().text.split("\n")
-      for ( i in tags ) {
-          if (i ==~/release\/(.*)/ ) {
-              elexis_version = (i=~ /release\//).replaceFirst("")
-              break
-          }
-      }
-      // Set property git_branch, but this property cannot be used in maven/pom.xml
-      // But it is used to invoke the modification only once per run
-      System.setProperty("git_branch",  branch)
-      System.setProperty("elexis_version",  elexis_version)
-      return branch;
-  }
-
-  // Write a repo.properties file
-  public void createRepoProperties(String repo_properties_name, String branch) {
-    // Now we are have the info to crate teh repo.properties
-    repo_version_file = new File(repo_properties_name)
-    repo_version_file.write(HINT_GENERATED)
-    repo_version_file.append("repoVariant=${branch}\n")
-    repo_version_file.append("project.id=${project.id}\n")
-    repo_version_file.append("project.name=${project.name}\n")
-    repo_version_file.append("project.version=${project.version}\n")
-    repo_version_file.append("projectVersion=${elexis_version}\n")
-    println("Created ${repo_properties_name}")
-  }
-
-if ( System.getProperty("git_branch") == null ) {
-  branch = getBranchVersion()
-  createRepoProperties('ch.elexis.base.p2site/repo.properties', branch)
-}
-]]>
-								</script>
-							</scripts>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.groovy</groupId>
-						<artifactId>groovy-all</artifactId>
-						<!-- any version of Groovy \>= 1.5.0 should work here -->
-						<version>2.4.21</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<includeTestResources>false</includeTestResources>
-					<linkXRef>true</linkXRef>
-					<encoding>UTF-8</encoding>
-					<consoleOutput>false</consoleOutput>
-					<failsOnError>false</failsOnError>
-					<headerLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/epl-v10.html</headerLocation>
-					<configLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/checkstyle.xml</configLocation>
-					<suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
-				</configuration>
-				<version>2.17</version>
-			</plugin>
 			<plugin>
 				<groupId>net.revelc.code.formatter</groupId>
 				<artifactId>formatter-maven-plugin</artifactId>
@@ -245,17 +169,6 @@ if ( System.getProperty("git_branch") == null ) {
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<!-- Use compiler plugin with tycho as the adapter to the JDT compiler. -->
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.10.1</version>
-					<configuration>
-						<release>17</release>
-					</configuration>
-				</plugin>
-				<plugin>
-					<!-- we want to ensure that the bin directory created by the Eclipse 
-						gets cleaned, too. Without it Maven would put two versions of each class 
-						file into the jars -->
 					<artifactId>maven-clean-plugin </artifactId>
 					<version>2.5</version>
 					<configuration>
@@ -341,43 +254,4 @@ if ( System.getProperty("git_branch") == null ) {
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.17</version>
-				<configuration>
-					<includeTestResources>false</includeTestResources>
-					<linkXRef>true</linkXRef>
-					<encoding>UTF-8</encoding>
-					<consoleOutput>false</consoleOutput>
-					<failsOnError>false</failsOnError>
-					<headerLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/epl-v10.html</headerLocation>
-					<configLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/checkstyle.xml</configLocation>
-					<suppressionsLocation>https://raw.githubusercontent.com/elexis/elexis-3-core/3.10/ch.elexis.core.releng/checkstyle-suppressions.xml</suppressionsLocation>
-				</configuration>
-				<reportSets>
-					<reportSet>
-						<inherited>false</inherited>
-						<reports>
-							<report>checkstyle-aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-			<plugin>        <!-- maven-jxr-plugin is needed for linkXRef -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
-		</plugins>
-	</reporting>
-	<distributionManagement>
-		<site>
-			<id>www.elexis.info</id>
-			<url>https://www.elexis.info</url>
-		</site>
-	</distributionManagement>
 </project>

@@ -35,7 +35,7 @@ jobs:
     - name: Trigger gitlab medelexis-3-application Workflow
       run: |
         curl -X POST \
-        --fail \
+        --fail-with-body \
         -F token=${{ secrets.GITLAB_MEDELEXIS_3_APPLICATION_PIPELINE_TRIGGER_TOKEN }} \
         -F ref=${{ env.BRANCH_NAME }} \
         https://gitlab.medelexis.ch/api/v4/projects/13/trigger/pipeline

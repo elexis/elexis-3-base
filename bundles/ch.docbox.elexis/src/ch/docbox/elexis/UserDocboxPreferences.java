@@ -53,7 +53,6 @@ import ch.docbox.ws.cdachservices.CDACHServices;
 import ch.docbox.ws.cdachservices.CDACHServices_Service;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.core.ac.EvACE;
-import ch.elexis.core.ac.EvaluatableACE;
 import ch.elexis.core.ac.Right;
 import ch.elexis.core.data.activator.CoreHub;
 import ch.elexis.core.model.IContact;
@@ -499,10 +498,9 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 	}
 
 	public static String getDocboxBrowserUrl() {
-		String test = isDocboxTest() ? "test" : StringUtils.EMPTY; //$NON-NLS-1$
 		String host = getBrowserHost(); // $NON-NLS-1$
 		String cgibin = "cgi-bin"; //$NON-NLS-1$
-		return "https://" + host + "/" + cgibin + "/WebObjects/docbox" + test + ".woa/wa/default"; //$NON-NLS-1$//$NON-NLS-2$
+		return "https://" + host + "/" + cgibin + "/WebObjects/docbox.woa/wa/default"; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public static String getDocboxServiceUrl() {
@@ -619,6 +617,7 @@ public class UserDocboxPreferences extends FieldEditorPreferencePage implements 
 				&& !StringUtils.EMPTY.equals(getSha1DocboxSecretKey());
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 
 	}

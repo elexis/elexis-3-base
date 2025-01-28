@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
+import org.slf4j.LoggerFactory;
 
 import at.medevit.elexis.inbox.model.IInboxElement;
 import at.medevit.elexis.inbox.model.IInboxElementService.State;
@@ -48,10 +49,13 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 	private String searchText;
 	private List<IInboxElement> filteredItems;
 
+	private Job currentJob;
+
 	public InboxElementContentProvider(InboxView inboxView) {
 		this.inboxView = inboxView;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		page = inboxView.getPagingComposite().getCurrentPage();
 		List<IInboxElement> list = filteredItems != null ? filteredItems : items;
@@ -69,54 +73,77 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 		return Collections.emptyList().toArray();
 	}
 
+	@Override
 	public void dispose() {
 		// nothing to do
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput instanceof List<?>) {
 			List<IInboxElement> input = (List<IInboxElement>) newInput;
 			// refresh map and list
-			Map<IPatient, PatientInboxElements> map = new HashMap<>();
-			items = null;
+			LoggerFactory.getLogger(getClass()).info("items empty [" + input.size() + "]");
+			items = Collections.emptyList();
+			filteredItems = null;
 			Display.getDefault().asyncExec(() -> {
 				viewer.refresh();
 			});
-			Job job = new Job("Loading Inbox") {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					monitor.beginTask("Lade Inbox", input.size());
-					for (IInboxElement inboxElement : input) {
-						IPatient patient = inboxElement.getPatient();
-						PatientInboxElements patientInbox = map.get(patient);
-						if (patientInbox == null) {
-							patientInbox = new PatientInboxElements(patient);
-							map.put(patient, patientInbox);
-						}
-						patientInbox.addElement(inboxElement);
-						monitor.worked(1);
-					}
-					items = map.values().stream().flatMap(pie -> pie.getElements().stream()).filter(ie -> ie != null)
-							.collect(Collectors.toList());
-					items.sort((l, r) -> {
-						return r.getLastupdate().compareTo(l.getLastupdate());
-					});
-					// refresh filtered list
-					if (StringUtils.isNotBlank(searchText)) {
-						setSearchText(searchText);
-					}
-					Display.getDefault().asyncExec(() -> {
-						page = 1;
-						inboxView.getPagingComposite().setup(page, items.size(), PAGING_FETCHSIZE);
+			if (currentJob != null) {
+				currentJob.cancel();
+			}
+			currentJob = new LoadingInboxJob(input);
+			currentJob.schedule();
+		}
+	}
 
-						inboxView.getViewer().refresh();
-					});
-					return Status.OK_STATUS;
+	private class LoadingInboxJob extends Job {
+
+		private List<IInboxElement> input;
+
+		public LoadingInboxJob(List<IInboxElement> input) {
+			super("Loading Inbox");
+			this.input = input;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			monitor.beginTask("Lade Inbox", input.size());
+			Map<IPatient, PatientInboxElements> map = new HashMap<>();
+
+			for (IInboxElement inboxElement : input) {
+				IPatient patient = inboxElement.getPatient();
+				PatientInboxElements patientInbox = map.get(patient);
+				if (patientInbox == null) {
+					patientInbox = new PatientInboxElements(patient);
+					map.put(patient, patientInbox);
 				}
-
-			};
-			job.schedule();
+				patientInbox.addElement(inboxElement);
+				monitor.worked(1);
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+			}
+			items = map.values().stream().flatMap(pie -> pie.getElements().stream()).filter(ie -> ie != null)
+					.collect(Collectors.toList());
+			items.sort((l, r) -> {
+				return r.getLastupdate().compareTo(l.getLastupdate());
+			});
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			// refresh filtered list
+			if (StringUtils.isNotBlank(searchText)) {
+				setSearchText(searchText);
+			}
+			Display.getDefault().asyncExec(() -> {
+				page = 1;
+				inboxView.getPagingComposite().setup(page, items.size(), PAGING_FETCHSIZE);
+				inboxView.getViewer().refresh();
+			});
+			currentJob = null;
+			return Status.OK_STATUS;
 		}
 	}
 
@@ -135,6 +162,13 @@ public class InboxElementContentProvider implements IStructuredContentProvider {
 					if (filteredItems != null) {
 						filteredItems.remove(element);
 					}
+				} else if (currentJob == null) {
+					items.addFirst(element);
+					Display.getDefault().asyncExec(() -> {
+						page = 1;
+						inboxView.getPagingComposite().setup(page, items.size(), PAGING_FETCHSIZE);
+						inboxView.getViewer().refresh();
+					});
 				}
 			}
 		}

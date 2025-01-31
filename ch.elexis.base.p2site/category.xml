@@ -268,6 +268,9 @@
    <feature id="ch.elexis.global_inbox.es.feature">
       <category name="libraries"/>
    </feature>
+   <feature id="ch.elexis.mednet.webapi.feature">
+      <category name="dataexchange"/>
+   </feature>
    <bundle id="ch.elexis.covid.cert">
       <category name="libraries"/>
    </bundle>
@@ -284,12 +287,6 @@
       <category name="libraries"/>
    </bundle>
    <bundle id="ch.elexis.fire.ui">
-      <category name="libraries"/>
-   </bundle>
-   <bundle id="ch.elexis.mednet.webapi.core">
-      <category name="libraries"/>
-   </bundle>
-   <bundle id="ch.elexis.mednet.webapi.ui">
       <category name="libraries"/>
    </bundle>
    <category-def name="basepackages" label="Basispakete"/>

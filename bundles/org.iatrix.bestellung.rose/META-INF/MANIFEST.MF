@@ -5,6 +5,15 @@ Bundle-SymbolicName: org.iatrix.bestellung.rose;singleton:=true
 Bundle-Version: 3.13.0.qualifier
 Bundle-Vendor: org.iatrix
 Require-Bundle: ch.elexis.core.data;bundle-version="3.9.0",
- ch.elexis.core.ui;bundle-version="3.9.0"
+ ch.elexis.core.ui;bundle-version="3.9.0",
+ ch.elexis.core
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Import-Package: at.medevit.elexis.hin.auth.core
+Import-Package: at.medevit.ch.artikelstamm,
+ at.medevit.elexis.hin.auth.core,
+ ch.elexis.mednet.webapi.core.service,
+ com.google.gson;version="[2.9.0,3.0.0)",
+ javax.xml.bind;version="[2.3.0,3.0.0)",
+ javax.xml.bind.annotation;version="[2.3.0,3.0.0)",
+ org.eclipse.wb.swt
+Bundle-ActivationPolicy: lazy
+Export-Package: org.iatrix.bestellung.rose

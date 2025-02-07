@@ -37,6 +37,7 @@ import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 import ch.elexis.core.ac.EvACE;
 import ch.elexis.core.ac.Right;
+import ch.elexis.core.model.ICategory;
 import ch.elexis.core.services.holder.AccessControlServiceHolder;
 import ch.elexis.core.ui.icons.Images;
 import ch.elexis.core.ui.util.SWTHelper;
@@ -200,9 +201,12 @@ public class FileImportDialog extends TitleAreaDialog {
 			tKeywords.setText(dh.getKeywords());
 			cbCategories.setText(dh.getCategory().getName());
 		}
-		bEditCat.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IDocumentHandle.class, Right.UPDATE).and(Right.EXECUTE)));
-		bDeleteCat.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IDocumentHandle.class, Right.DELETE).and(Right.EXECUTE)));
-		bNewCat.setEnabled(AccessControlServiceHolder.get().evaluate(EvACE.of(IDocumentHandle.class, Right.CREATE).and(Right.EXECUTE)));
+		bEditCat.setEnabled(
+				AccessControlServiceHolder.get().evaluate(EvACE.of(ICategory.class, Right.UPDATE)));
+		bDeleteCat.setEnabled(
+				AccessControlServiceHolder.get().evaluate(EvACE.of(ICategory.class, Right.DELETE)));
+		bNewCat.setEnabled(
+				AccessControlServiceHolder.get().evaluate(EvACE.of(ICategory.class, Right.CREATE)));
 
 		return ret;
 	}

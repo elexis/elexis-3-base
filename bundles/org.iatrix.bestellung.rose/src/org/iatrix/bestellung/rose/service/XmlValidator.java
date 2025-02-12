@@ -17,20 +17,18 @@ import org.iatrix.bestellung.rose.XsdResolver;
 import org.osgi.framework.Bundle;
 import org.xml.sax.SAXException;
 
-import ch.elexis.core.ui.exchange.XChangeException;
-
 public class XmlValidator {
 
-	public void validateXml(String xml) throws XChangeException {
+	public void validateXml(String xml) throws IllegalStateException {
 		try {
 			setXmlLimits();
 			Bundle bundle = Platform.getBundle(Constants.PLUGIN_ID);
 			if (bundle == null) {
-				throw new XChangeException("Bundle not found: " + Constants.PLUGIN_ID);
+				throw new IllegalStateException("Bundle not found: " + Constants.PLUGIN_ID);
 			}
 			URL xsdUrl = bundle.getEntry(Constants.XSD_RELATIVE_PATH);
 			if (xsdUrl == null) {
-				throw new XChangeException("XSD file not found: " + Constants.XSD_RELATIVE_PATH);
+				throw new IllegalStateException("XSD file not found: " + Constants.XSD_RELATIVE_PATH);
 			}
 
 			URL resolvedUrl = FileLocator.resolve(xsdUrl);
@@ -43,7 +41,7 @@ public class XmlValidator {
 				validator.validate(new StreamSource(new java.io.StringReader(xml)));
 			}
 		} catch (SAXException | IOException e) {
-			throw new XChangeException("XML validation failed: " + e.getMessage());
+			throw new IllegalStateException("XML validation failed: " + e.getMessage());
 		}
 	}
 

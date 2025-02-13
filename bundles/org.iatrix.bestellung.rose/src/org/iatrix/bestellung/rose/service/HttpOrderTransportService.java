@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -35,7 +37,7 @@ public class HttpOrderTransportService {
 
 	public String retrieveAccessToken(String clientId, String clientSecret) throws XChangeException {
 		try {
-			URL url = new URI(Constants.TOKEN_URL).toURL();
+			URL url = getUrl(Constants.TOKEN_URL, Constants.TOKEN_URL_TEST);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST"); //$NON-NLS-1$
 			conn.setRequestProperty("Authorization", "Basic " + encodeBasicAuth(clientId, clientSecret)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -67,8 +69,7 @@ public class HttpOrderTransportService {
 
 	public void sendOrderRequest(String xml, String token) throws XChangeException {
 		try {
-
-			URL url = new URI(Constants.ORDER_URL).toURL();
+			URL url = getUrl(Constants.ORDER_URL, Constants.ORDER_URL_TEST);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST"); //$NON-NLS-1$
 			conn.setRequestProperty("Authorization", "Bearer " + token); //$NON-NLS-1$ //$NON-NLS-2$
@@ -107,6 +108,10 @@ public class HttpOrderTransportService {
 		} catch (Exception e) {
 			throw new XChangeException("Error sending the order: " + e.getMessage()); //$NON-NLS-1$
 		}
+	}
+
+	private URL getUrl(String liveUrl, String testUrl) throws URISyntaxException, MalformedURLException {
+		return new URI(isTestMode ? testUrl : liveUrl).toURL();
 	}
 
 	private String extractLandingPageUrl(String responseXml) {

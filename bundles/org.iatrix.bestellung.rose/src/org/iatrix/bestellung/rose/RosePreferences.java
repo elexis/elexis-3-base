@@ -78,6 +78,7 @@ public class RosePreferences extends FieldEditorPreferencePage implements IWorkb
 			comp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			comp.setClientNumber(additionalClientNumber);
 		}
+
 		return ret;
 	}
 

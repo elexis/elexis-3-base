@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: ch.framsteg.elexis.docbox.productKey.fragment
-Bundle-SymbolicName: ch.framsteg.elexis.docbox.productKey.fragment
-Bundle-Version: 3.12.0.qualifier
-Bundle-Vendor: ch.framsteg
-Fragment-Host: ch.elexis.docbox.ws.client;bundle-version="3.0.0"
-Automatic-Module-Name: ch.framsteg.elexis.docbox.productKey.fragment
-Bundle-RequiredExecutionEnvironment: JavaSE-21

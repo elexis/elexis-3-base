@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.2.0" activate="activate" immediate="true" name="ch.elexis.global_inbox.internal.service.GlobalInboxEntryFactory">
-   <reference bind="setConfigService" interface="ch.elexis.core.services.IConfigService" name="ConfigService"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" immediate="true" name="ch.elexis.global_inbox.internal.service.GlobalInboxEntryFactory">
+   <service>
+      <provide interface="ch.elexis.global_inbox.internal.service.GlobalInboxEntryFactory"/>
+   </service>
    <reference bind="setExtensionFileHandler" cardinality="0..n" interface="java.util.function.Function" name="ExtensionFileHandler" policy="dynamic" policy-option="greedy" target="(service.name=ch.elexis.global_inbox.extensionfilehandler)" unbind="unsetExtensionFileHandler"/>
-   <reference bind="setModelService" interface="ch.elexis.core.services.IModelService" name="ModelService" target="(service.model.name=ch.elexis.core.model)"/>
-   <reference bind="setStoreToStringService" interface="ch.elexis.core.services.IStoreToStringService" name="StoreToStringService"/>
+   <reference cardinality="1..1" field="configService" interface="ch.elexis.core.services.IConfigService" name="configService"/>
+   <reference cardinality="1..1" field="modelService" interface="ch.elexis.core.services.IModelService" name="modelService" target="(service.model.name=ch.elexis.core.model)"/>
+   <reference cardinality="1..1" field="storeToStringService" interface="ch.elexis.core.services.IStoreToStringService" name="storeToStringService"/>
    <implementation class="ch.elexis.global_inbox.internal.service.GlobalInboxEntryFactory"/>
 </scr:component>

@@ -33,12 +33,15 @@ import ch.elexis.global_inbox.model.GlobalInboxEntry;
 import ch.elexis.global_inbox.ui.GlobalInboxUtil;
 
 @SuppressWarnings("rawtypes")
-@Component(immediate = true)
+@Component(service = GlobalInboxEntryFactory.class, immediate = true)
 public class GlobalInboxEntryFactory {
 
-	private static IStoreToStringService storeToStringService;
-	private static IModelService modelService;
-	private static IConfigService configService;
+	@Reference
+	private IStoreToStringService storeToStringService;
+	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
+	private IModelService modelService;
+	@Reference
+	private IConfigService configService;
 
 	private static List<Function> extensionFileHandlers = new ArrayList<Function>();
 
@@ -56,21 +59,6 @@ public class GlobalInboxEntryFactory {
 		});
 	}
 
-	@Reference
-	public void setStoreToStringService(IStoreToStringService storeToStringService) {
-		GlobalInboxEntryFactory.storeToStringService = storeToStringService;
-	}
-
-	@Reference
-	public void setConfigService(IConfigService configService) {
-		GlobalInboxEntryFactory.configService = configService;
-	}
-
-	@Reference(target = "(" + IModelService.SERVICEMODELNAME + "=ch.elexis.core.model)")
-	public void setModelService(IModelService modelService) {
-		GlobalInboxEntryFactory.modelService = modelService;
-	}
-
 	@Reference(target = "(service.name=ch.elexis.global_inbox.extensionfilehandler)", cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
 	public void setExtensionFileHandler(Function extensionFileHandler) {
 		GlobalInboxEntryFactory.extensionFileHandlers.add(extensionFileHandler);
@@ -80,7 +68,7 @@ public class GlobalInboxEntryFactory {
 		GlobalInboxEntryFactory.extensionFileHandlers.remove(extensionFileHandler);
 	}
 
-	public static GlobalInboxEntry createEntry(File mainFile, File[] extensionFiles) {
+	public GlobalInboxEntry createEntry(File mainFile, File[] extensionFiles) {
 		GlobalInboxEntry globalInboxEntry = new GlobalInboxEntry(mainFile, extensionFiles);
 		String category = GlobalInboxUtil.getCategory(mainFile);
 		String mimeType = null;
@@ -98,7 +86,7 @@ public class GlobalInboxEntryFactory {
 
 	}
 
-	public static GlobalInboxEntry populateExtensionInformation(GlobalInboxEntry globalInboxEntry) {
+	public GlobalInboxEntry populateExtensionInformation(GlobalInboxEntry globalInboxEntry) {
 		File[] extensionFiles = globalInboxEntry.getExtensionFiles();
 		for (File file : extensionFiles) {
 			String absolutePath = file.getAbsolutePath();
@@ -113,7 +101,7 @@ public class GlobalInboxEntryFactory {
 		return globalInboxEntry;
 	}
 
-	private static void integrateAdditionalInformation(Map<String, Object> result, GlobalInboxEntry gie) {
+	private void integrateAdditionalInformation(Map<String, Object> result, GlobalInboxEntry gie) {
 
 		Object dateTokens = result.get("dateTokens"); //$NON-NLS-1$
 		if (dateTokens instanceof List) {

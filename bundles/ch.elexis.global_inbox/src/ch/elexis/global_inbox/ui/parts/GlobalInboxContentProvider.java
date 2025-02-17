@@ -23,6 +23,7 @@ import ch.elexis.core.data.util.Extensions;
 import ch.elexis.core.data.util.LocalLock;
 import ch.elexis.core.services.holder.ConfigServiceHolder;
 import ch.elexis.core.ui.util.viewers.CommonContentProviderAdapter;
+import ch.elexis.core.utils.OsgiServiceUtil;
 import ch.elexis.global_inbox.Preferences;
 import ch.elexis.global_inbox.internal.service.GlobalInboxEntryFactory;
 import ch.elexis.global_inbox.model.GlobalInboxEntry;
@@ -39,6 +40,8 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 	private GlobalInboxPart view;
 	private LoadJob loader;
 	private GlobalInboxUtil giutil;
+
+	private GlobalInboxEntryFactory globalInboxEntryFactory;
 
 	@Override
 	public void dispose() {
@@ -57,6 +60,9 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 		loader = new LoadJob();
 		loader.schedule(1000);
 		giutil = new GlobalInboxUtil();
+
+		globalInboxEntryFactory = OsgiServiceUtil.getServiceWait(GlobalInboxEntryFactory.class, 5000)
+				.orElseThrow(() -> new IllegalStateException("No GlobalInboxEntryFactory"));
 	}
 
 	@Override
@@ -139,7 +145,7 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 
 			for (GlobalInboxEntry gie : loadJobList) {
 				if (!entries.contains(gie)) {
-					gie = GlobalInboxEntryFactory.populateExtensionInformation(gie);
+					gie = globalInboxEntryFactory.populateExtensionInformation(gie);
 					entries.add(gie);
 				}
 			}
@@ -199,7 +205,7 @@ public class GlobalInboxContentProvider extends CommonContentProviderAdapter {
 				File[] _extensionFiles = dir.listFiles(
 						(_dir, _name) -> _name.startsWith(file.getName()) && !Objects.equals(_name, file.getName()));
 				extensionFiles.addAll(Arrays.asList(_extensionFiles));
-				GlobalInboxEntry globalInboxEntry = GlobalInboxEntryFactory.createEntry(file, _extensionFiles);
+				GlobalInboxEntry globalInboxEntry = globalInboxEntryFactory.createEntry(file, _extensionFiles);
 				loadJobList.add(globalInboxEntry);
 			}
 		}

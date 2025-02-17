@@ -148,11 +148,10 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 				String dayStartsAt = ConfigServiceHolder.get().get("agenda/beginnStundeTagesdarstellung", "0000", //$NON-NLS-1$ //$NON-NLS-2$
 						false);
 				String dayEndsAt = ConfigServiceHolder.get().get("agenda/endStundeTagesdarstellung", "2359", false); //$NON-NLS-1$ //$NON-NLS-2$
-				browser.getDisplay().timerExec(500, () -> {
+				loadEventsFunction.setResources(selectedResources);
+				dayClickFunction.setSelectedResources(selectedResources);
+				uiSynchronize.asyncExec(() -> {
 					scriptingHelper.setCalenderTime(dayStartsAt, dayEndsAt);
-
-					loadEventsFunction.setResources(selectedResources);
-					dayClickFunction.setSelectedResources(selectedResources);
 					if (currentSpanSize != null) {
 						setSelectedSpanSize(currentSpanSize);
 					}

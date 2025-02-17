@@ -80,6 +80,11 @@ public class ScriptingHelper {
 		SingleSourceUtil.executeScript(browser, script);
 	}
 
+	public void render() {
+		String refetchEvents = "$('#calendar').fullCalendar('render');"; //$NON-NLS-1$
+		SingleSourceUtil.executeScript(browser, refetchEvents);
+	}
+
 	public void refetchEvents() {
 		String refetchEvents = "$('#calendar').fullCalendar('refetchEvents');"; //$NON-NLS-1$
 		SingleSourceUtil.executeScript(browser, refetchEvents);

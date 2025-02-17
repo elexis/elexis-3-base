@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ch.framsteg.elexis.docbox.feature"
+      label="Docbox Product Key Feature"
+      version="3.12.0.qualifier"
+      provider-name="ch.framsteg">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="ch.framsteg.elexis.docbox.fragment"
+         version="0.0.0"/>
+
+   <plugin
+         id="ch.elexis.docbox.ws.client"
+         version="0.0.0"/>
+
+</feature>

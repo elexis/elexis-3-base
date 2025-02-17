@@ -159,7 +159,6 @@ public class ParallelComposite extends Composite implements ISelectionProvider, 
 						setFontSize(size);
 						getConfiguredFontFamily().ifPresent(family -> setFontFamily(family));
 					});
-					scriptingHelper.render();
 				});
 			}
 		});

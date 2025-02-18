@@ -29,10 +29,8 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jakarta.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.jface.wizard.WizardDialog;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,6 +39,7 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -63,7 +62,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.jdom2.JDOMException;
-import org.osgi.service.component.annotations.Reference;
 import org.xml.sax.SAXException;
 
 import ch.elexis.core.common.ElexisEventTopics;
@@ -87,6 +85,7 @@ import ch.framsteg.elexis.covercard.exceptions.UnsupportedCardException;
 import ch.framsteg.elexis.covercard.utilities.TableSorter;
 import ch.framsteg.elexis.covercard.views.dialogs.CardInfoDialog;
 import ch.framsteg.elexis.covercard.views.wizard.RegisterWizard;
+import jakarta.inject.Inject;
 
 public class SearchView extends ViewPart implements IRefreshable {
 

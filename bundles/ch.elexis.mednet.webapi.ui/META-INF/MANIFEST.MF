@@ -22,9 +22,10 @@ Service-Component: OSGI-INF/ch.elexis.mednet.webapi.ui.MednetAuthUi.xml,
  OSGI-INF/ch.elexis.mednet.webapi.ui.handler.ImportOmnivoreUtil.xml,
  OSGI-INF/ch.elexis.mednet.webapi.ui.preferences.MedNetWebPreferencePage.xml
 Import-Package: com.google.gson;version="[2.11.0,3.0.0)",
+ com.google.gson.reflect;version="[2.11.0,3.0.0)",
+ org.apache.commons.io;version="[2.16.0,3.0.0)",
  org.apache.http.client;version="[4.5.0,5.0.0)",
  org.apache.http.client.fluent;version="[4.5.0,5.0.0)",
  org.apache.http.entity;version="[4.4.0,5.0.0)",
- org.eclipse.ui,
  org.eclipse.ui.preferences,
  org.eclipse.wb.swt

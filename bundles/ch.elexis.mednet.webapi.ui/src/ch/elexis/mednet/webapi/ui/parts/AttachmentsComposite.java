@@ -1,7 +1,5 @@
 package ch.elexis.mednet.webapi.ui.parts;
 
-
-
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -173,8 +171,9 @@ public class AttachmentsComposite extends Composite {
 				Label label = new Label(attachmentsParent, SWT.NONE);
 				String tmpFile = AttachmentsUtil.toAttachment(string);
 				if (!tmpFile.toLowerCase().endsWith(".pdf")) { //$NON-NLS-1$
-					MessageDialog.openWarning(getShell(), Messages.AttachmentsComposite_warning, Messages.AttachmentsComposite_document + FilenameUtils.getName(tmpFile)
-							+ Messages.AttachmentsComposite_cannotBeConverted);
+					MessageDialog.openWarning(getShell(), Messages.AttachmentsComposite_warning,
+							Messages.AttachmentsComposite_document + FilenameUtils.getName(tmpFile)
+									+ Messages.AttachmentsComposite_cannotBeConverted);
 				}
 				label.setText(FilenameUtils.getName(tmpFile));
 				label.setData(string);
